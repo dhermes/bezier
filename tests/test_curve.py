@@ -66,3 +66,17 @@ class TestCurve(unittest.TestCase):
         nodes = np.zeros((3, dimension))
         curve = self._make_one(nodes)
         self.assertEqual(curve.dimension, dimension)
+
+    def test_evaluate(self):
+        import numpy as np
+
+        s = 0.25
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, 0.5],
+            [1.0, 1.25],
+        ])
+        curve = self._make_one(nodes)
+        expected = np.array([0.25,  0.265625])
+        result = curve.evaluate(s)
+        self.assertTrue(np.all(expected == result))

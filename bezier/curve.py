@@ -13,6 +13,10 @@
 """Helper for Bezier Curves."""
 
 
+import numpy as np
+import six
+
+
 class Curve(object):
     r"""Represents a `Bezier curve`_.
 
@@ -51,3 +55,31 @@ class Curve(object):
         :math:`B(s) \in \mathbf{R}^3`, then the dimension is ``3``.
         """
         return self._dimension
+
+    def evaluate(self, s):
+        r"""Evaluate :math:`B(s)` along the curve.
+
+        Performs `de Casteljau's algorithm`_ to build up :math:`B(s)`.
+
+        .. de Casteljau's algorithm:
+            https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+
+        Args:
+            s (float): Parameter along the curve.
+
+        Returns:
+            numpy.ndarray: The point on the curve (as a one dimensional
+                NumPy array).
+        """
+        weights = np.zeros((self.degree, self.degree + 1))
+        eye = np.eye(self.degree)
+        weights[:, 1:] += eye * s
+        weights[:, :-1] += eye * (1 - s)
+
+        # NOTE: This assumes degree > 0.
+        value = weights.dot(self._nodes)
+        for stage in six.moves.xrange(1, self.degree):
+            value = weights[:-stage, :-stage].dot(value)
+
+        # Here: Value will be 1x2, we just want the 1D point.
+        return value.flatten()
