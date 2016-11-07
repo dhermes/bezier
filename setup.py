@@ -25,9 +25,7 @@ with open(os.path.join(PACKAGE_ROOT, 'README.rst')) as file_obj:
     README = file_obj.read()
 
 REQUIREMENTS = (
-    'matplotlib >= 1.5.3',
     'numpy >= 1.11.2',
-    'six >= 1.9.0',
 )
 DESCRIPTION = 'Helper for Bezier Curves, Triangles, and Higher Order Objects'
 
