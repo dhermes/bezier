@@ -37,3 +37,17 @@ class Curve(object):
         self._degree = rows - 1
         self._dimension = cols
         self._nodes = nodes
+
+    @property
+    def degree(self):
+        """int: The degree of the current curve."""
+        return self._degree
+
+    @property
+    def dimension(self):
+        r"""int: The dimension that the curve lives in.
+
+        For example, if the curve is 3D, i.e. if
+        :math:`B(s) \in \mathbf{R}^3`, then the dimension is ``3``.
+        """
+        return self._dimension

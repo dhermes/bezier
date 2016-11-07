@@ -49,3 +49,20 @@ class TestCurve(unittest.TestCase):
         nodes = np.zeros((2, 2, 2))
         with self.assertRaises(ValueError):
             self._make_one(nodes)
+
+    def test_degree_property(self):
+        import numpy as np
+
+        degree = 6
+        num_nodes = degree + 1
+        nodes = np.zeros((num_nodes, 2))
+        curve = self._make_one(nodes)
+        self.assertEqual(curve.degree, degree)
+
+    def test_dimension_property(self):
+        import numpy as np
+
+        dimension = 4
+        nodes = np.zeros((3, dimension))
+        curve = self._make_one(nodes)
+        self.assertEqual(curve.dimension, dimension)
