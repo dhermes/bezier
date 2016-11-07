@@ -13,6 +13,5 @@ Module contents
 
 .. automodule:: bezier
     :members:
-    :inherited-members:
     :undoc-members:
     :show-inheritance:

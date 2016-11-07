@@ -17,7 +17,7 @@
 set -e
 
 rm -rf docs/build/* docs/*rst
-OPTIONS="members,inherited-members,undoc-members,show-inheritance"
+OPTIONS="members,undoc-members,show-inheritance"
 SPHINX_APIDOC_OPTIONS="${OPTIONS}" sphinx-apidoc \
   --separate --force \
   --output-dir docs \
