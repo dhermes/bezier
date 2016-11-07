@@ -14,7 +14,17 @@
 
 
 class Curve(object):
-    """Represents a Bezier curve.
+    r"""Represents a `Bezier curve`_.
+
+    .. _Bezier curve: https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+
+    We take the traditional definiton: a `Bezier curve`_ is a mapping from
+    :math:`s \in \left[0, 1\right]` to convex combinations
+    of points :math:`v_0, v_1, \ldots, v_n` in some vector space:
+
+    .. math::
+
+       B(s) = \sum_{j = 0}^n \binom{n}{j} s^j (1 - s)^{n - j} \cdot v_j
 
     Args:
         nodes (numpy.ndarray): The nodes in the curve. The rows
