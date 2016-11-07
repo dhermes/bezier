@@ -1,0 +1,16 @@
+*.py[cod]
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+__pycache__
+
+# Unit test / coverage reports
+.coverage
+.tox
+.cache
+
+# Mac
+.DS_Store
