@@ -30,6 +30,23 @@ class Curve(object):
 
        B(s) = \sum_{j = 0}^n \binom{n}{j} s^j (1 - s)^{n - j} \cdot v_j
 
+    .. testsetup:: curve-eval
+
+      import numpy as np
+
+    .. doctest:: curve-eval
+      :options: +NORMALIZE_WHITESPACE
+
+      >>> import bezier
+      >>> nodes = np.array([
+      ...     [0.0, 0.0],
+      ...     [0.625, 0.5],
+      ...     [1.0, 0.5],
+      ... ])
+      >>> curve = bezier.Curve(nodes)
+      >>> curve.evaluate(0.75)
+      array([ 0.796875, 0.46875 ])
+
     Args:
         nodes (numpy.ndarray): The nodes in the curve. The rows
             represent each node while the columns are the dimension
@@ -61,7 +78,7 @@ class Curve(object):
 
         Performs `de Casteljau's algorithm`_ to build up :math:`B(s)`.
 
-        .. de Casteljau's algorithm:
+        .. _de Casteljau's algorithm:
             https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
 
         Args:
