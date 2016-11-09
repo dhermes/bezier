@@ -17,6 +17,29 @@ import numpy as np
 import six
 
 
+_LINEAR_SUBDIVIDE = np.array([
+    [1.0, 0.0],
+    [0.5, 0.5],
+    [0.0, 1.0],
+])
+_QUADRATIC_SUBDIVIDE = np.array([
+    [1.0, 0.0, 0.0],
+    [0.5, 0.5, 0.0],
+    [0.25, 0.5, 0.25],
+    [0.0, 0.5, 0.5],
+    [0.0, 0.0, 1.0],
+])
+_CUBIC_SUBDIVIDE = np.array([
+    [1.0, 0.0, 0.0, 0.0],
+    [0.5, 0.5, 0.0, 0.0],
+    [0.25, 0.5, 0.25, 0.0],
+    [0.125, 0.375, 0.375, 0.125],
+    [0.0, 0.25, 0.5, 0.25],
+    [0.0, 0.0, 0.5, 0.5],
+    [0.0, 0.0, 0.0, 1.0],
+])
+
+
 class Curve(object):
     r"""Represents a `Bezier curve`_.
 
@@ -51,10 +74,20 @@ class Curve(object):
         nodes (numpy.ndarray): The nodes in the curve. The rows
             represent each node while the columns are the dimension
             of the ambient space.
+
+    Raises:
+        ValueError: If the ``nodes`` are not 2D.
+        ValueError: If the ``nodes`` are not 2D.
     """
 
     def __init__(self, nodes):
+        if nodes.ndim != 2:
+            raise ValueError('Nodes must be 2-dimensional, not', nodes.ndim)
         rows, cols = nodes.shape
+        if rows < 2:
+            raise ValueError(
+                'At least two nodes are required to define a curve',
+                'Received', rows)
         self._degree = rows - 1
         self._dimension = cols
         self._nodes = nodes
@@ -88,9 +121,7 @@ class Curve(object):
             numpy.ndarray: The point on the curve (as a one dimensional
                 NumPy array).
         """
-        if self.degree == 0:
-            return self._nodes.flatten()
-
+        # NOTE: This assumes degree > 0, since the constructor requires this.
         weights = np.zeros((self.degree, self.degree + 1))
         eye = np.eye(self.degree)
         weights[:, 1:] += eye * s
@@ -155,3 +186,37 @@ class Curve(object):
             plt.show()
 
         return fig
+
+    def subdivide(self):
+        r"""Split the curve :math:`\gamma(s)` into a left and right half.
+
+        Takes the interval :math:`\left[0, 1\right]` and splits the curve into
+        :math:`\gamma_1 = \gamma\left(\left[0, \frac{1}{2}\right]\right)` and
+        :math:`\gamma_2 = \gamma\left(\left[\frac{1}{2}, 1\right]\right)`. In
+        order to do this, also reparameterizes the curve, hence the resulting
+        left and right halves have new nodes.
+
+        Returns:
+            Tuple[Curve, Curve]: The left and right sub-curves.
+
+        Raises:
+            NotImplementedError: If the curve degree is greater than ``3``.
+        """
+        if self.degree == 1:
+            new_nodes = _LINEAR_SUBDIVIDE.dot(self._nodes)
+            left = new_nodes[:2, :]
+            right = new_nodes[1:, :]
+        elif self.degree == 2:
+            new_nodes = _QUADRATIC_SUBDIVIDE.dot(self._nodes)
+            left = new_nodes[:3, :]
+            right = new_nodes[2:, :]
+        elif self.degree == 3:
+            new_nodes = _CUBIC_SUBDIVIDE.dot(self._nodes)
+            left = new_nodes[:4, :]
+            right = new_nodes[3:, :]
+        else:
+            raise NotImplementedError(
+                'Curves higher than degree 3 not yet supported',
+                'Current degree', self.degree)
+
+        return Curve(left), Curve(right)

@@ -39,7 +39,7 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
 
-    def test_constructor_bad_input(self):
+    def test_constructor_wrong_dimension(self):
         import numpy as np
 
         nodes = np.array([1.0, 2.0])
@@ -47,6 +47,19 @@ class TestCurve(unittest.TestCase):
             self._make_one(nodes)
 
         nodes = np.zeros((2, 2, 2))
+        with self.assertRaises(ValueError):
+            self._make_one(nodes)
+
+    def test_constructor_insufficient_nodes(self):
+        import numpy as np
+
+        nodes = np.array([
+            [1.0, 2.0],
+        ])
+        with self.assertRaises(ValueError):
+            self._make_one(nodes)
+
+        nodes = np.zeros((0, 2))
         with self.assertRaises(ValueError):
             self._make_one(nodes)
 
@@ -79,17 +92,6 @@ class TestCurve(unittest.TestCase):
         curve = self._make_one(nodes)
         expected = np.array([0.25,  0.265625])
         result = curve.evaluate(s)
-        self.assertTrue(np.all(expected == result))
-
-    def test_evaluate_degree_zero(self):
-        import numpy as np
-
-        nodes = np.array([
-            [0.0, 0.0],
-        ])
-        curve = self._make_one(nodes)
-        expected = nodes.flatten()
-        result = curve.evaluate(0.0)
         self.assertTrue(np.all(expected == result))
 
     def test_evaluate_multi(self):
@@ -137,7 +139,8 @@ class TestCurve(unittest.TestCase):
         import numpy as np
 
         nodes = np.array([
-            [0.0, 0.0],
+            [0.0, 1.0],
+            [1.0, 3.0],
         ])
         curve = self._make_one(nodes)
         plt = mock.Mock()
@@ -148,16 +151,24 @@ class TestCurve(unittest.TestCase):
         figure.gca.return_value = ax
 
         if show:
-            result = curve.plot(1, plt, show=True)
+            result = curve.plot(2, plt, show=True)
         else:
-            result = curve.plot(1, plt)
+            result = curve.plot(2, plt)
 
         self.assertIs(result, figure)
 
         # Check mocks.
         plt.figure.assert_called_once_with()
         figure.gca.assert_called_once_with()
-        ax.plot.assert_called_once_with(nodes[:, 0], nodes[:, 1])
+        # Can't use nodes[:, col] since == breaks on array.
+        self.assertEqual(ax.plot.call_count, 1)
+        call = ax.plot.mock_calls[0]
+        # Unpack the call as name, positional args, keyword args
+        _, positional, keyword = call
+        self.assertEqual(keyword, {})
+        self.assertEqual(len(positional), 2)
+        self.assertTrue(np.all(positional[0] == nodes[:, 0]))
+        self.assertTrue(np.all(positional[1] == nodes[:, 1]))
         if show:
             plt.show.assert_called_once_with()
         else:
@@ -168,3 +179,85 @@ class TestCurve(unittest.TestCase):
 
     def test_plot_show(self):
         self._plot_helper(show=True)
+
+    def _subdivide_helper(self, nodes, expected_l, expected_r):
+        import numpy as np
+
+        klass = self._get_target_class()
+
+        curve = self._make_one(nodes)
+        left, right = curve.subdivide()
+
+        self.assertIsInstance(left, klass)
+        self.assertTrue(np.all(left._nodes == expected_l))
+        self.assertIsInstance(right, klass)
+        self.assertTrue(np.all(right._nodes == expected_r))
+
+    def test_subdivide_line(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 1.0],
+            [4.0, 6.0],
+        ])
+        expected_l = np.array([
+            [0.0, 1.0],
+            [2.0, 3.5],
+        ])
+        expected_r = np.array([
+            [2.0, 3.5],
+            [4.0, 6.0],
+        ])
+        self._subdivide_helper(nodes, expected_l, expected_r)
+
+    def test_subdivide_quadratic(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 1.0],
+            [4.0, 6.0],
+            [7.0, 3.0],
+        ])
+        expected_l = np.array([
+            [0.0, 1.0],
+            [2.0, 3.5],
+            [3.75, 4.0],
+        ])
+        expected_r = np.array([
+            [3.75, 4.0],
+            [5.5, 4.5],
+            [7.0, 3.0],
+        ])
+        self._subdivide_helper(nodes, expected_l, expected_r)
+
+    def test_subdivide_cubic(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 1.0],
+            [4.0, 6.0],
+            [7.0, 3.0],
+            [6.0, 5.0],
+        ])
+        expected_l = np.array([
+            [0.0, 1.0],
+            [2.0, 3.5],
+            [3.75, 4.0],
+            [4.875, 4.125],
+        ])
+        expected_r = np.array([
+            [4.875, 4.125],
+            [6.0, 4.25],
+            [6.5, 4.0],
+            [6.0, 5.0],
+        ])
+        self._subdivide_helper(nodes, expected_l, expected_r)
+
+    def test_subdivide_degree_too_large(self):
+        import numpy as np
+
+        degree = 4
+        nodes = np.random.random((degree + 1, 2))
+        curve = self._make_one(nodes)
+        with self.assertRaises(NotImplementedError):
+            curve.subdivide()
