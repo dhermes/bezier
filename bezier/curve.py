@@ -88,12 +88,14 @@ class Curve(object):
             numpy.ndarray: The point on the curve (as a one dimensional
                 NumPy array).
         """
+        if self.degree == 0:
+            return self._nodes.flatten()
+
         weights = np.zeros((self.degree, self.degree + 1))
         eye = np.eye(self.degree)
         weights[:, 1:] += eye * s
         weights[:, :-1] += eye * (1 - s)
 
-        # NOTE: This assumes degree > 0.
         value = weights.dot(self._nodes)
         for stage in six.moves.xrange(1, self.degree):
             value = weights[:-stage, :-stage].dot(value)
@@ -128,3 +130,28 @@ class Curve(object):
         for i, s_val in enumerate(s_vals):
             result[i, :] = self.evaluate(s_val)
         return result
+
+    def plot(self, num_pts, plt, show=False):
+        """Plot the current curve.
+
+        Args:
+            num_pts (int): Number of points to plot.
+            plt (~types.ModuleType): Plotting module to use for creating
+               figures, etc.
+            show (bool): (Optional) Flag indicating if the plot should be
+                shown.
+
+        Returns:
+            matplotlib.figure.Figure: The figure created for the plot.
+        """
+        s_vals = np.linspace(0.0, 1.0, num_pts)
+        points = self.evaluate_multi(s_vals)
+
+        fig = plt.figure()
+        ax = fig.gca()
+        ax.plot(points[:, 0], points[:, 1])
+
+        if show:
+            plt.show()
+
+        return fig

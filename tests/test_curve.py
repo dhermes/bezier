@@ -81,6 +81,17 @@ class TestCurve(unittest.TestCase):
         result = curve.evaluate(s)
         self.assertTrue(np.all(expected == result))
 
+    def test_evaluate_degree_zero(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+        ])
+        curve = self._make_one(nodes)
+        expected = nodes.flatten()
+        result = curve.evaluate(0.0)
+        self.assertTrue(np.all(expected == result))
+
     def test_evaluate_multi(self):
         import numpy as np
 
@@ -120,3 +131,38 @@ class TestCurve(unittest.TestCase):
         curve.evaluate.assert_any_call(s1)
         curve.evaluate.assert_any_call(s2)
         self.assertEqual(curve.evaluate.call_count, 2)
+
+    def _plot_helper(self, show=False):
+        import mock
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+        ])
+        curve = self._make_one(nodes)
+        plt = mock.Mock()
+
+        figure = mock.Mock()
+        plt.figure.return_value = figure
+        ax = mock.Mock()
+        figure.gca.return_value = ax
+
+        if show:
+            result = curve.plot(1, plt, show=True)
+        else:
+            result = curve.plot(1, plt)
+
+        # Check mocks.
+        plt.figure.assert_called_once_with()
+        figure.gca.assert_called_once_with()
+        ax.plot.assert_called_once_with(nodes[:, 0], nodes[:, 1])
+        if show:
+            plt.show.assert_called_once_with()
+        else:
+            plt.show.assert_not_called()
+
+    def test_plot(self):
+        self._plot_helper()
+
+    def test_plot_show(self):
+        self._plot_helper(show=True)
