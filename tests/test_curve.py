@@ -152,6 +152,8 @@ class TestCurve(unittest.TestCase):
         else:
             result = curve.plot(1, plt)
 
+        self.assertIs(result, figure)
+
         # Check mocks.
         plt.figure.assert_called_once_with()
         figure.gca.assert_called_once_with()
