@@ -193,6 +193,25 @@ class TestCurve(unittest.TestCase):
         self.assertIsInstance(right, klass)
         self.assertTrue(np.all(right._nodes == expected_r))
 
+    def _subdivide_points_check(self, curve, num_pts):
+        import numpy as np
+
+        left, right = curve.subdivide()
+
+        left_half = np.linspace(0.0, 0.5, num_pts)
+        right_half = np.linspace(0.5, 1.0, num_pts)
+        unit_interval = np.linspace(0.0, 1.0, num_pts)
+
+        # Make sure left([0, 1]) == curve([0, 0.5])
+        main_vals = curve.evaluate_multi(left_half)
+        sub_vals = left.evaluate_multi(unit_interval)
+        self.assertTrue(np.allclose(main_vals, sub_vals))
+
+        # Make sure right([0, 1]) == curve([0.5, 1])
+        main_vals = curve.evaluate_multi(right_half)
+        sub_vals = right.evaluate_multi(unit_interval)
+        self.assertTrue(np.allclose(main_vals, sub_vals))
+
     def test_subdivide_line(self):
         import numpy as np
 
@@ -209,6 +228,17 @@ class TestCurve(unittest.TestCase):
             [4.0, 6.0],
         ])
         self._subdivide_helper(nodes, expected_l, expected_r)
+
+    def test_subdivide_line_check_evaluate(self):
+        import numpy as np
+
+        # Use a fixed seed so the test is deterministic.
+        random_state = np.random.RandomState(seed=88991)
+        nodes = random_state.random_sample((2, 2))
+
+        curve = self._make_one(nodes)
+        self.assertEqual(curve.degree, 1)
+        self._subdivide_points_check(curve, 32)
 
     def test_subdivide_quadratic(self):
         import numpy as np
@@ -229,6 +259,17 @@ class TestCurve(unittest.TestCase):
             [7.0, 3.0],
         ])
         self._subdivide_helper(nodes, expected_l, expected_r)
+
+    def test_subdivide_quadratic_check_evaluate(self):
+        import numpy as np
+
+        # Use a fixed seed so the test is deterministic.
+        random_state = np.random.RandomState(seed=10764)
+        nodes = random_state.random_sample((3, 2))
+
+        curve = self._make_one(nodes)
+        self.assertEqual(curve.degree, 2)
+        self._subdivide_points_check(curve, 32)
 
     def test_subdivide_cubic(self):
         import numpy as np
@@ -252,6 +293,17 @@ class TestCurve(unittest.TestCase):
             [6.0, 5.0],
         ])
         self._subdivide_helper(nodes, expected_l, expected_r)
+
+    def test_subdivide_cubic_check_evaluate(self):
+        import numpy as np
+
+        # Use a fixed seed so the test is deterministic.
+        random_state = np.random.RandomState(seed=990077)
+        nodes = random_state.random_sample((4, 2))
+
+        curve = self._make_one(nodes)
+        self.assertEqual(curve.degree, 3)
+        self._subdivide_points_check(curve, 32)
 
     def test_subdivide_degree_too_large(self):
         import numpy as np
