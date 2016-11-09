@@ -100,3 +100,31 @@ class Curve(object):
 
         # Here: Value will be 1x2, we just want the 1D point.
         return value.flatten()
+
+    def evaluate_multi(self, s_vals):
+        r"""Evaluate :math:`B(s)` for multiple points along the curve.
+
+        Performs `de Casteljau's algorithm`_ to build up :math:`B(s)`.
+
+        .. _de Casteljau's algorithm:
+            https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+
+        .. note::
+
+            This current just uses :meth:`evaluate` and so is less
+            performant than it could be.
+
+        Args:
+            s_vals (numpy.ndarray): Parameters along the curve (as a
+                1D array).
+
+        Returns:
+            numpy.ndarray: The points on the curve. As a two dimensional
+                NumPy array, with the rows corresponding to each ``s``
+                value and the columns to the dimension.
+        """
+        num_vals, = s_vals.shape
+        result = np.zeros((num_vals, self.dimension))
+        for i, s_val in enumerate(s_vals):
+            result[i, :] = self.evaluate(s_val)
+        return result

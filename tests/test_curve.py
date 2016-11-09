@@ -80,3 +80,43 @@ class TestCurve(unittest.TestCase):
         expected = np.array([0.25,  0.265625])
         result = curve.evaluate(s)
         self.assertTrue(np.all(expected == result))
+
+    def test_evaluate_multi(self):
+        import numpy as np
+
+        s_vals = np.array([0.0, 0.25, 0.5, 1.0, 1.25])
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.375, 0.375],
+            [1.0, 1.0],
+        ])
+        curve = self._make_one(nodes)
+        expected = np.array([
+            [0.0, 0.0],
+            [0.203125, 0.203125],
+            [0.4375, 0.4375],
+            [1.0, 1.0],
+            [1.328125, 1.328125],
+        ])
+        result = curve.evaluate_multi(s_vals)
+        self.assertTrue(np.all(expected == result))
+
+    def test_evaluate_multi_calls_evaluate(self):
+        import mock
+        import numpy as np
+
+        s1 = 3.14159
+        s2 = 2.817281728
+        s_vals = np.array([s1, s2])
+        num_pts = len(s_vals)
+        curve = self._make_one(np.zeros((2, 1)))
+        ret_vals = [10.0, -1.0]
+        curve.evaluate = mock.Mock(side_effect=ret_vals)
+
+        result = curve.evaluate_multi(s_vals)
+        self.assertEqual(result.shape, (num_pts, 1))
+        self.assertTrue(np.all(result == np.array([ret_vals]).T))
+
+        curve.evaluate.assert_any_call(s1)
+        curve.evaluate.assert_any_call(s2)
+        self.assertEqual(curve.evaluate.call_count, 2)
