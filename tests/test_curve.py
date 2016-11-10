@@ -223,7 +223,7 @@ class TestCurve(unittest.TestCase):
         ])
         curve = self._make_one(nodes)
         with self.assertRaises(NotImplementedError):
-            curve.plot(32, None)
+            curve.plot(32)
 
     def _subdivide_helper(self, nodes, expected_l, expected_r):
         klass = self._get_target_class()
