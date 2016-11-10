@@ -1,0 +1,9 @@
+### MATPLOTLIBRC FORMAT
+
+# See http://matplotlib.org/users/customizing.html
+
+#### CONFIGURATION BEGINS HERE
+
+# NOTE: The default backend may not be supported on CI platforms
+#       so we explicitly use a more vanilla backend.
+backend      : Agg

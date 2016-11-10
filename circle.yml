@@ -1,3 +1,7 @@
+machine:
+  environment:
+    MATPLOTLIBRC: tests
+
 dependencies:
   override:
     - pip install --upgrade pip tox tox-pyenv
