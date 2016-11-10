@@ -10,7 +10,20 @@ ignore=.git,.cache,.tox
 #            they document.
 load-plugins=pylint.extensions.check_docs
 
+[MESSAGES CONTROL]
+disable =
+    similarities,
+    I
+
 [REPORTS]
 # Tells whether to display a full report or only the messages
 # RATIONALE: noisy
 reports=no
+
+[BASIC]
+good-names=i,j,k,ex,Run,_,s,t,ax
+class-rgx=[A-Z_][a-zA-Z0-9]+$|^Test
+method-rgx=[a-z_][a-z0-9_]{2,30}$|^test_
+
+[DESIGN]
+max-args=6

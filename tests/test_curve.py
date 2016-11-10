@@ -168,9 +168,9 @@ class TestCurve(unittest.TestCase):
         import mock
         import numpy as np
 
-        s1 = 3.14159
-        s2 = 2.817281728
-        s_vals = np.array([s1, s2])
+        s_val1 = 3.14159
+        s_val2 = 2.817281728
+        s_vals = np.array([s_val1, s_val2])
         num_pts = len(s_vals)
         curve = self._make_one(np.zeros((2, 1)))
         ret_vals = [10.0, -1.0]
@@ -178,10 +178,13 @@ class TestCurve(unittest.TestCase):
 
         result = curve.evaluate_multi(s_vals)
         self.assertEqual(result.shape, (num_pts, 1))
-        self.assertTrue(np.all(result == np.array([ret_vals]).T))
+        # pylint: disable=no-member
+        expected = np.array([ret_vals]).T
+        # pylint: enable=no-member
+        self.assertTrue(np.all(result == expected))
 
-        curve.evaluate.assert_any_call(s1)
-        curve.evaluate.assert_any_call(s2)
+        curve.evaluate.assert_any_call(s_val1)
+        curve.evaluate.assert_any_call(s_val2)
         self.assertEqual(curve.evaluate.call_count, 2)
 
     def _plot_helper(self, show=False):
@@ -290,11 +293,17 @@ class TestCurve(unittest.TestCase):
         ])
         self._subdivide_helper(nodes, expected_l, expected_r)
 
-    def test_subdivide_line_check_evaluate(self):
+    @staticmethod
+    def _get_random(seed):
         import numpy as np
 
+        # pylint: disable=no-member
+        return np.random.RandomState(seed=seed)
+        # pylint: enable=no-member
+
+    def test_subdivide_line_check_evaluate(self):
         # Use a fixed seed so the test is deterministic.
-        random_state = np.random.RandomState(seed=88991)
+        random_state = self._get_random(88991)
         nodes = random_state.random_sample((2, 2))
 
         curve = self._make_one(nodes)
@@ -322,10 +331,8 @@ class TestCurve(unittest.TestCase):
         self._subdivide_helper(nodes, expected_l, expected_r)
 
     def test_subdivide_quadratic_check_evaluate(self):
-        import numpy as np
-
         # Use a fixed seed so the test is deterministic.
-        random_state = np.random.RandomState(seed=10764)
+        random_state = self._get_random(10764)
         nodes = random_state.random_sample((3, 2))
 
         curve = self._make_one(nodes)
@@ -356,10 +363,8 @@ class TestCurve(unittest.TestCase):
         self._subdivide_helper(nodes, expected_l, expected_r)
 
     def test_subdivide_cubic_check_evaluate(self):
-        import numpy as np
-
         # Use a fixed seed so the test is deterministic.
-        random_state = np.random.RandomState(seed=990077)
+        random_state = self._get_random(990077)
         nodes = random_state.random_sample((4, 2))
 
         curve = self._make_one(nodes)
@@ -367,10 +372,8 @@ class TestCurve(unittest.TestCase):
         self._subdivide_points_check(curve, 32)
 
     def test_subdivide_dynamic_subdivision_matrix(self):
-        import numpy as np
-
         # Use a fixed seed so the test is deterministic.
-        random_state = np.random.RandomState(seed=103)
+        random_state = self._get_random(103)
 
         degree = 4
         nodes = random_state.random_sample((degree + 1, 2))

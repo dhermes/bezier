@@ -11,6 +11,9 @@
 # limitations under the License.
 
 
+"""Common features of Bezier shapes."""
+
+
 class Base(object):
     """Base shape object.
 

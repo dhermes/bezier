@@ -124,7 +124,7 @@ class Curve(_base.Base):
         return num_nodes - 1
 
     @property
-    def length(self):
+    def length(self):  # pylint: disable=missing-returns-doc
         """float: The length of the current curve.
 
         Raises:
@@ -221,6 +221,7 @@ class Curve(_base.Base):
             result[i, :] = self.evaluate(s_val)
         return result
 
+    # pylint: disable=missing-param-doc,missing-type-doc,missing-returns-doc
     def plot(self, num_pts, plt, show=False):
         """Plot the current curve.
 
@@ -229,7 +230,7 @@ class Curve(_base.Base):
             plt (~types.ModuleType): Plotting module (i.e.
                 :mod:`plt <matplotlib.pyplot>`) to use for creating
                 figures, etc.
-            show (bool): (Optional) Flag indicating if the plot should be
+            show (Optional[bool]): Flag indicating if the plot should be
                 shown.
 
         Returns:
@@ -253,6 +254,7 @@ class Curve(_base.Base):
             plt.show()
 
         return fig
+    # pylint: enable=missing-param-doc,missing-type-doc,missing-returns-doc
 
     def subdivide(self):
         r"""Split the curve :math:`\gamma(s)` into a left and right half.
@@ -290,11 +292,17 @@ class Curve(_base.Base):
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
         if self.degree == 1:
+            # pylint: disable=no-member
             new_nodes = _LINEAR_SUBDIVIDE.dot(self._nodes)
+            # pylint: enable=no-member
         elif self.degree == 2:
+            # pylint: disable=no-member
             new_nodes = _QUADRATIC_SUBDIVIDE.dot(self._nodes)
+            # pylint: enable=no-member
         elif self.degree == 3:
+            # pylint: disable=no-member
             new_nodes = _CUBIC_SUBDIVIDE.dot(self._nodes)
+            # pylint: enable=no-member
         else:
             subdivide_mat = _make_subdivision_matrix(self.degree)
             new_nodes = subdivide_mat.dot(self._nodes)

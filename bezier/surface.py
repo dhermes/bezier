@@ -188,7 +188,7 @@ class Surface(_base.Base):
             raise ValueError(num_nodes, 'not a triangular number')
 
     @property
-    def area(self):
+    def area(self):  # pylint: disable=missing-returns-doc
         """float: The area of the current surface.
 
         Raises:
@@ -258,7 +258,7 @@ class Surface(_base.Base):
         else:
             raise NotImplementedError('Degree 1 only supported at this time')
 
-        return weights.dot(self._nodes).flatten()
+        return weights.dot(self._nodes).flatten()  # pylint: disable=no-member
 
     def evaluate_cartesian(self, s, t):
         r"""Compute a point on the surface.
@@ -307,13 +307,17 @@ class Surface(_base.Base):
             NotImplementedError: If the degree is not 1 or 2.
         """
         if self.degree == 1:
+            # pylint: disable=no-member
             new_nodes = _LINEAR_SUBDIVIDE.dot(self._nodes)
+            # pylint: enable=no-member
             nodes_a = new_nodes[(0, 1, 3), :]
             nodes_b = new_nodes[(4, 3, 1), :]
             nodes_c = new_nodes[(1, 2, 4), :]
             nodes_d = new_nodes[(3, 4, 5), :]
         elif self.degree == 2:
+            # pylint: disable=no-member
             new_nodes = _QUADRATIC_SUBDIVIDE.dot(self._nodes)
+            # pylint: enable=no-member
             nodes_a = new_nodes[(0, 1, 2, 5, 6, 9), :]
             nodes_b = new_nodes[(11, 10, 9, 7, 6, 2), :]
             nodes_c = new_nodes[(2, 3, 4, 7, 8, 11), :]
