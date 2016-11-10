@@ -22,12 +22,9 @@
 """
 
 
-try:
-    from matplotlib import path as _path_mod
-    from matplotlib import patches
-except ImportError:
-    _path_mod = None
-    patches = None
+from matplotlib import patches
+from matplotlib import path as _path_mod
+import matplotlib.pyplot as plt
 import numpy as np
 
 from bezier import _base
@@ -320,19 +317,38 @@ class Surface(_base.Base):
         """
         return self.evaluate_barycentric(1.0 - s - t, s, t)
 
-    def plot(self, pts_per_edge, plt, show=False):
+    @staticmethod
+    def _add_patch(ax, color, edge1, edge2, edge3):
+        """Add a polygonal surface patch to a plot.
+
+        Args:
+            ax (matplotlib.artist.Artist): A matplotlib axis.
+            color (Tuple[float, float, float]): Color as RGB profile.
+            edge1 (numpy.ndarray): 2D array of points along a curved edge.
+            edge2 (numpy.ndarray): 2D array of points along a curved edge.
+            edge3 (numpy.ndarray): 2D array of points along a curved edge.
+        """
+        # Since the edges overlap, we leave out the first point in each.
+        polygon = np.vstack([
+            edge1[1:, :],
+            edge2[1:, :],
+            edge3[1:, :],
+        ])
+        path = _path_mod.Path(polygon)
+        patch = patches.PathPatch(
+            path, facecolor=color, alpha=0.6)
+        ax.add_patch(patch)
+
+    def plot(self, pts_per_edge, show=False):
         """Plot the current surface.
 
         Args:
             pts_per_edge (int): Number of points to plot per edge.
-            plt (~types.ModuleType): Plotting module (i.e.
-                :mod:`plt <matplotlib.pyplot>`) to use for creating
-                figures, etc.
-            show (bool): (Optional) Flag indicating if the plot should be
+            show (Optional[bool]): Flag indicating if the plot should be
                 shown.
 
         Returns:
-            ~matplotlib.figure.Figure: The figure created for the plot.
+            matplotlib.figure.Figure: The figure created for the plot.
 
         Raises:
             NotImplementedError: If the curve's dimension is not ``2``.
@@ -355,16 +371,7 @@ class Surface(_base.Base):
         ax.plot(points2[:, 0], points2[:, 1], color=color)
         ax.plot(points3[:, 0], points3[:, 1], color=color)
 
-        if patches is not None:
-            polygon = np.vstack([
-                points1[1:, :],
-                points2[1:, :],
-                points3[1:, :],
-            ])
-            path = _path_mod.Path(polygon)
-            patch = patches.PathPatch(
-                path, facecolor=color, alpha=0.6)
-            ax.add_patch(patch)
+        self._add_patch(ax, color, points1, points2, points3)
 
         ax.plot(self._nodes[:, 0], self._nodes[:, 1],
                 color='black', marker='o', linestyle='None')

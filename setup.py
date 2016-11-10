@@ -33,6 +33,7 @@ README = TEMPLATE.format(
 )
 
 REQUIREMENTS = (
+    'matplotlib >= 1.5.3',
     'numpy >= 1.11.2',
     'six >= 1.9.0',
 )

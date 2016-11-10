@@ -22,6 +22,7 @@
 """
 
 
+import matplotlib.pyplot as plt
 import numpy as np
 import six
 
@@ -221,20 +222,16 @@ class Curve(_base.Base):
             result[i, :] = self.evaluate(s_val)
         return result
 
-    # pylint: disable=missing-param-doc,missing-type-doc,missing-returns-doc
-    def plot(self, num_pts, plt, show=False):
+    def plot(self, num_pts, show=False):
         """Plot the current curve.
 
         Args:
             num_pts (int): Number of points to plot.
-            plt (~types.ModuleType): Plotting module (i.e.
-                :mod:`plt <matplotlib.pyplot>`) to use for creating
-                figures, etc.
             show (Optional[bool]): Flag indicating if the plot should be
                 shown.
 
         Returns:
-            ~matplotlib.figure.Figure: The figure created for the plot.
+            matplotlib.figure.Figure: The figure created for the plot.
 
         Raises:
             NotImplementedError: If the curve's dimension is not ``2``.
@@ -254,7 +251,6 @@ class Curve(_base.Base):
             plt.show()
 
         return fig
-    # pylint: enable=missing-param-doc,missing-type-doc,missing-returns-doc
 
     def subdivide(self):
         r"""Split the curve :math:`\gamma(s)` into a left and right half.

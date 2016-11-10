@@ -185,10 +185,11 @@ class TestCurve(unittest.TestCase):
         ax = mock.Mock()
         figure.gca.return_value = ax
 
-        if show:
-            result = curve.plot(2, plt, show=True)
-        else:
-            result = curve.plot(2, plt)
+        with mock.patch('bezier.curve.plt', new=plt):
+            if show:
+                result = curve.plot(2, show=True)
+            else:
+                result = curve.plot(2)
 
         self.assertIs(result, figure)
 
