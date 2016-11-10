@@ -57,6 +57,31 @@ class TestCurve(unittest.TestCase):
         klass = self._get_target_class()
         return klass(*args, **kwargs)
 
+    def _binary_round(self, value, num_bits=8):
+        # NOTE: This assumes ``value`` is not Inf/-Inf/NaN or
+        #       a subnormal number.
+        hex_val = value.hex()
+        pre, hex_digits = hex_val.split('0x1.')
+        hex_digits, post = hex_digits.split('p')
+        self.assertEqual(len(hex_digits), 13)
+
+        # NOTE: Python produces 0b100101... instead of 100101...
+        all_bits = bin(int(hex_digits, 16))[2:]
+        all_bits = all_bits.zfill(52)
+        self.assertEqual(len(all_bits), 52)
+
+        truncated_bits = all_bits[:num_bits] + '0' * (52 - num_bits)
+        truncated_hex = '{:013x}'.format(int(truncated_bits, 2))
+
+        python_hex = pre + '0x1.' + truncated_hex + 'p' + post
+        return float.fromhex(python_hex)
+
+    @staticmethod
+    def _get_random(seed):
+        # pylint: disable=no-member
+        return np.random.RandomState(seed=seed)
+        # pylint: enable=no-member
+
     def test_constructor(self):
         nodes = np.array([
             [0.0, 0.0],
@@ -243,15 +268,15 @@ class TestCurve(unittest.TestCase):
         right_half = np.linspace(0.5, 1.0, num_pts)
         unit_interval = np.linspace(0.0, 1.0, num_pts)
 
-        # Make sure left([0, 1]) == curve([0, 0.5])
-        main_vals = curve.evaluate_multi(left_half)
-        sub_vals = left.evaluate_multi(unit_interval)
-        self.assertTrue(np.allclose(main_vals, sub_vals))
-
-        # Make sure right([0, 1]) == curve([0.5, 1])
-        main_vals = curve.evaluate_multi(right_half)
-        sub_vals = right.evaluate_multi(unit_interval)
-        self.assertTrue(np.allclose(main_vals, sub_vals))
+        pairs = [
+            (left, left_half),
+            (right, right_half),
+        ]
+        for sub_curve, half in pairs:
+            # Make sure sub_curve([0, 1]) == curve(half)
+            main_vals = curve.evaluate_multi(half)
+            sub_vals = sub_curve.evaluate_multi(unit_interval)
+            self.assertTrue(np.all(main_vals == sub_vals))
 
     def test_subdivide_line(self):
         nodes = np.array([
@@ -268,20 +293,17 @@ class TestCurve(unittest.TestCase):
         ])
         self._subdivide_helper(nodes, expected_l, expected_r)
 
-    @staticmethod
-    def _get_random(seed):
-        # pylint: disable=no-member
-        return np.random.RandomState(seed=seed)
-        # pylint: enable=no-member
-
     def test_subdivide_line_check_evaluate(self):
         # Use a fixed seed so the test is deterministic.
         random_state = self._get_random(88991)
         nodes = random_state.random_sample((2, 2))
+        # Round the nodes to 8 bits of precision to avoid round-off.
+        nodes = np.vectorize(self._binary_round)(nodes)
 
         curve = self._make_one(nodes)
         self.assertEqual(curve.degree, 1)
-        self._subdivide_points_check(curve, 32)
+        # No round-off when computing ds = 1/32.
+        self._subdivide_points_check(curve, 32 + 1)
 
     def test_subdivide_quadratic(self):
         nodes = np.array([
@@ -305,10 +327,13 @@ class TestCurve(unittest.TestCase):
         # Use a fixed seed so the test is deterministic.
         random_state = self._get_random(10764)
         nodes = random_state.random_sample((3, 2))
+        # Round the nodes to 8 bits of precision to avoid round-off.
+        nodes = np.vectorize(self._binary_round)(nodes)
 
         curve = self._make_one(nodes)
         self.assertEqual(curve.degree, 2)
-        self._subdivide_points_check(curve, 32)
+        # No round-off when computing ds = 1/32.
+        self._subdivide_points_check(curve, 32 + 1)
 
     def test_subdivide_cubic(self):
         nodes = np.array([
@@ -335,10 +360,13 @@ class TestCurve(unittest.TestCase):
         # Use a fixed seed so the test is deterministic.
         random_state = self._get_random(990077)
         nodes = random_state.random_sample((4, 2))
+        # Round the nodes to 8 bits of precision to avoid round-off.
+        nodes = np.vectorize(self._binary_round)(nodes)
 
         curve = self._make_one(nodes)
         self.assertEqual(curve.degree, 3)
-        self._subdivide_points_check(curve, 32)
+        # No round-off when computing ds = 1/32.
+        self._subdivide_points_check(curve, 32 + 1)
 
     def test_subdivide_dynamic_subdivision_matrix(self):
         # Use a fixed seed so the test is deterministic.
@@ -346,7 +374,10 @@ class TestCurve(unittest.TestCase):
 
         degree = 4
         nodes = random_state.random_sample((degree + 1, 2))
+        # Round the nodes to 8 bits of precision to avoid round-off.
+        nodes = np.vectorize(self._binary_round)(nodes)
 
         curve = self._make_one(nodes)
         self.assertEqual(curve.degree, degree)
-        self._subdivide_points_check(curve, 32)
+        # No round-off when computing ds = 1/32.
+        self._subdivide_points_check(curve, 32 + 1)
