@@ -196,7 +196,7 @@ class Curve(object):
 
         .. note::
 
-            This current just uses :meth:`evaluate` and so is less
+            This currently just uses :meth:`evaluate` and so is less
             performant than it could be.
 
         .. doctest:: curve-eval-multi

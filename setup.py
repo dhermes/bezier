@@ -21,8 +21,16 @@ from setuptools import setup
 VERSION = '0.0.1'
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(PACKAGE_ROOT, 'README.rst')) as file_obj:
-    README = file_obj.read()
+with open(os.path.join(PACKAGE_ROOT, 'README.rst.template')) as file_obj:
+    TEMPLATE = file_obj.read()
+
+README = TEMPLATE.format(
+    pypi='',
+    pypi_img='',
+    versions='',
+    versions_img='',
+    rtd_version=VERSION,
+)
 
 REQUIREMENTS = (
     'numpy >= 1.11.2',

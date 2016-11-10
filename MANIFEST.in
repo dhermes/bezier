@@ -1,0 +1,3 @@
+include README.rst.template
+graft bezier
+global-exclude *.pyc
