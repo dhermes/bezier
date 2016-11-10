@@ -208,7 +208,8 @@ class Surface(_base.Base):
         """Compute the edges of the current surface.
 
         Returns:
-            Tuple[Curve, Curve, Curve]: The edges of the surface.
+            Tuple[~curve.Curve, ~curve.Curve, ~curve.Curve]: The edges of
+            the surface.
 
         Raises:
             NotImplementedError: If the degree exceeds 2.
@@ -235,7 +236,9 @@ class Surface(_base.Base):
         """tuple: The edges of the surface.
 
         Returns:
-            Tuple[Curve, Curve, Curve]: The edges of the surface.
+            Tuple[~bezier.curve.Curve, ~bezier.curve.Curve, \
+                  ~bezier.curve.Curve]: The edges of
+            the surface.
         """
         if self._edges is None:
             self._edges = self._compute_edges()
