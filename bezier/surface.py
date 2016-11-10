@@ -22,31 +22,6 @@ import numpy as np
 from bezier import _base
 
 
-def _get_degree(num_nodes):
-    """Get the degree corresponding to the number of control points.
-
-    Args:
-        num_nodes (int): The number of control points for a
-            B |eacute| zier surface.
-
-    Returns:
-        int: The degree :math:`d` such that :math:`(d + 1)(d + 2)/2`
-        equals ```num_nodes``.
-
-    Raises:
-        ValueError: If ``num_nodes`` isn't a triangular number.
-    """
-    # 8 * num_nodes = 4(d + 1)(d + 2)
-    #               = 4d^2 + 12d + 8
-    #               = (2d + 3)^2 - 1
-    d_float = 0.5 * (np.sqrt(8.0 * num_nodes + 1.0) - 3.0)
-    d_int = int(np.round(d_float))
-    if (d_int + 1) * (d_int + 2) == 2 * num_nodes:
-        return d_int
-    else:
-        raise ValueError(num_nodes, 'not a triangular number')
-
-
 class Surface(_base.Base):
     r"""Represents a B |eacute| zier `surface`_.
 
@@ -90,9 +65,22 @@ class Surface(_base.Base):
         """Get the degree of the current surface.
 
         Args:
-            num_nodes (int): The number of nodes provided.
+            num_nodes (int): The number of control points for a
+                B |eacute| zier surface.
 
         Returns:
-            int: The degree of the current surface.
+            int: The degree :math:`d` such that :math:`(d + 1)(d + 2)/2`
+            equals ```num_nodes``.
+
+        Raises:
+            ValueError: If ``num_nodes`` isn't a triangular number.
         """
-        return _get_degree(num_nodes)
+        # 8 * num_nodes = 4(d + 1)(d + 2)
+        #               = 4d^2 + 12d + 8
+        #               = (2d + 3)^2 - 1
+        d_float = 0.5 * (np.sqrt(8.0 * num_nodes + 1.0) - 3.0)
+        d_int = int(np.round(d_float))
+        if (d_int + 1) * (d_int + 2) == 2 * num_nodes:
+            return d_int
+        else:
+            raise ValueError(num_nodes, 'not a triangular number')

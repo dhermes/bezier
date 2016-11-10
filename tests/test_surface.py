@@ -15,29 +15,6 @@
 import unittest
 
 
-class Test__get_degree(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(num_nodes):
-        from bezier import surface
-
-        return surface._get_degree(num_nodes)
-
-    def test_valid(self):
-        self.assertEqual(0, self._call_function_under_test(1))
-        self.assertEqual(1, self._call_function_under_test(3))
-        self.assertEqual(2, self._call_function_under_test(6))
-        self.assertEqual(3, self._call_function_under_test(10))
-        self.assertEqual(11, self._call_function_under_test(78))
-
-    def test_invalid(self):
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(2)
-
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(9)
-
-
 class TestSurface(unittest.TestCase):
 
     @staticmethod
@@ -82,6 +59,24 @@ class TestSurface(unittest.TestCase):
         ])
         with self.assertRaises(ValueError):
             self._make_one(nodes)
+
+    def test__get_degree_valid(self):
+        klass = self._get_target_class()
+
+        self.assertEqual(0, klass._get_degree(1))
+        self.assertEqual(1, klass._get_degree(3))
+        self.assertEqual(2, klass._get_degree(6))
+        self.assertEqual(3, klass._get_degree(10))
+        self.assertEqual(11, klass._get_degree(78))
+
+    def test__get_degree_invalid(self):
+        klass = self._get_target_class()
+
+        with self.assertRaises(ValueError):
+            klass._get_degree(2)
+
+        with self.assertRaises(ValueError):
+            klass._get_degree(9)
 
     def test___repr__(self):
         import numpy as np
