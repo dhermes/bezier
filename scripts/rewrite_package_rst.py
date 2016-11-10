@@ -27,6 +27,7 @@ bezier package
 
 .. automodule:: bezier
     :members:
+    :inherited-members:
     :undoc-members:
     :show-inheritance:
 

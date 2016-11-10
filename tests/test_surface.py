@@ -18,10 +18,10 @@ import unittest
 class Test__get_degree(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(degree):
+    def _call_function_under_test(num_nodes):
         from bezier import surface
 
-        return surface._get_degree(degree)
+        return surface._get_degree(num_nodes)
 
     def test_valid(self):
         self.assertEqual(0, self._call_function_under_test(1))

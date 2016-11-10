@@ -63,7 +63,8 @@ class Base(object):
     def dimension(self):
         r"""int: The dimension that the shape lives in.
 
-        For example, if the shape is 3D, then the dimension is ``3``.
+        For example, if the shape lives in :math:`\mathbf{R}^3`, then
+        the dimension is ``3``.
         """
         return self._dimension
 

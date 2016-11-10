@@ -17,7 +17,8 @@
 set -e
 
 rm -r docs/reference
-sphinx-apidoc \
+OPTIONS="members,inherited-members,undoc-members,show-inheritance"
+SPHINX_APIDOC_OPTIONS="${OPTIONS}" sphinx-apidoc \
     --separate \
     --force \
     --module-first \

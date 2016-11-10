@@ -19,33 +19,35 @@
 
 import numpy as np
 
+from bezier import _base
 
-def _get_degree(num_pts):
+
+def _get_degree(num_nodes):
     """Get the degree corresponding to the number of control points.
 
     Args:
-        num_pts (int): The number of control points for a
+        num_nodes (int): The number of control points for a
             B |eacute| zier surface.
 
     Returns:
         int: The degree :math:`d` such that :math:`(d + 1)(d + 2)/2`
-        equals ```num_pts``.
+        equals ```num_nodes``.
 
     Raises:
-        ValueError: If ``num_pts`` isn't a triangular number.
+        ValueError: If ``num_nodes`` isn't a triangular number.
     """
-    # 8 * num_pts = 4(d + 1)(d + 2)
-    #             = 4d^2 + 12d + 8
-    #             = (2d + 3)^2 - 1
-    d_float = 0.5 * (np.sqrt(8.0 * num_pts + 1.0) - 3.0)
+    # 8 * num_nodes = 4(d + 1)(d + 2)
+    #               = 4d^2 + 12d + 8
+    #               = (2d + 3)^2 - 1
+    d_float = 0.5 * (np.sqrt(8.0 * num_nodes + 1.0) - 3.0)
     d_int = int(np.round(d_float))
-    if (d_int + 1) * (d_int + 2) == 2 * num_pts:
+    if (d_int + 1) * (d_int + 2) == 2 * num_nodes:
         return d_int
     else:
-        raise ValueError(num_pts, 'not a triangular number')
+        raise ValueError(num_nodes, 'not a triangular number')
 
 
-class Surface(object):
+class Surface(_base.Base):
     r"""Represents a B |eacute| zier `surface`_.
 
     .. _surface: https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
@@ -81,19 +83,16 @@ class Surface(object):
         nodes (numpy.ndarray): The nodes in the surface. The rows
             represent each node while the columns are the dimension
             of the ambient space.
-
-    Raises:
-        ValueError: If the ``nodes`` are not 2D.
-        ValueError: If the ``degree`` is less than ``1``.
     """
 
-    def __init__(self, nodes):
-        if nodes.ndim != 2:
-            raise ValueError('Nodes must be 2-dimensional, not', nodes.ndim)
-        row, cols = nodes.shape
-        degree = _get_degree(row)
-        if degree < 1:
-            raise ValueError('Surface must be at least degree 1')
-        self._degree = degree
-        self._dimension = cols
-        self._nodes = nodes
+    @staticmethod
+    def _get_degree(num_nodes):
+        """Get the degree of the current surface.
+
+        Args:
+            num_nodes (int): The number of nodes provided.
+
+        Returns:
+            int: The degree of the current surface.
+        """
+        return _get_degree(num_nodes)
