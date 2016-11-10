@@ -112,3 +112,60 @@ class TestSurface(unittest.TestCase):
         area = 3.14159
         surface._area = area
         self.assertEqual(surface.area, area)
+
+    def _subdivide_helper(self, nodes, expected_a, expected_b,
+                          expected_c, expected_d):
+        import numpy as np
+
+        klass = self._get_target_class()
+
+        surface = self._make_one(nodes)
+        surface_a, surface_b, surface_c, surface_d = surface.subdivide()
+
+        self.assertIsInstance(surface_a, klass)
+        self.assertTrue(np.all(surface_a._nodes == expected_a))
+        self.assertIsInstance(surface_b, klass)
+        self.assertTrue(np.all(surface_b._nodes == expected_b))
+        self.assertIsInstance(surface_c, klass)
+        self.assertTrue(np.all(surface_c._nodes == expected_c))
+        self.assertIsInstance(surface_d, klass)
+        self.assertTrue(np.all(surface_d._nodes == expected_d))
+
+    def test_subdivide_linear(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        expected_a = np.array([
+            [0.0, 0.0],
+            [0.5, 0.0],
+            [0.0, 0.5],
+        ])
+        expected_b = np.array([
+            [0.5, 0.5],
+            [0.0, 0.5],
+            [0.5, 0.0],
+        ])
+        expected_c = np.array([
+            [0.5, 0.0],
+            [1.0, 0.0],
+            [0.5, 0.5],
+        ])
+        expected_d = np.array([
+            [0.0, 0.5],
+            [0.5, 0.5],
+            [0.0, 1.0],
+        ])
+        self._subdivide_helper(nodes, expected_a, expected_b,
+                               expected_c, expected_d)
+
+    def test_subdivide_unsupported_degree(self):
+        import numpy as np
+
+        nodes = np.zeros((78, 3))
+        surface = self._make_one(nodes)
+        with self.assertRaises(NotImplementedError):
+            surface.subdivide()

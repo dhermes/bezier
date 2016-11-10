@@ -27,6 +27,16 @@ import numpy as np
 from bezier import _base
 
 
+_LINEAR_SUBDIVIDE = np.array([
+    [1.0, 0.0, 0.0],
+    [0.5, 0.5, 0.0],
+    [0.0, 1.0, 0.0],
+    [0.5, 0.0, 0.5],
+    [0.0, 0.5, 0.5],
+    [0.0, 0.0, 1.0],
+])
+
+
 class Surface(_base.Base):
     r"""Represents a B |eacute| zier `surface`_.
 
@@ -171,3 +181,51 @@ class Surface(_base.Base):
             raise NotImplementedError(
                 'Area computation not yet implemented.')
         return self._area
+
+    def subdivide(self):
+        r"""Split the surface into four sub-surfaces.
+
+        Takes the reference triangle
+
+        .. math::
+
+           T = \left\{(s, t) \mid 0 \leq s, t, s + t \leq 1\right\}
+
+        and splits it into four sub-triangles
+
+        .. math::
+
+           \begin{align*}
+           A &= \left\{(s, t) \mid 0 \leq s, t, s + t \leq
+               \frac{1}{2}\right\} \\
+           B &= -A + \left(\frac{1}{2}, \frac{1}{2}\right) \\
+           C &= A + \left(\frac{1}{2}, 0\right) \\
+           D &= A + \left(0, \frac{1}{2}\right).
+           \end{align*}
+
+        These are the lower left (:math:`A`), central (:math:`B`), lower
+        right (:math:`C`) and upper left (:math:`D`) sub-triangles.
+
+        Returns:
+            Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
+            lower right and upper left sub-surfaces (in that order).
+
+        Raises:
+            NotImplementedError: If the degree is not 2 or 3.
+        """
+        if self.degree == 1:
+            new_nodes = _LINEAR_SUBDIVIDE.dot(self._nodes)
+            nodes_a = new_nodes[(0, 1, 3), :]
+            nodes_b = new_nodes[(4, 3, 1), :]
+            nodes_c = new_nodes[(1, 2, 4), :]
+            nodes_d = new_nodes[(3, 4, 5), :]
+        elif self.degree == 2:
+            pass
+        elif self.degree == 3:
+            pass
+        else:
+            raise NotImplementedError(
+                'Degrees 2 and 3 only supported at this time')
+
+        return (Surface(nodes_a), Surface(nodes_b),
+                Surface(nodes_c), Surface(nodes_d))
