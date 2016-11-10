@@ -72,7 +72,7 @@ class Curve(object):
 
     .. _Bezier curve: https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 
-    We take the traditional definiton: a `Bezier curve`_ is a mapping from
+    We take the traditional definition: a `Bezier curve`_ is a mapping from
     :math:`s \in \left[0, 1\right]` to convex combinations
     of points :math:`v_0, v_1, \ldots, v_n` in some vector space:
 

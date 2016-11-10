@@ -1,17 +1,42 @@
-bezier package
-==============
-
-Submodules
-----------
+``bezier``
+==========
 
 .. toctree::
+   :hidden:
+   :maxdepth: 2
 
-   bezier.curve
+   Reference <reference/modules>
 
-Module contents
----------------
+``bezier`` is a Python helper for Bezier Curves, Triangles, and
+Higher Order Objects.
 
-.. automodule:: bezier
-    :members:
-    :undoc-members:
-    :show-inheritance:
+This library provides:
+
+* Support for :mod:`Bezier Curves <bezier.curve>`
+
+Installing
+----------
+
+``bezier`` can be installed with `pip`_::
+
+    $ pip install --upgrade bezier
+
+``bezier`` is open-source, so you can alternatively grab the source
+code from `GitHub`_ and install from source.
+
+.. _pip: https://pip.pypa.io
+.. _GitHub: https://github.com/dhermes/bezier/
+
+Usage
+-----
+
+The :doc:`Module Reference <reference/modules>` documentation provides
+API-level documentation.
+
+License
+-------
+
+``bezier`` is made available under the Apache License. For more
+details, see `LICENSE`_
+
+.. _LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE

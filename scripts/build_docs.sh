@@ -16,15 +16,13 @@
 
 set -e
 
-rm -rf docs/build/* docs/*rst
-OPTIONS="members,undoc-members,show-inheritance"
-SPHINX_APIDOC_OPTIONS="${OPTIONS}" sphinx-apidoc \
-  --separate --force \
-  --output-dir docs \
-  bezier
-# We only have one package, so modules.rst is overkill.
-rm -f docs/modules.rst
-mv docs/bezier.rst docs/index.rst
+rm -r docs/reference
+sphinx-apidoc \
+    --separate \
+    --force \
+    --module-first \
+    --output-dir docs/reference \
+    bezier
 
 # If anything has changed
 if [[ -n "$(git diff -- docs/)" ]]; then
