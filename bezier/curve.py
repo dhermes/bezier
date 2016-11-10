@@ -25,6 +25,8 @@
 import numpy as np
 import six
 
+from bezier import _base
+
 
 _LINEAR_SUBDIVIDE = np.array([
     [1.0, 0.0],
@@ -76,7 +78,7 @@ def _make_subdivision_matrix(degree):
     return result
 
 
-class Curve(object):
+class Curve(_base.Base):
     r"""Represents a B |eacute| zier `curve`_.
 
     .. _curve: https://en.wikipedia.org/wiki/B%C3%A9zier_curve
@@ -105,52 +107,21 @@ class Curve(object):
         nodes (numpy.ndarray): The nodes in the curve. The rows
             represent each node while the columns are the dimension
             of the ambient space.
-
-    Raises:
-        ValueError: If the ``nodes`` are not 2D.
-        ValueError: If the ``degree`` is less than ``1``.
     """
 
-    def __init__(self, nodes):
-        if nodes.ndim != 2:
-            raise ValueError('Nodes must be 2-dimensional, not', nodes.ndim)
-        rows, cols = nodes.shape
-        if rows < 2:
-            raise ValueError(
-                'At least two nodes are required to define a curve',
-                'Received', rows)
-        self._degree = rows - 1
-        self._dimension = cols
-        self._nodes = nodes
-        self._length = None
+    _length = None
 
-    def __repr__(self):
-        """Representation of current curve.
+    @staticmethod
+    def _get_degree(num_nodes):
+        """Get the degree of the current curve.
+
+        Args:
+            num_nodes (int): The number of nodes provided.
 
         Returns:
-            str: Object representation.
+            int: The degree of the current curve.
         """
-        return '<Curve (degree={:d}, dimension={:d})>'.format(
-            self.degree, self.dimension)
-
-    @property
-    def degree(self):
-        """int: The degree of the current curve."""
-        return self._degree
-
-    @property
-    def dimension(self):
-        r"""int: The dimension that the curve lives in.
-
-        For example, if the curve is 3D, i.e. if
-        :math:`B(s) \in \mathbf{R}^3`, then the dimension is ``3``.
-        """
-        return self._dimension
-
-    @property
-    def nodes(self):
-        """numpy.ndarray: The nodes that define the current curve."""
-        return self._nodes.copy()
+        return num_nodes - 1
 
     @property
     def length(self):

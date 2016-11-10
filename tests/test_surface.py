@@ -82,3 +82,11 @@ class TestSurface(unittest.TestCase):
         ])
         with self.assertRaises(ValueError):
             self._make_one(nodes)
+
+    def test___repr__(self):
+        import numpy as np
+
+        nodes = np.zeros((15, 3))
+        surface = self._make_one(nodes)
+        expected = '<Surface (degree=4, dimension=3)>'
+        self.assertEqual(repr(surface), expected)

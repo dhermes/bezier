@@ -82,7 +82,7 @@ class TestCurve(unittest.TestCase):
         with self.assertRaises(ValueError):
             self._make_one(nodes)
 
-    def test_constructor_insufficient_nodes(self):
+    def test_constructor_bad_degree(self):
         import numpy as np
 
         nodes = np.array([
@@ -105,34 +105,6 @@ class TestCurve(unittest.TestCase):
         expected = '<Curve (degree={:d}, dimension={:d})>'.format(
             degree, dimension)
         self.assertEqual(repr(curve), expected)
-
-    def test_degree_property(self):
-        import numpy as np
-
-        degree = 6
-        num_nodes = degree + 1
-        nodes = np.zeros((num_nodes, 2))
-        curve = self._make_one(nodes)
-        self.assertEqual(curve.degree, degree)
-
-    def test_dimension_property(self):
-        import numpy as np
-
-        dimension = 4
-        nodes = np.zeros((3, dimension))
-        curve = self._make_one(nodes)
-        self.assertEqual(curve.dimension, dimension)
-
-    def test_nodes_property(self):
-        import numpy as np
-
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 2.0],
-        ])
-        curve = self._make_one(nodes)
-        self.assertTrue(np.all(curve.nodes == nodes))
-        self.assertIsNot(curve.nodes, nodes)
 
     def test_length_property_not_cached(self):
         import numpy as np
