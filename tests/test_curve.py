@@ -15,11 +15,42 @@
 import unittest
 
 
+class Test__make_subdivision_matrix(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(degree):
+        from bezier import curve
+
+        return curve._make_subdivision_matrix(degree)
+
+    def _helper(self, degree, expected):
+        import numpy as np
+
+        result = self._call_function_under_test(degree)
+        self.assertTrue(np.all(result == expected))
+
+    def test_linear(self):
+        from bezier import curve
+
+        self._helper(1, curve._LINEAR_SUBDIVIDE)
+
+    def test_quadratic(self):
+        from bezier import curve
+
+        self._helper(2, curve._QUADRATIC_SUBDIVIDE)
+
+    def test_cubic(self):
+        from bezier import curve
+
+        self._helper(3, curve._CUBIC_SUBDIVIDE)
+
+
 class TestCurve(unittest.TestCase):
 
     @staticmethod
     def _get_target_class():
         from bezier import curve
+
         return curve.Curve
 
     def _make_one(self, *args, **kwargs):
@@ -305,11 +336,15 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(curve.degree, 3)
         self._subdivide_points_check(curve, 32)
 
-    def test_subdivide_degree_too_large(self):
+    def test_subdivide_dynamic_subdivision_matrix(self):
         import numpy as np
 
+        # Use a fixed seed so the test is deterministic.
+        random_state = np.random.RandomState(seed=103)
+
         degree = 4
-        nodes = np.random.random((degree + 1, 2))
+        nodes = random_state.random_sample((degree + 1, 2))
+
         curve = self._make_one(nodes)
-        with self.assertRaises(NotImplementedError):
-            curve.subdivide()
+        self.assertEqual(curve.degree, degree)
+        self._subdivide_points_check(curve, 32)

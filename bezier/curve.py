@@ -40,6 +40,33 @@ _CUBIC_SUBDIVIDE = np.array([
 ])
 
 
+def _make_subdivision_matrix(degree):
+    """Make the matrix used to subdivide a curve.
+
+    Args:
+        degree (int): The degree of the curve.
+
+    Returns:
+        numpy.ndarray: The matrix used to convert the
+           nodes into left and right nodes.
+    """
+    num_rows = 2 * degree + 1
+    result = np.zeros((num_rows, degree + 1))
+    result[0, 0] = 1.0
+    result[-1, -1] = 1.0
+    for row in six.moves.xrange(1, degree + 1):
+        half_prev = 0.5 * result[row - 1, :row]
+        result[row, :row] = half_prev
+        result[row, 1:row + 1] += half_prev
+        # Populate the complement row as well.
+        complement = num_rows - row - 1
+        # NOTE: We "should" reverse the results when using
+        #       the complement, but they are symmetric so
+        #       that would be a waste.
+        result[complement, -(row + 1):] = result[row, :row + 1]
+    return result
+
+
 class Curve(object):
     r"""Represents a `Bezier curve`_.
 
@@ -198,25 +225,18 @@ class Curve(object):
 
         Returns:
             Tuple[Curve, Curve]: The left and right sub-curves.
-
-        Raises:
-            NotImplementedError: If the curve degree is greater than ``3``.
         """
         if self.degree == 1:
             new_nodes = _LINEAR_SUBDIVIDE.dot(self._nodes)
-            left = new_nodes[:2, :]
-            right = new_nodes[1:, :]
         elif self.degree == 2:
             new_nodes = _QUADRATIC_SUBDIVIDE.dot(self._nodes)
-            left = new_nodes[:3, :]
-            right = new_nodes[2:, :]
         elif self.degree == 3:
             new_nodes = _CUBIC_SUBDIVIDE.dot(self._nodes)
-            left = new_nodes[:4, :]
-            right = new_nodes[3:, :]
         else:
-            raise NotImplementedError(
-                'Curves higher than degree 3 not yet supported',
-                'Current degree', self.degree)
+            subdivide_mat = _make_subdivision_matrix(self.degree)
+            new_nodes = subdivide_mat.dot(self._nodes)
+
+        left = new_nodes[:self.degree + 1, :]
+        right = new_nodes[self.degree:, :]
 
         return Curve(left), Curve(right)
