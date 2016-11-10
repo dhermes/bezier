@@ -10,7 +10,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper for Bezier Curves."""
+"""Helper for B |eacute| zier Curves.
+
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
+
+.. testsetup:: *
+
+  import numpy as np
+  import bezier
+"""
 
 
 import numpy as np
@@ -68,24 +77,19 @@ def _make_subdivision_matrix(degree):
 
 
 class Curve(object):
-    r"""Represents a `Bezier curve`_.
+    r"""Represents a B |eacute| zier `curve`_.
 
-    .. _Bezier curve: https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+    .. _curve: https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 
-    We take the traditional definition: a `Bezier curve`_ is a mapping from
-    :math:`s \in \left[0, 1\right]` to convex combinations
+    We take the traditional definition: a B |eacute| zier curve is a mapping
+    from :math:`s \in \left[0, 1\right]` to convex combinations
     of points :math:`v_0, v_1, \ldots, v_n` in some vector space:
 
     .. math::
 
        B(s) = \sum_{j = 0}^n \binom{n}{j} s^j (1 - s)^{n - j} \cdot v_j
 
-    .. testsetup:: curve-eval
-
-      import numpy as np
-
-    .. doctest:: curve-eval
-      :options: +NORMALIZE_WHITESPACE
+    .. doctest:: curve-ctor
 
       >>> import bezier
       >>> nodes = np.array([
@@ -94,8 +98,8 @@ class Curve(object):
       ...     [1.0, 0.5],
       ... ])
       >>> curve = bezier.Curve(nodes)
-      >>> curve.evaluate(0.75)
-      array([ 0.796875, 0.46875 ])
+      >>> curve
+      <Curve (degree=2, dimension=2)>
 
     Args:
         nodes (numpy.ndarray): The nodes in the curve. The rows
@@ -119,6 +123,15 @@ class Curve(object):
         self._dimension = cols
         self._nodes = nodes
 
+    def __repr__(self):
+        """Representation of current curve.
+
+        Returns:
+            str: Object representation.
+        """
+        return '<Curve (degree={:d}, dimension={:d})>'.format(
+            self.degree, self.dimension)
+
     @property
     def degree(self):
         """int: The degree of the current curve."""
@@ -141,12 +154,24 @@ class Curve(object):
         .. _de Casteljau's algorithm:
             https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
 
+        .. doctest:: curve-eval
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> nodes = np.array([
+          ...     [0.0, 0.0],
+          ...     [0.625, 0.5],
+          ...     [1.0, 0.5],
+          ... ])
+          >>> curve = bezier.Curve(nodes)
+          >>> curve.evaluate(0.75)
+          array([ 0.796875, 0.46875 ])
+
         Args:
             s (float): Parameter along the curve.
 
         Returns:
             numpy.ndarray: The point on the curve (as a one dimensional
-                NumPy array).
+            NumPy array).
         """
         # NOTE: This assumes degree > 0, since the constructor requires this.
         weights = np.zeros((self.degree, self.degree + 1))
@@ -174,6 +199,24 @@ class Curve(object):
             This current just uses :meth:`evaluate` and so is less
             performant than it could be.
 
+        .. doctest:: curve-eval-multi
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> nodes = np.array([
+          ...     [0.0, 0.0, 0.0],
+          ...     [1.0, 2.0, 3.0],
+          ... ])
+          >>> curve = bezier.Curve(nodes)
+          >>> curve
+          <Curve (degree=1, dimension=3)>
+          >>> s_vals = np.linspace(0.0, 1.0, 5)
+          >>> curve.evaluate_multi(s_vals)
+          array([[ 0.  ,  0.  ,  0.  ],
+                 [ 0.25,  0.5 ,  0.75],
+                 [ 0.5 ,  1.  ,  1.5 ],
+                 [ 0.75,  1.5 ,  2.25],
+                 [ 1.  ,  2.  ,  3.  ]])
+
         Args:
             s_vals (numpy.ndarray): Parameters along the curve (as a
                 1D array).
@@ -195,7 +238,7 @@ class Curve(object):
         Args:
             num_pts (int): Number of points to plot.
             plt (~types.ModuleType): Plotting module to use for creating
-               figures, etc.
+                figures, etc.
             show (bool): (Optional) Flag indicating if the plot should be
                 shown.
 
@@ -222,6 +265,29 @@ class Curve(object):
         :math:`\gamma_2 = \gamma\left(\left[\frac{1}{2}, 1\right]\right)`. In
         order to do this, also reparameterizes the curve, hence the resulting
         left and right halves have new nodes.
+
+        .. doctest:: curve-subdivide
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> nodes = np.array([
+          ...     [0.0, 0.0],
+          ...     [1.25, 3.0],
+          ...     [2.0, 1.0],
+          ... ])
+          >>> curve = bezier.Curve(nodes)
+          >>> left, right = curve.subdivide()
+          >>> left
+          <Curve (degree=2, dimension=2)>
+          >>> left._nodes
+          array([[ 0.   , 0.   ],
+                 [ 0.625, 1.5  ],
+                 [ 1.125, 1.75 ]])
+          >>> right
+          <Curve (degree=2, dimension=2)>
+          >>> right._nodes
+          array([[ 1.125, 1.75 ],
+                 [ 1.625, 2.   ],
+                 [ 2.   , 1.   ]])
 
         Returns:
             Tuple[Curve, Curve]: The left and right sub-curves.

@@ -23,6 +23,10 @@ sphinx-apidoc \
     --module-first \
     --output-dir docs/reference \
     bezier
+# Remove unused modules.rst
+rm docs/reference/modules.rst
+# Rewrite main package RST
+python scripts/rewrite_package_rst.py
 
 # If anything has changed
 if [[ -n "$(git diff -- docs/)" ]]; then

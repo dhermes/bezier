@@ -28,7 +28,8 @@ REQUIREMENTS = (
     'numpy >= 1.11.2',
     'six >= 1.9.0',
 )
-DESCRIPTION = 'Helper for Bezier Curves, Triangles, and Higher Order Objects'
+DESCRIPTION = (
+    u'Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects')
 
 
 setup(

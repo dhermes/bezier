@@ -3,16 +3,19 @@
 
 .. toctree::
    :hidden:
-   :maxdepth: 2
+   :maxdepth: 4
 
-   Reference <reference/modules>
+   Bezier Package <reference/bezier>
 
-``bezier`` is a Python helper for Bezier Curves, Triangles, and
+``bezier`` is a Python helper for B |eacute| zier Curves, Triangles, and
 Higher Order Objects.
 
 This library provides:
 
-* Support for :mod:`Bezier Curves <bezier.curve>`
+* Support for B |eacute| zier :mod:`Curves <bezier.curve>`
+
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
 
 Installing
 ----------
@@ -30,7 +33,7 @@ code from `GitHub`_ and install from source.
 Usage
 -----
 
-The :doc:`Module Reference <reference/modules>` documentation provides
+The B |eacute| zier :doc:`Package <reference/bezier>` documentation provides
 API-level documentation.
 
 License

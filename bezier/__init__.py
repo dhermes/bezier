@@ -10,13 +10,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper for Bezier Curves, Triangles, and Higher Order Objects.
+"""Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects.
 
-Intended to perform basic operations on Bezier objects such
+Intended to perform basic operations on B |eacute| zier objects such
 as intersections, length/area/etc. computations, subdivision,
 implicitization and other relevant information.
 
 Plotting utilities will also be provided.
+
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
 """
 
 from bezier.curve import Curve

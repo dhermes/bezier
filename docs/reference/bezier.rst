@@ -2,9 +2,6 @@ bezier package
 ==============
 
 .. automodule:: bezier
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Submodules
 ----------
@@ -12,4 +9,3 @@ Submodules
 .. toctree::
 
    bezier.curve
-

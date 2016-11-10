@@ -1,9 +1,12 @@
 ``bezier``
 ==========
 
-    Helper for Bezier Curves, Triangles, and Higher Order Objects
+    Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
 |build| |pypi| |versions| |docs|
+
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
 
 License
 -------
