@@ -12,6 +12,7 @@ test:
     - tox -e cover
     - tox -e docs
     - tox -e doctest
+    - tox -e lint
 
 general:
   branches:
