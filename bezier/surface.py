@@ -22,6 +22,12 @@
 """
 
 
+try:
+    from matplotlib import path as _path_mod
+    from matplotlib import patches
+except ImportError:
+    _path_mod = None
+    patches = None
 import numpy as np
 
 from bezier import _base
@@ -313,6 +319,60 @@ class Surface(_base.Base):
             NumPy array).
         """
         return self.evaluate_barycentric(1.0 - s - t, s, t)
+
+    def plot(self, pts_per_edge, plt, show=False):
+        """Plot the current surface.
+
+        Args:
+            pts_per_edge (int): Number of points to plot per edge.
+            plt (~types.ModuleType): Plotting module (i.e.
+                :mod:`plt <matplotlib.pyplot>`) to use for creating
+                figures, etc.
+            show (bool): (Optional) Flag indicating if the plot should be
+                shown.
+
+        Returns:
+            ~matplotlib.figure.Figure: The figure created for the plot.
+
+        Raises:
+            NotImplementedError: If the curve's dimension is not ``2``.
+        """
+        if self.dimension != 2:
+            raise NotImplementedError('2D is the only supported dimension',
+                                      'Current dimension', self.dimension)
+
+        edge1, edge2, edge3 = self.edges
+        s_vals = np.linspace(0.0, 1.0, pts_per_edge)
+
+        points1 = edge1.evaluate_multi(s_vals)
+        points2 = edge2.evaluate_multi(s_vals)
+        points3 = edge3.evaluate_multi(s_vals)
+
+        fig = plt.figure()
+        ax = fig.gca()
+        line, = ax.plot(points1[:, 0], points1[:, 1])
+        color = line.get_color()
+        ax.plot(points2[:, 0], points2[:, 1], color=color)
+        ax.plot(points3[:, 0], points3[:, 1], color=color)
+
+        if patches is not None:
+            polygon = np.vstack([
+                points1[1:, :],
+                points2[1:, :],
+                points3[1:, :],
+            ])
+            path = _path_mod.Path(polygon)
+            patch = patches.PathPatch(
+                path, facecolor=color, alpha=0.6)
+            ax.add_patch(patch)
+
+        ax.plot(self._nodes[:, 0], self._nodes[:, 1],
+                color='black', marker='o', linestyle='None')
+
+        if show:
+            plt.show()
+
+        return fig
 
     def subdivide(self):
         r"""Split the surface into four sub-surfaces.
