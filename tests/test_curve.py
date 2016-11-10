@@ -94,6 +94,17 @@ class TestCurve(unittest.TestCase):
         with self.assertRaises(ValueError):
             self._make_one(nodes)
 
+    def test___repr__(self):
+        import numpy as np
+
+        degree = 4
+        dimension = 3
+        nodes = np.zeros((degree + 1, dimension))
+        curve = self._make_one(nodes)
+        expected = '<Curve (degree={:d}, dimension={:d})>'.format(
+            degree, dimension)
+        self.assertEqual(repr(curve), expected)
+
     def test_degree_property(self):
         import numpy as np
 
@@ -110,6 +121,17 @@ class TestCurve(unittest.TestCase):
         nodes = np.zeros((3, dimension))
         curve = self._make_one(nodes)
         self.assertEqual(curve.dimension, dimension)
+
+    def test_nodes_property(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 2.0],
+        ])
+        curve = self._make_one(nodes)
+        self.assertTrue(np.all(curve.nodes == nodes))
+        self.assertIsNot(curve.nodes, nodes)
 
     def test_evaluate(self):
         import numpy as np
@@ -210,6 +232,17 @@ class TestCurve(unittest.TestCase):
 
     def test_plot_show(self):
         self._plot_helper(show=True)
+
+    def test_plot_wrong_dimension(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0, 0.0],
+            [1.0, 3.0, 4.0],
+        ])
+        curve = self._make_one(nodes)
+        with self.assertRaises(NotImplementedError):
+            curve.plot(32, None)
 
     def _subdivide_helper(self, nodes, expected_l, expected_r):
         import numpy as np

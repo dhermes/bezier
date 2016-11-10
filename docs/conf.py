@@ -368,8 +368,9 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.5', None),
+    'matplotlib': ('http://matplotlib.org/', None),
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+    'python': ('https://docs.python.org/3.5', None),
 }
 
 # Autodoc config

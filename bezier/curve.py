@@ -146,6 +146,11 @@ class Curve(object):
         """
         return self._dimension
 
+    @property
+    def nodes(self):
+        """numpy.ndarray: The nodes that define the current curve."""
+        return self._nodes.copy()
+
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
 
@@ -223,8 +228,8 @@ class Curve(object):
 
         Returns:
             numpy.ndarray: The points on the curve. As a two dimensional
-                NumPy array, with the rows corresponding to each ``s``
-                value and the columns to the dimension.
+            NumPy array, with the rows corresponding to each ``s``
+            value and the columns to the dimension.
         """
         num_vals, = s_vals.shape
         result = np.zeros((num_vals, self.dimension))
@@ -237,14 +242,22 @@ class Curve(object):
 
         Args:
             num_pts (int): Number of points to plot.
-            plt (~types.ModuleType): Plotting module to use for creating
+            plt (~types.ModuleType): Plotting module (i.e.
+                :mod:`plt <matplotlib.pyplot>`) to use for creating
                 figures, etc.
             show (bool): (Optional) Flag indicating if the plot should be
                 shown.
 
         Returns:
-            matplotlib.figure.Figure: The figure created for the plot.
+            ~matplotlib.figure.Figure: The figure created for the plot.
+
+        Raises:
+            NotImplementedError: If the curve's dimension is not ``2``.
         """
+        if self.dimension != 2:
+            raise NotImplementedError('2D is the only supported dimension',
+                                      'Current dimension', self.dimension)
+
         s_vals = np.linspace(0.0, 1.0, num_pts)
         points = self.evaluate_multi(s_vals)
 
@@ -278,13 +291,13 @@ class Curve(object):
           >>> left, right = curve.subdivide()
           >>> left
           <Curve (degree=2, dimension=2)>
-          >>> left._nodes
+          >>> left.nodes
           array([[ 0.   , 0.   ],
                  [ 0.625, 1.5  ],
                  [ 1.125, 1.75 ]])
           >>> right
           <Curve (degree=2, dimension=2)>
-          >>> right._nodes
+          >>> right.nodes
           array([[ 1.125, 1.75 ],
                  [ 1.625, 2.   ],
                  [ 2.   , 1.   ]])
