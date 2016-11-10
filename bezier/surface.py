@@ -54,6 +54,62 @@ class Surface(_base.Base):
            \sum_{i + j + k = d} \binom{d}{i \, j \, k}
            \lambda_1^i \lambda_2^j \lambda_3^k \cdot v_{i, j, k}
 
+    .. note::
+
+       We assume the nodes are ordered from left-to-right and from
+       bottom-to-top. So for example, the linear triangle::
+
+          (0,0,1)
+
+          (1,0,0)  (0,1,0)
+
+       is ordered as
+
+       .. math::
+
+          \left[\begin{array}{c c c}
+              v_{1,0,0} & v_{0,1,0} & v_{0,0,1} \end{array}\right]^T
+
+       the quadratic triangle::
+
+          (0,0,2)
+
+          (1,0,1)  (0,1,1)
+
+          (2,0,0)  (1,1,0)  (0,2,0)
+
+       is ordered as
+
+       .. math::
+
+          \left[\begin{array}{c c c c c c}
+              v_{2,0,0} & v_{1,1,0} &
+              v_{0,2,0} & v_{1,0,1} &
+              v_{0,1,1} & v_{0,0,2} \end{array}\right]^T
+
+       the cubic triangle::
+
+          (0,0,3)
+
+          (1,0,2)  (0,1,2)
+
+          (2,0,1)  (1,1,1)  (0,2,1)
+
+          (3,0,0)  (2,1,0)  (1,2,0)  (0,3,0)
+
+       is ordered as
+
+       .. math::
+
+          \left[\begin{array}{c c c c c c c c c c}
+              v_{3,0,0} & v_{2,1,0} &
+              v_{1,2,0} & v_{0,3,0} &
+              v_{2,0,1} & v_{1,1,1} &
+              v_{0,2,1} & v_{1,0,2} &
+              v_{0,1,2} & v_{0,0,3} \end{array}\right]^T
+
+       and so on.
+
     Args:
         nodes (numpy.ndarray): The nodes in the surface. The rows
             represent each node while the columns are the dimension
