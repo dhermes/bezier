@@ -199,6 +199,55 @@ class Surface(_base.Base):
                 'Area computation not yet implemented.')
         return self._area
 
+    def evaluate_barycentric(self, lambda1, lambda2, lambda3):
+        r"""Compute a point on the surface.
+
+        Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)`.
+
+        Args:
+            lambda1 (float): Parameter along the reference triangle.
+            lambda2 (float): Parameter along the reference triangle.
+            lambda3 (float): Parameter along the reference triangle.
+
+        Returns:
+            numpy.ndarray: The point on the curve (as a one dimensional
+            NumPy array).
+
+        Raises:
+            ValueError: If the parameters are not valid, e.g. they
+                don't sum to ``1`` or some are negative.
+            NotImplementedError: If the degree is not equal to 1.
+        """
+        if not np.allclose(lambda1 + lambda2 + lambda3, 1.0):
+            raise ValueError('Values do not sum to 1',
+                             lambda1, lambda2, lambda3)
+        if lambda1 < 0.0 or lambda2 < 0.0 or lambda3 < 0.0:
+            raise ValueError('Parameters must be positive',
+                             lambda1, lambda2, lambda3)
+
+        if self.degree != 1:
+            raise NotImplementedError('Degree 1 only supported at this time')
+
+        weights = np.array([
+            [lambda1, lambda2, lambda3],
+        ])
+        return weights.dot(self._nodes).flatten()
+
+    def evaluate_cartesian(self, s, t):
+        r"""Compute a point on the surface.
+
+        Evaluates :math:`B\left(1 - s - t, s, t\right)`.
+
+        Args:
+            s (float): Parameter along the reference triangle.
+            t (float): Parameter along the reference triangle.
+
+        Returns:
+            numpy.ndarray: The point on the surface (as a one dimensional
+            NumPy array).
+        """
+        return self.evaluate_barycentric(1.0 - s - t, s, t)
+
     def subdivide(self):
         r"""Split the surface into four sub-surfaces.
 
@@ -228,7 +277,7 @@ class Surface(_base.Base):
             lower right and upper left sub-surfaces (in that order).
 
         Raises:
-            NotImplementedError: If the degree is not 2 or 3.
+            NotImplementedError: If the degree is not 1 or 2.
         """
         if self.degree == 1:
             new_nodes = _LINEAR_SUBDIVIDE.dot(self._nodes)
@@ -244,7 +293,7 @@ class Surface(_base.Base):
             nodes_d = new_nodes[(9, 10, 11, 12, 13, 14), :]
         else:
             raise NotImplementedError(
-                'Degrees 2 and 3 only supported at this time')
+                'Degrees 1 and 2 only supported at this time')
 
         return (Surface(nodes_a), Surface(nodes_b),
                 Surface(nodes_c), Surface(nodes_d))

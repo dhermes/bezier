@@ -113,6 +113,69 @@ class TestSurface(unittest.TestCase):
         surface._area = area
         self.assertEqual(surface.area, area)
 
+    def test_evaluate_barycentric(self):
+        import numpy as np
+
+        lambda_vals = (0.25, 0.5, 0.25)
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.5],
+            [0.0, 1.25],
+        ])
+        surface = self._make_one(nodes)
+
+        expected = np.array([0.5, 0.5625])
+        result = surface.evaluate_barycentric(*lambda_vals)
+        self.assertTrue(np.all(expected == result))
+
+    def test_evaluate_barycentric_negative_weights(self):
+        import numpy as np
+
+        surface = self._make_one(np.zeros((3, 2)))
+
+        lambda_vals = (0.25, -0.5, 1.25)
+        self.assertEqual(sum(lambda_vals), 1.0)
+
+        with self.assertRaises(ValueError):
+            surface.evaluate_barycentric(*lambda_vals)
+
+    def test_evaluate_barycentric_non_unity_weights(self):
+        import numpy as np
+
+        surface = self._make_one(np.zeros((3, 2)))
+
+        lambda_vals = (0.25, 0.25, 0.25)
+        self.assertNotEqual(sum(lambda_vals), 1.0)
+
+        with self.assertRaises(ValueError):
+            surface.evaluate_barycentric(*lambda_vals)
+
+    def test_evaluate_barycentric_unsupported(self):
+        import numpy as np
+
+        surface = self._make_one(np.zeros((6, 2)))
+
+        lambda_vals = (1.0, 0.0, 0.0)
+        self.assertEqual(sum(lambda_vals), 1.0)
+
+        with self.assertRaises(NotImplementedError):
+            surface.evaluate_barycentric(*lambda_vals)
+
+    def test_evaluate_cartesian(self):
+        import numpy as np
+
+        s_t_vals = (0.125, 0.125)
+        nodes = np.array([
+            [1.0, 1.0],
+            [2.0, 1.5],
+            [1.0, 2.75],
+        ])
+        surface = self._make_one(nodes)
+
+        expected = np.array([1.125, 1.28125])
+        result = surface.evaluate_cartesian(*s_t_vals)
+        self.assertTrue(np.all(expected == result))
+
     def _subdivide_helper(self, nodes, expected_a, expected_b,
                           expected_c, expected_d):
         import numpy as np
