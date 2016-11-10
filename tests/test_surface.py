@@ -14,6 +14,8 @@
 
 import unittest
 
+import numpy as np
+
 
 class TestSurface(unittest.TestCase):
 
@@ -28,8 +30,6 @@ class TestSurface(unittest.TestCase):
         return klass(*args, **kwargs)
 
     def test_constructor(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [0.625, 0.5],
@@ -43,8 +43,6 @@ class TestSurface(unittest.TestCase):
         self.assertIsNone(surface._edges)
 
     def test_constructor_wrong_dimension(self):
-        import numpy as np
-
         nodes = np.array([1.0, 2.0])
         with self.assertRaises(ValueError):
             self._make_one(nodes)
@@ -54,8 +52,6 @@ class TestSurface(unittest.TestCase):
             self._make_one(nodes)
 
     def test_constructor_bad_degree(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
         ])
@@ -81,16 +77,12 @@ class TestSurface(unittest.TestCase):
             klass._get_degree(9)
 
     def test___repr__(self):
-        import numpy as np
-
         nodes = np.zeros((15, 3))
         surface = self._make_one(nodes)
         expected = '<Surface (degree=4, dimension=3)>'
         self.assertEqual(repr(surface), expected)
 
     def test_area_property_not_cached(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 2.0],
@@ -102,8 +94,6 @@ class TestSurface(unittest.TestCase):
             getattr(surface, 'area')
 
     def test_area_property(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 2.0],
@@ -116,7 +106,6 @@ class TestSurface(unittest.TestCase):
 
     def _edges_helper(self, edge1, edge2, edge3,
                       nodes1, nodes2, nodes3):
-        import numpy as np
         import bezier
 
         self.assertIsInstance(edge1, bezier.Curve)
@@ -129,8 +118,6 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(np.all(edge3.nodes == nodes3))
 
     def test__compute_edges_linear(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [2.0, 1.0],
@@ -147,8 +134,6 @@ class TestSurface(unittest.TestCase):
             np.vstack([p001, p100]))
 
     def test__compute_edges_quadratic(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [1.25, 0.5],
@@ -168,15 +153,11 @@ class TestSurface(unittest.TestCase):
             np.vstack([p002, p101, p200]))
 
     def test__compute_edges_unsupported(self):
-        import numpy as np
-
         surface = self._make_one(np.zeros((10, 2)))
         with self.assertRaises(NotImplementedError):
             surface._compute_edges()
 
     def test_edges_property(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 0.0],
@@ -193,7 +174,6 @@ class TestSurface(unittest.TestCase):
 
     def test_edges_property_cached(self):
         import mock
-        import numpy as np
 
         surface = self._make_one(np.zeros((3, 2)))
         sentinel = object()
@@ -207,8 +187,6 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(surface._compute_edges.call_count, 1)
 
     def test_evaluate_barycentric_linear(self):
-        import numpy as np
-
         lambda_vals = (0.25, 0.5, 0.25)
         nodes = np.array([
             [0.0, 0.0],
@@ -222,8 +200,6 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(np.all(expected == result))
 
     def test_evaluate_barycentric_quadratic(self):
-        import numpy as np
-
         lambda_vals = (0.0, 0.25, 0.75)
         nodes = np.array([
             [0.0, 0.0],
@@ -240,8 +216,6 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(np.all(expected == result))
 
     def test_evaluate_barycentric_cubic(self):
-        import numpy as np
-
         lambda_vals = (0.125, 0.5, 0.375)
         nodes = np.array([
             [0.0, 0.0],
@@ -262,8 +236,6 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(np.all(expected == result))
 
     def test_evaluate_barycentric_negative_weights(self):
-        import numpy as np
-
         surface = self._make_one(np.zeros((3, 2)))
 
         lambda_vals = (0.25, -0.5, 1.25)
@@ -273,8 +245,6 @@ class TestSurface(unittest.TestCase):
             surface.evaluate_barycentric(*lambda_vals)
 
     def test_evaluate_barycentric_non_unity_weights(self):
-        import numpy as np
-
         surface = self._make_one(np.zeros((3, 2)))
 
         lambda_vals = (0.25, 0.25, 0.25)
@@ -284,8 +254,6 @@ class TestSurface(unittest.TestCase):
             surface.evaluate_barycentric(*lambda_vals)
 
     def test_evaluate_barycentric_unsupported(self):
-        import numpy as np
-
         surface = self._make_one(np.zeros((15, 2)))
 
         lambda_vals = (1.0, 0.0, 0.0)
@@ -295,8 +263,6 @@ class TestSurface(unittest.TestCase):
             surface.evaluate_barycentric(*lambda_vals)
 
     def test_evaluate_cartesian(self):
-        import numpy as np
-
         s_t_vals = (0.125, 0.125)
         nodes = np.array([
             [1.0, 1.0],
@@ -311,8 +277,6 @@ class TestSurface(unittest.TestCase):
 
     def _subdivide_helper(self, nodes, expected_a, expected_b,
                           expected_c, expected_d):
-        import numpy as np
-
         klass = self._get_target_class()
 
         surface = self._make_one(nodes)
@@ -328,8 +292,6 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(np.all(surface_d._nodes == expected_d))
 
     def test_subdivide_linear(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 0.0],
@@ -359,8 +321,6 @@ class TestSurface(unittest.TestCase):
                                expected_c, expected_d)
 
     def test_subdivide_quadratic(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [0.5, 0.25],
@@ -405,8 +365,6 @@ class TestSurface(unittest.TestCase):
                                expected_c, expected_d)
 
     def test_subdivide_unsupported_degree(self):
-        import numpy as np
-
         nodes = np.zeros((78, 3))
         surface = self._make_one(nodes)
         with self.assertRaises(NotImplementedError):

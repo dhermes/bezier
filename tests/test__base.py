@@ -14,6 +14,8 @@
 
 import unittest
 
+import numpy as np
+
 
 class TestBase(unittest.TestCase):
 
@@ -28,8 +30,6 @@ class TestBase(unittest.TestCase):
         return klass(*args, **kwargs)
 
     def test_constructor(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 1.0],
@@ -46,8 +46,6 @@ class TestBase(unittest.TestCase):
         self.assertEqual(num_nodes, klass._get_degree(num_nodes))
 
     def test_constructor_wrong_dimension(self):
-        import numpy as np
-
         nodes = np.array([1.0, 2.0])
         with self.assertRaises(ValueError):
             self._make_one(nodes)
@@ -57,23 +55,17 @@ class TestBase(unittest.TestCase):
             self._make_one(nodes)
 
     def test_constructor_insufficient_nodes(self):
-        import numpy as np
-
         nodes = np.zeros((0, 2))
         with self.assertRaises(ValueError):
             self._make_one(nodes)
 
     def test___repr__(self):
-        import numpy as np
-
         nodes = np.zeros((4, 3))
         shape = self._make_one(nodes)
         expected = '<Base (degree=4, dimension=3)>'
         self.assertEqual(repr(shape), expected)
 
     def test_degree_property(self):
-        import numpy as np
-
         degree = 6
         nodes = np.zeros((degree, 2))
         shape = self._make_one(nodes)
@@ -81,8 +73,6 @@ class TestBase(unittest.TestCase):
         self.assertEqual(shape._degree, degree)
 
     def test_dimension_property(self):
-        import numpy as np
-
         dimension = 4
         nodes = np.zeros((3, dimension))
         shape = self._make_one(nodes)
@@ -90,8 +80,6 @@ class TestBase(unittest.TestCase):
         self.assertEqual(shape._dimension, dimension)
 
     def test_nodes_property(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 2.0],

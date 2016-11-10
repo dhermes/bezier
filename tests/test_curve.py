@@ -14,6 +14,8 @@
 
 import unittest
 
+import numpy as np
+
 
 class Test__make_subdivision_matrix(unittest.TestCase):
 
@@ -24,8 +26,6 @@ class Test__make_subdivision_matrix(unittest.TestCase):
         return curve._make_subdivision_matrix(degree)
 
     def _helper(self, degree, expected):
-        import numpy as np
-
         result = self._call_function_under_test(degree)
         self.assertTrue(np.all(result == expected))
 
@@ -58,8 +58,6 @@ class TestCurve(unittest.TestCase):
         return klass(*args, **kwargs)
 
     def test_constructor(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [0.625, 0.5],
@@ -72,8 +70,6 @@ class TestCurve(unittest.TestCase):
         self.assertIsNone(curve._length)
 
     def test_constructor_wrong_dimension(self):
-        import numpy as np
-
         nodes = np.array([1.0, 2.0])
         with self.assertRaises(ValueError):
             self._make_one(nodes)
@@ -83,8 +79,6 @@ class TestCurve(unittest.TestCase):
             self._make_one(nodes)
 
     def test_constructor_bad_degree(self):
-        import numpy as np
-
         nodes = np.array([
             [1.0, 2.0],
         ])
@@ -96,8 +90,6 @@ class TestCurve(unittest.TestCase):
             self._make_one(nodes)
 
     def test___repr__(self):
-        import numpy as np
-
         degree = 4
         dimension = 3
         nodes = np.zeros((degree + 1, dimension))
@@ -107,8 +99,6 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(repr(curve), expected)
 
     def test_length_property_not_cached(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 2.0],
@@ -119,8 +109,6 @@ class TestCurve(unittest.TestCase):
             getattr(curve, 'length')
 
     def test_length_property(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 2.0],
@@ -131,8 +119,6 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(curve.length, length)
 
     def test_evaluate(self):
-        import numpy as np
-
         s = 0.25
         nodes = np.array([
             [0.0, 0.0],
@@ -145,8 +131,6 @@ class TestCurve(unittest.TestCase):
         self.assertTrue(np.all(expected == result))
 
     def test_evaluate_multi(self):
-        import numpy as np
-
         s_vals = np.array([0.0, 0.25, 0.5, 1.0, 1.25])
         nodes = np.array([
             [0.0, 0.0],
@@ -166,7 +150,6 @@ class TestCurve(unittest.TestCase):
 
     def test_evaluate_multi_calls_evaluate(self):
         import mock
-        import numpy as np
 
         s_val1 = 3.14159
         s_val2 = 2.817281728
@@ -189,7 +172,6 @@ class TestCurve(unittest.TestCase):
 
     def _plot_helper(self, show=False):
         import mock
-        import numpy as np
 
         nodes = np.array([
             [0.0, 1.0],
@@ -234,8 +216,6 @@ class TestCurve(unittest.TestCase):
         self._plot_helper(show=True)
 
     def test_plot_wrong_dimension(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 0.0, 0.0],
             [1.0, 3.0, 4.0],
@@ -245,8 +225,6 @@ class TestCurve(unittest.TestCase):
             curve.plot(32, None)
 
     def _subdivide_helper(self, nodes, expected_l, expected_r):
-        import numpy as np
-
         klass = self._get_target_class()
 
         curve = self._make_one(nodes)
@@ -258,8 +236,6 @@ class TestCurve(unittest.TestCase):
         self.assertTrue(np.all(right._nodes == expected_r))
 
     def _subdivide_points_check(self, curve, num_pts):
-        import numpy as np
-
         left, right = curve.subdivide()
 
         left_half = np.linspace(0.0, 0.5, num_pts)
@@ -277,8 +253,6 @@ class TestCurve(unittest.TestCase):
         self.assertTrue(np.allclose(main_vals, sub_vals))
 
     def test_subdivide_line(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 1.0],
             [4.0, 6.0],
@@ -295,8 +269,6 @@ class TestCurve(unittest.TestCase):
 
     @staticmethod
     def _get_random(seed):
-        import numpy as np
-
         # pylint: disable=no-member
         return np.random.RandomState(seed=seed)
         # pylint: enable=no-member
@@ -311,8 +283,6 @@ class TestCurve(unittest.TestCase):
         self._subdivide_points_check(curve, 32)
 
     def test_subdivide_quadratic(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 1.0],
             [4.0, 6.0],
@@ -340,8 +310,6 @@ class TestCurve(unittest.TestCase):
         self._subdivide_points_check(curve, 32)
 
     def test_subdivide_cubic(self):
-        import numpy as np
-
         nodes = np.array([
             [0.0, 1.0],
             [4.0, 6.0],
