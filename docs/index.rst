@@ -13,6 +13,7 @@ Higher Order Objects.
 This library provides:
 
 * Support for B |eacute| zier :mod:`Curves <bezier.curve>`
+* Support for B |eacute| zier :mod:`Surfaces <bezier.surface>`
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:

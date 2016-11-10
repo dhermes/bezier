@@ -17,9 +17,6 @@
 """
 
 
-import numpy as np
-
-
 class Surface(object):
     r"""Represents a B |eacute| zier `surface`_.
 
