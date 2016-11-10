@@ -69,6 +69,7 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(curve._degree, 2)
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
+        self.assertIsNone(curve._length)
 
     def test_constructor_wrong_dimension(self):
         import numpy as np
@@ -132,6 +133,30 @@ class TestCurve(unittest.TestCase):
         curve = self._make_one(nodes)
         self.assertTrue(np.all(curve.nodes == nodes))
         self.assertIsNot(curve.nodes, nodes)
+
+    def test_length_property_not_cached(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 2.0],
+        ])
+        curve = self._make_one(nodes)
+        self.assertIsNone(curve._length)
+        with self.assertRaises(NotImplementedError):
+            getattr(curve, 'length')
+
+    def test_length_property(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 2.0],
+        ])
+        curve = self._make_one(nodes)
+        length = 2.817281728
+        curve._length = length
+        self.assertEqual(curve.length, length)
 
     def test_evaluate(self):
         import numpy as np

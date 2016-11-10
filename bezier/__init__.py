@@ -23,8 +23,10 @@ Plotting utilities will also be provided.
 """
 
 from bezier.curve import Curve
+from bezier.surface import Surface
 
 
 __all__ = [
     'Curve',
+    'Surface',
 ]

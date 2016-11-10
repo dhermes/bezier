@@ -9,3 +9,4 @@ Submodules
 .. toctree::
 
    bezier.curve
+   bezier.surface

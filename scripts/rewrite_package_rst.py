@@ -36,6 +36,7 @@ Submodules
 .. toctree::
 
    bezier.curve
+   bezier.surface
 
 """
 
@@ -51,6 +52,7 @@ Submodules
 .. toctree::
 
    bezier.curve
+   bezier.surface
 """
 
 _SCRIPTS_DIR = os.path.dirname(__file__)

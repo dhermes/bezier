@@ -108,7 +108,7 @@ class Curve(object):
 
     Raises:
         ValueError: If the ``nodes`` are not 2D.
-        ValueError: If the ``nodes`` are not 2D.
+        ValueError: If there are fewer than 2 nodes.
     """
 
     def __init__(self, nodes):
@@ -122,6 +122,7 @@ class Curve(object):
         self._degree = rows - 1
         self._dimension = cols
         self._nodes = nodes
+        self._length = None
 
     def __repr__(self):
         """Representation of current curve.
@@ -150,6 +151,18 @@ class Curve(object):
     def nodes(self):
         """numpy.ndarray: The nodes that define the current curve."""
         return self._nodes.copy()
+
+    @property
+    def length(self):
+        """float: The nodes that define the current curve.
+
+        Raises:
+            NotImplementedError: If the length isn't already cached.
+        """
+        if self._length is None:
+            raise NotImplementedError(
+                'Length computation not yet implemented.')
+        return self._length
 
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
