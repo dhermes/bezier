@@ -39,6 +39,7 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(surface._degree, 1)
         self.assertEqual(surface._dimension, 2)
         self.assertIs(surface._nodes, nodes)
+        self.assertIsNone(surface._area)
 
     def test_constructor_wrong_dimension(self):
         import numpy as np
@@ -85,3 +86,29 @@ class TestSurface(unittest.TestCase):
         surface = self._make_one(nodes)
         expected = '<Surface (degree=4, dimension=3)>'
         self.assertEqual(repr(surface), expected)
+
+    def test_area_property_not_cached(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [2.0, 3.0],
+        ])
+        surface = self._make_one(nodes)
+        self.assertIsNone(surface._area)
+        with self.assertRaises(NotImplementedError):
+            getattr(surface, 'area')
+
+    def test_area_property(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [2.0, 3.0],
+        ])
+        surface = self._make_one(nodes)
+        area = 3.14159
+        surface._area = area
+        self.assertEqual(surface.area, area)

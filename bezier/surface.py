@@ -116,6 +116,8 @@ class Surface(_base.Base):
             of the ambient space.
     """
 
+    _area = None
+
     @staticmethod
     def _get_degree(num_nodes):
         """Get the degree of the current surface.
@@ -140,3 +142,15 @@ class Surface(_base.Base):
             return d_int
         else:
             raise ValueError(num_nodes, 'not a triangular number')
+
+    @property
+    def area(self):
+        """float: The area of the current surface.
+
+        Raises:
+            NotImplementedError: If the area isn't already cached.
+        """
+        if self._area is None:
+            raise NotImplementedError(
+                'Area computation not yet implemented.')
+        return self._area

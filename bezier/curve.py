@@ -125,7 +125,7 @@ class Curve(_base.Base):
 
     @property
     def length(self):
-        """float: The nodes that define the current curve.
+        """float: The length of the current curve.
 
         Raises:
             NotImplementedError: If the length isn't already cached.
