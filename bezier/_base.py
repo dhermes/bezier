@@ -76,6 +76,17 @@ class Base(object):
         """numpy.ndarray: The nodes that define the current shape."""
         return self._nodes.copy()
 
+    # NOTE: We disable the docstring return type check because
+    #       subclasses won't be able to refer to this private base.
+    def copy(self):  # pylint: disable=missing-returns-doc
+        """Make a copy of the current shape.
+
+        Returns:
+            Instance of the current shape.
+        """
+        new_nodes = self._nodes.copy()
+        return self.__class__(new_nodes)
+
     def __repr__(self):
         """Representation of current object.
 

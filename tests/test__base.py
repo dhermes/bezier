@@ -87,3 +87,19 @@ class TestBase(unittest.TestCase):
         shape = self._make_one(nodes)
         self.assertTrue(np.all(shape.nodes == nodes))
         self.assertIsNot(shape.nodes, nodes)
+
+    def test_copy(self):
+        import mock
+
+        shape = self._make_one(np.zeros((1, 2)))
+        fake_nodes = mock.Mock()
+        shape._nodes = fake_nodes
+
+        copied_nodes = np.zeros((2, 2))
+        fake_nodes.copy.return_value = copied_nodes
+
+        new_shape = shape.copy()
+        self.assertIsInstance(new_shape, self._get_target_class())
+        self.assertIs(new_shape._nodes, copied_nodes)
+
+        fake_nodes.copy.assert_called_once_with()

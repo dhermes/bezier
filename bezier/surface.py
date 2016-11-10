@@ -242,7 +242,11 @@ class Surface(_base.Base):
         """
         if self._edges is None:
             self._edges = self._compute_edges()
-        return self._edges
+        edge1, edge2, edge3 = self._edges
+        # NOTE: It is crucial that we return copies here. Since the edges
+        #       are cached, if they were mutable, callers could
+        #       inadvertently mutate the cached value.
+        return edge1.copy(), edge2.copy(), edge3.copy()
 
     def evaluate_barycentric(self, lambda1, lambda2, lambda3):
         r"""Compute a point on the surface.

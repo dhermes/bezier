@@ -176,14 +176,29 @@ class TestSurface(unittest.TestCase):
         import mock
 
         surface = self._make_one(np.zeros((3, 2)))
-        sentinel = object()
-        surface._compute_edges = mock.Mock(return_value=sentinel)
-        self.assertIs(surface.edges, sentinel)
 
+        # Create mock "edges" to be computed.
+        sentinel1 = mock.Mock()
+        sentinel2 = mock.Mock()
+        sentinel3 = mock.Mock()
+        expected = sentinel1, sentinel2, sentinel3
+        surface._compute_edges = mock.Mock(return_value=expected)
+
+        # Make sure the "edges" when copied just return themselves.
+        sentinel1.copy.return_value = sentinel1
+        sentinel2.copy.return_value = sentinel2
+        sentinel3.copy.return_value = sentinel3
+
+        # Access the property and check the mocks.
+        self.assertEqual(surface.edges, expected)
         surface._compute_edges.assert_any_call()
         self.assertEqual(surface._compute_edges.call_count, 1)
-        # Access again but make sure no more calls.
-        self.assertIs(surface.edges, sentinel)
+        sentinel1.copy.assert_called_once_with()
+        sentinel2.copy.assert_called_once_with()
+        sentinel3.copy.assert_called_once_with()
+
+        # Access again but make sure no more calls to _compute_edges().
+        self.assertEqual(surface.edges, expected)
         self.assertEqual(surface._compute_edges.call_count, 1)
 
     def test_evaluate_barycentric_linear(self):
@@ -475,3 +490,19 @@ class TestSurface(unittest.TestCase):
         surface = self._make_one(nodes)
         with self.assertRaises(NotImplementedError):
             surface.subdivide()
+
+    def test_copy(self):
+        import mock
+
+        surface = self._make_one(np.zeros((6, 2)))
+        fake_nodes = mock.Mock()
+        surface._nodes = fake_nodes
+
+        copied_nodes = np.zeros((3, 2))
+        fake_nodes.copy.return_value = copied_nodes
+
+        new_surface = surface.copy()
+        self.assertIsInstance(new_surface, self._get_target_class())
+        self.assertIs(new_surface._nodes, copied_nodes)
+
+        fake_nodes.copy.assert_called_once_with()
