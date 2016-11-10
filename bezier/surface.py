@@ -14,6 +14,11 @@
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
+
+.. testsetup:: *
+
+  import numpy as np
+  import bezier
 """
 
 
@@ -109,6 +114,18 @@ class Surface(_base.Base):
               v_{0,1,2} & v_{0,0,3} \end{array}\right]^T
 
        and so on.
+
+    .. doctest:: surface-ctor
+
+      >>> import bezier
+      >>> nodes = np.array([
+      ...     [0.0, 0.0],
+      ...     [1.0, 0.25],
+      ...     [0.25, 1.0],
+      ... ])
+      >>> surface = bezier.Surface(nodes)
+      >>> surface
+      <Surface (degree=1, dimension=2)>
 
     Args:
         nodes (numpy.ndarray): The nodes in the surface. The rows
