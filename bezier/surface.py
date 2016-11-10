@@ -17,10 +17,65 @@
 """
 
 
+import numpy as np
+
+
+def _get_degree(num_pts):
+    """Get the degree corresponding to the number of control points.
+
+    Args:
+        num_pts (int): The number of control points for a
+            B |eacute| zier surface.
+
+    Returns:
+        int: The degree :math:`d` such that :math:`(d + 1)(d + 2)/2`
+        equals ```num_pts``.
+
+    Raises:
+        ValueError: If ``num_pts`` isn't a triangular number.
+    """
+    # 8 * num_pts = 4(d + 1)(d + 2)
+    #             = 4d^2 + 12d + 8
+    #             = (2d + 3)^2 - 1
+    d_float = 0.5 * (np.sqrt(8.0 * num_pts + 1.0) - 3.0)
+    d_int = int(np.round(d_float))
+    if (d_int + 1) * (d_int + 2) == 2 * num_pts:
+        return d_int
+    else:
+        raise ValueError(num_pts, 'not a triangular number')
+
+
 class Surface(object):
     r"""Represents a B |eacute| zier `surface`_.
 
     .. _surface: https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
+    .. _unit simplex:
+        https://en.wikipedia.org/wiki/Simplex#The_standard_simplex
+    .. _barycentric coordinates:
+        https://en.wikipedia.org/wiki/Barycentric_coordinate_system
+
+    We define a B |eacute| zier triangle as a mapping from the
+    `unit simplex`_ in 2D (i.e. the unit triangle) onto a surface in an
+    arbitrary dimension. We use `barycentric coordinates`
+
+    .. math::
+
+       \lambda_1 = 1 - s - t, \lambda_2 = s, \lambda_3 = t
+
+    for points in
+
+    .. math::
+
+       \left\{(s, t) \mid 0 \leq s, t, s + t \leq 1\right\}.
+
+    As with curves, using these weights we get convex combinations
+    of points :math:`v_{i, j, k}` in some vector space:
+
+    .. math::
+
+       B\left(\lambda_1, \lambda_2, \lambda_3\right) =
+           \sum_{i + j + k = d} \binom{d}{i \, j \, k}
+           \lambda_1^i \lambda_2^j \lambda_3^k \cdot v_{i, j, k}
 
     Args:
         nodes (numpy.ndarray): The nodes in the surface. The rows
@@ -29,11 +84,16 @@ class Surface(object):
 
     Raises:
         ValueError: If the ``nodes`` are not 2D.
+        ValueError: If the ``degree`` is less than ``1``.
     """
 
     def __init__(self, nodes):
         if nodes.ndim != 2:
             raise ValueError('Nodes must be 2-dimensional, not', nodes.ndim)
-        _, cols = nodes.shape
+        row, cols = nodes.shape
+        degree = _get_degree(row)
+        if degree < 1:
+            raise ValueError('Surface must be at least degree 1')
+        self._degree = degree
         self._dimension = cols
         self._nodes = nodes

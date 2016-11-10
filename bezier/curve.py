@@ -108,7 +108,7 @@ class Curve(object):
 
     Raises:
         ValueError: If the ``nodes`` are not 2D.
-        ValueError: If there are fewer than 2 nodes.
+        ValueError: If the ``degree`` is less than ``1``.
     """
 
     def __init__(self, nodes):
