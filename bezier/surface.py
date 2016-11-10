@@ -25,6 +25,7 @@
 import numpy as np
 
 from bezier import _base
+from bezier import curve as _curve_mod
 
 
 _LINEAR_SUBDIVIDE = np.array([
@@ -65,7 +66,7 @@ class Surface(_base.Base):
 
     We define a B |eacute| zier triangle as a mapping from the
     `unit simplex`_ in 2D (i.e. the unit triangle) onto a surface in an
-    arbitrary dimension. We use `barycentric coordinates`
+    arbitrary dimension. We use `barycentric coordinates`_
 
     .. math::
 
@@ -161,6 +162,7 @@ class Surface(_base.Base):
     """
 
     _area = None
+    _edges = None
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -172,7 +174,7 @@ class Surface(_base.Base):
 
         Returns:
             int: The degree :math:`d` such that :math:`(d + 1)(d + 2)/2`
-            equals ```num_nodes``.
+            equals ``num_nodes``.
 
         Raises:
             ValueError: If ``num_nodes`` isn't a triangular number.
@@ -198,6 +200,43 @@ class Surface(_base.Base):
             raise NotImplementedError(
                 'Area computation not yet implemented.')
         return self._area
+
+    def _compute_edges(self):
+        """Compute the edges of the current surface.
+
+        Returns:
+            Tuple[Curve, Curve, Curve]: The edges of the surface.
+
+        Raises:
+            NotImplementedError: If the degree exceeds 2.
+        """
+        if self.degree == 1:
+            nodes1 = self._nodes[(0, 1), :]
+            nodes2 = self._nodes[(1, 2), :]
+            nodes3 = self._nodes[(2, 0), :]
+        elif self.degree == 2:
+            nodes1 = self._nodes[(0, 1, 2), :]
+            nodes2 = self._nodes[(2, 4, 5), :]
+            nodes3 = self._nodes[(5, 3, 0), :]
+        else:
+            raise NotImplementedError(
+                'Degree 1 and 2 only supported at this time')
+
+        edge1 = _curve_mod.Curve(nodes1)
+        edge2 = _curve_mod.Curve(nodes2)
+        edge3 = _curve_mod.Curve(nodes3)
+        return edge1, edge2, edge3
+
+    @property
+    def edges(self):
+        """tuple: The edges of the surface.
+
+        Returns:
+            Tuple[Curve, Curve, Curve]: The edges of the surface.
+        """
+        if self._edges is None:
+            self._edges = self._compute_edges()
+        return self._edges
 
     def evaluate_barycentric(self, lambda1, lambda2, lambda3):
         r"""Compute a point on the surface.

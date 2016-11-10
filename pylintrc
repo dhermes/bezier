@@ -26,4 +26,4 @@ class-rgx=[A-Z_][a-zA-Z0-9]+$|^Test
 method-rgx=[a-z_][a-z0-9_]{2,30}$|^test_
 
 [DESIGN]
-max-args=6
+max-args=7

@@ -40,6 +40,7 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(surface._dimension, 2)
         self.assertIs(surface._nodes, nodes)
         self.assertIsNone(surface._area)
+        self.assertIsNone(surface._edges)
 
     def test_constructor_wrong_dimension(self):
         import numpy as np
@@ -112,6 +113,98 @@ class TestSurface(unittest.TestCase):
         area = 3.14159
         surface._area = area
         self.assertEqual(surface.area, area)
+
+    def _edges_helper(self, edge1, edge2, edge3,
+                      nodes1, nodes2, nodes3):
+        import numpy as np
+        import bezier
+
+        self.assertIsInstance(edge1, bezier.Curve)
+        self.assertTrue(np.all(edge1.nodes == nodes1))
+
+        self.assertIsInstance(edge2, bezier.Curve)
+        self.assertTrue(np.all(edge2.nodes == nodes2))
+
+        self.assertIsInstance(edge3, bezier.Curve)
+        self.assertTrue(np.all(edge3.nodes == nodes3))
+
+    def test__compute_edges_linear(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [2.0, 1.0],
+            [-3.0, 3.0],
+        ])
+        p100, p010, p001 = nodes
+        surface = self._make_one(nodes)
+
+        edge1, edge2, edge3 = surface._compute_edges()
+        self._edges_helper(
+            edge1, edge2, edge3,
+            np.vstack([p100, p010]),
+            np.vstack([p010, p001]),
+            np.vstack([p001, p100]))
+
+    def test__compute_edges_quadratic(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.25, 0.5],
+            [2.0, 1.0],
+            [-1.5, 0.75],
+            [0.0, 2.0],
+            [-3.0, 3.0],
+        ])
+        p200, p110, p020, p101, p011, p002 = nodes
+        surface = self._make_one(nodes)
+
+        edge1, edge2, edge3 = surface._compute_edges()
+        self._edges_helper(
+            edge1, edge2, edge3,
+            np.vstack([p200, p110, p020]),
+            np.vstack([p020, p011, p002]),
+            np.vstack([p002, p101, p200]))
+
+    def test__compute_edges_unsupported(self):
+        import numpy as np
+
+        surface = self._make_one(np.zeros((10, 2)))
+        with self.assertRaises(NotImplementedError):
+            surface._compute_edges()
+
+    def test_edges_property(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface = self._make_one(nodes)
+
+        edge1, edge2, edge3 = surface.edges
+        nodes1 = nodes[:2, :]
+        nodes2 = nodes[1:, :]
+        nodes3 = nodes[(2, 0), :]
+        self._edges_helper(edge1, edge2, edge3,
+                           nodes1, nodes2, nodes3)
+
+    def test_edges_property_cached(self):
+        import mock
+        import numpy as np
+
+        surface = self._make_one(np.zeros((3, 2)))
+        sentinel = object()
+        surface._compute_edges = mock.Mock(return_value=sentinel)
+        self.assertIs(surface.edges, sentinel)
+
+        surface._compute_edges.assert_any_call()
+        self.assertEqual(surface._compute_edges.call_count, 1)
+        # Access again but make sure no more calls.
+        self.assertIs(surface.edges, sentinel)
+        self.assertEqual(surface._compute_edges.call_count, 1)
 
     def test_evaluate_barycentric_linear(self):
         import numpy as np
