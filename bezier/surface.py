@@ -216,7 +216,7 @@ class Surface(_base.Base):
         Raises:
             ValueError: If the parameters are not valid, e.g. they
                 don't sum to ``1`` or some are negative.
-            NotImplementedError: If the degree is not equal to 1.
+            NotImplementedError: If the degree is not greater than 3.
         """
         if not np.allclose(lambda1 + lambda2 + lambda3, 1.0):
             raise ValueError('Values do not sum to 1',
@@ -225,12 +225,39 @@ class Surface(_base.Base):
             raise ValueError('Parameters must be positive',
                              lambda1, lambda2, lambda3)
 
-        if self.degree != 1:
+        if self.degree == 1:
+            weights = np.array([
+                [lambda1, lambda2, lambda3],
+            ])
+        elif self.degree == 2:
+            weights = np.array([
+                [
+                    lambda1 * lambda1,
+                    2.0 * lambda1 * lambda2,
+                    lambda2 * lambda2,
+                    2.0 * lambda1 * lambda3,
+                    2.0 * lambda2 * lambda3,
+                    lambda3 * lambda3,
+                ]
+            ])
+        elif self.degree == 3:
+            weights = np.array([
+                [
+                    lambda1 * lambda1 * lambda1,
+                    3.0 * lambda1 * lambda1 * lambda2,
+                    3.0 * lambda1 * lambda2 * lambda2,
+                    lambda2 * lambda2 * lambda2,
+                    3.0 * lambda1 * lambda1 * lambda3,
+                    6.0 * lambda1 * lambda2 * lambda3,
+                    3.0 * lambda2 * lambda2 * lambda3,
+                    3.0 * lambda1 * lambda3 * lambda3,
+                    3.0 * lambda2 * lambda3 * lambda3,
+                    lambda3 * lambda3 * lambda3,
+                ]
+            ])
+        else:
             raise NotImplementedError('Degree 1 only supported at this time')
 
-        weights = np.array([
-            [lambda1, lambda2, lambda3],
-        ])
         return weights.dot(self._nodes).flatten()
 
     def evaluate_cartesian(self, s, t):

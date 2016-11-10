@@ -113,7 +113,7 @@ class TestSurface(unittest.TestCase):
         surface._area = area
         self.assertEqual(surface.area, area)
 
-    def test_evaluate_barycentric(self):
+    def test_evaluate_barycentric_linear(self):
         import numpy as np
 
         lambda_vals = (0.25, 0.5, 0.25)
@@ -125,6 +125,46 @@ class TestSurface(unittest.TestCase):
         surface = self._make_one(nodes)
 
         expected = np.array([0.5, 0.5625])
+        result = surface.evaluate_barycentric(*lambda_vals)
+        self.assertTrue(np.all(expected == result))
+
+    def test_evaluate_barycentric_quadratic(self):
+        import numpy as np
+
+        lambda_vals = (0.0, 0.25, 0.75)
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, 0.0],
+            [1.0, 0.5],
+            [0.5, 1.25],
+            [0.0, 1.25],
+            [0.0, 0.5],
+        ])
+        surface = self._make_one(nodes)
+
+        expected = np.array([0.0625, 0.78125])
+        result = surface.evaluate_barycentric(*lambda_vals)
+        self.assertTrue(np.all(expected == result))
+
+    def test_evaluate_barycentric_cubic(self):
+        import numpy as np
+
+        lambda_vals = (0.125, 0.5, 0.375)
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.25, 0.0],
+            [0.75, 0.25],
+            [1.0, 0.0],
+            [0.0, 0.25],
+            [0.375, 0.25],
+            [0.5, 0.25],
+            [0.0, 0.5],
+            [0.25, 0.75],
+            [0.0, 1.0],
+        ])
+        surface = self._make_one(nodes)
+
+        expected = np.array([0.447265625, 0.37060546875])
         result = surface.evaluate_barycentric(*lambda_vals)
         self.assertTrue(np.all(expected == result))
 
@@ -153,7 +193,7 @@ class TestSurface(unittest.TestCase):
     def test_evaluate_barycentric_unsupported(self):
         import numpy as np
 
-        surface = self._make_one(np.zeros((6, 2)))
+        surface = self._make_one(np.zeros((15, 2)))
 
         lambda_vals = (1.0, 0.0, 0.0)
         self.assertEqual(sum(lambda_vals), 1.0)
