@@ -162,6 +162,52 @@ class TestSurface(unittest.TestCase):
         self._subdivide_helper(nodes, expected_a, expected_b,
                                expected_c, expected_d)
 
+    def test_subdivide_quadratic(self):
+        import numpy as np
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, 0.25],
+            [1.0, 0.0],
+            [0.5, 0.75],
+            [0.0, 1.0],
+            [0.0, 0.5],
+        ])
+        expected_a = np.array([
+            [0.0, 0.0],
+            [0.25, 0.125],
+            [0.5, 0.125],
+            [0.25, 0.375],
+            [0.25, 0.5],
+            [0.25, 0.5],
+        ])
+        expected_b = np.array([
+            [0.25, 0.625],
+            [0.25, 0.625],
+            [0.25, 0.5],
+            [0.5, 0.5],
+            [0.25, 0.5],
+            [0.5, 0.125],
+        ])
+        expected_c = np.array([
+            [0.5, 0.125],
+            [0.75, 0.125],
+            [1.0, 0.0],
+            [0.5, 0.5],
+            [0.5, 0.5],
+            [0.25, 0.625],
+        ])
+        expected_d = np.array([
+            [0.25, 0.5],
+            [0.25, 0.625],
+            [0.25, 0.625],
+            [0.25, 0.625],
+            [0.0, 0.75],
+            [0.0, 0.5],
+        ])
+        self._subdivide_helper(nodes, expected_a, expected_b,
+                               expected_c, expected_d)
+
     def test_subdivide_unsupported_degree(self):
         import numpy as np
 

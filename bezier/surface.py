@@ -35,6 +35,23 @@ _LINEAR_SUBDIVIDE = np.array([
     [0.0, 0.5, 0.5],
     [0.0, 0.0, 1.0],
 ])
+_QUADRATIC_SUBDIVIDE = np.array([
+    [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.5, 0.5, 0.0, 0.0, 0.0, 0.0],
+    [0.25, 0.5, 0.25, 0.0, 0.0, 0.0],
+    [0.0, 0.5, 0.5, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+    [0.5, 0.0, 0.0, 0.5, 0.0, 0.0],
+    [0.25, 0.25, 0.0, 0.25, 0.25, 0.0],
+    [0.0, 0.25, 0.25, 0.25, 0.25, 0.0],
+    [0.0, 0.0, 0.5, 0.0, 0.5, 0.0],
+    [0.25, 0.0, 0.0, 0.5, 0.0, 0.25],
+    [0.0, 0.25, 0.0, 0.25, 0.25, 0.25],
+    [0.0, 0.0, 0.25, 0.0, 0.5, 0.25],
+    [0.0, 0.0, 0.0, 0.5, 0.0, 0.5],
+    [0.0, 0.0, 0.0, 0.0, 0.5, 0.5],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+])
 
 
 class Surface(_base.Base):
@@ -220,9 +237,11 @@ class Surface(_base.Base):
             nodes_c = new_nodes[(1, 2, 4), :]
             nodes_d = new_nodes[(3, 4, 5), :]
         elif self.degree == 2:
-            pass
-        elif self.degree == 3:
-            pass
+            new_nodes = _QUADRATIC_SUBDIVIDE.dot(self._nodes)
+            nodes_a = new_nodes[(0, 1, 2, 5, 6, 9), :]
+            nodes_b = new_nodes[(11, 10, 9, 7, 6, 2), :]
+            nodes_c = new_nodes[(2, 3, 4, 7, 8, 11), :]
+            nodes_d = new_nodes[(9, 10, 11, 12, 13, 14), :]
         else:
             raise NotImplementedError(
                 'Degrees 2 and 3 only supported at this time')
