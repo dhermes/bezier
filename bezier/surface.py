@@ -26,6 +26,7 @@ from matplotlib import patches
 from matplotlib import path as _path_mod
 import matplotlib.pyplot as plt
 import numpy as np
+import six
 
 from bezier import _base
 from bezier import curve as _curve_mod
@@ -323,6 +324,96 @@ class Surface(_base.Base):
             NumPy array).
         """
         return self.evaluate_barycentric(1.0 - s - t, s, t)
+
+    def evaluate_multi(self, param_vals):
+        r"""Compute multiple points on the surface.
+
+        If ``param_vals`` has two columns, this method treats
+        them as Cartesian:
+
+        .. doctest:: surface-eval-multi
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> nodes = np.array([
+          ...     [ 0., 0. ],
+          ...     [ 2., 1. ],
+          ...     [-3., 2. ],
+          ... ])
+          >>> surface = bezier.Surface(nodes)
+          >>> surface
+          <Surface (degree=1, dimension=2)>
+          >>> param_vals = np.array([
+          ...     [0.0, 0.0],
+          ...     [1.0, 0.0],
+          ...     [0.5, 0.5],
+          ... ])
+          >>> surface.evaluate_multi(param_vals)
+          array([[ 0. , 0. ],
+                 [ 2. , 1. ],
+                 [-0.5, 1.5]])
+
+        and if ``param_vals`` has three columns, treats them as Barycentric:
+
+        .. doctest:: surface-eval-multi
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> nodes = np.array([
+          ...     [ 0. , 0.  ],
+          ...     [ 1. , 0.75],
+          ...     [ 2. , 1.  ],
+          ...     [-1.5, 1.  ],
+          ...     [-0.5, 1.5 ],
+          ...     [-3. , 2.  ],
+          ... ])
+          >>> surface = bezier.Surface(nodes)
+          >>> surface
+          <Surface (degree=2, dimension=2)>
+          >>> param_vals = np.array([
+          ...     [0.   , 0.25, 0.75 ],
+          ...     [1.   , 0.  , 0.   ],
+          ...     [0.25 , 0.5 , 0.25 ],
+          ...     [0.375, 0.25, 0.375],
+          ... ])
+          >>> surface.evaluate_multi(param_vals)
+          array([[-1.75  , 1.75    ],
+                 [ 0.    , 0.      ],
+                 [ 0.25  , 1.0625  ],
+                 [-0.625 , 1.046875]])
+
+        .. note::
+
+            This currently just uses :meth:`evaluate_cartesian` and
+            :meth:`evaluate_barycentric` so is less
+            performant than it could be.
+
+        Args:
+            param_vals (numpy.ndarray): Array of parameter values (as a
+                2D array).
+
+        Returns:
+            numpy.ndarray: The point on the surface.
+
+        Raises:
+            ValueError: If ``param_vals`` is not a 2D array.
+            ValueError: If ``param_vals`` doesn't have 2 or 3 columns.
+        """
+        if param_vals.ndim != 2:
+            raise ValueError('Parameter values must be 2D array')
+        num_vals, num_cols = param_vals.shape
+        result = np.zeros((num_vals, self.dimension))
+
+        if num_cols == 2:
+            transform = self.evaluate_cartesian
+        elif num_cols == 3:
+            transform = self.evaluate_barycentric
+        else:
+            raise ValueError(
+                'Parameter values must either be Barycentric or Cartesian')
+
+        result = np.zeros((num_vals, self.dimension))
+        for index in six.moves.xrange(num_vals):
+            result[index, :] = transform(*param_vals[index, :])
+        return result
 
     @staticmethod
     def _add_patch(ax, color, edge1, edge2, edge3):

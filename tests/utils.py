@@ -12,12 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import functools
-
-import numpy as np
-
 
 def get_random(seed):
+    import numpy as np
+
     # pylint: disable=no-member
     return np.random.RandomState(seed=seed)
     # pylint: enable=no-member
@@ -44,8 +42,33 @@ def binary_round(value, num_bits):
 
 
 def get_random_nodes(shape, seed, num_bits):
+    import functools
+    import numpy as np
+
     random_state = get_random(seed)
     nodes = random_state.random_sample(shape)
     # Round the nodes to ``num_bits`` bits to avoid round-off.
     to_vectorize = functools.partial(binary_round, num_bits=num_bits)
     return np.vectorize(to_vectorize)(nodes)
+
+
+def ref_triangle_uniform_nodes(pts_exponent):
+    import numpy as np
+    import six
+
+    # Using the exponent means that we will divide by
+    # 2**exp, which can be done without roundoff (for small
+    # enough exponents).
+    pts_per_side = 2**pts_exponent + 1
+    total = ((pts_per_side + 1) * pts_per_side) / 2
+    result = np.zeros((total, 2))
+
+    index = 0
+    for y_val in six.moves.xrange(pts_per_side):
+        remaining = pts_per_side - y_val
+        for x_val in six.moves.xrange(remaining):
+            result[index, :] = x_val, y_val
+            index += 1
+
+    result /= (pts_per_side - 1.0)
+    return result

@@ -16,6 +16,8 @@ import unittest
 
 import numpy as np
 
+from tests import utils
+
 
 class TestSurface(unittest.TestCase):
 
@@ -290,6 +292,65 @@ class TestSurface(unittest.TestCase):
         result = surface.evaluate_cartesian(*s_t_vals)
         self.assertTrue(np.all(expected == result))
 
+    def test_evaluate_multi_with_barycentric(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.75],
+            [2.0, 1.0],
+            [-1.5, 1.0],
+            [-0.5, 1.5],
+            [-3.0, 2.0],
+        ])
+        surface = self._make_one(nodes)
+        expected = np.array([
+            [-1.75, 1.75],
+            [0.0, 0.0],
+            [0.25, 1.0625],
+            [-0.625, 1.046875],
+        ])
+
+        param_vals = np.array([
+            [0.25, 0.75],
+            [0.0, 0.0],
+            [0.5, 0.25],
+            [0.25, 0.375],
+        ])
+        result = surface.evaluate_multi(param_vals)
+        self.assertTrue(np.all(result == expected))
+
+    def test_evaluate_multi_with_cartesian(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [2.0, 1.0],
+            [-3.0, 2.0],
+        ])
+        surface = self._make_one(nodes)
+        expected = np.array([
+            [0.0, 0.0],
+            [2.0, 1.0],
+            [-0.5, 1.5],
+        ])
+
+        param_vals = np.array([
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.5, 0.5],
+        ])
+        result = surface.evaluate_multi(param_vals)
+        self.assertTrue(np.all(result == expected))
+
+    def test_evaluate_multi_wrong_dimension(self):
+        surface = self._make_one(np.zeros((3, 2)))
+        param_vals_1d = np.zeros((4,))
+        with self.assertRaises(ValueError):
+            surface.evaluate_multi(param_vals_1d)
+
+    def test_evaluate_multi_wrong_param_cols(self):
+        surface = self._make_one(np.zeros((3, 2)))
+        param_vals = np.zeros((4, 4))
+        with self.assertRaises(ValueError):
+            surface.evaluate_multi(param_vals)
+
     def test__add_patch(self):
         import mock
 
@@ -412,6 +473,27 @@ class TestSurface(unittest.TestCase):
         self.assertIsInstance(surface_d, klass)
         self.assertTrue(np.all(surface_d._nodes == expected_d))
 
+    def _subdivide_points_check(self, surface, pts_exponent=5):
+        # Using the exponent means that we will divide by
+        # 2**exp, which can be done without roundoff (for small
+        # enough exponents).
+        sub_surfaces = surface.subdivide()
+
+        ref_triangle = utils.ref_triangle_uniform_nodes(pts_exponent)
+        quarter_a = 0.5 * ref_triangle
+        quarters = [
+            quarter_a,
+            np.array([0.5, 0.5]) - quarter_a,  # B
+            quarter_a + np.array([0.5, 0.0]),  # C
+            quarter_a + np.array([0.0, 0.5]),  # D
+        ]
+
+        for sub_surface, quarter in zip(sub_surfaces, quarters):
+            # Make sure sub_surface(ref_triangle) == surface(quarter)
+            main_vals = surface.evaluate_multi(quarter)
+            sub_vals = sub_surface.evaluate_multi(ref_triangle)
+            self.assertTrue(np.all(main_vals == sub_vals))
+
     def test_subdivide_linear(self):
         nodes = np.array([
             [0.0, 0.0],
@@ -440,6 +522,16 @@ class TestSurface(unittest.TestCase):
         ])
         self._subdivide_helper(nodes, expected_a, expected_b,
                                expected_c, expected_d)
+
+    def test_subdivide_line_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(3, 2), seed=123987, num_bits=8)
+
+        surface = self._make_one(nodes)
+        self.assertEqual(surface.degree, 1)
+        self._subdivide_points_check(surface)
 
     def test_subdivide_quadratic(self):
         nodes = np.array([
@@ -484,6 +576,16 @@ class TestSurface(unittest.TestCase):
         ])
         self._subdivide_helper(nodes, expected_a, expected_b,
                                expected_c, expected_d)
+
+    def test_subdivide_quadratic_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(6, 2), seed=45001, num_bits=8)
+
+        surface = self._make_one(nodes)
+        self.assertEqual(surface.degree, 2)
+        self._subdivide_points_check(surface)
 
     def test_subdivide_unsupported_degree(self):
         nodes = np.zeros((78, 3))
