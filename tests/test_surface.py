@@ -311,6 +311,21 @@ class TestSurface(unittest.TestCase):
         result = surface.evaluate_cartesian(*s_t_vals)
         self.assertTrue(np.all(expected == result))
 
+    def test_evaluate_cartesian_calls_barycentric(self):
+        import mock
+
+        surface = self._make_one(np.zeros((3, 2)))
+        eval_method = mock.Mock()
+        surface.evaluate_barycentric = eval_method
+
+        s_val = 0.25
+        t_val = 0.25
+        eval_method.return_value = mock.sentinel.point
+        result = surface.evaluate_cartesian(s_val, t_val)
+        self.assertIs(result, mock.sentinel.point)
+
+        eval_method.assert_called_once_with(0.5, s_val, t_val)
+
     def test_evaluate_multi_with_barycentric(self):
         nodes = np.array([
             [0.0, 0.0],

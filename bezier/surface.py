@@ -233,6 +233,26 @@ class Surface(_base.Base):
     def edges(self):
         """tuple: The edges of the surface.
 
+        .. doctest:: surface-edges
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> nodes = np.array([
+          ...     [0.0   ,  0.0   ],
+          ...     [0.5   , -0.1875],
+          ...     [1.0   ,  0.0   ],
+          ...     [0.1875,  0.5   ],
+          ...     [0.625 ,  0.625 ],
+          ...     [0.0   ,  1.0   ],
+          ... ])
+          >>> surface = bezier.Surface(nodes)
+          >>> edge1, _, _ = surface.edges
+          >>> edge1
+          <Curve (degree=2, dimension=2)>
+          >>> edge1.nodes
+          array([[ 0.  ,  0.    ],
+                 [ 0.5 , -0.1875],
+                 [ 1.  ,  0.    ]])
+
         Returns:
             Tuple[~bezier.curve.Curve, ~bezier.curve.Curve, \
                   ~bezier.curve.Curve]: The edges of
@@ -250,6 +270,48 @@ class Surface(_base.Base):
         r"""Compute a point on the surface.
 
         Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)`.
+
+        .. testsetup:: surface-barycentric
+
+          import numpy as np
+          import bezier
+          nodes = np.array([
+              [0.0, 0.0],
+              [1.0, 0.25],
+              [0.25, 1.0],
+          ])
+          surface = bezier.Surface(nodes)
+
+        .. doctest:: surface-barycentric
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> nodes = np.array([
+          ...     [0.0, 0.0],
+          ...     [1.0, 0.25],
+          ...     [0.25, 1.0],
+          ... ])
+          >>> surface = bezier.Surface(nodes)
+          >>> surface.evaluate_barycentric(0.125, 0.125, 0.75)
+          array([ 0.3125 , 0.78125])
+
+        However, this can't be used for points **outside** the
+        reference triangle:
+
+        .. doctest:: surface-barycentric
+
+          >>> surface.evaluate_barycentric(-0.25, 0.75, 0.5)
+          Traceback (most recent call last):
+            ...
+          ValueError: ('Parameters must be positive', -0.25, 0.75, 0.5)
+
+        or for non-Barycentric coordinates;
+
+        .. doctest:: surface-barycentric
+
+          >>> surface.evaluate_barycentric(0.25, 0.25, 0.25)
+          Traceback (most recent call last):
+            ...
+          ValueError: ('Values do not sum to 1', 0.25, 0.25, 0.25)
 
         Args:
             lambda1 (float): Parameter along the reference triangle.
@@ -310,7 +372,8 @@ class Surface(_base.Base):
     def evaluate_cartesian(self, s, t):
         r"""Compute a point on the surface.
 
-        Evaluates :math:`B\left(1 - s - t, s, t\right)`.
+        Evaluates :math:`B\left(1 - s - t, s, t\right)` by calling
+        :meth:`evaluate_barycentric`.
 
         Args:
             s (float): Parameter along the reference triangle.
@@ -499,6 +562,23 @@ class Surface(_base.Base):
 
         These are the lower left (:math:`A`), central (:math:`B`), lower
         right (:math:`C`) and upper left (:math:`D`) sub-triangles.
+
+        .. doctest:: surface-subdivide
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> nodes = np.array([
+          ...     [ 0. , 0. ],
+          ...     [ 2. , 0. ],
+          ...     [ 0. , 4. ],
+          ... ])
+          >>> surface = bezier.Surface(nodes)
+          >>> _, _, _, sub_surface_d = surface.subdivide()
+          >>> sub_surface_d
+          <Surface (degree=1, dimension=2)>
+          >>> sub_surface_d.nodes
+          array([[ 0., 2.],
+                 [ 1., 2.],
+                 [ 0., 4.]])
 
         Returns:
             Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
