@@ -747,3 +747,54 @@ class TestSurface(unittest.TestCase):
         self.assertIs(new_surface._nodes, copied_nodes)
 
         fake_nodes.copy.assert_called_once_with()
+
+    def test__compute_valid_valid_linear(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface = self._make_one(nodes)
+        self.assertTrue(surface._compute_valid())
+
+    def test__compute_valid_invalid_linear(self):
+        nodes = np.array([
+            [0.0, 0.0, 0.0],
+            [1.0, 2.0, 2.0],
+            [2.0, 4.0, 4.0],
+        ])
+        surface = self._make_one(nodes)
+        self.assertFalse(surface._compute_valid())
+
+    def test__compute_valid_bad_degree(self):
+        surface = self._make_one(np.zeros((6, 2)))
+        with self.assertRaises(NotImplementedError):
+            surface._compute_valid()
+
+    def test_is_valid_property(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface = self._make_one(nodes)
+        self.assertTrue(surface.is_valid)
+
+    def test_is_valid_property_cached(self):
+        import mock
+
+        surface = self._make_one(np.zeros((3, 2)))
+        compute_valid = mock.Mock()
+        surface._compute_valid = compute_valid
+        compute_valid.return_value = True
+
+        self.assertIsNone(surface._is_valid)
+
+        # Access the property and check the mocks.
+        self.assertTrue(surface.is_valid)
+        self.assertTrue(surface._is_valid)
+        compute_valid.assert_called_once_with()
+
+        # Access again but make sure no more calls to _compute_valid().
+        self.assertTrue(surface.is_valid)
+        self.assertEqual(compute_valid.call_count, 1)

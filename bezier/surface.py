@@ -87,6 +87,10 @@ _CUBIC_SUBDIVIDE = np.array([
     [0., 0., 0., 0., 0., 0., 0., 0., 0.5, 0.5],
     [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.0],
 ])
+_LINEAR_JACOBIAN_HELPER = np.array([
+    [-1.0, 1.0, 0.0],
+    [-1.0, 0.0, 1.0],
+])
 
 
 class Surface(_base.Base):
@@ -197,6 +201,7 @@ class Surface(_base.Base):
 
     _area = None
     _edges = None
+    _is_valid = None
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -396,7 +401,8 @@ class Surface(_base.Base):
                 ]
             ])
         else:
-            raise NotImplementedError('Degree 1 only supported at this time')
+            raise NotImplementedError(
+                'Degrees 1, 2 and 3 only supported at this time')
 
         return weights.dot(self._nodes).flatten()  # pylint: disable=no-member
 
@@ -653,3 +659,48 @@ class Surface(_base.Base):
 
         return (Surface(nodes_a), Surface(nodes_b),
                 Surface(nodes_c), Surface(nodes_d))
+
+    def _compute_valid(self):
+        """Determines if the current surface is "valid".
+
+        Does this by checking if the Jacobian of the map from the
+        reference triangle is nonzero.
+
+        Returns:
+            bool: Flag indicating if the current surface is valid.
+
+        Raises:
+            NotImplementedError: If the degree is greater than 1.
+        """
+        if self.degree == 1:
+            # In the linear case, we are only invalid if the points
+            # are collinear.
+            # pylint: disable=no-member
+            delta_mat = _LINEAR_JACOBIAN_HELPER.dot(self._nodes)
+            # pylint: enable=no-member
+            return np.linalg.matrix_rank(delta_mat) == 2
+        else:
+            raise NotImplementedError(
+                'Degree 1 only supported at this time')
+
+    @property
+    def is_valid(self):  # pylint: disable=missing-returns-doc
+        """bool: Flag indicating if the surface no singularites.
+
+        This checks if the Jacobian of the map from the reference
+        triangle is nonzero.
+
+        .. doctest:: surface-is-valid
+
+          >>> nodes = np.array([
+          ...     [0.0, 0.0],
+          ...     [1.0, 0.0],
+          ...     [0.0, 1.0],
+          ... ])
+          >>> surface = bezier.Surface(nodes)
+          >>> surface.is_valid
+          True
+        """
+        if self._is_valid is None:
+            self._is_valid = self._compute_valid()
+        return self._is_valid
