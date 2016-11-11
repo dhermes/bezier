@@ -425,6 +425,19 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(np.all(positional[0] == expected[:, 0]))
         self.assertTrue(np.all(positional[1] == expected[:, 1]))
 
+    def _check_plot_calls(self, ax, nodes, color):
+        # Check the calls to ax.plot(). We can't assert_any_call()
+        # since == breaks on NumPy arrays.
+        self.assertEqual(ax.plot.call_count, 4)
+        calls = ax.plot.mock_calls
+        self._check_plot_call(calls[0], nodes[:2, :])
+        self._check_plot_call(calls[1], nodes[1:, :], color=color)
+        self._check_plot_call(calls[2], nodes[(2, 0), :], color=color)
+        self._check_plot_call(calls[3], nodes,
+                              color='black', marker='o', linestyle='None')
+        # Check the calls to ax.add_patch().
+        self.assertEqual(ax.add_patch.call_count, 1)
+
     def _plot_helper(self, show=False):
         import matplotlib.lines
         import mock
@@ -452,23 +465,13 @@ class TestSurface(unittest.TestCase):
             else:
                 result = curve.plot(2)
 
-        self.assertIs(result, figure)
+        self.assertIs(result, ax)
 
         # Check mocks.
         plt.figure.assert_called_once_with()
         figure.gca.assert_called_once_with()
 
-        # Check the calls to ax.plot(). We can't assert_any_call()
-        # since == breaks on NumPy arrays.
-        self.assertEqual(ax.plot.call_count, 4)
-        calls = ax.plot.mock_calls
-        self._check_plot_call(calls[0], nodes[:2, :])
-        self._check_plot_call(calls[1], nodes[1:, :], color=color)
-        self._check_plot_call(calls[2], nodes[(2, 0), :], color=color)
-        self._check_plot_call(calls[3], nodes,
-                              color='black', marker='o', linestyle='None')
-        # Check the calls to ax.add_patch().
-        self.assertEqual(ax.add_patch.call_count, 1)
+        self._check_plot_calls(ax, nodes, color)
 
         if show:
             plt.show.assert_called_once_with()
@@ -480,6 +483,34 @@ class TestSurface(unittest.TestCase):
 
     def test_plot_show(self):
         self._plot_helper(show=True)
+
+    def test_plot_existing_axis(self):
+        import matplotlib.lines
+        import mock
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.0, 1.0],
+            [1.0, 0.0],
+        ])
+        curve = self._make_one(nodes)
+        plt = mock.Mock()
+
+        ax = mock.Mock()
+        color = (0.5, 0.5, 0.75)
+        line = matplotlib.lines.Line2D([], [], color=color)
+        ax.plot.return_value = (line,)
+
+        with mock.patch('bezier.surface.plt', new=plt):
+            result = curve.plot(2, ax=ax)
+
+        self.assertIs(result, ax)
+
+        # Check mocks.
+        plt.figure.assert_not_called()
+        plt.show.assert_not_called()
+
+        self._check_plot_calls(ax, nodes, color)
 
     def test_plot_wrong_dimension(self):
         nodes = np.array([

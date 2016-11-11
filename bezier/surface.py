@@ -528,16 +528,19 @@ class Surface(_base.Base):
             path, facecolor=color, alpha=0.6)
         ax.add_patch(patch)
 
-    def plot(self, pts_per_edge, show=False):
+    def plot(self, pts_per_edge, ax=None, show=False):
         """Plot the current surface.
 
         Args:
             pts_per_edge (int): Number of points to plot per edge.
+            ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
+                to add plot to.
             show (Optional[bool]): Flag indicating if the plot should be
                 shown.
 
         Returns:
-            matplotlib.figure.Figure: The figure created for the plot.
+            matplotlib.artist.Artist: The axis containing the plot. This
+            may be a newly created axis.
 
         Raises:
             NotImplementedError: If the curve's dimension is not ``2``.
@@ -553,8 +556,10 @@ class Surface(_base.Base):
         points2 = edge2.evaluate_multi(s_vals)
         points3 = edge3.evaluate_multi(s_vals)
 
-        fig = plt.figure()
-        ax = fig.gca()
+        if ax is None:
+            fig = plt.figure()
+            ax = fig.gca()
+
         line, = ax.plot(points1[:, 0], points1[:, 1])
         color = line.get_color()
         ax.plot(points2[:, 0], points2[:, 1], color=color)
@@ -568,7 +573,7 @@ class Surface(_base.Base):
         if show:
             plt.show()
 
-        return fig
+        return ax
 
     def subdivide(self):
         r"""Split the surface into four sub-surfaces.
