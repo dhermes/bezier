@@ -57,6 +57,36 @@ _QUADRATIC_SUBDIVIDE = np.array([
     [0.0, 0.0, 0.0, 0.0, 0.5, 0.5],
     [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
 ])
+_CUBIC_SUBDIVIDE = np.array([
+    [1.0, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+    [0.5, 0.5, 0., 0., 0., 0., 0., 0., 0., 0.],
+    [0.25, 0.5, 0.25, 0., 0., 0., 0., 0., 0., 0.],
+    [0.125, 0.375, 0.375, 0.125, 0., 0., 0., 0., 0., 0.],
+    [0., 0.25, 0.5, 0.25, 0., 0., 0., 0., 0., 0.],
+    [0., 0., 0.5, 0.5, 0., 0., 0., 0., 0., 0.],
+    [0., 0., 0., 1.0, 0., 0., 0., 0., 0., 0.],
+    [0.5, 0., 0., 0., 0.5, 0., 0., 0., 0., 0.],
+    [0.25, 0.25, 0., 0., 0.25, 0.25, 0., 0., 0., 0.],
+    [0.125, 0.25, 0.125, 0., 0.125, 0.25, 0.125, 0., 0., 0.],
+    [0., 0.125, 0.25, 0.125, 0.125, 0.25, 0.125, 0., 0., 0.],
+    [0., 0., 0.25, 0.25, 0., 0.25, 0.25, 0., 0., 0., 0., 0., 0., 0.],
+    [0., 0., 0., 0.5, 0., 0., 0.5, 0., 0., 0.],
+    [0.25, 0., 0., 0., 0.5, 0., 0., 0.25, 0., 0.],
+    [0.125, 0.125, 0., 0., 0.25, 0.25, 0., 0.125, 0.125, 0.],
+    [0., 0.125, 0.125, 0., 0.125, 0.25, 0.125, 0.125, 0.125, 0.],
+    [0., 0., 0.125, 0.125, 0., 0.25, 0.25, 0.125, 0.125, 0.],
+    [0., 0., 0., 0.25, 0., 0., 0.5, 0., 0.25, 0.],
+    [0.125, 0., 0., 0., 0.375, 0., 0., 0.375, 0., 0.125],
+    [0., 0.125, 0., 0., 0.125, 0.25, 0., 0.25, 0.125, 0.125],
+    [0., 0., 0.125, 0., 0., 0.25, 0.125, 0.125, 0.25, 0.125],
+    [0., 0., 0., 0.125, 0., 0., 0.375, 0., 0.375, 0.125],
+    [0., 0., 0., 0., 0.25, 0., 0., 0.5, 0., 0.25],
+    [0., 0., 0., 0., 0., 0.25, 0., 0.25, 0.25, 0.25],
+    [0., 0., 0., 0., 0., 0., 0.25, 0., 0.5, 0.25],
+    [0., 0., 0., 0., 0., 0., 0., 0.5, 0., 0.5],
+    [0., 0., 0., 0., 0., 0., 0., 0., 0.5, 0.5],
+    [0., 0., 0., 0., 0., 0., 0., 0., 0., 1.0],
+])
 
 
 class Surface(_base.Base):
@@ -323,9 +353,10 @@ class Surface(_base.Base):
             NumPy array).
 
         Raises:
-            ValueError: If the parameters are not valid, e.g. they
-                don't sum to ``1`` or some are negative.
-            NotImplementedError: If the degree is not greater than 3.
+            ValueError: If the parameters are not valid barycentric
+                coordinates, e.g. they don't sum to ``1``.
+            ValueError: If some parameters are negative.
+            NotImplementedError: If the degree is greater than 3.
         """
         if not np.allclose(lambda1 + lambda2 + lambda3, 1.0):
             raise ValueError('Values do not sum to 1',
@@ -585,7 +616,7 @@ class Surface(_base.Base):
             lower right and upper left sub-surfaces (in that order).
 
         Raises:
-            NotImplementedError: If the degree is not 1 or 2.
+            NotImplementedError: If the degree is not 1, 2 or 3.
         """
         if self.degree == 1:
             # pylint: disable=no-member
@@ -603,9 +634,17 @@ class Surface(_base.Base):
             nodes_b = new_nodes[(11, 10, 9, 7, 6, 2), :]
             nodes_c = new_nodes[(2, 3, 4, 7, 8, 11), :]
             nodes_d = new_nodes[(9, 10, 11, 12, 13, 14), :]
+        elif self.degree == 3:
+            # pylint: disable=no-member
+            new_nodes = _CUBIC_SUBDIVIDE.dot(self._nodes)
+            # pylint: enable=no-member
+            nodes_a = new_nodes[(0, 1, 2, 3, 7, 8, 9, 13, 14, 18), :]
+            nodes_b = new_nodes[(21, 20, 19, 18, 16, 15, 14, 10, 9, 3), :]
+            nodes_c = new_nodes[(3, 4, 5, 6, 10, 11, 12, 16, 17, 21), :]
+            nodes_d = new_nodes[(18, 19, 20, 21, 22, 23, 24, 25, 26, 27), :]
         else:
             raise NotImplementedError(
-                'Degrees 1 and 2 only supported at this time')
+                'Degrees 1, 2 and 3 only supported at this time')
 
         return (Surface(nodes_a), Surface(nodes_b),
                 Surface(nodes_c), Surface(nodes_d))

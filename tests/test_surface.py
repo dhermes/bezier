@@ -621,6 +621,80 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(surface.degree, 2)
         self._subdivide_points_check(surface)
 
+    def test_subdivide_cubic(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [3.25, 1.5],
+            [6.5, 1.5],
+            [10.0, 0.0],
+            [1.5, 3.25],
+            [5.0, 5.0],
+            [10.0, 5.25],
+            [1.5, 6.5],
+            [5.25, 10.0],
+            [0.0, 10.0],
+        ])
+        expected_a = np.array([
+            [0.0, 0.0],
+            [1.625, 0.75],
+            [3.25, 1.125],
+            [4.90625, 1.125],
+            [0.75, 1.625],
+            [2.4375, 2.4375],
+            [4.3125, 2.875],
+            [1.125, 3.25],
+            [2.875, 4.3125],
+            [1.125, 4.90625],
+        ])
+        expected_b = np.array([
+            [6.96875, 6.96875],
+            [4.8125, 6.65625],
+            [2.875, 5.96875],
+            [1.125, 4.90625],
+            [6.65625, 4.8125],
+            [4.75, 4.75],
+            [2.875, 4.3125],
+            [5.96875, 2.875],
+            [4.3125, 2.875],
+            [4.90625, 1.125],
+        ])
+        expected_c = np.array([
+            [4.90625, 1.125],
+            [6.5625, 1.125],
+            [8.25, 0.75],
+            [10.0, 0.0],
+            [5.96875, 2.875],
+            [7.875, 2.9375],
+            [10.0, 2.625],
+            [6.65625, 4.8125],
+            [8.8125, 5.125],
+            [6.96875, 6.96875],
+        ])
+        expected_d = np.array([
+            [1.125, 4.90625],
+            [2.875, 5.96875],
+            [4.8125, 6.65625],
+            [6.96875, 6.96875],
+            [1.125, 6.5625],
+            [2.9375, 7.875],
+            [5.125, 8.8125],
+            [0.75, 8.25],
+            [2.625, 10.0],
+            [0.0, 10.0],
+        ])
+        self._subdivide_helper(nodes, expected_a, expected_b,
+                               expected_c, expected_d)
+
+    def test_subdivide_cubic_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(10, 2), seed=346323, num_bits=8)
+
+        surface = self._make_one(nodes)
+        self.assertEqual(surface.degree, 3)
+        self._subdivide_points_check(surface)
+
     def test_subdivide_unsupported_degree(self):
         nodes = np.zeros((78, 3))
         surface = self._make_one(nodes)
