@@ -358,16 +358,17 @@ class Surface(_base.Base):
             NumPy array).
 
         Raises:
-            ValueError: If the parameters are not valid barycentric
+            ValueError: If the weights are not valid barycentric
                 coordinates, e.g. they don't sum to ``1``.
-            ValueError: If some parameters are negative.
+            ValueError: If some weights are negative.
             NotImplementedError: If the degree is greater than 3.
         """
-        if not np.allclose(lambda1 + lambda2 + lambda3, 1.0):
-            raise ValueError('Values do not sum to 1',
+        weights_total = lambda1 + lambda2 + lambda3
+        if not np.allclose(weights_total, 1.0):
+            raise ValueError('Weights do not sum to 1',
                              lambda1, lambda2, lambda3)
         if lambda1 < 0.0 or lambda2 < 0.0 or lambda3 < 0.0:
-            raise ValueError('Parameters must be positive',
+            raise ValueError('Weights must be positive',
                              lambda1, lambda2, lambda3)
 
         if self.degree == 1:
