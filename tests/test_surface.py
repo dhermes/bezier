@@ -154,10 +154,29 @@ class TestSurface(unittest.TestCase):
             np.vstack([p020, p011, p002]),
             np.vstack([p002, p101, p200]))
 
-    def test__compute_edges_unsupported(self):
-        surface = self._make_one(np.zeros((10, 2)))
-        with self.assertRaises(NotImplementedError):
-            surface._compute_edges()
+    def test__compute_edges_cubic(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.328125, 0.1484375],
+            [0.65625, 0.1484375],
+            [1.0, 0.0],
+            [0.1484375, 0.328125],
+            [0.5, 0.5],
+            [1.0, 0.53125],
+            [0.1484375, 0.65625],
+            [0.53125, 1.0],
+            [0.0, 1.0],
+        ])
+        (p300, p210, p120, p030, p201,
+         unused_p111, p021, p102, p012, p003) = nodes
+        surface = self._make_one(nodes)
+
+        edges = surface._compute_edges()
+        self._edges_helper(
+            edges[0], edges[1], edges[2],
+            np.vstack([p300, p210, p120, p030]),
+            np.vstack([p030, p021, p012, p003]),
+            np.vstack([p003, p102, p201, p300]))
 
     def test_edges_property(self):
         nodes = np.array([

@@ -27,3 +27,6 @@ method-rgx=[a-z_][a-z0-9_]{2,30}$|^test_
 
 [DESIGN]
 max-args=7
+
+[VARIABLES]
+dummy-variables-rgx=(_+[a-zA-Z0-9]*?$)|dummy|^unused_

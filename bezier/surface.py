@@ -211,25 +211,22 @@ class Surface(_base.Base):
         Returns:
             Tuple[~curve.Curve, ~curve.Curve, ~curve.Curve]: The edges of
             the surface.
-
-        Raises:
-            NotImplementedError: If the degree exceeds 2.
         """
-        if self.degree == 1:
-            nodes1 = self._nodes[(0, 1), :]
-            nodes2 = self._nodes[(1, 2), :]
-            nodes3 = self._nodes[(2, 0), :]
-        elif self.degree == 2:
-            nodes1 = self._nodes[(0, 1, 2), :]
-            nodes2 = self._nodes[(2, 4, 5), :]
-            nodes3 = self._nodes[(5, 3, 0), :]
-        else:
-            raise NotImplementedError(
-                'Degree 1 and 2 only supported at this time')
+        indices1 = slice(0, self.degree + 1)
+        indices2 = np.empty(self.degree + 1, dtype=int)
+        indices3 = np.empty(self.degree + 1, dtype=int)
 
-        edge1 = _curve_mod.Curve(nodes1)
-        edge2 = _curve_mod.Curve(nodes2)
-        edge3 = _curve_mod.Curve(nodes3)
+        curr2 = self.degree
+        curr3 = -1
+        for i in six.moves.xrange(self.degree + 1):
+            indices2[i] = curr2
+            indices3[i] = curr3
+            curr2 += self.degree - i
+            curr3 -= i + 2
+
+        edge1 = _curve_mod.Curve(self._nodes[indices1, :])
+        edge2 = _curve_mod.Curve(self._nodes[indices2, :])
+        edge3 = _curve_mod.Curve(self._nodes[indices3, :])
         return edge1, edge2, edge3
 
     @property
