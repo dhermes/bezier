@@ -186,11 +186,11 @@ def _polynomial_sign(poly_surface):
             _MAX_SUBDIVISIONS)
 
 
-def _quadratic_valid_in_2d(nodes):
-    """Determine if a quadratic surface in 2D is "valid".
+def _quadratic_jacobian_polynomial(nodes):
+    r"""Compute the Jacobian determinant of a quadratic surface.
 
-    In this case, "valid" means that the Jacobian of the map is
-    not singular.
+    Converts :math:`\det(J(s, t))` to a polynomial on the reference
+    triangle and represents it as a surface object.
 
     .. note::
 
@@ -203,7 +203,8 @@ def _quadratic_valid_in_2d(nodes):
         nodes (numpy.ndarray): A 6x2 array of nodes in a surface.
 
     Returns:
-        bool: Flag indicating if the current surface is valid.
+        Surface: Artificial "surface" representing the polynomial
+        in the Bernstein basis.
     """
     # First evaluate the Jacobian at each of the 6 nodes.
     # pylint: disable=no-member
@@ -222,11 +223,7 @@ def _quadratic_valid_in_2d(nodes):
     bernstein = _QUADRATIC_TO_BERNSTEIN.dot(jac_at_nodes)
     # pylint: enable=no-member
     # ...and then form the polynomial p(s, t) as a Surface.
-    jac_poly = Surface(bernstein)
-
-    # Find the sign of the polynomial, where 0 means mixed.
-    poly_sign = _polynomial_sign(jac_poly)
-    return poly_sign != 0
+    return Surface(bernstein)
 
 
 class Surface(_base.Base):
@@ -819,7 +816,10 @@ class Surface(_base.Base):
             return np.linalg.matrix_rank(delta_mat) == 2
         elif self.degree == 2:
             if self.dimension == 2:
-                return _quadratic_valid_in_2d(self._nodes)
+                jac_poly = _quadratic_jacobian_polynomial(self._nodes)
+                # Find the sign of the polynomial, where 0 means mixed.
+                poly_sign = _polynomial_sign(jac_poly)
+                return poly_sign != 0
             else:
                 raise NotImplementedError(
                     'Quadratic validity check only implemented in R^2')

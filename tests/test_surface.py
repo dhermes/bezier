@@ -76,26 +76,15 @@ class Test__polynomial_sign(unittest.TestCase):
                 self._helper(bernstein, None)
 
 
-class Test__quadratic_valid_in_2d(unittest.TestCase):
+class Test__quadratic_jacobian_polynomial(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import surface
 
-        return surface._quadratic_valid_in_2d(nodes)
+        return surface._quadratic_jacobian_polynomial(nodes)
 
-    def test_valid(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [0.5, -0.1875],
-            [1.0, 0.0],
-            [0.1875, 0.5],
-            [0.625, 0.625],
-            [0.0, 1.0],
-        ])
-        self.assertTrue(self._call_function_under_test(nodes))
-
-    def test_invalid(self):
+    def test_it(self):
         # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^3]
         nodes = np.array([
             [1.0, 0.0],
@@ -105,7 +94,13 @@ class Test__quadratic_valid_in_2d(unittest.TestCase):
             [0.0, 0.0],
             [0.0, 1.0],
         ])
-        self.assertFalse(self._call_function_under_test(nodes))
+        jac_poly = self._call_function_under_test(nodes)
+        self.assertEqual(jac_poly.degree, 2)
+        self.assertEqual(jac_poly.dimension, 1)
+        # pylint: disable=no-member
+        expected = np.array([[0.0, 2.0, 0.0, -2.0, 2.0, 0.0]]).T
+        # pylint: enable=no-member
+        self.assertTrue(np.all(jac_poly.nodes == expected))
 
 
 class TestSurface(unittest.TestCase):
@@ -855,15 +850,30 @@ class TestSurface(unittest.TestCase):
         surface = self._make_one(nodes)
         self.assertFalse(surface._compute_valid())
 
-    def test__compute_valid_quadratic(self):
-        import mock
+    def test__compute_valid_quadratic_valid(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, -0.1875],
+            [1.0, 0.0],
+            [0.1875, 0.5],
+            [0.625, 0.625],
+            [0.0, 1.0],
+        ])
+        surface = self._make_one(nodes)
+        self.assertTrue(surface._compute_valid())
 
-        surface = self._make_one(np.zeros((6, 2)))
-        surface._nodes = mock.sentinel.nodes
-        with mock.patch('bezier.surface._quadratic_valid_in_2d',
-                        return_value=False) as patched:
-            self.assertFalse(surface._compute_valid())
-            patched.assert_called_once_with(mock.sentinel.nodes)
+    def test__compute_valid_quadratic_invalid(self):
+        # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^3]
+        nodes = np.array([
+            [1.0, 0.0],
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface = self._make_one(nodes)
+        self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_quadratic_bad_dimension(self):
         surface = self._make_one(np.zeros((6, 3)))
