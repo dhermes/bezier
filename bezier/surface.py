@@ -630,9 +630,9 @@ class Surface(_base.Base):
             bool: Flag indicating if the current surface is valid.
 
         Raises:
-            NotImplementedError: If the degree is greater than 2.
-            NotImplementedError: If the surface is quadratic but
-                in dimension other than :math:`\mathbf{R}^2`.
+            NotImplementedError: If the degree is greater than 3.
+            NotImplementedError: If the surface is quadratic or cubic
+                but in dimension other than :math:`\mathbf{R}^2`.
         """
         if self.degree == 1:
             # In the linear case, we are only invalid if the points
@@ -642,18 +642,23 @@ class Surface(_base.Base):
                 self._nodes)
             # pylint: enable=no-member
             return np.linalg.matrix_rank(delta_mat) == 2
-        elif self.degree == 2:
-            if self.dimension == 2:
+        elif self.degree in (2, 3):
+            if self.dimension != 2:
+                raise NotImplementedError(
+                    'Cubic/quadratic validity check only implemented in R^2')
+
+            if self.degree == 2:
                 bernstein = _surface_helpers.quadratic_jacobian_polynomial(
                     self._nodes)
-                # Form the polynomial p(s, t) as a Surface.
-                jac_poly = Surface(bernstein)
-                # Find the sign of the polynomial, where 0 means mixed.
-                poly_sign = _surface_helpers.polynomial_sign(jac_poly)
-                return poly_sign != 0
             else:
-                raise NotImplementedError(
-                    'Quadratic validity check only implemented in R^2')
+                bernstein = _surface_helpers.cubic_jacobian_polynomial(
+                    self._nodes)
+
+            # Form the polynomial p(s, t) as a Surface.
+            jac_poly = Surface(bernstein)
+            # Find the sign of the polynomial, where 0 means mixed.
+            poly_sign = _surface_helpers.polynomial_sign(jac_poly)
+            return poly_sign != 0
         else:
             raise NotImplementedError(
                 'Degrees 1 and 2 only supported at this time')

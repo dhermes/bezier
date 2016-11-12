@@ -830,8 +830,41 @@ class TestSurface(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             surface._compute_valid()
 
+    def test__compute_valid_cubic_valid(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [2.0, 0.0],
+            [3.0, 0.0],
+            [0.0, 1.0],
+            [1.0, 1.0],
+            [2.25, 1.25],
+            [0.0, 2.0],
+            [1.25, 2.25],
+            [0.0, 3.0],
+        ])
+        surface = self._make_one(nodes)
+        self.assertTrue(surface._compute_valid())
+
+    def test__compute_valid_cubic_invalid(self):
+        # B(L1, L2, L3) = [L1^3 + L2^3, L2^3 + L3^3]
+        nodes = np.array([
+            [1.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface = self._make_one(nodes)
+        self.assertFalse(surface._compute_valid())
+
     def test__compute_valid_bad_degree(self):
-        surface = self._make_one(np.zeros((10, 2)))
+        surface = self._make_one(np.zeros((15, 2)))
         with self.assertRaises(NotImplementedError):
             surface._compute_valid()
 

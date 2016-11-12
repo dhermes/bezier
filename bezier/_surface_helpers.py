@@ -156,6 +156,64 @@ QUADRATIC_TO_BERNSTEIN = np.array([
     [ 0, 0,  0, 0, 0,  2],  # noqa: E201
 ], dtype=float) / 2.0
 # pylint: enable=bad-whitespace
+# The Jacobian of a cubic (in any dimension) as given by
+# dB/ds = [-3 L1^2, 3 L1(L1 - 2 L2), 3 L2(2 L1 - L2), 3 L2^2, -6 L1 L3,
+#          6 L3(L1 - L2), 6 L2 L3, -3 L3^2, 3 L3^2, 0] * nodes
+# dB/dt = [-3 L1^2, -6 L1 L2, -3 L2^2, 0, 3 L1(L1 - 2 L3), 6 L2 (L1 - L3),
+#          3 L2^2, 3 L3(2 L1 - L3), 6 L2 L3, 3 L3^2] * nodes
+# We evaluate this at each of the 15 points in the quartic
+# triangle and then stack them (2 rows * 15 = 30 rows)
+# pylint: disable=bad-whitespace
+CUBIC_JACOBIAN_HELPER = np.array([
+    [-48,  48,   0,  0,   0,   0,  0,   0,  0,  0],
+    [-48,   0,   0,  0,  48,   0,  0,   0,  0,  0],
+    [-27,   9,  15,  3,   0,   0,  0,   0,  0,  0],
+    [-27, -18,  -3,  0,  27,  18,  3,   0,  0,  0],
+    [-12, -12,  12, 12,   0,   0,  0,   0,  0,  0],
+    [-12, -24, -12,  0,  12,  24, 12,   0,  0,  0],
+    [ -3, -15,  -9, 27,   0,   0,  0,   0,  0,  0],  # noqa: E201
+    [ -3, -18, -27,  0,   3,  18, 27,   0,  0,  0],  # noqa: E201
+    [  0,   0, -48, 48,   0,   0,  0,   0,  0,  0],  # noqa: E201
+    [  0,   0, -48,  0,   0,   0, 48,   0,  0,  0],  # noqa: E201
+    [-27,  27,   0,  0, -18,  18,  0,  -3,  3,  0],
+    [-27,   0,   0,  0,   9,   0,  0,  15,  0,  3],
+    [-12,   0,   9,  3, -12,   6,  6,  -3,  3,  0],
+    [-12, -12,  -3,  0,   0,   6,  3,   9,  6,  3],
+    [ -3,  -9,   0, 12,  -6,  -6, 12,  -3,  3,  0],  # noqa: E201
+    [ -3, -12, -12,  0,  -3,   0, 12,   3, 12,  3],  # noqa: E201
+    [  0,   0, -27, 27,   0, -18, 18,  -3,  3,  0],  # noqa: E201
+    [  0,   0, -27,  0,   0, -18, 27,  -3, 18,  3],  # noqa: E201
+    [-12,  12,   0,  0, -24,  24,  0, -12, 12,  0],
+    [-12,   0,   0,  0, -12,   0,  0,  12,  0, 12],
+    [ -3,  -3,   3,  3, -12,   0, 12, -12, 12,  0],  # noqa: E201
+    [ -3,  -6,  -3,  0,  -9,  -6,  3,   0, 12, 12],  # noqa: E201
+    [  0,   0, -12, 12,   0, -24, 24, -12, 12,  0],  # noqa: E201
+    [  0,   0, -12,  0,   0, -24, 12, -12, 24, 12],  # noqa: E201
+    [ -3,   3,   0,  0, -18,  18,  0, -27, 27,  0],  # noqa: E201
+    [ -3,   0,   0,  0, -15,   0,  0,  -9,  0, 27],  # noqa: E201
+    [  0,   0,  -3,  3,   0, -18, 18, -27, 27,  0],  # noqa: E201
+    [  0,   0,  -3,  0,   0, -18,  3, -27, 18, 27],  # noqa: E201
+    [  0,   0,   0,  0,   0,   0,  0, -48, 48,  0],  # noqa: E201
+    [  0,   0,   0,  0,   0,   0,  0, -48,  0, 48],  # noqa: E201
+], dtype=float) / 16.0
+QUARTIC_TO_BERNSTEIN = np.array([
+    [36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [-39, 144, -108, 48, -9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [26, -128, 240, -128, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [-9, 48, -108, 144, -39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [-39, 0, 0, 0, 0, 144, 0, 0, 0, -108, 0, 0, 48, 0, -9],
+    [26, -64, -24, 32, -9, -64, 288, -96, 16, -24, -96, 12, 32, 16, -9],
+    [-9, 32, -24, -64, 26, 16, -96, 288, -64, 12, -96, -24, 16, 32, -9],
+    [0, 0, 0, 0, -39, 0, 0, 0, 144, 0, 0, -108, 0, 48, -9],
+    [26, 0, 0, 0, 0, -128, 0, 0, 0, 240, 0, 0, -128, 0, 26],
+    [-9, 16, 12, 16, -9, 32, -96, -96, 32, -24, 288, -24, -64, -64, 26],
+    [0, 0, 0, 0, 26, 0, 0, 0, -128, 0, 0, 240, 0, -128, 26],
+    [-9, 0, 0, 0, 0, 48, 0, 0, 0, -108, 0, 0, 144, 0, -39],
+    [0, 0, 0, 0, -9, 0, 0, 0, 48, 0, 0, -108, 0, 144, -39],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36],
+], dtype=float) / 36.0
+# pylint: enable=bad-whitespace
 
 
 def polynomial_sign(poly_surface):
@@ -254,6 +312,54 @@ def quadratic_jacobian_polynomial(nodes):
     # Convert the nodal values to the Bernstein basis...
     # pylint: disable=no-member
     bernstein = QUADRATIC_TO_BERNSTEIN.dot(jac_at_nodes)
+    # pylint: enable=no-member
+    return bernstein
+
+
+def cubic_jacobian_polynomial(nodes):
+    r"""Compute the Jacobian determinant of a cubic surface.
+
+    Converts :math:`\det(J(s, t))` to a polynomial on the reference
+    triangle and represents it as a surface object.
+
+    .. note::
+
+        This assumes that ``nodes`` is 10x2 but doesn't verify this.
+        (However, the multiplication by ``CUBIC_JACOBIAN_HELPER``
+        would fail if ``nodes`` wasn't 10xN and then the ensuing
+        determinants would fail if there weren't 2 columns.)
+
+    Args:
+        nodes (numpy.ndarray): A 10x2 array of nodes in a surface.
+
+    Returns:
+        numpy.ndarray: Coefficients in Bernstein basis.
+    """
+    # First evaluate the Jacobian at each of the 15 nodes
+    # in the quartic triangle.
+    # pylint: disable=no-member
+    jac_parts = CUBIC_JACOBIAN_HELPER.dot(nodes)
+    # pylint: enable=no-member
+    jac_at_nodes = np.empty((15, 1))
+    jac_at_nodes[0, 0] = np.linalg.det(jac_parts[:2, :])
+    jac_at_nodes[1, 0] = np.linalg.det(jac_parts[2:4, :])
+    jac_at_nodes[2, 0] = np.linalg.det(jac_parts[4:6, :])
+    jac_at_nodes[3, 0] = np.linalg.det(jac_parts[6:8, :])
+    jac_at_nodes[4, 0] = np.linalg.det(jac_parts[8:10, :])
+    jac_at_nodes[5, 0] = np.linalg.det(jac_parts[10:12, :])
+    jac_at_nodes[6, 0] = np.linalg.det(jac_parts[12:14, :])
+    jac_at_nodes[7, 0] = np.linalg.det(jac_parts[14:16, :])
+    jac_at_nodes[8, 0] = np.linalg.det(jac_parts[16:18, :])
+    jac_at_nodes[9, 0] = np.linalg.det(jac_parts[18:20, :])
+    jac_at_nodes[10, 0] = np.linalg.det(jac_parts[20:22, :])
+    jac_at_nodes[11, 0] = np.linalg.det(jac_parts[22:24, :])
+    jac_at_nodes[12, 0] = np.linalg.det(jac_parts[24:26, :])
+    jac_at_nodes[13, 0] = np.linalg.det(jac_parts[26:28, :])
+    jac_at_nodes[14, 0] = np.linalg.det(jac_parts[28:, :])
+
+    # Convert the nodal values to the Bernstein basis...
+    # pylint: disable=no-member
+    bernstein = QUARTIC_TO_BERNSTEIN.dot(jac_at_nodes)
     # pylint: enable=no-member
     return bernstein
 
