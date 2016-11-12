@@ -567,9 +567,6 @@ class Surface(_base.Base):
         Returns:
             Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
             lower right and upper left sub-surfaces (in that order).
-
-        Raises:
-            NotImplementedError: If the degree is not 1, 2 or 3.
         """
         if self.degree == 1:
             # pylint: disable=no-member
@@ -578,7 +575,7 @@ class Surface(_base.Base):
             nodes_a = new_nodes[(0, 1, 3), :]
             nodes_b = new_nodes[(4, 3, 1), :]
             nodes_c = new_nodes[(1, 2, 4), :]
-            nodes_d = new_nodes[(3, 4, 5), :]
+            nodes_d = new_nodes[3:, :]
         elif self.degree == 2:
             # pylint: disable=no-member
             new_nodes = _surface_helpers.QUADRATIC_SUBDIVIDE.dot(self._nodes)
@@ -586,7 +583,7 @@ class Surface(_base.Base):
             nodes_a = new_nodes[(0, 1, 2, 5, 6, 9), :]
             nodes_b = new_nodes[(11, 10, 9, 7, 6, 2), :]
             nodes_c = new_nodes[(2, 3, 4, 7, 8, 11), :]
-            nodes_d = new_nodes[(9, 10, 11, 12, 13, 14), :]
+            nodes_d = new_nodes[9:, :]
         elif self.degree == 3:
             # pylint: disable=no-member
             new_nodes = _surface_helpers.CUBIC_SUBDIVIDE.dot(self._nodes)
@@ -594,10 +591,31 @@ class Surface(_base.Base):
             nodes_a = new_nodes[(0, 1, 2, 3, 7, 8, 9, 13, 14, 18), :]
             nodes_b = new_nodes[(21, 20, 19, 18, 16, 15, 14, 10, 9, 3), :]
             nodes_c = new_nodes[(3, 4, 5, 6, 10, 11, 12, 16, 17, 21), :]
-            nodes_d = new_nodes[(18, 19, 20, 21, 22, 23, 24, 25, 26, 27), :]
+            nodes_d = new_nodes[18:, :]
+        elif self.degree == 4:
+            # pylint: disable=no-member
+            new_nodes = _surface_helpers.QUARTIC_SUBDIVIDE.dot(self._nodes)
+            # pylint: enable=no-member
+            nodes_a = new_nodes[
+                (0, 1, 2, 3, 4, 9, 10, 11, 12, 17, 18, 19, 24, 25, 30), :]
+            nodes_b = new_nodes[
+                (34, 33, 32, 31, 30, 28, 27, 26, 25, 21, 20, 19, 13, 12, 4), :]
+            nodes_c = new_nodes[
+                (4, 5, 6, 7, 8, 13, 14, 15, 16, 21, 22, 23, 28, 29, 34), :]
+            nodes_d = new_nodes[30:, :]
         else:
-            raise NotImplementedError(
-                'Degrees 1, 2 and 3 only supported at this time')
+            nodes_a = _surface_helpers.specialize_surface(
+                self._nodes, self.degree,
+                (1.0, 0.0, 0.0), (0.5, 0.5, 0.0), (0.5, 0.0, 0.5))
+            nodes_b = _surface_helpers.specialize_surface(
+                self._nodes, self.degree,
+                (0.0, 0.5, 0.5), (0.5, 0.0, 0.5), (0.5, 0.5, 0.0))
+            nodes_c = _surface_helpers.specialize_surface(
+                self._nodes, self.degree,
+                (0.5, 0.5, 0.0), (0.0, 1.0, 0.0), (0.0, 0.5, 0.5))
+            nodes_d = _surface_helpers.specialize_surface(
+                self._nodes, self.degree,
+                (0.5, 0.0, 0.5), (0.0, 0.5, 0.5), (0.0, 0.0, 1.0))
 
         return (Surface(nodes_a), Surface(nodes_b),
                 Surface(nodes_c), Surface(nodes_d))

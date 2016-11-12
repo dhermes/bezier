@@ -744,11 +744,27 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(surface.degree, 3)
         self._subdivide_points_check(surface)
 
-    def test_subdivide_unsupported_degree(self):
-        nodes = np.zeros((78, 3))
+    def test_subdivide_quartic_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(15, 2), seed=741002, num_bits=8)
+
         surface = self._make_one(nodes)
-        with self.assertRaises(NotImplementedError):
-            surface.subdivide()
+        self.assertEqual(surface.degree, 4)
+        self._subdivide_points_check(surface)
+
+    def test_subdivide_on_the_fly(self):
+        # Test for a degree where the subdivision is done on the fly
+        # rather than via a stored matrix.
+        nodes = utils.get_random_nodes(
+            shape=(21, 2), seed=446, num_bits=8)
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+
+        surface = self._make_one(nodes)
+        self.assertEqual(surface.degree, 5)
+        self._subdivide_points_check(surface)
 
     def test_copy(self):
         import mock
