@@ -626,8 +626,10 @@ class Surface(_base.Base):
             return np.linalg.matrix_rank(delta_mat) == 2
         elif self.degree == 2:
             if self.dimension == 2:
-                jac_poly = _surface_helpers.quadratic_jacobian_polynomial(
-                    self._nodes, Surface)
+                bernstein = _surface_helpers.quadratic_jacobian_polynomial(
+                    self._nodes)
+                # Form the polynomial p(s, t) as a Surface.
+                jac_poly = Surface(bernstein)
                 # Find the sign of the polynomial, where 0 means mixed.
                 poly_sign = _surface_helpers.polynomial_sign(jac_poly)
                 return poly_sign != 0

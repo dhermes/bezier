@@ -173,7 +173,7 @@ def polynomial_sign(poly_surface):
             MAX_SUBDIVISIONS)
 
 
-def quadratic_jacobian_polynomial(nodes, surface_class):
+def quadratic_jacobian_polynomial(nodes):
     r"""Compute the Jacobian determinant of a quadratic surface.
 
     Converts :math:`\det(J(s, t))` to a polynomial on the reference
@@ -188,12 +188,9 @@ def quadratic_jacobian_polynomial(nodes, surface_class):
 
     Args:
         nodes (numpy.ndarray): A 6x2 array of nodes in a surface.
-        surface_class (type): Constructor for a surface object. We use
-            this as an argument to avoid a circular dependency.
 
     Returns:
-        Surface: Artificial "surface" representing the polynomial
-        in the Bernstein basis.
+        numpy.ndarray: Coefficients in Bernstein basis.
     """
     # First evaluate the Jacobian at each of the 6 nodes.
     # pylint: disable=no-member
@@ -211,8 +208,7 @@ def quadratic_jacobian_polynomial(nodes, surface_class):
     # pylint: disable=no-member
     bernstein = QUADRATIC_TO_BERNSTEIN.dot(jac_at_nodes)
     # pylint: enable=no-member
-    # ...and then form the polynomial p(s, t) as a Surface.
-    return surface_class(bernstein)
+    return bernstein
 
 
 def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):

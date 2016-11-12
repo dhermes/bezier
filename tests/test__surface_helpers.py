@@ -81,10 +81,8 @@ class Test_quadratic_jacobian_polynomial(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _surface_helpers
-        from bezier import surface
 
-        return _surface_helpers.quadratic_jacobian_polynomial(
-            nodes, surface.Surface)
+        return _surface_helpers.quadratic_jacobian_polynomial(nodes)
 
     def test_it(self):
         # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
@@ -96,13 +94,12 @@ class Test_quadratic_jacobian_polynomial(unittest.TestCase):
             [0.0, 0.0],
             [0.0, 1.0],
         ])
-        jac_poly = self._call_function_under_test(nodes)
-        self.assertEqual(jac_poly.degree, 2)
-        self.assertEqual(jac_poly.dimension, 1)
+        bernstein = self._call_function_under_test(nodes)
+        self.assertEqual(bernstein.shape, (6, 1))
         # pylint: disable=no-member
         expected = np.array([[0.0, 2.0, 0.0, -2.0, 2.0, 0.0]]).T
         # pylint: enable=no-member
-        self.assertTrue(np.all(jac_poly.nodes == expected))
+        self.assertTrue(np.all(bernstein == expected))
 
 
 class Test_de_casteljau_one_round(unittest.TestCase):
