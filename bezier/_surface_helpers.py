@@ -267,3 +267,67 @@ def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
         parent_i2 += 1
 
     return new_nodes
+
+
+def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
+    """Specialize a surface to a reparameterization
+
+    Does so by taking three points (in Barycentric form) within the
+    reference triangle and then reparameterizing the surface onto
+    the triangle formed by those three points.
+
+    .. note::
+
+        This assumes the surface is degree 1 or greater but doesn't check.
+
+    Args:
+        nodes (numpy.ndarray): Control points for a surface.
+        degree (int): The degree of the surface.
+        weights_a (Tuple[float, float, float]): Barycentric weights for a
+            point in the reference triangle
+        weights_b (Tuple[float, float, float]): Barycentric weights for a
+            point in the reference triangle
+        weights_c (Tuple[float, float, float]): Barycentric weights for a
+            point in the reference triangle
+
+    Returns:
+        numpy.ndarray: The control points for the specialized surface.
+    """
+    # Uses A-->0, B-->1, C-->2 to represent the specialization used.
+    partial_vals = {
+        (0,): de_casteljau_one_round(nodes, degree, *weights_a),
+        (1,): de_casteljau_one_round(nodes, degree, *weights_b),
+        (2,): de_casteljau_one_round(nodes, degree, *weights_c),
+    }
+
+    for reduced_deg in six.moves.xrange(degree - 1, 0, -1):
+        new_partial = {}
+        num_nodes = ((reduced_deg + 1) * (reduced_deg + 2)) / 2
+        id_mat = np.eye(num_nodes)
+
+        # Pre-compute the matrices that do the reduction so we don't
+        # have to **actually** perform the de Casteljau algorithm
+        # every time.
+        transform = {
+            0: de_casteljau_one_round(id_mat, reduced_deg, *weights_a),
+            1: de_casteljau_one_round(id_mat, reduced_deg, *weights_b),
+            2: de_casteljau_one_round(id_mat, reduced_deg, *weights_c),
+        }
+        for key, sub_nodes in six.iteritems(partial_vals):
+            # Our keys are ascending so we increment from the last value.
+            for next_id in six.moves.xrange(key[-1], 2 + 1):
+                new_key = key + (next_id,)
+                new_partial[new_key] = transform[next_id].dot(sub_nodes)
+
+        partial_vals = new_partial
+
+    result = np.empty(nodes.shape)
+    index = 0
+    for k in six.moves.xrange(degree + 1):
+        for j in six.moves.xrange(degree + 1 - k):
+            i = degree - j - k
+            key = (0,) * i + (1,) * j + (2,) * k
+            result[index, :] = partial_vals[key]
+            index += 1
+
+    return result

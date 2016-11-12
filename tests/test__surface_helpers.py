@@ -176,3 +176,71 @@ class Test_de_casteljau_one_round(unittest.TestCase):
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val)
         self.assertTrue(np.all(result == expected))
+
+
+class Test_specialize_surface(unittest.TestCase):
+
+    WEIGHTS0 = (1.0, 0.0, 0.0)
+    WEIGHTS1 = (0.5, 0.5, 0.0)
+    WEIGHTS2 = (0.0, 1.0, 0.0)
+    WEIGHTS3 = (0.5, 0.0, 0.5)
+    WEIGHTS4 = (0.0, 0.5, 0.5)
+    WEIGHTS5 = (0.0, 0.0, 1.0)
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree,
+                                  weights_a, weights_b, weights_c):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.specialize_surface(
+            nodes, degree, weights_a, weights_b, weights_c)
+
+    def _helpers(self, degree, all_nodes, inds_a, inds_b, inds_c, inds_d):
+        num_nodes = len(inds_a)
+        id_mat = np.eye(num_nodes)
+
+        expected_a = self._call_function_under_test(
+            id_mat, degree,
+            self.WEIGHTS0, self.WEIGHTS1, self.WEIGHTS3)
+        expected_b = self._call_function_under_test(
+            id_mat, degree,
+            self.WEIGHTS4, self.WEIGHTS3, self.WEIGHTS1)
+        expected_c = self._call_function_under_test(
+            id_mat, degree,
+            self.WEIGHTS1, self.WEIGHTS2, self.WEIGHTS4)
+        expected_d = self._call_function_under_test(
+            id_mat, degree,
+            self.WEIGHTS3, self.WEIGHTS4, self.WEIGHTS5)
+
+        self.assertTrue(np.all(all_nodes[inds_a, :] == expected_a))
+        self.assertTrue(np.all(all_nodes[inds_b, :] == expected_b))
+        self.assertTrue(np.all(all_nodes[inds_c, :] == expected_c))
+        self.assertTrue(np.all(all_nodes[inds_d, :] == expected_d))
+
+    def test_known_linear(self):
+        from bezier import _surface_helpers
+
+        all_nodes = _surface_helpers.LINEAR_SUBDIVIDE
+        self._helpers(1, all_nodes,
+                      (0, 1, 3), (4, 3, 1),
+                      (1, 2, 4), (3, 4, 5))
+
+    def test_known_quadratic(self):
+        from bezier import _surface_helpers
+
+        all_nodes = _surface_helpers.QUADRATIC_SUBDIVIDE
+        self._helpers(2, all_nodes,
+                      (0, 1, 2, 5, 6, 9),
+                      (11, 10, 9, 7, 6, 2),
+                      (2, 3, 4, 7, 8, 11),
+                      (9, 10, 11, 12, 13, 14))
+
+    def test_known_cubic(self):
+        from bezier import _surface_helpers
+
+        all_nodes = _surface_helpers.CUBIC_SUBDIVIDE
+        self._helpers(3, all_nodes,
+                      (0, 1, 2, 3, 7, 8, 9, 13, 14, 18),
+                      (21, 20, 19, 18, 16, 15, 14, 10, 9, 3),
+                      (3, 4, 5, 6, 10, 11, 12, 16, 17, 21),
+                      (18, 19, 20, 21, 22, 23, 24, 25, 26, 27))
