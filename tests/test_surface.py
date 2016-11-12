@@ -103,6 +103,81 @@ class Test__quadratic_jacobian_polynomial(unittest.TestCase):
         self.assertTrue(np.all(jac_poly.nodes == expected))
 
 
+class Test__de_casteljau_one_round(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
+        from bezier import surface
+
+        return surface._de_casteljau_one_round(
+            nodes, degree, lambda1, lambda2, lambda3)
+
+    def test_linear(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        s_val, t_val = 0.5, 0.375
+        expected = np.array([
+            [s_val, t_val],
+        ])
+
+        result = self._call_function_under_test(
+            nodes, 1, 1.0 - s_val - t_val, s_val, t_val)
+        self.assertTrue(np.all(result == expected))
+
+    def test_quadratic(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(6, 2), seed=97764, num_bits=8)
+
+        p200, p110, p020, p101, p011, p002 = nodes
+        s_val = 0.25
+        t_val = 0.125
+        lambda1 = 1.0 - s_val - t_val
+
+        q100 = lambda1 * p200 + s_val * p110 + t_val * p101
+        q010 = lambda1 * p110 + s_val * p020 + t_val * p011
+        q001 = lambda1 * p101 + s_val * p011 + t_val * p002
+
+        expected = np.vstack([q100, q010, q001])
+        result = self._call_function_under_test(
+            nodes, 2, lambda1, s_val, t_val)
+        self.assertTrue(np.all(result == expected))
+
+    def test_cubic(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [3.25, 1.5],
+            [6.5, 1.5],
+            [10.0, 0.0],
+            [1.5, 3.25],
+            [5.0, 5.0],
+            [10.0, 5.25],
+            [1.5, 6.5],
+            [5.25, 10.0],
+            [0.0, 10.0],
+        ])
+
+        s_val = 0.25
+        t_val = 0.375
+        lambda1 = 1.0 - s_val - t_val
+        transform = np.array([
+            [lambda1, s_val, 0., 0., t_val, 0., 0., 0., 0., 0.],
+            [0., lambda1, s_val, 0., 0., t_val, 0., 0., 0., 0.],
+            [0., 0., lambda1, s_val, 0., 0., t_val, 0., 0., 0.],
+            [0., 0., 0., 0., lambda1, s_val, 0., t_val, 0., 0.],
+            [0., 0., 0., 0., 0., lambda1, s_val, 0., t_val, 0.],
+            [0., 0., 0., 0., 0., 0., 0., lambda1, s_val, t_val],
+        ])
+        expected = transform.dot(nodes)
+        result = self._call_function_under_test(
+            nodes, 3, lambda1, s_val, t_val)
+        self.assertTrue(np.all(result == expected))
+
+
 class TestSurface(unittest.TestCase):
 
     @staticmethod

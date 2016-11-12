@@ -226,6 +226,64 @@ def _quadratic_jacobian_polynomial(nodes):
     return Surface(bernstein)
 
 
+def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
+    r"""Performs one "round" of the de Casteljau algorithm for surfaces.
+
+    Converts the ``nodes`` into a basis for a surface one degree smaller
+    by using the barycentric weights:
+
+    .. math::
+
+       q_{i, j, k} = \lambda_1 \cdot p_{i + 1, j, k} +
+           \lambda_2 \cdot p_{i, j + 1, k} + \lambda_2 \cdot p_{i, j, k + 1}
+
+    .. note:
+
+       For degree :math:`d`d, the number of nodes should be
+       :math:`(d + 1)(d + 2)/2`, but we don't verify this property.
+
+    Args:
+        nodes (numpy.ndarray): The nodes to reduce.
+        degree (int): The degree of the surface.
+        lambda1 (float): Parameter along the reference triangle.
+        lambda2 (float): Parameter along the reference triangle.
+        lambda3 (float): Parameter along the reference triangle.
+
+    Returns:
+        numpy.ndarray: The converted nodes.
+    """
+    num_nodes, dimension = nodes.shape
+    num_new_nodes = num_nodes - degree - 1
+
+    new_nodes = np.empty((num_new_nodes, dimension))
+
+    index = 0
+    # parent_i1 = index + k
+    # parent_i2 = index + k + 1
+    # parent_i3 = index + degree + 1
+    parent_i1 = 0
+    parent_i2 = 1
+    parent_i3 = degree + 1
+    for k in six.moves.xrange(degree):
+        for unused_j in six.moves.xrange(degree - k):
+            # NOTE: i = (degree - 1) - j - k
+            new_nodes[index, :] = (
+                lambda1 * nodes[parent_i1, :] +
+                lambda2 * nodes[parent_i2, :] +
+                lambda3 * nodes[parent_i3, :])
+            # Update all the indices.
+            parent_i1 += 1
+            parent_i2 += 1
+            parent_i3 += 1
+            index += 1
+
+        # Update the indices that depend on k.
+        parent_i1 += 1
+        parent_i2 += 1
+
+    return new_nodes
+
+
 class Surface(_base.Base):
     r"""Represents a B |eacute| zier `surface`_.
 
