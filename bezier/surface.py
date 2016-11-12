@@ -832,13 +832,30 @@ class Surface(_base.Base):
         """bool: Flag indicating if the surface no singularites.
 
         This checks if the Jacobian of the map from the reference
-        triangle is nonzero.
+        triangle is nonzero. For example, a linear "surface"
+        with collinear points is invalid:
 
         .. doctest:: surface-is-valid
 
           >>> nodes = np.array([
           ...     [0.0, 0.0],
+          ...     [1.0, 1.0],
+          ...     [2.0, 2.0],
+          ... ])
+          >>> surface = bezier.Surface(nodes)
+          >>> surface.is_valid
+          False
+
+        while a quadratic surface with one straight side:
+
+        .. doctest:: surface-is-valid
+
+          >>> nodes = np.array([
+          ...     [0.0, 0.0],
+          ...     [0.5, 0.125],
           ...     [1.0, 0.0],
+          ...     [-0.125, 0.5],
+          ...     [0.5, 0.5],
           ...     [0.0, 1.0],
           ... ])
           >>> surface = bezier.Surface(nodes)
