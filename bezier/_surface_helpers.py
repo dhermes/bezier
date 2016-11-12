@@ -316,6 +316,87 @@ def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     return new_nodes
 
 
+def _make_transform(degree, weights_a, weights_b, weights_c):
+    """Compute matrices corresponding to the de Casteljau algorithm.
+
+    Applies the de Casteljau to the identity matrix, thus
+    effectively caching the algorithm in a transformation matrix.
+
+    .. note::
+
+       This is premature optimization. It's unclear if the time
+       saved from "caching" one round of de Casteljau is cancelled
+       out by the extra storage required for the 3 matrices.
+
+    Args:
+        degree (int): The degree of a candidate surface.
+        weights_a (Tuple[float, float, float]): Barycentric weights for a
+            point in the reference triangle
+        weights_b (Tuple[float, float, float]): Barycentric weights for a
+            point in the reference triangle
+        weights_c (Tuple[float, float, float]): Barycentric weights for a
+            point in the reference triangle
+
+    Returns:
+        Mapping[int, numpy.ndarray]: Mapping from keys to the de Casteljau
+        transformation mappings. The keys are ``0`` corresponding to
+        ``weights_a``, ``1`` to ``weights_b`` and ``2`` to ``weights_c``.
+    """
+    num_nodes = ((degree + 1) * (degree + 2)) / 2
+    id_mat = np.eye(num_nodes)
+
+    # Pre-compute the matrices that do the reduction so we don't
+    # have to **actually** perform the de Casteljau algorithm
+    # every time.
+    transform = {
+        0: de_casteljau_one_round(id_mat, degree, *weights_a),
+        1: de_casteljau_one_round(id_mat, degree, *weights_b),
+        2: de_casteljau_one_round(id_mat, degree, *weights_c),
+    }
+    return transform
+
+
+def _reduced_to_matrix(shape, degree, vals_by_weight):
+    r"""Converts a reduced values dictionary into a matrix.
+
+    The ``vals_by_weight`` mapping has keys of the form:
+    ``(0, ..., 1, ..., 2, ...)`` where the ``0`` corresponds
+    to the number of times the first set of barycentric
+    weights was used in the reduction process, and similarly
+    for ``1`` and ``2``.
+
+    These points correspond to barycentric weights in their
+    own right. For example ``(0, 0, 1, 2)`` corresponds to
+    the Barycentric weight
+    :math:`\left(\frac{2}{4}, \frac{1}{4}, \frac{1}{4}\right)`.
+
+    Once the keys in ``vals_by_weight`` have been converted
+    to Barycentric coordinates, we order them according to
+    our rule (bottom to top, left to right) and then return
+    them in a single matrix.
+
+    Args:
+        shape (tuple): The shape of the result matrix.
+        degree (int): The degree of the surface.
+        vals_by_weight (Mapping[tuple, numpy.ndarray]): Dictionary
+            of reduced nodes according to blending of each of the
+            three sets of weights in a reduction.
+
+    Returns:
+        numpy.ndarray: The newly created reduced control points.
+    """
+    result = np.empty(shape)
+    index = 0
+    for k in six.moves.xrange(degree + 1):
+        for j in six.moves.xrange(degree + 1 - k):
+            i = degree - j - k
+            key = (0,) * i + (1,) * j + (2,) * k
+            result[index, :] = vals_by_weight[key]
+            index += 1
+
+    return result
+
+
 def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
     """Specialize a surface to a reparameterization
 
@@ -349,17 +430,8 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
 
     for reduced_deg in six.moves.xrange(degree - 1, 0, -1):
         new_partial = {}
-        num_nodes = ((reduced_deg + 1) * (reduced_deg + 2)) / 2
-        id_mat = np.eye(num_nodes)
-
-        # Pre-compute the matrices that do the reduction so we don't
-        # have to **actually** perform the de Casteljau algorithm
-        # every time.
-        transform = {
-            0: de_casteljau_one_round(id_mat, reduced_deg, *weights_a),
-            1: de_casteljau_one_round(id_mat, reduced_deg, *weights_b),
-            2: de_casteljau_one_round(id_mat, reduced_deg, *weights_c),
-        }
+        transform = _make_transform(
+            reduced_deg, weights_a, weights_b, weights_c)
         for key, sub_nodes in six.iteritems(partial_vals):
             # Our keys are ascending so we increment from the last value.
             for next_id in six.moves.xrange(key[-1], 2 + 1):
@@ -368,13 +440,4 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
 
         partial_vals = new_partial
 
-    result = np.empty(nodes.shape)
-    index = 0
-    for k in six.moves.xrange(degree + 1):
-        for j in six.moves.xrange(degree + 1 - k):
-            i = degree - j - k
-            key = (0,) * i + (1,) * j + (2,) * k
-            result[index, :] = partial_vals[key]
-            index += 1
-
-    return result
+    return _reduced_to_matrix(nodes.shape, degree, partial_vals)
