@@ -85,7 +85,7 @@ class Test__quadratic_jacobian_polynomial(unittest.TestCase):
         return surface._quadratic_jacobian_polynomial(nodes)
 
     def test_it(self):
-        # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^3]
+        # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
         nodes = np.array([
             [1.0, 0.0],
             [0.0, 0.0],
@@ -863,7 +863,7 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(surface._compute_valid())
 
     def test__compute_valid_quadratic_invalid(self):
-        # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^3]
+        # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
         nodes = np.array([
             [1.0, 0.0],
             [0.0, 0.0],
