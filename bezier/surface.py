@@ -552,9 +552,8 @@ class Surface(_base.Base):
 
         Raises:
             ValueError: If the weights are not valid barycentric
-                coordinates, e.g. they don't sum to ``1``.
+                coordinates, i.e. they don't sum to ``1``.
             ValueError: If some weights are negative.
-            NotImplementedError: If the degree is greater than 3.
         """
         weights_total = lambda1 + lambda2 + lambda3
         if not np.allclose(weights_total, 1.0):
@@ -595,8 +594,11 @@ class Surface(_base.Base):
                 ]
             ])
         else:
-            raise NotImplementedError(
-                'Degrees 1, 2 and 3 only supported at this time')
+            result = self._nodes
+            for reduced_deg in six.moves.xrange(self.degree, 0, -1):
+                result = _de_casteljau_one_round(
+                    result, reduced_deg, lambda1, lambda2, lambda3)
+            return result.flatten()
 
         return weights.dot(self._nodes).flatten()  # pylint: disable=no-member
 

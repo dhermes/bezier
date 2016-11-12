@@ -449,14 +449,32 @@ class TestSurface(unittest.TestCase):
         with self.assertRaises(ValueError):
             surface.evaluate_barycentric(*lambda_vals)
 
-    def test_evaluate_barycentric_unsupported(self):
-        surface = self._make_one(np.zeros((15, 2)))
+    def test_evaluate_barycentric_via_de_casteljau(self):
+        import math
 
-        lambda_vals = (1.0, 0.0, 0.0)
-        self.assertEqual(sum(lambda_vals), 1.0)
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(15, 2), seed=11112222, num_bits=8)
+        surface = self._make_one(nodes)
+        self.assertEqual(surface.degree, 4)
 
-        with self.assertRaises(NotImplementedError):
-            surface.evaluate_barycentric(*lambda_vals)
+        lambda_vals = (0.125, 0.375, 0.5)
+        index = 0
+        expected = np.array([0.0, 0.0])
+        for k in range(4 + 1):
+            for j in range(4 + 1 - k):
+                i = 4 - j - k
+                denom = (math.factorial(i) * math.factorial(j) *
+                         math.factorial(k))
+                coeff = 24 / denom
+                expected += (
+                    coeff * lambda_vals[0]**i * lambda_vals[1]**j *
+                    lambda_vals[2]**k * nodes[index, :])
+                index += 1
+
+        result = surface.evaluate_barycentric(*lambda_vals)
+        self.assertTrue(np.all(expected == result))
 
     def test_evaluate_cartesian(self):
         s_t_vals = (0.125, 0.125)
