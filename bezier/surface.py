@@ -125,9 +125,9 @@ class Surface(_base.Base):
 
       >>> import bezier
       >>> nodes = np.array([
-      ...     [0.0, 0.0],
-      ...     [1.0, 0.25],
-      ...     [0.25, 1.0],
+      ...     [0.0 , 0.0 ],
+      ...     [1.0 , 0.25],
+      ...     [0.25, 1.0 ],
       ... ])
       >>> surface = bezier.Surface(nodes)
       >>> surface
@@ -261,9 +261,9 @@ class Surface(_base.Base):
           :options: +NORMALIZE_WHITESPACE
 
           >>> nodes = np.array([
-          ...     [0.0, 0.0],
-          ...     [1.0, 0.25],
-          ...     [0.25, 1.0],
+          ...     [0.0 , 0.0 ],
+          ...     [1.0 , 0.25],
+          ...     [0.25, 1.0 ],
           ... ])
           >>> surface = bezier.Surface(nodes)
           >>> surface.evaluate_barycentric(0.125, 0.125, 0.75)
@@ -687,12 +687,12 @@ class Surface(_base.Base):
         .. doctest:: surface-is-valid
 
           >>> nodes = np.array([
-          ...     [0.0, 0.0],
-          ...     [0.5, 0.125],
-          ...     [1.0, 0.0],
-          ...     [-0.125, 0.5],
-          ...     [0.5, 0.5],
-          ...     [0.0, 1.0],
+          ...     [ 0.0  , 0.0  ],
+          ...     [ 0.5  , 0.125],
+          ...     [ 1.0  , 0.0  ],
+          ...     [-0.125, 0.5  ],
+          ...     [ 0.5  , 0.5  ],
+          ...     [ 0.0  , 1.0  ],
           ... ])
           >>> surface = bezier.Surface(nodes)
           >>> surface.is_valid
