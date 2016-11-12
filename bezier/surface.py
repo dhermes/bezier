@@ -100,28 +100,30 @@ _LINEAR_JACOBIAN_HELPER = np.array([
 # dB/dt = [-2L1, -2L2, 0, 2(L1 - L3), 2L2, 2L3] * nodes
 # We evaluate this at each of the 6 points in the quadratic
 # triangle and then stack them (2 rows * 6 = 12 rows)
+# pylint: disable=bad-whitespace
 _QUADRATIC_JACOBIAN_HELPER = np.array([
     [-2,  2, 0,  0, 0, 0],
     [-2,  0, 0,  2, 0, 0],
     [-1,  0, 1,  0, 0, 0],
     [-1, -1, 0,  1, 1, 0],
-    [ 0, -2, 2,  0, 0, 0],
-    [ 0, -2, 0,  0, 2, 0],
+    [ 0, -2, 2,  0, 0, 0],  # noqa: E201
+    [ 0, -2, 0,  0, 2, 0],  # noqa: E201
     [-1,  1, 0, -1, 1, 0],
     [-1,  0, 0,  0, 0, 1],
-    [ 0, -1, 1, -1, 1, 0],
-    [ 0, -1, 0, -1, 1, 1],
-    [ 0,  0, 0, -2, 2, 0],
-    [ 0,  0, 0, -2, 0, 2],
+    [ 0, -1, 1, -1, 1, 0],  # noqa: E201
+    [ 0, -1, 0, -1, 1, 1],  # noqa: E201
+    [ 0,  0, 0, -2, 2, 0],  # noqa: E201
+    [ 0,  0, 0, -2, 0, 2],  # noqa: E201
 ], dtype=float)
 _QUADRATIC_TO_BERNSTEIN = np.array([
-    [ 2, 0,  0, 0, 0,  0],
+    [ 2, 0,  0, 0, 0,  0],  # noqa: E201
     [-1, 4, -1, 0, 0,  0],
-    [ 0, 0,  2, 0, 0,  0],
+    [ 0, 0,  2, 0, 0,  0],  # noqa: E201
     [-1, 0,  0, 4, 0, -1],
-    [ 0, 0, -1, 0, 4, -1],
-    [ 0, 0,  0, 0, 0,  2],
+    [ 0, 0, -1, 0, 4, -1],  # noqa: E201
+    [ 0, 0,  0, 0, 0,  2],  # noqa: E201
 ], dtype=float) / 2.0
+# pylint: enable=bad-whitespace
 
 
 def _polynomial_sign(poly_surface):

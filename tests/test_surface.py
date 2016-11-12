@@ -136,15 +136,14 @@ class Test__de_casteljau_one_round(unittest.TestCase):
         p200, p110, p020, p101, p011, p002 = nodes
         s_val = 0.25
         t_val = 0.125
-        lambda1 = 1.0 - s_val - t_val
 
-        q100 = lambda1 * p200 + s_val * p110 + t_val * p101
-        q010 = lambda1 * p110 + s_val * p020 + t_val * p011
-        q001 = lambda1 * p101 + s_val * p011 + t_val * p002
+        q100 = (1.0 - s_val - t_val) * p200 + s_val * p110 + t_val * p101
+        q010 = (1.0 - s_val - t_val) * p110 + s_val * p020 + t_val * p011
+        q001 = (1.0 - s_val - t_val) * p101 + s_val * p011 + t_val * p002
 
         expected = np.vstack([q100, q010, q001])
         result = self._call_function_under_test(
-            nodes, 2, lambda1, s_val, t_val)
+            nodes, 2, 1.0 - s_val - t_val, s_val, t_val)
         self.assertTrue(np.all(result == expected))
 
     def test_cubic(self):
@@ -172,7 +171,9 @@ class Test__de_casteljau_one_round(unittest.TestCase):
             [0., 0., 0., 0., 0., lambda1, s_val, 0., t_val, 0.],
             [0., 0., 0., 0., 0., 0., 0., lambda1, s_val, t_val],
         ])
+        # pylint: disable=no-member
         expected = transform.dot(nodes)
+        # pylint: enable=no-member
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val)
         self.assertTrue(np.all(result == expected))
