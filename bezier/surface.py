@@ -22,9 +22,6 @@
 """
 
 
-import functools
-import operator
-
 from matplotlib import patches
 from matplotlib import path as _path_mod
 import matplotlib.pyplot as plt
@@ -32,258 +29,8 @@ import numpy as np
 import six
 
 from bezier import _base
+from bezier import _surface_helpers
 from bezier import curve as _curve_mod
-
-
-_MAX_SUBDIVISIONS = 5
-_LINEAR_SUBDIVIDE = np.array([
-    [2, 0, 0],
-    [1, 1, 0],
-    [0, 2, 0],
-    [1, 0, 1],
-    [0, 1, 1],
-    [0, 0, 2],
-], dtype=float) / 2.0
-_QUADRATIC_SUBDIVIDE = np.array([
-    [4, 0, 0, 0, 0, 0],
-    [2, 2, 0, 0, 0, 0],
-    [1, 2, 1, 0, 0, 0],
-    [0, 2, 2, 0, 0, 0],
-    [0, 0, 4, 0, 0, 0],
-    [2, 0, 0, 2, 0, 0],
-    [1, 1, 0, 1, 1, 0],
-    [0, 1, 1, 1, 1, 0],
-    [0, 0, 2, 0, 2, 0],
-    [1, 0, 0, 2, 0, 1],
-    [0, 1, 0, 1, 1, 1],
-    [0, 0, 1, 0, 2, 1],
-    [0, 0, 0, 2, 0, 2],
-    [0, 0, 0, 0, 2, 2],
-    [0, 0, 0, 0, 0, 4],
-], dtype=float) / 4.0
-_CUBIC_SUBDIVIDE = np.array([
-    [8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
-    [2, 4, 2, 0, 0, 0, 0, 0, 0, 0],
-    [1, 3, 3, 1, 0, 0, 0, 0, 0, 0],
-    [0, 2, 4, 2, 0, 0, 0, 0, 0, 0],
-    [0, 0, 4, 4, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 8, 0, 0, 0, 0, 0, 0],
-    [4, 0, 0, 0, 4, 0, 0, 0, 0, 0],
-    [2, 2, 0, 0, 2, 2, 0, 0, 0, 0],
-    [1, 2, 1, 0, 1, 2, 1, 0, 0, 0],
-    [0, 1, 2, 1, 1, 2, 1, 0, 0, 0],
-    [0, 0, 2, 2, 0, 2, 2, 0, 0, 0],
-    [0, 0, 0, 4, 0, 0, 4, 0, 0, 0],
-    [2, 0, 0, 0, 4, 0, 0, 2, 0, 0],
-    [1, 1, 0, 0, 2, 2, 0, 1, 1, 0],
-    [0, 1, 1, 0, 1, 2, 1, 1, 1, 0],
-    [0, 0, 1, 1, 0, 2, 2, 1, 1, 0],
-    [0, 0, 0, 2, 0, 0, 4, 0, 2, 0],
-    [1, 0, 0, 0, 3, 0, 0, 3, 0, 1],
-    [0, 1, 0, 0, 1, 2, 0, 2, 1, 1],
-    [0, 0, 1, 0, 0, 2, 1, 1, 2, 1],
-    [0, 0, 0, 1, 0, 0, 3, 0, 3, 1],
-    [0, 0, 0, 0, 2, 0, 0, 4, 0, 2],
-    [0, 0, 0, 0, 0, 2, 0, 2, 2, 2],
-    [0, 0, 0, 0, 0, 0, 2, 0, 4, 2],
-    [0, 0, 0, 0, 0, 0, 0, 4, 0, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 4, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
-], dtype=float) / 8.0
-_LINEAR_JACOBIAN_HELPER = np.array([
-    [-1, 1, 0],
-    [-1, 0, 1],
-], dtype=float)
-# The Jacobian of a quadratric (in any dimension) as given by
-# dB/ds = [-2L1, 2(L1 - L2), 2L2, -2L3, 2L3, 0] * nodes
-# dB/dt = [-2L1, -2L2, 0, 2(L1 - L3), 2L2, 2L3] * nodes
-# We evaluate this at each of the 6 points in the quadratic
-# triangle and then stack them (2 rows * 6 = 12 rows)
-# pylint: disable=bad-whitespace
-_QUADRATIC_JACOBIAN_HELPER = np.array([
-    [-2,  2, 0,  0, 0, 0],
-    [-2,  0, 0,  2, 0, 0],
-    [-1,  0, 1,  0, 0, 0],
-    [-1, -1, 0,  1, 1, 0],
-    [ 0, -2, 2,  0, 0, 0],  # noqa: E201
-    [ 0, -2, 0,  0, 2, 0],  # noqa: E201
-    [-1,  1, 0, -1, 1, 0],
-    [-1,  0, 0,  0, 0, 1],
-    [ 0, -1, 1, -1, 1, 0],  # noqa: E201
-    [ 0, -1, 0, -1, 1, 1],  # noqa: E201
-    [ 0,  0, 0, -2, 2, 0],  # noqa: E201
-    [ 0,  0, 0, -2, 0, 2],  # noqa: E201
-], dtype=float)
-_QUADRATIC_TO_BERNSTEIN = np.array([
-    [ 2, 0,  0, 0, 0,  0],  # noqa: E201
-    [-1, 4, -1, 0, 0,  0],
-    [ 0, 0,  2, 0, 0,  0],  # noqa: E201
-    [-1, 0,  0, 4, 0, -1],
-    [ 0, 0, -1, 0, 4, -1],  # noqa: E201
-    [ 0, 0,  0, 0, 0,  2],  # noqa: E201
-], dtype=float) / 2.0
-# pylint: enable=bad-whitespace
-
-
-def _polynomial_sign(poly_surface):
-    r"""Determine the "sign" of a polynomial on the reference triangle.
-
-    Checks if a polynomial :math:`p(s, t)` is positive, negative
-    or mixed sign on the reference triangle.
-
-    Does this by utilizing the Bezier form of :math:`p`: it is a
-    convex combination of the Bernstein basis (real numbers) hence
-    if the Bernstein basis is all positive, the polynomial must be.
-
-    If the values are mixed, then we can recursively subdivide
-    until we are in a region where the coefficients are all one
-    sign.
-
-    Args:
-        poly_surface (Surface): A polynomial on the reference triangle
-            specified as a surface.
-
-    Returns:
-        int: The sign of the polynomial. Will be one of ``-1``, ``1``
-        or ``0``. A value of ``0`` indicates a mixed sign or the
-        zero polynomial.
-
-    Raises:
-        ValueError: If no conclusion is reached after the maximum
-            number of subdivisions.
-    """
-    sub_polys = [poly_surface]
-    signs = set()
-    for _ in six.moves.xrange(_MAX_SUBDIVISIONS):
-        undecided = []
-        for poly in sub_polys:
-            # Avoid an unnecessarily copying the nodes.
-            # pylint: disable=protected-access
-            nodes = poly._nodes
-            # pylint: enable=protected-access
-            if np.all(nodes == 0.0):
-                signs.add(0)
-            elif np.all(nodes > 0.0):
-                signs.add(1)
-            elif np.all(nodes < 0.0):
-                signs.add(-1)
-            else:
-                undecided.append(poly)
-
-            if len(signs) > 1:
-                return 0
-
-        sub_polys = functools.reduce(
-            operator.add, [poly.subdivide() for poly in undecided], ())
-        if not sub_polys:
-            break
-
-    if len(sub_polys) == 0:
-        # NOTE: We are guaranteed that ``len(signs) <= 1``.
-        return signs.pop()
-    else:
-        raise ValueError(
-            'Did not reach a conclusion after max subdivisions',
-            _MAX_SUBDIVISIONS)
-
-
-def _quadratic_jacobian_polynomial(nodes):
-    r"""Compute the Jacobian determinant of a quadratic surface.
-
-    Converts :math:`\det(J(s, t))` to a polynomial on the reference
-    triangle and represents it as a surface object.
-
-    .. note::
-
-        This assumes that ``nodes`` is 6x2 but doesn't verify this.
-        (However, the multiplication by ``_QUADRATIC_JACOBIAN_HELPER``
-        would fail if ``nodes`` wasn't 6xN and then the ensuing
-        determinants would fail if there weren't 2 columns.)
-
-    Args:
-        nodes (numpy.ndarray): A 6x2 array of nodes in a surface.
-
-    Returns:
-        Surface: Artificial "surface" representing the polynomial
-        in the Bernstein basis.
-    """
-    # First evaluate the Jacobian at each of the 6 nodes.
-    # pylint: disable=no-member
-    jac_parts = _QUADRATIC_JACOBIAN_HELPER.dot(nodes)
-    # pylint: enable=no-member
-    jac_at_nodes = np.empty((6, 1))
-    jac_at_nodes[0, 0] = np.linalg.det(jac_parts[:2, :])
-    jac_at_nodes[1, 0] = np.linalg.det(jac_parts[2:4, :])
-    jac_at_nodes[2, 0] = np.linalg.det(jac_parts[4:6, :])
-    jac_at_nodes[3, 0] = np.linalg.det(jac_parts[6:8, :])
-    jac_at_nodes[4, 0] = np.linalg.det(jac_parts[8:10, :])
-    jac_at_nodes[5, 0] = np.linalg.det(jac_parts[10:, :])
-
-    # Convert the nodal values to the Bernstein basis...
-    # pylint: disable=no-member
-    bernstein = _QUADRATIC_TO_BERNSTEIN.dot(jac_at_nodes)
-    # pylint: enable=no-member
-    # ...and then form the polynomial p(s, t) as a Surface.
-    return Surface(bernstein)
-
-
-def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
-    r"""Performs one "round" of the de Casteljau algorithm for surfaces.
-
-    Converts the ``nodes`` into a basis for a surface one degree smaller
-    by using the barycentric weights:
-
-    .. math::
-
-       q_{i, j, k} = \lambda_1 \cdot p_{i + 1, j, k} +
-           \lambda_2 \cdot p_{i, j + 1, k} + \lambda_2 \cdot p_{i, j, k + 1}
-
-    .. note:
-
-       For degree :math:`d`d, the number of nodes should be
-       :math:`(d + 1)(d + 2)/2`, but we don't verify this property.
-
-    Args:
-        nodes (numpy.ndarray): The nodes to reduce.
-        degree (int): The degree of the surface.
-        lambda1 (float): Parameter along the reference triangle.
-        lambda2 (float): Parameter along the reference triangle.
-        lambda3 (float): Parameter along the reference triangle.
-
-    Returns:
-        numpy.ndarray: The converted nodes.
-    """
-    num_nodes, dimension = nodes.shape
-    num_new_nodes = num_nodes - degree - 1
-
-    new_nodes = np.empty((num_new_nodes, dimension))
-
-    index = 0
-    # parent_i1 = index + k
-    # parent_i2 = index + k + 1
-    # parent_i3 = index + degree + 1
-    parent_i1 = 0
-    parent_i2 = 1
-    parent_i3 = degree + 1
-    for k in six.moves.xrange(degree):
-        for unused_j in six.moves.xrange(degree - k):
-            # NOTE: i = (degree - 1) - j - k
-            new_nodes[index, :] = (
-                lambda1 * nodes[parent_i1, :] +
-                lambda2 * nodes[parent_i2, :] +
-                lambda3 * nodes[parent_i3, :])
-            # Update all the indices.
-            parent_i1 += 1
-            parent_i2 += 1
-            parent_i3 += 1
-            index += 1
-
-        # Update the indices that depend on k.
-        parent_i1 += 1
-        parent_i2 += 1
-
-    return new_nodes
 
 
 class Surface(_base.Base):
@@ -596,7 +343,7 @@ class Surface(_base.Base):
         else:
             result = self._nodes
             for reduced_deg in six.moves.xrange(self.degree, 0, -1):
-                result = _de_casteljau_one_round(
+                result = _surface_helpers.de_casteljau_one_round(
                     result, reduced_deg, lambda1, lambda2, lambda3)
             return result.flatten()
 
@@ -826,7 +573,7 @@ class Surface(_base.Base):
         """
         if self.degree == 1:
             # pylint: disable=no-member
-            new_nodes = _LINEAR_SUBDIVIDE.dot(self._nodes)
+            new_nodes = _surface_helpers.LINEAR_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
             nodes_a = new_nodes[(0, 1, 3), :]
             nodes_b = new_nodes[(4, 3, 1), :]
@@ -834,7 +581,7 @@ class Surface(_base.Base):
             nodes_d = new_nodes[(3, 4, 5), :]
         elif self.degree == 2:
             # pylint: disable=no-member
-            new_nodes = _QUADRATIC_SUBDIVIDE.dot(self._nodes)
+            new_nodes = _surface_helpers.QUADRATIC_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
             nodes_a = new_nodes[(0, 1, 2, 5, 6, 9), :]
             nodes_b = new_nodes[(11, 10, 9, 7, 6, 2), :]
@@ -842,7 +589,7 @@ class Surface(_base.Base):
             nodes_d = new_nodes[(9, 10, 11, 12, 13, 14), :]
         elif self.degree == 3:
             # pylint: disable=no-member
-            new_nodes = _CUBIC_SUBDIVIDE.dot(self._nodes)
+            new_nodes = _surface_helpers.CUBIC_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
             nodes_a = new_nodes[(0, 1, 2, 3, 7, 8, 9, 13, 14, 18), :]
             nodes_b = new_nodes[(21, 20, 19, 18, 16, 15, 14, 10, 9, 3), :]
@@ -873,14 +620,16 @@ class Surface(_base.Base):
             # In the linear case, we are only invalid if the points
             # are collinear.
             # pylint: disable=no-member
-            delta_mat = _LINEAR_JACOBIAN_HELPER.dot(self._nodes)
+            delta_mat = _surface_helpers.LINEAR_JACOBIAN_HELPER.dot(
+                self._nodes)
             # pylint: enable=no-member
             return np.linalg.matrix_rank(delta_mat) == 2
         elif self.degree == 2:
             if self.dimension == 2:
-                jac_poly = _quadratic_jacobian_polynomial(self._nodes)
+                jac_poly = _surface_helpers.quadratic_jacobian_polynomial(
+                    self._nodes, Surface)
                 # Find the sign of the polynomial, where 0 means mixed.
-                poly_sign = _polynomial_sign(jac_poly)
+                poly_sign = _surface_helpers.polynomial_sign(jac_poly)
                 return poly_sign != 0
             else:
                 raise NotImplementedError(
