@@ -217,7 +217,7 @@ class Curve(_base.Base):
             value and the columns to the dimension.
         """
         num_vals, = s_vals.shape
-        result = np.zeros((num_vals, self.dimension))
+        result = np.empty((num_vals, self.dimension))
         for i, s_val in enumerate(s_vals):
             result[i, :] = self.evaluate(s_val)
         return result

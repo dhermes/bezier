@@ -22,6 +22,9 @@
 """
 
 
+import functools
+import operator
+
 from matplotlib import patches
 from matplotlib import path as _path_mod
 import matplotlib.pyplot as plt
@@ -32,6 +35,7 @@ from bezier import _base
 from bezier import curve as _curve_mod
 
 
+_MAX_SUBDIVISIONS = 5
 _LINEAR_SUBDIVIDE = np.array([
     [1.0, 0.0, 0.0],
     [0.5, 0.5, 0.0],
@@ -91,6 +95,138 @@ _LINEAR_JACOBIAN_HELPER = np.array([
     [-1.0, 1.0, 0.0],
     [-1.0, 0.0, 1.0],
 ])
+# The Jacobian of a quadratric (in any dimension) as given by
+# dB/ds = [-2L1, 2(L1 - L2), 2L2, -2L3, 2L3, 0] * nodes
+# dB/dt = [-2L1, -2L2, 0, 2(L1 - L3), 2L2, 2L3] * nodes
+# We evaluate this at each of the 6 points in the quadratic
+# triangle and then stack them (2 rows * 6 = 12 rows)
+_QUADRATIC_JACOBIAN_HELPER = np.array([
+    [-2.0, 2.0, 0.0, 0.0, 0.0, 0.0],
+    [-2.0, 0.0, 0.0, 2.0, 0.0, 0.0],
+    [-1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+    [-1.0, -1.0, 0.0, 1.0, 1.0, 0.0],
+    [0.0, -2.0, 2.0, 0.0, 0.0, 0.0],
+    [0.0, -2.0, 0.0, 0.0, 2.0, 0.0],
+    [-1.0, 1.0, 0.0, -1.0, 1.0, 0.0],
+    [-1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+    [0.0, -1.0, 1.0, -1.0, 1.0, 0.0],
+    [0.0, -1.0, 0.0, -1.0, 1.0, 1.0],
+    [0.0, 0.0, 0.0, -2.0, 2.0, 0.0],
+    [0.0, 0.0, 0.0, -2.0, 0.0, 2.0],
+])
+_QUADRATIC_TO_BERNSTEIN = np.array([
+    [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [-0.5, 2.0, -0.5, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+    [-0.5, 0.0, 0.0, 2.0, 0.0, -0.5],
+    [0.0, 0.0, -0.5, 0.0, 2.0, -0.5],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+])
+
+
+def _polynomial_sign(poly_surface):
+    r"""Determine the "sign" of a polynomial on the reference triangle.
+
+    Checks if a polynomial :math:`p(s, t)` is positive, negative
+    or mixed sign on the reference triangle.
+
+    Does this by utilizing the Bezier form of :math:`p`: it is a
+    convex combination of the Bernstein basis (real numbers) hence
+    if the Bernstein basis is all positive, the polynomial must be.
+
+    If the values are mixed, then we can recursively subdivide
+    until we are in a region where the coefficients are all one
+    sign.
+
+    Args:
+        poly_surface (Surface): A polynomial on the reference triangle
+            specified as a surface.
+
+    Returns:
+        int: The sign of the polynomial. Will be one of ``-1``, ``1``
+        or ``0``. A value of ``0`` indicates a mixed sign or the
+        zero polynomial.
+
+    Raises:
+        ValueError: If no conclusion is reached after the maximum
+            number of subdivisions.
+    """
+    sub_polys = [poly_surface]
+    signs = set()
+    for _ in six.moves.xrange(_MAX_SUBDIVISIONS):
+        undecided = []
+        for poly in sub_polys:
+            # Avoid an unnecessarily copying the nodes.
+            # pylint: disable=protected-access
+            nodes = poly._nodes
+            # pylint: enable=protected-access
+            if np.all(nodes == 0.0):
+                signs.add(0)
+            elif np.all(nodes > 0.0):
+                signs.add(1)
+            elif np.all(nodes < 0.0):
+                signs.add(-1)
+            else:
+                undecided.append(poly)
+
+            if len(signs) > 1:
+                return 0
+
+        sub_polys = functools.reduce(
+            operator.add, [poly.subdivide() for poly in undecided], ())
+        if not sub_polys:
+            break
+
+    if len(sub_polys) == 0:
+        # NOTE: We are guaranteed that ``len(signs) <= 1``.
+        return signs.pop()
+    else:
+        raise ValueError(
+            'Did not reach a conclusion after max subdivisions',
+            _MAX_SUBDIVISIONS)
+
+
+def _quadratic_valid_in_2d(nodes):
+    """Determine if a quadratic surface in 2D is "valid".
+
+    In this case, "valid" means that the Jacobian of the map is
+    not singular.
+
+    .. note::
+
+        This assumes that ``nodes`` is 6x2 but doesn't verify this.
+        (However, the multiplication by ``_QUADRATIC_JACOBIAN_HELPER``
+        would fail if ``nodes`` wasn't 6xN and then the ensuing
+        determinants would fail if there weren't 2 columns.)
+
+    Args:
+        nodes (numpy.ndarray): A 6x2 array of nodes in a surface.
+
+    Returns:
+        bool: Flag indicating if the current surface is valid.
+    """
+    # First evaluate the Jacobian at each of the 6 nodes.
+    # pylint: disable=no-member
+    jac_parts = _QUADRATIC_JACOBIAN_HELPER.dot(nodes)
+    # pylint: enable=no-member
+    jac_at_nodes = np.empty((6, 1))
+    jac_at_nodes[0, 0] = np.linalg.det(jac_parts[:2, :])
+    jac_at_nodes[1, 0] = np.linalg.det(jac_parts[2:4, :])
+    jac_at_nodes[2, 0] = np.linalg.det(jac_parts[4:6, :])
+    jac_at_nodes[3, 0] = np.linalg.det(jac_parts[6:8, :])
+    jac_at_nodes[4, 0] = np.linalg.det(jac_parts[8:10, :])
+    jac_at_nodes[5, 0] = np.linalg.det(jac_parts[10:, :])
+
+    # Convert the nodal values to the Bernstein basis...
+    # pylint: disable=no-member
+    bernstein = _QUADRATIC_TO_BERNSTEIN.dot(jac_at_nodes)
+    # pylint: enable=no-member
+    # ...and then form the polynomial p(s, t) as a Surface.
+    jac_poly = Surface(bernstein)
+
+    # Find the sign of the polynomial, where 0 means mixed.
+    poly_sign = _polynomial_sign(jac_poly)
+    return poly_sign != 0
 
 
 class Surface(_base.Base):
@@ -498,7 +634,6 @@ class Surface(_base.Base):
         if param_vals.ndim != 2:
             raise ValueError('Parameter values must be 2D array')
         num_vals, num_cols = param_vals.shape
-        result = np.zeros((num_vals, self.dimension))
 
         if num_cols == 2:
             transform = self.evaluate_cartesian
@@ -508,7 +643,7 @@ class Surface(_base.Base):
             raise ValueError(
                 'Parameter values must either be Barycentric or Cartesian')
 
-        result = np.zeros((num_vals, self.dimension))
+        result = np.empty((num_vals, self.dimension))
         for index in six.moves.xrange(num_vals):
             result[index, :] = transform(*param_vals[index, :])
         return result
@@ -662,7 +797,7 @@ class Surface(_base.Base):
                 Surface(nodes_c), Surface(nodes_d))
 
     def _compute_valid(self):
-        """Determines if the current surface is "valid".
+        r"""Determines if the current surface is "valid".
 
         Does this by checking if the Jacobian of the map from the
         reference triangle is nonzero.
@@ -671,7 +806,9 @@ class Surface(_base.Base):
             bool: Flag indicating if the current surface is valid.
 
         Raises:
-            NotImplementedError: If the degree is greater than 1.
+            NotImplementedError: If the degree is greater than 2.
+            NotImplementedError: If the surface is quadratic but
+                in dimension other than :math:`\mathbf{R}^2`.
         """
         if self.degree == 1:
             # In the linear case, we are only invalid if the points
@@ -680,9 +817,15 @@ class Surface(_base.Base):
             delta_mat = _LINEAR_JACOBIAN_HELPER.dot(self._nodes)
             # pylint: enable=no-member
             return np.linalg.matrix_rank(delta_mat) == 2
+        elif self.degree == 2:
+            if self.dimension == 2:
+                return _quadratic_valid_in_2d(self._nodes)
+            else:
+                raise NotImplementedError(
+                    'Quadratic validity check only implemented in R^2')
         else:
             raise NotImplementedError(
-                'Degree 1 only supported at this time')
+                'Degrees 1 and 2 only supported at this time')
 
     @property
     def is_valid(self):  # pylint: disable=missing-returns-doc

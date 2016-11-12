@@ -19,6 +19,95 @@ import numpy as np
 from tests import utils
 
 
+class Test__polynomial_sign(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(poly_surface):
+        from bezier import surface
+
+        return surface._polynomial_sign(poly_surface)
+
+    def _helper(self, bernstein, expected):
+        import bezier
+
+        poly_surface = bezier.Surface(bernstein)
+        result = self._call_function_under_test(poly_surface)
+        self.assertEqual(result, expected)
+
+    def test_positive(self):
+        # pylint: disable=no-member
+        bernstein = np.array([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]).T
+        # pylint: enable=no-member
+        self._helper(bernstein, 1)
+
+    def test_negative(self):
+        # pylint: disable=no-member
+        bernstein = np.array([[-1.0, -2.0, -1.0]]).T
+        # pylint: enable=no-member
+        self._helper(bernstein, -1)
+
+    def test_zero(self):
+        bernstein = np.zeros((10, 1))
+        self._helper(bernstein, 0)
+
+    def test_mixed(self):
+        # pylint: disable=no-member
+        bernstein = np.array([[-1.0, 1.0, -1.0]]).T
+        # pylint: enable=no-member
+        self._helper(bernstein, 0)
+
+    def test_max_iterations(self):
+        import mock
+
+        # pylint: disable=no-member
+        bernstein = np.array([[1.0, 2.0, 3.0]]).T
+        # pylint: enable=no-member
+        with mock.patch('bezier.surface._MAX_SUBDIVISIONS', new=1):
+            self._helper(bernstein, 1)
+
+    def test_no_conclusion(self):
+        import mock
+
+        # pylint: disable=no-member
+        bernstein = np.array([[-1.0, 1.0, 2.0]]).T
+        # pylint: enable=no-member
+        with mock.patch('bezier.surface._MAX_SUBDIVISIONS', new=0):
+            with self.assertRaises(ValueError):
+                self._helper(bernstein, None)
+
+
+class Test__quadratic_valid_in_2d(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier import surface
+
+        return surface._quadratic_valid_in_2d(nodes)
+
+    def test_valid(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, -0.1875],
+            [1.0, 0.0],
+            [0.1875, 0.5],
+            [0.625, 0.625],
+            [0.0, 1.0],
+        ])
+        self.assertTrue(self._call_function_under_test(nodes))
+
+    def test_invalid(self):
+        # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^3]
+        nodes = np.array([
+            [1.0, 0.0],
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 1.0],
+        ])
+        self.assertFalse(self._call_function_under_test(nodes))
+
+
 class TestSurface(unittest.TestCase):
 
     @staticmethod
@@ -766,8 +855,23 @@ class TestSurface(unittest.TestCase):
         surface = self._make_one(nodes)
         self.assertFalse(surface._compute_valid())
 
-    def test__compute_valid_bad_degree(self):
+    def test__compute_valid_quadratic(self):
+        import mock
+
         surface = self._make_one(np.zeros((6, 2)))
+        surface._nodes = mock.sentinel.nodes
+        with mock.patch('bezier.surface._quadratic_valid_in_2d',
+                        return_value=False) as patched:
+            self.assertFalse(surface._compute_valid())
+            patched.assert_called_once_with(mock.sentinel.nodes)
+
+    def test__compute_valid_quadratic_bad_dimension(self):
+        surface = self._make_one(np.zeros((6, 3)))
+        with self.assertRaises(NotImplementedError):
+            surface._compute_valid()
+
+    def test__compute_valid_bad_degree(self):
+        surface = self._make_one(np.zeros((10, 2)))
         with self.assertRaises(NotImplementedError):
             surface._compute_valid()
 
