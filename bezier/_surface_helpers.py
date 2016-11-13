@@ -448,7 +448,7 @@ def _make_transform(degree, weights_a, weights_b, weights_c):
         transformation mappings. The keys are ``0`` corresponding to
         ``weights_a``, ``1`` to ``weights_b`` and ``2`` to ``weights_c``.
     """
-    num_nodes = ((degree + 1) * (degree + 2)) / 2
+    num_nodes = ((degree + 1) * (degree + 2)) // 2
     id_mat = np.eye(num_nodes)
 
     # Pre-compute the matrices that do the reduction so we don't
