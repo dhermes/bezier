@@ -37,7 +37,7 @@ class TestSurface(unittest.TestCase):
             [0.625, 0.5],
             [1.0, 0.75],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, _copy=False)
         self.assertEqual(surface._degree, 1)
         self.assertEqual(surface._dimension, 2)
         self.assertIs(surface._nodes, nodes)
@@ -769,11 +769,12 @@ class TestSurface(unittest.TestCase):
     def test_copy(self):
         import mock
 
-        surface = self._make_one(np.zeros((6, 2)))
-        fake_nodes = mock.Mock()
+        shape = (3, 2)
+        surface = self._make_one(np.zeros(shape))
+        fake_nodes = mock.Mock(ndim=2, shape=shape)
         surface._nodes = fake_nodes
 
-        copied_nodes = np.zeros((3, 2))
+        copied_nodes = np.zeros(shape)
         fake_nodes.copy.return_value = copied_nodes
 
         new_surface = surface.copy()

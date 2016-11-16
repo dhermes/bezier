@@ -306,4 +306,4 @@ class Curve(_base.Base):
         left = new_nodes[:self.degree + 1, :]
         right = new_nodes[self.degree:, :]
 
-        return Curve(left), Curve(right)
+        return Curve(left, _copy=False), Curve(right, _copy=False)

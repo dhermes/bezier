@@ -199,9 +199,9 @@ class Surface(_base.Base):
             curr2 += self.degree - i
             curr3 -= i + 2
 
-        edge1 = _curve_mod.Curve(self._nodes[indices1, :])
-        edge2 = _curve_mod.Curve(self._nodes[indices2, :])
-        edge3 = _curve_mod.Curve(self._nodes[indices3, :])
+        edge1 = _curve_mod.Curve(self._nodes[indices1, :], _copy=False)
+        edge2 = _curve_mod.Curve(self._nodes[indices2, :], _copy=False)
+        edge3 = _curve_mod.Curve(self._nodes[indices3, :], _copy=False)
         return edge1, edge2, edge3
 
     @property
@@ -617,8 +617,8 @@ class Surface(_base.Base):
                 self._nodes, self.degree,
                 (0.5, 0.0, 0.5), (0.0, 0.5, 0.5), (0.0, 0.0, 1.0))
 
-        return (Surface(nodes_a), Surface(nodes_b),
-                Surface(nodes_c), Surface(nodes_d))
+        return (Surface(nodes_a, _copy=False), Surface(nodes_b, _copy=False),
+                Surface(nodes_c, _copy=False), Surface(nodes_d, _copy=False))
 
     def _compute_valid(self):
         r"""Determines if the current surface is "valid".
@@ -655,7 +655,7 @@ class Surface(_base.Base):
                     self._nodes)
 
             # Form the polynomial p(s, t) as a Surface.
-            jac_poly = Surface(bernstein)
+            jac_poly = Surface(bernstein, _copy=False)
             # Find the sign of the polynomial, where 0 means mixed.
             poly_sign = _surface_helpers.polynomial_sign(jac_poly)
             return poly_sign != 0

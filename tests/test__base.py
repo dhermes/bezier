@@ -38,6 +38,18 @@ class TestBase(unittest.TestCase):
         shape = self._make_one(nodes)
         self.assertEqual(shape._degree, 3)
         self.assertEqual(shape._dimension, 2)
+        self.assertIsNot(shape._nodes, nodes)
+        self.assertTrue(np.all(shape._nodes == nodes))
+
+    def test_constructor_without_copy(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 3.0],
+        ])
+        shape = self._make_one(nodes, _copy=False)
+        self.assertEqual(shape._degree, 3)
+        self.assertEqual(shape._dimension, 2)
         self.assertIs(shape._nodes, nodes)
 
     def test_virtual__get_degree(self):
@@ -123,11 +135,12 @@ class TestBase(unittest.TestCase):
     def test_copy(self):
         import mock
 
-        shape = self._make_one(np.zeros((1, 2)))
-        fake_nodes = mock.Mock()
+        np_shape = (2, 2)
+        shape = self._make_one(np.zeros(np_shape))
+        fake_nodes = mock.Mock(ndim=2, shape=np_shape)
         shape._nodes = fake_nodes
 
-        copied_nodes = np.zeros((2, 2))
+        copied_nodes = np.zeros(np_shape)
         fake_nodes.copy.return_value = copied_nodes
 
         new_shape = shape.copy()

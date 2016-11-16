@@ -65,7 +65,7 @@ class TestCurve(unittest.TestCase):
             [0.625, 0.5],
             [1.0, 0.75],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, _copy=False)
         self.assertEqual(curve._degree, 2)
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)

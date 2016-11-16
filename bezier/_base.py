@@ -23,13 +23,16 @@ class Base(object):
         nodes (numpy.ndarray): The control points for the shape.
             Must be a 2D array, where the rows are the nodes and the
             columns correspond to each dimension the shape occurs in.
+        _copy (bool): Flag indicating if the nodes should be copied before
+            being stored. Defaults to :data:`True` since callers may
+            freely mutate ``nodes`` after passing in.
 
     Raises:
         ValueError: If the ``nodes`` are not 2D.
         ValueError: If the ``degree`` is less than ``1``.
     """
 
-    def __init__(self, nodes):
+    def __init__(self, nodes, _copy=True):
         if nodes.ndim != 2:
             raise ValueError('Nodes must be 2-dimensional, not',
                              nodes.ndim)
@@ -41,7 +44,10 @@ class Base(object):
 
         self._degree = degree
         self._dimension = dimension
-        self._nodes = nodes
+        if _copy:
+            self._nodes = nodes.copy()
+        else:
+            self._nodes = nodes
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -86,8 +92,7 @@ class Base(object):
         Returns:
             Instance of the current shape.
         """
-        new_nodes = self._nodes.copy()
-        return self.__class__(new_nodes)
+        return self.__class__(self._nodes, _copy=True)
 
     def __eq__(self, other):
         """Check equality against another shape.
@@ -102,7 +107,16 @@ class Base(object):
             return False
         if self.dimension != other.dimension:
             return False
-        return np.all(self._nodes == other._nodes)
+        other_nodes = other._nodes  # pylint: disable=protected-access
+        return np.all(self._nodes == other_nodes)
+
+    def __ne__(self, other):
+        """Check inequality against another shape.
+
+        Returns:
+            bool: Boolean indicating if the shapes are not the same.
+        """
+        return not self.__eq__(other)
 
     def __repr__(self):
         """Representation of current object.
