@@ -109,6 +109,41 @@ class TestBase(unittest.TestCase):
         shape2 = new_class2(nodes)
         self.assertNotEqual(shape1, shape2)
 
+    def test___hash__(self):
+        import mock
+
+        nodes = np.zeros((1, 2))
+        shape = self._make_one(nodes)
+
+        patch = mock.patch('bezier._base._HASH',
+                           return_value=12345)
+        with patch as mocked:
+            hash_val = hash(shape)
+
+        self.assertEqual(hash_val, mocked.return_value)
+        nodes_as_tuple = ((0.0, 0.0),)
+        hashed = (nodes_as_tuple, 'Base')
+        mocked.assert_called_once_with(hashed)
+
+    def test___hash__cache(self):
+        import mock
+
+        nodes = np.zeros((1, 2))
+        shape = self._make_one(nodes)
+
+        self.assertIsNone(shape._hash)
+
+        patch = mock.patch('bezier._base._HASH',
+                           return_value=12345)
+        with patch as mocked:
+            hash_val = hash(shape)
+            self.assertEqual(shape._hash, hash_val)
+            self.assertEqual(mocked.call_count, 1)
+
+            # Call again and make sure mock doesn't get called twice.
+            self.assertEqual(hash(shape), hash_val)
+            self.assertEqual(mocked.call_count, 1)
+
     def test_degree_property(self):
         degree = 6
         nodes = np.zeros((degree, 2))
