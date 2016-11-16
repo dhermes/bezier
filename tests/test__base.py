@@ -65,6 +65,38 @@ class TestBase(unittest.TestCase):
         expected = '<Base (degree=4, dimension=3)>'
         self.assertEqual(repr(shape), expected)
 
+    def test___eq__(self):
+        nodes1 = np.zeros((4, 3))
+        shape1 = self._make_one(nodes1)
+        nodes2 = np.zeros((4, 3))
+        shape2 = self._make_one(nodes2)
+        self.assertEqual(shape1, shape2)
+
+    def test___eq__different_degree(self):
+        nodes1 = np.zeros((1, 3))
+        shape1 = self._make_one(nodes1)
+        nodes2 = np.zeros((4, 3))
+        shape2 = self._make_one(nodes2)
+        self.assertNotEqual(shape1, shape2)
+
+    def test___eq__different_dimension(self):
+        nodes1 = np.zeros((4, 2))
+        shape1 = self._make_one(nodes1)
+        nodes2 = np.zeros((4, 3))
+        shape2 = self._make_one(nodes2)
+        self.assertNotEqual(shape1, shape2)
+
+    def test___eq__different_class(self):
+        nodes = np.zeros((4, 2))
+
+        base_class = self._get_target_class()
+        new_class1 = type('NewOne', (base_class,), {})
+        new_class2 = type('NewTwo', (base_class,), {})
+
+        shape1 = new_class1(nodes)
+        shape2 = new_class2(nodes)
+        self.assertNotEqual(shape1, shape2)
+
     def test_degree_property(self):
         degree = 6
         nodes = np.zeros((degree, 2))

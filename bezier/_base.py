@@ -13,6 +13,8 @@
 
 """Common features of Bezier shapes."""
 
+import numpy as np
+
 
 class Base(object):
     """Base shape object.
@@ -86,6 +88,21 @@ class Base(object):
         """
         new_nodes = self._nodes.copy()
         return self.__class__(new_nodes)
+
+    def __eq__(self, other):
+        """Check equality against another shape.
+
+        Returns:
+            bool: Boolean indicating if the shapes are the same.
+        """
+        # First check if both are instances of an identical class.
+        if getattr(other, '__class__', None) != self.__class__:
+            return False
+        if self.degree != other.degree:
+            return False
+        if self.dimension != other.dimension:
+            return False
+        return np.all(self._nodes == other._nodes)
 
     def __repr__(self):
         """Representation of current object.
