@@ -20,6 +20,20 @@
 import numpy as np
 
 
+_WEIGHTS_QUADRATIC = np.array([
+    [1.0, -2.0, 1.0],
+])
+_WEIGHTS_CUBIC = np.array([
+    [1.0, -2.0, 1.0, 0.0],
+    [0.0, 1.0, -2.0, 1.0],
+])
+_WEIGHTS_QUARTIC = np.array([
+    [1.0, -2.0, 1.0, 0.0, 0.0],
+    [0.0, 1.0, -2.0, 1.0, 0.0],
+    [0.0, 0.0, 1.0, -2.0, 1.0],
+])
+
+
 def bbox_intersect(nodes1, nodes2):
     r"""Bounding box intersection predicate.
 
@@ -48,3 +62,68 @@ def bbox_intersect(nodes1, nodes2):
 
     return (right2 > left1 and right1 > left2 and
             top2 > bottom1 and top1 > bottom2)
+
+
+def linearization_error(curve):
+    r"""Compute the maximum error of a linear approximation.
+
+    We use the line
+
+    .. math::
+
+       L(s) = v_0 (1 - s) + v_n s
+
+    and compute a bound on the maximum error
+
+    .. math::
+
+       \max_{s \in \left[0, 1\right]} \|B(s) - L(s)\|.
+
+    Rather than computing the actual maximum (a tight bound), we
+    use an upper bound via the remainder from Lagrange interpolation
+    in each component. This leaves us with :math:`\frac{s(s - 1)}{2!}`
+    times the second derivative in each component.
+
+    The second derivative curve is degree :math:`d = n - 2` and
+    is given by
+
+    .. math::
+
+       B''(s) = n(n - 1) \sum_{j = 0}^{d} \binom{d}{j} s^j
+       (1 - s)^{d - j} \cdot \Delta^2 v_j
+
+    Due to this form (and the convex combination property of
+    B |eacute| zier Curves) we know each component of the second derivative
+    will be bounded by the maximum of that component among the
+    :math:`\Delta^2 v_j`.
+
+    Args:
+        curve (~bezier.curve.Curve): A curve to be approximated by a line.
+
+    Returns:
+        float: The maximum error between the curve and the
+        linear approximation.
+    """
+    if curve.degree == 1:
+        return 0.0
+
+    if curve.degree == 2:
+        weights = _WEIGHTS_QUADRATIC
+    elif curve.degree == 3:
+        weights = _WEIGHTS_CUBIC
+    elif curve.degree == 4:
+        weights = _WEIGHTS_QUARTIC
+    else:
+        weights = np.zeros((curve.degree - 1, curve.degree + 1))
+        eye = np.eye(curve.degree - 1)
+        weights[:, :-2] = eye
+        weights[:, 1:-1] += -2 * eye
+        weights[:, 2:] += eye
+
+    nodes = curve._nodes  # pylint: disable=protected-access
+    second_deriv = weights.dot(nodes)  # pylint: disable=no-member
+    worst_case = np.max(np.abs(second_deriv), axis=0)
+
+    # max_{0 <= s <= 1} s(1 - s)/2 = 1/8 = 0.125
+    multiplier = 0.125 * curve.degree * (curve.degree - 1)
+    return multiplier * np.linalg.norm(worst_case, ord=2)
