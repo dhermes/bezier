@@ -70,6 +70,8 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
         self.assertIsNone(curve._length)
+        self.assertEqual(curve._start, 0.0)
+        self.assertEqual(curve._end, 1.0)
 
     def test_constructor_wrong_dimension(self):
         nodes = np.array([1.0, 2.0])
@@ -100,6 +102,19 @@ class TestCurve(unittest.TestCase):
             degree, dimension)
         self.assertEqual(repr(curve), expected)
 
+    def test___repr__custom_endpoints(self):
+        from bezier import curve as curve_mod
+
+        degree = 4
+        dimension = 3
+        start = 0.25
+        end = 0.75
+        nodes = np.zeros((degree + 1, dimension))
+        curve = self._make_one(nodes, start=start, end=end)
+        expected = curve_mod._REPR_TEMPLATE.format(
+            'Curve', degree, dimension, start, end)
+        self.assertEqual(repr(curve), expected)
+
     def test_length_property_not_cached(self):
         nodes = np.array([
             [0.0, 0.0],
@@ -119,6 +134,20 @@ class TestCurve(unittest.TestCase):
         length = 2.817281728
         curve._length = length
         self.assertEqual(curve.length, length)
+
+    def test_start_property(self):
+        import mock
+
+        curve = self._make_one(np.zeros((2, 2)),
+                               start=mock.sentinel.start)
+        self.assertIs(curve.start, mock.sentinel.start)
+
+    def test_end_property(self):
+        import mock
+
+        curve = self._make_one(np.zeros((2, 2)),
+                               end=mock.sentinel.end)
+        self.assertIs(curve.end, mock.sentinel.end)
 
     def test_evaluate(self):
         s = 0.25

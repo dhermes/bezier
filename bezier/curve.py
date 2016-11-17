@@ -29,6 +29,8 @@ import six
 from bezier import _base
 
 
+_REPR_TEMPLATE = (
+    '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
 _LINEAR_SUBDIVIDE = np.array([
     [1.0, 0.0],
     [0.5, 0.5],
@@ -108,9 +110,34 @@ class Curve(_base.Base):
         nodes (numpy.ndarray): The nodes in the curve. The rows
             represent each node while the columns are the dimension
             of the ambient space.
+        start (Optional[float]): The beginning of the sub-interval
+            that this curve represents.
+        end (Optional[float]): The end of the sub-interval
+            that this curve represents.
+        _copy (bool): Flag indicating if the nodes should be copied before
+            being stored. Defaults to :data:`True` since callers may
+            freely mutate ``nodes`` after passing in.
     """
 
     _length = None
+
+    def __init__(self, nodes, start=0.0, end=1.0, _copy=True):
+        super(Curve, self).__init__(nodes, _copy=_copy)
+        self._start = start
+        self._end = end
+
+    def __repr__(self):
+        """Representation of current object.
+
+        Returns:
+            str: Object representation.
+        """
+        if self.start == 0.0 and self.end == 1.0:
+            return super(Curve, self).__repr__()
+        else:
+            return _REPR_TEMPLATE.format(
+                self.__class__.__name__, self.degree,
+                self.dimension, self.start, self.end)
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -135,6 +162,47 @@ class Curve(_base.Base):
             raise NotImplementedError(
                 'Length computation not yet implemented.')
         return self._length
+
+    @property
+    def start(self):
+        """float: Start of sub-interval this curve represents.
+
+        This value is used to track the current curve in the
+        re-parameterization / subdivision process. The curve is still
+        defined on the unit interval, but this value illustrates
+        how this curve relates to a "parent" curve. For example:
+
+        .. doctest:: curve-start
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> nodes = np.array([
+          ...     [0.0, 0.0],
+          ...     [1.0, 2.0],
+          ... ])
+          >>> curve = bezier.Curve(nodes)
+          >>> curve
+          <Curve (degree=1, dimension=2)>
+          >>> left, right = curve.subdivide()
+          >>> left
+          <Curve (degree=1, dimension=2, start=0, end=0.5)>
+          >>> right
+          <Curve (degree=1, dimension=2, start=0.5, end=1)>
+          >>> _, mid_right = left.subdivide()
+          >>> mid_right
+          <Curve (degree=1, dimension=2, start=0.25, end=0.5)>
+          >>> mid_right.nodes
+          array([[ 0.25, 0.5 ],
+                 [ 0.5 , 1.  ]])
+        """
+        return self._start
+
+    @property
+    def end(self):
+        """float: End of sub-interval this curve represents.
+
+        See :attr:`~Curve.start` for more information.
+        """
+        return self._end
 
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
@@ -277,13 +345,13 @@ class Curve(_base.Base):
           >>> curve = bezier.Curve(nodes)
           >>> left, right = curve.subdivide()
           >>> left
-          <Curve (degree=2, dimension=2)>
+          <Curve (degree=2, dimension=2, start=0, end=0.5)>
           >>> left.nodes
           array([[ 0.   , 0.   ],
                  [ 0.625, 1.5  ],
                  [ 1.125, 1.75 ]])
           >>> right
-          <Curve (degree=2, dimension=2)>
+          <Curve (degree=2, dimension=2, start=0.5, end=1)>
           >>> right.nodes
           array([[ 1.125, 1.75 ],
                  [ 1.625, 2.   ],
@@ -308,10 +376,15 @@ class Curve(_base.Base):
             subdivide_mat = _make_subdivision_matrix(self.degree)
             new_nodes = subdivide_mat.dot(self._nodes)
 
-        left = new_nodes[:self.degree + 1, :]
-        right = new_nodes[self.degree:, :]
+        left_nodes = new_nodes[:self.degree + 1, :]
+        right_nodes = new_nodes[self.degree:, :]
 
-        return Curve(left, _copy=False), Curve(right, _copy=False)
+        midpoint = 0.5 * (self.start + self.end)
+        left = Curve(left_nodes, start=self.start,
+                     end=midpoint, _copy=False)
+        right = Curve(right_nodes, start=midpoint,
+                      end=self.end, _copy=False)
+        return left, right
 
     def intersect(self, other):
         """Find the points of intersection with another curve.
