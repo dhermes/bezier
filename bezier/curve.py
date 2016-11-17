@@ -98,9 +98,9 @@ class Curve(_base.Base):
 
       >>> import bezier
       >>> nodes = np.array([
-      ...     [0.0, 0.0],
+      ...     [0.0  , 0.0],
       ...     [0.625, 0.5],
-      ...     [1.0, 0.5],
+      ...     [1.0  , 0.5],
       ... ])
       >>> curve = bezier.Curve(nodes)
       >>> curve
@@ -259,9 +259,9 @@ class Curve(_base.Base):
           :options: +NORMALIZE_WHITESPACE
 
           >>> nodes = np.array([
-          ...     [0.0, 0.0],
+          ...     [0.0  , 0.0],
           ...     [0.625, 0.5],
-          ...     [1.0, 0.5],
+          ...     [1.0  , 0.5],
           ... ])
           >>> curve = bezier.Curve(nodes)
           >>> curve.evaluate(0.75)
@@ -312,11 +312,11 @@ class Curve(_base.Base):
           <Curve (degree=1, dimension=3)>
           >>> s_vals = np.linspace(0.0, 1.0, 5)
           >>> curve.evaluate_multi(s_vals)
-          array([[ 0.  ,  0.  ,  0.  ],
-                 [ 0.25,  0.5 ,  0.75],
-                 [ 0.5 ,  1.  ,  1.5 ],
-                 [ 0.75,  1.5 ,  2.25],
-                 [ 1.  ,  2.  ,  3.  ]])
+          array([[ 0.  , 0.  , 0.  ],
+                 [ 0.25, 0.5 , 0.75],
+                 [ 0.5 , 1.  , 1.5 ],
+                 [ 0.75, 1.5 , 2.25],
+                 [ 1.  , 2.  , 3.  ]])
 
         Args:
             s_vals (numpy.ndarray): Parameters along the curve (as a
@@ -381,9 +381,9 @@ class Curve(_base.Base):
           :options: +NORMALIZE_WHITESPACE
 
           >>> nodes = np.array([
-          ...     [0.0, 0.0],
+          ...     [0.0 , 0.0],
           ...     [1.25, 3.0],
-          ...     [2.0, 1.0],
+          ...     [2.0 , 1.0],
           ... ])
           >>> curve = bezier.Curve(nodes)
           >>> left, right = curve.subdivide()
