@@ -10,7 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Private helper methods for :mod:`bezier.surface`."""
+"""Private helper methods for :mod:`bezier.surface`.
+
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
+"""
 
 
 import functools
@@ -222,7 +226,7 @@ def polynomial_sign(poly_surface):
     Checks if a polynomial :math:`p(s, t)` is positive, negative
     or mixed sign on the reference triangle.
 
-    Does this by utilizing the Bezier form of :math:`p`: it is a
+    Does this by utilizing the B |eacute|zier form of :math:`p`: it is a
     convex combination of the Bernstein basis (real numbers) hence
     if the Bernstein basis is all positive, the polynomial must be.
 

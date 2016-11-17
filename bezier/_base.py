@@ -10,8 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Common features of B |eacute| zier shapes.
 
-"""Common features of Bezier shapes."""
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
+"""
 
 import numpy as np
 
