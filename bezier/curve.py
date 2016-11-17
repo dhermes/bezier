@@ -307,3 +307,25 @@ class Curve(_base.Base):
         right = new_nodes[self.degree:, :]
 
         return Curve(left, _copy=False), Curve(right, _copy=False)
+
+    def intersect(self, other):
+        """Find the points of intersection with another curve.
+
+        Args:
+            other (Curve): Other curve to intersect with.
+
+        Returns:
+            numpy.ndarray: Possible empty array of intersection points.
+
+        Raises:
+            TypeError: If ``other`` is not a curve.
+            NotImplementedError: If both curves aren't two-dimensional.
+        """
+        if not isinstance(other, Curve):
+            raise TypeError('Can only intersect with another curve',
+                            'Received', other)
+        if self.dimension != 2 or other.dimension != 2:
+            raise NotImplementedError(
+                'Intersection only implemented in 2D')
+
+        return np.zeros((0, 2))

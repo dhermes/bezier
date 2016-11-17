@@ -353,3 +353,39 @@ class TestCurve(unittest.TestCase):
         curve = self._make_one(nodes)
         self.assertEqual(curve.degree, degree)
         self._subdivide_points_check(curve)
+
+    def test_intersect(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, -0.25],
+            [1.0, 0.0],
+        ])
+        curve = self._make_one(nodes)
+        left, right = curve.subdivide()
+
+        result = left.intersect(right)
+        self.assertTrue(np.all(result == np.zeros((0, 2))))
+
+    def test_intersect_non_curve(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, -0.25],
+            [1.0, 0.0],
+        ])
+        curve = self._make_one(nodes)
+        with self.assertRaises(TypeError):
+            curve.intersect(object())
+
+    def test_intersect_unsupported_dimension(self):
+        nodes = np.array([
+            [0.0, 0.0, 0.0],
+            [0.5, -0.25, 0.75],
+            [1.0, 0.0, 1.25],
+        ])
+        curve1 = self._make_one(nodes)
+        curve2 = self._make_one(nodes[:, :2])
+
+        with self.assertRaises(NotImplementedError):
+            curve1.intersect(curve2)
+        with self.assertRaises(NotImplementedError):
+            curve2.intersect(curve1)
