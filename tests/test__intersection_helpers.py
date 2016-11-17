@@ -46,7 +46,7 @@ class Test_bbox_intersect(unittest.TestCase):
             self.UNIT_SQUARE, nodes))
 
     def test_almost_tangent(self):
-        x_val = 1.0 + np.spacing(1.0)
+        x_val = 1.0 + np.spacing(1.0)  # pylint: disable=no-member
         nodes = self.UNIT_SQUARE + np.array([[x_val, 0.0]])
         self.assertFalse(self._call_function_under_test(
             self.UNIT_SQUARE, nodes))
