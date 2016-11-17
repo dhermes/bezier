@@ -19,10 +19,6 @@
 import numpy as np
 
 
-# For unit-testing, we don't directly use hash().
-_HASH = hash
-
-
 class Base(object):
     """Base shape object.
 
@@ -38,8 +34,6 @@ class Base(object):
         ValueError: If the ``nodes`` are not 2D.
         ValueError: If the ``degree`` is less than ``1``.
     """
-
-    _hash = None
 
     def __init__(self, nodes, _copy=True):
         if nodes.ndim != 2:
@@ -102,24 +96,6 @@ class Base(object):
             Instance of the current shape.
         """
         return self.__class__(self._nodes, _copy=True)
-
-    def __hash__(self):
-        """Compute the hash of the current shape.
-
-        Since we enforce immutability of the data, we can cache
-        the return value and base it entirely on the ``nodes``
-        and the current class.
-
-        Returns:
-            int: The hash value for the nodes.
-        """
-        if self._hash is None:
-            nodes = self._nodes
-            as_immutable = tuple(
-                [tuple(row) for row in nodes.tolist()])
-            self._hash = _HASH(
-                (as_immutable, self.__class__.__name__))
-        return self._hash
 
     def __eq__(self, other):
         """Check equality against another shape.
