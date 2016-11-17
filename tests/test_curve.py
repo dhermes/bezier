@@ -149,6 +149,13 @@ class TestCurve(unittest.TestCase):
                                end=mock.sentinel.end)
         self.assertIs(curve.end, mock.sentinel.end)
 
+    def test_root_property(self):
+        import mock
+
+        curve = self._make_one(np.zeros((2, 2)),
+                               root=mock.sentinel.root)
+        self.assertIs(curve.root, mock.sentinel.root)
+
     def test_evaluate(self):
         s = 0.25
         nodes = np.array([
@@ -289,11 +296,26 @@ class TestCurve(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             curve.plot(32)
 
+    def test_subdivide_multilevel_root(self):
+        curve = self._make_one(np.zeros((2, 2)))
+        left, right = curve.subdivide()
+        self.assertIs(left.root, curve)
+        self.assertIs(right.root, curve)
+
+        one, two = left.subdivide()
+        three, four = right.subdivide()
+        self.assertIs(one.root, curve)
+        self.assertIs(two.root, curve)
+        self.assertIs(three.root, curve)
+        self.assertIs(four.root, curve)
+
     def _subdivide_helper(self, nodes, expected_l, expected_r):
         klass = self._get_target_class()
 
         curve = self._make_one(nodes)
         left, right = curve.subdivide()
+        self.assertIs(left.root, curve)
+        self.assertIs(right.root, curve)
 
         self.assertIsInstance(left, klass)
         self.assertTrue(np.all(left._nodes == expected_l))

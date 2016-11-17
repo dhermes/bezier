@@ -114,6 +114,8 @@ class Curve(_base.Base):
             that this curve represents.
         end (Optional[float]): The end of the sub-interval
             that this curve represents.
+        root (Optional[Curve]): The root curve that contains this
+            current curve.
         _copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
@@ -121,10 +123,11 @@ class Curve(_base.Base):
 
     _length = None
 
-    def __init__(self, nodes, start=0.0, end=1.0, _copy=True):
+    def __init__(self, nodes, start=0.0, end=1.0, root=None, _copy=True):
         super(Curve, self).__init__(nodes, _copy=_copy)
         self._start = start
         self._end = end
+        self._root = root
 
     def __repr__(self):
         """Representation of current object.
@@ -203,6 +206,46 @@ class Curve(_base.Base):
         See :attr:`~Curve.start` for more information.
         """
         return self._end
+
+    @property
+    def root(self):
+        """Curve: The "root" curve that contains the current curve.
+
+        This indicates that the current curve is a section of the
+        "root" curve. For example:
+
+        .. testsetup:: curve-root
+
+          import numpy as np
+          import bezier
+
+          nodes = np.array([
+              [0.0, 0.0],
+              [0.75, 0.0],
+              [1.0, 1.0],
+          ])
+          curve = bezier.Curve(nodes)
+
+        .. doctest:: curve-root
+          :options: +NORMALIZE_WHITESPACE
+
+          >>> _, right = curve.subdivide()
+          >>> right
+          <Curve (degree=2, dimension=2, start=0.5, end=1)>
+          >>> right.root is curve
+          True
+          >>> right.evaluate(0.0) == curve.evaluate(0.5)
+          array([ True, True], dtype=bool)
+          >>>
+          >>> mid_left, _ = right.subdivide()
+          >>> mid_left
+          <Curve (degree=2, dimension=2, start=0.5, end=0.75)>
+          >>> mid_left.root is curve
+          True
+          >>> mid_left.evaluate(1.0) == curve.evaluate(0.75)
+          array([ True, True], dtype=bool)
+        """
+        return self._root
 
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
@@ -379,11 +422,15 @@ class Curve(_base.Base):
         left_nodes = new_nodes[:self.degree + 1, :]
         right_nodes = new_nodes[self.degree:, :]
 
+        root = self.root
+        if root is None:
+            root = self
+
         midpoint = 0.5 * (self.start + self.end)
         left = Curve(left_nodes, start=self.start,
-                     end=midpoint, _copy=False)
+                     end=midpoint, root=root, _copy=False)
         right = Curve(right_nodes, start=midpoint,
-                      end=self.end, _copy=False)
+                      end=self.end, root=root, _copy=False)
         return left, right
 
     def intersect(self, other):
