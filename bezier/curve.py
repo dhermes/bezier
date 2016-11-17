@@ -222,16 +222,19 @@ class Curve(_base.Base):
             result[i, :] = self.evaluate(s_val)
         return result
 
-    def plot(self, num_pts, show=False):
+    def plot(self, num_pts, ax=None, show=False):
         """Plot the current curve.
 
         Args:
             num_pts (int): Number of points to plot.
+            ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
+                to add plot to.
             show (Optional[bool]): Flag indicating if the plot should be
                 shown.
 
         Returns:
-            matplotlib.figure.Figure: The figure created for the plot.
+            matplotlib.artist.Artist: The axis containing the plot. This
+            may be a newly created axis.
 
         Raises:
             NotImplementedError: If the curve's dimension is not ``2``.
@@ -243,14 +246,16 @@ class Curve(_base.Base):
         s_vals = np.linspace(0.0, 1.0, num_pts)
         points = self.evaluate_multi(s_vals)
 
-        fig = plt.figure()
-        ax = fig.gca()
+        if ax is None:
+            fig = plt.figure()
+            ax = fig.gca()
+
         ax.plot(points[:, 0], points[:, 1])
 
         if show:
             plt.show()
 
-        return fig
+        return ax
 
     def subdivide(self):
         r"""Split the curve :math:`\gamma(s)` into a left and right half.

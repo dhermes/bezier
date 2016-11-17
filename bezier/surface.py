@@ -294,7 +294,7 @@ class Surface(_base.Base):
             lambda3 (float): Parameter along the reference triangle.
 
         Returns:
-            numpy.ndarray: The point on the curve (as a one dimensional
+            numpy.ndarray: The point on the surface (as a one dimensional
             NumPy array).
 
         Raises:
@@ -491,7 +491,7 @@ class Surface(_base.Base):
             may be a newly created axis.
 
         Raises:
-            NotImplementedError: If the curve's dimension is not ``2``.
+            NotImplementedError: If the surface's dimension is not ``2``.
         """
         if self.dimension != 2:
             raise NotImplementedError('2D is the only supported dimension',
