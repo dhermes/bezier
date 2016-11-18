@@ -445,8 +445,6 @@ class Linearization(object):
 
     def __init__(self, curve, error=None):
         self._curve = curve
-        if error is None:
-            error = linearization_error(curve)
         self._error = error
 
     def subdivide(self):
@@ -457,6 +455,13 @@ class Linearization(object):
             just the current object.
         """
         return self,
+
+    @property
+    def error(self):
+        """float: The linearization error for the linearized curve."""
+        if self._error is None:
+            self._error = linearization_error(self._curve)
+        return self._error
 
     @property
     def _nodes(self):
@@ -488,8 +493,7 @@ class Linearization(object):
             (potentially linearized) curve and the linearization error.
         """
         if isinstance(shape, cls):
-            error = shape._error  # pylint: disable=protected-access
-            return shape, error
+            return shape, shape.error
         else:
             error = linearization_error(shape)
             _, err_exp = _FREXP(error)
