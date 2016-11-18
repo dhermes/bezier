@@ -306,6 +306,19 @@ class Curve(_base.Base):
                  [ 0.75, 1.5 , 2.25],
                  [ 1.  , 2.  , 3.  ]])
 
+        .. note::
+
+           This method is "optimized" for curves of small degree with a
+           moderate amount of ``s_vals``. :math:`B(s)` is evaluated
+           simultaneously by making one copy of the current curve's nodes
+           for each value in ``s_vals``. Then de Casteljau's algorithm
+           is used on each copy, lowering the number of nodes by one
+           until the evaluated point is computed.
+
+           In cases where the large copied matrix exceeds the cache size,
+           it may be faster to use :meth:`evaluate` in serial for each
+           value in ``s_vals`` to avoid copying the nodes.
+
         Args:
             s_vals (numpy.ndarray): Parameters along the curve (as a
                 1D array).
