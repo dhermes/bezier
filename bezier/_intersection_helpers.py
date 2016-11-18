@@ -17,13 +17,17 @@
 """
 
 
+import itertools
+
 import numpy as np
+import six
 
 from bezier import _curve_helpers
 
 
 _FREXP = np.frexp  # pylint: disable=no-member
 _ERROR_EXPONENT = -40  # 2.0**(-40) ~= 1e-12
+_MAX_INTERSECT_SUBDIVISIONS = 25
 
 
 def bbox_intersect(nodes1, nodes2):
@@ -374,6 +378,56 @@ def intersect_one_round(candidates):
         accepted.append((left, right))
 
     return accepted, max_err
+
+
+def all_intersections(candidates):
+    r"""Find the points of intersection among pairs of curves.
+
+    .. note::
+
+        This assumes all curves in a candidate pair are in
+        :math:`\mathbf{R}^2`, but does not **explicitly** check this.
+        However, functions used here will fail if that assumption
+        fails, e.g. :func:`bbox_intersect` and :func:`newton_refine`.
+
+    Args:
+        candidates (iterable): Iterable of pairs of curves that may
+            intersect.
+
+    Returns:
+        numpy.ndarray: Array of intersection points (possibly empty).
+
+    Raises:
+        ValueError: If the subdivision iteration does not terminate
+            before exhausting the maximum number of subdivisions.
+    """
+    for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
+        accepted, max_err = intersect_one_round(candidates)
+
+        # If none of the pairs have been accepted, then there is
+        # no intersection.
+        if not accepted:
+            return np.zeros((0, 2))
+
+        # In the case of ``accepted`` pairs, if the pairs are
+        # sufficiently close to their linearizations, we can stop
+        # the subdivisions and move on to the next step.
+        _, max_exp = _FREXP(max_err)
+        if max_exp <= _ERROR_EXPONENT:
+            return from_linearized(accepted)
+
+        # If we **do** require more subdivisions, we need to update
+        # the list of candidates.
+        # pylint: disable=redefined-variable-type
+        candidates = itertools.chain(*[
+            itertools.product(left.subdivide(), right.subdivide())
+            for left, right in accepted])
+        # pylint: enable=redefined-variable-type
+
+    return ValueError(
+        'Curve intersection failed to converge to approximately '
+        'linear subdivisions after max iterations.',
+        _MAX_INTERSECT_SUBDIVISIONS)
 
 
 class Linearization(object):

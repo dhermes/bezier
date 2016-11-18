@@ -26,8 +26,6 @@
 """
 
 
-import itertools
-
 import matplotlib.pyplot as plt
 import numpy as np
 import six
@@ -39,8 +37,6 @@ from bezier import _intersection_helpers
 
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
-_FREXP = np.frexp  # pylint: disable=no-member
-_MAX_INTERSECT_SUBDIVISIONS = 25
 _LINEAR_SUBDIVIDE = np.array([
     [1.0, 0.0],
     [0.5, 0.5],
@@ -445,13 +441,11 @@ class Curve(_base.Base):
             other (Curve): Other curve to intersect with.
 
         Returns:
-            numpy.ndarray: Possible empty array of intersection points.
+            numpy.ndarray: Array of intersection points (possibly empty).
 
         Raises:
             TypeError: If ``other`` is not a curve.
             NotImplementedError: If both curves aren't two-dimensional.
-            ValueError: If the subdivision iteration does not terminate
-                before exhausting the maximum number of subdivisions.
         """
         if not isinstance(other, Curve):
             raise TypeError('Can only intersect with another curve',
@@ -461,29 +455,4 @@ class Curve(_base.Base):
                 'Intersection only implemented in 2D')
 
         candidates = [(self, other)]
-        for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
-            accepted, max_err = _intersection_helpers.intersect_one_round(
-                candidates)
-
-            # If none of the pairs have been accepted, then there is
-            # no intersection.
-            if not accepted:
-                return np.zeros((0, 2))
-            # In the case of ``accepted`` pairs, if the pairs are
-            # sufficiently close to their linearizations, we can stop
-            # the subdivisions and move on to the next step.
-            _, max_exp = _FREXP(max_err)
-            if max_exp <= _intersection_helpers._ERROR_EXPONENT:
-                return _intersection_helpers.from_linearized(accepted)
-            # If we **do** require more subdivisions, we need to update
-            # the list of candidates.
-            # pylint: disable=redefined-variable-type
-            candidates = itertools.chain(*[
-                itertools.product(left.subdivide(), right.subdivide())
-                for left, right in accepted])
-            # pylint: enable=redefined-variable-type
-
-        return ValueError(
-            'Curve intersection failed to converge to approximately '
-            'linear subdivisions after max iterations.',
-            _MAX_INTERSECT_SUBDIVISIONS)
+        return _intersection_helpers.all_intersections(candidates)
