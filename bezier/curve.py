@@ -438,55 +438,6 @@ class Curve(_base.Base):
                       end=self.end, root=root, _copy=False)
         return left, right
 
-    def _intersect_one_round(self, candidates):
-        """Perform one step of the intersection process.
-
-        Checks if the bounding boxes of each pair in ``candidates``
-        intersect. If the bounding boxes do not intersect, the pair
-        is discarded. Otherwise, the pair is "accepted". Then we
-        attempt to linearize each curve in an "accepted" pair and
-        track the overall Linearization error for every curve
-        encountered.
-
-        Args:
-            candidates (Union[list, itertools.chain]): An iterable of
-                pairs of curves (or linearized curves).
-
-        Returns:
-            Tuple[list, float]: Returns a list of ``accepted`` pairs
-            (among ``candidates``) and the maximum linearization error
-            among all curves in the list of accepted pairs.
-        """
-        accepted = []
-        max_err = 0.0
-
-        for left, right in candidates:
-            # pylint: disable=protected-access
-            left_nodes = left._nodes
-            right_nodes = right._nodes
-            # pylint: enable=protected-access
-            if not _intersection_helpers.bbox_intersect(
-                    left_nodes, right_nodes):
-                continue
-
-            # Attempt to replace the curves with linearizations
-            # if they are close enough to lines.
-            # NOTE: This may be a wasted computation, e.g. if ``left``
-            #       occurs in multiple accepted pairs. However, in practice
-            #       the number of such pairs will be small so this cost
-            #       will be low.
-            left, err_left = _intersection_helpers.Linearization.from_shape(
-                left)
-            max_err = max(max_err, err_left)
-            # Now do the same for the right.
-            right, err_right = _intersection_helpers.Linearization.from_shape(
-                right)
-            max_err = max(max_err, err_right)
-            # Add the accepted pair.
-            accepted.append((left, right))
-
-        return accepted, max_err
-
     def intersect(self, other):
         """Find the points of intersection with another curve.
 
@@ -511,7 +462,8 @@ class Curve(_base.Base):
 
         candidates = [(self, other)]
         for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
-            accepted, max_err = self._intersect_one_round(candidates)
+            accepted, max_err = _intersection_helpers.intersect_one_round(
+                candidates)
 
             # If none of the pairs have been accepted, then there is
             # no intersection.
