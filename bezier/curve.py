@@ -288,11 +288,6 @@ class Curve(_base.Base):
         .. _de Casteljau's algorithm:
             https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
 
-        .. note::
-
-            This currently just uses :meth:`evaluate` and so is less
-            performant than it could be.
-
         .. doctest:: curve-eval-multi
           :options: +NORMALIZE_WHITESPACE
 
@@ -320,11 +315,8 @@ class Curve(_base.Base):
             NumPy array, with the rows corresponding to each ``s``
             value and the columns to the dimension.
         """
-        num_vals, = s_vals.shape
-        result = np.empty((num_vals, self.dimension))
-        for i, s_val in enumerate(s_vals):
-            result[i, :] = self.evaluate(s_val)
-        return result
+        return _curve_helpers.de_casteljau_multi(
+            self._nodes, self.degree, s_vals)
 
     def plot(self, num_pts, ax=None, show=False):
         """Plot the current curve.

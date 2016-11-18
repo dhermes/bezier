@@ -186,28 +186,6 @@ class TestCurve(unittest.TestCase):
         result = curve.evaluate_multi(s_vals)
         self.assertTrue(np.all(expected == result))
 
-    def test_evaluate_multi_calls_evaluate(self):
-        import mock
-
-        s_val1 = 3.14159
-        s_val2 = 2.817281728
-        s_vals = np.array([s_val1, s_val2])
-        num_pts = len(s_vals)
-        curve = self._make_one(np.zeros((2, 1)))
-        ret_vals = [10.0, -1.0]
-        curve.evaluate = mock.Mock(side_effect=ret_vals)
-
-        result = curve.evaluate_multi(s_vals)
-        self.assertEqual(result.shape, (num_pts, 1))
-        # pylint: disable=no-member
-        expected = np.array([ret_vals]).T
-        # pylint: enable=no-member
-        self.assertTrue(np.all(result == expected))
-
-        curve.evaluate.assert_any_call(s_val1)
-        curve.evaluate.assert_any_call(s_val2)
-        self.assertEqual(curve.evaluate.call_count, 2)
-
     def _check_plot_call(self, call, expected, **kwargs):
         # Unpack the call as name, positional args, keyword args
         _, positional, keyword = call
