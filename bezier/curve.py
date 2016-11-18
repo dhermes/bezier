@@ -40,8 +40,8 @@ from bezier import _intersection_helpers
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
 _FREXP = np.frexp  # pylint: disable=no-member
-_MAX_INTERSECT_SUBDIVISIONS = 20
-_ERROR_EXPONENT = -26
+_MAX_INTERSECT_SUBDIVISIONS = 25
+_ERROR_EXPONENT = -40  # 2.0**(-40) ~= 1e-12
 _LINEAR_SUBDIVIDE = np.array([
     [1.0, 0.0],
     [0.5, 0.5],
