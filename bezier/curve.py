@@ -472,6 +472,78 @@ class Curve(_base.Base):
 
         return np.vstack(intersections)
 
+    @staticmethod
+    def _try_linearize(curve):
+        """Try to linearize a curve (or an already linearized curve).
+
+        Args:
+            curve (Union[Curve, Linearization]): A curve or an already
+                linearized curve.
+
+        Returns:
+            Tuple[Union[Curve, Linearization], float]: A pair of the
+            (potentially linearized) curve and the linearization error.
+        """
+        if isinstance(curve, _intersection_helpers.Linearization):
+            error = curve._error  # pylint: disable=protected-access
+            return curve, error
+        else:
+            # NOTE: This may be a wasted computation, e.g. if ``curve``
+            #       occurs in multiple accepted pairs. However, in practice
+            #       the number of such pairs will be small so this cost
+            #       will be low.
+            error = _intersection_helpers.linearization_error(curve)
+            _, err_exp = _FREXP(error)
+            if err_exp <= _ERROR_EXPONENT:
+                linearized = _intersection_helpers.Linearization(
+                    curve, error=error)
+                return linearized, error
+            else:
+                return curve, error
+
+    def _intersect_one_round(self, candidates):
+        """Perform one step of the intersection process.
+
+        Checks if the bounding boxes of each pair in ``candidates``
+        intersect. If the bounding boxes do not intersect, the pair
+        is discarded. Otherwise, the pair is "accepted". Then we
+        attempt to linearize each curve in an "accepted" pair and
+        track the overall Linearization error for every curve
+        encountered.
+
+        Args:
+            candidates (Union[list, itertools.chain]): An iterable of
+                pairs of curves (or linearized curves).
+
+        Returns:
+            Tuple[list, float]: Returns a list of ``accepted`` pairs
+            (among ``candidates``) and the maximum linearization error
+            among all curves in the list of accepted pairs.
+        """
+        accepted = []
+        max_err = 0.0
+
+        for left, right in candidates:
+            # pylint: disable=protected-access
+            left_nodes = left._nodes
+            right_nodes = right._nodes
+            # pylint: enable=protected-access
+            if not _intersection_helpers.bbox_intersect(
+                    left_nodes, right_nodes):
+                continue
+
+            # Attempt to replace the curves with linearizations
+            # if they are close enough to lines.
+            left, err_left = self._try_linearize(left)
+            max_err = max(max_err, err_left)
+            # Now do the same for the right.
+            right, err_right = self._try_linearize(right)
+            max_err = max(max_err, err_right)
+            # Add the accepted pair.
+            accepted.append((left, right))
+
+        return accepted, max_err
+
     def intersect(self, other):
         """Find the points of intersection with another curve.
 
@@ -495,63 +567,8 @@ class Curve(_base.Base):
                 'Intersection only implemented in 2D')
 
         candidates = [(self, other)]
-        accepted = None
         for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
-            accepted = []
-            max_err = 0.0
-
-            for left, right in candidates:
-                # pylint: disable=protected-access
-                left_nodes = left._nodes
-                right_nodes = right._nodes
-                # pylint: enable=protected-access
-                if not _intersection_helpers.bbox_intersect(
-                        left_nodes, right_nodes):
-                    continue
-
-                # Attempt to replace the curves with linearizations
-                # if they are close enough to lines.
-                if isinstance(left, _intersection_helpers.Linearization):
-                    is_curve = False
-                    # pylint: disable=no-member,protected-access
-                    err_left = left._error
-                    # pylint: enable=no-member,protected-access
-                else:
-                    is_curve = True
-                    # NOTE: This may be a wasted computation, e.g. if ``left``
-                    #       occurs in multiple pairs. However, in practice the
-                    #       number of pairs will be small so this cost
-                    #       will be low.
-                    err_left = _intersection_helpers.linearization_error(left)
-
-                max_err = max(max_err, err_left)
-                if is_curve:
-                    _, left_exp = _FREXP(err_left)
-                    if left_exp <= _ERROR_EXPONENT:
-                        left = _intersection_helpers.Linearization(
-                            left, error=err_left)
-
-                # Now do the same for the right.
-                if isinstance(right, _intersection_helpers.Linearization):
-                    is_curve = False
-                    # pylint: disable=no-member,protected-access
-                    err_right = right._error
-                    # pylint: enable=no-member,protected-access
-                else:
-                    is_curve = True
-                    # NOTE: This may also be a wasted computation.
-                    err_right = _intersection_helpers.linearization_error(
-                        right)
-
-                max_err = max(max_err, err_right)
-                if is_curve:
-                    _, right_exp = _FREXP(err_right)
-                    if right_exp <= _ERROR_EXPONENT:
-                        right = _intersection_helpers.Linearization(
-                            right, error=err_right)
-
-                # Add the accepted pair.
-                accepted.append((left, right))
+            accepted, max_err = self._intersect_one_round(candidates)
 
             # If none of the pairs have been accepted, then there is
             # no intersection.
