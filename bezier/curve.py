@@ -41,7 +41,6 @@ _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
 _FREXP = np.frexp  # pylint: disable=no-member
 _MAX_INTERSECT_SUBDIVISIONS = 25
-_ERROR_EXPONENT = -40  # 2.0**(-40) ~= 1e-12
 _LINEAR_SUBDIVIDE = np.array([
     [1.0, 0.0],
     [0.5, 0.5],
@@ -439,35 +438,6 @@ class Curve(_base.Base):
                       end=self.end, root=root, _copy=False)
         return left, right
 
-    @staticmethod
-    def _try_linearize(curve):
-        """Try to linearize a curve (or an already linearized curve).
-
-        Args:
-            curve (Union[Curve, Linearization]): A curve or an already
-                linearized curve.
-
-        Returns:
-            Tuple[Union[Curve, Linearization], float]: A pair of the
-            (potentially linearized) curve and the linearization error.
-        """
-        if isinstance(curve, _intersection_helpers.Linearization):
-            error = curve._error  # pylint: disable=protected-access
-            return curve, error
-        else:
-            # NOTE: This may be a wasted computation, e.g. if ``curve``
-            #       occurs in multiple accepted pairs. However, in practice
-            #       the number of such pairs will be small so this cost
-            #       will be low.
-            error = _intersection_helpers.linearization_error(curve)
-            _, err_exp = _FREXP(error)
-            if err_exp <= _ERROR_EXPONENT:
-                linearized = _intersection_helpers.Linearization(
-                    curve, error=error)
-                return linearized, error
-            else:
-                return curve, error
-
     def _intersect_one_round(self, candidates):
         """Perform one step of the intersection process.
 
@@ -501,10 +471,16 @@ class Curve(_base.Base):
 
             # Attempt to replace the curves with linearizations
             # if they are close enough to lines.
-            left, err_left = self._try_linearize(left)
+            # NOTE: This may be a wasted computation, e.g. if ``left``
+            #       occurs in multiple accepted pairs. However, in practice
+            #       the number of such pairs will be small so this cost
+            #       will be low.
+            left, err_left = _intersection_helpers.Linearization.from_shape(
+                left)
             max_err = max(max_err, err_left)
             # Now do the same for the right.
-            right, err_right = self._try_linearize(right)
+            right, err_right = _intersection_helpers.Linearization.from_shape(
+                right)
             max_err = max(max_err, err_right)
             # Add the accepted pair.
             accepted.append((left, right))
@@ -545,7 +521,7 @@ class Curve(_base.Base):
             # sufficiently close to their linearizations, we can stop
             # the subdivisions and move on to the next step.
             _, max_exp = _FREXP(max_err)
-            if max_exp <= _ERROR_EXPONENT:
+            if max_exp <= _intersection_helpers._ERROR_EXPONENT:
                 return _intersection_helpers.from_linearized(accepted)
             # If we **do** require more subdivisions, we need to update
             # the list of candidates.

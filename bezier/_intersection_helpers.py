@@ -22,6 +22,10 @@ import numpy as np
 from bezier import _curve_helpers
 
 
+_FREXP = np.frexp  # pylint: disable=no-member
+_ERROR_EXPONENT = -40  # 2.0**(-40) ~= 1e-12
+
+
 def bbox_intersect(nodes1, nodes2):
     r"""Bounding box intersection predicate.
 
@@ -369,3 +373,27 @@ class Linearization(object):
     def end(self):
         """numpy.ndarray: The end vector of this linearization."""
         return self._curve._nodes[[-1], :]  # pylint: disable=protected-access
+
+    @classmethod
+    def from_shape(cls, shape):
+        """Try to linearize a curve (or an already linearized curve).
+
+        Args:
+            shape (Union[.Curve, Linearization]): A curve or an already
+                linearized curve.
+
+        Returns:
+            Tuple[Union[.Curve, Linearization], float]: A pair of the
+            (potentially linearized) curve and the linearization error.
+        """
+        if isinstance(shape, cls):
+            error = shape._error  # pylint: disable=protected-access
+            return shape, error
+        else:
+            error = linearization_error(shape)
+            _, err_exp = _FREXP(error)
+            if err_exp <= _ERROR_EXPONENT:
+                linearized = cls(shape, error=error)
+                return linearized, error
+            else:
+                return shape, error
