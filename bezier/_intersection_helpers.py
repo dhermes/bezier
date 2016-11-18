@@ -19,19 +19,7 @@
 
 import numpy as np
 
-
-_WEIGHTS_QUADRATIC = np.array([
-    [1.0, -2.0, 1.0],
-])
-_WEIGHTS_CUBIC = np.array([
-    [1.0, -2.0, 1.0, 0.0],
-    [0.0, 1.0, -2.0, 1.0],
-])
-_WEIGHTS_QUARTIC = np.array([
-    [1.0, -2.0, 1.0, 0.0, 0.0],
-    [0.0, 1.0, -2.0, 1.0, 0.0],
-    [0.0, 0.0, 1.0, -2.0, 1.0],
-])
+from bezier import _curve_helpers
 
 
 def bbox_intersect(nodes1, nodes2):
@@ -107,23 +95,103 @@ def linearization_error(curve):
     if curve.degree == 1:
         return 0.0
 
-    if curve.degree == 2:
-        weights = _WEIGHTS_QUADRATIC
-    elif curve.degree == 3:
-        weights = _WEIGHTS_CUBIC
-    elif curve.degree == 4:
-        weights = _WEIGHTS_QUARTIC
-    else:
-        weights = np.zeros((curve.degree - 1, curve.degree + 1))
-        eye = np.eye(curve.degree - 1)
-        weights[:, :-2] = eye
-        weights[:, 1:-1] += -2 * eye
-        weights[:, 2:] += eye
-
     nodes = curve._nodes  # pylint: disable=protected-access
-    second_deriv = weights.dot(nodes)  # pylint: disable=no-member
+    second_deriv = nodes[:-2, :] - 2.0 * nodes[1:-1, :] + nodes[2:, :]
     worst_case = np.max(np.abs(second_deriv), axis=0)
 
     # max_{0 <= s <= 1} s(1 - s)/2 = 1/8 = 0.125
     multiplier = 0.125 * curve.degree * (curve.degree - 1)
     return multiplier * np.linalg.norm(worst_case, ord=2)
+
+
+def _evaluate_hodograph(nodes, degree, s):
+    r"""Evaluate the Hodograph curve at a point :math:`s`.
+
+    The Hodograph is a synonym for the first derivative of a
+    B |eacute| zier curve.
+
+    Args:
+        nodes (numpy.ndarray): The nodes of a curve.
+        degree (int): The degree of the curve (assumed to be one less than
+            the number of ``nodes``.
+        s (float): A parameter along the curve at which the Hodograph
+            is to be evaluated.
+
+    Returns:
+        numpy.ndarray: The point on the Hodograph curve (as a one
+        dimensional NumPy array).
+    """
+    first_deriv = nodes[1:, :] - nodes[:-1, :]
+    # NOTE: Taking the derivative drops the degree by 1.
+    return _curve_helpers.de_casteljau(first_deriv, degree - 1, s)
+
+
+def newton_refine(s, curve1, t, curve2):
+    r"""Refine a near-intersection using Newton's method.
+
+    We assume we have an "almost" solution
+
+    .. math::
+
+       B_1\left(s_{\ast}\right) \approx B_2\left(t_{\ast}\right)
+
+    and want to use Newton's method on the function
+
+    .. math::
+
+       F(s, t) = B_1(s) - B_2(t)
+
+    to refine :math:`\left(s_{\ast}, t_{\ast}\right)`. Using this,
+    and the Jacobian :math:`DF`, we "solve"
+
+    .. math::
+
+       \left[\begin{array}{c}
+           0 \\ 0 \end{array}\right] \approx
+           F\left(s_{\ast} + \Delta s, t_{\ast} + \Delta t\right) \approx
+           F\left(s_{\ast}, t_{\ast}\right) +
+           \left[\begin{array}{c c}
+               B_1'\left(s_{\ast}\right) &
+               - B_2'\left(t_{\ast}\right) \end{array}\right]
+           \left[\begin{array}{c}
+               \Delta s \\ \Delta t \end{array}\right]
+
+    and refine with the component updates :math:`\Delta s` and
+    :math:`\Delta t`.
+
+    .. note::
+
+        This assumes ``curve1`` and ``curve2`` live in
+        :math:`\mathbf{R}^2`.
+
+    Args:
+        s (float): Parameter of a near-intersection along ``curve1``.
+        curve1 (.Curve): First curve forming intersection.
+        t (float): Parameter of a near-intersection along ``curve2``.
+        curve2 (.Curve): Second curve forming intersection.
+
+    Returns:
+        Tuple[float, float]: The refined parameters from a single Newton
+        step.
+    """
+    # NOTE: We form -F(s, t) since we want to solve -DF^{-1} F(s, t).
+    func_val = curve2.evaluate(t) - curve1.evaluate(s)
+    if np.all(func_val == 0.0):
+        # No refinement is needed.
+        return s, t
+
+    # NOTE: This assumes the curves are 2D.
+    jac_mat = np.zeros((2, 2))
+    # In curve.evaluate() and evaluate_hodograph() the roles of
+    # columns and rows are swapped.
+    nodes1 = curve1._nodes  # pylint: disable=protected-access
+    jac_mat[0, :] = _evaluate_hodograph(nodes1, curve1.degree, s)
+    nodes2 = curve2._nodes  # pylint: disable=protected-access
+    jac_mat[1, :] = - _evaluate_hodograph(nodes2, curve2.degree, t)
+
+    # Solve the system (via the transposes, since, as above, the roles
+    # of columns and rows are reversed). Note that since ``func_val``
+    # is a  1D object, then ``delta_s``, ``delta_t`` can be unpacked
+    # without worry of them being vectors.
+    delta_s, delta_t = np.linalg.solve(jac_mat.T, func_val.T)
+    return s + delta_s, t + delta_t

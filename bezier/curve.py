@@ -19,6 +19,9 @@
 
   import numpy as np
   import bezier
+
+.. autofunction:: bezier._intersection_helpers.linearization_error
+.. autofunction:: bezier._intersection_helpers.newton_refine
 """
 
 
@@ -27,6 +30,7 @@ import numpy as np
 import six
 
 from bezier import _base
+from bezier import _curve_helpers
 
 
 _REPR_TEMPLATE = (
@@ -274,18 +278,7 @@ class Curve(_base.Base):
             numpy.ndarray: The point on the curve (as a one dimensional
             NumPy array).
         """
-        # NOTE: This assumes degree > 0, since the constructor requires this.
-        weights = np.zeros((self.degree, self.degree + 1))
-        eye = np.eye(self.degree)
-        weights[:, 1:] += eye * s
-        weights[:, :-1] += eye * (1 - s)
-
-        value = weights.dot(self._nodes)
-        for stage in six.moves.xrange(1, self.degree):
-            value = weights[:-stage, :-stage].dot(value)
-
-        # Here: Value will be 1x2, we just want the 1D point.
-        return value.flatten()
+        return _curve_helpers.de_casteljau(self._nodes, self.degree, s)
 
     def evaluate_multi(self, s_vals):
         r"""Evaluate :math:`B(s)` for multiple points along the curve.

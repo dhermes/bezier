@@ -176,3 +176,130 @@ class Test_linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(curve)
         expected = 0.125 * 5 * 4 * 13.0
         self.assertEqual(error_val, expected)
+
+
+class Test_newton_refine(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(s, curve1, t, curve2):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.newton_refine(s, curve1, t, curve2)
+
+    def test_linear(self):
+        import bezier
+
+        nodes1 = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        nodes2 = np.array([
+            [1.0, 0.0],
+            [0.0, 3.0],
+        ])
+        curve1 = bezier.Curve(nodes1)
+        curve2 = bezier.Curve(nodes2)
+
+        known_s = 0.75
+        known_t = 0.25
+        self.assertTrue(np.all(
+            curve1.evaluate(known_s) == curve2.evaluate(known_t)))
+
+        wrong_s = known_s - 0.125
+        wrong_t = known_t + 0.125
+        # NOTE: By construction, the Jacobian matrix will be
+        #           [1, 1], [1, -3]
+        #       which has determinant -4.0, hence there will
+        #       be no round-off when solving.
+        new_s, new_t = self._call_function_under_test(
+            wrong_s, curve1, wrong_t, curve2)
+
+        # Newton's method is exact on linear problems so will
+        # always converge after one step.
+        self.assertEqual(new_s, known_s)
+        self.assertEqual(new_t, known_t)
+
+    @staticmethod
+    def _get_quadratics():
+        import bezier
+
+        nodes1 = np.array([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        nodes2 = np.array([
+            [1.0, 0.75],
+            [0.5, -0.25],
+            [0.0, 0.75],
+        ])
+        curve1 = bezier.Curve(nodes1)
+        curve2 = bezier.Curve(nodes2)
+        return curve1, curve2
+
+    def test_mixed_degree(self):
+        import bezier
+
+        curve1, _ = self._get_quadratics()
+        nodes2 = np.array([
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        curve2 = bezier.Curve(nodes2)
+
+        known_s = 0.5
+        known_t = 0.5
+        self.assertTrue(np.all(
+            curve1.evaluate(known_s) == curve2.evaluate(known_t)))
+
+        wrong_s = 0.25
+        wrong_t = 0.25
+        # NOTE: By construction, the Jacobian matrix will be
+        #           [0.5, 0.5], [1, -1]
+        #       which has determinant -1.0, hence there will
+        #       be no round-off when solving.
+        new_s, new_t = self._call_function_under_test(
+            wrong_s, curve1, wrong_t, curve2)
+
+        self.assertEqual(new_s, 0.625)
+        self.assertEqual(new_t, 0.5625)
+
+        # Make sure we have gotten closer to correct.
+        self.assertLess(abs(known_s - new_s), abs(known_s - wrong_s))
+        self.assertLess(abs(known_t - new_t), abs(known_t - wrong_t))
+
+    def test_early_exit(self):
+        curve1, curve2 = self._get_quadratics()
+
+        known_s = 0.25
+        known_t = 0.75
+
+        self.assertTrue(np.all(
+            curve1.evaluate(known_s) == curve2.evaluate(known_t)))
+        new_s, new_t = self._call_function_under_test(
+            known_s, curve1, known_t, curve2)
+
+        self.assertEqual(new_s, known_s)
+        self.assertEqual(new_t, known_t)
+
+    def test_quadratic(self):
+        curve1, curve2 = self._get_quadratics()
+
+        known_s = 0.25
+        known_t = 0.75
+        self.assertTrue(np.all(
+            curve1.evaluate(known_s) == curve2.evaluate(known_t)))
+
+        wrong_s = known_s + 0.0625  # 1/16
+        wrong_t = known_t + 0.0625  # 1/16
+        # NOTE: By construction, the Jacobian matrix will be
+        #           [0.5, 0.375], [0.5, -0.625]
+        #       which has determinant -0.5, hence there will
+        #       be no round-off when solving.
+        new_s, new_t = self._call_function_under_test(
+            wrong_s, curve1, wrong_t, curve2)
+
+        self.assertEqual(new_s, 0.171875)
+        self.assertEqual(new_t, 0.703125)
+        # NOTE: We don't check that we have gotten closer to
+        #       correct because we actually get further away.
