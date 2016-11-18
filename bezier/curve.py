@@ -22,8 +22,11 @@
 
 .. autofunction:: bezier._intersection_helpers.linearization_error
 .. autofunction:: bezier._intersection_helpers.newton_refine
+.. autofunction:: bezier._intersection_helpers.segment_intersection
 """
 
+
+import itertools
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,10 +34,13 @@ import six
 
 from bezier import _base
 from bezier import _curve_helpers
+from bezier import _intersection_helpers
 
 
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
+_MAX_INTERSECT_SUBDIVISIONS = 20
+_ERROR_EXPONENT = -26
 _LINEAR_SUBDIVIDE = np.array([
     [1.0, 0.0],
     [0.5, 0.5],
@@ -432,6 +438,36 @@ class Curve(_base.Base):
                       end=self.end, root=root, _copy=False)
         return left, right
 
+    def _from_linearized(self, linearized_pairs):
+        """Determine curve-curve intersections from pairs of linearizations.
+
+        Args:
+            linearized_pairs (list): List of pairs of
+                :class:`._intersection_helpers.Linearization` instances.
+
+        Returns:
+            numpy.ndarray: Array of all intersections.
+        """
+        intersections = []
+        for left, right in linearized_pairs:
+            s, t = _intersection_helpers.segment_intersection(
+                left.start, left.end, right.start, right.end)
+            # TODO: Check if s, t are in [0, 1].
+            # Now, promote `s` and `t` onto the original curves.
+            orig_s = (1 - s) * left._curve.start + s * left._curve.end
+            orig_left = left._curve.root
+            orig_t = (1 - t) * right._curve.start + t * right._curve.end
+            orig_right = right._curve.root
+            # Perform one step of Newton iteration to refine the computed
+            # values of s and t.
+            refined_s, refined_t = _intersection_helpers.newton_refine(
+                orig_s, orig_left, orig_t, orig_right)
+            # TODO: Check that (orig_left.evaluate(refined_s) ~=
+            #                   orig_right.evaluate(refined_t))
+            intersections.append(orig_left.evaluate(refined_s))
+
+        return np.vstack(intersections)
+
     def intersect(self, other):
         """Find the points of intersection with another curve.
 
@@ -444,6 +480,8 @@ class Curve(_base.Base):
         Raises:
             TypeError: If ``other`` is not a curve.
             NotImplementedError: If both curves aren't two-dimensional.
+            ValueError: If the subdivision iteration does not terminate
+                before exhausting the maximum number of subdivisions.
         """
         if not isinstance(other, Curve):
             raise TypeError('Can only intersect with another curve',
@@ -452,4 +490,73 @@ class Curve(_base.Base):
             raise NotImplementedError(
                 'Intersection only implemented in 2D')
 
-        return np.zeros((0, 2))
+        candidates = [(self, other)]
+        accepted = None
+        for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
+            accepted = []
+            max_err = 0.0
+
+            for left, right in candidates:
+                if not _intersection_helpers.bbox_intersect(
+                        left._nodes, right._nodes):
+                    continue
+
+                # Attempt to replace the curves with linearizations
+                # if they are close enough to lines.
+                if isinstance(left, _intersection_helpers.Linearization):
+                    is_curve = False
+                    err_left = left._error
+                else:
+                    is_curve = True
+                    # NOTE: This may be a wasted computation, e.g. if ``left``
+                    #       occurs in multiple pairs. However, in practice the
+                    #       number of pairs will be small so this cost
+                    #       will be low.
+                    err_left = _intersection_helpers.linearization_error(left)
+
+                max_err = max(max_err, err_left)
+                if is_curve:
+                    _, left_exp = np.frexp(err_left)
+                    if left_exp <= _ERROR_EXPONENT:
+                        left = _intersection_helpers.Linearization(
+                            left, error=err_left)
+
+                # Now do the same for the right.
+                if isinstance(right, _intersection_helpers.Linearization):
+                    is_curve = False
+                    err_right = right._error
+                else:
+                    is_curve = True
+                    # NOTE: This may also be a wasted computation.
+                    err_right = _intersection_helpers.linearization_error(right)
+
+                max_err = max(max_err, err_right)
+                if is_curve:
+                    _, right_exp = np.frexp(err_right)
+                    if right_exp <= _ERROR_EXPONENT:
+                        right = _intersection_helpers.Linearization(
+                            right, error=err_right)
+
+                # Add the accepted pair.
+                accepted.append((left, right))
+
+            # If none of the pairs have been accepted, then there is
+            # no intersection.
+            if not accepted:
+                return np.zeros((0, 2))
+            # In the case of ``accepted`` pairs, if the pairs are
+            # sufficiently close to their linearizations, we can stop
+            # the subdivisions and move on to the next step.
+            _, max_exp = np.frexp(max_err)
+            if max_exp <= _ERROR_EXPONENT:
+                return self._from_linearized(accepted)
+            # If we **do** require more subdivisions, we need to update
+            # the list of candidates.
+            candidates = itertools.chain(*[
+                itertools.product(left.subdivide(), right.subdivide())
+                for left, right in accepted])
+
+        return ValueError(
+            'Curve intersection failed to converge to approximately '
+            'linear subdivisions after max iterations.',
+            _MAX_INTERSECT_SUBDIVISIONS)

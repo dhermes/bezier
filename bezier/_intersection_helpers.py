@@ -196,3 +196,143 @@ def newton_refine(s, curve1, t, curve2):
     # without worry of them being vectors.
     delta_s, delta_t = np.linalg.solve(jac_mat.T, func_val.T)
     return s + delta_s, t + delta_t
+
+
+def _cross_product(vec0, vec1):
+    r"""Compute the cross-product of vectors in :math:`\mathbf{R}^2`.
+
+    Utilizes the fact that
+
+    .. math::
+
+       \left[\begin{array}{c} A \\ B \\ 0 \end{array}\right] \times
+           \left[\begin{array}{c} C \\ D \\ 0 \end{array}\right] =
+           \left[\begin{array}{c} 0 \\ 0 \\ AD - BC \end{array}\right]
+
+    and just returns the :math:`z` component.
+
+    Args:
+        vec0 (numpy.ndarray): A vector as a 1x2 NumPy array.
+        vec1 (numpy.ndarray): A vector as a 1x2 NumPy array.
+
+    Returns:
+        float: The cross-product (or rather, its :math:`z` component).
+    """
+    return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]
+
+
+def segment_intersection(start0, end0, start1, end1):
+    r"""Determine the intersection of two line segments.
+
+    Assumes each line is parametric
+
+    .. math::
+
+       \begin{alignat*}{2}
+        L_0(s) &= S_0 (1 - s) + E_0 s &&= S_0 + s \Delta_0 \\
+        L_1(s) &= S_1 (1 - t) + E_1 t &&= S_1 + t \Delta_1.
+       \end{alignat*}
+
+    To solve :math:`S_0 + s \Delta_0 = S_1 + t \Delta_1`, we use the
+    cross product:
+
+    .. math::
+
+       \left(S_0 + s \Delta_0\right) \times \Delta_1 =
+           \left(S_1 + t \Delta_1\right) \times \Delta_1 \Longrightarrow
+       s \left(\Delta_0 \times \Delta_1\right) =
+           \left(S_1 - S_0\right) \times \Delta_1.
+
+    Similarly
+
+    .. math::
+
+       \Delta_0 \times \left(S_0 + s \Delta_0\right) =
+           \Delta_0 \times \left(S_1 + t \Delta_1\right) \Longrightarrow
+       \left(S_1 - S_0\right) \times \Delta_0 =
+           \Delta_0 \times \left(S_0 - S_1\right) =
+           t \left(\Delta_0 \times \Delta_1\right).
+
+    .. note::
+
+       Since our points are in :math:`\mathbf{R}^2`, the "traditional"
+       cross-product in :math:`\mathbf{R}^3` will always point in the
+       :math:`z` direction, so in the above we mean the :math:`z`
+       component of the cross product, rather than the entire vector.
+
+    Args:
+        start0 (numpy.ndarray): A 1x2 NumPy array that is the start
+            vector :math:`S_0` of the parametric line :math:`L_0(s)`.
+        end0 (numpy.ndarray): A 1x2 NumPy array that is the end
+            vector :math:`E_0` of the parametric line :math:`L_0(s)`.
+        start1 (numpy.ndarray): A 1x2 NumPy array that is the start
+            vector :math:`S_1` of the parametric line :math:`L_1(s)`.
+        end1 (numpy.ndarray): A 1x2 NumPy array that is the end
+            vector :math:`E_1` of the parametric line :math:`L_1(s)`.
+
+    Returns:
+        Tuple[float, float]: Pair of :math:`s_{\ast}` and :math:`t_{\ast}`
+        such that the lines intersect:
+        :math:`L_0\left(s_{\ast}\right) = L_1\left(t_{\ast}\right)`.
+
+    Raises:
+        NotImplementedError: If the lines are parallel (or one of the lines
+            is degenerate. This manifests via
+            :math:`\Delta_0 \times \Delta_1 = 0`.
+    """
+    delta0 = end0 - start0
+    delta1 = end1 - start1
+    cross_d0_d1 = _cross_product(delta0, delta1)
+    if cross_d0_d1 == 0.0:
+        raise NotImplementedError('Delta_0 x Delta_1 = 0 not supported')
+    else:
+        start_delta = start1 - start0
+        s = _cross_product(start_delta, delta1) / cross_d0_d1
+        t = _cross_product(start_delta, delta0) / cross_d0_d1
+        return s, t
+
+
+class Linearization(object):
+    """A linearization of a curve.
+
+    This class is provided as a stand-in for a curve, so it
+    provides a similar interface.
+
+    Args:
+        curve (.Curve): A curve that is linearized.
+        error (Optional[float]): The linearization error. If not
+            provided, this value is computed on the fly via
+            :func:`linearization_error`.
+    """
+
+    def __init__(self, curve, error=None):
+        self._curve = curve
+        if error is None:
+            error = linearization_error(curve)
+        self._error = error
+
+    def subdivide(self):
+        """Do-nothing method to match the :class:`.Curve` interface.
+
+        Returns:
+            Tuple[Linearization]: List of all subdivided parts, which is
+            just the current object.
+        """
+        return self,
+
+    @property
+    def _nodes(self):
+        """numpy.ndarray: The nodes defining the linearized curve."""
+        # NOTE: It's unclear if self._curve._nodes is appropriate here
+        #       or if self._curve._nodes[[0, -1], :] is.
+        return self._curve._nodes
+
+    @property
+    def start(self):
+        """numpy.ndarray: The start vector of this linearization."""
+        return self._curve._nodes[[0], :]
+
+    @property
+    def end(self):
+        """numpy.ndarray: The end vector of this linearization."""
+        return self._curve._nodes[[-1], :]
