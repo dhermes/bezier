@@ -115,8 +115,16 @@ def linearization_error(curve):
 def _evaluate_hodograph(nodes, degree, s):
     r"""Evaluate the Hodograph curve at a point :math:`s`.
 
-    The Hodograph is a synonym for the first derivative of a
-    B |eacute| zier curve.
+    The Hodograph (first derivative) of a B |eacute| zier curve
+    degree :math:`d = n - 1` and is given by
+
+    .. math::
+
+       B'(s) = n \sum_{j = 0}^{d} \binom{d}{j} s^j
+       (1 - s)^{d - j} \cdot \Delta v_j
+
+    where each forward difference is given by
+    :math:`\Delta v_j = v_{j + 1} - v_j`.
 
     Args:
         nodes (numpy.ndarray): The nodes of a curve.
@@ -131,7 +139,7 @@ def _evaluate_hodograph(nodes, degree, s):
     """
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     # NOTE: Taking the derivative drops the degree by 1.
-    return _curve_helpers.evaluate_multi(
+    return degree * _curve_helpers.evaluate_multi(
         first_deriv, degree - 1, np.array([s])).flatten()
 
 
@@ -314,14 +322,12 @@ def from_linearized(linearized_pairs):
     for left, right in linearized_pairs:
         s, t = segment_intersection(
             left.start, left.end, right.start, right.end)
-        left_curve = left._curve  # pylint: disable=protected-access
-        right_curve = right._curve  # pylint: disable=protected-access
         # TODO: Check if s, t are in [0, 1].
         # Now, promote `s` and `t` onto the original curves.
-        orig_s = (1 - s) * left_curve.start + s * left_curve.end
-        orig_left = left_curve.root
-        orig_t = (1 - t) * right_curve.start + t * right_curve.end
-        orig_right = right_curve.root
+        orig_s = (1 - s) * left.curve.start + s * left.curve.end
+        orig_left = left.curve.root
+        orig_t = (1 - t) * right.curve.start + t * right.curve.end
+        orig_right = right.curve.root
         # Perform one step of Newton iteration to refine the computed
         # values of s and t.
         refined_s, _ = newton_refine(
@@ -418,11 +424,9 @@ def all_intersections(candidates):
 
         # If we **do** require more subdivisions, we need to update
         # the list of candidates.
-        # pylint: disable=redefined-variable-type
         candidates = itertools.chain(*[
             itertools.product(left.subdivide(), right.subdivide())
             for left, right in accepted])
-        # pylint: enable=redefined-variable-type
 
     return ValueError(
         'Curve intersection failed to converge to approximately '
@@ -455,6 +459,11 @@ class Linearization(object):
             just the current object.
         """
         return self,
+
+    @property
+    def curve(self):
+        """.Curve: The curve that this linearization approximates."""
+        return self._curve
 
     @property
     def error(self):
