@@ -39,6 +39,7 @@ from bezier import _intersection_helpers
 
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
+_FREXP = np.frexp  # pylint: disable=no-member
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _ERROR_EXPONENT = -26
 _LINEAR_SUBDIVIDE = np.array([
@@ -438,7 +439,8 @@ class Curve(_base.Base):
                       end=self.end, root=root, _copy=False)
         return left, right
 
-    def _from_linearized(self, linearized_pairs):
+    @staticmethod
+    def _from_linearized(linearized_pairs):
         """Determine curve-curve intersections from pairs of linearizations.
 
         Args:
@@ -452,15 +454,17 @@ class Curve(_base.Base):
         for left, right in linearized_pairs:
             s, t = _intersection_helpers.segment_intersection(
                 left.start, left.end, right.start, right.end)
+            left_curve = left._curve  # pylint: disable=protected-access
+            right_curve = right._curve  # pylint: disable=protected-access
             # TODO: Check if s, t are in [0, 1].
             # Now, promote `s` and `t` onto the original curves.
-            orig_s = (1 - s) * left._curve.start + s * left._curve.end
-            orig_left = left._curve.root
-            orig_t = (1 - t) * right._curve.start + t * right._curve.end
-            orig_right = right._curve.root
+            orig_s = (1 - s) * left_curve.start + s * left_curve.end
+            orig_left = left_curve.root
+            orig_t = (1 - t) * right_curve.start + t * right_curve.end
+            orig_right = right_curve.root
             # Perform one step of Newton iteration to refine the computed
             # values of s and t.
-            refined_s, refined_t = _intersection_helpers.newton_refine(
+            refined_s, _ = _intersection_helpers.newton_refine(
                 orig_s, orig_left, orig_t, orig_right)
             # TODO: Check that (orig_left.evaluate(refined_s) ~=
             #                   orig_right.evaluate(refined_t))
@@ -497,15 +501,21 @@ class Curve(_base.Base):
             max_err = 0.0
 
             for left, right in candidates:
+                # pylint: disable=protected-access
+                left_nodes = left._nodes
+                right_nodes = right._nodes
+                # pylint: enable=protected-access
                 if not _intersection_helpers.bbox_intersect(
-                        left._nodes, right._nodes):
+                        left_nodes, right_nodes):
                     continue
 
                 # Attempt to replace the curves with linearizations
                 # if they are close enough to lines.
                 if isinstance(left, _intersection_helpers.Linearization):
                     is_curve = False
+                    # pylint: disable=no-member,protected-access
                     err_left = left._error
+                    # pylint: enable=no-member,protected-access
                 else:
                     is_curve = True
                     # NOTE: This may be a wasted computation, e.g. if ``left``
@@ -516,7 +526,7 @@ class Curve(_base.Base):
 
                 max_err = max(max_err, err_left)
                 if is_curve:
-                    _, left_exp = np.frexp(err_left)
+                    _, left_exp = _FREXP(err_left)
                     if left_exp <= _ERROR_EXPONENT:
                         left = _intersection_helpers.Linearization(
                             left, error=err_left)
@@ -524,15 +534,18 @@ class Curve(_base.Base):
                 # Now do the same for the right.
                 if isinstance(right, _intersection_helpers.Linearization):
                     is_curve = False
+                    # pylint: disable=no-member,protected-access
                     err_right = right._error
+                    # pylint: enable=no-member,protected-access
                 else:
                     is_curve = True
                     # NOTE: This may also be a wasted computation.
-                    err_right = _intersection_helpers.linearization_error(right)
+                    err_right = _intersection_helpers.linearization_error(
+                        right)
 
                 max_err = max(max_err, err_right)
                 if is_curve:
-                    _, right_exp = np.frexp(err_right)
+                    _, right_exp = _FREXP(err_right)
                     if right_exp <= _ERROR_EXPONENT:
                         right = _intersection_helpers.Linearization(
                             right, error=err_right)
@@ -547,14 +560,16 @@ class Curve(_base.Base):
             # In the case of ``accepted`` pairs, if the pairs are
             # sufficiently close to their linearizations, we can stop
             # the subdivisions and move on to the next step.
-            _, max_exp = np.frexp(max_err)
+            _, max_exp = _FREXP(max_err)
             if max_exp <= _ERROR_EXPONENT:
                 return self._from_linearized(accepted)
             # If we **do** require more subdivisions, we need to update
             # the list of candidates.
+            # pylint: disable=redefined-variable-type
             candidates = itertools.chain(*[
                 itertools.product(left.subdivide(), right.subdivide())
                 for left, right in accepted])
+            # pylint: enable=redefined-variable-type
 
         return ValueError(
             'Curve intersection failed to converge to approximately '

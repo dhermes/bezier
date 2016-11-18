@@ -325,14 +325,14 @@ class Linearization(object):
         """numpy.ndarray: The nodes defining the linearized curve."""
         # NOTE: It's unclear if self._curve._nodes is appropriate here
         #       or if self._curve._nodes[[0, -1], :] is.
-        return self._curve._nodes
+        return self._curve._nodes  # pylint: disable=protected-access
 
     @property
     def start(self):
         """numpy.ndarray: The start vector of this linearization."""
-        return self._curve._nodes[[0], :]
+        return self._curve._nodes[[0], :]  # pylint: disable=protected-access
 
     @property
     def end(self):
         """numpy.ndarray: The end vector of this linearization."""
-        return self._curve._nodes[[-1], :]
+        return self._curve._nodes[[-1], :]  # pylint: disable=protected-access
