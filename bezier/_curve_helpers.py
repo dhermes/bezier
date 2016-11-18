@@ -21,7 +21,7 @@ import numpy as np
 import six
 
 
-def de_casteljau_multi(nodes, degree, s_vals):
+def evaluate_multi(nodes, degree, s_vals):
     r"""Performs the de Casteljau algorithm for multiple points along a curve.
 
     Args:

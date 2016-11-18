@@ -123,7 +123,7 @@ def _evaluate_hodograph(nodes, degree, s):
     """
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     # NOTE: Taking the derivative drops the degree by 1.
-    return _curve_helpers.de_casteljau_multi(
+    return _curve_helpers.evaluate_multi(
         first_deriv, degree - 1, np.array([s]))
 
 

@@ -329,7 +329,7 @@ class Curve(_base.Base):
             NumPy array, with the rows corresponding to each ``s``
             value and the columns to the dimension.
         """
-        return _curve_helpers.de_casteljau_multi(
+        return _curve_helpers.evaluate_multi(
             self._nodes, self.degree, s_vals)
 
     def plot(self, num_pts, ax=None, show=False):
