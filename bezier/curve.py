@@ -440,39 +440,6 @@ class Curve(_base.Base):
         return left, right
 
     @staticmethod
-    def _from_linearized(linearized_pairs):
-        """Determine curve-curve intersections from pairs of linearizations.
-
-        Args:
-            linearized_pairs (list): List of pairs of
-                :class:`._intersection_helpers.Linearization` instances.
-
-        Returns:
-            numpy.ndarray: Array of all intersections.
-        """
-        intersections = []
-        for left, right in linearized_pairs:
-            s, t = _intersection_helpers.segment_intersection(
-                left.start, left.end, right.start, right.end)
-            left_curve = left._curve  # pylint: disable=protected-access
-            right_curve = right._curve  # pylint: disable=protected-access
-            # TODO: Check if s, t are in [0, 1].
-            # Now, promote `s` and `t` onto the original curves.
-            orig_s = (1 - s) * left_curve.start + s * left_curve.end
-            orig_left = left_curve.root
-            orig_t = (1 - t) * right_curve.start + t * right_curve.end
-            orig_right = right_curve.root
-            # Perform one step of Newton iteration to refine the computed
-            # values of s and t.
-            refined_s, _ = _intersection_helpers.newton_refine(
-                orig_s, orig_left, orig_t, orig_right)
-            # TODO: Check that (orig_left.evaluate(refined_s) ~=
-            #                   orig_right.evaluate(refined_t))
-            intersections.append(orig_left.evaluate(refined_s))
-
-        return np.vstack(intersections)
-
-    @staticmethod
     def _try_linearize(curve):
         """Try to linearize a curve (or an already linearized curve).
 
@@ -579,7 +546,7 @@ class Curve(_base.Base):
             # the subdivisions and move on to the next step.
             _, max_exp = _FREXP(max_err)
             if max_exp <= _ERROR_EXPONENT:
-                return self._from_linearized(accepted)
+                return _intersection_helpers.from_linearized(accepted)
             # If we **do** require more subdivisions, we need to update
             # the list of candidates.
             # pylint: disable=redefined-variable-type

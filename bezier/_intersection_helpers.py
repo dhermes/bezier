@@ -292,6 +292,39 @@ def segment_intersection(start0, end0, start1, end1):
         return s, t
 
 
+def from_linearized(linearized_pairs):
+    """Determine curve-curve intersections from pairs of linearizations.
+
+    Args:
+        linearized_pairs (list): List of pairs of :class:`Linearization`
+            objects.
+
+    Returns:
+        numpy.ndarray: Array of all intersections.
+    """
+    intersections = []
+    for left, right in linearized_pairs:
+        s, t = segment_intersection(
+            left.start, left.end, right.start, right.end)
+        left_curve = left._curve  # pylint: disable=protected-access
+        right_curve = right._curve  # pylint: disable=protected-access
+        # TODO: Check if s, t are in [0, 1].
+        # Now, promote `s` and `t` onto the original curves.
+        orig_s = (1 - s) * left_curve.start + s * left_curve.end
+        orig_left = left_curve.root
+        orig_t = (1 - t) * right_curve.start + t * right_curve.end
+        orig_right = right_curve.root
+        # Perform one step of Newton iteration to refine the computed
+        # values of s and t.
+        refined_s, _ = newton_refine(
+            orig_s, orig_left, orig_t, orig_right)
+        # TODO: Check that (orig_left.evaluate(refined_s) ~=
+        #                   orig_right.evaluate(refined_t))
+        intersections.append(orig_left.evaluate(refined_s))
+
+    return np.vstack(intersections)
+
+
 class Linearization(object):
     """A linearization of a curve.
 
