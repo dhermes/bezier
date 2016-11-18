@@ -278,7 +278,8 @@ class Curve(_base.Base):
             numpy.ndarray: The point on the curve (as a one dimensional
             NumPy array).
         """
-        return _curve_helpers.de_casteljau(self._nodes, self.degree, s)
+        result = self.evaluate_multi(np.array([s]))
+        return result.flatten()
 
     def evaluate_multi(self, s_vals):
         r"""Evaluate :math:`B(s)` for multiple points along the curve.
