@@ -14,6 +14,7 @@
 
 import unittest
 
+import mock
 import numpy as np
 
 
@@ -133,8 +134,6 @@ class TestBase(unittest.TestCase):
         self.assertIsNot(shape.nodes, nodes)
 
     def test_copy(self):
-        import mock
-
         np_shape = (2, 2)
         shape = self._make_one(np.zeros(np_shape))
         fake_nodes = mock.Mock(ndim=2, shape=np_shape)

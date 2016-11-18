@@ -14,6 +14,7 @@
 
 import unittest
 
+import mock
 import numpy as np
 
 from tests import utils
@@ -194,8 +195,6 @@ class TestSurface(unittest.TestCase):
                            nodes1, nodes2, nodes3)
 
     def test_edges_property_cached(self):
-        import mock
-
         surface = self._make_one(np.zeros((3, 2)))
 
         # Create mock "edges" to be computed.
@@ -330,8 +329,6 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(np.all(expected == result))
 
     def test_evaluate_cartesian_calls_barycentric(self):
-        import mock
-
         surface = self._make_one(np.zeros((3, 2)))
         eval_method = mock.Mock()
         surface.evaluate_barycentric = eval_method
@@ -404,8 +401,6 @@ class TestSurface(unittest.TestCase):
             surface.evaluate_multi(param_vals)
 
     def test__add_patch(self):
-        import mock
-
         klass = self._get_target_class()
 
         ax = mock.Mock()
@@ -458,7 +453,6 @@ class TestSurface(unittest.TestCase):
 
     def _plot_helper(self, show=False):
         import matplotlib.lines
-        import mock
 
         nodes = np.array([
             [0.0, 0.0],
@@ -504,7 +498,6 @@ class TestSurface(unittest.TestCase):
 
     def test_plot_existing_axis(self):
         import matplotlib.lines
-        import mock
 
         nodes = np.array([
             [0.0, 0.0],
@@ -767,8 +760,6 @@ class TestSurface(unittest.TestCase):
         self._subdivide_points_check(surface)
 
     def test_copy(self):
-        import mock
-
         shape = (3, 2)
         surface = self._make_one(np.zeros(shape))
         fake_nodes = mock.Mock(ndim=2, shape=shape)
@@ -879,8 +870,6 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(surface.is_valid)
 
     def test_is_valid_property_cached(self):
-        import mock
-
         surface = self._make_one(np.zeros((3, 2)))
         compute_valid = mock.Mock()
         surface._compute_valid = compute_valid

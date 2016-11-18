@@ -14,6 +14,7 @@
 
 import unittest
 
+import mock
 import numpy as np
 
 from tests import utils
@@ -57,8 +58,6 @@ class Test_polynomial_sign(unittest.TestCase):
         self._helper(bernstein, 0)
 
     def test_max_iterations(self):
-        import mock
-
         # pylint: disable=no-member
         bernstein = np.array([[1.0, 2.0, 3.0]]).T
         # pylint: enable=no-member
@@ -66,8 +65,6 @@ class Test_polynomial_sign(unittest.TestCase):
             self._helper(bernstein, 1)
 
     def test_no_conclusion(self):
-        import mock
-
         # pylint: disable=no-member
         bernstein = np.array([[-1.0, 1.0, 2.0]]).T
         # pylint: enable=no-member

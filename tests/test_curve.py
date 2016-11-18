@@ -14,6 +14,7 @@
 
 import unittest
 
+import mock
 import numpy as np
 
 from tests import utils
@@ -136,22 +137,16 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(curve.length, length)
 
     def test_start_property(self):
-        import mock
-
         curve = self._make_one(np.zeros((2, 2)),
                                start=mock.sentinel.start)
         self.assertIs(curve.start, mock.sentinel.start)
 
     def test_end_property(self):
-        import mock
-
         curve = self._make_one(np.zeros((2, 2)),
                                end=mock.sentinel.end)
         self.assertIs(curve.end, mock.sentinel.end)
 
     def test_root_property(self):
-        import mock
-
         curve = self._make_one(np.zeros((2, 2)),
                                root=mock.sentinel.root)
         self.assertIs(curve.root, mock.sentinel.root)
@@ -195,8 +190,6 @@ class TestCurve(unittest.TestCase):
         self.assertTrue(np.all(positional[1] == expected[:, 1]))
 
     def _plot_helper(self, show=False):
-        import mock
-
         nodes = np.array([
             [0.0, 1.0],
             [1.0, 3.0],
@@ -237,7 +230,6 @@ class TestCurve(unittest.TestCase):
 
     def test_plot_existing_axis(self):
         import matplotlib.lines
-        import mock
 
         nodes = np.array([
             [0.0, 0.0],
