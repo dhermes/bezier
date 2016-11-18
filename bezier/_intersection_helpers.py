@@ -124,7 +124,7 @@ def _evaluate_hodograph(nodes, degree, s):
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     # NOTE: Taking the derivative drops the degree by 1.
     return _curve_helpers.evaluate_multi(
-        first_deriv, degree - 1, np.array([s]))
+        first_deriv, degree - 1, np.array([s])).flatten()
 
 
 def newton_refine(s, curve1, t, curve2):

@@ -254,10 +254,7 @@ class Curve(_base.Base):
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
 
-        Performs `de Casteljau's algorithm`_ to build up :math:`B(s)`.
-
-        .. _de Casteljau's algorithm:
-            https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+        See :meth:`evaluate_multi` for more details.
 
         .. doctest:: curve-eval
           :options: +NORMALIZE_WHITESPACE
@@ -284,8 +281,24 @@ class Curve(_base.Base):
     def evaluate_multi(self, s_vals):
         r"""Evaluate :math:`B(s)` for multiple points along the curve.
 
-        Performs `de Casteljau's algorithm`_ to build up :math:`B(s)`.
+        This is done by first evaluating each member of the
+        `Bernstein basis`_ at each value in ``s_vals`` and then
+        applying those to the control points for the current curve.
 
+        This is done instead of using `de Casteljau's algorithm`_.
+        Implementing de Casteljau is problematic because it requires
+        a choice between one of two methods:
+
+        * vectorize operations of the form :math:`(1 - s)v + s w`,
+          which requires a copy of the curve's control points for
+          each value in ``s_vals``
+        * avoid vectorization and compute each point in serial
+
+        Instead, we can use vectorized operations to build up the
+        Bernstein basis values.
+
+        .. _Bernstein basis:
+            https://en.wikipedia.org/wiki/Bernstein_polynomial
         .. _de Casteljau's algorithm:
             https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
 
@@ -306,19 +319,6 @@ class Curve(_base.Base):
                  [ 0.5 , 1.  , 1.5 ],
                  [ 0.75, 1.5 , 2.25],
                  [ 1.  , 2.  , 3.  ]])
-
-        .. note::
-
-           This method is "optimized" for curves of small degree with a
-           moderate amount of ``s_vals``. :math:`B(s)` is evaluated
-           simultaneously by making one copy of the current curve's nodes
-           for each value in ``s_vals``. Then de Casteljau's algorithm
-           is used on each copy, lowering the number of nodes by one
-           until the evaluated point is computed.
-
-           In cases where the large copied matrix exceeds the cache size,
-           it may be faster to use :meth:`evaluate` in serial for each
-           value in ``s_vals`` to avoid copying the nodes.
 
         Args:
             s_vals (numpy.ndarray): Parameters along the curve (as a

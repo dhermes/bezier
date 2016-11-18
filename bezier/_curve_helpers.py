@@ -22,7 +22,10 @@ import six
 
 
 def evaluate_multi(nodes, degree, s_vals):
-    r"""Performs the de Casteljau algorithm for multiple points along a curve.
+    r"""Computes multiple points along a curve.
+
+    Does so by computing the Bernstein basis at each value in ``s_vals``
+    rather than using the de Casteljau algorithm.
 
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
@@ -38,17 +41,16 @@ def evaluate_multi(nodes, degree, s_vals):
     """
     num_vals, = s_vals.shape
 
-    # Make a broadcasted copy along an extra axis. We insert
-    # the axis in between the #nodes and the dimension since
-    # the number of nodes in the result should come before
-    # the dimension.
-    value = np.repeat(nodes[:, np.newaxis, :], num_vals, axis=1)
-    # Put the parameter values on this axis for broadcasting.
-    s_vals = s_vals[np.newaxis, :, np.newaxis]
-    t_vals = 1.0 - s_vals
+    lambda2 = s_vals[:, np.newaxis]
+    lambda1 = 1.0 - lambda2
 
-    for _ in six.moves.xrange(degree):
-        value = t_vals * value[:-1, :, :] + s_vals * value[1:, :, :]
+    weights = np.zeros((num_vals, degree + 1))
+    weights[:, 0] = 1.0
 
-    # Here: Value will be 1x2x(num_vals), we just want the 2D points.
-    return value[0, :, :]
+    # Increase from degree 0 to ``degree``.
+    for curr_deg in six.moves.xrange(degree):
+        prev_vals = weights[:, :curr_deg + 1].copy()
+        weights[:, :curr_deg + 1] = lambda1 * prev_vals
+        weights[:, 1:curr_deg + 2] += lambda2 * prev_vals
+
+    return weights.dot(nodes)
