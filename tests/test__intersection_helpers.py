@@ -15,6 +15,78 @@ import unittest
 import numpy as np
 
 
+class Test__vector_close(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(vec1, vec2):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._vector_close(vec1, vec2)
+
+    def test_identical(self):
+        vec1 = np.array([0.5, 4.0])
+        self.assertTrue(self._call_function_under_test(vec1, vec1))
+
+    def test_far_apart(self):
+        vec1 = np.array([0.0, 6.0])
+        vec2 = np.array([1.0, -4.0])
+        self.assertFalse(self._call_function_under_test(vec1, vec2))
+
+    def test_close_but_different(self):
+        vec1 = np.array([2.25, -3.5])
+        vec2 = vec1 + np.array([-5.0, 12.0]) / 2.0**43
+        self.assertTrue(self._call_function_under_test(vec1, vec2))
+
+    def test_near_zero(self):
+        vec1 = np.array([0.0, 0.0])
+        vec2 = np.array([3.0, 4.0]) / 2.0**45
+        self.assertTrue(self._call_function_under_test(vec1, vec2))
+
+    def test_near_zero_fail(self):
+        vec1 = np.array([1.0, 0.0]) / 2.0**20
+        vec2 = np.array([0.0, 0.0])
+        self.assertFalse(self._call_function_under_test(vec1, vec2))
+
+
+class Test__check_close(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(s, curve1, t, curve2):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._check_close(
+            s, curve1, t, curve2)
+
+    def test_success(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        curve = bezier.Curve(nodes)
+        s_val = 0.5
+        wiggle = 2.0**(-50)
+        result = self._call_function_under_test(
+            s_val, curve, s_val + wiggle, curve)
+
+        expected = np.array([0.5, 0.5])
+        self.assertTrue(np.all(result == expected))
+
+    def test_failure(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve = bezier.Curve(nodes)
+        # The nodes of thise curve are far away.
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(0.0, curve, 1.0, curve)
+
+
 class Test_bbox_intersect(unittest.TestCase):
 
     UNIT_SQUARE = np.array([

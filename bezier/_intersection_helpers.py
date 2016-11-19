@@ -31,6 +31,77 @@ _FREXP = np.frexp  # pylint: disable=no-member
 # by squaring the error.
 _ERROR_EXPONENT = -26
 _MAX_INTERSECT_SUBDIVISIONS = 20
+_EPS = 2.0**(-40)
+
+
+def _vector_close(vec1, vec2):
+    r"""Checks that two vectors are equal to some threshold.
+
+    Does so by computing :math:`s_1 = \|v_1\|_2` and
+    :math:`s_2 = \|v_2\|_2` and then checking if
+
+    .. math::
+
+       \|v_1 - v_2\|_2 \leq \varepsilon \min(s_1, s_2)
+
+    where :math:`\varepsilon = 2^{-40} \approx 10^{-12}` is a fixed
+    threshold. In the rare case that one of ``vec1`` or ``vec2`` is
+    the zero vector (i.e. when :math:`\min(s_1, s_2) = 0`) instead
+    checks that the other vector is close enough to zero:
+
+    .. math::
+
+       \|v_1\|_2 = 0 \Longrightarrow \|v_2\|_2 \leq \varepsilon
+
+    .. note::
+
+       This function assumes that both vectors have finite numbers,
+       i.e. that no NaN or infinite numbers occur. NumPy provides
+       :func:`np.allclose` for coverage of **all** cases.
+
+    Args:
+        vec1 (numpy.ndarray): First vector for comparison.
+        vec2 (numpy.ndarray): Second vector for comparison.
+
+    Returns:
+        bool: Flag indicating if they are close to precision.
+    """
+    size1 = np.linalg.norm(vec1, ord=2)
+    size2 = np.linalg.norm(vec2, ord=2)
+    if size1 == 0:
+        return size2 <= _EPS
+    elif size2 == 0:
+        return size1 <= _EPS
+    else:
+        upper_bound = _EPS * min(size1, size2)
+        return np.linalg.norm(vec1 - vec2, ord=2) <= upper_bound
+
+
+def _check_close(s, curve1, t, curve2):
+    r"""Checks that two curves intersect to some threshold.
+
+    Verifies :math:`B_1(s) \approx B_2(t)` and then returns
+    :math:`B_1(s)` if they are sufficiently close.
+
+    Args:
+        s (float): Parameter of a near-intersection along ``curve1``.
+        curve1 (.Curve): First curve forming intersection.
+        t (float): Parameter of a near-intersection along ``curve2``.
+        curve2 (.Curve): Second curve forming intersection.
+
+    Raises:
+        ValueError: If :math:`B_1(s)` is not sufficiently close to
+            :math:`B_2(t)`.
+
+    Returns:
+        numpy.ndarray: The value of :math:`B_1(s)`.
+    """
+    vec1 = curve1.evaluate(s)
+    vec2 = curve2.evaluate(t)
+    if not _vector_close(vec1, vec2):
+        raise ValueError('B_1(s) and B_2(t) are not sufficiently close')
+
+    return vec1
 
 
 def bbox_intersect(nodes1, nodes2):
@@ -42,8 +113,8 @@ def bbox_intersect(nodes1, nodes2):
 
     .. note::
 
-        Though we assume (and the code relies on this fact) that
-        the nodes are two-dimensional, we don't check it.
+       Though we assume (and the code relies on this fact) that
+       the nodes are two-dimensional, we don't check it.
 
     Args:
         nodes1 (numpy.ndarray): Set of control points for a
@@ -76,7 +147,7 @@ def linearization_error(curve):
 
     .. math::
 
-       \max_{s \in \left[0, 1\right]} \|B(s) - L(s)\|.
+       \max_{s \in \left[0, 1\right]} \|B(s) - L(s)\|_2.
 
     Rather than computing the actual maximum (a tight bound), we
     use an upper bound via the remainder from Lagrange interpolation
@@ -181,8 +252,8 @@ def newton_refine(s, curve1, t, curve2):
 
     .. note::
 
-        This assumes ``curve1`` and ``curve2`` live in
-        :math:`\mathbf{R}^2`.
+       This assumes ``curve1`` and ``curve2`` live in
+       :math:`\mathbf{R}^2`.
 
     Args:
         s (float): Parameter of a near-intersection along ``curve1``.
@@ -333,11 +404,11 @@ def from_linearized(linearized_pairs):
         orig_right = right.curve.root
         # Perform one step of Newton iteration to refine the computed
         # values of s and t.
-        refined_s, _ = newton_refine(
+        refined_s, refined_t = newton_refine(
             orig_s, orig_left, orig_t, orig_right)
-        # TODO: Check that (orig_left.evaluate(refined_s) ~=
-        #                   orig_right.evaluate(refined_t))
-        intersections.append(orig_left.evaluate(refined_s))
+        intersection = _check_close(
+            refined_s, orig_left, refined_t, orig_right)
+        intersections.append(intersection)
 
     return np.vstack(intersections)
 
@@ -394,10 +465,10 @@ def all_intersections(candidates):
 
     .. note::
 
-        This assumes all curves in a candidate pair are in
-        :math:`\mathbf{R}^2`, but does not **explicitly** check this.
-        However, functions used here will fail if that assumption
-        fails, e.g. :func:`bbox_intersect` and :func:`newton_refine`.
+       This assumes all curves in a candidate pair are in
+       :math:`\mathbf{R}^2`, but does not **explicitly** check this.
+       However, functions used here will fail if that assumption
+       fails, e.g. :func:`bbox_intersect` and :func:`newton_refine`.
 
     Args:
         candidates (iterable): Iterable of pairs of curves that may
