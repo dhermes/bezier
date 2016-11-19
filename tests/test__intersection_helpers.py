@@ -87,6 +87,35 @@ class Test__check_close(unittest.TestCase):
             self._call_function_under_test(0.0, curve, 1.0, curve)
 
 
+class Test__check_parameters(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(s, t):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._check_parameters(s, t)
+
+    def test_at_endpoint(self):
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(0.0, 0.5)
+
+    def test_near_endpoint(self):
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(0.75, 1.0 + 2.0**(-20))
+
+    def test_s_outside(self):
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(-0.25, 0.5)
+
+    def test_t_outside(self):
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(0.25, 1.5)
+
+    def test_valid(self):
+        # We really just want to make sure it doesn't raise.
+        self.assertIsNone(self._call_function_under_test(0.25, 0.5))
+
+
 class Test_bbox_intersect(unittest.TestCase):
 
     UNIT_SQUARE = np.array([

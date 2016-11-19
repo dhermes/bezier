@@ -104,6 +104,28 @@ def _check_close(s, curve1, t, curve2):
     return vec1
 
 
+def _check_parameters(s, t):
+    r"""Check if ``s``, ``t`` are in :math:`\left(0, 1\right)`.
+
+    Args:
+        s (float): Parameter on a curve.
+        t (float): Parameter on a curve.
+
+    Raises:
+        ValueError: If one of the values falls outside the unit interval.
+        NotImplementedError: If one of the values is equal to, or very
+            close to, one of the endpoints of the unit interval.
+    """
+    if np.any(np.isclose([[s, t]], [[0.0], [1.0]])):
+        raise NotImplementedError(
+            'Intersection **at** endpoints not currently supported',
+            'One parameter is very near 0 or 1', s, t)
+    if s < 0.0 or s > 1.0:
+        raise ValueError('s outside of unit interval', s)
+    if t < 0.0 or t > 1.0:
+        raise ValueError('t outside of unit interval', t)
+
+
 def bbox_intersect(nodes1, nodes2):
     r"""Bounding box intersection predicate.
 
@@ -396,7 +418,7 @@ def from_linearized(linearized_pairs):
     for left, right in linearized_pairs:
         s, t = segment_intersection(
             left.start, left.end, right.start, right.end)
-        # TODO: Check if s, t are in [0, 1].
+        _check_parameters(s, t)
         # Now, promote `s` and `t` onto the original curves.
         orig_s = (1 - s) * left.curve.start + s * left.curve.end
         orig_left = left.curve.root
