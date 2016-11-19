@@ -44,13 +44,16 @@ def evaluate_multi(nodes, degree, s_vals):
     lambda2 = s_vals[:, np.newaxis]
     lambda1 = 1.0 - lambda2
 
-    weights = np.zeros((num_vals, degree + 1))
-    weights[:, 0] = 1.0
+    weights_next = np.zeros((num_vals, degree + 1))
+    weights_curr = np.zeros((num_vals, degree + 1))
+    weights_curr[:, 0] = 1.0
 
     # Increase from degree 0 to ``degree``.
     for curr_deg in six.moves.xrange(degree):
-        prev_vals = weights[:, :curr_deg + 1].copy()
-        weights[:, :curr_deg + 1] = lambda1 * prev_vals
-        weights[:, 1:curr_deg + 2] += lambda2 * prev_vals
+        weights_next[:, :curr_deg + 1] = (
+            lambda1 * weights_curr[:, :curr_deg + 1])
+        weights_next[:, 1:curr_deg + 2] += (
+            lambda2 * weights_curr[:, :curr_deg + 1])
+        weights_curr, weights_next = weights_next, weights_curr
 
-    return weights.dot(nodes)
+    return weights_curr.dot(nodes)
