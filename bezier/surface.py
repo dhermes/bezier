@@ -17,8 +17,8 @@
 
 .. testsetup:: *
 
-  import numpy as np
-  import bezier
+   import numpy as np
+   import bezier
 """
 
 
@@ -123,15 +123,15 @@ class Surface(_base.Base):
 
     .. doctest:: surface-ctor
 
-      >>> import bezier
-      >>> nodes = np.array([
-      ...     [0.0 , 0.0 ],
-      ...     [1.0 , 0.25],
-      ...     [0.25, 1.0 ],
-      ... ])
-      >>> surface = bezier.Surface(nodes)
-      >>> surface
-      <Surface (degree=1, dimension=2)>
+       >>> import bezier
+       >>> nodes = np.array([
+       ...     [0.0 , 0.0 ],
+       ...     [1.0 , 0.25],
+       ...     [0.25, 1.0 ],
+       ... ])
+       >>> surface = bezier.Surface(nodes)
+       >>> surface
+       <Surface (degree=1, dimension=2)>
 
     Args:
         nodes (numpy.ndarray): The nodes in the surface. The rows
@@ -209,24 +209,24 @@ class Surface(_base.Base):
         """tuple: The edges of the surface.
 
         .. doctest:: surface-edges
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> nodes = np.array([
-          ...     [0.0   ,  0.0   ],
-          ...     [0.5   , -0.1875],
-          ...     [1.0   ,  0.0   ],
-          ...     [0.1875,  0.5   ],
-          ...     [0.625 ,  0.625 ],
-          ...     [0.0   ,  1.0   ],
-          ... ])
-          >>> surface = bezier.Surface(nodes)
-          >>> edge1, _, _ = surface.edges
-          >>> edge1
-          <Curve (degree=2, dimension=2)>
-          >>> edge1.nodes
-          array([[ 0.  ,  0.    ],
-                 [ 0.5 , -0.1875],
-                 [ 1.  ,  0.    ]])
+           >>> nodes = np.array([
+           ...     [0.0   ,  0.0   ],
+           ...     [0.5   , -0.1875],
+           ...     [1.0   ,  0.0   ],
+           ...     [0.1875,  0.5   ],
+           ...     [0.625 ,  0.625 ],
+           ...     [0.0   ,  1.0   ],
+           ... ])
+           >>> surface = bezier.Surface(nodes)
+           >>> edge1, _, _ = surface.edges
+           >>> edge1
+           <Curve (degree=2, dimension=2)>
+           >>> edge1.nodes
+           array([[ 0.  ,  0.    ],
+                  [ 0.5 , -0.1875],
+                  [ 1.  ,  0.    ]])
 
         Returns:
             Tuple[~bezier.curve.Curve, ~bezier.curve.Curve, \
@@ -248,45 +248,45 @@ class Surface(_base.Base):
 
         .. testsetup:: surface-barycentric
 
-          import numpy as np
-          import bezier
-          nodes = np.array([
-              [0.0, 0.0],
-              [1.0, 0.25],
-              [0.25, 1.0],
-          ])
-          surface = bezier.Surface(nodes)
+           import numpy as np
+           import bezier
+           nodes = np.array([
+               [0.0, 0.0],
+               [1.0, 0.25],
+               [0.25, 1.0],
+           ])
+           surface = bezier.Surface(nodes)
 
         .. doctest:: surface-barycentric
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> nodes = np.array([
-          ...     [0.0 , 0.0 ],
-          ...     [1.0 , 0.25],
-          ...     [0.25, 1.0 ],
-          ... ])
-          >>> surface = bezier.Surface(nodes)
-          >>> surface.evaluate_barycentric(0.125, 0.125, 0.75)
-          array([ 0.3125 , 0.78125])
+           >>> nodes = np.array([
+           ...     [0.0 , 0.0 ],
+           ...     [1.0 , 0.25],
+           ...     [0.25, 1.0 ],
+           ... ])
+           >>> surface = bezier.Surface(nodes)
+           >>> surface.evaluate_barycentric(0.125, 0.125, 0.75)
+           array([ 0.3125 , 0.78125])
 
         However, this can't be used for points **outside** the
         reference triangle:
 
         .. doctest:: surface-barycentric
 
-          >>> surface.evaluate_barycentric(-0.25, 0.75, 0.5)
-          Traceback (most recent call last):
-            ...
-          ValueError: ('Parameters must be positive', -0.25, 0.75, 0.5)
+           >>> surface.evaluate_barycentric(-0.25, 0.75, 0.5)
+           Traceback (most recent call last):
+             ...
+           ValueError: ('Parameters must be positive', -0.25, 0.75, 0.5)
 
         or for non-Barycentric coordinates;
 
         .. doctest:: surface-barycentric
 
-          >>> surface.evaluate_barycentric(0.25, 0.25, 0.25)
-          Traceback (most recent call last):
-            ...
-          ValueError: ('Values do not sum to 1', 0.25, 0.25, 0.25)
+           >>> surface.evaluate_barycentric(0.25, 0.25, 0.25)
+           Traceback (most recent call last):
+             ...
+           ValueError: ('Values do not sum to 1', 0.25, 0.25, 0.25)
 
         Args:
             lambda1 (float): Parameter along the reference triangle.
@@ -372,59 +372,59 @@ class Surface(_base.Base):
         them as Cartesian:
 
         .. doctest:: surface-eval-multi
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> nodes = np.array([
-          ...     [ 0., 0. ],
-          ...     [ 2., 1. ],
-          ...     [-3., 2. ],
-          ... ])
-          >>> surface = bezier.Surface(nodes)
-          >>> surface
-          <Surface (degree=1, dimension=2)>
-          >>> param_vals = np.array([
-          ...     [0.0, 0.0],
-          ...     [1.0, 0.0],
-          ...     [0.5, 0.5],
-          ... ])
-          >>> surface.evaluate_multi(param_vals)
-          array([[ 0. , 0. ],
-                 [ 2. , 1. ],
-                 [-0.5, 1.5]])
+           >>> nodes = np.array([
+           ...     [ 0., 0. ],
+           ...     [ 2., 1. ],
+           ...     [-3., 2. ],
+           ... ])
+           >>> surface = bezier.Surface(nodes)
+           >>> surface
+           <Surface (degree=1, dimension=2)>
+           >>> param_vals = np.array([
+           ...     [0.0, 0.0],
+           ...     [1.0, 0.0],
+           ...     [0.5, 0.5],
+           ... ])
+           >>> surface.evaluate_multi(param_vals)
+           array([[ 0. , 0. ],
+                  [ 2. , 1. ],
+                  [-0.5, 1.5]])
 
         and if ``param_vals`` has three columns, treats them as Barycentric:
 
         .. doctest:: surface-eval-multi
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> nodes = np.array([
-          ...     [ 0. , 0.  ],
-          ...     [ 1. , 0.75],
-          ...     [ 2. , 1.  ],
-          ...     [-1.5, 1.  ],
-          ...     [-0.5, 1.5 ],
-          ...     [-3. , 2.  ],
-          ... ])
-          >>> surface = bezier.Surface(nodes)
-          >>> surface
-          <Surface (degree=2, dimension=2)>
-          >>> param_vals = np.array([
-          ...     [0.   , 0.25, 0.75 ],
-          ...     [1.   , 0.  , 0.   ],
-          ...     [0.25 , 0.5 , 0.25 ],
-          ...     [0.375, 0.25, 0.375],
-          ... ])
-          >>> surface.evaluate_multi(param_vals)
-          array([[-1.75  , 1.75    ],
-                 [ 0.    , 0.      ],
-                 [ 0.25  , 1.0625  ],
-                 [-0.625 , 1.046875]])
+           >>> nodes = np.array([
+           ...     [ 0. , 0.  ],
+           ...     [ 1. , 0.75],
+           ...     [ 2. , 1.  ],
+           ...     [-1.5, 1.  ],
+           ...     [-0.5, 1.5 ],
+           ...     [-3. , 2.  ],
+           ... ])
+           >>> surface = bezier.Surface(nodes)
+           >>> surface
+           <Surface (degree=2, dimension=2)>
+           >>> param_vals = np.array([
+           ...     [0.   , 0.25, 0.75 ],
+           ...     [1.   , 0.  , 0.   ],
+           ...     [0.25 , 0.5 , 0.25 ],
+           ...     [0.375, 0.25, 0.375],
+           ... ])
+           >>> surface.evaluate_multi(param_vals)
+           array([[-1.75  , 1.75    ],
+                  [ 0.    , 0.      ],
+                  [ 0.25  , 1.0625  ],
+                  [-0.625 , 1.046875]])
 
         .. note::
 
-            This currently just uses :meth:`evaluate_cartesian` and
-            :meth:`evaluate_barycentric` so is less
-            performant than it could be.
+           This currently just uses :meth:`evaluate_cartesian` and
+           :meth:`evaluate_barycentric` so is less
+           performant than it could be.
 
         Args:
             param_vals (numpy.ndarray): Array of parameter values (as a
@@ -548,21 +548,21 @@ class Surface(_base.Base):
         right (:math:`C`) and upper left (:math:`D`) sub-triangles.
 
         .. doctest:: surface-subdivide
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> nodes = np.array([
-          ...     [ 0. , 0. ],
-          ...     [ 2. , 0. ],
-          ...     [ 0. , 4. ],
-          ... ])
-          >>> surface = bezier.Surface(nodes)
-          >>> _, _, _, sub_surface_d = surface.subdivide()
-          >>> sub_surface_d
-          <Surface (degree=1, dimension=2)>
-          >>> sub_surface_d.nodes
-          array([[ 0., 2.],
-                 [ 1., 2.],
-                 [ 0., 4.]])
+           >>> nodes = np.array([
+           ...     [ 0. , 0. ],
+           ...     [ 2. , 0. ],
+           ...     [ 0. , 4. ],
+           ... ])
+           >>> surface = bezier.Surface(nodes)
+           >>> _, _, _, sub_surface_d = surface.subdivide()
+           >>> sub_surface_d
+           <Surface (degree=1, dimension=2)>
+           >>> sub_surface_d.nodes
+           array([[ 0., 2.],
+                  [ 1., 2.],
+                  [ 0., 4.]])
 
         Returns:
             Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
@@ -673,30 +673,30 @@ class Surface(_base.Base):
 
         .. doctest:: surface-is-valid
 
-          >>> nodes = np.array([
-          ...     [0.0, 0.0],
-          ...     [1.0, 1.0],
-          ...     [2.0, 2.0],
-          ... ])
-          >>> surface = bezier.Surface(nodes)
-          >>> surface.is_valid
-          False
+           >>> nodes = np.array([
+           ...     [0.0, 0.0],
+           ...     [1.0, 1.0],
+           ...     [2.0, 2.0],
+           ... ])
+           >>> surface = bezier.Surface(nodes)
+           >>> surface.is_valid
+           False
 
         while a quadratic surface with one straight side:
 
         .. doctest:: surface-is-valid
 
-          >>> nodes = np.array([
-          ...     [ 0.0  , 0.0  ],
-          ...     [ 0.5  , 0.125],
-          ...     [ 1.0  , 0.0  ],
-          ...     [-0.125, 0.5  ],
-          ...     [ 0.5  , 0.5  ],
-          ...     [ 0.0  , 1.0  ],
-          ... ])
-          >>> surface = bezier.Surface(nodes)
-          >>> surface.is_valid
-          True
+           >>> nodes = np.array([
+           ...     [ 0.0  , 0.0  ],
+           ...     [ 0.5  , 0.125],
+           ...     [ 1.0  , 0.0  ],
+           ...     [-0.125, 0.5  ],
+           ...     [ 0.5  , 0.5  ],
+           ...     [ 0.0  , 1.0  ],
+           ... ])
+           >>> surface = bezier.Surface(nodes)
+           >>> surface.is_valid
+           True
         """
         if self._is_valid is None:
             self._is_valid = self._compute_valid()

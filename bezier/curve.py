@@ -17,8 +17,8 @@
 
 .. testsetup:: *
 
-  import numpy as np
-  import bezier
+   import numpy as np
+   import bezier
 
 .. autofunction:: bezier._intersection_helpers.linearization_error
 .. autofunction:: bezier._intersection_helpers.newton_refine
@@ -102,15 +102,15 @@ class Curve(_base.Base):
 
     .. doctest:: curve-ctor
 
-      >>> import bezier
-      >>> nodes = np.array([
-      ...     [0.0  , 0.0],
-      ...     [0.625, 0.5],
-      ...     [1.0  , 0.5],
-      ... ])
-      >>> curve = bezier.Curve(nodes)
-      >>> curve
-      <Curve (degree=2, dimension=2)>
+       >>> import bezier
+       >>> nodes = np.array([
+       ...     [0.0  , 0.0],
+       ...     [0.625, 0.5],
+       ...     [1.0  , 0.5],
+       ... ])
+       >>> curve = bezier.Curve(nodes)
+       >>> curve
+       <Curve (degree=2, dimension=2)>
 
     Args:
         nodes (numpy.ndarray): The nodes in the curve. The rows
@@ -182,26 +182,26 @@ class Curve(_base.Base):
         how this curve relates to a "parent" curve. For example:
 
         .. doctest:: curve-start
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> nodes = np.array([
-          ...     [0.0, 0.0],
-          ...     [1.0, 2.0],
-          ... ])
-          >>> curve = bezier.Curve(nodes)
-          >>> curve
-          <Curve (degree=1, dimension=2)>
-          >>> left, right = curve.subdivide()
-          >>> left
-          <Curve (degree=1, dimension=2, start=0, end=0.5)>
-          >>> right
-          <Curve (degree=1, dimension=2, start=0.5, end=1)>
-          >>> _, mid_right = left.subdivide()
-          >>> mid_right
-          <Curve (degree=1, dimension=2, start=0.25, end=0.5)>
-          >>> mid_right.nodes
-          array([[ 0.25, 0.5 ],
-                 [ 0.5 , 1.  ]])
+           >>> nodes = np.array([
+           ...     [0.0, 0.0],
+           ...     [1.0, 2.0],
+           ... ])
+           >>> curve = bezier.Curve(nodes)
+           >>> curve
+           <Curve (degree=1, dimension=2)>
+           >>> left, right = curve.subdivide()
+           >>> left
+           <Curve (degree=1, dimension=2, start=0, end=0.5)>
+           >>> right
+           <Curve (degree=1, dimension=2, start=0.5, end=1)>
+           >>> _, mid_right = left.subdivide()
+           >>> mid_right
+           <Curve (degree=1, dimension=2, start=0.25, end=0.5)>
+           >>> mid_right.nodes
+           array([[ 0.25, 0.5 ],
+                  [ 0.5 , 1.  ]])
         """
         return self._start
 
@@ -222,34 +222,34 @@ class Curve(_base.Base):
 
         .. testsetup:: curve-root
 
-          import numpy as np
-          import bezier
+           import numpy as np
+           import bezier
 
-          nodes = np.array([
-              [0.0, 0.0],
-              [0.75, 0.0],
-              [1.0, 1.0],
-          ])
-          curve = bezier.Curve(nodes)
+           nodes = np.array([
+               [0.0, 0.0],
+               [0.75, 0.0],
+               [1.0, 1.0],
+           ])
+           curve = bezier.Curve(nodes)
 
         .. doctest:: curve-root
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> _, right = curve.subdivide()
-          >>> right
-          <Curve (degree=2, dimension=2, start=0.5, end=1)>
-          >>> right.root is curve
-          True
-          >>> right.evaluate(0.0) == curve.evaluate(0.5)
-          array([ True, True], dtype=bool)
-          >>>
-          >>> mid_left, _ = right.subdivide()
-          >>> mid_left
-          <Curve (degree=2, dimension=2, start=0.5, end=0.75)>
-          >>> mid_left.root is curve
-          True
-          >>> mid_left.evaluate(1.0) == curve.evaluate(0.75)
-          array([ True, True], dtype=bool)
+           >>> _, right = curve.subdivide()
+           >>> right
+           <Curve (degree=2, dimension=2, start=0.5, end=1)>
+           >>> right.root is curve
+           True
+           >>> right.evaluate(0.0) == curve.evaluate(0.5)
+           array([ True, True], dtype=bool)
+           >>>
+           >>> mid_left, _ = right.subdivide()
+           >>> mid_left
+           <Curve (degree=2, dimension=2, start=0.5, end=0.75)>
+           >>> mid_left.root is curve
+           True
+           >>> mid_left.evaluate(1.0) == curve.evaluate(0.75)
+           array([ True, True], dtype=bool)
         """
         return self._root
 
@@ -259,16 +259,16 @@ class Curve(_base.Base):
         See :meth:`evaluate_multi` for more details.
 
         .. doctest:: curve-eval
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> nodes = np.array([
-          ...     [0.0  , 0.0],
-          ...     [0.625, 0.5],
-          ...     [1.0  , 0.5],
-          ... ])
-          >>> curve = bezier.Curve(nodes)
-          >>> curve.evaluate(0.75)
-          array([ 0.796875, 0.46875 ])
+           >>> nodes = np.array([
+           ...     [0.0  , 0.0],
+           ...     [0.625, 0.5],
+           ...     [1.0  , 0.5],
+           ... ])
+           >>> curve = bezier.Curve(nodes)
+           >>> curve.evaluate(0.75)
+           array([ 0.796875, 0.46875 ])
 
         Args:
             s (float): Parameter along the curve.
@@ -305,22 +305,22 @@ class Curve(_base.Base):
             https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
 
         .. doctest:: curve-eval-multi
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> nodes = np.array([
-          ...     [0.0, 0.0, 0.0],
-          ...     [1.0, 2.0, 3.0],
-          ... ])
-          >>> curve = bezier.Curve(nodes)
-          >>> curve
-          <Curve (degree=1, dimension=3)>
-          >>> s_vals = np.linspace(0.0, 1.0, 5)
-          >>> curve.evaluate_multi(s_vals)
-          array([[ 0.  , 0.  , 0.  ],
-                 [ 0.25, 0.5 , 0.75],
-                 [ 0.5 , 1.  , 1.5 ],
-                 [ 0.75, 1.5 , 2.25],
-                 [ 1.  , 2.  , 3.  ]])
+           >>> nodes = np.array([
+           ...     [0.0, 0.0, 0.0],
+           ...     [1.0, 2.0, 3.0],
+           ... ])
+           >>> curve = bezier.Curve(nodes)
+           >>> curve
+           <Curve (degree=1, dimension=3)>
+           >>> s_vals = np.linspace(0.0, 1.0, 5)
+           >>> curve.evaluate_multi(s_vals)
+           array([[ 0.  , 0.  , 0.  ],
+                  [ 0.25, 0.5 , 0.75],
+                  [ 0.5 , 1.  , 1.5 ],
+                  [ 0.75, 1.5 , 2.25],
+                  [ 1.  , 2.  , 3.  ]])
 
         Args:
             s_vals (numpy.ndarray): Parameters along the curve (as a
@@ -379,27 +379,27 @@ class Curve(_base.Base):
         left and right halves have new nodes.
 
         .. doctest:: curve-subdivide
-          :options: +NORMALIZE_WHITESPACE
+           :options: +NORMALIZE_WHITESPACE
 
-          >>> nodes = np.array([
-          ...     [0.0 , 0.0],
-          ...     [1.25, 3.0],
-          ...     [2.0 , 1.0],
-          ... ])
-          >>> curve = bezier.Curve(nodes)
-          >>> left, right = curve.subdivide()
-          >>> left
-          <Curve (degree=2, dimension=2, start=0, end=0.5)>
-          >>> left.nodes
-          array([[ 0.   , 0.   ],
-                 [ 0.625, 1.5  ],
-                 [ 1.125, 1.75 ]])
-          >>> right
-          <Curve (degree=2, dimension=2, start=0.5, end=1)>
-          >>> right.nodes
-          array([[ 1.125, 1.75 ],
-                 [ 1.625, 2.   ],
-                 [ 2.   , 1.   ]])
+           >>> nodes = np.array([
+           ...     [0.0 , 0.0],
+           ...     [1.25, 3.0],
+           ...     [2.0 , 1.0],
+           ... ])
+           >>> curve = bezier.Curve(nodes)
+           >>> left, right = curve.subdivide()
+           >>> left
+           <Curve (degree=2, dimension=2, start=0, end=0.5)>
+           >>> left.nodes
+           array([[ 0.   , 0.   ],
+                  [ 0.625, 1.5  ],
+                  [ 1.125, 1.75 ]])
+           >>> right
+           <Curve (degree=2, dimension=2, start=0.5, end=1)>
+           >>> right.nodes
+           array([[ 1.125, 1.75 ],
+                  [ 1.625, 2.   ],
+                  [ 2.   , 1.   ]])
 
         Returns:
             Tuple[Curve, Curve]: The left and right sub-curves.

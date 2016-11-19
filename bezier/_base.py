@@ -58,7 +58,7 @@ class Base(object):
 
         .. note::
 
-            Subclasses are expected to implement this method.
+           Subclasses are expected to implement this method.
 
         Args:
             num_nodes (int): The number of nodes provided.

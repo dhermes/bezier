@@ -290,10 +290,10 @@ def quadratic_jacobian_polynomial(nodes):
 
     .. note::
 
-        This assumes that ``nodes`` is 6x2 but doesn't verify this.
-        (However, the multiplication by ``QUADRATIC_JACOBIAN_HELPER``
-        would fail if ``nodes`` wasn't 6xN and then the ensuing
-        determinants would fail if there weren't 2 columns.)
+       This assumes that ``nodes`` is 6x2 but doesn't verify this.
+       (However, the multiplication by ``QUADRATIC_JACOBIAN_HELPER``
+       would fail if ``nodes`` wasn't 6xN and then the ensuing
+       determinants would fail if there weren't 2 columns.)
 
     Args:
         nodes (numpy.ndarray): A 6x2 array of nodes in a surface.
@@ -328,10 +328,10 @@ def cubic_jacobian_polynomial(nodes):
 
     .. note::
 
-        This assumes that ``nodes`` is 10x2 but doesn't verify this.
-        (However, the multiplication by ``CUBIC_JACOBIAN_HELPER``
-        would fail if ``nodes`` wasn't 10xN and then the ensuing
-        determinants would fail if there weren't 2 columns.)
+       This assumes that ``nodes`` is 10x2 but doesn't verify this.
+       (However, the multiplication by ``CUBIC_JACOBIAN_HELPER``
+       would fail if ``nodes`` wasn't 10xN and then the ensuing
+       determinants would fail if there weren't 2 columns.)
 
     Args:
         nodes (numpy.ndarray): A 10x2 array of nodes in a surface.
@@ -516,7 +516,7 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
 
     .. note::
 
-        This assumes the surface is degree 1 or greater but doesn't check.
+       This assumes the surface is degree 1 or greater but doesn't check.
 
     Args:
         nodes (numpy.ndarray): Control points for a surface.
