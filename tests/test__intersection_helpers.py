@@ -838,3 +838,57 @@ class TestLinearization(unittest.TestCase):
         new_shape, new_error = klass.from_shape(linearization)
         self.assertIs(new_shape, linearization)
         self.assertEqual(new_error, error)
+
+
+class TestIntersection(unittest.TestCase):
+
+    @staticmethod
+    def _get_target_class():
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.Intersection
+
+    def _make_one(self, *args, **kwargs):
+        klass = self._get_target_class()
+        return klass(*args, **kwargs)
+
+    def test_constructor(self):
+        left = mock.sentinel.left
+        s_val = 0.25
+        right = mock.sentinel.right
+        t_val = 0.75
+
+        intersection = self._make_one(left, s_val, right, t_val)
+        self.assertIs(intersection._left, left)
+        self.assertEqual(intersection._s_val, s_val)
+        self.assertIs(intersection._right, right)
+        self.assertEqual(intersection._t_val, t_val)
+
+    def test_left_property(self):
+        intersection = self._make_one(
+            mock.sentinel.left, None, None, None)
+        self.assertIs(intersection.left, mock.sentinel.left)
+
+    def test_right_property(self):
+        intersection = self._make_one(
+            None, None, mock.sentinel.right, None)
+        self.assertIs(intersection.right, mock.sentinel.right)
+
+    def test_point_property(self):
+        s_val = 1.0
+        t_val = 0.0
+        intersection = self._make_one(
+            mock.sentinel.left, s_val, mock.sentinel.right, t_val)
+
+        patch = mock.patch(
+            'bezier._intersection_helpers._check_close',
+            return_value=mock.sentinel.point)
+        with patch as mocked:
+            self.assertIsNone(intersection._point)
+            self.assertIs(intersection.point, mock.sentinel.point)
+            self.assertIs(intersection._point, mock.sentinel.point)
+
+            self.assertEqual(mocked.call_count, 1)
+            # Make sure the cached value is used on future access.
+            self.assertIs(intersection.point, mock.sentinel.point)
+            self.assertEqual(mocked.call_count, 1)

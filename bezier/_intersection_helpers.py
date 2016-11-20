@@ -611,3 +611,41 @@ class Linearization(object):
                 return linearized, error
             else:
                 return shape, error
+
+
+class Intersection(object):
+    """Representation of a curve-curve intersection.
+
+    Args:
+        left (.Curve): The "left" curve in the intersection.
+        s (float): The parameter along ``left`` where the
+            intersection occurs.
+        right (.Curve): The "right" curve in the intersection.
+        t (float): The parameter along ``right`` where the
+            intersection occurs.
+    """
+
+    def __init__(self, left, s, right, t):
+        self._left = left
+        self._s_val = s
+        self._right = right
+        self._t_val = t
+        self._point = None
+
+    @property
+    def left(self):
+        """numpy.ndarray: The "left" curve in the intersection."""
+        return self._left
+
+    @property
+    def right(self):
+        """numpy.ndarray: The "right" curve in the intersection."""
+        return self._right
+
+    @property
+    def point(self):
+        """numpy.ndarray: The point where the intersection occurs."""
+        if self._point is None:
+            self._point = _check_close(
+                self._s_val, self._left, self._t_val, self._right)
+        return self._point
