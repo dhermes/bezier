@@ -20,34 +20,6 @@ import numpy as np
 from tests import utils
 
 
-class Test__make_subdivision_matrix(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(degree):
-        from bezier import curve
-
-        return curve._make_subdivision_matrix(degree)
-
-    def _helper(self, degree, expected):
-        result = self._call_function_under_test(degree)
-        self.assertTrue(np.all(result == expected))
-
-    def test_linear(self):
-        from bezier import curve
-
-        self._helper(1, curve._LINEAR_SUBDIVIDE)
-
-    def test_quadratic(self):
-        from bezier import curve
-
-        self._helper(2, curve._QUADRATIC_SUBDIVIDE)
-
-    def test_cubic(self):
-        from bezier import curve
-
-        self._helper(3, curve._CUBIC_SUBDIVIDE)
-
-
 class TestCurve(unittest.TestCase):
 
     @staticmethod

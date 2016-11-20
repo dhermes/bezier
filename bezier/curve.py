@@ -28,7 +28,6 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import six
 
 from bezier import _base
 from bezier import _curve_helpers
@@ -58,33 +57,6 @@ _CUBIC_SUBDIVIDE = np.array([
     [0.0, 0.0, 0.5, 0.5],
     [0.0, 0.0, 0.0, 1.0],
 ])
-
-
-def _make_subdivision_matrix(degree):
-    """Make the matrix used to subdivide a curve.
-
-    Args:
-        degree (int): The degree of the curve.
-
-    Returns:
-        numpy.ndarray: The matrix used to convert the
-           nodes into left and right nodes.
-    """
-    num_rows = 2 * degree + 1
-    result = np.zeros((num_rows, degree + 1))
-    result[0, 0] = 1.0
-    result[-1, -1] = 1.0
-    for row in six.moves.xrange(1, degree + 1):
-        half_prev = 0.5 * result[row - 1, :row]
-        result[row, :row] = half_prev
-        result[row, 1:row + 1] += half_prev
-        # Populate the complement row as well.
-        complement = num_rows - row - 1
-        # NOTE: We "should" reverse the results when using
-        #       the complement, but they are symmetric so
-        #       that would be a waste.
-        result[complement, -(row + 1):] = result[row, :row + 1]
-    return result
 
 
 class Curve(_base.Base):
@@ -419,7 +391,8 @@ class Curve(_base.Base):
             new_nodes = _CUBIC_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
         else:
-            subdivide_mat = _make_subdivision_matrix(self.degree)
+            subdivide_mat = _curve_helpers.make_subdivision_matrix(
+                self.degree)
             new_nodes = subdivide_mat.dot(self._nodes)
 
         left_nodes = new_nodes[:self.degree + 1, :]
