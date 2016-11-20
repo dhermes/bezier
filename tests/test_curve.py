@@ -116,6 +116,12 @@ class TestCurve(unittest.TestCase):
             'Curve', degree, dimension, start, end)
         self.assertEqual(repr(curve), expected)
 
+    def test__get_degree(self):
+        klass = self._get_target_class()
+
+        self.assertEqual(0, klass._get_degree(1))
+        self.assertEqual(1, klass._get_degree(2))
+
     def test_length_property_not_cached(self):
         nodes = np.array([
             [0.0, 0.0],
