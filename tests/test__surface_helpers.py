@@ -73,6 +73,34 @@ class Test_polynomial_sign(unittest.TestCase):
                 self._helper(bernstein, None)
 
 
+class Test__2x2_det(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(mat):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._2x2_det(mat)
+
+    def test_integers(self):
+        mat = np.array([
+            [1.0, 2.0],
+            [3.0, 4.0],
+        ])
+        self.assertEqual(self._call_function_under_test(mat), -2.0)
+
+    def test_better_than_numpy(self):
+        mat = np.array([
+            [-24.0, 3.0],
+            [-27.0, 0.0],
+        ]) / 16.0
+        actual_det = self._call_function_under_test(mat)
+        self.assertEqual(actual_det, 81.0 / 256.0)
+
+        np_det = np.linalg.det(mat)
+        self.assertNotEqual(actual_det, np_det)
+        self.assertLess(abs(actual_det - np_det), 1e-16)
+
+
 class Test_quadratic_jacobian_polynomial(unittest.TestCase):
 
     @staticmethod
@@ -93,9 +121,40 @@ class Test_quadratic_jacobian_polynomial(unittest.TestCase):
         ])
         bernstein = self._call_function_under_test(nodes)
         self.assertEqual(bernstein.shape, (6, 1))
-        # pylint: disable=no-member
-        expected = np.array([[0.0, 2.0, 0.0, -2.0, 2.0, 0.0]]).T
-        # pylint: enable=no-member
+        expected = np.array([[0.0, 2.0, 0.0, -2.0, 2.0, 0.0]])
+        expected = expected.T  # pylint: disable=no-member
+        self.assertTrue(np.all(bernstein == expected))
+
+
+class Test_cubic_jacobian_polynomial(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.cubic_jacobian_polynomial(nodes)
+
+    def test_it(self):
+        # B(L1, L2, L3) = [L1^3 + L2^3, L2^3 + L3^3]
+        nodes = np.array([
+            [1.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 1.0],
+        ])
+        bernstein = self._call_function_under_test(nodes)
+        shape = (15, 1)
+        self.assertEqual(bernstein.shape, shape)
+        expected = np.zeros(shape)
+        expected[2, 0] = 1.5
+        expected[9, 0] = -1.5
+        expected[11, 0] = 1.5
         self.assertTrue(np.all(bernstein == expected))
 
 

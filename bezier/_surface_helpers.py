@@ -216,7 +216,10 @@ QUARTIC_TO_BERNSTEIN = np.array([
     [-9, 0, 0, 0, 0, 48, 0, 0, 0, -108, 0, 0, 144, 0, -39],
     [0, 0, 0, 0, -9, 0, 0, 0, 48, 0, 0, -108, 0, 144, -39],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36],
-], dtype=float) / 36.0
+], dtype=float)
+# NOTE: We avoid round-off until after ``QUARTIC_TO_BERNSTEIN``
+#       has been applied.
+QUARTIC_BERNSTEIN_FACTOR = 36.0
 # pylint: enable=bad-whitespace
 
 
@@ -282,6 +285,35 @@ def polynomial_sign(poly_surface):
             MAX_SUBDIVISIONS)
 
 
+def _2x2_det(mat):
+    r"""Compute the determinant of a 2x2 matrix.
+
+    This is "needed" because :func:`numpy.linalg.det` rounds off
+    answers when it doesn't need to. For example:
+
+    .. doctest:: 2-by-2
+
+       >>> import numpy as np
+       >>> mat = np.array([
+       ...     [-24.0, 3.0],
+       ...     [-27.0, 0.0],
+       ... ]) / 16.0
+       >>> actual_det = -mat[0, 1] * mat[1, 0]
+       >>> np_det = np.linalg.det(mat)
+       >>> actual_det == np_det
+       False
+       >>> abs(actual_det - np_det) < 1e-16
+       True
+
+    Args:
+        mat (numpy.ndarray): A 2x2 matrix.
+
+    Returns:
+        float: The determinant of ``mat``.
+    """
+    return mat[0, 0] * mat[1, 1] - mat[0, 1] * mat[1, 0]
+
+
 def quadratic_jacobian_polynomial(nodes):
     r"""Compute the Jacobian determinant of a quadratic surface.
 
@@ -306,12 +338,12 @@ def quadratic_jacobian_polynomial(nodes):
     jac_parts = QUADRATIC_JACOBIAN_HELPER.dot(nodes)
     # pylint: enable=no-member
     jac_at_nodes = np.empty((6, 1))
-    jac_at_nodes[0, 0] = np.linalg.det(jac_parts[:2, :])
-    jac_at_nodes[1, 0] = np.linalg.det(jac_parts[2:4, :])
-    jac_at_nodes[2, 0] = np.linalg.det(jac_parts[4:6, :])
-    jac_at_nodes[3, 0] = np.linalg.det(jac_parts[6:8, :])
-    jac_at_nodes[4, 0] = np.linalg.det(jac_parts[8:10, :])
-    jac_at_nodes[5, 0] = np.linalg.det(jac_parts[10:, :])
+    jac_at_nodes[0, 0] = _2x2_det(jac_parts[:2, :])
+    jac_at_nodes[1, 0] = _2x2_det(jac_parts[2:4, :])
+    jac_at_nodes[2, 0] = _2x2_det(jac_parts[4:6, :])
+    jac_at_nodes[3, 0] = _2x2_det(jac_parts[6:8, :])
+    jac_at_nodes[4, 0] = _2x2_det(jac_parts[8:10, :])
+    jac_at_nodes[5, 0] = _2x2_det(jac_parts[10:, :])
 
     # Convert the nodal values to the Bernstein basis...
     # pylint: disable=no-member
@@ -345,26 +377,27 @@ def cubic_jacobian_polynomial(nodes):
     jac_parts = CUBIC_JACOBIAN_HELPER.dot(nodes)
     # pylint: enable=no-member
     jac_at_nodes = np.empty((15, 1))
-    jac_at_nodes[0, 0] = np.linalg.det(jac_parts[:2, :])
-    jac_at_nodes[1, 0] = np.linalg.det(jac_parts[2:4, :])
-    jac_at_nodes[2, 0] = np.linalg.det(jac_parts[4:6, :])
-    jac_at_nodes[3, 0] = np.linalg.det(jac_parts[6:8, :])
-    jac_at_nodes[4, 0] = np.linalg.det(jac_parts[8:10, :])
-    jac_at_nodes[5, 0] = np.linalg.det(jac_parts[10:12, :])
-    jac_at_nodes[6, 0] = np.linalg.det(jac_parts[12:14, :])
-    jac_at_nodes[7, 0] = np.linalg.det(jac_parts[14:16, :])
-    jac_at_nodes[8, 0] = np.linalg.det(jac_parts[16:18, :])
-    jac_at_nodes[9, 0] = np.linalg.det(jac_parts[18:20, :])
-    jac_at_nodes[10, 0] = np.linalg.det(jac_parts[20:22, :])
-    jac_at_nodes[11, 0] = np.linalg.det(jac_parts[22:24, :])
-    jac_at_nodes[12, 0] = np.linalg.det(jac_parts[24:26, :])
-    jac_at_nodes[13, 0] = np.linalg.det(jac_parts[26:28, :])
-    jac_at_nodes[14, 0] = np.linalg.det(jac_parts[28:, :])
+    jac_at_nodes[0, 0] = _2x2_det(jac_parts[:2, :])
+    jac_at_nodes[1, 0] = _2x2_det(jac_parts[2:4, :])
+    jac_at_nodes[2, 0] = _2x2_det(jac_parts[4:6, :])
+    jac_at_nodes[3, 0] = _2x2_det(jac_parts[6:8, :])
+    jac_at_nodes[4, 0] = _2x2_det(jac_parts[8:10, :])
+    jac_at_nodes[5, 0] = _2x2_det(jac_parts[10:12, :])
+    jac_at_nodes[6, 0] = _2x2_det(jac_parts[12:14, :])
+    jac_at_nodes[7, 0] = _2x2_det(jac_parts[14:16, :])
+    jac_at_nodes[8, 0] = _2x2_det(jac_parts[16:18, :])
+    jac_at_nodes[9, 0] = _2x2_det(jac_parts[18:20, :])
+    jac_at_nodes[10, 0] = _2x2_det(jac_parts[20:22, :])
+    jac_at_nodes[11, 0] = _2x2_det(jac_parts[22:24, :])
+    jac_at_nodes[12, 0] = _2x2_det(jac_parts[24:26, :])
+    jac_at_nodes[13, 0] = _2x2_det(jac_parts[26:28, :])
+    jac_at_nodes[14, 0] = _2x2_det(jac_parts[28:, :])
 
     # Convert the nodal values to the Bernstein basis...
     # pylint: disable=no-member
     bernstein = QUARTIC_TO_BERNSTEIN.dot(jac_at_nodes)
     # pylint: enable=no-member
+    bernstein /= QUARTIC_BERNSTEIN_FACTOR
     return bernstein
 
 
