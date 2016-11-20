@@ -4,3 +4,5 @@ branch = True
 [report]
 fail_under = 100
 show_missing = True
+exclude_lines =
+    pragma: NO COVER

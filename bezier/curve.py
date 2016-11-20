@@ -135,15 +135,11 @@ class Curve(_base.Base):
         return num_nodes - 1
 
     @property
-    def length(self):  # pylint: disable=missing-returns-doc
-        """float: The length of the current curve.
-
-        Raises:
-            NotImplementedError: If the length isn't already cached.
-        """
+    def length(self):
+        """float: The length of the current curve."""
         if self._length is None:
-            raise NotImplementedError(
-                'Length computation not yet implemented.')
+            self._length = _curve_helpers.compute_length(
+                self._nodes, self.degree)
         return self._length
 
     @property

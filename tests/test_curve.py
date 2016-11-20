@@ -102,8 +102,20 @@ class TestCurve(unittest.TestCase):
         ])
         curve = self._make_one(nodes)
         self.assertIsNone(curve._length)
-        with self.assertRaises(NotImplementedError):
-            getattr(curve, 'length')
+
+        patch = mock.patch(
+            'bezier._curve_helpers.compute_length',
+            return_value=mock.sentinel.length)
+        with patch as mocked:
+            self.assertEqual(curve.length, mock.sentinel.length)
+
+            self.assertEqual(mocked.call_count, 1)
+            call = mocked.mock_calls[0]
+            _, positional, keyword = call
+            self.assertEqual(keyword, {})
+            self.assertEqual(len(positional), 2)
+            self.assertTrue(np.all(positional[0] == nodes))
+            self.assertEqual(positional[1], 1)
 
     def test_length_property(self):
         nodes = np.array([

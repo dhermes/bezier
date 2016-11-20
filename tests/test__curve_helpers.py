@@ -14,6 +14,7 @@
 
 import unittest
 
+import mock
 import numpy as np
 
 
@@ -73,3 +74,64 @@ class Test_evaluate_multi(unittest.TestCase):
             self.assertEqual(result[index, 0], s_val * (4.0 - s_val))
             self.assertEqual(result[index, 1],
                              2.0 * s_val * (2.0 * s_val - 1.0))
+
+
+class Test__vec_size(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, s_val):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._vec_size(nodes, degree, s_val)
+
+    def test_linear(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [3.0, -4.0],
+        ])
+        size = self._call_function_under_test(nodes, 1, 0.25)
+        self.assertEqual(size, 0.25 * 5.0)
+
+    def test_quadratic(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [2.0, 3.0],
+            [1.0, 6.0],
+        ])
+        size = self._call_function_under_test(nodes, 2, 0.5)
+        self.assertEqual(size, 3.25)
+
+
+class Test_compute_length(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.compute_length(nodes, degree)
+
+    def test_linear(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [3.0, 4.0],
+        ])
+        length = self._call_function_under_test(nodes, 1)
+        self.assertEqual(length, 5.0)
+
+    def test_quadratic(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [2.0, 0.0],
+        ])
+        length = self._call_function_under_test(nodes, 2)
+        # 2 INT_0^1 SQRT(16 s^2  - 16 s + 5) ds = SQRT(5) + sinh^{-1}(2)/2
+        arcs2 = np.arcsinh(2.0)  # pylint: disable=no-member
+        expected = np.sqrt(5.0) + 0.5 * arcs2
+        self.assertLess(abs(length - expected), 1e-15)
+
+    def test_without_scipy(self):
+        nodes = np.zeros((5, 2))
+        with mock.patch('bezier._curve_helpers._scipy_int', new=None):
+            with self.assertRaises(OSError):
+                self._call_function_under_test(nodes, 4)

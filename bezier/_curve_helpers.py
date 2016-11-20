@@ -17,8 +17,15 @@
 """
 
 
+import functools
+
 import numpy as np
 import six
+
+try:
+    import scipy.integrate as _scipy_int
+except ImportError:  # pragma: NO COVER
+    _scipy_int = None
 
 
 def make_subdivision_matrix(degree):
@@ -84,3 +91,58 @@ def evaluate_multi(nodes, degree, s_vals):
         weights_curr, weights_next = weights_next, weights_curr
 
     return weights_curr.dot(nodes)
+
+
+def _vec_size(nodes, degree, s_val):
+    r"""Compute :math:`\|B(s)\|_2`.
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a curve.
+        degree (int): The degree of the curve (assumed to be one less than
+            the number of ``nodes``.
+        s_val (float): Parameter to compute :math:`B(s)`.
+
+    Returns:
+        float: The norm of :math:`B(s)`.
+    """
+    result_vec = evaluate_multi(nodes, degree, np.array([s_val]))
+    return np.linalg.norm(result_vec, ord=2)
+
+
+def compute_length(nodes, degree):
+    r"""Approximately compute the length of a curve.
+
+    .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
+
+    If ``degree`` is :math:`n`, then the Hodograph curve
+    :math:`B'(s)` is degree :math:`d = n - 1`. Using this curve, we
+    approximate the integral:
+
+    .. math::
+
+       \ell\left(B\right) =
+           \int_0^1 \| B'(s) \|_2 \, ds
+
+    using `QUADPACK`_ (via SciPy).
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a curve.
+        degree (int): The degree of the curve (assumed to be one less than
+            the number of ``nodes``.
+
+    Returns:
+        float: The length of the curve.
+
+    Raises:
+        OSError: If SciPy is not installed.
+    """
+    first_deriv = degree * (nodes[1:, :] - nodes[:-1, :])
+    if degree == 1:
+        return np.linalg.norm(first_deriv, ord=2)
+
+    if _scipy_int is None:
+        raise OSError('This function requires SciPy for quadrature.')
+
+    size_func = functools.partial(_vec_size, first_deriv, degree - 1)
+    length, _ = _scipy_int.quad(size_func, 0.0, 1.0)
+    return length
