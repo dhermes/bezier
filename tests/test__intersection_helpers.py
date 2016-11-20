@@ -578,10 +578,49 @@ class Test_from_linearized(unittest.TestCase):
         return _intersection_helpers.from_linearized(linearized_pairs)
 
     def test_it(self):
-        self.assertTrue(False)
+        import bezier
+        from bezier import _intersection_helpers
+
+        nodes1 = np.array([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1)
+        # NOTE: This curve isn't close to linear, but that's OK.
+        lin1 = _intersection_helpers.Linearization(curve1)
+
+        nodes2 = np.array([
+            [0.0, 1.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        curve2 = bezier.Curve(nodes2)
+        # NOTE: This curve isn't close to linear, but that's OK.
+        lin2 = _intersection_helpers.Linearization(curve2)
+
+        pairs = [(lin1, lin2)]
+        result = self._call_function_under_test(pairs)
+        expected = curve1.evaluate_multi(np.array([0.5]))
+        self.assertTrue(np.all(result == expected))
 
 
 class Test_intersect_one_round(unittest.TestCase):
+
+    # NOTE: NODES1 is a specialization of [0, 0], [1/2, 1], [1, 1]
+    #       onto the interval [1/4, 1].
+    NODES1 = np.array([
+        [0.25, 0.4375],
+        [0.625, 1.0],
+        [1.0, 1.0],
+    ])
+    # NOTE: NODES2 is a specialization of [0, 1], [1/2, 1], [1, 0]
+    #       onto the interval [0, 3/4].
+    NODES2 = np.array([
+        [0.0, 1.0],
+        [0.375, 1.0],
+        [0.75, 0.4375],
+    ])
 
     @staticmethod
     def _call_function_under_test(candidates):
@@ -589,8 +628,43 @@ class Test_intersect_one_round(unittest.TestCase):
 
         return _intersection_helpers.intersect_one_round(candidates)
 
-    def test_it(self):
-        self.assertTrue(False)
+    def test_simple(self):
+        import bezier
+
+        curve1 = bezier.Curve(self.NODES1)
+        curve2 = bezier.Curve(self.NODES2)
+        candidates = [(curve1, curve2)]
+        accepted, max_err = self._call_function_under_test(candidates)
+
+        self.assertEqual(max_err, 9.0 / 64.0)
+        self.assertEqual(accepted, [(curve1, curve2)])
+
+    def test_with_linearized(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        curve1 = bezier.Curve(self.NODES1)
+        left1, right1 = curve1.subdivide()
+
+        curve2 = bezier.Curve(self.NODES2)
+        _, right2 = curve2.subdivide()
+        left2, right2 = right2.subdivide()
+
+        # NOTE: (right1, right2) don't have bounding box intersection.
+        candidates = [(right1, right2), (left1, left2)]
+
+        # Mock the exponent so ``left2`` gets linearized.
+        with mock.patch('bezier._intersection_helpers._ERROR_EXPONENT', new=-5):
+            accepted, max_err = self._call_function_under_test(candidates)
+
+        self.assertEqual(max_err, 9.0 / 256.0)
+        self.assertEqual(len(accepted), 1)
+        accepted_left, accepted_right = accepted[0]
+        self.assertEqual(accepted_left, left1)
+        self.assertIsInstance(accepted_right,
+                              _intersection_helpers.Linearization)
+        self.assertIs(accepted_right._curve, left2)
+        self.assertEqual(accepted_right._error, 9.0 / 1024.0)
 
 
 class Test_all_intersections(unittest.TestCase):

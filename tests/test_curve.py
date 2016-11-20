@@ -73,6 +73,7 @@ class TestCurve(unittest.TestCase):
         self.assertIsNone(curve._length)
         self.assertEqual(curve._start, 0.0)
         self.assertEqual(curve._end, 1.0)
+        self.assertIs(curve._root, curve)
 
     def test_constructor_wrong_dimension(self):
         nodes = np.array([1.0, 2.0])

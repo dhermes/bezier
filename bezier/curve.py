@@ -133,6 +133,8 @@ class Curve(_base.Base):
         super(Curve, self).__init__(nodes, _copy=_copy)
         self._start = start
         self._end = end
+        if root is None:
+            root = self
         self._root = root
 
     def __repr__(self):
@@ -423,15 +425,11 @@ class Curve(_base.Base):
         left_nodes = new_nodes[:self.degree + 1, :]
         right_nodes = new_nodes[self.degree:, :]
 
-        root = self.root
-        if root is None:
-            root = self
-
         midpoint = 0.5 * (self.start + self.end)
         left = Curve(left_nodes, start=self.start,
-                     end=midpoint, root=root, _copy=False)
+                     end=midpoint, root=self.root, _copy=False)
         right = Curve(right_nodes, start=midpoint,
-                      end=self.end, root=root, _copy=False)
+                      end=self.end, root=self.root, _copy=False)
         return left, right
 
     def intersect(self, other):
