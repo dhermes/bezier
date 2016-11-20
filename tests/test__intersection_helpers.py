@@ -518,7 +518,16 @@ class Test__cross_product(unittest.TestCase):
         return _intersection_helpers._cross_product(vec0, vec1)
 
     def test_it(self):
-        self.assertTrue(False)
+        vec0 = np.array([[1.0, 7.0]]) / 8.0
+        vec1 = np.array([[-11.0, 24.0]]) / 32.0
+        result = self._call_function_under_test(vec0, vec1)
+
+        vec0_as_3d = np.hstack([vec0, [[0.0]]])
+        vec1_as_3d = np.hstack([vec1, [[0.0]]])
+
+        actual_cross = np.cross(vec0_as_3d, vec1_as_3d)
+        expected = np.array([[0.0, 0.0, result]])
+        self.assertTrue(np.all(actual_cross == expected))
 
 
 class Test_segment_intersection(unittest.TestCase):
