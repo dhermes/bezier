@@ -288,6 +288,40 @@ class Test__make_transform(unittest.TestCase):
         self._helper(2, weights, expected0, expected1, expected2)
 
 
+class Test__reduced_to_matrix(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(shape, degree, vals_by_weight):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._reduced_to_matrix(
+            shape, degree, vals_by_weight)
+
+    def test_it(self):
+        shape = (6, 2)
+        degree = 2
+
+        expected = np.array([
+            [1.0, 0.0],
+            [-1.0, 1.0],
+            [0.0, 1.0],
+            [0.0, -1.0],
+            [-1.0, -1.0],
+            [2.0, 0.0],
+        ])
+        vals_by_weight = {
+            (0, 0): expected[[0], :],
+            (0, 1): expected[[1], :],
+            (1, 1): expected[[2], :],
+            (0, 2): expected[[3], :],
+            (1, 2): expected[[4], :],
+            (2, 2): expected[[5], :],
+        }
+
+        result = self._call_function_under_test(shape, degree, vals_by_weight)
+        self.assertTrue(np.all(result == expected))
+
+
 class Test_specialize_surface(unittest.TestCase):
 
     WEIGHTS0 = (1.0, 0.0, 0.0)
