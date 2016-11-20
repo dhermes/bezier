@@ -601,7 +601,11 @@ class Linearization(object):
             return shape, shape.error
         else:
             error = linearization_error(shape)
-            _, err_exp = _FREXP(error)
+            if error == 0.0:
+                err_exp = -np.inf
+            else:
+                _, err_exp = _FREXP(error)
+
             if err_exp <= _ERROR_EXPONENT:
                 linearized = cls(shape, error=error)
                 return linearized, error

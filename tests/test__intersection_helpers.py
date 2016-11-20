@@ -12,6 +12,7 @@
 
 import unittest
 
+import mock
 import numpy as np
 
 
@@ -506,3 +507,188 @@ class Test_newton_refine(unittest.TestCase):
         exact_s, exact_t = parameters[-1, :]
         self.assertTrue(np.all(
             curve1.evaluate(exact_s) == curve2.evaluate(exact_t)))
+
+
+class Test__cross_product(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(vec0, vec1):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._cross_product(vec0, vec1)
+
+    def test_it(self):
+        self.assertTrue(False)
+
+
+class Test_segment_intersection(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(start0, end0, start1, end1):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.segment_intersection(
+            start0, end0, start1, end1)
+
+    def test_it(self):
+        self.assertTrue(False)
+
+
+class Test_from_linearized(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(linearized_pairs):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.from_linearized(linearized_pairs)
+
+    def test_it(self):
+        self.assertTrue(False)
+
+
+class Test_intersect_one_round(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(candidates):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.intersect_one_round(candidates)
+
+    def test_it(self):
+        self.assertTrue(False)
+
+
+class Test_all_intersections(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(candidates):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.all_intersections(candidates)
+
+    def test_it(self):
+        self.assertTrue(False)
+
+
+class TestLinearization(unittest.TestCase):
+
+    NODES = np.array([
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [5.0, 6.0],
+    ])
+
+    @staticmethod
+    def _get_target_class():
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.Linearization
+
+    def _make_one(self, *args, **kwargs):
+        klass = self._get_target_class()
+        return klass(*args, **kwargs)
+
+    def test_constructor(self):
+        linearization = self._make_one(mock.sentinel.curve)
+        self.assertIs(linearization._curve, mock.sentinel.curve)
+        self.assertIsNone(linearization._error)
+
+    def test_constructor_with_error(self):
+        error = 0.125
+        linearization = self._make_one(mock.sentinel.curve, error=error)
+        self.assertIs(linearization._curve, mock.sentinel.curve)
+        self.assertEqual(linearization._error, error)
+
+    def test_subdivide(self):
+        linearization = self._make_one(None)
+        self.assertEqual(linearization.subdivide(), (linearization,))
+
+    def test_curve_property(self):
+        linearization = self._make_one(mock.sentinel.curve)
+        self.assertIs(linearization.curve, mock.sentinel.curve)
+
+    def test_error_property(self):
+        error = 0.0625
+        linearization = self._make_one(None, error=error)
+        self.assertEqual(linearization.error, error)
+
+    def test_error_property_on_the_fly(self):
+        linearization = self._make_one(mock.sentinel.curve)
+
+        error = 0.09375
+        patch = mock.patch(
+            'bezier._intersection_helpers.linearization_error',
+            return_value=error)
+        with patch as mocked:
+            self.assertEqual(linearization.error, error)
+            mocked.assert_called_once_with(mock.sentinel.curve)
+
+    def test__nodes_property(self):
+        import bezier
+
+        curve = bezier.Curve(self.NODES, _copy=False)
+        linearization = self._make_one(curve)
+        self.assertIs(linearization._nodes, self.NODES)
+
+    def test_start_property(self):
+        import bezier
+
+        curve = bezier.Curve(self.NODES, _copy=False)
+        linearization = self._make_one(curve)
+        self.assertTrue(np.all(linearization.start == self.NODES[[0], :]))
+
+    def test_end_property(self):
+        import bezier
+
+        curve = bezier.Curve(self.NODES, _copy=False)
+        linearization = self._make_one(curve)
+        self.assertTrue(np.all(linearization.end == self.NODES[[2], :]))
+
+    def test_from_shape_factory_not_close_enough(self):
+        import bezier
+
+        curve = bezier.Curve(self.NODES, _copy=False)
+        klass = self._get_target_class()
+        new_shape, new_error = klass.from_shape(curve)
+        self.assertIs(new_shape, curve)
+        # NODES has constant second derivative equal to 2 * [3.0, 4.0].
+        self.assertEqual(new_error, 0.125 * 2 * 1 * 5.0)
+
+    def test_from_shape_factory_close_enough(self):
+        import bezier
+
+        scale_factor = 2.0**(-27)
+        nodes = self.NODES * scale_factor
+        curve = bezier.Curve(nodes, _copy=False)
+        klass = self._get_target_class()
+        new_shape, new_error = klass.from_shape(curve)
+
+        self.assertIsInstance(new_shape, klass)
+        self.assertIs(new_shape._curve, curve)
+        # NODES has constant second derivative equal to 2 * [3.0, 4.0].
+        expected_error = 0.125 * 2 * 1 * 5.0 * scale_factor
+        self.assertEqual(new_error, expected_error)
+
+    def test_from_shape_factory_no_error(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve = bezier.Curve(nodes, _copy=False)
+        klass = self._get_target_class()
+        new_shape, new_error = klass.from_shape(curve)
+        self.assertIsInstance(new_shape, klass)
+        self.assertIs(new_shape._curve, curve)
+        # ``nodes`` is linear, so error is 0.0.
+        self.assertEqual(new_error, 0.0)
+
+    def test_from_shape_factory_already_linearized(self):
+        error = 0.078125
+        linearization = self._make_one(None, error=error)
+
+        klass = self._get_target_class()
+        new_shape, new_error = klass.from_shape(linearization)
+        self.assertIs(new_shape, linearization)
+        self.assertEqual(new_error, error)
