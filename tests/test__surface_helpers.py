@@ -234,6 +234,60 @@ class Test_de_casteljau_one_round(unittest.TestCase):
         self.assertTrue(np.all(result == expected))
 
 
+class Test__make_transform(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(degree, weights_a, weights_b, weights_c):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._make_transform(
+            degree, weights_a, weights_b, weights_c)
+
+    def _helper(self, degree, weights, expected0, expected1, expected2):
+        result = self._call_function_under_test(
+            degree, weights[0, :], weights[1, :], weights[2, :])
+
+        self.assertIsInstance(result, dict)
+        self.assertEqual(len(result), 3)
+        self.assertTrue(np.all(result[0] == expected0))
+        self.assertTrue(np.all(result[1] == expected1))
+        self.assertTrue(np.all(result[2] == expected2))
+
+    def test_linear(self):
+        weights = np.array([
+            [1.0, 0.0, 0.0],
+            [0.5, 0.5, 0.0],
+            [0.5, 0.0, 0.5],
+        ])
+        expected0 = weights[[0], :]
+        expected1 = weights[[1], :]
+        expected2 = weights[[2], :]
+        self._helper(1, weights, expected0, expected1, expected2)
+
+    def test_quadratic(self):
+        weights = np.array([
+            [0.0, 0.5, 0.5],
+            [0.5, 0.0, 0.5],
+            [0.5, 0.5, 0.0],
+        ])
+        expected0 = np.array([
+            [0.0, 0.5, 0.0, 0.5, 0.0, 0.0],
+            [0.0, 0.0, 0.5, 0.0, 0.5, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.5, 0.5],
+        ])
+        expected1 = np.array([
+            [0.5, 0.0, 0.0, 0.5, 0.0, 0.0],
+            [0.0, 0.5, 0.0, 0.0, 0.5, 0.0],
+            [0.0, 0.0, 0.0, 0.5, 0.0, 0.5],
+        ])
+        expected2 = np.array([
+            [0.5, 0.5, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.5, 0.5, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.5, 0.5, 0.0],
+        ])
+        self._helper(2, weights, expected0, expected1, expected2)
+
+
 class Test_specialize_surface(unittest.TestCase):
 
     WEIGHTS0 = (1.0, 0.0, 0.0)
