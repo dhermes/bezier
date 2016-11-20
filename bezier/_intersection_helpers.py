@@ -524,7 +524,7 @@ def all_intersections(candidates):
             itertools.product(left.subdivide(), right.subdivide())
             for left, right in accepted])
 
-    return ValueError(
+    raise ValueError(
         'Curve intersection failed to converge to approximately '
         'linear subdivisions after max iterations.',
         _MAX_INTERSECT_SUBDIVISIONS)

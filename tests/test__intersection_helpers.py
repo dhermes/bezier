@@ -654,7 +654,8 @@ class Test_intersect_one_round(unittest.TestCase):
         candidates = [(right1, right2), (left1, left2)]
 
         # Mock the exponent so ``left2`` gets linearized.
-        with mock.patch('bezier._intersection_helpers._ERROR_EXPONENT', new=-5):
+        with mock.patch('bezier._intersection_helpers._ERROR_EXPONENT',
+                        new=-5):
             accepted, max_err = self._call_function_under_test(candidates)
 
         self.assertEqual(max_err, 9.0 / 256.0)
@@ -675,8 +676,44 @@ class Test_all_intersections(unittest.TestCase):
 
         return _intersection_helpers.all_intersections(candidates)
 
-    def test_it(self):
-        self.assertTrue(False)
+    def test_failure(self):
+        patch = mock.patch(
+            'bezier._intersection_helpers._MAX_INTERSECT_SUBDIVISIONS',
+            new=-1)
+        with patch:
+            with self.assertRaises(ValueError):
+                self._call_function_under_test([])
+
+    def test_no_intersections(self):
+        intersections = self._call_function_under_test([])
+        self.assertEqual(intersections.shape, (0, 2))
+
+    def test_success(self):
+        import bezier
+
+        # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
+        #       onto the interval [1/4, 1] and ``nodes`` is a specialization
+        #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
+        #       We expect them to intersect at s = 1/3, t = 2/3, which is
+        #       the point [1/2, 3/4].
+        nodes1 = np.array([
+            [0.25, 0.4375],
+            [0.625, 1.0],
+            [1.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1)
+
+        nodes2 = np.array([
+            [0.0, 1.0],
+            [0.375, 1.0],
+            [0.75, 0.4375],
+        ])
+        curve2 = bezier.Curve(nodes2)
+
+        candidates = [(curve1, curve2)]
+        intersections = self._call_function_under_test(candidates)
+        expected = np.array([[0.5, 0.75]])
+        self.assertTrue(np.all(intersections == expected))
 
 
 class TestLinearization(unittest.TestCase):
