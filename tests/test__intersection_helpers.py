@@ -133,25 +133,37 @@ class Test_bbox_intersect(unittest.TestCase):
         return _intersection_helpers.bbox_intersect(nodes1, nodes2)
 
     def test_intersect(self):
+        from bezier import _intersection_helpers
+
         nodes = self.UNIT_SQUARE + np.array([[0.5, 0.5]])
-        self.assertTrue(self._call_function_under_test(
-            self.UNIT_SQUARE, nodes))
+        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        self.assertIs(
+            result, _intersection_helpers.BoxIntersectionType.intersection)
 
     def test_far_apart(self):
+        from bezier import _intersection_helpers
+
         nodes = self.UNIT_SQUARE + np.array([[100.0, 100.0]])
-        self.assertFalse(self._call_function_under_test(
-            self.UNIT_SQUARE, nodes))
+        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        self.assertIs(
+            result, _intersection_helpers.BoxIntersectionType.disjoint)
 
     def test_tangent(self):
+        from bezier import _intersection_helpers
+
         nodes = self.UNIT_SQUARE + np.array([[1.0, 0.0]])
-        self.assertFalse(self._call_function_under_test(
-            self.UNIT_SQUARE, nodes))
+        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        self.assertIs(
+            result, _intersection_helpers.BoxIntersectionType.tangent)
 
     def test_almost_tangent(self):
+        from bezier import _intersection_helpers
+
         x_val = 1.0 + np.spacing(1.0)  # pylint: disable=no-member
         nodes = self.UNIT_SQUARE + np.array([[x_val, 0.0]])
-        self.assertFalse(self._call_function_under_test(
-            self.UNIT_SQUARE, nodes))
+        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        self.assertIs(
+            result, _intersection_helpers.BoxIntersectionType.disjoint)
 
 
 class Test_linearization_error(unittest.TestCase):

@@ -19,6 +19,7 @@
 
 import itertools
 
+import enum
 import numpy as np
 import six
 
@@ -145,15 +146,22 @@ def bbox_intersect(nodes1, nodes2):
             B |eacute| zier shape.
 
     Returns:
-        bool: Predicate indicating if the bounding boxes intersect.
+        BoxIntersectionType: Enum indicating the type of bounding
+        box intersection.
     """
     left1, bottom1 = np.min(nodes1, axis=0)
     right1, top1 = np.max(nodes1, axis=0)
     left2, bottom2 = np.min(nodes2, axis=0)
     right2, top2 = np.max(nodes2, axis=0)
 
-    return (right2 > left1 and right1 > left2 and
-            top2 > bottom1 and top1 > bottom2)
+    if (right2 == left1 or right1 == left2 or
+            top2 == bottom1 or top1 == bottom2):
+        return BoxIntersectionType.tangent
+    elif (right2 > left1 and right1 > left2 and
+          top2 > bottom1 and top1 > bottom2):
+        return BoxIntersectionType.intersection
+    else:
+        return BoxIntersectionType.disjoint
 
 
 def linearization_error(curve):
@@ -580,7 +588,8 @@ def intersect_one_round(candidates):
         left_nodes = left._nodes
         right_nodes = right._nodes
         # pylint: enable=protected-access
-        if not bbox_intersect(left_nodes, right_nodes):
+        if (bbox_intersect(left_nodes, right_nodes) is not
+                BoxIntersectionType.intersection):
             continue
 
         # Attempt to replace the curves with linearizations
@@ -646,6 +655,13 @@ def all_intersections(candidates):
         'Curve intersection failed to converge to approximately '
         'linear subdivisions after max iterations.',
         _MAX_INTERSECT_SUBDIVISIONS)
+
+
+class BoxIntersectionType(enum.Enum):
+    """Enum representing all possible bounding box intersections."""
+    intersection = 'intersection'
+    tangent = 'tangent'
+    disjoint = 'disjoint'
 
 
 class Linearization(object):
