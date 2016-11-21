@@ -625,6 +625,52 @@ class Test_from_linearized(unittest.TestCase):
         self.assertEqual(intersection._t_val, 0.5)
 
 
+class Test__tangent_bbox_intersection(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(left, right):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._tangent_bbox_intersection(
+            left, right)
+
+    def test_linear(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve = bezier.Curve(nodes)
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(curve, curve)
+
+    def test_elevated_linear(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 2.0],
+        ])
+        curve = bezier.Curve(nodes)
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(curve, curve)
+
+    def test_not_linear(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [2.0, 0.0],
+        ])
+        curve = bezier.Curve(nodes)
+        # We really just want to make sure it doesn't raise.
+        self.assertIsNone(
+            self._call_function_under_test(curve, curve))
+
+
 class Test_intersect_one_round(unittest.TestCase):
 
     # NOTE: NODES1 is a specialization of [0, 0], [1/2, 1], [1, 1]

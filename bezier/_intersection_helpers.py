@@ -561,6 +561,51 @@ def from_linearized(linearized_pairs):
     return intersections
 
 
+def _tangent_bbox_intersection(left, right):
+    r"""Check if two curves with tangent bounding boxes intersect.
+
+    If the bounding boxes are tangent, intersection can
+    only occur along that tangency.
+
+    If the curve is **not** a line, the **only** way the curve can touch
+    the bounding box is at the endpoints. To see this, consider the
+    component
+
+    .. math::
+
+       x(s) = \sum_j W_j x_j.
+
+    Since :math:`W_j > 0` for :math:`s \in \left(0, 1\right)`, if there
+    is some :math:`k` with :math:`x_k < M = \max x_j`, then for any
+    interior :math:`s`
+
+    .. math::
+
+       x(s) < \sum_j W_j M = M.
+
+    If all :math:`x_j = M`, then :math:`B(s)` falls on the line
+    :math:`x = M`. (A similar argument holds for the other three
+    component-extrema types.)
+
+    Args:
+        left (.Curve): First curve being intersected.
+        right (.Curve): Second curve being intersected.
+
+    Raises:
+        NotImplementedError: If either ``left`` or ``right`` is linear.
+    """
+    # pylint: disable=protected-access
+    left_nodes = left._nodes
+    right_nodes = right._nodes
+    # pylint: enable=protected-access
+    if (left.degree < 2 or right.degree < 2 or
+            np.linalg.matrix_rank(left_nodes) < 2 or
+            np.linalg.matrix_rank(right_nodes) < 2):
+        raise NotImplementedError(
+            'Tangent bounding boxes not implemented when one of '
+            'the curves is linear')
+
+
 def intersect_one_round(candidates):
     """Perform one step of the intersection process.
 
@@ -588,8 +633,11 @@ def intersect_one_round(candidates):
         left_nodes = left._nodes
         right_nodes = right._nodes
         # pylint: enable=protected-access
-        if (bbox_intersect(left_nodes, right_nodes) is not
-                BoxIntersectionType.intersection):
+        bbox_int = bbox_intersect(left_nodes, right_nodes)
+        if bbox_int is BoxIntersectionType.disjoint:
+            continue
+        elif bbox_int is BoxIntersectionType.tangent:
+            _tangent_bbox_intersection(left, right)
             continue
 
         # Attempt to replace the curves with linearizations
