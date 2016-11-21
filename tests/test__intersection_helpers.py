@@ -584,11 +584,10 @@ class Test_segment_intersection(unittest.TestCase):
 class Test_from_linearized(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(linearized_pairs, intersections):
+    def _call_function_under_test(left, right):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers.from_linearized(
-            linearized_pairs, intersections)
+        return _intersection_helpers.from_linearized(left, right)
 
     def test_it(self):
         import bezier
@@ -612,12 +611,7 @@ class Test_from_linearized(unittest.TestCase):
         # NOTE: This curve isn't close to linear, but that's OK.
         lin2 = _intersection_helpers.Linearization(curve2)
 
-        pairs = [(lin1, lin2)]
-        intersections = [None]
-        result = self._call_function_under_test(pairs, intersections)
-        self.assertIs(result, intersections)
-        self.assertEqual(len(result), 2)
-        intersection = result[1]
+        intersection = self._call_function_under_test(lin1, lin2)
         self.assertIsInstance(intersection,
                               _intersection_helpers.Intersection)
         expected = curve1.evaluate(0.5)
@@ -735,10 +729,9 @@ class Test_intersect_one_round(unittest.TestCase):
         curve1 = bezier.Curve(self.NODES1)
         curve2 = bezier.Curve(self.NODES2)
         candidates = [(curve1, curve2)]
-        accepted, max_err = self._call_function_under_test(
+        accepted = self._call_function_under_test(
             candidates, [])
 
-        self.assertEqual(max_err, 9.0 / 64.0)
         self.assertEqual(accepted, [(curve1, curve2)])
 
     def test_with_linearized(self):
@@ -759,11 +752,10 @@ class Test_intersect_one_round(unittest.TestCase):
         # Mock the exponent so ``left2`` gets linearized.
         with mock.patch('bezier._intersection_helpers._ERROR_EXPONENT',
                         new=-5):
-            accepted, max_err = self._call_function_under_test(
+            accepted = self._call_function_under_test(
                 candidates, intersections)
 
         self.assertEqual(intersections, [])
-        self.assertEqual(max_err, 9.0 / 256.0)
         self.assertEqual(len(accepted), 1)
         accepted_left, accepted_right = accepted[0]
         self.assertEqual(accepted_left, left1)
@@ -912,10 +904,8 @@ class TestLinearization(unittest.TestCase):
 
         curve = bezier.Curve(self.NODES, _copy=False)
         klass = self._get_target_class()
-        new_shape, new_error = klass.from_shape(curve)
+        new_shape = klass.from_shape(curve)
         self.assertIs(new_shape, curve)
-        # NODES has constant second derivative equal to 2 * [3.0, 4.0].
-        self.assertEqual(new_error, 0.125 * 2 * 1 * 5.0)
 
     def test_from_shape_factory_close_enough(self):
         import bezier
@@ -924,13 +914,13 @@ class TestLinearization(unittest.TestCase):
         nodes = self.NODES * scale_factor
         curve = bezier.Curve(nodes, _copy=False)
         klass = self._get_target_class()
-        new_shape, new_error = klass.from_shape(curve)
+        new_shape = klass.from_shape(curve)
 
         self.assertIsInstance(new_shape, klass)
         self.assertIs(new_shape._curve, curve)
         # NODES has constant second derivative equal to 2 * [3.0, 4.0].
         expected_error = 0.125 * 2 * 1 * 5.0 * scale_factor
-        self.assertEqual(new_error, expected_error)
+        self.assertEqual(new_shape.error, expected_error)
 
     def test_from_shape_factory_no_error(self):
         import bezier
@@ -941,20 +931,20 @@ class TestLinearization(unittest.TestCase):
         ])
         curve = bezier.Curve(nodes, _copy=False)
         klass = self._get_target_class()
-        new_shape, new_error = klass.from_shape(curve)
+        new_shape = klass.from_shape(curve)
         self.assertIsInstance(new_shape, klass)
         self.assertIs(new_shape._curve, curve)
         # ``nodes`` is linear, so error is 0.0.
-        self.assertEqual(new_error, 0.0)
+        self.assertEqual(new_shape.error, 0.0)
 
     def test_from_shape_factory_already_linearized(self):
         error = 0.078125
         linearization = self._make_one(None, error=error)
 
         klass = self._get_target_class()
-        new_shape, new_error = klass.from_shape(linearization)
+        new_shape = klass.from_shape(linearization)
         self.assertIs(new_shape, linearization)
-        self.assertEqual(new_error, error)
+        self.assertEqual(new_shape.error, error)
 
 
 class TestIntersection(unittest.TestCase):

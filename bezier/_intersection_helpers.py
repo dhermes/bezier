@@ -530,37 +530,32 @@ def segment_intersection(start0, end0, start1, end1):
         return s, t
 
 
-def from_linearized(linearized_pairs, intersections):
-    """Determine curve-curve intersections from pairs of linearizations.
+def from_linearized(left, right):
+    """Determine curve-curve intersection from pair of linearizations.
 
     Args:
-        linearized_pairs (list): List of pairs of :class:`Linearization`
-            objects.
-        intersections (list): A list of already encountered
-            intersections.
+        left (Linearization): First curve being intersected.
+        right (Linearization): Second curve being intersected.
 
     Returns:
-        list: List of all :class:`Intersection`s.
+        Intersection: The intersection between ``left`` and ``right``.
     """
-    for left, right in linearized_pairs:
-        s, t = segment_intersection(
-            left.start_node, left.end_node,
-            right.start_node, right.end_node)
-        _check_parameters(s, t)
-        # Now, promote `s` and `t` onto the original curves.
-        orig_s = (1 - s) * left.curve.start + s * left.curve.end
-        orig_left = left.curve.root
-        orig_t = (1 - t) * right.curve.start + t * right.curve.end
-        orig_right = right.curve.root
-        # Perform one step of Newton iteration to refine the computed
-        # values of s and t.
-        refined_s, refined_t = newton_refine(
-            orig_s, orig_left, orig_t, orig_right)
-        intersection = Intersection(
-            orig_left, refined_s, orig_right, refined_t)
-        intersections.append(intersection)
-
-    return intersections
+    s, t = segment_intersection(
+        left.start_node, left.end_node,
+        right.start_node, right.end_node)
+    _check_parameters(s, t)
+    # Now, promote `s` and `t` onto the original curves.
+    orig_s = (1 - s) * left.curve.start + s * left.curve.end
+    orig_left = left.curve.root
+    orig_t = (1 - t) * right.curve.start + t * right.curve.end
+    orig_right = right.curve.root
+    # Perform one step of Newton iteration to refine the computed
+    # values of s and t.
+    refined_s, refined_t = newton_refine(
+        orig_s, orig_left, orig_t, orig_right)
+    intersection = Intersection(
+        orig_left, refined_s, orig_right, refined_t)
+    return intersection
 
 
 def _tangent_bbox_intersection(left, right, intersections):
@@ -648,12 +643,9 @@ def intersect_one_round(candidates, intersections):
             to this list.
 
     Returns:
-        Tuple[list, float]: Returns a list of ``accepted`` pairs
-        (among ``candidates``) and the maximum linearization error
-        among all curves in the list of accepted pairs.
+        list: Returns a list of ``accepted`` pairs (among ``candidates``).
     """
     accepted = []
-    max_err = 0.0
 
     for left, right in candidates:
         # pylint: disable=protected-access
@@ -673,15 +665,21 @@ def intersect_one_round(candidates, intersections):
         #       occurs in multiple accepted pairs. However, in practice
         #       the number of such pairs will be small so this cost
         #       will be low.
-        left, err_left = Linearization.from_shape(left)
-        max_err = max(max_err, err_left)
+        left = Linearization.from_shape(left)
         # Now do the same for the right.
-        right, err_right = Linearization.from_shape(right)
-        max_err = max(max_err, err_right)
-        # Add the accepted pair.
-        accepted.append((left, right))
+        right = Linearization.from_shape(right)
 
-    return accepted, max_err
+        # If both ``left`` and ``right`` are linearizations, then we can
+        # intersect them immediately.
+        if (isinstance(left, Linearization) and
+                isinstance(right, Linearization)):
+            intersection = from_linearized(left, right)
+            intersections.append(intersection)
+        else:
+            # Add the accepted pair.
+            accepted.append((left, right))
+
+    return accepted
 
 
 def all_intersections(candidates):
@@ -707,19 +705,12 @@ def all_intersections(candidates):
     """
     intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
-        accepted, max_err = intersect_one_round(candidates, intersections)
+        accepted = intersect_one_round(candidates, intersections)
 
         # If none of the pairs have been accepted, then there is
         # no intersection.
         if not accepted:
             return intersections
-
-        # In the case of ``accepted`` pairs, if the pairs are
-        # sufficiently close to their linearizations, we can stop
-        # the subdivisions and move on to the next step.
-        _, max_exp = _FREXP(max_err)
-        if max_exp <= _ERROR_EXPONENT:
-            return from_linearized(accepted, intersections)
 
         # If we **do** require more subdivisions, we need to update
         # the list of candidates.
@@ -804,11 +795,10 @@ class Linearization(object):
                 linearized curve.
 
         Returns:
-            Tuple[Union[.Curve, Linearization], float]: A pair of the
-            (potentially linearized) curve and the linearization error.
+            Union[.Curve, Linearization]: The (potentially linearized) curve.
         """
         if isinstance(shape, cls):
-            return shape, shape.error
+            return shape
         else:
             error = linearization_error(shape)
             if error == 0.0:
@@ -818,9 +808,9 @@ class Linearization(object):
 
             if err_exp <= _ERROR_EXPONENT:
                 linearized = cls(shape, error=error)
-                return linearized, error
+                return linearized
             else:
-                return shape, error
+                return shape
 
 
 class Intersection(object):
