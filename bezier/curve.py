@@ -404,6 +404,23 @@ class Curve(_base.Base):
     def intersect(self, other):
         """Find the points of intersection with another curve.
 
+        .. doctest:: curve-intersect
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes1 = np.array([
+           ...     [0.0  , 0.0 ],
+           ...     [0.375, 0.75 ],
+           ...     [0.75 , 0.375],
+           ... ])
+           >>> curve1 = bezier.Curve(nodes1)
+           >>> nodes2 = np.array([
+           ...     [0.5, 0.0],
+           ...     [0.5, 3.0],
+           ... ])
+           >>> curve2 = bezier.Curve(nodes2)
+           >>> curve1.intersect(curve2)
+           array([[ 0.5, 0.5]])
+
         Args:
             other (Curve): Other curve to intersect with.
 
