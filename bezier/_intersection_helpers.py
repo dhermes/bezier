@@ -412,7 +412,7 @@ def from_linearized(linearized_pairs):
             objects.
 
     Returns:
-        numpy.ndarray: Array of all intersections.
+        list: List of all :class:`Intersection`s.
     """
     intersections = []
     for left, right in linearized_pairs:
@@ -428,11 +428,11 @@ def from_linearized(linearized_pairs):
         # values of s and t.
         refined_s, refined_t = newton_refine(
             orig_s, orig_left, orig_t, orig_right)
-        intersection = _check_close(
-            refined_s, orig_left, refined_t, orig_right)
+        intersection = Intersection(
+            orig_left, refined_s, orig_right, refined_t)
         intersections.append(intersection)
 
-    return np.vstack(intersections)
+    return intersections
 
 
 def intersect_one_round(candidates):
@@ -497,7 +497,7 @@ def all_intersections(candidates):
             intersect.
 
     Returns:
-        numpy.ndarray: Array of intersection points (possibly empty).
+        list: List of all :class:`Intersection`s (possibly empty).
 
     Raises:
         ValueError: If the subdivision iteration does not terminate
@@ -509,7 +509,7 @@ def all_intersections(candidates):
         # If none of the pairs have been accepted, then there is
         # no intersection.
         if not accepted:
-            return np.zeros((0, 2))
+            return []
 
         # In the case of ``accepted`` pairs, if the pairs are
         # sufficiently close to their linearizations, we can stop

@@ -422,4 +422,9 @@ class Curve(_base.Base):
                 'Intersection only implemented in 2D')
 
         candidates = [(self, other)]
-        return _intersection_helpers.all_intersections(candidates)
+        intersections = _intersection_helpers.all_intersections(candidates)
+        if intersections:
+            return np.vstack([intersection.point
+                              for intersection in intersections])
+        else:
+            return np.zeros((0, 2))

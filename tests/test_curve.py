@@ -399,7 +399,7 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(curve.degree, degree)
         self._subdivide_points_check(curve)
 
-    def test_intersect(self):
+    def test_intersect_empty(self):
         nodes = np.array([
             [0.0, 0.0],
             [0.5, -0.25],
@@ -410,6 +410,32 @@ class TestCurve(unittest.TestCase):
 
         result = left.intersect(right)
         self.assertTrue(np.all(result == np.zeros((0, 2))))
+
+    def test_intersect(self):
+        import bezier
+
+        # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
+        #       onto the interval [1/4, 1] and ``nodes`` is a specialization
+        #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
+        #       We expect them to intersect at s = 1/3, t = 2/3, which is
+        #       the point [1/2, 3/4].
+        nodes_left = np.array([
+            [0.25, 0.4375],
+            [0.625, 1.0],
+            [1.0, 1.0],
+        ])
+        left = bezier.Curve(nodes_left)
+
+        nodes_right = np.array([
+            [0.0, 1.0],
+            [0.375, 1.0],
+            [0.75, 0.4375],
+        ])
+        right = bezier.Curve(nodes_right)
+
+        result = left.intersect(right)
+        expected = np.array([[0.5, 0.75]])
+        self.assertTrue(np.all(result == expected))
 
     def test_intersect_non_curve(self):
         nodes = np.array([

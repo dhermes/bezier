@@ -601,8 +601,16 @@ class Test_from_linearized(unittest.TestCase):
 
         pairs = [(lin1, lin2)]
         result = self._call_function_under_test(pairs)
-        expected = curve1.evaluate_multi(np.array([0.5]))
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(len(result), 1)
+        intersection = result[0]
+        self.assertIsInstance(intersection,
+                              _intersection_helpers.Intersection)
+        expected = curve1.evaluate(0.5)
+        self.assertTrue(np.all(intersection.point == expected))
+        self.assertIs(intersection.left, curve1)
+        self.assertEqual(intersection._s_val, 0.5)
+        self.assertIs(intersection.right, curve2)
+        self.assertEqual(intersection._t_val, 0.5)
 
 
 class Test_intersect_one_round(unittest.TestCase):
@@ -686,10 +694,11 @@ class Test_all_intersections(unittest.TestCase):
 
     def test_no_intersections(self):
         intersections = self._call_function_under_test([])
-        self.assertEqual(intersections.shape, (0, 2))
+        self.assertEqual(intersections, [])
 
     def test_success(self):
         import bezier
+        from bezier import _intersection_helpers
 
         # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
         #       onto the interval [1/4, 1] and ``nodes`` is a specialization
@@ -712,8 +721,17 @@ class Test_all_intersections(unittest.TestCase):
 
         candidates = [(curve1, curve2)]
         intersections = self._call_function_under_test(candidates)
-        expected = np.array([[0.5, 0.75]])
-        self.assertTrue(np.all(intersections == expected))
+
+        self.assertEqual(len(intersections), 1)
+        intersection = intersections[0]
+        self.assertIsInstance(intersection,
+                              _intersection_helpers.Intersection)
+        expected = np.array([0.5, 0.75])
+        self.assertTrue(np.all(intersection.point == expected))
+        self.assertIs(intersection.left, curve1)
+        self.assertEqual(3.0 * intersection._s_val, 1.0)
+        self.assertIs(intersection.right, curve2)
+        self.assertEqual(3.0 * intersection._t_val, 2.0)
 
 
 class TestLinearization(unittest.TestCase):
