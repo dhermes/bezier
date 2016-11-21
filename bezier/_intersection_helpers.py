@@ -189,6 +189,40 @@ def linearization_error(curve):
     will be bounded by the maximum of that component among the
     :math:`\Delta^2 v_j`.
 
+    For example, the curve
+
+    .. math::
+
+       B(s) = \left[\begin{array}{c} 0 \\ 0 \end{array}\right] (1 - s)^2
+           + \left[\begin{array}{c} 1 \\ 3 \end{array}\right] 2s(1 - s)
+           + \left[\begin{array}{c} -2 \\ 9 \end{array}\right] s^2
+
+    has
+    :math:`B''(s) \equiv \left[\begin{array}{c} -8 \\ 6 \end{array}\right]`
+    which has norm :math:`10` everywhere, hence the maximum error is
+
+    .. math::
+
+       \left.\frac{s(1 - s)}{2!} \cdot 10\right|_{s = \frac{1}{2}}
+          = \frac{5}{4}.
+
+    .. testsetup::
+
+       import numpy as np
+       import bezier
+       from bezier._intersection_helpers import linearization_error
+
+    .. doctest::
+
+       >>> nodes = np.array([
+       ...     [ 0.0, 0.0],
+       ...     [ 1.0, 3.0],
+       ...     [-2.0, 9.0],
+       ... ])
+       >>> curve = bezier.Curve(nodes)
+       >>> linearization_error(curve)
+       1.25
+
     Args:
         curve (~bezier.curve.Curve): A curve to be approximated by a line.
 
@@ -240,15 +274,9 @@ def _evaluate_hodograph(nodes, degree, s):
 
 
 def newton_refine(s, curve1, t, curve2):
-    r"""Refine a near-intersection using Newton's method.
+    r"""Apply one step of 2D Newton's method.
 
-    We assume we have an "almost" solution
-
-    .. math::
-
-       B_1\left(s_{\ast}\right) \approx B_2\left(t_{\ast}\right)
-
-    and want to use Newton's method on the function
+    We want to use Newton's method on the function
 
     .. math::
 
@@ -274,8 +302,64 @@ def newton_refine(s, curve1, t, curve2):
 
     .. note::
 
-       This assumes ``curve1`` and ``curve2`` live in
+       This implementation assumes ``curve1`` and ``curve2`` live in
        :math:`\mathbf{R}^2`.
+
+    For example, the curves
+
+    .. math::
+
+        \begin{align*}
+        B_1(s) &= \left[\begin{array}{c} 0 \\ 0 \end{array}\right] (1 - s)^2
+            + \left[\begin{array}{c} 2 \\ 4 \end{array}\right] 2s(1 - s)
+            + \left[\begin{array}{c} 4 \\ 0 \end{array}\right] s^2 \\
+        B_2(t) &= \left[\begin{array}{c} 2 \\ 0 \end{array}\right] (1 - t)
+            + \left[\begin{array}{c} 0 \\ 3 \end{array}\right] t
+        \end{align*}
+
+    intersect at the point
+    :math:`B_1\left(\frac{1}{4}\right) = B_2\left(\frac{1}{2}\right) =
+    \frac{1}{2} \left[\begin{array}{c} 2 \\ 3 \end{array}\right]`.
+    However, starting from the wrong point we have
+
+    .. math::
+
+        \begin{align*}
+        F\left(\frac{3}{8}, \frac{1}{4}\right) &= \frac{1}{8}
+            \left[\begin{array}{c} 0 \\ 9 \end{array}\right] \\
+        DF\left(\frac{3}{8}, \frac{1}{4}\right) &=
+            \left[\begin{array}{c c}
+            4 & 2 \\ 2 & -3 \end{array}\right] \\
+        \Longrightarrow \left[\begin{array}{c} \Delta s \\ \Delta t
+            \end{array}\right] &= \frac{9}{64} \left[\begin{array}{c}
+            -1 \\ 2 \end{array}\right].
+        \end{align*}
+
+    .. testsetup::
+
+       import numpy as np
+       import bezier
+       from bezier._intersection_helpers import newton_refine
+
+    .. doctest::
+
+       >>> nodes1 = np.array([
+       ...     [0.0, 0.0],
+       ...     [2.0, 4.0],
+       ...     [4.0, 0.0],
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1)
+       >>> nodes2 = np.array([
+       ...     [2.0, 0.0],
+       ...     [0.0, 3.0],
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2)
+       >>> s, t = 0.375, 0.25
+       >>> new_s, new_t = newton_refine(s, curve1, t, curve2)
+       >>> 64.0 * (new_s - s)
+       -9.0
+       >>> 64.0 * (new_t - t)
+       18.0
 
     Args:
         s (float): Parameter of a near-intersection along ``curve1``.
@@ -342,7 +426,7 @@ def segment_intersection(start0, end0, start1, end1):
 
        \begin{alignat*}{2}
         L_0(s) &= S_0 (1 - s) + E_0 s &&= S_0 + s \Delta_0 \\
-        L_1(s) &= S_1 (1 - t) + E_1 t &&= S_1 + t \Delta_1.
+        L_1(t) &= S_1 (1 - t) + E_1 t &&= S_1 + t \Delta_1.
        \end{alignat*}
 
     To solve :math:`S_0 + s \Delta_0 = S_1 + t \Delta_1`, we use the
@@ -372,6 +456,40 @@ def segment_intersection(start0, end0, start1, end1):
        :math:`z` direction, so in the above we mean the :math:`z`
        component of the cross product, rather than the entire vector.
 
+    For example, the diagonal lines
+
+    .. math::
+
+       \begin{align*}
+        L_0(s) &= \left[\begin{array}{c} 0 \\ 0 \end{array}\right] (1 - s) +
+                  \left[\begin{array}{c} 2 \\ 2 \end{array}\right] s \\
+        L_1(t) &= \left[\begin{array}{c} -1 \\ 2 \end{array}\right] (1 - t) +
+                  \left[\begin{array}{c} 1 \\ 0 \end{array}\right] t
+       \end{align*}
+
+    intersect at :math:`L_0\left(\frac{1}{4}\right) =
+    L_1\left(\frac{3}{4}\right) =
+    \frac{1}{2} \left[\begin{array}{c} 1 \\ 1 \end{array}\right]`.
+
+    .. testsetup::
+
+       import numpy as np
+       import bezier
+       from bezier._intersection_helpers import segment_intersection
+
+    .. doctest::
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> start0 = np.array([[0.0, 0.0]])
+       >>> end0 = np.array([[2.0, 2.0]])
+       >>> start1 = np.array([[-1.0, 2.0]])
+       >>> end1 = np.array([[1.0, 0.0]])
+       >>> s, t = segment_intersection(start0, end0, start1, end1)
+       >>> s
+       0.25
+       >>> t
+       0.75
+
     Args:
         start0 (numpy.ndarray): A 1x2 NumPy array that is the start
             vector :math:`S_0` of the parametric line :math:`L_0(s)`.
@@ -389,7 +507,7 @@ def segment_intersection(start0, end0, start1, end1):
 
     Raises:
         NotImplementedError: If the lines are parallel (or one of the lines
-            is degenerate. This manifests via
+            is degenerate). This manifests via
             :math:`\Delta_0 \times \Delta_1 = 0`.
     """
     delta0 = end0 - start0
