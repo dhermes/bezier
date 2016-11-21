@@ -25,6 +25,10 @@ good-names=i,j,k,ex,Run,_,s,t,ax
 class-rgx=[A-Z_][a-zA-Z0-9]+$|^Test
 method-rgx=[a-z_][a-z0-9_]{2,30}$|^test_
 
+[FORMAT]
+max-line-length=79
+ignore-long-lines=
+
 [DESIGN]
 max-args=7
 
