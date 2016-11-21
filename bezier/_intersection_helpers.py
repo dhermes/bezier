@@ -17,9 +17,9 @@
 """
 
 
+import enum
 import itertools
 
-import enum
 import numpy as np
 import six
 
@@ -530,20 +530,22 @@ def segment_intersection(start0, end0, start1, end1):
         return s, t
 
 
-def from_linearized(linearized_pairs):
+def from_linearized(linearized_pairs, intersections):
     """Determine curve-curve intersections from pairs of linearizations.
 
     Args:
         linearized_pairs (list): List of pairs of :class:`Linearization`
             objects.
+        intersections (list): A list of already encountered
+            intersections.
 
     Returns:
         list: List of all :class:`Intersection`s.
     """
-    intersections = []
     for left, right in linearized_pairs:
         s, t = segment_intersection(
-            left.start, left.end, right.start, right.end)
+            left.start_node, left.end_node,
+            right.start_node, right.end_node)
         _check_parameters(s, t)
         # Now, promote `s` and `t` onto the original curves.
         orig_s = (1 - s) * left.curve.start + s * left.curve.end
@@ -561,7 +563,7 @@ def from_linearized(linearized_pairs):
     return intersections
 
 
-def _tangent_bbox_intersection(left, right):
+def _tangent_bbox_intersection(left, right, intersections):
     r"""Check if two curves with tangent bounding boxes intersect.
 
     If the bounding boxes are tangent, intersection can
@@ -590,10 +592,19 @@ def _tangent_bbox_intersection(left, right):
     Args:
         left (.Curve): First curve being intersected.
         right (.Curve): Second curve being intersected.
+        intersections (list): A list of already encountered
+            intersections. If these curves intersect at their tangeny,
+            then those intersections will be added to this list.
 
     Raises:
+        NotImplementedError: If either ``left`` or ``right`` is a
+            :class:`Linearization` rather than a curve.
         NotImplementedError: If either ``left`` or ``right`` is linear.
     """
+    if isinstance(left, Linearization) or isinstance(right, Linearization):
+        raise NotImplementedError(
+            'Linearizations not yet supported with tangent bounding boxes')
+
     # pylint: disable=protected-access
     left_nodes = left._nodes
     right_nodes = right._nodes
@@ -605,8 +616,20 @@ def _tangent_bbox_intersection(left, right):
             'Tangent bounding boxes not implemented when one of '
             'the curves is linear')
 
+    for i, s in ((0, 0.0), (-1, 1.0)):
+        node_left = left_nodes[i, :]
+        for j, t in ((0, 0.0), (-1, 1.0)):
+            node_right = right_nodes[j, :]
+            if _vector_close(node_left, node_right):
+                orig_s = (1 - s) * left.start + s * left.end
+                orig_t = (1 - t) * right.start + t * right.end
+                intersection = Intersection(
+                    left.root, orig_s, right.root, orig_t,
+                    point=node_left)
+                intersections.append(intersection)
 
-def intersect_one_round(candidates):
+
+def intersect_one_round(candidates, intersections):
     """Perform one step of the intersection process.
 
     Checks if the bounding boxes of each pair in ``candidates``
@@ -619,6 +642,10 @@ def intersect_one_round(candidates):
     Args:
         candidates (Union[list, itertools.chain]): An iterable of
             pairs of curves (or linearized curves).
+        intersections (list): A list of already encountered
+            intersections. If any intersections can be readily determined
+            during this round of subdivision, then they will be added
+            to this list.
 
     Returns:
         Tuple[list, float]: Returns a list of ``accepted`` pairs
@@ -637,7 +664,7 @@ def intersect_one_round(candidates):
         if bbox_int is BoxIntersectionType.disjoint:
             continue
         elif bbox_int is BoxIntersectionType.tangent:
-            _tangent_bbox_intersection(left, right)
+            _tangent_bbox_intersection(left, right, intersections)
             continue
 
         # Attempt to replace the curves with linearizations
@@ -678,20 +705,21 @@ def all_intersections(candidates):
         ValueError: If the subdivision iteration does not terminate
             before exhausting the maximum number of subdivisions.
     """
+    intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
-        accepted, max_err = intersect_one_round(candidates)
+        accepted, max_err = intersect_one_round(candidates, intersections)
 
         # If none of the pairs have been accepted, then there is
         # no intersection.
         if not accepted:
-            return []
+            return intersections
 
         # In the case of ``accepted`` pairs, if the pairs are
         # sufficiently close to their linearizations, we can stop
         # the subdivisions and move on to the next step.
         _, max_exp = _FREXP(max_err)
         if max_exp <= _ERROR_EXPONENT:
-            return from_linearized(accepted)
+            return from_linearized(accepted, intersections)
 
         # If we **do** require more subdivisions, we need to update
         # the list of candidates.
@@ -758,12 +786,12 @@ class Linearization(object):
         return self._curve._nodes  # pylint: disable=protected-access
 
     @property
-    def start(self):
+    def start_node(self):
         """numpy.ndarray: The start vector of this linearization."""
         return self._curve._nodes[[0], :]  # pylint: disable=protected-access
 
     @property
-    def end(self):
+    def end_node(self):
         """numpy.ndarray: The end vector of this linearization."""
         return self._curve._nodes[[-1], :]  # pylint: disable=protected-access
 
@@ -805,14 +833,17 @@ class Intersection(object):
         right (.Curve): The "right" curve in the intersection.
         t (float): The parameter along ``right`` where the
             intersection occurs.
+        point (Optional[numpy.ndarray]): The point where the two
+            curves actually intersect. If not provided, will be
+            computed on the fly when first accessed.
     """
 
-    def __init__(self, left, s, right, t):
+    def __init__(self, left, s, right, t, point=None):
         self._left = left
         self._s_val = s
         self._right = right
         self._t_val = t
-        self._point = None
+        self._point = point
 
     @property
     def left(self):

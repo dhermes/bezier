@@ -402,6 +402,17 @@ class TestCurve(unittest.TestCase):
     def test_intersect_empty(self):
         nodes = np.array([
             [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve1 = self._make_one(nodes)
+        curve2 = self._make_one(nodes + np.array([[2.0, 0.0]]))
+
+        result = curve1.intersect(curve2)
+        self.assertEqual(result.shape, (0, 2))
+
+    def test_intersect_at_boundary(self):
+        nodes = np.array([
+            [0.0, 0.0],
             [0.5, -0.25],
             [1.0, 0.0],
         ])
@@ -409,7 +420,8 @@ class TestCurve(unittest.TestCase):
         left, right = curve.subdivide()
 
         result = left.intersect(right)
-        self.assertTrue(np.all(result == np.zeros((0, 2))))
+        expected = np.array([[0.5, -0.125]])
+        self.assertTrue(np.all(result == expected))
 
     def test_intersect(self):
         import bezier
