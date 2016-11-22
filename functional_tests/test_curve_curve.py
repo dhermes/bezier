@@ -10,6 +10,7 @@
 
 import struct
 
+import matplotlib.pyplot as plt
 import numpy as np
 import six
 
@@ -45,6 +46,21 @@ CURVE4 = bezier.Curve(np.array([
     [2.625, -0.90625],
     [-0.75, 2.4375],
 ]))
+
+
+class Config(object):  # pylint: disable=too-few-public-methods
+    """Run-time configuration.
+
+    This is a mutable stand-in to allow test set-up to modify
+    global state.
+    """
+    AS_SCRIPT = False
+    MARKED = []
+
+    @classmethod
+    def mark(cls, func):
+        cls.MARKED.append(func)
+        return func
 
 
 def to_bits(byte_):
@@ -103,7 +119,17 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
         assert_close(point_on2[0], point[0])
         assert_close(point_on2[1], point[1])
 
+    if not Config.AS_SCRIPT:
+        return
 
+    ax = curve1.plot(32)
+    curve2.plot(32, ax=ax)
+    ax.scatter(points[:, 0], points[:, 1], color='black')
+    ax.axis('scaled')
+    plt.show()
+
+
+@Config.mark
 def test_curves1_and_2():
     sq31 = np.sqrt(31.0)
     s_val0 = 0.0625 * (9.0 - sq31)
@@ -118,6 +144,7 @@ def test_curves1_and_2():
     curve_curve_check(CURVE1, CURVE2, s_vals, t_vals, points)
 
 
+@Config.mark
 def test_curves3_and_4():
     # NOTE: This clearly indicates there is a problem with
     #       duplicates of intersections.
@@ -134,3 +161,13 @@ def test_curves3_and_4():
         [2.625, 0.65625],
     ])
     curve_curve_check(CURVE3, CURVE4, s_vals, t_vals, points)
+
+
+def main():
+    Config.AS_SCRIPT = True
+    for func in Config.MARKED:
+        func()
+
+
+if __name__ == '__main__':
+    main()
