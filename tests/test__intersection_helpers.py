@@ -558,22 +558,21 @@ class Test__cross_product(unittest.TestCase):
 class Test_segment_intersection(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(start0, end0, start1, end1):
+    def _call_function_under_test(start0, end0, start1, end1, **kwargs):
         from bezier import _intersection_helpers
 
         return _intersection_helpers.segment_intersection(
-            start0, end0, start1, end1)
+            start0, end0, start1, end1, **kwargs)
 
-    def _helper(self, intersection, s_val, direction0, t_val, direction1):
+    def _helper(self, intersection, s_val, direction0,
+                t_val, direction1, **kwargs):
         start0 = intersection + s_val * direction0
         end0 = intersection + (s_val - 1.0) * direction0
         start1 = intersection + t_val * direction1
         end1 = intersection + (t_val - 1.0) * direction1
 
-        computed_s, computed_t = self._call_function_under_test(
-            start0, end0, start1, end1)
-        self.assertEqual(computed_s, s_val)
-        self.assertEqual(computed_t, t_val)
+        return self._call_function_under_test(
+            start0, end0, start1, end1, **kwargs)
 
     def test_success(self):
         intersection = np.array([[1.0, 2.0]])
@@ -582,7 +581,10 @@ class Test_segment_intersection(unittest.TestCase):
         direction0 = np.array([[3.0, 0.5]])
         direction1 = np.array([[-2.0, 1.0]])
         # D0 x D1 == 4.0, so there will be no round-off in answer.
-        self._helper(intersection, s_val, direction0, t_val, direction1)
+        computed_s, computed_t = self._helper(
+            intersection, s_val, direction0, t_val, direction1)
+        self.assertEqual(computed_s, s_val)
+        self.assertEqual(computed_t, t_val)
 
     def test_parallel(self):
         intersection = np.array([[0.0, 0.0]])
@@ -592,6 +594,19 @@ class Test_segment_intersection(unittest.TestCase):
         direction1 = np.array([[0.0, 2.0]])
         with self.assertRaises(NotImplementedError):
             self._helper(intersection, s_val, direction0, t_val, direction1)
+
+    def test_parallel_no_fail(self):
+        intersection = np.array([[0.0, 0.0]])
+        s_val = 0.5
+        t_val = 0.5
+        direction0 = np.array([[0.0, 1.0]])
+        direction1 = np.array([[0.0, 2.0]])
+        computed_s, computed_t = self._helper(
+            intersection, s_val,
+            direction0, t_val, direction1, _fail=False)
+
+        self.assertTrue(np.isnan(computed_s))
+        self.assertTrue(np.isnan(computed_t))
 
 
 class Test_from_linearized(unittest.TestCase):

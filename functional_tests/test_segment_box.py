@@ -10,9 +10,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pytest
 
-import bezier
 from bezier import _intersection_helpers
 
 
@@ -23,7 +21,7 @@ UNIT_SQUARE = np.array([
 ])
 
 
-class Config(object):
+class Config(object):  # pylint: disable=too-few-public-methods
     """Run-time configuration.
 
     This is a mutable stand-in to allow test set-up to modify
@@ -93,16 +91,6 @@ def test_outside():
     expected = _intersection_helpers.BoxIntersectionType.disjoint
     for segment in segments:
         run_it(segment, expected)
-
-
-@Config.mark
-def test_unsupported():
-    segment = np.array([
-        [-0.5, 0.5],
-        [1.5, 0.5],
-    ])
-    with pytest.raises(NotImplementedError):
-        run_it(segment)
 
 
 @Config.mark
@@ -219,16 +207,32 @@ def test_goes_through_box():
             [0.5, -0.25],
         ]),
         np.array([
-            [0.0, -0.25],
-            [0.0, 1.25],
-        ]),
-        np.array([
             [1.25, 0.5],
             [0.5, 1.25],
         ]),
         np.array([
             [0.5, 1.25],
             [-0.25, 0.5],
+        ]),
+        np.array([
+            [-0.5, 0.5],
+            [1.5, 0.5],
+        ]),
+        np.array([
+            [-0.25, 0.0],
+            [1.25, 0.0],
+        ]),
+        np.array([
+            [1.0, -0.25],
+            [1.0, 1.25],
+        ]),
+        np.array([
+            [1.25, 1.0],
+            [-0.25, 1.0],
+        ]),
+        np.array([
+            [0.0, 1.25],
+            [0.0, -0.25],
         ]),
     )
 
@@ -239,6 +243,7 @@ def test_goes_through_box():
 def main():
     Config.AS_SCRIPT = True
     for func in Config.MARKED:
+        print(func.__name__)
         func()
 
 

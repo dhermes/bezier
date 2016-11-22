@@ -425,7 +425,7 @@ def _cross_product(vec0, vec1):
     return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]
 
 
-def segment_intersection(start0, end0, start1, end1):
+def segment_intersection(start0, end0, start1, end1, _fail=True):
     r"""Determine the intersection of two line segments.
 
     Assumes each line is parametric
@@ -507,6 +507,9 @@ def segment_intersection(start0, end0, start1, end1):
             vector :math:`S_1` of the parametric line :math:`L_1(s)`.
         end1 (numpy.ndarray): A 1x2 NumPy array that is the end
             vector :math:`E_1` of the parametric line :math:`L_1(s)`.
+        _fail (bool): Flag indicating if an exception should be raised
+            when an unimplemented situation is encountered. If
+            :data:`False`, then a non-sense answer will be returned.
 
     Returns:
         Tuple[float, float]: Pair of :math:`s_{\ast}` and :math:`t_{\ast}`
@@ -522,7 +525,10 @@ def segment_intersection(start0, end0, start1, end1):
     delta1 = end1 - start1
     cross_d0_d1 = _cross_product(delta0, delta1)
     if cross_d0_d1 == 0.0:
-        raise NotImplementedError('Delta_0 x Delta_1 = 0 not supported')
+        if _fail:
+            raise NotImplementedError('Delta_0 x Delta_1 = 0 not supported')
+        else:
+            return np.nan, np.nan
     else:
         start_delta = start1 - start0
         s = _cross_product(start_delta, delta1) / cross_d0_d1
@@ -659,22 +665,33 @@ def bbox_line_intersect(nodes, line_start, line_end):
             bottom <= line_end[0, 1] <= top):
         return BoxIntersectionType.intersection
 
+    # NOTE: We pass ``_fail=False`` to ``segment_intersection`` below.
+    #       At first, this may appear to "ignore" some potential
+    #       intersections of parallel lines. However, no intersections
+    #       will be missed. If parallel lines don't overlap, then
+    #       there is nothing to miss. If they do overlap, then either
+    #       the segment will have endpoints on the box (already covered)
+    #       or the segment will contain an entire side of the box, which
+    #       will force it to intersect the 3 edges that meet at the
+    #       two ends of those sides. The parallel edge will be skipped,
+    #       but the other two will be covered.
+
     # Bottom Edge
     s_bottom, t_bottom = segment_intersection(
         np.array([[left, bottom]]), np.array([[right, bottom]]),
-        line_start, line_end)
+        line_start, line_end, _fail=False)
     if 0.0 <= s_bottom <= 1.0 and 0.0 <= t_bottom <= 1.0:
         return BoxIntersectionType.intersection
     # Right Edge
     s_right, t_right = segment_intersection(
         np.array([[right, bottom]]), np.array([[right, top]]),
-        line_start, line_end)
+        line_start, line_end, _fail=False)
     if 0.0 <= s_right <= 1.0 and 0.0 <= t_right <= 1.0:
         return BoxIntersectionType.intersection
     # Top Edge
     s_top, t_top = segment_intersection(
         np.array([[right, top]]), np.array([[left, top]]),
-        line_start, line_end)
+        line_start, line_end, _fail=False)
     if 0.0 <= s_top <= 1.0 and 0.0 <= t_top <= 1.0:
         return BoxIntersectionType.intersection
     # NOTE: We skip the "last" edge. This is because any curve
