@@ -73,7 +73,7 @@ def assert_close(approximated, exact):
 
     mantissa_err = abs(int(mantissa_a, 2) - int(mantissa_e, 2))
     # Make sure the error is isolated to the last 3 bits.
-    assert mantissa_err < 8
+    assert mantissa_err <= 0b111
 
 
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
