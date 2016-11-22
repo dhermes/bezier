@@ -12,6 +12,7 @@ import struct
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 import six
 
 import bezier
@@ -63,6 +64,16 @@ CURVE7 = bezier.Curve(np.array([
     [0.0, 0.265625],
     [0.5, 0.234375],
     [1.0, 0.265625],
+]))
+# g8 = sympy.Matrix([[8 * s, 3]]) / 8
+CURVE8 = bezier.Curve(np.array([
+    [0.0, 0.375],
+    [1.0, 0.375],
+]))
+# g9 = sympy.Matrix([[2, 3 * s]]) / 4
+CURVE9 = bezier.Curve(np.array([
+    [0.5, 0.0],
+    [0.5, 0.75],
 ]))
 
 
@@ -229,6 +240,29 @@ def test_curves1_and_7():
         [s_val1, y_val],
     ])
     curve_curve_check(CURVE1, CURVE7, s_vals, t_vals, points)
+
+
+@Config.mark
+def test_curves1_and_8():
+    s_vals = np.array([0.25, 0.75])
+    t_vals = np.array([0.25, 0.75])
+    points = np.array([
+        [0.25, 0.375],
+        [0.75, 0.375],
+    ])
+    with pytest.raises(NotImplementedError):
+        curve_curve_check(CURVE1, CURVE8, s_vals, t_vals, points)
+
+
+@Config.mark
+def test_curves1_and_9():
+    s_vals = np.array([0.5])
+    t_vals = np.array([2.0 / 3])
+    points = np.array([
+        [0.5, 0.5],
+    ])
+    with pytest.raises(NotImplementedError):
+        curve_curve_check(CURVE1, CURVE9, s_vals, t_vals, points)
 
 
 def main():
