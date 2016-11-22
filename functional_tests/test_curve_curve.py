@@ -52,6 +52,12 @@ CURVE5 = bezier.Curve(np.array([
     [0.5, -0.25],
     [1.0, 0.75],
 ]))
+# g6 = sympy.Matrix([[]])
+CURVE6 = bezier.Curve(np.array([
+    [0.0, 1.0],
+    [0.5, 0.0],
+    [1.0, 1.0],
+]))
 
 
 class Config(object):  # pylint: disable=too-few-public-methods
@@ -186,6 +192,21 @@ def test_curves1_and_5():
         [0.75, 0.375],
     ])
     curve_curve_check(CURVE1, CURVE5, s_vals, t_vals, points)
+
+
+@Config.mark
+def test_curves1_and_6():
+    # NOTE: This clearly indicates there is a problem with
+    #       duplicates of intersections.
+    s_vals = np.array([0.5, 0.5, 0.5, 0.5])
+    t_vals = np.array([0.5, 0.5, 0.5, 0.5])
+    points = np.array([
+        [0.5, 0.5],
+        [0.5, 0.5],
+        [0.5, 0.5],
+        [0.5, 0.5],
+    ])
+    curve_curve_check(CURVE1, CURVE6, s_vals, t_vals, points)
 
 
 def main():
