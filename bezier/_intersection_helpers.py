@@ -668,10 +668,8 @@ def intersect_one_round(candidates, intersections):
             right_nodes = right._curve._nodes
             # pylint: enable=protected-access
         else:
-            # pylint: disable=protected-access
-            left_nodes = left._nodes
-            right_nodes = right._nodes
-            # pylint: enable=protected-access
+            left_nodes = left._nodes  # pylint: disable=protected-access
+            right_nodes = right._nodes  # pylint: disable=protected-access
 
         bbox_int = bbox_intersect(left_nodes, right_nodes)
         if bbox_int is BoxIntersectionType.disjoint:

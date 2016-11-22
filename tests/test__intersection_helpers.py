@@ -677,7 +677,6 @@ class Test__tangent_bbox_intersection(unittest.TestCase):
 
     def test_not_linear(self):
         import bezier
-        from bezier import _intersection_helpers
 
         nodes1 = np.array([
             [0.0, 0.0],
@@ -874,7 +873,8 @@ class Test_all_intersections(unittest.TestCase):
         expected = np.array([0.5, 0.75])
 
         s_val = 1.0 / 3.0
-        s_val += np.spacing(s_val)  # Tiny wiggle.
+        # Due to round-off, the answer is wrong by a tiny wiggle.
+        s_val += np.spacing(s_val)  # pylint: disable=no-member
         t_val = 2.0 / 3.0
         check_intersection(self, intersection, expected,
                            curve1, curve2, s_val, t_val)
