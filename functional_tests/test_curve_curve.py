@@ -75,6 +75,18 @@ CURVE9 = bezier.Curve(np.array([
     [0.5, 0.0],
     [0.5, 0.75],
 ]))
+# g10 = 9 * g1
+# g10 = sympy.Matrix([[9 * s, 18 * s * (1 - s)]])
+CURVE10 = bezier.Curve(np.array([
+    [0.0, 0.0],
+    [4.5, 9.0],
+    [9.0, 0.0],
+]))
+# g11 = sympy.Matrix([[6 * s, 8 * (1 - s)]])
+CURVE11 = bezier.Curve(np.array([
+    [0.0, 8.0],
+    [6.0, 0.0],
+]))
 
 
 class Config(object):  # pylint: disable=too-few-public-methods
@@ -257,12 +269,22 @@ def test_curves1_and_8():
 @Config.mark
 def test_curves1_and_9():
     s_vals = np.array([0.5])
-    t_vals = np.array([2.0 / 3])
+    t_vals = np.array([2.0 / 3.0])
     points = np.array([
         [0.5, 0.5],
     ])
     with pytest.raises(NotImplementedError):
         curve_curve_check(CURVE1, CURVE9, s_vals, t_vals, points)
+
+
+@Config.mark
+def test_curves10_and_11():
+    s_vals = np.array([1.0 / 3.0])
+    t_vals = np.array([0.5])
+    points = np.array([
+        [3.0, 4.0],
+    ])
+    curve_curve_check(CURVE10, CURVE11, s_vals, t_vals, points)
 
 
 def main():

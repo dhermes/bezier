@@ -624,6 +624,68 @@ def _tangent_bbox_intersection(left, right, intersections):
                 intersections.append(intersection)
 
 
+# pylint: disable=too-many-return-statements
+def bbox_line_intersect(nodes, line_start, line_end):
+    r"""Determine intersection of a bounding box and a line.
+
+    We do this by first checking if either the start or end node of the
+    segment are contained in the bounding box. If they aren't, then
+    checks if the line segment intersects any of the four sides of the
+    bounding box.
+
+    .. note::
+
+       This function is "half-finished". It makes no distinction between
+       "tangent" intersections of the box and segment and other types
+       of intersection. However, the distinction is worthwhile, so this
+       function should be "upgraded" at some point.
+
+    Args:
+        nodes (numpy.ndarray): Point (Nx2) that determine a bounding box.
+        line_start (numpy.ndarray): Beginning of a line segment (1x2).
+        line_end (numpy.ndarray): End of a line segment (1x2).
+
+    Returns:
+        BoxIntersectionType: Enum indicating the type of bounding
+        box intersection.
+    """
+    left, bottom = np.min(nodes, axis=0)
+    right, top = np.max(nodes, axis=0)
+
+    if (left <= line_start[0, 0] <= right and
+            bottom <= line_start[0, 1] <= top):
+        return BoxIntersectionType.intersection
+    if (left <= line_end[0, 0] <= right and
+            bottom <= line_end[0, 1] <= top):
+        return BoxIntersectionType.intersection
+
+    # Bottom Edge
+    s_bottom, t_bottom = segment_intersection(
+        np.array([[left, bottom]]), np.array([[right, bottom]]),
+        line_start, line_end)
+    if 0.0 <= s_bottom <= 1.0 and 0.0 <= t_bottom <= 1.0:
+        return BoxIntersectionType.intersection
+    # Right Edge
+    s_right, t_right = segment_intersection(
+        np.array([[right, bottom]]), np.array([[right, top]]),
+        line_start, line_end)
+    if 0.0 <= s_right <= 1.0 and 0.0 <= t_right <= 1.0:
+        return BoxIntersectionType.intersection
+    # Top Edge
+    s_top, t_top = segment_intersection(
+        np.array([[right, top]]), np.array([[left, top]]),
+        line_start, line_end)
+    if 0.0 <= s_top <= 1.0 and 0.0 <= t_top <= 1.0:
+        return BoxIntersectionType.intersection
+    # NOTE: We skip the "last" edge. This is because any curve
+    #       that doesn't have an endpoint on a curve must cross
+    #       at least two, so we will already covered such curves
+    #       in one of the branches above.
+
+    return BoxIntersectionType.disjoint
+# pylint: enable=too-many-return-statements
+
+
 def intersect_one_round(candidates, intersections):
     """Perform one step of the intersection process.
 
@@ -659,19 +721,21 @@ def intersect_one_round(candidates, intersections):
                     'Two linearizations should never be candidates',
                     left, right)
             # pylint: disable=protected-access
-            left_nodes = left._curve._nodes
             right_nodes = right._nodes
             # pylint: enable=protected-access
+            bbox_int = bbox_line_intersect(
+                right_nodes, left.start_node, left.end_node)
         elif isinstance(right, Linearization):
             # pylint: disable=protected-access
             left_nodes = left._nodes
-            right_nodes = right._curve._nodes
             # pylint: enable=protected-access
+            bbox_int = bbox_line_intersect(
+                left_nodes, right.start_node, right.end_node)
         else:
             left_nodes = left._nodes  # pylint: disable=protected-access
             right_nodes = right._nodes  # pylint: disable=protected-access
+            bbox_int = bbox_intersect(left_nodes, right_nodes)
 
-        bbox_int = bbox_intersect(left_nodes, right_nodes)
         if bbox_int is BoxIntersectionType.disjoint:
             continue
         elif bbox_int is BoxIntersectionType.tangent:
