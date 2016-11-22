@@ -17,6 +17,7 @@ test:
     - tox -e docs
     - tox -e doctest
     - tox -e lint
+    - tox -e functional
 
 general:
   branches:
