@@ -644,14 +644,35 @@ def intersect_one_round(candidates, intersections):
 
     Returns:
         list: Returns a list of ``accepted`` pairs (among ``candidates``).
+
+    Raises:
+        ValueError: If both the left and right candidates in a pair or
+            :class:`Linearization` instances. This should never occur
+            because two linearizations can be immediately intersected.
     """
     accepted = []
 
     for left, right in candidates:
-        # pylint: disable=protected-access
-        left_nodes = left._nodes
-        right_nodes = right._nodes
-        # pylint: enable=protected-access
+        if isinstance(left, Linearization):
+            if isinstance(right, Linearization):
+                raise ValueError(
+                    'Two linearizations should never be candidates',
+                    left, right)
+            # pylint: disable=protected-access
+            left_nodes = left._curve._nodes
+            right_nodes = right._nodes
+            # pylint: enable=protected-access
+        elif isinstance(right, Linearization):
+            # pylint: disable=protected-access
+            left_nodes = left._nodes
+            right_nodes = right._curve._nodes
+            # pylint: enable=protected-access
+        else:
+            # pylint: disable=protected-access
+            left_nodes = left._nodes
+            right_nodes = right._nodes
+            # pylint: enable=protected-access
+
         bbox_int = bbox_intersect(left_nodes, right_nodes)
         if bbox_int is BoxIntersectionType.disjoint:
             continue
@@ -768,13 +789,6 @@ class Linearization(object):
         if self._error is None:
             self._error = linearization_error(self._curve)
         return self._error
-
-    @property
-    def _nodes(self):
-        """numpy.ndarray: The nodes defining the linearized curve."""
-        # NOTE: It's unclear if self._curve._nodes is appropriate here
-        #       or if self._curve._nodes[[0, -1], :] is.
-        return self._curve._nodes  # pylint: disable=protected-access
 
     @property
     def start_node(self):
