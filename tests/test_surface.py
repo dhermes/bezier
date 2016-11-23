@@ -16,8 +16,15 @@ import unittest
 
 import mock
 import numpy as np
+import pytest
 
 from tests import utils
+
+
+slow = pytest.mark.skipif(
+    pytest.config.getoption('--ignore-slow'),
+    reason='--ignore-slow ignores the slow tests',
+)
 
 
 class TestSurface(unittest.TestCase):
@@ -599,6 +606,7 @@ class TestSurface(unittest.TestCase):
         self._subdivide_helper(nodes, expected_a, expected_b,
                                expected_c, expected_d)
 
+    @slow
     def test_subdivide_line_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
@@ -653,6 +661,7 @@ class TestSurface(unittest.TestCase):
         self._subdivide_helper(nodes, expected_a, expected_b,
                                expected_c, expected_d)
 
+    @slow
     def test_subdivide_quadratic_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
@@ -727,6 +736,7 @@ class TestSurface(unittest.TestCase):
         self._subdivide_helper(nodes, expected_a, expected_b,
                                expected_c, expected_d)
 
+    @slow
     def test_subdivide_cubic_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
@@ -737,6 +747,7 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(surface.degree, 3)
         self._subdivide_points_check(surface)
 
+    @slow
     def test_subdivide_quartic_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
@@ -747,6 +758,7 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(surface.degree, 4)
         self._subdivide_points_check(surface)
 
+    @slow
     def test_subdivide_on_the_fly(self):
         # Test for a degree where the subdivision is done on the fly
         # rather than via a stored matrix.
