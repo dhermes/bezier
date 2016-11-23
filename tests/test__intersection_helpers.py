@@ -688,6 +688,44 @@ class Test_from_linearized(unittest.TestCase):
                            curve1, curve2, 0.5, 0.5)
 
 
+class Test__add_tangent_intersection(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersection, intersections):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._add_tangent_intersection(
+            intersection, intersections)
+
+    def test_new(self):
+        from bezier import _intersection_helpers
+
+        intersection = _intersection_helpers.Intersection(
+            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0,
+            at_tangent=True)
+        intersections = []
+        self.assertIsNone(
+            self._call_function_under_test(intersection, intersections))
+        self.assertEqual(intersections, [intersection])
+
+    def test_existing(self):
+        from bezier import _intersection_helpers
+
+        intersection1 = _intersection_helpers.Intersection(
+            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0,
+            at_tangent=True)
+        intersection2 = _intersection_helpers.Intersection(
+            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0,
+            at_tangent=True)
+        intersections = [intersection1]
+        self.assertIsNone(
+            self._call_function_under_test(intersection2, intersections))
+
+        self.assertEqual(len(intersections), 1)
+        self.assertIs(intersections[0], intersection1)
+        self.assertIsNot(intersections[0], intersection2)
+
+
 class Test__tangent_bbox_intersection(unittest.TestCase):
 
     @staticmethod

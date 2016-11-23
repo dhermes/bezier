@@ -580,6 +580,28 @@ def from_linearized(left, right):
     return intersection
 
 
+def _add_tangent_intersection(intersection, intersections):
+    """Adds an intersection at bounding box tangency.
+
+    If the intersection has already been found, does nothing.
+
+    Args:
+        intersection (Intersection): A new intersection to add.
+        intersections (list): List of existing intersections.
+    """
+    # pylint: disable=protected-access
+    for existing in intersections:
+        if (existing.at_tangent and
+                existing.left is intersection.left and
+                existing.right is intersection.right and
+                existing._s_val == intersection._s_val and
+                existing._t_val == intersection._t_val):
+            return
+    # pylint: enable=protected-access
+
+    intersections.append(intersection)
+
+
 def _tangent_bbox_intersection(left, right, intersections):
     r"""Check if two curves with tangent bounding boxes intersect.
 
@@ -645,7 +667,7 @@ def _tangent_bbox_intersection(left, right, intersections):
                 intersection = Intersection(
                     left.root, orig_s, right.root, orig_t,
                     point=node_left, at_tangent=True)
-                intersections.append(intersection)
+                _add_tangent_intersection(intersection, intersections)
 
 
 # pylint: disable=too-many-return-statements
