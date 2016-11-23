@@ -638,10 +638,9 @@ class Surface(_base.Base):
             # In the linear case, we are only invalid if the points
             # are collinear.
             # pylint: disable=no-member
-            delta_mat = _surface_helpers.LINEAR_JACOBIAN_HELPER.dot(
-                self._nodes)
+            first_deriv = self._nodes[1:, :] - self._nodes[:-1, :]
             # pylint: enable=no-member
-            return np.linalg.matrix_rank(delta_mat) == 2
+            return np.linalg.matrix_rank(first_deriv) == 2
         elif self.degree in (2, 3):
             if self.dimension != 2:
                 raise NotImplementedError(

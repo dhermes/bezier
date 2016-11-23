@@ -127,10 +127,6 @@ QUARTIC_SUBDIVIDE = np.array([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16],
 ], dtype=float) / 16.0
-LINEAR_JACOBIAN_HELPER = np.array([
-    [-1, 1, 0],
-    [-1, 0, 1],
-], dtype=float)
 # The Jacobian of a quadratric (in any dimension) as given by
 # dB/ds = [-2L1, 2(L1 - L2), 2L2, -2L3, 2L3, 0] * nodes
 # dB/dt = [-2L1, -2L2, 0, 2(L1 - L3), 2L2, 2L3] * nodes
