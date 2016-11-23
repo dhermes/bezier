@@ -16,8 +16,10 @@ import mock
 import numpy as np
 
 
+# pylint: disable=too-many-arguments
 def check_intersection(test_case, intersection, expected,
-                       curve1, curve2, s_val, t_val):
+                       curve1, curve2, s_val, t_val,
+                       at_tangent=False):
     from bezier import _intersection_helpers
 
     test_case.assertIsInstance(
@@ -27,6 +29,11 @@ def check_intersection(test_case, intersection, expected,
     test_case.assertEqual(intersection._s_val, s_val)
     test_case.assertIs(intersection.right, curve2)
     test_case.assertEqual(intersection._t_val, t_val)
+    if at_tangent:
+        test_case.assertTrue(intersection.at_tangent)
+    else:
+        test_case.assertFalse(intersection.at_tangent)
+# pylint: enable=too-many-arguments
 
 
 class Test__in_interval(unittest.TestCase):
@@ -749,7 +756,8 @@ class Test__tangent_bbox_intersection(unittest.TestCase):
         intersection = intersections[0]
         expected = curve1.evaluate(1.0)
         check_intersection(self, intersection, expected,
-                           curve1, curve2, 1.0, 0.0)
+                           curve1, curve2, 1.0, 0.0,
+                           at_tangent=True)
 
 
 class Test_intersect_one_round(unittest.TestCase):
@@ -1060,17 +1068,14 @@ class TestIntersection(unittest.TestCase):
         klass = self._get_target_class()
         return klass(*args, **kwargs)
 
-    def _constructor_helper(self, point=None):
+    def _constructor_helper(self, **kwargs):
         left = mock.sentinel.left
         s_val = 0.25
         right = mock.sentinel.right
         t_val = 0.75
 
-        if point is None:
-            intersection = self._make_one(left, s_val, right, t_val)
-        else:
-            intersection = self._make_one(
-                left, s_val, right, t_val, point=point)
+        intersection = self._make_one(
+            left, s_val, right, t_val, **kwargs)
 
         self.assertIs(intersection._left, left)
         self.assertEqual(intersection._s_val, s_val)
@@ -1081,10 +1086,15 @@ class TestIntersection(unittest.TestCase):
     def test_constructor(self):
         intersection = self._constructor_helper()
         self.assertIsNone(intersection._point)
+        self.assertFalse(intersection.at_tangent)
 
     def test_constructor_with_point(self):
-        intersection = self._constructor_helper(mock.sentinel.point)
+        intersection = self._constructor_helper(point=mock.sentinel.point)
         self.assertIs(intersection._point, mock.sentinel.point)
+
+    def test_constructor_at_tangent(self):
+        intersection = self._constructor_helper(at_tangent=True)
+        self.assertTrue(intersection.at_tangent)
 
     def test_left_property(self):
         intersection = self._make_one(

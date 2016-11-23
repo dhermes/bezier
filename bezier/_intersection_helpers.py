@@ -644,7 +644,7 @@ def _tangent_bbox_intersection(left, right, intersections):
                 orig_t = (1 - t) * right.start + t * right.end
                 intersection = Intersection(
                     left.root, orig_s, right.root, orig_t,
-                    point=node_left)
+                    point=node_left, at_tangent=True)
                 intersections.append(intersection)
 
 
@@ -937,14 +937,19 @@ class Intersection(object):
         point (Optional[numpy.ndarray]): The point where the two
             curves actually intersect. If not provided, will be
             computed on the fly when first accessed.
+        at_tangent (bool): Indicates if the intersection happened at
+            a point of bounding box tangency. This can be used to
+            help with de-duplication of encountered intersections.
     """
 
-    def __init__(self, left, s, right, t, point=None):
+    def __init__(self, left, s, right, t, point=None,
+                 at_tangent=False):
         self._left = left
         self._s_val = s
         self._right = right
         self._t_val = t
         self._point = point
+        self.at_tangent = at_tangent
 
     @property
     def left(self):
