@@ -35,6 +35,27 @@ _MAX_INTERSECT_SUBDIVISIONS = 20
 _EPS = 2.0**(-40)
 
 
+def _in_interval(value, start, end):
+    """Checks if a ``value`` is an interval (inclusive).
+
+    .. note::
+
+       The current implementation does the most basic check,
+       however, in the future, a more generic check may be desired
+       that allows wiggle room around the endpoints to account
+       for round-off.
+
+    Args:
+        value (float): The value to check.
+        start (float): The (inclusive) start of the interval.
+        end (float): The (inclusive) end of the interval.
+
+    Returns:
+        bool: Indicating if the value is in the interval.
+    """
+    return start <= value <= end
+
+
 def _vector_close(vec1, vec2):
     r"""Checks that two vectors are equal to some threshold.
 
@@ -115,9 +136,9 @@ def _check_parameters(s, t):
     Raises:
         ValueError: If one of the values falls outside the unit interval.
     """
-    if s < 0.0 or s > 1.0:
+    if not _in_interval(s, 0.0, 1.0):
         raise ValueError('s outside of unit interval', s)
-    if t < 0.0 or t > 1.0:
+    if not _in_interval(t, 0.0, 1.0):
         raise ValueError('t outside of unit interval', t)
 
 
@@ -652,11 +673,11 @@ def bbox_line_intersect(nodes, line_start, line_end):
     left, bottom = np.min(nodes, axis=0)
     right, top = np.max(nodes, axis=0)
 
-    if (left <= line_start[0, 0] <= right and
-            bottom <= line_start[0, 1] <= top):
+    if (_in_interval(line_start[0, 0], left, right) and
+            _in_interval(line_start[0, 1], bottom, top)):
         return BoxIntersectionType.intersection
-    if (left <= line_end[0, 0] <= right and
-            bottom <= line_end[0, 1] <= top):
+    if (_in_interval(line_end[0, 0], left, right) and
+            _in_interval(line_end[0, 1], bottom, top)):
         return BoxIntersectionType.intersection
 
     # NOTE: We pass ``_fail=False`` to ``segment_intersection`` below.
@@ -674,19 +695,19 @@ def bbox_line_intersect(nodes, line_start, line_end):
     s_bottom, t_bottom = segment_intersection(
         np.array([[left, bottom]]), np.array([[right, bottom]]),
         line_start, line_end, _fail=False)
-    if 0.0 <= s_bottom <= 1.0 and 0.0 <= t_bottom <= 1.0:
+    if _in_interval(s_bottom, 0.0, 1.0) and _in_interval(t_bottom, 0.0, 1.0):
         return BoxIntersectionType.intersection
     # Right Edge
     s_right, t_right = segment_intersection(
         np.array([[right, bottom]]), np.array([[right, top]]),
         line_start, line_end, _fail=False)
-    if 0.0 <= s_right <= 1.0 and 0.0 <= t_right <= 1.0:
+    if _in_interval(s_right, 0.0, 1.0) and _in_interval(t_right, 0.0, 1.0):
         return BoxIntersectionType.intersection
     # Top Edge
     s_top, t_top = segment_intersection(
         np.array([[right, top]]), np.array([[left, top]]),
         line_start, line_end, _fail=False)
-    if 0.0 <= s_top <= 1.0 and 0.0 <= t_top <= 1.0:
+    if _in_interval(s_top, 0.0, 1.0) and _in_interval(t_top, 0.0, 1.0):
         return BoxIntersectionType.intersection
     # NOTE: We skip the "last" edge. This is because any curve
     #       that doesn't have an endpoint on a curve must cross

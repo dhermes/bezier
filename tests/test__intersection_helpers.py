@@ -29,6 +29,33 @@ def check_intersection(test_case, intersection, expected,
     test_case.assertEqual(intersection._t_val, t_val)
 
 
+class Test__in_interval(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(value, start, end):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._in_interval(value, start, end)
+
+    def test_interior(self):
+        self.assertTrue(self._call_function_under_test(
+            1.5, 1.0, 2.0))
+
+    def test_barely_inside(self):
+        local_epsilon = np.spacing(1.0)  # pylint: disable=no-member
+        self.assertTrue(self._call_function_under_test(
+            1.0 + local_epsilon, 1.0, 2.0))
+
+    def test_barely_outside(self):
+        local_epsilon = np.spacing(1.0)  # pylint: disable=no-member
+        self.assertFalse(self._call_function_under_test(
+            1.0 - local_epsilon / 2.0, 1.0, 2.0))
+
+    def test_outside(self):
+        self.assertFalse(self._call_function_under_test(
+            -1.0, 1.0, 2.0))
+
+
 class Test__vector_close(unittest.TestCase):
 
     @staticmethod
