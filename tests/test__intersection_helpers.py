@@ -189,6 +189,14 @@ class Test_bbox_intersect(unittest.TestCase):
         self.assertIs(
             result, _intersection_helpers.BoxIntersectionType.disjoint)
 
+    def test_disjoint_but_aligned(self):
+        from bezier import _intersection_helpers
+
+        nodes = self.UNIT_SQUARE + np.array([[1.0, 2.0]])
+        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        self.assertIs(
+            result, _intersection_helpers.BoxIntersectionType.disjoint)
+
     def test_tangent(self):
         from bezier import _intersection_helpers
 
