@@ -575,12 +575,15 @@ def from_linearized(left, right):
     # values of s and t.
     refined_s, refined_t = newton_refine(
         orig_s, orig_left, orig_t, orig_right)
+    at_endpoint = (refined_s in (left.curve.start, left.curve.end) or
+                   refined_t in (right.curve.start, right.curve.end))
     intersection = Intersection(
-        orig_left, refined_s, orig_right, refined_t)
+        orig_left, refined_s, orig_right, refined_t,
+        at_endpoint=at_endpoint)
     return intersection
 
 
-def _add_tangent_intersection(intersection, intersections):
+def _add_intersection(intersection, intersections):
     """Adds an intersection at bounding box tangency.
 
     If the intersection has already been found, does nothing.
@@ -591,7 +594,7 @@ def _add_tangent_intersection(intersection, intersections):
     """
     # pylint: disable=protected-access
     for existing in intersections:
-        if (existing.at_tangent and
+        if (existing.at_endpoint and
                 existing.left is intersection.left and
                 existing.right is intersection.right and
                 existing._s_val == intersection._s_val and
@@ -666,8 +669,8 @@ def _tangent_bbox_intersection(left, right, intersections):
                 orig_t = (1 - t) * right.start + t * right.end
                 intersection = Intersection(
                     left.root, orig_s, right.root, orig_t,
-                    point=node_left, at_tangent=True)
-                _add_tangent_intersection(intersection, intersections)
+                    point=node_left, at_endpoint=True)
+                _add_intersection(intersection, intersections)
 
 
 # pylint: disable=too-many-return-statements
@@ -814,7 +817,7 @@ def intersect_one_round(candidates, intersections):
         if (isinstance(left, Linearization) and
                 isinstance(right, Linearization)):
             intersection = from_linearized(left, right)
-            intersections.append(intersection)
+            _add_intersection(intersection, intersections)
         else:
             # Add the accepted pair.
             accepted.append((left, right))
@@ -959,19 +962,20 @@ class Intersection(object):
         point (Optional[numpy.ndarray]): The point where the two
             curves actually intersect. If not provided, will be
             computed on the fly when first accessed.
-        at_tangent (bool): Indicates if the intersection happened at
-            a point of bounding box tangency. This can be used to
-            help with de-duplication of encountered intersections.
+        at_endpoint (bool): Indicates if the intersection happened at
+            the endpoint of one (or both) of the two subdivided curves.
+            This can be used to help with de-duplication of encountered
+            intersections.
     """
 
     def __init__(self, left, s, right, t, point=None,
-                 at_tangent=False):
+                 at_endpoint=False):
         self._left = left
         self._s_val = s
         self._right = right
         self._t_val = t
         self._point = point
-        self.at_tangent = at_tangent
+        self.at_endpoint = at_endpoint
 
     @property
     def left(self):

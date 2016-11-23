@@ -208,14 +208,10 @@ def test_curves1_and_7():
 
 @Config.mark
 def test_curves1_and_8():
-    # NOTE: This clearly indicates there is a problem with
-    #       duplicates of intersections.
-    s_vals = np.array([0.25, 0.25, 0.75, 0.75])
+    s_vals = np.array([0.25, 0.75])
     t_vals = s_vals
     points = np.array([
         [0.25, 0.375],
-        [0.25, 0.375],
-        [0.75, 0.375],
         [0.75, 0.375],
     ])
     curve_curve_check(CURVE1, CURVE8, s_vals, t_vals, points)
@@ -223,12 +219,9 @@ def test_curves1_and_8():
 
 @Config.mark
 def test_curves1_and_9():
-    # NOTE: This clearly indicates there is a problem with
-    #       duplicates of intersections.
-    s_vals = np.array([0.5, 0.5])
-    t_vals = np.array([2.0, 2.0]) / 3.0
+    s_vals = np.array([0.5])
+    t_vals = np.array([2.0]) / 3.0
     points = np.array([
-        [0.5, 0.5],
         [0.5, 0.5],
     ])
     curve_curve_check(CURVE1, CURVE9, s_vals, t_vals, points)
