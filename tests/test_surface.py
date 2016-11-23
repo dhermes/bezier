@@ -21,8 +21,8 @@ import pytest
 from tests import utils
 
 
-slow = pytest.mark.skipif(
-    pytest.config.getoption('--ignore-slow'),
+slow = pytest.mark.skipif(  # pylint: disable=invalid-name
+    pytest.config.getoption('--ignore-slow'),  # pylint: disable=no-member
     reason='--ignore-slow ignores the slow tests',
 )
 
