@@ -8,8 +8,6 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-import struct
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -19,7 +17,6 @@ import bezier
 from bezier import _intersection_helpers
 
 
-PACK_DOUBLE = struct.Struct('>d').pack
 # g1 = sympy.Matrix([[s, 2 * s * (1 - s)]])
 CURVE1 = bezier.Curve(np.array([
     [0.0, 0.0],
@@ -104,33 +101,10 @@ class Config(object):  # pylint: disable=too-few-public-methods
         return func
 
 
-def to_bits(byte_):
-    binary_rep = bin(ord(byte_))
-    assert binary_rep[:2] == '0b'
-    binary_rep = binary_rep[2:].zfill(8)
-    assert len(binary_rep) == 8
-    return binary_rep
-
-
-def binary_representation(val):
-    as_bytes = PACK_DOUBLE(val)
-    as_bits = ''.join(map(to_bits, as_bytes))
-
-    sign = as_bits[0]
-    exponent = as_bits[1:12]
-    mantissa = as_bits[12:]
-    return sign, exponent, mantissa
-
-
 def assert_close(approximated, exact):
-    sign_a, exponent_a, mantissa_a = binary_representation(approximated)
-    sign_e, exponent_e, mantissa_e = binary_representation(exact)
-    assert sign_a == sign_e
-    assert exponent_a == exponent_e
-
-    mantissa_err = abs(int(mantissa_a, 2) - int(mantissa_e, 2))
     # Make sure the error is isolated to the last 3 bits.
-    assert mantissa_err <= 0b111
+    local_epsilon = np.spacing(exact)  # pylint: disable=no-member
+    assert abs(approximated - exact) < local_epsilon
 
 
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
