@@ -110,11 +110,12 @@ class Test__check_parameters(unittest.TestCase):
         return _intersection_helpers._check_parameters(s, t)
 
     def test_at_endpoint(self):
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(0.0, 0.5)
+        # We really just want to make sure it doesn't raise.
+        self.assertIsNone(self._call_function_under_test(0.0, 0.5))
+        self.assertIsNone(self._call_function_under_test(0.5, 1.0))
 
     def test_near_endpoint(self):
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(ValueError):
             self._call_function_under_test(0.75, 1.0 + 2.0**(-20))
 
     def test_s_outside(self):

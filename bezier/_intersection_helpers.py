@@ -114,13 +114,7 @@ def _check_parameters(s, t):
 
     Raises:
         ValueError: If one of the values falls outside the unit interval.
-        NotImplementedError: If one of the values is equal to, or very
-            close to, one of the endpoints of the unit interval.
     """
-    if np.any(np.isclose([[s, t]], [[0.0], [1.0]])):
-        raise NotImplementedError(
-            'Intersection **at** endpoints not currently supported',
-            'One parameter is very near 0 or 1', s, t)
     if s < 0.0 or s > 1.0:
         raise ValueError('s outside of unit interval', s)
     if t < 0.0 or t > 1.0:

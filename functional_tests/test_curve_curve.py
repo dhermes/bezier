@@ -10,7 +10,6 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pytest
 import six
 
 import bezier
@@ -183,7 +182,7 @@ def test_curves1_and_5():
     # NOTE: This clearly indicates there is a problem with
     #       duplicates of intersections.
     s_vals = np.array([0.25, 0.25, 0.25, 0.25, 0.75, 0.75, 0.75, 0.75])
-    t_vals = np.array([0.25, 0.25, 0.25, 0.25, 0.75, 0.75, 0.75, 0.75])
+    t_vals = s_vals
     points = np.array([
         [0.25, 0.375],
         [0.25, 0.375],
@@ -202,7 +201,7 @@ def test_curves1_and_6():
     # NOTE: This clearly indicates there is a problem with
     #       duplicates of intersections.
     s_vals = np.array([0.5, 0.5, 0.5, 0.5])
-    t_vals = np.array([0.5, 0.5, 0.5, 0.5])
+    t_vals = s_vals
     points = np.array([
         [0.5, 0.5],
         [0.5, 0.5],
@@ -219,7 +218,7 @@ def test_curves1_and_7():
     s_val1 = 0.5 + delta
 
     s_vals = np.array([s_val0, s_val1])
-    t_vals = np.array([s_val0, s_val1])
+    t_vals = s_vals
     y_val = 17.0 / 66.0
     points = np.array([
         [s_val0, y_val],
@@ -230,25 +229,30 @@ def test_curves1_and_7():
 
 @Config.mark
 def test_curves1_and_8():
-    s_vals = np.array([0.25, 0.75])
-    t_vals = np.array([0.25, 0.75])
+    # NOTE: This clearly indicates there is a problem with
+    #       duplicates of intersections.
+    s_vals = np.array([0.25, 0.25, 0.75, 0.75])
+    t_vals = s_vals
     points = np.array([
         [0.25, 0.375],
+        [0.25, 0.375],
+        [0.75, 0.375],
         [0.75, 0.375],
     ])
-    with pytest.raises(NotImplementedError):
-        curve_curve_check(CURVE1, CURVE8, s_vals, t_vals, points)
+    curve_curve_check(CURVE1, CURVE8, s_vals, t_vals, points)
 
 
 @Config.mark
 def test_curves1_and_9():
-    s_vals = np.array([0.5])
-    t_vals = np.array([2.0 / 3.0])
+    # NOTE: This clearly indicates there is a problem with
+    #       duplicates of intersections.
+    s_vals = np.array([0.5, 0.5])
+    t_vals = np.array([2.0, 2.0]) / 3.0
     points = np.array([
         [0.5, 0.5],
+        [0.5, 0.5],
     ])
-    with pytest.raises(NotImplementedError):
-        curve_curve_check(CURVE1, CURVE9, s_vals, t_vals, points)
+    curve_curve_check(CURVE1, CURVE9, s_vals, t_vals, points)
 
 
 @Config.mark
