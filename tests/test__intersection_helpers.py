@@ -700,13 +700,17 @@ class Test__add_tangent_intersection(unittest.TestCase):
     def test_new(self):
         from bezier import _intersection_helpers
 
-        intersection = _intersection_helpers.Intersection(
-            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0,
-            at_tangent=True)
-        intersections = []
+        intersection1 = _intersection_helpers.Intersection(
+            mock.sentinel.left, 0.5, mock.sentinel.right, 0.5,
+            at_tangent=False)
+        intersection2 = _intersection_helpers.Intersection(
+            mock.sentinel.left, 0.75, mock.sentinel.right, 0.25,
+            at_tangent=False)
+        intersections = [intersection1]
         self.assertIsNone(
-            self._call_function_under_test(intersection, intersections))
-        self.assertEqual(intersections, [intersection])
+            self._call_function_under_test(intersection2, intersections))
+
+        self.assertEqual(intersections, [intersection1, intersection2])
 
     def test_existing(self):
         from bezier import _intersection_helpers
