@@ -102,9 +102,9 @@ class Config(object):  # pylint: disable=too-few-public-methods
 
 
 def assert_close(approximated, exact):
-    # Make sure the error is isolated to the last 3 bits.
     local_epsilon = np.spacing(exact)  # pylint: disable=no-member
-    assert abs(approximated - exact) < local_epsilon
+    # Make sure the error is isolated to the last 3 bits.
+    assert abs(approximated - exact) < 8.0 * local_epsilon
 
 
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
