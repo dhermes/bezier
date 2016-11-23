@@ -627,8 +627,10 @@ def _tangent_bbox_intersection(left, right, intersections):
     right_nodes = right._nodes
     # pylint: enable=protected-access
     if (left.degree < 2 or right.degree < 2 or
-            np.linalg.matrix_rank(left_nodes) < 2 or
-            np.linalg.matrix_rank(right_nodes) < 2):
+            np.linalg.matrix_rank(
+                left_nodes[1:, :] - left_nodes[:-1, :]) < 2 or
+            np.linalg.matrix_rank(
+                right_nodes[1:, :] - right_nodes[:-1, :]) < 2):
         raise NotImplementedError(
             'Tangent bounding boxes not implemented when one of '
             'the curves is linear')
