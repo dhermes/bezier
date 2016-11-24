@@ -169,6 +169,12 @@ CURVE23 = bezier.Curve(np.array([
     [3.0, 4.5],
     [8.0, 4.5],
 ]))
+# g24 = sympy.Matrix([[(4 * s + 1) / 4, (3 - 4 * s) * (4 * s + 1) / 8]])
+CURVE24 = bezier.Curve(np.array([
+    [0.25, 0.375],
+    [0.75, 0.875],
+    [1.25, -0.625],
+]))
 
 
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
@@ -447,6 +453,22 @@ def test_curves10_and_23():
         [4.5, 4.5],
     ])
     curve_curve_check(CURVE10, CURVE23, s_vals, t_vals, points)
+
+
+def test_curves1_and_24():
+    # NOTE: This is two coincident curves, i.e. CURVE1 on
+    #       [1/4, 1] is identical to CURVE24 on [0, 3/4].
+    left_vals = CURVE1.evaluate_multi(
+        np.linspace(0.25, 1.0, 2**8 + 1))
+    right_vals = CURVE24.evaluate_multi(
+        np.linspace(0.0, 0.75, 2**8 + 1))
+    assert np.all(left_vals == right_vals)
+
+    s_vals = np.empty((0,))
+    t_vals = np.empty((0,))
+    points = np.empty((0, 2))
+    with pytest.raises(NotImplementedError):
+        curve_curve_check(CURVE1, CURVE24, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':

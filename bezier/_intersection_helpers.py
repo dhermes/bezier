@@ -33,6 +33,9 @@ _FREXP = np.frexp  # pylint: disable=no-member
 _ERROR_EXPONENT = -26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _EPS = 2.0**(-40)
+_TOO_MANY_TEMPLATE = (
+    'The number of candidate intersections is too high.\n'
+    '{:d} accepted pairs gives {:d} candidate pairs.')
 
 
 def _in_interval(value, start, end):
@@ -843,6 +846,9 @@ def all_intersections(candidates):
     Raises:
         ValueError: If the subdivision iteration does not terminate
             before exhausting the maximum number of subdivisions.
+        NotImplementedError: If the subdivision process picks up too
+            many candidate pairs. This typically indicates tangent
+            curves or coincident curves.
     """
     # First make sure any curves that are linear / near-linear are
     # linearized (to avoid unnecessary checks, e.g. bbox intersect check).
@@ -854,6 +860,10 @@ def all_intersections(candidates):
     intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
         accepted = intersect_one_round(candidates, intersections)
+        if len(accepted) > 16:
+            msg = _TOO_MANY_TEMPLATE.format(
+                len(accepted), 4 * len(accepted))
+            raise NotImplementedError(msg)
 
         # If none of the pairs have been accepted, then there is
         # no intersection.

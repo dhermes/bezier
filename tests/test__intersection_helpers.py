@@ -950,6 +950,32 @@ class Test_all_intersections(unittest.TestCase):
         intersections = self._call_function_under_test([])
         self.assertEqual(intersections, [])
 
+    def test_tangent(self):
+        import itertools
+        import bezier
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        curve = bezier.Curve(nodes)
+
+        # Start with two pieces.
+        pieces = itertools.chain(*[curve.subdivide()])
+        # Double the number of pieces 3 times.
+        for unused_exponent in (2, 3, 4):
+            pieces = itertools.chain(*[
+                piece.subdivide() for piece in pieces])
+
+        # Match each piece with itself.
+        candidates = [(piece, piece) for piece in pieces]
+        # But we need **more** than 16.
+        candidates.append((curve, curve))
+
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(candidates)
+
     def test_success(self):
         import bezier
 
