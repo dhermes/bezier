@@ -164,6 +164,11 @@ CURVE22 = bezier.Curve(np.array([
     [-1.5625, 0.25],
     [1.5625, 0.5625],
 ]))
+# g23 = sympy.Matrix([[10 * s + 6, 9]]) / 2
+CURVE23 = bezier.Curve(np.array([
+    [3.0, 4.5],
+    [8.0, 4.5],
+]))
 
 
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
@@ -433,6 +438,15 @@ def test_curves21_and_22():
         [0.375 + 0.125 * sq5, 0.3125 + 0.0625 * sq5],
     ])
     curve_curve_check(CURVE21, CURVE22, s_vals, t_vals, points)
+
+
+def test_curves10_and_23():
+    s_vals = np.array([0.5])
+    t_vals = np.array([3.0 / 10.0])
+    points = np.array([
+        [4.5, 4.5],
+    ])
+    curve_curve_check(CURVE10, CURVE23, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
