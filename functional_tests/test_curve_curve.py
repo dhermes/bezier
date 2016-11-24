@@ -143,6 +143,27 @@ CURVE19 = bezier.Curve(np.array([
     [1.5, 1.0],
     [1.0, 0.0],
 ]))
+# g20 = sympy.Matrix([[(2 * s - 1)**2, s/2]])
+CURVE20 = bezier.Curve(np.array([
+    [1.0, 0.0],
+    [-1.0, 0.25],
+    [1.0, 0.5],
+]))
+# g21 = sympy.Matrix([[
+#     (10 * s - 1) / 8,
+#     (9 - 10 * s) * (10 * s - 1) / 32,
+# ]])
+CURVE21 = bezier.Curve(np.array([
+    [-0.125, -0.28125],
+    [0.5, 1.28125],
+    [1.125, -0.28125],
+]))
+# g22 = sympy.Matrix([[25 * (2 * s - 1)**2 / 16, (10 * s - 1)  / 16]])
+CURVE22 = bezier.Curve(np.array([
+    [1.5625, -0.0625],
+    [-1.5625, 0.25],
+    [1.5625, 0.5625],
+]))
 
 
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
@@ -373,6 +394,45 @@ def test_curves1_and_19():
         [1.0, 0.0],
     ])
     curve_curve_check(CURVE1, CURVE19, s_vals, t_vals, points)
+
+
+def test_curves1_and_20():
+    delta = np.sqrt(5.0) / 8.0
+    s_vals = np.array([0.25, 0.375 - delta, 1.0, 0.375 + delta])
+    t_vals = np.array([0.75, 0.625 - delta, 0.0, 0.625 + delta])
+    points = np.array([
+        [0.25, 0.375],
+        [0.375 - delta, 0.3125 - 0.5 * delta],
+        [1.0, 0.0],
+        [0.375 + delta, 0.3125 + 0.5 * delta],
+    ])
+    curve_curve_check(CURVE1, CURVE20, s_vals, t_vals, points)
+
+
+def test_curves20_and_21():
+    sq5 = np.sqrt(5.0)
+    s_vals = np.array([0.625 - 0.125 * sq5, 0.0, 0.75, 0.625 + 0.125 * sq5])
+    t_vals = np.array([4.0 - sq5, 9.0, 3.0, 4.0 + sq5]) / 10.0
+    points = np.array([
+        [0.375 - 0.125 * sq5, 0.3125 - 0.0625 * sq5],
+        [1.0, 0.0],
+        [0.25, 0.375],
+        [0.375 + 0.125 * sq5, 0.3125 + 0.0625 * sq5],
+    ])
+    curve_curve_check(CURVE20, CURVE21, s_vals, t_vals, points)
+
+
+def test_curves21_and_22():
+    sq5 = np.sqrt(5.0)
+    s_vals = np.array([4.0 - sq5, 3.0, 9.0, 4.0 + sq5]) / 10.0
+    t_vals = np.array([6.0 - sq5, 7.0, 1.0, 6.0 + sq5]) / 10.0
+    points = np.array([
+        [0.375 - 0.125 * sq5, 0.3125 - 0.0625 * sq5],
+        [0.25, 0.375],
+        [1.0, 0.0],
+        [0.375 + 0.125 * sq5, 0.3125 + 0.0625 * sq5],
+    ])
+    curve_curve_check(CURVE21, CURVE22, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':

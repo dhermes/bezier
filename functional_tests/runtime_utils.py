@@ -18,17 +18,28 @@ import numpy as np
 import six
 
 
+EPS = 2.0**(-50)
+
+
 def assert_close(approximated, exact):
     """Assert that two floating point values are close.
 
-    Makes sure the error is isolated to the last 3 bits.
+    Makes sure the error is isolated to (approximately) the last 3 bits.
+    The last 3 bits would amplify the "least significant digit" by 8, and
+    4 bits would amplify by 16.
+
+    In the case that ``exact`` is exactly 0, we set an "absolute"
+    tolerance for ``approximated`` rather than a relative tolerance.
 
     Args:
         approximated (float): The value that was computed.
         exact (float): The expected value.
     """
-    local_epsilon = np.spacing(exact)  # pylint: disable=no-member
-    assert abs(approximated - exact) < 8.0 * abs(local_epsilon)
+    if exact == 0.0:
+        assert abs(approximated) < EPS
+    else:
+        local_epsilon = np.spacing(exact)  # pylint: disable=no-member
+        assert abs(approximated - exact) < 12.0 * abs(local_epsilon)
 
 
 def _start_line(func):
