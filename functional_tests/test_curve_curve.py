@@ -131,6 +131,18 @@ CURVE17 = bezier.Curve(np.array([
     [7.0, 10.0],
     [3.0, 4.0],
 ]))
+# g18 = sympy.Matrix([[s + 1, -2 * s * (1 - s)]])
+CURVE18 = bezier.Curve(np.array([
+    [1.0, 0.0],
+    [1.5, -1.0],
+    [2.0, 0.0],
+]))
+# g19 = sympy.Matrix([[s + 1, 2 * s * (1 - s)]])
+CURVE19 = bezier.Curve(np.array([
+    [2.0, 0.0],
+    [1.5, 1.0],
+    [1.0, 0.0],
+]))
 
 
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
@@ -343,6 +355,24 @@ def test_curves10_and_17():
     ])
     with pytest.raises(AssertionError):
         curve_curve_check(CURVE10, CURVE17, s_vals, t_vals, points)
+
+
+def test_curves1_and_18():
+    s_vals = np.array([1.0])
+    t_vals = np.array([0.0])
+    points = np.array([
+        [1.0, 0.0],
+    ])
+    curve_curve_check(CURVE1, CURVE18, s_vals, t_vals, points)
+
+
+def test_curves1_and_19():
+    s_vals = np.array([1.0])
+    t_vals = np.array([1.0])
+    points = np.array([
+        [1.0, 0.0],
+    ])
+    curve_curve_check(CURVE1, CURVE19, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
