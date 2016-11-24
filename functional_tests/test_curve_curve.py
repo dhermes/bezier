@@ -31,6 +31,7 @@ CURVE2 = bezier.Curve(np.array([
     [0.625, -0.5],
     [0.125, 0.5],
 ]))
+# g3 = 3 * g1
 # g3 = sympy.Matrix([[3 * s, 6 * s * (1 - s)]])
 CURVE3 = bezier.Curve(np.array([
     [0.0, 0.0],
@@ -107,12 +108,6 @@ CURVE13 = bezier.Curve(np.array([
 ]))
 
 
-def assert_close(approximated, exact):
-    local_epsilon = np.spacing(exact)  # pylint: disable=no-member
-    # Make sure the error is isolated to the last 3 bits.
-    assert abs(approximated - exact) < 8.0 * abs(local_epsilon)
-
-
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
     assert len(s_vals) == len(t_vals)
     assert len(s_vals) == len(points)
@@ -126,19 +121,19 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
         assert intersection.left is curve1
         assert intersection.right is curve2
 
-        assert_close(intersection._s_val, s_val)
-        assert_close(intersection._t_val, t_val)
+        runtime_utils.assert_close(intersection._s_val, s_val)
+        runtime_utils.assert_close(intersection._t_val, t_val)
 
-        assert_close(intersection.point[0], point[0])
-        assert_close(intersection.point[1], point[1])
+        runtime_utils.assert_close(intersection.point[0], point[0])
+        runtime_utils.assert_close(intersection.point[1], point[1])
 
         point_on1 = curve1.evaluate(s_val)
-        assert_close(point_on1[0], point[0])
-        assert_close(point_on1[1], point[1])
+        runtime_utils.assert_close(point_on1[0], point[0])
+        runtime_utils.assert_close(point_on1[1], point[1])
 
         point_on2 = curve2.evaluate(t_val)
-        assert_close(point_on2[0], point[0])
-        assert_close(point_on2[1], point[1])
+        runtime_utils.assert_close(point_on2[0], point[0])
+        runtime_utils.assert_close(point_on2[1], point[1])
 
     if not CONFIG.running:
         return

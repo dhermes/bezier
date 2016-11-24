@@ -14,7 +14,21 @@
 import inspect
 import types
 
+import numpy as np
 import six
+
+
+def assert_close(approximated, exact):
+    """Assert that two floating point values are close.
+
+    Makes sure the error is isolated to the last 3 bits.
+
+    Args:
+        approximated (float): The value that was computed.
+        exact (float): The expected value.
+    """
+    local_epsilon = np.spacing(exact)  # pylint: disable=no-member
+    assert abs(approximated - exact) < 8.0 * abs(local_epsilon)
 
 
 def _start_line(func):
