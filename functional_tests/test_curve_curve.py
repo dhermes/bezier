@@ -125,6 +125,12 @@ CURVE16 = bezier.Curve(np.array([
     [0.625, 0.1875],
     [1.0, 0.9375],
 ]))
+# g17 = sympy.Matrix([[11 - 8 * s, -4 * (2 * s**2 - s - 2)]])
+CURVE17 = bezier.Curve(np.array([
+    [11.0, 8.0],
+    [7.0, 10.0],
+    [3.0, 4.0],
+]))
 
 
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
@@ -325,6 +331,18 @@ def test_curves14_and_16():
         [0.625, 0.46875],
     ])
     curve_curve_check(CURVE14, CURVE16, s_vals, t_vals, points)
+
+
+def test_curves10_and_17():
+    # NOTE: This fails because segment_intersection() produces a barely
+    #       invalid ``t`` value: 0x1.0000999d70bc7p+0
+    s_vals = np.array([1.0 / 3.0])
+    t_vals = np.array([1.0])
+    points = np.array([
+        [3.0, 4.0],
+    ])
+    with pytest.raises(AssertionError):
+        curve_curve_check(CURVE10, CURVE17, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
