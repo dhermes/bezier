@@ -378,15 +378,12 @@ def test_curves14_and_16():
 
 
 def test_curves10_and_17():
-    # NOTE: This fails because segment_intersection() produces a barely
-    #       invalid ``t`` value: 0x1.0000999d70bc7p+0
     s_vals = np.array([1.0 / 3.0])
     t_vals = np.array([1.0])
     points = np.array([
         [3.0, 4.0],
     ])
-    with pytest.raises(AssertionError):
-        curve_curve_check(CURVE10, CURVE17, s_vals, t_vals, points)
+    curve_curve_check(CURVE10, CURVE17, s_vals, t_vals, points)
 
 
 def test_curves1_and_18():

@@ -36,6 +36,12 @@ _EPS = 2.0**(-40)
 _TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
     '{:d} accepted pairs gives {:d} candidate pairs.')
+# Allow wiggle room for ``s`` and ``t`` computed during segment
+# intersection. Any over- or under-shooting will (hopefully) be
+# resolved in the Newton refinement step. If it isn't resolved, the
+# call to _check_parameters() will fail the intersection.
+_WIGGLE_START = -2.0**(-16)
+_WIGGLE_END = 1.0 - _WIGGLE_START
 
 
 def _in_interval(value, start, end):
@@ -129,33 +135,20 @@ def _check_close(s, curve1, t, curve2):
     return vec1
 
 
-def _check_parameters(s, t, fail=True):
+def _check_parameters(s, t):
     r"""Check if ``s``, ``t`` are in :math:`\left(0, 1\right)`.
 
     Args:
         s (float): Parameter on a curve.
         t (float): Parameter on a curve.
-        fail (bool): Flag indicating if an exception should be raised
-            when values fall outside the intervals.
-
-    Returns:
-        bool: Indicates if the parameters are in the unit interval.
 
     Raises:
         ValueError: If one of the values falls outside the unit interval.
     """
     if not _in_interval(s, 0.0, 1.0):
-        if fail:
-            raise ValueError('s outside of unit interval', s)
-        else:
-            return False
+        raise ValueError('s outside of unit interval', s)
     if not _in_interval(t, 0.0, 1.0):
-        if fail:
-            raise ValueError('t outside of unit interval', t)
-        else:
-            return False
-
-    return True
+        raise ValueError('t outside of unit interval', t)
 
 
 def bbox_intersect(nodes1, nodes2):
@@ -582,7 +575,9 @@ def from_linearized(left, right, intersections):
     s, t = segment_intersection(
         left.start_node, left.end_node,
         right.start_node, right.end_node)
-    if not _check_parameters(s, t, fail=False):
+    if not _in_interval(s, _WIGGLE_START, _WIGGLE_END):
+        return
+    if not _in_interval(t, _WIGGLE_START, _WIGGLE_END):
         return
 
     # Now, promote `s` and `t` onto the original curves.

@@ -138,14 +138,15 @@ class Test__check_close(unittest.TestCase):
 class Test__check_parameters(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(s, t, **kwargs):
+    def _call_function_under_test(s, t):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._check_parameters(s, t, **kwargs)
+        return _intersection_helpers._check_parameters(s, t)
 
     def test_at_endpoint(self):
-        self.assertTrue(self._call_function_under_test(0.0, 0.5))
-        self.assertTrue(self._call_function_under_test(0.5, 1.0))
+        # Really just making sure the function doesn't raise.
+        self.assertIsNone(self._call_function_under_test(0.0, 0.5))
+        self.assertIsNone(self._call_function_under_test(0.5, 1.0))
 
     def test_near_endpoint(self):
         with self.assertRaises(ValueError):
@@ -155,20 +156,13 @@ class Test__check_parameters(unittest.TestCase):
         with self.assertRaises(ValueError):
             self._call_function_under_test(-0.25, 0.5)
 
-    def test_s_outside_no_exc(self):
-        self.assertFalse(
-            self._call_function_under_test(-0.25, 0.5, fail=False))
-
     def test_t_outside(self):
         with self.assertRaises(ValueError):
             self._call_function_under_test(0.25, 1.5)
 
-    def test_t_outside_no_exc(self):
-        self.assertFalse(
-            self._call_function_under_test(0.25, 1.5, fail=False))
-
     def test_valid(self):
-        self.assertTrue(self._call_function_under_test(0.25, 0.5))
+        # Really just making sure the function doesn't raise.
+        self.assertIsNone(self._call_function_under_test(0.25, 0.5))
 
 
 class Test_bbox_intersect(unittest.TestCase):
