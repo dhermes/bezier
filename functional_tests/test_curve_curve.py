@@ -10,6 +10,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 import six
 
 import bezier
@@ -105,6 +106,24 @@ CURVE13 = bezier.Curve(np.array([
     [0.5, -2.0],
     [0.75, 2.0],
     [1.0, 0.0],
+]))
+# g14 = sympy.Matrix([[3 * s / 4, 3 * s * (4 - 3 * s) / 8]])
+CURVE14 = bezier.Curve(np.array([
+    [0.0, 0.0],
+    [0.375, 0.75],
+    [0.75, 0.375],
+]))
+# g15 = sympy.Matrix([[(3 * s + 1) / 4, (9 * s**2 - 6 * s + 5) / 8]])
+CURVE15 = bezier.Curve(np.array([
+    [0.25, 0.625],
+    [0.625, 0.25],
+    [1.0, 1.0],
+]))
+# g16 = sympy.Matrix([[(3 * s + 1) / 4, 3 * (6 * s**2 - 4 * s + 3) / 16]])
+CURVE16 = bezier.Curve(np.array([
+    [0.25, 0.5625],
+    [0.625, 0.1875],
+    [1.0, 0.9375],
 ]))
 
 
@@ -215,7 +234,7 @@ def test_curves1_and_8():
 
 def test_curves1_and_9():
     s_vals = np.array([0.5])
-    t_vals = np.array([2.0]) / 3.0
+    t_vals = np.array([2.0 / 3.0])
     points = np.array([
         [0.5, 0.5],
     ])
@@ -286,6 +305,26 @@ def test_curves1_and_13():
         [1.0, 0.0],
     ])
     curve_curve_check(CURVE1, CURVE13, s_vals, t_vals, points)
+
+
+def test_curves14_and_15():
+    s_vals = np.array([2.0 / 3.0])
+    t_vals = np.array([1.0 / 3.0])
+    points = np.array([
+        [0.5, 0.5],
+    ])
+    with pytest.raises(NotImplementedError):
+        curve_curve_check(CURVE14, CURVE15, s_vals, t_vals, points)
+
+
+def test_curves14_and_16():
+    s_vals = np.array([3.0, 5.0]) / 6.0
+    t_vals = np.array([1.0, 3.0]) / 6.0
+    points = np.array([
+        [0.375, 0.46875],
+        [0.625, 0.46875],
+    ])
+    curve_curve_check(CURVE14, CURVE16, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
