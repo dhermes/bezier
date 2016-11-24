@@ -263,5 +263,14 @@ def test_curve12_self_crossing():
                       expected)
 
 
+def test_curves8_and_9():
+    s_vals = np.array([0.5])
+    t_vals = np.array([0.5])
+    points = np.array([
+        [0.5, 0.375],
+    ])
+    curve_curve_check(CURVE8, CURVE9, s_vals, t_vals, points)
+
+
 if __name__ == '__main__':
     CONFIG.run(globals())

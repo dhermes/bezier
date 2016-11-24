@@ -774,43 +774,7 @@ class Test__tangent_bbox_intersection(unittest.TestCase):
         return _intersection_helpers._tangent_bbox_intersection(
             left, right, intersections)
 
-    def test_linearization(self):
-        import bezier
-        from bezier import _intersection_helpers
-
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
-        curve = bezier.Curve(nodes)
-        lin = _intersection_helpers.Linearization(curve)
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(lin, lin, [])
-
-    def test_linear(self):
-        import bezier
-
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
-        curve = bezier.Curve(nodes)
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(curve, curve, [])
-
-    def test_elevated_linear(self):
-        import bezier
-
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 2.0],
-        ])
-        curve = bezier.Curve(nodes)
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(curve, curve, [])
-
-    def test_not_linear(self):
+    def test_it(self):
         import bezier
 
         nodes1 = np.array([
@@ -955,8 +919,15 @@ class Test_intersect_one_round(unittest.TestCase):
         curve2 = bezier.Curve(self.LINE2)
         lin2 = _intersection_helpers.Linearization(curve2)
 
-        with self.assertRaises(ValueError):
-            self._call_function_under_test([(lin1, lin2)], [])
+        intersections = []
+        accepted = self._call_function_under_test(
+            [(lin1, lin2)], intersections)
+        self.assertEqual(accepted, [])
+        self.assertEqual(len(intersections), 1)
+        intersection = intersections[0]
+        expected = np.array([0.5, 0.5])
+        check_intersection(self, intersection, expected,
+                           curve1, curve2, 0.5, 0.5)
 
 
 class Test_all_intersections(unittest.TestCase):

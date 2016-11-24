@@ -400,12 +400,17 @@ class TestCurve(unittest.TestCase):
         self._subdivide_points_check(curve)
 
     def test_intersect_empty(self):
-        nodes = np.array([
+        nodes1 = np.array([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve1 = self._make_one(nodes)
-        curve2 = self._make_one(nodes + np.array([[2.0, 0.0]]))
+        curve1 = self._make_one(nodes1)
+
+        nodes2 = np.array([
+            [3.0, 0.0],
+            [2.0, 1.0],
+        ])
+        curve2 = self._make_one(nodes2)
 
         result = curve1.intersect(curve2)
         self.assertEqual(result.shape, (0, 2))

@@ -648,35 +648,24 @@ def _tangent_bbox_intersection(left, right, intersections):
     :math:`x = M`. (A similar argument holds for the other three
     component-extrema types.)
 
+    .. note::
+
+       This method assumes callers will not pass curves that can be
+       linearized / are linear. In :func:`all_intersections`, curves
+       are pre-processed to do any linearization before the
+       subdivision / intersection process begins.
+
     Args:
         left (.Curve): First curve being intersected.
         right (.Curve): Second curve being intersected.
         intersections (list): A list of already encountered
             intersections. If these curves intersect at their tangeny,
             then those intersections will be added to this list.
-
-    Raises:
-        NotImplementedError: If either ``left`` or ``right`` is a
-            :class:`Linearization` rather than a curve.
-        NotImplementedError: If either ``left`` or ``right`` is linear.
     """
-    if isinstance(left, Linearization) or isinstance(right, Linearization):
-        raise NotImplementedError(
-            'Linearizations not yet supported with tangent bounding boxes')
-
     # pylint: disable=protected-access
     left_nodes = left._nodes
     right_nodes = right._nodes
     # pylint: enable=protected-access
-    if (left.degree < 2 or right.degree < 2 or
-            np.linalg.matrix_rank(
-                left_nodes[1:, :] - left_nodes[:-1, :]) < 2 or
-            np.linalg.matrix_rank(
-                right_nodes[1:, :] - right_nodes[:-1, :]) < 2):
-        raise NotImplementedError(
-            'Tangent bounding boxes not implemented when one of '
-            'the curves is linear')
-
     for i, s in ((0, 0.0), (-1, 1.0)):
         node_left = left_nodes[i, :]
         for j, t in ((0, 0.0), (-1, 1.0)):
@@ -783,25 +772,18 @@ def intersect_one_round(candidates, intersections):
 
     Returns:
         list: Returns a list of ``accepted`` pairs (among ``candidates``).
-
-    Raises:
-        ValueError: If both the left and right candidates in a pair or
-            :class:`Linearization` instances. This should never occur
-            because two linearizations can be immediately intersected.
     """
     accepted = []
 
     for left, right in candidates:
         if isinstance(left, Linearization):
             if isinstance(right, Linearization):
-                raise ValueError(
-                    'Two linearizations should never be candidates',
-                    left, right)
-            # pylint: disable=protected-access
-            right_nodes = right._nodes
-            # pylint: enable=protected-access
-            bbox_int = bbox_line_intersect(
-                right_nodes, left.start_node, left.end_node)
+                # Just jump right to line-line intersection.
+                bbox_int = None
+            else:
+                right_nodes = right._nodes  # pylint: disable=protected-access
+                bbox_int = bbox_line_intersect(
+                    right_nodes, left.start_node, left.end_node)
         elif isinstance(right, Linearization):
             # pylint: disable=protected-access
             left_nodes = left._nodes
@@ -862,6 +844,13 @@ def all_intersections(candidates):
         ValueError: If the subdivision iteration does not terminate
             before exhausting the maximum number of subdivisions.
     """
+    # First make sure any curves that are linear / near-linear are
+    # linearized (to avoid unnecessary checks, e.g. bbox intersect check).
+    candidates = [
+        (Linearization.from_shape(left), Linearization.from_shape(right))
+        for left, right in candidates
+    ]
+
     intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
         accepted = intersect_one_round(candidates, intersections)
