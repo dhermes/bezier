@@ -83,6 +83,17 @@ CURVE11 = bezier.Curve(np.array([
     [0.0, 8.0],
     [6.0, 0.0],
 ]))
+# NOTE: This curve has a self-crossing.
+# g12 = sympy.Matrix([[
+#     -3 * s * (3 * s - 2)**2 / 4,
+#     -(27 * s**3 - 72 * s**2 + 48 * s - 16) / 8,
+# ]])
+CURVE12 = bezier.Curve(np.array([
+    [0.0, 2.0],
+    [-1.0, 0.0],
+    [1.0, 1.0],
+    [-0.75, 1.625],
+]))
 
 
 class Config(object):  # pylint: disable=too-few-public-methods
@@ -103,7 +114,7 @@ class Config(object):  # pylint: disable=too-few-public-methods
 def assert_close(approximated, exact):
     local_epsilon = np.spacing(exact)  # pylint: disable=no-member
     # Make sure the error is isolated to the last 3 bits.
-    assert abs(approximated - exact) < 8.0 * local_epsilon
+    assert abs(approximated - exact) < 8.0 * abs(local_epsilon)
 
 
 def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
@@ -235,6 +246,42 @@ def test_curves10_and_11():
         [3.0, 4.0],
     ])
     curve_curve_check(CURVE10, CURVE11, s_vals, t_vals, points)
+
+
+@Config.mark
+def test_curve12_self_crossing():
+    left, right = CURVE12.subdivide()
+    # Re-create left and right so they aren't sub-curves.
+    left = bezier.Curve(left.nodes)
+    right = bezier.Curve(right.nodes)
+
+    delta = np.sqrt(5.0) / 3.0
+    s_vals = np.array([1.0, 1.0 - delta])
+    t_vals = np.array([0.0, delta])
+    points = np.array([
+        [-0.09375, 0.828125],
+        [-0.25, 1.375],
+    ])
+
+    curve_curve_check(left, right, s_vals, t_vals, points)
+
+    # Make sure the left curve doesn't cross itself.
+    left1, right1 = left.subdivide()
+    expected = right1.evaluate_multi(np.array([0.0]))
+    curve_curve_check(bezier.Curve(left1.nodes),
+                      bezier.Curve(right1.nodes),
+                      np.array([1.0]),
+                      np.array([0.0]),
+                      expected)
+
+    # Make sure the right curve doesn't cross itself.
+    left2, right2 = right.subdivide()
+    expected = right2.evaluate_multi(np.array([0.0]))
+    curve_curve_check(bezier.Curve(left2.nodes),
+                      bezier.Curve(right2.nodes),
+                      np.array([1.0]),
+                      np.array([0.0]),
+                      expected)
 
 
 def main():

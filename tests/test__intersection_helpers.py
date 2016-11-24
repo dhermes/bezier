@@ -138,15 +138,14 @@ class Test__check_close(unittest.TestCase):
 class Test__check_parameters(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(s, t):
+    def _call_function_under_test(s, t, **kwargs):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._check_parameters(s, t)
+        return _intersection_helpers._check_parameters(s, t, **kwargs)
 
     def test_at_endpoint(self):
-        # We really just want to make sure it doesn't raise.
-        self.assertIsNone(self._call_function_under_test(0.0, 0.5))
-        self.assertIsNone(self._call_function_under_test(0.5, 1.0))
+        self.assertTrue(self._call_function_under_test(0.0, 0.5))
+        self.assertTrue(self._call_function_under_test(0.5, 1.0))
 
     def test_near_endpoint(self):
         with self.assertRaises(ValueError):
@@ -156,13 +155,20 @@ class Test__check_parameters(unittest.TestCase):
         with self.assertRaises(ValueError):
             self._call_function_under_test(-0.25, 0.5)
 
+    def test_s_outside_no_exc(self):
+        self.assertFalse(
+            self._call_function_under_test(-0.25, 0.5, fail=False))
+
     def test_t_outside(self):
         with self.assertRaises(ValueError):
             self._call_function_under_test(0.25, 1.5)
 
+    def test_t_outside_no_exc(self):
+        self.assertFalse(
+            self._call_function_under_test(0.25, 1.5, fail=False))
+
     def test_valid(self):
-        # We really just want to make sure it doesn't raise.
-        self.assertIsNone(self._call_function_under_test(0.25, 0.5))
+        self.assertTrue(self._call_function_under_test(0.25, 0.5))
 
 
 class Test_bbox_intersect(unittest.TestCase):
@@ -655,10 +661,11 @@ class Test_segment_intersection(unittest.TestCase):
 class Test_from_linearized(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(left, right):
+    def _call_function_under_test(left, right, intersections):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers.from_linearized(left, right)
+        return _intersection_helpers.from_linearized(
+            left, right, intersections)
 
     def test_it(self):
         import bezier
@@ -682,10 +689,38 @@ class Test_from_linearized(unittest.TestCase):
         # NOTE: This curve isn't close to linear, but that's OK.
         lin2 = _intersection_helpers.Linearization(curve2)
 
-        intersection = self._call_function_under_test(lin1, lin2)
+        intersections = []
+        self.assertIsNone(
+            self._call_function_under_test(lin1, lin2, intersections))
+        self.assertEqual(len(intersections), 1)
+        intersection = intersections[0]
         expected = curve1.evaluate(0.5)
         check_intersection(self, intersection, expected,
                            curve1, curve2, 0.5, 0.5)
+
+    def test_no_intersection(self):
+        import bezier
+        from bezier import _intersection_helpers
+        # The bounding boxes intersect but the lines do not.
+
+        nodes1 = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1)
+        lin1 = _intersection_helpers.Linearization(curve1)
+
+        nodes2 = np.array([
+            [1.75, -0.75],
+            [0.75, 0.25],
+        ])
+        curve2 = bezier.Curve(nodes2)
+        lin2 = _intersection_helpers.Linearization(curve2)
+
+        intersections = []
+        self.assertIsNone(
+            self._call_function_under_test(lin1, lin2, intersections))
+        self.assertEqual(intersections, [])
 
 
 class Test__add_intersection(unittest.TestCase):

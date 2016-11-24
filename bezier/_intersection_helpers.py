@@ -126,20 +126,33 @@ def _check_close(s, curve1, t, curve2):
     return vec1
 
 
-def _check_parameters(s, t):
+def _check_parameters(s, t, fail=True):
     r"""Check if ``s``, ``t`` are in :math:`\left(0, 1\right)`.
 
     Args:
         s (float): Parameter on a curve.
         t (float): Parameter on a curve.
+        fail (bool): Flag indicating if an exception should be raised
+            when values fall outside the intervals.
+
+    Returns:
+        bool: Indicates if the parameters are in the unit interval.
 
     Raises:
         ValueError: If one of the values falls outside the unit interval.
     """
     if not _in_interval(s, 0.0, 1.0):
-        raise ValueError('s outside of unit interval', s)
+        if fail:
+            raise ValueError('s outside of unit interval', s)
+        else:
+            return False
     if not _in_interval(t, 0.0, 1.0):
-        raise ValueError('t outside of unit interval', t)
+        if fail:
+            raise ValueError('t outside of unit interval', t)
+        else:
+            return False
+
+    return True
 
 
 def bbox_intersect(nodes1, nodes2):
@@ -552,20 +565,23 @@ def segment_intersection(start0, end0, start1, end1, _fail=True):
         return s, t
 
 
-def from_linearized(left, right):
+def from_linearized(left, right, intersections):
     """Determine curve-curve intersection from pair of linearizations.
+
+    If there is an intersection along the segments, adds that intersection
+    to ``intersections``. Otherwise, returns without doing anything.
 
     Args:
         left (Linearization): First curve being intersected.
         right (Linearization): Second curve being intersected.
-
-    Returns:
-        Intersection: The intersection between ``left`` and ``right``.
+        intersections (list): A list of existing intersections.
     """
     s, t = segment_intersection(
         left.start_node, left.end_node,
         right.start_node, right.end_node)
-    _check_parameters(s, t)
+    if not _check_parameters(s, t, fail=False):
+        return
+
     # Now, promote `s` and `t` onto the original curves.
     orig_s = (1 - s) * left.curve.start + s * left.curve.end
     orig_left = left.curve.root
@@ -575,12 +591,13 @@ def from_linearized(left, right):
     # values of s and t.
     refined_s, refined_t = newton_refine(
         orig_s, orig_left, orig_t, orig_right)
+    _check_parameters(refined_s, refined_t)
     at_endpoint = (refined_s in (left.curve.start, left.curve.end) or
                    refined_t in (right.curve.start, right.curve.end))
     intersection = Intersection(
         orig_left, refined_s, orig_right, refined_t,
         at_endpoint=at_endpoint)
-    return intersection
+    _add_intersection(intersection, intersections)
 
 
 def _add_intersection(intersection, intersections):
@@ -816,8 +833,7 @@ def intersect_one_round(candidates, intersections):
         # intersect them immediately.
         if (isinstance(left, Linearization) and
                 isinstance(right, Linearization)):
-            intersection = from_linearized(left, right)
-            _add_intersection(intersection, intersections)
+            from_linearized(left, right, intersections)
         else:
             # Add the accepted pair.
             accepted.append((left, right))
