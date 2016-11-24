@@ -97,6 +97,14 @@ CURVE12 = bezier.Curve(np.array([
     [1.0, 1.0],
     [-0.75, 1.625],
 ]))
+# g13 = sympy.Matrix([[s, 4 * s * (1 - s) * (7 * s**2 - 7 * s + 2)]])
+CURVE13 = bezier.Curve(np.array([
+    [0.0, 0.0],
+    [0.25, 2.0],
+    [0.5, -2.0],
+    [0.75, 2.0],
+    [1.0, 0.0],
+]))
 
 
 def assert_close(approximated, exact):
@@ -135,8 +143,8 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
     if not CONFIG.running:
         return
 
-    ax = curve1.plot(32)
-    curve2.plot(32, ax=ax)
+    ax = curve1.plot(64)
+    curve2.plot(64, ax=ax)
     ax.scatter(points[:, 0], points[:, 1], color='black')
     ax.axis('scaled')
     plt.show()
@@ -270,6 +278,19 @@ def test_curves8_and_9():
         [0.5, 0.375],
     ])
     curve_curve_check(CURVE8, CURVE9, s_vals, t_vals, points)
+
+
+def test_curves1_and_13():
+    delta = 0.5 / np.sqrt(7.0)
+    s_vals = np.array([0.5 - delta, 0.5 + delta, 0.0, 1.0])
+    t_vals = s_vals
+    points = np.array([
+        [0.5 - delta, 3.0 / 7.0],
+        [0.5 + delta, 3.0 / 7.0],
+        [0.0, 0.0],
+        [1.0, 0.0],
+    ])
+    curve_curve_check(CURVE1, CURVE13, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
