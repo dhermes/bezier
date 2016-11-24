@@ -15,7 +15,10 @@ import six
 import bezier
 from bezier import _intersection_helpers
 
+import runtime_utils
 
+
+CONFIG = runtime_utils.Config()
 # g1 = sympy.Matrix([[s, 2 * s * (1 - s)]])
 CURVE1 = bezier.Curve(np.array([
     [0.0, 0.0],
@@ -96,21 +99,6 @@ CURVE12 = bezier.Curve(np.array([
 ]))
 
 
-class Config(object):  # pylint: disable=too-few-public-methods
-    """Run-time configuration.
-
-    This is a mutable stand-in to allow test set-up to modify
-    global state.
-    """
-    AS_SCRIPT = False
-    MARKED = []
-
-    @classmethod
-    def mark(cls, func):
-        cls.MARKED.append(func)
-        return func
-
-
 def assert_close(approximated, exact):
     local_epsilon = np.spacing(exact)  # pylint: disable=no-member
     # Make sure the error is isolated to the last 3 bits.
@@ -144,7 +132,7 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
         assert_close(point_on2[0], point[0])
         assert_close(point_on2[1], point[1])
 
-    if not Config.AS_SCRIPT:
+    if not CONFIG.running:
         return
 
     ax = curve1.plot(32)
@@ -154,7 +142,6 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
     plt.show()
 
 
-@Config.mark
 def test_curves1_and_2():
     sq31 = np.sqrt(31.0)
     s_val0 = 0.0625 * (9.0 - sq31)
@@ -169,7 +156,6 @@ def test_curves1_and_2():
     curve_curve_check(CURVE1, CURVE2, s_vals, t_vals, points)
 
 
-@Config.mark
 def test_curves3_and_4():
     s_vals = np.array([0.25, 0.875])
     t_vals = np.array([0.75, 0.25])
@@ -180,7 +166,6 @@ def test_curves3_and_4():
     curve_curve_check(CURVE3, CURVE4, s_vals, t_vals, points)
 
 
-@Config.mark
 def test_curves1_and_5():
     s_vals = np.array([0.25, 0.75])
     t_vals = s_vals
@@ -191,7 +176,6 @@ def test_curves1_and_5():
     curve_curve_check(CURVE1, CURVE5, s_vals, t_vals, points)
 
 
-@Config.mark
 def test_curves1_and_6():
     s_vals = np.array([0.5])
     t_vals = s_vals
@@ -201,7 +185,6 @@ def test_curves1_and_6():
     curve_curve_check(CURVE1, CURVE6, s_vals, t_vals, points)
 
 
-@Config.mark
 def test_curves1_and_7():
     delta = 2.0 / np.sqrt(33.0)
     s_val0 = 0.5 - delta
@@ -217,7 +200,6 @@ def test_curves1_and_7():
     curve_curve_check(CURVE1, CURVE7, s_vals, t_vals, points)
 
 
-@Config.mark
 def test_curves1_and_8():
     s_vals = np.array([0.25, 0.75])
     t_vals = s_vals
@@ -228,7 +210,6 @@ def test_curves1_and_8():
     curve_curve_check(CURVE1, CURVE8, s_vals, t_vals, points)
 
 
-@Config.mark
 def test_curves1_and_9():
     s_vals = np.array([0.5])
     t_vals = np.array([2.0]) / 3.0
@@ -238,7 +219,6 @@ def test_curves1_and_9():
     curve_curve_check(CURVE1, CURVE9, s_vals, t_vals, points)
 
 
-@Config.mark
 def test_curves10_and_11():
     s_vals = np.array([1.0 / 3.0])
     t_vals = np.array([0.5])
@@ -248,7 +228,6 @@ def test_curves10_and_11():
     curve_curve_check(CURVE10, CURVE11, s_vals, t_vals, points)
 
 
-@Config.mark
 def test_curve12_self_crossing():
     left, right = CURVE12.subdivide()
     # Re-create left and right so they aren't sub-curves.
@@ -284,11 +263,5 @@ def test_curve12_self_crossing():
                       expected)
 
 
-def main():
-    Config.AS_SCRIPT = True
-    for func in Config.MARKED:
-        func()
-
-
 if __name__ == '__main__':
-    main()
+    CONFIG.run(globals())

@@ -13,27 +13,15 @@ import numpy as np
 
 from bezier import _intersection_helpers
 
+import runtime_utils
 
+
+CONFIG = runtime_utils.Config()
 # Always gives us the unit square.
 UNIT_SQUARE = np.array([
     [0.0, 0.0],
     [1.0, 1.0],
 ])
-
-
-class Config(object):  # pylint: disable=too-few-public-methods
-    """Run-time configuration.
-
-    This is a mutable stand-in to allow test set-up to modify
-    global state.
-    """
-    AS_SCRIPT = False
-    MARKED = []
-
-    @classmethod
-    def mark(cls, func):
-        cls.MARKED.append(func)
-        return func
 
 
 def run_it(segment, expected=None):
@@ -44,7 +32,7 @@ def run_it(segment, expected=None):
         UNIT_SQUARE, segment[[0], :], segment[[1], :])
     assert result is expected
 
-    if not Config.AS_SCRIPT:
+    if not CONFIG.running:
         return
 
     line, = plt.plot([0, 1], [0, 1], alpha=0.0)
@@ -63,7 +51,6 @@ def run_it(segment, expected=None):
     plt.show()
 
 
-@Config.mark
 def test_outside():
     segment_bottom_left = np.array([
         [0.25, -0.75],
@@ -93,7 +80,6 @@ def test_outside():
         run_it(segment, expected)
 
 
-@Config.mark
 def test_start_in_box():
     segments = (
         np.array([
@@ -146,7 +132,6 @@ def test_start_in_box():
         run_it(segment)
 
 
-@Config.mark
 def test_end_in_box():
     segments = (
         np.array([
@@ -195,7 +180,6 @@ def test_end_in_box():
         run_it(segment)
 
 
-@Config.mark
 def test_goes_through_box():
     segments = (
         np.array([
@@ -240,12 +224,5 @@ def test_goes_through_box():
         run_it(segment)
 
 
-def main():
-    Config.AS_SCRIPT = True
-    for func in Config.MARKED:
-        print(func.__name__)
-        func()
-
-
 if __name__ == '__main__':
-    main()
+    CONFIG.run(globals())
