@@ -776,8 +776,10 @@ def intersect_one_round(candidates, intersections):
     for left, right in candidates:
         if isinstance(left, Linearization):
             if isinstance(right, Linearization):
-                # Just jump right to line-line intersection.
-                bbox_int = None
+                # If both ``left`` and ``right`` are linearizations, then
+                # we can intersect them immediately.
+                from_linearized(left, right, intersections)
+                continue
             else:
                 right_nodes = right._nodes  # pylint: disable=protected-access
                 bbox_int = bbox_line_intersect(
@@ -799,26 +801,35 @@ def intersect_one_round(candidates, intersections):
             _tangent_bbox_intersection(left, right, intersections)
             continue
 
-        # Attempt to replace the curves with linearizations
-        # if they are close enough to lines.
-        # NOTE: This may be a wasted computation, e.g. if ``left``
-        #       occurs in multiple accepted pairs. However, in practice
-        #       the number of such pairs will be small so this cost
-        #       will be low.
-        left = Linearization.from_shape(left)
-        # Now do the same for the right.
-        right = Linearization.from_shape(right)
-
-        # If both ``left`` and ``right`` are linearizations, then we can
-        # intersect them immediately.
-        if (isinstance(left, Linearization) and
-                isinstance(right, Linearization)):
-            from_linearized(left, right, intersections)
-        else:
-            # Add the accepted pair.
-            accepted.append((left, right))
+        # If we haven't ``continue``-d, add the accepted pair.
+        accepted.append((left, right))
 
     return accepted
+
+
+def _next_candidates(left, right):
+    """Take a pair of "accepted" curves and subdivide them.
+
+    Attempts to replace the subdivided curves with linearizations
+    if they are close enough to lines.
+
+    Args:
+        left (Union[.Curve, Linearization]): First curve in pair.
+        right (Union[.Curve, Linearization]): Second curve in pair.
+
+    Yields:
+        tuple: Pairs of left and right curves after subdivision, some of
+        which may be linearized.
+    """
+    # NOTE: This may be a wasted computation, e.g. if ``left``
+    #       occurs in multiple accepted pairs. However, in practice
+    #       the number of such pairs will be small so this cost
+    #       will be low.
+    for new_left in left.subdivide():
+        new_left = Linearization.from_shape(new_left)
+        for new_right in right.subdivide():
+            new_right = Linearization.from_shape(new_right)
+            yield new_left, new_right
 
 
 def all_intersections(candidates):
@@ -868,7 +879,7 @@ def all_intersections(candidates):
         # If we **do** require more subdivisions, we need to update
         # the list of candidates.
         candidates = itertools.chain(*[
-            itertools.product(left.subdivide(), right.subdivide())
+            _next_candidates(left, right)
             for left, right in accepted])
 
     raise ValueError(
