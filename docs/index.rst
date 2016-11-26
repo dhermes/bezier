@@ -6,6 +6,7 @@
    :maxdepth: 4
 
    Bezier Package <reference/bezier>
+   curve-curve-intersection
 
 ``bezier`` is a Python helper for B |eacute| zier Curves, Triangles, and
 Higher Order Objects.

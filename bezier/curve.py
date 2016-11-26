@@ -15,6 +15,9 @@
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
+See :doc:`../curve-curve-intersection` for examples using the
+:class:`Curve` class to find intersections.
+
 .. testsetup:: *
 
    import numpy as np

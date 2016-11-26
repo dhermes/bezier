@@ -11,6 +11,7 @@
 """Utilities for running functional tests as scripts."""
 
 
+import argparse
 import inspect
 import types
 
@@ -55,24 +56,17 @@ def _start_line(func):
     return line
 
 
-def _run(mod_globals):
-    """Run all tests, in source order.
+def get_parser():
+    """Create a command line argument parser.
 
-    Args:
-        mod_globals (dict): The globals from a module.
+    Returns:
+        argparse.ArgumentParser: An argument parser for functional tests.
     """
-    found = []
-    for key, value in six.iteritems(mod_globals):
-        if not key.lower().startswith('test'):
-            continue
-        if not isinstance(value, types.FunctionType):
-            continue
-        found.append(value)
-
-    found.sort(key=_start_line)
-
-    for func in found:
-        func()
+    parser = argparse.ArgumentParser(
+        description='Run functional tests.')
+    parser.add_argument('--save-plot', dest='save_plot',
+                        action='store_true')
+    return parser
 
 
 class Config(object):  # pylint: disable=too-few-public-methods
@@ -84,6 +78,29 @@ class Config(object):  # pylint: disable=too-few-public-methods
 
     def __init__(self):
         self.running = False
+        self.save_plot = False
+        self.current_test = None
+        self.parser = get_parser()
+
+    def _run(self, mod_globals):
+        """Run all tests, in source order.
+
+        Args:
+            mod_globals (dict): The globals from a module.
+        """
+        found = []
+        for key, value in six.iteritems(mod_globals):
+            if not key.lower().startswith('test'):
+                continue
+            if not isinstance(value, types.FunctionType):
+                continue
+            found.append(value)
+
+        found.sort(key=_start_line)
+
+        for func in found:
+            self.current_test = func.__name__
+            func()
 
     def run(self, mod_globals):
         """Run all tests, in source order.
@@ -92,8 +109,13 @@ class Config(object):  # pylint: disable=too-few-public-methods
             mod_globals (dict): The globals from a module.
         """
         running = self.running
+        save_plot = self.save_plot
         try:
             self.running = True
-            _run(mod_globals)
+            args = self.parser.parse_args()
+            self.save_plot = args.save_plot
+            self._run(mod_globals)
         finally:
             self.running = running
+            self.save_plot = save_plot
+            self.current_test = None

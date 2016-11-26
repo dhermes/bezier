@@ -8,9 +8,14 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
+try:
+    import seaborn
+except ImportError:
+    pass
 import six
 
 import bezier
@@ -18,6 +23,11 @@ from bezier import _intersection_helpers
 
 import runtime_utils
 
+
+_FNL_TESTS_DIR = os.path.dirname(__file__)
+_DOCS_DIR = os.path.abspath(
+    os.path.join(_FNL_TESTS_DIR, '..', 'docs'))
+IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
 
 CONFIG = runtime_utils.Config()
 # g1 = sympy.Matrix([[s, 2 * s * (1 - s)]])
@@ -177,7 +187,28 @@ CURVE24 = bezier.Curve(np.array([
 ]))
 
 
-def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
+def make_plots(curve1, curve2, points, ignore_save=False):
+    if not CONFIG.running:
+        return
+
+    ax = curve1.plot(64)
+    curve2.plot(64, ax=ax)
+    ax.scatter(points[:, 0], points[:, 1], color='black')
+    ax.axis('scaled')
+    if CONFIG.save_plot:
+        if not ignore_save:
+            filename = '{}.png'.format(CONFIG.current_test)
+            path = os.path.join(IMAGES_DIR, filename)
+            plt.savefig(path, bbox_inches='tight')
+            print('Saved {}'.format(filename))
+    else:
+        plt.show()
+
+    plt.close(ax.figure)
+
+
+def curve_curve_check(curve1, curve2, s_vals, t_vals, points,
+                      ignore_save=False):
     assert len(s_vals) == len(t_vals)
     assert len(s_vals) == len(points)
 
@@ -204,14 +235,7 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points):
         runtime_utils.assert_close(point_on2[0], point[0])
         runtime_utils.assert_close(point_on2[1], point[1])
 
-    if not CONFIG.running:
-        return
-
-    ax = curve1.plot(64)
-    curve2.plot(64, ax=ax)
-    ax.scatter(points[:, 0], points[:, 1], color='black')
-    ax.axis('scaled')
-    plt.show()
+    make_plots(curve1, curve2, points, ignore_save=ignore_save)
 
 
 def test_curves1_and_2():
@@ -323,7 +347,7 @@ def test_curve12_self_crossing():
                       bezier.Curve(right1.nodes),
                       np.array([1.0]),
                       np.array([0.0]),
-                      expected)
+                      expected, ignore_save=True)
 
     # Make sure the right curve doesn't cross itself.
     left2, right2 = right.subdivide()
@@ -332,7 +356,7 @@ def test_curve12_self_crossing():
                       bezier.Curve(right2.nodes),
                       np.array([1.0]),
                       np.array([0.0]),
-                      expected)
+                      expected, ignore_save=True)
 
 
 def test_curves8_and_9():
@@ -365,6 +389,8 @@ def test_curves14_and_15():
     ])
     with pytest.raises(NotImplementedError):
         curve_curve_check(CURVE14, CURVE15, s_vals, t_vals, points)
+
+    make_plots(CURVE14, CURVE15, points)
 
 
 def test_curves14_and_16():
@@ -466,6 +492,8 @@ def test_curves1_and_24():
     points = np.empty((0, 2))
     with pytest.raises(NotImplementedError):
         curve_curve_check(CURVE1, CURVE24, s_vals, t_vals, points)
+
+    make_plots(CURVE1, CURVE24, points)
 
 
 if __name__ == '__main__':
