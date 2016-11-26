@@ -146,3 +146,44 @@ def compute_length(nodes, degree):
     size_func = functools.partial(_vec_size, first_deriv, degree - 1)
     length, _ = _scipy_int.quad(size_func, 0.0, 1.0)
     return length
+
+
+def elevate_nodes(nodes, degree, dimension):
+    r"""Degree-elevate a B |eacute| zier curves.
+
+    Does this by converting the current nodes :math:`v_0, \ldots, v_n`
+    to new nodes :math:`w_0, \ldots, w_{n + 1}` where
+
+    .. math::
+
+       \begin{align*}
+       w_0 &= v_0 \\
+       w_j &= \frac{j}{n + 1} v_{j - 1} + \frac{n + 1 - j}{n + 1} v_j \\
+       w_{n + 1} &= v_n
+       \end{align*}
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a curve.
+        degree (int): The degree of the curve (assumed to be one less than
+            the number of ``nodes``.
+        dimension (int): The dimension of the curve.
+
+    Returns:
+        numpy.ndarray: The nodes of the degree-elevated curve.
+    """
+    new_nodes = np.zeros((degree + 2, dimension))
+
+    multipliers = np.arange(1, degree + 1, dtype=float)[:, np.newaxis]
+    denominator = degree + 1.0
+    new_nodes[1:-1, :] = (
+        multipliers * nodes[:-1, :] +
+        (denominator - multipliers) * nodes[1:, :])
+    # Hold off on division until the end, to (attempt to) avoid round-off.
+    new_nodes /= denominator
+
+    # After setting the internal nodes (which require division), set the
+    # boundary nodes.
+    new_nodes[0, :] = nodes[0, :]
+    new_nodes[-1, :] = nodes[-1, :]
+
+    return new_nodes

@@ -448,3 +448,24 @@ class Curve(_base.Base):
                               for intersection in intersections])
         else:
             return np.zeros((0, 2))
+
+    def elevate(self):
+        r"""Return a degree-elevated version of the current curve.
+
+        Does this by converting the current nodes :math:`v_0, \ldots, v_n`
+        to new nodes :math:`w_0, \ldots, w_{n + 1}` where
+
+        .. math::
+
+           \begin{align*}
+           w_0 &= v_0 \\
+           w_j &= \frac{j}{n + 1} v_{j - 1} + \frac{n + 1 - j}{n + 1} v_j \\
+           w_{n + 1} &= v_n
+           \end{align*}
+
+        Returns:
+            Curve: The degree-elevated curve.
+        """
+        new_nodes = _curve_helpers.elevate_nodes(
+            self._nodes, self.degree, self.dimension)
+        return Curve(new_nodes, _copy=False)

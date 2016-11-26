@@ -477,3 +477,22 @@ class TestCurve(unittest.TestCase):
             curve1.intersect(curve2)
         with self.assertRaises(NotImplementedError):
             curve2.intersect(curve1)
+
+    def test_elevate(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 0.5],
+            [1.0, 1.0],
+            [3.0, 2.0],
+            [3.5, 4.0],
+        ])
+        curve = bezier.Curve(nodes)
+        self.assertEqual(curve.degree, 3)
+        elevated = curve.elevate()
+        self.assertEqual(elevated.degree, 4)
+
+        s_vals = np.linspace(0.0, 1.0, 64 + 1)
+        orig_vals = curve.evaluate_multi(s_vals)
+        new_vals = elevated.evaluate_multi(s_vals)
+        self.assertTrue(np.all(orig_vals == new_vals))

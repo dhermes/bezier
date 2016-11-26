@@ -135,3 +135,40 @@ class Test_compute_length(unittest.TestCase):
         with mock.patch('bezier._curve_helpers._scipy_int', new=None):
             with self.assertRaises(OSError):
                 self._call_function_under_test(nodes, 4)
+
+
+class Test_elevate_nodes(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, dimension):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.elevate_nodes(nodes, degree, dimension)
+
+    def test_linear(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [2.0, 4.0],
+        ])
+        result = self._call_function_under_test(nodes, 1, 2)
+        expected = np.array([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [2.0, 4.0],
+        ])
+        self.assertTrue(np.all(result == expected))
+
+    def test_quadratic(self):
+        nodes = np.array([
+            [0.0, 0.5, 0.75],
+            [3.0, 0.5, 3.0],
+            [6.0, 0.5, 2.25],
+        ])
+        result = self._call_function_under_test(nodes, 2, 3)
+        expected = np.array([
+            [0.0, 0.5, 0.75],
+            [2.0, 0.5, 2.25],
+            [4.0, 0.5, 2.75],
+            [6.0, 0.5, 2.25],
+        ])
+        self.assertTrue(np.all(result == expected))
