@@ -158,7 +158,7 @@ Even for curves which don't intersect at exact floating point
 numbers, we can compute the intersection to machine precision:
 
 .. doctest:: intersect-1-2
-   :options: +ELLIPSIS, +NORMALIZE_WHITESPACE
+   :options: +NORMALIZE_WHITESPACE
 
    >>> curve1 = bezier.Curve(np.array([
    ...     [0.0, 0.0],
@@ -170,15 +170,21 @@ numbers, we can compute the intersection to machine precision:
    ...     [0.625, -0.5],
    ...     [0.125,  0.5],
    ... ]))
-   >>> curve1.intersect(curve2)
-   array([[ 0.214514..., 0.336996...],
-          [ 0.910485..., 0.163003...]])
+   >>> intersections = curve1.intersect(curve2)
+   >>> sq31 = np.sqrt(31.0)
+   >>> expected = np.array([
+   ...     [36 - 4 * sq31, 16 + sq31],
+   ...     [36 + 4 * sq31, 16 - sq31],
+   ... ]) / 64.0
+   >>> max_err = np.max(np.abs(intersections - expected))
+   >>> np.log2(max_err)
+   -54.0
 
 .. image:: images/test_curves1_and_2.png
    :align: center
 
 .. doctest:: intersect-1-7
-   :options: +ELLIPSIS, +NORMALIZE_WHITESPACE
+   :options: +NORMALIZE_WHITESPACE
 
    >>> curve1 = bezier.Curve(np.array([
    ...     [0.0, 0.0],
@@ -190,15 +196,21 @@ numbers, we can compute the intersection to machine precision:
    ...     [0.5, 0.234375],
    ...     [1.0, 0.265625],
    ... ]))
-   >>> curve1.intersect(curve2)
-   array([[ 0.151844...,  0.257575...],
-          [ 0.848155...,  0.257575...]])
+   >>> intersections = curve1.intersect(curve2)
+   >>> sq33 = np.sqrt(33.0)
+   >>> expected = np.array([
+   ...     [33 - 4 * sq33, 17],
+   ...     [33 + 4 * sq33, 17],
+   ... ]) / 66.0
+   >>> max_err = np.max(np.abs(intersections - expected))
+   >>> np.log2(max_err)
+   -54.0
 
 .. image:: images/test_curves1_and_7.png
    :align: center
 
 .. doctest:: intersect-1-13
-   :options: +ELLIPSIS, +NORMALIZE_WHITESPACE
+   :options: +NORMALIZE_WHITESPACE
 
    >>> curve1 = bezier.Curve(np.array([
    ...     [0.0, 0.0],
@@ -212,11 +224,17 @@ numbers, we can compute the intersection to machine precision:
    ...     [0.75,  2.0],
    ...     [1.0 ,  0.0],
    ... ]))
-   >>> curve1.intersect(curve2)
-   array([[ 0.311017...,  0.428571...],
-          [ 0.688982...,  0.428571...],
-          [ 0.         ,  0.         ],
-          [ 1.         ,  0.         ]])
+   >>> intersections = curve1.intersect(curve2)
+   >>> sq7 = np.sqrt(7.0)
+   >>> expected = np.array([
+   ...     [7 - sq7, 6],
+   ...     [7 + sq7, 6],
+   ...     [      0, 0],
+   ...     [     14, 0],
+   ... ]) / 14.0
+   >>> max_err = np.max(np.abs(intersections - expected))
+   >>> np.log2(max_err)
+   -54.0
 
 .. image:: images/test_curves1_and_13.png
    :align: center
@@ -234,11 +252,17 @@ numbers, we can compute the intersection to machine precision:
    ...     [-1.5625,  0.25  ],
    ...     [ 1.5625,  0.5625],
    ... ]))
-   >>> curve1.intersect(curve2)
-   array([[  9.54915028e-02,  1.72745751e-01],
-          [  2.50000000e-01,  3.75000000e-01],
-          [  1.00000000e+00, -5.55111512e-17],
-          [  6.54508497e-01,  4.52254249e-01]])
+   >>> intersections = curve1.intersect(curve2)
+   >>> sq5 = np.sqrt(5.0)
+   >>> expected = np.array([
+   ...     [6 - 2 * sq5, 5 - sq5],
+   ...     [          4, 6      ],
+   ...     [         16, 0      ],
+   ...     [6 + 2 * sq5, 5 + sq5],
+   ... ]) / 16.0
+   >>> max_err = np.max(np.abs(intersections - expected))
+   >>> np.log2(max_err)
+   -50.415...
 
 .. image:: images/test_curves21_and_22.png
    :align: center
