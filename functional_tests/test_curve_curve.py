@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 try:
-    import seaborn
+    import seaborn  # pylint: disable=unused-import
 except ImportError:
     pass
 import six
