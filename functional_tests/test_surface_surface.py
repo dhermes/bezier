@@ -208,10 +208,7 @@ SURFACE24 = bezier.Surface(np.array([
 SQ3 = np.sqrt(3.0)
 SURFACE25 = bezier.Surface(np.array([
     [0.5 * SQ3, -0.5],
-    [0.25 * SQ3, 0.25],
     [0.0, 1.0],
-    [0.0, -0.5],
-    [-0.25 * SQ3, 0.25],
     [-0.5 * SQ3, -0.5],
 ]))
 SURFACE26 = bezier.Surface(np.array([
@@ -224,10 +221,7 @@ SURFACE26 = bezier.Surface(np.array([
 ]))
 SURFACE27 = bezier.Surface(np.array([
     [0.625 * SQ3, -0.625],
-    [0.3125 * SQ3, 0.3125],
     [0.0, 1.25],
-    [0.0, -0.625],
-    [-0.3125 * SQ3, 0.3125],
     [-0.625 * SQ3, -0.625],
 ]))
 SURFACE28 = bezier.Surface(np.array([
@@ -261,18 +255,12 @@ SURFACE31 = bezier.Surface(np.array([
 ]))
 SURFACE32 = bezier.Surface(np.array([
     [1.0, -1.0],
-    [1.0, 0.0],
     [1.0, 1.0],
-    [0.45, -0.5],
-    [0.45, 0.5],
     [-0.1, 0.0],
 ]))
 SURFACE33 = bezier.Surface(np.array([
     [0.1, 0.0],
-    [-0.45, 0.5],
     [-1.0, 1.0],
-    [-0.45, -0.5],
-    [-1.0, 0.0],
     [-1.0, -1.0],
 ]))
 SURFACE34 = bezier.Surface(np.array([
@@ -293,10 +281,7 @@ SURFACE35 = bezier.Surface(np.array([
 ]))
 SURFACE36 = bezier.Surface(np.array([
     [0.0, 0.0],
-    [0.5, 0.0],
     [1.0, 0.0],
-    [0.0, 0.5],
-    [0.5, 0.5],
     [0.0, 1.0],
 ]))
 SURFACE37 = bezier.Surface(np.array([
@@ -309,10 +294,7 @@ SURFACE37 = bezier.Surface(np.array([
 ]))
 SURFACE38 = bezier.Surface(np.array([
     [0.0, 0.0],
-    [0.5, 0.5],
     [1.0, 1.0],
-    [-0.5, 0.5],
-    [0.0, 1.0],
     [-1.0, 1.0],
 ]))
 SURFACE39 = bezier.Surface(np.array([
