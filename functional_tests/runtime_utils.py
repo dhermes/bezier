@@ -12,6 +12,7 @@
 
 
 import argparse
+import contextlib
 import inspect
 import types
 
@@ -22,12 +23,12 @@ import six
 EPS = 2.0**(-50)
 
 
-def assert_close(approximated, exact):
+def _assert_close(approximated, exact, wiggle=8):
     """Assert that two floating point values are close.
 
     Makes sure the error is isolated to (approximately) the last 3 bits.
     The last 3 bits would amplify the "least significant digit" by 8, and
-    4 bits would amplify by 16.
+    4 bits would amplify by 16, etc.
 
     In the case that ``exact`` is exactly 0, we set an "absolute"
     tolerance for ``approximated`` rather than a relative tolerance.
@@ -35,12 +36,14 @@ def assert_close(approximated, exact):
     Args:
         approximated (float): The value that was computed.
         exact (float): The expected value.
+        wiggle (Optional[int]): The amount of wiggle room allowed (relative
+            to the smallest value).
     """
     if exact == 0.0:
         assert abs(approximated) < EPS
     else:
         local_epsilon = np.spacing(exact)  # pylint: disable=no-member
-        assert abs(approximated - exact) < 12.0 * abs(local_epsilon)
+        assert abs(approximated - exact) < wiggle * abs(local_epsilon)
 
 
 def _start_line(func):
@@ -81,6 +84,7 @@ class Config(object):  # pylint: disable=too-few-public-methods
         self.save_plot = False
         self.current_test = None
         self.parser = get_parser()
+        self._wiggle = 8
 
     def _run(self, mod_globals):
         """Run all tests, in source order.
@@ -101,6 +105,31 @@ class Config(object):  # pylint: disable=too-few-public-methods
         for func in found:
             self.current_test = func.__name__
             func()
+
+    @contextlib.contextmanager
+    def wiggle(self, wiggle):
+        """Make the context use a temporary wiggle room.
+
+        Args:
+            wiggle (int): The temporary amount of wiggle room.
+        """
+        old_wiggle = self._wiggle
+        try:
+            self._wiggle = wiggle
+            yield self
+        finally:
+            self._wiggle = old_wiggle
+
+    def assert_close(self, approximated, exact):
+        """Assert two values are close, with the local configuration in place.
+
+        Calls :func:`_assert_close` with the current configuration.
+
+        Args:
+            approximated (float): The value that was computed.
+            exact (float): The expected value.
+        """
+        _assert_close(approximated, exact, wiggle=self._wiggle)
 
     def run(self, mod_globals):
         """Run all tests, in source order.

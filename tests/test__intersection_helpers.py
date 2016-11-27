@@ -264,6 +264,22 @@ class Test_linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(curve)
         self.assertEqual(error_val, 0.0)
 
+    def test_hidden_linear(self):
+        import bezier
+
+        # NOTE: This is the line 3 y = 4 x, but with the parameterization
+        #       x(s) = 3 s (4 - 3 s).
+        nodes = np.array([
+            [0.0, 0.0],
+            [6.0, 8.0],
+            [3.0, 4.0],
+        ])
+        curve = bezier.Curve(nodes)
+        error_val = self._call_function_under_test(curve)
+        # D^2 v = [-9, -12]
+        expected = 0.125 * 2 * 1 * 15.0
+        self.assertEqual(error_val, expected)
+
     def test_quadratic(self):
         import bezier
 
@@ -289,6 +305,24 @@ class Test_linearization_error(unittest.TestCase):
         error_right = self._call_function_under_test(right)
         self.assertEqual(error_left, 0.25 * expected)
         self.assertEqual(error_right, 0.25 * expected)
+
+    def test_hidden_quadratic(self):
+        import bezier
+
+        # NOTE: This is the line y = 1 + x^2 / 4, but with the
+        #       parameterization x(s) = (3 s - 1)^2.
+        nodes = np.array([
+            [1.0, 1.25],
+            [-0.5, 0.5],
+            [-0.5, 2.0],
+            [1.0, -1.0],
+            [4.0, 5.0],
+        ])
+        curve = bezier.Curve(nodes)
+        error_val = self._call_function_under_test(curve)
+        # D^2 v = [1.5, 2.25], [1.5, -4.5], [1.5, 9]
+        expected = 0.125 * 4 * 3 * np.sqrt(1.5**2 + 9.0**2)
+        self.assertEqual(error_val, expected)
 
     def test_cubic(self):
         import bezier

@@ -185,6 +185,36 @@ CURVE24 = bezier.Curve(np.array([
     [0.75, 0.875],
     [1.25, -0.625],
 ]))
+# g25 = sympy.Matrix([[
+#     -s * (2 * s**2 - 3 * s - 3) / 4,
+#     -(3 * s**3 - 3 * s - 1) / 2,
+# ]])
+CURVE25 = bezier.Curve(np.array([
+    [0.0, 0.5],
+    [0.25, 1.0],
+    [0.75, 1.5],
+    [1.0, 0.5],
+]))
+# g26 = sympy.Matrix([[
+#     3 * (14 * s + 1) / 8,
+#     18 * s**3 - 27 * s**2 + 3 * s + 7,
+# ]])
+CURVE26 = bezier.Curve(np.array([
+    [0.375, 7.0],
+    [2.125, 8.0],
+    [3.875, 0.0],
+    [5.625, 1.0],
+]))
+# g27 = sympy.Matrix([[
+#     (6 * s + 1) / 8,
+#     (35 * s**3 - 60 * s**2 + 24 * s + 4) / 16,
+# ]])
+CURVE27 = bezier.Curve(np.array([
+    [0.125, 0.25],
+    [0.375, 0.75],
+    [0.625, 0.0],
+    [0.875, 0.1875],
+]))
 
 
 def make_plots(curve1, curve2, points, ignore_save=False):
@@ -221,19 +251,19 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points,
         assert intersection.left is curve1
         assert intersection.right is curve2
 
-        runtime_utils.assert_close(intersection._s_val, s_val)
-        runtime_utils.assert_close(intersection._t_val, t_val)
+        CONFIG.assert_close(intersection._s_val, s_val)
+        CONFIG.assert_close(intersection._t_val, t_val)
 
-        runtime_utils.assert_close(intersection.point[0], point[0])
-        runtime_utils.assert_close(intersection.point[1], point[1])
+        CONFIG.assert_close(intersection.point[0], point[0])
+        CONFIG.assert_close(intersection.point[1], point[1])
 
         point_on1 = curve1.evaluate(s_val)
-        runtime_utils.assert_close(point_on1[0], point[0])
-        runtime_utils.assert_close(point_on1[1], point[1])
+        CONFIG.assert_close(point_on1[0], point[0])
+        CONFIG.assert_close(point_on1[1], point[1])
 
         point_on2 = curve2.evaluate(t_val)
-        runtime_utils.assert_close(point_on2[0], point[0])
-        runtime_utils.assert_close(point_on2[1], point[1])
+        CONFIG.assert_close(point_on2[0], point[0])
+        CONFIG.assert_close(point_on2[1], point[1])
 
     make_plots(curve1, curve2, points, ignore_save=ignore_save)
 
@@ -466,7 +496,10 @@ def test_curves21_and_22():
         [1.0, 0.0],
         [0.375 + 0.125 * sq5, 0.3125 + 0.0625 * sq5],
     ])
-    curve_curve_check(CURVE21, CURVE22, s_vals, t_vals, points)
+
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(12):
+        curve_curve_check(CURVE21, CURVE22, s_vals, t_vals, points)
 
 
 def test_curves10_and_23():
@@ -494,6 +527,55 @@ def test_curves1_and_24():
         curve_curve_check(CURVE1, CURVE24, s_vals, t_vals, points)
 
     make_plots(CURVE1, CURVE24, points)
+
+
+def test_curves15_and_25():
+    # ctx = mpmath.MPContext()
+    # ctx.prec = 200
+    # ctx.polyroots([486, -3726, 13905, -18405, 6213, 1231])
+    s_vals = np.array([float.fromhex('0x1.b7b348cf939b9p-1')])
+    # ctx.polyroots([4, -16, 13, 25, -28, 4])
+    t_vals = np.array([float.fromhex('0x1.bf3536665a0cdp-1')])
+
+    # Slightly more accurate than (3 s + 1) / 4.
+    x_val = float.fromhex('0x1.c9c6769baeb4ap-1')
+    # identical to (9 s^2 - 6 s + 5) / 8 after rounding.
+    y_val = float.fromhex('0x1.9f09401c281ddp-1')
+    points = np.array([
+        [x_val, y_val],
+    ])
+    curve_curve_check(CURVE15, CURVE25, s_vals, t_vals, points)
+
+
+def test_curves11_and_26():
+    sq7 = np.sqrt(7.0)
+    s_vals = np.array(
+        [24.0, 24.0 - 7.0 * sq7, 24.0 + 7.0 * sq7]) / 48.0
+    t_vals = np.array([3.0, 3.0 - sq7, 3.0 + sq7]) / 6.0
+    points = np.array([
+        [72.0, 96.0],
+        [72.0 - 21.0 * sq7, 96.0 + 28.0 * sq7],
+        [72.0 + 21.0 * sq7, 96.0 - 28.0 * sq7],
+    ]) / 24.0
+
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(25):
+        curve_curve_check(CURVE11, CURVE26, s_vals, t_vals, points)
+
+
+def test_curves8_and_27():
+    s_val1, s_val2, _ = np.sort(np.roots([17920, -29760, 13512, -1691]))
+    s_vals = np.array([s_val2, s_val1])
+    t_val1, t_val2, _ = np.sort(np.roots([35, -60, 24, -2]))
+    t_vals = np.array([t_val2, t_val1])
+    points = np.array([
+        [s_val2, 0.375],
+        [s_val1, 0.375],
+    ])
+
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(42):
+        curve_curve_check(CURVE8, CURVE27, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
