@@ -215,6 +215,26 @@ CURVE27 = bezier.Curve(np.array([
     [0.625, 0.0],
     [0.875, 0.1875],
 ]))
+# Rotate g1 by 45 degrees and scale by sqrt(2).
+# g28 = sympy.Matrix([[s * (2 * s - 1), s * (3 - 2 * s)]])
+CURVE28 = bezier.Curve(np.array([
+    [0.0, 0.0],
+    [-0.5, 1.5],
+    [1.0, 1.0],
+]))
+# Rotate g6 by 45 degrees and scale by sqrt(2).
+# g29 = sympy.Matrix([[(1 - 2 * s) * (1 - s), 2 * s**2 - s + 1]])
+CURVE29 = bezier.Curve(np.array([
+    [-1.0, 1.0],
+    [0.5, 0.5],
+    [0.0, 2.0],
+]))
+# Rotate g9 by 45 degrees and scale by sqrt(2).
+# g30 = sympy.Matrix([[(2 - 3 * s) / 4, (2 + 3 * s) / 4]])
+CURVE30 = bezier.Curve(np.array([
+    [0.5, 0.5],
+    [-0.25, 1.25],
+]))
 
 
 def make_plots(curve1, curve2, points, ignore_save=False):
@@ -232,6 +252,7 @@ def make_plots(curve1, curve2, points, ignore_save=False):
             plt.savefig(path, bbox_inches='tight')
             print('Saved {}'.format(filename))
     else:
+        plt.title(CONFIG.current_test)
         plt.show()
 
     plt.close(ax.figure)
@@ -576,6 +597,29 @@ def test_curves8_and_27():
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(42):
         curve_curve_check(CURVE8, CURVE27, s_vals, t_vals, points)
+
+
+def test_curves28_and_29():
+    # NOTE: Though curves 1 and 6 successfully intersect (at a point
+    #       of tangency), the rotated equivalents do not.
+    s_vals = np.array([0.5])
+    t_vals = s_vals
+    points = np.array([
+        [0.0, 1.0],
+    ])
+    with pytest.raises(NotImplementedError):
+        curve_curve_check(CURVE28, CURVE29, s_vals, t_vals, points)
+
+    make_plots(CURVE28, CURVE29, points)
+
+
+def test_curves29_and_30():
+    s_vals = np.array([0.5])
+    t_vals = np.array([2.0 / 3.0])
+    points = np.array([
+        [0.0, 1.0],
+    ])
+    curve_curve_check(CURVE29, CURVE30, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
