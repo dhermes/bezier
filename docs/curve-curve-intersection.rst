@@ -87,6 +87,24 @@ Curve-Line Intersection
 .. image:: images/test_curves8_and_9.png
    :align: center
 
+.. doctest:: intersect-29-30
+   :options: +NORMALIZE_WHITESPACE
+
+   >>> curve1 = bezier.Curve(np.array([
+   ...     [-1.0, 1.0],
+   ...     [ 0.5, 0.5],
+   ...     [ 0.0, 2.0],
+   ... ]))
+   >>> curve2 = bezier.Curve(np.array([
+   ...     [ 0.5 , 0.5 ],
+   ...     [-0.25, 1.25],
+   ... ]))
+   >>> curve1.intersect(curve2)
+   array([[ 0., 1.]])
+
+.. image:: images/test_curves29_and_30.png
+   :align: center
+
 Curved Intersections
 --------------------
 
@@ -267,6 +285,92 @@ numbers, we can compute the intersection to machine precision:
 .. image:: images/test_curves21_and_22.png
    :align: center
 
+For higher degree, intersections, the error starts to get a little
+larger.
+
+.. doctest:: intersect-15-25
+   :options: +NORMALIZE_WHITESPACE
+
+   >>> curve1 = bezier.Curve(np.array([
+   ...     [0.25 , 0.625],
+   ...     [0.625, 0.25 ],
+   ...     [1.0  , 1.0  ],
+   ... ]))
+   >>> curve2 = bezier.Curve(np.array([
+   ...     [0.0 , 0.5],
+   ...     [0.25, 1.0],
+   ...     [0.75, 1.5],
+   ...     [1.0 , 0.5],
+   ... ]))
+   >>> intersections = curve1.intersect(curve2)
+   >>> s_vals = np.roots([486, -3726, 13905, -18405, 6213, 1231])
+   >>> _, s_val, _ = np.sort(s_vals[s_vals.imag == 0].real)
+   >>> x_val = (3 * s_val + 1) / 4
+   >>> y_val = (9 * s_val * s_val - 6 * s_val + 5) / 8
+   >>> expected = np.array([
+   ...     [x_val, y_val],
+   ... ])
+   >>> max_err = np.max(np.abs(intersections - expected))
+   >>> np.log2(max_err)
+   -49.678...
+
+.. image:: images/test_curves15_and_25.png
+   :align: center
+
+.. doctest:: intersect-11-26
+   :options: +NORMALIZE_WHITESPACE
+
+   >>> curve1 = bezier.Curve(np.array([
+   ...     [0.0, 8.0],
+   ...     [6.0, 0.0],
+   ... ]))
+   >>> curve2 = bezier.Curve(np.array([
+   ...     [0.375, 7.0],
+   ...     [2.125, 8.0],
+   ...     [3.875, 0.0],
+   ...     [5.625, 1.0],
+   ... ]))
+   >>> intersections = curve1.intersect(curve2)
+   >>> sq7 = np.sqrt(7.0)
+   >>> expected = np.array([
+   ...     [           72, 96           ],
+   ...     [72 - 21 * sq7, 96 + 28 * sq7],
+   ...     [72 + 21 * sq7, 96 - 28 * sq7],
+   ... ]) / 24.0
+   >>> max_err = np.max(np.abs(intersections - expected))
+   >>> np.log2(max_err)
+   -50.0
+
+.. image:: images/test_curves11_and_26.png
+   :align: center
+
+.. doctest:: intersect-8-27
+   :options: +NORMALIZE_WHITESPACE
+
+   >>> curve1 = bezier.Curve(np.array([
+   ...     [0.0, 0.375],
+   ...     [1.0, 0.375],
+   ... ]))
+   >>> curve2 = bezier.Curve(np.array([
+   ...     [0.125, 0.25  ],
+   ...     [0.375, 0.75  ],
+   ...     [0.625, 0.0   ],
+   ...     [0.875, 0.1875],
+   ... ]))
+   >>> intersections = curve1.intersect(curve2)
+   >>> s_val1, s_val2, _ = np.sort(np.roots(
+   ...     [17920, -29760, 13512, -1691]))
+   >>> expected = np.array([
+   ...     [s_val2, 0.375],
+   ...     [s_val1, 0.375],
+   ... ])
+   >>> max_err = np.max(np.abs(intersections - expected))
+   >>> np.log2(max_err)
+   -50.678...
+
+.. image:: images/test_curves8_and_27.png
+   :align: center
+
 Intersections at Endpoints
 --------------------------
 
@@ -439,7 +543,33 @@ are resolved:
 .. image:: images/test_curves10_and_23.png
    :align: center
 
-In addition to points of tangency, coincident curve segments
+but even by rotating an intersection (from above) that we
+know works
+
+.. image:: images/test_curves28_and_29.png
+   :align: center
+
+we still see a failure
+
+.. doctest:: intersect-28-29
+   :options: +NORMALIZE_WHITESPACE
+
+   >>> curve1 = bezier.Curve(np.array([
+   ...     [ 0.0, 0.0],
+   ...     [-0.5, 1.5],
+   ...     [ 1.0, 1.0],
+   ... ]))
+   >>> curve2 = bezier.Curve(np.array([
+   ...     [-1.0, 1.0],
+   ...     [ 0.5, 0.5],
+   ...     [ 0.0, 2.0],
+   ... ]))
+   >>> curve1.intersect(curve2)
+   Traceback (most recent call last):
+     ...
+   NotImplementedError: The number of candidate intersections is too high.
+
+In addition to points of tangency, **coincident curve segments**
 are (for now) not supported. For the curves
 
 .. image:: images/test_curves1_and_24.png
