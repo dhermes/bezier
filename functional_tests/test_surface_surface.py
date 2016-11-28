@@ -262,11 +262,15 @@ SURFACE21 = bezier.Surface(np.array([
     [0.0, -0.5625],
     [0.5, -0.75],
 ]))
+# F22 = sympy.Matrix([[(4 * s + 1) / 4, (8 * t - 1) / 8]])
 SURFACE22 = bezier.Surface(np.array([
     [0.25, -0.125],
     [1.25, -0.125],
     [0.25, 0.875],
 ]))
+# F23 = sympy.Matrix([[
+#     -s**2 - s * t - 2 * t + 1, -s * (s + t - 2),
+# ]])
 SURFACE23 = bezier.Surface(np.array([
     [1.0, 0.0],
     [1.0, 1.0],
@@ -275,6 +279,10 @@ SURFACE23 = bezier.Surface(np.array([
     [-0.5, 0.5],
     [-1.0, 0.0],
 ]))
+# F24 = sympy.Matrix([[
+#     -(3 * s**2 + 3 * s * t + 3 * t - 2) / 2,
+#     -(6 * s**2 + 6 * s * t - 12 * s - t) / 4,
+# ]])
 SURFACE24 = bezier.Surface(np.array([
     [1.0, 0.0],
     [1.0, 1.5],
@@ -335,16 +343,19 @@ SURFACE31 = bezier.Surface(np.array([
     [0.31000810907108672, 0.44468777714773527],
     [0.16054298846399917, 0.11216419756826268],
 ]))
+# F32 = sympy.Matrix([[(8 - 9 * t) / 8, 2 * s + t - 1]])
 SURFACE32 = bezier.Surface(np.array([
     [1.0, -1.0],
     [1.0, 1.0],
-    [-0.1, 0.0],
+    [-0.125, 0.0],
 ]))
+# F33 = sympy.Matrix([[(1 - 9 * s - 9 * t) / 8, s - t]])
 SURFACE33 = bezier.Surface(np.array([
-    [0.1, 0.0],
+    [0.125, 0.0],
     [-1.0, 1.0],
     [-1.0, -1.0],
 ]))
+# F34 = sympy.Matrix([[s * (t + 1), t * (s + 1)]])
 SURFACE34 = bezier.Surface(np.array([
     [0.0, 0.0],
     [0.5, 0.0],
@@ -353,6 +364,7 @@ SURFACE34 = bezier.Surface(np.array([
     [1.0, 1.0],
     [0.0, 1.0],
 ]))
+# F35 = sympy.Matrix([[s * t + t**2 - 2 * t + 2, s * t + t**2 + s]])
 SURFACE35 = bezier.Surface(np.array([
     [2.0, 0.0],
     [2.0, 0.5],
@@ -361,29 +373,33 @@ SURFACE35 = bezier.Surface(np.array([
     [1.5, 1.0],
     [1.0, 1.0],
 ]))
+# F36 = sympy.Matrix([[
+#     -(4 * s**2 + 6 * s * t - 3 * t**2 - 2 * s + 24 * t - 24) / 16,
+#     (3 * s * t + 3 * t**2 + 8 * s - 3 * t) / 8,
+# ]])
 SURFACE36 = bezier.Surface(np.array([
-    [0.0, 0.0],
-    [1.0, 0.0],
-    [0.0, 1.0],
-]))
-SURFACE37 = bezier.Surface(np.array([
     [1.5, 0.0],
-    [1.55, 0.5],
-    [1.4, 1.0],
-    [0.75, -0.2],
-    [0.6, 0.5],
-    [0.2, 0.0],
+    [1.5625, 0.5],
+    [1.375, 1.0],
+    [0.75, -0.1875],
+    [0.625, 0.5],
+    [0.1875, 0.0],
 ]))
-SURFACE38 = bezier.Surface(np.array([
+# F37 = sympy.Matrix([[s - t, s + t]])
+SURFACE37 = bezier.Surface(np.array([
     [0.0, 0.0],
     [1.0, 1.0],
     [-1.0, 1.0],
 ]))
-SURFACE39 = bezier.Surface(np.array([
+# F38 = sympy.Matrix([[
+#     (s - t) * (s + t + 9) / 8,
+#     (s**2 - 14 * s * t + t**2 + 17 * s + 17 * t - 8) / 8,
+# ]])
+SURFACE38 = bezier.Surface(np.array([
     [0.0, -1.0],
-    [0.575, 0.075],
+    [0.5625, 0.0625],
     [1.25, 1.25],
-    [-0.575, 0.075],
+    [-0.5625, 0.0625],
     [0.0, 0.25],
     [-1.25, 1.25],
 ]))
@@ -492,12 +508,12 @@ def test_surfaces34_and_35():
     surface_surface_check(SURFACE34, SURFACE35)
 
 
-def test_surfaces36_and_37():
-    surface_surface_check(SURFACE36, SURFACE37)
+def test_surfaces15_and_36():
+    surface_surface_check(SURFACE15, SURFACE36)
 
 
-def test_surfaces38_and_39():
-    surface_surface_check(SURFACE38, SURFACE39)
+def test_surfaces37_and_38():
+    surface_surface_check(SURFACE37, SURFACE38)
 
 
 if __name__ == '__main__':
