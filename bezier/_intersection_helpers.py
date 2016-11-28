@@ -504,13 +504,13 @@ def segment_intersection(start0, end0, start1, end1, _fail=True):
     L_1\left(\frac{3}{4}\right) =
     \frac{1}{2} \left[\begin{array}{c} 1 \\ 1 \end{array}\right]`.
 
-    .. testsetup::
+    .. testsetup:: segment-intersect
 
        import numpy as np
        import bezier
        from bezier._intersection_helpers import segment_intersection
 
-    .. doctest::
+    .. doctest:: segment-intersect
        :options: +NORMALIZE_WHITESPACE
 
        >>> start0 = np.array([[0.0, 0.0]])
@@ -522,6 +522,49 @@ def segment_intersection(start0, end0, start1, end1, _fail=True):
        0.25
        >>> t
        0.75
+
+    In the case that :math:`\Delta_0 \times \Delta_1 = 0`, the segments
+    are parallel. In the case that they are parallel and lie on the
+    **exact** same line, finding a unique intersection is not possible.
+    However, if they are parallel but on **different** lines, then there is a
+    **guarantee** of no intersection.
+
+    We can detect this case, by trying to project :math:`S_1` onto the
+    first line:
+
+    .. math::
+
+        S_1 = S_0 + s \Delta_0.
+
+    The :math:`x` and :math:`y` components of this give us two (potentially
+    different) values of :math:`s`. If they are different, then we know
+    the two lines are different.
+
+    Taking the parallel (but different) lines
+
+    .. math::
+
+       \begin{align*}
+        L_0(s) &= \left[\begin{array}{c} 1 \\ 0 \end{array}\right] (1 - s) +
+                  \left[\begin{array}{c} 0 \\ 1 \end{array}\right] s \\
+        L_1(t) &= \left[\begin{array}{c} -1 \\ 3 \end{array}\right] (1 - t) +
+                  \left[\begin{array}{c} 3 \\ -1 \end{array}\right] t
+       \end{align*}
+
+    we should be able to determine that the lines don't intersect, but
+    have yet to implement it:
+
+    .. doctest:: segment-intersect
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> start0 = np.array([[1.0, 0.0]])
+       >>> end0 = np.array([[0.0, 1.0]])
+       >>> start1 = np.array([[-1.0, 3.0]])
+       >>> end1 = np.array([[3.0, -1.0]])
+       >>> segment_intersection(start0, end0, start1, end1)
+       Traceback (most recent call last):
+         ...
+       NotImplementedError: Delta_0 x Delta_1 = 0 not supported
 
     Args:
         start0 (numpy.ndarray): A 1x2 NumPy array that is the start
