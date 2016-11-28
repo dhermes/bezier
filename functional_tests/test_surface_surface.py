@@ -292,22 +292,17 @@ SURFACE24 = bezier.Surface(np.array([
     [-0.5, 0.25],
 ]))
 SURFACE25 = bezier.Surface(np.array([
-    [-1.0, 0.0],
-    [1.0, 0.0],
-    [0.0, 1.75],
-]))
-SURFACE26 = bezier.Surface(np.array([
-    [-1.25, -0.25],
-    [0.0, 0.25],
-    [1.25, -0.25],
-    [-0.375, 0.90625],
-    [0.375, 0.90625],
-    [0.0, 1.9375],
-]))
-SURFACE27 = bezier.Surface(np.array([
     [-1.25, 0.0],
     [1.25, 0.0],
     [0.0, 2.1875],
+]))
+SURFACE26 = bezier.Surface(np.array([
+    [-1.5625, -0.3125],
+    [0.0, 0.3125],
+    [1.5625, -0.3125],
+    [-0.46875, 1.1328125],
+    [0.46875, 1.1328125],
+    [0.0, 2.421875],
 ]))
 SURFACE28 = bezier.Surface(np.array([
     [-1.0, 0.125],
@@ -467,8 +462,8 @@ def test_surfaces25_and_26():
     surface_surface_check(SURFACE25, SURFACE26)
 
 
-def test_surfaces27_and_28():
-    surface_surface_check(SURFACE27, SURFACE28)
+def test_surfaces25_and_28():
+    surface_surface_check(SURFACE25, SURFACE28)
 
 
 def test_surfaces6_and_7():
