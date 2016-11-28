@@ -78,6 +78,20 @@ def get_parser():
     return parser
 
 
+def real_roots(coeffs):
+    """Get real roots of a polynomial.
+
+    Args:
+        coeffs (List[Float]): List of polynomial coefficients.
+
+    Returns:
+        numpy.ndarray: The (sorted) real roots of the polynomial.
+    """
+    all_roots = np.roots(coeffs)
+    filtered = all_roots[all_roots.imag == 0.0].real
+    return np.sort(filtered)
+
+
 class Config(object):  # pylint: disable=too-few-public-methods
     """Run-time configuration.
 

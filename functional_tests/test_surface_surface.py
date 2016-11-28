@@ -413,13 +413,15 @@ SURFACE29Q = bezier.Surface(np.array([
 
 
 def edge_pairs(surface1, surface2):
-    edges1 = six.moves.map(
+    edges1 = surface1.edges
+    lin1 = six.moves.map(
         _intersection_helpers.Linearization.from_shape,
-        surface1.edges)
-    edges2 = six.moves.map(
+        edges1)
+    edges2 = surface2.edges
+    lin2 = six.moves.map(
         _intersection_helpers.Linearization.from_shape,
-        surface2.edges)
-    return itertools.product(edges1, edges2)
+        edges2)
+    return edges1, edges2, itertools.product(lin1, lin2)
 
 
 def make_plots(surface1, surface2):
@@ -439,18 +441,95 @@ def make_plots(surface1, surface2):
     plt.close(ax.figure)
 
 
-def surface_surface_check(surface1, surface2):
+def check_intersections(s_vals, t_vals, points, intersections,
+                        edges1, edges2):
+    num_vals = len(s_vals)
+    assert len(t_vals) == num_vals
+    assert len(points) == num_vals
+    assert len(intersections) == num_vals
+
+    info = six.moves.zip(
+        intersections, s_vals, t_vals, points, edges1, edges2)
+    for intersection, s_val, t_val, point, edge1, edge2 in info:
+        assert intersection.left is edge1
+        assert intersection.right is edge2
+
+        CONFIG.assert_close(intersection._s_val, s_val)
+        CONFIG.assert_close(intersection._t_val, t_val)
+
+        CONFIG.assert_close(intersection.point[0], point[0])
+        CONFIG.assert_close(intersection.point[1], point[1])
+
+        point_on1 = edge1.evaluate(s_val)
+        CONFIG.assert_close(point_on1[0], point[0])
+        CONFIG.assert_close(point_on1[1], point[1])
+
+        point_on2 = edge2.evaluate(t_val)
+        CONFIG.assert_close(point_on2[0], point[0])
+        CONFIG.assert_close(point_on2[1], point[1])
+
+
+def surface_surface_check(surface1, surface2, s_vals=None,
+                          t_vals=None, points=None,
+                          edge_inds1=None, edge_inds2=None):
     assert surface1.is_valid
     assert surface2.is_valid
 
-    _intersection_helpers.all_intersections(
-        edge_pairs(surface1, surface2))
+    edges1, edges2, candidates = edge_pairs(surface1, surface2)
+    intersections = _intersection_helpers.all_intersections(
+        candidates)
+    if points is not None:
+        # NOTE: This assumes but doesn't check that s_vals/t_vals/points
+        #       will either all be set, or none be set.
+        expected1 = [edges1[index] for index in edge_inds1]
+        expected2 = [edges2[index] for index in edge_inds2]
+        check_intersections(s_vals, t_vals, points, intersections,
+                            expected1, expected2)
 
     make_plots(surface1, surface2)
 
 
 def test_surfaces1Q_and_3Q():
-    surface_surface_check(SURFACE1Q, SURFACE3Q)
+    # NOTE: There are only truly 4 intersections, but two of
+    #       them occur at corners of the surface, so they both
+    #       get quadruple counted, taking the total to 4(2) + 2 = 10.
+    _, s_val1 = runtime_utils.real_roots([36, -48, 4, 200, -131])
+    s_val2, = runtime_utils.real_roots([49, 91, 320, -244])
+    edge_s_vals = np.array([
+        0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+        s_val1, s_val2, 1.0])
+
+    t_val1, _ = runtime_utils.real_roots([9, -18, 5, -28, 12])
+    t_val2, = runtime_utils.real_roots([49, 63, 88, -128])
+    edge_t_vals = np.array([
+        0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+        t_val1, t_val2, 1.0])
+
+    x_val1 = 0.5 * (1.0 - s_val1) * (s_val1 + 2.0)
+    y_val1 = 0.5 * s_val1 * (3.0 - s_val1)
+    x_val2 = 0.5 * s_val2 * (1.0 - s_val2)
+    y_val2 = 1.0 - s_val2
+    points = np.array([
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [1.0, 0.0],
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [1.0, 0.0],
+        [0.0, 0.0],
+        [x_val1, y_val1],
+        [x_val2, y_val2],
+        [0.0, 0.0],
+    ])
+
+    edge_inds1 = [0, 0, 0, 0, 1, 1, 2, 1, 2, 2]
+    edge_inds2 = [0, 0, 1, 2, 1, 0, 0, 2, 2, 2]
+
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(45):
+        surface_surface_check(SURFACE1Q, SURFACE3Q,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
 
 def test_surfaces1L_and_3L():

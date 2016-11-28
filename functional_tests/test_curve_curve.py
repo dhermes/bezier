@@ -576,9 +576,10 @@ def test_curves11_and_26():
 
 
 def test_curves8_and_27():
-    s_val1, s_val2, _ = np.sort(np.roots([17920, -29760, 13512, -1691]))
+    s_val1, s_val2, _ = runtime_utils.real_roots(
+        [17920, -29760, 13512, -1691])
     s_vals = np.array([s_val2, s_val1])
-    t_val1, t_val2, _ = np.sort(np.roots([35, -60, 24, -2]))
+    t_val1, t_val2, _ = runtime_utils.real_roots([35, -60, 24, -2])
     t_vals = np.array([t_val2, t_val1])
     points = np.array([
         [s_val2, 0.375],
