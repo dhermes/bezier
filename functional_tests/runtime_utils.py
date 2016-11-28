@@ -14,13 +14,19 @@
 import argparse
 import contextlib
 import inspect
+import os
 import types
 
+import matplotlib.pyplot as plt
 import numpy as np
 import six
 
 
 EPS = 2.0**(-50)
+_FNL_TESTS_DIR = os.path.dirname(__file__)
+_DOCS_DIR = os.path.abspath(
+    os.path.join(_FNL_TESTS_DIR, '..', 'docs'))
+IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
 
 
 def _assert_close(approximated, exact, wiggle=8):
@@ -148,3 +154,14 @@ class Config(object):  # pylint: disable=too-few-public-methods
             self.running = running
             self.save_plot = save_plot
             self.current_test = None
+
+    def save_fig(self):
+        """Save the current figure.
+
+        Uses the ``current_test`` for the filename and puts it
+        in the ``${GIT_ROOT}/docs/images`` directory.
+        """
+        filename = '{}.png'.format(self.current_test)
+        path = os.path.join(IMAGES_DIR, filename)
+        plt.savefig(path, bbox_inches='tight')
+        print('Saved {}'.format(filename))

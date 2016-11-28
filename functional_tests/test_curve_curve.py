@@ -8,7 +8,6 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -23,11 +22,6 @@ from bezier import _intersection_helpers
 
 import runtime_utils
 
-
-_FNL_TESTS_DIR = os.path.dirname(__file__)
-_DOCS_DIR = os.path.abspath(
-    os.path.join(_FNL_TESTS_DIR, '..', 'docs'))
-IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
 
 CONFIG = runtime_utils.Config()
 # g1 = sympy.Matrix([[s, 2 * s * (1 - s)]])
@@ -247,10 +241,7 @@ def make_plots(curve1, curve2, points, ignore_save=False):
     ax.axis('scaled')
     if CONFIG.save_plot:
         if not ignore_save:
-            filename = '{}.png'.format(CONFIG.current_test)
-            path = os.path.join(IMAGES_DIR, filename)
-            plt.savefig(path, bbox_inches='tight')
-            print('Saved {}'.format(filename))
+            CONFIG.save_fig()
     else:
         plt.title(CONFIG.current_test)
         plt.show()

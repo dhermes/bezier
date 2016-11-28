@@ -417,8 +417,14 @@ def surface_surface_check(surface1, surface2):
     ax = surface1.plot(64)
     surface2.plot(64, ax=ax)
     plt.axis('scaled')
-    plt.title(CONFIG.current_test)
-    plt.show()
+
+    if CONFIG.save_plot:
+        CONFIG.save_fig()
+    else:
+        plt.title(CONFIG.current_test)
+        plt.show()
+
+    plt.close(ax.figure)
 
 
 def test_surfaces1Q_and_3Q():

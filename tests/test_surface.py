@@ -29,6 +29,8 @@ slow = pytest.mark.skipif(  # pylint: disable=invalid-name
 
 class TestSurface(unittest.TestCase):
 
+    REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
+
     @staticmethod
     def _get_target_class():
         from bezier import surface
@@ -556,13 +558,13 @@ class TestSurface(unittest.TestCase):
         self.assertIsInstance(surface_d, klass)
         self.assertTrue(np.all(surface_d._nodes == expected_d))
 
-    def _subdivide_points_check(self, surface, pts_exponent=5):
+    def _subdivide_points_check(self, surface):
         # Using the exponent means that we will divide by
         # 2**exp, which can be done without roundoff (for small
         # enough exponents).
         sub_surfaces = surface.subdivide()
 
-        ref_triangle = utils.ref_triangle_uniform_nodes(pts_exponent)
+        ref_triangle = self.REF_TRIANGLE
         quarter_a = 0.5 * ref_triangle
         quarters = [
             quarter_a,
