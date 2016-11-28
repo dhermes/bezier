@@ -8,14 +8,19 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
+import itertools
+
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 try:
     import seaborn  # pylint: disable=unused-import
 except ImportError:
     pass
+import six
 
 import bezier
+from bezier import _intersection_helpers
 
 import runtime_utils
 
@@ -407,10 +412,17 @@ SURFACE29Q = bezier.Surface(np.array([
 ]))
 
 
-def surface_surface_check(surface1, surface2):
-    assert surface1.is_valid
-    assert surface2.is_valid
+def edge_pairs(surface1, surface2):
+    edges1 = six.moves.map(
+        _intersection_helpers.Linearization.from_shape,
+        surface1.edges)
+    edges2 = six.moves.map(
+        _intersection_helpers.Linearization.from_shape,
+        surface2.edges)
+    return itertools.product(edges1, edges2)
 
+
+def make_plots(surface1, surface2):
     if not CONFIG.running:
         return
 
@@ -427,12 +439,25 @@ def surface_surface_check(surface1, surface2):
     plt.close(ax.figure)
 
 
+def surface_surface_check(surface1, surface2):
+    assert surface1.is_valid
+    assert surface2.is_valid
+
+    _intersection_helpers.all_intersections(
+        edge_pairs(surface1, surface2))
+
+    make_plots(surface1, surface2)
+
+
 def test_surfaces1Q_and_3Q():
     surface_surface_check(SURFACE1Q, SURFACE3Q)
 
 
 def test_surfaces1L_and_3L():
-    surface_surface_check(SURFACE1L, SURFACE3L)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE1L, SURFACE3L)
+
+    make_plots(SURFACE1L, SURFACE3L)
 
 
 def test_surfaces1Q_and_2Q():
@@ -440,11 +465,17 @@ def test_surfaces1Q_and_2Q():
 
 
 def test_surfaces10Q_and_18Q():
-    surface_surface_check(SURFACE10Q, SURFACE18Q)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE10Q, SURFACE18Q)
+
+    make_plots(SURFACE10Q, SURFACE18Q)
 
 
 def test_surfaces10Q_and_19Q():
-    surface_surface_check(SURFACE10Q, SURFACE19Q)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE10Q, SURFACE19Q)
+
+    make_plots(SURFACE10Q, SURFACE19Q)
 
 
 def test_surfaces3Q_and_4Q():
@@ -452,7 +483,10 @@ def test_surfaces3Q_and_4Q():
 
 
 def test_surfaces1Q_and_5L():
-    surface_surface_check(SURFACE1Q, SURFACE5L)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE1Q, SURFACE5L)
+
+    make_plots(SURFACE1Q, SURFACE5L)
 
 
 def test_surfaces3Q_and_5Q():
@@ -464,15 +498,24 @@ def test_surfaces1L_and_2L():
 
 
 def test_surfaces20Q_and_21Q():
-    surface_surface_check(SURFACE20Q, SURFACE21Q)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE20Q, SURFACE21Q)
+
+    make_plots(SURFACE20Q, SURFACE21Q)
 
 
 def test_surfaces4L_and_22Q():
-    surface_surface_check(SURFACE4L, SURFACE22Q)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE4L, SURFACE22Q)
+
+    make_plots(SURFACE4L, SURFACE22Q)
 
 
 def test_surfaces4L_and_23Q():
-    surface_surface_check(SURFACE4L, SURFACE23Q)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE4L, SURFACE23Q)
+
+    make_plots(SURFACE4L, SURFACE23Q)
 
 
 def test_surfaces6Q_and_7Q():
@@ -480,7 +523,10 @@ def test_surfaces6Q_and_7Q():
 
 
 def test_surfaces8Q_and_9Q():
-    surface_surface_check(SURFACE8Q, SURFACE9Q)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE8Q, SURFACE9Q)
+
+    make_plots(SURFACE8Q, SURFACE9Q)
 
 
 def test_surfaces4Q_and_10Q():
@@ -512,11 +558,17 @@ def test_surfaces24Q_and_25Q():
 
 
 def test_surfaces1L_and_6L():
-    surface_surface_check(SURFACE1L, SURFACE6L)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE1L, SURFACE6L)
+
+    make_plots(SURFACE1L, SURFACE6L)
 
 
 def test_surfaces26Q_and_27Q():
-    surface_surface_check(SURFACE26Q, SURFACE27Q)
+    with pytest.raises(NotImplementedError):
+        surface_surface_check(SURFACE26Q, SURFACE27Q)
+
+    make_plots(SURFACE26Q, SURFACE27Q)
 
 
 def test_surfaces1L_and_28Q():
