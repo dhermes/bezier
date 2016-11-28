@@ -21,21 +21,28 @@ import runtime_utils
 
 
 CONFIG = runtime_utils.Config()
-# F1 = sympy.Matrix([[s, t]])
+# F1 = sympy.Matrix([[
+#     (2 * s - t**2 + t) / 2,
+#     (s**2 + 2 * s * t - s + 2 * t) / 2,
+# ]])
 SURFACE1 = bezier.Surface(np.array([
     [0.0, 0.0],
-    [0.5, -0.2],
+    [0.5, -0.25],
     [1.0, 0.0],
-    [0.2, 0.5],
-    [0.7, 0.7],
+    [0.25, 0.5],
+    [0.75, 0.75],
     [0.0, 1.0],
 ]))
+# F2 = sympy.Matrix([[
+#     (3 * s**2 + 6 * s * t + 5 * s + 8 * t - 2) / 8,
+#     (3 * s**2 - 3 * t**2 - 11 * s + 3 * t + 6) / 8,
+# ]])
 SURFACE2 = bezier.Surface(np.array([
     [-0.25, 0.75],
-    [0.05, 0.05],
+    [0.0625, 0.0625],
     [0.75, -0.25],
-    [0.25, 0.95],
-    [0.95, 0.25],
+    [0.25, 0.9375],
+    [0.9375, 0.25],
     [0.75, 0.75],
 ]))
 SURFACE3 = bezier.Surface(np.array([
@@ -232,10 +239,14 @@ SURFACE28 = bezier.Surface(np.array([
     [-0.375 * SQ3, 0.375],
     [-0.5 * SQ3, -0.5],
 ]))
+# F29 = sympy.Matrix([[
+#     (21 * s - 21 * t + 4) / 8,
+#     (21 * s + 21 * t - 5) / 32,
+# ]])
 SURFACE29 = bezier.Surface(np.array([
-    [0.5, -0.125],
-    [3.625, 0.5],
-    [-2.625, 0.5],
+    [0.5, -0.15625],
+    [3.125, 0.5],
+    [-2.125, 0.5],
 ]))
 SURFACE30 = bezier.Surface(np.array([
     [0.75831883074726314, 0.79847468902187979],
