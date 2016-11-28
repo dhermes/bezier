@@ -21,6 +21,62 @@ import runtime_utils
 
 
 CONFIG = runtime_utils.Config()
+
+# F1L = sympy.Matrix([[s, t]])
+SURFACE1L = bezier.Surface(np.array([
+    [0.0, 0.0],
+    [1.0, 0.0],
+    [0.0, 1.0],
+]))
+# F2L = sympy.Matrix([[
+#     (9 * s + 2 * t - 1) / 8,
+#     (9 * s + 7 * t - 1) / 16,
+# ]])
+SURFACE2L = bezier.Surface(np.array([
+    [-0.125, -0.0625],
+    [1.0, 0.5],
+    [0.125, 0.375],
+]))
+# F3L = sympy.Matrix([[(4 * s + 1) / 4, (8 * t - 1) / 8]])
+SURFACE3L = bezier.Surface(np.array([
+    [0.25, -0.125],
+    [1.25, -0.125],
+    [0.25, 0.875],
+]))
+# F4L = sympy.Matrix([[5 * (2 * s + t - 1) / 4, 35 * t / 16]])
+SURFACE4L = bezier.Surface(np.array([
+    [-1.25, 0.0],
+    [1.25, 0.0],
+    [0.0, 2.1875],
+]))
+# F5L = sympy.Matrix([[
+#     (21 * s - 21 * t + 4) / 8,
+#     (21 * s + 21 * t - 5) / 32,
+# ]])
+SURFACE5L = bezier.Surface(np.array([
+    [0.5, -0.15625],
+    [3.125, 0.5],
+    [-2.125, 0.5],
+]))
+# F6L = sympy.Matrix([[(8 - 9 * t) / 8, 2 * s + t - 1]])
+SURFACE6L = bezier.Surface(np.array([
+    [1.0, -1.0],
+    [1.0, 1.0],
+    [-0.125, 0.0],
+]))
+# F7L = sympy.Matrix([[(1 - 9 * s - 9 * t) / 8, s - t]])
+SURFACE7L = bezier.Surface(np.array([
+    [0.125, 0.0],
+    [-1.0, 1.0],
+    [-1.0, -1.0],
+]))
+# F8L = sympy.Matrix([[s - t, s + t]])
+SURFACE8L = bezier.Surface(np.array([
+    [0.0, 0.0],
+    [1.0, 1.0],
+    [-1.0, 1.0],
+]))
+
 # F1 = sympy.Matrix([[
 #     (2 * s - t**2 + t) / 2,
 #     (s**2 + 2 * s * t - s + 2 * t) / 2,
@@ -187,21 +243,6 @@ SURFACE14 = bezier.Surface(np.array([
     [0.625, 0.4375],
     [0.5, 0.6875],
 ]))
-# F15 = sympy.Matrix([[s, t]])
-SURFACE15 = bezier.Surface(np.array([
-    [0.0, 0.0],
-    [1.0, 0.0],
-    [0.0, 1.0],
-]))
-# F16 = sympy.Matrix([[
-#     (9 * s + 2 * t - 1) / 8,
-#     (9 * s + 7 * t - 1) / 16,
-# ]])
-SURFACE16 = bezier.Surface(np.array([
-    [-0.125, -0.0625],
-    [1.0, 0.5],
-    [0.125, 0.375],
-]))
 # F17 = sympy.Matrix([[
 #     -2 * (s + t) * (t - 1),
 #     (7 * s + 8 * t) / 4,
@@ -262,12 +303,6 @@ SURFACE21 = bezier.Surface(np.array([
     [0.0, -0.5625],
     [0.5, -0.75],
 ]))
-# F22 = sympy.Matrix([[(4 * s + 1) / 4, (8 * t - 1) / 8]])
-SURFACE22 = bezier.Surface(np.array([
-    [0.25, -0.125],
-    [1.25, -0.125],
-    [0.25, 0.875],
-]))
 # F23 = sympy.Matrix([[
 #     -s**2 - s * t - 2 * t + 1, -s * (s + t - 2),
 # ]])
@@ -291,11 +326,6 @@ SURFACE24 = bezier.Surface(np.array([
     [-0.5, 0.875],
     [-0.5, 0.25],
 ]))
-SURFACE25 = bezier.Surface(np.array([
-    [-1.25, 0.0],
-    [1.25, 0.0],
-    [0.0, 2.1875],
-]))
 SURFACE26 = bezier.Surface(np.array([
     [-1.5625, -0.3125],
     [0.0, 0.3125],
@@ -311,15 +341,6 @@ SURFACE27 = bezier.Surface(np.array([
     [-0.75, 1.1875],
     [0.75, 1.1875],
     [0.0, 1.875],
-]))
-# F28 = sympy.Matrix([[
-#     (21 * s - 21 * t + 4) / 8,
-#     (21 * s + 21 * t - 5) / 32,
-# ]])
-SURFACE28 = bezier.Surface(np.array([
-    [0.5, -0.15625],
-    [3.125, 0.5],
-    [-2.125, 0.5],
 ]))
 # F29 = sympy.Matrix([[
 #     -(42 * s**2 - 10 * s * t - 33 * t**2 + 16 * s + 128 * t - 96) / 128,
@@ -344,18 +365,6 @@ SURFACE30 = bezier.Surface(np.array([
     [0.90625, 0.53125],
     [0.296875, 0.4375],
     [0.15625, 0.109375],
-]))
-# F31 = sympy.Matrix([[(8 - 9 * t) / 8, 2 * s + t - 1]])
-SURFACE31 = bezier.Surface(np.array([
-    [1.0, -1.0],
-    [1.0, 1.0],
-    [-0.125, 0.0],
-]))
-# F32 = sympy.Matrix([[(1 - 9 * s - 9 * t) / 8, s - t]])
-SURFACE32 = bezier.Surface(np.array([
-    [0.125, 0.0],
-    [-1.0, 1.0],
-    [-1.0, -1.0],
 ]))
 # F33 = sympy.Matrix([[s * (t + 1), t * (s + 1)]])
 SURFACE33 = bezier.Surface(np.array([
@@ -387,12 +396,6 @@ SURFACE35 = bezier.Surface(np.array([
     [0.625, 0.5],
     [0.1875, 0.0],
 ]))
-# F36 = sympy.Matrix([[s - t, s + t]])
-SURFACE36 = bezier.Surface(np.array([
-    [0.0, 0.0],
-    [1.0, 1.0],
-    [-1.0, 1.0],
-]))
 # F37 = sympy.Matrix([[
 #     (s - t) * (s + t + 9) / 8,
 #     (s**2 - 14 * s * t + t**2 + 17 * s + 17 * t - 8) / 8,
@@ -408,6 +411,9 @@ SURFACE37 = bezier.Surface(np.array([
 
 
 def surface_surface_check(surface1, surface2):
+    assert surface1.is_valid
+    assert surface2.is_valid
+
     if not CONFIG.running:
         return
 
@@ -422,8 +428,8 @@ def test_surfaces1_and_3():
     surface_surface_check(SURFACE1, SURFACE3)
 
 
-def test_surfaces15_and_22():
-    surface_surface_check(SURFACE15, SURFACE22)
+def test_surfaces1L_and_3L():
+    surface_surface_check(SURFACE1L, SURFACE3L)
 
 
 def test_surfaces1_and_2():
@@ -442,28 +448,28 @@ def test_surfaces3_and_4():
     surface_surface_check(SURFACE3, SURFACE4)
 
 
-def test_surfaces1_and_28():
-    surface_surface_check(SURFACE1, SURFACE28)
+def test_surfaces1_and_5L():
+    surface_surface_check(SURFACE1, SURFACE5L)
 
 
 def test_surfaces3_and_5():
     surface_surface_check(SURFACE3, SURFACE5)
 
 
-def test_surfaces15_and_16():
-    surface_surface_check(SURFACE15, SURFACE16)
+def test_surfaces1L_and_2L():
+    surface_surface_check(SURFACE1L, SURFACE2L)
 
 
 def test_surfaces23_and_24():
     surface_surface_check(SURFACE23, SURFACE24)
 
 
-def test_surfaces25_and_26():
-    surface_surface_check(SURFACE25, SURFACE26)
+def test_surfaces4L_and_26():
+    surface_surface_check(SURFACE4L, SURFACE26)
 
 
-def test_surfaces25_and_27():
-    surface_surface_check(SURFACE25, SURFACE27)
+def test_surfaces4L_and_27():
+    surface_surface_check(SURFACE4L, SURFACE27)
 
 
 def test_surfaces6_and_7():
@@ -502,20 +508,20 @@ def test_surfaces29_and_30():
     surface_surface_check(SURFACE29, SURFACE30)
 
 
-def test_surfaces31_and_32():
-    surface_surface_check(SURFACE31, SURFACE32)
+def test_surfaces6L_and_7L():
+    surface_surface_check(SURFACE6L, SURFACE7L)
 
 
 def test_surfaces33_and_34():
     surface_surface_check(SURFACE33, SURFACE34)
 
 
-def test_surfaces15_and_35():
-    surface_surface_check(SURFACE15, SURFACE35)
+def test_surfaces1L_and_35():
+    surface_surface_check(SURFACE1L, SURFACE35)
 
 
-def test_surfaces36_and_37():
-    surface_surface_check(SURFACE36, SURFACE37)
+def test_surfaces8L_and_37():
+    surface_surface_check(SURFACE8L, SURFACE37)
 
 
 if __name__ == '__main__':
