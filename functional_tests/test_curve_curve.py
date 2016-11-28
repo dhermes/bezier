@@ -168,6 +168,7 @@ CURVE22 = bezier.Curve(np.array([
     [-1.5625, 0.25],
     [1.5625, 0.5625],
 ]))
+# g23 = 5 * g8 + sympy.Matrix([[24, 21]]) / 8
 # g23 = sympy.Matrix([[10 * s + 6, 9]]) / 2
 CURVE23 = bezier.Curve(np.array([
     [3.0, 4.5],
@@ -228,6 +229,12 @@ CURVE29 = bezier.Curve(np.array([
 CURVE30 = bezier.Curve(np.array([
     [0.5, 0.5],
     [-0.25, 1.25],
+]))
+# g31 = 2 * g11 + sympy.Matrix([[1, 3]]) / 4
+# g31 = sympy.Matrix([[(48 * s + 1) / 4, (67 - 64 * s) / 4]])
+CURVE31 = bezier.Curve(np.array([
+    [0.25, 16.75],
+    [12.25, 0.75],
 ]))
 
 
@@ -612,6 +619,26 @@ def test_curves29_and_30():
         [0.0, 1.0],
     ])
     curve_curve_check(CURVE29, CURVE30, s_vals, t_vals, points)
+
+
+def test_curves8_and_23():
+    s_vals = np.zeros((0,))
+    t_vals = s_vals
+    points = np.zeros((0, 2))
+    with pytest.raises(NotImplementedError):
+        curve_curve_check(CURVE8, CURVE23, s_vals, t_vals, points)
+
+    make_plots(CURVE8, CURVE23, points)
+
+
+def test_curves11_and_31():
+    s_vals = np.zeros((0,))
+    t_vals = s_vals
+    points = np.zeros((0, 2))
+    with pytest.raises(NotImplementedError):
+        curve_curve_check(CURVE11, CURVE31, s_vals, t_vals, points)
+
+    make_plots(CURVE11, CURVE31, points)
 
 
 if __name__ == '__main__':
