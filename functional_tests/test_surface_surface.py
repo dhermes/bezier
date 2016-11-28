@@ -314,6 +314,10 @@ SURFACE24 = bezier.Surface(np.array([
     [-0.5, 0.875],
     [-0.5, 0.25],
 ]))
+# F26 = sympy.Matrix([[
+#     -5 * (2 * t - 5) * (2 * s + t - 1) / 16,
+#     -5 * (16 * s**2 + 16 * s * t + 2 * t**2 - 16 * s - 37 * t + 4) / 64,
+# ]])
 SURFACE26 = bezier.Surface(np.array([
     [-1.5625, -0.3125],
     [0.0, 0.3125],
@@ -322,6 +326,10 @@ SURFACE26 = bezier.Surface(np.array([
     [0.46875, 1.1328125],
     [0.0, 2.421875],
 ]))
+# F27 = sympy.Matrix([[
+#     (t + 2) * (2 * s + t - 1) / 2,
+#     (4 * s**2 + 4 * s * t - 3 * t**2 - 4 * s + 17 * t + 1) / 8,
+# ]])
 SURFACE27 = bezier.Surface(np.array([
     [-1.0, 0.125],
     [0.0, -0.125],
