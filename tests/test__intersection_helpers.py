@@ -815,6 +815,51 @@ class Test_from_linearized(unittest.TestCase):
         curve2 = bezier.Curve(nodes2)
         lin2 = _intersection_helpers.Linearization(curve2)
 
+        intersections = []
+        self.assertIsNone(
+            self._call_function_under_test(lin1, lin2, intersections))
+        self.assertEqual(intersections, [])
+
+    def test_same_line_intersection(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        nodes1 = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1)
+        lin1 = _intersection_helpers.Linearization(curve1)
+
+        nodes2 = np.array([
+            [2.0, 2.0],
+            [3.0, 3.0],
+        ])
+        curve2 = bezier.Curve(nodes2)
+        lin2 = _intersection_helpers.Linearization(curve2)
+
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(lin1, lin2, [])
+
+    def test_parallel_non_degree_one(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        nodes1 = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1)
+        lin1 = _intersection_helpers.Linearization(curve1)
+
+        nodes2 = np.array([
+            [2.0, 2.0],
+            [2.5009765625, 2.5009765625],
+            [3.0, 3.0],
+        ])
+        curve2 = bezier.Curve(nodes2)
+        lin2 = _intersection_helpers.Linearization(curve2)
+
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(lin1, lin2, [])
 

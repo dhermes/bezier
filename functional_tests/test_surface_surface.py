@@ -532,10 +532,7 @@ def test_surfaces1Q_and_3Q():
 
 
 def test_surfaces1L_and_3L():
-    with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE1L, SURFACE3L)
-
-    make_plots(SURFACE1L, SURFACE3L)
+    surface_surface_check(SURFACE1L, SURFACE3L)
 
 
 def test_surfaces1Q_and_2Q():
@@ -636,17 +633,11 @@ def test_surfaces24Q_and_25Q():
 
 
 def test_surfaces1L_and_6L():
-    with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE1L, SURFACE6L)
-
-    make_plots(SURFACE1L, SURFACE6L)
+    surface_surface_check(SURFACE1L, SURFACE6L)
 
 
 def test_surfaces26Q_and_27Q():
-    with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE26Q, SURFACE27Q)
-
-    make_plots(SURFACE26Q, SURFACE27Q)
+    surface_surface_check(SURFACE26Q, SURFACE27Q)
 
 
 def test_surfaces1L_and_28Q():

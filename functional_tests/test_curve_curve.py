@@ -625,20 +625,14 @@ def test_curves8_and_23():
     s_vals = np.zeros((0,))
     t_vals = s_vals
     points = np.zeros((0, 2))
-    with pytest.raises(NotImplementedError):
-        curve_curve_check(CURVE8, CURVE23, s_vals, t_vals, points)
-
-    make_plots(CURVE8, CURVE23, points)
+    curve_curve_check(CURVE8, CURVE23, s_vals, t_vals, points)
 
 
 def test_curves11_and_31():
     s_vals = np.zeros((0,))
     t_vals = s_vals
     points = np.zeros((0, 2))
-    with pytest.raises(NotImplementedError):
-        curve_curve_check(CURVE11, CURVE31, s_vals, t_vals, points)
-
-    make_plots(CURVE11, CURVE31, points)
+    curve_curve_check(CURVE11, CURVE31, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':

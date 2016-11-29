@@ -649,12 +649,19 @@ def from_linearized(left, right, intersections):
     s, t, success = segment_intersection(
         left.start_node, left.end_node,
         right.start_node, right.end_node)
-    if not success:
+    if success:
+        if not _in_interval(s, _WIGGLE_START, _WIGGLE_END):
+            return
+        if not _in_interval(t, _WIGGLE_START, _WIGGLE_END):
+            return
+    else:
+        # Handle special case where the curves are actually lines.
+        if left.error == 0.0 and right.error == 0.0:
+            if _parallel_different(
+                    left.start_node, left.end_node, right.start_node):
+                return
+
         raise NotImplementedError('Line segments parallel.')
-    if not _in_interval(s, _WIGGLE_START, _WIGGLE_END):
-        return
-    if not _in_interval(t, _WIGGLE_START, _WIGGLE_END):
-        return
 
     # Now, promote `s` and `t` onto the original curves.
     orig_s = (1 - s) * left.curve.start + s * left.curve.end
