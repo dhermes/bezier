@@ -517,7 +517,7 @@ compute:
    >>> curve1.intersect(curve2)
    Traceback (most recent call last):
      ...
-   NotImplementedError: Delta_0 x Delta_1 = 0 not supported
+   NotImplementedError: Line segments parallel.
 
 This failure comes from the fact that the linear approximations
 of the curves near the point of intersection are parallel.

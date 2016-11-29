@@ -450,7 +450,7 @@ def _cross_product(vec0, vec1):
     return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]
 
 
-def segment_intersection(start0, end0, start1, end1, _fail=True):
+def segment_intersection(start0, end0, start1, end1):
     r"""Determine the intersection of two line segments.
 
     Assumes each line is parametric
@@ -517,7 +517,7 @@ def segment_intersection(start0, end0, start1, end1, _fail=True):
        >>> end0 = np.array([[2.0, 2.0]])
        >>> start1 = np.array([[-1.0, 2.0]])
        >>> end1 = np.array([[1.0, 0.0]])
-       >>> s, t = segment_intersection(start0, end0, start1, end1)
+       >>> s, t, _ = segment_intersection(start0, end0, start1, end1)
        >>> s
        0.25
        >>> t
@@ -557,7 +557,7 @@ def segment_intersection(start0, end0, start1, end1, _fail=True):
        \end{align*}
 
     we should be able to determine that the lines don't intersect, but
-    have yet to implement it:
+    this function is not meant for that check:
 
     .. doctest:: segment-intersect
        :options: +NORMALIZE_WHITESPACE
@@ -566,10 +566,9 @@ def segment_intersection(start0, end0, start1, end1, _fail=True):
        >>> end0 = np.array([[0.0, 1.0]])
        >>> start1 = np.array([[-1.0, 3.0]])
        >>> end1 = np.array([[3.0, -1.0]])
-       >>> segment_intersection(start0, end0, start1, end1)
-       Traceback (most recent call last):
-         ...
-       NotImplementedError: Delta_0 x Delta_1 = 0 not supported
+       >>> _, _, success = segment_intersection(start0, end0, start1, end1)
+       >>> success
+       False
 
     Args:
         start0 (numpy.ndarray): A 1x2 NumPy array that is the start
@@ -580,33 +579,23 @@ def segment_intersection(start0, end0, start1, end1, _fail=True):
             vector :math:`S_1` of the parametric line :math:`L_1(s)`.
         end1 (numpy.ndarray): A 1x2 NumPy array that is the end
             vector :math:`E_1` of the parametric line :math:`L_1(s)`.
-        _fail (bool): Flag indicating if an exception should be raised
-            when an unimplemented situation is encountered. If
-            :data:`False`, then a non-sense answer will be returned.
 
     Returns:
-        Tuple[float, float]: Pair of :math:`s_{\ast}` and :math:`t_{\ast}`
-        such that the lines intersect:
-        :math:`L_0\left(s_{\ast}\right) = L_1\left(t_{\ast}\right)`.
-
-    Raises:
-        NotImplementedError: If the lines are parallel (or one of the lines
-            is degenerate). This manifests via
-            :math:`\Delta_0 \times \Delta_1 = 0`.
+        Tuple[float, float, bool]: Pair of :math:`s_{\ast}` and
+        :math:`t_{\ast}` such that the lines intersect:
+        :math:`L_0\left(s_{\ast}\right) = L_1\left(t_{\ast}\right)` and then
+        a boolean indicating if an intersection was found.
     """
     delta0 = end0 - start0
     delta1 = end1 - start1
     cross_d0_d1 = _cross_product(delta0, delta1)
     if cross_d0_d1 == 0.0:
-        if _fail:
-            raise NotImplementedError('Delta_0 x Delta_1 = 0 not supported')
-        else:
-            return np.nan, np.nan
+        return None, None, False
     else:
         start_delta = start1 - start0
         s = _cross_product(start_delta, delta1) / cross_d0_d1
         t = _cross_product(start_delta, delta0) / cross_d0_d1
-        return s, t
+        return s, t, True
 
 
 def from_linearized(left, right, intersections):
@@ -619,10 +608,15 @@ def from_linearized(left, right, intersections):
         left (Linearization): First curve being intersected.
         right (Linearization): Second curve being intersected.
         intersections (list): A list of existing intersections.
+
+    Raises:
+        NotImplementedError: If the segment intersection fails.
     """
-    s, t = segment_intersection(
+    s, t, success = segment_intersection(
         left.start_node, left.end_node,
         right.start_node, right.end_node)
+    if not success:
+        raise NotImplementedError('Line segments parallel.')
     if not _in_interval(s, _WIGGLE_START, _WIGGLE_END):
         return
     if not _in_interval(t, _WIGGLE_START, _WIGGLE_END):
@@ -760,34 +754,37 @@ def bbox_line_intersect(nodes, line_start, line_end):
             _in_interval(line_end[0, 1], bottom, top)):
         return BoxIntersectionType.intersection
 
-    # NOTE: We pass ``_fail=False`` to ``segment_intersection`` below.
-    #       At first, this may appear to "ignore" some potential
-    #       intersections of parallel lines. However, no intersections
-    #       will be missed. If parallel lines don't overlap, then
-    #       there is nothing to miss. If they do overlap, then either
-    #       the segment will have endpoints on the box (already covered)
-    #       or the segment will contain an entire side of the box, which
-    #       will force it to intersect the 3 edges that meet at the
-    #       two ends of those sides. The parallel edge will be skipped,
-    #       but the other two will be covered.
+    # NOTE: We allow ``segment_intersection`` to fail below (i.e.
+    #       ``success=False``). At first, this may appear to "ignore"
+    #       some potential intersections of parallel lines. However,
+    #       no intersections will be missed. If parallel lines don't
+    #       overlap, then there is nothing to miss. If they do overlap,
+    #       then either the segment will have endpoints on the box (already
+    #       covered by the checks above) or the segment will contain an
+    #       entire side of the box, which will force it to intersect the 3
+    #       edges that meet at the two ends of those sides. The parallel
+    #       edge will be skipped, but the other two will be covered.
 
     # Bottom Edge
-    s_bottom, t_bottom = segment_intersection(
+    s_bottom, t_bottom, success = segment_intersection(
         np.array([[left, bottom]]), np.array([[right, bottom]]),
-        line_start, line_end, _fail=False)
-    if _in_interval(s_bottom, 0.0, 1.0) and _in_interval(t_bottom, 0.0, 1.0):
+        line_start, line_end)
+    if (success and _in_interval(s_bottom, 0.0, 1.0) and
+            _in_interval(t_bottom, 0.0, 1.0)):
         return BoxIntersectionType.intersection
     # Right Edge
-    s_right, t_right = segment_intersection(
+    s_right, t_right, success = segment_intersection(
         np.array([[right, bottom]]), np.array([[right, top]]),
-        line_start, line_end, _fail=False)
-    if _in_interval(s_right, 0.0, 1.0) and _in_interval(t_right, 0.0, 1.0):
+        line_start, line_end)
+    if (success and _in_interval(s_right, 0.0, 1.0) and
+            _in_interval(t_right, 0.0, 1.0)):
         return BoxIntersectionType.intersection
     # Top Edge
-    s_top, t_top = segment_intersection(
+    s_top, t_top, success = segment_intersection(
         np.array([[right, top]]), np.array([[left, top]]),
-        line_start, line_end, _fail=False)
-    if _in_interval(s_top, 0.0, 1.0) and _in_interval(t_top, 0.0, 1.0):
+        line_start, line_end)
+    if (success and _in_interval(s_top, 0.0, 1.0) and
+            _in_interval(t_top, 0.0, 1.0)):
         return BoxIntersectionType.intersection
     # NOTE: We skip the "last" edge. This is because any curve
     #       that doesn't have an endpoint on a curve must cross

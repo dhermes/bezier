@@ -443,10 +443,9 @@ def make_plots(surface1, surface2):
 
 def check_intersections(s_vals, t_vals, points, intersections,
                         edges1, edges2):
-    num_vals = len(s_vals)
-    assert len(t_vals) == num_vals
-    assert len(points) == num_vals
-    assert len(intersections) == num_vals
+    assert len(t_vals) == len(s_vals)
+    assert len(points) == len(s_vals)
+    assert len(intersections) == len(s_vals)
 
     info = six.moves.zip(
         intersections, s_vals, t_vals, points, edges1, edges2)

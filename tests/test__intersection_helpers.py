@@ -658,10 +658,12 @@ class Test_segment_intersection(unittest.TestCase):
         direction0 = np.array([[3.0, 0.5]])
         direction1 = np.array([[-2.0, 1.0]])
         # D0 x D1 == 4.0, so there will be no round-off in answer.
-        computed_s, computed_t = self._helper(
+        computed_s, computed_t, success = self._helper(
             intersection, s_val, direction0, t_val, direction1)
+
         self.assertEqual(computed_s, s_val)
         self.assertEqual(computed_t, t_val)
+        self.assertTrue(success)
 
     def test_parallel(self):
         intersection = np.array([[0.0, 0.0]])
@@ -669,21 +671,13 @@ class Test_segment_intersection(unittest.TestCase):
         t_val = 0.5
         direction0 = np.array([[0.0, 1.0]])
         direction1 = np.array([[0.0, 2.0]])
-        with self.assertRaises(NotImplementedError):
-            self._helper(intersection, s_val, direction0, t_val, direction1)
-
-    def test_parallel_no_fail(self):
-        intersection = np.array([[0.0, 0.0]])
-        s_val = 0.5
-        t_val = 0.5
-        direction0 = np.array([[0.0, 1.0]])
-        direction1 = np.array([[0.0, 2.0]])
-        computed_s, computed_t = self._helper(
+        computed_s, computed_t, success = self._helper(
             intersection, s_val,
-            direction0, t_val, direction1, _fail=False)
+            direction0, t_val, direction1)
 
-        self.assertTrue(np.isnan(computed_s))
-        self.assertTrue(np.isnan(computed_t))
+        self.assertIsNone(computed_s)
+        self.assertIsNone(computed_t)
+        self.assertFalse(success)
 
 
 class Test_from_linearized(unittest.TestCase):
