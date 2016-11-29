@@ -244,7 +244,8 @@ def make_plots(curve1, curve2, points, ignore_save=False):
 
     ax = curve1.plot(64)
     curve2.plot(64, ax=ax)
-    ax.scatter(points[:, 0], points[:, 1], color='black')
+    ax.plot(points[:, 0], points[:, 1],
+            marker='o', linestyle='None', color='black')
     ax.axis('scaled')
     if CONFIG.save_plot:
         if not ignore_save:

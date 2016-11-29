@@ -8,6 +8,76 @@
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
+Install
+-------
+
+.. code-block:: console
+
+   $ pip install --upgrade bezier
+
+Getting Started
+---------------
+
+For example, to create a curve:
+
+.. code-block:: python
+
+   >>> nodes1 = np.array([
+   ...     [0.0, 0.0],
+   ...     [0.5, 1.0],
+   ...     [1.0, 0.0],
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1)
+
+The intersection (points) between two curves can
+also be determined:
+
+.. code-block:: python
+
+   >>> nodes2 = np.array([
+   ...     [0.0, 0.0],
+   ...     [0.25, 2.0],
+   ...     [0.5, -2.0],
+   ...     [0.75, 2.0],
+   ...     [1.0, 0.0],
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2)
+   >>> intersections = curve1.intersect(curve2)
+   >>> intersections
+   array([[ 0.311...,  0.428...],
+          [ 0.688...,  0.428...],
+          [ 0.      ,  0.      ],
+          [ 1.      ,  0.      ]])
+
+and then we can plot these curves (along with their
+intersections):
+
+.. code-block:: python
+
+   >>> import matplotlib.pyplot as plt
+   >>> import seaborn
+   >>>
+   >>> ax = curve1.plot(num_pts=256)
+   >>> curve2.plot(num_pts=256, ax=ax)
+   >>> ax.plot(intersections[:, 0], intersections[:, 1],
+   ...         marker='o', linestyle='None', color='black')
+   >>> ax.axis('scaled')
+   >>> ax.set_xlim(-0.125, 1.125)
+   >>> ax.set_ylim(-0.0625, 0.625)
+   >>> plt.show()
+
+.. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_curves1_and_13.png
+   :align: center
+
+Development
+-----------
+
+To work on adding a feature or to run the functional tests,
+See the `DEVELOPMENT doc`_ for more information on how to get
+started.
+
+.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/master/DEVELOPMENT.rst
+
 License
 -------
 
