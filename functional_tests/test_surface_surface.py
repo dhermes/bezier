@@ -714,25 +714,62 @@ def test_surfaces1L_and_2L():
 
 
 def test_surfaces20Q_and_21Q():
+    # NOTE: There are only 2 intersections, but one of them occurs at
+    #       a corner of each surface, so gets quadruple counted.
+    edge_s_vals = np.array([0.0, 0.0, 1.0, 1.0, 0.5])
+    edge_t_vals = np.array([0.0, 1.0, 0.0, 1.0, 4.0 / 5.0])
+    points = np.array([
+        [1.0, 0.0],
+        [1.0, 0.0],
+        [1.0, 0.0],
+        [1.0, 0.0],
+        [-0.5, 0.5],
+    ])
+    edge_inds1 = [0, 0, 2, 2, 1]
+    edge_inds2 = [0, 2, 0, 2, 1]
+
     with pytest.raises(NotImplementedError):
         surface_surface_check(SURFACE20Q, SURFACE21Q,
-                              None, None, None, None, None)
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
     make_plots(SURFACE20Q, SURFACE21Q)
 
 
 def test_surfaces4L_and_22Q():
+    edge_s_vals = np.array([0.5, 0.5, 0.5])
+    edge_t_vals = np.array([0.5, 0.5, 0.5])
+    points = np.array([
+        [0.0, 0.0],
+        [0.625, 1.09375],
+        [-0.625, 1.09375],
+    ])
+    edge_inds1 = [0, 1, 2]
+    edge_inds2 = [0, 1, 2]
+
     with pytest.raises(NotImplementedError):
         surface_surface_check(SURFACE4L, SURFACE22Q,
-                              None, None, None, None, None)
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
     make_plots(SURFACE4L, SURFACE22Q)
 
 
 def test_surfaces4L_and_23Q():
+    edge_s_vals = np.array([0.5, 0.5, 0.5])
+    edge_t_vals = np.array([0.5, 0.5, 0.5])
+    points = np.array([
+        [0.0, 0.0],
+        [0.625, 1.09375],
+        [-0.625, 1.09375],
+    ])
+    edge_inds1 = [0, 1, 2]
+    edge_inds2 = [0, 1, 2]
+
     with pytest.raises(NotImplementedError):
         surface_surface_check(SURFACE4L, SURFACE23Q,
-                              None, None, None, None, None)
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
     make_plots(SURFACE4L, SURFACE23Q)
 
