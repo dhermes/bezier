@@ -10,6 +10,10 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+try:
+    import seaborn  # pylint: disable=unused-import
+except ImportError:
+    pass
 
 from bezier import _intersection_helpers
 
@@ -24,6 +28,33 @@ UNIT_SQUARE = np.array([
 ])
 
 
+def make_plot(segment):
+    figure = plt.figure()
+    ax = figure.gca()
+
+    line, = ax.plot([0, 1], [0, 1], alpha=0.0)
+    ax.fill_between([0, 1], [0, 0], [1, 1],
+                    alpha=0.5, color=line.get_color())
+    line, = ax.plot(segment[:, 0], segment[:, 1])
+    ax.plot(segment[0, 0], segment[0, 1], marker='o',
+            linestyle='None', color=line.get_color())
+    left_, bottom_ = np.min(segment, axis=0)
+    right_, top_ = np.max(segment, axis=0)
+    ax.fill_between([left_, right_], [bottom_, bottom_], [top_, top_],
+                    alpha=0.5, color=line.get_color())
+    ax.axis('scaled')
+    ax.set_xlim(-1.125, 2.125)
+    ax.set_ylim(-1.125, 2.125)
+
+    if CONFIG.save_plot:
+        CONFIG.save_fig()
+    else:
+        plt.title(CONFIG.current_test)
+        plt.show()
+
+    plt.close(figure)
+
+
 def run_it(segment, expected=None):
     if expected is None:
         expected = _intersection_helpers.BoxIntersectionType.intersection
@@ -35,20 +66,7 @@ def run_it(segment, expected=None):
     if not CONFIG.running:
         return
 
-    line, = plt.plot([0, 1], [0, 1], alpha=0.0)
-    plt.fill_between([0, 1], [0, 0], [1, 1],
-                     alpha=0.5, color=line.get_color())
-    line, = plt.plot(segment[:, 0], segment[:, 1])
-    plt.plot(segment[0, 0], segment[0, 1], marker='o',
-             linestyle='None', color=line.get_color())
-    left_, bottom_ = np.min(segment, axis=0)
-    right_, top_ = np.max(segment, axis=0)
-    plt.fill_between([left_, right_], [bottom_, bottom_], [top_, top_],
-                     alpha=0.5, color=line.get_color())
-    plt.axis('scaled')
-    plt.xlim(-1.125, 2.125)
-    plt.ylim(-1.125, 2.125)
-    plt.show()
+    make_plot(segment)
 
 
 def test_outside():
