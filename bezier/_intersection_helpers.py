@@ -368,13 +368,13 @@ def newton_refine(s, curve1, t, curve2):
             -1 \\ 2 \end{array}\right].
         \end{align*}
 
-    .. testsetup::
+    .. testsetup:: newton-refine
 
        import numpy as np
        import bezier
        from bezier._intersection_helpers import newton_refine
 
-    .. doctest::
+    .. doctest:: newton-refine
 
        >>> nodes1 = np.array([
        ...     [0.0, 0.0],
@@ -393,6 +393,81 @@ def newton_refine(s, curve1, t, curve2):
        -9.0
        >>> 64.0 * (new_t - t)
        18.0
+
+    For "typical" curves, we converge to a solution quadratically.
+    This means that the number of correct digits doubles every
+    iteration (until machine precision is reached).
+
+    .. doctest:: newton-refine
+
+       >>> curve1 = bezier.Curve(np.array([
+       ...     [0.0, 0.0],
+       ...     [0.25, 2.0],
+       ...     [0.5, -2.0],
+       ...     [0.75, 2.0],
+       ...     [1.0, 0.0],
+       ... ]))
+       >>> curve2 = bezier.Curve(np.array([
+       ...     [0.0, 1.0],
+       ...     [0.25, 0.5],
+       ...     [0.5, 0.5],
+       ...     [0.75, 0.5],
+       ...     [1.0, 0.0],
+       ... ]))
+       >>> # The expected intersection is the only real root of
+       >>> # 28 s^3 - 30 s^2 + 9 s - 1.
+       >>> rts = np.roots([28, -30, 9, -1])
+       >>> expected, = rts[rts.imag == 0.0].real
+       >>> s, t = 0.625, 0.625
+       >>> np.log2(abs(expected - s))
+       -4.399...
+       >>> s, t = newton_refine(s, curve1, t, curve2)
+       >>> np.log2(abs(expected - s))
+       -7.901...
+       >>> s, t = newton_refine(s, curve1, t, curve2)
+       >>> np.log2(abs(expected - s))
+       -16.010...
+       >>> s, t = newton_refine(s, curve1, t, curve2)
+       >>> np.log2(abs(expected - s))
+       -32.110...
+       >>> s, t = newton_refine(s, curve1, t, curve2)
+       >>> np.log2(abs(expected - s))
+       -50.0
+
+    However, when the intersection occurs at a point of tangency,
+    the convergence becomes linear. This means that the number of
+    correct digits added each iteration is roughly constant.
+
+    .. doctest:: newton-refine
+
+       >>> curve1 = bezier.Curve(np.array([
+       ...     [0.0, 0.0],
+       ...     [0.5, 1.0],
+       ...     [1.0, 0.0],
+       ... ]))
+       >>> curve2 = bezier.Curve(np.array([
+       ...     [0.0, 0.5],
+       ...     [1.0, 0.5],
+       ... ]))
+       >>> expected = 0.5
+       >>> s, t = 0.375, 0.375
+       >>> np.log2(abs(expected - s))
+       -3.0
+       >>> s, t = newton_refine(s, curve1, t, curve2)
+       >>> np.log2(abs(expected - s))
+       -4.0
+       >>> s, t = newton_refine(s, curve1, t, curve2)
+       >>> np.log2(abs(expected - s))
+       -5.0
+       >>> s, t = newton_refine(s, curve1, t, curve2)
+       >>> np.log2(abs(expected - s))
+       -6.0
+       >>> s, t = newton_refine(s, curve1, t, curve2)
+       >>> np.log2(abs(expected - s))
+       -7.0
+       >>> s, t = newton_refine(s, curve1, t, curve2)
+       >>> np.log2(abs(expected - s))
+       -8.0
 
     Args:
         s (float): Parameter of a near-intersection along ``curve1``.
@@ -595,7 +670,7 @@ def segment_intersection(start0, end0, start1, end1):
 def parallel_different(start0, end0, start1, end1):
     r"""Checks if two parallel lines ever meet.
 
-    Meant as a back-up when :func:`segment_intersection` fails.
+    Meant as a back-up when :func:`.segment_intersection` fails.
 
     .. note::
 
@@ -607,7 +682,7 @@ def parallel_different(start0, end0, start1, end1):
     they are parallel but on **different** lines, then there is a
     **guarantee** of no intersection.
 
-    In :func:`segment_intersection`, we utilized the normal form of the
+    In :func:`.segment_intersection`, we utilized the normal form of the
     lines (via the cross product):
 
     .. math::
