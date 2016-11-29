@@ -532,7 +532,18 @@ def test_surfaces1Q_and_3Q():
 
 
 def test_surfaces1L_and_3L():
-    surface_surface_check(SURFACE1L, SURFACE3L)
+    edge_s_vals = np.array([0.25, 0.75])
+    edge_t_vals = np.array([0.875, 0.125])
+    points = np.array([
+        [0.25, 0.0],
+        [0.25, 0.75],
+    ])
+    edge_inds1 = [0, 1]
+    edge_inds2 = [2, 2]
+
+    surface_surface_check(SURFACE1L, SURFACE3L,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces1Q_and_2Q():
@@ -585,7 +596,21 @@ def test_surfaces3Q_and_5Q():
 
 
 def test_surfaces1L_and_2L():
-    surface_surface_check(SURFACE1L, SURFACE2L)
+    edge_s_vals = np.array([0.0, 1.0, 1.3125, 3.0, 2.53125]) / 3.0
+    edge_t_vals = np.array([3.0, 19.0, 13.5, 3.0, 13.5]) / 27.0
+    points = np.array([
+        [0.0, 0.0],
+        [2.0, 1.0],
+        [1.6875, 1.3125],
+        [0.0, 0.0],
+        [0.0, 0.46875],
+    ]) / 3.0
+    edge_inds1 = [0, 1, 1, 2, 2]
+    edge_inds2 = [0, 0, 1, 0, 2]
+
+    surface_surface_check(SURFACE1L, SURFACE2L,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces20Q_and_21Q():
@@ -654,7 +679,18 @@ def test_surfaces24Q_and_25Q():
 
 
 def test_surfaces1L_and_6L():
-    surface_surface_check(SURFACE1L, SURFACE6L)
+    edge_s_vals = np.array([0.25, 0.75])
+    edge_t_vals = np.array([0.75, 0.25])
+    points = np.array([
+        [0.25, 0.0],
+        [0.0, 0.25],
+    ])
+    edge_inds1 = [0, 2]
+    edge_inds2 = [2, 0]
+
+    surface_surface_check(SURFACE1L, SURFACE6L,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces26Q_and_27Q():
