@@ -598,10 +598,7 @@ def test_surfaces6Q_and_7Q():
 
 
 def test_surfaces8Q_and_9Q():
-    with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE8Q, SURFACE9Q)
-
-    make_plots(SURFACE8Q, SURFACE9Q)
+    surface_surface_check(SURFACE8Q, SURFACE9Q)
 
 
 def test_surfaces4Q_and_10Q():

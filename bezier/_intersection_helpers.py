@@ -507,7 +507,6 @@ def segment_intersection(start0, end0, start1, end1):
     .. testsetup:: segment-intersect
 
        import numpy as np
-       import bezier
        from bezier._intersection_helpers import segment_intersection
 
     .. doctest:: segment-intersect
@@ -522,28 +521,6 @@ def segment_intersection(start0, end0, start1, end1):
        0.25
        >>> t
        0.75
-
-    In the case that :math:`\Delta_0 \times \Delta_1 = 0`, the segments
-    are parallel. In the case that they are parallel and lie on the
-    **exact** same line, finding a unique intersection is not possible.
-    However, if they are parallel but on **different** lines, then there is a
-    **guarantee** of no intersection.
-
-    Above, we utilized the normal form of the lines (via the cross product):
-
-    .. math::
-
-       \begin{align*}
-       L_0(s) \times \Delta_0 &\equiv S_0 \times \Delta_0 \\
-       L_1(t) \times \Delta_1 &\equiv S_1 \times \Delta_1
-       \end{align*}
-
-    So, we can detect if :math:`S_1` is on the first line by
-    checking if
-
-    .. math::
-
-       S_0 \times \Delta_0 \stackrel{?}{=} S_1 \times \Delta_0.
 
     Taking the parallel (but different) lines
 
@@ -569,6 +546,23 @@ def segment_intersection(start0, end0, start1, end1):
        >>> _, _, success = segment_intersection(start0, end0, start1, end1)
        >>> success
        False
+
+    Instead, we use :func:`.parallel_different`:
+
+    .. testsetup:: segment-intersect-continued
+
+       import numpy as np
+       from bezier._intersection_helpers import parallel_different
+
+       start0 = np.array([[1.0, 0.0]])
+       end0 = np.array([[0.0, 1.0]])
+       start1 = np.array([[-1.0, 3.0]])
+       end1 = np.array([[3.0, -1.0]])
+
+    .. doctest:: segment-intersect-continued
+
+       >>> parallel_different(start0, end0, start1, end1)
+       True
 
     Args:
         start0 (numpy.ndarray): A 1x2 NumPy array that is the start
@@ -598,20 +592,115 @@ def segment_intersection(start0, end0, start1, end1):
         return s, t, True
 
 
-def _parallel_different(start0, end0, start1):
-    r"""Checks if two parallel lines are different.
+def parallel_different(start0, end0, start1, end1):
+    r"""Checks if two parallel lines ever meet.
 
-    We can detect if :math:`S_1` is on the first line by
+    Meant as a back-up when :func:`segment_intersection` fails.
+
+    .. note::
+
+       This function assumes but never verifies that the lines
+       are parallel.
+
+    In the case that the segments are parallel and lie on the **exact**
+    same line, finding a unique intersection is not possible. However, if
+    they are parallel but on **different** lines, then there is a
+    **guarantee** of no intersection.
+
+    In :func:`segment_intersection`, we utilized the normal form of the
+    lines (via the cross product):
+
+    .. math::
+
+       \begin{align*}
+       L_0(s) \times \Delta_0 &\equiv S_0 \times \Delta_0 \\
+       L_1(t) \times \Delta_1 &\equiv S_1 \times \Delta_1
+       \end{align*}
+
+    So, we can detect if :math:`S_1` is on the first line by
     checking if
 
     .. math::
 
        S_0 \times \Delta_0 \stackrel{?}{=} S_1 \times \Delta_0.
 
+    If it is not on the first line, then we are done, the
+    segments don't meet:
+
+    .. testsetup:: parallel-different
+
+       import numpy as np
+       from bezier._intersection_helpers import parallel_different
+
+    .. doctest:: parallel-different
+
+       >>> # Line: y = 1
+       >>> start0 = np.array([[0.0, 1.0]])
+       >>> end0 = np.array([[1.0, 1.0]])
+       >>> # Vertical shift up: y = 2
+       >>> start1 = np.array([[-1.0, 2.0]])
+       >>> end1 = np.array([[3.0, 2.0]])
+       >>> parallel_different(start0, end0, start1, end1)
+       True
+
+    If :math:`S_1` **is** on the first line, we want to check that
+    :math:`S_1` and :math:`E_1` define parameters outside of
+    :math:`\left[0, 1\right]`. To compute these parameters:
+
+    .. math::
+
+       L_1(t) = S_0 + s_{\ast} \Delta_0 \Longrightarrow
+           s_{\ast} = \frac{\Delta_0^T \left(
+               L_1(t) - S_0\right)}{\Delta_0^T \Delta_0}.
+
+    For example, the segments :math:`\left[0, 1\right]` and
+    :math:`\left[\frac{3}{2}, 2\right]` (via
+    :math:`S_1 = S_0 + \frac{3}{2} \Delta_0` and
+    :math:`E_1 = S_0 + 2 \Delta_0`) don't meet:
+
+    .. doctest:: parallel-different
+
+       >>> start0 = np.array([[0.0, 1.0]])
+       >>> delta0 = np.array([[-1.0, 2.0]])
+       >>> end0 = start0 + 1.0 * delta0
+       >>> start1 = start0 + 1.5 * delta0
+       >>> end1 = start0 + 2.0 * delta0
+       >>> parallel_different(start0, end0, start1, end1)
+       True
+
+    but if the segments, overlap, like :math:`\left[0, 1\right]` and
+    :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
+
+    .. testsetup:: parallel-different-continued
+
+       import numpy as np
+       from bezier._intersection_helpers import parallel_different
+
+       start0 = np.array([[0.0, 1.0]])
+       delta0 = np.array([[-1.0, 2.0]])
+       end0 = start0 + 1.0 * delta0
+
+    .. doctest:: parallel-different-continued
+
+       >>> start1 = start0 - 1.0 * delta0
+       >>> end1 = start0 + 0.5 * delta0
+       >>> parallel_different(start0, end0, start1, end1)
+       False
+
+    Similarly, if the second interval completely contains the first,
+    the segments meet:
+
+    .. doctest:: parallel-different-continued
+
+       >>> start1 = start0 + 3.0 * delta0
+       >>> end1 = start0 - 2.0 * delta0
+       >>> parallel_different(start0, end0, start1, end1)
+       False
+
     .. note::
 
        This method doesn't currently allow wiggle room around the
-       expected value, i.e. the two values must be bitwise identical.
+       desired value, i.e. the two values must be bitwise identical.
        However, the most "correct" version of this function likely
        should allow for some round off.
 
@@ -622,6 +711,8 @@ def _parallel_different(start0, end0, start1):
             vector :math:`E_0` of the parametric line :math:`L_0(s)`.
         start1 (numpy.ndarray): A 1x2 NumPy array that is the start
             vector :math:`S_1` of the parametric line :math:`L_1(s)`.
+        end1 (numpy.ndarray): A 1x2 NumPy array that is the end
+            vector :math:`E_1` of the parametric line :math:`L_1(s)`.
 
     Returns:
         bool: Indicating if the lines are different.
@@ -629,7 +720,27 @@ def _parallel_different(start0, end0, start1):
     delta0 = end0 - start0
     line0_const = _cross_product(start0, delta0)
     start1_against = _cross_product(start1, delta0)
-    return line0_const != start1_against
+    if line0_const != start1_against:
+        return True
+
+    (norm0_sq,), = delta0.dot(delta0.T)
+    (start_numer,), = (start1 - start0).dot(delta0.T)
+    #      0 <= start_numer / norm0_sq <= 1
+    # <==> 0 <= start_numer            <= norm0_sq
+    if _in_interval(start_numer, 0.0, norm0_sq):
+        return False
+
+    (end_numer,), = (end1 - start0).dot(delta0.T)
+    #      0 <= end_numer / norm0_sq <= 1
+    # <==> 0 <= end_numer            <= norm0_sq
+    if _in_interval(end_numer, 0.0, norm0_sq):
+        return False
+
+    # We know neither the start or end parameters are in [0, 1], but
+    # they may contain [0, 1] between them.
+    min_val, max_val = sorted([start_numer, end_numer])
+    # So we make sure that 0 isn't between them.
+    return not _in_interval(0.0, min_val, max_val)
 
 
 def from_linearized(left, right, intersections):
@@ -657,8 +768,8 @@ def from_linearized(left, right, intersections):
     else:
         # Handle special case where the curves are actually lines.
         if left.error == 0.0 and right.error == 0.0:
-            if _parallel_different(
-                    left.start_node, left.end_node, right.start_node):
+            if parallel_different(left.start_node, left.end_node,
+                                  right.start_node, right.end_node):
                 return
 
         raise NotImplementedError('Line segments parallel.')
