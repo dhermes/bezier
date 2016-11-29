@@ -587,11 +587,27 @@ def test_surfaces1Q_and_2Q():  # pylint: disable=too-many-locals
 
 
 def test_surfaces10Q_and_18Q():
-    edge_s_vals = np.zeros((0,))
-    edge_t_vals = edge_s_vals
-    points = np.zeros((0, 2))
-    edge_inds1 = []
-    edge_inds2 = []
+    # NOTE: There are only truly 3 intersections, but they all
+    #       occur at corners of one (or each surface). One occurs
+    #       at a corner of both hence is quadruple counted. The
+    #       other two are on a corner of one but edge of the other
+    #       hence get double counted.
+    edge_s_vals = np.array(
+        [1.0, 1.0, 0.0, 0.0, 0.25, 0.25, 1.0, 0.0])
+    edge_t_vals = np.array(
+        [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.75, 0.75])
+    points = np.array([
+        [0.5, -0.75],
+        [0.5, -0.75],
+        [0.5, -0.75],
+        [0.5, -0.75],
+        [0.75, 0.09375],
+        [0.75, 0.09375],
+        [0.0, 0.0],
+        [0.0, 0.0],
+    ])
+    edge_inds1 = [1, 1, 2, 2, 0, 0, 0, 1]
+    edge_inds2 = [1, 2, 1, 2, 0, 2, 0, 0]
 
     with pytest.raises(NotImplementedError):
         surface_surface_check(SURFACE10Q, SURFACE18Q,
@@ -602,11 +618,23 @@ def test_surfaces10Q_and_18Q():
 
 
 def test_surfaces10Q_and_19Q():
-    edge_s_vals = np.zeros((0,))
-    edge_t_vals = edge_s_vals
-    points = np.zeros((0, 2))
-    edge_inds1 = []
-    edge_inds2 = []
+    # NOTE: There are only truly 2 intersections, but they both
+    #       occur at corners of each surface, so they both
+    #       get quadruple counted.
+    edge_s_vals = np.array([1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
+    edge_t_vals = np.array([0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0])
+    points = np.array([
+        [0.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 0.0],
+        [0.5, -0.75],
+        [0.5, -0.75],
+        [0.5, -0.75],
+        [0.5, -0.75],
+    ])
+    edge_inds1 = [0, 0, 1, 1, 1, 1, 2, 2]
+    edge_inds2 = [0, 2, 0, 2, 1, 2, 1, 2]
 
     with pytest.raises(NotImplementedError):
         surface_surface_check(SURFACE10Q, SURFACE19Q,
