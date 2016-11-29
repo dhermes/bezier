@@ -680,6 +680,59 @@ class Test_segment_intersection(unittest.TestCase):
         self.assertFalse(success)
 
 
+class Test__parallel_different(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(start0, delta0, start1):
+        from bezier import _intersection_helpers
+
+        end0 = start0 + delta0
+        return _intersection_helpers._parallel_different(
+            start0, end0, start1)
+
+    def test_both_nonzero_same_line(self):
+        start0 = np.array([[0.0, 0.0]])
+        delta0 = np.array([[3.0, 4.0]])
+        start1 = np.array([[6.0, 8.0]])
+        self.assertFalse(
+            self._call_function_under_test(start0, delta0, start1))
+
+    def test_both_nonzero_different_line(self):
+        start0 = np.array([[0.0, 0.0]])
+        delta0 = np.array([[3.0, 4.0]])
+        start1 = np.array([[4.5, 4.5]])
+        self.assertTrue(
+            self._call_function_under_test(start0, delta0, start1))
+
+    def test_zero_x_same_line(self):
+        start0 = np.array([[2.0, 0.0]])
+        delta0 = np.array([[0.0, 1.0]])
+        start1 = np.array([[2.0, 8.0]])
+        self.assertFalse(
+            self._call_function_under_test(start0, delta0, start1))
+
+    def test_zero_x_different_line(self):
+        start0 = np.array([[3.0, 2.0]])
+        delta0 = np.array([[0.0, -1.25]])
+        start1 = np.array([[0.0, 0.0]])
+        self.assertTrue(
+            self._call_function_under_test(start0, delta0, start1))
+
+    def test_zero_y_same_line(self):
+        start0 = np.array([[5.0, 10.25]])
+        delta0 = np.array([[4.0, 0.0]])
+        start1 = np.array([[2.0, 10.25]])
+        self.assertFalse(
+            self._call_function_under_test(start0, delta0, start1))
+
+    def test_zero_y_different_line(self):
+        start0 = np.array([[-13.0, 2.0]])
+        delta0 = np.array([[0.125, 0.0]])
+        start1 = np.array([[-13.0, 0.0]])
+        self.assertTrue(
+            self._call_function_under_test(start0, delta0, start1))
+
+
 class Test_from_linearized(unittest.TestCase):
 
     @staticmethod
@@ -743,6 +796,27 @@ class Test_from_linearized(unittest.TestCase):
         self.assertIsNone(
             self._call_function_under_test(lin1, lin2, intersections))
         self.assertEqual(intersections, [])
+
+    def test_parallel_intersection(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        nodes1 = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1)
+        lin1 = _intersection_helpers.Linearization(curve1)
+
+        nodes2 = np.array([
+            [0.0, 1.0],
+            [1.0, 2.0],
+        ])
+        curve2 = bezier.Curve(nodes2)
+        lin2 = _intersection_helpers.Linearization(curve2)
+
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(lin1, lin2, [])
 
 
 class Test__add_intersection(unittest.TestCase):

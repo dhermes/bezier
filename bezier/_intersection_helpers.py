@@ -533,17 +533,17 @@ def segment_intersection(start0, end0, start1, end1):
 
     .. math::
 
-        \begin{align*}
-        L_0(s) \times \Delta_0 &\equiv S_0 \times \Delta_0 \\
-        L_1(t) \times \Delta_1 &\equiv S_1 \times \Delta_1
-        \end{align*}
+       \begin{align*}
+       L_0(s) \times \Delta_0 &\equiv S_0 \times \Delta_0 \\
+       L_1(t) \times \Delta_1 &\equiv S_1 \times \Delta_1
+       \end{align*}
 
     So, we can detect if :math:`S_1` is on the first line by
     checking if
 
     .. math::
 
-        S_0 \times \Delta_0 \stackrel{?}{=} S_1 \times \Delta_0.
+       S_0 \times \Delta_0 \stackrel{?}{=} S_1 \times \Delta_0.
 
     Taking the parallel (but different) lines
 
@@ -596,6 +596,40 @@ def segment_intersection(start0, end0, start1, end1):
         s = _cross_product(start_delta, delta1) / cross_d0_d1
         t = _cross_product(start_delta, delta0) / cross_d0_d1
         return s, t, True
+
+
+def _parallel_different(start0, end0, start1):
+    r"""Checks if two parallel lines are different.
+
+    We can detect if :math:`S_1` is on the first line by
+    checking if
+
+    .. math::
+
+       S_0 \times \Delta_0 \stackrel{?}{=} S_1 \times \Delta_0.
+
+    .. note::
+
+       This method doesn't currently allow wiggle room around the
+       expected value, i.e. the two values must be bitwise identical.
+       However, the most "correct" version of this function likely
+       should allow for some round off.
+
+    Args:
+        start0 (numpy.ndarray): A 1x2 NumPy array that is the start
+            vector :math:`S_0` of the parametric line :math:`L_0(s)`.
+        end0 (numpy.ndarray): A 1x2 NumPy array that is the end
+            vector :math:`E_0` of the parametric line :math:`L_0(s)`.
+        start1 (numpy.ndarray): A 1x2 NumPy array that is the start
+            vector :math:`S_1` of the parametric line :math:`L_1(s)`.
+
+    Returns:
+        bool: Indicating if the lines are different.
+    """
+    delta0 = end0 - start0
+    line0_const = _cross_product(start0, delta0)
+    start1_against = _cross_product(start1, delta0)
+    return line0_const != start1_against
 
 
 def from_linearized(left, right, intersections):
