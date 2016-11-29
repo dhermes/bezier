@@ -6,18 +6,20 @@ dependencies:
   override:
     - pip install --upgrade pip tox tox-pyenv
     # latest as of Oct. 31, 2016: 2.7.12, 3.4.5, 3.5.2
-    - pyenv local 2.7.12 3.4.4 3.5.2
+    - pyenv local 2.7.12 3.4.4 3.5.2 pypy-4.0.1
 
 test:
   override:
     - tox -e py27
     - tox -e py34
     - tox -e py35
+    - tox -e pypy
     - tox -e cover
     - tox -e docs
     - tox -e doctest
     - tox -e lint
     - tox -e functional
+    - tox -e functional-pypy
   post:
     - .tox/cover/bin/pip install coveralls
     - .tox/cover/bin/coveralls
