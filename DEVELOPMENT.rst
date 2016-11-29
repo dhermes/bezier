@@ -11,15 +11,15 @@ Adding Features
 
 In order to add a feature to ``bezier``:
 
-1. **Discuss**: `File an issue`_ to notify maintainers of the
+#. **Discuss**: `File an issue`_ to notify maintainers of the
    proposed changes (i.e. just sending a large PR with a finished
    feature may catch maintainers off guard)
 
-2. **Add tests**: The feature must work fully on the following
+#. **Add tests**: The feature must work fully on the following
    CPython versions: 2.7, 3.4 and 3.5 on both UNIX and Windows.
    In addition, the feature should have 100% line coverage.
 
-3. **Documentation**: The feature must (should) be documented with
+#. **Documentation**: The feature must (should) be documented with
    helpful `doctest`_ examples wherever relevant.
 
 .. _File an issue: https://github.com/dhermes/bezier/issues/new

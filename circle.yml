@@ -13,7 +13,7 @@ test:
     - tox -e py27
     - tox -e py34
     - tox -e py35
-    - tox -e pypy
+    - tox -e pypy -- --ignore-slow
     - tox -e cover
     - tox -e docs
     - tox -e doctest

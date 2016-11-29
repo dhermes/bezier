@@ -16,6 +16,10 @@ import unittest
 
 import mock
 import numpy as np
+try:
+    import scipy.integrate as SCIPY_INT
+except ImportError:  # pragma: NO COVER
+    SCIPY_INT = None
 
 
 class Test_make_subdivision_matrix(unittest.TestCase):
@@ -118,6 +122,7 @@ class Test_compute_length(unittest.TestCase):
         length = self._call_function_under_test(nodes, 1)
         self.assertEqual(length, 5.0)
 
+    @unittest.skipIf(SCIPY_INT is None, 'SciPy not installed')
     def test_quadratic(self):
         nodes = np.array([
             [0.0, 0.0],
