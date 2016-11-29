@@ -616,7 +616,31 @@ def test_surfaces10Q_and_19Q():
 
 
 def test_surfaces3Q_and_4Q():
-    surface_surface_check(SURFACE3Q, SURFACE4Q)
+    _, s_val2 =  runtime_utils.real_roots([25, -130, 321, -88, -96])
+    _, s_val3 = runtime_utils.real_roots([49, 14, 145, 1008, -468])
+    edge_s_vals = np.array([0.5, s_val2, s_val3])
+
+    t_val2, _ = runtime_utils.real_roots([100, 360, 712, -2988, 169])
+    _, t_val3 = runtime_utils.real_roots([49, -532, 412, 37200, -26352])
+    edge_t_vals = np.array([0.5, t_val2, t_val3])
+
+    x_val2 = 0.125 * (s_val2 - 1.0) * (5.0 * s_val2 - 8.0)
+    x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
+    y_val2 = 0.125 * (1.0 - s_val2) * (7.0 * s_val2 + 8.0)
+    y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
+    points = np.array([
+        [0.5, 0.125],
+        [x_val2, y_val2],
+        [x_val3, y_val3],
+    ])
+    edge_inds1 = [0, 2, 2]
+    edge_inds2 = [0, 0, 1]
+
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(36):
+        surface_surface_check(SURFACE3Q, SURFACE4Q,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
 
 def test_surfaces1Q_and_5L():
@@ -627,7 +651,30 @@ def test_surfaces1Q_and_5L():
 
 
 def test_surfaces3Q_and_5Q():
-    surface_surface_check(SURFACE3Q, SURFACE5Q)
+    s_val3, _ = runtime_utils.real_roots([25, -130, 167, -302, 57])
+    s_val4, _ = runtime_utils.real_roots([25, -130, 901, -1212, 279])
+    edge_s_vals = np.array([0.25, 0.25, s_val3, s_val4])
+
+    _, t_val3 = runtime_utils.real_roots([25, -20, -1064, 7800, -6012])
+    t_val4, _ = runtime_utils.real_roots([25, -2340, 58908, -105840, 11664])
+    edge_t_vals = np.array([0.0, 1.0, t_val3, t_val4])
+
+    x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
+    x_val4 = 0.125 * (s_val4 - 1.0) * (5.0 * s_val4 - 8.0)
+    y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
+    y_val4 = 0.125 * (1.0 - s_val4) * (7.0 * s_val4 + 8.0)
+    points = np.array([
+        [0.25, 0.09375],
+        [0.25, 0.09375],
+        [x_val3, y_val3],
+        [x_val4, y_val4],
+    ])
+    edge_inds1 = [0, 0, 2, 2]
+    edge_inds2 = [0, 2, 1, 2]
+
+    surface_surface_check(SURFACE3Q, SURFACE5Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces1L_and_2L():
@@ -670,7 +717,49 @@ def test_surfaces4L_and_23Q():
 
 
 def test_surfaces6Q_and_7Q():
-    surface_surface_check(SURFACE6Q, SURFACE7Q)
+    s_val3, _ = runtime_utils.real_roots([1, -13, 2])
+    _, s_val4 = runtime_utils.real_roots([7, 5, -10])
+    s_val5, s_val6 = runtime_utils.real_roots([4, 120, 1592, -1908, 489])
+    s_val7, _ = runtime_utils.real_roots([64, -1232, 297])
+    _, s_val8 = runtime_utils.real_roots([576, 784, -871])
+    edge_s_vals = np.array([3.0 / 17.0, 14.0 / 17.0, s_val3, s_val4,
+                            s_val5, s_val6, s_val7, s_val8])
+
+    t_val3, _ = runtime_utils.real_roots([1, -102, 25])
+    _, t_val4 = runtime_utils.real_roots([49, 68, -76])
+    t_val6, t_val5 = runtime_utils.real_roots([4, -104, 1504, -1548, 369])
+    t_val7, _ = runtime_utils.real_roots([4, -20, 3])
+    _, t_val8 = runtime_utils.real_roots([12, 4, -13])
+    edge_t_vals = np.array([14.0 / 17.0, 3.0 / 17.0, t_val3, t_val4,
+                            t_val5, t_val6, t_val7, t_val8])
+
+    x_val3 = 0.25 * s_val3 * (3.0 + s_val3)
+    x_val4 = 0.25 * s_val4 * (3.0 + s_val4)
+    x_val5 = 0.25 * s_val5 * (3.0 + s_val5)
+    x_val6 = 0.25 * s_val6 * (3.0 + s_val6)
+    y_val3 = 0.75 * s_val3 * (1.0 - s_val3)
+    y_val4 = 0.75 * s_val4 * (1.0 - s_val4)
+    y_val5 = 0.75 * s_val5 * (1.0 - s_val5)
+    y_val6 = 0.75 * s_val6 * (1.0 - s_val6)
+
+    points = np.array([
+        [31.0 / 34.0, 3.0 / 17.0],
+        [3.0 / 34.0, 3.0 / 17.0],
+        [x_val3, y_val3],
+        [x_val4, y_val4],
+        [x_val5, y_val5],
+        [x_val6, y_val6],
+        [1.0 - 0.5 * s_val7, s_val7],
+        [0.5 - 0.5 * s_val8, 1.0 - s_val8],
+    ])
+    edge_inds1 = [1, 2, 0, 0, 0, 0, 1, 2]
+    edge_inds2 = [2, 1, 1, 2, 0, 0, 0, 0]
+
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(25):
+        surface_surface_check(SURFACE6Q, SURFACE7Q,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
 
 def test_surfaces8Q_and_9Q():
