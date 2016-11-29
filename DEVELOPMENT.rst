@@ -53,9 +53,9 @@ on every build and uploaded to `coveralls.io`_ via the
 ``COVERALLS_REPO_TOKEN`` environment variable set in
 the `CircleCI environment`_.
 
-.. line coverage: https://coveralls.io/github/dhermes/bezier
-.. coveralls.io: https://coveralls.io/
-.. CircleCI environment: https://circleci.com/gh/dhermes/bezier/edit#env-vars
+.. _line coverage: https://coveralls.io/github/dhermes/bezier
+.. _coveralls.io: https://coveralls.io/
+.. _CircleCI environment: https://circleci.com/gh/dhermes/bezier/edit#env-vars
 
 Slow Tests
 ==========
@@ -85,4 +85,4 @@ is needed to upload) the ``TWINE_USERNAME`` and ``TWINE_PASSWORD``
 environment variables are set in the `CircleCI environment`_.
 
 .. _PyPI: https://pypi.python.org/pypi/bezier
-.. twine: https://packaging.python.org/distributing/
+.. _twine: https://packaging.python.org/distributing/
