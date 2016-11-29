@@ -529,16 +529,21 @@ def segment_intersection(start0, end0, start1, end1, _fail=True):
     However, if they are parallel but on **different** lines, then there is a
     **guarantee** of no intersection.
 
-    We can detect this case, by trying to project :math:`S_1` onto the
-    first line:
+    Above, we utilized the normal form of the lines (via the cross product):
 
     .. math::
 
-        S_1 = S_0 + s \Delta_0.
+        \begin{align*}
+        L_0(s) \times \Delta_0 &\equiv S_0 \times \Delta_0 \\
+        L_1(t) \times \Delta_1 &\equiv S_1 \times \Delta_1
+        \end{align*}
 
-    The :math:`x` and :math:`y` components of this give us two (potentially
-    different) values of :math:`s`. If they are different, then we know
-    the two lines are different.
+    So, we can detect if :math:`S_1` is on the first line by
+    checking if
+
+    .. math::
+
+        S_0 \times \Delta_0 \stackrel{?}{=} S_1 \times \Delta_0.
 
     Taking the parallel (but different) lines
 
