@@ -18,6 +18,9 @@ test:
     - tox -e doctest
     - tox -e lint
     - tox -e functional
+  post:
+    - .tox/cover/bin/pip install coveralls
+    - .tox/cover/bin/coveralls
 
 general:
   branches:
