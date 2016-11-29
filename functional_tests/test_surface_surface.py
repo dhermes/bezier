@@ -468,9 +468,8 @@ def check_intersections(s_vals, t_vals, points, intersections,
         CONFIG.assert_close(point_on2[1], point[1])
 
 
-def surface_surface_check(surface1, surface2, s_vals=None,
-                          t_vals=None, points=None,
-                          edge_inds1=None, edge_inds2=None):
+def surface_surface_check(surface1, surface2, s_vals, t_vals,
+                          points, edge_inds1, edge_inds2):
     assert surface1.is_valid
     assert surface2.is_valid
 
@@ -616,7 +615,7 @@ def test_surfaces10Q_and_19Q():
 
 
 def test_surfaces3Q_and_4Q():
-    _, s_val2 =  runtime_utils.real_roots([25, -130, 321, -88, -96])
+    _, s_val2 = runtime_utils.real_roots([25, -130, 321, -88, -96])
     _, s_val3 = runtime_utils.real_roots([49, 14, 145, 1008, -468])
     edge_s_vals = np.array([0.5, s_val2, s_val3])
 
@@ -644,8 +643,27 @@ def test_surfaces3Q_and_4Q():
 
 
 def test_surfaces1Q_and_5L():
+    s_val4, _ = runtime_utils.real_roots([1, -3, 1])
+    edge_s_vals = np.array([0.75, 0.25, 0.5, s_val4])
+
+    t_val4, _ = runtime_utils.real_roots([1764, -3108, 1049])
+    edge_t_vals = np.array([2.0 / 21.0, 19.0 / 21.0, 4.0 / 7.0, t_val4])
+
+    x_val4 = 0.5 * (1.0 - s_val4) * (s_val4 + 2.0)
+    y_val4 = 0.5 * s_val4 * (3.0 - s_val4)
+    points = np.array([
+        [0.75, -0.09375],
+        [0.25, -0.09375],
+        [0.125, 0.5],
+        [x_val4, y_val4],
+    ])
+    edge_inds1 = [0, 0, 2, 1]
+    edge_inds2 = [0, 2, 1, 1]
+
     with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE1Q, SURFACE5L)
+        surface_surface_check(SURFACE1Q, SURFACE5L,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
     make_plots(SURFACE1Q, SURFACE5L)
 
@@ -697,21 +715,24 @@ def test_surfaces1L_and_2L():
 
 def test_surfaces20Q_and_21Q():
     with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE20Q, SURFACE21Q)
+        surface_surface_check(SURFACE20Q, SURFACE21Q,
+                              None, None, None, None, None)
 
     make_plots(SURFACE20Q, SURFACE21Q)
 
 
 def test_surfaces4L_and_22Q():
     with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE4L, SURFACE22Q)
+        surface_surface_check(SURFACE4L, SURFACE22Q,
+                              None, None, None, None, None)
 
     make_plots(SURFACE4L, SURFACE22Q)
 
 
 def test_surfaces4L_and_23Q():
     with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE4L, SURFACE23Q)
+        surface_surface_check(SURFACE4L, SURFACE23Q,
+                              None, None, None, None, None)
 
     make_plots(SURFACE4L, SURFACE23Q)
 
