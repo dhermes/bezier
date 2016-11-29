@@ -285,7 +285,7 @@ numbers, we can compute the intersection to machine precision:
 .. image:: images/test_curves21_and_22.png
    :align: center
 
-For higher degree, intersections, the error starts to get a little
+For higher degree intersections, the error starts to get a little
 larger.
 
 .. doctest:: intersect-15-25

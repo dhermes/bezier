@@ -23,3 +23,12 @@ general:
   branches:
     ignore:
       - gh-pages
+
+deployment:
+  release:
+    tag: /.*/
+    owner: dhermes
+    commands:
+      - python setup.py sdist bdist_wheel
+      - pip install --upgrade twine
+      - twine upload dist/*
