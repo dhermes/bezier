@@ -121,7 +121,7 @@ functional test case:
 and there is a `curve-curve doc`_ which captures most of the cases in the
 functional tests.
 
-.. curve-curve doc: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
+.. _curve-curve doc: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
 
 A surface-surface intersection functional test case:
 
@@ -179,8 +179,8 @@ Python 3.5).
 .. _PEP257: https://www.python.org/dev/peps/pep-0257/
 .. _Google style: http://google.github.io/styleguide/pyguide.html#Comments__body
 .. _Napoleon: https://sphinxcontrib-napoleon.readthedocs.io/en/latest/
-.. sphinx-docstring-typing: https://pypi.python.org/pypi/sphinx-docstring-typing
-.. type annotation: https://docs.python.org/3/library/typing.html
+.. _sphinx-docstring-typing: https://pypi.python.org/pypi/sphinx-docstring-typing
+.. _type annotation: https://docs.python.org/3/library/typing.html
 
 *************
 Documentation
