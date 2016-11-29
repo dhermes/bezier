@@ -539,9 +539,9 @@ def test_curves1_and_24():
         np.linspace(0.0, 0.75, 2**8 + 1))
     assert np.all(left_vals == right_vals)
 
-    s_vals = np.empty((0,))
-    t_vals = np.empty((0,))
-    points = np.empty((0, 2))
+    s_vals = np.zeros((0,))
+    t_vals = s_vals
+    points = np.zeros((0, 2))
     with pytest.raises(NotImplementedError):
         curve_curve_check(CURVE1, CURVE24, s_vals, t_vals, points)
 

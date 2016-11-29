@@ -540,15 +540,31 @@ def test_surfaces1Q_and_2Q():
 
 
 def test_surfaces10Q_and_18Q():
+    edge_s_vals = np.zeros((0,))
+    edge_t_vals = edge_s_vals
+    points = np.zeros((0, 2))
+    edge_inds1 = []
+    edge_inds2 = []
+
     with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE10Q, SURFACE18Q)
+        surface_surface_check(SURFACE10Q, SURFACE18Q,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
     make_plots(SURFACE10Q, SURFACE18Q)
 
 
 def test_surfaces10Q_and_19Q():
+    edge_s_vals = np.zeros((0,))
+    edge_t_vals = edge_s_vals
+    points = np.zeros((0, 2))
+    edge_inds1 = []
+    edge_inds2 = []
+
     with pytest.raises(NotImplementedError):
-        surface_surface_check(SURFACE10Q, SURFACE19Q)
+        surface_surface_check(SURFACE10Q, SURFACE19Q,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
     make_plots(SURFACE10Q, SURFACE19Q)
 
@@ -618,7 +634,15 @@ def test_surfaces10Q_and_17Q():
 
 
 def test_surfaces3Q_and_14Q():
-    surface_surface_check(SURFACE3Q, SURFACE14Q)
+    edge_s_vals = np.zeros((0,))
+    edge_t_vals = edge_s_vals
+    points = np.zeros((0, 2))
+    edge_inds1 = []
+    edge_inds2 = []
+
+    surface_surface_check(SURFACE3Q, SURFACE14Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces15Q_and_16Q():
@@ -634,7 +658,15 @@ def test_surfaces1L_and_6L():
 
 
 def test_surfaces26Q_and_27Q():
-    surface_surface_check(SURFACE26Q, SURFACE27Q)
+    edge_s_vals = np.zeros((0,))
+    edge_t_vals = edge_s_vals
+    points = np.zeros((0, 2))
+    edge_inds1 = []
+    edge_inds2 = []
+
+    surface_surface_check(SURFACE26Q, SURFACE27Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces1L_and_28Q():
