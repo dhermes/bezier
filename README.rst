@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|build| |pypi| |versions| |docs|
+|build| |coverage| |pypi| |versions| |docs|
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -93,3 +93,5 @@ Apache 2.0 - See `LICENSE`_ for more information.
    :target: https://pypi.python.org/pypi/bezier
 .. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
    :target: https://pypi.python.org/pypi/bezier
+.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch=master
+   :target: https://coveralls.io/github/dhermes/bezier?branch=master

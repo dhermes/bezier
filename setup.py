@@ -30,6 +30,7 @@ README = TEMPLATE.format(
     versions='',
     versions_img='',
     rtd_version=VERSION,
+    coveralls_branch=VERSION,
 )
 
 REQUIREMENTS = (
