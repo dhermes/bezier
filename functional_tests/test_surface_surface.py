@@ -547,7 +547,7 @@ def test_surfaces1L_and_3L():
                           edge_inds1, edge_inds2)
 
 
-def test_surfaces1Q_and_2Q():
+def test_surfaces1Q_and_2Q():  # pylint: disable=too-many-locals
     s_val1, _ = runtime_utils.real_roots([3, -21, 10])
     _, s_val2 = runtime_utils.real_roots([12, -24, 0, 140, -105])
     s_val3, _ = runtime_utils.real_roots([12, -72, 56, -100, 23])
@@ -776,7 +776,7 @@ def test_surfaces4L_and_23Q():
     make_plots(SURFACE4L, SURFACE23Q, points)
 
 
-def test_surfaces6Q_and_7Q():
+def test_surfaces6Q_and_7Q():  # pylint: disable=too-many-locals
     s_val3, _ = runtime_utils.real_roots([1, -13, 2])
     _, s_val4 = runtime_utils.real_roots([7, 5, -10])
     s_val5, s_val6 = runtime_utils.real_roots([4, 120, 1592, -1908, 489])
