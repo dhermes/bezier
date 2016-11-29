@@ -763,23 +763,90 @@ def test_surfaces6Q_and_7Q():
 
 
 def test_surfaces8Q_and_9Q():
-    surface_surface_check(SURFACE8Q, SURFACE9Q)
+    s_val2, s_val3 = runtime_utils.real_roots([28, -24, 1])
+    edge_s_vals = np.array([3.0 / 14.0, s_val2, s_val3, 13.0 / 14.0])
+
+    t_val3, t_val2 = runtime_utils.real_roots([28, -32, 5])
+    edge_t_vals = np.array([1.0 / 14.0, t_val2, t_val3, 11.0 / 14.0])
+
+    x_val2 = (1.0 - s_val2) * (1.0 + 7.0 * s_val2)
+    x_val3 = (1.0 - s_val3) * (1.0 + 7.0 * s_val3)
+    y_val2 = s_val2 * (8.0 - 7.0 * s_val2)
+    y_val3 = s_val3 * (8.0 - 7.0 * s_val3)
+    points = np.array([
+        [55.0 / 28.0, 39.0 / 28.0],
+        [x_val2, y_val2],
+        [x_val3, y_val3],
+        [15.0 / 28.0, 39.0 / 28.0],
+    ])
+    edge_inds1 = [1, 1, 1, 1]
+    edge_inds2 = [2, 2, 2, 2]
+
+    surface_surface_check(SURFACE8Q, SURFACE9Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces4Q_and_10Q():
-    surface_surface_check(SURFACE4Q, SURFACE10Q)
+    # NOTE: This intersection is at a point of tangency.
+    edge_s_vals = np.array([0.5])
+    edge_t_vals = np.array([0.5])
+    points = np.array([
+        [0.5, 0.125],
+    ])
+    edge_inds1 = [0]
+    edge_inds2 = [0]
+    surface_surface_check(SURFACE4Q, SURFACE10Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces11Q_and_12Q():
-    surface_surface_check(SURFACE11Q, SURFACE12Q)
+    s_val1, s_val2 = runtime_utils.real_roots([8, -8, 1])
+    edge_s_vals = np.array([s_val1, s_val2])
+    edge_t_vals = np.array([s_val2, s_val1])
+
+    points = np.array([
+        [s_val1, 0.125],
+        [s_val2, 0.125],
+    ])
+    edge_inds1 = [0, 0]
+    edge_inds2 = [0, 0]
+    surface_surface_check(SURFACE11Q, SURFACE12Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces3Q_and_13Q():
-    surface_surface_check(SURFACE3Q, SURFACE13Q)
+    # NOTE: This intersection is at a point of tangency.
+    edge_s_vals = np.array([0.5])
+    edge_t_vals = np.array([0.5])
+    points = np.array([
+        [0.5, 0.125],
+    ])
+    edge_inds1 = [0]
+    edge_inds2 = [0]
+    surface_surface_check(SURFACE3Q, SURFACE13Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces10Q_and_17Q():
-    surface_surface_check(SURFACE10Q, SURFACE17Q)
+    # NOTE: There is only truly 1 intersection, but it occurs at
+    #       a corner of each surface, so gets quadruple counted.
+    edge_s_vals = np.array([1.0, 1.0, 0.0, 0.0])
+    edge_t_vals = np.array([0.0, 1.0, 0.0, 1.0])
+    points = np.array([
+        [0.5, -0.75],
+        [0.5, -0.75],
+        [0.5, -0.75],
+        [0.5, -0.75],
+    ])
+    edge_inds1 = [1, 1, 2, 2]
+    edge_inds2 = [0, 2, 0, 2]
+    surface_surface_check(SURFACE10Q, SURFACE17Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2)
 
 
 def test_surfaces3Q_and_14Q():
@@ -795,7 +862,35 @@ def test_surfaces3Q_and_14Q():
 
 
 def test_surfaces15Q_and_16Q():
-    surface_surface_check(SURFACE15Q, SURFACE16Q)
+    s_val4, _ = runtime_utils.real_roots([49, -120, 32])
+    _, s_val5 = runtime_utils.real_roots([1, 70, -39])
+    s_val6, _ = runtime_utils.real_roots([2, -18, 1])
+    _, s_val7 = runtime_utils.real_roots([14, 2, -9])
+    edge_s_vals = np.array([0.25, 0.75, 0.5, s_val4, s_val5, s_val6, s_val7])
+
+    t_val4, _ = runtime_utils.real_roots([14, -30, 7])
+    _, t_val5 = runtime_utils.real_roots([2, 14, -15])
+    t_val6, _ = runtime_utils.real_roots([1, -72, 32])
+    _, t_val7 = runtime_utils.real_roots([49, 22, -39])
+    edge_t_vals = np.array([0.75, 0.25, 0.5, t_val4, t_val5, t_val6, t_val7])
+
+    points = np.array([
+        [0.5, 0.4375],
+        [0.5, 1.9375],
+        [0.5, 1.0],
+        [2.0 * s_val4, 1.75 * s_val4],
+        [2.0 - 2.0 * s_val5, 1.75 + 0.25 * s_val5],
+        [2.0 * s_val6 * (1.0 - s_val6), 2.0 - 2.0 * s_val6],
+        [2.0 * s_val7 * (1.0 - s_val7), 2.0 - 2.0 * s_val7],
+    ])
+    edge_inds1 = [0, 1, 2, 0, 1, 2, 2]
+    edge_inds2 = [2, 1, 0, 0, 0, 1, 2]
+
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(16):
+        surface_surface_check(SURFACE15Q, SURFACE16Q,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2)
 
 
 def test_surfaces24Q_and_25Q():
