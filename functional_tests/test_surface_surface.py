@@ -424,12 +424,14 @@ def edge_pairs(surface1, surface2):
     return edges1, edges2, itertools.product(lin1, lin2)
 
 
-def make_plots(surface1, surface2):
+def make_plots(surface1, surface2, points):
     if not CONFIG.running:
         return
 
     ax = surface1.plot(64)
     surface2.plot(64, ax=ax)
+    ax.plot(points[:, 0], points[:, 1], color='black',
+            marker='o', linestyle='None')
     plt.axis('scaled')
 
     if CONFIG.save_plot:
@@ -484,7 +486,7 @@ def surface_surface_check(surface1, surface2, s_vals, t_vals,
         check_intersections(s_vals, t_vals, points, intersections,
                             expected1, expected2)
 
-    make_plots(surface1, surface2)
+    make_plots(surface1, surface2, points)
 
 
 def test_surfaces1Q_and_3Q():
@@ -596,7 +598,7 @@ def test_surfaces10Q_and_18Q():
                               edge_s_vals, edge_t_vals, points,
                               edge_inds1, edge_inds2)
 
-    make_plots(SURFACE10Q, SURFACE18Q)
+    make_plots(SURFACE10Q, SURFACE18Q, points)
 
 
 def test_surfaces10Q_and_19Q():
@@ -611,7 +613,7 @@ def test_surfaces10Q_and_19Q():
                               edge_s_vals, edge_t_vals, points,
                               edge_inds1, edge_inds2)
 
-    make_plots(SURFACE10Q, SURFACE19Q)
+    make_plots(SURFACE10Q, SURFACE19Q, points)
 
 
 def test_surfaces3Q_and_4Q():
@@ -665,7 +667,7 @@ def test_surfaces1Q_and_5L():
                               edge_s_vals, edge_t_vals, points,
                               edge_inds1, edge_inds2)
 
-    make_plots(SURFACE1Q, SURFACE5L)
+    make_plots(SURFACE1Q, SURFACE5L, points)
 
 
 def test_surfaces3Q_and_5Q():
@@ -733,7 +735,7 @@ def test_surfaces20Q_and_21Q():
                               edge_s_vals, edge_t_vals, points,
                               edge_inds1, edge_inds2)
 
-    make_plots(SURFACE20Q, SURFACE21Q)
+    make_plots(SURFACE20Q, SURFACE21Q, points)
 
 
 def test_surfaces4L_and_22Q():
@@ -752,7 +754,7 @@ def test_surfaces4L_and_22Q():
                               edge_s_vals, edge_t_vals, points,
                               edge_inds1, edge_inds2)
 
-    make_plots(SURFACE4L, SURFACE22Q)
+    make_plots(SURFACE4L, SURFACE22Q, points)
 
 
 def test_surfaces4L_and_23Q():
@@ -771,7 +773,7 @@ def test_surfaces4L_and_23Q():
                               edge_s_vals, edge_t_vals, points,
                               edge_inds1, edge_inds2)
 
-    make_plots(SURFACE4L, SURFACE23Q)
+    make_plots(SURFACE4L, SURFACE23Q, points)
 
 
 def test_surfaces6Q_and_7Q():
