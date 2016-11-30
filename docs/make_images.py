@@ -172,7 +172,7 @@ def newton_refine3():
     points = curve1.evaluate_multi(all_s)
     colors = seaborn.dark_palette('blue', 6)
     ax.scatter(points[:, 0], points[:, 1], c=colors,
-               s=30, alpha=0.75, zorder=2)
+               s=20, alpha=0.75, zorder=2)
 
     ax.axis('scaled')
     ax.set_xlim(0.0, 1.0)
