@@ -568,25 +568,39 @@ class Surface(_base.Base):
            D &= A + \left(0, \frac{1}{2}\right).
            \end{align*}
 
+        .. image:: ../images/surface_subdivide1.png
+           :align: center
+
         These are the lower left (:math:`A`), central (:math:`B`), lower
         right (:math:`C`) and upper left (:math:`D`) sub-triangles.
+
+        For example, when a degree two surface is subdivided:
+
+        .. image:: ../images/surface_subdivide2.png
+           :align: center
 
         .. doctest:: surface-subdivide
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.array([
-           ...     [ 0. , 0. ],
-           ...     [ 2. , 0. ],
-           ...     [ 0. , 4. ],
+           ...     [-1.0 , 0.0 ],
+           ...     [ 0.5 , 0.5 ],
+           ...     [ 2.0 , 0.0 ],
+           ...     [ 0.25, 1.75],
+           ...     [ 2.0 , 3.0 ],
+           ...     [ 0.0 , 4.0 ],
            ... ])
            >>> surface = bezier.Surface(nodes)
            >>> _, _, _, sub_surface_d = surface.subdivide()
            >>> sub_surface_d
-           <Surface (degree=1, dimension=2)>
+           <Surface (degree=2, dimension=2)>
            >>> sub_surface_d.nodes
-           array([[ 0., 2.],
-                  [ 1., 2.],
-                  [ 0., 4.]])
+           array([[-0.125 , 1.875 ],
+                  [ 0.6875, 2.3125],
+                  [ 1.5   , 2.5   ],
+                  [ 0.125 , 2.875 ],
+                  [ 1.    , 3.5   ],
+                  [ 0.    , 4.    ]])
 
         Returns:
             Tuple[Surface, Surface, Surface, Surface]: The lower left, central,

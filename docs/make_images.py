@@ -593,6 +593,97 @@ def surface_is_valid3():
     save_image(ax.figure, 'surface_is_valid3.png')
 
 
+def surface_subdivide1():
+    """Image for :meth`.Surface.subdivide` docstring."""
+    surface = bezier.Surface(np.array([
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [0.0, 1.0],
+    ]))
+    surf_a, surf_b, surf_c, surf_d = surface.subdivide()
+
+    figure, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+
+    for ax in (ax1, ax2, ax3, ax4):
+        surface.plot(2, ax=ax)
+
+    surf_a.plot(2, ax=ax1)
+    ax1.text(1.0 / 6.0, 1.0 / 6.0, r'$A$', fontsize=20,
+             verticalalignment='center', horizontalalignment='center')
+
+    surf_b.plot(2, ax=ax2)
+    ax2.text(1.0 / 3.0, 1.0 / 3.0, r'$B$', fontsize=20,
+             verticalalignment='center', horizontalalignment='center')
+
+    surf_c.plot(2, ax=ax3)
+    ax3.text(2.0 / 3.0, 1.0 / 6.0, r'$C$', fontsize=20,
+             verticalalignment='center', horizontalalignment='center')
+
+    surf_d.plot(2, ax=ax4)
+    ax4.text(1.0 / 6.0, 2.0 / 3.0, r'$D$', fontsize=20,
+             verticalalignment='center', horizontalalignment='center')
+
+    for ax in (ax1, ax2, ax3, ax4):
+        ax.axis('scaled')
+
+    save_image(figure, 'surface_subdivide1')
+
+
+def add_edges(ax, surface, s_vals, color):
+    edge1, edge2, edge3 = surface.edges
+    # Compute points on each edge.
+    points1 = edge1.evaluate_multi(s_vals)
+    points2 = edge2.evaluate_multi(s_vals)
+    points3 = edge3.evaluate_multi(s_vals)
+
+    # Add the points to the plot.
+    ax.plot(points1[:, 0], points1[:, 1], color=color)
+    ax.plot(points2[:, 0], points2[:, 1], color=color)
+    ax.plot(points3[:, 0], points3[:, 1], color=color)
+
+
+def surface_subdivide2():
+    """Image for :meth`.Surface.subdivide` docstring."""
+    # Plot set-up.
+    figure = plt.figure()
+    ax = figure.gca()
+    colors = seaborn.husl_palette(6)
+
+    # Define surface and sub-surface.
+    surface = bezier.Surface(np.array([
+        [-1.0, 0.0],
+        [0.5, 0.5],
+        [2.0, 0.0],
+        [0.25, 1.75],
+        [2.0, 3.0],
+        [0.0, 4.0],
+    ]))
+    _, surf_b, _, _ = surface.subdivide()
+
+    N = 128
+    s_vals = np.linspace(0.0, 1.0, N + 1)
+    # Add edges from surface.
+    add_edges(ax, surface, s_vals, colors[4])
+    # Now do the same for surface B.
+    add_edges(ax, surf_b, s_vals, colors[0])
+
+    # Add the control points polygon for the original surface.
+    nodes = surface._nodes[(0, 2, 4, 5, 0), :]
+    add_patch(ax, nodes, colors[2], with_nodes=False)
+
+    # Add the control points polygon for the sub-surface.
+    nodes = surf_b._nodes[(0, 1, 2, 5, 3, 0), :]
+    add_patch(ax, nodes, colors[1])
+    # Take those same points and add the boundary.
+    ax.plot(nodes[:, 0], nodes[:, 1],
+            color='black', linestyle='dashed')
+
+    ax.axis('scaled')
+    ax.set_xlim(-1.125, 2.125)
+    ax.set_ylim(-0.125, 4.125)
+    save_image(ax.figure, 'surface_subdivide2')
+
+
 def main():
     linearization_error()
     newton_refine1()
@@ -615,6 +706,8 @@ def main():
     surface_is_valid1()
     surface_is_valid2()
     surface_is_valid3()
+    surface_subdivide1()
+    surface_subdivide2()
 
 
 if __name__ == '__main__':
