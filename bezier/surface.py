@@ -550,29 +550,14 @@ class Surface(_base.Base):
     def subdivide(self):
         r"""Split the surface into four sub-surfaces.
 
-        Takes the reference triangle
-
-        .. math::
-
-           T = \left\{(s, t) \mid 0 \leq s, t, s + t \leq 1\right\}
-
-        and splits it into four sub-triangles
-
-        .. math::
-
-           \begin{align*}
-           A &= \left\{(s, t) \mid 0 \leq s, t, s + t \leq
-               \frac{1}{2}\right\} \\
-           B &= -A + \left(\frac{1}{2}, \frac{1}{2}\right) \\
-           C &= A + \left(\frac{1}{2}, 0\right) \\
-           D &= A + \left(0, \frac{1}{2}\right).
-           \end{align*}
+        Does so by taking the unit triangle (i.e. the domain
+        of the surface) and splitting it into four sub-triangles
 
         .. image:: ../images/surface_subdivide1.png
            :align: center
 
-        These are the lower left (:math:`A`), central (:math:`B`), lower
-        right (:math:`C`) and upper left (:math:`D`) sub-triangles.
+        Then the surface is re-parameterized via the map to/from the
+        given sub-triangles and the unit triangle.
 
         For example, when a degree two surface is subdivided:
 
