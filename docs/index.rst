@@ -16,6 +16,11 @@ This library provides:
 * Support for B |eacute| zier :mod:`Curves <bezier.curve>`
 * Support for B |eacute| zier :mod:`Surfaces <bezier.surface>`
 
+Dive in and take a look!
+
+.. image:: images/test_surfaces6Q_and_7Q.png
+   :align: center
+
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
