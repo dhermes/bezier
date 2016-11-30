@@ -121,17 +121,23 @@ class Surface(_base.Base):
 
        and so on.
 
+    .. image:: ../images/surface_constructor.png
+       :align: center
+
     .. doctest:: surface-ctor
 
        >>> import bezier
        >>> nodes = np.array([
-       ...     [0.0 , 0.0 ],
-       ...     [1.0 , 0.25],
-       ...     [0.25, 1.0 ],
+       ...     [0.0  , 0.0  ],
+       ...     [0.5  , 0.0  ],
+       ...     [1.0  , 0.25 ],
+       ...     [0.125, 0.5  ],
+       ...     [0.375, 0.375],
+       ...     [0.25 , 1.0  ],
        ... ])
        >>> surface = bezier.Surface(nodes)
        >>> surface
-       <Surface (degree=1, dimension=2)>
+       <Surface (degree=2, dimension=2)>
 
     Args:
         nodes (numpy.ndarray): The nodes in the surface. The rows

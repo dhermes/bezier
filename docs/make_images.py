@@ -372,6 +372,41 @@ def curve_intersect():
     save_image(ax.figure, 'curve_intersect.png')
 
 
+def surface_constructor():
+    """Image for :class`.Surface` docstring."""
+    nodes = np.array([
+        [0.0, 0.0],
+        [0.5, 0.0],
+        [1.0, 0.25],
+        [0.125, 0.5],
+        [0.375, 0.375],
+        [0.25, 1.0],
+    ])
+    surface = bezier.Surface(nodes)
+
+    ax = surface.plot(256, with_nodes=True)
+    line = ax.lines[0]
+    add_patch(ax, nodes[(0, 1, 2, 5), :], line.get_color())
+    delta = 1.0 / 32.0
+    ax.text(nodes[0, 0], nodes[0, 1], r'$v_0$', fontsize=20,
+            verticalalignment='top', horizontalalignment='right')
+    ax.text(nodes[1, 0], nodes[1, 1], r'$v_1$', fontsize=20,
+            verticalalignment='top', horizontalalignment='center')
+    ax.text(nodes[2, 0], nodes[2, 1], r'$v_2$', fontsize=20,
+            verticalalignment='top', horizontalalignment='left')
+    ax.text(nodes[3, 0] - delta, nodes[3, 1], r'$v_3$', fontsize=20,
+            verticalalignment='center', horizontalalignment='right')
+    ax.text(nodes[4, 0] + delta, nodes[4, 1], r'$v_4$', fontsize=20,
+            verticalalignment='center', horizontalalignment='left')
+    ax.text(nodes[5, 0], nodes[5, 1] + delta, r'$v_5$', fontsize=20,
+            verticalalignment='bottom', horizontalalignment='center')
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.125, 1.125)
+    ax.set_ylim(-0.125, 1.125)
+    save_image(ax.figure, 'surface_constructor.png')
+
+
 def main():
     linearization_error()
     newton_refine1()
@@ -387,6 +422,7 @@ def main():
     curve_evaluate()
     curve_subdivide()
     curve_intersect()
+    surface_constructor()
 
 
 if __name__ == '__main__':
