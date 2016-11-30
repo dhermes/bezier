@@ -592,6 +592,9 @@ def segment_intersection(start0, end0, start1, end1):
     L_1\left(\frac{3}{4}\right) =
     \frac{1}{2} \left[\begin{array}{c} 1 \\ 1 \end{array}\right]`.
 
+    .. image:: ../images/segment_intersection1.png
+       :align: center
+
     .. testsetup:: segment-intersect
 
        import numpy as np
@@ -623,6 +626,9 @@ def segment_intersection(start0, end0, start1, end1):
 
     we should be able to determine that the lines don't intersect, but
     this function is not meant for that check:
+
+    .. image:: ../images/segment_intersection2.png
+       :align: center
 
     .. doctest:: segment-intersect
        :options: +NORMALIZE_WHITESPACE
@@ -715,6 +721,9 @@ def parallel_different(start0, end0, start1, end1):
     If it is not on the first line, then we are done, the
     segments don't meet:
 
+    .. image:: ../images/parallel_different1.png
+       :align: center
+
     .. testsetup:: parallel-different
 
        import numpy as np
@@ -747,10 +756,13 @@ def parallel_different(start0, end0, start1, end1):
     :math:`E_1 = S_0 + 2 \Delta_0`) correspond to segments that
     don't meet:
 
+    .. image:: ../images/parallel_different2.png
+       :align: center
+
     .. doctest:: parallel-different
 
-       >>> start0 = np.array([[0.0, 1.0]])
-       >>> delta0 = np.array([[-1.0, 2.0]])
+       >>> start0 = np.array([[1.0, 0.0]])
+       >>> delta0 = np.array([[2.0, -1.0]])
        >>> end0 = start0 + 1.0 * delta0
        >>> start1 = start0 + 1.5 * delta0
        >>> end1 = start0 + 2.0 * delta0
@@ -760,13 +772,16 @@ def parallel_different(start0, end0, start1, end1):
     but if the intervals overlap, like :math:`\left[0, 1\right]` and
     :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
 
+    .. image:: ../images/parallel_different3.png
+       :align: center
+
     .. testsetup:: parallel-different-continued
 
        import numpy as np
        from bezier._intersection_helpers import parallel_different
 
-       start0 = np.array([[0.0, 1.0]])
-       delta0 = np.array([[-1.0, 2.0]])
+       start0 = np.array([[1.0, 0.0]])
+       delta0 = np.array([[2.0, -1.0]])
        end0 = start0 + 1.0 * delta0
 
     .. doctest:: parallel-different-continued
@@ -778,6 +793,9 @@ def parallel_different(start0, end0, start1, end1):
 
     Similarly, if the second interval completely contains the first,
     the segments meet:
+
+    .. image:: ../images/parallel_different4.png
+       :align: center
 
     .. doctest:: parallel-different-continued
 

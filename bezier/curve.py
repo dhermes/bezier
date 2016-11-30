@@ -76,6 +76,9 @@ class Curve(_base.Base):
 
        B(s) = \sum_{j = 0}^n \binom{n}{j} s^j (1 - s)^{n - j} \cdot v_j
 
+    .. image:: ../images/curve_constructor.png
+       :align: center
+
     .. doctest:: curve-ctor
 
        >>> import bezier
@@ -232,6 +235,9 @@ class Curve(_base.Base):
 
         See :meth:`evaluate_multi` for more details.
 
+        .. image:: ../images/curve_evaluate.png
+           :align: center
+
         .. doctest:: curve-eval
            :options: +NORMALIZE_WHITESPACE
 
@@ -352,6 +358,9 @@ class Curve(_base.Base):
         order to do this, also reparameterizes the curve, hence the resulting
         left and right halves have new nodes.
 
+        .. image:: ../images/curve_subdivide.png
+           :align: center
+
         .. doctest:: curve-subdivide
            :options: +NORMALIZE_WHITESPACE
 
@@ -408,6 +417,9 @@ class Curve(_base.Base):
     def intersect(self, other):
         """Find the points of intersection with another curve.
 
+        .. image:: ../images/curve_intersect.png
+           :align: center
+
         .. doctest:: curve-intersect
            :options: +NORMALIZE_WHITESPACE
 
@@ -419,7 +431,7 @@ class Curve(_base.Base):
            >>> curve1 = bezier.Curve(nodes1)
            >>> nodes2 = np.array([
            ...     [0.5, 0.0],
-           ...     [0.5, 3.0],
+           ...     [0.5, 0.75],
            ... ])
            >>> curve2 = bezier.Curve(nodes2)
            >>> curve1.intersect(curve2)
