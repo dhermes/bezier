@@ -356,6 +356,7 @@ def newton_refine(s, curve1, t, curve2):
     intersect at the point
     :math:`B_1\left(\frac{1}{4}\right) = B_2\left(\frac{1}{2}\right) =
     \frac{1}{2} \left[\begin{array}{c} 2 \\ 3 \end{array}\right]`.
+
     However, starting from the wrong point we have
 
     .. math::
@@ -370,6 +371,9 @@ def newton_refine(s, curve1, t, curve2):
             \end{array}\right] &= \frac{9}{64} \left[\begin{array}{c}
             -1 \\ 2 \end{array}\right].
         \end{align*}
+
+    .. image:: ../images/newton_refine1.png
+       :align: center
 
     .. testsetup:: newton-refine
 
@@ -400,6 +404,9 @@ def newton_refine(s, curve1, t, curve2):
     For "typical" curves, we converge to a solution quadratically.
     This means that the number of correct digits doubles every
     iteration (until machine precision is reached).
+
+    .. image:: ../images/newton_refine2.png
+       :align: center
 
     .. doctest:: newton-refine
 
@@ -440,6 +447,9 @@ def newton_refine(s, curve1, t, curve2):
     However, when the intersection occurs at a point of tangency,
     the convergence becomes linear. This means that the number of
     correct digits added each iteration is roughly constant.
+
+    .. image:: ../images/newton_refine3.png
+       :align: center
 
     .. doctest:: newton-refine
 
