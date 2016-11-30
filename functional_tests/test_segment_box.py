@@ -10,10 +10,6 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-try:
-    import seaborn  # pylint: disable=unused-import
-except ImportError:
-    pass
 
 from bezier import _intersection_helpers
 

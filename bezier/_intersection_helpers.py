@@ -227,17 +227,20 @@ def linearization_error(curve):
     .. math::
 
        B(s) = \left[\begin{array}{c} 0 \\ 0 \end{array}\right] (1 - s)^2
-           + \left[\begin{array}{c} 1 \\ 3 \end{array}\right] 2s(1 - s)
-           + \left[\begin{array}{c} -2 \\ 9 \end{array}\right] s^2
+           + \left[\begin{array}{c} 3 \\ 1 \end{array}\right] 2s(1 - s)
+           + \left[\begin{array}{c} 9 \\ -2 \end{array}\right] s^2
 
     has
-    :math:`B''(s) \equiv \left[\begin{array}{c} -8 \\ 6 \end{array}\right]`
+    :math:`B''(s) \equiv \left[\begin{array}{c} 6 \\ -8 \end{array}\right]`
     which has norm :math:`10` everywhere, hence the maximum error is
 
     .. math::
 
        \left.\frac{s(1 - s)}{2!} \cdot 10\right|_{s = \frac{1}{2}}
           = \frac{5}{4}.
+
+    .. image:: ../images/linearization_error.png
+       :align: center
 
     .. testsetup::
 
@@ -248,9 +251,9 @@ def linearization_error(curve):
     .. doctest::
 
        >>> nodes = np.array([
-       ...     [ 0.0, 0.0],
-       ...     [ 1.0, 3.0],
-       ...     [-2.0, 9.0],
+       ...     [0.0,  0.0],
+       ...     [3.0,  1.0],
+       ...     [9.0, -2.0],
        ... ])
        >>> curve = bezier.Curve(nodes)
        >>> linearization_error(curve)
@@ -728,10 +731,11 @@ def parallel_different(start0, end0, start1, end1):
            s_{\ast} = \frac{\Delta_0^T \left(
                L_1(t) - S_0\right)}{\Delta_0^T \Delta_0}.
 
-    For example, the segments :math:`\left[0, 1\right]` and
+    For example, the intervals :math:`\left[0, 1\right]` and
     :math:`\left[\frac{3}{2}, 2\right]` (via
     :math:`S_1 = S_0 + \frac{3}{2} \Delta_0` and
-    :math:`E_1 = S_0 + 2 \Delta_0`) don't meet:
+    :math:`E_1 = S_0 + 2 \Delta_0`) correspond to segments that
+    don't meet:
 
     .. doctest:: parallel-different
 
@@ -743,7 +747,7 @@ def parallel_different(start0, end0, start1, end1):
        >>> parallel_different(start0, end0, start1, end1)
        True
 
-    but if the segments, overlap, like :math:`\left[0, 1\right]` and
+    but if the intervals overlap, like :math:`\left[0, 1\right]` and
     :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
 
     .. testsetup:: parallel-different-continued
