@@ -482,6 +482,44 @@ def newton_refine(s, curve1, t, curve2):
        >>> np.log2(abs(expected - s))
        -8.0
 
+    Unfortunately, the process terminates with an error that is not close
+    to machine precision :math:`\varepsilon` when
+    :math:`\Delta s = \Delta t = 0`.
+
+    .. testsetup:: newton-refine-continued
+
+       import numpy as np
+       import bezier
+       from bezier._intersection_helpers import newton_refine
+
+       curve1 = bezier.Curve(np.array([
+           [0.0, 0.0],
+           [0.5, 1.0],
+           [1.0, 0.0],
+       ]))
+       curve2 = bezier.Curve(np.array([
+           [0.0, 0.5],
+           [1.0, 0.5],
+       ]))
+
+    .. doctest:: newton-refine-continued
+
+       >>> s1 = t1 = 0.5 - 0.5**27
+       >>> np.log2(0.5 - s1)
+       -27.0
+       >>> s2, t2 = newton_refine(s1, curve1, t1, curve2)
+       >>> s2 == t2
+       True
+       >>> np.log2(0.5 - s2)
+       -28.0
+       >>> s3, t3 = newton_refine(s2, curve1, t2, curve2)
+       >>> s3 == t3 == s2
+       True
+
+    Due to round-off near the point of tangency, the final error
+    resembles :math:`\sqrt{\varepsilon}` rather than machine
+    precision as expected.
+
     Args:
         s (float): Parameter of a near-intersection along ``curve1``.
         curve1 (.Curve): First curve forming intersection.
