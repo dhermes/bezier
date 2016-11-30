@@ -447,20 +447,24 @@ class TestSurface(unittest.TestCase):
         self.assertTrue(np.all(positional[0] == expected[:, 0]))
         self.assertTrue(np.all(positional[1] == expected[:, 1]))
 
-    def _check_plot_calls(self, ax, nodes, color):
+    def _check_plot_calls(self, ax, nodes, color, with_nodes=False):
         # Check the calls to ax.plot(). We can't assert_any_call()
         # since == breaks on NumPy arrays.
-        self.assertEqual(ax.plot.call_count, 4)
+        if with_nodes:
+            self.assertEqual(ax.plot.call_count, 4)
+        else:
+            self.assertEqual(ax.plot.call_count, 3)
         calls = ax.plot.mock_calls
         self._check_plot_call(calls[0], nodes[:2, :])
         self._check_plot_call(calls[1], nodes[1:, :], color=color)
         self._check_plot_call(calls[2], nodes[(2, 0), :], color=color)
-        self._check_plot_call(calls[3], nodes,
-                              color='black', marker='o', linestyle='None')
+        if with_nodes:
+            self._check_plot_call(calls[3], nodes,
+                                  color='black', marker='o', linestyle='None')
         # Check the calls to ax.add_patch().
         self.assertEqual(ax.add_patch.call_count, 1)
 
-    def _plot_helper(self, show=False):
+    def _plot_helper(self, show=False, with_nodes=False):
         import matplotlib.lines
 
         nodes = np.array([
@@ -481,10 +485,12 @@ class TestSurface(unittest.TestCase):
         ax.plot.return_value = (line,)
 
         with mock.patch('bezier.surface.plt', new=plt):
+            kwargs = {}
             if show:
-                result = curve.plot(2, show=True)
-            else:
-                result = curve.plot(2)
+                kwargs['show'] = True
+            if with_nodes:
+                kwargs['with_nodes'] = True
+            result = curve.plot(2, **kwargs)
 
         self.assertIs(result, ax)
 
@@ -492,7 +498,7 @@ class TestSurface(unittest.TestCase):
         plt.figure.assert_called_once_with()
         figure.gca.assert_called_once_with()
 
-        self._check_plot_calls(ax, nodes, color)
+        self._check_plot_calls(ax, nodes, color, with_nodes=with_nodes)
 
         if show:
             plt.show.assert_called_once_with()
@@ -504,6 +510,9 @@ class TestSurface(unittest.TestCase):
 
     def test_plot_show(self):
         self._plot_helper(show=True)
+
+    def test_plot_with_nodes(self):
+        self._plot_helper(with_nodes=True)
 
     def test_plot_existing_axis(self):
         import matplotlib.lines

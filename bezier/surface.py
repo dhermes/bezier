@@ -476,13 +476,15 @@ class Surface(_base.Base):
             path, facecolor=color, alpha=0.6)
         ax.add_patch(patch)
 
-    def plot(self, pts_per_edge, ax=None, show=False):
+    def plot(self, pts_per_edge, ax=None, with_nodes=False, show=False):
         """Plot the current surface.
 
         Args:
             pts_per_edge (int): Number of points to plot per edge.
             ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
                 to add plot to.
+            with_nodes (Optional[bool]): Determines if the control points
+                should be added to the plot. Off by default.
             show (Optional[bool]): Flag indicating if the plot should be
                 shown.
 
@@ -515,8 +517,9 @@ class Surface(_base.Base):
 
         self._add_patch(ax, color, points1, points2, points3)
 
-        ax.plot(self._nodes[:, 0], self._nodes[:, 1],
-                color='black', marker='o', linestyle='None')
+        if with_nodes:
+            ax.plot(self._nodes[:, 0], self._nodes[:, 1],
+                    color='black', marker='o', linestyle='None')
 
         if show:
             plt.show()
