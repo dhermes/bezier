@@ -252,14 +252,20 @@ class Surface(_base.Base):
 
         Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)`.
 
+        .. image:: ../images/surface_evaluate_barycentric.png
+           :align: center
+
         .. testsetup:: surface-barycentric
 
            import numpy as np
            import bezier
            nodes = np.array([
-               [0.0, 0.0],
-               [1.0, 0.25],
-               [0.25, 1.0],
+               [0.0  , 0.0  ],
+               [0.5  , 0.0  ],
+               [1.0  , 0.25 ],
+               [0.125, 0.5  ],
+               [0.375, 0.375],
+               [0.25 , 1.0  ],
            ])
            surface = bezier.Surface(nodes)
 
@@ -267,13 +273,16 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.array([
-           ...     [0.0 , 0.0 ],
-           ...     [1.0 , 0.25],
-           ...     [0.25, 1.0 ],
+           ...     [0.0  , 0.0  ],
+           ...     [0.5  , 0.0  ],
+           ...     [1.0  , 0.25 ],
+           ...     [0.125, 0.5  ],
+           ...     [0.375, 0.375],
+           ...     [0.25 , 1.0  ],
            ... ])
            >>> surface = bezier.Surface(nodes)
            >>> surface.evaluate_barycentric(0.125, 0.125, 0.75)
-           array([ 0.3125 , 0.78125])
+           array([ 0.265625 , 0.73046875])
 
         However, this can't be used for points **outside** the
         reference triangle:
@@ -377,13 +386,16 @@ class Surface(_base.Base):
         If ``param_vals`` has two columns, this method treats
         them as Cartesian:
 
+        .. image:: ../images/surface_evaluate_multi1.png
+           :align: center
+
         .. doctest:: surface-eval-multi
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.array([
-           ...     [ 0., 0. ],
-           ...     [ 2., 1. ],
-           ...     [-3., 2. ],
+           ...     [ 0.0, 0.0],
+           ...     [ 2.0, 1.0],
+           ...     [-3.0, 2.0],
            ... ])
            >>> surface = bezier.Surface(nodes)
            >>> surface
@@ -399,6 +411,9 @@ class Surface(_base.Base):
                   [-0.5, 1.5]])
 
         and if ``param_vals`` has three columns, treats them as Barycentric:
+
+        .. image:: ../images/surface_evaluate_multi2.png
+           :align: center
 
         .. doctest:: surface-eval-multi
            :options: +NORMALIZE_WHITESPACE

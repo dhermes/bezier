@@ -293,8 +293,8 @@ def curve_constructor():
 
     ax = curve.plot(256)
     line = ax.lines[0]
-    ax.plot(nodes[:, 0], nodes[:, 1], linestyle='None',
-            marker='o', color='black')
+    ax.plot(nodes[:, 0], nodes[:, 1], color='black',
+            linestyle='None', marker='o')
     add_patch(ax, nodes, line.get_color())
 
     ax.axis('scaled')
@@ -313,8 +313,8 @@ def curve_evaluate():
 
     ax = curve.plot(256)
     points = curve.evaluate_multi(np.array([0.75]))
-    ax.plot(points[:, 0], points[:, 1], linestyle='None',
-            marker='o', color='black')
+    ax.plot(points[:, 0], points[:, 1], color='black',
+            linestyle='None', marker='o')
 
     ax.axis('scaled')
     ax.set_xlim(-0.125, 1.125)
@@ -363,8 +363,8 @@ def curve_intersect():
 
     ax = curve1.plot(256)
     curve2.plot(256, ax=ax)
-    ax.plot([0.5], [0.5], linestyle='None',
-            marker='o', color='black')
+    ax.plot([0.5], [0.5], color='black',
+            linestyle='None', marker='o')
 
     ax.axis('scaled')
     ax.set_xlim(0.0, 0.75)
@@ -407,6 +407,101 @@ def surface_constructor():
     save_image(ax.figure, 'surface_constructor.png')
 
 
+def surface_evaluate_barycentric():
+    """Image for :meth`.Surface.evaluate_barycentric` docstring."""
+    nodes = np.array([
+        [0.0, 0.0],
+        [0.5, 0.0],
+        [1.0, 0.25],
+        [0.125, 0.5],
+        [0.375, 0.375],
+        [0.25, 1.0],
+    ])
+    surface = bezier.Surface(nodes)
+
+    ax = surface.plot(256)
+    point = surface.evaluate_barycentric(0.125, 0.125, 0.75)
+    ax.plot([point[0]], [point[1]], color='black',
+            linestyle='None', marker='o')
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.125, 1.125)
+    ax.set_ylim(-0.125, 1.125)
+    save_image(ax.figure, 'surface_evaluate_barycentric.png')
+
+
+def surface_evaluate_multi1():
+    """Image for :meth`.Surface.evaluate_multi` docstring."""
+    nodes = np.array([
+        [0.0, 0.0],
+        [2.0, 1.0],
+        [-3.0, 2.0],
+    ])
+    surface = bezier.Surface(nodes)
+
+    ax = surface.plot(256)
+    param_vals = np.array([
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [0.5, 0.5],
+    ])
+    points = surface.evaluate_multi(param_vals)
+    ax.plot(points[:, 0], points[:, 1], color='black',
+            linestyle='None', marker='o')
+
+    delta = 1.0 / 32.0
+    ax.text(points[0, 0], points[0, 1], r'$w_0$', fontsize=20,
+            verticalalignment='top', horizontalalignment='right')
+    ax.text(points[1, 0] + 2 * delta, points[1, 1], r'$w_1$', fontsize=20,
+            verticalalignment='center', horizontalalignment='left')
+    ax.text(points[2, 0], points[2, 1] + delta, r'$w_2$', fontsize=20,
+            verticalalignment='bottom', horizontalalignment='left')
+
+    ax.axis('scaled')
+    ax.set_xlim(-3.125, 2.375)
+    ax.set_ylim(-0.25, 2.125)
+    save_image(ax.figure, 'surface_evaluate_multi1.png')
+
+
+def surface_evaluate_multi2():
+    """Image for :meth`.Surface.evaluate_multi` docstring."""
+    nodes = np.array([
+        [0.0, 0.0],
+        [1.0, 0.75],
+        [2.0, 1.0],
+        [-1.5, 1.0],
+        [-0.5, 1.5],
+        [-3.0, 2.0],
+    ])
+    surface = bezier.Surface(nodes)
+
+    ax = surface.plot(256)
+    param_vals = np.array([
+        [0.0, 0.25, 0.75],
+        [1.0, 0.0, 0.0],
+        [0.25, 0.5, 0.25],
+        [0.375, 0.25, 0.375],
+    ])
+    points = surface.evaluate_multi(param_vals)
+    ax.plot(points[:, 0], points[:, 1], color='black',
+            linestyle='None', marker='o')
+
+    delta = 1.0 / 32.0
+    ax.text(points[0, 0], points[0, 1] + delta, r'$w_0$', fontsize=20,
+            verticalalignment='bottom', horizontalalignment='center')
+    ax.text(points[1, 0], points[1, 1] - delta, r'$w_1$', fontsize=20,
+            verticalalignment='top', horizontalalignment='right')
+    ax.text(points[2, 0], points[2, 1], r'$w_2$', fontsize=20,
+            verticalalignment='bottom', horizontalalignment='left')
+    ax.text(points[3, 0], points[3, 1], r'$w_3$', fontsize=20,
+            verticalalignment='top', horizontalalignment='right')
+
+    ax.axis('scaled')
+    ax.set_xlim(-3.125, 2.125)
+    ax.set_ylim(-0.3125, 2.125)
+    save_image(ax.figure, 'surface_evaluate_multi2.png')
+
+
 def main():
     linearization_error()
     newton_refine1()
@@ -423,6 +518,9 @@ def main():
     curve_subdivide()
     curve_intersect()
     surface_constructor()
+    surface_evaluate_barycentric()
+    surface_evaluate_multi1()
+    surface_evaluate_multi2()
 
 
 if __name__ == '__main__':
