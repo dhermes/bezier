@@ -273,13 +273,14 @@ def parallel_different4():
         'parallel_different4.png')
 
 
-def add_patch(ax, nodes, color):
+def add_patch(ax, nodes, color, with_nodes=True):
     path = _path_mod.Path(nodes)
     patch = patches.PathPatch(
         path, facecolor=color, alpha=0.6)
     ax.add_patch(patch)
-    ax.plot(nodes[:, 0], nodes[:, 1], color='black',
-            linestyle='None', marker='o')
+    if with_nodes:
+        ax.plot(nodes[:, 0], nodes[:, 1], color='black',
+                linestyle='None', marker='o')
 
 
 def curve_constructor():
@@ -465,15 +466,14 @@ def surface_evaluate_multi1():
 
 def surface_evaluate_multi2():
     """Image for :meth`.Surface.evaluate_multi` docstring."""
-    nodes = np.array([
+    surface = bezier.Surface(np.array([
         [0.0, 0.0],
         [1.0, 0.75],
         [2.0, 1.0],
         [-1.5, 1.0],
         [-0.5, 1.5],
         [-3.0, 2.0],
-    ])
-    surface = bezier.Surface(nodes)
+    ]))
 
     ax = surface.plot(256)
     param_vals = np.array([
@@ -502,6 +502,97 @@ def surface_evaluate_multi2():
     save_image(ax.figure, 'surface_evaluate_multi2.png')
 
 
+def surface_is_valid1():
+    """Image for :meth`.Surface.is_valid` docstring."""
+    surface = bezier.Surface(np.array([
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [2.0, 2.0],
+    ]))
+
+    ax = surface.plot(256)
+    ax.axis('scaled')
+    ax.set_xlim(-0.125, 2.125)
+    ax.set_ylim(-0.125, 2.125)
+    save_image(ax.figure, 'surface_is_valid1.png')
+
+
+def surface_is_valid2():
+    """Image for :meth`.Surface.is_valid` docstring."""
+    surface = bezier.Surface(np.array([
+        [0.0, 0.0],
+        [0.5, 0.125],
+        [1.0, 0.0],
+        [-0.125, 0.5],
+        [0.5, 0.5],
+        [0.0, 1.0],
+    ]))
+
+    ax = surface.plot(256)
+    ax.axis('scaled')
+    ax.set_xlim(-0.125, 1.0625)
+    ax.set_ylim(-0.0625, 1.0625)
+    save_image(ax.figure, 'surface_is_valid2.png')
+
+
+def surface_is_valid3():
+    """Image for :meth`.Surface.is_valid` docstring."""
+    surface = bezier.Surface(np.array([
+        [1.0, 0.0],
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [0.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 1.0],
+    ]))
+    edge1, edge2, edge3 = surface.edges
+
+    N = 128
+    # Compute points on each edge.
+    std_s = np.linspace(0.0, 1.0, N + 1)
+    points1 = edge1.evaluate_multi(std_s)
+    points2 = edge2.evaluate_multi(std_s)
+    points3 = edge3.evaluate_multi(std_s)
+
+    # Compute the actual boundary where the Jacobian is 0.
+    s_vals = np.linspace(0.0, 0.2, N)
+    t_discrim = np.sqrt((1.0 - s_vals) * (1.0 - 5.0 * s_vals))
+    t_top = 0.5 * (1.0 - s_vals + t_discrim)
+    t_bottom = 0.5 * (1.0 - s_vals - t_discrim)
+    jacobian_zero_params = np.zeros((2 * N - 1, 2))
+    jacobian_zero_params[:N, 0] = s_vals
+    jacobian_zero_params[:N, 1] = t_top
+    jacobian_zero_params[N:, 0] = s_vals[-2::-1]
+    jacobian_zero_params[N:, 1] = t_bottom[-2::-1]
+    jac_edge = surface.evaluate_multi(jacobian_zero_params)
+
+    # Add the surface to the plot and add a dashed line
+    # for each "true" edge.
+    figure = plt.figure()
+    ax = figure.gca()
+    line, = ax.plot(jac_edge[:, 0], jac_edge[:, 1])
+    color = line.get_color()
+
+    ax.plot(points1[:, 0], points1[:, 1],
+            color='black', linestyle='dashed')
+    ax.plot(points2[:, 0], points2[:, 1],
+            color='black', linestyle='dashed')
+    ax.plot(points3[:, 0], points3[:, 1],
+            color='black', linestyle='dashed')
+
+    polygon = np.vstack([
+        points1[1:, :],
+        points2[1:, :],
+        jac_edge[1:, :],
+    ])
+    add_patch(ax, polygon, color, with_nodes=False)
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.0625, 1.0625)
+    ax.set_ylim(-0.0625, 1.0625)
+    save_image(ax.figure, 'surface_is_valid3.png')
+
+
 def main():
     linearization_error()
     newton_refine1()
@@ -521,6 +612,9 @@ def main():
     surface_evaluate_barycentric()
     surface_evaluate_multi1()
     surface_evaluate_multi2()
+    surface_is_valid1()
+    surface_is_valid2()
+    surface_is_valid3()
 
 
 if __name__ == '__main__':

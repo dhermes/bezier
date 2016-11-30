@@ -688,11 +688,17 @@ class Surface(_base.Base):
 
     @property
     def is_valid(self):  # pylint: disable=missing-returns-doc
-        """bool: Flag indicating if the surface no singularites.
+        """bool: Flag indicating if the surface is "valid".
+
+        Here, "valid" means there are no self-intersections or
+        singularities.
 
         This checks if the Jacobian of the map from the reference
         triangle is nonzero. For example, a linear "surface"
         with collinear points is invalid:
+
+        .. image:: ../images/surface_is_valid1.png
+           :align: center
 
         .. doctest:: surface-is-valid
 
@@ -707,6 +713,9 @@ class Surface(_base.Base):
 
         while a quadratic surface with one straight side:
 
+        .. image:: ../images/surface_is_valid2.png
+           :align: center
+
         .. doctest:: surface-is-valid
 
            >>> nodes = np.array([
@@ -720,6 +729,25 @@ class Surface(_base.Base):
            >>> surface = bezier.Surface(nodes)
            >>> surface.is_valid
            True
+
+        though not all higher degree surfaces are valid:
+
+        .. image:: ../images/surface_is_valid3.png
+           :align: center
+
+        .. doctest:: surface-is-valid
+
+           >>> nodes = np.array([
+           ...     [1.0, 0.0],
+           ...     [0.0, 0.0],
+           ...     [1.0, 1.0],
+           ...     [0.0, 0.0],
+           ...     [0.0, 0.0],
+           ...     [0.0, 1.0],
+           ... ])
+           >>> surface = bezier.Surface(nodes)
+           >>> surface.is_valid
+           False
         """
         if self._is_valid is None:
             self._is_valid = self._compute_valid()
