@@ -426,8 +426,8 @@ def newton_refine(s, curve1, t, curve2):
        ... ]))
        >>> # The expected intersection is the only real root of
        >>> # 28 s^3 - 30 s^2 + 9 s - 1.
-       >>> rts = np.roots([28, -30, 9, -1])
-       >>> expected, = rts[rts.imag == 0.0].real
+       >>> omega = (28.0 * np.sqrt(17.0) + 132.0)**(1.0 / 3.0) / 28.0
+       >>> expected = 5.0 / 14.0 + omega + 1 / (49.0 * omega)
        >>> s, t = 0.625, 0.625
        >>> np.log2(abs(expected - s))
        -4.399...
@@ -441,8 +441,8 @@ def newton_refine(s, curve1, t, curve2):
        >>> np.log2(abs(expected - s))
        -32.110...
        >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> np.log2(abs(expected - s))
-       -50.0
+       >>> s == expected
+       True
 
     However, when the intersection occurs at a point of tangency,
     the convergence becomes linear. This means that the number of
