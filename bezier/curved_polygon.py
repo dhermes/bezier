@@ -45,7 +45,7 @@ class CurvedPolygon(object):
        on the boundary is important: we check that one curve
        begins where the last one ended.
 
-    .. image:: ../images/curved_polygon_constructor.png
+    .. image:: ../images/curved_polygon_constructor1.png
        :align: center
 
     .. doctest:: curved-polygon-ctor
@@ -68,6 +68,38 @@ class CurvedPolygon(object):
        >>> edge3 = bezier.Curve(np.array([
        ...     [0.0, 1.0],
        ...     [0.0, 0.0],
+       ... ]))
+       >>> curved_poly = bezier.CurvedPolygon(
+       ...     edge0, edge1, edge2, edge3)
+       >>> curved_poly
+       <CurvedPolygon (num_sides=4)>
+
+    Though the endpoints of edge pair of edges are verified to match,
+    the curved polygon as a whole is not verified, so creating
+    a curved polygon with self-intersections is possible:
+
+    .. image:: ../images/curved_polygon_constructor2.png
+       :align: center
+
+    .. doctest:: curved-polygon-ctor-invalid
+
+       >>> edge0 = bezier.Curve(np.array([
+       ...     [0.0, 0.0],
+       ...     [1.0, 0.0],
+       ... ]))
+       >>> edge1 = bezier.Curve(np.array([
+       ...     [1.0 , 0.0],
+       ...     [1.25, 0.5],
+       ...     [1.0 , 1.0],
+       ... ]))
+       >>> edge2 = bezier.Curve(np.array([
+       ...     [1.0, 1.0],
+       ...     [2.0, 1.0],
+       ... ]))
+       >>> edge3 = bezier.Curve(np.array([
+       ...     [2.0, 1.0 ],
+       ...     [1.0, 0.75],
+       ...     [0.0, 0.0 ],
        ... ]))
        >>> curved_poly = bezier.CurvedPolygon(
        ...     edge0, edge1, edge2, edge3)

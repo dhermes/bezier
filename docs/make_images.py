@@ -684,7 +684,7 @@ def surface_subdivide2():
     save_image(ax.figure, 'surface_subdivide2')
 
 
-def curved_polygon_constructor():
+def curved_polygon_constructor1():
     """Image for :class`.CurvedPolygon` docstring."""
     edge0 = bezier.Curve(np.array([
         [0.0,  0.0],
@@ -710,7 +710,36 @@ def curved_polygon_constructor():
     ax.axis('scaled')
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.625, 1.625)
-    save_image(ax.figure, 'curved_polygon_constructor.png')
+    save_image(ax.figure, 'curved_polygon_constructor1.png')
+
+
+def curved_polygon_constructor2():
+    """Image for :class`.CurvedPolygon` docstring."""
+    edge0 = bezier.Curve(np.array([
+        [0.0, 0.0],
+        [1.0, 0.0],
+    ]))
+    edge1 = bezier.Curve(np.array([
+        [1.0, 0.0],
+        [1.25, 0.5],
+        [1.0, 1.0],
+    ]))
+    edge2 = bezier.Curve(np.array([
+        [1.0, 1.0],
+        [2.0, 1.0],
+    ]))
+    edge3 = bezier.Curve(np.array([
+        [2.0, 1.0],
+        [1.0, 0.75],
+        [0.0, 0.0],
+    ]))
+    curved_poly = bezier.CurvedPolygon(edge0, edge1, edge2, edge3)
+
+    ax = curved_poly.plot(256)
+    ax.axis('scaled')
+    ax.set_xlim(-0.125, 2.125)
+    ax.set_ylim(-0.125, 1.125)
+    save_image(ax.figure, 'curved_polygon_constructor2.png')
 
 
 def main():
@@ -737,7 +766,8 @@ def main():
     surface_is_valid3()
     surface_subdivide1()
     surface_subdivide2()
-    curved_polygon_constructor()
+    curved_polygon_constructor1()
+    curved_polygon_constructor2()
 
 
 if __name__ == '__main__':
