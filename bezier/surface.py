@@ -124,7 +124,7 @@ class Surface(_base.Base):
     .. image:: ../images/surface_constructor.png
        :align: center
 
-    .. doctest:: surface-ctor
+    .. doctest:: surface-constructor
 
        >>> import bezier
        >>> nodes = np.array([
@@ -138,6 +138,11 @@ class Surface(_base.Base):
        >>> surface = bezier.Surface(nodes)
        >>> surface
        <Surface (degree=2, dimension=2)>
+
+    .. testcleanup:: surface-constructor
+
+       import make_images
+       make_images.surface_constructor(surface)
 
     Args:
         nodes (numpy.ndarray): The nodes in the surface. The rows
@@ -255,7 +260,7 @@ class Surface(_base.Base):
         .. image:: ../images/surface_evaluate_barycentric.png
            :align: center
 
-        .. testsetup:: surface-barycentric
+        .. testsetup:: surface-barycentric, surface-barycentric-fail
 
            import numpy as np
            import bezier
@@ -281,13 +286,19 @@ class Surface(_base.Base):
            ...     [0.25 , 1.0  ],
            ... ])
            >>> surface = bezier.Surface(nodes)
-           >>> surface.evaluate_barycentric(0.125, 0.125, 0.75)
+           >>> point = surface.evaluate_barycentric(0.125, 0.125, 0.75)
+           >>> point
            array([ 0.265625 , 0.73046875])
+
+        .. testcleanup:: surface-barycentric
+
+           import make_images
+           make_images.surface_evaluate_barycentric(surface, point)
 
         However, this can't be used for points **outside** the
         reference triangle:
 
-        .. doctest:: surface-barycentric
+        .. doctest:: surface-barycentric-fail
 
            >>> surface.evaluate_barycentric(-0.25, 0.75, 0.5)
            Traceback (most recent call last):
@@ -296,7 +307,7 @@ class Surface(_base.Base):
 
         or for non-Barycentric coordinates;
 
-        .. doctest:: surface-barycentric
+        .. doctest:: surface-barycentric-fail
 
            >>> surface.evaluate_barycentric(0.25, 0.25, 0.25)
            Traceback (most recent call last):
@@ -389,7 +400,7 @@ class Surface(_base.Base):
         .. image:: ../images/surface_evaluate_multi1.png
            :align: center
 
-        .. doctest:: surface-eval-multi
+        .. doctest:: surface-eval-multi1
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.array([
@@ -405,17 +416,23 @@ class Surface(_base.Base):
            ...     [1.0, 0.0],
            ...     [0.5, 0.5],
            ... ])
-           >>> surface.evaluate_multi(param_vals)
+           >>> points = surface.evaluate_multi(param_vals)
+           >>> points
            array([[ 0. , 0. ],
                   [ 2. , 1. ],
                   [-0.5, 1.5]])
+
+        .. testcleanup:: surface-eval-multi1
+
+           import make_images
+           make_images.surface_evaluate_multi1(surface, points)
 
         and if ``param_vals`` has three columns, treats them as Barycentric:
 
         .. image:: ../images/surface_evaluate_multi2.png
            :align: center
 
-        .. doctest:: surface-eval-multi
+        .. doctest:: surface-eval-multi2
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.array([
@@ -435,11 +452,17 @@ class Surface(_base.Base):
            ...     [0.25 , 0.5 , 0.25 ],
            ...     [0.375, 0.25, 0.375],
            ... ])
-           >>> surface.evaluate_multi(param_vals)
+           >>> points = surface.evaluate_multi(param_vals)
+           >>> points
            array([[-1.75  , 1.75    ],
                   [ 0.    , 0.      ],
                   [ 0.25  , 1.0625  ],
                   [-0.625 , 1.046875]])
+
+        .. testcleanup:: surface-eval-multi2
+
+           import make_images
+           make_images.surface_evaluate_multi2(surface, points)
 
         .. note::
 
@@ -576,16 +599,22 @@ class Surface(_base.Base):
            ...     [ 0.0 , 4.0 ],
            ... ])
            >>> surface = bezier.Surface(nodes)
-           >>> _, _, _, sub_surface_d = surface.subdivide()
-           >>> sub_surface_d
+           >>> _, sub_surface_b, _, _ = surface.subdivide()
+           >>> sub_surface_b
            <Surface (degree=2, dimension=2)>
-           >>> sub_surface_d.nodes
-           array([[-0.125 , 1.875 ],
+           >>> sub_surface_b.nodes
+           array([[ 1.5   , 2.5   ],
                   [ 0.6875, 2.3125],
-                  [ 1.5   , 2.5   ],
-                  [ 0.125 , 2.875 ],
-                  [ 1.    , 3.5   ],
-                  [ 0.    , 4.    ]])
+                  [-0.125 , 1.875 ],
+                  [ 1.1875, 1.3125],
+                  [ 0.4375, 1.3125],
+                  [ 0.5   , 0.25  ]])
+
+        .. testcleanup:: surface-subdivide
+
+           import make_images
+           make_images.surface_subdivide1()
+           make_images.surface_subdivide2(surface, sub_surface_b)
 
         Returns:
             Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
@@ -699,7 +728,7 @@ class Surface(_base.Base):
         .. image:: ../images/surface_is_valid1.png
            :align: center
 
-        .. doctest:: surface-is-valid
+        .. doctest:: surface-is-valid1
 
            >>> nodes = np.array([
            ...     [0.0, 0.0],
@@ -710,12 +739,17 @@ class Surface(_base.Base):
            >>> surface.is_valid
            False
 
+        .. testcleanup:: surface-is-valid1
+
+           import make_images
+           make_images.surface_is_valid1(surface)
+
         while a quadratic surface with one straight side:
 
         .. image:: ../images/surface_is_valid2.png
            :align: center
 
-        .. doctest:: surface-is-valid
+        .. doctest:: surface-is-valid2
 
            >>> nodes = np.array([
            ...     [ 0.0  , 0.0  ],
@@ -729,12 +763,17 @@ class Surface(_base.Base):
            >>> surface.is_valid
            True
 
+        .. testcleanup:: surface-is-valid2
+
+           import make_images
+           make_images.surface_is_valid2(surface)
+
         though not all higher degree surfaces are valid:
 
         .. image:: ../images/surface_is_valid3.png
            :align: center
 
-        .. doctest:: surface-is-valid
+        .. doctest:: surface-is-valid3
 
            >>> nodes = np.array([
            ...     [1.0, 0.0],
@@ -747,6 +786,11 @@ class Surface(_base.Base):
            >>> surface = bezier.Surface(nodes)
            >>> surface.is_valid
            False
+
+        .. testcleanup:: surface-is-valid3
+
+           import make_images
+           make_images.surface_is_valid3(surface)
         """
         if self._is_valid is None:
             self._is_valid = self._compute_valid()

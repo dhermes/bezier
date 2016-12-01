@@ -48,7 +48,7 @@ class CurvedPolygon(object):
     .. image:: ../images/curved_polygon_constructor1.png
        :align: center
 
-    .. doctest:: curved-polygon-ctor
+    .. doctest:: curved-polygon-constructor
 
        >>> import bezier
        >>> edge0 = bezier.Curve(np.array([
@@ -74,7 +74,7 @@ class CurvedPolygon(object):
        >>> curved_poly
        <CurvedPolygon (num_sides=4)>
 
-    .. testcleanup:: curved-polygon-ctor
+    .. testcleanup:: curved-polygon-constructor
 
        import make_images
        make_images.curved_polygon_constructor1(curved_poly)
@@ -86,7 +86,7 @@ class CurvedPolygon(object):
     .. image:: ../images/curved_polygon_constructor2.png
        :align: center
 
-    .. doctest:: curved-polygon-ctor-invalid
+    .. doctest:: curved-polygon-constructor-invalid
 
        >>> edge0 = bezier.Curve(np.array([
        ...     [0.0, 0.0],
@@ -111,7 +111,7 @@ class CurvedPolygon(object):
        >>> curved_poly
        <CurvedPolygon (num_sides=4)>
 
-    .. testcleanup:: curved-polygon-ctor-invalid
+    .. testcleanup:: curved-polygon-constructor-invalid
 
        import make_images
        make_images.curved_polygon_constructor2(curved_poly)

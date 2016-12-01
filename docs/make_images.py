@@ -10,7 +10,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper to make images that are intended for docs."""
+"""Helper to make images that are intended for docs.
+
+To actually execute these functions with the desired inputs, run:
+
+.. code-block:: console
+
+   $ tox -e docs-images
+"""
 
 
 import os
@@ -276,23 +283,15 @@ def curve_intersect(curve1, curve2, intersections):
     save_image(ax.figure, 'curve_intersect.png')
 
 
-def surface_constructor():
+def surface_constructor(surface):
     """Image for :class`.Surface` docstring."""
     if NO_IMAGES:
         return
 
-    nodes = np.array([
-        [0.0, 0.0],
-        [0.5, 0.0],
-        [1.0, 0.25],
-        [0.125, 0.5],
-        [0.375, 0.375],
-        [0.25, 1.0],
-    ])
-    surface = bezier.Surface(nodes)
-
     ax = surface.plot(256, with_nodes=True)
     line = ax.lines[0]
+
+    nodes = surface._nodes
     add_patch(ax, nodes[(0, 1, 2, 5), :], line.get_color())
     delta = 1.0 / 32.0
     ax.text(nodes[0, 0], nodes[0, 1], r'$v_0$', fontsize=20,
@@ -314,23 +313,12 @@ def surface_constructor():
     save_image(ax.figure, 'surface_constructor.png')
 
 
-def surface_evaluate_barycentric():
+def surface_evaluate_barycentric(surface, point):
     """Image for :meth`.Surface.evaluate_barycentric` docstring."""
     if NO_IMAGES:
         return
 
-    nodes = np.array([
-        [0.0, 0.0],
-        [0.5, 0.0],
-        [1.0, 0.25],
-        [0.125, 0.5],
-        [0.375, 0.375],
-        [0.25, 1.0],
-    ])
-    surface = bezier.Surface(nodes)
-
     ax = surface.plot(256)
-    point = surface.evaluate_barycentric(0.125, 0.125, 0.75)
     ax.plot([point[0]], [point[1]], color='black',
             linestyle='None', marker='o')
 
@@ -340,25 +328,12 @@ def surface_evaluate_barycentric():
     save_image(ax.figure, 'surface_evaluate_barycentric.png')
 
 
-def surface_evaluate_multi1():
+def surface_evaluate_multi1(surface, points):
     """Image for :meth`.Surface.evaluate_multi` docstring."""
     if NO_IMAGES:
         return
 
-    nodes = np.array([
-        [0.0, 0.0],
-        [2.0, 1.0],
-        [-3.0, 2.0],
-    ])
-    surface = bezier.Surface(nodes)
-
     ax = surface.plot(256)
-    param_vals = np.array([
-        [0.0, 0.0],
-        [1.0, 0.0],
-        [0.5, 0.5],
-    ])
-    points = surface.evaluate_multi(param_vals)
     ax.plot(points[:, 0], points[:, 1], color='black',
             linestyle='None', marker='o')
 
@@ -376,28 +351,12 @@ def surface_evaluate_multi1():
     save_image(ax.figure, 'surface_evaluate_multi1.png')
 
 
-def surface_evaluate_multi2():
+def surface_evaluate_multi2(surface, points):
     """Image for :meth`.Surface.evaluate_multi` docstring."""
     if NO_IMAGES:
         return
 
-    surface = bezier.Surface(np.array([
-        [0.0, 0.0],
-        [1.0, 0.75],
-        [2.0, 1.0],
-        [-1.5, 1.0],
-        [-0.5, 1.5],
-        [-3.0, 2.0],
-    ]))
-
     ax = surface.plot(256)
-    param_vals = np.array([
-        [0.0, 0.25, 0.75],
-        [1.0, 0.0, 0.0],
-        [0.25, 0.5, 0.25],
-        [0.375, 0.25, 0.375],
-    ])
-    points = surface.evaluate_multi(param_vals)
     ax.plot(points[:, 0], points[:, 1], color='black',
             linestyle='None', marker='o')
 
@@ -417,16 +376,10 @@ def surface_evaluate_multi2():
     save_image(ax.figure, 'surface_evaluate_multi2.png')
 
 
-def surface_is_valid1():
+def surface_is_valid1(surface):
     """Image for :meth`.Surface.is_valid` docstring."""
     if NO_IMAGES:
         return
-
-    surface = bezier.Surface(np.array([
-        [0.0, 0.0],
-        [1.0, 1.0],
-        [2.0, 2.0],
-    ]))
 
     ax = surface.plot(256)
     ax.axis('scaled')
@@ -435,19 +388,10 @@ def surface_is_valid1():
     save_image(ax.figure, 'surface_is_valid1.png')
 
 
-def surface_is_valid2():
+def surface_is_valid2(surface):
     """Image for :meth`.Surface.is_valid` docstring."""
     if NO_IMAGES:
         return
-
-    surface = bezier.Surface(np.array([
-        [0.0, 0.0],
-        [0.5, 0.125],
-        [1.0, 0.0],
-        [-0.125, 0.5],
-        [0.5, 0.5],
-        [0.0, 1.0],
-    ]))
 
     ax = surface.plot(256)
     ax.axis('scaled')
@@ -456,19 +400,11 @@ def surface_is_valid2():
     save_image(ax.figure, 'surface_is_valid2.png')
 
 
-def surface_is_valid3():
+def surface_is_valid3(surface):
     """Image for :meth`.Surface.is_valid` docstring."""
     if NO_IMAGES:
         return
 
-    surface = bezier.Surface(np.array([
-        [1.0, 0.0],
-        [0.0, 0.0],
-        [1.0, 1.0],
-        [0.0, 0.0],
-        [0.0, 0.0],
-        [0.0, 1.0],
-    ]))
     edge1, edge2, edge3 = surface.edges
 
     N = 128
@@ -569,7 +505,7 @@ def add_edges(ax, surface, s_vals, color):
     ax.plot(points3[:, 0], points3[:, 1], color=color)
 
 
-def surface_subdivide2():
+def surface_subdivide2(surface, sub_surface_b):
     """Image for :meth`.Surface.subdivide` docstring."""
     if NO_IMAGES:
         return
@@ -579,30 +515,19 @@ def surface_subdivide2():
     ax = figure.gca()
     colors = seaborn.husl_palette(6)
 
-    # Define surface and sub-surface.
-    surface = bezier.Surface(np.array([
-        [-1.0, 0.0],
-        [0.5, 0.5],
-        [2.0, 0.0],
-        [0.25, 1.75],
-        [2.0, 3.0],
-        [0.0, 4.0],
-    ]))
-    _, surf_b, _, _ = surface.subdivide()
-
     N = 128
     s_vals = np.linspace(0.0, 1.0, N + 1)
     # Add edges from surface.
     add_edges(ax, surface, s_vals, colors[4])
     # Now do the same for surface B.
-    add_edges(ax, surf_b, s_vals, colors[0])
+    add_edges(ax, sub_surface_b, s_vals, colors[0])
 
     # Add the control points polygon for the original surface.
     nodes = surface._nodes[(0, 2, 4, 5, 0), :]
     add_patch(ax, nodes, colors[2], with_nodes=False)
 
     # Add the control points polygon for the sub-surface.
-    nodes = surf_b._nodes[(0, 1, 2, 5, 3, 0), :]
+    nodes = sub_surface_b._nodes[(0, 1, 2, 5, 3, 0), :]
     add_patch(ax, nodes, colors[1])
     # Take those same points and add the boundary.
     ax.plot(nodes[:, 0], nodes[:, 1],
@@ -636,19 +561,3 @@ def curved_polygon_constructor2(curved_poly):
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.125, 1.125)
     save_image(ax.figure, 'curved_polygon_constructor2.png')
-
-
-def main():
-    surface_constructor()
-    surface_evaluate_barycentric()
-    surface_evaluate_multi1()
-    surface_evaluate_multi2()
-    surface_is_valid1()
-    surface_is_valid2()
-    surface_is_valid3()
-    surface_subdivide1()
-    surface_subdivide2()
-
-
-if __name__ == '__main__':
-    main()
