@@ -45,15 +45,12 @@ def save_image(figure, filename):
     plt.close(figure)
 
 
-def linearization_error():
+def linearization_error(curve):
     """Image for :func:`.linearization_error` docstring."""
-    curve = bezier.Curve(np.array([
-        [0.0, 0.0],
-        [3.0, 1.0],
-        [9.0, -2.0],
-    ]))
-    line = bezier.Curve(curve._nodes[(0, -1), :])
+    if NO_IMAGES:
+        return
 
+    line = bezier.Curve(curve._nodes[(0, -1), :])
     midpoints = np.vstack([
         curve.evaluate(0.5),
         line.evaluate(0.5),
@@ -68,24 +65,11 @@ def linearization_error():
     save_image(ax.figure, 'linearization_error.png')
 
 
-def newton_refine1():
+def newton_refine1(s, new_s, curve1, t, new_t, curve2):
     """Image for :func:`.newton_refine` docstring."""
-    curve1 = bezier.Curve(np.array([
-        [0.0, 0.0],
-        [2.0, 4.0],
-        [4.0, 0.0],
-    ]))
-    curve2 = bezier.Curve(np.array([
-        [2.0, 0.0],
-        [0.0, 3.0],
-    ]))
+    if NO_IMAGES:
+        return
 
-    # We are "interested" in the two incorrect s and t values
-    # and the values they move to.
-    s = 0.375
-    new_s = s - 9.0 / 64.0
-    t = 0.25
-    new_t = t + 9.0 / 32.0
     points = np.vstack([
         curve1.evaluate(s),
         curve2.evaluate(t),
@@ -107,35 +91,17 @@ def newton_refine1():
     save_image(ax.figure, 'newton_refine1.png')
 
 
-def newton_refine2():
+def newton_refine2(s_vals, curve1, curve2):
     """Image for :func:`.newton_refine` docstring."""
-    curve1 = bezier.Curve(np.array([
-        [0.0, 0.0],
-        [0.25, 2.0],
-        [0.5, -2.0],
-        [0.75, 2.0],
-        [1.0, 0.0],
-    ]))
-    curve2 = bezier.Curve(np.array([
-        [0.0, 1.0],
-        [0.25, 0.5],
-        [0.5, 0.5],
-        [0.75, 0.5],
-        [1.0, 0.0],
-    ]))
+    if NO_IMAGES:
+        return
 
     ax = curve1.plot(256)
     ax.lines[-1].zorder = 1
     curve2.plot(256, ax=ax)
     ax.lines[-1].zorder = 1
 
-    s, t = 0.625, 0.625
-    all_s = np.array([s, 0.0, 0.0, 0.0, 0.0])
-    for index in range(4):
-        s, t = _intersection_helpers.newton_refine(s, curve1, t, curve2)
-        all_s[index + 1] = s
-
-    points = curve1.evaluate_multi(all_s)
+    points = curve1.evaluate_multi(np.array(s_vals))
     colors = seaborn.dark_palette('blue', 5)
     ax.scatter(points[:, 0], points[:, 1], c=colors,
                alpha=0.75, zorder=2)
@@ -146,30 +112,17 @@ def newton_refine2():
     save_image(ax.figure, 'newton_refine2.png')
 
 
-def newton_refine3():
+def newton_refine3(s_vals, curve1, curve2):
     """Image for :func:`.newton_refine` docstring."""
-    curve1 = bezier.Curve(np.array([
-        [0.0, 0.0],
-        [0.5, 1.0],
-        [1.0, 0.0],
-    ]))
-    curve2 = bezier.Curve(np.array([
-        [0.0, 0.5],
-        [1.0, 0.5],
-    ]))
+    if NO_IMAGES:
+        return
 
     ax = curve1.plot(256)
     ax.lines[-1].zorder = 1
     curve2.plot(256, ax=ax)
     ax.lines[-1].zorder = 1
 
-    s, t = 0.375, 0.375
-    all_s = np.array([s, 0.0, 0.0, 0.0, 0.0, 0.0])
-    for index in range(5):
-        s, t = _intersection_helpers.newton_refine(s, curve1, t, curve2)
-        all_s[index + 1] = s
-
-    points = curve1.evaluate_multi(all_s)
+    points = curve1.evaluate_multi(np.array(s_vals))
     colors = seaborn.dark_palette('blue', 6)
     ax.scatter(points[:, 0], points[:, 1], c=colors,
                s=20, alpha=0.75, zorder=2)
@@ -180,37 +133,31 @@ def newton_refine3():
     save_image(ax.figure, 'newton_refine3.png')
 
 
-def segment_intersection1():
+def segment_intersection1(start0, end0, start1, end1, s):
     """Image for :func:`.segment_intersection` docstring."""
-    line0 = bezier.Curve(np.array([
-        [0.0, 0.0],
-        [2.0, 2.0],
-    ]))
-    line1 = bezier.Curve(np.array([
-        [-1.0, 2.0],
-        [1.0, 0.0],
-    ]))
+    if NO_IMAGES:
+        return
+
+    line0 = bezier.Curve(np.vstack([start0, end0]))
+    line1 = bezier.Curve(np.vstack([start1, end1]))
 
     ax = line0.plot(2)
     line1.plot(256, ax=ax)
 
-    x_val, y_val = line0.evaluate(0.25)
+    x_val, y_val = line0.evaluate(s)
     ax.plot([x_val], [y_val], color='black', marker='o')
 
     ax.axis('scaled')
     save_image(ax.figure, 'segment_intersection1.png')
 
 
-def segment_intersection2():
+def segment_intersection2(start0, end0, start1, end1):
     """Image for :func:`.segment_intersection` docstring."""
-    line0 = bezier.Curve(np.array([
-        [1.0, 0.0],
-        [0.0, 1.0],
-    ]))
-    line1 = bezier.Curve(np.array([
-        [-1.0, 3.0],
-        [3.0, -1.0],
-    ]))
+    if NO_IMAGES:
+        return
+
+    line0 = bezier.Curve(np.vstack([start0, end0]))
+    line1 = bezier.Curve(np.vstack([start1, end1]))
 
     ax = line0.plot(2)
     line1.plot(2, ax=ax)
@@ -220,6 +167,10 @@ def segment_intersection2():
 
 
 def helper_parallel_different(start0, end0, start1, end1, filename):
+    """Image for :func:`.parallel_different` docstring."""
+    if NO_IMAGES:
+        return
+
     figure = plt.figure()
     ax = figure.gca()
 
@@ -239,38 +190,6 @@ def helper_parallel_different(start0, end0, start1, end1, filename):
     ax.set_ylim(center_y - 0.5625 * width_y, center_y + 0.5625 * width_y)
 
     save_image(figure, filename)
-
-
-def parallel_different1():
-    """Image for :func:`.parallel_different` docstring."""
-    helper_parallel_different(
-        np.array([[0.0, 1.0]]), np.array([[1.0, 1.0]]),
-        np.array([[-1.0, 2.0]]), np.array([[3.0, 2.0]]),
-        'parallel_different1.png')
-
-
-def parallel_different2():
-    """Image for :func:`.parallel_different` docstring."""
-    helper_parallel_different(
-        np.array([[1.0, 0.0]]), np.array([[3.0, -1.0]]),
-        np.array([[4.0, -1.5]]), np.array([[5.0, -2.0]]),
-        'parallel_different2.png')
-
-
-def parallel_different3():
-    """Image for :func:`.parallel_different` docstring."""
-    helper_parallel_different(
-        np.array([[1.0, 0.0]]), np.array([[3.0, -1.0]]),
-        np.array([[-1.0, 1.0]]), np.array([[2.0, -0.5]]),
-        'parallel_different3.png')
-
-
-def parallel_different4():
-    """Image for :func:`.parallel_different` docstring."""
-    helper_parallel_different(
-        np.array([[1.0, 0.0]]), np.array([[3.0, -1.0]]),
-        np.array([[7.0, -3.0]]), np.array([[-3.0, 2.0]]),
-        'parallel_different4.png')
 
 
 def add_patch(ax, nodes, color, with_nodes=True):
@@ -359,6 +278,9 @@ def curve_intersect(curve1, curve2, intersections):
 
 def surface_constructor():
     """Image for :class`.Surface` docstring."""
+    if NO_IMAGES:
+        return
+
     nodes = np.array([
         [0.0, 0.0],
         [0.5, 0.0],
@@ -394,6 +316,9 @@ def surface_constructor():
 
 def surface_evaluate_barycentric():
     """Image for :meth`.Surface.evaluate_barycentric` docstring."""
+    if NO_IMAGES:
+        return
+
     nodes = np.array([
         [0.0, 0.0],
         [0.5, 0.0],
@@ -417,6 +342,9 @@ def surface_evaluate_barycentric():
 
 def surface_evaluate_multi1():
     """Image for :meth`.Surface.evaluate_multi` docstring."""
+    if NO_IMAGES:
+        return
+
     nodes = np.array([
         [0.0, 0.0],
         [2.0, 1.0],
@@ -450,6 +378,9 @@ def surface_evaluate_multi1():
 
 def surface_evaluate_multi2():
     """Image for :meth`.Surface.evaluate_multi` docstring."""
+    if NO_IMAGES:
+        return
+
     surface = bezier.Surface(np.array([
         [0.0, 0.0],
         [1.0, 0.75],
@@ -488,6 +419,9 @@ def surface_evaluate_multi2():
 
 def surface_is_valid1():
     """Image for :meth`.Surface.is_valid` docstring."""
+    if NO_IMAGES:
+        return
+
     surface = bezier.Surface(np.array([
         [0.0, 0.0],
         [1.0, 1.0],
@@ -503,6 +437,9 @@ def surface_is_valid1():
 
 def surface_is_valid2():
     """Image for :meth`.Surface.is_valid` docstring."""
+    if NO_IMAGES:
+        return
+
     surface = bezier.Surface(np.array([
         [0.0, 0.0],
         [0.5, 0.125],
@@ -521,6 +458,9 @@ def surface_is_valid2():
 
 def surface_is_valid3():
     """Image for :meth`.Surface.is_valid` docstring."""
+    if NO_IMAGES:
+        return
+
     surface = bezier.Surface(np.array([
         [1.0, 0.0],
         [0.0, 0.0],
@@ -579,6 +519,9 @@ def surface_is_valid3():
 
 def surface_subdivide1():
     """Image for :meth`.Surface.subdivide` docstring."""
+    if NO_IMAGES:
+        return
+
     surface = bezier.Surface(np.array([
         [0.0, 0.0],
         [1.0, 0.0],
@@ -628,6 +571,9 @@ def add_edges(ax, surface, s_vals, color):
 
 def surface_subdivide2():
     """Image for :meth`.Surface.subdivide` docstring."""
+    if NO_IMAGES:
+        return
+
     # Plot set-up.
     figure = plt.figure()
     ax = figure.gca()
@@ -693,16 +639,6 @@ def curved_polygon_constructor2(curved_poly):
 
 
 def main():
-    linearization_error()
-    newton_refine1()
-    newton_refine2()
-    newton_refine3()
-    segment_intersection1()
-    segment_intersection2()
-    parallel_different1()
-    parallel_different2()
-    parallel_different3()
-    parallel_different4()
     surface_constructor()
     surface_evaluate_barycentric()
     surface_evaluate_multi1()

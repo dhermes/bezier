@@ -242,13 +242,13 @@ def linearization_error(curve):
     .. image:: ../images/linearization_error.png
        :align: center
 
-    .. testsetup::
+    .. testsetup:: linearization-error
 
        import numpy as np
        import bezier
        from bezier._intersection_helpers import linearization_error
 
-    .. doctest::
+    .. doctest:: linearization-error
 
        >>> nodes = np.array([
        ...     [0.0,  0.0],
@@ -258,6 +258,11 @@ def linearization_error(curve):
        >>> curve = bezier.Curve(nodes)
        >>> linearization_error(curve)
        1.25
+
+    .. testcleanup:: linearization-error
+
+       import make_images
+       make_images.linearization_error(curve)
 
     Args:
         curve (~bezier.curve.Curve): A curve to be approximated by a line.
@@ -375,13 +380,13 @@ def newton_refine(s, curve1, t, curve2):
     .. image:: ../images/newton_refine1.png
        :align: center
 
-    .. testsetup:: newton-refine
+    .. testsetup:: newton-refine1, newton-refine2, newton-refine3
 
        import numpy as np
        import bezier
        from bezier._intersection_helpers import newton_refine
 
-    .. doctest:: newton-refine
+    .. doctest:: newton-refine1
 
        >>> nodes1 = np.array([
        ...     [0.0, 0.0],
@@ -401,6 +406,11 @@ def newton_refine(s, curve1, t, curve2):
        >>> 64.0 * (new_t - t)
        18.0
 
+    .. testcleanup:: newton-refine1
+
+       import make_images
+       make_images.newton_refine1(s, new_s, curve1, t, new_t, curve2)
+
     For "typical" curves, we converge to a solution quadratically.
     This means that the number of correct digits doubles every
     iteration (until machine precision is reached).
@@ -408,7 +418,7 @@ def newton_refine(s, curve1, t, curve2):
     .. image:: ../images/newton_refine2.png
        :align: center
 
-    .. doctest:: newton-refine
+    .. doctest:: newton-refine2
 
        >>> curve1 = bezier.Curve(np.array([
        ...     [0.0, 0.0],
@@ -428,21 +438,27 @@ def newton_refine(s, curve1, t, curve2):
        >>> # 28 s^3 - 30 s^2 + 9 s - 1.
        >>> omega = (28.0 * np.sqrt(17.0) + 132.0)**(1.0 / 3.0) / 28.0
        >>> expected = 5.0 / 14.0 + omega + 1 / (49.0 * omega)
-       >>> s, t = 0.625, 0.625
-       >>> np.log2(abs(expected - s))
+       >>> s_vals = [0.625, None, None, None, None]
+       >>> t = 0.625
+       >>> np.log2(abs(expected - s_vals[0]))
        -4.399...
-       >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> np.log2(abs(expected - s))
+       >>> s_vals[1], t = newton_refine(s_vals[0], curve1, t, curve2)
+       >>> np.log2(abs(expected - s_vals[1]))
        -7.901...
-       >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> np.log2(abs(expected - s))
+       >>> s_vals[2], t = newton_refine(s_vals[1], curve1, t, curve2)
+       >>> np.log2(abs(expected - s_vals[2]))
        -16.010...
-       >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> np.log2(abs(expected - s))
+       >>> s_vals[3], t = newton_refine(s_vals[2], curve1, t, curve2)
+       >>> np.log2(abs(expected - s_vals[3]))
        -32.110...
-       >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> s == expected
+       >>> s_vals[4], t = newton_refine(s_vals[3], curve1, t, curve2)
+       >>> s_vals[4] == expected
        True
+
+    .. testcleanup:: newton-refine2
+
+       import make_images
+       make_images.newton_refine2(s_vals, curve1, curve2)
 
     However, when the intersection occurs at a point of tangency,
     the convergence becomes linear. This means that the number of
@@ -451,7 +467,7 @@ def newton_refine(s, curve1, t, curve2):
     .. image:: ../images/newton_refine3.png
        :align: center
 
-    .. doctest:: newton-refine
+    .. doctest:: newton-refine3
 
        >>> curve1 = bezier.Curve(np.array([
        ...     [0.0, 0.0],
@@ -463,30 +479,36 @@ def newton_refine(s, curve1, t, curve2):
        ...     [1.0, 0.5],
        ... ]))
        >>> expected = 0.5
-       >>> s, t = 0.375, 0.375
-       >>> np.log2(abs(expected - s))
+       >>> s_vals = [0.375, None, None, None, None, None]
+       >>> t = 0.375
+       >>> np.log2(abs(expected - s_vals[0]))
        -3.0
-       >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> np.log2(abs(expected - s))
+       >>> s_vals[1], t = newton_refine(s_vals[0], curve1, t, curve2)
+       >>> np.log2(abs(expected - s_vals[1]))
        -4.0
-       >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> np.log2(abs(expected - s))
+       >>> s_vals[2], t = newton_refine(s_vals[1], curve1, t, curve2)
+       >>> np.log2(abs(expected - s_vals[2]))
        -5.0
-       >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> np.log2(abs(expected - s))
+       >>> s_vals[3], t = newton_refine(s_vals[2], curve1, t, curve2)
+       >>> np.log2(abs(expected - s_vals[3]))
        -6.0
-       >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> np.log2(abs(expected - s))
+       >>> s_vals[4], t = newton_refine(s_vals[3], curve1, t, curve2)
+       >>> np.log2(abs(expected - s_vals[4]))
        -7.0
-       >>> s, t = newton_refine(s, curve1, t, curve2)
-       >>> np.log2(abs(expected - s))
+       >>> s_vals[5], t = newton_refine(s_vals[4], curve1, t, curve2)
+       >>> np.log2(abs(expected - s_vals[5]))
        -8.0
+
+    .. testcleanup:: newton-refine3
+
+       import make_images
+       make_images.newton_refine3(s_vals, curve1, curve2)
 
     Unfortunately, the process terminates with an error that is not close
     to machine precision :math:`\varepsilon` when
     :math:`\Delta s = \Delta t = 0`.
 
-    .. testsetup:: newton-refine-continued
+    .. testsetup:: newton-refine3-continued
 
        import numpy as np
        import bezier
@@ -502,7 +524,7 @@ def newton_refine(s, curve1, t, curve2):
            [1.0, 0.5],
        ]))
 
-    .. doctest:: newton-refine-continued
+    .. doctest:: newton-refine3-continued
 
        >>> s1 = t1 = 0.5 - 0.5**27
        >>> np.log2(0.5 - s1)
@@ -633,12 +655,12 @@ def segment_intersection(start0, end0, start1, end1):
     .. image:: ../images/segment_intersection1.png
        :align: center
 
-    .. testsetup:: segment-intersect
+    .. testsetup:: segment-intersection1, segment-intersection2
 
        import numpy as np
        from bezier._intersection_helpers import segment_intersection
 
-    .. doctest:: segment-intersect
+    .. doctest:: segment-intersection1
        :options: +NORMALIZE_WHITESPACE
 
        >>> start0 = np.array([[0.0, 0.0]])
@@ -650,6 +672,11 @@ def segment_intersection(start0, end0, start1, end1):
        0.25
        >>> t
        0.75
+
+    .. testcleanup:: segment-intersection1
+
+       import make_images
+       make_images.segment_intersection1(start0, end0, start1, end1, s)
 
     Taking the parallel (but different) lines
 
@@ -668,7 +695,7 @@ def segment_intersection(start0, end0, start1, end1):
     .. image:: ../images/segment_intersection2.png
        :align: center
 
-    .. doctest:: segment-intersect
+    .. doctest:: segment-intersection2
        :options: +NORMALIZE_WHITESPACE
 
        >>> start0 = np.array([[1.0, 0.0]])
@@ -679,9 +706,14 @@ def segment_intersection(start0, end0, start1, end1):
        >>> success
        False
 
+    .. testcleanup:: segment-intersection2
+
+       import make_images
+       make_images.segment_intersection2(start0, end0, start1, end1)
+
     Instead, we use :func:`.parallel_different`:
 
-    .. testsetup:: segment-intersect-continued
+    .. testsetup:: segment-intersection2-continued
 
        import numpy as np
        from bezier._intersection_helpers import parallel_different
@@ -691,7 +723,7 @@ def segment_intersection(start0, end0, start1, end1):
        start1 = np.array([[-1.0, 3.0]])
        end1 = np.array([[3.0, -1.0]])
 
-    .. doctest:: segment-intersect-continued
+    .. doctest:: segment-intersection2-continued
 
        >>> parallel_different(start0, end0, start1, end1)
        True
@@ -762,12 +794,12 @@ def parallel_different(start0, end0, start1, end1):
     .. image:: ../images/parallel_different1.png
        :align: center
 
-    .. testsetup:: parallel-different
+    .. testsetup:: parallel-different1, parallel-different2
 
        import numpy as np
        from bezier._intersection_helpers import parallel_different
 
-    .. doctest:: parallel-different
+    .. doctest:: parallel-different1
 
        >>> # Line: y = 1
        >>> start0 = np.array([[0.0, 1.0]])
@@ -777,6 +809,12 @@ def parallel_different(start0, end0, start1, end1):
        >>> end1 = np.array([[3.0, 2.0]])
        >>> parallel_different(start0, end0, start1, end1)
        True
+
+    .. testcleanup:: parallel-different1
+
+       import make_images
+       make_images.helper_parallel_different(
+           start0, end0, start1, end1, 'parallel_different1.png')
 
     If :math:`S_1` **is** on the first line, we want to check that
     :math:`S_1` and :math:`E_1` define parameters outside of
@@ -797,7 +835,7 @@ def parallel_different(start0, end0, start1, end1):
     .. image:: ../images/parallel_different2.png
        :align: center
 
-    .. doctest:: parallel-different
+    .. doctest:: parallel-different2
 
        >>> start0 = np.array([[1.0, 0.0]])
        >>> delta0 = np.array([[2.0, -1.0]])
@@ -807,13 +845,19 @@ def parallel_different(start0, end0, start1, end1):
        >>> parallel_different(start0, end0, start1, end1)
        True
 
+    .. testcleanup:: parallel-different2
+
+       import make_images
+       make_images.helper_parallel_different(
+           start0, end0, start1, end1, 'parallel_different2.png')
+
     but if the intervals overlap, like :math:`\left[0, 1\right]` and
     :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
 
     .. image:: ../images/parallel_different3.png
        :align: center
 
-    .. testsetup:: parallel-different-continued
+    .. testsetup:: parallel-different3, parallel-different4
 
        import numpy as np
        from bezier._intersection_helpers import parallel_different
@@ -822,12 +866,18 @@ def parallel_different(start0, end0, start1, end1):
        delta0 = np.array([[2.0, -1.0]])
        end0 = start0 + 1.0 * delta0
 
-    .. doctest:: parallel-different-continued
+    .. doctest:: parallel-different3
 
        >>> start1 = start0 - 1.0 * delta0
        >>> end1 = start0 + 0.5 * delta0
        >>> parallel_different(start0, end0, start1, end1)
        False
+
+    .. testcleanup:: parallel-different3
+
+       import make_images
+       make_images.helper_parallel_different(
+           start0, end0, start1, end1, 'parallel_different3.png')
 
     Similarly, if the second interval completely contains the first,
     the segments meet:
@@ -835,12 +885,18 @@ def parallel_different(start0, end0, start1, end1):
     .. image:: ../images/parallel_different4.png
        :align: center
 
-    .. doctest:: parallel-different-continued
+    .. doctest:: parallel-different4
 
        >>> start1 = start0 + 3.0 * delta0
        >>> end1 = start0 - 2.0 * delta0
        >>> parallel_different(start0, end0, start1, end1)
        False
+
+    .. testcleanup:: parallel-different4
+
+       import make_images
+       make_images.helper_parallel_different(
+           start0, end0, start1, end1, 'parallel_different4.png')
 
     .. note::
 
