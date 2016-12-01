@@ -1,1 +1,1 @@
-sphinx-docstring-typing
+sphinx-docstring-typing >= 0.0.2

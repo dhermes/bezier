@@ -117,8 +117,8 @@ class CurvedPolygon(object):
        make_images.curved_polygon_constructor2(curved_poly)
 
     Args:
-        edges (tuple): The boundary edges (each as :class:`.Curve`) of
-            the curved polygon.
+        edges (Tuple[~bezier.curve.Curve, ...]): The boundary edges
+            of the curved polygon.
     """
 
     def __init__(self, *edges):

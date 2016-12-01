@@ -82,13 +82,9 @@ class TestSurface(unittest.TestCase):
             self._make_one(nodes)
 
     def test___repr__(self):
-        degree = 2
-        dimension = 3
-        num_nodes = ((degree + 1) * (degree + 2)) / 2
-        nodes = np.zeros((num_nodes, dimension))
+        nodes = np.zeros((15, 3))
         surface = self._make_one(nodes)
-        expected = '<Surface (degree={:d}, dimension={:d})>'.format(
-            degree, dimension)
+        expected = '<Surface (degree=4, dimension=3)>'
         self.assertEqual(repr(surface), expected)
 
     def test___repr__custom_triangle(self):
@@ -124,12 +120,6 @@ class TestSurface(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             klass._get_degree(9)
-
-    def test___repr__(self):
-        nodes = np.zeros((15, 3))
-        surface = self._make_one(nodes)
-        expected = '<Surface (degree=4, dimension=3)>'
-        self.assertEqual(repr(surface), expected)
 
     def test_area_property_not_cached(self):
         nodes = np.array([
