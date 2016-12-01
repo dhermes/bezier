@@ -18,9 +18,17 @@ boundary.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
+
+.. testsetup:: *
+
+   import numpy as np
+   import bezier
 """
 
 
+from matplotlib import patches
+from matplotlib import path as _path_mod
+import matplotlib.pyplot as plt
 import numpy as np
 import six
 
@@ -37,25 +45,28 @@ class CurvedPolygon(object):
        on the boundary is important: we check that one curve
        begins where the last one ended.
 
+    .. image:: ../images/curved_polygon_constructor.png
+       :align: center
+
     .. doctest:: curved-polygon-ctor
 
        >>> import bezier
        >>> edge0 = bezier.Curve(np.array([
        ...     [0.0,  0.0],
-       ...     [0.5, -1.0],
-       ...     [1.0,  0.0],
+       ...     [1.0, -1.0],
+       ...     [2.0,  0.0],
        ... ]))
        >>> edge1 = bezier.Curve(np.array([
-       ...     [1.0, 0.0],
-       ...     [1.0, 2.0],
+       ...     [2.0, 0.0],
+       ...     [2.0, 1.0],
        ... ]))
        >>> edge2 = bezier.Curve(np.array([
-       ...     [1.0, 0.0],
-       ...     [0.5, 3.0],
-       ...     [0.0, 0.0],
+       ...     [2.0, 1.0],
+       ...     [1.0, 2.0],
+       ...     [0.0, 1.0],
        ... ]))
        >>> edge3 = bezier.Curve(np.array([
-       ...     [0.0, 2.0],
+       ...     [0.0, 1.0],
        ...     [0.0, 0.0],
        ... ]))
        >>> curved_poly = bezier.CurvedPolygon(
@@ -64,8 +75,8 @@ class CurvedPolygon(object):
        <CurvedPolygon (num_sides=4)>
 
     Args:
-        edges (Tuple[.Curve, ...]): The boundary edges of the
-            curved polygon.
+        edges (tuple): The boundary edges (each as :class:`.Curve`) of
+            the curved polygon.
     """
 
     def __init__(self, *edges):
@@ -93,7 +104,11 @@ class CurvedPolygon(object):
         if prev.dimension != 2:
             raise ValueError('Curve not in R^2', prev)
 
-        if not np.all(prev._nodes[-1, :] == curr._nodes[0, :]):
+        # pylint: disable=protected-access
+        prev_nodes = prev._nodes
+        curr_nodes = curr._nodes
+        # pylint: enable=protected-access
+        if not np.all(prev_nodes[-1, :] == curr_nodes[0, :]):
             raise ValueError(
                 'Consecutive sides do not have common endpoint',
                 prev, curr)
@@ -138,3 +153,44 @@ class CurvedPolygon(object):
         """
         return '<{} (num_sides={:d})>'.format(
             self.__class__.__name__, self.num_sides)
+
+    def plot(self, pts_per_edge, ax=None, show=False):
+        """Plot the current curved polygon.
+
+        Args:
+            pts_per_edge (int): Number of points to plot per curved edge.
+            ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
+                to add plot to.
+            show (Optional[bool]): Flag indicating if the plot should be
+                shown.
+
+        Returns:
+            matplotlib.artist.Artist: The axis containing the plot. This
+            may be a newly created axis.
+        """
+        if ax is None:
+            fig = plt.figure()
+            ax = fig.gca()
+
+        s_vals = np.linspace(0.0, 1.0, pts_per_edge)
+
+        # Evaluate points on each edge.
+        all_points = []
+        color = None
+        for edge in self._edges:
+            points = edge.evaluate_multi(s_vals)
+            line, = ax.plot(points[:, 0], points[:, 1], color=color)
+            color = line.get_color()
+            # Since the edges overlap, we leave out the first point in each.
+            all_points.append(points[1:, :])
+
+        polygon = np.vstack(all_points)
+        path = _path_mod.Path(polygon)
+        patch = patches.PathPatch(
+            path, facecolor=color, alpha=0.6)
+        ax.add_patch(patch)
+
+        if show:
+            plt.show()
+
+        return ax
