@@ -79,7 +79,7 @@ class Curve(_base.Base):
     .. image:: ../images/curve_constructor.png
        :align: center
 
-    .. doctest:: curve-ctor
+    .. doctest:: curve-constructor
 
        >>> import bezier
        >>> nodes = np.array([
@@ -90,6 +90,11 @@ class Curve(_base.Base):
        >>> curve = bezier.Curve(nodes)
        >>> curve
        <Curve (degree=2, dimension=2)>
+
+    .. testcleanup:: curve-constructor
+
+       import make_images
+       make_images.curve_constructor(curve)
 
     Args:
         nodes (numpy.ndarray): The nodes in the curve. The rows
@@ -250,6 +255,11 @@ class Curve(_base.Base):
            >>> curve.evaluate(0.75)
            array([ 0.796875, 0.46875 ])
 
+        .. testcleanup:: curve-eval
+
+           import make_images
+           make_images.curve_evaluate(curve)
+
         Args:
             s (float): Parameter along the curve.
 
@@ -384,6 +394,11 @@ class Curve(_base.Base):
                   [ 1.625, 2.   ],
                   [ 2.   , 1.   ]])
 
+        .. testcleanup:: curve-subdivide
+
+           import make_images
+           make_images.curve_subdivide(curve, left, right)
+
         Returns:
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
@@ -434,8 +449,14 @@ class Curve(_base.Base):
            ...     [0.5, 0.75],
            ... ])
            >>> curve2 = bezier.Curve(nodes2)
-           >>> curve1.intersect(curve2)
+           >>> intersections = curve1.intersect(curve2)
+           >>> intersections
            array([[ 0.5, 0.5]])
+
+        .. testcleanup:: curve-intersect
+
+           import make_images
+           make_images.curve_intersect(curve1, curve2, intersections)
 
         Args:
             other (Curve): Other curve to intersect with.

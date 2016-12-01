@@ -214,6 +214,26 @@ To run the documentation tests:
 
    $ tox -e doctest
    $ # OR
+   $ NO_IMAGES=True sphinx-build -W \
+   >   -b doctest \
+   >   -d docs/build/doctrees \
+   >   docs \
+   >   build/doctest
+
+Documentation Images
+====================
+
+Many images are included to illustrate the curves / surfaces / etc.
+under consideration and to display the result of the operation
+being described. To keep these images up-to-date with the doctest
+snippets, the images are created as doctest cleanup.
+
+To regenerate the images:
+
+.. code-block:: console
+
+   $ tox -e docs-images
+   $ # OR
    $ sphinx-build -W \
    >   -b doctest \
    >   -d docs/build/doctrees \

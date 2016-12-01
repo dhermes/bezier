@@ -283,17 +283,15 @@ def add_patch(ax, nodes, color, with_nodes=True):
                 linestyle='None', marker='o')
 
 
-def curve_constructor():
+def curve_constructor(curve):
     """Image for :class`.Curve` docstring."""
-    nodes = np.array([
-        [0.0  , 0.0],
-        [0.625, 0.5],
-        [1.0  , 0.5],
-    ])
-    curve = bezier.Curve(nodes)
+    if NO_IMAGES:
+        return
 
     ax = curve.plot(256)
     line = ax.lines[0]
+
+    nodes = curve._nodes
     ax.plot(nodes[:, 0], nodes[:, 1], color='black',
             linestyle='None', marker='o')
     add_patch(ax, nodes, line.get_color())
@@ -304,13 +302,10 @@ def curve_constructor():
     save_image(ax.figure, 'curve_constructor.png')
 
 
-def curve_evaluate():
+def curve_evaluate(curve):
     """Image for :meth`.Curve.evaluate` docstring."""
-    curve = bezier.Curve(np.array([
-        [0.0  , 0.0],
-        [0.625, 0.5],
-        [1.0  , 0.5],
-    ]))
+    if NO_IMAGES:
+        return
 
     ax = curve.plot(256)
     points = curve.evaluate_multi(np.array([0.75]))
@@ -323,14 +318,10 @@ def curve_evaluate():
     save_image(ax.figure, 'curve_evaluate.png')
 
 
-def curve_subdivide():
+def curve_subdivide(curve, left, right):
     """Image for :meth`.Curve.subdivide` docstring."""
-    curve = bezier.Curve(np.array([
-        [0.0, 0.0],
-        [1.25, 3.0],
-        [2.0, 1.0],
-    ]))
-    left, right = curve.subdivide()
+    if NO_IMAGES:
+        return
 
     figure = plt.figure()
     ax = figure.gca()
@@ -350,22 +341,15 @@ def curve_subdivide():
     save_image(ax.figure, 'curve_subdivide.png')
 
 
-def curve_intersect():
+def curve_intersect(curve1, curve2, intersections):
     """Image for :meth`.Curve.intersect` docstring."""
-    curve1 = bezier.Curve(np.array([
-        [0.0, 0.0],
-        [0.375, 0.75],
-        [0.75, 0.375],
-    ]))
-    curve2 = bezier.Curve(np.array([
-        [0.5, 0.0],
-        [0.5, 0.75],
-    ]))
+    if NO_IMAGES:
+        return
 
     ax = curve1.plot(256)
     curve2.plot(256, ax=ax)
-    ax.plot([0.5], [0.5], color='black',
-            linestyle='None', marker='o')
+    ax.plot(intersections[:, 0], intersections[:, 1],
+            color='black', linestyle='None', marker='o')
 
     ax.axis('scaled')
     ax.set_xlim(0.0, 0.75)
@@ -719,10 +703,6 @@ def main():
     parallel_different2()
     parallel_different3()
     parallel_different4()
-    curve_constructor()
-    curve_evaluate()
-    curve_subdivide()
-    curve_intersect()
     surface_constructor()
     surface_evaluate_barycentric()
     surface_evaluate_multi1()
