@@ -33,6 +33,10 @@ from bezier import _surface_helpers
 from bezier import curve as _curve_mod
 
 
+_REPR_TEMPLATE = (
+    '<{} (degree={:d}, dimension={:d}, base=({:g}, {:g}), width={:g})>')
+
+
 class Surface(_base.Base):
     r"""Represents a B |eacute| zier `surface`_.
 
@@ -148,11 +152,39 @@ class Surface(_base.Base):
         nodes (numpy.ndarray): The nodes in the surface. The rows
             represent each node while the columns are the dimension
             of the ambient space.
+        base_x (Optional[float]): The :math:`x`-coordinate of the base
+           vertex of the sub-triangle that this surface represents.
+        base_y (Optional[float]): The :math:`y`-coordinate of the base
+           vertex of the sub-triangle that this surface represents.
+        width (Optional[float]): The width of the sub-triangle that
+           this surface represents.
+        _copy (bool): Flag indicating if the nodes should be copied before
+            being stored. Defaults to :data:`True` since callers may
+            freely mutate ``nodes`` after passing in.
     """
 
     _area = None
     _edges = None
     _is_valid = None
+
+    def __init__(self, nodes, base_x=0.0, base_y=0.0, width=1.0, _copy=True):
+        super(Surface, self).__init__(nodes, _copy=_copy)
+        self._base_x = base_x
+        self._base_y = base_y
+        self._width = width
+
+    def __repr__(self):
+        """Representation of current object.
+
+        Returns:
+            str: Object representation.
+        """
+        if self._base_x == 0.0 and self._base_y == 0.0 and self._width == 1.0:
+            return super(Surface, self).__repr__()
+        else:
+            return _REPR_TEMPLATE.format(
+                self.__class__.__name__, self.degree, self.dimension,
+                self._base_x, self._base_y, self._width)
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -601,7 +633,7 @@ class Surface(_base.Base):
            >>> surface = bezier.Surface(nodes)
            >>> _, sub_surface_b, _, _ = surface.subdivide()
            >>> sub_surface_b
-           <Surface (degree=2, dimension=2)>
+           <Surface (degree=2, dimension=2, base=(0.5, 0.5), width=-0.5)>
            >>> sub_surface_b.nodes
            array([[ 1.5   , 2.5   ],
                   [ 0.6875, 2.3125],
@@ -669,8 +701,19 @@ class Surface(_base.Base):
                 self._nodes, self.degree,
                 (0.5, 0.0, 0.5), (0.0, 0.5, 0.5), (0.0, 0.0, 1.0))
 
-        return (Surface(nodes_a, _copy=False), Surface(nodes_b, _copy=False),
-                Surface(nodes_c, _copy=False), Surface(nodes_d, _copy=False))
+        half_width = 0.5 * self._width
+        shifted_x = self._base_x + half_width
+        shifted_y = self._base_y + half_width
+        return (
+            Surface(nodes_a, base_x=self._base_x, base_y=self._base_y,
+                    width=half_width, _copy=False),
+            Surface(nodes_b, base_x=shifted_x, base_y=shifted_y,
+                    width=-half_width, _copy=False),
+            Surface(nodes_c, base_x=shifted_x, base_y=self._base_y,
+                    width=half_width, _copy=False),
+            Surface(nodes_d, base_x=self._base_x, base_y=shifted_y,
+                    width=half_width, _copy=False),
+        )
 
     def _compute_valid(self):
         r"""Determines if the current surface is "valid".

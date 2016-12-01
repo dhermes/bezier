@@ -59,6 +59,9 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(surface._degree, 1)
         self.assertEqual(surface._dimension, 2)
         self.assertIs(surface._nodes, nodes)
+        self.assertEqual(surface._base_x, 0.0)
+        self.assertEqual(surface._base_y, 0.0)
+        self.assertEqual(surface._width, 1.0)
         self.assertIsNone(surface._area)
         self.assertIsNone(surface._edges)
 
@@ -77,6 +80,32 @@ class TestSurface(unittest.TestCase):
         ])
         with self.assertRaises(ValueError):
             self._make_one(nodes)
+
+    def test___repr__(self):
+        degree = 2
+        dimension = 3
+        num_nodes = ((degree + 1) * (degree + 2)) / 2
+        nodes = np.zeros((num_nodes, dimension))
+        surface = self._make_one(nodes)
+        expected = '<Surface (degree={:d}, dimension={:d})>'.format(
+            degree, dimension)
+        self.assertEqual(repr(surface), expected)
+
+    def test___repr__custom_triangle(self):
+        from bezier import surface as surface_mod
+
+        degree = 4
+        dimension = 3
+        num_nodes = ((degree + 1) * (degree + 2)) / 2
+        nodes = np.zeros((num_nodes, dimension))
+        base_x = 0.46875
+        base_y = 0.3125
+        width = 0.03125
+        surface = self._make_one(
+            nodes, base_x=base_x, base_y=base_y, width=width)
+        expected = surface_mod._REPR_TEMPLATE.format(
+            'Surface', degree, dimension, base_x, base_y, width)
+        self.assertEqual(repr(surface), expected)
 
     def test__get_degree_valid(self):
         klass = self._get_target_class()
