@@ -30,6 +30,14 @@ slow = pytest.mark.skipif(  # pylint: disable=invalid-name
 class TestSurface(unittest.TestCase):
 
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
+    QUADRATIC = np.array([
+        [0.0, 0.0],
+        [1.25, 0.5],
+        [2.0, 1.0],
+        [-1.5, 0.75],
+        [0.0, 2.0],
+        [-3.0, 3.0],
+    ])
 
     @staticmethod
     def _get_target_class():
@@ -146,14 +154,7 @@ class TestSurface(unittest.TestCase):
             np.vstack([p001, p100]))
 
     def test__compute_edges_quadratic(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.25, 0.5],
-            [2.0, 1.0],
-            [-1.5, 0.75],
-            [0.0, 2.0],
-            [-3.0, 3.0],
-        ])
+        nodes = self.QUADRATIC
         p200, p110, p020, p101, p011, p002 = nodes
         surface = self._make_one(nodes)
 
@@ -900,3 +901,25 @@ class TestSurface(unittest.TestCase):
         # Access again but make sure no more calls to _compute_valid().
         self.assertTrue(surface.is_valid)
         self.assertEqual(compute_valid.call_count, 1)
+
+    def test_locate(self):
+        surface = self._make_one(self.QUADRATIC)
+        point = surface.evaluate_multi(np.array([
+            [0.5, 0.25]]))
+        with self.assertRaises(NotImplementedError):
+            surface.locate(point)
+
+    def test_locate_bad_dimension(self):
+        surface = self._make_one(np.array([
+            [0.0], [1.0], [2.0]]))
+        with self.assertRaises(NotImplementedError):
+            surface.locate(None)
+
+    def test_locate_bad_point(self):
+        surface = self._make_one(self.QUADRATIC)
+        point1 = np.array([0.0, 1.0])
+        point2 = np.array([[0.0, 1.0, 2.0]])
+        with self.assertRaises(ValueError):
+            surface.locate(point1)
+        with self.assertRaises(ValueError):
+            surface.locate(point2)

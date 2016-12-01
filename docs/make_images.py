@@ -561,3 +561,18 @@ def curved_polygon_constructor2(curved_poly):
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.125, 1.125)
     save_image(ax.figure, 'curved_polygon_constructor2.png')
+
+
+def surface_locate(surface, point):
+    """Image for :meth`.Surface.locate` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = surface.plot(256)
+    ax.plot(point[:, 0], point[:, 1], color='black',
+            linestyle='None', marker='o')
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.0625, 1.0625)
+    ax.set_ylim(-0.1875, 1.0625)
+    save_image(ax.figure, 'surface_locate.png')

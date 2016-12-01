@@ -795,3 +795,56 @@ class Surface(_base.Base):
         if self._is_valid is None:
             self._is_valid = self._compute_valid()
         return self._is_valid
+
+    def locate(self, point):
+        r"""Find a point on the current surface.
+
+        Solves for :math:`s` and :math`t` in :math:`B(s, t) = p`.
+
+        .. note::
+
+           A unique solution is only guaranteed if the current surface is
+           valid. This code assumes a valid surface, but doesn't check.
+
+        .. image:: ../images/surface_locate.png
+           :align: center
+
+        .. doctest:: surface-locate
+
+           >>> surface = bezier.Surface(np.array([
+           ...     [0.0 ,  0.0 ],
+           ...     [0.5 , -0.25],
+           ...     [1.0 ,  0.0 ],
+           ...     [0.25,  0.5 ],
+           ...     [0.75,  0.75],
+           ...     [0.0 ,  1.0 ],
+           ... ]))
+           >>> point = np.array([[0.59375, 0.25]])
+           >>> surface.locate(point)
+           Traceback (most recent call last):
+             ...
+           NotImplementedError
+
+        .. testcleanup:: surface-locate
+
+           import make_images
+           make_images.surface_locate(surface, point)
+
+        Args:
+            point (numpy.ndarray): A (``1xD``) point on the surface,
+                where :math:`D` is the dimension of the surface.
+
+        Raises:
+            NotImplementedError: If the surface isn't in :math:`\mathbf{R}^2`.
+            ValueError: If the dimension of the ``point`` doesn't match the
+                dimension of the current surface.
+            NotImplementedError: For now, the method has not been implemented.
+        """
+        if self.dimension != 2:
+            raise NotImplementedError('Only 2D surfaces supported.')
+
+        if point.shape != (1, self.dimension):
+            raise ValueError('Point is not in same dimension as surface',
+                             point, 'Shape expected:', (1, self.dimension))
+
+        raise NotImplementedError
