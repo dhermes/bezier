@@ -30,6 +30,7 @@ from bezier import _intersection_helpers
 
 _DOCS_DIR = os.path.abspath(os.path.dirname(__file__))
 IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
+NO_IMAGES = 'NO_IMAGES' in os.environ
 
 
 def save_image(figure, filename):
@@ -41,7 +42,6 @@ def save_image(figure, filename):
     """
     path = os.path.join(IMAGES_DIR, filename)
     figure.savefig(path, bbox_inches='tight')
-    print('Saved {}'.format(filename))
     plt.close(figure)
 
 
@@ -684,27 +684,10 @@ def surface_subdivide2():
     save_image(ax.figure, 'surface_subdivide2')
 
 
-def curved_polygon_constructor1():
+def curved_polygon_constructor1(curved_poly):
     """Image for :class`.CurvedPolygon` docstring."""
-    edge0 = bezier.Curve(np.array([
-        [0.0,  0.0],
-        [1.0, -1.0],
-        [2.0,  0.0],
-    ]))
-    edge1 = bezier.Curve(np.array([
-        [2.0, 0.0],
-        [2.0, 1.0],
-    ]))
-    edge2 = bezier.Curve(np.array([
-        [2.0, 1.0],
-        [1.0, 2.0],
-        [0.0, 1.0],
-    ]))
-    edge3 = bezier.Curve(np.array([
-        [0.0, 1.0],
-        [0.0, 0.0],
-    ]))
-    curved_poly = bezier.CurvedPolygon(edge0, edge1, edge2, edge3)
+    if NO_IMAGES:
+        return
 
     ax = curved_poly.plot(256)
     ax.axis('scaled')
@@ -713,27 +696,10 @@ def curved_polygon_constructor1():
     save_image(ax.figure, 'curved_polygon_constructor1.png')
 
 
-def curved_polygon_constructor2():
+def curved_polygon_constructor2(curved_poly):
     """Image for :class`.CurvedPolygon` docstring."""
-    edge0 = bezier.Curve(np.array([
-        [0.0, 0.0],
-        [1.0, 0.0],
-    ]))
-    edge1 = bezier.Curve(np.array([
-        [1.0, 0.0],
-        [1.25, 0.5],
-        [1.0, 1.0],
-    ]))
-    edge2 = bezier.Curve(np.array([
-        [1.0, 1.0],
-        [2.0, 1.0],
-    ]))
-    edge3 = bezier.Curve(np.array([
-        [2.0, 1.0],
-        [1.0, 0.75],
-        [0.0, 0.0],
-    ]))
-    curved_poly = bezier.CurvedPolygon(edge0, edge1, edge2, edge3)
+    if NO_IMAGES:
+        return
 
     ax = curved_poly.plot(256)
     ax.axis('scaled')
@@ -766,8 +732,6 @@ def main():
     surface_is_valid3()
     surface_subdivide1()
     surface_subdivide2()
-    curved_polygon_constructor1()
-    curved_polygon_constructor2()
 
 
 if __name__ == '__main__':

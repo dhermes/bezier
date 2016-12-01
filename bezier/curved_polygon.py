@@ -74,6 +74,11 @@ class CurvedPolygon(object):
        >>> curved_poly
        <CurvedPolygon (num_sides=4)>
 
+    .. testcleanup:: curved-polygon-ctor
+
+       import make_images
+       make_images.curved_polygon_constructor1(curved_poly)
+
     Though the endpoints of edge pair of edges are verified to match,
     the curved polygon as a whole is not verified, so creating
     a curved polygon with self-intersections is possible:
@@ -105,6 +110,11 @@ class CurvedPolygon(object):
        ...     edge0, edge1, edge2, edge3)
        >>> curved_poly
        <CurvedPolygon (num_sides=4)>
+
+    .. testcleanup:: curved-polygon-ctor-invalid
+
+       import make_images
+       make_images.curved_polygon_constructor2(curved_poly)
 
     Args:
         edges (tuple): The boundary edges (each as :class:`.Curve`) of
