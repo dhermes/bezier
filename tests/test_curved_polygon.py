@@ -14,7 +14,10 @@
 
 import unittest
 
+import mock
 import numpy as np
+
+from tests import utils
 
 
 class TestCurvedPolygon(unittest.TestCase):
@@ -29,6 +32,7 @@ class TestCurvedPolygon(unittest.TestCase):
         [0.5, 1.0],
         [0.0, 0.0],
     ])
+    COLOR = (0.125, 0.125, 0.0)
 
     @staticmethod
     def _get_target_class():
@@ -89,3 +93,75 @@ class TestCurvedPolygon(unittest.TestCase):
         curved_poly = self._make_default()
         self.assertEqual(repr(curved_poly),
                          '<CurvedPolygon (num_sides=2)>')
+
+    def _check_plot_calls(self, ax):
+        # Check the calls to ax.plot(). We can't assert_any_call()
+        # since == breaks on NumPy arrays.
+        self.assertEqual(ax.plot.call_count, 2)
+
+        calls = ax.plot.mock_calls
+        utils.check_plot_call(
+            self, calls[0], self.NODES0[(0, 2), :], color=None)
+        utils.check_plot_call(
+            self, calls[1], self.NODES1[(0, 2), :], color=self.COLOR)
+
+    def _make_axis(self):
+        import matplotlib.lines
+
+        ax = mock.Mock()
+
+        line = matplotlib.lines.Line2D([], [], color=self.COLOR)
+        ax.plot.return_value = (line,)
+
+        return ax
+
+    def _plot_helper(self, show=False, ax=None):
+        if ax is None:
+            orig_ax = False
+            ax = self._make_axis()
+        else:
+            orig_ax = True
+
+        curved_poly = self._make_default()
+        plt = mock.Mock()
+
+        figure = mock.Mock()
+        plt.figure.return_value = figure
+        figure.gca.return_value = ax
+
+        with mock.patch('bezier.curved_polygon.plt', new=plt):
+            kwargs = {}
+            if show:
+                kwargs['show'] = True
+            if orig_ax:
+                kwargs['ax'] = ax
+            result = curved_poly.plot(2, **kwargs)
+
+        self.assertIs(result, ax)
+
+        # Check mocks.
+        if orig_ax:
+            plt.figure.assert_not_called()
+            figure.gca.assert_not_called()
+        else:
+            plt.figure.assert_called_once_with()
+            figure.gca.assert_called_once_with()
+
+        ax.add_patch.assert_called_once()
+
+        self._check_plot_calls(ax)
+
+        if show:
+            plt.show.assert_called_once_with()
+        else:
+            plt.show.assert_not_called()
+
+    def test_plot(self):
+        self._plot_helper()
+
+    def test_plot_show(self):
+        self._plot_helper(show=True)
+
+    def test_plot_existing_axis(self):
+        ax = self._make_axis()
+        self._plot_helper(ax=ax)

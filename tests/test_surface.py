@@ -439,14 +439,6 @@ class TestSurface(unittest.TestCase):
         patch = positional[0]
         self.assertTrue(np.all(patch.get_path().vertices == all_nodes))
 
-    def _check_plot_call(self, call, expected, **kwargs):
-        # Unpack the call as name, positional args, keyword args
-        _, positional, keyword = call
-        self.assertEqual(keyword, kwargs)
-        self.assertEqual(len(positional), 2)
-        self.assertTrue(np.all(positional[0] == expected[:, 0]))
-        self.assertTrue(np.all(positional[1] == expected[:, 1]))
-
     def _check_plot_calls(self, ax, nodes, color, with_nodes=False):
         # Check the calls to ax.plot(). We can't assert_any_call()
         # since == breaks on NumPy arrays.
@@ -455,11 +447,11 @@ class TestSurface(unittest.TestCase):
         else:
             self.assertEqual(ax.plot.call_count, 3)
         calls = ax.plot.mock_calls
-        self._check_plot_call(calls[0], nodes[:2, :])
-        self._check_plot_call(calls[1], nodes[1:, :], color=color)
-        self._check_plot_call(calls[2], nodes[(2, 0), :], color=color)
+        utils.check_plot_call(self, calls[0], nodes[:2, :])
+        utils.check_plot_call(self, calls[1], nodes[1:, :], color=color)
+        utils.check_plot_call(self, calls[2], nodes[(2, 0), :], color=color)
         if with_nodes:
-            self._check_plot_call(calls[3], nodes,
+            utils.check_plot_call(self, calls[3], nodes,
                                   color='black', marker='o', linestyle='None')
         # Check the calls to ax.add_patch().
         self.assertEqual(ax.add_patch.call_count, 1)

@@ -72,3 +72,14 @@ def ref_triangle_uniform_nodes(pts_exponent):
 
     result /= (pts_per_side - 1.0)
     return result
+
+
+def check_plot_call(test_case, call, expected, **kwargs):
+    import numpy as np
+
+    # Unpack the call as name, positional args, keyword args
+    _, positional, keyword = call
+    test_case.assertEqual(keyword, kwargs)
+    test_case.assertEqual(len(positional), 2)
+    test_case.assertTrue(np.all(positional[0] == expected[:, 0]))
+    test_case.assertTrue(np.all(positional[1] == expected[:, 1]))
