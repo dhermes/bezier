@@ -23,10 +23,12 @@ Plotting utilities will also be provided.
 """
 
 from bezier.curve import Curve
+from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface
 
 
 __all__ = [
     'Curve',
+    'CurvedPolygon',
     'Surface',
 ]
