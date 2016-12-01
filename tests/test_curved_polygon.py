@@ -56,9 +56,30 @@ class TestCurvedPolygon(unittest.TestCase):
         self.assertEqual(curved_poly._edges, (edge0, edge1))
         self.assertEqual(curved_poly._num_sides, 2)
 
-    def test__verify(self):
-        curved_poly = self._make_one()
-        self.assertIsNone(curved_poly._verify())
+    def test__verify_too_few(self):
+        with self.assertRaises(ValueError):
+            self._make_one()
+        with self.assertRaises(ValueError):
+            self._make_one(None)
+
+    def test__verify_bad_dimension(self):
+        import bezier
+
+        edge0 = bezier.Curve(np.array([
+            [1.0, 1.0],
+            [2.0, 2.0],
+        ]))
+        edge1 = bezier.Curve(self.NODES1)
+        with self.assertRaises(ValueError):
+            self._make_one(edge0, edge1)
+
+    def test__verify_not_aligned(self):
+        import bezier
+
+        edge0 = bezier.Curve(np.array([[0.0], [0.0]]))
+        edge1 = bezier.Curve(self.NODES1)
+        with self.assertRaises(ValueError):
+            self._make_one(edge0, edge1)
 
     def test_num_sides_property(self):
         curved_poly = self._make_default()
