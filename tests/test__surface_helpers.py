@@ -429,7 +429,8 @@ class Test_jacobian_s(unittest.TestCase):
         return _surface_helpers.jacobian_s(nodes, degree, dimension)
 
     def test_linear(self):
-        nodes = np.array([[0.0, 1.0, np.nan]]).T
+        nodes = np.array([[0.0, 1.0, np.nan]])
+        nodes = nodes.T  # pylint: disable=no-member
         result = self._call_function_under_test(nodes, 1, 1)
         expected = np.array([[1.0]])
         self.assertTrue(np.all(result == expected))
@@ -454,13 +455,17 @@ class Test_jacobian_s(unittest.TestCase):
     def test_cubic(self):
         nodes = np.arange(10, dtype=float)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
-        expected = 3 * np.array([[1, 3, 5, 9, 11, 15]], dtype=float).T
+        expected = 3 * np.array([[1, 3, 5, 9, 11, 15]], dtype=float)
+        expected = expected.T  # pylint: disable=no-member
         self.assertTrue(np.all(result == expected))
 
-    def test_unsupported(self):
-        nodes = np.arange(15, dtype=float)[:, np.newaxis]
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(nodes, 4, 1)
+    def test_quartic(self):
+        nodes = np.arange(15, dtype=float)[:, np.newaxis]**2
+        result = self._call_function_under_test(nodes, 4, 1)
+        expected = 4 * np.array([
+            [1, 3, 5, 7, 11, 13, 15, 19, 21, 25]], dtype=float)
+        expected = expected.T  # pylint: disable=no-member
+        self.assertTrue(np.all(result == expected))
 
 
 class Test_jacobian_t(unittest.TestCase):
@@ -472,7 +477,8 @@ class Test_jacobian_t(unittest.TestCase):
         return _surface_helpers.jacobian_t(nodes, degree, dimension)
 
     def test_linear(self):
-        nodes = np.array([[0.0, np.nan, 1.0]]).T
+        nodes = np.array([[0.0, np.nan, 1.0]])
+        nodes = nodes.T  # pylint: disable=no-member
         result = self._call_function_under_test(nodes, 1, 1)
         expected = np.array([[1.0]])
         self.assertTrue(np.all(result == expected))
@@ -497,13 +503,17 @@ class Test_jacobian_t(unittest.TestCase):
     def test_cubic(self):
         nodes = np.arange(10, dtype=float)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
-        expected = 3 * np.array([[16, 24, 32, 33, 39, 32]], dtype=float).T
+        expected = 3 * np.array([[16, 24, 32, 33, 39, 32]], dtype=float)
+        expected = expected.T  # pylint: disable=no-member
         self.assertTrue(np.all(result == expected))
 
-    def test_unsupported(self):
-        nodes = np.arange(15, dtype=float)[:, np.newaxis]
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(nodes, 4, 1)
+    def test_quartic(self):
+        nodes = np.arange(15, dtype=float)[:, np.newaxis]**2
+        result = self._call_function_under_test(nodes, 4, 1)
+        expected = 4 * np.array([
+            [25, 35, 45, 55, 56, 64, 72, 63, 69, 52]], dtype=float)
+        expected = expected.T  # pylint: disable=no-member
+        self.assertTrue(np.all(result == expected))
 
 
 class Test_newton_refine(unittest.TestCase):

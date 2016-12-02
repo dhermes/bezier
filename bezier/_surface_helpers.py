@@ -615,12 +615,6 @@ def _mean_centroid(candidates):
 def jacobian_s(nodes, degree, dimension):
     r"""Compute :math:`\frac{\partial B}{\partial s}`.
 
-    .. note::
-
-       The relationship between the nodes of the function and its
-       derivative is mostly described in the code in
-       :func:`de_casteljau_one_round`.
-
     Args:
         nodes (numpy.ndarray): Array of nodes in a surface.
         degree (int): The degree of the surface.
@@ -629,30 +623,23 @@ def jacobian_s(nodes, degree, dimension):
     Returns:
         numpy.ndarray: Nodes of the Jacobian surface in
             B |eacute| zier form.
-
-    Raises:
-        NotImplementedError: If ``degree`` is not 1, 2 or 3.
     """
-    if degree == 1:
-        return nodes[[1], :] - nodes[[0], :]
-    elif degree == 2:
-        result = np.empty((3, dimension))
-        result[0, :] = 2.0 * (nodes[1, :] - nodes[0, :])
-        result[1, :] = 2.0 * (nodes[2, :] - nodes[1, :])
-        result[2, :] = 2.0 * (nodes[4, :] - nodes[3, :])
-        return result
-    elif degree == 3:
-        result = np.empty((6, dimension))
-        result[0, :] = 3.0 * (nodes[1, :] - nodes[0, :])
-        result[1, :] = 3.0 * (nodes[2, :] - nodes[1, :])
-        result[2, :] = 3.0 * (nodes[3, :] - nodes[2, :])
-        result[3, :] = 3.0 * (nodes[5, :] - nodes[4, :])
-        result[4, :] = 3.0 * (nodes[6, :] - nodes[5, :])
-        result[5, :] = 3.0 * (nodes[8, :] - nodes[7, :])
-        return result
-    else:
-        raise NotImplementedError(
-            'Surface Jacobian only implemented for degrees 1, 2 and 3')
+    num_nodes = (degree * (degree + 1)) / 2
+    result = np.empty((num_nodes, dimension))
+
+    index = 0
+    i = 0
+    for num_vals in six.moves.xrange(degree, 0, -1):
+        for _ in six.moves.xrange(num_vals):
+            result[index, :] = nodes[i + 1, :] - nodes[i, :]
+            # Update the indices
+            index += 1
+            i += 1
+
+        # In between each row, the index gains an extra value.
+        i += 1
+
+    return float(degree) * result
 
 
 def jacobian_t(nodes, degree, dimension):
@@ -666,30 +653,25 @@ def jacobian_t(nodes, degree, dimension):
     Returns:
         numpy.ndarray: Nodes of the Jacobian surface in
             B |eacute| zier form.
-
-    Raises:
-        NotImplementedError: If ``degree`` is not 1, 2 or 3.
     """
-    if degree == 1:
-        return nodes[[2], :] - nodes[[0], :]
-    elif degree == 2:
-        result = np.empty((3, dimension))
-        result[0, :] = 2.0 * (nodes[3, :] - nodes[0, :])
-        result[1, :] = 2.0 * (nodes[4, :] - nodes[1, :])
-        result[2, :] = 2.0 * (nodes[5, :] - nodes[3, :])
-        return result
-    elif degree == 3:
-        result = np.empty((6, dimension))
-        result[0, :] = 3.0 * (nodes[4, :] - nodes[0, :])
-        result[1, :] = 3.0 * (nodes[5, :] - nodes[1, :])
-        result[2, :] = 3.0 * (nodes[6, :] - nodes[2, :])
-        result[3, :] = 3.0 * (nodes[7, :] - nodes[4, :])
-        result[4, :] = 3.0 * (nodes[8, :] - nodes[5, :])
-        result[5, :] = 3.0 * (nodes[9, :] - nodes[7, :])
-        return result
-    else:
-        raise NotImplementedError(
-            'Surface Jacobian only implemented for degrees 1, 2 and 3')
+    num_nodes = (degree * (degree + 1)) / 2
+    result = np.empty((num_nodes, dimension))
+
+    index = 0
+    i = 0
+    j = degree + 1
+    for num_vals in six.moves.xrange(degree, 0, -1):
+        for _ in six.moves.xrange(num_vals):
+            result[index, :] = nodes[j, :] - nodes[i, :]
+            # Update the indices
+            index += 1
+            i += 1
+            j += 1
+
+        # In between each row, the index gains an extra value.
+        i += 1
+
+    return float(degree) * result
 
 
 def newton_refine(surface, x_val, y_val, s, t):
