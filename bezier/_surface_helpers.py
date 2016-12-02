@@ -23,8 +23,11 @@ import operator
 import numpy as np
 import six
 
+from bezier import _helpers
 
-MAX_SUBDIVISIONS = 5
+
+MAX_POLY_SUBDIVISIONS = 5
+MAX_LOCATE_SUBDIVISIONS = 20
 LINEAR_SUBDIVIDE = np.array([
     [2, 0, 0],
     [1, 1, 0],
@@ -225,7 +228,7 @@ def polynomial_sign(poly_surface):
     Checks if a polynomial :math:`p(s, t)` is positive, negative
     or mixed sign on the reference triangle.
 
-    Does this by utilizing the B |eacute|zier form of :math:`p`: it is a
+    Does this by utilizing the B |eacute| zier form of :math:`p`: it is a
     convex combination of the Bernstein basis (real numbers) hence
     if the Bernstein basis is all positive, the polynomial must be.
 
@@ -248,7 +251,7 @@ def polynomial_sign(poly_surface):
     """
     sub_polys = [poly_surface]
     signs = set()
-    for _ in six.moves.xrange(MAX_SUBDIVISIONS):
+    for _ in six.moves.xrange(MAX_POLY_SUBDIVISIONS):
         undecided = []
         for poly in sub_polys:
             # Avoid an unnecessarily copying the nodes.
@@ -278,7 +281,7 @@ def polynomial_sign(poly_surface):
     else:
         raise ValueError(
             'Did not reach a conclusion after max subdivisions',
-            MAX_SUBDIVISIONS)
+            MAX_POLY_SUBDIVISIONS)
 
 
 def _2x2_det(mat):
@@ -580,3 +583,212 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
         partial_vals = new_partial
 
     return _reduced_to_matrix(nodes.shape, degree, partial_vals)
+
+
+def _mean_centroid(candidates):
+    """Take the mean of all centroids in set of reference triangles.
+
+    Args:
+        candidates (List[.Surface]): List of surfaces. We'll only use
+            the base ``x`` and ``y`` and the width of the reference
+            triangle that each surface represents.
+
+    Returns:
+        Tuple[float, float]: The mean of all centroids.
+    """
+    sum_x = 0.0
+    sum_y = 0.0
+    sum_width = 0.0
+    for candidate in candidates:
+        sum_x += candidate._base_x
+        sum_y += candidate._base_y
+        sum_width += candidate._width
+
+    denom = float(len(candidates))
+    mean_x = sum_x / denom
+    mean_y = sum_y / denom
+    width_delta = sum_width / (3.0 * denom)
+
+    return mean_x + width_delta, mean_y + width_delta
+
+
+def jacobian_s(nodes, degree, dimension):
+    r"""Compute :math:`\frac{\partial B}{\partial s}`.
+
+    .. note::
+
+       The relationship between the nodes of the function and its
+       derivative is mostly described in the code in
+       :func:`de_casteljau_one_round`.
+
+    Args:
+        nodes (numpy.ndarray): Array of nodes in a surface.
+        degree (int): The degree of the surface.
+        dimension (int): The dimension the surface lives in.
+
+    Returns:
+        numpy.ndarray: Nodes of the Jacobian surface in
+            B |eacute| zier form.
+
+    Raises:
+        NotImplementedError: If ``degree`` is not 1, 2 or 3.
+    """
+    if degree == 1:
+        return nodes[[1], :] - nodes[[0], :]
+    elif degree == 2:
+        result = np.empty((3, dimension))
+        result[0, :] = 2.0 * (nodes[1, :] - nodes[0, :])
+        result[1, :] = 2.0 * (nodes[2, :] - nodes[1, :])
+        result[2, :] = 2.0 * (nodes[4, :] - nodes[3, :])
+        return result
+    elif degree == 3:
+        result = np.empty((6, dimension))
+        result[0, :] = 3.0 * (nodes[1, :] - nodes[0, :])
+        result[1, :] = 3.0 * (nodes[2, :] - nodes[1, :])
+        result[2, :] = 3.0 * (nodes[3, :] - nodes[2, :])
+        result[3, :] = 3.0 * (nodes[5, :] - nodes[4, :])
+        result[4, :] = 3.0 * (nodes[6, :] - nodes[5, :])
+        result[5, :] = 3.0 * (nodes[8, :] - nodes[7, :])
+        return result
+    else:
+        raise NotImplementedError(
+            'Surface Jacobian only implemented for degrees 1, 2 and 3')
+
+
+def jacobian_t(nodes, degree, dimension):
+    r"""Compute :math:`\frac{\partial B}{\partial t}`.
+
+    Args:
+        nodes (numpy.ndarray): Array of nodes in a surface.
+        degree (int): The degree of the surface.
+        dimension (int): The dimension the surface lives in.
+
+    Returns:
+        numpy.ndarray: Nodes of the Jacobian surface in
+            B |eacute| zier form.
+
+    Raises:
+        NotImplementedError: If ``degree`` is not 1, 2 or 3.
+    """
+    if degree == 1:
+        return nodes[[1], :] - nodes[[0], :]
+    elif degree == 2:
+        result = np.empty((3, dimension))
+        result[0, :] = 2.0 * (nodes[3, :] - nodes[0, :])
+        result[1, :] = 2.0 * (nodes[4, :] - nodes[1, :])
+        result[2, :] = 2.0 * (nodes[5, :] - nodes[3, :])
+        return result
+    elif degree == 3:
+        result = np.empty((6, dimension))
+        result[0, :] = 3.0 * (nodes[4, :] - nodes[0, :])
+        result[1, :] = 3.0 * (nodes[5, :] - nodes[1, :])
+        result[2, :] = 3.0 * (nodes[6, :] - nodes[2, :])
+        result[3, :] = 3.0 * (nodes[7, :] - nodes[4, :])
+        result[4, :] = 3.0 * (nodes[8, :] - nodes[5, :])
+        result[5, :] = 3.0 * (nodes[9, :] - nodes[7, :])
+        return result
+    else:
+        raise NotImplementedError(
+            'Surface Jacobian only implemented for degrees 1, 2 and 3')
+
+
+def newton_refine(surface, x_val, y_val, s, t):
+    r"""Refine a solution to :math:`B(s, t) = p` using Newton's method.
+
+    Computes updates via
+
+    .. math::
+
+       \left[\begin{array}{c}
+           0 \\ 0 \end{array}\right] \approx
+           \left(B\left(s_{\ast}, t_{\ast}\right) -
+           \left[\begin{array}{c} x \\ y \end{array}\right]\right) +
+           \left[\begin{array}{c c}
+               B_s\left(s_{\ast}, t_{\ast}\right) &
+               B_t\left(s_{\ast}, t_{\ast}\right) \end{array}\right]
+           \left[\begin{array}{c}
+               \Delta s \\ \Delta t \end{array}\right]
+
+    Args:
+        surface (.Surface): A B |eacute| zier surface (assumed to
+            be two-dimensional).
+        x_val (float): The :math:`x`-coordinate of a point
+            on the surface.
+        y_val (float): The :math:`y`-coordinate of a point
+            on the surface.
+        s (float): Approximate :math:`s`-value to be refined.
+        t (float): Approximate :math:`t`-value to be refined.
+
+    Returns:
+        Tuple[float, float]: The refined :math:`s` and :math:`t` values.
+    """
+    surf_x, surf_y = surface.evaluate_cartesian(s, t)
+    if surf_x == x_val and surf_y == y_val:
+        # No refinement is needed.
+        return s, t
+
+    nodes = surface._nodes
+    # Compute Jacobian nodes / stack them horizatonally.
+    jac_both = np.hstack([
+        jacobian_s(nodes, surface.degree, surface.dimension),
+        jacobian_t(nodes, surface.degree, surface.dimension),
+    ])
+
+    lambda1 = 1.0 - s - t
+    # The degree of the jacobian is one less.
+    for reduced_deg in six.moves.xrange(surface.degree - 1, 0, -1):
+        jac_both = de_casteljau_one_round(
+            jac_both, reduced_deg, lambda1, s, t)
+
+    # The first column of the jacobian matrix is B_s (i.e. the
+    # left-most values in ``jac_both``).
+    jac_mat = np.array([
+        [jac_both[0, 0], jac_both[0, 2]],
+        [jac_both[0, 1], jac_both[0, 3]],
+    ])
+    rhs = np.array([
+        [x_val - surf_x],
+        [y_val - surf_y],
+    ])
+    soln = np.linalg.solve(jac_mat, rhs)
+    return s + soln[0, 0], t + soln[1, 0]
+
+
+def locate_point(surface, x_val, y_val):
+    r"""Locate a point on a surface.
+
+    Does so by recursively subdividing the surface and rejecting
+    sub-surfaces with bounding boxes that don't contain the point.
+    After the sub-surfaces are sufficiently small, uses Newton's
+    method to zoom in on the intersection.
+
+    Args:
+        surface (.Surface): A B |eacute| zier surface (assumed to
+            be two-dimensional).
+        x_val (float): The :math:`x`-coordinate of a point
+            on the surface.
+        y_val (float): The :math:`y`-coordinate of a point
+            on the surface.
+
+    Returns:
+        Optional[Tuple[float, float]]: The :math:`s` and :math:`t`
+        values corresponding to ``x_val`` and ``y_val`` or
+        :data:`None` if the point is not on the ``surface``.
+    """
+    candidates = [surface]
+    for _ in six.moves.xrange(MAX_LOCATE_SUBDIVISIONS + 1):
+        next_candidates = []
+        for candidate in candidates:
+            if _helpers.contains(candidate._nodes, x_val, y_val):
+                next_candidates.extend(candidate.subdivide())
+
+        candidates = next_candidates
+
+    if not candidates:
+        return None
+
+    # We take the average of all centroids from the candidates
+    # that may contain the point.
+    s_approx, t_approx = _mean_centroid(candidates)
+    s, t = newton_refine(surface, x_val, y_val, s_approx, t_approx)
+    return s, t

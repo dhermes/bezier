@@ -24,6 +24,7 @@ import numpy as np
 import six
 
 from bezier import _curve_helpers
+from bezier import _helpers
 
 
 _FREXP = np.frexp  # pylint: disable=no-member
@@ -32,7 +33,6 @@ _FREXP = np.frexp  # pylint: disable=no-member
 # by squaring the error.
 _ERROR_EXPONENT = -26
 _MAX_INTERSECT_SUBDIVISIONS = 20
-_EPS = 2.0**(-40)
 _TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
     '{:d} accepted pairs gives {:d} candidate pairs.')
@@ -42,70 +42,6 @@ _TOO_MANY_TEMPLATE = (
 # call to _check_parameters() will fail the intersection.
 _WIGGLE_START = -2.0**(-16)
 _WIGGLE_END = 1.0 - _WIGGLE_START
-
-
-def _in_interval(value, start, end):
-    """Checks if a ``value`` is an interval (inclusive).
-
-    .. note::
-
-       The current implementation does the most basic check,
-       however, in the future, a more generic check may be desired
-       that allows wiggle room around the endpoints to account
-       for round-off.
-
-    Args:
-        value (float): The value to check.
-        start (float): The (inclusive) start of the interval.
-        end (float): The (inclusive) end of the interval.
-
-    Returns:
-        bool: Indicating if the value is in the interval.
-    """
-    return start <= value <= end
-
-
-def _vector_close(vec1, vec2):
-    r"""Checks that two vectors are equal to some threshold.
-
-    Does so by computing :math:`s_1 = \|v_1\|_2` and
-    :math:`s_2 = \|v_2\|_2` and then checking if
-
-    .. math::
-
-       \|v_1 - v_2\|_2 \leq \varepsilon \min(s_1, s_2)
-
-    where :math:`\varepsilon = 2^{-40} \approx 10^{-12}` is a fixed
-    threshold. In the rare case that one of ``vec1`` or ``vec2`` is
-    the zero vector (i.e. when :math:`\min(s_1, s_2) = 0`) instead
-    checks that the other vector is close enough to zero:
-
-    .. math::
-
-       \|v_1\|_2 = 0 \Longrightarrow \|v_2\|_2 \leq \varepsilon
-
-    .. note::
-
-       This function assumes that both vectors have finite numbers,
-       i.e. that no NaN or infinite numbers occur. NumPy provides
-       :func:`np.allclose` for coverage of **all** cases.
-
-    Args:
-        vec1 (numpy.ndarray): First vector for comparison.
-        vec2 (numpy.ndarray): Second vector for comparison.
-
-    Returns:
-        bool: Flag indicating if they are close to precision.
-    """
-    size1 = np.linalg.norm(vec1, ord=2)
-    size2 = np.linalg.norm(vec2, ord=2)
-    if size1 == 0:
-        return size2 <= _EPS
-    elif size2 == 0:
-        return size1 <= _EPS
-    else:
-        upper_bound = _EPS * min(size1, size2)
-        return np.linalg.norm(vec1 - vec2, ord=2) <= upper_bound
 
 
 def _check_close(s, curve1, t, curve2):
@@ -129,14 +65,14 @@ def _check_close(s, curve1, t, curve2):
     """
     vec1 = curve1.evaluate(s)
     vec2 = curve2.evaluate(t)
-    if not _vector_close(vec1, vec2):
+    if not _helpers.vector_close(vec1, vec2):
         raise ValueError('B_1(s) and B_2(t) are not sufficiently close')
 
     return vec1
 
 
 def _check_parameters(s, t):
-    r"""Check if ``s``, ``t`` are in :math:`\left(0, 1\right)`.
+    r"""Check if ``s``, ``t`` are in :math:`\left[0, 1\right]`.
 
     Args:
         s (float): Parameter on a curve.
@@ -145,9 +81,9 @@ def _check_parameters(s, t):
     Raises:
         ValueError: If one of the values falls outside the unit interval.
     """
-    if not _in_interval(s, 0.0, 1.0):
+    if not _helpers.in_interval(s, 0.0, 1.0):
         raise ValueError('s outside of unit interval', s)
-    if not _in_interval(t, 0.0, 1.0):
+    if not _helpers.in_interval(t, 0.0, 1.0):
         raise ValueError('t outside of unit interval', t)
 
 
@@ -173,10 +109,8 @@ def bbox_intersect(nodes1, nodes2):
         BoxIntersectionType: Enum indicating the type of bounding
         box intersection.
     """
-    left1, bottom1 = np.min(nodes1, axis=0)
-    right1, top1 = np.max(nodes1, axis=0)
-    left2, bottom2 = np.min(nodes2, axis=0)
-    right2, top2 = np.max(nodes2, axis=0)
+    left1, right1, bottom1, top1 = _helpers.bbox(nodes1)
+    left2, right2, bottom2, top2 = _helpers.bbox(nodes2)
 
     if (right2 < left1 or right1 < left2 or
             top2 < bottom1 or top1 < bottom2):
@@ -928,20 +862,20 @@ def parallel_different(start0, end0, start1, end1):
     (start_numer,), = (start1 - start0).dot(delta0.T)
     #      0 <= start_numer / norm0_sq <= 1
     # <==> 0 <= start_numer            <= norm0_sq
-    if _in_interval(start_numer, 0.0, norm0_sq):
+    if _helpers.in_interval(start_numer, 0.0, norm0_sq):
         return False
 
     (end_numer,), = (end1 - start0).dot(delta0.T)
     #      0 <= end_numer / norm0_sq <= 1
     # <==> 0 <= end_numer            <= norm0_sq
-    if _in_interval(end_numer, 0.0, norm0_sq):
+    if _helpers.in_interval(end_numer, 0.0, norm0_sq):
         return False
 
     # We know neither the start or end parameters are in [0, 1], but
     # they may contain [0, 1] between them.
     min_val, max_val = sorted([start_numer, end_numer])
     # So we make sure that 0 isn't between them.
-    return not _in_interval(0.0, min_val, max_val)
+    return not _helpers.in_interval(0.0, min_val, max_val)
 
 
 def from_linearized(left, right, intersections):
@@ -962,9 +896,9 @@ def from_linearized(left, right, intersections):
         left.start_node, left.end_node,
         right.start_node, right.end_node)
     if success:
-        if not _in_interval(s, _WIGGLE_START, _WIGGLE_END):
+        if not _helpers.in_interval(s, _WIGGLE_START, _WIGGLE_END):
             return
-        if not _in_interval(t, _WIGGLE_START, _WIGGLE_END):
+        if not _helpers.in_interval(t, _WIGGLE_START, _WIGGLE_END):
             return
     else:
         # Handle special case where the curves are actually lines.
@@ -1063,7 +997,7 @@ def _tangent_bbox_intersection(left, right, intersections):
         node_left = left_nodes[i, :]
         for j, t in ((0, 0.0), (-1, 1.0)):
             node_right = right_nodes[j, :]
-            if _vector_close(node_left, node_right):
+            if _helpers.vector_close(node_left, node_right):
                 orig_s = (1 - s) * left.start + s * left.end
                 orig_t = (1 - t) * right.start + t * right.end
                 intersection = Intersection(
@@ -1100,11 +1034,11 @@ def bbox_line_intersect(nodes, line_start, line_end):
     left, bottom = np.min(nodes, axis=0)
     right, top = np.max(nodes, axis=0)
 
-    if (_in_interval(line_start[0, 0], left, right) and
-            _in_interval(line_start[0, 1], bottom, top)):
+    if (_helpers.in_interval(line_start[0, 0], left, right) and
+            _helpers.in_interval(line_start[0, 1], bottom, top)):
         return BoxIntersectionType.intersection
-    if (_in_interval(line_end[0, 0], left, right) and
-            _in_interval(line_end[0, 1], bottom, top)):
+    if (_helpers.in_interval(line_end[0, 0], left, right) and
+            _helpers.in_interval(line_end[0, 1], bottom, top)):
         return BoxIntersectionType.intersection
 
     # NOTE: We allow ``segment_intersection`` to fail below (i.e.
@@ -1122,22 +1056,22 @@ def bbox_line_intersect(nodes, line_start, line_end):
     s_bottom, t_bottom, success = segment_intersection(
         np.array([[left, bottom]]), np.array([[right, bottom]]),
         line_start, line_end)
-    if (success and _in_interval(s_bottom, 0.0, 1.0) and
-            _in_interval(t_bottom, 0.0, 1.0)):
+    if (success and _helpers.in_interval(s_bottom, 0.0, 1.0) and
+            _helpers.in_interval(t_bottom, 0.0, 1.0)):
         return BoxIntersectionType.intersection
     # Right Edge
     s_right, t_right, success = segment_intersection(
         np.array([[right, bottom]]), np.array([[right, top]]),
         line_start, line_end)
-    if (success and _in_interval(s_right, 0.0, 1.0) and
-            _in_interval(t_right, 0.0, 1.0)):
+    if (success and _helpers.in_interval(s_right, 0.0, 1.0) and
+            _helpers.in_interval(t_right, 0.0, 1.0)):
         return BoxIntersectionType.intersection
     # Top Edge
     s_top, t_top, success = segment_intersection(
         np.array([[right, top]]), np.array([[left, top]]),
         line_start, line_end)
-    if (success and _in_interval(s_top, 0.0, 1.0) and
-            _in_interval(t_top, 0.0, 1.0)):
+    if (success and _helpers.in_interval(s_top, 0.0, 1.0) and
+            _helpers.in_interval(t_top, 0.0, 1.0)):
         return BoxIntersectionType.intersection
     # NOTE: We skip the "last" edge. This is because any curve
     #       that doesn't have an endpoint on a curve must cross

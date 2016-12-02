@@ -36,66 +36,6 @@ def check_intersection(test_case, intersection, expected,
 # pylint: enable=too-many-arguments
 
 
-class Test__in_interval(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(value, start, end):
-        from bezier import _intersection_helpers
-
-        return _intersection_helpers._in_interval(value, start, end)
-
-    def test_interior(self):
-        self.assertTrue(self._call_function_under_test(
-            1.5, 1.0, 2.0))
-
-    def test_barely_inside(self):
-        local_epsilon = np.spacing(1.0)  # pylint: disable=no-member
-        self.assertTrue(self._call_function_under_test(
-            1.0 + local_epsilon, 1.0, 2.0))
-
-    def test_barely_outside(self):
-        local_epsilon = np.spacing(1.0)  # pylint: disable=no-member
-        self.assertFalse(self._call_function_under_test(
-            1.0 - local_epsilon / 2.0, 1.0, 2.0))
-
-    def test_outside(self):
-        self.assertFalse(self._call_function_under_test(
-            -1.0, 1.0, 2.0))
-
-
-class Test__vector_close(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(vec1, vec2):
-        from bezier import _intersection_helpers
-
-        return _intersection_helpers._vector_close(vec1, vec2)
-
-    def test_identical(self):
-        vec1 = np.array([0.5, 4.0])
-        self.assertTrue(self._call_function_under_test(vec1, vec1))
-
-    def test_far_apart(self):
-        vec1 = np.array([0.0, 6.0])
-        vec2 = np.array([1.0, -4.0])
-        self.assertFalse(self._call_function_under_test(vec1, vec2))
-
-    def test_close_but_different(self):
-        vec1 = np.array([2.25, -3.5])
-        vec2 = vec1 + np.array([-5.0, 12.0]) / 2.0**43
-        self.assertTrue(self._call_function_under_test(vec1, vec2))
-
-    def test_near_zero(self):
-        vec1 = np.array([0.0, 0.0])
-        vec2 = np.array([3.0, 4.0]) / 2.0**45
-        self.assertTrue(self._call_function_under_test(vec1, vec2))
-
-    def test_near_zero_fail(self):
-        vec1 = np.array([1.0, 0.0]) / 2.0**20
-        vec2 = np.array([0.0, 0.0])
-        self.assertFalse(self._call_function_under_test(vec1, vec2))
-
-
 class Test__check_close(unittest.TestCase):
 
     @staticmethod

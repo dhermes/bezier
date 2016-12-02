@@ -19,6 +19,8 @@
 
    import numpy as np
    import bezier
+
+.. autofunction:: bezier._surface_helpers.newton_refine
 """
 
 
@@ -863,10 +865,11 @@ class Surface(_base.Base):
            ...     [0.0 ,  1.0 ],
            ... ]))
            >>> point = np.array([[0.59375, 0.25]])
-           >>> surface.locate(point)
-           Traceback (most recent call last):
-             ...
-           NotImplementedError
+           >>> s, t = surface.locate(point)
+           >>> s
+           0.5
+           >>> t
+           0.25
 
         .. testcleanup:: surface-locate
 
@@ -881,7 +884,6 @@ class Surface(_base.Base):
             NotImplementedError: If the surface isn't in :math:`\mathbf{R}^2`.
             ValueError: If the dimension of the ``point`` doesn't match the
                 dimension of the current surface.
-            NotImplementedError: For now, the method has not been implemented.
         """
         if self.dimension != 2:
             raise NotImplementedError('Only 2D surfaces supported.')
@@ -890,4 +892,4 @@ class Surface(_base.Base):
             raise ValueError('Point is not in same dimension as surface',
                              point, 'Shape expected:', (1, self.dimension))
 
-        raise NotImplementedError
+        return _surface_helpers.locate_point(self, point[0, 0], point[0, 1])

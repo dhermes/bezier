@@ -61,14 +61,16 @@ class Test_polynomial_sign(unittest.TestCase):
         # pylint: disable=no-member
         bernstein = np.array([[1.0, 2.0, 3.0]]).T
         # pylint: enable=no-member
-        with mock.patch('bezier._surface_helpers.MAX_SUBDIVISIONS', new=1):
+        subs = 'bezier._surface_helpers.MAX_POLY_SUBDIVISIONS'
+        with mock.patch(subs, new=1):
             self._helper(bernstein, 1)
 
     def test_no_conclusion(self):
         # pylint: disable=no-member
         bernstein = np.array([[-1.0, 1.0, 2.0]]).T
         # pylint: enable=no-member
-        with mock.patch('bezier._surface_helpers.MAX_SUBDIVISIONS', new=0):
+        subs = 'bezier._surface_helpers.MAX_POLY_SUBDIVISIONS'
+        with mock.patch(subs, new=0):
             with self.assertRaises(ValueError):
                 self._helper(bernstein, None)
 
@@ -388,3 +390,31 @@ class Test_specialize_surface(unittest.TestCase):
                       (21, 20, 19, 18, 16, 15, 14, 10, 9, 3),
                       (3, 4, 5, 6, 10, 11, 12, 16, 17, 21),
                       (18, 19, 20, 21, 22, 23, 24, 25, 26, 27))
+
+
+class Test__mean_centroid(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(candidates):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._mean_centroid(candidates)
+
+    def test_it(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface1 = bezier.Surface(nodes)
+        surface2 = bezier.Surface(
+            nodes, base_x=0.5, base_y=0.25, width=0.75)
+        surface3 = bezier.Surface(
+            nodes, base_x=0.25, base_y=1.25, width=0.5)
+
+        centroid_x, centroid_y = self._call_function_under_test(
+            [surface1, surface2, surface3])
+        self.assertEqual(centroid_x, 0.5)
+        self.assertEqual(centroid_y, 0.75)
