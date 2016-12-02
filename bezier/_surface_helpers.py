@@ -624,7 +624,7 @@ def jacobian_s(nodes, degree, dimension):
         numpy.ndarray: Nodes of the Jacobian surface in
             B |eacute| zier form.
     """
-    num_nodes = (degree * (degree + 1)) / 2
+    num_nodes = (degree * (degree + 1)) // 2
     result = np.empty((num_nodes, dimension))
 
     index = 0
@@ -654,7 +654,7 @@ def jacobian_t(nodes, degree, dimension):
         numpy.ndarray: Nodes of the Jacobian surface in
             B |eacute| zier form.
     """
-    num_nodes = (degree * (degree + 1)) / 2
+    num_nodes = (degree * (degree + 1)) // 2
     result = np.empty((num_nodes, dimension))
 
     index = 0
