@@ -600,9 +600,9 @@ def _mean_centroid(candidates):
     sum_y = 0.0
     sum_width = 0.0
     for candidate in candidates:
-        sum_x += candidate._base_x
-        sum_y += candidate._base_y
-        sum_width += candidate._width
+        sum_x += candidate.base_x
+        sum_y += candidate.base_y
+        sum_width += candidate.width
 
     denom = float(len(candidates))
     mean_x = sum_x / denom
@@ -727,7 +727,7 @@ def newton_refine(surface, x_val, y_val, s, t):
         # No refinement is needed.
         return s, t
 
-    nodes = surface._nodes
+    nodes = surface._nodes  # pylint: disable=protected-access
     # Compute Jacobian nodes / stack them horizatonally.
     jac_both = np.hstack([
         jacobian_s(nodes, surface.degree, surface.dimension),
@@ -779,7 +779,8 @@ def locate_point(surface, x_val, y_val):
     for _ in six.moves.xrange(MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for candidate in candidates:
-            if _helpers.contains(candidate._nodes, x_val, y_val):
+            nodes = candidate._nodes  # pylint: disable=protected-access
+            if _helpers.contains(nodes, x_val, y_val):
                 next_candidates.extend(candidate.subdivide())
 
         candidates = next_candidates

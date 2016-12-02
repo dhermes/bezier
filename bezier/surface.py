@@ -174,6 +174,7 @@ class Surface(_base.Base):
         self._base_x = base_x
         self._base_y = base_y
         self._width = width
+        self._root = None
 
     def __repr__(self):
         """Representation of current object.
@@ -224,6 +225,86 @@ class Surface(_base.Base):
             raise NotImplementedError(
                 'Area computation not yet implemented.')
         return self._area
+
+    @property
+    def width(self):
+        """float: The "width" of the parameterized triangle.
+
+        When re-parameterizing (e.g. via :meth:`subdivide`) we
+        specialize the surface from the unit triangle to some
+        sub-triangle. After doing this, we re-parameterize so that
+        that sub-triangle is treated like the unit triangle.
+
+        To track which sub-triangle we are in during the subdivision
+        process, we use the coordinates of the base vertex as well
+        as the "width" of each leg.
+
+        .. image:: ../images/surface_width1.png
+           :align: center
+
+        .. testsetup:: surface-width1, surface-width2
+
+           import numpy as np
+           import bezier
+
+           surface = bezier.Surface(np.array([
+               [0.0, 0.0],
+               [1.0, 0.0],
+               [0.0, 1.0],
+           ]))
+
+        .. doctest:: surface-width1
+
+           >>> surface.base_x, surface.base_y
+           (0.0, 0.0)
+           >>> surface.width
+           1.0
+
+        .. testcleanup:: surface-width1
+
+           import make_images
+           make_images.surface_width1(surface)
+
+        Upon subdivision, the width halves (and potentially changes sign) and
+        the vertex moves to one of four points:
+
+        .. image:: ../images/surface_width2.png
+           :align: center
+
+        .. doctest:: surface-width2
+
+           >>> _, sub_surface_b, sub_surface_c, _ = surface.subdivide()
+           >>> sub_surface_b.base_x, sub_surface_b.base_y
+           (0.5, 0.5)
+           >>> sub_surface_b.width
+           -0.5
+           >>> sub_surface_c.base_x, sub_surface_c.base_y
+           (0.5, 0.0)
+           >>> sub_surface_c.width
+           0.5
+
+        .. testcleanup:: surface-width2
+
+           import make_images
+           make_images.surface_width2(sub_surface_b, sub_surface_c)
+        """
+        return self._width
+
+    @property
+    def base_x(self):
+        """float: The ``x``-coordinate of the base vertex.
+
+        See :meth:`width` for more detail.
+        """
+        return self._base_x
+
+    @property
+    def base_y(self):
+        """float: The ``y``-coordinate of the base vertex.
+
+        See :meth:`width` for more detail.
+        """
+        return self._base_y
 
     def _compute_edges(self):
         """Compute the edges of the current surface.
@@ -844,7 +925,7 @@ class Surface(_base.Base):
     def locate(self, point):
         r"""Find a point on the current surface.
 
-        Solves for :math:`s` and :math`t` in :math:`B(s, t) = p`.
+        Solves for :math:`s` and :math:`t` in :math:`B(s, t) = p`.
 
         .. note::
 
@@ -879,6 +960,11 @@ class Surface(_base.Base):
         Args:
             point (numpy.ndarray): A (``1xD``) point on the surface,
                 where :math:`D` is the dimension of the surface.
+
+        Returns:
+            Optional[Tuple[float, float]]: The :math:`s` and :math:`t`
+            values corresponding to ``x_val`` and ``y_val`` or
+            :data:`None` if the point is not on the ``surface``.
 
         Raises:
             NotImplementedError: If the surface isn't in :math:`\mathbf{R}^2`.

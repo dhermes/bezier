@@ -621,5 +621,73 @@ def curve_specialize(curve, new_curve):
     ax.axis('scaled')
     ax.set_xlim(-0.375, 1.125)
     ax.set_ylim(-0.75, 0.625)
-
     save_image(ax.figure, 'curve_specialize.png')
+
+
+def surface_width1(surface):
+    """Image for :meth`.Surface.width` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = surface.plot(2)
+    ax.plot([surface.base_x], [surface.base_y],
+            color='black', linestyle='None', marker='o')
+
+    arrow_props = {
+        'arrowstyle': ']-',
+        'linewidth': 1,
+    }
+    ax.annotate(
+        '', xy=(0.0, -0.09375), xycoords='data',
+        xytext=(1.0, -0.09375), textcoords='data',
+        color='black', arrowprops=arrow_props)
+
+    ax.text(0.5, -0.125, '$1$', fontsize=20,
+            verticalalignment='top', horizontalalignment='center')
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.0625, 1.0625)
+    ax.set_ylim(-0.25, 1.0625)
+    save_image(ax.figure, 'surface_width1.png')
+
+
+def surface_width2(sub_surface_b, sub_surface_c):
+    """Image for :meth`.Surface.width` docstring."""
+    if NO_IMAGES:
+        return
+
+    arrow_props = {
+        'arrowstyle': ']-',
+        'linewidth': 1,
+    }
+
+    figure, (ax1, ax2) = plt.subplots(1, 2)
+    for ax in (ax1, ax2):
+        ax.plot([0, 1, 0, 0], [0, 0, 1, 0],
+                color='black', linestyle='dashed', alpha=0.5)
+
+    sub_surface_b.plot(2, ax=ax1)
+    ax1.plot([sub_surface_b.base_x], [sub_surface_b.base_y],
+             color='black', linestyle='None', marker='o')
+    ax1.annotate(
+        '', xy=(0.5, 0.59375), xycoords='data',
+        xytext=(0.0, 0.59375), textcoords='data',
+        color='black', arrowprops=arrow_props)
+    ax1.text(0.21875, 0.78125, r'$-\frac{1}{2}$', fontsize=20,
+             verticalalignment='top', horizontalalignment='center')
+
+    sub_surface_c.plot(2, ax=ax2)
+    ax2.plot([sub_surface_c.base_x], [sub_surface_c.base_y],
+             color='black', linestyle='None', marker='o')
+    ax2.annotate(
+        '', xy=(0.5, -0.09375), xycoords='data',
+        xytext=(1.0, -0.09375), textcoords='data',
+        color='black', arrowprops=arrow_props)
+    ax2.text(0.75, -0.125, r'$\frac{1}{2}$', fontsize=20,
+             verticalalignment='top', horizontalalignment='center')
+
+    for ax in (ax1, ax2):
+        ax.axis('scaled')
+        ax.set_xlim(-0.0625, 1.0625)
+        ax.set_ylim(-0.3125, 1.0625)
+        save_image(ax.figure, 'surface_width2.png')
