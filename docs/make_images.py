@@ -20,6 +20,7 @@ To actually execute these functions with the desired inputs, run:
 """
 
 
+import fractions
 import os
 
 from matplotlib import patches
@@ -576,3 +577,49 @@ def surface_locate(surface, point):
     ax.set_xlim(-0.0625, 1.0625)
     ax.set_ylim(-0.1875, 1.0625)
     save_image(ax.figure, 'surface_locate.png')
+
+
+def _pretty_value(float_val):
+    as_frac = fractions.Fraction(float_val)
+    if as_frac.denominator == 1:
+        return as_frac.numerator
+
+    frac_tex = r'\frac{{{}}}{{{}}}'.format(
+        abs(as_frac.numerator), as_frac.denominator)
+    if float_val < 0.0:
+        frac_tex = '-' + frac_tex
+    if len(frac_tex) < 20:
+        return frac_tex
+    else:
+        return '{:g}'.format(float_val)
+
+
+def curve_specialize(curve, new_curve):
+    """Image for :meth`.Curve.specialize` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve.plot(256)
+    interval = r'$\left[{}, {}\right]$'.format(
+        _pretty_value(curve.start), _pretty_value(curve.end))
+    line = ax.lines[-1]
+    line.set_label(interval)
+    color1 = line.get_color()
+
+    new_curve.plot(256, ax=ax)
+    interval = r'$\left[{}, {}\right]$'.format(
+        _pretty_value(new_curve.start), _pretty_value(new_curve.end))
+    line = ax.lines[-1]
+    line.set_label(interval)
+
+    ax.plot(curve._nodes[(0, -1), 0], curve._nodes[(0, -1), 1],
+            color=color1, linestyle='None', marker='o')
+    ax.plot(new_curve._nodes[(0, -1), 0], new_curve._nodes[(0, -1), 1],
+            color=line.get_color(), linestyle='None', marker='o')
+
+    ax.legend(loc='lower right', fontsize=12)
+    ax.axis('scaled')
+    ax.set_xlim(-0.375, 1.125)
+    ax.set_ylim(-0.75, 0.625)
+
+    save_image(ax.figure, 'curve_specialize.png')

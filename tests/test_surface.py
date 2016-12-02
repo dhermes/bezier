@@ -925,8 +925,9 @@ class TestSurface(unittest.TestCase):
         surface = self._make_one(self.QUADRATIC)
         point = surface.evaluate_multi(np.array([
             [0.5, 0.25]]))
-        with self.assertRaises(NotImplementedError):
-            surface.locate(point)
+        s, t = surface.locate(point)
+        self.assertEqual(s, 0.5)
+        self.assertEqual(t, 0.25)
 
     def test_locate_bad_dimension(self):
         surface = self._make_one(np.array([

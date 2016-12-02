@@ -503,3 +503,70 @@ class Curve(_base.Base):
         new_nodes = _curve_helpers.elevate_nodes(
             self._nodes, self.degree, self.dimension)
         return Curve(new_nodes, _copy=False)
+
+    def specialize(self, start, end):
+        """Specialize the curve to a given sub-interval.
+
+        .. image:: ../images/curve_specialize.png
+           :align: center
+
+        .. doctest:: curve-specialize
+
+           >>> curve = bezier.Curve(np.array([
+           ...     [0.0, 0.0],
+           ...     [0.5, 1.0],
+           ...     [1.0, 0.0],
+           ... ]))
+           >>> new_curve = curve.specialize(-0.25, 0.75)
+           >>> new_curve
+           <Curve (degree=2, dimension=2, start=-0.25, end=0.75)>
+           >>> new_curve.nodes
+           array([[-0.25 , -0.625],
+                  [ 0.25 ,  0.875],
+                  [ 0.75 ,  0.375]])
+
+        .. testcleanup:: curve-specialize
+
+           import make_images
+           make_images.curve_specialize(curve, new_curve)
+
+        This is generalized version of :meth:`subdivide`, and can even
+        match the output of that method:
+
+        .. testsetup:: curve-specialize2
+
+           import numpy as np
+           import bezier
+
+           curve = bezier.Curve(np.array([
+               [0.0, 0.0],
+               [0.5, 1.0],
+               [1.0, 0.0],
+           ]))
+
+        .. doctest:: curve-specialize2
+
+            >>> left, right = curve.subdivide()
+            >>> left == curve.specialize(0.0, 0.5)
+            True
+            >>> right == curve.specialize(0.5, 1.0)
+            True
+
+        Args:
+            start (float): The start point of the interval we
+                are specializing to.
+            end (float): The end point of the interval we
+                are specializing to.
+
+        Returns:
+            Curve: The newly-specialized curve.
+        """
+        new_nodes = _curve_helpers.specialize_curve(
+            self._nodes, self.degree, start, end)
+
+        interval_delta = self.end - self.start
+        true_start = self.start + start * interval_delta
+        true_end = self.start + end * interval_delta
+        return Curve(new_nodes, start=true_start,
+                     end=true_end, root=self.root,
+                     _copy=False)

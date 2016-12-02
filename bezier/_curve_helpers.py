@@ -187,3 +187,68 @@ def elevate_nodes(nodes, degree, dimension):
     new_nodes[-1, :] = nodes[-1, :]
 
     return new_nodes
+
+
+def de_casteljau_one_round(nodes, lambda1, lambda2):
+    """Perform one round of de Casteljau's algorithm.
+
+    The weights are assumed to sum to one.
+
+    Args:
+        nodes (numpy.ndarray): Control points for a curve.
+        lambda1 (float): First barycentric weight on interval.
+        lambda2 (float): Second barycentric weight on interval.
+
+    Returns:
+        numpy.ndarray: The nodes for a "blended" curve one degree
+        lower.
+    """
+    return lambda1 * nodes[:-1, :] + lambda2 * nodes[1:, :]
+
+
+def specialize_curve(nodes, degree, start, end):
+    """Specialize a curve to a re-parameterization
+
+    Does so by taking two points along the number line and then
+    reparameterizing the curve onto the interval formed by the
+    start and end points.
+
+    .. note::
+
+       This assumes the curve is degree 1 or greater but doesn't check.
+
+    Args:
+        nodes (numpy.ndarray): Control points for a curve.
+        degree (int): The degree of the curve.
+        start (float): The start point of the interval we are specializing to.
+        end (float): The end point of the interval we are specializing to.
+
+    Returns:
+        numpy.ndarray: The control points for the specialized curve.
+    """
+    # Uses start-->0, end-->1 to represent the specialization used.
+    weights = (
+        (1.0 - start, start),
+        (1.0 - end, end),
+    )
+    partial_vals = {
+        (0,): de_casteljau_one_round(nodes, *weights[0]),
+        (1,): de_casteljau_one_round(nodes, *weights[1]),
+    }
+
+    for _ in six.moves.xrange(degree - 1, 0, -1):
+        new_partial = {}
+        for key, sub_nodes in six.iteritems(partial_vals):
+            # Our keys are ascending so we increment from the last value.
+            for next_id in six.moves.xrange(key[-1], 1 + 1):
+                new_key = key + (next_id,)
+                new_partial[new_key] = de_casteljau_one_round(
+                    sub_nodes, *weights[next_id])
+
+        partial_vals = new_partial
+
+    result = np.empty(nodes.shape)
+    for index in six.moves.xrange(degree + 1):
+        key = (0,) * (degree - index) + (1,) * index
+        result[index, :] = partial_vals[key]
+    return result
