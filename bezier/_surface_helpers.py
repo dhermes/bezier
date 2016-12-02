@@ -718,8 +718,8 @@ def newton_refine(surface, x_val, y_val, s, t):
     .. math::
 
        \begin{align*}
-       \Delta B &= \left[\begin{array}{c} x \\ y \end{array}\right] -
-          B\left(\frac{1}{2}, \frac{1}{4}\right) = \frac{1}{4}
+       \left[\begin{array}{c} x \\ y \end{array}\right] -
+          B\left(\frac{1}{2}, \frac{1}{4}\right) &= \frac{1}{4}
           \left[\begin{array}{c} -1 \\ 2 \end{array}\right] \\
        DB\left(\frac{1}{2}, \frac{1}{4}\right) &= \frac{1}{2}
            \left[\begin{array}{c c} 3 & 2 \\ 1 & 6 \end{array}\right] \\
