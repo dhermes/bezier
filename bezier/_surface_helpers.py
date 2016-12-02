@@ -709,6 +709,80 @@ def newton_refine(surface, x_val, y_val, s, t):
            \left[\begin{array}{c}
                \Delta s \\ \Delta t \end{array}\right]
 
+    For example, (with weights
+    :math:`\lambda_1 = 1 - s - t, \lambda_2 = s, \lambda_3 = t`)
+    consider the surface
+
+    .. math::
+
+       B(s, t) =
+           \left[\begin{array}{c} 0 \\ 0 \end{array}\right] \lambda_1^2 +
+           \left[\begin{array}{c} 1 \\ 0 \end{array}\right]
+               2 \lambda_1 \lambda_2 +
+           \left[\begin{array}{c} 2 \\ 0 \end{array}\right] \lambda_2^2 +
+           \left[\begin{array}{c} 2 \\ 1 \end{array}\right]
+               2 \lambda_1 \lambda_3 +
+           \left[\begin{array}{c} 2 \\ 2 \end{array}\right]
+               2 \lambda_2 \lambda_1 +
+           \left[\begin{array}{c} 0 \\ 2 \end{array}\right] \lambda_3^2
+
+    and the point
+    :math:`B\left(\frac{1}{4}, \frac{1}{2}\right) =
+    \frac{1}{4} \left[\begin{array}{c} 5 \\ 5 \end{array}\right]`.
+
+    Starting from the **wrong** point
+    :math:`s = \frac{1}{2}, t = \frac{1}{4}`, we have
+
+    .. math::
+
+       \begin{align*}
+       \Delta B &= \left[\begin{array}{c} x \\ y \end{array}\right] -
+          B\left(\frac{1}{2}, \frac{1}{4}\right) = \frac{1}{4}
+          \left[\begin{array}{c} -1 \\ 2 \end{array}\right] \\
+       DB\left(\frac{1}{2}, \frac{1}{4}\right) &= \frac{1}{2}
+           \left[\begin{array}{c c} 3 & 2 \\ 1 & 6 \end{array}\right] \\
+       \Longrightarrow \left[\begin{array}{c}
+           \Delta s \\ \Delta t \end{array}\right] &= \frac{1}{32}
+           \left[\begin{array}{c} -10 \\ 7 \end{array}\right]
+       \end{align*}
+
+    .. image:: ../images/newton_refine_surface.png
+       :align: center
+
+    .. testsetup:: newton-refine-surface
+
+       import numpy as np
+       import bezier
+       from bezier._surface_helpers import newton_refine
+
+    .. doctest:: newton-refine-surface
+
+       >>> surface = bezier.Surface(np.array([
+       ...     [0.0, 0.0],
+       ...     [1.0, 0.0],
+       ...     [2.0, 0.0],
+       ...     [2.0, 1.0],
+       ...     [2.0, 2.0],
+       ...     [0.0, 2.0],
+       ... ]))
+       >>> surface.is_valid
+       True
+       >>> x_val, y_val = surface.evaluate_cartesian(0.25, 0.5)
+       >>> x_val, y_val
+       (1.25, 1.25)
+       >>> s, t = 0.5, 0.25
+       >>> new_s, new_t = newton_refine(surface, x_val, y_val, s, t)
+       >>> 32 * (new_s - s)
+       -10.0
+       >>> 32 * (new_t - t)
+       7.0
+
+    .. testcleanup:: newton-refine-surface
+
+       import make_images
+       make_images.newton_refine_surface(
+           surface, x_val, y_val, s, t, new_s, new_t)
+
     Args:
         surface (.Surface): A B |eacute| zier surface (assumed to
             be two-dimensional).

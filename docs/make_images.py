@@ -691,3 +691,49 @@ def surface_width2(sub_surface_b, sub_surface_c):
         ax.set_xlim(-0.0625, 1.0625)
         ax.set_ylim(-0.3125, 1.0625)
         save_image(ax.figure, 'surface_width2.png')
+
+
+def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
+    """Image for :func:`._surface_helpers.linearization_error` docstring."""
+    if NO_IMAGES:
+        return
+
+    figure, (ax1, ax2) = plt.subplots(1, 2)
+
+    # Plot features of the parameter space in ax1.
+    tri_surf = bezier.Surface(np.array([
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [0.0, 1.0],
+    ]))
+    tri_surf.plot(2, ax=ax1)
+    ax1.plot([0.25], [0.5], marker='H')
+    ax1.plot([s], [t], color='black',
+             linestyle='None', marker='o')
+    ax1.plot([new_s], [new_t],
+             color='black', linestyle='None', marker='o',
+             markeredgewidth=1, markerfacecolor='None')
+
+    # Plot the equivalent output in ax2.
+    surface.plot(256, ax=ax2)
+    points = surface.evaluate_multi(np.array([
+        [s, t],
+        [new_s, new_t],
+    ]))
+    ax2.plot([x_val], [y_val], marker='H')
+    ax2.plot(points[[0], 0], points[[0], 1],
+             color='black', linestyle='None', marker='o')
+    ax2.plot(points[[1], 0], points[[1], 1],
+             color='black', linestyle='None', marker='o',
+             markeredgewidth=1, markerfacecolor='None')
+
+    # Set the axis bounds / scaling.
+    ax1.axis('scaled')
+    ax1.set_xlim(-0.0625, 1.0625)
+    ax1.set_ylim(-0.0625, 1.0625)
+
+    ax2.axis('scaled')
+    ax2.set_xlim(-0.125, 2.125)
+    ax2.set_ylim(-0.125, 2.125)
+
+    save_image(figure, 'newton_refine_surface.png')
