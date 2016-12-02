@@ -28,6 +28,7 @@ from bezier import _helpers
 
 MAX_POLY_SUBDIVISIONS = 5
 MAX_LOCATE_SUBDIVISIONS = 20
+LOCATE_EPS = 2.0**(-47)
 LINEAR_SUBDIVIDE = np.array([
     [2, 0, 0],
     [1, 1, 0],
@@ -848,4 +849,9 @@ def locate_point(surface, x_val, y_val):
     # that may contain the point.
     s_approx, t_approx = _mean_centroid(candidates)
     s, t = newton_refine(surface, x_val, y_val, s_approx, t_approx)
+
+    actual = surface.evaluate_cartesian(s, t)
+    expected = np.array([x_val, y_val])
+    if not _helpers.vector_close(actual, expected, eps=LOCATE_EPS):
+        s, t = newton_refine(surface, x_val, y_val, s, t)
     return s, t

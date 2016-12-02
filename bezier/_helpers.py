@@ -19,7 +19,7 @@ import numpy as np
 _EPS = 2.0**(-40)
 
 
-def vector_close(vec1, vec2):
+def vector_close(vec1, vec2, eps=_EPS):
     r"""Checks that two vectors are equal to some threshold.
 
     Does so by computing :math:`s_1 = \|v_1\|_2` and
@@ -47,6 +47,7 @@ def vector_close(vec1, vec2):
     Args:
         vec1 (numpy.ndarray): First vector for comparison.
         vec2 (numpy.ndarray): Second vector for comparison.
+        eps (float): Error threshold. Defaults to :math:`2^{-40}`.
 
     Returns:
         bool: Flag indicating if they are close to precision.
@@ -54,11 +55,11 @@ def vector_close(vec1, vec2):
     size1 = np.linalg.norm(vec1, ord=2)
     size2 = np.linalg.norm(vec2, ord=2)
     if size1 == 0:
-        return size2 <= _EPS
+        return size2 <= eps
     elif size2 == 0:
-        return size1 <= _EPS
+        return size1 <= eps
     else:
-        upper_bound = _EPS * min(size1, size2)
+        upper_bound = eps * min(size1, size2)
         return np.linalg.norm(vec1 - vec2, ord=2) <= upper_bound
 
 

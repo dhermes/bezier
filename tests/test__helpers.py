@@ -18,10 +18,10 @@ import numpy as np
 class Test_vector_close(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(vec1, vec2):
+    def _call_function_under_test(vec1, vec2, **kwargs):
         from bezier import _helpers
 
-        return _helpers.vector_close(vec1, vec2)
+        return _helpers.vector_close(vec1, vec2, **kwargs)
 
     def test_identical(self):
         vec1 = np.array([0.5, 4.0])
@@ -36,6 +36,12 @@ class Test_vector_close(unittest.TestCase):
         vec1 = np.array([2.25, -3.5])
         vec2 = vec1 + np.array([-5.0, 12.0]) / 2.0**43
         self.assertTrue(self._call_function_under_test(vec1, vec2))
+
+    def test_custom_epsilon(self):
+        vec1 = np.array([3.0, 4.0])
+        vec2 = np.array([2.0, 5.0])
+        self.assertTrue(self._call_function_under_test(vec1, vec2, eps=0.5))
+        self.assertFalse(self._call_function_under_test(vec1, vec2))
 
     def test_near_zero(self):
         vec1 = np.array([0.0, 0.0])

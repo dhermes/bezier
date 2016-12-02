@@ -526,15 +526,15 @@ class Surface(_base.Base):
            >>> surface
            <Surface (degree=1, dimension=2)>
            >>> param_vals = np.array([
-           ...     [0.0, 0.0],
-           ...     [1.0, 0.0],
-           ...     [0.5, 0.5],
+           ...     [0.0  , 0.0  ],
+           ...     [0.125, 0.625],
+           ...     [0.5  , 0.5  ],
            ... ])
            >>> points = surface.evaluate_multi(param_vals)
            >>> points
-           array([[ 0. , 0. ],
-                  [ 2. , 1. ],
-                  [-0.5, 1.5]])
+           array([[ 0.   , 0.   ],
+                  [-1.625, 1.375],
+                  [-0.5  , 1.5  ]])
 
         .. testcleanup:: surface-eval-multi1
 
