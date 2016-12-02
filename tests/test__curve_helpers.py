@@ -177,3 +177,60 @@ class Test_elevate_nodes(unittest.TestCase):
             [6.0, 0.5, 2.25],
         ])
         self.assertTrue(np.all(result == expected))
+
+
+class Test_de_casteljau_one_round(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, lambda1, lambda2):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.de_casteljau_one_round(
+            nodes, lambda1, lambda2)
+
+    def test_it(self):
+        nodes = np.array([
+            [0.0, 1.0],
+            [3.0, 5.0],
+        ])
+        result = self._call_function_under_test(nodes, 0.25, 0.75)
+        self.assertTrue(np.all(result == np.array([[2.25, 4.0]])))
+
+
+class Test_specialize_curve(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, start, end):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.specialize_curve(
+            nodes, degree, start, end)
+
+    def test_it(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        result = self._call_function_under_test(nodes, 1, 0.25, 0.75)
+        expected = np.array([
+            [0.25, 0.25],
+            [0.75, 0.75],
+        ])
+        self.assertTrue(np.all(result == expected))
+
+    def test_againt_subdivision(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 1.0],
+            [1.0, 6.0],
+            [3.0, 5.0],
+        ])
+        curve = bezier.Curve(nodes)
+        left, right = curve.subdivide()
+
+        left_nodes = self._call_function_under_test(nodes, 2, 0.0, 0.5)
+        self.assertTrue(np.all(left.nodes == left_nodes))
+
+        right_nodes = self._call_function_under_test(nodes, 2, 0.5, 1.0)
+        self.assertTrue(np.all(right.nodes == right_nodes))

@@ -143,6 +143,18 @@ class TestSurface(unittest.TestCase):
         surface._area = area
         self.assertEqual(surface.area, area)
 
+    def test_width_property(self):
+        surface = self._make_one(np.zeros((3, 1)))
+        self.assertEqual(surface.width, 1.0)
+
+    def test_base_x_property(self):
+        surface = self._make_one(np.zeros((3, 1)))
+        self.assertEqual(surface.base_x, 0.0)
+
+    def test_base_y_property(self):
+        surface = self._make_one(np.zeros((3, 1)))
+        self.assertEqual(surface.base_y, 0.0)
+
     def _edges_helper(self, edge1, edge2, edge3,
                       nodes1, nodes2, nodes3):
         import bezier

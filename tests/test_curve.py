@@ -479,15 +479,13 @@ class TestCurve(unittest.TestCase):
             curve2.intersect(curve1)
 
     def test_elevate(self):
-        import bezier
-
         nodes = np.array([
             [0.0, 0.5],
             [1.0, 1.0],
             [3.0, 2.0],
             [3.5, 4.0],
         ])
-        curve = bezier.Curve(nodes)
+        curve = self._make_one(nodes)
         self.assertEqual(curve.degree, 3)
         elevated = curve.elevate()
         self.assertEqual(elevated.degree, 4)
@@ -496,3 +494,24 @@ class TestCurve(unittest.TestCase):
         orig_vals = curve.evaluate_multi(s_vals)
         new_vals = elevated.evaluate_multi(s_vals)
         self.assertTrue(np.all(orig_vals == new_vals))
+
+    def test_specialize(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 6.0],
+            [5.0, 2.0],
+        ])
+        curve = self._make_one(nodes)
+        start = 0.25
+        end = 0.875
+        new_curve = curve.specialize(start, end)
+
+        self.assertEqual(new_curve.start, start)
+        self.assertEqual(new_curve.end, end)
+        self.assertIs(new_curve.root, curve)
+        expected = np.array([
+            [0.6875, 2.375],
+            [1.78125, 4.5625],
+            [4.046875, 2.84375],
+        ])
+        self.assertTrue(np.all(new_curve.nodes == expected))

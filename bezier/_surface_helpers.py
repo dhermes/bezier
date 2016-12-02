@@ -671,7 +671,7 @@ def jacobian_t(nodes, degree, dimension):
         NotImplementedError: If ``degree`` is not 1, 2 or 3.
     """
     if degree == 1:
-        return nodes[[1], :] - nodes[[0], :]
+        return nodes[[2], :] - nodes[[0], :]
     elif degree == 2:
         result = np.empty((3, dimension))
         result[0, :] = 2.0 * (nodes[3, :] - nodes[0, :])

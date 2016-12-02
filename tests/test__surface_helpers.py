@@ -418,3 +418,156 @@ class Test__mean_centroid(unittest.TestCase):
             [surface1, surface2, surface3])
         self.assertEqual(centroid_x, 0.5)
         self.assertEqual(centroid_y, 0.75)
+
+
+class Test_jacobian_s(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, dimension):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.jacobian_s(nodes, degree, dimension)
+
+    def test_linear(self):
+        nodes = np.array([[0.0, 1.0, np.nan]]).T
+        result = self._call_function_under_test(nodes, 1, 1)
+        expected = np.array([[1.0]])
+        self.assertTrue(np.all(result == expected))
+
+    def test_quadratic(self):
+        nodes = np.array([
+            [0.0, 1.0],
+            [1.0, 11.0],
+            [5.0, 7.0],
+            [4.0, -2.0],
+            [-1.0, 6.0],
+            [np.nan, np.nan],
+        ])
+        result = self._call_function_under_test(nodes, 2, 2)
+        expected = 2.0 * np.array([
+            [1.0, 10.0],
+            [4.0, -4.0],
+            [-5.0, 8.0],
+        ])
+        self.assertTrue(np.all(result == expected))
+
+    def test_cubic(self):
+        nodes = np.arange(10, dtype=float)[:, np.newaxis]**2
+        result = self._call_function_under_test(nodes, 3, 1)
+        expected = 3 * np.array([[1, 3, 5, 9, 11, 15]], dtype=float).T
+        self.assertTrue(np.all(result == expected))
+
+    def test_unsupported(self):
+        nodes = np.arange(15, dtype=float)[:, np.newaxis]
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(nodes, 4, 1)
+
+
+class Test_jacobian_t(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, dimension):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.jacobian_t(nodes, degree, dimension)
+
+    def test_linear(self):
+        nodes = np.array([[0.0, np.nan, 1.0]]).T
+        result = self._call_function_under_test(nodes, 1, 1)
+        expected = np.array([[1.0]])
+        self.assertTrue(np.all(result == expected))
+
+    def test_quadratic(self):
+        nodes = np.array([
+            [4.0, -2.0],
+            [0.0, 1.0],
+            [np.nan, np.nan],
+            [5.0, 7.0],
+            [-1.0, 6.0],
+            [1.0, 12.0],
+        ])
+        result = self._call_function_under_test(nodes, 2, 2)
+        expected = 2.0 * np.array([
+            [1.0, 9.0],
+            [-1.0, 5.0],
+            [-4.0, 5.0],
+        ])
+        self.assertTrue(np.all(result == expected))
+
+    def test_cubic(self):
+        nodes = np.arange(10, dtype=float)[:, np.newaxis]**2
+        result = self._call_function_under_test(nodes, 3, 1)
+        expected = 3 * np.array([[16, 24, 32, 33, 39, 32]], dtype=float).T
+        self.assertTrue(np.all(result == expected))
+
+    def test_unsupported(self):
+        nodes = np.arange(15, dtype=float)[:, np.newaxis]
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(nodes, 4, 1)
+
+
+class Test_newton_refine(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(surface, x_val, y_val, s, t):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.newton_refine(surface, x_val, y_val, s, t)
+
+    def test_it(self):
+        import bezier
+
+        surface = bezier.Surface(np.array([
+            [0.0, 0.0],
+            [0.5, -0.25],
+            [1.0, 0.0],
+            [0.0, 0.5],
+            [0.5, 0.5],
+            [-0.25, 0.875],
+        ]))
+        # This surface is given by
+        #     [(4 s - t^2) / 4, (4 s^2 + 4 s t - t^2 - 4 s + 8 t) / 8]
+        s, t = 0.25, 0.5
+        # At our points, the Jacobian is
+        #     [1, -1/4]
+        #     [0,  1  ]
+        # hence there will be no round-off when applying the inverse.
+        x_val, y_val = surface.evaluate_cartesian(0.5, 0.25)
+        new_s, new_t = self._call_function_under_test(
+            surface, x_val, y_val, s, t)
+        self.assertEqual(new_s, 247.0 / 512.0)
+        self.assertEqual(new_t, 31.0 / 128.0)
+
+
+class Test_locate_point(unittest.TestCase):
+
+    UNIT_TRIANGLE = np.array([
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [0.0, 1.0],
+    ])
+
+    @staticmethod
+    def _call_function_under_test(surface, x_val, y_val):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.locate_point(surface, x_val, y_val)
+
+    def test_it(self):
+        import bezier
+
+        surface = bezier.Surface(self.UNIT_TRIANGLE)
+        x_val = 0.25
+        y_val = 0.625
+        s, t = self._call_function_under_test(surface, x_val, y_val)
+        self.assertEqual(s, x_val)
+        self.assertEqual(t, y_val)
+
+    def test_no_match(self):
+        import bezier
+
+        surface = bezier.Surface(self.UNIT_TRIANGLE)
+        x_val = -0.125
+        y_val = 0.25
+        self.assertIsNone(
+            self._call_function_under_test(surface, x_val, y_val))

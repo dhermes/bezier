@@ -174,7 +174,6 @@ class Surface(_base.Base):
         self._base_x = base_x
         self._base_y = base_y
         self._width = width
-        self._root = None
 
     def __repr__(self):
         """Representation of current object.
