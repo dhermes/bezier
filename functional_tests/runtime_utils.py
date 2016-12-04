@@ -25,6 +25,8 @@ except ImportError:
     pass
 import six
 
+from bezier import _helpers
+
 
 EPS = 2.0**(-50)
 _FNL_TESTS_DIR = os.path.dirname(__file__)
@@ -94,6 +96,22 @@ def real_roots(coeffs):
     all_roots = np.roots(coeffs)
     filtered = all_roots[all_roots.imag == 0.0].real
     return np.sort(filtered)
+
+
+def add_plot_boundary(ax, nodes):
+    """Add a buffer of empty space around a plot boundary.
+
+    Args:
+        ax (matplotlib.artist.Artist): A matplotlib axis.
+        nodes (numpy.ndarray): The nodes defining the plot.
+    """
+    left, right, bottom, top = _helpers.bbox(nodes)
+    center_x = 0.5 * (right + left)
+    delta_x = right - left
+    center_y = 0.5 * (top + bottom)
+    delta_y = top - bottom
+    ax.set_xlim(center_x - 0.5625 * delta_x, center_x + 0.5625 * delta_x)
+    ax.set_ylim(center_y - 0.5625 * delta_y, center_y + 0.5625 * delta_y)
 
 
 class Config(object):  # pylint: disable=too-few-public-methods

@@ -127,9 +127,13 @@ A surface-surface intersection functional test case:
 
 .. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_surfaces1Q_and_2Q.png
 
-and a segment-box functional test case:
+a segment-box functional test case:
 
 .. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_goes_through_box.png
+
+and a "locate point on surface" functional test case:
+
+.. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_surface3_and_point1.png
 
 ************
 Coding Style
@@ -239,6 +243,18 @@ To regenerate the images:
    >   -d docs/build/doctrees \
    >   docs \
    >   build/doctest
+
+The images in the `Curve-Curve Intersection`_ document and and this
+document are generated as part of the functional tests:
+
+.. code-block:: console
+
+   $ python functional_tests/test_curve_curve.py --save-plot
+   $ python functional_tests/test_segment_box.py --save-plot
+   $ python functional_tests/test_surface_locate.py --save-plot
+   $ python functional_tests/test_surface_surface.py --save-plot
+
+.. _Curve-Curve Intersection: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
 
 **********************
 Continuous Integration

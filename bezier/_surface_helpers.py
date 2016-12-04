@@ -861,6 +861,11 @@ def locate_point(surface, x_val, y_val):
 def classify_intersection(intersection):
     """Determine which curve is on the "inside of the intersection".
 
+    .. note::
+
+       This function doesn't allow wiggle room / round-off when checking
+       endpoints, nor when checking if the cross-product is near zero.
+
     Args:
         intersection (.Intersection): An intersection object.
 
@@ -868,7 +873,7 @@ def classify_intersection(intersection):
         int: The index of the "inside" curve (``0`` or ``1``).
 
     Raises:
-        NotImplementedError: If the intersect is at an endpoint of
+        NotImplementedError: If the intersection is at an endpoint of
             one of the curves.
         NotImplementedError: The curves are tangent at the intersection.
     """

@@ -74,13 +74,7 @@ def make_plot(surface, point):
             marker='o', linestyle='None')
 
     ax.axis('scaled')
-    left, right, bottom, top = _helpers.bbox(surface._nodes)
-    center_x = 0.5 * (right + left)
-    delta_x = right - left
-    center_y = 0.5 * (top + bottom)
-    delta_y = top - bottom
-    ax.set_xlim(center_x - 0.5625 * delta_x, center_x + 0.5625 * delta_x)
-    ax.set_ylim(center_y - 0.5625 * delta_y, center_y + 0.5625 * delta_y)
+    runtime_utils.add_plot_boundary(ax, surface._nodes)
 
     if CONFIG.save_plot:
         CONFIG.save_fig()
