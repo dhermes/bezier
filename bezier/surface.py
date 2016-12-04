@@ -21,6 +21,7 @@
    import bezier
 
 .. autofunction:: bezier._surface_helpers.newton_refine
+.. autofunction:: bezier._surface_helpers.classify_intersection
 """
 
 

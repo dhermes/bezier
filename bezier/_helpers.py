@@ -116,3 +116,26 @@ def contains(nodes, x_val, y_val):
     if not in_interval(y_val, bottom, top):
         return False
     return True
+
+
+def cross_product(vec0, vec1):
+    r"""Compute the cross-product of vectors in :math:`\mathbf{R}^2`.
+
+    Utilizes the fact that
+
+    .. math::
+
+       \left[\begin{array}{c} A \\ B \\ 0 \end{array}\right] \times
+           \left[\begin{array}{c} C \\ D \\ 0 \end{array}\right] =
+           \left[\begin{array}{c} 0 \\ 0 \\ AD - BC \end{array}\right]
+
+    and just returns the :math:`z` component.
+
+    Args:
+        vec0 (numpy.ndarray): A vector as a 1x2 NumPy array.
+        vec1 (numpy.ndarray): A vector as a 1x2 NumPy array.
+
+    Returns:
+        float: The cross-product (or rather, its :math:`z` component).
+    """
+    return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]

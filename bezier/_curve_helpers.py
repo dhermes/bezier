@@ -136,6 +136,9 @@ def compute_length(nodes, degree):
     Raises:
         OSError: If SciPy is not installed.
     """
+    # NOTE: We somewhat replicate code in ``evaluate_hodograph()``
+    #       here. This is so we don't re-compute the nodes for the first
+    #       derivative every time it is evaluated.
     first_deriv = degree * (nodes[1:, :] - nodes[:-1, :])
     if degree == 1:
         return np.linalg.norm(first_deriv, ord=2)
@@ -252,3 +255,34 @@ def specialize_curve(nodes, degree, start, end):
         key = (0,) * (degree - index) + (1,) * index
         result[index, :] = partial_vals[key]
     return result
+
+
+def evaluate_hodograph(nodes, degree, s):
+    r"""Evaluate the Hodograph curve at a point :math:`s`.
+
+    The Hodograph (first derivative) of a B |eacute| zier curve
+    degree :math:`d = n - 1` and is given by
+
+    .. math::
+
+       B'(s) = n \sum_{j = 0}^{d} \binom{d}{j} s^j
+       (1 - s)^{d - j} \cdot \Delta v_j
+
+    where each forward difference is given by
+    :math:`\Delta v_j = v_{j + 1} - v_j`.
+
+    Args:
+        nodes (numpy.ndarray): The nodes of a curve.
+        degree (int): The degree of the curve (assumed to be one less than
+            the number of ``nodes``.
+        s (float): A parameter along the curve at which the Hodograph
+            is to be evaluated.
+
+    Returns:
+        numpy.ndarray: The point on the Hodograph curve (as a one
+        dimensional NumPy array).
+    """
+    first_deriv = nodes[1:, :] - nodes[:-1, :]
+    # NOTE: Taking the derivative drops the degree by 1.
+    return degree * evaluate_multi(
+        first_deriv, degree - 1, np.array([s])).flatten()

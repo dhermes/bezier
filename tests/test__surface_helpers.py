@@ -593,3 +593,71 @@ class Test_locate_point(unittest.TestCase):
         y_val = 0.25
         self.assertIsNone(
             self._call_function_under_test(surface, x_val, y_val))
+
+
+class Test_classify_intersection(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersection):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.classify_intersection(intersection)
+
+    def test_simple(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        left = bezier.Curve(np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ]))
+        right = bezier.Curve(np.array([
+            [0.25, 0.0],
+            [0.75, 1.0],
+        ]))
+        intersection = _intersection_helpers.Intersection(
+            left, 0.5, right, 0.5)
+        result = self._call_function_under_test(intersection)
+        self.assertEqual(result, 0)
+
+        # Swap and classify.
+        intersection = _intersection_helpers.Intersection(
+            right, 0.5, left, 0.5)
+        result = self._call_function_under_test(intersection)
+        self.assertEqual(result, 1)
+
+    def test_corner(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        left = bezier.Curve(np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ]))
+        right = bezier.Curve(np.array([
+            [1.0, 0.0],
+            [1.0, 2.0],
+        ]))
+        intersection = _intersection_helpers.Intersection(
+            left, 1.0, right, 0.5)
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(intersection)
+
+    def test_tangent(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        left = bezier.Curve(np.array([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ]))
+        right = bezier.Curve(np.array([
+            [0.0, 1.0],
+            [0.5, 0.0],
+            [1.0, 1.0],
+        ]))
+        intersection = _intersection_helpers.Intersection(
+            left, 0.5, right, 0.5)
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(intersection)

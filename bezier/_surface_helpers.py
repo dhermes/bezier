@@ -23,6 +23,7 @@ import operator
 import numpy as np
 import six
 
+from bezier import _curve_helpers
 from bezier import _helpers
 
 
@@ -855,3 +856,42 @@ def locate_point(surface, x_val, y_val):
     if not _helpers.vector_close(actual, expected, eps=LOCATE_EPS):
         s, t = newton_refine(surface, x_val, y_val, s, t)
     return s, t
+
+
+def classify_intersection(intersection):
+    """Determine which curve is on the "inside of the intersection".
+
+    Args:
+        intersection (.Intersection): An intersection object.
+
+    Returns:
+        int: The index of the "inside" curve (``0`` or ``1``).
+
+    Raises:
+        NotImplementedError: If the intersect is at an endpoint of
+            one of the curves.
+        NotImplementedError: The curves are tangent at the intersection.
+    """
+    s = intersection._s_val
+    t = intersection._t_val
+
+    if s == 0.0 or s == 1.0 or t == 0.0 or t == 1.0:
+        raise NotImplementedError
+
+    left_nodes = intersection.left._nodes
+    tangent1 = _curve_helpers.evaluate_hodograph(
+        left_nodes, intersection.left.degree, s)
+    right_nodes = intersection.right._nodes
+    tangent2 = _curve_helpers.evaluate_hodograph(
+        right_nodes, intersection.right.degree, t)
+
+    # Take the cross-product of tangent vectors to determine which one
+    # is more "to the left".
+    cross_prod = _helpers.cross_product(
+        np.array([tangent1]), np.array([tangent2]))
+    if cross_prod < 0:
+        return 1
+    elif cross_prod > 0:
+        return 0
+    else:
+        raise NotImplementedError

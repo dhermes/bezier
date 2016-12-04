@@ -217,37 +217,6 @@ def linearization_error(curve):
     return multiplier * np.linalg.norm(worst_case, ord=2)
 
 
-def _evaluate_hodograph(nodes, degree, s):
-    r"""Evaluate the Hodograph curve at a point :math:`s`.
-
-    The Hodograph (first derivative) of a B |eacute| zier curve
-    degree :math:`d = n - 1` and is given by
-
-    .. math::
-
-       B'(s) = n \sum_{j = 0}^{d} \binom{d}{j} s^j
-       (1 - s)^{d - j} \cdot \Delta v_j
-
-    where each forward difference is given by
-    :math:`\Delta v_j = v_{j + 1} - v_j`.
-
-    Args:
-        nodes (numpy.ndarray): The nodes of a curve.
-        degree (int): The degree of the curve (assumed to be one less than
-            the number of ``nodes``.
-        s (float): A parameter along the curve at which the Hodograph
-            is to be evaluated.
-
-    Returns:
-        numpy.ndarray: The point on the Hodograph curve (as a one
-        dimensional NumPy array).
-    """
-    first_deriv = nodes[1:, :] - nodes[:-1, :]
-    # NOTE: Taking the derivative drops the degree by 1.
-    return degree * _curve_helpers.evaluate_multi(
-        first_deriv, degree - 1, np.array([s])).flatten()
-
-
 def newton_refine(s, curve1, t, curve2):
     r"""Apply one step of 2D Newton's method.
 
@@ -497,9 +466,11 @@ def newton_refine(s, curve1, t, curve2):
     # In curve.evaluate() and evaluate_hodograph() the roles of
     # columns and rows are swapped.
     nodes1 = curve1._nodes  # pylint: disable=protected-access
-    jac_mat[0, :] = _evaluate_hodograph(nodes1, curve1.degree, s)
+    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(
+        nodes1, curve1.degree, s)
     nodes2 = curve2._nodes  # pylint: disable=protected-access
-    jac_mat[1, :] = - _evaluate_hodograph(nodes2, curve2.degree, t)
+    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(
+        nodes2, curve2.degree, t)
 
     # Solve the system (via the transposes, since, as above, the roles
     # of columns and rows are reversed). Note that since ``func_val``
@@ -507,29 +478,6 @@ def newton_refine(s, curve1, t, curve2):
     # without worry of them being vectors.
     delta_s, delta_t = np.linalg.solve(jac_mat.T, func_val.T)
     return s + delta_s, t + delta_t
-
-
-def _cross_product(vec0, vec1):
-    r"""Compute the cross-product of vectors in :math:`\mathbf{R}^2`.
-
-    Utilizes the fact that
-
-    .. math::
-
-       \left[\begin{array}{c} A \\ B \\ 0 \end{array}\right] \times
-           \left[\begin{array}{c} C \\ D \\ 0 \end{array}\right] =
-           \left[\begin{array}{c} 0 \\ 0 \\ AD - BC \end{array}\right]
-
-    and just returns the :math:`z` component.
-
-    Args:
-        vec0 (numpy.ndarray): A vector as a 1x2 NumPy array.
-        vec1 (numpy.ndarray): A vector as a 1x2 NumPy array.
-
-    Returns:
-        float: The cross-product (or rather, its :math:`z` component).
-    """
-    return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]
 
 
 def segment_intersection(start0, end0, start1, end1):
@@ -680,13 +628,13 @@ def segment_intersection(start0, end0, start1, end1):
     """
     delta0 = end0 - start0
     delta1 = end1 - start1
-    cross_d0_d1 = _cross_product(delta0, delta1)
+    cross_d0_d1 = _helpers.cross_product(delta0, delta1)
     if cross_d0_d1 == 0.0:
         return None, None, False
     else:
         start_delta = start1 - start0
-        s = _cross_product(start_delta, delta1) / cross_d0_d1
-        t = _cross_product(start_delta, delta0) / cross_d0_d1
+        s = _helpers.cross_product(start_delta, delta1) / cross_d0_d1
+        t = _helpers.cross_product(start_delta, delta0) / cross_d0_d1
         return s, t, True
 
 
@@ -853,8 +801,8 @@ def parallel_different(start0, end0, start1, end1):
         bool: Indicating if the lines are different.
     """
     delta0 = end0 - start0
-    line0_const = _cross_product(start0, delta0)
-    start1_against = _cross_product(start1, delta0)
+    line0_const = _helpers.cross_product(start0, delta0)
+    start1_against = _helpers.cross_product(start1, delta0)
     if line0_const != start1_against:
         return True
 

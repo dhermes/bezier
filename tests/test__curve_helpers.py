@@ -234,3 +234,63 @@ class Test_specialize_curve(unittest.TestCase):
 
         right_nodes = self._call_function_under_test(nodes, 2, 0.5, 1.0)
         self.assertTrue(np.all(right.nodes == right_nodes))
+
+
+class Test_evaluate_hodograph(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, s):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.evaluate_hodograph(nodes, degree, s)
+
+    def test_line(self):
+        degree = 1
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+
+        first_deriv1 = self._call_function_under_test(nodes, degree, 0.25)
+        self.assertEqual(first_deriv1.ndim, 1)
+        self.assertTrue(np.all(first_deriv1 == nodes[1, :] - nodes[0, :]))
+        # Make sure it is the same elsewhere since
+        # the derivative curve is degree 0.
+        first_deriv2 = self._call_function_under_test(nodes, degree, 0.75)
+        self.assertTrue(np.all(first_deriv1 == first_deriv2))
+
+    def test_quadratic(self):
+        degree = 2
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.25, 0.25],
+        ])
+        # This defines the curve
+        #  B(s) = [s(s + 4)/4, s(8 - 7s)/4]
+        # B'(s) = [(2 + s)/2, (4 - 7s)/2]
+
+        for s_val in (0.0, 0.25, 0.5, 0.625, 0.875):
+            first_deriv = self._call_function_under_test(nodes, degree, s_val)
+            self.assertEqual(first_deriv.shape, (2,))
+            self.assertEqual(first_deriv[0], (2.0 + s_val) / 2.0)
+            self.assertEqual(first_deriv[1], (4.0 - 7.0 * s_val) / 2.0)
+
+    def test_cubic(self):
+        degree = 3
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.25, 1.0],
+            [0.75, 0.5],
+            [1.25, 1.0],
+        ])
+        # This defines the curve
+        #  B(s) = [s(3 + 3s - s^2)/4, s(5s^2 - 9s + 6)/2]
+        # B'(s) = [3(1 + 2s - s^2)/4, 3(5s^2 - 6s + 2)/2]
+        for s_val in (0.125, 0.5, 0.75, 1.0, 1.125):
+            first_deriv = self._call_function_under_test(nodes, degree, s_val)
+            self.assertEqual(first_deriv.shape, (2,))
+            x_prime = 3.0 * (1.0 + 2.0 * s_val - s_val * s_val) / 4.0
+            self.assertEqual(first_deriv[0], x_prime)
+            y_prime = 3.0 * (5.0 * s_val * s_val - 6.0 * s_val + 2.0) / 2.0
+            self.assertEqual(first_deriv[1], y_prime)
