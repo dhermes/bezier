@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import bezier
-from bezier import _helpers
 
 import runtime_utils
 

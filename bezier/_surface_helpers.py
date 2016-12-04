@@ -877,16 +877,18 @@ def classify_intersection(intersection):
             one of the curves.
         NotImplementedError: The curves are tangent at the intersection.
     """
+    # pylint: disable=protected-access
     s = intersection._s_val
     t = intersection._t_val
+    # pylint: enable=protected-access
 
     if s == 0.0 or s == 1.0 or t == 0.0 or t == 1.0:
         raise NotImplementedError
 
-    left_nodes = intersection.left._nodes
+    left_nodes = intersection.left._nodes  # pylint: disable=protected-access
     tangent1 = _curve_helpers.evaluate_hodograph(
         left_nodes, intersection.left.degree, s)
-    right_nodes = intersection.right._nodes
+    right_nodes = intersection.right._nodes  # pylint: disable=protected-access
     tangent2 = _curve_helpers.evaluate_hodograph(
         right_nodes, intersection.right.degree, t)
 
