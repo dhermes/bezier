@@ -260,7 +260,11 @@ document are generated as part of the functional tests:
 Continuous Integration
 **********************
 
-And
+Tests are run on `CircleCI`_ after every commit. To see which tests
+are run, see the in the `CircleCI config`_.
+
+.. _CircleCI: https://circleci.com/gh/dhermes/bezier
+.. _CircleCI config: https://github.com/dhermes/bezier/blob/master/circle.yml
 
 **********************
 Deploying New Versions
