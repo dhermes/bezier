@@ -929,23 +929,22 @@ def from_linearized(left, right, intersections):
 
 
 def _add_intersection(intersection, intersections):
-    """Adds an intersection at bounding box tangency.
+    """Adds an intersection to list of ``intersections``.
 
-    If the intersection has already been found, does nothing.
+    Accounts for repeated points at curve endpoints. If the
+    intersection has already been found, does nothing.
 
     Args:
         intersection (Intersection): A new intersection to add.
         intersections (list): List of existing intersections.
     """
-    # pylint: disable=protected-access
     for existing in intersections:
         if (existing.at_endpoint and
                 existing.left is intersection.left and
                 existing.right is intersection.right and
-                existing._s_val == intersection._s_val and
-                existing._t_val == intersection._t_val):
+                existing.s == intersection.s and
+                existing.t == intersection.t):
             return
-    # pylint: enable=protected-access
 
     intersections.append(intersection)
 
@@ -1333,15 +1332,26 @@ class Intersection(object):
         self._t_val = t
         self._point = point
         self.at_endpoint = at_endpoint
+        self._interior_curve = None
+
+    @property
+    def s(self):
+        """float: The intersection parameter for the :attr:`.left` curve."""
+        return self._s_val
+
+    @property
+    def t(self):
+        """float: The intersection parameter for the :attr:`.right` curve."""
+        return self._t_val
 
     @property
     def left(self):
-        """numpy.ndarray: The "left" curve in the intersection."""
+        """Curve: The "left" curve in the intersection."""
         return self._left
 
     @property
     def right(self):
-        """numpy.ndarray: The "right" curve in the intersection."""
+        """Curve: The "right" curve in the intersection."""
         return self._right
 
     @property
@@ -1351,3 +1361,36 @@ class Intersection(object):
             self._point = _check_close(
                 self._s_val, self._left, self._t_val, self._right)
         return self._point
+
+    @property
+    def interior_curve(self):  # pylint: disable=missing-returns-doc
+        r"""int: Which of the curves is on the interior.
+
+        Will be ``0`` for the :attr:`.left`, ``1`` for the :attr:`.right`
+        and ``-1`` if it is ambiguous (e.g. the curves are tangent
+        but moving in opposite directions).
+
+        Raises:
+            AttributeError: If the value has not already been set.
+        """
+        if self._interior_curve is None:
+            raise AttributeError('interior_curve has not been set')
+        return self._interior_curve
+
+    @interior_curve.setter
+    def interior_curve(self, value):
+        """Set the
+
+        Args:
+            value (int): The value to set.
+
+        Raises:
+            AttributeError: If the value is already set.
+            ValueError: If the value isn't ``0``, ``1`` or ``-1``.
+        """
+        if self._interior_curve is not None:
+            raise AttributeError('interior_curve has already been set',
+                                 self._interior_curve)
+        if value not in (0, 1, -1):
+            raise ValueError('interior_curve must be among 0, 1 or -1')
+        self._interior_curve = value

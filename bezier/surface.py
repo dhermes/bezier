@@ -838,7 +838,7 @@ class Surface(_base.Base):
                 'Degrees 1 and 2 only supported at this time')
 
     @property
-    def is_valid(self):  # pylint: disable=missing-returns-doc
+    def is_valid(self):
         """bool: Flag indicating if the surface is "valid".
 
         Here, "valid" means there are no self-intersections or

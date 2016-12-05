@@ -1181,10 +1181,8 @@ def classify_intersection(intersection):
         NotImplementedError: The curves are tangent at the intersection
             and have the same curvature.
     """
-    # pylint: disable=protected-access
-    s = intersection._s_val
-    t = intersection._t_val
-    # pylint: enable=protected-access
+    s = intersection.s
+    t = intersection.t
 
     if s == 0.0 or s == 1.0 or t == 0.0 or t == 1.0:
         raise NotImplementedError('Intersection occurs at endpoint.')

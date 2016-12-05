@@ -222,7 +222,7 @@ To run the documentation tests:
    >   -b doctest \
    >   -d docs/build/doctrees \
    >   docs \
-   >   build/doctest
+   >   docs/build/doctest
 
 Documentation Images
 ====================
@@ -242,7 +242,7 @@ To regenerate the images:
    >   -b doctest \
    >   -d docs/build/doctrees \
    >   docs \
-   >   build/doctest
+   >   docs/build/doctest
 
 The images in the `Curve-Curve Intersection`_ document and and this
 document are generated as part of the functional tests:

@@ -269,8 +269,8 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points,
         assert intersection.left is curve1
         assert intersection.right is curve2
 
-        CONFIG.assert_close(intersection._s_val, s_val)
-        CONFIG.assert_close(intersection._t_val, t_val)
+        CONFIG.assert_close(intersection.s, s_val)
+        CONFIG.assert_close(intersection.t, t_val)
 
         CONFIG.assert_close(intersection.point[0], point[0])
         CONFIG.assert_close(intersection.point[1], point[1])
