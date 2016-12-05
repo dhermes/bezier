@@ -21,6 +21,8 @@ This is to help with the exposition of the computation and
 .. autofunction:: bezier._curve_helpers.get_curvature
 .. autoclass:: bezier._intersection_helpers.Intersection
    :members:
+.. autoclass:: bezier._intersection_helpers.Linearization
+   :members:
 .. autofunction:: bezier._surface_helpers.newton_refine
 .. autofunction:: bezier._surface_helpers.classify_intersection
 

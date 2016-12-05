@@ -126,6 +126,9 @@ def bbox_intersect(nodes1, nodes2):
 def linearization_error(curve):
     r"""Compute the maximum error of a linear approximation.
 
+    Helper for :class:`.Linearization`, which is used during the
+    curve-curve intersection process.
+
     We use the line
 
     .. math::
@@ -1087,7 +1090,7 @@ def intersect_one_round(candidates, intersections):
     intersect. If the bounding boxes do not intersect, the pair
     is discarded. Otherwise, the pair is "accepted". Then we
     attempt to linearize each curve in an "accepted" pair and
-    track the overall Linearization error for every curve
+    track the overall linearization error for every curve
     encountered.
 
     Args:
@@ -1235,7 +1238,7 @@ class Linearization(object):
         curve (.Curve): A curve that is linearized.
         error (Optional[float]): The linearization error. If not
             provided, this value is computed on the fly via
-            :func:`linearization_error`.
+            :func:`.linearization_error`.
     """
 
     def __init__(self, curve, error=None):
@@ -1246,14 +1249,14 @@ class Linearization(object):
         """Do-nothing method to match the :class:`.Curve` interface.
 
         Returns:
-            Tuple[Linearization]: List of all subdivided parts, which is
-            just the current object.
+            Tuple[~bezier._intersection_helpers.Linearization]: List of all
+            subdivided parts, which is just the current object.
         """
         return self,
 
     @property
     def curve(self):
-        """.Curve: The curve that this linearization approximates."""
+        """Curve: The curve that this linearization approximates."""
         return self._curve
 
     @property
@@ -1278,11 +1281,14 @@ class Linearization(object):
         """Try to linearize a curve (or an already linearized curve).
 
         Args:
-            shape (Union[.Curve, Linearization]): A curve or an already
+            shape (Union[~bezier.curve.Curve, \
+            ~bezier._intersection_helpers.Linearization]): A curve or an already
                 linearized curve.
 
         Returns:
-            Union[.Curve, Linearization]: The (potentially linearized) curve.
+            Union[~bezier.curve.Curve, \
+            ~bezier._intersection_helpers.Linearization]: The
+            (potentially linearized) curve.
         """
         if isinstance(shape, cls):
             return shape
