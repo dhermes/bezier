@@ -243,8 +243,7 @@ def make_plots(curve1, curve2, points, ignore_save=False):
     ax.plot(points[:, 0], points[:, 1],
             marker='o', linestyle='None', color='black')
     ax.axis('scaled')
-    nodes = np.vstack([curve1._nodes, curve2._nodes])
-    runtime_utils.add_plot_boundary(ax, nodes)
+    runtime_utils.add_plot_boundary(ax)
 
     if CONFIG.save_plot:
         if not ignore_save:

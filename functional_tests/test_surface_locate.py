@@ -73,7 +73,7 @@ def make_plot(surface, point):
             marker='o', linestyle='None')
 
     ax.axis('scaled')
-    runtime_utils.add_plot_boundary(ax, surface._nodes)
+    runtime_utils.add_plot_boundary(ax)
 
     if CONFIG.save_plot:
         CONFIG.save_fig()

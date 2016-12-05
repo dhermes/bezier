@@ -429,8 +429,7 @@ def make_plots(surface1, surface2, points):
     ax.plot(points[:, 0], points[:, 1], color='black',
             marker='o', linestyle='None')
     plt.axis('scaled')
-    nodes = np.vstack([surface1._nodes, surface2._nodes])
-    runtime_utils.add_plot_boundary(ax, nodes)
+    runtime_utils.add_plot_boundary(ax)
 
     if CONFIG.save_plot:
         CONFIG.save_fig()
