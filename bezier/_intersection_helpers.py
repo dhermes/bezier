@@ -1282,8 +1282,8 @@ class Linearization(object):
 
         Args:
             shape (Union[~bezier.curve.Curve, \
-            ~bezier._intersection_helpers.Linearization]): A curve or an already
-                linearized curve.
+            ~bezier._intersection_helpers.Linearization]): A curve or an
+                already linearized curve.
 
         Returns:
             Union[~bezier.curve.Curve, \
