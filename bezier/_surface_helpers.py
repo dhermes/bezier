@@ -1044,7 +1044,9 @@ def classify_intersection(intersection):
        make_images.classify_intersection4(s, curve1, curve2)
 
     or the point of tangency is a "degenerate" part of two
-    :class:`.CurvedPolygon` intersections:
+    :class:`.CurvedPolygon` intersections. It is "degenerate"
+    because from one direction, the point should be classified
+    as ``1`` and from another as ``0``:
 
     .. image:: ../images/classify_intersection5.png
        :align: center
