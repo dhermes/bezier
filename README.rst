@@ -35,11 +35,11 @@ also be determined:
 .. code-block:: python
 
    >>> nodes2 = np.array([
-   ...     [0.0, 0.0],
-   ...     [0.25, 2.0],
-   ...     [0.5, -2.0],
-   ...     [0.75, 2.0],
-   ...     [1.0, 0.0],
+   ...     [0.0 ,  0.0],
+   ...     [0.25,  2.0],
+   ...     [0.5 , -2.0],
+   ...     [0.75,  2.0],
+   ...     [1.0 ,  0.0],
    ... ])
    >>> curve2 = bezier.Curve(nodes2)
    >>> intersections = curve1.intersect(curve2)

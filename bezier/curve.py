@@ -439,13 +439,13 @@ class Curve(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes1 = np.array([
-           ...     [0.0  , 0.0 ],
+           ...     [0.0  , 0.0  ],
            ...     [0.375, 0.75 ],
            ...     [0.75 , 0.375],
            ... ])
            >>> curve1 = bezier.Curve(nodes1)
            >>> nodes2 = np.array([
-           ...     [0.5, 0.0],
+           ...     [0.5, 0.0 ],
            ...     [0.5, 0.75],
            ... ])
            >>> curve2 = bezier.Curve(nodes2)
