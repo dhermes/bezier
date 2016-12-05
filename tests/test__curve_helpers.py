@@ -294,3 +294,51 @@ class Test_evaluate_hodograph(unittest.TestCase):
             self.assertEqual(first_deriv[0], x_prime)
             y_prime = 3.0 * (5.0 * s_val * s_val - 6.0 * s_val + 2.0) / 2.0
             self.assertEqual(first_deriv[1], y_prime)
+
+
+class Test_get_curvature(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, tangent_vec, s):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.get_curvature(
+            nodes, degree, tangent_vec, s)
+
+    @staticmethod
+    def _get_tangent_vec(nodes, degree, s):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.evaluate_hodograph(nodes, degree, s)
+
+    def test_line(self):
+        s = 0.5
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        tangent_vec = self._get_tangent_vec(nodes, 1, s)
+        result = self._call_function_under_test(nodes, 1, tangent_vec, s)
+        self.assertEqual(result, 0.0)
+
+    def test_elevated_line(self):
+        s = 0.25
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, 0.5],
+            [1.0, 1.0],
+        ])
+        tangent_vec = self._get_tangent_vec(nodes, 2, s)
+        result = self._call_function_under_test(nodes, 2, tangent_vec, s)
+        self.assertEqual(result, 0.0)
+
+    def test_quadratic(self):
+        s = 0.5
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        tangent_vec = self._get_tangent_vec(nodes, 2, s)
+        result = self._call_function_under_test(nodes, 2, tangent_vec, s)
+        self.assertEqual(result, -4.0)

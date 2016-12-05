@@ -309,6 +309,9 @@ def get_curvature(nodes, degree, tangent_vec, s):
     Returns:
         float: The signed curvature.
     """
+    if degree == 1:
+        return 0.0
+
     # NOTE: We somewhat replicate code in ``evaluate_hodograph()``
     #       here. It may be worthwhile to implement ``Curve.hodograph()``
     #       and ``Curve.concavity()`` to avoid re-computing the
