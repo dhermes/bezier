@@ -1035,3 +1035,32 @@ def classify_intersection7(s, curve1, curve2):
     ax.set_xlim(-0.0625, 1.0625)
     ax.set_ylim(-0.0625, 1.1875)
     save_image(ax.figure, 'classify_intersection7.png')
+
+
+def get_curvature(nodes, s, tangent_vec, curvature):
+    """Image for :func:`get_curvature` docstring."""
+    if NO_IMAGES:
+        return
+
+    curve = bezier.Curve(nodes)
+
+    # Find the center of the circle along the direction
+    # perpendicular to the tangent vector (90 degree left turn).
+    radius_dir = np.array([-tangent_vec[1], tangent_vec[0]])
+    radius_dir /= np.linalg.norm(radius_dir, ord=2)
+    point = curve.evaluate(s)
+    circle_center = point + radius_dir / curvature
+
+    # Add the curve.
+    ax = curve.plot(256)
+    # Add the circle.
+    circle = plt.Circle(circle_center, 1.0 / abs(curvature), alpha=0.25)
+    ax.add_artist(circle)
+    # Add the point.
+    ax.plot([point[0]], [point[1]],
+            color='black', marker='o', linestyle='None')
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.0625, 1.0625)
+    ax.set_ylim(-0.0625, 0.625)
+    save_image(ax.figure, 'get_curvature.png')

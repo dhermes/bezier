@@ -297,7 +297,44 @@ def get_curvature(nodes, degree, tangent_vec, s):
 
     .. math::
 
-       \frac{B'(s) \times B''(s)}{\left\lVert B'(s) \right\rVert^3}
+       \frac{B'(s) \times B''(s)}{\left\lVert B'(s) \right\rVert_2^3}
+
+    .. image:: images/get_curvature.png
+       :align: center
+
+    .. testsetup:: get-curvature
+
+       import numpy as np
+       import bezier
+       from bezier._curve_helpers import evaluate_hodograph
+       from bezier._curve_helpers import get_curvature
+
+       def hodograph(nodes, s):
+           degree = nodes.shape[0] - 1
+           return evaluate_hodograph(nodes, degree, s)
+
+    .. doctest:: get-curvature
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> nodes = np.array([
+       ...     [1.0 ,  0.0],
+       ...     [0.75,  2.0],
+       ...     [0.5 , -2.0],
+       ...     [0.25,  2.0],
+       ...     [0.0 ,  0.0],
+       ... ])
+       >>> s = 0.5
+       >>> tangent_vec = hodograph(nodes, s)
+       >>> tangent_vec
+       array([-1., 0.])
+       >>> curvature = get_curvature(nodes, 4, tangent_vec, s)
+       >>> curvature
+       -12.0
+
+    .. testcleanup:: get-curvature
+
+       import make_images
+       make_images.get_curvature(nodes, s, tangent_vec, curvature)
 
     Args:
         nodes (numpy.ndarray): The nodes of a curve.
