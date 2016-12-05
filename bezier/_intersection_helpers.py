@@ -176,7 +176,7 @@ def linearization_error(curve):
     .. image:: images/linearization_error.png
        :align: center
 
-    .. testsetup:: linearization-error
+    .. testsetup:: linearization-error, linearization-error-fail
 
        import numpy as np
        import bezier
@@ -197,6 +197,48 @@ def linearization_error(curve):
 
        import make_images
        make_images.linearization_error(curve)
+
+    As a **non-example**, consider a "pathological" set of control points:
+
+    .. math::
+
+       B(s) = \left[\begin{array}{c} 0 \\ 0 \end{array}\right] (1 - s)^3
+           + \left[\begin{array}{c} 5 \\ 12 \end{array}\right] 3s(1 - s)^2
+           + \left[\begin{array}{c} 10 \\ 24 \end{array}\right] 3s^2(1 - s)
+           + \left[\begin{array}{c} 30 \\ 72 \end{array}\right] s^3
+
+    By construction, this lies on the line :math:`y = \frac{12x}{5}`, but
+    the parametrization is cubic:
+    :math:`12 \cdot x(s) = 5 \cdot y(s) = 180s(s^2 + 1)`. Hence, the fact
+    that the curve is a line is not accounted for and we take the worse
+    case among the nodes in:
+
+    .. math::
+
+       B''(s) = 3 \cdot 2 \cdot \left(
+           \left[\begin{array}{c} 0 \\ 0 \end{array}\right] (1 - s)
+           + \left[\begin{array}{c} 15 \\ 36 \end{array}\right] s\right)
+
+    which gives a nonzero maximum error:
+
+    .. doctest:: linearization-error-fail
+
+       >>> nodes = np.array([
+       ...     [ 0.0,  0.0],
+       ...     [ 5.0, 12.0],
+       ...     [10.0, 24.0],
+       ...     [30.0, 72.0],
+       ... ])
+       >>> curve = bezier.Curve(nodes)
+       >>> linearization_error(curve)
+       29.25
+
+    Though it may seem that ``0`` is a more appropriate answer, consider
+    the **goal** of this function. We seek to linearize curves and then
+    intersect the linear approximations. Then the :math:`s`-values from
+    the line-line intersection is lifted back to the curves. Thus
+    the error :math:`\|B(s) - L(s)\|_2` is more relevant than the
+    underyling algebraic curve containing :math:`B(s)`.
 
     .. note::
 
