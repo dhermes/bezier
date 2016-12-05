@@ -7,6 +7,7 @@
 
    Bezier Package <reference/bezier>
    curve-curve-intersection
+   algorithm-helpers
 
 ``bezier`` is a Python helper for B |eacute| zier Curves, Triangles, and
 Higher Order Objects.

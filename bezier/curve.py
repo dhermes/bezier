@@ -22,11 +22,6 @@ See :doc:`../curve-curve-intersection` for examples using the
 
    import numpy as np
    import bezier
-
-.. autofunction:: bezier._intersection_helpers.linearization_error
-.. autofunction:: bezier._intersection_helpers.newton_refine
-.. autofunction:: bezier._intersection_helpers.segment_intersection
-.. autofunction:: bezier._intersection_helpers.parallel_different
 """
 
 

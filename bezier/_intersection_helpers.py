@@ -173,7 +173,7 @@ def linearization_error(curve):
        \left.\frac{s(1 - s)}{2!} \cdot 10\right|_{s = \frac{1}{2}}
           = \frac{5}{4}.
 
-    .. image:: ../images/linearization_error.png
+    .. image:: images/linearization_error.png
        :align: center
 
     .. testsetup:: linearization-error
@@ -197,6 +197,14 @@ def linearization_error(curve):
 
        import make_images
        make_images.linearization_error(curve)
+
+    .. note::
+
+       It may be more appropriate to use a **relative** linearization error
+       rather than the **absolute** error provided here. It's unclear if
+       the domain :math:`\left[0, 1\right]` means the error is **already**
+       adequately scaled or if the error should be scaled by the arc
+       length of the curve or the (easier-to-compute) length of the line.
 
     Args:
         curve (~bezier.curve.Curve): A curve to be approximated by a line.
@@ -280,7 +288,7 @@ def newton_refine(s, curve1, t, curve2):
             -1 \\ 2 \end{array}\right].
         \end{align*}
 
-    .. image:: ../images/newton_refine1.png
+    .. image:: images/newton_refine1.png
        :align: center
 
     .. testsetup:: newton-refine1, newton-refine2, newton-refine3
@@ -318,7 +326,7 @@ def newton_refine(s, curve1, t, curve2):
     This means that the number of correct digits doubles every
     iteration (until machine precision is reached).
 
-    .. image:: ../images/newton_refine2.png
+    .. image:: images/newton_refine2.png
        :align: center
 
     .. doctest:: newton-refine2
@@ -367,7 +375,7 @@ def newton_refine(s, curve1, t, curve2):
     the convergence becomes linear. This means that the number of
     correct digits added each iteration is roughly constant.
 
-    .. image:: ../images/newton_refine3.png
+    .. image:: images/newton_refine3.png
        :align: center
 
     .. doctest:: newton-refine3
@@ -534,7 +542,7 @@ def segment_intersection(start0, end0, start1, end1):
     L_1\left(\frac{3}{4}\right) =
     \frac{1}{2} \left[\begin{array}{c} 1 \\ 1 \end{array}\right]`.
 
-    .. image:: ../images/segment_intersection1.png
+    .. image:: images/segment_intersection1.png
        :align: center
 
     .. testsetup:: segment-intersection1, segment-intersection2
@@ -574,7 +582,7 @@ def segment_intersection(start0, end0, start1, end1):
     we should be able to determine that the lines don't intersect, but
     this function is not meant for that check:
 
-    .. image:: ../images/segment_intersection2.png
+    .. image:: images/segment_intersection2.png
        :align: center
 
     .. doctest:: segment-intersection2
@@ -673,7 +681,7 @@ def parallel_different(start0, end0, start1, end1):
     If it is not on the first line, then we are done, the
     segments don't meet:
 
-    .. image:: ../images/parallel_different1.png
+    .. image:: images/parallel_different1.png
        :align: center
 
     .. testsetup:: parallel-different1, parallel-different2
@@ -714,7 +722,7 @@ def parallel_different(start0, end0, start1, end1):
     :math:`E_1 = S_0 + 2 \Delta_0`) correspond to segments that
     don't meet:
 
-    .. image:: ../images/parallel_different2.png
+    .. image:: images/parallel_different2.png
        :align: center
 
     .. doctest:: parallel-different2
@@ -736,7 +744,7 @@ def parallel_different(start0, end0, start1, end1):
     but if the intervals overlap, like :math:`\left[0, 1\right]` and
     :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
 
-    .. image:: ../images/parallel_different3.png
+    .. image:: images/parallel_different3.png
        :align: center
 
     .. testsetup:: parallel-different3, parallel-different4
@@ -764,7 +772,7 @@ def parallel_different(start0, end0, start1, end1):
     Similarly, if the second interval completely contains the first,
     the segments meet:
 
-    .. image:: ../images/parallel_different4.png
+    .. image:: images/parallel_different4.png
        :align: center
 
     .. doctest:: parallel-different4

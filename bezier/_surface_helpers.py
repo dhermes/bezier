@@ -730,7 +730,7 @@ def newton_refine(surface, x_val, y_val, s, t):
            \left[\begin{array}{c} -10 \\ 7 \end{array}\right]
        \end{align*}
 
-    .. image:: ../images/newton_refine_surface.png
+    .. image:: images/newton_refine_surface.png
        :align: center
 
     .. testsetup:: newton-refine-surface
@@ -868,7 +868,7 @@ def classify_intersection(intersection):
 
     The "typical" case is on the interior of both edges:
 
-    .. image:: ../images/classify_intersection1.png
+    .. image:: images/classify_intersection1.png
        :align: center
 
     .. testsetup:: classify-intersection1, classify-intersection2,
@@ -949,7 +949,7 @@ def classify_intersection(intersection):
     When :math:`B_1'(s) \times B_2'(t) = 0`, the tangent
     vectors are parallel, i.e. the intersection is a point of tangency:
 
-    .. image:: ../images/classify_intersection2.png
+    .. image:: images/classify_intersection2.png
        :align: center
 
     .. doctest:: classify-intersection2
@@ -983,7 +983,7 @@ def classify_intersection(intersection):
 
     .. _curvature: https://en.wikipedia.org/wiki/Curvature
 
-    .. image:: ../images/classify_intersection3.png
+    .. image:: images/classify_intersection3.png
        :align: center
 
     .. doctest:: classify-intersection3
@@ -1015,7 +1015,7 @@ def classify_intersection(intersection):
     of tangency, there is no side to choose. Either the point of tangency
     is not part of any :class:`.CurvedPolygon` intersection
 
-    .. image:: ../images/classify_intersection4.png
+    .. image:: images/classify_intersection4.png
        :align: center
 
     .. doctest:: classify-intersection4
@@ -1048,7 +1048,7 @@ def classify_intersection(intersection):
     because from one direction, the point should be classified
     as ``1`` and from another as ``0``:
 
-    .. image:: ../images/classify_intersection5.png
+    .. image:: images/classify_intersection5.png
        :align: center
 
     .. doctest:: classify-intersection5
@@ -1079,7 +1079,7 @@ def classify_intersection(intersection):
     However, if the `curvature`_ of each curve is identical, we
     don't try to distinguish further:
 
-    .. image:: ../images/classify_intersection6.png
+    .. image:: images/classify_intersection6.png
        :align: center
 
     .. doctest:: classify-intersection6
@@ -1120,7 +1120,7 @@ def classify_intersection(intersection):
     In addition to points of tangency, intersections that happen at
     the end of an edge need special handling:
 
-    .. image:: ../images/classify_intersection7.png
+    .. image:: images/classify_intersection7.png
        :align: center
 
     .. doctest:: classify-intersection7
