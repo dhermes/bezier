@@ -694,7 +694,7 @@ def surface_width2(sub_surface_b, sub_surface_c):
 
 
 def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
-    """Image for :func:`._surface_helpers.linearization_error` docstring."""
+    """Image for :func:`._surface_helpers.newton_refine` docstring."""
     if NO_IMAGES:
         return
 
@@ -737,3 +737,69 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
     ax2.set_ylim(-0.125, 2.125)
 
     save_image(figure, 'newton_refine_surface.png')
+
+
+def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
+    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve1.plot(256)
+    color1 = ax.lines[-1].get_color()
+    curve2.plot(256, ax=ax)
+    color2 = ax.lines[-1].get_color()
+
+    int_x, int_y = curve1.evaluate(s)
+    ax.plot([int_x, int_x + tangent1[0]], [int_y, int_y + tangent1[1]],
+            color=color1, linestyle='dashed')
+    ax.plot([int_x, int_x + tangent2[0]], [int_y, int_y + tangent2[1]],
+            color=color2, linestyle='dashed')
+    ax.plot([int_x], [int_y],
+            color='black', linestyle='None', marker='o')
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.125, 2.125)
+    ax.set_ylim(-0.125, 1.125)
+    save_image(ax.figure, 'classify_intersection1.png')
+
+
+def classify_intersection2(s, curve1, tangent1, curve2, tangent2):
+    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve1.plot(256)
+    color1 = ax.lines[-1].get_color()
+    curve2.plot(256, ax=ax)
+    color2 = ax.lines[-1].get_color()
+
+    int_x, int_y = curve1.evaluate(s)
+    ax.plot([int_x, int_x + tangent1[0]], [int_y, int_y + tangent1[1]],
+            color=color1, linestyle='dashed', marker='o')
+    ax.plot([int_x, int_x + tangent2[0]], [int_y, int_y + tangent2[1]],
+            color=color2, linestyle='dashed')
+    ax.plot([int_x], [int_y],
+            color='black', linestyle='None', marker='o')
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.0625, 3.0625)
+    ax.set_ylim(-0.0625, 0.5625)
+    save_image(ax.figure, 'classify_intersection2.png')
+
+
+def classify_intersection3(s, curve1, curve2):
+    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve1.plot(256)
+    curve2.plot(256, ax=ax)
+
+    int_x, int_y = curve1.evaluate(s)
+    ax.plot([int_x], [int_y],
+            color='black', linestyle='None', marker='o')
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.0625, 1.0625)
+    ax.set_ylim(-0.0625, 1.1875)
+    save_image(ax.figure, 'classify_intersection3.png')

@@ -859,12 +859,172 @@ def locate_point(surface, x_val, y_val):
 
 
 def classify_intersection(intersection):
-    """Determine which curve is on the "inside of the intersection".
+    r"""Determine which curve is on the "inside of the intersection".
+
+    This is intended to be a helper for forming a :class:`.CurvedPolygon`
+    from the edge intersections of two :class:`.Surface`-s. In order
+    to move from one intersection to another (or to the end of an edge),
+    the interior edge must be determined at the point of intersection.
+
+    The "typical" case is on the interior of both edges:
+
+    .. image:: ../images/classify_intersection1.png
+       :align: center
+
+    .. testsetup:: classify-intersection1, classify-intersection2,
+                   classify-intersection3
+
+       import numpy as np
+       import bezier
+       from bezier import _curve_helpers
+       from bezier._intersection_helpers import Intersection
+       from bezier._surface_helpers import classify_intersection
+
+       def hodograph(curve, s):
+           return _curve_helpers.evaluate_hodograph(
+               curve._nodes, curve.degree, s)
+
+    .. doctest:: classify-intersection1
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> curve1 = bezier.Curve(np.array([
+       ...     [1.0 , 0.0 ],
+       ...     [1.75, 0.25],
+       ...     [2.0 , 1.0 ],
+       ... ]))
+       >>> curve2 = bezier.Curve(np.array([
+       ...     [0.0   , 0.0   ],
+       ...     [1.6875, 0.0625],
+       ...     [2.0   , 0.5   ],
+       ... ]))
+       >>> s, t = 0.25, 0.5
+       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       array([ True, True], dtype=bool)
+       >>> tangent1 = hodograph(curve1, s)
+       >>> tangent1
+       array([ 1.25, 0.75])
+       >>> tangent2 = hodograph(curve2, t)
+       >>> tangent2
+       array([ 2. , 0.5])
+       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> classify_intersection(intersection)
+       0
+
+    .. testcleanup:: classify-intersection1
+
+       import make_images
+       make_images.classify_intersection1(
+           s, curve1, tangent1, curve2, tangent2)
+
+    We determine the interior / left one by using the `right-hand rule`_:
+    by embedding the tangent vectors in :math:`\mathbf{R}^3`, we
+    compute
+
+    .. _right-hand rule: https://en.wikipedia.org/wiki/Right-hand_rule
+
+    .. math::
+
+       \left[\begin{array}{c}
+           x_1'(s) \\ y_1'(s) \\ 0 \end{array}\right] \times
+       \left[\begin{array}{c}
+           x_2'(t) \\ y_2'(t) \\ 0 \end{array}\right] =
+       \left[\begin{array}{c}
+           0 \\ 0 \\ x_1'(s) y_2'(t) - x_2'(t) y_1'(s) \end{array}\right].
+
+    If the cross-product quantity
+    :math:`B_1'(s) \times B_2'(t) = x_1'(s) y_2'(t) - x_2'(t) y_1'(s)`
+    is positive, then the first curve is "to the right", i.e. the second
+    curve is interior. If the cross-product is negative, the first
+    curve is interior. In the case of zero cross-product, the tangent
+    vectors are parallel, i.e. the intersection is a point of tangency:
+
+    .. image:: ../images/classify_intersection2.png
+       :align: center
+
+    .. doctest:: classify-intersection2
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> curve1 = bezier.Curve(np.array([
+       ...     [1.0, 0.0],
+       ...     [1.5, 1.0],
+       ...     [2.0, 0.0],
+       ... ]))
+       >>> curve2 = bezier.Curve(np.array([
+       ...     [0.0, 0.0],
+       ...     [1.5, 1.0],
+       ...     [3.0, 0.0],
+       ... ]))
+       >>> s, t = 0.5, 0.5
+       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       array([ True, True], dtype=bool)
+       >>> tangent1 = hodograph(curve1, s)
+       >>> tangent1
+       array([ 1., 0.])
+       >>> tangent2 = hodograph(curve2, t)
+       >>> tangent2
+       array([ 3., 0.])
+       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> classify_intersection(intersection)
+       Traceback (most recent call last):
+         ...
+       NotImplementedError: Tangent vectors are parallel.
+
+    .. testcleanup:: classify-intersection2
+
+       import make_images
+       make_images.classify_intersection2(
+           s, curve1, tangent1, curve2, tangent2)
+
+    In addition to points of tangency, intersections that happen at
+    the end of an edge need special handling:
+
+    .. image:: ../images/classify_intersection3.png
+       :align: center
+
+    .. doctest:: classify-intersection3
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> curve1 = bezier.Curve(np.array([
+       ...     [0.0, 0.0],
+       ...     [0.5, 0.0],
+       ...     [1.0, 0.5],
+       ... ]))
+       >>> curve2 = bezier.Curve(np.array([
+       ...     [1.03515625, 0.125],
+       ...     [1.03515625, 0.625],
+       ...     [0.78515625, 1.125],
+       ... ]))
+       >>> s, t = 1.0, 0.375
+       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       array([ True, True], dtype=bool)
+       >>> tangent1 = hodograph(curve1, s)
+       >>> tangent1
+       array([ 1., 1.])
+       >>> tangent2 = hodograph(curve2, t)
+       >>> tangent2
+       array([-0.1875, 1. ])
+       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> classify_intersection(intersection)
+       Traceback (most recent call last):
+         ...
+       NotImplementedError: Intersection occurs at endpoint.
+
+    .. testcleanup:: classify-intersection3
+
+       import make_images
+       make_images.classify_intersection3(s, curve1, curve2)
+
+    .. note::
+
+       This assumes the intersection occurs in :math:`\mathbf{R}^2`
+       but doesn't check this.
 
     .. note::
 
        This function doesn't allow wiggle room / round-off when checking
        endpoints, nor when checking if the cross-product is near zero.
+       However, the most "correct" version of this function likely
+       should allow for some round off.
 
     Args:
         intersection (.Intersection): An intersection object.
@@ -883,7 +1043,7 @@ def classify_intersection(intersection):
     # pylint: enable=protected-access
 
     if s == 0.0 or s == 1.0 or t == 0.0 or t == 1.0:
-        raise NotImplementedError
+        raise NotImplementedError('Intersection occurs at endpoint.')
 
     left_nodes = intersection.left._nodes  # pylint: disable=protected-access
     tangent1 = _curve_helpers.evaluate_hodograph(
@@ -897,8 +1057,8 @@ def classify_intersection(intersection):
     cross_prod = _helpers.cross_product(
         np.array([tangent1]), np.array([tangent2]))
     if cross_prod < 0:
-        return 1
-    elif cross_prod > 0:
         return 0
+    elif cross_prod > 0:
+        return 1
     else:
-        raise NotImplementedError
+        raise NotImplementedError('Tangent vectors are parallel.')

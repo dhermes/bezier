@@ -618,13 +618,13 @@ class Test_classify_intersection(unittest.TestCase):
         intersection = _intersection_helpers.Intersection(
             left, 0.5, right, 0.5)
         result = self._call_function_under_test(intersection)
-        self.assertEqual(result, 0)
+        self.assertEqual(result, 1)
 
         # Swap and classify.
         intersection = _intersection_helpers.Intersection(
             right, 0.5, left, 0.5)
         result = self._call_function_under_test(intersection)
-        self.assertEqual(result, 1)
+        self.assertEqual(result, 0)
 
     def test_corner(self):
         import bezier

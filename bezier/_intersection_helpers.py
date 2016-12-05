@@ -782,7 +782,7 @@ def parallel_different(start0, end0, start1, end1):
 
     .. note::
 
-       This method doesn't currently allow wiggle room around the
+       This function doesn't currently allow wiggle room around the
        desired value, i.e. the two values must be bitwise identical.
        However, the most "correct" version of this function likely
        should allow for some round off.
@@ -925,7 +925,7 @@ def _tangent_bbox_intersection(left, right, intersections):
 
     .. note::
 
-       This method assumes callers will not pass curves that can be
+       This function assumes callers will not pass curves that can be
        linearized / are linear. In :func:`all_intersections`, curves
        are pre-processed to do any linearization before the
        subdivision / intersection process begins.
