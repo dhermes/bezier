@@ -27,6 +27,8 @@ try:
 except ImportError:  # pragma: NO COVER
     _scipy_int = None
 
+from bezier import _helpers
+
 
 def make_subdivision_matrix(degree):
     """Make the matrix used to subdivide a curve.
@@ -286,3 +288,38 @@ def evaluate_hodograph(nodes, degree, s):
     # NOTE: Taking the derivative drops the degree by 1.
     return degree * evaluate_multi(
         first_deriv, degree - 1, np.array([s])).flatten()
+
+
+def get_curvature(nodes, degree, tangent_vec, s):
+    r"""Compute the signed curvature of a curve at :math:`s`.
+
+    Computed via
+
+    .. math::
+
+       \frac{B'(s) \times B''(s)}{\left\lVert B'(s) \right\rVert^3}
+
+    Args:
+        nodes (numpy.ndarray): The nodes of a curve.
+        degree (int): The degree of the curve.
+        tangent_vec (numpy.ndarray): The already computed value of
+            :math:`B'(s)`
+        s (float): The parameter value along the curve.
+
+    Returns:
+        float: The signed curvature.
+    """
+    # NOTE: We somewhat replicate code in ``evaluate_hodograph()``
+    #       here. It may be worthwhile to implement ``Curve.hodograph()``
+    #       and ``Curve.concavity()`` to avoid re-computing the
+    #       first and second node differences.
+    first_deriv = nodes[1:, :] - nodes[:-1, :]
+    second_deriv = first_deriv[1:, :] - first_deriv[:-1, :]
+    concavity = degree * (degree - 1) * evaluate_multi(
+        second_deriv, degree - 2, np.array([s]))
+    # NOTE: This assumes ``tangent_vec`` was ``flatten()``-ed, but
+    #       we intentionally don't flatten ``concavity``.
+    curvature = _helpers.cross_product(
+        np.array([tangent_vec]), concavity)
+    curvature /= np.linalg.norm(tangent_vec, ord=2)**3
+    return curvature

@@ -597,15 +597,31 @@ class Test_locate_point(unittest.TestCase):
 
 class Test_classify_intersection(unittest.TestCase):
 
+    QUADRATIC1 = np.array([
+        [1.0, 0.0],
+        [1.5, 1.0],
+        [2.0, 0.0],
+    ])
+    QUADRATIC2 = np.array([
+        [0.0, 0.0],
+        [1.5, 1.0],
+        [3.0, 0.0],
+    ])
+
     @staticmethod
     def _call_function_under_test(intersection):
         from bezier import _surface_helpers
 
         return _surface_helpers.classify_intersection(intersection)
 
+    @staticmethod
+    def _make_intersect(left, s, right, t):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.Intersection(left, s, right, t)
+
     def test_simple(self):
         import bezier
-        from bezier import _intersection_helpers
 
         left = bezier.Curve(np.array([
             [0.0, 0.0],
@@ -615,20 +631,17 @@ class Test_classify_intersection(unittest.TestCase):
             [0.25, 0.0],
             [0.75, 1.0],
         ]))
-        intersection = _intersection_helpers.Intersection(
-            left, 0.5, right, 0.5)
+        intersection = self._make_intersect(left, 0.5, right, 0.5)
         result = self._call_function_under_test(intersection)
         self.assertEqual(result, 1)
 
         # Swap and classify.
-        intersection = _intersection_helpers.Intersection(
-            right, 0.5, left, 0.5)
+        intersection = self._make_intersect(right, 0.5, left, 0.5)
         result = self._call_function_under_test(intersection)
         self.assertEqual(result, 0)
 
     def test_corner(self):
         import bezier
-        from bezier import _intersection_helpers
 
         left = bezier.Curve(np.array([
             [0.0, 0.0],
@@ -638,26 +651,53 @@ class Test_classify_intersection(unittest.TestCase):
             [1.0, 0.0],
             [1.0, 2.0],
         ]))
-        intersection = _intersection_helpers.Intersection(
-            left, 1.0, right, 0.5)
+        intersection = self._make_intersect(left, 1.0, right, 0.5)
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(intersection)
 
-    def test_tangent(self):
+    def test_tangent_opposed(self):
         import bezier
-        from bezier import _intersection_helpers
+
+        left = bezier.Curve(self.QUADRATIC1[::-1, :])
+        right = bezier.Curve(self.QUADRATIC2)
+        intersection = self._make_intersect(left, 0.5, right, 0.5)
+
+        result = self._call_function_under_test(intersection)
+        self.assertEqual(result, -1)
+
+    def test_tangent_left_curvature(self):
+        import bezier
+
+        left = bezier.Curve(self.QUADRATIC1[::-1, :])
+        right = bezier.Curve(self.QUADRATIC2[::-1, :])
+        intersection = self._make_intersect(left, 0.5, right, 0.5)
+
+        result = self._call_function_under_test(intersection)
+        self.assertEqual(result, 0)
+
+    def test_tangent_right_curvature(self):
+        import bezier
+
+        left = bezier.Curve(self.QUADRATIC1)
+        right = bezier.Curve(self.QUADRATIC2)
+        intersection = self._make_intersect(left, 0.5, right, 0.5)
+
+        result = self._call_function_under_test(intersection)
+        self.assertEqual(result, 1)
+
+    def test_tangent_same_curvature(self):
+        import bezier
 
         left = bezier.Curve(np.array([
-            [0.0, 0.0],
-            [0.5, 1.0],
-            [1.0, 0.0],
+            [1.0, 0.25],
+            [-0.5, -0.25],
+            [0.0, 0.25],
         ]))
         right = bezier.Curve(np.array([
-            [0.0, 1.0],
-            [0.5, 0.0],
-            [1.0, 1.0],
+            [0.75, 0.25],
+            [-0.25, -0.25],
+            [-0.25, 0.25],
         ]))
-        intersection = _intersection_helpers.Intersection(
-            left, 0.5, right, 0.5)
+        intersection = self._make_intersect(left, 0.5, right, 0.5)
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(intersection)

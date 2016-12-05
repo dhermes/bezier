@@ -872,7 +872,9 @@ def classify_intersection(intersection):
        :align: center
 
     .. testsetup:: classify-intersection1, classify-intersection2,
-                   classify-intersection3
+                   classify-intersection3, classify-intersection4,
+                   classify-intersection5, classify-intersection6,
+                   classify-intersection7
 
        import numpy as np
        import bezier
@@ -883,6 +885,13 @@ def classify_intersection(intersection):
        def hodograph(curve, s):
            return _curve_helpers.evaluate_hodograph(
                curve._nodes, curve.degree, s)
+
+       def curvature(curve, s):
+           nodes = curve._nodes
+           tangent = _curve_helpers.evaluate_hodograph(
+               nodes, curve.degree, s)
+           return _curve_helpers.get_curvature(
+               nodes, curve.degree, tangent, s)
 
     .. doctest:: classify-intersection1
        :options: +NORMALIZE_WHITESPACE
@@ -935,7 +944,9 @@ def classify_intersection(intersection):
     :math:`B_1'(s) \times B_2'(t) = x_1'(s) y_2'(t) - x_2'(t) y_1'(s)`
     is positive, then the first curve is "to the right", i.e. the second
     curve is interior. If the cross-product is negative, the first
-    curve is interior. In the case of zero cross-product, the tangent
+    curve is interior.
+
+    When :math:`B_1'(s) \times B_2'(t) = 0`, the tangent
     vectors are parallel, i.e. the intersection is a point of tangency:
 
     .. image:: ../images/classify_intersection2.png
@@ -957,31 +968,160 @@ def classify_intersection(intersection):
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([ True, True], dtype=bool)
-       >>> tangent1 = hodograph(curve1, s)
-       >>> tangent1
-       array([ 1., 0.])
-       >>> tangent2 = hodograph(curve2, t)
-       >>> tangent2
-       array([ 3., 0.])
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       Traceback (most recent call last):
-         ...
-       NotImplementedError: Tangent vectors are parallel.
+       1
 
     .. testcleanup:: classify-intersection2
 
        import make_images
-       make_images.classify_intersection2(
-           s, curve1, tangent1, curve2, tangent2)
+       make_images.classify_intersection2(s, curve1, curve2)
 
-    In addition to points of tangency, intersections that happen at
-    the end of an edge need special handling:
+    Depending on the direction of the parameterizations, the interior
+    curve may change, but we can use the (signed) `curvature`_ of each
+    curve at that point to determine which is on the interior:
+
+    .. _curvature: https://en.wikipedia.org/wiki/Curvature
 
     .. image:: ../images/classify_intersection3.png
        :align: center
 
     .. doctest:: classify-intersection3
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> curve1 = bezier.Curve(np.array([
+       ...     [2.0, 0.0],
+       ...     [1.5, 1.0],
+       ...     [1.0, 0.0],
+       ... ]))
+       >>> curve2 = bezier.Curve(np.array([
+       ...     [3.0, 0.0],
+       ...     [1.5, 1.0],
+       ...     [0.0, 0.0],
+       ... ]))
+       >>> s, t = 0.5, 0.5
+       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       array([ True, True], dtype=bool)
+       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> classify_intersection(intersection)
+       0
+
+    .. testcleanup:: classify-intersection3
+
+       import make_images
+       make_images.classify_intersection3(s, curve1, curve2)
+
+    When the curves are moving in opposite directions at a point
+    of tangency, there is no side to choose. Either the point of tangency
+    is not part of any :class:`.CurvedPolygon` intersection
+
+    .. image:: ../images/classify_intersection4.png
+       :align: center
+
+    .. doctest:: classify-intersection4
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> curve1 = bezier.Curve(np.array([
+       ...     [2.0, 0.0],
+       ...     [1.5, 1.0],
+       ...     [1.0, 0.0],
+       ... ]))
+       >>> curve2 = bezier.Curve(np.array([
+       ...     [0.0, 0.0],
+       ...     [1.5, 1.0],
+       ...     [3.0, 0.0],
+       ... ]))
+       >>> s, t = 0.5, 0.5
+       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       array([ True, True], dtype=bool)
+       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> classify_intersection(intersection)
+       -1
+
+    .. testcleanup:: classify-intersection4
+
+       import make_images
+       make_images.classify_intersection4(s, curve1, curve2)
+
+    or the point of tangency is a "degenerate" part of two
+    :class:`.CurvedPolygon` intersections:
+
+    .. image:: ../images/classify_intersection5.png
+       :align: center
+
+    .. doctest:: classify-intersection5
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> curve1 = bezier.Curve(np.array([
+       ...     [1.0, 0.0],
+       ...     [1.5, 1.0],
+       ...     [2.0, 0.0],
+       ... ]))
+       >>> curve2 = bezier.Curve(np.array([
+       ...     [3.0, 0.0],
+       ...     [1.5, 1.0],
+       ...     [0.0, 0.0],
+       ... ]))
+       >>> s, t = 0.5, 0.5
+       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       array([ True, True], dtype=bool)
+       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> classify_intersection(intersection)
+       -1
+
+    .. testcleanup:: classify-intersection5
+
+       import make_images
+       make_images.classify_intersection5(s, curve1, curve2)
+
+    However, if the `curvature`_ of each curve is identical, we
+    don't try to distinguish further:
+
+    .. image:: ../images/classify_intersection6.png
+       :align: center
+
+    .. doctest:: classify-intersection6
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> curve1 = bezier.Curve(np.array([
+       ...     [ 0.375,  0.0625],
+       ...     [-0.125, -0.0625],
+       ...     [-0.125,  0.0625],
+       ... ]))
+       >>> curve2 = bezier.Curve(np.array([
+       ...     [ 0.75,  0.25],
+       ...     [-0.25, -0.25],
+       ...     [-0.25,  0.25],
+       ... ]))
+       >>> s, t = 0.5, 0.5
+       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       array([ True, True], dtype=bool)
+       >>> hodograph(curve1, s)
+       array([-0.5, 0. ])
+       >>> hodograph(curve2, t)
+       array([-1., 0.])
+       >>> curvature(curve1, s)
+       -2.0
+       >>> curvature(curve2, t)
+       -2.0
+       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> classify_intersection(intersection)
+       Traceback (most recent call last):
+         ...
+       NotImplementedError: Tangent curves have same curvature.
+
+    .. testcleanup:: classify-intersection6
+
+       import make_images
+       make_images.classify_intersection6(s, curve1, curve2)
+
+    In addition to points of tangency, intersections that happen at
+    the end of an edge need special handling:
+
+    .. image:: ../images/classify_intersection7.png
+       :align: center
+
+    .. doctest:: classify-intersection7
        :options: +NORMALIZE_WHITESPACE
 
        >>> curve1 = bezier.Curve(np.array([
@@ -1009,10 +1149,10 @@ def classify_intersection(intersection):
          ...
        NotImplementedError: Intersection occurs at endpoint.
 
-    .. testcleanup:: classify-intersection3
+    .. testcleanup:: classify-intersection7
 
        import make_images
-       make_images.classify_intersection3(s, curve1, curve2)
+       make_images.classify_intersection7(s, curve1, curve2)
 
     .. note::
 
@@ -1022,20 +1162,22 @@ def classify_intersection(intersection):
     .. note::
 
        This function doesn't allow wiggle room / round-off when checking
-       endpoints, nor when checking if the cross-product is near zero.
-       However, the most "correct" version of this function likely
-       should allow for some round off.
+       endpoints, nor when checking if the cross-product is near zero,
+       nor when curvatures are compared. However, the most "correct"
+       version of this function likely should allow for some round off.
 
     Args:
         intersection (.Intersection): An intersection object.
 
     Returns:
-        int: The index of the "inside" curve (``0`` or ``1``).
+        int: The index of the "inside" curve (``0`` or ``1``). If the
+        curves are tangent but facing opposite directions, returns ``-1``.
 
     Raises:
         NotImplementedError: If the intersection is at an endpoint of
             one of the curves.
-        NotImplementedError: The curves are tangent at the intersection.
+        NotImplementedError: The curves are tangent at the intersection
+            and have the same curvature.
     """
     # pylint: disable=protected-access
     s = intersection._s_val
@@ -1061,4 +1203,20 @@ def classify_intersection(intersection):
     elif cross_prod > 0:
         return 1
     else:
-        raise NotImplementedError('Tangent vectors are parallel.')
+        # If the tangent vectors are pointing in the opposite direction,
+        # then the curves are facing opposite directions.
+        dot_prod = tangent1.dot(tangent2)
+        if dot_prod < 0:
+            return -1
+        else:
+            curvature1 = _curve_helpers.get_curvature(
+                left_nodes, intersection.left.degree, tangent1, s)
+            curvature2 = _curve_helpers.get_curvature(
+                right_nodes, intersection.right.degree, tangent2, t)
+            if curvature1 > curvature2:
+                return 0
+            elif curvature1 < curvature2:
+                return 1
+            else:
+                raise NotImplementedError(
+                    'Tangent curves have same curvature.')
