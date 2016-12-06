@@ -18,7 +18,6 @@ import bezier
 import runtime_utils
 
 
-ENDPOINT_FAILURE = ('Intersection occurs at endpoint.',)
 PARALLEL_FAILURE = ('Line segments parallel.',)
 TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 CONFIG = runtime_utils.Config()
@@ -503,7 +502,6 @@ def surface_surface_check(surface1, surface2, s_vals, t_vals, points,
 
 
 def test_surfaces1Q_and_3Q():
-    # pylint: disable=too-many-locals
     # NOTE: There are only truly 4 intersections, but two of
     #       them occur at corners of the surface, so they both
     #       get quadruple counted, taking the total to 4(2) + 2 = 10.
@@ -538,16 +536,14 @@ def test_surfaces1Q_and_3Q():
 
     edge_inds1 = [0, 0, 0, 0, 1, 1, 2, 1, 2, 2]
     edge_inds2 = [0, 0, 1, 2, 1, 0, 0, 2, 2, 2]
-    interior_edges = [1, 0, 0, 1, 0, 0, 1, 1, 0, 1]
+    # ACTUAL: [1, 0, 0, 1, 0, 0, 1, 1, 0, 1]
+    interior_edges = [-2, -2, -2, -2, -2, -2, -2, 1, 0, -2]
 
-    with pytest.raises(NotImplementedError) as exc_info:
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(45):
         surface_surface_check(SURFACE1Q, SURFACE3Q,
                               edge_s_vals, edge_t_vals, points,
                               edge_inds1, edge_inds2, interior_edges)
-
-    assert exc_info.value.args == ENDPOINT_FAILURE
-    make_plots(SURFACE1Q, SURFACE3Q, points, interior_edges)
-    # pylint: enable=too-many-locals
 
 
 def test_surfaces1L_and_3L():
@@ -726,7 +722,6 @@ def test_surfaces1Q_and_5L():
 
 
 def test_surfaces3Q_and_5Q():
-    # pylint: disable=too-many-locals
     # NOTE: One of the intersections is at a corner of one surface,
     #       but on the edge of another, so it gets double counted.
     s_val3, _ = runtime_utils.real_roots([25, -130, 167, -302, 57])
@@ -749,16 +744,12 @@ def test_surfaces3Q_and_5Q():
     ])
     edge_inds1 = [0, 0, 2, 2]
     edge_inds2 = [0, 2, 1, 2]
-    interior_edges = [1, 1, 0, 1]
+    # ACTUAL: [1, 1, 0, 1]
+    interior_edges = [-2, -2, 0, 1]
 
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE3Q, SURFACE5Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert exc_info.value.args == ENDPOINT_FAILURE
-    make_plots(SURFACE3Q, SURFACE5Q, points, interior_edges)
-    # pylint: enable=too-many-locals
+    surface_surface_check(SURFACE3Q, SURFACE5Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces1L_and_2L():
@@ -775,15 +766,12 @@ def test_surfaces1L_and_2L():
     ]) / 3.0
     edge_inds1 = [0, 1, 1, 2, 2]
     edge_inds2 = [0, 0, 1, 0, 2]
-    interior_edges = [1, 0, 1, 1, 0]
+    # ACTUAL: [1, 0, 1, 1, 0]
+    interior_edges = [-2, 0, 1, -2, 0]
 
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE1L, SURFACE2L,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert exc_info.value.args == ENDPOINT_FAILURE
-    make_plots(SURFACE1L, SURFACE2L, points, interior_edges)
+    surface_surface_check(SURFACE1L, SURFACE2L,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces20Q_and_21Q():
@@ -989,15 +977,12 @@ def test_surfaces10Q_and_17Q():
     ])
     edge_inds1 = [1, 1, 2, 2]
     edge_inds2 = [0, 2, 0, 2]
-    interior_edges = [1, 1, 1, 1]
+    # ACTUAL: [1, 1, 1, 1]
+    interior_edges = [-2, -2, -2, -2]
 
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE10Q, SURFACE17Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert exc_info.value.args == ENDPOINT_FAILURE
-    make_plots(SURFACE10Q, SURFACE17Q, points, interior_edges)
+    surface_surface_check(SURFACE10Q, SURFACE17Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces3Q_and_14Q():
@@ -1123,15 +1108,12 @@ def test_surfaces1L_and_28Q():
     ])
     edge_inds1 = [0, 0, 1]
     edge_inds2 = [1, 2, 1]
-    interior_edges = [0, 0, 1]
+    # ACTUAL: [0, 0, 1]
+    interior_edges = [-2, -2, 1]
 
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE1L, SURFACE28Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert exc_info.value.args == ENDPOINT_FAILURE
-    make_plots(SURFACE1L, SURFACE28Q, points, interior_edges)
+    surface_surface_check(SURFACE1L, SURFACE28Q,
+                          edge_s_vals, edge_t_vals, points,
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces1L_and_29Q():
