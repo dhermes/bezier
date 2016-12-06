@@ -727,6 +727,8 @@ def test_surfaces1Q_and_5L():
 
 def test_surfaces3Q_and_5Q():
     # pylint: disable=too-many-locals
+    # NOTE: One of the intersections is at a corner of one surface,
+    #       but on the edge of another, so it gets double counted.
     s_val3, _ = runtime_utils.real_roots([25, -130, 167, -302, 57])
     s_val4, _ = runtime_utils.real_roots([25, -130, 901, -1212, 279])
     edge_s_vals = np.array([0.25, 0.25, s_val3, s_val4])
@@ -760,6 +762,8 @@ def test_surfaces3Q_and_5Q():
 
 
 def test_surfaces1L_and_2L():
+    # NOTE: One of the intersections is at a corner of one surface,
+    #       but on the edge of another, so it gets double counted.
     edge_s_vals = np.array([0.0, 1.0, 1.3125, 3.0, 2.53125]) / 3.0
     edge_t_vals = np.array([3.0, 19.0, 13.5, 3.0, 13.5]) / 27.0
     points = np.array([
