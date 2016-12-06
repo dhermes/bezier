@@ -652,8 +652,8 @@ class Test_classify_intersection(unittest.TestCase):
             [1.0, 2.0],
         ]))
         intersection = self._make_intersect(left, 1.0, right, 0.5)
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(intersection)
+        result = self._call_function_under_test(intersection)
+        self.assertEqual(result, -2)
 
     def test_tangent_opposed(self):
         import bezier

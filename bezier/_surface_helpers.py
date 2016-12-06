@@ -1147,9 +1147,7 @@ def classify_intersection(intersection):
        array([-0.1875, 1. ])
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       Traceback (most recent call last):
-         ...
-       NotImplementedError: Intersection occurs at endpoint.
+       -2
 
     .. testcleanup:: classify-intersection7
 
@@ -1174,10 +1172,9 @@ def classify_intersection(intersection):
     Returns:
         int: The index of the "inside" curve (``0`` or ``1``). If the
         curves are tangent but facing opposite directions, returns ``-1``.
+        If the intersection is at a corner, returns ``-2``.
 
     Raises:
-        NotImplementedError: If the intersection is at an endpoint of
-            one of the curves.
         NotImplementedError: The curves are tangent at the intersection
             and have the same curvature.
     """
@@ -1185,7 +1182,7 @@ def classify_intersection(intersection):
     t = intersection.t
 
     if s == 0.0 or s == 1.0 or t == 0.0 or t == 1.0:
-        raise NotImplementedError('Intersection occurs at endpoint.')
+        return -2
 
     left_nodes = intersection.left._nodes  # pylint: disable=protected-access
     tangent1 = _curve_helpers.evaluate_hodograph(
