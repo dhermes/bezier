@@ -107,6 +107,8 @@ class Curve(_base.Base):
     """
 
     _length = None
+    _next_edge = None
+    _previous_edge = None
 
     def __init__(self, nodes, start=0.0, end=1.0, root=None, _copy=True):
         super(Curve, self).__init__(nodes, _copy=_copy)
@@ -229,6 +231,26 @@ class Curve(_base.Base):
            array([ True, True], dtype=bool)
         """
         return self._root
+
+    @property
+    def next_edge(self):
+        """Optional[Curve]: An edge that comes after the current one.
+
+        This is intended to be used when a :class:`Curve` is created as part
+        of a larger structure like a :class:`.Surface` or
+        :class:`.CurvedPolygon`.
+        """
+        return self._next_edge
+
+    @property
+    def previous_edge(self):
+        """Optional[Curve]: An edge that comes before the current one.
+
+        This is intended to be used when a :class:`Curve` is created as part
+        of a larger structure like a :class:`.Surface` or
+        :class:`.CurvedPolygon`.
+        """
+        return self._previous_edge
 
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.

@@ -328,6 +328,7 @@ class Surface(_base.Base):
         edge1 = _curve_mod.Curve(self._nodes[indices1, :], _copy=False)
         edge2 = _curve_mod.Curve(self._nodes[indices2, :], _copy=False)
         edge3 = _curve_mod.Curve(self._nodes[indices3, :], _copy=False)
+        _surface_helpers.edge_cycle(edge1, edge2, edge3)
         return edge1, edge2, edge3
 
     def _get_edges(self):
@@ -381,7 +382,11 @@ class Surface(_base.Base):
         # NOTE: It is crucial that we return copies here. Since the edges
         #       are cached, if they were mutable, callers could
         #       inadvertently mutate the cached value.
-        return edge1.copy(), edge2.copy(), edge3.copy()
+        edge1 = edge1.copy()
+        edge2 = edge2.copy()
+        edge3 = edge3.copy()
+        _surface_helpers.edge_cycle(edge1, edge2, edge3)
+        return edge1, edge2, edge3
 
     def evaluate_barycentric(self, lambda1, lambda2, lambda3):
         r"""Compute a point on the surface.

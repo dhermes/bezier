@@ -1217,3 +1217,24 @@ def classify_intersection(intersection):
             else:
                 raise NotImplementedError(
                     'Tangent curves have same curvature.')
+
+
+def edge_cycle(edge1, edge2, edge3):
+    """Make edges follow the cycle ``1->2->3->1``.
+
+    Does this by setting the "previous" and "next" edge
+    values on each curved edge.
+
+    Args:
+        edge1 (.Curve): First curve in cycle.
+        edge2 (.Curve): Second curve in cycle.
+        edge3 (.Curve): Third curve in cycle.
+    """
+    # pylint: disable=protected-access
+    edge1._next_edge = edge2
+    edge1._previous_edge = edge3
+    edge2._next_edge = edge3
+    edge2._previous_edge = edge1
+    edge3._next_edge = edge1
+    edge3._previous_edge = edge2
+    # pylint: enable=protected-access
