@@ -451,6 +451,7 @@ def make_plots(surface1, surface2, points, interior_edges):
 
 def check_intersections(s_vals, t_vals, points, intersections,
                         edges1, edges2, interior_edges):
+    # pylint: disable=too-many-locals
     assert len(t_vals) == len(s_vals)
     assert len(points) == len(s_vals)
     assert len(intersections) == len(s_vals)
@@ -477,8 +478,10 @@ def check_intersections(s_vals, t_vals, points, intersections,
         point_on2 = edge2.evaluate(t_val)
         CONFIG.assert_close(point_on2[0], point[0])
         CONFIG.assert_close(point_on2[1], point[1])
+    # pylint: enable=too-many-locals
 
 
+# pylint: disable=too-many-arguments
 def surface_surface_check(surface1, surface2, s_vals, t_vals, points,
                           edge_inds1, edge_inds2, interior_edges):
     assert surface1.is_valid
@@ -496,9 +499,11 @@ def surface_surface_check(surface1, surface2, s_vals, t_vals, points,
                             expected1, expected2, interior_edges)
 
     make_plots(surface1, surface2, points, interior_edges)
+# pylint: enable=too-many-arguments
 
 
 def test_surfaces1Q_and_3Q():
+    # pylint: disable=too-many-locals
     # NOTE: There are only truly 4 intersections, but two of
     #       them occur at corners of the surface, so they both
     #       get quadruple counted, taking the total to 4(2) + 2 = 10.
@@ -542,6 +547,7 @@ def test_surfaces1Q_and_3Q():
 
     assert exc_info.value.args == ENDPOINT_FAILURE
     make_plots(SURFACE1Q, SURFACE3Q, points, interior_edges)
+    # pylint: enable=too-many-locals
 
 
 def test_surfaces1L_and_3L():
@@ -720,6 +726,7 @@ def test_surfaces1Q_and_5L():
 
 
 def test_surfaces3Q_and_5Q():
+    # pylint: disable=too-many-locals
     s_val3, _ = runtime_utils.real_roots([25, -130, 167, -302, 57])
     s_val4, _ = runtime_utils.real_roots([25, -130, 901, -1212, 279])
     edge_s_vals = np.array([0.25, 0.25, s_val3, s_val4])
@@ -749,6 +756,7 @@ def test_surfaces3Q_and_5Q():
 
     assert exc_info.value.args == ENDPOINT_FAILURE
     make_plots(SURFACE3Q, SURFACE5Q, points, interior_edges)
+    # pylint: enable=too-many-locals
 
 
 def test_surfaces1L_and_2L():

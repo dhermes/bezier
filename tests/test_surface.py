@@ -956,13 +956,15 @@ class TestSurface(unittest.TestCase):
             surface.locate(point2)
 
     def test_intersect(self):
-        surface1 = self._make_one(self.UNIT_TRIANGLE)
+        nodes1 = self.UNIT_TRIANGLE
+        surface1 = self._make_one(nodes1)
         # Similar triangle with overlapping square.
-        surface2 = self._make_one(np.array([
+        nodes2 = np.array([
             [0.25, 0.25],
             [-0.75, 0.25],
             [0.25, -0.75],
-        ]))
+        ])
+        surface2 = self._make_one(nodes2)
 
         intersections = surface1.intersect(surface2)
         self.assertEqual(len(intersections), 2)
@@ -970,17 +972,15 @@ class TestSurface(unittest.TestCase):
         int0 = intersections[0]
         self.assertEqual(int0.s, 0.25)
         self.assertEqual(int0.t, 0.75)
-        self.assertTrue(np.all(int0.left._nodes == surface1._nodes[:2, :]))
-        self.assertTrue(np.all(
-            int0.right._nodes == surface2._nodes[(2, 0), :]))
+        self.assertTrue(np.all(int0.left._nodes == nodes1[:2, :]))
+        self.assertTrue(np.all(int0.right._nodes == nodes2[(2, 0), :]))
         self.assertEqual(int0.interior_curve, 1)
 
         int1 = intersections[1]
         self.assertEqual(int0.s, 0.25)
         self.assertEqual(int0.t, 0.75)
-        self.assertTrue(np.all(
-            int1.left._nodes == surface1._nodes[(2, 0), :]))
-        self.assertTrue(np.all(int1.right._nodes == surface2._nodes[:2, :]))
+        self.assertTrue(np.all(int1.left._nodes == nodes1[(2, 0), :]))
+        self.assertTrue(np.all(int1.right._nodes == nodes2[:2, :]))
         self.assertEqual(int1.interior_curve, 0)
 
     def test_intersect_non_surface(self):
