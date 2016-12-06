@@ -38,6 +38,11 @@ class TestSurface(unittest.TestCase):
         [0.0, 2.0],
         [-3.0, 3.0],
     ])
+    UNIT_TRIANGLE = np.array([
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [0.0, 1.0],
+    ])
 
     @staticmethod
     def _get_target_class():
@@ -220,12 +225,29 @@ class TestSurface(unittest.TestCase):
             np.vstack([p030, p021, p012, p003]),
             np.vstack([p003, p102, p201, p300]))
 
+    def test__get_edges(self):
+        surface = self._make_one(np.zeros((3, 1)))
+        compute_mock = mock.Mock(return_value=mock.sentinel.edges)
+        surface._compute_edges = compute_mock
+
+        self.assertIsNone(surface._edges)
+        self.assertIs(surface._get_edges(), mock.sentinel.edges)
+        self.assertIs(surface._edges, mock.sentinel.edges)
+
+        compute_mock.assert_called_once_with()
+
+    def test__get_edges_cached(self):
+        surface = self._make_one(np.zeros((3, 1)))
+        compute_mock = mock.Mock()
+        surface._compute_edges = compute_mock
+
+        surface._edges = mock.sentinel.edges
+        self.assertIs(surface._get_edges(), mock.sentinel.edges)
+
+        compute_mock.assert_not_called()
+
     def test_edges_property(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 1.0],
-        ])
+        nodes = self.UNIT_TRIANGLE
         surface = self._make_one(nodes)
 
         edge1, edge2, edge3 = surface.edges
@@ -491,11 +513,7 @@ class TestSurface(unittest.TestCase):
     def _plot_helper(self, show=False, with_nodes=False):
         import matplotlib.lines
 
-        nodes = np.array([
-            [0.0, 0.0],
-            [0.0, 1.0],
-            [1.0, 0.0],
-        ])
+        nodes = self.UNIT_TRIANGLE
         curve = self._make_one(nodes)
         plt = mock.Mock()
 
@@ -541,11 +559,7 @@ class TestSurface(unittest.TestCase):
     def test_plot_existing_axis(self):
         import matplotlib.lines
 
-        nodes = np.array([
-            [0.0, 0.0],
-            [0.0, 1.0],
-            [1.0, 0.0],
-        ])
+        nodes = self.UNIT_TRIANGLE
         curve = self._make_one(nodes)
         plt = mock.Mock()
 
@@ -613,11 +627,6 @@ class TestSurface(unittest.TestCase):
             self.assertTrue(np.all(main_vals == sub_vals))
 
     def test_subdivide_linear(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 1.0],
-        ])
         expected_a = np.array([
             [0.0, 0.0],
             [0.5, 0.0],
@@ -638,8 +647,8 @@ class TestSurface(unittest.TestCase):
             [0.5, 0.5],
             [0.0, 1.0],
         ])
-        self._subdivide_helper(nodes, expected_a, expected_b,
-                               expected_c, expected_d)
+        self._subdivide_helper(self.UNIT_TRIANGLE, expected_a,
+                               expected_b, expected_c, expected_d)
 
     @slow
     def test_subdivide_line_check_evaluate(self):
@@ -822,12 +831,7 @@ class TestSurface(unittest.TestCase):
         fake_nodes.copy.assert_called_once_with()
 
     def test__compute_valid_valid_linear(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 1.0],
-        ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(self.UNIT_TRIANGLE)
         self.assertTrue(surface._compute_valid())
 
     def test__compute_valid_invalid_linear(self):
@@ -908,12 +912,7 @@ class TestSurface(unittest.TestCase):
             surface._compute_valid()
 
     def test_is_valid_property(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 1.0],
-        ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(self.UNIT_TRIANGLE)
         self.assertTrue(surface.is_valid)
 
     def test_is_valid_property_cached(self):
@@ -955,3 +954,30 @@ class TestSurface(unittest.TestCase):
             surface.locate(point1)
         with self.assertRaises(ValueError):
             surface.locate(point2)
+
+    def test_intersect(self):
+        surface1 = self._make_one(self.UNIT_TRIANGLE)
+        # Move the nodes sufficiently far away to avoid
+        # an intersection.
+        nodes = self.UNIT_TRIANGLE + np.array([[10.0, 10.0]])
+        surface2 = self._make_one(nodes)
+
+        intersections = surface1.intersect(surface2)
+        self.assertEqual(intersections, [])
+
+        intersections = surface2.intersect(surface1)
+        self.assertEqual(intersections, [])
+
+    def test_intersect_non_surface(self):
+        surface = self._make_one(self.UNIT_TRIANGLE)
+        with self.assertRaises(TypeError):
+            surface.intersect(object())
+
+    def test_intersect_unsupported_dimension(self):
+        surface1 = self._make_one(self.UNIT_TRIANGLE)
+        surface2 = self._make_one(np.zeros((3, 3)))
+
+        with self.assertRaises(NotImplementedError):
+            surface1.intersect(surface2)
+        with self.assertRaises(NotImplementedError):
+            surface2.intersect(surface1)

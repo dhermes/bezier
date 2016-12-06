@@ -8,15 +8,12 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-import itertools
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 import six
 
 import bezier
-from bezier import _intersection_helpers
 
 import runtime_utils
 
@@ -408,18 +405,6 @@ SURFACE29Q = bezier.Surface(np.array([
 ]))
 
 
-def edge_pairs(surface1, surface2):
-    edges1 = surface1.edges
-    lin1 = six.moves.map(
-        _intersection_helpers.Linearization.from_shape,
-        edges1)
-    edges2 = surface2.edges
-    lin2 = six.moves.map(
-        _intersection_helpers.Linearization.from_shape,
-        edges2)
-    return edges1, edges2, itertools.product(lin1, lin2)
-
-
 def make_plots(surface1, surface2, points):
     if not CONFIG.running:
         return
@@ -472,9 +457,9 @@ def surface_surface_check(surface1, surface2, s_vals, t_vals,
     assert surface1.is_valid
     assert surface2.is_valid
 
-    edges1, edges2, candidates = edge_pairs(surface1, surface2)
-    intersections = _intersection_helpers.all_intersections(
-        candidates)
+    intersections = surface1.intersect(surface2)
+    edges1 = surface1._get_edges()
+    edges2 = surface2._get_edges()
     if points is not None:
         # NOTE: This assumes but doesn't check that s_vals/t_vals/points
         #       will either all be set, or none be set.

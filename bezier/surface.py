@@ -22,6 +22,8 @@
 """
 
 
+import itertools
+
 from matplotlib import patches
 from matplotlib import path as _path_mod
 import matplotlib.pyplot as plt
@@ -29,6 +31,7 @@ import numpy as np
 import six
 
 from bezier import _base
+from bezier import _intersection_helpers
 from bezier import _surface_helpers
 from bezier import curve as _curve_mod
 
@@ -327,6 +330,24 @@ class Surface(_base.Base):
         edge3 = _curve_mod.Curve(self._nodes[indices3, :], _copy=False)
         return edge1, edge2, edge3
 
+    def _get_edges(self):
+        """Get the edges for the current surface.
+
+        If they haven't been computed yet, first compute and store them.
+
+        This is provided as a means for internal calls to get the edges
+        without copying (since :attr:`.edges` copies before giving to
+        a user to keep the stored data immutable).
+
+        Returns:
+            Tuple[~bezier.curve.Curve, ~bezier.curve.Curve, \
+                  ~bezier.curve.Curve]: The edges of
+            the surface.
+        """
+        if self._edges is None:
+            self._edges = self._compute_edges()
+        return self._edges
+
     @property
     def edges(self):
         """tuple: The edges of the surface.
@@ -356,9 +377,7 @@ class Surface(_base.Base):
                   ~bezier.curve.Curve]: The edges of
             the surface.
         """
-        if self._edges is None:
-            self._edges = self._compute_edges()
-        edge1, edge2, edge3 = self._edges
+        edge1, edge2, edge3 = self._get_edges()
         # NOTE: It is crucial that we return copies here. Since the edges
         #       are cached, if they were mutable, callers could
         #       inadvertently mutate the cached value.
@@ -976,3 +995,37 @@ class Surface(_base.Base):
                              point, 'Shape expected:', (1, self.dimension))
 
         return _surface_helpers.locate_point(self, point[0, 0], point[0, 1])
+
+    def intersect(self, other):
+        """Find the common intersection with another surface.
+
+        Args:
+            other (Surface): Other surface to intersect with.
+
+        Returns:
+            list: List of intersection objects (possibly empty).
+
+        Raises:
+            TypeError: If ``other`` is not a surface.
+            NotImplementedError: If both surfaces aren't two-dimensional.
+        """
+        if not isinstance(other, Surface):
+            raise TypeError('Can only intersect with another surface',
+                            'Received', other)
+        if self.dimension != 2 or other.dimension != 2:
+            raise NotImplementedError(
+                'Intersection only implemented in 2D')
+
+        edges1 = self._get_edges()
+        lin1 = six.moves.map(
+            _intersection_helpers.Linearization.from_shape,
+            edges1)
+        edges2 = other._get_edges()  # pylint: disable=protected-access
+        lin2 = six.moves.map(
+            _intersection_helpers.Linearization.from_shape,
+            edges2)
+
+        edge_pairs = itertools.product(lin1, lin2)
+        intersections = _intersection_helpers.all_intersections(
+            edge_pairs)
+        return intersections
