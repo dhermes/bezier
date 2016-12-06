@@ -1028,4 +1028,11 @@ class Surface(_base.Base):
         edge_pairs = itertools.product(lin1, lin2)
         intersections = _intersection_helpers.all_intersections(
             edge_pairs)
+        # Classify each intersection (``intersections`` is mutable and
+        # so is each element)
+        for intersection in intersections:
+            interior = _surface_helpers.classify_intersection(
+                intersection)
+            intersection.interior_curve = interior
+
         return intersections

@@ -18,6 +18,9 @@ import bezier
 import runtime_utils
 
 
+ENDPOINT_FAILURE = ('Intersection occurs at endpoint.',)
+PARALLEL_FAILURE = ('Line segments parallel.',)
+TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 CONFIG = runtime_utils.Config()
 
 # F1L = sympy.Matrix([[s, t]])
@@ -405,14 +408,35 @@ SURFACE29Q = bezier.Surface(np.array([
 ]))
 
 
-def make_plots(surface1, surface2, points):
+def make_plots(surface1, surface2, points, interior_edges):
     if not CONFIG.running:
         return
 
     ax = surface1.plot(64)
+    # Remove the alpha from the color
+    color0 = ax.patches[-1].get_facecolor()[:3]
     surface2.plot(64, ax=ax)
-    ax.plot(points[:, 0], points[:, 1], color='black',
-            marker='o', linestyle='None')
+    color1 = ax.patches[-1].get_facecolor()[:3]
+
+    # Add a fake point to get the next color.
+    line, = ax.plot([0], [0])
+    color2 = line.get_color()
+    line.remove()
+
+    for point, interior in six.moves.zip(points, interior_edges):
+        if interior == 0:
+            color = color0
+        elif interior == 1:
+            color = color1
+        elif interior == -1:
+            color = color2
+        else:
+            color = 'black'
+
+        ax.plot([point[0]], [point[1]], color=color,
+                marker='o', linestyle='None',
+                markeredgecolor='black', markeredgewidth=1)
+
     plt.axis('scaled')
     runtime_utils.add_plot_boundary(ax)
 
@@ -426,19 +450,22 @@ def make_plots(surface1, surface2, points):
 
 
 def check_intersections(s_vals, t_vals, points, intersections,
-                        edges1, edges2):
+                        edges1, edges2, interior_edges):
     assert len(t_vals) == len(s_vals)
     assert len(points) == len(s_vals)
     assert len(intersections) == len(s_vals)
+    assert len(interior_edges) == len(s_vals)
 
     info = six.moves.zip(
-        intersections, s_vals, t_vals, points, edges1, edges2)
-    for intersection, s_val, t_val, point, edge1, edge2 in info:
+        intersections, s_vals, t_vals, points,
+        edges1, edges2, interior_edges)
+    for intersection, s_val, t_val, point, edge1, edge2, interior in info:
         assert intersection.left is edge1
         assert intersection.right is edge2
 
         CONFIG.assert_close(intersection.s, s_val)
         CONFIG.assert_close(intersection.t, t_val)
+        assert intersection.interior_curve == interior
 
         CONFIG.assert_close(intersection.point[0], point[0])
         CONFIG.assert_close(intersection.point[1], point[1])
@@ -452,8 +479,8 @@ def check_intersections(s_vals, t_vals, points, intersections,
         CONFIG.assert_close(point_on2[1], point[1])
 
 
-def surface_surface_check(surface1, surface2, s_vals, t_vals,
-                          points, edge_inds1, edge_inds2):
+def surface_surface_check(surface1, surface2, s_vals, t_vals, points,
+                          edge_inds1, edge_inds2, interior_edges):
     assert surface1.is_valid
     assert surface2.is_valid
 
@@ -466,9 +493,9 @@ def surface_surface_check(surface1, surface2, s_vals, t_vals,
         expected1 = [edges1[index] for index in edge_inds1]
         expected2 = [edges2[index] for index in edge_inds2]
         check_intersections(s_vals, t_vals, points, intersections,
-                            expected1, expected2)
+                            expected1, expected2, interior_edges)
 
-    make_plots(surface1, surface2, points)
+    make_plots(surface1, surface2, points, interior_edges)
 
 
 def test_surfaces1Q_and_3Q():
@@ -506,12 +533,15 @@ def test_surfaces1Q_and_3Q():
 
     edge_inds1 = [0, 0, 0, 0, 1, 1, 2, 1, 2, 2]
     edge_inds2 = [0, 0, 1, 2, 1, 0, 0, 2, 2, 2]
+    interior_edges = [1, 0, 0, 1, 0, 0, 1, 1, 0, 1]
 
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(45):
+    with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE1Q, SURFACE3Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
+
+    assert exc_info.value.args == ENDPOINT_FAILURE
+    make_plots(SURFACE1Q, SURFACE3Q, points, interior_edges)
 
 
 def test_surfaces1L_and_3L():
@@ -523,10 +553,11 @@ def test_surfaces1L_and_3L():
     ])
     edge_inds1 = [0, 1]
     edge_inds2 = [2, 2]
+    interior_edges = [0, 1]
 
     surface_surface_check(SURFACE1L, SURFACE3L,
                           edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces1Q_and_2Q():  # pylint: disable=too-many-locals
@@ -560,12 +591,13 @@ def test_surfaces1Q_and_2Q():  # pylint: disable=too-many-locals
     ])
     edge_inds1 = [0, 0, 1, 1, 2, 2]
     edge_inds2 = [0, 1, 1, 2, 0, 2]
+    interior_edges = [0, 1, 0, 1, 1, 0]
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(11):
         surface_surface_check(SURFACE1Q, SURFACE2Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces10Q_and_18Q():
@@ -590,13 +622,15 @@ def test_surfaces10Q_and_18Q():
     ])
     edge_inds1 = [1, 1, 2, 2, 0, 0, 0, 1]
     edge_inds2 = [1, 2, 1, 2, 0, 2, 0, 0]
+    interior_edges = [-1, -1, -1, -1, -1, -1, -1, -1]
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE10Q, SURFACE18Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
-    make_plots(SURFACE10Q, SURFACE18Q, points)
+    assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    make_plots(SURFACE10Q, SURFACE18Q, points, interior_edges)
 
 
 def test_surfaces10Q_and_19Q():
@@ -617,13 +651,15 @@ def test_surfaces10Q_and_19Q():
     ])
     edge_inds1 = [0, 0, 1, 1, 1, 1, 2, 2]
     edge_inds2 = [0, 2, 0, 2, 1, 2, 1, 2]
+    interior_edges = [-1, -1, -1, -1, -1, -1, -1, -1]
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE10Q, SURFACE19Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
-    make_plots(SURFACE10Q, SURFACE19Q, points)
+    assert exc_info.value.args == PARALLEL_FAILURE
+    make_plots(SURFACE10Q, SURFACE19Q, points, interior_edges)
 
 
 def test_surfaces3Q_and_4Q():
@@ -646,12 +682,13 @@ def test_surfaces3Q_and_4Q():
     ])
     edge_inds1 = [0, 2, 2]
     edge_inds2 = [0, 0, 1]
+    interior_edges = [1, 1, 0]
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(36):
         surface_surface_check(SURFACE3Q, SURFACE4Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces1Q_and_5L():
@@ -671,13 +708,15 @@ def test_surfaces1Q_and_5L():
     ])
     edge_inds1 = [0, 0, 2, 1]
     edge_inds2 = [0, 2, 1, 1]
+    interior_edges = [0, 0, 0, 1]
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE1Q, SURFACE5L,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
-    make_plots(SURFACE1Q, SURFACE5L, points)
+    assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    make_plots(SURFACE1Q, SURFACE5L, points, interior_edges)
 
 
 def test_surfaces3Q_and_5Q():
@@ -701,10 +740,15 @@ def test_surfaces3Q_and_5Q():
     ])
     edge_inds1 = [0, 0, 2, 2]
     edge_inds2 = [0, 2, 1, 2]
+    interior_edges = [1, 1, 0, 1]
 
-    surface_surface_check(SURFACE3Q, SURFACE5Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+    with pytest.raises(NotImplementedError) as exc_info:
+        surface_surface_check(SURFACE3Q, SURFACE5Q,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2, interior_edges)
+
+    assert exc_info.value.args == ENDPOINT_FAILURE
+    make_plots(SURFACE3Q, SURFACE5Q, points, interior_edges)
 
 
 def test_surfaces1L_and_2L():
@@ -719,10 +763,15 @@ def test_surfaces1L_and_2L():
     ]) / 3.0
     edge_inds1 = [0, 1, 1, 2, 2]
     edge_inds2 = [0, 0, 1, 0, 2]
+    interior_edges = [1, 0, 1, 1, 0]
 
-    surface_surface_check(SURFACE1L, SURFACE2L,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+    with pytest.raises(NotImplementedError) as exc_info:
+        surface_surface_check(SURFACE1L, SURFACE2L,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2, interior_edges)
+
+    assert exc_info.value.args == ENDPOINT_FAILURE
+    make_plots(SURFACE1L, SURFACE2L, points, interior_edges)
 
 
 def test_surfaces20Q_and_21Q():
@@ -739,13 +788,15 @@ def test_surfaces20Q_and_21Q():
     ])
     edge_inds1 = [0, 0, 2, 2, 1]
     edge_inds2 = [0, 2, 0, 2, 1]
+    interior_edges = [0, 0, 0, 0, 1]
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE20Q, SURFACE21Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
-    make_plots(SURFACE20Q, SURFACE21Q, points)
+    assert exc_info.value.args == PARALLEL_FAILURE
+    make_plots(SURFACE20Q, SURFACE21Q, points, interior_edges)
 
 
 def test_surfaces4L_and_22Q():
@@ -758,13 +809,15 @@ def test_surfaces4L_and_22Q():
     ])
     edge_inds1 = [0, 1, 2]
     edge_inds2 = [0, 1, 2]
+    interior_edges = [0, 0, 0]
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE4L, SURFACE22Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
-    make_plots(SURFACE4L, SURFACE22Q, points)
+    assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    make_plots(SURFACE4L, SURFACE22Q, points, interior_edges)
 
 
 def test_surfaces4L_and_23Q():
@@ -777,13 +830,15 @@ def test_surfaces4L_and_23Q():
     ])
     edge_inds1 = [0, 1, 2]
     edge_inds2 = [0, 1, 2]
+    interior_edges = [1, 1, 1]
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE4L, SURFACE23Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
-    make_plots(SURFACE4L, SURFACE23Q, points)
+    assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    make_plots(SURFACE4L, SURFACE23Q, points, interior_edges)
 
 
 def test_surfaces6Q_and_7Q():  # pylint: disable=too-many-locals
@@ -824,12 +879,13 @@ def test_surfaces6Q_and_7Q():  # pylint: disable=too-many-locals
     ])
     edge_inds1 = [1, 2, 0, 0, 0, 0, 1, 2]
     edge_inds2 = [2, 1, 1, 2, 0, 0, 0, 0]
+    interior_edges = [0, 1, 0, 1, 1, 0, 1, 0]
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(25):
         surface_surface_check(SURFACE6Q, SURFACE7Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces8Q_and_9Q():
@@ -851,10 +907,11 @@ def test_surfaces8Q_and_9Q():
     ])
     edge_inds1 = [1, 1, 1, 1]
     edge_inds2 = [2, 2, 2, 2]
+    interior_edges = [1, 0, 0, 1]
 
     surface_surface_check(SURFACE8Q, SURFACE9Q,
                           edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces4Q_and_10Q():
@@ -866,9 +923,11 @@ def test_surfaces4Q_and_10Q():
     ])
     edge_inds1 = [0]
     edge_inds2 = [0]
+    interior_edges = [-1]
+
     surface_surface_check(SURFACE4Q, SURFACE10Q,
                           edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces11Q_and_12Q():
@@ -882,9 +941,11 @@ def test_surfaces11Q_and_12Q():
     ])
     edge_inds1 = [0, 0]
     edge_inds2 = [0, 0]
+    interior_edges = [0, 1]
+
     surface_surface_check(SURFACE11Q, SURFACE12Q,
                           edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces3Q_and_13Q():
@@ -896,9 +957,11 @@ def test_surfaces3Q_and_13Q():
     ])
     edge_inds1 = [0]
     edge_inds2 = [0]
+    interior_edges = [1]
+
     surface_surface_check(SURFACE3Q, SURFACE13Q,
                           edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces10Q_and_17Q():
@@ -914,9 +977,15 @@ def test_surfaces10Q_and_17Q():
     ])
     edge_inds1 = [1, 1, 2, 2]
     edge_inds2 = [0, 2, 0, 2]
-    surface_surface_check(SURFACE10Q, SURFACE17Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+    interior_edges = [1, 1, 1, 1]
+
+    with pytest.raises(NotImplementedError) as exc_info:
+        surface_surface_check(SURFACE10Q, SURFACE17Q,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2, interior_edges)
+
+    assert exc_info.value.args == ENDPOINT_FAILURE
+    make_plots(SURFACE10Q, SURFACE17Q, points, interior_edges)
 
 
 def test_surfaces3Q_and_14Q():
@@ -925,10 +994,11 @@ def test_surfaces3Q_and_14Q():
     points = np.zeros((0, 2))
     edge_inds1 = []
     edge_inds2 = []
+    interior_edges = []
 
     surface_surface_check(SURFACE3Q, SURFACE14Q,
                           edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces15Q_and_16Q():
@@ -955,12 +1025,13 @@ def test_surfaces15Q_and_16Q():
     ])
     edge_inds1 = [0, 1, 2, 0, 1, 2, 2]
     edge_inds2 = [2, 1, 0, 0, 0, 1, 2]
+    interior_edges = [0, 1, -1, 1, 0, 0, 1]
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(16):
         surface_surface_check(SURFACE15Q, SURFACE16Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
+                              edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces24Q_and_25Q():
@@ -986,13 +1057,13 @@ def test_surfaces24Q_and_25Q():
     ])
     edge_inds1 = [0, 2]
     edge_inds2 = [0, 1]
+    interior_edges = [1, 0]
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(22):
         surface_surface_check(SURFACE24Q, SURFACE25Q,
                               edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2)
-
+                              edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces1L_and_6L():
@@ -1004,10 +1075,11 @@ def test_surfaces1L_and_6L():
     ])
     edge_inds1 = [0, 2]
     edge_inds2 = [2, 0]
+    interior_edges = [1, 0]
 
     surface_surface_check(SURFACE1L, SURFACE6L,
                           edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces26Q_and_27Q():
@@ -1016,10 +1088,11 @@ def test_surfaces26Q_and_27Q():
     points = np.zeros((0, 2))
     edge_inds1 = []
     edge_inds2 = []
+    interior_edges = []
 
     surface_surface_check(SURFACE26Q, SURFACE27Q,
                           edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 def test_surfaces1L_and_28Q():
@@ -1038,10 +1111,15 @@ def test_surfaces1L_and_28Q():
     ])
     edge_inds1 = [0, 0, 1]
     edge_inds2 = [1, 2, 1]
+    interior_edges = [0, 0, 1]
 
-    surface_surface_check(SURFACE1L, SURFACE28Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+    with pytest.raises(NotImplementedError) as exc_info:
+        surface_surface_check(SURFACE1L, SURFACE28Q,
+                              edge_s_vals, edge_t_vals, points,
+                              edge_inds1, edge_inds2, interior_edges)
+
+    assert exc_info.value.args == ENDPOINT_FAILURE
+    make_plots(SURFACE1L, SURFACE28Q, points, interior_edges)
 
 
 def test_surfaces1L_and_29Q():
@@ -1057,10 +1135,11 @@ def test_surfaces1L_and_29Q():
     ])
     edge_inds1 = [1, 1]
     edge_inds2 = [1, 1]
+    interior_edges = [1, 0]
 
     surface_surface_check(SURFACE1L, SURFACE29Q,
                           edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2)
+                          edge_inds1, edge_inds2, interior_edges)
 
 
 if __name__ == '__main__':

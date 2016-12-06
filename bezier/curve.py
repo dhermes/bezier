@@ -355,11 +355,11 @@ class Curve(_base.Base):
         return ax
 
     def subdivide(self):
-        r"""Split the curve :math:`\gamma(s)` into a left and right half.
+        r"""Split the curve :math:`B(s)` into a left and right half.
 
         Takes the interval :math:`\left[0, 1\right]` and splits the curve into
-        :math:`\gamma_1 = \gamma\left(\left[0, \frac{1}{2}\right]\right)` and
-        :math:`\gamma_2 = \gamma\left(\left[\frac{1}{2}, 1\right]\right)`. In
+        :math:`B_1 = B\left(\left[0, \frac{1}{2}\right]\right)` and
+        :math:`B_2 = B\left(\left[\frac{1}{2}, 1\right]\right)`. In
         order to do this, also reparameterizes the curve, hence the resulting
         left and right halves have new nodes.
 
@@ -426,6 +426,8 @@ class Curve(_base.Base):
 
     def intersect(self, other):
         """Find the points of intersection with another curve.
+
+        See :doc:`../curve-curve-intersection` for more details.
 
         .. image:: ../images/curve_intersect.png
            :align: center

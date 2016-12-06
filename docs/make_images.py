@@ -755,7 +755,7 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
     ax.plot([int_x, int_x + tangent2[0]], [int_y, int_y + tangent2[1]],
             color=color2, linestyle='dashed')
     ax.plot([int_x], [int_y],
-            color='black', linestyle='None', marker='o')
+            color=color1, linestyle='None', marker='o')
 
     ax.axis('scaled')
     ax.set_xlim(-0.125, 2.125)
@@ -801,12 +801,13 @@ def classify_intersection2(s, curve1, curve2):
 
     surface2.plot(256, ax=ax)
     ax.patches[-1].set_alpha(0.1875)
+    color2 = ax.lines[-1].get_color()
     ax.lines[-1].remove()
     ax.lines[-1].remove()
 
     int_x, int_y = curve1.evaluate(s)
     ax.plot([int_x], [int_y],
-            color='black', linestyle='None', marker='o')
+            color=color2, linestyle='None', marker='o')
 
     ax.axis('scaled')
     ax.set_xlim(-0.0625, 3.0625)
@@ -847,6 +848,7 @@ def classify_intersection3(s, curve1, curve2):
     # Manually reduce the alpha on the surface patch(es) and
     # remove the lines we aren't using.
     ax.patches[-1].set_alpha(0.1875)
+    color1 = ax.lines[-1].get_color()
     ax.lines[-1].remove()
     ax.lines[-1].remove()
 
@@ -857,7 +859,7 @@ def classify_intersection3(s, curve1, curve2):
 
     int_x, int_y = curve1.evaluate(s)
     ax.plot([int_x], [int_y],
-            color='black', linestyle='None', marker='o')
+            color=color1, linestyle='None', marker='o')
 
     ax.axis('scaled')
     ax.set_xlim(-0.0625, 3.0625)
@@ -908,7 +910,7 @@ def classify_intersection4(s, curve1, curve2):
 
     int_x, int_y = curve1.evaluate(s)
     ax.plot([int_x], [int_y],
-            color='black', linestyle='None', marker='o')
+            linestyle='None', marker='o')
 
     ax.axis('scaled')
     ax.set_xlim(-0.0625, 3.0625)
@@ -960,6 +962,10 @@ def classify_intersection5(s, curve1, curve2):
         ax.lines[-1].remove()
         ax.lines[-1].remove()
 
+    # Remove the alpha from the color
+    color1 = ax1.patches[0].get_facecolor()[:3]
+    color2 = ax1.patches[1].get_facecolor()[:3]
+
     # Now add the "degenerate" intersection polygons. The first
     # comes from specializing to
     # left1(0.5, 1.0)-left2(0.0, 0.25)-right1(0.375, 0.5)
@@ -988,10 +994,12 @@ def classify_intersection5(s, curve1, curve2):
     surface4.plot(256, ax=ax2)
 
     int_x, int_y = curve1.evaluate(s)
-    for ax in (ax1, ax2):
-        ax.plot([int_x], [int_y],
-                color='black', linestyle='None', marker='o')
+    ax1.plot([int_x], [int_y],
+             color=color1, linestyle='None', marker='o')
+    ax2.plot([int_x], [int_y],
+             color=color2, linestyle='None', marker='o')
 
+    for ax in (ax1, ax2):
         ax.axis('scaled')
         ax.set_xlim(-0.0625, 3.0625)
         ax.set_ylim(-0.0625, 0.5625)
@@ -1026,10 +1034,11 @@ def classify_intersection7(s, curve1, curve2):
 
     ax = curve1.plot(256)
     curve2.plot(256, ax=ax)
+    color2 = ax.lines[-1].get_color()
 
     int_x, int_y = curve1.evaluate(s)
     ax.plot([int_x], [int_y],
-            color='black', linestyle='None', marker='o')
+            color=color2, linestyle='None', marker='o')
 
     ax.axis('scaled')
     ax.set_xlim(-0.0625, 1.0625)
