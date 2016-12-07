@@ -1053,4 +1053,8 @@ class Surface(_base.Base):
                 intersection.interior_curve = interior
                 uniques.append(intersection)
 
+        # NOTE: This is an extra check to make sure we found duplicate
+        #       intersections at corners. It is not strictly needed,
+        #       it is just provided as a sanity check.
+        _surface_helpers.verify_duplicates(duplicates, uniques)
         return uniques

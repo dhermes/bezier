@@ -17,6 +17,7 @@
 """
 
 
+import collections
 import functools
 import operator
 
@@ -1341,3 +1342,49 @@ def handle_corners(intersection):
         changed = True
 
     return changed
+
+
+def verify_duplicates(duplicates, uniques):
+    """Verify that a set of intersections had expected duplicates.
+
+    .. note::
+
+       This method only considers two intersections as equal if the
+       ``s`` and ``t`` values are bit-wise identical.
+
+    Args:
+        duplicates (List[.Intersection]): List of intersections
+            corresponding to duplicates that were filtered out.
+        uniques (List[.Intersection]): List of "final" intersections
+            with duplicates filtered out.
+
+    Raises:
+        ValueError: If the ``uniques`` are not actually all unique.
+        ValueError: If one of the ``duplicates`` does not correspond to
+            an intersection in ``uniques``.
+        ValueError: If a duplicate occurs only once but does not have
+            exactly one of ``s`` and ``t`` equal to ``0.0``.
+        ValueError: If a duplicate occurs three times but does not have
+            exactly both ``s == t == 0.0``.
+        ValueError: If a duplicate occurs a number other than one or three
+            times.
+    """
+    counter = collections.Counter((dupe.left, dupe.s, dupe.right, dupe.t)
+                                  for dupe in duplicates)
+    uniques_keys = set((uniq.left, uniq.s, uniq.right, uniq.t)
+                       for uniq in uniques)
+    if len(uniques_keys) < len(uniques):
+        raise ValueError('Non-unique intersection')
+
+    for key, count in six.iteritems(counter):
+        if key not in uniques_keys:
+            raise ValueError('Duplicate not among uniques', key)
+
+        if count == 1:
+            if (key[1], key[3]).count(0.0) != 1:
+                raise ValueError('Count == 1 should be a single corner', key)
+        elif count == 3:
+            if (key[1], key[3]) != (0.0, 0.0):
+                raise ValueError('Count == 3 should be a double corner', key)
+        else:
+            raise ValueError('Unexpected duplicate count', count)
