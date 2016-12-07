@@ -503,20 +503,13 @@ def surface_surface_check(surface1, surface2, s_vals, t_vals, points,
 
 
 def test_surfaces1Q_and_3Q():
-    # NOTE: There are only truly 4 intersections, but two of
-    #       them occur at corners of the surface, so they both
-    #       get quadruple counted, taking the total to 4(2) + 2 = 10.
     _, s_val1 = runtime_utils.real_roots([36, -48, 4, 200, -131])
     s_val2, = runtime_utils.real_roots([49, 91, 320, -244])
-    edge_s_vals = np.array([
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        s_val1, s_val2, 0.0])
+    edge_s_vals = np.array([0.0, 0.0, s_val1, s_val2])
 
     t_val1, _ = runtime_utils.real_roots([9, -18, 5, -28, 12])
     t_val2, = runtime_utils.real_roots([49, 63, 88, -128])
-    edge_t_vals = np.array([
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        t_val1, t_val2, 0.0])
+    edge_t_vals = np.array([0.0, 0.0, t_val1, t_val2])
 
     x_val1 = 0.5 * (1.0 - s_val1) * (s_val1 + 2.0)
     y_val1 = 0.5 * s_val1 * (3.0 - s_val1)
@@ -525,19 +518,13 @@ def test_surfaces1Q_and_3Q():
     points = np.array([
         [0.0, 0.0],
         [1.0, 0.0],
-        [1.0, 0.0],
-        [0.0, 0.0],
-        [1.0, 0.0],
-        [1.0, 0.0],
-        [0.0, 0.0],
         [x_val1, y_val1],
         [x_val2, y_val2],
-        [0.0, 0.0],
     ])
 
-    edge_inds1 = [0, 1, 1, 0, 1, 1, 0, 1, 2, 0]
-    edge_inds2 = [0, 1, 1, 0, 1, 1, 0, 2, 2, 0]
-    interior_edges = [1, 0, 0, 1, 0, 0, 1, 1, 0, 1]
+    edge_inds1 = [0, 1, 1, 2]
+    edge_inds2 = [0, 1, 2, 2]
+    interior_edges = [1, 0, 1, 0]
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(45):
@@ -603,28 +590,16 @@ def test_surfaces1Q_and_2Q():  # pylint: disable=too-many-locals
 
 
 def test_surfaces10Q_and_18Q():
-    # NOTE: There are only truly 3 intersections, but they all
-    #       occur at corners of one (or each surface). One occurs
-    #       at a corner of both hence is quadruple counted. The
-    #       other two are on a corner of one but edge of the other
-    #       hence get double counted.
-    edge_s_vals = np.array(
-        [1.0, 1.0, 0.0, 0.0, 0.25, 0.25, 1.0, 0.0])
-    edge_t_vals = np.array(
-        [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.75, 0.75])
+    edge_s_vals = np.array([0.0, 0.25, 0.0])
+    edge_t_vals = np.array([0.0, 0.0, 0.75])
     points = np.array([
         [0.5, -0.75],
-        [0.5, -0.75],
-        [0.5, -0.75],
-        [0.5, -0.75],
         [0.75, 0.09375],
-        [0.75, 0.09375],
-        [0.0, 0.0],
         [0.0, 0.0],
     ])
-    edge_inds1 = [1, 1, 2, 2, 0, 0, 0, 1]
-    edge_inds2 = [1, 2, 1, 2, 0, 2, 0, 0]
-    interior_edges = [None, None, None, None, None, None, None, None]
+    edge_inds1 = [2, 0, 1]
+    edge_inds2 = [2, 0, 0]
+    interior_edges = [None, None, None]
 
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE10Q, SURFACE18Q,
@@ -636,24 +611,15 @@ def test_surfaces10Q_and_18Q():
 
 
 def test_surfaces10Q_and_19Q():
-    # NOTE: There are only truly 2 intersections, but they both
-    #       occur at corners of each surface, so they both
-    #       get quadruple counted.
-    edge_s_vals = np.array([1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
-    edge_t_vals = np.array([0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0])
+    edge_s_vals = np.array([0.0, 0.0])
+    edge_t_vals = edge_s_vals
     points = np.array([
         [0.0, 0.0],
-        [0.0, 0.0],
-        [0.0, 0.0],
-        [0.0, 0.0],
-        [0.5, -0.75],
-        [0.5, -0.75],
-        [0.5, -0.75],
         [0.5, -0.75],
     ])
-    edge_inds1 = [0, 0, 1, 1, 1, 1, 2, 2]
-    edge_inds2 = [0, 2, 0, 2, 1, 2, 1, 2]
-    interior_edges = [None, None, None, None, None, None, None, None]
+    edge_inds1 = [1, 2]
+    edge_inds2 = [0, 2]
+    interior_edges = [None, None]
 
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE10Q, SURFACE19Q,
@@ -722,15 +688,13 @@ def test_surfaces1Q_and_5L():
 
 
 def test_surfaces3Q_and_5Q():
-    # NOTE: One of the intersections is at a corner of one surface,
-    #       but on the edge of another, so it gets double counted.
     s_val3, _ = runtime_utils.real_roots([25, -130, 167, -302, 57])
     s_val4, _ = runtime_utils.real_roots([25, -130, 901, -1212, 279])
-    edge_s_vals = np.array([0.25, 0.25, s_val3, s_val4])
+    edge_s_vals = np.array([0.25, s_val3, s_val4])
 
     _, t_val3 = runtime_utils.real_roots([25, -20, -1064, 7800, -6012])
     t_val4, _ = runtime_utils.real_roots([25, -2340, 58908, -105840, 11664])
-    edge_t_vals = np.array([0.0, 0.0, t_val3, t_val4])
+    edge_t_vals = np.array([0.0, t_val3, t_val4])
 
     x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
     x_val4 = 0.125 * (s_val4 - 1.0) * (5.0 * s_val4 - 8.0)
@@ -738,13 +702,12 @@ def test_surfaces3Q_and_5Q():
     y_val4 = 0.125 * (1.0 - s_val4) * (7.0 * s_val4 + 8.0)
     points = np.array([
         [0.25, 0.09375],
-        [0.25, 0.09375],
         [x_val3, y_val3],
         [x_val4, y_val4],
     ])
-    edge_inds1 = [0, 0, 2, 2]
-    edge_inds2 = [0, 0, 1, 2]
-    interior_edges = [1, 1, 0, 1]
+    edge_inds1 = [0, 2, 2]
+    edge_inds2 = [0, 1, 2]
+    interior_edges = [1, 0, 1]
 
     surface_surface_check(SURFACE3Q, SURFACE5Q,
                           edge_s_vals, edge_t_vals, points,
@@ -752,20 +715,17 @@ def test_surfaces3Q_and_5Q():
 
 
 def test_surfaces1L_and_2L():
-    # NOTE: One of the intersections is at a corner of one surface,
-    #       but on the edge of another, so it gets double counted.
-    edge_s_vals = np.array([0.0, 1.0, 1.3125, 0.0, 2.53125]) / 3.0
-    edge_t_vals = np.array([3.0, 19.0, 13.5, 3.0, 13.5]) / 27.0
+    edge_s_vals = np.array([0.0, 1.0, 1.3125, 2.53125]) / 3.0
+    edge_t_vals = np.array([3.0, 19.0, 13.5, 13.5]) / 27.0
     points = np.array([
         [0.0, 0.0],
         [2.0, 1.0],
         [1.6875, 1.3125],
-        [0.0, 0.0],
         [0.0, 0.46875],
     ]) / 3.0
-    edge_inds1 = [0, 1, 1, 0, 2]
-    edge_inds2 = [0, 0, 1, 0, 2]
-    interior_edges = [1, 0, 1, 1, 0]
+    edge_inds1 = [0, 1, 1, 2]
+    edge_inds2 = [0, 0, 1, 2]
+    interior_edges = [1, 0, 1, 0]
 
     surface_surface_check(SURFACE1L, SURFACE2L,
                           edge_s_vals, edge_t_vals, points,
@@ -773,20 +733,15 @@ def test_surfaces1L_and_2L():
 
 
 def test_surfaces20Q_and_21Q():
-    # NOTE: There are only 2 intersections, but one of them occurs at
-    #       a corner of each surface, so gets quadruple counted.
-    edge_s_vals = np.array([0.0, 0.0, 1.0, 1.0, 0.5])
-    edge_t_vals = np.array([0.0, 1.0, 0.0, 1.0, 4.0 / 5.0])
+    edge_s_vals = np.array([0.0, 0.5])
+    edge_t_vals = np.array([0.0, 4.0 / 5.0])
     points = np.array([
-        [1.0, 0.0],
-        [1.0, 0.0],
-        [1.0, 0.0],
         [1.0, 0.0],
         [-0.5, 0.5],
     ])
-    edge_inds1 = [0, 0, 2, 2, 1]
-    edge_inds2 = [0, 2, 0, 2, 1]
-    interior_edges = [0, 0, 0, 0, 1]
+    edge_inds1 = [0, 1]
+    edge_inds2 = [0, 1]
+    interior_edges = [0, 1]
 
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE20Q, SURFACE21Q,
@@ -963,19 +918,14 @@ def test_surfaces3Q_and_13Q():
 
 
 def test_surfaces10Q_and_17Q():
-    # NOTE: There is only truly 1 intersection, but it occurs at
-    #       a corner of each surface, so gets quadruple counted.
-    edge_s_vals = np.array([0.0, 0.0, 0.0, 0.0])
+    edge_s_vals = np.array([0.0])
     edge_t_vals = edge_s_vals
     points = np.array([
         [0.5, -0.75],
-        [0.5, -0.75],
-        [0.5, -0.75],
-        [0.5, -0.75],
     ])
-    edge_inds1 = [2, 2, 2, 2]
-    edge_inds2 = [0, 0, 0, 0]
-    interior_edges = [1, 1, 1, 1]
+    edge_inds1 = [2]
+    edge_inds2 = [0]
+    interior_edges = [1]
 
     surface_surface_check(SURFACE10Q, SURFACE17Q,
                           edge_s_vals, edge_t_vals, points,
@@ -1094,22 +1044,19 @@ def test_surfaces26Q_and_27Q():
 
 
 def test_surfaces1L_and_28Q():
-    # NOTE: One of the intersections is at a corner of one surface,
-    #       but on the edge of another, so it gets double counted.
     _, s_val3 = runtime_utils.real_roots([5, 30, -13])
-    edge_s_vals = np.array([0.1875, 0.1875, s_val3])
+    edge_s_vals = np.array([0.1875, s_val3])
 
     t_val3, _ = runtime_utils.real_roots([5, -40, 22])
-    edge_t_vals = np.array([0.0, 0.0, t_val3])
+    edge_t_vals = np.array([0.0, t_val3])
 
     points = np.array([
         [0.1875, 0.0],
-        [0.1875, 0.0],
         [1.0 - s_val3, s_val3],
     ])
-    edge_inds1 = [0, 0, 1]
-    edge_inds2 = [2, 2, 1]
-    interior_edges = [0, 0, 1]
+    edge_inds1 = [0, 1]
+    edge_inds2 = [2, 1]
+    interior_edges = [0, 1]
 
     surface_surface_check(SURFACE1L, SURFACE28Q,
                           edge_s_vals, edge_t_vals, points,

@@ -1322,14 +1322,22 @@ def handle_corners(intersection):
 
     Args:
         intersection (.Intersection): An intersection to mutate.
+
+    Returns:
+        bool: Indicating if the object was changed.
     """
+    changed = False
     if intersection.s == 1.0:
         # pylint: disable=protected-access
         intersection._s_val = 0.0
         intersection._left = intersection.left.next_edge
         # pylint: enable=protected-access
+        changed = True
     if intersection.t == 1.0:
         # pylint: disable=protected-access
         intersection._t_val = 0.0
         intersection._right = intersection.right.next_edge
         # pylint: enable=protected-access
+        changed = True
+
+    return changed
