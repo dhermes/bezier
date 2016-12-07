@@ -28,9 +28,11 @@ Dive in and take a look!
 Installing
 ----------
 
-``bezier`` can be installed with `pip`_::
+``bezier`` can be installed with `pip`_:
 
-    $ pip install --upgrade bezier
+.. code-block:: console
+
+   $ pip install --upgrade bezier
 
 ``bezier`` is open-source, so you can alternatively grab the source
 code from `GitHub`_ and install from source.

@@ -75,7 +75,9 @@ class Surface(_base.Base):
     .. note::
 
        We assume the nodes are ordered from left-to-right and from
-       bottom-to-top. So for example, the linear triangle::
+       bottom-to-top. So for example, the linear triangle:
+
+       .. code-block:: rest
 
           (0,0,1)
 
@@ -88,7 +90,9 @@ class Surface(_base.Base):
           \left[\begin{array}{c c c}
               v_{1,0,0} & v_{0,1,0} & v_{0,0,1} \end{array}\right]^T
 
-       the quadratic triangle::
+       the quadratic triangle:
+
+       .. code-block:: rest
 
           (0,0,2)
 
@@ -105,7 +109,9 @@ class Surface(_base.Base):
               v_{0,2,0} & v_{1,0,1} &
               v_{0,1,1} & v_{0,0,2} \end{array}\right]^T
 
-       the cubic triangle::
+       the cubic triangle:
+
+       .. code-block:: rest
 
           (0,0,3)
 
