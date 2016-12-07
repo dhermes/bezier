@@ -508,14 +508,14 @@ def test_surfaces1Q_and_3Q():
     _, s_val1 = runtime_utils.real_roots([36, -48, 4, 200, -131])
     s_val2, = runtime_utils.real_roots([49, 91, 320, -244])
     edge_s_vals = np.array([
-        0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0,
-        s_val1, s_val2, 1.0])
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        s_val1, s_val2, 0.0])
 
     t_val1, _ = runtime_utils.real_roots([9, -18, 5, -28, 12])
     t_val2, = runtime_utils.real_roots([49, 63, 88, -128])
     edge_t_vals = np.array([
-        0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
-        t_val1, t_val2, 1.0])
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        t_val1, t_val2, 0.0])
 
     x_val1 = 0.5 * (1.0 - s_val1) * (s_val1 + 2.0)
     y_val1 = 0.5 * s_val1 * (3.0 - s_val1)
@@ -534,10 +534,9 @@ def test_surfaces1Q_and_3Q():
         [0.0, 0.0],
     ])
 
-    edge_inds1 = [0, 0, 0, 0, 1, 1, 2, 1, 2, 2]
-    edge_inds2 = [0, 0, 1, 2, 1, 0, 0, 2, 2, 2]
-    # ACTUAL: [1, 0, 0, 1, 0, 0, 1, 1, 0, 1]
-    interior_edges = [-2, -2, -2, -2, -2, -2, -2, 1, 0, -2]
+    edge_inds1 = [0, 1, 1, 0, 1, 1, 0, 1, 2, 0]
+    edge_inds2 = [0, 1, 1, 0, 1, 1, 0, 2, 2, 0]
+    interior_edges = [1, 0, 0, 1, 0, 0, 1, 1, 0, 1]
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(45):
@@ -730,7 +729,7 @@ def test_surfaces3Q_and_5Q():
 
     _, t_val3 = runtime_utils.real_roots([25, -20, -1064, 7800, -6012])
     t_val4, _ = runtime_utils.real_roots([25, -2340, 58908, -105840, 11664])
-    edge_t_vals = np.array([0.0, 1.0, t_val3, t_val4])
+    edge_t_vals = np.array([0.0, 0.0, t_val3, t_val4])
 
     x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
     x_val4 = 0.125 * (s_val4 - 1.0) * (5.0 * s_val4 - 8.0)
@@ -743,9 +742,8 @@ def test_surfaces3Q_and_5Q():
         [x_val4, y_val4],
     ])
     edge_inds1 = [0, 0, 2, 2]
-    edge_inds2 = [0, 2, 1, 2]
-    # ACTUAL: [1, 1, 0, 1]
-    interior_edges = [-2, -2, 0, 1]
+    edge_inds2 = [0, 0, 1, 2]
+    interior_edges = [1, 1, 0, 1]
 
     surface_surface_check(SURFACE3Q, SURFACE5Q,
                           edge_s_vals, edge_t_vals, points,
@@ -755,7 +753,7 @@ def test_surfaces3Q_and_5Q():
 def test_surfaces1L_and_2L():
     # NOTE: One of the intersections is at a corner of one surface,
     #       but on the edge of another, so it gets double counted.
-    edge_s_vals = np.array([0.0, 1.0, 1.3125, 3.0, 2.53125]) / 3.0
+    edge_s_vals = np.array([0.0, 1.0, 1.3125, 0.0, 2.53125]) / 3.0
     edge_t_vals = np.array([3.0, 19.0, 13.5, 3.0, 13.5]) / 27.0
     points = np.array([
         [0.0, 0.0],
@@ -764,10 +762,9 @@ def test_surfaces1L_and_2L():
         [0.0, 0.0],
         [0.0, 0.46875],
     ]) / 3.0
-    edge_inds1 = [0, 1, 1, 2, 2]
+    edge_inds1 = [0, 1, 1, 0, 2]
     edge_inds2 = [0, 0, 1, 0, 2]
-    # ACTUAL: [1, 0, 1, 1, 0]
-    interior_edges = [-2, 0, 1, -2, 0]
+    interior_edges = [1, 0, 1, 1, 0]
 
     surface_surface_check(SURFACE1L, SURFACE2L,
                           edge_s_vals, edge_t_vals, points,
@@ -967,18 +964,17 @@ def test_surfaces3Q_and_13Q():
 def test_surfaces10Q_and_17Q():
     # NOTE: There is only truly 1 intersection, but it occurs at
     #       a corner of each surface, so gets quadruple counted.
-    edge_s_vals = np.array([1.0, 1.0, 0.0, 0.0])
-    edge_t_vals = np.array([0.0, 1.0, 0.0, 1.0])
+    edge_s_vals = np.array([0.0, 0.0, 0.0, 0.0])
+    edge_t_vals = edge_s_vals
     points = np.array([
         [0.5, -0.75],
         [0.5, -0.75],
         [0.5, -0.75],
         [0.5, -0.75],
     ])
-    edge_inds1 = [1, 1, 2, 2]
-    edge_inds2 = [0, 2, 0, 2]
-    # ACTUAL: [1, 1, 1, 1]
-    interior_edges = [-2, -2, -2, -2]
+    edge_inds1 = [2, 2, 2, 2]
+    edge_inds2 = [0, 0, 0, 0]
+    interior_edges = [1, 1, 1, 1]
 
     surface_surface_check(SURFACE10Q, SURFACE17Q,
                           edge_s_vals, edge_t_vals, points,
@@ -1099,7 +1095,7 @@ def test_surfaces1L_and_28Q():
     edge_s_vals = np.array([0.1875, 0.1875, s_val3])
 
     t_val3, _ = runtime_utils.real_roots([5, -40, 22])
-    edge_t_vals = np.array([1.0, 0.0, t_val3])
+    edge_t_vals = np.array([0.0, 0.0, t_val3])
 
     points = np.array([
         [0.1875, 0.0],
@@ -1107,9 +1103,8 @@ def test_surfaces1L_and_28Q():
         [1.0 - s_val3, s_val3],
     ])
     edge_inds1 = [0, 0, 1]
-    edge_inds2 = [1, 2, 1]
-    # ACTUAL: [0, 0, 1]
-    interior_edges = [-2, -2, 1]
+    edge_inds2 = [2, 2, 1]
+    interior_edges = [0, 0, 1]
 
     surface_surface_check(SURFACE1L, SURFACE28Q,
                           edge_s_vals, edge_t_vals, points,

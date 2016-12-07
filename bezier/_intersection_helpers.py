@@ -1366,10 +1366,9 @@ class Intersection(object):
     def interior_curve(self):  # pylint: disable=missing-returns-doc
         r"""int: Which of the curves is on the interior.
 
-        Will be ``0`` for the :attr:`.left`, ``1`` for the :attr:`.right`,
-        ``-1`` if it is ambiguous (e.g. the curves are tangent but moving
-        in opposite directions) and ``-2`` if the intersection occurs
-        at an endpoint (or both) of one the curves.
+        Will be ``0`` for the :attr:`.left`, ``1`` for the :attr:`.right`
+        and ``-1`` if it is ambiguous (e.g. the curves are tangent but moving
+        in opposite directions).
 
         Raises:
             AttributeError: If the value has not already been set.
@@ -1387,11 +1386,11 @@ class Intersection(object):
 
         Raises:
             AttributeError: If the value is already set.
-            ValueError: If the value isn't ``0``, ``1``, ``-1`` or ``-2``.
+            ValueError: If the value isn't ``0``, ``1`` or ``-1``.
         """
         if self._interior_curve is not None:
             raise AttributeError('interior_curve has already been set',
                                  self._interior_curve)
-        if value not in (0, 1, -1, -2):
-            raise ValueError('interior_curve must be among 0, 1, -1 or -2')
+        if value not in (0, 1, -1):
+            raise ValueError('interior_curve must be among 0, 1 or -1')
         self._interior_curve = value

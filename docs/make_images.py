@@ -739,17 +739,71 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
     save_image(figure, 'newton_refine_surface.png')
 
 
+def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
+    assert surface1.is_valid
+    edge1, _, _ = surface1.edges
+    assert edge1 == curve1
+
+    assert surface2.is_valid
+    edge2, _, _ = surface2.edges
+    assert edge2 == curve2
+
+    ax = surface1.plot(256, ax=ax)
+    # Manually reduce the alpha on the surface patch(es) and
+    # remove the lines we aren't using.
+    ax.patches[-1].set_alpha(0.1875)
+    color1 = ax.lines[-1].get_color()
+    ax.lines[-1].remove()
+    ax.lines[-1].remove()
+
+    surface2.plot(256, ax=ax)
+    ax.patches[-1].set_alpha(0.1875)
+    color2 = ax.lines[-1].get_color()
+    ax.lines[-1].remove()
+    ax.lines[-1].remove()
+
+    int_x, int_y = curve1.evaluate(s)
+    if interior == 0:
+        color = color1
+    elif interior == 1:
+        color = color2
+    else:
+        color = None
+    ax.plot([int_x], [int_y],
+            color=color, linestyle='None', marker='o')
+
+    ax.axis('scaled')
+    return ax
+
+
 def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
     """Image for :func:`._surface_helpers.classify_intersection` docstring."""
     if NO_IMAGES:
         return
 
-    ax = curve1.plot(256)
-    color1 = ax.lines[-1].get_color()
-    curve2.plot(256, ax=ax)
-    color2 = ax.lines[-1].get_color()
+    surface1 = bezier.Surface(np.array([
+        [1.0, 0.0],
+        [1.75, 0.25],
+        [2.0, 1.0],
+        [1.0, 1.0],
+        [1.5, 1.5],
+        [1.0, 2.0],
+    ]))
+    surface2 = bezier.Surface(np.array([
+        [0.0, 0.0],
+        [1.6875, 0.0625],
+        [2.0, 0.5],
+        [0.25, 1.0],
+        [1.25, 1.25],
+        [0.5, 2.0],
+    ]))
 
+    ax = classify_help(s, curve1, surface1, curve2, surface2, 0)
     int_x, int_y = curve1.evaluate(s)
+
+    # Remove the alpha from the color
+    color1 = ax.patches[0].get_facecolor()[:3]
+    color2 = ax.patches[1].get_facecolor()[:3]
     ax.plot([int_x, int_x + tangent1[0]], [int_y, int_y + tangent1[1]],
             color=color1, linestyle='dashed')
     ax.plot([int_x, int_x + tangent2[0]], [int_y, int_y + tangent2[1]],
@@ -776,10 +830,6 @@ def classify_intersection2(s, curve1, curve2):
         [1.75, 1.0],
         [1.5, 2.0],
     ]))
-    assert surface1.is_valid
-    edge1, _, _ = surface1.edges
-    assert edge1 == curve1
-
     surface2 = bezier.Surface(np.array([
         [0.0, 0.0],
         [1.5, 1.0],
@@ -788,28 +838,8 @@ def classify_intersection2(s, curve1, curve2):
         [2.25, 2.0],
         [1.5, 4.0],
     ]))
-    assert surface2.is_valid
-    edge2, _, _ = surface2.edges
-    assert edge2 == curve2
 
-    ax = surface1.plot(256)
-    # Manually reduce the alpha on the surface patch(es) and
-    # remove the lines we aren't using.
-    ax.patches[-1].set_alpha(0.1875)
-    ax.lines[-1].remove()
-    ax.lines[-1].remove()
-
-    surface2.plot(256, ax=ax)
-    ax.patches[-1].set_alpha(0.1875)
-    color2 = ax.lines[-1].get_color()
-    ax.lines[-1].remove()
-    ax.lines[-1].remove()
-
-    int_x, int_y = curve1.evaluate(s)
-    ax.plot([int_x], [int_y],
-            color=color2, linestyle='None', marker='o')
-
-    ax.axis('scaled')
+    ax = classify_help(s, curve1, surface1, curve2, surface2, 1)
     ax.set_xlim(-0.0625, 3.0625)
     ax.set_ylim(-0.0625, 0.5625)
     save_image(ax.figure, 'classify_intersection2.png')
@@ -828,10 +858,6 @@ def classify_intersection3(s, curve1, curve2):
         [1.25, -1.0],
         [1.5, -2.0],
     ]))
-    assert surface1.is_valid
-    edge1, _, _ = surface1.edges
-    assert edge1 == curve1
-
     surface2 = bezier.Surface(np.array([
         [3.0, 0.0],
         [1.5, 1.0],
@@ -840,28 +866,8 @@ def classify_intersection3(s, curve1, curve2):
         [0.75, -2.0],
         [1.5, -4.0],
     ]))
-    assert surface2.is_valid
-    edge2, _, _ = surface2.edges
-    assert edge2 == curve2
 
-    ax = surface1.plot(256)
-    # Manually reduce the alpha on the surface patch(es) and
-    # remove the lines we aren't using.
-    ax.patches[-1].set_alpha(0.1875)
-    color1 = ax.lines[-1].get_color()
-    ax.lines[-1].remove()
-    ax.lines[-1].remove()
-
-    surface2.plot(256, ax=ax)
-    ax.patches[-1].set_alpha(0.1875)
-    ax.lines[-1].remove()
-    ax.lines[-1].remove()
-
-    int_x, int_y = curve1.evaluate(s)
-    ax.plot([int_x], [int_y],
-            color=color1, linestyle='None', marker='o')
-
-    ax.axis('scaled')
+    ax = classify_help(s, curve1, surface1, curve2, surface2, 0)
     ax.set_xlim(-0.0625, 3.0625)
     ax.set_ylim(-0.0625, 0.5625)
     save_image(ax.figure, 'classify_intersection3.png')
@@ -880,10 +886,6 @@ def classify_intersection4(s, curve1, curve2):
         [1.25, -1.0],
         [1.5, -2.0],
     ]))
-    assert surface1.is_valid
-    edge1, _, _ = surface1.edges
-    assert edge1 == curve1
-
     surface2 = bezier.Surface(np.array([
         [0.0, 0.0],
         [1.5, 1.0],
@@ -892,27 +894,8 @@ def classify_intersection4(s, curve1, curve2):
         [2.25, 2.0],
         [1.5, 4.0],
     ]))
-    assert surface2.is_valid
-    edge2, _, _ = surface2.edges
-    assert edge2 == curve2
 
-    ax = surface1.plot(256)
-    # Manually reduce the alpha on the surface patch(es) and
-    # remove the lines we aren't using.
-    ax.patches[-1].set_alpha(0.1875)
-    ax.lines[-1].remove()
-    ax.lines[-1].remove()
-
-    surface2.plot(256, ax=ax)
-    ax.patches[-1].set_alpha(0.1875)
-    ax.lines[-1].remove()
-    ax.lines[-1].remove()
-
-    int_x, int_y = curve1.evaluate(s)
-    ax.plot([int_x], [int_y],
-            linestyle='None', marker='o')
-
-    ax.axis('scaled')
+    ax = classify_help(s, curve1, surface1, curve2, surface2, None)
     ax.set_xlim(-0.0625, 3.0625)
     ax.set_ylim(-0.0625, 0.5625)
     save_image(ax.figure, 'classify_intersection4.png')
@@ -931,10 +914,6 @@ def classify_intersection5(s, curve1, curve2):
         [1.75, 0.9375],
         [1.5, 1.875],
     ]))
-    assert surface1.is_valid
-    edge1, _, _ = surface1.edges
-    assert edge1 == curve1
-
     surface2 = bezier.Surface(np.array([
         [3.0, 0.0],
         [1.5, 1.0],
@@ -943,24 +922,10 @@ def classify_intersection5(s, curve1, curve2):
         [0.75, -2.0],
         [1.5, -4.0],
     ]))
-    assert surface2.is_valid
-    edge2, _, _ = surface2.edges
-    assert edge2 == curve2
 
     figure, (ax1, ax2) = plt.subplots(2, 1)
-
-    for ax in (ax1, ax2):
-        surface1.plot(256, ax=ax)
-        # Manually reduce the alpha on the surface patch(es) and
-        # remove the lines we aren't using.
-        ax.patches[-1].set_alpha(0.1875)
-        ax.lines[-1].remove()
-        ax.lines[-1].remove()
-
-        surface2.plot(256, ax=ax)
-        ax.patches[-1].set_alpha(0.1875)
-        ax.lines[-1].remove()
-        ax.lines[-1].remove()
+    classify_help(s, curve1, surface1, curve2, surface2, 0, ax=ax1)
+    classify_help(s, curve1, surface1, curve2, surface2, 1, ax=ax2)
 
     # Remove the alpha from the color
     color1 = ax1.patches[0].get_facecolor()[:3]
@@ -1004,7 +969,7 @@ def classify_intersection5(s, curve1, curve2):
         ax.set_xlim(-0.0625, 3.0625)
         ax.set_ylim(-0.0625, 0.5625)
 
-    ax1.get_xaxis().set_visible(False)
+    plt.setp(ax1.get_xticklabels(), visible=False)
     figure.tight_layout(h_pad=-7.0)
     save_image(figure, 'classify_intersection5.png')
 
@@ -1014,36 +979,64 @@ def classify_intersection6(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    ax = curve1.plot(256)
-    curve2.plot(256, ax=ax)
+    surface1 = bezier.Surface(np.array([
+        [0.375, 0.0625],
+        [-0.125, -0.0625],
+        [-0.125, 0.0625],
+        [0.1875, 0.15625],
+        [-0.0625, 0.15625],
+        [0.0, 0.25],
+    ]))
+    surface2 = bezier.Surface(np.array([
+        [0.75, 0.25],
+        [-0.25, -0.25],
+        [-0.25, 0.25],
+        [0.625, 0.625],
+        [0.125, 0.625],
+        [0.5, 1.0],
+    ]))
 
-    int_x, int_y = curve1.evaluate(s)
-    ax.plot([int_x], [int_y],
-            color='black', linestyle='None', marker='o')
-
-    ax.axis('scaled')
+    ax = classify_help(s, curve1, surface1, curve2, surface2, None)
     ax.set_xlim(-0.3125, 1.0625)
     ax.set_ylim(-0.0625, 0.3125)
     save_image(ax.figure, 'classify_intersection6.png')
 
 
-def classify_intersection7(s, curve1, curve2):
+def classify_intersection7(s, curve1a, curve1b, curve2):
     """Image for :func:`._surface_helpers.classify_intersection` docstring."""
     if NO_IMAGES:
         return
 
-    ax = curve1.plot(256)
-    curve2.plot(256, ax=ax)
-    color2 = ax.lines[-1].get_color()
+    surface1 = bezier.Surface(np.array([
+        [0.0, 0.0],
+        [4.5, 0.0],
+        [9.0, 2.25],
+        [0.0, 1.25],
+        [4.5, 2.375],
+        [0.0, 2.5],
+    ]))
+    surface2 = bezier.Surface(np.array([
+        [11.25, 0.0],
+        [9.0, 4.5],
+        [2.75, 1.0],
+        [8.125, -0.75],
+        [3.875, -0.25],
+        [5.0, -1.5],
+    ]))
 
-    int_x, int_y = curve1.evaluate(s)
-    ax.plot([int_x], [int_y],
-            color=color2, linestyle='None', marker='o')
+    figure, (ax1, ax2) = plt.subplots(2, 1)
+    classify_help(s, curve1a, surface1, curve2, surface2, None, ax=ax1)
+    surface1._nodes = surface1._nodes[(2, 4, 5, 1, 3, 0), :]
+    surface1._edges = None
+    classify_help(0.0, curve1b, surface1, curve2, surface2, 0, ax=ax2)
 
-    ax.axis('scaled')
-    ax.set_xlim(-0.0625, 1.0625)
-    ax.set_ylim(-0.0625, 1.1875)
-    save_image(ax.figure, 'classify_intersection7.png')
+    for ax in (ax1, ax2):
+        ax.set_xlim(-0.125, 11.5)
+        ax.set_ylim(-0.125, 2.625)
+
+    plt.setp(ax1.get_xticklabels(), visible=False)
+    figure.tight_layout(h_pad=-5.0)
+    save_image(figure, 'classify_intersection7.png')
 
 
 def get_curvature(nodes, s, tangent_vec, curvature):

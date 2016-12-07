@@ -1126,33 +1126,41 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection7
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve(np.array([
-       ...     [0.0, 0.0],
-       ...     [0.5, 0.0],
-       ...     [1.0, 0.5],
+       >>> curve1a = bezier.Curve(np.array([
+       ...     [0.0, 0.0 ],
+       ...     [4.5, 0.0 ],
+       ...     [9.0, 2.25],
        ... ]))
        >>> curve2 = bezier.Curve(np.array([
-       ...     [1.03515625, 0.125],
-       ...     [1.03515625, 0.625],
-       ...     [0.78515625, 1.125],
+       ...     [11.25, 0.0],
+       ...     [ 9.0 , 4.5],
+       ...     [ 2.75, 1.0],
        ... ]))
        >>> s, t = 1.0, 0.375
-       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       >>> curve1a.evaluate(s) == curve2.evaluate(t)
        array([ True, True], dtype=bool)
-       >>> tangent1 = hodograph(curve1, s)
-       >>> tangent1
-       array([ 1., 1.])
-       >>> tangent2 = hodograph(curve2, t)
-       >>> tangent2
-       array([-0.1875, 1. ])
-       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> intersection = Intersection(curve1a, s, curve2, t)
        >>> classify_intersection(intersection)
-       -2
+       Traceback (most recent call last):
+         ...
+       ValueError: ('Intersection occurs at the end of an edge',
+                    's', 1.0, 't', 0.375)
+       >>>
+       >>> curve1b = bezier.Curve(np.array([
+       ...     [9.0, 2.25 ],
+       ...     [4.5, 2.375],
+       ...     [0.0, 2.5  ],
+       ... ]))
+       >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
+       array([ True, True], dtype=bool)
+       >>> intersection = Intersection(curve1b, 0.0, curve2, t)
+       >>> classify_intersection(intersection)
+       0
 
     .. testcleanup:: classify-intersection7
 
        import make_images
-       make_images.classify_intersection7(s, curve1, curve2)
+       make_images.classify_intersection7(s, curve1a, curve1b, curve2)
 
     .. note::
 
@@ -1172,17 +1180,21 @@ def classify_intersection(intersection):
     Returns:
         int: The index of the "inside" curve (``0`` or ``1``). If the
         curves are tangent but facing opposite directions, returns ``-1``.
-        If the intersection is at a corner, returns ``-2``.
 
     Raises:
+        ValueError: If the intersection occurs at the end of either
+            curve involved. This is because we want to classify which
+            curve to **move forward** on, and we can't move past the
+            end of a segment.
         NotImplementedError: The curves are tangent at the intersection
             and have the same curvature.
     """
     s = intersection.s
     t = intersection.t
 
-    if s == 0.0 or s == 1.0 or t == 0.0 or t == 1.0:
-        return -2
+    if s == 1.0 or t == 1.0:
+        raise ValueError('Intersection occurs at the end of an edge',
+                         's', s, 't', t)
 
     left_nodes = intersection.left._nodes  # pylint: disable=protected-access
     tangent1 = _curve_helpers.evaluate_hodograph(
@@ -1238,3 +1250,39 @@ def edge_cycle(edge1, edge2, edge3):
     edge3._next_edge = edge1
     edge3._previous_edge = edge2
     # pylint: enable=protected-access
+
+
+def handle_corners(intersection):
+    """Mutates an intersection if it is on a corner.
+
+    Does nothing if the intersection happens in the middle of two
+    edges.
+
+    If the intersection occurs at the end of the ``left`` curve,
+    moves it to the beginning of the next edge. Similar for the
+    ``right`` curve.
+
+    This function is used as a pre-processing step before passing
+    an intersection to :func:`classify_intersection`. There, only
+    corners that **begin** an edge are considered, since that
+    function is trying to determine which edge to **move forward** on.
+
+    .. note::
+
+       This assumes the ``left`` and ``right`` curves are edges
+       in a surface, so the code (may) rely on ``next_edge``
+       and / or ``previous_edge`` being valid.
+
+    Args:
+        intersection (.Intersection): An intersection to mutate.
+    """
+    if intersection.s == 1.0:
+        # pylint: disable=protected-access
+        intersection._s_val = 0.0
+        intersection._left = intersection.left.next_edge
+        # pylint: enable=protected-access
+    if intersection.t == 1.0:
+        # pylint: disable=protected-access
+        intersection._t_val = 0.0
+        intersection._right = intersection.right.next_edge
+        # pylint: enable=protected-access

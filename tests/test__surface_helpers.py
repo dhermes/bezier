@@ -640,7 +640,7 @@ class Test_classify_intersection(unittest.TestCase):
         result = self._call_function_under_test(intersection)
         self.assertEqual(result, 0)
 
-    def test_corner(self):
+    def test_corner_end(self):
         import bezier
 
         left = bezier.Curve(np.array([
@@ -652,8 +652,23 @@ class Test_classify_intersection(unittest.TestCase):
             [1.0, 2.0],
         ]))
         intersection = self._make_intersect(left, 1.0, right, 0.5)
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(intersection)
+
+    def test_corner_start(self):
+        import bezier
+
+        left = bezier.Curve(np.array([
+            [1.0, 1.0],
+            [0.0, 0.0],
+        ]))
+        right = bezier.Curve(np.array([
+            [1.0, 0.0],
+            [1.0, 2.0],
+        ]))
+        intersection = self._make_intersect(left, 0.0, right, 0.5)
         result = self._call_function_under_test(intersection)
-        self.assertEqual(result, -2)
+        self.assertEqual(result, 0)
 
     def test_tangent_opposed(self):
         import bezier
@@ -723,3 +738,51 @@ class Test_edge_cycle(unittest.TestCase):
         self.assertIs(edge2._previous_edge, edge1)
         self.assertIs(edge3._next_edge, edge1)
         self.assertIs(edge3._previous_edge, edge2)
+
+
+class Test_handle_corners(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersection):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.handle_corners(intersection)
+
+    @staticmethod
+    def _make_intersect(left, s, right, t):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.Intersection(left, s, right, t)
+
+    def test_neither(self):
+        left = mock.Mock()
+        right = mock.Mock()
+        intersection = self._make_intersect(left, 0.5, right, 0.5)
+
+        self.assertIsNone(self._call_function_under_test(intersection))
+        self.assertEqual(intersection.s, 0.5)
+        self.assertIs(intersection.left, left)
+        self.assertEqual(intersection.t, 0.5)
+        self.assertIs(intersection.right, right)
+
+    def test_s(self):
+        left = mock.Mock(next_edge=mock.sentinel.next_left)
+        right = mock.Mock()
+        intersection = self._make_intersect(left, 1.0, right, 0.25)
+
+        self.assertIsNone(self._call_function_under_test(intersection))
+        self.assertEqual(intersection.s, 0.0)
+        self.assertIs(intersection.left, mock.sentinel.next_left)
+        self.assertEqual(intersection.t, 0.25)
+        self.assertIs(intersection.right, right)
+
+    def test_t(self):
+        left = mock.Mock()
+        right = mock.Mock(next_edge=mock.sentinel.next_right)
+        intersection = self._make_intersect(left, 0.75, right, 1.0)
+
+        self.assertIsNone(self._call_function_under_test(intersection))
+        self.assertEqual(intersection.s, 0.75)
+        self.assertIs(intersection.left, left)
+        self.assertEqual(intersection.t, 0.0)
+        self.assertIs(intersection.right, mock.sentinel.next_right)

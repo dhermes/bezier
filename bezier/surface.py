@@ -1036,6 +1036,7 @@ class Surface(_base.Base):
         # Classify each intersection (``intersections`` is mutable and
         # so is each element)
         for intersection in intersections:
+            _surface_helpers.handle_corners(intersection)
             interior = _surface_helpers.classify_intersection(
                 intersection)
             intersection.interior_curve = interior
