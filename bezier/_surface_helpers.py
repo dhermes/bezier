@@ -30,6 +30,11 @@ from bezier import _helpers
 MAX_POLY_SUBDIVISIONS = 5
 MAX_LOCATE_SUBDIVISIONS = 20
 LOCATE_EPS = 2.0**(-47)
+_SIGN = np.sign  # pylint: disable=no-member
+SAME_CURVATURE = 'Tangent curves have same curvature.'
+BAD_TANGENT = (
+    'Curves moving in opposite direction but define '
+    'overlapping arcs.')
 LINEAR_SUBDIVIDE = np.array([
     [2, 0, 0],
     [1, 1, 0],
@@ -1069,7 +1074,10 @@ def classify_intersection(intersection):
        array([ True, True], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       -1
+       Traceback (most recent call last):
+         ...
+       NotImplementedError: Curves moving in opposite direction
+                            but define overlapping arcs.
 
     .. testcleanup:: classify-intersection5
 
@@ -1186,22 +1194,17 @@ def classify_intersection(intersection):
             curve involved. This is because we want to classify which
             curve to **move forward** on, and we can't move past the
             end of a segment.
-        NotImplementedError: The curves are tangent at the intersection
-            and have the same curvature.
     """
-    s = intersection.s
-    t = intersection.t
-
-    if s == 1.0 or t == 1.0:
+    if intersection.s == 1.0 or intersection.t == 1.0:
         raise ValueError('Intersection occurs at the end of an edge',
-                         's', s, 't', t)
+                         's', intersection.s, 't', intersection.t)
 
-    left_nodes = intersection.left._nodes  # pylint: disable=protected-access
     tangent1 = _curve_helpers.evaluate_hodograph(
-        left_nodes, intersection.left.degree, s)
-    right_nodes = intersection.right._nodes  # pylint: disable=protected-access
+        intersection.left._nodes,  # pylint: disable=protected-access
+        intersection.left.degree, intersection.s)
     tangent2 = _curve_helpers.evaluate_hodograph(
-        right_nodes, intersection.right.degree, t)
+        intersection.right._nodes,  # pylint: disable=protected-access
+        intersection.right.degree, intersection.t)
 
     # Take the cross-product of tangent vectors to determine which one
     # is more "to the left".
@@ -1212,23 +1215,67 @@ def classify_intersection(intersection):
     elif cross_prod > 0:
         return 1
     else:
+        return _classify_tangent_intersection(
+            intersection, tangent1, tangent2)
+
+
+def _classify_tangent_intersection(intersection, tangent1, tangent2):
+    """Helper for func:`classify_intersection` at tangencies.
+
+    Args:
+        intersection (.Intersection): An intersection object.
+        tangent1 (numpy.ndarray): The tangent vector on the ``left`` curve
+            at the intersection.
+        tangent2 (numpy.ndarray): The tangent vector on the ``right`` curve
+            at the intersection.
+
+    Returns:
+        int: The index of the "inside" curve (``0`` or ``1``). If the
+        curves are tangent but facing opposite directions, returns ``-1``.
+
+    Raises:
+        NotImplementedError: If the curves are tangent, moving in opposite
+            directions, but enclose overlapping arcs.
+        NotImplementedError: If the curves are tangent at the intersection
+            and have the same curvature.
+    """
+    dot_prod = tangent1.dot(tangent2)
+    # NOTE: When computing curvatures we assume that we don't have lines
+    #       here, because lines that are tangent at an intersection are
+    #       parallel and we don't handle that case.
+    curvature1 = _curve_helpers.get_curvature(
+        intersection.left._nodes,  # pylint: disable=protected-access
+        intersection.left.degree, tangent1, intersection.s)
+    curvature2 = _curve_helpers.get_curvature(
+        intersection.right._nodes,  # pylint: disable=protected-access
+        intersection.right.degree, tangent2, intersection.t)
+    if dot_prod < 0:
         # If the tangent vectors are pointing in the opposite direction,
         # then the curves are facing opposite directions.
-        dot_prod = tangent1.dot(tangent2)
-        if dot_prod < 0:
-            return -1
-        else:
-            curvature1 = _curve_helpers.get_curvature(
-                left_nodes, intersection.left.degree, tangent1, s)
-            curvature2 = _curve_helpers.get_curvature(
-                right_nodes, intersection.right.degree, tangent2, t)
-            if curvature1 > curvature2:
-                return 0
-            elif curvature1 < curvature2:
-                return 1
+        sign1, sign2 = _SIGN([curvature1, curvature2])
+        if sign1 == sign2:
+            # If both curvatures are positive, since the curves are
+            # moving in opposite directions, the tangency isn't part of
+            # the surface intersection.
+            if sign1 == 1.0:
+                return -1
             else:
-                raise NotImplementedError(
-                    'Tangent curves have same curvature.')
+                raise NotImplementedError(BAD_TANGENT)
+        else:
+            delta_c = abs(curvature1) - abs(curvature2)
+            if delta_c == 0.0:
+                raise NotImplementedError(SAME_CURVATURE)
+            elif sign1 == _SIGN(delta_c):
+                return -1
+            else:
+                raise NotImplementedError(BAD_TANGENT)
+    else:
+        if curvature1 > curvature2:
+            return 0
+        elif curvature1 < curvature2:
+            return 1
+        else:
+            raise NotImplementedError(SAME_CURVATURE)
 
 
 def edge_cycle(edge1, edge2, edge3):

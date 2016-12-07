@@ -14,6 +14,7 @@ import pytest
 import six
 
 import bezier
+from bezier import _surface_helpers
 
 import runtime_utils
 
@@ -623,7 +624,7 @@ def test_surfaces10Q_and_18Q():
     ])
     edge_inds1 = [1, 1, 2, 2, 0, 0, 0, 1]
     edge_inds2 = [1, 2, 1, 2, 0, 2, 0, 0]
-    interior_edges = [-1, -1, -1, -1, -1, -1, -1, -1]
+    interior_edges = [None, None, None, None, None, None, None, None]
 
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE10Q, SURFACE18Q,
@@ -652,7 +653,7 @@ def test_surfaces10Q_and_19Q():
     ])
     edge_inds1 = [0, 0, 1, 1, 1, 1, 2, 2]
     edge_inds2 = [0, 2, 0, 2, 1, 2, 1, 2]
-    interior_edges = [-1, -1, -1, -1, -1, -1, -1, -1]
+    interior_edges = [None, None, None, None, None, None, None, None]
 
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE10Q, SURFACE19Q,
@@ -995,6 +996,7 @@ def test_surfaces3Q_and_14Q():
 
 
 def test_surfaces15Q_and_16Q():
+    # pylint: disable=too-many-locals
     s_val4, _ = runtime_utils.real_roots([49, -120, 32])
     _, s_val5 = runtime_utils.real_roots([1, 70, -39])
     s_val6, _ = runtime_utils.real_roots([2, -18, 1])
@@ -1018,13 +1020,16 @@ def test_surfaces15Q_and_16Q():
     ])
     edge_inds1 = [0, 1, 2, 0, 1, 2, 2]
     edge_inds2 = [2, 1, 0, 0, 0, 1, 2]
-    interior_edges = [0, 1, -1, 1, 0, 0, 1]
+    interior_edges = [0, 1, None, 1, 0, 0, 1]
 
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(16):
+    with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE15Q, SURFACE16Q,
                               edge_s_vals, edge_t_vals, points,
                               edge_inds1, edge_inds2, interior_edges)
+
+    assert exc_info.value.args == (_surface_helpers.BAD_TANGENT,)
+    make_plots(SURFACE15Q, SURFACE16Q, points, interior_edges)
+    # pylint: enable=too-many-locals
 
 
 def test_surfaces24Q_and_25Q():
