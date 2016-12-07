@@ -107,6 +107,7 @@ class Curve(_base.Base):
     """
 
     _length = None
+    _edge_index = None
     _next_edge = None
     _previous_edge = None
 
@@ -231,6 +232,41 @@ class Curve(_base.Base):
            array([ True, True], dtype=bool)
         """
         return self._root
+
+    @property
+    def edge_index(self):
+        """Optional[int]: The index of the edge among a group of edges.
+
+        .. testsetup:: edge-index
+
+           import numpy as np
+           import bezier
+
+           surface = bezier.Surface(np.array([
+               [0.0, 0.0],
+               [1.0, 0.0],
+               [0.0, 1.0],
+           ]))
+           _, curve, _ = surface.edges
+
+        .. doctest:: edge-index
+
+           >>> curve.edge_index
+           1
+           >>> curve.previous_edge
+           <Curve (degree=1, dimension=2)>
+           >>> curve.previous_edge.edge_index
+           0
+           >>> curve.next_edge
+           <Curve (degree=1, dimension=2)>
+           >>> curve.next_edge.edge_index
+           2
+
+        This is intended to be used when a :class:`Curve` is created as part
+        of a larger structure like a :class:`.Surface` or
+        :class:`.CurvedPolygon`.
+        """
+        return self._edge_index
 
     @property
     def next_edge(self):

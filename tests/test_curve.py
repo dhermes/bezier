@@ -43,6 +43,7 @@ class TestCurve(unittest.TestCase):
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
         self.assertIsNone(curve._length)
+        self.assertIsNone(curve._edge_index)
         self.assertIsNone(curve._next_edge)
         self.assertIsNone(curve._previous_edge)
         self.assertEqual(curve._start, 0.0)
@@ -143,6 +144,11 @@ class TestCurve(unittest.TestCase):
         curve = self._make_one(np.zeros((2, 2)),
                                root=mock.sentinel.root)
         self.assertIs(curve.root, mock.sentinel.root)
+
+    def test_edge_index_property(self):
+        curve = self._make_one(np.zeros((2, 2)))
+        curve._edge_index = 7
+        self.assertEqual(curve.edge_index, 7)
 
     def test_next_edge_property(self):
         curve = self._make_one(np.zeros((2, 2)))

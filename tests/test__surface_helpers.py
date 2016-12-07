@@ -824,10 +824,16 @@ class Test_edge_cycle(unittest.TestCase):
         edge3 = mock.Mock()
         self.assertIsNone(
             self._call_function_under_test(edge1, edge2, edge3))
+
+        self.assertEqual(edge1._edge_index, 0)
         self.assertIs(edge1._next_edge, edge2)
         self.assertIs(edge1._previous_edge, edge3)
+
+        self.assertEqual(edge2._edge_index, 1)
         self.assertIs(edge2._next_edge, edge3)
         self.assertIs(edge2._previous_edge, edge1)
+
+        self.assertEqual(edge3._edge_index, 2)
         self.assertIs(edge3._next_edge, edge1)
         self.assertIs(edge3._previous_edge, edge2)
 
@@ -876,6 +882,9 @@ class Test_handle_corners(unittest.TestCase):
 
 class Test_verify_duplicates(unittest.TestCase):
 
+    LEFT = mock.Mock(edge_index=1)
+    RIGHT = mock.Mock(edge_index=2)
+
     @staticmethod
     def _call_function_under_test(duplicates, uniques):
         from bezier import _surface_helpers
@@ -886,37 +895,37 @@ class Test_verify_duplicates(unittest.TestCase):
         self.assertIsNone(self._call_function_under_test([], []))
 
     def test_success(self):
-        uniq = make_intersect(None, 0.0, None, 0.25)
+        uniq = make_intersect(self.LEFT, 0.0, self.RIGHT, 0.25)
         self.assertIsNone(
             self._call_function_under_test([uniq], [uniq]))
 
     def test_success_triple(self):
-        uniq = make_intersect(None, 0.0, None, 0.0)
+        uniq = make_intersect(self.LEFT, 0.0, self.RIGHT, 0.0)
         self.assertIsNone(
             self._call_function_under_test([uniq, uniq, uniq], [uniq]))
 
     def test_failed_uniqueness(self):
-        uniq = make_intersect(None, 0.375, None, 0.75)
+        uniq = make_intersect(self.LEFT, 0.375, self.RIGHT, 0.75)
         with self.assertRaises(ValueError):
             self._call_function_under_test([], [uniq, uniq])
 
     def test_bad_duplicate(self):
-        dupe = make_intersect(None, 0.75, None, 0.25)
-        uniq = make_intersect(None, 0.25, None, 0.75)
+        dupe = make_intersect(self.LEFT, 0.75, self.RIGHT, 0.25)
+        uniq = make_intersect(self.LEFT, 0.25, self.RIGHT, 0.75)
         with self.assertRaises(ValueError):
             self._call_function_under_test([dupe], [uniq])
 
     def test_bad_single_corner(self):
-        uniq = make_intersect(None, 0.125, None, 0.125)
+        uniq = make_intersect(self.LEFT, 0.125, self.RIGHT, 0.125)
         with self.assertRaises(ValueError):
             self._call_function_under_test([uniq], [uniq])
 
     def test_bad_double_corner(self):
-        uniq = make_intersect(None, 0.0, None, 1.0)
+        uniq = make_intersect(self.LEFT, 0.0, self.RIGHT, 1.0)
         with self.assertRaises(ValueError):
             self._call_function_under_test([uniq, uniq, uniq], [uniq])
 
     def test_bad_count(self):
-        uniq = make_intersect(None, 0.375, None, 0.75)
+        uniq = make_intersect(self.LEFT, 0.375, self.RIGHT, 0.75)
         with self.assertRaises(ValueError):
             self._call_function_under_test([uniq, uniq], [uniq])

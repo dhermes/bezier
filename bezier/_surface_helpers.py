@@ -1291,10 +1291,15 @@ def edge_cycle(edge1, edge2, edge3):
         edge3 (.Curve): Third curve in cycle.
     """
     # pylint: disable=protected-access
+    edge1._edge_index = 0
     edge1._next_edge = edge2
     edge1._previous_edge = edge3
+
+    edge2._edge_index = 1
     edge2._next_edge = edge3
     edge2._previous_edge = edge1
+
+    edge3._edge_index = 2
     edge3._next_edge = edge1
     edge3._previous_edge = edge2
     # pylint: enable=protected-access
@@ -1369,10 +1374,12 @@ def verify_duplicates(duplicates, uniques):
         ValueError: If a duplicate occurs a number other than one or three
             times.
     """
-    counter = collections.Counter((dupe.left, dupe.s, dupe.right, dupe.t)
-                                  for dupe in duplicates)
-    uniques_keys = set((uniq.left, uniq.s, uniq.right, uniq.t)
-                       for uniq in uniques)
+    counter = collections.Counter(
+        (dupe.left.edge_index, dupe.s, dupe.right.edge_index, dupe.t)
+        for dupe in duplicates)
+    uniques_keys = set(
+        (uniq.left.edge_index, uniq.s, uniq.right.edge_index, uniq.t)
+        for uniq in uniques)
     if len(uniques_keys) < len(uniques):
         raise ValueError('Non-unique intersection')
 

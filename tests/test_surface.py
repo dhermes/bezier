@@ -165,16 +165,19 @@ class TestSurface(unittest.TestCase):
         import bezier
 
         self.assertIsInstance(edge1, bezier.Curve)
+        self.assertEqual(edge1._edge_index, 0)
         self.assertIs(edge1.next_edge, edge2)
         self.assertIs(edge1.previous_edge, edge3)
         self.assertTrue(np.all(edge1.nodes == nodes1))
 
         self.assertIsInstance(edge2, bezier.Curve)
+        self.assertEqual(edge2._edge_index, 1)
         self.assertIs(edge2.next_edge, edge3)
         self.assertIs(edge2.previous_edge, edge1)
         self.assertTrue(np.all(edge2.nodes == nodes2))
 
         self.assertIsInstance(edge3, bezier.Curve)
+        self.assertEqual(edge3._edge_index, 2)
         self.assertIs(edge3.next_edge, edge1)
         self.assertIs(edge3.previous_edge, edge2)
         self.assertTrue(np.all(edge3.nodes == nodes3))
