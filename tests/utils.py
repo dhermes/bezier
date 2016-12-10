@@ -94,8 +94,6 @@ def ref_triangle_uniform_nodes(pts_exponent):
 
 
 def check_plot_call(test_case, call, expected, **kwargs):
-    import numpy as np
-
     # Unpack the call as name, positional args, keyword args
     _, positional, keyword = call
     test_case.assertEqual(keyword, kwargs)
