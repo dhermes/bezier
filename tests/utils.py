@@ -115,7 +115,7 @@ class NumPyTestCase(unittest.TestCase):
     def assertArrayEqual(self, arr1, arr2, msg=None):
         import numpy as np
 
-        if not arr1.shape == arr2.shape:
+        if not arr1.shape == arr2.shape:  # pragma: NO COVER
             standard_msg = WRONG_SHAPE_TEMPLATE.format(
                 arr1.shape, arr1, arr2.shape, arr2)
             self.fail(self._formatMessage(msg, standard_msg))
