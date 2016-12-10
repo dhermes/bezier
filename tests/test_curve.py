@@ -20,7 +20,7 @@ import numpy as np
 from tests import utils
 
 
-class TestCurve(unittest.TestCase):
+class TestCurve(utils.NumPyTestCase):
 
     @staticmethod
     def _get_target_class():
@@ -117,7 +117,7 @@ class TestCurve(unittest.TestCase):
             _, positional, keyword = call
             self.assertEqual(keyword, {})
             self.assertEqual(len(positional), 2)
-            self.assertTrue(np.all(positional[0] == nodes))
+            self.assertEqual(positional[0], nodes)
             self.assertEqual(positional[1], 1)
 
     def test_length_property(self):
@@ -170,7 +170,7 @@ class TestCurve(unittest.TestCase):
         curve = self._make_one(nodes)
         expected = np.array([0.25, 0.265625])
         result = curve.evaluate(s)
-        self.assertTrue(np.all(expected == result))
+        self.assertEqual(expected, result)
 
     def test_evaluate_multi(self):
         s_vals = np.array([0.0, 0.25, 0.5, 1.0, 1.25])
@@ -188,15 +188,15 @@ class TestCurve(unittest.TestCase):
             [1.328125, 1.328125],
         ])
         result = curve.evaluate_multi(s_vals)
-        self.assertTrue(np.all(expected == result))
+        self.assertEqual(expected, result)
 
     def _check_plot_call(self, call, expected, **kwargs):
         # Unpack the call as name, positional args, keyword args
         _, positional, keyword = call
         self.assertEqual(keyword, kwargs)
         self.assertEqual(len(positional), 2)
-        self.assertTrue(np.all(positional[0] == expected[:, 0]))
-        self.assertTrue(np.all(positional[1] == expected[:, 1]))
+        self.assertEqual(positional[0], expected[:, 0])
+        self.assertEqual(positional[1], expected[:, 1])
 
     def _plot_helper(self, show=False):
         nodes = np.array([
@@ -297,9 +297,9 @@ class TestCurve(unittest.TestCase):
         self.assertIs(right.root, curve)
 
         self.assertIsInstance(left, klass)
-        self.assertTrue(np.all(left._nodes == expected_l))
+        self.assertEqual(left._nodes, expected_l)
         self.assertIsInstance(right, klass)
-        self.assertTrue(np.all(right._nodes == expected_r))
+        self.assertEqual(right._nodes, expected_r)
 
     def _subdivide_points_check(self, curve, pts_exponent=5):
         # Using the exponent means that ds = 1/2**exp, which
@@ -319,7 +319,7 @@ class TestCurve(unittest.TestCase):
             # Make sure sub_curve([0, 1]) == curve(half)
             main_vals = curve.evaluate_multi(half)
             sub_vals = sub_curve.evaluate_multi(unit_interval)
-            self.assertTrue(np.all(main_vals == sub_vals))
+            self.assertEqual(main_vals, sub_vals)
 
     def test_subdivide_line(self):
         nodes = np.array([
@@ -444,7 +444,7 @@ class TestCurve(unittest.TestCase):
 
         result = left.intersect(right)
         expected = np.array([[0.5, -0.125]])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_intersect(self):
         import bezier
@@ -470,7 +470,7 @@ class TestCurve(unittest.TestCase):
 
         result = left.intersect(right)
         expected = np.array([[0.5, 0.75]])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_intersect_non_curve(self):
         nodes = np.array([
@@ -511,7 +511,7 @@ class TestCurve(unittest.TestCase):
         s_vals = np.linspace(0.0, 1.0, 64 + 1)
         orig_vals = curve.evaluate_multi(s_vals)
         new_vals = elevated.evaluate_multi(s_vals)
-        self.assertTrue(np.all(orig_vals == new_vals))
+        self.assertEqual(orig_vals, new_vals)
 
     def test_specialize(self):
         nodes = np.array([
@@ -532,4 +532,4 @@ class TestCurve(unittest.TestCase):
             [1.78125, 4.5625],
             [4.046875, 2.84375],
         ])
-        self.assertTrue(np.all(new_curve.nodes == expected))
+        self.assertEqual(new_curve.nodes, expected)

@@ -27,7 +27,7 @@ slow = pytest.mark.skipif(  # pylint: disable=invalid-name
 )
 
 
-class TestSurface(unittest.TestCase):
+class TestSurface(utils.NumPyTestCase):
 
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
     QUADRATIC = np.array([
@@ -168,19 +168,19 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(edge1._edge_index, 0)
         self.assertIs(edge1.next_edge, edge2)
         self.assertIs(edge1.previous_edge, edge3)
-        self.assertTrue(np.all(edge1.nodes == nodes1))
+        self.assertEqual(edge1.nodes, nodes1)
 
         self.assertIsInstance(edge2, bezier.Curve)
         self.assertEqual(edge2._edge_index, 1)
         self.assertIs(edge2.next_edge, edge3)
         self.assertIs(edge2.previous_edge, edge1)
-        self.assertTrue(np.all(edge2.nodes == nodes2))
+        self.assertEqual(edge2.nodes, nodes2)
 
         self.assertIsInstance(edge3, bezier.Curve)
         self.assertEqual(edge3._edge_index, 2)
         self.assertIs(edge3.next_edge, edge1)
         self.assertIs(edge3.previous_edge, edge2)
-        self.assertTrue(np.all(edge3.nodes == nodes3))
+        self.assertEqual(edge3.nodes, nodes3)
 
     def test__compute_edges_linear(self):
         nodes = np.array([
@@ -304,7 +304,7 @@ class TestSurface(unittest.TestCase):
 
         expected = np.array([0.5, 0.5625])
         result = surface.evaluate_barycentric(*lambda_vals)
-        self.assertTrue(np.all(expected == result))
+        self.assertEqual(result, expected)
 
     def test_evaluate_barycentric_quadratic(self):
         lambda_vals = (0.0, 0.25, 0.75)
@@ -320,7 +320,7 @@ class TestSurface(unittest.TestCase):
 
         expected = np.array([0.0625, 0.78125])
         result = surface.evaluate_barycentric(*lambda_vals)
-        self.assertTrue(np.all(expected == result))
+        self.assertEqual(result, expected)
 
     def test_evaluate_barycentric_cubic(self):
         lambda_vals = (0.125, 0.5, 0.375)
@@ -340,7 +340,7 @@ class TestSurface(unittest.TestCase):
 
         expected = np.array([0.447265625, 0.37060546875])
         result = surface.evaluate_barycentric(*lambda_vals)
-        self.assertTrue(np.all(expected == result))
+        self.assertEqual(result, expected)
 
     def test_evaluate_barycentric_negative_weights(self):
         surface = self._make_one(np.zeros((3, 2)))
@@ -385,7 +385,7 @@ class TestSurface(unittest.TestCase):
                 index += 1
 
         result = surface.evaluate_barycentric(*lambda_vals)
-        self.assertTrue(np.all(expected == result))
+        self.assertEqual(result, expected)
 
     def test_evaluate_cartesian(self):
         s_t_vals = (0.125, 0.125)
@@ -398,7 +398,7 @@ class TestSurface(unittest.TestCase):
 
         expected = np.array([1.125, 1.28125])
         result = surface.evaluate_cartesian(*s_t_vals)
-        self.assertTrue(np.all(expected == result))
+        self.assertEqual(result, expected)
 
     def test_evaluate_cartesian_calls_barycentric(self):
         surface = self._make_one(np.zeros((3, 2)))
@@ -437,7 +437,7 @@ class TestSurface(unittest.TestCase):
             [0.25, 0.375],
         ])
         result = surface.evaluate_multi(param_vals)
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_evaluate_multi_with_cartesian(self):
         nodes = np.array([
@@ -458,7 +458,7 @@ class TestSurface(unittest.TestCase):
             [0.0, 0.5, 0.5],
         ])
         result = surface.evaluate_multi(param_vals)
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_evaluate_multi_wrong_dimension(self):
         surface = self._make_one(np.zeros((3, 2)))
@@ -500,7 +500,7 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(keyword, {})
         self.assertEqual(len(positional), 1)
         patch = positional[0]
-        self.assertTrue(np.all(patch.get_path().vertices == all_nodes))
+        self.assertEqual(patch.get_path().vertices, all_nodes)
 
     def _check_plot_calls(self, ax, nodes, color, with_nodes=False):
         # Check the calls to ax.plot(). We can't assert_any_call()
@@ -606,13 +606,13 @@ class TestSurface(unittest.TestCase):
         surface_a, surface_b, surface_c, surface_d = surface.subdivide()
 
         self.assertIsInstance(surface_a, klass)
-        self.assertTrue(np.all(surface_a._nodes == expected_a))
+        self.assertEqual(surface_a._nodes, expected_a)
         self.assertIsInstance(surface_b, klass)
-        self.assertTrue(np.all(surface_b._nodes == expected_b))
+        self.assertEqual(surface_b._nodes, expected_b)
         self.assertIsInstance(surface_c, klass)
-        self.assertTrue(np.all(surface_c._nodes == expected_c))
+        self.assertEqual(surface_c._nodes, expected_c)
         self.assertIsInstance(surface_d, klass)
-        self.assertTrue(np.all(surface_d._nodes == expected_d))
+        self.assertEqual(surface_d._nodes, expected_d)
 
     def _subdivide_points_check(self, surface):
         # Using the exponent means that we will divide by
@@ -633,7 +633,7 @@ class TestSurface(unittest.TestCase):
             # Make sure sub_surface(ref_triangle) == surface(quarter)
             main_vals = surface.evaluate_multi(quarter)
             sub_vals = sub_surface.evaluate_multi(ref_triangle)
-            self.assertTrue(np.all(main_vals == sub_vals))
+            self.assertEqual(main_vals, sub_vals)
 
     def test_subdivide_linear(self):
         expected_a = np.array([

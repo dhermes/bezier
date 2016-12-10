@@ -15,6 +15,8 @@ import unittest
 import mock
 import numpy as np
 
+from tests import utils
+
 
 # pylint: disable=too-many-arguments
 def check_intersection(test_case, intersection, expected,
@@ -24,7 +26,7 @@ def check_intersection(test_case, intersection, expected,
 
     test_case.assertIsInstance(
         intersection, _intersection_helpers.Intersection)
-    test_case.assertTrue(np.all(intersection.point == expected))
+    test_case.assertEqual(intersection.point, expected)
     test_case.assertIs(intersection.left, curve1)
     test_case.assertEqual(intersection.s, s_val)
     test_case.assertIs(intersection.right, curve2)
@@ -36,7 +38,7 @@ def check_intersection(test_case, intersection, expected,
 # pylint: enable=too-many-arguments
 
 
-class Test__check_close(unittest.TestCase):
+class Test__check_close(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(s, curve1, t, curve2):
@@ -60,7 +62,7 @@ class Test__check_close(unittest.TestCase):
             s_val, curve, s_val + wiggle, curve)
 
         expected = np.array([0.5, 0.5])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_failure(self):
         import bezier
@@ -322,7 +324,7 @@ class Test_linearization_error(unittest.TestCase):
         self.assertEqual(error_val, expected)
 
 
-class Test_newton_refine(unittest.TestCase):
+class Test_newton_refine(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(s, curve1, t, curve2):
@@ -346,8 +348,8 @@ class Test_newton_refine(unittest.TestCase):
 
         known_s = 0.75
         known_t = 0.25
-        self.assertTrue(np.all(
-            curve1.evaluate(known_s) == curve2.evaluate(known_t)))
+        self.assertEqual(curve1.evaluate(known_s),
+                         curve2.evaluate(known_t))
 
         wrong_s = known_s - 0.125
         wrong_t = known_t + 0.125
@@ -393,8 +395,8 @@ class Test_newton_refine(unittest.TestCase):
 
         known_s = 0.5
         known_t = 0.5
-        self.assertTrue(np.all(
-            curve1.evaluate(known_s) == curve2.evaluate(known_t)))
+        self.assertEqual(curve1.evaluate(known_s),
+                         curve2.evaluate(known_t))
 
         wrong_s = 0.25
         wrong_t = 0.25
@@ -418,8 +420,9 @@ class Test_newton_refine(unittest.TestCase):
         known_s = 0.25
         known_t = 0.75
 
-        self.assertTrue(np.all(
-            curve1.evaluate(known_s) == curve2.evaluate(known_t)))
+        self.assertEqual(curve1.evaluate(known_s),
+                         curve2.evaluate(known_t))
+
         new_s, new_t = self._call_function_under_test(
             known_s, curve1, known_t, curve2)
 
@@ -431,8 +434,8 @@ class Test_newton_refine(unittest.TestCase):
 
         known_s = 0.25
         known_t = 0.75
-        self.assertTrue(np.all(
-            curve1.evaluate(known_s) == curve2.evaluate(known_t)))
+        self.assertEqual(curve1.evaluate(known_s),
+                         curve2.evaluate(known_t))
 
         wrong_s = known_s + 0.0625  # 1/16
         wrong_t = known_t + 0.0625  # 1/16
@@ -484,11 +487,11 @@ class Test_newton_refine(unittest.TestCase):
             [0.5, 0.21875],
             [0.5, 0.21875],
         ])
-        self.assertTrue(np.all(parameters == expected))
+        self.assertEqual(parameters, expected)
         # Make sure that we've actually converged.
         exact_s, exact_t = parameters[-1, :]
-        self.assertTrue(np.all(
-            curve1.evaluate(exact_s) == curve2.evaluate(exact_t)))
+        self.assertEqual(curve1.evaluate(exact_s),
+                         curve2.evaluate(exact_t))
 
 
 class Test_segment_intersection(unittest.TestCase):
@@ -589,7 +592,7 @@ class Test_parallel_different(unittest.TestCase):
             self._call_function_under_test(start0, end0, start1, end1))
 
 
-class Test_from_linearized(unittest.TestCase):
+class Test_from_linearized(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(left, right, intersections):
@@ -762,7 +765,7 @@ class Test__add_intersection(unittest.TestCase):
         self.assertIsNot(intersections[0], intersection2)
 
 
-class Test__tangent_bbox_intersection(unittest.TestCase):
+class Test__tangent_bbox_intersection(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(left, right, intersections):
@@ -798,7 +801,7 @@ class Test__tangent_bbox_intersection(unittest.TestCase):
                            at_endpoint=True)
 
 
-class Test_intersect_one_round(unittest.TestCase):
+class Test_intersect_one_round(utils.NumPyTestCase):
 
     # NOTE: NODES1 is a specialization of [0, 0], [1/2, 1], [1, 1]
     #       onto the interval [1/4, 1].
@@ -918,7 +921,7 @@ class Test__next_candidates(unittest.TestCase):
         self.assertEqual(pairs, [(lin, lin)])
 
 
-class Test_all_intersections(unittest.TestCase):
+class Test_all_intersections(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(candidates):
@@ -1001,7 +1004,7 @@ class Test_all_intersections(unittest.TestCase):
                            curve1, curve2, s_val, t_val)
 
 
-class TestLinearization(unittest.TestCase):
+class TestLinearization(utils.NumPyTestCase):
 
     NODES = np.array([
         [0.0, 0.0],
@@ -1060,7 +1063,7 @@ class TestLinearization(unittest.TestCase):
         curve = bezier.Curve(self.NODES, _copy=False)
         linearization = self._make_one(curve)
         expected = self.NODES[[0], :]
-        self.assertTrue(np.all(linearization.start_node == expected))
+        self.assertEqual(linearization.start_node, expected)
 
     def test_end_node_property(self):
         import bezier
@@ -1068,7 +1071,7 @@ class TestLinearization(unittest.TestCase):
         curve = bezier.Curve(self.NODES, _copy=False)
         linearization = self._make_one(curve)
         expected = self.NODES[[2], :]
-        self.assertTrue(np.all(linearization.end_node == expected))
+        self.assertEqual(linearization.end_node, expected)
 
     def test_from_shape_factory_not_close_enough(self):
         import bezier

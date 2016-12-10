@@ -17,8 +17,10 @@ import unittest
 import mock
 import numpy as np
 
+from tests import utils
 
-class TestBase(unittest.TestCase):
+
+class TestBase(utils.NumPyTestCase):
 
     @staticmethod
     def _get_target_class():
@@ -40,7 +42,7 @@ class TestBase(unittest.TestCase):
         self.assertEqual(shape._degree, 3)
         self.assertEqual(shape._dimension, 2)
         self.assertIsNot(shape._nodes, nodes)
-        self.assertTrue(np.all(shape._nodes == nodes))
+        self.assertEqual(shape._nodes, nodes)
 
     def test_constructor_without_copy(self):
         nodes = np.array([
@@ -92,7 +94,7 @@ class TestBase(unittest.TestCase):
             [1.0, 2.0],
         ])
         shape = self._make_one(nodes)
-        self.assertTrue(np.all(shape.nodes == nodes))
+        self.assertEqual(shape.nodes, nodes)
         self.assertIsNot(shape.nodes, nodes)
 
     def test_copy(self):

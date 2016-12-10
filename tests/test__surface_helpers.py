@@ -115,7 +115,7 @@ class Test__2x2_det(unittest.TestCase):
         self.assertLess(abs(actual_det - np_det), 1e-16)
 
 
-class Test_quadratic_jacobian_polynomial(unittest.TestCase):
+class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes):
@@ -137,10 +137,10 @@ class Test_quadratic_jacobian_polynomial(unittest.TestCase):
         self.assertEqual(bernstein.shape, (6, 1))
         expected = np.array([[0.0, 2.0, 0.0, -2.0, 2.0, 0.0]])
         expected = expected.T  # pylint: disable=no-member
-        self.assertTrue(np.all(bernstein == expected))
+        self.assertEqual(bernstein, expected)
 
 
-class Test_cubic_jacobian_polynomial(unittest.TestCase):
+class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes):
@@ -169,10 +169,10 @@ class Test_cubic_jacobian_polynomial(unittest.TestCase):
         expected[2, 0] = 1.5
         expected[9, 0] = -1.5
         expected[11, 0] = 1.5
-        self.assertTrue(np.all(bernstein == expected))
+        self.assertEqual(bernstein, expected)
 
 
-class Test_de_casteljau_one_round(unittest.TestCase):
+class Test_de_casteljau_one_round(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
@@ -194,7 +194,7 @@ class Test_de_casteljau_one_round(unittest.TestCase):
 
         result = self._call_function_under_test(
             nodes, 1, 1.0 - s_val - t_val, s_val, t_val)
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_quadratic(self):
         # Use a fixed seed so the test is deterministic and round
@@ -213,7 +213,7 @@ class Test_de_casteljau_one_round(unittest.TestCase):
         expected = np.vstack([q100, q010, q001])
         result = self._call_function_under_test(
             nodes, 2, 1.0 - s_val - t_val, s_val, t_val)
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_cubic(self):
         nodes = np.array([
@@ -245,10 +245,10 @@ class Test_de_casteljau_one_round(unittest.TestCase):
         # pylint: enable=no-member
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val)
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
 
-class Test__make_transform(unittest.TestCase):
+class Test__make_transform(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(degree, weights_a, weights_b, weights_c):
@@ -263,9 +263,9 @@ class Test__make_transform(unittest.TestCase):
 
         self.assertIsInstance(result, dict)
         self.assertEqual(len(result), 3)
-        self.assertTrue(np.all(result[0] == expected0))
-        self.assertTrue(np.all(result[1] == expected1))
-        self.assertTrue(np.all(result[2] == expected2))
+        self.assertEqual(result[0], expected0)
+        self.assertEqual(result[1], expected1)
+        self.assertEqual(result[2], expected2)
 
     def test_linear(self):
         weights = np.array([
@@ -302,7 +302,7 @@ class Test__make_transform(unittest.TestCase):
         self._helper(2, weights, expected0, expected1, expected2)
 
 
-class Test__reduced_to_matrix(unittest.TestCase):
+class Test__reduced_to_matrix(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(shape, degree, vals_by_weight):
@@ -333,10 +333,10 @@ class Test__reduced_to_matrix(unittest.TestCase):
         }
 
         result = self._call_function_under_test(shape, degree, vals_by_weight)
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
 
-class Test_specialize_surface(unittest.TestCase):
+class Test_specialize_surface(utils.NumPyTestCase):
 
     WEIGHTS0 = (1.0, 0.0, 0.0)
     WEIGHTS1 = (0.5, 0.5, 0.0)
@@ -370,10 +370,10 @@ class Test_specialize_surface(unittest.TestCase):
             id_mat, degree,
             self.WEIGHTS3, self.WEIGHTS4, self.WEIGHTS5)
 
-        self.assertTrue(np.all(all_nodes[inds_a, :] == expected_a))
-        self.assertTrue(np.all(all_nodes[inds_b, :] == expected_b))
-        self.assertTrue(np.all(all_nodes[inds_c, :] == expected_c))
-        self.assertTrue(np.all(all_nodes[inds_d, :] == expected_d))
+        self.assertEqual(all_nodes[inds_a, :], expected_a)
+        self.assertEqual(all_nodes[inds_b, :], expected_b)
+        self.assertEqual(all_nodes[inds_c, :], expected_c)
+        self.assertEqual(all_nodes[inds_d, :], expected_d)
 
     def test_known_linear(self):
         from bezier import _surface_helpers
@@ -432,7 +432,7 @@ class Test__mean_centroid(unittest.TestCase):
         self.assertEqual(centroid_y, 0.75)
 
 
-class Test_jacobian_s(unittest.TestCase):
+class Test_jacobian_s(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
@@ -445,7 +445,7 @@ class Test_jacobian_s(unittest.TestCase):
         nodes = nodes.T  # pylint: disable=no-member
         result = self._call_function_under_test(nodes, 1, 1)
         expected = np.array([[1.0]])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_quadratic(self):
         nodes = np.array([
@@ -462,14 +462,14 @@ class Test_jacobian_s(unittest.TestCase):
             [4.0, -4.0],
             [-5.0, 8.0],
         ])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_cubic(self):
         nodes = np.arange(10, dtype=float)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
         expected = 3 * np.array([[1, 3, 5, 9, 11, 15]], dtype=float)
         expected = expected.T  # pylint: disable=no-member
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_quartic(self):
         nodes = np.arange(15, dtype=float)[:, np.newaxis]**2
@@ -477,10 +477,10 @@ class Test_jacobian_s(unittest.TestCase):
         expected = 4 * np.array([
             [1, 3, 5, 7, 11, 13, 15, 19, 21, 25]], dtype=float)
         expected = expected.T  # pylint: disable=no-member
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
 
-class Test_jacobian_t(unittest.TestCase):
+class Test_jacobian_t(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
@@ -493,7 +493,7 @@ class Test_jacobian_t(unittest.TestCase):
         nodes = nodes.T  # pylint: disable=no-member
         result = self._call_function_under_test(nodes, 1, 1)
         expected = np.array([[1.0]])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_quadratic(self):
         nodes = np.array([
@@ -510,14 +510,14 @@ class Test_jacobian_t(unittest.TestCase):
             [-1.0, 5.0],
             [-4.0, 5.0],
         ])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_cubic(self):
         nodes = np.arange(10, dtype=float)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
         expected = 3 * np.array([[16, 24, 32, 33, 39, 32]], dtype=float)
         expected = expected.T  # pylint: disable=no-member
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_quartic(self):
         nodes = np.arange(15, dtype=float)[:, np.newaxis]**2
@@ -525,7 +525,7 @@ class Test_jacobian_t(unittest.TestCase):
         expected = 4 * np.array([
             [25, 35, 45, 55, 56, 64, 72, 63, 69, 52]], dtype=float)
         expected = expected.T  # pylint: disable=no-member
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
 
 class Test_newton_refine(unittest.TestCase):

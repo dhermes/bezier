@@ -13,6 +13,25 @@
 # limitations under the License.
 
 
+import unittest
+
+
+WRONG_SHAPE_TEMPLATE = """\
+Arrays have different shapes
+array1{} =
+{!r}
+array2{} =
+{!r}
+"""
+NOT_EQ_TEMPLATE = """\
+Arrays not equal
+array1 =
+{!r}
+array2 =
+{!r}
+"""
+
+
 def get_random(seed):
     import numpy as np
 
@@ -81,5 +100,26 @@ def check_plot_call(test_case, call, expected, **kwargs):
     _, positional, keyword = call
     test_case.assertEqual(keyword, kwargs)
     test_case.assertEqual(len(positional), 2)
-    test_case.assertTrue(np.all(positional[0] == expected[:, 0]))
-    test_case.assertTrue(np.all(positional[1] == expected[:, 1]))
+    test_case.assertEqual(positional[0], expected[:, 0])
+    test_case.assertEqual(positional[1], expected[:, 1])
+
+
+class NumPyTestCase(unittest.TestCase):
+
+    def __init__(self, *args, **kwargs):
+        import numpy as np
+
+        super(NumPyTestCase, self).__init__(*args, **kwargs)
+        self.addTypeEqualityFunc(np.ndarray, self.assertArrayEqual)
+
+    def assertArrayEqual(self, arr1, arr2, msg=None):
+        import numpy as np
+
+        if not arr1.shape == arr2.shape:
+            standard_msg = WRONG_SHAPE_TEMPLATE.format(
+                arr1.shape, arr1, arr2.shape, arr2)
+            self.fail(self._formatMessage(msg, standard_msg))
+
+        if not np.all(arr1 == arr2):  # pragma: NO COVER
+            standard_msg = NOT_EQ_TEMPLATE.format(arr1, arr2)
+            self.fail(self._formatMessage(msg, standard_msg))

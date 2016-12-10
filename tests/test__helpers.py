@@ -14,6 +14,8 @@ import unittest
 
 import numpy as np
 
+from tests import utils
+
 
 class Test_vector_close(unittest.TestCase):
 
@@ -127,7 +129,7 @@ class Test_contains(unittest.TestCase):
             self._call_function_under_test(self.UNIT_SQUARE, 0.25, 0.75))
 
 
-class Test_cross_product(unittest.TestCase):
+class Test_cross_product(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(vec0, vec1):
@@ -145,4 +147,4 @@ class Test_cross_product(unittest.TestCase):
 
         actual_cross = np.cross(vec0_as_3d, vec1_as_3d)
         expected = np.array([[0.0, 0.0, result]])
-        self.assertTrue(np.all(actual_cross == expected))
+        self.assertEqual(actual_cross, expected)

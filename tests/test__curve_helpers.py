@@ -21,8 +21,10 @@ try:
 except ImportError:  # pragma: NO COVER
     SCIPY_INT = None
 
+from tests import utils
 
-class Test_make_subdivision_matrix(unittest.TestCase):
+
+class Test_make_subdivision_matrix(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(degree):
@@ -32,7 +34,7 @@ class Test_make_subdivision_matrix(unittest.TestCase):
 
     def _helper(self, degree, expected):
         result = self._call_function_under_test(degree)
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_linear(self):
         from bezier import curve
@@ -142,7 +144,7 @@ class Test_compute_length(unittest.TestCase):
                 self._call_function_under_test(nodes, 4)
 
 
-class Test_elevate_nodes(unittest.TestCase):
+class Test_elevate_nodes(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
@@ -161,7 +163,7 @@ class Test_elevate_nodes(unittest.TestCase):
             [1.0, 2.0],
             [2.0, 4.0],
         ])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_quadratic(self):
         nodes = np.array([
@@ -176,10 +178,10 @@ class Test_elevate_nodes(unittest.TestCase):
             [4.0, 0.5, 2.75],
             [6.0, 0.5, 2.25],
         ])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
 
-class Test_de_casteljau_one_round(unittest.TestCase):
+class Test_de_casteljau_one_round(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
@@ -194,10 +196,10 @@ class Test_de_casteljau_one_round(unittest.TestCase):
             [3.0, 5.0],
         ])
         result = self._call_function_under_test(nodes, 0.25, 0.75)
-        self.assertTrue(np.all(result == np.array([[2.25, 4.0]])))
+        self.assertEqual(result, np.array([[2.25, 4.0]]))
 
 
-class Test_specialize_curve(unittest.TestCase):
+class Test_specialize_curve(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, start, end):
@@ -216,7 +218,7 @@ class Test_specialize_curve(unittest.TestCase):
             [0.25, 0.25],
             [0.75, 0.75],
         ])
-        self.assertTrue(np.all(result == expected))
+        self.assertEqual(result, expected)
 
     def test_againt_subdivision(self):
         import bezier
@@ -230,13 +232,13 @@ class Test_specialize_curve(unittest.TestCase):
         left, right = curve.subdivide()
 
         left_nodes = self._call_function_under_test(nodes, 2, 0.0, 0.5)
-        self.assertTrue(np.all(left.nodes == left_nodes))
+        self.assertEqual(left.nodes, left_nodes)
 
         right_nodes = self._call_function_under_test(nodes, 2, 0.5, 1.0)
-        self.assertTrue(np.all(right.nodes == right_nodes))
+        self.assertEqual(right.nodes, right_nodes)
 
 
-class Test_evaluate_hodograph(unittest.TestCase):
+class Test_evaluate_hodograph(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, s):
@@ -253,11 +255,11 @@ class Test_evaluate_hodograph(unittest.TestCase):
 
         first_deriv1 = self._call_function_under_test(nodes, degree, 0.25)
         self.assertEqual(first_deriv1.ndim, 1)
-        self.assertTrue(np.all(first_deriv1 == nodes[1, :] - nodes[0, :]))
+        self.assertEqual(first_deriv1, nodes[1, :] - nodes[0, :])
         # Make sure it is the same elsewhere since
         # the derivative curve is degree 0.
         first_deriv2 = self._call_function_under_test(nodes, degree, 0.75)
-        self.assertTrue(np.all(first_deriv1 == first_deriv2))
+        self.assertEqual(first_deriv1, first_deriv2)
 
     def test_quadratic(self):
         degree = 2

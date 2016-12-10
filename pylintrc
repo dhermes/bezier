@@ -21,7 +21,7 @@ disable =
 reports=no
 
 [BASIC]
-good-names=i,j,k,ex,Run,_,s,t,ax
+good-names=i,j,k,ex,Run,_,s,t,ax,assertArrayEqual
 class-rgx=[A-Z_][a-zA-Z0-9]+$|^Test
 function-rgx=[a-z_][a-z0-9_]{2,30}$|^test_
 method-rgx=[a-z_][a-z0-9_]{2,30}$|^test_

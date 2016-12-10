@@ -20,7 +20,7 @@ import numpy as np
 from tests import utils
 
 
-class TestCurvedPolygon(unittest.TestCase):
+class TestCurvedPolygon(utils.NumPyTestCase):
 
     NODES0 = np.array([
         [0.0, 0.0],
