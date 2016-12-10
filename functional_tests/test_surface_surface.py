@@ -406,6 +406,13 @@ SURFACE29Q = bezier.Surface(np.array([
     [0.125, 0.125],
     [0.0, 1.25],
 ]))
+_ENUM_MAPPING = {
+    0: _surface_helpers.IntersectionClassification.first,
+    1: _surface_helpers.IntersectionClassification.second,
+    2: _surface_helpers.IntersectionClassification.opposed,
+    3: _surface_helpers.IntersectionClassification.tangent_first,
+    4: _surface_helpers.IntersectionClassification.tangent_second,
+}
 
 
 def make_plots(surface1, surface2, points, interior_edges):
@@ -424,11 +431,11 @@ def make_plots(surface1, surface2, points, interior_edges):
     line.remove()
 
     for point, interior in six.moves.zip(points, interior_edges):
-        if interior == 0:
+        if interior in (0, 3):
             color = color0
-        elif interior == 1:
+        elif interior in (1, 4):
             color = color1
-        elif interior == -1:
+        elif interior == 2:
             color = color2
         else:
             color = 'black'
@@ -466,7 +473,7 @@ def check_intersections(s_vals, t_vals, points, intersections,
 
         CONFIG.assert_close(intersection.s, s_val)
         CONFIG.assert_close(intersection.t, t_val)
-        assert intersection.interior_curve == interior
+        assert intersection.interior_curve is _ENUM_MAPPING[interior]
 
         CONFIG.assert_close(intersection.point[0], point[0])
         CONFIG.assert_close(intersection.point[1], point[1])
@@ -650,7 +657,7 @@ def test_surfaces3Q_and_4Q():
     ])
     edge_inds1 = [0, 2, 2]
     edge_inds2 = [0, 0, 1]
-    interior_edges = [1, 1, 0]
+    interior_edges = [4, 1, 0]
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(36):
@@ -676,7 +683,7 @@ def test_surfaces1Q_and_5L():
     ])
     edge_inds1 = [0, 0, 2, 1]
     edge_inds2 = [0, 2, 1, 1]
-    interior_edges = [0, 0, 0, 1]
+    interior_edges = [3, 3, 0, 1]
 
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE1Q, SURFACE5L,
@@ -741,7 +748,7 @@ def test_surfaces20Q_and_21Q():
     ])
     edge_inds1 = [0, 1]
     edge_inds2 = [0, 1]
-    interior_edges = [0, 1]
+    interior_edges = [3, 1]
 
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE20Q, SURFACE21Q,
@@ -762,7 +769,7 @@ def test_surfaces4L_and_22Q():
     ])
     edge_inds1 = [0, 1, 2]
     edge_inds2 = [0, 1, 2]
-    interior_edges = [0, 0, 0]
+    interior_edges = [3, 3, 3]
 
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE4L, SURFACE22Q,
@@ -783,7 +790,7 @@ def test_surfaces4L_and_23Q():
     ])
     edge_inds1 = [0, 1, 2]
     edge_inds2 = [0, 1, 2]
-    interior_edges = [1, 1, 1]
+    interior_edges = [4, 4, 4]
 
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check(SURFACE4L, SURFACE23Q,
@@ -876,7 +883,7 @@ def test_surfaces4Q_and_10Q():
     ])
     edge_inds1 = [0]
     edge_inds2 = [0]
-    interior_edges = [-1]
+    interior_edges = [2]
 
     surface_surface_check(SURFACE4Q, SURFACE10Q,
                           edge_s_vals, edge_t_vals, points,
@@ -910,7 +917,7 @@ def test_surfaces3Q_and_13Q():
     ])
     edge_inds1 = [0]
     edge_inds2 = [0]
-    interior_edges = [1]
+    interior_edges = [4]
 
     surface_surface_check(SURFACE3Q, SURFACE13Q,
                           edge_s_vals, edge_t_vals, points,

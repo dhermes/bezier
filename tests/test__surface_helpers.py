@@ -26,6 +26,12 @@ def make_intersect(left, s, right, t):
     return _intersection_helpers.Intersection(left, s, right, t)
 
 
+def get_enum(str_val):
+    from bezier import _surface_helpers
+
+    return _surface_helpers.IntersectionClassification[str_val]
+
+
 class Test_polynomial_sign(unittest.TestCase):
 
     @staticmethod
@@ -622,12 +628,12 @@ class Test_classify_intersection(unittest.TestCase):
         ]))
         intersection = make_intersect(left, 0.5, right, 0.5)
         result = self._call_function_under_test(intersection)
-        self.assertEqual(result, 1)
+        self.assertIs(result, get_enum('second'))
 
         # Swap and classify.
         intersection = make_intersect(right, 0.5, left, 0.5)
         result = self._call_function_under_test(intersection)
-        self.assertEqual(result, 0)
+        self.assertIs(result, get_enum('first'))
 
     def test_corner_end(self):
         import bezier
@@ -657,7 +663,7 @@ class Test_classify_intersection(unittest.TestCase):
         ]))
         intersection = make_intersect(left, 0.0, right, 0.5)
         result = self._call_function_under_test(intersection)
-        self.assertEqual(result, 0)
+        self.assertIs(result, get_enum('first'))
 
     def test_tangent(self):
         import bezier
@@ -674,7 +680,7 @@ class Test_classify_intersection(unittest.TestCase):
         ]))
         intersection = make_intersect(left, 0.5, right, 0.5)
         result = self._call_function_under_test(intersection)
-        self.assertEqual(result, 0)
+        self.assertIs(result, get_enum('tangent_first'))
 
 
 class Test__classify_tangent_intersection(unittest.TestCase):
@@ -723,7 +729,7 @@ class Test__classify_tangent_intersection(unittest.TestCase):
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         result = self._call_helper(intersection)
-        self.assertEqual(result, 0)
+        self.assertIs(result, get_enum('tangent_first'))
 
     def test_right_curvature(self):
         import bezier
@@ -733,7 +739,7 @@ class Test__classify_tangent_intersection(unittest.TestCase):
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         result = self._call_helper(intersection)
-        self.assertEqual(result, 1)
+        self.assertIs(result, get_enum('tangent_second'))
 
     def test_same_direction_same_curvature(self):
         import bezier
@@ -777,7 +783,7 @@ class Test__classify_tangent_intersection(unittest.TestCase):
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         result = self._call_helper(intersection)
-        self.assertEqual(result, -1)
+        self.assertIs(result, get_enum('opposed'))
 
     def test_opposed_same_sign_curvature_with_overlap(self):
         import bezier
@@ -797,7 +803,7 @@ class Test__classify_tangent_intersection(unittest.TestCase):
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         result = self._call_helper(intersection)
-        self.assertEqual(result, -1)
+        self.assertIs(result, get_enum('opposed'))
 
     def test_opposed_opp_sign_curvature_with_overlap(self):
         import bezier

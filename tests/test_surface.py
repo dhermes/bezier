@@ -965,6 +965,8 @@ class TestSurface(unittest.TestCase):
             surface.locate(point2)
 
     def test_intersect(self):
+        from bezier import _surface_helpers
+
         surface1 = self._make_one(self.UNIT_TRIANGLE)
         # Similar triangle with overlapping square.
         surface2 = self._make_one(np.array([
@@ -976,11 +978,13 @@ class TestSurface(unittest.TestCase):
         intersections = surface1.intersect(surface2)
         self.assertEqual(len(intersections), 4)
 
+        first = _surface_helpers.IntersectionClassification.first
+        second = _surface_helpers.IntersectionClassification.second
         expected = [
-            (0.5, 0.0, 0, 0, 1),
-            (0.5, 0.5, 1, 0, 0),
-            (0.0, 0.5, 2, 1, 0),
-            (0.5, 0.5, 2, 2, 1),
+            (0.5, 0.0, 0, 0, second),
+            (0.5, 0.5, 1, 0, first),
+            (0.0, 0.5, 2, 1, first),
+            (0.5, 0.5, 2, 2, second),
         ]
         for intersection, values in zip(intersections, expected):
             s, t, i, j, interior = values
@@ -988,7 +992,7 @@ class TestSurface(unittest.TestCase):
             self.assertEqual(intersection.t, t)
             self.assertIs(intersection.left, surface1._edges[i])
             self.assertIs(intersection.right, surface2._edges[j])
-            self.assertEqual(intersection.interior_curve, interior)
+            self.assertIs(intersection.interior_curve, interior)
 
     def test_intersect_non_surface(self):
         surface = self._make_one(self.UNIT_TRIANGLE)

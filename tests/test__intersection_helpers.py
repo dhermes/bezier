@@ -1215,12 +1215,6 @@ class TestIntersection(unittest.TestCase):
         with self.assertRaises(AttributeError):
             setattr(intersection, 'interior_curve', 0)
 
-    def test_interior_curve_set_bad_value(self):
-        intersection = self._make_one(None, None, None, None)
-        self.assertIsNone(intersection._interior_curve)
-        with self.assertRaises(ValueError):
-            setattr(intersection, 'interior_curve', -10)
-
     def test_interior_curve_set_valid(self):
         intersection = self._make_one(None, None, None, None)
         intersection.interior_curve = 0

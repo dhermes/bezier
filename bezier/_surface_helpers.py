@@ -18,6 +18,7 @@
 
 
 import collections
+import enum
 import functools
 import operator
 
@@ -923,7 +924,7 @@ def classify_intersection(intersection):
        array([ 2. , 0.5])
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       0
+       <IntersectionClassification.first: 'first'>
 
     .. testcleanup:: classify-intersection1
 
@@ -976,7 +977,7 @@ def classify_intersection(intersection):
        array([ True, True], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       1
+       <IntersectionClassification.tangent_second: 'tangent_second'>
 
     .. testcleanup:: classify-intersection2
 
@@ -1010,7 +1011,7 @@ def classify_intersection(intersection):
        array([ True, True], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       0
+       <IntersectionClassification.tangent_first: 'tangent_first'>
 
     .. testcleanup:: classify-intersection3
 
@@ -1042,7 +1043,7 @@ def classify_intersection(intersection):
        array([ True, True], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       -1
+       <IntersectionClassification.opposed: 'opposed'>
 
     .. testcleanup:: classify-intersection4
 
@@ -1164,7 +1165,7 @@ def classify_intersection(intersection):
        array([ True, True], dtype=bool)
        >>> intersection = Intersection(curve1b, 0.0, curve2, t)
        >>> classify_intersection(intersection)
-       0
+       <IntersectionClassification.first: 'first'>
 
     .. testcleanup:: classify-intersection7
 
@@ -1187,8 +1188,8 @@ def classify_intersection(intersection):
         intersection (.Intersection): An intersection object.
 
     Returns:
-        int: The index of the "inside" curve (``0`` or ``1``). If the
-        curves are tangent but facing opposite directions, returns ``-1``.
+        IntersectionClassification: The "inside" curve type, based on
+        the classification enum.
 
     Raises:
         ValueError: If the intersection occurs at the end of either
@@ -1212,9 +1213,9 @@ def classify_intersection(intersection):
     cross_prod = _helpers.cross_product(
         np.array([tangent1]), np.array([tangent2]))
     if cross_prod < 0:
-        return 0
+        return IntersectionClassification.first
     elif cross_prod > 0:
-        return 1
+        return IntersectionClassification.second
     else:
         return _classify_tangent_intersection(
             intersection, tangent1, tangent2)
@@ -1231,8 +1232,9 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
             at the intersection.
 
     Returns:
-        int: The index of the "inside" curve (``0`` or ``1``). If the
-        curves are tangent but facing opposite directions, returns ``-1``.
+        IntersectionClassification: The "inside" curve type, based on
+        the classification enum. Will either be ``opposed`` or one
+        of the ``tangent`` values.
 
     Raises:
         NotImplementedError: If the curves are tangent, moving in opposite
@@ -1259,7 +1261,7 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
             # moving in opposite directions, the tangency isn't part of
             # the surface intersection.
             if sign1 == 1.0:
-                return -1
+                return IntersectionClassification.opposed
             else:
                 raise NotImplementedError(BAD_TANGENT)
         else:
@@ -1267,14 +1269,14 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
             if delta_c == 0.0:
                 raise NotImplementedError(SAME_CURVATURE)
             elif sign1 == _SIGN(delta_c):
-                return -1
+                return IntersectionClassification.opposed
             else:
                 raise NotImplementedError(BAD_TANGENT)
     else:
         if curvature1 > curvature2:
-            return 0
+            return IntersectionClassification.tangent_first
         elif curvature1 < curvature2:
-            return 1
+            return IntersectionClassification.tangent_second
         else:
             raise NotImplementedError(SAME_CURVATURE)
 
@@ -1395,3 +1397,12 @@ def verify_duplicates(duplicates, uniques):
                 raise ValueError('Count == 3 should be a double corner', key)
         else:
             raise ValueError('Unexpected duplicate count', count)
+
+
+class IntersectionClassification(enum.Enum):
+    """Enum classifying the "interior" curve in an intersection."""
+    first = 'first'
+    second = 'second'
+    opposed = 'opposed'
+    tangent_first = 'tangent_first'
+    tangent_second = 'tangent_second'

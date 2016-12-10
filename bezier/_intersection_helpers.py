@@ -1386,11 +1386,8 @@ class Intersection(object):
 
         Raises:
             AttributeError: If the value is already set.
-            ValueError: If the value isn't ``0``, ``1`` or ``-1``.
         """
         if self._interior_curve is not None:
             raise AttributeError('interior_curve has already been set',
                                  self._interior_curve)
-        if value not in (0, 1, -1):
-            raise ValueError('interior_curve must be among 0, 1 or -1')
         self._interior_curve = value
