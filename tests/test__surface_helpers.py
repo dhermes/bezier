@@ -948,7 +948,3 @@ class Test_combine_intersections(unittest.TestCase):
     def test_empty(self):
         result = self._call_function_under_test([])
         self.assertEqual(result, [])
-
-    def test_non_empty(self):
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test([None])

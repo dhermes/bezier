@@ -27,6 +27,7 @@ import six
 
 from bezier import _curve_helpers
 from bezier import _helpers
+from bezier import _intersection_helpers
 from bezier import curved_polygon
 
 
@@ -38,6 +39,7 @@ SAME_CURVATURE = 'Tangent curves have same curvature.'
 BAD_TANGENT = (
     'Curves moving in opposite direction but define '
     'overlapping arcs.')
+WRONG_CURVE = 'Start and end node not defined on same curve'
 LINEAR_SUBDIVIDE = np.array([
     [2, 0, 0],
     [1, 1, 0],
@@ -1352,6 +1354,21 @@ def handle_corners(intersection):
     return changed
 
 
+def _identifier(intersection):
+    """Provide a simple value to identify an intersection.
+
+    Args:
+        intersection (.Intersection): The current intersection.
+
+    Returns:
+        Tuple[int, float, int, float]: The edge indices (left first,
+        right third) for the intersection and the parameter values
+        (left second, right fourth).
+    """
+    return (intersection.left.edge_index, intersection.s,
+            intersection.right.edge_index, intersection.t)
+
+
 def verify_duplicates(duplicates, uniques):
     """Verify that a set of intersections had expected duplicates.
 
@@ -1377,12 +1394,8 @@ def verify_duplicates(duplicates, uniques):
         ValueError: If a duplicate occurs a number other than one or three
             times.
     """
-    counter = collections.Counter(
-        (dupe.left.edge_index, dupe.s, dupe.right.edge_index, dupe.t)
-        for dupe in duplicates)
-    uniques_keys = set(
-        (uniq.left.edge_index, uniq.s, uniq.right.edge_index, uniq.t)
-        for uniq in uniques)
+    counter = collections.Counter(_identifier(dupe) for dupe in duplicates)
+    uniques_keys = set(_identifier(uniq) for uniq in uniques)
     if len(uniques_keys) < len(uniques):
         raise ValueError('Non-unique intersection')
 
@@ -1400,6 +1413,200 @@ def verify_duplicates(duplicates, uniques):
             raise ValueError('Unexpected duplicate count', count)
 
 
+def _to_front(intersection, intersections, unused):
+    """Rotates a node to the "front".
+
+    Helper for :func:`combine_intersections`.
+
+    If a node is at the end of a segment, moves it to the beginning
+    of the next segment (at the exact same point).
+
+    .. note::
+
+        This method checks for **exact** endpoints, i.e. parameter
+        bitwise identical to ``1.0``. But we should probably allow
+        some wiggle room.
+
+    Args:
+        intersection (.Intersection): The current intersection.
+        intersections (List[.Intersection]): List of all detected
+            intersections, provided as a reference for potential
+            points to arrive at.
+        unused (List[.Intersection]): List of nodes that haven't been
+            used yet in an intersection curved polygon
+
+    Returns:
+        .Intersection: An intersection to (maybe) move to the beginning
+        of the next segment(s).
+    """
+    changed = False
+    if intersection.s == 1.0:
+        changed = True
+        new_intersection = _intersection_helpers.Intersection(
+            intersection.left.next_edge, 0.0,
+            intersection.right, intersection.t)
+        new_intersection.interior_curve = intersection.interior_curve
+        intersection = new_intersection
+
+    if intersection.t == 1.0:
+        changed = True
+        new_intersection = _intersection_helpers.Intersection(
+            intersection.left, intersection.s,
+            intersection.right.next_edge, 0.0)
+        new_intersection.interior_curve = intersection.interior_curve
+        intersection = new_intersection
+
+    if changed:
+        # Make sure we haven't accidentally ignored an existing intersection.
+        for other_int in intersections:
+            if (other_int.s == intersection.s and
+                    other_int.left is intersection.left):
+                intersection = other_int
+                break
+
+            if (other_int.t == intersection.t and
+                    other_int.right is intersection.right):
+                intersection = other_int
+                break
+
+    if intersection in unused:
+        unused.remove(intersection)
+    return intersection
+
+
+def _get_next(intersection, intersections, unused):
+    """Gets the next node along a given edge.
+
+    Helper for :func:`combine_intersections`, but does the majority
+    of the heavy lifting.
+
+    .. note::
+
+        This function returns :class:`.Intersection` objects even
+        when the point isn't strictly an intersection. This is
+        "incorrect" in some sense, but for now, we don't bother
+        implementing a class similar to, but different from,
+        :class:`.Intersection` to satisfy this need.
+
+    Args:
+        intersection (.Intersection): The current intersection.
+        intersections (List[.Intersection]): List of all detected
+            intersections, provided as a reference for potential
+            points to arrive at.
+        unused (List[.Intersection]): List of nodes that haven't been
+            used yet in an intersection curved polygon
+
+    Returns:
+        .Intersection: The "next" point along a surface of intersection.
+        This will produce the next intersection along the current edge or
+        the end of the current edge.
+
+    Raises:
+        ValueError: If the intersection is not classified as
+            :attr:`~.IntersectionClassification.first` or
+            :attr:`~.IntersectionClassification.second`.
+    """
+    acceptable = (IntersectionClassification.first,
+                  IntersectionClassification.second)
+
+    result = None
+    if intersection.interior_curve is IntersectionClassification.first:
+        along_edge = None
+        left = intersection.left
+        s = intersection.s
+        for other_int in intersections:
+            other_s = other_int.s
+            if other_int.left is left and other_s > s:
+                # NOTE: We skip tangent intersections that don't occur
+                #       at a corner.
+                if other_s < 1.0 and other_int.interior_curve not in acceptable:
+                    continue
+                if along_edge is None or other_s < along_edge.s:
+                    along_edge = other_int
+
+        if along_edge is None:
+            # Just return the segment end.
+            new_intersection = _intersection_helpers.Intersection(
+                intersection.left, 1.0, None, None)
+            new_intersection.interior_curve = IntersectionClassification.first
+            result = new_intersection
+        else:
+            result = along_edge
+    elif intersection.interior_curve is IntersectionClassification.second:
+        along_edge = None
+        right = intersection.right
+        t = intersection.t
+        for other_int in intersections:
+            other_t = other_int.t
+            if other_int.right is right and other_t > t:
+                # NOTE: We skip tangent intersections that don't occur
+                #       at a corner.
+                if other_t < 1.0 and other_int.interior_curve not in acceptable:
+                    continue
+                if along_edge is None or other_t < along_edge.t:
+                    along_edge = other_int
+
+        if along_edge is None:
+            # Just return the segment end.
+            new_intersection = _intersection_helpers.Intersection(
+                None, None, intersection.right, 1.0)
+            new_intersection.interior_curve = IntersectionClassification.second
+            result = new_intersection
+        else:
+            result = along_edge
+    else:
+        raise ValueError('Cannot get next node if not starting from '
+                         '"first" or "second".')
+
+    if result in unused:
+        unused.remove(result)
+    return result
+
+
+def _ends_to_curve(start_node, end_node):
+    """Convert a "pair" of intersection nodes to a curve segment.
+
+    .. note::
+
+       This function determines "left" or "right" curve based on the
+       classification of ``start_node``, but the callers of this
+       function could provide that information / isolate the
+       base curve and the two parameters for us.
+
+    .. note::
+
+       This only checks the classification of the ``start_node``.
+
+    Args:
+        start_node (.Intersection): The beginning of a segment.
+        end_node (.Intersection): The end of (the same) segment.
+
+    Returns:
+        .Curve: The segment between the nodes.
+
+    Raises:
+        ValueError: If the ``start_node`` and ``end_node`` disagree on
+            the "left" curve when classified as "first" or disagree on
+            the "right" curve when classified as "second".
+        ValueError: If the ``start_node`` is not classified as
+            :attr:`~.IntersectionClassification.first` or
+            :attr:`~.IntersectionClassification.second`.
+    """
+    if start_node.interior_curve is IntersectionClassification.first:
+        left = start_node.left
+        if end_node.left is not left:
+            raise ValueError(WRONG_CURVE)
+        return left.specialize(start_node.s, end_node.s)
+    elif start_node.interior_curve is IntersectionClassification.second:
+        right = start_node.right
+        if end_node.right is not right:
+            raise ValueError(WRONG_CURVE)
+        return right.specialize(start_node.t, end_node.t)
+    else:
+        raise ValueError('Segment start must be classified as '
+                         '"first" or "second".')
+
+
 def combine_intersections(intersections):
     """Combine curve-curve intersections into curved polygon(s).
 
@@ -1413,16 +1620,46 @@ def combine_intersections(intersections):
 
     Args:
         intersections (list): A list of :class:`.Intersection` objects
-        produced by :func:`.all_intersections` applied to each of the 9
-        edge-edge pairs from a surface-surface pairing.
+            produced by :func:`.all_intersections` applied to each of
+            the 9 edge-edge pairs from a surface-surface pairing.
 
     Returns:
-        List[~bezier.curved_polygon.CurvedPolygon]: A.
+        List[~bezier.curved_polygon.CurvedPolygon]: A list of curved polygons
+        that compose the intersected objects.
     """
     if len(intersections) == 0:
         return []
 
-    raise NotImplementedError
+    acceptable = (IntersectionClassification.first,
+                  IntersectionClassification.second)
+    unused = [intersection for intersection in intersections
+              if intersection.interior_curve in acceptable]
+    result = []
+    while unused:
+        start = unused.pop()
+        curr_node = start
+        next_node = _get_next(start, intersections, unused)
+        edge_ends = [(curr_node, next_node)]
+        while next_node is not start:
+            curr_node = _to_front(next_node, intersections, unused)
+            # NOTE: We also check to break when moving a corner node
+            #       to the front. This is because ``intersections``
+            #       de-duplicates corners by selecting the one
+            #       (of 2 or 4 choices) at the front of segment(s).
+            if curr_node is start:
+                break
+            next_node = _get_next(curr_node, intersections, unused)
+            edge_ends.append((curr_node, next_node))
+
+        result.append(curved_polygon.CurvedPolygon(*(
+            _ends_to_curve(*pair)
+            for pair in edge_ends
+        )))
+
+    if len(result) == 0:
+        raise NotImplementedError('All tangent not done yet.')
+
+    return result
 
 
 class IntersectionClassification(enum.Enum):

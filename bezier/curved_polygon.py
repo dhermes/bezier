@@ -32,6 +32,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import six
 
+from bezier import _helpers
+
 
 class CurvedPolygon(object):
     """Represents an object defined by its curved boundary.
@@ -150,8 +152,9 @@ class CurvedPolygon(object):
         prev_nodes = prev._nodes
         curr_nodes = curr._nodes
         # pylint: enable=protected-access
-        if not np.all(prev_nodes[-1, :] == curr_nodes[0, :]):
+        if not _helpers.vector_close(prev_nodes[-1, :], curr_nodes[0, :]):
             raise ValueError(
+                'Not sufficiently close',
                 'Consecutive sides do not have common endpoint',
                 prev, curr)
 

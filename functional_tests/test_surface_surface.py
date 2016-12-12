@@ -20,6 +20,7 @@ import runtime_utils
 
 
 PARALLEL_FAILURE = ('Line segments parallel.',)
+ALL_TANGENT = ('All tangent not done yet.',)
 TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 CONFIG = runtime_utils.Config()
 
@@ -488,6 +489,33 @@ def check_intersections(s_vals, t_vals, points, intersections,
     # pylint: enable=too-many-locals
 
 
+def new_check(surface1, surface2, start_vals, end_vals, nodes, edge_pairs):
+    assert surface1.is_valid
+    assert surface2.is_valid
+
+    intersections = surface1.intersect(surface2)
+    assert len(intersections) == 1
+    intersection = intersections[0]
+    assert isinstance(intersection, bezier.CurvedPolygon)
+
+    edges = (
+        surface1._get_edges(),
+        surface2._get_edges(),
+    )
+
+    info = six.moves.zip(
+        intersection._edges, edge_pairs, start_vals, end_vals, nodes)
+    for edge, edge_pair, start_val, end_val, node in info:
+        surf_index, edge_index = edge_pair
+        expected = edges[surf_index][edge_index]
+        assert expected is edge.root
+
+        CONFIG.assert_close(edge.start, start_val)
+        CONFIG.assert_close(edge.end, end_val)
+        CONFIG.assert_close(edge._nodes[0, 0], node[0])
+        CONFIG.assert_close(edge._nodes[0, 1], node[1])
+
+
 # pylint: disable=too-many-arguments
 def surface_surface_check(surface1, surface2, s_vals, t_vals, points,
                           edge_inds1, edge_inds2, interior_edges):
@@ -512,59 +540,59 @@ def surface_surface_check(surface1, surface2, s_vals, t_vals, points,
 def test_surfaces1Q_and_3Q():
     _, s_val1 = runtime_utils.real_roots([36, -48, 4, 200, -131])
     s_val2, = runtime_utils.real_roots([49, 91, 320, -244])
-    edge_s_vals = np.array([0.0, 0.0, s_val1, s_val2])
 
     t_val1, _ = runtime_utils.real_roots([9, -18, 5, -28, 12])
     t_val2, = runtime_utils.real_roots([49, 63, 88, -128])
-    edge_t_vals = np.array([0.0, 0.0, t_val1, t_val2])
+    start_vals = np.array([s_val2, 0.0, 0.0, t_val1])
+    end_vals = np.array([1.0, 1.0, s_val1, t_val2])
 
     x_val1 = 0.5 * (1.0 - s_val1) * (s_val1 + 2.0)
     y_val1 = 0.5 * s_val1 * (3.0 - s_val1)
     x_val2 = 0.5 * s_val2 * (1.0 - s_val2)
     y_val2 = 1.0 - s_val2
-    points = np.array([
+    nodes = np.array([
+        [x_val2, y_val2],
         [0.0, 0.0],
         [1.0, 0.0],
         [x_val1, y_val1],
-        [x_val2, y_val2],
     ])
-
-    edge_inds1 = [0, 1, 1, 2]
-    edge_inds2 = [0, 1, 2, 2]
-    interior_edges = [1, 0, 1, 0]
-
+    edge_pairs = (
+        (0, 2),
+        (1, 0),
+        (0, 1),
+        (1, 2),
+    )
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(45):
-        surface_surface_check(SURFACE1Q, SURFACE3Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
+        new_check(SURFACE1Q, SURFACE3Q,
+                  start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_3L():
-    edge_s_vals = np.array([0.25, 0.75])
-    edge_t_vals = np.array([0.875, 0.125])
-    points = np.array([
-        [0.25, 0.0],
+    start_vals = np.array([0.125, 0.25, 0.0])
+    end_vals = np.array([0.875, 1.0, 0.75])
+
+    nodes = np.array([
         [0.25, 0.75],
+        [0.25, 0.0],
+        [1.0, 0.0],
     ])
-    edge_inds1 = [0, 1]
-    edge_inds2 = [2, 2]
-    interior_edges = [0, 1]
+    edge_pairs = (
+        (1, 2),
+        (0, 0),
+        (0, 1),
+    )
+    new_check(SURFACE1L, SURFACE3L,
+              start_vals, end_vals, nodes, edge_pairs)
 
-    surface_surface_check(SURFACE1L, SURFACE3L,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
 
-
-def test_surfaces1Q_and_2Q():  # pylint: disable=too-many-locals
+def test_surfaces1Q_and_2Q():
     s_val1, _ = runtime_utils.real_roots([3, -21, 10])
     _, s_val2 = runtime_utils.real_roots([12, -24, 0, 140, -105])
     s_val3, _ = runtime_utils.real_roots([12, -72, 56, -100, 23])
     _, s_val4 = runtime_utils.real_roots([12, 24, -88, 156, -81])
     _, s_val5 = runtime_utils.real_roots([9, -54, 213, -12, -96])
     s_val6, _ = runtime_utils.real_roots([12, -24, 24, -140, 23])
-    edge_s_vals = np.array([
-        s_val1, s_val2, s_val3, s_val4, s_val5, s_val6])
 
     _, t_val1 = runtime_utils.real_roots([9, 39, -38])
     t_val2, _ = runtime_utils.real_roots([9, -18, -3, -116, 20])
@@ -572,236 +600,277 @@ def test_surfaces1Q_and_2Q():  # pylint: disable=too-many-locals
     t_val4, _ = runtime_utils.real_roots([9, -66, 25, -160, 64])
     _, t_val5 = runtime_utils.real_roots([9, -66, 181, 36, -44])
     t_val6, _ = runtime_utils.real_roots([9, -18, -3, -116, 84])
-    edge_t_vals = np.array([
-        t_val1, t_val2, t_val3, t_val4, t_val5, t_val6])
+    start_vals = np.array(
+        [s_val6, t_val5, s_val1, t_val2, s_val3, t_val4])
+    end_vals = np.array(
+        [s_val5, t_val1, s_val2, t_val3,  s_val4, t_val6])
 
-    points = np.array([
+    nodes = np.array([
+        [0.5 * s_val6 * (1.0 - s_val6), 1.0 - s_val6],
+        [0.5 * s_val5 * (1.0 - s_val5), 1.0 - s_val5],
         [s_val1, 0.5 * s_val1 * (s_val1 - 1.0)],
         [s_val2, 0.5 * s_val2 * (s_val2 - 1.0)],
         [0.5 * (1.0 - s_val3) * (s_val3 + 2.0),
          0.5 * s_val3 * (3.0 - s_val3)],
         [0.5 * (1.0 - s_val4) * (s_val4 + 2.0),
          0.5 * s_val4 * (3.0 - s_val4)],
-        [0.5 * s_val5 * (1.0 - s_val5), 1.0 - s_val5],
-        [0.5 * s_val6 * (1.0 - s_val6), 1.0 - s_val6],
     ])
-    edge_inds1 = [0, 0, 1, 1, 2, 2]
-    edge_inds2 = [0, 1, 1, 2, 0, 2]
-    interior_edges = [0, 1, 0, 1, 1, 0]
-
+    edge_pairs = (
+        (0, 2),
+        (1, 0),
+        (0, 0),
+        (1, 1),
+        (0, 1),
+        (1, 2),
+    )
     # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(11):
-        surface_surface_check(SURFACE1Q, SURFACE2Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
+    with CONFIG.wiggle(9):
+        new_check(SURFACE1Q, SURFACE2Q,
+                  start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces10Q_and_18Q():
-    edge_s_vals = np.array([0.0, 0.25, 0.0])
-    edge_t_vals = np.array([0.0, 0.0, 0.75])
+    start_vals = np.array([0.0, 0.25, 0.0])
+    end_vals = np.array([1.0, 1.0, 1.0])
+
+    nodes = np.array([
+        [0.5, -0.75],
+        [0.75, 0.09375],
+        [0.0, 0.0],
+    ])
+    edge_pairs = (
+        (1, 2),
+        (0, 0),
+        (0, 1),
+    )
+    with pytest.raises(NotImplementedError) as exc_info:
+        new_check(SURFACE10Q, SURFACE18Q,
+                  start_vals, end_vals, nodes, edge_pairs)
+
+    assert str(exc_info.value).startswith(TANGENT_FAILURE)
     points = np.array([
         [0.5, -0.75],
         [0.75, 0.09375],
         [0.0, 0.0],
     ])
-    edge_inds1 = [2, 0, 1]
-    edge_inds2 = [2, 0, 0]
     interior_edges = [None, None, None]
-
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE10Q, SURFACE18Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert str(exc_info.value).startswith(TANGENT_FAILURE)
     make_plots(SURFACE10Q, SURFACE18Q, points, interior_edges)
 
 
 def test_surfaces10Q_and_19Q():
-    edge_s_vals = np.array([0.0, 0.0])
-    edge_t_vals = edge_s_vals
+    with pytest.raises(NotImplementedError) as exc_info:
+        intersections = SURFACE10Q.intersect(SURFACE19Q)
+        assert intersections == []
+
+    assert exc_info.value.args == PARALLEL_FAILURE
     points = np.array([
         [0.0, 0.0],
         [0.5, -0.75],
     ])
-    edge_inds1 = [1, 2]
-    edge_inds2 = [0, 2]
     interior_edges = [None, None]
-
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE10Q, SURFACE19Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert exc_info.value.args == PARALLEL_FAILURE
     make_plots(SURFACE10Q, SURFACE19Q, points, interior_edges)
 
 
 def test_surfaces3Q_and_4Q():
     _, s_val2 = runtime_utils.real_roots([25, -130, 321, -88, -96])
     _, s_val3 = runtime_utils.real_roots([49, 14, 145, 1008, -468])
-    edge_s_vals = np.array([0.5, s_val2, s_val3])
 
     t_val2, _ = runtime_utils.real_roots([100, 360, 712, -2988, 169])
     _, t_val3 = runtime_utils.real_roots([49, -532, 412, 37200, -26352])
-    edge_t_vals = np.array([0.5, t_val2, t_val3])
+    start_vals = np.array([s_val3, t_val2, 0.0])
+    end_vals = np.array([s_val2, 1.0, t_val3])
 
     x_val2 = 0.125 * (s_val2 - 1.0) * (5.0 * s_val2 - 8.0)
     x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
     y_val2 = 0.125 * (1.0 - s_val2) * (7.0 * s_val2 + 8.0)
     y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
-    points = np.array([
-        [0.5, 0.125],
-        [x_val2, y_val2],
+    nodes = np.array([
         [x_val3, y_val3],
+        [x_val2, y_val2],
+        [1.0, 0.25],
     ])
-    edge_inds1 = [0, 2, 2]
-    edge_inds2 = [0, 0, 1]
-    interior_edges = [4, 1, 0]
-
+    edge_pairs = (
+        (0, 2),
+        (1, 0),
+        (1, 1),
+    )
     # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(36):
-        surface_surface_check(SURFACE3Q, SURFACE4Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
+    with CONFIG.wiggle(32):
+        new_check(SURFACE3Q, SURFACE4Q,
+                  start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1Q_and_5L():
     s_val4, _ = runtime_utils.real_roots([1, -3, 1])
-    edge_s_vals = np.array([0.75, 0.25, 0.5, s_val4])
-
     t_val4, _ = runtime_utils.real_roots([1764, -3108, 1049])
-    edge_t_vals = np.array([2.0 / 21.0, 19.0 / 21.0, 4.0 / 7.0, t_val4])
+    start_vals = np.array([0.5, 0.0, 0.0, t_val4])
+    end_vals = np.array([1.0, 1.0, s_val4, 4.0 / 7.0])
 
     x_val4 = 0.5 * (1.0 - s_val4) * (s_val4 + 2.0)
-    y_val4 = 0.5 * s_val4 * (3.0 - s_val4)
+    nodes = np.array([
+        [0.125, 0.5],
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [x_val4, 0.5],
+    ])
+    edge_pairs = (
+        (0, 2),
+        (0, 0),
+        (0, 1),
+        (1, 1),
+    )
+    with pytest.raises(NotImplementedError) as exc_info:
+        new_check(SURFACE1Q, SURFACE5L,
+                  start_vals, end_vals, nodes, edge_pairs)
+
+    assert str(exc_info.value).startswith(TANGENT_FAILURE)
     points = np.array([
         [0.75, -0.09375],
         [0.25, -0.09375],
         [0.125, 0.5],
-        [x_val4, y_val4],
+        [x_val4, 0.5],
     ])
-    edge_inds1 = [0, 0, 2, 1]
-    edge_inds2 = [0, 2, 1, 1]
     interior_edges = [3, 3, 0, 1]
-
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE1Q, SURFACE5L,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert str(exc_info.value).startswith(TANGENT_FAILURE)
     make_plots(SURFACE1Q, SURFACE5L, points, interior_edges)
 
 
 def test_surfaces3Q_and_5Q():
     s_val3, _ = runtime_utils.real_roots([25, -130, 167, -302, 57])
     s_val4, _ = runtime_utils.real_roots([25, -130, 901, -1212, 279])
-    edge_s_vals = np.array([0.25, s_val3, s_val4])
 
     _, t_val3 = runtime_utils.real_roots([25, -20, -1064, 7800, -6012])
     t_val4, _ = runtime_utils.real_roots([25, -2340, 58908, -105840, 11664])
-    edge_t_vals = np.array([0.0, t_val3, t_val4])
+    start_vals = np.array([t_val4, 0.0, 0.0, s_val3])
+    end_vals = np.array([1.0, 1.0, t_val3, s_val4])
 
     x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
     x_val4 = 0.125 * (s_val4 - 1.0) * (5.0 * s_val4 - 8.0)
     y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
     y_val4 = 0.125 * (1.0 - s_val4) * (7.0 * s_val4 + 8.0)
-    points = np.array([
-        [0.25, 0.09375],
-        [x_val3, y_val3],
+    nodes = np.array([
         [x_val4, y_val4],
+        [0.25, 0.09375],
+        [1.125, 0.375],
+        [x_val3, y_val3],
     ])
-    edge_inds1 = [0, 2, 2]
-    edge_inds2 = [0, 1, 2]
-    interior_edges = [1, 0, 1]
-
-    surface_surface_check(SURFACE3Q, SURFACE5Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    edge_pairs = (
+        (1, 2),
+        (1, 0),
+        (1, 1),
+        (0, 2),
+    )
+    new_check(SURFACE3Q, SURFACE5Q,
+              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_2L():
-    edge_s_vals = np.array([0.0, 1.0, 1.3125, 2.53125]) / 3.0
-    edge_t_vals = np.array([3.0, 19.0, 13.5, 13.5]) / 27.0
-    points = np.array([
+    start_vals = np.array([7.59375, 1.0, 3.0, 4.5, 0.0]) / 9.0
+    end_vals = np.array([27.0, 19.0, 11.8125, 27.0, 13.5]) / 27.0
+
+    nodes = np.array([
+        [0.0, 0.46875],
         [0.0, 0.0],
         [2.0, 1.0],
         [1.6875, 1.3125],
-        [0.0, 0.46875],
+        [0.375, 1.125],
     ]) / 3.0
-    edge_inds1 = [0, 1, 1, 2]
-    edge_inds2 = [0, 0, 1, 2]
-    interior_edges = [1, 0, 1, 0]
-
-    surface_surface_check(SURFACE1L, SURFACE2L,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    edge_pairs = (
+        (0, 2),
+        (1, 0),
+        (0, 1),
+        (1, 1),
+        (1, 2),
+    )
+    new_check(SURFACE1L, SURFACE2L,
+              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces20Q_and_21Q():
-    edge_s_vals = np.array([0.0, 0.5])
-    edge_t_vals = np.array([0.0, 4.0 / 5.0])
+    start_vals = np.array([0.0, 0.0, 4.0 / 5.0, 0.0])
+    end_vals = np.array([1.0, 0.5, 1.0, 1.0])
+
+    nodes = np.array([
+        [1.0, 0.0],
+        [0.0, 1.0],
+        [-0.5, 0.5],
+        [-0.5, 0.25],
+    ])
+    edge_pairs = (
+        (0, 0),
+        (0, 1),
+        (1, 1),
+        (1, 2),
+    )
+    with pytest.raises(NotImplementedError) as exc_info:
+        new_check(SURFACE20Q, SURFACE21Q,
+                  start_vals, end_vals, nodes, edge_pairs)
+
+    assert exc_info.value.args == PARALLEL_FAILURE
     points = np.array([
         [1.0, 0.0],
         [-0.5, 0.5],
     ])
-    edge_inds1 = [0, 1]
-    edge_inds2 = [0, 1]
     interior_edges = [3, 1]
-
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE20Q, SURFACE21Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert exc_info.value.args == PARALLEL_FAILURE
     make_plots(SURFACE20Q, SURFACE21Q, points, interior_edges)
 
 
 def test_surfaces4L_and_22Q():
-    edge_s_vals = np.array([0.5, 0.5, 0.5])
-    edge_t_vals = np.array([0.5, 0.5, 0.5])
+    start_vals = np.array([0.0, 0.0, 0.0])
+    end_vals = np.array([1.0, 1.0, 1.0])
+
+    nodes = np.array([
+        [-1.25, 0.0],
+        [1.25, 0.0],
+        [0.0, 2.1875],
+    ])
+    edge_pairs = (
+        (0, 0),
+        (0, 1),
+        (0, 2),
+    )
+    with pytest.raises(NotImplementedError) as exc_info:
+        new_check(SURFACE4L, SURFACE22Q,
+                  start_vals, end_vals, nodes, edge_pairs)
+
+    assert str(exc_info.value).startswith(TANGENT_FAILURE)
     points = np.array([
         [0.0, 0.0],
         [0.625, 1.09375],
         [-0.625, 1.09375],
     ])
-    edge_inds1 = [0, 1, 2]
-    edge_inds2 = [0, 1, 2]
     interior_edges = [3, 3, 3]
-
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE4L, SURFACE22Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert str(exc_info.value).startswith(TANGENT_FAILURE)
     make_plots(SURFACE4L, SURFACE22Q, points, interior_edges)
 
 
 def test_surfaces4L_and_23Q():
-    edge_s_vals = np.array([0.5, 0.5, 0.5])
-    edge_t_vals = np.array([0.5, 0.5, 0.5])
+    start_vals = np.array([0.0, 0.0, 0.0])
+    end_vals = np.array([1.0, 1.0, 1.0])
+
+    nodes = np.array([
+        [-1.0, 0.125],
+        [1.0, 0.125],
+        [0.0, 1.875],
+    ])
+    edge_pairs = (
+        (1, 0),
+        (1, 1),
+        (1, 2),
+    )
+    with pytest.raises(NotImplementedError) as exc_info:
+        new_check(SURFACE4L, SURFACE23Q,
+                  start_vals, end_vals, nodes, edge_pairs)
+
+    assert str(exc_info.value).startswith(TANGENT_FAILURE)
     points = np.array([
         [0.0, 0.0],
         [0.625, 1.09375],
         [-0.625, 1.09375],
     ])
-    edge_inds1 = [0, 1, 2]
-    edge_inds2 = [0, 1, 2]
     interior_edges = [4, 4, 4]
-
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE4L, SURFACE23Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert str(exc_info.value).startswith(TANGENT_FAILURE)
     make_plots(SURFACE4L, SURFACE23Q, points, interior_edges)
 
 
-def test_surfaces6Q_and_7Q():  # pylint: disable=too-many-locals
+def test_surfaces6Q_and_7Q():
     s_val3, _ = runtime_utils.real_roots([1, -13, 2])
     _, s_val4 = runtime_utils.real_roots([7, 5, -10])
     s_val5, s_val6 = runtime_utils.real_roots([4, 120, 1592, -1908, 489])
@@ -850,110 +919,112 @@ def test_surfaces6Q_and_7Q():  # pylint: disable=too-many-locals
 
 def test_surfaces8Q_and_9Q():
     s_val2, s_val3 = runtime_utils.real_roots([28, -24, 1])
-    edge_s_vals = np.array([3.0 / 14.0, s_val2, s_val3, 13.0 / 14.0])
-
     t_val3, t_val2 = runtime_utils.real_roots([28, -32, 5])
-    edge_t_vals = np.array([1.0 / 14.0, t_val2, t_val3, 11.0 / 14.0])
+    start_vals = np.array([11.0 / 14.0, s_val2, 1.0 / 14.0, s_val3])
+    end_vals = np.array([t_val2, 3.0 / 14.0, t_val3, 13.0 / 14.0])
 
     x_val2 = (1.0 - s_val2) * (1.0 + 7.0 * s_val2)
     x_val3 = (1.0 - s_val3) * (1.0 + 7.0 * s_val3)
     y_val2 = s_val2 * (8.0 - 7.0 * s_val2)
     y_val3 = s_val3 * (8.0 - 7.0 * s_val3)
-    points = np.array([
-        [55.0 / 28.0, 39.0 / 28.0],
-        [x_val2, y_val2],
-        [x_val3, y_val3],
+    nodes = np.array([
         [15.0 / 28.0, 39.0 / 28.0],
+        [x_val2, y_val2],
+        [55.0 / 28.0, 39.0 / 28.0],
+        [x_val3, y_val3],
     ])
-    edge_inds1 = [1, 1, 1, 1]
-    edge_inds2 = [2, 2, 2, 2]
-    interior_edges = [1, 0, 0, 1]
-
-    surface_surface_check(SURFACE8Q, SURFACE9Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    edge_pairs = (
+        (1, 2),
+        (0, 1),
+        (1, 2),
+        (0, 1),
+    )
+    new_check(SURFACE8Q, SURFACE9Q,
+              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces4Q_and_10Q():
-    # NOTE: This intersection is at a point of tangency.
-    edge_s_vals = np.array([0.5])
-    edge_t_vals = np.array([0.5])
+    with pytest.raises(NotImplementedError) as exc_info:
+        intersections = SURFACE4Q.intersect(SURFACE10Q)
+        assert intersections == []
+
+    assert exc_info.value.args == ALL_TANGENT
     points = np.array([
         [0.5, 0.125],
     ])
-    edge_inds1 = [0]
-    edge_inds2 = [0]
     interior_edges = [2]
-
-    surface_surface_check(SURFACE4Q, SURFACE10Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    make_plots(SURFACE10Q, SURFACE18Q, points, interior_edges)
 
 
 def test_surfaces11Q_and_12Q():
     s_val1, s_val2 = runtime_utils.real_roots([8, -8, 1])
-    edge_s_vals = np.array([s_val1, s_val2])
-    edge_t_vals = np.array([s_val2, s_val1])
+    start_vals = np.array([s_val1, s_val1])
+    end_vals = np.array([s_val2, s_val2])
 
-    points = np.array([
-        [s_val1, 0.125],
+    nodes = np.array([
         [s_val2, 0.125],
+        [s_val1, 0.125],
     ])
-    edge_inds1 = [0, 0]
-    edge_inds2 = [0, 0]
-    interior_edges = [0, 1]
-
-    surface_surface_check(SURFACE11Q, SURFACE12Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    edge_pairs = (
+        (1, 0),
+        (0, 0),
+    )
+    new_check(SURFACE11Q, SURFACE12Q,
+              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces3Q_and_13Q():
-    # NOTE: This intersection is at a point of tangency.
-    edge_s_vals = np.array([0.5])
-    edge_t_vals = np.array([0.5])
+    start_vals = np.array([0.0, 0.0, 0.0])
+    end_vals = np.array([1.0, 1.0, 1.0])
+
+    nodes = np.array([
+        [0.25, 0.15625],
+        [0.75, 0.15625],
+        [0.5, 0.625],
+    ])
+    edge_pairs = (
+        (1, 0),
+        (1, 1),
+        (1, 2),
+    )
+    with pytest.raises(NotImplementedError) as exc_info:
+        new_check(SURFACE3Q, SURFACE13Q,
+                  start_vals, end_vals, nodes, edge_pairs)
+
+    assert exc_info.value.args == ALL_TANGENT
     points = np.array([
         [0.5, 0.125],
     ])
-    edge_inds1 = [0]
-    edge_inds2 = [0]
     interior_edges = [4]
-
-    surface_surface_check(SURFACE3Q, SURFACE13Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    make_plots(SURFACE3Q, SURFACE13Q, points, interior_edges)
 
 
 def test_surfaces10Q_and_17Q():
-    edge_s_vals = np.array([0.0])
-    edge_t_vals = edge_s_vals
-    points = np.array([
-        [0.5, -0.75],
-    ])
-    edge_inds1 = [2]
-    edge_inds2 = [0]
-    interior_edges = [1]
+    start_vals = np.array([0.0, 0.0, 0.0])
+    end_vals = np.array([1.0, 1.0, 1.0])
 
-    surface_surface_check(SURFACE10Q, SURFACE17Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    nodes = np.array([
+        [0.5, -0.75],
+        [0.796875, -0.125],
+        [0.203125, -0.125],
+    ])
+    edge_pairs = (
+        (1, 0),
+        (1, 1),
+        (1, 2),
+    )
+    new_check(SURFACE10Q, SURFACE17Q,
+              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces3Q_and_14Q():
-    edge_s_vals = np.zeros((0,))
-    edge_t_vals = edge_s_vals
-    points = np.zeros((0, 2))
-    edge_inds1 = []
-    edge_inds2 = []
-    interior_edges = []
+    intersections = SURFACE3Q.intersect(SURFACE14Q)
+    assert intersections == []
 
-    surface_surface_check(SURFACE3Q, SURFACE14Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    make_plots(SURFACE3Q, SURFACE14Q, [], [])
 
 
 def test_surfaces15Q_and_16Q():
-    # pylint: disable=too-many-locals
     s_val4, _ = runtime_utils.real_roots([49, -120, 32])
     _, s_val5 = runtime_utils.real_roots([1, 70, -39])
     s_val6, _ = runtime_utils.real_roots([2, -18, 1])
@@ -986,7 +1057,6 @@ def test_surfaces15Q_and_16Q():
 
     assert exc_info.value.args == (_surface_helpers.BAD_TANGENT,)
     make_plots(SURFACE15Q, SURFACE16Q, points, interior_edges)
-    # pylint: enable=too-many-locals
 
 
 def test_surfaces24Q_and_25Q():
@@ -994,100 +1064,105 @@ def test_surfaces24Q_and_25Q():
         [81, 72, -4640, -1168, 1036])
     _, s_val2 = runtime_utils.real_roots(
         [121, -14740, 618410, -9692, -153359])
-    edge_s_vals = np.array([s_val1, s_val2])
-
     _, t_val1, _, _ = runtime_utils.real_roots(
         [27, -1116, 12020, -10224, 2256])
     _, t_val2 = runtime_utils.real_roots(
         [11, -1232, 132116, 315936, -31348])
-    edge_t_vals = np.array([t_val1, t_val2])
+    start_vals = np.array([s_val2, 0.0, t_val1, 0.0])
+    end_vals = np.array([1.0, s_val1, 1.0, t_val2])
 
     x_val1 = 0.015625 * (4.0 - 3.0 * s_val1) * (7.0 * s_val1 + 12.0)
     y_val1 = 0.03125 * (3.0 * s_val1 * s_val1 + 25.0)
     x_val2 = 0.0078125 * (33.0 * s_val2 * s_val2 + 62.0 * s_val2 + 1.0)
     y_val2 = 0.03125 * (11.0 * s_val2 * s_val2 - 4.0 * s_val2 + 18.0)
-    points = np.array([
-        [x_val1, y_val1],
+    nodes = np.array([
         [x_val2, y_val2],
+        [0.75, 0.78125],
+        [x_val1, y_val1],
+        [0.328125, 0.625],
     ])
-    edge_inds1 = [0, 2]
-    edge_inds2 = [0, 1]
-    interior_edges = [1, 0]
+    edge_pairs = (
+        (0, 2),
+        (0, 0),
+        (1, 0),
+        (1, 1),
+    )
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(22):
-        surface_surface_check(SURFACE24Q, SURFACE25Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
+        new_check(SURFACE24Q, SURFACE25Q,
+                  start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_6L():
-    edge_s_vals = np.array([0.25, 0.75])
-    edge_t_vals = np.array([0.75, 0.25])
-    points = np.array([
-        [0.25, 0.0],
-        [0.0, 0.25],
-    ])
-    edge_inds1 = [0, 2]
-    edge_inds2 = [2, 0]
-    interior_edges = [1, 0]
+    start_vals = np.array([0.75, 0.0, 0.75, 0.0])
+    end_vals = np.array([1.0, 0.25, 1.0, 0.25])
 
-    surface_surface_check(SURFACE1L, SURFACE6L,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    nodes = np.array([
+        [0.0, 0.25],
+        [0.0, 0.0],
+        [0.25, 0.0],
+        [0.25, 0.25],
+    ])
+    edge_pairs = (
+        (0, 2),
+        (0, 0),
+        (1, 2),
+        (1, 0),
+    )
+    new_check(SURFACE1L, SURFACE6L,
+              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces26Q_and_27Q():
-    edge_s_vals = np.zeros((0,))
-    edge_t_vals = edge_s_vals
-    points = np.zeros((0, 2))
-    edge_inds1 = []
-    edge_inds2 = []
-    interior_edges = []
+    intersections = SURFACE26Q.intersect(SURFACE27Q)
+    assert intersections == []
 
-    surface_surface_check(SURFACE26Q, SURFACE27Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    make_plots(SURFACE26Q, SURFACE27Q, [], [])
 
 
 def test_surfaces1L_and_28Q():
     _, s_val3 = runtime_utils.real_roots([5, 30, -13])
-    edge_s_vals = np.array([0.1875, s_val3])
-
     t_val3, _ = runtime_utils.real_roots([5, -40, 22])
-    edge_t_vals = np.array([0.0, t_val3])
+    start_vals = np.array([t_val3, 0.1875, 0.0])
+    end_vals = np.array([1.0, 1.0, s_val3])
 
-    points = np.array([
-        [0.1875, 0.0],
+    nodes = np.array([
         [1.0 - s_val3, s_val3],
+        [0.1875, 0.0],
+        [1.0, 0.0],
     ])
-    edge_inds1 = [0, 1]
-    edge_inds2 = [2, 1]
-    interior_edges = [0, 1]
-
-    surface_surface_check(SURFACE1L, SURFACE28Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    edge_pairs = (
+        (1, 1),
+        (0, 0),
+        (0, 1),
+    )
+    new_check(SURFACE1L, SURFACE28Q,
+              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_29Q():
     s_val1, s_val2 = runtime_utils.real_roots([128, -128, 7])
-    edge_s_vals = np.array([s_val1, s_val2])
-
     t_val1, t_val2 = runtime_utils.real_roots([8, -8, 1])
-    edge_t_vals = np.array([t_val1, t_val2])
+    start_vals = np.array([s_val2, 0.0, 0.0, 0.0, t_val1])
+    end_vals = np.array([1.0, 1.0, 1.0, s_val1, t_val2])
 
-    points = np.array([
-        [1.0 - s_val1, s_val1],
+    nodes = np.array([
         [1.0 - s_val2, s_val2],
+        [0.0, 1.0],
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [1.0 - s_val1, s_val1],
     ])
-    edge_inds1 = [1, 1]
-    edge_inds2 = [1, 1]
-    interior_edges = [1, 0]
-
-    surface_surface_check(SURFACE1L, SURFACE29Q,
-                          edge_s_vals, edge_t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges)
+    edge_pairs = (
+        (0, 1),
+        (0, 2),
+        (0, 0),
+        (0, 1),
+        (1, 1),
+    )
+    new_check(SURFACE1L, SURFACE29Q,
+              start_vals, end_vals, nodes, edge_pairs)
 
 
 if __name__ == '__main__':
