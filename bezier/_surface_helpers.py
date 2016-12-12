@@ -27,6 +27,7 @@ import six
 
 from bezier import _curve_helpers
 from bezier import _helpers
+from bezier import curved_polygon
 
 
 MAX_POLY_SUBDIVISIONS = 5
@@ -1397,6 +1398,31 @@ def verify_duplicates(duplicates, uniques):
                 raise ValueError('Count == 3 should be a double corner', key)
         else:
             raise ValueError('Unexpected duplicate count', count)
+
+
+def combine_intersections(intersections):
+    """Combine curve-curve intersections into curved polygon(s).
+
+    Does so assuming each intersection lies on an edge of one of
+    two :class:`.Surface`-s.
+
+    .. note ::
+
+       This assumes that each ``intersection`` has been classified via
+       :func:`classify_intersection`.
+
+    Args:
+        intersections (list): A list of :class:`.Intersection` objects
+        produced by :func:`.all_intersections` applied to each of the 9
+        edge-edge pairs from a surface-surface pairing.
+
+    Returns:
+        List[~bezier.curved_polygon.CurvedPolygon]: A.
+    """
+    if len(intersections) == 0:
+        return []
+
+    raise NotImplementedError
 
 
 class IntersectionClassification(enum.Enum):

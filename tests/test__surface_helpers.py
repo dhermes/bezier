@@ -935,3 +935,20 @@ class Test_verify_duplicates(unittest.TestCase):
         uniq = make_intersect(self.LEFT, 0.375, self.RIGHT, 0.75)
         with self.assertRaises(ValueError):
             self._call_function_under_test([uniq, uniq], [uniq])
+
+
+class Test_combine_intersections(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersections):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.combine_intersections(intersections)
+
+    def test_empty(self):
+        result = self._call_function_under_test([])
+        self.assertEqual(result, [])
+
+    def test_non_empty(self):
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test([None])
