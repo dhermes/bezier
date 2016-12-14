@@ -199,11 +199,12 @@ class CurvedPolygon(object):
         return '<{} (num_sides={:d})>'.format(
             self.__class__.__name__, self.num_sides)
 
-    def plot(self, pts_per_edge, ax=None, show=False):
+    def plot(self, pts_per_edge, color=None, ax=None, show=False):
         """Plot the current curved polygon.
 
         Args:
             pts_per_edge (int): Number of points to plot per curved edge.
+            color (Optional[Tuple[float, float, float]]): Color as RGB profile.
             ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
                 to add plot to.
             show (Optional[bool]): Flag indicating if the plot should be
@@ -221,7 +222,6 @@ class CurvedPolygon(object):
 
         # Evaluate points on each edge.
         all_points = []
-        color = None
         for edge in self._edges:
             points = edge.evaluate_multi(s_vals)
             line, = ax.plot(points[:, 0], points[:, 1], color=color)

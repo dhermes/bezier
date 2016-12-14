@@ -416,12 +416,37 @@ Intersected = collections.namedtuple(
     ['start_vals', 'end_vals', 'nodes', 'edge_pairs'])
 
 
+def new_plot(surface1, surface2, intersections):
+    if not CONFIG.running:
+        return
+
+    ax = surface1.plot(64)
+    surface2.plot(64, ax=ax)
+
+    color = None
+    for intersection in intersections:
+        intersection.plot(64, color=color, ax=ax)
+        # Color is (R,G,B,A) but we just want (R,G,B).
+        color = ax.patches[-1].get_facecolor()[:3]
+
+    plt.axis('scaled')
+    runtime_utils.add_plot_boundary(ax)
+
+    if CONFIG.save_plot:
+        CONFIG.save_fig()
+    else:
+        plt.title(CONFIG.current_test)
+        plt.show()
+
+    plt.close(ax.figure)
+
+
 def make_plots(surface1, surface2, points, interior_edges):
     if not CONFIG.running:
         return
 
     ax = surface1.plot(64)
-    # Remove the alpha from the color
+    # Color is (R,G,B,A) but we just want (R,G,B).
     color0 = ax.patches[-1].get_facecolor()[:3]
     surface2.plot(64, ax=ax)
     color1 = ax.patches[-1].get_facecolor()[:3]
@@ -499,6 +524,8 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
             CONFIG.assert_close(edge.end, end_val)
             CONFIG.assert_close(edge._nodes[0, 0], node[0])
             CONFIG.assert_close(edge._nodes[0, 1], node[1])
+
+    new_plot(surface1, surface2, intersections)
 
 
 def test_surfaces1Q_and_3Q():
