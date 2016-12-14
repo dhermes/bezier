@@ -1713,31 +1713,24 @@ def _tangent_only_intersections(intersections, surface1, surface2):
         raise ValueError('Point type not for tangency', point_type)
 
 
-def combine_intersections(intersections, surface1, surface2):
-    """Combine curve-curve intersections into curved polygon(s).
+def _basic_interior_combine(intersections):
+    """Combine intersections that don't involve tangencies.
 
-    Does so assuming each intersection lies on an edge of one of
-    two :class:`.Surface`-s.
+    Helper for :func:`combine_intersections`.
 
-    .. note ::
+    .. note::
 
-       This assumes that each ``intersection`` has been classified via
-       :func:`classify_intersection`.
+       This helper assumes ``intersections`` isn't empty, but doesn't
+       enforce it.
 
     Args:
         intersections (list): A list of :class:`.Intersection` objects
             produced by :func:`.all_intersections` applied to each of
             the 9 edge-edge pairs from a surface-surface pairing.
-        surface1 (.Surface): First surface in intersection.
-        surface2 (.Surface): Second surface in intersection.
 
     Returns:
-        List[~bezier.curved_polygon.CurvedPolygon]: A list of curved polygons
-        that compose the intersected objects.
+        List[.CurvedPolygon]: All of the intersections encountered.
     """
-    if len(intersections) == 0:
-        return _no_intersections(surface1, surface2)
-
     acceptable = (IntersectionClassification.first,
                   IntersectionClassification.second)
     unused = [intersection for intersection in intersections
@@ -1764,6 +1757,35 @@ def combine_intersections(intersections, surface1, surface2):
             for pair in edge_ends
         )))
 
+    return result
+
+
+def combine_intersections(intersections, surface1, surface2):
+    """Combine curve-curve intersections into curved polygon(s).
+
+    Does so assuming each intersection lies on an edge of one of
+    two :class:`.Surface`-s.
+
+    .. note ::
+
+       This assumes that each ``intersection`` has been classified via
+       :func:`classify_intersection`.
+
+    Args:
+        intersections (list): A list of :class:`.Intersection` objects
+            produced by :func:`.all_intersections` applied to each of
+            the 9 edge-edge pairs from a surface-surface pairing.
+        surface1 (.Surface): First surface in intersection.
+        surface2 (.Surface): Second surface in intersection.
+
+    Returns:
+        List[~bezier.curved_polygon.CurvedPolygon]: A list of curved polygons
+        that compose the intersected objects.
+    """
+    if len(intersections) == 0:
+        return _no_intersections(surface1, surface2)
+
+    result = _basic_interior_combine(intersections)
     if len(result) > 0:
         return result
 
