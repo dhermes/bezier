@@ -416,7 +416,7 @@ Intersected = collections.namedtuple(
     ['start_vals', 'end_vals', 'nodes', 'edge_pairs'])
 
 
-def new_plot(surface1, surface2, intersections, failed=True):
+def make_plots(surface1, surface2, intersections, failed=True):
     if not CONFIG.running:
         return
 
@@ -504,7 +504,7 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
             CONFIG.assert_close(edge._nodes[0, 0], node[0])
             CONFIG.assert_close(edge._nodes[0, 1], node[1])
 
-    new_plot(surface1, surface2, intersections, failed=False)
+    make_plots(surface1, surface2, intersections, failed=False)
 
 
 def test_surfaces1Q_and_3Q():
@@ -621,7 +621,7 @@ def test_surfaces10Q_and_18Q():
     intersection = make_curved_polygon(
         SURFACE10Q, SURFACE18Q,
         start_vals, end_vals, edge_pairs)
-    new_plot(SURFACE10Q, SURFACE18Q, [intersection])
+    make_plots(SURFACE10Q, SURFACE18Q, [intersection])
 
 
 def test_surfaces10Q_and_19Q():
@@ -629,7 +629,7 @@ def test_surfaces10Q_and_19Q():
         surface_surface_check_multi(SURFACE10Q, SURFACE19Q)
 
     assert exc_info.value.args == PARALLEL_FAILURE
-    new_plot(SURFACE10Q, SURFACE19Q, [])
+    make_plots(SURFACE10Q, SURFACE19Q, [])
 
 
 def test_surfaces3Q_and_4Q():
@@ -688,7 +688,7 @@ def test_surfaces1Q_and_5L():
     intersection = make_curved_polygon(
         SURFACE1Q, SURFACE5L,
         start_vals, end_vals, edge_pairs)
-    new_plot(SURFACE1Q, SURFACE5L, [intersection])
+    make_plots(SURFACE1Q, SURFACE5L, [intersection])
 
 
 def test_surfaces3Q_and_5Q():
@@ -766,7 +766,7 @@ def test_surfaces20Q_and_21Q():
     intersection = make_curved_polygon(
         SURFACE20Q, SURFACE21Q,
         start_vals, end_vals, edge_pairs)
-    new_plot(SURFACE20Q, SURFACE21Q, [intersection])
+    make_plots(SURFACE20Q, SURFACE21Q, [intersection])
 
 
 def test_surfaces4L_and_22Q():
@@ -791,7 +791,7 @@ def test_surfaces4L_and_22Q():
     intersection = make_curved_polygon(
         SURFACE4L, SURFACE22Q,
         start_vals, end_vals, edge_pairs)
-    new_plot(SURFACE4L, SURFACE22Q, [intersection])
+    make_plots(SURFACE4L, SURFACE22Q, [intersection])
 
 
 def test_surfaces4L_and_23Q():
@@ -816,7 +816,7 @@ def test_surfaces4L_and_23Q():
     intersection = make_curved_polygon(
         SURFACE4L, SURFACE23Q,
         start_vals, end_vals, edge_pairs)
-    new_plot(SURFACE4L, SURFACE23Q, [intersection])
+    make_plots(SURFACE4L, SURFACE23Q, [intersection])
 
 
 def test_surfaces6Q_and_7Q():
@@ -910,7 +910,7 @@ def test_surfaces4Q_and_10Q():
         surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
 
     assert exc_info.value.args == ALL_TANGENT
-    new_plot(SURFACE4Q, SURFACE10Q, [])
+    make_plots(SURFACE4Q, SURFACE10Q, [])
 
 
 def test_surfaces11Q_and_12Q():
@@ -952,7 +952,7 @@ def test_surfaces3Q_and_13Q():
     intersection = make_curved_polygon(
         SURFACE3Q, SURFACE13Q,
         start_vals, end_vals, edge_pairs)
-    new_plot(SURFACE3Q, SURFACE13Q, [intersection])
+    make_plots(SURFACE3Q, SURFACE13Q, [intersection])
 
 
 def test_surfaces10Q_and_17Q():
@@ -995,7 +995,7 @@ def test_surfaces3Q_and_14Q():
     intersection = make_curved_polygon(
         SURFACE3Q, SURFACE14Q,
         start_vals, end_vals, edge_pairs)
-    new_plot(SURFACE3Q, SURFACE14Q, [intersection])
+    make_plots(SURFACE3Q, SURFACE14Q, [intersection])
 
 
 def test_surfaces15Q_and_16Q():
@@ -1053,7 +1053,7 @@ def test_surfaces15Q_and_16Q():
     intersection2 = make_curved_polygon(
         SURFACE15Q, SURFACE16Q,
         start_vals2, end_vals2, edge_pairs2)
-    new_plot(SURFACE15Q, SURFACE16Q, [intersection1, intersection2])
+    make_plots(SURFACE15Q, SURFACE16Q, [intersection1, intersection2])
 
 
 def test_surfaces24Q_and_25Q():
