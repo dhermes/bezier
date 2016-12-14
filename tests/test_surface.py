@@ -963,7 +963,7 @@ class TestSurface(utils.NumPyTestCase):
             surface.locate(point2)
 
     def test_intersect(self):
-        from bezier import _surface_helpers
+        import bezier
 
         surface1 = self._make_one(self.UNIT_TRIANGLE)
         # Similar triangle with overlapping square.
@@ -974,23 +974,20 @@ class TestSurface(utils.NumPyTestCase):
         ]))
 
         intersections = surface1.intersect(surface2)
-        self.assertEqual(len(intersections), 4)
+        self.assertEqual(len(intersections), 1)
 
-        first = _surface_helpers.IntersectionClassification.first
-        second = _surface_helpers.IntersectionClassification.second
-        expected = [
-            (0.5, 0.0, 0, 0, second),
-            (0.5, 0.5, 1, 0, first),
-            (0.0, 0.5, 2, 1, first),
-            (0.5, 0.5, 2, 2, second),
-        ]
-        for intersection, values in zip(intersections, expected):
-            s, t, i, j, interior = values
-            self.assertEqual(intersection.s, s)
-            self.assertEqual(intersection.t, t)
-            self.assertIs(intersection.left, surface1._edges[i])
-            self.assertIs(intersection.right, surface2._edges[j])
-            self.assertIs(intersection.interior_curve, interior)
+        intersection = intersections[0]
+        self.assertIsInstance(intersection, bezier.CurvedPolygon)
+
+        all_edges = surface1._get_edges() + surface2._get_edges()
+        # Check which sides the intersectioned edges come from.
+        self.assertEqual(
+            [all_edges.index(edge.root) for edge in intersection._edges],
+            [5, 3, 1, 2])
+        self.assertEqual([edge.start for edge in intersection._edges],
+                         [0.5, 0.0, 0.5, 0.0])
+        self.assertEqual([edge.end for edge in intersection._edges],
+                         [1.0, 0.5, 1.0, 0.5])
 
     def test_intersect_non_surface(self):
         surface = self._make_one(self.UNIT_TRIANGLE)
