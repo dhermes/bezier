@@ -468,6 +468,7 @@ def surface_surface_check(surface1, surface2,
 
 
 def surface_surface_check_multi(surface1, surface2, *all_intersected):
+    # pylint: disable=too-many-locals
     assert surface1.is_valid
     assert surface2.is_valid
 
@@ -505,6 +506,7 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
             CONFIG.assert_close(edge._nodes[0, 1], node[1])
 
     make_plots(surface1, surface2, intersections, failed=False)
+    # pylint: enable=too-many-locals
 
 
 def test_surfaces1Q_and_3Q():
@@ -557,6 +559,7 @@ def test_surfaces1L_and_3L():
 
 
 def test_surfaces1Q_and_2Q():
+    # pylint: disable=too-many-locals
     s_val1, _ = runtime_utils.real_roots([3, -21, 10])
     _, s_val2 = runtime_utils.real_roots([12, -24, 0, 140, -105])
     s_val3, _ = runtime_utils.real_roots([12, -72, 56, -100, 23])
@@ -573,17 +576,27 @@ def test_surfaces1Q_and_2Q():
     start_vals = np.array(
         [s_val6, t_val5, s_val1, t_val2, s_val3, t_val4])
     end_vals = np.array(
-        [s_val5, t_val1, s_val2, t_val3,  s_val4, t_val6])
+        [s_val5, t_val1, s_val2, t_val3, s_val4, t_val6])
+
+    x_val1 = 0.5 * s_val6 * (1.0 - s_val6)
+    x_val2 = 0.5 * s_val5 * (1.0 - s_val5)
+    x_val5 = 0.5 * (1.0 - s_val3) * (s_val3 + 2.0)
+    x_val6 = 0.5 * (1.0 - s_val4) * (s_val4 + 2.0)
+
+    y_val1 = 1.0 - s_val6
+    y_val2 = 1.0 - s_val5
+    y_val3 = 0.5 * s_val1 * (s_val1 - 1.0)
+    y_val4 = 0.5 * s_val2 * (s_val2 - 1.0)
+    y_val5 = 0.5 * s_val3 * (3.0 - s_val3)
+    y_val6 = 0.5 * s_val4 * (3.0 - s_val4)
 
     nodes = np.array([
-        [0.5 * s_val6 * (1.0 - s_val6), 1.0 - s_val6],
-        [0.5 * s_val5 * (1.0 - s_val5), 1.0 - s_val5],
-        [s_val1, 0.5 * s_val1 * (s_val1 - 1.0)],
-        [s_val2, 0.5 * s_val2 * (s_val2 - 1.0)],
-        [0.5 * (1.0 - s_val3) * (s_val3 + 2.0),
-         0.5 * s_val3 * (3.0 - s_val3)],
-        [0.5 * (1.0 - s_val4) * (s_val4 + 2.0),
-         0.5 * s_val4 * (3.0 - s_val4)],
+        [x_val1, y_val1],
+        [x_val2, y_val2],
+        [s_val1, y_val3],
+        [s_val2, y_val4],
+        [x_val5, y_val5],
+        [x_val6, y_val6],
     ])
     edge_pairs = (
         (0, 2),
@@ -597,6 +610,7 @@ def test_surfaces1Q_and_2Q():
     with CONFIG.wiggle(9):
         surface_surface_check(SURFACE1Q, SURFACE2Q,
                               start_vals, end_vals, nodes, edge_pairs)
+    # pylint: enable=too-many-locals
 
 
 def test_surfaces10Q_and_18Q():
@@ -820,6 +834,7 @@ def test_surfaces4L_and_23Q():
 
 
 def test_surfaces6Q_and_7Q():
+    # pylint: disable=too-many-locals
     s_val3, _ = runtime_utils.real_roots([1, -13, 2])
     _, s_val4 = runtime_utils.real_roots([7, 5, -10])
     s_val5, s_val6 = runtime_utils.real_roots([4, 120, 1592, -1908, 489])
@@ -877,6 +892,7 @@ def test_surfaces6Q_and_7Q():
     with CONFIG.wiggle(25):
         surface_surface_check_multi(SURFACE6Q, SURFACE7Q,
                                     intersected1, intersected2)
+    # pylint: enable=too-many-locals
 
 
 def test_surfaces8Q_and_9Q():
@@ -999,6 +1015,7 @@ def test_surfaces3Q_and_14Q():
 
 
 def test_surfaces15Q_and_16Q():
+    # pylint: disable=too-many-locals
     s_val4, _ = runtime_utils.real_roots([49, -120, 32])
     _, s_val5 = runtime_utils.real_roots([1, 70, -39])
     s_val6, _ = runtime_utils.real_roots([2, -18, 1])
@@ -1054,6 +1071,7 @@ def test_surfaces15Q_and_16Q():
         SURFACE15Q, SURFACE16Q,
         start_vals2, end_vals2, edge_pairs2)
     make_plots(SURFACE15Q, SURFACE16Q, [intersection1, intersection2])
+    # pylint: enable=too-many-locals
 
 
 def test_surfaces24Q_and_25Q():
@@ -1112,7 +1130,6 @@ def test_surfaces1L_and_6L():
 
 
 def test_surfaces26Q_and_27Q():
-    intersections = SURFACE26Q.intersect(SURFACE27Q)
     surface_surface_check_multi(SURFACE26Q, SURFACE27Q)
 
 

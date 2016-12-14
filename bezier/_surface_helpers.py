@@ -1474,6 +1474,7 @@ def _to_front(intersection, intersections, unused):
     return intersection
 
 
+# pylint: disable=too-many-branches
 def _get_next(intersection, intersections, unused):
     """Gets the next node along a given edge.
 
@@ -1519,7 +1520,8 @@ def _get_next(intersection, intersections, unused):
             if other_int.left is left and other_s > s:
                 # NOTE: We skip tangent intersections that don't occur
                 #       at a corner.
-                if other_s < 1.0 and other_int.interior_curve not in acceptable:
+                if (other_s < 1.0 and
+                        other_int.interior_curve not in acceptable):
                     continue
                 if along_edge is None or other_s < along_edge.s:
                     along_edge = other_int
@@ -1541,7 +1543,8 @@ def _get_next(intersection, intersections, unused):
             if other_int.right is right and other_t > t:
                 # NOTE: We skip tangent intersections that don't occur
                 #       at a corner.
-                if other_t < 1.0 and other_int.interior_curve not in acceptable:
+                if (other_t < 1.0 and
+                        other_int.interior_curve not in acceptable):
                     continue
                 if along_edge is None or other_t < along_edge.t:
                     along_edge = other_int
@@ -1550,7 +1553,9 @@ def _get_next(intersection, intersections, unused):
             # Just return the segment end.
             new_intersection = _intersection_helpers.Intersection(
                 None, None, intersection.right, 1.0)
+            # pylint: disable=redefined-variable-type
             new_intersection.interior_curve = IntersectionClassification.second
+            # pylint: enable=redefined-variable-type
             result = new_intersection
         else:
             result = along_edge
@@ -1561,6 +1566,7 @@ def _get_next(intersection, intersections, unused):
     if result in unused:
         unused.remove(result)
     return result
+# pylint: enable=too-many-branches
 
 
 def _ends_to_curve(start_node, end_node):
@@ -1626,6 +1632,12 @@ def combine_intersections(intersections):
     Returns:
         List[~bezier.curved_polygon.CurvedPolygon]: A list of curved polygons
         that compose the intersected objects.
+
+    Raises:
+        NotImplementedError: If there **are** intersections but
+        none of them are classified as
+        :attr:`~.IntersectionClassification.first` or
+        :attr:`~.IntersectionClassification.second`.
     """
     if len(intersections) == 0:
         return []
