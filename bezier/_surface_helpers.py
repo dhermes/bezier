@@ -1613,7 +1613,105 @@ def _ends_to_curve(start_node, end_node):
                          '"first" or "second".')
 
 
-def combine_intersections(intersections):
+def _to_curved_polygon(surface):
+    """Convert a surface to a curved polygon.
+
+    This is a helper for :func:`combine_intersections` to allow
+    returning a curved polygon when the intersection is the
+    entirety of one surface.
+
+    Args:
+        surface (.Surface): The surface to convert.
+
+    Returns:
+        .CurvedPolygon: The converted object.
+    """
+    edges = surface._get_edges()
+    return curved_polygon.CurvedPolygon(*edges)
+
+
+def _no_intersections(surface1, surface2):
+    """Determine if one surface is in the other.
+
+    Helper for :func:`combine_intersections` that handles the case
+    of no points of intersection. In this case, either the surfaces
+    are disjoint or one is fully contained in the other.
+
+    To check containment, it's enough to check if one of the corners
+    is contained in the other surface.
+
+    Args:
+        surface1 (.Surface): First surface in intersection.
+        surface2 (.Surface): Second surface in intersection.
+
+    Returns:
+        list: Either an empty list if one surface isn't contained
+        in the other. Otherwise, the list will have a single
+        :class:`.CurvedPolygon` corresponding to the internal surface.
+    """
+    corner1 = surface1._nodes[[0], :]
+    if surface2.locate(corner1) is not None:
+        return [_to_curved_polygon(surface1)]
+
+    corner2 = surface2._nodes[[0], :]
+    if surface1.locate(corner2) is not None:
+        return [_to_curved_polygon(surface2)]
+
+    return []
+
+
+def _tangent_only_intersections(intersections, surface1, surface2):
+    """Determine intersection in the case of only-tangent intersections.
+
+    If the only intersections are tangencies, then either the surfaces
+    are tangent but don't meet ("kissing" edges) or one surface is
+    internally tangent to the other.
+
+    Thus we expect every intersection in ``intersections`` to be
+    classified as :attr:`~.IntersectionClassification.tangent_first`,
+    :attr:`~.IntersectionClassification.tangent_second` or
+    :attr:`~.IntersectionClassification.opposed`.
+
+    What's more, we expect all intersections to be classified the same for
+    a given pairing.
+
+    Args:
+        intersections (list): A list of :class:`.Intersection` objects
+            produced by :func:`.all_intersections` applied to each of
+            the 9 edge-edge pairs from a surface-surface pairing.
+        surface1 (.Surface): First surface in intersection.
+        surface2 (.Surface): Second surface in intersection.
+
+    Returns:
+        list: Either an empty list if one surface isn't contained
+        in the other. Otherwise, the list will have a single
+        :class:`.CurvedPolygon` corresponding to the internal surface.
+
+    Raises:
+        ValueError: If there are intersections of more than one type among
+            :attr:`~.IntersectionClassification.tangent_first`,
+            :attr:`~.IntersectionClassification.tangent_second` or
+            :attr:`~.IntersectionClassification.opposed`.
+        ValueError: If there is a unique classification, but it isn't one
+            of the tangent types.
+    """
+    all_types = set([intersection.interior_curve
+                     for intersection in intersections])
+    if len(all_types) != 1:
+        raise ValueError('Unexpected value, types should all match',
+                         all_types)
+    point_type = all_types.pop()
+    if point_type is IntersectionClassification.opposed:
+        return []
+    elif point_type is IntersectionClassification.tangent_first:
+        return [_to_curved_polygon(surface1)]
+    elif point_type is IntersectionClassification.tangent_second:
+        return [_to_curved_polygon(surface2)]
+    else:
+        raise ValueError('Point type not for tangency', point_type)
+
+
+def combine_intersections(intersections, surface1, surface2):
     """Combine curve-curve intersections into curved polygon(s).
 
     Does so assuming each intersection lies on an edge of one of
@@ -1628,19 +1726,15 @@ def combine_intersections(intersections):
         intersections (list): A list of :class:`.Intersection` objects
             produced by :func:`.all_intersections` applied to each of
             the 9 edge-edge pairs from a surface-surface pairing.
+        surface1 (.Surface): First surface in intersection.
+        surface2 (.Surface): Second surface in intersection.
 
     Returns:
         List[~bezier.curved_polygon.CurvedPolygon]: A list of curved polygons
         that compose the intersected objects.
-
-    Raises:
-        NotImplementedError: If there **are** intersections but
-        none of them are classified as
-        :attr:`~.IntersectionClassification.first` or
-        :attr:`~.IntersectionClassification.second`.
     """
     if len(intersections) == 0:
-        return []
+        return _no_intersections(surface1, surface2)
 
     acceptable = (IntersectionClassification.first,
                   IntersectionClassification.second)
@@ -1668,10 +1762,10 @@ def combine_intersections(intersections):
             for pair in edge_ends
         )))
 
-    if len(result) == 0:
-        raise NotImplementedError('All tangent not done yet.')
+    if len(result) > 0:
+        return result
 
-    return result
+    return _tangent_only_intersections(intersections, surface1, surface2)
 
 
 class IntersectionClassification(enum.Enum):

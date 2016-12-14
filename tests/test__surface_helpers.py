@@ -20,6 +20,13 @@ import numpy as np
 from tests import utils
 
 
+UNIT_TRIANGLE = np.array([
+    [0.0, 0.0],
+    [1.0, 0.0],
+    [0.0, 1.0],
+])
+
+
 def make_intersect(left, s, right, t):
     from bezier import _intersection_helpers
 
@@ -563,12 +570,6 @@ class Test_newton_refine(unittest.TestCase):
 
 class Test_locate_point(unittest.TestCase):
 
-    UNIT_TRIANGLE = np.array([
-        [0.0, 0.0],
-        [1.0, 0.0],
-        [0.0, 1.0],
-    ])
-
     @staticmethod
     def _call_function_under_test(surface, x_val, y_val):
         from bezier import _surface_helpers
@@ -578,7 +579,7 @@ class Test_locate_point(unittest.TestCase):
     def test_it(self):
         import bezier
 
-        surface = bezier.Surface(self.UNIT_TRIANGLE)
+        surface = bezier.Surface(UNIT_TRIANGLE)
         x_val = 0.25
         y_val = 0.625
         s, t = self._call_function_under_test(surface, x_val, y_val)
@@ -588,7 +589,7 @@ class Test_locate_point(unittest.TestCase):
     def test_extra_newton_step(self):
         import bezier
 
-        surface = bezier.Surface(self.UNIT_TRIANGLE)
+        surface = bezier.Surface(UNIT_TRIANGLE)
         x_val = 1.0 / 3.0
         y_val = 1.0 / 3.0
         with mock.patch('bezier._surface_helpers.LOCATE_EPS', new=-1.0):
@@ -600,7 +601,7 @@ class Test_locate_point(unittest.TestCase):
     def test_no_match(self):
         import bezier
 
-        surface = bezier.Surface(self.UNIT_TRIANGLE)
+        surface = bezier.Surface(UNIT_TRIANGLE)
         x_val = -0.125
         y_val = 0.25
         self.assertIsNone(
@@ -940,11 +941,20 @@ class Test_verify_duplicates(unittest.TestCase):
 class Test_combine_intersections(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersections):
+    def _call_function_under_test(intersections, surface1, surface2):
         from bezier import _surface_helpers
 
-        return _surface_helpers.combine_intersections(intersections)
+        return _surface_helpers.combine_intersections(
+            intersections, surface1, surface2)
 
     def test_empty(self):
-        result = self._call_function_under_test([])
+        import bezier
+
+        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        surface2 = bezier.Surface(np.array([
+            [-1.0, 0.0],
+            [-1.0, 1.0],
+            [-2.0, 1.0],
+        ]))
+        result = self._call_function_under_test([], surface1, surface2)
         self.assertEqual(result, [])

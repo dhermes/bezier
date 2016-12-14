@@ -1057,4 +1057,5 @@ class Surface(_base.Base):
         #       intersections at corners. It is not strictly needed,
         #       it is just provided as a sanity check.
         _surface_helpers.verify_duplicates(duplicates, uniques)
-        return _surface_helpers.combine_intersections(uniques)
+        return _surface_helpers.combine_intersections(
+            uniques, self, other)

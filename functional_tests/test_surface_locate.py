@@ -86,10 +86,13 @@ def make_plot(surface, point):
 
 def check_point(surface, point_ind, expected_s, expected_t):
     point = POINTS[[point_ind], :]
-    s, t = surface.locate(point)
+    if expected_s is None and expected_t is None:
+        assert surface.locate(point) is None
+    else:
+        s, t = surface.locate(point)
 
-    CONFIG.assert_close(s, expected_s)
-    CONFIG.assert_close(t, expected_t)
+        CONFIG.assert_close(s, expected_s)
+        CONFIG.assert_close(t, expected_t)
 
     make_plot(surface, point)
 
@@ -110,6 +113,10 @@ def test_surface2_and_point1():
 
 def test_surface2_and_point2():
     check_point(SURFACE2, 2, 0.5, 0.25)
+
+
+def test_surface2_and_point4():
+    check_point(SURFACE2, 4, None, None)
 
 
 def test_surface3_and_point1():

@@ -22,7 +22,6 @@ import runtime_utils
 
 
 PARALLEL_FAILURE = ('Line segments parallel.',)
-ALL_TANGENT = ('All tangent not done yet.',)
 TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 CONFIG = runtime_utils.Config()
 
@@ -922,11 +921,7 @@ def test_surfaces8Q_and_9Q():
 
 
 def test_surfaces4Q_and_10Q():
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
-
-    assert exc_info.value.args == ALL_TANGENT
-    make_plots(SURFACE4Q, SURFACE10Q, [])
+    surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
 
 
 def test_surfaces11Q_and_12Q():
@@ -960,15 +955,8 @@ def test_surfaces3Q_and_13Q():
         (1, 1),
         (1, 2),
     )
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE3Q, SURFACE13Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-
-    assert exc_info.value.args == ALL_TANGENT
-    intersection = make_curved_polygon(
-        SURFACE3Q, SURFACE13Q,
-        start_vals, end_vals, edge_pairs)
-    make_plots(SURFACE3Q, SURFACE13Q, [intersection])
+    surface_surface_check(SURFACE3Q, SURFACE13Q,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces10Q_and_17Q():
@@ -1004,14 +992,8 @@ def test_surfaces3Q_and_14Q():
         (1, 2),
     )
 
-    with pytest.raises(AssertionError):
-        surface_surface_check(SURFACE3Q, SURFACE14Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-
-    intersection = make_curved_polygon(
-        SURFACE3Q, SURFACE14Q,
-        start_vals, end_vals, edge_pairs)
-    make_plots(SURFACE3Q, SURFACE14Q, [intersection])
+    surface_surface_check(SURFACE3Q, SURFACE14Q,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces15Q_and_16Q():
