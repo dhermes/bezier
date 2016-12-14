@@ -409,13 +409,6 @@ SURFACE29Q = bezier.Surface(np.array([
     [0.125, 0.125],
     [0.0, 1.25],
 ]))
-_ENUM_MAPPING = {
-    0: _surface_helpers.IntersectionClassification.first,
-    1: _surface_helpers.IntersectionClassification.second,
-    2: _surface_helpers.IntersectionClassification.opposed,
-    3: _surface_helpers.IntersectionClassification.tangent_first,
-    4: _surface_helpers.IntersectionClassification.tangent_second,
-}
 
 
 Intersected = collections.namedtuple(
@@ -464,38 +457,6 @@ def make_plots(surface1, surface2, points, interior_edges):
     plt.close(ax.figure)
 
 
-def check_intersections(s_vals, t_vals, points, intersections,
-                        edges1, edges2, interior_edges):
-    # pylint: disable=too-many-locals
-    assert len(t_vals) == len(s_vals)
-    assert len(points) == len(s_vals)
-    assert len(intersections) == len(s_vals)
-    assert len(interior_edges) == len(s_vals)
-
-    info = six.moves.zip(
-        intersections, s_vals, t_vals, points,
-        edges1, edges2, interior_edges)
-    for intersection, s_val, t_val, point, edge1, edge2, interior in info:
-        assert intersection.left is edge1
-        assert intersection.right is edge2
-
-        CONFIG.assert_close(intersection.s, s_val)
-        CONFIG.assert_close(intersection.t, t_val)
-        assert intersection.interior_curve is _ENUM_MAPPING[interior]
-
-        CONFIG.assert_close(intersection.point[0], point[0])
-        CONFIG.assert_close(intersection.point[1], point[1])
-
-        point_on1 = edge1.evaluate(s_val)
-        CONFIG.assert_close(point_on1[0], point[0])
-        CONFIG.assert_close(point_on1[1], point[1])
-
-        point_on2 = edge2.evaluate(t_val)
-        CONFIG.assert_close(point_on2[0], point[0])
-        CONFIG.assert_close(point_on2[1], point[1])
-    # pylint: enable=too-many-locals
-
-
 def new_check(surface1, surface2, start_vals, end_vals, nodes, edge_pairs):
     intersected = Intersected(start_vals, end_vals, nodes, edge_pairs)
     newt_check(surface1, surface2, intersected)
@@ -537,27 +498,6 @@ def newt_check(surface1, surface2, *all_intersected):
             CONFIG.assert_close(edge.end, end_val)
             CONFIG.assert_close(edge._nodes[0, 0], node[0])
             CONFIG.assert_close(edge._nodes[0, 1], node[1])
-
-
-# pylint: disable=too-many-arguments
-def surface_surface_check(surface1, surface2, s_vals, t_vals, points,
-                          edge_inds1, edge_inds2, interior_edges):
-    assert surface1.is_valid
-    assert surface2.is_valid
-
-    intersections = surface1.intersect(surface2)
-    edges1 = surface1._get_edges()
-    edges2 = surface2._get_edges()
-    if points is not None:
-        # NOTE: This assumes but doesn't check that s_vals/t_vals/points
-        #       will either all be set, or none be set.
-        expected1 = [edges1[index] for index in edge_inds1]
-        expected2 = [edges2[index] for index in edge_inds2]
-        check_intersections(s_vals, t_vals, points, intersections,
-                            expected1, expected2, interior_edges)
-
-    make_plots(surface1, surface2, points, interior_edges)
-# pylint: enable=too-many-arguments
 
 
 def test_surfaces1Q_and_3Q():
