@@ -8,6 +8,8 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
+import collections
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -416,6 +418,11 @@ _ENUM_MAPPING = {
 }
 
 
+Intersected = collections.namedtuple(
+    'Intersected',
+    ['start_vals', 'end_vals', 'nodes', 'edge_pairs'])
+
+
 def make_plots(surface1, surface2, points, interior_edges):
     if not CONFIG.running:
         return
@@ -490,30 +497,46 @@ def check_intersections(s_vals, t_vals, points, intersections,
 
 
 def new_check(surface1, surface2, start_vals, end_vals, nodes, edge_pairs):
+    intersected = Intersected(start_vals, end_vals, nodes, edge_pairs)
+    newt_check(surface1, surface2, intersected)
+
+
+def newt_check(surface1, surface2, *all_intersected):
     assert surface1.is_valid
     assert surface2.is_valid
 
     intersections = surface1.intersect(surface2)
-    assert len(intersections) == 1
-    intersection = intersections[0]
-    assert isinstance(intersection, bezier.CurvedPolygon)
-
+    assert len(intersections) == len(all_intersected)
     edges = (
         surface1._get_edges(),
         surface2._get_edges(),
     )
 
-    info = six.moves.zip(
-        intersection._edges, edge_pairs, start_vals, end_vals, nodes)
-    for edge, edge_pair, start_val, end_val, node in info:
-        surf_index, edge_index = edge_pair
-        expected = edges[surf_index][edge_index]
-        assert expected is edge.root
+    for intersection, intersected in six.moves.zip(
+            intersections, all_intersected):
+        assert isinstance(intersection, bezier.CurvedPolygon)
 
-        CONFIG.assert_close(edge.start, start_val)
-        CONFIG.assert_close(edge.end, end_val)
-        CONFIG.assert_close(edge._nodes[0, 0], node[0])
-        CONFIG.assert_close(edge._nodes[0, 1], node[1])
+        start_vals = intersected.start_vals
+        end_vals = intersected.end_vals
+        nodes = intersected.nodes
+        edge_pairs = intersected.edge_pairs
+
+        info = six.moves.zip(
+            intersection._edges, edge_pairs, start_vals, end_vals, nodes)
+        num_edges = len(intersection._edges)
+        assert num_edges == len(edge_pairs)
+        assert num_edges == len(start_vals)
+        assert num_edges == len(end_vals)
+        assert num_edges == len(nodes)
+        for edge, edge_pair, start_val, end_val, node in info:
+            surf_index, edge_index = edge_pair
+            expected = edges[surf_index][edge_index]
+            assert expected is edge.root
+
+            CONFIG.assert_close(edge.start, start_val)
+            CONFIG.assert_close(edge.end, end_val)
+            CONFIG.assert_close(edge._nodes[0, 0], node[0])
+            CONFIG.assert_close(edge._nodes[0, 1], node[1])
 
 
 # pylint: disable=too-many-arguments
@@ -876,16 +899,17 @@ def test_surfaces6Q_and_7Q():
     s_val5, s_val6 = runtime_utils.real_roots([4, 120, 1592, -1908, 489])
     s_val7, _ = runtime_utils.real_roots([64, -1232, 297])
     _, s_val8 = runtime_utils.real_roots([576, 784, -871])
-    edge_s_vals = np.array([3.0 / 17.0, 14.0 / 17.0, s_val3, s_val4,
-                            s_val5, s_val6, s_val7, s_val8])
 
     t_val3, _ = runtime_utils.real_roots([1, -102, 25])
     _, t_val4 = runtime_utils.real_roots([49, 68, -76])
     t_val6, t_val5 = runtime_utils.real_roots([4, -104, 1504, -1548, 369])
     t_val7, _ = runtime_utils.real_roots([4, -20, 3])
     _, t_val8 = runtime_utils.real_roots([12, 4, -13])
-    edge_t_vals = np.array([14.0 / 17.0, 3.0 / 17.0, t_val3, t_val4,
-                            t_val5, t_val6, t_val7, t_val8])
+
+    start_vals1 = np.array([s_val8, 3.0 / 17.0, s_val3, t_val5])
+    end_vals1 = np.array([14.0 / 17.0, t_val3, s_val5, t_val8])
+    start_vals2 = np.array([t_val7, s_val6, t_val4, 3.0 / 17.0])
+    end_vals2 = np.array([t_val6, s_val4, 14.0 / 17.0, s_val7])
 
     x_val3 = 0.25 * s_val3 * (3.0 + s_val3)
     x_val4 = 0.25 * s_val4 * (3.0 + s_val4)
@@ -896,25 +920,36 @@ def test_surfaces6Q_and_7Q():
     y_val5 = 0.75 * s_val5 * (1.0 - s_val5)
     y_val6 = 0.75 * s_val6 * (1.0 - s_val6)
 
-    points = np.array([
-        [31.0 / 34.0, 3.0 / 17.0],
+    nodes1 = np.array([
+        [0.5 - 0.5 * s_val8, 1.0 - s_val8],
         [3.0 / 34.0, 3.0 / 17.0],
         [x_val3, y_val3],
-        [x_val4, y_val4],
         [x_val5, y_val5],
-        [x_val6, y_val6],
-        [1.0 - 0.5 * s_val7, s_val7],
-        [0.5 - 0.5 * s_val8, 1.0 - s_val8],
     ])
-    edge_inds1 = [1, 2, 0, 0, 0, 0, 1, 2]
-    edge_inds2 = [2, 1, 1, 2, 0, 0, 0, 0]
-    interior_edges = [0, 1, 0, 1, 1, 0, 1, 0]
+    edge_pairs1 = (
+        (0, 2),
+        (1, 1),
+        (0, 0),
+        (1, 0),
+    )
 
+    nodes2 = np.array([
+        [1.0 - 0.5 * s_val7, s_val7],
+        [x_val6, y_val6],
+        [x_val4, y_val4],
+        [31.0 / 34.0, 3.0 / 17.0],
+    ])
+    edge_pairs2 = (
+        (1, 0),
+        (0, 0),
+        (1, 2),
+        (0, 1),
+    )
+    intersected1 = Intersected(start_vals1, end_vals1, nodes1, edge_pairs1)
+    intersected2 = Intersected(start_vals2, end_vals2, nodes2, edge_pairs2)
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(25):
-        surface_surface_check(SURFACE6Q, SURFACE7Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
+        newt_check(SURFACE6Q, SURFACE7Q, intersected1, intersected2)
 
 
 def test_surfaces8Q_and_9Q():
@@ -1029,14 +1064,49 @@ def test_surfaces15Q_and_16Q():
     _, s_val5 = runtime_utils.real_roots([1, 70, -39])
     s_val6, _ = runtime_utils.real_roots([2, -18, 1])
     _, s_val7 = runtime_utils.real_roots([14, 2, -9])
-    edge_s_vals = np.array([0.25, 0.75, 0.5, s_val4, s_val5, s_val6, s_val7])
 
     t_val4, _ = runtime_utils.real_roots([14, -30, 7])
     _, t_val5 = runtime_utils.real_roots([2, 14, -15])
     t_val6, _ = runtime_utils.real_roots([1, -72, 32])
     _, t_val7 = runtime_utils.real_roots([49, 22, -39])
-    edge_t_vals = np.array([0.75, 0.25, 0.5, t_val4, t_val5, t_val6, t_val7])
 
+    start_vals1 = np.array([0.25, t_val4, 0.5, t_val7])
+    end_vals1 = np.array([s_val4, 0.5, s_val7, 0.75])
+    start_vals2 = np.array([s_val6, 0.5, s_val5, 0.25])
+    end_vals2 = np.array([0.5, t_val5, 0.75, t_val6])
+
+    nodes1 = np.array([
+        [0.5, 0.4375],
+        [2.0 * s_val4, 1.75 * s_val4],
+        [0.5, 1.0],
+        [2.0 * s_val7 * (1.0 - s_val7), 2.0 - 2.0 * s_val7],
+    ])
+    edge_pairs1 = (
+        (0, 0),
+        (1, 0),
+        (0, 2),
+        (1, 2),
+    )
+
+    nodes2 = np.array([
+        [2.0 * s_val6 * (1.0 - s_val6), 2.0 - 2.0 * s_val6],
+        [0.5, 1.0],
+        [2.0 - 2.0 * s_val5, 1.75 + 0.25 * s_val5],
+        [0.5, 1.9375],
+    ])
+    edge_pairs2 = (
+        (0, 2),
+        (1, 0),
+        (0, 1),
+        (1, 1),
+    )
+    intersected1 = Intersected(start_vals1, end_vals1, nodes1, edge_pairs1)
+    intersected2 = Intersected(start_vals2, end_vals2, nodes2, edge_pairs2)
+
+    with pytest.raises(NotImplementedError) as exc_info:
+        newt_check(SURFACE15Q, SURFACE16Q, intersected1, intersected2)
+
+    assert exc_info.value.args == (_surface_helpers.BAD_TANGENT,)
     points = np.array([
         [0.5, 0.4375],
         [0.5, 1.9375],
@@ -1046,16 +1116,7 @@ def test_surfaces15Q_and_16Q():
         [2.0 * s_val6 * (1.0 - s_val6), 2.0 - 2.0 * s_val6],
         [2.0 * s_val7 * (1.0 - s_val7), 2.0 - 2.0 * s_val7],
     ])
-    edge_inds1 = [0, 1, 2, 0, 1, 2, 2]
-    edge_inds2 = [2, 1, 0, 0, 0, 1, 2]
     interior_edges = [0, 1, None, 1, 0, 0, 1]
-
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE15Q, SURFACE16Q,
-                              edge_s_vals, edge_t_vals, points,
-                              edge_inds1, edge_inds2, interior_edges)
-
-    assert exc_info.value.args == (_surface_helpers.BAD_TANGENT,)
     make_plots(SURFACE15Q, SURFACE16Q, points, interior_edges)
 
 
