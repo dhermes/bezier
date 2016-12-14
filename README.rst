@@ -66,7 +66,7 @@ intersections):
    >>> ax.set_ylim(-0.0625, 0.625)
    >>> plt.show()
 
-.. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_curves1_and_13.png
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/test_curves1_and_13.png
    :align: center
 
 Development
