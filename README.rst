@@ -81,10 +81,12 @@ started.
 License
 -------
 
-Apache 2.0 - See `LICENSE`_ for more information.
+Apache 2.0 - See `the LICENSE`_ for more information.
+
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
 
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=latest
-   :target: http://bezier.readthedocs.io/en/latest/?badge=latest
+   :target: http://bezier.readthedocs.io/en/latest/
    :alt: Documentation Status
 .. |build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
    :target: https://circleci.com/gh/dhermes/bezier
