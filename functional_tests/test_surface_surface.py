@@ -416,7 +416,7 @@ Intersected = collections.namedtuple(
     ['start_vals', 'end_vals', 'nodes', 'edge_pairs'])
 
 
-def new_plot(surface1, surface2, intersections):
+def new_plot(surface1, surface2, intersections, failed=True):
     if not CONFIG.running:
         return
 
@@ -435,51 +435,30 @@ def new_plot(surface1, surface2, intersections):
     if CONFIG.save_plot:
         CONFIG.save_fig()
     else:
-        plt.title(CONFIG.current_test)
-        plt.show()
-
-    plt.close(ax.figure)
-
-
-def make_plots(surface1, surface2, points, interior_edges):
-    if not CONFIG.running:
-        return
-
-    ax = surface1.plot(64)
-    # Color is (R,G,B,A) but we just want (R,G,B).
-    color0 = ax.patches[-1].get_facecolor()[:3]
-    surface2.plot(64, ax=ax)
-    color1 = ax.patches[-1].get_facecolor()[:3]
-
-    # Add a fake point to get the next color.
-    line, = ax.plot([0], [0])
-    color2 = line.get_color()
-    line.remove()
-
-    for point, interior in six.moves.zip(points, interior_edges):
-        if interior in (0, 3):
-            color = color0
-        elif interior in (1, 4):
-            color = color1
-        elif interior == 2:
-            color = color2
+        if failed:
+            plt.title(CONFIG.current_test + ': failed')
         else:
-            color = 'black'
-
-        ax.plot([point[0]], [point[1]], color=color,
-                marker='o', linestyle='None',
-                markeredgecolor='black', markeredgewidth=1)
-
-    plt.axis('scaled')
-    runtime_utils.add_plot_boundary(ax)
-
-    if CONFIG.save_plot:
-        CONFIG.save_fig()
-    else:
-        plt.title(CONFIG.current_test)
+            plt.title(CONFIG.current_test)
         plt.show()
 
     plt.close(ax.figure)
+
+
+def make_curved_polygon(surface1, surface2,
+                        start_vals, end_vals, edge_pairs):
+    base_edges = (
+        surface1._get_edges(),
+        surface2._get_edges(),
+    )
+
+    info = six.moves.zip(edge_pairs, start_vals, end_vals)
+    edges = []
+    for edge_pair, start_val, end_val in info:
+        surf_index, edge_index = edge_pair
+        base_edge = base_edges[surf_index][edge_index]
+        edges.append(base_edge.specialize(start_val, end_val))
+
+    return bezier.CurvedPolygon(*edges)
 
 
 def surface_surface_check(surface1, surface2,
@@ -525,7 +504,7 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
             CONFIG.assert_close(edge._nodes[0, 0], node[0])
             CONFIG.assert_close(edge._nodes[0, 1], node[1])
 
-    new_plot(surface1, surface2, intersections)
+    new_plot(surface1, surface2, intersections, failed=False)
 
 
 def test_surfaces1Q_and_3Q():
@@ -639,27 +618,18 @@ def test_surfaces10Q_and_18Q():
                               start_vals, end_vals, nodes, edge_pairs)
 
     assert str(exc_info.value).startswith(TANGENT_FAILURE)
-    points = np.array([
-        [0.5, -0.75],
-        [0.75, 0.09375],
-        [0.0, 0.0],
-    ])
-    interior_edges = [None, None, None]
-    make_plots(SURFACE10Q, SURFACE18Q, points, interior_edges)
+    intersection = make_curved_polygon(
+        SURFACE10Q, SURFACE18Q,
+        start_vals, end_vals, edge_pairs)
+    new_plot(SURFACE10Q, SURFACE18Q, [intersection])
 
 
 def test_surfaces10Q_and_19Q():
     with pytest.raises(NotImplementedError) as exc_info:
-        intersections = SURFACE10Q.intersect(SURFACE19Q)
-        assert intersections == []
+        surface_surface_check_multi(SURFACE10Q, SURFACE19Q)
 
     assert exc_info.value.args == PARALLEL_FAILURE
-    points = np.array([
-        [0.0, 0.0],
-        [0.5, -0.75],
-    ])
-    interior_edges = [None, None]
-    make_plots(SURFACE10Q, SURFACE19Q, points, interior_edges)
+    new_plot(SURFACE10Q, SURFACE19Q, [])
 
 
 def test_surfaces3Q_and_4Q():
@@ -715,14 +685,10 @@ def test_surfaces1Q_and_5L():
                               start_vals, end_vals, nodes, edge_pairs)
 
     assert str(exc_info.value).startswith(TANGENT_FAILURE)
-    points = np.array([
-        [0.75, -0.09375],
-        [0.25, -0.09375],
-        [0.125, 0.5],
-        [x_val4, 0.5],
-    ])
-    interior_edges = [3, 3, 0, 1]
-    make_plots(SURFACE1Q, SURFACE5L, points, interior_edges)
+    intersection = make_curved_polygon(
+        SURFACE1Q, SURFACE5L,
+        start_vals, end_vals, edge_pairs)
+    new_plot(SURFACE1Q, SURFACE5L, [intersection])
 
 
 def test_surfaces3Q_and_5Q():
@@ -797,12 +763,10 @@ def test_surfaces20Q_and_21Q():
                               start_vals, end_vals, nodes, edge_pairs)
 
     assert exc_info.value.args == PARALLEL_FAILURE
-    points = np.array([
-        [1.0, 0.0],
-        [-0.5, 0.5],
-    ])
-    interior_edges = [3, 1]
-    make_plots(SURFACE20Q, SURFACE21Q, points, interior_edges)
+    intersection = make_curved_polygon(
+        SURFACE20Q, SURFACE21Q,
+        start_vals, end_vals, edge_pairs)
+    new_plot(SURFACE20Q, SURFACE21Q, [intersection])
 
 
 def test_surfaces4L_and_22Q():
@@ -824,13 +788,10 @@ def test_surfaces4L_and_22Q():
                               start_vals, end_vals, nodes, edge_pairs)
 
     assert str(exc_info.value).startswith(TANGENT_FAILURE)
-    points = np.array([
-        [0.0, 0.0],
-        [0.625, 1.09375],
-        [-0.625, 1.09375],
-    ])
-    interior_edges = [3, 3, 3]
-    make_plots(SURFACE4L, SURFACE22Q, points, interior_edges)
+    intersection = make_curved_polygon(
+        SURFACE4L, SURFACE22Q,
+        start_vals, end_vals, edge_pairs)
+    new_plot(SURFACE4L, SURFACE22Q, [intersection])
 
 
 def test_surfaces4L_and_23Q():
@@ -852,13 +813,10 @@ def test_surfaces4L_and_23Q():
                               start_vals, end_vals, nodes, edge_pairs)
 
     assert str(exc_info.value).startswith(TANGENT_FAILURE)
-    points = np.array([
-        [0.0, 0.0],
-        [0.625, 1.09375],
-        [-0.625, 1.09375],
-    ])
-    interior_edges = [4, 4, 4]
-    make_plots(SURFACE4L, SURFACE23Q, points, interior_edges)
+    intersection = make_curved_polygon(
+        SURFACE4L, SURFACE23Q,
+        start_vals, end_vals, edge_pairs)
+    new_plot(SURFACE4L, SURFACE23Q, [intersection])
 
 
 def test_surfaces6Q_and_7Q():
@@ -949,15 +907,10 @@ def test_surfaces8Q_and_9Q():
 
 def test_surfaces4Q_and_10Q():
     with pytest.raises(NotImplementedError) as exc_info:
-        intersections = SURFACE4Q.intersect(SURFACE10Q)
-        assert intersections == []
+        surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
 
     assert exc_info.value.args == ALL_TANGENT
-    points = np.array([
-        [0.5, 0.125],
-    ])
-    interior_edges = [2]
-    make_plots(SURFACE10Q, SURFACE18Q, points, interior_edges)
+    new_plot(SURFACE4Q, SURFACE10Q, [])
 
 
 def test_surfaces11Q_and_12Q():
@@ -996,11 +949,10 @@ def test_surfaces3Q_and_13Q():
                               start_vals, end_vals, nodes, edge_pairs)
 
     assert exc_info.value.args == ALL_TANGENT
-    points = np.array([
-        [0.5, 0.125],
-    ])
-    interior_edges = [4]
-    make_plots(SURFACE3Q, SURFACE13Q, points, interior_edges)
+    intersection = make_curved_polygon(
+        SURFACE3Q, SURFACE13Q,
+        start_vals, end_vals, edge_pairs)
+    new_plot(SURFACE3Q, SURFACE13Q, [intersection])
 
 
 def test_surfaces10Q_and_17Q():
@@ -1022,10 +974,28 @@ def test_surfaces10Q_and_17Q():
 
 
 def test_surfaces3Q_and_14Q():
-    intersections = SURFACE3Q.intersect(SURFACE14Q)
-    assert intersections == []
+    start_vals = np.array([0.0, 0.0, 0.0])
+    end_vals = np.array([1.0, 1.0, 1.0])
 
-    make_plots(SURFACE3Q, SURFACE14Q, [], [])
+    nodes = np.array([
+        [0.25, 0.21875],
+        [0.75, 0.21875],
+        [0.5, 0.6875],
+    ])
+    edge_pairs = (
+        (1, 0),
+        (1, 1),
+        (1, 2),
+    )
+
+    with pytest.raises(AssertionError):
+        surface_surface_check(SURFACE3Q, SURFACE14Q,
+                              start_vals, end_vals, nodes, edge_pairs)
+
+    intersection = make_curved_polygon(
+        SURFACE3Q, SURFACE14Q,
+        start_vals, end_vals, edge_pairs)
+    new_plot(SURFACE3Q, SURFACE14Q, [intersection])
 
 
 def test_surfaces15Q_and_16Q():
@@ -1077,17 +1047,13 @@ def test_surfaces15Q_and_16Q():
                                     intersected1, intersected2)
 
     assert exc_info.value.args == (_surface_helpers.BAD_TANGENT,)
-    points = np.array([
-        [0.5, 0.4375],
-        [0.5, 1.9375],
-        [0.5, 1.0],
-        [2.0 * s_val4, 1.75 * s_val4],
-        [2.0 - 2.0 * s_val5, 1.75 + 0.25 * s_val5],
-        [2.0 * s_val6 * (1.0 - s_val6), 2.0 - 2.0 * s_val6],
-        [2.0 * s_val7 * (1.0 - s_val7), 2.0 - 2.0 * s_val7],
-    ])
-    interior_edges = [0, 1, None, 1, 0, 0, 1]
-    make_plots(SURFACE15Q, SURFACE16Q, points, interior_edges)
+    intersection1 = make_curved_polygon(
+        SURFACE15Q, SURFACE16Q,
+        start_vals1, end_vals1, edge_pairs1)
+    intersection2 = make_curved_polygon(
+        SURFACE15Q, SURFACE16Q,
+        start_vals2, end_vals2, edge_pairs2)
+    new_plot(SURFACE15Q, SURFACE16Q, [intersection1, intersection2])
 
 
 def test_surfaces24Q_and_25Q():
@@ -1147,9 +1113,7 @@ def test_surfaces1L_and_6L():
 
 def test_surfaces26Q_and_27Q():
     intersections = SURFACE26Q.intersect(SURFACE27Q)
-    assert intersections == []
-
-    make_plots(SURFACE26Q, SURFACE27Q, [], [])
+    surface_surface_check_multi(SURFACE26Q, SURFACE27Q)
 
 
 def test_surfaces1L_and_28Q():
