@@ -457,12 +457,13 @@ def make_plots(surface1, surface2, points, interior_edges):
     plt.close(ax.figure)
 
 
-def new_check(surface1, surface2, start_vals, end_vals, nodes, edge_pairs):
+def surface_surface_check(surface1, surface2,
+                          start_vals, end_vals, nodes, edge_pairs):
     intersected = Intersected(start_vals, end_vals, nodes, edge_pairs)
-    newt_check(surface1, surface2, intersected)
+    surface_surface_check_multi(surface1, surface2, intersected)
 
 
-def newt_check(surface1, surface2, *all_intersected):
+def surface_surface_check_multi(surface1, surface2, *all_intersected):
     assert surface1.is_valid
     assert surface2.is_valid
 
@@ -527,8 +528,8 @@ def test_surfaces1Q_and_3Q():
     )
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(45):
-        new_check(SURFACE1Q, SURFACE3Q,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE1Q, SURFACE3Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_3L():
@@ -545,8 +546,8 @@ def test_surfaces1L_and_3L():
         (0, 0),
         (0, 1),
     )
-    new_check(SURFACE1L, SURFACE3L,
-              start_vals, end_vals, nodes, edge_pairs)
+    surface_surface_check(SURFACE1L, SURFACE3L,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1Q_and_2Q():
@@ -588,8 +589,8 @@ def test_surfaces1Q_and_2Q():
     )
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(9):
-        new_check(SURFACE1Q, SURFACE2Q,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE1Q, SURFACE2Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces10Q_and_18Q():
@@ -607,8 +608,8 @@ def test_surfaces10Q_and_18Q():
         (0, 1),
     )
     with pytest.raises(NotImplementedError) as exc_info:
-        new_check(SURFACE10Q, SURFACE18Q,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE10Q, SURFACE18Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
     assert str(exc_info.value).startswith(TANGENT_FAILURE)
     points = np.array([
@@ -659,8 +660,8 @@ def test_surfaces3Q_and_4Q():
     )
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(32):
-        new_check(SURFACE3Q, SURFACE4Q,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE3Q, SURFACE4Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1Q_and_5L():
@@ -683,8 +684,8 @@ def test_surfaces1Q_and_5L():
         (1, 1),
     )
     with pytest.raises(NotImplementedError) as exc_info:
-        new_check(SURFACE1Q, SURFACE5L,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE1Q, SURFACE5L,
+                              start_vals, end_vals, nodes, edge_pairs)
 
     assert str(exc_info.value).startswith(TANGENT_FAILURE)
     points = np.array([
@@ -722,8 +723,8 @@ def test_surfaces3Q_and_5Q():
         (1, 1),
         (0, 2),
     )
-    new_check(SURFACE3Q, SURFACE5Q,
-              start_vals, end_vals, nodes, edge_pairs)
+    surface_surface_check(SURFACE3Q, SURFACE5Q,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_2L():
@@ -744,8 +745,8 @@ def test_surfaces1L_and_2L():
         (1, 1),
         (1, 2),
     )
-    new_check(SURFACE1L, SURFACE2L,
-              start_vals, end_vals, nodes, edge_pairs)
+    surface_surface_check(SURFACE1L, SURFACE2L,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces20Q_and_21Q():
@@ -765,8 +766,8 @@ def test_surfaces20Q_and_21Q():
         (1, 2),
     )
     with pytest.raises(NotImplementedError) as exc_info:
-        new_check(SURFACE20Q, SURFACE21Q,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE20Q, SURFACE21Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
     assert exc_info.value.args == PARALLEL_FAILURE
     points = np.array([
@@ -792,8 +793,8 @@ def test_surfaces4L_and_22Q():
         (0, 2),
     )
     with pytest.raises(NotImplementedError) as exc_info:
-        new_check(SURFACE4L, SURFACE22Q,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE4L, SURFACE22Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
     assert str(exc_info.value).startswith(TANGENT_FAILURE)
     points = np.array([
@@ -820,8 +821,8 @@ def test_surfaces4L_and_23Q():
         (1, 2),
     )
     with pytest.raises(NotImplementedError) as exc_info:
-        new_check(SURFACE4L, SURFACE23Q,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE4L, SURFACE23Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
     assert str(exc_info.value).startswith(TANGENT_FAILURE)
     points = np.array([
@@ -889,7 +890,8 @@ def test_surfaces6Q_and_7Q():
     intersected2 = Intersected(start_vals2, end_vals2, nodes2, edge_pairs2)
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(25):
-        newt_check(SURFACE6Q, SURFACE7Q, intersected1, intersected2)
+        surface_surface_check_multi(SURFACE6Q, SURFACE7Q,
+                                    intersected1, intersected2)
 
 
 def test_surfaces8Q_and_9Q():
@@ -914,8 +916,8 @@ def test_surfaces8Q_and_9Q():
         (1, 2),
         (0, 1),
     )
-    new_check(SURFACE8Q, SURFACE9Q,
-              start_vals, end_vals, nodes, edge_pairs)
+    surface_surface_check(SURFACE8Q, SURFACE9Q,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces4Q_and_10Q():
@@ -944,8 +946,8 @@ def test_surfaces11Q_and_12Q():
         (1, 0),
         (0, 0),
     )
-    new_check(SURFACE11Q, SURFACE12Q,
-              start_vals, end_vals, nodes, edge_pairs)
+    surface_surface_check(SURFACE11Q, SURFACE12Q,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces3Q_and_13Q():
@@ -963,8 +965,8 @@ def test_surfaces3Q_and_13Q():
         (1, 2),
     )
     with pytest.raises(NotImplementedError) as exc_info:
-        new_check(SURFACE3Q, SURFACE13Q,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE3Q, SURFACE13Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
     assert exc_info.value.args == ALL_TANGENT
     points = np.array([
@@ -988,8 +990,8 @@ def test_surfaces10Q_and_17Q():
         (1, 1),
         (1, 2),
     )
-    new_check(SURFACE10Q, SURFACE17Q,
-              start_vals, end_vals, nodes, edge_pairs)
+    surface_surface_check(SURFACE10Q, SURFACE17Q,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces3Q_and_14Q():
@@ -1044,7 +1046,8 @@ def test_surfaces15Q_and_16Q():
     intersected2 = Intersected(start_vals2, end_vals2, nodes2, edge_pairs2)
 
     with pytest.raises(NotImplementedError) as exc_info:
-        newt_check(SURFACE15Q, SURFACE16Q, intersected1, intersected2)
+        surface_surface_check_multi(SURFACE15Q, SURFACE16Q,
+                                    intersected1, intersected2)
 
     assert exc_info.value.args == (_surface_helpers.BAD_TANGENT,)
     points = np.array([
@@ -1091,8 +1094,8 @@ def test_surfaces24Q_and_25Q():
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(22):
-        new_check(SURFACE24Q, SURFACE25Q,
-                  start_vals, end_vals, nodes, edge_pairs)
+        surface_surface_check(SURFACE24Q, SURFACE25Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_6L():
@@ -1111,8 +1114,8 @@ def test_surfaces1L_and_6L():
         (1, 2),
         (1, 0),
     )
-    new_check(SURFACE1L, SURFACE6L,
-              start_vals, end_vals, nodes, edge_pairs)
+    surface_surface_check(SURFACE1L, SURFACE6L,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces26Q_and_27Q():
@@ -1138,8 +1141,8 @@ def test_surfaces1L_and_28Q():
         (0, 0),
         (0, 1),
     )
-    new_check(SURFACE1L, SURFACE28Q,
-              start_vals, end_vals, nodes, edge_pairs)
+    surface_surface_check(SURFACE1L, SURFACE28Q,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_29Q():
@@ -1162,8 +1165,8 @@ def test_surfaces1L_and_29Q():
         (0, 1),
         (1, 1),
     )
-    new_check(SURFACE1L, SURFACE29Q,
-              start_vals, end_vals, nodes, edge_pairs)
+    surface_surface_check(SURFACE1L, SURFACE29Q,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 if __name__ == '__main__':
