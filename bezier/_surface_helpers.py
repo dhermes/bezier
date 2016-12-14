@@ -1626,7 +1626,7 @@ def _to_curved_polygon(surface):
     Returns:
         .CurvedPolygon: The converted object.
     """
-    edges = surface._get_edges()
+    edges = surface._get_edges()  # pylint: disable=protected-access
     return curved_polygon.CurvedPolygon(*edges)
 
 
@@ -1649,11 +1649,13 @@ def _no_intersections(surface1, surface2):
         in the other. Otherwise, the list will have a single
         :class:`.CurvedPolygon` corresponding to the internal surface.
     """
-    corner1 = surface1._nodes[[0], :]
+    nodes1 = surface1._nodes  # pylint: disable=protected-access
+    corner1 = nodes1[[0], :]
     if surface2.locate(corner1) is not None:
         return [_to_curved_polygon(surface1)]
 
-    corner2 = surface2._nodes[[0], :]
+    nodes2 = surface2._nodes  # pylint: disable=protected-access
+    corner2 = nodes2[[0], :]
     if surface1.locate(corner2) is not None:
         return [_to_curved_polygon(surface2)]
 
