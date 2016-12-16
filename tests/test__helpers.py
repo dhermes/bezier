@@ -148,3 +148,56 @@ class Test_cross_product(utils.NumPyTestCase):
         actual_cross = np.cross(vec0_as_3d, vec1_as_3d)
         expected = np.array([[0.0, 0.0, result]])
         self.assertEqual(actual_cross, expected)
+
+
+class Test_n_bits_away(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(value1, value2, **kwargs):
+        from bezier import _helpers
+
+        return _helpers.n_bits_away(value1, value2, **kwargs)
+
+    def test_first_zero(self):
+        self.assertTrue(
+            self._call_function_under_test(0.0, 0.0))
+
+    def test_second_zero(self):
+        self.assertFalse(
+            self._call_function_under_test(1.0, 0.0))
+
+    def test_default_single_bit(self):
+        value1 = 1.0
+        value2 = 1.0 + 2.0**(-52)
+        value3 = 1.0 - 2.0**(-53)
+
+        self.assertTrue(
+            self._call_function_under_test(value1, value1))
+        self.assertTrue(
+            self._call_function_under_test(value1, value2))
+        self.assertTrue(
+            self._call_function_under_test(value2, value1))
+        self.assertTrue(
+            self._call_function_under_test(value1, value3))
+        self.assertTrue(
+            self._call_function_under_test(value3, value1))
+
+    def test_non_default_n(self):
+        value1 = 1.5
+        value2 = 1.5 + 2.0**(-43)
+
+        self.assertFalse(
+            self._call_function_under_test(value1, value2))
+        self.assertTrue(
+            self._call_function_under_test(value1, value2, num_bits=1000))
+
+    def test_very_close(self):
+        value1 = float.fromhex('0x1.fffffffffffd3p-3')
+        value2 = float.fromhex('0x1.fffffffffffcep-3')
+
+        self.assertFalse(
+            self._call_function_under_test(value1, value2))
+        self.assertFalse(
+            self._call_function_under_test(value1, value2, num_bits=4))
+        self.assertTrue(
+            self._call_function_under_test(value1, value2, num_bits=5))

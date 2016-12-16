@@ -651,13 +651,13 @@ def test_curves11_and_31():
 
 
 def test_curves32_and_33():
-    # NOTE: This intersection (incorrectly) occurs twice.
-    s_vals = np.array([13.0, 13.0]) / 56.0
-    t_vals = np.array([0.25, 0.25])
+    s_vals = np.array([13.0 / 56.0])
+    t_vals = np.array([0.25])
     points = np.array([
         [-0.046875, -0.25],
-        [-0.046875, -0.25],
     ])
+
+    # NOTE: We allow less wiggle room for this intersection.
     with CONFIG.wiggle(4):
         curve_curve_check(CURVE32, CURVE33, s_vals, t_vals, points)
 

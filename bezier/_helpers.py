@@ -139,3 +139,30 @@ def cross_product(vec0, vec1):
         float: The cross-product (or rather, its :math:`z` component).
     """
     return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]
+
+
+def n_bits_away(value1, value2, num_bits=1):
+    r"""Determines if ``value1`` is within ``n`` bits of ``value2``.
+
+    Uses ``np.spacing`` to determine the unit of least precision (ULP)
+    for ``value1`` and then checks that the different between the values
+    does not exceed ``n`` ULPs.
+
+    When ``value1=0`` or ``value2=0``, we instead check that the other is
+    less than :math:`2^{-40}` in magnitude.
+
+    Args:
+        value1 (float): The first value that being compared.
+        value2 (float): The second value that being compared.
+        num_bits (Optional[int]): Defaults to ``1``.
+
+    Returns:
+        bool: Predicate indicating if the values agree to ``n`` bits.
+    """
+    if value1 == 0.0:
+        return abs(value2) < _EPS
+    elif value2 == 0.0:
+        return abs(value1) < _EPS
+    else:
+        local_epsilon = np.spacing(value1)  # pylint: disable=no-member
+        return abs(value1 - value2) <= num_bits * abs(local_epsilon)

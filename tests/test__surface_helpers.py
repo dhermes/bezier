@@ -80,7 +80,7 @@ class Test_polynomial_sign(unittest.TestCase):
         # pylint: disable=no-member
         bernstein = np.array([[1.0, 2.0, 3.0]]).T
         # pylint: enable=no-member
-        subs = 'bezier._surface_helpers.MAX_POLY_SUBDIVISIONS'
+        subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=1):
             self._helper(bernstein, 1)
 
@@ -88,7 +88,7 @@ class Test_polynomial_sign(unittest.TestCase):
         # pylint: disable=no-member
         bernstein = np.array([[-1.0, 1.0, 2.0]]).T
         # pylint: enable=no-member
-        subs = 'bezier._surface_helpers.MAX_POLY_SUBDIVISIONS'
+        subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=0):
             with self.assertRaises(ValueError):
                 self._helper(bernstein, None)

@@ -920,11 +920,8 @@ def from_linearized(left, right, intersections):
     refined_s, refined_t = newton_refine(
         orig_s, orig_left, orig_t, orig_right)
     _check_parameters(refined_s, refined_t)
-    at_endpoint = (refined_s in (left.curve.start, left.curve.end) or
-                   refined_t in (right.curve.start, right.curve.end))
     intersection = Intersection(
-        orig_left, refined_s, orig_right, refined_t,
-        at_endpoint=at_endpoint)
+        orig_left, refined_s, orig_right, refined_t)
     _add_intersection(intersection, intersections)
 
 
@@ -939,11 +936,10 @@ def _add_intersection(intersection, intersections):
         intersections (list): List of existing intersections.
     """
     for existing in intersections:
-        if (existing.at_endpoint and
-                existing.left is intersection.left and
+        if (existing.left is intersection.left and
                 existing.right is intersection.right and
-                existing.s == intersection.s and
-                existing.t == intersection.t):
+                _helpers.n_bits_away(existing.s, intersection.s) and
+                _helpers.n_bits_away(existing.t, intersection.t)):
             return
 
     intersections.append(intersection)
@@ -1002,7 +998,7 @@ def _tangent_bbox_intersection(left, right, intersections):
                 orig_t = (1 - t) * right.start + t * right.end
                 intersection = Intersection(
                     left.root, orig_s, right.root, orig_t,
-                    point=node_left, at_endpoint=True)
+                    point=node_left)
                 _add_intersection(intersection, intersections)
 
 
@@ -1318,20 +1314,14 @@ class Intersection(object):
         point (Optional[numpy.ndarray]): The point where the two
             curves actually intersect. If not provided, will be
             computed on the fly when first accessed.
-        at_endpoint (bool): Indicates if the intersection happened at
-            the endpoint of one (or both) of the two subdivided curves.
-            This can be used to help with de-duplication of encountered
-            intersections.
     """
 
-    def __init__(self, left, s, right, t, point=None,
-                 at_endpoint=False):
+    def __init__(self, left, s, right, t, point=None):
         self._left = left
         self._s_val = s
         self._right = right
         self._t_val = t
         self._point = point
-        self.at_endpoint = at_endpoint
         self._interior_curve = None
 
     @property

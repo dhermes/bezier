@@ -428,7 +428,7 @@ SURFACE31Q = bezier.Surface(np.array([
     [1.0, 0.0],
     [0.0625, -0.5],
     [0.4375, 0.0],
-    [-0.125 , 0.0],
+    [-0.125, 0.0],
 ]))
 
 
@@ -1198,11 +1198,8 @@ def test_surfaces30Q_and_31Q():
         (1, 2),
     )
 
-    with pytest.raises(ValueError) as exc_info:
-        surface_surface_check(SURFACE30Q, SURFACE31Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-
-    assert exc_info.value.args == ('Non-unique intersection',)
+    surface_surface_check(SURFACE30Q, SURFACE31Q,
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 if __name__ == '__main__':

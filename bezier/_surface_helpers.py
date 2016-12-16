@@ -31,10 +31,10 @@ from bezier import _intersection_helpers
 from bezier import curved_polygon
 
 
-MAX_POLY_SUBDIVISIONS = 5
+_MAX_POLY_SUBDIVISIONS = 5
 MAX_LOCATE_SUBDIVISIONS = 20
 LOCATE_EPS = 2.0**(-47)
-SIGN = np.sign  # pylint: disable=no-member
+_SIGN = np.sign  # pylint: disable=no-member
 SAME_CURVATURE = 'Tangent curves have same curvature.'
 BAD_TANGENT = (
     'Curves moving in opposite direction but define '
@@ -263,7 +263,7 @@ def polynomial_sign(poly_surface):
     """
     sub_polys = [poly_surface]
     signs = set()
-    for _ in six.moves.xrange(MAX_POLY_SUBDIVISIONS):
+    for _ in six.moves.xrange(_MAX_POLY_SUBDIVISIONS):
         undecided = []
         for poly in sub_polys:
             # Avoid an unnecessarily copying the nodes.
@@ -293,7 +293,7 @@ def polynomial_sign(poly_surface):
     else:
         raise ValueError(
             'Did not reach a conclusion after max subdivisions',
-            MAX_POLY_SUBDIVISIONS)
+            _MAX_POLY_SUBDIVISIONS)
 
 
 def _2x2_det(mat):
@@ -1258,7 +1258,7 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
     if dot_prod < 0:
         # If the tangent vectors are pointing in the opposite direction,
         # then the curves are facing opposite directions.
-        sign1, sign2 = SIGN([curvature1, curvature2])
+        sign1, sign2 = _SIGN([curvature1, curvature2])
         if sign1 == sign2:
             # If both curvatures are positive, since the curves are
             # moving in opposite directions, the tangency isn't part of
@@ -1271,7 +1271,7 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
             delta_c = abs(curvature1) - abs(curvature2)
             if delta_c == 0.0:
                 raise NotImplementedError(SAME_CURVATURE)
-            elif sign1 == SIGN(delta_c):
+            elif sign1 == _SIGN(delta_c):
                 return IntersectionClassification.opposed
             else:
                 raise NotImplementedError(BAD_TANGENT)

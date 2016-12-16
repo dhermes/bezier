@@ -28,34 +28,10 @@ import six
 from bezier import _helpers
 
 
-EPS = 2.0**(-50)
 _FNL_TESTS_DIR = os.path.dirname(__file__)
 _DOCS_DIR = os.path.abspath(
     os.path.join(_FNL_TESTS_DIR, '..', 'docs'))
 IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
-
-
-def _assert_close(approximated, exact, wiggle=8):
-    """Assert that two floating point values are close.
-
-    Makes sure the error is isolated to (approximately) the last 3 bits.
-    The last 3 bits would amplify the "least significant digit" by 8, and
-    4 bits would amplify by 16, etc.
-
-    In the case that ``exact`` is exactly 0, we set an "absolute"
-    tolerance for ``approximated`` rather than a relative tolerance.
-
-    Args:
-        approximated (float): The value that was computed.
-        exact (float): The expected value.
-        wiggle (Optional[int]): The amount of wiggle room allowed (relative
-            to the smallest value).
-    """
-    if exact == 0.0:
-        assert abs(approximated) < EPS
-    else:
-        local_epsilon = np.spacing(exact)  # pylint: disable=no-member
-        assert abs(approximated - exact) < wiggle * abs(local_epsilon)
 
 
 def _start_line(func):
@@ -165,13 +141,12 @@ class Config(object):  # pylint: disable=too-few-public-methods
     def assert_close(self, approximated, exact):
         """Assert two values are close, with the local configuration in place.
 
-        Calls :func:`_assert_close` with the current configuration.
-
         Args:
             approximated (float): The value that was computed.
             exact (float): The expected value.
         """
-        _assert_close(approximated, exact, wiggle=self._wiggle)
+        assert _helpers.n_bits_away(
+            exact, approximated, num_bits=self._wiggle)
 
     def run(self, mod_globals):
         """Run all tests, in source order.

@@ -20,8 +20,7 @@ from tests import utils
 
 # pylint: disable=too-many-arguments
 def check_intersection(test_case, intersection, expected,
-                       curve1, curve2, s_val, t_val,
-                       at_endpoint=False):
+                       curve1, curve2, s_val, t_val):
     from bezier import _intersection_helpers
 
     test_case.assertIsInstance(
@@ -31,10 +30,6 @@ def check_intersection(test_case, intersection, expected,
     test_case.assertEqual(intersection.s, s_val)
     test_case.assertIs(intersection.right, curve2)
     test_case.assertEqual(intersection.t, t_val)
-    if at_endpoint:
-        test_case.assertTrue(intersection.at_endpoint)
-    else:
-        test_case.assertFalse(intersection.at_endpoint)
 # pylint: enable=too-many-arguments
 
 
@@ -736,11 +731,9 @@ class Test__add_intersection(unittest.TestCase):
         from bezier import _intersection_helpers
 
         intersection1 = _intersection_helpers.Intersection(
-            mock.sentinel.left, 0.5, mock.sentinel.right, 0.5,
-            at_endpoint=False)
+            mock.sentinel.left, 0.5, mock.sentinel.right, 0.5)
         intersection2 = _intersection_helpers.Intersection(
-            mock.sentinel.left, 0.75, mock.sentinel.right, 0.25,
-            at_endpoint=False)
+            mock.sentinel.left, 0.75, mock.sentinel.right, 0.25)
         intersections = [intersection1]
         self.assertIsNone(
             self._call_function_under_test(intersection2, intersections))
@@ -751,11 +744,9 @@ class Test__add_intersection(unittest.TestCase):
         from bezier import _intersection_helpers
 
         intersection1 = _intersection_helpers.Intersection(
-            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0,
-            at_endpoint=True)
+            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0)
         intersection2 = _intersection_helpers.Intersection(
-            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0,
-            at_endpoint=True)
+            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0)
         intersections = [intersection1]
         self.assertIsNone(
             self._call_function_under_test(intersection2, intersections))
@@ -797,8 +788,7 @@ class Test__tangent_bbox_intersection(utils.NumPyTestCase):
         intersection = intersections[0]
         expected = curve1.evaluate(1.0)
         check_intersection(self, intersection, expected,
-                           curve1, curve2, 1.0, 0.0,
-                           at_endpoint=True)
+                           curve1, curve2, 1.0, 0.0)
 
 
 class Test_intersect_one_round(utils.NumPyTestCase):
@@ -1152,15 +1142,10 @@ class TestIntersection(unittest.TestCase):
     def test_constructor(self):
         intersection = self._constructor_helper()
         self.assertIsNone(intersection._point)
-        self.assertFalse(intersection.at_endpoint)
 
     def test_constructor_with_point(self):
         intersection = self._constructor_helper(point=mock.sentinel.point)
         self.assertIs(intersection._point, mock.sentinel.point)
-
-    def test_constructor_at_endpoint(self):
-        intersection = self._constructor_helper(at_endpoint=True)
-        self.assertTrue(intersection.at_endpoint)
 
     def test_s_property(self):
         s = 0.375
