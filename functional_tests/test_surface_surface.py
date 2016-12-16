@@ -408,6 +408,28 @@ SURFACE29Q = bezier.Surface(np.array([
     [0.125, 0.125],
     [0.0, 1.25],
 ]))
+# F30Q = sympy.Matrix([[(7 * s - 2) / 8, (7 * t - 2) / 8]])
+# NOTE: This is a degree elevated linear surface.
+SURFACE30Q = bezier.Surface(np.array([
+    [-0.25, -0.25],
+    [0.1875, -0.25],
+    [0.625, -0.25],
+    [-0.25, 0.1875],
+    [0.1875, 0.1875],
+    [-0.25, 0.625],
+]))
+# F31Q = sympy.Matrix([[
+#     -(2 * t**2 + 2 * s * t - 8 * s - t) / 8,
+#     s + t - 1,
+# ]])
+SURFACE31Q = bezier.Surface(np.array([
+    [0.0, -1.0],
+    [0.5, -0.5],
+    [1.0, 0.0],
+    [0.0625, -0.5],
+    [0.4375, 0.0],
+    [-0.125 , 0.0],
+]))
 
 
 Intersected = collections.namedtuple(
@@ -1157,6 +1179,30 @@ def test_surfaces1L_and_29Q():
     )
     surface_surface_check(SURFACE1L, SURFACE29Q,
                           start_vals, end_vals, nodes, edge_pairs)
+
+
+def test_surfaces30Q_and_31Q():
+    start_vals = np.array([13.0 / 56.0, 0.0, 5.0 / 9.0, 0.0])
+    end_vals = np.array([1.0, 2.0 / 7.0, 1.0, 0.25])
+
+    nodes = np.array([
+        [-0.046875, -0.25],
+        [0.625, -0.25],
+        [0.375, 0.0],
+        [-0.125, 0.0],
+    ])
+    edge_pairs = (
+        (0, 0),
+        (0, 1),
+        (1, 1),
+        (1, 2),
+    )
+
+    with pytest.raises(ValueError) as exc_info:
+        surface_surface_check(SURFACE30Q, SURFACE31Q,
+                              start_vals, end_vals, nodes, edge_pairs)
+
+    assert exc_info.value.args == ('Non-unique intersection',)
 
 
 if __name__ == '__main__':
