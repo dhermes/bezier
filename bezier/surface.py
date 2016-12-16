@@ -865,7 +865,7 @@ class Surface(_base.Base):
             return poly_sign != 0
         else:
             raise NotImplementedError(
-                'Degrees 1 and 2 only supported at this time')
+                'Degrees 1, 2 and 3 only supported at this time')
 
     @property
     def is_valid(self):
