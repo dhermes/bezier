@@ -438,14 +438,15 @@ Detecting Self-Intersections
    :options: +NORMALIZE_WHITESPACE
 
    >>> curve1 = bezier.Curve(np.array([
-   ...     [ 0.0 , 0.0  ],
+   ...     [ 0.0 , 2.0  ],
    ...     [-1.0 , 0.0  ],
    ...     [ 1.0 , 1.0  ],
    ...     [-0.75, 1.625],
    ... ]))
    >>> left, right = curve1.subdivide()
    >>> left.intersect(right)
-   array([[-0.09375 , 0.578125]])
+   array([[-0.09375 , 0.828125],
+          [-0.25    , 1.375   ]])
 
 .. image:: images/test_curve12_self_crossing.png
    :align: center
