@@ -247,7 +247,7 @@ CURVE33 = bezier.Curve(np.array([
 ]))
 
 
-def make_plots(curve1, curve2, points, ignore_save=False):
+def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
     if not CONFIG.running:
         return
 
@@ -262,7 +262,10 @@ def make_plots(curve1, curve2, points, ignore_save=False):
         if not ignore_save:
             CONFIG.save_fig()
     else:
-        plt.title(CONFIG.current_test)
+        if failed:
+            plt.title(CONFIG.current_test + ': failed')
+        else:
+            plt.title(CONFIG.current_test)
         plt.show()
 
     plt.close(ax.figure)
@@ -296,7 +299,7 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points,
         CONFIG.assert_close(point_on2[0], point[0])
         CONFIG.assert_close(point_on2[1], point[1])
 
-    make_plots(curve1, curve2, points, ignore_save=ignore_save)
+    make_plots(curve1, curve2, points, ignore_save=ignore_save, failed=False)
 
 
 def test_curves1_and_2():
