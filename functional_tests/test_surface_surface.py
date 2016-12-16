@@ -16,12 +16,14 @@ import pytest
 import six
 
 import bezier
-from bezier import _surface_helpers
 
 import runtime_utils
 
 
 PARALLEL_FAILURE = ('Line segments parallel.',)
+BAD_TANGENT = (
+    'Curves moving in opposite direction but define '
+    'overlapping arcs.')
 TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 CONFIG = runtime_utils.Config()
 
@@ -1067,7 +1069,7 @@ def test_surfaces15Q_and_16Q():
         surface_surface_check_multi(SURFACE15Q, SURFACE16Q,
                                     intersected1, intersected2)
 
-    assert exc_info.value.args == (_surface_helpers.BAD_TANGENT,)
+    assert exc_info.value.args == (BAD_TANGENT,)
     intersection1 = make_curved_polygon(
         SURFACE15Q, SURFACE16Q,
         start_vals1, end_vals1, edge_pairs1)

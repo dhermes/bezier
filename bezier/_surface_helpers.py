@@ -32,14 +32,16 @@ from bezier import curved_polygon
 
 
 _MAX_POLY_SUBDIVISIONS = 5
-MAX_LOCATE_SUBDIVISIONS = 20
-LOCATE_EPS = 2.0**(-47)
+_MAX_LOCATE_SUBDIVISIONS = 20
+_LOCATE_EPS = 2.0**(-47)
 _SIGN = np.sign  # pylint: disable=no-member
-SAME_CURVATURE = 'Tangent curves have same curvature.'
-BAD_TANGENT = (
+_SAME_CURVATURE = 'Tangent curves have same curvature.'
+_BAD_TANGENT = (
     'Curves moving in opposite direction but define '
     'overlapping arcs.')
-WRONG_CURVE = 'Start and end node not defined on same curve'
+_WRONG_CURVE = 'Start and end node not defined on same curve'
+# NOTE: The ``SUBDIVIDE`` matrices are public since used in
+#       the ``surface`` module.
 LINEAR_SUBDIVIDE = np.array([
     [2, 0, 0],
     [1, 1, 0],
@@ -148,7 +150,7 @@ QUARTIC_SUBDIVIDE = np.array([
 # We evaluate this at each of the 6 points in the quadratic
 # triangle and then stack them (2 rows * 6 = 12 rows)
 # pylint: disable=bad-whitespace
-QUADRATIC_JACOBIAN_HELPER = np.array([
+_QUADRATIC_JACOBIAN_HELPER = np.array([
     [-2,  2, 0,  0, 0, 0],
     [-2,  0, 0,  2, 0, 0],
     [-1,  0, 1,  0, 0, 0],
@@ -162,7 +164,7 @@ QUADRATIC_JACOBIAN_HELPER = np.array([
     [ 0,  0, 0, -2, 2, 0],  # noqa: E201
     [ 0,  0, 0, -2, 0, 2],  # noqa: E201
 ], dtype=float)
-QUADRATIC_TO_BERNSTEIN = np.array([
+_QUADRATIC_TO_BERNSTEIN = np.array([
     [ 2, 0,  0, 0, 0,  0],  # noqa: E201
     [-1, 4, -1, 0, 0,  0],
     [ 0, 0,  2, 0, 0,  0],  # noqa: E201
@@ -179,7 +181,7 @@ QUADRATIC_TO_BERNSTEIN = np.array([
 # We evaluate this at each of the 15 points in the quartic
 # triangle and then stack them (2 rows * 15 = 30 rows)
 # pylint: disable=bad-whitespace
-CUBIC_JACOBIAN_HELPER = np.array([
+_CUBIC_JACOBIAN_HELPER = np.array([
     [-48,  48,   0,  0,   0,   0,  0,   0,  0,  0],
     [-48,   0,   0,  0,  48,   0,  0,   0,  0,  0],
     [-27,   9,  15,  3,   0,   0,  0,   0,  0,  0],
@@ -211,7 +213,8 @@ CUBIC_JACOBIAN_HELPER = np.array([
     [  0,   0,   0,  0,   0,   0,  0, -48, 48,  0],  # noqa: E201
     [  0,   0,   0,  0,   0,   0,  0, -48,  0, 48],  # noqa: E201
 ], dtype=float) / 16.0
-QUARTIC_TO_BERNSTEIN = np.array([
+# pylint: enable=bad-whitespace
+_QUARTIC_TO_BERNSTEIN = np.array([
     [36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [-39, 144, -108, 48, -9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [26, -128, 240, -128, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -228,10 +231,9 @@ QUARTIC_TO_BERNSTEIN = np.array([
     [0, 0, 0, 0, -9, 0, 0, 0, 48, 0, 0, -108, 0, 144, -39],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36],
 ], dtype=float)
-# NOTE: We avoid round-off until after ``QUARTIC_TO_BERNSTEIN``
+# NOTE: We avoid round-off until after ``_QUARTIC_TO_BERNSTEIN``
 #       has been applied.
-QUARTIC_BERNSTEIN_FACTOR = 36.0
-# pylint: enable=bad-whitespace
+_QUARTIC_BERNSTEIN_FACTOR = 36.0
 
 
 def polynomial_sign(poly_surface):
@@ -334,7 +336,7 @@ def quadratic_jacobian_polynomial(nodes):
     .. note::
 
        This assumes that ``nodes`` is 6x2 but doesn't verify this.
-       (However, the multiplication by ``QUADRATIC_JACOBIAN_HELPER``
+       (However, the multiplication by ``_QUADRATIC_JACOBIAN_HELPER``
        would fail if ``nodes`` wasn't 6xN and then the ensuing
        determinants would fail if there weren't 2 columns.)
 
@@ -346,7 +348,7 @@ def quadratic_jacobian_polynomial(nodes):
     """
     # First evaluate the Jacobian at each of the 6 nodes.
     # pylint: disable=no-member
-    jac_parts = QUADRATIC_JACOBIAN_HELPER.dot(nodes)
+    jac_parts = _QUADRATIC_JACOBIAN_HELPER.dot(nodes)
     # pylint: enable=no-member
     jac_at_nodes = np.empty((6, 1))
     jac_at_nodes[0, 0] = _2x2_det(jac_parts[:2, :])
@@ -358,7 +360,7 @@ def quadratic_jacobian_polynomial(nodes):
 
     # Convert the nodal values to the Bernstein basis...
     # pylint: disable=no-member
-    bernstein = QUADRATIC_TO_BERNSTEIN.dot(jac_at_nodes)
+    bernstein = _QUADRATIC_TO_BERNSTEIN.dot(jac_at_nodes)
     # pylint: enable=no-member
     return bernstein
 
@@ -372,7 +374,7 @@ def cubic_jacobian_polynomial(nodes):
     .. note::
 
        This assumes that ``nodes`` is 10x2 but doesn't verify this.
-       (However, the multiplication by ``CUBIC_JACOBIAN_HELPER``
+       (However, the multiplication by ``_CUBIC_JACOBIAN_HELPER``
        would fail if ``nodes`` wasn't 10xN and then the ensuing
        determinants would fail if there weren't 2 columns.)
 
@@ -385,7 +387,7 @@ def cubic_jacobian_polynomial(nodes):
     # First evaluate the Jacobian at each of the 15 nodes
     # in the quartic triangle.
     # pylint: disable=no-member
-    jac_parts = CUBIC_JACOBIAN_HELPER.dot(nodes)
+    jac_parts = _CUBIC_JACOBIAN_HELPER.dot(nodes)
     # pylint: enable=no-member
     jac_at_nodes = np.empty((15, 1))
     jac_at_nodes[0, 0] = _2x2_det(jac_parts[:2, :])
@@ -406,9 +408,9 @@ def cubic_jacobian_polynomial(nodes):
 
     # Convert the nodal values to the Bernstein basis...
     # pylint: disable=no-member
-    bernstein = QUARTIC_TO_BERNSTEIN.dot(jac_at_nodes)
+    bernstein = _QUARTIC_TO_BERNSTEIN.dot(jac_at_nodes)
     # pylint: enable=no-member
-    bernstein /= QUARTIC_BERNSTEIN_FACTOR
+    bernstein /= _QUARTIC_BERNSTEIN_FACTOR
     return bernstein
 
 
@@ -844,7 +846,7 @@ def locate_point(surface, x_val, y_val):
         :data:`None` if the point is not on the ``surface``.
     """
     candidates = [surface]
-    for _ in six.moves.xrange(MAX_LOCATE_SUBDIVISIONS + 1):
+    for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for candidate in candidates:
             nodes = candidate._nodes  # pylint: disable=protected-access
@@ -863,7 +865,7 @@ def locate_point(surface, x_val, y_val):
 
     actual = surface.evaluate_cartesian(s, t)
     expected = np.array([x_val, y_val])
-    if not _helpers.vector_close(actual, expected, eps=LOCATE_EPS):
+    if not _helpers.vector_close(actual, expected, eps=_LOCATE_EPS):
         s, t = newton_refine(surface, x_val, y_val, s, t)
     return s, t
 
@@ -1266,22 +1268,22 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
             if sign1 == 1.0:
                 return IntersectionClassification.opposed
             else:
-                raise NotImplementedError(BAD_TANGENT)
+                raise NotImplementedError(_BAD_TANGENT)
         else:
             delta_c = abs(curvature1) - abs(curvature2)
             if delta_c == 0.0:
-                raise NotImplementedError(SAME_CURVATURE)
+                raise NotImplementedError(_SAME_CURVATURE)
             elif sign1 == _SIGN(delta_c):
                 return IntersectionClassification.opposed
             else:
-                raise NotImplementedError(BAD_TANGENT)
+                raise NotImplementedError(_BAD_TANGENT)
     else:
         if curvature1 > curvature2:
             return IntersectionClassification.tangent_first
         elif curvature1 < curvature2:
             return IntersectionClassification.tangent_second
         else:
-            raise NotImplementedError(SAME_CURVATURE)
+            raise NotImplementedError(_SAME_CURVATURE)
 
 
 def edge_cycle(edge1, edge2, edge3):
@@ -1601,12 +1603,12 @@ def _ends_to_curve(start_node, end_node):
     if start_node.interior_curve is IntersectionClassification.first:
         left = start_node.left
         if end_node.left is not left:
-            raise ValueError(WRONG_CURVE)
+            raise ValueError(_WRONG_CURVE)
         return left.specialize(start_node.s, end_node.s)
     elif start_node.interior_curve is IntersectionClassification.second:
         right = start_node.right
         if end_node.right is not right:
-            raise ValueError(WRONG_CURVE)
+            raise ValueError(_WRONG_CURVE)
         return right.specialize(start_node.t, end_node.t)
     else:
         raise ValueError('Segment start must be classified as '

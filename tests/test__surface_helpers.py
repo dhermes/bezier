@@ -592,7 +592,7 @@ class Test_locate_point(unittest.TestCase):
         surface = bezier.Surface(UNIT_TRIANGLE)
         x_val = 1.0 / 3.0
         y_val = 1.0 / 3.0
-        with mock.patch('bezier._surface_helpers.LOCATE_EPS', new=-1.0):
+        with mock.patch('bezier._surface_helpers._LOCATE_EPS', new=-1.0):
             s, t = self._call_function_under_test(surface, x_val, y_val)
 
         self.assertEqual(s, x_val)
