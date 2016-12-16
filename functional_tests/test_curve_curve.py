@@ -232,6 +232,19 @@ CURVE31 = bezier.Curve(np.array([
     [0.25, 16.75],
     [12.25, 0.75],
 ]))
+# g32 = sympy.Matrix([[(7 * s - 2) / 8, -1 / 4]])
+# NOTE: This is a degree-elevated line.
+CURVE32 = bezier.Curve(np.array([
+    [-0.25, -0.25],
+    [0.1875, -0.25],
+    [0.625, -0.25],
+]))
+# g33 = sympy.Matrix([[(1 - 2 * s) * (s - 1) / 8, -s]])
+CURVE33 = bezier.Curve(np.array([
+    [-0.125, 0.0],
+    [0.0625, -0.5],
+    [0.0, -1.0],
+]))
 
 
 def make_plots(curve1, curve2, points, ignore_save=False):
@@ -635,6 +648,18 @@ def test_curves11_and_31():
     t_vals = s_vals
     points = np.zeros((0, 2))
     curve_curve_check(CURVE11, CURVE31, s_vals, t_vals, points)
+
+
+def test_curves32_and_33():
+    # NOTE: This intersection (incorrectly) occurs twice.
+    s_vals = np.array([13.0, 13.0]) / 56.0
+    t_vals = np.array([0.25, 0.25])
+    points = np.array([
+        [-0.046875, -0.25],
+        [-0.046875, -0.25],
+    ])
+    with CONFIG.wiggle(4):
+        curve_curve_check(CURVE32, CURVE33, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
