@@ -16,6 +16,7 @@ import pytest
 import six
 
 import bezier
+from bezier import _plot_helpers
 
 import runtime_utils
 
@@ -453,7 +454,7 @@ def make_plots(surface1, surface2, intersections, failed=True):
         color = ax.patches[-1].get_facecolor()[:3]
 
     plt.axis('scaled')
-    runtime_utils.add_plot_boundary(ax)
+    _plot_helpers.add_plot_boundary(ax)
 
     if CONFIG.save_plot:
         CONFIG.save_fig()

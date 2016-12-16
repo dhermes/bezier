@@ -74,22 +74,6 @@ def real_roots(coeffs):
     return np.sort(filtered)
 
 
-def add_plot_boundary(ax):
-    """Add a buffer of empty space around a plot boundary.
-
-    Args:
-        ax (matplotlib.artist.Artist): A matplotlib axis.
-    """
-    nodes = np.vstack([line.get_xydata() for line in ax.lines])
-    left, right, bottom, top = _helpers.bbox(nodes)
-    center_x = 0.5 * (right + left)
-    delta_x = right - left
-    center_y = 0.5 * (top + bottom)
-    delta_y = top - bottom
-    ax.set_xlim(center_x - 0.5625 * delta_x, center_x + 0.5625 * delta_x)
-    ax.set_ylim(center_y - 0.5625 * delta_y, center_y + 0.5625 * delta_y)
-
-
 class Config(object):  # pylint: disable=too-few-public-methods
     """Run-time configuration.
 

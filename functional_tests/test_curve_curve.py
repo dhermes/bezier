@@ -15,6 +15,7 @@ import six
 
 import bezier
 from bezier import _intersection_helpers
+from bezier import _plot_helpers
 
 import runtime_utils
 
@@ -256,7 +257,7 @@ def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
     ax.plot(points[:, 0], points[:, 1],
             marker='o', linestyle='None', color='black')
     ax.axis('scaled')
-    runtime_utils.add_plot_boundary(ax)
+    _plot_helpers.add_plot_boundary(ax)
 
     if CONFIG.save_plot:
         if not ignore_save:
