@@ -662,11 +662,13 @@ class Surface(_base.Base):
             path, facecolor=color, alpha=0.6)
         ax.add_patch(patch)
 
-    def plot(self, pts_per_edge, ax=None, with_nodes=False, show=False):
+    def plot(self, pts_per_edge, color=None, ax=None,
+             with_nodes=False, show=False):
         """Plot the current surface.
 
         Args:
             pts_per_edge (int): Number of points to plot per edge.
+            color (Optional[Tuple[float, float, float]]): Color as RGB profile.
             ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
                 to add plot to.
             with_nodes (Optional[bool]): Determines if the control points
@@ -696,7 +698,7 @@ class Surface(_base.Base):
             fig = plt.figure()
             ax = fig.gca()
 
-        line, = ax.plot(points1[:, 0], points1[:, 1])
+        line, = ax.plot(points1[:, 0], points1[:, 1], color=color)
         color = line.get_color()
         ax.plot(points2[:, 0], points2[:, 1], color=color)
         ax.plot(points3[:, 0], points3[:, 1], color=color)

@@ -508,7 +508,7 @@ class TestSurface(utils.NumPyTestCase):
         else:
             self.assertEqual(ax.plot.call_count, 3)
         calls = ax.plot.mock_calls
-        utils.check_plot_call(self, calls[0], nodes[:2, :])
+        utils.check_plot_call(self, calls[0], nodes[:2, :], color=None)
         utils.check_plot_call(self, calls[1], nodes[1:, :], color=color)
         utils.check_plot_call(self, calls[2], nodes[(2, 0), :], color=color)
         if with_nodes:
