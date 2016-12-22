@@ -104,7 +104,7 @@ def _check_parameters(s, t):
         else:
             raise ValueError(name, 'outside of unit interval', val)
 
-    return tuple(return_vals)
+    return return_vals[0], return_vals[1]
 
 
 def bbox_intersect(nodes1, nodes2):
