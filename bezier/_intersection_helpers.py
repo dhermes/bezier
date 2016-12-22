@@ -42,6 +42,10 @@ _TOO_MANY_TEMPLATE = (
 # call to _check_parameters() will fail the intersection.
 _WIGGLE_START = -2.0**(-16)
 _WIGGLE_END = 1.0 - _WIGGLE_START
+# Even after Newton resolves over- or under-shooting, there may
+# still be a small amount of "leakage" outside [0, 1].
+_CHECK_WIGGLE_START = -2.0**(-50)
+_CHECK_WIGGLE_END = 1.0 - _CHECK_WIGGLE_START
 
 
 def _check_close(s, curve1, t, curve2):
@@ -74,17 +78,33 @@ def _check_close(s, curve1, t, curve2):
 def _check_parameters(s, t):
     r"""Check if ``s``, ``t`` are in :math:`\left[0, 1\right]`.
 
+    Allows a little bit of wiggle room outside the interval. Actually
+    checks that values are in :math:`\left[-2^{-50}, 1 + 2^{-50}\right]`.
+
     Args:
         s (float): Parameter on a curve.
         t (float): Parameter on a curve.
 
+    Returns:
+        Tuple[float, float]: The values of ``s`` and ``t``. May be slightly
+        modified from the input values if they lie outside the unit interval.
+
     Raises:
-        ValueError: If one of the values falls outside the unit interval.
+        ValueError: If one of the values falls outside the unit interval
+        (with wiggle room).
     """
-    if not _helpers.in_interval(s, 0.0, 1.0):
-        raise ValueError('s outside of unit interval', s)
-    if not _helpers.in_interval(t, 0.0, 1.0):
-        raise ValueError('t outside of unit interval', t)
+    return_vals = []
+    for val, name in ((s, 's'), (t, 't')):
+        if _helpers.in_interval(val, 0.0, 1.0):
+            return_vals.append(val)
+        elif _CHECK_WIGGLE_START < val < 0.0:
+            return_vals.append(0.0)
+        elif 1.0 < val < _CHECK_WIGGLE_END:
+            return_vals.append(1.0)
+        else:
+            raise ValueError(name, 'outside of unit interval', val)
+
+    return tuple(return_vals)
 
 
 def bbox_intersect(nodes1, nodes2):
@@ -919,7 +939,7 @@ def from_linearized(left, right, intersections):
     # values of s and t.
     refined_s, refined_t = newton_refine(
         orig_s, orig_left, orig_t, orig_right)
-    _check_parameters(refined_s, refined_t)
+    refined_s, refined_t = _check_parameters(refined_s, refined_t)
     intersection = Intersection(
         orig_left, refined_s, orig_right, refined_t)
     _add_intersection(intersection, intersections)

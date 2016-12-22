@@ -246,6 +246,26 @@ CURVE33 = bezier.Curve(np.array([
     [0.0625, -0.5],
     [0.0, -1.0],
 ]))
+# g34 = sympy.Matrix([[4, 3 * (2 * s + 5)]]) / 8
+CURVE34 = bezier.Curve(np.array([
+    [0.5, 1.875],
+    [0.5, 2.625],
+]))
+# g35 = sympy.Matrix([[5 * (1 - 2 * s), 21]]) / 8
+CURVE35 = bezier.Curve(np.array([
+    [0.625, 2.625],
+    [-0.625, 2.625],
+]))
+# g36 = sympy.Matrix([[(1 - s) / 2, -3 * (s + 1) / 8]])
+CURVE36 = bezier.Curve(np.array([
+    [0.5, -0.375],
+    [0.0, -0.75],
+]))
+# g37 = sympy.Matrix([[(7 * s - 2) / 4, 7 * (s - 1) / 8]])
+CURVE37 = bezier.Curve(np.array([
+    [-0.5, -0.875],
+    [1.25, 0.0],
+]))
 
 
 def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
@@ -664,6 +684,26 @@ def test_curves32_and_33():
     # NOTE: We allow less wiggle room for this intersection.
     with CONFIG.wiggle(4):
         curve_curve_check(CURVE32, CURVE33, s_vals, t_vals, points)
+
+
+def test_curves34_and_35():
+    s_vals = np.array([1.0])
+    t_vals = np.array([1.0 / 10.0])
+    points = np.array([
+        [0.5, 2.625],
+    ])
+
+    curve_curve_check(CURVE34, CURVE35, s_vals, t_vals, points)
+
+
+def test_curves36_and_37():
+    s_vals = np.array([0.0])
+    t_vals = np.array([4.0 / 7.0])
+    points = np.array([
+        [0.5, -0.375],
+    ])
+
+    curve_curve_check(CURVE36, CURVE37, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':

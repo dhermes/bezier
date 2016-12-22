@@ -82,8 +82,10 @@ class Test__check_parameters(unittest.TestCase):
 
     def test_at_endpoint(self):
         # Really just making sure the function doesn't raise.
-        self.assertIsNone(self._call_function_under_test(0.0, 0.5))
-        self.assertIsNone(self._call_function_under_test(0.5, 1.0))
+        result = self._call_function_under_test(0.0, 0.5)
+        self.assertEqual(result, (0.0, 0.5))
+        result = self._call_function_under_test(0.5, 1.0)
+        self.assertEqual(result, (0.5, 1.0))
 
     def test_near_endpoint(self):
         with self.assertRaises(ValueError):
@@ -99,7 +101,18 @@ class Test__check_parameters(unittest.TestCase):
 
     def test_valid(self):
         # Really just making sure the function doesn't raise.
-        self.assertIsNone(self._call_function_under_test(0.25, 0.5))
+        result = self._call_function_under_test(0.25, 0.5)
+        self.assertEqual(result, (0.25, 0.5))
+
+    def test_wiggle_below(self):
+        value = -2.0**(-60)
+        result = self._call_function_under_test(value, 0.25)
+        self.assertEqual(result, (0.0, 0.25))
+
+    def test_wiggle_above(self):
+        value = 1 + 2.0**(-52)
+        result = self._call_function_under_test(0.875, value)
+        self.assertEqual(result, (0.875, 1.0))
 
 
 class Test_bbox_intersect(unittest.TestCase):
