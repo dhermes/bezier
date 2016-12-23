@@ -28,6 +28,7 @@ slow = pytest.mark.skipif(  # pylint: disable=invalid-name
 class TestSurface(utils.NumPyTestCase):
 
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
+    REF_TRIANGLE3 = utils.ref_triangle_uniform_nodes(3)
     QUADRATIC = np.array([
         [0.0, 0.0],
         [1.25, 0.5],
@@ -1002,3 +1003,42 @@ class TestSurface(utils.NumPyTestCase):
             surface1.intersect(surface2)
         with self.assertRaises(NotImplementedError):
             surface2.intersect(surface1)
+
+    def test_elevate_linear(self):
+        surface = self._make_one(np.array([
+            [0.0, 0.0],
+            [2.0, 1.0],
+            [-1.0, 2.0],
+        ]))
+        elevated = surface.elevate()
+        expected = np.array([
+            [0.0, 0.0],
+            [1.0, 0.5],
+            [2.0, 1.0],
+            [-0.5, 1.0],
+            [0.5, 1.5],
+            [-1.0, 2.0],
+        ])
+        self.assertEqual(surface.degree, 1)
+        self.assertEqual(elevated.degree, 2)
+        self.assertEqual(elevated.nodes, expected)
+
+        main_vals = surface.evaluate_multi(self.REF_TRIANGLE3)
+        sub_vals = elevated.evaluate_multi(self.REF_TRIANGLE3)
+        self.assertEqual(main_vals, sub_vals)
+
+    def test_elevate_quadratic(self):
+        nodes = np.array([[0.0, 6.0, 9.0, 0.0, 6.0, -3.0]])
+        nodes = nodes.T  # pylint: disable=no-member
+        surface = self._make_one(nodes)
+        elevated = surface.elevate()
+        expected = np.array([
+            [0.0, 4.0, 7.0, 9.0, 0.0, 4.0, 7.0, -1.0, 3.0, -3.0]])
+        expected = expected.T  # pylint: disable=no-member
+        self.assertEqual(surface.degree, 2)
+        self.assertEqual(elevated.degree, 3)
+        self.assertEqual(elevated.nodes, expected)
+
+        main_vals = surface.evaluate_multi(self.REF_TRIANGLE3)
+        sub_vals = elevated.evaluate_multi(self.REF_TRIANGLE3)
+        self.assertEqual(main_vals, sub_vals)

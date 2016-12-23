@@ -1061,3 +1061,97 @@ class Surface(_base.Base):
         _surface_helpers.verify_duplicates(duplicates, uniques)
         return _surface_helpers.combine_intersections(
             uniques, self, other)
+
+    def elevate(self):
+        r"""Return a degree-elevated version of the current surface.
+
+        Does this by converting the current nodes
+        :math:`\left\{v_{i, j, k}\right\}_{i + j + k = d}` to new nodes
+        :math:`\left\{w_{i, j, k}\right\}_{i + j + k = d + 1}`. Does so
+        by re-writing
+
+        .. math::
+
+           E\left(\lambda_1, \lambda_2, \lambda_3\right) =
+               \left(\lambda_1 + \lambda_2 + \lambda_3\right)
+               B\left(\lambda_1, \lambda_2, \lambda_3\right) =
+               \sum_{i + j + k = d + 1} \binom{d + 1}{i \, j \, k}
+               \lambda_1^i \lambda_2^j \lambda_3^k \cdot w_{i, j, k}
+
+        In this form, we must have
+
+        .. math::
+
+           \begin{align*}
+           \binom{d + 1}{i \, j \, k} \cdot w_{i, j, k} &=
+               \binom{d}{i - 1 \, j \, k} \cdot v_{i - 1, j, k} +
+               \binom{d}{i \, j - 1 \, k} \cdot v_{i, j - 1, k} +
+               \binom{d}{i \, j \, k - 1} \cdot v_{i, j, k - 1} \\
+           \Longleftrightarrow (d + 1) \cdot w_{i, j, k} &=
+               i \cdot v_{i - 1, j, k} + j \cdot v_{i, j - 1, k} +
+               k \cdot v_{i, j, k - 1}
+           \end{align*}
+
+        where we assume that, for example, :math:`v_{i, j, k - 1}` is
+        :math:`0` (or any other unused value) if :math:`k = 0`.
+
+        .. doctest:: surface-elevate
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> surface = bezier.Surface(np.array([
+           ...     [0.0, 0.0],
+           ...     [1.0, 0.0],
+           ...     [0.0, 1.0],
+           ... ]))
+           >>> surface
+           <Surface (degree=1, dimension=2)>
+           >>> new_surface = surface.elevate()
+           >>> new_surface
+           <Surface (degree=2, dimension=2)>
+           >>> new_surface.nodes
+           array([[ 0. , 0. ],
+                  [ 0.5, 0. ],
+                  [ 1. , 0. ],
+                  [ 0. , 0.5],
+                  [ 0.5, 0.5],
+                  [ 0. , 1. ]])
+
+        Returns:
+            Surface: The degree-elevated surface.
+        """
+        num_nodes, _ = self._nodes.shape
+        # (d + 1)(d + 2)/2 --> (d + 2)(d + 3)/2
+        num_new = num_nodes + self.degree + 2
+        new_nodes = np.zeros((num_new, self.dimension))
+
+        # NOTE: We start from the index triples (i, j, k) for the current
+        #       nodes and map them onto (i + 1, j, k), etc. This index
+        #       tracking is also done in :func:`.de_casteljau_one_round`.
+        index = 0
+        # parent_i1 = index + k
+        # parent_i2 = index + k + 1
+        # parent_i3 = index + degree + 2
+        parent_i1 = 0
+        parent_i2 = 1
+        parent_i3 = self.degree + 2
+        for k in six.moves.xrange(self.degree + 1):
+            for j in six.moves.xrange(self.degree + 1 - k):
+                i = self.degree - j - k
+                new_nodes[parent_i1, :] += (i + 1) * self._nodes[index, :]
+                new_nodes[parent_i2, :] += (j + 1) * self._nodes[index, :]
+                new_nodes[parent_i3, :] += (k + 1) * self._nodes[index, :]
+                # Update all the indices.
+                parent_i1 += 1
+                parent_i2 += 1
+                parent_i3 += 1
+                index += 1
+
+            # Update the indices that depend on k.
+            parent_i1 += 1
+            parent_i2 += 1
+
+        # Hold off on division until the end, to (attempt to) avoid round-off.
+        denominator = self.degree + 1.0
+        new_nodes /= denominator
+
+        return Surface(new_nodes, _copy=False)
