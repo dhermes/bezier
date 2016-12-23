@@ -1066,3 +1066,41 @@ def get_curvature(nodes, s, tangent_vec, curvature):
     ax.set_xlim(-0.0625, 1.0625)
     ax.set_ylim(-0.0625, 0.625)
     save_image(ax.figure, 'get_curvature.png')
+
+
+def curve_locate(curve, point1, point2):
+    """Image for :meth`.Curve.locate` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve.plot(256)
+    points = np.vstack([point1, point2])
+    ax.plot(points[:, 0], points[:, 1], color='black',
+            linestyle='None', marker='o')
+
+    ax.axis('scaled')
+    ax.set_xlim(-0.125, 4.125)
+    ax.set_ylim(-0.125, 1.25)
+    save_image(ax.figure, 'curve_locate.png')
+
+
+def newton_refine_curve(curve, point, s, new_s):
+    """Image for :func:`._curve_helpers.newton_refine` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve.plot(256)
+    ax.plot(point[:, 0], point[:, 1], marker='H')
+    wrong_points = curve.evaluate_multi(np.array([s, new_s]))
+    ax.plot(wrong_points[[0], 0], wrong_points[[0], 1],
+            color='black', linestyle='None', marker='o')
+    ax.plot(wrong_points[[1], 0], wrong_points[[1], 1],
+            color='black', linestyle='None', marker='o',
+            markeredgewidth=1, markerfacecolor='None')
+
+    # Set the axis bounds / scaling.
+    ax.axis('scaled')
+    ax.set_xlim(-0.125, 3.125)
+    ax.set_ylim(-0.125, 1.375)
+
+    save_image(ax.figure, 'newton_refine_curve.png')

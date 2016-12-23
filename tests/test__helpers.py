@@ -129,6 +129,40 @@ class Test_contains(unittest.TestCase):
             self._call_function_under_test(self.UNIT_SQUARE, 0.25, 0.75))
 
 
+class Test_contains_nd(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, point):
+        from bezier import _helpers
+
+        return _helpers.contains_nd(nodes, point)
+
+    def test_below(self):
+        nodes = np.array([
+            [0.0, 1.0],
+            [0.5, 0.0],
+            [1.0, 2.0],
+        ])
+        point = np.array([[-0.5, 1.0]])
+        self.assertFalse(self._call_function_under_test(nodes, point))
+
+    def test_above(self):
+        nodes = np.array([
+            [0.0, -4.0, 2.0],
+            [-1.0, 1.0, 3.0],
+        ])
+        point = np.array([[-0.5, 2.0, 2.5]])
+        self.assertFalse(self._call_function_under_test(nodes, point))
+
+    def test_inside(self):
+        nodes = np.array([
+            [0.0, 1.0, 2.0, 3.0],
+            [1.0, -2.0, -4.0, 1.0],
+        ])
+        point = np.array([[0.5, 0.0, 0.0, 2.0]])
+        self.assertTrue(self._call_function_under_test(nodes, point))
+
+
 class Test_cross_product(utils.NumPyTestCase):
 
     @staticmethod

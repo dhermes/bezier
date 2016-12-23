@@ -344,3 +344,57 @@ class Test_get_curvature(unittest.TestCase):
         tangent_vec = self._get_tangent_vec(nodes, 2, s)
         result = self._call_function_under_test(nodes, 2, tangent_vec, s)
         self.assertEqual(result, -4.0)
+
+
+class Test_newton_refine(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(curve, point, s):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.newton_refine(curve, point, s)
+
+    def test_it(self):
+        import bezier
+
+        curve = bezier.Curve(np.array([
+            [0.0, 0.0, 0.0],
+            [1.0, -1.0, 1.0],
+            [3.0, 2.0, 2.0],
+            [2.0, 2.0, 4.0],
+        ]))
+        point = curve.evaluate_multi(np.array([0.5]))
+        new_s = self._call_function_under_test(curve, point, 0.25)
+        self.assertEqual(110.0 * new_s, 57.0)
+
+
+class Test_locate_point(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(curve, point):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.locate_point(curve, point)
+
+    def test_it(self):
+        import bezier
+
+        curve = bezier.Curve(np.array([
+            [0.0, 0.0, 0.0],
+            [3.0, 0.0, -1.0],
+            [1.0, 1.0, 3.0],
+        ]))
+        point = curve.evaluate_multi(np.array([0.125]))
+        result = self._call_function_under_test(curve, point)
+        self.assertEqual(result, 0.125)
+
+    def test_no_match(self):
+        import bezier
+
+        curve = bezier.Curve(np.array([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ]))
+        point = np.array([[0.5, 2.0]])
+        self.assertIsNone(self._call_function_under_test(curve, point))

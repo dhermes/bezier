@@ -118,6 +118,32 @@ def contains(nodes, x_val, y_val):
     return True
 
 
+def contains_nd(nodes, point):
+    r"""Predicate indicating if a point is within a bounding box.
+
+    Like :func:`contains` but supports points in arbitrary dimension.
+    Unlike :func:`contains`, this function directly uses ``<=`` and
+    ``>=`` for comparison (:func:`contains` uses :func:`in_interval`).
+
+    Args:
+       nodes (numpy.ndarray): A set of points.
+       point (numpy.ndarray): A 1D NumPy array representing a point
+           in the same dimension as ``nodes``.
+
+    Returns:
+        bool: Indicating containment.
+    """
+    min_vals = np.min(nodes, axis=0)
+    if not np.all(min_vals <= point):
+        return False
+
+    max_vals = np.max(nodes, axis=0)
+    if not np.all(point <= max_vals):
+        return False
+
+    return True
+
+
 def cross_product(vec0, vec1):
     r"""Compute the cross-product of vectors in :math:`\mathbf{R}^2`.
 

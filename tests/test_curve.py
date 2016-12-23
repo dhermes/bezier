@@ -531,3 +531,24 @@ class TestCurve(utils.NumPyTestCase):
             [4.046875, 2.84375],
         ])
         self.assertEqual(new_curve.nodes, expected)
+
+    def test_locate_wrong_shape(self):
+        curve = self._make_one(np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ]))
+        point = np.array([[0.0, 1.0, 2.0]])
+        with self.assertRaises(ValueError):
+            curve.locate(point)
+
+    def test_locate(self):
+        curve = self._make_one(np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, -1.0],
+            [5.0, 1.0],
+        ]))
+        s_val = 0.75
+        point = curve.evaluate_multi(np.array([s_val]))
+        result = curve.locate(point)
+        self.assertEqual(result, s_val)

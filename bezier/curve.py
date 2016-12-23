@@ -625,3 +625,57 @@ class Curve(_base.Base):
         return Curve(new_nodes, start=true_start,
                      end=true_end, root=self.root,
                      _copy=False)
+
+    def locate(self, point):
+        r"""Find a point on the current curve.
+
+        Solves for :math:`s` in :math:`B(s) = p`.
+
+        .. note::
+
+           A unique solution is only guaranteed if the current curve has no
+           self-intersections. This code assumes, but doesn't check, that
+           this is true.
+
+        .. image:: ../images/curve_locate.png
+           :align: center
+
+        .. doctest:: curve-locate
+
+           >>> curve = bezier.Curve(np.array([
+           ...     [0.0, 0.0],
+           ...     [1.0, 2.0],
+           ...     [3.0, 1.0],
+           ...     [4.0, 0.0],
+           ... ]))
+           >>> point1 = np.array([[3.09375, 0.703125]])
+           >>> s = curve.locate(point1)
+           >>> s
+           0.75
+           >>> point2 = np.array([[2.0, 0.5]])
+           >>> curve.locate(point2) is None
+           True
+
+        .. testcleanup:: curve-locate
+
+           import make_images
+           make_images.curve_locate(curve, point1, point2)
+
+        Args:
+            point (numpy.ndarray): A (``1xD``) point on the curve,
+                where :math:`D` is the dimension of the curve.
+
+        Returns:
+            Optional[float]: The parameter value (:math:`s`) corresponding
+            to ``point`` or :data:`None` if the point is not on
+            the ``curve``.
+
+        Raises:
+            ValueError: If the dimension of the ``point`` doesn't match the
+                dimension of the current curve.
+        """
+        if point.shape != (1, self.dimension):
+            raise ValueError('Point is not in same dimension as curve',
+                             point, 'Shape expected:', (1, self.dimension))
+
+        return _curve_helpers.locate_point(self, point)

@@ -30,6 +30,9 @@ except ImportError:  # pragma: NO COVER
 from bezier import _helpers
 
 
+_MAX_LOCATE_SUBDIVISIONS = 20
+
+
 def make_subdivision_matrix(degree):
     """Make the matrix used to subdivide a curve.
 
@@ -363,3 +366,129 @@ def get_curvature(nodes, degree, tangent_vec, s):
         np.array([tangent_vec]), concavity)
     curvature /= np.linalg.norm(tangent_vec, ord=2)**3
     return curvature
+
+
+def newton_refine(curve, point, s):
+    r"""Refine a solution to :math:`B(s) = p` using Newton's method.
+
+    Computes updates via
+
+    .. math::
+
+       \mathbf{0} \approx
+           \left(B\left(s_{\ast}\right) - p\right) +
+           B'\left(s_{\ast}\right) \Delta s
+
+    For example, consider the curve
+
+    .. math::
+
+       B(s) =
+           \left[\begin{array}{c} 0 \\ 0 \end{array}\right] (1 - s)^2 +
+           \left[\begin{array}{c} 1 \\ 2 \end{array}\right]
+               2 (1 - s) s +
+           \left[\begin{array}{c} 3 \\ 1 \end{array}\right] s^2
+
+    and the point :math:`B\left(\frac{1}{4}\right) =
+    \frac{1}{16} \left[\begin{array}{c} 9 \\ 13 \end{array}\right]`.
+
+    Starting from the **wrong** point :math:`s = \frac{3}{4}`, we have
+
+    .. math::
+
+       \begin{align*}
+       p - B\left(\frac{1}{2}\right) &= -\frac{1}{2}
+           \left[\begin{array}{c} 3 \\ 1 \end{array}\right] \\
+       B'\left(\frac{1}{2}\right) &= \frac{1}{2}
+           \left[\begin{array}{c} 7 \\ -1 \end{array}\right] \\
+       \Longrightarrow \frac{1}{4} \left[\begin{array}{c c}
+           7 & -1 \end{array}\right] \left[\begin{array}{c}
+           7 \\ -1 \end{array}\right] \Delta s &= -\frac{1}{4}
+           \left[\begin{array}{c c} 7 & -1 \end{array}\right]
+           \left[\begin{array}{c} 3 \\ 1 \end{array}\right] \\
+       \Longrightarrow \Delta s &= -\frac{2}{5}
+       \end{align*}
+
+    .. image:: images/newton_refine_curve.png
+       :align: center
+
+    .. testsetup:: newton-refine-curve
+
+       import numpy as np
+       import bezier
+       from bezier._curve_helpers import newton_refine
+
+    .. doctest:: newton-refine-curve
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> curve = bezier.Curve(np.array([
+       ...     [0.0, 0.0],
+       ...     [1.0, 2.0],
+       ...     [3.0, 1.0],
+       ... ]))
+       >>> point = curve.evaluate_multi(np.array([0.25]))
+       >>> point
+       array([[ 0.5625, 0.8125]])
+       >>> s = 0.75
+       >>> new_s = newton_refine(curve, point, s)
+       >>> 5 * (new_s - s)
+       -2.0
+
+    .. testcleanup:: newton-refine-curve
+
+       import make_images
+       make_images.newton_refine_curve(curve, point, s, new_s)
+
+    Args:
+        curve (.Curve): The curve to refine a point on.
+        point (numpy.ndarray): A point on ``curve``.
+        s (float): An "almost" solution to :math:`B(s) = p`.
+
+    Returns:
+        float: The updated value :math:`s + \Delta s`.
+    """
+    nodes = curve._nodes  # pylint: disable=protected-access
+    pt_delta = point.flatten() - curve.evaluate(s)
+    derivative = evaluate_hodograph(nodes, curve.degree, s)
+    delta_s = np.dot(pt_delta, derivative) / np.dot(derivative, derivative)
+    return s + delta_s
+
+
+def locate_point(curve, point):
+    r"""Locate a point on a curve.
+
+    Does so by recursively subdividing the curve and rejecting
+    sub-curves with bounding boxes that don't contain the point.
+    After the sub-curves are sufficiently small, uses Newton's
+    method to zoom in on the parameter value.
+
+    .. note::
+
+       This assumes, but does not check, that ``point`` is ``1xD``,
+       where ``D`` is the dimension that ``curve`` is in.
+
+    Args:
+        curve (.Curve): A B |eacute| zier curve.
+        point (numpy.ndarray): The point to locate.
+
+    Returns:
+        Optional[float]: The parameter value (:math:`s`) corresponding
+        to ``point`` or :data:`None` if the point is not on the ``curve``.
+    """
+    point = point.flatten()
+    candidates = [curve]
+    for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
+        next_candidates = []
+        for candidate in candidates:
+            nodes = candidate._nodes  # pylint: disable=protected-access
+            if _helpers.contains_nd(nodes, point):
+                next_candidates.extend(candidate.subdivide())
+
+        candidates = next_candidates
+
+    if not candidates:
+        return None
+
+    s_approx = np.mean(
+        [(candidate.start, candidate.end) for candidate in candidates])
+    return newton_refine(curve, point, s_approx)
