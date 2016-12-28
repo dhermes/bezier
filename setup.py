@@ -18,7 +18,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-VERSION = '0.2.0'
+VERSION = '0.2.1'
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(PACKAGE_ROOT, 'README.rst.template')) as file_obj:
