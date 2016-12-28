@@ -1104,3 +1104,24 @@ def newton_refine_curve(curve, point, s, new_s):
     ax.set_ylim(-0.125, 1.375)
 
     save_image(ax.figure, 'newton_refine_curve.png')
+
+
+def newton_refine_curve_cusp(curve, s_vals):
+    """Image for :func:`._curve_helpers.newton_refine` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve.plot(256)
+    ax.lines[-1].zorder = 1
+
+    points = curve.evaluate_multi(np.array(s_vals))
+    colors = seaborn.dark_palette('blue', 6)
+    ax.scatter(points[:, 0], points[:, 1], c=colors,
+               s=20, alpha=0.75, zorder=2)
+
+    # Set the axis bounds / scaling.
+    ax.axis('scaled')
+    ax.set_xlim(-0.125, 6.125)
+    ax.set_ylim(-3.125, 3.125)
+
+    save_image(ax.figure, 'newton_refine_curve_cusp.png')

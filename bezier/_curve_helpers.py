@@ -412,7 +412,7 @@ def newton_refine(curve, point, s):
     .. image:: images/newton_refine_curve.png
        :align: center
 
-    .. testsetup:: newton-refine-curve
+    .. testsetup:: newton-refine-curve, newton-refine-curve-cusp
 
        import numpy as np
        import bezier
@@ -438,6 +438,87 @@ def newton_refine(curve, point, s):
 
        import make_images
        make_images.newton_refine_curve(curve, point, s, new_s)
+
+    On curves that are not "valid" (i.e. :math:`B(s)` is not
+    injective with non-zero gradient), Newton's method may
+    break down and converge linearly:
+
+    .. image:: images/newton_refine_curve_cusp.png
+       :align: center
+
+    .. doctest:: newton-refine-curve-cusp
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> curve = bezier.Curve(np.array([
+       ...     [ 6.0, -3.0],
+       ...     [-2.0,  3.0],
+       ...     [-2.0, -3.0],
+       ...     [ 6.0,  3.0],
+       ... ]))
+       >>> expected = 0.5
+       >>> point = curve.evaluate_multi(np.array([expected]))
+       >>> point
+       array([[ 0., 0.]])
+       >>> s_vals = [0.625, None, None, None, None, None]
+       >>> np.log2(abs(expected - s_vals[0]))
+       -3.0
+       >>> s_vals[1] = newton_refine(curve, point, s_vals[0])
+       >>> np.log2(abs(expected - s_vals[1]))
+       -3.983...
+       >>> s_vals[2] = newton_refine(curve, point, s_vals[1])
+       >>> np.log2(abs(expected - s_vals[2]))
+       -4.979...
+       >>> s_vals[3] = newton_refine(curve, point, s_vals[2])
+       >>> np.log2(abs(expected - s_vals[3]))
+       -5.978...
+       >>> s_vals[4] = newton_refine(curve, point, s_vals[3])
+       >>> np.log2(abs(expected - s_vals[4]))
+       -6.978...
+       >>> s_vals[5] = newton_refine(curve, point, s_vals[4])
+       >>> np.log2(abs(expected - s_vals[5]))
+       -7.978...
+
+    .. testcleanup:: newton-refine-curve-cusp
+
+       import make_images
+       make_images.newton_refine_curve_cusp(curve, s_vals)
+
+    Due to round-off, the Newton process terminates with an error that is not
+    close to machine precision :math:`\varepsilon` when :math:`\Delta s = 0`.
+
+    .. testsetup:: newton-refine-curve-cusp-continued
+
+       import numpy as np
+       import bezier
+       from bezier._curve_helpers import newton_refine
+
+       curve = bezier.Curve(np.array([
+           [6.0, -3.0],
+           [-2.0, 3.0],
+           [-2.0, -3.0],
+           [6.0, 3.0],
+       ]))
+       point = curve.evaluate_multi(np.array([0.5]))
+
+    .. doctest:: newton-refine-curve-cusp
+
+       >>> s_vals = [0.625]
+       >>> new_s = newton_refine(curve, point, s_vals[-1])
+       >>> while new_s not in s_vals:
+       ...     s_vals.append(new_s)
+       ...     new_s = newton_refine(curve, point, s_vals[-1])
+       ...
+       >>> len(s_vals)
+       27
+       >>> terminal_s = s_vals[-1]
+       >>> terminal_s == newton_refine(curve, point, terminal_s)
+       True
+       >>> np.log2(terminal_s - 0.5)
+       -29.580...
+
+    Due to round-off near the cusp, the final error resembles
+    :math:`\sqrt{\varepsilon}` rather than machine precision
+    as expected.
 
     Args:
         curve (.Curve): The curve to refine a point on.
