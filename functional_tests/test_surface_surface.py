@@ -1224,10 +1224,16 @@ def test_surfaces1L_and_7L():
     with pytest.raises(AssertionError):
         surface_surface_check_multi(SURFACE1L, SURFACE7L)
 
+    intersections = SURFACE1L.intersect(SURFACE7L)
+    make_plots(SURFACE1L, SURFACE7L, intersections)
+
 
 def test_surfaces8L_and_29Q():
     with pytest.raises(AssertionError):
         surface_surface_check_multi(SURFACE8L, SURFACE29Q)
+
+    intersections = SURFACE8L.intersect(SURFACE29Q)
+    make_plots(SURFACE8L, SURFACE29Q, intersections)
 
 
 if __name__ == '__main__':
