@@ -90,10 +90,13 @@ Apache 2.0 - See `the LICENSE`_ for more information.
    :alt: Documentation Status
 .. |build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
    :target: https://circleci.com/gh/dhermes/bezier
-   :alt: CirleCI Build
+   :alt: CircleCI Build
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
    :target: https://pypi.python.org/pypi/bezier
+   :alt: PyPI Latest
 .. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
    :target: https://pypi.python.org/pypi/bezier
+   :alt: Package Versions
 .. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch=master
    :target: https://coveralls.io/github/dhermes/bezier?branch=master
+   :alt: Code Coverage

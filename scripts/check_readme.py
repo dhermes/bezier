@@ -25,10 +25,12 @@ ACTUAL_FILE = os.path.join(_ROOT_DIR, 'README.rst')
 
 PYPI_IMG = """
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
-   :target: https://pypi.python.org/pypi/bezier"""
+   :target: https://pypi.python.org/pypi/bezier
+   :alt: PyPI Latest"""
 VERSIONS_IMG = """
 .. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
-   :target: https://pypi.python.org/pypi/bezier"""
+   :target: https://pypi.python.org/pypi/bezier
+   :alt: Package Versions"""
 
 
 def main():
