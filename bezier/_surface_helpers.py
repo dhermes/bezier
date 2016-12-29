@@ -1313,7 +1313,7 @@ def edge_cycle(edge1, edge2, edge3):
 
 
 def handle_corners(intersection):
-    """Determine if ``intersection`` is a corner.
+    """Mutates an intersection if it is on a corner.
 
     Does nothing if the intersection happens in the middle of two
     edges.
@@ -1327,10 +1327,6 @@ def handle_corners(intersection):
     corners that **begin** an edge are considered, since that
     function is trying to determine which edge to **move forward** on.
 
-    **Some** corner intersections occur when two surfaces just touch
-    at that corner, but have no intersection. In this case, we
-    "ignore" the corner.
-
     .. note::
 
        This assumes the ``left`` and ``right`` curves are edges
@@ -1338,16 +1334,12 @@ def handle_corners(intersection):
        and / or ``previous_edge`` being valid.
 
     Args:
-        intersection (.Intersection): An intersection to "diagnose" and
-            possibly mutate.
+        intersection (.Intersection): An intersection to mutate.
 
     Returns:
-        Tuple[bool, bool]: Pair of predicates. The first indicates if the
-        object was changed and the second indicates if the corner is
-        to be ignored.
+        bool: Indicating if the object was changed.
     """
     changed = False
-    ignored = False
     if intersection.s == 1.0:
         # pylint: disable=protected-access
         intersection._s_val = 0.0
@@ -1361,7 +1353,7 @@ def handle_corners(intersection):
         # pylint: enable=protected-access
         changed = True
 
-    return changed, ignored
+    return changed
 
 
 def _identifier(intersection):

@@ -1046,10 +1046,8 @@ class Surface(_base.Base):
         duplicates = []
         uniques = []
         for intersection in intersections:
-            changed, ignored = _surface_helpers.handle_corners(intersection)
-            if ignored:
-                continue
-            elif changed:
+            changed = _surface_helpers.handle_corners(intersection)
+            if changed:
                 duplicates.append(intersection)
             else:
                 interior = _surface_helpers.classify_intersection(

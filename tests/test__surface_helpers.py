@@ -858,9 +858,7 @@ class Test_handle_corners(unittest.TestCase):
         right = mock.Mock()
         intersection = make_intersect(left, 0.5, right, 0.5)
 
-        changed, ignored = self._call_function_under_test(intersection)
-        self.assertFalse(changed)
-        self.assertFalse(ignored)
+        self.assertFalse(self._call_function_under_test(intersection))
         self.assertEqual(intersection.s, 0.5)
         self.assertIs(intersection.left, left)
         self.assertEqual(intersection.t, 0.5)
@@ -871,9 +869,7 @@ class Test_handle_corners(unittest.TestCase):
         right = mock.Mock()
         intersection = make_intersect(left, 1.0, right, 0.25)
 
-        changed, ignored = self._call_function_under_test(intersection)
-        self.assertTrue(changed)
-        self.assertFalse(ignored)
+        self.assertTrue(self._call_function_under_test(intersection))
         self.assertEqual(intersection.s, 0.0)
         self.assertIs(intersection.left, mock.sentinel.next_left)
         self.assertEqual(intersection.t, 0.25)
@@ -884,9 +880,7 @@ class Test_handle_corners(unittest.TestCase):
         right = mock.Mock(next_edge=mock.sentinel.next_right)
         intersection = make_intersect(left, 0.75, right, 1.0)
 
-        changed, ignored = self._call_function_under_test(intersection)
-        self.assertTrue(changed)
-        self.assertFalse(ignored)
+        self.assertTrue(self._call_function_under_test(intersection))
         self.assertEqual(intersection.s, 0.75)
         self.assertIs(intersection.left, left)
         self.assertEqual(intersection.t, 0.0)
