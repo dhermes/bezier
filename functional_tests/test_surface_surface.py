@@ -85,6 +85,18 @@ SURFACE8L = bezier.Surface(np.array([
     [0.75, 0.125],
     [1.25, 1.25],
 ]))
+# F9L = sympy.Matrix([[(7 * s + 2 * t) / 8, -(s - 5 * t - 1) / 8]])
+SURFACE9L = bezier.Surface(np.array([
+    [0.0, 0.125],
+    [0.875, 0.0],
+    [0.25, 0.75],
+]))
+# F10L = sympy.Matrix([[-2 * s + t, 3 * (s - t)]])
+SURFACE10L = bezier.Surface(np.array([
+    [0.0, 0.0],
+    [-2.0, 3.0],
+    [1.0, -3.0],
+]))
 
 # F1Q = sympy.Matrix([[
 #     (2 * s - t**2 + t) / 2,
@@ -1234,6 +1246,32 @@ def test_surfaces8L_and_29Q():
 
     intersections = SURFACE8L.intersect(SURFACE29Q)
     make_plots(SURFACE8L, SURFACE29Q, intersections)
+
+
+def test_surfaces1L_and_9L():
+    start_vals = np.array([0.0, 0.0, 0.0])
+    end_vals = np.array([1.0, 1.0, 1.0])
+
+    nodes = np.array([
+        [0.0, 0.125],
+        [0.875, 0.0],
+        [0.25, 0.75],
+    ])
+    edge_pairs = (
+        (1, 0),
+        (1, 1),
+        (1, 2),
+    )
+    surface_surface_check(SURFACE1L, SURFACE9L,
+                          start_vals, end_vals, nodes, edge_pairs)
+
+
+def test_surfaces1L_and_10L():
+    with pytest.raises(AssertionError):
+        surface_surface_check_multi(SURFACE1L, SURFACE10L)
+
+    intersections = SURFACE1L.intersect(SURFACE10L)
+    make_plots(SURFACE1L, SURFACE10L, intersections)
 
 
 if __name__ == '__main__':
