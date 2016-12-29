@@ -70,6 +70,21 @@ SURFACE6L = bezier.Surface(np.array([
     [-0.75, 0.25],
     [0.25, -0.75],
 ]))
+# F7L = sympy.Matrix([[-(s + t), (s - t + 1) / 2]])
+SURFACE7L = bezier.Surface(np.array([
+    [0.0, 0.5],
+    [-1.0, 1.0],
+    [-1.0, 0.0],
+]))
+# F8L = sympy.Matrix([[
+#     (5 * s + 9 * t + 1) / 8,
+#     -(5 * s - 4 * t - 6) / 8,
+# ]])
+SURFACE8L = bezier.Surface(np.array([
+    [0.125, 0.75],
+    [0.75, 0.125],
+    [1.25, 1.25],
+]))
 
 # F1Q = sympy.Matrix([[
 #     (2 * s - t**2 + t) / 2,
@@ -1203,6 +1218,16 @@ def test_surfaces30Q_and_31Q():
 
     surface_surface_check(SURFACE30Q, SURFACE31Q,
                           start_vals, end_vals, nodes, edge_pairs)
+
+
+def test_surfaces1L_and_7L():
+    with pytest.raises(AssertionError):
+        surface_surface_check_multi(SURFACE1L, SURFACE7L)
+
+
+def test_surfaces8L_and_29Q():
+    with pytest.raises(AssertionError):
+        surface_surface_check_multi(SURFACE8L, SURFACE29Q)
 
 
 if __name__ == '__main__':
