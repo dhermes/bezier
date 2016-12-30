@@ -145,7 +145,7 @@ def contains_nd(nodes, point):
 
 
 def cross_product(vec0, vec1):
-    r"""Compute the cross-product of vectors in :math:`\mathbf{R}^2`.
+    r"""Compute the cross product of vectors in :math:`\mathbf{R}^2`.
 
     Utilizes the fact that
 
@@ -162,7 +162,7 @@ def cross_product(vec0, vec1):
         vec1 (numpy.ndarray): A vector as a 1x2 NumPy array.
 
     Returns:
-        float: The cross-product (or rather, its :math:`z` component).
+        float: The cross product (or rather, its :math:`z` component).
     """
     return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]
 

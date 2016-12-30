@@ -1125,3 +1125,14 @@ def newton_refine_curve_cusp(curve, s_vals):
     ax.set_ylim(-3.125, 3.125)
 
     save_image(ax.figure, 'newton_refine_curve_cusp.png')
+
+
+def classify_intersection8(s, curve1, surface1, curve2, surface2):
+    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = classify_help(s, curve1, surface1, curve2, surface2, None)
+    ax.set_xlim(-1.125, 1.125)
+    ax.set_ylim(-0.125, 1.125)
+    save_image(ax.figure, 'classify_intersection8.png')

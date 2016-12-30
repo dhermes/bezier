@@ -886,7 +886,7 @@ def classify_intersection(intersection):
     .. testsetup:: classify-intersection1, classify-intersection2,
                    classify-intersection3, classify-intersection4,
                    classify-intersection5, classify-intersection6,
-                   classify-intersection7
+                   classify-intersection7, classify-intersection8
 
        import numpy as np
        import bezier
@@ -952,10 +952,10 @@ def classify_intersection(intersection):
        \left[\begin{array}{c}
            0 \\ 0 \\ x_1'(s) y_2'(t) - x_2'(t) y_1'(s) \end{array}\right].
 
-    If the cross-product quantity
+    If the cross product quantity
     :math:`B_1'(s) \times B_2'(t) = x_1'(s) y_2'(t) - x_2'(t) y_1'(s)`
     is positive, then the first curve is "to the right", i.e. the second
-    curve is interior. If the cross-product is negative, the first
+    curve is interior. If the cross product is negative, the first
     curve is interior.
 
     When :math:`B_1'(s) \times B_2'(t) = 0`, the tangent
@@ -1177,6 +1177,47 @@ def classify_intersection(intersection):
        import make_images
        make_images.classify_intersection7(s, curve1a, curve1b, curve2)
 
+    As above, some intersections at the end of an edge are part of
+    an actual intersection. However, some surfaces may just "kiss" at a
+    corner intersection:
+
+    .. image:: images/classify_intersection8.png
+       :align: center
+
+    .. doctest:: classify-intersection8
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> surface1 = bezier.Surface(np.array([
+       ...     [0.25 , 1.0  ],
+       ...     [0.0  , 0.5  ],
+       ...     [0.0  , 0.0  ],
+       ...     [0.625, 0.875],
+       ...     [0.5  , 0.375],
+       ...     [1.0  , 0.75 ],
+       ... ]))
+       >>> surface2 = bezier.Surface(np.array([
+       ...     [ 0.0625, 0.5  ],
+       ...     [-0.25  , 1.0  ],
+       ...     [-1.0   , 1.0  ],
+       ...     [-0.5   , 0.125],
+       ...     [-1.0   , 0.5  ],
+       ...     [-1.0   , 0.0  ],
+       ... ]))
+       >>> curve1, _, _ = surface1.edges
+       >>> curve2, _, _ = surface2.edges
+       >>> s, t = 0.5, 0.0
+       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       array([ True, True], dtype=bool)
+       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> classify_intersection(intersection)
+       <IntersectionClassification.ignored_corner: 'ignored_corner'>
+
+    .. testcleanup:: classify-intersection8
+
+       import make_images
+       make_images.classify_intersection8(
+           s, curve1, surface1, curve2, surface2)
+
     .. note::
 
        This assumes the intersection occurs in :math:`\mathbf{R}^2`
@@ -1185,7 +1226,7 @@ def classify_intersection(intersection):
     .. note::
 
        This function doesn't allow wiggle room / round-off when checking
-       endpoints, nor when checking if the cross-product is near zero,
+       endpoints, nor when checking if the cross product is near zero,
        nor when curvatures are compared. However, the most "correct"
        version of this function likely should allow for some round off.
 
@@ -1213,7 +1254,10 @@ def classify_intersection(intersection):
         intersection.right._nodes,  # pylint: disable=protected-access
         intersection.right.degree, intersection.t)
 
-    # Take the cross-product of tangent vectors to determine which one
+    if _check_ignored_corner(intersection, tangent1, tangent2):
+        return IntersectionClassification.ignored_corner
+
+    # Take the cross product of tangent vectors to determine which one
     # is more "to the left".
     cross_prod = _helpers.cross_product(
         np.array([tangent1]), np.array([tangent2]))
@@ -1310,6 +1354,157 @@ def edge_cycle(edge1, edge2, edge3):
     edge3._next_edge = edge1
     edge3._previous_edge = edge2
     # pylint: enable=protected-access
+
+
+def _check_ignored_edge_corner(
+        edge_tangent, corner_tangent, corner_previous_edge):
+    """Check ignored when a corner lies **inside** another edge.
+
+    Helper for :func:`_check_ignored_corner` where one of ``s`` and
+    ``t`` are ``0``, but **not both**.
+
+    Args:
+        edge_tangent (numpy.ndarray): Tangent vector along the edge
+            that the intersection occurs in the middle of.
+        corner_tangent (numpy.ndarray): Tangent vector at the corner
+            where intersection occurs (at the beginning of edge).
+        corner_previous_edge (.Curve): Edge that ends at the corner
+            intersection (whereas ``corner_tangent`` comes from the edge
+            that **begins** at the corner intersection).
+
+    Returns:
+        bool: Indicates if the corner intersection should be ignored.
+    """
+    cross_prod = _helpers.cross_product(
+        np.array([edge_tangent]), np.array([corner_tangent]))
+    # A negative cross product indicates that ``edge_tangent`` is
+    # "to the left" of ``corner_tangent`` (due to right-hand rule).
+    if cross_prod > 0.0:
+        return False
+
+    # Do the same for the **other** tangent at the corner.
+    alt_corner_tangent = _curve_helpers.evaluate_hodograph(
+        corner_previous_edge._nodes,  # pylint: disable=protected-access
+        corner_previous_edge.degree, 1.0)
+    # Change the direction of the "in" tangent so that it points "out".
+    alt_corner_tangent *= -1.0
+    cross_prod = _helpers.cross_product(
+        np.array([edge_tangent]), np.array([alt_corner_tangent]))
+    return cross_prod <= 0.0
+
+
+def _check_ignored_double_corner(intersection, tangent_s, tangent_t):
+    """Check if an intersection is an "ignored" double corner.
+
+    Helper for :func:`_check_ignored_corner` where both ``s`` and
+    ``t`` are ``0``.
+
+    Does so by checking if either edge through the ``t`` corner goes
+    through the interior of the other surface. An interior check
+    is done by checking that a few cross products are positive.
+
+    Args:
+        intersection (.Intersection): An intersection to "diagnose".
+        tangent_s (numpy.ndarray): The tangent vector on the ``left`` curve
+            at the intersection.
+        tangent_t (numpy.ndarray): The tangent vector on the ``right`` curve
+            at the intersection.
+
+    Returns:
+        bool: Indicates if the corner is to be ignored.
+    """
+    # Compute the other edge for the ``s`` surface.
+    prev_edge = intersection.left.previous_edge
+    alt_tangent_s = _curve_helpers.evaluate_hodograph(
+        prev_edge._nodes,  # pylint: disable=protected-access
+        prev_edge.degree, 1.0)
+
+    # First check if ``tangent_t`` is interior to the ``s`` surface.
+    cross_prod1 = _helpers.cross_product(
+        np.array([tangent_s]), np.array([tangent_t]))
+    cross_prod2 = _helpers.cross_product(
+        np.array([alt_tangent_s]), np.array([tangent_t]))
+    # A positive cross product indicates that ``tangent_t`` is
+    # interior to ``tangent_s``. Similar for ``alt_tangent_s``.
+    # If ``tangent_t`` is interior to both, then the surfaces
+    # do more than just "kiss" at the corner, so the corner should
+    # not be ignored.
+    if cross_prod1 >= 0.0 and cross_prod2 >= 0.0:
+        return False
+
+    # If ``tangent_t`` is not interior, we check the other ``t``
+    # edge that ends at the corner.
+    prev_edge = intersection.right.previous_edge
+    alt_tangent_t = _curve_helpers.evaluate_hodograph(
+        prev_edge._nodes,  # pylint: disable=protected-access
+        prev_edge.degree, 1.0)
+    # Change the direction of the "in" tangent so that it points "out".
+    alt_tangent_t *= -1.0
+
+    cross_prod3 = _helpers.cross_product(
+        np.array([tangent_s]), np.array([alt_tangent_t]))
+    cross_prod4 = _helpers.cross_product(
+        np.array([alt_tangent_s]), np.array([alt_tangent_t]))
+    if cross_prod3 >= 0.0 and cross_prod4 >= 0.0:
+        return False
+
+    # If neither of ``tangent_t`` or ``alt_tangent_t`` are interior
+    # to the ``s`` surface, one of two things is true. Either
+    # the two surfaces have no interior intersection (1) or the
+    # ``s`` surface is bounded by both edges of the ``t`` surface
+    # at the corner intersection (2). To detect (2), we only need
+    # check if ``tangent_s`` is interior to both ``tangent_t``
+    # and ``alt_tangent_t``.
+    return not (cross_prod1 <= 0.0 and cross_prod3 >= 0.0)
+
+
+def _check_ignored_corner(intersection, tangent_s, tangent_t):
+    """Check if an intersection is an "ignored" corner.
+
+    An "ignored" corner is one where the surfaces just "kiss" at
+    the point of intersection but their interiors do not meet.
+
+    We can determine this by comparing the tangent lines from
+    the point of intersection.
+
+    .. note::
+
+       This assumes the ``intersection`` has been shifted to the
+       beginning of a curve so only checks if ``s == 0.0`` or ``t == 0.0``
+       (rather than also checking for ``1.0``).
+
+    .. note::
+
+       This assumes the ``left`` and ``right`` curves are edges
+       in a surface, so the code relies on ``previous_edge`` being valid.
+
+    Args:
+        intersection (.Intersection): An intersection to "diagnose".
+        tangent_s (numpy.ndarray): The tangent vector on the ``left`` curve
+            at the intersection.
+        tangent_t (numpy.ndarray): The tangent vector on the ``right`` curve
+            at the intersection.
+
+    Returns:
+        bool: Indicates if the corner is to be ignored.
+    """
+    if intersection.s == 0.0:
+        if intersection.t == 0.0:
+            # Double corner.
+            return _check_ignored_double_corner(
+                intersection, tangent_s, tangent_t)
+        else:
+            # s-only corner.
+            prev_edge = intersection.left.previous_edge
+            return _check_ignored_edge_corner(
+                tangent_t, tangent_s, prev_edge)
+    elif intersection.t == 0.0:
+        # t-only corner.
+        prev_edge = intersection.right.previous_edge
+        return _check_ignored_edge_corner(tangent_s, tangent_t, prev_edge)
+    else:
+        # Not a corner.
+        return False
 
 
 def handle_corners(intersection):
@@ -1705,7 +1900,11 @@ def _tangent_only_intersections(intersections, surface1, surface2):
         raise ValueError('Unexpected value, types should all match',
                          all_types)
     point_type = all_types.pop()
-    if point_type is IntersectionClassification.opposed:
+    ignored_types = (
+        IntersectionClassification.opposed,
+        IntersectionClassification.ignored_corner,
+    )
+    if point_type in ignored_types:
         return []
     elif point_type is IntersectionClassification.tangent_first:
         return [_to_curved_polygon(surface1)]
@@ -1801,3 +2000,4 @@ class IntersectionClassification(enum.Enum):
     opposed = 'opposed'
     tangent_first = 'tangent_first'
     tangent_second = 'tangent_second'
+    ignored_corner = 'ignored_corner'

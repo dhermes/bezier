@@ -588,7 +588,7 @@ def segment_intersection(start0, end0, start1, end1):
     .. note::
 
        Since our points are in :math:`\mathbf{R}^2`, the "traditional"
-       cross-product in :math:`\mathbf{R}^3` will always point in the
+       cross product in :math:`\mathbf{R}^3` will always point in the
        :math:`z` direction, so in the above we mean the :math:`z`
        component of the cross product, rather than the entire vector.
 

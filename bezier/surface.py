@@ -1016,11 +1016,13 @@ class Surface(_base.Base):
             other (Surface): Other surface to intersect with.
 
         Returns:
-            list: List of intersection objects (possibly empty).
+            List[~bezier.curved_polygon.CurvedPolygon]: List of
+            intersections (possibly empty).
 
         Raises:
             TypeError: If ``other`` is not a surface.
-            NotImplementedError: If both surfaces aren't two-dimensional.
+            NotImplementedError: If at least one of the surfaces
+                isn't two-dimensional.
         """
         if not isinstance(other, Surface):
             raise TypeError('Can only intersect with another surface',

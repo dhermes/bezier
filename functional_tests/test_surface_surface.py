@@ -1027,6 +1027,13 @@ def test_surfaces10Q_and_17Q():
     )
     surface_surface_check(SURFACE10Q, SURFACE17Q,
                           start_vals, end_vals, nodes, edge_pairs)
+    alt_edge_pairs = (
+        (0, 0),
+        (0, 1),
+        (0, 2),
+    )
+    surface_surface_check(SURFACE17Q, SURFACE10Q,
+                          start_vals, end_vals, nodes, alt_edge_pairs)
 
 
 def test_surfaces3Q_and_14Q():
@@ -1233,19 +1240,11 @@ def test_surfaces30Q_and_31Q():
 
 
 def test_surfaces1L_and_7L():
-    with pytest.raises(AssertionError):
-        surface_surface_check_multi(SURFACE1L, SURFACE7L)
-
-    intersections = SURFACE1L.intersect(SURFACE7L)
-    make_plots(SURFACE1L, SURFACE7L, intersections)
+    surface_surface_check_multi(SURFACE1L, SURFACE7L)
 
 
 def test_surfaces8L_and_29Q():
-    with pytest.raises(AssertionError):
-        surface_surface_check_multi(SURFACE8L, SURFACE29Q)
-
-    intersections = SURFACE8L.intersect(SURFACE29Q)
-    make_plots(SURFACE8L, SURFACE29Q, intersections)
+    surface_surface_check_multi(SURFACE8L, SURFACE29Q)
 
 
 def test_surfaces1L_and_9L():
@@ -1267,11 +1266,7 @@ def test_surfaces1L_and_9L():
 
 
 def test_surfaces1L_and_10L():
-    with pytest.raises(AssertionError):
-        surface_surface_check_multi(SURFACE1L, SURFACE10L)
-
-    intersections = SURFACE1L.intersect(SURFACE10L)
-    make_plots(SURFACE1L, SURFACE10L, intersections)
+    surface_surface_check_multi(SURFACE1L, SURFACE10L)
 
 
 if __name__ == '__main__':
