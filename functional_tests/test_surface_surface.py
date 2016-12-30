@@ -1027,13 +1027,27 @@ def test_surfaces10Q_and_17Q():
     )
     surface_surface_check(SURFACE10Q, SURFACE17Q,
                           start_vals, end_vals, nodes, edge_pairs)
-    alt_edge_pairs = (
+
+
+def test_surfaces17Q_and_10Q():
+    # NOTE: This is identical to test_surfaces10Q_and_17Q, but
+    #       now the "first" surface is the one that is fully
+    #       interior at the double corner.
+    start_vals = np.array([0.0, 0.0, 0.0])
+    end_vals = np.array([1.0, 1.0, 1.0])
+
+    nodes = np.array([
+        [0.5, -0.75],
+        [0.796875, -0.125],
+        [0.203125, -0.125],
+    ])
+    edge_pairs = (
         (0, 0),
         (0, 1),
         (0, 2),
     )
     surface_surface_check(SURFACE17Q, SURFACE10Q,
-                          start_vals, end_vals, nodes, alt_edge_pairs)
+                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces3Q_and_14Q():

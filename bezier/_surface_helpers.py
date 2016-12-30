@@ -1254,7 +1254,7 @@ def classify_intersection(intersection):
         intersection.right._nodes,  # pylint: disable=protected-access
         intersection.right.degree, intersection.t)
 
-    if _check_ignored_corner(intersection, tangent1, tangent2):
+    if _ignored_corner(intersection, tangent1, tangent2):
         return IntersectionClassification.ignored_corner
 
     # Take the cross product of tangent vectors to determine which one
@@ -1356,11 +1356,10 @@ def edge_cycle(edge1, edge2, edge3):
     # pylint: enable=protected-access
 
 
-def _check_ignored_edge_corner(
-        edge_tangent, corner_tangent, corner_previous_edge):
+def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     """Check ignored when a corner lies **inside** another edge.
 
-    Helper for :func:`_check_ignored_corner` where one of ``s`` and
+    Helper for :func:`_ignored_corner` where one of ``s`` and
     ``t`` are ``0``, but **not both**.
 
     Args:
@@ -1393,10 +1392,10 @@ def _check_ignored_edge_corner(
     return cross_prod <= 0.0
 
 
-def _check_ignored_double_corner(intersection, tangent_s, tangent_t):
+def _ignored_double_corner(intersection, tangent_s, tangent_t):
     """Check if an intersection is an "ignored" double corner.
 
-    Helper for :func:`_check_ignored_corner` where both ``s`` and
+    Helper for :func:`_ignored_corner` where both ``s`` and
     ``t`` are ``0``.
 
     Does so by checking if either edge through the ``t`` corner goes
@@ -1422,15 +1421,17 @@ def _check_ignored_double_corner(intersection, tangent_s, tangent_t):
     # First check if ``tangent_t`` is interior to the ``s`` surface.
     cross_prod1 = _helpers.cross_product(
         np.array([tangent_s]), np.array([tangent_t]))
-    cross_prod2 = _helpers.cross_product(
-        np.array([alt_tangent_s]), np.array([tangent_t]))
     # A positive cross product indicates that ``tangent_t`` is
     # interior to ``tangent_s``. Similar for ``alt_tangent_s``.
     # If ``tangent_t`` is interior to both, then the surfaces
     # do more than just "kiss" at the corner, so the corner should
     # not be ignored.
-    if cross_prod1 >= 0.0 and cross_prod2 >= 0.0:
-        return False
+    if cross_prod1 >= 0.0:
+        # Only compute ``cross_prod2`` if we need to.
+        cross_prod2 = _helpers.cross_product(
+            np.array([alt_tangent_s]), np.array([tangent_t]))
+        if cross_prod2 >= 0.0:
+            return False
 
     # If ``tangent_t`` is not interior, we check the other ``t``
     # edge that ends at the corner.
@@ -1443,10 +1444,12 @@ def _check_ignored_double_corner(intersection, tangent_s, tangent_t):
 
     cross_prod3 = _helpers.cross_product(
         np.array([tangent_s]), np.array([alt_tangent_t]))
-    cross_prod4 = _helpers.cross_product(
-        np.array([alt_tangent_s]), np.array([alt_tangent_t]))
-    if cross_prod3 >= 0.0 and cross_prod4 >= 0.0:
-        return False
+    if cross_prod3 >= 0.0:
+        # Only compute ``cross_prod4`` if we need to.
+        cross_prod4 = _helpers.cross_product(
+            np.array([alt_tangent_s]), np.array([alt_tangent_t]))
+        if cross_prod4 >= 0.0:
+            return False
 
     # If neither of ``tangent_t`` or ``alt_tangent_t`` are interior
     # to the ``s`` surface, one of two things is true. Either
@@ -1454,11 +1457,16 @@ def _check_ignored_double_corner(intersection, tangent_s, tangent_t):
     # ``s`` surface is bounded by both edges of the ``t`` surface
     # at the corner intersection (2). To detect (2), we only need
     # check if ``tangent_s`` is interior to both ``tangent_t``
-    # and ``alt_tangent_t``.
+    # and ``alt_tangent_t``. ``cross_prod1`` contains
+    # (tangent_s) x (tangent_t), so it's negative will tell if
+    # ``tangent_s`` is interior. Similarly, ``cross_prod3``
+    # contains (tangent_s) x (alt_tangent_t), but we also reversed
+    # the sign on ``alt_tangent_t`` so switching the sign back
+    # and reversing the arguments in the cross product cancel out.
     return not (cross_prod1 <= 0.0 and cross_prod3 >= 0.0)
 
 
-def _check_ignored_corner(intersection, tangent_s, tangent_t):
+def _ignored_corner(intersection, tangent_s, tangent_t):
     """Check if an intersection is an "ignored" corner.
 
     An "ignored" corner is one where the surfaces just "kiss" at
@@ -1491,17 +1499,16 @@ def _check_ignored_corner(intersection, tangent_s, tangent_t):
     if intersection.s == 0.0:
         if intersection.t == 0.0:
             # Double corner.
-            return _check_ignored_double_corner(
+            return _ignored_double_corner(
                 intersection, tangent_s, tangent_t)
         else:
             # s-only corner.
             prev_edge = intersection.left.previous_edge
-            return _check_ignored_edge_corner(
-                tangent_t, tangent_s, prev_edge)
+            return _ignored_edge_corner(tangent_t, tangent_s, prev_edge)
     elif intersection.t == 0.0:
         # t-only corner.
         prev_edge = intersection.right.previous_edge
-        return _check_ignored_edge_corner(tangent_s, tangent_t, prev_edge)
+        return _ignored_edge_corner(tangent_s, tangent_t, prev_edge)
     else:
         # Not a corner.
         return False
