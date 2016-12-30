@@ -1,0 +1,9 @@
+### MATPLOTLIBRC FORMAT
+
+# See http://matplotlib.org/users/customizing.html
+
+#### CONFIGURATION BEGINS HERE
+
+# Custom math font settings (always use LaTeX "Computer Modern")
+mathtext.fontset : cm
+mathtext.rm      : serif

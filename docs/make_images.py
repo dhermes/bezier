@@ -112,7 +112,7 @@ def newton_refine2(s_vals, curve1, curve2):
     points = curve1.evaluate_multi(np.array(s_vals))
     colors = seaborn.dark_palette('blue', 5)
     ax.scatter(points[:, 0], points[:, 1], c=colors,
-               alpha=0.75, zorder=2)
+               s=20, alpha=0.75, zorder=2)
 
     ax.axis('scaled')
     ax.set_xlim(0.0, 1.0)
@@ -663,8 +663,18 @@ def surface_width2(sub_surface_b, sub_surface_c):
 
     figure, (ax1, ax2) = plt.subplots(1, 2)
     for ax in (ax1, ax2):
-        ax.plot([0, 1, 0, 0], [0, 0, 1, 0],
+        ax.plot([1, 0, 0], [0, 0, 1],
                 color='black', linestyle='dashed', alpha=0.5)
+    # Full hypotenuse on RHS plot
+    ax2.plot([0, 1], [1, 0],
+             color='black', linestyle='dashed', alpha=0.5)
+    # Leave space in hypotenuse for text on LHS plot
+    ax1.plot([0, 0.21875], [1, 0.78125],
+             color='black', linestyle='dashed', alpha=0.5)
+    ax1.plot([0.21875, 0.3125], [0.78125, 0.6875],
+             color='black', linestyle='dashed', alpha=0.1875)
+    ax1.plot([0.3125, 1], [0.6875, 0],
+             color='black', linestyle='dashed', alpha=0.5)
 
     sub_surface_b.plot(2, ax=ax1)
     ax1.plot([sub_surface_b.base_x], [sub_surface_b.base_y],
