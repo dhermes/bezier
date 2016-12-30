@@ -309,16 +309,16 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points,
         CONFIG.assert_close(intersection.s, s_val)
         CONFIG.assert_close(intersection.t, t_val)
 
-        CONFIG.assert_close(intersection.point[0], point[0])
-        CONFIG.assert_close(intersection.point[1], point[1])
+        CONFIG.assert_close(intersection.point[0, 0], point[0])
+        CONFIG.assert_close(intersection.point[0, 1], point[1])
 
         point_on1 = curve1.evaluate(s_val)
-        CONFIG.assert_close(point_on1[0], point[0])
-        CONFIG.assert_close(point_on1[1], point[1])
+        CONFIG.assert_close(point_on1[0, 0], point[0])
+        CONFIG.assert_close(point_on1[0, 1], point[1])
 
         point_on2 = curve2.evaluate(t_val)
-        CONFIG.assert_close(point_on2[0], point[0])
-        CONFIG.assert_close(point_on2[1], point[1])
+        CONFIG.assert_close(point_on2[0, 0], point[0])
+        CONFIG.assert_close(point_on2[0, 1], point[1])
 
     make_plots(curve1, curve2, points, ignore_save=ignore_save, failed=False)
 

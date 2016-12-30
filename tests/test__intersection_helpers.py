@@ -56,7 +56,7 @@ class Test__check_close(utils.NumPyTestCase):
         result = self._call_function_under_test(
             s_val, curve, s_val + wiggle, curve)
 
-        expected = np.array([0.5, 0.5])
+        expected = np.array([[0.5, 0.5]])
         self.assertEqual(result, expected)
 
     def test_failure(self):
@@ -892,7 +892,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         self.assertEqual(accepted, [])
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
-        expected = np.array([0.5, 0.5])
+        expected = np.array([[0.5, 0.5]])
         check_intersection(self, intersection, expected,
                            curve1, curve2, 0.5, 0.5)
 
@@ -997,7 +997,7 @@ class Test_all_intersections(utils.NumPyTestCase):
 
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
-        expected = np.array([0.5, 0.75])
+        expected = np.array([[0.5, 0.75]])
 
         s_val = 1.0 / 3.0
         # Due to round-off, the answer is wrong by a tiny wiggle.

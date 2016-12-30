@@ -254,8 +254,8 @@ class Test_evaluate_hodograph(utils.NumPyTestCase):
         ])
 
         first_deriv1 = self._call_function_under_test(nodes, degree, 0.25)
-        self.assertEqual(first_deriv1.ndim, 1)
-        self.assertEqual(first_deriv1, nodes[1, :] - nodes[0, :])
+        self.assertEqual(first_deriv1.shape, (1, 2))
+        self.assertEqual(first_deriv1, nodes[[1], :] - nodes[[0], :])
         # Make sure it is the same elsewhere since
         # the derivative curve is degree 0.
         first_deriv2 = self._call_function_under_test(nodes, degree, 0.75)
@@ -274,9 +274,9 @@ class Test_evaluate_hodograph(utils.NumPyTestCase):
 
         for s_val in (0.0, 0.25, 0.5, 0.625, 0.875):
             first_deriv = self._call_function_under_test(nodes, degree, s_val)
-            self.assertEqual(first_deriv.shape, (2,))
-            self.assertEqual(first_deriv[0], (2.0 + s_val) / 2.0)
-            self.assertEqual(first_deriv[1], (4.0 - 7.0 * s_val) / 2.0)
+            self.assertEqual(first_deriv.shape, (1, 2))
+            self.assertEqual(first_deriv[0, 0], (2.0 + s_val) / 2.0)
+            self.assertEqual(first_deriv[0, 1], (4.0 - 7.0 * s_val) / 2.0)
 
     def test_cubic(self):
         degree = 3
@@ -291,11 +291,11 @@ class Test_evaluate_hodograph(utils.NumPyTestCase):
         # B'(s) = [3(1 + 2s - s^2)/4, 3(5s^2 - 6s + 2)/2]
         for s_val in (0.125, 0.5, 0.75, 1.0, 1.125):
             first_deriv = self._call_function_under_test(nodes, degree, s_val)
-            self.assertEqual(first_deriv.shape, (2,))
+            self.assertEqual(first_deriv.shape, (1, 2))
             x_prime = 3.0 * (1.0 + 2.0 * s_val - s_val * s_val) / 4.0
-            self.assertEqual(first_deriv[0], x_prime)
+            self.assertEqual(first_deriv[0, 0], x_prime)
             y_prime = 3.0 * (5.0 * s_val * s_val - 6.0 * s_val + 2.0) / 2.0
-            self.assertEqual(first_deriv[1], y_prime)
+            self.assertEqual(first_deriv[0, 1], y_prime)
 
 
 class Test_get_curvature(unittest.TestCase):

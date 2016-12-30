@@ -166,7 +166,7 @@ class TestCurve(utils.NumPyTestCase):
             [1.0, 1.25],
         ])
         curve = self._make_one(nodes)
-        expected = np.array([0.25, 0.265625])
+        expected = np.array([[0.25, 0.265625]])
         result = curve.evaluate(s)
         self.assertEqual(expected, result)
 

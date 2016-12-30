@@ -546,10 +546,10 @@ def newton_refine(s, curve1, t, curve2):
         nodes2, curve2.degree, t)
 
     # Solve the system (via the transposes, since, as above, the roles
-    # of columns and rows are reversed). Note that since ``func_val``
-    # is a  1D object, then ``delta_s``, ``delta_t`` can be unpacked
-    # without worry of them being vectors.
-    delta_s, delta_t = np.linalg.solve(jac_mat.T, func_val.T)
+    # of columns and rows are reversed).
+    result = np.linalg.solve(jac_mat.T, func_val.T)
+    # Convert to row-vector and unpack (also makes assertion on shape).
+    (delta_s, delta_t), = result.T
     return s + delta_s, t + delta_t
 
 
@@ -1010,9 +1010,9 @@ def _tangent_bbox_intersection(left, right, intersections):
     right_nodes = right._nodes
     # pylint: enable=protected-access
     for i, s in ((0, 0.0), (-1, 1.0)):
-        node_left = left_nodes[i, :]
+        node_left = left_nodes[[i], :]
         for j, t in ((0, 0.0), (-1, 1.0)):
-            node_right = right_nodes[j, :]
+            node_right = right_nodes[[j], :]
             if _helpers.vector_close(node_left, node_right):
                 orig_s = (1 - s) * left.start + s * left.end
                 orig_t = (1 - t) * right.start + t * right.end

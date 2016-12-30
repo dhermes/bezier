@@ -221,7 +221,7 @@ class Curve(_base.Base):
            >>> right.root is curve
            True
            >>> right.evaluate(0.0) == curve.evaluate(0.5)
-           array([ True, True], dtype=bool)
+           array([[ True, True]], dtype=bool)
            >>>
            >>> mid_left, _ = right.subdivide()
            >>> mid_left
@@ -229,7 +229,7 @@ class Curve(_base.Base):
            >>> mid_left.root is curve
            True
            >>> mid_left.evaluate(1.0) == curve.evaluate(0.75)
-           array([ True, True], dtype=bool)
+           array([[ True, True]], dtype=bool)
         """
         return self._root
 
@@ -306,7 +306,7 @@ class Curve(_base.Base):
            ... ])
            >>> curve = bezier.Curve(nodes)
            >>> curve.evaluate(0.75)
-           array([ 0.796875, 0.46875 ])
+           array([[ 0.796875, 0.46875 ]])
 
         .. testcleanup:: curve-eval
 
@@ -317,11 +317,10 @@ class Curve(_base.Base):
             s (float): Parameter along the curve.
 
         Returns:
-            numpy.ndarray: The point on the curve (as a one dimensional
-            NumPy array).
+            numpy.ndarray: The point on the curve (as a two dimensional
+            NumPy array with a single row).
         """
-        result = self.evaluate_multi(np.array([s]))
-        return result.flatten()
+        return self.evaluate_multi(np.array([s]))
 
     def evaluate_multi(self, s_vals):
         r"""Evaluate :math:`B(s)` for multiple points along the curve.

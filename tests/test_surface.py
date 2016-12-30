@@ -301,7 +301,7 @@ class TestSurface(utils.NumPyTestCase):
         ])
         surface = self._make_one(nodes)
 
-        expected = np.array([0.5, 0.5625])
+        expected = np.array([[0.5, 0.5625]])
         result = surface.evaluate_barycentric(*lambda_vals)
         self.assertEqual(result, expected)
 
@@ -317,7 +317,7 @@ class TestSurface(utils.NumPyTestCase):
         ])
         surface = self._make_one(nodes)
 
-        expected = np.array([0.0625, 0.78125])
+        expected = np.array([[0.0625, 0.78125]])
         result = surface.evaluate_barycentric(*lambda_vals)
         self.assertEqual(result, expected)
 
@@ -337,7 +337,7 @@ class TestSurface(utils.NumPyTestCase):
         ])
         surface = self._make_one(nodes)
 
-        expected = np.array([0.447265625, 0.37060546875])
+        expected = np.array([[0.447265625, 0.37060546875]])
         result = surface.evaluate_barycentric(*lambda_vals)
         self.assertEqual(result, expected)
 
@@ -371,7 +371,7 @@ class TestSurface(utils.NumPyTestCase):
 
         lambda_vals = (0.125, 0.375, 0.5)
         index = 0
-        expected = np.array([0.0, 0.0])
+        expected = np.array([[0.0, 0.0]])
         for k in range(4 + 1):
             for j in range(4 + 1 - k):
                 i = 4 - j - k
@@ -380,7 +380,7 @@ class TestSurface(utils.NumPyTestCase):
                 coeff = 24 / denom
                 expected += (
                     coeff * lambda_vals[0]**i * lambda_vals[1]**j *
-                    lambda_vals[2]**k * nodes[index, :])
+                    lambda_vals[2]**k * nodes[[index], :])
                 index += 1
 
         result = surface.evaluate_barycentric(*lambda_vals)
@@ -395,7 +395,7 @@ class TestSurface(utils.NumPyTestCase):
         ])
         surface = self._make_one(nodes)
 
-        expected = np.array([1.125, 1.28125])
+        expected = np.array([[1.125, 1.28125]])
         result = surface.evaluate_cartesian(*s_t_vals)
         self.assertEqual(result, expected)
 

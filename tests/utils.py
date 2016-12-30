@@ -16,6 +16,13 @@
 import unittest
 
 
+WRONG_TYPE_TEMPLATE = """\
+Arrays have different types
+array1({}) =
+{!r}
+array2({}) =
+{!r}
+"""
 WRONG_SHAPE_TEMPLATE = """\
 Arrays have different shapes
 array1{} =
@@ -113,7 +120,12 @@ class NumPyTestCase(unittest.TestCase):
     def assertArrayEqual(self, arr1, arr2, msg=None):
         import numpy as np
 
-        if not arr1.shape == arr2.shape:  # pragma: NO COVER
+        if arr1.dtype is not arr2.dtype:
+            standard_msg = WRONG_TYPE_TEMPLATE.format(
+                arr1.dtype, arr1, arr2.dtype, arr2)
+            self.fail(self._formatMessage(msg, standard_msg))
+
+        if arr1.shape != arr2.shape:  # pragma: NO COVER
             standard_msg = WRONG_SHAPE_TEMPLATE.format(
                 arr1.shape, arr1, arr2.shape, arr2)
             self.fail(self._formatMessage(msg, standard_msg))

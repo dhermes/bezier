@@ -561,7 +561,7 @@ class Test_newton_refine(unittest.TestCase):
         #     [1, -1/4]
         #     [0,  1  ]
         # hence there will be no round-off when applying the inverse.
-        x_val, y_val = surface.evaluate_cartesian(0.5, 0.25)
+        (x_val, y_val), = surface.evaluate_cartesian(0.5, 0.25)
         new_s, new_t = self._call_function_under_test(
             surface, x_val, y_val, s, t)
         self.assertEqual(new_s, 247.0 / 512.0)

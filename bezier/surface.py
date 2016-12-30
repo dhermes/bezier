@@ -430,7 +430,7 @@ class Surface(_base.Base):
            >>> surface = bezier.Surface(nodes)
            >>> point = surface.evaluate_barycentric(0.125, 0.125, 0.75)
            >>> point
-           array([ 0.265625 , 0.73046875])
+           array([[ 0.265625 , 0.73046875]])
 
         .. testcleanup:: surface-barycentric
 
@@ -462,8 +462,8 @@ class Surface(_base.Base):
             lambda3 (float): Parameter along the reference triangle.
 
         Returns:
-            numpy.ndarray: The point on the surface (as a one dimensional
-            NumPy array).
+            numpy.ndarray: The point on the surface (as a two dimensional
+            NumPy array with a single row).
 
         Raises:
             ValueError: If the weights are not valid barycentric
@@ -513,9 +513,9 @@ class Surface(_base.Base):
             for reduced_deg in six.moves.xrange(self.degree, 0, -1):
                 result = _surface_helpers.de_casteljau_one_round(
                     result, reduced_deg, lambda1, lambda2, lambda3)
-            return result.flatten()
+            return result
 
-        return weights.dot(self._nodes).flatten()  # pylint: disable=no-member
+        return weights.dot(self._nodes)  # pylint: disable=no-member
 
     def evaluate_cartesian(self, s, t):
         r"""Compute a point on the surface.

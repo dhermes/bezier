@@ -152,7 +152,7 @@ def segment_intersection1(start0, end0, start1, end1, s):
     ax = line0.plot(2)
     line1.plot(256, ax=ax)
 
-    x_val, y_val = line0.evaluate(s)
+    (x_val, y_val), = line0.evaluate(s)
     ax.plot([x_val], [y_val], color='black', marker='o')
 
     ax.axis('scaled')
@@ -320,7 +320,7 @@ def surface_evaluate_barycentric(surface, point):
         return
 
     ax = surface.plot(256)
-    ax.plot([point[0]], [point[1]], color='black',
+    ax.plot(point[:, 0], point[:, 1], color='black',
             linestyle='None', marker='o')
 
     ax.axis('scaled')
@@ -772,7 +772,7 @@ def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
     ax.lines[-1].remove()
     ax.lines[-1].remove()
 
-    int_x, int_y = curve1.evaluate(s)
+    (int_x, int_y), = curve1.evaluate(s)
     if interior == 0:
         color = color1
     elif interior == 1:
@@ -809,14 +809,16 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
     ]))
 
     ax = classify_help(s, curve1, surface1, curve2, surface2, 0)
-    int_x, int_y = curve1.evaluate(s)
+    (int_x, int_y), = curve1.evaluate(s)
 
     # Remove the alpha from the color
     color1 = ax.patches[0].get_facecolor()[:3]
     color2 = ax.patches[1].get_facecolor()[:3]
-    ax.plot([int_x, int_x + tangent1[0]], [int_y, int_y + tangent1[1]],
+    ax.plot([int_x, int_x + tangent1[0, 0]],
+            [int_y, int_y + tangent1[0, 1]],
             color=color1, linestyle='dashed')
-    ax.plot([int_x, int_x + tangent2[0]], [int_y, int_y + tangent2[1]],
+    ax.plot([int_x, int_x + tangent2[0, 0]],
+            [int_y, int_y + tangent2[0, 1]],
             color=color2, linestyle='dashed')
     ax.plot([int_x], [int_y],
             color=color1, linestyle='None', marker='o')
@@ -968,7 +970,7 @@ def classify_intersection5(s, curve1, curve2):
     # NOTE: We don't require the intersection polygon be valid.
     surface4.plot(256, ax=ax2)
 
-    int_x, int_y = curve1.evaluate(s)
+    (int_x, int_y), = curve1.evaluate(s)
     ax1.plot([int_x], [int_y],
              color=color1, linestyle='None', marker='o')
     ax2.plot([int_x], [int_y],
@@ -1058,7 +1060,7 @@ def get_curvature(nodes, s, tangent_vec, curvature):
 
     # Find the center of the circle along the direction
     # perpendicular to the tangent vector (90 degree left turn).
-    radius_dir = np.array([-tangent_vec[1], tangent_vec[0]])
+    radius_dir = np.array([[-tangent_vec[0, 1], tangent_vec[0, 0]]])
     radius_dir /= np.linalg.norm(radius_dir, ord=2)
     point = curve.evaluate(s)
     circle_center = point + radius_dir / curvature
@@ -1066,10 +1068,11 @@ def get_curvature(nodes, s, tangent_vec, curvature):
     # Add the curve.
     ax = curve.plot(256)
     # Add the circle.
+    circle_center = circle_center.flatten()
     circle = plt.Circle(circle_center, 1.0 / abs(curvature), alpha=0.25)
     ax.add_artist(circle)
     # Add the point.
-    ax.plot([point[0]], [point[1]],
+    ax.plot(point[:, 0], point[:, 1],
             color='black', marker='o', linestyle='None')
 
     ax.axis('scaled')

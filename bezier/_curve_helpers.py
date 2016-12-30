@@ -284,13 +284,13 @@ def evaluate_hodograph(nodes, degree, s):
             is to be evaluated.
 
     Returns:
-        numpy.ndarray: The point on the Hodograph curve (as a one
-        dimensional NumPy array).
+        numpy.ndarray: The point on the Hodograph curve (as a two
+        dimensional NumPy array with a single row).
     """
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     # NOTE: Taking the derivative drops the degree by 1.
     return degree * evaluate_multi(
-        first_deriv, degree - 1, np.array([s])).flatten()
+        first_deriv, degree - 1, np.array([s]))
 
 
 def get_curvature(nodes, degree, tangent_vec, s):
@@ -329,7 +329,7 @@ def get_curvature(nodes, degree, tangent_vec, s):
        >>> s = 0.5
        >>> tangent_vec = hodograph(nodes, s)
        >>> tangent_vec
-       array([-1., 0.])
+       array([[-1., 0.]])
        >>> curvature = get_curvature(nodes, 4, tangent_vec, s)
        >>> curvature
        -12.0
@@ -360,10 +360,8 @@ def get_curvature(nodes, degree, tangent_vec, s):
     second_deriv = first_deriv[1:, :] - first_deriv[:-1, :]
     concavity = degree * (degree - 1) * evaluate_multi(
         second_deriv, degree - 2, np.array([s]))
-    # NOTE: This assumes ``tangent_vec`` was ``flatten()``-ed, but
-    #       we intentionally don't flatten ``concavity``.
-    curvature = _helpers.cross_product(
-        np.array([tangent_vec]), concavity)
+
+    curvature = _helpers.cross_product(tangent_vec, concavity)
     curvature /= np.linalg.norm(tangent_vec, ord=2)**3
     return curvature
 
@@ -529,9 +527,12 @@ def newton_refine(curve, point, s):
         float: The updated value :math:`s + \Delta s`.
     """
     nodes = curve._nodes  # pylint: disable=protected-access
-    pt_delta = point.flatten() - curve.evaluate(s)
+    pt_delta = point - curve.evaluate(s)
     derivative = evaluate_hodograph(nodes, curve.degree, s)
-    delta_s = np.dot(pt_delta, derivative) / np.dot(derivative, derivative)
+    # Each array is 1x2 (i.e. a row vector).
+    delta_s = pt_delta.dot(derivative.T) / derivative.dot(derivative.T)
+    # Unpack 1x1 array into a scalar (and assert size).
+    (delta_s,), = delta_s
     return s + delta_s
 
 
@@ -556,7 +557,6 @@ def locate_point(curve, point):
         Optional[float]: The parameter value (:math:`s`) corresponding
         to ``point`` or :data:`None` if the point is not on the ``curve``.
     """
-    point = point.flatten()
     candidates = [curve]
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []

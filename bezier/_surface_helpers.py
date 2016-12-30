@@ -763,7 +763,7 @@ def newton_refine(surface, x_val, y_val, s, t):
        ... ]))
        >>> surface.is_valid
        True
-       >>> x_val, y_val = surface.evaluate_cartesian(0.25, 0.5)
+       >>> (x_val, y_val), = surface.evaluate_cartesian(0.25, 0.5)
        >>> x_val, y_val
        (1.25, 1.25)
        >>> s, t = 0.5, 0.25
@@ -792,7 +792,7 @@ def newton_refine(surface, x_val, y_val, s, t):
     Returns:
         Tuple[float, float]: The refined :math:`s` and :math:`t` values.
     """
-    surf_x, surf_y = surface.evaluate_cartesian(s, t)
+    (surf_x, surf_y), = surface.evaluate_cartesian(s, t)
     if surf_x == x_val and surf_y == y_val:
         # No refinement is needed.
         return s, t
@@ -920,13 +920,13 @@ def classify_intersection(intersection):
        ... ]))
        >>> s, t = 0.25, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([ True, True], dtype=bool)
+       array([[ True, True]], dtype=bool)
        >>> tangent1 = hodograph(curve1, s)
        >>> tangent1
-       array([ 1.25, 0.75])
+       array([[ 1.25, 0.75]])
        >>> tangent2 = hodograph(curve2, t)
        >>> tangent2
-       array([ 2. , 0.5])
+       array([[ 2. , 0.5]])
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
        <IntersectionClassification.first: 'first'>
@@ -979,7 +979,7 @@ def classify_intersection(intersection):
        ... ]))
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([ True, True], dtype=bool)
+       array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
        <IntersectionClassification.tangent_second: 'tangent_second'>
@@ -1013,7 +1013,7 @@ def classify_intersection(intersection):
        ... ]))
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([ True, True], dtype=bool)
+       array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
        <IntersectionClassification.tangent_first: 'tangent_first'>
@@ -1045,7 +1045,7 @@ def classify_intersection(intersection):
        ... ]))
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([ True, True], dtype=bool)
+       array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
        <IntersectionClassification.opposed: 'opposed'>
@@ -1078,7 +1078,7 @@ def classify_intersection(intersection):
        ... ]))
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([ True, True], dtype=bool)
+       array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
        Traceback (most recent call last):
@@ -1112,11 +1112,11 @@ def classify_intersection(intersection):
        ... ]))
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([ True, True], dtype=bool)
+       array([[ True, True]], dtype=bool)
        >>> hodograph(curve1, s)
-       array([-0.5, 0. ])
+       array([[-0.5, 0. ]])
        >>> hodograph(curve2, t)
-       array([-1., 0.])
+       array([[-1., 0.]])
        >>> curvature(curve1, s)
        -2.0
        >>> curvature(curve2, t)
@@ -1153,7 +1153,7 @@ def classify_intersection(intersection):
        ... ]))
        >>> s, t = 1.0, 0.375
        >>> curve1a.evaluate(s) == curve2.evaluate(t)
-       array([ True, True], dtype=bool)
+       array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1a, s, curve2, t)
        >>> classify_intersection(intersection)
        Traceback (most recent call last):
@@ -1167,7 +1167,7 @@ def classify_intersection(intersection):
        ...     [0.0, 2.5  ],
        ... ]))
        >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
-       array([ True, True], dtype=bool)
+       array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1b, 0.0, curve2, t)
        >>> classify_intersection(intersection)
        <IntersectionClassification.first: 'first'>
@@ -1207,7 +1207,7 @@ def classify_intersection(intersection):
        >>> curve2, _, _ = surface2.edges
        >>> s, t = 0.5, 0.0
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([ True, True], dtype=bool)
+       array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
        <IntersectionClassification.ignored_corner: 'ignored_corner'>
@@ -1259,8 +1259,7 @@ def classify_intersection(intersection):
 
     # Take the cross product of tangent vectors to determine which one
     # is more "to the left".
-    cross_prod = _helpers.cross_product(
-        np.array([tangent1]), np.array([tangent2]))
+    cross_prod = _helpers.cross_product(tangent1, tangent2)
     if cross_prod < 0:
         return IntersectionClassification.first
     elif cross_prod > 0:
@@ -1291,7 +1290,10 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
         NotImplementedError: If the curves are tangent at the intersection
             and have the same curvature.
     """
-    dot_prod = tangent1.dot(tangent2)
+    # Each array is 1x2 (i.e. a row vector).
+    dot_prod = tangent1.dot(tangent2.T)
+    # Unpack 1x1 array into a scalar (and assert size).
+    (dot_prod,), = dot_prod
     # NOTE: When computing curvatures we assume that we don't have lines
     #       here, because lines that are tangent at an intersection are
     #       parallel and we don't handle that case.
@@ -1374,8 +1376,7 @@ def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     Returns:
         bool: Indicates if the corner intersection should be ignored.
     """
-    cross_prod = _helpers.cross_product(
-        np.array([edge_tangent]), np.array([corner_tangent]))
+    cross_prod = _helpers.cross_product(edge_tangent, corner_tangent)
     # A negative cross product indicates that ``edge_tangent`` is
     # "to the left" of ``corner_tangent`` (due to right-hand rule).
     if cross_prod > 0.0:
@@ -1387,8 +1388,7 @@ def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
         corner_previous_edge.degree, 1.0)
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
-    cross_prod = _helpers.cross_product(
-        np.array([edge_tangent]), np.array([alt_corner_tangent]))
+    cross_prod = _helpers.cross_product(edge_tangent, alt_corner_tangent)
     return cross_prod <= 0.0
 
 
@@ -1419,8 +1419,7 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
         prev_edge.degree, 1.0)
 
     # First check if ``tangent_t`` is interior to the ``s`` surface.
-    cross_prod1 = _helpers.cross_product(
-        np.array([tangent_s]), np.array([tangent_t]))
+    cross_prod1 = _helpers.cross_product(tangent_s, tangent_t)
     # A positive cross product indicates that ``tangent_t`` is
     # interior to ``tangent_s``. Similar for ``alt_tangent_s``.
     # If ``tangent_t`` is interior to both, then the surfaces
@@ -1428,8 +1427,7 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
     # not be ignored.
     if cross_prod1 >= 0.0:
         # Only compute ``cross_prod2`` if we need to.
-        cross_prod2 = _helpers.cross_product(
-            np.array([alt_tangent_s]), np.array([tangent_t]))
+        cross_prod2 = _helpers.cross_product(alt_tangent_s, tangent_t)
         if cross_prod2 >= 0.0:
             return False
 
@@ -1442,12 +1440,10 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
 
-    cross_prod3 = _helpers.cross_product(
-        np.array([tangent_s]), np.array([alt_tangent_t]))
+    cross_prod3 = _helpers.cross_product(tangent_s, alt_tangent_t)
     if cross_prod3 >= 0.0:
         # Only compute ``cross_prod4`` if we need to.
-        cross_prod4 = _helpers.cross_product(
-            np.array([alt_tangent_s]), np.array([alt_tangent_t]))
+        cross_prod4 = _helpers.cross_product(alt_tangent_s, alt_tangent_t)
         if cross_prod4 >= 0.0:
             return False
 
