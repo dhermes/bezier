@@ -89,4 +89,4 @@ build_script:
 
 test_script:
   # Run the project tests
-  - "%CMD_IN_ENV% py.test tests
+  - "%CMD_IN_ENV% py.test tests"
