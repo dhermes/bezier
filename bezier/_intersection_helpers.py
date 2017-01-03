@@ -518,6 +518,95 @@ def newton_refine(s, curve1, t, curve2):
     resembles :math:`\sqrt{\varepsilon}` rather than machine
     precision as expected.
 
+    However, this can be overcome (but not by this method). At the
+    point of tangency, we want :math:`B_1'(s) \parallel B_2'(t)`.
+    This can be checked numerically via
+
+    .. math::
+
+        B_1'(s) \times B_2'(t) = 0.
+
+    For the last example that breaks down numerically, this is
+
+    .. math::
+
+        0 = \left[\begin{array}{c} 1 \\ 2 - 4s \end{array}\right] \times
+            \left[\begin{array}{c} 1 \\ 0 \end{array}\right] = 4 s - 2.
+
+    With this, we can modify Newton's method to find a zero of the
+    over-determined system
+
+    .. math::
+
+        G(s, t) = \left[\begin{array}{c} B_0(s) - B_1(t) \\
+            B_1'(s) \times B_2'(t) \end{array}\right] =
+            \left[\begin{array}{c} s - t \\ 2 s (1 - s) - \frac{1}{2} \\
+            4 s - 2\end{array}\right].
+
+    Since :math:`DG` is :math:`3 \times 2`, we can't invert it. However,
+    we can find a least-squares solution:
+
+    .. math::
+
+        \left(DG^T DG\right) \left[\begin{array}{c}
+            \Delta s \\ \Delta t \end{array}\right] = -DG^T G.
+
+    This only works if :math:`DG` has full rank. In this case, it does
+    since the submatrix containing the first and last rows has rank two:
+
+    .. math::
+
+        DG = \left[\begin{array}{c c} 1 & -1 \\
+            2 - 4 s & 0 \\
+            4 & 0 \end{array}\right].
+
+    Though this avoids a singular system, the normal equations have a
+    condition number that is the square of the condition number of the matrix.
+
+    Starting from :math:`s = t = \frac{3}{8}` as above:
+
+    .. testsetup:: newton-refine4
+
+       import numpy as np
+
+       def modified_update(s, t):
+           minus_G = np.array([
+               [t - s],
+               [0.5 - 2.0 * s * (1.0 - s)],
+               [2.0 - 4.0 * s],
+           ])
+           DG = np.array([
+               [1.0, -1.0],
+               [2.0 - 4.0 * s, 0.0],
+               [4.0, 0.0],
+           ])
+           LHS = DG.T.dot(DG)
+           RHS = DG.T.dot(minus_G)
+           delta_params = np.linalg.solve(LHS, RHS)
+           delta_s, delta_t = delta_params.flatten()
+           return s + delta_s, t + delta_t
+
+    .. doctest:: newton-refine4
+
+       >>> s0, t0 = 0.375, 0.375
+       >>> np.log2(0.5 - s0)
+       -3.0
+       >>> s1, t1 = modified_update(s0, t0)
+       >>> s1 == t1
+       True
+       >>> 1040.0 * s1
+       519.0
+       >>> np.log2(0.5 - s1)
+       -10.022...
+       >>> s2, t2 = modified_update(s1, t1)
+       >>> s2 == t2
+       True
+       >>> np.log2(0.5 - s2)
+       -31.067...
+       >>> s3, t3 = modified_update(s2, t2)
+       >>> s3 == t3 == 0.5
+       True
+
     Args:
         s (float): Parameter of a near-intersection along ``curve1``.
         curve1 (.Curve): First curve forming intersection.
