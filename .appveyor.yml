@@ -9,6 +9,7 @@ environment:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: http://stackoverflow.com/a/13751649/163740
+    # NOTE: We don't use this (for now).
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\obvci_appveyor_python_build_env.cmd"
 
   matrix:
@@ -69,6 +70,11 @@ install:
   - cmd: conda config --set show_channel_urls true
   - cmd: conda config --add channels conda-forge
 
+  # Sleuth: ``conda`` install info.
+  - cmd: conda --version
+  - cmd: conda info --envs
+  - cmd: conda info
+
   # Actually activate ``conda``.
   - cmd: call %CONDA_INSTALL_LOCN%\Scripts\activate.bat
   - cmd: set PYTHONUNBUFFERED=1
@@ -76,3 +82,6 @@ install:
   # Check that we have the expected version and architecture for Python
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+
+  # Install (hardcoded) dependencies for ``bezier``.
+  - cmd: conda install enum34 matplotlib numpy six
