@@ -84,4 +84,4 @@ install:
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
   # Install (hardcoded) dependencies for ``bezier``.
-  - cmd: conda install enum34 matplotlib numpy six
+  - cmd: conda install --yes enum34 matplotlib numpy six
