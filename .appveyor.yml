@@ -21,42 +21,42 @@ environment:
 
     - TARGET_ARCH: x86
       CONDA_PY: 27
-      PY_CONDITION: "python >=2.7,<3"
+      PY_CONDITION: "python=2.7"
       CONDA_INSTALL_LOCN: C:\\Miniconda
 
     - TARGET_ARCH: x64
       CONDA_PY: 27
-      PY_CONDITION: "python >=2.7,<3"
+      PY_CONDITION: "python=2.7"
       CONDA_INSTALL_LOCN: C:\\Miniconda-x64
 
     - TARGET_ARCH: x86
       CONDA_PY: 34
-      PY_CONDITION: "python >=3.4,<3.5"
+      PY_CONDITION: "python=3.4"
       CONDA_INSTALL_LOCN: C:\\Miniconda3
 
     - TARGET_ARCH: x64
       CONDA_PY: 34
-      PY_CONDITION: "python >=3.4,<3.5"
+      PY_CONDITION: "python=3.4"
       CONDA_INSTALL_LOCN: C:\\Miniconda3-x64
 
     - TARGET_ARCH: x86
       CONDA_PY: 35
-      PY_CONDITION: "python >=3.5,<3.6"
+      PY_CONDITION: "python=3.5"
       CONDA_INSTALL_LOCN: C:\\Miniconda35
 
     - TARGET_ARCH: x64
       CONDA_PY: 35
-      PY_CONDITION: "python >=3.5,<3.6"
+      PY_CONDITION: "python=3.5"
       CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
 
     - TARGET_ARCH: x86
       CONDA_PY: 36
-      PY_CONDITION: "python >=3.6"
+      PY_CONDITION: "python=3.6"
       CONDA_INSTALL_LOCN: C:\\Miniconda
 
     - TARGET_ARCH: x64
       CONDA_PY: 36
-      PY_CONDITION: "python >=3.6"
+      PY_CONDITION: "python=3.6"
       CONDA_INSTALL_LOCN: C:\\Miniconda-x64
 
 install:
@@ -77,7 +77,7 @@ install:
   # Update ``conda`` settings.
   - cmd: conda config --set show_channel_urls true
   - cmd: conda config --set always_yes true
-  - cmd: conda config --set changeps1 no
+  - cmd: conda config --set changeps1 false
   - cmd: conda config --add channels conda-forge
 
   # Make ``conda`` environment scoped for desired version.
