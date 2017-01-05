@@ -1,3 +1,13 @@
+:: EXPECTED ENV VARS: TARGET_ARCH (either x86 or x64)
+::                    CONDA_PY (either 27, 33, 35 etc. - only major version is extracted)
+::
+:: From:
+::   (https://github.com/pelson/Obvious-CI/blob/
+::    a0e09c1a199486e9d07c056bc40130a67c9e929f/
+::    scripts/obvci_appveyor_python_build_env.cmd)
+:: Reproduced here to avoid an install round-trip.
+::
+::
 :: To build extensions for 64 bit Python 3, we need to configure environment
 :: variables to use the MSVC 2010 C++ compilers from GRMSDKX_EN_DVD.iso of:
 :: MS Windows SDK for Windows 7 and .NET Framework 4 (SDK v7.1)
@@ -16,7 +26,8 @@
 :: https://github.com/cython/cython/wiki/64BitCythonExtensionsOnWindows
 :: http://stackoverflow.com/a/13751649/163740
 ::
-:: Author: Olivier Grisel
+:: Author: Phil Elson
+:: Original Author: Olivier Grisel (https://github.com/ogrisel/python-appveyor-demo)
 :: License: CC0 1.0 Universal: http://creativecommons.org/publicdomain/zero/1.0/
 ::
 :: Notes about batch files for Python people:
@@ -33,15 +44,20 @@
 
 SET COMMAND_TO_RUN=%*
 SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
-SET WIN_WDK=c:\Program Files (x86)\Windows Kits\10\Include\wdf
 
 :: Extract the major and minor versions, and allow for the minor version to be
 :: more than 9.  This requires the version number to have two dots in it.
-SET MAJOR_PYTHON_VERSION=%PYTHON_VERSION:~0,1%
-IF "%PYTHON_VERSION:~3,1%" == "." (
-    SET MINOR_PYTHON_VERSION=%PYTHON_VERSION:~2,1%
+SET MAJOR_PYTHON_VERSION=%CONDA_PY:~0,1%
+
+IF "%CONDA_PY:~2,1%" == "" (
+    :: CONDA_PY style, such as 27, 34 etc.
+    SET MINOR_PYTHON_VERSION=%CONDA_PY:~1,1%
 ) ELSE (
-    SET MINOR_PYTHON_VERSION=%PYTHON_VERSION:~2,2%
+    IF "%CONDA_PY:~3,1%" == "." (
+     SET MINOR_PYTHON_VERSION=%CONDA_PY:~2,1%
+    ) ELSE (
+     SET MINOR_PYTHON_VERSION=%CONDA_PY:~2,2%
+    )
 )
 
 :: Based on the Python version, determine what SDK version to use, and whether
@@ -56,18 +72,14 @@ IF %MAJOR_PYTHON_VERSION% == 2 (
             SET SET_SDK_64=Y
         ) ELSE (
             SET SET_SDK_64=N
-            IF EXIST "%WIN_WDK%" (
-                :: See: https://connect.microsoft.com/VisualStudio/feedback/details/1610302/
-                REN "%WIN_WDK%" 0wdf
-            )
         )
     ) ELSE (
         ECHO Unsupported Python version: "%MAJOR_PYTHON_VERSION%"
-        EXIT 1
+        EXIT /B 1
     )
 )
 
-IF %PYTHON_ARCH% == 64 (
+IF "%TARGET_ARCH%"=="x64" (
     IF %SET_SDK_64% == Y (
         ECHO Configuring Windows SDK %WINDOWS_SDK_VERSION% for Python %MAJOR_PYTHON_VERSION% on a 64 bit architecture
         SET DISTUTILS_USE_SDK=1
@@ -75,14 +87,14 @@ IF %PYTHON_ARCH% == 64 (
         "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Setup\WindowsSdkVer.exe" -q -version:%WINDOWS_SDK_VERSION%
         "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Bin\SetEnv.cmd" /x64 /release
         ECHO Executing: %COMMAND_TO_RUN%
-        call %COMMAND_TO_RUN% || EXIT 1
+        call %COMMAND_TO_RUN% || EXIT /B 1
     ) ELSE (
         ECHO Using default MSVC build environment for 64 bit architecture
         ECHO Executing: %COMMAND_TO_RUN%
-        call %COMMAND_TO_RUN% || EXIT 1
+        call %COMMAND_TO_RUN% || EXIT /B 1
     )
 ) ELSE (
     ECHO Using default MSVC build environment for 32 bit architecture
     ECHO Executing: %COMMAND_TO_RUN%
-    call %COMMAND_TO_RUN% || EXIT 1
+    call %COMMAND_TO_RUN% || EXIT /B 1
 )
