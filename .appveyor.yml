@@ -77,9 +77,11 @@ install:
   # Update ``conda`` settings.
   - cmd: conda config --set show_channel_urls true
   - cmd: conda config --set always_yes true
+  - cmd: conda config --set changeps1 no
   - cmd: conda config --add channels conda-forge
 
   # Make ``conda`` environment scoped for desired version.
+  - cmd: conda update conda
   - cmd: conda create --name testing "%PY_CONDITION%"
 
   # Sleuth: ``conda`` install info.
@@ -90,7 +92,6 @@ install:
   # Activate and update ``conda``.
   - cmd: set PYTHONUNBUFFERED=1
   - cmd: activate testing
-  - cmd: conda update conda
 
   # Check that we have the expected version and architecture for Python
   - cmd: python --version
