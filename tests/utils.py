@@ -120,7 +120,7 @@ class NumPyTestCase(unittest.TestCase):
     def assertArrayEqual(self, arr1, arr2, msg=None):
         import numpy as np
 
-        if arr1.dtype is not arr2.dtype:
+        if arr1.dtype is not arr2.dtype:  # pragma: NO COVER
             standard_msg = WRONG_TYPE_TEMPLATE.format(
                 arr1.dtype, arr1, arr2.dtype, arr2)
             self.fail(self._formatMessage(msg, standard_msg))
