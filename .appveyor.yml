@@ -89,3 +89,13 @@ install:
 
   # Install (hardcoded) dependencies for ``bezier``.
   - cmd: conda install enum34 matplotlib numpy six
+
+  # Install ``bezier``.
+  - cmd: python setup.py install
+
+  # Install (hardcoded) test dependencies (should use ``tox``).
+  - cmd: conda install pytest mock scipy
+
+test_script:
+  # Run the project tests
+  - cmd: py.test tests/
