@@ -266,6 +266,18 @@ CURVE37 = bezier.Curve(np.array([
     [-0.5, -0.875],
     [1.25, 0.0],
 ]))
+# g38 = sympy.Matrix([[(3 * s + 1) / 2, (3 * s - 1)**2 / 8]])
+CURVE38 = bezier.Curve(np.array([
+    [0.5, 0.125],
+    [1.25, -0.25],
+    [2.0, 0.5],
+]))
+# g39 = sympy.Matrix([[(2 * s + 1) / 2, -(2 * s - 1)**2 / 8]])
+CURVE39 = bezier.Curve(np.array([
+    [0.5, -0.125],
+    [1.0, 0.125],
+    [1.5, -0.125],
+]))
 
 
 def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
@@ -704,6 +716,17 @@ def test_curves36_and_37():
     ])
 
     curve_curve_check(CURVE36, CURVE37, s_vals, t_vals, points)
+
+
+@pytest.mark.xfail
+def test_curves38_and_39():
+    s_vals = np.array([1.0 / 3.0])
+    t_vals = np.array([0.5])
+    points = np.array([
+        [1.0, 0.0],
+    ])
+
+    curve_curve_check(CURVE38, CURVE39, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
