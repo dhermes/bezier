@@ -21,34 +21,42 @@ environment:
 
     - TARGET_ARCH: x86
       CONDA_PY: 27
+      PY_CONDITION: "python >=2.7,<3"
       CONDA_INSTALL_LOCN: C:\\Miniconda
 
     - TARGET_ARCH: x64
       CONDA_PY: 27
+      PY_CONDITION: "python >=2.7,<3"
       CONDA_INSTALL_LOCN: C:\\Miniconda-x64
 
     - TARGET_ARCH: x86
       CONDA_PY: 34
+      PY_CONDITION: "python >=3.4,<3.5"
       CONDA_INSTALL_LOCN: C:\\Miniconda3
 
     - TARGET_ARCH: x64
       CONDA_PY: 34
+      PY_CONDITION: "python >=3.4,<3.5"
       CONDA_INSTALL_LOCN: C:\\Miniconda3-x64
 
     - TARGET_ARCH: x86
       CONDA_PY: 35
+      PY_CONDITION: "python >=3.5,<3.6"
       CONDA_INSTALL_LOCN: C:\\Miniconda35
 
     - TARGET_ARCH: x64
       CONDA_PY: 35
+      PY_CONDITION: "python >=3.5,<3.6"
       CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
 
     - TARGET_ARCH: x86
       CONDA_PY: 36
+      PY_CONDITION: "python >=3.6"
       CONDA_INSTALL_LOCN: C:\\Miniconda
 
     - TARGET_ARCH: x64
       CONDA_PY: 36
+      PY_CONDITION: "python >=3.6"
       CONDA_INSTALL_LOCN: C:\\Miniconda-x64
 
 install:
@@ -68,23 +76,25 @@ install:
 
   # Update ``conda`` settings.
   - cmd: conda config --set show_channel_urls true
+  - cmd: conda config --set always_yes true
   - cmd: conda config --add channels conda-forge
+
+  # Make ``conda`` environment scoped for desired version.
+  - cmd: conda create --name testing "%PY_CONDITION%"
 
   # Sleuth: ``conda`` install info.
   - cmd: conda --version
   - cmd: conda info --envs
   - cmd: conda info
 
-  # Update ``conda`` before activating.
-  - cmd: conda update --yes conda
-
-  # Actually activate ``conda``.
-  - cmd: call %CONDA_INSTALL_LOCN%\Scripts\activate.bat
+  # Activate and update ``conda``.
   - cmd: set PYTHONUNBUFFERED=1
+  - cmd: activate testing
+  - cmd: conda update conda
 
   # Check that we have the expected version and architecture for Python
-  - "python --version"
-  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+  - cmd: python --version
+  - cmd: python -c "import struct; print(struct.calcsize('P') * 8)"
 
   # Install (hardcoded) dependencies for ``bezier``.
-  - cmd: conda install --yes enum34 matplotlib numpy six
+  - cmd: conda install enum34 matplotlib numpy six
