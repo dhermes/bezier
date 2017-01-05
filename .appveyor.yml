@@ -75,6 +75,9 @@ install:
   - cmd: conda info --envs
   - cmd: conda info
 
+  # Update ``conda`` before activating.
+  - cmd: conda update --yes conda
+
   # Actually activate ``conda``.
   - cmd: call %CONDA_INSTALL_LOCN%\Scripts\activate.bat
   - cmd: set PYTHONUNBUFFERED=1
