@@ -21,12 +21,12 @@ environment:
 
     - TARGET_ARCH: x86
       CONDA_PY: 27
-      PY_CONDITION: "python=2.7"
+      PY_CONDITION: "python >=2.7.13,<3"
       CONDA_INSTALL_LOCN: C:\\Miniconda
 
     - TARGET_ARCH: x64
       CONDA_PY: 27
-      PY_CONDITION: "python=2.7"
+      PY_CONDITION: "python >=2.7.13,<3"
       CONDA_INSTALL_LOCN: C:\\Miniconda-x64
 
     - TARGET_ARCH: x86
