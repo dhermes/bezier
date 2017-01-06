@@ -6,6 +6,11 @@ Curve-Curve Intersection
    import bezier
    import numpy as np
 
+   def binary_exponent(value):
+       _, result = np.frexp(value)
+       # Shift [1/2, 1) --> [1, 2) borrows one from exponent
+       return result - 1
+
 The problem of intersecting two curves is a difficult one
 in computational geometry. The :meth:`.Curve.intersect`
 method uses a combination of curve subdivision, bounding
@@ -195,8 +200,8 @@ numbers, we can compute the intersection to machine precision:
    ...     [36 + 4 * sq31, 16 - sq31],
    ... ]) / 64.0
    >>> max_err = np.max(np.abs(intersections - expected))
-   >>> np.log2(max_err)
-   -54.0
+   >>> binary_exponent(max_err)
+   -54
 
 .. image:: images/test_curves1_and_2.png
    :align: center
@@ -221,8 +226,8 @@ numbers, we can compute the intersection to machine precision:
    ...     [33 + 4 * sq33, 17],
    ... ]) / 66.0
    >>> max_err = np.max(np.abs(intersections - expected))
-   >>> np.log2(max_err)
-   -54.0
+   >>> binary_exponent(max_err)
+   -54
 
 .. image:: images/test_curves1_and_7.png
    :align: center
@@ -251,8 +256,8 @@ numbers, we can compute the intersection to machine precision:
    ...     [     14, 0],
    ... ]) / 14.0
    >>> max_err = np.max(np.abs(intersections - expected))
-   >>> np.log2(max_err)
-   -54.0
+   >>> binary_exponent(max_err)
+   -54
 
 .. image:: images/test_curves1_and_13.png
    :align: center
@@ -279,8 +284,8 @@ numbers, we can compute the intersection to machine precision:
    ...     [6 + 2 * sq5, 5 + sq5],
    ... ]) / 16.0
    >>> max_err = np.max(np.abs(intersections - expected))
-   >>> np.log2(max_err)
-   -50.415...
+   >>> binary_exponent(max_err)
+   -51
 
 .. image:: images/test_curves21_and_22.png
    :align: center
@@ -311,8 +316,8 @@ larger.
    ...     [x_val, y_val],
    ... ])
    >>> max_err = np.max(np.abs(intersections - expected))
-   >>> np.log2(max_err)
-   -49.678...
+   >>> binary_exponent(max_err)
+   -50
 
 .. image:: images/test_curves15_and_25.png
    :align: center
@@ -338,8 +343,8 @@ larger.
    ...     [72 + 21 * sq7, 96 - 28 * sq7],
    ... ]) / 24.0
    >>> max_err = np.max(np.abs(intersections - expected))
-   >>> np.log2(max_err)
-   -50.0
+   >>> binary_exponent(max_err)
+   -50
 
 .. image:: images/test_curves11_and_26.png
    :align: center
@@ -365,8 +370,8 @@ larger.
    ...     [s_val1, 0.375],
    ... ])
    >>> max_err = np.max(np.abs(intersections - expected))
-   >>> np.log2(max_err)
-   -50.678...
+   >>> binary_exponent(max_err)
+   -51
 
 .. image:: images/test_curves8_and_27.png
    :align: center
