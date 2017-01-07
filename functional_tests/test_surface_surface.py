@@ -586,7 +586,7 @@ def test_surfaces1Q_and_3Q():
         (1, 2),
     )
     # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(46):
+    with CONFIG.wiggle(48):
         surface_surface_check(SURFACE1Q, SURFACE3Q,
                               start_vals, end_vals, nodes, edge_pairs)
 

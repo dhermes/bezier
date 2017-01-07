@@ -498,7 +498,7 @@ def newton_refine(curve, point, s):
        ]))
        point = curve.evaluate_multi(np.array([0.5]))
 
-    .. doctest:: newton-refine-curve-cusp
+    .. doctest:: newton-refine-curve-cusp-continued
 
        >>> s_vals = [0.625]
        >>> new_s = newton_refine(curve, point, s_vals[-1])
@@ -506,13 +506,11 @@ def newton_refine(curve, point, s):
        ...     s_vals.append(new_s)
        ...     new_s = newton_refine(curve, point, s_vals[-1])
        ...
-       >>> len(s_vals)
-       27
        >>> terminal_s = s_vals[-1]
        >>> terminal_s == newton_refine(curve, point, terminal_s)
        True
-       >>> np.log2(terminal_s - 0.5)
-       -29.580...
+       >>> 2.0**(-31) <= abs(terminal_s - 0.5) <= 2.0**(-29)
+       True
 
     Due to round-off near the cusp, the final error resembles
     :math:`\sqrt{\varepsilon}` rather than machine precision
