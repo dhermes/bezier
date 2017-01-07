@@ -129,8 +129,10 @@ class Config(object):  # pylint: disable=too-few-public-methods
             approximated (float): The value that was computed.
             exact (float): The expected value.
         """
+        msg = '{} ~= {} to {:d} bits'.format(
+            approximated.hex(), exact.hex(), self._wiggle)
         assert _helpers.n_bits_away(
-            exact, approximated, num_bits=self._wiggle)
+            exact, approximated, num_bits=self._wiggle), msg
 
     def run(self, mod_globals):
         """Run all tests, in source order.

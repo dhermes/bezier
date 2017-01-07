@@ -19,47 +19,47 @@ environment:
     # See: https://www.appveyor.com/docs/installed-software/#python
     # Borrowed from conda-forge recipes.
 
-    - TARGET_ARCH: x86
-      CONDA_PY: 27
-      PY_CONDITION: "python >=2.7.13,<3"
-      CONDA_INSTALL_LOCN: C:\\Miniconda
-      TEST_TYPE: base
+    # - TARGET_ARCH: x86
+    #   CONDA_PY: 27
+    #   PY_CONDITION: "python >=2.7.13,<3"
+    #   CONDA_INSTALL_LOCN: C:\\Miniconda
+    #   TEST_TYPE: base
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 27
-      PY_CONDITION: "python >=2.7.13,<3"
-      CONDA_INSTALL_LOCN: C:\\Miniconda-x64
-      TEST_TYPE: base
+    # - TARGET_ARCH: x64
+    #   CONDA_PY: 27
+    #   PY_CONDITION: "python >=2.7.13,<3"
+    #   CONDA_INSTALL_LOCN: C:\\Miniconda-x64
+    #   TEST_TYPE: base
 
-    - TARGET_ARCH: x86
-      CONDA_PY: 34
-      PY_CONDITION: "python=3.4"
-      CONDA_INSTALL_LOCN: C:\\Miniconda3
-      TEST_TYPE: base
+    # - TARGET_ARCH: x86
+    #   CONDA_PY: 34
+    #   PY_CONDITION: "python=3.4"
+    #   CONDA_INSTALL_LOCN: C:\\Miniconda3
+    #   TEST_TYPE: base
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 34
-      PY_CONDITION: "python=3.4"
-      CONDA_INSTALL_LOCN: C:\\Miniconda3-x64
-      TEST_TYPE: base
+    # - TARGET_ARCH: x64
+    #   CONDA_PY: 34
+    #   PY_CONDITION: "python=3.4"
+    #   CONDA_INSTALL_LOCN: C:\\Miniconda3-x64
+    #   TEST_TYPE: base
 
-    - TARGET_ARCH: x86
-      CONDA_PY: 35
-      PY_CONDITION: "python=3.5"
-      CONDA_INSTALL_LOCN: C:\\Miniconda35
-      TEST_TYPE: base
+    # - TARGET_ARCH: x86
+    #   CONDA_PY: 35
+    #   PY_CONDITION: "python=3.5"
+    #   CONDA_INSTALL_LOCN: C:\\Miniconda35
+    #   TEST_TYPE: base
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 35
-      PY_CONDITION: "python=3.5"
-      CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
-      TEST_TYPE: base
+    # - TARGET_ARCH: x64
+    #   CONDA_PY: 35
+    #   PY_CONDITION: "python=3.5"
+    #   CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
+    #   TEST_TYPE: base
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 27
-      PY_CONDITION: "python >=2.7.13,<3"
-      CONDA_INSTALL_LOCN: C:\\Miniconda-x64
-      TEST_TYPE: cover
+    # - TARGET_ARCH: x64
+    #   CONDA_PY: 27
+    #   PY_CONDITION: "python >=2.7.13,<3"
+    #   CONDA_INSTALL_LOCN: C:\\Miniconda-x64
+    #   TEST_TYPE: cover
 
     - TARGET_ARCH: x64
       CONDA_PY: 27
@@ -122,33 +122,33 @@ install:
   # Install (hardcoded) conditional (on base) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "base")
         {
-          conda install pytest mock scipy
+          conda install pytest mock scipy;
         }
 
   # Install (hardcoded) conditional (on cover) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
-          conda install pytest mock coverage pytest-cov scipy
+          conda install pytest mock coverage pytest-cov scipy;
         }
 
   # Install (hardcoded) conditional (on functional) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
-          conda install pytest mock
+          conda install pytest mock;
         }
 
   # Install (hardcoded) conditional (on doctest) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "doctest")
         {
-          conda install Sphinx
-          pip install sphinx-rtd-theme sphinx-docstring-typing
-          $env:NO_IMAGES = "True"
+          conda install Sphinx;
+          pip install sphinx-rtd-theme sphinx-docstring-typing;
+          $env:NO_IMAGES = "True";
         }
 
 test_script:
   - ps: if ($env:TEST_TYPE -eq "base")
         {
-          py.test tests
+          py.test tests;
         }
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
@@ -156,7 +156,7 @@ test_script:
               --cov=bezier `
               --cov=tests `
               tests `
-              functional_tests/test_segment_box.py
+              functional_tests/test_segment_box.py;
         }
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
@@ -168,5 +168,5 @@ test_script:
             -b doctest `
             -d docs/build/doctrees `
             docs `
-            docs/build/doctest
+            docs/build/doctest;
         }
