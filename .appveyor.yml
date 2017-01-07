@@ -55,6 +55,12 @@ environment:
       CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
       TEST_TYPE: base
 
+    - TARGET_ARCH: x64
+      CONDA_PY: 27
+      PY_CONDITION: "python >=2.7.13,<3"
+      CONDA_INSTALL_LOCN: C:\\Miniconda-x64
+      TEST_TYPE: cover
+
 install:
   # If there is a newer build queued for the same PR, cancel this one.
   # The AppVeyor 'rollout builds' option is supposed to serve the same
