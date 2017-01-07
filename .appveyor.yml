@@ -23,31 +23,37 @@ environment:
       CONDA_PY: 27
       PY_CONDITION: "python >=2.7.13,<3"
       CONDA_INSTALL_LOCN: C:\\Miniconda
+      TEST_TYPE: base
 
     - TARGET_ARCH: x64
       CONDA_PY: 27
       PY_CONDITION: "python >=2.7.13,<3"
       CONDA_INSTALL_LOCN: C:\\Miniconda-x64
+      TEST_TYPE: base
 
     - TARGET_ARCH: x86
       CONDA_PY: 34
       PY_CONDITION: "python=3.4"
       CONDA_INSTALL_LOCN: C:\\Miniconda3
+      TEST_TYPE: base
 
     - TARGET_ARCH: x64
       CONDA_PY: 34
       PY_CONDITION: "python=3.4"
       CONDA_INSTALL_LOCN: C:\\Miniconda3-x64
+      TEST_TYPE: base
 
     - TARGET_ARCH: x86
       CONDA_PY: 35
       PY_CONDITION: "python=3.5"
       CONDA_INSTALL_LOCN: C:\\Miniconda35
+      TEST_TYPE: base
 
     - TARGET_ARCH: x64
       CONDA_PY: 35
       PY_CONDITION: "python=3.5"
       CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
+      TEST_TYPE: base
 
 install:
   # If there is a newer build queued for the same PR, cancel this one.
@@ -96,6 +102,24 @@ install:
   # Install (hardcoded) test dependencies (should use ``tox``).
   - cmd: conda install pytest mock scipy
 
+  # Install (hardcoded) conditional (on base) test dependencies.
+  - ps: if ($env:TEST_TYPE -eq "base")
+        {
+          conda install scipy
+        }
+
+  # Install (hardcoded) conditional (on cover) test dependencies.
+  - ps: if ($env:TEST_TYPE -eq "cover")
+        {
+          conda install coverage pytest-cov scipy
+        }
+
 test_script:
-  # Run the project tests
-  - cmd: py.test tests/
+  - ps: if ($env:TEST_TYPE -eq "base")
+        {
+          py.test tests/
+        }
+  - ps: if ($env:TEST_TYPE -eq "cover")
+        {
+          py.test --cov=bezier --cov=tests tests/ functional_tests/test_segment_box.py
+        }
