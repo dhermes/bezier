@@ -53,6 +53,12 @@ class TestSurface(utils.NumPyTestCase):
         klass = self._get_target_class()
         return klass(*args, **kwargs)
 
+    def _make_one_no_slots(self, *args, **kwargs):
+        class NoSlots(self._get_target_class()):
+            pass
+
+        return NoSlots(*args, **kwargs)
+
     def test_constructor(self):
         nodes = np.array([
             [0.0, 0.0],
@@ -234,7 +240,7 @@ class TestSurface(utils.NumPyTestCase):
             np.vstack([p003, p102, p201, p300]))
 
     def test__get_edges(self):
-        surface = self._make_one(np.zeros((3, 1)))
+        surface = self._make_one_no_slots(np.zeros((3, 1)))
         compute_mock = mock.Mock(return_value=mock.sentinel.edges)
         surface._compute_edges = compute_mock
 
@@ -245,7 +251,7 @@ class TestSurface(utils.NumPyTestCase):
         compute_mock.assert_called_once_with()
 
     def test__get_edges_cached(self):
-        surface = self._make_one(np.zeros((3, 1)))
+        surface = self._make_one_no_slots(np.zeros((3, 1)))
         compute_mock = mock.Mock()
         surface._compute_edges = compute_mock
 
@@ -266,7 +272,7 @@ class TestSurface(utils.NumPyTestCase):
                            nodes1, nodes2, nodes3)
 
     def test_edges_property_cached(self):
-        surface = self._make_one(np.zeros((3, 2)))
+        surface = self._make_one_no_slots(np.zeros((3, 2)))
 
         # Create mock "edges" to be computed.
         sentinel1 = mock.Mock()
@@ -400,7 +406,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_evaluate_cartesian_calls_barycentric(self):
-        surface = self._make_one(np.zeros((3, 2)))
+        surface = self._make_one_no_slots(np.zeros((3, 2)))
         eval_method = mock.Mock()
         surface.evaluate_barycentric = eval_method
 
@@ -924,7 +930,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertTrue(surface.is_valid)
 
     def test_is_valid_property_cached(self):
-        surface = self._make_one(np.zeros((3, 2)))
+        surface = self._make_one_no_slots(np.zeros((3, 2)))
         compute_valid = mock.Mock()
         surface._compute_valid = compute_valid
         compute_valid.return_value = True

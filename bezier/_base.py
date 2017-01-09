@@ -35,6 +35,8 @@ class Base(object):
         ValueError: If the ``degree`` is less than ``1``.
     """
 
+    __slots__ = ('_degree', '_dimension', '_nodes')
+
     def __init__(self, nodes, _copy=True):
         if nodes.ndim != 2:
             raise ValueError('Nodes must be 2-dimensional, not',

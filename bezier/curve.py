@@ -106,10 +106,12 @@ class Curve(_base.Base):
             freely mutate ``nodes`` after passing in.
     """
 
-    _length = None
-    _edge_index = None
-    _next_edge = None
-    _previous_edge = None
+    __slots__ = (
+        '_degree', '_dimension', '_nodes',  # From base class
+        '_start', '_end', '_root',  # From constructor
+        '_length', '_edge_index', '_next_edge',  # Empty defaults
+        '_previous_edge',  # Empty defaults
+    )
 
     def __init__(self, nodes, start=0.0, end=1.0, root=None, _copy=True):
         super(Curve, self).__init__(nodes, _copy=_copy)
@@ -118,6 +120,10 @@ class Curve(_base.Base):
         if root is None:
             root = self
         self._root = root
+        self._length = None
+        self._edge_index = None
+        self._next_edge = None
+        self._previous_edge = None
 
     def __repr__(self):
         """Representation of current object.

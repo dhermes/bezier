@@ -172,15 +172,20 @@ class Surface(_base.Base):
             freely mutate ``nodes`` after passing in.
     """
 
-    _area = None
-    _edges = None
-    _is_valid = None
+    __slots__ = (
+        '_degree', '_dimension', '_nodes',  # From base class
+        '_base_x', '_base_y', '_width',  # From constructor
+        '_area', '_edges', '_is_valid',  # Empty defaults
+    )
 
     def __init__(self, nodes, base_x=0.0, base_y=0.0, width=1.0, _copy=True):
         super(Surface, self).__init__(nodes, _copy=_copy)
         self._base_x = base_x
         self._base_y = base_y
         self._width = width
+        self._area = None
+        self._edges = None
+        self._is_valid = None
 
     def __repr__(self):
         """Representation of current object.
