@@ -1032,7 +1032,7 @@ class Surface(_base.Base):
                 'Intersection only implemented in 2D')
 
         bbox_int = _intersection_helpers.bbox_intersect(
-            self._nodes, other._nodes)
+            self._nodes, other._nodes)  # pylint: disable=protected-access
         if (bbox_int is not
                 _intersection_helpers.BoxIntersectionType.intersection):
             return []
