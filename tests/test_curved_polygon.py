@@ -58,6 +58,17 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         self.assertEqual(curved_poly._edges, (edge0, edge1))
         self.assertEqual(curved_poly._num_sides, 2)
 
+    def test_constructor_without_verify(self):
+        import bezier
+
+        edge0 = bezier.Curve(self.NODES0)
+        with self.assertRaises(ValueError):
+            self._make_one(edge0)
+
+        curved_poly = self._make_one(edge0, _verify=False)
+        self.assertEqual(curved_poly._edges, (edge0,))
+        self.assertEqual(curved_poly._num_sides, 1)
+
     def test__verify_too_few(self):
         with self.assertRaises(ValueError):
             self._make_one()

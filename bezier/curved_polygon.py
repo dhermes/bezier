@@ -44,8 +44,8 @@ class CurvedPolygon(object):
     .. note::
 
        The direction of the nodes in each :class:`.Curve`
-       on the boundary is important: we check that one curve
-       begins where the last one ended.
+       on the boundary is important. When verifying, we check that
+       one curve begins where the last one ended.
 
     .. image:: ../images/curved_polygon_constructor1.png
        :align: center
@@ -81,7 +81,7 @@ class CurvedPolygon(object):
        import make_images
        make_images.curved_polygon_constructor1(curved_poly)
 
-    Though the endpoints of edge pair of edges are verified to match,
+    Though the endpoints of each pair of edges are verified to match,
     the curved polygon as a whole is not verified, so creating
     a curved polygon with self-intersections is possible:
 
@@ -121,12 +121,18 @@ class CurvedPolygon(object):
     Args:
         edges (Tuple[~bezier.curve.Curve, ...]): The boundary edges
             of the curved polygon.
+        kwargs: The only keyword argument accepted is ``_verify``, which is
+            a :class:`bool` indicating if the edges should be verified as
+            having shared endpoints. It defaults to :data:`True`.
     """
 
-    def __init__(self, *edges):
+    __slots__ = ('_edges', '_num_sides')
+
+    def __init__(self, *edges, **kwargs):
         self._edges = edges
         self._num_sides = len(edges)
-        self._verify()
+        if kwargs.pop('_verify', True):
+            self._verify()
 
     @staticmethod
     def _verify_pair(prev, curr):

@@ -1827,7 +1827,7 @@ def _to_curved_polygon(surface):
         .CurvedPolygon: The converted object.
     """
     edges = surface._get_edges()  # pylint: disable=protected-access
-    return curved_polygon.CurvedPolygon(*edges)
+    return curved_polygon.CurvedPolygon(*edges, _verify=False)
 
 
 def _no_intersections(surface1, surface2):
@@ -1956,10 +1956,8 @@ def _basic_interior_combine(intersections):
             next_node = _get_next(curr_node, intersections, unused)
             edge_ends.append((curr_node, next_node))
 
-        result.append(curved_polygon.CurvedPolygon(*(
-            _ends_to_curve(*pair)
-            for pair in edge_ends
-        )))
+        edge_gen = (_ends_to_curve(*pair) for pair in edge_ends)
+        result.append(curved_polygon.CurvedPolygon(*edge_gen, _verify=False))
 
     return result
 
