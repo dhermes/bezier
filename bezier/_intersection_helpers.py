@@ -1345,9 +1345,22 @@ class Linearization(object):
             :func:`.linearization_error`.
     """
 
+    __slots__ = ('curve', '_error', 'start_node', 'end_node')
+
     def __init__(self, curve, error=None):
-        self._curve = curve
+        self.curve = curve
+        """Curve: The curve that this linearization approximates."""
         self._error = error
+        # NOTE: We went the nodes to be 1x2 but accessing
+        #       ``curve._nodes[[0], :]`` makes a copy while the access
+        #       below **does not** copy. See
+        #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
+        #        arrays.indexing.html#advanced-indexing)
+        nodes = curve._nodes  # pylint: disable=protected-access
+        self.start_node = nodes[0, :].reshape((1, 2))
+        """numpy.ndarray: The start vector of this linearization."""
+        self.end_node = nodes[-1, :].reshape((1, 2))
+        """numpy.ndarray: The end vector of this linearization."""
 
     def subdivide(self):
         """Do-nothing method to match the :class:`.Curve` interface.
@@ -1359,26 +1372,11 @@ class Linearization(object):
         return self,
 
     @property
-    def curve(self):
-        """Curve: The curve that this linearization approximates."""
-        return self._curve
-
-    @property
     def error(self):
         """float: The linearization error for the linearized curve."""
         if self._error is None:
-            self._error = linearization_error(self._curve)
+            self._error = linearization_error(self.curve)
         return self._error
-
-    @property
-    def start_node(self):
-        """numpy.ndarray: The start vector of this linearization."""
-        return self._curve._nodes[[0], :]  # pylint: disable=protected-access
-
-    @property
-    def end_node(self):
-        """numpy.ndarray: The end vector of this linearization."""
-        return self._curve._nodes[[-1], :]  # pylint: disable=protected-access
 
     @classmethod
     def from_shape(cls, shape):

@@ -1025,32 +1025,42 @@ class TestLinearization(utils.NumPyTestCase):
         klass = self._get_target_class()
         return klass(*args, **kwargs)
 
+    @staticmethod
+    def _mock_curve():
+        nodes = mock.MagicMock(spec=np.ndarray)
+        return mock.Mock(_nodes=nodes, spec=['_nodes'])
+
     def test_constructor(self):
-        linearization = self._make_one(mock.sentinel.curve)
-        self.assertIs(linearization._curve, mock.sentinel.curve)
+        nodes = np.array([
+            [4.0, -5.0],
+            [0.0, 7.0],
+        ])
+        curve = mock.Mock(_nodes=nodes, spec=['_nodes'])
+        linearization = self._make_one(curve)
+        self.assertIs(linearization.curve, curve)
         self.assertIsNone(linearization._error)
+        self.assertEqual(linearization.start_node, nodes[[0], :])
+        self.assertEqual(linearization.end_node, nodes[[1], :])
 
     def test_constructor_with_error(self):
+        curve = self._mock_curve()
         error = 0.125
-        linearization = self._make_one(mock.sentinel.curve, error=error)
-        self.assertIs(linearization._curve, mock.sentinel.curve)
+        linearization = self._make_one(curve, error=error)
+        self.assertIs(linearization.curve, curve)
         self.assertEqual(linearization._error, error)
 
     def test_subdivide(self):
-        linearization = self._make_one(None)
+        linearization = self._make_one(self._mock_curve())
         self.assertEqual(linearization.subdivide(), (linearization,))
-
-    def test_curve_property(self):
-        linearization = self._make_one(mock.sentinel.curve)
-        self.assertIs(linearization.curve, mock.sentinel.curve)
 
     def test_error_property(self):
         error = 0.0625
-        linearization = self._make_one(None, error=error)
+        linearization = self._make_one(self._mock_curve(), error=error)
         self.assertEqual(linearization.error, error)
 
     def test_error_property_on_the_fly(self):
-        linearization = self._make_one(mock.sentinel.curve)
+        curve = self._mock_curve()
+        linearization = self._make_one(curve)
 
         error = 0.09375
         patch = mock.patch(
@@ -1058,23 +1068,29 @@ class TestLinearization(utils.NumPyTestCase):
             return_value=error)
         with patch as mocked:
             self.assertEqual(linearization.error, error)
-            mocked.assert_called_once_with(mock.sentinel.curve)
+            mocked.assert_called_once_with(curve)
 
-    def test_start_node_property(self):
+    def test_start_node_attr(self):
         import bezier
 
         curve = bezier.Curve(self.NODES, _copy=False)
         linearization = self._make_one(curve)
         expected = self.NODES[[0], :]
         self.assertEqual(linearization.start_node, expected)
+        # Make sure not copied.
+        self.assertIs(linearization.start_node.base, self.NODES)
+        self.assertFalse(linearization.start_node.flags.owndata)
 
-    def test_end_node_property(self):
+    def test_end_node_attr(self):
         import bezier
 
         curve = bezier.Curve(self.NODES, _copy=False)
         linearization = self._make_one(curve)
         expected = self.NODES[[2], :]
         self.assertEqual(linearization.end_node, expected)
+        # Make sure not copied.
+        self.assertIs(linearization.end_node.base, self.NODES)
+        self.assertFalse(linearization.end_node.flags.owndata)
 
     def test_from_shape_factory_not_close_enough(self):
         import bezier
@@ -1094,7 +1110,7 @@ class TestLinearization(utils.NumPyTestCase):
         new_shape = klass.from_shape(curve)
 
         self.assertIsInstance(new_shape, klass)
-        self.assertIs(new_shape._curve, curve)
+        self.assertIs(new_shape.curve, curve)
         # NODES has constant second derivative equal to 2 * [3.0, 4.0].
         expected_error = 0.125 * 2 * 1 * 5.0 * scale_factor
         self.assertEqual(new_shape.error, expected_error)
@@ -1110,13 +1126,13 @@ class TestLinearization(utils.NumPyTestCase):
         klass = self._get_target_class()
         new_shape = klass.from_shape(curve)
         self.assertIsInstance(new_shape, klass)
-        self.assertIs(new_shape._curve, curve)
+        self.assertIs(new_shape.curve, curve)
         # ``nodes`` is linear, so error is 0.0.
         self.assertEqual(new_shape.error, 0.0)
 
     def test_from_shape_factory_already_linearized(self):
         error = 0.078125
-        linearization = self._make_one(None, error=error)
+        linearization = self._make_one(self._mock_curve(), error=error)
 
         klass = self._get_target_class()
         new_shape = klass.from_shape(linearization)
