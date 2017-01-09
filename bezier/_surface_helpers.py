@@ -864,7 +864,7 @@ def locate_point(surface, x_val, y_val):
     s, t = newton_refine(surface, x_val, y_val, s_approx, t_approx)
 
     actual = surface.evaluate_cartesian(s, t)
-    expected = np.array([x_val, y_val])
+    expected = np.array([[x_val, y_val]])
     if not _helpers.vector_close(actual, expected, eps=_LOCATE_EPS):
         s, t = newton_refine(surface, x_val, y_val, s, t)
     return s, t

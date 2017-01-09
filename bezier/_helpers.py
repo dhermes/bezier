@@ -52,15 +52,17 @@ def vector_close(vec1, vec2, eps=_EPS):
     Returns:
         bool: Flag indicating if they are close to precision.
     """
-    size1 = np.linalg.norm(vec1, ord=2)
-    size2 = np.linalg.norm(vec2, ord=2)
+    # NOTE: We assume the caller sends a 1xD vector. We turn it into
+    #       a one-dimensional vector so NumPy doesn't use a matrix norm.
+    size1 = np.linalg.norm(vec1[0, :], ord=2)
+    size2 = np.linalg.norm(vec2[0, :], ord=2)
     if size1 == 0:
         return size2 <= eps
     elif size2 == 0:
         return size1 <= eps
     else:
         upper_bound = eps * min(size1, size2)
-        return np.linalg.norm(vec1 - vec2, ord=2) <= upper_bound
+        return np.linalg.norm(vec1[0, :] - vec2[0, :], ord=2) <= upper_bound
 
 
 def in_interval(value, start, end):

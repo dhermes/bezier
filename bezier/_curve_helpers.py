@@ -111,7 +111,8 @@ def _vec_size(nodes, degree, s_val):
         float: The norm of :math:`B(s)`.
     """
     result_vec = evaluate_multi(nodes, degree, np.array([s_val]))
-    return np.linalg.norm(result_vec, ord=2)
+    # NOTE: We convert to 1D to make sure NumPy uses vector norm.
+    return np.linalg.norm(result_vec[0, :], ord=2)
 
 
 def compute_length(nodes, degree):
@@ -146,7 +147,8 @@ def compute_length(nodes, degree):
     #       derivative every time it is evaluated.
     first_deriv = degree * (nodes[1:, :] - nodes[:-1, :])
     if degree == 1:
-        return np.linalg.norm(first_deriv, ord=2)
+        # NOTE: We convert to 1D to make sure NumPy uses vector norm.
+        return np.linalg.norm(first_deriv[0, :], ord=2)
 
     if _scipy_int is None:
         raise OSError('This function requires SciPy for quadrature.')
@@ -362,7 +364,8 @@ def get_curvature(nodes, degree, tangent_vec, s):
         second_deriv, degree - 2, np.array([s]))
 
     curvature = _helpers.cross_product(tangent_vec, concavity)
-    curvature /= np.linalg.norm(tangent_vec, ord=2)**3
+    # NOTE: We convert to 1D to make sure NumPy uses vector norm.
+    curvature /= np.linalg.norm(tangent_vec[0, :], ord=2)**3
     return curvature
 
 

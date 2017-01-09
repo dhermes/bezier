@@ -27,11 +27,10 @@ from bezier import _curve_helpers
 from bezier import _helpers
 
 
-_FREXP = np.frexp  # pylint: disable=no-member
 # Set the threshold for exponetn at half the bits available,
 # this way one round of Newton's method can finish the job
 # by squaring the error.
-_ERROR_EXPONENT = -26
+_ERROR_VAL = 0.5**26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
@@ -287,6 +286,7 @@ def linearization_error(curve):
 
     # max_{0 <= s <= 1} s(1 - s)/2 = 1/8 = 0.125
     multiplier = 0.125 * curve.degree * (curve.degree - 1)
+    # NOTE: worst_case is 1D due to np.max(), so this is the vector norm.
     return multiplier * np.linalg.norm(worst_case, ord=2)
 
 
@@ -1398,12 +1398,7 @@ class Linearization(object):
             return shape
         else:
             error = linearization_error(shape)
-            if error == 0.0:
-                err_exp = -np.inf
-            else:
-                _, err_exp = _FREXP(error)
-
-            if err_exp <= _ERROR_EXPONENT:
+            if error < _ERROR_VAL:
                 linearized = cls(shape, error=error)
                 return linearized
             else:

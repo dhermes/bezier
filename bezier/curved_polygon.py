@@ -152,7 +152,7 @@ class CurvedPolygon(object):
         prev_nodes = prev._nodes
         curr_nodes = curr._nodes
         # pylint: enable=protected-access
-        if not _helpers.vector_close(prev_nodes[-1, :], curr_nodes[0, :]):
+        if not _helpers.vector_close(prev_nodes[[-1], :], curr_nodes[[0], :]):
             raise ValueError(
                 'Not sufficiently close',
                 'Consecutive sides do not have common endpoint',

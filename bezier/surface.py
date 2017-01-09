@@ -1031,6 +1031,12 @@ class Surface(_base.Base):
             raise NotImplementedError(
                 'Intersection only implemented in 2D')
 
+        bbox_int = _intersection_helpers.bbox_intersect(
+            self._nodes, other._nodes)
+        if (bbox_int is not
+                _intersection_helpers.BoxIntersectionType.intersection):
+            return []
+
         edges1 = self._get_edges()
         lin1 = six.moves.map(
             _intersection_helpers.Linearization.from_shape,

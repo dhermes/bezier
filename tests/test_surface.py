@@ -990,6 +990,28 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual([edge.end for edge in intersection._edges],
                          [1.0, 0.5, 1.0, 0.5])
 
+    def test_intersect_disjoint_bbox(self):
+        surface1 = self._make_one(self.UNIT_TRIANGLE)
+        surface2 = self._make_one(np.array([
+            [4.0, 0.0],
+            [5.0, 0.0],
+            [4.0, 1.0],
+        ]))
+
+        intersections = surface1.intersect(surface2)
+        self.assertEqual(intersections, [])
+
+    def test_intersect_tangent_bbox(self):
+        surface1 = self._make_one(self.UNIT_TRIANGLE)
+        surface2 = self._make_one(np.array([
+            [0.0, 0.0],
+            [0.0, 1.0],
+            [-1.0, 1.0],
+        ]))
+
+        intersections = surface1.intersect(surface2)
+        self.assertEqual(intersections, [])
+
     def test_intersect_non_surface(self):
         surface = self._make_one(self.UNIT_TRIANGLE)
         with self.assertRaises(TypeError):
