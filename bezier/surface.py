@@ -197,7 +197,7 @@ class Surface(_base.Base):
             return super(Surface, self).__repr__()
         else:
             return _REPR_TEMPLATE.format(
-                self.__class__.__name__, self.degree, self.dimension,
+                self.__class__.__name__, self._degree, self._dimension,
                 self._base_x, self._base_y, self._width)
 
     @staticmethod
@@ -324,16 +324,16 @@ class Surface(_base.Base):
             Tuple[~curve.Curve, ~curve.Curve, ~curve.Curve]: The edges of
             the surface.
         """
-        indices1 = slice(0, self.degree + 1)
-        indices2 = np.empty(self.degree + 1, dtype=int)
-        indices3 = np.empty(self.degree + 1, dtype=int)
+        indices1 = slice(0, self._degree + 1)
+        indices2 = np.empty(self._degree + 1, dtype=np.int32)
+        indices3 = np.empty(self._degree + 1, dtype=np.int32)
 
-        curr2 = self.degree
+        curr2 = self._degree
         curr3 = -1
-        for i in six.moves.xrange(self.degree + 1):
+        for i in six.moves.xrange(self._degree + 1):
             indices2[i] = curr2
             indices3[i] = curr3
-            curr2 += self.degree - i
+            curr2 += self._degree - i
             curr3 -= i + 2
 
         edge1 = _curve_mod.Curve(self._nodes[indices1, :], _copy=False)
@@ -503,11 +503,11 @@ class Surface(_base.Base):
                 raise ValueError('Weights must be positive',
                                  lambda1, lambda2, lambda3)
 
-        if self.degree == 1:
+        if self._degree == 1:
             weights = np.array([
                 [lambda1, lambda2, lambda3],
             ])
-        elif self.degree == 2:
+        elif self._degree == 2:
             weights = np.array([
                 [
                     lambda1 * lambda1,
@@ -518,7 +518,7 @@ class Surface(_base.Base):
                     lambda3 * lambda3,
                 ]
             ])
-        elif self.degree == 3:
+        elif self._degree == 3:
             weights = np.array([
                 [
                     lambda1 * lambda1 * lambda1,
@@ -535,7 +535,7 @@ class Surface(_base.Base):
             ])
         else:
             result = self._nodes
-            for reduced_deg in six.moves.xrange(self.degree, 0, -1):
+            for reduced_deg in six.moves.xrange(self._degree, 0, -1):
                 result = _surface_helpers.de_casteljau_one_round(
                     result, reduced_deg, lambda1, lambda2, lambda3)
             return result
@@ -689,7 +689,7 @@ class Surface(_base.Base):
             raise ValueError(
                 'Parameter values must either be Barycentric or Cartesian')
 
-        result = np.empty((num_vals, self.dimension))
+        result = np.empty((num_vals, self._dimension))
         for index in six.moves.xrange(num_vals):
             result[index, :] = transform(
                 *param_vals[index, :], _verify=_verify)
@@ -738,9 +738,9 @@ class Surface(_base.Base):
         Raises:
             NotImplementedError: If the surface's dimension is not ``2``.
         """
-        if self.dimension != 2:
+        if self._dimension != 2:
             raise NotImplementedError('2D is the only supported dimension',
-                                      'Current dimension', self.dimension)
+                                      'Current dimension', self._dimension)
 
         edge1, edge2, edge3 = self._get_edges()
         s_vals = np.linspace(0.0, 1.0, pts_per_edge)
@@ -819,7 +819,7 @@ class Surface(_base.Base):
             Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
             lower right and upper left sub-surfaces (in that order).
         """
-        if self.degree == 1:
+        if self._degree == 1:
             # pylint: disable=no-member
             new_nodes = _surface_helpers.LINEAR_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
@@ -827,7 +827,7 @@ class Surface(_base.Base):
             nodes_b = new_nodes[(4, 3, 1), :]
             nodes_c = new_nodes[(1, 2, 4), :]
             nodes_d = new_nodes[3:, :]
-        elif self.degree == 2:
+        elif self._degree == 2:
             # pylint: disable=no-member
             new_nodes = _surface_helpers.QUADRATIC_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
@@ -835,7 +835,7 @@ class Surface(_base.Base):
             nodes_b = new_nodes[(11, 10, 9, 7, 6, 2), :]
             nodes_c = new_nodes[(2, 3, 4, 7, 8, 11), :]
             nodes_d = new_nodes[9:, :]
-        elif self.degree == 3:
+        elif self._degree == 3:
             # pylint: disable=no-member
             new_nodes = _surface_helpers.CUBIC_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
@@ -843,7 +843,7 @@ class Surface(_base.Base):
             nodes_b = new_nodes[(21, 20, 19, 18, 16, 15, 14, 10, 9, 3), :]
             nodes_c = new_nodes[(3, 4, 5, 6, 10, 11, 12, 16, 17, 21), :]
             nodes_d = new_nodes[18:, :]
-        elif self.degree == 4:
+        elif self._degree == 4:
             # pylint: disable=no-member
             new_nodes = _surface_helpers.QUARTIC_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
@@ -856,16 +856,16 @@ class Surface(_base.Base):
             nodes_d = new_nodes[30:, :]
         else:
             nodes_a = _surface_helpers.specialize_surface(
-                self._nodes, self.degree,
+                self._nodes, self._degree,
                 (1.0, 0.0, 0.0), (0.5, 0.5, 0.0), (0.5, 0.0, 0.5))
             nodes_b = _surface_helpers.specialize_surface(
-                self._nodes, self.degree,
+                self._nodes, self._degree,
                 (0.0, 0.5, 0.5), (0.5, 0.0, 0.5), (0.5, 0.5, 0.0))
             nodes_c = _surface_helpers.specialize_surface(
-                self._nodes, self.degree,
+                self._nodes, self._degree,
                 (0.5, 0.5, 0.0), (0.0, 1.0, 0.0), (0.0, 0.5, 0.5))
             nodes_d = _surface_helpers.specialize_surface(
-                self._nodes, self.degree,
+                self._nodes, self._degree,
                 (0.5, 0.0, 0.5), (0.0, 0.5, 0.5), (0.0, 0.0, 1.0))
 
         half_width = 0.5 * self._width
@@ -896,19 +896,19 @@ class Surface(_base.Base):
             NotImplementedError: If the surface is quadratic or cubic
                 but in dimension other than :math:`\mathbf{R}^2`.
         """
-        if self.degree == 1:
+        if self._degree == 1:
             # In the linear case, we are only invalid if the points
             # are collinear.
             # pylint: disable=no-member
             first_deriv = self._nodes[1:, :] - self._nodes[:-1, :]
             # pylint: enable=no-member
             return np.linalg.matrix_rank(first_deriv) == 2
-        elif self.degree in (2, 3):
-            if self.dimension != 2:
+        elif self._degree in (2, 3):
+            if self._dimension != 2:
                 raise NotImplementedError(
                     'Cubic/quadratic validity check only implemented in R^2')
 
-            if self.degree == 2:
+            if self._degree == 2:
                 bernstein = _surface_helpers.quadratic_jacobian_polynomial(
                     self._nodes)
             else:
@@ -1055,12 +1055,12 @@ class Surface(_base.Base):
             ValueError: If the dimension of the ``point`` doesn't match the
                 dimension of the current surface.
         """
-        if self.dimension != 2:
+        if self._dimension != 2:
             raise NotImplementedError('Only 2D surfaces supported.')
 
-        if point.shape != (1, self.dimension):
+        if point.shape != (1, self._dimension):
             raise ValueError('Point is not in same dimension as surface',
-                             point, 'Shape expected:', (1, self.dimension))
+                             point, 'Shape expected:', (1, self._dimension))
 
         return _surface_helpers.locate_point(self, point[0, 0], point[0, 1])
 
@@ -1082,9 +1082,11 @@ class Surface(_base.Base):
         if not isinstance(other, Surface):
             raise TypeError('Can only intersect with another surface',
                             'Received', other)
-        if self.dimension != 2 or other.dimension != 2:
+        # pylint: disable=protected-access
+        if self._dimension != 2 or other._dimension != 2:
             raise NotImplementedError(
                 'Intersection only implemented in 2D')
+        # pylint: enable=protected-access
 
         bbox_int = _intersection_helpers.bbox_intersect(
             self._nodes, other._nodes)  # pylint: disable=protected-access
@@ -1184,8 +1186,8 @@ class Surface(_base.Base):
         """
         num_nodes, _ = self._nodes.shape
         # (d + 1)(d + 2)/2 --> (d + 2)(d + 3)/2
-        num_new = num_nodes + self.degree + 2
-        new_nodes = np.zeros((num_new, self.dimension))
+        num_new = num_nodes + self._degree + 2
+        new_nodes = np.zeros((num_new, self._dimension))
 
         # NOTE: We start from the index triples (i, j, k) for the current
         #       nodes and map them onto (i + 1, j, k), etc. This index
@@ -1196,10 +1198,10 @@ class Surface(_base.Base):
         # parent_i3 = index + degree + 2
         parent_i1 = 0
         parent_i2 = 1
-        parent_i3 = self.degree + 2
-        for k in six.moves.xrange(self.degree + 1):
-            for j in six.moves.xrange(self.degree + 1 - k):
-                i = self.degree - j - k
+        parent_i3 = self._degree + 2
+        for k in six.moves.xrange(self._degree + 1):
+            for j in six.moves.xrange(self._degree + 1 - k):
+                i = self._degree - j - k
                 new_nodes[parent_i1, :] += (i + 1) * self._nodes[index, :]
                 new_nodes[parent_i2, :] += (j + 1) * self._nodes[index, :]
                 new_nodes[parent_i3, :] += (k + 1) * self._nodes[index, :]
@@ -1214,7 +1216,7 @@ class Surface(_base.Base):
             parent_i2 += 1
 
         # Hold off on division until the end, to (attempt to) avoid round-off.
-        denominator = self.degree + 1.0
+        denominator = self._degree + 1.0
         new_nodes /= denominator
 
         return Surface(new_nodes, _copy=False)

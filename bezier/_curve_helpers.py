@@ -527,9 +527,12 @@ def newton_refine(curve, point, s):
     Returns:
         float: The updated value :math:`s + \Delta s`.
     """
-    nodes = curve._nodes  # pylint: disable=protected-access
+    # pylint: disable=protected-access
+    nodes = curve._nodes
+    degree = curve._degree
+    # pylint: enable=protected-access
     pt_delta = point - curve.evaluate(s)
-    derivative = evaluate_hodograph(nodes, curve.degree, s)
+    derivative = evaluate_hodograph(nodes, degree, s)
     # Each array is 1x2 (i.e. a row vector).
     delta_s = pt_delta.dot(derivative.T) / derivative.dot(derivative.T)
     # Unpack 1x1 array into a scalar (and assert size).

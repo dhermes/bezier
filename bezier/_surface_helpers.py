@@ -797,16 +797,18 @@ def newton_refine(surface, x_val, y_val, s, t):
         # No refinement is needed.
         return s, t
 
-    nodes = surface._nodes  # pylint: disable=protected-access
     # Compute Jacobian nodes / stack them horizatonally.
+    # pylint: disable=protected-access
+    degree = surface._degree
     jac_both = np.hstack([
-        jacobian_s(nodes, surface.degree, surface.dimension),
-        jacobian_t(nodes, surface.degree, surface.dimension),
+        jacobian_s(surface._nodes, degree, surface._dimension),
+        jacobian_t(surface._nodes, degree, surface._dimension),
     ])
+    # pylint: enable=protected-access
 
     lambda1 = 1.0 - s - t
     # The degree of the jacobian is one less.
-    for reduced_deg in six.moves.xrange(surface.degree - 1, 0, -1):
+    for reduced_deg in six.moves.xrange(degree - 1, 0, -1):
         jac_both = de_casteljau_one_round(
             jac_both, reduced_deg, lambda1, s, t)
 
@@ -896,14 +898,14 @@ def classify_intersection(intersection):
 
        def hodograph(curve, s):
            return _curve_helpers.evaluate_hodograph(
-               curve._nodes, curve.degree, s)
+               curve._nodes, curve._degree, s)
 
        def curvature(curve, s):
            nodes = curve._nodes
            tangent = _curve_helpers.evaluate_hodograph(
-               nodes, curve.degree, s)
+               nodes, curve._degree, s)
            return _curve_helpers.get_curvature(
-               nodes, curve.degree, tangent, s)
+               nodes, curve._degree, tangent, s)
 
     .. doctest:: classify-intersection1
        :options: +NORMALIZE_WHITESPACE
@@ -1247,12 +1249,12 @@ def classify_intersection(intersection):
         raise ValueError('Intersection occurs at the end of an edge',
                          's', intersection.s, 't', intersection.t)
 
+    # pylint: disable=protected-access
     tangent1 = _curve_helpers.evaluate_hodograph(
-        intersection.left._nodes,  # pylint: disable=protected-access
-        intersection.left.degree, intersection.s)
+        intersection.left._nodes, intersection.left._degree, intersection.s)
     tangent2 = _curve_helpers.evaluate_hodograph(
-        intersection.right._nodes,  # pylint: disable=protected-access
-        intersection.right.degree, intersection.t)
+        intersection.right._nodes, intersection.right._degree, intersection.t)
+    # pylint: enable=protected-access
 
     if _ignored_corner(intersection, tangent1, tangent2):
         return IntersectionClassification.ignored_corner
@@ -1297,12 +1299,14 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
     # NOTE: When computing curvatures we assume that we don't have lines
     #       here, because lines that are tangent at an intersection are
     #       parallel and we don't handle that case.
+    # pylint: disable=protected-access
     curvature1 = _curve_helpers.get_curvature(
-        intersection.left._nodes,  # pylint: disable=protected-access
-        intersection.left.degree, tangent1, intersection.s)
+        intersection.left._nodes, intersection.left._degree,
+        tangent1, intersection.s)
     curvature2 = _curve_helpers.get_curvature(
-        intersection.right._nodes,  # pylint: disable=protected-access
-        intersection.right.degree, tangent2, intersection.t)
+        intersection.right._nodes, intersection.right._degree,
+        tangent2, intersection.t)
+    # pylint: enable=protected-access
     if dot_prod < 0:
         # If the tangent vectors are pointing in the opposite direction,
         # then the curves are facing opposite directions.
@@ -1383,9 +1387,10 @@ def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
         return False
 
     # Do the same for the **other** tangent at the corner.
+    # pylint: disable=protected-access
     alt_corner_tangent = _curve_helpers.evaluate_hodograph(
-        corner_previous_edge._nodes,  # pylint: disable=protected-access
-        corner_previous_edge.degree, 1.0)
+        corner_previous_edge._nodes, corner_previous_edge._degree, 1.0)
+    # pylint: enable=protected-access
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
     cross_prod = _helpers.cross_product(edge_tangent, alt_corner_tangent)
@@ -1414,9 +1419,10 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
     """
     # Compute the other edge for the ``s`` surface.
     prev_edge = intersection.left.previous_edge
+    # pylint: disable=protected-access
     alt_tangent_s = _curve_helpers.evaluate_hodograph(
-        prev_edge._nodes,  # pylint: disable=protected-access
-        prev_edge.degree, 1.0)
+        prev_edge._nodes, prev_edge._degree, 1.0)
+    # pylint: enable=protected-access
 
     # First check if ``tangent_t`` is interior to the ``s`` surface.
     cross_prod1 = _helpers.cross_product(tangent_s, tangent_t)
@@ -1434,9 +1440,10 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
     # If ``tangent_t`` is not interior, we check the other ``t``
     # edge that ends at the corner.
     prev_edge = intersection.right.previous_edge
+    # pylint: disable=protected-access
     alt_tangent_t = _curve_helpers.evaluate_hodograph(
-        prev_edge._nodes,  # pylint: disable=protected-access
-        prev_edge.degree, 1.0)
+        prev_edge._nodes, prev_edge._degree, 1.0)
+    # pylint: enable=protected-access
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
 

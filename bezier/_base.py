@@ -94,4 +94,4 @@ class Base(object):
             str: Object representation.
         """
         return '<{} (degree={:d}, dimension={:d})>'.format(
-            self.__class__.__name__, self.degree, self.dimension)
+            self.__class__.__name__, self._degree, self._dimension)

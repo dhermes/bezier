@@ -131,12 +131,12 @@ class Curve(_base.Base):
         Returns:
             str: Object representation.
         """
-        if self.start == 0.0 and self.end == 1.0:
+        if self._start == 0.0 and self._end == 1.0:
             return super(Curve, self).__repr__()
         else:
             return _REPR_TEMPLATE.format(
-                self.__class__.__name__, self.degree,
-                self.dimension, self.start, self.end)
+                self.__class__.__name__, self._degree,
+                self._dimension, self._start, self._end)
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -155,7 +155,7 @@ class Curve(_base.Base):
         """float: The length of the current curve."""
         if self._length is None:
             self._length = _curve_helpers.compute_length(
-                self._nodes, self.degree)
+                self._nodes, self._degree)
         return self._length
 
     @property
@@ -395,7 +395,7 @@ class Curve(_base.Base):
             value and the columns to the dimension.
         """
         return _curve_helpers.evaluate_multi(
-            self._nodes, self.degree, s_vals)
+            self._nodes, self._degree, s_vals)
 
     def plot(self, num_pts, ax=None, show=False):
         """Plot the current curve.
@@ -414,9 +414,9 @@ class Curve(_base.Base):
         Raises:
             NotImplementedError: If the curve's dimension is not ``2``.
         """
-        if self.dimension != 2:
+        if self._dimension != 2:
             raise NotImplementedError('2D is the only supported dimension',
-                                      'Current dimension', self.dimension)
+                                      'Current dimension', self._dimension)
 
         s_vals = np.linspace(0.0, 1.0, num_pts)
         points = self.evaluate_multi(s_vals)
@@ -475,25 +475,25 @@ class Curve(_base.Base):
         Returns:
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
-        if self.degree == 1:
+        if self._degree == 1:
             # pylint: disable=no-member
             new_nodes = _LINEAR_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
-        elif self.degree == 2:
+        elif self._degree == 2:
             # pylint: disable=no-member
             new_nodes = _QUADRATIC_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
-        elif self.degree == 3:
+        elif self._degree == 3:
             # pylint: disable=no-member
             new_nodes = _CUBIC_SUBDIVIDE.dot(self._nodes)
             # pylint: enable=no-member
         else:
             subdivide_mat = _curve_helpers.make_subdivision_matrix(
-                self.degree)
+                self._degree)
             new_nodes = subdivide_mat.dot(self._nodes)
 
-        left_nodes = new_nodes[:self.degree + 1, :]
-        right_nodes = new_nodes[self.degree:, :]
+        left_nodes = new_nodes[:self._degree + 1, :]
+        right_nodes = new_nodes[self._degree:, :]
 
         midpoint = 0.5 * (self._start + self._end)
         left = Curve(
@@ -548,9 +548,11 @@ class Curve(_base.Base):
         if not isinstance(other, Curve):
             raise TypeError('Can only intersect with another curve',
                             'Received', other)
-        if self.dimension != 2 or other.dimension != 2:
+        # pylint: disable=protected-access
+        if self._dimension != 2 or other._dimension != 2:
             raise NotImplementedError(
                 'Intersection only implemented in 2D')
+        # pylint: enable=protected-access
 
         candidates = [(self, other)]
         intersections = _intersection_helpers.all_intersections(candidates)
@@ -578,7 +580,7 @@ class Curve(_base.Base):
             Curve: The degree-elevated curve.
         """
         new_nodes = _curve_helpers.elevate_nodes(
-            self._nodes, self.degree, self.dimension)
+            self._nodes, self._degree, self._dimension)
         root = None if self._root is self else self._root
         return Curve(
             new_nodes, start=self._start, end=self._end,
@@ -644,7 +646,7 @@ class Curve(_base.Base):
             Curve: The newly-specialized curve.
         """
         new_nodes = _curve_helpers.specialize_curve(
-            self._nodes, self.degree, start, end)
+            self._nodes, self._degree, start, end)
 
         interval_delta = self._end - self._start
         true_start = self._start + start * interval_delta
@@ -701,8 +703,8 @@ class Curve(_base.Base):
             ValueError: If the dimension of the ``point`` doesn't match the
                 dimension of the current curve.
         """
-        if point.shape != (1, self.dimension):
+        if point.shape != (1, self._dimension):
             raise ValueError('Point is not in same dimension as curve',
-                             point, 'Shape expected:', (1, self.dimension))
+                             point, 'Shape expected:', (1, self._dimension))
 
         return _curve_helpers.locate_point(self, point)

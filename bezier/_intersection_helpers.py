@@ -272,7 +272,8 @@ def linearization_error(curve):
         float: The maximum error between the curve and the
         linear approximation.
     """
-    if curve.degree == 1:
+    degree = curve._degree  # pylint: disable=protected-access
+    if degree == 1:
         return 0.0
 
     nodes = curve._nodes  # pylint: disable=protected-access
@@ -280,7 +281,7 @@ def linearization_error(curve):
     worst_case = np.max(np.abs(second_deriv), axis=0)
 
     # max_{0 <= s <= 1} s(1 - s)/2 = 1/8 = 0.125
-    multiplier = 0.125 * curve.degree * (curve.degree - 1)
+    multiplier = 0.125 * degree * (degree - 1)
     # NOTE: worst_case is 1D due to np.max(), so this is the vector norm.
     return multiplier * np.linalg.norm(worst_case, ord=2)
 
@@ -622,12 +623,12 @@ def newton_refine(s, curve1, t, curve2):
     jac_mat = np.zeros((2, 2))
     # In curve.evaluate() and evaluate_hodograph() the roles of
     # columns and rows are swapped.
-    nodes1 = curve1._nodes  # pylint: disable=protected-access
+    # pylint: disable=protected-access
     jac_mat[0, :] = _curve_helpers.evaluate_hodograph(
-        nodes1, curve1.degree, s)
-    nodes2 = curve2._nodes  # pylint: disable=protected-access
+        curve1._nodes, curve1._degree, s)
     jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(
-        nodes2, curve2.degree, t)
+        curve2._nodes, curve2._degree, t)
+    # pylint: enable=protected-access
 
     # Solve the system (via the transposes, since, as above, the roles
     # of columns and rows are reversed).

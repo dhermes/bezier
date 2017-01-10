@@ -151,7 +151,7 @@ class CurvedPolygon(object):
             ValueError: If the previous side is not in 2D.
             ValueError: If consecutive sides don't share an endpoint.
         """
-        if prev.dimension != 2:
+        if prev._dimension != 2:  # pylint: disable=protected-access
             raise ValueError('Curve not in R^2', prev)
 
         # pylint: disable=protected-access
