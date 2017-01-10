@@ -792,7 +792,7 @@ def newton_refine(surface, x_val, y_val, s, t):
     Returns:
         Tuple[float, float]: The refined :math:`s` and :math:`t` values.
     """
-    (surf_x, surf_y), = surface.evaluate_cartesian(s, t)
+    (surf_x, surf_y), = surface.evaluate_cartesian(s, t, _verify=False)
     if surf_x == x_val and surf_y == y_val:
         # No refinement is needed.
         return s, t
@@ -863,7 +863,7 @@ def locate_point(surface, x_val, y_val):
     s_approx, t_approx = _mean_centroid(candidates)
     s, t = newton_refine(surface, x_val, y_val, s_approx, t_approx)
 
-    actual = surface.evaluate_cartesian(s, t)
+    actual = surface.evaluate_cartesian(s, t, _verify=False)
     expected = np.array([[x_val, y_val]])
     if not _helpers.vector_close(actual, expected, eps=_LOCATE_EPS):
         s, t = newton_refine(surface, x_val, y_val, s, t)

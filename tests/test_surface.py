@@ -356,6 +356,21 @@ class TestSurface(utils.NumPyTestCase):
         with self.assertRaises(ValueError):
             surface.evaluate_barycentric(*lambda_vals)
 
+    def test_evaluate_barycentric_negative_weights_no_verify(self):
+        lambda_vals = (0.25, -0.5, 1.25)
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.5],
+            [0.0, 1.25],
+        ])
+        surface = self._make_one(nodes)
+
+        self.assertLess(min(lambda_vals), 0.0)
+        result = surface.evaluate_barycentric(*lambda_vals, _verify=False)
+
+        expected = np.array([[-0.5, 1.3125]])
+        self.assertEqual(result, expected)
+
     def test_evaluate_barycentric_non_unity_weights(self):
         surface = self._make_one(np.zeros((3, 2)))
 
@@ -364,6 +379,21 @@ class TestSurface(utils.NumPyTestCase):
 
         with self.assertRaises(ValueError):
             surface.evaluate_barycentric(*lambda_vals)
+
+    def test_evaluate_barycentric_non_unity_weights_no_verify(self):
+        lambda_vals = (0.25, 0.25, 0.25)
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.5],
+            [0.0, 1.25],
+        ])
+        surface = self._make_one(nodes)
+
+        self.assertNotEqual(sum(lambda_vals), 1.0)
+        result = surface.evaluate_barycentric(*lambda_vals, _verify=False)
+
+        expected = np.array([[0.25, 0.4375]])
+        self.assertEqual(result, expected)
 
     def test_evaluate_barycentric_via_de_casteljau(self):
         import math
@@ -405,7 +435,7 @@ class TestSurface(utils.NumPyTestCase):
         result = surface.evaluate_cartesian(*s_t_vals)
         self.assertEqual(result, expected)
 
-    def test_evaluate_cartesian_calls_barycentric(self):
+    def _calls_barycentric(self, **kwargs):
         surface = self._make_one_no_slots(np.zeros((3, 2)))
         eval_method = mock.Mock()
         surface.evaluate_barycentric = eval_method
@@ -413,10 +443,20 @@ class TestSurface(utils.NumPyTestCase):
         s_val = 0.25
         t_val = 0.25
         eval_method.return_value = mock.sentinel.point
-        result = surface.evaluate_cartesian(s_val, t_val)
+        result = surface.evaluate_cartesian(s_val, t_val, **kwargs)
         self.assertIs(result, mock.sentinel.point)
 
-        eval_method.assert_called_once_with(0.5, s_val, t_val)
+        if kwargs:
+            eval_method.assert_called_once_with(0.5, s_val, t_val, **kwargs)
+        else:
+            eval_method.assert_called_once_with(
+                0.5, s_val, t_val, _verify=True)
+
+    def test_evaluate_cartesian_calls_barycentric(self):
+        self._calls_barycentric()
+
+    def test_evaluate_cartesian_calls_barycentric_no_verify(self):
+        self._calls_barycentric(_verify=False)
 
     def test_evaluate_multi_with_barycentric(self):
         nodes = np.array([

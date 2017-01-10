@@ -399,7 +399,7 @@ class Surface(_base.Base):
         _surface_helpers.edge_cycle(edge1, edge2, edge3)
         return edge1, edge2, edge3
 
-    def evaluate_barycentric(self, lambda1, lambda2, lambda3):
+    def evaluate_barycentric(self, lambda1, lambda2, lambda3, _verify=True):
         r"""Compute a point on the surface.
 
         Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)`.
@@ -407,7 +407,8 @@ class Surface(_base.Base):
         .. image:: ../images/surface_evaluate_barycentric.png
            :align: center
 
-        .. testsetup:: surface-barycentric, surface-barycentric-fail
+        .. testsetup:: surface-barycentric, surface-barycentric-fail,
+                       surface-barycentric-no-verify
 
            import numpy as np
            import bezier
@@ -461,10 +462,26 @@ class Surface(_base.Base):
              ...
            ValueError: ('Values do not sum to 1', 0.25, 0.25, 0.25)
 
+        However, these "invalid" inputs can be used if ``_verify`` is
+        :data:`False`.
+
+        .. doctest:: surface-barycentric-no-verify
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> surface.evaluate_barycentric(-0.25, 0.75, 0.5, _verify=False)
+           array([[ 0.6875 , 0.546875]])
+           >>> surface.evaluate_barycentric(0.25, 0.25, 0.25, _verify=False)
+           array([[ 0.203125, 0.1875 ]])
+
         Args:
             lambda1 (float): Parameter along the reference triangle.
             lambda2 (float): Parameter along the reference triangle.
             lambda3 (float): Parameter along the reference triangle.
+            _verify (Optional[bool]): Indicates if the barycentric coordinates
+                should be verified as summing to one and all non-negative (i.e.
+                verified as barycentric). Can either be used to evaluate at
+                points outside the domain, or to save time when the caller
+                already knows the input is verified. Defaults to :data:`True`.
 
         Returns:
             numpy.ndarray: The point on the surface (as a two dimensional
@@ -472,16 +489,19 @@ class Surface(_base.Base):
 
         Raises:
             ValueError: If the weights are not valid barycentric
-                coordinates, i.e. they don't sum to ``1``.
-            ValueError: If some weights are negative.
+                coordinates, i.e. they don't sum to ``1``. (Won't raise if
+                ``_verify=False``.)
+            ValueError: If some weights are negative. (Won't raise if
+                ``_verify=False``.)
         """
-        weights_total = lambda1 + lambda2 + lambda3
-        if not np.allclose(weights_total, 1.0):
-            raise ValueError('Weights do not sum to 1',
-                             lambda1, lambda2, lambda3)
-        if lambda1 < 0.0 or lambda2 < 0.0 or lambda3 < 0.0:
-            raise ValueError('Weights must be positive',
-                             lambda1, lambda2, lambda3)
+        if _verify:
+            weights_total = lambda1 + lambda2 + lambda3
+            if not np.allclose(weights_total, 1.0):
+                raise ValueError('Weights do not sum to 1',
+                                 lambda1, lambda2, lambda3)
+            if lambda1 < 0.0 or lambda2 < 0.0 or lambda3 < 0.0:
+                raise ValueError('Weights must be positive',
+                                 lambda1, lambda2, lambda3)
 
         if self.degree == 1:
             weights = np.array([
@@ -522,23 +542,49 @@ class Surface(_base.Base):
 
         return weights.dot(self._nodes)  # pylint: disable=no-member
 
-    def evaluate_cartesian(self, s, t):
+    def evaluate_cartesian(self, s, t, _verify=True):
         r"""Compute a point on the surface.
 
         Evaluates :math:`B\left(1 - s - t, s, t\right)` by calling
-        :meth:`evaluate_barycentric`.
+        :meth:`evaluate_barycentric`:
+
+        .. testsetup:: surface-cartesian
+
+           import numpy as np
+           import bezier
+
+        .. doctest:: surface-cartesian
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.array([
+           ...     [0.0 , 0.0  ],
+           ...     [0.5 , 0.5  ],
+           ...     [1.0 , 0.625],
+           ...     [0.0 , 0.5  ],
+           ...     [0.5 , 0.5  ],
+           ...     [0.25, 1.0  ],
+           ... ])
+           >>> surface = bezier.Surface(nodes)
+           >>> point = surface.evaluate_cartesian(0.125, 0.375)
+           >>> point
+           array([[ 0.16015625, 0.44726562]])
+           >>> surface.evaluate_barycentric(0.5, 0.125, 0.375)
+           array([[ 0.16015625, 0.44726562]])
 
         Args:
             s (float): Parameter along the reference triangle.
             t (float): Parameter along the reference triangle.
+            _verify (Optional[bool]): Indicates if the coordinates should be
+                verified. See :meth:`evaluate_barycentric`. Defaults to
+                :data:`True`.
 
         Returns:
-            numpy.ndarray: The point on the surface (as a one dimensional
+            numpy.ndarray: The point on the surface (as a two dimensional
             NumPy array).
         """
-        return self.evaluate_barycentric(1.0 - s - t, s, t)
+        return self.evaluate_barycentric(1.0 - s - t, s, t, _verify=_verify)
 
-    def evaluate_multi(self, param_vals):
+    def evaluate_multi(self, param_vals, _verify=True):
         r"""Compute multiple points on the surface.
 
         If ``param_vals`` has two columns, this method treats
@@ -620,6 +666,9 @@ class Surface(_base.Base):
         Args:
             param_vals (numpy.ndarray): Array of parameter values (as a
                 2D array).
+            _verify (Optional[bool]): Indicates if the coordinates should be
+                verified. See :meth:`evaluate_barycentric`. Defaults to
+                :data:`True`.
 
         Returns:
             numpy.ndarray: The point on the surface.
@@ -642,7 +691,8 @@ class Surface(_base.Base):
 
         result = np.empty((num_vals, self.dimension))
         for index in six.moves.xrange(num_vals):
-            result[index, :] = transform(*param_vals[index, :])
+            result[index, :] = transform(
+                *param_vals[index, :], _verify=_verify)
         return result
 
     @staticmethod
