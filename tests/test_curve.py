@@ -542,6 +542,9 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve.degree, 3)
         elevated = curve.elevate()
         self.assertEqual(elevated.degree, 4)
+        self.assertIs(elevated.root, elevated)
+        self.assertEqual(elevated.start, curve.start)
+        self.assertEqual(elevated.end, curve.end)
 
         s_vals = np.linspace(0.0, 1.0, 64 + 1)
         orig_vals = curve.evaluate_multi(s_vals)

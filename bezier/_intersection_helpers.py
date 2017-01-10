@@ -1336,18 +1336,18 @@ class Linearization(object):
 
     Args:
         curve (.Curve): A curve that is linearized.
-        error (Optional[float]): The linearization error. If not
-            provided, this value is computed on the fly via
-            :func:`.linearization_error`.
+        error (float): The linearization error. Expected to have been
+            computed via :func:`.linearization_error`.
     """
 
-    __slots__ = ('curve', '_error', 'start_node', 'end_node')
+    __slots__ = ('curve', 'error', 'start_node', 'end_node')
 
-    def __init__(self, curve, error=None):
+    def __init__(self, curve, error):
         self.curve = curve
         """Curve: The curve that this linearization approximates."""
-        self._error = error
-        # NOTE: We went the nodes to be 1x2 but accessing
+        self.error = error
+        """float: The linearization error for the linearized curve."""
+        # NOTE: We want the nodes to be 1x2 but accessing
         #       ``curve._nodes[[0], :]`` makes a copy while the access
         #       below **does not** copy. See
         #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
@@ -1366,13 +1366,6 @@ class Linearization(object):
             subdivided parts, which is just the current object.
         """
         return self,
-
-    @property
-    def error(self):
-        """float: The linearization error for the linearized curve."""
-        if self._error is None:
-            self._error = linearization_error(self.curve)
-        return self._error
 
     @classmethod
     def from_shape(cls, shape):
@@ -1393,7 +1386,7 @@ class Linearization(object):
         else:
             error = linearization_error(shape)
             if error < _ERROR_VAL:
-                linearized = cls(shape, error=error)
+                linearized = cls(shape, error)
                 return linearized
             else:
                 return shape

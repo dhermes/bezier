@@ -495,11 +495,13 @@ class Curve(_base.Base):
         left_nodes = new_nodes[:self.degree + 1, :]
         right_nodes = new_nodes[self.degree:, :]
 
-        midpoint = 0.5 * (self.start + self.end)
-        left = Curve(left_nodes, start=self.start,
-                     end=midpoint, root=self.root, _copy=False)
-        right = Curve(right_nodes, start=midpoint,
-                      end=self.end, root=self.root, _copy=False)
+        midpoint = 0.5 * (self._start + self._end)
+        left = Curve(
+            left_nodes, start=self._start, end=midpoint,
+            root=self._root, _copy=False)
+        right = Curve(
+            right_nodes, start=midpoint, end=self._end,
+            root=self._root, _copy=False)
         return left, right
 
     def intersect(self, other):
@@ -577,7 +579,10 @@ class Curve(_base.Base):
         """
         new_nodes = _curve_helpers.elevate_nodes(
             self._nodes, self.degree, self.dimension)
-        return Curve(new_nodes, _copy=False)
+        root = None if self._root is self else self._root
+        return Curve(
+            new_nodes, start=self._start, end=self._end,
+            root=root, _copy=False)
 
     def specialize(self, start, end):
         """Specialize the curve to a given sub-interval.
@@ -641,12 +646,12 @@ class Curve(_base.Base):
         new_nodes = _curve_helpers.specialize_curve(
             self._nodes, self.degree, start, end)
 
-        interval_delta = self.end - self.start
-        true_start = self.start + start * interval_delta
-        true_end = self.start + end * interval_delta
-        return Curve(new_nodes, start=true_start,
-                     end=true_end, root=self.root,
-                     _copy=False)
+        interval_delta = self._end - self._start
+        true_start = self._start + start * interval_delta
+        true_end = self._start + end * interval_delta
+        return Curve(
+            new_nodes, start=true_start, end=true_end,
+            root=self._root, _copy=False)
 
     def locate(self, point):
         r"""Find a point on the current curve.
