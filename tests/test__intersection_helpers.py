@@ -25,7 +25,7 @@ def check_intersection(test_case, intersection, expected,
 
     test_case.assertIsInstance(
         intersection, _intersection_helpers.Intersection)
-    test_case.assertEqual(intersection.point, expected)
+    test_case.assertEqual(intersection.get_point(), expected)
     test_case.assertIs(intersection.left, curve1)
     test_case.assertEqual(intersection.s, s_val)
     test_case.assertIs(intersection.right, curve2)
@@ -1161,42 +1161,33 @@ class TestIntersection(unittest.TestCase):
         intersection = self._make_one(
             left, s_val, right, t_val, **kwargs)
 
-        self.assertIs(intersection._left, left)
-        self.assertEqual(intersection._s_val, s_val)
-        self.assertIs(intersection._right, right)
-        self.assertEqual(intersection._t_val, t_val)
-        self.assertIsNone(intersection._interior_curve)
+        self.assertIs(intersection.left, left)
+        self.assertEqual(intersection.s, s_val)
+        self.assertIs(intersection.right, right)
+        self.assertEqual(intersection.t, t_val)
+        self.assertIsNone(intersection.interior_curve)
         return intersection
 
     def test_constructor(self):
         intersection = self._constructor_helper()
-        self.assertIsNone(intersection._point)
+        self.assertIsNone(intersection.point)
 
     def test_constructor_with_point(self):
         intersection = self._constructor_helper(point=mock.sentinel.point)
-        self.assertIs(intersection._point, mock.sentinel.point)
+        self.assertIs(intersection.point, mock.sentinel.point)
 
-    def test_s_property(self):
-        s = 0.375
-        intersection = self._make_one(None, s, None, None)
-        self.assertEqual(intersection.s, s)
-
-    def test_t_property(self):
-        t = 0.9990234375
-        intersection = self._make_one(None, None, None, t)
-        self.assertEqual(intersection.t, t)
-
-    def test_left_property(self):
+    def test_get_point_stored(self):
         intersection = self._make_one(
-            mock.sentinel.left, None, None, None)
-        self.assertIs(intersection.left, mock.sentinel.left)
+            None, None, None, None, point=mock.sentinel.point)
 
-    def test_right_property(self):
-        intersection = self._make_one(
-            None, None, mock.sentinel.right, None)
-        self.assertIs(intersection.right, mock.sentinel.right)
+        patch = mock.patch(
+            'bezier._intersection_helpers._check_close',
+            return_value=mock.sentinel.point)
+        with patch as mocked:
+            self.assertIs(intersection.get_point(), mock.sentinel.point)
+            mocked.assert_not_called()
 
-    def test_point_property(self):
+    def test_get_point_on_the_fly(self):
         s_val = 1.0
         t_val = 0.0
         intersection = self._make_one(
@@ -1206,33 +1197,7 @@ class TestIntersection(unittest.TestCase):
             'bezier._intersection_helpers._check_close',
             return_value=mock.sentinel.point)
         with patch as mocked:
-            self.assertIsNone(intersection._point)
-            self.assertIs(intersection.point, mock.sentinel.point)
-            self.assertIs(intersection._point, mock.sentinel.point)
-
-            self.assertEqual(mocked.call_count, 1)
-            # Make sure the cached value is used on future access.
-            self.assertIs(intersection.point, mock.sentinel.point)
-            self.assertEqual(mocked.call_count, 1)
-
-    def test_interior_curve_get_unset(self):
-        intersection = self._make_one(None, None, None, None)
-        self.assertIsNone(intersection._interior_curve)
-        with self.assertRaises(AttributeError):
-            getattr(intersection, 'interior_curve')
-
-    def test_interior_curve_get_when_set(self):
-        intersection = self._make_one(None, None, None, None)
-        intersection._interior_curve = mock.sentinel.interior
-        self.assertIs(intersection.interior_curve, mock.sentinel.interior)
-
-    def test_interior_curve_set_when_set(self):
-        intersection = self._make_one(None, None, None, None)
-        intersection.interior_curve = -1
-        with self.assertRaises(AttributeError):
-            setattr(intersection, 'interior_curve', 0)
-
-    def test_interior_curve_set_valid(self):
-        intersection = self._make_one(None, None, None, None)
-        intersection.interior_curve = 0
-        self.assertEqual(intersection.interior_curve, 0)
+            self.assertIsNone(intersection.point)
+            self.assertIs(intersection.get_point(), mock.sentinel.point)
+            mocked.assert_called_once_with(
+                s_val, mock.sentinel.left, t_val, mock.sentinel.right)

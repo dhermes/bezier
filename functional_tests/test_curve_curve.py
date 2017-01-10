@@ -321,8 +321,9 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points,
         CONFIG.assert_close(intersection.s, s_val)
         CONFIG.assert_close(intersection.t, t_val)
 
-        CONFIG.assert_close(intersection.point[0, 0], point[0])
-        CONFIG.assert_close(intersection.point[0, 1], point[1])
+        computed_point = intersection.get_point()
+        CONFIG.assert_close(computed_point[0, 0], point[0])
+        CONFIG.assert_close(computed_point[0, 1], point[1])
 
         point_on1 = curve1.evaluate(s_val)
         CONFIG.assert_close(point_on1[0, 0], point[0])

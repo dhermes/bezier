@@ -1403,7 +1403,7 @@ class Linearization(object):
                 return shape
 
 
-class Intersection(object):
+class Intersection(object):  # pylint: disable=too-few-public-methods
     """Representation of a curve-curve intersection.
 
     Args:
@@ -1414,75 +1414,41 @@ class Intersection(object):
         t (float): The parameter along ``right`` where the
             intersection occurs.
         point (Optional[numpy.ndarray]): The point where the two
-            curves actually intersect. If not provided, will be
-            computed on the fly when first accessed.
+            curves actually intersect.
     """
 
-    __slots__ = ('_left', '_s_val', '_right', '_t_val',
-                 '_point', '_interior_curve')
+    __slots__ = ('left', 's', 'right', 't',
+                 'point', 'interior_curve')
 
     def __init__(self, left, s, right, t, point=None):
-        self._left = left
-        self._s_val = s
-        self._right = right
-        self._t_val = t
-        self._point = point
-        self._interior_curve = None
-
-    @property
-    def s(self):
-        """float: The intersection parameter for the :attr:`.left` curve."""
-        return self._s_val
-
-    @property
-    def t(self):
-        """float: The intersection parameter for the :attr:`.right` curve."""
-        return self._t_val
-
-    @property
-    def left(self):
+        self.left = left
         """Curve: The "left" curve in the intersection."""
-        return self._left
-
-    @property
-    def right(self):
+        self.s = s
+        """float: The intersection parameter for the :attr:`.left` curve."""
+        self.right = right
         """Curve: The "right" curve in the intersection."""
-        return self._right
-
-    @property
-    def point(self):
+        self.t = t
+        """float: The intersection parameter for the :attr:`.right` curve."""
+        self.point = point
         """numpy.ndarray: The point where the intersection occurs."""
-        if self._point is None:
-            self._point = _check_close(
-                self._s_val, self._left, self._t_val, self._right)
-        return self._point
+        self.interior_curve = None
+        """IntersectionClassification: Which of the curves is on the interior.
 
-    @property
-    def interior_curve(self):  # pylint: disable=missing-returns-doc
-        r"""int: Which of the curves is on the interior.
-
-        Will be ``0`` for the :attr:`.left`, ``1`` for the :attr:`.right`
-        and ``-1`` if it is ambiguous (e.g. the curves are tangent but moving
-        in opposite directions).
-
-        Raises:
-            AttributeError: If the value has not already been set.
+        See :func:`.classify_intersection` for more details.
         """
-        if self._interior_curve is None:
-            raise AttributeError('interior_curve has not been set')
-        return self._interior_curve
 
-    @interior_curve.setter
-    def interior_curve(self, value):
-        """Set the ``interior_curve`` value.
+    def get_point(self):
+        """The point where the intersection occurs.
 
-        Args:
-            value (int): The value to set.
+        This exists primarily for :meth:`.Curve.intersect`.
 
-        Raises:
-            AttributeError: If the value is already set.
+        Returns:
+            numpy.ndarray: The point where the intersection occurs.
+            Returns ``point`` if stored on the current value, otherwise
+            computes the value on the fly.
         """
-        if self._interior_curve is not None:
-            raise AttributeError('interior_curve has already been set',
-                                 self._interior_curve)
-        self._interior_curve = value
+        if self.point is None:
+            return _check_close(
+                self.s, self.left, self.t, self.right)
+        else:
+            return self.point

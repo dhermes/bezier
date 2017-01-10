@@ -1539,16 +1539,12 @@ def handle_corners(intersection):
     """
     changed = False
     if intersection.s == 1.0:
-        # pylint: disable=protected-access
-        intersection._s_val = 0.0
-        intersection._left = intersection.left.next_edge
-        # pylint: enable=protected-access
+        intersection.s = 0.0
+        intersection.left = intersection.left.next_edge
         changed = True
     if intersection.t == 1.0:
-        # pylint: disable=protected-access
-        intersection._t_val = 0.0
-        intersection._right = intersection.right.next_edge
-        # pylint: enable=protected-access
+        intersection.t = 0.0
+        intersection.right = intersection.right.next_edge
         changed = True
 
     return changed
