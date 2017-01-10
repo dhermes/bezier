@@ -49,7 +49,7 @@ LINEAR_SUBDIVIDE = np.array([
     [1, 0, 1],
     [0, 1, 1],
     [0, 0, 2],
-], dtype=float) / 2.0
+], dtype=np.float64) / 2.0
 QUADRATIC_SUBDIVIDE = np.array([
     [4, 0, 0, 0, 0, 0],
     [2, 2, 0, 0, 0, 0],
@@ -66,7 +66,7 @@ QUADRATIC_SUBDIVIDE = np.array([
     [0, 0, 0, 2, 0, 2],
     [0, 0, 0, 0, 2, 2],
     [0, 0, 0, 0, 0, 4],
-], dtype=float) / 4.0
+], dtype=np.float64) / 4.0
 CUBIC_SUBDIVIDE = np.array([
     [8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -96,7 +96,7 @@ CUBIC_SUBDIVIDE = np.array([
     [0, 0, 0, 0, 0, 0, 0, 4, 0, 4],
     [0, 0, 0, 0, 0, 0, 0, 0, 4, 4],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
-], dtype=float) / 8.0
+], dtype=np.float64) / 8.0
 QUARTIC_SUBDIVIDE = np.array([
     [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -143,7 +143,7 @@ QUARTIC_SUBDIVIDE = np.array([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16],
-], dtype=float) / 16.0
+], dtype=np.float64) / 16.0
 # The Jacobian of a quadratric (in any dimension) as given by
 # dB/ds = [-2L1, 2(L1 - L2), 2L2, -2L3, 2L3, 0] * nodes
 # dB/dt = [-2L1, -2L2, 0, 2(L1 - L3), 2L2, 2L3] * nodes
@@ -163,7 +163,7 @@ _QUADRATIC_JACOBIAN_HELPER = np.array([
     [ 0, -1, 0, -1, 1, 1],  # noqa: E201
     [ 0,  0, 0, -2, 2, 0],  # noqa: E201
     [ 0,  0, 0, -2, 0, 2],  # noqa: E201
-], dtype=float)
+], dtype=np.float64)
 _QUADRATIC_TO_BERNSTEIN = np.array([
     [ 2, 0,  0, 0, 0,  0],  # noqa: E201
     [-1, 4, -1, 0, 0,  0],
@@ -171,7 +171,7 @@ _QUADRATIC_TO_BERNSTEIN = np.array([
     [-1, 0,  0, 4, 0, -1],
     [ 0, 0, -1, 0, 4, -1],  # noqa: E201
     [ 0, 0,  0, 0, 0,  2],  # noqa: E201
-], dtype=float) / 2.0
+], dtype=np.float64) / 2.0
 # pylint: enable=bad-whitespace
 # The Jacobian of a cubic (in any dimension) as given by
 # dB/ds = [-3 L1^2, 3 L1(L1 - 2 L2), 3 L2(2 L1 - L2), 3 L2^2, -6 L1 L3,
@@ -212,7 +212,7 @@ _CUBIC_JACOBIAN_HELPER = np.array([
     [  0,   0,  -3,  0,   0, -18,  3, -27, 18, 27],  # noqa: E201
     [  0,   0,   0,  0,   0,   0,  0, -48, 48,  0],  # noqa: E201
     [  0,   0,   0,  0,   0,   0,  0, -48,  0, 48],  # noqa: E201
-], dtype=float) / 16.0
+], dtype=np.float64) / 16.0
 # pylint: enable=bad-whitespace
 _QUARTIC_TO_BERNSTEIN = np.array([
     [36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -230,7 +230,7 @@ _QUARTIC_TO_BERNSTEIN = np.array([
     [-9, 0, 0, 0, 0, 48, 0, 0, 0, -108, 0, 0, 144, 0, -39],
     [0, 0, 0, 0, -9, 0, 0, 0, 48, 0, 0, -108, 0, 144, -39],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36],
-], dtype=float)
+], dtype=np.float64)
 # NOTE: We avoid round-off until after ``_QUARTIC_TO_BERNSTEIN``
 #       has been applied.
 _QUARTIC_BERNSTEIN_FACTOR = 36.0

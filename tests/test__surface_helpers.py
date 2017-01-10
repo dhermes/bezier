@@ -474,17 +474,17 @@ class Test_jacobian_s(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_cubic(self):
-        nodes = np.arange(10, dtype=float)[:, np.newaxis]**2
+        nodes = np.arange(10, dtype=np.float64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
-        expected = 3 * np.array([[1, 3, 5, 9, 11, 15]], dtype=float)
+        expected = 3 * np.array([[1, 3, 5, 9, 11, 15]], dtype=np.float64)
         expected = expected.T  # pylint: disable=no-member
         self.assertEqual(result, expected)
 
     def test_quartic(self):
-        nodes = np.arange(15, dtype=float)[:, np.newaxis]**2
+        nodes = np.arange(15, dtype=np.float64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 4, 1)
         expected = 4 * np.array([
-            [1, 3, 5, 7, 11, 13, 15, 19, 21, 25]], dtype=float)
+            [1, 3, 5, 7, 11, 13, 15, 19, 21, 25]], dtype=np.float64)
         expected = expected.T  # pylint: disable=no-member
         self.assertEqual(result, expected)
 
@@ -522,17 +522,17 @@ class Test_jacobian_t(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_cubic(self):
-        nodes = np.arange(10, dtype=float)[:, np.newaxis]**2
+        nodes = np.arange(10, dtype=np.float64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
-        expected = 3 * np.array([[16, 24, 32, 33, 39, 32]], dtype=float)
+        expected = 3 * np.array([[16, 24, 32, 33, 39, 32]], dtype=np.float64)
         expected = expected.T  # pylint: disable=no-member
         self.assertEqual(result, expected)
 
     def test_quartic(self):
-        nodes = np.arange(15, dtype=float)[:, np.newaxis]**2
+        nodes = np.arange(15, dtype=np.float64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 4, 1)
         expected = 4 * np.array([
-            [25, 35, 45, 55, 56, 64, 72, 63, 69, 52]], dtype=float)
+            [25, 35, 45, 55, 56, 64, 72, 63, 69, 52]], dtype=np.float64)
         expected = expected.T  # pylint: disable=no-member
         self.assertEqual(result, expected)
 
