@@ -994,7 +994,7 @@ class TestSurface(utils.NumPyTestCase):
         with self.assertRaises(ValueError):
             surface.locate(point2)
 
-    def test_intersect(self):
+    def _basic_intersect_helper(self, **kwargs):
         import bezier
 
         surface1 = self._make_one(self.UNIT_TRIANGLE)
@@ -1005,7 +1005,7 @@ class TestSurface(utils.NumPyTestCase):
             [-0.5, 1.0],
         ]))
 
-        intersections = surface1.intersect(surface2)
+        intersections = surface1.intersect(surface2, **kwargs)
         self.assertEqual(len(intersections), 1)
 
         intersection = intersections[0]
@@ -1020,6 +1020,12 @@ class TestSurface(utils.NumPyTestCase):
                          [0.5, 0.0, 0.5, 0.0])
         self.assertEqual([edge.end for edge in intersection._edges],
                          [1.0, 0.5, 1.0, 0.5])
+
+    def test_intersect(self):
+        self._basic_intersect_helper()
+
+    def test_intersect_no_verify(self):
+        self._basic_intersect_helper(_verify=False)
 
     def test_intersect_disjoint_bbox(self):
         surface1 = self._make_one(self.UNIT_TRIANGLE)

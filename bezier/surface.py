@@ -1054,11 +1054,15 @@ class Surface(_base.Base):
 
         return _surface_helpers.locate_point(self, point[0, 0], point[0, 1])
 
-    def intersect(self, other):
+    def intersect(self, other, _verify=True):
         """Find the common intersection with another surface.
 
         Args:
             other (Surface): Other surface to intersect with.
+            _verify (Optional[bool]): Indicates if extra caution should be
+                used to verify assumptions about the algorithm as it
+                proceeds. Can be disabled to speed up execution time.
+                Defaults to :data:`True`.
 
         Returns:
             List[~bezier.curved_polygon.CurvedPolygon]: List of
@@ -1110,10 +1114,8 @@ class Surface(_base.Base):
                 intersection.interior_curve = interior
                 uniques.append(intersection)
 
-        # NOTE: This is an extra check to make sure we found duplicate
-        #       intersections at corners. It is not strictly needed,
-        #       it is just provided as a sanity check.
-        _surface_helpers.verify_duplicates(duplicates, uniques)
+        if _verify:
+            _surface_helpers.verify_duplicates(duplicates, uniques)
         return _surface_helpers.combine_intersections(
             uniques, self, other)
 
