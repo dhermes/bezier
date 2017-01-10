@@ -514,15 +514,19 @@ def newton_refine(s, curve1, t, curve2):
     resembles :math:`\sqrt{\varepsilon}` rather than machine
     precision as expected.
 
-    However, this can be overcome (but not by this method). At the
-    point of tangency, we want :math:`B_1'(s) \parallel B_2'(t)`.
-    This can be checked numerically via
+    .. note::
+
+       The following is not implemented in this function. It's just
+       an exploration on how the shortcomings might be addressed.
+
+    However, this can be overcome. At the point of tangency, we want
+    :math:`B_1'(s) \parallel B_2'(t)`. This can be checked numerically via
 
     .. math::
 
         B_1'(s) \times B_2'(t) = 0.
 
-    For the last example that breaks down numerically, this is
+    For the last example (the one that converges linearly), this is
 
     .. math::
 

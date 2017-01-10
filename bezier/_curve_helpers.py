@@ -31,6 +31,7 @@ from bezier import _helpers
 
 
 _MAX_LOCATE_SUBDIVISIONS = 20
+_FLOAT64 = np.float64  # pylint: disable=no-member
 
 
 def make_subdivision_matrix(degree):
@@ -183,7 +184,7 @@ def elevate_nodes(nodes, degree, dimension):
     """
     new_nodes = np.zeros((degree + 2, dimension))
 
-    multipliers = np.arange(1, degree + 1, dtype=np.float64)[:, np.newaxis]
+    multipliers = np.arange(1, degree + 1, dtype=_FLOAT64)[:, np.newaxis]
     denominator = degree + 1.0
     new_nodes[1:-1, :] = (
         multipliers * nodes[:-1, :] +

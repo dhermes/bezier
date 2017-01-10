@@ -35,6 +35,7 @@ _MAX_POLY_SUBDIVISIONS = 5
 _MAX_LOCATE_SUBDIVISIONS = 20
 _LOCATE_EPS = 2.0**(-47)
 _SIGN = np.sign  # pylint: disable=no-member
+_FLOAT64 = np.float64  # pylint: disable=no-member
 _SAME_CURVATURE = 'Tangent curves have same curvature.'
 _BAD_TANGENT = (
     'Curves moving in opposite direction but define '
@@ -49,7 +50,7 @@ LINEAR_SUBDIVIDE = np.array([
     [1, 0, 1],
     [0, 1, 1],
     [0, 0, 2],
-], dtype=np.float64) / 2.0
+], dtype=_FLOAT64) / 2.0
 QUADRATIC_SUBDIVIDE = np.array([
     [4, 0, 0, 0, 0, 0],
     [2, 2, 0, 0, 0, 0],
@@ -66,7 +67,7 @@ QUADRATIC_SUBDIVIDE = np.array([
     [0, 0, 0, 2, 0, 2],
     [0, 0, 0, 0, 2, 2],
     [0, 0, 0, 0, 0, 4],
-], dtype=np.float64) / 4.0
+], dtype=_FLOAT64) / 4.0
 CUBIC_SUBDIVIDE = np.array([
     [8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -96,7 +97,7 @@ CUBIC_SUBDIVIDE = np.array([
     [0, 0, 0, 0, 0, 0, 0, 4, 0, 4],
     [0, 0, 0, 0, 0, 0, 0, 0, 4, 4],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
-], dtype=np.float64) / 8.0
+], dtype=_FLOAT64) / 8.0
 QUARTIC_SUBDIVIDE = np.array([
     [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -143,7 +144,7 @@ QUARTIC_SUBDIVIDE = np.array([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16],
-], dtype=np.float64) / 16.0
+], dtype=_FLOAT64) / 16.0
 # The Jacobian of a quadratric (in any dimension) as given by
 # dB/ds = [-2L1, 2(L1 - L2), 2L2, -2L3, 2L3, 0] * nodes
 # dB/dt = [-2L1, -2L2, 0, 2(L1 - L3), 2L2, 2L3] * nodes
@@ -163,7 +164,7 @@ _QUADRATIC_JACOBIAN_HELPER = np.array([
     [ 0, -1, 0, -1, 1, 1],  # noqa: E201
     [ 0,  0, 0, -2, 2, 0],  # noqa: E201
     [ 0,  0, 0, -2, 0, 2],  # noqa: E201
-], dtype=np.float64)
+], dtype=_FLOAT64)
 _QUADRATIC_TO_BERNSTEIN = np.array([
     [ 2, 0,  0, 0, 0,  0],  # noqa: E201
     [-1, 4, -1, 0, 0,  0],
@@ -171,7 +172,7 @@ _QUADRATIC_TO_BERNSTEIN = np.array([
     [-1, 0,  0, 4, 0, -1],
     [ 0, 0, -1, 0, 4, -1],  # noqa: E201
     [ 0, 0,  0, 0, 0,  2],  # noqa: E201
-], dtype=np.float64) / 2.0
+], dtype=_FLOAT64) / 2.0
 # pylint: enable=bad-whitespace
 # The Jacobian of a cubic (in any dimension) as given by
 # dB/ds = [-3 L1^2, 3 L1(L1 - 2 L2), 3 L2(2 L1 - L2), 3 L2^2, -6 L1 L3,
@@ -212,7 +213,7 @@ _CUBIC_JACOBIAN_HELPER = np.array([
     [  0,   0,  -3,  0,   0, -18,  3, -27, 18, 27],  # noqa: E201
     [  0,   0,   0,  0,   0,   0,  0, -48, 48,  0],  # noqa: E201
     [  0,   0,   0,  0,   0,   0,  0, -48,  0, 48],  # noqa: E201
-], dtype=np.float64) / 16.0
+], dtype=_FLOAT64) / 16.0
 # pylint: enable=bad-whitespace
 _QUARTIC_TO_BERNSTEIN = np.array([
     [36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -230,7 +231,7 @@ _QUARTIC_TO_BERNSTEIN = np.array([
     [-9, 0, 0, 0, 0, 48, 0, 0, 0, -108, 0, 0, 144, 0, -39],
     [0, 0, 0, 0, -9, 0, 0, 0, 48, 0, 0, -108, 0, 144, -39],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36],
-], dtype=np.float64)
+], dtype=_FLOAT64)
 # NOTE: We avoid round-off until after ``_QUARTIC_TO_BERNSTEIN``
 #       has been applied.
 _QUARTIC_BERNSTEIN_FACTOR = 36.0
@@ -313,9 +314,7 @@ def _2x2_det(mat):
        ... ]) / 16.0
        >>> actual_det = -mat[0, 1] * mat[1, 0]
        >>> np_det = np.linalg.det(mat)
-       >>> actual_det == np_det
-       False
-       >>> abs(actual_det - np_det) < 1e-16
+       >>> np.abs(actual_det - np_det) == np.spacing(actual_det)
        True
 
     Args:
@@ -1677,7 +1676,94 @@ def _to_front(intersection, intersections, unused):
     return intersection
 
 
-# pylint: disable=too-many-branches
+def _get_next_first(intersection, intersections):
+    """Gets the next node along the current (left) edge.
+
+    Helper for :func:`_get_next` and along with :func:`_get_next_second`, this
+    function does the majority of the heavy lifting. **Very** similar to
+    :func:`_get_next_second`, but this works with the left curve while the
+    other function works with the right.
+
+    Args:
+        intersection (.Intersection): The current intersection.
+        intersections (List[.Intersection]): List of all detected
+            intersections, provided as a reference for potential
+            points to arrive at.
+
+    Returns:
+        .Intersection: The "next" point along a surface of intersection.
+        This will produce the next intersection along the current (left)
+        edge or the end of the same edge.
+    """
+    along_edge = None
+    left = intersection.left
+    s = intersection.s
+    for other_int in intersections:
+        other_s = other_int.s
+        if other_int.left is left and other_s > s:
+            # NOTE: We skip tangent intersections that don't occur
+            #       at a corner.
+            if (other_s < 1.0 and
+                    other_int.interior_curve not in _ACCEPTABLE):
+                continue
+            if along_edge is None or other_s < along_edge.s:
+                along_edge = other_int
+
+    if along_edge is None:
+        # If there is no other intersection on the edge, just return
+        # the segment end.
+        new_intersection = _intersection_helpers.Intersection(
+            left, 1.0, None, None)
+        new_intersection.interior_curve = IntersectionClassification.first
+        return new_intersection
+    else:
+        return along_edge
+
+
+def _get_next_second(intersection, intersections):
+    """Gets the next node along the current (right) edge.
+
+    Helper for :func:`_get_next` and along with :func:`_get_next_first`, this
+    function does the majority of the heavy lifting. **Very** similar to
+    :func:`_get_next_first`, but this works with the right curve while the
+    other function works with the left.
+
+    Args:
+        intersection (.Intersection): The current intersection.
+        intersections (List[.Intersection]): List of all detected
+            intersections, provided as a reference for potential
+            points to arrive at.
+
+    Returns:
+        .Intersection: The "next" point along a surface of intersection.
+        This will produce the next intersection along the current (right)
+        edge or the end of the same edge.
+    """
+    along_edge = None
+    right = intersection.right
+    t = intersection.t
+    for other_int in intersections:
+        other_t = other_int.t
+        if other_int.right is right and other_t > t:
+            # NOTE: We skip tangent intersections that don't occur
+            #       at a corner.
+            if (other_t < 1.0 and
+                    other_int.interior_curve not in _ACCEPTABLE):
+                continue
+            if along_edge is None or other_t < along_edge.t:
+                along_edge = other_int
+
+    if along_edge is None:
+        # If there is no other intersection on the edge, just return
+        # the segment end.
+        new_intersection = _intersection_helpers.Intersection(
+            None, None, right, 1.0)
+        new_intersection.interior_curve = IntersectionClassification.second
+        return new_intersection
+    else:
+        return along_edge
+
+
 def _get_next(intersection, intersections, unused):
     """Gets the next node along a given edge.
 
@@ -1710,58 +1796,11 @@ def _get_next(intersection, intersections, unused):
             :attr:`~.IntersectionClassification.first` or
             :attr:`~.IntersectionClassification.second`.
     """
-    acceptable = (IntersectionClassification.first,
-                  IntersectionClassification.second)
-
     result = None
     if intersection.interior_curve is IntersectionClassification.first:
-        along_edge = None
-        left = intersection.left
-        s = intersection.s
-        for other_int in intersections:
-            other_s = other_int.s
-            if other_int.left is left and other_s > s:
-                # NOTE: We skip tangent intersections that don't occur
-                #       at a corner.
-                if (other_s < 1.0 and
-                        other_int.interior_curve not in acceptable):
-                    continue
-                if along_edge is None or other_s < along_edge.s:
-                    along_edge = other_int
-
-        if along_edge is None:
-            # Just return the segment end.
-            new_intersection = _intersection_helpers.Intersection(
-                intersection.left, 1.0, None, None)
-            new_intersection.interior_curve = IntersectionClassification.first
-            result = new_intersection
-        else:
-            result = along_edge
+        result = _get_next_first(intersection, intersections)
     elif intersection.interior_curve is IntersectionClassification.second:
-        along_edge = None
-        right = intersection.right
-        t = intersection.t
-        for other_int in intersections:
-            other_t = other_int.t
-            if other_int.right is right and other_t > t:
-                # NOTE: We skip tangent intersections that don't occur
-                #       at a corner.
-                if (other_t < 1.0 and
-                        other_int.interior_curve not in acceptable):
-                    continue
-                if along_edge is None or other_t < along_edge.t:
-                    along_edge = other_int
-
-        if along_edge is None:
-            # Just return the segment end.
-            new_intersection = _intersection_helpers.Intersection(
-                None, None, intersection.right, 1.0)
-            # pylint: disable=redefined-variable-type
-            new_intersection.interior_curve = IntersectionClassification.second
-            # pylint: enable=redefined-variable-type
-            result = new_intersection
-        else:
-            result = along_edge
+        result = _get_next_second(intersection, intersections)
     else:
         raise ValueError('Cannot get next node if not starting from '
                          '"first" or "second".')
@@ -1769,7 +1808,6 @@ def _get_next(intersection, intersections, unused):
     if result in unused:
         unused.remove(result)
     return result
-# pylint: enable=too-many-branches
 
 
 def _ends_to_curve(start_node, end_node):
@@ -1938,10 +1976,8 @@ def _basic_interior_combine(intersections):
     Returns:
         List[.CurvedPolygon]: All of the intersections encountered.
     """
-    acceptable = (IntersectionClassification.first,
-                  IntersectionClassification.second)
     unused = [intersection for intersection in intersections
-              if intersection.interior_curve in acceptable]
+              if intersection.interior_curve in _ACCEPTABLE]
     result = []
     while unused:
         start = unused.pop()
@@ -2005,3 +2041,11 @@ class IntersectionClassification(enum.Enum):
     tangent_first = 'tangent_first'
     tangent_second = 'tangent_second'
     ignored_corner = 'ignored_corner'
+
+
+# NOTE: This constant must be define **after** ``IntersectionClassification``
+#       is, hence we can't define it at the top with the other constants.
+_ACCEPTABLE = (
+    IntersectionClassification.first,
+    IntersectionClassification.second,
+)
