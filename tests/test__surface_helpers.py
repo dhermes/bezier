@@ -27,10 +27,12 @@ UNIT_TRIANGLE = np.array([
 ])
 
 
-def make_intersect(left, s, right, t):
+def make_intersect(left, s, right, t, interior_curve=None):
     from bezier import _intersection_helpers
 
-    return _intersection_helpers.Intersection(left, s, right, t)
+    result = _intersection_helpers.Intersection(left, s, right, t)
+    result.interior_curve = interior_curve
+    return result
 
 
 def get_enum(str_val):
@@ -1097,6 +1099,22 @@ class Test_handle_corners(unittest.TestCase):
         self.assertIs(intersection.right, mock.sentinel.next_right)
 
 
+class Test__identifier(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersection):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._identifier(intersection)
+
+    def test_it(self):
+        left = mock.Mock(edge_index=10)
+        right = mock.Mock(edge_index=99)
+        intersection = make_intersect(left, 0.5, right, 0.75)
+        result = self._call_function_under_test(intersection)
+        self.assertEqual(result, (10, 0.5, 99, 0.75))
+
+
 class Test_verify_duplicates(unittest.TestCase):
 
     LEFT = mock.Mock(edge_index=1)
@@ -1148,7 +1166,379 @@ class Test_verify_duplicates(unittest.TestCase):
             self._call_function_under_test([uniq, uniq], [uniq])
 
 
-class Test_combine_intersections(unittest.TestCase):
+class Test__to_front(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersection, intersections, unused):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._to_front(
+            intersection, intersections, unused)
+
+    def test_no_change(self):
+        intersection = make_intersect(None, 0.5, None, 0.5)
+        result = self._call_function_under_test(intersection, [], [])
+        self.assertIs(result, intersection)
+
+    def test_remove_from_unused(self):
+        intersection = make_intersect(None, 0.5, None, 0.5)
+        unused = [intersection]
+        result = self._call_function_under_test(intersection, [], unused)
+        self.assertIs(result, intersection)
+        self.assertEqual(unused, [])
+
+    def test_move_s(self):
+        from bezier import _intersection_helpers
+
+        left = mock.Mock(spec=['next_edge'])
+        intersection = make_intersect(
+            left, 1.0, mock.sentinel.right, 0.5, mock.sentinel.interior_curve)
+
+        result = self._call_function_under_test(intersection, [], [])
+        self.assertIsNot(result, intersection)
+        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertIs(result.left, left.next_edge)
+        self.assertEqual(result.s, 0.0)
+        self.assertIs(result.right, mock.sentinel.right)
+        self.assertEqual(result.t, 0.5)
+        self.assertIs(result.interior_curve, mock.sentinel.interior_curve)
+
+    def test_move_s_to_existing(self):
+        left = mock.Mock(spec=['next_edge'])
+        intersection = make_intersect(left, 1.0, mock.sentinel.right, 0.5)
+
+        existing_int = make_intersect(
+            left.next_edge, 0.0, mock.sentinel.right, 0.5)
+        result = self._call_function_under_test(
+            intersection, [existing_int], [])
+        self.assertIs(result, existing_int)
+
+    def test_move_t(self):
+        from bezier import _intersection_helpers
+
+        right = mock.Mock(spec=['next_edge'])
+        intersection = make_intersect(
+            mock.sentinel.left, 0.5, right, 1.0, mock.sentinel.interior_curve)
+
+        result = self._call_function_under_test(intersection, [], [])
+        self.assertIsNot(result, intersection)
+        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertIs(result.left, mock.sentinel.left)
+        self.assertEqual(result.s, 0.5)
+        self.assertIs(result.right, right.next_edge)
+        self.assertEqual(result.t, 0.0)
+        self.assertIs(result.interior_curve, mock.sentinel.interior_curve)
+
+    def test_move_t_to_existing(self):
+        right = mock.Mock(spec=['next_edge'])
+        intersection = make_intersect(mock.sentinel.left, 0.5, right, 1.0)
+
+        existing_int = make_intersect(
+            mock.sentinel.left, 0.5, right.next_edge, 0.0)
+        result = self._call_function_under_test(
+            intersection, [existing_int], [])
+        self.assertIs(result, existing_int)
+
+
+class Test__ends_to_curve(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(start_node, end_node):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._ends_to_curve(start_node, end_node)
+
+    def test_bad_classification(self):
+        start_node = make_intersect(None, 0.5, None, 0.5)
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(start_node, None)
+
+    def _on_different_curves(self, interior_curve):
+        start_node = make_intersect(
+            mock.sentinel.left1, 0.5, mock.sentinel.right1, 0.5,
+            interior_curve)
+        end_node = make_intersect(
+            mock.sentinel.left2, 0.5, mock.sentinel.right2, 0.5)
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(start_node, end_node)
+
+    def test_first_on_different_curves(self):
+        self._on_different_curves(get_enum('first'))
+
+    def test_second_on_different_curves(self):
+        self._on_different_curves(get_enum('second'))
+
+    def test_first(self):
+        import bezier
+
+        left = bezier.Curve(np.array([
+            [0.0, 1.0],
+            [1.0, 3.0],
+        ]))
+        start_node = make_intersect(left, 0.5, None, None, get_enum('first'))
+        end_node = make_intersect(left, 0.75, None, None)
+
+        result = self._call_function_under_test(start_node, end_node)
+        self.assertIsInstance(result, bezier.Curve)
+        expected = np.array([
+            [0.5, 2.0],
+            [0.75, 2.5],
+        ])
+        self.assertEqual(result._nodes, expected)
+        self.assertEqual(result.start, 0.5)
+        self.assertEqual(result.end, 0.75)
+        self.assertIs(result.root, left)
+
+    def test_second(self):
+        import bezier
+
+        right = bezier.Curve(np.array([
+            [4.0, -1.0],
+            [2.0, 1.0],
+        ]))
+        start_node = make_intersect(
+            None, None, right, 0.125, get_enum('second'))
+        end_node = make_intersect(None, None, right, 0.25)
+
+        result = self._call_function_under_test(start_node, end_node)
+        self.assertIsInstance(result, bezier.Curve)
+        expected = np.array([
+            [3.75, -0.75],
+            [3.5, -0.5],
+        ])
+        self.assertEqual(result._nodes, expected)
+        self.assertEqual(result.start, 0.125)
+        self.assertEqual(result.end, 0.25)
+        self.assertIs(result.root, right)
+
+
+class Test__to_curved_polygon(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(surface):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._to_curved_polygon(surface)
+
+    def test_it(self):
+        import bezier
+
+        surface = bezier.Surface(UNIT_TRIANGLE)
+        result = self._call_function_under_test(surface)
+        self.assertIsInstance(result, bezier.CurvedPolygon)
+        self.assertEqual(result._num_sides, 3)
+        self.assertEqual(result._edges[0].nodes, UNIT_TRIANGLE[(0, 1), :])
+        self.assertEqual(result._edges[1].nodes, UNIT_TRIANGLE[(1, 2), :])
+        self.assertEqual(result._edges[2].nodes, UNIT_TRIANGLE[(2, 0), :])
+
+
+class Test__no_intersections(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(surface1, surface2):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._no_intersections(surface1, surface2)
+
+    def test_disjoint(self):
+        import bezier
+
+        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        surface2 = bezier.Surface(UNIT_TRIANGLE + np.array([[5.0, 0.0]]))
+        result = self._call_function_under_test(surface1, surface2)
+        self.assertEqual(result, [])
+
+    def test_first_contained(self):
+        import bezier
+
+        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        surface2 = bezier.Surface(4.0 * UNIT_TRIANGLE - np.array([[1.0, 1.0]]))
+
+        patch = mock.patch(
+            'bezier._surface_helpers._to_curved_polygon',
+            return_value=mock.sentinel.curved)
+        with patch as mocked:
+            result = self._call_function_under_test(surface1, surface2)
+            self.assertEqual(result, [mock.sentinel.curved])
+
+            mocked.assert_called_once_with(surface1)
+
+    def test_second_contained(self):
+        import bezier
+
+        surface1 = bezier.Surface(4.0 * UNIT_TRIANGLE - np.array([[1.0, 1.0]]))
+        surface2 = bezier.Surface(UNIT_TRIANGLE)
+
+        patch = mock.patch(
+            'bezier._surface_helpers._to_curved_polygon',
+            return_value=mock.sentinel.curved)
+        with patch as mocked:
+            result = self._call_function_under_test(surface1, surface2)
+            self.assertEqual(result, [mock.sentinel.curved])
+
+            mocked.assert_called_once_with(surface2)
+
+
+class Test__tangent_only_intersections(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersections, surface1, surface2):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._tangent_only_intersections(
+            intersections, surface1, surface2)
+
+    def test_too_few_types(self):
+        with self.assertRaises(ValueError):
+            self._call_function_under_test([], None, None)
+
+    def test_too_many_types(self):
+        int1 = mock.Mock(interior_curve=get_enum('first'))
+        int2 = mock.Mock(interior_curve=get_enum('second'))
+        with self.assertRaises(ValueError):
+            self._call_function_under_test([int1, int2], None, None)
+
+    def test_bad_types(self):
+        intersection = mock.Mock(interior_curve=get_enum('first'))
+        with self.assertRaises(ValueError):
+            self._call_function_under_test([intersection], None, None)
+
+    def test_ignored_types(self):
+        intersection = mock.Mock(interior_curve=get_enum('opposed'))
+        result = self._call_function_under_test([intersection], None, None)
+        self.assertEqual(result, [])
+
+        intersection = mock.Mock(interior_curve=get_enum('ignored_corner'))
+        result = self._call_function_under_test([intersection], None, None)
+        self.assertEqual(result, [])
+
+    def test_first(self):
+        intersection = mock.Mock(interior_curve=get_enum('tangent_first'))
+
+        patch = mock.patch(
+            'bezier._surface_helpers._to_curved_polygon',
+            return_value=mock.sentinel.curved)
+        with patch as mocked:
+            result = self._call_function_under_test(
+                [intersection], mock.sentinel.surface1, None)
+            self.assertEqual(result, [mock.sentinel.curved])
+
+            mocked.assert_called_once_with(mock.sentinel.surface1)
+
+    def test_second(self):
+        intersection = mock.Mock(interior_curve=get_enum('tangent_second'))
+
+        patch = mock.patch(
+            'bezier._surface_helpers._to_curved_polygon',
+            return_value=mock.sentinel.curved)
+        with patch as mocked:
+            result = self._call_function_under_test(
+                [intersection], None, mock.sentinel.surface2)
+            self.assertEqual(result, [mock.sentinel.curved])
+
+            mocked.assert_called_once_with(mock.sentinel.surface2)
+
+
+class Test__basic_interior_combine(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersections):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._basic_interior_combine(intersections)
+
+    def test_it(self):
+        import bezier
+
+        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        edges1 = surface1.edges
+        surface2 = bezier.Surface(np.array([
+            [0.5, 0.25],
+            [1.0, 0.25],
+            [0.75, 1.0],
+        ]))
+        edges2 = surface2.edges
+
+        intersection1 = make_intersect(
+            edges1[1], 0.25, edges2[0], 0.4375, get_enum('first'))
+        intersection2 = make_intersect(
+            edges1[1], 0.5, edges2[2], 0.75, get_enum('second'))
+
+        result = self._call_function_under_test(
+            [intersection1, intersection2])
+        self.assertEqual(len(result), 1)
+        curved_polygon = result[0]
+        self.assertIsInstance(curved_polygon, bezier.CurvedPolygon)
+        self.assertEqual(curved_polygon.num_sides, 3)
+        edge1, edge2, edge3 = curved_polygon._edges
+
+        # First edge.
+        self.assertEqual(edge1.start, 0.75)
+        self.assertEqual(edge1.end, 1.0)
+        expected = np.array([
+            [0.5625, 0.4375],
+            [0.5, 0.25],
+        ])
+        self.assertEqual(edge1.nodes, expected)
+        # Second edge.
+        self.assertEqual(edge2.start, 0.0)
+        self.assertEqual(edge2.end, 0.4375)
+        expected = np.array([
+            [0.5, 0.25],
+            [0.71875, 0.25],
+        ])
+        self.assertEqual(edge2.nodes, expected)
+        # Third edge.
+        self.assertEqual(edge3.start, 0.25)
+        self.assertEqual(edge3.end, 0.5)
+        expected = np.array([
+            [0.75, 0.25],
+            [0.5, 0.5],
+        ])
+        self.assertEqual(edge3.nodes, expected)
+
+    def test_corner_node_next(self):
+        import bezier
+
+        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        edges1 = surface1._get_edges()
+        surface2 = bezier.Surface(np.array([
+            [0.0, 0.125],
+            [0.875, 0.0],
+            [0.25, 0.75],
+        ]))
+        edges2 = surface2._get_edges()
+
+        intersections = [
+            make_intersect(edges1[0], 0.875, edges2[1], 0.0,
+                           interior_curve=get_enum('second')),
+            make_intersect(edges1[1], 0.75, edges2[2], 0.0,
+                           interior_curve=get_enum('second')),
+            make_intersect(edges1[2], 0.875, edges2[0], 0.0,
+                           interior_curve=get_enum('second')),
+        ]
+        result = self._call_function_under_test(intersections)
+
+        self.assertEqual(len(result), 1)
+        curved_polygon = result[0]
+        self.assertIsInstance(curved_polygon, bezier.CurvedPolygon)
+        self.assertEqual(curved_polygon.num_sides, 3)
+
+        self.assertEqual(curved_polygon._edges[0].nodes, np.array([
+            [0.0, 0.125],
+            [0.875, 0.0],
+        ]))
+        self.assertEqual(curved_polygon._edges[1].nodes, np.array([
+            [0.875, 0.0],
+            [0.25, 0.75],
+        ]))
+        self.assertEqual(curved_polygon._edges[2].nodes, np.array([
+            [0.25, 0.75],
+            [0.0, 0.125],
+        ]))
+
+
+class Test_combine_intersections(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(intersections, surface1, surface2):
@@ -1168,3 +1558,80 @@ class Test_combine_intersections(unittest.TestCase):
         ]))
         result = self._call_function_under_test([], surface1, surface2)
         self.assertEqual(result, [])
+
+    def test_basic(self):
+        import bezier
+
+        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        edges1 = surface1._get_edges()
+        surface2 = bezier.Surface(np.array([
+            [0.75, -0.25],
+            [0.75, 0.75],
+            [-0.25, 0.75],
+        ]))
+        edges2 = surface2._get_edges()
+        intersections = [
+            make_intersect(edges1[0], 0.75, edges2[0], 0.25,
+                           interior_curve=get_enum('second')),
+            make_intersect(edges1[0], 0.5, edges2[2], 0.75,
+                           interior_curve=get_enum('first')),
+            make_intersect(edges1[1], 0.25, edges2[0], 0.5,
+                           interior_curve=get_enum('first')),
+            make_intersect(edges1[1], 0.75, edges2[1], 0.5,
+                           interior_curve=get_enum('second')),
+            make_intersect(edges1[2], 0.25, edges2[1], 0.75,
+                           interior_curve=get_enum('first')),
+            make_intersect(edges1[2], 0.5, edges2[2], 0.25,
+                           interior_curve=get_enum('second')),
+        ]
+        result = self._call_function_under_test(
+            intersections, surface1, surface2)
+
+        self.assertEqual(len(result), 1)
+        curved_polygon = result[0]
+        self.assertIsInstance(curved_polygon, bezier.CurvedPolygon)
+        self.assertEqual(curved_polygon.num_sides, 6)
+
+        edge_choices = surface1._get_edges() + surface2._get_edges()
+        start_vals = [0.25, 0.5, 0.25, 0.25, 0.5, 0.25]
+        end_vals = [0.75, 0.75, 0.5, 0.75, 0.75, 0.5]
+        edge_inds = [5, 0, 3, 1, 4, 2]
+        for index in range(6):
+            edge = curved_polygon._edges[index]
+            self.assertEqual(edge.start, start_vals[index])
+            self.assertEqual(edge.end, end_vals[index])
+            self.assertIs(edge.root, edge_choices[edge_inds[index]])
+
+    def test_tangent(self):
+        import bezier
+
+        surface1 = bezier.Surface(np.array([
+            [0.0, 0.0],
+            [0.5, -0.5],
+            [1.0, 0.0],
+            [0.25, 0.5],
+            [0.75, 0.5],
+            [0.5, 1.0],
+        ]))
+        edges = surface1.edges
+        left, _, _ = edges
+        surface2 = bezier.Surface(np.array([
+            [-1.0, -0.25],
+            [2.0, -0.25],
+            [0.5, 1.5],
+        ]))
+        right, _, _ = surface2.edges
+
+        intersection = make_intersect(
+            left, 0.5, right, 0.5, get_enum('tangent_first'))
+        result = self._call_function_under_test(
+            [intersection], surface1, surface2)
+        self.assertEqual(len(result), 1)
+        curved_polygon = result[0]
+        self.assertIsInstance(curved_polygon, bezier.CurvedPolygon)
+        self.assertEqual(curved_polygon.num_sides, 3)
+
+        for index in range(3):
+            self.assertEqual(
+                curved_polygon._edges[index].nodes,
+                edges[index].nodes)
