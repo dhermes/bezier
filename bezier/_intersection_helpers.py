@@ -1409,12 +1409,14 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             intersection occurs.
         point (Optional[numpy.ndarray]): The point where the two
             curves actually intersect.
+        interior_curve (Optional[IntersectionClassification]): The
+            classification of the intersection.
     """
 
     __slots__ = ('left', 's', 'right', 't',
                  'point', 'interior_curve')
 
-    def __init__(self, left, s, right, t, point=None):
+    def __init__(self, left, s, right, t, point=None, interior_curve=None):
         self.left = left
         """Curve: The "left" curve in the intersection."""
         self.s = s
@@ -1425,7 +1427,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         """float: The intersection parameter for the :attr:`.right` curve."""
         self.point = point
         """numpy.ndarray: The point where the intersection occurs."""
-        self.interior_curve = None
+        self.interior_curve = interior_curve
         """IntersectionClassification: Which of the curves is on the interior.
 
         See :func:`.classify_intersection` for more details.

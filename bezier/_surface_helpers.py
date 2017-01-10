@@ -1646,16 +1646,16 @@ def _to_front(intersection, intersections, unused):
         changed = True
         new_intersection = _intersection_helpers.Intersection(
             intersection.left.next_edge, 0.0,
-            intersection.right, intersection.t)
-        new_intersection.interior_curve = intersection.interior_curve
+            intersection.right, intersection.t,
+            interior_curve=intersection.interior_curve)
         intersection = new_intersection
 
     if intersection.t == 1.0:
         changed = True
         new_intersection = _intersection_helpers.Intersection(
             intersection.left, intersection.s,
-            intersection.right.next_edge, 0.0)
-        new_intersection.interior_curve = intersection.interior_curve
+            intersection.right.next_edge, 0.0,
+            interior_curve=intersection.interior_curve)
         intersection = new_intersection
 
     if changed:
@@ -1713,8 +1713,8 @@ def _get_next_first(intersection, intersections):
         # If there is no other intersection on the edge, just return
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
-            left, 1.0, None, None)
-        new_intersection.interior_curve = IntersectionClassification.first
+            left, 1.0, None, None,
+            interior_curve=IntersectionClassification.first)
         return new_intersection
     else:
         return along_edge
@@ -1757,8 +1757,8 @@ def _get_next_second(intersection, intersections):
         # If there is no other intersection on the edge, just return
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
-            None, None, right, 1.0)
-        new_intersection.interior_curve = IntersectionClassification.second
+            None, None, right, 1.0,
+            interior_curve=IntersectionClassification.second)
         return new_intersection
     else:
         return along_edge

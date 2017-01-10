@@ -31,9 +31,8 @@ FLOAT64 = np.float64  # pylint: disable=no-member
 def make_intersect(left, s, right, t, interior_curve=None):
     from bezier import _intersection_helpers
 
-    result = _intersection_helpers.Intersection(left, s, right, t)
-    result.interior_curve = interior_curve
-    return result
+    return _intersection_helpers.Intersection(
+        left, s, right, t, interior_curve=interior_curve)
 
 
 def get_enum(str_val):

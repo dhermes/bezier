@@ -1142,16 +1142,24 @@ class TestIntersection(unittest.TestCase):
         self.assertEqual(intersection.s, s_val)
         self.assertIs(intersection.right, right)
         self.assertEqual(intersection.t, t_val)
-        self.assertIsNone(intersection.interior_curve)
         return intersection
 
     def test_constructor(self):
         intersection = self._constructor_helper()
         self.assertIsNone(intersection.point)
+        self.assertIsNone(intersection.interior_curve)
 
     def test_constructor_with_point(self):
         intersection = self._constructor_helper(point=mock.sentinel.point)
         self.assertIs(intersection.point, mock.sentinel.point)
+        self.assertIsNone(intersection.interior_curve)
+
+    def test_constructor_with_interior_curve(self):
+        intersection = self._constructor_helper(
+            interior_curve=mock.sentinel.interior_curve)
+        self.assertIsNone(intersection.point)
+        self.assertIs(intersection.interior_curve,
+                      mock.sentinel.interior_curve)
 
     def test_get_point_stored(self):
         intersection = self._make_one(
