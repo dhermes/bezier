@@ -270,9 +270,7 @@ def polynomial_sign(poly_surface):
         undecided = []
         for poly in sub_polys:
             # Avoid an unnecessarily copying the nodes.
-            # pylint: disable=protected-access
-            nodes = poly._nodes
-            # pylint: enable=protected-access
+            nodes = poly._nodes  # pylint: disable=protected-access
             if np.all(nodes == 0.0):
                 signs.add(0)
             elif np.all(nodes > 0.0):
@@ -358,9 +356,7 @@ def quadratic_jacobian_polynomial(nodes):
     jac_at_nodes[5, 0] = _2x2_det(jac_parts[10:, :])
 
     # Convert the nodal values to the Bernstein basis...
-    # pylint: disable=no-member
     bernstein = _QUADRATIC_TO_BERNSTEIN.dot(jac_at_nodes)
-    # pylint: enable=no-member
     return bernstein
 
 
@@ -385,9 +381,7 @@ def cubic_jacobian_polynomial(nodes):
     """
     # First evaluate the Jacobian at each of the 15 nodes
     # in the quartic triangle.
-    # pylint: disable=no-member
     jac_parts = _CUBIC_JACOBIAN_HELPER.dot(nodes)
-    # pylint: enable=no-member
     jac_at_nodes = np.empty((15, 1))
     jac_at_nodes[0, 0] = _2x2_det(jac_parts[:2, :])
     jac_at_nodes[1, 0] = _2x2_det(jac_parts[2:4, :])

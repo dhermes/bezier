@@ -28,7 +28,7 @@ from matplotlib import path as _path_mod
 import matplotlib.pyplot as plt
 import numpy as np
 try:
-    import seaborn  # pylint: disable=unused-import
+    import seaborn
 except ImportError:
     pass
 

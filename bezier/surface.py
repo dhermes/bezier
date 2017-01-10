@@ -820,33 +820,25 @@ class Surface(_base.Base):
             lower right and upper left sub-surfaces (in that order).
         """
         if self._degree == 1:
-            # pylint: disable=no-member
             new_nodes = _surface_helpers.LINEAR_SUBDIVIDE.dot(self._nodes)
-            # pylint: enable=no-member
             nodes_a = new_nodes[(0, 1, 3), :]
             nodes_b = new_nodes[(4, 3, 1), :]
             nodes_c = new_nodes[(1, 2, 4), :]
             nodes_d = new_nodes[3:, :]
         elif self._degree == 2:
-            # pylint: disable=no-member
             new_nodes = _surface_helpers.QUADRATIC_SUBDIVIDE.dot(self._nodes)
-            # pylint: enable=no-member
             nodes_a = new_nodes[(0, 1, 2, 5, 6, 9), :]
             nodes_b = new_nodes[(11, 10, 9, 7, 6, 2), :]
             nodes_c = new_nodes[(2, 3, 4, 7, 8, 11), :]
             nodes_d = new_nodes[9:, :]
         elif self._degree == 3:
-            # pylint: disable=no-member
             new_nodes = _surface_helpers.CUBIC_SUBDIVIDE.dot(self._nodes)
-            # pylint: enable=no-member
             nodes_a = new_nodes[(0, 1, 2, 3, 7, 8, 9, 13, 14, 18), :]
             nodes_b = new_nodes[(21, 20, 19, 18, 16, 15, 14, 10, 9, 3), :]
             nodes_c = new_nodes[(3, 4, 5, 6, 10, 11, 12, 16, 17, 21), :]
             nodes_d = new_nodes[18:, :]
         elif self._degree == 4:
-            # pylint: disable=no-member
             new_nodes = _surface_helpers.QUARTIC_SUBDIVIDE.dot(self._nodes)
-            # pylint: enable=no-member
             nodes_a = new_nodes[
                 (0, 1, 2, 3, 4, 9, 10, 11, 12, 17, 18, 19, 24, 25, 30), :]
             nodes_b = new_nodes[
@@ -899,9 +891,7 @@ class Surface(_base.Base):
         if self._degree == 1:
             # In the linear case, we are only invalid if the points
             # are collinear.
-            # pylint: disable=no-member
             first_deriv = self._nodes[1:, :] - self._nodes[:-1, :]
-            # pylint: enable=no-member
             return np.linalg.matrix_rank(first_deriv) == 2
         elif self._degree in (2, 3):
             if self._dimension != 2:

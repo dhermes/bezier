@@ -18,7 +18,9 @@ import numpy as np
 from tests import utils
 
 
-# pylint: disable=too-many-arguments
+SPACING = np.spacing  # pylint: disable=no-member
+
+
 def check_intersection(test_case, intersection, expected,
                        curve1, curve2, s_val, t_val):
     from bezier import _intersection_helpers
@@ -30,7 +32,6 @@ def check_intersection(test_case, intersection, expected,
     test_case.assertEqual(intersection.s, s_val)
     test_case.assertIs(intersection.right, curve2)
     test_case.assertEqual(intersection.t, t_val)
-# pylint: enable=too-many-arguments
 
 
 class Test__check_close(utils.NumPyTestCase):
@@ -165,7 +166,7 @@ class Test_bbox_intersect(unittest.TestCase):
     def test_almost_tangent(self):
         from bezier import _intersection_helpers
 
-        x_val = 1.0 + np.spacing(1.0)  # pylint: disable=no-member
+        x_val = 1.0 + SPACING(1.0)
         nodes = self.UNIT_SQUARE + np.array([[x_val, 0.0]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
         self.assertIs(
@@ -1001,7 +1002,7 @@ class Test_all_intersections(utils.NumPyTestCase):
 
         s_val = 1.0 / 3.0
         # Due to round-off, the answer is wrong by a tiny wiggle.
-        s_val += np.spacing(s_val)  # pylint: disable=no-member
+        s_val += SPACING(s_val)
         t_val = 2.0 / 3.0
         check_intersection(self, intersection, expected,
                            curve1, curve2, s_val, t_val)

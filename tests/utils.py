@@ -42,9 +42,7 @@ array2 =
 def get_random(seed):
     import numpy as np
 
-    # pylint: disable=no-member
-    return np.random.RandomState(seed=seed)
-    # pylint: enable=no-member
+    return np.random.RandomState(seed=seed)  # pylint: disable=no-member
 
 
 def binary_round(value, num_bits):

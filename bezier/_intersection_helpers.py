@@ -1112,7 +1112,6 @@ def _tangent_bbox_intersection(left, right, intersections):
                 _add_intersection(intersection, intersections)
 
 
-# pylint: disable=too-many-return-statements
 def bbox_line_intersect(nodes, line_start, line_end):
     r"""Determine intersection of a bounding box and a line.
 
@@ -1185,7 +1184,6 @@ def bbox_line_intersect(nodes, line_start, line_end):
     #       in one of the branches above.
 
     return BoxIntersectionType.disjoint
-# pylint: enable=too-many-return-statements
 
 
 def intersect_one_round(candidates, intersections):
@@ -1223,9 +1221,7 @@ def intersect_one_round(candidates, intersections):
                 bbox_int = bbox_line_intersect(
                     right_nodes, left.start_node, left.end_node)
         elif isinstance(right, Linearization):
-            # pylint: disable=protected-access
-            left_nodes = left._nodes
-            # pylint: enable=protected-access
+            left_nodes = left._nodes  # pylint: disable=protected-access
             bbox_int = bbox_line_intersect(
                 left_nodes, right.start_node, right.end_node)
         else:

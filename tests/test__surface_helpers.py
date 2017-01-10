@@ -79,17 +79,13 @@ class Test_polynomial_sign(unittest.TestCase):
         self._helper(bernstein, 0)
 
     def test_max_iterations(self):
-        # pylint: disable=no-member
-        bernstein = np.array([[1.0, 2.0, 3.0]]).T
-        # pylint: enable=no-member
+        bernstein = np.array([[1.0, 2.0, 3.0]]).T  # pylint: disable=no-member
         subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=1):
             self._helper(bernstein, 1)
 
     def test_no_conclusion(self):
-        # pylint: disable=no-member
-        bernstein = np.array([[-1.0, 1.0, 2.0]]).T
-        # pylint: enable=no-member
+        bernstein = np.array([[-1.0, 1.0, 2.0]]).T  # pylint: disable=no-member
         subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=0):
             with self.assertRaises(ValueError):
@@ -249,9 +245,7 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
             [0., 0., 0., 0., 0., lambda1, s_val, 0., t_val, 0.],
             [0., 0., 0., 0., 0., 0., 0., lambda1, s_val, t_val],
         ])
-        # pylint: disable=no-member
-        expected = transform.dot(nodes)
-        # pylint: enable=no-member
+        expected = transform.dot(nodes)  # pylint: disable=no-member
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val)
         self.assertEqual(result, expected)

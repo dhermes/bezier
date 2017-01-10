@@ -74,7 +74,7 @@ def real_roots(coeffs):
     return np.sort(filtered)
 
 
-class Config(object):  # pylint: disable=too-few-public-methods
+class Config(object):
     """Run-time configuration.
 
     This is a mutable stand-in to allow test set-up to modify
