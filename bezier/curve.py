@@ -294,6 +294,21 @@ class Curve(_base.Base):
         """
         return self._previous_edge
 
+    def _copy(self):
+        """Make a copy of the current curve.
+
+        Returns:
+            .Curve: Copy of current curve.
+        """
+        root = None if self._root is self else self._root
+        result = Curve(
+            self._nodes, start=self._start, end=self._end,
+            root=root, _copy=True)
+        # Also copy over any cached computed values. (Ignore the
+        # prev/next/index information though: YAGNI.)
+        result._length = self._length  # pylint: disable=protected-access
+        return result
+
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
 
@@ -606,11 +621,13 @@ class Curve(_base.Base):
 
         .. doctest:: curve-specialize2
 
-            >>> left, right = curve.subdivide()
-            >>> left == curve.specialize(0.0, 0.5)
-            True
-            >>> right == curve.specialize(0.5, 1.0)
-            True
+           >>> left, right = curve.subdivide()
+           >>> also_left = curve.specialize(0.0, 0.5)
+           >>> np.all(also_left.nodes == left.nodes)
+           True
+           >>> also_right = curve.specialize(0.5, 1.0)
+           >>> np.all(also_right.nodes == right.nodes)
+           True
 
         Args:
             start (float): The start point of the interval we

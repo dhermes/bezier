@@ -393,9 +393,9 @@ class Surface(_base.Base):
         # NOTE: It is crucial that we return copies here. Since the edges
         #       are cached, if they were mutable, callers could
         #       inadvertently mutate the cached value.
-        edge1 = edge1.copy()
-        edge2 = edge2.copy()
-        edge3 = edge3.copy()
+        edge1 = edge1._copy()  # pylint: disable=protected-access
+        edge2 = edge2._copy()  # pylint: disable=protected-access
+        edge3 = edge3._copy()  # pylint: disable=protected-access
         _surface_helpers.edge_cycle(edge1, edge2, edge3)
         return edge1, edge2, edge3
 
@@ -742,7 +742,7 @@ class Surface(_base.Base):
             raise NotImplementedError('2D is the only supported dimension',
                                       'Current dimension', self.dimension)
 
-        edge1, edge2, edge3 = self.edges
+        edge1, edge2, edge3 = self._get_edges()
         s_vals = np.linspace(0.0, 1.0, pts_per_edge)
 
         points1 = edge1.evaluate_multi(s_vals)

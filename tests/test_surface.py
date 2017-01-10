@@ -275,24 +275,24 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one_no_slots(np.zeros((3, 2)))
 
         # Create mock "edges" to be computed.
-        sentinel1 = mock.Mock()
-        sentinel2 = mock.Mock()
-        sentinel3 = mock.Mock()
+        sentinel1 = mock.Mock(spec=['_copy'])
+        sentinel2 = mock.Mock(spec=['_copy'])
+        sentinel3 = mock.Mock(spec=['_copy'])
         expected = sentinel1, sentinel2, sentinel3
         surface._compute_edges = mock.Mock(return_value=expected)
 
         # Make sure the "edges" when copied just return themselves.
-        sentinel1.copy.return_value = sentinel1
-        sentinel2.copy.return_value = sentinel2
-        sentinel3.copy.return_value = sentinel3
+        sentinel1._copy.return_value = sentinel1
+        sentinel2._copy.return_value = sentinel2
+        sentinel3._copy.return_value = sentinel3
 
         # Access the property and check the mocks.
         self.assertEqual(surface.edges, expected)
         surface._compute_edges.assert_any_call()
         self.assertEqual(surface._compute_edges.call_count, 1)
-        sentinel1.copy.assert_called_once_with()
-        sentinel2.copy.assert_called_once_with()
-        sentinel3.copy.assert_called_once_with()
+        sentinel1._copy.assert_called_once_with()
+        sentinel2._copy.assert_called_once_with()
+        sentinel3._copy.assert_called_once_with()
 
         # Access again but make sure no more calls to _compute_edges().
         self.assertEqual(surface.edges, expected)
@@ -868,21 +868,6 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes)
         self.assertEqual(surface.degree, 5)
         self._subdivide_points_check(surface)
-
-    def test_copy(self):
-        shape = (3, 2)
-        surface = self._make_one(np.zeros(shape))
-        fake_nodes = mock.Mock(ndim=2, shape=shape)
-        surface._nodes = fake_nodes
-
-        copied_nodes = np.zeros(shape)
-        fake_nodes.copy.return_value = copied_nodes
-
-        new_surface = surface.copy()
-        self.assertIsInstance(new_surface, self._get_target_class())
-        self.assertIs(new_surface._nodes, copied_nodes)
-
-        fake_nodes.copy.assert_called_once_with()
 
     def test__compute_valid_valid_linear(self):
         surface = self._make_one(self.UNIT_TRIANGLE)

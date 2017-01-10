@@ -16,8 +16,6 @@
    :trim:
 """
 
-import numpy as np
-
 
 class Base(object):
     """Base shape object.
@@ -88,40 +86,6 @@ class Base(object):
     def nodes(self):
         """numpy.ndarray: The nodes that define the current shape."""
         return self._nodes.copy()
-
-    # NOTE: We disable the docstring return type check because
-    #       subclasses won't be able to refer to this private base.
-    def copy(self):  # pylint: disable=missing-returns-doc
-        """Make a copy of the current shape.
-
-        Returns:
-            Instance of the current shape.
-        """
-        return self.__class__(self._nodes, _copy=True)
-
-    def __eq__(self, other):
-        """Check equality against another shape.
-
-        Returns:
-            bool: Boolean indicating if the shapes are the same.
-        """
-        # First check if both are instances of an identical class.
-        if getattr(other, '__class__', None) != self.__class__:
-            return False
-        if self.degree != other.degree:
-            return False
-        if self.dimension != other.dimension:
-            return False
-        other_nodes = other._nodes  # pylint: disable=protected-access
-        return np.all(self._nodes == other_nodes)
-
-    def __ne__(self, other):
-        """Check inequality against another shape.
-
-        Returns:
-            bool: Boolean indicating if the shapes are not the same.
-        """
-        return not self.__eq__(other)
 
     def __repr__(self):
         """Representation of current object.

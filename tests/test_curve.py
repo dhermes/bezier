@@ -158,6 +158,43 @@ class TestCurve(utils.NumPyTestCase):
         curve._previous_edge = mock.sentinel.previous
         self.assertIs(curve.previous_edge, mock.sentinel.previous)
 
+    def _copy_helper(self, **kwargs):
+        np_shape = (2, 2)
+        length = kwargs.pop('_length', None)
+        curve = self._make_one(np.zeros(np_shape), **kwargs)
+        curve._length = length
+        fake_nodes = mock.Mock(
+            ndim=2, shape=np_shape, spec=['ndim', 'shape', 'copy'])
+        curve._nodes = fake_nodes
+
+        copied_nodes = np.zeros(np_shape)
+        fake_nodes.copy.return_value = copied_nodes
+
+        new_curve = curve._copy()
+        self.assertIsInstance(new_curve, self._get_target_class())
+        self.assertEqual(new_curve._degree, curve._degree)
+        self.assertEqual(new_curve._dimension, curve._dimension)
+        self.assertIs(new_curve._nodes, copied_nodes)
+        self.assertEqual(new_curve._start, curve._start)
+        self.assertEqual(new_curve._end, curve._end)
+        if 'root' in kwargs:
+            self.assertIs(new_curve._root, kwargs['root'])
+        else:
+            self.assertIs(new_curve._root, new_curve)
+        self.assertEqual(new_curve._length, curve._length)
+        self.assertIsNone(new_curve._edge_index)
+        self.assertIsNone(new_curve._next_edge)
+        self.assertIsNone(new_curve._previous_edge)
+
+        fake_nodes.copy.assert_called_once_with()
+
+    def test__copy(self):
+        self._copy_helper()
+
+    def test__copy_with_root(self):
+        self._copy_helper(
+            start=0.25, end=0.5, root=mock.sentinel.root, _length=2.25)
+
     def test_evaluate(self):
         s = 0.25
         nodes = np.array([

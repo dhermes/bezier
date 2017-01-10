@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
 import numpy as np
 
 from tests import utils
@@ -94,53 +93,6 @@ class TestBase(utils.NumPyTestCase):
         shape = self._make_one(nodes)
         self.assertEqual(shape.nodes, nodes)
         self.assertIsNot(shape.nodes, nodes)
-
-    def test_copy(self):
-        np_shape = (2, 2)
-        shape = self._make_one(np.zeros(np_shape))
-        fake_nodes = mock.Mock(ndim=2, shape=np_shape)
-        shape._nodes = fake_nodes
-
-        copied_nodes = np.zeros(np_shape)
-        fake_nodes.copy.return_value = copied_nodes
-
-        new_shape = shape.copy()
-        self.assertIsInstance(new_shape, self._get_target_class())
-        self.assertIs(new_shape._nodes, copied_nodes)
-
-        fake_nodes.copy.assert_called_once_with()
-
-    def test___eq__(self):
-        nodes1 = np.zeros((4, 3))
-        shape1 = self._make_one(nodes1)
-        nodes2 = np.zeros((4, 3))
-        shape2 = self._make_one(nodes2)
-        self.assertEqual(shape1, shape2)
-
-    def test___ne__different_degree(self):
-        nodes1 = np.zeros((1, 3))
-        shape1 = self._make_one(nodes1)
-        nodes2 = np.zeros((4, 3))
-        shape2 = self._make_one(nodes2)
-        self.assertNotEqual(shape1, shape2)
-
-    def test___ne__different_dimension(self):
-        nodes1 = np.zeros((4, 2))
-        shape1 = self._make_one(nodes1)
-        nodes2 = np.zeros((4, 3))
-        shape2 = self._make_one(nodes2)
-        self.assertNotEqual(shape1, shape2)
-
-    def test___ne__different_class(self):
-        nodes = np.zeros((4, 2))
-
-        base_class = self._get_target_class()
-        new_class1 = type('NewOne', (base_class,), {})
-        new_class2 = type('NewTwo', (base_class,), {})
-
-        shape1 = new_class1(nodes)
-        shape2 = new_class2(nodes)
-        self.assertNotEqual(shape1, shape2)
 
     def test___repr__(self):
         nodes = np.zeros((4, 3))
