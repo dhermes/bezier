@@ -23,12 +23,12 @@ Curve-Line Intersection
 .. doctest:: intersect-1-8
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.375],
    ...     [1.0, 0.375],
    ... ]))
@@ -42,12 +42,12 @@ Curve-Line Intersection
 .. doctest:: intersect-1-9
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.5, 0.0 ],
    ...     [0.5, 0.75],
    ... ]))
@@ -60,12 +60,12 @@ Curve-Line Intersection
 .. doctest:: intersect-10-11
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [4.5, 9.0],
    ...     [9.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 8.0],
    ...     [6.0, 0.0],
    ... ]))
@@ -78,11 +78,11 @@ Curve-Line Intersection
 .. doctest:: intersect-8-9
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.375],
    ...     [1.0, 0.375],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.5, 0.0 ],
    ...     [0.5, 0.75],
    ... ]))
@@ -95,12 +95,12 @@ Curve-Line Intersection
 .. doctest:: intersect-29-30
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [-1.0, 1.0],
    ...     [ 0.5, 0.5],
    ...     [ 0.0, 2.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [ 0.5 , 0.5 ],
    ...     [-0.25, 1.25],
    ... ]))
@@ -120,12 +120,12 @@ with zero error:
 .. doctest:: intersect-1-5
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.0,  0.75],
    ...     [0.5, -0.25],
    ...     [1.0,  0.75],
@@ -140,12 +140,12 @@ with zero error:
 .. doctest:: intersect-3-4
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [1.5, 3.0],
    ...     [3.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [ 3.0  ,  1.5    ],
    ...     [ 2.625, -0.90625],
    ...     [-0.75 ,  2.4375 ],
@@ -160,12 +160,12 @@ with zero error:
 .. doctest:: intersect-14-16
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0  , 0.0  ],
    ...     [0.375, 0.75 ],
    ...     [0.75 , 0.375],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.25 , 0.5625],
    ...     [0.625, 0.1875],
    ...     [1.0  , 0.9375],
@@ -183,12 +183,12 @@ numbers, we can compute the intersection to machine precision:
 .. doctest:: intersect-1-2
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [1.125,  0.5],
    ...     [0.625, -0.5],
    ...     [0.125,  0.5],
@@ -209,12 +209,12 @@ numbers, we can compute the intersection to machine precision:
 .. doctest:: intersect-1-7
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.265625],
    ...     [0.5, 0.234375],
    ...     [1.0, 0.265625],
@@ -235,12 +235,12 @@ numbers, we can compute the intersection to machine precision:
 .. doctest:: intersect-1-13
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.0 ,  0.0],
    ...     [0.25,  2.0],
    ...     [0.5 , -2.0],
@@ -265,12 +265,12 @@ numbers, we can compute the intersection to machine precision:
 .. doctest:: intersect-21-22
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [-0.125, -0.28125],
    ...     [ 0.5  ,  1.28125],
    ...     [ 1.125, -0.28125],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [ 1.5625, -0.0625],
    ...     [-1.5625,  0.25  ],
    ...     [ 1.5625,  0.5625],
@@ -296,12 +296,12 @@ larger.
 .. doctest:: intersect-15-25
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.25 , 0.625],
    ...     [0.625, 0.25 ],
    ...     [1.0  , 1.0  ],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.0 , 0.5],
    ...     [0.25, 1.0],
    ...     [0.75, 1.5],
@@ -325,11 +325,11 @@ larger.
 .. doctest:: intersect-11-26
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 8.0],
    ...     [6.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.375, 7.0],
    ...     [2.125, 8.0],
    ...     [3.875, 0.0],
@@ -352,11 +352,11 @@ larger.
 .. doctest:: intersect-8-27
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.375],
    ...     [1.0, 0.375],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.125, 0.25  ],
    ...     [0.375, 0.75  ],
    ...     [0.625, 0.0   ],
@@ -382,12 +382,12 @@ Intersections at Endpoints
 .. doctest:: intersect-1-18
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [1.0,  0.0],
    ...     [1.5, -1.0],
    ...     [2.0,  0.0],
@@ -401,12 +401,12 @@ Intersections at Endpoints
 .. doctest:: intersect-1-19
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [2.0, 0.0],
    ...     [1.5, 1.0],
    ...     [1.0, 0.0],
@@ -420,12 +420,12 @@ Intersections at Endpoints
 .. doctest:: intersect-10-17
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [4.5, 9.0],
    ...     [9.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [11.0,  8.0],
    ...     [ 7.0, 10.0],
    ...     [ 3.0,  4.0],
@@ -442,7 +442,7 @@ Detecting Self-Intersections
 .. doctest:: intersect-12-self
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [ 0.0 , 2.0  ],
    ...     [-1.0 , 0.0  ],
    ...     [ 1.0 , 1.0  ],
@@ -482,12 +482,12 @@ successfully terminates
 .. doctest:: intersect-1-6
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 1.0],
    ...     [0.5, 0.0],
    ...     [1.0, 1.0],
@@ -510,12 +510,12 @@ compute:
 .. doctest:: intersect-14-15
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0  , 0.0  ],
    ...     [0.375, 0.75 ],
    ...     [0.75 , 0.375],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.25 , 0.625],
    ...     [0.625, 0.25 ],
    ...     [1.0  , 1.0  ],
@@ -534,12 +534,12 @@ are resolved:
 .. doctest:: intersect-10-23
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [4.5, 9.0],
    ...     [9.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [3.0, 4.5],
    ...     [8.0, 4.5],
    ... ]))
@@ -560,12 +560,12 @@ we still see a failure
 .. doctest:: intersect-28-29
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [ 0.0, 0.0],
    ...     [-0.5, 1.5],
    ...     [ 1.0, 1.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [-1.0, 1.0],
    ...     [ 0.5, 0.5],
    ...     [ 0.0, 2.0],
@@ -586,12 +586,12 @@ the library fails as well
 .. doctest:: intersect-1-24
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve(np.array([
+   >>> curve1 = bezier.Curve.from_nodes(np.array([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ]))
-   >>> curve2 = bezier.Curve(np.array([
+   >>> curve2 = bezier.Curve.from_nodes(np.array([
    ...     [0.25,  0.375],
    ...     [0.75,  0.875],
    ...     [1.25, -0.625],

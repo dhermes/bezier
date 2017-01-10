@@ -206,7 +206,7 @@ def linearization_error(curve):
        ...     [3.0,  1.0],
        ...     [9.0, -2.0],
        ... ])
-       >>> curve = bezier.Curve(nodes)
+       >>> curve = bezier.Curve(nodes, 2)
        >>> linearization_error(curve)
        1.25
 
@@ -246,7 +246,7 @@ def linearization_error(curve):
        ...     [10.0, 24.0],
        ...     [30.0, 72.0],
        ... ])
-       >>> curve = bezier.Curve(nodes)
+       >>> curve = bezier.Curve(nodes, 3)
        >>> linearization_error(curve)
        29.25
 
@@ -365,12 +365,12 @@ def newton_refine(s, curve1, t, curve2):
        ...     [2.0, 4.0],
        ...     [4.0, 0.0],
        ... ])
-       >>> curve1 = bezier.Curve(nodes1)
+       >>> curve1 = bezier.Curve(nodes1, 2)
        >>> nodes2 = np.array([
        ...     [2.0, 0.0],
        ...     [0.0, 3.0],
        ... ])
-       >>> curve2 = bezier.Curve(nodes2)
+       >>> curve2 = bezier.Curve(nodes2, 1)
        >>> s, t = 0.375, 0.25
        >>> new_s, new_t = newton_refine(s, curve1, t, curve2)
        >>> 64.0 * (new_s - s)
@@ -392,14 +392,14 @@ def newton_refine(s, curve1, t, curve2):
 
     .. doctest:: newton-refine2
 
-       >>> curve1 = bezier.Curve(np.array([
+       >>> curve1 = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 0.0],
        ...     [0.25, 2.0],
        ...     [0.5, -2.0],
        ...     [0.75, 2.0],
        ...     [1.0, 0.0],
        ... ]))
-       >>> curve2 = bezier.Curve(np.array([
+       >>> curve2 = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 1.0],
        ...     [0.25, 0.5],
        ...     [0.5, 0.5],
@@ -441,12 +441,12 @@ def newton_refine(s, curve1, t, curve2):
 
     .. doctest:: newton-refine3
 
-       >>> curve1 = bezier.Curve(np.array([
+       >>> curve1 = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 0.0],
        ...     [0.5, 1.0],
        ...     [1.0, 0.0],
        ... ]))
-       >>> curve2 = bezier.Curve(np.array([
+       >>> curve2 = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 0.5],
        ...     [1.0, 0.5],
        ... ]))
@@ -486,12 +486,12 @@ def newton_refine(s, curve1, t, curve2):
        import bezier
        from bezier._intersection_helpers import newton_refine
 
-       curve1 = bezier.Curve(np.array([
+       curve1 = bezier.Curve.from_nodes(np.array([
            [0.0, 0.0],
            [0.5, 1.0],
            [1.0, 0.0],
        ]))
-       curve2 = bezier.Curve(np.array([
+       curve2 = bezier.Curve.from_nodes(np.array([
            [0.0, 0.5],
            [1.0, 0.5],
        ]))

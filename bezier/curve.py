@@ -82,7 +82,7 @@ class Curve(_base.Base):
        ...     [0.625, 0.5],
        ...     [1.0  , 0.5],
        ... ])
-       >>> curve = bezier.Curve(nodes)
+       >>> curve = bezier.Curve.from_nodes(nodes)
        >>> curve
        <Curve (degree=2, dimension=2)>
 
@@ -95,6 +95,9 @@ class Curve(_base.Base):
         nodes (numpy.ndarray): The nodes in the curve. The rows
             represent each node while the columns are the dimension
             of the ambient space.
+        degree (int): The degree of the curve. This is assumed to
+            be correct. Use :meth:`from_nodes` if the degree has not
+            yet been recruited.
         start (Optional[float]): The beginning of the sub-interval
             that this curve represents.
         end (Optional[float]): The end of the sub-interval
@@ -113,8 +116,10 @@ class Curve(_base.Base):
         '_previous_edge',  # Empty defaults
     )
 
-    def __init__(self, nodes, start=0.0, end=1.0, root=None, _copy=True):
+    def __init__(self, nodes, degree, start=0.0, end=1.0,
+                 root=None, _copy=True):
         super(Curve, self).__init__(nodes, _copy=_copy)
+        self._degree = degree
         self._start = start
         self._end = end
         if root is None:
@@ -124,6 +129,33 @@ class Curve(_base.Base):
         self._edge_index = None
         self._next_edge = None
         self._previous_edge = None
+
+    @classmethod
+    def from_nodes(cls, nodes, start=0.0, end=1.0, root=None, _copy=True):
+        """Create a :class:`.Curve` from nodes.
+
+        Computes the ``degree`` based on the shape of ``nodes``.
+
+        Args:
+            nodes (numpy.ndarray): The nodes in the curve. The rows
+                represent each node while the columns are the dimension
+                of the ambient space.
+            start (Optional[float]): The beginning of the sub-interval
+                that this curve represents.
+            end (Optional[float]): The end of the sub-interval
+                that this curve represents.
+            root (Optional[Curve]): The root curve that contains this
+                current curve.
+            _copy (bool): Flag indicating if the nodes should be copied before
+                being stored. Defaults to :data:`True` since callers may
+                freely mutate ``nodes`` after passing in.
+
+        Returns:
+            Curve: The constructed curve.
+        """
+        num_nodes, _ = nodes.shape
+        degree = cls._get_degree(num_nodes)
+        return cls(nodes, degree, start=start, end=end, root=root, _copy=_copy)
 
     def __repr__(self):
         """Representation of current object.
@@ -174,7 +206,7 @@ class Curve(_base.Base):
            ...     [0.0, 0.0],
            ...     [1.0, 2.0],
            ... ])
-           >>> curve = bezier.Curve(nodes)
+           >>> curve = bezier.Curve(nodes, 1)
            >>> curve
            <Curve (degree=1, dimension=2)>
            >>> left, right = curve.subdivide()
@@ -216,7 +248,7 @@ class Curve(_base.Base):
                [0.75, 0.0],
                [1.0, 1.0],
            ])
-           curve = bezier.Curve(nodes)
+           curve = bezier.Curve(nodes, 2)
 
         .. doctest:: curve-root
            :options: +NORMALIZE_WHITESPACE
@@ -302,7 +334,7 @@ class Curve(_base.Base):
         """
         root = None if self._root is self else self._root
         result = Curve(
-            self._nodes, start=self._start, end=self._end,
+            self._nodes, self._degree, start=self._start, end=self._end,
             root=root, _copy=True)
         # Also copy over any cached computed values. (Ignore the
         # prev/next/index information though: YAGNI.)
@@ -325,7 +357,7 @@ class Curve(_base.Base):
            ...     [0.625, 0.5],
            ...     [1.0  , 0.5],
            ... ])
-           >>> curve = bezier.Curve(nodes)
+           >>> curve = bezier.Curve(nodes, 2)
            >>> curve.evaluate(0.75)
            array([[ 0.796875, 0.46875 ]])
 
@@ -374,7 +406,7 @@ class Curve(_base.Base):
            ...     [0.0, 0.0, 0.0],
            ...     [1.0, 2.0, 3.0],
            ... ])
-           >>> curve = bezier.Curve(nodes)
+           >>> curve = bezier.Curve(nodes, 1)
            >>> curve
            <Curve (degree=1, dimension=3)>
            >>> s_vals = np.linspace(0.0, 1.0, 5)
@@ -452,7 +484,7 @@ class Curve(_base.Base):
            ...     [1.25, 3.0],
            ...     [2.0 , 1.0],
            ... ])
-           >>> curve = bezier.Curve(nodes)
+           >>> curve = bezier.Curve(nodes, 2)
            >>> left, right = curve.subdivide()
            >>> left
            <Curve (degree=2, dimension=2, start=0, end=0.5)>
@@ -497,10 +529,10 @@ class Curve(_base.Base):
 
         midpoint = 0.5 * (self._start + self._end)
         left = Curve(
-            left_nodes, start=self._start, end=midpoint,
+            left_nodes, self._degree, start=self._start, end=midpoint,
             root=self._root, _copy=False)
         right = Curve(
-            right_nodes, start=midpoint, end=self._end,
+            right_nodes, self._degree, start=midpoint, end=self._end,
             root=self._root, _copy=False)
         return left, right
 
@@ -520,12 +552,12 @@ class Curve(_base.Base):
            ...     [0.375, 0.75 ],
            ...     [0.75 , 0.375],
            ... ])
-           >>> curve1 = bezier.Curve(nodes1)
+           >>> curve1 = bezier.Curve(nodes1, 2)
            >>> nodes2 = np.array([
            ...     [0.5, 0.0 ],
            ...     [0.5, 0.75],
            ... ])
-           >>> curve2 = bezier.Curve(nodes2)
+           >>> curve2 = bezier.Curve(nodes2, 1)
            >>> intersections = curve1.intersect(curve2)
            >>> intersections
            array([[ 0.5, 0.5]])
@@ -583,7 +615,7 @@ class Curve(_base.Base):
             self._nodes, self._degree, self._dimension)
         root = None if self._root is self else self._root
         return Curve(
-            new_nodes, start=self._start, end=self._end,
+            new_nodes, self._degree + 1, start=self._start, end=self._end,
             root=root, _copy=False)
 
     def specialize(self, start, end):
@@ -594,7 +626,7 @@ class Curve(_base.Base):
 
         .. doctest:: curve-specialize
 
-           >>> curve = bezier.Curve(np.array([
+           >>> curve = bezier.Curve.from_nodes(np.array([
            ...     [0.0, 0.0],
            ...     [0.5, 1.0],
            ...     [1.0, 0.0],
@@ -620,11 +652,12 @@ class Curve(_base.Base):
            import numpy as np
            import bezier
 
-           curve = bezier.Curve(np.array([
+           nodes = np.array([
                [0.0, 0.0],
                [0.5, 1.0],
                [1.0, 0.0],
-           ]))
+           ])
+           curve = bezier.Curve(nodes, 2)
 
         .. doctest:: curve-specialize2
 
@@ -652,7 +685,7 @@ class Curve(_base.Base):
         true_start = self._start + start * interval_delta
         true_end = self._start + end * interval_delta
         return Curve(
-            new_nodes, start=true_start, end=true_end,
+            new_nodes, self._degree, start=true_start, end=true_end,
             root=self._root, _copy=False)
 
     def locate(self, point):
@@ -671,7 +704,7 @@ class Curve(_base.Base):
 
         .. doctest:: curve-locate
 
-           >>> curve = bezier.Curve(np.array([
+           >>> curve = bezier.Curve.from_nodes(np.array([
            ...     [0.0, 0.0],
            ...     [1.0, 2.0],
            ...     [3.0, 1.0],

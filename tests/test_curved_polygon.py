@@ -45,15 +45,15 @@ class TestCurvedPolygon(utils.NumPyTestCase):
     def _make_default(self):
         import bezier
 
-        edge0 = bezier.Curve(self.NODES0)
-        edge1 = bezier.Curve(self.NODES1)
+        edge0 = bezier.Curve(self.NODES0, 2)
+        edge1 = bezier.Curve(self.NODES1, 2)
         return self._make_one(edge0, edge1)
 
     def test_constructor(self):
         import bezier
 
-        edge0 = bezier.Curve(self.NODES0)
-        edge1 = bezier.Curve(self.NODES1)
+        edge0 = bezier.Curve(self.NODES0, 2)
+        edge1 = bezier.Curve(self.NODES1, 2)
         curved_poly = self._make_one(edge0, edge1)
         self.assertEqual(curved_poly._edges, (edge0, edge1))
         self.assertEqual(curved_poly._num_sides, 2)
@@ -61,7 +61,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
     def test_constructor_without_verify(self):
         import bezier
 
-        edge0 = bezier.Curve(self.NODES0)
+        edge0 = bezier.Curve(self.NODES0, 2)
         with self.assertRaises(ValueError):
             self._make_one(edge0)
 
@@ -78,19 +78,20 @@ class TestCurvedPolygon(utils.NumPyTestCase):
     def test__verify_bad_dimension(self):
         import bezier
 
-        edge0 = bezier.Curve(np.array([
+        nodes0 = np.array([
             [1.0, 1.0],
             [2.0, 2.0],
-        ]))
-        edge1 = bezier.Curve(self.NODES1)
+        ])
+        edge0 = bezier.Curve(nodes0, 1)
+        edge1 = bezier.Curve(self.NODES1, 2)
         with self.assertRaises(ValueError):
             self._make_one(edge0, edge1)
 
     def test__verify_not_aligned(self):
         import bezier
 
-        edge0 = bezier.Curve(np.array([[0.0], [0.0]]))
-        edge1 = bezier.Curve(self.NODES1)
+        edge0 = bezier.Curve(np.array([[0.0], [0.0]]), 1)
+        edge1 = bezier.Curve(self.NODES1, 2)
         with self.assertRaises(ValueError):
             self._make_one(edge0, edge1)
 

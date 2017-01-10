@@ -22,20 +22,20 @@ import runtime_utils
 
 CONFIG = runtime_utils.Config()
 # g1 = sympy.Matrix([[s, 2 * s * (1 - s)]])
-CURVE1 = bezier.Curve(np.array([
+CURVE1 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.0],
     [0.5, 1.0],
     [1.0, 0.0],
 ]))
 # g2 = sympy.Matrix([[(9 - 8 * s) / 8, (2 * s - 1)**2 / 2]])
-CURVE2 = bezier.Curve(np.array([
+CURVE2 = bezier.Curve.from_nodes(np.array([
     [1.125, 0.5],
     [0.625, -0.5],
     [0.125, 0.5],
 ]))
 # g3 = 3 * g1
 # g3 = sympy.Matrix([[3 * s, 6 * s * (1 - s)]])
-CURVE3 = bezier.Curve(np.array([
+CURVE3 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.0],
     [1.5, 3.0],
     [3.0, 0.0],
@@ -44,48 +44,48 @@ CURVE3 = bezier.Curve(np.array([
 #     -3 * (4 * s**2 + s - 4) / 4,
 #     (92 * s**2 - 77 * s + 24) / 16,
 # ]])
-CURVE4 = bezier.Curve(np.array([
+CURVE4 = bezier.Curve.from_nodes(np.array([
     [3.0, 1.5],
     [2.625, -0.90625],
     [-0.75, 2.4375],
 ]))
 # g5 = sympy.Matrix([[s, (8 * s**2 - 8 * s + 3) / 4]])
-CURVE5 = bezier.Curve(np.array([
+CURVE5 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.75],
     [0.5, -0.25],
     [1.0, 0.75],
 ]))
 # g6 = sympy.Matrix([[s, s**2 + (1 - s)**2]])
-CURVE6 = bezier.Curve(np.array([
+CURVE6 = bezier.Curve.from_nodes(np.array([
     [0.0, 1.0],
     [0.5, 0.0],
     [1.0, 1.0],
 ]))
 # g7 = sympy.Matrix([[s, (4 * s**2 - 4 * s + 17) / 64]])
-CURVE7 = bezier.Curve(np.array([
+CURVE7 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.265625],
     [0.5, 0.234375],
     [1.0, 0.265625],
 ]))
 # g8 = sympy.Matrix([[8 * s, 3]]) / 8
-CURVE8 = bezier.Curve(np.array([
+CURVE8 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.375],
     [1.0, 0.375],
 ]))
 # g9 = sympy.Matrix([[2, 3 * s]]) / 4
-CURVE9 = bezier.Curve(np.array([
+CURVE9 = bezier.Curve.from_nodes(np.array([
     [0.5, 0.0],
     [0.5, 0.75],
 ]))
 # g10 = 9 * g1
 # g10 = sympy.Matrix([[9 * s, 18 * s * (1 - s)]])
-CURVE10 = bezier.Curve(np.array([
+CURVE10 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.0],
     [4.5, 9.0],
     [9.0, 0.0],
 ]))
 # g11 = sympy.Matrix([[6 * s, 8 * (1 - s)]])
-CURVE11 = bezier.Curve(np.array([
+CURVE11 = bezier.Curve.from_nodes(np.array([
     [0.0, 8.0],
     [6.0, 0.0],
 ]))
@@ -94,14 +94,14 @@ CURVE11 = bezier.Curve(np.array([
 #     -3 * s * (3 * s - 2)**2 / 4,
 #     -(27 * s**3 - 72 * s**2 + 48 * s - 16) / 8,
 # ]])
-CURVE12 = bezier.Curve(np.array([
+CURVE12 = bezier.Curve.from_nodes(np.array([
     [0.0, 2.0],
     [-1.0, 0.0],
     [1.0, 1.0],
     [-0.75, 1.625],
 ]))
 # g13 = sympy.Matrix([[s, 4 * s * (1 - s) * (7 * s**2 - 7 * s + 2)]])
-CURVE13 = bezier.Curve(np.array([
+CURVE13 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.0],
     [0.25, 2.0],
     [0.5, -2.0],
@@ -109,43 +109,43 @@ CURVE13 = bezier.Curve(np.array([
     [1.0, 0.0],
 ]))
 # g14 = sympy.Matrix([[3 * s / 4, 3 * s * (4 - 3 * s) / 8]])
-CURVE14 = bezier.Curve(np.array([
+CURVE14 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.0],
     [0.375, 0.75],
     [0.75, 0.375],
 ]))
 # g15 = sympy.Matrix([[(3 * s + 1) / 4, (9 * s**2 - 6 * s + 5) / 8]])
-CURVE15 = bezier.Curve(np.array([
+CURVE15 = bezier.Curve.from_nodes(np.array([
     [0.25, 0.625],
     [0.625, 0.25],
     [1.0, 1.0],
 ]))
 # g16 = sympy.Matrix([[(3 * s + 1) / 4, 3 * (6 * s**2 - 4 * s + 3) / 16]])
-CURVE16 = bezier.Curve(np.array([
+CURVE16 = bezier.Curve.from_nodes(np.array([
     [0.25, 0.5625],
     [0.625, 0.1875],
     [1.0, 0.9375],
 ]))
 # g17 = sympy.Matrix([[11 - 8 * s, -4 * (2 * s**2 - s - 2)]])
-CURVE17 = bezier.Curve(np.array([
+CURVE17 = bezier.Curve.from_nodes(np.array([
     [11.0, 8.0],
     [7.0, 10.0],
     [3.0, 4.0],
 ]))
 # g18 = sympy.Matrix([[s + 1, -2 * s * (1 - s)]])
-CURVE18 = bezier.Curve(np.array([
+CURVE18 = bezier.Curve.from_nodes(np.array([
     [1.0, 0.0],
     [1.5, -1.0],
     [2.0, 0.0],
 ]))
 # g19 = sympy.Matrix([[s + 1, 2 * s * (1 - s)]])
-CURVE19 = bezier.Curve(np.array([
+CURVE19 = bezier.Curve.from_nodes(np.array([
     [2.0, 0.0],
     [1.5, 1.0],
     [1.0, 0.0],
 ]))
 # g20 = sympy.Matrix([[(2 * s - 1)**2, s/2]])
-CURVE20 = bezier.Curve(np.array([
+CURVE20 = bezier.Curve.from_nodes(np.array([
     [1.0, 0.0],
     [-1.0, 0.25],
     [1.0, 0.5],
@@ -154,25 +154,25 @@ CURVE20 = bezier.Curve(np.array([
 #     (10 * s - 1) / 8,
 #     (9 - 10 * s) * (10 * s - 1) / 32,
 # ]])
-CURVE21 = bezier.Curve(np.array([
+CURVE21 = bezier.Curve.from_nodes(np.array([
     [-0.125, -0.28125],
     [0.5, 1.28125],
     [1.125, -0.28125],
 ]))
 # g22 = sympy.Matrix([[25 * (2 * s - 1)**2 / 16, (10 * s - 1)  / 16]])
-CURVE22 = bezier.Curve(np.array([
+CURVE22 = bezier.Curve.from_nodes(np.array([
     [1.5625, -0.0625],
     [-1.5625, 0.25],
     [1.5625, 0.5625],
 ]))
 # g23 = 5 * g8 + sympy.Matrix([[24, 21]]) / 8
 # g23 = sympy.Matrix([[10 * s + 6, 9]]) / 2
-CURVE23 = bezier.Curve(np.array([
+CURVE23 = bezier.Curve.from_nodes(np.array([
     [3.0, 4.5],
     [8.0, 4.5],
 ]))
 # g24 = sympy.Matrix([[(4 * s + 1) / 4, (3 - 4 * s) * (4 * s + 1) / 8]])
-CURVE24 = bezier.Curve(np.array([
+CURVE24 = bezier.Curve.from_nodes(np.array([
     [0.25, 0.375],
     [0.75, 0.875],
     [1.25, -0.625],
@@ -181,7 +181,7 @@ CURVE24 = bezier.Curve(np.array([
 #     -s * (2 * s**2 - 3 * s - 3) / 4,
 #     -(3 * s**3 - 3 * s - 1) / 2,
 # ]])
-CURVE25 = bezier.Curve(np.array([
+CURVE25 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.5],
     [0.25, 1.0],
     [0.75, 1.5],
@@ -191,7 +191,7 @@ CURVE25 = bezier.Curve(np.array([
 #     3 * (14 * s + 1) / 8,
 #     18 * s**3 - 27 * s**2 + 3 * s + 7,
 # ]])
-CURVE26 = bezier.Curve(np.array([
+CURVE26 = bezier.Curve.from_nodes(np.array([
     [0.375, 7.0],
     [2.125, 8.0],
     [3.875, 0.0],
@@ -201,7 +201,7 @@ CURVE26 = bezier.Curve(np.array([
 #     (6 * s + 1) / 8,
 #     (35 * s**3 - 60 * s**2 + 24 * s + 4) / 16,
 # ]])
-CURVE27 = bezier.Curve(np.array([
+CURVE27 = bezier.Curve.from_nodes(np.array([
     [0.125, 0.25],
     [0.375, 0.75],
     [0.625, 0.0],
@@ -209,71 +209,71 @@ CURVE27 = bezier.Curve(np.array([
 ]))
 # Rotate g1 by 45 degrees and scale by sqrt(2).
 # g28 = sympy.Matrix([[s * (2 * s - 1), s * (3 - 2 * s)]])
-CURVE28 = bezier.Curve(np.array([
+CURVE28 = bezier.Curve.from_nodes(np.array([
     [0.0, 0.0],
     [-0.5, 1.5],
     [1.0, 1.0],
 ]))
 # Rotate g6 by 45 degrees and scale by sqrt(2).
 # g29 = sympy.Matrix([[(1 - 2 * s) * (1 - s), 2 * s**2 - s + 1]])
-CURVE29 = bezier.Curve(np.array([
+CURVE29 = bezier.Curve.from_nodes(np.array([
     [-1.0, 1.0],
     [0.5, 0.5],
     [0.0, 2.0],
 ]))
 # Rotate g9 by 45 degrees and scale by sqrt(2).
 # g30 = sympy.Matrix([[(2 - 3 * s) / 4, (2 + 3 * s) / 4]])
-CURVE30 = bezier.Curve(np.array([
+CURVE30 = bezier.Curve.from_nodes(np.array([
     [0.5, 0.5],
     [-0.25, 1.25],
 ]))
 # g31 = 2 * g11 + sympy.Matrix([[1, 3]]) / 4
 # g31 = sympy.Matrix([[(48 * s + 1) / 4, (67 - 64 * s) / 4]])
-CURVE31 = bezier.Curve(np.array([
+CURVE31 = bezier.Curve.from_nodes(np.array([
     [0.25, 16.75],
     [12.25, 0.75],
 ]))
 # g32 = sympy.Matrix([[(7 * s - 2) / 8, -1 / 4]])
 # NOTE: This is a degree-elevated line.
-CURVE32 = bezier.Curve(np.array([
+CURVE32 = bezier.Curve.from_nodes(np.array([
     [-0.25, -0.25],
     [0.1875, -0.25],
     [0.625, -0.25],
 ]))
 # g33 = sympy.Matrix([[(1 - 2 * s) * (s - 1) / 8, -s]])
-CURVE33 = bezier.Curve(np.array([
+CURVE33 = bezier.Curve.from_nodes(np.array([
     [-0.125, 0.0],
     [0.0625, -0.5],
     [0.0, -1.0],
 ]))
 # g34 = sympy.Matrix([[4, 3 * (2 * s + 5)]]) / 8
-CURVE34 = bezier.Curve(np.array([
+CURVE34 = bezier.Curve.from_nodes(np.array([
     [0.5, 1.875],
     [0.5, 2.625],
 ]))
 # g35 = sympy.Matrix([[5 * (1 - 2 * s), 21]]) / 8
-CURVE35 = bezier.Curve(np.array([
+CURVE35 = bezier.Curve.from_nodes(np.array([
     [0.625, 2.625],
     [-0.625, 2.625],
 ]))
 # g36 = sympy.Matrix([[(1 - s) / 2, -3 * (s + 1) / 8]])
-CURVE36 = bezier.Curve(np.array([
+CURVE36 = bezier.Curve.from_nodes(np.array([
     [0.5, -0.375],
     [0.0, -0.75],
 ]))
 # g37 = sympy.Matrix([[(7 * s - 2) / 4, 7 * (s - 1) / 8]])
-CURVE37 = bezier.Curve(np.array([
+CURVE37 = bezier.Curve.from_nodes(np.array([
     [-0.5, -0.875],
     [1.25, 0.0],
 ]))
 # g38 = sympy.Matrix([[(3 * s + 1) / 2, (3 * s - 1)**2 / 8]])
-CURVE38 = bezier.Curve(np.array([
+CURVE38 = bezier.Curve.from_nodes(np.array([
     [0.5, 0.125],
     [1.25, -0.25],
     [2.0, 0.5],
 ]))
 # g39 = sympy.Matrix([[(2 * s + 1) / 2, -(2 * s - 1)**2 / 8]])
-CURVE39 = bezier.Curve(np.array([
+CURVE39 = bezier.Curve.from_nodes(np.array([
     [0.5, -0.125],
     [1.0, 0.125],
     [1.5, -0.125],
@@ -424,9 +424,11 @@ def test_curves10_and_11():
 
 def test_curve12_self_crossing():
     left, right = CURVE12.subdivide()
-    # Re-create left and right so they aren't sub-curves.
-    left = bezier.Curve(left.nodes)
-    right = bezier.Curve(right.nodes)
+    # Re-create left and right so they aren't sub-curves. This is just to
+    # satisfy a quirk of ``curve_curve_check``, not an issue with the
+    # library.
+    left = bezier.Curve(left.nodes, left.degree)
+    right = bezier.Curve(right.nodes, right.degree)
 
     delta = np.sqrt(5.0) / 3.0
     s_vals = np.array([1.0, 1.0 - delta])
@@ -441,8 +443,8 @@ def test_curve12_self_crossing():
     # Make sure the left curve doesn't cross itself.
     left1, right1 = left.subdivide()
     expected = right1.evaluate_multi(np.array([0.0]))
-    curve_curve_check(bezier.Curve(left1.nodes),
-                      bezier.Curve(right1.nodes),
+    curve_curve_check(bezier.Curve(left1.nodes, left1.degree),
+                      bezier.Curve(right1.nodes, right1.degree),
                       np.array([1.0]),
                       np.array([0.0]),
                       expected, ignore_save=True)
@@ -450,8 +452,8 @@ def test_curve12_self_crossing():
     # Make sure the right curve doesn't cross itself.
     left2, right2 = right.subdivide()
     expected = right2.evaluate_multi(np.array([0.0]))
-    curve_curve_check(bezier.Curve(left2.nodes),
-                      bezier.Curve(right2.nodes),
+    curve_curve_check(bezier.Curve(left2.nodes, left2.degree),
+                      bezier.Curve(right2.nodes, right2.degree),
                       np.array([1.0]),
                       np.array([0.0]),
                       expected, ignore_save=True)

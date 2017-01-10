@@ -615,11 +615,11 @@ class Test_classify_intersection(unittest.TestCase):
     def test_simple(self):
         import bezier
 
-        left = bezier.Curve(np.array([
+        left = bezier.Curve.from_nodes(np.array([
             [0.0, 0.0],
             [1.0, 1.0],
         ]))
-        right = bezier.Curve(np.array([
+        right = bezier.Curve.from_nodes(np.array([
             [0.25, 0.0],
             [0.75, 1.0],
         ]))
@@ -635,11 +635,11 @@ class Test_classify_intersection(unittest.TestCase):
     def test_corner_end(self):
         import bezier
 
-        left = bezier.Curve(np.array([
+        left = bezier.Curve.from_nodes(np.array([
             [0.0, 0.0],
             [1.0, 1.0],
         ]))
-        right = bezier.Curve(np.array([
+        right = bezier.Curve.from_nodes(np.array([
             [1.0, 0.0],
             [1.0, 2.0],
         ]))
@@ -650,11 +650,11 @@ class Test_classify_intersection(unittest.TestCase):
     def test_corner_start(self):
         import bezier
 
-        left = bezier.Curve(np.array([
+        left = bezier.Curve.from_nodes(np.array([
             [1.0, 1.0],
             [0.0, 0.0],
         ]))
-        right = bezier.Curve(np.array([
+        right = bezier.Curve.from_nodes(np.array([
             [1.0, 0.0],
             [1.0, 2.0],
         ]))
@@ -665,12 +665,12 @@ class Test_classify_intersection(unittest.TestCase):
     def test_tangent(self):
         import bezier
 
-        left = bezier.Curve(np.array([
+        left = bezier.Curve.from_nodes(np.array([
             [0.0, 0.0],
             [1.5, 1.0],
             [3.0, 0.0],
         ]))
-        right = bezier.Curve(np.array([
+        right = bezier.Curve.from_nodes(np.array([
             [1.0, 0.0],
             [1.5, 1.0],
             [2.0, 0.0],
@@ -737,8 +737,8 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_left_curvature(self):
         import bezier
 
-        left = bezier.Curve(self.QUADRATIC1[::-1, :])
-        right = bezier.Curve(self.QUADRATIC2[::-1, :])
+        left = bezier.Curve(self.QUADRATIC1[::-1, :], 2)
+        right = bezier.Curve(self.QUADRATIC2[::-1, :], 2)
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         result = self._call_helper(intersection)
@@ -747,8 +747,8 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_right_curvature(self):
         import bezier
 
-        left = bezier.Curve(self.QUADRATIC1)
-        right = bezier.Curve(self.QUADRATIC2)
+        left = bezier.Curve(self.QUADRATIC1, 2)
+        right = bezier.Curve(self.QUADRATIC2, 2)
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         result = self._call_helper(intersection)
@@ -757,12 +757,12 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_same_direction_same_curvature(self):
         import bezier
 
-        left = bezier.Curve(np.array([
+        left = bezier.Curve.from_nodes(np.array([
             [1.0, 0.25],
             [-0.5, -0.25],
             [0.0, 0.25],
         ]))
-        right = bezier.Curve(np.array([
+        right = bezier.Curve.from_nodes(np.array([
             [0.75, 0.25],
             [-0.25, -0.25],
             [-0.25, 0.25],
@@ -774,12 +774,12 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_opposed_same_curvature(self):
         import bezier
 
-        left = bezier.Curve(np.array([
+        left = bezier.Curve.from_nodes(np.array([
             [0.0, 0.25],
             [-0.5, -0.25],
             [1.0, 0.25],
         ]))
-        right = bezier.Curve(np.array([
+        right = bezier.Curve.from_nodes(np.array([
             [0.75, 0.25],
             [-0.25, -0.25],
             [-0.25, 0.25],
@@ -791,8 +791,8 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_opposed_same_sign_curvature_no_overlap(self):
         import bezier
 
-        left = bezier.Curve(self.QUADRATIC1[::-1, :])
-        right = bezier.Curve(self.QUADRATIC3)
+        left = bezier.Curve(self.QUADRATIC1[::-1, :], 2)
+        right = bezier.Curve(self.QUADRATIC3, 2)
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         result = self._call_helper(intersection)
@@ -801,8 +801,8 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_opposed_same_sign_curvature_with_overlap(self):
         import bezier
 
-        left = bezier.Curve(self.QUADRATIC1)
-        right = bezier.Curve(self.QUADRATIC3[::-1, :])
+        left = bezier.Curve(self.QUADRATIC1, 2)
+        right = bezier.Curve(self.QUADRATIC3[::-1, :], 2)
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         with self.assertRaises(NotImplementedError):
@@ -811,8 +811,8 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_opposed_opp_sign_curvature_no_overlap(self):
         import bezier
 
-        left = bezier.Curve(self.QUADRATIC1[::-1, :])
-        right = bezier.Curve(self.QUADRATIC2)
+        left = bezier.Curve(self.QUADRATIC1[::-1, :], 2)
+        right = bezier.Curve(self.QUADRATIC2, 2)
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         result = self._call_helper(intersection)
@@ -821,8 +821,8 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_opposed_opp_sign_curvature_with_overlap(self):
         import bezier
 
-        left = bezier.Curve(self.QUADRATIC1)
-        right = bezier.Curve(self.QUADRATIC2[::-1, :])
+        left = bezier.Curve(self.QUADRATIC1, 2)
+        right = bezier.Curve(self.QUADRATIC2[::-1, :], 2)
         intersection = make_intersect(left, 0.5, right, 0.5)
 
         with self.assertRaises(NotImplementedError):
@@ -878,7 +878,7 @@ class Test__ignored_edge_corner(unittest.TestCase):
 
         edge_tangent = np.array([[-1.0, 1.0]])
         corner_tangent = np.array([[0.5, 0.5]])
-        corner_previous_edge = bezier.Curve(np.array([
+        corner_previous_edge = bezier.Curve.from_nodes(np.array([
             [0.5, 2.0],
             [0.5, 0.5],
         ]))
@@ -891,7 +891,7 @@ class Test__ignored_edge_corner(unittest.TestCase):
 
         edge_tangent = np.array([[1.0, 0.0]])
         corner_tangent = np.array([[1.0, -1.0]])
-        corner_previous_edge = bezier.Curve(np.array([
+        corner_previous_edge = bezier.Curve.from_nodes(np.array([
             [1.0, 1.0],
             [0.5, 0.0],
         ]))
@@ -1426,7 +1426,7 @@ class Test__ends_to_curve(utils.NumPyTestCase):
     def test_first(self):
         import bezier
 
-        left = bezier.Curve(np.array([
+        left = bezier.Curve.from_nodes(np.array([
             [0.0, 1.0],
             [1.0, 3.0],
         ]))
@@ -1448,10 +1448,11 @@ class Test__ends_to_curve(utils.NumPyTestCase):
     def test_second(self):
         import bezier
 
-        right = bezier.Curve(np.array([
+        nodes = np.array([
             [4.0, -1.0],
             [2.0, 1.0],
-        ]))
+        ])
+        right = bezier.Curve(nodes, 1)
         start_node = make_intersect(
             None, None, right, 0.125, interior_curve=get_enum('second'))
         end_node = make_intersect(None, None, right, 0.25)

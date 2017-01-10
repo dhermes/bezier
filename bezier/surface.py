@@ -180,6 +180,8 @@ class Surface(_base.Base):
 
     def __init__(self, nodes, base_x=0.0, base_y=0.0, width=1.0, _copy=True):
         super(Surface, self).__init__(nodes, _copy=_copy)
+        num_nodes, _ = nodes.shape
+        self._degree = self._get_degree(num_nodes)
         self._base_x = base_x
         self._base_y = base_y
         self._width = width
@@ -336,9 +338,12 @@ class Surface(_base.Base):
             curr2 += self._degree - i
             curr3 -= i + 2
 
-        edge1 = _curve_mod.Curve(self._nodes[indices1, :], _copy=False)
-        edge2 = _curve_mod.Curve(self._nodes[indices2, :], _copy=False)
-        edge3 = _curve_mod.Curve(self._nodes[indices3, :], _copy=False)
+        edge1 = _curve_mod.Curve(
+            self._nodes[indices1, :], self._degree, _copy=False)
+        edge2 = _curve_mod.Curve(
+            self._nodes[indices2, :], self._degree, _copy=False)
+        edge3 = _curve_mod.Curve(
+            self._nodes[indices3, :], self._degree, _copy=False)
         _surface_helpers.edge_cycle(edge1, edge2, edge3)
         return edge1, edge2, edge3
 

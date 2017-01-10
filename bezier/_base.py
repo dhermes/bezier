@@ -30,7 +30,6 @@ class Base(object):
 
     Raises:
         ValueError: If the ``nodes`` are not 2D.
-        ValueError: If the ``degree`` is less than ``1``.
     """
 
     __slots__ = ('_degree', '_dimension', '_nodes')
@@ -40,33 +39,13 @@ class Base(object):
             raise ValueError('Nodes must be 2-dimensional, not',
                              nodes.ndim)
 
-        num_nodes, dimension = nodes.shape
-        degree = self._get_degree(num_nodes)
-        if degree < 1:
-            raise ValueError('Shape must be at least degree 1')
-
-        self._degree = degree
+        _, dimension = nodes.shape
+        self._degree = -1
         self._dimension = dimension
         if _copy:
             self._nodes = nodes.copy()
         else:
             self._nodes = nodes
-
-    @staticmethod
-    def _get_degree(num_nodes):
-        """Get the degree of the current shape.
-
-        .. note::
-
-           Subclasses are expected to implement this method.
-
-        Args:
-            num_nodes (int): The number of nodes provided.
-
-        Returns:
-            int: The degree of the current shape.
-        """
-        return num_nodes
 
     @property
     def degree(self):

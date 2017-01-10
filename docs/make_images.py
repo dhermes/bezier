@@ -58,7 +58,7 @@ def linearization_error(curve):
     if NO_IMAGES:
         return
 
-    line = bezier.Curve(curve._nodes[(0, -1), :])
+    line = bezier.Curve.from_nodes(curve._nodes[(0, -1), :])
     midpoints = np.vstack([
         curve.evaluate(0.5),
         line.evaluate(0.5),
@@ -146,8 +146,8 @@ def segment_intersection1(start0, end0, start1, end1, s):
     if NO_IMAGES:
         return
 
-    line0 = bezier.Curve(np.vstack([start0, end0]))
-    line1 = bezier.Curve(np.vstack([start1, end1]))
+    line0 = bezier.Curve.from_nodes(np.vstack([start0, end0]))
+    line1 = bezier.Curve.from_nodes(np.vstack([start1, end1]))
 
     ax = line0.plot(2)
     line1.plot(256, ax=ax)
@@ -164,8 +164,8 @@ def segment_intersection2(start0, end0, start1, end1):
     if NO_IMAGES:
         return
 
-    line0 = bezier.Curve(np.vstack([start0, end0]))
-    line1 = bezier.Curve(np.vstack([start1, end1]))
+    line0 = bezier.Curve.from_nodes(np.vstack([start0, end0]))
+    line1 = bezier.Curve.from_nodes(np.vstack([start1, end1]))
 
     ax = line0.plot(2)
     line1.plot(2, ax=ax)
@@ -752,11 +752,11 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
 def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
     assert surface1.is_valid
     edge1, _, _ = surface1.edges
-    assert edge1 == curve1
+    assert np.all(edge1._nodes == curve1._nodes)
 
     assert surface2.is_valid
     edge2, _, _ = surface2.edges
-    assert edge2 == curve2
+    assert np.all(edge2._nodes == curve2._nodes)
 
     ax = surface1.plot(256, ax=ax)
     # Manually reduce the alpha on the surface patch(es) and
@@ -1056,7 +1056,7 @@ def get_curvature(nodes, s, tangent_vec, curvature):
     if NO_IMAGES:
         return
 
-    curve = bezier.Curve(nodes)
+    curve = bezier.Curve.from_nodes(nodes)
 
     # Find the center of the circle along the direction
     # perpendicular to the tangent vector (90 degree left turn).

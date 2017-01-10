@@ -903,12 +903,12 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection1
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve(np.array([
+       >>> curve1 = bezier.Curve.from_nodes(np.array([
        ...     [1.0 , 0.0 ],
        ...     [1.75, 0.25],
        ...     [2.0 , 1.0 ],
        ... ]))
-       >>> curve2 = bezier.Curve(np.array([
+       >>> curve2 = bezier.Curve.from_nodes(np.array([
        ...     [0.0   , 0.0   ],
        ...     [1.6875, 0.0625],
        ...     [2.0   , 0.5   ],
@@ -962,12 +962,12 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection2
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve(np.array([
+       >>> curve1 = bezier.Curve.from_nodes(np.array([
        ...     [1.0, 0.0],
        ...     [1.5, 1.0],
        ...     [2.0, 0.0],
        ... ]))
-       >>> curve2 = bezier.Curve(np.array([
+       >>> curve2 = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 0.0],
        ...     [1.5, 1.0],
        ...     [3.0, 0.0],
@@ -996,12 +996,12 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection3
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve(np.array([
+       >>> curve1 = bezier.Curve.from_nodes(np.array([
        ...     [2.0, 0.0],
        ...     [1.5, 1.0],
        ...     [1.0, 0.0],
        ... ]))
-       >>> curve2 = bezier.Curve(np.array([
+       >>> curve2 = bezier.Curve.from_nodes(np.array([
        ...     [3.0, 0.0],
        ...     [1.5, 1.0],
        ...     [0.0, 0.0],
@@ -1028,12 +1028,12 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection4
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve(np.array([
+       >>> curve1 = bezier.Curve.from_nodes(np.array([
        ...     [2.0, 0.0],
        ...     [1.5, 1.0],
        ...     [1.0, 0.0],
        ... ]))
-       >>> curve2 = bezier.Curve(np.array([
+       >>> curve2 = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 0.0],
        ...     [1.5, 1.0],
        ...     [3.0, 0.0],
@@ -1061,12 +1061,12 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection5
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve(np.array([
+       >>> curve1 = bezier.Curve.from_nodes(np.array([
        ...     [1.0, 0.0],
        ...     [1.5, 1.0],
        ...     [2.0, 0.0],
        ... ]))
-       >>> curve2 = bezier.Curve(np.array([
+       >>> curve2 = bezier.Curve.from_nodes(np.array([
        ...     [3.0, 0.0],
        ...     [1.5, 1.0],
        ...     [0.0, 0.0],
@@ -1095,12 +1095,12 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection6
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve(np.array([
+       >>> curve1 = bezier.Curve.from_nodes(np.array([
        ...     [ 0.375,  0.0625],
        ...     [-0.125, -0.0625],
        ...     [-0.125,  0.0625],
        ... ]))
-       >>> curve2 = bezier.Curve(np.array([
+       >>> curve2 = bezier.Curve.from_nodes(np.array([
        ...     [ 0.75,  0.25],
        ...     [-0.25, -0.25],
        ...     [-0.25,  0.25],
@@ -1136,12 +1136,12 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection7
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1a = bezier.Curve(np.array([
+       >>> curve1a = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 0.0 ],
        ...     [4.5, 0.0 ],
        ...     [9.0, 2.25],
        ... ]))
-       >>> curve2 = bezier.Curve(np.array([
+       >>> curve2 = bezier.Curve.from_nodes(np.array([
        ...     [11.25, 0.0],
        ...     [ 9.0 , 4.5],
        ...     [ 2.75, 1.0],
@@ -1156,7 +1156,7 @@ def classify_intersection(intersection):
        ValueError: ('Intersection occurs at the end of an edge',
                     's', 1.0, 't', 0.375)
        >>>
-       >>> curve1b = bezier.Curve(np.array([
+       >>> curve1b = bezier.Curve.from_nodes(np.array([
        ...     [9.0, 2.25 ],
        ...     [4.5, 2.375],
        ...     [0.0, 2.5  ],

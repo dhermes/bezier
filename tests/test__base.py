@@ -36,7 +36,7 @@ class TestBase(utils.NumPyTestCase):
             [2.0, 3.0],
         ])
         shape = self._make_one(nodes)
-        self.assertEqual(shape._degree, 3)
+        self.assertEqual(shape._degree, -1)
         self.assertEqual(shape._dimension, 2)
         self.assertIsNot(shape._nodes, nodes)
         self.assertEqual(shape._nodes, nodes)
@@ -48,7 +48,7 @@ class TestBase(utils.NumPyTestCase):
             [2.0, 3.0],
         ])
         shape = self._make_one(nodes, _copy=False)
-        self.assertEqual(shape._degree, 3)
+        self.assertEqual(shape._degree, -1)
         self.assertEqual(shape._dimension, 2)
         self.assertIs(shape._nodes, nodes)
 
@@ -61,22 +61,10 @@ class TestBase(utils.NumPyTestCase):
         with self.assertRaises(ValueError):
             self._make_one(nodes)
 
-    def test_constructor_insufficient_nodes(self):
-        nodes = np.zeros((0, 2))
-        with self.assertRaises(ValueError):
-            self._make_one(nodes)
-
-    def test__get_degree(self):
-        klass = self._get_target_class()
-        num_nodes = 41
-        self.assertEqual(num_nodes, klass._get_degree(num_nodes))
-
     def test_degree_property(self):
-        degree = 6
-        nodes = np.zeros((degree, 2))
-        shape = self._make_one(nodes)
-        self.assertEqual(shape.degree, degree)
-        self.assertEqual(shape._degree, degree)
+        shape = self._make_one(np.zeros((0, 1)))
+        self.assertEqual(shape.degree, -1)
+        self.assertEqual(shape._degree, -1)
 
     def test_dimension_property(self):
         dimension = 4
@@ -97,5 +85,6 @@ class TestBase(utils.NumPyTestCase):
     def test___repr__(self):
         nodes = np.zeros((4, 3))
         shape = self._make_one(nodes)
+        shape._degree = 4
         expected = '<Base (degree=4, dimension=3)>'
         self.assertEqual(repr(shape), expected)

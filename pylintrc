@@ -32,6 +32,8 @@ ignore-long-lines=
 
 [DESIGN]
 max-args=7
+# Maximum number of attributes for a class (see R0902).
+max-attributes=8
 
 [VARIABLES]
 dummy-variables-rgx=(_+[a-zA-Z0-9]*?$)|dummy|^unused_

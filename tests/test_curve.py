@@ -36,7 +36,7 @@ class TestCurve(utils.NumPyTestCase):
             [0.625, 0.5],
             [1.0, 0.75],
         ])
-        curve = self._make_one(nodes, _copy=False)
+        curve = self._make_one(nodes, 2, _copy=False)
         self.assertEqual(curve._degree, 2)
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
@@ -51,28 +51,37 @@ class TestCurve(utils.NumPyTestCase):
     def test_constructor_wrong_dimension(self):
         nodes = np.array([1.0, 2.0])
         with self.assertRaises(ValueError):
-            self._make_one(nodes)
+            self._make_one(nodes, None)
 
         nodes = np.zeros((2, 2, 2))
         with self.assertRaises(ValueError):
-            self._make_one(nodes)
+            self._make_one(nodes, None)
 
-    def test_constructor_bad_degree(self):
+    def test_from_nodes_factory(self):
         nodes = np.array([
-            [1.0, 2.0],
+            [1.0, 2.0, 0.0],
+            [1.0, 3.0, 0.0],
         ])
-        with self.assertRaises(ValueError):
-            self._make_one(nodes)
+        klass = self._get_target_class()
 
-        nodes = np.zeros((0, 2))
-        with self.assertRaises(ValueError):
-            self._make_one(nodes)
+        curve = klass.from_nodes(
+            nodes, start=0.25, end=0.75, root=mock.sentinel.root)
+        self.assertEqual(curve._degree, 1)
+        self.assertEqual(curve._dimension, 3)
+        self.assertEqual(curve._nodes, nodes)
+        self.assertIsNone(curve._length)
+        self.assertIsNone(curve._edge_index)
+        self.assertIsNone(curve._next_edge)
+        self.assertIsNone(curve._previous_edge)
+        self.assertEqual(curve._start, 0.25)
+        self.assertEqual(curve._end, 0.75)
+        self.assertIs(curve._root, mock.sentinel.root)
 
     def test___repr__(self):
         degree = 4
         dimension = 3
         nodes = np.zeros((degree + 1, dimension))
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, degree)
         expected = '<Curve (degree={:d}, dimension={:d})>'.format(
             degree, dimension)
         self.assertEqual(repr(curve), expected)
@@ -85,7 +94,7 @@ class TestCurve(utils.NumPyTestCase):
         start = 0.25
         end = 0.75
         nodes = np.zeros((degree + 1, dimension))
-        curve = self._make_one(nodes, start=start, end=end)
+        curve = self._make_one(nodes, degree, start=start, end=end)
         expected = curve_mod._REPR_TEMPLATE.format(
             'Curve', degree, dimension, start, end)
         self.assertEqual(repr(curve), expected)
@@ -101,7 +110,7 @@ class TestCurve(utils.NumPyTestCase):
             [0.0, 0.0],
             [1.0, 2.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 1)
         self.assertIsNone(curve._length)
 
         patch = mock.patch(
@@ -123,45 +132,45 @@ class TestCurve(utils.NumPyTestCase):
             [0.0, 0.0],
             [1.0, 2.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 1)
         length = 2.817281728
         curve._length = length
         self.assertEqual(curve.length, length)
 
     def test_start_property(self):
-        curve = self._make_one(np.zeros((2, 2)),
+        curve = self._make_one(np.zeros((2, 2)), 1,
                                start=mock.sentinel.start)
         self.assertIs(curve.start, mock.sentinel.start)
 
     def test_end_property(self):
-        curve = self._make_one(np.zeros((2, 2)),
+        curve = self._make_one(np.zeros((2, 2)), 1,
                                end=mock.sentinel.end)
         self.assertIs(curve.end, mock.sentinel.end)
 
     def test_root_property(self):
-        curve = self._make_one(np.zeros((2, 2)),
+        curve = self._make_one(np.zeros((2, 2)), 1,
                                root=mock.sentinel.root)
         self.assertIs(curve.root, mock.sentinel.root)
 
     def test_edge_index_property(self):
-        curve = self._make_one(np.zeros((2, 2)))
+        curve = self._make_one(np.zeros((2, 2)), 1)
         curve._edge_index = 7
         self.assertEqual(curve.edge_index, 7)
 
     def test_next_edge_property(self):
-        curve = self._make_one(np.zeros((2, 2)))
+        curve = self._make_one(np.zeros((2, 2)), 1)
         curve._next_edge = mock.sentinel.next_edge
         self.assertIs(curve.next_edge, mock.sentinel.next_edge)
 
     def test_previous_edge_property(self):
-        curve = self._make_one(np.zeros((2, 2)))
+        curve = self._make_one(np.zeros((2, 2)), 1)
         curve._previous_edge = mock.sentinel.previous
         self.assertIs(curve.previous_edge, mock.sentinel.previous)
 
     def _copy_helper(self, **kwargs):
         np_shape = (2, 2)
         length = kwargs.pop('_length', None)
-        curve = self._make_one(np.zeros(np_shape), **kwargs)
+        curve = self._make_one(np.zeros(np_shape), 1, **kwargs)
         curve._length = length
         fake_nodes = mock.Mock(
             ndim=2, shape=np_shape, spec=['ndim', 'shape', 'copy'])
@@ -202,7 +211,7 @@ class TestCurve(utils.NumPyTestCase):
             [0.5, 0.5],
             [1.0, 1.25],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 2)
         expected = np.array([[0.25, 0.265625]])
         result = curve.evaluate(s)
         self.assertEqual(expected, result)
@@ -214,7 +223,7 @@ class TestCurve(utils.NumPyTestCase):
             [0.375, 0.375],
             [1.0, 1.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 2)
         expected = np.array([
             [0.0, 0.0],
             [0.203125, 0.203125],
@@ -238,7 +247,7 @@ class TestCurve(utils.NumPyTestCase):
             [0.0, 1.0],
             [1.0, 3.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 1)
         plt = mock.Mock()
 
         figure = mock.Mock()
@@ -279,7 +288,7 @@ class TestCurve(utils.NumPyTestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 1)
         plt = mock.Mock()
 
         ax = mock.Mock()
@@ -306,12 +315,12 @@ class TestCurve(utils.NumPyTestCase):
             [0.0, 0.0, 0.0],
             [1.0, 3.0, 4.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 1)
         with self.assertRaises(NotImplementedError):
             curve.plot(32)
 
     def test_subdivide_multilevel_root(self):
-        curve = self._make_one(np.zeros((2, 2)))
+        curve = self._make_one(np.zeros((2, 2)), 1)
         left, right = curve.subdivide()
         self.assertIs(left.root, curve)
         self.assertIs(right.root, curve)
@@ -326,7 +335,7 @@ class TestCurve(utils.NumPyTestCase):
     def _subdivide_helper(self, nodes, expected_l, expected_r):
         klass = self._get_target_class()
 
-        curve = self._make_one(nodes)
+        curve = klass.from_nodes(nodes)
         left, right = curve.subdivide()
         self.assertIs(left.root, curve)
         self.assertIs(right.root, curve)
@@ -377,7 +386,7 @@ class TestCurve(utils.NumPyTestCase):
         nodes = utils.get_random_nodes(
             shape=(2, 2), seed=88991, num_bits=8)
 
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 1)
         self.assertEqual(curve.degree, 1)
         self._subdivide_points_check(curve)
 
@@ -405,7 +414,7 @@ class TestCurve(utils.NumPyTestCase):
         nodes = utils.get_random_nodes(
             shape=(3, 2), seed=10764, num_bits=8)
 
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 2)
         self.assertEqual(curve.degree, 2)
         self._subdivide_points_check(curve)
 
@@ -436,7 +445,7 @@ class TestCurve(utils.NumPyTestCase):
         nodes = utils.get_random_nodes(
             shape=(4, 2), seed=990077, num_bits=8)
 
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 3)
         self.assertEqual(curve.degree, 3)
         self._subdivide_points_check(curve)
 
@@ -448,7 +457,7 @@ class TestCurve(utils.NumPyTestCase):
         nodes = utils.get_random_nodes(
             shape=shape, seed=103, num_bits=8)
 
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, degree)
         self.assertEqual(curve.degree, degree)
         self._subdivide_points_check(curve)
 
@@ -457,13 +466,13 @@ class TestCurve(utils.NumPyTestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve1 = self._make_one(nodes1)
+        curve1 = self._make_one(nodes1, 1)
 
         nodes2 = np.array([
             [3.0, 0.0],
             [2.0, 1.0],
         ])
-        curve2 = self._make_one(nodes2)
+        curve2 = self._make_one(nodes2, 1)
 
         result = curve1.intersect(curve2)
         self.assertEqual(result.shape, (0, 2))
@@ -474,7 +483,7 @@ class TestCurve(utils.NumPyTestCase):
             [0.5, -0.25],
             [1.0, 0.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 2)
         left, right = curve.subdivide()
 
         result = left.intersect(right)
@@ -482,8 +491,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_intersect(self):
-        import bezier
-
         # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
         #       onto the interval [1/4, 1] and ``nodes`` is a specialization
         #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
@@ -494,14 +501,14 @@ class TestCurve(utils.NumPyTestCase):
             [0.625, 1.0],
             [1.0, 1.0],
         ])
-        left = bezier.Curve(nodes_left)
+        left = self._make_one(nodes_left, 2)
 
         nodes_right = np.array([
             [0.0, 1.0],
             [0.375, 1.0],
             [0.75, 0.4375],
         ])
-        right = bezier.Curve(nodes_right)
+        right = self._make_one(nodes_right, 2)
 
         result = left.intersect(right)
         expected = np.array([[0.5, 0.75]])
@@ -513,7 +520,7 @@ class TestCurve(utils.NumPyTestCase):
             [0.5, -0.25],
             [1.0, 0.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 2)
         with self.assertRaises(TypeError):
             curve.intersect(object())
 
@@ -523,8 +530,8 @@ class TestCurve(utils.NumPyTestCase):
             [0.5, -0.25, 0.75],
             [1.0, 0.0, 1.25],
         ])
-        curve1 = self._make_one(nodes)
-        curve2 = self._make_one(nodes[:, :2])
+        curve1 = self._make_one(nodes, 2)
+        curve2 = self._make_one(nodes[:, :2], 2)
 
         with self.assertRaises(NotImplementedError):
             curve1.intersect(curve2)
@@ -538,7 +545,7 @@ class TestCurve(utils.NumPyTestCase):
             [3.0, 2.0],
             [3.5, 4.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 3)
         self.assertEqual(curve.degree, 3)
         elevated = curve.elevate()
         self.assertEqual(elevated.degree, 4)
@@ -557,7 +564,7 @@ class TestCurve(utils.NumPyTestCase):
             [1.0, 6.0],
             [5.0, 2.0],
         ])
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 2)
         start = 0.25
         end = 0.875
         new_curve = curve.specialize(start, end)
@@ -573,21 +580,23 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(new_curve.nodes, expected)
 
     def test_locate_wrong_shape(self):
-        curve = self._make_one(np.array([
+        nodes = np.array([
             [0.0, 0.0],
             [1.0, 1.0],
-        ]))
+        ])
+        curve = self._make_one(nodes, 1)
         point = np.array([[0.0, 1.0, 2.0]])
         with self.assertRaises(ValueError):
             curve.locate(point)
 
     def test_locate(self):
-        curve = self._make_one(np.array([
+        nodes = np.array([
             [0.0, 0.0],
             [1.0, 1.0],
             [2.0, -1.0],
             [5.0, 1.0],
-        ]))
+        ])
+        curve = self._make_one(nodes, 3)
         s_val = 0.75
         point = curve.evaluate_multi(np.array([s_val]))
         result = curve.locate(point)

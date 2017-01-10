@@ -228,7 +228,7 @@ class Test_specialize_curve(utils.NumPyTestCase):
             [1.0, 6.0],
             [3.0, 5.0],
         ])
-        curve = bezier.Curve(nodes)
+        curve = bezier.Curve(nodes, 2)
         left, right = curve.subdivide()
 
         left_nodes = self._call_function_under_test(nodes, 2, 0.0, 0.5)
@@ -357,7 +357,7 @@ class Test_newton_refine(unittest.TestCase):
     def test_it(self):
         import bezier
 
-        curve = bezier.Curve(np.array([
+        curve = bezier.Curve.from_nodes(np.array([
             [0.0, 0.0, 0.0],
             [1.0, -1.0, 1.0],
             [3.0, 2.0, 2.0],
@@ -379,7 +379,7 @@ class Test_locate_point(unittest.TestCase):
     def test_it(self):
         import bezier
 
-        curve = bezier.Curve(np.array([
+        curve = bezier.Curve.from_nodes(np.array([
             [0.0, 0.0, 0.0],
             [3.0, 0.0, -1.0],
             [1.0, 1.0, 3.0],
@@ -391,7 +391,7 @@ class Test_locate_point(unittest.TestCase):
     def test_no_match(self):
         import bezier
 
-        curve = bezier.Curve(np.array([
+        curve = bezier.Curve.from_nodes(np.array([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],

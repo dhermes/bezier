@@ -423,7 +423,7 @@ def newton_refine(curve, point, s):
     .. doctest:: newton-refine-curve
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve = bezier.Curve(np.array([
+       >>> curve = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 0.0],
        ...     [1.0, 2.0],
        ...     [3.0, 1.0],
@@ -451,7 +451,7 @@ def newton_refine(curve, point, s):
     .. doctest:: newton-refine-curve-cusp
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve = bezier.Curve(np.array([
+       >>> curve = bezier.Curve.from_nodes(np.array([
        ...     [ 6.0, -3.0],
        ...     [-2.0,  3.0],
        ...     [-2.0, -3.0],
@@ -494,7 +494,7 @@ def newton_refine(curve, point, s):
        import bezier
        from bezier._curve_helpers import newton_refine
 
-       curve = bezier.Curve(np.array([
+       curve = bezier.Curve.from_nodes(np.array([
            [6.0, -3.0],
            [-2.0, 3.0],
            [-2.0, -3.0],

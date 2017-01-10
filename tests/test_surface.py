@@ -84,13 +84,6 @@ class TestSurface(utils.NumPyTestCase):
         with self.assertRaises(ValueError):
             self._make_one(nodes)
 
-    def test_constructor_bad_degree(self):
-        nodes = np.array([
-            [0.0, 0.0],
-        ])
-        with self.assertRaises(ValueError):
-            self._make_one(nodes)
-
     def test___repr__(self):
         nodes = np.zeros((15, 3))
         surface = self._make_one(nodes)

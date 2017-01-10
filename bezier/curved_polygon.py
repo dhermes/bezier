@@ -53,21 +53,21 @@ class CurvedPolygon(object):
     .. doctest:: curved-polygon-constructor
 
        >>> import bezier
-       >>> edge0 = bezier.Curve(np.array([
+       >>> edge0 = bezier.Curve.from_nodes(np.array([
        ...     [0.0,  0.0],
        ...     [1.0, -1.0],
        ...     [2.0,  0.0],
        ... ]))
-       >>> edge1 = bezier.Curve(np.array([
+       >>> edge1 = bezier.Curve.from_nodes(np.array([
        ...     [2.0, 0.0],
        ...     [2.0, 1.0],
        ... ]))
-       >>> edge2 = bezier.Curve(np.array([
+       >>> edge2 = bezier.Curve.from_nodes(np.array([
        ...     [2.0, 1.0],
        ...     [1.0, 2.0],
        ...     [0.0, 1.0],
        ... ]))
-       >>> edge3 = bezier.Curve(np.array([
+       >>> edge3 = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 1.0],
        ...     [0.0, 0.0],
        ... ]))
@@ -90,20 +90,20 @@ class CurvedPolygon(object):
 
     .. doctest:: curved-polygon-constructor-invalid
 
-       >>> edge0 = bezier.Curve(np.array([
+       >>> edge0 = bezier.Curve.from_nodes(np.array([
        ...     [0.0, 0.0],
        ...     [1.0, 0.0],
        ... ]))
-       >>> edge1 = bezier.Curve(np.array([
+       >>> edge1 = bezier.Curve.from_nodes(np.array([
        ...     [1.0 , 0.0],
        ...     [1.25, 0.5],
        ...     [1.0 , 1.0],
        ... ]))
-       >>> edge2 = bezier.Curve(np.array([
+       >>> edge2 = bezier.Curve.from_nodes(np.array([
        ...     [1.0, 1.0],
        ...     [2.0, 1.0],
        ... ]))
-       >>> edge3 = bezier.Curve(np.array([
+       >>> edge3 = bezier.Curve.from_nodes(np.array([
        ...     [2.0, 1.0 ],
        ...     [1.0, 0.75],
        ...     [0.0, 0.0 ],

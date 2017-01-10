@@ -27,7 +27,7 @@ For example, to create a curve:
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
    ... ])
-   >>> curve1 = bezier.Curve(nodes1)
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
 
 The intersection (points) between two curves can
 also be determined:
@@ -41,7 +41,7 @@ also be determined:
    ...     [0.75,  2.0],
    ...     [1.0 ,  0.0],
    ... ])
-   >>> curve2 = bezier.Curve(nodes2)
+   >>> curve2 = bezier.Curve.from_nodes(nodes2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
    array([[ 0.311...,  0.428...],
