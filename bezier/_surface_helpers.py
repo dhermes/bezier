@@ -1866,7 +1866,7 @@ def _to_curved_polygon(surface):
 
 
 def _no_intersections(surface1, surface2):
-    """Determine if one surface is in the other.
+    r"""Determine if one surface is in the other.
 
     Helper for :func:`combine_intersections` that handles the case
     of no points of intersection. In this case, either the surfaces
@@ -1876,8 +1876,10 @@ def _no_intersections(surface1, surface2):
     is contained in the other surface.
 
     Args:
-        surface1 (.Surface): First surface in intersection.
-        surface2 (.Surface): Second surface in intersection.
+        surface1 (.Surface): First surface in intersection (assumed in
+            :math:\mathbf{R}^2`).
+        surface2 (.Surface): Second surface in intersection (assumed in
+            :math:\mathbf{R}^2`).
 
     Returns:
         list: Either an empty list if one surface isn't contained
@@ -1885,12 +1887,17 @@ def _no_intersections(surface1, surface2):
         :class:`.CurvedPolygon` corresponding to the internal surface.
     """
     nodes1 = surface1._nodes  # pylint: disable=protected-access
-    corner1 = nodes1[[0], :]
+    # NOTE: We want the nodes to be 1x2 but accessing ``nodes1[[0], :]``
+    #       and ``nodes2[[0], :]`` makes a copy while the accesses
+    #       below **do not** copy. See
+    #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
+    #        arrays.indexing.html#advanced-indexing)
+    corner1 = nodes1[0, :].reshape((1, 2))
     if surface2.locate(corner1) is not None:
         return [_to_curved_polygon(surface1)]
 
     nodes2 = surface2._nodes  # pylint: disable=protected-access
-    corner2 = nodes2[[0], :]
+    corner2 = nodes2[0, :].reshape((1, 2))
     if surface1.locate(corner2) is not None:
         return [_to_curved_polygon(surface2)]
 

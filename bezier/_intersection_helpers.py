@@ -1089,8 +1089,10 @@ def _tangent_bbox_intersection(left, right, intersections):
        subdivision / intersection process begins.
 
     Args:
-        left (.Curve): First curve being intersected.
-        right (.Curve): Second curve being intersected.
+        left (.Curve): First curve being intersected (assumed in
+            :math:\mathbf{R}^2`).
+        right (.Curve): Second curve being intersected (assumed in
+            :math:\mathbf{R}^2`).
         intersections (list): A list of already encountered
             intersections. If these curves intersect at their tangeny,
             then those intersections will be added to this list.
@@ -1100,9 +1102,14 @@ def _tangent_bbox_intersection(left, right, intersections):
     right_nodes = right._nodes
     # pylint: enable=protected-access
     for i, s in ((0, 0.0), (-1, 1.0)):
-        node_left = left_nodes[[i], :]
+        # NOTE: We want the nodes to be 1x2 but accessing
+        #       ``left_nodes[[index], :]`` makes a copy while the
+        #       accesses below **do not** copy. See
+        #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
+        #        arrays.indexing.html#advanced-indexing)
+        node_left = left_nodes[i, :].reshape((1, 2))
         for j, t in ((0, 0.0), (-1, 1.0)):
-            node_right = right_nodes[[j], :]
+            node_right = right_nodes[j, :].reshape((1, 2))
             if _helpers.vector_close(node_left, node_right):
                 orig_s = (1 - s) * left.start + s * left.end
                 orig_t = (1 - t) * right.start + t * right.end
