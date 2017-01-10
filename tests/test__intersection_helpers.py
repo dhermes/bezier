@@ -770,6 +770,50 @@ class Test__add_intersection(unittest.TestCase):
         self.assertIsNot(intersections[0], intersection2)
 
 
+class Test__endpoint_check(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(
+            left, node_left, s, right, node_right, t, intersections):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._endpoint_check(
+            left, node_left, s, right, node_right, t, intersections)
+
+    def test_not_close(self):
+        node_left = np.array([[0.0, 0.0]])
+        node_right = np.array([[1.0, 1.0]])
+        intersections = []
+        self._call_function_under_test(
+            None, node_left, None, None, node_right, None, intersections)
+        self.assertEqual(intersections, [])
+
+    def test_same(self):
+        import bezier
+
+        left = bezier.Curve(np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ]))
+        right = bezier.Curve(np.array([
+            [1.0, 1.0],
+            [2.0, 1.0],
+        ]))
+
+        node_left = left.nodes[[1], :]
+        node_right = right.nodes[[0], :]
+        intersections = []
+
+        patch = mock.patch('bezier._intersection_helpers.Intersection',
+                           return_value=mock.sentinel.endpoint)
+        with patch as mocked:
+            self._call_function_under_test(
+                left, node_left, 1.0, right, node_right, 0.0, intersections)
+            self.assertEqual(intersections, [mock.sentinel.endpoint])
+            mocked.assert_called_once_with(
+                left, 1.0, right, 0.0, point=node_left)
+
+
 class Test__tangent_bbox_intersection(utils.NumPyTestCase):
 
     @staticmethod

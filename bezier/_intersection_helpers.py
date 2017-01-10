@@ -1055,6 +1055,37 @@ def _add_intersection(intersection, intersections):
     intersections.append(intersection)
 
 
+def _endpoint_check(left, node_left, s, right, node_right, t, intersections):
+    r"""Check if curve endpoints are identical.
+
+    Helper for :func:`_tangent_bbox_intersection`.
+
+    Args:
+        left (.Curve): First curve being intersected (assumed in
+            :math:\mathbf{R}^2`).
+        node_left (numpy.ndarray): ``1x2`` array, one of the endpoints
+            of ``left``.
+        s (float): The parameter corresponding to ``node_left``, so
+             expected to be one of ``0.0`` or ``1.0``.
+        right (.Curve): Second curve being intersected (assumed in
+            :math:\mathbf{R}^2`).
+        node_right (numpy.ndarray): ``1x2`` array, one of the endpoints
+            of ``right``.
+        t (float): The parameter corresponding to ``node_right``, so
+             expected to be one of ``0.0`` or ``1.0``.
+        intersections (list): A list of already encountered
+            intersections. If these curves intersect at their tangeny,
+            then those intersections will be added to this list.
+    """
+    if _helpers.vector_close(node_left, node_right):
+        orig_s = (1 - s) * left.start + s * left.end
+        orig_t = (1 - t) * right.start + t * right.end
+        intersection = Intersection(
+            left.root, orig_s, right.root, orig_t,
+            point=node_left)
+        _add_intersection(intersection, intersections)
+
+
 def _tangent_bbox_intersection(left, right, intersections):
     r"""Check if two curves with tangent bounding boxes intersect.
 
@@ -1101,22 +1132,24 @@ def _tangent_bbox_intersection(left, right, intersections):
     left_nodes = left._nodes
     right_nodes = right._nodes
     # pylint: enable=protected-access
-    for i, s in ((0, 0.0), (-1, 1.0)):
-        # NOTE: We want the nodes to be 1x2 but accessing
-        #       ``left_nodes[[index], :]`` makes a copy while the
-        #       accesses below **do not** copy. See
-        #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
-        #        arrays.indexing.html#advanced-indexing)
-        node_left = left_nodes[i, :].reshape((1, 2))
-        for j, t in ((0, 0.0), (-1, 1.0)):
-            node_right = right_nodes[j, :].reshape((1, 2))
-            if _helpers.vector_close(node_left, node_right):
-                orig_s = (1 - s) * left.start + s * left.end
-                orig_t = (1 - t) * right.start + t * right.end
-                intersection = Intersection(
-                    left.root, orig_s, right.root, orig_t,
-                    point=node_left)
-                _add_intersection(intersection, intersections)
+    # NOTE: We want the nodes to be 1x2 but accessing
+    #       ``left_nodes[[index], :]`` makes a copy while the
+    #       accesses below **do not** copy. See
+    #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
+    #        arrays.indexing.html#advanced-indexing)
+    node_left1 = left_nodes[0, :].reshape((1, 2))
+    node_left2 = left_nodes[-1, :].reshape((1, 2))
+    node_right1 = right_nodes[0, :].reshape((1, 2))
+    node_right2 = right_nodes[-1, :].reshape((1, 2))
+
+    _endpoint_check(
+        left, node_left1, 0.0, right, node_right1, 0.0, intersections)
+    _endpoint_check(
+        left, node_left1, 0.0, right, node_right2, 1.0, intersections)
+    _endpoint_check(
+        left, node_left2, 1.0, right, node_right1, 0.0, intersections)
+    _endpoint_check(
+        left, node_left2, 1.0, right, node_right2, 1.0, intersections)
 
 
 def bbox_line_intersect(nodes, line_start, line_end):
