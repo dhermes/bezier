@@ -72,47 +72,47 @@ class Test__check_close(utils.NumPyTestCase):
             self._call_function_under_test(0.0, curve, 1.0, curve)
 
 
-class Test__check_parameters(unittest.TestCase):
+class Test__wiggle_interval(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(s, t):
+    def _call_function_under_test(value):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._check_parameters(s, t)
+        return _intersection_helpers._wiggle_interval(value)
 
     def test_at_endpoint(self):
         # Really just making sure the function doesn't raise.
-        result = self._call_function_under_test(0.0, 0.5)
-        self.assertEqual(result, (0.0, 0.5))
-        result = self._call_function_under_test(0.5, 1.0)
-        self.assertEqual(result, (0.5, 1.0))
+        result = self._call_function_under_test(0.0)
+        self.assertEqual(result, 0.0)
+        result = self._call_function_under_test(1.0)
+        self.assertEqual(result, 1.0)
 
     def test_near_endpoint(self):
         with self.assertRaises(ValueError):
-            self._call_function_under_test(0.75, 1.0 + 2.0**(-20))
+            self._call_function_under_test(1.0 + 2.0**(-20))
 
-    def test_s_outside(self):
+    def test_outside_below(self):
         with self.assertRaises(ValueError):
-            self._call_function_under_test(-0.25, 0.5)
+            self._call_function_under_test(-0.25)
 
-    def test_t_outside(self):
+    def test_outside_above(self):
         with self.assertRaises(ValueError):
-            self._call_function_under_test(0.25, 1.5)
+            self._call_function_under_test(1.5)
 
     def test_valid(self):
         # Really just making sure the function doesn't raise.
-        result = self._call_function_under_test(0.25, 0.5)
-        self.assertEqual(result, (0.25, 0.5))
+        result = self._call_function_under_test(0.25)
+        self.assertEqual(result, 0.25)
 
     def test_wiggle_below(self):
         value = -2.0**(-60)
-        result = self._call_function_under_test(value, 0.25)
-        self.assertEqual(result, (0.0, 0.25))
+        result = self._call_function_under_test(value)
+        self.assertEqual(result, 0.0)
 
     def test_wiggle_above(self):
         value = 1 + 2.0**(-52)
-        result = self._call_function_under_test(0.875, value)
-        self.assertEqual(result, (0.875, 1.0))
+        result = self._call_function_under_test(value)
+        self.assertEqual(result, 1.0)
 
 
 class Test_bbox_intersect(unittest.TestCase):

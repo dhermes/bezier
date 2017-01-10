@@ -38,7 +38,7 @@ _TOO_MANY_TEMPLATE = (
 # Allow wiggle room for ``s`` and ``t`` computed during segment
 # intersection. Any over- or under-shooting will (hopefully) be
 # resolved in the Newton refinement step. If it isn't resolved, the
-# call to _check_parameters() will fail the intersection.
+# call to _wiggle_interval() will fail the intersection.
 _WIGGLE_START = -2.0**(-16)
 _WIGGLE_END = 1.0 - _WIGGLE_START
 # Even after Newton resolves over- or under-shooting, there may
@@ -74,36 +74,31 @@ def _check_close(s, curve1, t, curve2):
     return vec1
 
 
-def _check_parameters(s, t):
-    r"""Check if ``s``, ``t`` are in :math:`\left[0, 1\right]`.
+def _wiggle_interval(value):
+    r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
 
     Allows a little bit of wiggle room outside the interval. Actually
     checks that values are in :math:`\left[-2^{-50}, 1 + 2^{-50}\right]`.
 
     Args:
-        s (float): Parameter on a curve.
-        t (float): Parameter on a curve.
+        value (float): Value to check in interval.
 
     Returns:
-        Tuple[float, float]: The values of ``s`` and ``t``. May be slightly
-        modified from the input values if they lie outside the unit interval.
+        float: The ``value`` if it's in the interval, or ``0`` or ``1``
+        if the value lies slightly outside.
 
     Raises:
         ValueError: If one of the values falls outside the unit interval
         (with wiggle room).
     """
-    return_vals = []
-    for val, name in ((s, 's'), (t, 't')):
-        if _helpers.in_interval(val, 0.0, 1.0):
-            return_vals.append(val)
-        elif _CHECK_WIGGLE_START < val < 0.0:
-            return_vals.append(0.0)
-        elif 1.0 < val < _CHECK_WIGGLE_END:
-            return_vals.append(1.0)
-        else:
-            raise ValueError(name, 'outside of unit interval', val)
-
-    return return_vals[0], return_vals[1]
+    if _helpers.in_interval(value, 0.0, 1.0):
+        return value
+    elif _CHECK_WIGGLE_START < value < 0.0:
+        return 0.0
+    elif 1.0 < value < _CHECK_WIGGLE_END:
+        return 1.0
+    else:
+        raise ValueError('outside of unit interval', value)
 
 
 def bbox_intersect(nodes1, nodes2):
@@ -1028,7 +1023,8 @@ def from_linearized(left, right, intersections):
     # values of s and t.
     refined_s, refined_t = newton_refine(
         orig_s, orig_left, orig_t, orig_right)
-    refined_s, refined_t = _check_parameters(refined_s, refined_t)
+    refined_s = _wiggle_interval(refined_s)
+    refined_t = _wiggle_interval(refined_t)
     intersection = Intersection(
         orig_left, refined_s, orig_right, refined_t)
     _add_intersection(intersection, intersections)
