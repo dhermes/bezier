@@ -1418,6 +1418,9 @@ class Intersection(object):
             computed on the fly when first accessed.
     """
 
+    __slots__ = ('_left', '_s_val', '_right', '_t_val',
+                 '_point', '_interior_curve')
+
     def __init__(self, left, s, right, t, point=None):
         self._left = left
         self._s_val = s
