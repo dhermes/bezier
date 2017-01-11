@@ -31,6 +31,7 @@ from bezier import _helpers
 
 
 _MAX_LOCATE_SUBDIVISIONS = 20
+_LOCATE_STD_CAP = 0.5**20
 _FLOAT64 = np.float64  # pylint: disable=no-member
 
 
@@ -561,6 +562,11 @@ def locate_point(curve, point):
     Returns:
         Optional[float]: The parameter value (:math:`s`) corresponding
         to ``point`` or :data:`None` if the point is not on the ``curve``.
+
+    Raises:
+        ValueError: If the standard deviation of the remaining start / end
+            parameters among the subdivided intervals exceeds a given
+            threshold (e.g. :math:`2^{-20}`).
     """
     candidates = [curve]
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
@@ -576,7 +582,13 @@ def locate_point(curve, point):
         return None
 
     # pylint: disable=protected-access
-    s_approx = np.mean(
+    params = np.hstack(
         [(candidate._start, candidate._end) for candidate in candidates])
     # pylint: enable=protected-access
+
+    if np.std(params) > _LOCATE_STD_CAP:
+        raise ValueError(
+            'Parameters not close enough to one another', params)
+
+    s_approx = np.mean(params)
     return newton_refine(curve, point, s_approx)

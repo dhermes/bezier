@@ -398,3 +398,17 @@ class Test_locate_point(unittest.TestCase):
         ]))
         point = np.array([[0.5, 2.0]])
         self.assertIsNone(self._call_function_under_test(curve, point))
+
+    def test_failure_on_invalid(self):
+        import bezier
+
+        nodes = np.array([
+            [0.0, 2.0],
+            [-1.0, 0.0],
+            [1.0, 1.0],
+            [-0.75, 1.625],
+        ])
+        curve = bezier.Curve(nodes, 3)
+        point = np.array([[-0.25, 1.375]])
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(curve, point)
