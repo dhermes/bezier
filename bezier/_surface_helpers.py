@@ -1541,7 +1541,7 @@ def handle_corners(intersection):
 
     .. note::
 
-      This assumes the first and second curves in ``intersection`` are edges
+       This assumes the first and second curves in ``intersection`` are edges
        in a surface, so the code (may) rely on ``next_edge`` and / or
        ``previous_edge`` being valid.
 
