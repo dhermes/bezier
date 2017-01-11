@@ -91,7 +91,7 @@ Apache 2.0 - See `the LICENSE`_ for more information.
 .. |circle-build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
    :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
-.. |appveyor-build| image:: https://ci.appveyor.com/api/projects/status/github/dhermes/bezier?branch=master&svg=true
+.. |appveyor-build| image:: https://ci.appveyor.com/api/projects/status/github/dhermes/bezier?svg=true
    :target: https://ci.appveyor.com/project/dhermes/bezier
    :alt: AppVeyor CI Build
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg

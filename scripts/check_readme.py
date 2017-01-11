@@ -50,6 +50,7 @@ def main():
         versions_img=VERSIONS_IMG,
         rtd_version='latest',
         coveralls_branch='master',
+        revision='master',
     )
 
     with open(ACTUAL_FILE, 'r') as file_obj:

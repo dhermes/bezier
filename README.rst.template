@@ -66,7 +66,7 @@ intersections):
    >>> ax.set_ylim(-0.0625, 0.625)
    >>> plt.show()
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/test_curves1_and_13.png
+.. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/test_curves1_and_13.png
    :align: center
 
 Development
@@ -76,14 +76,14 @@ To work on adding a feature or to run the functional tests,
 See the `DEVELOPMENT doc`_ for more information on how to get
 started.
 
-.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/master/DEVELOPMENT.rst
+.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
 
 License
 -------
 
 Apache 2.0 - See `the LICENSE`_ for more information.
 
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/{revision}/LICENSE
 
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}
    :target: http://bezier.readthedocs.io/en/{rtd_version}/
@@ -91,7 +91,7 @@ Apache 2.0 - See `the LICENSE`_ for more information.
 .. |circle-build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
    :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
-.. |appveyor-build| image:: https://ci.appveyor.com/api/projects/status/github/dhermes/bezier?branch=master&svg=true
+.. |appveyor-build| image:: https://ci.appveyor.com/api/projects/status/github/dhermes/bezier?svg=true
    :target: https://ci.appveyor.com/project/dhermes/bezier
    :alt: AppVeyor CI Build{pypi_img}{versions_img}
 .. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch={coveralls_branch}
