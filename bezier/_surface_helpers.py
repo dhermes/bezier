@@ -932,7 +932,7 @@ def classify_intersection(intersection):
        make_images.classify_intersection1(
            s, curve1, tangent1, curve2, tangent2)
 
-    We determine the interior / left one by using the `right-hand rule`_:
+    We determine the interior (i.e. left) one by using the `right-hand rule`_:
     by embedding the tangent vectors in :math:`\mathbf{R}^3`, we
     compute
 
@@ -949,9 +949,9 @@ def classify_intersection(intersection):
 
     If the cross product quantity
     :math:`B_1'(s) \times B_2'(t) = x_1'(s) y_2'(t) - x_2'(t) y_1'(s)`
-    is positive, then the first curve is "to the right", i.e. the second
-    curve is interior. If the cross product is negative, the first
-    curve is interior.
+    is positive, then the first curve is "outside" / "to the right", i.e.
+    the second curve is interior. If the cross product is negative, the
+    first curve is interior.
 
     When :math:`B_1'(s) \times B_2'(t) = 0`, the tangent
     vectors are parallel, i.e. the intersection is a point of tangency:
@@ -1244,16 +1244,17 @@ def classify_intersection(intersection):
 
     # pylint: disable=protected-access
     tangent1 = _curve_helpers.evaluate_hodograph(
-        intersection.left._nodes, intersection.left._degree, intersection.s)
+        intersection.first._nodes, intersection.first._degree, intersection.s)
     tangent2 = _curve_helpers.evaluate_hodograph(
-        intersection.right._nodes, intersection.right._degree, intersection.t)
+        intersection.second._nodes, intersection.second._degree,
+        intersection.t)
     # pylint: enable=protected-access
 
     if _ignored_corner(intersection, tangent1, tangent2):
         return IntersectionClassification.ignored_corner
 
     # Take the cross product of tangent vectors to determine which one
-    # is more "to the left".
+    # is more "inside" / "to the left".
     cross_prod = _helpers.cross_product(tangent1, tangent2)
     if cross_prod < 0:
         return IntersectionClassification.first
@@ -1269,9 +1270,9 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
 
     Args:
         intersection (.Intersection): An intersection object.
-        tangent1 (numpy.ndarray): The tangent vector on the ``left`` curve
+        tangent1 (numpy.ndarray): The tangent vector to the first curve
             at the intersection.
-        tangent2 (numpy.ndarray): The tangent vector on the ``right`` curve
+        tangent2 (numpy.ndarray): The tangent vector to the second curve
             at the intersection.
 
     Returns:
@@ -1294,10 +1295,10 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
     #       parallel and we don't handle that case.
     # pylint: disable=protected-access
     curvature1 = _curve_helpers.get_curvature(
-        intersection.left._nodes, intersection.left._degree,
+        intersection.first._nodes, intersection.first._degree,
         tangent1, intersection.s)
     curvature2 = _curve_helpers.get_curvature(
-        intersection.right._nodes, intersection.right._degree,
+        intersection.second._nodes, intersection.second._degree,
         tangent2, intersection.t)
     # pylint: enable=protected-access
     if dot_prod < 0:
@@ -1375,7 +1376,7 @@ def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     """
     cross_prod = _helpers.cross_product(edge_tangent, corner_tangent)
     # A negative cross product indicates that ``edge_tangent`` is
-    # "to the left" of ``corner_tangent`` (due to right-hand rule).
+    # "inside" / "to the left" of ``corner_tangent`` (due to right-hand rule).
     if cross_prod > 0.0:
         return False
 
@@ -1402,16 +1403,16 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
 
     Args:
         intersection (.Intersection): An intersection to "diagnose".
-        tangent_s (numpy.ndarray): The tangent vector on the ``left`` curve
+        tangent_s (numpy.ndarray): The tangent vector to the first curve
             at the intersection.
-        tangent_t (numpy.ndarray): The tangent vector on the ``right`` curve
+        tangent_t (numpy.ndarray): The tangent vector to the second curve
             at the intersection.
 
     Returns:
         bool: Indicates if the corner is to be ignored.
     """
     # Compute the other edge for the ``s`` surface.
-    prev_edge = intersection.left.previous_edge
+    prev_edge = intersection.first.previous_edge
     # pylint: disable=protected-access
     alt_tangent_s = _curve_helpers.evaluate_hodograph(
         prev_edge._nodes, prev_edge._degree, 1.0)
@@ -1432,7 +1433,7 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
 
     # If ``tangent_t`` is not interior, we check the other ``t``
     # edge that ends at the corner.
-    prev_edge = intersection.right.previous_edge
+    prev_edge = intersection.second.previous_edge
     # pylint: disable=protected-access
     alt_tangent_t = _curve_helpers.evaluate_hodograph(
         prev_edge._nodes, prev_edge._degree, 1.0)
@@ -1479,14 +1480,14 @@ def _ignored_corner(intersection, tangent_s, tangent_t):
 
     .. note::
 
-       This assumes the ``left`` and ``right`` curves are edges
+       This assumes the first and second curves in ``intersection`` are edges
        in a surface, so the code relies on ``previous_edge`` being valid.
 
     Args:
         intersection (.Intersection): An intersection to "diagnose".
-        tangent_s (numpy.ndarray): The tangent vector on the ``left`` curve
+        tangent_s (numpy.ndarray): The tangent vector to the first curve
             at the intersection.
-        tangent_t (numpy.ndarray): The tangent vector on the ``right`` curve
+        tangent_t (numpy.ndarray): The tangent vector to the second curve
             at the intersection.
 
     Returns:
@@ -1499,11 +1500,11 @@ def _ignored_corner(intersection, tangent_s, tangent_t):
                 intersection, tangent_s, tangent_t)
         else:
             # s-only corner.
-            prev_edge = intersection.left.previous_edge
+            prev_edge = intersection.first.previous_edge
             return _ignored_edge_corner(tangent_t, tangent_s, prev_edge)
     elif intersection.t == 0.0:
         # t-only corner.
-        prev_edge = intersection.right.previous_edge
+        prev_edge = intersection.second.previous_edge
         return _ignored_edge_corner(tangent_s, tangent_t, prev_edge)
     else:
         # Not a corner.
@@ -1516,9 +1517,9 @@ def handle_corners(intersection):
     Does nothing if the intersection happens in the middle of two
     edges.
 
-    If the intersection occurs at the end of the ``left`` curve,
+    If the intersection occurs at the end of the first curve,
     moves it to the beginning of the next edge. Similar for the
-    ``right`` curve.
+    second curve.
 
     This function is used as a pre-processing step before passing
     an intersection to :func:`classify_intersection`. There, only
@@ -1527,9 +1528,9 @@ def handle_corners(intersection):
 
     .. note::
 
-       This assumes the ``left`` and ``right`` curves are edges
-       in a surface, so the code (may) rely on ``next_edge``
-       and / or ``previous_edge`` being valid.
+      This assumes the first and second curves in ``intersection`` are edges
+       in a surface, so the code (may) rely on ``next_edge`` and / or
+       ``previous_edge`` being valid.
 
     Args:
         intersection (.Intersection): An intersection to mutate.
@@ -1540,11 +1541,11 @@ def handle_corners(intersection):
     changed = False
     if intersection.s == 1.0:
         intersection.s = 0.0
-        intersection.left = intersection.left.next_edge
+        intersection.first = intersection.first.next_edge
         changed = True
     if intersection.t == 1.0:
         intersection.t = 0.0
-        intersection.right = intersection.right.next_edge
+        intersection.second = intersection.second.next_edge
         changed = True
 
     return changed
@@ -1557,12 +1558,16 @@ def _identifier(intersection):
         intersection (.Intersection): The current intersection.
 
     Returns:
-        Tuple[int, float, int, float]: The edge indices (left first,
-        right third) for the intersection and the parameter values
-        (left second, right fourth).
+        Tuple[int, float, int, float]: The edge indices for the intersection
+        and the parameter values:
+
+        * first edge index
+        * first parameter
+        * second edge index
+        * second parameter
     """
-    return (intersection.left.edge_index, intersection.s,
-            intersection.right.edge_index, intersection.t)
+    return (intersection.first.edge_index, intersection.s,
+            intersection.second.edge_index, intersection.t)
 
 
 def verify_duplicates(duplicates, uniques):
@@ -1639,16 +1644,16 @@ def _to_front(intersection, intersections, unused):
     if intersection.s == 1.0:
         changed = True
         new_intersection = _intersection_helpers.Intersection(
-            intersection.left.next_edge, 0.0,
-            intersection.right, intersection.t,
+            intersection.first.next_edge, 0.0,
+            intersection.second, intersection.t,
             interior_curve=intersection.interior_curve)
         intersection = new_intersection
 
     if intersection.t == 1.0:
         changed = True
         new_intersection = _intersection_helpers.Intersection(
-            intersection.left, intersection.s,
-            intersection.right.next_edge, 0.0,
+            intersection.first, intersection.s,
+            intersection.second.next_edge, 0.0,
             interior_curve=intersection.interior_curve)
         intersection = new_intersection
 
@@ -1656,12 +1661,12 @@ def _to_front(intersection, intersections, unused):
         # Make sure we haven't accidentally ignored an existing intersection.
         for other_int in intersections:
             if (other_int.s == intersection.s and
-                    other_int.left is intersection.left):
+                    other_int.first is intersection.first):
                 intersection = other_int
                 break
 
             if (other_int.t == intersection.t and
-                    other_int.right is intersection.right):
+                    other_int.second is intersection.second):
                 intersection = other_int
                 break
 
@@ -1671,12 +1676,12 @@ def _to_front(intersection, intersections, unused):
 
 
 def _get_next_first(intersection, intersections):
-    """Gets the next node along the current (left) edge.
+    """Gets the next node along the current (first) edge.
 
     Helper for :func:`_get_next` and along with :func:`_get_next_second`, this
     function does the majority of the heavy lifting. **Very** similar to
-    :func:`_get_next_second`, but this works with the left curve while the
-    other function works with the right.
+    :func:`_get_next_second`, but this works with the first curve while the
+    other function works with the second.
 
     Args:
         intersection (.Intersection): The current intersection.
@@ -1686,15 +1691,15 @@ def _get_next_first(intersection, intersections):
 
     Returns:
         .Intersection: The "next" point along a surface of intersection.
-        This will produce the next intersection along the current (left)
+        This will produce the next intersection along the current (first)
         edge or the end of the same edge.
     """
     along_edge = None
-    left = intersection.left
+    first = intersection.first
     s = intersection.s
     for other_int in intersections:
         other_s = other_int.s
-        if other_int.left is left and other_s > s:
+        if other_int.first is first and other_s > s:
             # NOTE: We skip tangent intersections that don't occur
             #       at a corner.
             if (other_s < 1.0 and
@@ -1707,7 +1712,7 @@ def _get_next_first(intersection, intersections):
         # If there is no other intersection on the edge, just return
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
-            left, 1.0, None, None,
+            first, 1.0, None, None,
             interior_curve=IntersectionClassification.first)
         return new_intersection
     else:
@@ -1715,12 +1720,12 @@ def _get_next_first(intersection, intersections):
 
 
 def _get_next_second(intersection, intersections):
-    """Gets the next node along the current (right) edge.
+    """Gets the next node along the current (second) edge.
 
     Helper for :func:`_get_next` and along with :func:`_get_next_first`, this
     function does the majority of the heavy lifting. **Very** similar to
-    :func:`_get_next_first`, but this works with the right curve while the
-    other function works with the left.
+    :func:`_get_next_first`, but this works with the second curve while the
+    other function works with the first.
 
     Args:
         intersection (.Intersection): The current intersection.
@@ -1730,15 +1735,15 @@ def _get_next_second(intersection, intersections):
 
     Returns:
         .Intersection: The "next" point along a surface of intersection.
-        This will produce the next intersection along the current (right)
+        This will produce the next intersection along the current (second)
         edge or the end of the same edge.
     """
     along_edge = None
-    right = intersection.right
+    second = intersection.second
     t = intersection.t
     for other_int in intersections:
         other_t = other_int.t
-        if other_int.right is right and other_t > t:
+        if other_int.second is second and other_t > t:
             # NOTE: We skip tangent intersections that don't occur
             #       at a corner.
             if (other_t < 1.0 and
@@ -1751,7 +1756,7 @@ def _get_next_second(intersection, intersections):
         # If there is no other intersection on the edge, just return
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
-            None, None, right, 1.0,
+            None, None, second, 1.0,
             interior_curve=IntersectionClassification.second)
         return new_intersection
     else:
@@ -1809,10 +1814,11 @@ def _ends_to_curve(start_node, end_node):
 
     .. note::
 
-       This function determines "left" or "right" curve based on the
-       classification of ``start_node``, but the callers of this
-       function could provide that information / isolate the
-       base curve and the two parameters for us.
+       This function could specialize to the first or second segment
+       attached to ``start_node`` and ``end_node``. We determine
+       first / second based on the classification of ``start_node``,
+       but the callers of this function could provide that information /
+       isolate the base curve and the two parameters for us.
 
     .. note::
 
@@ -1827,22 +1833,22 @@ def _ends_to_curve(start_node, end_node):
 
     Raises:
         ValueError: If the ``start_node`` and ``end_node`` disagree on
-            the "left" curve when classified as "first" or disagree on
-            the "right" curve when classified as "second".
+            the first curve when classified as "first" or disagree on
+            the second curve when classified as "second".
         ValueError: If the ``start_node`` is not classified as
             :attr:`~.IntersectionClassification.first` or
             :attr:`~.IntersectionClassification.second`.
     """
     if start_node.interior_curve is IntersectionClassification.first:
-        left = start_node.left
-        if end_node.left is not left:
+        first = start_node.first
+        if end_node.first is not first:
             raise ValueError(_WRONG_CURVE)
-        return left.specialize(start_node.s, end_node.s)
+        return first.specialize(start_node.s, end_node.s)
     elif start_node.interior_curve is IntersectionClassification.second:
-        right = start_node.right
-        if end_node.right is not right:
+        second = start_node.second
+        if end_node.second is not second:
             raise ValueError(_WRONG_CURVE)
-        return right.specialize(start_node.t, end_node.t)
+        return second.specialize(start_node.t, end_node.t)
     else:
         raise ValueError('Segment start must be classified as '
                          '"first" or "second".')

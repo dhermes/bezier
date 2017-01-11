@@ -28,9 +28,9 @@ def check_intersection(test_case, intersection, expected,
     test_case.assertIsInstance(
         intersection, _intersection_helpers.Intersection)
     test_case.assertEqual(intersection.get_point(), expected)
-    test_case.assertIs(intersection.left, curve1)
+    test_case.assertIs(intersection.first, curve1)
     test_case.assertEqual(intersection.s, s_val)
-    test_case.assertIs(intersection.right, curve2)
+    test_case.assertIs(intersection.second, curve2)
     test_case.assertEqual(intersection.t, t_val)
 
 
@@ -604,11 +604,11 @@ class Test_parallel_different(unittest.TestCase):
 class Test_from_linearized(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(left, right, intersections):
+    def _call_function_under_test(first, second, intersections):
         from bezier import _intersection_helpers
 
         return _intersection_helpers.from_linearized(
-            left, right, intersections)
+            first, second, intersections)
 
     def test_it(self):
         import bezier
@@ -745,9 +745,9 @@ class Test__add_intersection(unittest.TestCase):
         from bezier import _intersection_helpers
 
         intersection1 = _intersection_helpers.Intersection(
-            mock.sentinel.left, 0.5, mock.sentinel.right, 0.5)
+            mock.sentinel.first, 0.5, mock.sentinel.second, 0.5)
         intersection2 = _intersection_helpers.Intersection(
-            mock.sentinel.left, 0.75, mock.sentinel.right, 0.25)
+            mock.sentinel.first, 0.75, mock.sentinel.second, 0.25)
         intersections = [intersection1]
         self.assertIsNone(
             self._call_function_under_test(intersection2, intersections))
@@ -758,9 +758,9 @@ class Test__add_intersection(unittest.TestCase):
         from bezier import _intersection_helpers
 
         intersection1 = _intersection_helpers.Intersection(
-            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0)
+            mock.sentinel.first, 0.0, mock.sentinel.second, 1.0)
         intersection2 = _intersection_helpers.Intersection(
-            mock.sentinel.left, 0.0, mock.sentinel.right, 1.0)
+            mock.sentinel.first, 0.0, mock.sentinel.second, 1.0)
         intersections = [intersection1]
         self.assertIsNone(
             self._call_function_under_test(intersection2, intersections))
@@ -774,54 +774,55 @@ class Test__endpoint_check(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(
-            left, node_left, s, right, node_right, t, intersections):
+            first, node_first, s, second, node_second, t, intersections):
         from bezier import _intersection_helpers
 
         return _intersection_helpers._endpoint_check(
-            left, node_left, s, right, node_right, t, intersections)
+            first, node_first, s, second, node_second, t, intersections)
 
     def test_not_close(self):
-        node_left = np.array([[0.0, 0.0]])
-        node_right = np.array([[1.0, 1.0]])
+        node_first = np.array([[0.0, 0.0]])
+        node_second = np.array([[1.0, 1.0]])
         intersections = []
         self._call_function_under_test(
-            None, node_left, None, None, node_right, None, intersections)
+            None, node_first, None, None, node_second, None, intersections)
         self.assertEqual(intersections, [])
 
     def test_same(self):
         import bezier
 
-        left = bezier.Curve.from_nodes(np.array([
+        first = bezier.Curve.from_nodes(np.array([
             [0.0, 0.0],
             [1.0, 1.0],
         ]))
-        right = bezier.Curve.from_nodes(np.array([
+        second = bezier.Curve.from_nodes(np.array([
             [1.0, 1.0],
             [2.0, 1.0],
         ]))
 
-        node_left = left.nodes[[1], :]
-        node_right = right.nodes[[0], :]
+        node_first = first.nodes[[1], :]
+        node_second = second.nodes[[0], :]
         intersections = []
 
         patch = mock.patch('bezier._intersection_helpers.Intersection',
                            return_value=mock.sentinel.endpoint)
         with patch as mocked:
             self._call_function_under_test(
-                left, node_left, 1.0, right, node_right, 0.0, intersections)
+                first, node_first, 1.0,
+                second, node_second, 0.0, intersections)
             self.assertEqual(intersections, [mock.sentinel.endpoint])
             mocked.assert_called_once_with(
-                left, 1.0, right, 0.0, point=node_left)
+                first, 1.0, second, 0.0, point=node_first)
 
 
 class Test__tangent_bbox_intersection(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(left, right, intersections):
+    def _call_function_under_test(first, second, intersections):
         from bezier import _intersection_helpers
 
         return _intersection_helpers._tangent_bbox_intersection(
-            left, right, intersections)
+            first, second, intersections)
 
     def test_it(self):
         import bezier
@@ -892,7 +893,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 
         self.assertEqual(accepted, [(curve1, curve2)])
 
-    def test_left_linearized(self):
+    def test_first_linearized(self):
         import bezier
         from bezier import _intersection_helpers
 
@@ -907,7 +908,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         self.assertEqual(intersections, [])
         self.assertEqual(accepted, [(lin1, curve2)])
 
-    def test_right_linearized(self):
+    def test_second_linearized(self):
         import bezier
         from bezier import _intersection_helpers
 
@@ -945,10 +946,10 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 class Test__next_candidates(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(left, right):
+    def _call_function_under_test(first, second):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._next_candidates(left, right)
+        return _intersection_helpers._next_candidates(first, second)
 
     def test_it(self):
         import types
@@ -1175,17 +1176,17 @@ class TestIntersection(unittest.TestCase):
         return klass(*args, **kwargs)
 
     def _constructor_helper(self, **kwargs):
-        left = mock.sentinel.left
+        first = mock.sentinel.first
         s_val = 0.25
-        right = mock.sentinel.right
+        second = mock.sentinel.second
         t_val = 0.75
 
         intersection = self._make_one(
-            left, s_val, right, t_val, **kwargs)
+            first, s_val, second, t_val, **kwargs)
 
-        self.assertIs(intersection.left, left)
+        self.assertIs(intersection.first, first)
         self.assertEqual(intersection.s, s_val)
-        self.assertIs(intersection.right, right)
+        self.assertIs(intersection.second, second)
         self.assertEqual(intersection.t, t_val)
         return intersection
 
@@ -1221,7 +1222,7 @@ class TestIntersection(unittest.TestCase):
         s_val = 1.0
         t_val = 0.0
         intersection = self._make_one(
-            mock.sentinel.left, s_val, mock.sentinel.right, t_val)
+            mock.sentinel.first, s_val, mock.sentinel.second, t_val)
 
         patch = mock.patch(
             'bezier._intersection_helpers._check_close',
@@ -1230,4 +1231,4 @@ class TestIntersection(unittest.TestCase):
             self.assertIsNone(intersection.point)
             self.assertIs(intersection.get_point(), mock.sentinel.point)
             mocked.assert_called_once_with(
-                s_val, mock.sentinel.left, t_val, mock.sentinel.right)
+                s_val, mock.sentinel.first, t_val, mock.sentinel.second)

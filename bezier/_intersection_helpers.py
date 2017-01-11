@@ -988,23 +988,23 @@ def parallel_different(start0, end0, start1, end1):
     return not _helpers.in_interval(0.0, min_val, max_val)
 
 
-def from_linearized(left, right, intersections):
+def from_linearized(first, second, intersections):
     """Determine curve-curve intersection from pair of linearizations.
 
     If there is an intersection along the segments, adds that intersection
     to ``intersections``. Otherwise, returns without doing anything.
 
     Args:
-        left (Linearization): First curve being intersected.
-        right (Linearization): Second curve being intersected.
+        first (Linearization): First curve being intersected.
+        second (Linearization): Second curve being intersected.
         intersections (list): A list of existing intersections.
 
     Raises:
         NotImplementedError: If the segment intersection fails.
     """
     s, t, success = segment_intersection(
-        left.start_node, left.end_node,
-        right.start_node, right.end_node)
+        first.start_node, first.end_node,
+        second.start_node, second.end_node)
     if success:
         if not _helpers.in_interval(s, _WIGGLE_START, _WIGGLE_END):
             return
@@ -1012,26 +1012,26 @@ def from_linearized(left, right, intersections):
             return
     else:
         # Handle special case where the curves are actually lines.
-        if left.error == 0.0 and right.error == 0.0:
-            if parallel_different(left.start_node, left.end_node,
-                                  right.start_node, right.end_node):
+        if first.error == 0.0 and second.error == 0.0:
+            if parallel_different(first.start_node, first.end_node,
+                                  second.start_node, second.end_node):
                 return
 
         raise NotImplementedError('Line segments parallel.')
 
     # Now, promote `s` and `t` onto the original curves.
-    orig_s = (1 - s) * left.curve.start + s * left.curve.end
-    orig_left = left.curve.root
-    orig_t = (1 - t) * right.curve.start + t * right.curve.end
-    orig_right = right.curve.root
+    orig_s = (1 - s) * first.curve.start + s * first.curve.end
+    orig_first = first.curve.root
+    orig_t = (1 - t) * second.curve.start + t * second.curve.end
+    orig_second = second.curve.root
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
     refined_s, refined_t = newton_refine(
-        orig_s, orig_left, orig_t, orig_right)
+        orig_s, orig_first, orig_t, orig_second)
     refined_s = _wiggle_interval(refined_s)
     refined_t = _wiggle_interval(refined_t)
     intersection = Intersection(
-        orig_left, refined_s, orig_right, refined_t)
+        orig_first, refined_s, orig_second, refined_t)
     _add_intersection(intersection, intersections)
 
 
@@ -1046,8 +1046,8 @@ def _add_intersection(intersection, intersections):
         intersections (list): List of existing intersections.
     """
     for existing in intersections:
-        if (existing.left is intersection.left and
-                existing.right is intersection.right and
+        if (existing.first is intersection.first and
+                existing.second is intersection.second and
                 _helpers.n_bits_away(existing.s, intersection.s) and
                 _helpers.n_bits_away(existing.t, intersection.t)):
             return
@@ -1055,38 +1055,39 @@ def _add_intersection(intersection, intersections):
     intersections.append(intersection)
 
 
-def _endpoint_check(left, node_left, s, right, node_right, t, intersections):
+def _endpoint_check(first, node_first, s,
+                    second, node_second, t, intersections):
     r"""Check if curve endpoints are identical.
 
     Helper for :func:`_tangent_bbox_intersection`.
 
     Args:
-        left (.Curve): First curve being intersected (assumed in
+        first (.Curve): First curve being intersected (assumed in
             :math:\mathbf{R}^2`).
-        node_left (numpy.ndarray): ``1x2`` array, one of the endpoints
-            of ``left``.
-        s (float): The parameter corresponding to ``node_left``, so
+        node_first (numpy.ndarray): ``1x2`` array, one of the endpoints
+            of ``first``.
+        s (float): The parameter corresponding to ``node_first``, so
              expected to be one of ``0.0`` or ``1.0``.
-        right (.Curve): Second curve being intersected (assumed in
+        second (.Curve): Second curve being intersected (assumed in
             :math:\mathbf{R}^2`).
-        node_right (numpy.ndarray): ``1x2`` array, one of the endpoints
-            of ``right``.
-        t (float): The parameter corresponding to ``node_right``, so
+        node_second (numpy.ndarray): ``1x2`` array, one of the endpoints
+            of ``second``.
+        t (float): The parameter corresponding to ``node_second``, so
              expected to be one of ``0.0`` or ``1.0``.
         intersections (list): A list of already encountered
             intersections. If these curves intersect at their tangeny,
             then those intersections will be added to this list.
     """
-    if _helpers.vector_close(node_left, node_right):
-        orig_s = (1 - s) * left.start + s * left.end
-        orig_t = (1 - t) * right.start + t * right.end
+    if _helpers.vector_close(node_first, node_second):
+        orig_s = (1 - s) * first.start + s * first.end
+        orig_t = (1 - t) * second.start + t * second.end
         intersection = Intersection(
-            left.root, orig_s, right.root, orig_t,
-            point=node_left)
+            first.root, orig_s, second.root, orig_t,
+            point=node_first)
         _add_intersection(intersection, intersections)
 
 
-def _tangent_bbox_intersection(left, right, intersections):
+def _tangent_bbox_intersection(first, second, intersections):
     r"""Check if two curves with tangent bounding boxes intersect.
 
     If the bounding boxes are tangent, intersection can
@@ -1120,36 +1121,36 @@ def _tangent_bbox_intersection(left, right, intersections):
        subdivision / intersection process begins.
 
     Args:
-        left (.Curve): First curve being intersected (assumed in
+        first (.Curve): First curve being intersected (assumed in
             :math:\mathbf{R}^2`).
-        right (.Curve): Second curve being intersected (assumed in
+        second (.Curve): Second curve being intersected (assumed in
             :math:\mathbf{R}^2`).
         intersections (list): A list of already encountered
             intersections. If these curves intersect at their tangeny,
             then those intersections will be added to this list.
     """
     # pylint: disable=protected-access
-    left_nodes = left._nodes
-    right_nodes = right._nodes
+    first_nodes = first._nodes
+    second_nodes = second._nodes
     # pylint: enable=protected-access
     # NOTE: We want the nodes to be 1x2 but accessing
-    #       ``left_nodes[[index], :]`` makes a copy while the
+    #       ``first_nodes[[index], :]`` makes a copy while the
     #       accesses below **do not** copy. See
     #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
     #        arrays.indexing.html#advanced-indexing)
-    node_left1 = left_nodes[0, :].reshape((1, 2))
-    node_left2 = left_nodes[-1, :].reshape((1, 2))
-    node_right1 = right_nodes[0, :].reshape((1, 2))
-    node_right2 = right_nodes[-1, :].reshape((1, 2))
+    node_first1 = first_nodes[0, :].reshape((1, 2))
+    node_first2 = first_nodes[-1, :].reshape((1, 2))
+    node_second1 = second_nodes[0, :].reshape((1, 2))
+    node_second2 = second_nodes[-1, :].reshape((1, 2))
 
     _endpoint_check(
-        left, node_left1, 0.0, right, node_right1, 0.0, intersections)
+        first, node_first1, 0.0, second, node_second1, 0.0, intersections)
     _endpoint_check(
-        left, node_left1, 0.0, right, node_right2, 1.0, intersections)
+        first, node_first1, 0.0, second, node_second2, 1.0, intersections)
     _endpoint_check(
-        left, node_left2, 1.0, right, node_right1, 0.0, intersections)
+        first, node_first2, 1.0, second, node_second1, 0.0, intersections)
     _endpoint_check(
-        left, node_left2, 1.0, right, node_right2, 1.0, intersections)
+        first, node_first2, 1.0, second, node_second2, 1.0, intersections)
 
 
 def bbox_line_intersect(nodes, line_start, line_end):
@@ -1176,8 +1177,7 @@ def bbox_line_intersect(nodes, line_start, line_end):
         BoxIntersectionType: Enum indicating the type of bounding
         box intersection.
     """
-    left, bottom = np.min(nodes, axis=0)
-    right, top = np.max(nodes, axis=0)
+    left, right, bottom, top = _helpers.bbox(nodes)
 
     if (_helpers.in_interval(line_start[0, 0], left, right) and
             _helpers.in_interval(line_start[0, 1], bottom, top)):
@@ -1249,61 +1249,63 @@ def intersect_one_round(candidates, intersections):
     """
     accepted = []
 
-    for left, right in candidates:
-        if isinstance(left, Linearization):
-            if isinstance(right, Linearization):
-                # If both ``left`` and ``right`` are linearizations, then
+    for first, second in candidates:
+        if isinstance(first, Linearization):
+            # pylint: disable=protected-access
+            if isinstance(second, Linearization):
+                # If both ``first`` and ``second`` are linearizations, then
                 # we can intersect them immediately.
-                from_linearized(left, right, intersections)
+                from_linearized(first, second, intersections)
                 continue
             else:
-                right_nodes = right._nodes  # pylint: disable=protected-access
                 bbox_int = bbox_line_intersect(
-                    right_nodes, left.start_node, left.end_node)
-        elif isinstance(right, Linearization):
-            left_nodes = left._nodes  # pylint: disable=protected-access
+                    second._nodes, first.start_node, first.end_node)
+            # pylint: enable=protected-access
+        elif isinstance(second, Linearization):
+            # pylint: disable=protected-access
             bbox_int = bbox_line_intersect(
-                left_nodes, right.start_node, right.end_node)
+                first._nodes, second.start_node, second.end_node)
+            # pylint: enable=protected-access
         else:
-            left_nodes = left._nodes  # pylint: disable=protected-access
-            right_nodes = right._nodes  # pylint: disable=protected-access
-            bbox_int = bbox_intersect(left_nodes, right_nodes)
+            first_nodes = first._nodes  # pylint: disable=protected-access
+            second_nodes = second._nodes  # pylint: disable=protected-access
+            bbox_int = bbox_intersect(first_nodes, second_nodes)
 
         if bbox_int is BoxIntersectionType.disjoint:
             continue
         elif bbox_int is BoxIntersectionType.tangent:
-            _tangent_bbox_intersection(left, right, intersections)
+            _tangent_bbox_intersection(first, second, intersections)
             continue
 
         # If we haven't ``continue``-d, add the accepted pair.
-        accepted.append((left, right))
+        accepted.append((first, second))
 
     return accepted
 
 
-def _next_candidates(left, right):
+def _next_candidates(first, second):
     """Take a pair of "accepted" curves and subdivide them.
 
     Attempts to replace the subdivided curves with linearizations
     if they are close enough to lines.
 
     Args:
-        left (Union[.Curve, Linearization]): First curve in pair.
-        right (Union[.Curve, Linearization]): Second curve in pair.
+        first (Union[.Curve, Linearization]): First curve in pair.
+        second (Union[.Curve, Linearization]): Second curve in pair.
 
     Yields:
-        tuple: Pairs of left and right curves after subdivision, some of
+        tuple: Pairs of first and second curves after subdivision, some of
         which may be linearized.
     """
-    # NOTE: This may be a wasted computation, e.g. if ``left``
+    # NOTE: This may be a wasted computation, e.g. if ``first``
     #       occurs in multiple accepted pairs. However, in practice
     #       the number of such pairs will be small so this cost
     #       will be low.
-    for new_left in left.subdivide():
-        new_left = Linearization.from_shape(new_left)
-        for new_right in right.subdivide():
-            new_right = Linearization.from_shape(new_right)
-            yield new_left, new_right
+    for new_first in first.subdivide():
+        new_first = Linearization.from_shape(new_first)
+        for new_second in second.subdivide():
+            new_second = Linearization.from_shape(new_second)
+            yield new_first, new_second
 
 
 def all_intersections(candidates):
@@ -1333,8 +1335,8 @@ def all_intersections(candidates):
     # First make sure any curves that are linear / near-linear are
     # linearized (to avoid unnecessary checks, e.g. bbox intersect check).
     candidates = [
-        (Linearization.from_shape(left), Linearization.from_shape(right))
-        for left, right in candidates
+        (Linearization.from_shape(first), Linearization.from_shape(second))
+        for first, second in candidates
     ]
 
     intersections = []
@@ -1353,8 +1355,8 @@ def all_intersections(candidates):
         # If we **do** require more subdivisions, we need to update
         # the list of candidates.
         candidates = itertools.chain(*[
-            _next_candidates(left, right)
-            for left, right in accepted])
+            _next_candidates(first, second)
+            for first, second in accepted])
 
     raise ValueError(
         'Curve intersection failed to converge to approximately '
@@ -1437,11 +1439,11 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
     """Representation of a curve-curve intersection.
 
     Args:
-        left (.Curve): The "left" curve in the intersection.
-        s (float): The parameter along ``left`` where the
+        first (.Curve): The "first" curve in the intersection.
+        s (float): The parameter along ``first`` where the
             intersection occurs.
-        right (.Curve): The "right" curve in the intersection.
-        t (float): The parameter along ``right`` where the
+        second (.Curve): The "second" curve in the intersection.
+        t (float): The parameter along ``second`` where the
             intersection occurs.
         point (Optional[numpy.ndarray]): The point where the two
             curves actually intersect.
@@ -1449,18 +1451,18 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             classification of the intersection.
     """
 
-    __slots__ = ('left', 's', 'right', 't',
+    __slots__ = ('first', 's', 'second', 't',
                  'point', 'interior_curve')
 
-    def __init__(self, left, s, right, t, point=None, interior_curve=None):
-        self.left = left
-        """Curve: The "left" curve in the intersection."""
+    def __init__(self, first, s, second, t, point=None, interior_curve=None):
+        self.first = first
+        """Curve: The "first" curve in the intersection."""
         self.s = s
-        """float: The intersection parameter for the :attr:`.left` curve."""
-        self.right = right
-        """Curve: The "right" curve in the intersection."""
+        """float: The intersection parameter for the :attr:`.first` curve."""
+        self.second = second
+        """Curve: The "second" curve in the intersection."""
         self.t = t
-        """float: The intersection parameter for the :attr:`.right` curve."""
+        """float: The intersection parameter for the :attr:`.second` curve."""
         self.point = point
         """numpy.ndarray: The point where the intersection occurs."""
         self.interior_curve = interior_curve
@@ -1481,6 +1483,6 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         """
         if self.point is None:
             return _check_close(
-                self.s, self.left, self.t, self.right)
+                self.s, self.first, self.t, self.second)
         else:
             return self.point

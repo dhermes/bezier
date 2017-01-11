@@ -34,6 +34,7 @@ except ImportError:
 
 import bezier
 from bezier import _intersection_helpers
+from bezier import _plot_helpers
 
 
 _DOCS_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -187,15 +188,7 @@ def helper_parallel_different(start0, end0, start1, end1, filename):
     ax.plot(points[2:, 0], points[2:, 1], marker='o')
 
     ax.axis('scaled')
-    left, bottom = np.min(points, axis=0)
-    right, top = np.max(points, axis=0)
-    width_x = right - left
-    center_x = 0.5 * (right + left)
-    width_y = top - bottom
-    center_y = 0.5 * (top + bottom)
-
-    ax.set_xlim(center_x - 0.5625 * width_x, center_x + 0.5625 * width_x)
-    ax.set_ylim(center_y - 0.5625 * width_y, center_y + 0.5625 * width_y)
+    _plot_helpers.add_plot_boundary(ax)
 
     save_image(figure, filename)
 

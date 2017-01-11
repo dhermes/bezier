@@ -315,8 +315,8 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points,
 
     info = six.moves.zip(intersections, s_vals, t_vals, points)
     for intersection, s_val, t_val, point in info:
-        assert intersection.left is curve1
-        assert intersection.right is curve2
+        assert intersection.first is curve1
+        assert intersection.second is curve2
 
         CONFIG.assert_close(intersection.s, s_val)
         CONFIG.assert_close(intersection.t, t_val)
