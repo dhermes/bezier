@@ -99,7 +99,9 @@ class Test_polynomial_sign(unittest.TestCase):
         #          [0.0   0.5  ]
         #          [0.5   0.5  ]
         #          [0.25  1.0  ]
+        # pylint: disable=no-member
         bernstein = np.array([[1.0, 0.5, 0.0, 0.75, 0.4375, 1.0]]).T
+        # pylint: enable=no-member
         self._helper(bernstein, 0)
 
 

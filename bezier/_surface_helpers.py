@@ -265,7 +265,9 @@ def polynomial_sign(poly_surface):
             number of subdivisions.
     """
     # The indices where the corner nodes in a surface are.
+    # pylint: disable=protected-access
     corner_indices = (0, poly_surface._degree, -1)
+    # pylint: enable=protected-access
     sub_polys = [poly_surface]
     signs = set()
     for _ in six.moves.xrange(_MAX_POLY_SUBDIVISIONS):
