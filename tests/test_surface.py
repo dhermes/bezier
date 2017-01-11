@@ -65,7 +65,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.625, 0.5],
             [1.0, 0.75],
         ])
-        surface = self._make_one(nodes, _copy=False)
+        surface = self._make_one(nodes, 1, _copy=False)
         self.assertEqual(surface._degree, 1)
         self.assertEqual(surface._dimension, 2)
         self.assertIs(surface._nodes, nodes)
@@ -74,19 +74,44 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(surface._width, 1.0)
         self.assertIsNone(surface._area)
         self.assertIsNone(surface._edges)
+        self.assertIsNone(surface._is_valid)
 
     def test_constructor_wrong_dimension(self):
         nodes = np.array([1.0, 2.0])
         with self.assertRaises(ValueError):
-            self._make_one(nodes)
+            self._make_one(nodes, 0)
 
-        nodes = np.zeros((2, 2, 2))
+        nodes = np.zeros((3, 2, 2))
         with self.assertRaises(ValueError):
-            self._make_one(nodes)
+            self._make_one(nodes, 1)
+
+    def test_from_nodes_factory(self):
+        nodes = np.array([
+            [0.0, 0.0, 0.0],
+            [1.0, 0.5, 0.0],
+            [2.0, 0.0, 0.0],
+            [0.0, 1.0, 2.0],
+            [1.0, 1.0, 0.0],
+            [2.0, 3.0, 0.0],
+        ])
+        klass = self._get_target_class()
+
+        surface = klass.from_nodes(
+            nodes, base_x=0.25, base_y=0.0, width=0.625)
+        self.assertIsInstance(surface, klass)
+        self.assertEqual(surface._degree, 2)
+        self.assertEqual(surface._dimension, 3)
+        self.assertEqual(surface._nodes, nodes)
+        self.assertEqual(surface._base_x, 0.25)
+        self.assertEqual(surface._base_y, 0.0)
+        self.assertEqual(surface._width, 0.625)
+        self.assertIsNone(surface._area)
+        self.assertIsNone(surface._edges)
+        self.assertIsNone(surface._is_valid)
 
     def test___repr__(self):
         nodes = np.zeros((15, 3))
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 4)
         expected = '<Surface (degree=4, dimension=3)>'
         self.assertEqual(repr(surface), expected)
 
@@ -101,7 +126,7 @@ class TestSurface(utils.NumPyTestCase):
         base_y = 0.3125
         width = 0.03125
         surface = self._make_one(
-            nodes, base_x=base_x, base_y=base_y, width=width)
+            nodes, degree, base_x=base_x, base_y=base_y, width=width)
         expected = surface_mod._REPR_TEMPLATE.format(
             'Surface', degree, dimension, base_x, base_y, width)
         self.assertEqual(repr(surface), expected)
@@ -130,7 +155,7 @@ class TestSurface(utils.NumPyTestCase):
             [1.0, 2.0],
             [2.0, 3.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
         self.assertIsNone(surface._area)
         with self.assertRaises(NotImplementedError):
             getattr(surface, 'area')
@@ -141,21 +166,21 @@ class TestSurface(utils.NumPyTestCase):
             [1.0, 2.0],
             [2.0, 3.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
         area = 3.14159
         surface._area = area
         self.assertEqual(surface.area, area)
 
     def test_width_property(self):
-        surface = self._make_one(np.zeros((3, 1)))
+        surface = self._make_one(np.zeros((3, 1)), 1)
         self.assertEqual(surface.width, 1.0)
 
     def test_base_x_property(self):
-        surface = self._make_one(np.zeros((3, 1)))
+        surface = self._make_one(np.zeros((3, 1)), 1)
         self.assertEqual(surface.base_x, 0.0)
 
     def test_base_y_property(self):
-        surface = self._make_one(np.zeros((3, 1)))
+        surface = self._make_one(np.zeros((3, 1)), 1)
         self.assertEqual(surface.base_y, 0.0)
 
     def _edges_helper(self, edge1, edge2, edge3,
@@ -187,7 +212,7 @@ class TestSurface(utils.NumPyTestCase):
             [-3.0, 3.0],
         ])
         p100, p010, p001 = nodes
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
 
         edge1, edge2, edge3 = surface._compute_edges()
         self._edges_helper(
@@ -199,7 +224,7 @@ class TestSurface(utils.NumPyTestCase):
     def test__compute_edges_quadratic(self):
         nodes = self.QUADRATIC
         p200, p110, p020, p101, p011, p002 = nodes
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 2)
 
         edge1, edge2, edge3 = surface._compute_edges()
         self._edges_helper(
@@ -223,7 +248,7 @@ class TestSurface(utils.NumPyTestCase):
         ])
         (p300, p210, p120, p030, p201,
          unused_p111, p021, p102, p012, p003) = nodes
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 3)
 
         edges = surface._compute_edges()
         self._edges_helper(
@@ -233,7 +258,7 @@ class TestSurface(utils.NumPyTestCase):
             np.vstack([p003, p102, p201, p300]))
 
     def test__get_edges(self):
-        surface = self._make_one_no_slots(np.zeros((3, 1)))
+        surface = self._make_one_no_slots(np.zeros((3, 1)), 1)
         compute_mock = mock.Mock(return_value=mock.sentinel.edges)
         surface._compute_edges = compute_mock
 
@@ -244,7 +269,7 @@ class TestSurface(utils.NumPyTestCase):
         compute_mock.assert_called_once_with()
 
     def test__get_edges_cached(self):
-        surface = self._make_one_no_slots(np.zeros((3, 1)))
+        surface = self._make_one_no_slots(np.zeros((3, 1)), 1)
         compute_mock = mock.Mock()
         surface._compute_edges = compute_mock
 
@@ -255,7 +280,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_edges_property(self):
         nodes = self.UNIT_TRIANGLE
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
 
         edge1, edge2, edge3 = surface.edges
         nodes1 = nodes[:2, :]
@@ -265,7 +290,7 @@ class TestSurface(utils.NumPyTestCase):
                            nodes1, nodes2, nodes3)
 
     def test_edges_property_cached(self):
-        surface = self._make_one_no_slots(np.zeros((3, 2)))
+        surface = self._make_one_no_slots(np.zeros((3, 2)), 1)
 
         # Create mock "edges" to be computed.
         sentinel1 = mock.Mock(spec=['_copy'])
@@ -298,7 +323,7 @@ class TestSurface(utils.NumPyTestCase):
             [1.0, 0.5],
             [0.0, 1.25],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
 
         expected = np.array([[0.5, 0.5625]])
         result = surface.evaluate_barycentric(*lambda_vals)
@@ -314,7 +339,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.0, 1.25],
             [0.0, 0.5],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 2)
 
         expected = np.array([[0.0625, 0.78125]])
         result = surface.evaluate_barycentric(*lambda_vals)
@@ -334,14 +359,14 @@ class TestSurface(utils.NumPyTestCase):
             [0.25, 0.75],
             [0.0, 1.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 3)
 
         expected = np.array([[0.447265625, 0.37060546875]])
         result = surface.evaluate_barycentric(*lambda_vals)
         self.assertEqual(result, expected)
 
     def test_evaluate_barycentric_negative_weights(self):
-        surface = self._make_one(np.zeros((3, 2)))
+        surface = self._make_one(np.zeros((3, 2)), 1)
 
         lambda_vals = (0.25, -0.5, 1.25)
         self.assertEqual(sum(lambda_vals), 1.0)
@@ -356,7 +381,7 @@ class TestSurface(utils.NumPyTestCase):
             [1.0, 0.5],
             [0.0, 1.25],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
 
         self.assertLess(min(lambda_vals), 0.0)
         result = surface.evaluate_barycentric(*lambda_vals, _verify=False)
@@ -365,7 +390,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_evaluate_barycentric_non_unity_weights(self):
-        surface = self._make_one(np.zeros((3, 2)))
+        surface = self._make_one(np.zeros((3, 2)), 1)
 
         lambda_vals = (0.25, 0.25, 0.25)
         self.assertNotEqual(sum(lambda_vals), 1.0)
@@ -380,7 +405,7 @@ class TestSurface(utils.NumPyTestCase):
             [1.0, 0.5],
             [0.0, 1.25],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
 
         self.assertNotEqual(sum(lambda_vals), 1.0)
         result = surface.evaluate_barycentric(*lambda_vals, _verify=False)
@@ -395,7 +420,8 @@ class TestSurface(utils.NumPyTestCase):
         # the nodes to 8 bits of precision to avoid round-off.
         nodes = utils.get_random_nodes(
             shape=(15, 2), seed=11112222, num_bits=8)
-        surface = self._make_one(nodes)
+        klass = self._get_target_class()
+        surface = klass.from_nodes(nodes)
         self.assertEqual(surface.degree, 4)
 
         lambda_vals = (0.125, 0.375, 0.5)
@@ -422,14 +448,14 @@ class TestSurface(utils.NumPyTestCase):
             [2.0, 1.5],
             [1.0, 2.75],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
 
         expected = np.array([[1.125, 1.28125]])
         result = surface.evaluate_cartesian(*s_t_vals)
         self.assertEqual(result, expected)
 
     def _calls_barycentric(self, **kwargs):
-        surface = self._make_one_no_slots(np.zeros((3, 2)))
+        surface = self._make_one_no_slots(np.zeros((3, 2)), 1)
         eval_method = mock.Mock()
         surface.evaluate_barycentric = eval_method
 
@@ -460,7 +486,7 @@ class TestSurface(utils.NumPyTestCase):
             [-0.5, 1.5],
             [-3.0, 2.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 2)
         expected = np.array([
             [-1.75, 1.75],
             [0.0, 0.0],
@@ -483,7 +509,7 @@ class TestSurface(utils.NumPyTestCase):
             [2.0, 1.0],
             [-3.0, 2.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
         expected = np.array([
             [0.0, 0.0],
             [2.0, 1.0],
@@ -499,13 +525,13 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_evaluate_multi_wrong_dimension(self):
-        surface = self._make_one(np.zeros((3, 2)))
+        surface = self._make_one(np.zeros((3, 2)), 1)
         param_vals_1d = np.zeros((4,))
         with self.assertRaises(ValueError):
             surface.evaluate_multi(param_vals_1d)
 
     def test_evaluate_multi_wrong_param_cols(self):
-        surface = self._make_one(np.zeros((3, 2)))
+        surface = self._make_one(np.zeros((3, 2)), 1)
         param_vals = np.zeros((4, 4))
         with self.assertRaises(ValueError):
             surface.evaluate_multi(param_vals)
@@ -561,7 +587,7 @@ class TestSurface(utils.NumPyTestCase):
         import matplotlib.lines
 
         nodes = self.UNIT_TRIANGLE
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 1)
         plt = mock.Mock()
 
         figure = mock.Mock()
@@ -607,7 +633,7 @@ class TestSurface(utils.NumPyTestCase):
         import matplotlib.lines
 
         nodes = self.UNIT_TRIANGLE
-        curve = self._make_one(nodes)
+        curve = self._make_one(nodes, 1)
         plt = mock.Mock()
 
         ax = mock.Mock()
@@ -632,7 +658,7 @@ class TestSurface(utils.NumPyTestCase):
             [1.0, 3.0, 4.0],
             [2.0, 6.0, 9.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
         with self.assertRaises(NotImplementedError):
             surface.plot(32)
 
@@ -640,7 +666,7 @@ class TestSurface(utils.NumPyTestCase):
                           expected_c, expected_d):
         klass = self._get_target_class()
 
-        surface = self._make_one(nodes)
+        surface = klass.from_nodes(nodes)
         surface_a, surface_b, surface_c, surface_d = surface.subdivide()
 
         self.assertIsInstance(surface_a, klass)
@@ -704,7 +730,8 @@ class TestSurface(utils.NumPyTestCase):
         nodes = utils.get_random_nodes(
             shape=(3, 2), seed=123987, num_bits=8)
 
-        surface = self._make_one(nodes)
+        klass = self._get_target_class()
+        surface = klass.from_nodes(nodes)
         self.assertEqual(surface.degree, 1)
         self._subdivide_points_check(surface)
 
@@ -759,7 +786,8 @@ class TestSurface(utils.NumPyTestCase):
         nodes = utils.get_random_nodes(
             shape=(6, 2), seed=45001, num_bits=8)
 
-        surface = self._make_one(nodes)
+        klass = self._get_target_class()
+        surface = klass.from_nodes(nodes)
         self.assertEqual(surface.degree, 2)
         self._subdivide_points_check(surface)
 
@@ -834,7 +862,8 @@ class TestSurface(utils.NumPyTestCase):
         nodes = utils.get_random_nodes(
             shape=(10, 2), seed=346323, num_bits=8)
 
-        surface = self._make_one(nodes)
+        klass = self._get_target_class()
+        surface = klass.from_nodes(nodes)
         self.assertEqual(surface.degree, 3)
         self._subdivide_points_check(surface)
 
@@ -845,7 +874,8 @@ class TestSurface(utils.NumPyTestCase):
         nodes = utils.get_random_nodes(
             shape=(15, 2), seed=741002, num_bits=8)
 
-        surface = self._make_one(nodes)
+        klass = self._get_target_class()
+        surface = klass.from_nodes(nodes)
         self.assertEqual(surface.degree, 4)
         self._subdivide_points_check(surface)
 
@@ -858,12 +888,13 @@ class TestSurface(utils.NumPyTestCase):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
 
-        surface = self._make_one(nodes)
+        klass = self._get_target_class()
+        surface = klass.from_nodes(nodes)
         self.assertEqual(surface.degree, 5)
         self._subdivide_points_check(surface)
 
     def test__compute_valid_valid_linear(self):
-        surface = self._make_one(self.UNIT_TRIANGLE)
+        surface = self._make_one(self.UNIT_TRIANGLE, 1)
         self.assertTrue(surface._compute_valid())
 
     def test__compute_valid_invalid_linear(self):
@@ -872,7 +903,7 @@ class TestSurface(utils.NumPyTestCase):
             [1.0, 2.0, 2.0],
             [2.0, 4.0, 4.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 1)
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_quadratic_valid(self):
@@ -884,7 +915,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.625, 0.625],
             [0.0, 1.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 2)
         self.assertTrue(surface._compute_valid())
 
     def test__compute_valid_quadratic_invalid(self):
@@ -897,11 +928,11 @@ class TestSurface(utils.NumPyTestCase):
             [0.0, 0.0],
             [0.0, 1.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 2)
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_quadratic_bad_dimension(self):
-        surface = self._make_one(np.zeros((6, 3)))
+        surface = self._make_one(np.zeros((6, 3)), 2)
         with self.assertRaises(NotImplementedError):
             surface._compute_valid()
 
@@ -918,7 +949,7 @@ class TestSurface(utils.NumPyTestCase):
             [1.25, 2.25],
             [0.0, 3.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 3)
         self.assertTrue(surface._compute_valid())
 
     def test__compute_valid_cubic_invalid(self):
@@ -935,20 +966,20 @@ class TestSurface(utils.NumPyTestCase):
             [0.0, 0.0],
             [0.0, 1.0],
         ])
-        surface = self._make_one(nodes)
+        surface = self._make_one(nodes, 3)
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_bad_degree(self):
-        surface = self._make_one(np.zeros((15, 2)))
+        surface = self._make_one(np.zeros((15, 2)), 4)
         with self.assertRaises(NotImplementedError):
             surface._compute_valid()
 
     def test_is_valid_property(self):
-        surface = self._make_one(self.UNIT_TRIANGLE)
+        surface = self._make_one(self.UNIT_TRIANGLE, 1)
         self.assertTrue(surface.is_valid)
 
     def test_is_valid_property_cached(self):
-        surface = self._make_one_no_slots(np.zeros((3, 2)))
+        surface = self._make_one_no_slots(np.zeros((3, 2)), 1)
         compute_valid = mock.Mock()
         surface._compute_valid = compute_valid
         compute_valid.return_value = True
@@ -965,7 +996,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(compute_valid.call_count, 1)
 
     def test_locate(self):
-        surface = self._make_one(self.QUADRATIC)
+        surface = self._make_one(self.QUADRATIC, 2)
         point = surface.evaluate_multi(np.array([
             [0.5, 0.25]]))
         s, t = surface.locate(point)
@@ -973,13 +1004,13 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(t, 0.25)
 
     def test_locate_bad_dimension(self):
-        surface = self._make_one(np.array([
-            [0.0], [1.0], [2.0]]))
+        nodes = np.array([[0.0, 1.0, 2.0]]).T  # pylint: disable=no-member
+        surface = self._make_one(nodes, 1)
         with self.assertRaises(NotImplementedError):
             surface.locate(None)
 
     def test_locate_bad_point(self):
-        surface = self._make_one(self.QUADRATIC)
+        surface = self._make_one(self.QUADRATIC, 2)
         point1 = np.array([0.0, 1.0])
         point2 = np.array([[0.0, 1.0, 2.0]])
         with self.assertRaises(ValueError):
@@ -990,13 +1021,14 @@ class TestSurface(utils.NumPyTestCase):
     def _basic_intersect_helper(self, **kwargs):
         import bezier
 
-        surface1 = self._make_one(self.UNIT_TRIANGLE)
+        surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
         # Similar triangle with overlapping square.
-        surface2 = self._make_one(np.array([
+        nodes = np.array([
             [0.5, 0.0],
             [0.5, 1.0],
             [-0.5, 1.0],
-        ]))
+        ])
+        surface2 = self._make_one(nodes, 1)
 
         intersections = surface1.intersect(surface2, **kwargs)
         self.assertEqual(len(intersections), 1)
@@ -1021,35 +1053,37 @@ class TestSurface(utils.NumPyTestCase):
         self._basic_intersect_helper(_verify=False)
 
     def test_intersect_disjoint_bbox(self):
-        surface1 = self._make_one(self.UNIT_TRIANGLE)
-        surface2 = self._make_one(np.array([
+        surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
+        nodes = np.array([
             [4.0, 0.0],
             [5.0, 0.0],
             [4.0, 1.0],
-        ]))
+        ])
+        surface2 = self._make_one(nodes, 1)
 
         intersections = surface1.intersect(surface2)
         self.assertEqual(intersections, [])
 
     def test_intersect_tangent_bbox(self):
-        surface1 = self._make_one(self.UNIT_TRIANGLE)
-        surface2 = self._make_one(np.array([
+        surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
+        nodes = np.array([
             [0.0, 0.0],
             [0.0, 1.0],
             [-1.0, 1.0],
-        ]))
+        ])
+        surface2 = self._make_one(nodes, 1)
 
         intersections = surface1.intersect(surface2)
         self.assertEqual(intersections, [])
 
     def test_intersect_non_surface(self):
-        surface = self._make_one(self.UNIT_TRIANGLE)
+        surface = self._make_one(self.UNIT_TRIANGLE, 1)
         with self.assertRaises(TypeError):
             surface.intersect(object())
 
     def test_intersect_unsupported_dimension(self):
-        surface1 = self._make_one(self.UNIT_TRIANGLE)
-        surface2 = self._make_one(np.zeros((3, 3)))
+        surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
+        surface2 = self._make_one(np.zeros((3, 3)), 1)
 
         with self.assertRaises(NotImplementedError):
             surface1.intersect(surface2)
@@ -1057,7 +1091,8 @@ class TestSurface(utils.NumPyTestCase):
             surface2.intersect(surface1)
 
     def test_elevate_linear(self):
-        surface = self._make_one(np.array([
+        klass = self._get_target_class()
+        surface = klass.from_nodes(np.array([
             [0.0, 0.0],
             [2.0, 1.0],
             [-1.0, 2.0],
@@ -1080,9 +1115,11 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(main_vals, sub_vals)
 
     def test_elevate_quadratic(self):
+        klass = self._get_target_class()
+
         nodes = np.array([[0.0, 6.0, 9.0, 0.0, 6.0, -3.0]])
         nodes = nodes.T  # pylint: disable=no-member
-        surface = self._make_one(nodes)
+        surface = klass.from_nodes(nodes)
         elevated = surface.elevate()
         expected = np.array([
             [0.0, 4.0, 7.0, 9.0, 0.0, 4.0, 7.0, -1.0, 3.0, -3.0]])

@@ -377,7 +377,7 @@ def cubic_jacobian_polynomial(nodes):
         nodes (numpy.ndarray): A 10x2 array of nodes in a surface.
 
     Returns:
-        numpy.ndarray: Coefficients in Bernstein basis.
+        numpy.ndarray: 15x1 array, coefficients in Bernstein basis.
     """
     # First evaluate the Jacobian at each of the 15 nodes
     # in the quartic triangle.
@@ -746,7 +746,7 @@ def newton_refine(surface, x_val, y_val, s, t):
 
     .. doctest:: newton-refine-surface
 
-       >>> surface = bezier.Surface(np.array([
+       >>> surface = bezier.Surface.from_nodes(np.array([
        ...     [0.0, 0.0],
        ...     [1.0, 0.0],
        ...     [2.0, 0.0],
@@ -1182,7 +1182,7 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection8
        :options: +NORMALIZE_WHITESPACE
 
-       >>> surface1 = bezier.Surface(np.array([
+       >>> surface1 = bezier.Surface.from_nodes(np.array([
        ...     [0.25 , 1.0  ],
        ...     [0.0  , 0.5  ],
        ...     [0.0  , 0.0  ],
@@ -1190,7 +1190,7 @@ def classify_intersection(intersection):
        ...     [0.5  , 0.375],
        ...     [1.0  , 0.75 ],
        ... ]))
-       >>> surface2 = bezier.Surface(np.array([
+       >>> surface2 = bezier.Surface.from_nodes(np.array([
        ...     [ 0.0625, 0.5  ],
        ...     [-0.25  , 1.0  ],
        ...     [-1.0   , 1.0  ],

@@ -148,7 +148,7 @@ class Surface(_base.Base):
        ...     [0.375, 0.375],
        ...     [0.25 , 1.0  ],
        ... ])
-       >>> surface = bezier.Surface(nodes)
+       >>> surface = bezier.Surface(nodes, degree=2)
        >>> surface
        <Surface (degree=2, dimension=2)>
 
@@ -161,6 +161,9 @@ class Surface(_base.Base):
         nodes (numpy.ndarray): The nodes in the surface. The rows
             represent each node while the columns are the dimension
             of the ambient space.
+        degree (int): The degree of the surface. This is assumed to
+            correctly correspond to the number of ``nodes``. Use
+            :meth:`from_nodes` if the degree has not yet been computed.
         base_x (Optional[float]): The :math:`x`-coordinate of the base
            vertex of the sub-triangle that this surface represents.
         base_y (Optional[float]): The :math:`y`-coordinate of the base
@@ -173,21 +176,49 @@ class Surface(_base.Base):
     """
 
     __slots__ = (
-        '_degree', '_dimension', '_nodes',  # From base class
-        '_base_x', '_base_y', '_width',  # From constructor
+        '_dimension', '_nodes',  # From base class
+        '_degree', '_base_x', '_base_y', '_width',  # From constructor
         '_area', '_edges', '_is_valid',  # Empty defaults
     )
 
-    def __init__(self, nodes, base_x=0.0, base_y=0.0, width=1.0, _copy=True):
+    def __init__(self, nodes, degree, base_x=0.0, base_y=0.0,
+                 width=1.0, _copy=True):
         super(Surface, self).__init__(nodes, _copy=_copy)
-        num_nodes, _ = nodes.shape
-        self._degree = self._get_degree(num_nodes)
+        self._degree = degree
         self._base_x = base_x
         self._base_y = base_y
         self._width = width
         self._area = None
         self._edges = None
         self._is_valid = None
+
+    @classmethod
+    def from_nodes(cls, nodes, base_x=0.0, base_y=0.0, width=1.0, _copy=True):
+        """Create a :class:`.Surface` from nodes.
+
+        Computes the ``degree`` based on the shape of ``nodes``.
+
+        Args:
+            nodes (numpy.ndarray): The nodes in the surface. The rows
+                represent each node while the columns are the dimension
+                of the ambient space.
+            base_x (Optional[float]): The :math:`x`-coordinate of the base
+               vertex of the sub-triangle that this surface represents.
+            base_y (Optional[float]): The :math:`y`-coordinate of the base
+               vertex of the sub-triangle that this surface represents.
+            width (Optional[float]): The width of the sub-triangle that
+               this surface represents.
+            _copy (bool): Flag indicating if the nodes should be copied before
+                being stored. Defaults to :data:`True` since callers may
+                freely mutate ``nodes`` after passing in.
+
+        Returns:
+            Surface: The constructed surface.
+        """
+        num_nodes, _ = nodes.shape
+        degree = cls._get_degree(num_nodes)
+        return cls(nodes, degree, base_x=base_x, base_y=base_y,
+                   width=width, _copy=True)
 
     def __repr__(self):
         """Representation of current object.
@@ -260,7 +291,7 @@ class Surface(_base.Base):
            import numpy as np
            import bezier
 
-           surface = bezier.Surface(np.array([
+           surface = bezier.Surface.from_nodes(np.array([
                [0.0, 0.0],
                [1.0, 0.0],
                [0.0, 1.0],
@@ -380,7 +411,7 @@ class Surface(_base.Base):
            ...     [0.625 ,  0.625 ],
            ...     [0.0   ,  1.0   ],
            ... ])
-           >>> surface = bezier.Surface(nodes)
+           >>> surface = bezier.Surface(nodes, 2)
            >>> edge1, _, _ = surface.edges
            >>> edge1
            <Curve (degree=2, dimension=2)>
@@ -425,7 +456,7 @@ class Surface(_base.Base):
                [0.375, 0.375],
                [0.25 , 1.0  ],
            ])
-           surface = bezier.Surface(nodes)
+           surface = bezier.Surface(nodes, 2)
 
         .. doctest:: surface-barycentric
            :options: +NORMALIZE_WHITESPACE
@@ -438,7 +469,7 @@ class Surface(_base.Base):
            ...     [0.375, 0.375],
            ...     [0.25 , 1.0  ],
            ... ])
-           >>> surface = bezier.Surface(nodes)
+           >>> surface = bezier.Surface(nodes, 2)
            >>> point = surface.evaluate_barycentric(0.125, 0.125, 0.75)
            >>> point
            array([[ 0.265625 , 0.73046875]])
@@ -569,7 +600,7 @@ class Surface(_base.Base):
            ...     [0.5 , 0.5  ],
            ...     [0.25, 1.0  ],
            ... ])
-           >>> surface = bezier.Surface(nodes)
+           >>> surface = bezier.Surface(nodes, 2)
            >>> point = surface.evaluate_cartesian(0.125, 0.375)
            >>> point
            array([[ 0.16015625, 0.44726562]])
@@ -606,7 +637,7 @@ class Surface(_base.Base):
            ...     [ 2.0, 1.0],
            ...     [-3.0, 2.0],
            ... ])
-           >>> surface = bezier.Surface(nodes)
+           >>> surface = bezier.Surface(nodes, 1)
            >>> surface
            <Surface (degree=1, dimension=2)>
            >>> param_vals = np.array([
@@ -641,7 +672,7 @@ class Surface(_base.Base):
            ...     [-0.5, 1.5 ],
            ...     [-3. , 2.  ],
            ... ])
-           >>> surface = bezier.Surface(nodes)
+           >>> surface = bezier.Surface(nodes, 2)
            >>> surface
            <Surface (degree=2, dimension=2)>
            >>> param_vals = np.array([
@@ -802,7 +833,7 @@ class Surface(_base.Base):
            ...     [ 2.0 , 3.0 ],
            ...     [ 0.0 , 4.0 ],
            ... ])
-           >>> surface = bezier.Surface(nodes)
+           >>> surface = bezier.Surface(nodes, 2)
            >>> _, sub_surface_b, _, _ = surface.subdivide()
            >>> sub_surface_b
            <Surface (degree=2, dimension=2, base=(0.5, 0.5), width=-0.5)>
@@ -869,14 +900,14 @@ class Surface(_base.Base):
         shifted_x = self._base_x + half_width
         shifted_y = self._base_y + half_width
         return (
-            Surface(nodes_a, base_x=self._base_x, base_y=self._base_y,
-                    width=half_width, _copy=False),
-            Surface(nodes_b, base_x=shifted_x, base_y=shifted_y,
+            Surface(nodes_a, self._degree, base_x=self._base_x,
+                    base_y=self._base_y, width=half_width, _copy=False),
+            Surface(nodes_b, self._degree, base_x=shifted_x, base_y=shifted_y,
                     width=-half_width, _copy=False),
-            Surface(nodes_c, base_x=shifted_x, base_y=self._base_y,
-                    width=half_width, _copy=False),
-            Surface(nodes_d, base_x=self._base_x, base_y=shifted_y,
-                    width=half_width, _copy=False),
+            Surface(nodes_c, self._degree, base_x=shifted_x,
+                    base_y=self._base_y, width=half_width, _copy=False),
+            Surface(nodes_d, self._degree, base_x=self._base_x,
+                    base_y=shifted_y, width=half_width, _copy=False),
         )
 
     def _compute_valid(self):
@@ -906,12 +937,14 @@ class Surface(_base.Base):
             if self._degree == 2:
                 bernstein = _surface_helpers.quadratic_jacobian_polynomial(
                     self._nodes)
+                jac_degree = 2
             else:
                 bernstein = _surface_helpers.cubic_jacobian_polynomial(
                     self._nodes)
+                jac_degree = 4
 
             # Form the polynomial p(s, t) as a Surface.
-            jac_poly = Surface(bernstein, _copy=False)
+            jac_poly = Surface(bernstein, jac_degree, _copy=False)
             # Find the sign of the polynomial, where 0 means mixed.
             poly_sign = _surface_helpers.polynomial_sign(jac_poly)
             return poly_sign != 0
@@ -940,7 +973,7 @@ class Surface(_base.Base):
            ...     [1.0, 1.0],
            ...     [2.0, 2.0],
            ... ])
-           >>> surface = bezier.Surface(nodes)
+           >>> surface = bezier.Surface(nodes, 1)
            >>> surface.is_valid
            False
 
@@ -964,7 +997,7 @@ class Surface(_base.Base):
            ...     [ 0.5  , 0.5  ],
            ...     [ 0.0  , 1.0  ],
            ... ])
-           >>> surface = bezier.Surface(nodes)
+           >>> surface = bezier.Surface(nodes, 2)
            >>> surface.is_valid
            True
 
@@ -988,7 +1021,7 @@ class Surface(_base.Base):
            ...     [0.0, 0.0],
            ...     [0.0, 1.0],
            ... ])
-           >>> surface = bezier.Surface(nodes)
+           >>> surface = bezier.Surface(nodes, 2)
            >>> surface.is_valid
            False
 
@@ -1016,7 +1049,7 @@ class Surface(_base.Base):
 
         .. doctest:: surface-locate
 
-           >>> surface = bezier.Surface(np.array([
+           >>> surface = bezier.Surface.from_nodes(np.array([
            ...     [0.0 ,  0.0 ],
            ...     [0.5 , -0.25],
            ...     [1.0 ,  0.0 ],
@@ -1160,7 +1193,7 @@ class Surface(_base.Base):
         .. doctest:: surface-elevate
            :options: +NORMALIZE_WHITESPACE
 
-           >>> surface = bezier.Surface(np.array([
+           >>> surface = bezier.Surface.from_nodes(np.array([
            ...     [0.0, 0.0],
            ...     [1.0, 0.0],
            ...     [0.0, 1.0],
@@ -1216,4 +1249,4 @@ class Surface(_base.Base):
         denominator = self._degree + 1.0
         new_nodes /= denominator
 
-        return Surface(new_nodes, _copy=False)
+        return Surface(new_nodes, self._degree + 1, _copy=False)

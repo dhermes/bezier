@@ -32,7 +32,8 @@ class Base(object):
         ValueError: If the ``nodes`` are not 2D.
     """
 
-    __slots__ = ('_degree', '_dimension', '_nodes')
+    __slots__ = ('_dimension', '_nodes')
+    _degree = -1
 
     def __init__(self, nodes, _copy=True):
         if nodes.ndim != 2:
@@ -40,7 +41,6 @@ class Base(object):
                              nodes.ndim)
 
         _, dimension = nodes.shape
-        self._degree = -1
         self._dimension = dimension
         if _copy:
             self._nodes = nodes.copy()

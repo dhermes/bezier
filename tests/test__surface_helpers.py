@@ -52,7 +52,7 @@ class Test_polynomial_sign(unittest.TestCase):
     def _helper(self, bernstein, expected):
         import bezier
 
-        poly_surface = bezier.Surface(bernstein)
+        poly_surface = bezier.Surface.from_nodes(bernstein)
         result = self._call_function_under_test(poly_surface)
         self.assertEqual(result, expected)
 
@@ -423,11 +423,11 @@ class Test__mean_centroid(unittest.TestCase):
             [1.0, 0.0],
             [0.0, 1.0],
         ])
-        surface1 = bezier.Surface(nodes)
+        surface1 = bezier.Surface(nodes, 1)
         surface2 = bezier.Surface(
-            nodes, base_x=0.5, base_y=0.25, width=0.75)
+            nodes, 1, base_x=0.5, base_y=0.25, width=0.75)
         surface3 = bezier.Surface(
-            nodes, base_x=0.25, base_y=1.25, width=0.5)
+            nodes, 1, base_x=0.25, base_y=1.25, width=0.5)
 
         centroid_x, centroid_y = self._call_function_under_test(
             [surface1, surface2, surface3])
@@ -542,7 +542,7 @@ class Test_newton_refine(unittest.TestCase):
     def test_it(self):
         import bezier
 
-        surface = bezier.Surface(np.array([
+        surface = bezier.Surface.from_nodes(np.array([
             [0.0, 0.0],
             [0.5, -0.25],
             [1.0, 0.0],
@@ -575,7 +575,7 @@ class Test_locate_point(unittest.TestCase):
     def test_it(self):
         import bezier
 
-        surface = bezier.Surface(UNIT_TRIANGLE)
+        surface = bezier.Surface(UNIT_TRIANGLE, 1)
         x_val = 0.25
         y_val = 0.625
         s, t = self._call_function_under_test(surface, x_val, y_val)
@@ -585,7 +585,7 @@ class Test_locate_point(unittest.TestCase):
     def test_extra_newton_step(self):
         import bezier
 
-        surface = bezier.Surface(UNIT_TRIANGLE)
+        surface = bezier.Surface(UNIT_TRIANGLE, 1)
         x_val = 1.0 / 3.0
         y_val = 1.0 / 3.0
         with mock.patch('bezier._surface_helpers._LOCATE_EPS', new=-1.0):
@@ -597,7 +597,7 @@ class Test_locate_point(unittest.TestCase):
     def test_no_match(self):
         import bezier
 
-        surface = bezier.Surface(UNIT_TRIANGLE)
+        surface = bezier.Surface(UNIT_TRIANGLE, 1)
         x_val = -0.125
         y_val = 0.25
         self.assertIsNone(
@@ -682,9 +682,9 @@ class Test_classify_intersection(unittest.TestCase):
     def test_ignored_corner(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         left, _, _ = surface1.edges
-        surface2 = bezier.Surface(np.array([
+        surface2 = bezier.Surface.from_nodes(np.array([
             [0.0, 0.0],
             [-1.0, 0.0],
             [0.0, -1.0],
@@ -912,13 +912,13 @@ class Test__ignored_double_corner(unittest.TestCase):
     def test_ignored(self):
         import bezier
 
-        surface1 = bezier.Surface(np.array([
+        surface1 = bezier.Surface.from_nodes(np.array([
             [1.0, 0.0],
             [1.5, 0.25],
             [0.5, 1.0],
         ]))
         left, _, _ = surface1.edges
-        surface2 = bezier.Surface(UNIT_TRIANGLE)
+        surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
         _, right, _ = surface2.edges
         intersection = make_intersect(left, 0.0, right, 0.0)
         tangent_s = np.array([[0.5, 0.25]])
@@ -931,9 +931,9 @@ class Test__ignored_double_corner(unittest.TestCase):
     def test_overlap_first(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         _, left, _ = surface1.edges
-        surface2 = bezier.Surface(np.array([
+        surface2 = bezier.Surface.from_nodes(np.array([
             [1.0, 0.0],
             [1.0, 1.0],
             [0.5, 0.25],
@@ -950,13 +950,13 @@ class Test__ignored_double_corner(unittest.TestCase):
     def test_overlap_second(self):
         import bezier
 
-        surface1 = bezier.Surface(np.array([
+        surface1 = bezier.Surface.from_nodes(np.array([
             [1.0, 0.0],
             [1.0, 1.0],
             [0.5, 0.25],
         ]))
         left, _, _ = surface1.edges
-        surface2 = bezier.Surface(UNIT_TRIANGLE)
+        surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
         _, right, _ = surface2.edges
         intersection = make_intersect(left, 0.0, right, 0.0)
         tangent_s = np.array([[0.0, 1.0]])
@@ -969,13 +969,13 @@ class Test__ignored_double_corner(unittest.TestCase):
     def test_segment_contained(self):
         import bezier
 
-        surface1 = bezier.Surface(np.array([
+        surface1 = bezier.Surface.from_nodes(np.array([
             [0.0, 0.0],
             [1.0, 0.5],
             [0.5, 1.0],
         ]))
         left, _, _ = surface1.edges
-        surface2 = bezier.Surface(UNIT_TRIANGLE)
+        surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
         right, _, _ = surface2.edges
         intersection = make_intersect(left, 0.0, right, 0.0)
         tangent_s = np.array([[1.0, 0.5]])
@@ -1480,7 +1480,7 @@ class Test__to_curved_polygon(utils.NumPyTestCase):
     def test_it(self):
         import bezier
 
-        surface = bezier.Surface(UNIT_TRIANGLE)
+        surface = bezier.Surface(UNIT_TRIANGLE, 1)
         result = self._call_function_under_test(surface)
         self.assertIsInstance(result, bezier.CurvedPolygon)
         self.assertEqual(result._num_sides, 3)
@@ -1500,16 +1500,17 @@ class Test__no_intersections(unittest.TestCase):
     def test_disjoint(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE)
-        surface2 = bezier.Surface(UNIT_TRIANGLE + np.array([[5.0, 0.0]]))
+        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
+        surface2 = bezier.Surface(UNIT_TRIANGLE + np.array([[5.0, 0.0]]), 1)
         result = self._call_function_under_test(surface1, surface2)
         self.assertEqual(result, [])
 
     def test_first_contained(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE)
-        surface2 = bezier.Surface(4.0 * UNIT_TRIANGLE - np.array([[1.0, 1.0]]))
+        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
+        surface2 = bezier.Surface(
+            4.0 * UNIT_TRIANGLE - np.array([[1.0, 1.0]]), 1)
 
         patch = mock.patch(
             'bezier._surface_helpers._to_curved_polygon',
@@ -1523,8 +1524,9 @@ class Test__no_intersections(unittest.TestCase):
     def test_second_contained(self):
         import bezier
 
-        surface1 = bezier.Surface(4.0 * UNIT_TRIANGLE - np.array([[1.0, 1.0]]))
-        surface2 = bezier.Surface(UNIT_TRIANGLE)
+        surface1 = bezier.Surface(
+            4.0 * UNIT_TRIANGLE - np.array([[1.0, 1.0]]), 1)
+        surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
 
         patch = mock.patch(
             'bezier._surface_helpers._to_curved_polygon',
@@ -1607,9 +1609,9 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
     def test_it(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         edges1 = surface1.edges
-        surface2 = bezier.Surface(np.array([
+        surface2 = bezier.Surface.from_nodes(np.array([
             [0.5, 0.25],
             [1.0, 0.25],
             [0.75, 1.0],
@@ -1659,9 +1661,9 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
     def test_corner_node_next(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         edges1 = surface1._get_edges()
-        surface2 = bezier.Surface(np.array([
+        surface2 = bezier.Surface.from_nodes(np.array([
             [0.0, 0.125],
             [0.875, 0.0],
             [0.25, 0.75],
@@ -1709,8 +1711,8 @@ class Test_combine_intersections(utils.NumPyTestCase):
     def test_empty(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE)
-        surface2 = bezier.Surface(np.array([
+        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
+        surface2 = bezier.Surface.from_nodes(np.array([
             [-1.0, 0.0],
             [-1.0, 1.0],
             [-2.0, 1.0],
@@ -1721,9 +1723,9 @@ class Test_combine_intersections(utils.NumPyTestCase):
     def test_basic(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE)
+        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         edges1 = surface1._get_edges()
-        surface2 = bezier.Surface(np.array([
+        surface2 = bezier.Surface.from_nodes(np.array([
             [0.75, -0.25],
             [0.75, 0.75],
             [-0.25, 0.75],
@@ -1764,7 +1766,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
     def test_tangent(self):
         import bezier
 
-        surface1 = bezier.Surface(np.array([
+        surface1 = bezier.Surface.from_nodes(np.array([
             [0.0, 0.0],
             [0.5, -0.5],
             [1.0, 0.0],
@@ -1774,7 +1776,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
         ]))
         edges = surface1.edges
         left, _, _ = edges
-        surface2 = bezier.Surface(np.array([
+        surface2 = bezier.Surface.from_nodes(np.array([
             [-1.0, -0.25],
             [2.0, -0.25],
             [0.5, 1.5],

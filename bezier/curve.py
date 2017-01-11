@@ -96,8 +96,8 @@ class Curve(_base.Base):
             represent each node while the columns are the dimension
             of the ambient space.
         degree (int): The degree of the curve. This is assumed to
-            be correct. Use :meth:`from_nodes` if the degree has not
-            yet been recruited.
+            correctly correspond to the number of ``nodes``. Use
+            :meth:`from_nodes` if the degree has not yet been computed.
         start (Optional[float]): The beginning of the sub-interval
             that this curve represents.
         end (Optional[float]): The end of the sub-interval
@@ -110,8 +110,8 @@ class Curve(_base.Base):
     """
 
     __slots__ = (
-        '_degree', '_dimension', '_nodes',  # From base class
-        '_start', '_end', '_root',  # From constructor
+        '_dimension', '_nodes',  # From base class
+        '_degree', '_start', '_end', '_root',  # From constructor
         '_length', '_edge_index', '_next_edge',  # Empty defaults
         '_previous_edge',  # Empty defaults
     )
@@ -280,7 +280,7 @@ class Curve(_base.Base):
            import numpy as np
            import bezier
 
-           surface = bezier.Surface(np.array([
+           surface = bezier.Surface.from_nodes(np.array([
                [0.0, 0.0],
                [1.0, 0.0],
                [0.0, 1.0],

@@ -459,7 +459,7 @@ def surface_subdivide1():
     if NO_IMAGES:
         return
 
-    surface = bezier.Surface(np.array([
+    surface = bezier.Surface.from_nodes(np.array([
         [0.0, 0.0],
         [1.0, 0.0],
         [0.0, 1.0],
@@ -711,7 +711,7 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
     figure, (ax1, ax2) = plt.subplots(1, 2)
 
     # Plot features of the parameter space in ax1.
-    tri_surf = bezier.Surface(np.array([
+    tri_surf = bezier.Surface.from_nodes(np.array([
         [0.0, 0.0],
         [1.0, 0.0],
         [0.0, 1.0],
@@ -791,7 +791,7 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface(np.array([
+    surface1 = bezier.Surface.from_nodes(np.array([
         [1.0, 0.0],
         [1.75, 0.25],
         [2.0, 1.0],
@@ -799,7 +799,7 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
         [1.5, 1.5],
         [1.0, 2.0],
     ]))
-    surface2 = bezier.Surface(np.array([
+    surface2 = bezier.Surface.from_nodes(np.array([
         [0.0, 0.0],
         [1.6875, 0.0625],
         [2.0, 0.5],
@@ -834,7 +834,7 @@ def classify_intersection2(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface(np.array([
+    surface1 = bezier.Surface.from_nodes(np.array([
         [1.0, 0.0],
         [1.5, 1.0],
         [2.0, 0.0],
@@ -842,7 +842,7 @@ def classify_intersection2(s, curve1, curve2):
         [1.75, 1.0],
         [1.5, 2.0],
     ]))
-    surface2 = bezier.Surface(np.array([
+    surface2 = bezier.Surface.from_nodes(np.array([
         [0.0, 0.0],
         [1.5, 1.0],
         [3.0, 0.0],
@@ -862,7 +862,7 @@ def classify_intersection3(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface(np.array([
+    surface1 = bezier.Surface.from_nodes(np.array([
         [2.0, 0.0],
         [1.5, 1.0],
         [1.0, 0.0],
@@ -870,7 +870,7 @@ def classify_intersection3(s, curve1, curve2):
         [1.25, -1.0],
         [1.5, -2.0],
     ]))
-    surface2 = bezier.Surface(np.array([
+    surface2 = bezier.Surface.from_nodes(np.array([
         [3.0, 0.0],
         [1.5, 1.0],
         [0.0, 0.0],
@@ -890,7 +890,7 @@ def classify_intersection4(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface(np.array([
+    surface1 = bezier.Surface.from_nodes(np.array([
         [2.0, 0.0],
         [1.5, 1.0],
         [1.0, 0.0],
@@ -898,7 +898,7 @@ def classify_intersection4(s, curve1, curve2):
         [1.25, -1.0],
         [1.5, -2.0],
     ]))
-    surface2 = bezier.Surface(np.array([
+    surface2 = bezier.Surface.from_nodes(np.array([
         [0.0, 0.0],
         [1.5, 1.0],
         [3.0, 0.0],
@@ -918,7 +918,7 @@ def classify_intersection5(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface(np.array([
+    surface1 = bezier.Surface.from_nodes(np.array([
         [1.0, 0.0],
         [1.5, 1.0],
         [2.0, 0.0],
@@ -926,7 +926,7 @@ def classify_intersection5(s, curve1, curve2):
         [1.75, 0.9375],
         [1.5, 1.875],
     ]))
-    surface2 = bezier.Surface(np.array([
+    surface2 = bezier.Surface.from_nodes(np.array([
         [3.0, 0.0],
         [1.5, 1.0],
         [0.0, 0.0],
@@ -946,7 +946,7 @@ def classify_intersection5(s, curve1, curve2):
     # Now add the "degenerate" intersection polygons. The first
     # comes from specializing to
     # left1(0.5, 1.0)-left2(0.0, 0.25)-right1(0.375, 0.5)
-    surface3 = bezier.Surface(np.array([
+    surface3 = bezier.Surface.from_nodes(np.array([
         [1.5, 0.5],
         [1.75, 0.5],
         [2.0, 0.0],
@@ -959,7 +959,7 @@ def classify_intersection5(s, curve1, curve2):
 
     # The second comes from specializing to
     # left1(0.0, 0.5)-right1(0.5, 0.625)-left3(0.75, 1.0)
-    surface4 = bezier.Surface(np.array([
+    surface4 = bezier.Surface.from_nodes(np.array([
         [1.0, 0.0],
         [1.25, 0.5],
         [1.5, 0.5],
@@ -991,7 +991,7 @@ def classify_intersection6(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface(np.array([
+    surface1 = bezier.Surface.from_nodes(np.array([
         [0.375, 0.0625],
         [-0.125, -0.0625],
         [-0.125, 0.0625],
@@ -999,7 +999,7 @@ def classify_intersection6(s, curve1, curve2):
         [-0.0625, 0.15625],
         [0.0, 0.25],
     ]))
-    surface2 = bezier.Surface(np.array([
+    surface2 = bezier.Surface.from_nodes(np.array([
         [0.75, 0.25],
         [-0.25, -0.25],
         [-0.25, 0.25],
@@ -1019,7 +1019,7 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface(np.array([
+    surface1 = bezier.Surface.from_nodes(np.array([
         [0.0, 0.0],
         [4.5, 0.0],
         [9.0, 2.25],
@@ -1027,7 +1027,7 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
         [4.5, 2.375],
         [0.0, 2.5],
     ]))
-    surface2 = bezier.Surface(np.array([
+    surface2 = bezier.Surface.from_nodes(np.array([
         [11.25, 0.0],
         [9.0, 4.5],
         [2.75, 1.0],

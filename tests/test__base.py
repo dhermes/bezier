@@ -85,6 +85,5 @@ class TestBase(utils.NumPyTestCase):
     def test___repr__(self):
         nodes = np.zeros((4, 3))
         shape = self._make_one(nodes)
-        shape._degree = 4
-        expected = '<Base (degree=4, dimension=3)>'
+        expected = '<Base (degree=-1, dimension=3)>'
         self.assertEqual(repr(shape), expected)

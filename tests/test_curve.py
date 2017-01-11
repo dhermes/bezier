@@ -66,6 +66,7 @@ class TestCurve(utils.NumPyTestCase):
 
         curve = klass.from_nodes(
             nodes, start=0.25, end=0.75, root=mock.sentinel.root)
+        self.assertIsInstance(curve, klass)
         self.assertEqual(curve._degree, 1)
         self.assertEqual(curve._dimension, 3)
         self.assertEqual(curve._nodes, nodes)

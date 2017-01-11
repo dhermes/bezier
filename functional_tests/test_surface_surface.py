@@ -29,7 +29,7 @@ TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 CONFIG = runtime_utils.Config()
 
 # F1L = sympy.Matrix([[s, t]])
-SURFACE1L = bezier.Surface(np.array([
+SURFACE1L = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [1.0, 0.0],
     [0.0, 1.0],
@@ -38,19 +38,19 @@ SURFACE1L = bezier.Surface(np.array([
 #     (9 * s + 2 * t - 1) / 8,
 #     (9 * s + 7 * t - 1) / 16,
 # ]])
-SURFACE2L = bezier.Surface(np.array([
+SURFACE2L = bezier.Surface.from_nodes(np.array([
     [-0.125, -0.0625],
     [1.0, 0.5],
     [0.125, 0.375],
 ]))
 # F3L = sympy.Matrix([[(4 * s + 1) / 4, (8 * t - 1) / 8]])
-SURFACE3L = bezier.Surface(np.array([
+SURFACE3L = bezier.Surface.from_nodes(np.array([
     [0.25, -0.125],
     [1.25, -0.125],
     [0.25, 0.875],
 ]))
 # F4L = sympy.Matrix([[5 * (2 * s + t - 1) / 4, 35 * t / 16]])
-SURFACE4L = bezier.Surface(np.array([
+SURFACE4L = bezier.Surface.from_nodes(np.array([
     [-1.25, 0.0],
     [1.25, 0.0],
     [0.0, 2.1875],
@@ -59,19 +59,19 @@ SURFACE4L = bezier.Surface(np.array([
 #     (21 * s - 21 * t + 4) / 8,
 #     (21 * s + 21 * t - 5) / 32,
 # ]])
-SURFACE5L = bezier.Surface(np.array([
+SURFACE5L = bezier.Surface.from_nodes(np.array([
     [0.5, -0.15625],
     [3.125, 0.5],
     [-2.125, 0.5],
 ]))
 # F6L = sympy.Matrix([[(1 - 4 * s) / 4, (1 - 4 * t) / 4]])
-SURFACE6L = bezier.Surface(np.array([
+SURFACE6L = bezier.Surface.from_nodes(np.array([
     [0.25, 0.25],
     [-0.75, 0.25],
     [0.25, -0.75],
 ]))
 # F7L = sympy.Matrix([[-(s + t), (s - t + 1) / 2]])
-SURFACE7L = bezier.Surface(np.array([
+SURFACE7L = bezier.Surface.from_nodes(np.array([
     [0.0, 0.5],
     [-1.0, 1.0],
     [-1.0, 0.0],
@@ -80,19 +80,19 @@ SURFACE7L = bezier.Surface(np.array([
 #     (5 * s + 9 * t + 1) / 8,
 #     -(5 * s - 4 * t - 6) / 8,
 # ]])
-SURFACE8L = bezier.Surface(np.array([
+SURFACE8L = bezier.Surface.from_nodes(np.array([
     [0.125, 0.75],
     [0.75, 0.125],
     [1.25, 1.25],
 ]))
 # F9L = sympy.Matrix([[(7 * s + 2 * t) / 8, -(s - 5 * t - 1) / 8]])
-SURFACE9L = bezier.Surface(np.array([
+SURFACE9L = bezier.Surface.from_nodes(np.array([
     [0.0, 0.125],
     [0.875, 0.0],
     [0.25, 0.75],
 ]))
 # F10L = sympy.Matrix([[-2 * s + t, 3 * (s - t)]])
-SURFACE10L = bezier.Surface(np.array([
+SURFACE10L = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [-2.0, 3.0],
     [1.0, -3.0],
@@ -102,7 +102,7 @@ SURFACE10L = bezier.Surface(np.array([
 #     (2 * s - t**2 + t) / 2,
 #     (s**2 + 2 * s * t - s + 2 * t) / 2,
 # ]])
-SURFACE1Q = bezier.Surface(np.array([
+SURFACE1Q = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [0.5, -0.25],
     [1.0, 0.0],
@@ -114,7 +114,7 @@ SURFACE1Q = bezier.Surface(np.array([
 #     (3 * s**2 + 6 * s * t + 5 * s + 8 * t - 2) / 8,
 #     (3 * s**2 - 3 * t**2 - 11 * s + 3 * t + 6) / 8,
 # ]])
-SURFACE2Q = bezier.Surface(np.array([
+SURFACE2Q = bezier.Surface.from_nodes(np.array([
     [-0.25, 0.75],
     [0.0625, 0.0625],
     [0.75, -0.25],
@@ -126,7 +126,7 @@ SURFACE2Q = bezier.Surface(np.array([
 #     (11 * s * t + 5 * t**2 + 8 * s + 3 * t) / 8,
 #     -(4 * s**2 + 7 * s * t + 7 * t**2 - 4 * s - 15 * t) / 8,
 # ]])
-SURFACE3Q = bezier.Surface(np.array([
+SURFACE3Q = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [0.5, 0.25],
     [1.0, 0.0],
@@ -138,7 +138,7 @@ SURFACE3Q = bezier.Surface(np.array([
 #     -(2 * s * t + t**2 - 16 * s - 4 * t) / 16,
 #     (2 * s**2 + 2 * s * t - 2 * s + 3 * t + 1) / 4,
 # ]])
-SURFACE4Q = bezier.Surface(np.array([
+SURFACE4Q = bezier.Surface.from_nodes(np.array([
     [0.0, 0.25],
     [0.5, 0.0],
     [1.0, 0.25],
@@ -150,7 +150,7 @@ SURFACE4Q = bezier.Surface(np.array([
 #     -(s**2 + s * t - 8 * s - 3 * t - 2) / 8,
 #     -(25 * s**2 + 20 * s * t - t**2 - 34 * s - 28 * t - 3) / 32,
 # ]])
-SURFACE5Q = bezier.Surface(np.array([
+SURFACE5Q = bezier.Surface.from_nodes(np.array([
     [0.25, 0.09375],
     [0.75, 0.625],
     [1.125, 0.375],
@@ -162,7 +162,7 @@ SURFACE5Q = bezier.Surface(np.array([
 #     (s**2 + s * t + 3 * s + 2 * t) / 4,
 #     -(3 * s**2 + 3 * s * t - 3 * s - 4 * t) / 4,
 # ]])
-SURFACE6Q = bezier.Surface(np.array([
+SURFACE6Q = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [0.375, 0.375],
     [1.0, 0.0],
@@ -174,7 +174,7 @@ SURFACE6Q = bezier.Surface(np.array([
 #     -(s**2 + s * t + 3 * s + 2 * t - 4) / 4,
 #     (8 * s**2 + 8 * s * t - 8 * s - 9 * t + 3) / 8,
 # ]])
-SURFACE7Q = bezier.Surface(np.array([
+SURFACE7Q = bezier.Surface.from_nodes(np.array([
     [1.0, 0.375],
     [0.625, -0.125],
     [0.0, 0.375],
@@ -186,7 +186,7 @@ SURFACE7Q = bezier.Surface(np.array([
 #     s * (7 * t + 1),
 #     t * (7 * s + 1),
 # ]])
-SURFACE8Q = bezier.Surface(np.array([
+SURFACE8Q = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [0.5, 0.0],
     [1.0, 0.0],
@@ -198,7 +198,7 @@ SURFACE8Q = bezier.Surface(np.array([
 #     (14 * s * t + 14 * t**2 + 2 * s - 12 * t + 3) / 2,
 #     -t * (7 * s + 7 * t - 8),
 # ]])
-SURFACE9Q = bezier.Surface(np.array([
+SURFACE9Q = bezier.Surface.from_nodes(np.array([
     [1.5, 0.0],
     [2.0, 0.0],
     [2.5, 0.0],
@@ -210,7 +210,7 @@ SURFACE9Q = bezier.Surface(np.array([
 #     -(2 * s + t - 2) / 2,
 #     -(2 * s**2 + 2 * s*t - 2 * s + 3 * t) / 4,
 # ]])
-SURFACE10Q = bezier.Surface(np.array([
+SURFACE10Q = bezier.Surface.from_nodes(np.array([
     [1.0, 0.0],
     [0.5, 0.25],
     [0.0, 0.0],
@@ -222,7 +222,7 @@ SURFACE10Q = bezier.Surface(np.array([
 #     (16 * s - t**2 + 4 * t) / 16,
 #     (8 * s**2 + 8 * s * t - 8 * s + 12 * t + 3) / 16,
 # ]])
-SURFACE11Q = bezier.Surface(np.array([
+SURFACE11Q = bezier.Surface.from_nodes(np.array([
     [0.0, 0.1875],
     [0.5, -0.0625],
     [1.0, 0.1875],
@@ -234,7 +234,7 @@ SURFACE11Q = bezier.Surface(np.array([
 #     -(2 * s + t - 2) / 2,
 #     -(8 * s**2 + 8 * s * t - 8 * s + 12 * t - 1) / 16,
 # ]])
-SURFACE12Q = bezier.Surface(np.array([
+SURFACE12Q = bezier.Surface.from_nodes(np.array([
     [1.0, 0.0625],
     [0.5, 0.3125],
     [0.0, 0.0625],
@@ -248,7 +248,7 @@ SURFACE12Q = bezier.Surface(np.array([
 # ]])
 # NOTE: The bottom edge of this surface lies entirely on the
 #       bottom edge of SURFACE4Q.
-SURFACE13Q = bezier.Surface(np.array([
+SURFACE13Q = bezier.Surface.from_nodes(np.array([
     [0.25, 0.15625],
     [0.5, 0.09375],
     [0.75, 0.15625],
@@ -257,7 +257,7 @@ SURFACE13Q = bezier.Surface(np.array([
     [0.5, 0.625],
 ]))
 # F14Q = F13Q + sympy.Matrix([[0, 1]]) / 16
-SURFACE14Q = bezier.Surface(np.array([
+SURFACE14Q = bezier.Surface.from_nodes(np.array([
     [0.25, 0.21875],
     [0.5, 0.15625],
     [0.75, 0.21875],
@@ -269,7 +269,7 @@ SURFACE14Q = bezier.Surface(np.array([
 #     -2 * (s + t) * (t - 1),
 #     (7 * s + 8 * t) / 4,
 # ]])
-SURFACE15Q = bezier.Surface(np.array([
+SURFACE15Q = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [1.0, 0.875],
     [2.0, 1.75],
@@ -281,7 +281,7 @@ SURFACE15Q = bezier.Surface(np.array([
 #     2 * s**2 + 2 * s * t - 2 * s - 2 * t + 1,
 #     (8 * s + 7 * t) / 4,
 # ]])
-SURFACE16Q = bezier.Surface(np.array([
+SURFACE16Q = bezier.Surface.from_nodes(np.array([
     [1.0, 0.0],
     [0.0, 1.0],
     [1.0, 2.0],
@@ -293,7 +293,7 @@ SURFACE16Q = bezier.Surface(np.array([
 #     (19 * s - 19 * t + 32) / 64,
 #     (2 *s * t + 5 * s + 5 * t - 6) / 8,
 # ]])
-SURFACE17Q = bezier.Surface(np.array([
+SURFACE17Q = bezier.Surface.from_nodes(np.array([
     [0.5, -0.75],
     [0.6484375, -0.4375],
     [0.796875, -0.125],
@@ -305,7 +305,7 @@ SURFACE17Q = bezier.Surface(np.array([
 #     -(4 * s + t - 3) / 4,
 #     -(16 * s**2 + 16 * s * t - 8 * s + 27 * t - 3) / 32,
 # ]])
-SURFACE18Q = bezier.Surface(np.array([
+SURFACE18Q = bezier.Surface.from_nodes(np.array([
     [0.75, 0.09375],
     [0.25, 0.21875],
     [-0.25, -0.15625],
@@ -317,7 +317,7 @@ SURFACE18Q = bezier.Surface(np.array([
 #     (t - s) / 2,
 #     -(s**2 + s * t + 2 * s + 6 * t) / 8,
 # ]])
-SURFACE19Q = bezier.Surface(np.array([
+SURFACE19Q = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [-0.25, -0.125],
     [-0.5, -0.375],
@@ -328,7 +328,7 @@ SURFACE19Q = bezier.Surface(np.array([
 # F20Q = sympy.Matrix([[
 #     -s**2 - s * t - 2 * t + 1, -s * (s + t - 2),
 # ]])
-SURFACE20Q = bezier.Surface(np.array([
+SURFACE20Q = bezier.Surface.from_nodes(np.array([
     [1.0, 0.0],
     [1.0, 1.0],
     [0.0, 1.0],
@@ -340,7 +340,7 @@ SURFACE20Q = bezier.Surface(np.array([
 #     -(3 * s**2 + 3 * s * t + 3 * t - 2) / 2,
 #     -(6 * s**2 + 6 * s * t - 12 * s - t) / 4,
 # ]])
-SURFACE21Q = bezier.Surface(np.array([
+SURFACE21Q = bezier.Surface.from_nodes(np.array([
     [1.0, 0.0],
     [1.0, 1.5],
     [-0.5, 1.5],
@@ -352,7 +352,7 @@ SURFACE21Q = bezier.Surface(np.array([
 #     -5 * (2 * t - 5) * (2 * s + t - 1) / 16,
 #     -5 * (16 * s**2 + 16 * s * t + 2 * t**2 - 16 * s - 37 * t + 4) / 64,
 # ]])
-SURFACE22Q = bezier.Surface(np.array([
+SURFACE22Q = bezier.Surface.from_nodes(np.array([
     [-1.5625, -0.3125],
     [0.0, 0.3125],
     [1.5625, -0.3125],
@@ -364,7 +364,7 @@ SURFACE22Q = bezier.Surface(np.array([
 #     (t + 2) * (2 * s + t - 1) / 2,
 #     (4 * s**2 + 4 * s * t - 3 * t**2 - 4 * s + 17 * t + 1) / 8,
 # ]])
-SURFACE23Q = bezier.Surface(np.array([
+SURFACE23Q = bezier.Surface.from_nodes(np.array([
     [-1.0, 0.125],
     [0.0, -0.125],
     [1.0, 0.125],
@@ -376,7 +376,7 @@ SURFACE23Q = bezier.Surface(np.array([
 #     -(42 * s**2 - 10 * s * t - 33 * t**2 + 16 * s + 128 * t - 96) / 128,
 #     (3 * s**2 + 24 * s * t + 11 * t**2 - 18 * t + 25) / 32,
 # ]])
-SURFACE24Q = bezier.Surface(np.array([
+SURFACE24Q = bezier.Surface.from_nodes(np.array([
     [0.75, 0.78125],
     [0.6875, 0.78125],
     [0.296875, 0.875],
@@ -388,7 +388,7 @@ SURFACE24Q = bezier.Surface(np.array([
 #     -(s**2 + 38 * s * t + 44 * t**2 + 40 * s + 8 * t - 62) / 64,
 #     (2 * s**2 + 12 * s * t + t**2 - 24 * s - 56 * t + 62) / 64,
 # ]])
-SURFACE25Q = bezier.Surface(np.array([
+SURFACE25Q = bezier.Surface.from_nodes(np.array([
     [0.96875, 0.96875],
     [0.65625, 0.78125],
     [0.328125, 0.625],
@@ -397,7 +397,7 @@ SURFACE25Q = bezier.Surface(np.array([
     [0.15625, 0.109375],
 ]))
 # F26Q = sympy.Matrix([[s * (t + 1), t * (s + 1)]])
-SURFACE26Q = bezier.Surface(np.array([
+SURFACE26Q = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [0.5, 0.0],
     [1.0, 0.0],
@@ -406,7 +406,7 @@ SURFACE26Q = bezier.Surface(np.array([
     [0.0, 1.0],
 ]))
 # F27Q = sympy.Matrix([[s * t + t**2 - 2 * t + 2, s * t + t**2 + s]])
-SURFACE27Q = bezier.Surface(np.array([
+SURFACE27Q = bezier.Surface.from_nodes(np.array([
     [2.0, 0.0],
     [2.0, 0.5],
     [2.0, 1.0],
@@ -418,7 +418,7 @@ SURFACE27Q = bezier.Surface(np.array([
 #     -(4 * s**2 + 6 * s * t - 3 * t**2 - 2 * s + 24 * t - 24) / 16,
 #     (3 * s * t + 3 * t**2 + 8 * s - 3 * t) / 8,
 # ]])
-SURFACE28Q = bezier.Surface(np.array([
+SURFACE28Q = bezier.Surface.from_nodes(np.array([
     [1.5, 0.0],
     [1.5625, 0.5],
     [1.375, 1.0],
@@ -430,7 +430,7 @@ SURFACE28Q = bezier.Surface(np.array([
 #     (s**2 - 7 * s * t + 13 * s + 4 * t - 4) / 8,
 #     -(7 * s * t - t**2 - 4 * s - 13 * t + 4) / 8,
 # ]])
-SURFACE29Q = bezier.Surface(np.array([
+SURFACE29Q = bezier.Surface.from_nodes(np.array([
     [-0.5, -0.5],
     [0.3125, -0.25],
     [1.25, 0.0],
@@ -440,7 +440,7 @@ SURFACE29Q = bezier.Surface(np.array([
 ]))
 # F30Q = sympy.Matrix([[(7 * s - 2) / 8, (7 * t - 2) / 8]])
 # NOTE: This is a degree elevated linear surface.
-SURFACE30Q = bezier.Surface(np.array([
+SURFACE30Q = bezier.Surface.from_nodes(np.array([
     [-0.25, -0.25],
     [0.1875, -0.25],
     [0.625, -0.25],
@@ -452,7 +452,7 @@ SURFACE30Q = bezier.Surface(np.array([
 #     -(2 * t**2 + 2 * s * t - 8 * s - t) / 8,
 #     s + t - 1,
 # ]])
-SURFACE31Q = bezier.Surface(np.array([
+SURFACE31Q = bezier.Surface.from_nodes(np.array([
     [0.0, -1.0],
     [0.5, -0.5],
     [1.0, 0.0],

@@ -21,14 +21,14 @@ CONFIG = runtime_utils.Config()
 
 
 # F1 = sympy.Matrix([[s, t]])
-SURFACE1 = bezier.Surface(np.array([
+SURFACE1 = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [1.0, 0.0],
     [0.0, 1.0],
 ]))
 # F2 = sympy.Matrix([[
 #     (-t**2 + 2 * s + t) / 2, (s**2 + 2 * s * t - s + 2 * t) / 2]])
-SURFACE2 = bezier.Surface(np.array([
+SURFACE2 = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [0.5, -0.25],
     [1.0, 0.0],
@@ -38,7 +38,7 @@ SURFACE2 = bezier.Surface(np.array([
 ]))
 # F3 = sympy.Matrix([[
 #     -(2 * s * t - 4 * s - t) / 4, (s**2 - s * t + 4 * t) / 4]])
-SURFACE3 = bezier.Surface(np.array([
+SURFACE3 = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [0.5, 0.0],
     [1.0, 0.25],
@@ -47,7 +47,7 @@ SURFACE3 = bezier.Surface(np.array([
     [0.25, 1.0],
 ]))
 # F4 = sympy.Matrix([[2 * (s + 2 * t) * (1 - t), 2 * t * (s + 1)]])
-SURFACE4 = bezier.Surface(np.array([
+SURFACE4 = bezier.Surface.from_nodes(np.array([
     [0.0, 0.0],
     [1.0, 0.0],
     [2.0, 0.0],
