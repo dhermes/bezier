@@ -2066,13 +2066,28 @@ def combine_intersections(intersections, surface1, surface2):
 
 
 class IntersectionClassification(enum.Enum):
-    """Enum classifying the "interior" curve in an intersection."""
+    """Enum classifying the "interior" curve in an intersection.
+
+    Provided as the output values for :func:`.classify_intersection`.
+    """
+
     first = 'first'
+    """The first curve is on the interior."""
+
     second = 'second'
+    """The second curve is on the interior."""
+
     opposed = 'opposed'
+    """Tangent intersection with opposed interiors."""
+
     tangent_first = 'tangent_first'
+    """Tangent intersection, first curve is on the interior."""
+
     tangent_second = 'tangent_second'
+    """Tangent intersection, second curve is on the interior."""
+
     ignored_corner = 'ignored_corner'
+    """Intersection at a corner, interiors don't intersect."""
 
 
 # NOTE: This constant must be define **after** ``IntersectionClassification``

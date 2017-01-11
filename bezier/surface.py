@@ -57,11 +57,11 @@ class Surface(_base.Base):
 
        \lambda_1 = 1 - s - t, \lambda_2 = s, \lambda_3 = t
 
-    for points in
+    for points in the unit triangle
+    :math:`\left\{(s, t) \mid 0 \leq s, t, s + t \leq 1\right\}`:
 
-    .. math::
-
-       \left\{(s, t) \mid 0 \leq s, t, s + t \leq 1\right\}.
+    .. image:: ../images/unit_triangle.png
+       :align: center
 
     As with curves, using these weights we get convex combinations
     of points :math:`v_{i, j, k}` in some vector space:
@@ -155,6 +155,7 @@ class Surface(_base.Base):
     .. testcleanup:: surface-constructor
 
        import make_images
+       make_images.unit_triangle()
        make_images.surface_constructor(surface)
 
     Args:
@@ -166,10 +167,12 @@ class Surface(_base.Base):
             :meth:`from_nodes` if the degree has not yet been computed.
         base_x (Optional[float]): The :math:`x`-coordinate of the base
            vertex of the sub-triangle that this surface represents.
+           See :meth:`width` for more info.
         base_y (Optional[float]): The :math:`y`-coordinate of the base
            vertex of the sub-triangle that this surface represents.
+           See :meth:`width` for more info.
         width (Optional[float]): The width of the sub-triangle that
-           this surface represents.
+           this surface represents. See :meth:`width` for more info.
         _copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
@@ -398,7 +401,7 @@ class Surface(_base.Base):
 
     @property
     def edges(self):
-        """tuple: The edges of the surface.
+        """The edges of the surface.
 
         .. doctest:: surface-edges
            :options: +NORMALIZE_WHITESPACE
@@ -707,7 +710,7 @@ class Surface(_base.Base):
                 :data:`True`.
 
         Returns:
-            numpy.ndarray: The point on the surface.
+            numpy.ndarray: The points on the surface.
 
         Raises:
             ValueError: If ``param_vals`` is not a 2D array.
@@ -753,8 +756,7 @@ class Surface(_base.Base):
             path, facecolor=color, alpha=0.6)
         ax.add_patch(patch)
 
-    def plot(self, pts_per_edge, color=None, ax=None,
-             with_nodes=False, show=False):
+    def plot(self, pts_per_edge, color=None, ax=None, with_nodes=False):
         """Plot the current surface.
 
         Args:
@@ -764,8 +766,6 @@ class Surface(_base.Base):
                 to add plot to.
             with_nodes (Optional[bool]): Determines if the control points
                 should be added to the plot. Off by default.
-            show (Optional[bool]): Flag indicating if the plot should be
-                shown.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This
@@ -799,9 +799,6 @@ class Surface(_base.Base):
         if with_nodes:
             ax.plot(self._nodes[:, 0], self._nodes[:, 1],
                     color='black', marker='o', linestyle='None')
-
-        if show:
-            plt.show()
 
         return ax
 
@@ -1075,8 +1072,8 @@ class Surface(_base.Base):
 
         Returns:
             Optional[Tuple[float, float]]: The :math:`s` and :math:`t`
-            values corresponding to ``x_val`` and ``y_val`` or
-            :data:`None` if the point is not on the ``surface``.
+            values corresponding to ``point`` or :data:`None` if the point
+            is not on the surface.
 
         Raises:
             NotImplementedError: If the surface isn't in :math:`\mathbf{R}^2`.
@@ -1187,29 +1184,43 @@ class Surface(_base.Base):
                k \cdot v_{i, j, k - 1}
            \end{align*}
 
-        where we assume that, for example, :math:`v_{i, j, k - 1}` is
-        :math:`0` (or any other unused value) if :math:`k = 0`.
+        where we define, for example, :math:`v_{i, j, k - 1} = 0`
+        if :math:`k = 0`.
+
+        .. image:: ../images/surface_elevate.png
+           :align: center
 
         .. doctest:: surface-elevate
            :options: +NORMALIZE_WHITESPACE
 
-           >>> surface = bezier.Surface.from_nodes(np.array([
-           ...     [0.0, 0.0],
-           ...     [1.0, 0.0],
-           ...     [0.0, 1.0],
-           ... ]))
-           >>> surface
-           <Surface (degree=1, dimension=2)>
-           >>> new_surface = surface.elevate()
-           >>> new_surface
-           <Surface (degree=2, dimension=2)>
-           >>> new_surface.nodes
-           array([[ 0. , 0. ],
-                  [ 0.5, 0. ],
-                  [ 1. , 0. ],
-                  [ 0. , 0.5],
-                  [ 0.5, 0.5],
-                  [ 0. , 1. ]])
+           >>> nodes = np.array([
+           ...     [0.0 , 0.0 ],
+           ...     [1.5 , 0.0 ],
+           ...     [3.0 , 0.0 ],
+           ...     [0.75, 1.5 ],
+           ...     [2.25, 2.25],
+           ...     [0.0 , 3.0 ],
+           ... ])
+           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> elevated = surface.elevate()
+           >>> elevated
+           <Surface (degree=3, dimension=2)>
+           >>> elevated.nodes
+           array([[ 0.  , 0.  ],
+                  [ 1.  , 0.  ],
+                  [ 2.  , 0.  ],
+                  [ 3.  , 0.  ],
+                  [ 0.5 , 1.  ],
+                  [ 1.5 , 1.25],
+                  [ 2.5 , 1.5 ],
+                  [ 0.5 , 2.  ],
+                  [ 1.5 , 2.5 ],
+                  [ 0.  , 3.  ]])
+
+        .. testcleanup:: surface-elevate
+
+           import make_images
+           make_images.surface_elevate(surface, elevated)
 
         Returns:
             Surface: The degree-elevated surface.

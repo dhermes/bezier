@@ -1451,7 +1451,8 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             intersection occurs.
         point (Optional[numpy.ndarray]): The point where the two
             curves actually intersect.
-        interior_curve (Optional[IntersectionClassification]): The
+        interior_curve (Optional[ \
+            ~bezier._surface_helpers.IntersectionClassification]): The
             classification of the intersection.
     """
 
@@ -1462,11 +1463,11 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         self.first = first
         """Curve: The "first" curve in the intersection."""
         self.s = s
-        """float: The intersection parameter for the :attr:`.first` curve."""
+        """float: The intersection parameter for the ``first`` curve."""
         self.second = second
         """Curve: The "second" curve in the intersection."""
         self.t = t
-        """float: The intersection parameter for the :attr:`.second` curve."""
+        """float: The intersection parameter for the ``second`` curve."""
         self.point = point
         """numpy.ndarray: The point where the intersection occurs."""
         self.interior_curve = interior_curve

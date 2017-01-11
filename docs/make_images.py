@@ -1142,3 +1142,73 @@ def classify_intersection8(s, curve1, surface1, curve2, surface2):
     ax.set_xlim(-1.125, 1.125)
     ax.set_ylim(-0.125, 1.125)
     save_image(ax.figure, 'classify_intersection8.png')
+
+
+def curve_elevate(curve, elevated):
+    """Image for :meth:`.curve.Curve.elevate` docstring."""
+    if NO_IMAGES:
+        return
+
+    figure, (ax1, ax2) = plt.subplots(1, 2)
+
+    curve.plot(256, ax=ax1)
+    color = ax1.lines[-1].get_color()
+    add_patch(ax1, curve._nodes, color)
+
+    elevated.plot(256, ax=ax2)
+    color = ax2.lines[-1].get_color()
+    add_patch(ax2, elevated._nodes, color)
+
+    ax1.axis('scaled')
+    ax2.axis('scaled')
+    _plot_helpers.add_plot_boundary(ax1)
+    ax2.set_xlim(*ax1.get_xlim())
+    ax2.set_ylim(*ax1.get_ylim())
+
+    save_image(figure, 'curve_elevate.png')
+
+
+def surface_elevate(surface, elevated):
+    """Image for :meth:`.surface.Surface.elevate` docstring."""
+    if NO_IMAGES:
+        return
+
+    figure, (ax1, ax2) = plt.subplots(1, 2)
+
+    surface.plot(256, ax=ax1)
+    color = ax1.lines[-1].get_color()
+    nodes = surface._nodes[(0, 1, 2, 4, 5), :]
+    add_patch(ax1, nodes, color)
+
+    elevated.plot(256, ax=ax2)
+    color = ax2.lines[-1].get_color()
+    nodes = elevated._nodes[(0, 1, 2, 3, 6, 8, 9), :]
+    add_patch(ax2, nodes, color)
+
+    ax1.axis('scaled')
+    ax2.axis('scaled')
+    _plot_helpers.add_plot_boundary(ax1)
+    ax2.set_xlim(*ax1.get_xlim())
+    ax2.set_ylim(*ax1.get_ylim())
+
+    save_image(figure, 'surface_elevate.png')
+
+
+def unit_triangle():
+    """Image for :class:`.surface.Surface` docstring."""
+    if NO_IMAGES:
+        return
+
+    nodes = np.array([
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [0.0, 1.0],
+    ])
+    surface = bezier.Surface(nodes, degree=1)
+
+    ax = surface.plot(256)
+
+    ax.axis('scaled')
+    _plot_helpers.add_plot_boundary(ax)
+
+    save_image(ax.figure, 'unit_triangle.png')

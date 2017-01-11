@@ -212,7 +212,7 @@ class CurvedPolygon(object):
         return '<{} (num_sides={:d})>'.format(
             self.__class__.__name__, self._num_sides)
 
-    def plot(self, pts_per_edge, color=None, ax=None, show=False):
+    def plot(self, pts_per_edge, color=None, ax=None):
         """Plot the current curved polygon.
 
         Args:
@@ -220,8 +220,6 @@ class CurvedPolygon(object):
             color (Optional[Tuple[float, float, float]]): Color as RGB profile.
             ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
                 to add plot to.
-            show (Optional[bool]): Flag indicating if the plot should be
-                shown.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This
@@ -247,8 +245,5 @@ class CurvedPolygon(object):
         patch = patches.PathPatch(
             path, facecolor=color, alpha=0.6)
         ax.add_patch(patch)
-
-        if show:
-            plt.show()
 
         return ax

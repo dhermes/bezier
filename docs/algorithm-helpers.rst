@@ -24,6 +24,8 @@ This is to help with the exposition of the computation and
    :members:
 .. autoclass:: bezier._intersection_helpers.Linearization
    :members:
+.. autoclass:: bezier._surface_helpers.IntersectionClassification
+   :members:
 .. autofunction:: bezier._surface_helpers.newton_refine
 .. autofunction:: bezier._surface_helpers.classify_intersection
 

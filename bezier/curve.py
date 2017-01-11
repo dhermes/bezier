@@ -429,15 +429,13 @@ class Curve(_base.Base):
         return _curve_helpers.evaluate_multi(
             self._nodes, self._degree, s_vals)
 
-    def plot(self, num_pts, ax=None, show=False):
+    def plot(self, num_pts, ax=None):
         """Plot the current curve.
 
         Args:
             num_pts (int): Number of points to plot.
             ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
                 to add plot to.
-            show (Optional[bool]): Flag indicating if the plot should be
-                shown.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This
@@ -458,9 +456,6 @@ class Curve(_base.Base):
             ax = fig.gca()
 
         ax.plot(points[:, 0], points[:, 1])
-
-        if show:
-            plt.show()
 
         return ax
 
@@ -575,7 +570,8 @@ class Curve(_base.Base):
 
         Raises:
             TypeError: If ``other`` is not a curve.
-            NotImplementedError: If both curves aren't two-dimensional.
+            NotImplementedError: If at least one of the curves
+                isn't two-dimensional.
         """
         if not isinstance(other, Curve):
             raise TypeError('Can only intersect with another curve',
@@ -607,6 +603,37 @@ class Curve(_base.Base):
            w_j &= \frac{j}{n + 1} v_{j - 1} + \frac{n + 1 - j}{n + 1} v_j \\
            w_{n + 1} &= v_n
            \end{align*}
+
+        .. image:: ../images/curve_elevate.png
+           :align: center
+
+        .. testsetup:: curve-root
+
+           import numpy as np
+           import bezier
+
+        .. doctest:: curve-elevate
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.array([
+           ...     [0.0, 0.0],
+           ...     [1.5, 1.5],
+           ...     [3.0, 0.0],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=2)
+           >>> elevated = curve.elevate()
+           >>> elevated
+           <Curve (degree=3, dimension=2)>
+           >>> elevated.nodes
+           array([[ 0., 0.],
+                  [ 1., 1.],
+                  [ 2., 1.],
+                  [ 3., 0.]])
+
+        .. testcleanup:: curve-elevate
+
+           import make_images
+           make_images.curve_elevate(curve, elevated)
 
         Returns:
             Curve: The degree-elevated curve.
