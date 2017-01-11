@@ -187,7 +187,7 @@ class CurvedPolygon(object):
             ValueError: If one of the sides is not in 2D.
             ValueError: If consecutive sides don't share an endpoint.
         """
-        if self.num_sides < 2:
+        if self._num_sides < 2:
             raise ValueError('At least two sides required.')
 
         for prev, curr in six.moves.zip(self._edges, self._edges[1:]):
@@ -210,7 +210,7 @@ class CurvedPolygon(object):
             str: Object representation.
         """
         return '<{} (num_sides={:d})>'.format(
-            self.__class__.__name__, self.num_sides)
+            self.__class__.__name__, self._num_sides)
 
     def plot(self, pts_per_edge, color=None, ax=None, show=False):
         """Plot the current curved polygon.

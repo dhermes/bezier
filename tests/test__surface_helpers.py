@@ -1001,7 +1001,7 @@ class Test__ignored_corner(unittest.TestCase):
         self.assertFalse(result)
 
     def test_s_corner(self):
-        first = mock.Mock(spec=['previous_edge'])
+        first = mock.Mock(spec=['_previous_edge'])
         intersection = make_intersect(first, 0.0, None, 0.5)
 
         patch = mock.patch(
@@ -1015,10 +1015,10 @@ class Test__ignored_corner(unittest.TestCase):
 
             mocked.assert_called_once_with(
                 mock.sentinel.tangent_t, mock.sentinel.tangent_s,
-                first.previous_edge)
+                first._previous_edge)
 
     def test_t_corner(self):
-        second = mock.Mock(spec=['previous_edge'])
+        second = mock.Mock(spec=['_previous_edge'])
         intersection = make_intersect(None, 0.5, second, 0.0)
 
         patch = mock.patch(
@@ -1032,7 +1032,7 @@ class Test__ignored_corner(unittest.TestCase):
 
             mocked.assert_called_once_with(
                 mock.sentinel.tangent_s, mock.sentinel.tangent_t,
-                second.previous_edge)
+                second._previous_edge)
 
     def test_double_corner(self):
         intersection = make_intersect(None, 0.0, None, 0.0)
@@ -1071,7 +1071,8 @@ class Test_handle_corners(unittest.TestCase):
         self.assertIs(intersection.second, second)
 
     def test_s(self):
-        first = mock.Mock(next_edge=mock.sentinel.next_first)
+        first = mock.Mock(
+            _next_edge=mock.sentinel.next_first, spec=['_next_edge'])
         second = mock.Mock()
         intersection = make_intersect(first, 1.0, second, 0.25)
 
@@ -1083,7 +1084,8 @@ class Test_handle_corners(unittest.TestCase):
 
     def test_t(self):
         first = mock.Mock()
-        second = mock.Mock(next_edge=mock.sentinel.next_second)
+        second = mock.Mock(
+            _next_edge=mock.sentinel.next_second, spec=['_next_edge'])
         intersection = make_intersect(first, 0.75, second, 1.0)
 
         self.assertTrue(self._call_function_under_test(intersection))
@@ -1102,8 +1104,8 @@ class Test__identifier(unittest.TestCase):
         return _surface_helpers._identifier(intersection)
 
     def test_it(self):
-        first = mock.Mock(edge_index=10)
-        second = mock.Mock(edge_index=99)
+        first = mock.Mock(_edge_index=10, spec=['_edge_index'])
+        second = mock.Mock(_edge_index=99, spec=['_edge_index'])
         intersection = make_intersect(first, 0.5, second, 0.75)
         result = self._call_function_under_test(intersection)
         self.assertEqual(result, (10, 0.5, 99, 0.75))
@@ -1184,7 +1186,7 @@ class Test__to_front(unittest.TestCase):
     def test_move_s(self):
         from bezier import _intersection_helpers
 
-        first = mock.Mock(spec=['next_edge'])
+        first = mock.Mock(spec=['_next_edge'])
         intersection = make_intersect(
             first, 1.0, mock.sentinel.second, 0.5,
             interior_curve=mock.sentinel.interior_curve)
@@ -1192,18 +1194,18 @@ class Test__to_front(unittest.TestCase):
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
         self.assertIsInstance(result, _intersection_helpers.Intersection)
-        self.assertIs(result.first, first.next_edge)
+        self.assertIs(result.first, first._next_edge)
         self.assertEqual(result.s, 0.0)
         self.assertIs(result.second, mock.sentinel.second)
         self.assertEqual(result.t, 0.5)
         self.assertIs(result.interior_curve, mock.sentinel.interior_curve)
 
     def test_move_s_to_existing(self):
-        first = mock.Mock(spec=['next_edge'])
+        first = mock.Mock(spec=['_next_edge'])
         intersection = make_intersect(first, 1.0, mock.sentinel.second, 0.5)
 
         existing_int = make_intersect(
-            first.next_edge, 0.0, mock.sentinel.second, 0.5)
+            first._next_edge, 0.0, mock.sentinel.second, 0.5)
         result = self._call_function_under_test(
             intersection, [existing_int], [])
         self.assertIs(result, existing_int)
@@ -1211,7 +1213,7 @@ class Test__to_front(unittest.TestCase):
     def test_move_t(self):
         from bezier import _intersection_helpers
 
-        second = mock.Mock(spec=['next_edge'])
+        second = mock.Mock(spec=['_next_edge'])
         intersection = make_intersect(
             mock.sentinel.first, 0.5, second, 1.0,
             interior_curve=mock.sentinel.interior_curve)
@@ -1221,16 +1223,16 @@ class Test__to_front(unittest.TestCase):
         self.assertIsInstance(result, _intersection_helpers.Intersection)
         self.assertIs(result.first, mock.sentinel.first)
         self.assertEqual(result.s, 0.5)
-        self.assertIs(result.second, second.next_edge)
+        self.assertIs(result.second, second._next_edge)
         self.assertEqual(result.t, 0.0)
         self.assertIs(result.interior_curve, mock.sentinel.interior_curve)
 
     def test_move_t_to_existing(self):
-        second = mock.Mock(spec=['next_edge'])
+        second = mock.Mock(spec=['_next_edge'])
         intersection = make_intersect(mock.sentinel.first, 0.5, second, 1.0)
 
         existing_int = make_intersect(
-            mock.sentinel.first, 0.5, second.next_edge, 0.0)
+            mock.sentinel.first, 0.5, second._next_edge, 0.0)
         result = self._call_function_under_test(
             intersection, [existing_int], [])
         self.assertIs(result, existing_int)

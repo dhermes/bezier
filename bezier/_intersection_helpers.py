@@ -1020,10 +1020,12 @@ def from_linearized(first, second, intersections):
         raise NotImplementedError('Line segments parallel.')
 
     # Now, promote `s` and `t` onto the original curves.
-    orig_s = (1 - s) * first.curve.start + s * first.curve.end
-    orig_first = first.curve.root
-    orig_t = (1 - t) * second.curve.start + t * second.curve.end
-    orig_second = second.curve.root
+    # pylint: disable=protected-access
+    orig_s = (1 - s) * first.curve._start + s * first.curve._end
+    orig_first = first.curve._root
+    orig_t = (1 - t) * second.curve._start + t * second.curve._end
+    orig_second = second.curve._root
+    # pylint: enable=protected-access
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
     refined_s, refined_t = newton_refine(
@@ -1079,11 +1081,13 @@ def _endpoint_check(first, node_first, s,
             then those intersections will be added to this list.
     """
     if _helpers.vector_close(node_first, node_second):
-        orig_s = (1 - s) * first.start + s * first.end
-        orig_t = (1 - t) * second.start + t * second.end
+        # pylint: disable=protected-access
+        orig_s = (1 - s) * first._start + s * first._end
+        orig_t = (1 - t) * second._start + t * second._end
         intersection = Intersection(
-            first.root, orig_s, second.root, orig_t,
+            first._root, orig_s, second._root, orig_t,
             point=node_first)
+        # pylint: enable=protected-access
         _add_intersection(intersection, intersections)
 
 

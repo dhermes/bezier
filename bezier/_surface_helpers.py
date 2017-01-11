@@ -607,9 +607,11 @@ def _mean_centroid(candidates):
     sum_y = 0.0
     sum_width = 0.0
     for candidate in candidates:
-        sum_x += candidate.base_x
-        sum_y += candidate.base_y
-        sum_width += candidate.width
+        # pylint: disable=protected-access
+        sum_x += candidate._base_x
+        sum_y += candidate._base_y
+        sum_width += candidate._width
+        # pylint: enable=protected-access
 
     denom = float(len(candidates))
     mean_x = sum_x / denom
@@ -1412,8 +1414,8 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
         bool: Indicates if the corner is to be ignored.
     """
     # Compute the other edge for the ``s`` surface.
-    prev_edge = intersection.first.previous_edge
     # pylint: disable=protected-access
+    prev_edge = intersection.first._previous_edge
     alt_tangent_s = _curve_helpers.evaluate_hodograph(
         prev_edge._nodes, prev_edge._degree, 1.0)
     # pylint: enable=protected-access
@@ -1433,8 +1435,8 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
 
     # If ``tangent_t`` is not interior, we check the other ``t``
     # edge that ends at the corner.
-    prev_edge = intersection.second.previous_edge
     # pylint: disable=protected-access
+    prev_edge = intersection.second._previous_edge
     alt_tangent_t = _curve_helpers.evaluate_hodograph(
         prev_edge._nodes, prev_edge._degree, 1.0)
     # pylint: enable=protected-access
@@ -1494,17 +1496,21 @@ def _ignored_corner(intersection, tangent_s, tangent_t):
         bool: Indicates if the corner is to be ignored.
     """
     if intersection.s == 0.0:
+        # pylint: disable=protected-access
         if intersection.t == 0.0:
             # Double corner.
             return _ignored_double_corner(
                 intersection, tangent_s, tangent_t)
         else:
             # s-only corner.
-            prev_edge = intersection.first.previous_edge
+            prev_edge = intersection.first._previous_edge
             return _ignored_edge_corner(tangent_t, tangent_s, prev_edge)
+        # pylint: enable=protected-access
     elif intersection.t == 0.0:
         # t-only corner.
-        prev_edge = intersection.second.previous_edge
+        # pylint: disable=protected-access
+        prev_edge = intersection.second._previous_edge
+        # pylint: enable=protected-access
         return _ignored_edge_corner(tangent_s, tangent_t, prev_edge)
     else:
         # Not a corner.
@@ -1541,11 +1547,15 @@ def handle_corners(intersection):
     changed = False
     if intersection.s == 1.0:
         intersection.s = 0.0
-        intersection.first = intersection.first.next_edge
+        # pylint: disable=protected-access
+        intersection.first = intersection.first._next_edge
+        # pylint: enable=protected-access
         changed = True
     if intersection.t == 1.0:
         intersection.t = 0.0
-        intersection.second = intersection.second.next_edge
+        # pylint: disable=protected-access
+        intersection.second = intersection.second._next_edge
+        # pylint: enable=protected-access
         changed = True
 
     return changed
@@ -1566,8 +1576,12 @@ def _identifier(intersection):
         * second edge index
         * second parameter
     """
-    return (intersection.first.edge_index, intersection.s,
-            intersection.second.edge_index, intersection.t)
+    return (
+        intersection.first._edge_index,  # pylint: disable=protected-access
+        intersection.s,
+        intersection.second._edge_index,  # pylint: disable=protected-access
+        intersection.t,
+    )
 
 
 def verify_duplicates(duplicates, uniques):
@@ -1643,18 +1657,22 @@ def _to_front(intersection, intersections, unused):
     changed = False
     if intersection.s == 1.0:
         changed = True
+        # pylint: disable=protected-access
         new_intersection = _intersection_helpers.Intersection(
-            intersection.first.next_edge, 0.0,
+            intersection.first._next_edge, 0.0,
             intersection.second, intersection.t,
             interior_curve=intersection.interior_curve)
+        # pylint: enable=protected-access
         intersection = new_intersection
 
     if intersection.t == 1.0:
         changed = True
+        # pylint: disable=protected-access
         new_intersection = _intersection_helpers.Intersection(
             intersection.first, intersection.s,
-            intersection.second.next_edge, 0.0,
+            intersection.second._next_edge, 0.0,
             interior_curve=intersection.interior_curve)
+        # pylint: enable=protected-access
         intersection = new_intersection
 
     if changed:

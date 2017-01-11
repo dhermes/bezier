@@ -575,6 +575,8 @@ def locate_point(curve, point):
     if not candidates:
         return None
 
+    # pylint: disable=protected-access
     s_approx = np.mean(
-        [(candidate.start, candidate.end) for candidate in candidates])
+        [(candidate._start, candidate._end) for candidate in candidates])
+    # pylint: enable=protected-access
     return newton_refine(curve, point, s_approx)
