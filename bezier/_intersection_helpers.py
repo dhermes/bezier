@@ -206,7 +206,7 @@ def linearization_error(curve):
        ...     [3.0,  1.0],
        ...     [9.0, -2.0],
        ... ])
-       >>> curve = bezier.Curve(nodes, 2)
+       >>> curve = bezier.Curve(nodes, degree=2)
        >>> linearization_error(curve)
        1.25
 
@@ -246,7 +246,7 @@ def linearization_error(curve):
        ...     [10.0, 24.0],
        ...     [30.0, 72.0],
        ... ])
-       >>> curve = bezier.Curve(nodes, 3)
+       >>> curve = bezier.Curve(nodes, degree=3)
        >>> linearization_error(curve)
        29.25
 
@@ -365,12 +365,12 @@ def newton_refine(s, curve1, t, curve2):
        ...     [2.0, 4.0],
        ...     [4.0, 0.0],
        ... ])
-       >>> curve1 = bezier.Curve(nodes1, 2)
+       >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.array([
        ...     [2.0, 0.0],
        ...     [0.0, 3.0],
        ... ])
-       >>> curve2 = bezier.Curve(nodes2, 1)
+       >>> curve2 = bezier.Curve(nodes2, degree=1)
        >>> s, t = 0.375, 0.25
        >>> new_s, new_t = newton_refine(s, curve1, t, curve2)
        >>> 64.0 * (new_s - s)
@@ -392,20 +392,22 @@ def newton_refine(s, curve1, t, curve2):
 
     .. doctest:: newton-refine2
 
-       >>> curve1 = bezier.Curve.from_nodes(np.array([
-       ...     [0.0, 0.0],
-       ...     [0.25, 2.0],
-       ...     [0.5, -2.0],
-       ...     [0.75, 2.0],
-       ...     [1.0, 0.0],
-       ... ]))
-       >>> curve2 = bezier.Curve.from_nodes(np.array([
-       ...     [0.0, 1.0],
+       >>> nodes1 = np.array([
+       ...     [0.0 ,  0.0],
+       ...     [0.25,  2.0],
+       ...     [0.5 , -2.0],
+       ...     [0.75,  2.0],
+       ...     [1.0 ,  0.0],
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1, degree=4)
+       >>> nodes2 = np.array([
+       ...     [0.0 , 1.0],
        ...     [0.25, 0.5],
-       ...     [0.5, 0.5],
+       ...     [0.5 , 0.5],
        ...     [0.75, 0.5],
-       ...     [1.0, 0.0],
-       ... ]))
+       ...     [1.0 , 0.0],
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=4)
        >>> # The expected intersection is the only real root of
        >>> # 28 s^3 - 30 s^2 + 9 s - 1.
        >>> omega = (28.0 * np.sqrt(17.0) + 132.0)**(1.0 / 3.0) / 28.0
@@ -441,15 +443,17 @@ def newton_refine(s, curve1, t, curve2):
 
     .. doctest:: newton-refine3
 
-       >>> curve1 = bezier.Curve.from_nodes(np.array([
+       >>> nodes1 = np.array([
        ...     [0.0, 0.0],
        ...     [0.5, 1.0],
        ...     [1.0, 0.0],
-       ... ]))
-       >>> curve2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1, degree=2)
+       >>> nodes2 = np.array([
        ...     [0.0, 0.5],
        ...     [1.0, 0.5],
-       ... ]))
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=1)
        >>> expected = 0.5
        >>> s_vals = [0.375, None, None, None, None, None]
        >>> t = 0.375
@@ -486,15 +490,17 @@ def newton_refine(s, curve1, t, curve2):
        import bezier
        from bezier._intersection_helpers import newton_refine
 
-       curve1 = bezier.Curve.from_nodes(np.array([
+       nodes1 = np.array([
            [0.0, 0.0],
            [0.5, 1.0],
            [1.0, 0.0],
-       ]))
-       curve2 = bezier.Curve.from_nodes(np.array([
+       ])
+       curve1 = bezier.Curve(nodes1, degree=2)
+       nodes2 = np.array([
            [0.0, 0.5],
            [1.0, 0.5],
-       ]))
+       ])
+       curve2 = bezier.Curve(nodes2, degree=1)
 
     .. doctest:: newton-refine3-continued
 

@@ -53,24 +53,28 @@ class CurvedPolygon(object):
     .. doctest:: curved-polygon-constructor
 
        >>> import bezier
-       >>> edge0 = bezier.Curve.from_nodes(np.array([
+       >>> nodes0 = np.array([
        ...     [0.0,  0.0],
        ...     [1.0, -1.0],
        ...     [2.0,  0.0],
-       ... ]))
-       >>> edge1 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> edge0 = bezier.Curve(nodes0, degree=2)
+       >>> nodes1 = np.array([
        ...     [2.0, 0.0],
        ...     [2.0, 1.0],
-       ... ]))
-       >>> edge2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> edge1 = bezier.Curve(nodes1, degree=1)
+       >>> nodes2 = np.array([
        ...     [2.0, 1.0],
        ...     [1.0, 2.0],
        ...     [0.0, 1.0],
-       ... ]))
-       >>> edge3 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> edge2 = bezier.Curve(nodes2, degree=2)
+       >>> nodes3 = np.array([
        ...     [0.0, 1.0],
        ...     [0.0, 0.0],
-       ... ]))
+       ... ])
+       >>> edge3 = bezier.Curve(nodes3, degree=1)
        >>> curved_poly = bezier.CurvedPolygon(
        ...     edge0, edge1, edge2, edge3)
        >>> curved_poly
@@ -90,24 +94,28 @@ class CurvedPolygon(object):
 
     .. doctest:: curved-polygon-constructor-invalid
 
-       >>> edge0 = bezier.Curve.from_nodes(np.array([
+       >>> nodes0 = np.array([
        ...     [0.0, 0.0],
        ...     [1.0, 0.0],
-       ... ]))
-       >>> edge1 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> edge0 = bezier.Curve(nodes0, degree=1)
+       >>> nodes1 = np.array([
        ...     [1.0 , 0.0],
        ...     [1.25, 0.5],
        ...     [1.0 , 1.0],
-       ... ]))
-       >>> edge2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> edge1 = bezier.Curve(nodes1, degree=2)
+       >>> nodes2 = np.array([
        ...     [1.0, 1.0],
        ...     [2.0, 1.0],
-       ... ]))
-       >>> edge3 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> edge2 = bezier.Curve(nodes2, degree=1)
+       >>> nodes3 = np.array([
        ...     [2.0, 1.0 ],
        ...     [1.0, 0.75],
        ...     [0.0, 0.0 ],
-       ... ]))
+       ... ])
+       >>> edge3 = bezier.Curve(nodes3, degree=2)
        >>> curved_poly = bezier.CurvedPolygon(
        ...     edge0, edge1, edge2, edge3)
        >>> curved_poly

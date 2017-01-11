@@ -125,7 +125,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
 
         return ax
 
-    def _plot_helper(self, show=False, ax=None):
+    def _plot_helper(self, ax=None):
         if ax is None:
             orig_ax = False
             ax = self._make_axis()
@@ -141,8 +141,6 @@ class TestCurvedPolygon(utils.NumPyTestCase):
 
         with mock.patch('bezier.curved_polygon.plt', new=plt):
             kwargs = {}
-            if show:
-                kwargs['show'] = True
             if orig_ax:
                 kwargs['ax'] = ax
             result = curved_poly.plot(2, **kwargs)
@@ -161,16 +159,8 @@ class TestCurvedPolygon(utils.NumPyTestCase):
 
         self._check_plot_calls(ax)
 
-        if show:
-            plt.show.assert_called_once_with()
-        else:
-            plt.show.assert_not_called()
-
     def test_plot(self):
         self._plot_helper()
-
-    def test_plot_show(self):
-        self._plot_helper(show=True)
 
     def test_plot_existing_axis(self):
         ax = self._make_axis()

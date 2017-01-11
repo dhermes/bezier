@@ -583,7 +583,7 @@ class TestSurface(utils.NumPyTestCase):
         # Check the calls to ax.add_patch().
         self.assertEqual(ax.add_patch.call_count, 1)
 
-    def _plot_helper(self, show=False, with_nodes=False):
+    def _plot_helper(self, with_nodes=False):
         import matplotlib.lines
 
         nodes = self.UNIT_TRIANGLE
@@ -601,8 +601,6 @@ class TestSurface(utils.NumPyTestCase):
 
         with mock.patch('bezier.surface.plt', new=plt):
             kwargs = {}
-            if show:
-                kwargs['show'] = True
             if with_nodes:
                 kwargs['with_nodes'] = True
             result = curve.plot(2, **kwargs)
@@ -615,16 +613,8 @@ class TestSurface(utils.NumPyTestCase):
 
         self._check_plot_calls(ax, nodes, color, with_nodes=with_nodes)
 
-        if show:
-            plt.show.assert_called_once_with()
-        else:
-            plt.show.assert_not_called()
-
     def test_plot(self):
         self._plot_helper()
-
-    def test_plot_show(self):
-        self._plot_helper(show=True)
 
     def test_plot_with_nodes(self):
         self._plot_helper(with_nodes=True)
@@ -648,7 +638,6 @@ class TestSurface(utils.NumPyTestCase):
 
         # Check mocks.
         plt.figure.assert_not_called()
-        plt.show.assert_not_called()
 
         self._check_plot_calls(ax, nodes, color)
 

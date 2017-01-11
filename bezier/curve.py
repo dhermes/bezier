@@ -206,7 +206,7 @@ class Curve(_base.Base):
            ...     [0.0, 0.0],
            ...     [1.0, 2.0],
            ... ])
-           >>> curve = bezier.Curve(nodes, 1)
+           >>> curve = bezier.Curve(nodes, degree=1)
            >>> curve
            <Curve (degree=1, dimension=2)>
            >>> left, right = curve.subdivide()
@@ -248,7 +248,7 @@ class Curve(_base.Base):
                [0.75, 0.0],
                [1.0, 1.0],
            ])
-           curve = bezier.Curve(nodes, 2)
+           curve = bezier.Curve(nodes, degree=2)
 
         .. doctest:: curve-root
            :options: +NORMALIZE_WHITESPACE
@@ -280,11 +280,12 @@ class Curve(_base.Base):
            import numpy as np
            import bezier
 
-           surface = bezier.Surface.from_nodes(np.array([
+           nodes = np.array([
                [0.0, 0.0],
                [1.0, 0.0],
                [0.0, 1.0],
-           ]))
+           ])
+           surface = bezier.Surface(nodes, degree=1)
            _, curve, _ = surface.edges
 
         .. doctest:: edge-index
@@ -357,7 +358,7 @@ class Curve(_base.Base):
            ...     [0.625, 0.5],
            ...     [1.0  , 0.5],
            ... ])
-           >>> curve = bezier.Curve(nodes, 2)
+           >>> curve = bezier.Curve(nodes, degree=2)
            >>> curve.evaluate(0.75)
            array([[ 0.796875, 0.46875 ]])
 
@@ -406,7 +407,7 @@ class Curve(_base.Base):
            ...     [0.0, 0.0, 0.0],
            ...     [1.0, 2.0, 3.0],
            ... ])
-           >>> curve = bezier.Curve(nodes, 1)
+           >>> curve = bezier.Curve(nodes, degree=1)
            >>> curve
            <Curve (degree=1, dimension=3)>
            >>> s_vals = np.linspace(0.0, 1.0, 5)
@@ -479,7 +480,7 @@ class Curve(_base.Base):
            ...     [1.25, 3.0],
            ...     [2.0 , 1.0],
            ... ])
-           >>> curve = bezier.Curve(nodes, 2)
+           >>> curve = bezier.Curve(nodes, degree=2)
            >>> left, right = curve.subdivide()
            >>> left
            <Curve (degree=2, dimension=2, start=0, end=0.5)>
@@ -547,12 +548,12 @@ class Curve(_base.Base):
            ...     [0.375, 0.75 ],
            ...     [0.75 , 0.375],
            ... ])
-           >>> curve1 = bezier.Curve(nodes1, 2)
+           >>> curve1 = bezier.Curve(nodes1, degree=2)
            >>> nodes2 = np.array([
            ...     [0.5, 0.0 ],
            ...     [0.5, 0.75],
            ... ])
-           >>> curve2 = bezier.Curve(nodes2, 1)
+           >>> curve2 = bezier.Curve(nodes2, degree=1)
            >>> intersections = curve1.intersect(curve2)
            >>> intersections
            array([[ 0.5, 0.5]])
@@ -653,11 +654,12 @@ class Curve(_base.Base):
 
         .. doctest:: curve-specialize
 
-           >>> curve = bezier.Curve.from_nodes(np.array([
+           >>> nodes = np.array([
            ...     [0.0, 0.0],
            ...     [0.5, 1.0],
            ...     [1.0, 0.0],
-           ... ]))
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=2)
            >>> new_curve = curve.specialize(-0.25, 0.75)
            >>> new_curve
            <Curve (degree=2, dimension=2, start=-0.25, end=0.75)>
@@ -684,7 +686,7 @@ class Curve(_base.Base):
                [0.5, 1.0],
                [1.0, 0.0],
            ])
-           curve = bezier.Curve(nodes, 2)
+           curve = bezier.Curve(nodes, degree=2)
 
         .. doctest:: curve-specialize2
 
@@ -731,12 +733,13 @@ class Curve(_base.Base):
 
         .. doctest:: curve-locate
 
-           >>> curve = bezier.Curve.from_nodes(np.array([
+           >>> nodes = np.array([
            ...     [0.0, 0.0],
            ...     [1.0, 2.0],
            ...     [3.0, 1.0],
            ...     [4.0, 0.0],
-           ... ]))
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=3)
            >>> point1 = np.array([[3.09375, 0.703125]])
            >>> s = curve.locate(point1)
            >>> s

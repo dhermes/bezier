@@ -243,7 +243,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(positional[0], expected[:, 0])
         self.assertEqual(positional[1], expected[:, 1])
 
-    def _plot_helper(self, show=False):
+    def test_plot(self):
         nodes = np.array([
             [0.0, 1.0],
             [1.0, 3.0],
@@ -257,10 +257,7 @@ class TestCurve(utils.NumPyTestCase):
         figure.gca.return_value = ax
 
         with mock.patch('bezier.curve.plt', new=plt):
-            if show:
-                result = curve.plot(2, show=True)
-            else:
-                result = curve.plot(2)
+            result = curve.plot(2)
 
         self.assertIs(result, ax)
 
@@ -271,16 +268,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(ax.plot.call_count, 1)
         call = ax.plot.mock_calls[0]
         self._check_plot_call(call, nodes)
-        if show:
-            plt.show.assert_called_once_with()
-        else:
-            plt.show.assert_not_called()
-
-    def test_plot(self):
-        self._plot_helper()
-
-    def test_plot_show(self):
-        self._plot_helper(show=True)
 
     def test_plot_existing_axis(self):
         import matplotlib.lines
@@ -304,7 +291,6 @@ class TestCurve(utils.NumPyTestCase):
 
         # Check mocks.
         plt.figure.assert_not_called()
-        plt.show.assert_not_called()
 
         # Can't use nodes[:, col] since == breaks on array.
         self.assertEqual(ax.plot.call_count, 1)

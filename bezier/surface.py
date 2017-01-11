@@ -294,11 +294,12 @@ class Surface(_base.Base):
            import numpy as np
            import bezier
 
-           surface = bezier.Surface.from_nodes(np.array([
+           nodes = np.array([
                [0.0, 0.0],
                [1.0, 0.0],
                [0.0, 1.0],
-           ]))
+           ])
+           surface = bezier.Surface(nodes, degree=1)
 
         .. doctest:: surface-width1
 
@@ -414,7 +415,7 @@ class Surface(_base.Base):
            ...     [0.625 ,  0.625 ],
            ...     [0.0   ,  1.0   ],
            ... ])
-           >>> surface = bezier.Surface(nodes, 2)
+           >>> surface = bezier.Surface(nodes, degree=2)
            >>> edge1, _, _ = surface.edges
            >>> edge1
            <Curve (degree=2, dimension=2)>
@@ -459,7 +460,7 @@ class Surface(_base.Base):
                [0.375, 0.375],
                [0.25 , 1.0  ],
            ])
-           surface = bezier.Surface(nodes, 2)
+           surface = bezier.Surface(nodes, degree=2)
 
         .. doctest:: surface-barycentric
            :options: +NORMALIZE_WHITESPACE
@@ -472,7 +473,7 @@ class Surface(_base.Base):
            ...     [0.375, 0.375],
            ...     [0.25 , 1.0  ],
            ... ])
-           >>> surface = bezier.Surface(nodes, 2)
+           >>> surface = bezier.Surface(nodes, degree=2)
            >>> point = surface.evaluate_barycentric(0.125, 0.125, 0.75)
            >>> point
            array([[ 0.265625 , 0.73046875]])
@@ -603,7 +604,7 @@ class Surface(_base.Base):
            ...     [0.5 , 0.5  ],
            ...     [0.25, 1.0  ],
            ... ])
-           >>> surface = bezier.Surface(nodes, 2)
+           >>> surface = bezier.Surface(nodes, degree=2)
            >>> point = surface.evaluate_cartesian(0.125, 0.375)
            >>> point
            array([[ 0.16015625, 0.44726562]])
@@ -640,7 +641,7 @@ class Surface(_base.Base):
            ...     [ 2.0, 1.0],
            ...     [-3.0, 2.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, 1)
+           >>> surface = bezier.Surface(nodes, degree=1)
            >>> surface
            <Surface (degree=1, dimension=2)>
            >>> param_vals = np.array([
@@ -675,7 +676,7 @@ class Surface(_base.Base):
            ...     [-0.5, 1.5 ],
            ...     [-3. , 2.  ],
            ... ])
-           >>> surface = bezier.Surface(nodes, 2)
+           >>> surface = bezier.Surface(nodes, degree=2)
            >>> surface
            <Surface (degree=2, dimension=2)>
            >>> param_vals = np.array([
@@ -830,7 +831,7 @@ class Surface(_base.Base):
            ...     [ 2.0 , 3.0 ],
            ...     [ 0.0 , 4.0 ],
            ... ])
-           >>> surface = bezier.Surface(nodes, 2)
+           >>> surface = bezier.Surface(nodes, degree=2)
            >>> _, sub_surface_b, _, _ = surface.subdivide()
            >>> sub_surface_b
            <Surface (degree=2, dimension=2, base=(0.5, 0.5), width=-0.5)>
@@ -970,7 +971,7 @@ class Surface(_base.Base):
            ...     [1.0, 1.0],
            ...     [2.0, 2.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, 1)
+           >>> surface = bezier.Surface(nodes, degree=1)
            >>> surface.is_valid
            False
 
@@ -994,7 +995,7 @@ class Surface(_base.Base):
            ...     [ 0.5  , 0.5  ],
            ...     [ 0.0  , 1.0  ],
            ... ])
-           >>> surface = bezier.Surface(nodes, 2)
+           >>> surface = bezier.Surface(nodes, degree=2)
            >>> surface.is_valid
            True
 
@@ -1018,7 +1019,7 @@ class Surface(_base.Base):
            ...     [0.0, 0.0],
            ...     [0.0, 1.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, 2)
+           >>> surface = bezier.Surface(nodes, degree=2)
            >>> surface.is_valid
            False
 
@@ -1046,14 +1047,15 @@ class Surface(_base.Base):
 
         .. doctest:: surface-locate
 
-           >>> surface = bezier.Surface.from_nodes(np.array([
+           >>> nodes = np.array([
            ...     [0.0 ,  0.0 ],
            ...     [0.5 , -0.25],
            ...     [1.0 ,  0.0 ],
            ...     [0.25,  0.5 ],
            ...     [0.75,  0.75],
            ...     [0.0 ,  1.0 ],
-           ... ]))
+           ... ])
+           >>> surface = bezier.Surface(nodes, degree=2)
            >>> point = np.array([[0.59375, 0.25]])
            >>> s, t = surface.locate(point)
            >>> s

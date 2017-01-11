@@ -755,14 +755,15 @@ def newton_refine(surface, x_val, y_val, s, t):
 
     .. doctest:: newton-refine-surface
 
-       >>> surface = bezier.Surface.from_nodes(np.array([
+       >>> nodes = np.array([
        ...     [0.0, 0.0],
        ...     [1.0, 0.0],
        ...     [2.0, 0.0],
        ...     [2.0, 1.0],
        ...     [2.0, 2.0],
        ...     [0.0, 2.0],
-       ... ]))
+       ... ])
+       >>> surface = bezier.Surface(nodes, degree=2)
        >>> surface.is_valid
        True
        >>> (x_val, y_val), = surface.evaluate_cartesian(0.25, 0.5)
@@ -912,16 +913,18 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection1
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve.from_nodes(np.array([
+       >>> nodes1 = np.array([
        ...     [1.0 , 0.0 ],
        ...     [1.75, 0.25],
        ...     [2.0 , 1.0 ],
-       ... ]))
-       >>> curve2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1, degree=2)
+       >>> nodes2 = np.array([
        ...     [0.0   , 0.0   ],
        ...     [1.6875, 0.0625],
        ...     [2.0   , 0.5   ],
-       ... ]))
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.25, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
@@ -971,16 +974,18 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection2
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve.from_nodes(np.array([
+       >>> nodes1 = np.array([
        ...     [1.0, 0.0],
        ...     [1.5, 1.0],
        ...     [2.0, 0.0],
-       ... ]))
-       >>> curve2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1, degree=2)
+       >>> nodes2 = np.array([
        ...     [0.0, 0.0],
        ...     [1.5, 1.0],
        ...     [3.0, 0.0],
-       ... ]))
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
@@ -1005,16 +1010,18 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection3
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve.from_nodes(np.array([
+       >>> nodes1 = np.array([
        ...     [2.0, 0.0],
        ...     [1.5, 1.0],
        ...     [1.0, 0.0],
-       ... ]))
-       >>> curve2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1, degree=2)
+       >>> nodes2 = np.array([
        ...     [3.0, 0.0],
        ...     [1.5, 1.0],
        ...     [0.0, 0.0],
-       ... ]))
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
@@ -1037,16 +1044,18 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection4
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve.from_nodes(np.array([
+       >>> nodes1 = np.array([
        ...     [2.0, 0.0],
        ...     [1.5, 1.0],
        ...     [1.0, 0.0],
-       ... ]))
-       >>> curve2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1, degree=2)
+       >>> nodes2 = np.array([
        ...     [0.0, 0.0],
        ...     [1.5, 1.0],
        ...     [3.0, 0.0],
-       ... ]))
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
@@ -1070,16 +1079,18 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection5
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve.from_nodes(np.array([
+       >>> nodes1 = np.array([
        ...     [1.0, 0.0],
        ...     [1.5, 1.0],
        ...     [2.0, 0.0],
-       ... ]))
-       >>> curve2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1, degree=2)
+       >>> nodes2 = np.array([
        ...     [3.0, 0.0],
        ...     [1.5, 1.0],
        ...     [0.0, 0.0],
-       ... ]))
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
@@ -1104,16 +1115,18 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection6
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1 = bezier.Curve.from_nodes(np.array([
+       >>> nodes1 = np.array([
        ...     [ 0.375,  0.0625],
        ...     [-0.125, -0.0625],
        ...     [-0.125,  0.0625],
-       ... ]))
-       >>> curve2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1, degree=2)
+       >>> nodes2 = np.array([
        ...     [ 0.75,  0.25],
        ...     [-0.25, -0.25],
        ...     [-0.25,  0.25],
-       ... ]))
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
@@ -1145,16 +1158,18 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection7
        :options: +NORMALIZE_WHITESPACE
 
-       >>> curve1a = bezier.Curve.from_nodes(np.array([
+       >>> nodes1a = np.array([
        ...     [0.0, 0.0 ],
        ...     [4.5, 0.0 ],
        ...     [9.0, 2.25],
-       ... ]))
-       >>> curve2 = bezier.Curve.from_nodes(np.array([
+       ... ])
+       >>> curve1a = bezier.Curve(nodes1a, degree=2)
+       >>> nodes2 = np.array([
        ...     [11.25, 0.0],
        ...     [ 9.0 , 4.5],
        ...     [ 2.75, 1.0],
-       ... ]))
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 1.0, 0.375
        >>> curve1a.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
@@ -1165,11 +1180,12 @@ def classify_intersection(intersection):
        ValueError: ('Intersection occurs at the end of an edge',
                     's', 1.0, 't', 0.375)
        >>>
-       >>> curve1b = bezier.Curve.from_nodes(np.array([
+       >>> nodes1b = np.array([
        ...     [9.0, 2.25 ],
        ...     [4.5, 2.375],
        ...     [0.0, 2.5  ],
-       ... ]))
+       ... ])
+       >>> curve1b = bezier.Curve(nodes1b, degree=2)
        >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1b, 0.0, curve2, t)
@@ -1191,22 +1207,24 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection8
        :options: +NORMALIZE_WHITESPACE
 
-       >>> surface1 = bezier.Surface.from_nodes(np.array([
+       >>> nodes1 = np.array([
        ...     [0.25 , 1.0  ],
        ...     [0.0  , 0.5  ],
        ...     [0.0  , 0.0  ],
        ...     [0.625, 0.875],
        ...     [0.5  , 0.375],
        ...     [1.0  , 0.75 ],
-       ... ]))
-       >>> surface2 = bezier.Surface.from_nodes(np.array([
+       ... ])
+       >>> surface1 = bezier.Surface(nodes1, degree=2)
+       >>> nodes2 = np.array([
        ...     [ 0.0625, 0.5  ],
        ...     [-0.25  , 1.0  ],
        ...     [-1.0   , 1.0  ],
        ...     [-0.5   , 0.125],
        ...     [-1.0   , 0.5  ],
        ...     [-1.0   , 0.0  ],
-       ... ]))
+       ... ])
+       >>> surface2 = bezier.Surface(nodes2, degree=2)
        >>> curve1, _, _ = surface1.edges
        >>> curve2, _, _ = surface2.edges
        >>> s, t = 0.5, 0.0
