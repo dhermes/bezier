@@ -264,6 +264,8 @@ def polynomial_sign(poly_surface):
         ValueError: If no conclusion is reached after the maximum
             number of subdivisions.
     """
+    # The indices where the corner nodes in a surface are.
+    corner_indices = (0, poly_surface._degree, -1)
     sub_polys = [poly_surface]
     signs = set()
     for _ in six.moves.xrange(_MAX_POLY_SUBDIVISIONS):
@@ -271,6 +273,9 @@ def polynomial_sign(poly_surface):
         for poly in sub_polys:
             # Avoid an unnecessarily copying the nodes.
             nodes = poly._nodes  # pylint: disable=protected-access
+            # First add all the signs of the corner nodes.
+            signs.update(_SIGN(nodes[corner_indices, 0]).astype(int))
+            # Then check if the ``nodes`` are **uniformly** one sign.
             if np.all(nodes == 0.0):
                 signs.add(0)
             elif np.all(nodes > 0.0):

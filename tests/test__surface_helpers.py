@@ -91,6 +91,17 @@ class Test_polynomial_sign(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self._helper(bernstein, None)
 
+    def test_conclusion_from_corner_node(self):
+        # NOTE: This comes from the surface defined by
+        #          [0.0   0.0  ]
+        #          [0.5   0.5  ]
+        #          [1.0   0.625]
+        #          [0.0   0.5  ]
+        #          [0.5   0.5  ]
+        #          [0.25  1.0  ]
+        bernstein = np.array([[1.0, 0.5, 0.0, 0.75, 0.4375, 1.0]]).T
+        self._helper(bernstein, 0)
+
 
 class Test__2x2_det(unittest.TestCase):
 
