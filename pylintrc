@@ -48,4 +48,4 @@ dummy-variables-rgx=(_+[a-zA-Z0-9]*?$)|dummy|^unused_
 exclude-protected =
     _nodes,
     _degree,
-    _dimesnion,
+    _dimension,

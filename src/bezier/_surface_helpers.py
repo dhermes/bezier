@@ -269,16 +269,14 @@ def polynomial_sign(poly_surface):
             number of subdivisions.
     """
     # The indices where the corner nodes in a surface are.
-    # pylint: disable=protected-access
     corner_indices = (0, poly_surface._degree, -1)
-    # pylint: enable=protected-access
     sub_polys = [poly_surface]
     signs = set()
     for _ in six.moves.xrange(_MAX_POLY_SUBDIVISIONS):
         undecided = []
         for poly in sub_polys:
             # Avoid an unnecessarily copying the nodes.
-            nodes = poly._nodes  # pylint: disable=protected-access
+            nodes = poly._nodes
             # First add all the signs of the corner nodes.
             signs.update(_SIGN(nodes[corner_indices, 0]).astype(int))
             # Then check if the ``nodes`` are **uniformly** one sign.
@@ -805,13 +803,11 @@ def newton_refine(surface, x_val, y_val, s, t):
         return s, t
 
     # Compute Jacobian nodes / stack them horizatonally.
-    # pylint: disable=protected-access
     degree = surface._degree
     jac_both = np.hstack([
         jacobian_s(surface._nodes, degree, surface._dimension),
         jacobian_t(surface._nodes, degree, surface._dimension),
     ])
-    # pylint: enable=protected-access
 
     lambda1 = 1.0 - s - t
     # The degree of the jacobian is one less.
@@ -858,7 +854,7 @@ def locate_point(surface, x_val, y_val):
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for candidate in candidates:
-            nodes = candidate._nodes  # pylint: disable=protected-access
+            nodes = candidate._nodes
             if _helpers.contains(nodes, x_val, y_val):
                 next_candidates.extend(candidate.subdivide())
 
@@ -1273,13 +1269,11 @@ def classify_intersection(intersection):
         raise ValueError('Intersection occurs at the end of an edge',
                          's', intersection.s, 't', intersection.t)
 
-    # pylint: disable=protected-access
     tangent1 = _curve_helpers.evaluate_hodograph(
         intersection.first._nodes, intersection.first._degree, intersection.s)
     tangent2 = _curve_helpers.evaluate_hodograph(
         intersection.second._nodes, intersection.second._degree,
         intersection.t)
-    # pylint: enable=protected-access
 
     if _ignored_corner(intersection, tangent1, tangent2):
         return IntersectionClassification.ignored_corner
@@ -1324,14 +1318,12 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
     # NOTE: When computing curvatures we assume that we don't have lines
     #       here, because lines that are tangent at an intersection are
     #       parallel and we don't handle that case.
-    # pylint: disable=protected-access
     curvature1 = _curve_helpers.get_curvature(
         intersection.first._nodes, intersection.first._degree,
         tangent1, intersection.s)
     curvature2 = _curve_helpers.get_curvature(
         intersection.second._nodes, intersection.second._degree,
         tangent2, intersection.t)
-    # pylint: enable=protected-access
     if dot_prod < 0:
         # If the tangent vectors are pointing in the opposite direction,
         # then the curves are facing opposite directions.
@@ -1412,10 +1404,8 @@ def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
         return False
 
     # Do the same for the **other** tangent at the corner.
-    # pylint: disable=protected-access
     alt_corner_tangent = _curve_helpers.evaluate_hodograph(
         corner_previous_edge._nodes, corner_previous_edge._degree, 1.0)
-    # pylint: enable=protected-access
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
     cross_prod = _helpers.cross_product(edge_tangent, alt_corner_tangent)
@@ -1445,9 +1435,9 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
     # Compute the other edge for the ``s`` surface.
     # pylint: disable=protected-access
     prev_edge = intersection.first._previous_edge
+    # pylint: enable=protected-access
     alt_tangent_s = _curve_helpers.evaluate_hodograph(
         prev_edge._nodes, prev_edge._degree, 1.0)
-    # pylint: enable=protected-access
 
     # First check if ``tangent_t`` is interior to the ``s`` surface.
     cross_prod1 = _helpers.cross_product(tangent_s, tangent_t)
@@ -1466,9 +1456,9 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
     # edge that ends at the corner.
     # pylint: disable=protected-access
     prev_edge = intersection.second._previous_edge
+    # pylint: enable=protected-access
     alt_tangent_t = _curve_helpers.evaluate_hodograph(
         prev_edge._nodes, prev_edge._degree, 1.0)
-    # pylint: enable=protected-access
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
 
@@ -1939,18 +1929,16 @@ def _no_intersections(surface1, surface2):
         in the other. Otherwise, the list will have a single
         :class:`.CurvedPolygon` corresponding to the internal surface.
     """
-    nodes1 = surface1._nodes  # pylint: disable=protected-access
     # NOTE: We want the nodes to be 1x2 but accessing ``nodes1[[0], :]``
     #       and ``nodes2[[0], :]`` makes a copy while the accesses
     #       below **do not** copy. See
     #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
     #        arrays.indexing.html#advanced-indexing)
-    corner1 = nodes1[0, :].reshape((1, 2))
+    corner1 = surface1._nodes[0, :].reshape((1, 2))
     if surface2.locate(corner1) is not None:
         return [_to_curved_polygon(surface1)]
 
-    nodes2 = surface2._nodes  # pylint: disable=protected-access
-    corner2 = nodes2[0, :].reshape((1, 2))
+    corner2 = surface2._nodes[0, :].reshape((1, 2))
     if surface1.locate(corner2) is not None:
         return [_to_curved_polygon(surface2)]
 
@@ -2085,6 +2073,63 @@ def combine_intersections(intersections, surface1, surface2):
         return result
 
     return _tangent_only_intersections(intersections, surface1, surface2)
+
+
+def evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
+    r"""Compute a point on a surface.
+
+    Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)` for a
+    B |eacute| zier surface / triangle defined by ``nodes``.
+
+    Args:
+        nodes (numpy.ndarray): Control point nodes that define the surface.
+        degree (int): The degree of the surface define by ``nodes``.
+        lambda1 (float): Parameter along the reference triangle.
+        lambda2 (float): Parameter along the reference triangle.
+        lambda3 (float): Parameter along the reference triangle.
+
+    Returns:
+        numpy.ndarray: The evaluate point as a ``1xD`` array (where ``D``
+        is the ambient dimension where ``nodes`` reside).
+    """
+    if degree == 1:
+        weights = np.array([
+            [lambda1, lambda2, lambda3],
+        ])
+    elif degree == 2:
+        weights = np.array([
+            [
+                lambda1 * lambda1,
+                2.0 * lambda1 * lambda2,
+                lambda2 * lambda2,
+                2.0 * lambda1 * lambda3,
+                2.0 * lambda2 * lambda3,
+                lambda3 * lambda3,
+            ]
+        ])
+    elif degree == 3:
+        weights = np.array([
+            [
+                lambda1 * lambda1 * lambda1,
+                3.0 * lambda1 * lambda1 * lambda2,
+                3.0 * lambda1 * lambda2 * lambda2,
+                lambda2 * lambda2 * lambda2,
+                3.0 * lambda1 * lambda1 * lambda3,
+                6.0 * lambda1 * lambda2 * lambda3,
+                3.0 * lambda2 * lambda2 * lambda3,
+                3.0 * lambda1 * lambda3 * lambda3,
+                3.0 * lambda2 * lambda3 * lambda3,
+                lambda3 * lambda3 * lambda3,
+            ]
+        ])
+    else:
+        result = nodes
+        for reduced_deg in six.moves.xrange(degree, 0, -1):
+            result = de_casteljau_one_round(
+                result, reduced_deg, lambda1, lambda2, lambda3)
+        return result
+
+    return weights.dot(nodes)  # pylint: disable=no-member
 
 
 class IntersectionClassification(enum.Enum):

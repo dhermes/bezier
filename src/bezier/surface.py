@@ -543,44 +543,8 @@ class Surface(_base.Base):
                 raise ValueError('Weights must be positive',
                                  lambda1, lambda2, lambda3)
 
-        if self._degree == 1:
-            weights = np.array([
-                [lambda1, lambda2, lambda3],
-            ])
-        elif self._degree == 2:
-            weights = np.array([
-                [
-                    lambda1 * lambda1,
-                    2.0 * lambda1 * lambda2,
-                    lambda2 * lambda2,
-                    2.0 * lambda1 * lambda3,
-                    2.0 * lambda2 * lambda3,
-                    lambda3 * lambda3,
-                ]
-            ])
-        elif self._degree == 3:
-            weights = np.array([
-                [
-                    lambda1 * lambda1 * lambda1,
-                    3.0 * lambda1 * lambda1 * lambda2,
-                    3.0 * lambda1 * lambda2 * lambda2,
-                    lambda2 * lambda2 * lambda2,
-                    3.0 * lambda1 * lambda1 * lambda3,
-                    6.0 * lambda1 * lambda2 * lambda3,
-                    3.0 * lambda2 * lambda2 * lambda3,
-                    3.0 * lambda1 * lambda3 * lambda3,
-                    3.0 * lambda2 * lambda3 * lambda3,
-                    lambda3 * lambda3 * lambda3,
-                ]
-            ])
-        else:
-            result = self._nodes
-            for reduced_deg in six.moves.xrange(self._degree, 0, -1):
-                result = _surface_helpers.de_casteljau_one_round(
-                    result, reduced_deg, lambda1, lambda2, lambda3)
-            return result
-
-        return weights.dot(self._nodes)  # pylint: disable=no-member
+        return _surface_helpers.evaluate_barycentric(
+            self._nodes, self._degree, lambda1, lambda2, lambda3)
 
     def evaluate_cartesian(self, s, t, _verify=True):
         r"""Compute a point on the surface.
