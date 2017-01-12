@@ -4,7 +4,8 @@ machine:
 
 dependencies:
   override:
-    - pip install --upgrade pip tox tox-pyenv
+    # Needed for testing (NumPy distutils needed for install)
+    - pip install --upgrade pip tox tox-pyenv numpy
     # latest as of Oct. 31, 2016: 2.7.12, 3.4.5, 3.5.2
     - pyenv local 2.7.12 3.4.4 3.5.2
 
