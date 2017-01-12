@@ -1,10 +1,10 @@
-all: bezier/_speedup.so
+all: src/bezier/_speedup.so
 
-bezier/_speedup.so: bezier/speedup.f90 .f2py_f2cmap
-	f2py -c -m _speedup bezier/speedup.f90
-	mv _speedup.so bezier
+src/bezier/_speedup.so: src/bezier/speedup.f90 .f2py_f2cmap
+	f2py -c -m _speedup src/bezier/speedup.f90
+	mv _speedup.so src/bezier
 
 clean:
-	rm -f bezier/_speedup.so
+	rm -f src/bezier/_speedup.so
 
 .PHONY: all clean

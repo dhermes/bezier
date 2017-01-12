@@ -16,4 +16,4 @@ __pycache__
 .DS_Store
 
 # Generated files
-bezier/_speedup.so
+src/bezier/_speedup.so
