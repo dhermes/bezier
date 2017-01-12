@@ -2,7 +2,7 @@ module speedup
 
   implicit none
   private
-  public de_casteljau_one_round, evaluate_multi
+  public de_casteljau_one_round, evaluate_multi, linearization_error
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -13,6 +13,8 @@ contains
   subroutine de_casteljau_one_round( &
        num_nodes, dimension_, nodes, degree, &
        lambda1, lambda2, lambda3, new_nodes)
+
+    ! NOTE: This is de Casteljau on a Bezier surface / triangle.
 
     !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
@@ -62,6 +64,8 @@ contains
   subroutine evaluate_multi( &
        num_nodes, dimension_, nodes, num_vals, s_vals, evaluated)
 
+    ! NOTE: This is evaluate_multi for a Bezier curve.
+
     !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     !f2py integer intent(hide), depend(s_vals) :: num_vals = size(s_vals)
@@ -103,5 +107,29 @@ contains
     evaluated = matmul(weights_curr, nodes)
 
   end subroutine evaluate_multi
+
+  subroutine linearization_error(nodes, degree, dimension_, error)
+
+    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    real(dp), intent(in) :: nodes(degree + 1, dimension_)
+    integer :: dimension_
+    integer :: degree
+    real(dp), intent(out) :: error
+    ! Variables outside of signature.
+    real(dp) :: second_deriv(degree - 1, dimension_)
+    real(dp) :: worst_case(dimension_)
+
+    if (degree == 1) then
+       error = 0.0_dp
+       return
+    endif
+
+    second_deriv = ( &
+         nodes(:degree - 1, :) - &
+         2.0_dp * nodes(2:degree, :) + &
+         nodes(3:, :))
+    worst_case = maxval(abs(second_deriv), 1)
+    error = 0.125_dp * degree * (degree - 1) * norm2(worst_case)
+ end subroutine linearization_error
 
 end module speedup

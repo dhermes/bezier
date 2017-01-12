@@ -173,13 +173,8 @@ class Test_bbox_intersect(unittest.TestCase):
             result, _intersection_helpers.BoxIntersectionType.disjoint)
 
 
-class Test_linearization_error(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree):
-        from bezier import _intersection_helpers
-
-        return _intersection_helpers.linearization_error(nodes, degree)
+# pylint: disable=no-member
+class Base_linearization_error(object):  # pylint: disable=invalid-name
 
     def test_linear(self):
         nodes = np.array([
@@ -247,6 +242,20 @@ class Test_linearization_error(unittest.TestCase):
         self.assertEqual(error_left, 0.25 * expected)
         self.assertEqual(error_right, 0.25 * expected)
 
+    def test_higher_dimension(self):
+        nodes = np.array([
+            [1.5, 0.0, 6.25],
+            [3.5, -5.0, 10.25],
+            [8.5, 2.0, 10.25],
+        ])
+        # NOTE: This is hand picked so that
+        #             d Nodes = [2, -5, 4], [5, 7, 0]
+        #           d^2 Nodes = [3, 12, -4]
+        #       so that sqrt(3^2 + 12^2 + 4^2) = 13.0
+        error_val = self._call_function_under_test(nodes, 2)
+        expected = 0.125 * 2 * 1 * 13.0
+        self.assertEqual(error_val, expected)
+
     def test_hidden_quadratic(self):
         # NOTE: This is the line y = 1 + x^2 / 4, but with the
         #       parameterization x(s) = (3 s - 1)^2.
@@ -260,7 +269,8 @@ class Test_linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(nodes, 4)
         # D^2 v = [1.5, 2.25], [1.5, -4.5], [1.5, 9]
         expected = 0.125 * 4 * 3 * np.sqrt(1.5**2 + 9.0**2)
-        self.assertEqual(error_val, expected)
+        local_eps = abs(np.spacing(expected))
+        self.assertAlmostEqual(error_val, expected, delta=local_eps)
 
     def test_cubic(self):
         nodes = np.array([
@@ -309,6 +319,26 @@ class Test_linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(nodes, 5)
         expected = 0.125 * 5 * 4 * 13.0
         self.assertEqual(error_val, expected)
+# pylint: enable=no-member
+
+
+class Test__linearization_error(Base_linearization_error, unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._linearization_error(nodes, degree)
+
+
+class Test_speedup_linearization_error(
+        Base_linearization_error, unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _speedup
+
+        return _speedup.speedup.linearization_error(nodes, degree)
 
 
 class Test_newton_refine(utils.NumPyTestCase):

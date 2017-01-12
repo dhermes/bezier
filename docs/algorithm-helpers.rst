@@ -14,7 +14,7 @@ In this document, these helper functions and objects are documented.
 This is to help with the exposition of the computation and
 **does not** imply that these are part of the stable public interface.
 
-.. autofunction:: bezier._intersection_helpers.linearization_error
+.. autofunction:: bezier._intersection_helpers._linearization_error
 .. autofunction:: bezier._intersection_helpers.newton_refine
 .. autofunction:: bezier._intersection_helpers.segment_intersection
 .. autofunction:: bezier._intersection_helpers.parallel_different

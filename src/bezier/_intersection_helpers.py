@@ -25,6 +25,10 @@ import six
 
 from bezier import _curve_helpers
 from bezier import _helpers
+try:
+    from bezier import _speedup
+except ImportError:  # pragma: NO COVER
+    _speedup = None
 
 
 # Set the threshold for exponetn at half the bits available,
@@ -137,7 +141,7 @@ def bbox_intersect(nodes1, nodes2):
         return BoxIntersectionType.intersection
 
 
-def linearization_error(nodes, degree):
+def _linearization_error(nodes, degree):
     r"""Compute the maximum error of a linear approximation.
 
     Helper for :class:`.Linearization`, which is used during the
@@ -262,6 +266,11 @@ def linearization_error(nodes, degree):
        the domain :math:`\left[0, 1\right]` means the error is **already**
        adequately scaled or if the error should be scaled by the arc
        length of the curve or the (easier-to-compute) length of the line.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): Nodes of a curve.
@@ -1494,3 +1503,11 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
                 self.s, self.first, self.t, self.second)
         else:
             return self.point
+
+
+# pylint: disable=invalid-name
+if _speedup is None:  # pragma: NO COVER
+    linearization_error = _linearization_error
+else:
+    linearization_error = _speedup.speedup.linearization_error
+# pylint: enable=invalid-name
