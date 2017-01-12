@@ -28,6 +28,10 @@ except ImportError:  # pragma: NO COVER
     _scipy_int = None
 
 from bezier import _helpers
+try:
+    from bezier import _speedup
+except ImportError:  # pragma: NO COVER
+    _speedup = None
 
 
 _MAX_LOCATE_SUBDIVISIONS = 20
@@ -62,7 +66,7 @@ def make_subdivision_matrix(degree):
     return result
 
 
-def evaluate_multi(nodes, degree, s_vals):
+def _evaluate_multi(nodes, s_vals):
     r"""Computes multiple points along a curve.
 
     Does so by computing the Bernstein basis at each value in ``s_vals``
@@ -70,8 +74,6 @@ def evaluate_multi(nodes, degree, s_vals):
 
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
-        degree (int): The degree of the curve (assumed to be one less than
-            the number of ``nodes``.
         s_vals (numpy.ndarray): Parameters along the curve (as a
             1D array).
 
@@ -81,16 +83,17 @@ def evaluate_multi(nodes, degree, s_vals):
         value and the columns to the dimension.
     """
     num_vals, = s_vals.shape
+    num_nodes, _ = nodes.shape
 
     lambda2 = s_vals[:, np.newaxis]
     lambda1 = 1.0 - lambda2
 
-    weights_next = np.zeros((num_vals, degree + 1))
-    weights_curr = np.zeros((num_vals, degree + 1))
+    weights_next = np.zeros((num_vals, num_nodes))
+    weights_curr = np.zeros((num_vals, num_nodes))
     weights_curr[:, 0] = 1.0
 
-    # Increase from degree 0 to ``degree``.
-    for curr_deg in six.moves.xrange(degree):
+    # Increase from degree 0 to max degree.
+    for curr_deg in six.moves.xrange(num_nodes - 1):
         weights_next[:, :curr_deg + 1] = (
             lambda1 * weights_curr[:, :curr_deg + 1])
         weights_next[:, 1:curr_deg + 2] += (
@@ -100,19 +103,17 @@ def evaluate_multi(nodes, degree, s_vals):
     return weights_curr.dot(nodes)
 
 
-def _vec_size(nodes, degree, s_val):
+def _vec_size(nodes, s_val):
     r"""Compute :math:`\|B(s)\|_2`.
 
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
-        degree (int): The degree of the curve (assumed to be one less than
-            the number of ``nodes``.
         s_val (float): Parameter to compute :math:`B(s)`.
 
     Returns:
         float: The norm of :math:`B(s)`.
     """
-    result_vec = evaluate_multi(nodes, degree, np.array([s_val]))
+    result_vec = evaluate_multi(nodes, np.array([s_val]))
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
     return np.linalg.norm(result_vec[0, :], ord=2)
 
@@ -155,7 +156,7 @@ def compute_length(nodes, degree):
     if _scipy_int is None:
         raise OSError('This function requires SciPy for quadrature.')
 
-    size_func = functools.partial(_vec_size, first_deriv, degree - 1)
+    size_func = functools.partial(_vec_size, first_deriv)
     length, _ = _scipy_int.quad(size_func, 0.0, 1.0)
     return length
 
@@ -294,7 +295,7 @@ def evaluate_hodograph(nodes, degree, s):
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     # NOTE: Taking the derivative drops the degree by 1.
     return degree * evaluate_multi(
-        first_deriv, degree - 1, np.array([s]))
+        first_deriv, np.array([s]))
 
 
 def get_curvature(nodes, degree, tangent_vec, s):
@@ -363,7 +364,7 @@ def get_curvature(nodes, degree, tangent_vec, s):
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     second_deriv = first_deriv[1:, :] - first_deriv[:-1, :]
     concavity = degree * (degree - 1) * evaluate_multi(
-        second_deriv, degree - 2, np.array([s]))
+        second_deriv, np.array([s]))
 
     curvature = _helpers.cross_product(tangent_vec, concavity)
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
@@ -595,3 +596,11 @@ def locate_point(curve, point):
 
     s_approx = np.mean(params)
     return newton_refine(curve, point, s_approx)
+
+
+# pylint: disable=invalid-name
+if _speedup is None:  # pragma: NO COVER
+    evaluate_multi = _evaluate_multi
+else:
+    evaluate_multi = _speedup.speedup.evaluate_multi
+# pylint: enable=invalid-name

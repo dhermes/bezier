@@ -427,8 +427,7 @@ class Curve(_base.Base):
             NumPy array, with the rows corresponding to each ``s``
             value and the columns to the dimension.
         """
-        return _curve_helpers.evaluate_multi(
-            self._nodes, self._degree, s_vals)
+        return _curve_helpers.evaluate_multi(self._nodes, s_vals)
 
     def plot(self, num_pts, ax=None):
         """Plot the current curve.

@@ -74,6 +74,7 @@ def extension_modules():
         sources=[
             os.path.join(bezier_path, 'speedup.f90'),
         ],
+        extra_compile_args=['-O3'],
     )
     return [extension]
 

@@ -2,7 +2,7 @@ module speedup
 
   implicit none
   private
-  public de_casteljau_one_round
+  public de_casteljau_one_round, evaluate_multi
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -58,5 +58,50 @@ contains
     enddo
 
   end subroutine de_casteljau_one_round
+
+  subroutine evaluate_multi( &
+       num_nodes, dimension_, nodes, num_vals, s_vals, evaluated)
+
+    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
+    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    !f2py integer intent(hide), depend(s_vals) :: num_vals = size(s_vals)
+    integer :: num_nodes
+    integer :: dimension_
+    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    integer :: num_vals
+    real(dp), intent(in) :: s_vals(num_vals)
+    real(dp), intent(out) :: evaluated(num_vals, dimension_)
+    ! Variables outside of signature.
+    integer :: curr_deg, index
+    real(dp) :: one_less(num_vals)
+    real(dp) :: weights_next(num_vals, num_nodes)
+    real(dp) :: weights_curr(num_vals, num_nodes)
+    real(dp) :: swap(num_vals, num_nodes)
+
+    ! Degree 0 only occupies first column
+    weights_curr(:, 1) = 1.0_dp
+    weights_curr(:, 2:) = 0.0_dp
+    ! Zero out "next" workspace
+    weights_next = 0.0_dp
+
+    one_less(:) = 1.0_dp - s_vals(:)
+
+    ! Increase from degree 0 to (degree - 1).
+    do curr_deg = 1, num_nodes - 1
+       forall (index = 1:curr_deg)
+          weights_next(:, index) = weights_curr(:, index) * one_less(:)
+          weights_next(:, index + 1) = ( &
+               weights_next(:, index + 1) + &
+               weights_curr(:, index) * s_vals(:))
+       end forall
+
+       swap = weights_curr
+       weights_curr = weights_next
+       weights_next = swap
+    enddo
+
+    evaluated = matmul(weights_curr, nodes)
+
+  end subroutine evaluate_multi
 
 end module speedup

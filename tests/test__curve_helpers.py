@@ -52,19 +52,30 @@ class Test_make_subdivision_matrix(utils.NumPyTestCase):
         self._helper(3, curve._CUBIC_SUBDIVIDE)
 
 
-class Test_evaluate_multi(unittest.TestCase):
+# pylint: disable=no-member
+class Base_evaluate_multi(object):  # pylint: disable=invalid-name
 
-    @staticmethod
-    def _call_function_under_test(nodes, degree, s_vals):
-        from bezier import _curve_helpers
+    def test_linear(self):
+        num_vals = 129
+        s_vals = np.linspace(0.0, 1.0, num_vals)
+        # B(s) = [s + 1, 1 - 2 s, 3 s - 7]
+        nodes = np.array([
+            [1.0, 1.0, -7.0],
+            [2.0, -1.0, -4.0],
+        ])
 
-        return _curve_helpers.evaluate_multi(nodes, degree, s_vals)
+        result = self._call_function_under_test(nodes, s_vals)
 
-    def test_it(self):
-        import six
+        expected = np.empty((num_vals, 3))
+        expected[:, 0] = 1.0 + s_vals
+        expected[:, 1] = 1.0 - 2.0 * s_vals
+        expected[:, 2] = -7.0 + 3.0 * s_vals
 
-        s_vals = np.array([0.0, 0.25, 0.75, 1.0])
-        degree = 2
+        self.assertEqual(result, expected)
+
+    def test_quadratic(self):
+        num_vals = 65
+        s_vals = np.linspace(0.0, 1.0, num_vals)
         # B(s) = [s(4 - s), 2s(2s - 1)]
         nodes = np.array([
             [0.0, 0.0],
@@ -72,30 +83,48 @@ class Test_evaluate_multi(unittest.TestCase):
             [3.0, 2.0],
         ])
 
-        result = self._call_function_under_test(nodes, degree, s_vals)
-        self.assertEqual(result.shape, (4, 2))
+        result = self._call_function_under_test(nodes, s_vals)
 
-        for index in six.moves.xrange(4):
-            s_val = s_vals[index]
-            self.assertEqual(result[index, 0], s_val * (4.0 - s_val))
-            self.assertEqual(result[index, 1],
-                             2.0 * s_val * (2.0 * s_val - 1.0))
+        expected = np.empty((num_vals, 2))
+        expected[:, 0] = s_vals * (4.0 - s_vals)
+        expected[:, 1] = 2.0 * s_vals * (2.0 * s_vals - 1.0)
+
+        self.assertEqual(result, expected)
+# pylint: enable=no-member
+
+
+class Test__evaluate_multi(Base_evaluate_multi, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, s_vals):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._evaluate_multi(nodes, s_vals)
+
+
+class Test_speedup_evaluate_multi(Base_evaluate_multi, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, s_vals):
+        from bezier import _speedup
+
+        return _speedup.speedup.evaluate_multi(nodes, s_vals)
 
 
 class Test__vec_size(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, s_val):
+    def _call_function_under_test(nodes, s_val):
         from bezier import _curve_helpers
 
-        return _curve_helpers._vec_size(nodes, degree, s_val)
+        return _curve_helpers._vec_size(nodes, s_val)
 
     def test_linear(self):
         nodes = np.array([
             [0.0, 0.0],
             [3.0, -4.0],
         ])
-        size = self._call_function_under_test(nodes, 1, 0.25)
+        size = self._call_function_under_test(nodes, 0.25)
         self.assertEqual(size, 0.25 * 5.0)
 
     def test_quadratic(self):
@@ -104,7 +133,7 @@ class Test__vec_size(unittest.TestCase):
             [2.0, 3.0],
             [1.0, 6.0],
         ])
-        size = self._call_function_under_test(nodes, 2, 0.5)
+        size = self._call_function_under_test(nodes, 0.5)
         self.assertEqual(size, 3.25)
 
 
