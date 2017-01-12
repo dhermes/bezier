@@ -106,7 +106,7 @@ install:
   - cmd: python -c "import struct; print(struct.calcsize('P') * 8)"
 
   # Install ``gcc`` so we can build extensions (``gfortran`` included)
-  - cmd: conda install gcc
+  - cmd: conda install m2w64-gcc-fortran
 
   # Install (hardcoded) dependencies for ``bezier``.
   - cmd: conda install enum34 matplotlib numpy six
