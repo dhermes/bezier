@@ -439,6 +439,30 @@ class Surface(_base.Base):
         _surface_helpers.edge_cycle(edge1, edge2, edge3)
         return edge1, edge2, edge3
 
+    @staticmethod
+    def _verify_barycentric(lambda1, lambda2, lambda3):
+        """Verifies that weights are Barycentric and on the reference triangle.
+
+        I.e., checks that they sum to one and are all non-negative.
+
+        Args:
+            lambda1 (float): Parameter along the reference triangle.
+            lambda2 (float): Parameter along the reference triangle.
+            lambda3 (float): Parameter along the reference triangle.
+
+        Raises:
+            ValueError: If the weights are not valid barycentric
+                coordinates, i.e. they don't sum to ``1``.
+            ValueError: If some weights are negative.
+        """
+        weights_total = lambda1 + lambda2 + lambda3
+        if not np.allclose(weights_total, 1.0):
+            raise ValueError('Weights do not sum to 1',
+                             lambda1, lambda2, lambda3)
+        if lambda1 < 0.0 or lambda2 < 0.0 or lambda3 < 0.0:
+            raise ValueError('Weights must be positive',
+                             lambda1, lambda2, lambda3)
+
     def evaluate_barycentric(self, lambda1, lambda2, lambda3, _verify=True):
         r"""Compute a point on the surface.
 
@@ -535,16 +559,26 @@ class Surface(_base.Base):
                 ``_verify=False``.)
         """
         if _verify:
-            weights_total = lambda1 + lambda2 + lambda3
-            if not np.allclose(weights_total, 1.0):
-                raise ValueError('Weights do not sum to 1',
-                                 lambda1, lambda2, lambda3)
-            if lambda1 < 0.0 or lambda2 < 0.0 or lambda3 < 0.0:
-                raise ValueError('Weights must be positive',
-                                 lambda1, lambda2, lambda3)
+            self._verify_barycentric(lambda1, lambda2, lambda3)
 
         return _surface_helpers.evaluate_barycentric(
             self._nodes, self._degree, lambda1, lambda2, lambda3)
+
+    @staticmethod
+    def _verify_cartesian(s, t):
+        """Verifies that a point is in the reference triangle.
+
+        I.e., checks that they sum to <= one and are each non-negative.
+
+        Args:
+            s (float): Parameter along the reference triangle.
+            t (float): Parameter along the reference triangle.
+
+        Raises:
+            ValueError: If the point lies outside the reference triangle.
+        """
+        if s < 0.0 or t < 0.0 or s + t > 1.0:
+            raise ValueError('Point lies outside reference triangle', s, t)
 
     def evaluate_cartesian(self, s, t, _verify=True):
         r"""Compute a point on the surface.
@@ -586,7 +620,11 @@ class Surface(_base.Base):
             numpy.ndarray: The point on the surface (as a two dimensional
             NumPy array).
         """
-        return self.evaluate_barycentric(1.0 - s - t, s, t, _verify=_verify)
+        if _verify:
+            self._verify_cartesian(s, t)
+
+        return _surface_helpers.evaluate_barycentric(
+            self._nodes, self._degree, 1.0 - s - t, s, t)
 
     def evaluate_multi(self, param_vals, _verify=True):
         r"""Compute multiple points on the surface.

@@ -316,6 +316,28 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(surface.edges, expected)
         self.assertEqual(surface._compute_edges.call_count, 1)
 
+    def test__verify_barycentric(self):
+        klass = self._get_target_class()
+        # Valid inside.
+        self.assertIsNone(klass._verify_barycentric(0.5, 0.25, 0.25))
+        # Valid boundary.
+        self.assertIsNone(klass._verify_barycentric(0.5, 0.0, 0.5))
+        self.assertIsNone(klass._verify_barycentric(0.25, 0.75, 0.0))
+        self.assertIsNone(klass._verify_barycentric(0.0, 0.0, 1.0))
+        self.assertIsNone(klass._verify_barycentric(0.0, 0.5, 0.5))
+        # Invalid sum.
+        with self.assertRaises(ValueError):
+            klass._verify_barycentric(0.5, 0.5, 0.5)
+        # Invalid lamdba1
+        with self.assertRaises(ValueError):
+            klass._verify_barycentric(-0.5, 0.75, 0.75)
+        # Invalid lamdba2.
+        with self.assertRaises(ValueError):
+            klass._verify_barycentric(0.75, -0.5, 0.75)
+        # Invalid lamdba3.
+        with self.assertRaises(ValueError):
+            klass._verify_barycentric(0.875, 0.25, -0.125)
+
     def test_evaluate_barycentric(self):
         surface = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
         lambda_vals = (0.25, 0.0, 0.75)
@@ -328,15 +350,6 @@ class TestSurface(utils.NumPyTestCase):
             self.assertIs(result, mock.sentinel.evaluated)
             mocked.assert_called_once_with(
                 self.UNIT_TRIANGLE, 1, *lambda_vals)
-
-    def test_evaluate_barycentric_negative_weights(self):
-        surface = self._make_one(np.zeros((3, 2)), 1)
-
-        lambda_vals = (0.25, -0.5, 1.25)
-        self.assertEqual(sum(lambda_vals), 1.0)
-
-        with self.assertRaises(ValueError):
-            surface.evaluate_barycentric(*lambda_vals)
 
     def test_evaluate_barycentric_negative_weights_no_verify(self):
         lambda_vals = (0.25, -0.5, 1.25)
@@ -353,15 +366,6 @@ class TestSurface(utils.NumPyTestCase):
         expected = np.array([[-0.5, 1.3125]])
         self.assertEqual(result, expected)
 
-    def test_evaluate_barycentric_non_unity_weights(self):
-        surface = self._make_one(np.zeros((3, 2)), 1)
-
-        lambda_vals = (0.25, 0.25, 0.25)
-        self.assertNotEqual(sum(lambda_vals), 1.0)
-
-        with self.assertRaises(ValueError):
-            surface.evaluate_barycentric(*lambda_vals)
-
     def test_evaluate_barycentric_non_unity_weights_no_verify(self):
         lambda_vals = (0.25, 0.25, 0.25)
         nodes = np.array([
@@ -377,6 +381,25 @@ class TestSurface(utils.NumPyTestCase):
         expected = np.array([[0.25, 0.4375]])
         self.assertEqual(result, expected)
 
+    def test__verify_cartesian(self):
+        klass = self._get_target_class()
+        # Valid inside.
+        self.assertIsNone(klass._verify_cartesian(0.25, 0.25))
+        # Valid boundary.
+        self.assertIsNone(klass._verify_cartesian(0.0, 0.5))
+        self.assertIsNone(klass._verify_cartesian(0.75, 0.0))
+        self.assertIsNone(klass._verify_cartesian(0.0, 1.0))
+        self.assertIsNone(klass._verify_cartesian(0.5, 0.5))
+        # Invalid s.
+        with self.assertRaises(ValueError):
+            klass._verify_cartesian(-0.5, 0.75)
+        # Invalid t.
+        with self.assertRaises(ValueError):
+            klass._verify_cartesian(0.25, -0.125)
+        # Invalid (1 - s - t).
+        with self.assertRaises(ValueError):
+            klass._verify_cartesian(0.75, 0.75)
+
     def test_evaluate_cartesian(self):
         s_t_vals = (0.125, 0.125)
         nodes = np.array([
@@ -390,28 +413,32 @@ class TestSurface(utils.NumPyTestCase):
         result = surface.evaluate_cartesian(*s_t_vals)
         self.assertEqual(result, expected)
 
-    def _calls_barycentric(self, **kwargs):
-        surface = self._make_one_no_slots(np.zeros((3, 2)), 1)
-        eval_method = mock.Mock()
-        surface.evaluate_barycentric = eval_method
+    def test_evaluate_cartesian_no_verify(self):
+        s_t_vals = (0.25, 1.0)
+        nodes = np.array([
+            [1.0, 1.0],
+            [2.0, 1.5],
+            [1.0, 2.75],
+        ])
+        surface = self._make_one(nodes, 1)
+
+        expected = np.array([[1.25, 2.875]])
+        result = surface.evaluate_cartesian(*s_t_vals, _verify=False)
+        self.assertEqual(result, expected)
+
+    def test_evaluate_cartesian_calls_barycentric(self):
+        nodes = np.zeros((3, 2))
+        surface = self._make_one_no_slots(nodes, 1, _copy=False)
+        patch = mock.patch('bezier._surface_helpers.evaluate_barycentric',
+                           return_value=mock.sentinel.point)
 
         s_val = 0.25
         t_val = 0.25
-        eval_method.return_value = mock.sentinel.point
-        result = surface.evaluate_cartesian(s_val, t_val, **kwargs)
-        self.assertIs(result, mock.sentinel.point)
+        with patch as mocked:
+            result = surface.evaluate_cartesian(s_val, t_val)
+            self.assertIs(result, mock.sentinel.point)
 
-        if kwargs:
-            eval_method.assert_called_once_with(0.5, s_val, t_val, **kwargs)
-        else:
-            eval_method.assert_called_once_with(
-                0.5, s_val, t_val, _verify=True)
-
-    def test_evaluate_cartesian_calls_barycentric(self):
-        self._calls_barycentric()
-
-    def test_evaluate_cartesian_calls_barycentric_no_verify(self):
-        self._calls_barycentric(_verify=False)
+            mocked.assert_called_once_with(nodes, 1, 0.5, s_val, t_val)
 
     def test_evaluate_multi_with_barycentric(self):
         nodes = np.array([
