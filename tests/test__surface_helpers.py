@@ -190,14 +190,11 @@ class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
         self.assertEqual(bernstein, expected)
 
 
-class Test_de_casteljau_one_round(utils.NumPyTestCase):
+class Base_de_casteljau_one_round(object):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _surface_helpers
-
-        return _surface_helpers.de_casteljau_one_round(
-            nodes, degree, lambda1, lambda2, lambda3)
+        raise NotImplementedError
 
     def test_linear(self):
         nodes = np.array([
@@ -262,6 +259,28 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val)
         self.assertEqual(result, expected)
+
+
+class Test__de_casteljau_one_round(Base_de_casteljau_one_round,
+                                   utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._de_casteljau_one_round(
+            nodes, degree, lambda1, lambda2, lambda3)
+
+
+class Test_speedup_de_casteljau_one_round(Base_de_casteljau_one_round,
+                                          utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
+        from bezier import _speedup
+
+        return _speedup.speedup.de_casteljau_one_round(
+            nodes, degree, lambda1, lambda2, lambda3)
 
 
 class Test__make_transform(utils.NumPyTestCase):

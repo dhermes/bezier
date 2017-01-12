@@ -1,3 +1,5 @@
 include README.rst.template
+include .f2py_f2cmap
 graft bezier
 global-exclude *.pyc
+global-exclude *.so

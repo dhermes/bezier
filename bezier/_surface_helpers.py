@@ -29,6 +29,10 @@ from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import curved_polygon
+try:
+    from bezier import _speedup
+except ImportError:
+    _speedup = None
 
 
 _MAX_POLY_SUBDIVISIONS = 5
@@ -414,7 +418,7 @@ def cubic_jacobian_polynomial(nodes):
     return bernstein
 
 
-def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
+def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     r"""Performs one "round" of the de Casteljau algorithm for surfaces.
 
     Converts the ``nodes`` into a basis for a surface one degree smaller
@@ -2114,3 +2118,8 @@ _ACCEPTABLE = (
     IntersectionClassification.first,
     IntersectionClassification.second,
 )
+
+if _speedup is None:
+    de_casteljau_one_round = _de_casteljau_one_round
+else:
+    de_casteljau_one_round = _speedup.speedup.de_casteljau_one_round
