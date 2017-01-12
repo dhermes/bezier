@@ -323,8 +323,8 @@ def surface_evaluate_barycentric(surface, point):
     save_image(ax.figure, 'surface_evaluate_barycentric.png')
 
 
-def surface_evaluate_multi1(surface, points):
-    """Image for :meth`.Surface.evaluate_multi` docstring."""
+def surface_evaluate_cartesian_multi(surface, points):
+    """Image for :meth`.Surface.evaluate_cartesian_multi` docstring."""
     if NO_IMAGES:
         return
 
@@ -343,11 +343,11 @@ def surface_evaluate_multi1(surface, points):
     ax.axis('scaled')
     ax.set_xlim(-3.125, 2.375)
     ax.set_ylim(-0.25, 2.125)
-    save_image(ax.figure, 'surface_evaluate_multi1.png')
+    save_image(ax.figure, 'surface_evaluate_cartesian_multi.png')
 
 
-def surface_evaluate_multi2(surface, points):
-    """Image for :meth`.Surface.evaluate_multi` docstring."""
+def surface_evaluate_barycentric_multi(surface, points):
+    """Image for :meth`.Surface.evaluate_barycentric_multi` docstring."""
     if NO_IMAGES:
         return
 
@@ -368,7 +368,7 @@ def surface_evaluate_multi2(surface, points):
     ax.axis('scaled')
     ax.set_xlim(-3.125, 2.125)
     ax.set_ylim(-0.3125, 2.125)
-    save_image(ax.figure, 'surface_evaluate_multi2.png')
+    save_image(ax.figure, 'surface_evaluate_barycentric_multi.png')
 
 
 def surface_is_valid1(surface):
@@ -419,7 +419,7 @@ def surface_is_valid3(surface):
     jacobian_zero_params[:N, 1] = t_top
     jacobian_zero_params[N:, 0] = s_vals[-2::-1]
     jacobian_zero_params[N:, 1] = t_bottom[-2::-1]
-    jac_edge = surface.evaluate_multi(jacobian_zero_params)
+    jac_edge = surface.evaluate_cartesian_multi(jacobian_zero_params)
 
     # Add the surface to the plot and add a dashed line
     # for each "true" edge.
@@ -720,7 +720,7 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
 
     # Plot the equivalent output in ax2.
     surface.plot(256, ax=ax2)
-    points = surface.evaluate_multi(np.array([
+    points = surface.evaluate_cartesian_multi(np.array([
         [s, t],
         [new_s, new_t],
     ]))

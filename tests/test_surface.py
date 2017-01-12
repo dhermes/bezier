@@ -440,7 +440,55 @@ class TestSurface(utils.NumPyTestCase):
 
             mocked.assert_called_once_with(nodes, 1, 0.5, s_val, t_val)
 
-    def test_evaluate_multi_with_barycentric(self):
+    def test_evaluate_barycentric_multi(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [2.0, 1.0],
+            [-3.0, 2.0],
+        ])
+        surface = self._make_one(nodes, 1)
+        expected = np.array([
+            [0.0, 0.0],
+            [2.0, 1.0],
+            [-0.5, 1.5],
+        ])
+
+        param_vals = np.array([
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.5, 0.5],
+        ])
+        result = surface.evaluate_barycentric_multi(param_vals)
+        self.assertEqual(result, expected)
+
+    def test_evaluate_barycentric_multi_wrong_dimension(self):
+        surface = self._make_one(np.zeros((3, 2)), 1)
+        param_vals_1d = np.zeros((4,))
+        with self.assertRaises(ValueError):
+            surface.evaluate_barycentric_multi(param_vals_1d)
+
+    def test_evaluate_barycentric_multi_no_verify(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [3.0, -1.0],
+            [1.0, 0.0],
+        ])
+        surface = self._make_one(nodes, 1)
+        expected = np.array([
+            [1.0, -0.25],
+            [0.0, 1.0],
+            [2.375, -0.75],
+        ])
+
+        param_vals = np.array([
+            [0.25, 0.25, 0.25],
+            [-1.0, -1.0, 3.0],
+            [0.125, 0.75, 0.125]
+        ])
+        result = surface.evaluate_barycentric_multi(param_vals, _verify=False)
+        self.assertEqual(result, expected)
+
+    def test_evaluate_cartesian_multi(self):
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 0.75],
@@ -463,41 +511,35 @@ class TestSurface(utils.NumPyTestCase):
             [0.5, 0.25],
             [0.25, 0.375],
         ])
-        result = surface.evaluate_multi(param_vals)
+        result = surface.evaluate_cartesian_multi(param_vals)
         self.assertEqual(result, expected)
 
-    def test_evaluate_multi_with_cartesian(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [2.0, 1.0],
-            [-3.0, 2.0],
-        ])
-        surface = self._make_one(nodes, 1)
-        expected = np.array([
-            [0.0, 0.0],
-            [2.0, 1.0],
-            [-0.5, 1.5],
-        ])
-
-        param_vals = np.array([
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, 0.5, 0.5],
-        ])
-        result = surface.evaluate_multi(param_vals)
-        self.assertEqual(result, expected)
-
-    def test_evaluate_multi_wrong_dimension(self):
+    def test_evaluate_cartesian_multi_wrong_dimension(self):
         surface = self._make_one(np.zeros((3, 2)), 1)
         param_vals_1d = np.zeros((4,))
         with self.assertRaises(ValueError):
-            surface.evaluate_multi(param_vals_1d)
+            surface.evaluate_cartesian_multi(param_vals_1d)
 
-    def test_evaluate_multi_wrong_param_cols(self):
-        surface = self._make_one(np.zeros((3, 2)), 1)
-        param_vals = np.zeros((4, 4))
-        with self.assertRaises(ValueError):
-            surface.evaluate_multi(param_vals)
+    def test_evaluate_cartesian_multi_no_verify(self):
+        nodes = np.array([
+            [0.0, 2.0],
+            [1.0, 1.0],
+            [1.0, 0.0],
+        ])
+        surface = self._make_one(nodes, 1)
+        expected = np.array([
+            [0.5, 1.25],
+            [2.0, -3.0],
+            [0.875, 1.0],
+        ])
+
+        param_vals = np.array([
+            [0.25, 0.25],
+            [-1.0, 3.0],
+            [0.75, 0.125]
+        ])
+        result = surface.evaluate_cartesian_multi(param_vals, _verify=False)
+        self.assertEqual(result, expected)
 
     def test__add_patch(self):
         klass = self._get_target_class()
@@ -647,8 +689,8 @@ class TestSurface(utils.NumPyTestCase):
 
         for sub_surface, quarter in zip(sub_surfaces, quarters):
             # Make sure sub_surface(ref_triangle) == surface(quarter)
-            main_vals = surface.evaluate_multi(quarter)
-            sub_vals = sub_surface.evaluate_multi(ref_triangle)
+            main_vals = surface.evaluate_cartesian_multi(quarter)
+            sub_vals = sub_surface.evaluate_cartesian_multi(ref_triangle)
             self.assertEqual(main_vals, sub_vals)
 
     def test_subdivide_linear(self):
@@ -949,8 +991,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_locate(self):
         surface = self._make_one(self.QUADRATIC, 2)
-        point = surface.evaluate_multi(np.array([
-            [0.5, 0.25]]))
+        point = surface.evaluate_cartesian(0.5, 0.25)
         s, t = surface.locate(point)
         self.assertEqual(s, 0.5)
         self.assertEqual(t, 0.25)
@@ -1062,8 +1103,8 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(elevated.degree, 2)
         self.assertEqual(elevated.nodes, expected)
 
-        main_vals = surface.evaluate_multi(self.REF_TRIANGLE3)
-        sub_vals = elevated.evaluate_multi(self.REF_TRIANGLE3)
+        main_vals = surface.evaluate_cartesian_multi(self.REF_TRIANGLE3)
+        sub_vals = elevated.evaluate_cartesian_multi(self.REF_TRIANGLE3)
         self.assertEqual(main_vals, sub_vals)
 
     def test_elevate_quadratic(self):
@@ -1080,6 +1121,6 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(elevated.degree, 3)
         self.assertEqual(elevated.nodes, expected)
 
-        main_vals = surface.evaluate_multi(self.REF_TRIANGLE3)
-        sub_vals = elevated.evaluate_multi(self.REF_TRIANGLE3)
+        main_vals = surface.evaluate_cartesian_multi(self.REF_TRIANGLE3)
+        sub_vals = elevated.evaluate_cartesian_multi(self.REF_TRIANGLE3)
         self.assertEqual(main_vals, sub_vals)

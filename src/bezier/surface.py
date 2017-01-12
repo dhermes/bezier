@@ -613,7 +613,7 @@ class Surface(_base.Base):
             s (float): Parameter along the reference triangle.
             t (float): Parameter along the reference triangle.
             _verify (Optional[bool]): Indicates if the coordinates should be
-                verified. See :meth:`evaluate_barycentric`. Defaults to
+                verified inside of the reference triangle. Defaults to
                 :data:`True`.
 
         Returns:
@@ -626,45 +626,14 @@ class Surface(_base.Base):
         return _surface_helpers.evaluate_barycentric(
             self._nodes, self._degree, 1.0 - s - t, s, t)
 
-    def evaluate_multi(self, param_vals, _verify=True):
+    def evaluate_barycentric_multi(self, param_vals, _verify=True):
         r"""Compute multiple points on the surface.
 
-        If ``param_vals`` has two columns, this method treats
-        them as Cartesian:
+        Assumes ``param_vals`` has three columns of Barycentric coordinates.
+        See :meth:`evaluate_barycentric` for more details on how each row of
+        parameter values is evaluated.
 
-        .. image:: ../images/surface_evaluate_multi1.png
-           :align: center
-
-        .. doctest:: surface-eval-multi1
-           :options: +NORMALIZE_WHITESPACE
-
-           >>> nodes = np.array([
-           ...     [ 0.0, 0.0],
-           ...     [ 2.0, 1.0],
-           ...     [-3.0, 2.0],
-           ... ])
-           >>> surface = bezier.Surface(nodes, degree=1)
-           >>> surface
-           <Surface (degree=1, dimension=2)>
-           >>> param_vals = np.array([
-           ...     [0.0  , 0.0  ],
-           ...     [0.125, 0.625],
-           ...     [0.5  , 0.5  ],
-           ... ])
-           >>> points = surface.evaluate_multi(param_vals)
-           >>> points
-           array([[ 0.   , 0.   ],
-                  [-1.625, 1.375],
-                  [-0.5  , 1.5  ]])
-
-        .. testcleanup:: surface-eval-multi1
-
-           import make_images
-           make_images.surface_evaluate_multi1(surface, points)
-
-        and if ``param_vals`` has three columns, treats them as Barycentric:
-
-        .. image:: ../images/surface_evaluate_multi2.png
+        .. image:: ../images/surface_evaluate_barycentric_multi.png
            :align: center
 
         .. doctest:: surface-eval-multi2
@@ -687,7 +656,7 @@ class Surface(_base.Base):
            ...     [0.25 , 0.5 , 0.25 ],
            ...     [0.375, 0.25, 0.375],
            ... ])
-           >>> points = surface.evaluate_multi(param_vals)
+           >>> points = surface.evaluate_barycentric_multi(param_vals)
            >>> points
            array([[-1.75  , 1.75    ],
                   [ 0.    , 0.      ],
@@ -697,17 +666,16 @@ class Surface(_base.Base):
         .. testcleanup:: surface-eval-multi2
 
            import make_images
-           make_images.surface_evaluate_multi2(surface, points)
+           make_images.surface_evaluate_barycentric_multi(surface, points)
 
         .. note::
 
-           This currently just uses :meth:`evaluate_cartesian` and
-           :meth:`evaluate_barycentric` so is less
-           performant than it could be.
+           There is also a Fortran implementation of this function, which
+           will be used if it can be built.
 
         Args:
             param_vals (numpy.ndarray): Array of parameter values (as a
-                2D array).
+                ``Nx3`` array).
             _verify (Optional[bool]): Indicates if the coordinates should be
                 verified. See :meth:`evaluate_barycentric`. Defaults to
                 :data:`True`.
@@ -717,24 +685,88 @@ class Surface(_base.Base):
 
         Raises:
             ValueError: If ``param_vals`` is not a 2D array.
-            ValueError: If ``param_vals`` doesn't have 2 or 3 columns.
         """
         if param_vals.ndim != 2:
             raise ValueError('Parameter values must be 2D array')
-        num_vals, num_cols = param_vals.shape
 
-        if num_cols == 2:
-            transform = self.evaluate_cartesian
-        elif num_cols == 3:
-            transform = self.evaluate_barycentric
-        else:
-            raise ValueError(
-                'Parameter values must either be Barycentric or Cartesian')
+        if _verify:
+            for lambda1, lambda2, lambda3 in param_vals:
+                self._verify_barycentric(lambda1, lambda2, lambda3)
 
+        num_vals, _ = param_vals.shape
         result = np.empty((num_vals, self._dimension))
-        for index in six.moves.xrange(num_vals):
-            result[index, :] = transform(
-                *param_vals[index, :], _verify=_verify)
+        for index, (lambda1, lambda2, lambda3) in enumerate(param_vals):
+            result[index, :] = _surface_helpers.evaluate_barycentric(
+                self._nodes, self._degree, lambda1, lambda2, lambda3)
+        return result
+
+    def evaluate_cartesian_multi(self, param_vals, _verify=True):
+        r"""Compute multiple points on the surface.
+
+        Assumes ``param_vals`` has two columns of Cartesian coordinates.
+        See :meth:`evaluate_cartesian` for more details on how each row of
+        parameter values is evaluated.
+
+        .. image:: ../images/surface_evaluate_cartesian_multi.png
+           :align: center
+
+        .. doctest:: surface-eval-multi1
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.array([
+           ...     [ 0.0, 0.0],
+           ...     [ 2.0, 1.0],
+           ...     [-3.0, 2.0],
+           ... ])
+           >>> surface = bezier.Surface(nodes, degree=1)
+           >>> surface
+           <Surface (degree=1, dimension=2)>
+           >>> param_vals = np.array([
+           ...     [0.0  , 0.0  ],
+           ...     [0.125, 0.625],
+           ...     [0.5  , 0.5  ],
+           ... ])
+           >>> points = surface.evaluate_cartesian_multi(param_vals)
+           >>> points
+           array([[ 0.   , 0.   ],
+                  [-1.625, 1.375],
+                  [-0.5  , 1.5  ]])
+
+        .. testcleanup:: surface-eval-multi1
+
+           import make_images
+           make_images.surface_evaluate_cartesian_multi(surface, points)
+
+        .. note::
+
+           There is also a Fortran implementation of this function, which
+           will be used if it can be built.
+
+        Args:
+            param_vals (numpy.ndarray): Array of parameter values (as a
+                ``Nx2`` array).
+            _verify (Optional[bool]): Indicates if the coordinates should be
+                verified. See :meth:`evaluate_cartesian`. Defaults to
+                :data:`True`.
+
+        Returns:
+            numpy.ndarray: The points on the surface.
+
+        Raises:
+            ValueError: If ``param_vals`` is not a 2D array.
+        """
+        if param_vals.ndim != 2:
+            raise ValueError('Parameter values must be 2D array')
+
+        if _verify:
+            for s, t in param_vals:
+                self._verify_cartesian(s, t)
+
+        num_vals, _ = param_vals.shape
+        result = np.empty((num_vals, self._dimension))
+        for index, (s, t) in enumerate(param_vals):
+            result[index, :] = _surface_helpers.evaluate_barycentric(
+                self._nodes, self._degree, 1.0 - s - t, s, t)
         return result
 
     @staticmethod
