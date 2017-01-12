@@ -74,8 +74,9 @@ def extension_modules():
         sources=[
             os.path.join(bezier_path, 'speedup.f90'),
         ],
-        extra_compile_args=['-O3'],
     )
+    if 'config_fc' not in sys.argv:
+        sys.argv.extend(['config_fc', '--opt=-O3'])
     return [extension]
 
 
