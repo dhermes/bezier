@@ -564,68 +564,6 @@ class Surface(_base.Base):
         return _surface_helpers.evaluate_barycentric(
             self._nodes, self._degree, lambda1, lambda2, lambda3)
 
-    @staticmethod
-    def _verify_cartesian(s, t):
-        """Verifies that a point is in the reference triangle.
-
-        I.e., checks that they sum to <= one and are each non-negative.
-
-        Args:
-            s (float): Parameter along the reference triangle.
-            t (float): Parameter along the reference triangle.
-
-        Raises:
-            ValueError: If the point lies outside the reference triangle.
-        """
-        if s < 0.0 or t < 0.0 or s + t > 1.0:
-            raise ValueError('Point lies outside reference triangle', s, t)
-
-    def evaluate_cartesian(self, s, t, _verify=True):
-        r"""Compute a point on the surface.
-
-        Evaluates :math:`B\left(1 - s - t, s, t\right)` by calling
-        :meth:`evaluate_barycentric`:
-
-        .. testsetup:: surface-cartesian
-
-           import numpy as np
-           import bezier
-
-        .. doctest:: surface-cartesian
-           :options: +NORMALIZE_WHITESPACE
-
-           >>> nodes = np.array([
-           ...     [0.0 , 0.0  ],
-           ...     [0.5 , 0.5  ],
-           ...     [1.0 , 0.625],
-           ...     [0.0 , 0.5  ],
-           ...     [0.5 , 0.5  ],
-           ...     [0.25, 1.0  ],
-           ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
-           >>> point = surface.evaluate_cartesian(0.125, 0.375)
-           >>> point
-           array([[ 0.16015625, 0.44726562]])
-           >>> surface.evaluate_barycentric(0.5, 0.125, 0.375)
-           array([[ 0.16015625, 0.44726562]])
-
-        Args:
-            s (float): Parameter along the reference triangle.
-            t (float): Parameter along the reference triangle.
-            _verify (Optional[bool]): Indicates if the coordinates should be
-                verified inside of the reference triangle. Defaults to
-                :data:`True`.
-
-        Returns:
-            numpy.ndarray: The point on the surface (as a two dimensional
-            NumPy array).
-        """
-        if _verify:
-            self._verify_cartesian(s, t)
-
-        return _surface_helpers.evaluate_barycentric(
-            self._nodes, self._degree, 1.0 - s - t, s, t)
-
     def evaluate_barycentric_multi(self, param_vals, _verify=True):
         r"""Compute multiple points on the surface.
 
@@ -699,6 +637,68 @@ class Surface(_base.Base):
             result[index, :] = _surface_helpers.evaluate_barycentric(
                 self._nodes, self._degree, lambda1, lambda2, lambda3)
         return result
+
+    @staticmethod
+    def _verify_cartesian(s, t):
+        """Verifies that a point is in the reference triangle.
+
+        I.e., checks that they sum to <= one and are each non-negative.
+
+        Args:
+            s (float): Parameter along the reference triangle.
+            t (float): Parameter along the reference triangle.
+
+        Raises:
+            ValueError: If the point lies outside the reference triangle.
+        """
+        if s < 0.0 or t < 0.0 or s + t > 1.0:
+            raise ValueError('Point lies outside reference triangle', s, t)
+
+    def evaluate_cartesian(self, s, t, _verify=True):
+        r"""Compute a point on the surface.
+
+        Evaluates :math:`B\left(1 - s - t, s, t\right)` by calling
+        :meth:`evaluate_barycentric`:
+
+        .. testsetup:: surface-cartesian
+
+           import numpy as np
+           import bezier
+
+        .. doctest:: surface-cartesian
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.array([
+           ...     [0.0 , 0.0  ],
+           ...     [0.5 , 0.5  ],
+           ...     [1.0 , 0.625],
+           ...     [0.0 , 0.5  ],
+           ...     [0.5 , 0.5  ],
+           ...     [0.25, 1.0  ],
+           ... ])
+           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> point = surface.evaluate_cartesian(0.125, 0.375)
+           >>> point
+           array([[ 0.16015625, 0.44726562]])
+           >>> surface.evaluate_barycentric(0.5, 0.125, 0.375)
+           array([[ 0.16015625, 0.44726562]])
+
+        Args:
+            s (float): Parameter along the reference triangle.
+            t (float): Parameter along the reference triangle.
+            _verify (Optional[bool]): Indicates if the coordinates should be
+                verified inside of the reference triangle. Defaults to
+                :data:`True`.
+
+        Returns:
+            numpy.ndarray: The point on the surface (as a two dimensional
+            NumPy array).
+        """
+        if _verify:
+            self._verify_cartesian(s, t)
+
+        return _surface_helpers.evaluate_barycentric(
+            self._nodes, self._degree, 1.0 - s - t, s, t)
 
     def evaluate_cartesian_multi(self, param_vals, _verify=True):
         r"""Compute multiple points on the surface.
