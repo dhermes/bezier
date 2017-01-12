@@ -316,54 +316,18 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(surface.edges, expected)
         self.assertEqual(surface._compute_edges.call_count, 1)
 
-    def test_evaluate_barycentric_linear(self):
-        lambda_vals = (0.25, 0.5, 0.25)
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 0.5],
-            [0.0, 1.25],
-        ])
-        surface = self._make_one(nodes, 1)
+    def test_evaluate_barycentric(self):
+        surface = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
+        lambda_vals = (0.25, 0.0, 0.75)
 
-        expected = np.array([[0.5, 0.5625]])
-        result = surface.evaluate_barycentric(*lambda_vals)
-        self.assertEqual(result, expected)
-
-    def test_evaluate_barycentric_quadratic(self):
-        lambda_vals = (0.0, 0.25, 0.75)
-        nodes = np.array([
-            [0.0, 0.0],
-            [0.5, 0.0],
-            [1.0, 0.5],
-            [0.5, 1.25],
-            [0.0, 1.25],
-            [0.0, 0.5],
-        ])
-        surface = self._make_one(nodes, 2)
-
-        expected = np.array([[0.0625, 0.78125]])
-        result = surface.evaluate_barycentric(*lambda_vals)
-        self.assertEqual(result, expected)
-
-    def test_evaluate_barycentric_cubic(self):
-        lambda_vals = (0.125, 0.5, 0.375)
-        nodes = np.array([
-            [0.0, 0.0],
-            [0.25, 0.0],
-            [0.75, 0.25],
-            [1.0, 0.0],
-            [0.0, 0.25],
-            [0.375, 0.25],
-            [0.5, 0.25],
-            [0.0, 0.5],
-            [0.25, 0.75],
-            [0.0, 1.0],
-        ])
-        surface = self._make_one(nodes, 3)
-
-        expected = np.array([[0.447265625, 0.37060546875]])
-        result = surface.evaluate_barycentric(*lambda_vals)
-        self.assertEqual(result, expected)
+        # Just make sure we call the helper.
+        patch = mock.patch('bezier._surface_helpers.evaluate_barycentric',
+                           return_value=mock.sentinel.evaluated)
+        with patch as mocked:
+            result = surface.evaluate_barycentric(*lambda_vals)
+            self.assertIs(result, mock.sentinel.evaluated)
+            mocked.assert_called_once_with(
+                self.UNIT_TRIANGLE, 1, *lambda_vals)
 
     def test_evaluate_barycentric_negative_weights(self):
         surface = self._make_one(np.zeros((3, 2)), 1)
@@ -411,34 +375,6 @@ class TestSurface(utils.NumPyTestCase):
         result = surface.evaluate_barycentric(*lambda_vals, _verify=False)
 
         expected = np.array([[0.25, 0.4375]])
-        self.assertEqual(result, expected)
-
-    def test_evaluate_barycentric_via_de_casteljau(self):
-        import math
-
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-        nodes = utils.get_random_nodes(
-            shape=(15, 2), seed=11112222, num_bits=8)
-        klass = self._get_target_class()
-        surface = klass.from_nodes(nodes)
-        self.assertEqual(surface.degree, 4)
-
-        lambda_vals = (0.125, 0.375, 0.5)
-        index = 0
-        expected = np.array([[0.0, 0.0]])
-        for k in range(4 + 1):
-            for j in range(4 + 1 - k):
-                i = 4 - j - k
-                denom = (math.factorial(i) * math.factorial(j) *
-                         math.factorial(k))
-                coeff = 24 / denom
-                expected += (
-                    coeff * lambda_vals[0]**i * lambda_vals[1]**j *
-                    lambda_vals[2]**k * nodes[[index], :])
-                index += 1
-
-        result = surface.evaluate_barycentric(*lambda_vals)
         self.assertEqual(result, expected)
 
     def test_evaluate_cartesian(self):

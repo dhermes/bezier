@@ -432,6 +432,11 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
        For degree :math:`d`d, the number of nodes should be
        :math:`(d + 1)(d + 2)/2`, but we don't verify this property.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         nodes (numpy.ndarray): The nodes to reduce.
         degree (int): The degree of the surface.
@@ -2075,11 +2080,16 @@ def combine_intersections(intersections, surface1, surface2):
     return _tangent_only_intersections(intersections, surface1, surface2)
 
 
-def evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
+def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
     r"""Compute a point on a surface.
 
     Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)` for a
     B |eacute| zier surface / triangle defined by ``nodes``.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): Control point nodes that define the surface.
@@ -2167,6 +2177,8 @@ _ACCEPTABLE = (
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
+    evaluate_barycentric = _evaluate_barycentric
 else:
     de_casteljau_one_round = _speedup.speedup.de_casteljau_one_round
+    evaluate_barycentric = _speedup.speedup.evaluate_barycentric
 # pylint: enable=invalid-name

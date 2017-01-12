@@ -2,7 +2,8 @@ module speedup
 
   implicit none
   private
-  public de_casteljau_one_round, evaluate_multi, linearization_error
+  public de_casteljau_one_round, evaluate_multi, linearization_error, &
+         evaluate_barycentric
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -130,6 +131,54 @@ contains
          nodes(3:, :))
     worst_case = maxval(abs(second_deriv), 1)
     error = 0.125_dp * degree * (degree - 1) * norm2(worst_case)
- end subroutine linearization_error
+  end subroutine linearization_error
+
+  subroutine evaluate_barycentric( &
+       num_nodes, dimension_, nodes, degree, &
+       lambda1, lambda2, lambda3, point)
+
+    ! NOTE: This evaluation on a Bezier surface / triangle.
+    ! NOTE: This assumes degree >= 1.
+
+    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
+    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    integer :: num_nodes
+    integer :: dimension_
+    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    integer :: degree
+    real(dp), intent(in) :: lambda1
+    real(dp), intent(in) :: lambda2
+    real(dp), intent(in) :: lambda3
+    real(dp), intent(out) :: point(1, dimension_)
+    ! Variables outside of signature.
+    integer :: curr_deg, curr_num_nodes, next_num_nodes
+    real(dp) :: workspace_curr(num_nodes - degree - 1, dimension_)
+    real(dp) :: workspace_next(num_nodes - 2 * degree - 1, dimension_)
+    real(dp) :: swap(num_nodes - 2 * degree - 1, dimension_)
+
+    ! Do the first round of de Casteljau (this assumes degree >= 1).
+    call de_casteljau_one_round( &
+         num_nodes, dimension_, nodes, degree, &
+         lambda1, lambda2, lambda3, workspace_curr)
+
+    curr_num_nodes = num_nodes - degree - 1
+    do curr_deg = degree - 1, 1, -1
+       next_num_nodes = curr_num_nodes - curr_deg - 1
+       call de_casteljau_one_round( &
+            curr_num_nodes, dimension_, &
+            workspace_curr(:curr_num_nodes, :), curr_deg, &
+            lambda1, lambda2, lambda3, &
+            workspace_next(:next_num_nodes, :))
+
+       ! Swap the relevant data in the current and next workspaces
+       curr_num_nodes = next_num_nodes
+       swap(:curr_num_nodes, :) = workspace_curr(:curr_num_nodes, :)
+       workspace_curr(:curr_num_nodes, :) = workspace_next(:curr_num_nodes, :)
+       workspace_next(:curr_num_nodes, :) = swap(:curr_num_nodes, :)
+    enddo
+
+    point = workspace_curr(1:1, :)
+
+  end subroutine evaluate_barycentric
 
 end module speedup

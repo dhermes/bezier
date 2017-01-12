@@ -1828,3 +1828,116 @@ class Test_combine_intersections(utils.NumPyTestCase):
             self.assertEqual(
                 curved_polygon._edges[index].nodes,
                 edges[index].nodes)
+
+
+# pylint: disable=no-member
+class Base_evaluate_barycentric(object):  # pylint: disable=invalid-name
+
+    def test_linear(self):
+        lambda_vals = (0.25, 0.5, 0.25)
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.5],
+            [0.0, 1.25],
+        ])
+
+        expected = np.array([[0.5, 0.5625]])
+        result = self._call_function_under_test(nodes, 1, *lambda_vals)
+        self.assertEqual(result, expected)
+
+    def test_quadratic(self):
+        lambda_vals = (0.0, 0.25, 0.75)
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.5, 0.0],
+            [1.0, 0.5],
+            [0.5, 1.25],
+            [0.0, 1.25],
+            [0.0, 0.5],
+        ])
+
+        expected = np.array([[0.0625, 0.78125]])
+        result = self._call_function_under_test(nodes, 2, *lambda_vals)
+        self.assertEqual(result, expected)
+
+    def test_quadratic_dimension3(self):
+        lambda_vals = (0.125, 0.375, 0.5)
+        nodes = np.array([
+            [0.0, 0.0, 1.0],
+            [0.5, 0.0, 0.25],
+            [1.0, 0.5, 0.0],
+            [0.5, 1.25, 1.25],
+            [0.0, 1.25, 0.5],
+            [0.0, 0.5, -1.0],
+        ])
+
+        expected = np.array([[0.25, 0.8203125, 0.1328125]])
+        result = self._call_function_under_test(nodes, 2, *lambda_vals)
+        self.assertEqual(result, expected)
+
+    def test_cubic(self):
+        lambda_vals = (0.125, 0.5, 0.375)
+        nodes = np.array([
+            [0.0, 0.0],
+            [0.25, 0.0],
+            [0.75, 0.25],
+            [1.0, 0.0],
+            [0.0, 0.25],
+            [0.375, 0.25],
+            [0.5, 0.25],
+            [0.0, 0.5],
+            [0.25, 0.75],
+            [0.0, 1.0],
+        ])
+
+        expected = np.array([[0.447265625, 0.37060546875]])
+        result = self._call_function_under_test(nodes, 3, *lambda_vals)
+        self.assertEqual(result, expected)
+
+    def test_quartic(self):
+        import math
+
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(15, 2), seed=11112222, num_bits=8)
+
+        lambda_vals = (0.125, 0.375, 0.5)
+        index = 0
+        expected = np.array([[0.0, 0.0]])
+        for k in range(4 + 1):
+            for j in range(4 + 1 - k):
+                i = 4 - j - k
+                denom = (math.factorial(i) * math.factorial(j) *
+                         math.factorial(k))
+                coeff = 24 / denom
+                expected += (
+                    coeff * lambda_vals[0]**i * lambda_vals[1]**j *
+                    lambda_vals[2]**k * nodes[[index], :])
+                index += 1
+
+        result = self._call_function_under_test(nodes, 4, *lambda_vals)
+        self.assertEqual(result, expected)
+# pylint: disable=no-member
+
+
+class Test__evaluate_barycentric(
+        Base_evaluate_barycentric, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._evaluate_barycentric(
+            nodes, degree, lambda1, lambda2, lambda3)
+
+
+class Test_speedup_evaluate_barycentric(
+        Base_evaluate_barycentric, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
+        from bezier import _speedup
+
+        return _speedup.speedup.evaluate_barycentric(
+            nodes, degree, lambda1, lambda2, lambda3)
