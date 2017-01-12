@@ -10,10 +10,16 @@ ignore=.git,.cache,.tox
 #            they document.
 load-plugins=pylint.extensions.check_docs
 
+# A comma-separated list of package or module names from where C extensions may
+# be loaded. Extensions are loading into the active Python interpreter and may
+# run arbitrary code
+extension-pkg-whitelist=bezier
+
 [MESSAGES CONTROL]
 disable =
     similarities,
-    I
+    I,
+    cyclic-import,
 
 [REPORTS]
 # Tells whether to display a full report or only the messages

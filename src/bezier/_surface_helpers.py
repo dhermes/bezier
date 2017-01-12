@@ -31,7 +31,7 @@ from bezier import _intersection_helpers
 from bezier import curved_polygon
 try:
     from bezier import _speedup
-except ImportError:
+except ImportError:  # pragma: NO COVER
     _speedup = None
 
 
@@ -2119,7 +2119,9 @@ _ACCEPTABLE = (
     IntersectionClassification.second,
 )
 
-if _speedup is None:
+# pylint: disable=invalid-name
+if _speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
 else:
     de_casteljau_one_round = _speedup.speedup.de_casteljau_one_round
+# pylint: enable=invalid-name

@@ -190,11 +190,8 @@ class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
         self.assertEqual(bernstein, expected)
 
 
-class Base_de_casteljau_one_round(object):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        raise NotImplementedError
+# pylint: disable=no-member
+class Base_de_casteljau_one_round(object):  # pylint: disable=invalid-name
 
     def test_linear(self):
         nodes = np.array([
@@ -255,10 +252,11 @@ class Base_de_casteljau_one_round(object):
             [0., 0., 0., 0., 0., lambda1, s_val, 0., t_val, 0.],
             [0., 0., 0., 0., 0., 0., 0., lambda1, s_val, t_val],
         ])
-        expected = transform.dot(nodes)  # pylint: disable=no-member
+        expected = transform.dot(nodes)
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val)
         self.assertEqual(result, expected)
+# pylint: enable=no-member
 
 
 class Test__de_casteljau_one_round(Base_de_casteljau_one_round,

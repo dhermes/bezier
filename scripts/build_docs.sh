@@ -23,7 +23,7 @@ SPHINX_APIDOC_OPTIONS="${OPTIONS}" sphinx-apidoc \
     --force \
     --module-first \
     --output-dir docs/reference \
-    bezier
+    src/bezier
 # Remove unused modules.rst
 rm docs/reference/modules.rst
 # Rewrite main package RST

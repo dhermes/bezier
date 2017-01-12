@@ -25,6 +25,11 @@ Plotting utilities will also be provided.
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface
+try:
+    import bezier._speedup  # noqa: F401
+    _HAS_SPEEDUP = True
+except ImportError:  # pragma: NO COVER
+    _HAS_SPEEDUP = False
 
 
 __all__ = [

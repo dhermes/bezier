@@ -18,6 +18,8 @@ import os
 import pkg_resources
 import sys
 
+import setuptools
+
 
 VERSION = '0.3.0'
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -66,7 +68,7 @@ def extension_modules():
     #       H/T to http://stackoverflow.com/a/41575848/1068170
     from numpy.distutils import core
 
-    bezier_path = os.path.join(PACKAGE_ROOT, 'bezier')
+    bezier_path = os.path.join(PACKAGE_ROOT, 'src', 'bezier')
     extension = core.Extension(
         name='bezier._speedup',
         sources=[
@@ -88,7 +90,8 @@ def setup():
         long_description=README,
         scripts=(),
         url='https://github.com/dhermes/bezier',
-        packages=['bezier'],
+        packages=setuptools.find_packages('src'),
+        package_dir={'': 'src'},
         license='Apache 2.0',
         platforms='Posix; MacOS X; Windows',
         include_package_data=True,
