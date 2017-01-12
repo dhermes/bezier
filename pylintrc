@@ -43,3 +43,9 @@ max-attributes=8
 
 [VARIABLES]
 dummy-variables-rgx=(_+[a-zA-Z0-9]*?$)|dummy|^unused_
+
+[CLASSES]
+exclude-protected =
+    _nodes,
+    _degree,
+    _dimesnion,

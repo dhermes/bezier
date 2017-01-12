@@ -137,7 +137,7 @@ def bbox_intersect(nodes1, nodes2):
         return BoxIntersectionType.intersection
 
 
-def linearization_error(curve):
+def linearization_error(nodes, degree):
     r"""Compute the maximum error of a linear approximation.
 
     Helper for :class:`.Linearization`, which is used during the
@@ -206,14 +206,13 @@ def linearization_error(curve):
        ...     [3.0,  1.0],
        ...     [9.0, -2.0],
        ... ])
-       >>> curve = bezier.Curve(nodes, degree=2)
-       >>> linearization_error(curve)
+       >>> linearization_error(nodes, 2)
        1.25
 
     .. testcleanup:: linearization-error
 
        import make_images
-       make_images.linearization_error(curve)
+       make_images.linearization_error(nodes)
 
     As a **non-example**, consider a "pathological" set of control points:
 
@@ -246,8 +245,7 @@ def linearization_error(curve):
        ...     [10.0, 24.0],
        ...     [30.0, 72.0],
        ... ])
-       >>> curve = bezier.Curve(nodes, degree=3)
-       >>> linearization_error(curve)
+       >>> linearization_error(nodes, 3)
        29.25
 
     Though it may seem that ``0`` is a more appropriate answer, consider
@@ -266,17 +264,16 @@ def linearization_error(curve):
        length of the curve or the (easier-to-compute) length of the line.
 
     Args:
-        curve (~bezier.curve.Curve): A curve to be approximated by a line.
+        nodes (numpy.ndarray): Nodes of a curve.
+        degree (int): The degree of the curve
 
     Returns:
         float: The maximum error between the curve and the
         linear approximation.
     """
-    degree = curve._degree  # pylint: disable=protected-access
     if degree == 1:
         return 0.0
 
-    nodes = curve._nodes  # pylint: disable=protected-access
     second_deriv = nodes[:-2, :] - 2.0 * nodes[1:-1, :] + nodes[2:, :]
     worst_case = np.max(np.abs(second_deriv), axis=0)
 
@@ -1179,7 +1176,7 @@ def bbox_line_intersect(nodes, line_start, line_end):
        function should be "upgraded" at some point.
 
     Args:
-        nodes (numpy.ndarray): Point (Nx2) that determine a bounding box.
+        nodes (numpy.ndarray): Points (Nx2) that determine a bounding box.
         line_start (numpy.ndarray): Beginning of a line segment (1x2).
         line_end (numpy.ndarray): End of a line segment (1x2).
 
@@ -1437,7 +1434,7 @@ class Linearization(object):
         if isinstance(shape, cls):
             return shape
         else:
-            error = linearization_error(shape)
+            error = linearization_error(shape._nodes, shape._degree)
             if error < _ERROR_VAL:
                 linearized = cls(shape, error)
                 return linearized

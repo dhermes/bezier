@@ -54,12 +54,13 @@ def save_image(figure, filename):
     plt.close(figure)
 
 
-def linearization_error(curve):
+def linearization_error(nodes):
     """Image for :func:`.linearization_error` docstring."""
     if NO_IMAGES:
         return
 
-    line = bezier.Curve.from_nodes(curve._nodes[(0, -1), :])
+    curve = bezier.Curve.from_nodes(nodes)
+    line = bezier.Curve.from_nodes(nodes[(0, -1), :])
     midpoints = np.vstack([
         curve.evaluate(0.5),
         line.evaluate(0.5),
