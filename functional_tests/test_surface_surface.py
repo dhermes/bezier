@@ -658,7 +658,7 @@ def test_surfaces1Q_and_2Q():
         (1, 2),
     )
     # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(9):
+    with CONFIG.wiggle(10):
         surface_surface_check(SURFACE1Q, SURFACE2Q,
                               start_vals, end_vals, nodes, edge_pairs)
     # pylint: enable=too-many-locals

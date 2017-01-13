@@ -5,7 +5,8 @@ module speedup
   public de_casteljau_one_round, evaluate_multi, linearization_error, &
          evaluate_barycentric, evaluate_barycentric_multi, &
          evaluate_cartesian_multi, cross_product, segment_intersection, &
-         bbox, specialize_curve_generic, specialize_curve
+         bbox, specialize_curve_generic, specialize_curve_quadratic, &
+         specialize_curve
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -303,8 +304,7 @@ contains
   end subroutine bbox
 
   subroutine specialize_curve_generic( &
-       nodes, degree, dimension_, start, end_, curve_start, curve_end, &
-       new_nodes, true_start, true_end)
+       nodes, degree, dimension_, start, end_, new_nodes)
 
     ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
 
@@ -312,12 +312,10 @@ contains
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: dimension_
     integer, intent(in) :: degree
-    real(dp), intent(in) :: start, end_, curve_start, curve_end
+    real(dp), intent(in) :: start, end_
     real(dp), intent(out) :: new_nodes(degree + 1, dimension_)
-    real(dp), intent(out) :: true_start, true_end
     ! Variables outside of signature.
     real(dp) :: workspace(degree, dimension_, degree + 1)
-    real(dp) :: interval_delta
     integer :: index, curr_size, j
     real(dp) :: minus_start, minus_end
 
@@ -349,12 +347,37 @@ contains
        new_nodes(index, :) = workspace(1, :, index)
     end forall
 
-    ! Now, compute the new interval.
-    interval_delta = curve_end - curve_start
-    true_start = curve_start + start * interval_delta
-    true_end = curve_start + end_ * interval_delta
-
   end subroutine specialize_curve_generic
+
+  subroutine specialize_curve_quadratic( &
+       nodes, dimension_, start, end_, new_nodes)
+
+    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    real(dp), intent(in) :: nodes(3, dimension_)
+    integer :: dimension_
+    real(dp), intent(in) :: start, end_
+    real(dp), intent(out) :: new_nodes(3, dimension_)
+    ! Variables outside of signature.
+    real(dp) :: minus_start, minus_end, prod_both
+
+    minus_start = 1.0_dp - start
+    minus_end = 1.0_dp - end_
+    prod_both = start * end_
+
+    new_nodes(1, :) = ( &
+         minus_start * minus_start * nodes(1, :) + &
+         2.0_dp * start * minus_start * nodes(2, :) + &
+         start * start * nodes(3, :))
+    new_nodes(2, :) = ( &
+         minus_start * minus_end * nodes(1, :) + &
+         (end_ + start - 2.0_dp * prod_both) * nodes(2, :) + &
+         prod_both * nodes(3, :))
+    new_nodes(3, :) = ( &
+         minus_end * minus_end * nodes(1, :) + &
+         2.0_dp * end_ * minus_end * nodes(2, :) + &
+         end_ * end_ * nodes(3, :))
+
+  end subroutine specialize_curve_quadratic
 
   subroutine specialize_curve( &
        nodes, degree, dimension_, start, end_, curve_start, curve_end, &
@@ -367,10 +390,24 @@ contains
     real(dp), intent(in) :: start, end_, curve_start, curve_end
     real(dp), intent(out) :: new_nodes(degree + 1, dimension_)
     real(dp), intent(out) :: true_start, true_end
+    ! Variables outside of signature.
+    real(dp) :: interval_delta
 
-    call specialize_curve_generic( &
-         nodes, degree, dimension_, start, end_, curve_start, &
-         curve_end, new_nodes, true_start, true_end)
+    if (degree == 1) then
+       new_nodes(1, :) = (1.0_dp - start) * nodes(1, :) + start * nodes(2, :)
+       new_nodes(2, :) = (1.0_dp - end_) * nodes(1, :) + end_ * nodes(2, :)
+    else if (degree == 2) then
+       call specialize_curve_quadratic( &
+            nodes, dimension_, start, end_, new_nodes)
+    else
+       call specialize_curve_generic( &
+            nodes, degree, dimension_, start, end_, new_nodes)
+    endif
+
+    ! Now, compute the new interval.
+    interval_delta = curve_end - curve_start
+    true_start = curve_start + start * interval_delta
+    true_end = curve_start + end_ * interval_delta
 
   end subroutine specialize_curve
 
