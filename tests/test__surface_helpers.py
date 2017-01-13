@@ -270,7 +270,7 @@ class Test__de_casteljau_one_round(Base_de_casteljau_one_round,
             nodes, degree, lambda1, lambda2, lambda3)
 
 
-@unittest.skipIf(utils.NO_SPEEDUP, 'No speedups available')
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_de_casteljau_one_round(Base_de_casteljau_one_round,
                                           utils.NumPyTestCase):
 
@@ -1933,7 +1933,7 @@ class Test__evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3)
 
 
-@unittest.skipIf(utils.NO_SPEEDUP, 'No speedups available')
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_evaluate_barycentric(
         Base_evaluate_barycentric, utils.NumPyTestCase):
 
@@ -2001,7 +2001,7 @@ class Test__evaluate_barycentric_multi(
             nodes, degree, param_vals, dimension)
 
 
-@unittest.skipIf(utils.NO_SPEEDUP, 'No speedups available')
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_evaluate_barycentric_multi(
         Base_evaluate_barycentric_multi, utils.NumPyTestCase):
 
@@ -2074,7 +2074,7 @@ class Test__evaluate_cartesian_multi(
             nodes, degree, param_vals, dimension)
 
 
-@unittest.skipIf(utils.NO_SPEEDUP, 'No speedups available')
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_evaluate_cartesian_multi(
         Base_evaluate_cartesian_multi, utils.NumPyTestCase):
 

@@ -123,7 +123,7 @@ class Test__bbox(Base_bbox, unittest.TestCase):
         return _helpers._bbox(nodes)
 
 
-@unittest.skipIf(utils.NO_SPEEDUP, 'No speedups available')
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_bbox(Base_bbox, unittest.TestCase):
 
     @staticmethod

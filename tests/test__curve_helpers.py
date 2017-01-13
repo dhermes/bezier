@@ -102,7 +102,7 @@ class Test__evaluate_multi(Base_evaluate_multi, utils.NumPyTestCase):
         return _curve_helpers._evaluate_multi(nodes, s_vals)
 
 
-@unittest.skipIf(utils.NO_SPEEDUP, 'No speedups available')
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_evaluate_multi(Base_evaluate_multi, utils.NumPyTestCase):
 
     @staticmethod

@@ -331,7 +331,7 @@ class Test__linearization_error(Base_linearization_error, unittest.TestCase):
         return _intersection_helpers._linearization_error(nodes, degree)
 
 
-@unittest.skipIf(utils.NO_SPEEDUP, 'No speedups available')
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_linearization_error(
         Base_linearization_error, unittest.TestCase):
 
@@ -568,7 +568,7 @@ class Test__segment_intersection(Base_segment_intersection, unittest.TestCase):
             start0, end0, start1, end1)
 
 
-@unittest.skipIf(utils.NO_SPEEDUP, 'No speedups available')
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_segment_intersection(
         Base_segment_intersection, unittest.TestCase):
 
