@@ -512,14 +512,8 @@ class Test_newton_refine(utils.NumPyTestCase):
                          curve2.evaluate(exact_t))
 
 
-class Test_segment_intersection(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(start0, end0, start1, end1, **kwargs):
-        from bezier import _intersection_helpers
-
-        return _intersection_helpers.segment_intersection(
-            start0, end0, start1, end1, **kwargs)
+# pylint: disable=no-member
+class Base_segment_intersection(object):  # pylint: disable=invalid-name
 
     def _helper(self, intersection, s_val, direction0,
                 t_val, direction1, **kwargs):
@@ -555,9 +549,37 @@ class Test_segment_intersection(unittest.TestCase):
             intersection, s_val,
             direction0, t_val, direction1)
 
-        self.assertIsNone(computed_s)
-        self.assertIsNone(computed_t)
+        if self.WITH_NONES:
+            self.assertIsNone(computed_s)
+            self.assertIsNone(computed_t)
         self.assertFalse(success)
+# pylint: enable=no-member
+
+
+class Test__segment_intersection(Base_segment_intersection, unittest.TestCase):
+
+    WITH_NONES = True
+
+    @staticmethod
+    def _call_function_under_test(start0, end0, start1, end1):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._segment_intersection(
+            start0, end0, start1, end1)
+
+
+@unittest.skipIf(utils.NO_SPEEDUP, 'No speedups available')
+class Test_speedup_segment_intersection(
+        Base_segment_intersection, unittest.TestCase):
+
+    WITH_NONES = False
+
+    @staticmethod
+    def _call_function_under_test(start0, end0, start1, end1):
+        from bezier import _speedup
+
+        return _speedup.speedup.segment_intersection(
+            start0, end0, start1, end1)
 
 
 class Test_parallel_different(unittest.TestCase):

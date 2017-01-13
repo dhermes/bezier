@@ -4,7 +4,7 @@ module speedup
   private
   public de_casteljau_one_round, evaluate_multi, linearization_error, &
          evaluate_barycentric, evaluate_barycentric_multi, &
-         evaluate_cartesian_multi
+         evaluate_cartesian_multi, cross_product, segment_intersection
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -240,5 +240,47 @@ contains
     enddo
 
   end subroutine evaluate_cartesian_multi
+
+  subroutine cross_product(vec0, vec1, result_)
+
+    real(dp), intent(in) :: vec0(1, 2)
+    real(dp), intent(in) :: vec1(1, 2)
+    real(dp), intent(out) :: result_
+
+    result_ = vec0(1, 1) * vec1(1, 2) - vec0(1, 2) * vec1(1, 1)
+
+  end subroutine cross_product
+
+  subroutine segment_intersection(start0, end0, start1, end1, s, t, success)
+
+    real(dp), intent(in) :: start0(1, 2)
+    real(dp), intent(in) :: end0(1, 2)
+    real(dp), intent(in) :: start1(1, 2)
+    real(dp), intent(in) :: end1(1, 2)
+    real(dp), intent(out) :: s, t
+    logical(1), intent(out) :: success
+    ! Variables outside of signature.
+    real(dp) :: delta0(1, 2)
+    real(dp) :: delta1(1, 2)
+    real(dp) :: start_delta(1, 2)
+    real(dp) :: cross_d0_d1
+    real(dp) :: other_cross
+
+    delta0 = end0 - start0
+    delta1 = end1 - start1
+    call cross_product(delta0, delta1, cross_d0_d1)
+
+    if (cross_d0_d1 == 0.0_dp) then
+       success = .FALSE.
+    else
+       start_delta = start1 - start0
+       call cross_product(start_delta, delta1, other_cross)
+       s = other_cross / cross_d0_d1
+       call cross_product(start_delta, delta0, other_cross)
+       t = other_cross / cross_d0_d1
+       success = .TRUE.
+    endif
+
+  end subroutine segment_intersection
 
 end module speedup

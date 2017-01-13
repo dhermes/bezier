@@ -654,7 +654,7 @@ def newton_refine(s, curve1, t, curve2):
     return s + delta_s, t + delta_t
 
 
-def segment_intersection(start0, end0, start1, end1):
+def _segment_intersection(start0, end0, start1, end1):
     r"""Determine the intersection of two line segments.
 
     Assumes each line is parametric
@@ -759,7 +759,7 @@ def segment_intersection(start0, end0, start1, end1):
        >>> start1 = np.array([[-1.0, 3.0]])
        >>> end1 = np.array([[3.0, -1.0]])
        >>> _, _, success = segment_intersection(start0, end0, start1, end1)
-       >>> success
+       >>> bool(success)
        False
 
     .. testcleanup:: segment-intersection2
@@ -783,6 +783,11 @@ def segment_intersection(start0, end0, start1, end1):
 
        >>> parallel_different(start0, end0, start1, end1)
        True
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         start0 (numpy.ndarray): A 1x2 NumPy array that is the start
@@ -1508,6 +1513,8 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     linearization_error = _linearization_error
+    segment_intersection = _segment_intersection
 else:
     linearization_error = _speedup.speedup.linearization_error
+    segment_intersection = _speedup.speedup.segment_intersection
 # pylint: enable=invalid-name
