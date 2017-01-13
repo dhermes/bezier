@@ -633,7 +633,7 @@ class Surface(_base.Base):
                 self._verify_barycentric(lambda1, lambda2, lambda3)
 
         return _surface_helpers.evaluate_barycentric_multi(
-            self._nodes, self._degree, self._dimension, param_vals)
+            self._nodes, self._degree, param_vals, self._dimension)
 
     @staticmethod
     def _verify_cartesian(s, t):
@@ -761,7 +761,7 @@ class Surface(_base.Base):
                 self._verify_cartesian(s, t)
 
         return _surface_helpers.evaluate_cartesian_multi(
-            self._nodes, self._degree, self._dimension, param_vals)
+            self._nodes, self._degree, param_vals, self._dimension)
 
     @staticmethod
     def _add_patch(ax, color, edge1, edge2, edge3):

@@ -1943,14 +1943,8 @@ class Test_speedup_evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3)
 
 
-class Test_evaluate_barycentric_multi(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, dimension, param_vals):
-        from bezier import _surface_helpers
-
-        return _surface_helpers.evaluate_barycentric_multi(
-            nodes, degree, dimension, param_vals)
+# pylint: disable=no-member
+class Base_evaluate_barycentric_multi(object):  # pylint: disable=invalid-name
 
     def test_basic(self):
         nodes = np.array([
@@ -1969,7 +1963,7 @@ class Test_evaluate_barycentric_multi(utils.NumPyTestCase):
             [0.0, 1.0, 0.0],
             [0.0, 0.5, 0.5],
         ])
-        result = self._call_function_under_test(nodes, 1, 2, param_vals)
+        result = self._call_function_under_test(nodes, 1, param_vals, 2)
         self.assertEqual(result, expected)
 
     def test_outside_domain(self):
@@ -1989,18 +1983,35 @@ class Test_evaluate_barycentric_multi(utils.NumPyTestCase):
             [-1.0, -1.0, 3.0],
             [0.125, 0.75, 0.125]
         ])
-        result = self._call_function_under_test(nodes, 1, 2, param_vals)
+        result = self._call_function_under_test(nodes, 1, param_vals, 2)
         self.assertEqual(result, expected)
+# pylint: enable=no-member
 
 
-class Test_evaluate_cartesian_multi(utils.NumPyTestCase):
+class Test__evaluate_barycentric_multi(
+        Base_evaluate_barycentric_multi, utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, dimension, param_vals):
+    def _call_function_under_test(nodes, degree, param_vals, dimension):
         from bezier import _surface_helpers
 
-        return _surface_helpers.evaluate_cartesian_multi(
-            nodes, degree, dimension, param_vals)
+        return _surface_helpers._evaluate_barycentric_multi(
+            nodes, degree, param_vals, dimension)
+
+
+class Test_speedup_evaluate_barycentric_multi(
+        Base_evaluate_barycentric_multi, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, param_vals, dimension):
+        from bezier import _speedup
+
+        return _speedup.speedup.evaluate_barycentric_multi(
+            nodes, degree, param_vals, dimension)
+
+
+# pylint: disable=no-member
+class Base_evaluate_cartesian_multi(object):  # pylint: disable=invalid-name
 
     def test_basic(self):
         nodes = np.array([
@@ -2024,7 +2035,7 @@ class Test_evaluate_cartesian_multi(utils.NumPyTestCase):
             [0.5, 0.25],
             [0.25, 0.375],
         ])
-        result = self._call_function_under_test(nodes, 2, 2, param_vals)
+        result = self._call_function_under_test(nodes, 2, param_vals, 2)
         self.assertEqual(result, expected)
 
     def test_outside_domain(self):
@@ -2044,5 +2055,28 @@ class Test_evaluate_cartesian_multi(utils.NumPyTestCase):
             [-1.0, 3.0],
             [0.75, 0.125]
         ])
-        result = self._call_function_under_test(nodes, 1, 2, param_vals)
+        result = self._call_function_under_test(nodes, 1, param_vals, 2)
         self.assertEqual(result, expected)
+# pylint: disable=no-member
+
+
+class Test__evaluate_cartesian_multi(
+        Base_evaluate_cartesian_multi, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, param_vals, dimension):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._evaluate_cartesian_multi(
+            nodes, degree, param_vals, dimension)
+
+
+class Test_speedup_evaluate_cartesian_multi(
+        Base_evaluate_cartesian_multi, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, param_vals, dimension):
+        from bezier import _speedup
+
+        return _speedup.speedup.evaluate_cartesian_multi(
+            nodes, degree, param_vals, dimension)

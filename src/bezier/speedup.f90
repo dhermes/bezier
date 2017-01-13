@@ -3,7 +3,8 @@ module speedup
   implicit none
   private
   public de_casteljau_one_round, evaluate_multi, linearization_error, &
-         evaluate_barycentric
+         evaluate_barycentric, evaluate_barycentric_multi, &
+         evaluate_cartesian_multi
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -137,7 +138,7 @@ contains
        num_nodes, dimension_, nodes, degree, &
        lambda1, lambda2, lambda3, point)
 
-    ! NOTE: This evaluation on a Bezier surface / triangle.
+    ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
 
     !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
@@ -180,5 +181,64 @@ contains
     point = workspace_curr(1:1, :)
 
   end subroutine evaluate_barycentric
+
+  subroutine evaluate_barycentric_multi( &
+       num_nodes, nodes, degree, num_vals, param_vals, dimension_, evaluated)
+
+    ! NOTE: This evaluation is on a Bezier surface / triangle.
+    ! NOTE: This assumes degree >= 1.
+
+    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
+    !f2py integer depend(nodes) :: dimension_ = size(nodes, 2)
+    !f2py integer intent(hide), depend(param_vals) :: num_vals &
+    !f2py     = size(param_vals, 1)
+    integer :: num_nodes
+    integer :: dimension_
+    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    integer :: degree
+    integer :: num_vals
+    real(dp), intent(in) :: param_vals(num_vals, 3)
+    real(dp), intent(out) :: evaluated(num_vals, dimension_)
+    ! Variables outside of signature.
+    integer :: index
+
+    do index = 1, num_vals
+       call evaluate_barycentric( &
+            num_nodes, dimension_, nodes, degree, &
+            param_vals(index, 1), param_vals(index, 2), &
+            param_vals(index, 3), evaluated(index, :))
+    enddo
+
+  end subroutine evaluate_barycentric_multi
+
+  subroutine evaluate_cartesian_multi( &
+       num_nodes, nodes, degree, num_vals, param_vals, dimension_, evaluated)
+
+    ! NOTE: This evaluation is on a Bezier surface / triangle.
+    ! NOTE: This assumes degree >= 1.
+
+    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
+    !f2py integer depend(nodes) :: dimension_ = size(nodes, 2)
+    !f2py integer intent(hide), depend(param_vals) :: num_vals &
+    !f2py     = size(param_vals, 1)
+    integer :: num_nodes
+    integer :: dimension_
+    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    integer :: degree
+    integer :: num_vals
+    real(dp), intent(in) :: param_vals(num_vals, 2)
+    real(dp), intent(out) :: evaluated(num_vals, dimension_)
+    ! Variables outside of signature.
+    integer :: index
+
+    do index = 1, num_vals
+       call evaluate_barycentric( &
+            num_nodes, dimension_, nodes, degree, &
+            1.0_dp - param_vals(index, 1) - param_vals(index, 2), &
+            param_vals(index, 1), param_vals(index, 2), &
+            evaluated(index, :))
+    enddo
+
+  end subroutine evaluate_cartesian_multi
 
 end module speedup

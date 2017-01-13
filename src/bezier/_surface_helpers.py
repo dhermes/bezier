@@ -2142,7 +2142,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
     return weights.dot(nodes)  # pylint: disable=no-member
 
 
-def evaluate_barycentric_multi(nodes, degree, dimension, param_vals):
+def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
     r"""Compute multiple points on the surface.
 
     .. note::
@@ -2153,9 +2153,9 @@ def evaluate_barycentric_multi(nodes, degree, dimension, param_vals):
     Args:
         nodes (numpy.ndarray): Control point nodes that define the surface.
         degree (int): The degree of the surface define by ``nodes``.
-        dimension (int): The dimension the surface lives in.
         param_vals (numpy.ndarray): Array of parameter values (as a
             ``Nx3`` array).
+        dimension (int): The dimension the surface lives in.
 
     Returns:
         numpy.ndarray: The evaluated points, where rows correspond to
@@ -2170,7 +2170,7 @@ def evaluate_barycentric_multi(nodes, degree, dimension, param_vals):
     return result
 
 
-def evaluate_cartesian_multi(nodes, degree, dimension, param_vals):
+def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
     r"""Compute multiple points on the surface.
 
     .. note::
@@ -2181,9 +2181,9 @@ def evaluate_cartesian_multi(nodes, degree, dimension, param_vals):
     Args:
         nodes (numpy.ndarray): Control point nodes that define the surface.
         degree (int): The degree of the surface define by ``nodes``.
-        dimension (int): The dimension the surface lives in.
         param_vals (numpy.ndarray): Array of parameter values (as a
             ``Nx2`` array).
+        dimension (int): The dimension the surface lives in.
 
     Returns:
         numpy.ndarray: The evaluated points, where rows correspond to
@@ -2234,7 +2234,11 @@ _ACCEPTABLE = (
 if _speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
     evaluate_barycentric = _evaluate_barycentric
+    evaluate_barycentric_multi = _evaluate_barycentric_multi
+    evaluate_cartesian_multi = _evaluate_cartesian_multi
 else:
     de_casteljau_one_round = _speedup.speedup.de_casteljau_one_round
     evaluate_barycentric = _speedup.speedup.evaluate_barycentric
+    evaluate_barycentric_multi = _speedup.speedup.evaluate_barycentric_multi
+    evaluate_cartesian_multi = _speedup.speedup.evaluate_cartesian_multi
 # pylint: enable=invalid-name
