@@ -219,7 +219,7 @@ def de_casteljau_one_round(nodes, lambda1, lambda2):
     return lambda1 * nodes[:-1, :] + lambda2 * nodes[1:, :]
 
 
-def specialize_curve(nodes, degree, start, end):
+def specialize_curve(nodes, degree, start, end, curve_start, curve_end):
     """Specialize a curve to a re-parameterization
 
     Does so by taking two points along the number line and then
@@ -235,10 +235,17 @@ def specialize_curve(nodes, degree, start, end):
         degree (int): The degree of the curve.
         start (float): The start point of the interval we are specializing to.
         end (float): The end point of the interval we are specializing to.
+        curve_start (float): The beginning of the original interval which the
+            the curve defined by ``nodes`` defines.
+        curve_end (float): The end of the original interval which the
+            the curve defined by ``nodes`` defines.
 
     Returns:
-        numpy.ndarray: The control points for the specialized curve.
+        Tuple[numpy.ndarray, float, float]: The control points for the
+        specialized curve, as well as the true start and true end of the
+        newly created curve.
     """
+    # pylint: disable=too-many-locals
     # Uses start-->0, end-->1 to represent the specialization used.
     weights = (
         (1.0 - start, start),
@@ -264,7 +271,12 @@ def specialize_curve(nodes, degree, start, end):
     for index in six.moves.xrange(degree + 1):
         key = (0,) * (degree - index) + (1,) * index
         result[index, :] = partial_vals[key]
-    return result
+
+    interval_delta = curve_end - curve_start
+    true_start = curve_start + start * interval_delta
+    true_end = curve_start + end * interval_delta
+    return result, true_start, true_end
+    # pylint: enable=too-many-locals
 
 
 def evaluate_hodograph(nodes, degree, s):

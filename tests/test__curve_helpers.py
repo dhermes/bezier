@@ -232,23 +232,27 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
 class Test_specialize_curve(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, start, end):
+    def _call_function_under_test(
+            nodes, degree, start, end, curve_start, curve_end):
         from bezier import _curve_helpers
 
         return _curve_helpers.specialize_curve(
-            nodes, degree, start, end)
+            nodes, degree, start, end, curve_start, curve_end)
 
     def test_it(self):
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        result = self._call_function_under_test(nodes, 1, 0.25, 0.75)
+        result, true_start, true_end = self._call_function_under_test(
+            nodes, 1, 0.25, 0.75, 0.125, 0.25)
         expected = np.array([
             [0.25, 0.25],
             [0.75, 0.75],
         ])
         self.assertEqual(result, expected)
+        self.assertEqual(true_start, 0.15625)
+        self.assertEqual(true_end, 0.21875)
 
     def test_againt_subdivision(self):
         import bezier
@@ -261,11 +265,17 @@ class Test_specialize_curve(utils.NumPyTestCase):
         curve = bezier.Curve(nodes, 2)
         left, right = curve.subdivide()
 
-        left_nodes = self._call_function_under_test(nodes, 2, 0.0, 0.5)
+        left_nodes, true_start, true_end = self._call_function_under_test(
+            nodes, 2, 0.0, 0.5, 0.0, 1.0)
         self.assertEqual(left.nodes, left_nodes)
+        self.assertEqual(true_start, left.start)
+        self.assertEqual(true_end, left.end)
 
-        right_nodes = self._call_function_under_test(nodes, 2, 0.5, 1.0)
+        right_nodes, true_start, true_end = self._call_function_under_test(
+            nodes, 2, 0.5, 1.0, 0.0, 1.0)
         self.assertEqual(right.nodes, right_nodes)
+        self.assertEqual(true_start, right.start)
+        self.assertEqual(true_end, right.end)
 
 
 class Test_evaluate_hodograph(utils.NumPyTestCase):

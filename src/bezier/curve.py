@@ -706,12 +706,8 @@ class Curve(_base.Base):
         Returns:
             Curve: The newly-specialized curve.
         """
-        new_nodes = _curve_helpers.specialize_curve(
-            self._nodes, self._degree, start, end)
-
-        interval_delta = self._end - self._start
-        true_start = self._start + start * interval_delta
-        true_end = self._start + end * interval_delta
+        new_nodes, true_start, true_end = _curve_helpers.specialize_curve(
+            self._nodes, self._degree, start, end, self._start, self._end)
         return Curve(
             new_nodes, self._degree, start=true_start, end=true_end,
             root=self._root, _copy=False)

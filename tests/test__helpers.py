@@ -96,6 +96,21 @@ class Base_bbox(object):  # pylint: disable=invalid-name
         self.assertEqual(right, 1.0)
         self.assertEqual(bottom, 3.0)
         self.assertEqual(top, 5.0)
+
+    def test_lots_of_values(self):
+        nodes = np.array([
+            [1.0, 0.0],
+            [2.0, 1.0],
+            [-1.0, 2.0],
+            [5.0, -3.0],
+            [4.0, 4.0],
+            [0.0, 0.0],
+        ])
+        left, right, bottom, top = self._call_function_under_test(nodes)
+        self.assertEqual(left, -1.0)
+        self.assertEqual(right, 5.0)
+        self.assertEqual(bottom, -3.0)
+        self.assertEqual(top, 4.0)
 # pylint: enable=no-member
 
 
