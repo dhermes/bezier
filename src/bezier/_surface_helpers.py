@@ -1940,11 +1940,11 @@ def _no_intersections(surface1, surface2):
     #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
     #        arrays.indexing.html#advanced-indexing)
     corner1 = surface1._nodes[0, :].reshape((1, 2))
-    if surface2.locate(corner1) is not None:
+    if surface2.locate(corner1, _verify=False) is not None:
         return [_to_curved_polygon(surface1)]
 
     corner2 = surface2._nodes[0, :].reshape((1, 2))
-    if surface1.locate(corner2) is not None:
+    if surface1.locate(corner2, _verify=False) is not None:
         return [_to_curved_polygon(surface2)]
 
     return []
