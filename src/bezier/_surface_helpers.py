@@ -720,7 +720,7 @@ def _jacobian_both(nodes, degree, dimension):
     ])
 
 
-def newton_refine(surface, x_val, y_val, s, t):
+def newton_refine(nodes, degree, x_val, y_val, s, t):
     r"""Refine a solution to :math:`B(s, t) = p` using Newton's method.
 
     Computes updates via
@@ -800,7 +800,7 @@ def newton_refine(surface, x_val, y_val, s, t):
        >>> x_val, y_val
        (1.25, 1.25)
        >>> s, t = 0.5, 0.25
-       >>> new_s, new_t = newton_refine(surface, x_val, y_val, s, t)
+       >>> new_s, new_t = newton_refine(nodes, 2, x_val, y_val, s, t)
        >>> 32 * (new_s - s)
        -10.0
        >>> 32 * (new_t - t)
@@ -813,8 +813,8 @@ def newton_refine(surface, x_val, y_val, s, t):
            surface, x_val, y_val, s, t, new_s, new_t)
 
     Args:
-        surface (.Surface): A B |eacute| zier surface (assumed to
-            be two-dimensional).
+        nodes (numpy.ndarray): Array of nodes in a surface.
+        degree (int): The degree of the surface.
         x_val (float): The :math:`x`-coordinate of a point
             on the surface.
         y_val (float): The :math:`y`-coordinate of a point
@@ -825,14 +825,14 @@ def newton_refine(surface, x_val, y_val, s, t):
     Returns:
         Tuple[float, float]: The refined :math:`s` and :math:`t` values.
     """
-    (surf_x, surf_y), = surface.evaluate_cartesian(s, t, _verify=False)
+    (surf_x, surf_y), = evaluate_barycentric(
+        nodes, degree, 1.0 - s - t, s, t)
     if surf_x == x_val and surf_y == y_val:
         # No refinement is needed.
         return s, t
 
-    # Compute Jacobian nodes / stack them horizatonally.
-    degree = surface._degree
-    jac_nodes = jacobian_both(surface._nodes, degree, surface._dimension)
+    # NOTE: This function assumes ``dimension==2`` (i.e. since ``x, y``).
+    jac_nodes = jacobian_both(nodes, degree, 2)
 
     lambda1 = 1.0 - s - t
     # The degree of the jacobian is one less.
@@ -890,12 +890,14 @@ def locate_point(surface, x_val, y_val):
     # We take the average of all centroids from the candidates
     # that may contain the point.
     s_approx, t_approx = _mean_centroid(candidates)
-    s, t = newton_refine(surface, x_val, y_val, s_approx, t_approx)
+    s, t = newton_refine(
+        surface._nodes, surface._degree, x_val, y_val, s_approx, t_approx)
 
     actual = surface.evaluate_cartesian(s, t, _verify=False)
     expected = np.array([[x_val, y_val]])
     if not _helpers.vector_close(actual, expected, eps=_LOCATE_EPS):
-        s, t = newton_refine(surface, x_val, y_val, s, t)
+        s, t = newton_refine(
+            surface._nodes, surface._degree, x_val, y_val, s, t)
     return s, t
 
 
