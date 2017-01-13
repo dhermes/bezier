@@ -631,12 +631,8 @@ class Surface(_base.Base):
             for lambda1, lambda2, lambda3 in param_vals:
                 self._verify_barycentric(lambda1, lambda2, lambda3)
 
-        num_vals, _ = param_vals.shape
-        result = np.empty((num_vals, self._dimension))
-        for index, (lambda1, lambda2, lambda3) in enumerate(param_vals):
-            result[index, :] = _surface_helpers.evaluate_barycentric(
-                self._nodes, self._degree, lambda1, lambda2, lambda3)
-        return result
+        return _surface_helpers.evaluate_barycentric_multi(
+            self._nodes, self._degree, self._dimension, param_vals)
 
     @staticmethod
     def _verify_cartesian(s, t):

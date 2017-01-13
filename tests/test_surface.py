@@ -381,6 +381,36 @@ class TestSurface(utils.NumPyTestCase):
         expected = np.array([[0.25, 0.4375]])
         self.assertEqual(result, expected)
 
+    def test_evaluate_barycentric_multi_wrong_dimension(self):
+        surface = self._make_one(np.zeros((3, 2)), 1)
+        param_vals_1d = np.zeros((4,))
+        with self.assertRaises(ValueError):
+            surface.evaluate_barycentric_multi(param_vals_1d)
+
+    def _eval_bary_multi_helper(self, **kwargs):
+        nodes = np.array([
+            [0.0, 0.0],
+            [2.0, 1.0],
+            [-3.0, 2.0],
+        ])
+        surface = self._make_one(nodes, 1, _copy=False)
+        param_vals = np.array([[1.0, 0.0, 0.0]])
+
+        patch = mock.patch(
+            'bezier._surface_helpers.evaluate_barycentric_multi',
+            return_value=mock.sentinel.evaluated)
+        with patch as mocked:
+            result = surface.evaluate_barycentric_multi(param_vals, **kwargs)
+            self.assertEqual(result, mock.sentinel.evaluated)
+
+            mocked.assert_called_once_with(nodes, 1, 2, param_vals)
+
+    def test_evaluate_barycentric_multi(self):
+        self._eval_bary_multi_helper()
+
+    def test_evaluate_barycentric_multi_no_verify(self):
+        self._eval_bary_multi_helper(_verify=False)
+
     def test__verify_cartesian(self):
         klass = self._get_target_class()
         # Valid inside.
@@ -439,54 +469,6 @@ class TestSurface(utils.NumPyTestCase):
             self.assertIs(result, mock.sentinel.point)
 
             mocked.assert_called_once_with(nodes, 1, 0.5, s_val, t_val)
-
-    def test_evaluate_barycentric_multi(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [2.0, 1.0],
-            [-3.0, 2.0],
-        ])
-        surface = self._make_one(nodes, 1)
-        expected = np.array([
-            [0.0, 0.0],
-            [2.0, 1.0],
-            [-0.5, 1.5],
-        ])
-
-        param_vals = np.array([
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, 0.5, 0.5],
-        ])
-        result = surface.evaluate_barycentric_multi(param_vals)
-        self.assertEqual(result, expected)
-
-    def test_evaluate_barycentric_multi_wrong_dimension(self):
-        surface = self._make_one(np.zeros((3, 2)), 1)
-        param_vals_1d = np.zeros((4,))
-        with self.assertRaises(ValueError):
-            surface.evaluate_barycentric_multi(param_vals_1d)
-
-    def test_evaluate_barycentric_multi_no_verify(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [3.0, -1.0],
-            [1.0, 0.0],
-        ])
-        surface = self._make_one(nodes, 1)
-        expected = np.array([
-            [1.0, -0.25],
-            [0.0, 1.0],
-            [2.375, -0.75],
-        ])
-
-        param_vals = np.array([
-            [0.25, 0.25, 0.25],
-            [-1.0, -1.0, 3.0],
-            [0.125, 0.75, 0.125]
-        ])
-        result = surface.evaluate_barycentric_multi(param_vals, _verify=False)
-        self.assertEqual(result, expected)
 
     def test_evaluate_cartesian_multi(self):
         nodes = np.array([

@@ -2099,7 +2099,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         lambda3 (float): Parameter along the reference triangle.
 
     Returns:
-        numpy.ndarray: The evaluate point as a ``1xD`` array (where ``D``
+        numpy.ndarray: The evaluated point as a ``1xD`` array (where ``D``
         is the ambient dimension where ``nodes`` reside).
     """
     if degree == 1:
@@ -2140,6 +2140,34 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         return result
 
     return weights.dot(nodes)  # pylint: disable=no-member
+
+
+def evaluate_barycentric_multi(nodes, degree, dimension, param_vals):
+    r"""Compute multiple points on the surface.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    Args:
+        nodes (numpy.ndarray): Control point nodes that define the surface.
+        degree (int): The degree of the surface define by ``nodes``.
+        dimension (int): The dimension the surface lives in.
+        param_vals (numpy.ndarray): Array of parameter values (as a
+            ``Nx3`` array).
+
+    Returns:
+        numpy.ndarray: The evaluated points, where rows correspond to
+        rows of ``param_vals`` and the columns to the dimension of the
+        underlying surface.
+    """
+    num_vals, _ = param_vals.shape
+    result = np.empty((num_vals, dimension))
+    for index, (lambda1, lambda2, lambda3) in enumerate(param_vals):
+        result[index, :] = evaluate_barycentric(
+            nodes, degree, lambda1, lambda2, lambda3)
+    return result
 
 
 class IntersectionClassification(enum.Enum):
