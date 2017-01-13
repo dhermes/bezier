@@ -159,6 +159,11 @@ contains
     real(dp) :: workspace_next(num_nodes - 2 * degree - 1, dimension_)
     real(dp) :: swap(num_nodes - 2 * degree - 1, dimension_)
 
+    if (degree == 0) then
+       point = nodes
+       return
+    endif
+
     ! Do the first round of de Casteljau (this assumes degree >= 1).
     call de_casteljau_one_round( &
          num_nodes, dimension_, nodes, degree, &

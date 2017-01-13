@@ -697,6 +697,29 @@ def jacobian_t(nodes, degree, dimension):
     return float(degree) * result
 
 
+def jacobian_both(nodes, degree, dimension):
+    r"""Compute :math:`s` and :math:`t` partial of :math:`B`.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    Args:
+        nodes (numpy.ndarray): Array of nodes in a surface.
+        degree (int): The degree of the surface.
+        dimension (int): The dimension the surface lives in.
+
+    Returns:
+        numpy.ndarray: Nodes of the Jacobian surfaces in
+            B |eacute| zier form.
+    """
+    return np.hstack([
+        jacobian_s(nodes, degree, dimension),
+        jacobian_t(nodes, degree, dimension),
+    ])
+
+
 def newton_refine(surface, x_val, y_val, s, t):
     r"""Refine a solution to :math:`B(s, t) = p` using Newton's method.
 
@@ -809,16 +832,12 @@ def newton_refine(surface, x_val, y_val, s, t):
 
     # Compute Jacobian nodes / stack them horizatonally.
     degree = surface._degree
-    jac_both = np.hstack([
-        jacobian_s(surface._nodes, degree, surface._dimension),
-        jacobian_t(surface._nodes, degree, surface._dimension),
-    ])
+    jac_nodes = jacobian_both(surface._nodes, degree, surface._dimension)
 
     lambda1 = 1.0 - s - t
     # The degree of the jacobian is one less.
-    for reduced_deg in six.moves.xrange(degree - 1, 0, -1):
-        jac_both = de_casteljau_one_round(
-            jac_both, reduced_deg, lambda1, s, t)
+    jac_both = evaluate_barycentric(
+        jac_nodes, degree - 1, lambda1, s, t)
 
     # The first column of the jacobian matrix is B_s (i.e. the
     # left-most values in ``jac_both``).
