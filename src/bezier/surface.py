@@ -1064,7 +1064,7 @@ class Surface(_base.Base):
             self._is_valid = self._compute_valid()
         return self._is_valid
 
-    def locate(self, point):
+    def locate(self, point, _verify=True):
         r"""Find a point on the current surface.
 
         Solves for :math:`s` and :math:`t` in :math:`B(s, t) = p`.
@@ -1103,6 +1103,9 @@ class Surface(_base.Base):
         Args:
             point (numpy.ndarray): A (``1xD``) point on the surface,
                 where :math:`D` is the dimension of the surface.
+            _verify (Optional[bool]): Indicates if extra caution should be
+                used to verify assumptions about the inputs. Can be
+                disabled to speed up execution time. Defaults to :data:`True`.
 
         Returns:
             Optional[Tuple[float, float]]: The :math:`s` and :math:`t`
@@ -1114,12 +1117,14 @@ class Surface(_base.Base):
             ValueError: If the dimension of the ``point`` doesn't match the
                 dimension of the current surface.
         """
-        if self._dimension != 2:
-            raise NotImplementedError('Only 2D surfaces supported.')
+        if _verify:
+            if self._dimension != 2:
+                raise NotImplementedError('Only 2D surfaces supported.')
 
-        if point.shape != (1, self._dimension):
-            raise ValueError('Point is not in same dimension as surface',
-                             point, 'Shape expected:', (1, self._dimension))
+            if point.shape != (1, self._dimension):
+                raise ValueError('Point is not in same dimension as surface',
+                                 point, 'Shape expected:',
+                                 (1, self._dimension))
 
         return _surface_helpers.locate_point(self, point[0, 0], point[0, 1])
 

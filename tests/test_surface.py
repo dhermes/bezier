@@ -978,6 +978,24 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(s, 0.5)
         self.assertEqual(t, 0.25)
 
+    def test_locate_no_verify(self):
+        surface = self._make_one(self.QUADRATIC, 2)
+        s = 0.125
+        t = 0.125
+        x_val, y_val = surface.evaluate_cartesian(s, t).flatten()
+        point = np.array([
+            [x_val, y_val],
+            [np.nan, np.nan],
+        ])
+        # Make sure it fails.
+        with self.assertRaises(ValueError):
+            surface.locate(point)
+
+        # Will only use the first row if _verify=False.
+        computed_s, computed_t = surface.locate(point, _verify=False)
+        self.assertEqual(s, computed_s)
+        self.assertEqual(t, computed_t)
+
     def test_locate_bad_dimension(self):
         nodes = np.array([[0.0, 1.0, 2.0]]).T  # pylint: disable=no-member
         surface = self._make_one(nodes, 1)
