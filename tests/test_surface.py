@@ -456,7 +456,7 @@ class TestSurface(utils.NumPyTestCase):
         result = surface.evaluate_cartesian(*s_t_vals, _verify=False)
         self.assertEqual(result, expected)
 
-    def test_evaluate_cartesian_calls_barycentric(self):
+    def test_evaluate_cartesian_calls_helper(self):
         nodes = np.zeros((3, 2))
         surface = self._make_one_no_slots(nodes, 1, _copy=False)
         patch = mock.patch('bezier._surface_helpers.evaluate_barycentric',
@@ -470,58 +470,35 @@ class TestSurface(utils.NumPyTestCase):
 
             mocked.assert_called_once_with(nodes, 1, 0.5, s_val, t_val)
 
-    def test_evaluate_cartesian_multi(self):
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 0.75],
-            [2.0, 1.0],
-            [-1.5, 1.0],
-            [-0.5, 1.5],
-            [-3.0, 2.0],
-        ])
-        surface = self._make_one(nodes, 2)
-        expected = np.array([
-            [-1.75, 1.75],
-            [0.0, 0.0],
-            [0.25, 1.0625],
-            [-0.625, 1.046875],
-        ])
-
-        param_vals = np.array([
-            [0.25, 0.75],
-            [0.0, 0.0],
-            [0.5, 0.25],
-            [0.25, 0.375],
-        ])
-        result = surface.evaluate_cartesian_multi(param_vals)
-        self.assertEqual(result, expected)
-
     def test_evaluate_cartesian_multi_wrong_dimension(self):
         surface = self._make_one(np.zeros((3, 2)), 1)
         param_vals_1d = np.zeros((4,))
         with self.assertRaises(ValueError):
             surface.evaluate_cartesian_multi(param_vals_1d)
 
-    def test_evaluate_cartesian_multi_no_verify(self):
+    def _eval_cartesian_multi_helper(self, **kwargs):
         nodes = np.array([
+            [2.0, 3.0],
             [0.0, 2.0],
-            [1.0, 1.0],
-            [1.0, 0.0],
+            [3.0, 7.5],
         ])
-        surface = self._make_one(nodes, 1)
-        expected = np.array([
-            [0.5, 1.25],
-            [2.0, -3.0],
-            [0.875, 1.0],
-        ])
+        surface = self._make_one(nodes, 1, _copy=False)
+        param_vals = np.array([[1.0, 0.0]])
 
-        param_vals = np.array([
-            [0.25, 0.25],
-            [-1.0, 3.0],
-            [0.75, 0.125]
-        ])
-        result = surface.evaluate_cartesian_multi(param_vals, _verify=False)
-        self.assertEqual(result, expected)
+        patch = mock.patch(
+            'bezier._surface_helpers.evaluate_cartesian_multi',
+            return_value=mock.sentinel.evaluated)
+        with patch as mocked:
+            result = surface.evaluate_cartesian_multi(param_vals, **kwargs)
+            self.assertEqual(result, mock.sentinel.evaluated)
+
+            mocked.assert_called_once_with(nodes, 1, 2, param_vals)
+
+    def test_evaluate_cartesian_multi(self):
+        self._eval_cartesian_multi_helper()
+
+    def test_evaluate_cartesian_multi_no_verify(self):
+        self._eval_cartesian_multi_helper(_verify=False)
 
     def test__add_patch(self):
         klass = self._get_target_class()

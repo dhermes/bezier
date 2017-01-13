@@ -1991,3 +1991,58 @@ class Test_evaluate_barycentric_multi(utils.NumPyTestCase):
         ])
         result = self._call_function_under_test(nodes, 1, 2, param_vals)
         self.assertEqual(result, expected)
+
+
+class Test_evaluate_cartesian_multi(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, dimension, param_vals):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.evaluate_cartesian_multi(
+            nodes, degree, dimension, param_vals)
+
+    def test_basic(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 0.75],
+            [2.0, 1.0],
+            [-1.5, 1.0],
+            [-0.5, 1.5],
+            [-3.0, 2.0],
+        ])
+        expected = np.array([
+            [-1.75, 1.75],
+            [0.0, 0.0],
+            [0.25, 1.0625],
+            [-0.625, 1.046875],
+        ])
+
+        param_vals = np.array([
+            [0.25, 0.75],
+            [0.0, 0.0],
+            [0.5, 0.25],
+            [0.25, 0.375],
+        ])
+        result = self._call_function_under_test(nodes, 2, 2, param_vals)
+        self.assertEqual(result, expected)
+
+    def test_outside_domain(self):
+        nodes = np.array([
+            [0.0, 2.0],
+            [1.0, 1.0],
+            [1.0, 0.0],
+        ])
+        expected = np.array([
+            [0.5, 1.25],
+            [2.0, -3.0],
+            [0.875, 1.0],
+        ])
+
+        param_vals = np.array([
+            [0.25, 0.25],
+            [-1.0, 3.0],
+            [0.75, 0.125]
+        ])
+        result = self._call_function_under_test(nodes, 1, 2, param_vals)
+        self.assertEqual(result, expected)

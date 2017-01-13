@@ -760,12 +760,8 @@ class Surface(_base.Base):
             for s, t in param_vals:
                 self._verify_cartesian(s, t)
 
-        num_vals, _ = param_vals.shape
-        result = np.empty((num_vals, self._dimension))
-        for index, (s, t) in enumerate(param_vals):
-            result[index, :] = _surface_helpers.evaluate_barycentric(
-                self._nodes, self._degree, 1.0 - s - t, s, t)
-        return result
+        return _surface_helpers.evaluate_cartesian_multi(
+            self._nodes, self._degree, self._dimension, param_vals)
 
     @staticmethod
     def _add_patch(ax, color, edge1, edge2, edge3):
