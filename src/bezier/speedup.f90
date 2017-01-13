@@ -5,7 +5,7 @@ module speedup
   public de_casteljau_one_round, evaluate_multi, linearization_error, &
          evaluate_barycentric, evaluate_barycentric_multi, &
          evaluate_cartesian_multi, cross_product, segment_intersection, &
-         bbox, specialize_curve
+         bbox, specialize_curve_generic, specialize_curve
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -302,9 +302,11 @@ contains
 
   end subroutine bbox
 
-  subroutine specialize_curve( &
+  subroutine specialize_curve_generic( &
        nodes, degree, dimension_, start, end_, curve_start, curve_end, &
        new_nodes, true_start, true_end)
+
+    ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
 
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
@@ -351,6 +353,24 @@ contains
     interval_delta = curve_end - curve_start
     true_start = curve_start + start * interval_delta
     true_end = curve_start + end_ * interval_delta
+
+  end subroutine specialize_curve_generic
+
+  subroutine specialize_curve( &
+       nodes, degree, dimension_, start, end_, curve_start, curve_end, &
+       new_nodes, true_start, true_end)
+
+    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    real(dp), intent(in) :: nodes(degree + 1, dimension_)
+    integer :: dimension_
+    integer, intent(in) :: degree
+    real(dp), intent(in) :: start, end_, curve_start, curve_end
+    real(dp), intent(out) :: new_nodes(degree + 1, dimension_)
+    real(dp), intent(out) :: true_start, true_end
+
+    call specialize_curve_generic( &
+         nodes, degree, dimension_, start, end_, curve_start, &
+         curve_end, new_nodes, true_start, true_end)
 
   end subroutine specialize_curve
 
