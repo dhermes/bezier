@@ -292,7 +292,7 @@ def _linearization_error(nodes, degree):
     return multiplier * np.linalg.norm(worst_case, ord=2)
 
 
-def newton_refine(s, curve1, t, curve2):
+def newton_refine(s, nodes1, degree1, t, nodes2, degree2):
     r"""Apply one step of 2D Newton's method.
 
     We want to use Newton's method on the function
@@ -321,7 +321,7 @@ def newton_refine(s, curve1, t, curve2):
 
     .. note::
 
-       This implementation assumes ``curve1`` and ``curve2`` live in
+       This implementation assumes the curves live in
        :math:`\mathbf{R}^2`.
 
     For example, the curves
@@ -371,14 +371,12 @@ def newton_refine(s, curve1, t, curve2):
        ...     [2.0, 4.0],
        ...     [4.0, 0.0],
        ... ])
-       >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.array([
        ...     [2.0, 0.0],
        ...     [0.0, 3.0],
        ... ])
-       >>> curve2 = bezier.Curve(nodes2, degree=1)
        >>> s, t = 0.375, 0.25
-       >>> new_s, new_t = newton_refine(s, curve1, t, curve2)
+       >>> new_s, new_t = newton_refine(s, nodes1, 2, t, nodes2, 1)
        >>> 64.0 * (new_s - s)
        -9.0
        >>> 64.0 * (new_t - t)
@@ -387,6 +385,8 @@ def newton_refine(s, curve1, t, curve2):
     .. testcleanup:: newton-refine1
 
        import make_images
+       curve1 = bezier.Curve(nodes1, degree=2)
+       curve2 = bezier.Curve(nodes2, degree=1)
        make_images.newton_refine1(s, new_s, curve1, t, new_t, curve2)
 
     For "typical" curves, we converge to a solution quadratically.
@@ -405,7 +405,6 @@ def newton_refine(s, curve1, t, curve2):
        ...     [0.75,  2.0],
        ...     [1.0 ,  0.0],
        ... ])
-       >>> curve1 = bezier.Curve(nodes1, degree=4)
        >>> nodes2 = np.array([
        ...     [0.0 , 1.0],
        ...     [0.25, 0.5],
@@ -413,7 +412,6 @@ def newton_refine(s, curve1, t, curve2):
        ...     [0.75, 0.5],
        ...     [1.0 , 0.0],
        ... ])
-       >>> curve2 = bezier.Curve(nodes2, degree=4)
        >>> # The expected intersection is the only real root of
        >>> # 28 s^3 - 30 s^2 + 9 s - 1.
        >>> omega = (28.0 * np.sqrt(17.0) + 132.0)**(1.0 / 3.0) / 28.0
@@ -422,22 +420,24 @@ def newton_refine(s, curve1, t, curve2):
        >>> t = 0.625
        >>> np.log2(abs(expected - s_vals[0]))
        -4.399...
-       >>> s_vals[1], t = newton_refine(s_vals[0], curve1, t, curve2)
+       >>> s_vals[1], t = newton_refine(s_vals[0], nodes1, 4, t, nodes2, 4)
        >>> np.log2(abs(expected - s_vals[1]))
        -7.901...
-       >>> s_vals[2], t = newton_refine(s_vals[1], curve1, t, curve2)
+       >>> s_vals[2], t = newton_refine(s_vals[1], nodes1, 4, t, nodes2, 4)
        >>> np.log2(abs(expected - s_vals[2]))
        -16.010...
-       >>> s_vals[3], t = newton_refine(s_vals[2], curve1, t, curve2)
+       >>> s_vals[3], t = newton_refine(s_vals[2], nodes1, 4, t, nodes2, 4)
        >>> np.log2(abs(expected - s_vals[3]))
        -32.110...
-       >>> s_vals[4], t = newton_refine(s_vals[3], curve1, t, curve2)
+       >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, 4, t, nodes2, 4)
        >>> s_vals[4] == expected
        True
 
     .. testcleanup:: newton-refine2
 
        import make_images
+       curve1 = bezier.Curve(nodes1, degree=4)
+       curve2 = bezier.Curve(nodes2, degree=4)
        make_images.newton_refine2(s_vals, curve1, curve2)
 
     However, when the intersection occurs at a point of tangency,
@@ -454,36 +454,36 @@ def newton_refine(s, curve1, t, curve2):
        ...     [0.5, 1.0],
        ...     [1.0, 0.0],
        ... ])
-       >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.array([
        ...     [0.0, 0.5],
        ...     [1.0, 0.5],
        ... ])
-       >>> curve2 = bezier.Curve(nodes2, degree=1)
        >>> expected = 0.5
        >>> s_vals = [0.375, None, None, None, None, None]
        >>> t = 0.375
        >>> np.log2(abs(expected - s_vals[0]))
        -3.0
-       >>> s_vals[1], t = newton_refine(s_vals[0], curve1, t, curve2)
+       >>> s_vals[1], t = newton_refine(s_vals[0], nodes1, 2, t, nodes2, 1)
        >>> np.log2(abs(expected - s_vals[1]))
        -4.0
-       >>> s_vals[2], t = newton_refine(s_vals[1], curve1, t, curve2)
+       >>> s_vals[2], t = newton_refine(s_vals[1], nodes1, 2, t, nodes2, 1)
        >>> np.log2(abs(expected - s_vals[2]))
        -5.0
-       >>> s_vals[3], t = newton_refine(s_vals[2], curve1, t, curve2)
+       >>> s_vals[3], t = newton_refine(s_vals[2], nodes1, 2, t, nodes2, 1)
        >>> np.log2(abs(expected - s_vals[3]))
        -6.0
-       >>> s_vals[4], t = newton_refine(s_vals[3], curve1, t, curve2)
+       >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, 2, t, nodes2, 1)
        >>> np.log2(abs(expected - s_vals[4]))
        -7.0
-       >>> s_vals[5], t = newton_refine(s_vals[4], curve1, t, curve2)
+       >>> s_vals[5], t = newton_refine(s_vals[4], nodes1, 2, t, nodes2, 1)
        >>> np.log2(abs(expected - s_vals[5]))
        -8.0
 
     .. testcleanup:: newton-refine3
 
        import make_images
+       curve1 = bezier.Curve(nodes1, degree=2)
+       curve2 = bezier.Curve(nodes2, degree=1)
        make_images.newton_refine3(s_vals, curve1, curve2)
 
     Unfortunately, the process terminates with an error that is not close
@@ -501,24 +501,22 @@ def newton_refine(s, curve1, t, curve2):
            [0.5, 1.0],
            [1.0, 0.0],
        ])
-       curve1 = bezier.Curve(nodes1, degree=2)
        nodes2 = np.array([
            [0.0, 0.5],
            [1.0, 0.5],
        ])
-       curve2 = bezier.Curve(nodes2, degree=1)
 
     .. doctest:: newton-refine3-continued
 
        >>> s1 = t1 = 0.5 - 0.5**27
        >>> np.log2(0.5 - s1)
        -27.0
-       >>> s2, t2 = newton_refine(s1, curve1, t1, curve2)
+       >>> s2, t2 = newton_refine(s1, nodes1, 2, t1, nodes2, 1)
        >>> s2 == t2
        True
        >>> np.log2(0.5 - s2)
        -28.0
-       >>> s3, t3 = newton_refine(s2, curve1, t2, curve2)
+       >>> s3, t3 = newton_refine(s2, nodes1, 2, t2, nodes2, 1)
        >>> s3 == t3 == s2
        True
 
@@ -620,17 +618,21 @@ def newton_refine(s, curve1, t, curve2):
        True
 
     Args:
-        s (float): Parameter of a near-intersection along ``curve1``.
-        curve1 (.Curve): First curve forming intersection.
-        t (float): Parameter of a near-intersection along ``curve2``.
-        curve2 (.Curve): Second curve forming intersection.
+        s (float): Parameter of a near-intersection along the first curve.
+        nodes1 (numpy.ndarray): Nodes of first curve forming intersection.
+        degree1 (int): The degree of the curve given by ``nodes1``.
+        t (float): Parameter of a near-intersection along the second curve.
+        nodes2 (numpy.ndarray): Nodes of second curve forming intersection.
+        degree2 (int): The degree of the curve given by ``nodes2``.
 
     Returns:
         Tuple[float, float]: The refined parameters from a single Newton
         step.
     """
     # NOTE: We form -F(s, t) since we want to solve -DF^{-1} F(s, t).
-    func_val = curve2.evaluate(t) - curve1.evaluate(s)
+    func_val = (
+        _curve_helpers.evaluate_multi(nodes2, np.array([t])) -
+        _curve_helpers.evaluate_multi(nodes1, np.array([s])))
     if np.all(func_val == 0.0):
         # No refinement is needed.
         return s, t
@@ -639,12 +641,8 @@ def newton_refine(s, curve1, t, curve2):
     jac_mat = np.zeros((2, 2))
     # In curve.evaluate() and evaluate_hodograph() the roles of
     # columns and rows are swapped.
-    # pylint: disable=protected-access
-    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(
-        curve1._nodes, curve1._degree, s)
-    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(
-        curve2._nodes, curve2._degree, t)
-    # pylint: enable=protected-access
+    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(nodes1, degree1, s)
+    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(nodes2, degree2, t)
 
     # Solve the system (via the transposes, since, as above, the roles
     # of columns and rows are reversed).
@@ -1046,7 +1044,8 @@ def from_linearized(first, second, intersections):
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
     refined_s, refined_t = newton_refine(
-        orig_s, orig_first, orig_t, orig_second)
+        orig_s, orig_first._nodes, orig_first._degree,
+        orig_t, orig_second._nodes, orig_second._degree)
     refined_s = _wiggle_interval(refined_s)
     refined_t = _wiggle_interval(refined_t)
     intersection = Intersection(
@@ -1150,19 +1149,15 @@ def _tangent_bbox_intersection(first, second, intersections):
             intersections. If these curves intersect at their tangeny,
             then those intersections will be added to this list.
     """
-    # pylint: disable=protected-access
-    first_nodes = first._nodes
-    second_nodes = second._nodes
-    # pylint: enable=protected-access
     # NOTE: We want the nodes to be 1x2 but accessing
     #       ``first_nodes[[index], :]`` makes a copy while the
     #       accesses below **do not** copy. See
     #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
     #        arrays.indexing.html#advanced-indexing)
-    node_first1 = first_nodes[0, :].reshape((1, 2))
-    node_first2 = first_nodes[-1, :].reshape((1, 2))
-    node_second1 = second_nodes[0, :].reshape((1, 2))
-    node_second2 = second_nodes[-1, :].reshape((1, 2))
+    node_first1 = first._nodes[0, :].reshape((1, 2))
+    node_first2 = first._nodes[-1, :].reshape((1, 2))
+    node_second1 = second._nodes[0, :].reshape((1, 2))
+    node_second2 = second._nodes[-1, :].reshape((1, 2))
 
     _endpoint_check(
         first, node_first1, 0.0, second, node_second1, 0.0, intersections)
@@ -1272,7 +1267,6 @@ def intersect_one_round(candidates, intersections):
 
     for first, second in candidates:
         if isinstance(first, Linearization):
-            # pylint: disable=protected-access
             if isinstance(second, Linearization):
                 # If both ``first`` and ``second`` are linearizations, then
                 # we can intersect them immediately.
@@ -1281,16 +1275,11 @@ def intersect_one_round(candidates, intersections):
             else:
                 bbox_int = bbox_line_intersect(
                     second._nodes, first.start_node, first.end_node)
-            # pylint: enable=protected-access
         elif isinstance(second, Linearization):
-            # pylint: disable=protected-access
             bbox_int = bbox_line_intersect(
                 first._nodes, second.start_node, second.end_node)
-            # pylint: enable=protected-access
         else:
-            first_nodes = first._nodes  # pylint: disable=protected-access
-            second_nodes = second._nodes  # pylint: disable=protected-access
-            bbox_int = bbox_intersect(first_nodes, second_nodes)
+            bbox_int = bbox_intersect(first._nodes, second._nodes)
 
         if bbox_int is BoxIntersectionType.disjoint:
             continue
@@ -1416,10 +1405,9 @@ class Linearization(object):
         #       below **does not** copy. See
         #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
         #        arrays.indexing.html#advanced-indexing)
-        nodes = curve._nodes  # pylint: disable=protected-access
-        self.start_node = nodes[0, :].reshape((1, 2))
+        self.start_node = curve._nodes[0, :].reshape((1, 2))
         """numpy.ndarray: The start vector of this linearization."""
-        self.end_node = nodes[-1, :].reshape((1, 2))
+        self.end_node = curve._nodes[-1, :].reshape((1, 2))
         """numpy.ndarray: The end vector of this linearization."""
 
     def subdivide(self):
