@@ -219,7 +219,7 @@ def de_casteljau_one_round(nodes, lambda1, lambda2):
     return lambda1 * nodes[:-1, :] + lambda2 * nodes[1:, :]
 
 
-def specialize_curve(nodes, degree, start, end, curve_start, curve_end):
+def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
     """Specialize a curve to a re-parameterization
 
     Does so by taking two points along the number line and then
@@ -232,13 +232,13 @@ def specialize_curve(nodes, degree, start, end, curve_start, curve_end):
 
     Args:
         nodes (numpy.ndarray): Control points for a curve.
-        degree (int): The degree of the curve.
         start (float): The start point of the interval we are specializing to.
         end (float): The end point of the interval we are specializing to.
         curve_start (float): The beginning of the original interval which the
             the curve defined by ``nodes`` defines.
         curve_end (float): The end of the original interval which the
             the curve defined by ``nodes`` defines.
+        degree (int): The degree of the curve.
 
     Returns:
         Tuple[numpy.ndarray, float, float]: The control points for the
@@ -613,6 +613,8 @@ def locate_point(curve, point):
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     evaluate_multi = _evaluate_multi
+    specialize_curve = _specialize_curve
 else:
     evaluate_multi = _speedup.speedup.evaluate_multi
+    specialize_curve = _speedup.speedup.specialize_curve
 # pylint: enable=invalid-name

@@ -5,7 +5,7 @@ module speedup
   public de_casteljau_one_round, evaluate_multi, linearization_error, &
          evaluate_barycentric, evaluate_barycentric_multi, &
          evaluate_cartesian_multi, cross_product, segment_intersection, &
-         bbox
+         bbox, specialize_curve
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -116,7 +116,7 @@ contains
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: dimension_
-    integer :: degree
+    integer, intent(in) :: degree
     real(dp), intent(out) :: error
     ! Variables outside of signature.
     real(dp) :: second_deriv(degree - 1, dimension_)
@@ -301,5 +301,57 @@ contains
     top = workspace(2)
 
   end subroutine bbox
+
+  subroutine specialize_curve( &
+       nodes, degree, dimension_, start, end_, curve_start, curve_end, &
+       new_nodes, true_start, true_end)
+
+    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    real(dp), intent(in) :: nodes(degree + 1, dimension_)
+    integer :: dimension_
+    integer, intent(in) :: degree
+    real(dp), intent(in) :: start, end_, curve_start, curve_end
+    real(dp), intent(out) :: new_nodes(degree + 1, dimension_)
+    real(dp), intent(out) :: true_start, true_end
+    ! Variables outside of signature.
+    real(dp) :: workspace(degree, dimension_, degree + 1)
+    real(dp) :: interval_delta
+    integer :: index, curr_size, j
+    real(dp) :: minus_start, minus_end
+
+    minus_start = 1.0_dp - start
+    minus_end = 1.0_dp - end_
+    workspace(:, :, 1) = minus_start * nodes(:degree, :) + start * nodes(2:, :)
+    workspace(:, :, 2) = minus_end * nodes(:degree, :) + end_ * nodes(2:, :)
+
+    curr_size = degree
+    do index = 3, degree + 1
+       curr_size = curr_size - 1
+       ! First add a new "column" (or whatever the 3rd dimension is called)
+       ! at the end using ``end_``.
+       workspace(:curr_size, :, index) = ( &
+            minus_end * workspace(:curr_size, :, index - 1) + &
+            end_ * workspace(2:curr_size + 1, :, index - 1))
+       ! Update all the values in place by using de Casteljau with the
+       ! ``start`` parameter.
+       forall (j = 1:index - 1)
+          workspace(:curr_size, :, j) = ( &
+               minus_start * workspace(:curr_size, :, j) + &
+               start * workspace(2:curr_size + 1, :, j))
+       end forall
+    enddo
+
+    ! Move the final "column" (or whatever the 3rd dimension is called)
+    ! of the workspace into ``new_nodes``.
+    forall (index = 1:degree + 1)
+       new_nodes(index, :) = workspace(1, :, index)
+    end forall
+
+    ! Now, compute the new interval.
+    interval_delta = curve_end - curve_start
+    true_start = curve_start + start * interval_delta
+    true_end = curve_start + end_ * interval_delta
+
+  end subroutine specialize_curve
 
 end module speedup

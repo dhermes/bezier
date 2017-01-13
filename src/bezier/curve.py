@@ -707,7 +707,7 @@ class Curve(_base.Base):
             Curve: The newly-specialized curve.
         """
         new_nodes, true_start, true_end = _curve_helpers.specialize_curve(
-            self._nodes, self._degree, start, end, self._start, self._end)
+            self._nodes, start, end, self._start, self._end, self._degree)
         return Curve(
             new_nodes, self._degree, start=true_start, end=true_end,
             root=self._root, _copy=False)

@@ -229,15 +229,8 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, np.array([[2.25, 4.0]]))
 
 
-class Test_specialize_curve(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(
-            nodes, degree, start, end, curve_start, curve_end):
-        from bezier import _curve_helpers
-
-        return _curve_helpers.specialize_curve(
-            nodes, degree, start, end, curve_start, curve_end)
+# pylint: disable=no-member
+class Base_specialize_curve(object):  # pylint: disable=invalid-name
 
     def test_it(self):
         nodes = np.array([
@@ -245,7 +238,7 @@ class Test_specialize_curve(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         result, true_start, true_end = self._call_function_under_test(
-            nodes, 1, 0.25, 0.75, 0.125, 0.25)
+            nodes, 0.25, 0.75, 0.125, 0.25, 1)
         expected = np.array([
             [0.25, 0.25],
             [0.75, 0.75],
@@ -266,16 +259,41 @@ class Test_specialize_curve(utils.NumPyTestCase):
         left, right = curve.subdivide()
 
         left_nodes, true_start, true_end = self._call_function_under_test(
-            nodes, 2, 0.0, 0.5, 0.0, 1.0)
+            nodes, 0.0, 0.5, 0.0, 1.0, 2)
         self.assertEqual(left.nodes, left_nodes)
         self.assertEqual(true_start, left.start)
         self.assertEqual(true_end, left.end)
 
         right_nodes, true_start, true_end = self._call_function_under_test(
-            nodes, 2, 0.5, 1.0, 0.0, 1.0)
+            nodes, 0.5, 1.0, 0.0, 1.0, 2)
         self.assertEqual(right.nodes, right_nodes)
         self.assertEqual(true_start, right.start)
         self.assertEqual(true_end, right.end)
+# pylint: disable=no-member
+
+
+class Test__specialize_curve(Base_specialize_curve, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(
+            nodes, start, end, curve_start, curve_end, degree):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._specialize_curve(
+            nodes, start, end, curve_start, curve_end, degree)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_specialize_curve(
+        Base_specialize_curve, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(
+            nodes, start, end, curve_start, curve_end, degree):
+        from bezier import _speedup
+
+        return _speedup.speedup.specialize_curve(
+            nodes, start, end, curve_start, curve_end, degree)
 
 
 class Test_evaluate_hodograph(utils.NumPyTestCase):
