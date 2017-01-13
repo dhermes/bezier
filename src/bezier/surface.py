@@ -1142,17 +1142,16 @@ class Surface(_base.Base):
             NotImplementedError: If at least one of the surfaces
                 isn't two-dimensional.
         """
-        if not isinstance(other, Surface):
-            raise TypeError('Can only intersect with another surface',
-                            'Received', other)
-        # pylint: disable=protected-access
-        if self._dimension != 2 or other._dimension != 2:
-            raise NotImplementedError(
-                'Intersection only implemented in 2D')
-        # pylint: enable=protected-access
+        if _verify:
+            if not isinstance(other, Surface):
+                raise TypeError('Can only intersect with another surface',
+                                'Received', other)
+            if self._dimension != 2 or other._dimension != 2:
+                raise NotImplementedError(
+                    'Intersection only implemented in 2D')
 
         bbox_int = _intersection_helpers.bbox_intersect(
-            self._nodes, other._nodes)  # pylint: disable=protected-access
+            self._nodes, other._nodes)
         if (bbox_int is not
                 _intersection_helpers.BoxIntersectionType.intersection):
             return []
