@@ -19,10 +19,12 @@ import pytest
 from tests import utils
 
 
-slow = pytest.mark.skipif(  # pylint: disable=invalid-name
-    pytest.config.getoption('--ignore-slow'),  # pylint: disable=no-member
+# pylint: disable=invalid-name,no-member
+slow = pytest.mark.skipif(
+    pytest.config.getoption('--ignore-slow') and utils.NO_SPEEDUP,
     reason='--ignore-slow ignores the slow tests',
 )
+# pylint: enable=invalid-name,no-member
 
 
 class TestSurface(utils.NumPyTestCase):

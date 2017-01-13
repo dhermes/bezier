@@ -15,6 +15,14 @@
 
 import unittest
 
+try:
+    # pylint: disable=unused-import
+    import bezier._speedup  # noqa: F401
+    # pylint: enable=unused-import
+    NO_SPEEDUP = False
+except ImportError:  # pragma: NO COVER
+    NO_SPEEDUP = True
+
 
 WRONG_TYPE_TEMPLATE = """\
 Arrays have different types
