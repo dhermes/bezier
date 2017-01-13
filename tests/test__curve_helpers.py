@@ -24,6 +24,9 @@ except ImportError:  # pragma: NO COVER
 from tests import utils
 
 
+FLOAT64 = np.float64  # pylint: disable=no-member
+
+
 class Test_make_subdivision_matrix(utils.NumPyTestCase):
 
     @staticmethod
@@ -232,7 +235,7 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
 # pylint: disable=no-member
 class Base_specialize_curve(object):  # pylint: disable=invalid-name
 
-    def test_it(self):
+    def test_linear(self):
         nodes = np.array([
             [0.0, 0.0],
             [1.0, 1.0],
@@ -269,6 +272,46 @@ class Base_specialize_curve(object):  # pylint: disable=invalid-name
         self.assertEqual(right.nodes, right_nodes)
         self.assertEqual(true_start, right.start)
         self.assertEqual(true_end, right.end)
+
+    def test_cubic(self):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, -1.0],
+            [1.0, -2.0],
+            [3.0, 2.0],
+        ])
+        result, true_start, true_end = self._call_function_under_test(
+            nodes, 0.125, 0.625, 0.0, 1.0, 3)
+        expected = np.array([
+            [171, -187],
+            [375, -423],
+            [499, -579],
+            [735, -335],
+        ], dtype=FLOAT64) / 512.0
+        self.assertEqual(result, expected)
+        self.assertEqual(true_start, 0.125)
+        self.assertEqual(true_end, 0.625)
+
+    def test_quartic(self):
+        nodes = np.array([
+            [0.0, 5.0],
+            [1.0, 6.0],
+            [1.0, 7.0],
+            [3.0, 6.0],
+            [3.0, 7.0],
+        ])
+        result, true_start, true_end = self._call_function_under_test(
+            nodes, 0.5, 0.75, 0.0, 1.0, 4)
+        expected = np.array([
+            [1.5625, 6.375],
+            [1.78125, 6.4375],
+            [2.015625, 6.46875],
+            [2.2578125, 6.484375],
+            [2.47265625, 6.5234375],
+        ])
+        self.assertEqual(result, expected)
+        self.assertEqual(true_start, 0.5)
+        self.assertEqual(true_end, 0.75)
 # pylint: disable=no-member
 
 
