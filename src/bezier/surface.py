@@ -616,18 +616,19 @@ class Surface(_base.Base):
                 ``Nx3`` array).
             _verify (Optional[bool]): Indicates if the coordinates should be
                 verified. See :meth:`evaluate_barycentric`. Defaults to
-                :data:`True`.
+                :data:`True`. Will also double check that ``param_vals``
+                is the right shape.
 
         Returns:
             numpy.ndarray: The points on the surface.
 
         Raises:
-            ValueError: If ``param_vals`` is not a 2D array.
+            ValueError: If ``param_vals`` is not a 2D array and
+                ``_verify=True``.
         """
-        if param_vals.ndim != 2:
-            raise ValueError('Parameter values must be 2D array')
-
         if _verify:
+            if param_vals.ndim != 2:
+                raise ValueError('Parameter values must be 2D array')
             for lambda1, lambda2, lambda3 in param_vals:
                 self._verify_barycentric(lambda1, lambda2, lambda3)
 
@@ -743,18 +744,19 @@ class Surface(_base.Base):
                 ``Nx2`` array).
             _verify (Optional[bool]): Indicates if the coordinates should be
                 verified. See :meth:`evaluate_cartesian`. Defaults to
-                :data:`True`.
+                :data:`True`. Will also double check that ``param_vals``
+                is the right shape.
 
         Returns:
             numpy.ndarray: The points on the surface.
 
         Raises:
-            ValueError: If ``param_vals`` is not a 2D array.
+            ValueError: If ``param_vals`` is not a 2D array and
+                ``_verify=True``.
         """
-        if param_vals.ndim != 2:
-            raise ValueError('Parameter values must be 2D array')
-
         if _verify:
+            if param_vals.ndim != 2:
+                raise ValueError('Parameter values must be 2D array')
             for s, t in param_vals:
                 self._verify_cartesian(s, t)
 
