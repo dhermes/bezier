@@ -562,6 +562,118 @@ class Test_jacobian_t(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
+# pylint: disable=no-member
+class Base_jacobian_both(object):  # pylint: disable=invalid-name
+
+    def test_linear(self):
+        # B(s, t) = -2s + 2t + 3
+        nodes = np.array([
+            [3.0],
+            [1.0],
+            [5.0],
+        ])
+        result = self._call_function_under_test(nodes, 1, 1)
+
+        # B_s = -2
+        # B_t = 2
+        expected = np.array([
+            [-2.0, 2.0],
+        ])
+        self.assertEqual(result, expected)
+
+    def test_quadratic(self):
+        # B(s, t) = [
+        #     4 s t - 2 s + 5 t^2 - 6 t + 3,
+        #     -s (s - 2 t),
+        #     8 s^2 - 10 s t - 2 s - 13 t^2 + 12 t + 1,
+        # ]
+        #
+        nodes = np.array([
+            [3.0, 0.0, 1.0],
+            [2.0, 0.0, 0.0],
+            [1.0, -1.0, 7.0],
+            [0.0, 0.0, 7.0],
+            [1.0, 1.0, 1.0],
+            [2.0, 0.0, 0.0],
+        ])
+        result = self._call_function_under_test(nodes, 2, 3)
+
+        # B_s = [
+        #     4 t - 2,
+        #     -2 s + 2 t,
+        #     16 s - 10 t - 2,
+        # ]
+        # B_t = [
+        #     4 s + 10 t - 6,
+        #     2 s,
+        #    -10 s - 26 t + 12,
+        # ]
+        expected = np.array([
+            [-2.0, 0.0, -2.0, -6.0, 0.0, 12.0],
+            [-2.0, -2.0, 14.0, -2.0, 2.0, 2.0],
+            [2.0, 2.0, -12.0, 4.0, 0.0, -14.0],
+        ])
+        self.assertEqual(result, expected)
+
+    def test_cubic(self):
+        # B(s, t) = [
+        #     -2s^3 + 9s^2t + 12st^2 - 12st + 3s - 2t^3 + 6t,
+        #     (-10s^3 - 30s^2t + 30s^2 - 36st^2 + 42st -
+        #          18s - 15t^3 + 30t^2 - 18t + 7),
+        # ]
+        nodes = np.array([
+            [0.0, 7.0],
+            [1.0, 1.0],
+            [2.0, 5.0],
+            [1.0, 9.0],
+            [2.0, 1.0],
+            [1.0, 2.0],
+            [3.0, 3.0],
+            [4.0, 5.0],
+            [5.0, 1.0],
+            [4.0, 4.0],
+        ])
+        result = self._call_function_under_test(nodes, 3, 2)
+
+        # B_s = [
+        #     -6s^2 + 18st + 12t^2 - 12t + 3,
+        #     -30s^2 - 60st + 60s - 36t^2 + 42t - 18,
+        # ]
+        # B_t = [
+        #     9s^2 + 24st - 12s - 6t^2 + 6,
+        #     -30s^2 - 72st + 42s - 45t^2 + 60t - 18,
+        # ]
+        expected = np.array([
+            [3.0, -18.0, 6.0, -18.0],
+            [3.0, 12.0, 0.0, 3.0],
+            [-3.0, 12.0, 3.0, -6.0],
+            [-3.0, 3.0, 6.0, 12.0],
+            [6.0, 3.0, 12.0, -3.0],
+            [3.0, -12.0, 0.0, -3.0],
+        ])
+        self.assertEqual(result, expected)
+# pylint: enable=no-member
+
+
+class Test__jacobian_both(Base_jacobian_both, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, dimension):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._jacobian_both(nodes, degree, dimension)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_jacobian_both(Base_jacobian_both, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, dimension):
+        from bezier import _speedup
+
+        return _speedup.speedup.jacobian_both(nodes, degree, dimension)
+
+
 class Test_newton_refine(unittest.TestCase):
 
     @staticmethod

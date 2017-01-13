@@ -6,7 +6,7 @@ module speedup
          evaluate_barycentric, evaluate_barycentric_multi, &
          evaluate_cartesian_multi, cross_product, segment_intersection, &
          bbox, specialize_curve_generic, specialize_curve_quadratic, &
-         specialize_curve
+         specialize_curve, jacobian_both
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -415,5 +415,40 @@ contains
     true_end = curve_start + end_ * interval_delta
 
   end subroutine specialize_curve
+
+  subroutine jacobian_both( &
+       num_nodes, dimension_, nodes, degree, new_nodes)
+
+    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
+    !f2py integer, depend(nodes) :: dimension_ = size(nodes, 2)
+    integer :: num_nodes
+    integer :: dimension_
+    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    integer :: degree
+    real(dp), intent(out) :: new_nodes(num_nodes - degree - 1, 2 * dimension_)
+    ! Variables outside of signature.
+    integer :: index, i, j, k, num_vals
+
+    index = 1
+    i = 1
+    j = degree + 2
+    do num_vals = degree, 1, -1
+       do k = 0, num_vals - 1
+          ! jacobian_s
+          new_nodes(index, :dimension_) = nodes(i + 1, :) - nodes(i, :)
+          ! jacobian_t
+          new_nodes(index, dimension_ + 1:) = nodes(j, :) - nodes(i, :)
+          ! Update the indices
+          index = index + 1
+          i = i + 1
+          j = j + 1
+       enddo
+       ! In between each row, the index gains an extra value.
+       i = i + 1
+    enddo
+
+    new_nodes = degree * new_nodes
+
+  end subroutine jacobian_both
 
 end module speedup

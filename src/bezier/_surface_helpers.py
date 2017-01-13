@@ -697,7 +697,7 @@ def jacobian_t(nodes, degree, dimension):
     return float(degree) * result
 
 
-def jacobian_both(nodes, degree, dimension):
+def _jacobian_both(nodes, degree, dimension):
     r"""Compute :math:`s` and :math:`t` partial of :math:`B`.
 
     .. note::
@@ -2255,9 +2255,11 @@ if _speedup is None:  # pragma: NO COVER
     evaluate_barycentric = _evaluate_barycentric
     evaluate_barycentric_multi = _evaluate_barycentric_multi
     evaluate_cartesian_multi = _evaluate_cartesian_multi
+    jacobian_both = _jacobian_both
 else:
     de_casteljau_one_round = _speedup.speedup.de_casteljau_one_round
     evaluate_barycentric = _speedup.speedup.evaluate_barycentric
     evaluate_barycentric_multi = _speedup.speedup.evaluate_barycentric_multi
     evaluate_cartesian_multi = _speedup.speedup.evaluate_cartesian_multi
+    jacobian_both = _speedup.speedup.jacobian_both
 # pylint: enable=invalid-name
