@@ -114,6 +114,7 @@ class Curve(_base.Base):
         '_degree', '_start', '_end', '_root',  # From constructor
         '_length', '_edge_index', '_next_edge',  # Empty defaults
         '_previous_edge',  # Empty defaults
+        '_calls',  # TEMP
     )
 
     def __init__(self, nodes, degree, start=0.0, end=1.0,
@@ -129,6 +130,7 @@ class Curve(_base.Base):
         self._edge_index = None
         self._next_edge = None
         self._previous_edge = None
+        self._calls = 0  # TEMP
 
     @classmethod
     def from_nodes(cls, nodes, start=0.0, end=1.0, root=None, _copy=True):
@@ -770,3 +772,9 @@ class Curve(_base.Base):
                              point, 'Shape expected:', (1, self._dimension))
 
         return _curve_helpers.locate_point(self, point)
+
+    def _hodograph(self, s):
+        self._calls += 1
+        print('::: Calls - {} :::'.format(self._calls))
+        return _curve_helpers.evaluate_hodograph(
+            self._nodes, self._degree, s)

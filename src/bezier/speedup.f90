@@ -4,7 +4,8 @@ module speedup
   private
   public de_casteljau_one_round, evaluate_multi, linearization_error, &
          evaluate_barycentric, evaluate_barycentric_multi, &
-         evaluate_cartesian_multi, cross_product, segment_intersection
+         evaluate_cartesian_multi, cross_product, segment_intersection, &
+         bbox
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -282,5 +283,23 @@ contains
     endif
 
   end subroutine segment_intersection
+
+  subroutine bbox(num_nodes, nodes, left, right, bottom, top)
+
+    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
+    integer :: num_nodes
+    real(dp), intent(in) :: nodes(num_nodes, 2)
+    real(dp), intent(out) :: left, right, bottom, top
+    ! Variables outside of signature.
+    real(dp) :: workspace(2)
+
+    workspace = minval(nodes, 1)
+    left = workspace(1)
+    bottom = workspace(2)
+    workspace = maxval(nodes, 1)
+    right = workspace(1)
+    top = workspace(2)
+
+  end subroutine bbox
 
 end module speedup

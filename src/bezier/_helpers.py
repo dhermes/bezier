@@ -15,6 +15,11 @@
 
 import numpy as np
 
+try:
+    from bezier import _speedup
+except ImportError:  # pragma: NO COVER
+    _speedup = None
+
 
 _EPS = 2.0**(-40)
 
@@ -86,7 +91,7 @@ def in_interval(value, start, end):
     return start <= value <= end
 
 
-def bbox(nodes):
+def _bbox(nodes):
     """Get the bounding box for set of points.
 
     Args:
@@ -194,3 +199,11 @@ def n_bits_away(value1, value2, num_bits=1):
     else:
         local_epsilon = np.spacing(value1)  # pylint: disable=no-member
         return abs(value1 - value2) <= num_bits * abs(local_epsilon)
+
+
+# pylint: disable=invalid-name
+if _speedup is None:  # pragma: NO COVER
+    bbox = _bbox
+else:
+    bbox = _speedup.speedup.bbox
+# pylint: enable=invalid-name
