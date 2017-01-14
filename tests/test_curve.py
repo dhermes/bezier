@@ -265,7 +265,7 @@ class TestCurve(utils.NumPyTestCase):
         # since == breaks on NumPy arrays.
         self.assertEqual(ax.plot.call_count, 1)
         call = ax.plot.mock_calls[0]
-        utils.check_plot_call(self, call, nodes)
+        utils.check_plot_call(self, call, nodes, color=None)
 
     @mock.patch('bezier._plot_helpers.new_axis')
     def test_plot_explicit(self, new_axis_mock):
@@ -277,7 +277,8 @@ class TestCurve(utils.NumPyTestCase):
 
         num_pts = 2  # This value is crucial for the plot call.
         ax = mock.Mock(spec=['plot'])
-        result = curve.plot(num_pts, ax=ax)
+        color = (0.75, 1.0, 1.0)
+        result = curve.plot(num_pts, color=color, ax=ax)
         self.assertIs(result, ax)
 
         # Verify mocks.
@@ -286,7 +287,7 @@ class TestCurve(utils.NumPyTestCase):
         # since == breaks on NumPy arrays.
         self.assertEqual(ax.plot.call_count, 1)
         call = ax.plot.mock_calls[0]
-        utils.check_plot_call(self, call, nodes)
+        utils.check_plot_call(self, call, nodes, color=color)
 
     def test_subdivide_multilevel_root(self):
         curve = self._make_one(np.zeros((2, 2)), 1)

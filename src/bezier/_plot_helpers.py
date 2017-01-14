@@ -83,11 +83,13 @@ def add_patch(ax, color, pts_per_edge, *edges):
         all_points.append(points[1:, :])
 
     polygon = np.vstack(all_points)
+
+    # Add boundary first.
+    line, = ax.plot(polygon[:, 0], polygon[:, 1], color=color)
+    # Reset ``color`` in case it was ``None`` and set from color wheel.
+    color = line.get_color()
+
     path = _path_mod.Path(polygon)
     patch = patches.PathPatch(
         path, facecolor=color, alpha=0.625)
     ax.add_patch(patch)
-
-    # Color is (R,G,B,A) but we just want (R,G,B).
-    color = ax.patches[-1].get_facecolor()[:3]
-    ax.plot(polygon[:, 0], polygon[:, 1], color=color)

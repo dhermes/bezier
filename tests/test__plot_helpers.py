@@ -144,11 +144,12 @@ class Test_add_patch(utils.NumPyTestCase):
         matplotlib = mock.Mock(
             patches=patches, path=path, spec=['patches', 'path'])
 
-        patch = mock.Mock(spec=['get_facecolor'])
-        patch.get_facecolor.return_value = color
-        ax = mock.Mock(
-            patches=[patch], spec=['add_patch', 'patches', 'plot'])
+        ax = mock.Mock(spec=['add_patch', 'plot'])
+        line = mock.Mock(spec=['get_color'])
+        line.get_color.return_value = color
+        ax.plot.return_value = (line,)
 
+        # Run the code with fake modules.
         modules = {
             'matplotlib': matplotlib,
             'matplotlib.patches': patches,
@@ -166,5 +167,5 @@ class Test_add_patch(utils.NumPyTestCase):
             path.Path.return_value, facecolor=color, alpha=0.625)
         ax.add_patch.assert_called_once_with(
             patches.PathPatch.return_value)
-        patch.get_facecolor.assert_called_once_with()
+        line.get_color.assert_called_once_with()
         self._plot_check(ax, points, color)

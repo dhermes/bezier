@@ -753,18 +753,19 @@ def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
     assert np.all(edge2._nodes == curve2._nodes)
 
     ax = surface1.plot(256, ax=ax)
-    # Manually reduce the alpha on the surface patch(es) and
-    # remove the lines we aren't using.
+    # Manually reduce the alpha on the surface patch(es).
     ax.patches[-1].set_alpha(0.1875)
     color1 = ax.lines[-1].get_color()
-    ax.lines[-1].remove()
-    ax.lines[-1].remove()
 
     surface2.plot(256, ax=ax)
     ax.patches[-1].set_alpha(0.1875)
     color2 = ax.lines[-1].get_color()
-    ax.lines[-1].remove()
-    ax.lines[-1].remove()
+
+    # Remove the existing boundary (lines) and just add our edges.
+    while ax.lines:
+        ax.lines[-1].remove()
+    edge1.plot(256, ax=ax, color=color1)
+    edge2.plot(256, ax=ax, color=color2)
 
     (int_x, int_y), = curve1.evaluate(s)
     if interior == 0:
