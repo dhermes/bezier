@@ -156,20 +156,16 @@ class CurvedPolygon(object):
             ValueError: If the previous side is not in 2D.
             ValueError: If consecutive sides don't share an endpoint.
         """
-        if prev._dimension != 2:  # pylint: disable=protected-access
+        if prev._dimension != 2:
             raise ValueError('Curve not in R^2', prev)
 
-        # pylint: disable=protected-access
-        prev_nodes = prev._nodes
-        curr_nodes = curr._nodes
-        # pylint: enable=protected-access
         # NOTE: We want the nodes to be 1x2 but accessing
         #       ``curve._nodes[[0], :]`` makes a copy while the access
         #       below **does not** copy. See
         #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
         #        arrays.indexing.html#advanced-indexing)
-        end = prev_nodes[-1, :].reshape((1, 2))
-        start = curr_nodes[0, :].reshape((1, 2))
+        end = prev._nodes[-1, :].reshape((1, 2))
+        start = curr._nodes[0, :].reshape((1, 2))
         if not _helpers.vector_close(end, start):
             raise ValueError(
                 'Not sufficiently close',

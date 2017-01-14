@@ -374,7 +374,7 @@ class Curve(_base.Base):
             numpy.ndarray: The point on the curve (as a two dimensional
             NumPy array with a single row).
         """
-        return self.evaluate_multi(np.array([s]))
+        return _curve_helpers.evaluate_multi(self._nodes, np.array([s]))
 
     def evaluate_multi(self, s_vals):
         r"""Evaluate :math:`B(s)` for multiple points along the curve.

@@ -32,24 +32,24 @@ contains
     real(dp), intent(in) :: lambda3
     real(dp), intent(out) :: new_nodes(num_nodes - degree - 1, dimension_)
     ! Variables outside of signature.
-    integer :: index
+    integer :: index_
     integer :: parent_i1
     integer :: parent_i2
     integer :: parent_i3
     integer :: k, j
 
-    index = 1
+    index_ = 1
     parent_i1 = 1
     parent_i2 = 2
     parent_i3 = degree + 2
-    ! NOTE: Throughout for index <--> (i, j, k) in the (degree - 1)
-    !       triangle, we have parent_i1 = index + k <--> (i + 1, j, k),
-    !       parent_i2 = index + k + 1 <--> (i, j + 1, k) and
-    !       parent_i3 = index + degree + 1 <--> (i, j, k + 1).
+    ! NOTE: Throughout for index_ <--> (i, j, k) in the (degree - 1)
+    !       triangle, we have parent_i1 = index_ + k <--> (i + 1, j, k),
+    !       parent_i2 = index_ + k + 1 <--> (i, j + 1, k) and
+    !       parent_i3 = index_ + degree + 1 <--> (i, j, k + 1).
     do k = 0, degree - 1
        do j = 0, degree - k - 1
           ! NOTE: i = (degree - 1) - j - k
-          new_nodes(index, :) = ( &
+          new_nodes(index_, :) = ( &
                lambda1 * nodes(parent_i1, :) + &
                lambda2 * nodes(parent_i2, :) + &
                lambda3 * nodes(parent_i3, :))
@@ -57,7 +57,7 @@ contains
           parent_i1 = parent_i1 + 1
           parent_i2 = parent_i2 + 1
           parent_i3 = parent_i3 + 1
-          index = index + 1
+          index_ = index_ + 1
        end do
        ! Update the indices that depend on k.
        parent_i1 = parent_i1 + 1
@@ -81,7 +81,7 @@ contains
     real(dp), intent(in) :: s_vals(num_vals)
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
-    integer :: curr_deg, index
+    integer :: curr_deg, index_
     real(dp) :: one_less(num_vals)
     real(dp) :: weights_next(num_vals, num_nodes)
     real(dp) :: weights_curr(num_vals, num_nodes)
@@ -97,11 +97,11 @@ contains
 
     ! Increase from degree 0 to (degree - 1).
     do curr_deg = 1, num_nodes - 1
-       forall (index = 1:curr_deg)
-          weights_next(:, index) = weights_curr(:, index) * one_less(:)
-          weights_next(:, index + 1) = ( &
-               weights_next(:, index + 1) + &
-               weights_curr(:, index) * s_vals(:))
+       forall (index_ = 1:curr_deg)
+          weights_next(:, index_) = weights_curr(:, index_) * one_less(:)
+          weights_next(:, index_ + 1) = ( &
+               weights_next(:, index_ + 1) + &
+               weights_curr(:, index_) * s_vals(:))
        end forall
 
        swap = weights_curr
@@ -208,13 +208,13 @@ contains
     real(dp), intent(in) :: param_vals(num_vals, 3)
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
-    integer :: index
+    integer :: index_
 
-    do index = 1, num_vals
+    do index_ = 1, num_vals
        call evaluate_barycentric( &
             num_nodes, dimension_, nodes, degree, &
-            param_vals(index, 1), param_vals(index, 2), &
-            param_vals(index, 3), evaluated(index, :))
+            param_vals(index_, 1), param_vals(index_, 2), &
+            param_vals(index_, 3), evaluated(index_, :))
     end do
 
   end subroutine evaluate_barycentric_multi
@@ -237,14 +237,14 @@ contains
     real(dp), intent(in) :: param_vals(num_vals, 2)
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
-    integer :: index
+    integer :: index_
 
-    do index = 1, num_vals
+    do index_ = 1, num_vals
        call evaluate_barycentric( &
             num_nodes, dimension_, nodes, degree, &
-            1.0_dp - param_vals(index, 1) - param_vals(index, 2), &
-            param_vals(index, 1), param_vals(index, 2), &
-            evaluated(index, :))
+            1.0_dp - param_vals(index_, 1) - param_vals(index_, 2), &
+            param_vals(index_, 1), param_vals(index_, 2), &
+            evaluated(index_, :))
     end do
 
   end subroutine evaluate_cartesian_multi
@@ -322,7 +322,7 @@ contains
     real(dp), intent(out) :: new_nodes(degree + 1, dimension_)
     ! Variables outside of signature.
     real(dp) :: workspace(degree, dimension_, degree + 1)
-    integer :: index, curr_size, j
+    integer :: index_, curr_size, j
     real(dp) :: minus_start, minus_end
 
     minus_start = 1.0_dp - start
@@ -331,16 +331,16 @@ contains
     workspace(:, :, 2) = minus_end * nodes(:degree, :) + end_ * nodes(2:, :)
 
     curr_size = degree
-    do index = 3, degree + 1
+    do index_ = 3, degree + 1
        curr_size = curr_size - 1
        ! First add a new "column" (or whatever the 3rd dimension is called)
        ! at the end using ``end_``.
-       workspace(:curr_size, :, index) = ( &
-            minus_end * workspace(:curr_size, :, index - 1) + &
-            end_ * workspace(2:curr_size + 1, :, index - 1))
+       workspace(:curr_size, :, index_) = ( &
+            minus_end * workspace(:curr_size, :, index_ - 1) + &
+            end_ * workspace(2:curr_size + 1, :, index_ - 1))
        ! Update all the values in place by using de Casteljau with the
        ! ``start`` parameter.
-       forall (j = 1:index - 1)
+       forall (j = 1:index_ - 1)
           workspace(:curr_size, :, j) = ( &
                minus_start * workspace(:curr_size, :, j) + &
                start * workspace(2:curr_size + 1, :, j))
@@ -349,8 +349,8 @@ contains
 
     ! Move the final "column" (or whatever the 3rd dimension is called)
     ! of the workspace into ``new_nodes``.
-    forall (index = 1:degree + 1)
-       new_nodes(index, :) = workspace(1, :, index)
+    forall (index_ = 1:degree + 1)
+       new_nodes(index_, :) = workspace(1, :, index_)
     end forall
 
   end subroutine specialize_curve_generic
@@ -428,23 +428,23 @@ contains
     integer :: degree
     real(dp), intent(out) :: new_nodes(num_nodes - degree - 1, 2 * dimension_)
     ! Variables outside of signature.
-    integer :: index, i, j, k, num_vals
+    integer :: index_, i, j, k, num_vals
 
-    index = 1
+    index_ = 1
     i = 1
     j = degree + 2
     do num_vals = degree, 1, -1
        do k = 0, num_vals - 1
           ! jacobian_s
-          new_nodes(index, :dimension_) = nodes(i + 1, :) - nodes(i, :)
+          new_nodes(index_, :dimension_) = nodes(i + 1, :) - nodes(i, :)
           ! jacobian_t
-          new_nodes(index, dimension_ + 1:) = nodes(j, :) - nodes(i, :)
+          new_nodes(index_, dimension_ + 1:) = nodes(j, :) - nodes(i, :)
           ! Update the indices
-          index = index + 1
+          index_ = index_ + 1
           i = i + 1
           j = j + 1
        end do
-       ! In between each row, the index gains an extra value.
+       ! In between each row, the index_ gains an extra value.
        i = i + 1
     end do
 
