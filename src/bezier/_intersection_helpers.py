@@ -292,7 +292,7 @@ def _linearization_error(nodes, degree):
     return multiplier * np.linalg.norm(worst_case, ord=2)
 
 
-def newton_refine(s, nodes1, degree1, t, nodes2, degree2):
+def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
     r"""Apply one step of 2D Newton's method.
 
     We want to use Newton's method on the function
@@ -376,7 +376,7 @@ def newton_refine(s, nodes1, degree1, t, nodes2, degree2):
        ...     [0.0, 3.0],
        ... ])
        >>> s, t = 0.375, 0.25
-       >>> new_s, new_t = newton_refine(s, nodes1, 2, t, nodes2, 1)
+       >>> new_s, new_t = newton_refine(s, nodes1, t, nodes2, 2, 1)
        >>> 64.0 * (new_s - s)
        -9.0
        >>> 64.0 * (new_t - t)
@@ -420,16 +420,16 @@ def newton_refine(s, nodes1, degree1, t, nodes2, degree2):
        >>> t = 0.625
        >>> np.log2(abs(expected - s_vals[0]))
        -4.399...
-       >>> s_vals[1], t = newton_refine(s_vals[0], nodes1, 4, t, nodes2, 4)
+       >>> s_vals[1], t = newton_refine(s_vals[0], nodes1, t, nodes2, 4, 4)
        >>> np.log2(abs(expected - s_vals[1]))
        -7.901...
-       >>> s_vals[2], t = newton_refine(s_vals[1], nodes1, 4, t, nodes2, 4)
+       >>> s_vals[2], t = newton_refine(s_vals[1], nodes1, t, nodes2, 4, 4)
        >>> np.log2(abs(expected - s_vals[2]))
        -16.010...
-       >>> s_vals[3], t = newton_refine(s_vals[2], nodes1, 4, t, nodes2, 4)
+       >>> s_vals[3], t = newton_refine(s_vals[2], nodes1, t, nodes2, 4, 4)
        >>> np.log2(abs(expected - s_vals[3]))
        -32.110...
-       >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, 4, t, nodes2, 4)
+       >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, t, nodes2, 4, 4)
        >>> s_vals[4] == expected
        True
 
@@ -463,19 +463,19 @@ def newton_refine(s, nodes1, degree1, t, nodes2, degree2):
        >>> t = 0.375
        >>> np.log2(abs(expected - s_vals[0]))
        -3.0
-       >>> s_vals[1], t = newton_refine(s_vals[0], nodes1, 2, t, nodes2, 1)
+       >>> s_vals[1], t = newton_refine(s_vals[0], nodes1, t, nodes2, 2, 1)
        >>> np.log2(abs(expected - s_vals[1]))
        -4.0
-       >>> s_vals[2], t = newton_refine(s_vals[1], nodes1, 2, t, nodes2, 1)
+       >>> s_vals[2], t = newton_refine(s_vals[1], nodes1, t, nodes2, 2, 1)
        >>> np.log2(abs(expected - s_vals[2]))
        -5.0
-       >>> s_vals[3], t = newton_refine(s_vals[2], nodes1, 2, t, nodes2, 1)
+       >>> s_vals[3], t = newton_refine(s_vals[2], nodes1, t, nodes2, 2, 1)
        >>> np.log2(abs(expected - s_vals[3]))
        -6.0
-       >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, 2, t, nodes2, 1)
+       >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, t, nodes2, 2, 1)
        >>> np.log2(abs(expected - s_vals[4]))
        -7.0
-       >>> s_vals[5], t = newton_refine(s_vals[4], nodes1, 2, t, nodes2, 1)
+       >>> s_vals[5], t = newton_refine(s_vals[4], nodes1, t, nodes2, 2, 1)
        >>> np.log2(abs(expected - s_vals[5]))
        -8.0
 
@@ -511,12 +511,12 @@ def newton_refine(s, nodes1, degree1, t, nodes2, degree2):
        >>> s1 = t1 = 0.5 - 0.5**27
        >>> np.log2(0.5 - s1)
        -27.0
-       >>> s2, t2 = newton_refine(s1, nodes1, 2, t1, nodes2, 1)
+       >>> s2, t2 = newton_refine(s1, nodes1, t1, nodes2, 2, 1)
        >>> s2 == t2
        True
        >>> np.log2(0.5 - s2)
        -28.0
-       >>> s3, t3 = newton_refine(s2, nodes1, 2, t2, nodes2, 1)
+       >>> s3, t3 = newton_refine(s2, nodes1, t2, nodes2, 2, 1)
        >>> s3 == t3 == s2
        True
 
@@ -620,9 +620,9 @@ def newton_refine(s, nodes1, degree1, t, nodes2, degree2):
     Args:
         s (float): Parameter of a near-intersection along the first curve.
         nodes1 (numpy.ndarray): Nodes of first curve forming intersection.
-        degree1 (int): The degree of the curve given by ``nodes1``.
         t (float): Parameter of a near-intersection along the second curve.
         nodes2 (numpy.ndarray): Nodes of second curve forming intersection.
+        degree1 (int): The degree of the curve given by ``nodes1``.
         degree2 (int): The degree of the curve given by ``nodes2``.
 
     Returns:
@@ -638,11 +638,11 @@ def newton_refine(s, nodes1, degree1, t, nodes2, degree2):
         return s, t
 
     # NOTE: This assumes the curves are 2D.
-    jac_mat = np.zeros((2, 2))
+    jac_mat = np.empty((2, 2))
     # In curve.evaluate() and evaluate_hodograph() the roles of
     # columns and rows are swapped.
-    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(nodes1, degree1, s)
-    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(nodes2, degree2, t)
+    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(s, nodes1, degree1)
+    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(t, nodes2, degree2)
 
     # Solve the system (via the transposes, since, as above, the roles
     # of columns and rows are reversed).
@@ -1044,8 +1044,8 @@ def from_linearized(first, second, intersections):
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
     refined_s, refined_t = newton_refine(
-        orig_s, orig_first._nodes, orig_first._degree,
-        orig_t, orig_second._nodes, orig_second._degree)
+        orig_s, orig_first._nodes, orig_t, orig_second._nodes,
+        orig_first._degree, orig_second._degree)
     refined_s = _wiggle_interval(refined_s)
     refined_t = _wiggle_interval(refined_t)
     intersection = Intersection(
@@ -1502,7 +1502,9 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
 if _speedup is None:  # pragma: NO COVER
     linearization_error = _linearization_error
     segment_intersection = _segment_intersection
+    newton_refine = _newton_refine
 else:
     linearization_error = _speedup.speedup.linearization_error
     segment_intersection = _speedup.speedup.segment_intersection
+    newton_refine = _speedup.speedup.newton_refine_intersect
 # pylint: enable=invalid-name

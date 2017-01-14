@@ -339,13 +339,8 @@ class Test_speedup_specialize_curve(
             nodes, start, end, curve_start, curve_end, degree)
 
 
-class Test_evaluate_hodograph(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, s):
-        from bezier import _curve_helpers
-
-        return _curve_helpers.evaluate_hodograph(nodes, degree, s)
+# pylint: disable=no-member
+class Base_evaluate_hodograph(object):  # pylint: disable=invalid-name
 
     def test_line(self):
         degree = 1
@@ -354,12 +349,12 @@ class Test_evaluate_hodograph(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
 
-        first_deriv1 = self._call_function_under_test(nodes, degree, 0.25)
+        first_deriv1 = self._call_function_under_test(0.25, nodes, degree)
         self.assertEqual(first_deriv1.shape, (1, 2))
         self.assertEqual(first_deriv1, nodes[[1], :] - nodes[[0], :])
         # Make sure it is the same elsewhere since
         # the derivative curve is degree 0.
-        first_deriv2 = self._call_function_under_test(nodes, degree, 0.75)
+        first_deriv2 = self._call_function_under_test(0.75, nodes, degree)
         self.assertEqual(first_deriv1, first_deriv2)
 
     def test_quadratic(self):
@@ -374,7 +369,7 @@ class Test_evaluate_hodograph(utils.NumPyTestCase):
         # B'(s) = [(2 + s)/2, (4 - 7s)/2]
 
         for s_val in (0.0, 0.25, 0.5, 0.625, 0.875):
-            first_deriv = self._call_function_under_test(nodes, degree, s_val)
+            first_deriv = self._call_function_under_test(s_val, nodes, degree)
             self.assertEqual(first_deriv.shape, (1, 2))
             self.assertEqual(first_deriv[0, 0], (2.0 + s_val) / 2.0)
             self.assertEqual(first_deriv[0, 1], (4.0 - 7.0 * s_val) / 2.0)
@@ -391,12 +386,33 @@ class Test_evaluate_hodograph(utils.NumPyTestCase):
         #  B(s) = [s(3 + 3s - s^2)/4, s(5s^2 - 9s + 6)/2]
         # B'(s) = [3(1 + 2s - s^2)/4, 3(5s^2 - 6s + 2)/2]
         for s_val in (0.125, 0.5, 0.75, 1.0, 1.125):
-            first_deriv = self._call_function_under_test(nodes, degree, s_val)
+            first_deriv = self._call_function_under_test(s_val, nodes, degree)
             self.assertEqual(first_deriv.shape, (1, 2))
             x_prime = 3.0 * (1.0 + 2.0 * s_val - s_val * s_val) / 4.0
             self.assertEqual(first_deriv[0, 0], x_prime)
             y_prime = 3.0 * (5.0 * s_val * s_val - 6.0 * s_val + 2.0) / 2.0
             self.assertEqual(first_deriv[0, 1], y_prime)
+# pylint: enable=no-member
+
+
+class Test__evaluate_hodograph(Base_evaluate_hodograph, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(s, nodes, degree):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._evaluate_hodograph(s, nodes, degree)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_evaluate_hodograph(
+        Base_evaluate_hodograph, utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(s, nodes, degree):
+        from bezier import _speedup
+
+        return _speedup.speedup.evaluate_hodograph(s, nodes, degree)
 
 
 class Test_get_curvature(unittest.TestCase):
@@ -409,10 +425,10 @@ class Test_get_curvature(unittest.TestCase):
             nodes, degree, tangent_vec, s)
 
     @staticmethod
-    def _get_tangent_vec(nodes, degree, s):
+    def _get_tangent_vec(s, nodes, degree):
         from bezier import _curve_helpers
 
-        return _curve_helpers.evaluate_hodograph(nodes, degree, s)
+        return _curve_helpers.evaluate_hodograph(s, nodes, degree)
 
     def test_line(self):
         s = 0.5
@@ -420,7 +436,7 @@ class Test_get_curvature(unittest.TestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        tangent_vec = self._get_tangent_vec(nodes, 1, s)
+        tangent_vec = self._get_tangent_vec(s, nodes, 1)
         result = self._call_function_under_test(nodes, 1, tangent_vec, s)
         self.assertEqual(result, 0.0)
 
@@ -431,7 +447,7 @@ class Test_get_curvature(unittest.TestCase):
             [0.5, 0.5],
             [1.0, 1.0],
         ])
-        tangent_vec = self._get_tangent_vec(nodes, 2, s)
+        tangent_vec = self._get_tangent_vec(s, nodes, 2)
         result = self._call_function_under_test(nodes, 2, tangent_vec, s)
         self.assertEqual(result, 0.0)
 
@@ -442,7 +458,7 @@ class Test_get_curvature(unittest.TestCase):
             [0.5, 1.0],
             [1.0, 0.0],
         ])
-        tangent_vec = self._get_tangent_vec(nodes, 2, s)
+        tangent_vec = self._get_tangent_vec(s, nodes, 2)
         result = self._call_function_under_test(nodes, 2, tangent_vec, s)
         self.assertEqual(result, -4.0)
 

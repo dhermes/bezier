@@ -72,6 +72,11 @@ def _evaluate_multi(nodes, s_vals):
     Does so by computing the Bernstein basis at each value in ``s_vals``
     rather than using the de Casteljau algorithm.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
         s_vals (numpy.ndarray): Parameters along the curve (as a
@@ -230,6 +235,11 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
 
        This assumes the curve is degree 1 or greater but doesn't check.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         nodes (numpy.ndarray): Control points for a curve.
         start (float): The start point of the interval we are specializing to.
@@ -279,7 +289,7 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
     # pylint: enable=too-many-locals
 
 
-def evaluate_hodograph(nodes, degree, s):
+def _evaluate_hodograph(s, nodes, degree):
     r"""Evaluate the Hodograph curve at a point :math:`s`.
 
     The Hodograph (first derivative) of a B |eacute| zier curve
@@ -292,6 +302,11 @@ def evaluate_hodograph(nodes, degree, s):
 
     where each forward difference is given by
     :math:`\Delta v_j = v_{j + 1} - v_j`.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): The nodes of a curve.
@@ -331,7 +346,7 @@ def get_curvature(nodes, degree, tangent_vec, s):
 
        def hodograph(nodes, s):
            degree = nodes.shape[0] - 1
-           return evaluate_hodograph(nodes, degree, s)
+           return evaluate_hodograph(s, nodes, degree)
 
     .. doctest:: get-curvature
        :options: +NORMALIZE_WHITESPACE
@@ -550,7 +565,7 @@ def newton_refine(curve, point, s):
     degree = curve._degree
     # pylint: enable=protected-access
     pt_delta = point - curve.evaluate(s)
-    derivative = evaluate_hodograph(nodes, degree, s)
+    derivative = evaluate_hodograph(s, nodes, degree)
     # Each array is 1x2 (i.e. a row vector).
     delta_s = pt_delta.dot(derivative.T) / derivative.dot(derivative.T)
     # Unpack 1x1 array into a scalar (and assert size).
@@ -614,7 +629,9 @@ def locate_point(curve, point):
 if _speedup is None:  # pragma: NO COVER
     evaluate_multi = _evaluate_multi
     specialize_curve = _specialize_curve
+    evaluate_hodograph = _evaluate_hodograph
 else:
     evaluate_multi = _speedup.speedup.evaluate_multi
     specialize_curve = _speedup.speedup.specialize_curve
+    evaluate_hodograph = _speedup.speedup.evaluate_hodograph
 # pylint: enable=invalid-name

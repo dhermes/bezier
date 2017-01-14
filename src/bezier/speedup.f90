@@ -6,7 +6,8 @@ module speedup
          evaluate_barycentric, evaluate_barycentric_multi, &
          evaluate_cartesian_multi, cross_product, segment_intersection, &
          bbox, specialize_curve_generic, specialize_curve_quadratic, &
-         specialize_curve, jacobian_both
+         specialize_curve, jacobian_both, evaluate_hodograph, &
+         newton_refine_intersect
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -450,5 +451,78 @@ contains
     new_nodes = degree * new_nodes
 
   end subroutine jacobian_both
+
+  subroutine evaluate_hodograph(s, nodes, dimension_, degree, hodograph)
+
+    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    real(dp), intent(in) :: s
+    real(dp), intent(in) :: nodes(degree + 1, dimension_)
+    integer :: dimension_
+    integer, intent(in) :: degree
+    real(dp), intent(out) :: hodograph(1, dimension_)
+    ! Variables outside of signature.
+    real(dp) :: first_deriv(degree, dimension_)
+    real(dp) :: param(1)
+
+    first_deriv = nodes(2:, :) - nodes(:degree, :)
+    param = s
+    call evaluate_multi( &
+         degree, dimension_, first_deriv, 1, param, hodograph)
+    hodograph = degree * hodograph
+
+  end subroutine evaluate_hodograph
+
+  subroutine newton_refine_intersect( &
+       s, nodes1, degree1, t, nodes2, degree2, new_s, new_t)
+
+    real(dp), intent(in) :: s
+    real(dp), intent(in) :: nodes1(degree1 + 1, 2)
+    integer, intent(in) :: degree1
+    real(dp), intent(in) :: t
+    real(dp), intent(in) :: nodes2(degree2 + 1, 2)
+    integer, intent(in) :: degree2
+    real(dp), intent(out) :: new_s, new_t
+    ! Variables outside of signature.
+    real(dp) :: param(1)
+    real(dp) :: func_val(1, 2)
+    real(dp) :: workspace(1, 2)
+    real(dp) :: jac_mat(2, 2)
+    real(dp) :: determinant, delta_s, delta_t
+
+    param = t
+    call evaluate_multi( &
+         degree2 + 1, 2, nodes2, 1, param, func_val)
+    param = s
+    call evaluate_multi( &
+         degree1 + 1, 2, nodes1, 1, param, workspace)
+    func_val = func_val - workspace
+
+    if (all(func_val == 0.0_dp)) then
+       new_s = s
+       new_t = t
+       return
+    endif
+
+    call evaluate_hodograph(s, nodes1, 2, degree1, jac_mat(1:1, :))
+    ! NOTE: We actually want the negative, since we want -B2'(t), but
+    !       since we manually solve the system, it's just algebra
+    !       to figure out how to use the negative values.
+    call evaluate_hodograph(t, nodes2, 2, degree2, jac_mat(2:2, :))
+
+    determinant = ( &
+         jac_mat(1, 1) * jac_mat(2, 2) - jac_mat(1, 2) * jac_mat(2, 1))
+
+    ! NOTE: We manually invert the 2x2 system ([ds, dt] J)^T = f^T.
+    delta_s = ( &
+         (jac_mat(2, 2) * func_val(1, 1) - &
+         jac_mat(2, 1) * func_val(1, 2)) / determinant)
+    new_s = s + delta_s
+
+    delta_t = ( &
+         (jac_mat(1, 2) * func_val(1, 1) - &
+         jac_mat(1, 1) * func_val(1, 2)) / determinant)
+    new_t = t + delta_t
+
+  end subroutine newton_refine_intersect
 
 end module speedup
