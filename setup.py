@@ -46,7 +46,6 @@ README = TEMPLATE.format(
 
 REQUIREMENTS = (
     'enum34',
-    'matplotlib >= 1.5.3',
     'numpy >= 1.11.2',
     'six >= 1.9.0',
 )

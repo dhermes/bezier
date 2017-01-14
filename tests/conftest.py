@@ -18,13 +18,6 @@ This
 """
 
 
-# pylint: disable=unused-import
-from matplotlib import patches  # noqa: F401
-from matplotlib import path as _path_mod  # noqa: F401
-import matplotlib.pyplot as plt  # noqa: F401
-# pylint: enable=unused-import
-
-
 def pytest_addoption(parser):
     parser.addoption(
         '--ignore-slow',

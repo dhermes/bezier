@@ -23,14 +23,19 @@ To actually execute these functions with the desired inputs, run:
 import fractions
 import os
 
-from matplotlib import patches
-from matplotlib import path as _path_mod
-import matplotlib.pyplot as plt
+try:
+    from matplotlib import patches
+    from matplotlib import path as _path_mod
+    import matplotlib.pyplot as plt
+except ImportError:
+    patches = None
+    _path_mod = None
+    plt = None
 import numpy as np
 try:
     import seaborn
 except ImportError:
-    pass
+    seaborn = None
 
 import bezier
 from bezier import _intersection_helpers

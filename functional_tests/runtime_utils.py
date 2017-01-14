@@ -17,12 +17,15 @@ import inspect
 import os
 import types
 
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    plt = None
 import numpy as np
 try:
     import seaborn  # pylint: disable=unused-import
 except ImportError:
-    pass
+    seaborn = None
 import six
 
 from bezier import _helpers
