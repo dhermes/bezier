@@ -502,120 +502,56 @@ class TestSurface(utils.NumPyTestCase):
     def test_evaluate_cartesian_multi_no_verify(self):
         self._eval_cartesian_multi_helper(_verify=False)
 
-    def test__add_patch(self):
-        klass = self._get_target_class()
-
-        ax = mock.Mock()
-        color = (0.5, 0.0, 0.5)
-        all_nodes = np.array([
-            [0.0, 1.0],
-            [1.0, 3.0],
-            [2.0, 6.0],
-            [3.0, 10.0],
-            [4.0, 15.0],
-            [5.0, 21.0],
-        ])
-        edge1 = all_nodes[(-1, 0, 1), :]
-        edge2 = all_nodes[(1, 2, 3), :]
-        edge3 = all_nodes[(3, 4, 5), :]
-        self.assertIsNone(
-            klass._add_patch(ax, color, edge1, edge2, edge3))
-
-        # Check the call to ax.add_patch(). We can't
-        # assert_called_once_with() since == breaks on NumPy arrays.
-        self.assertEqual(ax.add_patch.call_count, 1)
-        call = ax.add_patch.mock_calls[0]
-        # Unpack the call as name, positional args, keyword args
-        _, positional, keyword = call
-        self.assertEqual(keyword, {})
-        self.assertEqual(len(positional), 1)
-        patch = positional[0]
-        self.assertEqual(patch.get_path().vertices, all_nodes)
-
-    def _check_plot_calls(self, ax, nodes, color, with_nodes=False):
-        # Check the calls to ax.plot(). We can't assert_any_call()
-        # since == breaks on NumPy arrays.
-        if with_nodes:
-            self.assertEqual(ax.plot.call_count, 4)
-        else:
-            self.assertEqual(ax.plot.call_count, 3)
-        calls = ax.plot.mock_calls
-        utils.check_plot_call(self, calls[0], nodes[:2, :], color=None)
-        utils.check_plot_call(self, calls[1], nodes[1:, :], color=color)
-        utils.check_plot_call(self, calls[2], nodes[(2, 0), :], color=color)
-        if with_nodes:
-            utils.check_plot_call(self, calls[3], nodes,
-                                  color='black', marker='o', linestyle='None')
-        # Check the calls to ax.add_patch().
-        self.assertEqual(ax.add_patch.call_count, 1)
-
-    def _plot_helper(self, with_nodes=False):
-        import matplotlib.lines
-
-        nodes = self.UNIT_TRIANGLE
-        curve = self._make_one(nodes, 1)
-        plt = mock.Mock()
-
-        figure = mock.Mock()
-        plt.figure.return_value = figure
-        ax = mock.Mock()
-        figure.gca.return_value = ax
-
-        color = (0.5, 0.5, 0.75)
-        line = matplotlib.lines.Line2D([], [], color=color)
-        ax.plot.return_value = (line,)
-
-        with mock.patch('bezier.surface.plt', new=plt):
-            kwargs = {}
-            if with_nodes:
-                kwargs['with_nodes'] = True
-            result = curve.plot(2, **kwargs)
-
-        self.assertIs(result, ax)
-
-        # Check mocks.
-        plt.figure.assert_called_once_with()
-        figure.gca.assert_called_once_with()
-
-        self._check_plot_calls(ax, nodes, color, with_nodes=with_nodes)
-
-    def test_plot(self):
-        self._plot_helper()
-
-    def test_plot_with_nodes(self):
-        self._plot_helper(with_nodes=True)
-
-    def test_plot_existing_axis(self):
-        import matplotlib.lines
-
-        nodes = self.UNIT_TRIANGLE
-        curve = self._make_one(nodes, 1)
-        plt = mock.Mock()
-
-        ax = mock.Mock()
-        color = (0.5, 0.5, 0.75)
-        line = matplotlib.lines.Line2D([], [], color=color)
-        ax.plot.return_value = (line,)
-
-        with mock.patch('bezier.surface.plt', new=plt):
-            result = curve.plot(2, ax=ax)
-
-        self.assertIs(result, ax)
-
-        # Check mocks.
-        plt.figure.assert_not_called()
-
-        self._check_plot_calls(ax, nodes, color)
-
     def test_plot_wrong_dimension(self):
         nodes = np.array([
             [0.0, 0.0, 0.0],
             [1.0, 3.0, 4.0],
             [2.0, 6.0, 9.0],
         ])
-        surface = self._make_one(nodes, 1)
+        surface = self._make_one(nodes, 1, _copy=False)
         with self.assertRaises(NotImplementedError):
             surface.plot(32)
+
+    @mock.patch('bezier._plot_helpers.new_axis')
+    @mock.patch('bezier._plot_helpers.add_patch')
+    def test_plot_defaults(self, add_patch_mock, new_axis_mock):
+        ax = mock.Mock(spec=[])
+        new_axis_mock.return_value = ax
+
+        curve = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
+
+        pts_per_edge = 16
+        result = curve.plot(pts_per_edge)
+        self.assertIs(result, ax)
+
+        # Verify mocks.
+        new_axis_mock.assert_called_once_with()
+        add_patch_mock.assert_called_once_with(
+            ax, None, pts_per_edge, *curve._edges)
+
+    @mock.patch('bezier._plot_helpers.new_axis')
+    @mock.patch('bezier._plot_helpers.add_patch')
+    def test_plot_explicit(self, add_patch_mock, new_axis_mock):
+        ax = mock.Mock(spec=['plot'])
+        color = (0.5, 0.5, 0.5)
+        curve = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
+
+        pts_per_edge = 16
+        result = curve.plot(
+            pts_per_edge, color=color, ax=ax, with_nodes=True)
+        self.assertIs(result, ax)
+
+        # Verify mocks.
+        new_axis_mock.assert_not_called()
+        add_patch_mock.assert_called_once_with(
+            ax, color, pts_per_edge, *curve._edges)
+        # Check the call to ax.plot(). We can't assert_any_call()
+        # since == breaks on NumPy arrays.
+        self.assertEqual(ax.plot.call_count, 1)
+        call = ax.plot.mock_calls[0]
+        utils.check_plot_call(
+            self, call, self.UNIT_TRIANGLE,
+            color='black', marker='o', linestyle='None')
 
     def _subdivide_helper(self, nodes, expected_a, expected_b,
                           expected_c, expected_d):

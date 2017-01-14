@@ -24,14 +24,12 @@
 
 import itertools
 
-from matplotlib import patches
-from matplotlib import path as _path_mod
-import matplotlib.pyplot as plt
 import numpy as np
 import six
 
 from bezier import _base
 from bezier import _intersection_helpers
+from bezier import _plot_helpers
 from bezier import _surface_helpers
 from bezier import curve as _curve_mod
 
@@ -763,28 +761,6 @@ class Surface(_base.Base):
         return _surface_helpers.evaluate_cartesian_multi(
             self._nodes, self._degree, param_vals, self._dimension)
 
-    @staticmethod
-    def _add_patch(ax, color, edge1, edge2, edge3):
-        """Add a polygonal surface patch to a plot.
-
-        Args:
-            ax (matplotlib.artist.Artist): A matplotlib axis.
-            color (Tuple[float, float, float]): Color as RGB profile.
-            edge1 (numpy.ndarray): 2D array of points along a curved edge.
-            edge2 (numpy.ndarray): 2D array of points along a curved edge.
-            edge3 (numpy.ndarray): 2D array of points along a curved edge.
-        """
-        # Since the edges overlap, we leave out the first point in each.
-        polygon = np.vstack([
-            edge1[1:, :],
-            edge2[1:, :],
-            edge3[1:, :],
-        ])
-        path = _path_mod.Path(polygon)
-        patch = patches.PathPatch(
-            path, facecolor=color, alpha=0.6)
-        ax.add_patch(patch)
-
     def plot(self, pts_per_edge, color=None, ax=None, with_nodes=False):
         """Plot the current surface.
 
@@ -807,23 +783,10 @@ class Surface(_base.Base):
             raise NotImplementedError('2D is the only supported dimension',
                                       'Current dimension', self._dimension)
 
-        edge1, edge2, edge3 = self._get_edges()
-        s_vals = np.linspace(0.0, 1.0, pts_per_edge)
-
-        points1 = edge1.evaluate_multi(s_vals)
-        points2 = edge2.evaluate_multi(s_vals)
-        points3 = edge3.evaluate_multi(s_vals)
-
         if ax is None:
-            fig = plt.figure()
-            ax = fig.gca()
+            ax = _plot_helpers.new_axis()
 
-        line, = ax.plot(points1[:, 0], points1[:, 1], color=color)
-        color = line.get_color()
-        ax.plot(points2[:, 0], points2[:, 1], color=color)
-        ax.plot(points3[:, 0], points3[:, 1], color=color)
-
-        self._add_patch(ax, color, points1, points2, points3)
+        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._get_edges())
 
         if with_nodes:
             ax.plot(self._nodes[:, 0], self._nodes[:, 1],

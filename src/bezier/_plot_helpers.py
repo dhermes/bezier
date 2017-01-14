@@ -16,6 +16,21 @@ import numpy as np
 from bezier import _helpers
 
 
+def new_axis():
+    """Get a new matplotlib axis.
+
+    Returns:
+        matplotlib.artist.Artist: A newly created axis.
+    """
+    # NOTE: We import the plotting library at runtime to
+    #       avoid the cost for users that only want to compute.
+    #       The ``matplotlib`` import is a tad expensive.
+    import matplotlib.pyplot as plt
+
+    figure = plt.figure()
+    return figure.gca()
+
+
 def add_plot_boundary(ax, padding=0.125):
     """Add a buffer of empty space around a plot boundary.
 
@@ -41,3 +56,38 @@ def add_plot_boundary(ax, padding=0.125):
                 center_x + multiplier * delta_x)
     ax.set_ylim(center_y - multiplier * delta_y,
                 center_y + multiplier * delta_y)
+
+
+def add_patch(ax, color, pts_per_edge, *edges):
+    """Add a polygonal surface patch to a plot.
+
+    Args:
+        ax (matplotlib.artist.Artist): A matplotlib axis.
+        color (Tuple[float, float, float]): Color as RGB profile.
+        pts_per_edge (int): Number of points to use in polygonal
+            approximation of edge.
+        edges (Tuple[~bezier.curve.Curve, ...]): Curved edges defining
+            a boundary.
+    """
+    from matplotlib import patches
+    from matplotlib import path as _path_mod
+
+    s_vals = np.linspace(0.0, 1.0, pts_per_edge)
+
+    # Evaluate points on each edge.
+    all_points = []
+    for edge in edges:
+        points = edge.evaluate_multi(s_vals)
+        # We assume the edges overlap and leave out the first point
+        # in each.
+        all_points.append(points[1:, :])
+
+    polygon = np.vstack(all_points)
+    path = _path_mod.Path(polygon)
+    patch = patches.PathPatch(
+        path, facecolor=color, alpha=0.625)
+    ax.add_patch(patch)
+
+    # Color is (R,G,B,A) but we just want (R,G,B).
+    color = ax.patches[-1].get_facecolor()[:3]
+    ax.plot(polygon[:, 0], polygon[:, 1], color=color)

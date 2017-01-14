@@ -235,68 +235,6 @@ class TestCurve(utils.NumPyTestCase):
         result = curve.evaluate_multi(s_vals)
         self.assertEqual(expected, result)
 
-    def _check_plot_call(self, call, expected, **kwargs):
-        # Unpack the call as name, positional args, keyword args
-        _, positional, keyword = call
-        self.assertEqual(keyword, kwargs)
-        self.assertEqual(len(positional), 2)
-        self.assertEqual(positional[0], expected[:, 0])
-        self.assertEqual(positional[1], expected[:, 1])
-
-    def test_plot(self):
-        nodes = np.array([
-            [0.0, 1.0],
-            [1.0, 3.0],
-        ])
-        curve = self._make_one(nodes, 1)
-        plt = mock.Mock()
-
-        figure = mock.Mock()
-        plt.figure.return_value = figure
-        ax = mock.Mock()
-        figure.gca.return_value = ax
-
-        with mock.patch('bezier.curve.plt', new=plt):
-            result = curve.plot(2)
-
-        self.assertIs(result, ax)
-
-        # Check mocks.
-        plt.figure.assert_called_once_with()
-        figure.gca.assert_called_once_with()
-        # Can't use nodes[:, col] since == breaks on array.
-        self.assertEqual(ax.plot.call_count, 1)
-        call = ax.plot.mock_calls[0]
-        self._check_plot_call(call, nodes)
-
-    def test_plot_existing_axis(self):
-        import matplotlib.lines
-
-        nodes = np.array([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
-        curve = self._make_one(nodes, 1)
-        plt = mock.Mock()
-
-        ax = mock.Mock()
-        color = (0.25, 0.25, 0.125)
-        line = matplotlib.lines.Line2D([], [], color=color)
-        ax.plot.return_value = (line,)
-
-        with mock.patch('bezier.surface.plt', new=plt):
-            result = curve.plot(2, ax=ax)
-
-        self.assertIs(result, ax)
-
-        # Check mocks.
-        plt.figure.assert_not_called()
-
-        # Can't use nodes[:, col] since == breaks on array.
-        self.assertEqual(ax.plot.call_count, 1)
-        call = ax.plot.mock_calls[0]
-        self._check_plot_call(call, nodes)
-
     def test_plot_wrong_dimension(self):
         nodes = np.array([
             [0.0, 0.0, 0.0],
@@ -305,6 +243,50 @@ class TestCurve(utils.NumPyTestCase):
         curve = self._make_one(nodes, 1)
         with self.assertRaises(NotImplementedError):
             curve.plot(32)
+
+    @mock.patch('bezier._plot_helpers.new_axis')
+    def test_plot_defaults(self, new_axis_mock):
+        ax = mock.Mock(spec=['plot'])
+        new_axis_mock.return_value = ax
+
+        nodes = np.array([
+            [0.0, 1.0],
+            [1.0, 3.0],
+        ])
+        curve = self._make_one(nodes, 1, _copy=False)
+
+        num_pts = 2  # This value is crucial for the plot call.
+        result = curve.plot(num_pts)
+        self.assertIs(result, ax)
+
+        # Verify mocks.
+        new_axis_mock.assert_called_once_with()
+        # Check the call to ax.plot(). We can't assert_any_call()
+        # since == breaks on NumPy arrays.
+        self.assertEqual(ax.plot.call_count, 1)
+        call = ax.plot.mock_calls[0]
+        utils.check_plot_call(self, call, nodes)
+
+    @mock.patch('bezier._plot_helpers.new_axis')
+    def test_plot_explicit(self, new_axis_mock):
+        nodes = np.array([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve = self._make_one(nodes, 1, _copy=False)
+
+        num_pts = 2  # This value is crucial for the plot call.
+        ax = mock.Mock(spec=['plot'])
+        result = curve.plot(num_pts, ax=ax)
+        self.assertIs(result, ax)
+
+        # Verify mocks.
+        new_axis_mock.assert_not_called()
+        # Check the call to ax.plot(). We can't assert_any_call()
+        # since == breaks on NumPy arrays.
+        self.assertEqual(ax.plot.call_count, 1)
+        call = ax.plot.mock_calls[0]
+        utils.check_plot_call(self, call, nodes)
 
     def test_subdivide_multilevel_root(self):
         curve = self._make_one(np.zeros((2, 2)), 1)

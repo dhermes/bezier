@@ -15,11 +15,59 @@
 import unittest
 
 import mock
+import numpy as np
+
+from tests import utils
+
+
+def run_fake_modules(modules, func):
+    import sys
+
+    existing = {}
+    for name, mod_obj in modules.items():
+        if name in sys.modules:  # pragma: NO COVER
+            existing[name] = sys.modules.pop(name)
+        sys.modules[name] = mod_obj
+
+    try:
+        return func()
+    finally:
+        for name in modules.keys():
+            sys.modules.pop(name)
+            if name in existing:  # pragma: NO COVER
+                sys.modules[name] = existing[name]
+
+
+class Test_new_axis(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test():
+        from bezier import _plot_helpers
+
+        return _plot_helpers.new_axis()
+
+    def test_it(self):
+        figure = mock.Mock(spec=['gca'])
+        figure.gca.return_value = mock.sentinel.ax
+
+        plt = mock.Mock(spec=['figure'])
+        plt.figure.return_value = figure
+
+        matplotlib = mock.Mock(pyplot=plt, spec=['pyplot'])
+
+        modules = {
+            'matplotlib': matplotlib,
+            'matplotlib.pyplot': plt,
+        }
+        result = run_fake_modules(modules, self._call_function_under_test)
+        self.assertIs(result, mock.sentinel.ax)
+
+        # Verify mocks.
+        plt.figure.assert_called_once_with()
+        figure.gca.assert_called_once_with()
 
 
 class Test_add_plot_boundary(unittest.TestCase):
-
-    AX_PROPS = ('lines', 'set_xlim', 'set_ylim')
 
     @staticmethod
     def _call_function_under_test(ax, **kwargs):
@@ -27,22 +75,96 @@ class Test_add_plot_boundary(unittest.TestCase):
 
         return _plot_helpers.add_plot_boundary(ax, **kwargs)
 
+    def _helper(self, **kwargs):
+        line = mock.Mock(spec=['get_xydata'])
+        line.get_xydata.return_value = np.array([
+            [-1.0, -1.0],
+            [1.0, 1.0],
+        ])
+        ax = mock.Mock(lines=[line], spec=['lines', 'set_xlim', 'set_ylim'])
+
+        self.assertIsNone(self._call_function_under_test(ax, **kwargs))
+        padding = kwargs.get('padding', 0.125)
+        ax.set_xlim.assert_called_once_with(-1.0 - padding, 1.0 + padding)
+        ax.set_ylim.assert_called_once_with(-1.0 - padding, 1.0 + padding)
+
     def test_default(self):
-        import matplotlib.lines
-
-        line = matplotlib.lines.Line2D([-1.0, 1.0], [-1.0, 1.0])
-        ax = mock.Mock(name='AxesSubplot', spec=self.AX_PROPS, lines=[line])
-
-        self.assertIsNone(self._call_function_under_test(ax))
-        ax.set_xlim.assert_called_once_with(-1.125, 1.125)
-        ax.set_ylim.assert_called_once_with(-1.125, 1.125)
+        self._helper()
 
     def test_with_padding(self):
-        import matplotlib.lines
+        self._helper(padding=0.5)
 
-        line = matplotlib.lines.Line2D([-1.0, 1.0], [-1.0, 1.0])
-        ax = mock.Mock(name='AxesSubplot', spec=self.AX_PROPS, lines=[line])
 
-        self.assertIsNone(self._call_function_under_test(ax, padding=0.5))
-        ax.set_xlim.assert_called_once_with(-1.5, 1.5)
-        ax.set_ylim.assert_called_once_with(-1.5, 1.5)
+class Test_add_patch(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(ax, color, pts_per_edge, *edges):
+        from bezier import _plot_helpers
+
+        return _plot_helpers.add_patch(ax, color, pts_per_edge, *edges)
+
+    def _s_val_mock(self, edge):
+        self.assertEqual(edge.evaluate_multi.call_count, 1)
+        call = edge.evaluate_multi.mock_calls[0]
+        _, positional, keyword = call
+        self.assertEqual(keyword, {})
+        self.assertEqual(len(positional), 1)
+        self.assertEqual(positional[0], np.array([0.0, 0.5, 1.0]))
+
+    def _path_val(self, path, points):
+        self.assertEqual(path.Path.call_count, 1)
+        call = path.Path.mock_calls[0]
+        _, positional, keyword = call
+        self.assertEqual(keyword, {})
+        self.assertEqual(len(positional), 1)
+        self.assertEqual(positional[0], points[1:, :])
+
+    def _plot_check(self, ax, points, color):
+        self.assertEqual(ax.plot.call_count, 1)
+        call = ax.plot.mock_calls[0]
+        utils.check_plot_call(self, call, points[1:, :], color=color)
+
+    def test_it(self):
+        import functools
+
+        # Set-up input values.
+        color = (0.25, 0.5, 0.75)
+        pts_per_edge = 3
+        edge = mock.Mock(spec=['evaluate_multi'])
+        points = np.array([
+            [0.0, 1.0],
+            [1.0, 3.0],
+            [2.0, 6.0],
+        ])
+        edge.evaluate_multi.return_value = points
+
+        # Set-up mocks (quite a lot).
+        patches = mock.Mock(spec=['PathPatch'])
+        path = mock.Mock(spec=['Path'])
+        matplotlib = mock.Mock(
+            patches=patches, path=path, spec=['patches', 'path'])
+
+        patch = mock.Mock(spec=['get_facecolor'])
+        patch.get_facecolor.return_value = color
+        ax = mock.Mock(
+            patches=[patch], spec=['add_patch', 'patches', 'plot'])
+
+        modules = {
+            'matplotlib': matplotlib,
+            'matplotlib.patches': patches,
+            'matplotlib.path': path,
+        }
+        func = functools.partial(
+            self._call_function_under_test, ax, color, pts_per_edge, edge)
+        result = run_fake_modules(modules, func)
+        self.assertIsNone(result)
+
+        # Verify mocks (quite a lot).
+        self._s_val_mock(edge)
+        self._path_val(path, points)
+        patches.PathPatch.assert_called_once_with(
+            path.Path.return_value, facecolor=color, alpha=0.625)
+        ax.add_patch.assert_called_once_with(
+            patches.PathPatch.return_value)
+        patch.get_facecolor.assert_called_once_with()
+        self._plot_check(ax, points, color)

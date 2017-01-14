@@ -25,12 +25,12 @@ See :doc:`../curve-curve-intersection` for examples using the
 """
 
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 from bezier import _base
 from bezier import _curve_helpers
 from bezier import _intersection_helpers
+from bezier import _plot_helpers
 
 
 _REPR_TEMPLATE = (
@@ -452,8 +452,7 @@ class Curve(_base.Base):
         points = self.evaluate_multi(s_vals)
 
         if ax is None:
-            fig = plt.figure()
-            ax = fig.gca()
+            ax = _plot_helpers.new_axis()
 
         ax.plot(points[:, 0], points[:, 1])
 

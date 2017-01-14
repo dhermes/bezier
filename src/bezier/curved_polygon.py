@@ -26,13 +26,10 @@ boundary.
 """
 
 
-from matplotlib import patches
-from matplotlib import path as _path_mod
-import matplotlib.pyplot as plt
-import numpy as np
 import six
 
 from bezier import _helpers
+from bezier import _plot_helpers
 
 
 class CurvedPolygon(object):
@@ -234,24 +231,8 @@ class CurvedPolygon(object):
             may be a newly created axis.
         """
         if ax is None:
-            fig = plt.figure()
-            ax = fig.gca()
+            ax = _plot_helpers.new_axis()
 
-        s_vals = np.linspace(0.0, 1.0, pts_per_edge)
-
-        # Evaluate points on each edge.
-        all_points = []
-        for edge in self._edges:
-            points = edge.evaluate_multi(s_vals)
-            line, = ax.plot(points[:, 0], points[:, 1], color=color)
-            color = line.get_color()
-            # Since the edges overlap, we leave out the first point in each.
-            all_points.append(points[1:, :])
-
-        polygon = np.vstack(all_points)
-        path = _path_mod.Path(polygon)
-        patch = patches.PathPatch(
-            path, facecolor=color, alpha=0.6)
-        ax.add_patch(patch)
+        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._edges)
 
         return ax

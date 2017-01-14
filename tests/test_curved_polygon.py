@@ -104,64 +104,34 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         self.assertEqual(repr(curved_poly),
                          '<CurvedPolygon (num_sides=2)>')
 
-    def _check_plot_calls(self, ax):
-        # Check the calls to ax.plot(). We can't assert_any_call()
-        # since == breaks on NumPy arrays.
-        self.assertEqual(ax.plot.call_count, 2)
-
-        calls = ax.plot.mock_calls
-        utils.check_plot_call(
-            self, calls[0], self.NODES0[(0, 2), :], color=None)
-        utils.check_plot_call(
-            self, calls[1], self.NODES1[(0, 2), :], color=self.COLOR)
-
-    def _make_axis(self):
-        import matplotlib.lines
-
-        ax = mock.Mock()
-
-        line = matplotlib.lines.Line2D([], [], color=self.COLOR)
-        ax.plot.return_value = (line,)
-
-        return ax
-
-    def _plot_helper(self, ax=None):
-        if ax is None:
-            orig_ax = False
-            ax = self._make_axis()
-        else:
-            orig_ax = True
+    @mock.patch('bezier._plot_helpers.new_axis')
+    @mock.patch('bezier._plot_helpers.add_patch')
+    def test_plot_defaults(self, add_patch_mock, new_axis_mock):
+        ax = mock.Mock(spec=[])
+        new_axis_mock.return_value = ax
 
         curved_poly = self._make_default()
-        plt = mock.Mock()
-
-        figure = mock.Mock()
-        plt.figure.return_value = figure
-        figure.gca.return_value = ax
-
-        with mock.patch('bezier.curved_polygon.plt', new=plt):
-            kwargs = {}
-            if orig_ax:
-                kwargs['ax'] = ax
-            result = curved_poly.plot(2, **kwargs)
-
+        pts_per_edge = 16
+        result = curved_poly.plot(pts_per_edge)
         self.assertIs(result, ax)
 
-        # Check mocks.
-        if orig_ax:
-            plt.figure.assert_not_called()
-            figure.gca.assert_not_called()
-        else:
-            plt.figure.assert_called_once_with()
-            figure.gca.assert_called_once_with()
+        # Verify mocks.
+        new_axis_mock.assert_called_once_with()
+        add_patch_mock.assert_called_once_with(
+            ax, None, pts_per_edge, *curved_poly._edges)
 
-        ax.add_patch.assert_called_once()
+    @mock.patch('bezier._plot_helpers.new_axis')
+    @mock.patch('bezier._plot_helpers.add_patch')
+    def test_plot_explicit(self, add_patch_mock, new_axis_mock):
+        ax = mock.Mock(spec=[])
+        color = (0.5, 0.5, 0.5)
+        curved_poly = self._make_default()
 
-        self._check_plot_calls(ax)
+        pts_per_edge = 16
+        result = curved_poly.plot(pts_per_edge, color=color, ax=ax)
+        self.assertIs(result, ax)
 
-    def test_plot(self):
-        self._plot_helper()
-
-    def test_plot_existing_axis(self):
-        ax = self._make_axis()
-        self._plot_helper(ax=ax)
+        # Verify mocks.
+        new_axis_mock.assert_not_called()
+        add_patch_mock.assert_called_once_with(
+            ax, color, pts_per_edge, *curved_poly._edges)
