@@ -58,11 +58,11 @@ contains
           parent_i2 = parent_i2 + 1
           parent_i3 = parent_i3 + 1
           index = index + 1
-       enddo
+       end do
        ! Update the indices that depend on k.
        parent_i1 = parent_i1 + 1
        parent_i2 = parent_i2 + 1
-    enddo
+    end do
 
   end subroutine de_casteljau_one_round
 
@@ -107,7 +107,7 @@ contains
        swap = weights_curr
        weights_curr = weights_next
        weights_next = swap
-    enddo
+    end do
 
     evaluated = matmul(weights_curr, nodes)
 
@@ -127,7 +127,7 @@ contains
     if (degree == 1) then
        error = 0.0_dp
        return
-    endif
+    end if
 
     second_deriv = ( &
          nodes(:degree - 1, :) - &
@@ -163,7 +163,7 @@ contains
     if (degree == 0) then
        point = nodes
        return
-    endif
+    end if
 
     ! Do the first round of de Casteljau (this assumes degree >= 1).
     call de_casteljau_one_round( &
@@ -184,7 +184,7 @@ contains
        swap(:curr_num_nodes, :) = workspace_curr(:curr_num_nodes, :)
        workspace_curr(:curr_num_nodes, :) = workspace_next(:curr_num_nodes, :)
        workspace_next(:curr_num_nodes, :) = swap(:curr_num_nodes, :)
-    enddo
+    end do
 
     point = workspace_curr(1:1, :)
 
@@ -215,7 +215,7 @@ contains
             num_nodes, dimension_, nodes, degree, &
             param_vals(index, 1), param_vals(index, 2), &
             param_vals(index, 3), evaluated(index, :))
-    enddo
+    end do
 
   end subroutine evaluate_barycentric_multi
 
@@ -245,7 +245,7 @@ contains
             1.0_dp - param_vals(index, 1) - param_vals(index, 2), &
             param_vals(index, 1), param_vals(index, 2), &
             evaluated(index, :))
-    enddo
+    end do
 
   end subroutine evaluate_cartesian_multi
 
@@ -287,7 +287,7 @@ contains
        call cross_product(start_delta, delta0, other_cross)
        t = other_cross / cross_d0_d1
        success = .TRUE.
-    endif
+    end if
 
   end subroutine segment_intersection
 
@@ -345,7 +345,7 @@ contains
                minus_start * workspace(:curr_size, :, j) + &
                start * workspace(2:curr_size + 1, :, j))
        end forall
-    enddo
+    end do
 
     ! Move the final "column" (or whatever the 3rd dimension is called)
     ! of the workspace into ``new_nodes``.
@@ -408,7 +408,7 @@ contains
     else
        call specialize_curve_generic( &
             nodes, degree, dimension_, start, end_, new_nodes)
-    endif
+    end if
 
     ! Now, compute the new interval.
     interval_delta = curve_end - curve_start
@@ -443,10 +443,10 @@ contains
           index = index + 1
           i = i + 1
           j = j + 1
-       enddo
+       end do
        ! In between each row, the index gains an extra value.
        i = i + 1
-    enddo
+    end do
 
     new_nodes = degree * new_nodes
 
@@ -501,7 +501,7 @@ contains
        new_s = s
        new_t = t
        return
-    endif
+    end if
 
     call evaluate_hodograph(s, nodes1, 2, degree1, jac_mat(1:1, :))
     ! NOTE: We actually want the negative, since we want -B2'(t), but
