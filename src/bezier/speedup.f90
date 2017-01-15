@@ -526,26 +526,24 @@ contains
   end subroutine newton_refine_intersect
 
   subroutine jacobian_det( &
-       num_nodes, dimension_, nodes, degree, num_vals, param_vals, evaluated)
+       num_nodes, nodes, degree, num_vals, param_vals, evaluated)
 
     !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer, depend(nodes) :: dimension_ = size(nodes, 2)
     !f2py integer intent(hide), depend(param_vals) :: num_vals &
     !f2py     = size(param_vals, 1)
     integer :: num_nodes
-    integer :: dimension_
-    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    real(dp), intent(in) :: nodes(num_nodes, 2)
     integer :: degree
     integer :: num_vals
     real(dp), intent(in) :: param_vals(num_vals, 2)
     real(dp), intent(out) :: evaluated(num_vals)
     ! Variables outside of signature.
-    real(dp) :: jac_nodes(num_nodes - degree - 1, 2 * dimension_)
-    real(dp) :: Bs_Bt_vals(num_vals, 2 * dimension_)
+    real(dp) :: jac_nodes(num_nodes - degree - 1, 4)
+    real(dp) :: Bs_Bt_vals(num_vals, 4)
     real(dp) :: determinant
 
     call jacobian_both( &
-         num_nodes, dimension_, nodes, degree, jac_nodes)
+         num_nodes, 2, nodes, degree, jac_nodes)
     if (degree == 1) then
        determinant = ( &
             jac_nodes(1, 1) * jac_nodes(1, 4) - &
@@ -554,7 +552,7 @@ contains
     else
        call evaluate_cartesian_multi( &
             num_nodes - degree - 1, jac_nodes, degree - 1, &
-            num_vals, param_vals, 2 * dimension_, Bs_Bt_vals)
+            num_vals, param_vals, 4, Bs_Bt_vals)
        evaluated = ( &
             Bs_Bt_vals(:, 1) * Bs_Bt_vals(:, 4) - &
             Bs_Bt_vals(:, 2) * Bs_Bt_vals(:, 3))

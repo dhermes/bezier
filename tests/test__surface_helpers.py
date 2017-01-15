@@ -146,10 +146,40 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
             [0.0, 1.0],
         ])
         bernstein = self._call_function_under_test(nodes)
-        self.assertEqual(bernstein.shape, (6, 1))
         expected = np.asfortranarray([
             [0.0], [2.0], [0.0], [-2.0], [2.0], [0.0]])
         self.assertEqual(bernstein, expected)
+
+    def test_against_det(self):
+        from bezier import _surface_helpers
+
+        # B(L1, L2, L3) = [s (t + 2), s^2 + 4 t]
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [2.0, 1.0],
+            [0.0, 2.0],
+            [1.5, 2.0],
+            [0.0, 4.0],
+        ])
+
+        st_vals = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 0.0],
+            [1.0, 0.0],
+            [0.0, 0.5],
+            [0.5, 0.5],
+            [0.0, 1.0],
+        ])
+        as_det = _surface_helpers.jacobian_det(nodes, 2, st_vals)
+        as_det = as_det.reshape((6, 1), order='F')
+        # B_s = [t + 2, 2*s]
+        # B_t = [s, 4]
+        # det(DB) = -2 (s^2 - 2t - 4)
+        bernstein = self._call_function_under_test(nodes)
+        evaluated_bernstein = _surface_helpers.evaluate_cartesian_multi(
+            bernstein, 2, st_vals, 1)
+        self.assertEqual(evaluated_bernstein, as_det)
 
 
 class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
@@ -670,11 +700,10 @@ class Test_speedup_jacobian_both(Test__jacobian_both):
 class Test__jacobian_det(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, st_vals, dimension):
+    def _call_function_under_test(nodes, degree, st_vals):
         from bezier import _surface_helpers
 
-        return _surface_helpers._jacobian_det(
-            nodes, degree, st_vals, dimension)
+        return _surface_helpers._jacobian_det(nodes, degree, st_vals)
 
     def test_linear(self):
         import bezier
@@ -688,7 +717,7 @@ class Test__jacobian_det(utils.NumPyTestCase):
         surface = bezier.Surface(nodes, degree=degree, _copy=False)
         self.assertTrue(surface.is_valid)
         st_vals = np.random.random((13, 2))
-        result = self._call_function_under_test(nodes, degree, st_vals, 2)
+        result = self._call_function_under_test(nodes, degree, st_vals)
         expected = 2.0 * np.ones(13)
         self.assertEqual(result, expected)
 
@@ -713,7 +742,7 @@ class Test__jacobian_det(utils.NumPyTestCase):
             [0.25, 0.75],
             [1.0, 0.0],
         ])
-        result = self._call_function_under_test(nodes, degree, st_vals, 2)
+        result = self._call_function_under_test(nodes, degree, st_vals)
         # det(DB) = s + t + 1
         expected = np.asfortranarray([1.25, 1.875, 2.0, 2.0])
         self.assertEqual(result, expected)
@@ -723,11 +752,10 @@ class Test__jacobian_det(utils.NumPyTestCase):
 class Test_speedup_jacobian_det(Test__jacobian_det):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, st_vals, dimension):
+    def _call_function_under_test(nodes, degree, st_vals):
         from bezier import _speedup
 
-        return _speedup.speedup.jacobian_det(
-            nodes, degree, st_vals, dimension)
+        return _speedup.speedup.jacobian_det(nodes, degree, st_vals)
 
 
 class Test_newton_refine(unittest.TestCase):

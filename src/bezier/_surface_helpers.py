@@ -792,8 +792,10 @@ def _jacobian_both(nodes, degree, dimension):
     return result
 
 
-def _jacobian_det(nodes, degree, st_vals, dimension):
+def _jacobian_det(nodes, degree, st_vals):
     r"""Compute :math:`\det(D B)` at a set of values.
+
+    This requires that :math:`B \in \mathbf{R}^2`.
 
     .. note::
 
@@ -809,9 +811,9 @@ def _jacobian_det(nodes, degree, st_vals, dimension):
     .. testsetup:: jacobian-det
 
        import numpy as np
-       import bezier
 
-       from galerkin_reconstruction import jacobian_det
+       import bezier
+       from bezier._surface_helpers import jacobian_det
 
     .. doctest:: jacobian-det
        :options: +NORMALIZE_WHITESPACE
@@ -840,7 +842,7 @@ def _jacobian_det(nodes, degree, st_vals, dimension):
        array([ 0.5 , 1.59375, 1.25 ])
        >>> t_vals * (s_vals + 2)
        array([ 0. , 0.34375, 1.25 ])
-       >>> jacobian_det(nodes, 2, 2, st_vals)
+       >>> jacobian_det(nodes, 2, st_vals)
        array([ 4.5 , 5.75, 6. ])
        >>> # det(DB) = 2(s + t + 2)
        >>> 2 * (s_vals + t_vals + 2)
@@ -849,22 +851,22 @@ def _jacobian_det(nodes, degree, st_vals, dimension):
     Args:
         nodes (numpy.ndarray): Nodes defining a B |eacute| zier
             surface :math:`B(s, t)`.
-        degree (int): The degree of the surface.
+        degree (int): The degree of the surface :math:`B`.
         st_vals (numpy.ndarray): ``Nx2`` array of Cartesian
-            inputs to B |eacute| zier surface.
-        dimension (int): The dimension of the surface.
+            inputs to B |eacute| zier surfaces defined by
+            :math:`B_s` and :math:`B_t`.
 
     Returns:
         numpy.ndarray: Array of all determinant values, one
         for each row in ``st_vals``.
     """
-    jac_nodes = jacobian_both(nodes, degree, dimension)
+    jac_nodes = jacobian_both(nodes, degree, 2)
     if degree == 1:
         num_vals, _ = st_vals.shape
         bs_bt_vals = np.repeat(jac_nodes, num_vals, axis=0)
     else:
         bs_bt_vals = evaluate_cartesian_multi(
-            jac_nodes, degree - 1, st_vals, 2 * dimension)
+            jac_nodes, degree - 1, st_vals, 4)
 
     # Take the determinant for each (s, t).
     return (bs_bt_vals[:, 0] * bs_bt_vals[:, 3] -
