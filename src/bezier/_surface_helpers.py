@@ -792,6 +792,85 @@ def _jacobian_both(nodes, degree, dimension):
     return result
 
 
+def _jacobian_det(nodes, degree, st_vals, dimension):
+    r"""Compute :math:`\det(D B)` at a set of values.
+
+    .. note::
+
+       This assumes but does not check that each ``(s, t)``
+       in ``st_vals`` is inside the reference triangle.
+
+    .. warning::
+
+       This relies on helpers in :mod:`bezier` for computing the
+       Jacobian of the surface. However, these helpers are not
+       part of the public surface and may change or be removed.
+
+    .. testsetup:: jacobian-det
+
+       import numpy as np
+       import bezier
+
+       from galerkin_reconstruction import jacobian_det
+
+    .. doctest:: jacobian-det
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> nodes = np.asfortranarray([
+       ...     [0.0, 0.0],
+       ...     [1.0, 0.0],
+       ...     [2.0, 0.0],
+       ...     [0.0, 1.0],
+       ...     [1.5, 1.5],
+       ...     [0.0, 2.0],
+       ... ])
+       >>> surface = bezier.Surface(nodes, degree=2)
+       >>> st_vals = np.asfortranarray([
+       ...     [0.25, 0.0  ],
+       ...     [0.75, 0.125],
+       ...     [0.5 , 0.5  ],
+       ... ])
+       >>> s_vals, t_vals = st_vals.T
+       >>> surface.evaluate_cartesian_multi(st_vals)
+       array([[ 0.5    , 0.     ],
+              [ 1.59375, 0.34375],
+              [ 1.25   , 1.25   ]])
+       >>> # B(s, t) = [s(t + 2), t(s + 2)]
+       >>> s_vals * (t_vals + 2)
+       array([ 0.5 , 1.59375, 1.25 ])
+       >>> t_vals * (s_vals + 2)
+       array([ 0. , 0.34375, 1.25 ])
+       >>> jacobian_det(nodes, 2, 2, st_vals)
+       array([ 4.5 , 5.75, 6. ])
+       >>> # det(DB) = 2(s + t + 2)
+       >>> 2 * (s_vals + t_vals + 2)
+       array([ 4.5 , 5.75, 6. ])
+
+    Args:
+        nodes (numpy.ndarray): Nodes defining a B |eacute| zier
+            surface :math:`B(s, t)`.
+        degree (int): The degree of the surface.
+        st_vals (numpy.ndarray): ``Nx2`` array of Cartesian
+            inputs to B |eacute| zier surface.
+        dimension (int): The dimension of the surface.
+
+    Returns:
+        numpy.ndarray: Array of all determinant values, one
+        for each row in ``st_vals``.
+    """
+    jac_nodes = jacobian_both(nodes, degree, dimension)
+    if degree == 1:
+        num_vals, _ = st_vals.shape
+        bs_bt_vals = np.repeat(jac_nodes, num_vals, axis=0)
+    else:
+        bs_bt_vals = evaluate_cartesian_multi(
+            jac_nodes, degree - 1, st_vals, 2 * dimension)
+
+    # Take the determinant for each (s, t).
+    return (bs_bt_vals[:, 0] * bs_bt_vals[:, 3] -
+            bs_bt_vals[:, 1] * bs_bt_vals[:, 2])
+
+
 def newton_refine(nodes, degree, x_val, y_val, s, t):
     r"""Refine a solution to :math:`B(s, t) = p` using Newton's method.
 
@@ -2328,10 +2407,12 @@ if _speedup is None:  # pragma: NO COVER
     evaluate_barycentric_multi = _evaluate_barycentric_multi
     evaluate_cartesian_multi = _evaluate_cartesian_multi
     jacobian_both = _jacobian_both
+    jacobian_det = _jacobian_det
 else:
     de_casteljau_one_round = _speedup.speedup.de_casteljau_one_round
     evaluate_barycentric = _speedup.speedup.evaluate_barycentric
     evaluate_barycentric_multi = _speedup.speedup.evaluate_barycentric_multi
     evaluate_cartesian_multi = _speedup.speedup.evaluate_cartesian_multi
     jacobian_both = _speedup.speedup.jacobian_both
+    jacobian_det = _speedup.speedup.jacobian_det
 # pylint: enable=invalid-name

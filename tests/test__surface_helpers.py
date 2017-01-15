@@ -667,6 +667,69 @@ class Test_speedup_jacobian_both(Test__jacobian_both):
         return _speedup.speedup.jacobian_both(nodes, degree, dimension)
 
 
+class Test__jacobian_det(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, st_vals, dimension):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._jacobian_det(
+            nodes, degree, st_vals, dimension)
+
+    def test_linear(self):
+        import bezier
+
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 2.0],
+        ])
+        degree = 1
+        surface = bezier.Surface(nodes, degree=degree, _copy=False)
+        self.assertTrue(surface.is_valid)
+        st_vals = np.random.random((13, 2))
+        result = self._call_function_under_test(nodes, degree, st_vals, 2)
+        expected = 2.0 * np.ones(13)
+        self.assertEqual(result, expected)
+
+    def test_nonlinear(self):
+        import bezier
+
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 0.0],
+            [1.0, 0.0],
+            [0.0, 0.5],
+            [1.0, 1.0],
+            [0.0, 1.0],
+        ])
+        degree = 2
+        surface = bezier.Surface(nodes, degree=degree, _copy=False)
+        self.assertTrue(surface.is_valid)
+        # B(s, t) = [s(t + 1), t(s + 1)]
+        st_vals = np.asfortranarray([
+            [0.125, 0.125],
+            [0.5, 0.375],
+            [0.25, 0.75],
+            [1.0, 0.0],
+        ])
+        result = self._call_function_under_test(nodes, degree, st_vals, 2)
+        # det(DB) = s + t + 1
+        expected = np.asfortranarray([1.25, 1.875, 2.0, 2.0])
+        self.assertEqual(result, expected)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_jacobian_det(Test__jacobian_det):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, st_vals, dimension):
+        from bezier import _speedup
+
+        return _speedup.speedup.jacobian_det(
+            nodes, degree, st_vals, dimension)
+
+
 class Test_newton_refine(unittest.TestCase):
 
     @staticmethod
