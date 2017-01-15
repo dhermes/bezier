@@ -360,24 +360,25 @@ class Surface(_base.Base):
             Tuple[~curve.Curve, ~curve.Curve, ~curve.Curve]: The edges of
             the surface.
         """
-        indices1 = slice(0, self._degree + 1)
-        indices2 = np.empty(self._degree + 1, dtype=np.int32, order='F')
-        indices3 = np.empty(self._degree + 1, dtype=np.int32, order='F')
+        nodes1 = np.empty((self._degree + 1, self._dimension), order='F')
+        nodes2 = np.empty((self._degree + 1, self._dimension), order='F')
+        nodes3 = np.empty((self._degree + 1, self._dimension), order='F')
 
         curr2 = self._degree
         curr3 = -1
+        all_nodes = self._nodes
         for i in six.moves.xrange(self._degree + 1):
-            indices2[i] = curr2
-            indices3[i] = curr3
+            nodes1[i, :] = all_nodes[i, :]
+            nodes2[i, :] = all_nodes[curr2, :]
+            nodes3[i, :] = all_nodes[curr3, :]
+            # Update the indices.
             curr2 += self._degree - i
             curr3 -= i + 2
 
-        edge1 = _curve_mod.Curve(
-            self._nodes[indices1, :], self._degree, _copy=False)
-        edge2 = _curve_mod.Curve(
-            self._nodes[indices2, :], self._degree, _copy=False)
-        edge3 = _curve_mod.Curve(
-            self._nodes[indices3, :], self._degree, _copy=False)
+        edge1 = _curve_mod.Curve(nodes1, self._degree, _copy=False)
+        edge2 = _curve_mod.Curve(nodes2, self._degree, _copy=False)
+        edge3 = _curve_mod.Curve(nodes3, self._degree, _copy=False)
+
         _surface_helpers.edge_cycle(edge1, edge2, edge3)
         return edge1, edge2, edge3
 
@@ -846,36 +847,41 @@ class Surface(_base.Base):
             lower right and upper left sub-surfaces (in that order).
         """
         if self._degree == 1:
-            new_nodes = _helpers.matrix_product(
-                _surface_helpers.LINEAR_SUBDIVIDE, self._nodes)
-            nodes_a = new_nodes[(0, 1, 3), :]
-            nodes_b = new_nodes[(4, 3, 1), :]
-            nodes_c = new_nodes[(1, 2, 4), :]
-            nodes_d = new_nodes[3:, :]
+            nodes_a = _helpers.matrix_product(
+                _surface_helpers.LINEAR_SUBDIVIDE_A, self._nodes)
+            nodes_b = _helpers.matrix_product(
+                _surface_helpers.LINEAR_SUBDIVIDE_B, self._nodes)
+            nodes_c = _helpers.matrix_product(
+                _surface_helpers.LINEAR_SUBDIVIDE_C, self._nodes)
+            nodes_d = _helpers.matrix_product(
+                _surface_helpers.LINEAR_SUBDIVIDE_D, self._nodes)
         elif self._degree == 2:
-            new_nodes = _helpers.matrix_product(
-                _surface_helpers.QUADRATIC_SUBDIVIDE, self._nodes)
-            nodes_a = new_nodes[(0, 1, 2, 5, 6, 9), :]
-            nodes_b = new_nodes[(11, 10, 9, 7, 6, 2), :]
-            nodes_c = new_nodes[(2, 3, 4, 7, 8, 11), :]
-            nodes_d = new_nodes[9:, :]
+            nodes_a = _helpers.matrix_product(
+                _surface_helpers.QUADRATIC_SUBDIVIDE_A, self._nodes)
+            nodes_b = _helpers.matrix_product(
+                _surface_helpers.QUADRATIC_SUBDIVIDE_B, self._nodes)
+            nodes_c = _helpers.matrix_product(
+                _surface_helpers.QUADRATIC_SUBDIVIDE_C, self._nodes)
+            nodes_d = _helpers.matrix_product(
+                _surface_helpers.QUADRATIC_SUBDIVIDE_D, self._nodes)
         elif self._degree == 3:
-            new_nodes = _helpers.matrix_product(
-                _surface_helpers.CUBIC_SUBDIVIDE, self._nodes)
-            nodes_a = new_nodes[(0, 1, 2, 3, 7, 8, 9, 13, 14, 18), :]
-            nodes_b = new_nodes[(21, 20, 19, 18, 16, 15, 14, 10, 9, 3), :]
-            nodes_c = new_nodes[(3, 4, 5, 6, 10, 11, 12, 16, 17, 21), :]
-            nodes_d = new_nodes[18:, :]
+            nodes_a = _helpers.matrix_product(
+                _surface_helpers.CUBIC_SUBDIVIDE_A, self._nodes)
+            nodes_b = _helpers.matrix_product(
+                _surface_helpers.CUBIC_SUBDIVIDE_B, self._nodes)
+            nodes_c = _helpers.matrix_product(
+                _surface_helpers.CUBIC_SUBDIVIDE_C, self._nodes)
+            nodes_d = _helpers.matrix_product(
+                _surface_helpers.CUBIC_SUBDIVIDE_D, self._nodes)
         elif self._degree == 4:
-            new_nodes = _helpers.matrix_product(
-                _surface_helpers.QUARTIC_SUBDIVIDE, self._nodes)
-            nodes_a = new_nodes[
-                (0, 1, 2, 3, 4, 9, 10, 11, 12, 17, 18, 19, 24, 25, 30), :]
-            nodes_b = new_nodes[
-                (34, 33, 32, 31, 30, 28, 27, 26, 25, 21, 20, 19, 13, 12, 4), :]
-            nodes_c = new_nodes[
-                (4, 5, 6, 7, 8, 13, 14, 15, 16, 21, 22, 23, 28, 29, 34), :]
-            nodes_d = new_nodes[30:, :]
+            nodes_a = _helpers.matrix_product(
+                _surface_helpers.QUARTIC_SUBDIVIDE_A, self._nodes)
+            nodes_b = _helpers.matrix_product(
+                _surface_helpers.QUARTIC_SUBDIVIDE_B, self._nodes)
+            nodes_c = _helpers.matrix_product(
+                _surface_helpers.QUARTIC_SUBDIVIDE_C, self._nodes)
+            nodes_d = _helpers.matrix_product(
+                _surface_helpers.QUARTIC_SUBDIVIDE_D, self._nodes)
         else:
             nodes_a = _surface_helpers.specialize_surface(
                 self._nodes, self._degree,

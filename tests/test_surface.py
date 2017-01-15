@@ -218,11 +218,11 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 1)
 
         edge1, edge2, edge3 = surface._compute_edges()
+        nodes1 = np.asfortranarray(np.vstack([p100, p010]))
+        nodes2 = np.asfortranarray(np.vstack([p010, p001]))
+        nodes3 = np.asfortranarray(np.vstack([p001, p100]))
         self._edges_helper(
-            edge1, edge2, edge3,
-            np.vstack([p100, p010]),
-            np.vstack([p010, p001]),
-            np.vstack([p001, p100]))
+            edge1, edge2, edge3, nodes1, nodes2, nodes3)
 
     def test__compute_edges_quadratic(self):
         nodes = self.QUADRATIC
@@ -230,11 +230,11 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 2)
 
         edge1, edge2, edge3 = surface._compute_edges()
+        nodes1 = np.asfortranarray(np.vstack([p200, p110, p020]))
+        nodes2 = np.asfortranarray(np.vstack([p020, p011, p002]))
+        nodes3 = np.asfortranarray(np.vstack([p002, p101, p200]))
         self._edges_helper(
-            edge1, edge2, edge3,
-            np.vstack([p200, p110, p020]),
-            np.vstack([p020, p011, p002]),
-            np.vstack([p002, p101, p200]))
+            edge1, edge2, edge3, nodes1, nodes2, nodes3)
 
     def test__compute_edges_cubic(self):
         nodes = np.asfortranarray([
@@ -256,9 +256,9 @@ class TestSurface(utils.NumPyTestCase):
         edges = surface._compute_edges()
         self._edges_helper(
             edges[0], edges[1], edges[2],
-            np.vstack([p300, p210, p120, p030]),
-            np.vstack([p030, p021, p012, p003]),
-            np.vstack([p003, p102, p201, p300]))
+            np.asfortranarray(np.vstack([p300, p210, p120, p030])),
+            np.asfortranarray(np.vstack([p030, p021, p012, p003])),
+            np.asfortranarray(np.vstack([p003, p102, p201, p300])))
 
     def test__get_edges(self):
         surface = self._make_one_no_slots(self.ZEROS, 1)
@@ -286,9 +286,9 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 1)
 
         edge1, edge2, edge3 = surface.edges
-        nodes1 = nodes[:2, :]
-        nodes2 = nodes[1:, :]
-        nodes3 = nodes[(2, 0), :]
+        nodes1 = np.asfortranarray(nodes[:2, :])
+        nodes2 = np.asfortranarray(nodes[1:, :])
+        nodes3 = np.asfortranarray(nodes[(2, 0), :])
         self._edges_helper(edge1, edge2, edge3,
                            nodes1, nodes2, nodes3)
 
@@ -915,7 +915,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(t, computed_t)
 
     def test_locate_bad_dimension(self):
-        nodes = np.asfortranarray([[0.0, 1.0, 2.0]]).T
+        nodes = np.asfortranarray([[0.0], [1.0], [2.0]])
         surface = self._make_one(nodes, 1)
         with self.assertRaises(NotImplementedError):
             surface.locate(None)
@@ -1029,13 +1029,12 @@ class TestSurface(utils.NumPyTestCase):
     def test_elevate_quadratic(self):
         klass = self._get_target_class()
 
-        nodes = np.asfortranarray([[0.0, 6.0, 9.0, 0.0, 6.0, -3.0]])
-        nodes = nodes.T
+        nodes = np.asfortranarray([[0.0], [6.0], [9.0], [0.0], [6.0], [-3.0]])
         surface = klass.from_nodes(nodes)
         elevated = surface.elevate()
         expected = np.asfortranarray([
-            [0.0, 4.0, 7.0, 9.0, 0.0, 4.0, 7.0, -1.0, 3.0, -3.0]])
-        expected = expected.T
+            [0.0], [4.0], [7.0], [9.0], [0.0],
+            [4.0], [7.0], [-1.0], [3.0], [-3.0]])
         self.assertEqual(surface.degree, 2)
         self.assertEqual(elevated.degree, 3)
         self.assertEqual(elevated.nodes, expected)

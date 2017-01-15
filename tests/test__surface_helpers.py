@@ -57,15 +57,12 @@ class Test_polynomial_sign(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_positive(self):
-        # pylint: disable=no-member
-        bernstein = np.asfortranarray([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]).T
-        # pylint: enable=no-member
+        bernstein = np.asfortranarray(
+            [[1.0], [2.0], [3.0], [4.0], [5.0], [6.0]])
         self._helper(bernstein, 1)
 
     def test_negative(self):
-        # pylint: disable=no-member
-        bernstein = np.asfortranarray([[-1.0, -2.0, -1.0]]).T
-        # pylint: enable=no-member
+        bernstein = np.asfortranarray([[-1.0], [-2.0], [-1.0]])
         self._helper(bernstein, -1)
 
     def test_zero(self):
@@ -73,21 +70,17 @@ class Test_polynomial_sign(unittest.TestCase):
         self._helper(bernstein, 0)
 
     def test_mixed(self):
-        # pylint: disable=no-member
-        bernstein = np.asfortranarray([[-1.0, 1.0, -1.0]]).T
-        # pylint: enable=no-member
+        bernstein = np.asfortranarray([[-1.0], [1.0], [-1.0]])
         self._helper(bernstein, 0)
 
     def test_max_iterations(self):
-        bernstein = np.asfortranarray(
-            [[1.0, 2.0, 3.0]]).T  # pylint: disable=no-member
+        bernstein = np.asfortranarray([[1.0], [2.0], [3.0]])
         subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=1):
             self._helper(bernstein, 1)
 
     def test_no_conclusion(self):
-        bernstein = np.asfortranarray(
-            [[-1.0, 1.0, 2.0]]).T  # pylint: disable=no-member
+        bernstein = np.asfortranarray([[-1.0], [1.0], [2.0]])
         subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=0):
             with self.assertRaises(ValueError):
@@ -101,9 +94,8 @@ class Test_polynomial_sign(unittest.TestCase):
         #          [0.0   0.5  ]
         #          [0.5   0.5  ]
         #          [0.25  1.0  ]
-        # pylint: disable=no-member
-        bernstein = np.asfortranarray([[1.0, 0.5, 0.0, 0.75, 0.4375, 1.0]]).T
-        # pylint: enable=no-member
+        bernstein = np.asfortranarray([
+            [1.0], [0.5], [0.0], [0.75], [0.4375], [1.0]])
         self._helper(bernstein, 0)
 
 
@@ -155,8 +147,8 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
         ])
         bernstein = self._call_function_under_test(nodes)
         self.assertEqual(bernstein.shape, (6, 1))
-        expected = np.asfortranarray([[0.0, 2.0, 0.0, -2.0, 2.0, 0.0]])
-        expected = expected.T  # pylint: disable=no-member
+        expected = np.asfortranarray([
+            [0.0], [2.0], [0.0], [-2.0], [2.0], [0.0]])
         self.assertEqual(bernstein, expected)
 
 
@@ -230,7 +222,7 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
         q010 = (1.0 - s_val - t_val) * p110 + s_val * p020 + t_val * p011
         q001 = (1.0 - s_val - t_val) * p101 + s_val * p011 + t_val * p002
 
-        expected = np.vstack([q100, q010, q001])
+        expected = np.asfortranarray(np.vstack([q100, q010, q001]))
         result = self._call_function_under_test(
             nodes, 2, 1.0 - s_val - t_val, s_val, t_val)
         self.assertEqual(result, expected)
@@ -304,9 +296,9 @@ class Test__make_transform(utils.NumPyTestCase):
             [0.5, 0.5, 0.0],
             [0.5, 0.0, 0.5],
         ])
-        expected0 = weights[[0], :]
-        expected1 = weights[[1], :]
-        expected2 = weights[[2], :]
+        expected0 = np.asfortranarray(weights[[0], :])
+        expected1 = np.asfortranarray(weights[[1], :])
+        expected2 = np.asfortranarray(weights[[2], :])
         self._helper(1, weights, expected0, expected1, expected2)
 
     def test_quadratic(self):
@@ -384,55 +376,65 @@ class Test_specialize_surface(utils.NumPyTestCase):
         return _surface_helpers.specialize_surface(
             nodes, degree, weights_a, weights_b, weights_c)
 
-    def _helpers(self, degree, all_nodes, inds_a, inds_b, inds_c, inds_d):
-        num_nodes = len(inds_a)
-        id_mat = np.eye(num_nodes)
+    def _helper(self, degree, expected_a, expected_b, expected_c, expected_d):
+        from bezier import _helpers
 
-        expected_a = self._call_function_under_test(
+        num_nodes = ((degree + 1) * (degree + 2)) // 2
+        id_mat = _helpers.eye(num_nodes)
+
+        computed_a = self._call_function_under_test(
             id_mat, degree,
             self.WEIGHTS0, self.WEIGHTS1, self.WEIGHTS3)
-        expected_b = self._call_function_under_test(
+        computed_b = self._call_function_under_test(
             id_mat, degree,
             self.WEIGHTS4, self.WEIGHTS3, self.WEIGHTS1)
-        expected_c = self._call_function_under_test(
+        computed_c = self._call_function_under_test(
             id_mat, degree,
             self.WEIGHTS1, self.WEIGHTS2, self.WEIGHTS4)
-        expected_d = self._call_function_under_test(
+        computed_d = self._call_function_under_test(
             id_mat, degree,
             self.WEIGHTS3, self.WEIGHTS4, self.WEIGHTS5)
 
-        self.assertEqual(all_nodes[inds_a, :], expected_a)
-        self.assertEqual(all_nodes[inds_b, :], expected_b)
-        self.assertEqual(all_nodes[inds_c, :], expected_c)
-        self.assertEqual(all_nodes[inds_d, :], expected_d)
+        self.assertEqual(computed_a, expected_a)
+        self.assertEqual(computed_b, expected_b)
+        self.assertEqual(computed_c, expected_c)
+        self.assertEqual(computed_d, expected_d)
 
     def test_known_linear(self):
         from bezier import _surface_helpers
 
-        all_nodes = _surface_helpers.LINEAR_SUBDIVIDE
-        self._helpers(1, all_nodes,
-                      (0, 1, 3), (4, 3, 1),
-                      (1, 2, 4), (3, 4, 5))
+        self._helper(
+            1, _surface_helpers.LINEAR_SUBDIVIDE_A,
+            _surface_helpers.LINEAR_SUBDIVIDE_B,
+            _surface_helpers.LINEAR_SUBDIVIDE_C,
+            _surface_helpers.LINEAR_SUBDIVIDE_D)
 
     def test_known_quadratic(self):
         from bezier import _surface_helpers
 
-        all_nodes = _surface_helpers.QUADRATIC_SUBDIVIDE
-        self._helpers(2, all_nodes,
-                      (0, 1, 2, 5, 6, 9),
-                      (11, 10, 9, 7, 6, 2),
-                      (2, 3, 4, 7, 8, 11),
-                      (9, 10, 11, 12, 13, 14))
+        self._helper(
+            2, _surface_helpers.QUADRATIC_SUBDIVIDE_A,
+            _surface_helpers.QUADRATIC_SUBDIVIDE_B,
+            _surface_helpers.QUADRATIC_SUBDIVIDE_C,
+            _surface_helpers.QUADRATIC_SUBDIVIDE_D)
 
     def test_known_cubic(self):
         from bezier import _surface_helpers
 
-        all_nodes = _surface_helpers.CUBIC_SUBDIVIDE
-        self._helpers(3, all_nodes,
-                      (0, 1, 2, 3, 7, 8, 9, 13, 14, 18),
-                      (21, 20, 19, 18, 16, 15, 14, 10, 9, 3),
-                      (3, 4, 5, 6, 10, 11, 12, 16, 17, 21),
-                      (18, 19, 20, 21, 22, 23, 24, 25, 26, 27))
+        self._helper(
+            3, _surface_helpers.CUBIC_SUBDIVIDE_A,
+            _surface_helpers.CUBIC_SUBDIVIDE_B,
+            _surface_helpers.CUBIC_SUBDIVIDE_C,
+            _surface_helpers.CUBIC_SUBDIVIDE_D)
+
+    def test_known_quartic(self):
+        from bezier import _surface_helpers
+
+        self._helper(
+            4, _surface_helpers.QUARTIC_SUBDIVIDE_A,
+            _surface_helpers.QUARTIC_SUBDIVIDE_B,
+            _surface_helpers.QUARTIC_SUBDIVIDE_C,
+            _surface_helpers.QUARTIC_SUBDIVIDE_D)
 
 
 class Test__mean_centroid(unittest.TestCase):
@@ -472,8 +474,7 @@ class Test_jacobian_s(utils.NumPyTestCase):
         return _surface_helpers.jacobian_s(nodes, degree, dimension)
 
     def test_linear(self):
-        nodes = np.asfortranarray([[0.0, 1.0, np.nan]])
-        nodes = nodes.T  # pylint: disable=no-member
+        nodes = np.asfortranarray([[0.0], [1.0], [np.nan]])
         result = self._call_function_under_test(nodes, 1, 1)
         expected = np.asfortranarray([[1.0]])
         self.assertEqual(result, expected)
@@ -498,16 +499,16 @@ class Test_jacobian_s(utils.NumPyTestCase):
     def test_cubic(self):
         nodes = np.arange(10, dtype=FLOAT64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
-        expected = 3 * np.asfortranarray([[1, 3, 5, 9, 11, 15]], dtype=FLOAT64)
-        expected = expected.T  # pylint: disable=no-member
+        expected = 3 * np.asfortranarray([
+            [1], [3], [5], [9], [11], [15]], dtype=FLOAT64)
         self.assertEqual(result, expected)
 
     def test_quartic(self):
         nodes = np.arange(15, dtype=FLOAT64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 4, 1)
         expected = 4 * np.asfortranarray([
-            [1, 3, 5, 7, 11, 13, 15, 19, 21, 25]], dtype=FLOAT64)
-        expected = expected.T  # pylint: disable=no-member
+            [1], [3], [5], [7], [11], [13],
+            [15], [19], [21], [25]], dtype=FLOAT64)
         self.assertEqual(result, expected)
 
 
@@ -520,8 +521,7 @@ class Test_jacobian_t(utils.NumPyTestCase):
         return _surface_helpers.jacobian_t(nodes, degree, dimension)
 
     def test_linear(self):
-        nodes = np.asfortranarray([[0.0, np.nan, 1.0]])
-        nodes = nodes.T  # pylint: disable=no-member
+        nodes = np.asfortranarray([[0.0], [np.nan], [1.0]])
         result = self._call_function_under_test(nodes, 1, 1)
         expected = np.asfortranarray([[1.0]])
         self.assertEqual(result, expected)
@@ -547,16 +547,16 @@ class Test_jacobian_t(utils.NumPyTestCase):
         nodes = np.arange(10, dtype=FLOAT64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
         expected = 3 * np.asfortranarray(
-            [[16, 24, 32, 33, 39, 32]], dtype=FLOAT64)
-        expected = expected.T  # pylint: disable=no-member
+            [[16], [24], [32], [33], [39], [32]], dtype=FLOAT64)
         self.assertEqual(result, expected)
 
     def test_quartic(self):
         nodes = np.arange(15, dtype=FLOAT64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 4, 1)
         expected = 4 * np.asfortranarray([
-            [25, 35, 45, 55, 56, 64, 72, 63, 69, 52]], dtype=FLOAT64)
-        expected = expected.T  # pylint: disable=no-member
+            [25], [35], [45], [55], [56],
+            [64], [72], [63], [69], [52],
+        ], dtype=FLOAT64)
         self.assertEqual(result, expected)
 
 
@@ -1623,9 +1623,12 @@ class Test__to_curved_polygon(utils.NumPyTestCase):
         result = self._call_function_under_test(surface)
         self.assertIsInstance(result, bezier.CurvedPolygon)
         self.assertEqual(result._num_sides, 3)
-        self.assertEqual(result._edges[0].nodes, UNIT_TRIANGLE[(0, 1), :])
-        self.assertEqual(result._edges[1].nodes, UNIT_TRIANGLE[(1, 2), :])
-        self.assertEqual(result._edges[2].nodes, UNIT_TRIANGLE[(2, 0), :])
+        expected = np.asfortranarray(UNIT_TRIANGLE[(0, 1), :])
+        self.assertEqual(result._edges[0].nodes, expected)
+        expected = np.asfortranarray(UNIT_TRIANGLE[(1, 2), :])
+        self.assertEqual(result._edges[1].nodes, expected)
+        expected = np.asfortranarray(UNIT_TRIANGLE[(2, 0), :])
+        self.assertEqual(result._edges[2].nodes, expected)
 
 
 class Test__no_intersections(unittest.TestCase):

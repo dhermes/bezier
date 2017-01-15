@@ -117,12 +117,13 @@ class Test_add_patch(utils.NumPyTestCase):
         _, positional, keyword = call
         self.assertEqual(keyword, {})
         self.assertEqual(len(positional), 1)
-        self.assertEqual(positional[0], points[1:, :])
+        self.assertEqual(positional[0], np.asfortranarray(points[1:, :]))
 
     def _plot_check(self, ax, points, color):
         self.assertEqual(ax.plot.call_count, 1)
         call = ax.plot.mock_calls[0]
-        utils.check_plot_call(self, call, points[1:, :], color=color)
+        utils.check_plot_call(
+            self, call, np.asfortranarray(points[1:, :]), color=color)
 
     def test_it(self):
         import functools

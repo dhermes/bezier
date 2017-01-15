@@ -1104,9 +1104,11 @@ def _endpoint_check(first, node_first, s,
         # pylint: disable=protected-access
         orig_s = (1 - s) * first._start + s * first._end
         orig_t = (1 - t) * second._start + t * second._end
+        # ``node_first`` is a row in a Fortran-contiguous array, so
+        # the values aren't contiguous.
         intersection = Intersection(
             first._root, orig_s, second._root, orig_t,
-            point=node_first)
+            point=np.asfortranarray(node_first))
         # pylint: enable=protected-access
         _add_intersection(intersection, intersections)
 
@@ -1158,10 +1160,12 @@ def _tangent_bbox_intersection(first, second, intersections):
     #       accesses below **do not** copy. See
     #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
     #        arrays.indexing.html#advanced-indexing)
-    node_first1 = first._nodes[0, :].reshape((1, 2), order='F')
-    node_first2 = first._nodes[-1, :].reshape((1, 2), order='F')
-    node_second1 = second._nodes[0, :].reshape((1, 2), order='F')
-    node_second2 = second._nodes[-1, :].reshape((1, 2), order='F')
+    #       We don't use order='F' when reshaping since the data isn't
+    #       contiguous (since we assumes `_nodes` is Fortran contiguous).
+    node_first1 = first._nodes[0, :].reshape((1, 2))
+    node_first2 = first._nodes[-1, :].reshape((1, 2))
+    node_second1 = second._nodes[0, :].reshape((1, 2))
+    node_second2 = second._nodes[-1, :].reshape((1, 2))
 
     _endpoint_check(
         first, node_first1, 0.0, second, node_second1, 0.0, intersections)

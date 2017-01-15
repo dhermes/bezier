@@ -833,8 +833,8 @@ class Test__endpoint_check(unittest.TestCase):
             [2.0, 1.0],
         ]))
 
-        node_first = first.nodes[[1], :]
-        node_second = second.nodes[[0], :]
+        node_first = np.asfortranarray(first.nodes[[1], :])
+        node_second = np.asfortranarray(second.nodes[[0], :])
         intersections = []
 
         patch = mock.patch('bezier._intersection_helpers.Intersection',
@@ -1119,8 +1119,12 @@ class TestLinearization(utils.NumPyTestCase):
         linearization = self._make_one(curve, error)
         self.assertIs(linearization.curve, curve)
         self.assertEqual(linearization.error, error)
-        self.assertEqual(linearization.start_node, nodes[[0], :])
-        self.assertEqual(linearization.end_node, nodes[[1], :])
+        self.assertEqual(
+            np.asfortranarray(linearization.start_node),
+            np.asfortranarray(nodes[[0], :]))
+        self.assertEqual(
+            np.asfortranarray(linearization.end_node),
+            np.asfortranarray(nodes[[1], :]))
 
     def test_subdivide(self):
         linearization = self._make_one(self._mock_curve(), np.nan)
@@ -1131,8 +1135,9 @@ class TestLinearization(utils.NumPyTestCase):
 
         curve = bezier.Curve(self.NODES, 2, _copy=False)
         linearization = self._make_one(curve, np.nan)
-        expected = self.NODES[[0], :]
-        self.assertEqual(linearization.start_node, expected)
+        expected = np.asfortranarray(self.NODES[[0], :])
+        self.assertEqual(
+            np.asfortranarray(linearization.start_node), expected)
         # Make sure not copied.
         self.assertIs(linearization.start_node.base, self.NODES)
         self.assertFalse(linearization.start_node.flags.owndata)
@@ -1142,8 +1147,9 @@ class TestLinearization(utils.NumPyTestCase):
 
         curve = bezier.Curve(self.NODES, 2, _copy=False)
         linearization = self._make_one(curve, np.nan)
-        expected = self.NODES[[2], :]
-        self.assertEqual(linearization.end_node, expected)
+        expected = np.asfortranarray(self.NODES[[2], :])
+        self.assertEqual(
+            np.asfortranarray(linearization.end_node), expected)
         # Make sure not copied.
         self.assertIs(linearization.end_node.base, self.NODES)
         self.assertFalse(linearization.end_node.flags.owndata)

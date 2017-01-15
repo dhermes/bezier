@@ -615,8 +615,8 @@ def locate_point(curve, point):
         return None
 
     # pylint: disable=protected-access
-    params = np.hstack(
-        [(candidate._start, candidate._end) for candidate in candidates])
+    params = [
+        (candidate._start, candidate._end) for candidate in candidates]
     # pylint: enable=protected-access
 
     if np.std(params) > _LOCATE_STD_CAP:

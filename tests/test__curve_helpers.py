@@ -349,8 +349,8 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
         ])
 
         first_deriv1 = self._call_function_under_test(0.25, nodes, degree)
-        self.assertEqual(first_deriv1.shape, (1, 2))
-        self.assertEqual(first_deriv1, nodes[[1], :] - nodes[[0], :])
+        expected = np.asfortranarray(nodes[[1], :] - nodes[[0], :])
+        self.assertEqual(first_deriv1, expected)
         # Make sure it is the same elsewhere since
         # the derivative curve is degree 0.
         first_deriv2 = self._call_function_under_test(0.75, nodes, degree)

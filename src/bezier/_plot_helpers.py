@@ -44,7 +44,8 @@ def add_plot_boundary(ax, padding=0.125):
         padding (Optional[float]): Amount (as a fraction of width and height)
             of padding to add around data. Defaults to ``0.125``.
     """
-    nodes = np.vstack([line.get_xydata() for line in ax.lines])
+    nodes = np.asfortranarray(
+        np.vstack([line.get_xydata() for line in ax.lines]))
     left, right, bottom, top = _helpers.bbox(nodes)
     center_x = 0.5 * (right + left)
     delta_x = right - left
@@ -82,7 +83,7 @@ def add_patch(ax, color, pts_per_edge, *edges):
         # in each.
         all_points.append(points[1:, :])
 
-    polygon = np.vstack(all_points)
+    polygon = np.asfortranarray(np.vstack(all_points))
 
     # Add boundary first.
     line, = ax.plot(polygon[:, 0], polygon[:, 1], color=color)

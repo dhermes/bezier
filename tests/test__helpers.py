@@ -201,10 +201,12 @@ class Test_cross_product(utils.NumPyTestCase):
         vec1 = np.asfortranarray([[-11.0, 24.0]]) / 32.0
         result = self._call_function_under_test(vec0, vec1)
 
-        vec0_as_3d = np.hstack([vec0, [[0.0]]])
-        vec1_as_3d = np.hstack([vec1, [[0.0]]])
+        vec0_as_3d = np.zeros((1, 3), order='F')
+        vec0_as_3d[0, :2] = vec0
+        vec1_as_3d = np.zeros((1, 3), order='F')
+        vec1_as_3d[0, :2] = vec1
 
-        actual_cross = np.cross(vec0_as_3d, vec1_as_3d)
+        actual_cross = np.asfortranarray(np.cross(vec0_as_3d, vec1_as_3d))
         expected = np.asfortranarray([[0.0, 0.0, result]])
         self.assertEqual(actual_cross, expected)
 

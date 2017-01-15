@@ -24,6 +24,13 @@ except ImportError:  # pragma: NO COVER
     WITHOUT_SPEEDUPS = True
 
 
+WRONG_FLAGS_TEMPLATE = """\
+Arrays are not Fortran contiguous
+array1 flags =
+{}
+array2 flags =
+{}
+"""
 WRONG_TYPE_TEMPLATE = """\
 Arrays have different types
 array1({}) =
@@ -125,6 +132,12 @@ class NumPyTestCase(unittest.TestCase):
 
     def assertArrayEqual(self, arr1, arr2, msg=None):
         import numpy as np
+
+        if (not arr1.flags.f_contiguous or
+                not arr2.flags.f_contiguous):  # pragma: NO COVER
+            standard_msg = WRONG_FLAGS_TEMPLATE.format(
+                arr1.flags, arr2.flags)
+            self.fail(self._formatMessage(msg, standard_msg))
 
         if arr1.dtype is not arr2.dtype:  # pragma: NO COVER
             standard_msg = WRONG_TYPE_TEMPLATE.format(

@@ -600,8 +600,10 @@ class Curve(_base.Base):
         candidates = [(self, other)]
         intersections = _intersection_helpers.all_intersections(candidates)
         if intersections:
-            return np.vstack([intersection.get_point()
-                              for intersection in intersections])
+            result = np.empty((len(intersections), 2), order='F')
+            for index, intersection in enumerate(intersections):
+                result[index, :] = intersection.get_point()
+            return result
         else:
             return np.zeros((0, 2), order='F')
 
