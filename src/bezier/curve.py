@@ -531,7 +531,7 @@ class Curve(_base.Base):
             root=self._root, _copy=False)
         return left, right
 
-    def intersect(self, other):
+    def intersect(self, other, _verify=True):
         """Find the points of intersection with another curve.
 
         See :doc:`../curve-curve-intersection` for more details.
@@ -564,23 +564,26 @@ class Curve(_base.Base):
 
         Args:
             other (Curve): Other curve to intersect with.
+            _verify (Optional[bool]): Indicates if extra caution should be
+                used to verify assumptions about the input and current
+                curve. Can be disabled to speed up execution time.
+                Defaults to :data:`True`.
 
         Returns:
             numpy.ndarray: Array of intersection points (possibly empty).
 
         Raises:
-            TypeError: If ``other`` is not a curve.
+            TypeError: If ``other`` is not a curve (and ``_verify=True``).
             NotImplementedError: If at least one of the curves
-                isn't two-dimensional.
+                isn't two-dimensional (and ``_verify=True``).
         """
-        if not isinstance(other, Curve):
-            raise TypeError('Can only intersect with another curve',
-                            'Received', other)
-        # pylint: disable=protected-access
-        if self._dimension != 2 or other._dimension != 2:
-            raise NotImplementedError(
-                'Intersection only implemented in 2D')
-        # pylint: enable=protected-access
+        if _verify:
+            if not isinstance(other, Curve):
+                raise TypeError('Can only intersect with another curve',
+                                'Received', other)
+            if self._dimension != 2 or other._dimension != 2:
+                raise NotImplementedError(
+                    'Intersection only implemented in 2D')
 
         candidates = [(self, other)]
         intersections = _intersection_helpers.all_intersections(candidates)

@@ -1265,9 +1265,11 @@ def intersect_one_round(candidates, intersections):
     """
     accepted = []
 
+    # NOTE: In the below we replace ``isinstance(a, B)`` with
+    #       ``a.__class__ is B``, which is a 3-3.5x speedup.
     for first, second in candidates:
-        if isinstance(first, Linearization):
-            if isinstance(second, Linearization):
+        if first.__class__ is Linearization:
+            if second.__class__ is Linearization:
                 # If both ``first`` and ``second`` are linearizations, then
                 # we can intersect them immediately.
                 from_linearized(first, second, intersections)
@@ -1275,7 +1277,7 @@ def intersect_one_round(candidates, intersections):
             else:
                 bbox_int = bbox_line_intersect(
                     second._nodes, first.start_node, first.end_node)
-        elif isinstance(second, Linearization):
+        elif second.__class__ is Linearization:
             bbox_int = bbox_line_intersect(
                 first._nodes, second.start_node, second.end_node)
         else:
@@ -1432,7 +1434,9 @@ class Linearization(object):
             ~bezier._intersection_helpers.Linearization]: The
             (potentially linearized) curve.
         """
-        if isinstance(shape, cls):
+        # NOTE: In the below we replace ``isinstance(a, B)`` with
+        #       ``a.__class__ is B``, which is a 3-3.5x speedup.
+        if shape.__class__ is cls:
             return shape
         else:
             error = linearization_error(shape._nodes, shape._degree)

@@ -460,7 +460,7 @@ class TestCurve(utils.NumPyTestCase):
         expected = np.array([[0.5, -0.125]])
         self.assertEqual(result, expected)
 
-    def test_intersect(self):
+    def _intersect_helper(self, **kwargs):
         # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
         #       onto the interval [1/4, 1] and ``nodes`` is a specialization
         #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
@@ -480,9 +480,15 @@ class TestCurve(utils.NumPyTestCase):
         ])
         right = self._make_one(nodes_right, 2)
 
-        result = left.intersect(right)
+        result = left.intersect(right, **kwargs)
         expected = np.array([[0.5, 0.75]])
         self.assertEqual(result, expected)
+
+    def test_intersect(self):
+        self._intersect_helper()
+
+    def test_intersect_no_verify(self):
+        self._intersect_helper(_verify=False)
 
     def test_intersect_non_curve(self):
         nodes = np.array([
