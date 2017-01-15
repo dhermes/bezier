@@ -1002,6 +1002,7 @@ class Test__next_candidates(unittest.TestCase):
         return _intersection_helpers._next_candidates(first, second)
 
     def test_it(self):
+        import itertools
         import types
         import bezier
         from bezier import _intersection_helpers
@@ -1015,7 +1016,7 @@ class Test__next_candidates(unittest.TestCase):
 
         result = self._call_function_under_test(lin, lin)
 
-        self.assertIsInstance(result, types.GeneratorType)
+        self.assertIsInstance(result, itertools.product)
         pairs = list(result)
         self.assertEqual(pairs, [(lin, lin)])
 

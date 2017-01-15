@@ -1308,14 +1308,13 @@ def _next_candidates(first, second):
         which may be linearized.
     """
     # NOTE: This may be a wasted computation, e.g. if ``first``
-    #       occurs in multiple accepted pairs. However, in practice
+    #       or ``second`` occur in multiple accepted pairs (the caller
+    #       only passes one pair at a time). However, in practice
     #       the number of such pairs will be small so this cost
     #       will be low.
-    for new_first in first.subdivide():
-        new_first = Linearization.from_shape(new_first)
-        for new_second in second.subdivide():
-            new_second = Linearization.from_shape(new_second)
-            yield new_first, new_second
+    lin1 = six.moves.map(Linearization.from_shape, first.subdivide())
+    lin2 = six.moves.map(Linearization.from_shape, second.subdivide())
+    return itertools.product(lin1, lin2)
 
 
 def all_intersections(candidates):
