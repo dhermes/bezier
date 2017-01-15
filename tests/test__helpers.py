@@ -83,8 +83,13 @@ class Test_in_interval(unittest.TestCase):
             -1.0, 1.0, 2.0))
 
 
-# pylint: disable=no-member
-class Base_bbox(object):  # pylint: disable=invalid-name
+class Test__bbox(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier import _helpers
+
+        return _helpers._bbox(nodes)
 
     def test_it(self):
         nodes = np.array([
@@ -111,20 +116,10 @@ class Base_bbox(object):  # pylint: disable=invalid-name
         self.assertEqual(right, 5.0)
         self.assertEqual(bottom, -3.0)
         self.assertEqual(top, 4.0)
-# pylint: enable=no-member
-
-
-class Test__bbox(Base_bbox, unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes):
-        from bezier import _helpers
-
-        return _helpers._bbox(nodes)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_bbox(Base_bbox, unittest.TestCase):
+class Test_speedup_bbox(Test__bbox):
 
     @staticmethod
     def _call_function_under_test(nodes):

@@ -55,8 +55,13 @@ class Test_make_subdivision_matrix(utils.NumPyTestCase):
         self._helper(3, curve._CUBIC_SUBDIVIDE)
 
 
-# pylint: disable=no-member
-class Base_evaluate_multi(object):  # pylint: disable=invalid-name
+class Test__evaluate_multi(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, s_vals):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._evaluate_multi(nodes, s_vals)
 
     def test_linear(self):
         num_vals = 129
@@ -93,20 +98,10 @@ class Base_evaluate_multi(object):  # pylint: disable=invalid-name
         expected[:, 1] = 2.0 * s_vals * (2.0 * s_vals - 1.0)
 
         self.assertEqual(result, expected)
-# pylint: enable=no-member
-
-
-class Test__evaluate_multi(Base_evaluate_multi, utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, s_vals):
-        from bezier import _curve_helpers
-
-        return _curve_helpers._evaluate_multi(nodes, s_vals)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_multi(Base_evaluate_multi, utils.NumPyTestCase):
+class Test_speedup_evaluate_multi(Test__evaluate_multi):
 
     @staticmethod
     def _call_function_under_test(nodes, s_vals):
@@ -232,8 +227,15 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, np.array([[2.25, 4.0]]))
 
 
-# pylint: disable=no-member
-class Base_specialize_curve(object):  # pylint: disable=invalid-name
+class Test__specialize_curve(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(
+            nodes, start, end, curve_start, curve_end, degree):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._specialize_curve(
+            nodes, start, end, curve_start, curve_end, degree)
 
     def test_linear(self):
         nodes = np.array([
@@ -312,23 +314,10 @@ class Base_specialize_curve(object):  # pylint: disable=invalid-name
         self.assertEqual(result, expected)
         self.assertEqual(true_start, 0.5)
         self.assertEqual(true_end, 0.75)
-# pylint: disable=no-member
-
-
-class Test__specialize_curve(Base_specialize_curve, utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(
-            nodes, start, end, curve_start, curve_end, degree):
-        from bezier import _curve_helpers
-
-        return _curve_helpers._specialize_curve(
-            nodes, start, end, curve_start, curve_end, degree)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_specialize_curve(
-        Base_specialize_curve, utils.NumPyTestCase):
+class Test_speedup_specialize_curve(Test__specialize_curve):
 
     @staticmethod
     def _call_function_under_test(
@@ -339,8 +328,13 @@ class Test_speedup_specialize_curve(
             nodes, start, end, curve_start, curve_end, degree)
 
 
-# pylint: disable=no-member
-class Base_evaluate_hodograph(object):  # pylint: disable=invalid-name
+class Test__evaluate_hodograph(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(s, nodes, degree):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._evaluate_hodograph(s, nodes, degree)
 
     def test_line(self):
         degree = 1
@@ -392,21 +386,10 @@ class Base_evaluate_hodograph(object):  # pylint: disable=invalid-name
             self.assertEqual(first_deriv[0, 0], x_prime)
             y_prime = 3.0 * (5.0 * s_val * s_val - 6.0 * s_val + 2.0) / 2.0
             self.assertEqual(first_deriv[0, 1], y_prime)
-# pylint: enable=no-member
-
-
-class Test__evaluate_hodograph(Base_evaluate_hodograph, utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(s, nodes, degree):
-        from bezier import _curve_helpers
-
-        return _curve_helpers._evaluate_hodograph(s, nodes, degree)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_hodograph(
-        Base_evaluate_hodograph, utils.NumPyTestCase):
+class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
 
     @staticmethod
     def _call_function_under_test(s, nodes, degree):

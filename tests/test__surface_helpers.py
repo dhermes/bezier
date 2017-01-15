@@ -190,8 +190,14 @@ class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
         self.assertEqual(bernstein, expected)
 
 
-# pylint: disable=no-member
-class Base_de_casteljau_one_round(object):  # pylint: disable=invalid-name
+class Test__de_casteljau_one_round(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._de_casteljau_one_round(
+            nodes, degree, lambda1, lambda2, lambda3)
 
     def test_linear(self):
         nodes = np.array([
@@ -256,23 +262,10 @@ class Base_de_casteljau_one_round(object):  # pylint: disable=invalid-name
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val)
         self.assertEqual(result, expected)
-# pylint: enable=no-member
-
-
-class Test__de_casteljau_one_round(Base_de_casteljau_one_round,
-                                   utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _surface_helpers
-
-        return _surface_helpers._de_casteljau_one_round(
-            nodes, degree, lambda1, lambda2, lambda3)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_de_casteljau_one_round(Base_de_casteljau_one_round,
-                                          utils.NumPyTestCase):
+class Test_speedup_de_casteljau_one_round(Test__de_casteljau_one_round):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
@@ -562,8 +555,13 @@ class Test_jacobian_t(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-# pylint: disable=no-member
-class Base_jacobian_both(object):  # pylint: disable=invalid-name
+class Test__jacobian_both(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, dimension):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._jacobian_both(nodes, degree, dimension)
 
     def test_linear(self):
         # B(s, t) = -2s + 2t + 3
@@ -652,20 +650,10 @@ class Base_jacobian_both(object):  # pylint: disable=invalid-name
             [3.0, -12.0, 0.0, -3.0],
         ])
         self.assertEqual(result, expected)
-# pylint: enable=no-member
-
-
-class Test__jacobian_both(Base_jacobian_both, utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _surface_helpers
-
-        return _surface_helpers._jacobian_both(nodes, degree, dimension)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_jacobian_both(Base_jacobian_both, utils.NumPyTestCase):
+class Test_speedup_jacobian_both(Test__jacobian_both):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
@@ -1944,8 +1932,14 @@ class Test_combine_intersections(utils.NumPyTestCase):
                 edges[index].nodes)
 
 
-# pylint: disable=no-member
-class Base_evaluate_barycentric(object):  # pylint: disable=invalid-name
+class Test__evaluate_barycentric(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._evaluate_barycentric(
+            nodes, degree, lambda1, lambda2, lambda3)
 
     def test_linear(self):
         lambda_vals = (0.25, 0.5, 0.25)
@@ -2032,23 +2026,10 @@ class Base_evaluate_barycentric(object):  # pylint: disable=invalid-name
 
         result = self._call_function_under_test(nodes, 4, *lambda_vals)
         self.assertEqual(result, expected)
-# pylint: disable=no-member
-
-
-class Test__evaluate_barycentric(
-        Base_evaluate_barycentric, utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _surface_helpers
-
-        return _surface_helpers._evaluate_barycentric(
-            nodes, degree, lambda1, lambda2, lambda3)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_barycentric(
-        Base_evaluate_barycentric, utils.NumPyTestCase):
+class Test_speedup_evaluate_barycentric(Test__evaluate_barycentric):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
@@ -2058,8 +2039,14 @@ class Test_speedup_evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3)
 
 
-# pylint: disable=no-member
-class Base_evaluate_barycentric_multi(object):  # pylint: disable=invalid-name
+class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, param_vals, dimension):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._evaluate_barycentric_multi(
+            nodes, degree, param_vals, dimension)
 
     def test_basic(self):
         nodes = np.array([
@@ -2100,23 +2087,11 @@ class Base_evaluate_barycentric_multi(object):  # pylint: disable=invalid-name
         ])
         result = self._call_function_under_test(nodes, 1, param_vals, 2)
         self.assertEqual(result, expected)
-# pylint: enable=no-member
-
-
-class Test__evaluate_barycentric_multi(
-        Base_evaluate_barycentric_multi, utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _surface_helpers
-
-        return _surface_helpers._evaluate_barycentric_multi(
-            nodes, degree, param_vals, dimension)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_evaluate_barycentric_multi(
-        Base_evaluate_barycentric_multi, utils.NumPyTestCase):
+        Test__evaluate_barycentric_multi):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
@@ -2126,8 +2101,14 @@ class Test_speedup_evaluate_barycentric_multi(
             nodes, degree, param_vals, dimension)
 
 
-# pylint: disable=no-member
-class Base_evaluate_cartesian_multi(object):  # pylint: disable=invalid-name
+class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, param_vals, dimension):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._evaluate_cartesian_multi(
+            nodes, degree, param_vals, dimension)
 
     def test_basic(self):
         nodes = np.array([
@@ -2173,23 +2154,10 @@ class Base_evaluate_cartesian_multi(object):  # pylint: disable=invalid-name
         ])
         result = self._call_function_under_test(nodes, 1, param_vals, 2)
         self.assertEqual(result, expected)
-# pylint: disable=no-member
-
-
-class Test__evaluate_cartesian_multi(
-        Base_evaluate_cartesian_multi, utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _surface_helpers
-
-        return _surface_helpers._evaluate_cartesian_multi(
-            nodes, degree, param_vals, dimension)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_cartesian_multi(
-        Base_evaluate_cartesian_multi, utils.NumPyTestCase):
+class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):

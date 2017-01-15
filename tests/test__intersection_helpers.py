@@ -173,8 +173,13 @@ class Test_bbox_intersect(unittest.TestCase):
             result, _intersection_helpers.BoxIntersectionType.disjoint)
 
 
-# pylint: disable=no-member
-class Base_linearization_error(object):  # pylint: disable=invalid-name
+class Test__linearization_error(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._linearization_error(nodes, degree)
 
     def test_linear(self):
         nodes = np.array([
@@ -319,21 +324,10 @@ class Base_linearization_error(object):  # pylint: disable=invalid-name
         error_val = self._call_function_under_test(nodes, 5)
         expected = 0.125 * 5 * 4 * 13.0
         self.assertEqual(error_val, expected)
-# pylint: enable=no-member
-
-
-class Test__linearization_error(Base_linearization_error, unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree):
-        from bezier import _intersection_helpers
-
-        return _intersection_helpers._linearization_error(nodes, degree)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_linearization_error(
-        Base_linearization_error, unittest.TestCase):
+class Test_speedup_linearization_error(Test__linearization_error):
 
     @staticmethod
     def _call_function_under_test(nodes, degree):
@@ -342,8 +336,14 @@ class Test_speedup_linearization_error(
         return _speedup.speedup.linearization_error(nodes, degree)
 
 
-# pylint: disable=no-member
-class Base_newton_refine(object):  # pylint: disable=invalid-name
+class Test__newton_refine(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(s, nodes1, t, nodes2, degree1, degree2):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._newton_refine(
+            s, nodes1, t, nodes2, degree1, degree2)
 
     def test_linear(self):
         import bezier
@@ -507,21 +507,10 @@ class Base_newton_refine(object):  # pylint: disable=invalid-name
         exact_s, exact_t = parameters[-1, :]
         self.assertEqual(curve1.evaluate(exact_s),
                          curve2.evaluate(exact_t))
-# pylint: enable=no-member
-
-
-class Test__newton_refine(Base_newton_refine, utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(s, nodes1, t, nodes2, degree1, degree2):
-        from bezier import _intersection_helpers
-
-        return _intersection_helpers._newton_refine(
-            s, nodes1, t, nodes2, degree1, degree2)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_newton_refine(Base_newton_refine, utils.NumPyTestCase):
+class Test_speedup_newton_refine(Test__newton_refine):
 
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2, degree1, degree2):
@@ -531,8 +520,16 @@ class Test_speedup_newton_refine(Base_newton_refine, utils.NumPyTestCase):
             s, nodes1, t, nodes2, degree1, degree2)
 
 
-# pylint: disable=no-member
-class Base_segment_intersection(object):  # pylint: disable=invalid-name
+class Test__segment_intersection(unittest.TestCase):
+
+    WITH_NONES = True
+
+    @staticmethod
+    def _call_function_under_test(start0, end0, start1, end1):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._segment_intersection(
+            start0, end0, start1, end1)
 
     def _helper(self, intersection, s_val, direction0,
                 t_val, direction1, **kwargs):
@@ -572,24 +569,10 @@ class Base_segment_intersection(object):  # pylint: disable=invalid-name
             self.assertIsNone(computed_s)
             self.assertIsNone(computed_t)
         self.assertFalse(success)
-# pylint: enable=no-member
-
-
-class Test__segment_intersection(Base_segment_intersection, unittest.TestCase):
-
-    WITH_NONES = True
-
-    @staticmethod
-    def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _intersection_helpers
-
-        return _intersection_helpers._segment_intersection(
-            start0, end0, start1, end1)
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_segment_intersection(
-        Base_segment_intersection, unittest.TestCase):
+class Test_speedup_segment_intersection(Test__segment_intersection):
 
     WITH_NONES = False
 
@@ -1003,7 +986,6 @@ class Test__next_candidates(unittest.TestCase):
 
     def test_it(self):
         import itertools
-        import types
         import bezier
         from bezier import _intersection_helpers
 
