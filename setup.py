@@ -34,6 +34,11 @@ $ pip install numpy
 $ # OR
 $ conda install numpy
 """
+MISSING_F90_MESSAGE = """\
+No Fortran 90 compiler found.
+
+Skipping Fortran extension speedups.
+"""
 README = TEMPLATE.format(
     pypi='',
     pypi_img='',
@@ -62,7 +67,16 @@ def is_installed(requirement):
         return True
 
 
-def extension_modules():
+def has_f90_compiler():
+    from distutils.ccompiler import new_compiler
+    from numpy.distutils.fcompiler import new_fcompiler
+
+    c_compiler = new_compiler()
+    f90_compiler = new_fcompiler(requiref90=True, c_compiler=c_compiler)
+    return f90_compiler is not None
+
+
+def _extension_modules():
     # NOTE: This assumes is_installed('numpy') has already passed.
     #       H/T to http://stackoverflow.com/a/41575848/1068170
     from numpy.distutils import core
@@ -73,10 +87,19 @@ def extension_modules():
         sources=[
             os.path.join(bezier_path, 'speedup.f90'),
         ],
+        language='f90',
     )
     if 'config_fc' not in sys.argv:
         sys.argv.extend(['config_fc', '--opt=-O3'])
     return [extension]
+
+
+def extension_modules():
+    if has_f90_compiler():
+        return _extension_modules()
+    else:
+        print(MISSING_F90_MESSAGE, file=sys.stderr)
+        return []
 
 
 def setup():
