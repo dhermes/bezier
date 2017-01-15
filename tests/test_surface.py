@@ -31,7 +31,7 @@ class TestSurface(utils.NumPyTestCase):
 
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
     REF_TRIANGLE3 = utils.ref_triangle_uniform_nodes(3)
-    QUADRATIC = np.array([
+    QUADRATIC = np.asfortranarray([
         [0.0, 0.0],
         [1.25, 0.5],
         [2.0, 1.0],
@@ -39,7 +39,7 @@ class TestSurface(utils.NumPyTestCase):
         [0.0, 2.0],
         [-3.0, 3.0],
     ])
-    UNIT_TRIANGLE = np.array([
+    UNIT_TRIANGLE = np.asfortranarray([
         [0.0, 0.0],
         [1.0, 0.0],
         [0.0, 1.0],
@@ -62,7 +62,7 @@ class TestSurface(utils.NumPyTestCase):
         return NoSlots(*args, **kwargs)
 
     def test_constructor(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.625, 0.5],
             [1.0, 0.75],
@@ -79,7 +79,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertIsNone(surface._is_valid)
 
     def test_constructor_wrong_dimension(self):
-        nodes = np.array([1.0, 2.0])
+        nodes = np.asfortranarray([1.0, 2.0])
         with self.assertRaises(ValueError):
             self._make_one(nodes, 0)
 
@@ -88,7 +88,7 @@ class TestSurface(utils.NumPyTestCase):
             self._make_one(nodes, 1)
 
     def test_from_nodes_factory(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0, 0.0],
             [1.0, 0.5, 0.0],
             [2.0, 0.0, 0.0],
@@ -152,7 +152,7 @@ class TestSurface(utils.NumPyTestCase):
             klass._get_degree(9)
 
     def test_area_property_not_cached(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
             [2.0, 3.0],
@@ -163,7 +163,7 @@ class TestSurface(utils.NumPyTestCase):
             getattr(surface, 'area')
 
     def test_area_property(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
             [2.0, 3.0],
@@ -208,7 +208,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(edge3.nodes, nodes3)
 
     def test__compute_edges_linear(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [2.0, 1.0],
             [-3.0, 3.0],
@@ -236,7 +236,7 @@ class TestSurface(utils.NumPyTestCase):
             np.vstack([p002, p101, p200]))
 
     def test__compute_edges_cubic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.328125, 0.1484375],
             [0.65625, 0.1484375],
@@ -355,7 +355,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_evaluate_barycentric_negative_weights_no_verify(self):
         lambda_vals = (0.25, -0.5, 1.25)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.5],
             [0.0, 1.25],
@@ -365,12 +365,12 @@ class TestSurface(utils.NumPyTestCase):
         self.assertLess(min(lambda_vals), 0.0)
         result = surface.evaluate_barycentric(*lambda_vals, _verify=False)
 
-        expected = np.array([[-0.5, 1.3125]])
+        expected = np.asfortranarray([[-0.5, 1.3125]])
         self.assertEqual(result, expected)
 
     def test_evaluate_barycentric_non_unity_weights_no_verify(self):
         lambda_vals = (0.25, 0.25, 0.25)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.5],
             [0.0, 1.25],
@@ -380,7 +380,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertNotEqual(sum(lambda_vals), 1.0)
         result = surface.evaluate_barycentric(*lambda_vals, _verify=False)
 
-        expected = np.array([[0.25, 0.4375]])
+        expected = np.asfortranarray([[0.25, 0.4375]])
         self.assertEqual(result, expected)
 
     def test_evaluate_barycentric_multi_wrong_dimension(self):
@@ -390,13 +390,13 @@ class TestSurface(utils.NumPyTestCase):
             surface.evaluate_barycentric_multi(param_vals_1d)
 
     def _eval_bary_multi_helper(self, **kwargs):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [2.0, 1.0],
             [-3.0, 2.0],
         ])
         surface = self._make_one(nodes, 1, _copy=False)
-        param_vals = np.array([[1.0, 0.0, 0.0]])
+        param_vals = np.asfortranarray([[1.0, 0.0, 0.0]])
 
         patch = mock.patch(
             'bezier._surface_helpers.evaluate_barycentric_multi',
@@ -434,27 +434,27 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_evaluate_cartesian(self):
         s_t_vals = (0.125, 0.125)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 1.0],
             [2.0, 1.5],
             [1.0, 2.75],
         ])
         surface = self._make_one(nodes, 1)
 
-        expected = np.array([[1.125, 1.28125]])
+        expected = np.asfortranarray([[1.125, 1.28125]])
         result = surface.evaluate_cartesian(*s_t_vals)
         self.assertEqual(result, expected)
 
     def test_evaluate_cartesian_no_verify(self):
         s_t_vals = (0.25, 1.0)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 1.0],
             [2.0, 1.5],
             [1.0, 2.75],
         ])
         surface = self._make_one(nodes, 1)
 
-        expected = np.array([[1.25, 2.875]])
+        expected = np.asfortranarray([[1.25, 2.875]])
         result = surface.evaluate_cartesian(*s_t_vals, _verify=False)
         self.assertEqual(result, expected)
 
@@ -479,13 +479,13 @@ class TestSurface(utils.NumPyTestCase):
             surface.evaluate_cartesian_multi(param_vals_1d)
 
     def _eval_cartesian_multi_helper(self, **kwargs):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [2.0, 3.0],
             [0.0, 2.0],
             [3.0, 7.5],
         ])
         surface = self._make_one(nodes, 1, _copy=False)
-        param_vals = np.array([[1.0, 0.0]])
+        param_vals = np.asfortranarray([[1.0, 0.0]])
 
         patch = mock.patch(
             'bezier._surface_helpers.evaluate_cartesian_multi',
@@ -503,7 +503,7 @@ class TestSurface(utils.NumPyTestCase):
         self._eval_cartesian_multi_helper(_verify=False)
 
     def test_plot_wrong_dimension(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0, 0.0],
             [1.0, 3.0, 4.0],
             [2.0, 6.0, 9.0],
@@ -579,9 +579,9 @@ class TestSurface(utils.NumPyTestCase):
         quarter_a = 0.5 * ref_triangle
         quarters = [
             quarter_a,
-            np.array([0.5, 0.5]) - quarter_a,  # B
-            quarter_a + np.array([0.5, 0.0]),  # C
-            quarter_a + np.array([0.0, 0.5]),  # D
+            np.asfortranarray([0.5, 0.5]) - quarter_a,  # B
+            quarter_a + np.asfortranarray([0.5, 0.0]),  # C
+            quarter_a + np.asfortranarray([0.0, 0.5]),  # D
         ]
 
         for sub_surface, quarter in zip(sub_surfaces, quarters):
@@ -591,22 +591,22 @@ class TestSurface(utils.NumPyTestCase):
             self.assertEqual(main_vals, sub_vals)
 
     def test_subdivide_linear(self):
-        expected_a = np.array([
+        expected_a = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 0.0],
             [0.0, 0.5],
         ])
-        expected_b = np.array([
+        expected_b = np.asfortranarray([
             [0.5, 0.5],
             [0.0, 0.5],
             [0.5, 0.0],
         ])
-        expected_c = np.array([
+        expected_c = np.asfortranarray([
             [0.5, 0.0],
             [1.0, 0.0],
             [0.5, 0.5],
         ])
-        expected_d = np.array([
+        expected_d = np.asfortranarray([
             [0.0, 0.5],
             [0.5, 0.5],
             [0.0, 1.0],
@@ -627,7 +627,7 @@ class TestSurface(utils.NumPyTestCase):
         self._subdivide_points_check(surface)
 
     def test_subdivide_quadratic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 0.25],
             [1.0, 0.0],
@@ -635,7 +635,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.0, 1.0],
             [0.0, 0.5],
         ])
-        expected_a = np.array([
+        expected_a = np.asfortranarray([
             [0.0, 0.0],
             [0.25, 0.125],
             [0.5, 0.125],
@@ -643,7 +643,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.25, 0.5],
             [0.25, 0.5],
         ])
-        expected_b = np.array([
+        expected_b = np.asfortranarray([
             [0.25, 0.625],
             [0.25, 0.625],
             [0.25, 0.5],
@@ -651,7 +651,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.25, 0.5],
             [0.5, 0.125],
         ])
-        expected_c = np.array([
+        expected_c = np.asfortranarray([
             [0.5, 0.125],
             [0.75, 0.125],
             [1.0, 0.0],
@@ -659,7 +659,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.5, 0.5],
             [0.25, 0.625],
         ])
-        expected_d = np.array([
+        expected_d = np.asfortranarray([
             [0.25, 0.5],
             [0.25, 0.625],
             [0.25, 0.625],
@@ -683,7 +683,7 @@ class TestSurface(utils.NumPyTestCase):
         self._subdivide_points_check(surface)
 
     def test_subdivide_cubic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [3.25, 1.5],
             [6.5, 1.5],
@@ -695,7 +695,7 @@ class TestSurface(utils.NumPyTestCase):
             [5.25, 10.0],
             [0.0, 10.0],
         ])
-        expected_a = np.array([
+        expected_a = np.asfortranarray([
             [0.0, 0.0],
             [1.625, 0.75],
             [3.25, 1.125],
@@ -707,7 +707,7 @@ class TestSurface(utils.NumPyTestCase):
             [2.875, 4.3125],
             [1.125, 4.90625],
         ])
-        expected_b = np.array([
+        expected_b = np.asfortranarray([
             [6.96875, 6.96875],
             [4.8125, 6.65625],
             [2.875, 5.96875],
@@ -719,7 +719,7 @@ class TestSurface(utils.NumPyTestCase):
             [4.3125, 2.875],
             [4.90625, 1.125],
         ])
-        expected_c = np.array([
+        expected_c = np.asfortranarray([
             [4.90625, 1.125],
             [6.5625, 1.125],
             [8.25, 0.75],
@@ -731,7 +731,7 @@ class TestSurface(utils.NumPyTestCase):
             [8.8125, 5.125],
             [6.96875, 6.96875],
         ])
-        expected_d = np.array([
+        expected_d = np.asfortranarray([
             [1.125, 4.90625],
             [2.875, 5.96875],
             [4.8125, 6.65625],
@@ -789,7 +789,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertTrue(surface._compute_valid())
 
     def test__compute_valid_invalid_linear(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0, 0.0],
             [1.0, 2.0, 2.0],
             [2.0, 4.0, 4.0],
@@ -798,7 +798,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_quadratic_valid(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, -0.1875],
             [1.0, 0.0],
@@ -811,7 +811,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test__compute_valid_quadratic_invalid(self):
         # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 0.0],
             [0.0, 0.0],
             [1.0, 1.0],
@@ -828,7 +828,7 @@ class TestSurface(utils.NumPyTestCase):
             surface._compute_valid()
 
     def test__compute_valid_cubic_valid(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.0],
             [2.0, 0.0],
@@ -845,7 +845,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test__compute_valid_cubic_invalid(self):
         # B(L1, L2, L3) = [L1^3 + L2^3, L2^3 + L3^3]
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 0.0],
             [0.0, 0.0],
             [0.0, 0.0],
@@ -898,7 +898,7 @@ class TestSurface(utils.NumPyTestCase):
         s = 0.125
         t = 0.125
         x_val, y_val = surface.evaluate_cartesian(s, t).flatten()
-        point = np.array([
+        point = np.asfortranarray([
             [x_val, y_val],
             [np.nan, np.nan],
         ])
@@ -912,15 +912,15 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(t, computed_t)
 
     def test_locate_bad_dimension(self):
-        nodes = np.array([[0.0, 1.0, 2.0]]).T  # pylint: disable=no-member
+        nodes = np.asfortranarray([[0.0, 1.0, 2.0]]).T
         surface = self._make_one(nodes, 1)
         with self.assertRaises(NotImplementedError):
             surface.locate(None)
 
     def test_locate_bad_point(self):
         surface = self._make_one(self.QUADRATIC, 2)
-        point1 = np.array([0.0, 1.0])
-        point2 = np.array([[0.0, 1.0, 2.0]])
+        point1 = np.asfortranarray([0.0, 1.0])
+        point2 = np.asfortranarray([[0.0, 1.0, 2.0]])
         with self.assertRaises(ValueError):
             surface.locate(point1)
         with self.assertRaises(ValueError):
@@ -931,7 +931,7 @@ class TestSurface(utils.NumPyTestCase):
 
         surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
         # Similar triangle with overlapping square.
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.5, 0.0],
             [0.5, 1.0],
             [-0.5, 1.0],
@@ -962,7 +962,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_intersect_disjoint_bbox(self):
         surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [4.0, 0.0],
             [5.0, 0.0],
             [4.0, 1.0],
@@ -974,7 +974,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_intersect_tangent_bbox(self):
         surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.0, 1.0],
             [-1.0, 1.0],
@@ -999,14 +999,14 @@ class TestSurface(utils.NumPyTestCase):
             surface2.intersect(surface1)
 
     def test_elevate_linear(self):
-        klass = self._get_target_class()
-        surface = klass.from_nodes(np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [2.0, 1.0],
             [-1.0, 2.0],
-        ]))
+        ])
+        surface = self._make_one(nodes, 1)
         elevated = surface.elevate()
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.5],
             [2.0, 1.0],
@@ -1025,13 +1025,13 @@ class TestSurface(utils.NumPyTestCase):
     def test_elevate_quadratic(self):
         klass = self._get_target_class()
 
-        nodes = np.array([[0.0, 6.0, 9.0, 0.0, 6.0, -3.0]])
-        nodes = nodes.T  # pylint: disable=no-member
+        nodes = np.asfortranarray([[0.0, 6.0, 9.0, 0.0, 6.0, -3.0]])
+        nodes = nodes.T
         surface = klass.from_nodes(nodes)
         elevated = surface.elevate()
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.0, 4.0, 7.0, 9.0, 0.0, 4.0, 7.0, -1.0, 3.0, -3.0]])
-        expected = expected.T  # pylint: disable=no-member
+        expected = expected.T
         self.assertEqual(surface.degree, 2)
         self.assertEqual(elevated.degree, 3)
         self.assertEqual(elevated.nodes, expected)

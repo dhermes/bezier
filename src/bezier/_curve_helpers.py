@@ -118,7 +118,7 @@ def _vec_size(nodes, s_val):
     Returns:
         float: The norm of :math:`B(s)`.
     """
-    result_vec = evaluate_multi(nodes, np.array([s_val]))
+    result_vec = evaluate_multi(nodes, np.asfortranarray([s_val]))
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
     return np.linalg.norm(result_vec[0, :], ord=2)
 
@@ -322,7 +322,7 @@ def _evaluate_hodograph(s, nodes, degree):
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     # NOTE: Taking the derivative drops the degree by 1.
     return degree * evaluate_multi(
-        first_deriv, np.array([s]))
+        first_deriv, np.asfortranarray([s]))
 
 
 def get_curvature(nodes, degree, tangent_vec, s):
@@ -351,7 +351,7 @@ def get_curvature(nodes, degree, tangent_vec, s):
     .. doctest:: get-curvature
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes = np.array([
+       >>> nodes = np.asfortranarray([
        ...     [1.0 ,  0.0],
        ...     [0.75,  2.0],
        ...     [0.5 , -2.0],
@@ -391,7 +391,7 @@ def get_curvature(nodes, degree, tangent_vec, s):
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     second_deriv = first_deriv[1:, :] - first_deriv[:-1, :]
     concavity = degree * (degree - 1) * evaluate_multi(
-        second_deriv, np.array([s]))
+        second_deriv, np.asfortranarray([s]))
 
     curvature = _helpers.cross_product(tangent_vec, concavity)
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
@@ -452,13 +452,13 @@ def newton_refine(curve, point, s):
     .. doctest:: newton-refine-curve
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes = np.array([
+       >>> nodes = np.asfortranarray([
        ...     [0.0, 0.0],
        ...     [1.0, 2.0],
        ...     [3.0, 1.0],
        ... ])
        >>> curve = bezier.Curve(nodes, degree=2)
-       >>> point = curve.evaluate_multi(np.array([0.25]))
+       >>> point = curve.evaluate(0.25)
        >>> point
        array([[ 0.5625, 0.8125]])
        >>> s = 0.75
@@ -481,7 +481,7 @@ def newton_refine(curve, point, s):
     .. doctest:: newton-refine-curve-cusp
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes = np.array([
+       >>> nodes = np.asfortranarray([
        ...     [ 6.0, -3.0],
        ...     [-2.0,  3.0],
        ...     [-2.0, -3.0],
@@ -489,7 +489,7 @@ def newton_refine(curve, point, s):
        ... ])
        >>> curve = bezier.Curve(nodes, degree=3)
        >>> expected = 0.5
-       >>> point = curve.evaluate_multi(np.array([expected]))
+       >>> point = curve.evaluate(expected)
        >>> point
        array([[ 0., 0.]])
        >>> s_vals = [0.625, None, None, None, None, None]
@@ -525,14 +525,14 @@ def newton_refine(curve, point, s):
        import bezier
        from bezier._curve_helpers import newton_refine
 
-       nodes = np.array([
+       nodes = np.asfortranarray([
            [6.0, -3.0],
            [-2.0, 3.0],
            [-2.0, -3.0],
            [6.0, 3.0],
        ])
        curve = bezier.Curve(nodes, degree=3)
-       point = curve.evaluate_multi(np.array([0.5]))
+       point = curve.evaluate(0.5)
 
     .. doctest:: newton-refine-curve-cusp-continued
 

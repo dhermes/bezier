@@ -77,7 +77,7 @@ class Test_add_plot_boundary(unittest.TestCase):
 
     def _helper(self, **kwargs):
         line = mock.Mock(spec=['get_xydata'])
-        line.get_xydata.return_value = np.array([
+        line.get_xydata.return_value = np.asfortranarray([
             [-1.0, -1.0],
             [1.0, 1.0],
         ])
@@ -109,7 +109,7 @@ class Test_add_patch(utils.NumPyTestCase):
         _, positional, keyword = call
         self.assertEqual(keyword, {})
         self.assertEqual(len(positional), 1)
-        self.assertEqual(positional[0], np.array([0.0, 0.5, 1.0]))
+        self.assertEqual(positional[0], np.asfortranarray([0.0, 0.5, 1.0]))
 
     def _path_val(self, path, points):
         self.assertEqual(path.Path.call_count, 1)
@@ -131,7 +131,7 @@ class Test_add_patch(utils.NumPyTestCase):
         color = (0.25, 0.5, 0.75)
         pts_per_edge = 3
         edge = mock.Mock(spec=['evaluate_multi'])
-        points = np.array([
+        points = np.asfortranarray([
             [0.0, 1.0],
             [1.0, 3.0],
             [2.0, 6.0],

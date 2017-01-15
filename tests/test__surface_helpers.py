@@ -20,7 +20,7 @@ import numpy as np
 from tests import utils
 
 
-UNIT_TRIANGLE = np.array([
+UNIT_TRIANGLE = np.asfortranarray([
     [0.0, 0.0],
     [1.0, 0.0],
     [0.0, 1.0],
@@ -58,13 +58,13 @@ class Test_polynomial_sign(unittest.TestCase):
 
     def test_positive(self):
         # pylint: disable=no-member
-        bernstein = np.array([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]).T
+        bernstein = np.asfortranarray([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]).T
         # pylint: enable=no-member
         self._helper(bernstein, 1)
 
     def test_negative(self):
         # pylint: disable=no-member
-        bernstein = np.array([[-1.0, -2.0, -1.0]]).T
+        bernstein = np.asfortranarray([[-1.0, -2.0, -1.0]]).T
         # pylint: enable=no-member
         self._helper(bernstein, -1)
 
@@ -74,18 +74,20 @@ class Test_polynomial_sign(unittest.TestCase):
 
     def test_mixed(self):
         # pylint: disable=no-member
-        bernstein = np.array([[-1.0, 1.0, -1.0]]).T
+        bernstein = np.asfortranarray([[-1.0, 1.0, -1.0]]).T
         # pylint: enable=no-member
         self._helper(bernstein, 0)
 
     def test_max_iterations(self):
-        bernstein = np.array([[1.0, 2.0, 3.0]]).T  # pylint: disable=no-member
+        bernstein = np.asfortranarray(
+            [[1.0, 2.0, 3.0]]).T  # pylint: disable=no-member
         subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=1):
             self._helper(bernstein, 1)
 
     def test_no_conclusion(self):
-        bernstein = np.array([[-1.0, 1.0, 2.0]]).T  # pylint: disable=no-member
+        bernstein = np.asfortranarray(
+            [[-1.0, 1.0, 2.0]]).T  # pylint: disable=no-member
         subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=0):
             with self.assertRaises(ValueError):
@@ -100,7 +102,7 @@ class Test_polynomial_sign(unittest.TestCase):
         #          [0.5   0.5  ]
         #          [0.25  1.0  ]
         # pylint: disable=no-member
-        bernstein = np.array([[1.0, 0.5, 0.0, 0.75, 0.4375, 1.0]]).T
+        bernstein = np.asfortranarray([[1.0, 0.5, 0.0, 0.75, 0.4375, 1.0]]).T
         # pylint: enable=no-member
         self._helper(bernstein, 0)
 
@@ -114,14 +116,14 @@ class Test__2x2_det(unittest.TestCase):
         return _surface_helpers._2x2_det(mat)
 
     def test_integers(self):
-        mat = np.array([
+        mat = np.asfortranarray([
             [1.0, 2.0],
             [3.0, 4.0],
         ])
         self.assertEqual(self._call_function_under_test(mat), -2.0)
 
     def test_better_than_numpy(self):
-        mat = np.array([
+        mat = np.asfortranarray([
             [-24.0, 3.0],
             [-27.0, 0.0],
         ]) / 16.0
@@ -143,7 +145,7 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
 
     def test_it(self):
         # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 0.0],
             [0.0, 0.0],
             [1.0, 1.0],
@@ -153,7 +155,7 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
         ])
         bernstein = self._call_function_under_test(nodes)
         self.assertEqual(bernstein.shape, (6, 1))
-        expected = np.array([[0.0, 2.0, 0.0, -2.0, 2.0, 0.0]])
+        expected = np.asfortranarray([[0.0, 2.0, 0.0, -2.0, 2.0, 0.0]])
         expected = expected.T  # pylint: disable=no-member
         self.assertEqual(bernstein, expected)
 
@@ -168,7 +170,7 @@ class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
 
     def test_it(self):
         # B(L1, L2, L3) = [L1^3 + L2^3, L2^3 + L3^3]
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 0.0],
             [0.0, 0.0],
             [0.0, 0.0],
@@ -200,13 +202,13 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
             nodes, degree, lambda1, lambda2, lambda3)
 
     def test_linear(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.0],
             [0.0, 1.0],
         ])
         s_val, t_val = 0.5, 0.375
-        expected = np.array([
+        expected = np.asfortranarray([
             [s_val, t_val],
         ])
 
@@ -234,7 +236,7 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_cubic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [3.25, 1.5],
             [6.5, 1.5],
@@ -250,7 +252,7 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
         s_val = 0.25
         t_val = 0.375
         lambda1 = 1.0 - s_val - t_val
-        transform = np.array([
+        transform = np.asfortranarray([
             [lambda1, s_val, 0., 0., t_val, 0., 0., 0., 0., 0.],
             [0., lambda1, s_val, 0., 0., t_val, 0., 0., 0., 0.],
             [0., 0., lambda1, s_val, 0., 0., t_val, 0., 0., 0.],
@@ -295,7 +297,7 @@ class Test__make_transform(utils.NumPyTestCase):
         self.assertEqual(result[2], expected2)
 
     def test_linear(self):
-        weights = np.array([
+        weights = np.asfortranarray([
             [1.0, 0.0, 0.0],
             [0.5, 0.5, 0.0],
             [0.5, 0.0, 0.5],
@@ -306,22 +308,22 @@ class Test__make_transform(utils.NumPyTestCase):
         self._helper(1, weights, expected0, expected1, expected2)
 
     def test_quadratic(self):
-        weights = np.array([
+        weights = np.asfortranarray([
             [0.0, 0.5, 0.5],
             [0.5, 0.0, 0.5],
             [0.5, 0.5, 0.0],
         ])
-        expected0 = np.array([
+        expected0 = np.asfortranarray([
             [0.0, 0.5, 0.0, 0.5, 0.0, 0.0],
             [0.0, 0.0, 0.5, 0.0, 0.5, 0.0],
             [0.0, 0.0, 0.0, 0.0, 0.5, 0.5],
         ])
-        expected1 = np.array([
+        expected1 = np.asfortranarray([
             [0.5, 0.0, 0.0, 0.5, 0.0, 0.0],
             [0.0, 0.5, 0.0, 0.0, 0.5, 0.0],
             [0.0, 0.0, 0.0, 0.5, 0.0, 0.5],
         ])
-        expected2 = np.array([
+        expected2 = np.asfortranarray([
             [0.5, 0.5, 0.0, 0.0, 0.0, 0.0],
             [0.0, 0.5, 0.5, 0.0, 0.0, 0.0],
             [0.0, 0.0, 0.0, 0.5, 0.5, 0.0],
@@ -342,7 +344,7 @@ class Test__reduced_to_matrix(utils.NumPyTestCase):
         shape = (6, 2)
         degree = 2
 
-        expected = np.array([
+        expected = np.asfortranarray([
             [1.0, 0.0],
             [-1.0, 1.0],
             [0.0, 1.0],
@@ -442,7 +444,7 @@ class Test__mean_centroid(unittest.TestCase):
     def test_it(self):
         import bezier
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.0],
             [0.0, 1.0],
@@ -468,14 +470,14 @@ class Test_jacobian_s(utils.NumPyTestCase):
         return _surface_helpers.jacobian_s(nodes, degree, dimension)
 
     def test_linear(self):
-        nodes = np.array([[0.0, 1.0, np.nan]])
+        nodes = np.asfortranarray([[0.0, 1.0, np.nan]])
         nodes = nodes.T  # pylint: disable=no-member
         result = self._call_function_under_test(nodes, 1, 1)
-        expected = np.array([[1.0]])
+        expected = np.asfortranarray([[1.0]])
         self.assertEqual(result, expected)
 
     def test_quadratic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 1.0],
             [1.0, 11.0],
             [5.0, 7.0],
@@ -484,7 +486,7 @@ class Test_jacobian_s(utils.NumPyTestCase):
             [np.nan, np.nan],
         ])
         result = self._call_function_under_test(nodes, 2, 2)
-        expected = 2.0 * np.array([
+        expected = 2.0 * np.asfortranarray([
             [1.0, 10.0],
             [4.0, -4.0],
             [-5.0, 8.0],
@@ -494,14 +496,14 @@ class Test_jacobian_s(utils.NumPyTestCase):
     def test_cubic(self):
         nodes = np.arange(10, dtype=FLOAT64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
-        expected = 3 * np.array([[1, 3, 5, 9, 11, 15]], dtype=FLOAT64)
+        expected = 3 * np.asfortranarray([[1, 3, 5, 9, 11, 15]], dtype=FLOAT64)
         expected = expected.T  # pylint: disable=no-member
         self.assertEqual(result, expected)
 
     def test_quartic(self):
         nodes = np.arange(15, dtype=FLOAT64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 4, 1)
-        expected = 4 * np.array([
+        expected = 4 * np.asfortranarray([
             [1, 3, 5, 7, 11, 13, 15, 19, 21, 25]], dtype=FLOAT64)
         expected = expected.T  # pylint: disable=no-member
         self.assertEqual(result, expected)
@@ -516,14 +518,14 @@ class Test_jacobian_t(utils.NumPyTestCase):
         return _surface_helpers.jacobian_t(nodes, degree, dimension)
 
     def test_linear(self):
-        nodes = np.array([[0.0, np.nan, 1.0]])
+        nodes = np.asfortranarray([[0.0, np.nan, 1.0]])
         nodes = nodes.T  # pylint: disable=no-member
         result = self._call_function_under_test(nodes, 1, 1)
-        expected = np.array([[1.0]])
+        expected = np.asfortranarray([[1.0]])
         self.assertEqual(result, expected)
 
     def test_quadratic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [4.0, -2.0],
             [0.0, 1.0],
             [np.nan, np.nan],
@@ -532,7 +534,7 @@ class Test_jacobian_t(utils.NumPyTestCase):
             [1.0, 12.0],
         ])
         result = self._call_function_under_test(nodes, 2, 2)
-        expected = 2.0 * np.array([
+        expected = 2.0 * np.asfortranarray([
             [1.0, 9.0],
             [-1.0, 5.0],
             [-4.0, 5.0],
@@ -542,14 +544,15 @@ class Test_jacobian_t(utils.NumPyTestCase):
     def test_cubic(self):
         nodes = np.arange(10, dtype=FLOAT64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 3, 1)
-        expected = 3 * np.array([[16, 24, 32, 33, 39, 32]], dtype=FLOAT64)
+        expected = 3 * np.asfortranarray(
+            [[16, 24, 32, 33, 39, 32]], dtype=FLOAT64)
         expected = expected.T  # pylint: disable=no-member
         self.assertEqual(result, expected)
 
     def test_quartic(self):
         nodes = np.arange(15, dtype=FLOAT64)[:, np.newaxis]**2
         result = self._call_function_under_test(nodes, 4, 1)
-        expected = 4 * np.array([
+        expected = 4 * np.asfortranarray([
             [25, 35, 45, 55, 56, 64, 72, 63, 69, 52]], dtype=FLOAT64)
         expected = expected.T  # pylint: disable=no-member
         self.assertEqual(result, expected)
@@ -565,7 +568,7 @@ class Test__jacobian_both(utils.NumPyTestCase):
 
     def test_linear(self):
         # B(s, t) = -2s + 2t + 3
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [3.0],
             [1.0],
             [5.0],
@@ -574,7 +577,7 @@ class Test__jacobian_both(utils.NumPyTestCase):
 
         # B_s = -2
         # B_t = 2
-        expected = np.array([
+        expected = np.asfortranarray([
             [-2.0, 2.0],
         ])
         self.assertEqual(result, expected)
@@ -586,7 +589,7 @@ class Test__jacobian_both(utils.NumPyTestCase):
         #     8 s^2 - 10 s t - 2 s - 13 t^2 + 12 t + 1,
         # ]
         #
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [3.0, 0.0, 1.0],
             [2.0, 0.0, 0.0],
             [1.0, -1.0, 7.0],
@@ -606,7 +609,7 @@ class Test__jacobian_both(utils.NumPyTestCase):
         #     2 s,
         #    -10 s - 26 t + 12,
         # ]
-        expected = np.array([
+        expected = np.asfortranarray([
             [-2.0, 0.0, -2.0, -6.0, 0.0, 12.0],
             [-2.0, -2.0, 14.0, -2.0, 2.0, 2.0],
             [2.0, 2.0, -12.0, 4.0, 0.0, -14.0],
@@ -619,7 +622,7 @@ class Test__jacobian_both(utils.NumPyTestCase):
         #     (-10s^3 - 30s^2t + 30s^2 - 36st^2 + 42st -
         #          18s - 15t^3 + 30t^2 - 18t + 7),
         # ]
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 7.0],
             [1.0, 1.0],
             [2.0, 5.0],
@@ -641,7 +644,7 @@ class Test__jacobian_both(utils.NumPyTestCase):
         #     9s^2 + 24st - 12s - 6t^2 + 6,
         #     -30s^2 - 72st + 42s - 45t^2 + 60t - 18,
         # ]
-        expected = np.array([
+        expected = np.asfortranarray([
             [3.0, -18.0, 6.0, -18.0],
             [3.0, 12.0, 0.0, 3.0],
             [-3.0, 12.0, 3.0, -6.0],
@@ -672,7 +675,7 @@ class Test_newton_refine(unittest.TestCase):
             nodes, degree, x_val, y_val, s, t)
 
     def test_it(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, -0.25],
             [1.0, 0.0],
@@ -747,11 +750,11 @@ class Test_classify_intersection(unittest.TestCase):
     def test_simple(self):
         import bezier
 
-        first = bezier.Curve.from_nodes(np.array([
+        first = bezier.Curve.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ]))
-        second = bezier.Curve.from_nodes(np.array([
+        second = bezier.Curve.from_nodes(np.asfortranarray([
             [0.25, 0.0],
             [0.75, 1.0],
         ]))
@@ -767,11 +770,11 @@ class Test_classify_intersection(unittest.TestCase):
     def test_corner_end(self):
         import bezier
 
-        first = bezier.Curve.from_nodes(np.array([
+        first = bezier.Curve.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ]))
-        second = bezier.Curve.from_nodes(np.array([
+        second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.0, 2.0],
         ]))
@@ -782,11 +785,11 @@ class Test_classify_intersection(unittest.TestCase):
     def test_corner_start(self):
         import bezier
 
-        first = bezier.Curve.from_nodes(np.array([
+        first = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 1.0],
             [0.0, 0.0],
         ]))
-        second = bezier.Curve.from_nodes(np.array([
+        second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.0, 2.0],
         ]))
@@ -797,12 +800,12 @@ class Test_classify_intersection(unittest.TestCase):
     def test_tangent(self):
         import bezier
 
-        first = bezier.Curve.from_nodes(np.array([
+        first = bezier.Curve.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [1.5, 1.0],
             [3.0, 0.0],
         ]))
-        second = bezier.Curve.from_nodes(np.array([
+        second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.5, 1.0],
             [2.0, 0.0],
@@ -816,7 +819,7 @@ class Test_classify_intersection(unittest.TestCase):
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         first, _, _ = surface1.edges
-        surface2 = bezier.Surface.from_nodes(np.array([
+        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [-1.0, 0.0],
             [0.0, -1.0],
@@ -830,17 +833,17 @@ class Test_classify_intersection(unittest.TestCase):
 
 class Test__classify_tangent_intersection(unittest.TestCase):
 
-    QUADRATIC1 = np.array([
+    QUADRATIC1 = np.asfortranarray([
         [1.0, 0.0],
         [1.5, 1.0],
         [2.0, 0.0],
     ])
-    QUADRATIC2 = np.array([
+    QUADRATIC2 = np.asfortranarray([
         [0.0, 0.0],
         [1.5, 1.0],
         [3.0, 0.0],
     ])
-    QUADRATIC3 = np.array([
+    QUADRATIC3 = np.asfortranarray([
         [1.0, 1.0],
         [1.5, 0.0],
         [2.0, 1.0],
@@ -889,12 +892,12 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_same_direction_same_curvature(self):
         import bezier
 
-        first = bezier.Curve.from_nodes(np.array([
+        first = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.25],
             [-0.5, -0.25],
             [0.0, 0.25],
         ]))
-        second = bezier.Curve.from_nodes(np.array([
+        second = bezier.Curve.from_nodes(np.asfortranarray([
             [0.75, 0.25],
             [-0.25, -0.25],
             [-0.25, 0.25],
@@ -906,12 +909,12 @@ class Test__classify_tangent_intersection(unittest.TestCase):
     def test_opposed_same_curvature(self):
         import bezier
 
-        first = bezier.Curve.from_nodes(np.array([
+        first = bezier.Curve.from_nodes(np.asfortranarray([
             [0.0, 0.25],
             [-0.5, -0.25],
             [1.0, 0.25],
         ]))
-        second = bezier.Curve.from_nodes(np.array([
+        second = bezier.Curve.from_nodes(np.asfortranarray([
             [0.75, 0.25],
             [-0.25, -0.25],
             [-0.25, 0.25],
@@ -1000,17 +1003,17 @@ class Test__ignored_edge_corner(unittest.TestCase):
             edge_tangent, corner_tangent, corner_previous_edge)
 
     def test_first_across(self):
-        edge_tangent = np.array([[1.0, 0.0]])
-        corner_tangent = np.array([[0.0, 1.0]])
+        edge_tangent = np.asfortranarray([[1.0, 0.0]])
+        corner_tangent = np.asfortranarray([[0.0, 1.0]])
         self.assertFalse(
             self._call_function_under_test(edge_tangent, corner_tangent, None))
 
     def test_outside(self):
         import bezier
 
-        edge_tangent = np.array([[-1.0, 1.0]])
-        corner_tangent = np.array([[0.5, 0.5]])
-        corner_previous_edge = bezier.Curve.from_nodes(np.array([
+        edge_tangent = np.asfortranarray([[-1.0, 1.0]])
+        corner_tangent = np.asfortranarray([[0.5, 0.5]])
+        corner_previous_edge = bezier.Curve.from_nodes(np.asfortranarray([
             [0.5, 2.0],
             [0.5, 0.5],
         ]))
@@ -1021,9 +1024,9 @@ class Test__ignored_edge_corner(unittest.TestCase):
     def test_straddle(self):
         import bezier
 
-        edge_tangent = np.array([[1.0, 0.0]])
-        corner_tangent = np.array([[1.0, -1.0]])
-        corner_previous_edge = bezier.Curve.from_nodes(np.array([
+        edge_tangent = np.asfortranarray([[1.0, 0.0]])
+        corner_tangent = np.asfortranarray([[1.0, -1.0]])
+        corner_previous_edge = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 1.0],
             [0.5, 0.0],
         ]))
@@ -1044,7 +1047,7 @@ class Test__ignored_double_corner(unittest.TestCase):
     def test_ignored(self):
         import bezier
 
-        surface1 = bezier.Surface.from_nodes(np.array([
+        surface1 = bezier.Surface.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.5, 0.25],
             [0.5, 1.0],
@@ -1053,8 +1056,8 @@ class Test__ignored_double_corner(unittest.TestCase):
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
         _, second, _ = surface2.edges
         intersection = make_intersect(first, 0.0, second, 0.0)
-        tangent_s = np.array([[0.5, 0.25]])
-        tangent_t = np.array([[-1.0, 1.0]])
+        tangent_s = np.asfortranarray([[0.5, 0.25]])
+        tangent_t = np.asfortranarray([[-1.0, 1.0]])
 
         result = self._call_function_under_test(
             intersection, tangent_s, tangent_t)
@@ -1065,15 +1068,15 @@ class Test__ignored_double_corner(unittest.TestCase):
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         _, first, _ = surface1.edges
-        surface2 = bezier.Surface.from_nodes(np.array([
+        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.0, 1.0],
             [0.5, 0.25],
         ]))
         second, _, _ = surface2.edges
         intersection = make_intersect(first, 0.0, second, 0.0)
-        tangent_s = np.array([[-1.0, 1.0]])
-        tangent_t = np.array([[0.0, 1.0]])
+        tangent_s = np.asfortranarray([[-1.0, 1.0]])
+        tangent_t = np.asfortranarray([[0.0, 1.0]])
 
         result = self._call_function_under_test(
             intersection, tangent_s, tangent_t)
@@ -1082,7 +1085,7 @@ class Test__ignored_double_corner(unittest.TestCase):
     def test_overlap_second(self):
         import bezier
 
-        surface1 = bezier.Surface.from_nodes(np.array([
+        surface1 = bezier.Surface.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.0, 1.0],
             [0.5, 0.25],
@@ -1091,8 +1094,8 @@ class Test__ignored_double_corner(unittest.TestCase):
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
         _, second, _ = surface2.edges
         intersection = make_intersect(first, 0.0, second, 0.0)
-        tangent_s = np.array([[0.0, 1.0]])
-        tangent_t = np.array([[-1.0, 1.0]])
+        tangent_s = np.asfortranarray([[0.0, 1.0]])
+        tangent_t = np.asfortranarray([[-1.0, 1.0]])
 
         result = self._call_function_under_test(
             intersection, tangent_s, tangent_t)
@@ -1101,7 +1104,7 @@ class Test__ignored_double_corner(unittest.TestCase):
     def test_segment_contained(self):
         import bezier
 
-        surface1 = bezier.Surface.from_nodes(np.array([
+        surface1 = bezier.Surface.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.5],
             [0.5, 1.0],
@@ -1110,8 +1113,8 @@ class Test__ignored_double_corner(unittest.TestCase):
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
         second, _, _ = surface2.edges
         intersection = make_intersect(first, 0.0, second, 0.0)
-        tangent_s = np.array([[1.0, 0.5]])
-        tangent_t = np.array([[1.0, 0.0]])
+        tangent_s = np.asfortranarray([[1.0, 0.5]])
+        tangent_t = np.asfortranarray([[1.0, 0.0]])
 
         result = self._call_function_under_test(
             intersection, tangent_s, tangent_t)
@@ -1560,7 +1563,7 @@ class Test__ends_to_curve(utils.NumPyTestCase):
     def test_first(self):
         import bezier
 
-        first = bezier.Curve.from_nodes(np.array([
+        first = bezier.Curve.from_nodes(np.asfortranarray([
             [0.0, 1.0],
             [1.0, 3.0],
         ]))
@@ -1570,7 +1573,7 @@ class Test__ends_to_curve(utils.NumPyTestCase):
 
         result = self._call_function_under_test(start_node, end_node)
         self.assertIsInstance(result, bezier.Curve)
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.5, 2.0],
             [0.75, 2.5],
         ])
@@ -1582,7 +1585,7 @@ class Test__ends_to_curve(utils.NumPyTestCase):
     def test_second(self):
         import bezier
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [4.0, -1.0],
             [2.0, 1.0],
         ])
@@ -1593,7 +1596,7 @@ class Test__ends_to_curve(utils.NumPyTestCase):
 
         result = self._call_function_under_test(start_node, end_node)
         self.assertIsInstance(result, bezier.Curve)
-        expected = np.array([
+        expected = np.asfortranarray([
             [3.75, -0.75],
             [3.5, -0.5],
         ])
@@ -1635,7 +1638,8 @@ class Test__no_intersections(unittest.TestCase):
         import bezier
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
-        surface2 = bezier.Surface(UNIT_TRIANGLE + np.array([[5.0, 0.0]]), 1)
+        surface2 = bezier.Surface(
+            UNIT_TRIANGLE + np.asfortranarray([[5.0, 0.0]]), 1)
         result = self._call_function_under_test(surface1, surface2)
         self.assertEqual(result, [])
 
@@ -1644,7 +1648,7 @@ class Test__no_intersections(unittest.TestCase):
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         surface2 = bezier.Surface(
-            4.0 * UNIT_TRIANGLE - np.array([[1.0, 1.0]]), 1)
+            4.0 * UNIT_TRIANGLE - np.asfortranarray([[1.0, 1.0]]), 1)
 
         patch = mock.patch(
             'bezier._surface_helpers._to_curved_polygon',
@@ -1659,7 +1663,7 @@ class Test__no_intersections(unittest.TestCase):
         import bezier
 
         surface1 = bezier.Surface(
-            4.0 * UNIT_TRIANGLE - np.array([[1.0, 1.0]]), 1)
+            4.0 * UNIT_TRIANGLE - np.asfortranarray([[1.0, 1.0]]), 1)
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
 
         patch = mock.patch(
@@ -1745,7 +1749,7 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         edges1 = surface1.edges
-        surface2 = bezier.Surface.from_nodes(np.array([
+        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [0.5, 0.25],
             [1.0, 0.25],
             [0.75, 1.0],
@@ -1770,7 +1774,7 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
         # First edge.
         self.assertEqual(edge1.start, 0.75)
         self.assertEqual(edge1.end, 1.0)
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.5625, 0.4375],
             [0.5, 0.25],
         ])
@@ -1778,7 +1782,7 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
         # Second edge.
         self.assertEqual(edge2.start, 0.0)
         self.assertEqual(edge2.end, 0.4375)
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.5, 0.25],
             [0.71875, 0.25],
         ])
@@ -1786,7 +1790,7 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
         # Third edge.
         self.assertEqual(edge3.start, 0.25)
         self.assertEqual(edge3.end, 0.5)
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.75, 0.25],
             [0.5, 0.5],
         ])
@@ -1797,7 +1801,7 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         edges1 = surface1._get_edges()
-        surface2 = bezier.Surface.from_nodes(np.array([
+        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [0.0, 0.125],
             [0.875, 0.0],
             [0.25, 0.75],
@@ -1819,15 +1823,15 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
         self.assertIsInstance(curved_polygon, bezier.CurvedPolygon)
         self.assertEqual(curved_polygon.num_sides, 3)
 
-        self.assertEqual(curved_polygon._edges[0].nodes, np.array([
+        self.assertEqual(curved_polygon._edges[0].nodes, np.asfortranarray([
             [0.0, 0.125],
             [0.875, 0.0],
         ]))
-        self.assertEqual(curved_polygon._edges[1].nodes, np.array([
+        self.assertEqual(curved_polygon._edges[1].nodes, np.asfortranarray([
             [0.875, 0.0],
             [0.25, 0.75],
         ]))
-        self.assertEqual(curved_polygon._edges[2].nodes, np.array([
+        self.assertEqual(curved_polygon._edges[2].nodes, np.asfortranarray([
             [0.25, 0.75],
             [0.0, 0.125],
         ]))
@@ -1846,7 +1850,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
         import bezier
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
-        surface2 = bezier.Surface.from_nodes(np.array([
+        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [-1.0, 0.0],
             [-1.0, 1.0],
             [-2.0, 1.0],
@@ -1859,7 +1863,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
         edges1 = surface1._get_edges()
-        surface2 = bezier.Surface.from_nodes(np.array([
+        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [0.75, -0.25],
             [0.75, 0.75],
             [-0.25, 0.75],
@@ -1900,7 +1904,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
     def test_tangent(self):
         import bezier
 
-        surface1 = bezier.Surface.from_nodes(np.array([
+        surface1 = bezier.Surface.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [0.5, -0.5],
             [1.0, 0.0],
@@ -1910,7 +1914,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
         ]))
         edges = surface1.edges
         first, _, _ = edges
-        surface2 = bezier.Surface.from_nodes(np.array([
+        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [-1.0, -0.25],
             [2.0, -0.25],
             [0.5, 1.5],
@@ -1943,19 +1947,19 @@ class Test__evaluate_barycentric(utils.NumPyTestCase):
 
     def test_linear(self):
         lambda_vals = (0.25, 0.5, 0.25)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.5],
             [0.0, 1.25],
         ])
 
-        expected = np.array([[0.5, 0.5625]])
+        expected = np.asfortranarray([[0.5, 0.5625]])
         result = self._call_function_under_test(nodes, 1, *lambda_vals)
         self.assertEqual(result, expected)
 
     def test_quadratic(self):
         lambda_vals = (0.0, 0.25, 0.75)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 0.0],
             [1.0, 0.5],
@@ -1964,13 +1968,13 @@ class Test__evaluate_barycentric(utils.NumPyTestCase):
             [0.0, 0.5],
         ])
 
-        expected = np.array([[0.0625, 0.78125]])
+        expected = np.asfortranarray([[0.0625, 0.78125]])
         result = self._call_function_under_test(nodes, 2, *lambda_vals)
         self.assertEqual(result, expected)
 
     def test_quadratic_dimension3(self):
         lambda_vals = (0.125, 0.375, 0.5)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0, 1.0],
             [0.5, 0.0, 0.25],
             [1.0, 0.5, 0.0],
@@ -1979,13 +1983,13 @@ class Test__evaluate_barycentric(utils.NumPyTestCase):
             [0.0, 0.5, -1.0],
         ])
 
-        expected = np.array([[0.25, 0.8203125, 0.1328125]])
+        expected = np.asfortranarray([[0.25, 0.8203125, 0.1328125]])
         result = self._call_function_under_test(nodes, 2, *lambda_vals)
         self.assertEqual(result, expected)
 
     def test_cubic(self):
         lambda_vals = (0.125, 0.5, 0.375)
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.25, 0.0],
             [0.75, 0.25],
@@ -1998,7 +2002,7 @@ class Test__evaluate_barycentric(utils.NumPyTestCase):
             [0.0, 1.0],
         ])
 
-        expected = np.array([[0.447265625, 0.37060546875]])
+        expected = np.asfortranarray([[0.447265625, 0.37060546875]])
         result = self._call_function_under_test(nodes, 3, *lambda_vals)
         self.assertEqual(result, expected)
 
@@ -2012,7 +2016,7 @@ class Test__evaluate_barycentric(utils.NumPyTestCase):
 
         lambda_vals = (0.125, 0.375, 0.5)
         index = 0
-        expected = np.array([[0.0, 0.0]])
+        expected = np.asfortranarray([[0.0, 0.0]])
         for k in range(4 + 1):
             for j in range(4 + 1 - k):
                 i = 4 - j - k
@@ -2049,18 +2053,18 @@ class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
             nodes, degree, param_vals, dimension)
 
     def test_basic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [2.0, 1.0],
             [-3.0, 2.0],
         ])
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.0, 0.0],
             [2.0, 1.0],
             [-0.5, 1.5],
         ])
 
-        param_vals = np.array([
+        param_vals = np.asfortranarray([
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0],
             [0.0, 0.5, 0.5],
@@ -2069,18 +2073,18 @@ class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_outside_domain(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [3.0, -1.0],
             [1.0, 0.0],
         ])
-        expected = np.array([
+        expected = np.asfortranarray([
             [1.0, -0.25],
             [0.0, 1.0],
             [2.375, -0.75],
         ])
 
-        param_vals = np.array([
+        param_vals = np.asfortranarray([
             [0.25, 0.25, 0.25],
             [-1.0, -1.0, 3.0],
             [0.125, 0.75, 0.125]
@@ -2111,7 +2115,7 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
             nodes, degree, param_vals, dimension)
 
     def test_basic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.75],
             [2.0, 1.0],
@@ -2119,14 +2123,14 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
             [-0.5, 1.5],
             [-3.0, 2.0],
         ])
-        expected = np.array([
+        expected = np.asfortranarray([
             [-1.75, 1.75],
             [0.0, 0.0],
             [0.25, 1.0625],
             [-0.625, 1.046875],
         ])
 
-        param_vals = np.array([
+        param_vals = np.asfortranarray([
             [0.25, 0.75],
             [0.0, 0.0],
             [0.5, 0.25],
@@ -2136,18 +2140,18 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_outside_domain(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 2.0],
             [1.0, 1.0],
             [1.0, 0.0],
         ])
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.5, 1.25],
             [2.0, -3.0],
             [0.875, 1.0],
         ])
 
-        param_vals = np.array([
+        param_vals = np.asfortranarray([
             [0.25, 0.25],
             [-1.0, 3.0],
             [0.75, 0.125]

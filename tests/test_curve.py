@@ -31,7 +31,7 @@ class TestCurve(utils.NumPyTestCase):
         return klass(*args, **kwargs)
 
     def test_constructor(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.625, 0.5],
             [1.0, 0.75],
@@ -49,7 +49,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertIs(curve._root, curve)
 
     def test_constructor_wrong_dimension(self):
-        nodes = np.array([1.0, 2.0])
+        nodes = np.asfortranarray([1.0, 2.0])
         with self.assertRaises(ValueError):
             self._make_one(nodes, None)
 
@@ -58,7 +58,7 @@ class TestCurve(utils.NumPyTestCase):
             self._make_one(nodes, None)
 
     def test_from_nodes_factory(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 2.0, 0.0],
             [1.0, 3.0, 0.0],
         ])
@@ -107,7 +107,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(1, klass._get_degree(2))
 
     def test_length_property_not_cached(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
         ])
@@ -129,7 +129,7 @@ class TestCurve(utils.NumPyTestCase):
             self.assertEqual(positional[1], 1)
 
     def test_length_property(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
         ])
@@ -196,7 +196,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertIsNone(new_curve._next_edge)
         self.assertIsNone(new_curve._previous_edge)
 
-        fake_nodes.copy.assert_called_once_with()
+        fake_nodes.copy.assert_called_once_with(order='A')
 
     def test__copy(self):
         self._copy_helper()
@@ -207,25 +207,25 @@ class TestCurve(utils.NumPyTestCase):
 
     def test_evaluate(self):
         s = 0.25
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 0.5],
             [1.0, 1.25],
         ])
         curve = self._make_one(nodes, 2)
-        expected = np.array([[0.25, 0.265625]])
+        expected = np.asfortranarray([[0.25, 0.265625]])
         result = curve.evaluate(s)
         self.assertEqual(expected, result)
 
     def test_evaluate_multi(self):
-        s_vals = np.array([0.0, 0.25, 0.5, 1.0, 1.25])
-        nodes = np.array([
+        s_vals = np.asfortranarray([0.0, 0.25, 0.5, 1.0, 1.25])
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.375, 0.375],
             [1.0, 1.0],
         ])
         curve = self._make_one(nodes, 2)
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.0, 0.0],
             [0.203125, 0.203125],
             [0.4375, 0.4375],
@@ -236,7 +236,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(expected, result)
 
     def test_plot_wrong_dimension(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0, 0.0],
             [1.0, 3.0, 4.0],
         ])
@@ -249,7 +249,7 @@ class TestCurve(utils.NumPyTestCase):
         ax = mock.Mock(spec=['plot'])
         new_axis_mock.return_value = ax
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 1.0],
             [1.0, 3.0],
         ])
@@ -269,7 +269,7 @@ class TestCurve(utils.NumPyTestCase):
 
     @mock.patch('bezier._plot_helpers.new_axis')
     def test_plot_explicit(self, new_axis_mock):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
@@ -336,15 +336,15 @@ class TestCurve(utils.NumPyTestCase):
             self.assertEqual(main_vals, sub_vals)
 
     def test_subdivide_line(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 1.0],
             [4.0, 6.0],
         ])
-        expected_l = np.array([
+        expected_l = np.asfortranarray([
             [0.0, 1.0],
             [2.0, 3.5],
         ])
-        expected_r = np.array([
+        expected_r = np.asfortranarray([
             [2.0, 3.5],
             [4.0, 6.0],
         ])
@@ -361,17 +361,17 @@ class TestCurve(utils.NumPyTestCase):
         self._subdivide_points_check(curve)
 
     def test_subdivide_quadratic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 1.0],
             [4.0, 6.0],
             [7.0, 3.0],
         ])
-        expected_l = np.array([
+        expected_l = np.asfortranarray([
             [0.0, 1.0],
             [2.0, 3.5],
             [3.75, 4.0],
         ])
-        expected_r = np.array([
+        expected_r = np.asfortranarray([
             [3.75, 4.0],
             [5.5, 4.5],
             [7.0, 3.0],
@@ -389,19 +389,19 @@ class TestCurve(utils.NumPyTestCase):
         self._subdivide_points_check(curve)
 
     def test_subdivide_cubic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 1.0],
             [4.0, 6.0],
             [7.0, 3.0],
             [6.0, 5.0],
         ])
-        expected_l = np.array([
+        expected_l = np.asfortranarray([
             [0.0, 1.0],
             [2.0, 3.5],
             [3.75, 4.0],
             [4.875, 4.125],
         ])
-        expected_r = np.array([
+        expected_r = np.asfortranarray([
             [4.875, 4.125],
             [6.0, 4.25],
             [6.5, 4.0],
@@ -432,13 +432,13 @@ class TestCurve(utils.NumPyTestCase):
         self._subdivide_points_check(curve)
 
     def test_intersect_empty(self):
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
         curve1 = self._make_one(nodes1, 1)
 
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [3.0, 0.0],
             [2.0, 1.0],
         ])
@@ -448,7 +448,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(result.shape, (0, 2))
 
     def test_intersect_at_boundary(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, -0.25],
             [1.0, 0.0],
@@ -457,7 +457,7 @@ class TestCurve(utils.NumPyTestCase):
         left, right = curve.subdivide()
 
         result = left.intersect(right)
-        expected = np.array([[0.5, -0.125]])
+        expected = np.asfortranarray([[0.5, -0.125]])
         self.assertEqual(result, expected)
 
     def _intersect_helper(self, **kwargs):
@@ -466,14 +466,14 @@ class TestCurve(utils.NumPyTestCase):
         #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
         #       We expect them to intersect at s = 1/3, t = 2/3, which is
         #       the point [1/2, 3/4].
-        nodes_left = np.array([
+        nodes_left = np.asfortranarray([
             [0.25, 0.4375],
             [0.625, 1.0],
             [1.0, 1.0],
         ])
         left = self._make_one(nodes_left, 2)
 
-        nodes_right = np.array([
+        nodes_right = np.asfortranarray([
             [0.0, 1.0],
             [0.375, 1.0],
             [0.75, 0.4375],
@@ -481,7 +481,7 @@ class TestCurve(utils.NumPyTestCase):
         right = self._make_one(nodes_right, 2)
 
         result = left.intersect(right, **kwargs)
-        expected = np.array([[0.5, 0.75]])
+        expected = np.asfortranarray([[0.5, 0.75]])
         self.assertEqual(result, expected)
 
     def test_intersect(self):
@@ -491,7 +491,7 @@ class TestCurve(utils.NumPyTestCase):
         self._intersect_helper(_verify=False)
 
     def test_intersect_non_curve(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, -0.25],
             [1.0, 0.0],
@@ -501,7 +501,7 @@ class TestCurve(utils.NumPyTestCase):
             curve.intersect(object())
 
     def test_intersect_unsupported_dimension(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0, 0.0],
             [0.5, -0.25, 0.75],
             [1.0, 0.0, 1.25],
@@ -515,7 +515,7 @@ class TestCurve(utils.NumPyTestCase):
             curve2.intersect(curve1)
 
     def test_elevate(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.5],
             [1.0, 1.0],
             [3.0, 2.0],
@@ -535,7 +535,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(orig_vals, new_vals)
 
     def test_specialize(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 6.0],
             [5.0, 2.0],
@@ -548,7 +548,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(new_curve.start, start)
         self.assertEqual(new_curve.end, end)
         self.assertIs(new_curve.root, curve)
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.6875, 2.375],
             [1.78125, 4.5625],
             [4.046875, 2.84375],
@@ -556,17 +556,17 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(new_curve.nodes, expected)
 
     def test_locate_wrong_shape(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
         curve = self._make_one(nodes, 1)
-        point = np.array([[0.0, 1.0, 2.0]])
+        point = np.asfortranarray([[0.0, 1.0, 2.0]])
         with self.assertRaises(ValueError):
             curve.locate(point)
 
     def test_locate(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
             [2.0, -1.0],
@@ -574,6 +574,6 @@ class TestCurve(utils.NumPyTestCase):
         ])
         curve = self._make_one(nodes, 3)
         s_val = 0.75
-        point = curve.evaluate_multi(np.array([s_val]))
+        point = curve.evaluate_multi(np.asfortranarray([s_val]))
         result = curve.locate(point)
         self.assertEqual(result, s_val)

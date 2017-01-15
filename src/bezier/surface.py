@@ -138,7 +138,7 @@ class Surface(_base.Base):
     .. doctest:: surface-constructor
 
        >>> import bezier
-       >>> nodes = np.array([
+       >>> nodes = np.asfortranarray([
        ...     [0.0  , 0.0  ],
        ...     [0.5  , 0.0  ],
        ...     [1.0  , 0.25 ],
@@ -292,7 +292,7 @@ class Surface(_base.Base):
            import numpy as np
            import bezier
 
-           nodes = np.array([
+           nodes = np.asfortranarray([
                [0.0, 0.0],
                [1.0, 0.0],
                [0.0, 1.0],
@@ -405,7 +405,7 @@ class Surface(_base.Base):
         .. doctest:: surface-edges
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0   ,  0.0   ],
            ...     [0.5   , -0.1875],
            ...     [1.0   ,  0.0   ],
@@ -474,7 +474,7 @@ class Surface(_base.Base):
 
            import numpy as np
            import bezier
-           nodes = np.array([
+           nodes = np.asfortranarray([
                [0.0  , 0.0  ],
                [0.5  , 0.0  ],
                [1.0  , 0.25 ],
@@ -487,7 +487,7 @@ class Surface(_base.Base):
         .. doctest:: surface-barycentric
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0  , 0.0  ],
            ...     [0.5  , 0.0  ],
            ...     [1.0  , 0.25 ],
@@ -575,7 +575,7 @@ class Surface(_base.Base):
         .. doctest:: surface-eval-multi2
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [ 0. , 0.  ],
            ...     [ 1. , 0.75],
            ...     [ 2. , 1.  ],
@@ -586,7 +586,7 @@ class Surface(_base.Base):
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> surface
            <Surface (degree=2, dimension=2)>
-           >>> param_vals = np.array([
+           >>> param_vals = np.asfortranarray([
            ...     [0.   , 0.25, 0.75 ],
            ...     [1.   , 0.  , 0.   ],
            ...     [0.25 , 0.5 , 0.25 ],
@@ -663,7 +663,7 @@ class Surface(_base.Base):
         .. doctest:: surface-cartesian
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0 , 0.0  ],
            ...     [0.5 , 0.5  ],
            ...     [1.0 , 0.625],
@@ -708,7 +708,7 @@ class Surface(_base.Base):
         .. doctest:: surface-eval-multi1
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [ 0.0, 0.0],
            ...     [ 2.0, 1.0],
            ...     [-3.0, 2.0],
@@ -716,7 +716,7 @@ class Surface(_base.Base):
            >>> surface = bezier.Surface(nodes, degree=1)
            >>> surface
            <Surface (degree=1, dimension=2)>
-           >>> param_vals = np.array([
+           >>> param_vals = np.asfortranarray([
            ...     [0.0  , 0.0  ],
            ...     [0.125, 0.625],
            ...     [0.5  , 0.5  ],
@@ -814,7 +814,7 @@ class Surface(_base.Base):
         .. doctest:: surface-subdivide
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [-1.0 , 0.0 ],
            ...     [ 0.5 , 0.5 ],
            ...     [ 2.0 , 0.0 ],
@@ -957,7 +957,7 @@ class Surface(_base.Base):
 
         .. doctest:: surface-is-valid1
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0, 0.0],
            ...     [1.0, 1.0],
            ...     [2.0, 2.0],
@@ -978,7 +978,7 @@ class Surface(_base.Base):
 
         .. doctest:: surface-is-valid2
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [ 0.0  , 0.0  ],
            ...     [ 0.5  , 0.125],
            ...     [ 1.0  , 0.0  ],
@@ -1002,7 +1002,7 @@ class Surface(_base.Base):
 
         .. doctest:: surface-is-valid3
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [1.0, 0.0],
            ...     [0.0, 0.0],
            ...     [1.0, 1.0],
@@ -1038,7 +1038,7 @@ class Surface(_base.Base):
 
         .. doctest:: surface-locate
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0 ,  0.0 ],
            ...     [0.5 , -0.25],
            ...     [1.0 ,  0.0 ],
@@ -1047,7 +1047,7 @@ class Surface(_base.Base):
            ...     [0.0 ,  1.0 ],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
-           >>> point = np.array([[0.59375, 0.25]])
+           >>> point = np.asfortranarray([[0.59375, 0.25]])
            >>> s, t = surface.locate(point)
            >>> s
            0.5
@@ -1190,7 +1190,7 @@ class Surface(_base.Base):
         .. doctest:: surface-elevate
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0 , 0.0 ],
            ...     [1.5 , 0.0 ],
            ...     [3.0 , 0.0 ],

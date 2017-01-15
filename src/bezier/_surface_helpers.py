@@ -47,7 +47,7 @@ _BAD_TANGENT = (
 _WRONG_CURVE = 'Start and end node not defined on same curve'
 # NOTE: The ``SUBDIVIDE`` matrices are public since used in
 #       the ``surface`` module.
-LINEAR_SUBDIVIDE = np.array([
+LINEAR_SUBDIVIDE = np.asfortranarray([
     [2, 0, 0],
     [1, 1, 0],
     [0, 2, 0],
@@ -55,7 +55,7 @@ LINEAR_SUBDIVIDE = np.array([
     [0, 1, 1],
     [0, 0, 2],
 ], dtype=_FLOAT64) / 2.0
-QUADRATIC_SUBDIVIDE = np.array([
+QUADRATIC_SUBDIVIDE = np.asfortranarray([
     [4, 0, 0, 0, 0, 0],
     [2, 2, 0, 0, 0, 0],
     [1, 2, 1, 0, 0, 0],
@@ -72,7 +72,7 @@ QUADRATIC_SUBDIVIDE = np.array([
     [0, 0, 0, 0, 2, 2],
     [0, 0, 0, 0, 0, 4],
 ], dtype=_FLOAT64) / 4.0
-CUBIC_SUBDIVIDE = np.array([
+CUBIC_SUBDIVIDE = np.asfortranarray([
     [8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
     [2, 4, 2, 0, 0, 0, 0, 0, 0, 0],
@@ -102,7 +102,7 @@ CUBIC_SUBDIVIDE = np.array([
     [0, 0, 0, 0, 0, 0, 0, 0, 4, 4],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
 ], dtype=_FLOAT64) / 8.0
-QUARTIC_SUBDIVIDE = np.array([
+QUARTIC_SUBDIVIDE = np.asfortranarray([
     [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [4, 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -155,7 +155,7 @@ QUARTIC_SUBDIVIDE = np.array([
 # We evaluate this at each of the 6 points in the quadratic
 # triangle and then stack them (2 rows * 6 = 12 rows)
 # pylint: disable=bad-whitespace
-_QUADRATIC_JACOBIAN_HELPER = np.array([
+_QUADRATIC_JACOBIAN_HELPER = np.asfortranarray([
     [-2,  2, 0,  0, 0, 0],
     [-2,  0, 0,  2, 0, 0],
     [-1,  0, 1,  0, 0, 0],
@@ -169,7 +169,7 @@ _QUADRATIC_JACOBIAN_HELPER = np.array([
     [ 0,  0, 0, -2, 2, 0],  # noqa: E201
     [ 0,  0, 0, -2, 0, 2],  # noqa: E201
 ], dtype=_FLOAT64)
-_QUADRATIC_TO_BERNSTEIN = np.array([
+_QUADRATIC_TO_BERNSTEIN = np.asfortranarray([
     [ 2, 0,  0, 0, 0,  0],  # noqa: E201
     [-1, 4, -1, 0, 0,  0],
     [ 0, 0,  2, 0, 0,  0],  # noqa: E201
@@ -186,7 +186,7 @@ _QUADRATIC_TO_BERNSTEIN = np.array([
 # We evaluate this at each of the 15 points in the quartic
 # triangle and then stack them (2 rows * 15 = 30 rows)
 # pylint: disable=bad-whitespace
-_CUBIC_JACOBIAN_HELPER = np.array([
+_CUBIC_JACOBIAN_HELPER = np.asfortranarray([
     [-48,  48,   0,  0,   0,   0,  0,   0,  0,  0],
     [-48,   0,   0,  0,  48,   0,  0,   0,  0,  0],
     [-27,   9,  15,  3,   0,   0,  0,   0,  0,  0],
@@ -219,7 +219,7 @@ _CUBIC_JACOBIAN_HELPER = np.array([
     [  0,   0,   0,  0,   0,   0,  0, -48,  0, 48],  # noqa: E201
 ], dtype=_FLOAT64) / 16.0
 # pylint: enable=bad-whitespace
-_QUARTIC_TO_BERNSTEIN = np.array([
+_QUARTIC_TO_BERNSTEIN = np.asfortranarray([
     [36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [-39, 144, -108, 48, -9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [26, -128, 240, -128, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -315,7 +315,7 @@ def _2x2_det(mat):
     .. doctest:: 2-by-2
 
        >>> import numpy as np
-       >>> mat = np.array([
+       >>> mat = np.asfortranarray([
        ...     [-24.0, 3.0],
        ...     [-27.0, 0.0],
        ... ]) / 16.0
@@ -785,7 +785,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
     .. doctest:: newton-refine-surface
 
-       >>> nodes = np.array([
+       >>> nodes = np.asfortranarray([
        ...     [0.0, 0.0],
        ...     [1.0, 0.0],
        ...     [2.0, 0.0],
@@ -841,11 +841,11 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
     # The first column of the jacobian matrix is B_s (i.e. the
     # left-most values in ``jac_both``).
-    jac_mat = np.array([
+    jac_mat = np.asfortranarray([
         [jac_both[0, 0], jac_both[0, 2]],
         [jac_both[0, 1], jac_both[0, 3]],
     ])
-    rhs = np.array([
+    rhs = np.asfortranarray([
         [x_val - surf_x],
         [y_val - surf_y],
     ])
@@ -894,7 +894,7 @@ def locate_point(surface, x_val, y_val):
         surface._nodes, surface._degree, x_val, y_val, s_approx, t_approx)
 
     actual = surface.evaluate_cartesian(s, t, _verify=False)
-    expected = np.array([[x_val, y_val]])
+    expected = np.asfortranarray([[x_val, y_val]])
     if not _helpers.vector_close(actual, expected, eps=_LOCATE_EPS):
         s, t = newton_refine(
             surface._nodes, surface._degree, x_val, y_val, s, t)
@@ -939,13 +939,13 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection1
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [1.0 , 0.0 ],
        ...     [1.75, 0.25],
        ...     [2.0 , 1.0 ],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [0.0   , 0.0   ],
        ...     [1.6875, 0.0625],
        ...     [2.0   , 0.5   ],
@@ -1000,13 +1000,13 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection2
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [1.0, 0.0],
        ...     [1.5, 1.0],
        ...     [2.0, 0.0],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [0.0, 0.0],
        ...     [1.5, 1.0],
        ...     [3.0, 0.0],
@@ -1036,13 +1036,13 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection3
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [2.0, 0.0],
        ...     [1.5, 1.0],
        ...     [1.0, 0.0],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [3.0, 0.0],
        ...     [1.5, 1.0],
        ...     [0.0, 0.0],
@@ -1070,13 +1070,13 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection4
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [2.0, 0.0],
        ...     [1.5, 1.0],
        ...     [1.0, 0.0],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [0.0, 0.0],
        ...     [1.5, 1.0],
        ...     [3.0, 0.0],
@@ -1105,13 +1105,13 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection5
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [1.0, 0.0],
        ...     [1.5, 1.0],
        ...     [2.0, 0.0],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [3.0, 0.0],
        ...     [1.5, 1.0],
        ...     [0.0, 0.0],
@@ -1141,13 +1141,13 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection6
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [ 0.375,  0.0625],
        ...     [-0.125, -0.0625],
        ...     [-0.125,  0.0625],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [ 0.75,  0.25],
        ...     [-0.25, -0.25],
        ...     [-0.25,  0.25],
@@ -1184,13 +1184,13 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection7
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes1a = np.array([
+       >>> nodes1a = np.asfortranarray([
        ...     [0.0, 0.0 ],
        ...     [4.5, 0.0 ],
        ...     [9.0, 2.25],
        ... ])
        >>> curve1a = bezier.Curve(nodes1a, degree=2)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [11.25, 0.0],
        ...     [ 9.0 , 4.5],
        ...     [ 2.75, 1.0],
@@ -1206,7 +1206,7 @@ def classify_intersection(intersection):
        ValueError: ('Intersection occurs at the end of an edge',
                     's', 1.0, 't', 0.375)
        >>>
-       >>> nodes1b = np.array([
+       >>> nodes1b = np.asfortranarray([
        ...     [9.0, 2.25 ],
        ...     [4.5, 2.375],
        ...     [0.0, 2.5  ],
@@ -1233,7 +1233,7 @@ def classify_intersection(intersection):
     .. doctest:: classify-intersection8
        :options: +NORMALIZE_WHITESPACE
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [0.25 , 1.0  ],
        ...     [0.0  , 0.5  ],
        ...     [0.0  , 0.0  ],
@@ -1242,7 +1242,7 @@ def classify_intersection(intersection):
        ...     [1.0  , 0.75 ],
        ... ])
        >>> surface1 = bezier.Surface(nodes1, degree=2)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [ 0.0625, 0.5  ],
        ...     [-0.25  , 1.0  ],
        ...     [-1.0   , 1.0  ],
@@ -2124,11 +2124,11 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         is the ambient dimension where ``nodes`` reside).
     """
     if degree == 1:
-        weights = np.array([
+        weights = np.asfortranarray([
             [lambda1, lambda2, lambda3],
         ])
     elif degree == 2:
-        weights = np.array([
+        weights = np.asfortranarray([
             [
                 lambda1 * lambda1,
                 2.0 * lambda1 * lambda2,
@@ -2139,7 +2139,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
             ]
         ])
     elif degree == 3:
-        weights = np.array([
+        weights = np.asfortranarray([
             [
                 lambda1 * lambda1 * lambda1,
                 3.0 * lambda1 * lambda1 * lambda2,

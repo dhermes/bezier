@@ -23,15 +23,17 @@ Curve-Line Intersection
 .. doctest:: intersect-1-8
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.0, 0.375],
    ...     [1.0, 0.375],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> curve1.intersect(curve2)
    array([[ 0.25 , 0.375],
           [ 0.75 , 0.375]])
@@ -42,15 +44,17 @@ Curve-Line Intersection
 .. doctest:: intersect-1-9
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.5, 0.0 ],
    ...     [0.5, 0.75],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> curve1.intersect(curve2)
    array([[ 0.5, 0.5]])
 
@@ -60,15 +64,17 @@ Curve-Line Intersection
 .. doctest:: intersect-10-11
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [4.5, 9.0],
    ...     [9.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.0, 8.0],
    ...     [6.0, 0.0],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> curve1.intersect(curve2)
    array([[ 3., 4.]])
 
@@ -78,14 +84,16 @@ Curve-Line Intersection
 .. doctest:: intersect-8-9
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.375],
    ...     [1.0, 0.375],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=1)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.5, 0.0 ],
    ...     [0.5, 0.75],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> curve1.intersect(curve2)
    array([[ 0.5 , 0.375]])
 
@@ -95,15 +103,17 @@ Curve-Line Intersection
 .. doctest:: intersect-29-30
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [-1.0, 1.0],
    ...     [ 0.5, 0.5],
    ...     [ 0.0, 2.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [ 0.5 , 0.5 ],
    ...     [-0.25, 1.25],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> curve1.intersect(curve2)
    array([[ 0., 1.]])
 
@@ -120,16 +130,18 @@ with zero error:
 .. doctest:: intersect-1-5
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.0,  0.75],
    ...     [0.5, -0.25],
    ...     [1.0,  0.75],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    array([[ 0.25 , 0.375],
           [ 0.75 , 0.375]])
@@ -140,16 +152,18 @@ with zero error:
 .. doctest:: intersect-3-4
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [1.5, 3.0],
    ...     [3.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [ 3.0  ,  1.5    ],
    ...     [ 2.625, -0.90625],
    ...     [-0.75 ,  2.4375 ],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    array([[ 0.75  , 1.125  ],
           [ 2.625 , 0.65625]])
@@ -160,16 +174,18 @@ with zero error:
 .. doctest:: intersect-14-16
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0  , 0.0  ],
    ...     [0.375, 0.75 ],
    ...     [0.75 , 0.375],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.25 , 0.5625],
    ...     [0.625, 0.1875],
    ...     [1.0  , 0.9375],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    array([[ 0.375 , 0.46875],
           [ 0.625 , 0.46875]])
@@ -183,19 +199,21 @@ numbers, we can compute the intersection to machine precision:
 .. doctest:: intersect-1-2
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [1.125,  0.5],
    ...     [0.625, -0.5],
    ...     [0.125,  0.5],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> sq31 = np.sqrt(31.0)
-   >>> expected = np.array([
+   >>> expected = np.asfortranarray([
    ...     [36 - 4 * sq31, 16 + sq31],
    ...     [36 + 4 * sq31, 16 - sq31],
    ... ]) / 64.0
@@ -209,19 +227,21 @@ numbers, we can compute the intersection to machine precision:
 .. doctest:: intersect-1-7
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.0, 0.265625],
    ...     [0.5, 0.234375],
    ...     [1.0, 0.265625],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> sq33 = np.sqrt(33.0)
-   >>> expected = np.array([
+   >>> expected = np.asfortranarray([
    ...     [33 - 4 * sq33, 17],
    ...     [33 + 4 * sq33, 17],
    ... ]) / 66.0
@@ -235,21 +255,23 @@ numbers, we can compute the intersection to machine precision:
 .. doctest:: intersect-1-13
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.0 ,  0.0],
    ...     [0.25,  2.0],
    ...     [0.5 , -2.0],
    ...     [0.75,  2.0],
    ...     [1.0 ,  0.0],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=4)
    >>> intersections = curve1.intersect(curve2)
    >>> sq7 = np.sqrt(7.0)
-   >>> expected = np.array([
+   >>> expected = np.asfortranarray([
    ...     [7 - sq7, 6],
    ...     [7 + sq7, 6],
    ...     [      0, 0],
@@ -265,19 +287,21 @@ numbers, we can compute the intersection to machine precision:
 .. doctest:: intersect-21-22
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [-0.125, -0.28125],
    ...     [ 0.5  ,  1.28125],
    ...     [ 1.125, -0.28125],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [ 1.5625, -0.0625],
    ...     [-1.5625,  0.25  ],
    ...     [ 1.5625,  0.5625],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> sq5 = np.sqrt(5.0)
-   >>> expected = np.array([
+   >>> expected = np.asfortranarray([
    ...     [6 - 2 * sq5, 5 - sq5],
    ...     [          4, 6      ],
    ...     [         16, 0      ],
@@ -296,23 +320,25 @@ larger.
 .. doctest:: intersect-15-25
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.25 , 0.625],
    ...     [0.625, 0.25 ],
    ...     [1.0  , 1.0  ],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.0 , 0.5],
    ...     [0.25, 1.0],
    ...     [0.75, 1.5],
    ...     [1.0 , 0.5],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=3)
    >>> intersections = curve1.intersect(curve2)
    >>> s_vals = np.roots([486, -3726, 13905, -18405, 6213, 1231])
    >>> _, s_val, _ = np.sort(s_vals[s_vals.imag == 0].real)
    >>> x_val = (3 * s_val + 1) / 4
    >>> y_val = (9 * s_val * s_val - 6 * s_val + 5) / 8
-   >>> expected = np.array([
+   >>> expected = np.asfortranarray([
    ...     [x_val, y_val],
    ... ])
    >>> max_err = np.max(np.abs(intersections - expected))
@@ -325,19 +351,21 @@ larger.
 .. doctest:: intersect-11-26
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 8.0],
    ...     [6.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=1)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.375, 7.0],
    ...     [2.125, 8.0],
    ...     [3.875, 0.0],
    ...     [5.625, 1.0],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=3)
    >>> intersections = curve1.intersect(curve2)
    >>> sq7 = np.sqrt(7.0)
-   >>> expected = np.array([
+   >>> expected = np.asfortranarray([
    ...     [           72, 96           ],
    ...     [72 - 21 * sq7, 96 + 28 * sq7],
    ...     [72 + 21 * sq7, 96 - 28 * sq7],
@@ -352,20 +380,22 @@ larger.
 .. doctest:: intersect-8-27
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.375],
    ...     [1.0, 0.375],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=1)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.125, 0.25  ],
    ...     [0.375, 0.75  ],
    ...     [0.625, 0.0   ],
    ...     [0.875, 0.1875],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=3)
    >>> intersections = curve1.intersect(curve2)
    >>> s_val1, s_val2, _ = np.sort(np.roots(
    ...     [17920, -29760, 13512, -1691]))
-   >>> expected = np.array([
+   >>> expected = np.asfortranarray([
    ...     [s_val2, 0.375],
    ...     [s_val1, 0.375],
    ... ])
@@ -382,16 +412,18 @@ Intersections at Endpoints
 .. doctest:: intersect-1-18
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [1.0,  0.0],
    ...     [1.5, -1.0],
    ...     [2.0,  0.0],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    array([[ 1., 0.]])
 
@@ -401,16 +433,18 @@ Intersections at Endpoints
 .. doctest:: intersect-1-19
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [2.0, 0.0],
    ...     [1.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    array([[ 1., 0.]])
 
@@ -420,16 +454,18 @@ Intersections at Endpoints
 .. doctest:: intersect-10-17
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [4.5, 9.0],
    ...     [9.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [11.0,  8.0],
    ...     [ 7.0, 10.0],
    ...     [ 3.0,  4.0],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    array([[ 3., 4.]])
 
@@ -442,12 +478,13 @@ Detecting Self-Intersections
 .. doctest:: intersect-12-self
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [ 0.0 , 2.0  ],
    ...     [-1.0 , 0.0  ],
    ...     [ 1.0 , 1.0  ],
    ...     [-0.75, 1.625],
-   ... ]))
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=3)
    >>> left, right = curve1.subdivide()
    >>> left.intersect(right)
    array([[-0.09375 , 0.828125],
@@ -482,16 +519,18 @@ successfully terminates
 .. doctest:: intersect-1-6
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.0, 1.0],
    ...     [0.5, 0.0],
    ...     [1.0, 1.0],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    array([[ 0.5, 0.5]])
 
@@ -510,16 +549,18 @@ compute:
 .. doctest:: intersect-14-15
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0  , 0.0  ],
    ...     [0.375, 0.75 ],
    ...     [0.75 , 0.375],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.25 , 0.625],
    ...     [0.625, 0.25 ],
    ...     [1.0  , 1.0  ],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    Traceback (most recent call last):
      ...
@@ -534,15 +575,17 @@ are resolved:
 .. doctest:: intersect-10-23
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [4.5, 9.0],
    ...     [9.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [3.0, 4.5],
    ...     [8.0, 4.5],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> curve1.intersect(curve2)
    array([[ 4.5, 4.5]])
 
@@ -560,16 +603,18 @@ we still see a failure
 .. doctest:: intersect-28-29
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [ 0.0, 0.0],
    ...     [-0.5, 1.5],
    ...     [ 1.0, 1.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [-1.0, 1.0],
    ...     [ 0.5, 0.5],
    ...     [ 0.0, 2.0],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    Traceback (most recent call last):
      ...
@@ -586,16 +631,18 @@ the library fails as well
 .. doctest:: intersect-1-24
    :options: +NORMALIZE_WHITESPACE
 
-   >>> curve1 = bezier.Curve.from_nodes(np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
-   ... ]))
-   >>> curve2 = bezier.Curve.from_nodes(np.array([
+   ... ])
+   >>> curve1 = bezier.Curve(nodes1, degree=2)
+   >>> nodes2 = np.asfortranarray([
    ...     [0.25,  0.375],
    ...     [0.75,  0.875],
    ...     [1.25, -0.625],
-   ... ]))
+   ... ])
+   >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
    Traceback (most recent call last):
      ...

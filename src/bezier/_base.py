@@ -43,7 +43,7 @@ class Base(object):
         _, dimension = nodes.shape
         self._dimension = dimension
         if _copy:
-            self._nodes = nodes.copy()
+            self._nodes = nodes.copy(order='A')
         else:
             self._nodes = nodes
 
@@ -64,7 +64,7 @@ class Base(object):
     @property
     def nodes(self):
         """numpy.ndarray: The nodes that define the current shape."""
-        return self._nodes.copy()
+        return self._nodes.copy(order='A')
 
     def __repr__(self):
         """Representation of current object.

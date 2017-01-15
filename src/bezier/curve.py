@@ -35,19 +35,19 @@ from bezier import _plot_helpers
 
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
-_LINEAR_SUBDIVIDE = np.array([
+_LINEAR_SUBDIVIDE = np.asfortranarray([
     [1.0, 0.0],
     [0.5, 0.5],
     [0.0, 1.0],
 ])
-_QUADRATIC_SUBDIVIDE = np.array([
+_QUADRATIC_SUBDIVIDE = np.asfortranarray([
     [1.0, 0.0, 0.0],
     [0.5, 0.5, 0.0],
     [0.25, 0.5, 0.25],
     [0.0, 0.5, 0.5],
     [0.0, 0.0, 1.0],
 ])
-_CUBIC_SUBDIVIDE = np.array([
+_CUBIC_SUBDIVIDE = np.asfortranarray([
     [1.0, 0.0, 0.0, 0.0],
     [0.5, 0.5, 0.0, 0.0],
     [0.25, 0.5, 0.25, 0.0],
@@ -77,7 +77,7 @@ class Curve(_base.Base):
     .. doctest:: curve-constructor
 
        >>> import bezier
-       >>> nodes = np.array([
+       >>> nodes = np.asfortranarray([
        ...     [0.0  , 0.0],
        ...     [0.625, 0.5],
        ...     [1.0  , 0.5],
@@ -202,7 +202,7 @@ class Curve(_base.Base):
         .. doctest:: curve-start
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0, 0.0],
            ...     [1.0, 2.0],
            ... ])
@@ -243,7 +243,7 @@ class Curve(_base.Base):
            import numpy as np
            import bezier
 
-           nodes = np.array([
+           nodes = np.asfortranarray([
                [0.0, 0.0],
                [0.75, 0.0],
                [1.0, 1.0],
@@ -280,7 +280,7 @@ class Curve(_base.Base):
            import numpy as np
            import bezier
 
-           nodes = np.array([
+           nodes = np.asfortranarray([
                [0.0, 0.0],
                [1.0, 0.0],
                [0.0, 1.0],
@@ -353,7 +353,7 @@ class Curve(_base.Base):
         .. doctest:: curve-eval
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0  , 0.0],
            ...     [0.625, 0.5],
            ...     [1.0  , 0.5],
@@ -374,7 +374,8 @@ class Curve(_base.Base):
             numpy.ndarray: The point on the curve (as a two dimensional
             NumPy array with a single row).
         """
-        return _curve_helpers.evaluate_multi(self._nodes, np.array([s]))
+        return _curve_helpers.evaluate_multi(
+            self._nodes, np.asfortranarray([s]))
 
     def evaluate_multi(self, s_vals):
         r"""Evaluate :math:`B(s)` for multiple points along the curve.
@@ -403,7 +404,7 @@ class Curve(_base.Base):
         .. doctest:: curve-eval-multi
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0, 0.0, 0.0],
            ...     [1.0, 2.0, 3.0],
            ... ])
@@ -474,7 +475,7 @@ class Curve(_base.Base):
         .. doctest:: curve-subdivide
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0 , 0.0],
            ...     [1.25, 3.0],
            ...     [2.0 , 1.0],
@@ -542,13 +543,13 @@ class Curve(_base.Base):
         .. doctest:: curve-intersect
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes1 = np.array([
+           >>> nodes1 = np.asfortranarray([
            ...     [0.0  , 0.0  ],
            ...     [0.375, 0.75 ],
            ...     [0.75 , 0.375],
            ... ])
            >>> curve1 = bezier.Curve(nodes1, degree=2)
-           >>> nodes2 = np.array([
+           >>> nodes2 = np.asfortranarray([
            ...     [0.5, 0.0 ],
            ...     [0.5, 0.75],
            ... ])
@@ -618,7 +619,7 @@ class Curve(_base.Base):
         .. doctest:: curve-elevate
            :options: +NORMALIZE_WHITESPACE
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0, 0.0],
            ...     [1.5, 1.5],
            ...     [3.0, 0.0],
@@ -656,7 +657,7 @@ class Curve(_base.Base):
 
         .. doctest:: curve-specialize
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0, 0.0],
            ...     [0.5, 1.0],
            ...     [1.0, 0.0],
@@ -683,7 +684,7 @@ class Curve(_base.Base):
            import numpy as np
            import bezier
 
-           nodes = np.array([
+           nodes = np.asfortranarray([
                [0.0, 0.0],
                [0.5, 1.0],
                [1.0, 0.0],
@@ -731,18 +732,18 @@ class Curve(_base.Base):
 
         .. doctest:: curve-locate
 
-           >>> nodes = np.array([
+           >>> nodes = np.asfortranarray([
            ...     [0.0, 0.0],
            ...     [1.0, 2.0],
            ...     [3.0, 1.0],
            ...     [4.0, 0.0],
            ... ])
            >>> curve = bezier.Curve(nodes, degree=3)
-           >>> point1 = np.array([[3.09375, 0.703125]])
+           >>> point1 = np.asfortranarray([[3.09375, 0.703125]])
            >>> s = curve.locate(point1)
            >>> s
            0.75
-           >>> point2 = np.array([[2.0, 0.5]])
+           >>> point2 = np.asfortranarray([[2.0, 0.5]])
            >>> curve.locate(point2) is None
            True
 

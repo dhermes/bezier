@@ -67,7 +67,7 @@ class Test__evaluate_multi(utils.NumPyTestCase):
         num_vals = 129
         s_vals = np.linspace(0.0, 1.0, num_vals)
         # B(s) = [s + 1, 1 - 2 s, 3 s - 7]
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 1.0, -7.0],
             [2.0, -1.0, -4.0],
         ])
@@ -85,7 +85,7 @@ class Test__evaluate_multi(utils.NumPyTestCase):
         num_vals = 65
         s_vals = np.linspace(0.0, 1.0, num_vals)
         # B(s) = [s(4 - s), 2s(2s - 1)]
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [2.0, -1.0],
             [3.0, 2.0],
@@ -119,7 +119,7 @@ class Test__vec_size(unittest.TestCase):
         return _curve_helpers._vec_size(nodes, s_val)
 
     def test_linear(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [3.0, -4.0],
         ])
@@ -127,7 +127,7 @@ class Test__vec_size(unittest.TestCase):
         self.assertEqual(size, 0.25 * 5.0)
 
     def test_quadratic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [2.0, 3.0],
             [1.0, 6.0],
@@ -145,7 +145,7 @@ class Test_compute_length(unittest.TestCase):
         return _curve_helpers.compute_length(nodes, degree)
 
     def test_linear(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [3.0, 4.0],
         ])
@@ -154,7 +154,7 @@ class Test_compute_length(unittest.TestCase):
 
     @unittest.skipIf(SCIPY_INT is None, 'SciPy not installed')
     def test_quadratic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
             [2.0, 0.0],
@@ -181,12 +181,12 @@ class Test_elevate_nodes(utils.NumPyTestCase):
         return _curve_helpers.elevate_nodes(nodes, degree, dimension)
 
     def test_linear(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [2.0, 4.0],
         ])
         result = self._call_function_under_test(nodes, 1, 2)
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
             [2.0, 4.0],
@@ -194,13 +194,13 @@ class Test_elevate_nodes(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_quadratic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.5, 0.75],
             [3.0, 0.5, 3.0],
             [6.0, 0.5, 2.25],
         ])
         result = self._call_function_under_test(nodes, 2, 3)
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.0, 0.5, 0.75],
             [2.0, 0.5, 2.25],
             [4.0, 0.5, 2.75],
@@ -219,12 +219,12 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
             nodes, lambda1, lambda2)
 
     def test_it(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 1.0],
             [3.0, 5.0],
         ])
         result = self._call_function_under_test(nodes, 0.25, 0.75)
-        self.assertEqual(result, np.array([[2.25, 4.0]]))
+        self.assertEqual(result, np.asfortranarray([[2.25, 4.0]]))
 
 
 class Test__specialize_curve(utils.NumPyTestCase):
@@ -238,13 +238,13 @@ class Test__specialize_curve(utils.NumPyTestCase):
             nodes, start, end, curve_start, curve_end, degree)
 
     def test_linear(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
         result, true_start, true_end = self._call_function_under_test(
             nodes, 0.25, 0.75, 0.125, 0.25, 1)
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.25, 0.25],
             [0.75, 0.75],
         ])
@@ -255,7 +255,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
     def test_againt_subdivision(self):
         import bezier
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 1.0],
             [1.0, 6.0],
             [3.0, 5.0],
@@ -276,7 +276,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
         self.assertEqual(true_end, right.end)
 
     def test_cubic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, -1.0],
             [1.0, -2.0],
@@ -284,7 +284,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
         ])
         result, true_start, true_end = self._call_function_under_test(
             nodes, 0.125, 0.625, 0.0, 1.0, 3)
-        expected = np.array([
+        expected = np.asfortranarray([
             [171, -187],
             [375, -423],
             [499, -579],
@@ -295,7 +295,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
         self.assertEqual(true_end, 0.625)
 
     def test_quartic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 5.0],
             [1.0, 6.0],
             [1.0, 7.0],
@@ -304,7 +304,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
         ])
         result, true_start, true_end = self._call_function_under_test(
             nodes, 0.5, 0.75, 0.0, 1.0, 4)
-        expected = np.array([
+        expected = np.asfortranarray([
             [1.5625, 6.375],
             [1.78125, 6.4375],
             [2.015625, 6.46875],
@@ -338,7 +338,7 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
 
     def test_line(self):
         degree = 1
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
@@ -353,7 +353,7 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
 
     def test_quadratic(self):
         degree = 2
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.25, 0.25],
@@ -370,7 +370,7 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
 
     def test_cubic(self):
         degree = 3
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.25, 1.0],
             [0.75, 0.5],
@@ -415,7 +415,7 @@ class Test_get_curvature(unittest.TestCase):
 
     def test_line(self):
         s = 0.5
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
@@ -425,7 +425,7 @@ class Test_get_curvature(unittest.TestCase):
 
     def test_elevated_line(self):
         s = 0.25
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 0.5],
             [1.0, 1.0],
@@ -436,7 +436,7 @@ class Test_get_curvature(unittest.TestCase):
 
     def test_quadratic(self):
         s = 0.5
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],
@@ -457,13 +457,13 @@ class Test_newton_refine(unittest.TestCase):
     def test_it(self):
         import bezier
 
-        curve = bezier.Curve.from_nodes(np.array([
+        curve = bezier.Curve.from_nodes(np.asfortranarray([
             [0.0, 0.0, 0.0],
             [1.0, -1.0, 1.0],
             [3.0, 2.0, 2.0],
             [2.0, 2.0, 4.0],
         ]))
-        point = curve.evaluate_multi(np.array([0.5]))
+        point = curve.evaluate_multi(np.asfortranarray([0.5]))
         new_s = self._call_function_under_test(curve, point, 0.25)
         self.assertEqual(110.0 * new_s, 57.0)
 
@@ -479,36 +479,36 @@ class Test_locate_point(unittest.TestCase):
     def test_it(self):
         import bezier
 
-        curve = bezier.Curve.from_nodes(np.array([
+        curve = bezier.Curve.from_nodes(np.asfortranarray([
             [0.0, 0.0, 0.0],
             [3.0, 0.0, -1.0],
             [1.0, 1.0, 3.0],
         ]))
-        point = curve.evaluate_multi(np.array([0.125]))
+        point = curve.evaluate_multi(np.asfortranarray([0.125]))
         result = self._call_function_under_test(curve, point)
         self.assertEqual(result, 0.125)
 
     def test_no_match(self):
         import bezier
 
-        curve = bezier.Curve.from_nodes(np.array([
+        curve = bezier.Curve.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],
         ]))
-        point = np.array([[0.5, 2.0]])
+        point = np.asfortranarray([[0.5, 2.0]])
         self.assertIsNone(self._call_function_under_test(curve, point))
 
     def test_failure_on_invalid(self):
         import bezier
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 2.0],
             [-1.0, 0.0],
             [1.0, 1.0],
             [-0.75, 1.625],
         ])
         curve = bezier.Curve(nodes, 3)
-        point = np.array([[-0.25, 1.375]])
+        point = np.asfortranarray([[-0.25, 1.375]])
         with self.assertRaises(ValueError):
             self._call_function_under_test(curve, point)

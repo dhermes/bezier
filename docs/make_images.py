@@ -116,7 +116,7 @@ def newton_refine2(s_vals, curve1, curve2):
     curve2.plot(256, ax=ax)
     ax.lines[-1].zorder = 1
 
-    points = curve1.evaluate_multi(np.array(s_vals))
+    points = curve1.evaluate_multi(np.asfortranarray(s_vals))
     colors = seaborn.dark_palette('blue', 5)
     ax.scatter(points[:, 0], points[:, 1], c=colors,
                s=20, alpha=0.75, zorder=2)
@@ -137,7 +137,7 @@ def newton_refine3(s_vals, curve1, curve2):
     curve2.plot(256, ax=ax)
     ax.lines[-1].zorder = 1
 
-    points = curve1.evaluate_multi(np.array(s_vals))
+    points = curve1.evaluate_multi(np.asfortranarray(s_vals))
     colors = seaborn.dark_palette('blue', 6)
     ax.scatter(points[:, 0], points[:, 1], c=colors,
                s=20, alpha=0.75, zorder=2)
@@ -234,7 +234,7 @@ def curve_evaluate(curve):
         return
 
     ax = curve.plot(256)
-    points = curve.evaluate_multi(np.array([0.75]))
+    points = curve.evaluate_multi(np.asfortranarray([0.75]))
     ax.plot(points[:, 0], points[:, 1], color='black',
             linestyle='None', marker='o')
 
@@ -458,7 +458,7 @@ def surface_subdivide1():
     if NO_IMAGES:
         return
 
-    surface = bezier.Surface.from_nodes(np.array([
+    surface = bezier.Surface.from_nodes(np.asfortranarray([
         [0.0, 0.0],
         [1.0, 0.0],
         [0.0, 1.0],
@@ -710,7 +710,7 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
     figure, (ax1, ax2) = plt.subplots(1, 2)
 
     # Plot features of the parameter space in ax1.
-    tri_surf = bezier.Surface.from_nodes(np.array([
+    tri_surf = bezier.Surface.from_nodes(np.asfortranarray([
         [0.0, 0.0],
         [1.0, 0.0],
         [0.0, 1.0],
@@ -725,7 +725,7 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
 
     # Plot the equivalent output in ax2.
     surface.plot(256, ax=ax2)
-    points = surface.evaluate_cartesian_multi(np.array([
+    points = surface.evaluate_cartesian_multi(np.asfortranarray([
         [s, t],
         [new_s, new_t],
     ]))
@@ -791,7 +791,7 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(np.array([
+    surface1 = bezier.Surface.from_nodes(np.asfortranarray([
         [1.0, 0.0],
         [1.75, 0.25],
         [2.0, 1.0],
@@ -799,7 +799,7 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
         [1.5, 1.5],
         [1.0, 2.0],
     ]))
-    surface2 = bezier.Surface.from_nodes(np.array([
+    surface2 = bezier.Surface.from_nodes(np.asfortranarray([
         [0.0, 0.0],
         [1.6875, 0.0625],
         [2.0, 0.5],
@@ -834,7 +834,7 @@ def classify_intersection2(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(np.array([
+    surface1 = bezier.Surface.from_nodes(np.asfortranarray([
         [1.0, 0.0],
         [1.5, 1.0],
         [2.0, 0.0],
@@ -842,7 +842,7 @@ def classify_intersection2(s, curve1, curve2):
         [1.75, 1.0],
         [1.5, 2.0],
     ]))
-    surface2 = bezier.Surface.from_nodes(np.array([
+    surface2 = bezier.Surface.from_nodes(np.asfortranarray([
         [0.0, 0.0],
         [1.5, 1.0],
         [3.0, 0.0],
@@ -862,7 +862,7 @@ def classify_intersection3(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(np.array([
+    surface1 = bezier.Surface.from_nodes(np.asfortranarray([
         [2.0, 0.0],
         [1.5, 1.0],
         [1.0, 0.0],
@@ -870,7 +870,7 @@ def classify_intersection3(s, curve1, curve2):
         [1.25, -1.0],
         [1.5, -2.0],
     ]))
-    surface2 = bezier.Surface.from_nodes(np.array([
+    surface2 = bezier.Surface.from_nodes(np.asfortranarray([
         [3.0, 0.0],
         [1.5, 1.0],
         [0.0, 0.0],
@@ -890,7 +890,7 @@ def classify_intersection4(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(np.array([
+    surface1 = bezier.Surface.from_nodes(np.asfortranarray([
         [2.0, 0.0],
         [1.5, 1.0],
         [1.0, 0.0],
@@ -898,7 +898,7 @@ def classify_intersection4(s, curve1, curve2):
         [1.25, -1.0],
         [1.5, -2.0],
     ]))
-    surface2 = bezier.Surface.from_nodes(np.array([
+    surface2 = bezier.Surface.from_nodes(np.asfortranarray([
         [0.0, 0.0],
         [1.5, 1.0],
         [3.0, 0.0],
@@ -918,7 +918,7 @@ def classify_intersection5(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(np.array([
+    surface1 = bezier.Surface.from_nodes(np.asfortranarray([
         [1.0, 0.0],
         [1.5, 1.0],
         [2.0, 0.0],
@@ -926,7 +926,7 @@ def classify_intersection5(s, curve1, curve2):
         [1.75, 0.9375],
         [1.5, 1.875],
     ]))
-    surface2 = bezier.Surface.from_nodes(np.array([
+    surface2 = bezier.Surface.from_nodes(np.asfortranarray([
         [3.0, 0.0],
         [1.5, 1.0],
         [0.0, 0.0],
@@ -946,7 +946,7 @@ def classify_intersection5(s, curve1, curve2):
     # Now add the "degenerate" intersection polygons. The first
     # comes from specializing to
     # left1(0.5, 1.0)-left2(0.0, 0.25)-right1(0.375, 0.5)
-    surface3 = bezier.Surface.from_nodes(np.array([
+    surface3 = bezier.Surface.from_nodes(np.asfortranarray([
         [1.5, 0.5],
         [1.75, 0.5],
         [2.0, 0.0],
@@ -959,7 +959,7 @@ def classify_intersection5(s, curve1, curve2):
 
     # The second comes from specializing to
     # left1(0.0, 0.5)-right1(0.5, 0.625)-left3(0.75, 1.0)
-    surface4 = bezier.Surface.from_nodes(np.array([
+    surface4 = bezier.Surface.from_nodes(np.asfortranarray([
         [1.0, 0.0],
         [1.25, 0.5],
         [1.5, 0.5],
@@ -991,7 +991,7 @@ def classify_intersection6(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(np.array([
+    surface1 = bezier.Surface.from_nodes(np.asfortranarray([
         [0.375, 0.0625],
         [-0.125, -0.0625],
         [-0.125, 0.0625],
@@ -999,7 +999,7 @@ def classify_intersection6(s, curve1, curve2):
         [-0.0625, 0.15625],
         [0.0, 0.25],
     ]))
-    surface2 = bezier.Surface.from_nodes(np.array([
+    surface2 = bezier.Surface.from_nodes(np.asfortranarray([
         [0.75, 0.25],
         [-0.25, -0.25],
         [-0.25, 0.25],
@@ -1019,7 +1019,7 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(np.array([
+    surface1 = bezier.Surface.from_nodes(np.asfortranarray([
         [0.0, 0.0],
         [4.5, 0.0],
         [9.0, 2.25],
@@ -1027,7 +1027,7 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
         [4.5, 2.375],
         [0.0, 2.5],
     ]))
-    surface2 = bezier.Surface.from_nodes(np.array([
+    surface2 = bezier.Surface.from_nodes(np.asfortranarray([
         [11.25, 0.0],
         [9.0, 4.5],
         [2.75, 1.0],
@@ -1060,7 +1060,7 @@ def get_curvature(nodes, s, tangent_vec, curvature):
 
     # Find the center of the circle along the direction
     # perpendicular to the tangent vector (90 degree left turn).
-    radius_dir = np.array([[-tangent_vec[0, 1], tangent_vec[0, 0]]])
+    radius_dir = np.asfortranarray([[-tangent_vec[0, 1], tangent_vec[0, 0]]])
     radius_dir /= np.linalg.norm(radius_dir, ord=2)
     point = curve.evaluate(s)
     circle_center = point + radius_dir / curvature
@@ -1104,7 +1104,7 @@ def newton_refine_curve(curve, point, s, new_s):
 
     ax = curve.plot(256)
     ax.plot(point[:, 0], point[:, 1], marker='H')
-    wrong_points = curve.evaluate_multi(np.array([s, new_s]))
+    wrong_points = curve.evaluate_multi(np.asfortranarray([s, new_s]))
     ax.plot(wrong_points[[0], 0], wrong_points[[0], 1],
             color='black', linestyle='None', marker='o')
     ax.plot(wrong_points[[1], 0], wrong_points[[1], 1],
@@ -1127,7 +1127,7 @@ def newton_refine_curve_cusp(curve, s_vals):
     ax = curve.plot(256)
     ax.lines[-1].zorder = 1
 
-    points = curve.evaluate_multi(np.array(s_vals))
+    points = curve.evaluate_multi(np.asfortranarray(s_vals))
     colors = seaborn.dark_palette('blue', 6)
     ax.scatter(points[:, 0], points[:, 1], c=colors,
                s=20, alpha=0.75, zorder=2)
@@ -1206,7 +1206,7 @@ def unit_triangle():
     if NO_IMAGES:
         return
 
-    nodes = np.array([
+    nodes = np.asfortranarray([
         [0.0, 0.0],
         [1.0, 0.0],
         [0.0, 1.0],

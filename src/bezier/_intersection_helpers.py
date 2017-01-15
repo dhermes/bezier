@@ -205,7 +205,7 @@ def _linearization_error(nodes, degree):
 
     .. doctest:: linearization-error
 
-       >>> nodes = np.array([
+       >>> nodes = np.asfortranarray([
        ...     [0.0,  0.0],
        ...     [3.0,  1.0],
        ...     [9.0, -2.0],
@@ -243,7 +243,7 @@ def _linearization_error(nodes, degree):
 
     .. doctest:: linearization-error-fail
 
-       >>> nodes = np.array([
+       >>> nodes = np.asfortranarray([
        ...     [ 0.0,  0.0],
        ...     [ 5.0, 12.0],
        ...     [10.0, 24.0],
@@ -366,12 +366,12 @@ def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
 
     .. doctest:: newton-refine1
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [0.0, 0.0],
        ...     [2.0, 4.0],
        ...     [4.0, 0.0],
        ... ])
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [2.0, 0.0],
        ...     [0.0, 3.0],
        ... ])
@@ -398,14 +398,14 @@ def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
 
     .. doctest:: newton-refine2
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [0.0 ,  0.0],
        ...     [0.25,  2.0],
        ...     [0.5 , -2.0],
        ...     [0.75,  2.0],
        ...     [1.0 ,  0.0],
        ... ])
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [0.0 , 1.0],
        ...     [0.25, 0.5],
        ...     [0.5 , 0.5],
@@ -449,12 +449,12 @@ def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
 
     .. doctest:: newton-refine3
 
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [0.0, 0.0],
        ...     [0.5, 1.0],
        ...     [1.0, 0.0],
        ... ])
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [0.0, 0.5],
        ...     [1.0, 0.5],
        ... ])
@@ -496,12 +496,12 @@ def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
        import bezier
        from bezier._intersection_helpers import newton_refine
 
-       nodes1 = np.array([
+       nodes1 = np.asfortranarray([
            [0.0, 0.0],
            [0.5, 1.0],
            [1.0, 0.0],
        ])
-       nodes2 = np.array([
+       nodes2 = np.asfortranarray([
            [0.0, 0.5],
            [1.0, 0.5],
        ])
@@ -580,12 +580,12 @@ def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
        import numpy as np
 
        def modified_update(s, t):
-           minus_G = np.array([
+           minus_G = np.asfortranarray([
                [t - s],
                [0.5 - 2.0 * s * (1.0 - s)],
                [2.0 - 4.0 * s],
            ])
-           DG = np.array([
+           DG = np.asfortranarray([
                [1.0, -1.0],
                [2.0 - 4.0 * s, 0.0],
                [4.0, 0.0],
@@ -631,8 +631,8 @@ def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
     """
     # NOTE: We form -F(s, t) since we want to solve -DF^{-1} F(s, t).
     func_val = (
-        _curve_helpers.evaluate_multi(nodes2, np.array([t])) -
-        _curve_helpers.evaluate_multi(nodes1, np.array([s])))
+        _curve_helpers.evaluate_multi(nodes2, np.asfortranarray([t])) -
+        _curve_helpers.evaluate_multi(nodes1, np.asfortranarray([s])))
     if np.all(func_val == 0.0):
         # No refinement is needed.
         return s, t
@@ -717,10 +717,10 @@ def _segment_intersection(start0, end0, start1, end1):
     .. doctest:: segment-intersection1
        :options: +NORMALIZE_WHITESPACE
 
-       >>> start0 = np.array([[0.0, 0.0]])
-       >>> end0 = np.array([[2.0, 2.0]])
-       >>> start1 = np.array([[-1.0, 2.0]])
-       >>> end1 = np.array([[1.0, 0.0]])
+       >>> start0 = np.asfortranarray([[0.0, 0.0]])
+       >>> end0 = np.asfortranarray([[2.0, 2.0]])
+       >>> start1 = np.asfortranarray([[-1.0, 2.0]])
+       >>> end1 = np.asfortranarray([[1.0, 0.0]])
        >>> s, t, _ = segment_intersection(start0, end0, start1, end1)
        >>> s
        0.25
@@ -752,10 +752,10 @@ def _segment_intersection(start0, end0, start1, end1):
     .. doctest:: segment-intersection2
        :options: +NORMALIZE_WHITESPACE
 
-       >>> start0 = np.array([[1.0, 0.0]])
-       >>> end0 = np.array([[0.0, 1.0]])
-       >>> start1 = np.array([[-1.0, 3.0]])
-       >>> end1 = np.array([[3.0, -1.0]])
+       >>> start0 = np.asfortranarray([[1.0, 0.0]])
+       >>> end0 = np.asfortranarray([[0.0, 1.0]])
+       >>> start1 = np.asfortranarray([[-1.0, 3.0]])
+       >>> end1 = np.asfortranarray([[3.0, -1.0]])
        >>> _, _, success = segment_intersection(start0, end0, start1, end1)
        >>> bool(success)
        False
@@ -772,10 +772,10 @@ def _segment_intersection(start0, end0, start1, end1):
        import numpy as np
        from bezier._intersection_helpers import parallel_different
 
-       start0 = np.array([[1.0, 0.0]])
-       end0 = np.array([[0.0, 1.0]])
-       start1 = np.array([[-1.0, 3.0]])
-       end1 = np.array([[3.0, -1.0]])
+       start0 = np.asfortranarray([[1.0, 0.0]])
+       end0 = np.asfortranarray([[0.0, 1.0]])
+       start1 = np.asfortranarray([[-1.0, 3.0]])
+       end1 = np.asfortranarray([[3.0, -1.0]])
 
     .. doctest:: segment-intersection2-continued
 
@@ -861,11 +861,11 @@ def parallel_different(start0, end0, start1, end1):
     .. doctest:: parallel-different1
 
        >>> # Line: y = 1
-       >>> start0 = np.array([[0.0, 1.0]])
-       >>> end0 = np.array([[1.0, 1.0]])
+       >>> start0 = np.asfortranarray([[0.0, 1.0]])
+       >>> end0 = np.asfortranarray([[1.0, 1.0]])
        >>> # Vertical shift up: y = 2
-       >>> start1 = np.array([[-1.0, 2.0]])
-       >>> end1 = np.array([[3.0, 2.0]])
+       >>> start1 = np.asfortranarray([[-1.0, 2.0]])
+       >>> end1 = np.asfortranarray([[3.0, 2.0]])
        >>> parallel_different(start0, end0, start1, end1)
        True
 
@@ -896,8 +896,8 @@ def parallel_different(start0, end0, start1, end1):
 
     .. doctest:: parallel-different2
 
-       >>> start0 = np.array([[1.0, 0.0]])
-       >>> delta0 = np.array([[2.0, -1.0]])
+       >>> start0 = np.asfortranarray([[1.0, 0.0]])
+       >>> delta0 = np.asfortranarray([[2.0, -1.0]])
        >>> end0 = start0 + 1.0 * delta0
        >>> start1 = start0 + 1.5 * delta0
        >>> end1 = start0 + 2.0 * delta0
@@ -921,8 +921,8 @@ def parallel_different(start0, end0, start1, end1):
        import numpy as np
        from bezier._intersection_helpers import parallel_different
 
-       start0 = np.array([[1.0, 0.0]])
-       delta0 = np.array([[2.0, -1.0]])
+       start0 = np.asfortranarray([[1.0, 0.0]])
+       delta0 = np.asfortranarray([[2.0, -1.0]])
        end0 = start0 + 1.0 * delta0
 
     .. doctest:: parallel-different3
@@ -1215,21 +1215,24 @@ def bbox_line_intersect(nodes, line_start, line_end):
 
     # Bottom Edge
     s_bottom, t_bottom, success = segment_intersection(
-        np.array([[left, bottom]]), np.array([[right, bottom]]),
+        np.asfortranarray([[left, bottom]]),
+        np.asfortranarray([[right, bottom]]),
         line_start, line_end)
     if (success and _helpers.in_interval(s_bottom, 0.0, 1.0) and
             _helpers.in_interval(t_bottom, 0.0, 1.0)):
         return BoxIntersectionType.intersection
     # Right Edge
     s_right, t_right, success = segment_intersection(
-        np.array([[right, bottom]]), np.array([[right, top]]),
+        np.asfortranarray([[right, bottom]]),
+        np.asfortranarray([[right, top]]),
         line_start, line_end)
     if (success and _helpers.in_interval(s_right, 0.0, 1.0) and
             _helpers.in_interval(t_right, 0.0, 1.0)):
         return BoxIntersectionType.intersection
     # Top Edge
     s_top, t_top, success = segment_intersection(
-        np.array([[right, top]]), np.array([[left, top]]),
+        np.asfortranarray([[right, top]]),
+        np.asfortranarray([[left, top]]),
         line_start, line_end)
     if (success and _helpers.in_interval(s_top, 0.0, 1.0) and
             _helpers.in_interval(t_top, 0.0, 1.0)):
@@ -1305,9 +1308,9 @@ def _next_candidates(first, second):
         first (Union[.Curve, Linearization]): First curve in pair.
         second (Union[.Curve, Linearization]): Second curve in pair.
 
-    Yields:
-        tuple: Pairs of first and second curves after subdivision, some of
-        which may be linearized.
+    Returns:
+        itertools.product: Iterator of pairs of first and second curves after
+        subdivision, some of which may be linearized.
     """
     # NOTE: This may be a wasted computation, e.g. if ``first``
     #       or ``second`` occur in multiple accepted pairs (the caller

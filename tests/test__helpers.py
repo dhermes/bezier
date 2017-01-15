@@ -26,33 +26,33 @@ class Test_vector_close(unittest.TestCase):
         return _helpers.vector_close(vec1, vec2, **kwargs)
 
     def test_identical(self):
-        vec1 = np.array([[0.5, 4.0]])
+        vec1 = np.asfortranarray([[0.5, 4.0]])
         self.assertTrue(self._call_function_under_test(vec1, vec1))
 
     def test_far_apart(self):
-        vec1 = np.array([[0.0, 6.0]])
-        vec2 = np.array([[1.0, -4.0]])
+        vec1 = np.asfortranarray([[0.0, 6.0]])
+        vec2 = np.asfortranarray([[1.0, -4.0]])
         self.assertFalse(self._call_function_under_test(vec1, vec2))
 
     def test_close_but_different(self):
-        vec1 = np.array([[2.25, -3.5]])
-        vec2 = vec1 + np.array([[-5.0, 12.0]]) / 2.0**43
+        vec1 = np.asfortranarray([[2.25, -3.5]])
+        vec2 = vec1 + np.asfortranarray([[-5.0, 12.0]]) / 2.0**43
         self.assertTrue(self._call_function_under_test(vec1, vec2))
 
     def test_custom_epsilon(self):
-        vec1 = np.array([[3.0, 4.0]])
-        vec2 = np.array([[2.0, 5.0]])
+        vec1 = np.asfortranarray([[3.0, 4.0]])
+        vec2 = np.asfortranarray([[2.0, 5.0]])
         self.assertTrue(self._call_function_under_test(vec1, vec2, eps=0.5))
         self.assertFalse(self._call_function_under_test(vec1, vec2))
 
     def test_near_zero(self):
-        vec1 = np.array([[0.0, 0.0]])
-        vec2 = np.array([[3.0, 4.0]]) / 2.0**45
+        vec1 = np.asfortranarray([[0.0, 0.0]])
+        vec2 = np.asfortranarray([[3.0, 4.0]]) / 2.0**45
         self.assertTrue(self._call_function_under_test(vec1, vec2))
 
     def test_near_zero_fail(self):
-        vec1 = np.array([[1.0, 0.0]]) / 2.0**20
-        vec2 = np.array([[0.0, 0.0]])
+        vec1 = np.asfortranarray([[1.0, 0.0]]) / 2.0**20
+        vec2 = np.asfortranarray([[0.0, 0.0]])
         self.assertFalse(self._call_function_under_test(vec1, vec2))
 
 
@@ -92,7 +92,7 @@ class Test__bbox(unittest.TestCase):
         return _helpers._bbox(nodes)
 
     def test_it(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 5.0],
             [1.0, 3.0],
         ])
@@ -103,7 +103,7 @@ class Test__bbox(unittest.TestCase):
         self.assertEqual(top, 5.0)
 
     def test_lots_of_values(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 0.0],
             [2.0, 1.0],
             [-1.0, 2.0],
@@ -130,7 +130,7 @@ class Test_speedup_bbox(Test__bbox):
 
 class Test_contains(unittest.TestCase):
 
-    UNIT_SQUARE = np.array([
+    UNIT_SQUARE = np.asfortranarray([
         [0.0, 0.0],
         [1.0, 1.0],
     ])
@@ -163,28 +163,28 @@ class Test_contains_nd(unittest.TestCase):
         return _helpers.contains_nd(nodes, point)
 
     def test_below(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 1.0],
             [0.5, 0.0],
             [1.0, 2.0],
         ])
-        point = np.array([[-0.5, 1.0]])
+        point = np.asfortranarray([[-0.5, 1.0]])
         self.assertFalse(self._call_function_under_test(nodes, point))
 
     def test_above(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, -4.0, 2.0],
             [-1.0, 1.0, 3.0],
         ])
-        point = np.array([[-0.5, 2.0, 2.5]])
+        point = np.asfortranarray([[-0.5, 2.0, 2.5]])
         self.assertFalse(self._call_function_under_test(nodes, point))
 
     def test_inside(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 1.0, 2.0, 3.0],
             [1.0, -2.0, -4.0, 1.0],
         ])
-        point = np.array([[0.5, 0.0, 0.0, 2.0]])
+        point = np.asfortranarray([[0.5, 0.0, 0.0, 2.0]])
         self.assertTrue(self._call_function_under_test(nodes, point))
 
 
@@ -197,15 +197,15 @@ class Test_cross_product(utils.NumPyTestCase):
         return _helpers.cross_product(vec0, vec1)
 
     def test_it(self):
-        vec0 = np.array([[1.0, 7.0]]) / 8.0
-        vec1 = np.array([[-11.0, 24.0]]) / 32.0
+        vec0 = np.asfortranarray([[1.0, 7.0]]) / 8.0
+        vec1 = np.asfortranarray([[-11.0, 24.0]]) / 32.0
         result = self._call_function_under_test(vec0, vec1)
 
         vec0_as_3d = np.hstack([vec0, [[0.0]]])
         vec1_as_3d = np.hstack([vec1, [[0.0]]])
 
         actual_cross = np.cross(vec0_as_3d, vec1_as_3d)
-        expected = np.array([[0.0, 0.0, result]])
+        expected = np.asfortranarray([[0.0, 0.0, result]])
         self.assertEqual(actual_cross, expected)
 
 

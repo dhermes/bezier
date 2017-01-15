@@ -22,7 +22,7 @@ For example, to create a curve:
 
 .. code-block:: python
 
-   >>> nodes1 = np.array([
+   >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
    ...     [0.5, 1.0],
    ...     [1.0, 0.0],
@@ -34,7 +34,7 @@ also be determined:
 
 .. code-block:: python
 
-   >>> nodes2 = np.array([
+   >>> nodes2 = np.asfortranarray([
    ...     [0.0 ,  0.0],
    ...     [0.25,  2.0],
    ...     [0.5 , -2.0],

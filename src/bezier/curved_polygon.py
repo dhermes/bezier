@@ -50,24 +50,24 @@ class CurvedPolygon(object):
     .. doctest:: curved-polygon-constructor
 
        >>> import bezier
-       >>> nodes0 = np.array([
+       >>> nodes0 = np.asfortranarray([
        ...     [0.0,  0.0],
        ...     [1.0, -1.0],
        ...     [2.0,  0.0],
        ... ])
        >>> edge0 = bezier.Curve(nodes0, degree=2)
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [2.0, 0.0],
        ...     [2.0, 1.0],
        ... ])
        >>> edge1 = bezier.Curve(nodes1, degree=1)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [2.0, 1.0],
        ...     [1.0, 2.0],
        ...     [0.0, 1.0],
        ... ])
        >>> edge2 = bezier.Curve(nodes2, degree=2)
-       >>> nodes3 = np.array([
+       >>> nodes3 = np.asfortranarray([
        ...     [0.0, 1.0],
        ...     [0.0, 0.0],
        ... ])
@@ -91,23 +91,23 @@ class CurvedPolygon(object):
 
     .. doctest:: curved-polygon-constructor-invalid
 
-       >>> nodes0 = np.array([
+       >>> nodes0 = np.asfortranarray([
        ...     [0.0, 0.0],
        ...     [1.0, 0.0],
        ... ])
        >>> edge0 = bezier.Curve(nodes0, degree=1)
-       >>> nodes1 = np.array([
+       >>> nodes1 = np.asfortranarray([
        ...     [1.0 , 0.0],
        ...     [1.25, 0.5],
        ...     [1.0 , 1.0],
        ... ])
        >>> edge1 = bezier.Curve(nodes1, degree=2)
-       >>> nodes2 = np.array([
+       >>> nodes2 = np.asfortranarray([
        ...     [1.0, 1.0],
        ...     [2.0, 1.0],
        ... ])
        >>> edge2 = bezier.Curve(nodes2, degree=1)
-       >>> nodes3 = np.array([
+       >>> nodes3 = np.asfortranarray([
        ...     [2.0, 1.0 ],
        ...     [1.0, 0.75],
        ...     [0.0, 0.0 ],

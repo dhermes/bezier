@@ -46,7 +46,7 @@ class Test__check_close(utils.NumPyTestCase):
     def test_success(self):
         import bezier
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],
@@ -57,13 +57,13 @@ class Test__check_close(utils.NumPyTestCase):
         result = self._call_function_under_test(
             s_val, curve, s_val + wiggle, curve)
 
-        expected = np.array([[0.5, 0.5]])
+        expected = np.asfortranarray([[0.5, 0.5]])
         self.assertEqual(result, expected)
 
     def test_failure(self):
         import bezier
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
@@ -118,7 +118,7 @@ class Test__wiggle_interval(unittest.TestCase):
 
 class Test_bbox_intersect(unittest.TestCase):
 
-    UNIT_SQUARE = np.array([
+    UNIT_SQUARE = np.asfortranarray([
         [0.0, 0.0],
         [1.0, 0.0],
         [1.0, 1.0],
@@ -134,7 +134,7 @@ class Test_bbox_intersect(unittest.TestCase):
     def test_intersect(self):
         from bezier import _intersection_helpers
 
-        nodes = self.UNIT_SQUARE + np.array([[0.5, 0.5]])
+        nodes = self.UNIT_SQUARE + np.asfortranarray([[0.5, 0.5]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
         self.assertIs(
             result, _intersection_helpers.BoxIntersectionType.intersection)
@@ -142,7 +142,7 @@ class Test_bbox_intersect(unittest.TestCase):
     def test_far_apart(self):
         from bezier import _intersection_helpers
 
-        nodes = self.UNIT_SQUARE + np.array([[100.0, 100.0]])
+        nodes = self.UNIT_SQUARE + np.asfortranarray([[100.0, 100.0]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
         self.assertIs(
             result, _intersection_helpers.BoxIntersectionType.disjoint)
@@ -150,7 +150,7 @@ class Test_bbox_intersect(unittest.TestCase):
     def test_disjoint_but_aligned(self):
         from bezier import _intersection_helpers
 
-        nodes = self.UNIT_SQUARE + np.array([[1.0, 2.0]])
+        nodes = self.UNIT_SQUARE + np.asfortranarray([[1.0, 2.0]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
         self.assertIs(
             result, _intersection_helpers.BoxIntersectionType.disjoint)
@@ -158,7 +158,7 @@ class Test_bbox_intersect(unittest.TestCase):
     def test_tangent(self):
         from bezier import _intersection_helpers
 
-        nodes = self.UNIT_SQUARE + np.array([[1.0, 0.0]])
+        nodes = self.UNIT_SQUARE + np.asfortranarray([[1.0, 0.0]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
         self.assertIs(
             result, _intersection_helpers.BoxIntersectionType.tangent)
@@ -167,7 +167,7 @@ class Test_bbox_intersect(unittest.TestCase):
         from bezier import _intersection_helpers
 
         x_val = 1.0 + SPACING(1.0)
-        nodes = self.UNIT_SQUARE + np.array([[x_val, 0.0]])
+        nodes = self.UNIT_SQUARE + np.asfortranarray([[x_val, 0.0]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
         self.assertIs(
             result, _intersection_helpers.BoxIntersectionType.disjoint)
@@ -182,7 +182,7 @@ class Test__linearization_error(unittest.TestCase):
         return _intersection_helpers._linearization_error(nodes, degree)
 
     def test_linear(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
         ])
@@ -190,7 +190,7 @@ class Test__linearization_error(unittest.TestCase):
         self.assertEqual(error_val, 0.0)
 
     def test_degree_elevated_linear(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 2.0],
@@ -198,7 +198,7 @@ class Test__linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(nodes, 2)
         self.assertEqual(error_val, 0.0)
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.25, 0.5],
             [0.5, 1.0],
@@ -211,7 +211,7 @@ class Test__linearization_error(unittest.TestCase):
     def test_hidden_linear(self):
         # NOTE: This is the line 3 y = 4 x, but with the parameterization
         #       x(s) = 3 s (4 - 3 s).
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [6.0, 8.0],
             [3.0, 4.0],
@@ -224,7 +224,7 @@ class Test__linearization_error(unittest.TestCase):
     def test_quadratic(self):
         import bezier
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
             [5.0, 6.0],
@@ -248,7 +248,7 @@ class Test__linearization_error(unittest.TestCase):
         self.assertEqual(error_right, 0.25 * expected)
 
     def test_higher_dimension(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.5, 0.0, 6.25],
             [3.5, -5.0, 10.25],
             [8.5, 2.0, 10.25],
@@ -264,7 +264,7 @@ class Test__linearization_error(unittest.TestCase):
     def test_hidden_quadratic(self):
         # NOTE: This is the line y = 1 + x^2 / 4, but with the
         #       parameterization x(s) = (3 s - 1)^2.
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [1.0, 1.25],
             [-0.5, 0.5],
             [-0.5, 2.0],
@@ -274,11 +274,11 @@ class Test__linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(nodes, 4)
         # D^2 v = [1.5, 2.25], [1.5, -4.5], [1.5, 9]
         expected = 0.125 * 4 * 3 * np.sqrt(1.5**2 + 9.0**2)
-        local_eps = abs(np.spacing(expected))
+        local_eps = abs(np.spacing(expected))  # pylint: disable=no-member
         self.assertAlmostEqual(error_val, expected, delta=local_eps)
 
     def test_cubic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
             [5.0, 6.0],
@@ -293,7 +293,7 @@ class Test__linearization_error(unittest.TestCase):
         self.assertEqual(error_val, expected)
 
     def test_quartic(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
             [5.0, 6.0],
@@ -309,7 +309,7 @@ class Test__linearization_error(unittest.TestCase):
         self.assertEqual(error_val, expected)
 
     def test_degree_weights_on_the_fly(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
             [7.0, 3.0],
@@ -348,11 +348,11 @@ class Test__newton_refine(utils.NumPyTestCase):
     def test_linear(self):
         import bezier
 
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [1.0, 0.0],
             [0.0, 3.0],
         ])
@@ -382,12 +382,12 @@ class Test__newton_refine(utils.NumPyTestCase):
     def _get_quadratics():
         import bezier
 
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],
         ])
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [1.0, 0.75],
             [0.5, -0.25],
             [0.0, 0.75],
@@ -400,7 +400,7 @@ class Test__newton_refine(utils.NumPyTestCase):
         import bezier
 
         curve1, _ = self._get_quadratics()
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [1.0, 0.0],
             [0.0, 1.0],
         ])
@@ -473,7 +473,7 @@ class Test__newton_refine(utils.NumPyTestCase):
 
         import bezier
 
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [0.25, 1.0],
             [0.5, -0.75],
@@ -482,7 +482,7 @@ class Test__newton_refine(utils.NumPyTestCase):
         ])
         curve1 = bezier.Curve(nodes1, 4)
         # Vertical line forces a unique solution.
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [0.5, 0.0],
             [0.5, 1.0],
         ])
@@ -496,7 +496,7 @@ class Test__newton_refine(utils.NumPyTestCase):
             parameters[guess, :] = self._call_function_under_test(
                 prev_s, nodes1, prev_t, nodes2, 4, 1)
 
-        expected = np.array([
+        expected = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 2.0],
             [0.5, 0.21875],
@@ -542,11 +542,11 @@ class Test__segment_intersection(unittest.TestCase):
             start0, end0, start1, end1, **kwargs)
 
     def test_success(self):
-        intersection = np.array([[1.0, 2.0]])
+        intersection = np.asfortranarray([[1.0, 2.0]])
         s_val = 0.25
         t_val = 0.625
-        direction0 = np.array([[3.0, 0.5]])
-        direction1 = np.array([[-2.0, 1.0]])
+        direction0 = np.asfortranarray([[3.0, 0.5]])
+        direction1 = np.asfortranarray([[-2.0, 1.0]])
         # D0 x D1 == 4.0, so there will be no round-off in answer.
         computed_s, computed_t, success = self._helper(
             intersection, s_val, direction0, t_val, direction1)
@@ -556,11 +556,11 @@ class Test__segment_intersection(unittest.TestCase):
         self.assertTrue(success)
 
     def test_parallel(self):
-        intersection = np.array([[0.0, 0.0]])
+        intersection = np.asfortranarray([[0.0, 0.0]])
         s_val = 0.5
         t_val = 0.5
-        direction0 = np.array([[0.0, 1.0]])
-        direction1 = np.array([[0.0, 2.0]])
+        direction0 = np.asfortranarray([[0.0, 1.0]])
+        direction1 = np.asfortranarray([[0.0, 2.0]])
         computed_s, computed_t, success = self._helper(
             intersection, s_val,
             direction0, t_val, direction1)
@@ -594,42 +594,42 @@ class Test_parallel_different(unittest.TestCase):
             start0, end0, start1, end1)
 
     def test_same_line_no_overlap(self):
-        start0 = np.array([[0.0, 0.0]])
-        end0 = np.array([[3.0, 4.0]])
-        start1 = np.array([[6.0, 8.0]])
-        end1 = np.array([[9.0, 12.0]])
+        start0 = np.asfortranarray([[0.0, 0.0]])
+        end0 = np.asfortranarray([[3.0, 4.0]])
+        start1 = np.asfortranarray([[6.0, 8.0]])
+        end1 = np.asfortranarray([[9.0, 12.0]])
         self.assertTrue(
             self._call_function_under_test(start0, end0, start1, end1))
 
     def test_same_line_overlap_at_start(self):
-        start0 = np.array([[6.0, -3.0]])
-        end0 = np.array([[-7.0, 1.0]])
-        start1 = np.array([[1.125, -1.5]])
-        end1 = np.array([[-5.375, 0.5]])
+        start0 = np.asfortranarray([[6.0, -3.0]])
+        end0 = np.asfortranarray([[-7.0, 1.0]])
+        start1 = np.asfortranarray([[1.125, -1.5]])
+        end1 = np.asfortranarray([[-5.375, 0.5]])
         self.assertFalse(
             self._call_function_under_test(start0, end0, start1, end1))
 
     def test_same_line_overlap_at_end(self):
-        start0 = np.array([[1.0, 2.0]])
-        end0 = np.array([[3.0, 5.0]])
-        start1 = np.array([[-0.5, -0.25]])
-        end1 = np.array([[2.0, 3.5]])
+        start0 = np.asfortranarray([[1.0, 2.0]])
+        end0 = np.asfortranarray([[3.0, 5.0]])
+        start1 = np.asfortranarray([[-0.5, -0.25]])
+        end1 = np.asfortranarray([[2.0, 3.5]])
         self.assertFalse(
             self._call_function_under_test(start0, end0, start1, end1))
 
     def test_same_line_contained(self):
-        start0 = np.array([[-9.0, 0.0]])
-        end0 = np.array([[4.0, 5.0]])
-        start1 = np.array([[23.5, 12.5]])
-        end1 = np.array([[-25.25, -6.25]])
+        start0 = np.asfortranarray([[-9.0, 0.0]])
+        end0 = np.asfortranarray([[4.0, 5.0]])
+        start1 = np.asfortranarray([[23.5, 12.5]])
+        end1 = np.asfortranarray([[-25.25, -6.25]])
         self.assertFalse(
             self._call_function_under_test(start0, end0, start1, end1))
 
     def test_different_line(self):
-        start0 = np.array([[3.0, 2.0]])
-        end0 = np.array([[3.0, 0.75]])
-        start1 = np.array([[0.0, 0.0]])
-        end1 = np.array([[0.0, 2.0]])
+        start0 = np.asfortranarray([[3.0, 2.0]])
+        end0 = np.asfortranarray([[3.0, 0.75]])
+        start1 = np.asfortranarray([[0.0, 0.0]])
+        end1 = np.asfortranarray([[0.0, 2.0]])
         self.assertTrue(
             self._call_function_under_test(start0, end0, start1, end1))
 
@@ -647,7 +647,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         import bezier
         from bezier import _intersection_helpers
 
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 1.0],
@@ -656,7 +656,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         # NOTE: This curve isn't close to linear, but that's OK.
         lin1 = _intersection_helpers.Linearization(curve1, np.nan)
 
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [0.0, 1.0],
             [0.5, 1.0],
             [1.0, 0.0],
@@ -679,14 +679,14 @@ class Test_from_linearized(utils.NumPyTestCase):
         from bezier import _intersection_helpers
         # The bounding boxes intersect but the lines do not.
 
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
         curve1 = bezier.Curve(nodes1, 1)
         lin1 = _intersection_helpers.Linearization(curve1, 0.0)
 
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [1.75, -0.75],
             [0.75, 0.25],
         ])
@@ -702,14 +702,14 @@ class Test_from_linearized(utils.NumPyTestCase):
         import bezier
         from bezier import _intersection_helpers
 
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
         curve1 = bezier.Curve(nodes1, 1)
         lin1 = _intersection_helpers.Linearization(curve1, 0.0)
 
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [0.0, 1.0],
             [1.0, 2.0],
         ])
@@ -725,14 +725,14 @@ class Test_from_linearized(utils.NumPyTestCase):
         import bezier
         from bezier import _intersection_helpers
 
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
         curve1 = bezier.Curve(nodes1, 1)
         lin1 = _intersection_helpers.Linearization(curve1, 0.0)
 
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [0.5, 0.5],
             [3.0, 3.0],
         ])
@@ -746,14 +746,14 @@ class Test_from_linearized(utils.NumPyTestCase):
         import bezier
         from bezier import _intersection_helpers
 
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
         curve1 = bezier.Curve(nodes1, 1)
         lin1 = _intersection_helpers.Linearization(curve1, 0.0)
 
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [2.0, 2.0],
             [2.5009765625, 2.5009765625],
             [3.0, 3.0],
@@ -814,8 +814,8 @@ class Test__endpoint_check(unittest.TestCase):
             first, node_first, s, second, node_second, t, intersections)
 
     def test_not_close(self):
-        node_first = np.array([[0.0, 0.0]])
-        node_second = np.array([[1.0, 1.0]])
+        node_first = np.asfortranarray([[0.0, 0.0]])
+        node_second = np.asfortranarray([[1.0, 1.0]])
         intersections = []
         self._call_function_under_test(
             None, node_first, None, None, node_second, None, intersections)
@@ -824,11 +824,11 @@ class Test__endpoint_check(unittest.TestCase):
     def test_same(self):
         import bezier
 
-        first = bezier.Curve.from_nodes(np.array([
+        first = bezier.Curve.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ]))
-        second = bezier.Curve.from_nodes(np.array([
+        second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 1.0],
             [2.0, 1.0],
         ]))
@@ -860,13 +860,13 @@ class Test__tangent_bbox_intersection(utils.NumPyTestCase):
     def test_it(self):
         import bezier
 
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
             [2.0, 0.0],
         ])
         curve1 = bezier.Curve(nodes1, 2)
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [2.0, 0.0],
             [3.0, 2.0],
             [4.0, 0.0],
@@ -887,23 +887,23 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 
     # NOTE: NODES1 is a specialization of [0, 0], [1/2, 1], [1, 1]
     #       onto the interval [1/4, 1].
-    NODES1 = np.array([
+    NODES1 = np.asfortranarray([
         [0.25, 0.4375],
         [0.625, 1.0],
         [1.0, 1.0],
     ])
     # NOTE: NODES2 is a specialization of [0, 1], [1/2, 1], [1, 0]
     #       onto the interval [0, 3/4].
-    NODES2 = np.array([
+    NODES2 = np.asfortranarray([
         [0.0, 1.0],
         [0.375, 1.0],
         [0.75, 0.4375],
     ])
-    LINE1 = np.array([
+    LINE1 = np.asfortranarray([
         [0.0, 0.0],
         [1.0, 1.0],
     ])
-    LINE2 = np.array([
+    LINE2 = np.asfortranarray([
         [0.0, 1.0],
         [1.0, 0.0],
     ])
@@ -971,7 +971,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         self.assertEqual(accepted, [])
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
-        expected = np.array([[0.5, 0.5]])
+        expected = np.asfortranarray([[0.5, 0.5]])
         check_intersection(self, intersection, expected,
                            curve1, curve2, 0.5, 0.5)
 
@@ -989,7 +989,7 @@ class Test__next_candidates(unittest.TestCase):
         import bezier
         from bezier import _intersection_helpers
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
@@ -1027,7 +1027,7 @@ class Test_all_intersections(utils.NumPyTestCase):
         import itertools
         import bezier
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],
@@ -1057,14 +1057,14 @@ class Test_all_intersections(utils.NumPyTestCase):
         #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
         #       We expect them to intersect at s = 1/3, t = 2/3, which is
         #       the point [1/2, 3/4].
-        nodes1 = np.array([
+        nodes1 = np.asfortranarray([
             [0.25, 0.4375],
             [0.625, 1.0],
             [1.0, 1.0],
         ])
         curve1 = bezier.Curve(nodes1, 2)
 
-        nodes2 = np.array([
+        nodes2 = np.asfortranarray([
             [0.0, 1.0],
             [0.375, 1.0],
             [0.75, 0.4375],
@@ -1076,7 +1076,7 @@ class Test_all_intersections(utils.NumPyTestCase):
 
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
-        expected = np.array([[0.5, 0.75]])
+        expected = np.asfortranarray([[0.5, 0.75]])
 
         s_val = 1.0 / 3.0
         # Due to round-off, the answer is wrong by a tiny wiggle.
@@ -1088,7 +1088,7 @@ class Test_all_intersections(utils.NumPyTestCase):
 
 class TestLinearization(utils.NumPyTestCase):
 
-    NODES = np.array([
+    NODES = np.asfortranarray([
         [0.0, 0.0],
         [1.0, 1.0],
         [5.0, 6.0],
@@ -1110,7 +1110,7 @@ class TestLinearization(utils.NumPyTestCase):
         return mock.Mock(_nodes=nodes, spec=['_nodes'])
 
     def test_constructor(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [4.0, -5.0],
             [0.0, 7.0],
         ])
@@ -1174,7 +1174,7 @@ class TestLinearization(utils.NumPyTestCase):
     def test_from_shape_factory_no_error(self):
         import bezier
 
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])

@@ -30,7 +30,7 @@ class TestBase(utils.NumPyTestCase):
         return klass(*args, **kwargs)
 
     def test_constructor(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
             [2.0, 3.0],
@@ -42,7 +42,7 @@ class TestBase(utils.NumPyTestCase):
         self.assertEqual(shape._nodes, nodes)
 
     def test_constructor_without_copy(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
             [2.0, 3.0],
@@ -53,7 +53,7 @@ class TestBase(utils.NumPyTestCase):
         self.assertIs(shape._nodes, nodes)
 
     def test_constructor_wrong_dimension(self):
-        nodes = np.array([1.0, 2.0])
+        nodes = np.asfortranarray([1.0, 2.0])
         with self.assertRaises(ValueError):
             self._make_one(nodes)
 
@@ -74,7 +74,7 @@ class TestBase(utils.NumPyTestCase):
         self.assertEqual(shape._dimension, dimension)
 
     def test_nodes_property(self):
-        nodes = np.array([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
         ])
