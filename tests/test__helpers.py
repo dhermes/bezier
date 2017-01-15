@@ -260,3 +260,56 @@ class Test_n_bits_away(unittest.TestCase):
             self._call_function_under_test(value1, value2, num_bits=4))
         self.assertTrue(
             self._call_function_under_test(value1, value2, num_bits=5))
+
+
+class Test_eye(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(num_elts):
+        from bezier import _helpers
+
+        return _helpers.eye(num_elts)
+
+    def test_it(self):
+        expected3 = np.asfortranarray([
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+        ])
+        self.assertEqual(self._call_function_under_test(3), expected3)
+
+        expected6 = np.asfortranarray([
+            [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+        ])
+        self.assertEqual(self._call_function_under_test(6), expected6)
+
+
+class Test_matrix_product(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(mat1, mat2):
+        from bezier import _helpers
+
+        return _helpers.matrix_product(mat1, mat2)
+
+    def test_it(self):
+        mat1 = np.asfortranarray([
+            [1.0, 2.0],
+            [3.0, 4.0],
+        ])
+        mat2 = np.asfortranarray([[5.0], [6.0]])
+        result = self._call_function_under_test(mat1, mat2)
+
+        expected = np.asfortranarray([[17.0], [39.0]])
+        self.assertEqual(result, expected)
+        # Make sure our data is F-contiguous.
+        self.assertTrue(result.flags.f_contiguous)
+        self.assertFalse(result.flags.c_contiguous)
+        # matrix_product() has the side-effect of returning a "view"
+        # since it returns the transpose of a product of transposes.
+        self.assertFalse(result.flags.owndata)

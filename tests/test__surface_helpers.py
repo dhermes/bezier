@@ -69,7 +69,7 @@ class Test_polynomial_sign(unittest.TestCase):
         self._helper(bernstein, -1)
 
     def test_zero(self):
-        bernstein = np.zeros((10, 1))
+        bernstein = np.zeros((10, 1), order='F')
         self._helper(bernstein, 0)
 
     def test_mixed(self):
@@ -185,7 +185,7 @@ class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
         bernstein = self._call_function_under_test(nodes)
         shape = (15, 1)
         self.assertEqual(bernstein.shape, shape)
-        expected = np.zeros(shape)
+        expected = np.zeros(shape, order='F')
         expected[2, 0] = 1.5
         expected[9, 0] = -1.5
         expected[11, 0] = 1.5
@@ -236,6 +236,8 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_cubic(self):
+        from bezier import _helpers
+
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [3.25, 1.5],
@@ -260,7 +262,7 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
             [0., 0., 0., 0., 0., lambda1, s_val, 0., t_val, 0.],
             [0., 0., 0., 0., 0., 0., 0., lambda1, s_val, t_val],
         ])
-        expected = transform.dot(nodes)
+        expected = _helpers.matrix_product(transform, nodes)
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val)
         self.assertEqual(result, expected)

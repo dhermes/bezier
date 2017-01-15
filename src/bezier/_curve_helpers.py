@@ -39,31 +39,32 @@ _LOCATE_STD_CAP = 0.5**20
 _FLOAT64 = np.float64  # pylint: disable=no-member
 
 
-def make_subdivision_matrix(degree):
+def make_subdivision_matrices(degree):
     """Make the matrix used to subdivide a curve.
 
     Args:
         degree (int): The degree of the curve.
 
     Returns:
-        numpy.ndarray: The matrix used to convert the
-           nodes into left and right nodes.
+        Tuple[numpy.ndarray, numpy.ndarray]: The matrices used to convert
+           the nodes into left and right nodes, respectively.
     """
-    num_rows = 2 * degree + 1
-    result = np.zeros((num_rows, degree + 1))
-    result[0, 0] = 1.0
-    result[-1, -1] = 1.0
+    left = np.zeros((degree + 1, degree + 1), order='F')
+    right = np.zeros((degree + 1, degree + 1), order='F')
+    left[0, 0] = 1.0
+    right[-1, -1] = 1.0
     for row in six.moves.xrange(1, degree + 1):
-        half_prev = 0.5 * result[row - 1, :row]
-        result[row, :row] = half_prev
-        result[row, 1:row + 1] += half_prev
-        # Populate the complement row as well.
-        complement = num_rows - row - 1
+        half_prev = 0.5 * left[row - 1, :row]
+        left[row, :row] = half_prev
+        left[row, 1:row + 1] += half_prev
+        # Populate the complement row (in right) as well.
+        complement = degree - row
         # NOTE: We "should" reverse the results when using
         #       the complement, but they are symmetric so
         #       that would be a waste.
-        result[complement, -(row + 1):] = result[row, :row + 1]
-    return result
+        right[complement, -(row + 1):] = left[row, :row + 1]
+
+    return left, right
 
 
 def _evaluate_multi(nodes, s_vals):
@@ -93,8 +94,8 @@ def _evaluate_multi(nodes, s_vals):
     lambda2 = s_vals[:, np.newaxis]
     lambda1 = 1.0 - lambda2
 
-    weights_next = np.zeros((num_vals, num_nodes))
-    weights_curr = np.zeros((num_vals, num_nodes))
+    weights_next = np.zeros((num_vals, num_nodes), order='F')
+    weights_curr = np.zeros((num_vals, num_nodes), order='F')
     weights_curr[:, 0] = 1.0
 
     # Increase from degree 0 to max degree.
@@ -105,7 +106,7 @@ def _evaluate_multi(nodes, s_vals):
             lambda2 * weights_curr[:, :curr_deg + 1])
         weights_curr, weights_next = weights_next, weights_curr
 
-    return weights_curr.dot(nodes)
+    return _helpers.matrix_product(weights_curr, nodes)
 
 
 def _vec_size(nodes, s_val):
@@ -189,7 +190,7 @@ def elevate_nodes(nodes, degree, dimension):
     Returns:
         numpy.ndarray: The nodes of the degree-elevated curve.
     """
-    new_nodes = np.zeros((degree + 2, dimension))
+    new_nodes = np.zeros((degree + 2, dimension), order='F')
 
     multipliers = np.arange(1, degree + 1, dtype=_FLOAT64)[:, np.newaxis]
     denominator = degree + 1.0
@@ -221,7 +222,8 @@ def de_casteljau_one_round(nodes, lambda1, lambda2):
         numpy.ndarray: The nodes for a "blended" curve one degree
         lower.
     """
-    return lambda1 * nodes[:-1, :] + lambda2 * nodes[1:, :]
+    return np.asfortranarray(
+        lambda1 * nodes[:-1, :] + lambda2 * nodes[1:, :])
 
 
 def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
@@ -277,7 +279,7 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
 
         partial_vals = new_partial
 
-    result = np.empty(nodes.shape)
+    result = np.empty(nodes.shape, order='F')
     for index in six.moves.xrange(degree + 1):
         key = (0,) * (degree - index) + (1,) * index
         result[index, :] = partial_vals[key]
@@ -566,10 +568,10 @@ def newton_refine(curve, point, s):
     # pylint: enable=protected-access
     pt_delta = point - curve.evaluate(s)
     derivative = evaluate_hodograph(s, nodes, degree)
-    # Each array is 1x2 (i.e. a row vector).
-    delta_s = pt_delta.dot(derivative.T) / derivative.dot(derivative.T)
-    # Unpack 1x1 array into a scalar (and assert size).
-    (delta_s,), = delta_s
+    # Each array is 1x2 (i.e. a row vector), we want the vector dot product.
+    delta_s = (
+        np.vdot(pt_delta[0, :], derivative[0, :]) /
+        np.vdot(derivative[0, :], derivative[0, :]))
     return s + delta_s
 
 

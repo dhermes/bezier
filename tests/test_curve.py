@@ -20,6 +20,8 @@ from tests import utils
 
 class TestCurve(utils.NumPyTestCase):
 
+    ZEROS = np.zeros((2, 2), order='F')
+
     @staticmethod
     def _get_target_class():
         from bezier import curve
@@ -53,7 +55,7 @@ class TestCurve(utils.NumPyTestCase):
         with self.assertRaises(ValueError):
             self._make_one(nodes, None)
 
-        nodes = np.zeros((2, 2, 2))
+        nodes = np.zeros((2, 2, 2), order='F')
         with self.assertRaises(ValueError):
             self._make_one(nodes, None)
 
@@ -81,7 +83,7 @@ class TestCurve(utils.NumPyTestCase):
     def test___repr__(self):
         degree = 4
         dimension = 3
-        nodes = np.zeros((degree + 1, dimension))
+        nodes = np.zeros((degree + 1, dimension), order='F')
         curve = self._make_one(nodes, degree)
         expected = '<Curve (degree={:d}, dimension={:d})>'.format(
             degree, dimension)
@@ -94,7 +96,7 @@ class TestCurve(utils.NumPyTestCase):
         dimension = 3
         start = 0.25
         end = 0.75
-        nodes = np.zeros((degree + 1, dimension))
+        nodes = np.zeros((degree + 1, dimension), order='F')
         curve = self._make_one(nodes, degree, start=start, end=end)
         expected = curve_mod._REPR_TEMPLATE.format(
             'Curve', degree, dimension, start, end)
@@ -139,45 +141,45 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve.length, length)
 
     def test_start_property(self):
-        curve = self._make_one(np.zeros((2, 2)), 1,
+        curve = self._make_one(self.ZEROS, 1,
                                start=mock.sentinel.start)
         self.assertIs(curve.start, mock.sentinel.start)
 
     def test_end_property(self):
-        curve = self._make_one(np.zeros((2, 2)), 1,
+        curve = self._make_one(self.ZEROS, 1,
                                end=mock.sentinel.end)
         self.assertIs(curve.end, mock.sentinel.end)
 
     def test_root_property(self):
-        curve = self._make_one(np.zeros((2, 2)), 1,
+        curve = self._make_one(self.ZEROS, 1,
                                root=mock.sentinel.root)
         self.assertIs(curve.root, mock.sentinel.root)
 
     def test_edge_index_property(self):
-        curve = self._make_one(np.zeros((2, 2)), 1)
+        curve = self._make_one(self.ZEROS, 1)
         curve._edge_index = 7
         self.assertEqual(curve.edge_index, 7)
 
     def test_next_edge_property(self):
-        curve = self._make_one(np.zeros((2, 2)), 1)
+        curve = self._make_one(self.ZEROS, 1)
         curve._next_edge = mock.sentinel.next_edge
         self.assertIs(curve.next_edge, mock.sentinel.next_edge)
 
     def test_previous_edge_property(self):
-        curve = self._make_one(np.zeros((2, 2)), 1)
+        curve = self._make_one(self.ZEROS, 1)
         curve._previous_edge = mock.sentinel.previous
         self.assertIs(curve.previous_edge, mock.sentinel.previous)
 
     def _copy_helper(self, **kwargs):
         np_shape = (2, 2)
         length = kwargs.pop('_length', None)
-        curve = self._make_one(np.zeros(np_shape), 1, **kwargs)
+        curve = self._make_one(np.zeros(np_shape, order='F'), 1, **kwargs)
         curve._length = length
         fake_nodes = mock.Mock(
             ndim=2, shape=np_shape, spec=['ndim', 'shape', 'copy'])
         curve._nodes = fake_nodes
 
-        copied_nodes = np.zeros(np_shape)
+        copied_nodes = np.zeros(np_shape, order='F')
         fake_nodes.copy.return_value = copied_nodes
 
         new_curve = curve._copy()
@@ -196,7 +198,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertIsNone(new_curve._next_edge)
         self.assertIsNone(new_curve._previous_edge)
 
-        fake_nodes.copy.assert_called_once_with(order='A')
+        fake_nodes.copy.assert_called_once_with(order='F')
 
     def test__copy(self):
         self._copy_helper()
@@ -290,7 +292,7 @@ class TestCurve(utils.NumPyTestCase):
         utils.check_plot_call(self, call, nodes, color=color)
 
     def test_subdivide_multilevel_root(self):
-        curve = self._make_one(np.zeros((2, 2)), 1)
+        curve = self._make_one(self.ZEROS, 1)
         left, right = curve.subdivide()
         self.assertIs(left.root, curve)
         self.assertIs(right.root, curve)

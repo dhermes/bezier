@@ -201,6 +201,42 @@ def n_bits_away(value1, value2, num_bits=1):
         return abs(value1 - value2) <= num_bits * abs(local_epsilon)
 
 
+def eye(num_elts):
+    """Get ``n x n`` identity matrix.
+
+    Provided here because ``np.eye`` doesn't allow creation in Fortran order.
+
+    Args:
+        num_elts (int): The number of elements (``n``) on each side.
+
+    Returns:
+        numpy.ndarray: The identity matrix.
+    """
+    id_mat = np.zeros((num_elts, num_elts), order='F')
+    id_mat[:num_elts].flat[::num_elts + 1] = 1.0
+    return id_mat
+
+
+def matrix_product(mat1, mat2):
+    """Compute the product of two Fortran contiguous matrices.
+
+    This is to avoid the overhead of NumPy converting to C-contiguous
+    before computing a matrix product.
+
+    Does so via ``A B = (B^T A^T)^T`` since ``B^T`` and ``A^T`` will be
+    C-contiguous without a copy, then the product ``P = B^T A^T`` will
+    be C-contiguous and we can return the view ``P^T`` without a copy.
+
+    Args:
+        mat1 (numpy.ndarray): The left-hand side matrix.
+        mat2 (numpy.ndarray): The right-hand side matrix.
+
+    Returns:
+        numpy.ndarray: The product of the two matrices.
+    """
+    return np.dot(mat2.T, mat1.T).T
+
+
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     bbox = _bbox

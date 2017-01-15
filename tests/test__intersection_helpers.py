@@ -489,7 +489,7 @@ class Test__newton_refine(utils.NumPyTestCase):
         curve2 = bezier.Curve(nodes2, 1)
 
         num_guess = 4
-        parameters = np.zeros((num_guess, 2))
+        parameters = np.zeros((num_guess, 2), order='F')
         # NOTE: This means our "first" guess is (s, t) = (0, 0).
         for guess in six.moves.xrange(1, num_guess):
             prev_s, prev_t = parameters[guess - 1, :]

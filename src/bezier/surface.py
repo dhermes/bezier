@@ -28,6 +28,7 @@ import numpy as np
 import six
 
 from bezier import _base
+from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
@@ -360,8 +361,8 @@ class Surface(_base.Base):
             the surface.
         """
         indices1 = slice(0, self._degree + 1)
-        indices2 = np.empty(self._degree + 1, dtype=np.int32)
-        indices3 = np.empty(self._degree + 1, dtype=np.int32)
+        indices2 = np.empty(self._degree + 1, dtype=np.int32, order='F')
+        indices3 = np.empty(self._degree + 1, dtype=np.int32, order='F')
 
         curr2 = self._degree
         curr3 = -1
@@ -845,25 +846,29 @@ class Surface(_base.Base):
             lower right and upper left sub-surfaces (in that order).
         """
         if self._degree == 1:
-            new_nodes = _surface_helpers.LINEAR_SUBDIVIDE.dot(self._nodes)
+            new_nodes = _helpers.matrix_product(
+                _surface_helpers.LINEAR_SUBDIVIDE, self._nodes)
             nodes_a = new_nodes[(0, 1, 3), :]
             nodes_b = new_nodes[(4, 3, 1), :]
             nodes_c = new_nodes[(1, 2, 4), :]
             nodes_d = new_nodes[3:, :]
         elif self._degree == 2:
-            new_nodes = _surface_helpers.QUADRATIC_SUBDIVIDE.dot(self._nodes)
+            new_nodes = _helpers.matrix_product(
+                _surface_helpers.QUADRATIC_SUBDIVIDE, self._nodes)
             nodes_a = new_nodes[(0, 1, 2, 5, 6, 9), :]
             nodes_b = new_nodes[(11, 10, 9, 7, 6, 2), :]
             nodes_c = new_nodes[(2, 3, 4, 7, 8, 11), :]
             nodes_d = new_nodes[9:, :]
         elif self._degree == 3:
-            new_nodes = _surface_helpers.CUBIC_SUBDIVIDE.dot(self._nodes)
+            new_nodes = _helpers.matrix_product(
+                _surface_helpers.CUBIC_SUBDIVIDE, self._nodes)
             nodes_a = new_nodes[(0, 1, 2, 3, 7, 8, 9, 13, 14, 18), :]
             nodes_b = new_nodes[(21, 20, 19, 18, 16, 15, 14, 10, 9, 3), :]
             nodes_c = new_nodes[(3, 4, 5, 6, 10, 11, 12, 16, 17, 21), :]
             nodes_d = new_nodes[18:, :]
         elif self._degree == 4:
-            new_nodes = _surface_helpers.QUARTIC_SUBDIVIDE.dot(self._nodes)
+            new_nodes = _helpers.matrix_product(
+                _surface_helpers.QUARTIC_SUBDIVIDE, self._nodes)
             nodes_a = new_nodes[
                 (0, 1, 2, 3, 4, 9, 10, 11, 12, 17, 18, 19, 24, 25, 30), :]
             nodes_b = new_nodes[
@@ -1225,7 +1230,7 @@ class Surface(_base.Base):
         num_nodes, _ = self._nodes.shape
         # (d + 1)(d + 2)/2 --> (d + 2)(d + 3)/2
         num_new = num_nodes + self._degree + 2
-        new_nodes = np.zeros((num_new, self._dimension))
+        new_nodes = np.zeros((num_new, self._dimension), order='F')
 
         # NOTE: We start from the index triples (i, j, k) for the current
         #       nodes and map them onto (i + 1, j, k), etc. This index

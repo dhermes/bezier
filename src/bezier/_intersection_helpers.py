@@ -578,6 +578,7 @@ def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
     .. testsetup:: newton-refine4
 
        import numpy as np
+       from bezier import _helpers
 
        def modified_update(s, t):
            minus_G = np.asfortranarray([
@@ -590,8 +591,10 @@ def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
                [2.0 - 4.0 * s, 0.0],
                [4.0, 0.0],
            ])
-           LHS = DG.T.dot(DG)
-           RHS = DG.T.dot(minus_G)
+           DG_t = np.asfortranarray(DG.T)
+
+           LHS = _helpers.matrix_product(DG_t, DG)
+           RHS = _helpers.matrix_product(DG_t, minus_G)
            delta_params = np.linalg.solve(LHS, RHS)
            delta_s, delta_t = delta_params.flatten()
            return s + delta_s, t + delta_t
@@ -638,7 +641,7 @@ def _newton_refine(s, nodes1, t, nodes2, degree1, degree2):
         return s, t
 
     # NOTE: This assumes the curves are 2D.
-    jac_mat = np.empty((2, 2))
+    jac_mat = np.empty((2, 2), order='F')
     # In curve.evaluate() and evaluate_hodograph() the roles of
     # columns and rows are swapped.
     jac_mat[0, :] = _curve_helpers.evaluate_hodograph(s, nodes1, degree1)
@@ -983,14 +986,15 @@ def parallel_different(start0, end0, start1, end1):
     if line0_const != start1_against:
         return True
 
-    (norm0_sq,), = delta0.dot(delta0.T)
-    (start_numer,), = (start1 - start0).dot(delta0.T)
+    # Each array is 1x2 (i.e. a row vector), we want the vector dot product.
+    norm0_sq = np.vdot(delta0[0, :], delta0[0, :])
+    start_numer = np.vdot((start1 - start0)[0, :], delta0[0, :])
     #      0 <= start_numer / norm0_sq <= 1
     # <==> 0 <= start_numer            <= norm0_sq
     if _helpers.in_interval(start_numer, 0.0, norm0_sq):
         return False
 
-    (end_numer,), = (end1 - start0).dot(delta0.T)
+    end_numer = np.vdot((end1 - start0)[0, :], delta0[0, :])
     #      0 <= end_numer / norm0_sq <= 1
     # <==> 0 <= end_numer            <= norm0_sq
     if _helpers.in_interval(end_numer, 0.0, norm0_sq):
@@ -1154,10 +1158,10 @@ def _tangent_bbox_intersection(first, second, intersections):
     #       accesses below **do not** copy. See
     #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
     #        arrays.indexing.html#advanced-indexing)
-    node_first1 = first._nodes[0, :].reshape((1, 2))
-    node_first2 = first._nodes[-1, :].reshape((1, 2))
-    node_second1 = second._nodes[0, :].reshape((1, 2))
-    node_second2 = second._nodes[-1, :].reshape((1, 2))
+    node_first1 = first._nodes[0, :].reshape((1, 2), order='F')
+    node_first2 = first._nodes[-1, :].reshape((1, 2), order='F')
+    node_second1 = second._nodes[0, :].reshape((1, 2), order='F')
+    node_second2 = second._nodes[-1, :].reshape((1, 2), order='F')
 
     _endpoint_check(
         first, node_first1, 0.0, second, node_second1, 0.0, intersections)
@@ -1409,9 +1413,9 @@ class Linearization(object):
         #       below **does not** copy. See
         #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
         #        arrays.indexing.html#advanced-indexing)
-        self.start_node = curve._nodes[0, :].reshape((1, 2))
+        self.start_node = curve._nodes[0, :].reshape((1, 2), order='F')
         """numpy.ndarray: The start vector of this linearization."""
-        self.end_node = curve._nodes[-1, :].reshape((1, 2))
+        self.end_node = curve._nodes[-1, :].reshape((1, 2), order='F')
         """numpy.ndarray: The end vector of this linearization."""
 
     def subdivide(self):

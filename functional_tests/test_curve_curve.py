@@ -680,16 +680,16 @@ def test_curves29_and_30():
 
 
 def test_curves8_and_23():
-    s_vals = np.zeros((0,))
+    s_vals = np.zeros((0,), order='F')
     t_vals = s_vals
-    points = np.zeros((0, 2))
+    points = np.zeros((0, 2), order='F')
     curve_curve_check(CURVE8, CURVE23, s_vals, t_vals, points)
 
 
 def test_curves11_and_31():
-    s_vals = np.zeros((0,))
+    s_vals = np.zeros((0,), order='F')
     t_vals = s_vals
-    points = np.zeros((0, 2))
+    points = np.zeros((0, 2), order='F')
     curve_curve_check(CURVE11, CURVE31, s_vals, t_vals, points)
 
 

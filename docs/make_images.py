@@ -419,7 +419,7 @@ def surface_is_valid3(surface):
     t_discrim = np.sqrt((1.0 - s_vals) * (1.0 - 5.0 * s_vals))
     t_top = 0.5 * (1.0 - s_vals + t_discrim)
     t_bottom = 0.5 * (1.0 - s_vals - t_discrim)
-    jacobian_zero_params = np.zeros((2 * N - 1, 2))
+    jacobian_zero_params = np.zeros((2 * N - 1, 2), order='F')
     jacobian_zero_params[:N, 0] = s_vals
     jacobian_zero_params[:N, 1] = t_top
     jacobian_zero_params[N:, 0] = s_vals[-2::-1]

@@ -354,9 +354,10 @@ def quadratic_jacobian_polynomial(nodes):
     """
     # First evaluate the Jacobian at each of the 6 nodes.
     # pylint: disable=no-member
-    jac_parts = _QUADRATIC_JACOBIAN_HELPER.dot(nodes)
+    jac_parts = _helpers.matrix_product(
+        _QUADRATIC_JACOBIAN_HELPER, nodes)
     # pylint: enable=no-member
-    jac_at_nodes = np.empty((6, 1))
+    jac_at_nodes = np.empty((6, 1), order='F')
     jac_at_nodes[0, 0] = _2x2_det(jac_parts[:2, :])
     jac_at_nodes[1, 0] = _2x2_det(jac_parts[2:4, :])
     jac_at_nodes[2, 0] = _2x2_det(jac_parts[4:6, :])
@@ -365,7 +366,8 @@ def quadratic_jacobian_polynomial(nodes):
     jac_at_nodes[5, 0] = _2x2_det(jac_parts[10:, :])
 
     # Convert the nodal values to the Bernstein basis...
-    bernstein = _QUADRATIC_TO_BERNSTEIN.dot(jac_at_nodes)
+    bernstein = _helpers.matrix_product(
+        _QUADRATIC_TO_BERNSTEIN, jac_at_nodes)
     return bernstein
 
 
@@ -390,8 +392,9 @@ def cubic_jacobian_polynomial(nodes):
     """
     # First evaluate the Jacobian at each of the 15 nodes
     # in the quartic triangle.
-    jac_parts = _CUBIC_JACOBIAN_HELPER.dot(nodes)
-    jac_at_nodes = np.empty((15, 1))
+    jac_parts = _helpers.matrix_product(
+        _CUBIC_JACOBIAN_HELPER, nodes)
+    jac_at_nodes = np.empty((15, 1), order='F')
     jac_at_nodes[0, 0] = _2x2_det(jac_parts[:2, :])
     jac_at_nodes[1, 0] = _2x2_det(jac_parts[2:4, :])
     jac_at_nodes[2, 0] = _2x2_det(jac_parts[4:6, :])
@@ -410,7 +413,8 @@ def cubic_jacobian_polynomial(nodes):
 
     # Convert the nodal values to the Bernstein basis...
     # pylint: disable=no-member
-    bernstein = _QUARTIC_TO_BERNSTEIN.dot(jac_at_nodes)
+    bernstein = _helpers.matrix_product(
+        _QUARTIC_TO_BERNSTEIN, jac_at_nodes)
     # pylint: enable=no-member
     bernstein /= _QUARTIC_BERNSTEIN_FACTOR
     return bernstein
@@ -450,7 +454,7 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     num_nodes, dimension = nodes.shape
     num_new_nodes = num_nodes - degree - 1
 
-    new_nodes = np.empty((num_new_nodes, dimension))
+    new_nodes = np.empty((num_new_nodes, dimension), order='F')
 
     index = 0
     # parent_i1 = index + k
@@ -506,7 +510,7 @@ def _make_transform(degree, weights_a, weights_b, weights_c):
         ``weights_a``, ``1`` to ``weights_b`` and ``2`` to ``weights_c``.
     """
     num_nodes = ((degree + 1) * (degree + 2)) // 2
-    id_mat = np.eye(num_nodes)
+    id_mat = _helpers.eye(num_nodes)
 
     # Pre-compute the matrices that do the reduction so we don't
     # have to **actually** perform the de Casteljau algorithm
@@ -548,7 +552,7 @@ def _reduced_to_matrix(shape, degree, vals_by_weight):
     Returns:
         numpy.ndarray: The newly created reduced control points.
     """
-    result = np.empty(shape)
+    result = np.empty(shape, order='F')
     index = 0
     for k in six.moves.xrange(degree + 1):
         for j in six.moves.xrange(degree + 1 - k):
@@ -599,7 +603,8 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
             # Our keys are ascending so we increment from the last value.
             for next_id in six.moves.xrange(key[-1], 2 + 1):
                 new_key = key + (next_id,)
-                new_partial[new_key] = transform[next_id].dot(sub_nodes)
+                new_partial[new_key] = _helpers.matrix_product(
+                    transform[next_id], sub_nodes)
 
         partial_vals = new_partial
 
@@ -648,7 +653,7 @@ def jacobian_s(nodes, degree, dimension):
             B |eacute| zier form.
     """
     num_nodes = (degree * (degree + 1)) // 2
-    result = np.empty((num_nodes, dimension))
+    result = np.empty((num_nodes, dimension), order='F')
 
     index = 0
     i = 0
@@ -678,7 +683,7 @@ def jacobian_t(nodes, degree, dimension):
             B |eacute| zier form.
     """
     num_nodes = (degree * (degree + 1)) // 2
-    result = np.empty((num_nodes, dimension))
+    result = np.empty((num_nodes, dimension), order='F')
 
     index = 0
     i = 0
@@ -1337,10 +1342,8 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
         NotImplementedError: If the curves are tangent at the intersection
             and have the same curvature.
     """
-    # Each array is 1x2 (i.e. a row vector).
-    dot_prod = tangent1.dot(tangent2.T)
-    # Unpack 1x1 array into a scalar (and assert size).
-    (dot_prod,), = dot_prod
+    # Each array is 1x2 (i.e. a row vector), we want the vector dot product.
+    dot_prod = np.vdot(tangent1[0, :], tangent2[0, :])
     # NOTE: When computing curvatures we assume that we don't have lines
     #       here, because lines that are tangent at an intersection are
     #       parallel and we don't handle that case.
@@ -1960,11 +1963,11 @@ def _no_intersections(surface1, surface2):
     #       below **do not** copy. See
     #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
     #        arrays.indexing.html#advanced-indexing)
-    corner1 = surface1._nodes[0, :].reshape((1, 2))
+    corner1 = surface1._nodes[0, :].reshape((1, 2), order='F')
     if surface2.locate(corner1, _verify=False) is not None:
         return [_to_curved_polygon(surface1)]
 
-    corner2 = surface2._nodes[0, :].reshape((1, 2))
+    corner2 = surface2._nodes[0, :].reshape((1, 2), order='F')
     if surface1.locate(corner2, _verify=False) is not None:
         return [_to_curved_polygon(surface2)]
 
@@ -2160,7 +2163,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
                 result, reduced_deg, lambda1, lambda2, lambda3)
         return result
 
-    return weights.dot(nodes)  # pylint: disable=no-member
+    return _helpers.matrix_product(weights, nodes)
 
 
 def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
@@ -2184,7 +2187,7 @@ def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
         underlying surface.
     """
     num_vals, _ = param_vals.shape
-    result = np.empty((num_vals, dimension))
+    result = np.empty((num_vals, dimension), order='F')
     for index, (lambda1, lambda2, lambda3) in enumerate(param_vals):
         result[index, :] = evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3)
@@ -2212,7 +2215,7 @@ def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
         underlying surface.
     """
     num_vals, _ = param_vals.shape
-    result = np.empty((num_vals, dimension))
+    result = np.empty((num_vals, dimension), order='F')
     for index, (s, t) in enumerate(param_vals):
         result[index, :] = evaluate_barycentric(
             nodes, degree, 1.0 - s - t, s, t)

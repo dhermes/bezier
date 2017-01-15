@@ -164,8 +164,8 @@ class CurvedPolygon(object):
         #       below **does not** copy. See
         #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
         #        arrays.indexing.html#advanced-indexing)
-        end = prev._nodes[-1, :].reshape((1, 2))
-        start = curr._nodes[0, :].reshape((1, 2))
+        end = prev._nodes[-1, :].reshape((1, 2), order='F')
+        start = curr._nodes[0, :].reshape((1, 2), order='F')
         if not _helpers.vector_close(end, start):
             raise ValueError(
                 'Not sufficiently close',

@@ -29,28 +29,38 @@ import numpy as np
 
 from bezier import _base
 from bezier import _curve_helpers
+from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
 
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
-_LINEAR_SUBDIVIDE = np.asfortranarray([
+_LINEAR_SUBDIVIDE_LEFT = np.asfortranarray([
     [1.0, 0.0],
+    [0.5, 0.5],
+])
+_LINEAR_SUBDIVIDE_RIGHT = np.asfortranarray([
     [0.5, 0.5],
     [0.0, 1.0],
 ])
-_QUADRATIC_SUBDIVIDE = np.asfortranarray([
+_QUADRATIC_SUBDIVIDE_LEFT = np.asfortranarray([
     [1.0, 0.0, 0.0],
     [0.5, 0.5, 0.0],
+    [0.25, 0.5, 0.25],
+])
+_QUADRATIC_SUBDIVIDE_RIGHT = np.asfortranarray([
     [0.25, 0.5, 0.25],
     [0.0, 0.5, 0.5],
     [0.0, 0.0, 1.0],
 ])
-_CUBIC_SUBDIVIDE = np.asfortranarray([
+_CUBIC_SUBDIVIDE_LEFT = np.asfortranarray([
     [1.0, 0.0, 0.0, 0.0],
     [0.5, 0.5, 0.0, 0.0],
     [0.25, 0.5, 0.25, 0.0],
+    [0.125, 0.375, 0.375, 0.125],
+])
+_CUBIC_SUBDIVIDE_RIGHT = np.asfortranarray([
     [0.125, 0.375, 0.375, 0.125],
     [0.0, 0.25, 0.5, 0.25],
     [0.0, 0.0, 0.5, 0.5],
@@ -504,24 +514,25 @@ class Curve(_base.Base):
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
         if self._degree == 1:
-            # pylint: disable=no-member
-            new_nodes = _LINEAR_SUBDIVIDE.dot(self._nodes)
-            # pylint: enable=no-member
+            left_nodes = _helpers.matrix_product(
+                _LINEAR_SUBDIVIDE_LEFT, self._nodes)
+            right_nodes = _helpers.matrix_product(
+                _LINEAR_SUBDIVIDE_RIGHT, self._nodes)
         elif self._degree == 2:
-            # pylint: disable=no-member
-            new_nodes = _QUADRATIC_SUBDIVIDE.dot(self._nodes)
-            # pylint: enable=no-member
+            left_nodes = _helpers.matrix_product(
+                _QUADRATIC_SUBDIVIDE_LEFT, self._nodes)
+            right_nodes = _helpers.matrix_product(
+                _QUADRATIC_SUBDIVIDE_RIGHT, self._nodes)
         elif self._degree == 3:
-            # pylint: disable=no-member
-            new_nodes = _CUBIC_SUBDIVIDE.dot(self._nodes)
-            # pylint: enable=no-member
+            left_nodes = _helpers.matrix_product(
+                _CUBIC_SUBDIVIDE_LEFT, self._nodes)
+            right_nodes = _helpers.matrix_product(
+                _CUBIC_SUBDIVIDE_RIGHT, self._nodes)
         else:
-            subdivide_mat = _curve_helpers.make_subdivision_matrix(
+            left_mat, right_mat = _curve_helpers.make_subdivision_matrices(
                 self._degree)
-            new_nodes = subdivide_mat.dot(self._nodes)
-
-        left_nodes = new_nodes[:self._degree + 1, :]
-        right_nodes = new_nodes[self._degree:, :]
+            left_nodes = _helpers.matrix_product(left_mat, self._nodes)
+            right_nodes = _helpers.matrix_product(right_mat, self._nodes)
 
         midpoint = 0.5 * (self._start + self._end)
         left = Curve(
@@ -592,7 +603,7 @@ class Curve(_base.Base):
             return np.vstack([intersection.get_point()
                               for intersection in intersections])
         else:
-            return np.zeros((0, 2))
+            return np.zeros((0, 2), order='F')
 
     def elevate(self):
         r"""Return a degree-elevated version of the current curve.

@@ -27,32 +27,37 @@ from tests import utils
 FLOAT64 = np.float64  # pylint: disable=no-member
 
 
-class Test_make_subdivision_matrix(utils.NumPyTestCase):
+class Test_make_subdivision_matrices(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(degree):
         from bezier import _curve_helpers
 
-        return _curve_helpers.make_subdivision_matrix(degree)
+        return _curve_helpers.make_subdivision_matrices(degree)
 
-    def _helper(self, degree, expected):
-        result = self._call_function_under_test(degree)
-        self.assertEqual(result, expected)
+    def _helper(self, degree, expected_l, expected_r):
+        left, right = self._call_function_under_test(degree)
+        self.assertEqual(left, expected_l)
+        self.assertEqual(right, expected_r)
 
     def test_linear(self):
         from bezier import curve
 
-        self._helper(1, curve._LINEAR_SUBDIVIDE)
+        self._helper(
+            1, curve._LINEAR_SUBDIVIDE_LEFT, curve._LINEAR_SUBDIVIDE_RIGHT)
 
     def test_quadratic(self):
         from bezier import curve
 
-        self._helper(2, curve._QUADRATIC_SUBDIVIDE)
+        self._helper(
+            2, curve._QUADRATIC_SUBDIVIDE_LEFT,
+            curve._QUADRATIC_SUBDIVIDE_RIGHT)
 
     def test_cubic(self):
         from bezier import curve
 
-        self._helper(3, curve._CUBIC_SUBDIVIDE)
+        self._helper(
+            3, curve._CUBIC_SUBDIVIDE_LEFT, curve._CUBIC_SUBDIVIDE_RIGHT)
 
 
 class Test__evaluate_multi(utils.NumPyTestCase):
@@ -74,7 +79,7 @@ class Test__evaluate_multi(utils.NumPyTestCase):
 
         result = self._call_function_under_test(nodes, s_vals)
 
-        expected = np.empty((num_vals, 3))
+        expected = np.empty((num_vals, 3), order='F')
         expected[:, 0] = 1.0 + s_vals
         expected[:, 1] = 1.0 - 2.0 * s_vals
         expected[:, 2] = -7.0 + 3.0 * s_vals
@@ -93,7 +98,7 @@ class Test__evaluate_multi(utils.NumPyTestCase):
 
         result = self._call_function_under_test(nodes, s_vals)
 
-        expected = np.empty((num_vals, 2))
+        expected = np.empty((num_vals, 2), order='F')
         expected[:, 0] = s_vals * (4.0 - s_vals)
         expected[:, 1] = 2.0 * s_vals * (2.0 * s_vals - 1.0)
 
@@ -166,7 +171,7 @@ class Test_compute_length(unittest.TestCase):
         self.assertLess(abs(length - expected), 1e-15)
 
     def test_without_scipy(self):
-        nodes = np.zeros((5, 2))
+        nodes = np.zeros((5, 2), order='F')
         with mock.patch('bezier._curve_helpers._scipy_int', new=None):
             with self.assertRaises(OSError):
                 self._call_function_under_test(nodes, 4)

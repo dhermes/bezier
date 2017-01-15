@@ -44,6 +44,7 @@ class TestSurface(utils.NumPyTestCase):
         [1.0, 0.0],
         [0.0, 1.0],
     ])
+    ZEROS = np.zeros((3, 2), order='F')
 
     @staticmethod
     def _get_target_class():
@@ -83,7 +84,7 @@ class TestSurface(utils.NumPyTestCase):
         with self.assertRaises(ValueError):
             self._make_one(nodes, 0)
 
-        nodes = np.zeros((3, 2, 2))
+        nodes = np.zeros((3, 2, 2), order='F')
         with self.assertRaises(ValueError):
             self._make_one(nodes, 1)
 
@@ -112,7 +113,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertIsNone(surface._is_valid)
 
     def test___repr__(self):
-        nodes = np.zeros((15, 3))
+        nodes = np.zeros((15, 3), order='F')
         surface = self._make_one(nodes, 4)
         expected = '<Surface (degree=4, dimension=3)>'
         self.assertEqual(repr(surface), expected)
@@ -123,7 +124,7 @@ class TestSurface(utils.NumPyTestCase):
         degree = 4
         dimension = 3
         num_nodes = ((degree + 1) * (degree + 2)) / 2
-        nodes = np.zeros((num_nodes, dimension))
+        nodes = np.zeros((num_nodes, dimension), order='F')
         base_x = 0.46875
         base_y = 0.3125
         width = 0.03125
@@ -174,15 +175,15 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(surface.area, area)
 
     def test_width_property(self):
-        surface = self._make_one(np.zeros((3, 1)), 1)
+        surface = self._make_one(self.ZEROS, 1)
         self.assertEqual(surface.width, 1.0)
 
     def test_base_x_property(self):
-        surface = self._make_one(np.zeros((3, 1)), 1)
+        surface = self._make_one(self.ZEROS, 1)
         self.assertEqual(surface.base_x, 0.0)
 
     def test_base_y_property(self):
-        surface = self._make_one(np.zeros((3, 1)), 1)
+        surface = self._make_one(self.ZEROS, 1)
         self.assertEqual(surface.base_y, 0.0)
 
     def _edges_helper(self, edge1, edge2, edge3,
@@ -260,7 +261,7 @@ class TestSurface(utils.NumPyTestCase):
             np.vstack([p003, p102, p201, p300]))
 
     def test__get_edges(self):
-        surface = self._make_one_no_slots(np.zeros((3, 1)), 1)
+        surface = self._make_one_no_slots(self.ZEROS, 1)
         compute_mock = mock.Mock(return_value=mock.sentinel.edges)
         surface._compute_edges = compute_mock
 
@@ -271,7 +272,7 @@ class TestSurface(utils.NumPyTestCase):
         compute_mock.assert_called_once_with()
 
     def test__get_edges_cached(self):
-        surface = self._make_one_no_slots(np.zeros((3, 1)), 1)
+        surface = self._make_one_no_slots(self.ZEROS, 1)
         compute_mock = mock.Mock()
         surface._compute_edges = compute_mock
 
@@ -292,7 +293,7 @@ class TestSurface(utils.NumPyTestCase):
                            nodes1, nodes2, nodes3)
 
     def test_edges_property_cached(self):
-        surface = self._make_one_no_slots(np.zeros((3, 2)), 1)
+        surface = self._make_one_no_slots(self.ZEROS, 1)
 
         # Create mock "edges" to be computed.
         sentinel1 = mock.Mock(spec=['_copy'])
@@ -384,8 +385,8 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_evaluate_barycentric_multi_wrong_dimension(self):
-        surface = self._make_one(np.zeros((3, 2)), 1)
-        param_vals_1d = np.zeros((4,))
+        surface = self._make_one(self.ZEROS, 1)
+        param_vals_1d = np.zeros((4,), order='F')
         with self.assertRaises(ValueError):
             surface.evaluate_barycentric_multi(param_vals_1d)
 
@@ -459,7 +460,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_evaluate_cartesian_calls_helper(self):
-        nodes = np.zeros((3, 2))
+        nodes = self.ZEROS
         surface = self._make_one_no_slots(nodes, 1, _copy=False)
         patch = mock.patch('bezier._surface_helpers.evaluate_barycentric',
                            return_value=mock.sentinel.point)
@@ -473,8 +474,8 @@ class TestSurface(utils.NumPyTestCase):
             mocked.assert_called_once_with(nodes, 1, 0.5, s_val, t_val)
 
     def test_evaluate_cartesian_multi_wrong_dimension(self):
-        surface = self._make_one(np.zeros((3, 2)), 1)
-        param_vals_1d = np.zeros((4,))
+        surface = self._make_one(self.ZEROS, 1)
+        param_vals_1d = np.zeros((4,), order='F')
         with self.assertRaises(ValueError):
             surface.evaluate_cartesian_multi(param_vals_1d)
 
@@ -823,7 +824,8 @@ class TestSurface(utils.NumPyTestCase):
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_quadratic_bad_dimension(self):
-        surface = self._make_one(np.zeros((6, 3)), 2)
+        nodes = np.zeros((6, 3), order='F')
+        surface = self._make_one(nodes, 2)
         with self.assertRaises(NotImplementedError):
             surface._compute_valid()
 
@@ -861,7 +863,8 @@ class TestSurface(utils.NumPyTestCase):
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_bad_degree(self):
-        surface = self._make_one(np.zeros((15, 2)), 4)
+        nodes = np.zeros((15, 2), order='F')
+        surface = self._make_one(nodes, 4)
         with self.assertRaises(NotImplementedError):
             surface._compute_valid()
 
@@ -870,7 +873,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertTrue(surface.is_valid)
 
     def test_is_valid_property_cached(self):
-        surface = self._make_one_no_slots(np.zeros((3, 2)), 1)
+        surface = self._make_one_no_slots(self.ZEROS, 1)
         compute_valid = mock.Mock()
         surface._compute_valid = compute_valid
         compute_valid.return_value = True
@@ -991,7 +994,8 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_intersect_unsupported_dimension(self):
         surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
-        surface2 = self._make_one(np.zeros((3, 3)), 1)
+        nodes2 = np.zeros((3, 3), order='F')
+        surface2 = self._make_one(nodes2, 1)
 
         with self.assertRaises(NotImplementedError):
             surface1.intersect(surface2)
