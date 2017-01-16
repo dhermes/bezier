@@ -311,7 +311,8 @@ class Test_matrix_product(utils.NumPyTestCase):
         self.assertEqual(result, expected)
         # Make sure our data is F-contiguous.
         self.assertTrue(result.flags.f_contiguous)
-        self.assertFalse(result.flags.c_contiguous)
+        msg = 'flags:\n{}'.format(result.flags)
+        self.assertFalse(result.flags.c_contiguous, msg=msg)
         # matrix_product() has the side-effect of returning a "view"
         # since it returns the transpose of a product of transposes.
         self.assertFalse(result.flags.owndata)
