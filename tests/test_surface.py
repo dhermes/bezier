@@ -123,7 +123,7 @@ class TestSurface(utils.NumPyTestCase):
 
         degree = 4
         dimension = 3
-        num_nodes = ((degree + 1) * (degree + 2)) / 2
+        num_nodes = ((degree + 1) * (degree + 2)) // 2
         nodes = np.zeros((num_nodes, dimension), order='F')
         base_x = 0.46875
         base_y = 0.3125
