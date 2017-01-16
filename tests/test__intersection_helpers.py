@@ -685,13 +685,147 @@ class Test_parallel_different(unittest.TestCase):
 
 class Test__from_linearized_low_level(utils.NumPyTestCase):
 
+    # pylint: disable=too-many-arguments
     @staticmethod
-    def _call_function_under_test(first, second):
+    def _call_function_under_test(
+            error1, start1, end1, start_node1, end_node1, nodes1, degree1,
+            error2, start2, end2, start_node2, end_node2, nodes2, degree2):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._from_linearized_low_level(first, second)
+        return _intersection_helpers._from_linearized_low_level(
+            error1, start1, end1, start_node1, end_node1, nodes1, degree1,
+            error2, start2, end2, start_node2, end_node2, nodes2, degree2)
+    # pylint: enable=too-many-arguments
 
     def test_it(self):
+        start_node1 = np.asfortranarray([[0.0, 0.0]])
+        end_node1 = np.asfortranarray([[1.0, 1.0]])
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 1.0],
+        ])
+        # NOTE: This curve isn't close to linear, but that's OK.
+        error1 = np.nan
+
+        start_node2 = np.asfortranarray([[0.0, 1.0]])
+        end_node2 = np.asfortranarray([[1.0, 0.0]])
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        # NOTE: This curve isn't close to linear, but that's OK.
+        error2 = np.nan
+
+        refined_s, refined_t, success = self._call_function_under_test(
+            error1, 0.0, 1.0, start_node1, end_node1, nodes1, 2,
+            error2, 0.0, 1.0, start_node2, end_node2, nodes2, 2)
+        self.assertTrue(success)
+        self.assertEqual(refined_s, 0.5)
+        self.assertEqual(refined_t, 0.5)
+
+    def test_no_intersection(self):
+        # The bounding boxes intersect but the lines do not.
+        start_node1 = np.asfortranarray([[0.0, 0.0]])
+        end_node1 = np.asfortranarray([[1.0, 1.0]])
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        error1 = 0.0
+
+        start_node2 = np.asfortranarray([[1.75, -0.75]])
+        end_node2 = np.asfortranarray([[0.75, 0.25]])
+        nodes2 = np.asfortranarray([
+            [1.75, -0.75],
+            [0.75, 0.25],
+        ])
+        error2 = 0.0
+
+        _, _, success = self._call_function_under_test(
+            error1, 0.0, 1.0, start_node1, end_node1, nodes1, 1,
+            error2, 0.0, 1.0, start_node2, end_node2, nodes2, 1)
+        self.assertFalse(success)
+
+    def test_parallel_intersection(self):
+        start_node1 = np.asfortranarray([[0.0, 0.0]])
+        end_node1 = np.asfortranarray([[1.0, 1.0]])
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        error1 = 0.0
+
+        start_node2 = np.asfortranarray([[0.0, 1.0]])
+        end_node2 = np.asfortranarray([[1.0, 2.0]])
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 2.0],
+        ])
+        error2 = 0.0
+
+        _, _, success = self._call_function_under_test(
+            error1, 0.0, 1.0, start_node1, end_node1, nodes1, 1,
+            error2, 0.0, 1.0, start_node2, end_node2, nodes2, 1)
+        self.assertFalse(success)
+
+    def test_same_line_intersection(self):
+        start_node1 = np.asfortranarray([[0.0, 0.0]])
+        end_node1 = np.asfortranarray([[1.0, 1.0]])
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        error1 = 0.0
+
+        start_node2 = np.asfortranarray([[0.5, 0.5]])
+        end_node2 = np.asfortranarray([[3.0, 3.0]])
+        nodes2 = np.asfortranarray([
+            [0.5, 0.5],
+            [3.0, 3.0],
+        ])
+        error2 = 0.0
+
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(
+                error1, 0.0, 1.0, start_node1, end_node1, nodes1, 1,
+                error2, 0.0, 1.0, start_node2, end_node2, nodes2, 1)
+
+    def test_parallel_non_degree_one(self):
+        start_node1 = np.asfortranarray([[0.0, 0.0]])
+        end_node1 = np.asfortranarray([[1.0, 1.0]])
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        error1 = 0.0
+
+        start_node2 = np.asfortranarray([[2.0, 2.0]])
+        end_node2 = np.asfortranarray([[3.0, 3.0]])
+        nodes2 = np.asfortranarray([
+            [2.0, 2.0],
+            [2.5009765625, 2.5009765625],
+            [3.0, 3.0],
+        ])
+        error2 = np.nan
+
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(
+                error1, 0.0, 1.0, start_node1, end_node1, nodes1, 1,
+                error2, 0.0, 1.0, start_node2, end_node2, nodes2, 2)
+
+
+class Test_from_linearized(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(first, second, intersections):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.from_linearized(
+            first, second, intersections)
+
+    def test_success(self):
         import bezier
         from bezier import _intersection_helpers
 
@@ -713,13 +847,16 @@ class Test__from_linearized_low_level(utils.NumPyTestCase):
         # NOTE: This curve isn't close to linear, but that's OK.
         lin2 = _intersection_helpers.Linearization(curve2, np.nan)
 
-        refined_s, refined_t, success = self._call_function_under_test(
-            lin1, lin2)
-        self.assertTrue(success)
-        self.assertEqual(refined_s, 0.5)
-        self.assertEqual(refined_t, 0.5)
+        intersections = []
+        self.assertIsNone(
+            self._call_function_under_test(lin1, lin2, intersections))
+        self.assertEqual(len(intersections), 1)
 
-    def test_no_intersection(self):
+        expected = np.asfortranarray([[0.5, 0.75]])
+        check_intersection(self, intersections[0], expected,
+                           curve1, curve2, 0.5, 0.5)
+
+    def test_failure(self):
         import bezier
         from bezier import _intersection_helpers
         # The bounding boxes intersect but the lines do not.
@@ -738,125 +875,10 @@ class Test__from_linearized_low_level(utils.NumPyTestCase):
         curve2 = bezier.Curve(nodes2, 1)
         lin2 = _intersection_helpers.Linearization(curve2, 0.0)
 
-        _, _, success = self._call_function_under_test(lin1, lin2)
-        self.assertFalse(success)
-
-    def test_parallel_intersection(self):
-        import bezier
-        from bezier import _intersection_helpers
-
-        nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
-        curve1 = bezier.Curve(nodes1, 1)
-        lin1 = _intersection_helpers.Linearization(curve1, 0.0)
-
-        nodes2 = np.asfortranarray([
-            [0.0, 1.0],
-            [1.0, 2.0],
-        ])
-        curve2 = bezier.Curve(nodes2, 1)
-        lin2 = _intersection_helpers.Linearization(curve2, 0.0)
-
-        _, _, success = self._call_function_under_test(lin1, lin2)
-        self.assertFalse(success)
-
-    def test_same_line_intersection(self):
-        import bezier
-        from bezier import _intersection_helpers
-
-        nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
-        curve1 = bezier.Curve(nodes1, 1)
-        lin1 = _intersection_helpers.Linearization(curve1, 0.0)
-
-        nodes2 = np.asfortranarray([
-            [0.5, 0.5],
-            [3.0, 3.0],
-        ])
-        curve2 = bezier.Curve(nodes2, 1)
-        lin2 = _intersection_helpers.Linearization(curve2, 0.0)
-
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(lin1, lin2)
-
-    def test_parallel_non_degree_one(self):
-        import bezier
-        from bezier import _intersection_helpers
-
-        nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
-        curve1 = bezier.Curve(nodes1, 1)
-        lin1 = _intersection_helpers.Linearization(curve1, 0.0)
-
-        nodes2 = np.asfortranarray([
-            [2.0, 2.0],
-            [2.5009765625, 2.5009765625],
-            [3.0, 3.0],
-        ])
-        curve2 = bezier.Curve(nodes2, 2)
-        lin2 = _intersection_helpers.Linearization(curve2, np.nan)
-
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(lin1, lin2)
-
-
-class Test_from_linearized(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(first, second, intersections):
-        from bezier import _intersection_helpers
-
-        return _intersection_helpers.from_linearized(
-            first, second, intersections)
-
-    def test_success(self):
-        curve1 = mock.Mock(spec=['_root'])
-        first = mock.Mock(curve=curve1, spec=['curve'])
-        curve2 = mock.Mock(spec=['_root'])
-        second = mock.Mock(curve=curve2, spec=['curve'])
         intersections = []
-
-        refined_s = 0.25
-        refined_t = 0.75
-        patch = mock.patch(
-            'bezier._intersection_helpers._from_linearized_low_level',
-            return_value=(refined_s, refined_t, True))
-
-        with patch as mocked:
-            self.assertIsNone(
-                self._call_function_under_test(first, second, intersections))
-            self.assertEqual(len(intersections), 1)
-
-            intersection = intersections[0]
-            # Fake the intersection point so we can use the helper.
-            intersection.point = mock.sentinel.point
-            check_intersection(
-                self, intersections[0], mock.sentinel.point,
-                curve1._root, curve2._root, refined_s, refined_t)
-
-            mocked.assert_called_once_with(first, second)
-
-    def test_failure(self):
-        first = mock.sentinel.first
-        second = mock.sentinel.second
-        intersections = []
-
-        patch = mock.patch(
-            'bezier._intersection_helpers._from_linearized_low_level',
-            return_value=(None, None, False))
-
-        with patch as mocked:
-            self.assertIsNone(
-                self._call_function_under_test(first, second, intersections))
-            self.assertEqual(len(intersections), 0)
-
-            mocked.assert_called_once_with(first, second)
+        self.assertIsNone(
+            self._call_function_under_test(lin1, lin2, intersections))
+        self.assertEqual(len(intersections), 0)
 
 
 class Test__add_intersection(unittest.TestCase):
