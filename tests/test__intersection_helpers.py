@@ -683,14 +683,13 @@ class Test_parallel_different(unittest.TestCase):
             self._call_function_under_test(start0, end0, start1, end1))
 
 
-class Test_from_linearized(utils.NumPyTestCase):
+class Test__from_linearized_low_level(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(first, second, intersections):
+    def _call_function_under_test(first, second):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers.from_linearized(
-            first, second, intersections)
+        return _intersection_helpers._from_linearized_low_level(first, second)
 
     def test_it(self):
         import bezier
@@ -714,14 +713,11 @@ class Test_from_linearized(utils.NumPyTestCase):
         # NOTE: This curve isn't close to linear, but that's OK.
         lin2 = _intersection_helpers.Linearization(curve2, np.nan)
 
-        intersections = []
-        self.assertIsNone(
-            self._call_function_under_test(lin1, lin2, intersections))
-        self.assertEqual(len(intersections), 1)
-        intersection = intersections[0]
-        expected = curve1.evaluate(0.5)
-        check_intersection(self, intersection, expected,
-                           curve1, curve2, 0.5, 0.5)
+        refined_s, refined_t, success = self._call_function_under_test(
+            lin1, lin2)
+        self.assertTrue(success)
+        self.assertEqual(refined_s, 0.5)
+        self.assertEqual(refined_t, 0.5)
 
     def test_no_intersection(self):
         import bezier
@@ -742,10 +738,8 @@ class Test_from_linearized(utils.NumPyTestCase):
         curve2 = bezier.Curve(nodes2, 1)
         lin2 = _intersection_helpers.Linearization(curve2, 0.0)
 
-        intersections = []
-        self.assertIsNone(
-            self._call_function_under_test(lin1, lin2, intersections))
-        self.assertEqual(intersections, [])
+        _, _, success = self._call_function_under_test(lin1, lin2)
+        self.assertFalse(success)
 
     def test_parallel_intersection(self):
         import bezier
@@ -765,10 +759,8 @@ class Test_from_linearized(utils.NumPyTestCase):
         curve2 = bezier.Curve(nodes2, 1)
         lin2 = _intersection_helpers.Linearization(curve2, 0.0)
 
-        intersections = []
-        self.assertIsNone(
-            self._call_function_under_test(lin1, lin2, intersections))
-        self.assertEqual(intersections, [])
+        _, _, success = self._call_function_under_test(lin1, lin2)
+        self.assertFalse(success)
 
     def test_same_line_intersection(self):
         import bezier
@@ -789,7 +781,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         lin2 = _intersection_helpers.Linearization(curve2, 0.0)
 
         with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(lin1, lin2, [])
+            self._call_function_under_test(lin1, lin2)
 
     def test_parallel_non_degree_one(self):
         import bezier
@@ -811,7 +803,60 @@ class Test_from_linearized(utils.NumPyTestCase):
         lin2 = _intersection_helpers.Linearization(curve2, np.nan)
 
         with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(lin1, lin2, [])
+            self._call_function_under_test(lin1, lin2)
+
+
+class Test_from_linearized(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(first, second, intersections):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.from_linearized(
+            first, second, intersections)
+
+    def test_success(self):
+        curve1 = mock.Mock(spec=['_root'])
+        first = mock.Mock(curve=curve1, spec=['curve'])
+        curve2 = mock.Mock(spec=['_root'])
+        second = mock.Mock(curve=curve2, spec=['curve'])
+        intersections = []
+
+        refined_s = 0.25
+        refined_t = 0.75
+        patch = mock.patch(
+            'bezier._intersection_helpers._from_linearized_low_level',
+            return_value=(refined_s, refined_t, True))
+
+        with patch as mocked:
+            self.assertIsNone(
+                self._call_function_under_test(first, second, intersections))
+            self.assertEqual(len(intersections), 1)
+
+            intersection = intersections[0]
+            # Fake the intersection point so we can use the helper.
+            intersection.point = mock.sentinel.point
+            check_intersection(
+                self, intersections[0], mock.sentinel.point,
+                curve1._root, curve2._root, refined_s, refined_t)
+
+            mocked.assert_called_once_with(first, second)
+
+    def test_failure(self):
+        first = mock.sentinel.first
+        second = mock.sentinel.second
+        intersections = []
+
+        patch = mock.patch(
+            'bezier._intersection_helpers._from_linearized_low_level',
+            return_value=(None, None, False))
+
+        with patch as mocked:
+            self.assertIsNone(
+                self._call_function_under_test(first, second, intersections))
+            self.assertEqual(len(intersections), 0)
+
+            mocked.assert_called_once_with(first, second)
 
 
 class Test__add_intersection(unittest.TestCase):

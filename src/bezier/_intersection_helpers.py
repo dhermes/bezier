@@ -83,6 +83,11 @@ def _wiggle_interval_py(value):
     Allows a little bit of wiggle room outside the interval. Actually
     checks that values are in :math:`\left[-2^{-50}, 1 + 2^{-50}\right]`.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         value (float): Value to check in interval.
 
@@ -1011,16 +1016,19 @@ def parallel_different(start0, end0, start1, end1):
     return not _helpers.in_interval(0.0, min_val, max_val)
 
 
-def from_linearized(first, second, intersections):
+def _from_linearized_low_level(first, second):
     """Determine curve-curve intersection from pair of linearizations.
-
-    If there is an intersection along the segments, adds that intersection
-    to ``intersections``. Otherwise, returns without doing anything.
 
     Args:
         first (Linearization): First curve being intersected.
         second (Linearization): Second curve being intersected.
-        intersections (list): A list of existing intersections.
+
+    Returns:
+        Tuple[float, float, bool]: Triple of:
+
+        * ``s``-coordinate of intersection
+        * ``t``-coordinate of intersection
+        * Flag indicating of the linearizations actually intersect
 
     Raises:
         NotImplementedError: If the segment intersection fails.
@@ -1030,15 +1038,15 @@ def from_linearized(first, second, intersections):
         second.start_node, second.end_node)
     if success:
         if not _helpers.in_interval(s, _WIGGLE_START, _WIGGLE_END):
-            return
+            return None, None, False
         if not _helpers.in_interval(t, _WIGGLE_START, _WIGGLE_END):
-            return
+            return None, None, False
     else:
         # Handle special case where the curves are actually lines.
         if first.error == 0.0 and second.error == 0.0:
             if parallel_different(first.start_node, first.end_node,
                                   second.start_node, second.end_node):
-                return
+                return None, None, False
 
         raise NotImplementedError('Line segments parallel.')
 
@@ -1056,9 +1064,27 @@ def from_linearized(first, second, intersections):
         orig_first._degree, orig_second._degree)
     refined_s = _wiggle_interval(refined_s)
     refined_t = _wiggle_interval(refined_t)
-    intersection = Intersection(
-        orig_first, refined_s, orig_second, refined_t)
-    _add_intersection(intersection, intersections)
+    return refined_s, refined_t, True
+
+
+def from_linearized(first, second, intersections):
+    """Determine curve-curve intersection from pair of linearizations.
+
+    If there is an intersection along the segments, adds that intersection
+    to ``intersections``. Otherwise, returns without doing anything.
+
+    Args:
+        first (Linearization): First curve being intersected.
+        second (Linearization): Second curve being intersected.
+        intersections (list): A list of existing intersections.
+    """
+    refined_s, refined_t, success = _from_linearized_low_level(first, second)
+    if success:
+        # pylint: disable=protected-access
+        intersection = Intersection(
+            first.curve._root, refined_s, second.curve._root, refined_t)
+        # pylint: enable=protected-access
+        _add_intersection(intersection, intersections)
 
 
 def _add_intersection(intersection, intersections):
