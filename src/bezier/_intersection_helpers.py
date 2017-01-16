@@ -77,7 +77,7 @@ def _check_close(s, curve1, t, curve2):
     return vec1
 
 
-def _wiggle_interval(value):
+def _wiggle_interval_py(value):
     r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
 
     Allows a little bit of wiggle room outside the interval. Actually
@@ -1528,9 +1528,11 @@ if _speedup is None:  # pragma: NO COVER
     segment_intersection = _segment_intersection
     newton_refine = _newton_refine
     bbox_intersect = _bbox_intersect
+    _wiggle_interval = _wiggle_interval_py
 else:
     linearization_error = _speedup.speedup.linearization_error
     segment_intersection = _speedup.speedup.segment_intersection
     newton_refine = _speedup.speedup.newton_refine_intersect
     bbox_intersect = _speedup.speedup.bbox_intersect
+    _wiggle_interval = _speedup.speedup.wiggle_interval
 # pylint: enable=invalid-name

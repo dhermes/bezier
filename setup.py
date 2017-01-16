@@ -85,6 +85,7 @@ def _extension_modules():
     extension = core.Extension(
         name='bezier._speedup',
         sources=[
+            os.path.join(bezier_path, '_speedup.pyf'),
             os.path.join(bezier_path, 'speedup.f90'),
         ],
         language='f90',

@@ -1,0 +1,161 @@
+!    -*- f90 -*-
+
+python module _speedup
+    interface
+        module speedup
+            integer, private,parameter,optional :: dp=kind(0.d0)
+            subroutine de_casteljau_one_round(num_nodes,dimension_,nodes,degree,lambda1,lambda2,lambda3,new_nodes)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
+                integer :: degree
+                real(kind=dp) intent(in) :: lambda1
+                real(kind=dp) intent(in) :: lambda2
+                real(kind=dp) intent(in) :: lambda3
+                real(kind=dp) dimension(num_nodes-degree-1,dimension_),intent(out),depend(num_nodes,degree,dimension_) :: new_nodes
+            end subroutine de_casteljau_one_round
+            subroutine evaluate_multi(num_nodes,dimension_,nodes,num_vals,s_vals,evaluated)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
+                integer, optional,intent(hide),depend(s_vals) :: num_vals=size(s_vals)
+                real(kind=dp) dimension(num_vals),intent(in) :: s_vals
+                real(kind=dp) dimension(num_vals,dimension_),intent(out),depend(num_vals,dimension_) :: evaluated
+            end subroutine evaluate_multi
+            subroutine linearization_error(nodes,degree,dimension_,error)
+                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
+                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) intent(out) :: error
+            end subroutine linearization_error
+            subroutine evaluate_barycentric(num_nodes,dimension_,nodes,degree,lambda1,lambda2,lambda3,point)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
+                integer :: degree
+                real(kind=dp) intent(in) :: lambda1
+                real(kind=dp) intent(in) :: lambda2
+                real(kind=dp) intent(in) :: lambda3
+                real(kind=dp) dimension(1,dimension_),intent(out),depend(dimension_) :: point
+            end subroutine evaluate_barycentric
+            subroutine evaluate_barycentric_multi(num_nodes,nodes,degree,num_vals,param_vals,dimension_,evaluated)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
+                integer :: degree
+                integer, optional,intent(hide),depend(param_vals) :: num_vals=size(param_vals, 1)
+                real(kind=dp) dimension(num_vals,3),intent(in) :: param_vals
+                integer, optional,depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) dimension(num_vals,dimension_),intent(out),depend(num_vals,dimension_) :: evaluated
+            end subroutine evaluate_barycentric_multi
+            subroutine evaluate_cartesian_multi(num_nodes,nodes,degree,num_vals,param_vals,dimension_,evaluated)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
+                integer :: degree
+                integer, optional,intent(hide),depend(param_vals) :: num_vals=size(param_vals, 1)
+                real(kind=dp) dimension(num_vals,2),intent(in) :: param_vals
+                integer, optional,depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) dimension(num_vals,dimension_),intent(out),depend(num_vals,dimension_) :: evaluated
+            end subroutine evaluate_cartesian_multi
+            subroutine cross_product(vec0,vec1,result_)
+                real(kind=dp) dimension(1,2),intent(in) :: vec0
+                real(kind=dp) dimension(1,2),intent(in) :: vec1
+                real(kind=dp) intent(out) :: result_
+            end subroutine cross_product
+            subroutine segment_intersection(start0,end0,start1,end1,s,t,success)
+                real(kind=dp) dimension(1,2),intent(in) :: start0
+                real(kind=dp) dimension(1,2),intent(in) :: end0
+                real(kind=dp) dimension(1,2),intent(in) :: start1
+                real(kind=dp) dimension(1,2),intent(in) :: end1
+                real(kind=dp) intent(out) :: s
+                real(kind=dp) intent(out) :: t
+                logical(kind=1) intent(out) :: success
+            end subroutine segment_intersection
+            subroutine bbox(num_nodes,nodes,left,right,bottom,top)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                real(kind=dp) dimension(num_nodes,2),intent(in) :: nodes
+                real(kind=dp) intent(out) :: left
+                real(kind=dp) intent(out) :: right
+                real(kind=dp) intent(out) :: bottom
+                real(kind=dp) intent(out) :: top
+            end subroutine bbox
+            subroutine specialize_curve_generic(nodes,degree,dimension_,start,end_,new_nodes)
+                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
+                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) intent(in) :: start
+                real(kind=dp) intent(in) :: end_
+                real(kind=dp) dimension(degree + 1,dimension_),intent(out),depend(degree,dimension_) :: new_nodes
+            end subroutine specialize_curve_generic
+            subroutine specialize_curve_quadratic(nodes,dimension_,start,end_,new_nodes)
+                real(kind=dp) dimension(3,dimension_),intent(in) :: nodes
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) intent(in) :: start
+                real(kind=dp) intent(in) :: end_
+                real(kind=dp) dimension(3,dimension_),intent(out),depend(dimension_) :: new_nodes
+            end subroutine specialize_curve_quadratic
+            subroutine specialize_curve(nodes,degree,dimension_,start,end_,curve_start,curve_end,new_nodes,true_start,true_end)
+                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
+                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) intent(in) :: start
+                real(kind=dp) intent(in) :: end_
+                real(kind=dp) intent(in) :: curve_start
+                real(kind=dp) intent(in) :: curve_end
+                real(kind=dp) dimension(degree + 1,dimension_),intent(out),depend(degree,dimension_) :: new_nodes
+                real(kind=dp) intent(out) :: true_start
+                real(kind=dp) intent(out) :: true_end
+            end subroutine specialize_curve
+            subroutine jacobian_both(num_nodes,dimension_,nodes,degree,new_nodes)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                integer, optional,depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
+                integer :: degree
+                real(kind=dp) dimension(num_nodes-degree-1,2 * dimension_),intent(out),depend(num_nodes,degree,dimension_) :: new_nodes
+            end subroutine jacobian_both
+            subroutine evaluate_hodograph(s,nodes,dimension_,degree,hodograph)
+                real(kind=dp) intent(in) :: s
+                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
+                real(kind=dp) dimension(1,dimension_),intent(out),depend(dimension_) :: hodograph
+            end subroutine evaluate_hodograph
+            subroutine newton_refine_intersect(s,nodes1,degree1,t,nodes2,degree2,new_s,new_t)
+                real(kind=dp) intent(in) :: s
+                real(kind=dp) dimension(degree1 + 1,2),intent(in) :: nodes1
+                integer, optional,intent(in),check((shape(nodes1,0)-1)==degree1),depend(nodes1) :: degree1=(shape(nodes1,0)-1)
+                real(kind=dp) intent(in) :: t
+                real(kind=dp) dimension(degree2 + 1,2),intent(in) :: nodes2
+                integer, optional,intent(in),check((shape(nodes2,0)-1)==degree2),depend(nodes2) :: degree2=(shape(nodes2,0)-1)
+                real(kind=dp) intent(out) :: new_s
+                real(kind=dp) intent(out) :: new_t
+            end subroutine newton_refine_intersect
+            subroutine jacobian_det(num_nodes,nodes,degree,num_vals,param_vals,evaluated)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                real(kind=dp) dimension(num_nodes,2),intent(in) :: nodes
+                integer :: degree
+                integer, optional,intent(hide),depend(param_vals) :: num_vals=size(param_vals, 1)
+                real(kind=dp) dimension(num_vals,2),intent(in) :: param_vals
+                real(kind=dp) dimension(num_vals),intent(out),depend(num_vals) :: evaluated
+            end subroutine jacobian_det
+            subroutine bbox_intersect(num_nodes1,nodes1,num_nodes2,nodes2,enum_)
+                integer, optional,intent(hide),depend(nodes1) :: num_nodes1=size(nodes1, 1)
+                real(kind=dp) dimension(num_nodes1,2),intent(in) :: nodes1
+                integer, optional,intent(hide),depend(nodes2) :: num_nodes2=size(nodes2, 1)
+                real(kind=dp) dimension(num_nodes2,2),intent(in) :: nodes2
+                integer intent(out) :: enum_
+            end subroutine bbox_intersect
+            subroutine wiggle_interval(value_,result_,success)
+                real(kind=dp) intent(in) :: value_
+                real(kind=dp) intent(out) :: result_
+                logical(kind=1) intent(hide) :: success
+                callstatement '''
+                (*f2py_func)(&value_, &result_, &success);
+                if (!success)
+                {
+                  PyErr_SetString(PyExc_ValueError, "outside of unit interval");
+                }
+                '''
+            end subroutine wiggle_interval
+        end module speedup
+    end interface
+end python module _speedup

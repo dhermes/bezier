@@ -7,7 +7,8 @@ module speedup
          evaluate_cartesian_multi, cross_product, segment_intersection, &
          bbox, specialize_curve_generic, specialize_curve_quadratic, &
          specialize_curve, jacobian_both, evaluate_hodograph, &
-         newton_refine_intersect, jacobian_det, bbox_intersect
+         newton_refine_intersect, jacobian_det, bbox_intersect, &
+         wiggle_interval
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -588,5 +589,24 @@ contains
     end if
 
   end subroutine bbox_intersect
+
+  subroutine wiggle_interval(value_, result_, success)
+
+    real(dp), intent(in) :: value_
+    real(dp), intent(out) :: result_
+    logical(1), intent(out) :: success
+
+    success = .TRUE.
+    if (0.0_dp <= value_ .AND. value_ <= 1.0_dp) then
+       result_ = value_
+    else if (-(0.5_dp**50) < value_ .AND. value_ < 0.0_dp) then
+       result_ = 0.0_dp
+    else if (1.0_dp < value_ .AND. value_ < 1.0_dp + 0.5_dp**50) then
+       result_ = 1.0_dp
+    else
+       success = .FALSE.
+    end if
+
+  end subroutine wiggle_interval
 
 end module speedup

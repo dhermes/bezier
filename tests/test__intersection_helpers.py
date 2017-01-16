@@ -73,13 +73,13 @@ class Test__check_close(utils.NumPyTestCase):
             self._call_function_under_test(0.0, curve, 1.0, curve)
 
 
-class Test__wiggle_interval(unittest.TestCase):
+class Test__wiggle_interval_py(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(value):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._wiggle_interval(value)
+        return _intersection_helpers._wiggle_interval_py(value)
 
     def test_at_endpoint(self):
         # Really just making sure the function doesn't raise.
@@ -114,6 +114,45 @@ class Test__wiggle_interval(unittest.TestCase):
         value = 1 + 2.0**(-52)
         result = self._call_function_under_test(value)
         self.assertEqual(result, 1.0)
+
+    def test_boundary(self):
+        # Values near / at the left-hand boundary.
+        value = float.fromhex('-0x1.ffffffffffffep-51')
+        self.assertEqual(
+            self._call_function_under_test(value), 0.0)
+        value = float.fromhex('-0x1.fffffffffffffp-51')
+        self.assertEqual(
+            self._call_function_under_test(value), 0.0)
+        value = float.fromhex('-0x1.0000000000000p-50')
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(value)
+        value = float.fromhex('-0x1.0000000000001p-50')
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(value)
+
+        # Values near / at the right-hand boundary.
+        value = float.fromhex('0x1.0000000000002p+0')
+        self.assertEqual(
+            self._call_function_under_test(value), 1.0)
+        value = float.fromhex('0x1.0000000000003p+0')
+        self.assertEqual(
+            self._call_function_under_test(value), 1.0)
+        value = float.fromhex('0x1.0000000000004p+0')
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(value)
+        value = float.fromhex('0x1.0000000000005p+0')
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(value)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_wiggle_interval(Test__wiggle_interval_py):
+
+    @staticmethod
+    def _call_function_under_test(value):
+        from bezier import _speedup
+
+        return _speedup.speedup.wiggle_interval(value)
 
 
 class Test__bbox_intersect(unittest.TestCase):
