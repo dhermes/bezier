@@ -17,7 +17,7 @@ This is to help with the exposition of the computation and
 .. autofunction:: bezier._intersection_helpers._linearization_error
 .. autofunction:: bezier._intersection_helpers._newton_refine
 .. autofunction:: bezier._intersection_helpers._segment_intersection
-.. autofunction:: bezier._intersection_helpers.parallel_different
+.. autofunction:: bezier._intersection_helpers._parallel_different
 .. autofunction:: bezier._curve_helpers.get_curvature
 .. autofunction:: bezier._curve_helpers.newton_refine
 .. autoclass:: bezier._intersection_helpers.Intersection

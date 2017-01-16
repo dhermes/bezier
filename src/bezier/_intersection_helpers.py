@@ -791,7 +791,7 @@ def _segment_intersection(start0, end0, start1, end1):
 
     .. doctest:: segment-intersection2-continued
 
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> bool(parallel_different(start0, end0, start1, end1))
        True
 
     .. note::
@@ -827,7 +827,7 @@ def _segment_intersection(start0, end0, start1, end1):
         return s, t, True
 
 
-def parallel_different(start0, end0, start1, end1):
+def _parallel_different(start0, end0, start1, end1):
     r"""Checks if two parallel lines ever meet.
 
     Meant as a back-up when :func:`.segment_intersection` fails.
@@ -878,7 +878,7 @@ def parallel_different(start0, end0, start1, end1):
        >>> # Vertical shift up: y = 2
        >>> start1 = np.asfortranarray([[-1.0, 2.0]])
        >>> end1 = np.asfortranarray([[3.0, 2.0]])
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> bool(parallel_different(start0, end0, start1, end1))
        True
 
     .. testcleanup:: parallel-different1
@@ -913,7 +913,7 @@ def parallel_different(start0, end0, start1, end1):
        >>> end0 = start0 + 1.0 * delta0
        >>> start1 = start0 + 1.5 * delta0
        >>> end1 = start0 + 2.0 * delta0
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> bool(parallel_different(start0, end0, start1, end1))
        True
 
     .. testcleanup:: parallel-different2
@@ -941,7 +941,7 @@ def parallel_different(start0, end0, start1, end1):
 
        >>> start1 = start0 - 1.0 * delta0
        >>> end1 = start0 + 0.5 * delta0
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> bool(parallel_different(start0, end0, start1, end1))
        False
 
     .. testcleanup:: parallel-different3
@@ -960,7 +960,7 @@ def parallel_different(start0, end0, start1, end1):
 
        >>> start1 = start0 + 3.0 * delta0
        >>> end1 = start0 - 2.0 * delta0
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> bool(parallel_different(start0, end0, start1, end1))
        False
 
     .. testcleanup:: parallel-different4
@@ -1588,10 +1588,12 @@ if _speedup is None:  # pragma: NO COVER
     newton_refine = _newton_refine
     bbox_intersect = _bbox_intersect
     _wiggle_interval = _wiggle_interval_py
+    parallel_different = _parallel_different
 else:
     linearization_error = _speedup.speedup.linearization_error
     segment_intersection = _speedup.speedup.segment_intersection
     newton_refine = _speedup.speedup.newton_refine_intersect
     bbox_intersect = _speedup.speedup.bbox_intersect
     _wiggle_interval = _speedup.speedup.wiggle_interval
+    parallel_different = _speedup.speedup.parallel_different
 # pylint: enable=invalid-name

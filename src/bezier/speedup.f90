@@ -8,7 +8,7 @@ module speedup
          bbox, specialize_curve_generic, specialize_curve_quadratic, &
          specialize_curve, jacobian_both, evaluate_hodograph, &
          newton_refine_intersect, jacobian_det, bbox_intersect, &
-         wiggle_interval
+         wiggle_interval, parallel_different
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -608,5 +608,56 @@ contains
     end if
 
   end subroutine wiggle_interval
+
+  subroutine parallel_different(start0, end0, start1, end1, result_)
+
+    real(dp), intent(in) :: start0(1, 2)
+    real(dp), intent(in) :: end0(1, 2)
+    real(dp), intent(in) :: start1(1, 2)
+    real(dp), intent(in) :: end1(1, 2)
+    logical(1), intent(out) :: result_
+    ! Variables outside of signature.
+    real(dp) :: delta0(1, 2)
+    real(dp) :: val1, val2, val3
+
+    delta0 = end0 - start0
+    call cross_product(start0, delta0, val1)  ! line0_const
+    call cross_product(start1, delta0, val2)  ! start1_against
+
+    if (val1 /= val2) then
+       result_ = .TRUE.
+       return
+    end if
+
+    val1 = dot_product(delta0(1, :), delta0(1, :))  ! norm0_sq
+    val2 = dot_product(start1(1, :) - start0(1, :), delta0(1, :))  ! start_numer
+    !      0 <= start_numer / norm0_sq <= 1
+    ! <==> 0 <= start_numer            <= norm0_sq
+    if (0.0_dp <= val2 .AND. val2 <= val1) then
+       result_ = .FALSE.
+       return
+    end if
+
+    val2 = dot_product(end1(1, :) - start0(1, :), delta0(1, :))  ! end_numer
+    !      0 <= end_numer / norm0_sq <= 1
+    ! <==> 0 <= end_numer            <= norm0_sq
+    if (0.0_dp <= val2 .AND. val2 <= val1) then
+       result_ = .FALSE.
+       return
+    end if
+
+    ! We know neither the start or end parameters are in [0, 1], but
+    ! they may contain [0, 1] between them.
+    val3 = min(val1, val2)  ! min_val
+    val1 = max(val1, val2)  ! max_val
+
+    ! So we make sure that 0 isn't between them.
+    if (val3 <= 0.0_dp .AND. 0.0_dp <= val1) then
+       result_ = .FALSE.
+    else
+       result_ = .TRUE.
+    end if
+
+  end subroutine parallel_different
 
 end module speedup

@@ -156,6 +156,13 @@ python module _speedup
                 }
                 '''
             end subroutine wiggle_interval
+            subroutine parallel_different(start0,end0,start1,end1,result_)
+                real(kind=dp) dimension(1,2),intent(in) :: start0
+                real(kind=dp) dimension(1,2),intent(in) :: end0
+                real(kind=dp) dimension(1,2),intent(in) :: start1
+                real(kind=dp) dimension(1,2),intent(in) :: end1
+                logical(kind=1) intent(out) :: result_
+            end subroutine parallel_different
         end module speedup
     end interface
 end python module _speedup
