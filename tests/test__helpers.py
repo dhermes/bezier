@@ -303,16 +303,23 @@ class Test_matrix_product(utils.NumPyTestCase):
         mat1 = np.asfortranarray([
             [1.0, 2.0],
             [3.0, 4.0],
+            [5.0, 6.0],
         ])
-        mat2 = np.asfortranarray([[5.0], [6.0]])
+        mat2 = np.asfortranarray([
+            [7.0, 8.0, 9.0],
+            [10.0, 11.0, 12.0],
+        ])
         result = self._call_function_under_test(mat1, mat2)
 
-        expected = np.asfortranarray([[17.0], [39.0]])
+        expected = np.asfortranarray([
+            [27.0, 30.0, 33.0],
+            [61.0, 68.0, 75.0],
+            [95.0, 106.0, 117.0],
+        ])
         self.assertEqual(result, expected)
         # Make sure our data is F-contiguous.
         self.assertTrue(result.flags.f_contiguous)
-        msg = 'flags:\n{}'.format(result.flags)
-        self.assertFalse(result.flags.c_contiguous, msg=msg)
+        self.assertFalse(result.flags.c_contiguous)
         # matrix_product() has the side-effect of returning a "view"
         # since it returns the transpose of a product of transposes.
         self.assertFalse(result.flags.owndata)
