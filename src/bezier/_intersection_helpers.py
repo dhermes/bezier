@@ -17,7 +17,6 @@
 """
 
 
-import enum
 import itertools
 
 import numpy as np
@@ -105,7 +104,7 @@ def _wiggle_interval(value):
         raise ValueError('outside of unit interval', value)
 
 
-def bbox_intersect(nodes1, nodes2):
+def _bbox_intersect(nodes1, nodes2):
     r"""Bounding box intersection predicate.
 
     Determines if the bounding box of two sets of control points
@@ -117,6 +116,11 @@ def bbox_intersect(nodes1, nodes2):
        Though we assume (and the code relies on this fact) that
        the nodes are two-dimensional, we don't check it.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         nodes1 (numpy.ndarray): Set of control points for a
             B |eacute| zier shape.
@@ -124,21 +128,21 @@ def bbox_intersect(nodes1, nodes2):
             B |eacute| zier shape.
 
     Returns:
-        BoxIntersectionType: Enum indicating the type of bounding
-        box intersection.
+        int: Enum from ``BoxIntersectionType`` indicating the type of
+        bounding box intersection.
     """
     left1, right1, bottom1, top1 = _helpers.bbox(nodes1)
     left2, right2, bottom2, top2 = _helpers.bbox(nodes2)
 
     if (right2 < left1 or right1 < left2 or
             top2 < bottom1 or top1 < bottom2):
-        return BoxIntersectionType.disjoint
+        return BoxIntersectionType.DISJOINT
 
     if (right2 == left1 or right1 == left2 or
             top2 == bottom1 or top1 == bottom2):
-        return BoxIntersectionType.tangent
+        return BoxIntersectionType.TANGENT
     else:
-        return BoxIntersectionType.intersection
+        return BoxIntersectionType.INTERSECTION
 
 
 def _linearization_error(nodes, degree):
@@ -1198,17 +1202,17 @@ def bbox_line_intersect(nodes, line_start, line_end):
         line_end (numpy.ndarray): End of a line segment (1x2).
 
     Returns:
-        BoxIntersectionType: Enum indicating the type of bounding
-        box intersection.
+        int: Enum from ``BoxIntersectionType`` indicating the type of
+        bounding box intersection.
     """
     left, right, bottom, top = _helpers.bbox(nodes)
 
     if (_helpers.in_interval(line_start[0, 0], left, right) and
             _helpers.in_interval(line_start[0, 1], bottom, top)):
-        return BoxIntersectionType.intersection
+        return BoxIntersectionType.INTERSECTION
     if (_helpers.in_interval(line_end[0, 0], left, right) and
             _helpers.in_interval(line_end[0, 1], bottom, top)):
-        return BoxIntersectionType.intersection
+        return BoxIntersectionType.INTERSECTION
 
     # NOTE: We allow ``segment_intersection`` to fail below (i.e.
     #       ``success=False``). At first, this may appear to "ignore"
@@ -1228,7 +1232,7 @@ def bbox_line_intersect(nodes, line_start, line_end):
         line_start, line_end)
     if (success and _helpers.in_interval(s_bottom, 0.0, 1.0) and
             _helpers.in_interval(t_bottom, 0.0, 1.0)):
-        return BoxIntersectionType.intersection
+        return BoxIntersectionType.INTERSECTION
     # Right Edge
     s_right, t_right, success = segment_intersection(
         np.asfortranarray([[right, bottom]]),
@@ -1236,7 +1240,7 @@ def bbox_line_intersect(nodes, line_start, line_end):
         line_start, line_end)
     if (success and _helpers.in_interval(s_right, 0.0, 1.0) and
             _helpers.in_interval(t_right, 0.0, 1.0)):
-        return BoxIntersectionType.intersection
+        return BoxIntersectionType.INTERSECTION
     # Top Edge
     s_top, t_top, success = segment_intersection(
         np.asfortranarray([[right, top]]),
@@ -1244,13 +1248,13 @@ def bbox_line_intersect(nodes, line_start, line_end):
         line_start, line_end)
     if (success and _helpers.in_interval(s_top, 0.0, 1.0) and
             _helpers.in_interval(t_top, 0.0, 1.0)):
-        return BoxIntersectionType.intersection
+        return BoxIntersectionType.INTERSECTION
     # NOTE: We skip the "last" edge. This is because any curve
     #       that doesn't have an endpoint on a curve must cross
     #       at least two, so we will already covered such curves
     #       in one of the branches above.
 
-    return BoxIntersectionType.disjoint
+    return BoxIntersectionType.DISJOINT
 
 
 def intersect_one_round(candidates, intersections):
@@ -1294,9 +1298,9 @@ def intersect_one_round(candidates, intersections):
         else:
             bbox_int = bbox_intersect(first._nodes, second._nodes)
 
-        if bbox_int is BoxIntersectionType.disjoint:
+        if bbox_int == BoxIntersectionType.DISJOINT:
             continue
-        elif bbox_int is BoxIntersectionType.tangent:
+        elif bbox_int == BoxIntersectionType.TANGENT:
             _tangent_bbox_intersection(first, second, intersections)
             continue
 
@@ -1386,11 +1390,17 @@ def all_intersections(candidates):
         _MAX_INTERSECT_SUBDIVISIONS)
 
 
-class BoxIntersectionType(enum.Enum):
-    """Enum representing all possible bounding box intersections."""
-    intersection = 'intersection'
-    tangent = 'tangent'
-    disjoint = 'disjoint'
+class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
+    """Enum representing all possible bounding box intersections.
+
+    .. note::
+
+       This class would be more "correct" as an ``enum.Enum``, but it we keep
+       the values integers to make interfacing with Fortran easier.
+    """
+    INTERSECTION = 0
+    TANGENT = 1
+    DISJOINT = 2
 
 
 class Linearization(object):
@@ -1517,8 +1527,10 @@ if _speedup is None:  # pragma: NO COVER
     linearization_error = _linearization_error
     segment_intersection = _segment_intersection
     newton_refine = _newton_refine
+    bbox_intersect = _bbox_intersect
 else:
     linearization_error = _speedup.speedup.linearization_error
     segment_intersection = _speedup.speedup.segment_intersection
     newton_refine = _speedup.speedup.newton_refine_intersect
+    bbox_intersect = _speedup.speedup.bbox_intersect
 # pylint: enable=invalid-name

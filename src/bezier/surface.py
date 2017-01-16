@@ -1127,8 +1127,7 @@ class Surface(_base.Base):
 
         bbox_int = _intersection_helpers.bbox_intersect(
             self._nodes, other._nodes)
-        if (bbox_int is not
-                _intersection_helpers.BoxIntersectionType.intersection):
+        if bbox_int != _intersection_helpers.BoxIntersectionType.INTERSECTION:
             return []
 
         edges1 = self._get_edges()

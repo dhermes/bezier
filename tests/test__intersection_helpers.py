@@ -116,7 +116,7 @@ class Test__wiggle_interval(unittest.TestCase):
         self.assertEqual(result, 1.0)
 
 
-class Test_bbox_intersect(unittest.TestCase):
+class Test__bbox_intersect(unittest.TestCase):
 
     UNIT_SQUARE = np.asfortranarray([
         [0.0, 0.0],
@@ -129,39 +129,39 @@ class Test_bbox_intersect(unittest.TestCase):
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers.bbox_intersect(nodes1, nodes2)
+        return _intersection_helpers._bbox_intersect(nodes1, nodes2)
 
     def test_intersect(self):
         from bezier import _intersection_helpers
 
         nodes = self.UNIT_SQUARE + np.asfortranarray([[0.5, 0.5]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
-        self.assertIs(
-            result, _intersection_helpers.BoxIntersectionType.intersection)
+        expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
+        self.assertEqual(result, expected)
 
     def test_far_apart(self):
         from bezier import _intersection_helpers
 
         nodes = self.UNIT_SQUARE + np.asfortranarray([[100.0, 100.0]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
-        self.assertIs(
-            result, _intersection_helpers.BoxIntersectionType.disjoint)
+        expected = _intersection_helpers.BoxIntersectionType.DISJOINT
+        self.assertEqual(result, expected)
 
     def test_disjoint_but_aligned(self):
         from bezier import _intersection_helpers
 
         nodes = self.UNIT_SQUARE + np.asfortranarray([[1.0, 2.0]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
-        self.assertIs(
-            result, _intersection_helpers.BoxIntersectionType.disjoint)
+        expected = _intersection_helpers.BoxIntersectionType.DISJOINT
+        self.assertEqual(result, expected)
 
     def test_tangent(self):
         from bezier import _intersection_helpers
 
         nodes = self.UNIT_SQUARE + np.asfortranarray([[1.0, 0.0]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
-        self.assertIs(
-            result, _intersection_helpers.BoxIntersectionType.tangent)
+        expected = _intersection_helpers.BoxIntersectionType.TANGENT
+        self.assertEqual(result, expected)
 
     def test_almost_tangent(self):
         from bezier import _intersection_helpers
@@ -169,8 +169,18 @@ class Test_bbox_intersect(unittest.TestCase):
         x_val = 1.0 + SPACING(1.0)
         nodes = self.UNIT_SQUARE + np.asfortranarray([[x_val, 0.0]])
         result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
-        self.assertIs(
-            result, _intersection_helpers.BoxIntersectionType.disjoint)
+        expected = _intersection_helpers.BoxIntersectionType.DISJOINT
+        self.assertEqual(result, expected)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_bbox_intersect(Test__bbox_intersect):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _speedup
+
+        return _speedup.speedup.bbox_intersect(nodes1, nodes2)
 
 
 class Test__linearization_error(unittest.TestCase):

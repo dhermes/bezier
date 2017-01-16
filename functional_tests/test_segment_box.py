@@ -56,11 +56,11 @@ def make_plot(segment):
 
 def run_it(segment, expected=None):
     if expected is None:
-        expected = _intersection_helpers.BoxIntersectionType.intersection
+        expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
 
     result = _intersection_helpers.bbox_line_intersect(
         UNIT_SQUARE, segment[[0], :], segment[[1], :])
-    assert result is expected
+    assert result == expected
 
     if not CONFIG.running:
         return
@@ -92,7 +92,7 @@ def test_outside():
         segment_top_right,
         segment_top_left,
     )
-    expected = _intersection_helpers.BoxIntersectionType.disjoint
+    expected = _intersection_helpers.BoxIntersectionType.DISJOINT
     for segment in segments:
         run_it(segment, expected)
 

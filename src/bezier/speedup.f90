@@ -7,7 +7,7 @@ module speedup
          evaluate_cartesian_multi, cross_product, segment_intersection, &
          bbox, specialize_curve_generic, specialize_curve_quadratic, &
          specialize_curve, jacobian_both, evaluate_hodograph, &
-         newton_refine_intersect, jacobian_det
+         newton_refine_intersect, jacobian_det, bbox_intersect
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -559,5 +559,34 @@ contains
     end if
 
   end subroutine jacobian_det
+
+  subroutine bbox_intersect(num_nodes1, nodes1, num_nodes2, nodes2, enum_)
+
+    !f2py integer intent(hide), depend(nodes1) :: num_nodes1 = size(nodes1, 1)
+    !f2py integer intent(hide), depend(nodes2) :: num_nodes2 = size(nodes2, 1)
+    integer :: num_nodes1, num_nodes2
+    real(dp), intent(in) :: nodes1(num_nodes1, 2)
+    real(dp), intent(in) :: nodes2(num_nodes2, 2)
+    integer, intent(out) :: enum_
+    ! Variables outside of signature.
+    real(dp) :: left1, right1, bottom1, top1
+    real(dp) :: left2, right2, bottom2, top2
+
+    call bbox(num_nodes1, nodes1, left1, right1, bottom1, top1)
+    call bbox(num_nodes2, nodes2, left2, right2, bottom2, top2)
+
+    if ( &
+         right2 < left1 .OR. right1 < left2 .OR. &
+         top2 < bottom1 .OR. top1 < bottom2) then
+        enum_ = 2
+     else if ( &
+          right2 == left1 .OR. right1 == left2 .OR. &
+          top2 == bottom1 .OR. top1 == bottom2) then
+        enum_ = 1
+    else
+        enum_ = 0
+    end if
+
+  end subroutine bbox_intersect
 
 end module speedup
