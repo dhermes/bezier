@@ -1017,9 +1017,9 @@ def _parallel_different(start0, end0, start1, end1):
 
 
 # pylint: disable=too-many-arguments
-def _from_linearized_low_level(
-        error1, start1, end1, start_node1, end_node1, nodes1, degree1,
-        error2, start2, end2, start_node2, end_node2, nodes2, degree2):
+def _from_linearized_low_level_py(
+        error1, start1, end1, start_node1, end_node1, nodes1,
+        error2, start2, end2, start_node2, end_node2, nodes2):
     """Determine curve-curve intersection from pair of linearizations.
 
     The inputs are the "fully-unpacked" values from two
@@ -1037,7 +1037,6 @@ def _from_linearized_low_level(
             first curve (also in the linearization).
         nodes1 (numpy.ndarray): The (``(D + 1)x2``) nodes of the "root"
             curve that contains the first curve.
-        degree1 (int): The degree (``D``) of the first curve.
         error2 (float): The linearization error for the second curve.
         start2 (float): The start parameter of the (potentially
             subdivided) second curve.
@@ -1049,7 +1048,6 @@ def _from_linearized_low_level(
             second curve (also in the linearization).
         nodes2 (numpy.ndarray): The (``(D2 + 1)x2``) nodes of the "root"
             curve that contains the second curve.
-        degree2 (int): The degree (``D2``) of the second curve.
 
     Returns:
         Tuple[float, float, bool]: Triple of:
@@ -1083,8 +1081,10 @@ def _from_linearized_low_level(
     orig_t = (1 - t) * start2 + t * end2
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
+    num_nodes1, _ = nodes1.shape
+    num_nodes2, _ = nodes2.shape
     refined_s, refined_t = newton_refine(
-        orig_s, nodes1, orig_t, nodes2, degree1, degree2)
+        orig_s, nodes1, orig_t, nodes2, num_nodes1 - 1, num_nodes2 - 1)
     refined_s = _wiggle_interval(refined_s)
     refined_t = _wiggle_interval(refined_t)
     return refined_s, refined_t, True
@@ -1110,9 +1110,9 @@ def from_linearized(first, second, intersections):
     orig_second = curve2._root
     refined_s, refined_t, success = _from_linearized_low_level(
         first.error, curve1._start, curve1._end, first.start_node,
-        first.end_node, orig_first._nodes, orig_first._degree,
+        first.end_node, orig_first._nodes,
         second.error, curve2._start, curve2._end, second.start_node,
-        second.end_node, orig_second._nodes, orig_second._degree)
+        second.end_node, orig_second._nodes)
     # pylint: enable=protected-access
     if success:
         intersection = Intersection(
@@ -1589,6 +1589,7 @@ if _speedup is None:  # pragma: NO COVER
     bbox_intersect = _bbox_intersect
     _wiggle_interval = _wiggle_interval_py
     parallel_different = _parallel_different
+    _from_linearized_low_level = _from_linearized_low_level_py
 else:
     linearization_error = _speedup.speedup.linearization_error
     segment_intersection = _speedup.speedup.segment_intersection
@@ -1596,4 +1597,5 @@ else:
     bbox_intersect = _speedup.speedup.bbox_intersect
     _wiggle_interval = _speedup.speedup.wiggle_interval
     parallel_different = _speedup.speedup.parallel_different
+    _from_linearized_low_level = _speedup.speedup.from_linearized
 # pylint: enable=invalid-name

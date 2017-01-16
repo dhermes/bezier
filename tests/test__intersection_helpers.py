@@ -694,18 +694,18 @@ class Test_speedup_parallel_different(Test__parallel_different):
             start0, end0, start1, end1)
 
 
-class Test__from_linearized_low_level(utils.NumPyTestCase):
+class Test__from_linearized_low_level_py(utils.NumPyTestCase):
 
     # pylint: disable=too-many-arguments
     @staticmethod
     def _call_function_under_test(
-            error1, start1, end1, start_node1, end_node1, nodes1, degree1,
-            error2, start2, end2, start_node2, end_node2, nodes2, degree2):
+            error1, start1, end1, start_node1, end_node1, nodes1,
+            error2, start2, end2, start_node2, end_node2, nodes2):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._from_linearized_low_level(
-            error1, start1, end1, start_node1, end_node1, nodes1, degree1,
-            error2, start2, end2, start_node2, end_node2, nodes2, degree2)
+        return _intersection_helpers._from_linearized_low_level_py(
+            error1, start1, end1, start_node1, end_node1, nodes1,
+            error2, start2, end2, start_node2, end_node2, nodes2)
     # pylint: enable=too-many-arguments
 
     def test_it(self):
@@ -730,13 +730,13 @@ class Test__from_linearized_low_level(utils.NumPyTestCase):
         error2 = np.nan
 
         refined_s, refined_t, success = self._call_function_under_test(
-            error1, 0.0, 1.0, start_node1, end_node1, nodes1, 2,
-            error2, 0.0, 1.0, start_node2, end_node2, nodes2, 2)
+            error1, 0.0, 1.0, start_node1, end_node1, nodes1,
+            error2, 0.0, 1.0, start_node2, end_node2, nodes2)
         self.assertTrue(success)
         self.assertEqual(refined_s, 0.5)
         self.assertEqual(refined_t, 0.5)
 
-    def test_no_intersection(self):
+    def _no_intersect_help(self, swap=False):
         # The bounding boxes intersect but the lines do not.
         start_node1 = np.asfortranarray([[0.0, 0.0]])
         end_node1 = np.asfortranarray([[1.0, 1.0]])
@@ -745,6 +745,7 @@ class Test__from_linearized_low_level(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         error1 = 0.0
+        args1 = (error1, 0.0, 1.0, start_node1, end_node1, nodes1)
 
         start_node2 = np.asfortranarray([[1.75, -0.75]])
         end_node2 = np.asfortranarray([[0.75, 0.25]])
@@ -753,11 +754,20 @@ class Test__from_linearized_low_level(utils.NumPyTestCase):
             [0.75, 0.25],
         ])
         error2 = 0.0
+        args2 = (error2, 0.0, 1.0, start_node2, end_node2, nodes2)
 
-        _, _, success = self._call_function_under_test(
-            error1, 0.0, 1.0, start_node1, end_node1, nodes1, 1,
-            error2, 0.0, 1.0, start_node2, end_node2, nodes2, 1)
+        if swap:
+            args1, args2 = args2, args1
+
+        args = args1 + args2
+        _, _, success = self._call_function_under_test(*args)
         self.assertFalse(success)
+
+    def test_no_intersection_bad_t(self):
+        self._no_intersect_help()
+
+    def test_no_intersection_bad_s(self):
+        self._no_intersect_help(swap=True)
 
     def test_parallel_intersection(self):
         start_node1 = np.asfortranarray([[0.0, 0.0]])
@@ -777,8 +787,8 @@ class Test__from_linearized_low_level(utils.NumPyTestCase):
         error2 = 0.0
 
         _, _, success = self._call_function_under_test(
-            error1, 0.0, 1.0, start_node1, end_node1, nodes1, 1,
-            error2, 0.0, 1.0, start_node2, end_node2, nodes2, 1)
+            error1, 0.0, 1.0, start_node1, end_node1, nodes1,
+            error2, 0.0, 1.0, start_node2, end_node2, nodes2)
         self.assertFalse(success)
 
     def test_same_line_intersection(self):
@@ -800,8 +810,8 @@ class Test__from_linearized_low_level(utils.NumPyTestCase):
 
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(
-                error1, 0.0, 1.0, start_node1, end_node1, nodes1, 1,
-                error2, 0.0, 1.0, start_node2, end_node2, nodes2, 1)
+                error1, 0.0, 1.0, start_node1, end_node1, nodes1,
+                error2, 0.0, 1.0, start_node2, end_node2, nodes2)
 
     def test_parallel_non_degree_one(self):
         start_node1 = np.asfortranarray([[0.0, 0.0]])
@@ -823,8 +833,24 @@ class Test__from_linearized_low_level(utils.NumPyTestCase):
 
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(
-                error1, 0.0, 1.0, start_node1, end_node1, nodes1, 1,
-                error2, 0.0, 1.0, start_node2, end_node2, nodes2, 2)
+                error1, 0.0, 1.0, start_node1, end_node1, nodes1,
+                error2, 0.0, 1.0, start_node2, end_node2, nodes2)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_from_linearized(Test__from_linearized_low_level_py):
+
+    # pylint: disable=too-many-arguments
+    @staticmethod
+    def _call_function_under_test(
+            error1, start1, end1, start_node1, end_node1, nodes1,
+            error2, start2, end2, start_node2, end_node2, nodes2):
+        from bezier import _speedup
+
+        return _speedup.speedup.from_linearized(
+            error1, start1, end1, start_node1, end_node1, nodes1,
+            error2, start2, end2, start_node2, end_node2, nodes2)
+    # pylint: enable=too-many-arguments
 
 
 class Test_from_linearized(utils.NumPyTestCase):

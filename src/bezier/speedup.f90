@@ -8,7 +8,7 @@ module speedup
          bbox, specialize_curve_generic, specialize_curve_quadratic, &
          specialize_curve, jacobian_both, evaluate_hodograph, &
          newton_refine_intersect, jacobian_det, bbox_intersect, &
-         wiggle_interval, parallel_different
+         wiggle_interval, parallel_different, from_linearized
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -659,5 +659,87 @@ contains
     end if
 
   end subroutine parallel_different
+
+  subroutine from_linearized( &
+       error1, start1, end1, start_node1, end_node1, nodes1, degree1, &
+       error2, start2, end2, start_node2, end_node2, nodes2, degree2, &
+       refined_s, refined_t, does_intersect, py_exc)
+
+    !f2py integer intent(hide), depend(nodes1) :: degree1 = size(nodes1, 1) - 1
+    !f2py integer intent(hide), depend(nodes2) :: degree2 = size(nodes2, 1) - 1
+    real(dp), intent(in) :: error1, start1, end1
+    real(dp), intent(in) :: start_node1(1, 2)
+    real(dp), intent(in) :: end_node1(1, 2)
+    real(dp), intent(in) :: nodes1(degree1 + 1, 2)
+    integer, intent(in) :: degree1
+    real(dp), intent(in) :: error2, start2, end2
+    real(dp), intent(in) :: start_node2(1, 2)
+    real(dp), intent(in) :: end_node2(1, 2)
+    real(dp), intent(in) :: nodes2(degree2 + 1, 2)
+    integer, intent(in) :: degree2
+    real(dp), intent(out) :: refined_s, refined_t
+    logical(1), intent(out) :: does_intersect
+    integer, intent(out) :: py_exc
+    ! Variables outside of signature.
+    real(dp) :: s, t
+    logical(1) :: success
+
+    py_exc = 0
+    call segment_intersection( &
+         start_node1, end_node1, start_node2, end_node2, s, t, success)
+
+    if (success) then
+       if (s < -(0.5_dp**16) .OR. 1.0_dp + 0.5_dp**16 < s) then
+          does_intersect = .FALSE.
+          return
+       end if
+
+       if (t < -(0.5_dp**16) .OR. 1.0_dp + 0.5_dp**16 < t) then
+          does_intersect = .FALSE.
+          return
+       end if
+    else
+       ! Handle special case where the curves are actually lines.
+       if (error1 == 0.0_dp .AND. error2 == 0.0_dp) then
+          call parallel_different( &
+               start_node1, end_node1, start_node2, end_node2, success)
+          if (success) then
+             does_intersect = .FALSE.
+             return
+          end if
+       end if
+
+       ! Expect the wrapper code to raise
+       ! NotImplementedError('Line segments parallel.')
+       py_exc = 1
+       return
+    end if
+
+    does_intersect = .TRUE.
+    ! Now, promote ``s`` and ``t`` onto the original curves.
+    s = (1.0_dp - s) * start1 + s * end1  ! orig_s
+    t = (1.0_dp - t) * start2 + t * end2  ! orig_t
+    ! Perform one step of Newton iteration to refine the computed
+    ! values of s and t.
+    call newton_refine_intersect( &
+         s, nodes1, degree1, t, nodes2, degree2, refined_s, refined_t)
+
+    call wiggle_interval(refined_s, s, success)
+    if (.NOT. success) then
+       ! py_exc==2 indicates ``wiggle_interval`` failed.
+       py_exc = 2
+       return
+    end if
+    refined_s = s
+
+    call wiggle_interval(refined_t, t, success)
+    if (.NOT. success) then
+       ! py_exc==2 indicates ``wiggle_interval`` failed.
+       py_exc = 2
+       return
+    end if
+    refined_t = t
+
+  end subroutine from_linearized
 
 end module speedup

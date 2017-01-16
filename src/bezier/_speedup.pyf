@@ -163,6 +163,37 @@ python module _speedup
                 real(kind=dp) dimension(1,2),intent(in) :: end1
                 logical(kind=1) intent(out) :: result_
             end subroutine parallel_different
+            subroutine from_linearized(error1,start1,end1,start_node1,end_node1,nodes1,degree1,error2,start2,end2,start_node2,end_node2,nodes2,degree2,refined_s,refined_t,does_intersect,py_exc)
+                real(kind=dp) intent(in) :: error1
+                real(kind=dp) intent(in) :: start1
+                real(kind=dp) intent(in) :: end1
+                real(kind=dp) dimension(1,2),intent(in) :: start_node1
+                real(kind=dp) dimension(1,2),intent(in) :: end_node1
+                real(kind=dp) dimension(degree1 + 1,2),intent(in) :: nodes1
+                integer, optional,intent(hide),depend(nodes1) :: degree1=size(nodes1, 1)-1
+                real(kind=dp) intent(in) :: error2
+                real(kind=dp) intent(in) :: start2
+                real(kind=dp) intent(in) :: end2
+                real(kind=dp) dimension(1,2),intent(in) :: start_node2
+                real(kind=dp) dimension(1,2),intent(in) :: end_node2
+                real(kind=dp) dimension(degree2 + 1,2),intent(in) :: nodes2
+                integer, optional,intent(hide),depend(nodes2) :: degree2=size(nodes2, 1)-1
+                real(kind=dp) intent(out) :: refined_s
+                real(kind=dp) intent(out) :: refined_t
+                logical(kind=1) intent(out) :: does_intersect
+                integer intent(hide) :: py_exc
+                callstatement '''
+                (*f2py_func)(&error1, &start1, &end1, start_node1, end_node1, nodes1, &degree1, &error2, &start2, &end2, start_node2, end_node2, nodes2, &degree2, &refined_s, &refined_t, &does_intersect, &py_exc);
+                if (py_exc == 1)
+                {
+                  PyErr_SetString(PyExc_NotImplementedError, "Line segments parallel.");
+                }
+                if (py_exc == 2)
+                {
+                  PyErr_SetString(PyExc_ValueError, "outside of unit interval");
+                }
+                '''
+            end subroutine from_linearized
         end module speedup
     end interface
 end python module _speedup
