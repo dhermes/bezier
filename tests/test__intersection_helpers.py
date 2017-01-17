@@ -769,6 +769,41 @@ class Test__from_linearized_low_level_py(utils.NumPyTestCase):
     def test_no_intersection_bad_s(self):
         self._no_intersect_help(swap=True)
 
+    def _no_intersect_help_non_line(self, swap=False):
+        # The bounding boxes intersect but the lines do not.
+        start_node1 = np.asfortranarray([[0.0, 0.0]])
+        end_node1 = np.asfortranarray([[1.0, 1.0]])
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 0.0],
+            [1.0, 1.0],
+        ])
+        error1 = 0.25
+        args1 = (error1, 0.0, 1.0, start_node1, end_node1, nodes1)
+
+        start_node2 = np.asfortranarray([[1.75, -0.75]])
+        end_node2 = np.asfortranarray([[0.75, 0.25]])
+        nodes2 = np.asfortranarray([
+            [1.75, -0.75],
+            [1.25, -0.75],
+            [0.75, 0.25],
+        ])
+        error2 = 0.25
+        args2 = (error2, 0.0, 1.0, start_node2, end_node2, nodes2)
+
+        if swap:
+            args1, args2 = args2, args1
+
+        args = args1 + args2
+        _, _, success = self._call_function_under_test(*args)
+        self.assertFalse(success)
+
+    def test_no_intersection_bad_t_non_line(self):
+        self._no_intersect_help_non_line()
+
+    def test_no_intersection_bad_s_non_line(self):
+        self._no_intersect_help_non_line(swap=True)
+
     def test_parallel_intersection(self):
         start_node1 = np.asfortranarray([[0.0, 0.0]])
         end_node1 = np.asfortranarray([[1.0, 1.0]])

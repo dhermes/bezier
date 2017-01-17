@@ -689,6 +689,17 @@ contains
          start_node1, end_node1, start_node2, end_node2, s, t, success)
 
     if (success) then
+       ! Special case for lines, allow no leeway on almost intersections.
+       if (error1 == 0.0_dp .AND. (s < 0.0_dp .OR. 1.0_dp < s)) then
+          does_intersect = .FALSE.
+          return
+       end if
+
+       if (error2 == 0.0_dp .AND. (t < 0.0_dp .OR. 1.0_dp < t)) then
+          does_intersect = .FALSE.
+          return
+       end if
+
        if (s < -(0.5_dp**16) .OR. 1.0_dp + 0.5_dp**16 < s) then
           does_intersect = .FALSE.
           return

@@ -750,7 +750,6 @@ def test_curves38_and_39():
     curve_curve_check(CURVE38, CURVE39, s_vals, t_vals, points)
 
 
-@pytest.mark.xfail
 def test_curves40_and_41():
     s_vals = np.zeros((0,), order='F')
     t_vals = s_vals

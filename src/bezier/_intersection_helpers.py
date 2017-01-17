@@ -1063,6 +1063,10 @@ def _from_linearized_low_level_py(
     s, t, success = segment_intersection(
         start_node1, end_node1, start_node2, end_node2)
     if success:
+        if error1 == 0.0 and not _helpers.in_interval(s, 0.0, 1.0):
+            return None, None, False
+        if error2 == 0.0 and not _helpers.in_interval(t, 0.0, 1.0):
+            return None, None, False
         if not _helpers.in_interval(s, _WIGGLE_START, _WIGGLE_END):
             return None, None, False
         if not _helpers.in_interval(t, _WIGGLE_START, _WIGGLE_END):
