@@ -281,6 +281,20 @@ CURVE39 = bezier.Curve.from_nodes(np.asfortranarray([
     [1.0, 0.125],
     [1.5, -0.125],
 ]), _copy=False)
+# g40 is not worth writing down
+CURVE40 = bezier.Curve.from_nodes(np.asfortranarray([
+    [float.fromhex('-0x1.1f2347525aff1p-2'),
+     float.fromhex('-0x1.b10f43da717d8p-3')],
+    [float.fromhex('-0x1.3912a66009422p-2'),
+     float.fromhex('-0x1.263d62f131d03p-4')],
+]))
+# g41 is not worth writing down
+CURVE41 = bezier.Curve.from_nodes(np.asfortranarray([
+    [float.fromhex('-0x1.25a8a28e98475p-2'),
+     float.fromhex('-0x1.692bd46818fe8p-3')],
+    [float.fromhex('-0x1.7daf3df0a049ep-2'),
+     float.fromhex('-0x1.1361ffff031f1p-2')],
+]))
 
 
 def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
@@ -734,6 +748,14 @@ def test_curves38_and_39():
     ])
 
     curve_curve_check(CURVE38, CURVE39, s_vals, t_vals, points)
+
+
+@pytest.mark.xfail
+def test_curves40_and_41():
+    s_vals = np.zeros((0,), order='F')
+    t_vals = s_vals
+    points = np.zeros((0, 2), order='F')
+    curve_curve_check(CURVE40, CURVE41, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
