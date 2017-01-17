@@ -2163,11 +2163,7 @@ def _tangent_only_intersections(intersections, surface1, surface2):
         raise ValueError('Unexpected value, types should all match',
                          all_types)
     point_type = all_types.pop()
-    ignored_types = (
-        IntersectionClassification.opposed,
-        IntersectionClassification.ignored_corner,
-    )
-    if point_type in ignored_types:
+    if point_type in _IGNORED_TYPES:
         return []
     elif point_type is IntersectionClassification.tangent_first:
         return [_to_curved_polygon(surface1)]
@@ -2400,6 +2396,10 @@ class IntersectionClassification(enum.Enum):
 _ACCEPTABLE = (
     IntersectionClassification.first,
     IntersectionClassification.second,
+)
+_IGNORED_TYPES = (
+    IntersectionClassification.opposed,
+    IntersectionClassification.ignored_corner,
 )
 
 # pylint: disable=invalid-name
