@@ -390,26 +390,8 @@ class Curve(_base.Base):
     def evaluate_multi(self, s_vals):
         r"""Evaluate :math:`B(s)` for multiple points along the curve.
 
-        This is done by first evaluating each member of the
-        `Bernstein basis`_ at each value in ``s_vals`` and then
-        applying those to the control points for the current curve.
-
-        This is done instead of using `de Casteljau's algorithm`_.
-        Implementing de Casteljau is problematic because it requires
-        a choice between one of two methods:
-
-        * vectorize operations of the form :math:`(1 - s)v + s w`,
-          which requires a copy of the curve's control points for
-          each value in ``s_vals``
-        * avoid vectorization and compute each point in serial
-
-        Instead, we can use vectorized operations to build up the
-        Bernstein basis values.
-
-        .. _Bernstein basis:
-            https://en.wikipedia.org/wiki/Bernstein_polynomial
-        .. _de Casteljau's algorithm:
-            https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+        This is done via a modified Horner's method (vectorized for
+        each ``s``-value).
 
         .. doctest:: curve-eval-multi
            :options: +NORMALIZE_WHITESPACE

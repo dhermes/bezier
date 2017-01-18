@@ -68,49 +68,47 @@ contains
   end subroutine de_casteljau_one_round
 
   subroutine evaluate_multi( &
-       num_nodes, dimension_, nodes, num_vals, s_vals, evaluated)
+       nodes, degree, dimension_, s_vals, num_vals, evaluated)
 
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
+    !f2py integer intent(hide), depend(nodes) :: degree_ = size(nodes, 1) - 1
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     !f2py integer intent(hide), depend(s_vals) :: num_vals = size(s_vals)
-    integer :: num_nodes
+    real(dp), intent(in) :: nodes(degree + 1, dimension_)
+    integer :: degree
     integer :: dimension_
-    real(dp), intent(in) :: nodes(num_nodes, dimension_)
-    integer :: num_vals
     real(dp), intent(in) :: s_vals(num_vals)
+    integer :: num_vals
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
-    integer :: curr_deg, index_
+    integer :: i, j
     real(dp) :: one_less(num_vals)
-    real(dp) :: weights_next(num_vals, num_nodes)
-    real(dp) :: weights_curr(num_vals, num_nodes)
-    real(dp) :: swap(num_vals, num_nodes)
+    real(dp) :: s_pow(num_vals)
+    integer :: binom_val
 
-    ! Degree 0 only occupies first column
-    weights_curr(:, 1) = 1.0_dp
-    weights_curr(:, 2:) = 0.0_dp
-    ! Zero out "next" workspace
-    weights_next = 0.0_dp
+    one_less = 1.0_dp - s_vals
+    s_pow = 1.0_dp
+    binom_val = 1
 
-    one_less(:) = 1.0_dp - s_vals(:)
+    forall (i = 1:num_vals)
+       evaluated(i, :) = one_less(i) * nodes(1, :)
+    end forall
 
-    ! Increase from degree 0 to (degree - 1).
-    do curr_deg = 1, num_nodes - 1
-       forall (index_ = 1:curr_deg)
-          weights_next(:, index_) = weights_curr(:, index_) * one_less(:)
-          weights_next(:, index_ + 1) = ( &
-               weights_next(:, index_ + 1) + &
-               weights_curr(:, index_) * s_vals(:))
+    do i = 2, degree
+       s_pow = s_pow * s_vals
+       binom_val = (binom_val * (degree - i + 2)) / (i - 1)
+       forall (j = 1:num_vals)
+          evaluated(j, :) = ( &
+               evaluated(j, :) + &
+               binom_val * s_pow(j) * nodes(i, :)) * one_less(j)
        end forall
-
-       swap = weights_curr
-       weights_curr = weights_next
-       weights_next = swap
     end do
 
-    evaluated = matmul(weights_curr, nodes)
+    forall (i = 1:num_vals)
+       evaluated(i, :) = ( &
+            evaluated(i, :) + s_pow(i) * s_vals(i) * nodes(degree + 1, :))
+    end forall
 
   end subroutine evaluate_multi
 
@@ -468,7 +466,7 @@ contains
     first_deriv = nodes(2:, :) - nodes(:degree, :)
     param = s
     call evaluate_multi( &
-         degree, dimension_, first_deriv, 1, param, hodograph)
+         first_deriv, degree - 1, dimension_, param, 1, hodograph)
     hodograph = degree * hodograph
 
   end subroutine evaluate_hodograph
@@ -492,10 +490,10 @@ contains
 
     param = t
     call evaluate_multi( &
-         degree2 + 1, 2, nodes2, 1, param, func_val)
+         nodes2, degree2, 2, param, 1, func_val)
     param = s
     call evaluate_multi( &
-         degree1 + 1, 2, nodes1, 1, param, workspace)
+         nodes1, degree1, 2, param, 1, workspace)
     func_val = func_val - workspace
 
     if (all(func_val == 0.0_dp)) then

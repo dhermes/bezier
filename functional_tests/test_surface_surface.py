@@ -1162,7 +1162,7 @@ def test_surfaces24Q_and_25Q():
     )
 
     # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(22):
+    with CONFIG.wiggle(35):
         surface_surface_check(SURFACE24Q, SURFACE25Q,
                               start_vals, end_vals, nodes, edge_pairs)
 

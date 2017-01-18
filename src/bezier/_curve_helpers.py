@@ -70,7 +70,7 @@ def make_subdivision_matrices(degree):
 def _evaluate_multi(nodes, s_vals):
     r"""Computes multiple points along a curve.
 
-    Does so by computing the Bernstein basis at each value in ``s_vals``
+    Does so via a modified Horner's method for each value in ``s_vals``
     rather than using the de Casteljau algorithm.
 
     .. note::
@@ -89,24 +89,27 @@ def _evaluate_multi(nodes, s_vals):
         value and the columns to the dimension.
     """
     num_vals, = s_vals.shape
-    num_nodes, _ = nodes.shape
+    num_nodes, dimension = nodes.shape
+    degree = num_nodes - 1
 
-    lambda2 = s_vals[:, np.newaxis]
-    lambda1 = 1.0 - lambda2
+    s_vals = s_vals[:, np.newaxis]  # lambda2
+    one_less = 1.0 - s_vals  # lambda1
 
-    weights_next = np.zeros((num_vals, num_nodes), order='F')
-    weights_curr = np.zeros((num_vals, num_nodes), order='F')
-    weights_curr[:, 0] = 1.0
+    # Avoidable Python for-loop (already has Fortran impl.)
+    result = np.zeros((num_vals, dimension), order='F')
+    result += one_less * nodes[0, :]
 
-    # Increase from degree 0 to max degree.
-    for curr_deg in six.moves.xrange(num_nodes - 1):
-        weights_next[:, :curr_deg + 1] = (
-            lambda1 * weights_curr[:, :curr_deg + 1])
-        weights_next[:, 1:curr_deg + 2] += (
-            lambda2 * weights_curr[:, :curr_deg + 1])
-        weights_curr, weights_next = weights_next, weights_curr
+    binom_val = 1.0
+    s_pow = np.ones((num_vals, 1), order='F')
+    for index in six.moves.xrange(1, degree):
+        s_pow *= s_vals
+        binom_val = (binom_val * (degree - index + 1)) / index
+        result += binom_val * s_pow * nodes[index, :]
+        result *= one_less
 
-    return _helpers.matrix_product(weights_curr, nodes)
+    result += s_vals * s_pow * nodes[degree, :]
+
+    return result
 
 
 def _vec_size(nodes, s_val):
