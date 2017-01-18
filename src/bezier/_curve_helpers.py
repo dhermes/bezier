@@ -88,25 +88,65 @@ def _evaluate_multi(nodes, s_vals):
         NumPy array, with the rows corresponding to each ``s``
         value and the columns to the dimension.
     """
-    num_vals, = s_vals.shape
+    one_less = 1.0 - s_vals
+    return evaluate_multi_barycentric(nodes, one_less, s_vals)
+
+
+
+def _evaluate_multi_barycentric(nodes, lambda1, lambda2):
+    r"""Evaluates a B |eacute| zier type-function.
+
+    Of the form
+
+    .. math::
+
+       B(\lambda_1, \lambda_2) = \sum_j \binom{n}{j}
+           \lambda_1^{n - j} \lambda_2^j \cdot v_j
+
+    for some set of vectors :math:`v_j` given by ``nodes``.
+
+    Does so via a modified Horner's method for each pair of values
+    in ``lambda1`` and ``lambda2``, rather than using the
+    de Casteljau algorithm.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a curve.
+        lambda1 (numpy.ndarray): Parameters along the curve (as a
+            1D array).
+        lambda2 (numpy.ndarray): Parameters along the curve (as a
+            1D array). Typically we have ``lambda1 + lambda2 == 1``.
+
+    Returns:
+        numpy.ndarray: The evaluated points as a two dimensional
+        NumPy array, with the rows corresponding to each pair of parameter
+        values and the columns to the dimension.
+    """
+    # NOTE: We assume but don't check that lambda2 has the same shape.
+    num_vals, = lambda1.shape
     num_nodes, dimension = nodes.shape
     degree = num_nodes - 1
 
-    s_vals = s_vals[:, np.newaxis]  # lambda2
-    one_less = 1.0 - s_vals  # lambda1
+    # Resize for broadcasting.
+    lambda1 = lambda1[:, np.newaxis]
+    lambda2 = lambda2[:, np.newaxis]
 
     result = np.zeros((num_vals, dimension), order='F')
-    result += one_less * nodes[0, :]
+    result += lambda1 * nodes[0, :]
 
     binom_val = 1.0
-    s_pow = np.ones((num_vals, 1), order='F')
+    lambda2_pow = np.ones((num_vals, 1), order='F')
     for index in six.moves.xrange(1, degree):
-        s_pow *= s_vals
+        lambda2_pow *= lambda2
         binom_val = (binom_val * (degree - index + 1)) / index
-        result += binom_val * s_pow * nodes[index, :]
-        result *= one_less
+        result += binom_val * lambda2_pow * nodes[index, :]
+        result *= lambda1
 
-    result += s_vals * s_pow * nodes[degree, :]
+    result += lambda2 * lambda2_pow * nodes[degree, :]
 
     return result
 
@@ -631,10 +671,12 @@ def locate_point(curve, point):
 
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
+    evaluate_multi_barycentric = _evaluate_multi_barycentric
     evaluate_multi = _evaluate_multi
     specialize_curve = _specialize_curve
     evaluate_hodograph = _evaluate_hodograph
 else:
+    evaluate_multi_barycentric = _speedup.speedup.evaluate_curve_barycentric
     evaluate_multi = _speedup.speedup.evaluate_multi
     specialize_curve = _speedup.speedup.specialize_curve
     evaluate_hodograph = _speedup.speedup.evaluate_hodograph

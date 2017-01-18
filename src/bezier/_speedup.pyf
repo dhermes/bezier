@@ -14,6 +14,15 @@ python module _speedup
                 real(kind=dp) intent(in) :: lambda3
                 real(kind=dp) dimension(num_nodes-degree-1,dimension_),intent(out),depend(num_nodes,degree,dimension_) :: new_nodes
             end subroutine de_casteljau_one_round
+            subroutine evaluate_curve_barycentric(nodes,degree,dimension_,lambda1,lambda2,num_vals,evaluated)
+                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
+                integer, optional,check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) dimension(num_vals),intent(in) :: lambda1
+                real(kind=dp) dimension(num_vals),intent(in),depend(num_vals) :: lambda2
+                integer, optional,intent(hide),depend(lambda1) :: num_vals=size(lambda1)
+                real(kind=dp) dimension(num_vals,dimension_),intent(out),depend(num_vals,dimension_) :: evaluated
+            end subroutine evaluate_curve_barycentric
             subroutine evaluate_multi(nodes,degree,dimension_,s_vals,num_vals,evaluated)
                 real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
                 integer, optional,check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)

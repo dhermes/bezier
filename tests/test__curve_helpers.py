@@ -60,6 +60,46 @@ class Test_make_subdivision_matrices(utils.NumPyTestCase):
             3, curve._CUBIC_SUBDIVIDE_LEFT, curve._CUBIC_SUBDIVIDE_RIGHT)
 
 
+class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, lambda1, lambda2):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._evaluate_multi_barycentric(
+            nodes, lambda1, lambda2)
+
+    def test_non_unity(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0, 0.0],
+            [0.5, 3.0, 1.0],
+            [1.5, 4.0, 1.0],
+            [2.0, 8.0, 1.0],
+        ])
+        lambda1 = np.array([0.25, 0.5, 0.75])
+        lambda2 = np.array([0.25, 0.125, -0.75])
+
+        result = self._call_function_under_test(nodes, lambda1, lambda2)
+        expected = np.asfortranarray([
+            [0.125, 0.453125, 0.109375],
+            [0.0859375, 0.390625, 0.119140625],
+            [0.421875, -2.109375, -0.421875],
+        ])
+        self.assertEqual(result, expected)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_evaluate_curve_barycentric(
+        Test__evaluate_multi_barycentric):
+
+    @staticmethod
+    def _call_function_under_test(nodes, lambda1, lambda2):
+        from bezier import _speedup
+
+        return _speedup.speedup.evaluate_curve_barycentric(
+            nodes, lambda1, lambda2)
+
+
 class Test__evaluate_multi(utils.NumPyTestCase):
 
     @staticmethod

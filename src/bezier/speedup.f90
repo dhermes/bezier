@@ -2,13 +2,14 @@ module speedup
 
   implicit none
   private
-  public de_casteljau_one_round, evaluate_multi, linearization_error, &
-         evaluate_barycentric, evaluate_barycentric_multi, &
-         evaluate_cartesian_multi, cross_product, segment_intersection, &
-         bbox, specialize_curve_generic, specialize_curve_quadratic, &
-         specialize_curve, jacobian_both, evaluate_hodograph, &
-         newton_refine_intersect, jacobian_det, bbox_intersect, &
-         wiggle_interval, parallel_different, from_linearized
+  public &
+       de_casteljau_one_round, evaluate_curve_barycentric, evaluate_multi, &
+       linearization_error, evaluate_barycentric, evaluate_barycentric_multi, &
+       evaluate_cartesian_multi, cross_product, segment_intersection, bbox, &
+       specialize_curve_generic, specialize_curve_quadratic, &
+       specialize_curve, jacobian_both, evaluate_hodograph, &
+       newton_refine_intersect, jacobian_det, bbox_intersect, &
+       wiggle_interval, parallel_different, from_linearized
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
@@ -67,6 +68,51 @@ contains
 
   end subroutine de_casteljau_one_round
 
+  subroutine evaluate_curve_barycentric( &
+       nodes, degree, dimension_, lambda1, lambda2, num_vals, evaluated)
+
+    ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
+
+    !f2py integer intent(hide), depend(nodes) :: degree_ = size(nodes, 1) - 1
+    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    !f2py integer intent(hide), depend(lambda1) :: num_vals = size(lambda1)
+    real(dp), intent(in) :: nodes(degree + 1, dimension_)
+    integer :: degree
+    integer :: dimension_
+    real(dp), intent(in) :: lambda1(num_vals)
+    real(dp), intent(in) :: lambda2(num_vals)
+    integer :: num_vals
+    real(dp), intent(out) :: evaluated(num_vals, dimension_)
+    ! Variables outside of signature.
+    integer :: i, j
+    real(dp) :: lambda2_pow(num_vals)
+    integer :: binom_val
+
+    lambda2_pow = 1.0_dp
+    binom_val = 1
+
+    forall (i = 1:num_vals)
+       evaluated(i, :) = lambda1(i) * nodes(1, :)
+    end forall
+
+    do i = 2, degree
+       lambda2_pow = lambda2_pow * lambda2
+       binom_val = (binom_val * (degree - i + 2)) / (i - 1)
+       forall (j = 1:num_vals)
+          evaluated(j, :) = ( &
+               evaluated(j, :) + &
+               binom_val * lambda2_pow(j) * nodes(i, :)) * lambda1(j)
+       end forall
+    end do
+
+    forall (i = 1:num_vals)
+       evaluated(i, :) = ( &
+            evaluated(i, :) + &
+            lambda2_pow(i) * lambda2(i) * nodes(degree + 1, :))
+    end forall
+
+  end subroutine evaluate_curve_barycentric
+
   subroutine evaluate_multi( &
        nodes, degree, dimension_, s_vals, num_vals, evaluated)
 
@@ -82,34 +128,11 @@ contains
     integer :: num_vals
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
-    integer :: i, j
     real(dp) :: one_less(num_vals)
-    real(dp) :: s_pow(num_vals)
-    integer :: binom_val
 
     one_less = 1.0_dp - s_vals
-    s_pow = 1.0_dp
-    binom_val = 1
-
-    forall (i = 1:num_vals)
-       evaluated(i, :) = one_less(i) * nodes(1, :)
-    end forall
-
-    do i = 2, degree
-       s_pow = s_pow * s_vals
-       binom_val = (binom_val * (degree - i + 2)) / (i - 1)
-       forall (j = 1:num_vals)
-          evaluated(j, :) = ( &
-               evaluated(j, :) + &
-               binom_val * s_pow(j) * nodes(i, :)) * one_less(j)
-       end forall
-    end do
-
-    forall (i = 1:num_vals)
-       evaluated(i, :) = ( &
-            evaluated(i, :) + s_pow(i) * s_vals(i) * nodes(degree + 1, :))
-    end forall
-
+    call evaluate_curve_barycentric( &
+         nodes, degree, dimension_, one_less, s_vals, num_vals, evaluated)
   end subroutine evaluate_multi
 
   subroutine linearization_error(nodes, degree, dimension_, error)
