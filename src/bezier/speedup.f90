@@ -177,38 +177,13 @@ contains
     real(dp), intent(in) :: lambda3
     real(dp), intent(out) :: point(1, dimension_)
     ! Variables outside of signature.
-    integer :: k, binom_val, index_, new_index
-    real(dp) :: row_result(1, dimension_)
-    real(dp) :: lambda1_arr(1), lambda2_arr(1)
+    real(dp) :: param_vals(1, 3)
 
-    if (degree == 0) then
-       point = nodes
-       return
-    end if
-
-    lambda1_arr = lambda1
-    lambda2_arr = lambda2
-    binom_val = 1
-    index_ = num_nodes
-    point(1, :) = nodes(index_, :)
-
-    do k = degree - 1, 0, -1
-        ! We want to go from (d C (k + 1)) to (d C k).
-        binom_val = (binom_val * (k + 1)) / (degree - k)
-        index_ = index_ - 1  ! Step to last element in row.
-        !     k = d - 1, d - 2, ...
-        ! d - k =     1,     2, ...
-        ! We know row k has (d - k + 1) elements.
-        new_index = index_ - degree + k  ! First element in row.
-
-        call evaluate_curve_barycentric( &
-             nodes(new_index:index_, :), degree - k, dimension_, &
-             lambda1_arr, lambda2_arr, 1, row_result)
-
-        point = lambda3 * point + binom_val * row_result
-        ! Update index for next iteration.
-        index_ = new_index
-    end do
+    param_vals(1, 1) = lambda1
+    param_vals(1, 2) = lambda2
+    param_vals(1, 3) = lambda3
+    call evaluate_barycentric_multi( &
+         num_nodes, nodes, degree, 1, param_vals, dimension_, point)
 
   end subroutine evaluate_barycentric
 
@@ -230,13 +205,43 @@ contains
     real(dp), intent(in) :: param_vals(num_vals, 3)
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
-    integer :: index_
+    integer :: k, binom_val, index_, new_index
+    real(dp) :: row_result(num_vals, dimension_)
 
-    do index_ = 1, num_vals
-       call evaluate_barycentric( &
-            num_nodes, dimension_, nodes, degree, &
-            param_vals(index_, 1), param_vals(index_, 2), &
-            param_vals(index_, 3), evaluated(index_, :))
+    index_ = num_nodes
+    forall (new_index = 1:num_vals)  ! Borrow new_index for this loop.
+       evaluated(new_index, :) = nodes(index_, :)
+    end forall
+
+    if (degree == 0) then
+       return
+    end if
+
+    binom_val = 1
+    do k = degree - 1, 0, -1
+        ! We want to go from (d C (k + 1)) to (d C k).
+        binom_val = (binom_val * (k + 1)) / (degree - k)
+        index_ = index_ - 1  ! Step to last element in row.
+        !     k = d - 1, d - 2, ...
+        ! d - k =     1,     2, ...
+        ! We know row k has (d - k + 1) elements.
+        new_index = index_ - degree + k  ! First element in row.
+
+        ! lambda1 = param_vals(:, 1)
+        ! lambda2 = param_vals(:, 2)
+        call evaluate_curve_barycentric( &
+             nodes(new_index:index_, :), degree - k, dimension_, &
+             param_vals(:, 1), param_vals(:, 2), num_vals, row_result)
+
+        ! Update index for next iteration.
+        index_ = new_index
+
+        ! lambda3 = param_vals(:, 3)
+        forall (new_index = 1:num_vals)  ! Borrow new_index for this loop.
+           evaluated(new_index, :) = ( &
+                param_vals(new_index, 3) * evaluated(new_index, :) + &
+                binom_val * row_result(new_index, :))
+        end forall
     end do
 
   end subroutine evaluate_barycentric_multi
