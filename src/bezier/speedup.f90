@@ -177,38 +177,38 @@ contains
     real(dp), intent(in) :: lambda3
     real(dp), intent(out) :: point(1, dimension_)
     ! Variables outside of signature.
-    integer :: curr_deg, curr_num_nodes, next_num_nodes
-    real(dp) :: workspace_curr(num_nodes - degree - 1, dimension_)
-    real(dp) :: workspace_next(num_nodes - 2 * degree - 1, dimension_)
-    real(dp) :: swap(num_nodes - 2 * degree - 1, dimension_)
+    integer :: k, binom_val, index_, new_index
+    real(dp) :: row_result(1, dimension_)
+    real(dp) :: lambda1_arr(1), lambda2_arr(1)
 
     if (degree == 0) then
        point = nodes
        return
     end if
 
-    ! Do the first round of de Casteljau (this assumes degree >= 1).
-    call de_casteljau_one_round( &
-         num_nodes, dimension_, nodes, degree, &
-         lambda1, lambda2, lambda3, workspace_curr)
+    lambda1_arr = lambda1
+    lambda2_arr = lambda2
+    binom_val = 1
+    index_ = num_nodes
+    point(1, :) = nodes(index_, :)
 
-    curr_num_nodes = num_nodes - degree - 1
-    do curr_deg = degree - 1, 1, -1
-       next_num_nodes = curr_num_nodes - curr_deg - 1
-       call de_casteljau_one_round( &
-            curr_num_nodes, dimension_, &
-            workspace_curr(:curr_num_nodes, :), curr_deg, &
-            lambda1, lambda2, lambda3, &
-            workspace_next(:next_num_nodes, :))
+    do k = degree - 1, 0, -1
+        ! We want to go from (d C (k + 1)) to (d C k).
+        binom_val = (binom_val * (k + 1)) / (degree - k)
+        index_ = index_ - 1  ! Step to last element in row.
+        !     k = d - 1, d - 2, ...
+        ! d - k =     1,     2, ...
+        ! We know row k has (d - k + 1) elements.
+        new_index = index_ - degree + k  ! First element in row.
 
-       ! Swap the relevant data in the current and next workspaces
-       curr_num_nodes = next_num_nodes
-       swap(:curr_num_nodes, :) = workspace_curr(:curr_num_nodes, :)
-       workspace_curr(:curr_num_nodes, :) = workspace_next(:curr_num_nodes, :)
-       workspace_next(:curr_num_nodes, :) = swap(:curr_num_nodes, :)
+        call evaluate_curve_barycentric( &
+             nodes(new_index:index_, :), degree - k, dimension_, &
+             lambda1_arr, lambda2_arr, 1, row_result)
+
+        point = lambda3 * point + binom_val * row_result
+        ! Update index for next iteration.
+        index_ = new_index
     end do
-
-    point = workspace_curr(1:1, :)
 
   end subroutine evaluate_barycentric
 

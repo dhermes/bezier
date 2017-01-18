@@ -92,7 +92,6 @@ def _evaluate_multi(nodes, s_vals):
     return evaluate_multi_barycentric(nodes, one_less, s_vals)
 
 
-
 def _evaluate_multi_barycentric(nodes, lambda1, lambda2):
     r"""Evaluates a B |eacute| zier type-function.
 

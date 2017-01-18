@@ -2270,44 +2270,35 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         numpy.ndarray: The evaluated point as a ``1xD`` array (where ``D``
         is the ambient dimension where ``nodes`` reside).
     """
-    if degree == 1:
-        weights = np.asfortranarray([
-            [lambda1, lambda2, lambda3],
-        ])
-    elif degree == 2:
-        weights = np.asfortranarray([
-            [
-                lambda1 * lambda1,
-                2.0 * lambda1 * lambda2,
-                lambda2 * lambda2,
-                2.0 * lambda1 * lambda3,
-                2.0 * lambda2 * lambda3,
-                lambda3 * lambda3,
-            ]
-        ])
-    elif degree == 3:
-        weights = np.asfortranarray([
-            [
-                lambda1 * lambda1 * lambda1,
-                3.0 * lambda1 * lambda1 * lambda2,
-                3.0 * lambda1 * lambda2 * lambda2,
-                lambda2 * lambda2 * lambda2,
-                3.0 * lambda1 * lambda1 * lambda3,
-                6.0 * lambda1 * lambda2 * lambda3,
-                3.0 * lambda2 * lambda2 * lambda3,
-                3.0 * lambda1 * lambda3 * lambda3,
-                3.0 * lambda2 * lambda3 * lambda3,
-                lambda3 * lambda3 * lambda3,
-            ]
-        ])
-    else:
-        result = nodes
-        for reduced_deg in six.moves.xrange(degree, 0, -1):
-            result = de_casteljau_one_round(
-                result, reduced_deg, lambda1, lambda2, lambda3)
-        return result
+    num_nodes, dimension = nodes.shape
 
-    return _helpers.matrix_product(weights, nodes)
+    binom_val = 1.0
+    result = np.zeros((1, dimension), order='F')
+    index = num_nodes - 1
+    result += nodes[index, :]
+
+    # curve evaluate_multi_barycentric() takes arrays.
+    lambda1 = np.asfortranarray([lambda1])
+    lambda2 = np.asfortranarray([lambda2])
+    for k in six.moves.xrange(degree - 1, -1, -1):
+        # We want to go from (d C (k + 1)) to (d C k).
+        binom_val = (binom_val * (k + 1)) / (degree - k)
+        index -= 1  # Step to last element in row.
+        #     k = d - 1, d - 2, ...
+        # d - k =     1,     2, ...
+        # We know row k has (d - k + 1) elements.
+        new_index = index - degree + k  # First element in row.
+
+        row_nodes = nodes[new_index:index + 1, :]
+        row_result = _curve_helpers.evaluate_multi_barycentric(
+            row_nodes, lambda1, lambda2)
+
+        result *= lambda3
+        result += binom_val * row_result
+        # Update index for next iteration.
+        index = new_index
+
+    return result
 
 
 def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
