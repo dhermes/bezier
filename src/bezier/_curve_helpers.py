@@ -95,7 +95,6 @@ def _evaluate_multi(nodes, s_vals):
     s_vals = s_vals[:, np.newaxis]  # lambda2
     one_less = 1.0 - s_vals  # lambda1
 
-    # Avoidable Python for-loop (already has Fortran impl.)
     result = np.zeros((num_vals, dimension), order='F')
     result += one_less * nodes[0, :]
 
