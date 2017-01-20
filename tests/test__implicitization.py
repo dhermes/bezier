@@ -20,10 +20,10 @@ from tests import utils
 class Test_evaluate(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, x, y):
+    def _call_function_under_test(nodes, x_val, y_val):
         from bezier import _implicitization
 
-        return _implicitization.evaluate(nodes, x, y)
+        return _implicitization.evaluate(nodes, x_val, y_val)
 
     def test_point(self):
         nodes = np.asfortranarray([[1.0, 1.0]])
@@ -68,10 +68,10 @@ class Test_evaluate(unittest.TestCase):
         ])
 
         vals = np.linspace(0.0, 1.0, 9)
-        for xv in vals:
-            for yv in vals:
-                result = self._call_function_under_test(nodes, xv, yv)
-                self.assertEqual(result, -xv)
+        for x_val in vals:
+            for y_val in vals:
+                result = self._call_function_under_test(nodes, x_val, y_val)
+                self.assertEqual(result, -x_val)
 
     def test_quadratic(self):
         # f(x, y) = x^2 + 4 x - 4 y
@@ -102,9 +102,9 @@ class Test_evaluate(unittest.TestCase):
             shape=(50, 2), seed=7930932, num_bits=8)
         values = []
         expected = []
-        for x, y in xy_vals:
-            values.append(self._call_function_under_test(nodes, x, y))
-            expected.append((x - y) * (x - y) - y)
+        for x_val, y_val in xy_vals:
+            values.append(self._call_function_under_test(nodes, x_val, y_val))
+            expected.append((x_val - y_val) * (x_val - y_val) - y_val)
         self.assertEqual(values, expected)
 
     def test_cubic(self):

@@ -26,7 +26,7 @@ without translating to a power basis, we utilize the work of
 """
 
 
-def evaluate(nodes, x, y):
+def evaluate(nodes, x_val, y_val):
     r"""Evaluate the implicitized bivariate polynomial containing the curve.
 
     Assumes `algebraic curve`_ containing :math:`B(s, t)` is given by
@@ -44,8 +44,11 @@ def evaluate(nodes, x, y):
 
     Args:
         nodes (numpy.ndarray): ``Nx2`` array of nodes in a curve.
-        x (float): ``x``-coordinate for evaluation.
-        y (float): ``y``-coordinate for evaluation.
+        x_val (float): ``x``-coordinate for evaluation.
+        y_val (float): ``y``-coordinate for evaluation.
+
+    Returns:
+        float: The computed value of :math:`f(x, y)`.
 
     Raises:
         ValueError: If the curve is a point.
@@ -60,29 +63,29 @@ def evaluate(nodes, x, y):
         # Modified Sylvester: [x0 - x, x1 - x]
         #                     [y0 - y, y1 - y]
         return (
-            (nodes[0, 0] - x) * (nodes[1, 1] - y) -
-            (nodes[1, 0] - x) * (nodes[0, 1] - y))
+            (nodes[0, 0] - x_val) * (nodes[1, 1] - y_val) -
+            (nodes[1, 0] - x_val) * (nodes[0, 1] - y_val))
     elif num_nodes == 3:
         # x(s) - x = (x0 - x) (1 - s)^2 + 2 (x1 - x) s(1 - s) + (x2 - x) s^2
         # y(s) - y = (y0 - y) (1 - s)^2 + 2 (y1 - y) s(1 - s) + (y2 - y) s^2
-        # Modified Sylvester: [x0 - x, 2(x1 - x),    x2 - x,      0]
-        #                     [     0,    x0 - x, 2(x1 - x), x2 - x]
-        #                     [y0 - y, 2(y1 - y),    y2 - y,      0]
-        #                     [     0,    y0 - y, 2(y1 - y), y2 - y]
-        valA, valB, valC = nodes[:, 0] - x
-        valB *= 2
-        valD, valE, valF = nodes[:, 1] - y
-        valE *= 2
+        # Modified Sylvester: [x0 - x, 2(x1 - x),    x2 - x,      0] = A|B|C|0
+        #                     [     0,    x0 - x, 2(x1 - x), x2 - x]   0|A|B|C
+        #                     [y0 - y, 2(y1 - y),    y2 - y,      0]   D|E|F|0
+        #                     [     0,    y0 - y, 2(y1 - y), y2 - y]   0|D|E|F
+        val_a, val_b, val_c = nodes[:, 0] - x_val
+        val_b *= 2
+        val_d, val_e, val_f = nodes[:, 1] - y_val
+        val_e *= 2
         #     [A, B, C]         [E, F, 0]
         # det [E, F, 0] = - det [A, B, C] = -E (BF - CE) + F(AF - CD)
         #     [D, E, F]         [D, E, F]
-        sub1 = valB * valF - valC * valE
-        sub2 = valA * valF - valC * valD
-        sub_detA = -valE * sub1 + valF * sub2
+        sub1 = val_b * val_f - val_c * val_e
+        sub2 = val_a * val_f - val_c * val_d
+        sub_det_a = -val_e * sub1 + val_f * sub2
         #     [B, C, 0]
         # det [A, B, C] = B (BF - CE) - C (AF - CD)
         #     [D, E, F]
-        sub_detD = valB * sub1 - valC * sub2
-        return valA * sub_detA + valD * sub_detD
+        sub_det_d = val_b * sub1 - val_c * sub2
+        return val_a * sub_det_a + val_d * sub_det_d
     else:
         raise NotImplementedError('Only degrees 1 and 2 supported')
