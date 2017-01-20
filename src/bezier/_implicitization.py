@@ -15,6 +15,7 @@ r"""Helper for implicitizing B |eacute| zier curves.
 .. _resultant: https://en.wikipedia.org/wiki/Resultant
 .. _algebraic curve: https://en.wikipedia.org/wiki/Algebraic_curve
 .. _Farouki and Rajan: http://dx.doi.org/10.1016/0167-8396(88)90016-7
+.. _theorem: https://en.wikipedia.org/wiki/B%C3%A9zout's_theorem
 
 Primarily uses the `resultant`_ to evaluate the implicitized
 `algebraic curve`_. In order to do this on B |eacute| zier curves
@@ -163,8 +164,6 @@ def eval_intersection_polynomial(nodes1, nodes2, t):
 def _to_power_basis11(nodes1, nodes2):
     r"""Compute the coefficients of an **intersection polynomial**.
 
-    .. _theorem: https://en.wikipedia.org/wiki/B%C3%A9zout's_theorem
-
     Helper for :func:`to_power_basis` in the case that each curve is
     degree one. In this case, B |eacute| zout's `theorem`_ tells us
     that the **intersection polynomial** is degree :math:`1 \cdot 1`
@@ -180,11 +179,43 @@ def _to_power_basis11(nodes1, nodes2):
     # We manually invert the Vandermonde matrix:
     # [1 0.0][c0] = [n0]
     # [1 1.0][c1]   [n1]
-    n0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
-    n1 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
+    evaluated0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
+    evaluated1 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
     # [c0] = [ 1 0][n0]
     # [c1] = [-1 1][n1]
-    return np.array([n0, -n0 + n1])
+    return np.array([evaluated0, -evaluated0 + evaluated1])
+
+
+def _to_power_basis12(nodes1, nodes2):
+    r"""Compute the coefficients of an **intersection polynomial**.
+
+    Helper for :func:`to_power_basis` in the case that the first curve is
+    degree one and the second is degree two. In this case, B |eacute|
+    zout's `theorem`_ tells us that the **intersection polynomial** is
+    degree :math:`1 \cdot 2` hence we return three coefficients.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+
+    Returns:
+        numpy.ndarray: ``3``-array of coefficients.
+    """
+    # We manually invert the Vandermonde matrix:
+    # [1 0.0 0.0 ][c0] = [n0]
+    # [1 0.5 0.25][c1]   [n1]
+    # [1 1.0 1.0 ][c2]   [n2]
+    evaluated0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
+    evaluated1 = eval_intersection_polynomial(nodes1, nodes2, 0.5)
+    evaluated2 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
+    # [c0] = [ 1  0  0][n0]
+    # [c1] = [-3  4 -1][n1]
+    # [c2] = [ 2 -4  2][n2]
+    return np.array([
+        evaluated0,
+        -3.0 * evaluated0 + 4.0 * evaluated1 - evaluated2,
+        2.0 * evaluated0 - 4.0 * evaluated1 + 2.0 * evaluated2,
+    ])
 
 
 def to_power_basis(nodes1, nodes2):
@@ -210,6 +241,8 @@ def to_power_basis(nodes1, nodes2):
     if num_nodes1 == 2:
         if num_nodes2 == 2:
             return _to_power_basis11(nodes1, nodes2)
+        elif num_nodes2 == 3:
+            return _to_power_basis12(nodes1, nodes2)
 
     raise NotImplementedError(
         'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1,

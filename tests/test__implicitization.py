@@ -251,6 +251,32 @@ class Test__to_power_basis11(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
+class Test__to_power_basis12(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _implicitization
+
+        return _implicitization._to_power_basis12(nodes1, nodes2)
+
+    def test_it(self):
+        # f1(x, y) = (2 y - 1) / 2
+        nodes1 = np.asfortranarray([
+            [0.0, 0.5],
+            [1.0, 0.5],
+        ])
+        # x2(t), y2(t) = t, 2 t (1 - t)
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        # f1(x2(t), y2(t)) = -(2 t - 1)^2 / 2
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = np.array([-0.5, 2.0, -2.0])
+        self.assertEqual(result, expected)
+
+
 class Test_to_power_basis(utils.NumPyTestCase):
 
     @staticmethod
@@ -275,9 +301,26 @@ class Test_to_power_basis(utils.NumPyTestCase):
         expected = np.array([-1.0, 0.0])
         self.assertEqual(result, expected)
 
+    def test_degrees_1_2(self):
+        # f1(x, y) = 2 (4 x + 3 y - 24)
+        nodes1 = np.asfortranarray([
+            [0.0, 8.0],
+            [6.0, 0.0],
+        ])
+        # x2(t), y2(t) = 9 t, 18 t (1 - t)
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [4.5, 9.0],
+            [9.0, 0.0],
+        ])
+        # f1(x2(t), y2(t)) = 12 (4 - 3 t) (3 t - 1)
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = np.array([-48.0, 180.0, -108.0])
+        self.assertEqual(result, expected)
+
     def test_unsupported(self):
         nodes_yes = np.zeros((2, 2), order='F')
-        nodes_no = np.zeros((3, 2), order='F')
+        nodes_no = np.zeros((4, 2), order='F')
 
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes_yes, nodes_no)
