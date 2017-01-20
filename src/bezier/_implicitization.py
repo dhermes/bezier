@@ -29,6 +29,30 @@ without translating to a power basis, we utilize the work of
 import numpy as np
 
 
+def _evaluate3(nodes, x_val, y_val):
+    """Helper for :func:`evaluate` when ``nodes`` is degree 3.
+
+    Args:
+        nodes (numpy.ndarray): ``4x2`` array of nodes in a curve.
+        x_val (float): ``x``-coordinate for evaluation.
+        y_val (float): ``y``-coordinate for evaluation.
+
+    Returns:
+        float: The computed value of :math:`f(x, y)`.
+    """
+    # NOTE: This may be (a) slower and (b) less precise than
+    #       hard-coding the determinant.
+    sylvester_mat = np.zeros((6, 6), order='F')
+    delta = nodes - np.asfortranarray([[x_val, y_val]])
+    delta[1:3, :] *= 3.0
+    # Swap rows/columns so that x-y are right next to each other.
+    # This will only change the determinant up to a sign.
+    sylvester_mat[:4, :2] = delta
+    sylvester_mat[1:5, 2:4] = delta
+    sylvester_mat[2:, 4:] = delta
+    return np.linalg.det(sylvester_mat)
+
+
 def evaluate(nodes, x_val, y_val):
     r"""Evaluate the implicitized bivariate polynomial containing the curve.
 
@@ -91,16 +115,6 @@ def evaluate(nodes, x_val, y_val):
         sub_det_d = val_b * sub1 - val_c * sub2
         return val_a * sub_det_a + val_d * sub_det_d
     elif num_nodes == 4:
-        # NOTE: This may be (a) slower and (b) less precise than
-        #       hard-coding the determinant.
-        sylvester_mat = np.zeros((6, 6), order='F')
-        delta = nodes - np.asfortranarray([[x_val, y_val]])
-        delta[1:3, :] *= 3.0
-        # Swap rows/columns so that x-y are right next to each other.
-        # This will only change the determinant up to a sign.
-        sylvester_mat[:4, :2] = delta
-        sylvester_mat[1:5, 2:4] = delta
-        sylvester_mat[2:, 4:] = delta
-        return np.linalg.det(sylvester_mat)
+        return _evaluate3(nodes, x_val, y_val)
     else:
         raise NotImplementedError('Only degrees 1 and 2 supported')
