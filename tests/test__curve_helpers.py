@@ -559,6 +559,8 @@ class Test_locate_point(unittest.TestCase):
 
 class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
 
+    EPS = 0.5**52
+
     @staticmethod
     def _call_function_under_test(nodes, degree):
         from bezier import _curve_helpers
@@ -577,6 +579,23 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
             [2.0, 4.0],
         ])
         self.assertEqual(result, expected)
+
+    def _actually_inverse_helper(self, degree):
+        from bezier import _curve_helpers
+        from bezier import _helpers
+
+        nodes = _helpers.eye(degree + 2)
+        reduction_mat = self._call_function_under_test(nodes, degree + 1)
+        id_mat = _helpers.eye(degree + 1)
+        elevation_mat = _curve_helpers.elevate_nodes(
+            id_mat, degree, degree + 1)
+
+        result = _helpers.matrix_product(reduction_mat, elevation_mat)
+        return result, id_mat
+
+    def test_to_linear_actually_inverse(self):
+        result, id_mat = self._actually_inverse_helper(1)
+        self.assertEqual(result, id_mat)
 
     def test_from_quadratic_not_elevated(self):
         from bezier import _curve_helpers
@@ -611,6 +630,11 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
         ])
         self.assertEqual(result, expected)
 
+    def test_to_quadratic_actually_inverse(self):
+        result, id_mat = self._actually_inverse_helper(2)
+        max_err = np.abs(result - id_mat).max()
+        self.assertLess(max_err, self.EPS)
+
     def test_to_cubic(self):
         nodes = np.asfortranarray([
             [0.0],
@@ -627,6 +651,11 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
             [2.0],
         ])
         self.assertEqual(result, expected)
+
+    def test_to_cubic_actually_inverse(self):
+        result, id_mat = self._actually_inverse_helper(3)
+        max_err = np.abs(result - id_mat).max()
+        self.assertLess(max_err, self.EPS)
 
     def test_unsupported_degree(self):
         degree = 5
