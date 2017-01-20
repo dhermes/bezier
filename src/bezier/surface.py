@@ -353,12 +353,12 @@ class Surface(_base.Base):
         """
         return self._base_y
 
-    def _compute_edges(self):
-        """Compute the edges of the current surface.
+    def _compute_edge_nodes(self):
+        """Compute the nodes of each edges of the current surface.
 
         Returns:
-            Tuple[~curve.Curve, ~curve.Curve, ~curve.Curve]: The edges of
-            the surface.
+            Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]: The nodes in
+            the edges of the surface.
         """
         nodes1 = np.empty((self._degree + 1, self._dimension), order='F')
         nodes2 = np.empty((self._degree + 1, self._dimension), order='F')
@@ -375,6 +375,16 @@ class Surface(_base.Base):
             curr2 += self._degree - i
             curr3 -= i + 2
 
+        return nodes1, nodes2, nodes3
+
+    def _compute_edges(self):
+        """Compute the edges of the current surface.
+
+        Returns:
+            Tuple[~curve.Curve, ~curve.Curve, ~curve.Curve]: The edges of
+            the surface.
+        """
+        nodes1, nodes2, nodes3 = self._compute_edge_nodes()
         edge1 = _curve_mod.Curve(nodes1, self._degree, _copy=False)
         edge2 = _curve_mod.Curve(nodes2, self._degree, _copy=False)
         edge3 = _curve_mod.Curve(nodes3, self._degree, _copy=False)
