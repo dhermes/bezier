@@ -749,6 +749,87 @@ def reduce_pseudo_inverse(nodes, degree):
     return result
 
 
+def _projection_error(nodes, projected):
+    """Compute the error between ``nodes`` and the projected nodes.
+
+    Helper for :func:`_maybe_reduce`.
+
+    For now, just compute the relative error in the Frobenius norm. But,
+    we may wish to consider the error per row / point instead.
+
+    Args:
+        nodes (numpy.ndarray): Nodes in a curve.
+        projected (numpy.ndarray): The ``nodes`` projected into the
+            space of degree-elevated nodes.
+
+    Returns:
+        float: The relative error.
+    """
+    relative_err = np.linalg.norm(nodes - projected, ord='fro')
+    if relative_err != 0.0:
+        relative_err /= np.linalg.norm(nodes, ord='fro')
+
+    return relative_err
+
+
+def _maybe_reduce(nodes):
+    r"""Reduce nodes in a curve if they are degree-elevated.
+
+    We check if the nodes are degree-elevated by projecting onto the
+    space of degree-elevated curves of the same degree, then comparing
+    to the projection. We form the projection by taking the corresponding
+    elevation matrix :math:`E` (from one degree lower) and forming
+    :math:`E \left(E^T E\right)^{-1} E^T`.
+
+    Args:
+        nodes (numpy.ndarray): The nodes in the curve.
+
+    Returns:
+        Tuple[bool, numpy.ndarray]: Pair of values. The first indicates
+        if the ``nodes`` were reduced. The second is the resulting nodes,
+        either the reduced ones or the original passed in.
+
+    Raises:
+        NotImplementedError: If the curve is degree 5 or higher.
+    """
+    num_nodes, _ = nodes.shape
+    if num_nodes < 3:
+        return False, nodes
+    elif num_nodes == 3:
+        projection = _PROJECTION1
+        denom = _PROJ_DENOM1
+    elif num_nodes == 4:
+        projection = _PROJECTION2
+        denom = _PROJ_DENOM2
+    elif num_nodes == 5:
+        projection = _PROJECTION3
+        denom = _PROJ_DENOM3
+    else:
+        raise NotImplementedError(num_nodes)
+
+    projected = _helpers.matrix_product(projection, nodes) / denom
+    relative_err = _projection_error(nodes, projected)
+    if relative_err < _REDUCE_THRESHOLD:
+        return True, reduce_pseudo_inverse(nodes, num_nodes - 1)
+    else:
+        return False, nodes
+
+
+def full_reduce(nodes):
+    """Apply degree reduction to ``nodes`` until it can no longer be reduced.
+
+    Args:
+        nodes (numpy.ndarray): The nodes in the curve.
+
+    Returns:
+        numpy.ndarray: The fully degree-reduced nodes.
+    """
+    was_reduced, nodes = _maybe_reduce(nodes)
+    while was_reduced:
+        was_reduced, nodes = _maybe_reduce(nodes)
+    return nodes
+
+
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     evaluate_multi_barycentric = _evaluate_multi_barycentric

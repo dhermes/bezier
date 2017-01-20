@@ -663,3 +663,187 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
             shape=(degree + 1, 2), seed=3820, num_bits=8)
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes, degree)
+
+
+class Test__projection_error(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, projected):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._projection_error(nodes, projected)
+
+    def test_it(self):
+        nodes = np.asfortranarray([
+            [0.0, 4.0],
+            [3.0, 0.0],
+        ])
+        result = self._call_function_under_test(nodes, nodes)
+        self.assertEqual(result, 0.0)
+
+        projected = np.asfortranarray([
+            [0.5, 4.5],
+            [2.5, 0.5],
+        ])
+        result = self._call_function_under_test(nodes, projected)
+        self.assertEqual(5.0 * result, 1.0)
+
+    def test_nodes_zero(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+        ])
+        result = self._call_function_under_test(nodes, nodes)
+        self.assertEqual(result, 0.0)
+
+
+class Test__maybe_reduce(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier import _curve_helpers
+
+        return _curve_helpers._maybe_reduce(nodes)
+
+    def _low_degree_helper(self, nodes):
+        was_reduced, new_nodes = self._call_function_under_test(nodes)
+        self.assertFalse(was_reduced)
+        self.assertIs(new_nodes, nodes)
+
+    def test_low_degree(self):
+        nodes = np.asfortranarray([
+            [1.0, 1.0],
+        ])
+        self._low_degree_helper(nodes)
+
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        self._low_degree_helper(nodes)
+
+        # NOTE: This **should** be reduced, but we don't bother reducing
+        #       to a point (since it isn't a curve).
+        nodes = np.asfortranarray([
+            [2.0, 2.0],
+            [2.0, 2.0],
+        ])
+        self._low_degree_helper(nodes)
+
+    def test_to_linear(self):
+        nodes = np.asfortranarray([
+            [0.0, 3.0],
+            [1.0, 3.5],
+            [2.0, 4.0],
+        ])
+        was_reduced, new_nodes = self._call_function_under_test(nodes)
+
+        self.assertTrue(was_reduced)
+        expected = np.asfortranarray([
+            [0.0, 3.0],
+            [2.0, 4.0],
+        ])
+        self.assertEqual(expected, new_nodes)
+
+    def test_to_quadratic(self):
+        nodes = np.asfortranarray([
+            [3.0, 0.0],
+            [2.0, 2.0],
+            [1.0, 2.0],
+            [0.0, 0.0],
+        ])
+        was_reduced, new_nodes = self._call_function_under_test(nodes)
+
+        self.assertTrue(was_reduced)
+        expected = np.asfortranarray([
+            [3.0, 0.0],
+            [1.5, 3.0],
+            [0.0, 0.0],
+        ])
+        self.assertEqual(expected, new_nodes)
+
+    def test_from_cubic_not_elevated(self):
+        nodes = np.asfortranarray([
+            [0.0, 2.0],
+            [-1.0, 0.0],
+            [1.0, 1.0],
+            [-0.75, 1.625],
+        ])
+        was_reduced, new_nodes = self._call_function_under_test(nodes)
+        self.assertFalse(was_reduced)
+        self.assertIs(new_nodes, nodes)
+
+    def test_to_cubic(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [0.75, 1.5],
+            [2.0, 2.5],
+            [3.5, 3.0],
+            [5.0, 3.0],
+        ])
+        was_reduced, new_nodes = self._call_function_under_test(nodes)
+
+        self.assertTrue(was_reduced)
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [3.0, 3.0],
+            [5.0, 3.0],
+        ])
+        self.assertEqual(expected, new_nodes)
+
+    def test_unsupported_degree(self):
+        degree = 5
+        nodes = utils.get_random_nodes(
+            shape=(degree + 1, 2), seed=77618, num_bits=8)
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(nodes)
+
+
+class Test_full_reduce(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.full_reduce(nodes)
+
+    def test_single(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [2.0, 4.0],
+            [4.0, 6.0],
+            [6.0, 6.0],
+        ])
+        new_nodes = self._call_function_under_test(nodes)
+
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [3.0, 6.0],
+            [6.0, 6.0],
+        ])
+        self.assertEqual(expected, new_nodes)
+
+    def test_multiple(self):
+        nodes = np.asfortranarray([
+            [0.0, 4.0],
+            [1.0, 4.5],
+            [2.0, 5.0],
+            [3.0, 5.5],
+        ])
+        new_nodes = self._call_function_under_test(nodes)
+
+        expected = np.asfortranarray([
+            [0.0, 4.0],
+            [3.0, 5.5],
+        ])
+        self.assertEqual(expected, new_nodes)
+
+    def test_no_reduce(self):
+        nodes = np.asfortranarray([
+            [0.0, 2.0],
+            [-1.0, 0.0],
+            [1.0, 1.0],
+            [-0.75, 1.625],
+        ])
+        new_nodes = self._call_function_under_test(nodes)
+        self.assertIs(new_nodes, nodes)
