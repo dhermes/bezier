@@ -40,8 +40,16 @@ is the "intersection polynomial" for :math:`t`.
 
 
 import numpy as np
+from numpy.polynomial import chebyshev
+from numpy.polynomial import polynomial
 
 from bezier import _curve_helpers
+
+
+_CHEB7, _ = chebyshev.chebgauss(7)
+_CHEB7 = 0.5 * (_CHEB7 + 1.0)
+_CHEB10, _ = chebyshev.chebgauss(10)
+_CHEB10 = 0.5 * (_CHEB10 + 1.0)
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -300,6 +308,60 @@ def _to_power_basis22(nodes1, nodes2):
     ])
 
 
+def _to_power_basis23(nodes1, nodes2):
+    r"""Compute the coefficients of an **intersection polynomial**.
+
+    Helper for :func:`to_power_basis` in the case that the first curve is
+    degree two and the second is degree three. In this case, B |eacute|
+    zout's `theorem`_ tells us that the **intersection polynomial** is
+    degree :math:`2 \cdot 3` hence we return seven coefficients.
+
+    .. note::
+
+       This uses a least-squares fit to the function evaluated at the
+       Chebyshev nodes (scaled and shifted onto ``[0, 1]``). Hence, the
+       coefficients may be less stable than those produced for smaller
+       degrees.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+
+    Returns:
+        numpy.ndarray: ``7``-array of coefficients.
+    """
+    evaluated = [eval_intersection_polynomial(nodes1, nodes2, t_val)
+                 for t_val in _CHEB7]
+    return polynomial.polyfit(_CHEB7, evaluated, 6)
+
+
+def _to_power_basis33(nodes1, nodes2):
+    r"""Compute the coefficients of an **intersection polynomial**.
+
+    Helper for :func:`to_power_basis` in the case that each curve is
+    degree three. In this case, B |eacute| zout's `theorem`_ tells us
+    that the **intersection polynomial** is degree :math:`3 \cdot 3`
+    hence we return ten coefficients.
+
+    .. note::
+
+       This uses a least-squares fit to the function evaluated at the
+       Chebyshev nodes (scaled and shifted onto ``[0, 1]``). Hence, the
+       coefficients may be less stable than those produced for smaller
+       degrees.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+
+    Returns:
+        numpy.ndarray: ``10``-array of coefficients.
+    """
+    evaluated = [eval_intersection_polynomial(nodes1, nodes2, t_val)
+                 for t_val in _CHEB10]
+    return polynomial.polyfit(_CHEB10, evaluated, 9)
+
+
 def to_power_basis(nodes1, nodes2):
     """Compute the coefficients of an **intersection polynomial**.
 
@@ -317,7 +379,7 @@ def to_power_basis(nodes1, nodes2):
 
     Raises:
         NotImplementedError: If the degree pair is not ``1-1``, ``1-2``,
-            ``1-3`` or ``2-2``.
+            ``1-3``, ``2-2``, ``2-3`` or ``3-3``.
     """
     num_nodes1, _ = nodes1.shape
     num_nodes2, _ = nodes2.shape
@@ -331,7 +393,14 @@ def to_power_basis(nodes1, nodes2):
     elif num_nodes1 == 3:
         if num_nodes2 == 3:
             return _to_power_basis22(nodes1, nodes2)
+        elif num_nodes2 == 4:
+            return _to_power_basis23(nodes1, nodes2)
+    elif num_nodes1 == 4:
+        if num_nodes2 == 4:
+            return _to_power_basis33(nodes1, nodes2)
 
+    err_msg = (
+        'Currently only supporting degree pairs '
+        '1-1, 1-2, 1-3, 2-2, 2-3 and 3-3.')
     raise NotImplementedError(
-        'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1,
-        'Currently only supporting degree pairs 1-1, 1-2, 1-3 and 2-2')
+        'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1, err_msg)

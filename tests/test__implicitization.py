@@ -17,6 +17,10 @@ import numpy as np
 from tests import utils
 
 
+FLOAT64 = np.float64  # pylint: disable=no-member
+LOCAL_EPS = 0.5**26  # sqrt(machine precision)
+
+
 class Test__evaluate3(unittest.TestCase):
 
     @staticmethod
@@ -39,14 +43,12 @@ class Test__evaluate3(unittest.TestCase):
             [3.0, 5.0],
         ])
 
-        local_eps = 0.5**26  # sqrt(machine precision)
-
         xy_vals = utils.get_random_nodes(
             shape=(50, 2), seed=81390, num_bits=8)
         for x_val, y_val in xy_vals:
             result = self._call_function_under_test(nodes, x_val, y_val)
             expected = self._compute_expected(x_val, y_val)
-            self.assertAlmostEqual(result, expected, delta=local_eps)
+            self.assertAlmostEqual(result, expected, delta=LOCAL_EPS)
 
 
 class Test_evaluate(unittest.TestCase):
@@ -148,14 +150,12 @@ class Test_evaluate(unittest.TestCase):
             [6.0, 3.0],
         ])
 
-        local_eps = 0.5**26  # sqrt(machine precision)
-
         xy_vals = utils.get_random_nodes(
             shape=(50, 2), seed=238382, num_bits=8)
         for x_val, y_val in xy_vals:
             result = self._call_function_under_test(nodes, x_val, y_val)
             expected = 13824.0 * (x_val * x_val * x_val - 24.0 * y_val * y_val)
-            self.assertAlmostEqual(result, expected, delta=local_eps)
+            self.assertAlmostEqual(result, expected, delta=LOCAL_EPS)
 
     def test_quartic(self):
         # f(x, y) = -28 x^4 + 56 x^3 - 36 x^2 + 8 x - y
@@ -333,6 +333,65 @@ class Test__to_power_basis22(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
+class Test__to_power_basis23(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _implicitization
+
+        return _implicitization._to_power_basis23(nodes1, nodes2)
+
+    def test_it(self):
+        # f1(x, y) = 4 (4 x^2 - 12 x - 4 y + 11)
+        nodes1 = np.asfortranarray([
+            [0.5, 1.5],
+            [1.5, -0.5],
+            [2.5, 1.5],
+        ])
+        # x2(t), y2(t) = 3 t, t (4 t^2 - 6 t + 3)
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 0.0],
+            [3.0, 1.0],
+        ])
+        # f1(x2(t), y2(t)) = 4 (2 s - 1)^2 (4 s - 11)
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = np.array([44, -192, 240, -64, 0.0, 0.0, 0.0])
+        self.assertLess(np.abs(result - expected).max(), LOCAL_EPS)
+
+
+class Test__to_power_basis33(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _implicitization
+
+        return _implicitization._to_power_basis33(nodes1, nodes2)
+
+    def test_it(self):
+        # f1(x, y) = x^3 - 9 x^2 + 27 x - 27 y
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 1.0],
+            [3.0, 1.0],
+        ])
+        # x2(t), y2(t) = (1 - t) (t^2 + t + 1), 3 (1 - t)
+        nodes2 = np.asfortranarray([
+            [1.0, 3.0],
+            [1.0, 2.0],
+            [1.0, 1.0],
+            [0.0, 0.0],
+        ])
+        # f1(x2(t), y2(t)) = (
+        #     -(s - 1)^2 (s + 2) (s^6 + 3 s^4 + 4 s^3 + 9 s^2 + 6 s + 31)
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = np.array(
+            [-62, 81, 0, -12, 0, 0, -6, 0, 0, -1], dtype=FLOAT64)
+        self.assertLess(np.abs(result - expected).max(), LOCAL_EPS)
+
+
 class Test_to_power_basis(utils.NumPyTestCase):
 
     @staticmethod
@@ -412,16 +471,68 @@ class Test_to_power_basis(utils.NumPyTestCase):
         expected = 3.0 * np.array([12.0, -28.0, 5.0, -18.0, 9.0]) / 16.0
         self.assertEqual(result, expected)
 
+    def test_degrees_2_3(self):
+        # f1(x, y) = 81 (2 x^2 - 2 x - y + 1) / 128
+        nodes1 = np.asfortranarray([
+            [0.25, 0.625],
+            [0.625, 0.25],
+            [1.0, 1.0],
+        ])
+        # x2(t), y2(t) = -t (2 t^2 - 3 t - 3) / 4, y2(t) = -(3 t^3 - 3 t - 1) / 2
+        nodes2 = np.asfortranarray([
+            [0.0, 0.5],
+            [0.25, 1.0],
+            [0.75, 1.5],
+            [1.0, 0.5],
+        ])
+        # f1(x2(t), y2(t)) = (
+        #     81 (t + 1) (4 t^5 - 16 t^4 + 13 t^3 + 25 t^2 - 28 t + 4) / 1024)
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = 81.0 * np.array([4, -24, -3, 38, -3, -12, 4]) / 1024.0
+        self.assertTrue(np.allclose(result, expected, atol=0.0, rtol=LOCAL_EPS))
+
+    def test_degrees_3_3(self):
+        # f1(x, y) = -(13824 x^3 + 3456 x^2 y - 55296 x^2 +
+        #              288 x y^2 - 2088 x y + 39816 x + 8 y^3 +
+        #              129 y^2 + 6846 y - 6983) / 512
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.375, -1.0],
+            [0.625, 0.0],
+            [1.0, 1.0],
+        ])
+        # x2(t), y2(t) = -t (2 t^2 - 3 t - 3) / 4, -(3 t^3 - 3 t - 1) / 2
+        nodes2 = np.asfortranarray([
+            [0.0, 0.5],
+            [0.25, 1.0],
+            [0.75, 1.5],
+            [1.0, 0.5],
+        ])
+        # f1(x2(t), y2(t)) = (
+        #     13500 t^9 - 48600 t^8 + 1620 t^7 + 170451 t^6 - 171072 t^5 -
+        #     146394 t^4 + 331686 t^3 + 10827 t^2 - 158418 t + 14107) / 2048
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = np.array([
+            14107, -158418, 10827, 331686, -146394,
+            -171072, 170451, 1620, -48600, 13500]) / 2048.0
+        self.assertTrue(np.allclose(result, expected, atol=0.0, rtol=LOCAL_EPS))
+
     def test_unsupported(self):
         nodes_yes1 = np.zeros((2, 2), order='F')
         nodes_yes2 = np.zeros((3, 2), order='F')
+        nodes_yes3 = np.zeros((4, 2), order='F')
         nodes_no = np.zeros((5, 2), order='F')
 
+        # Just make sure we fall through **all** of the implicit
+        # ``else`` branches.
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes_yes1, nodes_no)
 
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes_yes2, nodes_no)
+
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(nodes_yes3, nodes_no)
 
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes_no, nodes_no)
