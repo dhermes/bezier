@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper for implicitizing B |eacute| zier curves.
+r"""Helper for implicitizing B |eacute| zier curves.
 
 .. _resultant: https://en.wikipedia.org/wiki/Resultant
 .. _algebraic curve: https://en.wikipedia.org/wiki/Algebraic_curve
@@ -21,12 +21,26 @@ Primarily uses the `resultant`_ to evaluate the implicitized
 without translating to a power basis, we utilize the work of
 `Farouki and Rajan`_ to compute a modified Sylvester determinant.
 
+Given two parametric curves :math:`(x_1(s), y_1(s))` and
+:math:`(x_2(t), y_2(t))`, we can determine an "intersection polynomial"
+for both :math:`s` and :math:`t`. For example, by implicitizing the
+first curve, we determine :math:`f_1(x, y)` and plugging the second
+curve into this we find
+
+.. math::
+
+   g(t) = f_1\left(x_2(t), y_2(t)\right) = 0
+
+is the "intersection polynomial" for :math:`t`.
+
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 """
 
 
 import numpy as np
+
+from bezier import _curve_helpers
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -118,3 +132,85 @@ def evaluate(nodes, x_val, y_val):
         return _evaluate3(nodes, x_val, y_val)
     else:
         raise NotImplementedError('Only degrees 1 and 2 supported')
+
+
+def eval_intersection_polynomial(nodes1, nodes2, t):
+    r"""Evaluates a parametric curve **on** an implicitized algebraic curve.
+
+    Uses :func:`evaluate` to evaluate :math:`f_1(x, y)`, the implicitization
+    of ``nodes1``. Then plugs ``t`` into the second parametric curve to
+    get an ``x``- and ``y``-coordinate and evaluate the
+    **intersection polynomial**:
+
+    .. math::
+
+       g(t) = f_1\left(x_2(t), y_2(t)right)
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+        t (float): The parameter along ``nodes2`` where we evaluate
+            the function.
+
+    Returns:
+        float: The computed value of :math:`f_1(x_2(t), y_2(t))`.
+    """
+    (x_val, y_val), = _curve_helpers.evaluate_multi(
+        nodes2, np.asfortranarray([t]))
+    return evaluate(nodes1, x_val, y_val)
+
+
+def _to_power_basis11(nodes1, nodes2):
+    r"""Compute the coefficients of an **intersection polynomial**.
+
+    .. _theorem: https://en.wikipedia.org/wiki/B%C3%A9zout's_theorem
+
+    Helper for :func:`to_power_basis` in the case that each curve is
+    degree one. In this case, B |eacute| zout's `theorem`_ tells us
+    that the **intersection polynomial** is degree :math:`1 \cdot 1`
+    hence we return two coefficients.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+
+    Returns:
+        numpy.ndarray: ``2``-array of coefficients.
+    """
+    # We manually invert the Vandermonde matrix:
+    # [1 0.0][c0] = [n0]
+    # [1 1.0][c1]   [n1]
+    n0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
+    n1 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
+    # [c0] = [ 1 0][n0]
+    # [c1] = [-1 1][n1]
+    return np.array([n0, -n0 + n1])
+
+
+def to_power_basis(nodes1, nodes2):
+    """Compute the coefficients of an **intersection polynomial**.
+
+    .. note::
+
+       This assumes that the degree of the curve given by ``nodes1`` is
+       less than or equal to the degree of that given by ``nodes2``.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+
+    Returns:
+        numpy.ndarray: ``2``-array of coefficients.
+
+    Raises:
+        NotImplementedError: If the degree pair is not ``1-1``.
+    """
+    num_nodes1, _ = nodes1.shape
+    num_nodes2, _ = nodes2.shape
+    if num_nodes1 == 2:
+        if num_nodes2 == 2:
+            return _to_power_basis11(nodes1, nodes2)
+
+    raise NotImplementedError(
+        'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1,
+        'Currently only supporting degree pair 1-1')
