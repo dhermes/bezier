@@ -257,6 +257,49 @@ def _to_power_basis13(nodes1, nodes2):
     ])
 
 
+def _to_power_basis22(nodes1, nodes2):
+    r"""Compute the coefficients of an **intersection polynomial**.
+
+    Helper for :func:`to_power_basis` in the case that each curve is
+    degree two. In this case, B |eacute| zout's `theorem`_ tells us
+    that the **intersection polynomial** is degree :math:`2 \cdot 2`
+    hence we return five coefficients.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+
+    Returns:
+        numpy.ndarray: ``5``-array of coefficients.
+    """
+    # We manually invert the Vandermonde matrix:
+    # [1 0   0    0     0     ][c0] = [n0]
+    # [1 1/4 1/16 1/64  1/256 ][c1]   [n1]
+    # [1 1/2 1/4  1/8   1/16  ][c2]   [n2]
+    # [1 3/4 9/16 27/64 81/256][c3]   [n3]
+    # [1 1   1    1     1     ][c4]   [n4]
+    val0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
+    val1 = eval_intersection_polynomial(nodes1, nodes2, 0.25)
+    val2 = eval_intersection_polynomial(nodes1, nodes2, 0.5)
+    val3 = eval_intersection_polynomial(nodes1, nodes2, 0.75)
+    val4 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
+    # [c0] =       [ 3   0    0    0    0 ][n0]
+    # [c1] = 1 / 3 [-25  48  -36   16  -3 ][n1]
+    # [c2] =       [ 70 -208  228 -112  22][n2]
+    # [c3] =       [-80  288 -384  224 -48][n3]
+    # [c4] =       [ 32 -128  192 -128  32][n4]
+    # Since polynomial coefficients, we don't need to divide by 3
+    # to get the same polynomial. Avoid the division to avoid round-off.
+    return np.array([
+        3.0 * val0,
+        -25.0 * val0 + 48.0 * val1 - 36.0 * val2 + 16.0 * val3 - 3.0 * val4,
+        70.0 * val0 - 208.0 * val1 + 228.0 * val2 - 112.0 * val3 + 22.0 * val4,
+        (-80.0 * val0 + 288.0 * val1 - 384.0 * val2 +
+         224.0 * val3 - 48.0 * val4),
+        32.0 * val0 - 128.0 * val1 + 192.0 * val2 - 128.0 * val3 + 32.0 * val4,
+    ])
+
+
 def to_power_basis(nodes1, nodes2):
     """Compute the coefficients of an **intersection polynomial**.
 
@@ -273,8 +316,8 @@ def to_power_basis(nodes1, nodes2):
         numpy.ndarray: Array of coefficients.
 
     Raises:
-        NotImplementedError: If the degree pair is not ``1-1``, ``1-2``
-            or ``1-3``.
+        NotImplementedError: If the degree pair is not ``1-1``, ``1-2``,
+            ``1-3`` or ``2-2``.
     """
     num_nodes1, _ = nodes1.shape
     num_nodes2, _ = nodes2.shape
@@ -285,7 +328,10 @@ def to_power_basis(nodes1, nodes2):
             return _to_power_basis12(nodes1, nodes2)
         elif num_nodes2 == 4:
             return _to_power_basis13(nodes1, nodes2)
+    elif num_nodes1 == 3:
+        if num_nodes2 == 3:
+            return _to_power_basis22(nodes1, nodes2)
 
     raise NotImplementedError(
         'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1,
-        'Currently only supporting degree pairs 1-1, 1-2 and 1-3')
+        'Currently only supporting degree pairs 1-1, 1-2, 1-3 and 2-2')
