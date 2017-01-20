@@ -606,7 +606,7 @@ class Curve(_base.Base):
         .. image:: ../images/curve_elevate.png
            :align: center
 
-        .. testsetup:: curve-root
+        .. testsetup:: curve-elevate
 
            import numpy as np
            import bezier
@@ -642,6 +642,113 @@ class Curve(_base.Base):
         root = None if self._root is self else self._root
         return Curve(
             new_nodes, self._degree + 1, start=self._start, end=self._end,
+            root=root, _copy=False)
+
+    def reduce_(self):
+        r"""Return a degree-reduced version of the current curve.
+
+        .. _pseudo-inverse:
+            https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_pseudoinverse
+
+        Does this by converting the current nodes :math:`v_0, \ldots, v_n`
+        to new nodes :math:`w_0, \ldots, w_{n - 1}` that correspond to
+        reversing the :meth:`elevate` process.
+
+        This uses the `pseudo-inverse`_ of the elevation matrix. For example
+        when elevating from degree 2 to 3, the matrix :math:`E_2` is given by
+
+        .. math::
+
+           \mathbf{v} = \left[\begin{array}{c} v_0 \\ v_1 \\ v_2
+               \end{array}\right] \longmapsto \left[\begin{array}{c} v_0 \\
+               \frac{v_0 + 2 v_1}{3} \\ \frac{2 v_1 + v_2}{3} \\ v_2
+               \end{array}\right] = \frac{1}{3}
+               \left[\begin{array}{c c} 3 & 0 \\ 2 & 1 \\ 1 & 2
+               \\ 0 & 3 \end{array}\right] \mathbf{v}
+
+        and the pseudo-inverse is given by
+
+        .. math::
+
+           R_2 = \left(E_2^T E_2\right)^{-1} E_2^T = \frac{1}{20}
+               \left[\begin{array}{c c c c} 19 & 3 & -3 & 1 \\
+               -5 & 15 & 15 & -5 \\ 1 & -3 & 3 & 19
+               \end{array}\right].
+
+        .. warning::
+
+           Though degree-elevation preserves the start and end nodes, degree
+           reduction has no such guarantee. Rather, the nodes produced are
+           "best" in the least squares sense (when solving the normal
+           equations).
+
+        .. image:: ../images/curve_reduce.png
+           :align: center
+
+        .. testsetup:: curve-reduce, curve-reduce-approx
+
+           import numpy as np
+           import bezier
+
+        .. doctest:: curve-reduce
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.asfortranarray([
+           ...     [-3.0, 3.0],
+           ...     [ 0.0, 2.0],
+           ...     [ 1.0, 3.0],
+           ...     [ 0.0, 6.0],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=3)
+           >>> reduced = curve.reduce_()
+           >>> reduced
+           <Curve (degree=2, dimension=2)>
+           >>> reduced.nodes
+           array([[-3. , 3. ],
+                  [ 1.5, 1.5],
+                  [ 0. , 6. ]])
+
+        .. testcleanup:: curve-reduce
+
+           import make_images
+           make_images.curve_reduce(curve, reduced)
+
+        In the case that the current curve **is not** degree-elevated.
+
+        .. image:: ../images/curve_reduce_approx.png
+           :align: center
+
+        .. doctest:: curve-reduce-approx
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0 , 2.5],
+           ...     [1.25, 5.0],
+           ...     [3.75, 7.5],
+           ...     [5.0 , 2.5],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=3)
+           >>> reduced = curve.reduce_()
+           >>> reduced
+           <Curve (degree=2, dimension=2)>
+           >>> reduced.nodes
+           array([[-0.125, 2.125],
+                  [ 2.5  , 8.125],
+                  [ 5.125, 2.875]])
+
+        .. testcleanup:: curve-reduce-approx
+
+           import make_images
+           make_images.curve_reduce_approx(curve, reduced)
+
+        Returns:
+            Curve: The degree-reduced curve.
+        """
+        new_nodes = _curve_helpers.reduce_pseudo_inverse(
+            self._nodes, self._degree)
+        root = None if self._root is self else self._root
+        return Curve(
+            new_nodes, self._degree - 1, start=self._start, end=self._end,
             root=root, _copy=False)
 
     def specialize(self, start, end):

@@ -199,13 +199,14 @@ def helper_parallel_different(start0, end0, start1, end1, filename):
     save_image(figure, filename)
 
 
-def add_patch(ax, nodes, color, with_nodes=True):
+def add_patch(ax, nodes, color, with_nodes=True,
+              alpha=0.625, node_color='black'):
     path = _path_mod.Path(nodes)
     patch = patches.PathPatch(
-        path, facecolor=color, alpha=0.6)
+        path, facecolor=color, alpha=alpha)
     ax.add_patch(patch)
     if with_nodes:
-        ax.plot(nodes[:, 0], nodes[:, 1], color='black',
+        ax.plot(nodes[:, 0], nodes[:, 1], color=node_color,
                 linestyle='None', marker='o')
 
 
@@ -1219,3 +1220,46 @@ def unit_triangle():
     _plot_helpers.add_plot_boundary(ax)
 
     save_image(ax.figure, 'unit_triangle.png')
+
+
+def curve_reduce(curve, reduced):
+    """Image for :meth:`.curve.Curve.reduce` docstring."""
+    if NO_IMAGES:
+        return
+
+    figure, (ax1, ax2) = plt.subplots(1, 2)
+
+    curve.plot(256, ax=ax1)
+    color = ax1.lines[-1].get_color()
+    add_patch(ax1, curve._nodes, color)
+
+    reduced.plot(256, ax=ax2)
+    color = ax2.lines[-1].get_color()
+    add_patch(ax2, reduced._nodes, color)
+
+    ax1.axis('scaled')
+    ax2.axis('scaled')
+    _plot_helpers.add_plot_boundary(ax2)
+    ax1.set_xlim(*ax1.get_xlim())
+    ax1.set_ylim(*ax1.get_ylim())
+
+    save_image(figure, 'curve_reduce.png')
+
+
+def curve_reduce_approx(curve, reduced):
+    """Image for :meth:`.curve.Curve.reduce` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve.plot(256)
+    color = ax.lines[-1].get_color()
+    add_patch(ax, curve._nodes, color, alpha=0.25, node_color=color)
+
+    reduced.plot(256, ax=ax)
+    color = ax.lines[-1].get_color()
+    add_patch(ax, reduced._nodes, color, alpha=0.25, node_color=color)
+
+    ax.axis('scaled')
+    _plot_helpers.add_plot_boundary(ax)
+
+    save_image(ax.figure, 'curve_reduce_approx.png')

@@ -555,3 +555,82 @@ class Test_locate_point(unittest.TestCase):
         point = np.asfortranarray([[-0.25, 1.375]])
         with self.assertRaises(ValueError):
             self._call_function_under_test(curve, point)
+
+
+class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.reduce_pseudo_inverse(nodes, degree)
+
+    def test_to_linear(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [2.0, 4.0],
+        ])
+        result = self._call_function_under_test(nodes, 2)
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [2.0, 4.0],
+        ])
+        self.assertEqual(result, expected)
+
+    def test_from_quadratic_not_elevated(self):
+        from bezier import _curve_helpers
+
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.5],
+            [2.0, 0.0],
+        ])
+        result = self._call_function_under_test(nodes, 2)
+        expected = np.asfortranarray([
+            [0.0, 0.5],
+            [2.0, 0.5],
+        ])
+        self.assertEqual(result, expected)
+
+        re_elevated = _curve_helpers.elevate_nodes(result, 1, 2)
+        self.assertTrue(np.any(nodes != re_elevated))
+
+    def test_to_quadratic(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.5, 0.75],
+            [2.0, 0.5, 2.25],
+            [4.0, 0.5, 2.75],
+            [6.0, 0.5, 2.25],
+        ])
+        result = self._call_function_under_test(nodes, 3)
+        expected = np.asfortranarray([
+            [0.0, 0.5, 0.75],
+            [3.0, 0.5, 3.0],
+            [6.0, 0.5, 2.25],
+        ])
+        self.assertEqual(result, expected)
+
+    def test_to_cubic(self):
+        nodes = np.asfortranarray([
+            [0.0],
+            [0.75],
+            [2.0],
+            [2.75],
+            [2.0],
+        ])
+        result = self._call_function_under_test(nodes, 4)
+        expected = np.asfortranarray([
+            [0.0],
+            [1.0],
+            [3.0],
+            [2.0],
+        ])
+        self.assertEqual(result, expected)
+
+    def test_unsupported_degree(self):
+        degree = 5
+        nodes = utils.get_random_nodes(
+            shape=(degree + 1, 2), seed=3820, num_bits=8)
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(nodes, degree)

@@ -534,6 +534,32 @@ class TestCurve(utils.NumPyTestCase):
         new_vals = elevated.evaluate_multi(s_vals)
         self.assertEqual(orig_vals, new_vals)
 
+    def test_reduce_(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 3.0],
+            [2.0, 3.0],
+            [3.0, 0.0],
+        ])
+        curve = self._make_one(nodes, 3)
+        self.assertEqual(curve.degree, 3)
+        reduced = curve.reduce_()
+
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [1.5, 4.5],
+            [3.0, 0.0],
+        ])
+        self.assertEqual(reduced.nodes, expected)
+        self.assertIs(reduced.root, reduced)
+        self.assertEqual(reduced.start, curve.start)
+        self.assertEqual(reduced.end, curve.end)
+
+        s_vals = np.linspace(0.0, 1.0, 64 + 1)
+        orig_vals = curve.evaluate_multi(s_vals)
+        new_vals = reduced.evaluate_multi(s_vals)
+        self.assertEqual(orig_vals, new_vals)
+
     def test_specialize(self):
         nodes = np.asfortranarray([
             [0.0, 0.0],

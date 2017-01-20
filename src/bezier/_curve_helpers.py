@@ -37,6 +37,54 @@ except ImportError:  # pragma: NO COVER
 _MAX_LOCATE_SUBDIVISIONS = 20
 _LOCATE_STD_CAP = 0.5**20
 _FLOAT64 = np.float64  # pylint: disable=no-member
+_REDUCE_THRESHOLD = 0.5**26  # sqrt(machine precision)
+# Projections onto the space of degree-elevated nodes.
+# If v --> Ev is the elevation map, then P = E (E^T E)^{-1} E^T
+# is the projection.
+# pylint: disable=bad-whitespace
+_PROJECTION1 = np.asfortranarray([
+    [ 2.5, 1.0, -0.5],  # noqa: E201
+    [ 1.0, 1.0,  1.0],  # noqa: E201
+    [-0.5, 1.0,  2.5],
+])
+_PROJ_DENOM1 = 3.0
+_PROJECTION2 = np.asfortranarray([
+    [ 4.75,  0.75, -0.75,  0.25],  # noqa: E201
+    [ 0.75,  2.75,  2.25, -0.75],  # noqa: E201
+    [-0.75,  2.25,  2.75,  0.75],
+    [ 0.25, -0.75,  0.75,  4.75],  # noqa: E201
+])
+_PROJ_DENOM2 = 5.0
+_PROJECTION3 = np.asfortranarray([
+    [103.5,   6.0, -9.0,   6.0,  -1.5],
+    [  6.0,  81.0, 36.0, -24.0,   6.0],  # noqa: E201
+    [ -9.0,  36.0, 51.0,  36.0,  -9.0],  # noqa: E201
+    [  6.0, -24.0, 36.0,  81.0,   6.0],  # noqa: E201
+    [ -1.5,   6.0, -9.0,   6.0, 103.5],  # noqa: E201
+])
+_PROJ_DENOM3 = 105.0
+# Reductions for a set of degree-elevated nodes.
+# If v --> Ev is the elevation map, then R = (E^T E)^{-1} E^T -- the
+# pseudo-inverse of E -- actually reduces a set of nodes.
+_REDUCTION1 = np.asfortranarray([
+    [ 2.5, 1.0, -0.5],  # noqa: E201
+    [-0.5, 1.0,  2.5],
+])
+_REDUCTION_DENOM1 = 3.0
+_REDUCTION2 = np.asfortranarray([
+    [ 4.75,  0.75, -0.75,  0.25],  # noqa: E201
+    [-1.25,  3.75,  3.75, -1.25],
+    [ 0.25, -0.75,  0.75,  4.75],  # noqa: E201
+])
+_REDUCTION_DENOM2 = 5.0
+_REDUCTION3 = np.asfortranarray([
+    [103.5,   6.0, -9.0,   6.0,  -1.5],
+    [-26.5, 106.0, 51.0, -34.0,   8.5],
+    [  8.5, -34.0, 51.0, 106.0, -26.5],  # noqa: E201
+    [ -1.5,   6.0, -9.0,   6.0, 103.5],  # noqa: E201
+])
+_REDUCTION_DENOM3 = 105.0
+# pylint: enable=bad-whitespace
 
 
 def make_subdivision_matrices(degree):
@@ -666,6 +714,39 @@ def locate_point(curve, point):
 
     s_approx = np.mean(params)
     return newton_refine(curve, point, s_approx)
+
+
+def reduce_pseudo_inverse(nodes, degree):
+    """Performs degree-reduction for a B |eacute| zier curve.
+
+    Does so by using the pseudo-inverse of the degree elevation
+    operator (which is overdetermined).
+
+    Args:
+        nodes (numpy.ndarray): The nodes in the curve.
+        degree (int): The degree of the curve.
+
+    Returns:
+        numpy.ndarray: The reduced nodes.
+
+    Raises:
+        NotImplementedError: If the degree is not 2, 3 or 4.
+    """
+    if degree == 2:
+        reduction = _REDUCTION1
+        denom = _REDUCTION_DENOM1
+    elif degree == 3:
+        reduction = _REDUCTION2
+        denom = _REDUCTION_DENOM2
+    elif degree == 4:
+        reduction = _REDUCTION3
+        denom = _REDUCTION_DENOM3
+    else:
+        raise NotImplementedError(degree)
+
+    result = _helpers.matrix_product(reduction, nodes)
+    result /= denom
+    return result
 
 
 # pylint: disable=invalid-name
