@@ -14,6 +14,8 @@ import unittest
 
 import numpy as np
 
+from tests import utils
+
 
 class Test_evaluate(unittest.TestCase):
 
@@ -77,6 +79,41 @@ class Test_evaluate(unittest.TestCase):
             [0.0, 0.0],
             [1.0, 1.0],
             [2.0, 3.0],
+        ])
+
+        values = [
+            self._call_function_under_test(nodes, 0.0, 0.0),
+            self._call_function_under_test(nodes, 1.0, 0.0),
+            self._call_function_under_test(nodes, 2.0, 0.0),
+            self._call_function_under_test(nodes, 0.0, 1.0),
+            self._call_function_under_test(nodes, 1.0, 1.0),
+            self._call_function_under_test(nodes, 0.0, 2.0),
+        ]
+        expected = [0.0, 5.0, 12.0, -4.0, 1.0, -8.0]
+        self.assertEqual(values, expected)
+
+        # f(x, y) = (x - y)^2 - y
+        nodes = np.asfortranarray([
+            [0.75, 0.25],
+            [-0.25, -0.25],
+            [-0.25, 0.25],
+        ])
+        xy_vals = utils.get_random_nodes(
+            shape=(50, 2), seed=7930932, num_bits=8)
+        values = []
+        expected = []
+        for x, y in xy_vals:
+            values.append(self._call_function_under_test(nodes, x, y))
+            expected.append((x - y) * (x - y) - y)
+        self.assertEqual(values, expected)
+
+    def test_cubic(self):
+        # f(x, y) = 576 (24 y^2 - x^3)
+        nodes = np.asfortranarray([
+            [6.0, -3.0],
+            [-2.0, 3.0],
+            [-2.0, -3.0],
+            [6.0, 3.0],
         ])
 
         with self.assertRaises(NotImplementedError):

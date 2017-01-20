@@ -49,12 +49,12 @@ def evaluate(nodes, x, y):
 
     Raises:
         ValueError: If the curve is a point.
-        NotImplementedError: If the curve is not degree 1.
+        NotImplementedError: If the curve is not degree 1 or 2.
     """
     num_nodes, _ = nodes.shape
     if num_nodes == 1:
         raise ValueError('A point cannot be implicitized')
-    if num_nodes == 2:
+    elif num_nodes == 2:
         # x(s) - x = (x0 - x) (1 - s) + (x1 - x) s
         # y(s) - y = (y0 - y) (1 - s) + (y1 - y) s
         # Modified Sylvester: [x0 - x, x1 - x]
@@ -62,5 +62,27 @@ def evaluate(nodes, x, y):
         return (
             (nodes[0, 0] - x) * (nodes[1, 1] - y) -
             (nodes[1, 0] - x) * (nodes[0, 1] - y))
+    elif num_nodes == 3:
+        # x(s) - x = (x0 - x) (1 - s)^2 + 2 (x1 - x) s(1 - s) + (x2 - x) s^2
+        # y(s) - y = (y0 - y) (1 - s)^2 + 2 (y1 - y) s(1 - s) + (y2 - y) s^2
+        # Modified Sylvester: [x0 - x, 2(x1 - x),    x2 - x,      0]
+        #                     [     0,    x0 - x, 2(x1 - x), x2 - x]
+        #                     [y0 - y, 2(y1 - y),    y2 - y,      0]
+        #                     [     0,    y0 - y, 2(y1 - y), y2 - y]
+        valA, valB, valC = nodes[:, 0] - x
+        valB *= 2
+        valD, valE, valF = nodes[:, 1] - y
+        valE *= 2
+        #     [A, B, C]         [E, F, 0]
+        # det [E, F, 0] = - det [A, B, C] = -E (BF - CE) + F(AF - CD)
+        #     [D, E, F]         [D, E, F]
+        sub1 = valB * valF - valC * valE
+        sub2 = valA * valF - valC * valD
+        sub_detA = -valE * sub1 + valF * sub2
+        #     [B, C, 0]
+        # det [A, B, C] = B (BF - CE) - C (AF - CD)
+        #     [D, E, F]
+        sub_detD = valB * sub1 - valC * sub2
+        return valA * sub_detA + valD * sub_detD
     else:
-        raise NotImplementedError('Only degrees 0 and 1 supported')
+        raise NotImplementedError('Only degrees 1 and 2 supported')
