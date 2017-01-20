@@ -179,11 +179,11 @@ def _to_power_basis11(nodes1, nodes2):
     # We manually invert the Vandermonde matrix:
     # [1 0.0][c0] = [n0]
     # [1 1.0][c1]   [n1]
-    evaluated0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
-    evaluated1 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
+    val0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
+    val1 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
     # [c0] = [ 1 0][n0]
     # [c1] = [-1 1][n1]
-    return np.array([evaluated0, -evaluated0 + evaluated1])
+    return np.array([val0, -val0 + val1])
 
 
 def _to_power_basis12(nodes1, nodes2):
@@ -205,16 +205,55 @@ def _to_power_basis12(nodes1, nodes2):
     # [1 0.0 0.0 ][c0] = [n0]
     # [1 0.5 0.25][c1]   [n1]
     # [1 1.0 1.0 ][c2]   [n2]
-    evaluated0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
-    evaluated1 = eval_intersection_polynomial(nodes1, nodes2, 0.5)
-    evaluated2 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
+    val0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
+    val1 = eval_intersection_polynomial(nodes1, nodes2, 0.5)
+    val2 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
     # [c0] = [ 1  0  0][n0]
     # [c1] = [-3  4 -1][n1]
     # [c2] = [ 2 -4  2][n2]
     return np.array([
-        evaluated0,
-        -3.0 * evaluated0 + 4.0 * evaluated1 - evaluated2,
-        2.0 * evaluated0 - 4.0 * evaluated1 + 2.0 * evaluated2,
+        val0,
+        -3.0 * val0 + 4.0 * val1 - val2,
+        2.0 * val0 - 4.0 * val1 + 2.0 * val2,
+    ])
+
+
+def _to_power_basis13(nodes1, nodes2):
+    r"""Compute the coefficients of an **intersection polynomial**.
+
+    Helper for :func:`to_power_basis` in the case that the first curve is
+    degree one and the second is degree three. In this case, B |eacute|
+    zout's `theorem`_ tells us that the **intersection polynomial** is
+    degree :math:`1 \cdot 3` hence we return four coefficients.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+
+    Returns:
+        numpy.ndarray: ``4``-array of coefficients.
+    """
+    # We manually invert the Vandermonde matrix:
+    # Use exact f.p. numbers to avoid round-off wherever possible.
+    # [1 0   0    0    ][c0] = [n0]
+    # [1 1/4 1/16 1/64 ][c1]   [n1]
+    # [1 3/4 9/16 27/64][c2]   [n2]
+    # [1 1   1    1    ][c3]   [n3]
+    val0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
+    val1 = eval_intersection_polynomial(nodes1, nodes2, 0.25)
+    val2 = eval_intersection_polynomial(nodes1, nodes2, 0.75)
+    val3 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
+    # [c0] =       [  3   0   0   0][n0]
+    # [c1] = 1 / 3 [-19  24  -8   3][n1]
+    # [c2] =       [ 32 -56  40 -16][n2]
+    # [c3] =       [-16  32 -32  16][n3]
+    # Since polynomial coefficients, we don't need to divide by 3
+    # to get the same polynomial. Avoid the division to avoid round-off.
+    return np.array([
+        3.0 * val0,
+        -19.0 * val0 + 24.0 * val1 - 8.0 * val2 + 3.0 * val3,
+        32.0 * val0 - 56.0 * val1 + 40.0 * val2 - 16.0 * val3,
+        -16.0 * val0 + 32.0 * val1 - 32.0 * val2 + 16.0 * val3,
     ])
 
 
@@ -231,10 +270,11 @@ def to_power_basis(nodes1, nodes2):
         nodes2 (numpy.ndarray): The nodes in the second curve.
 
     Returns:
-        numpy.ndarray: ``2``-array of coefficients.
+        numpy.ndarray: Array of coefficients.
 
     Raises:
-        NotImplementedError: If the degree pair is not ``1-1``.
+        NotImplementedError: If the degree pair is not ``1-1``, ``1-2``
+            or ``1-3``.
     """
     num_nodes1, _ = nodes1.shape
     num_nodes2, _ = nodes2.shape
@@ -243,7 +283,9 @@ def to_power_basis(nodes1, nodes2):
             return _to_power_basis11(nodes1, nodes2)
         elif num_nodes2 == 3:
             return _to_power_basis12(nodes1, nodes2)
+        elif num_nodes2 == 4:
+            return _to_power_basis13(nodes1, nodes2)
 
     raise NotImplementedError(
         'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1,
-        'Currently only supporting degree pair 1-1')
+        'Currently only supporting degree pairs 1-1, 1-2 and 1-3')

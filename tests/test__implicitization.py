@@ -277,6 +277,34 @@ class Test__to_power_basis12(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
+class Test__to_power_basis13(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _implicitization
+
+        return _implicitization._to_power_basis13(nodes1, nodes2)
+
+    def test_it(self):
+        # f1(x, y) = -(152 x + 112 y - 967) / 64
+        nodes1 = np.asfortranarray([
+            [2.5625, 5.15625],
+            [0.8125, 7.53125],
+        ])
+        # x2(t), y2(t) = 3 (14 t + 1) / 8, 18 t^3 - 27 t^2 + 3 t + 7
+        nodes2 = np.asfortranarray([
+            [0.375, 7.0],
+            [2.125, 8.0],
+            [3.875, 0.0],
+            [5.625, 1.0],
+        ])
+        # f1(x2(t), y2(t)) = -63 (t - 1) (4 t - 1)^2 / 32
+        result = self._call_function_under_test(nodes1, nodes2)
+        # The 1-3 method avoids a division by 3.0
+        expected = 3.0 * (-63.0) * np.array([-1.0, 9.0, -24.0, 16.0]) / 32.0
+        self.assertEqual(result, expected)
+
+
 class Test_to_power_basis(utils.NumPyTestCase):
 
     @staticmethod
@@ -318,9 +346,28 @@ class Test_to_power_basis(utils.NumPyTestCase):
         expected = np.array([-48.0, 180.0, -108.0])
         self.assertEqual(result, expected)
 
+    def test_degrees_1_3(self):
+        # f1(x, y) = -(2 x - y - 1) / 2
+        nodes1 = np.asfortranarray([
+            [0.5, 0.0],
+            [1.0, 1.0],
+        ])
+        # x2(t), y2(t) = -t (2 t^2 - 3 t - 3) / 4, -(3 t^3 - 3 t - 1) / 2
+        nodes2 = np.asfortranarray([
+            [0.0, 0.5],
+            [0.25, 1.0],
+            [0.75, 1.5],
+            [1.0, 0.5],
+        ])
+        # f1(x2(t), y2(t)) = -(t^3 + 3 t^2 - 3) / 4
+        result = self._call_function_under_test(nodes1, nodes2)
+        # The 1-3 method avoids a division by 3.0
+        expected = 3.0 * np.array([0.75, 0.0, -0.75, -0.25])
+        self.assertEqual(result, expected)
+
     def test_unsupported(self):
         nodes_yes = np.zeros((2, 2), order='F')
-        nodes_no = np.zeros((4, 2), order='F')
+        nodes_no = np.zeros((5, 2), order='F')
 
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes_yes, nodes_no)
