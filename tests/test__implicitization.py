@@ -108,12 +108,31 @@ class Test_evaluate(unittest.TestCase):
         self.assertEqual(values, expected)
 
     def test_cubic(self):
-        # f(x, y) = 576 (24 y^2 - x^3)
+        # f(x, y) = 13824 (x^3 - 24 y^2)
         nodes = np.asfortranarray([
             [6.0, -3.0],
             [-2.0, 3.0],
             [-2.0, -3.0],
             [6.0, 3.0],
+        ])
+
+        local_eps = 0.5**26  # sqrt(machine precision)
+
+        xy_vals = utils.get_random_nodes(
+            shape=(50, 2), seed=238382, num_bits=8)
+        for x_val, y_val in xy_vals:
+            result = self._call_function_under_test(nodes, x_val, y_val)
+            expected = 13824.0 * (x_val * x_val * x_val - 24.0 * y_val * y_val)
+            self.assertAlmostEqual(result, expected, delta=local_eps)
+
+    def test_quartic(self):
+        # f(x, y) = -28 x^4 + 56 x^3 - 36 x^2 + 8 x - y
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [0.25, 2.0],
+            [0.5, -2.0],
+            [0.75, 2.0],
+            [1.0, 0.0],
         ])
 
         with self.assertRaises(NotImplementedError):
