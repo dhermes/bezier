@@ -42,6 +42,7 @@ is the "intersection polynomial" for :math:`t`.
 import numpy as np
 from numpy.polynomial import chebyshev
 from numpy.polynomial import polynomial
+import six
 
 from bezier import _curve_helpers
 
@@ -404,3 +405,34 @@ def to_power_basis(nodes1, nodes2):
         '1-1, 1-2, 1-3, 2-2, 2-3 and 3-3.')
     raise NotImplementedError(
         'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1, err_msg)
+
+
+def polynomial_norm(coeffs):
+    r"""Computes :math:`L_2` norm of polynomial on :math:`\left[0, 1\right]`.
+
+    We have
+
+    .. math::
+
+       \left\langle f, f \right\rangle = \sum_{i, j}
+           \int_0^1 c_i c_j x^{i + j} \, dx = \sum_{i, j}
+           \frac{c_i c_j}{i + j + 1} = \sum_{i} \frac{c_i^2}{2 i + 1}
+           + 2 \sum_{j > i} \frac{c_i c_j}{i + j + 1}.
+
+    Args:
+        coeffs (numpy.ndarray): ``d + 1``-array of coefficients in monomial /
+            power basis.
+
+    Returns:
+        float: The :math:`L_2` norm of the polynomial.
+    """
+    num_coeffs, = coeffs.shape
+    result = 0.0
+    for i in six.moves.xrange(num_coeffs):
+        coeff_i = coeffs[i]
+        result += coeff_i * coeff_i / (2.0 * i + 1.0)
+        for j in six.moves.xrange(i + 1, num_coeffs):
+            coeff_j = coeffs[j]
+            result += 2.0 * coeff_i * coeff_j / (i + j + 1.0)
+
+    return np.sqrt(result)

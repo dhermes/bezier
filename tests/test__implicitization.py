@@ -536,3 +536,18 @@ class Test_to_power_basis(utils.NumPyTestCase):
 
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes_no, nodes_no)
+
+
+class Test_polynomial_norm(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(coeffs):
+        from bezier import _implicitization
+
+        return _implicitization.polynomial_norm(coeffs)
+
+    def test_it(self):
+        coeffs = np.asfortranarray([2.0, 1.0, 3.0])
+        result = self._call_function_under_test(coeffs)
+        expected = np.sqrt(409.0 / 30.0)
+        self.assertAlmostEqual(result, expected, delta=LOCAL_EPS)
