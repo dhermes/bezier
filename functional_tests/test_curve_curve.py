@@ -18,7 +18,6 @@ import numpy as np
 import pytest
 import six
 
-import bezier
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
