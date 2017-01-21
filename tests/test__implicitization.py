@@ -478,7 +478,7 @@ class Test_to_power_basis(utils.NumPyTestCase):
             [0.625, 0.25],
             [1.0, 1.0],
         ])
-        # x2(t), y2(t) = -t (2 t^2 - 3 t - 3) / 4, y2(t) = -(3 t^3 - 3 t - 1) / 2
+        # x2(t), y2(t) = -t (2 t^2 - 3 t - 3) / 4, -(3 t^3 - 3 t - 1) / 2
         nodes2 = np.asfortranarray([
             [0.0, 0.5],
             [0.25, 1.0],
@@ -489,7 +489,8 @@ class Test_to_power_basis(utils.NumPyTestCase):
         #     81 (t + 1) (4 t^5 - 16 t^4 + 13 t^3 + 25 t^2 - 28 t + 4) / 1024)
         result = self._call_function_under_test(nodes1, nodes2)
         expected = 81.0 * np.array([4, -24, -3, 38, -3, -12, 4]) / 1024.0
-        self.assertTrue(np.allclose(result, expected, atol=0.0, rtol=LOCAL_EPS))
+        self.assertTrue(
+            np.allclose(result, expected, atol=0.0, rtol=LOCAL_EPS))
 
     def test_degrees_3_3(self):
         # f1(x, y) = -(13824 x^3 + 3456 x^2 y - 55296 x^2 +
@@ -515,7 +516,8 @@ class Test_to_power_basis(utils.NumPyTestCase):
         expected = np.array([
             14107, -158418, 10827, 331686, -146394,
             -171072, 170451, 1620, -48600, 13500]) / 2048.0
-        self.assertTrue(np.allclose(result, expected, atol=0.0, rtol=LOCAL_EPS))
+        self.assertTrue(
+            np.allclose(result, expected, atol=0.0, rtol=LOCAL_EPS))
 
     def test_unsupported(self):
         nodes_yes1 = np.zeros((2, 2), order='F')
@@ -551,3 +553,81 @@ class Test_polynomial_norm(unittest.TestCase):
         result = self._call_function_under_test(coeffs)
         expected = np.sqrt(409.0 / 30.0)
         self.assertAlmostEqual(result, expected, delta=LOCAL_EPS)
+
+
+class Test_roots_in_unit_interval(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(coeffs):
+        from bezier import _implicitization
+
+        return _implicitization.roots_in_unit_interval(coeffs)
+
+    def test_it(self):
+        # P(t) = (t^2 + 1) (2 t - 1) (3 t - 1) (3 t - 2)
+        coeffs = np.array([-2.0, 13.0, -29.0, 31.0, -27.0, 18.0])
+        all_roots = self._call_function_under_test(coeffs)
+        all_roots = np.sort(all_roots)
+        self.assertEqual(all_roots.shape, (3,))
+        for index in (0, 1, 2):
+            expected = (index + 2.0) / 6.0
+            self.assertAlmostEqual(
+                all_roots[index], expected, delta=LOCAL_EPS)
+
+
+class Test_intersect_curves(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _implicitization
+
+        return _implicitization.intersect_curves(nodes1, nodes2)
+
+    def test_degrees_1_1(self):
+        # f1(x, y) = (8 y - 3) / 8
+        nodes1 = np.asfortranarray([
+            [0.0, 0.375],
+            [1.0, 0.375],
+        ])
+        # x2(t), y2(t) = 1 / 2, 3 s / 4
+        nodes2 = np.asfortranarray([
+            [0.5, 0.0],
+            [0.5, 0.75],
+        ])
+        # f1(x2(t), y2(t)) = 3 (2 t - 1) / 8
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = np.asfortranarray([
+            [-np.inf, 0.5],
+        ])
+        self.assertEqual(result, expected)
+
+    def _degrees_1_2_helper(self, swapped=False):
+        # f1(x, y) = 2 (4 x + 3 y - 24)
+        nodes1 = np.asfortranarray([
+            [0.0, 8.0],
+            [6.0, 0.0],
+        ])
+        # x2(t), y2(t) = 9 t, 18 t (1 - t)
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [4.5, 9.0],
+            [9.0, 0.0],
+        ])
+
+        # f1(x2(t), y2(t)) = 12 (4 - 3 t) (3 t - 1)
+        if swapped:
+            col1, col2 = 1, 0
+            result = self._call_function_under_test(nodes2, nodes1)
+        else:
+            col1, col2 = 0, 1
+            result = self._call_function_under_test(nodes1, nodes2)
+
+        self.assertEqual(result.shape, (1, 2))
+        self.assertEqual(result[0, col1], -np.inf)
+        self.assertAlmostEqual(result[0, col2], 1.0 / 3.0, delta=LOCAL_EPS)
+
+    def test_degrees_1_2(self):
+        self._degrees_1_2_helper()
+
+    def test_degrees_2_1(self):
+        self._degrees_1_2_helper(swapped=True)

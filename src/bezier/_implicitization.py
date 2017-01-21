@@ -51,6 +51,10 @@ _CHEB7, _ = chebyshev.chebgauss(7)
 _CHEB7 = 0.5 * (_CHEB7 + 1.0)
 _CHEB10, _ = chebyshev.chebgauss(10)
 _CHEB10 = 0.5 * (_CHEB10 + 1.0)
+# Allow a buffer of sqrt(sqrt(machine precision)) for polynomial roots.
+_IMAGINARY_WIGGLE = 0.5**13
+_UNIT_INTERVAL_WIGGLE_START = -0.5**13
+_UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -436,3 +440,71 @@ def polynomial_norm(coeffs):
             result += 2.0 * coeff_i * coeff_j / (i + j + 1.0)
 
     return np.sqrt(result)
+
+
+def roots_in_unit_interval(coeffs):
+    """Compute roots of a polynomial in the unit interval.
+
+    Args:
+        coeffs (numpy.ndarray): ``d + 1``-array of coefficients in monomial /
+            power basis.
+
+    Returns:
+        numpy.ndarray: ``N``-array of real values in :math:`\left[0, 1\right]`.
+    """
+    all_roots = polynomial.polyroots(coeffs)
+    # Only keep roots inside or very near to the unit interval.
+    all_roots = all_roots[
+        (_UNIT_INTERVAL_WIGGLE_START < all_roots) &
+        (all_roots < _UNIT_INTERVAL_WIGGLE_END)]
+    # Only keep roots with very small imaginary part. (Really only
+    # keep the real parts.)
+    real_inds = np.abs(all_roots.imag) < _IMAGINARY_WIGGLE
+    return all_roots[real_inds].real
+
+
+def intersect_curves(nodes1, nodes2):
+    r"""Intersect two parametric B |eacute| zier curves.
+
+    .. note::
+
+       This is a work in progress. For now, we don't check for
+       non-simple roots or compute the matched parameter. In
+       addition, we will use Newton's method to verify intersection
+       once a pair is identified.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+
+    Returns:
+        numpy.ndarray: ``Nx2`` array of intersection parameters.
+        Each row contains a pair of values :math:`s` and :math:`t`
+        (each in :math:`\left[0, 1\right]`) such that the curves
+        intersect: :math:`B_1(s) = B_2(t)`.
+    """
+    nodes1 = _curve_helpers.full_reduce(nodes1)
+    nodes2 = _curve_helpers.full_reduce(nodes2)
+
+    num_nodes1, _ = nodes1.shape
+    num_nodes2, _ = nodes2.shape
+    swapped = False
+    if num_nodes1 > num_nodes2:
+        nodes1, nodes2 = nodes2, nodes1
+        swapped = True
+
+    coeffs = to_power_basis(nodes1, nodes2)
+    # Normalize on [0, 1].
+    coeffs /= polynomial_norm(coeffs)
+
+    t_vals = roots_in_unit_interval(coeffs)
+    num_t, = t_vals.shape
+    result = np.zeros((num_t, 2), order='F')
+    if swapped:
+        result[:, 0] = t_vals
+        result[:, 1] = -np.inf
+    else:
+        result[:, 0] = -np.inf
+        result[:, 1] = t_vals
+
+    return result
