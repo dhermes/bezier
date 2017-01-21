@@ -443,7 +443,7 @@ def polynomial_norm(coeffs):
 
 
 def roots_in_unit_interval(coeffs):
-    """Compute roots of a polynomial in the unit interval.
+    r"""Compute roots of a polynomial in the unit interval.
 
     Args:
         coeffs (numpy.ndarray): ``d + 1``-array of coefficients in monomial /
