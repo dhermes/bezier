@@ -14,6 +14,8 @@ import numpy as np
 
 import bezier
 
+import runtime_utils
+
 
 CURVES = (
     None,  # Start counting at one.
@@ -292,11 +294,26 @@ CURVES = (
     ]), _copy=False),
 )
 
+_SQ31 = np.sqrt(31.0)
+_D33 = 2.0 / np.sqrt(33.0)
+_SQ7 = np.sqrt(7.0)
+_D7 = 0.5 / _SQ7
+_D5 = np.sqrt(5.0) / 8.0
+_SQ5 = np.sqrt(5.0)
+_S_ROOT1, _S_ROOT2, _ = runtime_utils.real_roots(
+    [17920, -29760, 13512, -1691])
+_T_ROOT1, _T_ROOT2, _ = runtime_utils.real_roots([35, -60, 24, -2])
 _EMPTY = np.zeros((0, 4), order='F')
 # NOTE: The intersection information is in 4 columns. The first
 #       column is the s-parameter, the second is the t-parameter, and
 #       third is the x-value at the intersection and finally the y-value.
 INTERSECTION_INFO = {
+    (1, 2): np.asfortranarray([
+        [0.0625 * (9.0 - _SQ31), 0.0625 * (9.0 + _SQ31),
+         0.0625 * (9.0 - _SQ31), (16.0 + _SQ31) / 64.0],
+        [0.0625 * (9.0 + _SQ31), 0.0625 * (9.0 - _SQ31),
+         0.0625 * (9.0 + _SQ31), (16.0 - _SQ31) / 64.0],
+    ]),
     (3, 4): np.asfortranarray([
         [0.25, 0.75, 0.75, 1.125],
         [0.875, 0.25, 2.625, 0.65625],
@@ -307,6 +324,10 @@ INTERSECTION_INFO = {
     ]),
     (1, 6): np.asfortranarray([
         [0.5, 0.5, 0.5, 0.5],
+    ]),
+    (1, 7): np.asfortranarray([
+        [0.5 - _D33, 0.5 - _D33, 0.5 - _D33, 17.0 / 66.0],
+        [0.5 + _D33, 0.5 + _D33, 0.5 + _D33, 17.0 / 66.0],
     ]),
     (1, 8): np.asfortranarray([
         [0.25, 0.25, 0.25, 0.375],
@@ -320,6 +341,12 @@ INTERSECTION_INFO = {
     ]),
     (8, 9): np.asfortranarray([
         [0.5, 0.5, 0.5, 0.375],
+    ]),
+    (1, 13): np.asfortranarray([
+        [0.5 - _D7, 0.5 - _D7, 0.5 - _D7, 3.0 / 7.0],
+        [0.5 + _D7, 0.5 + _D7, 0.5 + _D7, 3.0 / 7.0],
+        [0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 1.0, 0.0],
     ]),
     (14, 15): np.asfortranarray([
         [2.0 / 3.0, 1.0 / 3.0, 0.5, 0.5],
@@ -337,6 +364,28 @@ INTERSECTION_INFO = {
     (1, 19): np.asfortranarray([
         [1.0, 1.0, 1.0, 0.0],
     ]),
+    (1, 20): np.asfortranarray([
+        [0.25, 0.75, 0.25, 0.375],
+        [0.375 - _D5, 0.625 - _D5, 0.375 - _D5, 0.3125 - 0.5 * _D5],
+        [1.0, 0.0, 1.0, 0.0],
+        [0.375 + _D5, 0.625 + _D5, 0.375 + _D5, 0.3125 + 0.5 * _D5],
+    ]),
+    (20, 21): np.asfortranarray([
+        [0.625 - 0.125 * _SQ5, (4.0 - _SQ5) / 10.0,
+         0.375 - 0.125 * _SQ5, 0.3125 - 0.0625 * _SQ5],
+        [0.0, 9.0 / 10.0, 1.0, 0.0],
+        [0.75, 3.0 / 10.0, 0.25, 0.375],
+        [0.625 + 0.125 * _SQ5, (4.0 + _SQ5) / 10.0,
+         0.375 + 0.125 * _SQ5, 0.3125 + 0.0625 * _SQ5],
+    ]),
+    (21, 22): np.asfortranarray([
+        [(4.0 - _SQ5) / 10.0, (6.0 - _SQ5) / 10.0,
+         0.375 - 0.125 * _SQ5, 0.3125 - 0.0625 * _SQ5],
+        [3.0 / 10.0, 7.0 / 10.0, 0.25, 0.375],
+        [9.0 / 10.0, 1.0 / 10.0, 1.0, 0.0],
+        [(4.0 + _SQ5) / 10.0, (6.0 + _SQ5) / 10.0,
+         0.375 + 0.125 * _SQ5, 0.3125 + 0.0625 * _SQ5],
+    ]),
     (10, 23): np.asfortranarray([
         [0.5, 3.0 / 10.0, 4.5, 4.5],
     ]),
@@ -344,12 +393,36 @@ INTERSECTION_INFO = {
         [0.25, 0.0, 0.25, 0.375],
         [1.0, 0.75, 1.0, 0.0],
     ]),
+    (15, 25): np.asfortranarray([
+        # ctx = mpmath.MPContext()
+        # ctx.prec = 200
+        # s --> ctx.polyroots([486, -3726, 13905, -18405, 6213, 1231])
+        # t --> ctx.polyroots([4, -16, 13, 25, -28, 4])
+        # x --> (3 s + 1) / 4
+        # y --> (9 s^2 - 6 s + 5) / 8
+        [float.fromhex('0x1.b7b348cf939b9p-1'),
+         float.fromhex('0x1.bf3536665a0cdp-1'),
+         float.fromhex('0x1.c9c6769baeb4ap-1'),
+         float.fromhex('0x1.9f09401c281ddp-1')]
+    ]),
+    (11, 26): np.asfortranarray([
+        [0.5, 0.5, 3.0, 4.0],
+        [0.5 - 7.0 * _SQ7 / 48.0, 0.5 - _SQ7 / 6.0,
+         3.0 - 0.875 * _SQ7, 4.0 + 7.0 * _SQ7 / 6.0],
+        [0.5 + 7.0 * _SQ7 / 48.0, 0.5 + _SQ7 / 6.0,
+         3.0 + 0.875 * _SQ7, 4.0 - 7.0 * _SQ7 / 6.0],
+    ]),
+    (8, 27): np.asfortranarray([
+        [_S_ROOT2, _T_ROOT2, _S_ROOT2, 0.375],
+        [_S_ROOT1, _T_ROOT1, _S_ROOT1, 0.375],
+    ]),
     (28, 29): np.asfortranarray([
         [0.5, 0.5, 0.0, 1.0],
     ]),
     (29, 30): np.asfortranarray([
         [0.5, 2.0 / 3.0, 0.0, 1.0],
     ]),
+    (8, 23): _EMPTY,
     (11, 31): _EMPTY,
     (32, 33): np.asfortranarray([
         [13.0 / 56.0, 0.25, -0.046875, -0.25],

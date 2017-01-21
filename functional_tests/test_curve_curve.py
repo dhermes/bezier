@@ -103,17 +103,7 @@ def curve_curve_check(curve_or_id1, curve_or_id2, s_vals=None, t_vals=None,
 
 
 def test_curves1_and_2():
-    sq31 = np.sqrt(31.0)
-    s_val0 = 0.0625 * (9.0 - sq31)
-    s_val1 = 0.0625 * (9.0 + sq31)
-
-    s_vals = np.asfortranarray([s_val0, s_val1])
-    t_vals = np.asfortranarray([s_val1, s_val0])
-    points = np.asfortranarray([
-        [s_val0, (16.0 + sq31) / 64.0],
-        [s_val1, (16.0 - sq31) / 64.0],
-    ])
-    curve_curve_check(1, 2, s_vals, t_vals, points)
+    curve_curve_check(1, 2)
 
 
 def test_curves3_and_4():
@@ -129,18 +119,7 @@ def test_curves1_and_6():
 
 
 def test_curves1_and_7():
-    delta = 2.0 / np.sqrt(33.0)
-    s_val0 = 0.5 - delta
-    s_val1 = 0.5 + delta
-
-    s_vals = np.asfortranarray([s_val0, s_val1])
-    t_vals = s_vals
-    y_val = 17.0 / 66.0
-    points = np.asfortranarray([
-        [s_val0, y_val],
-        [s_val1, y_val],
-    ])
-    curve_curve_check(1, 7, s_vals, t_vals, points)
+    curve_curve_check(1, 7)
 
 
 def test_curves1_and_8():
@@ -198,16 +177,7 @@ def test_curves8_and_9():
 
 
 def test_curves1_and_13():
-    delta = 0.5 / np.sqrt(7.0)
-    s_vals = np.asfortranarray([0.5 - delta, 0.5 + delta, 0.0, 1.0])
-    t_vals = s_vals
-    points = np.asfortranarray([
-        [0.5 - delta, 3.0 / 7.0],
-        [0.5 + delta, 3.0 / 7.0],
-        [0.0, 0.0],
-        [1.0, 0.0],
-    ])
-    curve_curve_check(1, 13, s_vals, t_vals, points)
+    curve_curve_check(1, 13)
 
 
 def test_curves14_and_15():
@@ -238,46 +208,17 @@ def test_curves1_and_19():
 
 
 def test_curves1_and_20():
-    delta = np.sqrt(5.0) / 8.0
-    s_vals = np.asfortranarray([0.25, 0.375 - delta, 1.0, 0.375 + delta])
-    t_vals = np.asfortranarray([0.75, 0.625 - delta, 0.0, 0.625 + delta])
-    points = np.asfortranarray([
-        [0.25, 0.375],
-        [0.375 - delta, 0.3125 - 0.5 * delta],
-        [1.0, 0.0],
-        [0.375 + delta, 0.3125 + 0.5 * delta],
-    ])
-    curve_curve_check(1, 20, s_vals, t_vals, points)
+    curve_curve_check(1, 20)
 
 
 def test_curves20_and_21():
-    sq5 = np.sqrt(5.0)
-    s_vals = np.asfortranarray([
-        0.625 - 0.125 * sq5, 0.0, 0.75, 0.625 + 0.125 * sq5])
-    t_vals = np.asfortranarray([4.0 - sq5, 9.0, 3.0, 4.0 + sq5]) / 10.0
-    points = np.asfortranarray([
-        [0.375 - 0.125 * sq5, 0.3125 - 0.0625 * sq5],
-        [1.0, 0.0],
-        [0.25, 0.375],
-        [0.375 + 0.125 * sq5, 0.3125 + 0.0625 * sq5],
-    ])
-    curve_curve_check(20, 21, s_vals, t_vals, points)
+    curve_curve_check(20, 21)
 
 
 def test_curves21_and_22():
-    sq5 = np.sqrt(5.0)
-    s_vals = np.asfortranarray([4.0 - sq5, 3.0, 9.0, 4.0 + sq5]) / 10.0
-    t_vals = np.asfortranarray([6.0 - sq5, 7.0, 1.0, 6.0 + sq5]) / 10.0
-    points = np.asfortranarray([
-        [0.375 - 0.125 * sq5, 0.3125 - 0.0625 * sq5],
-        [0.25, 0.375],
-        [1.0, 0.0],
-        [0.375 + 0.125 * sq5, 0.3125 + 0.0625 * sq5],
-    ])
-
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(12):
-        curve_curve_check(21, 22, s_vals, t_vals, points)
+        curve_curve_check(21, 22)
 
 
 def test_curves10_and_23():
@@ -304,53 +245,19 @@ def test_curves1_and_24():
 
 
 def test_curves15_and_25():
-    # ctx = mpmath.MPContext()
-    # ctx.prec = 200
-    # ctx.polyroots([486, -3726, 13905, -18405, 6213, 1231])
-    s_vals = np.asfortranarray([float.fromhex('0x1.b7b348cf939b9p-1')])
-    # ctx.polyroots([4, -16, 13, 25, -28, 4])
-    t_vals = np.asfortranarray([float.fromhex('0x1.bf3536665a0cdp-1')])
-
-    # Slightly more accurate than (3 s + 1) / 4.
-    x_val = float.fromhex('0x1.c9c6769baeb4ap-1')
-    # identical to (9 s^2 - 6 s + 5) / 8 after rounding.
-    y_val = float.fromhex('0x1.9f09401c281ddp-1')
-    points = np.asfortranarray([
-        [x_val, y_val],
-    ])
-    curve_curve_check(15, 25, s_vals, t_vals, points)
+    curve_curve_check(15, 25)
 
 
 def test_curves11_and_26():
-    sq7 = np.sqrt(7.0)
-    s_vals = np.asfortranarray(
-        [24.0, 24.0 - 7.0 * sq7, 24.0 + 7.0 * sq7]) / 48.0
-    t_vals = np.asfortranarray([3.0, 3.0 - sq7, 3.0 + sq7]) / 6.0
-    points = np.asfortranarray([
-        [72.0, 96.0],
-        [72.0 - 21.0 * sq7, 96.0 + 28.0 * sq7],
-        [72.0 + 21.0 * sq7, 96.0 - 28.0 * sq7],
-    ]) / 24.0
-
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(25):
-        curve_curve_check(11, 26, s_vals, t_vals, points)
+        curve_curve_check(11, 26)
 
 
 def test_curves8_and_27():
-    s_val1, s_val2, _ = runtime_utils.real_roots(
-        [17920, -29760, 13512, -1691])
-    s_vals = np.asfortranarray([s_val2, s_val1])
-    t_val1, t_val2, _ = runtime_utils.real_roots([35, -60, 24, -2])
-    t_vals = np.asfortranarray([t_val2, t_val1])
-    points = np.asfortranarray([
-        [s_val2, 0.375],
-        [s_val1, 0.375],
-    ])
-
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(42):
-        curve_curve_check(8, 27, s_vals, t_vals, points)
+        curve_curve_check(8, 27)
 
 
 def test_curves28_and_29():
@@ -369,10 +276,7 @@ def test_curves29_and_30():
 
 
 def test_curves8_and_23():
-    s_vals = np.zeros((0,), order='F')
-    t_vals = s_vals
-    points = np.zeros((0, 2), order='F')
-    curve_curve_check(8, 23, s_vals, t_vals, points)
+    curve_curve_check(8, 23)
 
 
 def test_curves11_and_31():
