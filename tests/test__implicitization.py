@@ -18,7 +18,7 @@ from tests import utils
 
 
 FLOAT64 = np.float64  # pylint: disable=no-member
-LOCAL_EPS = 0.5**26  # sqrt(machine precision)
+LOCAL_EPS = 0.5**25  # 2 * sqrt(machine precision)
 
 
 class Test__evaluate3(unittest.TestCase):
