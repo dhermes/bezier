@@ -495,7 +495,9 @@ def intersect_curves(nodes1, nodes2):
 
     coeffs = to_power_basis(nodes1, nodes2)
     # Normalize on [0, 1].
-    coeffs /= polynomial_norm(coeffs)
+    l2_norm = polynomial_norm(coeffs)
+    if l2_norm != 0.0:
+        coeffs /= l2_norm
 
     t_vals = roots_in_unit_interval(coeffs)
     num_t, = t_vals.shape

@@ -14,7 +14,6 @@ try:
     import matplotlib.pyplot as plt
 except ImportError:
     plt = None
-import numpy as np
 import pytest
 import six
 
@@ -33,14 +32,14 @@ def make_plots(curve1, curve2, points=None,
     if not CONFIG.running:
         return
 
-    if isinstance(curve1, six.integer_types):
-        curve1 = candidate_curves.CURVES[curve1]
-        curve2 = candidate_curves.CURVES[curve2]
-
     if points is None:
         key = (curve1, curve2)
         info = candidate_curves.INTERSECTION_INFO[key]
         points = info[:, 2:]
+
+    if isinstance(curve1, six.integer_types):
+        curve1 = candidate_curves.CURVES[curve1]
+        curve2 = candidate_curves.CURVES[curve2]
 
     ax = curve1.plot(64)
     curve2.plot(64, ax=ax)
@@ -249,7 +248,12 @@ def test_curves36_and_37():
 
 @pytest.mark.xfail
 def test_curves38_and_39():
-    curve_curve_check(38, 39)
+    try:
+        curve_curve_check(38, 39)
+    except AssertionError:
+        make_plots(38, 39)
+        if not CONFIG.running:
+            raise
 
 
 def test_curves40_and_41():
