@@ -22,281 +22,11 @@ import bezier
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
+import candidate_curves
 import runtime_utils
 
 
 CONFIG = runtime_utils.Config()
-# g1 = sympy.Matrix([[s, 2 * s * (1 - s)]])
-CURVE1 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [0.5, 1.0],
-    [1.0, 0.0],
-]), _copy=False)
-# g2 = sympy.Matrix([[(9 - 8 * s) / 8, (2 * s - 1)**2 / 2]])
-CURVE2 = bezier.Curve.from_nodes(np.asfortranarray([
-    [1.125, 0.5],
-    [0.625, -0.5],
-    [0.125, 0.5],
-]), _copy=False)
-# g3 = 3 * g1
-# g3 = sympy.Matrix([[3 * s, 6 * s * (1 - s)]])
-CURVE3 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [1.5, 3.0],
-    [3.0, 0.0],
-]), _copy=False)
-# g4 = sympy.Matrix([[
-#     -3 * (4 * s**2 + s - 4) / 4,
-#     (92 * s**2 - 77 * s + 24) / 16,
-# ]])
-CURVE4 = bezier.Curve.from_nodes(np.asfortranarray([
-    [3.0, 1.5],
-    [2.625, -0.90625],
-    [-0.75, 2.4375],
-]), _copy=False)
-# g5 = sympy.Matrix([[s, (8 * s**2 - 8 * s + 3) / 4]])
-CURVE5 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.75],
-    [0.5, -0.25],
-    [1.0, 0.75],
-]), _copy=False)
-# g6 = sympy.Matrix([[s, s**2 + (1 - s)**2]])
-CURVE6 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 1.0],
-    [0.5, 0.0],
-    [1.0, 1.0],
-]), _copy=False)
-# g7 = sympy.Matrix([[s, (4 * s**2 - 4 * s + 17) / 64]])
-CURVE7 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.265625],
-    [0.5, 0.234375],
-    [1.0, 0.265625],
-]), _copy=False)
-# g8 = sympy.Matrix([[8 * s, 3]]) / 8
-CURVE8 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.375],
-    [1.0, 0.375],
-]), _copy=False)
-# g9 = sympy.Matrix([[2, 3 * s]]) / 4
-CURVE9 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.5, 0.0],
-    [0.5, 0.75],
-]), _copy=False)
-# g10 = 9 * g1
-# g10 = sympy.Matrix([[9 * s, 18 * s * (1 - s)]])
-CURVE10 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [4.5, 9.0],
-    [9.0, 0.0],
-]), _copy=False)
-# g11 = sympy.Matrix([[6 * s, 8 * (1 - s)]])
-CURVE11 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 8.0],
-    [6.0, 0.0],
-]), _copy=False)
-# NOTE: This curve has a self-crossing.
-# g12 = sympy.Matrix([[
-#     -3 * s * (3 * s - 2)**2 / 4,
-#     -(27 * s**3 - 72 * s**2 + 48 * s - 16) / 8,
-# ]])
-CURVE12 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 2.0],
-    [-1.0, 0.0],
-    [1.0, 1.0],
-    [-0.75, 1.625],
-]), _copy=False)
-# g13 = sympy.Matrix([[s, 4 * s * (1 - s) * (7 * s**2 - 7 * s + 2)]])
-CURVE13 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [0.25, 2.0],
-    [0.5, -2.0],
-    [0.75, 2.0],
-    [1.0, 0.0],
-]), _copy=False)
-# g14 = sympy.Matrix([[3 * s / 4, 3 * s * (4 - 3 * s) / 8]])
-CURVE14 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [0.375, 0.75],
-    [0.75, 0.375],
-]), _copy=False)
-# g15 = sympy.Matrix([[(3 * s + 1) / 4, (9 * s**2 - 6 * s + 5) / 8]])
-CURVE15 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.25, 0.625],
-    [0.625, 0.25],
-    [1.0, 1.0],
-]), _copy=False)
-# g16 = sympy.Matrix([[(3 * s + 1) / 4, 3 * (6 * s**2 - 4 * s + 3) / 16]])
-CURVE16 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.25, 0.5625],
-    [0.625, 0.1875],
-    [1.0, 0.9375],
-]), _copy=False)
-# g17 = sympy.Matrix([[11 - 8 * s, -4 * (2 * s**2 - s - 2)]])
-CURVE17 = bezier.Curve.from_nodes(np.asfortranarray([
-    [11.0, 8.0],
-    [7.0, 10.0],
-    [3.0, 4.0],
-]), _copy=False)
-# g18 = sympy.Matrix([[s + 1, -2 * s * (1 - s)]])
-CURVE18 = bezier.Curve.from_nodes(np.asfortranarray([
-    [1.0, 0.0],
-    [1.5, -1.0],
-    [2.0, 0.0],
-]), _copy=False)
-# g19 = sympy.Matrix([[s + 1, 2 * s * (1 - s)]])
-CURVE19 = bezier.Curve.from_nodes(np.asfortranarray([
-    [2.0, 0.0],
-    [1.5, 1.0],
-    [1.0, 0.0],
-]), _copy=False)
-# g20 = sympy.Matrix([[(2 * s - 1)**2, s/2]])
-CURVE20 = bezier.Curve.from_nodes(np.asfortranarray([
-    [1.0, 0.0],
-    [-1.0, 0.25],
-    [1.0, 0.5],
-]), _copy=False)
-# g21 = sympy.Matrix([[
-#     (10 * s - 1) / 8,
-#     (9 - 10 * s) * (10 * s - 1) / 32,
-# ]])
-CURVE21 = bezier.Curve.from_nodes(np.asfortranarray([
-    [-0.125, -0.28125],
-    [0.5, 1.28125],
-    [1.125, -0.28125],
-]), _copy=False)
-# g22 = sympy.Matrix([[25 * (2 * s - 1)**2 / 16, (10 * s - 1)  / 16]])
-CURVE22 = bezier.Curve.from_nodes(np.asfortranarray([
-    [1.5625, -0.0625],
-    [-1.5625, 0.25],
-    [1.5625, 0.5625],
-]), _copy=False)
-# g23 = 5 * g8 + sympy.Matrix([[24, 21]]) / 8
-# g23 = sympy.Matrix([[10 * s + 6, 9]]) / 2
-CURVE23 = bezier.Curve.from_nodes(np.asfortranarray([
-    [3.0, 4.5],
-    [8.0, 4.5],
-]), _copy=False)
-# g24 = sympy.Matrix([[(4 * s + 1) / 4, (3 - 4 * s) * (4 * s + 1) / 8]])
-CURVE24 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.25, 0.375],
-    [0.75, 0.875],
-    [1.25, -0.625],
-]), _copy=False)
-# g25 = sympy.Matrix([[
-#     -s * (2 * s**2 - 3 * s - 3) / 4,
-#     -(3 * s**3 - 3 * s - 1) / 2,
-# ]])
-CURVE25 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.5],
-    [0.25, 1.0],
-    [0.75, 1.5],
-    [1.0, 0.5],
-]), _copy=False)
-# g26 = sympy.Matrix([[
-#     3 * (14 * s + 1) / 8,
-#     18 * s**3 - 27 * s**2 + 3 * s + 7,
-# ]])
-CURVE26 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.375, 7.0],
-    [2.125, 8.0],
-    [3.875, 0.0],
-    [5.625, 1.0],
-]), _copy=False)
-# g27 = sympy.Matrix([[
-#     (6 * s + 1) / 8,
-#     (35 * s**3 - 60 * s**2 + 24 * s + 4) / 16,
-# ]])
-CURVE27 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.125, 0.25],
-    [0.375, 0.75],
-    [0.625, 0.0],
-    [0.875, 0.1875],
-]), _copy=False)
-# Rotate g1 by 45 degrees and scale by sqrt(2).
-# g28 = sympy.Matrix([[s * (2 * s - 1), s * (3 - 2 * s)]])
-CURVE28 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [-0.5, 1.5],
-    [1.0, 1.0],
-]), _copy=False)
-# Rotate g6 by 45 degrees and scale by sqrt(2).
-# g29 = sympy.Matrix([[(1 - 2 * s) * (1 - s), 2 * s**2 - s + 1]])
-CURVE29 = bezier.Curve.from_nodes(np.asfortranarray([
-    [-1.0, 1.0],
-    [0.5, 0.5],
-    [0.0, 2.0],
-]), _copy=False)
-# Rotate g9 by 45 degrees and scale by sqrt(2).
-# g30 = sympy.Matrix([[(2 - 3 * s) / 4, (2 + 3 * s) / 4]])
-CURVE30 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.5, 0.5],
-    [-0.25, 1.25],
-]), _copy=False)
-# g31 = 2 * g11 + sympy.Matrix([[1, 3]]) / 4
-# g31 = sympy.Matrix([[(48 * s + 1) / 4, (67 - 64 * s) / 4]])
-CURVE31 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.25, 16.75],
-    [12.25, 0.75],
-]), _copy=False)
-# g32 = sympy.Matrix([[(7 * s - 2) / 8, -1 / 4]])
-# NOTE: This is a degree-elevated line.
-CURVE32 = bezier.Curve.from_nodes(np.asfortranarray([
-    [-0.25, -0.25],
-    [0.1875, -0.25],
-    [0.625, -0.25],
-]), _copy=False)
-# g33 = sympy.Matrix([[(1 - 2 * s) * (s - 1) / 8, -s]])
-CURVE33 = bezier.Curve.from_nodes(np.asfortranarray([
-    [-0.125, 0.0],
-    [0.0625, -0.5],
-    [0.0, -1.0],
-]), _copy=False)
-# g34 = sympy.Matrix([[4, 3 * (2 * s + 5)]]) / 8
-CURVE34 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.5, 1.875],
-    [0.5, 2.625],
-]), _copy=False)
-# g35 = sympy.Matrix([[5 * (1 - 2 * s), 21]]) / 8
-CURVE35 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.625, 2.625],
-    [-0.625, 2.625],
-]), _copy=False)
-# g36 = sympy.Matrix([[(1 - s) / 2, -3 * (s + 1) / 8]])
-CURVE36 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.5, -0.375],
-    [0.0, -0.75],
-]), _copy=False)
-# g37 = sympy.Matrix([[(7 * s - 2) / 4, 7 * (s - 1) / 8]])
-CURVE37 = bezier.Curve.from_nodes(np.asfortranarray([
-    [-0.5, -0.875],
-    [1.25, 0.0],
-]), _copy=False)
-# g38 = sympy.Matrix([[(3 * s + 1) / 2, (3 * s - 1)**2 / 8]])
-CURVE38 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.5, 0.125],
-    [1.25, -0.25],
-    [2.0, 0.5],
-]), _copy=False)
-# g39 = sympy.Matrix([[(2 * s + 1) / 2, -(2 * s - 1)**2 / 8]])
-CURVE39 = bezier.Curve.from_nodes(np.asfortranarray([
-    [0.5, -0.125],
-    [1.0, 0.125],
-    [1.5, -0.125],
-]), _copy=False)
-# g40 is not worth writing down
-CURVE40 = bezier.Curve.from_nodes(np.asfortranarray([
-    [float.fromhex('-0x1.1f2347525aff1p-2'),
-     float.fromhex('-0x1.b10f43da717d8p-3')],
-    [float.fromhex('-0x1.3912a66009422p-2'),
-     float.fromhex('-0x1.263d62f131d03p-4')],
-]))
-# g41 is not worth writing down
-CURVE41 = bezier.Curve.from_nodes(np.asfortranarray([
-    [float.fromhex('-0x1.25a8a28e98475p-2'),
-     float.fromhex('-0x1.692bd46818fe8p-3')],
-    [float.fromhex('-0x1.7daf3df0a049ep-2'),
-     float.fromhex('-0x1.1361ffff031f1p-2')],
-]))
 
 
 def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
@@ -323,10 +53,18 @@ def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
     plt.close(ax.figure)
 
 
-def curve_curve_check(curve1, curve2, s_vals, t_vals, points,
-                      ignore_save=False):
+def curve_curve_check(curve_or_id1, curve_or_id2, s_vals, t_vals,
+                      points, ignore_save=False):
+    # pylint: disable=too-many-locals
     assert len(s_vals) == len(t_vals)
     assert len(s_vals) == len(points)
+
+    if isinstance(curve_or_id1, six.integer_types):
+        curve1 = candidate_curves.CURVES[curve_or_id1]
+        curve2 = candidate_curves.CURVES[curve_or_id2]
+    else:
+        curve1 = curve_or_id1
+        curve2 = curve_or_id2
 
     intersections = _intersection_helpers.all_intersections(
         [(curve1, curve2)])
@@ -353,6 +91,7 @@ def curve_curve_check(curve1, curve2, s_vals, t_vals, points,
         CONFIG.assert_close(point_on2[0, 1], point[1])
 
     make_plots(curve1, curve2, points, ignore_save=ignore_save, failed=False)
+    # pylint: enable=too-many-locals
 
 
 def test_curves1_and_2():
@@ -366,7 +105,7 @@ def test_curves1_and_2():
         [s_val0, (16.0 + sq31) / 64.0],
         [s_val1, (16.0 - sq31) / 64.0],
     ])
-    curve_curve_check(CURVE1, CURVE2, s_vals, t_vals, points)
+    curve_curve_check(1, 2, s_vals, t_vals, points)
 
 
 def test_curves3_and_4():
@@ -376,7 +115,7 @@ def test_curves3_and_4():
         [0.75, 1.125],
         [2.625, 0.65625],
     ])
-    curve_curve_check(CURVE3, CURVE4, s_vals, t_vals, points)
+    curve_curve_check(3, 4, s_vals, t_vals, points)
 
 
 def test_curves1_and_5():
@@ -386,7 +125,7 @@ def test_curves1_and_5():
         [0.25, 0.375],
         [0.75, 0.375],
     ])
-    curve_curve_check(CURVE1, CURVE5, s_vals, t_vals, points)
+    curve_curve_check(1, 5, s_vals, t_vals, points)
 
 
 def test_curves1_and_6():
@@ -395,7 +134,7 @@ def test_curves1_and_6():
     points = np.asfortranarray([
         [0.5, 0.5],
     ])
-    curve_curve_check(CURVE1, CURVE6, s_vals, t_vals, points)
+    curve_curve_check(1, 6, s_vals, t_vals, points)
 
 
 def test_curves1_and_7():
@@ -410,7 +149,7 @@ def test_curves1_and_7():
         [s_val0, y_val],
         [s_val1, y_val],
     ])
-    curve_curve_check(CURVE1, CURVE7, s_vals, t_vals, points)
+    curve_curve_check(1, 7, s_vals, t_vals, points)
 
 
 def test_curves1_and_8():
@@ -420,7 +159,7 @@ def test_curves1_and_8():
         [0.25, 0.375],
         [0.75, 0.375],
     ])
-    curve_curve_check(CURVE1, CURVE8, s_vals, t_vals, points)
+    curve_curve_check(1, 8, s_vals, t_vals, points)
 
 
 def test_curves1_and_9():
@@ -429,7 +168,7 @@ def test_curves1_and_9():
     points = np.asfortranarray([
         [0.5, 0.5],
     ])
-    curve_curve_check(CURVE1, CURVE9, s_vals, t_vals, points)
+    curve_curve_check(1, 9, s_vals, t_vals, points)
 
 
 def test_curves10_and_11():
@@ -438,11 +177,12 @@ def test_curves10_and_11():
     points = np.asfortranarray([
         [3.0, 4.0],
     ])
-    curve_curve_check(CURVE10, CURVE11, s_vals, t_vals, points)
+    curve_curve_check(10, 11, s_vals, t_vals, points)
 
 
 def test_curve12_self_crossing():
-    left, right = CURVE12.subdivide()
+    curve = candidate_curves.CURVES[12]
+    left, right = curve.subdivide()
     # Re-create left and right so they aren't sub-curves. This is just to
     # satisfy a quirk of ``curve_curve_check``, not an issue with the
     # library.
@@ -484,7 +224,7 @@ def test_curves8_and_9():
     points = np.asfortranarray([
         [0.5, 0.375],
     ])
-    curve_curve_check(CURVE8, CURVE9, s_vals, t_vals, points)
+    curve_curve_check(8, 9, s_vals, t_vals, points)
 
 
 def test_curves1_and_13():
@@ -497,7 +237,7 @@ def test_curves1_and_13():
         [0.0, 0.0],
         [1.0, 0.0],
     ])
-    curve_curve_check(CURVE1, CURVE13, s_vals, t_vals, points)
+    curve_curve_check(1, 13, s_vals, t_vals, points)
 
 
 def test_curves14_and_15():
@@ -507,9 +247,10 @@ def test_curves14_and_15():
         [0.5, 0.5],
     ])
     with pytest.raises(NotImplementedError):
-        curve_curve_check(CURVE14, CURVE15, s_vals, t_vals, points)
+        curve_curve_check(14, 15, s_vals, t_vals, points)
 
-    make_plots(CURVE14, CURVE15, points)
+    make_plots(
+        candidate_curves.CURVES[14], candidate_curves.CURVES[15], points)
 
 
 def test_curves14_and_16():
@@ -519,7 +260,7 @@ def test_curves14_and_16():
         [0.375, 0.46875],
         [0.625, 0.46875],
     ])
-    curve_curve_check(CURVE14, CURVE16, s_vals, t_vals, points)
+    curve_curve_check(14, 16, s_vals, t_vals, points)
 
 
 def test_curves10_and_17():
@@ -528,7 +269,7 @@ def test_curves10_and_17():
     points = np.asfortranarray([
         [3.0, 4.0],
     ])
-    curve_curve_check(CURVE10, CURVE17, s_vals, t_vals, points)
+    curve_curve_check(10, 17, s_vals, t_vals, points)
 
 
 def test_curves1_and_18():
@@ -537,7 +278,7 @@ def test_curves1_and_18():
     points = np.asfortranarray([
         [1.0, 0.0],
     ])
-    curve_curve_check(CURVE1, CURVE18, s_vals, t_vals, points)
+    curve_curve_check(1, 18, s_vals, t_vals, points)
 
 
 def test_curves1_and_19():
@@ -546,7 +287,7 @@ def test_curves1_and_19():
     points = np.asfortranarray([
         [1.0, 0.0],
     ])
-    curve_curve_check(CURVE1, CURVE19, s_vals, t_vals, points)
+    curve_curve_check(1, 19, s_vals, t_vals, points)
 
 
 def test_curves1_and_20():
@@ -559,7 +300,7 @@ def test_curves1_and_20():
         [1.0, 0.0],
         [0.375 + delta, 0.3125 + 0.5 * delta],
     ])
-    curve_curve_check(CURVE1, CURVE20, s_vals, t_vals, points)
+    curve_curve_check(1, 20, s_vals, t_vals, points)
 
 
 def test_curves20_and_21():
@@ -573,7 +314,7 @@ def test_curves20_and_21():
         [0.25, 0.375],
         [0.375 + 0.125 * sq5, 0.3125 + 0.0625 * sq5],
     ])
-    curve_curve_check(CURVE20, CURVE21, s_vals, t_vals, points)
+    curve_curve_check(20, 21, s_vals, t_vals, points)
 
 
 def test_curves21_and_22():
@@ -589,7 +330,7 @@ def test_curves21_and_22():
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(12):
-        curve_curve_check(CURVE21, CURVE22, s_vals, t_vals, points)
+        curve_curve_check(21, 22, s_vals, t_vals, points)
 
 
 def test_curves10_and_23():
@@ -598,15 +339,17 @@ def test_curves10_and_23():
     points = np.asfortranarray([
         [4.5, 4.5],
     ])
-    curve_curve_check(CURVE10, CURVE23, s_vals, t_vals, points)
+    curve_curve_check(10, 23, s_vals, t_vals, points)
 
 
 def test_curves1_and_24():
     # NOTE: This is two coincident curves, i.e. CURVE1 on
     #       [1/4, 1] is identical to CURVE24 on [0, 3/4].
-    left_vals = CURVE1.evaluate_multi(
+    curve1 = candidate_curves.CURVES[1]
+    curve24 = candidate_curves.CURVES[24]
+    left_vals = curve1.evaluate_multi(
         np.linspace(0.25, 1.0, 2**8 + 1))
-    right_vals = CURVE24.evaluate_multi(
+    right_vals = curve24.evaluate_multi(
         np.linspace(0.0, 0.75, 2**8 + 1))
     assert np.all(left_vals == right_vals)
 
@@ -617,9 +360,9 @@ def test_curves1_and_24():
         [1.0, 0.0],
     ])
     with pytest.raises(NotImplementedError):
-        curve_curve_check(CURVE1, CURVE24, s_vals, t_vals, points)
+        curve_curve_check(1, 24, s_vals, t_vals, points)
 
-    make_plots(CURVE1, CURVE24, points)
+    make_plots(curve1, curve24, points)
 
 
 def test_curves15_and_25():
@@ -637,7 +380,7 @@ def test_curves15_and_25():
     points = np.asfortranarray([
         [x_val, y_val],
     ])
-    curve_curve_check(CURVE15, CURVE25, s_vals, t_vals, points)
+    curve_curve_check(15, 25, s_vals, t_vals, points)
 
 
 def test_curves11_and_26():
@@ -653,7 +396,7 @@ def test_curves11_and_26():
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(25):
-        curve_curve_check(CURVE11, CURVE26, s_vals, t_vals, points)
+        curve_curve_check(11, 26, s_vals, t_vals, points)
 
 
 def test_curves8_and_27():
@@ -669,7 +412,7 @@ def test_curves8_and_27():
 
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(42):
-        curve_curve_check(CURVE8, CURVE27, s_vals, t_vals, points)
+        curve_curve_check(8, 27, s_vals, t_vals, points)
 
 
 def test_curves28_and_29():
@@ -681,9 +424,10 @@ def test_curves28_and_29():
         [0.0, 1.0],
     ])
     with pytest.raises(NotImplementedError):
-        curve_curve_check(CURVE28, CURVE29, s_vals, t_vals, points)
+        curve_curve_check(28, 29, s_vals, t_vals, points)
 
-    make_plots(CURVE28, CURVE29, points)
+    make_plots(
+        candidate_curves.CURVES[28], candidate_curves.CURVES[29], points)
 
 
 def test_curves29_and_30():
@@ -692,21 +436,21 @@ def test_curves29_and_30():
     points = np.asfortranarray([
         [0.0, 1.0],
     ])
-    curve_curve_check(CURVE29, CURVE30, s_vals, t_vals, points)
+    curve_curve_check(29, 30, s_vals, t_vals, points)
 
 
 def test_curves8_and_23():
     s_vals = np.zeros((0,), order='F')
     t_vals = s_vals
     points = np.zeros((0, 2), order='F')
-    curve_curve_check(CURVE8, CURVE23, s_vals, t_vals, points)
+    curve_curve_check(8, 23, s_vals, t_vals, points)
 
 
 def test_curves11_and_31():
     s_vals = np.zeros((0,), order='F')
     t_vals = s_vals
     points = np.zeros((0, 2), order='F')
-    curve_curve_check(CURVE11, CURVE31, s_vals, t_vals, points)
+    curve_curve_check(11, 31, s_vals, t_vals, points)
 
 
 def test_curves32_and_33():
@@ -718,7 +462,7 @@ def test_curves32_and_33():
 
     # NOTE: We allow less wiggle room for this intersection.
     with CONFIG.wiggle(4):
-        curve_curve_check(CURVE32, CURVE33, s_vals, t_vals, points)
+        curve_curve_check(32, 33, s_vals, t_vals, points)
 
 
 def test_curves34_and_35():
@@ -728,7 +472,7 @@ def test_curves34_and_35():
         [0.5, 2.625],
     ])
 
-    curve_curve_check(CURVE34, CURVE35, s_vals, t_vals, points)
+    curve_curve_check(34, 35, s_vals, t_vals, points)
 
 
 def test_curves36_and_37():
@@ -738,7 +482,7 @@ def test_curves36_and_37():
         [0.5, -0.375],
     ])
 
-    curve_curve_check(CURVE36, CURVE37, s_vals, t_vals, points)
+    curve_curve_check(36, 37, s_vals, t_vals, points)
 
 
 @pytest.mark.xfail
@@ -749,14 +493,14 @@ def test_curves38_and_39():
         [1.0, 0.0],
     ])
 
-    curve_curve_check(CURVE38, CURVE39, s_vals, t_vals, points)
+    curve_curve_check(38, 39, s_vals, t_vals, points)
 
 
 def test_curves40_and_41():
     s_vals = np.zeros((0,), order='F')
     t_vals = s_vals
     points = np.zeros((0, 2), order='F')
-    curve_curve_check(CURVE40, CURVE41, s_vals, t_vals, points)
+    curve_curve_check(40, 41, s_vals, t_vals, points)
 
 
 if __name__ == '__main__':
