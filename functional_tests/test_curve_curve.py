@@ -53,26 +53,19 @@ def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
     plt.close(ax.figure)
 
 
-def curve_curve_check(curve_or_id1, curve_or_id2, s_vals=None, t_vals=None,
-                      points=None, ignore_save=False):
+def curve_curve_check(curve_id1, curve_id2, ignore_save=False):
     # pylint: disable=too-many-locals
-    if s_vals is None:
-        # NOTE: Assume ``s_vals`` None means t_vals / points are.
-        key = (curve_or_id1, curve_or_id2)
-        info = candidate_curves.INTERSECTION_INFO[key]
-        s_vals = info[:, 0]
-        t_vals = info[:, 1]
-        points = info[:, 2:]
+    key = (curve_id1, curve_id2)
+    info = candidate_curves.INTERSECTION_INFO[key]
+    s_vals = info[:, 0]
+    t_vals = info[:, 1]
+    points = info[:, 2:]
 
     assert len(s_vals) == len(t_vals)
     assert len(s_vals) == len(points)
 
-    if isinstance(curve_or_id1, six.integer_types):
-        curve1 = candidate_curves.CURVES[curve_or_id1]
-        curve2 = candidate_curves.CURVES[curve_or_id2]
-    else:
-        curve1 = curve_or_id1
-        curve2 = curve_or_id2
+    curve1 = candidate_curves.CURVES[curve_id1]
+    curve2 = candidate_curves.CURVES[curve_id2]
 
     intersections = _intersection_helpers.all_intersections(
         [(curve1, curve2)])
@@ -135,41 +128,9 @@ def test_curves10_and_11():
 
 
 def test_curve12_self_crossing():
-    curve = candidate_curves.CURVES[12]
-    left, right = curve.subdivide()
-    # Re-create left and right so they aren't sub-curves. This is just to
-    # satisfy a quirk of ``curve_curve_check``, not an issue with the
-    # library.
-    left = bezier.Curve(left.nodes, left.degree)
-    right = bezier.Curve(right.nodes, right.degree)
-
-    delta = np.sqrt(5.0) / 3.0
-    s_vals = np.asfortranarray([1.0, 1.0 - delta])
-    t_vals = np.asfortranarray([0.0, delta])
-    points = np.asfortranarray([
-        [-0.09375, 0.828125],
-        [-0.25, 1.375],
-    ])
-
-    curve_curve_check(left, right, s_vals, t_vals, points)
-
-    # Make sure the left curve doesn't cross itself.
-    left1, right1 = left.subdivide()
-    expected = right1.evaluate_multi(np.asfortranarray([0.0]))
-    curve_curve_check(bezier.Curve(left1.nodes, left1.degree),
-                      bezier.Curve(right1.nodes, right1.degree),
-                      np.asfortranarray([1.0]),
-                      np.asfortranarray([0.0]),
-                      expected, ignore_save=True)
-
-    # Make sure the right curve doesn't cross itself.
-    left2, right2 = right.subdivide()
-    expected = right2.evaluate_multi(np.asfortranarray([0.0]))
-    curve_curve_check(bezier.Curve(left2.nodes, left2.degree),
-                      bezier.Curve(right2.nodes, right2.degree),
-                      np.asfortranarray([1.0]),
-                      np.asfortranarray([0.0]),
-                      expected, ignore_save=True)
+    curve_curve_check(42, 43)
+    curve_curve_check(44, 45, ignore_save=True)
+    curve_curve_check(46, 47, ignore_save=True)
 
 
 def test_curves8_and_9():
