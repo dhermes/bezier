@@ -53,9 +53,17 @@ def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
     plt.close(ax.figure)
 
 
-def curve_curve_check(curve_or_id1, curve_or_id2, s_vals, t_vals,
-                      points, ignore_save=False):
+def curve_curve_check(curve_or_id1, curve_or_id2, s_vals=None, t_vals=None,
+                      points=None, ignore_save=False):
     # pylint: disable=too-many-locals
+    if s_vals is None:
+        # NOTE: Assume ``s_vals`` None means t_vals / points are.
+        key = (curve_or_id1, curve_or_id2)
+        info = candidate_curves.INTERSECTION_INFO[key]
+        s_vals = info[:, 0]
+        t_vals = info[:, 1]
+        points = info[:, 2:]
+
     assert len(s_vals) == len(t_vals)
     assert len(s_vals) == len(points)
 
@@ -109,32 +117,15 @@ def test_curves1_and_2():
 
 
 def test_curves3_and_4():
-    s_vals = np.asfortranarray([0.25, 0.875])
-    t_vals = np.asfortranarray([0.75, 0.25])
-    points = np.asfortranarray([
-        [0.75, 1.125],
-        [2.625, 0.65625],
-    ])
-    curve_curve_check(3, 4, s_vals, t_vals, points)
+    curve_curve_check(3, 4)
 
 
 def test_curves1_and_5():
-    s_vals = np.asfortranarray([0.25, 0.75])
-    t_vals = s_vals
-    points = np.asfortranarray([
-        [0.25, 0.375],
-        [0.75, 0.375],
-    ])
-    curve_curve_check(1, 5, s_vals, t_vals, points)
+    curve_curve_check(1, 5)
 
 
 def test_curves1_and_6():
-    s_vals = np.asfortranarray([0.5])
-    t_vals = s_vals
-    points = np.asfortranarray([
-        [0.5, 0.5],
-    ])
-    curve_curve_check(1, 6, s_vals, t_vals, points)
+    curve_curve_check(1, 6)
 
 
 def test_curves1_and_7():
@@ -153,31 +144,15 @@ def test_curves1_and_7():
 
 
 def test_curves1_and_8():
-    s_vals = np.asfortranarray([0.25, 0.75])
-    t_vals = s_vals
-    points = np.asfortranarray([
-        [0.25, 0.375],
-        [0.75, 0.375],
-    ])
-    curve_curve_check(1, 8, s_vals, t_vals, points)
+    curve_curve_check(1, 8)
 
 
 def test_curves1_and_9():
-    s_vals = np.asfortranarray([0.5])
-    t_vals = np.asfortranarray([2.0 / 3.0])
-    points = np.asfortranarray([
-        [0.5, 0.5],
-    ])
-    curve_curve_check(1, 9, s_vals, t_vals, points)
+    curve_curve_check(1, 9)
 
 
 def test_curves10_and_11():
-    s_vals = np.asfortranarray([1.0 / 3.0])
-    t_vals = np.asfortranarray([0.5])
-    points = np.asfortranarray([
-        [3.0, 4.0],
-    ])
-    curve_curve_check(10, 11, s_vals, t_vals, points)
+    curve_curve_check(10, 11)
 
 
 def test_curve12_self_crossing():
@@ -219,12 +194,7 @@ def test_curve12_self_crossing():
 
 
 def test_curves8_and_9():
-    s_vals = np.asfortranarray([0.5])
-    t_vals = np.asfortranarray([0.5])
-    points = np.asfortranarray([
-        [0.5, 0.375],
-    ])
-    curve_curve_check(8, 9, s_vals, t_vals, points)
+    curve_curve_check(8, 9)
 
 
 def test_curves1_and_13():
@@ -241,53 +211,30 @@ def test_curves1_and_13():
 
 
 def test_curves14_and_15():
-    s_vals = np.asfortranarray([2.0 / 3.0])
-    t_vals = np.asfortranarray([1.0 / 3.0])
-    points = np.asfortranarray([
-        [0.5, 0.5],
-    ])
     with pytest.raises(NotImplementedError):
-        curve_curve_check(14, 15, s_vals, t_vals, points)
+        curve_curve_check(14, 15)
 
-    make_plots(
-        candidate_curves.CURVES[14], candidate_curves.CURVES[15], points)
+    curve14 = candidate_curves.CURVES[14]
+    curve15 = candidate_curves.CURVES[15]
+    info = candidate_curves.INTERSECTION_INFO[(14, 15)]
+    points = info[:, 2:]
+    make_plots(curve14, curve15, points)
 
 
 def test_curves14_and_16():
-    s_vals = np.asfortranarray([3.0, 5.0]) / 6.0
-    t_vals = np.asfortranarray([1.0, 3.0]) / 6.0
-    points = np.asfortranarray([
-        [0.375, 0.46875],
-        [0.625, 0.46875],
-    ])
-    curve_curve_check(14, 16, s_vals, t_vals, points)
+    curve_curve_check(14, 16)
 
 
 def test_curves10_and_17():
-    s_vals = np.asfortranarray([1.0 / 3.0])
-    t_vals = np.asfortranarray([1.0])
-    points = np.asfortranarray([
-        [3.0, 4.0],
-    ])
-    curve_curve_check(10, 17, s_vals, t_vals, points)
+    curve_curve_check(10, 17)
 
 
 def test_curves1_and_18():
-    s_vals = np.asfortranarray([1.0])
-    t_vals = np.asfortranarray([0.0])
-    points = np.asfortranarray([
-        [1.0, 0.0],
-    ])
-    curve_curve_check(1, 18, s_vals, t_vals, points)
+    curve_curve_check(1, 18)
 
 
 def test_curves1_and_19():
-    s_vals = np.asfortranarray([1.0])
-    t_vals = np.asfortranarray([1.0])
-    points = np.asfortranarray([
-        [1.0, 0.0],
-    ])
-    curve_curve_check(1, 19, s_vals, t_vals, points)
+    curve_curve_check(1, 19)
 
 
 def test_curves1_and_20():
@@ -334,12 +281,7 @@ def test_curves21_and_22():
 
 
 def test_curves10_and_23():
-    s_vals = np.asfortranarray([0.5])
-    t_vals = np.asfortranarray([3.0 / 10.0])
-    points = np.asfortranarray([
-        [4.5, 4.5],
-    ])
-    curve_curve_check(10, 23, s_vals, t_vals, points)
+    curve_curve_check(10, 23)
 
 
 def test_curves1_and_24():
@@ -353,15 +295,11 @@ def test_curves1_and_24():
         np.linspace(0.0, 0.75, 2**8 + 1))
     assert np.all(left_vals == right_vals)
 
-    s_vals = np.asfortranarray([0.25, 1.0])
-    t_vals = np.asfortranarray([0.0, 0.75])
-    points = np.asfortranarray([
-        [0.25, 0.375],
-        [1.0, 0.0],
-    ])
     with pytest.raises(NotImplementedError):
-        curve_curve_check(1, 24, s_vals, t_vals, points)
+        curve_curve_check(1, 24)
 
+    info = candidate_curves.INTERSECTION_INFO[(1, 24)]
+    points = info[:, 2:]
     make_plots(curve1, curve24, points)
 
 
@@ -416,27 +354,18 @@ def test_curves8_and_27():
 
 
 def test_curves28_and_29():
-    # NOTE: Though curves 1 and 6 successfully intersect (at a point
-    #       of tangency), the rotated equivalents do not.
-    s_vals = np.asfortranarray([0.5])
-    t_vals = s_vals
-    points = np.asfortranarray([
-        [0.0, 1.0],
-    ])
     with pytest.raises(NotImplementedError):
-        curve_curve_check(28, 29, s_vals, t_vals, points)
+        curve_curve_check(28, 29)
 
-    make_plots(
-        candidate_curves.CURVES[28], candidate_curves.CURVES[29], points)
+    curve28 = candidate_curves.CURVES[28]
+    curve29 = candidate_curves.CURVES[29]
+    info = candidate_curves.INTERSECTION_INFO[(28, 29)]
+    points = info[:, 2:]
+    make_plots(curve28, curve29, points)
 
 
 def test_curves29_and_30():
-    s_vals = np.asfortranarray([0.5])
-    t_vals = np.asfortranarray([2.0 / 3.0])
-    points = np.asfortranarray([
-        [0.0, 1.0],
-    ])
-    curve_curve_check(29, 30, s_vals, t_vals, points)
+    curve_curve_check(29, 30)
 
 
 def test_curves8_and_23():
@@ -447,60 +376,30 @@ def test_curves8_and_23():
 
 
 def test_curves11_and_31():
-    s_vals = np.zeros((0,), order='F')
-    t_vals = s_vals
-    points = np.zeros((0, 2), order='F')
-    curve_curve_check(11, 31, s_vals, t_vals, points)
+    curve_curve_check(11, 31)
 
 
 def test_curves32_and_33():
-    s_vals = np.asfortranarray([13.0 / 56.0])
-    t_vals = np.asfortranarray([0.25])
-    points = np.asfortranarray([
-        [-0.046875, -0.25],
-    ])
-
     # NOTE: We allow less wiggle room for this intersection.
     with CONFIG.wiggle(4):
-        curve_curve_check(32, 33, s_vals, t_vals, points)
+        curve_curve_check(32, 33)
 
 
 def test_curves34_and_35():
-    s_vals = np.asfortranarray([1.0])
-    t_vals = np.asfortranarray([1.0 / 10.0])
-    points = np.asfortranarray([
-        [0.5, 2.625],
-    ])
-
-    curve_curve_check(34, 35, s_vals, t_vals, points)
+    curve_curve_check(34, 35)
 
 
 def test_curves36_and_37():
-    s_vals = np.asfortranarray([0.0])
-    t_vals = np.asfortranarray([4.0 / 7.0])
-    points = np.asfortranarray([
-        [0.5, -0.375],
-    ])
-
-    curve_curve_check(36, 37, s_vals, t_vals, points)
+    curve_curve_check(36, 37)
 
 
 @pytest.mark.xfail
 def test_curves38_and_39():
-    s_vals = np.asfortranarray([1.0 / 3.0])
-    t_vals = np.asfortranarray([0.5])
-    points = np.asfortranarray([
-        [1.0, 0.0],
-    ])
-
-    curve_curve_check(38, 39, s_vals, t_vals, points)
+    curve_curve_check(38, 39)
 
 
 def test_curves40_and_41():
-    s_vals = np.zeros((0,), order='F')
-    t_vals = s_vals
-    points = np.zeros((0, 2), order='F')
-    curve_curve_check(40, 41, s_vals, t_vals, points)
+    curve_curve_check(40, 41)
 
 
 if __name__ == '__main__':

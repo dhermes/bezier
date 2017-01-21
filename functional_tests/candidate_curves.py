@@ -203,6 +203,8 @@ CURVES = (
         [0.625, 0.0],
         [0.875, 0.1875],
     ]), _copy=False),
+    # NOTE: Though curves 1 and 6 successfully intersect (at a point
+    #       of tangency), the rotated equivalents do not.
     # Rotate g1 by 45 degrees and scale by sqrt(2).
     # g28 = sympy.Matrix([[s * (2 * s - 1), s * (3 - 2 * s)]])
     bezier.Curve.from_nodes(np.asfortranarray([
@@ -289,3 +291,77 @@ CURVES = (
          float.fromhex('-0x1.1361ffff031f1p-2')],
     ]), _copy=False),
 )
+
+_EMPTY = np.zeros((0, 4), order='F')
+# NOTE: The intersection information is in 4 columns. The first
+#       column is the s-parameter, the second is the t-parameter, and
+#       third is the x-value at the intersection and finally the y-value.
+INTERSECTION_INFO = {
+    (3, 4): np.asfortranarray([
+        [0.25, 0.75, 0.75, 1.125],
+        [0.875, 0.25, 2.625, 0.65625],
+    ]),
+    (1, 5): np.asfortranarray([
+        [0.25, 0.25, 0.25, 0.375],
+        [0.75, 0.75, 0.75, 0.375],
+    ]),
+    (1, 6): np.asfortranarray([
+        [0.5, 0.5, 0.5, 0.5],
+    ]),
+    (1, 8): np.asfortranarray([
+        [0.25, 0.25, 0.25, 0.375],
+        [0.75, 0.75, 0.75, 0.375],
+    ]),
+    (1, 9): np.asfortranarray([
+        [0.5, 2.0 / 3.0, 0.5, 0.5],
+    ]),
+    (10, 11): np.asfortranarray([
+        [1.0 / 3.0, 0.5, 3.0, 4.0],
+    ]),
+    (8, 9): np.asfortranarray([
+        [0.5, 0.5, 0.5, 0.375],
+    ]),
+    (14, 15): np.asfortranarray([
+        [2.0 / 3.0, 1.0 / 3.0, 0.5, 0.5],
+    ]),
+    (14, 16): np.asfortranarray([
+        [0.5, 1.0 / 6.0, 0.375, 0.46875],
+        [5.0 / 6.0, 0.5, 0.625, 0.46875],
+    ]),
+    (10, 17): np.asfortranarray([
+        [1.0 / 3.0, 1.0, 3.0, 4.0],
+    ]),
+    (1, 18): np.asfortranarray([
+        [1.0, 0.0, 1.0, 0.0],
+    ]),
+    (1, 19): np.asfortranarray([
+        [1.0, 1.0, 1.0, 0.0],
+    ]),
+    (10, 23): np.asfortranarray([
+        [0.5, 3.0 / 10.0, 4.5, 4.5],
+    ]),
+    (1, 24): np.asfortranarray([
+        [0.25, 0.0, 0.25, 0.375],
+        [1.0, 0.75, 1.0, 0.0],
+    ]),
+    (28, 29): np.asfortranarray([
+        [0.5, 0.5, 0.0, 1.0],
+    ]),
+    (29, 30): np.asfortranarray([
+        [0.5, 2.0 / 3.0, 0.0, 1.0],
+    ]),
+    (11, 31): _EMPTY,
+    (32, 33): np.asfortranarray([
+        [13.0 / 56.0, 0.25, -0.046875, -0.25],
+    ]),
+    (34, 35): np.asfortranarray([
+        [1.0, 1.0 / 10.0, 0.5, 2.625],
+    ]),
+    (36, 37): np.asfortranarray([
+        [0.0, 4.0 / 7.0, 0.5, -0.375],
+    ]),
+    (38, 39): np.asfortranarray([
+        [1.0 / 3.0, 0.5, 1.0, 0.0],
+    ]),
+    (40, 41): _EMPTY,
+}
