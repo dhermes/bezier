@@ -55,6 +55,8 @@ _CHEB10 = 0.5 * (_CHEB10 + 1.0)
 _IMAGINARY_WIGGLE = 0.5**13
 _UNIT_INTERVAL_WIGGLE_START = -0.5**13
 _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
+# Detect almost zero polynomials.
+_L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -496,7 +498,9 @@ def intersect_curves(nodes1, nodes2):
     coeffs = to_power_basis(nodes1, nodes2)
     # Normalize on [0, 1].
     l2_norm = polynomial_norm(coeffs)
-    if l2_norm != 0.0:
+    if l2_norm < _L2_THRESHOLD:
+        coeffs = np.zeros(coeffs.shape, order='F')
+    else:
         coeffs /= l2_norm
 
     t_vals = roots_in_unit_interval(coeffs)

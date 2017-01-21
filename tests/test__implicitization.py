@@ -617,6 +617,26 @@ class Test_intersect_curves(utils.NumPyTestCase):
         expected = np.zeros((0, 2), order='F')
         self.assertEqual(result, expected)
 
+    def test_almost_zero_l2_norm(self):
+        # f1(x, y) = 16 (4 x^3 - 18 x^2 + 27 x - 27 y)
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 0.0],
+            [3.0, 1.0],
+        ])
+        # x2(t), y2(t) = 3 (2 s + 1) / 2, (2 s + 1) (4 s^2 - 2 s + 1) / 2
+        nodes2 = np.asfortranarray([
+            [1.5, 0.5],
+            [2.5, 0.5],
+            [3.5, 0.5],
+            [4.5, 4.5],
+        ])
+        # f1(x2(t), y2(t)) = 0
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = np.zeros((0, 2), order='F')
+        self.assertEqual(result, expected)
+
     def _degrees_1_2_helper(self, swapped=False):
         # f1(x, y) = 2 (4 x + 3 y - 24)
         nodes1 = np.asfortranarray([
