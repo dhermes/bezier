@@ -29,9 +29,19 @@ import runtime_utils
 CONFIG = runtime_utils.Config()
 
 
-def make_plots(curve1, curve2, points, ignore_save=False, failed=True):
+def make_plots(curve1, curve2, points=None,
+               ignore_save=False, failed=True):
     if not CONFIG.running:
         return
+
+    if isinstance(curve1, six.integer_types):
+        curve1 = candidate_curves.CURVES[curve1]
+        curve2 = candidate_curves.CURVES[curve2]
+
+    if points is None:
+        key = (curve1, curve2)
+        info = candidate_curves.INTERSECTION_INFO[key]
+        points = info[:, 2:]
 
     ax = curve1.plot(64)
     curve2.plot(64, ax=ax)
@@ -145,11 +155,7 @@ def test_curves14_and_15():
     with pytest.raises(NotImplementedError):
         curve_curve_check(14, 15)
 
-    curve14 = candidate_curves.CURVES[14]
-    curve15 = candidate_curves.CURVES[15]
-    info = candidate_curves.INTERSECTION_INFO[(14, 15)]
-    points = info[:, 2:]
-    make_plots(curve14, curve15, points)
+    make_plots(14, 15)
 
 
 def test_curves14_and_16():
@@ -187,22 +193,10 @@ def test_curves10_and_23():
 
 
 def test_curves1_and_24():
-    # NOTE: This is two coincident curves, i.e. CURVE1 on
-    #       [1/4, 1] is identical to CURVE24 on [0, 3/4].
-    curve1 = candidate_curves.CURVES[1]
-    curve24 = candidate_curves.CURVES[24]
-    left_vals = curve1.evaluate_multi(
-        np.linspace(0.25, 1.0, 2**8 + 1))
-    right_vals = curve24.evaluate_multi(
-        np.linspace(0.0, 0.75, 2**8 + 1))
-    assert np.all(left_vals == right_vals)
-
     with pytest.raises(NotImplementedError):
         curve_curve_check(1, 24)
 
-    info = candidate_curves.INTERSECTION_INFO[(1, 24)]
-    points = info[:, 2:]
-    make_plots(curve1, curve24, points)
+    make_plots(1, 24)
 
 
 def test_curves15_and_25():
@@ -225,11 +219,7 @@ def test_curves28_and_29():
     with pytest.raises(NotImplementedError):
         curve_curve_check(28, 29)
 
-    curve28 = candidate_curves.CURVES[28]
-    curve29 = candidate_curves.CURVES[29]
-    info = candidate_curves.INTERSECTION_INFO[(28, 29)]
-    points = info[:, 2:]
-    make_plots(curve28, curve29, points)
+    make_plots(28, 29)
 
 
 def test_curves29_and_30():

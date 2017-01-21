@@ -169,6 +169,8 @@ CURVES = (
         [3.0, 4.5],
         [8.0, 4.5],
     ]), _copy=False),
+    # NOTE: This is coincident with CURVE1.
+    #       g1([1/4, 1]) == g24([0, 3/4])
     # g24 = sympy.Matrix([[(4 * s + 1) / 4, (3 - 4 * s) * (4 * s + 1) / 8]])
     bezier.Curve.from_nodes(np.asfortranarray([
         [0.25, 0.375],
@@ -431,6 +433,7 @@ INTERSECTION_INFO = {
     (10, 23): np.asfortranarray([
         [0.5, 3.0 / 10.0, 4.5, 4.5],
     ]),
+    # NOTE: This is coincident curves.
     (1, 24): np.asfortranarray([
         [0.25, 0.0, 0.25, 0.375],
         [1.0, 0.75, 1.0, 0.0],
