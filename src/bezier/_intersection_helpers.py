@@ -1087,8 +1087,6 @@ def _from_linearized_low_level_py(
     orig_t = (1 - t) * start2 + t * end2
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
-    num_nodes1, _ = nodes1.shape
-    num_nodes2, _ = nodes2.shape
     refined_s, refined_t = newton_refine(orig_s, nodes1, orig_t, nodes2)
     refined_s = _wiggle_interval(refined_s)
     refined_t = _wiggle_interval(refined_t)

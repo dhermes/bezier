@@ -36,16 +36,11 @@ COINCIDENT_INTERSECTIONS = (
     (44, 45),
     (46, 47),
 )
-IGNORED = (
-    (1, 13),  # Degree pair (1-4) unsupported.
-)
 
 
 def test_all():
     all_intersect = six.iteritems(candidate_curves.INTERSECTION_INFO)
     for (curve_id1, curve_id2), info in all_intersect:
-        if (curve_id1, curve_id2) in IGNORED:
-            continue
         curve1 = candidate_curves.CURVES[curve_id1]
         nodes1 = curve1._nodes
         curve2 = candidate_curves.CURVES[curve_id2]

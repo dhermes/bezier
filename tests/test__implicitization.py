@@ -306,15 +306,15 @@ class Test__to_power_basis13(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test__to_power_basis22(utils.NumPyTestCase):
+class Test__to_power_basis_degree4(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _implicitization
 
-        return _implicitization._to_power_basis22(nodes1, nodes2)
+        return _implicitization._to_power_basis_degree4(nodes1, nodes2)
 
-    def test_it(self):
+    def test_degrees_2_2(self):
         # f1(x, y) = (x^2 - 4 x y + 4 y^2 - y) / 16
         nodes1 = np.asfortranarray([
             [0.375, 0.0625],
@@ -329,9 +329,29 @@ class Test__to_power_basis22(utils.NumPyTestCase):
         ])
         # f1(x2(t), y2(t)) = (2 t - 1)^3 (2 t + 3) / 256
         result = self._call_function_under_test(nodes1, nodes2)
-        # The 2-2 method avoids a division by 3.0
+        # The function avoids a division by 3.0
         expected = (3.0 / 256.0) * np.asfortranarray(
             [-3.0, 16.0, -24.0, 0.0, 16.0])
+        self.assertEqual(result, expected)
+
+    def test_degrees_1_4(self):
+        # f1(x, y) = 4 (y - 3)
+        nodes1 = np.asfortranarray([
+            [0.0, 3.0],
+            [4.0, 3.0],
+        ])
+        # x2(t), y2(t) = 4 s, 2 s (s - 1) (5 s^2 - 5 s - 2)
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 3.0],
+            [3.0, 1.0],
+            [4.0, 0.0],
+        ])
+        # f1(x2(t), y2(t)) = 4 (10 t^4 - 20 t^3 + 6 t^2 + 4 t - 3)
+        result = self._call_function_under_test(nodes1, nodes2)
+        # The function avoids a division by 3.0
+        expected = 3.0 * np.asfortranarray([-12.0, 16.0, 24.0, -80.0, 40.0])
         self.assertEqual(result, expected)
 
 
@@ -360,6 +380,38 @@ class Test__to_power_basis23(utils.NumPyTestCase):
         # f1(x2(t), y2(t)) = 4 (2 s - 1)^2 (4 s - 11)
         result = self._call_function_under_test(nodes1, nodes2)
         expected = np.asfortranarray([44, -192, 240, -64, 0.0, 0.0, 0.0])
+        self.assertLess(np.abs(result - expected).max(), LOCAL_EPS)
+
+
+class Test__to_power_basis_degree8(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _implicitization
+
+        return _implicitization._to_power_basis_degree8(nodes1, nodes2)
+
+    def test_degrees_2_4(self):
+        # f1(x, y) = 2 (9 x - 2 y^2 - 6 y)
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.5],
+            [4.0, 3.0],
+        ])
+        # x2(t), y2(t) = 4 t, -t (7 t^3 - 6 t - 4)
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 3.0],
+            [3.0, 6.0],
+            [4.0, 3.0],
+        ])
+        # f1(x2(t), y2(t)) = (
+        #     4 t (t - 1) (49 t^6 + 49 t^5 - 35 t^4 -
+        #                  91 t^3 - 76 t^2 - 28 t + 6))
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = np.asfortranarray(
+            [0.0, -24.0, 136.0, 192.0, 60.0, -224.0, -336.0, 0.0, 196.0])
         self.assertLess(np.abs(result - expected).max(), LOCAL_EPS)
 
 
@@ -454,6 +506,26 @@ class Test_to_power_basis(utils.NumPyTestCase):
         expected = 3.0 * np.asfortranarray([0.75, 0.0, -0.75, -0.25])
         self.assertEqual(result, expected)
 
+    def test_degrees_1_4(self):
+        # f1(x, y) = 4 y - 3 x
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [4.0, 3.0],
+        ])
+        # x2(t), y2(t) = 4 t, -t (7 t^3 - 6 t - 4)
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 3.0],
+            [3.0, 6.0],
+            [4.0, 3.0],
+        ])
+        # f1(x2(t), y2(t)) = 4 t (1 - t) (7 t^2 + 7 t + 1)
+        result = self._call_function_under_test(nodes1, nodes2)
+        # The function avoids a division by 3.0
+        expected = 3.0 * np.asfortranarray([0.0, 4.0, 24.0, 0.0, -28.0])
+        self.assertEqual(result, expected)
+
     def test_degrees_2_2(self):
         # f1(x, y) = (x^2 - 2 x y + 4 x + y^2 + 4 y - 5) / 4
         nodes1 = np.asfortranarray([
@@ -469,7 +541,7 @@ class Test_to_power_basis(utils.NumPyTestCase):
         ])
         # f1(x2(t), y2(t)) = (9 t^4 - 18 t^3 + 5 t^2 - 28 t + 12) / 16
         result = self._call_function_under_test(nodes1, nodes2)
-        # The 2-2 method avoids a division by 3.0
+        # The function avoids a division by 3.0
         expected = (3.0 / 16.0) * np.asfortranarray(
             [12.0, -28.0, 5.0, -18.0, 9.0])
         self.assertEqual(result, expected)
@@ -495,6 +567,29 @@ class Test_to_power_basis(utils.NumPyTestCase):
             [4, -24, -3, 38, -3, -12, 4])
         self.assertTrue(
             np.allclose(result, expected, atol=0.0, rtol=LOCAL_EPS))
+
+    def test_degrees_2_4(self):
+        # f1(x, y) = 2*(9*x - 2*y**2 - 6*y)
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.5],
+            [4.0, 3.0],
+        ])
+        # x2(t), y2(t) = 4*t, 2*t*(t - 1)*(5*t**2 - 5*t - 2)]])
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 3.0],
+            [3.0, 1.0],
+            [4.0, 0.0],
+        ])
+        # f1(x2(t), y2(t)) = (
+        #     8 t (50 t^7 - 200 t^6 + 260 t^5 - 80 t^4 -
+        #          47 t^3 - 6 t^2 + 17 t - 3))
+        result = self._call_function_under_test(nodes1, nodes2)
+        expected = np.asfortranarray(
+            [0.0, -24.0, 136.0, -48.0, -376.0, -640.0, 2080.0, -1600.0, 400.0])
+        self.assertLess(np.abs(result - expected).max(), LOCAL_EPS)
 
     def test_degrees_3_3(self):
         # f1(x, y) = -(13824 x^3 + 3456 x^2 y - 55296 x^2 +
@@ -527,7 +622,7 @@ class Test_to_power_basis(utils.NumPyTestCase):
         nodes_yes1 = np.zeros((2, 2), order='F')
         nodes_yes2 = np.zeros((3, 2), order='F')
         nodes_yes3 = np.zeros((4, 2), order='F')
-        nodes_no = np.zeros((5, 2), order='F')
+        nodes_no = np.zeros((6, 2), order='F')
 
         # Just make sure we fall through **all** of the implicit
         # ``else`` branches.
@@ -577,6 +672,28 @@ class Test_roots_in_unit_interval(utils.NumPyTestCase):
             expected = (index + 2.0) / 6.0
             self.assertAlmostEqual(
                 all_roots[index], expected, delta=LOCAL_EPS)
+
+
+class Test__strip_leading_zeros(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(coeffs, **kwargs):
+        from bezier import _implicitization
+
+        return _implicitization._strip_leading_zeros(coeffs, **kwargs)
+
+    def test_default_threshold(self):
+        coeffs = np.asfortranarray([0.0, 1.0, 1.5])
+        result = self._call_function_under_test(coeffs)
+        self.assertIs(result, coeffs)
+
+    def test_custom_threshold(self):
+        coeffs = np.asfortranarray([2.0, 0.0, 0.0, 0.5**10])
+        result = self._call_function_under_test(coeffs)
+        self.assertIs(result, coeffs)
+
+        result = self._call_function_under_test(coeffs, threshold=0.5**9)
+        self.assertEqual(result, coeffs[:1])
 
 
 class Test__check_non_simple(utils.NumPyTestCase):

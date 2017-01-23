@@ -50,6 +50,8 @@ from bezier import _intersection_helpers
 
 _CHEB7, _ = chebyshev.chebgauss(7)
 _CHEB7 = 0.5 * (_CHEB7 + 1.0)
+_CHEB9, _ = chebyshev.chebgauss(9)
+_CHEB9 = 0.5 * (_CHEB9 + 1.0)
 _CHEB10, _ = chebyshev.chebgauss(10)
 _CHEB10 = 0.5 * (_CHEB10 + 1.0)
 # Allow a buffer of sqrt(sqrt(machine precision)) for polynomial roots.
@@ -58,10 +60,14 @@ _UNIT_INTERVAL_WIGGLE_START = -0.5**13
 _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
 # Detect almost zero polynomials.
 _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
-_ZERO_THRESHOLD = 0.5**42  # 1024 (machine precision)
+_ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
 _RESULTANT_THRESHOLD = 0.5**26  # sqrt(machine precision)
+_COEFFICIENT_THRESHOLD = 0.5**26  # sqrt(machine precision)
 _COINCIDENT_ERR = 'Coincident curves not currently supported'
 _NON_SIMPLE_ERR = 'Polynomial has non-simple roots'
+_POWER_BASIS_ERR = (
+    'Currently only supporting degree pairs '
+    '1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3.')
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -277,13 +283,13 @@ def _to_power_basis13(nodes1, nodes2):
     ])
 
 
-def _to_power_basis22(nodes1, nodes2):
+def _to_power_basis_degree4(nodes1, nodes2):
     r"""Compute the coefficients of an **intersection polynomial**.
 
-    Helper for :func:`to_power_basis` in the case that each curve is
-    degree two. In this case, B |eacute| zout's `theorem`_ tells us
-    that the **intersection polynomial** is degree :math:`2 \cdot 2`
-    hence we return five coefficients.
+    Helper for :func:`to_power_basis` in the case that B |eacute| zout's
+    `theorem`_ tells us the **intersection polynomial** is degree
+    :math:`4`. This happens if the two curves have degrees two and two
+    or have degrees one and four.
 
     Args:
         nodes1 (numpy.ndarray): The nodes in the first curve.
@@ -347,6 +353,33 @@ def _to_power_basis23(nodes1, nodes2):
     return polynomial.polyfit(_CHEB7, evaluated, 6)
 
 
+def _to_power_basis_degree8(nodes1, nodes2):
+    r"""Compute the coefficients of an **intersection polynomial**.
+
+    Helper for :func:`to_power_basis` in the case that B |eacute| zout's
+    `theorem`_ tells us the **intersection polynomial** is degree
+    :math:`8`. This happens if the two curves have degrees one and eight
+    or have degrees two and four.
+
+    .. note::
+
+       This uses a least-squares fit to the function evaluated at the
+       Chebyshev nodes (scaled and shifted onto ``[0, 1]``). Hence, the
+       coefficients may be less stable than those produced for smaller
+       degrees.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+
+    Returns:
+        numpy.ndarray: ``9``-array of coefficients.
+    """
+    evaluated = [eval_intersection_polynomial(nodes1, nodes2, t_val)
+                 for t_val in _CHEB9]
+    return polynomial.polyfit(_CHEB9, evaluated, 8)
+
+
 def _to_power_basis33(nodes1, nodes2):
     r"""Compute the coefficients of an **intersection polynomial**.
 
@@ -391,7 +424,7 @@ def to_power_basis(nodes1, nodes2):
 
     Raises:
         NotImplementedError: If the degree pair is not ``1-1``, ``1-2``,
-            ``1-3``, ``2-2``, ``2-3`` or ``3-3``.
+            ``1-3``, ``1-4``, ``2-2``, ``2-3``, ``2-4`` or ``3-3``.
     """
     num_nodes1, _ = nodes1.shape
     num_nodes2, _ = nodes2.shape
@@ -402,20 +435,22 @@ def to_power_basis(nodes1, nodes2):
             return _to_power_basis12(nodes1, nodes2)
         elif num_nodes2 == 4:
             return _to_power_basis13(nodes1, nodes2)
+        elif num_nodes2 == 5:
+            return _to_power_basis_degree4(nodes1, nodes2)
     elif num_nodes1 == 3:
         if num_nodes2 == 3:
-            return _to_power_basis22(nodes1, nodes2)
+            return _to_power_basis_degree4(nodes1, nodes2)
         elif num_nodes2 == 4:
             return _to_power_basis23(nodes1, nodes2)
+        elif num_nodes2 == 5:
+            return _to_power_basis_degree8(nodes1, nodes2)
     elif num_nodes1 == 4:
         if num_nodes2 == 4:
             return _to_power_basis33(nodes1, nodes2)
 
-    err_msg = (
-        'Currently only supporting degree pairs '
-        '1-1, 1-2, 1-3, 2-2, 2-3 and 3-3.')
     raise NotImplementedError(
-        'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1, err_msg)
+        'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1,
+        _POWER_BASIS_ERR)
 
 
 def polynomial_norm(coeffs):
@@ -494,6 +529,29 @@ def roots_in_unit_interval(coeffs):
     return all_roots[real_inds].real
 
 
+def _strip_leading_zeros(coeffs, threshold=_COEFFICIENT_THRESHOLD):
+    r"""Strip leading zero coefficients from a polynomial.
+
+    .. note::
+
+       This assumes the polynomial :math:`f` defined by ``coeffs``
+       has been normalized (via :func:`.normalize_polynomial`).
+
+    Args:
+        coeffs (numpy.ndarray): ``d + 1``-array of coefficients in monomial /
+            power basis.
+        threshold (Optional[float]): The point :math:`\tau` below which a
+            a coefficient will be considered to be numerically zero.
+
+    Returns:
+        numpy.ndarray: The same coefficients without any unnecessary zero
+        terms.
+    """
+    while np.abs(coeffs[-1]) < threshold:
+        coeffs = coeffs[:-1]
+    return coeffs
+
+
 def _check_non_simple(coeffs, threshold=_RESULTANT_THRESHOLD):
     r"""Checks that a polynomial has no non-simple roots.
 
@@ -520,10 +578,7 @@ def _check_non_simple(coeffs, threshold=_RESULTANT_THRESHOLD):
     Raises:
         NotImplementedError: If the polynomial has non-simple roots.
     """
-    # Strip trailing zeros.
-    while coeffs[-1] == 0.0:
-        coeffs = coeffs[:-1]
-
+    coeffs = _strip_leading_zeros(coeffs)
     num_coeffs, = coeffs.shape
     if num_coeffs < 3:
         return
