@@ -57,6 +57,7 @@ _UNIT_INTERVAL_WIGGLE_START = -0.5**13
 _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
 # Detect almost zero polynomials.
 _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
+_ZERO_THRESHOLD = 0.5**42  # 1024 (machine precision)
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -198,7 +199,7 @@ def _to_power_basis11(nodes1, nodes2):
     val1 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
     # [c0] = [ 1 0][n0]
     # [c1] = [-1 1][n1]
-    return np.array([val0, -val0 + val1])
+    return np.asfortranarray([val0, -val0 + val1])
 
 
 def _to_power_basis12(nodes1, nodes2):
@@ -226,7 +227,7 @@ def _to_power_basis12(nodes1, nodes2):
     # [c0] = [ 1  0  0][n0]
     # [c1] = [-3  4 -1][n1]
     # [c2] = [ 2 -4  2][n2]
-    return np.array([
+    return np.asfortranarray([
         val0,
         -3.0 * val0 + 4.0 * val1 - val2,
         2.0 * val0 - 4.0 * val1 + 2.0 * val2,
@@ -264,7 +265,7 @@ def _to_power_basis13(nodes1, nodes2):
     # [c3] =       [-16  32 -32  16][n3]
     # Since polynomial coefficients, we don't need to divide by 3
     # to get the same polynomial. Avoid the division to avoid round-off.
-    return np.array([
+    return np.asfortranarray([
         3.0 * val0,
         -19.0 * val0 + 24.0 * val1 - 8.0 * val2 + 3.0 * val3,
         32.0 * val0 - 56.0 * val1 + 40.0 * val2 - 16.0 * val3,
@@ -305,7 +306,7 @@ def _to_power_basis22(nodes1, nodes2):
     # [c4] =       [ 32 -128  192 -128  32][n4]
     # Since polynomial coefficients, we don't need to divide by 3
     # to get the same polynomial. Avoid the division to avoid round-off.
-    return np.array([
+    return np.asfortranarray([
         3.0 * val0,
         -25.0 * val0 + 48.0 * val1 - 36.0 * val2 + 16.0 * val3 - 3.0 * val4,
         70.0 * val0 - 208.0 * val1 + 228.0 * val2 - 112.0 * val3 + 22.0 * val4,
@@ -444,6 +445,30 @@ def polynomial_norm(coeffs):
     return np.sqrt(result)
 
 
+def normalize_polynomial(coeffs, threshold=_L2_THRESHOLD):
+    r"""Normalizes a polynomial in the :math:`L_2` sense.
+
+    Does so on the interval :math:\left[0, 1\right]` via
+    :func:`polynomial_norm`.
+
+    Args:
+        coeffs (numpy.ndarray): ``d + 1``-array of coefficients in monomial /
+            power basis.
+        threshold (Optional[float]): The point :math:`\tau` below which a
+            polynomial will be considered to be numerically equal to zero,
+            applies to all :math:`f` with :math`\| f \|_{L_2} < \tau`.
+
+    Returns:
+        numpy.ndarray: The normalized polynomial.
+    """
+    l2_norm = polynomial_norm(coeffs)
+    if l2_norm < threshold:
+        return np.zeros(coeffs.shape, order='F')
+    else:
+        coeffs /= l2_norm
+        return coeffs
+
+
 def roots_in_unit_interval(coeffs):
     r"""Compute roots of a polynomial in the unit interval.
 
@@ -495,22 +520,121 @@ def intersect_curves(nodes1, nodes2):
         nodes1, nodes2 = nodes2, nodes1
         swapped = True
 
-    coeffs = to_power_basis(nodes1, nodes2)
-    # Normalize on [0, 1].
-    l2_norm = polynomial_norm(coeffs)
-    if l2_norm < _L2_THRESHOLD:
-        coeffs = np.zeros(coeffs.shape, order='F')
-    else:
-        coeffs /= l2_norm
-
+    coeffs = normalize_polynomial(to_power_basis(nodes1, nodes2))
     t_vals = roots_in_unit_interval(coeffs)
-    num_t, = t_vals.shape
-    result = np.zeros((num_t, 2), order='F')
+
+    final_s = []
+    final_t = []
+    for t_val in t_vals:
+        (x_val, y_val), = _curve_helpers.evaluate_multi(
+            nodes2, np.asfortranarray([t_val]))
+        s_val = locate_point(nodes1, x_val, y_val)
+        if s_val is not None:
+            final_s.append(s_val)
+            final_t.append(t_val)
+
+    result = np.zeros((len(final_s), 2), order='F')
     if swapped:
-        result[:, 0] = t_vals
-        result[:, 1] = -np.inf
-    else:
-        result[:, 0] = -np.inf
-        result[:, 1] = t_vals
+        final_s, final_t = final_t, final_s
+
+    result[:, 0] = final_s
+    result[:, 1] = final_t
 
     return result
+
+
+def poly_to_power_basis(bezier_coeffs):
+    """Convert a B |eacute| zier curve to polynomial in power basis.
+
+    .. note::
+
+       This assumes, but does not verify, that the "B |eacute| zier
+       degree" matches the true degree of the curve. Callers can
+       guarantee this by calling :func:`.full_reduce`.
+
+    Args:
+        bezier_coeffs (numpy.ndarray): A 1D array of coefficients in
+            the Bernstein basis.
+
+    Returns:
+        numpy.ndarray: 1D array of coefficients in monomial basis.
+
+    Raises:
+        NotImplementedError: If the degree of the curve is not among
+            0, 1, 2 or 3.
+    """
+    num_coeffs, = bezier_coeffs.shape
+    if num_coeffs == 1:
+        return bezier_coeffs
+    elif num_coeffs == 2:
+        # C0 (1 - s) + C1 s = C0 + (C1 - C0) s
+        coeff0, coeff1 = bezier_coeffs
+        return np.asfortranarray([coeff0, coeff1 - coeff0])
+    elif num_coeffs == 3:
+        #   C0 (1 - s)^2 + C1 2 (1 - s) s + C2 s^2
+        # = C0 + 2(C1 - C0) s + (C2 - 2 C1 + C0) s^2
+        coeff0, coeff1, coeff2 = bezier_coeffs
+        return np.asfortranarray([
+            coeff0, 2.0 * (coeff1 - coeff0), coeff2 - 2.0 * coeff1 + coeff0])
+    elif num_coeffs == 4:
+        #   C0 (1 - s)^3 + C1 3 (1 - s)^2 + C2 3 (1 - s) s^2 + C3 s^3
+        # = C0 + 3(C1 - C0) s + 3(C2 - 2 C1 + C0) s^2 +
+        #   (C3 - 3 C2 + 3 C1 - C0) s^3
+        coeff0, coeff1, coeff2, coeff3 = bezier_coeffs
+        return np.asfortranarray([
+            coeff0,
+            3.0 * (coeff1 - coeff0),
+            3.0 * (coeff2 - 2.0 * coeff1 + coeff0),
+            coeff3 - 3.0 * coeff2 + 3.0 * coeff1 - coeff0,
+        ])
+    else:
+        raise NotImplementedError(
+            'Currently only supports degrees 0, 1, 2 and 3')
+
+
+def locate_point(nodes, x_val, y_val):
+    r"""Find the parameter corresponding to a point on a curve.
+
+    .. note::
+
+       This assumes that the curve :math:`B(s, t)` defined by ``nodes``
+       lives in :math:`\mathbf{R}^2`.
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a B |eacute| zier curve.
+        x_val (float): The :math:`x`-coordinate of the point.
+        y_val (float): The :math:`y`-coordinate of the point.
+
+    Returns:
+        Optional[float]: The parameter on the curve (if it exists).
+    """
+    # First, reduce to the true degree of x(s) and y(s).
+    zero1 = _curve_helpers.full_reduce(nodes[:, [0]]) - x_val
+    zero2 = _curve_helpers.full_reduce(nodes[:, [1]]) - y_val
+
+    # Make sure we have the lowest degree in front, to make the polynomial
+    # solve have the fewest number of roots.
+    if zero1.shape[0] > zero2.shape[0]:
+        zero1, zero2 = zero2, zero1
+
+    # If the "smallest" is identically zero, we can't find any roots
+    # from it.
+    if np.all(zero1 == 0.0):
+        # NOTE: We assume that callers won't pass ``nodes`` that are
+        #       degree 0, so if ``zero1`` is a constant, ``zero2`` won't be.
+        zero1, zero2 = zero2, zero1
+
+    power_basis1 = poly_to_power_basis(zero1[:, 0])
+    all_roots = roots_in_unit_interval(power_basis1)
+    if all_roots.size == 0:
+        return
+
+    # NOTE: We normalize ``power_basis2`` because we want to check for
+    #       "zero" values, i.e. f2(s) == 0.
+    power_basis2 = normalize_polynomial(poly_to_power_basis(zero2[:, 0]))
+
+    near_zero = np.abs(polynomial.polyval(all_roots, power_basis2))
+    index = np.argmin(near_zero)
+
+    if near_zero[index] < _ZERO_THRESHOLD:
+        return all_roots[index]

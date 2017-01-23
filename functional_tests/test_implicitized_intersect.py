@@ -24,7 +24,6 @@ EPS = 0.5**45
 IGNORED = (
     (1, 13),  # Degree pair (1-4) unsupported.
     (1, 24),  # Coincident
-    (15, 25),  # Spurious root
     (42, 43),  # Coincident
     (44, 45),  # Coincident
     (46, 47),  # Coincident
@@ -44,12 +43,10 @@ def test_all():
         if param_vals.size == 0:
             assert info.size == 0
         else:
-            if param_vals[0, 0] == -np.inf:
-                col_id = 1
-            else:
-                col_id = 0
-
-            exact = np.sort(info[:, col_id])
-            computed = np.sort(param_vals[:, col_id])
+            exact = info[np.argsort(info[:, 0]), :2]
+            computed = param_vals[np.argsort(param_vals[:, 0]), :2]
+            zero_elts = np.where(exact == 0.0)
+            assert np.all(np.abs(computed[zero_elts]) < EPS)
+            computed[zero_elts] = 0.0  # So we can still use atol=0.0.
             assert np.allclose(exact, computed,
                                atol=0.0, rtol=EPS)

@@ -74,8 +74,8 @@ class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
             [1.5, 4.0, 1.0],
             [2.0, 8.0, 1.0],
         ])
-        lambda1 = np.array([0.25, 0.5, 0.75])
-        lambda2 = np.array([0.25, 0.125, -0.75])
+        lambda1 = np.asfortranarray([0.25, 0.5, 0.75])
+        lambda2 = np.asfortranarray([0.25, 0.125, -0.75])
 
         result = self._call_function_under_test(nodes, lambda1, lambda2)
         expected = np.asfortranarray([
