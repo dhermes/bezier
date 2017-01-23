@@ -426,6 +426,7 @@ def to_power_basis(nodes1, nodes2):
         NotImplementedError: If the degree pair is not ``1-1``, ``1-2``,
             ``1-3``, ``1-4``, ``2-2``, ``2-3``, ``2-4`` or ``3-3``.
     """
+    # pylint: disable=too-many-return-statements
     num_nodes1, _ = nodes1.shape
     num_nodes2, _ = nodes2.shape
     if num_nodes1 == 2:
@@ -451,6 +452,7 @@ def to_power_basis(nodes1, nodes2):
     raise NotImplementedError(
         'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1,
         _POWER_BASIS_ERR)
+    # pylint: enable=too-many-return-statements
 
 
 def polynomial_norm(coeffs):
