@@ -11,6 +11,7 @@
 # limitations under the License.
 
 import numpy as np
+import pytest
 import six
 
 from bezier import _implicitization
@@ -21,12 +22,22 @@ import candidate_curves
 # NOTE: This is much too large (for now) but will be resolved
 #       in subsequent iterations.
 EPS = 0.5**45
+TANGENT_INTERSECTIONS = (
+    (1, 6),
+    (10, 23),
+    (14, 15),
+    (28, 29),
+    (38, 39),
+    (1, 18),
+)
+COINCIDENT_INTERSECTIONS = (
+    (1, 24),
+    (42, 43),
+    (44, 45),
+    (46, 47),
+)
 IGNORED = (
     (1, 13),  # Degree pair (1-4) unsupported.
-    (1, 24),  # Coincident
-    (42, 43),  # Coincident
-    (44, 45),  # Coincident
-    (46, 47),  # Coincident
 )
 
 
@@ -39,6 +50,20 @@ def test_all():
         nodes1 = curve1._nodes
         curve2 = candidate_curves.CURVES[curve_id2]
         nodes2 = curve2._nodes
+        if (curve_id1, curve_id2) in TANGENT_INTERSECTIONS:
+            with pytest.raises(NotImplementedError) as exc_info:
+                _implicitization.intersect_curves(nodes1, nodes2)
+
+            assert len(exc_info.value.args) == 4
+            assert exc_info.value.args[0] == _implicitization._NON_SIMPLE_ERR
+            continue
+        elif (curve_id1, curve_id2) in COINCIDENT_INTERSECTIONS:
+            with pytest.raises(NotImplementedError) as exc_info:
+                _implicitization.intersect_curves(nodes1, nodes2)
+
+            assert exc_info.value.args == (_implicitization._COINCIDENT_ERR,)
+            continue
+
         param_vals = _implicitization.intersect_curves(nodes1, nodes2)
         if param_vals.size == 0:
             assert info.size == 0

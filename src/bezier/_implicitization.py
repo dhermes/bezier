@@ -58,6 +58,9 @@ _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
 # Detect almost zero polynomials.
 _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
 _ZERO_THRESHOLD = 0.5**42  # 1024 (machine precision)
+_RESULTANT_THRESHOLD = 0.5**26  # sqrt(machine precision)
+_COINCIDENT_ERR = 'Coincident curves not currently supported'
+_NON_SIMPLE_ERR = 'Polynomial has non-simple roots'
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -490,6 +493,58 @@ def roots_in_unit_interval(coeffs):
     return all_roots[real_inds].real
 
 
+def _check_non_simple(coeffs, threshold=_RESULTANT_THRESHOLD):
+    r"""Checks that a polynomial has no non-simple roots.
+
+    Does so by computing the resultant of :math:`f` and :math:`f'`.
+
+    .. note::
+
+       This assumes the polynomial :math:`f` defined by ``coeffs``
+       has been normalized (via :func:`.normalize_polynomial`). This
+       assumption is necessary to put an **absolute** limit on the
+       resultant (rather than a relative one).
+
+    .. note::
+
+       This assumes that :math:`f \neq 0`.
+
+    Args:
+        coeffs (numpy.ndarray): ``d + 1``-array of coefficients in monomial /
+            power basis.
+        threshold (Optional[float]): The point :math:`\tau` below which a
+            polynomial will be considered to be numerically non-simple,
+            applies to all :math:`f` with :math`\text{Res}(f, f') < \tau`.
+
+    Raises:
+        NotImplementedError: If the polynomial has non-simple roots.
+    """
+    # Strip trailing zeros.
+    while coeffs[-1] == 0.0:
+        coeffs = coeffs[:-1]
+
+    num_coeffs, = coeffs.shape
+    if num_coeffs < 3:
+        return
+
+    deriv_poly = polynomial.polyder(coeffs)
+    sylvester_mat = np.zeros(
+        (2 * num_coeffs - 3, 2 * num_coeffs - 3), order='F')
+
+    column = 0
+    for index in six.moves.xrange(num_coeffs - 2):
+        sylvester_mat[index:index + num_coeffs, column] = coeffs
+        column += 1
+    for index in six.moves.xrange(num_coeffs - 1):
+        sylvester_mat[index:index + num_coeffs - 1, column] = deriv_poly
+        column += 1
+
+    resultant = np.linalg.det(sylvester_mat)
+    if np.abs(resultant) < threshold:
+        raise NotImplementedError(
+            _NON_SIMPLE_ERR, coeffs, 'Resultant', resultant)
+
+
 def intersect_curves(nodes1, nodes2):
     r"""Intersect two parametric B |eacute| zier curves.
 
@@ -509,6 +564,10 @@ def intersect_curves(nodes1, nodes2):
         Each row contains a pair of values :math:`s` and :math:`t`
         (each in :math:`\left[0, 1\right]`) such that the curves
         intersect: :math:`B_1(s) = B_2(t)`.
+
+    Raises:
+        NotImplementedError: If the "intersection polynomial" is
+        all zeros -- which indicates coincident curves.
     """
     nodes1 = _curve_helpers.full_reduce(nodes1)
     nodes2 = _curve_helpers.full_reduce(nodes2)
@@ -521,6 +580,10 @@ def intersect_curves(nodes1, nodes2):
         swapped = True
 
     coeffs = normalize_polynomial(to_power_basis(nodes1, nodes2))
+    if np.all(coeffs == 0.0):
+        raise NotImplementedError(_COINCIDENT_ERR)
+
+    _check_non_simple(coeffs)
     t_vals = roots_in_unit_interval(coeffs)
 
     final_s = []

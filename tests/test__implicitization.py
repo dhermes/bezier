@@ -579,6 +579,45 @@ class Test_roots_in_unit_interval(utils.NumPyTestCase):
                 all_roots[index], expected, delta=LOCAL_EPS)
 
 
+class Test__check_non_simple(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(coeffs, **kwargs):
+        from bezier import _implicitization
+
+        return _implicitization._check_non_simple(coeffs, **kwargs)
+
+    def test_extra_zeros(self):
+        coeffs = np.asfortranarray([2.0, -3.0, 1.0, 0.0])
+        # Just make sure no exception was thrown.
+        self.assertIsNone(self._call_function_under_test(coeffs))
+
+    def test_line(self):
+        coeffs = np.asfortranarray([4.0, 1.0])
+        # Just make sure no exception was thrown.
+        self.assertIsNone(self._call_function_under_test(coeffs))
+
+    def test_double_root(self):
+        coeffs = np.asfortranarray([4.0, -4.0, 1.0])
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(coeffs)
+
+    def test_almost_double_root(self):
+        from bezier import _implicitization
+
+        # f(t) = (t + 2)^2 (3 t + 2) (4 t + 19)
+        coeffs = np.asfortranarray([152.0, 412.0, 346.0, 113.0, 12.0])
+        # Make sure f(t) is very far from normalized.
+        l2_norm = _implicitization.polynomial_norm(coeffs)
+        self.assertGreater(l2_norm, 525.0)
+        self.assertLess(l2_norm, 575.0)
+        # Make f(t) slightly closer to unit "length".
+        coeffs /= 2.0
+
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(coeffs, threshold=0.5**14)
+
+
 class Test_intersect_curves(utils.NumPyTestCase):
 
     @staticmethod
@@ -603,42 +642,6 @@ class Test_intersect_curves(utils.NumPyTestCase):
         expected = np.asfortranarray([
             [0.5, 0.5],
         ])
-        self.assertEqual(result, expected)
-
-    def test_zero_l2_norm(self):
-        # f1(x, y) = 1 - x
-        nodes1 = np.asfortranarray([
-            [1.0, 0.0],
-            [1.0, 1.0],
-        ])
-        # x2(t), y2(t) = 1, s + 2
-        nodes2 = np.asfortranarray([
-            [1.0, 2.0],
-            [1.0, 3.0],
-        ])
-        # f1(x2(t), y2(t)) = 0
-        result = self._call_function_under_test(nodes1, nodes2)
-        expected = np.zeros((0, 2), order='F')
-        self.assertEqual(result, expected)
-
-    def test_almost_zero_l2_norm(self):
-        # f1(x, y) = 16 (4 x^3 - 18 x^2 + 27 x - 27 y)
-        nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 0.0],
-            [3.0, 1.0],
-        ])
-        # x2(t), y2(t) = 3 (2 s + 1) / 2, (2 s + 1) (4 s^2 - 2 s + 1) / 2
-        nodes2 = np.asfortranarray([
-            [1.5, 0.5],
-            [2.5, 0.5],
-            [3.5, 0.5],
-            [4.5, 4.5],
-        ])
-        # f1(x2(t), y2(t)) = 0
-        result = self._call_function_under_test(nodes1, nodes2)
-        expected = np.zeros((0, 2), order='F')
         self.assertEqual(result, expected)
 
     def _degrees_1_2_helper(self, swapped=False):
@@ -703,6 +706,24 @@ class Test_intersect_curves(utils.NumPyTestCase):
         self.assertAlmostEqual(
             result[0, 1], float.fromhex('0x1.bf3536665a0cdp-1'),
             delta=LOCAL_EPS)
+
+    def test_coincident(self):
+        # f1(x, y) = -4 (4 x^2 + 4 x y - 16 x + y^2 + 8 y)
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [4.0, 0.0],
+        ])
+        # x2(t), y2(t) = 3 (t + 1) (3 t + 7) / 8, -3 (t + 1) (3 t - 1) / 4
+        nodes2 = np.asfortranarray([
+            [2.625, 0.75],
+            [4.5, 0.0],
+            [7.5, -3.0],
+        ])
+
+        # f1(x2(t), y2(t)) = 0
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(nodes1, nodes2)
 
 
 class Test_normalize_polynomial(utils.NumPyTestCase):
