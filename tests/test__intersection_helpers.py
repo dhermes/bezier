@@ -388,11 +388,10 @@ class Test_speedup_linearization_error(Test__linearization_error):
 class Test__newton_refine(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(s, nodes1, t, nodes2, degree1, degree2):
+    def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._newton_refine(
-            s, nodes1, t, nodes2, degree1, degree2)
+        return _intersection_helpers._newton_refine(s, nodes1, t, nodes2)
 
     def test_linear(self):
         import bezier
@@ -420,7 +419,7 @@ class Test__newton_refine(utils.NumPyTestCase):
         #       which has determinant -4.0, hence there will
         #       be no round-off when solving.
         new_s, new_t = self._call_function_under_test(
-            wrong_s, nodes1, wrong_t, nodes2, 1, 1)
+            wrong_s, nodes1, wrong_t, nodes2)
 
         # Newton's method is exact on linear problems so will
         # always converge after one step.
@@ -467,7 +466,7 @@ class Test__newton_refine(utils.NumPyTestCase):
         #       which has determinant -2.0, hence there will
         #       be no round-off when solving.
         new_s, new_t = self._call_function_under_test(
-            wrong_s, curve1._nodes, wrong_t, nodes2, curve1._degree, 1)
+            wrong_s, curve1._nodes, wrong_t, nodes2)
 
         self.assertEqual(new_s, 0.4375)
         self.assertEqual(new_t, 0.5625)
@@ -486,8 +485,7 @@ class Test__newton_refine(utils.NumPyTestCase):
                          curve2.evaluate(known_t))
 
         new_s, new_t = self._call_function_under_test(
-            known_s, curve1._nodes, known_t, curve2._nodes,
-            curve1._degree, curve2._degree)
+            known_s, curve1._nodes, known_t, curve2._nodes)
 
         self.assertEqual(new_s, known_s)
         self.assertEqual(new_t, known_t)
@@ -507,8 +505,7 @@ class Test__newton_refine(utils.NumPyTestCase):
         #       which has determinant -2.0, hence there will
         #       be no round-off when solving.
         new_s, new_t = self._call_function_under_test(
-            wrong_s, curve1._nodes, wrong_t, curve2._nodes,
-            curve1._degree, curve2._degree)
+            wrong_s, curve1._nodes, wrong_t, curve2._nodes)
 
         self.assertEqual(new_s, 0.2421875)
         self.assertEqual(new_t, 0.7578125)
@@ -543,7 +540,7 @@ class Test__newton_refine(utils.NumPyTestCase):
         for guess in six.moves.xrange(1, num_guess):
             prev_s, prev_t = parameters[guess - 1, :]
             parameters[guess, :] = self._call_function_under_test(
-                prev_s, nodes1, prev_t, nodes2, 4, 1)
+                prev_s, nodes1, prev_t, nodes2)
 
         expected = np.asfortranarray([
             [0.0, 0.0],
@@ -562,11 +559,10 @@ class Test__newton_refine(utils.NumPyTestCase):
 class Test_speedup_newton_refine(Test__newton_refine):
 
     @staticmethod
-    def _call_function_under_test(s, nodes1, t, nodes2, degree1, degree2):
+    def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _speedup
 
-        return _speedup.speedup.newton_refine_intersect(
-            s, nodes1, t, nodes2, degree1, degree2)
+        return _speedup.speedup.newton_refine_intersect(s, nodes1, t, nodes2)
 
 
 class Test__segment_intersection(unittest.TestCase):

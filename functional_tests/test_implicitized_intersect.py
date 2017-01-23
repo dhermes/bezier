@@ -21,7 +21,7 @@ import candidate_curves
 
 # NOTE: This is much too large (for now) but will be resolved
 #       in subsequent iterations.
-EPS = 0.5**45
+EPS = 0.5**48
 TANGENT_INTERSECTIONS = (
     (1, 6),
     (10, 23),

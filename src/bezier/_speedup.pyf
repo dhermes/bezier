@@ -131,10 +131,10 @@ python module _speedup
             subroutine newton_refine_intersect(s,nodes1,degree1,t,nodes2,degree2,new_s,new_t)
                 real(kind=dp) intent(in) :: s
                 real(kind=dp) dimension(degree1 + 1,2),intent(in) :: nodes1
-                integer, optional,intent(in),check((shape(nodes1,0)-1)==degree1),depend(nodes1) :: degree1=(shape(nodes1,0)-1)
+                integer, optional,intent(hide),depend(nodes1) :: degree1=size(nodes1, 1)-1
                 real(kind=dp) intent(in) :: t
                 real(kind=dp) dimension(degree2 + 1,2),intent(in) :: nodes2
-                integer, optional,intent(in),check((shape(nodes2,0)-1)==degree2),depend(nodes2) :: degree2=(shape(nodes2,0)-1)
+                integer, optional,intent(hide),depend(nodes2) :: degree2=size(nodes2, 1)-1
                 real(kind=dp) intent(out) :: new_s
                 real(kind=dp) intent(out) :: new_t
             end subroutine newton_refine_intersect

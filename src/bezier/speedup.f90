@@ -73,7 +73,7 @@ contains
 
     ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
 
-    !f2py integer intent(hide), depend(nodes) :: degree_ = size(nodes, 1) - 1
+    !f2py integer intent(hide), depend(nodes) :: degree = size(nodes, 1) - 1
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     !f2py integer intent(hide), depend(lambda1) :: num_vals = size(lambda1)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
@@ -118,7 +118,7 @@ contains
 
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
-    !f2py integer intent(hide), depend(nodes) :: degree_ = size(nodes, 1) - 1
+    !f2py integer intent(hide), depend(nodes) :: degree = size(nodes, 1) - 1
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     !f2py integer intent(hide), depend(s_vals) :: num_vals = size(s_vals)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
@@ -535,12 +535,14 @@ contains
   subroutine newton_refine_intersect( &
        s, nodes1, degree1, t, nodes2, degree2, new_s, new_t)
 
+    !f2py integer intent(hide), depend(nodes1) :: degree1 = size(nodes1, 1) - 1
+    !f2py integer intent(hide), depend(nodes2) :: degree2 = size(nodes2, 1) - 1
     real(dp), intent(in) :: s
     real(dp), intent(in) :: nodes1(degree1 + 1, 2)
-    integer, intent(in) :: degree1
+    integer :: degree1
     real(dp), intent(in) :: t
     real(dp), intent(in) :: nodes2(degree2 + 1, 2)
-    integer, intent(in) :: degree2
+    integer :: degree2
     real(dp), intent(out) :: new_s, new_t
     ! Variables outside of signature.
     real(dp) :: param(1)

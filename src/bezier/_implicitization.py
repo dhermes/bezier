@@ -45,6 +45,7 @@ from numpy.polynomial import polynomial
 import six
 
 from bezier import _curve_helpers
+from bezier import _intersection_helpers
 
 
 _CHEB7, _ = chebyshev.chebgauss(7)
@@ -548,13 +549,6 @@ def _check_non_simple(coeffs, threshold=_RESULTANT_THRESHOLD):
 def intersect_curves(nodes1, nodes2):
     r"""Intersect two parametric B |eacute| zier curves.
 
-    .. note::
-
-       This is a work in progress. For now, we don't check for
-       non-simple roots or compute the matched parameter. In
-       addition, we will use Newton's method to verify intersection
-       once a pair is identified.
-
     Args:
         nodes1 (numpy.ndarray): The nodes in the first curve.
         nodes2 (numpy.ndarray): The nodes in the second curve.
@@ -593,6 +587,11 @@ def intersect_curves(nodes1, nodes2):
             nodes2, np.asfortranarray([t_val]))
         s_val = locate_point(nodes1, x_val, y_val)
         if s_val is not None:
+            # NOTE: We perform one Newton step to deal with any residual
+            #       issues of high-degree polynomial solves (one of which
+            #       depends the already approximate ``x_val, y_val``).
+            s_val, t_val = _intersection_helpers.newton_refine(
+                s_val, nodes1, t_val, nodes2)
             final_s.append(s_val)
             final_t.append(t_val)
 
