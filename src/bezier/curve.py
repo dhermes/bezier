@@ -22,6 +22,9 @@ See :doc:`../curve-curve-intersection` for examples using the
 
    import numpy as np
    import bezier
+
+.. autoclass:: IntersectionStrategy
+   :members:
 """
 
 
@@ -66,6 +69,9 @@ _CUBIC_SUBDIVIDE_RIGHT = np.asfortranarray([
     [0.0, 0.0, 0.5, 0.5],
     [0.0, 0.0, 0.0, 1.0],
 ])
+
+
+IntersectionStrategy = _intersection_helpers.IntersectionStrategy
 
 
 class Curve(_base.Base):
@@ -539,7 +545,9 @@ class Curve(_base.Base):
             root=self._root, _copy=False)
         return left, right
 
-    def intersect(self, other, _verify=True):
+    def intersect(self, other,
+                  strategy=IntersectionStrategy.geometric,
+                  _verify=True):
         """Find the points of intersection with another curve.
 
         See :doc:`../curve-curve-intersection` for more details.
@@ -572,6 +580,8 @@ class Curve(_base.Base):
 
         Args:
             other (Curve): Other curve to intersect with.
+            strategy (Optional[~bezier.curve.IntersectionStrategy]): The
+                intersection algorithm to use. Defaults to geometric.
             _verify (Optional[bool]): Indicates if extra caution should be
                 used to verify assumptions about the input and current
                 curve. Can be disabled to speed up execution time.
@@ -594,7 +604,8 @@ class Curve(_base.Base):
                     'Intersection only implemented in 2D')
 
         candidates = [(self, other)]
-        intersections = _intersection_helpers.all_intersections(candidates)
+        intersections = _intersection_helpers.all_intersections(
+            candidates, strategy=strategy)
         if intersections:
             result = np.empty((len(intersections), 2), order='F')
             for index, intersection in enumerate(intersections):

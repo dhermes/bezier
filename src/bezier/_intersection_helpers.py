@@ -17,6 +17,7 @@
 """
 
 
+import enum
 import itertools
 
 import numpy as np
@@ -30,7 +31,7 @@ except ImportError:  # pragma: NO COVER
     _speedup = None
 
 
-# Set the threshold for exponetn at half the bits available,
+# Set the threshold for exponent at half the bits available,
 # this way one round of Newton's method can finish the job
 # by squaring the error.
 _ERROR_VAL = 0.5**26
@@ -1396,7 +1397,15 @@ def _next_candidates(first, second):
     return itertools.product(lin1, lin2)
 
 
-def all_intersections(candidates):
+class IntersectionStrategy(enum.Enum):
+    """Enum determining if the type of intersection algorithm to use."""
+
+    geometric = 'geometric'
+    """Take a geometric approach to intersection (e.g. with subdivision)."""
+
+
+# pylint: disable=unused-argument
+def all_intersections(candidates, strategy=IntersectionStrategy.geometric):
     r"""Find the points of intersection among pairs of curves.
 
     .. note::
@@ -1409,6 +1418,8 @@ def all_intersections(candidates):
     Args:
         candidates (iterable): Iterable of pairs of curves that may
             intersect.
+        strategy (Optional[~bezier.curve.IntersectionStrategy]): The
+            intersection algorithm to use. Defaults to geometric.
 
     Returns:
         list: List of all :class:`Intersection`s (possibly empty).
@@ -1450,6 +1461,7 @@ def all_intersections(candidates):
         'Curve intersection failed to converge to approximately '
         'linear subdivisions after max iterations.',
         _MAX_INTERSECT_SUBDIVISIONS)
+# pylint: enable=unused-argument
 
 
 class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
