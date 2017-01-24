@@ -51,7 +51,7 @@ class Test__check_close(utils.NumPyTestCase):
             [0.5, 1.0],
             [1.0, 0.0],
         ])
-        curve = bezier.Curve(nodes, 2)
+        curve = bezier.Curve(nodes, degree=2)
         s_val = 0.5
         wiggle = 2.0**(-50)
         result = self._call_function_under_test(
@@ -67,7 +67,7 @@ class Test__check_close(utils.NumPyTestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve = bezier.Curve(nodes, 1)
+        curve = bezier.Curve(nodes, degree=1)
         # The nodes of thise curve are far away.
         with self.assertRaises(ValueError):
             self._call_function_under_test(0.0, curve, 1.0, curve)
@@ -289,7 +289,7 @@ class Test__linearization_error(unittest.TestCase):
         # For a degree two curve, the 2nd derivative is constant
         # so by subdividing, our error should drop by a factor
         # of (1/2)^2 = 4.
-        curve = bezier.Curve(nodes, 2)
+        curve = bezier.Curve(nodes, degree=2)
         left, right = curve.subdivide()
         error_left = self._call_function_under_test(left._nodes, 2)
         error_right = self._call_function_under_test(right._nodes, 2)
@@ -404,8 +404,8 @@ class Test__newton_refine(utils.NumPyTestCase):
             [1.0, 0.0],
             [0.0, 3.0],
         ])
-        curve1 = bezier.Curve(nodes1, 1)
-        curve2 = bezier.Curve(nodes2, 1)
+        curve1 = bezier.Curve(nodes1, degree=1)
+        curve2 = bezier.Curve(nodes2, degree=1)
 
         known_s = 0.75
         known_t = 0.25
@@ -440,8 +440,8 @@ class Test__newton_refine(utils.NumPyTestCase):
             [0.5, -0.25],
             [0.0, 0.75],
         ])
-        curve1 = bezier.Curve(nodes1, 2)
-        curve2 = bezier.Curve(nodes2, 2)
+        curve1 = bezier.Curve(nodes1, degree=2)
+        curve2 = bezier.Curve(nodes2, degree=2)
         return curve1, curve2
 
     def test_mixed_degree(self):
@@ -452,7 +452,7 @@ class Test__newton_refine(utils.NumPyTestCase):
             [1.0, 0.0],
             [0.0, 1.0],
         ])
-        curve2 = bezier.Curve(nodes2, 1)
+        curve2 = bezier.Curve(nodes2, degree=1)
 
         known_s = 0.5
         known_t = 0.5
@@ -526,13 +526,13 @@ class Test__newton_refine(utils.NumPyTestCase):
             [0.75, 1.0],
             [1.0, 0.0],
         ])
-        curve1 = bezier.Curve(nodes1, 4)
+        curve1 = bezier.Curve(nodes1, degree=4)
         # Vertical line forces a unique solution.
         nodes2 = np.asfortranarray([
             [0.5, 0.0],
             [0.5, 1.0],
         ])
-        curve2 = bezier.Curve(nodes2, 1)
+        curve2 = bezier.Curve(nodes2, degree=1)
 
         num_guess = 4
         parameters = np.zeros((num_guess, 2), order='F')
@@ -902,7 +902,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             [0.5, 1.0],
             [1.0, 1.0],
         ])
-        curve1 = bezier.Curve(nodes1, 2)
+        curve1 = bezier.Curve(nodes1, degree=2)
         # NOTE: This curve isn't close to linear, but that's OK.
         lin1 = _intersection_helpers.Linearization(curve1, np.nan)
 
@@ -911,7 +911,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             [0.5, 1.0],
             [1.0, 0.0],
         ])
-        curve2 = bezier.Curve(nodes2, 2)
+        curve2 = bezier.Curve(nodes2, degree=2)
         # NOTE: This curve isn't close to linear, but that's OK.
         lin2 = _intersection_helpers.Linearization(curve2, np.nan)
 
@@ -933,14 +933,14 @@ class Test_from_linearized(utils.NumPyTestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve1 = bezier.Curve(nodes1, 1)
+        curve1 = bezier.Curve(nodes1, degree=1)
         lin1 = _intersection_helpers.Linearization(curve1, 0.0)
 
         nodes2 = np.asfortranarray([
             [1.75, -0.75],
             [0.75, 0.25],
         ])
-        curve2 = bezier.Curve(nodes2, 1)
+        curve2 = bezier.Curve(nodes2, degree=1)
         lin2 = _intersection_helpers.Linearization(curve2, 0.0)
 
         intersections = []
@@ -1049,13 +1049,13 @@ class Test__tangent_bbox_intersection(utils.NumPyTestCase):
             [1.0, 2.0],
             [2.0, 0.0],
         ])
-        curve1 = bezier.Curve(nodes1, 2)
+        curve1 = bezier.Curve(nodes1, degree=2)
         nodes2 = np.asfortranarray([
             [2.0, 0.0],
             [3.0, 2.0],
             [4.0, 0.0],
         ])
-        curve2 = bezier.Curve(nodes2, 2)
+        curve2 = bezier.Curve(nodes2, degree=2)
 
         intersections = []
         self.assertIsNone(
@@ -1102,8 +1102,8 @@ class Test_intersect_one_round(utils.NumPyTestCase):
     def test_simple(self):
         import bezier
 
-        curve1 = bezier.Curve(self.NODES1, 2)
-        curve2 = bezier.Curve(self.NODES2, 2)
+        curve1 = bezier.Curve(self.NODES1, degree=2)
+        curve2 = bezier.Curve(self.NODES2, degree=2)
         candidates = [(curve1, curve2)]
         accepted = self._call_function_under_test(
             candidates, [])
@@ -1114,9 +1114,9 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         import bezier
         from bezier import _intersection_helpers
 
-        curve1 = bezier.Curve(self.LINE1, 1)
+        curve1 = bezier.Curve(self.LINE1, degree=1)
         lin1 = _intersection_helpers.Linearization(curve1, 0.0)
-        curve2 = bezier.Curve(self.LINE2, 1)
+        curve2 = bezier.Curve(self.LINE2, degree=1)
 
         intersections = []
         accepted = self._call_function_under_test(
@@ -1129,8 +1129,8 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         import bezier
         from bezier import _intersection_helpers
 
-        curve1 = bezier.Curve(self.LINE1, 1)
-        curve2 = bezier.Curve(self.LINE2, 1)
+        curve1 = bezier.Curve(self.LINE1, degree=1)
+        curve2 = bezier.Curve(self.LINE2, degree=1)
         lin2 = _intersection_helpers.Linearization(curve2, 0.0)
 
         intersections = []
@@ -1144,9 +1144,9 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         import bezier
         from bezier import _intersection_helpers
 
-        curve1 = bezier.Curve(self.LINE1, 1)
+        curve1 = bezier.Curve(self.LINE1, degree=1)
         lin1 = _intersection_helpers.Linearization(curve1, 0.0)
-        curve2 = bezier.Curve(self.LINE2, 1)
+        curve2 = bezier.Curve(self.LINE2, degree=1)
         lin2 = _intersection_helpers.Linearization(curve2, 0.0)
 
         intersections = []
@@ -1177,7 +1177,7 @@ class Test__next_candidates(unittest.TestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve = bezier.Curve(nodes, 1)
+        curve = bezier.Curve(nodes, degree=1)
         lin = _intersection_helpers.Linearization(curve, 0.0)
 
         result = self._call_function_under_test(lin, lin)
@@ -1187,13 +1187,13 @@ class Test__next_candidates(unittest.TestCase):
         self.assertEqual(pairs, [(lin, lin)])
 
 
-class Test_all_intersections(utils.NumPyTestCase):
+class Test__all_intersections_geometric(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(candidates):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers.all_intersections(candidates)
+        return _intersection_helpers._all_intersections_geometric(candidates)
 
     def test_failure(self):
         patch = mock.patch(
@@ -1216,7 +1216,7 @@ class Test_all_intersections(utils.NumPyTestCase):
             [0.5, 1.0],
             [1.0, 0.0],
         ])
-        curve = bezier.Curve(nodes, 2)
+        curve = bezier.Curve(nodes, degree=2)
 
         # Start with two pieces.
         pieces = itertools.chain(*[curve.subdivide()])
@@ -1246,14 +1246,14 @@ class Test_all_intersections(utils.NumPyTestCase):
             [0.625, 1.0],
             [1.0, 1.0],
         ])
-        curve1 = bezier.Curve(nodes1, 2)
+        curve1 = bezier.Curve(nodes1, degree=2)
 
         nodes2 = np.asfortranarray([
             [0.0, 1.0],
             [0.375, 1.0],
             [0.75, 0.4375],
         ])
-        curve2 = bezier.Curve(nodes2, 2)
+        curve2 = bezier.Curve(nodes2, degree=2)
 
         candidates = [(curve1, curve2)]
         intersections = self._call_function_under_test(candidates)
@@ -1268,6 +1268,92 @@ class Test_all_intersections(utils.NumPyTestCase):
         t_val = 2.0 / 3.0
         check_intersection(self, intersection, expected,
                            curve1, curve2, s_val, t_val)
+
+
+class Test__all_intersections_algebraic(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(candidates):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._all_intersections_algebraic(candidates)
+
+    def test_no_intersections(self):
+        intersections = self._call_function_under_test([])
+        self.assertEqual(intersections, [])
+
+    def test_success(self):
+        import bezier
+
+        # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
+        #       onto the interval [1/4, 1] and ``nodes`` is a specialization
+        #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
+        #       We expect them to intersect at s = 1/3, t = 2/3, which is
+        #       the point [1/2, 3/4].
+        nodes1 = np.asfortranarray([
+            [0.25, 0.4375],
+            [0.625, 1.0],
+            [1.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1, degree=2, _copy=False)
+
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.375, 1.0],
+            [0.75, 0.4375],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=2, _copy=False)
+
+        candidates = [(curve1, curve2)]
+        intersections = self._call_function_under_test(candidates)
+
+        self.assertEqual(len(intersections), 1)
+        intersection = intersections[0]
+        expected = np.asfortranarray([[0.5, 0.75]])
+
+        s_val = 1.0 / 3.0
+        t_val = 2.0 / 3.0
+        check_intersection(self, intersection, expected,
+                           curve1, curve2, s_val, t_val)
+
+
+class Test_all_intersections(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(candidates, **kwargs):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.all_intersections(candidates, **kwargs)
+
+    def test_geometric(self):
+        from bezier import _intersection_helpers
+
+        strategy = _intersection_helpers.IntersectionStrategy.geometric
+        patch = mock.patch(
+            'bezier._intersection_helpers._all_intersections_geometric',
+            return_value=mock.sentinel.intersections)
+        with patch as mocked:
+            result = self._call_function_under_test(
+                mock.sentinel.candidates, strategy=strategy)
+            self.assertIs(result, mock.sentinel.intersections)
+            mocked.assert_called_once_with(mock.sentinel.candidates)
+
+    def test_algebraic(self):
+        from bezier import _intersection_helpers
+
+        strategy = _intersection_helpers.IntersectionStrategy.algebraic
+        patch = mock.patch(
+            'bezier._intersection_helpers._all_intersections_algebraic',
+            return_value=mock.sentinel.intersections)
+        with patch as mocked:
+            result = self._call_function_under_test(
+                mock.sentinel.candidates, strategy=strategy)
+            self.assertIs(result, mock.sentinel.intersections)
+            mocked.assert_called_once_with(mock.sentinel.candidates)
+
+    def test_unknown_strategy(self):
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(None, strategy=None)
 
 
 class TestLinearization(utils.NumPyTestCase):
@@ -1317,7 +1403,7 @@ class TestLinearization(utils.NumPyTestCase):
     def test_start_node_attr(self):
         import bezier
 
-        curve = bezier.Curve(self.NODES, 2, _copy=False)
+        curve = bezier.Curve(self.NODES, degree=2, _copy=False)
         linearization = self._make_one(curve, np.nan)
         expected = np.asfortranarray(self.NODES[[0], :])
         self.assertEqual(
@@ -1329,7 +1415,7 @@ class TestLinearization(utils.NumPyTestCase):
     def test_end_node_attr(self):
         import bezier
 
-        curve = bezier.Curve(self.NODES, 2, _copy=False)
+        curve = bezier.Curve(self.NODES, degree=2, _copy=False)
         linearization = self._make_one(curve, np.nan)
         expected = np.asfortranarray(self.NODES[[2], :])
         self.assertEqual(
@@ -1341,7 +1427,7 @@ class TestLinearization(utils.NumPyTestCase):
     def test_from_shape_factory_not_close_enough(self):
         import bezier
 
-        curve = bezier.Curve(self.NODES, 2, _copy=False)
+        curve = bezier.Curve(self.NODES, degree=2, _copy=False)
         klass = self._get_target_class()
         new_shape = klass.from_shape(curve)
         self.assertIs(new_shape, curve)
@@ -1351,7 +1437,7 @@ class TestLinearization(utils.NumPyTestCase):
 
         scale_factor = 2.0**(-27)
         nodes = self.NODES * scale_factor
-        curve = bezier.Curve(nodes, 2, _copy=False)
+        curve = bezier.Curve(nodes, degree=2, _copy=False)
         klass = self._get_target_class()
         new_shape = klass.from_shape(curve)
 
@@ -1368,7 +1454,7 @@ class TestLinearization(utils.NumPyTestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve = bezier.Curve(nodes, 1, _copy=False)
+        curve = bezier.Curve(nodes, degree=1, _copy=False)
         klass = self._get_target_class()
         new_shape = klass.from_shape(curve)
         self.assertIsInstance(new_shape, klass)

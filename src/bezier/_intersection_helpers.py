@@ -1401,11 +1401,13 @@ class IntersectionStrategy(enum.Enum):
     """Enum determining if the type of intersection algorithm to use."""
 
     geometric = 'geometric'
-    """Take a geometric approach to intersection (e.g. with subdivision)."""
+    """Geometric approach to intersection (via subdivision)."""
+
+    algebraic = 'algebraic'
+    """Algebraic approach to intersection (via implicitization)."""
 
 
-# pylint: disable=unused-argument
-def all_intersections(candidates, strategy=IntersectionStrategy.geometric):
+def _all_intersections_geometric(candidates):
     r"""Find the points of intersection among pairs of curves.
 
     .. note::
@@ -1418,8 +1420,6 @@ def all_intersections(candidates, strategy=IntersectionStrategy.geometric):
     Args:
         candidates (iterable): Iterable of pairs of curves that may
             intersect.
-        strategy (Optional[~bezier.curve.IntersectionStrategy]): The
-            intersection algorithm to use. Defaults to geometric.
 
     Returns:
         list: List of all :class:`Intersection`s (possibly empty).
@@ -1461,7 +1461,72 @@ def all_intersections(candidates, strategy=IntersectionStrategy.geometric):
         'Curve intersection failed to converge to approximately '
         'linear subdivisions after max iterations.',
         _MAX_INTERSECT_SUBDIVISIONS)
-# pylint: enable=unused-argument
+
+
+def _all_intersections_algebraic(candidates):
+    r"""Find the points of intersection among pairs of curves.
+
+    .. note::
+
+       This assumes all curves in a candidate pair are in
+       :math:`\mathbf{R}^2`, but does not **explicitly** check this.
+       However, functions used here will fail if that assumption
+       fails.
+
+    Args:
+        candidates (iterable): Iterable of pairs of curves that may
+            intersect.
+
+    Returns:
+        list: List of all :class:`Intersection`s (possibly empty).
+    """
+    # NOTE: This cyclic import need be resolved.
+    from bezier import _implicitization
+
+    result = []
+    for first, second in candidates:
+        # NOTE: In the below we replace ``isinstance(a, B)`` with
+        #       ``a.__class__ is B``, which is a 3-3.5x speedup.
+        curve1 = first.curve if first.__class__ is Linearization else first
+        nodes1 = curve1._nodes
+        curve2 = second.curve if second.__class__ is Linearization else second
+        nodes2 = curve2._nodes
+        st_vals = _implicitization.intersect_curves(nodes1, nodes2)
+        for s, t in st_vals:
+            intersection = Intersection(curve1, s, curve2, t)
+            result.append(intersection)
+
+    return result
+
+
+def all_intersections(candidates, strategy=IntersectionStrategy.geometric):
+    r"""Find the points of intersection among pairs of curves.
+
+    .. note::
+
+       This assumes all curves in a candidate pair are in
+       :math:`\mathbf{R}^2`, but does not **explicitly** check this.
+       However, functions used here will fail if that assumption
+       fails.
+
+    Args:
+        candidates (iterable): Iterable of pairs of curves that may
+            intersect.
+        strategy (Optional[~bezier.curve.IntersectionStrategy]): The
+            intersection algorithm to use. Defaults to geometric.
+
+    Returns:
+        list: List of all :class:`Intersection`s (possibly empty).
+
+    Raises:
+        ValueError: If the strategy is not known.
+    """
+    if strategy is IntersectionStrategy.geometric:
+        return _all_intersections_geometric(candidates)
+    elif strategy is IntersectionStrategy.algebraic:
+        return _all_intersections_algebraic(candidates)
+    else:
+        raise ValueError('Unexpected strategy.')
 
 
 class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
