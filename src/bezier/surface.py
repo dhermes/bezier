@@ -1044,6 +1044,20 @@ class Surface(_base.Base):
             self._is_valid = self._compute_valid()
         return self._is_valid
 
+    @property
+    def __dict__(self):
+        """dict: Dictionary of current surface's property namespace.
+
+        This is just a stand-in property for the usual ``__dict__``. This
+        class defines ``__slots__`` so by default would not provide a
+        ``__dict__``.
+
+        This also means that the current object can't be modified by the
+        returned dictionary.
+        """
+        return {name: getattr(self, name)
+                for name in self.__slots__}
+
     def locate(self, point, _verify=True):
         r"""Find a point on the current surface.
 

@@ -168,6 +168,26 @@ class TestCurve(utils.NumPyTestCase):
         curve._previous_edge = mock.sentinel.previous
         self.assertIs(curve.previous_edge, mock.sentinel.previous)
 
+    def test___dict___property(self):
+        curve = self._make_one(self.ZEROS, 1, _copy=False)
+        props_dict = curve.__dict__
+        expected = {
+            '_nodes': self.ZEROS,
+            '_dimension': 2,
+            '_degree': 1,
+            '_start': 0.0,
+            '_end': 1.0,
+            '_root': curve,
+            '_length': None,
+            '_edge_index': None,
+            '_next_edge': None,
+            '_previous_edge': None,
+        }
+        self.assertEqual(props_dict, expected)
+        # Check that modifying ``props_dict`` won't modify ``curve``.
+        expected['_end'] = 1.5
+        self.assertNotEqual(curve._end, expected['_end'])
+
     def _copy_helper(self, **kwargs):
         np_shape = (2, 2)
         length = kwargs.pop('_length', None)

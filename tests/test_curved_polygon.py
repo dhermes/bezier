@@ -97,6 +97,18 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         curved_poly = self._make_default()
         self.assertIs(curved_poly.num_sides, 2)
 
+    def test___dict___property(self):
+        curved_poly = self._make_default()
+        props_dict = curved_poly.__dict__
+        expected = {
+            '_edges': curved_poly._edges,
+            '_num_sides': curved_poly._num_sides,
+        }
+        self.assertEqual(props_dict, expected)
+        # Check that modifying ``props_dict`` won't modify ``curved_poly``.
+        expected['_num_sides'] = 5
+        self.assertNotEqual(curved_poly._num_sides, expected['_num_sides'])
+
     def test___repr__(self):
         curved_poly = self._make_default()
         self.assertEqual(repr(curved_poly),

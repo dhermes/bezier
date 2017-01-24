@@ -904,6 +904,25 @@ class TestSurface(utils.NumPyTestCase):
         self.assertTrue(surface.is_valid)
         self.assertEqual(compute_valid.call_count, 1)
 
+    def test___dict___property(self):
+        surface = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
+        props_dict = surface.__dict__
+        expected = {
+            '_nodes': self.UNIT_TRIANGLE,
+            '_dimension': 2,
+            '_degree': 1,
+            '_base_x': 0.0,
+            '_base_y': 0.0,
+            '_width': 1.0,
+            '_area': None,
+            '_edges': None,
+            '_is_valid': None,
+        }
+        self.assertEqual(props_dict, expected)
+        # Check that modifying ``props_dict`` won't modify ``surface``.
+        expected['_width'] = 1.5
+        self.assertNotEqual(surface._width, expected['_width'])
+
     def test_locate(self):
         surface = self._make_one(self.QUADRATIC, 2)
         point = surface.evaluate_cartesian(0.5, 0.25)

@@ -337,6 +337,20 @@ class Curve(_base.Base):
         """
         return self._previous_edge
 
+    @property
+    def __dict__(self):
+        """dict: Dictionary of current curve's property namespace.
+
+        This is just a stand-in property for the usual ``__dict__``. This
+        class defines ``__slots__`` so by default would not provide a
+        ``__dict__``.
+
+        This also means that the current object can't be modified by the
+        returned dictionary.
+        """
+        return {name: getattr(self, name)
+                for name in self.__slots__}
+
     def _copy(self):
         """Make a copy of the current curve.
 

@@ -204,6 +204,20 @@ class CurvedPolygon(object):
         """int: The number of sides in the current polygon."""
         return self._num_sides
 
+    @property
+    def __dict__(self):
+        """dict: Dictionary of current curved polygon's property namespace.
+
+        This is just a stand-in property for the usual ``__dict__``. This
+        class defines ``__slots__`` so by default would not provide a
+        ``__dict__``.
+
+        This also means that the current object can't be modified by the
+        returned dictionary.
+        """
+        return {name: getattr(self, name)
+                for name in self.__slots__}
+
     def __repr__(self):
         """Representation of current object.
 
