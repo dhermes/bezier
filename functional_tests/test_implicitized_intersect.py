@@ -19,9 +19,24 @@ from bezier import _implicitization
 import candidate_curves
 
 
+SPACING = np.spacing  # pylint: disable=no-member
 # NOTE: This is much too large (for now) but will be resolved
 #       in subsequent iterations.
-EPS = 0.5**48
+ULPS_ALLOWED = 3.0
+# NOTE: We use units of least precision (ULP) as error. These
+#       are for the very rare cases where the computed values
+#       differ from the actual values by more than 3 ULPs.
+CUSTOM_ERRORS = {
+    (8, 27): np.asfortranarray([
+        [ULPS_ALLOWED, 4.0],
+        [ULPS_ALLOWED, 6.0],
+    ]),
+    (11, 26): np.asfortranarray([
+        [10.0, 30.0],
+        [ULPS_ALLOWED, ULPS_ALLOWED],
+        [ULPS_ALLOWED, ULPS_ALLOWED],
+    ]),
+}
 TANGENT_INTERSECTIONS = (
     (1, 6),
     (10, 23),
@@ -41,18 +56,19 @@ COINCIDENT_INTERSECTIONS = (
 def test_all():
     all_intersect = six.iteritems(candidate_curves.INTERSECTION_INFO)
     for (curve_id1, curve_id2), info in all_intersect:
+        id_pair = (curve_id1, curve_id2)
         curve1 = candidate_curves.CURVES[curve_id1]
         nodes1 = curve1._nodes
         curve2 = candidate_curves.CURVES[curve_id2]
         nodes2 = curve2._nodes
-        if (curve_id1, curve_id2) in TANGENT_INTERSECTIONS:
+        if id_pair in TANGENT_INTERSECTIONS:
             with pytest.raises(NotImplementedError) as exc_info:
                 _implicitization.intersect_curves(nodes1, nodes2)
 
             assert len(exc_info.value.args) == 4
             assert exc_info.value.args[0] == _implicitization._NON_SIMPLE_ERR
             continue
-        elif (curve_id1, curve_id2) in COINCIDENT_INTERSECTIONS:
+        elif id_pair in COINCIDENT_INTERSECTIONS:
             with pytest.raises(NotImplementedError) as exc_info:
                 _implicitization.intersect_curves(nodes1, nodes2)
 
@@ -64,9 +80,10 @@ def test_all():
             assert info.size == 0
         else:
             exact = info[np.argsort(info[:, 0]), :2]
+            multiplier = CUSTOM_ERRORS.get(id_pair, ULPS_ALLOWED)
+            # NOTE: Spacing gives ULP for each value.
+            allowed_errors = multiplier * SPACING(exact)
+
             computed = param_vals[np.argsort(param_vals[:, 0]), :2]
-            zero_elts = np.where(exact == 0.0)
-            assert np.all(np.abs(computed[zero_elts]) < EPS)
-            computed[zero_elts] = 0.0  # So we can still use atol=0.0.
-            assert np.allclose(exact, computed,
-                               atol=0.0, rtol=EPS)
+            # NOTE: We assume zeros will be **exactly** correct.
+            assert np.all(np.abs(exact - computed) <= allowed_errors)

@@ -63,6 +63,7 @@ _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
 _ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
 _RESULTANT_THRESHOLD = 0.5**26  # sqrt(machine precision)
 _COEFFICIENT_THRESHOLD = 0.5**26  # sqrt(machine precision)
+_PARAM_THRESHOLD = 0.5**51  # 2 (machine precision)
 _COINCIDENT_ERR = 'Coincident curves not currently supported'
 _NON_SIMPLE_ERR = 'Polynomial has non-simple roots'
 _POWER_BASIS_ERR = (
@@ -603,6 +604,22 @@ def _check_non_simple(coeffs, threshold=_RESULTANT_THRESHOLD):
             _NON_SIMPLE_ERR, coeffs, 'Resultant', resultant)
 
 
+def _near_zero(value, threshold=_PARAM_THRESHOLD):
+    """Rounds a number to zero if it is within a specified threshold.
+
+    Args:
+        value (float): Value to be rounded.
+        threshold (Optional[float]): The threshold for rounding.
+
+    Returns:
+        float: The original value or ``0.0``.
+    """
+    if np.abs(value) < threshold:
+        return 0.0
+    else:
+        return value
+
+
 def intersect_curves(nodes1, nodes2):
     r"""Intersect two parametric B |eacute| zier curves.
 
@@ -649,8 +666,8 @@ def intersect_curves(nodes1, nodes2):
             #       depends the already approximate ``x_val, y_val``).
             s_val, t_val = _intersection_helpers.newton_refine(
                 s_val, nodes1, t_val, nodes2)
-            final_s.append(s_val)
-            final_t.append(t_val)
+            final_s.append(_near_zero(s_val))
+            final_t.append(_near_zero(t_val))
 
     result = np.zeros((len(final_s), 2), order='F')
     if swapped:
