@@ -12,6 +12,7 @@
 
 import unittest
 
+import mock
 import numpy as np
 
 from tests import utils
@@ -760,6 +761,54 @@ class Test__near_zero(utils.NumPyTestCase):
 
         result = self._call_function_under_test(value, threshold=0.5**10)
         self.assertEqual(0.0, result)
+
+
+class Test__resolve_and_add(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(
+            nodes1, s_val, final_s, nodes2, t_val, final_t):
+        from bezier import _implicitization
+
+        return _implicitization._resolve_and_add(
+            nodes1, s_val, final_s, nodes2, t_val, final_t)
+
+    def _helper(self, s, t):
+        nodes1 = mock.sentinel.nodes1
+        nodes2 = mock.sentinel.nodes2
+        final_s = []
+        final_t = []
+
+        patch = mock.patch(
+            'bezier._intersection_helpers.newton_refine',
+            return_value=(s, t))
+        with patch as mocked:
+            self._call_function_under_test(
+                nodes1, s, final_s, nodes2, t, final_t)
+            mocked.assert_called_once_with(s, nodes1, t, nodes2)
+
+        return final_s, final_t
+
+    def test_unchanged(self):
+        s = 0.5
+        t = 0.25
+        final_s, final_t = self._helper(s, t)
+        self.assertEqual(final_s, [s])
+        self.assertEqual(final_t, [t])
+
+    def test_to_zero(self):
+        s = -0.5**60
+        t = 0.5
+        final_s, final_t = self._helper(s, t)
+        self.assertEqual(final_s, [0.0])
+        self.assertEqual(final_t, [t])
+
+    def test_still_negative(self):
+        s = 0.125
+        t = -0.5**20
+        final_s, final_t = self._helper(s, t)
+        self.assertEqual(final_s, [])
+        self.assertEqual(final_t, [])
 
 
 class Test_intersect_curves(utils.NumPyTestCase):

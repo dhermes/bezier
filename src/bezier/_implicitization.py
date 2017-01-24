@@ -620,6 +620,37 @@ def _near_zero(value, threshold=_PARAM_THRESHOLD):
         return value
 
 
+def _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t):
+    """Resolve a computed intersection and add to lists.
+
+    We perform one Newton step to deal with any residual issues of
+    high-degree polynomial solves (one of which depends the already
+    approximate ``x_val, y_val``).
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes in the first curve.
+        s_val (float): The approximate intersection parameter
+            along ``nodes1``.
+        final_s (List[float, ...]): The list of accepted intersection
+            parameters ``s``.
+        nodes2 (numpy.ndarray): The nodes in the second curve.
+        t_val (float): The approximate intersection parameter
+            along ``nodes2``.
+        final_t (List[float, ...]): The list of accepted intersection
+            parameters ``t``.
+    """
+    s_val, t_val = _intersection_helpers.newton_refine(
+        s_val, nodes1, t_val, nodes2)
+
+    s_val = _near_zero(s_val)
+    t_val = _near_zero(t_val)
+    if s_val < 0.0 or t_val < 0.0:
+        return
+
+    final_s.append(s_val)
+    final_t.append(t_val)
+
+
 def intersect_curves(nodes1, nodes2):
     r"""Intersect two parametric B |eacute| zier curves.
 
@@ -661,13 +692,8 @@ def intersect_curves(nodes1, nodes2):
             nodes2, np.asfortranarray([t_val]))
         s_val = locate_point(nodes1, x_val, y_val)
         if s_val is not None:
-            # NOTE: We perform one Newton step to deal with any residual
-            #       issues of high-degree polynomial solves (one of which
-            #       depends the already approximate ``x_val, y_val``).
-            s_val, t_val = _intersection_helpers.newton_refine(
-                s_val, nodes1, t_val, nodes2)
-            final_s.append(_near_zero(s_val))
-            final_t.append(_near_zero(t_val))
+            _resolve_and_add(
+                nodes1, s_val, final_s, nodes2, t_val, final_t)
 
     result = np.zeros((len(final_s), 2), order='F')
     if swapped:

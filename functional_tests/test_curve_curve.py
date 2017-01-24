@@ -10,6 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import operator
+
 try:
     import matplotlib.pyplot as plt
 except ImportError:
@@ -25,6 +27,7 @@ import runtime_utils
 
 
 CONFIG = runtime_utils.Config()
+S_PROP = operator.attrgetter('s')
 
 
 def make_plots(curve1, curve2, points=None,
@@ -64,6 +67,7 @@ def make_plots(curve1, curve2, points=None,
 def curve_curve_check(curve_id1, curve_id2, ignore_save=False):
     # pylint: disable=too-many-locals
     key = (curve_id1, curve_id2)
+    # NOTE: This assumes ``info`` is sorted by s-value.
     info = candidate_curves.INTERSECTION_INFO[key]
     s_vals = info[:, 0]
     t_vals = info[:, 1]
@@ -75,9 +79,12 @@ def curve_curve_check(curve_id1, curve_id2, ignore_save=False):
     curve1 = candidate_curves.CURVES[curve_id1]
     curve2 = candidate_curves.CURVES[curve_id2]
 
+    strategy = _intersection_helpers.IntersectionStrategy.geometric
     intersections = _intersection_helpers.all_intersections(
-        [(curve1, curve2)])
+        [(curve1, curve2)], strategy=strategy)
     assert len(intersections) == len(s_vals)
+    # Make sure intersections are sorted by s-value as well.
+    intersections.sort(key=S_PROP)
 
     info = six.moves.zip(intersections, s_vals, t_vals, points)
     for intersection, s_val, t_val, point in info:

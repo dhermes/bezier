@@ -79,11 +79,13 @@ def test_all():
         if param_vals.size == 0:
             assert info.size == 0
         else:
-            exact = info[np.argsort(info[:, 0]), :2]
+            # NOTE: This assumes ``info`` is sorted by s-value.
+            exact = info[:, :2]
             multiplier = CUSTOM_ERRORS.get(id_pair, ULPS_ALLOWED)
             # NOTE: Spacing gives ULP for each value.
             allowed_errors = multiplier * SPACING(exact)
 
             computed = param_vals[np.argsort(param_vals[:, 0]), :2]
+            assert exact.shape == computed.shape
             # NOTE: We assume zeros will be **exactly** correct.
             assert np.all(np.abs(exact - computed) <= allowed_errors)
