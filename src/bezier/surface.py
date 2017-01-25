@@ -37,6 +37,7 @@ from bezier import curve as _curve_mod
 
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, base=({:g}, {:g}), width={:g})>')
+_STRATEGY = _intersection_helpers.IntersectionStrategy
 
 
 class Surface(_base.Base):
@@ -1122,11 +1123,13 @@ class Surface(_base.Base):
 
         return _surface_helpers.locate_point(self, point[0, 0], point[0, 1])
 
-    def intersect(self, other, _verify=True):
+    def intersect(self, other, strategy=_STRATEGY.geometric, _verify=True):
         """Find the common intersection with another surface.
 
         Args:
             other (Surface): Other surface to intersect with.
+            strategy (Optional[~bezier.curve.IntersectionStrategy]): The
+                intersection algorithm to use. Defaults to geometric.
             _verify (Optional[bool]): Indicates if extra caution should be
                 used to verify assumptions about the algorithm as it
                 proceeds. Can be disabled to speed up execution time.
@@ -1165,7 +1168,7 @@ class Surface(_base.Base):
 
         edge_pairs = itertools.product(lin1, lin2)
         intersections = _intersection_helpers.all_intersections(
-            edge_pairs)
+            edge_pairs, strategy=strategy)
 
         # Classify each intersection.
         duplicates = []

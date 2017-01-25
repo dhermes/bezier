@@ -997,6 +997,12 @@ class TestSurface(utils.NumPyTestCase):
     def test_intersect_no_verify(self):
         self._basic_intersect_helper(_verify=False)
 
+    def test_intersect_algebraic(self):
+        from bezier import _intersection_helpers
+
+        strategy = _intersection_helpers.IntersectionStrategy.algebraic
+        self._basic_intersect_helper(strategy=strategy)
+
     def test_intersect_disjoint_bbox(self):
         surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
         nodes = np.asfortranarray([

@@ -21,6 +21,7 @@ import pytest
 import six
 
 import bezier
+from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
 import runtime_utils
@@ -523,12 +524,21 @@ def surface_surface_check(surface1, surface2,
     surface_surface_check_multi(surface1, surface2, intersected)
 
 
+def curved_polygon_edges(intersection):
+    # Re-sort the edges to be in the same order independent of strategy.
+    edge_list = intersection._edges
+    edge_info = [(edge.start, edge.end) for edge in edge_list]
+    index = edge_info.index(min(edge_info))
+    return edge_list[index:] + edge_list[:index]
+
+
 def surface_surface_check_multi(surface1, surface2, *all_intersected):
     # pylint: disable=too-many-locals
     assert surface1.is_valid
     assert surface2.is_valid
 
-    intersections = surface1.intersect(surface2)
+    strategy = _intersection_helpers.IntersectionStrategy.geometric
+    intersections = surface1.intersect(surface2, strategy=strategy)
     assert len(intersections) == len(all_intersected)
     edges = (
         surface1._get_edges(),
@@ -544,9 +554,10 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
         nodes = intersected.nodes
         edge_pairs = intersected.edge_pairs
 
+        int_edges = curved_polygon_edges(intersection)
         info = six.moves.zip(
-            intersection._edges, edge_pairs, start_vals, end_vals, nodes)
-        num_edges = len(intersection._edges)
+            int_edges, edge_pairs, start_vals, end_vals, nodes)
+        num_edges = len(int_edges)
         assert num_edges == len(edge_pairs)
         assert num_edges == len(start_vals)
         assert num_edges == len(end_vals)
@@ -571,24 +582,24 @@ def test_surfaces1Q_and_3Q():
 
     t_val1, _ = runtime_utils.real_roots([9, -18, 5, -28, 12])
     t_val2, = runtime_utils.real_roots([49, 63, 88, -128])
-    start_vals = np.asfortranarray([s_val2, 0.0, 0.0, t_val1])
-    end_vals = np.asfortranarray([1.0, 1.0, s_val1, t_val2])
+    start_vals = np.asfortranarray([0.0, t_val1, s_val2, 0.0])
+    end_vals = np.asfortranarray([s_val1, t_val2, 1.0, 1.0])
 
     x_val1 = 0.5 * (1.0 - s_val1) * (s_val1 + 2.0)
     y_val1 = 0.5 * s_val1 * (3.0 - s_val1)
     x_val2 = 0.5 * s_val2 * (1.0 - s_val2)
     y_val2 = 1.0 - s_val2
     nodes = np.asfortranarray([
-        [x_val2, y_val2],
-        [0.0, 0.0],
         [1.0, 0.0],
         [x_val1, y_val1],
+        [x_val2, y_val2],
+        [0.0, 0.0],
     ])
     edge_pairs = (
-        (0, 2),
-        (1, 0),
         (0, 1),
         (1, 2),
+        (0, 2),
+        (1, 0),
     )
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(48):
@@ -597,18 +608,18 @@ def test_surfaces1Q_and_3Q():
 
 
 def test_surfaces1L_and_3L():
-    start_vals = np.asfortranarray([0.125, 0.25, 0.0])
-    end_vals = np.asfortranarray([0.875, 1.0, 0.75])
+    start_vals = np.asfortranarray([0.0, 0.125, 0.25])
+    end_vals = np.asfortranarray([0.75, 0.875, 1.0])
 
     nodes = np.asfortranarray([
+        [1.0, 0.0],
         [0.25, 0.75],
         [0.25, 0.0],
-        [1.0, 0.0],
     ])
     edge_pairs = (
+        (0, 1),
         (1, 2),
         (0, 0),
-        (0, 1),
     )
     surface_surface_check(SURFACE1L, SURFACE3L,
                           start_vals, end_vals, nodes, edge_pairs)
@@ -708,22 +719,22 @@ def test_surfaces3Q_and_4Q():
 
     t_val2, _ = runtime_utils.real_roots([100, 360, 712, -2988, 169])
     _, t_val3 = runtime_utils.real_roots([49, -532, 412, 37200, -26352])
-    start_vals = np.asfortranarray([s_val3, t_val2, 0.0])
-    end_vals = np.asfortranarray([s_val2, 1.0, t_val3])
+    start_vals = np.asfortranarray([0.0, s_val3, t_val2])
+    end_vals = np.asfortranarray([t_val3, s_val2, 1.0])
 
     x_val2 = 0.125 * (s_val2 - 1.0) * (5.0 * s_val2 - 8.0)
     x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
     y_val2 = 0.125 * (1.0 - s_val2) * (7.0 * s_val2 + 8.0)
     y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
     nodes = np.asfortranarray([
+        [1.0, 0.25],
         [x_val3, y_val3],
         [x_val2, y_val2],
-        [1.0, 0.25],
     ])
     edge_pairs = (
+        (1, 1),
         (0, 2),
         (1, 0),
-        (1, 1),
     )
     # NOTE: We require a bit more wiggle room for these roots.
     with CONFIG.wiggle(32):
@@ -767,46 +778,46 @@ def test_surfaces3Q_and_5Q():
 
     _, t_val3 = runtime_utils.real_roots([25, -20, -1064, 7800, -6012])
     t_val4, _ = runtime_utils.real_roots([25, -2340, 58908, -105840, 11664])
-    start_vals = np.asfortranarray([t_val4, 0.0, 0.0, s_val3])
-    end_vals = np.asfortranarray([1.0, 1.0, t_val3, s_val4])
+    start_vals = np.asfortranarray([0.0, s_val3, t_val4, 0.0])
+    end_vals = np.asfortranarray([t_val3, s_val4, 1.0, 1.0])
 
     x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
     x_val4 = 0.125 * (s_val4 - 1.0) * (5.0 * s_val4 - 8.0)
     y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
     y_val4 = 0.125 * (1.0 - s_val4) * (7.0 * s_val4 + 8.0)
     nodes = np.asfortranarray([
-        [x_val4, y_val4],
-        [0.25, 0.09375],
         [1.125, 0.375],
         [x_val3, y_val3],
+        [x_val4, y_val4],
+        [0.25, 0.09375],
     ])
     edge_pairs = (
-        (1, 2),
-        (1, 0),
         (1, 1),
         (0, 2),
+        (1, 2),
+        (1, 0),
     )
     surface_surface_check(SURFACE3Q, SURFACE5Q,
                           start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_2L():
-    start_vals = np.asfortranarray([7.59375, 1.0, 3.0, 4.5, 0.0]) / 9.0
-    end_vals = np.asfortranarray([27.0, 19.0, 11.8125, 27.0, 13.5]) / 27.0
+    start_vals = np.asfortranarray([0.0, 7.59375, 1.0, 3.0, 4.5]) / 9.0
+    end_vals = np.asfortranarray([13.5, 27.0, 19.0, 11.8125, 27.0]) / 27.0
 
     nodes = np.asfortranarray([
+        [0.375, 1.125],
         [0.0, 0.46875],
         [0.0, 0.0],
         [2.0, 1.0],
         [1.6875, 1.3125],
-        [0.375, 1.125],
     ]) / 3.0
     edge_pairs = (
+        (1, 2),
         (0, 2),
         (1, 0),
         (0, 1),
         (1, 1),
-        (1, 2),
     )
     surface_surface_check(SURFACE1L, SURFACE2L,
                           start_vals, end_vals, nodes, edge_pairs)
@@ -903,8 +914,8 @@ def test_surfaces6Q_and_7Q():
     t_val7, _ = runtime_utils.real_roots([4, -20, 3])
     _, t_val8 = runtime_utils.real_roots([12, 4, -13])
 
-    start_vals1 = np.asfortranarray([s_val8, 3.0 / 17.0, s_val3, t_val5])
-    end_vals1 = np.asfortranarray([14.0 / 17.0, t_val3, s_val5, t_val8])
+    start_vals1 = np.asfortranarray([s_val3, t_val5, s_val8, 3.0 / 17.0])
+    end_vals1 = np.asfortranarray([s_val5, t_val8, 14.0 / 17.0, t_val3])
     start_vals2 = np.asfortranarray([t_val7, s_val6, t_val4, 3.0 / 17.0])
     end_vals2 = np.asfortranarray([t_val6, s_val4, 14.0 / 17.0, s_val7])
 
@@ -918,16 +929,16 @@ def test_surfaces6Q_and_7Q():
     y_val6 = 0.75 * s_val6 * (1.0 - s_val6)
 
     nodes1 = np.asfortranarray([
-        [0.5 - 0.5 * s_val8, 1.0 - s_val8],
-        [3.0 / 34.0, 3.0 / 17.0],
         [x_val3, y_val3],
         [x_val5, y_val5],
+        [0.5 - 0.5 * s_val8, 1.0 - s_val8],
+        [3.0 / 34.0, 3.0 / 17.0],
     ])
     edge_pairs1 = (
-        (0, 2),
-        (1, 1),
         (0, 0),
         (1, 0),
+        (0, 2),
+        (1, 1),
     )
 
     nodes2 = np.asfortranarray([
@@ -954,24 +965,24 @@ def test_surfaces6Q_and_7Q():
 def test_surfaces8Q_and_9Q():
     s_val2, s_val3 = runtime_utils.real_roots([28, -24, 1])
     t_val3, t_val2 = runtime_utils.real_roots([28, -32, 5])
-    start_vals = np.asfortranarray([11.0 / 14.0, s_val2, 1.0 / 14.0, s_val3])
-    end_vals = np.asfortranarray([t_val2, 3.0 / 14.0, t_val3, 13.0 / 14.0])
+    start_vals = np.asfortranarray([s_val2, 1.0 / 14.0, s_val3, 11.0 / 14.0])
+    end_vals = np.asfortranarray([3.0 / 14.0, t_val3, 13.0 / 14.0, t_val2])
 
     x_val2 = (1.0 - s_val2) * (1.0 + 7.0 * s_val2)
     x_val3 = (1.0 - s_val3) * (1.0 + 7.0 * s_val3)
     y_val2 = s_val2 * (8.0 - 7.0 * s_val2)
     y_val3 = s_val3 * (8.0 - 7.0 * s_val3)
     nodes = np.asfortranarray([
-        [15.0 / 28.0, 39.0 / 28.0],
         [x_val2, y_val2],
         [55.0 / 28.0, 39.0 / 28.0],
         [x_val3, y_val3],
+        [15.0 / 28.0, 39.0 / 28.0],
     ])
     edge_pairs = (
-        (1, 2),
         (0, 1),
         (1, 2),
         (0, 1),
+        (1, 2),
     )
     surface_surface_check(SURFACE8Q, SURFACE9Q,
                           start_vals, end_vals, nodes, edge_pairs)
@@ -1143,24 +1154,24 @@ def test_surfaces24Q_and_25Q():
         [27, -1116, 12020, -10224, 2256])
     _, t_val2 = runtime_utils.real_roots(
         [11, -1232, 132116, 315936, -31348])
-    start_vals = np.asfortranarray([s_val2, 0.0, t_val1, 0.0])
-    end_vals = np.asfortranarray([1.0, s_val1, 1.0, t_val2])
+    start_vals = np.asfortranarray([0.0, s_val2, 0.0, t_val1])
+    end_vals = np.asfortranarray([t_val2, 1.0, s_val1, 1.0])
 
     x_val1 = 0.015625 * (4.0 - 3.0 * s_val1) * (7.0 * s_val1 + 12.0)
     y_val1 = 0.03125 * (3.0 * s_val1 * s_val1 + 25.0)
     x_val2 = 0.0078125 * (33.0 * s_val2 * s_val2 + 62.0 * s_val2 + 1.0)
     y_val2 = 0.03125 * (11.0 * s_val2 * s_val2 - 4.0 * s_val2 + 18.0)
     nodes = np.asfortranarray([
+        [0.328125, 0.625],
         [x_val2, y_val2],
         [0.75, 0.78125],
         [x_val1, y_val1],
-        [0.328125, 0.625],
     ])
     edge_pairs = (
+        (1, 1),
         (0, 2),
         (0, 0),
         (1, 0),
-        (1, 1),
     )
 
     # NOTE: We require a bit more wiggle room for these roots.
@@ -1170,20 +1181,20 @@ def test_surfaces24Q_and_25Q():
 
 
 def test_surfaces1L_and_6L():
-    start_vals = np.asfortranarray([0.75, 0.0, 0.75, 0.0])
-    end_vals = np.asfortranarray([1.0, 0.25, 1.0, 0.25])
+    start_vals = np.asfortranarray([0.0, 0.75, 0.0, 0.75])
+    end_vals = np.asfortranarray([0.25, 1.0, 0.25, 1.0])
 
     nodes = np.asfortranarray([
-        [0.0, 0.25],
         [0.0, 0.0],
         [0.25, 0.0],
         [0.25, 0.25],
+        [0.0, 0.25],
     ])
     edge_pairs = (
-        (0, 2),
         (0, 0),
         (1, 2),
         (1, 0),
+        (0, 2),
     )
     surface_surface_check(SURFACE1L, SURFACE6L,
                           start_vals, end_vals, nodes, edge_pairs)
@@ -1196,18 +1207,18 @@ def test_surfaces26Q_and_27Q():
 def test_surfaces1L_and_28Q():
     _, s_val3 = runtime_utils.real_roots([5, 30, -13])
     t_val3, _ = runtime_utils.real_roots([5, -40, 22])
-    start_vals = np.asfortranarray([t_val3, 0.1875, 0.0])
-    end_vals = np.asfortranarray([1.0, 1.0, s_val3])
+    start_vals = np.asfortranarray([0.0, t_val3, 0.1875])
+    end_vals = np.asfortranarray([s_val3, 1.0, 1.0])
 
     nodes = np.asfortranarray([
+        [1.0, 0.0],
         [1.0 - s_val3, s_val3],
         [0.1875, 0.0],
-        [1.0, 0.0],
     ])
     edge_pairs = (
+        (0, 1),
         (1, 1),
         (0, 0),
-        (0, 1),
     )
     surface_surface_check(SURFACE1L, SURFACE28Q,
                           start_vals, end_vals, nodes, edge_pairs)
@@ -1216,42 +1227,42 @@ def test_surfaces1L_and_28Q():
 def test_surfaces1L_and_29Q():
     s_val1, s_val2 = runtime_utils.real_roots([128, -128, 7])
     t_val1, t_val2 = runtime_utils.real_roots([8, -8, 1])
-    start_vals = np.asfortranarray([s_val2, 0.0, 0.0, 0.0, t_val1])
-    end_vals = np.asfortranarray([1.0, 1.0, 1.0, s_val1, t_val2])
+    start_vals = np.asfortranarray([0.0, t_val1, s_val2, 0.0, 0.0])
+    end_vals = np.asfortranarray([s_val1, t_val2, 1.0, 1.0, 1.0])
 
     nodes = np.asfortranarray([
+        [1.0, 0.0],
+        [1.0 - s_val1, s_val1],
         [1.0 - s_val2, s_val2],
         [0.0, 1.0],
         [0.0, 0.0],
-        [1.0, 0.0],
-        [1.0 - s_val1, s_val1],
     ])
     edge_pairs = (
         (0, 1),
+        (1, 1),
+        (0, 1),
         (0, 2),
         (0, 0),
-        (0, 1),
-        (1, 1),
     )
     surface_surface_check(SURFACE1L, SURFACE29Q,
                           start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces30Q_and_31Q():
-    start_vals = np.asfortranarray([13.0 / 56.0, 0.0, 5.0 / 9.0, 0.0])
-    end_vals = np.asfortranarray([1.0, 2.0 / 7.0, 1.0, 0.25])
+    start_vals = np.asfortranarray([0.0, 13.0 / 56.0, 0.0, 5.0 / 9.0])
+    end_vals = np.asfortranarray([0.25, 1.0, 2.0 / 7.0, 1.0])
 
     nodes = np.asfortranarray([
+        [-0.125, 0.0],
         [-0.046875, -0.25],
         [0.625, -0.25],
         [0.375, 0.0],
-        [-0.125, 0.0],
     ])
     edge_pairs = (
+        (1, 2),
         (0, 0),
         (0, 1),
         (1, 1),
-        (1, 2),
     )
 
     surface_surface_check(SURFACE30Q, SURFACE31Q,
