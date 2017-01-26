@@ -567,6 +567,17 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
 
         return _curve_helpers.reduce_pseudo_inverse(nodes, degree)
 
+    def test_to_constant(self):
+        nodes = np.asfortranarray([
+            [-2.0, 1.0],
+            [-2.0, 1.0],
+        ])
+        result = self._call_function_under_test(nodes, 1)
+        expected = np.asfortranarray([
+            [-2.0, 1.0],
+        ])
+        self.assertEqual(result, expected)
+
     def test_to_linear(self):
         nodes = np.asfortranarray([
             [0.0, 0.0],
@@ -727,7 +738,10 @@ class Test__maybe_reduce(utils.NumPyTestCase):
             [2.0, 2.0],
             [2.0, 2.0],
         ])
-        self._low_degree_helper(nodes)
+        was_reduced, new_nodes = self._call_function_under_test(nodes)
+        self.assertTrue(was_reduced)
+        expected = np.asfortranarray([[2.0, 2.0]])
+        self.assertEqual(new_nodes, expected)
 
     def test_to_linear(self):
         nodes = np.asfortranarray([

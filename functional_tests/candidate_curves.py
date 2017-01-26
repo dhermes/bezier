@@ -336,6 +336,16 @@ CURVES = (
         [-0.3125, 1.46875],
         [-0.75, 1.625],
     ]), _copy=False),
+    # g48 = sympy.Matrix([[1, 3 * (2 * s - 1)]])
+    bezier.Curve.from_nodes(np.asfortranarray([
+        [1.0, -3.0],
+        [1.0, 3.0],
+    ]), _copy=False),
+    # g49 = sympy.Matrix([[10 * (1 - s), 0]])
+    bezier.Curve.from_nodes(np.asfortranarray([
+        [10.0, 0.0],
+        [0.0, 0.0],
+    ]), _copy=False),
 )
 
 _SQ31 = np.sqrt(31.0)
@@ -491,5 +501,8 @@ INTERSECTION_INFO = {
     ]),
     (46, 47): np.asfortranarray([
         [1.0, 0.0, -9.0 / 256.0, 583.0 / 512.0],
+    ]),
+    (48, 49): np.asfortranarray([
+        [0.5, 9.0 / 10.0, 1.0, 0.0],
     ]),
 }

@@ -42,6 +42,11 @@ _REDUCE_THRESHOLD = 0.5**26  # sqrt(machine precision)
 # If v --> Ev is the elevation map, then P = E (E^T E)^{-1} E^T
 # is the projection.
 # pylint: disable=bad-whitespace
+_PROJECTION0 = np.asfortranarray([
+    [0.5, 0.5],
+    [0.5, 0.5],
+])
+_PROJ_DENOM0 = 1.0
 _PROJECTION1 = np.asfortranarray([
     [ 2.5, 1.0, -0.5],  # noqa: E201
     [ 1.0, 1.0,  1.0],  # noqa: E201
@@ -66,6 +71,10 @@ _PROJ_DENOM3 = 105.0
 # Reductions for a set of degree-elevated nodes.
 # If v --> Ev is the elevation map, then R = (E^T E)^{-1} E^T -- the
 # pseudo-inverse of E -- actually reduces a set of nodes.
+_REDUCTION0 = np.asfortranarray([
+    [0.5, 0.5],
+])
+_REDUCTION_DENOM0 = 1.0
 _REDUCTION1 = np.asfortranarray([
     [ 2.5, 1.0, -0.5],  # noqa: E201
     [-0.5, 1.0,  2.5],
@@ -730,9 +739,12 @@ def reduce_pseudo_inverse(nodes, degree):
         numpy.ndarray: The reduced nodes.
 
     Raises:
-        NotImplementedError: If the degree is not 2, 3 or 4.
+        NotImplementedError: If the degree is not 1, 2, 3 or 4.
     """
-    if degree == 2:
+    if degree == 1:
+        reduction = _REDUCTION0
+        denom = _REDUCTION_DENOM0
+    elif degree == 2:
         reduction = _REDUCTION1
         denom = _REDUCTION_DENOM1
     elif degree == 3:
@@ -793,8 +805,11 @@ def _maybe_reduce(nodes):
         NotImplementedError: If the curve is degree 5 or higher.
     """
     num_nodes, _ = nodes.shape
-    if num_nodes < 3:
+    if num_nodes < 2:
         return False, nodes
+    elif num_nodes == 2:
+        projection = _PROJECTION0
+        denom = _PROJ_DENOM0
     elif num_nodes == 3:
         projection = _PROJECTION1
         denom = _PROJ_DENOM1

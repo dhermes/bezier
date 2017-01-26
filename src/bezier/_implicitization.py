@@ -778,9 +778,8 @@ def locate_point(nodes, x_val, y_val):
     if zero1.shape[0] > zero2.shape[0]:
         zero1, zero2 = zero2, zero1
 
-    # If the "smallest" is identically zero, we can't find any roots
-    # from it.
-    if np.all(zero1 == 0.0):
+    # If the "smallest" is a constant, we can't find any roots from it.
+    if zero1.shape[0] == 1:
         # NOTE: We assume that callers won't pass ``nodes`` that are
         #       degree 0, so if ``zero1`` is a constant, ``zero2`` won't be.
         zero1, zero2 = zero2, zero1
