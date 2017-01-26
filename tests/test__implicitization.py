@@ -700,10 +700,10 @@ class Test__strip_leading_zeros(utils.NumPyTestCase):
 class Test__check_non_simple(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(coeffs, **kwargs):
+    def _call_function_under_test(coeffs):
         from bezier import _implicitization
 
-        return _implicitization._check_non_simple(coeffs, **kwargs)
+        return _implicitization._check_non_simple(coeffs)
 
     def test_extra_zeros(self):
         coeffs = np.asfortranarray([2.0, -3.0, 1.0, 0.0])
@@ -716,24 +716,25 @@ class Test__check_non_simple(utils.NumPyTestCase):
         self.assertIsNone(self._call_function_under_test(coeffs))
 
     def test_double_root(self):
+        # f(t) = (t - 2)^2
         coeffs = np.asfortranarray([4.0, -4.0, 1.0])
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(coeffs)
 
-    def test_almost_double_root(self):
-        from bezier import _implicitization
-
         # f(t) = (t + 2)^2 (3 t + 2) (4 t + 19)
         coeffs = np.asfortranarray([152.0, 412.0, 346.0, 113.0, 12.0])
-        # Make sure f(t) is very far from normalized.
-        l2_norm = _implicitization.polynomial_norm(coeffs)
-        self.assertGreater(l2_norm, 525.0)
-        self.assertLess(l2_norm, 575.0)
-        # Make f(t) slightly closer to unit "length".
-        coeffs /= 2.0
-
         with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(coeffs, threshold=0.5**14)
+            self._call_function_under_test(coeffs)
+
+    def test_scale_invariant(self):
+        # f(t) = (t - 1) (t - 2) (t - 3) (t - 4)
+        coeffs = np.asfortranarray([24.0, -50.0, 35.0, -10.0, 1.0])
+        # Make sure no exception was thrown.
+        self.assertIsNone(self._call_function_under_test(coeffs))
+
+        for exponent in (-30, -20, -10, 10, 20, 30):
+            new_coeffs = 0.5**exponent * coeffs
+            self.assertIsNone(self._call_function_under_test(new_coeffs))
 
 
 class Test__near_zero(utils.NumPyTestCase):

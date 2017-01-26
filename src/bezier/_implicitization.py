@@ -61,7 +61,6 @@ _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
 # Detect almost zero polynomials.
 _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
 _ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
-_RESULTANT_THRESHOLD = 0.5**26  # sqrt(machine precision)
 _COEFFICIENT_THRESHOLD = 0.5**26  # sqrt(machine precision)
 _PARAM_THRESHOLD = 0.5**51  # 2 (machine precision)
 _COINCIDENT_ERR = 'Coincident curves not currently supported'
@@ -555,17 +554,14 @@ def _strip_leading_zeros(coeffs, threshold=_COEFFICIENT_THRESHOLD):
     return coeffs
 
 
-def _check_non_simple(coeffs, threshold=_RESULTANT_THRESHOLD):
+def _check_non_simple(coeffs):
     r"""Checks that a polynomial has no non-simple roots.
 
-    Does so by computing the resultant of :math:`f` and :math:`f'`.
+    Does so by computing the companion matrix :math:`A` of :math:`f'`
+    and then evaluating the rank of :math:`B = f(A)`. If :math:`B` is not
+    full rank, then :math:`f` and :math:`f'` have a shared factor.
 
-    .. note::
-
-       This assumes the polynomial :math:`f` defined by ``coeffs``
-       has been normalized (via :func:`.normalize_polynomial`). This
-       assumption is necessary to put an **absolute** limit on the
-       resultant (rather than a relative one).
+    See: http://dx.doi.org/10.1016/0024-3795(70)90023-6
 
     .. note::
 
@@ -574,9 +570,6 @@ def _check_non_simple(coeffs, threshold=_RESULTANT_THRESHOLD):
     Args:
         coeffs (numpy.ndarray): ``d + 1``-array of coefficients in monomial /
             power basis.
-        threshold (Optional[float]): The point :math:`\tau` below which a
-            polynomial will be considered to be numerically non-simple,
-            applies to all :math:`f` with :math`\text{Res}(f, f') < \tau`.
 
     Raises:
         NotImplementedError: If the polynomial has non-simple roots.
@@ -587,21 +580,19 @@ def _check_non_simple(coeffs, threshold=_RESULTANT_THRESHOLD):
         return
 
     deriv_poly = polynomial.polyder(coeffs)
-    sylvester_mat = np.zeros(
-        (2 * num_coeffs - 3, 2 * num_coeffs - 3), order='F')
 
-    column = 0
-    for index in six.moves.xrange(num_coeffs - 2):
-        sylvester_mat[index:index + num_coeffs, column] = coeffs
-        column += 1
-    for index in six.moves.xrange(num_coeffs - 1):
-        sylvester_mat[index:index + num_coeffs - 1, column] = deriv_poly
-        column += 1
+    companion = polynomial.polycompanion(deriv_poly)
+    # Use Horner's method to evaluate f(companion)
+    num_companion, _ = companion.shape
+    id_mat = np.eye(num_companion)
+    evaluated = coeffs[-1] * id_mat
+    for index in six.moves.xrange(num_coeffs - 2, -1, -1):
+        coeff = coeffs[index]
+        evaluated = evaluated.dot(companion) + coeff * id_mat
 
-    resultant = np.linalg.det(sylvester_mat)
-    if np.abs(resultant) < threshold:
-        raise NotImplementedError(
-            _NON_SIMPLE_ERR, coeffs, 'Resultant', resultant)
+    rank = np.linalg.matrix_rank(evaluated)
+    if rank < num_companion:
+        raise NotImplementedError(_NON_SIMPLE_ERR, coeffs)
 
 
 def _near_zero(value, threshold=_PARAM_THRESHOLD):

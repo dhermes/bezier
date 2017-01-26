@@ -21,12 +21,16 @@ import pytest
 import six
 
 import bezier
-from bezier import _intersection_helpers
+from bezier import _implicitization
 from bezier import _plot_helpers
+from bezier import curve
 
 import runtime_utils
 
 
+ALGEBRAIC = curve.IntersectionStrategy.algebraic
+GEOMETRIC = curve.IntersectionStrategy.geometric
+STRATEGY = GEOMETRIC
 PARALLEL_FAILURE = ('Line segments parallel.',)
 BAD_TANGENT = (
     'Curves moving in opposite direction but define '
@@ -524,12 +528,38 @@ def surface_surface_check(surface1, surface2,
     surface_surface_check_multi(surface1, surface2, intersected)
 
 
-def curved_polygon_edges(intersection):
+def curved_polygon_edges(intersection, edges):
+    edges1, edges2 = edges
+    all_edges = edges1 + edges2
     # Re-sort the edges to be in the same order independent of strategy.
     edge_list = intersection._edges
-    edge_info = [(edge.start, edge.end) for edge in edge_list]
+    edge_info = [(all_edges.index(edge.root), edge.start, edge.end)
+                 for edge in edge_list]
     index = edge_info.index(min(edge_info))
     return edge_list[index:] + edge_list[:index]
+
+
+def check_tangent(exc_info, parallel=False, bad_tangent=False):
+    if STRATEGY is GEOMETRIC:
+        if parallel:
+            assert exc_info.value.args == PARALLEL_FAILURE
+        elif bad_tangent:
+            assert exc_info.value.args == (BAD_TANGENT,)
+        else:
+            assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    else:
+        assert len(exc_info.value.args) == 2
+        assert exc_info.value.args[0] == _implicitization._NON_SIMPLE_ERR
+
+
+def check_coincident(exc_info, parallel=False):
+    if STRATEGY is GEOMETRIC:
+        if parallel:
+            assert exc_info.value.args == PARALLEL_FAILURE
+        else:
+            assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    else:
+        assert exc_info.value.args == (_implicitization._COINCIDENT_ERR,)
 
 
 def surface_surface_check_multi(surface1, surface2, *all_intersected):
@@ -537,8 +567,7 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
     assert surface1.is_valid
     assert surface2.is_valid
 
-    strategy = _intersection_helpers.IntersectionStrategy.geometric
-    intersections = surface1.intersect(surface2, strategy=strategy)
+    intersections = surface1.intersect(surface2, strategy=STRATEGY)
     assert len(intersections) == len(all_intersected)
     edges = (
         surface1._get_edges(),
@@ -554,7 +583,7 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
         nodes = intersected.nodes
         edge_pairs = intersected.edge_pairs
 
-        int_edges = curved_polygon_edges(intersection)
+        int_edges = curved_polygon_edges(intersection, edges)
         info = six.moves.zip(
             int_edges, edge_pairs, start_vals, end_vals, nodes)
         num_edges = len(int_edges)
@@ -608,18 +637,18 @@ def test_surfaces1Q_and_3Q():
 
 
 def test_surfaces1L_and_3L():
-    start_vals = np.asfortranarray([0.0, 0.125, 0.25])
-    end_vals = np.asfortranarray([0.75, 0.875, 1.0])
+    start_vals = np.asfortranarray([0.25, 0.0, 0.125])
+    end_vals = np.asfortranarray([1.0, 0.75, 0.875])
 
     nodes = np.asfortranarray([
+        [0.25, 0.0],
         [1.0, 0.0],
         [0.25, 0.75],
-        [0.25, 0.0],
     ])
     edge_pairs = (
+        (0, 0),
         (0, 1),
         (1, 2),
-        (0, 0),
     )
     surface_surface_check(SURFACE1L, SURFACE3L,
                           start_vals, end_vals, nodes, edge_pairs)
@@ -641,9 +670,9 @@ def test_surfaces1Q_and_2Q():
     _, t_val5 = runtime_utils.real_roots([9, -66, 181, 36, -44])
     t_val6, _ = runtime_utils.real_roots([9, -18, -3, -116, 84])
     start_vals = np.asfortranarray(
-        [s_val6, t_val5, s_val1, t_val2, s_val3, t_val4])
+        [s_val1, t_val2, s_val3, t_val4, s_val6, t_val5])
     end_vals = np.asfortranarray(
-        [s_val5, t_val1, s_val2, t_val3, s_val4, t_val6])
+        [s_val2, t_val3, s_val4, t_val6, s_val5, t_val1])
 
     x_val1 = 0.5 * s_val6 * (1.0 - s_val6)
     x_val2 = 0.5 * s_val5 * (1.0 - s_val5)
@@ -658,23 +687,23 @@ def test_surfaces1Q_and_2Q():
     y_val6 = 0.5 * s_val4 * (3.0 - s_val4)
 
     nodes = np.asfortranarray([
-        [x_val1, y_val1],
-        [x_val2, y_val2],
         [s_val1, y_val3],
         [s_val2, y_val4],
         [x_val5, y_val5],
         [x_val6, y_val6],
+        [x_val1, y_val1],
+        [x_val2, y_val2],
     ])
     edge_pairs = (
-        (0, 2),
-        (1, 0),
         (0, 0),
         (1, 1),
         (0, 1),
         (1, 2),
+        (0, 2),
+        (1, 0),
     )
     # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(10):
+    with CONFIG.wiggle(19):
         surface_surface_check(SURFACE1Q, SURFACE2Q,
                               start_vals, end_vals, nodes, edge_pairs)
     # pylint: enable=too-many-locals
@@ -698,7 +727,7 @@ def test_surfaces10Q_and_18Q():
         surface_surface_check(SURFACE10Q, SURFACE18Q,
                               start_vals, end_vals, nodes, edge_pairs)
 
-    assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    check_coincident(exc_info)
     intersection = make_curved_polygon(
         SURFACE10Q, SURFACE18Q,
         start_vals, end_vals, edge_pairs)
@@ -709,7 +738,7 @@ def test_surfaces10Q_and_19Q():
     with pytest.raises(NotImplementedError) as exc_info:
         surface_surface_check_multi(SURFACE10Q, SURFACE19Q)
 
-    assert exc_info.value.args == PARALLEL_FAILURE
+    check_coincident(exc_info, parallel=True)
     make_plots(SURFACE10Q, SURFACE19Q, [])
 
 
@@ -719,27 +748,34 @@ def test_surfaces3Q_and_4Q():
 
     t_val2, _ = runtime_utils.real_roots([100, 360, 712, -2988, 169])
     _, t_val3 = runtime_utils.real_roots([49, -532, 412, 37200, -26352])
-    start_vals = np.asfortranarray([0.0, s_val3, t_val2])
-    end_vals = np.asfortranarray([t_val3, s_val2, 1.0])
+    start_vals = np.asfortranarray([s_val3, t_val2, 0.0])
+    end_vals = np.asfortranarray([s_val2, 1.0, t_val3])
 
     x_val2 = 0.125 * (s_val2 - 1.0) * (5.0 * s_val2 - 8.0)
     x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
     y_val2 = 0.125 * (1.0 - s_val2) * (7.0 * s_val2 + 8.0)
     y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
     nodes = np.asfortranarray([
-        [1.0, 0.25],
         [x_val3, y_val3],
         [x_val2, y_val2],
+        [1.0, 0.25],
     ])
     edge_pairs = (
-        (1, 1),
         (0, 2),
         (1, 0),
+        (1, 1),
     )
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(32):
-        surface_surface_check(SURFACE3Q, SURFACE4Q,
-                              start_vals, end_vals, nodes, edge_pairs)
+    if STRATEGY is GEOMETRIC:
+        # NOTE: We require a bit more wiggle room for these roots.
+        with CONFIG.wiggle(32):
+            surface_surface_check(SURFACE3Q, SURFACE4Q,
+                                  start_vals, end_vals, nodes, edge_pairs)
+    else:
+        with pytest.raises(NotImplementedError) as exc_info:
+            surface_surface_check(SURFACE3Q, SURFACE4Q,
+                                  start_vals, end_vals, nodes, edge_pairs)
+
+        check_tangent(exc_info)
 
 
 def test_surfaces1Q_and_5L():
@@ -765,7 +801,7 @@ def test_surfaces1Q_and_5L():
         surface_surface_check(SURFACE1Q, SURFACE5L,
                               start_vals, end_vals, nodes, edge_pairs)
 
-    assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    check_tangent(exc_info)
     intersection = make_curved_polygon(
         SURFACE1Q, SURFACE5L,
         start_vals, end_vals, edge_pairs)
@@ -778,46 +814,46 @@ def test_surfaces3Q_and_5Q():
 
     _, t_val3 = runtime_utils.real_roots([25, -20, -1064, 7800, -6012])
     t_val4, _ = runtime_utils.real_roots([25, -2340, 58908, -105840, 11664])
-    start_vals = np.asfortranarray([0.0, s_val3, t_val4, 0.0])
-    end_vals = np.asfortranarray([t_val3, s_val4, 1.0, 1.0])
+    start_vals = np.asfortranarray([s_val3, t_val4, 0.0, 0.0])
+    end_vals = np.asfortranarray([s_val4, 1.0, 1.0, t_val3])
 
     x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
     x_val4 = 0.125 * (s_val4 - 1.0) * (5.0 * s_val4 - 8.0)
     y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
     y_val4 = 0.125 * (1.0 - s_val4) * (7.0 * s_val4 + 8.0)
     nodes = np.asfortranarray([
-        [1.125, 0.375],
         [x_val3, y_val3],
         [x_val4, y_val4],
         [0.25, 0.09375],
+        [1.125, 0.375],
     ])
     edge_pairs = (
-        (1, 1),
         (0, 2),
         (1, 2),
         (1, 0),
+        (1, 1),
     )
     surface_surface_check(SURFACE3Q, SURFACE5Q,
                           start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_2L():
-    start_vals = np.asfortranarray([0.0, 7.59375, 1.0, 3.0, 4.5]) / 9.0
-    end_vals = np.asfortranarray([13.5, 27.0, 19.0, 11.8125, 27.0]) / 27.0
+    start_vals = np.asfortranarray([3.0, 4.5, 0.0, 7.59375, 1.0]) / 9.0
+    end_vals = np.asfortranarray([11.8125, 27.0, 13.5, 27.0, 19.0]) / 27.0
 
     nodes = np.asfortranarray([
+        [2.0, 1.0],
+        [1.6875, 1.3125],
         [0.375, 1.125],
         [0.0, 0.46875],
         [0.0, 0.0],
-        [2.0, 1.0],
-        [1.6875, 1.3125],
     ]) / 3.0
     edge_pairs = (
+        (0, 1),
+        (1, 1),
         (1, 2),
         (0, 2),
         (1, 0),
-        (0, 1),
-        (1, 1),
     )
     surface_surface_check(SURFACE1L, SURFACE2L,
                           start_vals, end_vals, nodes, edge_pairs)
@@ -843,7 +879,7 @@ def test_surfaces20Q_and_21Q():
         surface_surface_check(SURFACE20Q, SURFACE21Q,
                               start_vals, end_vals, nodes, edge_pairs)
 
-    assert exc_info.value.args == PARALLEL_FAILURE
+    check_tangent(exc_info, parallel=True)
     intersection = make_curved_polygon(
         SURFACE20Q, SURFACE21Q,
         start_vals, end_vals, edge_pairs)
@@ -868,7 +904,7 @@ def test_surfaces4L_and_22Q():
         surface_surface_check(SURFACE4L, SURFACE22Q,
                               start_vals, end_vals, nodes, edge_pairs)
 
-    assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    check_tangent(exc_info)
     intersection = make_curved_polygon(
         SURFACE4L, SURFACE22Q,
         start_vals, end_vals, edge_pairs)
@@ -893,7 +929,7 @@ def test_surfaces4L_and_23Q():
         surface_surface_check(SURFACE4L, SURFACE23Q,
                               start_vals, end_vals, nodes, edge_pairs)
 
-    assert str(exc_info.value).startswith(TANGENT_FAILURE)
+    check_tangent(exc_info)
     intersection = make_curved_polygon(
         SURFACE4L, SURFACE23Q,
         start_vals, end_vals, edge_pairs)
@@ -916,8 +952,8 @@ def test_surfaces6Q_and_7Q():
 
     start_vals1 = np.asfortranarray([s_val3, t_val5, s_val8, 3.0 / 17.0])
     end_vals1 = np.asfortranarray([s_val5, t_val8, 14.0 / 17.0, t_val3])
-    start_vals2 = np.asfortranarray([t_val7, s_val6, t_val4, 3.0 / 17.0])
-    end_vals2 = np.asfortranarray([t_val6, s_val4, 14.0 / 17.0, s_val7])
+    start_vals2 = np.asfortranarray([s_val6, t_val4, 3.0 / 17.0, t_val7])
+    end_vals2 = np.asfortranarray([s_val4, 14.0 / 17.0, s_val7, t_val6])
 
     x_val3 = 0.25 * s_val3 * (3.0 + s_val3)
     x_val4 = 0.25 * s_val4 * (3.0 + s_val4)
@@ -942,16 +978,16 @@ def test_surfaces6Q_and_7Q():
     )
 
     nodes2 = np.asfortranarray([
-        [1.0 - 0.5 * s_val7, s_val7],
         [x_val6, y_val6],
         [x_val4, y_val4],
         [31.0 / 34.0, 3.0 / 17.0],
+        [1.0 - 0.5 * s_val7, s_val7],
     ])
     edge_pairs2 = (
-        (1, 0),
         (0, 0),
         (1, 2),
         (0, 1),
+        (1, 0),
     )
     intersected1 = Intersected(start_vals1, end_vals1, nodes1, edge_pairs1)
     intersected2 = Intersected(start_vals2, end_vals2, nodes2, edge_pairs2)
@@ -989,7 +1025,13 @@ def test_surfaces8Q_and_9Q():
 
 
 def test_surfaces4Q_and_10Q():
-    surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
+    if STRATEGY is GEOMETRIC:
+        surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
+    else:
+        with pytest.raises(NotImplementedError) as exc_info:
+            surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
+
+        check_tangent(exc_info)
 
 
 def test_surfaces11Q_and_12Q():
@@ -998,12 +1040,12 @@ def test_surfaces11Q_and_12Q():
     end_vals = np.asfortranarray([s_val2, s_val2])
 
     nodes = np.asfortranarray([
-        [s_val2, 0.125],
         [s_val1, 0.125],
+        [s_val2, 0.125],
     ])
     edge_pairs = (
-        (1, 0),
         (0, 0),
+        (1, 0),
     )
     surface_surface_check(SURFACE11Q, SURFACE12Q,
                           start_vals, end_vals, nodes, edge_pairs)
@@ -1023,8 +1065,15 @@ def test_surfaces3Q_and_13Q():
         (1, 1),
         (1, 2),
     )
-    surface_surface_check(SURFACE3Q, SURFACE13Q,
-                          start_vals, end_vals, nodes, edge_pairs)
+    if STRATEGY is GEOMETRIC:
+        surface_surface_check(SURFACE3Q, SURFACE13Q,
+                              start_vals, end_vals, nodes, edge_pairs)
+    else:
+        with pytest.raises(NotImplementedError) as exc_info:
+            surface_surface_check(SURFACE3Q, SURFACE13Q,
+                                  start_vals, end_vals, nodes, edge_pairs)
+
+        check_tangent(exc_info)
 
 
 def test_surfaces10Q_and_17Q():
@@ -1134,7 +1183,7 @@ def test_surfaces15Q_and_16Q():
         surface_surface_check_multi(SURFACE15Q, SURFACE16Q,
                                     intersected1, intersected2)
 
-    assert exc_info.value.args == (BAD_TANGENT,)
+    check_tangent(exc_info, bad_tangent=True)
     intersection1 = make_curved_polygon(
         SURFACE15Q, SURFACE16Q,
         start_vals1, end_vals1, edge_pairs1)
@@ -1154,24 +1203,24 @@ def test_surfaces24Q_and_25Q():
         [27, -1116, 12020, -10224, 2256])
     _, t_val2 = runtime_utils.real_roots(
         [11, -1232, 132116, 315936, -31348])
-    start_vals = np.asfortranarray([0.0, s_val2, 0.0, t_val1])
-    end_vals = np.asfortranarray([t_val2, 1.0, s_val1, 1.0])
+    start_vals = np.asfortranarray([0.0, t_val1, 0.0, s_val2])
+    end_vals = np.asfortranarray([s_val1, 1.0, t_val2, 1.0])
 
     x_val1 = 0.015625 * (4.0 - 3.0 * s_val1) * (7.0 * s_val1 + 12.0)
     y_val1 = 0.03125 * (3.0 * s_val1 * s_val1 + 25.0)
     x_val2 = 0.0078125 * (33.0 * s_val2 * s_val2 + 62.0 * s_val2 + 1.0)
     y_val2 = 0.03125 * (11.0 * s_val2 * s_val2 - 4.0 * s_val2 + 18.0)
     nodes = np.asfortranarray([
-        [0.328125, 0.625],
-        [x_val2, y_val2],
         [0.75, 0.78125],
         [x_val1, y_val1],
+        [0.328125, 0.625],
+        [x_val2, y_val2],
     ])
     edge_pairs = (
-        (1, 1),
-        (0, 2),
         (0, 0),
         (1, 0),
+        (1, 1),
+        (0, 2),
     )
 
     # NOTE: We require a bit more wiggle room for these roots.
@@ -1207,18 +1256,18 @@ def test_surfaces26Q_and_27Q():
 def test_surfaces1L_and_28Q():
     _, s_val3 = runtime_utils.real_roots([5, 30, -13])
     t_val3, _ = runtime_utils.real_roots([5, -40, 22])
-    start_vals = np.asfortranarray([0.0, t_val3, 0.1875])
-    end_vals = np.asfortranarray([s_val3, 1.0, 1.0])
+    start_vals = np.asfortranarray([0.1875, 0.0, t_val3])
+    end_vals = np.asfortranarray([1.0, s_val3, 1.0])
 
     nodes = np.asfortranarray([
+        [0.1875, 0.0],
         [1.0, 0.0],
         [1.0 - s_val3, s_val3],
-        [0.1875, 0.0],
     ])
     edge_pairs = (
+        (0, 0),
         (0, 1),
         (1, 1),
-        (0, 0),
     )
     surface_surface_check(SURFACE1L, SURFACE28Q,
                           start_vals, end_vals, nodes, edge_pairs)
@@ -1227,42 +1276,42 @@ def test_surfaces1L_and_28Q():
 def test_surfaces1L_and_29Q():
     s_val1, s_val2 = runtime_utils.real_roots([128, -128, 7])
     t_val1, t_val2 = runtime_utils.real_roots([8, -8, 1])
-    start_vals = np.asfortranarray([0.0, t_val1, s_val2, 0.0, 0.0])
-    end_vals = np.asfortranarray([s_val1, t_val2, 1.0, 1.0, 1.0])
+    start_vals = np.asfortranarray([0.0, 0.0, t_val1, s_val2, 0.0])
+    end_vals = np.asfortranarray([1.0, s_val1, t_val2, 1.0, 1.0])
 
     nodes = np.asfortranarray([
+        [0.0, 0.0],
         [1.0, 0.0],
         [1.0 - s_val1, s_val1],
         [1.0 - s_val2, s_val2],
         [0.0, 1.0],
-        [0.0, 0.0],
     ])
     edge_pairs = (
+        (0, 0),
         (0, 1),
         (1, 1),
         (0, 1),
         (0, 2),
-        (0, 0),
     )
     surface_surface_check(SURFACE1L, SURFACE29Q,
                           start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces30Q_and_31Q():
-    start_vals = np.asfortranarray([0.0, 13.0 / 56.0, 0.0, 5.0 / 9.0])
-    end_vals = np.asfortranarray([0.25, 1.0, 2.0 / 7.0, 1.0])
+    start_vals = np.asfortranarray([13.0 / 56.0, 0.0, 5.0 / 9.0, 0.0])
+    end_vals = np.asfortranarray([1.0, 2.0 / 7.0, 1.0, 0.25])
 
     nodes = np.asfortranarray([
-        [-0.125, 0.0],
         [-0.046875, -0.25],
         [0.625, -0.25],
         [0.375, 0.0],
+        [-0.125, 0.0],
     ])
     edge_pairs = (
-        (1, 2),
         (0, 0),
         (0, 1),
         (1, 1),
+        (1, 2),
     )
 
     surface_surface_check(SURFACE30Q, SURFACE31Q,

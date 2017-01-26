@@ -1491,6 +1491,10 @@ def _all_intersections_algebraic(candidates):
         nodes1 = curve1._nodes
         curve2 = second.curve if second.__class__ is Linearization else second
         nodes2 = curve2._nodes
+        # Only attempt this if the bounding boxes intersect.
+        if bbox_intersect(nodes1, nodes2) == BoxIntersectionType.DISJOINT:
+            continue
+
         st_vals = _implicitization.intersect_curves(nodes1, nodes2)
         for s, t in st_vals:
             intersection = Intersection(curve1, s, curve2, t)
