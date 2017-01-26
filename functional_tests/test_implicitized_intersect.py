@@ -65,7 +65,7 @@ def test_all():
             with pytest.raises(NotImplementedError) as exc_info:
                 _implicitization.intersect_curves(nodes1, nodes2)
 
-            assert len(exc_info.value.args) == 4
+            assert len(exc_info.value.args) == 2
             assert exc_info.value.args[0] == _implicitization._NON_SIMPLE_ERR
             continue
         elif id_pair in COINCIDENT_INTERSECTIONS:

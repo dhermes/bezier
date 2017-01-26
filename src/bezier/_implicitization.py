@@ -63,6 +63,7 @@ _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
 _ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
 _COEFFICIENT_THRESHOLD = 0.5**26  # sqrt(machine precision)
 _PARAM_THRESHOLD = 0.5**51  # 2 (machine precision)
+_NON_SIMPLE_THRESHOLD = 0.5**48  # 16 (machine precision)
 _COINCIDENT_ERR = 'Coincident curves not currently supported'
 _NON_SIMPLE_ERR = 'Polynomial has non-simple roots'
 _POWER_BASIS_ERR = (
@@ -590,7 +591,14 @@ def _check_non_simple(coeffs):
         coeff = coeffs[index]
         evaluated = evaluated.dot(companion) + coeff * id_mat
 
-    rank = np.linalg.matrix_rank(evaluated)
+    if num_companion == 1:
+        # NOTE: This relies on the fact that coeffs is normalized.
+        if np.abs(evaluated[0, 0]) > _NON_SIMPLE_THRESHOLD:
+            rank = 1
+        else:
+            rank = 0
+    else:
+        rank = np.linalg.matrix_rank(evaluated)
     if rank < num_companion:
         raise NotImplementedError(_NON_SIMPLE_ERR, coeffs)
 
