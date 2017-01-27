@@ -36,6 +36,7 @@ except ImportError:  # pragma: NO COVER
 # by squaring the error.
 _ERROR_VAL = 0.5**26
 _MAX_INTERSECT_SUBDIVISIONS = 20
+_MAX_CANDIDATES = 16
 _TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
     '{:d} accepted pairs gives {:d} candidate pairs.')
@@ -1441,7 +1442,7 @@ def _all_intersections_geometric(candidates):
     intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
         accepted = intersect_one_round(candidates, intersections)
-        if len(accepted) > 16:
+        if len(accepted) > _MAX_CANDIDATES:
             msg = _TOO_MANY_TEMPLATE.format(
                 len(accepted), 4 * len(accepted))
             raise NotImplementedError(msg)
