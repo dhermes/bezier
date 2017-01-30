@@ -267,5 +267,45 @@ def test_curves40_and_41():
     curve_curve_check(40, 41)
 
 
+def test_curves42_and_43():
+    curve_curve_check(42, 43)
+
+
+def test_curves44_and_45():
+    curve_curve_check(44, 45)
+
+
+def test_curves46_and_47():
+    curve_curve_check(46, 47)
+
+
+def test_curves48_and_49():
+    curve_curve_check(48, 49)
+
+
+def test_curves50_and_54():
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(91):
+        curve_curve_check(50, 54)
+
+
+def test_curves51_and_54():
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(1013):
+        curve_curve_check(51, 54)
+
+
+def test_curves52_and_54():
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(91):
+        curve_curve_check(52, 54)
+
+
+def test_curves53_and_54():
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(1013):
+        curve_curve_check(53, 54)
+
+
 if __name__ == '__main__':
     CONFIG.run(globals())

@@ -237,9 +237,46 @@ def matrix_product(mat1, mat2):
     return np.dot(mat2.T, mat1.T).T
 
 
+def _wiggle_interval_py(value, wiggle=0.5**45):
+    r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
+
+    Allows a little bit of wiggle room outside the interval. Any value
+    within ``wiggle`` of ``0.0` will be converted to ``0.0` and similar
+    for ``1.0``.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    Args:
+        value (float): Value to check in interval.
+        wiggle (Optional[float]): The amount of wiggle room around the
+            the endpoints ``0.0`` and ``1.0``.
+
+    Returns:
+        float: The ``value`` if it's in the interval, or ``0`` or ``1``
+        if the value lies slightly outside.
+
+    Raises:
+        ValueError: If one of the values falls outside the unit interval
+        (with wiggle room).
+    """
+    if -wiggle < value < wiggle:
+        return 0.0
+    elif wiggle <= value <= 1.0 - wiggle:
+        return value
+    elif 1.0 - wiggle < value < 1.0 + wiggle:
+        return 1.0
+    else:
+        raise ValueError('outside of unit interval', value)
+
+
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     bbox = _bbox
+    wiggle_interval = _wiggle_interval_py
 else:
     bbox = _speedup.speedup.bbox
+    wiggle_interval = _speedup.speedup.wiggle_interval
 # pylint: enable=invalid-name

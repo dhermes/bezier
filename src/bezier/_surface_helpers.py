@@ -20,6 +20,7 @@
 import collections
 import enum
 import functools
+import itertools
 import operator
 
 import numpy as np
@@ -1757,36 +1758,34 @@ def handle_corners(intersection):
     return changed
 
 
-def _identifier(intersection):
-    """Provide a simple value to identify an intersection.
+def _same_intersection(intersection1, intersection2, wiggle=0.5**40):
+    """Check if two intersections are close to machine precision.
 
     Args:
-        intersection (.Intersection): The current intersection.
+        intersection1 (.Intersection): The first intersection.
+        intersection2 (.Intersection): The second intersection.
+        wiggle (Optional[float]): The amount of relative error allowed
+            in parameter values.
 
     Returns:
-        Tuple[int, float, int, float]: The edge indices for the intersection
-        and the parameter values:
-
-        * first edge index
-        * first parameter
-        * second edge index
-        * second parameter
+        bool: Indicates if the two intersections are the same to
+        machine precision.
     """
-    return (
-        intersection.first._edge_index,  # pylint: disable=protected-access
-        intersection.s,
-        intersection.second._edge_index,  # pylint: disable=protected-access
-        intersection.t,
-    )
+    # pylint: disable=protected-access
+    if intersection1.first._edge_index != intersection2.first._edge_index:
+        return False
+    if intersection1.second._edge_index != intersection2.second._edge_index:
+        return False
+    # pylint: enable=protected-access
+
+    return np.allclose(
+        [intersection1.s, intersection1.t],
+        [intersection2.s, intersection2.t],
+        atol=0.0, rtol=wiggle)
 
 
 def verify_duplicates(duplicates, uniques):
     """Verify that a set of intersections had expected duplicates.
-
-    .. note::
-
-       This method only considers two intersections as equal if the
-       ``s`` and ``t`` values are bit-wise identical.
 
     Args:
         duplicates (List[.Intersection]): List of intersections
@@ -1805,21 +1804,31 @@ def verify_duplicates(duplicates, uniques):
         ValueError: If a duplicate occurs a number other than one or three
             times.
     """
-    counter = collections.Counter(_identifier(dupe) for dupe in duplicates)
-    uniques_keys = set(_identifier(uniq) for uniq in uniques)
-    if len(uniques_keys) < len(uniques):
-        raise ValueError('Non-unique intersection')
+    for uniq1, uniq2 in itertools.combinations(uniques, 2):
+        if _same_intersection(uniq1, uniq2):
+            raise ValueError('Non-unique intersection')
 
-    for key, count in six.iteritems(counter):
-        if key not in uniques_keys:
-            raise ValueError('Duplicate not among uniques', key)
+    counter = collections.Counter()
+    for dupe in duplicates:
+        matches = []
+        for index, uniq in enumerate(uniques):
+            if _same_intersection(dupe, uniq):
+                matches.append(index)
 
+        if len(matches) != 1:
+            raise ValueError('Duplicate not among uniques', dupe)
+
+        matched, = matches
+        counter[matched] += 1
+
+    for index, count in six.iteritems(counter):
+        uniq = uniques[index]
         if count == 1:
-            if (key[1], key[3]).count(0.0) != 1:
-                raise ValueError('Count == 1 should be a single corner', key)
+            if (uniq.s, uniq.t).count(0.0) != 1:
+                raise ValueError('Count == 1 should be a single corner', uniq)
         elif count == 3:
-            if (key[1], key[3]) != (0.0, 0.0):
-                raise ValueError('Count == 3 should be a double corner', key)
+            if (uniq.s, uniq.t) != (0.0, 0.0):
+                raise ValueError('Count == 3 should be a double corner', uniq)
         else:
             raise ValueError('Unexpected duplicate count', count)
 
@@ -2173,7 +2182,7 @@ def _tangent_only_intersections(intersections, surface1, surface2):
         raise ValueError('Point type not for tangency', point_type)
 
 
-def _basic_interior_combine(intersections):
+def _basic_interior_combine(intersections, max_edges=10):
     """Combine intersections that don't involve tangencies.
 
     Helper for :func:`combine_intersections`.
@@ -2187,9 +2196,16 @@ def _basic_interior_combine(intersections):
         intersections (list): A list of :class:`.Intersection` objects
             produced by :func:`.all_intersections` applied to each of
             the 9 edge-edge pairs from a surface-surface pairing.
+        max_edges (Optional[int]): The maximum number of allowed / expected
+            edges per intersection. This is to avoid infinite loops.
 
     Returns:
         List[.CurvedPolygon]: All of the intersections encountered.
+
+    Raises:
+        RuntimeError: If the number of edges in a curved polygon
+            exceeds ``max_edges``. This is interpreted as a sign
+            that the algorithm failed.
     """
     unused = [intersection for intersection in intersections
               if intersection.interior_curve in _ACCEPTABLE]
@@ -2209,6 +2225,9 @@ def _basic_interior_combine(intersections):
                 break
             next_node = _get_next(curr_node, intersections, unused)
             edge_ends.append((curr_node, next_node))
+            if len(edge_ends) > max_edges:
+                raise RuntimeError(
+                    'Unexpected number of edges', len(edge_ends))
 
         edge_gen = (_ends_to_curve(*pair) for pair in edge_ends)
         result.append(curved_polygon.CurvedPolygon(*edge_gen, _verify=False))

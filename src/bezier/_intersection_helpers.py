@@ -46,10 +46,6 @@ _TOO_MANY_TEMPLATE = (
 # call to _wiggle_interval() will fail the intersection.
 _WIGGLE_START = -2.0**(-16)
 _WIGGLE_END = 1.0 - _WIGGLE_START
-# Even after Newton resolves over- or under-shooting, there may
-# still be a small amount of "leakage" outside [0, 1].
-_CHECK_WIGGLE_START = -2.0**(-50)
-_CHECK_WIGGLE_END = 1.0 - _CHECK_WIGGLE_START
 
 
 def _check_close(s, curve1, t, curve2):
@@ -77,38 +73,6 @@ def _check_close(s, curve1, t, curve2):
         raise ValueError('B_1(s) and B_2(t) are not sufficiently close')
 
     return vec1
-
-
-def _wiggle_interval_py(value):
-    r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
-
-    Allows a little bit of wiggle room outside the interval. Actually
-    checks that values are in :math:`\left[-2^{-50}, 1 + 2^{-50}\right]`.
-
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
-
-    Args:
-        value (float): Value to check in interval.
-
-    Returns:
-        float: The ``value`` if it's in the interval, or ``0`` or ``1``
-        if the value lies slightly outside.
-
-    Raises:
-        ValueError: If one of the values falls outside the unit interval
-        (with wiggle room).
-    """
-    if _helpers.in_interval(value, 0.0, 1.0):
-        return value
-    elif _CHECK_WIGGLE_START < value < 0.0:
-        return 0.0
-    elif 1.0 < value < _CHECK_WIGGLE_END:
-        return 1.0
-    else:
-        raise ValueError('outside of unit interval', value)
 
 
 def _bbox_intersect(nodes1, nodes2):
@@ -1090,8 +1054,8 @@ def _from_linearized_low_level_py(
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
     refined_s, refined_t = newton_refine(orig_s, nodes1, orig_t, nodes2)
-    refined_s = _wiggle_interval(refined_s)
-    refined_t = _wiggle_interval(refined_t)
+    refined_s = _helpers.wiggle_interval(refined_s)
+    refined_t = _helpers.wiggle_interval(refined_t)
     return refined_s, refined_t, True
     # pylint: enable=too-many-locals
 # pylint: enable=too-many-arguments
@@ -1672,7 +1636,6 @@ if _speedup is None:  # pragma: NO COVER
     segment_intersection = _segment_intersection
     newton_refine = _newton_refine
     bbox_intersect = _bbox_intersect
-    _wiggle_interval = _wiggle_interval_py
     parallel_different = _parallel_different
     _from_linearized_low_level = _from_linearized_low_level_py
 else:
@@ -1680,7 +1643,6 @@ else:
     segment_intersection = _speedup.speedup.segment_intersection
     newton_refine = _speedup.speedup.newton_refine_intersect
     bbox_intersect = _speedup.speedup.bbox_intersect
-    _wiggle_interval = _speedup.speedup.wiggle_interval
     parallel_different = _speedup.speedup.parallel_different
     _from_linearized_low_level = _speedup.speedup.from_linearized
 # pylint: enable=invalid-name

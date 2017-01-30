@@ -45,6 +45,7 @@ from numpy.polynomial import polynomial
 import six
 
 from bezier import _curve_helpers
+from bezier import _helpers
 from bezier import _intersection_helpers
 
 
@@ -62,7 +63,6 @@ _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
 _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
 _ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
 _COEFFICIENT_THRESHOLD = 0.5**26  # sqrt(machine precision)
-_PARAM_THRESHOLD = 0.5**51  # 2 (machine precision)
 _NON_SIMPLE_THRESHOLD = 0.5**48  # 16 (machine precision)
 _COINCIDENT_ERR = 'Coincident curves not currently supported'
 _NON_SIMPLE_ERR = 'Polynomial has non-simple roots'
@@ -603,22 +603,6 @@ def _check_non_simple(coeffs):
         raise NotImplementedError(_NON_SIMPLE_ERR, coeffs)
 
 
-def _near_zero(value, threshold=_PARAM_THRESHOLD):
-    """Rounds a number to zero if it is within a specified threshold.
-
-    Args:
-        value (float): Value to be rounded.
-        threshold (Optional[float]): The threshold for rounding.
-
-    Returns:
-        float: The original value or ``0.0``.
-    """
-    if np.abs(value) < threshold:
-        return 0.0
-    else:
-        return value
-
-
 def _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t):
     """Resolve a computed intersection and add to lists.
 
@@ -641,9 +625,13 @@ def _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t):
     s_val, t_val = _intersection_helpers.newton_refine(
         s_val, nodes1, t_val, nodes2)
 
-    s_val = _near_zero(s_val)
-    t_val = _near_zero(t_val)
-    if s_val < 0.0 or t_val < 0.0:
+    # NOTE: This is a bad idea, using exceptions for control-flow.
+    #       In Python, exceptions are very expensive and should not be
+    #       used for high-performance code.
+    try:
+        s_val = _helpers.wiggle_interval(s_val)
+        t_val = _helpers.wiggle_interval(t_val)
+    except ValueError:
         return
 
     final_s.append(s_val)

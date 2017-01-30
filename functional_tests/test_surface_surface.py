@@ -107,6 +107,13 @@ SURFACE10L = bezier.Surface.from_nodes(np.asfortranarray([
     [-2.0, 3.0],
     [1.0, -3.0],
 ]), _copy=False)
+# F11L = sympy.Matrix([[
+#     (t - 2 * s + 36) / 16, (97 - 5 * s - 6 * t) / 32]])
+SURFACE11L = bezier.Surface.from_nodes(np.asfortranarray([
+    [2.25, 3.03125],
+    [2.125, 2.875],
+    [2.3125, 2.84375],
+]), _copy=False)
 
 # F1Q = sympy.Matrix([[
 #     (2 * s - t**2 + t) / 2,
@@ -469,6 +476,32 @@ SURFACE31Q = bezier.Surface.from_nodes(np.asfortranarray([
     [0.0625, -0.5],
     [0.4375, 0.0],
     [-0.125, 0.0],
+]), _copy=False)
+# NOTE: This is a degree-elevated form of SURFACEF11L
+# F32Q = sympy.Matrix([[
+#     (t - 2 * s + 36) / 16, (97 - 5 * s - 6 * t) / 32]])
+SURFACE32Q = bezier.Surface.from_nodes(np.asfortranarray([
+    [2.25, 3.03125],
+    [2.1875, 2.953125],
+    [2.125, 2.875],
+    [2.28125, 2.9375],
+    [2.21875, 2.859375],
+    [2.3125, 2.84375],
+]), _copy=False)
+# NOTE: Node 4 (0-indexed) should be [2.1611328125, 2.875] since the
+#       actual edge is a line with a quadratic parameterization.
+#       The "bad" parameterization of the edge doesn't cause issues
+#       on [0, 1] but it would if the interval contained points on
+#       either side of -30.
+# F33Q = sympy.Matrix([[
+#     (t**2 - 64 * s - 4 * t + 1140) / 512, (24 - s - t) / 8]])
+SURFACE33Q = bezier.Surface.from_nodes(np.asfortranarray([
+    [2.2265625, 3],
+    [2.1640625, 2.9375],
+    [2.1015625, 2.875],
+    [2.22265625, 2.9375],
+    [2.16015625, 2.875],
+    [2.220703125, 2.875],
 ]), _copy=False)
 
 
@@ -1346,6 +1379,33 @@ def test_surfaces1L_and_9L():
 
 def test_surfaces1L_and_10L():
     surface_surface_check_multi(SURFACE1L, SURFACE10L)
+
+
+def test_surfaces11L_and_33Q():
+    # NOTE: Actual value is [4 sqrt(57) - 30]
+    s_val = float.fromhex('0x1.983e62b67adeep-3')
+    start_vals = np.asfortranarray([0.25, s_val, 0.0, 0.0])
+    end_vals = np.asfortranarray([1.0, 1.0, 1.0, 0.0625])
+
+    nodes = np.asfortranarray([
+        [2.21875, 2.9921875],
+        [2.125, 2.875],
+        [2.220703125, 2.875],
+        [2.2265625, 3.0],
+    ])
+    edge_pairs = (
+        (0, 0),
+        (1, 1),
+        (1, 2),
+        (1, 0),
+    )
+    # NOTE: We require a bit more wiggle room for these roots.
+    with CONFIG.wiggle(1013):
+        surface_surface_check(SURFACE11L, SURFACE33Q,
+                              start_vals, end_vals, nodes, edge_pairs)
+        # Test the degree-elevated equivalent.
+        surface_surface_check(SURFACE32Q, SURFACE33Q,
+                              start_vals, end_vals, nodes, edge_pairs)
 
 
 if __name__ == '__main__':

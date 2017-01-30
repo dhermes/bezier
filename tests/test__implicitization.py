@@ -737,33 +737,6 @@ class Test__check_non_simple(utils.NumPyTestCase):
             self.assertIsNone(self._call_function_under_test(new_coeffs))
 
 
-class Test__near_zero(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(value, **kwargs):
-        from bezier import _implicitization
-
-        return _implicitization._near_zero(value, **kwargs)
-
-    def test_unchanged(self):
-        value = 0.5
-        self.assertEqual(value, self._call_function_under_test(value))
-
-    def test_nearby(self):
-        self.assertEqual(0.0, self._call_function_under_test(0.0))
-
-        value = 0.5**60
-        self.assertEqual(0.0, self._call_function_under_test(value))
-        self.assertEqual(0.0, self._call_function_under_test(-value))
-
-    def test_explicit_threshold(self):
-        value = 0.5**20
-        self.assertEqual(value, self._call_function_under_test(value))
-
-        result = self._call_function_under_test(value, threshold=0.5**10)
-        self.assertEqual(0.0, result)
-
-
 class Test__resolve_and_add(utils.NumPyTestCase):
 
     @staticmethod

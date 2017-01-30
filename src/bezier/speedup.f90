@@ -658,11 +658,12 @@ contains
     logical(1), intent(out) :: success
 
     success = .TRUE.
-    if (0.0_dp <= value_ .AND. value_ <= 1.0_dp) then
-       result_ = value_
-    else if (-(0.5_dp**50) < value_ .AND. value_ < 0.0_dp) then
+    if (-0.5_dp**45 < value_ .AND. value_ < 0.5_dp**45) then
        result_ = 0.0_dp
-    else if (1.0_dp < value_ .AND. value_ < 1.0_dp + 0.5_dp**50) then
+    else if (0.5_dp**45 <= value_ .AND. value_ <= 1.0_dp - 0.5_dp**45) then
+       result_ = value_
+    else if ( &
+         1.0_dp - 0.5_dp**45 < value_ .AND. value_ < 1.0_dp + 0.5_dp**45) then
        result_ = 1.0_dp
     else
        success = .FALSE.

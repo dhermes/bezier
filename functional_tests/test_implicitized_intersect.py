@@ -36,6 +36,18 @@ CUSTOM_ERRORS = {
         [ULPS_ALLOWED, ULPS_ALLOWED],
         [ULPS_ALLOWED, ULPS_ALLOWED],
     ]),
+    (50, 54): np.asfortranarray([
+        [0.0, 165.0],
+    ]),
+    (51, 54): np.asfortranarray([
+        [0.0, 18.0],
+    ]),
+    (52, 54): np.asfortranarray([
+        [0.0, 165.0],
+    ]),
+    (53, 54): np.asfortranarray([
+        [0.0, 18.0],
+    ]),
 }
 TANGENT_INTERSECTIONS = (
     (1, 6),

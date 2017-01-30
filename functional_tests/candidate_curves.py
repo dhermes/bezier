@@ -346,6 +346,39 @@ CURVES = (
         [10.0, 0.0],
         [0.0, 0.0],
     ]), _copy=False),
+    # g50 = sympy.Matrix([[(18 - s) / 8, (97 - 5 * s) / 32]])
+    bezier.Curve.from_nodes(np.asfortranarray([
+        [2.25, 3.03125],
+        [2.125, 2.875],
+    ]), _copy=False),
+    # g51 = sympy.Matrix([[(3 * s + 34) / 16, (92 - s) / 32]])
+    bezier.Curve.from_nodes(np.asfortranarray([
+        [2.125, 2.875],
+        [2.3125, 2.84375],
+    ]), _copy=False),
+    # NOTE: This is g50, but degree elevated.
+    # g52 = sympy.Matrix([[(18 - s) / 8, (97 - 5 * s) / 32]])
+    bezier.Curve.from_nodes(np.asfortranarray([
+        [2.25, 3.03125],
+        [2.1875, 2.953125],
+        [2.125, 2.875],
+    ]), _copy=False),
+    # NOTE: This is g51, but degree elevated.
+    # g53 = sympy.Matrix([[(3 * s + 34) / 16, (92 - s) / 32]])
+    bezier.Curve.from_nodes(np.asfortranarray([
+        [2.125, 2.875],
+        [2.21875, 2.859375],
+        [2.3125, 2.84375],
+    ]), _copy=False),
+    # NOTE: This curve has a "bad" parameterization. It is a line, but
+    #       the curve appears quadratic. There are no self-intersections
+    #       or cusps in [0, 1], but the curve should be degree 1.
+    # g54 = sympy.Matrix([[(s**2 + 60 * s + 1076) / 512, 23 / 8]])
+    bezier.Curve.from_nodes(np.asfortranarray([
+        [2.1015625, 2.875],
+        [2.16015625, 2.875],
+        [2.220703125, 2.875],
+    ]), _copy=False),
 )
 
 _SQ31 = np.sqrt(31.0)
@@ -357,6 +390,8 @@ _SQ5 = np.sqrt(5.0)
 _S_ROOT1, _S_ROOT2, _ = runtime_utils.real_roots(
     [17920, -29760, 13512, -1691])
 _T_ROOT1, _T_ROOT2, _ = runtime_utils.real_roots([35, -60, 24, -2])
+# Accurate version of 4 sqrt(57) - 30
+_S_ROOT3 = float.fromhex('0x1.983e62b67adeep-3')
 _EMPTY = np.zeros((0, 4), order='F')
 # NOTE: The intersection information is in 4 columns. The first
 #       column is the s-parameter, the second is the t-parameter, and
@@ -504,5 +539,17 @@ INTERSECTION_INFO = {
     ]),
     (48, 49): np.asfortranarray([
         [0.5, 9.0 / 10.0, 1.0, 0.0],
+    ]),
+    (50, 54): np.asfortranarray([
+        [1.0, _S_ROOT3, 2.125, 2.875],
+    ]),
+    (51, 54): np.asfortranarray([
+        [0.0, _S_ROOT3, 2.125, 2.875],
+    ]),
+    (52, 54): np.asfortranarray([
+        [1.0, _S_ROOT3, 2.125, 2.875],
+    ]),
+    (53, 54): np.asfortranarray([
+        [0.0, _S_ROOT3, 2.125, 2.875],
     ]),
 }

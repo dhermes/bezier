@@ -1321,20 +1321,52 @@ class Test_handle_corners(unittest.TestCase):
         self.assertIs(intersection.second, mock.sentinel.next_second)
 
 
-class Test__identifier(unittest.TestCase):
+class Test__same_intersection(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersection):
+    def _call_function_under_test(intersection1, intersection2, **kwargs):
         from bezier import _surface_helpers
 
-        return _surface_helpers._identifier(intersection)
+        return _surface_helpers._same_intersection(
+            intersection1, intersection2, **kwargs)
 
-    def test_it(self):
-        first = mock.Mock(_edge_index=10, spec=['_edge_index'])
-        second = mock.Mock(_edge_index=99, spec=['_edge_index'])
-        intersection = make_intersect(first, 0.5, second, 0.75)
-        result = self._call_function_under_test(intersection)
-        self.assertEqual(result, (10, 0.5, 99, 0.75))
+    @staticmethod
+    def _make_one(index1, s, index2, t):
+        first = mock.Mock(_edge_index=index1, spec=['_edge_index'])
+        second = mock.Mock(_edge_index=index2, spec=['_edge_index'])
+        return make_intersect(first, s, second, t)
+
+    def test_same(self):
+        intersection = self._make_one(10, 0.5, 99, 0.75)
+        result = self._call_function_under_test(intersection, intersection)
+        self.assertTrue(result)
+
+    def test_almost_same(self):
+        intersection1 = self._make_one(10, 0.5, 99, 0.75)
+        intersection2 = self._make_one(10, 0.5, 99, 0.875)
+        result = self._call_function_under_test(intersection1, intersection2)
+        self.assertFalse(result)
+        result = self._call_function_under_test(
+            intersection1, intersection2, wiggle=0.5)
+        self.assertTrue(result)
+
+    def test_different_edge(self):
+        intersection1 = self._make_one(10, 0.5, 99, 0.5)
+        intersection2 = self._make_one(10, 0.5, 98, 0.5)
+        intersection3 = self._make_one(11, 0.5, 99, 0.5)
+        self.assertFalse(
+            self._call_function_under_test(intersection1, intersection2))
+        self.assertFalse(
+            self._call_function_under_test(intersection1, intersection3))
+
+    def test_different_param(self):
+        intersection1 = self._make_one(1, 0.5, 9, 0.5)
+        intersection2 = self._make_one(1, 0.75, 9, 0.5)
+        intersection3 = self._make_one(1, 0.5, 9, 0.75)
+        self.assertFalse(
+            self._call_function_under_test(intersection1, intersection2))
+        self.assertFalse(
+            self._call_function_under_test(intersection1, intersection3))
 
 
 class Test_verify_duplicates(unittest.TestCase):
@@ -1833,10 +1865,11 @@ class Test__tangent_only_intersections(unittest.TestCase):
 class Test__basic_interior_combine(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(intersections):
+    def _call_function_under_test(intersections, **kwargs):
         from bezier import _surface_helpers
 
-        return _surface_helpers._basic_interior_combine(intersections)
+        return _surface_helpers._basic_interior_combine(
+            intersections, **kwargs)
 
     def test_it(self):
         import bezier
@@ -1929,6 +1962,28 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
             [0.25, 0.75],
             [0.0, 0.125],
         ]))
+
+    @mock.patch('bezier._surface_helpers._get_next',
+                return_value=mock.sentinel.next_)
+    @mock.patch('bezier._surface_helpers._to_front',
+                return_value=mock.sentinel.front)
+    def _too_many_edges_helper(self, to_front, get_next, **kwargs):
+        start = make_intersect(
+            None, 0.0, None, 0.0, interior_curve=get_enum('second'))
+        with self.assertRaises(RuntimeError):
+            self._call_function_under_test([start], **kwargs)
+
+        max_edges = kwargs.pop('max_edges', 10)
+        self.assertEqual(kwargs, {})
+
+        self.assertEqual(to_front.call_count, max_edges)
+        self.assertEqual(get_next.call_count, max_edges + 1)
+
+    def test_too_many_edges(self):
+        self._too_many_edges_helper()
+
+    def test_too_many_edges_explicit_max(self):
+        self._too_many_edges_helper(max_edges=3)
 
 
 class Test_combine_intersections(utils.NumPyTestCase):

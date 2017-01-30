@@ -323,3 +323,138 @@ class Test_matrix_product(utils.NumPyTestCase):
         # matrix_product() has the side-effect of returning a "view"
         # since it returns the transpose of a product of transposes.
         self.assertFalse(result.flags.owndata)
+
+
+class Test__wiggle_interval_py(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(value, **kwargs):
+        from bezier import _helpers
+
+        return _helpers._wiggle_interval_py(value, **kwargs)
+
+    def test_at_endpoint(self):
+        # Really just making sure the function doesn't raise.
+        result = self._call_function_under_test(0.0)
+        self.assertEqual(result, 0.0)
+        result = self._call_function_under_test(1.0)
+        self.assertEqual(result, 1.0)
+
+    def test_near_endpoint(self):
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(1.0 + 2.0**(-20))
+
+    def test_outside_below(self):
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(-0.25)
+
+    def test_outside_above(self):
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(1.5)
+
+    def test_valid(self):
+        # Really just making sure the function doesn't raise.
+        result = self._call_function_under_test(0.25)
+        self.assertEqual(result, 0.25)
+
+    def test_wiggle_below(self):
+        value = -2.0**(-60)
+        result = self._call_function_under_test(value)
+        self.assertEqual(result, 0.0)
+
+    def test_wiggle_above(self):
+        value = 1 + 2.0**(-52)
+        result = self._call_function_under_test(value)
+        self.assertEqual(result, 1.0)
+
+    def test_outer_boundary(self):
+        # Values near / at the left-hand boundary.
+        value = float.fromhex('-0x1.ffffffffffffep-46')
+        self.assertEqual(
+            self._call_function_under_test(value), 0.0)
+        value = float.fromhex('-0x1.fffffffffffffp-46')
+        self.assertEqual(
+            self._call_function_under_test(value), 0.0)
+        value = float.fromhex('-0x1.0000000000000p-45')
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(value)
+        value = float.fromhex('-0x1.0000000000001p-45')
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(value)
+
+        # Values near / at the right-hand boundary.
+        value = float.fromhex('0x1.000000000007ep+0')
+        self.assertEqual(
+            self._call_function_under_test(value), 1.0)
+        value = float.fromhex('0x1.000000000007fp+0')
+        self.assertEqual(
+            self._call_function_under_test(value), 1.0)
+        value = float.fromhex('0x1.0000000000080p+0')
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(value)
+        value = float.fromhex('0x1.0000000000081p+0')
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(value)
+
+    def test_inner_boundary(self):
+        # Values near / at the left-hand boundary.
+        value = float.fromhex('0x1.ffffffffffffep-46')
+        self.assertEqual(
+            self._call_function_under_test(value), 0.0)
+        value = float.fromhex('0x1.fffffffffffffp-46')
+        self.assertEqual(
+            self._call_function_under_test(value), 0.0)
+        value = float.fromhex('0x1.0000000000000p-45')
+        self.assertEqual(
+            self._call_function_under_test(value), value)
+        value = float.fromhex('0x1.0000000000001p-45')
+        self.assertEqual(
+            self._call_function_under_test(value), value)
+
+        # Values near / at the right-hand boundary.
+        value = float.fromhex('0x1.ffffffffffefep-1')
+        self.assertEqual(
+            self._call_function_under_test(value), value)
+        value = float.fromhex('0x1.ffffffffffeffp-1')
+        self.assertEqual(
+            self._call_function_under_test(value), value)
+        value = float.fromhex('0x1.fffffffffff00p-1')
+        self.assertEqual(
+            self._call_function_under_test(value), value)
+        value = float.fromhex('0x1.fffffffffff01p-1')
+        self.assertEqual(
+            self._call_function_under_test(value), 1.0)
+        value = float.fromhex('0x1.fffffffffff02p-1')
+        self.assertEqual(
+            self._call_function_under_test(value), 1.0)
+
+    def test_custom_wiggle(self):
+        value = 1.25
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(value)
+
+        result = self._call_function_under_test(value, wiggle=0.5)
+        self.assertEqual(result, 1.0)
+
+        value = 0.875
+        self.assertEqual(
+            self._call_function_under_test(value), value)
+        self.assertEqual(
+            self._call_function_under_test(value, wiggle=0.25), 1.0)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_wiggle_interval(Test__wiggle_interval_py):
+
+    @staticmethod
+    def _call_function_under_test(value):
+        from bezier import _speedup
+
+        return _speedup.speedup.wiggle_interval(value)
+
+    def test_custom_wiggle(self):
+        # Fortran implementation doesn't support optional wiggle. This
+        # isn't because Fortran **can't** (just use "optional"), it's just
+        # to allow the compiler to pre-compute 1 + wiggle / 1 - wiggle
+        # rather than having to deal with it at run-time.
+        pass
