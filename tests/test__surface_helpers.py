@@ -1963,10 +1963,6 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
             [0.0, 0.125],
         ]))
 
-    @mock.patch('bezier._surface_helpers._get_next',
-                return_value=mock.sentinel.next_)
-    @mock.patch('bezier._surface_helpers._to_front',
-                return_value=mock.sentinel.front)
     def _too_many_edges_helper(self, to_front, get_next, **kwargs):
         start = make_intersect(
             None, 0.0, None, 0.0, interior_curve=get_enum('second'))
@@ -1979,11 +1975,19 @@ class Test__basic_interior_combine(utils.NumPyTestCase):
         self.assertEqual(to_front.call_count, max_edges)
         self.assertEqual(get_next.call_count, max_edges + 1)
 
-    def test_too_many_edges(self):
-        self._too_many_edges_helper()
+    @mock.patch('bezier._surface_helpers._get_next',
+                return_value=mock.sentinel.next_)
+    @mock.patch('bezier._surface_helpers._to_front',
+                return_value=mock.sentinel.front)
+    def test_too_many_edges(self, to_front, get_next):
+        self._too_many_edges_helper(to_front, get_next)
 
-    def test_too_many_edges_explicit_max(self):
-        self._too_many_edges_helper(max_edges=3)
+    @mock.patch('bezier._surface_helpers._get_next',
+                return_value=mock.sentinel.next_)
+    @mock.patch('bezier._surface_helpers._to_front',
+                return_value=mock.sentinel.front)
+    def test_too_many_edges_explicit_max(self, to_front, get_next):
+        self._too_many_edges_helper(to_front, get_next, max_edges=3)
 
 
 class Test_combine_intersections(utils.NumPyTestCase):

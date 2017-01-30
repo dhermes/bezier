@@ -1818,7 +1818,7 @@ def verify_duplicates(duplicates, uniques):
         if len(matches) != 1:
             raise ValueError('Duplicate not among uniques', dupe)
 
-        matched, = matches
+        matched = matches[0]
         counter[matched] += 1
 
     for index, count in six.iteritems(counter):
