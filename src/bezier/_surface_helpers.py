@@ -995,16 +995,19 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
     # The first column of the jacobian matrix is B_s (i.e. the
     # left-most values in ``jac_both``).
-    jac_mat = np.asfortranarray([
-        [jac_both[0, 0], jac_both[0, 2]],
-        [jac_both[0, 1], jac_both[0, 3]],
-    ])
-    rhs = np.asfortranarray([
-        [x_val - surf_x],
-        [y_val - surf_y],
-    ])
-    soln = np.linalg.solve(jac_mat, rhs)
-    return s + soln[0, 0], t + soln[1, 0]
+    # NOTE: We have a system
+    #           [A C][ds] = [E]
+    #           [B D][dt]   [F]
+    #       This is not a typo, A->B->C->D matches the data:
+    a_val, b_val, c_val, d_val = jac_both[0, :]
+    #       and
+    e_val = x_val - surf_x
+    f_val = y_val - surf_y
+    # Now solve:
+    denom = a_val * d_val - b_val * c_val
+    delta_s = (d_val * e_val - c_val * f_val) / denom
+    delta_t = (a_val * f_val - b_val * e_val) / denom
+    return s + delta_s, t + delta_t
 
 
 def locate_point(surface, x_val, y_val):
