@@ -874,6 +874,46 @@ def _jacobian_det(nodes, degree, st_vals):
             bs_bt_vals[:, 1] * bs_bt_vals[:, 2])
 
 
+def _newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
+    r"""Helper for :func:`newton_refine`.
+
+    We have a system:
+
+    .. code-block:: rest
+
+       [A C][ds] = [E]
+       [B D][dt]   [F]
+
+    This is not a typo, ``A->B->C->D`` matches the data in ``jac_both``.
+    We solve directly rather than using a linear algebra utility:
+
+    .. code-block:: rest
+
+       ds = (D E - C F) / (A D - B C)
+       dt = (A F - B E) / (A D - B C)
+
+    Args:
+        jac_both (numpy.ndarray): A 1x4 matrix of entries in a Jacobian.
+        x_val (float): An ``x``-value we are trying to reach.
+        surf_x (float): The actual ``x``-value we are currently at.
+        y_val (float): An ``y``-value we are trying to reach.
+        surf_y (float): The actual ``x``-value we are currently at.
+
+    Returns:
+        Tuple[float, float]: The pair of values the solve the
+         linear system.
+    """
+    a_val, b_val, c_val, d_val = jac_both[0, :]
+    #       and
+    e_val = x_val - surf_x
+    f_val = y_val - surf_y
+    # Now solve:
+    denom = a_val * d_val - b_val * c_val
+    delta_s = (d_val * e_val - c_val * f_val) / denom
+    delta_t = (a_val * f_val - b_val * e_val) / denom
+    return delta_s, delta_t
+
+
 def newton_refine(nodes, degree, x_val, y_val, s, t):
     r"""Refine a solution to :math:`B(s, t) = p` using Newton's method.
 
@@ -995,18 +1035,8 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
     # The first column of the jacobian matrix is B_s (i.e. the
     # left-most values in ``jac_both``).
-    # NOTE: We have a system
-    #           [A C][ds] = [E]
-    #           [B D][dt]   [F]
-    #       This is not a typo, A->B->C->D matches the data:
-    a_val, b_val, c_val, d_val = jac_both[0, :]
-    #       and
-    e_val = x_val - surf_x
-    f_val = y_val - surf_y
-    # Now solve:
-    denom = a_val * d_val - b_val * c_val
-    delta_s = (d_val * e_val - c_val * f_val) / denom
-    delta_t = (a_val * f_val - b_val * e_val) / denom
+    delta_s, delta_t = _newton_refine_solve(
+        jac_both, x_val, surf_x, y_val, surf_y)
     return s + delta_s, t + delta_t
 
 
