@@ -1102,8 +1102,8 @@ def _add_intersection(intersection, intersections):
     for existing in intersections:
         if (existing.first is intersection.first and
                 existing.second is intersection.second and
-                _helpers.n_bits_away(existing.s, intersection.s) and
-                _helpers.n_bits_away(existing.t, intersection.t)):
+                _helpers.ulps_away(existing.s, intersection.s) and
+                _helpers.ulps_away(existing.t, intersection.t)):
             return
 
     intersections.append(intersection)

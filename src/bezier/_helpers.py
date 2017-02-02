@@ -21,7 +21,7 @@ except ImportError:  # pragma: NO COVER
     _speedup = None
 
 
-_EPS = 2.0**(-40)
+_EPS = 0.5**40
 
 
 def vector_close(vec1, vec2, eps=_EPS):
@@ -174,20 +174,21 @@ def cross_product(vec0, vec1):
     return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]
 
 
-def n_bits_away(value1, value2, num_bits=1):
-    r"""Determines if ``value1`` is within ``n`` bits of ``value2``.
+def ulps_away(value1, value2, num_bits=1):
+    r"""Determines if ``value1`` is within ``n`` ULPs of ``value2``.
 
     Uses ``np.spacing`` to determine the unit of least precision (ULP)
     for ``value1`` and then checks that the different between the values
     does not exceed ``n`` ULPs.
 
     When ``value1=0`` or ``value2=0``, we instead check that the other is
-    less than :math:`2^{-40}` in magnitude.
+    less than :math:`2^{-40}` (``_EPS``) in magnitude.
 
     Args:
         value1 (float): The first value that being compared.
         value2 (float): The second value that being compared.
-        num_bits (Optional[int]): Defaults to ``1``.
+        num_bits (Optional[int]): The number of bits allowed to differ.
+            Defaults to ``1``.
 
     Returns:
         bool: Predicate indicating if the values agree to ``n`` bits.

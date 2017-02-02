@@ -211,13 +211,13 @@ class Test_cross_product(utils.NumPyTestCase):
         self.assertEqual(actual_cross, expected)
 
 
-class Test_n_bits_away(unittest.TestCase):
+class Test_ulps_away(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(value1, value2, **kwargs):
         from bezier import _helpers
 
-        return _helpers.n_bits_away(value1, value2, **kwargs)
+        return _helpers.ulps_away(value1, value2, **kwargs)
 
     def test_first_zero(self):
         self.assertTrue(

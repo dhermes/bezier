@@ -136,7 +136,7 @@ class Config(object):
         """
         msg = '{} ~= {} to {:d} bits'.format(
             approximated.hex(), exact.hex(), self._wiggle)
-        assert _helpers.n_bits_away(
+        assert _helpers.ulps_away(
             exact, approximated, num_bits=self._wiggle), msg
 
     def run(self, mod_globals):
