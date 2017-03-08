@@ -442,12 +442,13 @@ class Curve(_base.Base):
         """
         return _curve_helpers.evaluate_multi(self._nodes, s_vals)
 
-    def plot(self, num_pts, color=None, ax=None):
+    def plot(self, num_pts, color=None, alpha=None, ax=None):
         """Plot the current curve.
 
         Args:
             num_pts (int): Number of points to plot.
             color (Optional[Tuple[float, float, float]]): Color as RGB profile.
+            alpha (Optional[float]): The alpha channel for the color.
             ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
                 to add plot to.
 
@@ -468,7 +469,7 @@ class Curve(_base.Base):
         if ax is None:
             ax = _plot_helpers.new_axis()
 
-        ax.plot(points[:, 0], points[:, 1], color=color)
+        ax.plot(points[:, 0], points[:, 1], color=color, alpha=alpha)
 
         return ax
 

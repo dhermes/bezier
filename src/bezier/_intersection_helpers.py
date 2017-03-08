@@ -46,6 +46,9 @@ _TOO_MANY_TEMPLATE = (
 # call to _wiggle_interval() will fail the intersection.
 _WIGGLE_START = -2.0**(-16)
 _WIGGLE_END = 1.0 - _WIGGLE_START
+# Number of bits allowed in _add_intersection() to consider two
+# intersections to be "identical".
+_SIMILAR_ULPS = 1
 
 
 def _check_close(s, curve1, t, curve2):
@@ -1045,6 +1048,8 @@ def _from_linearized_low_level_py(
             if parallel_different(start_node1, end_node1,
                                   start_node2, end_node2):
                 return None, None, False
+        elif bbox_intersect(nodes1, nodes2) == BoxIntersectionType.DISJOINT:
+            return None, None, False
 
         raise NotImplementedError('Line segments parallel.')
 
@@ -1102,8 +1107,10 @@ def _add_intersection(intersection, intersections):
     for existing in intersections:
         if (existing.first is intersection.first and
                 existing.second is intersection.second and
-                _helpers.ulps_away(existing.s, intersection.s) and
-                _helpers.ulps_away(existing.t, intersection.t)):
+                _helpers.ulps_away(
+                    existing.s, intersection.s, num_bits=_SIMILAR_ULPS) and
+                _helpers.ulps_away(
+                    existing.t, intersection.t, num_bits=_SIMILAR_ULPS)):
             return
 
     intersections.append(intersection)

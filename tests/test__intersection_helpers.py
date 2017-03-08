@@ -762,7 +762,7 @@ class Test__from_linearized_low_level_py(utils.NumPyTestCase):
                 error1, 0.0, 1.0, start_node1, end_node1, nodes1,
                 error2, 0.0, 1.0, start_node2, end_node2, nodes2)
 
-    def test_parallel_non_degree_one(self):
+    def test_parallel_non_degree_one_disjoint(self):
         start_node1 = np.asfortranarray([[0.0, 0.0]])
         end_node1 = np.asfortranarray([[1.0, 1.0]])
         nodes1 = np.asfortranarray([
@@ -777,6 +777,29 @@ class Test__from_linearized_low_level_py(utils.NumPyTestCase):
             [2.0, 2.0],
             [2.5009765625, 2.5009765625],
             [3.0, 3.0],
+        ])
+        error2 = np.nan
+
+        _, _, success = self._call_function_under_test(
+                error1, 0.0, 1.0, start_node1, end_node1, nodes1,
+                error2, 0.0, 1.0, start_node2, end_node2, nodes2)
+        self.assertFalse(success)
+
+    def test_parallel_non_degree_not_disjoint(self):
+        start_node1 = np.asfortranarray([[0.0, 0.0]])
+        end_node1 = np.asfortranarray([[1.0, 1.0]])
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        error1 = 0.0
+
+        start_node2 = np.asfortranarray([[0.5, 0.75]])
+        end_node2 = np.asfortranarray([[1.5, 1.75]])
+        nodes2 = np.asfortranarray([
+            [0.5, 0.75],
+            [1.0009765625, 1.2509765625],
+            [1.5, 1.75],
         ])
         error2 = np.nan
 
@@ -903,6 +926,34 @@ class Test__add_intersection(unittest.TestCase):
         self.assertEqual(len(intersections), 1)
         self.assertIs(intersections[0], intersection1)
         self.assertIsNot(intersections[0], intersection2)
+
+    def test_ulp_wiggle(self):
+        from bezier import _intersection_helpers
+
+        intersection1 = _intersection_helpers.Intersection(
+            mock.sentinel.first, 0.5, mock.sentinel.second, 0.5)
+        delta = 3 * np.spacing(0.5)
+        intersection2 = _intersection_helpers.Intersection(
+            mock.sentinel.first, 0.5 + delta, mock.sentinel.second, 0.5)
+        intersections = [intersection1]
+
+        with mock.patch.object(_intersection_helpers, '_SIMILAR_ULPS', new=10):
+            self.assertIsNone(
+                self._call_function_under_test(intersection2, intersections))
+            # No change since delta is within 10 ULPs.
+            self.assertEqual(intersections, [intersection1])
+
+        with mock.patch.object(_intersection_helpers, '_SIMILAR_ULPS', new=3):
+            self.assertIsNone(
+                self._call_function_under_test(intersection2, intersections))
+            # No change since delta is within 3 ULPs.
+            self.assertEqual(intersections, [intersection1])
+
+        with mock.patch.object(_intersection_helpers, '_SIMILAR_ULPS', new=2):
+            self.assertIsNone(
+                self._call_function_under_test(intersection2, intersections))
+            # Add new intersection since delta is not within 2 ULPs.
+            self.assertEqual(intersections, [intersection1, intersection2])
 
 
 class Test__endpoint_check(unittest.TestCase):

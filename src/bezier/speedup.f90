@@ -744,6 +744,7 @@ contains
     integer, intent(out) :: py_exc
     ! Variables outside of signature.
     real(dp) :: s, t
+    integer :: enum_
     logical(1) :: success
 
     py_exc = 0
@@ -777,6 +778,13 @@ contains
           call parallel_different( &
                start_node1, end_node1, start_node2, end_node2, success)
           if (success) then
+             does_intersect = .FALSE.
+             return
+          end if
+       else
+          call bbox_intersect( &
+               degree1 + 1, nodes1, degree2 + 1, nodes2, enum_)
+          if (enum_ == 2) then  ! Disjoint
              does_intersect = .FALSE.
              return
           end if
