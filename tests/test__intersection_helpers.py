@@ -241,7 +241,7 @@ class Test__linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(nodes, 4)
         # D^2 v = [1.5, 2.25], [1.5, -4.5], [1.5, 9]
         expected = 0.125 * 4 * 3 * np.sqrt(1.5**2 + 9.0**2)
-        local_eps = abs(np.spacing(expected))  # pylint: disable=no-member
+        local_eps = abs(SPACING(expected))
         self.assertAlmostEqual(error_val, expected, delta=local_eps)
 
     def test_cubic(self):
@@ -781,8 +781,8 @@ class Test__from_linearized_low_level_py(utils.NumPyTestCase):
         error2 = np.nan
 
         _, _, success = self._call_function_under_test(
-                error1, 0.0, 1.0, start_node1, end_node1, nodes1,
-                error2, 0.0, 1.0, start_node2, end_node2, nodes2)
+            error1, 0.0, 1.0, start_node1, end_node1, nodes1,
+            error2, 0.0, 1.0, start_node2, end_node2, nodes2)
         self.assertFalse(success)
 
     def test_parallel_non_degree_not_disjoint(self):
@@ -932,7 +932,7 @@ class Test__add_intersection(unittest.TestCase):
 
         intersection1 = _intersection_helpers.Intersection(
             mock.sentinel.first, 0.5, mock.sentinel.second, 0.5)
-        delta = 3 * np.spacing(0.5)
+        delta = 3 * SPACING(0.5)
         intersection2 = _intersection_helpers.Intersection(
             mock.sentinel.first, 0.5 + delta, mock.sentinel.second, 0.5)
         intersections = [intersection1]

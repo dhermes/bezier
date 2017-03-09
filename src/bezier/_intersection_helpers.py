@@ -987,7 +987,7 @@ def _parallel_different(start0, end0, start1, end1):
     return not _helpers.in_interval(0.0, min_val, max_val)
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-return-statements
 def _from_linearized_low_level_py(
         error1, start1, end1, start_node1, end_node1, nodes1,
         error2, start2, end2, start_node2, end_node2, nodes2):
@@ -1063,7 +1063,7 @@ def _from_linearized_low_level_py(
     refined_t = _helpers.wiggle_interval(refined_t)
     return refined_s, refined_t, True
     # pylint: enable=too-many-locals
-# pylint: enable=too-many-arguments
+# pylint: enable=too-many-arguments,too-many-return-statements
 
 
 def from_linearized(first, second, intersections):
