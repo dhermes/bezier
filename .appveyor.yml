@@ -111,8 +111,8 @@ install:
   - cmd: conda install enum34 matplotlib numpy six
 
   # Install ``bezier``.
-  - cmd: python setup.py build_ext --compiler=mingw32
-  - cmd: python setup.py install
+  - "%CMD_IN_ENV% python setup.py build_ext --compiler=msvc --inplace"
+  - "%CMD_IN_ENV% python setup.py install"
 
   # Install (hardcoded) test dependencies (should use ``tox``).
 
