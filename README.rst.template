@@ -73,7 +73,7 @@ Development
 -----------
 
 To work on adding a feature or to run the functional tests,
-See the `DEVELOPMENT doc`_ for more information on how to get
+see the `DEVELOPMENT doc`_ for more information on how to get
 started.
 
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
