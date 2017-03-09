@@ -118,7 +118,7 @@ functional test case:
 
 .. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_curves11_and_26.png
 
-and there is a `curve-curve doc`_ which captures most of the cases in the
+and there is a `curve-curve doc`_ which captures many of the cases in the
 functional tests.
 
 .. _curve-curve doc: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
