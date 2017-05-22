@@ -1,5 +1,5 @@
 ---
-title: 'Helper for B&#00E9;zier Curves, Triangles, and Higher Order Objects'
+title: 'Helper for B&#xe9;zier Curves, Triangles, and Higher Order Objects'
 tags:
   - example
   - tags
@@ -18,15 +18,15 @@ bibliography: paper.bib
 
 # Summary
 
-`bezier` is a Python helper for B&#00E9;zier [Curves][1], [Triangles][2],
+`bezier` is a Python helper for B&#xe9;zier [Curves][1], [Triangles][2],
 and Higher Order Objects.
 
 This library provides:
 
-- Support for B&#00E9;zier [`Curves`][5]
-- Support for B&#00E9;zier [`Surfaces`][6]
+- Support for B&#xe9;zier [`Curves`][5]
+- Support for B&#xe9;zier [`Surfaces`][6]
 
-and may support B&#00E9;zier Solids and and Higher Order Objects at a later
+and may support B&#xe9;zier Solids and and Higher Order Objects at a later
 time.
 
 -![Surface-surface intersection example](https://github.com/dhermes/bezier/blob/master/docs/images/test_surfaces6Q_and_7Q.png)
