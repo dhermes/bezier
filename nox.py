@@ -31,7 +31,7 @@ DOCS_DEPS = (
     '--requirement',
     os.path.join(NOX_DIR, 'docs', 'requirements.txt'),
 )
-DOCS_INTERP = 'python3.6'
+SINGLE_INTERP = 'python3.6'
 
 
 def get_path(*names):
@@ -90,7 +90,7 @@ def functional(session):
 
 @nox.session
 def docs(session):
-    session.interpreter = DOCS_INTERP
+    session.interpreter = SINGLE_INTERP
 
     # Install all dependencies.
     session.install(*DOCS_DEPS)
@@ -116,7 +116,7 @@ def get_doctest_args(session):
 
 @nox.session
 def doctest(session):
-    session.interpreter = DOCS_INTERP
+    session.interpreter = SINGLE_INTERP
     if 'NO_IMAGES' not in os.environ:
         reason = 'NO_IMAGES=True must be set'
         print(reason, file=sys.stderr)
@@ -130,3 +130,58 @@ def doctest(session):
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
     session.run(*run_args)
+
+
+@nox.session
+def lint(session):
+    session.interpreter = SINGLE_INTERP
+    if 'PYTHONPATH' not in os.environ:
+        reason = 'PYTHONPATH env. var. must point to functional_tests/'
+        print(reason, file=sys.stderr)
+        raise nox.command.CommandFailed(reason=reason)
+
+    # Install all dependencies.
+    local_deps = BASE_DEPS + (
+        'docutils',
+        'flake8',
+        'flake8-import-order',
+        'matplotlib',
+        'Pygments',
+        'pylint',
+    )
+    session.install(*local_deps)
+    # Install this package.
+    session.install('.')
+
+    # Run the script to check that the README is valid.
+    check_path = get_path('scripts', 'check_readme.py')
+    session.run('python', check_path)
+    # Run the script to check that setup.py is valid.
+    setup_file = get_path('setup.py')
+    session.run(
+        'python', setup_file, 'check', '--metadata',
+        '--restructuredtext', '--strict')
+    # Run flake8 over the code to check import order.
+    session.run(
+        'flake8',
+        '--import-order-style=google',
+        '--application-import-names=bezier,tests',
+        get_path('src', 'bezier'),
+        get_path('tests'),
+    )
+    # Run Pylint over the library source.
+    session.run(
+        'pylint', '--rcfile', 'pylintrc',
+        '--max-module-lines=2463',
+        get_path('src', 'bezier'),
+    )
+    # Run Pylint over the tests source.
+    session.run(
+        'pylint', '--rcfile', 'pylintrc',
+        '--disable=missing-docstring',
+        '--disable=protected-access',
+        '--disable=too-many-public-methods',
+        '--max-module-lines=2324',
+        get_path('functional_tests'),
+        get_path('tests'),
+    )

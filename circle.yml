@@ -5,7 +5,7 @@ machine:
 dependencies:
   override:
     # Needed for testing (NumPy distutils needed for install)
-    - pip install --upgrade pip tox tox-pyenv numpy nox-automation
+    - pip install --upgrade pip numpy nox-automation
     # latest as of May 22, 2017: 2.7.13, 3.5.3, 3.6.1
     - pyenv local 2.7.12 3.5.3 3.6.1
 
@@ -16,16 +16,11 @@ test:
     - nox -s cover
     - nox -s docs
     - NO_IMAGES=True nox -s doctest
-    - tox -e lint
+    - PYTHONPATH=functional_tests/ nox -s lint
     - nox -s functional
   post:
     - .nox/cover/bin/pip install coveralls
     - .nox/cover/bin/coveralls
-
-general:
-  branches:
-    ignore:
-      - gh-pages
 
 deployment:
   release:
