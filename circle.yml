@@ -5,22 +5,22 @@ machine:
 dependencies:
   override:
     # Needed for testing (NumPy distutils needed for install)
-    - pip install --upgrade pip tox tox-pyenv numpy
-    # latest as of Oct. 31, 2016: 2.7.12, 3.4.5, 3.5.2
-    - pyenv local 2.7.12 3.4.4 3.5.2
+    - pip install --upgrade pip tox tox-pyenv numpy nox-automation
+    # latest as of May 22, 2017: 2.7.13, 3.5.3, 3.6.1
+    - pyenv local 2.7.13 3.5.3 3.6.1
 
 test:
   override:
-    - tox -e py34
-    - tox -e py35
-    - tox -e cover
+    - nox -s "unit_tests(python_version='3.5')"
+    - nox -s "unit_tests(python_version='3.6')"
+    - nox -s cover
     - tox -e docs
     - tox -e doctest
     - tox -e lint
-    - tox -e functional
+    - nox -s functional
   post:
-    - .tox/cover/bin/pip install coveralls
-    - .tox/cover/bin/coveralls
+    - .nox/cover/bin/pip install coveralls
+    - .nox/cover/bin/coveralls
 
 general:
   branches:
