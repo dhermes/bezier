@@ -1,0 +1,23 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/8bd28155b7a8a2097a57ac314b7bf234081bd310/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "http://orcid.org/0000-0001-7366-173X",
+      "@type": "Person",
+      "affiliation": "University of California, Berkeley",
+      "email": "daniel.j.hermes@gmail.com",
+      "name": "Danny Hermes"
+    }
+  ],
+  "codeRepository": "https://github.com/dhermes/bezier",
+  "dateCreated": "2017-05-22",
+  "dateModified": "2017-05-22",
+  "datePublished": "2017-05-22",
+  "description": "Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects",
+  "identifier": "",
+  "keywords": "Geometry, Curve, B\u00e9zier, Intersection, Python",
+  "license": "Apache 2.0",
+  "title": "B\u00e9zier",
+  "version": "0.3.0"
+}
