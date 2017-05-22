@@ -14,8 +14,8 @@ test:
     - nox -s "unit_tests(python_version='3.5')"
     - nox -s "unit_tests(python_version='3.6')"
     - nox -s cover
-    - tox -e docs
-    - tox -e doctest
+    - nox -s docs
+    - NO_IMAGES=True nox -s doctest
     - tox -e lint
     - nox -s functional
   post:

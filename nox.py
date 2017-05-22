@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
+
 import os
+import sys
 
 import nox
+import nox.command
 
 
 BASE_DEPS = (
@@ -22,10 +26,12 @@ BASE_DEPS = (
     'numpy',
     'pytest',
 )
-DOCS_DEPS = (
-    os.path.join('docs', 'requirements.txt'),
-)
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
+DOCS_DEPS = (
+    '--requirement',
+    os.path.join(NOX_DIR, 'docs', 'requirements.txt'),
+)
+DOCS_INTERP = 'python3.6'
 
 
 def get_path(*names):
@@ -58,7 +64,7 @@ def cover(session):
     # Install this package.
     session.install('.')
 
-    # Run py.test against the unit tests.
+    # Run py.test with coverage against the unit tests.
     run_args = ['py.test', '--cov=bezier', '--cov=tests']
     run_args += session.posargs
     run_args += [
@@ -77,6 +83,50 @@ def functional(session):
     # Install this package.
     session.install('.')
 
-    # Run py.test against the unit tests.
+    # Run py.test against the functional tests.
     run_args = ['py.test'] + session.posargs + [get_path('functional_tests')]
+    session.run(*run_args)
+
+
+@nox.session
+def docs(session):
+    session.interpreter = DOCS_INTERP
+
+    # Install all dependencies.
+    session.install(*DOCS_DEPS)
+    # Install this package.
+    session.install('.')
+
+    # Run the script for building docs.
+    command = get_path('scripts', 'build_docs.sh')
+    session.run(command)
+
+
+def get_doctest_args(session):
+    run_args = [
+        'sphinx-build', '-W',
+        '-b', 'doctest',
+        '-d', get_path('docs', 'build', 'doctrees'),
+        get_path('docs'),
+        get_path('docs', 'build', 'doctest'),
+    ]
+    run_args += session.posargs
+    return run_args
+
+
+@nox.session
+def doctest(session):
+    session.interpreter = DOCS_INTERP
+    if 'NO_IMAGES' not in os.environ:
+        reason = 'NO_IMAGES=True must be set'
+        print(reason, file=sys.stderr)
+        raise nox.command.CommandFailed(reason=reason)
+
+    # Install all dependencies.
+    session.install(*DOCS_DEPS)
+    # Install this package.
+    session.install('.')
+
+    # Run the script for building docs and running doctests.
+    run_args = get_doctest_args(session)
     session.run(*run_args)
