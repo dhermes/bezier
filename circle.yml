@@ -7,7 +7,7 @@ dependencies:
     # Needed for testing (NumPy distutils needed for install)
     - pip install --upgrade pip tox tox-pyenv numpy nox-automation
     # latest as of May 22, 2017: 2.7.13, 3.5.3, 3.6.1
-    - pyenv local 2.7.13 3.5.3 3.6.1
+    - pyenv local 2.7.12 3.5.3 3.6.1
 
 test:
   override:
