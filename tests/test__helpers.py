@@ -446,11 +446,11 @@ class Test__wiggle_interval_py(unittest.TestCase):
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_wiggle_interval(Test__wiggle_interval_py):
 
-    @staticmethod
-    def _call_function_under_test(value):
+    def _call_function_under_test(self, value, **kwargs):
         from bezier import _speedup
 
-        return _speedup.speedup.wiggle_interval(value)
+        self.assertEqual(kwargs, {})
+        return _speedup.speedup.wiggle_interval(value, **kwargs)
 
     def test_custom_wiggle(self):
         # Fortran implementation doesn't support optional wiggle. This

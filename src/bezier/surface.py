@@ -261,8 +261,9 @@ class Surface(_base.Base):
         else:
             raise ValueError(num_nodes, 'not a triangular number')
 
+    # pylint: disable=missing-return-doc,missing-return-type-doc
     @property
-    def area(self):  # pylint: disable=missing-returns-doc
+    def area(self):
         """float: The area of the current surface.
 
         Raises:
@@ -272,6 +273,7 @@ class Surface(_base.Base):
             raise NotImplementedError(
                 'Area computation not yet implemented.')
         return self._area
+    # pylint: enable=missing-return-doc,missing-return-type-doc
 
     @property
     def width(self):

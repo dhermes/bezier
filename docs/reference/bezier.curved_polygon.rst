@@ -1,5 +1,5 @@
-bezier.curved_polygon module
-============================
+bezier\.curved\_polygon module
+==============================
 
 .. automodule:: bezier.curved_polygon
     :members:

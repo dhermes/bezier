@@ -119,6 +119,9 @@ class Config(object):
 
         Args:
             wiggle (int): The temporary amount of wiggle room.
+
+        Yields:
+            Config: the current configuration.
         """
         old_wiggle = self._wiggle
         try:

@@ -1,5 +1,5 @@
-bezier.surface module
-=====================
+bezier\.surface module
+======================
 
 .. automodule:: bezier.surface
     :members:

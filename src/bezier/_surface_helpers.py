@@ -364,13 +364,13 @@ def polynomial_sign(poly_surface):
         if not sub_polys:
             break
 
-    if len(sub_polys) == 0:
-        # NOTE: We are guaranteed that ``len(signs) <= 1``.
-        return signs.pop()
-    else:
+    if sub_polys:
         raise ValueError(
             'Did not reach a conclusion after max subdivisions',
             _MAX_POLY_SUBDIVISIONS)
+    else:
+        # NOTE: We are guaranteed that ``len(signs) <= 1``.
+        return signs.pop()
 
 
 def _2x2_det(mat):
@@ -2290,11 +2290,11 @@ def combine_intersections(intersections, surface1, surface2):
         List[~bezier.curved_polygon.CurvedPolygon]: A list of curved polygons
         that compose the intersected objects.
     """
-    if len(intersections) == 0:
+    if not intersections:
         return _no_intersections(surface1, surface2)
 
     result = _basic_interior_combine(intersections)
-    if len(result) > 0:
+    if result:
         return result
 
     return _tangent_only_intersections(intersections, surface1, surface2)
