@@ -115,9 +115,28 @@ class Test_add_patch(utils.NumPyTestCase):
         utils.check_plot_call(
             self, call, expected, color=color)
 
+    @staticmethod
+    def _get_info(points):
+        from bezier import surface as surface_mod
+
+        surface = surface_mod.Surface(points, 1, _copy=False)
+        edges = surface._get_edges()
+
+        point0, point1, point2 = points
+        expected = np.asfortranarray([
+            0.5 * (point0 + point1),
+            point1,
+            0.5 * (point1 + point2),
+            point2,
+            0.5 * (point2 + point0),
+            point0,
+            0.5 * (point0 + point1),
+        ])
+
+        return expected, edges
+
     def test_it(self):
         import functools
-        from bezier import surface as surface_mod
 
         # Set-up input values.
         color = (0.25, 0.5, 0.75)
@@ -127,8 +146,7 @@ class Test_add_patch(utils.NumPyTestCase):
             [1.0, 3.0],
             [2.0, 6.0],
         ])
-        surface = surface_mod.Surface(points, 1, _copy=False)
-        edge1, edge2, edge3 = surface._get_edges()
+        expected, edges = self._get_info(points)
 
         # Set-up mocks (quite a lot).
         patches = mock.Mock(spec=['PathPatch'])
@@ -148,22 +166,11 @@ class Test_add_patch(utils.NumPyTestCase):
             'matplotlib.path': path,
         }
         func = functools.partial(
-            self._call_function_under_test, ax, color,
-            pts_per_edge, edge1, edge2, edge3)
+            self._call_function_under_test, ax, color, pts_per_edge, *edges)
         result = run_fake_modules(modules, func)
         self.assertIsNone(result)
 
         # Verify mocks (quite a lot).
-        p0, p1, p2 = points
-        expected = np.asfortranarray([
-            0.5 * (p0 + p1),
-            p1,
-            0.5 * (p1 + p2),
-            p2,
-            0.5 * (p2 + p0),
-            p0,
-            0.5 * (p0 + p1),
-        ])
         self._path_val(path, expected)
         patches.PathPatch.assert_called_once_with(
             path.Path.return_value, facecolor=color, alpha=0.625)
