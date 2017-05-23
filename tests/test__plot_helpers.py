@@ -101,41 +101,34 @@ class Test_add_patch(utils.NumPyTestCase):
 
         return _plot_helpers.add_patch(ax, color, pts_per_edge, *edges)
 
-    def _s_val_mock(self, edge):
-        self.assertEqual(edge.evaluate_multi.call_count, 1)
-        call = edge.evaluate_multi.mock_calls[0]
-        _, positional, keyword = call
-        self.assertEqual(keyword, {})
-        self.assertEqual(len(positional), 1)
-        self.assertEqual(positional[0], np.asfortranarray([0.0, 0.5, 1.0]))
-
-    def _path_val(self, path, points):
+    def _path_val(self, path, expected):
         self.assertEqual(path.Path.call_count, 1)
         call = path.Path.mock_calls[0]
         _, positional, keyword = call
         self.assertEqual(keyword, {})
         self.assertEqual(len(positional), 1)
-        self.assertEqual(positional[0], np.asfortranarray(points[1:, :]))
+        self.assertEqual(positional[0], expected)
 
-    def _plot_check(self, ax, points, color):
+    def _plot_check(self, ax, expected, color):
         self.assertEqual(ax.plot.call_count, 1)
         call = ax.plot.mock_calls[0]
         utils.check_plot_call(
-            self, call, np.asfortranarray(points[1:, :]), color=color)
+            self, call, expected, color=color)
 
     def test_it(self):
         import functools
+        from bezier import surface as surface_mod
 
         # Set-up input values.
         color = (0.25, 0.5, 0.75)
         pts_per_edge = 3
-        edge = mock.Mock(spec=['evaluate_multi'])
         points = np.asfortranarray([
             [0.0, 1.0],
             [1.0, 3.0],
             [2.0, 6.0],
         ])
-        edge.evaluate_multi.return_value = points
+        surface = surface_mod.Surface(points, 1, _copy=False)
+        edge1, edge2, edge3 = surface._get_edges()
 
         # Set-up mocks (quite a lot).
         patches = mock.Mock(spec=['PathPatch'])
@@ -155,16 +148,26 @@ class Test_add_patch(utils.NumPyTestCase):
             'matplotlib.path': path,
         }
         func = functools.partial(
-            self._call_function_under_test, ax, color, pts_per_edge, edge)
+            self._call_function_under_test, ax, color,
+            pts_per_edge, edge1, edge2, edge3)
         result = run_fake_modules(modules, func)
         self.assertIsNone(result)
 
         # Verify mocks (quite a lot).
-        self._s_val_mock(edge)
-        self._path_val(path, points)
+        p0, p1, p2 = points
+        expected = np.asfortranarray([
+            0.5 * (p0 + p1),
+            p1,
+            0.5 * (p1 + p2),
+            p2,
+            0.5 * (p2 + p0),
+            p0,
+            0.5 * (p0 + p1),
+        ])
+        self._path_val(path, expected)
         patches.PathPatch.assert_called_once_with(
             path.Path.return_value, facecolor=color, alpha=0.625)
         ax.add_patch.assert_called_once_with(
             patches.PathPatch.return_value)
         line.get_color.assert_called_once_with()
-        self._plot_check(ax, points, color)
+        self._plot_check(ax, expected, color)

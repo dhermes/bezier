@@ -133,6 +133,25 @@ def doctest(session):
 
 
 @nox.session
+def docs_images(session):
+    session.interpreter = SINGLE_INTERP
+    if 'MATPLOTLIBRC' not in os.environ:
+        reason = 'MATPLOTLIBRC=docs/ must be set'
+        print(reason, file=sys.stderr)
+        raise nox.command.CommandFailed(reason=reason)
+
+    # Install all dependencies.
+    local_deps = DOCS_DEPS + ('matplotlib >= 2.0.0', 'seaborn')
+    session.install(*local_deps)
+    # Install this package.
+    session.install('.')
+
+    # Run the script for generating images for docs.
+    run_args = get_doctest_args(session)
+    session.run(*run_args)
+
+
+@nox.session
 def lint(session):
     session.interpreter = SINGLE_INTERP
     if 'PYTHONPATH' not in os.environ:

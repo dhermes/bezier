@@ -85,9 +85,16 @@ def add_patch(ax, color, pts_per_edge, *edges):
         # in each.
         all_points.append(points[1:, :])
 
-    polygon = np.asfortranarray(np.vstack(all_points))
+    # Add first point as last point (polygon is closed).
+    first_edge = all_points[0]
+    # NOTE: ``first_edge[[0], :]`` makes a copy while the access
+    #       below **does not** copy. See
+    #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
+    #        arrays.indexing.html#advanced-indexing)
+    all_points.append(first_edge[0, :].reshape((1, 2), order='F'))
 
     # Add boundary first.
+    polygon = np.asfortranarray(np.vstack(all_points))
     line, = ax.plot(polygon[:, 0], polygon[:, 1], color=color)
     # Reset ``color`` in case it was ``None`` and set from color wheel.
     color = line.get_color()
