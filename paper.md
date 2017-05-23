@@ -26,7 +26,7 @@ This library provides:
 - Support for B&#xe9;zier [`Curves`][5]
 - Support for B&#xe9;zier [`Surfaces`][6]
 
-and may support B&#xe9;zier Solids and and Higher Order Objects at a later
+and may support B&#xe9;zier Solids and Higher Order Objects at a later
 time.
 
 -![Surface-surface intersection example](https://github.com/dhermes/bezier/blob/master/docs/images/test_surfaces6Q_and_7Q.png)

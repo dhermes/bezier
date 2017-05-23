@@ -114,7 +114,7 @@ install:
   - "%CMD_IN_ENV% python setup.py build_ext --compiler=msvc --inplace"
   - "%CMD_IN_ENV% python setup.py install"
 
-  # Install (hardcoded) test dependencies (should use ``tox``).
+  # Install (hardcoded) test dependencies (should use ``nox``).
 
   # Install (hardcoded) conditional (on base) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "base")

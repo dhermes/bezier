@@ -10,7 +10,6 @@ __pycache__
 # Unit test / coverage reports
 .coverage
 .nox
-.tox
 .cache
 
 # Mac

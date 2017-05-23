@@ -50,10 +50,12 @@ README = TEMPLATE.format(
 )
 
 REQUIREMENTS = (
-    'enum34',
     'numpy >= 1.11.2',
     'six >= 1.9.0',
 )
+EXTRAS_REQUIRE = {
+    ':python_version<"3.4"': ['enum34'],
+}
 DESCRIPTION = (
     u'Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects')
 
@@ -122,6 +124,7 @@ def setup():
         include_package_data=True,
         zip_safe=True,
         install_requires=REQUIREMENTS,
+        extras_require=EXTRAS_REQUIRE,
         ext_modules=extension_modules(),
         classifiers=(
             'Development Status :: 3 - Alpha',
@@ -131,8 +134,8 @@ def setup():
             'Programming Language :: Python :: 2',
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.6',
             'Topic :: Internet',
         ),
     )

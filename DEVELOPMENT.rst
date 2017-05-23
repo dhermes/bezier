@@ -16,7 +16,7 @@ In order to add a feature to ``bezier``:
    feature may catch maintainers off guard)
 
 #. **Add tests**: The feature must work fully on the following
-   CPython versions: 2.7, 3.4 and 3.5 on both UNIX and Windows.
+   CPython versions: 2.7, 3.5 and 3.6 on both UNIX and Windows.
    In addition, the feature should have 100% line coverage.
 
 #. **Documentation**: The feature must (should) be documented with
@@ -29,13 +29,13 @@ In order to add a feature to ``bezier``:
 Running Unit Tests
 ******************
 
-We recommend using ``tox`` to run unit tests:
+We recommend using ``nox`` to run unit tests:
 
 .. code-block:: console
 
-   $ tox -e py27
-   $ tox -e py34
-   $ tox -e py35
+   $ nox -s "unit_tests(python_version='2.7')"
+   $ nox -s "unit_tests(python_version='3.5')"
+   $ nox -s "unit_tests(python_version='3.6')"
 
 However, `pytest`_ can be used directly (though it won't
 manage dependencies):
@@ -45,8 +45,8 @@ manage dependencies):
 .. code-block:: console
 
    $ python2.7 -m py.test tests/
-   $ python3.4 -m py.test tests/
    $ python3.5 -m py.test tests/
+   $ python3.6 -m py.test tests/
 
 Test Coverage
 =============
@@ -64,7 +64,7 @@ To run the coverage report locally:
 
 .. code-block:: console
 
-   $ tox -e cover
+   $ nox -s cover
    $ # OR
    $ python -m py.test \
    >  --cov=bezier \
@@ -107,9 +107,9 @@ To run the functional tests:
 
 .. code-block:: console
 
-   $ tox -e functional
+   $ nox -s "functional(python_version='2.7')"
    $ # OR
-   $ python -m py.test functional_tests/
+   $ python2.7 -m py.test functional_tests/
 
 .. _functional tests: https://github.com/dhermes/bezier/tree/master/functional_tests
 
@@ -150,7 +150,7 @@ To check compliance:
 
 .. code-block:: console
 
-   $ tox -e lint
+   $ PYTHONPATH=functional_tests/ nox -s lint
 
 A few extensions and overrides have been specified in the `pylintrc`_
 configuration for ``bezier``.
@@ -200,7 +200,7 @@ To build the documentation locally:
 
 .. code-block:: console
 
-   $ tox -e docs
+   $ nox -s docs
    $ # OR
    $ ./scripts/build_docs.sh
 
@@ -216,7 +216,7 @@ To run the documentation tests:
 
 .. code-block:: console
 
-   $ tox -e doctest
+   $ NO_IMAGES=True nox -s doctest
    $ # OR
    $ NO_IMAGES=True sphinx-build -W \
    >   -b doctest \
@@ -236,7 +236,7 @@ To regenerate the images:
 
 .. code-block:: console
 
-   $ tox -e docs-images
+   $ MATPLOTLIBRC=docs/ nox -s docs_images
    $ # OR
    $ sphinx-build -W \
    >   -b doctest \
@@ -244,7 +244,7 @@ To regenerate the images:
    >   docs \
    >   docs/build/doctest
 
-The images in the `Curve-Curve Intersection`_ document and and this
+The images in the `Curve-Curve Intersection`_ document and this
 document are generated as part of the functional tests:
 
 .. code-block:: console
@@ -284,16 +284,16 @@ Supported Python Versions
 ``bezier`` explicitly supports:
 
 -  `Python 2.7`_
--  `Python 3.4`_
 -  `Python 3.5`_
+-  `Python 3.6`_
 
 .. _Python 2.7: https://docs.python.org/2.7/
-.. _Python 3.4: https://docs.python.org/3.4/
 .. _Python 3.5: https://docs.python.org/3.5/
+.. _Python 3.6: https://docs.python.org/3.6/
 
-Supported versions can be found in the ``tox.ini`` `config`_.
+Supported versions can be found in the ``nox.py`` `config`_.
 
-.. _config: https://github.com/dhermes/bezier/blob/master/tox.ini
+.. _config: https://github.com/dhermes/bezier/blob/master/nox.py
 
 Versioning
 ==========

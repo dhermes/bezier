@@ -21,9 +21,10 @@ import nox
 import nox.command
 
 
+NUMPY = 'numpy'
 BASE_DEPS = (
     'mock >= 1.3.0',
-    'numpy',
+    NUMPY,
     'pytest',
 )
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -32,19 +33,39 @@ DOCS_DEPS = (
     os.path.join(NOX_DIR, 'docs', 'requirements.txt'),
 )
 SINGLE_INTERP = 'python3.6'
+PYPY = 'pypy'
+PYPY_NUMPY = 'git+https://bitbucket.org/pypy/numpy.git'
 
 
 def get_path(*names):
     return os.path.join(NOX_DIR, *names)
 
 
+def pypy_setup(local_deps):
+    local_deps = list(local_deps)
+    local_deps.remove(NUMPY)
+    local_deps.append(PYPY_NUMPY)
+    local_deps = tuple(local_deps)
+
+    if 'MATPLOTLIBRC' not in os.environ:
+        reason = 'MATPLOTLIBRC=test/ must be set'
+        print(reason, file=sys.stderr)
+        raise nox.command.CommandFailed(reason=reason)
+
+    return local_deps
+
+
 @nox.session
-@nox.parametrize('python_version', ['2.7', '3.5', '3.6'])
+@nox.parametrize('python_version', ['2.7', '3.5', '3.6', PYPY])
 def unit_tests(session, python_version):
-    session.interpreter = 'python{}'.format(python_version)
+    if python_version == PYPY:
+        session.interpreter = PYPY
+        local_deps = pypy_setup(BASE_DEPS)
+    else:
+        session.interpreter = 'python{}'.format(python_version)
+        local_deps = BASE_DEPS + ('scipy',)
 
     # Install all test dependencies.
-    local_deps = BASE_DEPS + ('scipy',)
     session.install(*local_deps)
     # Install this package.
     session.install('.')
@@ -75,11 +96,17 @@ def cover(session):
 
 
 @nox.session
-def functional(session):
-    session.interpreter = 'python2.7'
+@nox.parametrize('python_version', ['2.7', '3.5', '3.6', PYPY])
+def functional(session, python_version):
+    local_deps = BASE_DEPS
+    if python_version == PYPY:
+        session.interpreter = PYPY
+        local_deps = pypy_setup(local_deps)
+    else:
+        session.interpreter = 'python{}'.format(python_version)
 
     # Install all test dependencies.
-    session.install(*BASE_DEPS)
+    session.install(*local_deps)
     # Install this package.
     session.install('.')
 
