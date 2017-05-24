@@ -29,24 +29,51 @@ In order to add a feature to ``bezier``:
 Running Unit Tests
 ******************
 
-We recommend using ``nox`` to run unit tests:
+We recommend using ``nox`` (`nox-automation`_) to run unit tests:
 
 .. code-block:: console
 
    $ nox -s "unit_tests(python_version='2.7')"
    $ nox -s "unit_tests(python_version='3.5')"
    $ nox -s "unit_tests(python_version='3.6')"
+   $ MATPLOTLIBRC=test/ nox -s "unit_tests(python_version='pypy')"
+   $ nox -s unit_tests  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
 manage dependencies):
 
+.. code-block:: console
+
+   $ PYTHONPATH=src/ python2.7 -m pytest tests/
+   $ PYTHONPATH=src/ python3.5 -m pytest tests/
+   $ PYTHONPATH=src/ python3.6 -m pytest tests/
+   $ PYTHONPATH=src/ MATPLOTLIBRC=test/ pypy -m pytest tests/
+
+.. _nox-automation: https://nox.readthedocs.io/en/stable/
 .. _pytest: http://docs.pytest.org/en/stable/
+
+Native Code Extensions
+======================
+
+Many low-level computations have alternate implementations in Fortran.
+When using ``nox``, the ``bezier`` package will automatically be installed
+into a virtual environment and the native extensions will be built during
+install.
+
+However, if you run the tests directly from the source tree via
 
 .. code-block:: console
 
-   $ python2.7 -m py.test tests/
-   $ python3.5 -m py.test tests/
-   $ python3.6 -m py.test tests/
+   $ PYTHONPATH=src/ python -m pytest tests/
+
+some unit tests may be skipped. The unit tests for the Fortran
+implementations will skip (rather than fail) if the extensions aren't
+compiled and present in the source tree. To compile the native extensions,
+make sure you have a valid Fortran compiler and run
+
+.. code-block:: console
+
+   $ make
 
 Test Coverage
 =============
@@ -64,13 +91,13 @@ To run the coverage report locally:
 
 .. code-block:: console
 
-   $ nox -s cover
+   $ PYTHONPATH=functional_tests/ nox -s cover
    $ # OR
-   $ python -m py.test \
+   $ PYTHONPATH=src/:functional_tests/ python -m pytest \
    >  --cov=bezier \
    >  --cov=tests \
    >  tests/ \
-   >  functional_tests/
+   >  functional_tests/test_segment_box.py
 
 Slow Tests
 ==========
@@ -80,13 +107,13 @@ marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
 
-   $ python -m py.test tests/ --ignore-slow
+   $ PYTHONPATH=src/ python -m pytest tests/ --ignore-slow
 
 These slow tests have been identified via:
 
 .. code-block:: console
 
-   $ python -m py.test tests/ --durations=10
+   $ PYTHONPATH=src/ python -m pytest tests/ --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 
@@ -107,9 +134,20 @@ To run the functional tests:
 
 .. code-block:: console
 
+   $ export PYTHONPATH=functional_tests/
    $ nox -s "functional(python_version='2.7')"
+   $ nox -s "functional(python_version='3.5')"
+   $ nox -s "functional(python_version='3.6')"
+   $ MATPLOTLIBRC=test/ nox -s "functional(python_version='pypy')"
+   $ nox -s functional  # Run all versions
+   $ unset PYTHONPATH
    $ # OR
-   $ python2.7 -m py.test functional_tests/
+   $ export PYTHONPATH=src/:functional_tests/
+   $ python2.7 -m pytest functional_tests/
+   $ python3.5 -m pytest functional_tests/
+   $ python3.6 -m pytest functional_tests/
+   $ MATPLOTLIBRC=test/ pypy -m pytest functional_tests/
+   $ unset PYTHONPATH
 
 .. _functional tests: https://github.com/dhermes/bezier/tree/master/functional_tests
 
@@ -201,8 +239,8 @@ To build the documentation locally:
 .. code-block:: console
 
    $ nox -s docs
-   $ # OR
-   $ ./scripts/build_docs.sh
+   $ # OR (from a Python 3.5 or later environment)
+   $ PYTHONPATH=src/ ./scripts/build_docs.sh
 
 Documentation Snippets
 ======================
@@ -217,8 +255,8 @@ To run the documentation tests:
 .. code-block:: console
 
    $ NO_IMAGES=True nox -s doctest
-   $ # OR
-   $ NO_IMAGES=True sphinx-build -W \
+   $ # OR (from a Python 3.5 or later environment)
+   $ PYTHONPATH=src/ NO_IMAGES=True sphinx-build -W \
    >   -b doctest \
    >   -d docs/build/doctrees \
    >   docs \
@@ -237,8 +275,8 @@ To regenerate the images:
 .. code-block:: console
 
    $ MATPLOTLIBRC=docs/ nox -s docs_images
-   $ # OR
-   $ sphinx-build -W \
+   $ # OR (from a Python 3.5 or later environment)
+   $ PYTHONPATH=src/ MATPLOTLIBRC=docs/ sphinx-build -W \
    >   -b doctest \
    >   -d docs/build/doctrees \
    >   docs \
@@ -249,10 +287,10 @@ document are generated as part of the functional tests:
 
 .. code-block:: console
 
-   $ python functional_tests/test_curve_curve.py --save-plot
-   $ python functional_tests/test_segment_box.py --save-plot
-   $ python functional_tests/test_surface_locate.py --save-plot
-   $ python functional_tests/test_surface_surface.py --save-plot
+   $ PYTHONPATH=src/ python functional_tests/test_curve_curve.py --save-plot
+   $ PYTHONPATH=src/ python functional_tests/test_segment_box.py --save-plot
+   $ PYTHONPATH=src/ python functional_tests/test_surface_locate.py --save-plot
+   $ PYTHONPATH=src/ python functional_tests/test_surface_surface.py --save-plot
 
 .. _Curve-Curve Intersection: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
 

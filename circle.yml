@@ -13,7 +13,7 @@ test:
   override:
     - nox -s "unit_tests(python_version='3.5')"
     - nox -s "unit_tests(python_version='3.6')"
-    - nox -s cover
+    - PYTHONPATH=functional_tests/ nox -s cover
     - nox -s docs
     - NO_IMAGES=True nox -s doctest
     - PYTHONPATH=functional_tests/ nox -s lint

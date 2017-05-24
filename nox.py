@@ -75,9 +75,17 @@ def unit_tests(session, python_version):
     session.run(*run_args)
 
 
+def prep_run_functional():
+    if 'PYTHONPATH' not in os.environ:
+        reason = 'PYTHONPATH=functional_tests/ must be set'
+        print(reason, file=sys.stderr)
+        raise nox.command.CommandFailed(reason=reason)
+
+
 @nox.session
 def cover(session):
     session.interpreter = 'python2.7'
+    prep_run_functional()
 
     # Install all test dependencies.
     local_deps = BASE_DEPS + ('scipy', 'pytest-cov', 'coverage')
@@ -98,6 +106,8 @@ def cover(session):
 @nox.session
 @nox.parametrize('python_version', ['2.7', '3.5', '3.6', PYPY])
 def functional(session, python_version):
+    prep_run_functional()
+
     local_deps = BASE_DEPS
     if python_version == PYPY:
         session.interpreter = PYPY
@@ -181,11 +191,7 @@ def docs_images(session):
 @nox.session
 def lint(session):
     session.interpreter = SINGLE_INTERP
-    if 'PYTHONPATH' not in os.environ:
-        reason = 'PYTHONPATH env. var. must point to functional_tests/'
-        print(reason, file=sys.stderr)
-        raise nox.command.CommandFailed(reason=reason)
-
+    prep_run_functional()
     # Install all dependencies.
     local_deps = BASE_DEPS + (
         'docutils',
