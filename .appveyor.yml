@@ -25,18 +25,6 @@ environment:
       TEST_TYPE: base
 
     - TARGET_ARCH: x86
-      CONDA_PY: 34
-      PY_CONDITION: "python=3.4"
-      CONDA_INSTALL_LOCN: C:\\Miniconda3
-      TEST_TYPE: base
-
-    - TARGET_ARCH: x64
-      CONDA_PY: 34
-      PY_CONDITION: "python=3.4"
-      CONDA_INSTALL_LOCN: C:\\Miniconda3-x64
-      TEST_TYPE: base
-
-    - TARGET_ARCH: x86
       CONDA_PY: 35
       PY_CONDITION: "python=3.5"
       CONDA_INSTALL_LOCN: C:\\Miniconda35
@@ -46,6 +34,18 @@ environment:
       CONDA_PY: 35
       PY_CONDITION: "python=3.5"
       CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
+      TEST_TYPE: base
+
+    - TARGET_ARCH: x86
+      CONDA_PY: 36
+      PY_CONDITION: "python=3.6"
+      CONDA_INSTALL_LOCN: C:\\Miniconda36
+      TEST_TYPE: base
+
+    - TARGET_ARCH: x64
+      CONDA_PY: 36
+      PY_CONDITION: "python=3.6"
+      CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
       TEST_TYPE: base
 
     - TARGET_ARCH: x64
@@ -104,14 +104,10 @@ install:
   - cmd: python --version
   - cmd: python -c "import struct; print(struct.calcsize('P') * 8)"
 
-  # Install ``gcc`` so we can build extensions (``gfortran`` included)
-  - cmd: conda install m2w64-gcc-fortran
-
-  # Install (hardcoded) dependencies for ``bezier``.
-  - cmd: conda install enum34 matplotlib numpy six
+  # Install some of the "difficult" dependencies for ``bezier``.
+  - cmd: conda install matplotlib numpy
 
   # Install ``bezier``.
-  - "%CMD_IN_ENV% python setup.py build_ext --compiler=msvc --inplace"
   - "%CMD_IN_ENV% python setup.py install"
 
   # Install (hardcoded) test dependencies (should use ``nox``).
@@ -126,12 +122,14 @@ install:
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
           conda install pytest mock coverage pytest-cov scipy;
+          $env:PYTHONPATH = "functional_tests/";
         }
 
   # Install (hardcoded) conditional (on functional) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
           conda install pytest mock;
+          $env:PYTHONPATH = "functional_tests/";
         }
 
   # Install (hardcoded) conditional (on doctest) test dependencies.
@@ -152,6 +150,7 @@ test_script:
           py.test `
               --cov=bezier `
               --cov=tests `
+              --cov-fail-under=98 `
               tests `
               functional_tests/test_segment_box.py;
         }
