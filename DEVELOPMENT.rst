@@ -303,11 +303,14 @@ document are generated as part of the functional tests:
 Continuous Integration
 **********************
 
-Tests are run on `CircleCI`_ after every commit. To see which tests
-are run, see the in the `CircleCI config`_.
+Tests are run on `CircleCI`_ and `AppVeyor`_ after every commit. To see
+which tests are run, see the `CircleCI config`_ and the
+`AppVeyor config`_.
 
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
+.. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
 .. _CircleCI config: https://github.com/dhermes/bezier/blob/master/circle.yml
+.. _AppVeyor config: https://github.com/dhermes/bezier/blob/master/.appveyor.yml
 
 **********************
 Deploying New Versions
