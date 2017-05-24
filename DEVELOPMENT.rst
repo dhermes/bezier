@@ -287,10 +287,12 @@ document are generated as part of the functional tests:
 
 .. code-block:: console
 
-   $ PYTHONPATH=src/ python functional_tests/test_curve_curve.py --save-plot
-   $ PYTHONPATH=src/ python functional_tests/test_segment_box.py --save-plot
-   $ PYTHONPATH=src/ python functional_tests/test_surface_locate.py --save-plot
-   $ PYTHONPATH=src/ python functional_tests/test_surface_surface.py --save-plot
+   $ export MATPLOTLIBRC=docs/ PYTHONPATH=src/
+   $ python functional_tests/test_curve_curve.py --save-plot
+   $ python functional_tests/test_segment_box.py --save-plot
+   $ python functional_tests/test_surface_locate.py --save-plot
+   $ python functional_tests/test_surface_surface.py --save-plot
+   $ unset MATPLOTLIBRC PYTHONPATH
 
 .. _Curve-Curve Intersection: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
 
