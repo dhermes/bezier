@@ -94,10 +94,10 @@ To run the coverage report locally:
    $ PYTHONPATH=functional_tests/ nox -s cover
    $ # OR
    $ PYTHONPATH=src/:functional_tests/ python -m pytest \
-   >  --cov=bezier \
-   >  --cov=tests \
-   >  tests/ \
-   >  functional_tests/test_segment_box.py
+   >   --cov=bezier \
+   >   --cov=tests \
+   >   tests/ \
+   >   functional_tests/test_segment_box.py
 
 Slow Tests
 ==========
