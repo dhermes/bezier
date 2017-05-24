@@ -160,13 +160,18 @@ class Config(object):
             self.save_plot = save_plot
             self.current_test = None
 
-    def save_fig(self):
+    def save_fig(self, extra=''):
         """Save the current figure.
 
         Uses the ``current_test`` for the filename and puts it
         in the ``${GIT_ROOT}/docs/images`` directory.
+
+        Args:
+            extra (Optional[str]): Extra information to put in the filename.
+                Filename defaults to ``{current_test}.png`` but if ``extra``
+                is passed, it will be ``{current_test}{extra}.png``.
         """
-        filename = '{}.png'.format(self.current_test)
+        filename = '{}{}.png'.format(self.current_test, extra)
         path = os.path.join(IMAGES_DIR, filename)
         plt.savefig(path, bbox_inches='tight')
         print('Saved {}'.format(filename))

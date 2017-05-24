@@ -31,7 +31,7 @@ UNIT_SQUARE = np.asfortranarray([
 ])
 
 
-def make_plot(segment):
+def make_plot(segment, index):
     figure = plt.figure()
     ax = figure.gca()
 
@@ -50,7 +50,8 @@ def make_plot(segment):
     ax.set_ylim(-1.125, 2.125)
 
     if CONFIG.save_plot:
-        CONFIG.save_fig()
+        extra = '{:02d}'.format(index)
+        CONFIG.save_fig(extra=extra)
     else:
         plt.title(CONFIG.current_test)
         plt.show()
@@ -58,7 +59,7 @@ def make_plot(segment):
     plt.close(figure)
 
 
-def run_it(segment, expected=None):
+def run_it(segment, expected=None, index=0):
     if expected is None:
         expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
 
@@ -69,7 +70,7 @@ def run_it(segment, expected=None):
     if not CONFIG.running:
         return
 
-    make_plot(segment)
+    make_plot(segment, index)
 
 
 def test_outside():
@@ -97,8 +98,8 @@ def test_outside():
         segment_top_left,
     )
     expected = _intersection_helpers.BoxIntersectionType.DISJOINT
-    for segment in segments:
-        run_it(segment, expected)
+    for index, segment in enumerate(segments):
+        run_it(segment, expected, index)
 
 
 def test_start_in_box():
@@ -149,8 +150,8 @@ def test_start_in_box():
         ]),
     )
 
-    for segment in segments:
-        run_it(segment)
+    for index, segment in enumerate(segments):
+        run_it(segment, index=index)
 
 
 def test_end_in_box():
@@ -197,8 +198,8 @@ def test_end_in_box():
         ]),
     )
 
-    for segment in segments:
-        run_it(segment)
+    for index, segment in enumerate(segments):
+        run_it(segment, index=index)
 
 
 def test_goes_through_box():
@@ -241,8 +242,8 @@ def test_goes_through_box():
         ]),
     )
 
-    for segment in segments:
-        run_it(segment)
+    for index, segment in enumerate(segments):
+        run_it(segment, index=index)
 
 
 if __name__ == '__main__':

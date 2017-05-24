@@ -167,7 +167,7 @@ A surface-surface intersection functional test case:
 
 a segment-box functional test case:
 
-.. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_goes_through_box.png
+.. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_goes_through_box08.png
 
 and a "locate point on surface" functional test case:
 
