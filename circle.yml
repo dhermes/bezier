@@ -17,7 +17,7 @@ test:
     - nox -s docs
     - NO_IMAGES=True nox -s doctest
     - PYTHONPATH=functional_tests/ nox -s lint
-    - nox -s "functional(python_version='2.7')"
+    - PYTHONPATH=functional_tests/ nox -s "functional(python_version='2.7')"
   post:
     - .nox/cover/bin/pip install coveralls
     - .nox/cover/bin/coveralls
