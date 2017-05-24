@@ -289,10 +289,13 @@ document are generated as part of the functional tests:
 
    $ export MATPLOTLIBRC=docs/ PYTHONPATH=src/
    $ python functional_tests/test_curve_curve.py --save-plot
+   $ python functional_tests/test_implicitized_intersect.py --save-plot
    $ python functional_tests/test_segment_box.py --save-plot
    $ python functional_tests/test_surface_locate.py --save-plot
    $ python functional_tests/test_surface_surface.py --save-plot
    $ unset MATPLOTLIBRC PYTHONPATH
+
+(``test_implicitized_intersect.py`` doesn't actually generate any images.)
 
 .. _Curve-Curve Intersection: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
 

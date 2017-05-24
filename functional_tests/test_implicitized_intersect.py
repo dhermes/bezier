@@ -22,8 +22,6 @@ import candidate_curves
 
 
 SPACING = np.spacing  # pylint: disable=no-member
-# NOTE: This is much too large (for now) but will be resolved
-#       in subsequent iterations.
 ULPS_ALLOWED = 3.0
 # NOTE: We use units of least precision (ULP) as error. These
 #       are for the very rare cases where the computed values
@@ -67,6 +65,38 @@ COINCIDENT_INTERSECTIONS = (
 )
 
 
+def check_tangent(nodes1, nodes2):
+    with pytest.raises(NotImplementedError) as exc_info:
+        _implicitization.intersect_curves(nodes1, nodes2)
+
+    assert len(exc_info.value.args) == 2
+    assert exc_info.value.args[0] == _implicitization._NON_SIMPLE_ERR
+
+
+def check_coincident(nodes1, nodes2):
+    with pytest.raises(NotImplementedError) as exc_info:
+        _implicitization.intersect_curves(nodes1, nodes2)
+
+    assert exc_info.value.args == (_implicitization._COINCIDENT_ERR,)
+
+
+def check_intersect(id_pair, nodes1, nodes2, info):
+    param_vals = _implicitization.intersect_curves(nodes1, nodes2)
+    if param_vals.size == 0:
+        assert info.size == 0
+    else:
+        # NOTE: This assumes ``info`` is sorted by s-value.
+        exact = info[:, :2]
+        multiplier = CUSTOM_ERRORS.get(id_pair, ULPS_ALLOWED)
+        # NOTE: Spacing gives ULP for each value.
+        allowed_errors = multiplier * SPACING(exact)
+
+        computed = param_vals[np.argsort(param_vals[:, 0]), :2]
+        assert exact.shape == computed.shape
+        # NOTE: We assume zeros will be **exactly** correct.
+        assert np.all(np.abs(exact - computed) <= allowed_errors)
+
+
 def test_all():
     all_intersect = six.iteritems(candidate_curves.INTERSECTION_INFO)
     for (curve_id1, curve_id2), info in all_intersect:
@@ -76,30 +106,8 @@ def test_all():
         curve2 = candidate_curves.CURVES[curve_id2]
         nodes2 = curve2._nodes
         if id_pair in TANGENT_INTERSECTIONS:
-            with pytest.raises(NotImplementedError) as exc_info:
-                _implicitization.intersect_curves(nodes1, nodes2)
-
-            assert len(exc_info.value.args) == 2
-            assert exc_info.value.args[0] == _implicitization._NON_SIMPLE_ERR
-            continue
+            check_tangent(nodes1, nodes2)
         elif id_pair in COINCIDENT_INTERSECTIONS:
-            with pytest.raises(NotImplementedError) as exc_info:
-                _implicitization.intersect_curves(nodes1, nodes2)
-
-            assert exc_info.value.args == (_implicitization._COINCIDENT_ERR,)
-            continue
-
-        param_vals = _implicitization.intersect_curves(nodes1, nodes2)
-        if param_vals.size == 0:
-            assert info.size == 0
+            check_coincident(nodes1, nodes2)
         else:
-            # NOTE: This assumes ``info`` is sorted by s-value.
-            exact = info[:, :2]
-            multiplier = CUSTOM_ERRORS.get(id_pair, ULPS_ALLOWED)
-            # NOTE: Spacing gives ULP for each value.
-            allowed_errors = multiplier * SPACING(exact)
-
-            computed = param_vals[np.argsort(param_vals[:, 0]), :2]
-            assert exact.shape == computed.shape
-            # NOTE: We assume zeros will be **exactly** correct.
-            assert np.all(np.abs(exact - computed) <= allowed_errors)
+            check_intersect(id_pair, nodes1, nodes2, info)
