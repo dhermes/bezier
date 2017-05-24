@@ -16,6 +16,7 @@ from __future__ import print_function
 
 import os
 import pkg_resources
+import platform
 import sys
 
 import setuptools
@@ -38,6 +39,13 @@ MISSING_F90_MESSAGE = """\
 No Fortran 90 compiler found.
 
 Skipping Fortran extension speedups.
+"""
+WINDOWS_MESSAGE = """\
+Skipping Fortran extension speedups on Windows.
+
+Sorry for this inconvenience. For more information or to help, visit:
+
+    https://github.com/dhermes/bezier/issues/26
 """
 README = TEMPLATE.format(
     pypi='',
@@ -98,7 +106,10 @@ def _extension_modules():
 
 
 def extension_modules():
-    if has_f90_compiler():
+    if platform.system().lower() == 'windows':
+        print(WINDOWS_MESSAGE, file=sys.stderr)
+        return []
+    elif has_f90_compiler():
         return _extension_modules()
     else:
         print(MISSING_F90_MESSAGE, file=sys.stderr)
