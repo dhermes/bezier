@@ -155,6 +155,7 @@ For example, the following curve-curve intersection is a
 functional test case:
 
 .. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_curves11_and_26.png
+   :align: center
 
 and there is a `Curve-Curve Intersection`_ document which captures many of
 the cases in the functional tests.
@@ -164,14 +165,17 @@ the cases in the functional tests.
 A surface-surface intersection functional test case:
 
 .. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_surfaces1Q_and_2Q.png
+   :align: center
 
 a segment-box functional test case:
 
 .. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_goes_through_box08.png
+   :align: center
 
 and a "locate point on surface" functional test case:
 
 .. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_surface3_and_point1.png
+   :align: center
 
 ************
 Coding Style

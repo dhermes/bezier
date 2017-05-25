@@ -8,6 +8,7 @@
    Bezier Package <reference/bezier>
    curve-curve-intersection
    algorithm-helpers
+   development
 
 ``bezier`` is a Python helper for B |eacute| zier Curves, Triangles, and
 Higher Order Objects.
@@ -45,6 +46,13 @@ Usage
 
 The B |eacute| zier :doc:`Package <reference/bezier>` documentation provides
 API-level documentation.
+
+Development
+-----------
+
+To work on adding a feature or to run the functional tests, see the
+:doc:`DEVELOPMENT doc <development>` for more information on how to get
+started.
 
 License
 -------
