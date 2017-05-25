@@ -14,6 +14,7 @@
 
 from __future__ import print_function
 
+import glob
 import os
 import sys
 
@@ -178,7 +179,7 @@ def docs_images(session):
         raise nox.command.CommandFailed(reason=reason)
 
     # Install all dependencies.
-    local_deps = DOCS_DEPS + ('matplotlib >= 2.0.0', 'seaborn')
+    local_deps = DOCS_DEPS + ('matplotlib >= 2.0.0', 'seaborn', 'pytest')
     session.install(*local_deps)
     # Install this package.
     session.install('.')
@@ -186,6 +187,11 @@ def docs_images(session):
     # Run the script for generating images for docs.
     run_args = get_doctest_args(session)
     session.run(*run_args)
+
+    # Run the functional tests with --save-plot.
+    fnl_tests_glob = get_path('functional_tests', 'test_*.py')
+    for filename in glob.glob(fnl_tests_glob):
+        session.run('python', filename, '--save-plot')
 
 
 @nox.session

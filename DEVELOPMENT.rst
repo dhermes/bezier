@@ -13,7 +13,7 @@ In order to add a feature to ``bezier``:
 
 #. **Discuss**: `File an issue`_ to notify maintainers of the
    proposed changes (i.e. just sending a large PR with a finished
-   feature may catch maintainers off guard)
+   feature may catch maintainers off guard).
 
 #. **Add tests**: The feature must work fully on the following
    CPython versions: 2.7, 3.5 and 3.6 on both UNIX and Windows.
@@ -154,24 +154,24 @@ To run the functional tests:
 For example, the following curve-curve intersection is a
 functional test case:
 
-.. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_curves11_and_26.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_curves11_and_26.png
 
-and there is a `curve-curve doc`_ which captures many of the cases in the
-functional tests.
+and there is a `Curve-Curve Intersection`_ document which captures many of
+the cases in the functional tests.
 
-.. _curve-curve doc: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
+.. _Curve-Curve Intersection: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
 
 A surface-surface intersection functional test case:
 
-.. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_surfaces1Q_and_2Q.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_surfaces1Q_and_2Q.png
 
 a segment-box functional test case:
 
-.. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_goes_through_box08.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_goes_through_box08.png
 
 and a "locate point on surface" functional test case:
 
-.. image:: https://github.com/dhermes/bezier/blob/master/docs/images/test_surface3_and_point1.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_surface3_and_point1.png
 
 ************
 Coding Style
@@ -202,7 +202,7 @@ We require docstrings on all public objects and enforce this with
 our ``lint`` checks. The docstrings mostly follow `PEP257`_
 and are written in the `Google style`_, e.g.
 
-.. code-block::
+.. code-block:: rest
 
    Args:
        path (str): The path of the file to wrap
@@ -270,24 +270,21 @@ under consideration and to display the result of the operation
 being described. To keep these images up-to-date with the doctest
 snippets, the images are created as doctest cleanup.
 
-To regenerate the images:
+In addition, the images in the `Curve-Curve Intersection`_ document and
+this document are generated as part of the functional tests.
+
+To regenerate all the images:
 
 .. code-block:: console
 
    $ MATPLOTLIBRC=docs/ nox -s docs_images
    $ # OR (from a Python 3.5 or later environment)
-   $ PYTHONPATH=src/ MATPLOTLIBRC=docs/ sphinx-build -W \
+   $ export MATPLOTLIBRC=docs/ PYTHONPATH=src/
+   $ sphinx-build -W \
    >   -b doctest \
    >   -d docs/build/doctrees \
    >   docs \
    >   docs/build/doctest
-
-The images in the `Curve-Curve Intersection`_ document and this
-document are generated as part of the functional tests:
-
-.. code-block:: console
-
-   $ export MATPLOTLIBRC=docs/ PYTHONPATH=src/
    $ python functional_tests/test_curve_curve.py --save-plot
    $ python functional_tests/test_implicitized_intersect.py --save-plot
    $ python functional_tests/test_segment_box.py --save-plot
@@ -295,9 +292,7 @@ document are generated as part of the functional tests:
    $ python functional_tests/test_surface_surface.py --save-plot
    $ unset MATPLOTLIBRC PYTHONPATH
 
-(``test_implicitized_intersect.py`` doesn't actually generate any images.)
-
-.. _Curve-Curve Intersection: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
+(``test_implicitized_intersect.py`` doesn't actually generate any images).
 
 **********************
 Continuous Integration
