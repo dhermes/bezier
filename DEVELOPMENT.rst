@@ -36,7 +36,7 @@ We recommend using ``nox`` (`nox-automation`_) to run unit tests:
    $ nox -s "unit_tests(python_version='2.7')"
    $ nox -s "unit_tests(python_version='3.5')"
    $ nox -s "unit_tests(python_version='3.6')"
-   $ MATPLOTLIBRC=test/ nox -s "unit_tests(python_version='pypy')"
+   $ nox -s "unit_tests(python_version='pypy')"
    $ nox -s unit_tests  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
@@ -91,7 +91,7 @@ To run the coverage report locally:
 
 .. code-block:: console
 
-   $ PYTHONPATH=functional_tests/ nox -s cover
+   $ nox -s cover
    $ # OR
    $ PYTHONPATH=src/:functional_tests/ python -m pytest \
    >   --cov=bezier \
@@ -134,13 +134,11 @@ To run the functional tests:
 
 .. code-block:: console
 
-   $ export PYTHONPATH=functional_tests/
    $ nox -s "functional(python_version='2.7')"
    $ nox -s "functional(python_version='3.5')"
    $ nox -s "functional(python_version='3.6')"
-   $ MATPLOTLIBRC=test/ nox -s "functional(python_version='pypy')"
+   $ nox -s "functional(python_version='pypy')"
    $ nox -s functional  # Run all versions
-   $ unset PYTHONPATH
    $ # OR
    $ export PYTHONPATH=src/:functional_tests/
    $ python2.7 -m pytest functional_tests/
@@ -192,7 +190,7 @@ To check compliance:
 
 .. code-block:: console
 
-   $ PYTHONPATH=functional_tests/ nox -s lint
+   $ nox -s lint
 
 A few extensions and overrides have been specified in the `pylintrc`_
 configuration for ``bezier``.
@@ -258,7 +256,7 @@ To run the documentation tests:
 
 .. code-block:: console
 
-   $ NO_IMAGES=True nox -s doctest
+   $ nox -s doctest
    $ # OR (from a Python 3.5 or later environment)
    $ PYTHONPATH=src/ NO_IMAGES=True sphinx-build -W \
    >   -b doctest \
@@ -281,7 +279,7 @@ To regenerate all the images:
 
 .. code-block:: console
 
-   $ MATPLOTLIBRC=docs/ nox -s docs_images
+   $ nox -s docs_images
    $ # OR (from a Python 3.5 or later environment)
    $ export MATPLOTLIBRC=docs/ PYTHONPATH=src/
    $ sphinx-build -W \

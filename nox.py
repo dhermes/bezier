@@ -19,7 +19,6 @@ import os
 import sys
 
 import nox
-import nox.command
 
 
 NUMPY = 'numpy'
@@ -48,12 +47,8 @@ def pypy_setup(local_deps):
     local_deps.append(PYPY_NUMPY)
     local_deps = tuple(local_deps)
 
-    if 'MATPLOTLIBRC' not in os.environ:
-        reason = 'MATPLOTLIBRC=test/ must be set'
-        print(reason, file=sys.stderr)
-        raise nox.command.CommandFailed(reason=reason)
-
-    return local_deps
+    env = {'MATPLOTLIBRC': 'test'}
+    return local_deps, env
 
 
 @nox.session
@@ -61,10 +56,11 @@ def pypy_setup(local_deps):
 def unit_tests(session, python_version):
     if python_version == PYPY:
         session.interpreter = PYPY
-        local_deps = pypy_setup(BASE_DEPS)
+        local_deps, env = pypy_setup(BASE_DEPS)
     else:
         session.interpreter = 'python{}'.format(python_version)
         local_deps = BASE_DEPS + ('scipy',)
+        env = None
 
     # Install all test dependencies.
     session.install(*local_deps)
@@ -73,20 +69,16 @@ def unit_tests(session, python_version):
 
     # Run py.test against the unit tests.
     run_args = ['py.test'] + session.posargs + [get_path('tests')]
-    session.run(*run_args)
+    session.run(*run_args, env=env)
 
 
-def prep_run_functional():
-    if 'PYTHONPATH' not in os.environ:
-        reason = 'PYTHONPATH=functional_tests/ must be set'
-        print(reason, file=sys.stderr)
-        raise nox.command.CommandFailed(reason=reason)
+def functional_env():
+    return {'PYTHONPATH': 'functional_tests'}
 
 
 @nox.session
 def cover(session):
     session.interpreter = 'python2.7'
-    prep_run_functional()
 
     # Install all test dependencies.
     local_deps = BASE_DEPS + ('scipy', 'pytest-cov', 'coverage')
@@ -101,20 +93,19 @@ def cover(session):
         get_path('tests'),
         get_path('functional_tests', 'test_segment_box.py'),
     ]
-    session.run(*run_args)
+    session.run(*run_args, env=functional_env())
 
 
 @nox.session
 @nox.parametrize('python_version', ['2.7', '3.5', '3.6', PYPY])
 def functional(session, python_version):
-    prep_run_functional()
-
     local_deps = BASE_DEPS
     if python_version == PYPY:
         session.interpreter = PYPY
-        local_deps = pypy_setup(local_deps)
+        local_deps, env = pypy_setup(local_deps)
     else:
         session.interpreter = 'python{}'.format(python_version)
+        env = {}
 
     # Install all test dependencies.
     session.install(*local_deps)
@@ -123,7 +114,8 @@ def functional(session, python_version):
 
     # Run py.test against the functional tests.
     run_args = ['py.test'] + session.posargs + [get_path('functional_tests')]
-    session.run(*run_args)
+    env.update(functional_env())
+    session.run(*run_args, env=env)
 
 
 @nox.session
@@ -155,11 +147,6 @@ def get_doctest_args(session):
 @nox.session
 def doctest(session):
     session.interpreter = SINGLE_INTERP
-    if 'NO_IMAGES' not in os.environ:
-        reason = 'NO_IMAGES=True must be set'
-        print(reason, file=sys.stderr)
-        raise nox.command.CommandFailed(reason=reason)
-
     # Install all dependencies.
     session.install(*DOCS_DEPS)
     # Install this package.
@@ -167,17 +154,12 @@ def doctest(session):
 
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
-    session.run(*run_args)
+    session.run(*run_args, env={'NO_IMAGES': 'True'})
 
 
 @nox.session
 def docs_images(session):
     session.interpreter = SINGLE_INTERP
-    if 'MATPLOTLIBRC' not in os.environ:
-        reason = 'MATPLOTLIBRC=docs/ must be set'
-        print(reason, file=sys.stderr)
-        raise nox.command.CommandFailed(reason=reason)
-
     # Install all dependencies.
     local_deps = DOCS_DEPS + ('matplotlib >= 2.0.0', 'seaborn', 'pytest')
     session.install(*local_deps)
@@ -186,18 +168,18 @@ def docs_images(session):
 
     # Run the script for generating images for docs.
     run_args = get_doctest_args(session)
-    session.run(*run_args)
+    env = {'MATPLOTLIBRC': 'docs'}
+    session.run(*run_args, env=env)
 
     # Run the functional tests with --save-plot.
     fnl_tests_glob = get_path('functional_tests', 'test_*.py')
     for filename in glob.glob(fnl_tests_glob):
-        session.run('python', filename, '--save-plot')
+        session.run('python', filename, '--save-plot', env=env)
 
 
 @nox.session
 def lint(session):
     session.interpreter = SINGLE_INTERP
-    prep_run_functional()
     # Install all dependencies.
     local_deps = BASE_DEPS + (
         'docutils',
@@ -242,4 +224,5 @@ def lint(session):
         '--max-module-lines=2324',
         get_path('functional_tests'),
         get_path('tests'),
+        env=functional_env(),
     )
