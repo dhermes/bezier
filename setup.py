@@ -22,7 +22,7 @@ import sys
 import setuptools
 
 
-VERSION = '0.3.0'
+VERSION = '0.3.0'  # Also in codemeta.json
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(PACKAGE_ROOT, 'README.rst.template')) as file_obj:
