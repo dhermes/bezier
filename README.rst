@@ -8,12 +8,36 @@
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
-Install
--------
+``bezier`` is a Python helper for B |eacute| zier Curves, Triangles, and
+Higher Order Objects.
+
+This library provides:
+
+* Support for B |eacute| zier `Curves`_
+* Support for B |eacute| zier `Surfaces`_
+
+Dive in and take a look!
+
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/test_surfaces6Q_and_7Q.png
+   :align: center
+
+.. _Curves: http://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
+.. _Surface: http://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
+
+Installing
+----------
+
+``bezier`` can be installed with `pip`_:
 
 .. code-block:: console
 
    $ pip install --upgrade bezier
+
+``bezier`` is open-source, so you can alternatively grab the source
+code from `GitHub`_ and install from source.
+
+.. _pip: https://pip.pypa.io
+.. _GitHub: https://github.com/dhermes/bezier/
 
 Getting Started
 ---------------
@@ -72,8 +96,8 @@ intersections):
 Development
 -----------
 
-To work on adding a feature or to run the functional tests,
-see the `DEVELOPMENT doc`_ for more information on how to get
+To work on adding a feature or to run the functional tests, see the
+`DEVELOPMENT doc`_ for more information on how to get
 started.
 
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/master/DEVELOPMENT.rst
@@ -81,7 +105,8 @@ started.
 License
 -------
 
-Apache 2.0 - See `the LICENSE`_ for more information.
+``bezier`` is made available under the Apache 2.0 License. For more
+details, see `the LICENSE`_
 
 .. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
 

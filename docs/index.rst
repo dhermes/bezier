@@ -57,7 +57,7 @@ started.
 License
 -------
 
-``bezier`` is made available under the Apache License. For more
-details, see `LICENSE`_
+``bezier`` is made available under the Apache 2.0 License. For more
+details, see `the LICENSE`_
 
-.. _LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
