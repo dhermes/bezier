@@ -146,7 +146,8 @@ def get_doctest_args(session):
 def doctest(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
-    session.install(*DOCS_DEPS)
+    local_deps = DOCS_DEPS + ('mock',)
+    session.install(*local_deps)
     # Install this package.
     session.install('.')
 

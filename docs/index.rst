@@ -46,7 +46,28 @@ Getting Started
 
 For example, to create a curve:
 
-.. code-block:: python
+.. testsetup:: getting-started
+
+   import sys
+
+   import mock
+   import numpy as np
+
+   import bezier
+
+   # Fake the matplotlib/seaborn imports.
+   assert 'matplotlib' not in sys.modules
+   assert 'matplotlib.pyplot' not in sys.modules
+   assert 'seaborn' not in sys.modules
+
+   plt_mod = mock.Mock(spec=['figure', 'show'])
+   plt_mod.show.return_value = None
+   sys.modules['matplotlib.pyplot'] = plt_mod
+   mpl_mod = mock.Mock(pyplot=plt_mod, spec=[])
+   sys.modules['matplotlib'] = mpl_mod
+   sys.modules['seaborn'] = mock.Mock(spec=[])
+
+.. doctest:: getting-started
 
    >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
@@ -58,7 +79,8 @@ For example, to create a curve:
 The intersection (points) between two curves can
 also be determined:
 
-.. code-block:: python
+.. doctest:: getting-started
+   :options: +NORMALIZE_WHITESPACE
 
    >>> nodes2 = np.asfortranarray([
    ...     [0.0 ,  0.0],
@@ -70,27 +92,34 @@ also be determined:
    >>> curve2 = bezier.Curve.from_nodes(nodes2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.311...,  0.428...],
-          [ 0.688...,  0.428...],
-          [ 0.      ,  0.      ],
-          [ 1.      ,  0.      ]])
+   array([[ 0.31101776, 0.42857143],
+          [ 0.68898224, 0.42857143],
+          [ 0.        , 0.        ],
+          [ 1.        , 0.        ]])
 
 and then we can plot these curves (along with their
 intersections):
 
-.. code-block:: python
+.. doctest:: getting-started
 
    >>> import matplotlib.pyplot as plt
    >>> import seaborn
    >>>
    >>> ax = curve1.plot(num_pts=256)
-   >>> curve2.plot(num_pts=256, ax=ax)
-   >>> ax.plot(intersections[:, 0], intersections[:, 1],
-   ...         marker='o', linestyle='None', color='black')
-   >>> ax.axis('scaled')
-   >>> ax.set_xlim(-0.125, 1.125)
-   >>> ax.set_ylim(-0.0625, 0.625)
+   >>> _ = curve2.plot(num_pts=256, ax=ax)
+   >>> lines = ax.plot(
+   ...     intersections[:, 0], intersections[:, 1],
+   ...     marker='o', linestyle='None', color='black')
+   >>> _ = ax.axis('scaled')
+   >>> _ = ax.set_xlim(-0.125, 1.125)
+   >>> _ = ax.set_ylim(-0.0625, 0.625)
    >>> plt.show()
+
+.. testcleanup:: getting-started
+
+   sys.modules.pop('matplotlib')
+   sys.modules.pop('matplotlib.pyplot')
+   sys.modules.pop('seaborn')
 
 .. image:: images/test_curves1_and_13.png
    :align: center
