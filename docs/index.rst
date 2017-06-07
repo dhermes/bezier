@@ -27,6 +27,59 @@ Dive in and take a look!
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
+Why B |eacute| zier?
+--------------------
+
+A B |eacute| zier curves (and surface, etc.) is a parametric curve
+that uses the `Bernstein basis`_:
+
+.. math::
+
+   b_{j, n} = \binom{n}{j} s^j (1 - s)^{n - j}
+
+to defined a curve as a linear combination:
+
+.. math::
+
+   B(s) = \sum_{j = 0}^n b_{j, n} \cdot v_j.
+
+This comes from the fact that the weights sum to one:
+
+.. math::
+
+   b_{0, n} + b_{1, n} + \cdots + b_{n, n} =
+       \left(s + (1 - s)\right)^n = 1.
+
+This can be generalized to higher order by considering three, four, etc.
+non-negative weights that sum to one (in the above we have the two
+non-negative weights :math:`s` and :math:`1 - s`).
+
+Due to their simple form, B |eacute| zier curves:
+
+* can easily model geometric objects as parametric curves, surfaces, etc.
+* can be computed in an efficient and numerically stable way via
+  `de Casteljau's algorithm`_
+* can utilize convex optimization techniques for many algorithms (such as
+  curve-curve intersection), since curves (and surfaces, etc.)
+  are convex combinations of the basis
+
+Many applications -- as well as the history of their development --
+are described in
+"The Bernstein polynomial basis: A centennial `retrospective`_",
+for example;
+
+* aids physical analysis using finite element methods (`FEM`_) on
+  isogeometric models by using geometric shape functions called
+  `NURBS`_ to represent data
+* used in robust control of dynamic systems; utilizes convexity to
+  create a hull of curves
+
+.. _retrospective: https://dx.doi.org/10.1016/j.cagd.2012.03.001
+.. _Bernstein basis: https://en.wikipedia.org/wiki/Bernstein_polynomial
+.. _de Casteljau's algorithm: https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+.. _FEM: https://en.wikipedia.org/wiki/Finite_element_method
+.. _NURBS: https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline
+
 Installing
 ----------
 
