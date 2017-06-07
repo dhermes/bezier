@@ -90,6 +90,11 @@ intersections):
 .. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/test_curves1_and_13.png
    :align: center
 
+For API-level documentation, check out the B |eacute| zier
+`Package`_ documentation.
+
+.. _Package: http://bezier.readthedocs.io/en/latest/reference/bezier.html
+
 Development
 -----------
 
