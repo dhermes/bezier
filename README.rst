@@ -21,6 +21,55 @@ Dive in and take a look!
 .. _Curves: https://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
 .. _Surfaces: https://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
 
+Why B |eacute| zier?
+--------------------
+
+A B |eacute| zier curves (and surface, etc.) is a parametric curve
+that uses the `Bernstein basis`_:
+
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/bernstein_basis.png
+   :align: center
+
+to defined a curve as a linear combination:
+
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/bezier_defn.png
+   :align: center
+
+This comes from the fact that the weights sum to one:
+
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/sum_to_unity.png
+   :align: center
+
+This can be generalized to higher order by considering three, four, etc.
+non-negative weights that sum to one (in the above we have the two
+non-negative weights ``s`` and ``1 - s``).
+
+Due to their simple form, B |eacute| zier curves:
+
+* can easily model geometric objects as parametric curves, surfaces, etc.
+* can be computed in an efficient and numerically stable way via
+  `de Casteljau's algorithm`_
+* can utilize convex optimization techniques for many algorithms (such as
+  curve-curve intersection), since curves (and surfaces, etc.)
+  are convex combinations of the basis
+
+Many applications -- as well as the history of their development --
+are described in
+"The Bernstein polynomial basis: A centennial `retrospective`_",
+for example;
+
+* aids physical analysis using finite element methods (`FEM`_) on
+  isogeometric models by using geometric shape functions called
+  `NURBS`_ to represent data
+* used in robust control of dynamic systems; utilizes convexity to
+  create a hull of curves
+
+.. _retrospective: https://dx.doi.org/10.1016/j.cagd.2012.03.001
+.. _Bernstein basis: https://en.wikipedia.org/wiki/Bernstein_polynomial
+.. _de Casteljau's algorithm: https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+.. _FEM: https://en.wikipedia.org/wiki/Finite_element_method
+.. _NURBS: https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline
+
 Installing
 ----------
 
