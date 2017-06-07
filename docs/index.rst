@@ -110,10 +110,6 @@ For example, to create a curve:
    import bezier
 
    # Fake the matplotlib/seaborn imports.
-   assert 'matplotlib' not in sys.modules
-   assert 'matplotlib.pyplot' not in sys.modules
-   assert 'seaborn' not in sys.modules
-
    plt_mod = mock.Mock(spec=['figure', 'show'])
    plt_mod.show.return_value = None
    sys.modules['matplotlib.pyplot'] = plt_mod
