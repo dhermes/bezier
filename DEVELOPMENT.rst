@@ -50,7 +50,7 @@ manage dependencies):
    $ PYTHONPATH=src/ MATPLOTLIBRC=test/ pypy -m pytest tests/
 
 .. _nox-automation: https://nox.readthedocs.io/en/stable/
-.. _pytest: http://docs.pytest.org/en/stable/
+.. _pytest: https://docs.pytest.org/en/stable/
 
 Native Code Extensions
 ======================
@@ -158,7 +158,7 @@ functional test case:
 and there is a `Curve-Curve Intersection`_ document which captures many of
 the cases in the functional tests.
 
-.. _Curve-Curve Intersection: http://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
+.. _Curve-Curve Intersection: https://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
 
 A surface-surface intersection functional test case:
 
@@ -221,7 +221,7 @@ allow for `type annotation`_ for arguments and result (introduced in
 Python 3.5).
 
 .. _PEP257: https://www.python.org/dev/peps/pep-0257/
-.. _Google style: http://google.github.io/styleguide/pyguide.html#Comments__body
+.. _Google style: https://google.github.io/styleguide/pyguide.html#Comments__body
 .. _Napoleon: https://sphinxcontrib-napoleon.readthedocs.io/en/latest/
 .. _sphinx-docstring-typing: https://pypi.python.org/pypi/sphinx-docstring-typing
 .. _type annotation: https://docs.python.org/3/library/typing.html

@@ -18,8 +18,8 @@ Dive in and take a look!
 .. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/test_surfaces6Q_and_7Q.png
    :align: center
 
-.. _Curves: http://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
-.. _Surfaces: http://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
+.. _Curves: https://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
+.. _Surfaces: https://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
 
 Installing
 ----------
@@ -94,7 +94,7 @@ intersections):
 For API-level documentation, check out the B |eacute| zier
 `Package`_ documentation.
 
-.. _Package: http://bezier.readthedocs.io/en/latest/reference/bezier.html
+.. _Package: https://bezier.readthedocs.io/en/latest/reference/bezier.html
 
 Development
 -----------
@@ -114,7 +114,7 @@ details, see `the LICENSE`_
 .. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
 
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=latest
-   :target: http://bezier.readthedocs.io/en/latest/
+   :target: https://bezier.readthedocs.io/en/latest/
    :alt: Documentation Status
 .. |circle-build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
    :target: https://circleci.com/gh/dhermes/bezier
