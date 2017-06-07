@@ -136,7 +136,7 @@ install:
   - ps: if ($env:TEST_TYPE -eq "doctest")
         {
           conda install Sphinx;
-          pip install sphinx-rtd-theme sphinx-docstring-typing;
+          pip install sphinx-rtd-theme sphinx-docstring-typing mock;
           $env:NO_IMAGES = "True";
         }
 
