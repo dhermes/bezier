@@ -17,7 +17,7 @@ test:
     - nox -s docs
     - nox -s doctest
     - nox -s lint
-    - nox -s "functional(python_version='2.7')"
+    - nox -s "functional(python_version='3.6')"
   post:
     - .nox/cover/bin/pip install coveralls
     - .nox/cover/bin/coveralls
