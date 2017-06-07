@@ -3,6 +3,8 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
+|circle-build| |appveyor-build| |coverage| |pypi| |versions|
+
 .. toctree::
    :hidden:
    :maxdepth: 4
@@ -189,3 +191,19 @@ License
 details, see `the LICENSE`_.
 
 .. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
+
+.. |circle-build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
+   :target: https://circleci.com/gh/dhermes/bezier
+   :alt: CircleCI Build
+.. |appveyor-build| image:: https://ci.appveyor.com/api/projects/status/github/dhermes/bezier?svg=true
+   :target: https://ci.appveyor.com/project/dhermes/bezier
+   :alt: AppVeyor CI Build
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
+   :target: https://pypi.python.org/pypi/bezier
+   :alt: PyPI Latest
+.. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
+   :target: https://pypi.python.org/pypi/bezier
+   :alt: Package Versions
+.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch=master
+   :target: https://coveralls.io/github/dhermes/bezier?branch=master
+   :alt: Code Coverage
