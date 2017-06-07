@@ -22,7 +22,7 @@ Dive in and take a look!
    :align: center
 
 .. _Curves: http://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
-.. _Surface: http://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
+.. _Surfaces: http://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
 
 Installing
 ----------
