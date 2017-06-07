@@ -8,9 +8,6 @@
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
-``bezier`` is a Python helper for B |eacute| zier Curves, Triangles, and
-Higher Order Objects.
-
 This library provides:
 
 * Support for B |eacute| zier `Curves`_
