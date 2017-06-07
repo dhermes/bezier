@@ -37,7 +37,7 @@ that uses the `Bernstein basis`_:
 
    b_{j, n} = \binom{n}{j} s^j (1 - s)^{n - j}
 
-to defined a curve as a linear combination:
+to define a curve as a linear combination:
 
 .. math::
 

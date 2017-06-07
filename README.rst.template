@@ -30,7 +30,7 @@ that uses the `Bernstein basis`_:
 .. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/bernstein_basis.png
    :align: center
 
-to defined a curve as a linear combination:
+to define a curve as a linear combination:
 
 .. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/bezier_defn.png
    :align: center
