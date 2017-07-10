@@ -11,10 +11,12 @@
             "0x1.b7537f52e7c79p-3",
             "0x1.d22b202b460e2p-1"
         ],
+        "curve1_poly": [25, -144, 128],
         "curve2_params": [
             "0x1.d22b202b460e2p-1",
             "0x1.b7537f52e7c79p-3"
-        ]
+        ],
+        "curve2_poly": [25, -144, 128]
     }, {
         "curve1": 3,
         "curve2": 4,
@@ -72,10 +74,12 @@
             "0x1.36fa590b4b85dp-3",
             "0x1.b24169bd2d1e9p-1"
         ],
+        "curve1_poly": [17, -132, 132],
         "curve2_params": [
             "0x1.36fa590b4b85dp-3",
             "0x1.b24169bd2d1e9p-1"
-        ]
+        ],
+        "curve2_poly": [17, -132, 132]
     }, {
         "curve1": 1,
         "curve2": 8,
@@ -147,12 +151,14 @@
             "0x1.60c2479a9fdfap-1",
             1
         ],
+        "curve1_poly": [3, -14, 14],
         "curve2_params": [
             0,
             "0x1.3e7b70cac040dp-2",
             "0x1.60c2479a9fdfap-1",
             1
-        ]
+        ],
+        "curve2_poly": [3, -14, 14]
     }, {
         "curve1": 14,
         "curve2": 15,
@@ -237,12 +243,14 @@
             "0x1.4f1bbcdcbfa54p-1",
             1
         ],
+        "curve1_poly": [1, -12, 16],
         "curve2_params": [
             "0x1.61c8864680b58p-2",
             "3/4",
             "0x1.cf1bbcdcbfa54p-1",
             0
-        ]
+        ],
+        "curve2_poly": [5, -20, 16]
     }, {
         "curve1": 20,
         "curve2": 21,
@@ -259,12 +267,14 @@
             "3/4",
             "0x1.cf1bbcdcbfa54p-1"
         ],
+        "curve1_poly": [5, -20, 16],
         "curve2_params": [
             "9/10",
             "0x1.6940d6d73455ap-3",
             "3/10",
             "0x1.3f4963e3cc843p-1"
-        ]
+        ],
+        "curve2_poly": [11, -80, 100]
     }, {
         "curve1": 21,
         "curve2": 22,
@@ -281,12 +291,14 @@
             "0x1.3f4963e3cc843p-1",
             "9/10"
         ],
+        "curve1_poly": [11, -80, 100],
         "curve2_params": [
             "0x1.816d383866f7ap-2",
             "7/10",
             "0x1.a5afca4a32eaap-1",
             "1/10"
-        ]
+        ],
+        "curve2_poly": [31, -120, 100]
     }, {
         "curve1": 10,
         "curve2": 23,
@@ -326,9 +338,11 @@
         "curve1_params": [
             "0x1.b7b348cf939b9p-1"
         ],
+        "curve1_poly": [1231, 6213, -18405, 13905, -3726, 486],
         "curve2_params": [
             "0x1.bf3536665a0cdp-1"
-        ]
+        ],
+        "curve2_poly": [4, -28, 25, 13, -16, 4]
     }, {
         "curve1": 11,
         "curve2": 26,
@@ -343,11 +357,13 @@
             "1/2",
             "0x1.d39ac3cd22113p-4"
         ],
+        "curve1_poly": [233, -2304, 2304],
         "curve2_params": [
             "0x1.e3aae41e04b98p-5",
             "1/2",
             "0x1.e3aae41e04b98p-5"
-        ]
+        ],
+        "curve2_poly": [1, -18, 18]
     }, {
         "curve1": 8,
         "curve2": 27,
@@ -360,10 +376,12 @@
             "0x1.ae0b02accd842p-3",
             "0x1.cb0f15070e256p-2"
         ],
+        "curve1_poly": [-1691, 13512, -29760, 17920],
         "curve2_params": [
             "0x1.d01d5c7779605p-4",
             "0x1.b969715ebd872p-2"
-        ]
+        ],
+        "curve2_poly": [-2, 24, -60, 35]
     }, {
         "curve1": 28,
         "curve2": 29,
@@ -530,7 +548,8 @@
         ],
         "curve2_params": [
             "0x1.983e62b67adeep-3"
-        ]
+        ],
+        "curve2_poly": [-12, 60, 1]
     }, {
         "curve1": 51,
         "curve2": 54,
@@ -543,7 +562,8 @@
         ],
         "curve2_params": [
             "0x1.983e62b67adeep-3"
-        ]
+        ],
+        "curve2_poly": [-12, 60, 1]
     }, {
         "curve1": 52,
         "curve2": 54,
@@ -556,7 +576,8 @@
         ],
         "curve2_params": [
             "0x1.983e62b67adeep-3"
-        ]
+        ],
+        "curve2_poly": [-12, 60, 1]
     }, {
         "curve1": 53,
         "curve2": 54,
@@ -569,6 +590,7 @@
         ],
         "curve2_params": [
             "0x1.983e62b67adeep-3"
-        ]
+        ],
+        "curve2_poly": [-12, 60, 1]
     }
 ]
