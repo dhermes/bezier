@@ -385,8 +385,8 @@ _SQ31 = np.sqrt(31.0)
 _D33 = 2.0 / np.sqrt(33.0)
 _SQ7 = np.sqrt(7.0)
 _D7 = 0.5 / _SQ7
-_D5 = np.sqrt(5.0) / 8.0
 _SQ5 = np.sqrt(5.0)
+_D5 = _SQ5 / 8.0
 _S_ROOT1, _S_ROOT2, _ = runtime_utils.real_roots(
     [17920, -29760, 13512, -1691])
 _T_ROOT1, _T_ROOT2, _ = runtime_utils.real_roots([35, -60, 24, -2])
