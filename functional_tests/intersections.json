@@ -316,6 +316,7 @@
         "curve1": 1,
         "curve2": 24,
         "id": 20,
+        "note": "The curves in this intersection are coincident: curve1([1/4, 1]) == curve24([0, 3/4]).",
         "intersections": [
             ["1/4", "3/8"],
             [1, 0]
@@ -386,6 +387,7 @@
         "curve1": 28,
         "curve2": 29,
         "id": 24,
+        "note": "The library successfully detects intersection (at a point of tangency) of curves #1 and #6, but fails (currently, as of July 2017) to detect the tangency of the rotated and scaled equivalent pair #28 and #29.",
         "intersections": [
             [0, 1]
         ],
@@ -485,6 +487,7 @@
         "curve1": 42,
         "curve2": 43,
         "id": 33,
+        "note": "Both of these are segments of the same curve.",
         "intersections": [
             ["-1/4", "11/8"],
             ["-3/32", "53/64"]
