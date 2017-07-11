@@ -16,6 +16,8 @@
 import argparse
 import contextlib
 import inspect
+import io
+import json
 import os
 import types
 
@@ -77,6 +79,76 @@ def real_roots(coeffs):
     all_roots = np.roots(coeffs)
     filtered = all_roots[all_roots.imag == 0.0].real
     return np.sort(filtered)
+
+
+def _convert_float(value):
+    """Convert an "exact" value to a ``float``.
+
+    Also works recursively if ``value`` is a list.
+
+    Assumes a value is one of the following:
+
+    * an integer
+    * a string in C "%a" hex format for an IEEE-754 double precision number
+    * a string fraction of the format "N/D"
+
+    Args:
+        value (Union[int, str, list]): Values to be converted.
+
+    Returns:
+        Union[float, list]: The converted value (or list of values).
+    """
+    if isinstance(value, list):
+        return [_convert_float(element) for element in value]
+    elif isinstance(value, six.integer_types):
+        return float(value)
+    elif value.startswith('0x') or value.startswith('-0x'):
+        return float.fromhex(value)
+    else:
+        numerator, denominator = value.split('/')
+        return float(numerator) / float(denominator)
+
+
+
+def convert_floats(info, keys):
+    """Modify ``info`` in-place to convert strings to floating point numbers.
+
+    Args:
+        info (List[dict, ...]): A list of dictionaries to be modified.
+        keys (List[str, ...]): The keys within each dictionary that contain
+            floating point values to be converted from a "custom" form
+            to native Python ``float`` values.
+    """
+    for element in info:
+        for key in keys:
+            converted = _convert_float(element[key])
+            if isinstance(converted, list):
+                converted = np.asfortranarray(converted)
+
+            element[key] = converted
+
+
+def get_intersections_info():
+    """Load curve and intersections info from JSON file.
+
+    Returns:
+        Tuple[List[dict, ...], List[dict, ...]]: The lists of
+
+        * curve info dictionaries.
+        * intersection info dictionaries.
+    """
+    filename = os.path.join(_FNL_TESTS_DIR, 'curves.json')
+    with io.open(filename, 'r', encoding='utf-8') as file_obj:
+        curves = json.load(file_obj)
+    convert_floats(curves, keys=['control_points'])
+
+    filename = os.path.join(_FNL_TESTS_DIR, 'intersections.json')
+    with io.open(filename, 'r', encoding='utf-8') as file_obj:
+        intersections = json.load(file_obj)
+    keys = ['intersections', 'curve1_params', 'curve2_params']
+    convert_floats(intersections, keys=keys)
+
+    return curves, intersections
 
 
 class Config(object):

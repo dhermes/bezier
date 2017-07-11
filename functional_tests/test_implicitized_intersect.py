@@ -18,7 +18,7 @@ import six
 
 from bezier import _implicitization
 
-import candidate_curves
+import runtime_utils
 
 
 SPACING = np.spacing  # pylint: disable=no-member
@@ -32,7 +32,7 @@ CUSTOM_ERRORS = {
         [ULPS_ALLOWED, 6.0],
     ]),
     (11, 26): np.asfortranarray([
-        [10.0, 30.0],
+        [12.0, 30.0],
         [ULPS_ALLOWED, ULPS_ALLOWED],
         [ULPS_ALLOWED, ULPS_ALLOWED],
     ]),
@@ -83,10 +83,17 @@ def check_coincident(nodes1, nodes2):
 def check_intersect(id_pair, nodes1, nodes2, info):
     param_vals = _implicitization.intersect_curves(nodes1, nodes2)
     if param_vals.size == 0:
-        assert info.size == 0
+        assert info['curve1_params'].size == 0
+        assert info['curve2_params'].size == 0
+        assert info['intersections'].size == 0
     else:
-        # NOTE: This assumes ``info`` is sorted by s-value.
-        exact = info[:, :2]
+        # NOTE: This assumes the intersections are sorted by s-value.
+        s_vals = info['curve1_params']
+        num_s, = s_vals.shape
+        exact = np.zeros((num_s, 2), order='F')
+        exact[:, 0] = s_vals
+        exact[:, 1] = info['curve2_params']
+
         multiplier = CUSTOM_ERRORS.get(id_pair, ULPS_ALLOWED)
         # NOTE: Spacing gives ULP for each value.
         allowed_errors = multiplier * SPACING(exact)
@@ -98,13 +105,22 @@ def check_intersect(id_pair, nodes1, nodes2, info):
 
 
 def test_all():
-    all_intersect = six.iteritems(candidate_curves.INTERSECTION_INFO)
-    for (curve_id1, curve_id2), info in all_intersect:
+    curves, intersections = runtime_utils.get_intersections_info()
+    for info in intersections:
+        # Get info for "curve 1".
+        curve_id1 = info['curve1']
+        curve1_info = curves[curve_id1 - 1]
+        assert curve1_info['id'] == curve_id1
+        nodes1 = curve1_info['control_points']
+
+        # Get info for "curve 2".
+        curve_id2 = info['curve2']
+        curve2_info = curves[curve_id2 - 1]
+        assert curve2_info['id'] == curve_id2
+        nodes2 = curve2_info['control_points']
+
+        # Actually try to intersect the curves.
         id_pair = (curve_id1, curve_id2)
-        curve1 = candidate_curves.CURVES[curve_id1]
-        nodes1 = curve1._nodes
-        curve2 = candidate_curves.CURVES[curve_id2]
-        nodes2 = curve2._nodes
         if id_pair in TANGENT_INTERSECTIONS:
             check_tangent(nodes1, nodes2)
         elif id_pair in COINCIDENT_INTERSECTIONS:
