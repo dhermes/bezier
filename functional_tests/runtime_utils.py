@@ -116,11 +116,11 @@ def no_op_manager():
 
 
 def id_func(intersection_info):
-    """Turn info from ``intersections.json`` into a test ID.
+    """Turn info from ``curve_intersections.json`` into a test ID.
 
     Args:
         intersection_info (dict): An intersection value loaded from
-            ``intersections.json``.
+            ``curve_intersections.json``.
 
     Returns:
         str: An identifier formatted from the info.
@@ -162,7 +162,7 @@ def get_intersections_info():
         curves = json.load(file_obj)
     convert_floats(curves, keys=['control_points'])
 
-    filename = os.path.join(_FNL_TESTS_DIR, 'intersections.json')
+    filename = os.path.join(_FNL_TESTS_DIR, 'curve_intersections.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
         intersections = json.load(file_obj)
     keys = ['intersections', 'curve1_params', 'curve2_params']

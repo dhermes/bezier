@@ -172,7 +172,13 @@ def docs_images(session):
 
     # Run the functional tests with --save-plot.
     fnl_tests_glob = get_path('functional_tests', 'test_*.py')
-    for filename in glob.glob(fnl_tests_glob):
+    modules_to_run = glob.glob(fnl_tests_glob)
+    # Generate images for ``curve_intersections.json``.
+    curve_curve_filename = get_path(
+        'functional_tests', 'make_curve_intersection_images.py')
+    modules_to_run.append(curve_curve_filename)
+
+    for filename in modules_to_run:
         session.run('python', filename, '--save-plot', env=env)
 
 
