@@ -490,7 +490,7 @@ Detecting Self-Intersections
    array([[-0.09375 , 0.828125],
           [-0.25    , 1.375   ]])
 
-.. image:: images/test_curve12_self_crossing.png
+.. image:: images/test_curves42_and_43.png
    :align: center
 
 Limitations
