@@ -144,8 +144,10 @@ def test_intersect(intersection_info):
     id_pair = (curve_id1, curve_id2)
 
     if id_pair in FAILURE_NOT_IMPLEMENTED:
+        assert intersection_info['type'] in ('tangent', 'coincident')
         context = pytest.raises(NotImplementedError)
     elif id_pair in INCORRECT_COUNT:
+        assert intersection_info['type'] == 'tangent'
         context = pytest.raises(IncorrectCount)
     elif id_pair in WIGGLES:
         context = CONFIG.wiggle(WIGGLES[id_pair])
