@@ -14,299 +14,146 @@ from __future__ import absolute_import
 
 import operator
 
-try:
-    import matplotlib.pyplot as plt
-except ImportError:
-    plt = None
 import pytest
 import six
 
+import bezier
 from bezier import _intersection_helpers
-from bezier import _plot_helpers
 
-import candidate_curves
 import runtime_utils
 
 
 CONFIG = runtime_utils.Config()
 S_PROP = operator.attrgetter('s')
+CURVES, INTERSECTIONS = runtime_utils.get_intersections_info()
+WIGGLES = {
+    (21, 22): 12,
+    (11, 26): 25,
+    (8, 27): 42,
+    (32, 33): 4,
+    (50, 54): 91,
+    (51, 54): 1013,
+    (52, 54): 91,
+    (53, 54): 1013,
+}
+FAILURE_NOT_IMPLEMENTED = (
+    (14, 15),  # Line segments parallel.
+    (1, 24),  # The number of candidate intersections is too high. (24)
+    (28, 29),  # The number of candidate intersections is too high. (22)
+)
+INCORRECT_COUNT = (
+    (38, 39),
+)
 
 
-def make_plots(curve1, curve2, points=None,
-               ignore_save=False, failed=True):
-    if not CONFIG.running:
-        return
+class IncorrectCount(ValueError):
+    """Custom exception for a "very bad" answer.
 
-    if points is None:
-        key = (curve1, curve2)
-        info = candidate_curves.INTERSECTION_INFO[key]
-        points = info[:, 2:]
+    This should be raised when the **computed** number of intersections
+    disagrees with the actual number of intersections.
+    """
 
-    if isinstance(curve1, six.integer_types):
-        curve1 = candidate_curves.CURVES[curve1]
-        curve2 = candidate_curves.CURVES[curve2]
 
-    ax = curve1.plot(64)
-    curve2.plot(64, ax=ax)
-    ax.plot(points[:, 0], points[:, 1],
-            marker='o', linestyle='None', color='black')
-    ax.axis('scaled')
-    _plot_helpers.add_plot_boundary(ax)
+def _get_curve(curve_id):
+    curve_info = CURVES[curve_id - 1]
+    assert curve_info['id'] == curve_id
+    return bezier.Curve.from_nodes(
+        curve_info['control_points'], _copy=False)
 
-    if CONFIG.save_plot:
-        if not ignore_save:
-            CONFIG.save_fig()
+
+def _get_params(intersection_info):
+    s_vals = intersection_info['curve1_params']
+    num_s, = s_vals.shape
+
+    t_vals = intersection_info['curve2_params']
+    assert t_vals.shape == (num_s,)
+
+    intersection_pts = intersection_info['intersections']
+    if num_s == 0:
+        assert intersection_pts.size == 0
     else:
-        if failed:
-            plt.title(CONFIG.current_test + ': failed')
-        else:
-            plt.title(CONFIG.current_test)
-        plt.show()
+        assert intersection_pts.shape == (num_s, 2)
 
-    plt.close(ax.figure)
+    return s_vals, t_vals, intersection_pts
 
 
-def curve_curve_check(curve_id1, curve_id2, ignore_save=False):
-    # pylint: disable=too-many-locals
-    key = (curve_id1, curve_id2)
-    # NOTE: This assumes ``info`` is sorted by s-value.
-    info = candidate_curves.INTERSECTION_INFO[key]
-    s_vals = info[:, 0]
-    t_vals = info[:, 1]
-    points = info[:, 2:]
-
-    assert len(s_vals) == len(t_vals)
-    assert len(s_vals) == len(points)
-
-    curve1 = candidate_curves.CURVES[curve_id1]
-    curve2 = candidate_curves.CURVES[curve_id2]
-
+def _intersection_curves(num_s, curve_id1, curve_id2, curve1, curve2):
     strategy = _intersection_helpers.IntersectionStrategy.geometric
     intersections = _intersection_helpers.all_intersections(
         [(curve1, curve2)], strategy=strategy)
-    assert len(intersections) == len(s_vals)
-    # Make sure intersections are sorted by s-value as well.
+
+    # Make we have the right number of intersections.
+    if len(intersections) != num_s:
+        raise IncorrectCount(
+            'Received wrong number of intersections',
+            len(intersections), 'Expected', num_s,
+            'Curve 1', curve_id1, 'Curve 2', curve_id2)
+
+    # Sort the intersections by s-value.
     intersections.sort(key=S_PROP)
-
-    info = six.moves.zip(intersections, s_vals, t_vals, points)
-    for intersection, s_val, t_val, point in info:
-        assert intersection.first is curve1
-        assert intersection.second is curve2
-
-        CONFIG.assert_close(intersection.s, s_val)
-        CONFIG.assert_close(intersection.t, t_val)
-
-        computed_point = intersection.get_point()
-        CONFIG.assert_close(computed_point[0, 0], point[0])
-        CONFIG.assert_close(computed_point[0, 1], point[1])
-
-        point_on1 = curve1.evaluate(s_val)
-        CONFIG.assert_close(point_on1[0, 0], point[0])
-        CONFIG.assert_close(point_on1[0, 1], point[1])
-
-        point_on2 = curve2.evaluate(t_val)
-        CONFIG.assert_close(point_on2[0, 0], point[0])
-        CONFIG.assert_close(point_on2[0, 1], point[1])
-
-    make_plots(curve1, curve2, points, ignore_save=ignore_save, failed=False)
-    # pylint: enable=too-many-locals
-
-
-def test_curves1_and_2():
-    curve_curve_check(1, 2)
-
-
-def test_curves3_and_4():
-    curve_curve_check(3, 4)
-
-
-def test_curves1_and_5():
-    curve_curve_check(1, 5)
-
-
-def test_curves1_and_6():
-    curve_curve_check(1, 6)
-
-
-def test_curves1_and_7():
-    curve_curve_check(1, 7)
-
-
-def test_curves1_and_8():
-    curve_curve_check(1, 8)
-
-
-def test_curves1_and_9():
-    curve_curve_check(1, 9)
-
-
-def test_curves10_and_11():
-    curve_curve_check(10, 11)
-
-
-def test_curve12_self_crossing():
-    curve_curve_check(42, 43)
-    curve_curve_check(44, 45, ignore_save=True)
-    curve_curve_check(46, 47, ignore_save=True)
-
-
-def test_curves8_and_9():
-    curve_curve_check(8, 9)
-
-
-def test_curves1_and_13():
-    curve_curve_check(1, 13)
-
-
-def test_curves14_and_15():
-    with pytest.raises(NotImplementedError):
-        curve_curve_check(14, 15)
-
-    make_plots(14, 15)
-
-
-def test_curves14_and_16():
-    curve_curve_check(14, 16)
-
-
-def test_curves10_and_17():
-    curve_curve_check(10, 17)
-
-
-def test_curves1_and_18():
-    curve_curve_check(1, 18)
-
-
-def test_curves1_and_19():
-    curve_curve_check(1, 19)
-
-
-def test_curves1_and_20():
-    curve_curve_check(1, 20)
-
-
-def test_curves20_and_21():
-    curve_curve_check(20, 21)
-
-
-def test_curves21_and_22():
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(12):
-        curve_curve_check(21, 22)
-
-
-def test_curves10_and_23():
-    curve_curve_check(10, 23)
-
-
-def test_curves1_and_24():
-    with pytest.raises(NotImplementedError):
-        curve_curve_check(1, 24)
-
-    make_plots(1, 24)
-
-
-def test_curves15_and_25():
-    curve_curve_check(15, 25)
-
-
-def test_curves11_and_26():
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(25):
-        curve_curve_check(11, 26)
-
-
-def test_curves8_and_27():
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(42):
-        curve_curve_check(8, 27)
-
-
-def test_curves28_and_29():
-    with pytest.raises(NotImplementedError):
-        curve_curve_check(28, 29)
-
-    make_plots(28, 29)
-
-
-def test_curves29_and_30():
-    curve_curve_check(29, 30)
-
-
-def test_curves8_and_23():
-    curve_curve_check(8, 23)
-
-
-def test_curves11_and_31():
-    curve_curve_check(11, 31)
-
-
-def test_curves32_and_33():
-    # NOTE: We allow less wiggle room for this intersection.
-    with CONFIG.wiggle(4):
-        curve_curve_check(32, 33)
-
-
-def test_curves34_and_35():
-    curve_curve_check(34, 35)
-
-
-def test_curves36_and_37():
-    curve_curve_check(36, 37)
-
-
-@pytest.mark.xfail
-def test_curves38_and_39():
-    try:
-        curve_curve_check(38, 39)
-    except AssertionError:
-        make_plots(38, 39)
-        if not CONFIG.running:
-            raise
-
-
-def test_curves40_and_41():
-    curve_curve_check(40, 41)
-
-
-def test_curves42_and_43():
-    curve_curve_check(42, 43)
-
-
-def test_curves44_and_45():
-    curve_curve_check(44, 45)
-
-
-def test_curves46_and_47():
-    curve_curve_check(46, 47)
-
-
-def test_curves48_and_49():
-    curve_curve_check(48, 49)
-
-
-def test_curves50_and_54():
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(91):
-        curve_curve_check(50, 54)
-
-
-def test_curves51_and_54():
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(1013):
-        curve_curve_check(51, 54)
-
-
-def test_curves52_and_54():
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(91):
-        curve_curve_check(52, 54)
-
-
-def test_curves53_and_54():
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(1013):
-        curve_curve_check(53, 54)
+    return intersections
+
+
+def _intersection_check(info_tuple, curve1, curve2):
+    intersection, s_val, t_val, point = info_tuple
+    assert intersection.first is curve1
+    assert intersection.second is curve2
+
+    CONFIG.assert_close(intersection.s, s_val)
+    CONFIG.assert_close(intersection.t, t_val)
+
+    computed_point = intersection.get_point()
+    CONFIG.assert_close(computed_point[0, 0], point[0])
+    CONFIG.assert_close(computed_point[0, 1], point[1])
+
+    point_on1 = curve1.evaluate(s_val)
+    CONFIG.assert_close(point_on1[0, 0], point[0])
+    CONFIG.assert_close(point_on1[0, 1], point[1])
+
+    point_on2 = curve2.evaluate(t_val)
+    CONFIG.assert_close(point_on2[0, 0], point[0])
+    CONFIG.assert_close(point_on2[0, 1], point[1])
+
+
+def _intersections_check(curve_id1, curve_id2, intersection_info):
+    # Get curve instances.
+    curve1 = _get_curve(curve_id1)
+    curve2 = _get_curve(curve_id2)
+
+    # Get / verify info for the intersections.
+    s_vals, t_vals, intersection_pts = _get_params(intersection_info)
+
+    # Actually intersect the curves.
+    intersections = _intersection_curves(
+        s_vals.size, curve_id1, curve_id2, curve1, curve2)
+
+    # Check that each intersection is as expected.
+    info = six.moves.zip(intersections, s_vals, t_vals, intersection_pts)
+    for info_tuple in info:
+        _intersection_check(info_tuple, curve1, curve2)
+
+
+@pytest.mark.parametrize(
+    'intersection_info',
+    INTERSECTIONS,
+    ids=runtime_utils.id_func,
+)
+def test_intersect(intersection_info):
+    curve_id1 = intersection_info['curve1']
+    curve_id2 = intersection_info['curve2']
+    id_pair = (curve_id1, curve_id2)
+
+    if id_pair in FAILURE_NOT_IMPLEMENTED:
+        context = pytest.raises(NotImplementedError)
+    elif id_pair in INCORRECT_COUNT:
+        context = pytest.raises(IncorrectCount)
+    elif id_pair in WIGGLES:
+        context = CONFIG.wiggle(WIGGLES[id_pair])
+    else:
+        context = runtime_utils.no_op_manager()
+
+    with context:
+        _intersections_check(curve_id1, curve_id2, intersection_info)
 
 
 if __name__ == '__main__':

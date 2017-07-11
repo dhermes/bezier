@@ -109,6 +109,26 @@ def _convert_float(value):
         return float(numerator) / float(denominator)
 
 
+@contextlib.contextmanager
+def no_op_manager():
+    """No-op context manager."""
+    yield
+
+
+def id_func(intersection_info):
+    """Turn info from ``intersections.json`` into a test ID.
+
+    Args:
+        intersection_info (dict): An intersection value loaded from
+            ``intersections.json``.
+
+    Returns:
+        str: An identifier formatted from the info.
+    """
+    return 'curves {:d} and {:d} (ID: {:d})'.format(
+        intersection_info['curve1'], intersection_info['curve2'],
+        intersection_info['id'])
+
 
 def convert_floats(info, keys):
     """Modify ``info`` in-place to convert strings to floating point numbers.
