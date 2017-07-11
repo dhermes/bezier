@@ -49,6 +49,7 @@ CUSTOM_ERRORS = {
         [0.0, 18.0],
     ]),
 }
+CURVES, INTERSECTIONS = runtime_utils.get_intersections_info()
 
 
 def check_tangent(nodes1, nodes2):
@@ -92,32 +93,31 @@ def check_no_intersect(nodes1, nodes2):
     assert param_vals.size == 0
 
 
-def test_all():
-    curves, intersections = runtime_utils.get_intersections_info()
-    for info in intersections:
-        # Get info for "curve 1".
-        curve_id1 = info['curve1']
-        curve1_info = curves[curve_id1 - 1]
-        assert curve1_info['id'] == curve_id1
-        nodes1 = curve1_info['control_points']
+@pytest.mark.parametrize('intersection_info', INTERSECTIONS)
+def test_intersect(intersection_info):
+    # Get info for "curve 1".
+    curve_id1 = intersection_info['curve1']
+    curve1_info = CURVES[curve_id1 - 1]
+    assert curve1_info['id'] == curve_id1
+    nodes1 = curve1_info['control_points']
 
-        # Get info for "curve 2".
-        curve_id2 = info['curve2']
-        curve2_info = curves[curve_id2 - 1]
-        assert curve2_info['id'] == curve_id2
-        nodes2 = curve2_info['control_points']
+    # Get info for "curve 2".
+    curve_id2 = intersection_info['curve2']
+    curve2_info = CURVES[curve_id2 - 1]
+    assert curve2_info['id'] == curve_id2
+    nodes2 = curve2_info['control_points']
 
-        # Actually try to intersect the curves.
-        intersection_type = info['type']
-        if intersection_type == 'tangent':
-            check_tangent(nodes1, nodes2)
-        elif intersection_type == 'coincident':
-            check_coincident(nodes1, nodes2)
-        elif intersection_type == 'standard':
-            id_pair = (curve_id1, curve_id2)
-            check_intersect(id_pair, nodes1, nodes2, info)
-        elif intersection_type == 'no-intersection':
-            check_no_intersect(nodes1, nodes2)
-        else:
-            raise ValueError(
-                'Unexpected intersection type', intersection_type)
+    # Actually try to intersect the curves.
+    intersection_type = intersection_info['type']
+    if intersection_type == 'tangent':
+        check_tangent(nodes1, nodes2)
+    elif intersection_type == 'coincident':
+        check_coincident(nodes1, nodes2)
+    elif intersection_type == 'standard':
+        id_pair = (curve_id1, curve_id2)
+        check_intersect(id_pair, nodes1, nodes2, intersection_info)
+    elif intersection_type == 'no-intersection':
+        check_no_intersect(nodes1, nodes2)
+    else:
+        raise ValueError(
+            'Unexpected intersection type', intersection_type)
