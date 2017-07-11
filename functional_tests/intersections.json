@@ -3,6 +3,7 @@
         "curve1": 1,
         "curve2": 2,
         "id": 1,
+        "type": "standard",
         "intersections": [
             ["0x1.b7537f52e7c79p-3", "0x1.59159015a3071p-2"],
             ["0x1.d22b202b460e2p-1", "0x1.4dd4dfd4b9f1ep-3"]
@@ -21,6 +22,7 @@
         "curve1": 3,
         "curve2": 4,
         "id": 2,
+        "type": "standard",
         "intersections": [
             ["3/4", "9/8"],
             ["21/8", "21/32"]
@@ -37,6 +39,7 @@
         "curve1": 1,
         "curve2": 5,
         "id": 3,
+        "type": "standard",
         "intersections": [
             ["1/4", "3/8"],
             ["3/4", "3/8"]
@@ -53,6 +56,7 @@
         "curve1": 1,
         "curve2": 6,
         "id": 4,
+        "type": "tangent",
         "intersections": [
             ["1/2", "1/2"]
         ],
@@ -66,6 +70,7 @@
         "curve1": 1,
         "curve2": 7,
         "id": 5,
+        "type": "standard",
         "intersections": [
             ["0x1.36fa590b4b85dp-3", "0x1.07c1f07c1f07cp-2"],
             ["0x1.b24169bd2d1e9p-1", "0x1.07c1f07c1f07cp-2"]
@@ -84,6 +89,7 @@
         "curve1": 1,
         "curve2": 8,
         "id": 6,
+        "type": "standard",
         "intersections": [
             ["1/4", "3/8"],
             ["3/4", "3/8"]
@@ -100,6 +106,7 @@
         "curve1": 1,
         "curve2": 9,
         "id": 7,
+        "type": "standard",
         "intersections": [
             ["1/2", "1/2"]
         ],
@@ -113,6 +120,7 @@
         "curve1": 10,
         "curve2": 11,
         "id": 8,
+        "type": "standard",
         "intersections": [
             [3, 4]
         ],
@@ -126,6 +134,7 @@
         "curve1": 8,
         "curve2": 9,
         "id": 9,
+        "type": "standard",
         "intersections": [
             ["1/2", "3/8"]
         ],
@@ -139,6 +148,7 @@
         "curve1": 1,
         "curve2": 13,
         "id": 10,
+        "type": "standard",
         "intersections": [
             [0, 0],
             ["0x1.3e7b70cac040dp-2", "0x1.b6db6db6db6dbp-2"],
@@ -163,6 +173,7 @@
         "curve1": 14,
         "curve2": 15,
         "id": 11,
+        "type": "tangent",
         "intersections": [
             ["1/2", "1/2"]
         ],
@@ -176,6 +187,7 @@
         "curve1": 14,
         "curve2": 16,
         "id": 12,
+        "type": "standard",
         "intersections": [
             ["3/8", "15/32"],
             ["5/8", "15/32"]
@@ -192,6 +204,7 @@
         "curve1": 10,
         "curve2": 17,
         "id": 13,
+        "type": "standard",
         "intersections": [
             [3, 4]
         ],
@@ -205,6 +218,7 @@
         "curve1": 1,
         "curve2": 18,
         "id": 14,
+        "type": "tangent",
         "intersections": [
             [1, 0]
         ],
@@ -218,6 +232,7 @@
         "curve1": 1,
         "curve2": 19,
         "id": 15,
+        "type": "standard",
         "intersections": [
             [1, 0]
         ],
@@ -231,6 +246,7 @@
         "curve1": 1,
         "curve2": 20,
         "id": 16,
+        "type": "standard",
         "intersections": [
             ["0x1.8722191a02d61p-4", "0x1.61c8864680b58p-3"],
             ["1/4", "3/8"],
@@ -255,6 +271,7 @@
         "curve1": 20,
         "curve2": 21,
         "id": 17,
+        "type": "standard",
         "intersections": [
             [1, 0],
             ["0x1.8722191a02d61p-4", "0x1.61c8864680b58p-3"],
@@ -279,6 +296,7 @@
         "curve1": 21,
         "curve2": 22,
         "id": 18,
+        "type": "standard",
         "intersections": [
             ["0x1.8722191a02d61p-4", "0x1.61c8864680b58p-3"],
             ["1/4", "3/8"],
@@ -303,6 +321,7 @@
         "curve1": 10,
         "curve2": 23,
         "id": 19,
+        "type": "tangent",
         "intersections": [
             ["9/2", "9/2"]
         ],
@@ -316,6 +335,7 @@
         "curve1": 1,
         "curve2": 24,
         "id": 20,
+        "type": "coincident",
         "note": "The curves in this intersection are coincident: curve1([1/4, 1]) == curve24([0, 3/4]).",
         "intersections": [
             ["1/4", "3/8"],
@@ -333,6 +353,7 @@
         "curve1": 15,
         "curve2": 25,
         "id": 21,
+        "type": "standard",
         "intersections": [
             ["0x1.c9c6769baeb4bp-1", "0x1.9f09401c281dep-1"]
         ],
@@ -348,6 +369,7 @@
         "curve1": 11,
         "curve2": 26,
         "id": 22,
+        "type": "standard",
         "intersections": [
             ["0x1.5eb412d9d98cep-1", "0x1.c58ca7865bbdep+2"],
             [3, 4],
@@ -369,6 +391,7 @@
         "curve1": 8,
         "curve2": 27,
         "id": 23,
+        "type": "standard",
         "intersections": [
             ["0x1.ae0b02accd842p-3", "3/8"],
             ["0x1.cb0f15070e256p-2", "3/8"]
@@ -387,6 +410,7 @@
         "curve1": 28,
         "curve2": 29,
         "id": 24,
+        "type": "tangent",
         "note": "The library successfully detects intersection (at a point of tangency) of curves #1 and #6, but fails (currently, as of July 2017) to detect the tangency of the rotated and scaled equivalent pair #28 and #29.",
         "intersections": [
             [0, 1]
@@ -401,6 +425,7 @@
         "curve1": 29,
         "curve2": 30,
         "id": 25,
+        "type": "standard",
         "intersections": [
             [0, 1]
         ],
@@ -414,6 +439,7 @@
         "curve1": 8,
         "curve2": 23,
         "id": 26,
+        "type": "no-intersection",
         "intersections": [],
         "curve1_params": [],
         "curve2_params": []
@@ -421,6 +447,7 @@
         "curve1": 11,
         "curve2": 31,
         "id": 27,
+        "type": "no-intersection",
         "intersections": [],
         "curve1_params": [],
         "curve2_params": []
@@ -428,6 +455,7 @@
         "curve1": 32,
         "curve2": 33,
         "id": 28,
+        "type": "standard",
         "intersections": [
             ["-3/64", "-1/4"]
         ],
@@ -441,6 +469,7 @@
         "curve1": 34,
         "curve2": 35,
         "id": 29,
+        "type": "standard",
         "intersections": [
             ["1/2", "21/8"]
         ],
@@ -454,6 +483,7 @@
         "curve1": 36,
         "curve2": 37,
         "id": 30,
+        "type": "standard",
         "intersections": [
             ["1/2", "-3/8"]
         ],
@@ -467,6 +497,7 @@
         "curve1": 38,
         "curve2": 39,
         "id": 31,
+        "type": "tangent",
         "intersections": [
             [1, 0]
         ],
@@ -480,6 +511,7 @@
         "curve1": 40,
         "curve2": 41,
         "id": 32,
+        "type": "no-intersection",
         "intersections": [],
         "curve1_params": [],
         "curve2_params": []
@@ -487,7 +519,8 @@
         "curve1": 42,
         "curve2": 43,
         "id": 33,
-        "note": "Both of these are segments of the same curve.",
+        "type": "coincident",
+        "note": "The curves in this intersection are coincident: curve42([1, 2]) == curve43([0, 1]). The algebraic curve that contains them both also has a self-crossing present on these curves.",
         "intersections": [
             ["-1/4", "11/8"],
             ["-3/32", "53/64"]
@@ -506,6 +539,8 @@
         "curve1": 44,
         "curve2": 45,
         "id": 34,
+        "type": "coincident",
+        "note": "The curves in this intersection are coincident: curve44([1, 2]) == curve45([0, 1]).",
         "intersections": [
             ["-75/256", "517/512"]
         ],
@@ -519,6 +554,8 @@
         "curve1": 46,
         "curve2": 47,
         "id": 35,
+        "type": "coincident",
+        "note": "The curves in this intersection are coincident: curve46([1, 2]) == curve47([0, 1]).",
         "intersections": [
             ["-9/256", "583/512"]
         ],
@@ -532,6 +569,7 @@
         "curve1": 48,
         "curve2": 49,
         "id": 36,
+        "type": "standard",
         "intersections": [
             [1, 0]
         ],
@@ -545,6 +583,7 @@
         "curve1": 50,
         "curve2": 54,
         "id": 37,
+        "type": "standard",
         "intersections": [
             ["17/8", "23/8"]
         ],
@@ -559,6 +598,7 @@
         "curve1": 51,
         "curve2": 54,
         "id": 38,
+        "type": "standard",
         "intersections": [
             ["17/8", "23/8"]
         ],
@@ -573,6 +613,7 @@
         "curve1": 52,
         "curve2": 54,
         "id": 39,
+        "type": "standard",
         "intersections": [
             ["17/8", "23/8"]
         ],
@@ -587,6 +628,7 @@
         "curve1": 53,
         "curve2": 54,
         "id": 40,
+        "type": "standard",
         "intersections": [
             ["17/8", "23/8"]
         ],

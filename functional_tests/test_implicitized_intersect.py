@@ -49,20 +49,6 @@ CUSTOM_ERRORS = {
         [0.0, 18.0],
     ]),
 }
-TANGENT_INTERSECTIONS = (
-    (1, 6),
-    (10, 23),
-    (14, 15),
-    (28, 29),
-    (38, 39),
-    (1, 18),
-)
-COINCIDENT_INTERSECTIONS = (
-    (1, 24),
-    (42, 43),
-    (44, 45),
-    (46, 47),
-)
 
 
 def check_tangent(nodes1, nodes2):
@@ -82,26 +68,28 @@ def check_coincident(nodes1, nodes2):
 
 def check_intersect(id_pair, nodes1, nodes2, info):
     param_vals = _implicitization.intersect_curves(nodes1, nodes2)
-    if param_vals.size == 0:
-        assert info['curve1_params'].size == 0
-        assert info['curve2_params'].size == 0
-        assert info['intersections'].size == 0
-    else:
-        # NOTE: This assumes the intersections are sorted by s-value.
-        s_vals = info['curve1_params']
-        num_s, = s_vals.shape
-        exact = np.zeros((num_s, 2), order='F')
-        exact[:, 0] = s_vals
-        exact[:, 1] = info['curve2_params']
+    assert param_vals.size > 0
 
-        multiplier = CUSTOM_ERRORS.get(id_pair, ULPS_ALLOWED)
-        # NOTE: Spacing gives ULP for each value.
-        allowed_errors = multiplier * SPACING(exact)
+    # NOTE: This assumes the intersections are sorted by s-value.
+    s_vals = info['curve1_params']
+    num_s, = s_vals.shape
+    exact = np.zeros((num_s, 2), order='F')
+    exact[:, 0] = s_vals
+    exact[:, 1] = info['curve2_params']
 
-        computed = param_vals[np.argsort(param_vals[:, 0]), :2]
-        assert exact.shape == computed.shape
-        # NOTE: We assume zeros will be **exactly** correct.
-        assert np.all(np.abs(exact - computed) <= allowed_errors)
+    multiplier = CUSTOM_ERRORS.get(id_pair, ULPS_ALLOWED)
+    # NOTE: Spacing gives ULP for each value.
+    allowed_errors = multiplier * SPACING(exact)
+
+    computed = param_vals[np.argsort(param_vals[:, 0]), :2]
+    assert exact.shape == computed.shape
+    # NOTE: We assume zeros will be **exactly** correct.
+    assert np.all(np.abs(exact - computed) <= allowed_errors)
+
+
+def check_no_intersect(nodes1, nodes2):
+    param_vals = _implicitization.intersect_curves(nodes1, nodes2)
+    assert param_vals.size == 0
 
 
 def test_all():
@@ -120,10 +108,16 @@ def test_all():
         nodes2 = curve2_info['control_points']
 
         # Actually try to intersect the curves.
-        id_pair = (curve_id1, curve_id2)
-        if id_pair in TANGENT_INTERSECTIONS:
+        intersection_type = info['type']
+        if intersection_type == 'tangent':
             check_tangent(nodes1, nodes2)
-        elif id_pair in COINCIDENT_INTERSECTIONS:
+        elif intersection_type == 'coincident':
             check_coincident(nodes1, nodes2)
-        else:
+        elif intersection_type == 'standard':
+            id_pair = (curve_id1, curve_id2)
             check_intersect(id_pair, nodes1, nodes2, info)
+        elif intersection_type == 'no-intersection':
+            check_no_intersect(nodes1, nodes2)
+        else:
+            raise ValueError(
+                'Unexpected intersection type', intersection_type)
