@@ -92,7 +92,17 @@ def check_no_intersect(nodes1, nodes2):
     assert param_vals.size == 0
 
 
-@pytest.mark.parametrize('intersection_info', INTERSECTIONS)
+def id_func(intersection_info):
+    return 'curves {:d} and {:d} (ID: {:d})'.format(
+        intersection_info['curve1'], intersection_info['curve2'],
+        intersection_info['id'])
+
+
+@pytest.mark.parametrize(
+    'intersection_info',
+    INTERSECTIONS,
+    ids=id_func,
+)
 def test_intersect(intersection_info):
     # Get info for "curve 1".
     curve_id1 = intersection_info['curve1']
