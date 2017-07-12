@@ -108,7 +108,7 @@ def evaluate(nodes, x_val, y_val):
     .. note::
 
        This assumes, but doesn't check, that ``nodes`` is not degree-elevated.
-       If it were degree elevated, then the Sylvester matrix will always
+       If it were degree-elevated, then the Sylvester matrix will always
        have zero determinant.
 
     Args:

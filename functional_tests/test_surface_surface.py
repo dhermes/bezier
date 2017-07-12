@@ -458,7 +458,7 @@ SURFACE29Q = bezier.Surface.from_nodes(np.asfortranarray([
     [0.0, 1.25],
 ]), _copy=False)
 # F30Q = sympy.Matrix([[(7 * s - 2) / 8, (7 * t - 2) / 8]])
-# NOTE: This is a degree elevated linear surface.
+# NOTE: This is a degree-elevated linear surface.
 SURFACE30Q = bezier.Surface.from_nodes(np.asfortranarray([
     [-0.25, -0.25],
     [0.1875, -0.25],
