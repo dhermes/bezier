@@ -115,7 +115,7 @@ For example, to create a curve:
    sys.modules['matplotlib.pyplot'] = plt_mod
    mpl_mod = mock.Mock(pyplot=plt_mod, spec=[])
    sys.modules['matplotlib'] = mpl_mod
-   sys.modules['seaborn'] = mock.Mock(spec=[])
+   sys.modules['seaborn'] = mock.Mock(spec=['set'])
 
 .. doctest:: getting-started
 
@@ -154,6 +154,7 @@ intersections):
 
    >>> import matplotlib.pyplot as plt
    >>> import seaborn
+   >>> seaborn.set()
    >>>
    >>> ax = curve1.plot(num_pts=256)
    >>> _ = curve2.plot(num_pts=256, ax=ax)

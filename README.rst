@@ -126,6 +126,7 @@ intersections):
 
    >>> import matplotlib.pyplot as plt
    >>> import seaborn
+   >>> seaborn.set()
    >>>
    >>> ax = curve1.plot(num_pts=256)
    >>> _ = curve2.plot(num_pts=256, ax=ax)

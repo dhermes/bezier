@@ -21,6 +21,7 @@ import nox
 
 NUMPY = 'numpy'
 MOCK_DEP = 'mock >= 1.3.0'
+SEABORN_DEP = 'seaborn >= 0.8'
 BASE_DEPS = (
     MOCK_DEP,
     NUMPY,
@@ -162,7 +163,7 @@ def docs_images(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
     local_deps = DOCS_DEPS
-    local_deps += ('matplotlib >= 2.0.0', MOCK_DEP, 'seaborn', 'pytest')
+    local_deps += ('matplotlib >= 2.0.0', MOCK_DEP, SEABORN_DEP, 'pytest')
     session.install(*local_deps)
     # Install this package.
     session.install('.')

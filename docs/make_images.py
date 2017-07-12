@@ -42,6 +42,8 @@ from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
 
+if seaborn is not None:
+    seaborn.set()  # Required in `seaborn >= 0.8`
 _DOCS_DIR = os.path.abspath(os.path.dirname(__file__))
 IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
 NO_IMAGES = 'NO_IMAGES' in os.environ
