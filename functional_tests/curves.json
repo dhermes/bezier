@@ -706,6 +706,6 @@
             [-23, 0, 0],
             [8, 0, 1]
         ],
-        "note": "This curve has a ``bad'' parameterization. It is a line, but the curve appears quadratic. There are no self-intersections or cusps on the interval [0, 1], but the curve should be degree 1."
+        "note": "This curve has a ``bad'' parameterization. It is a line, but the curve appears quadratic: `x(s) = ((s + 30)^2 + 176) / 512, y(s) = 23 / 8`. If `553/256 = 2212/1024` were changed to `2213/1024` then the curve would present as a line: `x(s) = (61 s + 1076) / 512, y(s) = 23 / 8`. There are no self-intersections or cusps on the interval [0, 1], but the curve is still ``bad'' since it has a ``false'' degree of 2 (rather than the actual degree of 1). The quadratic curve behaves badly around `s = -30` because it will lead to duplicate values of `x`, for example `x(-31) = x(-29)` and in general `x(-30 + d) = x(-30 - d)`."
     }
 }

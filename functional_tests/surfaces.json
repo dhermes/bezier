@@ -204,7 +204,8 @@
             ["3/8", "3/8"],
             ["5/8", "3/8"],
             ["1/2", "5/8"]
-        ]
+        ],
+        "note": "The bottom edge of this surface lies entirely on the bottom edge of surface 4Q."
     },
     "14Q": {
         "control_points": [
@@ -214,7 +215,8 @@
             ["3/8", "7/16"],
             ["5/8", "7/16"],
             ["1/2", "11/16"]
-        ]
+        ],
+        "note": "This surface is surface 13Q shifted by [0, 1/16]."
     },
     "15Q": {
         "control_points": [
@@ -374,7 +376,8 @@
             ["-1/4", "3/16"],
             ["3/16", "3/16"],
             ["-1/4", "5/8"]
-        ]
+        ],
+        "note": "This is a degree-elevated linear surface."
     },
     "31Q": {
         "control_points": [
@@ -394,7 +397,8 @@
             ["73/32", "47/16"],
             ["71/32", "183/64"],
             ["37/16", "91/32"]
-        ]
+        ],
+        "note": "This is surface 11L degree-elevated from linear to quadratic."
     },
     "33Q": {
         "control_points": [
@@ -404,6 +408,7 @@
             ["569/256", "47/16"],
             ["553/256", "23/8"],
             ["1137/512", "23/8"]
-        ]
+        ],
+        "note": "Edge 1 (0-indexed) is curve 54, which has a ``bad'' parameterization, but this is not a problem for `s` in [0, 1]."
     }
 }

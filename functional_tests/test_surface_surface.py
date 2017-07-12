@@ -479,9 +479,9 @@ SURFACE31Q = bezier.Surface.from_nodes(np.asfortranarray([
     [0.4375, 0.0],
     [-0.125, 0.0],
 ]), _copy=False)
-# NOTE: This is a degree-elevated form of SURFACEF11L
 # F32Q = sympy.Matrix([[
 #     (t - 2 * s + 36) / 16, (97 - 5 * s - 6 * t) / 32]])
+# NOTE: This is a degree-elevated form of SURFACE11L
 SURFACE32Q = bezier.Surface.from_nodes(np.asfortranarray([
     [2.25, 3.03125],
     [2.1875, 2.953125],
@@ -490,13 +490,10 @@ SURFACE32Q = bezier.Surface.from_nodes(np.asfortranarray([
     [2.21875, 2.859375],
     [2.3125, 2.84375],
 ]), _copy=False)
-# NOTE: Node 4 (0-indexed) should be [2.1611328125, 2.875] since the
-#       actual edge is a line with a quadratic parameterization.
-#       The "bad" parameterization of the edge doesn't cause issues
-#       on [0, 1] but it would if the interval contained points on
-#       either side of -30.
 # F33Q = sympy.Matrix([[
 #     (t**2 - 64 * s - 4 * t + 1140) / 512, (24 - s - t) / 8]])
+# NOTE: Edge 1 (0-indexed) is curve 54, which has a ``bad'' parameterization,
+#       but this is not a problem for `s` in [0, 1]."
 SURFACE33Q = bezier.Surface.from_nodes(np.asfortranarray([
     [2.2265625, 3],
     [2.1640625, 2.9375],
