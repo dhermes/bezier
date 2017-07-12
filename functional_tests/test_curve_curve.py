@@ -155,7 +155,3 @@ def test_intersect(intersection_info):
 
     with context:
         _intersections_check(curve_id1, curve_id2, intersection_info)
-
-
-if __name__ == '__main__':
-    CONFIG.run(globals())

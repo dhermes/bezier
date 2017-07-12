@@ -38,7 +38,7 @@ Curve-Line Intersection
    array([[ 0.25 , 0.375],
           [ 0.75 , 0.375]])
 
-.. image:: images/test_curves1_and_8.png
+.. image:: images/curves1_and_8.png
    :align: center
 
 .. doctest:: intersect-1-9
@@ -58,7 +58,7 @@ Curve-Line Intersection
    >>> curve1.intersect(curve2)
    array([[ 0.5, 0.5]])
 
-.. image:: images/test_curves1_and_9.png
+.. image:: images/curves1_and_9.png
    :align: center
 
 .. doctest:: intersect-10-11
@@ -78,7 +78,7 @@ Curve-Line Intersection
    >>> curve1.intersect(curve2)
    array([[ 3., 4.]])
 
-.. image:: images/test_curves10_and_11.png
+.. image:: images/curves10_and_11.png
    :align: center
 
 .. doctest:: intersect-8-9
@@ -97,7 +97,7 @@ Curve-Line Intersection
    >>> curve1.intersect(curve2)
    array([[ 0.5 , 0.375]])
 
-.. image:: images/test_curves8_and_9.png
+.. image:: images/curves8_and_9.png
    :align: center
 
 .. doctest:: intersect-29-30
@@ -117,7 +117,7 @@ Curve-Line Intersection
    >>> curve1.intersect(curve2)
    array([[ 0., 1.]])
 
-.. image:: images/test_curves29_and_30.png
+.. image:: images/curves29_and_30.png
    :align: center
 
 Curved Intersections
@@ -146,7 +146,7 @@ with zero error:
    array([[ 0.25 , 0.375],
           [ 0.75 , 0.375]])
 
-.. image:: images/test_curves1_and_5.png
+.. image:: images/curves1_and_5.png
    :align: center
 
 .. doctest:: intersect-3-4
@@ -168,7 +168,7 @@ with zero error:
    array([[ 0.75  , 1.125  ],
           [ 2.625 , 0.65625]])
 
-.. image:: images/test_curves3_and_4.png
+.. image:: images/curves3_and_4.png
    :align: center
 
 .. doctest:: intersect-14-16
@@ -190,7 +190,7 @@ with zero error:
    array([[ 0.375 , 0.46875],
           [ 0.625 , 0.46875]])
 
-.. image:: images/test_curves14_and_16.png
+.. image:: images/curves14_and_16.png
    :align: center
 
 Even for curves which don't intersect at exact floating point
@@ -221,7 +221,7 @@ numbers, we can compute the intersection to machine precision:
    >>> binary_exponent(max_err)
    -54
 
-.. image:: images/test_curves1_and_2.png
+.. image:: images/curves1_and_2.png
    :align: center
 
 .. doctest:: intersect-1-7
@@ -249,7 +249,7 @@ numbers, we can compute the intersection to machine precision:
    >>> binary_exponent(max_err)
    -54
 
-.. image:: images/test_curves1_and_7.png
+.. image:: images/curves1_and_7.png
    :align: center
 
 .. doctest:: intersect-1-13
@@ -281,7 +281,7 @@ numbers, we can compute the intersection to machine precision:
    >>> binary_exponent(max_err)
    -54
 
-.. image:: images/test_curves1_and_13.png
+.. image:: images/curves1_and_13.png
    :align: center
 
 .. doctest:: intersect-21-22
@@ -311,7 +311,7 @@ numbers, we can compute the intersection to machine precision:
    >>> binary_exponent(max_err)
    -51
 
-.. image:: images/test_curves21_and_22.png
+.. image:: images/curves21_and_22.png
    :align: center
 
 For higher degree intersections, the error starts to get a little
@@ -345,7 +345,7 @@ larger.
    >>> binary_exponent(max_err)
    -50
 
-.. image:: images/test_curves15_and_25.png
+.. image:: images/curves15_and_25.png
    :align: center
 
 .. doctest:: intersect-11-26
@@ -374,7 +374,7 @@ larger.
    >>> binary_exponent(max_err)
    -50
 
-.. image:: images/test_curves11_and_26.png
+.. image:: images/curves11_and_26.png
    :align: center
 
 .. doctest:: intersect-8-27
@@ -403,7 +403,7 @@ larger.
    >>> binary_exponent(max_err)
    -51
 
-.. image:: images/test_curves8_and_27.png
+.. image:: images/curves8_and_27.png
    :align: center
 
 Intersections at Endpoints
@@ -427,7 +427,7 @@ Intersections at Endpoints
    >>> curve1.intersect(curve2)
    array([[ 1., 0.]])
 
-.. image:: images/test_curves1_and_18.png
+.. image:: images/curves1_and_18.png
    :align: center
 
 .. doctest:: intersect-1-19
@@ -448,7 +448,7 @@ Intersections at Endpoints
    >>> curve1.intersect(curve2)
    array([[ 1., 0.]])
 
-.. image:: images/test_curves1_and_19.png
+.. image:: images/curves1_and_19.png
    :align: center
 
 .. doctest:: intersect-10-17
@@ -469,7 +469,7 @@ Intersections at Endpoints
    >>> curve1.intersect(curve2)
    array([[ 3., 4.]])
 
-.. image:: images/test_curves10_and_17.png
+.. image:: images/curves10_and_17.png
    :align: center
 
 Detecting Self-Intersections
@@ -490,7 +490,7 @@ Detecting Self-Intersections
    array([[-0.09375 , 0.828125],
           [-0.25    , 1.375   ]])
 
-.. image:: images/test_curves42_and_43.png
+.. image:: images/curves42_and_43.png
    :align: center
 
 Limitations
@@ -534,13 +534,13 @@ successfully terminates
    >>> curve1.intersect(curve2)
    array([[ 0.5, 0.5]])
 
-.. image:: images/test_curves1_and_6.png
+.. image:: images/curves1_and_6.png
    :align: center
 
 However this library mostly avoids (for now) computing tangent
 intersections. For example, the curves
 
-.. image:: images/test_curves14_and_15.png
+.. image:: images/curves14_and_15.png
    :align: center
 
 have a tangent intersection that this library fails to
@@ -589,13 +589,13 @@ are resolved:
    >>> curve1.intersect(curve2)
    array([[ 4.5, 4.5]])
 
-.. image:: images/test_curves10_and_23.png
+.. image:: images/curves10_and_23.png
    :align: center
 
 but even by rotating an intersection (from above) that we
 know works
 
-.. image:: images/test_curves28_and_29.png
+.. image:: images/curves28_and_29.png
    :align: center
 
 we still see a failure
@@ -623,7 +623,7 @@ we still see a failure
 In addition to points of tangency, **coincident curve segments**
 are (for now) not supported. For the curves
 
-.. image:: images/test_curves1_and_24.png
+.. image:: images/curves1_and_24.png
    :align: center
 
 the library fails as well

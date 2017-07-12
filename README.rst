@@ -137,7 +137,7 @@ intersections):
    >>> _ = ax.set_ylim(-0.0625, 0.625)
    >>> plt.show()
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/test_curves1_and_13.png
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/curves1_and_13.png
    :align: center
 
 For API-level documentation, check out the B |eacute| zier

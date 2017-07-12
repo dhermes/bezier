@@ -22,12 +22,11 @@ import runtime_utils
 
 CONFIG = runtime_utils.Config()
 CURVES, INTERSECTIONS = runtime_utils.get_intersections_info()
-FILENAME_TEMPLATE = 'test_curves{:d}_and_{:d}'
+FILENAME_TEMPLATE = 'curves{}_and_{}'
 
 
 def _get_curve(curve_id):
-    curve_info = CURVES[curve_id - 1]
-    assert curve_info['id'] == curve_id
+    curve_info = CURVES[curve_id]
     return bezier.Curve.from_nodes(
         curve_info['control_points'], _copy=False)
 
@@ -41,8 +40,9 @@ def make_plot(intersection_info, save_plot):
 
     ax = curve1.plot(64)
     curve2.plot(64, ax=ax)
-    ax.plot(intersection_pts[:, 0], intersection_pts[:, 1],
-            marker='o', linestyle='None', color='black')
+    if intersection_pts.size:
+        ax.plot(intersection_pts[:, 0], intersection_pts[:, 1],
+                marker='o', linestyle='None', color='black')
     ax.axis('scaled')
     _plot_helpers.add_plot_boundary(ax)
 

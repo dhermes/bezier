@@ -152,7 +152,7 @@ To run the functional tests:
 For example, the following curve-curve intersection is a
 functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_curves11_and_26.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/curves11_and_26.png
    :align: center
 
 and there is a `Curve-Curve Intersection`_ document which captures many of

@@ -20,8 +20,9 @@ import nox
 
 
 NUMPY = 'numpy'
+MOCK_DEP = 'mock >= 1.3.0'
 BASE_DEPS = (
-    'mock >= 1.3.0',
+    MOCK_DEP,
     NUMPY,
     'pytest',
 )
@@ -146,7 +147,7 @@ def get_doctest_args(session):
 def doctest(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
-    local_deps = DOCS_DEPS + ('mock',)
+    local_deps = DOCS_DEPS + (MOCK_DEP,)
     session.install(*local_deps)
     # Install this package.
     session.install('.')
@@ -160,14 +161,17 @@ def doctest(session):
 def docs_images(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
-    local_deps = DOCS_DEPS + ('matplotlib >= 2.0.0', 'seaborn', 'pytest')
+    local_deps = DOCS_DEPS
+    local_deps += ('matplotlib >= 2.0.0', MOCK_DEP, 'seaborn', 'pytest')
     session.install(*local_deps)
     # Install this package.
     session.install('.')
 
+    # Use custom RC-file for matplotlib.
+    env = {'MATPLOTLIBRC': 'docs'}
+
     # Run the script for generating images for docs.
     run_args = get_doctest_args(session)
-    env = {'MATPLOTLIBRC': 'docs'}
     session.run(*run_args, env=env)
 
     # Run the functional tests with --save-plot.

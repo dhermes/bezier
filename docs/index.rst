@@ -171,7 +171,7 @@ intersections):
    sys.modules.pop('matplotlib.pyplot')
    sys.modules.pop('seaborn')
 
-.. image:: images/test_curves1_and_13.png
+.. image:: images/curves1_and_13.png
    :align: center
 
 For API-level documentation, check out the B |eacute| zier
