@@ -16,7 +16,7 @@ To actually execute these functions with the desired inputs, run:
 
 .. code-block:: console
 
-   $ MATPLOTLIBRC=docs/ nox -s docs_images
+   $ nox -s docs_images
 """
 
 
