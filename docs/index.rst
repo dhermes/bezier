@@ -115,7 +115,9 @@ For example, to create a curve:
    sys.modules['matplotlib.pyplot'] = plt_mod
    mpl_mod = mock.Mock(pyplot=plt_mod, spec=[])
    sys.modules['matplotlib'] = mpl_mod
-   sys.modules['seaborn'] = mock.Mock(spec=['set'])
+   seaborn_mod = mock.Mock(spec=['set'])
+   seaborn_mod.set.return_value = None
+   sys.modules['seaborn'] = seaborn_mod
 
 .. doctest:: getting-started
 
