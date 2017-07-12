@@ -27,22 +27,22 @@ CONFIG = runtime_utils.Config()
 S_PROP = operator.attrgetter('s')
 CURVES, INTERSECTIONS = runtime_utils.get_intersections_info()
 WIGGLES = {
-    (21, 22): 12,
-    (11, 26): 25,
-    (8, 27): 42,
-    (32, 33): 4,
-    (50, 54): 91,
-    (51, 54): 1013,
-    (52, 54): 91,
-    (53, 54): 1013,
+    ('21', '22'): 12,
+    ('11', '26'): 25,
+    ('8', '27'): 42,
+    ('32', '33'): 4,
+    ('50', '54'): 91,
+    ('51', '54'): 1013,
+    ('52', '54'): 91,
+    ('53', '54'): 1013,
 }
 FAILURE_NOT_IMPLEMENTED = (
-    (14, 15),  # Line segments parallel.
-    (1, 24),  # The number of candidate intersections is too high. (24)
-    (28, 29),  # The number of candidate intersections is too high. (22)
+    ('14', '15'),  # Line segments parallel.
+    ('1', '24'),  # The number of candidate intersections is too high. (24)
+    ('28', '29'),  # The number of candidate intersections is too high. (22)
 )
 INCORRECT_COUNT = (
-    (38, 39),
+    ('38', '39'),
 )
 
 
@@ -55,8 +55,7 @@ class IncorrectCount(ValueError):
 
 
 def _get_curve(curve_id):
-    curve_info = CURVES[curve_id - 1]
-    assert curve_info['id'] == curve_id
+    curve_info = CURVES[curve_id]
     return bezier.Curve.from_nodes(
         curve_info['control_points'], _copy=False)
 

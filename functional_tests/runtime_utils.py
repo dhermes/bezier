@@ -125,7 +125,7 @@ def id_func(intersection_info):
     Returns:
         str: An identifier formatted from the info.
     """
-    return 'curves {:d} and {:d} (ID: {:d})'.format(
+    return 'curves {!r} and {!r} (ID: {:d})'.format(
         intersection_info['curve1'], intersection_info['curve2'],
         intersection_info['id'])
 
@@ -160,7 +160,7 @@ def get_intersections_info():
     filename = os.path.join(_FNL_TESTS_DIR, 'curves.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
         curves = json.load(file_obj)
-    convert_floats(curves, keys=['control_points'])
+    convert_floats(six.itervalues(curves), keys=['control_points'])
 
     filename = os.path.join(_FNL_TESTS_DIR, 'curve_intersections.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:

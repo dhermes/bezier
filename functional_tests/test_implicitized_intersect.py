@@ -26,25 +26,25 @@ ULPS_ALLOWED = 3.0
 #       are for the very rare cases where the computed values
 #       differ from the actual values by more than 3 ULPs.
 CUSTOM_ERRORS = {
-    (8, 27): np.asfortranarray([
+    ('8', '27'): np.asfortranarray([
         [ULPS_ALLOWED, 4.0],
         [ULPS_ALLOWED, 6.0],
     ]),
-    (11, 26): np.asfortranarray([
+    ('11', '26'): np.asfortranarray([
         [12.0, 30.0],
         [ULPS_ALLOWED, ULPS_ALLOWED],
         [ULPS_ALLOWED, ULPS_ALLOWED],
     ]),
-    (50, 54): np.asfortranarray([
+    ('50', '54'): np.asfortranarray([
         [0.0, 165.0],
     ]),
-    (51, 54): np.asfortranarray([
+    ('51', '54'): np.asfortranarray([
         [0.0, 18.0],
     ]),
-    (52, 54): np.asfortranarray([
+    ('52', '54'): np.asfortranarray([
         [0.0, 165.0],
     ]),
-    (53, 54): np.asfortranarray([
+    ('53', '54'): np.asfortranarray([
         [0.0, 18.0],
     ]),
 }
@@ -100,14 +100,12 @@ def check_no_intersect(nodes1, nodes2):
 def test_intersect(intersection_info):
     # Get info for "curve 1".
     curve_id1 = intersection_info['curve1']
-    curve1_info = CURVES[curve_id1 - 1]
-    assert curve1_info['id'] == curve_id1
+    curve1_info = CURVES[curve_id1]
     nodes1 = curve1_info['control_points']
 
     # Get info for "curve 2".
     curve_id2 = intersection_info['curve2']
-    curve2_info = CURVES[curve_id2 - 1]
-    assert curve2_info['id'] == curve_id2
+    curve2_info = CURVES[curve_id2]
     nodes2 = curve2_info['control_points']
 
     # Actually try to intersect the curves.
