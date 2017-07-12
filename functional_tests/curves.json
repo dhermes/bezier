@@ -308,7 +308,8 @@
             [-576, 1, 2],
             [1728, 2, 1],
             [-1728, 3, 0]
-        ]
+        ],
+        "note": "The algebraic curve that contains this curve has a self-crossing at [22/27, 17/18] when the parameters are (-1 +/- sqrt(33)) / 6."
     },
     "26": {
         "control_points": [
