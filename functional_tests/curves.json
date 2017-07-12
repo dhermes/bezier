@@ -6,9 +6,9 @@
             [1, 0]
         ],
         "implicitized": [
-            [-1, 0, 1],
-            [2, 1, 0],
-            [-2, 2, 0]
+            [1, 0, 1],
+            [-2, 1, 0],
+            [2, 2, 0]
         ]
     },
     "2": {
@@ -284,9 +284,9 @@
             ["5/4", "-5/8"]
         ],
         "implicitized": [
-            [-1, 0, 1],
-            [2, 1, 0],
-            [-2, 2, 0]
+            [1, 0, 1],
+            [-2, 1, 0],
+            [2, 2, 0]
         ],
         "note": "This is coincident with #1: curve1([1/4, 1]) == curve24([0, 3/4])."
     },
@@ -377,9 +377,9 @@
             ["-1/4", "5/4"]
         ],
         "implicitized": [
-            [-1, 0, 0],
-            [1, 0, 1],
-            [1, 1, 0]
+            [1, 0, 0],
+            [-1, 0, 1],
+            [-1, 1, 0]
         ],
         "note": "This curve is #9 rotated about the origin by 45 degrees counterclockwise and scaled up by a factor of sqrt(2)."
     },
@@ -389,9 +389,9 @@
             ["49/4", "3/4"]
         ],
         "implicitized": [
-            [205, 0, 0],
-            [-12, 0, 1],
-            [-16, 1, 0]
+            [-205, 0, 0],
+            [12, 0, 1],
+            [16, 1, 0]
         ],
         "note": "This curve is #11 scaled up by a factor of 2 and shifted by [1/4, 3/4]."
     },
@@ -402,8 +402,8 @@
             ["5/8", "-1/4"]
         ],
         "implicitized": [
-            [-1, 0, 0],
-            [-4, 0, 1]
+            [1, 0, 0],
+            [4, 0, 1]
         ],
         "note": "This is a degree-elevated version of the line segment y = -1/4 for -1/4 <= x <= 5/8."
     },
