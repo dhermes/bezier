@@ -75,15 +75,6 @@
             [6, 0]
         ]
     },
-    "12": {
-        "control_points": [
-            [0, 2],
-            [-1, 0],
-            [1, 1],
-            ["-3/4", "13/8"]
-        ],
-        "note": "This curve has a self-crossing at [-1/4, 11/8] when the parameters are (3 +/- sqrt(5)) / 6."
-    },
     "13": {
         "control_points": [
             [0, 0],
@@ -231,7 +222,7 @@
             ["3/16", "-1/4"],
             ["5/8", "-1/4"]
         ],
-        "note": "This is a degree-elevated version of the line y = -1/4 for -1/4 <= x <= 5/8."
+        "note": "This is a degree-elevated version of the line segment y = -1/4 for -1/4 <= x <= 5/8."
     },
     "33": {
         "control_points": [
@@ -299,7 +290,7 @@
             ["-1/4", "3/4"],
             ["-3/32", "53/64"]
         ],
-        "note": "This is coincident with #12: curve42([0, 1]) == curve12([0, 1/2])."
+        "note": "The algebraic curve that contains this curve has a self-crossing at [-1/4, 11/8] when the parameters are (3 +/- sqrt(5)) / 3."
     },
     "43": {
         "control_points": [
@@ -308,7 +299,7 @@
             ["1/8", "21/16"],
             ["-3/4", "13/8"]
         ],
-        "note": "This is coincident with #12: curve43([0, 1]) == curve12([1/2, 1])."
+        "note": "This is coincident with #42: curve43([0, 1]) == curve42([1, 2]), and their shared (parent) algebraic curve has a self-crossing."
     },
     "44": {
         "control_points": [
@@ -317,7 +308,7 @@
             ["-5/16", "19/16"],
             ["-75/256", "517/512"]
         ],
-        "note": "This is coincident with #12: curve44([0, 1]) == curve12([0, 1/4])."
+        "note": "This is coincident with #42: curve44([0, 1]) == curve42([0, 1/2]), and their shared (parent) algebraic curve has a self-crossing."
     },
     "45": {
         "control_points": [
@@ -326,7 +317,7 @@
             ["-11/64", "101/128"],
             ["-3/32", "53/64"]
         ],
-        "note": "This is coincident with #12: curve45([0, 1]) == curve12([1/4, 1/2])."
+        "note": "This is coincident with #42: curve45([0, 1]) == curve42([1/2, 1]), and their shared (parent) algebraic curve has a self-crossing."
     },
     "46": {
         "control_points": [
@@ -335,7 +326,7 @@
             ["5/128", "253/256"],
             ["-9/256", "583/512"]
         ],
-        "note": "This is coincident with #12: curve46([0, 1]) == curve12([1/2, 3/4])."
+        "note": "This is coincident with #42: curve46([0, 1]) == curve42([1, 3/2]), and their shared (parent) algebraic curve has a self-crossing."
     },
     "47": {
         "control_points": [
@@ -344,7 +335,7 @@
             ["-5/16", "47/32"],
             ["-3/4", "13/8"]
         ],
-        "note": "This is coincident with #12: curve47([0, 1]) == curve12([3/4, 1])."
+        "note": "This is coincident with #42: curve47([0, 1]) == curve42([3/2, 2]), and their shared (parent) algebraic curve has a self-crossing."
     },
     "48": {
         "control_points": [
