@@ -27,18 +27,19 @@ CONFIG = runtime_utils.Config()
 S_PROP = operator.attrgetter('s')
 CURVES, INTERSECTIONS = runtime_utils.get_intersections_info()
 WIGGLES = {
-    ('21', '22'): 12,
-    ('11', '26'): 25,
-    ('8', '27'): 42,
-    ('32', '33'): 4,
-    ('50', '54'): 91,
-    ('51', '54'): 1013,
-    ('52', '54'): 91,
-    ('53', '54'): 1013,
+    ('8', '27'): 41,  # Established on Ubuntu 16.04
+    ('14', '16'): 4,  # Established on Ubuntu 16.04 (Less than 8)
+    ('20', '21'): 7,  # Established on Ubuntu 16.04 (Less than 8)
+    ('21', '22'): 11,  # Established on Ubuntu 16.04
+    ('32', '33'): 3,  # Established on Ubuntu 16.04 (Less than 8)
+    ('50', '54'): 91,  # Established on Ubuntu 16.04
+    ('51', '54'): 1013,  # Established on Ubuntu 16.04
+    ('52', '54'): 91,  # Established on Ubuntu 16.04
+    ('53', '54'): 1013,  # Established on Ubuntu 16.04
 }
 FAILURE_NOT_IMPLEMENTED = (
-    ('14', '15'),  # Line segments parallel.
     ('1', '24'),  # The number of candidate intersections is too high. (24)
+    ('14', '15'),  # Line segments parallel.
     ('28', '29'),  # The number of candidate intersections is too high. (22)
 )
 INCORRECT_COUNT = (
