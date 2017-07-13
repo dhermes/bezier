@@ -2,7 +2,43 @@
     {
         "surface1": "1Q",
         "surface2": "3Q",
-        "id": 1
+        "id": 1,
+        "intersections": [
+            [1, 0],
+            ["0x1.b3814fc520094p-2", "0x1.951b989d86b44p-1"],
+            ["0x1.e3902ffacd381p-4", "0x1.875633d1f12bep-2"],
+            [0, 0]
+        ],
+        "start_params": [
+            0,
+            "0x1.b05d9249bd0f1p-2",
+            "0x1.3c54e617076a1p-1",
+            0
+        ],
+        "start_param_polys": [
+            [0, 1],
+            [12, -28, 5, -18, 9],
+            [-244, 320, 91, 49],
+            [0, 1]
+        ],
+        "end_params": [
+            "0x1.5dad785d7b57dp-1",
+            "0x1.8b3631b4a4202p-1",
+            1,
+            1
+        ],
+        "end_param_polys": [
+            [-131, 200, 4, -48, 36],
+            [-128, 88, 63, 49],
+            [-1, 1],
+            [-1, 1]
+        ],
+        "edge_pairs": [
+            [0, 1],
+            [1, 2],
+            [0, 2],
+            [1, 0]
+        ]
     }, {
         "surface1": "1L",
         "surface2": "3L",
@@ -127,5 +163,10 @@
         "surface1": "11L",
         "surface2": "33Q",
         "id": 32
+    }, {
+        "surface1": "32Q",
+        "surface2": "33Q",
+        "id": 33,
+        "note": "This is the same is intersection 32, but surface 32Q is a degree-elevated version of surface 11L."
     }
 ]

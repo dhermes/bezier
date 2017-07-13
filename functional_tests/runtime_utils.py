@@ -37,9 +37,9 @@ from bezier import _helpers
 
 if seaborn is not None:
     seaborn.set()  # Required in `seaborn >= 0.8`
-_FNL_TESTS_DIR = os.path.dirname(__file__)
+FNL_TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 _DOCS_DIR = os.path.abspath(
-    os.path.join(_FNL_TESTS_DIR, '..', 'docs'))
+    os.path.join(FNL_TESTS_DIR, '..', 'docs'))
 IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
 
 
@@ -158,6 +158,9 @@ def convert_floats(info, keys):
     """
     for element in info:
         for key in keys:
+            if key not in element:
+                continue
+
             converted = _convert_float(element[key])
             if isinstance(converted, list):
                 converted = np.asfortranarray(converted)
@@ -169,23 +172,46 @@ def curve_intersections_info():
     """Load curve and intersections info from JSON file.
 
     Returns:
-        Tuple[List[dict], List[dict]]: The lists of
+        Tuple[Dict[str, dict], List[dict]]: The
 
-        * curve info dictionaries.
-        * intersection info dictionaries.
+        * mapping of curve info dictionaries.
+        * list of intersection info dictionaries.
     """
-    filename = os.path.join(_FNL_TESTS_DIR, 'curves.json')
+    filename = os.path.join(FNL_TESTS_DIR, 'curves.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
         curves = json.load(file_obj)
     convert_floats(six.itervalues(curves), keys=['control_points'])
 
-    filename = os.path.join(_FNL_TESTS_DIR, 'curve_intersections.json')
+    filename = os.path.join(FNL_TESTS_DIR, 'curve_intersections.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
         intersections = json.load(file_obj)
     keys = ['intersections', 'curve1_params', 'curve2_params']
     convert_floats(intersections, keys=keys)
 
     return curves, intersections
+
+
+def surface_intersections_info():
+    """Load surface and intersections info from JSON file.
+
+    Returns:
+        Tuple[Dict[str, dict], List[dict]]: The
+
+        * mapping of surface info dictionaries.
+        * list of intersection info dictionaries.
+    """
+    filename = os.path.join(FNL_TESTS_DIR, 'surfaces.json')
+    with io.open(filename, 'r', encoding='utf-8') as file_obj:
+        surfaces = json.load(file_obj)
+    convert_floats(six.itervalues(surfaces), keys=['control_points'])
+
+    filename = os.path.join(FNL_TESTS_DIR, 'surface_intersections.json')
+    with io.open(filename, 'r', encoding='utf-8') as file_obj:
+        intersections = json.load(file_obj)
+    keys = ['intersections', 'start_params', 'end_params']
+    convert_floats(intersections, keys=keys)
+
+    return surfaces, intersections
 
 
 class Config(object):
