@@ -61,13 +61,12 @@ def binary_round(value, num_bits):
     # NOTE: This assumes ``value`` is not Inf/-Inf/NaN or
     #       a subnormal number.
     hex_val = value.hex()
+    # NOTE: `pre` is either '' or '-'.
     pre, hex_digits = hex_val.split('0x1.')
     hex_digits, post = hex_digits.split('p')
     assert len(hex_digits) == 13
 
-    # NOTE: Python produces 0b100101... instead of 100101...
-    all_bits = bin(int(hex_digits, 16))[2:]
-    all_bits = all_bits.zfill(52)
+    all_bits = '{:052b}'.format(int(hex_digits, 16))
     assert len(all_bits) == 52
 
     truncated_bits = all_bits[:num_bits] + '0' * (52 - num_bits)

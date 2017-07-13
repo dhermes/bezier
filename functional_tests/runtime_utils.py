@@ -136,8 +136,8 @@ def convert_floats(info, keys):
     """Modify ``info`` in-place to convert strings to floating point numbers.
 
     Args:
-        info (List[dict, ...]): A list of dictionaries to be modified.
-        keys (List[str, ...]): The keys within each dictionary that contain
+        info (List[dict]): A list of dictionaries to be modified.
+        keys (List[str]): The keys within each dictionary that contain
             floating point values to be converted from a "custom" form
             to native Python ``float`` values.
     """
@@ -154,7 +154,7 @@ def get_intersections_info():
     """Load curve and intersections info from JSON file.
 
     Returns:
-        Tuple[List[dict, ...], List[dict, ...]]: The lists of
+        Tuple[List[dict], List[dict]]: The lists of
 
         * curve info dictionaries.
         * intersection info dictionaries.

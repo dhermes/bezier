@@ -614,12 +614,12 @@ def _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t):
         nodes1 (numpy.ndarray): The nodes in the first curve.
         s_val (float): The approximate intersection parameter
             along ``nodes1``.
-        final_s (List[float, ...]): The list of accepted intersection
+        final_s (List[float]): The list of accepted intersection
             parameters ``s``.
         nodes2 (numpy.ndarray): The nodes in the second curve.
         t_val (float): The approximate intersection parameter
             along ``nodes2``.
-        final_t (List[float, ...]): The list of accepted intersection
+        final_t (List[float]): The list of accepted intersection
             parameters ``t``.
     """
     s_val, t_val = _intersection_helpers.newton_refine(
