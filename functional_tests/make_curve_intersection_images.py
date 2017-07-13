@@ -21,7 +21,7 @@ import runtime_utils
 
 
 CONFIG = runtime_utils.Config()
-CURVES, INTERSECTIONS = runtime_utils.get_intersections_info()
+CURVES, INTERSECTIONS = runtime_utils.curve_intersections_info()
 FILENAME_TEMPLATE = 'curves{}_and_{}'
 
 

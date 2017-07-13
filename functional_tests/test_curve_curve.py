@@ -25,7 +25,7 @@ import runtime_utils
 
 CONFIG = runtime_utils.Config()
 S_PROP = operator.attrgetter('s')
-CURVES, INTERSECTIONS = runtime_utils.get_intersections_info()
+CURVES, INTERSECTIONS = runtime_utils.curve_intersections_info()
 WIGGLES = {
     ('8', '27'): 41,  # Established on Ubuntu 16.04
     ('14', '16'): 4,  # Established on Ubuntu 16.04 (Less than 8)
@@ -136,7 +136,7 @@ def _intersections_check(curve_id1, curve_id2, intersection_info):
 @pytest.mark.parametrize(
     'intersection_info',
     INTERSECTIONS,
-    ids=runtime_utils.id_func,
+    ids=runtime_utils.curve_id_func,
 )
 def test_intersect(intersection_info):
     curve_id1 = intersection_info['curve1']

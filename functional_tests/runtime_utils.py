@@ -117,7 +117,7 @@ def no_op_manager():
     yield
 
 
-def id_func(intersection_info):
+def curve_id_func(intersection_info):
     """Turn info from ``curve_intersections.json`` into a test ID.
 
     Args:
@@ -129,6 +129,21 @@ def id_func(intersection_info):
     """
     return 'curves {!r} and {!r} (ID: {:d})'.format(
         intersection_info['curve1'], intersection_info['curve2'],
+        intersection_info['id'])
+
+
+def surface_id_func(intersection_info):
+    """Turn info from ``surface_intersections.json`` into a test ID.
+
+    Args:
+        intersection_info (dict): An intersection value loaded from
+            ``surface_intersections.json``.
+
+    Returns:
+        str: An identifier formatted from the info.
+    """
+    return 'surfaces {!r} and {!r} (ID: {:d})'.format(
+        intersection_info['surface1'], intersection_info['surface2'],
         intersection_info['id'])
 
 
@@ -150,7 +165,7 @@ def convert_floats(info, keys):
             element[key] = converted
 
 
-def get_intersections_info():
+def curve_intersections_info():
     """Load curve and intersections info from JSON file.
 
     Returns:

@@ -48,7 +48,7 @@ CUSTOM_ERRORS = {
         [0.0, 18.0],
     ]),
 }
-CURVES, INTERSECTIONS = runtime_utils.get_intersections_info()
+CURVES, INTERSECTIONS = runtime_utils.curve_intersections_info()
 
 
 def check_tangent(nodes1, nodes2):
@@ -95,7 +95,7 @@ def check_no_intersect(nodes1, nodes2):
 @pytest.mark.parametrize(
     'intersection_info',
     INTERSECTIONS,
-    ids=runtime_utils.id_func,
+    ids=runtime_utils.curve_id_func,
 )
 def test_intersect(intersection_info):
     # Get info for "curve 1".
