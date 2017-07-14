@@ -14,7 +14,6 @@ from __future__ import absolute_import
 
 import matplotlib.pyplot as plt
 
-import bezier
 from bezier import _plot_helpers
 
 import runtime_utils

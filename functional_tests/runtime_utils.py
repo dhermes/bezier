@@ -318,7 +318,7 @@ class Config(object):
         print('Saved {}'.format(filename))
 
 
-class CurveInfo(object):
+class CurveInfo(object):  # pylint: disable=too-few-public-methods
     r"""Information about a curve from ``curves.json``.
 
     These are expected to have three keys:
@@ -392,6 +392,9 @@ class CurveInfo(object):
         Args:
             id_ (str): The ID of the curve.
             info (dict): The JSON data of the curve.
+
+        Returns:
+            .CurveInfo: The curve info parsed from the JSON.
         """
         control_points = info.pop('control_points')
         control_points = np.asfortranarray(_convert_float(control_points))
