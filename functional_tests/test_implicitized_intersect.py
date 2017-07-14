@@ -101,12 +101,12 @@ def test_intersect(intersection_info):
     # Get info for "curve 1".
     curve_id1 = intersection_info['curve1']
     curve1_info = CURVES[curve_id1]
-    nodes1 = curve1_info['control_points']
+    nodes1 = curve1_info.control_points
 
     # Get info for "curve 2".
     curve_id2 = intersection_info['curve2']
     curve2_info = CURVES[curve_id2]
-    nodes2 = curve2_info['control_points']
+    nodes2 = curve2_info.control_points
 
     # Actually try to intersect the curves.
     intersection_type = intersection_info['type']

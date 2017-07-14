@@ -17,7 +17,6 @@ import operator
 import pytest
 import six
 
-import bezier
 from bezier import _intersection_helpers
 
 import runtime_utils
@@ -53,12 +52,6 @@ class IncorrectCount(ValueError):
     This should be raised when the **computed** number of intersections
     disagrees with the actual number of intersections.
     """
-
-
-def _get_curve(curve_id):
-    curve_info = CURVES[curve_id]
-    return bezier.Curve.from_nodes(
-        curve_info['control_points'], _copy=False)
 
 
 def _get_params(intersection_info):
@@ -117,8 +110,8 @@ def _intersection_check(info_tuple, curve1, curve2):
 
 def _intersections_check(curve_id1, curve_id2, intersection_info):
     # Get curve instances.
-    curve1 = _get_curve(curve_id1)
-    curve2 = _get_curve(curve_id2)
+    curve1 = CURVES[curve_id1].curve
+    curve2 = CURVES[curve_id2].curve
 
     # Get / verify info for the intersections.
     s_vals, t_vals, intersection_pts = _get_params(intersection_info)

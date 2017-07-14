@@ -32,6 +32,7 @@ except ImportError:
     seaborn = None
 import six
 
+import bezier
 from bezier import _helpers
 
 
@@ -183,8 +184,9 @@ def curve_intersections_info():
     """
     filename = os.path.join(FNL_TESTS_DIR, 'curves.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
-        curves = json.load(file_obj)
-    convert_floats(six.itervalues(curves), keys=['control_points'])
+        curve_json = json.load(file_obj)
+    curves = {id_: CurveInfo.from_json(id_, info)
+              for id_, info in six.iteritems(curve_json)}
 
     filename = os.path.join(FNL_TESTS_DIR, 'curve_intersections.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
@@ -314,3 +316,85 @@ class Config(object):
         path = os.path.join(IMAGES_DIR, filename)
         plt.savefig(path, bbox_inches='tight')
         print('Saved {}'.format(filename))
+
+
+class CurveInfo(object):
+    r"""Information about a curve from ``curves.json``.
+
+    These are expected to have three keys:
+
+    * ``control_points``: A list of ``x-y`` coordinates of the control points
+      in the curve. The coordinates themselves can be integers, stringified
+      fractions or stringified IEEE-754 values (``%a`` format).
+    * ``note`` (optional): Description of the curve / curve segment.
+    * ``implicitized`` (optional): The algebraic curve that contains
+      this curve as a segment. (Only provided if the curve comes from
+      rational control points.) For example, for "curve 2"
+
+      .. math::
+
+         x(s) = \frac{9 - 8 s}{8}
+         y(s) = \frac{(2 s - 1)^2}{2}
+
+      so we have
+
+      .. math::
+
+         8 x = 9 - 8 s \Longrightarrow 8 s - 4 = 5 - 8 x
+         2 y = (2 s - 1)^2 \Longrightarrow 32 y = (8 s - 4)^2
+         \Longrightarrow 32 y = (5 - 8 x)^2
+         \Longrightarrow 25 - 32 y - 80 x + 64 x^2 = 0
+
+      and this implicitized algebraic curve corresponds to
+
+      .. code-block:: python
+
+         [
+             [ 25, 0, 0],
+             [-32, 0, 1],
+             [-80, 1, 0],
+             [ 64, 2, 0],
+         ]
+
+    This representation is a list of triples of integers
+    ``coefficient, degree_x, degree_y`` where ``degree_x`` and ``degree_y``
+    are non-negative. Though it's not required, we also have
+    ``coefficient != 0`` and the triples are sorted by total degree
+    (``degree_x + degree_y``) and then by ``degree_x`` to break ties.
+
+    In addition, each curve comes with an ID from a dictionary, i.e.
+    ``curves.json`` uses ID keys to identify the curves, rather than just
+    having a list of curve info.
+
+    Args:
+        id_ (str): The ID of the curve.
+        control_points (numpy.ndarray): The control points.
+        implicitized (Optional[List[List[int]]]): The coefficient triples
+            defining the algebraic curve that contains the curve.
+        note (Optional[str]): A note about the curve (e.g. what is it
+            related to).
+    """
+
+    def __init__(self, id_, control_points, implicitized=None, note=None):
+        self.id_ = id_
+        self.control_points = control_points
+        self.curve = bezier.Curve.from_nodes(control_points, _copy=False)
+        self.implicitized = implicitized
+        self.note = note
+
+    @classmethod
+    def from_json(cls, id_, info):
+        """Convert JSON curve info into ``CurveInfo``.
+
+        This involves parsing the dictionary and converting some stringified
+        values (rationals and IEEE-754) to Python ``float``-s.
+
+        Args:
+            id_ (str): The ID of the curve.
+            info (dict): The JSON data of the curve.
+        """
+        control_points = info.pop('control_points')
+        control_points = np.asfortranarray(_convert_float(control_points))
+        implicitized = info.pop('implicitized', None)
+        note = info.pop('note', None)
+        return cls(id_, control_points, implicitized=implicitized, note=note)

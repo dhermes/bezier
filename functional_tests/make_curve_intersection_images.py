@@ -25,17 +25,11 @@ CURVES, INTERSECTIONS = runtime_utils.curve_intersections_info()
 FILENAME_TEMPLATE = 'curves{}_and_{}'
 
 
-def _get_curve(curve_id):
-    curve_info = CURVES[curve_id]
-    return bezier.Curve.from_nodes(
-        curve_info['control_points'], _copy=False)
-
-
 def make_plot(intersection_info, save_plot):
     curve_id1 = intersection_info['curve1']
-    curve1 = _get_curve(curve_id1)
+    curve1 = CURVES[curve_id1].curve
     curve_id2 = intersection_info['curve2']
-    curve2 = _get_curve(curve_id2)
+    curve2 = CURVES[curve_id2].curve
     intersection_pts = intersection_info['intersections']
 
     ax = curve1.plot(64)
