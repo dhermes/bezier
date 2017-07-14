@@ -90,9 +90,11 @@ def _convert_float(value):
 
     Assumes a value is one of the following:
 
+    * :data:`None`
     * an integer
     * a string in C "%a" hex format for an IEEE-754 double precision number
     * a string fraction of the format "N/D"
+    * a list of one of the accepted types (incl. a list)
 
     Args:
         value (Union[int, str, list]): Values to be converted.
@@ -100,7 +102,9 @@ def _convert_float(value):
     Returns:
         Union[float, list]: The converted value (or list of values).
     """
-    if isinstance(value, list):
+    if value is None:
+        return None
+    elif isinstance(value, list):
         return [_convert_float(element) for element in value]
     elif isinstance(value, six.integer_types):
         return float(value)
