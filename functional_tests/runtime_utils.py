@@ -127,27 +127,6 @@ def no_op_manager():
     yield
 
 
-def convert_floats(info, keys):
-    """Modify ``info`` in-place to convert strings to floating point numbers.
-
-    Args:
-        info (List[dict]): A list of dictionaries to be modified.
-        keys (List[str]): The keys within each dictionary that contain
-            floating point values to be converted from a "custom" form
-            to native Python ``float`` values.
-    """
-    for element in info:
-        for key in keys:
-            if key not in element:
-                continue
-
-            converted = _convert_float(element[key])
-            if isinstance(converted, list):
-                converted = np.asfortranarray(converted)
-
-            element[key] = converted
-
-
 def curve_intersections_info():
     """Load curve and intersections info from JSON file.
 
@@ -166,7 +145,6 @@ def curve_intersections_info():
     filename = os.path.join(FNL_TESTS_DIR, 'curve_intersections.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
         intersections_json = json.load(file_obj)
-
     intersections = [CurveIntersectionInfo.from_json(info, curves)
                      for info in intersections_json]
 
@@ -190,9 +168,9 @@ def surface_intersections_info():
 
     filename = os.path.join(FNL_TESTS_DIR, 'surface_intersections.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
-        intersections = json.load(file_obj)
-    keys = ['intersections', 'start_params', 'end_params']
-    convert_floats(intersections, keys=keys)
+        intersections_json = json.load(file_obj)
+    intersections = [SurfaceIntersectionInfo.from_json(info, surfaces)
+                     for info in intersections_json]
 
     return surfaces, intersections
 
@@ -615,8 +593,8 @@ class CurveIntersectionInfo(object):
             ValueError: If any of ``info`` is left unparsed.
         """
         id_ = info.pop('id')
-        curve1 = curves[info.pop('curve1')]
-        curve2 = curves[info.pop('curve2')]
+        curve1_info = curves[info.pop('curve1')]
+        curve2_info = curves[info.pop('curve2')]
         type_ = CurveIntersectionType(info.pop('type'))
 
         intersections = np.asfortranarray(
@@ -638,7 +616,7 @@ class CurveIntersectionInfo(object):
             raise ValueError('Unexpected keys remaining in JSON info', info)
 
         return cls(
-            id_, curve1, curve2, type_, intersections,
+            id_, curve1_info, curve2_info, type_, intersections,
             curve1_params, curve2_params,
             curve1_polys=curve1_polys, curve2_polys=curve2_polys, note=note)
 # pylint: enable=too-many-instance-attributes
@@ -698,3 +676,162 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
             raise ValueError('Unexpected keys remaining in JSON info', info)
 
         return cls(id_, control_points, note=note)
+
+
+class SurfaceIntersectionInfo(object):
+    r"""Information about an intersection from ``surface_intersections.json``.
+
+    A surface-surface intersection JSON is expected to have 10 keys:
+
+    * ``surface1``: ID of the first surface in the intersection.
+    * ``surface2``: ID of the second surface in the intersection.
+    * ``id``
+    * ``note`` (optional): Description of the intersection(s).
+    * ``intersections``(optional, for now): List of pairs of "numerical"
+      ``x-y`` values.
+    * ``start_params``(optional, for now): "Numerical" parameters along edge
+      curves at intersections.
+    * ``start_param_polys`` (optional): The (integer) coefficients of the
+      minimal polynomials that determine the values in ``start_params``.
+      See ``curve1_params`` in :class:`CurveIntersectionInfo` for an
+      example.
+    * ``end_params`` (optional, for now): "Numerical" parameters along edge
+      curves at intersections.
+    * ``end_param_polys`` (optional): The (integer) coefficients of the
+      minimal polynomials that determine the values in ``end_params``.
+    * ``edge_pairs`` (optional, for now): List of pairs of
+      ``surface_index, edge_index`` for each intersection, i.e. the
+      intersection occurs on ``surface_index`` (one of 1 or 2) and on the
+      edge ``edge_index`` (one of 0, 1 or 2) **of that surface**. An
+      intersection requires **two** edges, but this one is the edge that
+      the boundary (of the intersection) continues along.
+
+    The "numerical" values in ``intersections``, ``start_params`` and
+    ``end_params`` can be integers, stringified fractions or stringified
+    IEEE-754 values (``%a`` format).
+
+    Args:
+        id_ (int): The intersection ID.
+        surface1_info (SurfaceInfo): The surface information for the first
+            surface in the intersection.
+        surface2_info (SurfaceInfo): The surface information for the second
+            surface in the intersection.
+        intersections (Optional[numpy.ndarray]): ``Nx2`` array of ``x-y``
+            coordinate pairs of intersection points.
+        edge_pairs (Optional[List[List[int]]]): List of pairs of
+            ``surface_index, edge_index`` for each intersection. I.e. the
+            intersection occurs on ``surface_index`` (one of 1 or 2) and on
+            the edge ``edge_index`` (one of 0, 1 or 2) **of that surface**.
+            An intersection requires **two** edges, but this one is the edge
+            that the boundary (of the intersection) continues along.
+        start_params (Optional[numpy.ndarray]): 1D array, the parameters along
+            ``surface1`` where the intersections occur (in the same order as
+            the rows of ``intersections``). These are typically called
+            ``s``-parameters.
+        end_params (Optional[numpy.ndarray]): 1D array, the parameters along
+            ``surface2`` where the intersections occur (in the same order as
+            the rows of ``intersections``). These are typically called
+            ``t``-parameters.
+        start_param_polys (Optional[List[List[int]]]): The coefficients of the
+            polynomials that determine the values in ``start_params``.
+        end_param_polys (Optional[List[List[int]]]): The coefficients of the
+            polynomials that determine the values in ``end_params``.
+        note (Optional[str]): A note about the intersection (e.g. why it is
+            unique / problematic).
+    """
+
+    def __init__(self, id_, surface1_info, surface2_info, intersections=None,
+                 edge_pairs=None, start_params=None, end_params=None,
+                 start_param_polys=None, end_param_polys=None, note=None):
+        self.id_ = id_
+        self.surface1_info = surface1_info
+        self.surface2_info = surface2_info
+
+        self.intersections = intersections
+        self.edge_pairs = edge_pairs
+
+        self.start_params = start_params
+        self.start_param_polys = start_param_polys
+
+        self.end_params = end_params
+        self.end_param_polys = end_param_polys
+
+        self.note = note
+
+    @classmethod
+    def from_json(cls, info, surfaces):
+        """Parse and convert JSON surface intersection info.
+
+        This involves parsing the dictionary and converting some stringified
+        values (rationals and IEEE-754) to Python ``float``-s.
+
+        Args:
+            info (dict): The JSON data of the surface intersection.
+            surfaces (Dict[str, SurfaceInfo]): An already parsed dictionary of
+                surface information.
+
+        Returns:
+            .SurfaceIntersectionInfo: The intersection info parsed from
+                the JSON.
+
+        Raises:
+            ValueError: If any of ``info`` is left unparsed.
+        """
+        id_ = info.pop('id')
+        surface1_info = surfaces[info.pop('surface1')]
+        surface2_info = surfaces[info.pop('surface2')]
+
+        # Optional fields.
+        intersections = info.pop('intersections', None)
+        if intersections is not None:
+            intersections = np.asfortranarray(_convert_float(intersections))
+            if intersections.size == 0:
+                intersections = intersections.reshape((0, 2))
+
+        edge_pairs = info.pop('edge_pairs', None)
+
+        start_params = info.pop('start_params', None)
+        if start_params is not None:
+            start_params = np.asfortranarray(_convert_float(start_params))
+
+        end_params = info.pop('end_params', None)
+        if end_params is not None:
+            end_params = np.asfortranarray(_convert_float(end_params))
+
+        start_param_polys = info.pop('start_param_polys', None)
+        end_param_polys = info.pop('end_param_polys', None)
+        note = info.pop('note', None)
+
+        if info:
+            raise ValueError('Unexpected keys remaining in JSON info', info)
+
+        return cls(
+            id_, surface1_info, surface2_info,
+            intersections=intersections, edge_pairs=edge_pairs,
+            start_params=start_params, end_params=end_params,
+            start_param_polys=start_param_polys,
+            end_param_polys=end_param_polys, note=note)
+
+    @property
+    def test_id(self):
+        """str: The ID for this intersection in unit tests."""
+        return 'surfaces {!r} and {!r} (ID: {:d})'.format(
+            self.surface1_info.id_, self.surface2_info.id_, self.id_)
+
+    @property
+    def surface1(self):
+        """The first B |eacute| zier surface in the intersection.
+
+        Returns:
+            ~bezier.surface.Surface: The first B |eacute| zier surface.
+        """
+        return self.surface1_info.surface
+
+    @property
+    def surface2(self):
+        """The second B |eacute| zier surface in the intersection.
+
+        Returns:
+            ~bezier.surface.Surface: The second B |eacute| zier surface.
+        """
+        return self.surface2_info.surface
