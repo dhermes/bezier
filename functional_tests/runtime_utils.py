@@ -504,6 +504,7 @@ class CurveIntersectionInfo(object):
         self.note = note
 
         self._verify_dimensions()
+        self._verify_data()
     # pylint: enable=too-many-arguments
 
     def _verify_dimensions(self):
@@ -541,6 +542,20 @@ class CurveIntersectionInfo(object):
                 raise ValueError(
                     'Unexpected number of ``curve2_polys``',
                     len(self.curve2_polys), 'Expected', self.num_params)
+
+    def _verify_data(self):
+        """Verify assumptions about the data.
+
+        * The intersections are sorted by s-value.
+
+        Raises:
+            ValueError: If the assumptions are not met.
+        """
+        sorted_s = np.sort(self.curve1_params)
+        if not np.all(sorted_s == self.curve1_params):
+            raise ValueError(
+                'Expected s-parameters (``curve1_params``) to be '
+                'in ascending order.')
 
     @property
     def test_id(self):
