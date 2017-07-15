@@ -10,7 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utilities for running functional tests as scripts."""
+"""Utilities for running functional tests as scripts.
+
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
+"""
 
 
 import argparse
@@ -315,8 +319,8 @@ class CurveInfo(object):  # pylint: disable=too-few-public-methods
       fractions or stringified IEEE-754 values (``%a`` format).
     * ``note`` (optional): Description of the curve / curve segment.
     * ``implicitized`` (optional): The algebraic curve that contains
-      this curve as a segment. (Only provided if the curve comes from
-      rational control points.) For example, for "curve 2"
+      this B |eacute| zier curve as a segment. (Only provided if the curve
+      comes from rational control points.) For example, for "curve 2"
 
       .. math::
 
@@ -357,7 +361,8 @@ class CurveInfo(object):  # pylint: disable=too-few-public-methods
         id_ (str): The ID of the curve.
         control_points (numpy.ndarray): The control points.
         implicitized (Optional[List[List[int]]]): The coefficient triples
-            defining the algebraic curve that contains the curve.
+            defining the algebraic curve that contains the
+            B |eacute| zier curve.
         note (Optional[str]): A note about the curve (e.g. what is it
             related to).
     """
@@ -460,9 +465,9 @@ class CurveIntersectionInfo(object):
 
     Args:
         id_ (int): The intersection ID.
-        curve1 (CurveInfo): The curve information for the first curve in
+        curve1_info (CurveInfo): The curve information for the first curve in
             the intersection.
-        curve2 (CurveInfo): The curve information for the second curve in
+        curve2_info (CurveInfo): The curve information for the second curve in
             the intersection.
         type_ (.CurveIntersectionType): Describes how the curves intersect.
         intersections (numpy.ndarray): ``Nx2`` array of ``x-y`` coordinate
@@ -486,18 +491,18 @@ class CurveIntersectionInfo(object):
     num_params = None
 
     # pylint: disable=too-many-arguments
-    def __init__(self, id_, curve1, curve2, type_, intersections,
-                 curve1_params, curve2_params, curve1_polys=None,
-                 curve2_polys=None, note=None):
+    def __init__(self, id_, curve1_info, curve2_info, type_,
+                 intersections, curve1_params, curve2_params,
+                 curve1_polys=None, curve2_polys=None, note=None):
         self.id_ = id_
         self.intersections = intersections
         self.type_ = type_
 
-        self.curve1 = curve1
+        self.curve1_info = curve1_info
         self.curve1_params = curve1_params
         self.curve1_polys = curve1_polys
 
-        self.curve2 = curve2
+        self.curve2_info = curve2_info
         self.curve2_params = curve2_params
         self.curve2_polys = curve2_polys
 
@@ -583,6 +588,24 @@ class CurveIntersectionInfo(object):
             * intersection points (2D ``N x 2`` array)
         """
         return self.curve1_params, self.curve2_params, self.intersections
+
+    @property
+    def curve1(self):
+        """The first B |eacute| zier curve in the intersection.
+
+        Returns:
+            ~bezier.curve.Curve: The first B |eacute| zier curve.
+        """
+        return self.curve1_info.curve
+
+    @property
+    def curve2(self):
+        """The second B |eacute| zier curve in the intersection.
+
+        Returns:
+            ~bezier.curve.Curve: The second B |eacute| zier curve.
+        """
+        return self.curve2_info.curve
 
     @classmethod
     def from_json(cls, info, curves):

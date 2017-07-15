@@ -24,8 +24,8 @@ _, INTERSECTIONS = runtime_utils.curve_intersections_info()
 
 
 def make_plot(intersection_info, save_plot):
-    curve1 = intersection_info.curve1.curve
-    curve2 = intersection_info.curve2.curve
+    curve1 = intersection_info.curve1
+    curve2 = intersection_info.curve2
     intersection_pts = intersection_info.intersections
 
     ax = curve1.plot(64)

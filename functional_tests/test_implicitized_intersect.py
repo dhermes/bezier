@@ -99,8 +99,8 @@ def check_no_intersect(nodes1, nodes2):
 )
 def test_intersect(intersection_info):
     # Get the control points for the curves.
-    nodes1 = intersection_info.curve1.control_points
-    nodes2 = intersection_info.curve2.control_points
+    nodes1 = intersection_info.curve1_info.control_points
+    nodes2 = intersection_info.curve2_info.control_points
 
     # Actually try to intersect the curves.
     intersection_type = intersection_info.type_

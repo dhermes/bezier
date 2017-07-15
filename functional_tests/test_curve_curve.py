@@ -62,8 +62,8 @@ class IncorrectCount(ValueError):
 
 def _intersection_curves(intersection_info):
     strategy = _intersection_helpers.IntersectionStrategy.geometric
-    curve1 = intersection_info.curve1.curve
-    curve2 = intersection_info.curve2.curve
+    curve1 = intersection_info.curve1
+    curve2 = intersection_info.curve2
     intersections = _intersection_helpers.all_intersections(
         [(curve1, curve2)], strategy=strategy)
 
@@ -107,8 +107,8 @@ def _intersections_check(intersection_info):
     # Check that each intersection is as expected.
     s_vals, t_vals, intersection_pts = intersection_info.params
     info = six.moves.zip(intersections, s_vals, t_vals, intersection_pts)
-    curve1 = intersection_info.curve1.curve
-    curve2 = intersection_info.curve2.curve
+    curve1 = intersection_info.curve1
+    curve2 = intersection_info.curve2
     for info_tuple in info:
         _intersection_check(info_tuple, curve1, curve2)
 
