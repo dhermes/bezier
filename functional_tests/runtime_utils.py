@@ -566,12 +566,13 @@ class CurveIntersectionInfo(object):
     def test_id(self):
         """str: The ID for this intersection in unit tests."""
         return 'curves {!r} and {!r} (ID: {:d})'.format(
-            self.curve1, self.curve2, self.id_)
+            self.curve1_info.id_, self.curve2_info.id_, self.id_)
 
     @property
     def img_filename(self):
         """str: Filename to use when saving images for this intersection."""
-        return 'curves{}_and_{}'.format(self.curve1.id_, self.curve2.id_)
+        return 'curves{}_and_{}'.format(
+            self.curve1_info.id_, self.curve2_info.id_)
 
     @property
     def params(self):
@@ -589,6 +590,7 @@ class CurveIntersectionInfo(object):
         """
         return self.curve1_params, self.curve2_params, self.intersections
 
+    # pylint: disable=missing-return-type-doc
     @property
     def curve1(self):
         """The first B |eacute| zier curve in the intersection.
@@ -606,6 +608,7 @@ class CurveIntersectionInfo(object):
             ~bezier.curve.Curve: The second B |eacute| zier curve.
         """
         return self.curve2_info.curve
+    # pylint: enable=missing-return-type-doc
 
     @classmethod
     def from_json(cls, info, curves):
