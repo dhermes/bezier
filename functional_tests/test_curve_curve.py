@@ -40,6 +40,7 @@ FAILURE_NOT_IMPLEMENTED = (
     ('1', '24'),  # The number of candidate intersections is too high. (24)
     ('14', '15'),  # Line segments parallel.
     ('28', '29'),  # The number of candidate intersections is too high. (22)
+    ('56', '57'),  # The number of candidate intersections is too high. (20)
 )
 INCORRECT_COUNT = (
     ('38', '39'),
