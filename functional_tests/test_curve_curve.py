@@ -25,7 +25,7 @@ from runtime_utils import CurveIntersectionType
 
 CONFIG = runtime_utils.Config()
 S_PROP = operator.attrgetter('s')
-CURVES, INTERSECTIONS = runtime_utils.curve_intersections_info()
+_, INTERSECTIONS = runtime_utils.curve_intersections_info()
 WIGGLES = {
     ('8', '27'): 41,  # Established on Ubuntu 16.04
     ('14', '16'): 4,  # Established on Ubuntu 16.04 (Less than 8)

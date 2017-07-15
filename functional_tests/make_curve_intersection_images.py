@@ -20,26 +20,22 @@ import runtime_utils
 
 
 CONFIG = runtime_utils.Config()
-CURVES, INTERSECTIONS = runtime_utils.curve_intersections_info()
-FILENAME_TEMPLATE = 'curves{}_and_{}'
+_, INTERSECTIONS = runtime_utils.curve_intersections_info()
 
 
 def make_plot(intersection_info, save_plot):
-    curve_id1 = intersection_info['curve1']
-    curve1 = CURVES[curve_id1].curve
-    curve_id2 = intersection_info['curve2']
-    curve2 = CURVES[curve_id2].curve
-    intersection_pts = intersection_info['intersections']
+    curve1 = intersection_info.curve1.curve
+    curve2 = intersection_info.curve2.curve
+    intersection_pts = intersection_info.intersections
 
     ax = curve1.plot(64)
     curve2.plot(64, ax=ax)
-    if intersection_pts.size:
-        ax.plot(intersection_pts[:, 0], intersection_pts[:, 1],
-                marker='o', linestyle='None', color='black')
+    ax.plot(intersection_pts[:, 0], intersection_pts[:, 1],
+            marker='o', linestyle='None', color='black')
     ax.axis('scaled')
     _plot_helpers.add_plot_boundary(ax)
 
-    filename = FILENAME_TEMPLATE.format(curve_id1, curve_id2)
+    filename = intersection_info.img_filename
     if save_plot:
         # NOTE: This is an abuse of ``current_test``, but we don't need
         #       a full-fledged ``Config``, we **just** need ``save_fig``.

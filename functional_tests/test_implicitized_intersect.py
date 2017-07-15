@@ -50,7 +50,7 @@ CUSTOM_ERRORS = {
         [0.0, 18.0],
     ]),
 }
-CURVES, INTERSECTIONS = runtime_utils.curve_intersections_info()
+_, INTERSECTIONS = runtime_utils.curve_intersections_info()
 
 
 def check_tangent(nodes1, nodes2):

@@ -546,6 +546,11 @@ class CurveIntersectionInfo(object):
             self.curve1, self.curve2, self.id_)
 
     @property
+    def img_filename(self):
+        """str: Filename to use when saving images for this intersection."""
+        return 'curves{}_and_{}'.format(self.curve1.id_, self.curve2.id_)
+
+    @property
     def params(self):
         """Get the parameters and intersection points.
 
