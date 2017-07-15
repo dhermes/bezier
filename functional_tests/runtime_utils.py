@@ -415,6 +415,7 @@ class CurveIntersectionType(enum.Enum):
     """Intersection is not **any** of the other types."""
 
 
+# pylint: disable=too-many-instance-attributes
 class CurveIntersectionInfo(object):
     r"""Information about an intersection from ``curve_intersections.json``.
 
@@ -484,6 +485,7 @@ class CurveIntersectionInfo(object):
 
     num_params = None
 
+    # pylint: disable=too-many-arguments
     def __init__(self, id_, curve1, curve2, type_, intersections,
                  curve1_params, curve2_params, curve1_polys=None,
                  curve2_polys=None, note=None):
@@ -502,6 +504,7 @@ class CurveIntersectionInfo(object):
         self.note = note
 
         self._verify_dimensions()
+    # pylint: enable=too-many-arguments
 
     def _verify_dimensions(self):
         """Verify that all the dimensions are the same.
@@ -611,3 +614,4 @@ class CurveIntersectionInfo(object):
             id_, curve1, curve2, type_, intersections,
             curve1_params, curve2_params,
             curve1_polys=curve1_polys, curve2_polys=curve2_polys, note=note)
+# pylint: enable=too-many-instance-attributes
