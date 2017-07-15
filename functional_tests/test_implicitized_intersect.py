@@ -11,6 +11,7 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+import operator
 
 import numpy as np
 import pytest
@@ -18,6 +19,7 @@ import pytest
 from bezier import _implicitization
 
 import runtime_utils
+from runtime_utils import CurveIntersectionType
 
 
 SPACING = np.spacing  # pylint: disable=no-member
@@ -66,22 +68,21 @@ def check_coincident(nodes1, nodes2):
     assert exc_info.value.args == (_implicitization._COINCIDENT_ERR,)
 
 
-def check_intersect(id_pair, nodes1, nodes2, info):
+def check_intersect(nodes1, nodes2, intersection_info):
     param_vals = _implicitization.intersect_curves(nodes1, nodes2)
     assert param_vals.size > 0
 
     # NOTE: This assumes the intersections are sorted by s-value.
-    s_vals = info['curve1_params']
-    num_s, = s_vals.shape
-    exact = np.zeros((num_s, 2), order='F')
-    exact[:, 0] = s_vals
-    exact[:, 1] = info['curve2_params']
+    exact = np.zeros((intersection_info.num_params, 2), order='F')
+    exact[:, 0] = intersection_info.curve1_params
+    exact[:, 1] = intersection_info.curve2_params
 
+    id_pair = (intersection_info.curve1.id_, intersection_info.curve2.id_)
     multiplier = CUSTOM_ERRORS.get(id_pair, ULPS_ALLOWED)
     # NOTE: Spacing gives ULP for each value.
     allowed_errors = multiplier * SPACING(exact)
 
-    computed = param_vals[np.argsort(param_vals[:, 0]), :2]
+    computed = param_vals[np.argsort(param_vals[:, 0]), :]
     assert exact.shape == computed.shape
     # NOTE: We assume zeros will be **exactly** correct.
     assert np.all(np.abs(exact - computed) <= allowed_errors)
@@ -95,29 +96,22 @@ def check_no_intersect(nodes1, nodes2):
 @pytest.mark.parametrize(
     'intersection_info',
     INTERSECTIONS,
-    ids=runtime_utils.curve_id_func,
+    ids=operator.attrgetter('tests_id'),
 )
 def test_intersect(intersection_info):
-    # Get info for "curve 1".
-    curve_id1 = intersection_info['curve1']
-    curve1_info = CURVES[curve_id1]
-    nodes1 = curve1_info.control_points
-
-    # Get info for "curve 2".
-    curve_id2 = intersection_info['curve2']
-    curve2_info = CURVES[curve_id2]
-    nodes2 = curve2_info.control_points
+    # Get the control points for the curves.
+    nodes1 = intersection_info.curve1.control_points
+    nodes2 = intersection_info.curve2.control_points
 
     # Actually try to intersect the curves.
-    intersection_type = intersection_info['type']
-    if intersection_type == 'tangent':
+    intersection_type = intersection_info.type_
+    if intersection_type == CurveIntersectionType.tangent:
         check_tangent(nodes1, nodes2)
-    elif intersection_type == 'coincident':
+    elif intersection_type == CurveIntersectionType.coincident:
         check_coincident(nodes1, nodes2)
-    elif intersection_type == 'standard':
-        id_pair = (curve_id1, curve_id2)
-        check_intersect(id_pair, nodes1, nodes2, intersection_info)
-    elif intersection_type == 'no-intersection':
+    elif intersection_type == CurveIntersectionType.standard:
+        check_intersect(nodes1, nodes2, intersection_info)
+    elif intersection_type == CurveIntersectionType.no_intersection:
         check_no_intersect(nodes1, nodes2)
     else:
         raise ValueError(

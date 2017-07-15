@@ -15,6 +15,7 @@
 
 import argparse
 import contextlib
+import enum
 import inspect
 import io
 import json
@@ -122,21 +123,6 @@ def no_op_manager():
     yield
 
 
-def curve_id_func(intersection_info):
-    """Turn info from ``curve_intersections.json`` into a test ID.
-
-    Args:
-        intersection_info (dict): An intersection value loaded from
-            ``curve_intersections.json``.
-
-    Returns:
-        str: An identifier formatted from the info.
-    """
-    return 'curves {!r} and {!r} (ID: {:d})'.format(
-        intersection_info['curve1'], intersection_info['curve2'],
-        intersection_info['id'])
-
-
 def surface_id_func(intersection_info):
     """Turn info from ``surface_intersections.json`` into a test ID.
 
@@ -190,9 +176,10 @@ def curve_intersections_info():
 
     filename = os.path.join(FNL_TESTS_DIR, 'curve_intersections.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
-        intersections = json.load(file_obj)
-    keys = ['intersections', 'curve1_params', 'curve2_params']
-    convert_floats(intersections, keys=keys)
+        intersections_json = json.load(file_obj)
+
+    intersections = [CurveIntersectionInfo.from_json(info, curves)
+                     for info in intersections_json]
 
     return curves, intersections
 
@@ -395,9 +382,227 @@ class CurveInfo(object):  # pylint: disable=too-few-public-methods
 
         Returns:
             .CurveInfo: The curve info parsed from the JSON.
+
+        Raises:
+            ValueError: If any of ``info`` is left unparsed.
         """
         control_points = info.pop('control_points')
         control_points = np.asfortranarray(_convert_float(control_points))
         implicitized = info.pop('implicitized', None)
+
+        # Optional fields.
         note = info.pop('note', None)
+
+        if info:
+            raise ValueError('Unexpected keys remaining in JSON info', info)
+
         return cls(id_, control_points, implicitized=implicitized, note=note)
+
+
+class CurveIntersectionType(enum.Enum):
+    """Enum describing curve intersection."""
+
+    coincident = 'coincident'
+    """Curves lie on the same underlying algebraic curve."""
+
+    no_intersection = 'no-intersection'
+    """Curves do not intersect."""
+
+    tangent = 'tangent'
+    """Curves are tangent at the point of intersection."""
+
+    standard = 'standard'
+    """Intersection is not **any** of the other types."""
+
+
+class CurveIntersectionInfo(object):
+    r"""Information about an intersection from ``curve_intersections.json``.
+
+    A curve-curve intersection JSON is expected to have 8 keys:
+
+    * ``curve1``: ID of the first curve in the intersection.
+    * ``curve2``: ID of the second curve in the intersection.
+    * ``id``
+    * ``type``
+    * ``note`` (optional): Description of the intersection / notes about how
+      it behaves.
+    * ``intersections``: List of pairs of "numerical" ``x-y`` values.
+    * ``curve1_params``: "Numerical" curve parameters at intersections.
+    * ``curve1_polys`` (optional): The (integer) coefficients of the minimal
+      polynomials that determine the values in ``curve1_params``.
+
+      For example, if the roots are
+
+      .. math::
+
+         0 \\
+         \frac{7 - \sqrt{7}}{14} \approx \mathtt{0x1.3e7b70cac040dp-2} \\
+         \frac{7 + \sqrt{7}}{14} \approx \mathtt{0x1.60c2479a9fdfap-1} \\
+         1
+
+      Then the corresponding (minimal) polynomial coefficients are:
+
+      .. code-block:: python
+
+         [
+             [0, 1],
+             [3, -14, 14],
+             [3, -14, 14],
+             [-1, 1],
+         ]
+    * ``curve2_params``: "Numerical" curve parameters at intersections.
+    * ``curve2_polys`` (optional): Similar to ``curve1_polys``.
+
+    The "numerical" values in ``intersections``, ``curve1_params`` and
+    ``curve2_params`` can be integers, stringified fractions or stringified
+    IEEE-754 values (``%a`` format).
+
+    Args:
+        id_ (int): The intersection ID.
+        curve1 (CurveInfo): The curve information for the first curve in
+            the intersection.
+        curve2 (CurveInfo): The curve information for the second curve in
+            the intersection.
+        type_ (.CurveIntersectionType): Describes how the curves intersect.
+        intersections (numpy.ndarray): ``Nx2`` array of ``x-y`` coordinate
+            pairs of intersection points.
+        curve1_params (numpy.ndarray): 1D array, the parameters along
+            ``curve1`` where the intersections occur (in the same order as
+            the rows of ``intersections``). These are typically called
+            ``s``-parameters.
+        curve2_params (numpy.ndarray): 1D array, the parameters along
+            ``curve2`` where the intersections occur (in the same order as
+            the rows of ``intersections``). These are typically called
+            ``t``-parameters.
+        curve1_polys (Optional[List[List[int]]]): The coefficients of the
+            polynomials that determine the values in ``curve1_params``.
+        curve2_polys (Optional[List[List[int]]]): The coefficients of the
+            polynomials that determine the values in ``curve2_params``.
+        note (Optional[str]): A note about the intersection (e.g. why it is
+            unique / problematic).
+    """
+
+    num_params = None
+
+    def __init__(self, id_, curve1, curve2, type_, intersections,
+                 curve1_params, curve2_params, curve1_polys=None,
+                 curve2_polys=None, note=None):
+        self.id_ = id_
+        self.intersections = intersections
+        self.type_ = type_
+
+        self.curve1 = curve1
+        self.curve1_params = curve1_params
+        self.curve1_polys = curve1_polys
+
+        self.curve2 = curve2
+        self.curve2_params = curve2_params
+        self.curve2_polys = curve2_polys
+
+        self.note = note
+
+        self._verify_dimensions()
+
+    def _verify_dimensions(self):
+        """Verify that all the dimensions are the same.
+
+        This also sets the ``num_params`` attribute.
+
+        Raises:
+            ValueError: If one of the values is not the "expected" shape.
+        """
+        if self.curve1_params.ndim != 1:
+            raise ValueError(
+                'Expected 1-dimensional data for ``curve1_params``.')
+        # Unpack into one value now that we know 1D.
+        self.num_params, = self.curve1_params.shape
+
+        shape = (self.num_params,)
+        if self.curve2_params.shape != shape:
+            msg = 'Expected shape {} for ``curve2_params``.'.format(shape)
+            raise ValueError(msg)
+
+        shape = (self.num_params, 2)
+        if self.intersections.shape != shape:
+            msg = 'Expected shape {} for ``intersections``.'.format(shape)
+            raise ValueError(msg)
+
+        if self.curve1_polys is not None:
+            if len(self.curve1_polys) != self.num_params:
+                raise ValueError(
+                    'Unexpected number of ``curve1_polys``',
+                    len(self.curve1_polys), 'Expected', self.num_params)
+
+        if self.curve2_polys is not None:
+            if len(self.curve2_polys) != self.num_params:
+                raise ValueError(
+                    'Unexpected number of ``curve2_polys``',
+                    len(self.curve2_polys), 'Expected', self.num_params)
+
+    @property
+    def test_id(self):
+        """str: The ID for this intersection in unit tests."""
+        return 'curves {!r} and {!r} (ID: {:d})'.format(
+            self.curve1, self.curve2, self.id_)
+
+    @property
+    def params(self):
+        """Get the parameters and intersection points.
+
+        No verification is done here, rather, it's done in the
+        constructor / in :meth:`from_json`.
+
+        Returns:
+            Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]: The
+
+            * ``s``-parameters (1D ``N`` array)
+            * ``t``-parameters (1D ``N`` array)
+            * intersection points (2D ``N x 2`` array)
+        """
+        return self.curve1_params, self.curve2_params, self.intersections
+
+    @classmethod
+    def from_json(cls, info, curves):
+        """Convert JSON curve intersection info into ``CurveIntersectionInfo``.
+
+        This involves parsing the dictionary and converting some stringified
+        values (rationals and IEEE-754) to Python ``float``-s.
+
+        Args:
+            info (dict): The JSON data of the curve intersection.
+            curves (Dict[str, CurveInfo]): An already parsed dictionary of
+                curve information.
+
+        Returns:
+            .CurveIntersectionInfo: The intersection info parsed from the JSON.
+
+        Raises:
+            ValueError: If any of ``info`` is left unparsed.
+        """
+        id_ = info.pop('id')
+        curve1 = curves[info.pop('curve1')]
+        curve2 = curves[info.pop('curve2')]
+        type_ = CurveIntersectionType(info.pop('type'))
+
+        intersections = np.asfortranarray(
+            _convert_float(info.pop('intersections')))
+        curve1_params = np.asfortranarray(
+            _convert_float(info.pop('curve1_params')))
+        curve2_params = np.asfortranarray(
+            _convert_float(info.pop('curve2_params')))
+
+        if intersections.size == 0:
+            intersections = intersections.reshape((0, 2))
+
+        # Optional fields.
+        curve1_polys = info.pop('curve1_polys', None)
+        curve2_polys = info.pop('curve2_polys', None)
+        note = info.pop('note', None)
+
+        if info:
+            raise ValueError('Unexpected keys remaining in JSON info', info)
+
+        return cls(
+            id_, curve1, curve2, type_, intersections,
+            curve1_params, curve2_params,
+            curve1_polys=curve1_polys, curve2_polys=curve2_polys, note=note)

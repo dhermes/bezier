@@ -20,6 +20,7 @@ import six
 from bezier import _intersection_helpers
 
 import runtime_utils
+from runtime_utils import CurveIntersectionType
 
 
 CONFIG = runtime_utils.Config()
@@ -42,6 +43,10 @@ FAILURE_NOT_IMPLEMENTED = (
     ('28', '29'),  # The number of candidate intersections is too high. (22)
     ('56', '57'),  # The number of candidate intersections is too high. (20)
 )
+NOT_IMPLEMENTED_TYPES = (
+    CurveIntersectionType.tangent,
+    CurveIntersectionType.coincident,
+)
 INCORRECT_COUNT = (
     ('38', '39'),
 )
@@ -55,33 +60,19 @@ class IncorrectCount(ValueError):
     """
 
 
-def _get_params(intersection_info):
-    s_vals = intersection_info['curve1_params']
-    num_s, = s_vals.shape
-
-    t_vals = intersection_info['curve2_params']
-    assert t_vals.shape == (num_s,)
-
-    intersection_pts = intersection_info['intersections']
-    if num_s == 0:
-        assert intersection_pts.size == 0
-    else:
-        assert intersection_pts.shape == (num_s, 2)
-
-    return s_vals, t_vals, intersection_pts
-
-
-def _intersection_curves(num_s, curve_id1, curve_id2, curve1, curve2):
+def _intersection_curves(intersection_info):
     strategy = _intersection_helpers.IntersectionStrategy.geometric
+    curve1 = intersection_info.curve1.curve
+    curve2 = intersection_info.curve2.curve
     intersections = _intersection_helpers.all_intersections(
         [(curve1, curve2)], strategy=strategy)
 
     # Make we have the right number of intersections.
-    if len(intersections) != num_s:
+    if len(intersections) != intersection_info.num_params:
         raise IncorrectCount(
             'Received wrong number of intersections',
-            len(intersections), 'Expected', num_s,
-            'Curve 1', curve_id1, 'Curve 2', curve_id2)
+            len(intersections), 'Expected', intersection_info.num_params,
+            intersection_info.test_id)
 
     # Sort the intersections by s-value.
     intersections.sort(key=S_PROP)
@@ -109,20 +100,15 @@ def _intersection_check(info_tuple, curve1, curve2):
     CONFIG.assert_close(point_on2[0, 1], point[1])
 
 
-def _intersections_check(curve_id1, curve_id2, intersection_info):
-    # Get curve instances.
-    curve1 = CURVES[curve_id1].curve
-    curve2 = CURVES[curve_id2].curve
-
-    # Get / verify info for the intersections.
-    s_vals, t_vals, intersection_pts = _get_params(intersection_info)
-
+def _intersections_check(intersection_info):
     # Actually intersect the curves.
-    intersections = _intersection_curves(
-        s_vals.size, curve_id1, curve_id2, curve1, curve2)
+    intersections = _intersection_curves(intersection_info)
 
     # Check that each intersection is as expected.
+    s_vals, t_vals, intersection_pts = intersection_info.params
     info = six.moves.zip(intersections, s_vals, t_vals, intersection_pts)
+    curve1 = intersection_info.curve1.curve
+    curve2 = intersection_info.curve2.curve
     for info_tuple in info:
         _intersection_check(info_tuple, curve1, curve2)
 
@@ -130,18 +116,18 @@ def _intersections_check(curve_id1, curve_id2, intersection_info):
 @pytest.mark.parametrize(
     'intersection_info',
     INTERSECTIONS,
-    ids=runtime_utils.curve_id_func,
+    ids=operator.attrgetter('tests_id'),
 )
 def test_intersect(intersection_info):
-    curve_id1 = intersection_info['curve1']
-    curve_id2 = intersection_info['curve2']
+    curve_id1 = intersection_info.curve1.id_
+    curve_id2 = intersection_info.curve2.id_
     id_pair = (curve_id1, curve_id2)
 
     if id_pair in FAILURE_NOT_IMPLEMENTED:
-        assert intersection_info['type'] in ('tangent', 'coincident')
+        assert intersection_info.type_ in NOT_IMPLEMENTED_TYPES
         context = pytest.raises(NotImplementedError)
     elif id_pair in INCORRECT_COUNT:
-        assert intersection_info['type'] == 'tangent'
+        assert intersection_info.type_ == CurveIntersectionType.tangent
         context = pytest.raises(IncorrectCount)
     elif id_pair in WIGGLES:
         context = CONFIG.wiggle(WIGGLES[id_pair])
@@ -149,4 +135,4 @@ def test_intersect(intersection_info):
         context = runtime_utils.no_op_manager()
 
     with context:
-        _intersections_check(curve_id1, curve_id2, intersection_info)
+        _intersections_check(intersection_info)
