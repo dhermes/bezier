@@ -127,21 +127,6 @@ def no_op_manager():
     yield
 
 
-def surface_id_func(intersection_info):
-    """Turn info from ``surface_intersections.json`` into a test ID.
-
-    Args:
-        intersection_info (dict): An intersection value loaded from
-            ``surface_intersections.json``.
-
-    Returns:
-        str: An identifier formatted from the info.
-    """
-    return 'surfaces {!r} and {!r} (ID: {:d})'.format(
-        intersection_info['surface1'], intersection_info['surface2'],
-        intersection_info['id'])
-
-
 def convert_floats(info, keys):
     """Modify ``info`` in-place to convert strings to floating point numbers.
 
@@ -199,8 +184,9 @@ def surface_intersections_info():
     """
     filename = os.path.join(FNL_TESTS_DIR, 'surfaces.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
-        surfaces = json.load(file_obj)
-    convert_floats(six.itervalues(surfaces), keys=['control_points'])
+        surface_json = json.load(file_obj)
+    surfaces = {id_: SurfaceInfo.from_json(id_, info)
+                for id_, info in six.iteritems(surface_json)}
 
     filename = os.path.join(FNL_TESTS_DIR, 'surface_intersections.json')
     with io.open(filename, 'r', encoding='utf-8') as file_obj:
@@ -656,3 +642,59 @@ class CurveIntersectionInfo(object):
             curve1_params, curve2_params,
             curve1_polys=curve1_polys, curve2_polys=curve2_polys, note=note)
 # pylint: enable=too-many-instance-attributes
+
+
+class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
+    r"""Information about a surface from ``surfaces.json``.
+
+    These are expected to have two keys:
+
+    * ``control_points``: A list of ``x-y`` coordinates of the control points
+      in the surface. The coordinates themselves can be integers, stringified
+      fractions or stringified IEEE-754 values (``%a`` format).
+    * ``note`` (optional): Description of the surface / surface segment.
+
+    In addition, each surface comes with an ID from a dictionary, i.e.
+    ``surfaces.json`` uses ID keys to identify the surfaces, rather than just
+    having a list of surface info.
+
+    Args:
+        id_ (str): The ID of the surface.
+        control_points (numpy.ndarray): The control points.
+        note (Optional[str]): A note about the surface (e.g. what is it
+            related to).
+    """
+
+    def __init__(self, id_, control_points, note=None):
+        self.id_ = id_
+        self.control_points = control_points
+        self.surface = bezier.Surface.from_nodes(control_points, _copy=False)
+        self.note = note
+
+    @classmethod
+    def from_json(cls, id_, info):
+        """Convert JSON surface info into ``SurfaceInfo``.
+
+        This involves parsing the dictionary and converting some stringified
+        values (rationals and IEEE-754) to Python ``float``-s.
+
+        Args:
+            id_ (str): The ID of the surface.
+            info (dict): The JSON data of the surface.
+
+        Returns:
+            .SurfaceInfo: The surface info parsed from the JSON.
+
+        Raises:
+            ValueError: If any of ``info`` is left unparsed.
+        """
+        control_points = info.pop('control_points')
+        control_points = np.asfortranarray(_convert_float(control_points))
+
+        # Optional fields.
+        note = info.pop('note', None)
+
+        if info:
+            raise ValueError('Unexpected keys remaining in JSON info', info)
+
+        return cls(id_, control_points, note=note)
