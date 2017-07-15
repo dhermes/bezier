@@ -28,25 +28,25 @@ ULPS_ALLOWED = 3.0
 #       are for the very rare cases where the computed values
 #       differ from the actual values by more than 3 ULPs.
 CUSTOM_ERRORS = {
-    ('8', '27'): np.asfortranarray([
-        [ULPS_ALLOWED, 4.0],
-        [ULPS_ALLOWED, 6.0],
-    ]),
-    ('11', '26'): np.asfortranarray([
+    22: np.asfortranarray([
         [12.0, 30.0],
         [ULPS_ALLOWED, ULPS_ALLOWED],
         [ULPS_ALLOWED, ULPS_ALLOWED],
     ]),
-    ('50', '54'): np.asfortranarray([
+    23: np.asfortranarray([
+        [ULPS_ALLOWED, 4.0],
+        [ULPS_ALLOWED, 6.0],
+    ]),
+    37: np.asfortranarray([
         [0.0, 165.0],
     ]),
-    ('51', '54'): np.asfortranarray([
+    38: np.asfortranarray([
         [0.0, 18.0],
     ]),
-    ('52', '54'): np.asfortranarray([
+    39: np.asfortranarray([
         [0.0, 165.0],
     ]),
-    ('53', '54'): np.asfortranarray([
+    40: np.asfortranarray([
         [0.0, 18.0],
     ]),
 }
@@ -77,8 +77,7 @@ def check_intersect(nodes1, nodes2, intersection_info):
     exact[:, 0] = intersection_info.curve1_params
     exact[:, 1] = intersection_info.curve2_params
 
-    id_pair = (intersection_info.curve1.id_, intersection_info.curve2.id_)
-    multiplier = CUSTOM_ERRORS.get(id_pair, ULPS_ALLOWED)
+    multiplier = CUSTOM_ERRORS.get(intersection_info.id_, ULPS_ALLOWED)
     # NOTE: Spacing gives ULP for each value.
     allowed_errors = multiplier * SPACING(exact)
 

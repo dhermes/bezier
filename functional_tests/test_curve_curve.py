@@ -27,28 +27,28 @@ CONFIG = runtime_utils.Config()
 S_PROP = operator.attrgetter('s')
 _, INTERSECTIONS = runtime_utils.curve_intersections_info()
 WIGGLES = {
-    ('8', '27'): 41,  # Established on Ubuntu 16.04
-    ('14', '16'): 4,  # Established on Ubuntu 16.04 (Less than 8)
-    ('20', '21'): 7,  # Established on Ubuntu 16.04 (Less than 8)
-    ('21', '22'): 11,  # Established on Ubuntu 16.04
-    ('32', '33'): 3,  # Established on Ubuntu 16.04 (Less than 8)
-    ('50', '54'): 91,  # Established on Ubuntu 16.04
-    ('51', '54'): 1013,  # Established on Ubuntu 16.04
-    ('52', '54'): 91,  # Established on Ubuntu 16.04
-    ('53', '54'): 1013,  # Established on Ubuntu 16.04
+    12: 4,  # Established on Ubuntu 16.04 (Less than 8)
+    17: 7,  # Established on Ubuntu 16.04 (Less than 8)
+    18: 11,  # Established on Ubuntu 16.04
+    23: 41,  # Established on Ubuntu 16.04
+    28: 3,  # Established on Ubuntu 16.04 (Less than 8)
+    37: 91,  # Established on Ubuntu 16.04
+    38: 1013,  # Established on Ubuntu 16.04
+    39: 91,  # Established on Ubuntu 16.04
+    40: 1013,  # Established on Ubuntu 16.04
 }
 FAILURE_NOT_IMPLEMENTED = (
-    ('1', '24'),  # The number of candidate intersections is too high. (24)
-    ('14', '15'),  # Line segments parallel.
-    ('28', '29'),  # The number of candidate intersections is too high. (22)
-    ('56', '57'),  # The number of candidate intersections is too high. (20)
+    11,  # Line segments parallel.
+    20,  # The number of candidate intersections is too high. (24)
+    24,  # The number of candidate intersections is too high. (22)
+    42,  # The number of candidate intersections is too high. (20)
 )
 NOT_IMPLEMENTED_TYPES = (
     CurveIntersectionType.tangent,
     CurveIntersectionType.coincident,
 )
 INCORRECT_COUNT = (
-    ('38', '39'),
+    31,
 )
 
 
@@ -119,18 +119,15 @@ def _intersections_check(intersection_info):
     ids=operator.attrgetter('tests_id'),
 )
 def test_intersect(intersection_info):
-    curve_id1 = intersection_info.curve1.id_
-    curve_id2 = intersection_info.curve2.id_
-    id_pair = (curve_id1, curve_id2)
-
-    if id_pair in FAILURE_NOT_IMPLEMENTED:
+    id_ = intersection_info.id_
+    if id_ in FAILURE_NOT_IMPLEMENTED:
         assert intersection_info.type_ in NOT_IMPLEMENTED_TYPES
         context = pytest.raises(NotImplementedError)
-    elif id_pair in INCORRECT_COUNT:
+    elif id_ in INCORRECT_COUNT:
         assert intersection_info.type_ == CurveIntersectionType.tangent
         context = pytest.raises(IncorrectCount)
-    elif id_pair in WIGGLES:
-        context = CONFIG.wiggle(WIGGLES[id_pair])
+    elif id_ in WIGGLES:
+        context = CONFIG.wiggle(WIGGLES[id_])
     else:
         context = runtime_utils.no_op_manager()
 
