@@ -678,6 +678,7 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
         return cls(id_, control_points, note=note)
 
 
+# pylint: disable=too-many-instance-attributes
 class SurfaceIntersectionInfo(object):
     r"""Information about an intersection from ``surface_intersections.json``.
 
@@ -740,6 +741,7 @@ class SurfaceIntersectionInfo(object):
             unique / problematic).
     """
 
+    # pylint: disable=too-many-arguments
     def __init__(self, id_, surface1_info, surface2_info, intersections=None,
                  edge_pairs=None, start_params=None, end_params=None,
                  start_param_polys=None, end_param_polys=None, note=None):
@@ -757,6 +759,7 @@ class SurfaceIntersectionInfo(object):
         self.end_param_polys = end_param_polys
 
         self.note = note
+    # pylint: enable=too-many-arguments
 
     @classmethod
     def from_json(cls, info, surfaces):
@@ -818,6 +821,7 @@ class SurfaceIntersectionInfo(object):
         return 'surfaces {!r} and {!r} (ID: {:d})'.format(
             self.surface1_info.id_, self.surface2_info.id_, self.id_)
 
+    # pylint: disable=missing-return-type-doc
     @property
     def surface1(self):
         """The first B |eacute| zier surface in the intersection.
@@ -835,3 +839,5 @@ class SurfaceIntersectionInfo(object):
             ~bezier.surface.Surface: The second B |eacute| zier surface.
         """
         return self.surface2_info.surface
+    # pylint: enable=missing-return-type-doc
+# pylint: enable=too-many-instance-attributes
