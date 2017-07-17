@@ -761,6 +761,32 @@ class SurfaceIntersectionInfo(object):
         self.note = note
     # pylint: enable=too-many-arguments
 
+    @property
+    def test_id(self):
+        """str: The ID for this intersection in unit tests."""
+        return 'surfaces {!r} and {!r} (ID: {:d})'.format(
+            self.surface1_info.id_, self.surface2_info.id_, self.id_)
+
+    # pylint: disable=missing-return-type-doc
+    @property
+    def surface1(self):
+        """The first B |eacute| zier surface in the intersection.
+
+        Returns:
+            ~bezier.surface.Surface: The first B |eacute| zier surface.
+        """
+        return self.surface1_info.surface
+
+    @property
+    def surface2(self):
+        """The second B |eacute| zier surface in the intersection.
+
+        Returns:
+            ~bezier.surface.Surface: The second B |eacute| zier surface.
+        """
+        return self.surface2_info.surface
+    # pylint: enable=missing-return-type-doc
+
     @classmethod
     def from_json(cls, info, surfaces):
         """Parse and convert JSON surface intersection info.
@@ -814,30 +840,4 @@ class SurfaceIntersectionInfo(object):
             start_params=start_params, end_params=end_params,
             start_param_polys=start_param_polys,
             end_param_polys=end_param_polys, note=note)
-
-    @property
-    def test_id(self):
-        """str: The ID for this intersection in unit tests."""
-        return 'surfaces {!r} and {!r} (ID: {:d})'.format(
-            self.surface1_info.id_, self.surface2_info.id_, self.id_)
-
-    # pylint: disable=missing-return-type-doc
-    @property
-    def surface1(self):
-        """The first B |eacute| zier surface in the intersection.
-
-        Returns:
-            ~bezier.surface.Surface: The first B |eacute| zier surface.
-        """
-        return self.surface1_info.surface
-
-    @property
-    def surface2(self):
-        """The second B |eacute| zier surface in the intersection.
-
-        Returns:
-            ~bezier.surface.Surface: The second B |eacute| zier surface.
-        """
-        return self.surface2_info.surface
-    # pylint: enable=missing-return-type-doc
 # pylint: enable=too-many-instance-attributes
