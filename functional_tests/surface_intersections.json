@@ -42,47 +42,91 @@
     }, {
         "surface1": "1L",
         "surface2": "3L",
-        "id": 2
+        "id": 2,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "1Q",
         "surface2": "2Q",
-        "id": 3
+        "id": 3,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "10Q",
         "surface2": "18Q",
-        "id": 4
+        "id": 4,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "10Q",
         "surface2": "19Q",
-        "id": 5
+        "id": 5,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "3Q",
         "surface2": "4Q",
-        "id": 6
+        "id": 6,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "1Q",
         "surface2": "5L",
-        "id": 7
+        "id": 7,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "3Q",
         "surface2": "5Q",
-        "id": 8
+        "id": 8,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "1L",
         "surface2": "2L",
-        "id": 9
+        "id": 9,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "20Q",
         "surface2": "21Q",
-        "id": 10
+        "id": 10,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "4L",
         "surface2": "22Q",
-        "id": 11
+        "id": 11,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "4L",
         "surface2": "23Q",
-        "id": 12
+        "id": 12,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "6Q",
         "surface2": "7Q",
@@ -156,83 +200,163 @@
     }, {
         "surface1": "8Q",
         "surface2": "9Q",
-        "id": 14
+        "id": 14,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "4Q",
         "surface2": "10Q",
-        "id": 15
+        "id": 15,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "11Q",
         "surface2": "12Q",
-        "id": 16
+        "id": 16,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "3Q",
         "surface2": "13Q",
-        "id": 17
+        "id": 17,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "10Q",
         "surface2": "17Q",
-        "id": 18
+        "id": 18,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "17Q",
         "surface2": "10Q",
-        "id": 19
+        "id": 19,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "3Q",
         "surface2": "14Q",
-        "id": 20
+        "id": 20,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "15Q",
         "surface2": "16Q",
-        "id": 21
+        "id": 21,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "24Q",
         "surface2": "25Q",
-        "id": 22
+        "id": 22,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "1L",
         "surface2": "6L",
-        "id": 23
+        "id": 23,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "26Q",
         "surface2": "27Q",
-        "id": 24
+        "id": 24,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "1L",
         "surface2": "28Q",
-        "id": 25
+        "id": 25,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "1L",
         "surface2": "29Q",
-        "id": 26
+        "id": 26,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "30Q",
         "surface2": "31Q",
-        "id": 27
+        "id": 27,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "1L",
         "surface2": "7L",
-        "id": 28
+        "id": 28,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "8L",
         "surface2": "29Q",
-        "id": 29
+        "id": 29,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "1L",
         "surface2": "9L",
-        "id": 30
+        "id": 30,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "1L",
         "surface2": "10L",
-        "id": 31
+        "id": 31,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "11L",
         "surface2": "33Q",
-        "id": 32
+        "id": 32,
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }, {
         "surface1": "32Q",
         "surface2": "33Q",
         "id": 33,
-        "note": "This is the same is intersection 32, but surface 32Q is a degree-elevated version of surface 11L."
+        "note": "This is the same is intersection 32, but surface 32Q is a degree-elevated version of surface 11L.",
+        "intersections": [],
+        "start_params": [],
+        "end_params": [],
+        "edge_pairs": []
     }
 ]
