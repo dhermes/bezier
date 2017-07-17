@@ -39,6 +39,9 @@ from bezier import _plot_helpers
 
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
+_LOCATE_ERROR_TEMPLATE = (
+    'Dimension mismatch: This curve is {:d}-dimensional, so the point should '
+    'be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
 _LINEAR_SUBDIVIDE_LEFT = np.asfortranarray([
     [1.0, 0.0],
     [0.5, 0.5],
@@ -374,6 +377,8 @@ class Curve(_base.Base):
 
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
+
+        This method acts as a (partial) inverse to :meth:`locate`.
 
         See :meth:`evaluate_multi` for more details.
 
@@ -849,6 +854,8 @@ class Curve(_base.Base):
 
         Solves for :math:`s` in :math:`B(s) = p`.
 
+        This method acts as a (partial) inverse to :meth:`evaluate`.
+
         .. note::
 
            A unique solution is only guaranteed if the current curve has no
@@ -894,7 +901,10 @@ class Curve(_base.Base):
                 dimension of the current curve.
         """
         if point.shape != (1, self._dimension):
-            raise ValueError('Point is not in same dimension as curve',
-                             point, 'Shape expected:', (1, self._dimension))
+            point_dimensions = ' x '.join(
+                str(dimension) for dimension in point.shape)
+            msg = _LOCATE_ERROR_TEMPLATE.format(
+                self._dimension, self._dimension, point, point_dimensions)
+            raise ValueError(msg)
 
         return _curve_helpers.locate_point(self, point)

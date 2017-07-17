@@ -37,6 +37,9 @@ from bezier import curve as _curve_mod
 
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, base=({:g}, {:g}), width={:g})>')
+_LOCATE_ERROR_TEMPLATE = (
+    'Dimension mismatch: This surface is {:d}-dimensional, so the point '
+    'should be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
 _STRATEGY = _intersection_helpers.IntersectionStrategy
 
 
@@ -670,6 +673,8 @@ class Surface(_base.Base):
         Evaluates :math:`B\left(1 - s - t, s, t\right)` by calling
         :meth:`evaluate_barycentric`:
 
+        This method acts as a (partial) inverse to :meth:`locate`.
+
         .. testsetup:: surface-cartesian
 
            import numpy as np
@@ -1066,6 +1071,8 @@ class Surface(_base.Base):
 
         Solves for :math:`s` and :math:`t` in :math:`B(s, t) = p`.
 
+        This method acts as a (partial) inverse to :meth:`evaluate_cartesian`.
+
         .. note::
 
            A unique solution is only guaranteed if the current surface is
@@ -1119,9 +1126,11 @@ class Surface(_base.Base):
                 raise NotImplementedError('Only 2D surfaces supported.')
 
             if point.shape != (1, self._dimension):
-                raise ValueError('Point is not in same dimension as surface',
-                                 point, 'Shape expected:',
-                                 (1, self._dimension))
+                point_dimensions = ' x '.join(
+                    str(dimension) for dimension in point.shape)
+                msg = _LOCATE_ERROR_TEMPLATE.format(
+                    self._dimension, self._dimension, point, point_dimensions)
+                raise ValueError(msg)
 
         return _surface_helpers.locate_point(self, point[0, 0], point[0, 1])
 
