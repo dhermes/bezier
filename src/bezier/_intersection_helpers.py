@@ -1200,7 +1200,7 @@ def _tangent_bbox_intersection(first, second, intersections):
     #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
     #        arrays.indexing.html#advanced-indexing)
     #       We don't use order='F' when reshaping since the data isn't
-    #       contiguous (since we assumes `_nodes` is Fortran contiguous).
+    #       contiguous (since we assume `_nodes` is Fortran contiguous).
     node_first1 = first._nodes[0, :].reshape((1, 2))
     node_first2 = first._nodes[-1, :].reshape((1, 2))
     node_second1 = second._nodes[0, :].reshape((1, 2))
