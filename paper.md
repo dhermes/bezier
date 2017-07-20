@@ -40,6 +40,6 @@ time.
 [1]: https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 [2]: https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
 [3]: http://tom.cs.byu.edu/~557/text/cagd.pdf
-[4]: https://www.amazon.com/Curves-Surfaces-CAGD-Fifth-Practical/dp/1558607374%3FSubscriptionId%3D0JYN1NVW651KCA56C102%26tag%3Dtechkie-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D1558607374
+[4]: https://www.amazon.com/Curves-Surfaces-CAGD-Fifth-Practical/dp/1558607374
 [5]: https://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
 [6]: https://bezier.readthedocs.io/en/latest/reference/bezier.surface.html

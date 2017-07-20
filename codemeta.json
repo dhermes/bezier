@@ -3,7 +3,7 @@
   "@type": "Code",
   "author": [
     {
-      "@id": "http://orcid.org/0000-0001-7366-173X",
+      "@id": "https://orcid.org/0000-0001-7366-173X",
       "@type": "Person",
       "affiliation": "University of California, Berkeley",
       "email": "daniel.j.hermes@gmail.com",

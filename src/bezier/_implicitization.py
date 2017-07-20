@@ -14,7 +14,7 @@ r"""Helper for implicitizing B |eacute| zier curves.
 
 .. _resultant: https://en.wikipedia.org/wiki/Resultant
 .. _algebraic curve: https://en.wikipedia.org/wiki/Algebraic_curve
-.. _Farouki and Rajan: http://dx.doi.org/10.1016/0167-8396(88)90016-7
+.. _Farouki and Rajan: https://dx.doi.org/10.1016/0167-8396(88)90016-7
 .. _theorem: https://en.wikipedia.org/wiki/B%C3%A9zout's_theorem
 
 Primarily uses the `resultant`_ to evaluate the implicitized
@@ -562,7 +562,7 @@ def _check_non_simple(coeffs):
     and then evaluating the rank of :math:`B = f(A)`. If :math:`B` is not
     full rank, then :math:`f` and :math:`f'` have a shared factor.
 
-    See: http://dx.doi.org/10.1016/0024-3795(70)90023-6
+    See: https://dx.doi.org/10.1016/0024-3795(70)90023-6
 
     .. note::
 

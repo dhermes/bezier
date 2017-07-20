@@ -88,7 +88,7 @@ def has_f90_compiler():
 
 def _extension_modules():
     # NOTE: This assumes is_installed('numpy') has already passed.
-    #       H/T to http://stackoverflow.com/a/41575848/1068170
+    #       H/T to https://stackoverflow.com/a/41575848/1068170
     from numpy.distutils import core
 
     bezier_path = os.path.join(PACKAGE_ROOT, 'src', 'bezier')
