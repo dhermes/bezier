@@ -987,6 +987,26 @@ def _parallel_different(start0, end0, start1, end1):
     return not _helpers.in_interval(0.0, min_val, max_val)
 
 
+def _wiggle_pair(s_val, t_val):
+    """Coerce two parameter values into the unit interval.
+
+    Returns:
+        Tuple[float, float]: Pair of ``(s_val, t_val)`` with each potentially
+        rounded into the unit interval (if close enough).
+
+    Raises:
+        ValueError: If one of the values falls outside the unit interval
+            (with wiggle room).
+    """
+    new_s, success_s = _helpers.wiggle_interval(s_val)
+    new_t, success_t = _helpers.wiggle_interval(t_val)
+    if not (success_s and success_t):
+        raise ValueError(
+            'At least one value outside of unit interval', s_val, t_val)
+
+    return new_s, new_t
+
+
 # pylint: disable=too-many-arguments,too-many-return-statements
 def _from_linearized_low_level_py(
         error1, start1, end1, start_node1, end_node1, nodes1,
@@ -1029,8 +1049,6 @@ def _from_linearized_low_level_py(
 
     Raises:
         NotImplementedError: If the segment intersection fails.
-        ValueError: If one of the refined parameter values falls outside
-            the unit interval (with wiggle room).
     """
     # pylint: disable=too-many-locals
     s, t, success = segment_intersection(
@@ -1061,13 +1079,7 @@ def _from_linearized_low_level_py(
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
     refined_s, refined_t = newton_refine(orig_s, nodes1, orig_t, nodes2)
-    refined_s, success_s = _helpers.wiggle_interval(refined_s)
-    refined_t, success_t = _helpers.wiggle_interval(refined_t)
-    if not (success_s and success_t):
-        raise ValueError(
-            'At least one value outside of unit interval',
-            refined_s, refined_t)
-
+    refined_s, refined_t = _wiggle_pair(refined_s, refined_t)
     return refined_s, refined_t, True
     # pylint: enable=too-many-locals
 # pylint: enable=too-many-arguments,too-many-return-statements

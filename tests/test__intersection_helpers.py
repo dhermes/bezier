@@ -608,6 +608,26 @@ class Test_speedup_parallel_different(Test__parallel_different):
             start0, end0, start1, end1)
 
 
+class Test__wiggle_pair(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(s_val, t_val):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._wiggle_pair(s_val, t_val)
+
+    def test_success(self):
+        s_val = float.fromhex('-0x1.fffffffffffffp-46')
+        t_val = 0.75
+        new_s, new_t = self._call_function_under_test(s_val, t_val)
+        self.assertEqual(new_s, 0.0)
+        self.assertEqual(new_t, t_val)
+
+    def test_failure(self):
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(-0.5, 0.5)
+
+
 class Test__from_linearized_low_level_py(utils.NumPyTestCase):
 
     # pylint: disable=too-many-arguments

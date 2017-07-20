@@ -383,7 +383,7 @@ class Test__wiggle_interval_py(unittest.TestCase):
             self._call_function_under_test(value), (0.0, True))
 
         value = float.fromhex('-0x1.0000000000000p-45')
-        _,  success = self._call_function_under_test(value)
+        _, success = self._call_function_under_test(value)
         self.assertFalse(success)
 
         value = float.fromhex('-0x1.0000000000001p-45')
