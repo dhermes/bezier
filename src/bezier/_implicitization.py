@@ -583,13 +583,16 @@ def _check_non_simple(coeffs):
     deriv_poly = polynomial.polyder(coeffs)
 
     companion = polynomial.polycompanion(deriv_poly)
+    # NOTE: `polycompanion()` returns a C-contiguous array.
+    companion = companion.T
     # Use Horner's method to evaluate f(companion)
     num_companion, _ = companion.shape
-    id_mat = np.eye(num_companion)
+    id_mat = _helpers.eye(num_companion)
     evaluated = coeffs[-1] * id_mat
     for index in six.moves.xrange(num_coeffs - 2, -1, -1):
         coeff = coeffs[index]
-        evaluated = evaluated.dot(companion) + coeff * id_mat
+        evaluated = (
+            _helpers.matrix_product(evaluated, companion) + coeff * id_mat)
 
     if num_companion == 1:
         # NOTE: This relies on the fact that coeffs is normalized.
