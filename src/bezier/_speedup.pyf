@@ -167,14 +167,7 @@ python module _speedup
             subroutine wiggle_interval(value_,result_,success)
                 real(kind=dp) intent(in) :: value_
                 real(kind=dp) intent(out) :: result_
-                logical(kind=1) intent(hide) :: success
-                callstatement '''
-                (*f2py_func)(&value_, &result_, &success);
-                if (!success)
-                {
-                  PyErr_SetString(PyExc_ValueError, "outside of unit interval");
-                }
-                '''
+                logical(kind=1) intent(out) :: success
             end subroutine wiggle_interval
             subroutine parallel_different(start0,end0,start1,end1,result_)
                 real(kind=dp) dimension(1,2),intent(in) :: start0

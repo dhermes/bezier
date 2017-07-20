@@ -335,112 +335,123 @@ class Test__wiggle_interval_py(unittest.TestCase):
 
     def test_at_endpoint(self):
         # Really just making sure the function doesn't raise.
-        result = self._call_function_under_test(0.0)
+        result, success = self._call_function_under_test(0.0)
+        self.assertTrue(success)
         self.assertEqual(result, 0.0)
-        result = self._call_function_under_test(1.0)
+
+        result, success = self._call_function_under_test(1.0)
+        self.assertTrue(success)
         self.assertEqual(result, 1.0)
 
     def test_near_endpoint(self):
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(1.0 + 2.0**(-20))
+        _, success = self._call_function_under_test(1.0 + 2.0**(-20))
+        self.assertFalse(success)
 
     def test_outside_below(self):
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(-0.25)
+        _, success = self._call_function_under_test(-0.25)
+        self.assertFalse(success)
 
     def test_outside_above(self):
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(1.5)
+        _, success = self._call_function_under_test(1.5)
+        self.assertFalse(success)
 
     def test_valid(self):
         # Really just making sure the function doesn't raise.
-        result = self._call_function_under_test(0.25)
+        result, success = self._call_function_under_test(0.25)
+        self.assertTrue(success)
         self.assertEqual(result, 0.25)
 
     def test_wiggle_below(self):
         value = -2.0**(-60)
-        result = self._call_function_under_test(value)
+        result, success = self._call_function_under_test(value)
+        self.assertTrue(success)
         self.assertEqual(result, 0.0)
 
     def test_wiggle_above(self):
         value = 1 + 2.0**(-52)
-        result = self._call_function_under_test(value)
+        result, success = self._call_function_under_test(value)
+        self.assertTrue(success)
         self.assertEqual(result, 1.0)
 
     def test_outer_boundary(self):
         # Values near / at the left-hand boundary.
         value = float.fromhex('-0x1.ffffffffffffep-46')
         self.assertEqual(
-            self._call_function_under_test(value), 0.0)
+            self._call_function_under_test(value), (0.0, True))
         value = float.fromhex('-0x1.fffffffffffffp-46')
         self.assertEqual(
-            self._call_function_under_test(value), 0.0)
+            self._call_function_under_test(value), (0.0, True))
+
         value = float.fromhex('-0x1.0000000000000p-45')
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(value)
+        _,  success = self._call_function_under_test(value)
+        self.assertFalse(success)
+
         value = float.fromhex('-0x1.0000000000001p-45')
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(value)
+        _, success = self._call_function_under_test(value)
+        self.assertFalse(success)
 
         # Values near / at the right-hand boundary.
         value = float.fromhex('0x1.000000000007ep+0')
         self.assertEqual(
-            self._call_function_under_test(value), 1.0)
+            self._call_function_under_test(value), (1.0, True))
         value = float.fromhex('0x1.000000000007fp+0')
         self.assertEqual(
-            self._call_function_under_test(value), 1.0)
+            self._call_function_under_test(value), (1.0, True))
+
         value = float.fromhex('0x1.0000000000080p+0')
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(value)
+        _, success = self._call_function_under_test(value)
+        self.assertFalse(success)
+
         value = float.fromhex('0x1.0000000000081p+0')
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(value)
+        _, success = self._call_function_under_test(value)
+        self.assertFalse(success)
 
     def test_inner_boundary(self):
         # Values near / at the left-hand boundary.
         value = float.fromhex('0x1.ffffffffffffep-46')
         self.assertEqual(
-            self._call_function_under_test(value), 0.0)
+            self._call_function_under_test(value), (0.0, True))
         value = float.fromhex('0x1.fffffffffffffp-46')
         self.assertEqual(
-            self._call_function_under_test(value), 0.0)
+            self._call_function_under_test(value), (0.0, True))
         value = float.fromhex('0x1.0000000000000p-45')
         self.assertEqual(
-            self._call_function_under_test(value), value)
+            self._call_function_under_test(value), (value, True))
         value = float.fromhex('0x1.0000000000001p-45')
         self.assertEqual(
-            self._call_function_under_test(value), value)
+            self._call_function_under_test(value), (value, True))
 
         # Values near / at the right-hand boundary.
         value = float.fromhex('0x1.ffffffffffefep-1')
         self.assertEqual(
-            self._call_function_under_test(value), value)
+            self._call_function_under_test(value), (value, True))
         value = float.fromhex('0x1.ffffffffffeffp-1')
         self.assertEqual(
-            self._call_function_under_test(value), value)
+            self._call_function_under_test(value), (value, True))
         value = float.fromhex('0x1.fffffffffff00p-1')
         self.assertEqual(
-            self._call_function_under_test(value), value)
+            self._call_function_under_test(value), (value, True))
         value = float.fromhex('0x1.fffffffffff01p-1')
         self.assertEqual(
-            self._call_function_under_test(value), 1.0)
+            self._call_function_under_test(value), (1.0, True))
         value = float.fromhex('0x1.fffffffffff02p-1')
         self.assertEqual(
-            self._call_function_under_test(value), 1.0)
+            self._call_function_under_test(value), (1.0, True))
 
     def test_custom_wiggle(self):
         value = 1.25
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(value)
+        _, success = self._call_function_under_test(value)
+        self.assertFalse(success)
 
-        result = self._call_function_under_test(value, wiggle=0.5)
+        result, success = self._call_function_under_test(value, wiggle=0.5)
+        self.assertTrue(success)
         self.assertEqual(result, 1.0)
 
         value = 0.875
         self.assertEqual(
-            self._call_function_under_test(value), value)
+            self._call_function_under_test(value), (value, True))
         self.assertEqual(
-            self._call_function_under_test(value, wiggle=0.25), 1.0)
+            self._call_function_under_test(value, wiggle=0.25), (1.0, True))
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')

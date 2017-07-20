@@ -256,21 +256,21 @@ def _wiggle_interval_py(value, wiggle=0.5**45):
             the endpoints ``0.0`` and ``1.0``.
 
     Returns:
-        float: The ``value`` if it's in the interval, or ``0`` or ``1``
-        if the value lies slightly outside.
+        Tuple[float, bool]: Pair of
 
-    Raises:
-        ValueError: If one of the values falls outside the unit interval
-        (with wiggle room).
+        * The ``value`` if it's in the interval, or ``0`` or ``1``
+          if the value lies slightly outside. If the ``value`` is
+          too far outside the unit interval, will be NaN.
+        * Boolean indicating if the ``value`` is inside the unit interval.
     """
     if -wiggle < value < wiggle:
-        return 0.0
+        return 0.0, True
     elif wiggle <= value <= 1.0 - wiggle:
-        return value
+        return value, True
     elif 1.0 - wiggle < value < 1.0 + wiggle:
-        return 1.0
+        return 1.0, True
     else:
-        raise ValueError('outside of unit interval', value)
+        return np.nan, False
 
 
 # pylint: disable=invalid-name

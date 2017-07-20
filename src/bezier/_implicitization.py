@@ -625,13 +625,9 @@ def _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t):
     s_val, t_val = _intersection_helpers.newton_refine(
         s_val, nodes1, t_val, nodes2)
 
-    # NOTE: This is a bad idea, using exceptions for control-flow.
-    #       In Python, exceptions are very expensive and should not be
-    #       used for high-performance code.
-    try:
-        s_val = _helpers.wiggle_interval(s_val)
-        t_val = _helpers.wiggle_interval(t_val)
-    except ValueError:
+    s_val, success_s = _helpers.wiggle_interval(s_val)
+    t_val, success_t = _helpers.wiggle_interval(t_val)
+    if not (success_s and success_t):
         return
 
     final_s.append(s_val)
