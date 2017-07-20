@@ -31,7 +31,10 @@ with open(os.path.join(PACKAGE_ROOT, 'README.rst.template')) as file_obj:
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
-$ pip install numpy
+$ pip              install numpy
+$ python    -m pip install numpy --user
+$ python2.7 -m pip install numpy --user
+$ python3.6 -m pip install numpy --user
 $ # OR
 $ conda install numpy
 """

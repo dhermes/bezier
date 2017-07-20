@@ -87,7 +87,10 @@ Installing
 
 .. code-block:: console
 
-   $ pip install --upgrade bezier
+   $ pip              install --upgrade bezier
+   $ python    -m pip install --upgrade bezier --user
+   $ python2.7 -m pip install --upgrade bezier --user
+   $ python3.6 -m pip install --upgrade bezier --user
 
 ``bezier`` is open-source, so you can alternatively grab the source
 code from `GitHub`_ and install from source.
