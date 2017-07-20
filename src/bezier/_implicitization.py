@@ -607,7 +607,7 @@ def _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t):
     """Resolve a computed intersection and add to lists.
 
     We perform one Newton step to deal with any residual issues of
-    high-degree polynomial solves (one of which depends the already
+    high-degree polynomial solves (one of which depends on the already
     approximate ``x_val, y_val``).
 
     Args:
