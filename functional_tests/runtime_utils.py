@@ -747,6 +747,9 @@ class SurfaceIntersectionInfo(object):
             polynomials = self.end_param_polys
             name = 'end'
 
+        if polynomials is None:
+            return
+
         err_msg1 = 'Unexpected number of {} parameter polynomials.'.format(
             name)
         template2 = (
@@ -1038,12 +1041,23 @@ class SurfaceIntersectionsInfo(object):
         end_params_parts = cls._get_parts(info.pop('end_params'))
 
         # Optional fields.
-        default_polys = [None] * len(intersection_parts)
-        start_param_polys_parts = cls._get_parts(
-            info.pop('start_param_polys', default_polys), convert=False)
-        end_param_polys_parts = cls._get_parts(
-            info.pop('end_param_polys', default_polys), convert=False)
+        start_param_polys = info.pop('start_param_polys', None)
+        end_param_polys = info.pop('end_param_polys', None)
         note = info.pop('note', None)
+
+        # (Optionally) split the polynomials into parts.
+        default_polys = [None] * len(intersection_parts)
+        if start_param_polys is None:
+            start_param_polys_parts = default_polys
+        else:
+            start_param_polys_parts = cls._get_parts(
+                start_param_polys, convert=False)
+
+        if end_param_polys is None:
+            end_param_polys_parts = default_polys
+        else:
+            end_param_polys_parts = cls._get_parts(
+                end_param_polys, convert=False)
 
         # Make sure we've exhausted the data.
         if info:

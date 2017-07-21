@@ -345,18 +345,70 @@
         "surface1": "11L",
         "surface2": "33Q",
         "id": 32,
-        "intersections": [],
-        "start_params": [],
-        "end_params": [],
-        "edge_pairs": []
+        "intersections": [
+            ["71/32", "383/128"],
+            ["17/8", "23/8"],
+            ["1137/512", "23/8"],
+            ["285/128", 3]
+        ],
+        "start_params": [
+            "1/4",
+            "0x1.983e62b67adeep-3",
+            0,
+            0
+        ],
+        "start_param_polys": [
+            [-1, 4],
+            [-12, 60, 1],
+            [0, 1],
+            [0, 1]
+        ],
+        "end_params": [
+            1,
+            1,
+            1,
+            "1/16"
+        ],
+        "edge_pairs": [
+            [0, 0],
+            [1, 1],
+            [1, 2],
+            [1, 0]
+        ]
     }, {
         "surface1": "32Q",
         "surface2": "33Q",
         "id": 33,
-        "note": "This is the same is intersection 32, but surface 32Q is a degree-elevated version of surface 11L.",
-        "intersections": [],
-        "start_params": [],
-        "end_params": [],
-        "edge_pairs": []
+        "note": "This is the same as intersection 32, but surface 32Q is a degree-elevated version of surface 11L.",
+        "intersections": [
+            ["71/32", "383/128"],
+            ["17/8", "23/8"],
+            ["1137/512", "23/8"],
+            ["285/128", 3]
+        ],
+        "start_params": [
+            "1/4",
+            "0x1.983e62b67adeep-3",
+            0,
+            0
+        ],
+        "start_param_polys": [
+            [-1, 4],
+            [-12, 60, 1],
+            [0, 1],
+            [0, 1]
+        ],
+        "end_params": [
+            1,
+            1,
+            1,
+            "1/16"
+        ],
+        "edge_pairs": [
+            [0, 0],
+            [1, 1],
+            [1, 2],
+            [1, 0]
+        ]
     }
 ]

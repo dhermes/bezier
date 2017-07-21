@@ -40,10 +40,12 @@ BAD_TANGENT = (
     'overlapping arcs.')
 TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 WIGGLES = {
-    1: 48,
-    13: 25,
+    1: 46,
+    13: 19,
+    32: 1013,
+    33: 1013,
 }
-WHITELIST = (1, 13)  # This is temporary.
+WHITELIST = (1, 13, 32, 33)  # This is temporary.
 CONFIG = runtime_utils.Config()
 
 SURFACE1L = SURFACES['1L'].surface
@@ -56,7 +58,6 @@ SURFACE7L = SURFACES['7L'].surface
 SURFACE8L = SURFACES['8L'].surface
 SURFACE9L = SURFACES['9L'].surface
 SURFACE10L = SURFACES['10L'].surface
-SURFACE11L = SURFACES['11L'].surface
 SURFACE1Q = SURFACES['1Q'].surface
 SURFACE2Q = SURFACES['2Q'].surface
 SURFACE3Q = SURFACES['3Q'].surface
@@ -86,8 +87,6 @@ SURFACE28Q = SURFACES['28Q'].surface
 SURFACE29Q = SURFACES['29Q'].surface
 SURFACE30Q = SURFACES['30Q'].surface
 SURFACE31Q = SURFACES['31Q'].surface
-SURFACE32Q = SURFACES['32Q'].surface
-SURFACE33Q = SURFACES['33Q'].surface
 
 
 Intersected = collections.namedtuple(
@@ -871,33 +870,6 @@ def test_surfaces1L_and_9L():
 
 def test_surfaces1L_and_10L():
     surface_surface_check_multi(SURFACE1L, SURFACE10L)
-
-
-def test_surfaces11L_and_33Q():
-    # NOTE: Actual value is [4 sqrt(57) - 30]
-    s_val = float.fromhex('0x1.983e62b67adeep-3')
-    start_vals = np.asfortranarray([0.25, s_val, 0.0, 0.0])
-    end_vals = np.asfortranarray([1.0, 1.0, 1.0, 0.0625])
-
-    nodes = np.asfortranarray([
-        [2.21875, 2.9921875],
-        [2.125, 2.875],
-        [2.220703125, 2.875],
-        [2.2265625, 3.0],
-    ])
-    edge_pairs = (
-        (0, 0),
-        (1, 1),
-        (1, 2),
-        (1, 0),
-    )
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(1013):
-        surface_surface_check(SURFACE11L, SURFACE33Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-        # Test the degree-elevated equivalent.
-        surface_surface_check(SURFACE32Q, SURFACE33Q,
-                              start_vals, end_vals, nodes, edge_pairs)
 
 
 @pytest.mark.parametrize(
