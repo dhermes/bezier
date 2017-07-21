@@ -45,7 +45,6 @@ WIGGLES = {
     32: 1013,
     33: 1013,
 }
-WHITELIST = (1, 13, 32, 33)  # This is temporary.
 CONFIG = runtime_utils.Config()
 
 SURFACE1L = SURFACES['1L'].surface
@@ -879,8 +878,8 @@ def test_surfaces1L_and_10L():
 )
 def test_intersect(intersection_info):
     id_ = intersection_info.id_
-    if id_ not in WHITELIST:
-        pytest.skip('Not yet on whitelist')
+    if intersection_info.note == 'data-unfinished':
+        pytest.skip('Intersection does not have all data yet.')
 
     if id_ in WIGGLES:
         context = CONFIG.wiggle(WIGGLES[id_])
