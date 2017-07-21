@@ -32,7 +32,7 @@ import runtime_utils
 
 ALGEBRAIC = curve.IntersectionStrategy.algebraic
 GEOMETRIC = curve.IntersectionStrategy.geometric
-_, INTERSECTIONS = runtime_utils.surface_intersections_info()
+SURFACES, INTERSECTIONS = runtime_utils.surface_intersections_info()
 STRATEGY = GEOMETRIC
 PARALLEL_FAILURE = ('Line segments parallel.',)
 BAD_TANGENT = (
@@ -46,444 +46,48 @@ WIGGLES = {
 WHITELIST = (1, 13)  # This is temporary.
 CONFIG = runtime_utils.Config()
 
-# F1L = sympy.Matrix([[s, t]])
-SURFACE1L = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [1.0, 0.0],
-    [0.0, 1.0],
-]), _copy=False)
-# F2L = sympy.Matrix([[
-#     (9 * s + 2 * t - 1) / 8,
-#     (9 * s + 7 * t - 1) / 16,
-# ]])
-SURFACE2L = bezier.Surface.from_nodes(np.asfortranarray([
-    [-0.125, -0.0625],
-    [1.0, 0.5],
-    [0.125, 0.375],
-]), _copy=False)
-# F3L = sympy.Matrix([[(4 * s + 1) / 4, (8 * t - 1) / 8]])
-SURFACE3L = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.25, -0.125],
-    [1.25, -0.125],
-    [0.25, 0.875],
-]), _copy=False)
-# F4L = sympy.Matrix([[5 * (2 * s + t - 1) / 4, 35 * t / 16]])
-SURFACE4L = bezier.Surface.from_nodes(np.asfortranarray([
-    [-1.25, 0.0],
-    [1.25, 0.0],
-    [0.0, 2.1875],
-]), _copy=False)
-# F5L = sympy.Matrix([[
-#     (21 * s - 21 * t + 4) / 8,
-#     (21 * s + 21 * t - 5) / 32,
-# ]])
-SURFACE5L = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.5, -0.15625],
-    [3.125, 0.5],
-    [-2.125, 0.5],
-]), _copy=False)
-# F6L = sympy.Matrix([[(1 - 4 * s) / 4, (1 - 4 * t) / 4]])
-SURFACE6L = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.25, 0.25],
-    [-0.75, 0.25],
-    [0.25, -0.75],
-]), _copy=False)
-# F7L = sympy.Matrix([[-(s + t), (s - t + 1) / 2]])
-SURFACE7L = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.5],
-    [-1.0, 1.0],
-    [-1.0, 0.0],
-]), _copy=False)
-# F8L = sympy.Matrix([[
-#     (5 * s + 9 * t + 1) / 8,
-#     -(5 * s - 4 * t - 6) / 8,
-# ]])
-SURFACE8L = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.125, 0.75],
-    [0.75, 0.125],
-    [1.25, 1.25],
-]), _copy=False)
-# F9L = sympy.Matrix([[(7 * s + 2 * t) / 8, -(s - 5 * t - 1) / 8]])
-SURFACE9L = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.125],
-    [0.875, 0.0],
-    [0.25, 0.75],
-]), _copy=False)
-# F10L = sympy.Matrix([[-2 * s + t, 3 * (s - t)]])
-SURFACE10L = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [-2.0, 3.0],
-    [1.0, -3.0],
-]), _copy=False)
-# F11L = sympy.Matrix([[
-#     (t - 2 * s + 36) / 16, (97 - 5 * s - 6 * t) / 32]])
-SURFACE11L = bezier.Surface.from_nodes(np.asfortranarray([
-    [2.25, 3.03125],
-    [2.125, 2.875],
-    [2.3125, 2.84375],
-]), _copy=False)
-
-# F1Q = sympy.Matrix([[
-#     (2 * s - t**2 + t) / 2,
-#     (s**2 + 2 * s * t - s + 2 * t) / 2,
-# ]])
-SURFACE1Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [0.5, -0.25],
-    [1.0, 0.0],
-    [0.25, 0.5],
-    [0.75, 0.75],
-    [0.0, 1.0],
-]), _copy=False)
-# F2Q = sympy.Matrix([[
-#     (3 * s**2 + 6 * s * t + 5 * s + 8 * t - 2) / 8,
-#     (3 * s**2 - 3 * t**2 - 11 * s + 3 * t + 6) / 8,
-# ]])
-SURFACE2Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [-0.25, 0.75],
-    [0.0625, 0.0625],
-    [0.75, -0.25],
-    [0.25, 0.9375],
-    [0.9375, 0.25],
-    [0.75, 0.75],
-]), _copy=False)
-# F3Q = sympy.Matrix([[
-#     (11 * s * t + 5 * t**2 + 8 * s + 3 * t) / 8,
-#     -(4 * s**2 + 7 * s * t + 7 * t**2 - 4 * s - 15 * t) / 8,
-# ]])
-SURFACE3Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [0.5, 0.25],
-    [1.0, 0.0],
-    [0.1875, 0.9375],
-    [1.375, 0.75],
-    [1.0, 1.0],
-]), _copy=False)
-# F4Q = sympy.Matrix([[
-#     -(2 * s * t + t**2 - 16 * s - 4 * t) / 16,
-#     (2 * s**2 + 2 * s * t - 2 * s + 3 * t + 1) / 4,
-# ]])
-SURFACE4Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.25],
-    [0.5, 0.0],
-    [1.0, 0.25],
-    [0.125, 0.625],
-    [0.5625, 0.625],
-    [0.1875, 1.0],
-]), _copy=False)
-# F5Q = sympy.Matrix([[
-#     -(s**2 + s * t - 8 * s - 3 * t - 2) / 8,
-#     -(25 * s**2 + 20 * s * t - t**2 - 34 * s - 28 * t - 3) / 32,
-# ]])
-SURFACE5Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.25, 0.09375],
-    [0.75, 0.625],
-    [1.125, 0.375],
-    [0.4375, 0.53125],
-    [0.875, 0.75],
-    [0.625, 1.0],
-]), _copy=False)
-# F8Q = sympy.Matrix([[
-#     s * (7 * t + 1),
-#     t * (7 * s + 1),
-# ]])
-SURFACE8Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [0.5, 0.0],
-    [1.0, 0.0],
-    [0.0, 0.5],
-    [4.0, 4.0],
-    [0.0, 1.0],
-]), _copy=False)
-# F9Q = sympy.Matrix([[
-#     (14 * s * t + 14 * t**2 + 2 * s - 12 * t + 3) / 2,
-#     -t * (7 * s + 7 * t - 8),
-# ]])
-SURFACE9Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [1.5, 0.0],
-    [2.0, 0.0],
-    [2.5, 0.0],
-    [-1.5, 4.0],
-    [2.5, 0.5],
-    [2.5, 1.0],
-]), _copy=False)
-# F10Q = sympy.Matrix([[
-#     -(2 * s + t - 2) / 2,
-#     -(2 * s**2 + 2 * s*t - 2 * s + 3 * t) / 4,
-# ]])
-SURFACE10Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [1.0, 0.0],
-    [0.5, 0.25],
-    [0.0, 0.0],
-    [0.75, -0.375],
-    [0.25, -0.375],
-    [0.5, -0.75],
-]), _copy=False)
-# F11Q = sympy.Matrix([[
-#     (16 * s - t**2 + 4 * t) / 16,
-#     (8 * s**2 + 8 * s * t - 8 * s + 12 * t + 3) / 16,
-# ]])
-SURFACE11Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.1875],
-    [0.5, -0.0625],
-    [1.0, 0.1875],
-    [0.125, 0.5625],
-    [0.625, 0.5625],
-    [0.1875, 0.9375],
-]), _copy=False)
-# F12Q = sympy.Matrix([[
-#     -(2 * s + t - 2) / 2,
-#     -(8 * s**2 + 8 * s * t - 8 * s + 12 * t - 1) / 16,
-# ]])
-SURFACE12Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [1.0, 0.0625],
-    [0.5, 0.3125],
-    [0.0, 0.0625],
-    [0.75, -0.3125],
-    [0.25, -0.3125],
-    [0.5, -0.6875],
-]), _copy=False)
-# F13Q = sympy.Matrix([[
-#     (2 * s + t + 1) / 4,
-#     (4 * s**2 + 4 * s * t + t**2 - 4 * s + 14 * t + 5) / 32,
-# ]])
-# NOTE: The bottom edge of this surface lies entirely on the
-#       bottom edge of SURFACE4Q.
-SURFACE13Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.25, 0.15625],
-    [0.5, 0.09375],
-    [0.75, 0.15625],
-    [0.375, 0.375],
-    [0.625, 0.375],
-    [0.5, 0.625],
-]), _copy=False)
-# F14Q = F13Q + sympy.Matrix([[0, 1]]) / 16
-SURFACE14Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.25, 0.21875],
-    [0.5, 0.15625],
-    [0.75, 0.21875],
-    [0.375, 0.4375],
-    [0.625, 0.4375],
-    [0.5, 0.6875],
-]), _copy=False)
-# F15Q = sympy.Matrix([[
-#     -2 * (s + t) * (t - 1),
-#     (7 * s + 8 * t) / 4,
-# ]])
-SURFACE15Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [1.0, 0.875],
-    [2.0, 1.75],
-    [1.0, 1.0],
-    [1.0, 1.875],
-    [0.0, 2.0],
-]), _copy=False)
-# F16Q = sympy.Matrix([[
-#     2 * s**2 + 2 * s * t - 2 * s - 2 * t + 1,
-#     (8 * s + 7 * t) / 4,
-# ]])
-SURFACE16Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [1.0, 0.0],
-    [0.0, 1.0],
-    [1.0, 2.0],
-    [0.0, 0.875],
-    [0.0, 1.875],
-    [-1.0, 1.75],
-]), _copy=False)
-# F17Q = sympy.Matrix([[
-#     (19 * s - 19 * t + 32) / 64,
-#     (2 *s * t + 5 * s + 5 * t - 6) / 8,
-# ]])
-SURFACE17Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.5, -0.75],
-    [0.6484375, -0.4375],
-    [0.796875, -0.125],
-    [0.3515625, -0.4375],
-    [0.5, 0.0],
-    [0.203125, -0.125],
-]), _copy=False)
-# F18Q = sympy.Matrix([[
-#     -(4 * s + t - 3) / 4,
-#     -(16 * s**2 + 16 * s * t - 8 * s + 27 * t - 3) / 32,
-# ]])
-SURFACE18Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.75, 0.09375],
-    [0.25, 0.21875],
-    [-0.25, -0.15625],
-    [0.625, -0.328125],
-    [0.125, -0.453125],
-    [0.5, -0.75],
-]), _copy=False)
-# F19Q = sympy.Matrix([[
-#     (t - s) / 2,
-#     -(s**2 + s * t + 2 * s + 6 * t) / 8,
-# ]])
-SURFACE19Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [-0.25, -0.125],
-    [-0.5, -0.375],
-    [0.25, -0.375],
-    [0.0, -0.5625],
-    [0.5, -0.75],
-]), _copy=False)
-# F20Q = sympy.Matrix([[
-#     -s**2 - s * t - 2 * t + 1, -s * (s + t - 2),
-# ]])
-SURFACE20Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [1.0, 0.0],
-    [1.0, 1.0],
-    [0.0, 1.0],
-    [0.0, 0.0],
-    [-0.5, 0.5],
-    [-1.0, 0.0],
-]), _copy=False)
-# F21Q = sympy.Matrix([[
-#     -(3 * s**2 + 3 * s * t + 3 * t - 2) / 2,
-#     -(6 * s**2 + 6 * s * t - 12 * s - t) / 4,
-# ]])
-SURFACE21Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [1.0, 0.0],
-    [1.0, 1.5],
-    [-0.5, 1.5],
-    [0.25, 0.125],
-    [-0.5, 0.875],
-    [-0.5, 0.25],
-]), _copy=False)
-# F22Q = sympy.Matrix([[
-#     -5 * (2 * t - 5) * (2 * s + t - 1) / 16,
-#     -5 * (16 * s**2 + 16 * s * t + 2 * t**2 - 16 * s - 37 * t + 4) / 64,
-# ]])
-SURFACE22Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [-1.5625, -0.3125],
-    [0.0, 0.3125],
-    [1.5625, -0.3125],
-    [-0.46875, 1.1328125],
-    [0.46875, 1.1328125],
-    [0.0, 2.421875],
-]), _copy=False)
-# F23Q = sympy.Matrix([[
-#     (t + 2) * (2 * s + t - 1) / 2,
-#     (4 * s**2 + 4 * s * t - 3 * t**2 - 4 * s + 17 * t + 1) / 8,
-# ]])
-SURFACE23Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [-1.0, 0.125],
-    [0.0, -0.125],
-    [1.0, 0.125],
-    [-0.75, 1.1875],
-    [0.75, 1.1875],
-    [0.0, 1.875],
-]), _copy=False)
-# F24Q = sympy.Matrix([[
-#     -(42 * s**2 - 10 * s * t - 33 * t**2 + 16 * s + 128 * t - 96) / 128,
-#     (3 * s**2 + 24 * s * t + 11 * t**2 - 18 * t + 25) / 32,
-# ]])
-SURFACE24Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.75, 0.78125],
-    [0.6875, 0.78125],
-    [0.296875, 0.875],
-    [0.25, 0.5],
-    [0.2265625, 0.875],
-    [0.0078125, 0.5625],
-]), _copy=False)
-# F25Q = sympy.Matrix([[
-#     -(s**2 + 38 * s * t + 44 * t**2 + 40 * s + 8 * t - 62) / 64,
-#     (2 * s**2 + 12 * s * t + t**2 - 24 * s - 56 * t + 62) / 64,
-# ]])
-SURFACE25Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.96875, 0.96875],
-    [0.65625, 0.78125],
-    [0.328125, 0.625],
-    [0.90625, 0.53125],
-    [0.296875, 0.4375],
-    [0.15625, 0.109375],
-]), _copy=False)
-# F26Q = sympy.Matrix([[s * (t + 1), t * (s + 1)]])
-SURFACE26Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [0.5, 0.0],
-    [1.0, 0.0],
-    [0.0, 0.5],
-    [1.0, 1.0],
-    [0.0, 1.0],
-]), _copy=False)
-# F27Q = sympy.Matrix([[s * t + t**2 - 2 * t + 2, s * t + t**2 + s]])
-SURFACE27Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [2.0, 0.0],
-    [2.0, 0.5],
-    [2.0, 1.0],
-    [1.0, 0.0],
-    [1.5, 1.0],
-    [1.0, 1.0],
-]), _copy=False)
-# F28Q = sympy.Matrix([[
-#     -(4 * s**2 + 6 * s * t - 3 * t**2 - 2 * s + 24 * t - 24) / 16,
-#     (3 * s * t + 3 * t**2 + 8 * s - 3 * t) / 8,
-# ]])
-SURFACE28Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [1.5, 0.0],
-    [1.5625, 0.5],
-    [1.375, 1.0],
-    [0.75, -0.1875],
-    [0.625, 0.5],
-    [0.1875, 0.0],
-]), _copy=False)
-# F29Q = sympy.Matrix([[
-#     (s**2 - 7 * s * t + 13 * s + 4 * t - 4) / 8,
-#     -(7 * s * t - t**2 - 4 * s - 13 * t + 4) / 8,
-# ]])
-SURFACE29Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [-0.5, -0.5],
-    [0.3125, -0.25],
-    [1.25, 0.0],
-    [-0.25, 0.3125],
-    [0.125, 0.125],
-    [0.0, 1.25],
-]), _copy=False)
-# F30Q = sympy.Matrix([[(7 * s - 2) / 8, (7 * t - 2) / 8]])
-# NOTE: This is a degree-elevated linear surface.
-SURFACE30Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [-0.25, -0.25],
-    [0.1875, -0.25],
-    [0.625, -0.25],
-    [-0.25, 0.1875],
-    [0.1875, 0.1875],
-    [-0.25, 0.625],
-]), _copy=False)
-# F31Q = sympy.Matrix([[
-#     -(2 * t**2 + 2 * s * t - 8 * s - t) / 8,
-#     s + t - 1,
-# ]])
-SURFACE31Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, -1.0],
-    [0.5, -0.5],
-    [1.0, 0.0],
-    [0.0625, -0.5],
-    [0.4375, 0.0],
-    [-0.125, 0.0],
-]), _copy=False)
-# F32Q = sympy.Matrix([[
-#     (t - 2 * s + 36) / 16, (97 - 5 * s - 6 * t) / 32]])
-# NOTE: This is a degree-elevated form of SURFACE11L
-SURFACE32Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [2.25, 3.03125],
-    [2.1875, 2.953125],
-    [2.125, 2.875],
-    [2.28125, 2.9375],
-    [2.21875, 2.859375],
-    [2.3125, 2.84375],
-]), _copy=False)
-# F33Q = sympy.Matrix([[
-#     (t**2 - 64 * s - 4 * t + 1140) / 512, (24 - s - t) / 8]])
-# NOTE: Edge 1 (0-indexed) is curve 54, which has a ``bad'' parameterization,
-#       but this is not a problem for `s` in [0, 1]."
-SURFACE33Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [2.2265625, 3],
-    [2.1640625, 2.9375],
-    [2.1015625, 2.875],
-    [2.22265625, 2.9375],
-    [2.16015625, 2.875],
-    [2.220703125, 2.875],
-]), _copy=False)
+SURFACE1L = SURFACES['1L'].surface
+SURFACE2L = SURFACES['2L'].surface
+SURFACE3L = SURFACES['3L'].surface
+SURFACE4L = SURFACES['4L'].surface
+SURFACE5L = SURFACES['5L'].surface
+SURFACE6L = SURFACES['6L'].surface
+SURFACE7L = SURFACES['7L'].surface
+SURFACE8L = SURFACES['8L'].surface
+SURFACE9L = SURFACES['9L'].surface
+SURFACE10L = SURFACES['10L'].surface
+SURFACE11L = SURFACES['11L'].surface
+SURFACE1Q = SURFACES['1Q'].surface
+SURFACE2Q = SURFACES['2Q'].surface
+SURFACE3Q = SURFACES['3Q'].surface
+SURFACE4Q = SURFACES['4Q'].surface
+SURFACE5Q = SURFACES['5Q'].surface
+SURFACE8Q = SURFACES['8Q'].surface
+SURFACE9Q = SURFACES['9Q'].surface
+SURFACE10Q = SURFACES['10Q'].surface
+SURFACE11Q = SURFACES['11Q'].surface
+SURFACE12Q = SURFACES['12Q'].surface
+SURFACE13Q = SURFACES['13Q'].surface
+SURFACE14Q = SURFACES['14Q'].surface
+SURFACE15Q = SURFACES['15Q'].surface
+SURFACE16Q = SURFACES['16Q'].surface
+SURFACE17Q = SURFACES['17Q'].surface
+SURFACE18Q = SURFACES['18Q'].surface
+SURFACE19Q = SURFACES['19Q'].surface
+SURFACE20Q = SURFACES['20Q'].surface
+SURFACE21Q = SURFACES['21Q'].surface
+SURFACE22Q = SURFACES['22Q'].surface
+SURFACE23Q = SURFACES['23Q'].surface
+SURFACE24Q = SURFACES['24Q'].surface
+SURFACE25Q = SURFACES['25Q'].surface
+SURFACE26Q = SURFACES['26Q'].surface
+SURFACE27Q = SURFACES['27Q'].surface
+SURFACE28Q = SURFACES['28Q'].surface
+SURFACE29Q = SURFACES['29Q'].surface
+SURFACE30Q = SURFACES['30Q'].surface
+SURFACE31Q = SURFACES['31Q'].surface
+SURFACE32Q = SURFACES['32Q'].surface
+SURFACE33Q = SURFACES['33Q'].surface
 
 
 Intersected = collections.namedtuple(
