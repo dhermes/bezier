@@ -11,8 +11,8 @@
 # limitations under the License.
 
 from __future__ import absolute_import
-
 import collections
+import operator
 
 try:
     import matplotlib.pyplot as plt
@@ -32,12 +32,18 @@ import runtime_utils
 
 ALGEBRAIC = curve.IntersectionStrategy.algebraic
 GEOMETRIC = curve.IntersectionStrategy.geometric
+_, INTERSECTIONS = runtime_utils.surface_intersections_info()
 STRATEGY = GEOMETRIC
 PARALLEL_FAILURE = ('Line segments parallel.',)
 BAD_TANGENT = (
     'Curves moving in opposite direction but define '
     'overlapping arcs.')
 TANGENT_FAILURE = 'The number of candidate intersections is too high.'
+WIGGLES = {
+    1: 48,
+    13: 25,
+}
+WHITELIST = (1, 13)  # This is temporary.
 CONFIG = runtime_utils.Config()
 
 # F1L = sympy.Matrix([[s, t]])
@@ -176,30 +182,6 @@ SURFACE5Q = bezier.Surface.from_nodes(np.asfortranarray([
     [0.4375, 0.53125],
     [0.875, 0.75],
     [0.625, 1.0],
-]), _copy=False)
-# F6Q = sympy.Matrix([[
-#     (s**2 + s * t + 3 * s + 2 * t) / 4,
-#     -(3 * s**2 + 3 * s * t - 3 * s - 4 * t) / 4,
-# ]])
-SURFACE6Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.0],
-    [0.375, 0.375],
-    [1.0, 0.0],
-    [0.25, 0.5],
-    [0.75, 0.5],
-    [0.5, 1.0],
-]), _copy=False)
-# F7Q = sympy.Matrix([[
-#     -(s**2 + s * t + 3 * s + 2 * t - 4) / 4,
-#     (8 * s**2 + 8 * s * t - 8 * s - 9 * t + 3) / 8,
-# ]])
-SURFACE7Q = bezier.Surface.from_nodes(np.asfortranarray([
-    [1.0, 0.375],
-    [0.625, -0.125],
-    [0.0, 0.375],
-    [0.75, -0.1875],
-    [0.25, -0.1875],
-    [0.5, -0.75],
 ]), _copy=False)
 # F8Q = sympy.Matrix([[
 #     s * (7 * t + 1),
@@ -637,37 +619,6 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
     # pylint: enable=too-many-locals
 
 
-def test_surfaces1Q_and_3Q():
-    _, s_val1 = runtime_utils.real_roots([36, -48, 4, 200, -131])
-    s_val2, = runtime_utils.real_roots([49, 91, 320, -244])
-
-    t_val1, _ = runtime_utils.real_roots([9, -18, 5, -28, 12])
-    t_val2, = runtime_utils.real_roots([49, 63, 88, -128])
-    start_vals = np.asfortranarray([0.0, t_val1, s_val2, 0.0])
-    end_vals = np.asfortranarray([s_val1, t_val2, 1.0, 1.0])
-
-    x_val1 = 0.5 * (1.0 - s_val1) * (s_val1 + 2.0)
-    y_val1 = 0.5 * s_val1 * (3.0 - s_val1)
-    x_val2 = 0.5 * s_val2 * (1.0 - s_val2)
-    y_val2 = 1.0 - s_val2
-    nodes = np.asfortranarray([
-        [1.0, 0.0],
-        [x_val1, y_val1],
-        [x_val2, y_val2],
-        [0.0, 0.0],
-    ])
-    edge_pairs = (
-        (0, 1),
-        (1, 2),
-        (0, 2),
-        (1, 0),
-    )
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(48):
-        surface_surface_check(SURFACE1Q, SURFACE3Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-
-
 def test_surfaces1L_and_3L():
     start_vals = np.asfortranarray([0.25, 0.0, 0.125])
     end_vals = np.asfortranarray([1.0, 0.75, 0.875])
@@ -966,68 +917,6 @@ def test_surfaces4L_and_23Q():
         SURFACE4L, SURFACE23Q,
         start_vals, end_vals, edge_pairs)
     make_plots(SURFACE4L, SURFACE23Q, [intersection])
-
-
-def test_surfaces6Q_and_7Q():
-    # pylint: disable=too-many-locals
-    s_val3, _ = runtime_utils.real_roots([1, -13, 2])
-    _, s_val4 = runtime_utils.real_roots([7, 5, -10])
-    s_val5, s_val6 = runtime_utils.real_roots([4, 120, 1592, -1908, 489])
-    s_val7, _ = runtime_utils.real_roots([64, -1232, 297])
-    _, s_val8 = runtime_utils.real_roots([576, 784, -871])
-
-    t_val3, _ = runtime_utils.real_roots([1, -102, 25])
-    _, t_val4 = runtime_utils.real_roots([49, 68, -76])
-    t_val6, t_val5 = runtime_utils.real_roots([4, -104, 1504, -1548, 369])
-    t_val7, _ = runtime_utils.real_roots([4, -20, 3])
-    _, t_val8 = runtime_utils.real_roots([12, 4, -13])
-
-    start_vals1 = np.asfortranarray([s_val3, t_val5, s_val8, 3.0 / 17.0])
-    end_vals1 = np.asfortranarray([s_val5, t_val8, 14.0 / 17.0, t_val3])
-    start_vals2 = np.asfortranarray([s_val6, t_val4, 3.0 / 17.0, t_val7])
-    end_vals2 = np.asfortranarray([s_val4, 14.0 / 17.0, s_val7, t_val6])
-
-    x_val3 = 0.25 * s_val3 * (3.0 + s_val3)
-    x_val4 = 0.25 * s_val4 * (3.0 + s_val4)
-    x_val5 = 0.25 * s_val5 * (3.0 + s_val5)
-    x_val6 = 0.25 * s_val6 * (3.0 + s_val6)
-    y_val3 = 0.75 * s_val3 * (1.0 - s_val3)
-    y_val4 = 0.75 * s_val4 * (1.0 - s_val4)
-    y_val5 = 0.75 * s_val5 * (1.0 - s_val5)
-    y_val6 = 0.75 * s_val6 * (1.0 - s_val6)
-
-    nodes1 = np.asfortranarray([
-        [x_val3, y_val3],
-        [x_val5, y_val5],
-        [0.5 - 0.5 * s_val8, 1.0 - s_val8],
-        [3.0 / 34.0, 3.0 / 17.0],
-    ])
-    edge_pairs1 = (
-        (0, 0),
-        (1, 0),
-        (0, 2),
-        (1, 1),
-    )
-
-    nodes2 = np.asfortranarray([
-        [x_val6, y_val6],
-        [x_val4, y_val4],
-        [31.0 / 34.0, 3.0 / 17.0],
-        [1.0 - 0.5 * s_val7, s_val7],
-    ])
-    edge_pairs2 = (
-        (0, 0),
-        (1, 2),
-        (0, 1),
-        (1, 0),
-    )
-    intersected1 = Intersected(start_vals1, end_vals1, nodes1, edge_pairs1)
-    intersected2 = Intersected(start_vals2, end_vals2, nodes2, edge_pairs2)
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(25):
-        surface_surface_check_multi(SURFACE6Q, SURFACE7Q,
-                                    intersected1, intersected2)
-    # pylint: enable=too-many-locals
 
 
 def test_surfaces8Q_and_9Q():
@@ -1405,6 +1294,36 @@ def test_surfaces11L_and_33Q():
         # Test the degree-elevated equivalent.
         surface_surface_check(SURFACE32Q, SURFACE33Q,
                               start_vals, end_vals, nodes, edge_pairs)
+
+
+@pytest.mark.parametrize(
+    'intersection_info',
+    INTERSECTIONS,
+    ids=operator.attrgetter('test_id'),
+)
+def test_intersect(intersection_info):
+    id_ = intersection_info.id_
+    if id_ not in WHITELIST:
+        pytest.skip('Not yet on whitelist')
+
+    if id_ in WIGGLES:
+        context = CONFIG.wiggle(WIGGLES[id_])
+    else:
+        context = runtime_utils.no_op_manager()
+
+    intersected = []
+    for curved_poly_info in intersection_info.intersection_infos:
+        intersected.append(Intersected(
+            curved_poly_info.start_params,
+            curved_poly_info.end_params,
+            curved_poly_info.intersections,
+            curved_poly_info.edge_pairs,
+        ))
+
+    surface1 = intersection_info.surface1_info.surface
+    surface2 = intersection_info.surface2_info.surface
+    with context:
+        surface_surface_check_multi(surface1, surface2, *intersected)
 
 
 if __name__ == '__main__':

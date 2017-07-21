@@ -95,7 +95,7 @@ def check_no_intersect(nodes1, nodes2):
 @pytest.mark.parametrize(
     'intersection_info',
     INTERSECTIONS,
-    ids=operator.attrgetter('tests_id'),
+    ids=operator.attrgetter('test_id'),
 )
 def test_intersect(intersection_info):
     # Get the control points for the curves.

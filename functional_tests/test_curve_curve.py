@@ -116,7 +116,7 @@ def _intersections_check(intersection_info):
 @pytest.mark.parametrize(
     'intersection_info',
     INTERSECTIONS,
-    ids=operator.attrgetter('tests_id'),
+    ids=operator.attrgetter('test_id'),
 )
 def test_intersect(intersection_info):
     id_ = intersection_info.id_
