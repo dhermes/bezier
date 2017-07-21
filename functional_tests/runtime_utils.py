@@ -678,6 +678,7 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
         return cls(id_, control_points, note=note)
 
 
+# pylint: disable=too-few-public-methods
 class SurfaceIntersectionInfo(object):
     """Information about a single curved polygon intersection.
 
@@ -685,6 +686,8 @@ class SurfaceIntersectionInfo(object):
     into multiple disjoint curved polygons (e.g. "6Q"-"7Q").
 
     Args:
+        parent (.SurfaceIntersectionsInfo): The parent that contains this
+            instance.
         intersections (Optional[numpy.ndarray]): ``Nx2`` array of ``x-y``
             coordinate pairs of intersection points.
         edge_pairs (List[List[int]]): List of pairs of
@@ -707,6 +710,7 @@ class SurfaceIntersectionInfo(object):
             polynomials that determine the values in ``end_params``.
     """
 
+    # pylint: disable=too-many-arguments
     def __init__(self, parent, intersections, edge_pairs,
                  start_params, end_params,
                  start_param_polys=None, end_param_polys=None):
@@ -722,6 +726,7 @@ class SurfaceIntersectionInfo(object):
         self.end_param_polys = end_param_polys
 
         self.num_intersections = self._verify()
+    # pylint: enable=too-many-arguments
 
     def _verify_polynomials(self, num_intersections, start=True):
         """Verify a list of polynomial coefficients.
@@ -784,9 +789,9 @@ class SurfaceIntersectionInfo(object):
         self._verify_polynomials(num_intersections, start=False)
 
         return num_intersections
+# pylint: enable=too-few-public-methods
 
 
-# pylint: disable=too-many-instance-attributes
 class SurfaceIntersectionsInfo(object):
     r"""Information about an intersection from ``surface_intersections.json``.
 
@@ -829,7 +834,6 @@ class SurfaceIntersectionsInfo(object):
             unique / problematic).
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(self, id_, surface1_info, surface2_info,
                  intersection_infos, note=None):
         self.id_ = id_
@@ -840,7 +844,6 @@ class SurfaceIntersectionsInfo(object):
         self.note = note
 
         self._set_parent()
-    # pylint: enable=too-many-arguments
 
     def _set_parent(self):
         """Set the current instance as parent in each child."""
@@ -1055,4 +1058,3 @@ class SurfaceIntersectionsInfo(object):
         return cls(
             id_, surface1_info, surface2_info,
             intersection_infos, note=note)
-# pylint: enable=too-many-instance-attributes
