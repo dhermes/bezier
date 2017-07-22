@@ -545,25 +545,6 @@ def test_surfaces17Q_and_10Q():
                           start_vals, end_vals, nodes, edge_pairs)
 
 
-def test_surfaces3Q_and_14Q():
-    start_vals = np.asfortranarray([0.0, 0.0, 0.0])
-    end_vals = np.asfortranarray([1.0, 1.0, 1.0])
-
-    nodes = np.asfortranarray([
-        [0.25, 0.21875],
-        [0.75, 0.21875],
-        [0.5, 0.6875],
-    ])
-    edge_pairs = (
-        (1, 0),
-        (1, 1),
-        (1, 2),
-    )
-
-    surface_surface_check(SURFACE3Q, SURFACE14Q,
-                          start_vals, end_vals, nodes, edge_pairs)
-
-
 def test_surfaces1L_and_6L():
     start_vals = np.asfortranarray([0.0, 0.75, 0.0, 0.75])
     end_vals = np.asfortranarray([0.25, 1.0, 0.25, 1.0])
