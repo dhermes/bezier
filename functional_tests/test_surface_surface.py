@@ -70,7 +70,6 @@ SURFACE3Q = SURFACES['3Q'].surface
 SURFACE4Q = SURFACES['4Q'].surface
 SURFACE5Q = SURFACES['5Q'].surface
 SURFACE10Q = SURFACES['10Q'].surface
-SURFACE13Q = SURFACES['13Q'].surface
 SURFACE14Q = SURFACES['14Q'].surface
 SURFACE17Q = SURFACES['17Q'].surface
 SURFACE18Q = SURFACES['18Q'].surface
@@ -505,31 +504,6 @@ def test_surfaces4L_and_23Q():
         SURFACE4L, SURFACE23Q,
         start_vals, end_vals, edge_pairs)
     make_plots(SURFACE4L, SURFACE23Q, [intersection])
-
-
-def test_surfaces3Q_and_13Q():
-    start_vals = np.asfortranarray([0.0, 0.0, 0.0])
-    end_vals = np.asfortranarray([1.0, 1.0, 1.0])
-
-    nodes = np.asfortranarray([
-        [0.25, 0.15625],
-        [0.75, 0.15625],
-        [0.5, 0.625],
-    ])
-    edge_pairs = (
-        (1, 0),
-        (1, 1),
-        (1, 2),
-    )
-    if STRATEGY is GEOMETRIC:
-        surface_surface_check(SURFACE3Q, SURFACE13Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-    else:
-        with pytest.raises(NotImplementedError) as exc_info:
-            surface_surface_check(SURFACE3Q, SURFACE13Q,
-                                  start_vals, end_vals, nodes, edge_pairs)
-
-        check_tangent(exc_info.value)
 
 
 def test_surfaces10Q_and_17Q():
