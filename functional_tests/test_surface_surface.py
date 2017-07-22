@@ -52,6 +52,9 @@ FAILED_CASES_TANGENT = {
     10: {'parallel': True},
     21: {'bad_tangent': True},
 }
+FAILED_CASES_COINCIDENT = {
+    5: {'parallel': True},
+}
 CONFIG = runtime_utils.Config()
 
 SURFACE1L = SURFACES['1L'].surface
@@ -60,10 +63,7 @@ SURFACE3L = SURFACES['3L'].surface
 SURFACE4L = SURFACES['4L'].surface
 SURFACE5L = SURFACES['5L'].surface
 SURFACE6L = SURFACES['6L'].surface
-SURFACE7L = SURFACES['7L'].surface
-SURFACE8L = SURFACES['8L'].surface
 SURFACE9L = SURFACES['9L'].surface
-SURFACE10L = SURFACES['10L'].surface
 SURFACE1Q = SURFACES['1Q'].surface
 SURFACE2Q = SURFACES['2Q'].surface
 SURFACE3Q = SURFACES['3Q'].surface
@@ -175,14 +175,28 @@ def check_tangent_manager(**kwargs):
     check_tangent(caught_exc, **kwargs)
 
 
-def check_coincident(exc_info, parallel=False):
+def check_coincident(caught_exc, parallel=False):
+    exc_args = caught_exc.args
     if STRATEGY is GEOMETRIC:
         if parallel:
-            assert exc_info.value.args == PARALLEL_FAILURE
+            assert exc_args == PARALLEL_FAILURE
         else:
-            assert str(exc_info.value).startswith(TANGENT_FAILURE)
+            assert len(exc_args) == 1
+            assert exc_args[0].startswith(TANGENT_FAILURE)
     else:
-        assert exc_info.value.args == (_implicitization._COINCIDENT_ERR,)
+        assert exc_args == (_implicitization._COINCIDENT_ERR,)
+
+
+@contextlib.contextmanager
+def check_coincident_manager(**kwargs):
+    caught_exc = None
+    try:
+        yield
+    except NotImplementedError as exc:
+        caught_exc = exc
+
+    assert caught_exc is not None
+    check_coincident(caught_exc, **kwargs)
 
 
 def surface_surface_check_multi(surface1, surface2, *all_intersected):
@@ -319,19 +333,11 @@ def test_surfaces10Q_and_18Q():
         surface_surface_check(SURFACE10Q, SURFACE18Q,
                               start_vals, end_vals, nodes, edge_pairs)
 
-    check_coincident(exc_info)
+    check_coincident(exc_info.value)
     intersection = make_curved_polygon(
         SURFACE10Q, SURFACE18Q,
         start_vals, end_vals, edge_pairs)
     make_plots(SURFACE10Q, SURFACE18Q, [intersection])
-
-
-def test_surfaces10Q_and_19Q():
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check_multi(SURFACE10Q, SURFACE19Q)
-
-    check_coincident(exc_info, parallel=True)
-    make_plots(SURFACE10Q, SURFACE19Q, [])
 
 
 def test_surfaces3Q_and_4Q():
@@ -501,16 +507,6 @@ def test_surfaces4L_and_23Q():
     make_plots(SURFACE4L, SURFACE23Q, [intersection])
 
 
-def test_surfaces4Q_and_10Q():
-    if STRATEGY is GEOMETRIC:
-        surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
-    else:
-        with pytest.raises(NotImplementedError) as exc_info:
-            surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
-
-        check_tangent(exc_info.value)
-
-
 def test_surfaces3Q_and_13Q():
     start_vals = np.asfortranarray([0.0, 0.0, 0.0])
     end_vals = np.asfortranarray([1.0, 1.0, 1.0])
@@ -658,14 +654,6 @@ def test_surfaces1L_and_29Q():
                           start_vals, end_vals, nodes, edge_pairs)
 
 
-def test_surfaces1L_and_7L():
-    surface_surface_check_multi(SURFACE1L, SURFACE7L)
-
-
-def test_surfaces8L_and_29Q():
-    surface_surface_check_multi(SURFACE8L, SURFACE29Q)
-
-
 def test_surfaces1L_and_9L():
     start_vals = np.asfortranarray([0.0, 0.0, 0.0])
     end_vals = np.asfortranarray([1.0, 1.0, 1.0])
@@ -684,10 +672,6 @@ def test_surfaces1L_and_9L():
                           start_vals, end_vals, nodes, edge_pairs)
 
 
-def test_surfaces1L_and_10L():
-    surface_surface_check_multi(SURFACE1L, SURFACE10L)
-
-
 @pytest.mark.parametrize(
     'intersection_info',
     INTERSECTIONS,
@@ -701,6 +685,9 @@ def test_intersect(intersection_info):
     if id_ in FAILED_CASES_TANGENT:
         kwargs = FAILED_CASES_TANGENT[id_]
         context = check_tangent_manager(**kwargs)
+    elif id_ in FAILED_CASES_COINCIDENT:
+        kwargs = FAILED_CASES_COINCIDENT[id_]
+        context = check_coincident_manager(**kwargs)
     elif id_ in WIGGLES:
         context = CONFIG.wiggle(WIGGLES[id_])
     else:
