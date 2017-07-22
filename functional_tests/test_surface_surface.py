@@ -168,7 +168,7 @@ def check_coincident_manager(strategy, parallel=False):
         assert exc_args == (_implicitization._COINCIDENT_ERR,)
 
 
-def surface_surface_check_multi(strategy, surface1, surface2, *all_intersected):
+def surface_surface_check(strategy, surface1, surface2, *all_intersected):
     # pylint: disable=too-many-locals
     assert surface1.is_valid
     assert surface2.is_valid
@@ -242,7 +242,7 @@ def test_intersect(strategy, intersection_info):
     surface1 = intersection_info.surface1_info.surface
     surface2 = intersection_info.surface2_info.surface
     with context:
-        surface_surface_check_multi(
+        surface_surface_check(
             strategy, surface1, surface2,
             *intersection_info.intersection_infos)
 
