@@ -33,7 +33,6 @@ import runtime_utils
 ALGEBRAIC = curve.IntersectionStrategy.algebraic
 GEOMETRIC = curve.IntersectionStrategy.geometric
 SURFACES, INTERSECTIONS = runtime_utils.surface_intersections_info()
-STRATEGY = GEOMETRIC
 PARALLEL_FAILURE = ('Line segments parallel.',)
 BAD_TANGENT = (
     'Curves moving in opposite direction but define '
@@ -107,7 +106,7 @@ def curved_polygon_edges(intersection, edges):
 
 
 @contextlib.contextmanager
-def check_tangent_manager(parallel=False, bad_tangent=False):
+def check_tangent_manager(strategy, parallel=False, bad_tangent=False):
     caught_exc = None
     try:
         yield
@@ -116,7 +115,7 @@ def check_tangent_manager(parallel=False, bad_tangent=False):
 
     assert caught_exc is not None
     exc_args = caught_exc.args
-    if STRATEGY is GEOMETRIC:
+    if strategy is GEOMETRIC:
         if parallel:
             assert exc_args == PARALLEL_FAILURE
         elif bad_tangent:
@@ -130,7 +129,7 @@ def check_tangent_manager(parallel=False, bad_tangent=False):
 
 
 @contextlib.contextmanager
-def check_coincident_manager(parallel=False):
+def check_coincident_manager(strategy, parallel=False):
     caught_exc = None
     try:
         yield
@@ -139,7 +138,7 @@ def check_coincident_manager(parallel=False):
 
     assert caught_exc is not None
     exc_args = caught_exc.args
-    if STRATEGY is GEOMETRIC:
+    if strategy is GEOMETRIC:
         if parallel:
             assert exc_args == PARALLEL_FAILURE
         else:
@@ -149,12 +148,12 @@ def check_coincident_manager(parallel=False):
         assert exc_args == (_implicitization._COINCIDENT_ERR,)
 
 
-def surface_surface_check_multi(surface1, surface2, *all_intersected):
+def surface_surface_check_multi(strategy, surface1, surface2, *all_intersected):
     # pylint: disable=too-many-locals
     assert surface1.is_valid
     assert surface2.is_valid
 
-    intersections = surface1.intersect(surface2, strategy=STRATEGY)
+    intersections = surface1.intersect(surface2, strategy=strategy)
     assert len(intersections) == len(all_intersected)
     edges = (
         surface1._get_edges(),
@@ -198,13 +197,15 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
     ids=operator.attrgetter('test_id'),
 )
 def test_intersect(intersection_info):
+    strategy = GEOMETRIC
+
     id_ = intersection_info.id_
     if id_ in FAILED_CASES_TANGENT:
         kwargs = FAILED_CASES_TANGENT[id_]
-        context = check_tangent_manager(**kwargs)
+        context = check_tangent_manager(strategy, **kwargs)
     elif id_ in FAILED_CASES_COINCIDENT:
         kwargs = FAILED_CASES_COINCIDENT[id_]
-        context = check_coincident_manager(**kwargs)
+        context = check_coincident_manager(strategy, **kwargs)
     elif id_ in WIGGLES:
         context = CONFIG.wiggle(WIGGLES[id_])
     else:
@@ -223,7 +224,8 @@ def test_intersect(intersection_info):
     surface1 = intersection_info.surface1_info.surface
     surface2 = intersection_info.surface2_info.surface
     with context:
-        surface_surface_check_multi(surface1, surface2, *intersected)
+        surface_surface_check_multi(
+            strategy, surface1, surface2, *intersected)
 
 
 if __name__ == '__main__':
