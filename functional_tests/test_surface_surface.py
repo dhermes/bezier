@@ -64,10 +64,6 @@ CONFIG = runtime_utils.Config()
 
 SURFACE1L = SURFACES['1L'].surface
 SURFACE9L = SURFACES['9L'].surface
-SURFACE10Q = SURFACES['10Q'].surface
-SURFACE14Q = SURFACES['14Q'].surface
-SURFACE17Q = SURFACES['17Q'].surface
-SURFACE19Q = SURFACES['19Q'].surface
 
 
 Intersected = collections.namedtuple(
@@ -229,45 +225,6 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
 
     make_plots(surface1, surface2, intersections, failed=False)
     # pylint: enable=too-many-locals
-
-
-def test_surfaces10Q_and_17Q():
-    start_vals = np.asfortranarray([0.0, 0.0, 0.0])
-    end_vals = np.asfortranarray([1.0, 1.0, 1.0])
-
-    nodes = np.asfortranarray([
-        [0.5, -0.75],
-        [0.796875, -0.125],
-        [0.203125, -0.125],
-    ])
-    edge_pairs = (
-        (1, 0),
-        (1, 1),
-        (1, 2),
-    )
-    surface_surface_check(SURFACE10Q, SURFACE17Q,
-                          start_vals, end_vals, nodes, edge_pairs)
-
-
-def test_surfaces17Q_and_10Q():
-    # NOTE: This is identical to test_surfaces10Q_and_17Q, but
-    #       now the "first" surface is the one that is fully
-    #       interior at the double corner.
-    start_vals = np.asfortranarray([0.0, 0.0, 0.0])
-    end_vals = np.asfortranarray([1.0, 1.0, 1.0])
-
-    nodes = np.asfortranarray([
-        [0.5, -0.75],
-        [0.796875, -0.125],
-        [0.203125, -0.125],
-    ])
-    edge_pairs = (
-        (0, 0),
-        (0, 1),
-        (0, 2),
-    )
-    surface_surface_check(SURFACE17Q, SURFACE10Q,
-                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_9L():
