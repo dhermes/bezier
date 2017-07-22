@@ -19,8 +19,7 @@ try:
     import matplotlib.pyplot as plt
 except ImportError:
     plt = None
-import numpy as np
-import pytest
+mport pytest
 import six
 
 import bezier
@@ -34,7 +33,7 @@ import runtime_utils
 ALGEBRAIC = curve.IntersectionStrategy.algebraic
 GEOMETRIC = curve.IntersectionStrategy.geometric
 SURFACES, INTERSECTIONS = runtime_utils.surface_intersections_info()
-STRATEGY = GEOMETRIC
+# STRATEGY = GEOMETRIC
 PARALLEL_FAILURE = ('Line segments parallel.',)
 BAD_TANGENT = (
     'Curves moving in opposite direction but define '
@@ -111,12 +110,6 @@ def make_curved_polygon(surface1, surface2,
         edges.append(base_edge.specialize(start_val, end_val))
 
     return bezier.CurvedPolygon(*edges)
-
-
-def surface_surface_check(surface1, surface2,
-                          start_vals, end_vals, nodes, edge_pairs):
-    intersected = Intersected(start_vals, end_vals, nodes, edge_pairs)
-    surface_surface_check_multi(surface1, surface2, intersected)
 
 
 def curved_polygon_edges(intersection, edges):
