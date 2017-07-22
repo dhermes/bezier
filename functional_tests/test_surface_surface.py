@@ -43,6 +43,7 @@ BAD_TANGENT = (BAD_TANGENT,)
 TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 WIGGLES = {
     1: 46,
+    3: 9,
     13: 19,
     22: 37,
     32: 1013,
@@ -66,7 +67,6 @@ SURFACE5L = SURFACES['5L'].surface
 SURFACE6L = SURFACES['6L'].surface
 SURFACE9L = SURFACES['9L'].surface
 SURFACE1Q = SURFACES['1Q'].surface
-SURFACE2Q = SURFACES['2Q'].surface
 SURFACE3Q = SURFACES['3Q'].surface
 SURFACE4Q = SURFACES['4Q'].surface
 SURFACE5Q = SURFACES['5Q'].surface
@@ -253,61 +253,6 @@ def test_surfaces1L_and_3L():
     )
     surface_surface_check(SURFACE1L, SURFACE3L,
                           start_vals, end_vals, nodes, edge_pairs)
-
-
-def test_surfaces1Q_and_2Q():
-    # pylint: disable=too-many-locals
-    s_val1, _ = runtime_utils.real_roots([3, -21, 10])
-    _, s_val2 = runtime_utils.real_roots([12, -24, 0, 140, -105])
-    s_val3, _ = runtime_utils.real_roots([12, -72, 56, -100, 23])
-    _, s_val4 = runtime_utils.real_roots([12, 24, -88, 156, -81])
-    _, s_val5 = runtime_utils.real_roots([9, -54, 213, -12, -96])
-    s_val6, _ = runtime_utils.real_roots([12, -24, 24, -140, 23])
-
-    _, t_val1 = runtime_utils.real_roots([9, 39, -38])
-    t_val2, _ = runtime_utils.real_roots([9, -18, -3, -116, 20])
-    _, t_val3 = runtime_utils.real_roots([9, 30, -119, 272, -128])
-    t_val4, _ = runtime_utils.real_roots([9, -66, 25, -160, 64])
-    _, t_val5 = runtime_utils.real_roots([9, -66, 181, 36, -44])
-    t_val6, _ = runtime_utils.real_roots([9, -18, -3, -116, 84])
-    start_vals = np.asfortranarray(
-        [s_val1, t_val2, s_val3, t_val4, s_val6, t_val5])
-    end_vals = np.asfortranarray(
-        [s_val2, t_val3, s_val4, t_val6, s_val5, t_val1])
-
-    x_val1 = 0.5 * s_val6 * (1.0 - s_val6)
-    x_val2 = 0.5 * s_val5 * (1.0 - s_val5)
-    x_val5 = 0.5 * (1.0 - s_val3) * (s_val3 + 2.0)
-    x_val6 = 0.5 * (1.0 - s_val4) * (s_val4 + 2.0)
-
-    y_val1 = 1.0 - s_val6
-    y_val2 = 1.0 - s_val5
-    y_val3 = 0.5 * s_val1 * (s_val1 - 1.0)
-    y_val4 = 0.5 * s_val2 * (s_val2 - 1.0)
-    y_val5 = 0.5 * s_val3 * (3.0 - s_val3)
-    y_val6 = 0.5 * s_val4 * (3.0 - s_val4)
-
-    nodes = np.asfortranarray([
-        [s_val1, y_val3],
-        [s_val2, y_val4],
-        [x_val5, y_val5],
-        [x_val6, y_val6],
-        [x_val1, y_val1],
-        [x_val2, y_val2],
-    ])
-    edge_pairs = (
-        (0, 0),
-        (1, 1),
-        (0, 1),
-        (1, 2),
-        (0, 2),
-        (1, 0),
-    )
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(19):
-        surface_surface_check(SURFACE1Q, SURFACE2Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-    # pylint: enable=too-many-locals
 
 
 def test_surfaces3Q_and_4Q():
