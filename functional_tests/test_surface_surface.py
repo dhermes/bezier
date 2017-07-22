@@ -67,8 +67,6 @@ SURFACE2Q = SURFACES['2Q'].surface
 SURFACE3Q = SURFACES['3Q'].surface
 SURFACE4Q = SURFACES['4Q'].surface
 SURFACE5Q = SURFACES['5Q'].surface
-SURFACE8Q = SURFACES['8Q'].surface
-SURFACE9Q = SURFACES['9Q'].surface
 SURFACE10Q = SURFACES['10Q'].surface
 SURFACE11Q = SURFACES['11Q'].surface
 SURFACE12Q = SURFACES['12Q'].surface
@@ -509,32 +507,6 @@ def test_surfaces4L_and_23Q():
         SURFACE4L, SURFACE23Q,
         start_vals, end_vals, edge_pairs)
     make_plots(SURFACE4L, SURFACE23Q, [intersection])
-
-
-def test_surfaces8Q_and_9Q():
-    s_val2, s_val3 = runtime_utils.real_roots([28, -24, 1])
-    t_val3, t_val2 = runtime_utils.real_roots([28, -32, 5])
-    start_vals = np.asfortranarray([s_val2, 1.0 / 14.0, s_val3, 11.0 / 14.0])
-    end_vals = np.asfortranarray([3.0 / 14.0, t_val3, 13.0 / 14.0, t_val2])
-
-    x_val2 = (1.0 - s_val2) * (1.0 + 7.0 * s_val2)
-    x_val3 = (1.0 - s_val3) * (1.0 + 7.0 * s_val3)
-    y_val2 = s_val2 * (8.0 - 7.0 * s_val2)
-    y_val3 = s_val3 * (8.0 - 7.0 * s_val3)
-    nodes = np.asfortranarray([
-        [x_val2, y_val2],
-        [55.0 / 28.0, 39.0 / 28.0],
-        [x_val3, y_val3],
-        [15.0 / 28.0, 39.0 / 28.0],
-    ])
-    edge_pairs = (
-        (0, 1),
-        (1, 2),
-        (0, 1),
-        (1, 2),
-    )
-    surface_surface_check(SURFACE8Q, SURFACE9Q,
-                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces4Q_and_10Q():

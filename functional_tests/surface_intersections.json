@@ -231,11 +231,30 @@
         "surface1": "8Q",
         "surface2": "9Q",
         "id": 14,
-        "note": "data-unfinished",
-        "intersections": [],
-        "start_params": [],
-        "end_params": [],
-        "edge_pairs": []
+        "intersections": [
+            ["5/4", "0x1.59f10d0c73266p-2"],
+            ["55/28", "39/28"],
+            ["5/4", "0x1.e05f2a73bea42p+0"],
+            ["15/28", "39/28"]
+        ],
+        "start_params": [
+            "0x1.67c43431cc998p-5",
+            "1/14",
+            "0x1.a05f2a73bea42p-1",
+            "11/14"
+        ],
+        "end_params": [
+            "3/14",
+            "0x1.7e835631056f8p-3",
+            "13/14",
+            "0x1.e983bcbce3366p-1"
+        ],
+        "edge_pairs": [
+            [0, 1],
+            [1, 2],
+            [0, 1],
+            [1, 2]
+        ]
     }, {
         "surface1": "4Q",
         "surface2": "10Q",
