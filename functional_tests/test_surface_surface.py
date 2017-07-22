@@ -63,7 +63,6 @@ FAILED_CASES_COINCIDENT = {
 CONFIG = runtime_utils.Config()
 
 SURFACE1L = SURFACES['1L'].surface
-SURFACE3L = SURFACES['3L'].surface
 SURFACE6L = SURFACES['6L'].surface
 SURFACE9L = SURFACES['9L'].surface
 SURFACE3Q = SURFACES['3Q'].surface
@@ -234,24 +233,6 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
 
     make_plots(surface1, surface2, intersections, failed=False)
     # pylint: enable=too-many-locals
-
-
-def test_surfaces1L_and_3L():
-    start_vals = np.asfortranarray([0.25, 0.0, 0.125])
-    end_vals = np.asfortranarray([1.0, 0.75, 0.875])
-
-    nodes = np.asfortranarray([
-        [0.25, 0.0],
-        [1.0, 0.0],
-        [0.25, 0.75],
-    ])
-    edge_pairs = (
-        (0, 0),
-        (0, 1),
-        (1, 2),
-    )
-    surface_surface_check(SURFACE1L, SURFACE3L,
-                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces3Q_and_4Q():
