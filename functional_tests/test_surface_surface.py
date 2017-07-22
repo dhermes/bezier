@@ -77,8 +77,6 @@ SURFACE18Q = SURFACES['18Q'].surface
 SURFACE19Q = SURFACES['19Q'].surface
 SURFACE22Q = SURFACES['22Q'].surface
 SURFACE23Q = SURFACES['23Q'].surface
-SURFACE26Q = SURFACES['26Q'].surface
-SURFACE27Q = SURFACES['27Q'].surface
 SURFACE28Q = SURFACES['28Q'].surface
 SURFACE29Q = SURFACES['29Q'].surface
 SURFACE30Q = SURFACES['30Q'].surface
@@ -616,10 +614,6 @@ def test_surfaces1L_and_6L():
     )
     surface_surface_check(SURFACE1L, SURFACE6L,
                           start_vals, end_vals, nodes, edge_pairs)
-
-
-def test_surfaces26Q_and_27Q():
-    surface_surface_check_multi(SURFACE26Q, SURFACE27Q)
 
 
 def test_surfaces1L_and_28Q():
