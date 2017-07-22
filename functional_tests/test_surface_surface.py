@@ -65,8 +65,6 @@ CONFIG = runtime_utils.Config()
 SURFACE1L = SURFACES['1L'].surface
 SURFACE6L = SURFACES['6L'].surface
 SURFACE9L = SURFACES['9L'].surface
-SURFACE3Q = SURFACES['3Q'].surface
-SURFACE5Q = SURFACES['5Q'].surface
 SURFACE10Q = SURFACES['10Q'].surface
 SURFACE14Q = SURFACES['14Q'].surface
 SURFACE17Q = SURFACES['17Q'].surface
@@ -232,35 +230,6 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
 
     make_plots(surface1, surface2, intersections, failed=False)
     # pylint: enable=too-many-locals
-
-
-def test_surfaces3Q_and_5Q():
-    s_val3, _ = runtime_utils.real_roots([25, -130, 167, -302, 57])
-    s_val4, _ = runtime_utils.real_roots([25, -130, 901, -1212, 279])
-
-    _, t_val3 = runtime_utils.real_roots([25, -20, -1064, 7800, -6012])
-    t_val4, _ = runtime_utils.real_roots([25, -2340, 58908, -105840, 11664])
-    start_vals = np.asfortranarray([s_val3, t_val4, 0.0, 0.0])
-    end_vals = np.asfortranarray([s_val4, 1.0, 1.0, t_val3])
-
-    x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
-    x_val4 = 0.125 * (s_val4 - 1.0) * (5.0 * s_val4 - 8.0)
-    y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
-    y_val4 = 0.125 * (1.0 - s_val4) * (7.0 * s_val4 + 8.0)
-    nodes = np.asfortranarray([
-        [x_val3, y_val3],
-        [x_val4, y_val4],
-        [0.25, 0.09375],
-        [1.125, 0.375],
-    ])
-    edge_pairs = (
-        (0, 2),
-        (1, 2),
-        (1, 0),
-        (1, 1),
-    )
-    surface_surface_check(SURFACE3Q, SURFACE5Q,
-                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces10Q_and_17Q():
