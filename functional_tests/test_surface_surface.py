@@ -63,7 +63,6 @@ FAILED_CASES_COINCIDENT = {
 CONFIG = runtime_utils.Config()
 
 SURFACE1L = SURFACES['1L'].surface
-SURFACE6L = SURFACES['6L'].surface
 SURFACE9L = SURFACES['9L'].surface
 SURFACE10Q = SURFACES['10Q'].surface
 SURFACE14Q = SURFACES['14Q'].surface
@@ -268,26 +267,6 @@ def test_surfaces17Q_and_10Q():
         (0, 2),
     )
     surface_surface_check(SURFACE17Q, SURFACE10Q,
-                          start_vals, end_vals, nodes, edge_pairs)
-
-
-def test_surfaces1L_and_6L():
-    start_vals = np.asfortranarray([0.0, 0.75, 0.0, 0.75])
-    end_vals = np.asfortranarray([0.25, 1.0, 0.25, 1.0])
-
-    nodes = np.asfortranarray([
-        [0.0, 0.0],
-        [0.25, 0.0],
-        [0.25, 0.25],
-        [0.0, 0.25],
-    ])
-    edge_pairs = (
-        (0, 0),
-        (1, 2),
-        (1, 0),
-        (0, 2),
-    )
-    surface_surface_check(SURFACE1L, SURFACE6L,
                           start_vals, end_vals, nodes, edge_pairs)
 
 
