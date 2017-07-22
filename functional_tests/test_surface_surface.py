@@ -44,6 +44,7 @@ TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 WIGGLES = {
     1: 46,
     13: 19,
+    22: 37,
     32: 1013,
     33: 1013,
 }
@@ -76,8 +77,6 @@ SURFACE18Q = SURFACES['18Q'].surface
 SURFACE19Q = SURFACES['19Q'].surface
 SURFACE22Q = SURFACES['22Q'].surface
 SURFACE23Q = SURFACES['23Q'].surface
-SURFACE24Q = SURFACES['24Q'].surface
-SURFACE25Q = SURFACES['25Q'].surface
 SURFACE26Q = SURFACES['26Q'].surface
 SURFACE27Q = SURFACES['27Q'].surface
 SURFACE28Q = SURFACES['28Q'].surface
@@ -597,41 +596,6 @@ def test_surfaces3Q_and_14Q():
 
     surface_surface_check(SURFACE3Q, SURFACE14Q,
                           start_vals, end_vals, nodes, edge_pairs)
-
-
-def test_surfaces24Q_and_25Q():
-    _, _, s_val1, _ = runtime_utils.real_roots(
-        [81, 72, -4640, -1168, 1036])
-    _, s_val2 = runtime_utils.real_roots(
-        [121, -14740, 618410, -9692, -153359])
-    _, t_val1, _, _ = runtime_utils.real_roots(
-        [27, -1116, 12020, -10224, 2256])
-    _, t_val2 = runtime_utils.real_roots(
-        [11, -1232, 132116, 315936, -31348])
-    start_vals = np.asfortranarray([0.0, t_val1, 0.0, s_val2])
-    end_vals = np.asfortranarray([s_val1, 1.0, t_val2, 1.0])
-
-    x_val1 = 0.015625 * (4.0 - 3.0 * s_val1) * (7.0 * s_val1 + 12.0)
-    y_val1 = 0.03125 * (3.0 * s_val1 * s_val1 + 25.0)
-    x_val2 = 0.0078125 * (33.0 * s_val2 * s_val2 + 62.0 * s_val2 + 1.0)
-    y_val2 = 0.03125 * (11.0 * s_val2 * s_val2 - 4.0 * s_val2 + 18.0)
-    nodes = np.asfortranarray([
-        [0.75, 0.78125],
-        [x_val1, y_val1],
-        [0.328125, 0.625],
-        [x_val2, y_val2],
-    ])
-    edge_pairs = (
-        (0, 0),
-        (1, 0),
-        (1, 1),
-        (0, 2),
-    )
-
-    # NOTE: We require a bit more wiggle room for these roots.
-    with CONFIG.wiggle(35):
-        surface_surface_check(SURFACE24Q, SURFACE25Q,
-                              start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces1L_and_6L():
