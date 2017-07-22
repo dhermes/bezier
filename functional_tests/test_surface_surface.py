@@ -19,7 +19,7 @@ try:
     import matplotlib.pyplot as plt
 except ImportError:
     plt = None
-mport pytest
+import pytest
 import six
 
 import bezier
@@ -33,7 +33,7 @@ import runtime_utils
 ALGEBRAIC = curve.IntersectionStrategy.algebraic
 GEOMETRIC = curve.IntersectionStrategy.geometric
 SURFACES, INTERSECTIONS = runtime_utils.surface_intersections_info()
-# STRATEGY = GEOMETRIC
+STRATEGY = GEOMETRIC
 PARALLEL_FAILURE = ('Line segments parallel.',)
 BAD_TANGENT = (
     'Curves moving in opposite direction but define '
@@ -123,7 +123,15 @@ def curved_polygon_edges(intersection, edges):
     return edge_list[index:] + edge_list[:index]
 
 
-def check_tangent(caught_exc, parallel=False, bad_tangent=False):
+@contextlib.contextmanager
+def check_tangent_manager(parallel=False, bad_tangent=False):
+    caught_exc = None
+    try:
+        yield
+    except NotImplementedError as exc:
+        caught_exc = exc
+
+    assert caught_exc is not None
     exc_args = caught_exc.args
     if STRATEGY is GEOMETRIC:
         if parallel:
@@ -139,7 +147,7 @@ def check_tangent(caught_exc, parallel=False, bad_tangent=False):
 
 
 @contextlib.contextmanager
-def check_tangent_manager(**kwargs):
+def check_coincident_manager(parallel=False):
     caught_exc = None
     try:
         yield
@@ -147,10 +155,6 @@ def check_tangent_manager(**kwargs):
         caught_exc = exc
 
     assert caught_exc is not None
-    check_tangent(caught_exc, **kwargs)
-
-
-def check_coincident(caught_exc, parallel=False):
     exc_args = caught_exc.args
     if STRATEGY is GEOMETRIC:
         if parallel:
@@ -160,18 +164,6 @@ def check_coincident(caught_exc, parallel=False):
             assert exc_args[0].startswith(TANGENT_FAILURE)
     else:
         assert exc_args == (_implicitization._COINCIDENT_ERR,)
-
-
-@contextlib.contextmanager
-def check_coincident_manager(**kwargs):
-    caught_exc = None
-    try:
-        yield
-    except NotImplementedError as exc:
-        caught_exc = exc
-
-    assert caught_exc is not None
-    check_coincident(caught_exc, **kwargs)
 
 
 def surface_surface_check_multi(surface1, surface2, *all_intersected):
