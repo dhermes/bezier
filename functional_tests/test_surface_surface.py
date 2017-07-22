@@ -49,6 +49,7 @@ WIGGLES = {
 }
 FAILED_CASES_TANGENT = {
     10: {'parallel': True},
+    21: {'bad_tangent': True},
 }
 CONFIG = runtime_utils.Config()
 
@@ -70,8 +71,6 @@ SURFACE5Q = SURFACES['5Q'].surface
 SURFACE10Q = SURFACES['10Q'].surface
 SURFACE13Q = SURFACES['13Q'].surface
 SURFACE14Q = SURFACES['14Q'].surface
-SURFACE15Q = SURFACES['15Q'].surface
-SURFACE16Q = SURFACES['16Q'].surface
 SURFACE17Q = SURFACES['17Q'].surface
 SURFACE18Q = SURFACES['18Q'].surface
 SURFACE19Q = SURFACES['19Q'].surface
@@ -598,66 +597,6 @@ def test_surfaces3Q_and_14Q():
 
     surface_surface_check(SURFACE3Q, SURFACE14Q,
                           start_vals, end_vals, nodes, edge_pairs)
-
-
-def test_surfaces15Q_and_16Q():
-    # pylint: disable=too-many-locals
-    s_val4, _ = runtime_utils.real_roots([49, -120, 32])
-    _, s_val5 = runtime_utils.real_roots([1, 70, -39])
-    s_val6, _ = runtime_utils.real_roots([2, -18, 1])
-    _, s_val7 = runtime_utils.real_roots([14, 2, -9])
-
-    t_val4, _ = runtime_utils.real_roots([14, -30, 7])
-    _, t_val5 = runtime_utils.real_roots([2, 14, -15])
-    t_val6, _ = runtime_utils.real_roots([1, -72, 32])
-    _, t_val7 = runtime_utils.real_roots([49, 22, -39])
-
-    start_vals1 = np.asfortranarray([0.25, t_val4, 0.5, t_val7])
-    end_vals1 = np.asfortranarray([s_val4, 0.5, s_val7, 0.75])
-    start_vals2 = np.asfortranarray([s_val6, 0.5, s_val5, 0.25])
-    end_vals2 = np.asfortranarray([0.5, t_val5, 0.75, t_val6])
-
-    nodes1 = np.asfortranarray([
-        [0.5, 0.4375],
-        [2.0 * s_val4, 1.75 * s_val4],
-        [0.5, 1.0],
-        [2.0 * s_val7 * (1.0 - s_val7), 2.0 - 2.0 * s_val7],
-    ])
-    edge_pairs1 = (
-        (0, 0),
-        (1, 0),
-        (0, 2),
-        (1, 2),
-    )
-
-    nodes2 = np.asfortranarray([
-        [2.0 * s_val6 * (1.0 - s_val6), 2.0 - 2.0 * s_val6],
-        [0.5, 1.0],
-        [2.0 - 2.0 * s_val5, 1.75 + 0.25 * s_val5],
-        [0.5, 1.9375],
-    ])
-    edge_pairs2 = (
-        (0, 2),
-        (1, 0),
-        (0, 1),
-        (1, 1),
-    )
-    intersected1 = Intersected(start_vals1, end_vals1, nodes1, edge_pairs1)
-    intersected2 = Intersected(start_vals2, end_vals2, nodes2, edge_pairs2)
-
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check_multi(SURFACE15Q, SURFACE16Q,
-                                    intersected1, intersected2)
-
-    check_tangent(exc_info.value, bad_tangent=True)
-    intersection1 = make_curved_polygon(
-        SURFACE15Q, SURFACE16Q,
-        start_vals1, end_vals1, edge_pairs1)
-    intersection2 = make_curved_polygon(
-        SURFACE15Q, SURFACE16Q,
-        start_vals2, end_vals2, edge_pairs2)
-    make_plots(SURFACE15Q, SURFACE16Q, [intersection1, intersection2])
-    # pylint: enable=too-many-locals
 
 
 def test_surfaces24Q_and_25Q():
