@@ -75,7 +75,6 @@ SURFACE10Q = SURFACES['10Q'].surface
 SURFACE14Q = SURFACES['14Q'].surface
 SURFACE17Q = SURFACES['17Q'].surface
 SURFACE19Q = SURFACES['19Q'].surface
-SURFACE29Q = SURFACES['29Q'].surface
 
 
 Intersected = collections.namedtuple(
@@ -485,30 +484,6 @@ def test_surfaces1L_and_6L():
         (0, 2),
     )
     surface_surface_check(SURFACE1L, SURFACE6L,
-                          start_vals, end_vals, nodes, edge_pairs)
-
-
-def test_surfaces1L_and_29Q():
-    s_val1, s_val2 = runtime_utils.real_roots([128, -128, 7])
-    t_val1, t_val2 = runtime_utils.real_roots([8, -8, 1])
-    start_vals = np.asfortranarray([0.0, 0.0, t_val1, s_val2, 0.0])
-    end_vals = np.asfortranarray([1.0, s_val1, t_val2, 1.0, 1.0])
-
-    nodes = np.asfortranarray([
-        [0.0, 0.0],
-        [1.0, 0.0],
-        [1.0 - s_val1, s_val1],
-        [1.0 - s_val2, s_val2],
-        [0.0, 1.0],
-    ])
-    edge_pairs = (
-        (0, 0),
-        (0, 1),
-        (1, 1),
-        (0, 1),
-        (0, 2),
-    )
-    surface_surface_check(SURFACE1L, SURFACE29Q,
                           start_vals, end_vals, nodes, edge_pairs)
 
 
