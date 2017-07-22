@@ -13,7 +13,7 @@
 from __future__ import absolute_import
 import collections
 import contextlib
-import operator
+import itertools
 
 try:
     import matplotlib.pyplot as plt
@@ -191,14 +191,22 @@ def surface_surface_check_multi(strategy, surface1, surface2, *all_intersected):
     # pylint: enable=too-many-locals
 
 
-@pytest.mark.parametrize(
-    'intersection_info',
-    INTERSECTIONS,
-    ids=operator.attrgetter('test_id'),
-)
-def test_intersect(intersection_info):
-    strategy = GEOMETRIC
+def _id_func(value):
+    if isinstance(value, curve.IntersectionStrategy):
+        return 'strategy: {}'.format(value.name)
+    else:
+        return value.test_id
 
+
+@pytest.mark.parametrize(
+    'strategy,intersection_info',
+    itertools.product(
+        (GEOMETRIC,),
+        INTERSECTIONS,
+    ),
+    ids=_id_func,
+)
+def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_
     if id_ in FAILED_CASES_TANGENT:
         kwargs = FAILED_CASES_TANGENT[id_]
