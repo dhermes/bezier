@@ -490,11 +490,30 @@
         "surface1": "30Q",
         "surface2": "31Q",
         "id": 27,
-        "note": "data-unfinished",
-        "intersections": [],
-        "start_params": [],
-        "end_params": [],
-        "edge_pairs": []
+        "intersections": [
+            ["-3/64", "-1/4"],
+            ["5/8", "-1/4"],
+            ["3/8", 0],
+            ["-1/8", 0]
+        ],
+        "start_params": [
+            "13/56",
+            0,
+            "5/9",
+            0
+        ],
+        "end_params": [
+            1,
+            "2/7",
+            1,
+            "1/4"
+        ],
+        "edge_pairs": [
+            [0, 0],
+            [0, 1],
+            [1, 1],
+            [1, 2]
+        ]
     }, {
         "surface1": "1L",
         "surface2": "7L",
