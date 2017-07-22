@@ -14,16 +14,11 @@ from __future__ import absolute_import
 import contextlib
 import itertools
 
-try:
-    import matplotlib.pyplot as plt
-except ImportError:
-    plt = None
 import pytest
 import six
 
 import bezier
 from bezier import _implicitization
-from bezier import _plot_helpers
 from bezier import curve
 
 import runtime_utils
