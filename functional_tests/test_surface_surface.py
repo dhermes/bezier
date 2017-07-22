@@ -62,9 +62,6 @@ FAILED_CASES_COINCIDENT = {
 }
 CONFIG = runtime_utils.Config()
 
-SURFACE1L = SURFACES['1L'].surface
-SURFACE9L = SURFACES['9L'].surface
-
 
 Intersected = collections.namedtuple(
     'Intersected',
@@ -227,24 +224,6 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
     # pylint: enable=too-many-locals
 
 
-def test_surfaces1L_and_9L():
-    start_vals = np.asfortranarray([0.0, 0.0, 0.0])
-    end_vals = np.asfortranarray([1.0, 1.0, 1.0])
-
-    nodes = np.asfortranarray([
-        [0.0, 0.125],
-        [0.875, 0.0],
-        [0.25, 0.75],
-    ])
-    edge_pairs = (
-        (1, 0),
-        (1, 1),
-        (1, 2),
-    )
-    surface_surface_check(SURFACE1L, SURFACE9L,
-                          start_vals, end_vals, nodes, edge_pairs)
-
-
 @pytest.mark.parametrize(
     'intersection_info',
     INTERSECTIONS,
@@ -252,9 +231,6 @@ def test_surfaces1L_and_9L():
 )
 def test_intersect(intersection_info):
     id_ = intersection_info.id_
-    if intersection_info.note == 'data-unfinished':
-        pytest.skip('Intersection does not have all data yet.')
-
     if id_ in FAILED_CASES_TANGENT:
         kwargs = FAILED_CASES_TANGENT[id_]
         context = check_tangent_manager(**kwargs)
@@ -266,14 +242,15 @@ def test_intersect(intersection_info):
     else:
         context = runtime_utils.no_op_manager()
 
-    intersected = []
-    for curved_poly_info in intersection_info.intersection_infos:
-        intersected.append(Intersected(
+    intersected = [
+        Intersected(
             curved_poly_info.start_params,
             curved_poly_info.end_params,
             curved_poly_info.intersections,
             curved_poly_info.edge_pairs,
-        ))
+        )
+        for curved_poly_info in intersection_info.intersection_infos
+    ]
 
     surface1 = intersection_info.surface1_info.surface
     surface2 = intersection_info.surface2_info.surface
