@@ -31,7 +31,7 @@ import runtime_utils
 
 ALGEBRAIC = curve.IntersectionStrategy.algebraic
 GEOMETRIC = curve.IntersectionStrategy.geometric
-SURFACES, INTERSECTIONS = runtime_utils.surface_intersections_info()
+_, INTERSECTIONS = runtime_utils.surface_intersections_info()
 PARALLEL_FAILURE = ('Line segments parallel.',)
 BAD_TANGENT = (
     'Curves moving in opposite direction but define '
