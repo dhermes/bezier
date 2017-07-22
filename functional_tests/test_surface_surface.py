@@ -68,8 +68,6 @@ SURFACE3Q = SURFACES['3Q'].surface
 SURFACE4Q = SURFACES['4Q'].surface
 SURFACE5Q = SURFACES['5Q'].surface
 SURFACE10Q = SURFACES['10Q'].surface
-SURFACE11Q = SURFACES['11Q'].surface
-SURFACE12Q = SURFACES['12Q'].surface
 SURFACE13Q = SURFACES['13Q'].surface
 SURFACE14Q = SURFACES['14Q'].surface
 SURFACE15Q = SURFACES['15Q'].surface
@@ -517,23 +515,6 @@ def test_surfaces4Q_and_10Q():
             surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
 
         check_tangent(exc_info.value)
-
-
-def test_surfaces11Q_and_12Q():
-    s_val1, s_val2 = runtime_utils.real_roots([8, -8, 1])
-    start_vals = np.asfortranarray([s_val1, s_val1])
-    end_vals = np.asfortranarray([s_val2, s_val2])
-
-    nodes = np.asfortranarray([
-        [s_val1, 0.125],
-        [s_val2, 0.125],
-    ])
-    edge_pairs = (
-        (0, 0),
-        (1, 0),
-    )
-    surface_surface_check(SURFACE11Q, SURFACE12Q,
-                          start_vals, end_vals, nodes, edge_pairs)
 
 
 def test_surfaces3Q_and_13Q():
