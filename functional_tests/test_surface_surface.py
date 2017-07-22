@@ -66,7 +66,6 @@ SURFACE1L = SURFACES['1L'].surface
 SURFACE6L = SURFACES['6L'].surface
 SURFACE9L = SURFACES['9L'].surface
 SURFACE3Q = SURFACES['3Q'].surface
-SURFACE4Q = SURFACES['4Q'].surface
 SURFACE5Q = SURFACES['5Q'].surface
 SURFACE10Q = SURFACES['10Q'].surface
 SURFACE14Q = SURFACES['14Q'].surface
@@ -233,42 +232,6 @@ def surface_surface_check_multi(surface1, surface2, *all_intersected):
 
     make_plots(surface1, surface2, intersections, failed=False)
     # pylint: enable=too-many-locals
-
-
-def test_surfaces3Q_and_4Q():
-    _, s_val2 = runtime_utils.real_roots([25, -130, 321, -88, -96])
-    _, s_val3 = runtime_utils.real_roots([49, 14, 145, 1008, -468])
-
-    t_val2, _ = runtime_utils.real_roots([100, 360, 712, -2988, 169])
-    _, t_val3 = runtime_utils.real_roots([49, -532, 412, 37200, -26352])
-    start_vals = np.asfortranarray([s_val3, t_val2, 0.0])
-    end_vals = np.asfortranarray([s_val2, 1.0, t_val3])
-
-    x_val2 = 0.125 * (s_val2 - 1.0) * (5.0 * s_val2 - 8.0)
-    x_val3 = 0.125 * (s_val3 - 1.0) * (5.0 * s_val3 - 8.0)
-    y_val2 = 0.125 * (1.0 - s_val2) * (7.0 * s_val2 + 8.0)
-    y_val3 = 0.125 * (1.0 - s_val3) * (7.0 * s_val3 + 8.0)
-    nodes = np.asfortranarray([
-        [x_val3, y_val3],
-        [x_val2, y_val2],
-        [1.0, 0.25],
-    ])
-    edge_pairs = (
-        (0, 2),
-        (1, 0),
-        (1, 1),
-    )
-    if STRATEGY is GEOMETRIC:
-        # NOTE: We require a bit more wiggle room for these roots.
-        with CONFIG.wiggle(32):
-            surface_surface_check(SURFACE3Q, SURFACE4Q,
-                                  start_vals, end_vals, nodes, edge_pairs)
-    else:
-        with pytest.raises(NotImplementedError) as exc_info:
-            surface_surface_check(SURFACE3Q, SURFACE4Q,
-                                  start_vals, end_vals, nodes, edge_pairs)
-
-        check_tangent(exc_info.value)
 
 
 def test_surfaces3Q_and_5Q():
