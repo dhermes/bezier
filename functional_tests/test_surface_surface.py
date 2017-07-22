@@ -51,6 +51,7 @@ WIGGLES = {
 FAILED_CASES_TANGENT = {
     10: {'parallel': True},
     11: {},
+    12: {},
     21: {'bad_tangent': True},
 }
 FAILED_CASES_COINCIDENT = {
@@ -62,7 +63,6 @@ CONFIG = runtime_utils.Config()
 SURFACE1L = SURFACES['1L'].surface
 SURFACE2L = SURFACES['2L'].surface
 SURFACE3L = SURFACES['3L'].surface
-SURFACE4L = SURFACES['4L'].surface
 SURFACE5L = SURFACES['5L'].surface
 SURFACE6L = SURFACES['6L'].surface
 SURFACE9L = SURFACES['9L'].surface
@@ -75,7 +75,6 @@ SURFACE10Q = SURFACES['10Q'].surface
 SURFACE14Q = SURFACES['14Q'].surface
 SURFACE17Q = SURFACES['17Q'].surface
 SURFACE19Q = SURFACES['19Q'].surface
-SURFACE23Q = SURFACES['23Q'].surface
 SURFACE28Q = SURFACES['28Q'].surface
 SURFACE29Q = SURFACES['29Q'].surface
 
@@ -429,31 +428,6 @@ def test_surfaces1L_and_2L():
     )
     surface_surface_check(SURFACE1L, SURFACE2L,
                           start_vals, end_vals, nodes, edge_pairs)
-
-
-def test_surfaces4L_and_23Q():
-    start_vals = np.asfortranarray([0.0, 0.0, 0.0])
-    end_vals = np.asfortranarray([1.0, 1.0, 1.0])
-
-    nodes = np.asfortranarray([
-        [-1.0, 0.125],
-        [1.0, 0.125],
-        [0.0, 1.875],
-    ])
-    edge_pairs = (
-        (1, 0),
-        (1, 1),
-        (1, 2),
-    )
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE4L, SURFACE23Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-
-    check_tangent(exc_info.value)
-    intersection = make_curved_polygon(
-        SURFACE4L, SURFACE23Q,
-        start_vals, end_vals, edge_pairs)
-    make_plots(SURFACE4L, SURFACE23Q, [intersection])
 
 
 def test_surfaces10Q_and_17Q():
