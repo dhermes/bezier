@@ -53,6 +53,7 @@ FAILED_CASES_TANGENT = {
     21: {'bad_tangent': True},
 }
 FAILED_CASES_COINCIDENT = {
+    4: {},
     5: {'parallel': True},
 }
 CONFIG = runtime_utils.Config()
@@ -72,7 +73,6 @@ SURFACE5Q = SURFACES['5Q'].surface
 SURFACE10Q = SURFACES['10Q'].surface
 SURFACE14Q = SURFACES['14Q'].surface
 SURFACE17Q = SURFACES['17Q'].surface
-SURFACE18Q = SURFACES['18Q'].surface
 SURFACE19Q = SURFACES['19Q'].surface
 SURFACE22Q = SURFACES['22Q'].surface
 SURFACE23Q = SURFACES['23Q'].surface
@@ -312,31 +312,6 @@ def test_surfaces1Q_and_2Q():
         surface_surface_check(SURFACE1Q, SURFACE2Q,
                               start_vals, end_vals, nodes, edge_pairs)
     # pylint: enable=too-many-locals
-
-
-def test_surfaces10Q_and_18Q():
-    start_vals = np.asfortranarray([0.0, 0.25, 0.0])
-    end_vals = np.asfortranarray([1.0, 1.0, 1.0])
-
-    nodes = np.asfortranarray([
-        [0.5, -0.75],
-        [0.75, 0.09375],
-        [0.0, 0.0],
-    ])
-    edge_pairs = (
-        (1, 2),
-        (0, 0),
-        (0, 1),
-    )
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE10Q, SURFACE18Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-
-    check_coincident(exc_info.value)
-    intersection = make_curved_polygon(
-        SURFACE10Q, SURFACE18Q,
-        start_vals, end_vals, edge_pairs)
-    make_plots(SURFACE10Q, SURFACE18Q, [intersection])
 
 
 def test_surfaces3Q_and_4Q():

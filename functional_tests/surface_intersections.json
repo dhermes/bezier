@@ -61,11 +61,26 @@
         "surface1": "10Q",
         "surface2": "18Q",
         "id": 4,
-        "note": "data-unfinished",
-        "intersections": [],
-        "start_params": [],
-        "end_params": [],
-        "edge_pairs": []
+        "intersections": [
+            ["1/2", "-3/4"],
+            ["3/4", "3/32"],
+            [0, 0]
+        ],
+        "start_params": [
+            0,
+            "1/4",
+            0
+        ],
+        "end_params": [
+            1,
+            1,
+            1
+        ],
+        "edge_pairs": [
+            [1, 2],
+            [0, 0],
+            [0, 1]
+        ]
     }, {
         "surface1": "10Q",
         "surface2": "19Q",
