@@ -180,7 +180,7 @@ def docs_images(session):
     modules_to_run = glob.glob(fnl_tests_glob)
     # Generate images for ``curve_intersections.json``.
     curve_curve_filename = get_path(
-        'functional_tests', 'make_curve_intersection_images.py')
+        'functional_tests', 'make_curve_curve_images.py')
     modules_to_run.append(curve_curve_filename)
 
     for filename in modules_to_run:
