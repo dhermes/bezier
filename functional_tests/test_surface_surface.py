@@ -11,7 +11,6 @@
 # limitations under the License.
 
 from __future__ import absolute_import
-import collections
 import contextlib
 import itertools
 
@@ -85,11 +84,6 @@ FAILED_CASES_COINCIDENT = {
     },
 }
 CONFIG = runtime_utils.Config()
-
-
-Intersected = collections.namedtuple(
-    'Intersected',
-    ['start_vals', 'end_vals', 'nodes', 'edge_pairs'])
 
 
 def make_plots(surface1, surface2, intersections, failed=True):
@@ -190,9 +184,9 @@ def surface_surface_check_multi(strategy, surface1, surface2, *all_intersected):
             intersections, all_intersected):
         assert isinstance(intersection, bezier.CurvedPolygon)
 
-        start_vals = intersected.start_vals
-        end_vals = intersected.end_vals
-        nodes = intersected.nodes
+        start_vals = intersected.start_params
+        end_vals = intersected.end_params
+        nodes = intersected.intersections
         edge_pairs = intersected.edge_pairs
 
         int_edges = curved_polygon_edges(intersection, edges)
@@ -245,21 +239,12 @@ def test_intersect(strategy, intersection_info):
     else:
         context = runtime_utils.no_op_manager()
 
-    intersected = [
-        Intersected(
-            curved_poly_info.start_params,
-            curved_poly_info.end_params,
-            curved_poly_info.intersections,
-            curved_poly_info.edge_pairs,
-        )
-        for curved_poly_info in intersection_info.intersection_infos
-    ]
-
     surface1 = intersection_info.surface1_info.surface
     surface2 = intersection_info.surface2_info.surface
     with context:
         surface_surface_check_multi(
-            strategy, surface1, surface2, *intersected)
+            strategy, surface1, surface2,
+            *intersection_info.intersection_infos)
 
 
 if __name__ == '__main__':
