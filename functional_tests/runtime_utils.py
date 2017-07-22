@@ -859,6 +859,12 @@ class SurfaceIntersectionsInfo(object):
         return 'surfaces {!r} and {!r} (ID: {:d})'.format(
             self.surface1_info.id_, self.surface2_info.id_, self.id_)
 
+    @property
+    def img_filename(self):
+        """str: Filename to use when saving images for this intersection."""
+        return 'surfaces{}_and_{}'.format(
+            self.surface1_info.id_, self.surface2_info.id_)
+
     # pylint: disable=missing-return-type-doc
     @property
     def surface1(self):
