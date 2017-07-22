@@ -95,23 +95,6 @@ def make_plots(surface1, surface2, intersections, failed=True):
     plt.close(ax.figure)
 
 
-def make_curved_polygon(surface1, surface2,
-                        start_vals, end_vals, edge_pairs):
-    base_edges = (
-        surface1._get_edges(),
-        surface2._get_edges(),
-    )
-
-    info = six.moves.zip(edge_pairs, start_vals, end_vals)
-    edges = []
-    for edge_pair, start_val, end_val in info:
-        surf_index, edge_index = edge_pair
-        base_edge = base_edges[surf_index][edge_index]
-        edges.append(base_edge.specialize(start_val, end_val))
-
-    return bezier.CurvedPolygon(*edges)
-
-
 def curved_polygon_edges(intersection, edges):
     edges1, edges2 = edges
     all_edges = edges1 + edges2
