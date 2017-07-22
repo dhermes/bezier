@@ -162,7 +162,7 @@ the cases in the functional tests.
 
 A surface-surface intersection functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_surfaces1Q_and_2Q.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/surfaces1Q_and_2Q.png
    :align: center
 
 a segment-box functional test case:

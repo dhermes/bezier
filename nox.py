@@ -180,10 +180,10 @@ def docs_images(session):
     modules_to_run = glob.glob(fnl_tests_glob)
     # Generate images for ``curve_intersections.json`` and
     # ``surface_intersections.json``.
-    modules_to_run.extend(
+    modules_to_run.extend((
         get_path('functional_tests', 'make_curve_curve_images.py'),
         get_path('functional_tests', 'make_surface_surface_images.py')
-    )
+    ))
 
     for filename in modules_to_run:
         session.run('python', filename, '--save-plot', env=env)

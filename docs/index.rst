@@ -21,7 +21,7 @@ This library provides:
 
 Dive in and take a look!
 
-.. image:: images/test_surfaces6Q_and_7Q.png
+.. image:: images/surfaces6Q_and_7Q.png
    :align: center
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE

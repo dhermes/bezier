@@ -29,7 +29,7 @@ This library provides:
 and may support B&#xe9;zier Solids and Higher Order Objects at a later
 time.
 
--![Surface-surface intersection example](https://github.com/dhermes/bezier/blob/master/docs/images/test_surfaces6Q_and_7Q.png)
+-![Surface-surface intersection example](https://github.com/dhermes/bezier/blob/master/docs/images/surfaces6Q_and_7Q.png)
 
 # References
 

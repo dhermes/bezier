@@ -15,7 +15,7 @@ This library provides:
 
 Dive in and take a look!
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/test_surfaces6Q_and_7Q.png
+.. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/surfaces6Q_and_7Q.png
    :align: center
 
 .. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html

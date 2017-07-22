@@ -215,7 +215,3 @@ def test_intersect(strategy, intersection_info):
         surface_surface_check(
             strategy, surface1, surface2,
             *intersection_info.intersection_infos)
-
-
-if __name__ == '__main__':
-    CONFIG.run(globals())
