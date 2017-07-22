@@ -547,11 +547,36 @@
         "surface1": "1L",
         "surface2": "28Q",
         "id": 25,
-        "note": "data-unfinished",
-        "intersections": [],
-        "start_params": [],
-        "end_params": [],
-        "edge_pairs": []
+        "intersections": [
+            ["3/16", 0],
+            [1, 0],
+            ["0x1.3030daa2f5896p-1", "0x1.9f9e4aba14ed4p-2"]
+        ],
+        "start_params": [
+            "3/16",
+            0,
+            "0x1.3030daa2f5896p-1"
+        ],
+        "start_param_polys": [
+            [-3, 16],
+            [0, 1],
+            [22, -40, 5]
+        ],
+        "end_params": [
+            1,
+            "0x1.9f9e4aba14ed4p-2",
+            1
+        ],
+        "end_param_polys": [
+            [-1, 1],
+            [-13, 30, 5],
+            [-1, 1]
+        ],
+        "edge_pairs": [
+            [0, 0],
+            [0, 1],
+            [1, 1]
+        ]
     }, {
         "surface1": "1L",
         "surface2": "29Q",
