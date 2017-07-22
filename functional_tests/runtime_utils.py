@@ -679,11 +679,12 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
 
 
 # pylint: disable=too-few-public-methods
-class SurfaceIntersectionInfo(object):
+class CurvedPolygonInfo(object):
     """Information about a single curved polygon intersection.
 
-    When two surfaces are intersected, the intersection region may split
-    into multiple disjoint curved polygons (e.g. "6Q"-"7Q").
+    This is needed (in addition to :class:`.SurfaceIntersectionsInfo`)
+    because when two surfaces are intersected, the intersection region may
+    split into multiple disjoint curved polygons (e.g. "6Q"-"7Q").
 
     Args:
         parent (.SurfaceIntersectionsInfo): The parent that contains this
@@ -831,7 +832,7 @@ class SurfaceIntersectionsInfo(object):
             surface in the intersection.
         surface2_info (SurfaceInfo): The surface information for the second
             surface in the intersection.
-        intersection_infos (List[SurfaceIntersectionInfo]): The info for
+        intersection_infos (List[CurvedPolygonInfo]): The info for
             each intersection region.
         note (Optional[str]): A note about the intersection(s) (e.g. why
             unique / problematic).
@@ -990,7 +991,7 @@ class SurfaceIntersectionsInfo(object):
                 end parameter values. (Or :data:`None`.)
 
         Returns:
-            List[SurfaceIntersectionInfo]: List of intersection info
+            List[CurvedPolygonInfo]: List of intersection info
             objects.
 
         Raises:
@@ -1001,7 +1002,7 @@ class SurfaceIntersectionsInfo(object):
             start_params_parts, end_params_parts,
             start_param_polys_parts, end_param_polys_parts)
         intersection_infos = [
-            SurfaceIntersectionInfo(None, *info)
+            CurvedPolygonInfo(None, *info)
             for info in info_iter]
 
         expected_len = max(
@@ -1076,7 +1077,7 @@ class SurfaceIntersectionsInfo(object):
         if info:
             raise ValueError('Unexpected keys remaining in JSON info', info)
 
-        # Map ``parts`` onto list of SurfaceIntersectionInfo.
+        # Map ``parts`` onto list of CurvedPolygonInfo.
         intersection_infos = cls._parts_to_intersections(
             intersection_parts, edge_pairs_parts,
             start_params_parts, end_params_parts,
