@@ -1011,6 +1011,25 @@ class SurfaceIntersectionsInfo(object):
         return intersection_infos
 
     @classmethod
+    def _split_polynomials(cls, info, name, num_intersections):
+        """Split start / end parameter polynomials on :data:`None`.
+
+        Args:
+            name (str): One of ``start_param_polys`` or
+                ``end_param_polys``.
+            info (dict): Dictionary of JSON data.
+            num_intersections (int): The number of intersections.
+
+        Returns:
+            list: The polynomial sections, split on :data:`None`.
+        """
+        polynomials = info.pop(name, None)
+        if polynomials is None:
+            return [None] * num_intersections
+        else:
+            return cls._get_parts(polynomials, convert=False)
+
+    @classmethod
     def from_json(cls, info, surfaces):
         """Parse and convert JSON surface intersection info.
 
@@ -1041,23 +1060,11 @@ class SurfaceIntersectionsInfo(object):
         end_params_parts = cls._get_parts(info.pop('end_params'))
 
         # Optional fields.
-        start_param_polys = info.pop('start_param_polys', None)
-        end_param_polys = info.pop('end_param_polys', None)
+        start_param_polys_parts = cls._split_polynomials(
+            info, 'start_param_polys', len(intersection_parts))
+        end_param_polys_parts = cls._split_polynomials(
+            info, 'end_param_polys', len(intersection_parts))
         note = info.pop('note', None)
-
-        # (Optionally) split the polynomials into parts.
-        default_polys = [None] * len(intersection_parts)
-        if start_param_polys is None:
-            start_param_polys_parts = default_polys
-        else:
-            start_param_polys_parts = cls._get_parts(
-                start_param_polys, convert=False)
-
-        if end_param_polys is None:
-            end_param_polys_parts = default_polys
-        else:
-            end_param_polys_parts = cls._get_parts(
-                end_param_polys, convert=False)
 
         # Make sure we've exhausted the data.
         if info:
