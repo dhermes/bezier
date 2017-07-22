@@ -12,6 +12,7 @@
 
 from __future__ import absolute_import
 import collections
+import contextlib
 import operator
 
 try:
@@ -38,12 +39,16 @@ PARALLEL_FAILURE = ('Line segments parallel.',)
 BAD_TANGENT = (
     'Curves moving in opposite direction but define '
     'overlapping arcs.')
+BAD_TANGENT = (BAD_TANGENT,)
 TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 WIGGLES = {
     1: 46,
     13: 19,
     32: 1013,
     33: 1013,
+}
+FAILED_CASES_TANGENT = {
+    10: {'parallel': True},
 }
 CONFIG = runtime_utils.Config()
 
@@ -74,8 +79,6 @@ SURFACE16Q = SURFACES['16Q'].surface
 SURFACE17Q = SURFACES['17Q'].surface
 SURFACE18Q = SURFACES['18Q'].surface
 SURFACE19Q = SURFACES['19Q'].surface
-SURFACE20Q = SURFACES['20Q'].surface
-SURFACE21Q = SURFACES['21Q'].surface
 SURFACE22Q = SURFACES['22Q'].surface
 SURFACE23Q = SURFACES['23Q'].surface
 SURFACE24Q = SURFACES['24Q'].surface
@@ -155,17 +158,31 @@ def curved_polygon_edges(intersection, edges):
     return edge_list[index:] + edge_list[:index]
 
 
-def check_tangent(exc_info, parallel=False, bad_tangent=False):
+def check_tangent(caught_exc, parallel=False, bad_tangent=False):
+    exc_args = caught_exc.args
     if STRATEGY is GEOMETRIC:
         if parallel:
-            assert exc_info.value.args == PARALLEL_FAILURE
+            assert exc_args == PARALLEL_FAILURE
         elif bad_tangent:
-            assert exc_info.value.args == (BAD_TANGENT,)
+            assert exc_args == BAD_TANGENT
         else:
-            assert str(exc_info.value).startswith(TANGENT_FAILURE)
+            assert len(exc_args) == 1
+            assert exc_args[0].startswith(TANGENT_FAILURE)
     else:
-        assert len(exc_info.value.args) == 2
-        assert exc_info.value.args[0] == _implicitization._NON_SIMPLE_ERR
+        assert len(exc_args) == 2
+        assert exc_args[0] == _implicitization._NON_SIMPLE_ERR
+
+
+@contextlib.contextmanager
+def check_tangent_manager(**kwargs):
+    caught_exc = None
+    try:
+        yield
+    except NotImplementedError as exc:
+        caught_exc = exc
+
+    assert caught_exc is not None
+    check_tangent(caught_exc, **kwargs)
 
 
 def check_coincident(exc_info, parallel=False):
@@ -360,7 +377,7 @@ def test_surfaces3Q_and_4Q():
             surface_surface_check(SURFACE3Q, SURFACE4Q,
                                   start_vals, end_vals, nodes, edge_pairs)
 
-        check_tangent(exc_info)
+        check_tangent(exc_info.value)
 
 
 def test_surfaces1Q_and_5L():
@@ -386,7 +403,7 @@ def test_surfaces1Q_and_5L():
         surface_surface_check(SURFACE1Q, SURFACE5L,
                               start_vals, end_vals, nodes, edge_pairs)
 
-    check_tangent(exc_info)
+    check_tangent(exc_info.value)
     intersection = make_curved_polygon(
         SURFACE1Q, SURFACE5L,
         start_vals, end_vals, edge_pairs)
@@ -444,33 +461,6 @@ def test_surfaces1L_and_2L():
                           start_vals, end_vals, nodes, edge_pairs)
 
 
-def test_surfaces20Q_and_21Q():
-    start_vals = np.asfortranarray([0.0, 0.0, 4.0 / 5.0, 0.0])
-    end_vals = np.asfortranarray([1.0, 0.5, 1.0, 1.0])
-
-    nodes = np.asfortranarray([
-        [1.0, 0.0],
-        [0.0, 1.0],
-        [-0.5, 0.5],
-        [-0.5, 0.25],
-    ])
-    edge_pairs = (
-        (0, 0),
-        (0, 1),
-        (1, 1),
-        (1, 2),
-    )
-    with pytest.raises(NotImplementedError) as exc_info:
-        surface_surface_check(SURFACE20Q, SURFACE21Q,
-                              start_vals, end_vals, nodes, edge_pairs)
-
-    check_tangent(exc_info, parallel=True)
-    intersection = make_curved_polygon(
-        SURFACE20Q, SURFACE21Q,
-        start_vals, end_vals, edge_pairs)
-    make_plots(SURFACE20Q, SURFACE21Q, [intersection])
-
-
 def test_surfaces4L_and_22Q():
     start_vals = np.asfortranarray([0.0, 0.0, 0.0])
     end_vals = np.asfortranarray([1.0, 1.0, 1.0])
@@ -489,7 +479,7 @@ def test_surfaces4L_and_22Q():
         surface_surface_check(SURFACE4L, SURFACE22Q,
                               start_vals, end_vals, nodes, edge_pairs)
 
-    check_tangent(exc_info)
+    check_tangent(exc_info.value)
     intersection = make_curved_polygon(
         SURFACE4L, SURFACE22Q,
         start_vals, end_vals, edge_pairs)
@@ -514,7 +504,7 @@ def test_surfaces4L_and_23Q():
         surface_surface_check(SURFACE4L, SURFACE23Q,
                               start_vals, end_vals, nodes, edge_pairs)
 
-    check_tangent(exc_info)
+    check_tangent(exc_info.value)
     intersection = make_curved_polygon(
         SURFACE4L, SURFACE23Q,
         start_vals, end_vals, edge_pairs)
@@ -554,7 +544,7 @@ def test_surfaces4Q_and_10Q():
         with pytest.raises(NotImplementedError) as exc_info:
             surface_surface_check_multi(SURFACE4Q, SURFACE10Q)
 
-        check_tangent(exc_info)
+        check_tangent(exc_info.value)
 
 
 def test_surfaces11Q_and_12Q():
@@ -596,7 +586,7 @@ def test_surfaces3Q_and_13Q():
             surface_surface_check(SURFACE3Q, SURFACE13Q,
                                   start_vals, end_vals, nodes, edge_pairs)
 
-        check_tangent(exc_info)
+        check_tangent(exc_info.value)
 
 
 def test_surfaces10Q_and_17Q():
@@ -706,7 +696,7 @@ def test_surfaces15Q_and_16Q():
         surface_surface_check_multi(SURFACE15Q, SURFACE16Q,
                                     intersected1, intersected2)
 
-    check_tangent(exc_info, bad_tangent=True)
+    check_tangent(exc_info.value, bad_tangent=True)
     intersection1 = make_curved_polygon(
         SURFACE15Q, SURFACE16Q,
         start_vals1, end_vals1, edge_pairs1)
@@ -881,7 +871,10 @@ def test_intersect(intersection_info):
     if intersection_info.note == 'data-unfinished':
         pytest.skip('Intersection does not have all data yet.')
 
-    if id_ in WIGGLES:
+    if id_ in FAILED_CASES_TANGENT:
+        kwargs = FAILED_CASES_TANGENT[id_]
+        context = check_tangent_manager(**kwargs)
+    elif id_ in WIGGLES:
         context = CONFIG.wiggle(WIGGLES[id_])
     else:
         context = runtime_utils.no_op_manager()
