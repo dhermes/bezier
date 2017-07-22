@@ -40,23 +40,49 @@ BAD_TANGENT = (
 BAD_TANGENT = (BAD_TANGENT,)
 TANGENT_FAILURE = 'The number of candidate intersections is too high.'
 WIGGLES = {
-    1: 46,
-    3: 9,
-    13: 19,
-    22: 37,
-    32: 1013,
-    33: 1013,
+    GEOMETRIC: {
+        1: 46,  # Established on Ubuntu 16.04
+        3: 10,  # Established on AppVeyor (64-bit Python 2.7)
+        13: 19,  # Established on Ubuntu 16.04
+        22: 37,  # Established on Ubuntu 16.04
+        32: 1013,  # Established on Ubuntu 16.04
+        33: 1013,  # Established on Ubuntu 16.04
+    },
+    ALGEBRAIC: {
+        3: 12,  # Established on Ubuntu 16.04
+        22: 14,  # Established on Ubuntu 16.04
+        32: 18,  # Established on Ubuntu 16.04
+        33: 18,  # Established on Ubuntu 16.04
+    },
 }
 FAILED_CASES_TANGENT = {
-    7: {},
-    10: {'parallel': True},
-    11: {},
-    12: {},
-    21: {'bad_tangent': True},
+    GEOMETRIC: {
+        7: {},
+        10: {'parallel': True},
+        11: {},
+        12: {},
+        21: {'bad_tangent': True},
+    },
+    ALGEBRAIC: {
+        6: {},
+        7: {},
+        10: {},
+        11: {},
+        12: {},
+        15: {},
+        17: {},
+        21: {},
+    },
 }
 FAILED_CASES_COINCIDENT = {
-    4: {},
-    5: {'parallel': True},
+    GEOMETRIC: {
+        4: {},
+        5: {'parallel': True},
+    },
+    ALGEBRAIC: {
+        4: {},
+        5: {},
+    },
 }
 CONFIG = runtime_utils.Config()
 
@@ -201,21 +227,21 @@ def _id_func(value):
 @pytest.mark.parametrize(
     'strategy,intersection_info',
     itertools.product(
-        (GEOMETRIC,),
+        (GEOMETRIC, ALGEBRAIC),
         INTERSECTIONS,
     ),
     ids=_id_func,
 )
 def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_
-    if id_ in FAILED_CASES_TANGENT:
-        kwargs = FAILED_CASES_TANGENT[id_]
+    if id_ in FAILED_CASES_TANGENT[strategy]:
+        kwargs = FAILED_CASES_TANGENT[strategy][id_]
         context = check_tangent_manager(strategy, **kwargs)
-    elif id_ in FAILED_CASES_COINCIDENT:
-        kwargs = FAILED_CASES_COINCIDENT[id_]
+    elif id_ in FAILED_CASES_COINCIDENT[strategy]:
+        kwargs = FAILED_CASES_COINCIDENT[strategy][id_]
         context = check_coincident_manager(strategy, **kwargs)
-    elif id_ in WIGGLES:
-        context = CONFIG.wiggle(WIGGLES[id_])
+    elif id_ in WIGGLES[strategy]:
+        context = CONFIG.wiggle(WIGGLES[strategy][id_])
     else:
         context = runtime_utils.no_op_manager()
 
