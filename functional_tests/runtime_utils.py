@@ -351,9 +351,6 @@ class CurveInfo(object):  # pylint: disable=too-few-public-methods
 
         Returns:
             .CurveInfo: The curve info parsed from the JSON.
-
-        Raises:
-            ValueError: If any of ``info`` is left unparsed.
         """
         control_points = info.pop('control_points')
         control_points = np.asfortranarray(_convert_float(control_points))
@@ -361,9 +358,7 @@ class CurveInfo(object):  # pylint: disable=too-few-public-methods
 
         # Optional fields.
         note = info.pop('note', None)
-
-        if info:
-            raise ValueError('Unexpected keys remaining in JSON info', info)
+        _ensure_empty(info)
 
         return cls(id_, control_points, implicitized=implicitized, note=note)
 
@@ -588,9 +583,6 @@ class CurveIntersectionInfo(object):
 
         Returns:
             .CurveIntersectionInfo: The intersection info parsed from the JSON.
-
-        Raises:
-            ValueError: If any of ``info`` is left unparsed.
         """
         id_ = info.pop('id')
         curve1_info = curves[info.pop('curve1')]
@@ -611,9 +603,7 @@ class CurveIntersectionInfo(object):
         curve1_polys = info.pop('curve1_polys', None)
         curve2_polys = info.pop('curve2_polys', None)
         note = info.pop('note', None)
-
-        if info:
-            raise ValueError('Unexpected keys remaining in JSON info', info)
+        _ensure_empty(info)
 
         return cls(
             id_, curve1_info, curve2_info, type_, intersections,
@@ -662,18 +652,13 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
 
         Returns:
             .SurfaceInfo: The surface info parsed from the JSON.
-
-        Raises:
-            ValueError: If any of ``info`` is left unparsed.
         """
         control_points = info.pop('control_points')
         control_points = np.asfortranarray(_convert_float(control_points))
 
         # Optional fields.
         note = info.pop('note', None)
-
-        if info:
-            raise ValueError('Unexpected keys remaining in JSON info', info)
+        _ensure_empty(info)
 
         return cls(id_, control_points, note=note)
 
@@ -686,10 +671,34 @@ class CurvedPolygonInfo(object):
     because when two surfaces are intersected, the intersection region may
     split into multiple disjoint curved polygons (e.g. "6Q"-"7Q").
 
+    Curved polygon JSON coming from a surface-surface intersection is expected
+    to have 6 keys:
+
+    * ``nodes``: List of pairs of "numerical" ``x-y`` values.
+    * ``start_params``: "Numerical" parameters along edge curves at
+      intersections.
+    * ``start_param_polys`` (optional): The (integer) coefficients of the
+      minimal polynomials that determine the values in ``start_params``.
+      See ``curve1_params`` in :class:`CurveIntersectionInfo` for an
+      example.
+    * ``end_params``: "Numerical" parameters along edge curves at
+      intersections.
+    * ``end_param_polys`` (optional): The (integer) coefficients of the
+      minimal polynomials that determine the values in ``end_params``.
+    * ``edge_pairs``: List of pairs of ``surface_index, edge_index`` for
+      each intersection, i.e. the intersection occurs on ``surface_index``
+      (one of 1 or 2) and on the edge ``edge_index`` (one of 0, 1 or 2) **of
+      that surface**. An intersection requires **two** edges, but this one is
+      the edge that the boundary (of the intersection) continues along.
+
+    The "numerical" values in ``nodes``, ``start_params`` and
+    ``end_params`` can be integers, stringified fractions or stringified
+    IEEE-754 values (``%a`` format).
+
     Args:
         parent (.SurfaceIntersectionsInfo): The parent that contains this
             instance.
-        intersections (Optional[numpy.ndarray]): ``Nx2`` array of ``x-y``
+        nodes (Optional[numpy.ndarray]): ``Nx2`` array of ``x-y``
             coordinate pairs of intersection points.
         edge_pairs (List[List[int]]): List of pairs of
             ``surface_index, edge_index`` for each intersection. I.e. the
@@ -712,12 +721,12 @@ class CurvedPolygonInfo(object):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, parent, intersections, edge_pairs,
+    def __init__(self, parent, nodes, edge_pairs,
                  start_params, end_params,
                  start_param_polys=None, end_param_polys=None):
         self.parent = parent
 
-        self.intersections = intersections
+        self.nodes = nodes
         self.edge_pairs = edge_pairs
 
         self.start_params = start_params
@@ -726,14 +735,14 @@ class CurvedPolygonInfo(object):
         self.end_params = end_params
         self.end_param_polys = end_param_polys
 
-        self.num_intersections = self._verify()
+        self.num_nodes = self._verify()
     # pylint: enable=too-many-arguments
 
-    def _verify_polynomials(self, num_intersections, start=True):
+    def _verify_polynomials(self, num_nodes, start=True):
         """Verify a list of polynomial coefficients.
 
         Args:
-            num_intersections (int): The (expected) number of intersections.
+            num_nodes (int): The (expected) number of nodes.
             start (Optional[bool]): Indicates if start or end polynomials
                 should be verified.
 
@@ -757,7 +766,7 @@ class CurvedPolygonInfo(object):
             '{} parameter polynomial should have integer coefficients.')
         err_msg2 = template2.format(name)
 
-        if len(polynomials) != num_intersections:
+        if len(polynomials) != num_nodes:
             raise ValueError(err_msg1)
         for polynomial in polynomials:
             if not all(isinstance(coeff, int) for coeff in polynomial):
@@ -767,64 +776,84 @@ class CurvedPolygonInfo(object):
         """Verify the state.
 
         Returns:
-            int: The number of intersections.
+            int: The number of nodes.
 
         Raises:
             ValueError: If the sizes are not as expected.
             ValueError: If the types are not as expected.
         """
-        num_intersections, cols = self.intersections.shape
+        num_nodes, cols = self.nodes.shape
         if cols != 2:
-            raise ValueError('Unexpected shape of intersections')
+            raise ValueError('Unexpected shape of nodes')
 
         np_edges = np.asfortranarray(self.edge_pairs, dtype=int)
-        if np_edges.shape != (num_intersections, 2):
+        if np_edges.shape != (num_nodes, 2):
             raise ValueError('Unexpected shape of edge pairs')
         if not np.all(np_edges == self.edge_pairs):
             raise ValueError('Edge pairs were expected to be integers.')
 
-        if self.start_params.shape != (num_intersections,):
+        if self.start_params.shape != (num_nodes,):
             raise ValueError('Unexpected shape of start parameters')
 
-        if self.end_params.shape != (num_intersections,):
+        if self.end_params.shape != (num_nodes,):
             raise ValueError('Unexpected shape of end parameters')
 
-        self._verify_polynomials(num_intersections, start=True)
-        self._verify_polynomials(num_intersections, start=False)
+        self._verify_polynomials(num_nodes, start=True)
+        self._verify_polynomials(num_nodes, start=False)
 
-        return num_intersections
+        return num_nodes
+
+    @classmethod
+    def from_json(cls, info):
+        """Parse and convert JSON curved polygon info.
+
+        This is a curved polygon arising from surface-surface intersection,
+        so the data is tailored to how each edge of the curved polygon relates
+        to the original two surfaces.
+
+        This involves parsing the dictionary and converting some stringified
+        values (rationals and IEEE-754) to Python ``float``-s.
+
+        Args:
+            info (dict): The JSON data of the curved polygon.
+
+        Returns:
+            .CurvedPolygonInfo: The curved polygon info parsed from the JSON.
+        """
+        nodes = np.asfortranarray(
+            _convert_float(info.pop('nodes')))
+        if nodes.size == 0:
+            nodes = nodes.reshape((0, 2), order='F')
+
+        start_params = np.asfortranarray(
+            _convert_float(info.pop('start_params')))
+        end_params = np.asfortranarray(
+            _convert_float(info.pop('end_params')))
+        edge_pairs = info.pop('edge_pairs')
+
+        # Optional fields.
+        start_param_polys = info.pop('start_param_polys', None)
+        end_param_polys = info.pop('end_param_polys', None)
+
+        _ensure_empty(info)
+        return cls(
+            None, nodes, edge_pairs, start_params, end_params,
+            start_param_polys=start_param_polys,
+            end_param_polys=end_param_polys)
 # pylint: enable=too-few-public-methods
 
 
 class SurfaceIntersectionsInfo(object):
     r"""Information about an intersection from ``surface_intersections.json``.
 
-    A surface-surface intersection JSON is expected to have 10 keys:
+    A surface-surface intersection JSON is expected to have 5 keys:
 
     * ``surface1``: ID of the first surface in the intersection.
     * ``surface2``: ID of the second surface in the intersection.
     * ``id``
     * ``note`` (optional): Description of the intersection(s).
-    * ``intersections``: List of pairs of "numerical" ``x-y`` values.
-    * ``start_params``: "Numerical" parameters along edge curves at
-      intersections.
-    * ``start_param_polys`` (optional): The (integer) coefficients of the
-      minimal polynomials that determine the values in ``start_params``.
-      See ``curve1_params`` in :class:`CurveIntersectionInfo` for an
-      example.
-    * ``end_params``: "Numerical" parameters along edge curves at
-      intersections.
-    * ``end_param_polys`` (optional): The (integer) coefficients of the
-      minimal polynomials that determine the values in ``end_params``.
-    * ``edge_pairs``: List of pairs of ``surface_index, edge_index`` for
-      each intersection, i.e. the intersection occurs on ``surface_index``
-      (one of 1 or 2) and on the edge ``edge_index`` (one of 0, 1 or 2) **of
-      that surface**. An intersection requires **two** edges, but this one is
-      the edge that the boundary (of the intersection) continues along.
-
-    The "numerical" values in ``intersections``, ``start_params`` and
-    ``end_params`` can be integers, stringified fractions or stringified
-    IEEE-754 values (``%a`` format).
+    * ``intersections``: List of info describing curved polygon(s) in the
+      intersection.
 
     Args:
         id_ (int): The intersection ID.
@@ -832,26 +861,26 @@ class SurfaceIntersectionsInfo(object):
             surface in the intersection.
         surface2_info (SurfaceInfo): The surface information for the second
             surface in the intersection.
-        intersection_infos (List[CurvedPolygonInfo]): The info for
+        intersections (List[CurvedPolygonInfo]): The info for
             each intersection region.
         note (Optional[str]): A note about the intersection(s) (e.g. why
             unique / problematic).
     """
 
     def __init__(self, id_, surface1_info, surface2_info,
-                 intersection_infos, note=None):
+                 intersections, note=None):
         self.id_ = id_
         self.surface1_info = surface1_info
         self.surface2_info = surface2_info
 
-        self.intersection_infos = intersection_infos
+        self.intersections = intersections
         self.note = note
 
         self._set_parent()
 
     def _set_parent(self):
         """Set the current instance as parent in each child."""
-        for info in self.intersection_infos:
+        for info in self.intersections:
             info.parent = self
 
     @property
@@ -886,156 +915,6 @@ class SurfaceIntersectionsInfo(object):
         return self.surface2_info.surface
     # pylint: enable=missing-return-type-doc
 
-    @staticmethod
-    def _split_by_null(values):
-        """Split "single" list of values into multiple lists.
-
-        For example
-
-        .. code-block:: python
-
-           [
-               '1/4',
-               1,
-               None,
-               0,
-               '0x1.6a09e667f3bcdp-1',
-               1,
-           ]
-
-        corresponds to **two** lists ``['1/4', 1]`` and
-        ``[0, '0x1.6a09e667f3bcdp-1', 1]``.
-
-        Args:
-            values (list): A list of values **intended** to be split on
-                :data:`None`.
-
-        Returns:
-            List[list]: A list of all lists in ``values``.
-
-        Raises:
-            ValueError: If one of the segments (between :data:`None`-s)
-                is empty.
-        """
-        if not values:
-            return []
-
-        result = []
-        curr_element = []
-        for value in values:
-            if value is None:
-                if curr_element:
-                    result.append(curr_element)
-                    curr_element = []
-                else:
-                    raise ValueError('Expected non-empty')
-            else:
-                curr_element.append(value)
-
-        if curr_element:
-            result.append(curr_element)
-        else:
-            raise ValueError('Expected non-empty')
-
-        return result
-
-    @classmethod
-    def _get_parts(cls, raw_parts, empty_shape=(0,), convert=True):
-        """Retrieve data from ``info`` and split it on :data:`None`.
-
-        Args:
-            raw_parts (list): List of JSON data to convert (has not been
-                split on :data:`None` yet).
-            empty_shape (Optional[Tuple[int, ...]]): The "shape" of an empty
-                part (used to reshape).
-            convert (Optional[bool]): Flag indicating if each part should
-                be converted to a NumPy array.
-
-        Returns:
-            List[Union[list, numpy.ndarray]]: A list of data stored at
-            ``key``, potentially converted to a NumPy array.
-        """
-        parts = cls._split_by_null(raw_parts)
-
-        result = []
-        for part in parts:
-            if convert:
-                converted = np.asfortranarray(_convert_float(part))
-                if converted.size == 0:
-                    converted = converted.reshape(empty_shape, order='F')
-            else:
-                converted = part
-
-            result.append(converted)
-
-        return result
-
-    @classmethod
-    def _parts_to_intersections(
-            cls, intersection_parts, edge_pairs_parts,
-            start_params_parts, end_params_parts,
-            start_param_polys_parts, end_param_polys_parts):
-        """Convert and verify intersection parts.
-
-        For more information about the arguments, see the
-        :class:`.SurfaceIntersectionsInfo` constructor.
-
-        Args:
-            intersection_parts (list): List of intersection info.
-            edge_pairs_parts (list): List of lists of edge pairs.
-            start_params_parts (list): List of lists of start parameters.
-            end_params_parts (list): List of lists of end parameters.
-            start_param_polys_parts (list): List of polynomials that define
-                start parameter values. (Or :data:`None`.)
-            end_param_polys_parts (list): List of polynomials that define
-                end parameter values. (Or :data:`None`.)
-
-        Returns:
-            List[CurvedPolygonInfo]: List of intersection info
-            objects.
-
-        Raises:
-            ValueError: If each of the ``parts`` inputs is not the same length.
-        """
-        info_iter = six.moves.zip(
-            intersection_parts, edge_pairs_parts,
-            start_params_parts, end_params_parts,
-            start_param_polys_parts, end_param_polys_parts)
-        intersection_infos = [
-            CurvedPolygonInfo(None, *info)
-            for info in info_iter]
-
-        expected_len = max(
-            len(intersection_parts), len(edge_pairs_parts),
-            len(start_params_parts), len(end_params_parts),
-            len(start_param_polys_parts), len(end_param_polys_parts),
-        )
-        if len(intersection_infos) != expected_len:
-            raise ValueError(
-                'Each contribution to intersection info must '
-                'be the same length.')
-
-        return intersection_infos
-
-    @classmethod
-    def _split_polynomials(cls, info, name, num_intersections):
-        """Split start / end parameter polynomials on :data:`None`.
-
-        Args:
-            name (str): One of ``start_param_polys`` or
-                ``end_param_polys``.
-            info (dict): Dictionary of JSON data.
-            num_intersections (int): The number of intersections.
-
-        Returns:
-            list: The polynomial sections, split on :data:`None`.
-        """
-        polynomials = info.pop(name, None)
-        if polynomials is None:
-            return [None] * num_intersections
-        else:
-            return cls._get_parts(polynomials, convert=False)
-
     @classmethod
     def from_json(cls, info, surfaces):
         """Parse and convert JSON surface intersection info.
@@ -1051,38 +930,35 @@ class SurfaceIntersectionsInfo(object):
         Returns:
             .SurfaceIntersectionsInfo: The intersection info parsed from
                 the JSON.
-
-        Raises:
-            ValueError: If any of ``info`` is left unparsed.
         """
         id_ = info.pop('id')
         surface1_info = surfaces[info.pop('surface1')]
         surface2_info = surfaces[info.pop('surface2')]
-
-        intersection_parts = cls._get_parts(
-            info.pop('intersections'), empty_shape=(0, 2))
-        edge_pairs_parts = cls._get_parts(
-            info.pop('edge_pairs'), convert=False)
-        start_params_parts = cls._get_parts(info.pop('start_params'))
-        end_params_parts = cls._get_parts(info.pop('end_params'))
+        intersections = info.pop('intersections')
 
         # Optional fields.
-        start_param_polys_parts = cls._split_polynomials(
-            info, 'start_param_polys', len(intersection_parts))
-        end_param_polys_parts = cls._split_polynomials(
-            info, 'end_param_polys', len(intersection_parts))
         note = info.pop('note', None)
+        _ensure_empty(info)
 
-        # Make sure we've exhausted the data.
-        if info:
-            raise ValueError('Unexpected keys remaining in JSON info', info)
-
-        # Map ``parts`` onto list of CurvedPolygonInfo.
-        intersection_infos = cls._parts_to_intersections(
-            intersection_parts, edge_pairs_parts,
-            start_params_parts, end_params_parts,
-            start_param_polys_parts, end_param_polys_parts)
-
+        # Convert ``intersections`` JSON to ``CurvedPolygonInfo``.
+        intersections = [
+            CurvedPolygonInfo.from_json(curved_polygon)
+            for curved_polygon in intersections
+        ]
         return cls(
             id_, surface1_info, surface2_info,
-            intersection_infos, note=note)
+            intersections, note=note)
+
+
+def _ensure_empty(info):
+    """Make sure a JSON info dictionary if empty.
+
+    Args:
+        info (dict): Expected to be exhausted.
+
+    Raises:
+        ValueError: If there are any keys remaining in ``info``.
+    """
+    # Make sure we've exhausted the data.
+    if info:
+        raise ValueError('Unexpected keys remaining in JSON info', info)

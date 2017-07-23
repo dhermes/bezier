@@ -153,7 +153,7 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
 
         start_vals = intersected.start_params
         end_vals = intersected.end_params
-        nodes = intersected.intersections
+        nodes = intersected.nodes
         edge_pairs = intersected.edge_pairs
 
         int_edges = curved_polygon_edges(intersection, edges)
@@ -209,4 +209,4 @@ def test_intersect(strategy, intersection_info):
     with context:
         surface_surface_check(
             strategy, surface1, surface2,
-            *intersection_info.intersection_infos)
+            *intersection_info.intersections)
