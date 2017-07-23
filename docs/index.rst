@@ -5,6 +5,9 @@
 
 |circle-build| |appveyor-build| |coverage| |pypi| |versions|
 
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
+
 .. toctree::
    :hidden:
    :maxdepth: 4
@@ -23,9 +26,6 @@ Dive in and take a look!
 
 .. image:: images/surfaces6Q_and_7Q.png
    :align: center
-
-.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
-   :trim:
 
 Why B |eacute| zier?
 --------------------
