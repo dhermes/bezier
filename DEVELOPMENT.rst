@@ -287,11 +287,10 @@ To regenerate all the images:
    >   -d docs/build/doctrees \
    >   docs \
    >   docs/build/doctest
-   $ python functional_tests/test_curve_curve.py --save-plot
-   $ python functional_tests/test_implicitized_intersect.py --save-plot
    $ python functional_tests/test_segment_box.py --save-plot
    $ python functional_tests/test_surface_locate.py --save-plot
-   $ python functional_tests/test_surface_surface.py --save-plot
+   $ python functional_tests/make_curve_curve_images.py
+   $ python functional_tests/make_surface_surface_images.py
    $ unset MATPLOTLIBRC PYTHONPATH
 
 (``test_implicitized_intersect.py`` doesn't actually generate any images).
