@@ -7,7 +7,7 @@
             "description": "A list of x-y coordinates of the control points on the surface.",
             "type": "array",
             "items": {
-                "description": "An x-y coordinate pair for a single control point",
+                "description": "An x-y coordinate pair for a single control point.",
                 "type": "array",
                 "items": {
                     "description": "A coordinate as a numerical value.",

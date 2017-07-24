@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "A description of a curve polygon that has occurred as an intersection between two B\\u00e9zier surfaces. The curved polygon edges will be described in terms of the two surfaces they intersect. A curved polygon can be completely described from its edges and each edge will be given as a segment from an edge of one of the two intersected surfaces.",
+    "type": "object",
+    "properties": {
+        "nodes": {
+            "description": "A list of x-y coordinates of the ``corners'' of the curved polygon."
+            "type": "array",
+            "items": {
+                "description": "An x-y coordinate pair for a single corner.",
+                "type": "array",
+                "items": {
+                    "description": "A coordinate as a numerical value.",
+                    "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
+                },
+                "minItems": 2,
+                "maxItems": 2
+            },
+            "minItems": 2
+        },
+        "start_params": {
+            "description": "Numerical parameters (along an edge of a surface) that define the starting points of each edge of the curved polygon (as segments within an edge of one of the two surfaces).",
+            "type": "array"
+            "items": {
+                "description": "A parameter as a numerical value.",
+                "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
+            }
+        },
+        "end_params": {
+            "description": "Numerical parameters (along an edge of a surface) that define the end / terminal points of each edge of the curved polygon (as segments within an edge of one of the two surfaces).",
+            "type": "array"
+            "items": {
+                "description": "A parameter as a numerical value.",
+                "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
+            }
+        },
+        "edge_pairs": {
+            "description": "List of pairs of ``surface_index, edge_index`` for each edge that defines the curved polygon.",
+            "type": "array",
+            "items": {
+                "description": "A ``surface_index, edge_index`` pair. The ``surface_index`` determines which surface the edge lies on (i.e. surface 1 or surface 2) and the edge ``edge_index`` determines which edge **of that surface** (i.e. edge 0 or edge 1 or edge 2).",
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                },
+                "minItems": 2,
+                "maxItems": 2
+            }
+        },
+        "start_param_polys": {
+            "description": "The coefficients of the minimal polynomials that determine the values in ``start_params`` (if applicable).",
+            "type": "array",
+            "items": {
+                "description": "The coefficients in a given polynomial, in order from lowest to highest exponent. For example, if a parameter is a root of ``4 s^4 + 3 s - 2 = 0`` (i.e. ``0x1.182547769d3bbp-1``) then the polynomial is represented as ``[-2, 3, 0, 0, 4]``.",
+                "type": "array",
+                "items": {
+                    "description": "A coefficient in a polynomial.",
+                    "type": "integer"
+                },
+                "minItems": 2
+            }
+        }
+        "end_param_polys": {
+            "description": "The coefficients of the minimal polynomials that determine the values in ``end_params`` (if applicable).",
+            "type": "array",
+            "items": {
+                "description": "The coefficients in a given polynomial, in order from lowest to highest exponent. For example, if a parameter is a root of ``4 s^3 + 3 s^2 + 2 s - 1 = 0`` (i.e. ``0x1.37c9dbcbb1d1cp-2``) then the polynomial is represented as ``[-1, 2, 3, 4]``.",
+                "type": "array",
+                "items": {
+                    "description": "A coefficient in a polynomial.",
+                    "type": "integer"
+                },
+                "minItems": 2
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "nodes",
+        "start_params",
+        "end_params",
+        "edge_pairs"
+    ]
+}

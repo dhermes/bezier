@@ -589,37 +589,13 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
 class CurvedPolygonInfo(object):
     """Information about a single curved polygon intersection.
 
-    This is needed (in addition to :class:`.SurfaceIntersectionsInfo`)
-    because when two surfaces are intersected, the intersection region may
-    split into multiple disjoint curved polygons (e.g. "6Q"-"7Q").
-
-    Curved polygon JSON coming from a surface-surface intersection is expected
-    to have 6 keys:
-
-    * ``nodes``: List of pairs of "numerical" ``x-y`` values.
-    * ``start_params``: "Numerical" parameters along edge curves at
-      intersections.
-    * ``start_param_polys`` (optional): The (integer) coefficients of the
-      minimal polynomials that determine the values in ``start_params``.
-      See ``curve1_params`` in :class:`CurveIntersectionInfo` for an
-      example.
-    * ``end_params``: "Numerical" parameters along edge curves at
-      intersections.
-    * ``end_param_polys`` (optional): The (integer) coefficients of the
-      minimal polynomials that determine the values in ``end_params``.
-    * ``edge_pairs``: List of pairs of ``surface_index, edge_index`` for
-      each intersection, i.e. the intersection occurs on ``surface_index``
-      (one of 1 or 2) and on the edge ``edge_index`` (one of 0, 1 or 2) **of
-      that surface**. An intersection requires **two** edges, but this one is
-      the edge that the boundary (of the intersection) continues along.
-
-    The "numerical" values in ``nodes``, ``start_params`` and
-    ``end_params`` can be integers, stringified fractions or stringified
-    IEEE-754 values (``%a`` format).
+    The ``surface_intersections.json`` file contains surface-surface
+    intersections, each of which may contain multiple curved polygons
+    as the intersected area (e.g. the "6Q"-"7Q" intersection splits into two
+    disjoint regions). Such a curved polygon is described by the JSON-schema
+    in ``functional_tests/schema/curved_polygon.json``.
 
     Args:
-        parent (.SurfaceIntersectionsInfo): The parent that contains this
-            instance.
         nodes (Optional[numpy.ndarray]): ``Nx2`` array of ``x-y``
             coordinate pairs of intersection points.
         edge_pairs (List[List[int]]): List of pairs of
@@ -643,10 +619,10 @@ class CurvedPolygonInfo(object):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, parent, nodes, edge_pairs,
-                 start_params, end_params,
+    def __init__(self, nodes, edge_pairs, start_params, end_params,
                  start_param_polys=None, end_param_polys=None):
-        self.parent = parent
+        # Will be set later by the `SurfaceIntersectionsInfo` constructor.
+        self.parent = None
 
         self.nodes = nodes
         self.edge_pairs = edge_pairs
@@ -759,7 +735,7 @@ class CurvedPolygonInfo(object):
 
         _ensure_empty(info)
         return cls(
-            None, nodes, edge_pairs, start_params, end_params,
+            nodes, edge_pairs, start_params, end_params,
             start_param_polys=start_param_polys,
             end_param_polys=end_param_polys)
 # pylint: enable=too-few-public-methods
