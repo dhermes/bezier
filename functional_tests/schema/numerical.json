@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "description": "A generic value container: can be an integer, stringified fraction or stringified IEEE-754 value.",
+    "description": "A generic numerical value container: can be an integer, stringified fraction or stringified IEEE-754 value.",
     "type": ["integer", "string"],
     "oneOf": [
         {"type": "integer"},

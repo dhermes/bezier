@@ -10,8 +10,8 @@
                 "description": "An x-y coordinate pair for a single control point",
                 "type": "array",
                 "items": {
-                    "description": "A coordinate value as an integer, stringified fraction or stringified IEEE-754 value.",
-                    "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/value.json"
+                    "description": "A coordinate as a numerical value.",
+                    "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
                 },
                 "minItems": 2,
                 "maxItems": 2
