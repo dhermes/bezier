@@ -744,14 +744,9 @@ class CurvedPolygonInfo(object):
 class SurfaceIntersectionsInfo(object):
     """Information about an intersection from ``surface_intersections.json``.
 
-    A surface-surface intersection JSON is expected to have 5 keys:
-
-    * ``surface1``: ID of the first surface in the intersection.
-    * ``surface2``: ID of the second surface in the intersection.
-    * ``id``
-    * ``note`` (optional): Description of the intersection(s).
-    * ``intersections``: List of info describing curved polygon(s) in the
-      intersection.
+    The ``surface_intersections.json`` file contains a list of intersection
+    cases. The intersection cases are described by the JSON-schema in
+    ``functional_tests/schema/surface_intersection.json``.
 
     Args:
         id_ (int): The intersection ID.

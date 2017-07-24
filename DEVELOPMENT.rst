@@ -187,12 +187,14 @@ JSON files:
 * `surface_intersections.json`_
 
 This way, the test cases are programming language agnostic and can be
-repurposed.
+repurposed. The `JSON schema`_ for these files are stored in the
+``functional_tests/schema`` directory.
 
 .. _curves.json: https://github.com/dhermes/bezier/blob/master/functional_tests/curves.json
 .. _curve_intersections.json: https://github.com/dhermes/bezier/blob/master/functional_tests/curve_intersections.json
 .. _surfaces.json: https://github.com/dhermes/bezier/blob/master/functional_tests/surfaces.json
 .. _surface_intersections.json: https://github.com/dhermes/bezier/blob/master/functional_tests/surface_intersections.json
+.. _JSON schema: http://json-schema.org/
 
 ************
 Coding Style

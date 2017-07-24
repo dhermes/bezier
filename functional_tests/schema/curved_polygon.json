@@ -4,7 +4,7 @@
     "type": "object",
     "properties": {
         "nodes": {
-            "description": "A list of x-y coordinates of the ``corners'' of the curved polygon."
+            "description": "A list of x-y coordinates of the ``corners'' of the curved polygon.",
             "type": "array",
             "items": {
                 "description": "An x-y coordinate pair for a single corner.",
@@ -20,7 +20,7 @@
         },
         "start_params": {
             "description": "Numerical parameters (along an edge of a surface) that define the starting points of each edge of the curved polygon (as segments within an edge of one of the two surfaces).",
-            "type": "array"
+            "type": "array",
             "items": {
                 "description": "A parameter as a numerical value.",
                 "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
@@ -28,7 +28,7 @@
         },
         "end_params": {
             "description": "Numerical parameters (along an edge of a surface) that define the end / terminal points of each edge of the curved polygon (as segments within an edge of one of the two surfaces).",
-            "type": "array"
+            "type": "array",
             "items": {
                 "description": "A parameter as a numerical value.",
                 "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
@@ -59,7 +59,7 @@
                 },
                 "minItems": 2
             }
-        }
+        },
         "end_param_polys": {
             "description": "The coefficients of the minimal polynomials that determine the values in ``end_params`` (if applicable).",
             "type": "array",
