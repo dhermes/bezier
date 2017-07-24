@@ -11,7 +11,7 @@
         "fraction": {
             "description": "A stringified fraction. For example ``4/7'' or ``-11/3''.",
             "type": "string",
-            "pattern": "^-?\\d/\\d$"
+            "pattern": "^-?\\d+/\\d+$"
         },
         "ieee754": {
             "description": "A stringified IEEE-754 value in ``%a'' format. For example, ``sqrt(2)`` is nearest to ``0x1.6a09e667f3bcdp+0''.",
