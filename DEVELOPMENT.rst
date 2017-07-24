@@ -175,6 +175,25 @@ and a "locate point on surface" functional test case:
 .. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_surface3_and_point1.png
    :align: center
 
+Functional Test Data
+====================
+
+The curve-curve and surface-surface intersection test cases are stored in
+JSON files:
+
+* `curves.json`_
+* `curve_intersections.json`_
+* `surfaces.json`_
+* `surface_intersections.json`_
+
+This way, the test cases are programming language agnostic and can be
+repurposed.
+
+.. _curves.json: https://github.com/dhermes/bezier/blob/master/functional_tests/curves.json
+.. _curve_intersections.json: https://github.com/dhermes/bezier/blob/master/functional_tests/curve_intersections.json
+.. _surfaces.json: https://github.com/dhermes/bezier/blob/master/functional_tests/surfaces.json
+.. _surface_intersections.json: https://github.com/dhermes/bezier/blob/master/functional_tests/surface_intersections.json
+
 ************
 Coding Style
 ************
