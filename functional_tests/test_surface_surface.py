@@ -176,20 +176,13 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
     # pylint: enable=too-many-locals
 
 
-def _id_func(value):
-    if isinstance(value, curve.IntersectionStrategy):
-        return 'strategy: {}'.format(value.name)
-    else:
-        return value.test_id
-
-
 @pytest.mark.parametrize(
     'strategy,intersection_info',
     itertools.product(
         (GEOMETRIC, ALGEBRAIC),
         INTERSECTIONS,
     ),
-    ids=_id_func,
+    ids=runtime_utils.id_func,
 )
 def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_

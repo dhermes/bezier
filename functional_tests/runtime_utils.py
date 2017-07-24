@@ -38,6 +38,7 @@ except ImportError:
 import six
 
 import bezier
+import bezier.curve
 from bezier import _helpers
 
 
@@ -173,6 +174,37 @@ def surface_intersections_info():
                      for info in intersections_json]
 
     return surfaces, intersections
+
+
+def _ensure_empty(info):
+    """Make sure a JSON info dictionary if empty.
+
+    Args:
+        info (dict): Expected to be exhausted.
+
+    Raises:
+        ValueError: If there are any keys remaining in ``info``.
+    """
+    # Make sure we've exhausted the data.
+    if info:
+        raise ValueError('Unexpected keys remaining in JSON info', info)
+
+
+def id_func(value):
+    """ID function for pytest parametrized tests.
+
+    Args:
+        value (Union[.IntersectionStrategy, CurveIntersectionInfo, \
+            SurfaceIntersectionsInfo]: Either intersection info or an
+            intersection strategy.
+
+    Returns:
+        str: The ID for a parameter in a parametrized test.
+    """
+    if isinstance(value, bezier.curve.IntersectionStrategy):
+        return 'strategy: {}'.format(value.name)
+    else:
+        return value.test_id
 
 
 class Config(object):
@@ -841,17 +873,3 @@ class SurfaceIntersectionsInfo(object):
         return cls(
             id_, surface1_info, surface2_info,
             intersections, note=note)
-
-
-def _ensure_empty(info):
-    """Make sure a JSON info dictionary if empty.
-
-    Args:
-        info (dict): Expected to be exhausted.
-
-    Raises:
-        ValueError: If there are any keys remaining in ``info``.
-    """
-    # Make sure we've exhausted the data.
-    if info:
-        raise ValueError('Unexpected keys remaining in JSON info', info)
