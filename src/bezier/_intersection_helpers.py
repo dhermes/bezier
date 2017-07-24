@@ -1639,6 +1639,20 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         See :func:`.classify_intersection` for more details.
         """
 
+    @property
+    def __dict__(self):
+        """dict: Dictionary of current intersection's property namespace.
+
+        This is just a stand-in property for the usual ``__dict__``. This
+        class defines ``__slots__`` so by default would not provide a
+        ``__dict__``.
+
+        This also means that the current object can't be modified by the
+        returned dictionary.
+        """
+        return {name: getattr(self, name)
+                for name in self.__slots__}
+
     def get_point(self):
         """The point where the intersection occurs.
 
