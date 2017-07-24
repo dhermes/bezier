@@ -274,52 +274,11 @@ class Config(object):
 
 
 class CurveInfo(object):  # pylint: disable=too-few-public-methods
-    r"""Information about a curve from ``curves.json``.
+    """Information about a curve from ``curves.json``.
 
-    These are expected to have three keys:
-
-    * ``control_points``: A list of ``x-y`` coordinates of the control points
-      in the curve. The coordinates themselves can be integers, stringified
-      fractions or stringified IEEE-754 values (``%a`` format).
-    * ``note`` (optional): Description of the curve / curve segment.
-    * ``implicitized`` (optional): The algebraic curve that contains
-      this B |eacute| zier curve as a segment. (Only provided if the curve
-      comes from rational control points.) For example, for "curve 2"
-
-      .. math::
-
-         x(s) = \frac{9 - 8 s}{8}
-         y(s) = \frac{(2 s - 1)^2}{2}
-
-      so we have
-
-      .. math::
-
-         8 x = 9 - 8 s \Longrightarrow 8 s - 4 = 5 - 8 x
-         2 y = (2 s - 1)^2 \Longrightarrow 32 y = (8 s - 4)^2
-         \Longrightarrow 32 y = (5 - 8 x)^2
-         \Longrightarrow 25 - 32 y - 80 x + 64 x^2 = 0
-
-      and this implicitized algebraic curve corresponds to
-
-      .. code-block:: python
-
-         [
-             [ 25, 0, 0],
-             [-32, 0, 1],
-             [-80, 1, 0],
-             [ 64, 2, 0],
-         ]
-
-    This representation is a list of triples of integers
-    ``coefficient, degree_x, degree_y`` where ``degree_x`` and ``degree_y``
-    are non-negative. Though it's not required, we also have
-    ``coefficient != 0`` and the triples are sorted by total degree
-    (``degree_x + degree_y``) and then by ``degree_x`` to break ties.
-
-    In addition, each curve comes with an ID from a dictionary, i.e.
-    ``curves.json`` uses ID keys to identify the curves, rather than just
-    having a list of curve info.
+    The ``curves.json`` file contains a dictionary where each key is the ID
+    of the given curve and each value is a curve. The curves are described
+    by the JSON-schema in ``functional_tests/schema/curve.json``.
 
     Args:
         id_ (str): The ID of the curve.
@@ -381,46 +340,11 @@ class CurveIntersectionType(enum.Enum):
 
 # pylint: disable=too-many-instance-attributes
 class CurveIntersectionInfo(object):
-    r"""Information about an intersection from ``curve_intersections.json``.
+    """Information about an intersection from ``curve_intersections.json``.
 
-    A curve-curve intersection JSON is expected to have 8 keys:
-
-    * ``curve1``: ID of the first curve in the intersection.
-    * ``curve2``: ID of the second curve in the intersection.
-    * ``id``
-    * ``type``
-    * ``note`` (optional): Description of the intersection / notes about how
-      it behaves.
-    * ``intersections``: List of pairs of "numerical" ``x-y`` values.
-    * ``curve1_params``: "Numerical" curve parameters at intersections.
-    * ``curve1_polys`` (optional): The (integer) coefficients of the minimal
-      polynomials that determine the values in ``curve1_params``.
-
-      For example, if the roots are
-
-      .. math::
-
-         0 \\
-         \frac{7 - \sqrt{7}}{14} \approx \mathtt{0x1.3e7b70cac040dp-2} \\
-         \frac{7 + \sqrt{7}}{14} \approx \mathtt{0x1.60c2479a9fdfap-1} \\
-         1
-
-      Then the corresponding (minimal) polynomial coefficients are:
-
-      .. code-block:: python
-
-         [
-             [0, 1],
-             [3, -14, 14],
-             [3, -14, 14],
-             [-1, 1],
-         ]
-    * ``curve2_params``: "Numerical" curve parameters at intersections.
-    * ``curve2_polys`` (optional): Similar to ``curve1_polys``.
-
-    The "numerical" values in ``intersections``, ``curve1_params`` and
-    ``curve2_params`` can be integers, stringified fractions or stringified
-    IEEE-754 values (``%a`` format).
+    The ``curve_intersections.json`` file contains a list of intersection
+    cases. The intersection cases are described by the JSON-schema in
+    ``functional_tests/schema/curve_intersection.json``.
 
     Args:
         id_ (int): The intersection ID.

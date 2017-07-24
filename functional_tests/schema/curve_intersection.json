@@ -1,0 +1,98 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "An intersection of two B\\u00e9zier curves.",
+    "type": "object",
+    "properties": {
+        "curve1": {
+            "description": "ID of the first curve in the intersection.",
+            "type": "string"
+        },
+        "curve2": {
+            "description": "ID of the second curve in the intersection.",
+            "type": "string"
+        },
+        "id": {
+            "description": "ID of intersection ``test case''.",
+            "type": "integer"
+        },
+        "type": {
+            "description": "Type of intersection that occurs.",
+            "enum": [
+                "no-intersection",
+                "standard",
+                "tangent",
+                "coincident"
+            ]
+        },
+        "note": {
+            "description": "Description of the intersection / notes about how it behaves.",
+            "type": "string"
+        },
+        "intersections": {
+            "description": "A list of x-y coordinates where the curves intersect.",
+            "type": "array",
+            "items": {
+                "description": "An x-y coordinate pair for a single intersection point.",
+                "type": "array",
+                "items": {
+                    "description": "A coordinate as a numerical value.",
+                    "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
+                },
+                "minItems": 2,
+                "maxItems": 2
+            }
+        },
+        "curve1_params": {
+            "description": "Parameters in curve 1 of the intersection points (in the same order).",
+            "type": "array",
+            "items": {
+                "description": "A curve parameter as a numerical value.",
+                "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
+            }
+        },
+        "curve1_polys": {
+            "description": "The coefficients of the minimal polynomials that determine the values in ``curve1_params``. This can only be provided if both curves are defined by rational (or at least algebraic) control points.",
+            "type": "array",
+            "items": {
+                "description": "The coefficients in a given polynomial, in order from lowest to highest exponent. For example, if a parameter is ``(7 - sqrt(7)) / 14`` (i.e. ``0x1.3e7b70cac040dp-2``) then the minimal polynomial is ``14 s^2 - 14 s + 3 = 0`` which is represented as ``[3, -14, 14]``.",
+                "type": "array",
+                "items": {
+                    "description": "A coefficient in a polynomial.",
+                    "type": "integer"
+                },
+                "minItems": 2
+            }
+        },
+        "curve2_params": {
+            "description": "Parameters in curve 2 of the intersection points (in the same order).",
+            "type": "array",
+            "items": {
+                "description": "A curve parameter as a numerical value.",
+                "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
+            }
+        },
+        "curve2_polys": {
+            "description": "The coefficients of the minimal polynomials that determine the values in ``curve2_params``. This can only be provided if both curves are defined by rational (or at least algebraic) control points.",
+            "type": "array",
+            "items": {
+                "description": "The coefficients in a given polynomial, in order from lowest to highest exponent. For example, if a parameter is ``cuberoot(1/4)`` (i.e. ``0x1.428a2f98d728bp-1``) then the minimal polynomial is ``4 s^3 - 1 = 0`` which is represented as ``[-1, 0, 0, 4]``.",
+                "type": "array",
+                "items": {
+                    "description": "A coefficient in a polynomial.",
+                    "type": "integer"
+                },
+                "minItems": 2
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "curve1",
+        "curve2",
+        "id",
+        "type",
+        "intersections",
+        "curve1_params",
+        "curve2_params"
+    ]
+}
