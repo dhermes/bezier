@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "A generic value container: can be an integer, stringified fraction or stringified IEEE-754 value.",
+    "type": ["integer", "string"],
+    "oneOf": [
+        {"type": "integer"},
+        {"$ref": "#/definitions/fraction"},
+        {"$ref": "#/definitions/ieee754"}
+    ],
+    "definitions": {
+        "fraction": {
+            "description": "A stringified fraction. For example ``4/7'' or ``-11/3''.",
+            "type": "string",
+            "pattern": "^-?\\d/\\d$"
+        },
+        "ieee754": {
+            "description": "A stringified IEEE-754 value in ``%a'' format. For example, ``sqrt(2)`` is nearest to ``0x1.6a09e667f3bcdp+0''.",
+            "type": "string",
+            "pattern": "^-?0x1\\.[0-9a-f]{13}p[+-]\\d+$"
+        }
+    }
+}
