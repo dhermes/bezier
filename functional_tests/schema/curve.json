@@ -1,0 +1,45 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "A description of a B\\u00e9zier curve, mostly of control points. The control points can be described as IEEE-754 double precision values, integers or rational numbers.",
+    "type": "object",
+    "properties": {
+        "control_points": {
+            "description": "A list of x-y coordinates of the control points in the curve.",
+            "type": "array",
+            "items": {
+                "description": "An x-y coordinate pair for a single control point",
+                "type": "array",
+                "items": {
+                    "description": "A coordinate value: can be an integer, stringified fraction (e.g. ``4/7'') or stringified IEEE-754 value (``%a'' format, e.g. sqrt(2) is nearest to ``0x1.6a09e667f3bcdp+0'').",
+                    "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/value.json"
+                },
+                "minItems": 2,
+                "maxItems": 2
+            },
+            "minItems": 1
+        },
+        "note": {
+            "description": "Description of the curve or segment within a curve.",
+            "type": "string"
+        },
+        "implicitized": {
+            "description": "The algebraic curve that contains this B\\u00e9zier curve as a segment. (Only provided if the curve comes from rational control points.) A given algebraic curve is represented as a list of integer triples, each of which holds a coefficient, an x-exponent and a y-exponent. For example, for the curve with ``x(s) = 9 - 8 s`` and ``y(s) = (2 s - 1)^2``, we have ``16 y = (8 s - 4)^2 = (5 - x)^2`` which corresponds to ``f(x, y) = x^2 - 10 x - 16 y + 25``. This polynomial is represented by the four triples [25, 0, 0], [-16, 0, 1], [-10, 1, 0] and [1, 2, 0].",
+            "type": "array",
+            "items": {
+                "description": "A coefficient, x-exponent, y-exponent triple.",
+                "type": "array",
+                "items": {
+                    "description": "One of coefficient, x-exponent, y-exponent.",
+                    "type": "integer"
+                },
+                "maxItems": 3,
+                "maxItems": 3
+            },
+            "minItems": 1
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "control_points"
+    ]
+}
