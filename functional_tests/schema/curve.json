@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "description": "A description of a B\\u00e9zier curve, mostly of control points. The control points can be described as IEEE-754 double precision values, integers or rational numbers.",
+    "description": "A description of a B\\u00e9zier curve.",
     "type": "object",
     "properties": {
         "control_points": {
@@ -10,7 +10,7 @@
                 "description": "An x-y coordinate pair for a single control point",
                 "type": "array",
                 "items": {
-                    "description": "A coordinate value: can be an integer, stringified fraction (e.g. ``4/7'') or stringified IEEE-754 value (``%a'' format, e.g. sqrt(2) is nearest to ``0x1.6a09e667f3bcdp+0'').",
+                    "description": "A coordinate value as an integer, stringified fraction or stringified IEEE-754 value.",
                     "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/value.json"
                 },
                 "minItems": 2,
