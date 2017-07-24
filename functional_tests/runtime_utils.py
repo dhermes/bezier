@@ -323,7 +323,11 @@ class CurveInfo(object):  # pylint: disable=too-few-public-methods
 
 
 class CurveIntersectionType(enum.Enum):
-    """Enum describing curve intersection."""
+    """Enum describing curve intersection.
+
+    These values correspond to the ``type`` enum property in the
+    ``curve_intersection.json`` JSON-schema.
+    """
 
     coincident = 'coincident'
     """Curves lie on the same underlying algebraic curve."""
@@ -538,18 +542,11 @@ class CurveIntersectionInfo(object):
 
 
 class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
-    r"""Information about a surface from ``surfaces.json``.
+    """Information about a surface from ``surfaces.json``.
 
-    These are expected to have two keys:
-
-    * ``control_points``: A list of ``x-y`` coordinates of the control points
-      in the surface. The coordinates themselves can be integers, stringified
-      fractions or stringified IEEE-754 values (``%a`` format).
-    * ``note`` (optional): Description of the surface / surface segment.
-
-    In addition, each surface comes with an ID from a dictionary, i.e.
-    ``surfaces.json`` uses ID keys to identify the surfaces, rather than just
-    having a list of surface info.
+    The ``surfaces.json`` file contains a dictionary where each key is the ID
+    of the given surface and each value is a surface. The surfaces are
+    described by the JSON-schema in ``functional_tests/schema/surface.json``.
 
     Args:
         id_ (str): The ID of the surface.
@@ -769,7 +766,7 @@ class CurvedPolygonInfo(object):
 
 
 class SurfaceIntersectionsInfo(object):
-    r"""Information about an intersection from ``surface_intersections.json``.
+    """Information about an intersection from ``surface_intersections.json``.
 
     A surface-surface intersection JSON is expected to have 5 keys:
 
