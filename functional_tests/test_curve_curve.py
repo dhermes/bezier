@@ -38,63 +38,69 @@ ULPS_ALLOWED = 3.0
 ZERO_THRESHOLD = 0.5**52
 ZERO_MISS = object()
 ULPS_ALLOWED_OVERRIDE = {
-    12: {
-        (0, 1): 4,  # Established on Ubuntu 16.04
-    },
-    17: {
-        (0, 7): ZERO_MISS,  # Established on Ubuntu 16.04
-        (2, 1): 7,  # Established on Ubuntu 16.04
-        (3, 1): 4,  # Established on Ubuntu 16.04
-        (3, 2): 7,  # Established on Ubuntu 16.04
-    },
-    18: {
-        (0, 6): 5,  # Established on Ubuntu 16.04
-        (1, 0): 8,  # Established on Ubuntu 16.04
-        (1, 2): 10,  # Established on Ubuntu 16.04
-        (1, 3): 11,  # Established on Ubuntu 16.04
-        (1, 6): 4,  # Established on Ubuntu 16.04
-        (2, 2): 4,  # Established on Ubuntu 16.04
-        (3, 3): ZERO_MISS,  # Established on Ubuntu 16.04
-        (3, 5): ZERO_MISS,  # Established on Ubuntu 16.04
-        (3, 7): ZERO_MISS,  # Established on Ubuntu 16.04
-    },
-    23: {
-        (0, 0): 14,  # Established on Ubuntu 16.04
-        (0, 1): 41,  # Established on Ubuntu 16.04
-        (0, 2): 14,  # Established on Ubuntu 16.04
-        (1, 0): 16,  # Established on Ubuntu 16.04
-        (1, 1): 21,  # Established on Ubuntu 16.04
-        (1, 2): 16,  # Established on Ubuntu 16.04
-    },
-    25: {
-        (0, 6): ZERO_MISS,  # Established on Ubuntu 16.04
-    },
-    37: {
-        (0, 1): 91,  # Established on Ubuntu 16.04
-    },
-    38: {
-        (0, 1): 1013,  # Established on Ubuntu 16.04
-    },
-    39: {
-        (0, 1): 91,  # Established on Ubuntu 16.04
-    },
-    40: {
-        (0, 1): 1013,  # Established on Ubuntu 16.04
+    GEOMETRIC: {
+        12: {
+            (0, 1): 4,  # Established on Ubuntu 16.04
+        },
+        17: {
+            (0, 7): ZERO_MISS,  # Established on Ubuntu 16.04
+            (2, 1): 7,  # Established on Ubuntu 16.04
+            (3, 1): 4,  # Established on Ubuntu 16.04
+            (3, 2): 7,  # Established on Ubuntu 16.04
+        },
+        18: {
+            (0, 6): 5,  # Established on Ubuntu 16.04
+            (1, 0): 8,  # Established on Ubuntu 16.04
+            (1, 2): 10,  # Established on Ubuntu 16.04
+            (1, 3): 11,  # Established on Ubuntu 16.04
+            (1, 6): 4,  # Established on Ubuntu 16.04
+            (2, 2): 4,  # Established on Ubuntu 16.04
+            (3, 3): ZERO_MISS,  # Established on Ubuntu 16.04
+            (3, 5): ZERO_MISS,  # Established on Ubuntu 16.04
+            (3, 7): ZERO_MISS,  # Established on Ubuntu 16.04
+        },
+        23: {
+            (0, 0): 14,  # Established on Ubuntu 16.04
+            (0, 1): 41,  # Established on Ubuntu 16.04
+            (0, 2): 14,  # Established on Ubuntu 16.04
+            (1, 0): 16,  # Established on Ubuntu 16.04
+            (1, 1): 21,  # Established on Ubuntu 16.04
+            (1, 2): 16,  # Established on Ubuntu 16.04
+        },
+        25: {
+            (0, 6): ZERO_MISS,  # Established on Ubuntu 16.04
+        },
+        37: {
+            (0, 1): 91,  # Established on Ubuntu 16.04
+        },
+        38: {
+            (0, 1): 1013,  # Established on Ubuntu 16.04
+        },
+        39: {
+            (0, 1): 91,  # Established on Ubuntu 16.04
+        },
+        40: {
+            (0, 1): 1013,  # Established on Ubuntu 16.04
+        },
     },
 }
-FAILURE_NOT_IMPLEMENTED = (
-    11,  # Line segments parallel.
-    20,  # The number of candidate intersections is too high. (24)
-    24,  # The number of candidate intersections is too high. (22)
-    42,  # The number of candidate intersections is too high. (20)
-)
+FAILURE_NOT_IMPLEMENTED = {
+    GEOMETRIC: (
+        11,  # Line segments parallel.
+        20,  # The number of candidate intersections is too high. (24)
+        24,  # The number of candidate intersections is too high. (22)
+        42,  # The number of candidate intersections is too high. (20)
+    ),
+}
 NOT_IMPLEMENTED_TYPES = (
     CurveIntersectionType.tangent,
     CurveIntersectionType.coincident,
 )
-INCORRECT_COUNT = (
-    31,
-)
+INCORRECT_COUNT = {
+    GEOMETRIC: (
+        31,
+    ),
+}
 
 
 class IncorrectCount(ValueError):
@@ -159,10 +165,10 @@ def intersection_values(intersection_info, strategy):
     return computed, exact
 
 
-def error_multipliers(intersection_info, shape):
+def error_multipliers(intersection_info, shape, strategy):
     zero_misses = []
     multipliers = ULPS_ALLOWED * np.ones(shape, order='F')
-    override = ULPS_ALLOWED_OVERRIDE.get(intersection_info.id_)
+    override = ULPS_ALLOWED_OVERRIDE[strategy].get(intersection_info.id_)
     if override is not None:
         for index_tuple, value in six.iteritems(override):
             if value is ZERO_MISS:
@@ -177,7 +183,7 @@ def error_multipliers(intersection_info, shape):
 def intersections_check(intersection_info, strategy):
     computed, exact = intersection_values(intersection_info, strategy)
     zero_misses, multipliers = error_multipliers(
-        intersection_info, exact.shape)
+        intersection_info, exact.shape, strategy)
 
     # Make sure our errors fall under the number of "allowed" ULPs.
     allowed_errors = np.abs(multipliers * SPACING(exact))
@@ -202,10 +208,10 @@ def intersections_check(intersection_info, strategy):
 )
 def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_
-    if id_ in FAILURE_NOT_IMPLEMENTED:
+    if id_ in FAILURE_NOT_IMPLEMENTED[strategy]:
         assert intersection_info.type_ in NOT_IMPLEMENTED_TYPES
         context = pytest.raises(NotImplementedError)
-    elif id_ in INCORRECT_COUNT:
+    elif id_ in INCORRECT_COUNT[strategy]:
         assert intersection_info.type_ == CurveIntersectionType.tangent
         context = pytest.raises(IncorrectCount)
     else:
