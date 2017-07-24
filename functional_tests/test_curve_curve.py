@@ -84,18 +84,21 @@ ULPS_ALLOWED_OVERRIDE = {
         },
     },
 }
-FAILURE_NOT_IMPLEMENTED = {
+TANGENT_SUCCESS = {
     GEOMETRIC: (
-        11,  # Line segments parallel.
-        20,  # The number of candidate intersections is too high. (24)
-        24,  # The number of candidate intersections is too high. (22)
-        42,  # The number of candidate intersections is too high. (20)
+        4,
+        14,
+        19,
+        41,
     ),
 }
-NOT_IMPLEMENTED_TYPES = (
-    CurveIntersectionType.tangent,
-    CurveIntersectionType.coincident,
-)
+COINCIDENT_SUCCESS = {
+    GEOMETRIC: (
+        33,
+        34,
+        35,
+    ),
+}
 INCORRECT_COUNT = {
     GEOMETRIC: (
         31,
@@ -180,7 +183,7 @@ def error_multipliers(intersection_info, shape, strategy):
     return zero_misses, multipliers
 
 
-def intersections_check(intersection_info, strategy):
+def check_intersect(intersection_info, strategy):
     computed, exact = intersection_values(intersection_info, strategy)
     zero_misses, multipliers = error_multipliers(
         intersection_info, exact.shape, strategy)
@@ -198,6 +201,30 @@ def intersections_check(intersection_info, strategy):
             assert np.abs(computed[index_tuple]) < ZERO_THRESHOLD
 
 
+def check_no_intersect(intersection_info, strategy):
+    computed, exact = intersection_values(intersection_info, strategy)
+    assert computed.size == 0
+    assert exact.size == 0
+
+
+def check_tangent(intersection_info, strategy):
+    id_ = intersection_info.id_
+    if id_ in TANGENT_SUCCESS[strategy]:
+        check_intersect(intersection_info, strategy)
+    else:
+        with pytest.raises(NotImplementedError):
+            intersection_values(intersection_info, strategy)
+
+
+def check_coincident(intersection_info, strategy):
+    id_ = intersection_info.id_
+    if id_ in COINCIDENT_SUCCESS[strategy]:
+        check_intersect(intersection_info, strategy)
+    else:
+        with pytest.raises(NotImplementedError):
+            intersection_values(intersection_info, strategy)
+
+
 @pytest.mark.parametrize(
     'strategy,intersection_info',
     itertools.product(
@@ -208,14 +235,21 @@ def intersections_check(intersection_info, strategy):
 )
 def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_
-    if id_ in FAILURE_NOT_IMPLEMENTED[strategy]:
-        assert intersection_info.type_ in NOT_IMPLEMENTED_TYPES
-        context = pytest.raises(NotImplementedError)
-    elif id_ in INCORRECT_COUNT[strategy]:
-        assert intersection_info.type_ == CurveIntersectionType.tangent
-        context = pytest.raises(IncorrectCount)
-    else:
-        context = runtime_utils.no_op_manager()
+    # Actually try to intersect the curves.
+    intersection_type = intersection_info.type_
 
-    with context:
-        intersections_check(intersection_info, strategy)
+    if id_ in INCORRECT_COUNT[strategy]:
+        assert intersection_info.type_ == CurveIntersectionType.tangent
+        with pytest.raises(IncorrectCount):
+            check_intersect(intersection_info, strategy)
+    elif intersection_type == CurveIntersectionType.tangent:
+        check_tangent(intersection_info, strategy)
+    elif intersection_type == CurveIntersectionType.coincident:
+        check_coincident(intersection_info, strategy)
+    elif intersection_type == CurveIntersectionType.standard:
+        check_intersect(intersection_info, strategy)
+    elif intersection_type == CurveIntersectionType.no_intersection:
+        check_no_intersect(intersection_info, strategy)
+    else:
+        raise ValueError(
+            'Unexpected intersection type', intersection_type)
