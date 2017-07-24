@@ -12,11 +12,13 @@
 
 from __future__ import absolute_import
 
+import itertools
 import operator
 
 import pytest
 import six
 
+import bezier.curve
 from bezier import _intersection_helpers
 
 import runtime_utils
@@ -24,6 +26,7 @@ from runtime_utils import CurveIntersectionType
 
 
 CONFIG = runtime_utils.Config()
+GEOMETRIC = bezier.curve.IntersectionStrategy.geometric
 S_PROP = operator.attrgetter('s')
 _, INTERSECTIONS = runtime_utils.curve_intersections_info()
 WIGGLES = {
@@ -114,11 +117,14 @@ def _intersections_check(intersection_info):
 
 
 @pytest.mark.parametrize(
-    'intersection_info',
-    INTERSECTIONS,
-    ids=operator.attrgetter('test_id'),
+    'strategy,intersection_info',
+    itertools.product(
+        (GEOMETRIC,),
+        INTERSECTIONS,
+    ),
+    ids=runtime_utils.id_func,
 )
-def test_intersect(intersection_info):
+def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_
     if id_ in FAILURE_NOT_IMPLEMENTED:
         assert intersection_info.type_ in NOT_IMPLEMENTED_TYPES
