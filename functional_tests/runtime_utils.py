@@ -371,8 +371,6 @@ class CurveIntersectionInfo(object):
             unique / problematic).
     """
 
-    num_params = None
-
     # pylint: disable=too-many-arguments
     def __init__(self, id_, curve1_info, curve2_info, type_,
                  intersections, curve1_params, curve2_params,
@@ -391,14 +389,15 @@ class CurveIntersectionInfo(object):
 
         self.note = note
 
-        self._verify_dimensions()
+        self.num_params = self._verify_dimensions()
         self._verify_data()
     # pylint: enable=too-many-arguments
 
     def _verify_dimensions(self):
         """Verify that all the dimensions are the same.
 
-        This also sets the ``num_params`` attribute.
+        Returns:
+            int: The number of parameters / intersections expected.
 
         Raises:
             ValueError: If one of the values is not the "expected" shape.
@@ -407,29 +406,31 @@ class CurveIntersectionInfo(object):
             raise ValueError(
                 'Expected 1-dimensional data for ``curve1_params``.')
         # Unpack into one value now that we know 1D.
-        self.num_params, = self.curve1_params.shape
+        num_params, = self.curve1_params.shape
 
-        shape = (self.num_params,)
+        shape = (num_params,)
         if self.curve2_params.shape != shape:
             msg = 'Expected shape {} for ``curve2_params``.'.format(shape)
             raise ValueError(msg)
 
-        shape = (self.num_params, 2)
+        shape = (num_params, 2)
         if self.intersections.shape != shape:
             msg = 'Expected shape {} for ``intersections``.'.format(shape)
             raise ValueError(msg)
 
         if self.curve1_polys is not None:
-            if len(self.curve1_polys) != self.num_params:
+            if len(self.curve1_polys) != num_params:
                 raise ValueError(
                     'Unexpected number of ``curve1_polys``',
-                    len(self.curve1_polys), 'Expected', self.num_params)
+                    len(self.curve1_polys), 'Expected', num_params)
 
         if self.curve2_polys is not None:
-            if len(self.curve2_polys) != self.num_params:
+            if len(self.curve2_polys) != num_params:
                 raise ValueError(
                     'Unexpected number of ``curve2_polys``',
-                    len(self.curve2_polys), 'Expected', self.num_params)
+                    len(self.curve2_polys), 'Expected', num_params)
+
+        return num_params
 
     def _verify_data(self):
         """Verify assumptions about the data.
