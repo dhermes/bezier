@@ -314,8 +314,6 @@ To regenerate all the images:
    $ python functional_tests/make_surface_surface_images.py
    $ unset MATPLOTLIBRC PYTHONPATH
 
-(``test_implicitized_intersect.py`` doesn't actually generate any images).
-
 **********************
 Continuous Integration
 **********************
