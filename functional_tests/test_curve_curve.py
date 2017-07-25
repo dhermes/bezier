@@ -137,22 +137,30 @@ ULPS_ALLOWED_OVERRIDE = {
         },
     },
 }
-TANGENT_SUCCESS = {
-    GEOMETRIC: (
-        4,
-        14,
-        19,
-        41,
-    ),
-    ALGEBRAIC: ()
+NON_SIMPLE_ERR = _implicitization._NON_SIMPLE_ERR
+SEGMENTS_PARALLEL = (_intersection_helpers._SEGMENTS_PARALLEL,)
+TOO_MANY = _intersection_helpers._TOO_MANY_TEMPLATE
+COINCIDENT_ERR = (_implicitization._COINCIDENT_ERR,)
+TANGENT_OVERRIDES = {
+    GEOMETRIC: {
+        4: {'success': True},
+        11: {'parallel': True},
+        14: {'success': True},
+        19: {'success': True},
+        24: {'too_many': 22},
+        41: {'success': True},
+        42: {'too_many': 20},
+    },
+    ALGEBRAIC: {},
 }
-COINCIDENT_SUCCESS = {
-    GEOMETRIC: (
-        33,
-        34,
-        35,
-    ),
-    ALGEBRAIC: ()
+COINCIDENT_OVERRIDES = {
+    GEOMETRIC: {
+        20: {'too_many': 24},
+        33: {'success': True},
+        34: {'success': True},
+        35: {'success': True},
+    },
+    ALGEBRAIC: {},
 }
 INCORRECT_COUNT = {
     GEOMETRIC: (
@@ -281,27 +289,48 @@ def check_no_intersect(intersection_info, strategy):
 
 def check_tangent(intersection_info, strategy):
     id_ = intersection_info.id_
-    if id_ in TANGENT_SUCCESS[strategy]:
+    tangent_kwargs = TANGENT_OVERRIDES[strategy].get(id_, {})
+
+    if tangent_kwargs == {'success': True}:
         check_intersect(intersection_info, strategy)
     else:
         with pytest.raises(NotImplementedError) as exc_info:
             intersection_values(intersection_info, strategy)
 
+        exc_args = exc_info.value.args
         if strategy is ALGEBRAIC:
-            assert len(exc_info.value.args) == 2
-            assert exc_info.value.args[0] == _implicitization._NON_SIMPLE_ERR
+            assert len(exc_args) == 2
+            assert exc_args[0] == NON_SIMPLE_ERR
+        else:
+            if 'parallel' in tangent_kwargs:
+                assert tangent_kwargs == {'parallel': True}
+                assert exc_args == SEGMENTS_PARALLEL
+            else:
+                too_many = tangent_kwargs.get('too_many')
+                assert tangent_kwargs == {'too_many': too_many}
+                err_msg = TOO_MANY.format(too_many, 4 * too_many)
+                assert exc_args == (err_msg,)
 
 
 def check_coincident(intersection_info, strategy):
     id_ = intersection_info.id_
-    if id_ in COINCIDENT_SUCCESS[strategy]:
+    coincident_kwargs = COINCIDENT_OVERRIDES[strategy].get(id_, {})
+
+    if coincident_kwargs == {'success': True}:
         check_intersect(intersection_info, strategy)
     else:
         with pytest.raises(NotImplementedError) as exc_info:
             intersection_values(intersection_info, strategy)
 
+        exc_args = exc_info.value.args
         if strategy is ALGEBRAIC:
-            assert exc_info.value.args == (_implicitization._COINCIDENT_ERR,)
+            assert coincident_kwargs == {}
+            assert exc_args == COINCIDENT_ERR
+        else:
+            too_many = coincident_kwargs.get('too_many')
+            assert coincident_kwargs == {'too_many': too_many}
+            err_msg = TOO_MANY.format(too_many, 4 * too_many)
+            assert exc_args == (err_msg,)
 
 
 @pytest.mark.parametrize(

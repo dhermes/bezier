@@ -19,6 +19,8 @@ import six
 
 import bezier
 from bezier import _implicitization
+from bezier import _intersection_helpers
+from bezier import _surface_helpers
 from bezier import curve
 
 import runtime_utils
@@ -27,12 +29,9 @@ import runtime_utils
 ALGEBRAIC = curve.IntersectionStrategy.algebraic
 GEOMETRIC = curve.IntersectionStrategy.geometric
 _, INTERSECTIONS = runtime_utils.surface_intersections_info()
-PARALLEL_FAILURE = ('Line segments parallel.',)
-BAD_TANGENT = (
-    'Curves moving in opposite direction but define '
-    'overlapping arcs.')
-BAD_TANGENT = (BAD_TANGENT,)
-TANGENT_FAILURE = 'The number of candidate intersections is too high.'
+PARALLEL_FAILURE = (_intersection_helpers._SEGMENTS_PARALLEL,)
+BAD_TANGENT = (_surface_helpers._BAD_TANGENT,)
+TOO_MANY = _intersection_helpers._TOO_MANY_TEMPLATE
 WIGGLES = {
     GEOMETRIC: {
         1: 46,  # Established on Ubuntu 16.04
@@ -51,10 +50,10 @@ WIGGLES = {
 }
 FAILED_CASES_TANGENT = {
     GEOMETRIC: {
-        7: {},
+        7: {'too_many': 21},
         10: {'parallel': True},
-        11: {},
-        12: {},
+        11: {'too_many': 18},
+        12: {'too_many': 22},
         21: {'bad_tangent': True},
     },
     ALGEBRAIC: {
@@ -70,7 +69,7 @@ FAILED_CASES_TANGENT = {
 }
 FAILED_CASES_COINCIDENT = {
     GEOMETRIC: {
-        4: {},
+        4: {'too_many': 28},
         5: {'parallel': True},
     },
     ALGEBRAIC: {
@@ -93,7 +92,8 @@ def curved_polygon_edges(intersection, edges):
 
 
 @contextlib.contextmanager
-def check_tangent_manager(strategy, parallel=False, bad_tangent=False):
+def check_tangent_manager(
+        strategy, parallel=False, bad_tangent=False, too_many=None):
     caught_exc = None
     try:
         yield
@@ -108,15 +108,15 @@ def check_tangent_manager(strategy, parallel=False, bad_tangent=False):
         elif bad_tangent:
             assert exc_args == BAD_TANGENT
         else:
-            assert len(exc_args) == 1
-            assert exc_args[0].startswith(TANGENT_FAILURE)
+            err_msg = TOO_MANY.format(too_many, 4 * too_many)
+            assert exc_args == (err_msg,)
     else:
         assert len(exc_args) == 2
         assert exc_args[0] == _implicitization._NON_SIMPLE_ERR
 
 
 @contextlib.contextmanager
-def check_coincident_manager(strategy, parallel=False):
+def check_coincident_manager(strategy, parallel=False, too_many=None):
     caught_exc = None
     try:
         yield
@@ -129,8 +129,8 @@ def check_coincident_manager(strategy, parallel=False):
         if parallel:
             assert exc_args == PARALLEL_FAILURE
         else:
-            assert len(exc_args) == 1
-            assert exc_args[0].startswith(TANGENT_FAILURE)
+            err_msg = TOO_MANY.format(too_many, 4 * too_many)
+            assert exc_args == (err_msg,)
     else:
         assert exc_args == (_implicitization._COINCIDENT_ERR,)
 

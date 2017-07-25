@@ -37,6 +37,7 @@ except ImportError:  # pragma: NO COVER
 _ERROR_VAL = 0.5**26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _MAX_CANDIDATES = 16
+_SEGMENTS_PARALLEL = 'Line segments parallel.'
 _TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
     '{:d} accepted pairs gives {:d} candidate pairs.')
@@ -1071,7 +1072,7 @@ def _from_linearized_low_level_py(
         elif bbox_intersect(nodes1, nodes2) == BoxIntersectionType.DISJOINT:
             return None, None, False
 
-        raise NotImplementedError('Line segments parallel.')
+        raise NotImplementedError(_SEGMENTS_PARALLEL)
 
     # Now, promote `s` and `t` onto the original curves.
     orig_s = (1 - s) * start1 + s * end1
