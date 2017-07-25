@@ -28,7 +28,6 @@ from runtime_utils import CurveIntersectionType
 
 
 SPACING = np.spacing  # pylint: disable=no-member
-CONFIG = runtime_utils.Config()
 GEOMETRIC = bezier.curve.IntersectionStrategy.geometric
 ALGEBRAIC = bezier.curve.IntersectionStrategy.algebraic
 S_PROP = operator.attrgetter('s')
