@@ -1505,6 +1505,25 @@ class TestIntersection(unittest.TestCase):
         self.assertIs(intersection.interior_curve,
                       mock.sentinel.interior_curve)
 
+    def test___dict___property(self):
+        intersection = self._constructor_helper(
+            point=mock.sentinel.point,
+            interior_curve=mock.sentinel.interior_curve,
+        )
+        props_dict = intersection.__dict__
+        expected = {
+            'first': mock.sentinel.first,
+            's': 0.25,
+            'second': mock.sentinel.second,
+            't': 0.75,
+            'point': mock.sentinel.point,
+            'interior_curve': mock.sentinel.interior_curve,
+        }
+        self.assertEqual(props_dict, expected)
+        # Check that modifying ``props_dict`` won't modify ``curve``.
+        expected['s'] = 0.5
+        self.assertNotEqual(intersection.s, expected['s'])
+
     def test_get_point_stored(self):
         intersection = self._make_one(
             None, None, None, None, point=mock.sentinel.point)
