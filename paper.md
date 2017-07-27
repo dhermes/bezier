@@ -1,9 +1,13 @@
 ---
 title: 'Helper for B&#xe9;zier Curves, Triangles, and Higher Order Objects'
 tags:
-  - example
-  - tags
-  - for the paper
+  - algebra
+  - bezier
+  - curve
+  - parametric curve
+  - numerical software
+  - Python
+  - Fortran
 authors:
  - name: Danny Hermes
    orcid: 0000-0001-7366-173X
