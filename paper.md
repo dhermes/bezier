@@ -38,8 +38,8 @@ time.
 # References
 
 - [Lecture notes][3]: Computer Aided Geometric Design by Thomas W.
-  Sederberg of BYU
-- [Curves and Surfaces for CAGD][4] by Gerald Farin
+  Sederberg of BYU [@SederbergNotes]
+- [Curves and Surfaces for CAGD][4] by Gerald Farin [@Farin2001]
 
 [1]: https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 [2]: https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
