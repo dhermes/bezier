@@ -2342,6 +2342,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         new_index = index - degree + k  # First element in row.
 
         row_nodes = nodes[new_index:index + 1, :]
+        row_nodes = np.asfortranarray(row_nodes)
         row_result = _curve_helpers.evaluate_multi_barycentric(
             row_nodes, lambda1, lambda2)
 
