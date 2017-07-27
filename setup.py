@@ -141,8 +141,10 @@ def setup():
         extras_require=EXTRAS_REQUIRE,
         ext_modules=extension_modules(),
         classifiers=(
-            'Development Status :: 3 - Alpha',
+            'Development Status :: 4 - Beta',
             'Intended Audience :: Developers',
+            'Intended Audience :: Science/Research',
+            'Topic :: Scientific/Engineering :: Mathematics',
             'License :: OSI Approved :: Apache Software License',
             'Operating System :: OS Independent',
             'Programming Language :: Python :: 2',
@@ -150,7 +152,6 @@ def setup():
             'Programming Language :: Python :: 3',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
-            'Topic :: Internet',
         ),
     )
 
