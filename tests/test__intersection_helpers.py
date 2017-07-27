@@ -474,7 +474,7 @@ class Test__newton_refine(utils.NumPyTestCase):
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_newton_refine(Test__newton_refine):
+class Test_speedup_newton_refine_intersect(Test__newton_refine):
 
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
