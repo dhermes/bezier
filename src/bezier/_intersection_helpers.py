@@ -120,7 +120,7 @@ def _bbox_intersect(nodes1, nodes2):
         return BoxIntersectionType.INTERSECTION
 
 
-def _linearization_error(nodes, degree):
+def _linearization_error(nodes):
     r"""Compute the maximum error of a linear approximation.
 
     Helper for :class:`.Linearization`, which is used during the
@@ -189,7 +189,7 @@ def _linearization_error(nodes, degree):
        ...     [3.0,  1.0],
        ...     [9.0, -2.0],
        ... ])
-       >>> linearization_error(nodes, 2)
+       >>> linearization_error(nodes)
        1.25
 
     .. testcleanup:: linearization-error
@@ -228,7 +228,7 @@ def _linearization_error(nodes, degree):
        ...     [10.0, 24.0],
        ...     [30.0, 72.0],
        ... ])
-       >>> linearization_error(nodes, 3)
+       >>> linearization_error(nodes)
        29.25
 
     Though it may seem that ``0`` is a more appropriate answer, consider
@@ -253,12 +253,13 @@ def _linearization_error(nodes, degree):
 
     Args:
         nodes (numpy.ndarray): Nodes of a curve.
-        degree (int): The degree of the curve
 
     Returns:
         float: The maximum error between the curve and the
         linear approximation.
     """
+    num_nodes, _ = nodes.shape
+    degree = num_nodes - 1
     if degree == 1:
         return 0.0
 
@@ -1595,7 +1596,7 @@ class Linearization(object):
         if shape.__class__ is cls:
             return shape
         else:
-            error = linearization_error(shape._nodes, shape._degree)
+            error = linearization_error(shape._nodes)
             if error < _ERROR_VAL:
                 linearized = cls(shape, error)
                 return linearized

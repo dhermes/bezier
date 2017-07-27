@@ -188,13 +188,13 @@ class Test_contains_nd(unittest.TestCase):
         self.assertTrue(self._call_function_under_test(nodes, point))
 
 
-class Test_cross_product(utils.NumPyTestCase):
+class Test__cross_product(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(vec0, vec1):
         from bezier import _helpers
 
-        return _helpers.cross_product(vec0, vec1)
+        return _helpers._cross_product(vec0, vec1)
 
     def test_it(self):
         vec0 = np.asfortranarray([[1.0, 7.0]]) / 8.0
@@ -209,6 +209,16 @@ class Test_cross_product(utils.NumPyTestCase):
         actual_cross = np.asfortranarray(np.cross(vec0_as_3d, vec1_as_3d))
         expected = np.asfortranarray([[0.0, 0.0, result]])
         self.assertEqual(actual_cross, expected)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_cross_product(Test__cross_product):
+
+    @staticmethod
+    def _call_function_under_test(vec0, vec1):
+        from bezier import _speedup
+
+        return _speedup.speedup.cross_product(vec0, vec1)
 
 
 class Test_ulps_away(unittest.TestCase):

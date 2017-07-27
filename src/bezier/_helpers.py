@@ -151,7 +151,7 @@ def contains_nd(nodes, point):
     return True
 
 
-def cross_product(vec0, vec1):
+def _cross_product(vec0, vec1):
     r"""Compute the cross product of vectors in :math:`\mathbf{R}^2`.
 
     Utilizes the fact that
@@ -277,7 +277,9 @@ def _wiggle_interval_py(value, wiggle=0.5**45):
 if _speedup is None:  # pragma: NO COVER
     bbox = _bbox
     wiggle_interval = _wiggle_interval_py
+    cross_product = _cross_product
 else:
     bbox = _speedup.speedup.bbox
     wiggle_interval = _speedup.speedup.wiggle_interval
+    cross_product = _speedup.speedup.cross_product
 # pylint: enable=invalid-name
