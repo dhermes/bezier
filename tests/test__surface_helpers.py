@@ -714,9 +714,9 @@ class Test__jacobian_det(utils.NumPyTestCase):
         degree = 1
         surface = bezier.Surface(nodes, degree=degree, _copy=False)
         self.assertTrue(surface.is_valid)
-        st_vals = np.random.random((13, 2))
+        st_vals = np.asfortranarray(np.random.random((13, 2)))
         result = self._call_function_under_test(nodes, degree, st_vals)
-        expected = 2.0 * np.ones(13)
+        expected = 2.0 * np.ones(13, order='F')
         self.assertEqual(result, expected)
 
     def test_nonlinear(self):
