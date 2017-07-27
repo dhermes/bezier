@@ -1397,9 +1397,9 @@ class TestLinearization(utils.NumPyTestCase):
         expected = np.asfortranarray(self.NODES[[0], :])
         self.assertEqual(
             np.asfortranarray(linearization.start_node), expected)
-        # Make sure not copied.
-        self.assertIs(linearization.start_node.base, self.NODES)
-        self.assertFalse(linearization.start_node.flags.owndata)
+        # Make sure the data is "original" (was previously a view).
+        self.assertIsNone(linearization.start_node.base)
+        self.assertTrue(linearization.start_node.flags.owndata)
 
     def test_end_node_attr(self):
         import bezier
@@ -1409,9 +1409,9 @@ class TestLinearization(utils.NumPyTestCase):
         expected = np.asfortranarray(self.NODES[[2], :])
         self.assertEqual(
             np.asfortranarray(linearization.end_node), expected)
-        # Make sure not copied.
-        self.assertIs(linearization.end_node.base, self.NODES)
-        self.assertFalse(linearization.end_node.flags.owndata)
+        # Make sure the data is "original" (was previously a view).
+        self.assertIsNone(linearization.end_node.base)
+        self.assertTrue(linearization.end_node.flags.owndata)
 
     def test_from_shape_factory_not_close_enough(self):
         import bezier
