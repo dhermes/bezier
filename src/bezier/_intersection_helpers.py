@@ -1558,14 +1558,13 @@ class Linearization(object):
         """Curve: The curve that this linearization approximates."""
         self.error = error
         """float: The linearization error for the linearized curve."""
-        # NOTE: We want the nodes to be 1x2 but accessing
-        #       ``curve._nodes[[0], :]`` makes a copy while the access
-        #       below **does not** copy. See
-        #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
-        #        arrays.indexing.html#advanced-indexing)
-        self.start_node = curve._nodes[0, :].reshape((1, 2), order='F')
+        self.start_node = np.asfortranarray([
+            [curve._nodes[0, 0], curve._nodes[0, 1]],
+        ])
         """numpy.ndarray: The start vector of this linearization."""
-        self.end_node = curve._nodes[-1, :].reshape((1, 2), order='F')
+        self.end_node = np.asfortranarray([
+            [curve._nodes[-1, 0], curve._nodes[-1, 1]],
+        ])
         """numpy.ndarray: The end vector of this linearization."""
 
     def subdivide(self):
