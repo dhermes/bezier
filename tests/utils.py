@@ -81,7 +81,7 @@ def get_random_nodes(shape, seed, num_bits):
     import numpy as np
 
     random_state = get_random(seed)
-    nodes = random_state.random_sample(shape)
+    nodes = np.asfortranarray(random_state.random_sample(shape))
     # Round the nodes to ``num_bits`` bits to avoid round-off.
     to_vectorize = functools.partial(binary_round, num_bits=num_bits)
     return np.vectorize(to_vectorize)(nodes)
