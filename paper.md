@@ -27,23 +27,17 @@ and Higher Order Objects.
 
 This library provides:
 
-- Support for B&#xe9;zier [`Curves`][5]
-- Support for B&#xe9;zier [`Surfaces`][6]
+- Support for B&#xe9;zier [`Curves`][3]
+- Support for B&#xe9;zier [`Surfaces`][4]
 
 and may support B&#xe9;zier Solids and Higher Order Objects at a later
 time.
 
--![Surface-surface intersection example](https://github.com/dhermes/bezier/blob/master/docs/images/surfaces6Q_and_7Q.png)
-
-# References
-
-- [Lecture notes][3]: Computer Aided Geometric Design by Thomas W.
-  Sederberg of BYU [@SederbergNotes]
-- [Curves and Surfaces for CAGD][4] by Gerald Farin [@Farin2001]
+-![Surface-surface intersection example](https://cdn.rawgit.com/dhermes/bezier/0.4.0/docs/images/test_surfaces6Q_and_7Q.png)
 
 [1]: https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 [2]: https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
-[3]: http://tom.cs.byu.edu/~557/text/cagd.pdf
-[4]: https://www.amazon.com/Curves-Surfaces-CAGD-Fifth-Practical/dp/1558607374
-[5]: https://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
-[6]: https://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
+[3]: https://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
+[4]: https://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
+
+# References
