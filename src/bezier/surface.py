@@ -137,6 +137,16 @@ class Surface(_base.Base):
 
        and so on.
 
+       The index formula
+
+       .. math::
+
+          j + \frac{k}{2} \left(2 (i + j) + k + 3\right)
+
+       can be used to map a triple :math:`(i, j, k)` onto the
+       corresponding linear index, but it is not particularly insightful
+       or useful.
+
     .. image:: ../images/surface_constructor.png
        :align: center
 
@@ -823,7 +833,7 @@ class Surface(_base.Base):
         .. image:: ../images/surface_subdivide1.png
            :align: center
 
-        Then the surface is re-parameterized via the map to/from the
+        Then the surface is re-parameterized via the map to / from the
         given sub-triangles and the unit triangle.
 
         For example, when a degree two surface is subdivided:

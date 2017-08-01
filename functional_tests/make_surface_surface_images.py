@@ -52,7 +52,7 @@ def make_plot(intersection_info, save_plot):
     surface2.plot(64, ax=ax)
 
     color = None
-    for curved_polygon_info in intersection_info.intersection_infos:
+    for curved_polygon_info in intersection_info.intersections:
         curved_polygon = make_curved_polygon(
             surface1, surface2, curved_polygon_info)
         curved_polygon.plot(64, color=color, ax=ax)

@@ -197,8 +197,8 @@ def test_intersect(strategy, intersection_info):
     else:
         context = runtime_utils.no_op_manager()
 
-    surface1 = intersection_info.surface1_info.surface
-    surface2 = intersection_info.surface2_info.surface
+    surface1 = intersection_info.surface1
+    surface2 = intersection_info.surface2
     with context:
         surface_surface_check(
             strategy, surface1, surface2,

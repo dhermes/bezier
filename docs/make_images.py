@@ -531,7 +531,13 @@ def surface_subdivide2(surface, sub_surface_b):
 
     # Add the control points polygon for the sub-surface.
     nodes = sub_surface_b._nodes[(0, 1, 2, 5, 3, 0), :]
-    add_patch(ax, nodes, colors[1])
+    add_patch(ax, nodes, colors[1], with_nodes=False)
+
+    # Plot **all** the nodes.
+    sub_nodes = sub_surface_b._nodes
+    ax.plot(sub_nodes[:, 0], sub_nodes[:, 1], color='black',
+            linestyle='None', marker='o')
+
     # Take those same points and add the boundary.
     ax.plot(nodes[:, 0], nodes[:, 1],
             color='black', linestyle='dashed')
