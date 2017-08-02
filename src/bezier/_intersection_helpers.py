@@ -1348,11 +1348,12 @@ def intersect_one_round(candidates, intersections):
             else:
                 bbox_int = bbox_line_intersect(
                     second._nodes, first.start_node, first.end_node)
-        elif second.__class__ is Linearization:
-            bbox_int = bbox_line_intersect(
-                first._nodes, second.start_node, second.end_node)
         else:
-            bbox_int = bbox_intersect(first._nodes, second._nodes)
+            if second.__class__ is Linearization:
+                bbox_int = bbox_line_intersect(
+                    first._nodes, second.start_node, second.end_node)
+            else:
+                bbox_int = bbox_intersect(first._nodes, second._nodes)
 
         if bbox_int == BoxIntersectionType.DISJOINT:
             continue

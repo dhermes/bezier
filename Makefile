@@ -6,7 +6,8 @@ src/bezier/_speedup.so: src/bezier/_speedup.pyf src/bezier/speedup.f90 .f2py_f2c
 	mv _speedup*.so src/bezier
 
 brute-force-pyf: src/bezier/speedup.f90 .f2py_f2cmap
-	f2py src/bezier/speedup.f90 -m _speedup -h src/bezier/_speedup.pyf
+	f2py src/bezier/speedup.f90 -m _speedup \
+	  -h src/bezier/_speedup.pyf --overwrite-signature
 
 clean:
 	rm -f src/bezier/_speedup*.so

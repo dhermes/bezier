@@ -13,7 +13,7 @@
 module speedup
 
   implicit none
-  private
+  private in_interval
   public &
        de_casteljau_one_round, evaluate_curve_barycentric, evaluate_multi, &
        linearization_error, evaluate_barycentric, evaluate_barycentric_multi, &
@@ -834,5 +834,14 @@ contains
     refined_t = t
 
   end subroutine from_linearized
+
+  subroutine in_interval(value_, start, end, result_)
+
+    real(dp), intent(in) :: value_, start, end
+    logical(1), intent(out) :: result_
+
+    result_ = (start <= value_) .AND. (value_ <= end)
+
+  end subroutine in_interval
 
 end module speedup
