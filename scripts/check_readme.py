@@ -36,6 +36,10 @@ ZENODO_IMG = """
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
    :alt: Zenodo DOI for ``bezier``"""
+JOSS_IMG = """
+.. |JOSS| image:: http://joss.theoj.org/papers/10.21105/joss.00267/status.svg
+   :target: https://dx.doi.org/10.21105/joss.00267
+   :alt: "Journal of Open Source Science" DOI for ``bezier``"""
 
 
 def get_diff(value1, value2, name1, name2):
@@ -68,15 +72,17 @@ def main():
         template = file_obj.read()
 
     expected = template.format(
-        pypi='|pypi| ',
+        pypi='\n\n|pypi| ',
         pypi_img=PYPI_IMG,
-        versions='|versions| ',
+        versions='|versions|\n\n',
         versions_img=VERSIONS_IMG,
         rtd_version='latest',
         coveralls_branch='master',
         revision='master',
         zenodo=' |zenodo|',
         zenodo_img=ZENODO_IMG,
+        joss=' |JOSS|',
+        joss_img=JOSS_IMG,
     )
 
     with open(ACTUAL_FILE, 'r') as file_obj:

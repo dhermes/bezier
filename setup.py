@@ -53,13 +53,15 @@ Sorry for this inconvenience. For more information or to help, visit:
 README = TEMPLATE.format(
     pypi='',
     pypi_img='',
-    versions='',
+    versions=' ',  # Space before "|docs|".
     versions_img='',
     rtd_version=VERSION,
     coveralls_branch=VERSION,
     revision=VERSION,
     zenodo='',
     zenodo_img='',
+    joss='',
+    joss_img='',
 )
 
 REQUIREMENTS = (
