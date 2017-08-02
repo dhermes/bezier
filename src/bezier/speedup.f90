@@ -838,14 +838,14 @@ contains
 
   end subroutine from_linearized
 
-  pure subroutine in_interval(value_, start, end, result_)
+  pure function in_interval(value_, start, end) result(predicate)
 
     real(dp), intent(in) :: value_, start, end
-    logical(1), intent(out) :: result_
+    logical(1) :: predicate
 
-    result_ = (start <= value_) .AND. (value_ <= end)
+    predicate = (start <= value_) .AND. (value_ <= end)
 
-  end subroutine in_interval
+  end function in_interval
 
   subroutine bbox_line_intersect( &
        num_nodes, nodes, line_start, line_end, enum_)
@@ -861,22 +861,22 @@ contains
     real(dp) :: segment_start(1, 2)
     real(dp) :: segment_end(1, 2)
     real(dp) :: s_curr, t_curr
-    logical(1) :: success, predicate1, predicate2
+    logical(1) :: success
 
     call bbox(num_nodes, nodes, left, right, bottom, top)
 
     ! Check if line start is inside the bounding box.
-    call in_interval(line_start(1, 1), left, right, predicate1)
-    call in_interval(line_start(1, 2), bottom, top, predicate2)
-    if (predicate1 .AND. predicate2) then
+    if ( &
+         in_interval(line_start(1, 1), left, right) .AND. &
+         in_interval(line_start(1, 2), bottom, top)) then
        enum_ = BoxIntersectionType_INTERSECTION
        return
     end if
 
     ! Check if line end is inside the bounding box.
-    call in_interval(line_end(1, 1), left, right, predicate1)
-    call in_interval(line_end(1, 2), bottom, top, predicate2)
-    if (predicate1 .AND. predicate2) then
+    if ( &
+         in_interval(line_end(1, 1), left, right) .AND. &
+         in_interval(line_end(1, 2), bottom, top)) then
        enum_ = BoxIntersectionType_INTERSECTION
        return
     end if
@@ -900,9 +900,10 @@ contains
     call segment_intersection( &
          segment_start, segment_end, line_start, line_end, &
          s_curr, t_curr, success)
-    call in_interval(s_curr, 0.0_dp, 1.0_dp, predicate1)
-    call in_interval(t_curr, 0.0_dp, 1.0_dp, predicate2)
-    if (success .AND. predicate1 .AND. predicate2) then
+    if ( &
+         success .AND. &
+         in_interval(s_curr, 0.0_dp, 1.0_dp) .AND. &
+         in_interval(t_curr, 0.0_dp, 1.0_dp)) then
        enum_ = BoxIntersectionType_INTERSECTION
        return
     end if
@@ -915,9 +916,10 @@ contains
     call segment_intersection( &
          segment_start, segment_end, line_start, line_end, &
          s_curr, t_curr, success)
-    call in_interval(s_curr, 0.0_dp, 1.0_dp, predicate1)
-    call in_interval(t_curr, 0.0_dp, 1.0_dp, predicate2)
-    if (success .AND. predicate1 .AND. predicate2) then
+    if ( &
+         success .AND. &
+         in_interval(s_curr, 0.0_dp, 1.0_dp) .AND. &
+         in_interval(t_curr, 0.0_dp, 1.0_dp)) then
        enum_ = BoxIntersectionType_INTERSECTION
        return
     end if
@@ -930,9 +932,10 @@ contains
     call segment_intersection( &
          segment_start, segment_end, line_start, line_end, &
          s_curr, t_curr, success)
-    call in_interval(s_curr, 0.0_dp, 1.0_dp, predicate1)
-    call in_interval(t_curr, 0.0_dp, 1.0_dp, predicate2)
-    if (success .AND. predicate1 .AND. predicate2) then
+    if ( &
+         success .AND. &
+         in_interval(s_curr, 0.0_dp, 1.0_dp) .AND. &
+         in_interval(t_curr, 0.0_dp, 1.0_dp)) then
        enum_ = BoxIntersectionType_INTERSECTION
        return
     end if
