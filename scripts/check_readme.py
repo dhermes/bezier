@@ -15,6 +15,7 @@
 
 from __future__ import print_function
 
+import difflib
 import os
 
 
@@ -35,6 +36,25 @@ ZENODO_IMG = """
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
    :alt: Zenodo DOI for ``bezier``"""
+
+
+def get_diff(value1, value2, name1, name2):
+    """Get a diff between two strings.
+
+    Args:
+        value1 (str): First string to be compared.
+        value2 (str): Second string to be compared.
+        name1 (str): Name of the first string.
+        name2 (str): Name of the second string.
+
+    Returns:
+        str: The full diff.
+    """
+    lines1 = [line + '\n' for line in value1.splitlines()]
+    lines2 = [line + '\n' for line in value2.splitlines()]
+    diff_lines = difflib.context_diff(
+        lines1, lines2, fromfile=name1, tofile=name2)
+    return ''.join(diff_lines)
 
 
 def main():
@@ -63,11 +83,11 @@ def main():
         contents = file_obj.read()
 
     if contents != expected:
-        raise ValueError('README.rst is not up to date with template',
-                         'Expected', expected,
-                         'Actual', contents)
+        err_msg = '\n' + get_diff(
+            contents, expected, 'README.rst.actual', 'README.rst.expected')
+        raise ValueError(err_msg)
     else:
-        print('REAMDE contents are as expected.')
+        print('README contents are as expected.')
 
 
 if __name__ == '__main__':
