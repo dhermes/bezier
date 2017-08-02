@@ -58,6 +58,8 @@ README = TEMPLATE.format(
     rtd_version=VERSION,
     coveralls_branch=VERSION,
     revision=VERSION,
+    zenodo='',
+    zenodo_img='',
 )
 
 REQUIREMENTS = (

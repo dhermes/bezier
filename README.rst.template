@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |appveyor-build| |coverage| {pypi}{versions}|docs|
+|circle-build| |appveyor-build| |coverage| {pypi}{versions}|docs|{zenodo}
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -177,4 +177,4 @@ details, see `the LICENSE`_.
    :alt: AppVeyor CI Build{pypi_img}{versions_img}
 .. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch={coveralls_branch}
    :target: https://coveralls.io/github/dhermes/bezier?branch={coveralls_branch}
-   :alt: Code Coverage
+   :alt: Code Coverage{zenodo_img}

@@ -31,6 +31,10 @@ VERSIONS_IMG = """
 .. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
    :target: https://pypi.python.org/pypi/bezier
    :alt: Package Versions"""
+ZENODO_IMG = """
+.. |zenodo| image:: https://zenodo.org/badge/73047402.svg
+   :target: https://zenodo.org/badge/latestdoi/73047402
+   :alt: Zenodo DOI for ``bezier``"""
 
 
 def main():
@@ -51,6 +55,8 @@ def main():
         rtd_version='latest',
         coveralls_branch='master',
         revision='master',
+        zenodo=' |zenodo|',
+        zenodo_img=ZENODO_IMG,
     )
 
     with open(ACTUAL_FILE, 'r') as file_obj:
