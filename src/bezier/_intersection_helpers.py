@@ -1237,7 +1237,7 @@ def _tangent_bbox_intersection(first, second, intersections):
         first, node_first2, 1.0, second, node_second2, 1.0, intersections)
 
 
-def bbox_line_intersect(nodes, line_start, line_end):
+def _bbox_line_intersect(nodes, line_start, line_end):
     r"""Determine intersection of a bounding box and a line.
 
     We do this by first checking if either the start or end node of the
@@ -1307,7 +1307,7 @@ def bbox_line_intersect(nodes, line_start, line_end):
         return BoxIntersectionType.INTERSECTION
     # NOTE: We skip the "last" edge. This is because any curve
     #       that doesn't have an endpoint on a curve must cross
-    #       at least two, so we will already covered such curves
+    #       at least two, so we will have already covered such curves
     #       in one of the branches above.
 
     return BoxIntersectionType.DISJOINT
@@ -1680,6 +1680,7 @@ if _speedup is None:  # pragma: NO COVER
     bbox_intersect = _bbox_intersect
     parallel_different = _parallel_different
     _from_linearized_low_level = _from_linearized_low_level_py
+    bbox_line_intersect = _bbox_line_intersect
 else:
     linearization_error = _speedup.speedup.linearization_error
     segment_intersection = _speedup.speedup.segment_intersection
@@ -1687,4 +1688,5 @@ else:
     bbox_intersect = _speedup.speedup.bbox_intersect
     parallel_different = _speedup.speedup.parallel_different
     _from_linearized_low_level = _speedup.speedup.from_linearized
+    bbox_line_intersect = _speedup.speedup.bbox_line_intersect
 # pylint: enable=invalid-name

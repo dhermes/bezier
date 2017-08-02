@@ -21,11 +21,14 @@ module speedup
        specialize_curve_generic, specialize_curve_quadratic, &
        specialize_curve, jacobian_both, evaluate_hodograph, &
        newton_refine_intersect, jacobian_det, bbox_intersect, &
-       wiggle_interval, parallel_different, from_linearized
+       wiggle_interval, parallel_different, from_linearized, bbox_line_intersect
 
   ! NOTE: This still relies on .f2py_f2cmap being present
   !       in the directory that build is called from.
   integer, parameter :: dp=kind(0.d0)
+  integer, parameter :: BoxIntersectionType_INTERSECTION = 0
+  integer, parameter :: BoxIntersectionType_TANGENT = 1
+  integer, parameter :: BoxIntersectionType_DISJOINT = 2
 
 contains
 
@@ -652,13 +655,13 @@ contains
     if ( &
          right2 < left1 .OR. right1 < left2 .OR. &
          top2 < bottom1 .OR. top1 < bottom2) then
-        enum_ = 2
-     else if ( &
-          right2 == left1 .OR. right1 == left2 .OR. &
-          top2 == bottom1 .OR. top1 == bottom2) then
-        enum_ = 1
+       enum_ = BoxIntersectionType_DISJOINT
+    else if ( &
+         right2 == left1 .OR. right1 == left2 .OR. &
+         top2 == bottom1 .OR. top1 == bottom2) then
+       enum_ = BoxIntersectionType_TANGENT
     else
-        enum_ = 0
+       enum_ = BoxIntersectionType_INTERSECTION
     end if
 
   end subroutine bbox_intersect
@@ -796,7 +799,7 @@ contains
        else
           call bbox_intersect( &
                degree1 + 1, nodes1, degree2 + 1, nodes2, enum_)
-          if (enum_ == 2) then  ! Disjoint
+          if (enum_ == BoxIntersectionType_DISJOINT) then
              does_intersect = .FALSE.
              return
           end if
@@ -835,7 +838,7 @@ contains
 
   end subroutine from_linearized
 
-  subroutine in_interval(value_, start, end, result_)
+  pure subroutine in_interval(value_, start, end, result_)
 
     real(dp), intent(in) :: value_, start, end
     logical(1), intent(out) :: result_
@@ -843,5 +846,104 @@ contains
     result_ = (start <= value_) .AND. (value_ <= end)
 
   end subroutine in_interval
+
+  subroutine bbox_line_intersect( &
+       num_nodes, nodes, line_start, line_end, enum_)
+
+    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
+    integer :: num_nodes
+    real(dp), intent(in) :: nodes(num_nodes, 2)
+    real(dp), intent(in) :: line_start(1, 2)
+    real(dp), intent(in) :: line_end(1, 2)
+    integer, intent(out) :: enum_
+    ! Variables outside of signature.
+    real(dp) :: left, right, bottom, top
+    real(dp) :: segment_start(1, 2)
+    real(dp) :: segment_end(1, 2)
+    real(dp) :: s_curr, t_curr
+    logical(1) :: success, predicate1, predicate2
+
+    call bbox(num_nodes, nodes, left, right, bottom, top)
+
+    ! Check if line start is inside the bounding box.
+    call in_interval(line_start(1, 1), left, right, predicate1)
+    call in_interval(line_start(1, 2), bottom, top, predicate2)
+    if (predicate1 .AND. predicate2) then
+       enum_ = BoxIntersectionType_INTERSECTION
+       return
+    end if
+
+    ! Check if line end is inside the bounding box.
+    call in_interval(line_end(1, 1), left, right, predicate1)
+    call in_interval(line_end(1, 2), bottom, top, predicate2)
+    if (predicate1 .AND. predicate2) then
+       enum_ = BoxIntersectionType_INTERSECTION
+       return
+    end if
+
+    ! NOTE: We allow ``segment_intersection`` to fail below (i.e.
+    !       ``success=False``). At first, this may appear to "ignore"
+    !       some potential intersections of parallel lines. However,
+    !       no intersections will be missed. If parallel lines don't
+    !       overlap, then there is nothing to miss. If they do overlap,
+    !       then either the segment will have endpoints on the box (already
+    !       covered by the checks above) or the segment will contain an
+    !       entire side of the box, which will force it to intersect the 3
+    !       edges that meet at the two ends of those sides. The parallel
+    !       edge will be skipped, but the other two will be covered.
+
+    ! Bottom Edge
+    segment_start(1, 1) = left
+    segment_start(1, 2) = bottom
+    segment_end(1, 1) = right
+    segment_end(1, 2) = bottom
+    call segment_intersection( &
+         segment_start, segment_end, line_start, line_end, &
+         s_curr, t_curr, success)
+    call in_interval(s_curr, 0.0_dp, 1.0_dp, predicate1)
+    call in_interval(t_curr, 0.0_dp, 1.0_dp, predicate2)
+    if (success .AND. predicate1 .AND. predicate2) then
+       enum_ = BoxIntersectionType_INTERSECTION
+       return
+    end if
+
+    ! Right Edge
+    segment_start(1, 1) = right
+    segment_start(1, 2) = bottom
+    segment_end(1, 1) = right
+    segment_end(1, 2) = top
+    call segment_intersection( &
+         segment_start, segment_end, line_start, line_end, &
+         s_curr, t_curr, success)
+    call in_interval(s_curr, 0.0_dp, 1.0_dp, predicate1)
+    call in_interval(t_curr, 0.0_dp, 1.0_dp, predicate2)
+    if (success .AND. predicate1 .AND. predicate2) then
+       enum_ = BoxIntersectionType_INTERSECTION
+       return
+    end if
+
+    ! Top Edge
+    segment_start(1, 1) = right
+    segment_start(1, 2) = top
+    segment_end(1, 1) = left
+    segment_end(1, 2) = top
+    call segment_intersection( &
+         segment_start, segment_end, line_start, line_end, &
+         s_curr, t_curr, success)
+    call in_interval(s_curr, 0.0_dp, 1.0_dp, predicate1)
+    call in_interval(t_curr, 0.0_dp, 1.0_dp, predicate2)
+    if (success .AND. predicate1 .AND. predicate2) then
+       enum_ = BoxIntersectionType_INTERSECTION
+       return
+    end if
+
+    ! NOTE: We skip the "last" edge. This is because any curve
+    !       that doesn't have an endpoint on a curve must cross
+    !       at least two, so we will have already covered such curves
+    !       in one of the branches above.
+
+    enum_ = BoxIntersectionType_DISJOINT
+
+  end subroutine bbox_line_intersect
 
 end module speedup

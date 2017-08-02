@@ -10,15 +10,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import itertools
 import unittest
 
 import mock
 import numpy as np
+import six
 
 from tests import utils
 
 
 SPACING = np.spacing  # pylint: disable=no-member
+UNIT_SQUARE = np.asfortranarray([
+    [0.0, 0.0],
+    [1.0, 0.0],
+    [1.0, 1.0],
+    [0.0, 1.0],
+])
 
 
 def check_intersection(test_case, intersection, expected,
@@ -75,13 +83,6 @@ class Test__check_close(utils.NumPyTestCase):
 
 class Test__bbox_intersect(unittest.TestCase):
 
-    UNIT_SQUARE = np.asfortranarray([
-        [0.0, 0.0],
-        [1.0, 0.0],
-        [1.0, 1.0],
-        [0.0, 1.0],
-    ])
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _intersection_helpers
@@ -91,32 +92,32 @@ class Test__bbox_intersect(unittest.TestCase):
     def test_intersect(self):
         from bezier import _intersection_helpers
 
-        nodes = self.UNIT_SQUARE + np.asfortranarray([[0.5, 0.5]])
-        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        nodes = UNIT_SQUARE + np.asfortranarray([[0.5, 0.5]])
+        result = self._call_function_under_test(UNIT_SQUARE, nodes)
         expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_far_apart(self):
         from bezier import _intersection_helpers
 
-        nodes = self.UNIT_SQUARE + np.asfortranarray([[100.0, 100.0]])
-        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        nodes = UNIT_SQUARE + np.asfortranarray([[100.0, 100.0]])
+        result = self._call_function_under_test(UNIT_SQUARE, nodes)
         expected = _intersection_helpers.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
     def test_disjoint_but_aligned(self):
         from bezier import _intersection_helpers
 
-        nodes = self.UNIT_SQUARE + np.asfortranarray([[1.0, 2.0]])
-        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        nodes = UNIT_SQUARE + np.asfortranarray([[1.0, 2.0]])
+        result = self._call_function_under_test(UNIT_SQUARE, nodes)
         expected = _intersection_helpers.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
     def test_tangent(self):
         from bezier import _intersection_helpers
 
-        nodes = self.UNIT_SQUARE + np.asfortranarray([[1.0, 0.0]])
-        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        nodes = UNIT_SQUARE + np.asfortranarray([[1.0, 0.0]])
+        result = self._call_function_under_test(UNIT_SQUARE, nodes)
         expected = _intersection_helpers.BoxIntersectionType.TANGENT
         self.assertEqual(result, expected)
 
@@ -124,8 +125,8 @@ class Test__bbox_intersect(unittest.TestCase):
         from bezier import _intersection_helpers
 
         x_val = 1.0 + SPACING(1.0)
-        nodes = self.UNIT_SQUARE + np.asfortranarray([[x_val, 0.0]])
-        result = self._call_function_under_test(self.UNIT_SQUARE, nodes)
+        nodes = UNIT_SQUARE + np.asfortranarray([[x_val, 0.0]])
+        result = self._call_function_under_test(UNIT_SQUARE, nodes)
         expected = _intersection_helpers.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
@@ -433,8 +434,6 @@ class Test__newton_refine(utils.NumPyTestCase):
         self.assertLess(abs(known_t - new_t), abs(known_t - wrong_t))
 
     def test_convergence(self):
-        import six
-
         import bezier
 
         nodes1 = np.asfortranarray([
@@ -1056,6 +1055,93 @@ class Test__tangent_bbox_intersection(utils.NumPyTestCase):
                            curve1, curve2, 1.0, 0.0)
 
 
+class Test__bbox_line_intersect(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, line_start, line_end):
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers._bbox_line_intersect(
+            nodes, line_start, line_end)
+
+    def test_start_in_bbox(self):
+        from bezier import _intersection_helpers
+
+        line_start = np.asfortranarray([[0.5, 0.5]])
+        line_end = np.asfortranarray([[0.5, 1.5]])
+
+        result = self._call_function_under_test(
+            UNIT_SQUARE, line_start, line_end)
+        expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
+        self.assertEqual(result, expected)
+
+    def test_end_in_bbox(self):
+        from bezier import _intersection_helpers
+
+        line_start = np.asfortranarray([[-1.0, 0.5]])
+        line_end = np.asfortranarray([[0.5, 0.5]])
+
+        result = self._call_function_under_test(
+            UNIT_SQUARE, line_start, line_end)
+        expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
+        self.assertEqual(result, expected)
+
+    def test_segment_intersect_bbox_bottom(self):
+        from bezier import _intersection_helpers
+
+        line_start = np.asfortranarray([[0.5, -0.5]])
+        line_end = np.asfortranarray([[0.5, 1.5]])
+
+        result = self._call_function_under_test(
+            UNIT_SQUARE, line_start, line_end)
+        expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
+        self.assertEqual(result, expected)
+
+    def test_segment_intersect_bbox_right(self):
+        from bezier import _intersection_helpers
+
+        line_start = np.asfortranarray([[-0.5, 0.5]])
+        line_end = np.asfortranarray([[1.5, 0.5]])
+
+        result = self._call_function_under_test(
+            UNIT_SQUARE, line_start, line_end)
+        expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
+        self.assertEqual(result, expected)
+
+    def test_segment_intersect_bbox_top(self):
+        from bezier import _intersection_helpers
+
+        line_start = np.asfortranarray([[-0.25, 0.5]])
+        line_end = np.asfortranarray([[0.5, 1.25]])
+
+        result = self._call_function_under_test(
+            UNIT_SQUARE, line_start, line_end)
+        expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
+        self.assertEqual(result, expected)
+
+    def test_disjoint(self):
+        from bezier import _intersection_helpers
+
+        line_start = np.asfortranarray([[2.0, 2.0]])
+        line_end = np.asfortranarray([[2.0, 5.0]])
+
+        result = self._call_function_under_test(
+            UNIT_SQUARE, line_start, line_end)
+        expected = _intersection_helpers.BoxIntersectionType.DISJOINT
+        self.assertEqual(result, expected)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_bbox_line_intersect(Test__bbox_line_intersect):
+
+    @staticmethod
+    def _call_function_under_test(nodes, line_start, line_end):
+        from bezier import _speedup
+
+        return _speedup.speedup.bbox_line_intersect(
+            nodes, line_start, line_end)
+
+
 class Test_intersect_one_round(utils.NumPyTestCase):
 
     # NOTE: NODES1 is a specialization of [0, 0], [1/2, 1], [1, 1]
@@ -1158,7 +1244,6 @@ class Test__next_candidates(unittest.TestCase):
         return _intersection_helpers._next_candidates(first, second)
 
     def test_it(self):
-        import itertools
         import bezier
         from bezier import _intersection_helpers
 
@@ -1197,7 +1282,6 @@ class Test__all_intersections_geometric(utils.NumPyTestCase):
         self.assertEqual(intersections, [])
 
     def test_tangent(self):
-        import itertools
         import bezier
 
         nodes = np.asfortranarray([
@@ -1343,6 +1427,43 @@ class Test_all_intersections(utils.NumPyTestCase):
     def test_unknown_strategy(self):
         with self.assertRaises(ValueError):
             self._call_function_under_test(None, strategy=None)
+
+
+class TestBoxIntersectionType(unittest.TestCase):
+
+    @staticmethod
+    def _get_target_class():
+        from bezier import _intersection_helpers
+
+        return _intersection_helpers.BoxIntersectionType
+
+    def _is_magic_method(self, name):
+        if name.startswith('_'):
+            self.assertTrue(name.startswith('__'))
+            self.assertTrue(name.endswith('__'))
+            return True
+        else:
+            return False
+
+    @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+    def test_verify_fortran_enums(self):
+        from bezier import _speedup
+
+        klass = self._get_target_class()
+        props = set(
+            name
+            for name in six.iterkeys(klass.__dict__)
+            if not self._is_magic_method(name)
+        )
+        expected_props = set(['INTERSECTION', 'TANGENT', 'DISJOINT'])
+        self.assertEqual(props, expected_props)
+
+        # Actually verify the enums.
+        speedup = _speedup.speedup
+        self.assertEqual(
+            klass.INTERSECTION, speedup.BoxIntersectionType_INTERSECTION)
+        self.assertEqual(klass.TANGENT, speedup.BoxIntersectionType_TANGENT)
+        self.assertEqual(klass.DISJOINT, speedup.BoxIntersectionType_DISJOINT)
 
 
 class TestLinearization(utils.NumPyTestCase):

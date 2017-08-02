@@ -15,6 +15,9 @@ python module _speedup
     interface
         module speedup
             integer, parameter,optional :: dp=kind(0.d0)
+            integer, parameter,optional :: BoxIntersectionType_INTERSECTION=0
+            integer, parameter,optional :: BoxIntersectionType_TANGENT=1
+            integer, parameter,optional :: BoxIntersectionType_DISJOINT=2
             subroutine de_casteljau_one_round(num_nodes,dimension_,nodes,degree,lambda1,lambda2,lambda3,new_nodes)
                 integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
                 integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
@@ -207,6 +210,13 @@ python module _speedup
                 }
                 '''
             end subroutine from_linearized
+            subroutine bbox_line_intersect(num_nodes,nodes,line_start,line_end,enum_)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                real(kind=dp) dimension(num_nodes,2),intent(in) :: nodes
+                real(kind=dp) dimension(1,2),intent(in) :: line_start
+                real(kind=dp) dimension(1,2),intent(in) :: line_end
+                integer intent(out) :: enum_
+            end subroutine bbox_line_intersect
         end module speedup
     end interface
 end python module _speedup
