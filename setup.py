@@ -24,10 +24,7 @@ import setuptools
 
 VERSION = '0.4.0.dev1'  # Also in codemeta.json
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
-
-with open(os.path.join(PACKAGE_ROOT, 'README.rst.template')) as file_obj:
-    TEMPLATE = file_obj.read()
-
+TEMPLATE_FILENAME = os.path.join(PACKAGE_ROOT, 'README.rst.template')
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
@@ -51,39 +48,17 @@ Sorry for this inconvenience. For more information or to help, visit:
     https://github.com/dhermes/bezier/issues/26
 """
 IMG_PREFIX_TEMPLATE = 'https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/'
-IMG_PREFIX = IMG_PREFIX_TEMPLATE.format(revision=VERSION)
 EXTRA_LINKS_TEMPLATE = """\
 .. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html
 .. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html
 .. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
 """
-EXTRA_LINKS = EXTRA_LINKS_TEMPLATE.format(
-    rtd_version=VERSION, revision=VERSION)
 DOCS_IMG_TEMPLATE = """\
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}
    :target: https://bezier.readthedocs.io/en/{rtd_version}/
    :alt: Documentation Status
 """
-DOCS_IMG = DOCS_IMG_TEMPLATE.format(rtd_version=VERSION)
-README = TEMPLATE.format(
-    img_prefix=IMG_PREFIX,
-    extra_links=EXTRA_LINKS,
-    docs='|docs|',
-    docs_img=DOCS_IMG,
-    pypi='',
-    pypi_img='',
-    versions=' ',  # Space before "|docs|".
-    versions_img='',
-    rtd_version=VERSION,
-    coveralls_branch=VERSION,
-    revision=VERSION,
-    zenodo='',
-    zenodo_img='',
-    joss='',
-    joss_img='',
-)
-
 REQUIREMENTS = (
     'numpy >= 1.11.2',
     'six >= 1.9.0',
@@ -143,6 +118,33 @@ def extension_modules():
         return []
 
 
+def make_readme():
+    with open(TEMPLATE_FILENAME, 'r') as file_obj:
+        template = file_obj.read()
+
+    img_prefix = IMG_PREFIX_TEMPLATE.format(revision=VERSION)
+    extra_links = EXTRA_LINKS_TEMPLATE.format(
+        rtd_version=VERSION, revision=VERSION)
+    docs_img = DOCS_IMG_TEMPLATE.format(rtd_version=VERSION)
+    return template.format(
+        img_prefix=img_prefix,
+        extra_links=extra_links,
+        docs='|docs|',
+        docs_img=docs_img,
+        pypi='',
+        pypi_img='',
+        versions=' ',  # Space before "|docs|".
+        versions_img='',
+        rtd_version=VERSION,
+        coveralls_branch=VERSION,
+        revision=VERSION,
+        zenodo='',
+        zenodo_img='',
+        joss='',
+        joss_img='',
+    )
+
+
 def setup():
     from numpy.distutils import core
 
@@ -152,7 +154,7 @@ def setup():
         description=DESCRIPTION,
         author='Danny Hermes',
         author_email='daniel.j.hermes@gmail.com',
-        long_description=README,
+        long_description=make_readme(),
         scripts=(),
         url='https://github.com/dhermes/bezier',
         packages=setuptools.find_packages('src'),
