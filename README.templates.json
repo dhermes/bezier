@@ -1,0 +1,5 @@
+{
+  "docs_img": ".. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}\n   :target: https://bezier.readthedocs.io/en/{rtd_version}/\n   :alt: Documentation Status\n", 
+  "extra_links": ".. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html\n.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html\n.. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html\n.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst\n", 
+  "img_prefix": "https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/"
+}

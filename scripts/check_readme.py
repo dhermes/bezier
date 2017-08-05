@@ -16,26 +16,16 @@
 from __future__ import print_function
 
 import difflib
+import json
 import os
 
 
 _SCRIPTS_DIR = os.path.dirname(__file__)
 _ROOT_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, '..'))
 TEMPLATE_FILE = os.path.join(_ROOT_DIR, 'README.rst.template')
+TEMPLATES_FILE = os.path.join(_ROOT_DIR, 'README.templates.json')
 ACTUAL_FILE = os.path.join(_ROOT_DIR, 'README.rst')
 
-IMG_PREFIX_TEMPLATE = 'https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/'
-EXTRA_LINKS_TEMPLATE = """\
-.. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html
-.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html
-.. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html
-.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
-"""
-DOCS_IMG_TEMPLATE = """\
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}
-   :target: https://bezier.readthedocs.io/en/{rtd_version}/
-   :alt: Documentation Status
-"""
 PYPI_IMG = """
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
    :target: https://pypi.python.org/pypi/bezier
@@ -83,12 +73,15 @@ def main():
     with open(TEMPLATE_FILE, 'r') as file_obj:
         template = file_obj.read()
 
+    with open(TEMPLATES_FILE, 'r') as file_obj:
+        templates_info = json.load(file_obj)
+
     rtd_version = 'latest'
     revision = 'master'
-    img_prefix = IMG_PREFIX_TEMPLATE.format(revision=revision)
-    extra_links = EXTRA_LINKS_TEMPLATE.format(
+    img_prefix = templates_info['img_prefix'].format(revision=revision)
+    extra_links = templates_info['extra_links'].format(
         rtd_version=rtd_version, revision=revision)
-    docs_img = DOCS_IMG_TEMPLATE.format(rtd_version=rtd_version)
+    docs_img = templates_info['docs_img'].format(rtd_version=rtd_version)
     expected = template.format(
         img_prefix=img_prefix,
         extra_links=extra_links,

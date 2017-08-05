@@ -14,6 +14,7 @@
 
 from __future__ import print_function
 
+import json
 import os
 import pkg_resources
 import platform
@@ -25,6 +26,7 @@ import setuptools
 VERSION = '0.4.0.dev1'  # Also in codemeta.json
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 TEMPLATE_FILENAME = os.path.join(PACKAGE_ROOT, 'README.rst.template')
+TEMPLATES_FILENAME = os.path.join(PACKAGE_ROOT, 'README.templates.json')
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
@@ -46,18 +48,6 @@ Skipping Fortran extension speedups on Windows.
 Sorry for this inconvenience. For more information or to help, visit:
 
     https://github.com/dhermes/bezier/issues/26
-"""
-IMG_PREFIX_TEMPLATE = 'https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/'
-EXTRA_LINKS_TEMPLATE = """\
-.. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html
-.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html
-.. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html
-.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
-"""
-DOCS_IMG_TEMPLATE = """\
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}
-   :target: https://bezier.readthedocs.io/en/{rtd_version}/
-   :alt: Documentation Status
 """
 REQUIREMENTS = (
     'numpy >= 1.11.2',
@@ -122,10 +112,13 @@ def make_readme():
     with open(TEMPLATE_FILENAME, 'r') as file_obj:
         template = file_obj.read()
 
-    img_prefix = IMG_PREFIX_TEMPLATE.format(revision=VERSION)
-    extra_links = EXTRA_LINKS_TEMPLATE.format(
+    with open(TEMPLATES_FILENAME, 'r') as file_obj:
+        templates_info = json.load(file_obj)
+
+    img_prefix = templates_info['img_prefix'].format(revision=VERSION)
+    extra_links = templates_info['extra_links'].format(
         rtd_version=VERSION, revision=VERSION)
-    docs_img = DOCS_IMG_TEMPLATE.format(rtd_version=VERSION)
+    docs_img = templates_info['docs_img'].format(rtd_version=VERSION)
     return template.format(
         img_prefix=img_prefix,
         extra_links=extra_links,
