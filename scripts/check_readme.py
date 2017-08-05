@@ -174,12 +174,19 @@ def get_diff(value1, value2, name1, name2):
     return ''.join(diff_lines)
 
 
-def readme_verify():
-    """Populate the template and compare to ``README``.
+def populate_readme(revision, rtd_version):
+    """Populate README template with values.
+
+    Args:
+        revision (str): The branch, commit, etc. being referred to (e.g.
+            ``master``).
+        rtd_version (str): The version to use for RTD (Read the Docs) links
+            (e.g. ``latest``).
+
+    Returns:
+        str: The populated README contents.
 
     Raises:
-        ValueError: If the current README doesn't agree with the expected
-            value computed from the template.
         ValueError: If the ``sphinx_modules`` encountered are not as expected.
         ValueError: If the ``sphinx_docs`` encountered are not as expected.
     """
@@ -189,15 +196,16 @@ def readme_verify():
     with open(TEMPLATES_FILE, 'r') as file_obj:
         templates_info = json.load(file_obj)
 
-    img_prefix = templates_info['img_prefix'].format(revision=REVISION)
+    img_prefix = templates_info['img_prefix'].format(revision=revision)
     extra_links = templates_info['extra_links'].format(
-        rtd_version=RTD_VERSION, revision=REVISION)
-    docs_img = templates_info['docs_img'].format(rtd_version=RTD_VERSION)
+        rtd_version=rtd_version, revision=revision)
+    docs_img = templates_info['docs_img'].format(rtd_version=rtd_version)
     bernstein_basis = templates_info['bernstein_basis'].format(
         img_prefix=img_prefix)
     bezier_defn = templates_info['bezier_defn'].format(img_prefix=img_prefix)
     sum_to_unity = templates_info['sum_to_unity'].format(img_prefix=img_prefix)
-    expected = template.format(
+
+    readme_contents = template.format(
         code_block1=PLAIN_CODE_BLOCK,
         code_block2=PLAIN_CODE_BLOCK,
         code_block3=PLAIN_CODE_BLOCK,
@@ -214,9 +222,9 @@ def readme_verify():
         pypi_img=PYPI_IMG,
         versions='|versions|\n\n',
         versions_img=VERSIONS_IMG,
-        rtd_version=RTD_VERSION,
+        rtd_version=rtd_version,
         coveralls_branch='master',
-        revision=REVISION,
+        revision=revision,
         zenodo='|zenodo|',
         zenodo_img=ZENODO_IMG,
         joss=' |JOSS|',
@@ -224,22 +232,33 @@ def readme_verify():
     )
 
     # Apply regular expressions to convert Sphinx "roles" to plain reST.
-    expected = INLINE_MATH_EXPR.sub(inline_math, expected)
+    readme_contents = INLINE_MATH_EXPR.sub(inline_math, readme_contents)
 
     sphinx_modules = []
     to_replace = functools.partial(
         mod_replace, sphinx_modules=sphinx_modules)
-    expected = MOD_EXPR.sub(to_replace, expected)
+    readme_contents = MOD_EXPR.sub(to_replace, readme_contents)
     if sphinx_modules != ['bezier.curve', 'bezier.surface']:
         raise ValueError('Unexpected sphinx_modules', sphinx_modules)
 
     sphinx_docs = []
     to_replace = functools.partial(
         doc_replace, sphinx_docs=sphinx_docs)
-    expected = DOC_EXPR.sub(to_replace, expected)
+    readme_contents = DOC_EXPR.sub(to_replace, readme_contents)
     if sphinx_docs != ['reference/bezier', 'development']:
         raise ValueError('Unexpected sphinx_docs', sphinx_docs)
 
+    return readme_contents
+
+
+def readme_verify():
+    """Populate the template and compare to ``README``.
+
+    Raises:
+        ValueError: If the current README doesn't agree with the expected
+            value computed from the template.
+    """
+    expected = populate_readme(REVISION, RTD_VERSION)
     # Actually get the stored contents.
     with open(README_FILE, 'r') as file_obj:
         contents = file_obj.read()
