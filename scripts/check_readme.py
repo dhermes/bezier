@@ -24,6 +24,18 @@ _ROOT_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, '..'))
 TEMPLATE_FILE = os.path.join(_ROOT_DIR, 'README.rst.template')
 ACTUAL_FILE = os.path.join(_ROOT_DIR, 'README.rst')
 
+IMG_PREFIX_TEMPLATE = 'https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/'
+EXTRA_LINKS_TEMPLATE = """\
+.. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html
+.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html
+.. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html
+.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
+"""
+DOCS_IMG_TEMPLATE = """\
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}
+   :target: https://bezier.readthedocs.io/en/{rtd_version}/
+   :alt: Documentation Status
+"""
 PYPI_IMG = """
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
    :target: https://pypi.python.org/pypi/bezier
@@ -71,15 +83,25 @@ def main():
     with open(TEMPLATE_FILE, 'r') as file_obj:
         template = file_obj.read()
 
+    rtd_version = 'latest'
+    revision = 'master'
+    img_prefix = IMG_PREFIX_TEMPLATE.format(revision=revision)
+    extra_links = EXTRA_LINKS_TEMPLATE.format(
+        rtd_version=rtd_version, revision=revision)
+    docs_img = DOCS_IMG_TEMPLATE.format(rtd_version=rtd_version)
     expected = template.format(
+        img_prefix=img_prefix,
+        extra_links=extra_links,
+        docs='|docs| ',
+        docs_img=docs_img,
         pypi='\n\n|pypi| ',
         pypi_img=PYPI_IMG,
         versions='|versions|\n\n',
         versions_img=VERSIONS_IMG,
-        rtd_version='latest',
+        rtd_version=rtd_version,
         coveralls_branch='master',
-        revision='master',
-        zenodo=' |zenodo|',
+        revision=revision,
+        zenodo='|zenodo|',
         zenodo_img=ZENODO_IMG,
         joss=' |JOSS|',
         joss_img=JOSS_IMG,

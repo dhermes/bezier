@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |appveyor-build| |coverage|{pypi}{versions}|docs|{zenodo}{joss}
+|circle-build| |appveyor-build| |coverage|{pypi}{versions}{docs}{zenodo}{joss}
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -15,11 +15,8 @@ This library provides:
 
 Dive in and take a look!
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/surfaces6Q_and_7Q.png
+.. image:: {img_prefix}images/surfaces6Q_and_7Q.png
    :align: center
-
-.. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html
-.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html
 
 Why B |eacute| zier?
 --------------------
@@ -27,17 +24,17 @@ Why B |eacute| zier?
 A B |eacute| zier curves (and surface, etc.) is a parametric curve
 that uses the `Bernstein basis`_:
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/bernstein_basis.png
+.. image:: {img_prefix}images/bernstein_basis.png
    :align: center
 
 to define a curve as a linear combination:
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/bezier_defn.png
+.. image:: {img_prefix}images/bezier_defn.png
    :align: center
 
 This comes from the fact that the weights sum to one:
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/sum_to_unity.png
+.. image:: {img_prefix}images/sum_to_unity.png
    :align: center
 
 This can be generalized to higher order by considering three, four, etc.
@@ -141,13 +138,11 @@ intersections):
    >>> _ = ax.set_ylim(-0.0625, 0.625)
    >>> plt.show()
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/images/curves1_and_13.png
+.. image:: {img_prefix}images/curves1_and_13.png
    :align: center
 
 For API-level documentation, check out the B |eacute| zier
 `Package`_ documentation.
-
-.. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html
 
 Development
 -----------
@@ -156,20 +151,15 @@ To work on adding a feature or to run the functional tests, see the
 `DEVELOPMENT doc`_ for more information on how to get
 started.
 
-.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
-
 License
 -------
 
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/{revision}/LICENSE
+{extra_links}.. _the LICENSE: https://github.com/dhermes/bezier/blob/{revision}/LICENSE
 
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}
-   :target: https://bezier.readthedocs.io/en/{rtd_version}/
-   :alt: Documentation Status
-.. |circle-build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
+{docs_img}.. |circle-build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
    :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
 .. |appveyor-build| image:: https://ci.appveyor.com/api/projects/status/github/dhermes/bezier?svg=true

@@ -22,9 +22,6 @@ Dive in and take a look!
 .. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/surfaces6Q_and_7Q.png
    :align: center
 
-.. _Curves: https://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
-.. _Surfaces: https://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
-
 Why B |eacute| zier?
 --------------------
 
@@ -151,8 +148,6 @@ intersections):
 For API-level documentation, check out the B |eacute| zier
 `Package`_ documentation.
 
-.. _Package: https://bezier.readthedocs.io/en/latest/reference/bezier.html
-
 Development
 -----------
 
@@ -160,14 +155,16 @@ To work on adding a feature or to run the functional tests, see the
 `DEVELOPMENT doc`_ for more information on how to get
 started.
 
-.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/master/DEVELOPMENT.rst
-
 License
 -------
 
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
+.. _Curves: https://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
+.. _Surfaces: https://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
+.. _Package: https://bezier.readthedocs.io/en/latest/reference/bezier.html
+.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/master/DEVELOPMENT.rst
 .. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
 
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=latest

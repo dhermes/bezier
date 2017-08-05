@@ -3,7 +3,11 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |appveyor-build| |coverage| |pypi| |versions|
+|circle-build| |appveyor-build| |coverage|
+
+|pypi| |versions|
+
+|zenodo| |JOSS|
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -213,3 +217,9 @@ details, see `the LICENSE`_.
 .. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch=master
    :target: https://coveralls.io/github/dhermes/bezier?branch=master
    :alt: Code Coverage
+.. |zenodo| image:: https://zenodo.org/badge/73047402.svg
+   :target: https://zenodo.org/badge/latestdoi/73047402
+   :alt: Zenodo DOI for ``bezier``
+.. |JOSS| image:: http://joss.theoj.org/papers/10.21105/joss.00267/status.svg
+   :target: https://dx.doi.org/10.21105/joss.00267
+   :alt: "Journal of Open Source Science" DOI for ``bezier``
