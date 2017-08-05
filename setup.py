@@ -27,6 +27,7 @@ VERSION = '0.4.0.dev1'  # Also in codemeta.json
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 TEMPLATE_FILENAME = os.path.join(PACKAGE_ROOT, 'README.rst.template')
 TEMPLATES_FILENAME = os.path.join(PACKAGE_ROOT, 'README.templates.json')
+PLAIN_CODE_BLOCK = '.. code-block:: python'
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
@@ -119,7 +120,19 @@ def make_readme():
     extra_links = templates_info['extra_links'].format(
         rtd_version=VERSION, revision=VERSION)
     docs_img = templates_info['docs_img'].format(rtd_version=VERSION)
+    bernstein_basis = templates_info['bernstein_basis'].format(
+        img_prefix=img_prefix)
+    bezier_defn = templates_info['bezier_defn'].format(img_prefix=img_prefix)
+    sum_to_unity = templates_info['sum_to_unity'].format(img_prefix=img_prefix)
     return template.format(
+        code_block1=PLAIN_CODE_BLOCK,
+        code_block2=PLAIN_CODE_BLOCK,
+        code_block3=PLAIN_CODE_BLOCK,
+        testcleanup='',
+        toctree='',
+        bernstein_basis=bernstein_basis,
+        bezier_defn=bezier_defn,
+        sum_to_unity=sum_to_unity,
         img_prefix=img_prefix,
         extra_links=extra_links,
         docs='|docs|',

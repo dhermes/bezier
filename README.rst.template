@@ -8,10 +8,10 @@
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
-This library provides:
+{toctree}This library provides:
 
-* Support for B |eacute| zier `Curves`_
-* Support for B |eacute| zier `Surfaces`_
+* Support for B |eacute| zier :mod:`Curves <bezier.curve>`
+* Support for B |eacute| zier :mod:`Surfaces <bezier.surface>`
 
 Dive in and take a look!
 
@@ -24,22 +24,19 @@ Why B |eacute| zier?
 A B |eacute| zier curve (and surface, etc.) is a parametric curve
 that uses the `Bernstein basis`_:
 
-.. image:: {img_prefix}images/bernstein_basis.png
-   :align: center
+{bernstein_basis}
 
 to define a curve as a linear combination:
 
-.. image:: {img_prefix}images/bezier_defn.png
-   :align: center
+{bezier_defn}
 
 This comes from the fact that the weights sum to one:
 
-.. image:: {img_prefix}images/sum_to_unity.png
-   :align: center
+{sum_to_unity}
 
 This can be generalized to higher order by considering three, four, etc.
 non-negative weights that sum to one (in the above we have the two
-non-negative weights ``s`` and ``1 - s``).
+non-negative weights :math:`s` and :math:`1 - s`).
 
 Due to their simple form, B |eacute| zier curves:
 
@@ -90,7 +87,7 @@ Getting Started
 
 For example, to create a curve:
 
-.. code-block:: python
+{code_block1}
 
    >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.0],
@@ -102,7 +99,7 @@ For example, to create a curve:
 The intersection (points) between two curves can
 also be determined:
 
-.. code-block:: python
+{code_block2}
 
    >>> nodes2 = np.asfortranarray([
    ...     [0.0 ,  0.0],
@@ -122,7 +119,7 @@ also be determined:
 and then we can plot these curves (along with their
 intersections):
 
-.. code-block:: python
+{code_block3}
 
    >>> import matplotlib.pyplot as plt
    >>> import seaborn
@@ -138,17 +135,17 @@ intersections):
    >>> _ = ax.set_ylim(-0.0625, 0.625)
    >>> plt.show()
 
-.. image:: {img_prefix}images/curves1_and_13.png
+{testcleanup}.. image:: {img_prefix}images/curves1_and_13.png
    :align: center
 
 For API-level documentation, check out the B |eacute| zier
-`Package`_ documentation.
+:doc:`Package <reference/bezier>` documentation.
 
 Development
 -----------
 
 To work on adding a feature or to run the functional tests, see the
-`DEVELOPMENT doc`_ for more information on how to get
+:doc:`DEVELOPMENT doc <development>` for more information on how to get
 started.
 
 License

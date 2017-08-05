@@ -1,5 +1,8 @@
 {
-  "docs_img": ".. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}\n   :target: https://bezier.readthedocs.io/en/{rtd_version}/\n   :alt: Documentation Status\n", 
-  "extra_links": ".. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html\n.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html\n.. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html\n.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst\n", 
-  "img_prefix": "https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/"
+  "bernstein_basis": ".. image:: {img_prefix}images/bernstein_basis.png\n   :align: center",
+  "bezier_defn": ".. image:: {img_prefix}images/bezier_defn.png\n   :align: center",
+  "docs_img": ".. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}\n   :target: https://bezier.readthedocs.io/en/{rtd_version}/\n   :alt: Documentation Status\n",
+  "extra_links": ".. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html\n.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html\n.. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html\n.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst\n",
+  "img_prefix": "https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/",
+  "sum_to_unity": ".. image:: {img_prefix}images/sum_to_unity.png\n   :align: center"
 }

@@ -34,7 +34,7 @@ Dive in and take a look!
 Why B |eacute| zier?
 --------------------
 
-A B |eacute| zier curves (and surface, etc.) is a parametric curve
+A B |eacute| zier curve (and surface, etc.) is a parametric curve
 that uses the `Bernstein basis`_:
 
 .. math::
