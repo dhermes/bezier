@@ -14,7 +14,6 @@
 
 from __future__ import print_function
 
-import json
 import os
 import pkg_resources
 import platform
@@ -25,9 +24,7 @@ import setuptools
 
 VERSION = '0.4.0.dev1'  # Also in codemeta.json
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
-TEMPLATE_FILENAME = os.path.join(PACKAGE_ROOT, 'README.rst.template')
-TEMPLATES_FILENAME = os.path.join(PACKAGE_ROOT, 'README.templates.json')
-PLAIN_CODE_BLOCK = '.. code-block:: python'
+TEMPLATE_FILENAME = os.path.join(PACKAGE_ROOT, 'RELEASE_README.rst.template')
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
@@ -113,42 +110,7 @@ def make_readme():
     with open(TEMPLATE_FILENAME, 'r') as file_obj:
         template = file_obj.read()
 
-    with open(TEMPLATES_FILENAME, 'r') as file_obj:
-        templates_info = json.load(file_obj)
-
-    img_prefix = templates_info['img_prefix'].format(revision=VERSION)
-    extra_links = templates_info['extra_links'].format(
-        rtd_version=VERSION, revision=VERSION)
-    docs_img = templates_info['docs_img'].format(rtd_version=VERSION)
-    bernstein_basis = templates_info['bernstein_basis'].format(
-        img_prefix=img_prefix)
-    bezier_defn = templates_info['bezier_defn'].format(img_prefix=img_prefix)
-    sum_to_unity = templates_info['sum_to_unity'].format(img_prefix=img_prefix)
-    return template.format(
-        code_block1=PLAIN_CODE_BLOCK,
-        code_block2=PLAIN_CODE_BLOCK,
-        code_block3=PLAIN_CODE_BLOCK,
-        testcleanup='',
-        toctree='',
-        bernstein_basis=bernstein_basis,
-        bezier_defn=bezier_defn,
-        sum_to_unity=sum_to_unity,
-        img_prefix=img_prefix,
-        extra_links=extra_links,
-        docs='|docs|',
-        docs_img=docs_img,
-        pypi='',
-        pypi_img='',
-        versions=' ',  # Space before "|docs|".
-        versions_img='',
-        rtd_version=VERSION,
-        coveralls_branch=VERSION,
-        revision=VERSION,
-        zenodo='',
-        zenodo_img='',
-        joss='',
-        joss_img='',
-    )
+    return template.format(version=VERSION)
 
 
 def setup():

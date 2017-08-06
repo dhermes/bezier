@@ -17,7 +17,6 @@ from __future__ import print_function
 
 import difflib
 import functools
-import json
 import os
 import re
 
@@ -25,7 +24,8 @@ import re
 _SCRIPTS_DIR = os.path.dirname(__file__)
 _ROOT_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, '..'))
 TEMPLATE_FILE = os.path.join(_ROOT_DIR, 'README.rst.template')
-TEMPLATES_FILE = os.path.join(_ROOT_DIR, 'README.templates.json')
+RELEASE_TEMPLATE_FILE = os.path.join(
+    _ROOT_DIR, 'RELEASE_README.rst.template')
 INDEX_FILE = os.path.join(_ROOT_DIR, 'docs', 'index.rst')
 README_FILE = os.path.join(_ROOT_DIR, 'README.rst')
 RTD_VERSION = 'latest'
@@ -79,19 +79,40 @@ TOCTREE = """\
    development
 
 """
+IMG_PREFIX = 'https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/'
+EXTRA_LINKS = """\
+.. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html
+.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html
+.. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html
+.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
+"""
 BERNSTEIN_BASIS_SPHINX = """\
 .. math::
 
    b_{j, n} = \\binom{n}{j} s^j (1 - s)^{n - j}"""
+BERNSTEIN_BASIS_PLAIN = """\
+.. image:: {img_prefix}images/bernstein_basis.png
+   :align: center"""
 BEZIER_DEFN_SPHINX = """\
 .. math::
 
    B(s) = \\sum_{j = 0}^n b_{j, n} \\cdot v_j."""
+BEZIER_DEFN_PLAIN = """\
+.. image:: {img_prefix}images/bezier_defn.png
+   :align: center"""
 SUM_TO_UNITY_SPHINX = """\
 .. math::
 
    b_{0, n} + b_{1, n} + \\cdots + b_{n, n} =
        \\left(s + (1 - s)\\right)^n = 1."""
+SUM_TO_UNITY_PLAIN = """\
+.. image:: {img_prefix}images/sum_to_unity.png
+   :align: center"""
+DOCS_IMG = """\
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}
+   :target: https://bezier.readthedocs.io/en/{rtd_version}/
+   :alt: Documentation Status
+"""
 PYPI_IMG = """
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
    :target: https://pypi.python.org/pypi/bezier
@@ -174,7 +195,7 @@ def get_diff(value1, value2, name1, name2):
     return ''.join(diff_lines)
 
 
-def populate_readme(revision, rtd_version):
+def populate_readme(revision, rtd_version, **extra_kwargs):
     """Populate README template with values.
 
     Args:
@@ -182,6 +203,7 @@ def populate_readme(revision, rtd_version):
             ``master``).
         rtd_version (str): The version to use for RTD (Read the Docs) links
             (e.g. ``latest``).
+        extra_kwargs (Dict[str, str]): Over-ride for template arguments.
 
     Returns:
         str: The populated README contents.
@@ -193,43 +215,41 @@ def populate_readme(revision, rtd_version):
     with open(TEMPLATE_FILE, 'r') as file_obj:
         template = file_obj.read()
 
-    with open(TEMPLATES_FILE, 'r') as file_obj:
-        templates_info = json.load(file_obj)
-
-    img_prefix = templates_info['img_prefix'].format(revision=revision)
-    extra_links = templates_info['extra_links'].format(
+    img_prefix = IMG_PREFIX.format(revision=revision)
+    extra_links = EXTRA_LINKS.format(
         rtd_version=rtd_version, revision=revision)
-    docs_img = templates_info['docs_img'].format(rtd_version=rtd_version)
-    bernstein_basis = templates_info['bernstein_basis'].format(
-        img_prefix=img_prefix)
-    bezier_defn = templates_info['bezier_defn'].format(img_prefix=img_prefix)
-    sum_to_unity = templates_info['sum_to_unity'].format(img_prefix=img_prefix)
+    docs_img = DOCS_IMG.format(rtd_version=rtd_version)
+    bernstein_basis = BERNSTEIN_BASIS_PLAIN.format(img_prefix=img_prefix)
+    bezier_defn = BEZIER_DEFN_PLAIN.format(img_prefix=img_prefix)
+    sum_to_unity = SUM_TO_UNITY_PLAIN.format(img_prefix=img_prefix)
 
-    readme_contents = template.format(
-        code_block1=PLAIN_CODE_BLOCK,
-        code_block2=PLAIN_CODE_BLOCK,
-        code_block3=PLAIN_CODE_BLOCK,
-        testcleanup='',
-        toctree='',
-        bernstein_basis=bernstein_basis,
-        bezier_defn=bezier_defn,
-        sum_to_unity=sum_to_unity,
-        img_prefix=img_prefix,
-        extra_links=extra_links,
-        docs='|docs| ',
-        docs_img=docs_img,
-        pypi='\n\n|pypi| ',
-        pypi_img=PYPI_IMG,
-        versions='|versions|\n\n',
-        versions_img=VERSIONS_IMG,
-        rtd_version=rtd_version,
-        coveralls_branch='master',
-        revision=revision,
-        zenodo='|zenodo|',
-        zenodo_img=ZENODO_IMG,
-        joss=' |JOSS|',
-        joss_img=JOSS_IMG,
-    )
+    template_kwargs = {
+        'code_block1': PLAIN_CODE_BLOCK,
+        'code_block2': PLAIN_CODE_BLOCK,
+        'code_block3': PLAIN_CODE_BLOCK,
+        'testcleanup': '',
+        'toctree': '',
+        'bernstein_basis': bernstein_basis,
+        'bezier_defn': bezier_defn,
+        'sum_to_unity': sum_to_unity,
+        'img_prefix': img_prefix,
+        'extra_links': extra_links,
+        'docs': '|docs| ',
+        'docs_img': docs_img,
+        'pypi': '\n\n|pypi| ',
+        'pypi_img': PYPI_IMG,
+        'versions': '|versions|\n\n',
+        'versions_img': VERSIONS_IMG,
+        'rtd_version': rtd_version,
+        'coveralls_branch': 'master',
+        'revision': revision,
+        'zenodo': '|zenodo|',
+        'zenodo_img': ZENODO_IMG,
+        'joss': ' |JOSS|',
+        'joss_img': JOSS_IMG,
+    }
+    template_kwargs.update(**extra_kwargs)
+    readme_contents = template.format(**template_kwargs)
 
     # Apply regular expressions to convert Sphinx "roles" to plain reST.
     readme_contents = INLINE_MATH_EXPR.sub(inline_math, readme_contents)
@@ -269,6 +289,44 @@ def readme_verify():
         raise ValueError(err_msg)
     else:
         print('README contents are as expected.')
+
+
+def release_readme_verify():
+    """Specialize the template to a PyPI release template.
+
+    Once populated, compare to ``RELEASE_README.rst.template``.
+
+    Raises:
+        ValueError: If the current template doesn't agree with the expected
+            value specialized from the template.
+    """
+    version = '{version}'
+    expected = populate_readme(
+        version,
+        version,
+        docs='|docs|',
+        pypi='',
+        pypi_img='',
+        versions=' ',
+        versions_img='',
+        coveralls_branch=version,
+        zenodo='',
+        zenodo_img='',
+        joss='',
+        joss_img='',
+    )
+
+    with open(RELEASE_TEMPLATE_FILE, 'r') as file_obj:
+        contents = file_obj.read()
+
+    if contents != expected:
+        err_msg = '\n' + get_diff(
+            contents, expected,
+            'RELEASE_README.rst.actual',
+            'RELEASE_README.rst.expected')
+        raise ValueError(err_msg)
+    else:
+        print('RELEASE_README.rst.template contents are as expected.')
 
 
 def docs_index_verify():
@@ -322,8 +380,9 @@ def docs_index_verify():
 
 
 def main():
-    """Verify both ``README.rst`` and ``docs/index.rst``."""
+    """Verify specialized versions of ``README.rst.template``."""
     readme_verify()
+    release_readme_verify()
     docs_index_verify()
 
 
