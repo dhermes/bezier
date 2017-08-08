@@ -1071,6 +1071,18 @@ class Test_bezier_roots(utils.NumPyTestCase):
         roots = self._call_function_under_test(coeffs)
         self.assertEqual(roots, np.asfortranarray([-1.0, 0.0]))
 
+    def test_quadratic_complex(self):
+        # s^2 + 1
+        coeffs = np.asfortranarray([1.0, 1.0, 2.0])
+        roots = self._call_function_under_test(coeffs)
+
+        roots = np.sort(roots)
+        expected = np.asfortranarray([-1.0j, 1.0j])
+        ulp_errs = np.abs((roots - expected) / SPACING(expected.imag))
+        self.assertEqual(ulp_errs.shape, (2,))
+        self.assertLess(ulp_errs[0], 4)
+        self.assertLess(ulp_errs[1], 4)
+
     def test_quadratic_drop_degree(self):
         # 2 (s - 2) (s - 1)
         coeffs = np.asfortranarray([4.0, 1.0, 0.0])
@@ -1090,7 +1102,7 @@ class Test_bezier_roots(utils.NumPyTestCase):
 
         roots = np.sort(roots)
         expected = np.asfortranarray([2.0, 5.0, 17.0])
-        ulp_errs = np.abs(roots - expected) / SPACING(expected)
+        ulp_errs = np.abs((roots - expected) / SPACING(expected))
         self.assertEqual(ulp_errs.shape, (3,))
         self.assertLess(ulp_errs[0], 16)
         self.assertLess(ulp_errs[1], 512)
@@ -1109,7 +1121,7 @@ class Test_bezier_roots(utils.NumPyTestCase):
 
         roots = np.sort(roots)
         expected = np.asfortranarray([0.75, 5.0])
-        ulp_errs = np.abs(roots - expected) / SPACING(expected)
+        ulp_errs = np.abs((roots - expected) / SPACING(expected))
         self.assertEqual(ulp_errs.shape, (2,))
         self.assertLess(ulp_errs[0], 4)
         self.assertLess(ulp_errs[1], 16)
@@ -1122,6 +1134,18 @@ class Test_bezier_roots(utils.NumPyTestCase):
         roots = np.sort(roots)
         expected = np.asfortranarray([0.0, 0.0, 0.0, 5.0])
         self.assertEqual(roots, expected)
+
+    def test_quartic_as_twice_elevated(self):
+        # 6 (s - 3) (s + 7)
+        coeffs = np.asfortranarray([-126.0, -120.0, -113.0, -105.0, -96.0])
+        roots = self._call_function_under_test(coeffs)
+
+        roots = np.sort(roots)
+        expected = np.asfortranarray([-7.0, 3.0])
+        ulp_errs = np.abs((roots - expected) / SPACING(expected))
+        self.assertEqual(ulp_errs.shape, (2,))
+        self.assertLess(ulp_errs[0], 8192)
+        self.assertLess(ulp_errs[1], 128)
 
 
 class Test_poly_to_power_basis(utils.NumPyTestCase):

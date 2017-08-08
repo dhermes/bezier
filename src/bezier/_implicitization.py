@@ -59,8 +59,7 @@ _CHEB10 = 0.5 * (_CHEB10 + 1.0)
 _IMAGINARY_WIGGLE = 0.5**13
 _UNIT_INTERVAL_WIGGLE_START = -0.5**13
 _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
-_SIGMA_START = -1.0 - 0.5**50
-_SIGMA_END = -1.0 + 0.5**50
+_SIGMA_THRESHOLD = 0.5**20
 # Detect almost zero polynomials.
 _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
 _ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
@@ -633,11 +632,8 @@ def bezier_roots(coeffs):
     if effective_degree:
         sigma_roots = np.linalg.eigvals(companion)
         # Filter out `sigma = -1`, i.e. "points at infinity".
-        to_keep = ~(
-            (sigma_roots.imag == 0.0) &
-            (sigma_roots.real > _SIGMA_START) &
-            (sigma_roots.real < _SIGMA_END)
-        )
+        # We want the error ||(sigma - (-1))|| ~= 2^{-52}
+        to_keep = np.abs(sigma_roots + 1.0) > _SIGMA_THRESHOLD
         sigma_roots = sigma_roots[to_keep]
         s_vals = sigma_roots / (1.0 + sigma_roots)
     else:
