@@ -524,8 +524,8 @@ def roots_in_unit_interval(coeffs):
     all_roots = polynomial.polyroots(coeffs)
     # Only keep roots inside or very near to the unit interval.
     all_roots = all_roots[
-        (_UNIT_INTERVAL_WIGGLE_START < all_roots) &
-        (all_roots < _UNIT_INTERVAL_WIGGLE_END)]
+        (_UNIT_INTERVAL_WIGGLE_START < all_roots.real) &
+        (all_roots.real < _UNIT_INTERVAL_WIGGLE_END)]
     # Only keep roots with very small imaginary part. (Really only
     # keep the real parts.)
     real_inds = np.abs(all_roots.imag) < _IMAGINARY_WIGGLE
