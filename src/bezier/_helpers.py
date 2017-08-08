@@ -214,7 +214,7 @@ def eye(num_elts):
         numpy.ndarray: The identity matrix.
     """
     id_mat = np.zeros((num_elts, num_elts), order='F')
-    id_mat[:num_elts].flat[::num_elts + 1] = 1.0
+    id_mat.flat[::num_elts + 1] = 1.0
     return id_mat
 
 

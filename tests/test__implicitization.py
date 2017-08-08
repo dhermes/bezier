@@ -19,6 +19,7 @@ from tests import utils
 
 
 FLOAT64 = np.float64  # pylint: disable=no-member
+SPACING = np.spacing  # pylint: disable=no-member
 LOCAL_EPS = 0.5**25  # 2 * sqrt(machine precision)
 
 
@@ -934,6 +935,193 @@ class Test_normalize_polynomial(utils.NumPyTestCase):
         result = self._call_function_under_test(coeffs, threshold=0.5**8)
         self.assertIsNot(result, coeffs)
         self.assertEqual(result, np.zeros(shape, order='F'))
+
+
+class Test_bernstein_companion(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(coeffs):
+        from bezier import _implicitization
+
+        return _implicitization.bernstein_companion(coeffs)
+
+    def test_all_zero(self):
+        for num_zeros in (1, 2, 3, 4):
+            coeffs = np.zeros((num_zeros,), order='F')
+            result = self._call_function_under_test(coeffs)
+            companion, degree, effective_degree = result
+            self.assertEqual(companion.shape, (0, 0))
+            self.assertEqual(degree, 0)
+            self.assertEqual(effective_degree, 0)
+
+    def test_linear(self):
+        # s
+        coeffs = np.asfortranarray([0.0, 1.0])
+        companion, degree, effective_degree = self._call_function_under_test(
+            coeffs)
+        self.assertEqual(companion, np.asfortranarray([[0.0]]))
+        self.assertEqual(degree, 1)
+        self.assertEqual(effective_degree, 1)
+
+    def test_linear_drop_degree(self):
+        # 4 (1 - s)
+        coeffs = np.asfortranarray([4.0, 0.0])
+        companion, degree, effective_degree = self._call_function_under_test(
+            coeffs)
+        self.assertEqual(companion.shape, (0, 0))
+        self.assertEqual(degree, 1)
+        self.assertEqual(effective_degree, 0)
+
+    def test_quadratic(self):
+        # 2 s (s + 1)
+        coeffs = np.asfortranarray([0.0, 1.0, 4.0])
+        companion, degree, effective_degree = self._call_function_under_test(
+            coeffs)
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, -0.5],
+        ])
+        self.assertEqual(companion, expected)
+        self.assertEqual(degree, 2)
+        self.assertEqual(effective_degree, 2)
+
+    def test_quadratic_drop_degree(self):
+        # 2 (s - 2) (s - 1)
+        coeffs = np.asfortranarray([4.0, 1.0, 0.0])
+        companion, degree, effective_degree = self._call_function_under_test(
+            coeffs)
+        self.assertEqual(companion, np.asfortranarray([[-2.0]]))
+        self.assertEqual(degree, 2)
+        self.assertEqual(effective_degree, 1)
+
+    def test_cubic(self):
+        # -(s - 17) (s - 5) (s - 2)
+        coeffs = np.asfortranarray([170.0, 127.0, 92.0, 64.0])
+        companion, degree, effective_degree = self._call_function_under_test(
+            coeffs)
+        expected = np.asfortranarray([
+            [0.0, 0.0, -2.65625],
+            [1.0, 0.0, -5.953125],
+            [0.0, 1.0, -4.3125],
+        ])
+        self.assertEqual(companion, expected)
+        self.assertEqual(degree, 3)
+        self.assertEqual(effective_degree, 3)
+
+    def test_cubic_drop_degree(self):
+        # 3 (1 - s)^2 (3 s + 1)
+        coeffs = np.asfortranarray([3.0, 4.0, 0.0, 0.0])
+        companion, degree, effective_degree = self._call_function_under_test(
+            coeffs)
+        self.assertEqual(companion, np.asfortranarray([[-0.25]]))
+        self.assertEqual(degree, 3)
+        self.assertEqual(effective_degree, 1)
+
+    def test_quartic(self):
+        # 4 s^3 (5 - s)
+        coeffs = np.asfortranarray([0.0, 0.0, 0.0, 5.0, 16.0])
+        companion, degree, effective_degree = self._call_function_under_test(
+            coeffs)
+        expected = np.asfortranarray([
+            [0.0, 0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, -1.25],
+        ])
+        self.assertEqual(companion, expected)
+        self.assertEqual(degree, 4)
+        self.assertEqual(effective_degree, 4)
+
+
+class Test_bezier_roots(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(coeffs):
+        from bezier import _implicitization
+
+        return _implicitization.bezier_roots(coeffs)
+
+    def test_all_zero(self):
+        for num_zeros in (1, 2, 3, 4):
+            coeffs = np.zeros((num_zeros,), order='F')
+            roots = self._call_function_under_test(coeffs)
+            self.assertEqual(roots.shape, (0,))
+
+    def test_linear(self):
+        # s
+        coeffs = np.asfortranarray([0.0, 1.0])
+        roots = self._call_function_under_test(coeffs)
+        self.assertEqual(roots, np.asfortranarray([0.0]))
+
+    def test_linear_drop_degree(self):
+        # 4 (1 - s)
+        coeffs = np.asfortranarray([4.0, 0.0])
+        roots = self._call_function_under_test(coeffs)
+        self.assertEqual(roots, np.asfortranarray([1.0]))
+
+    def test_linear_as_elevated(self):
+        # 2
+        coeffs = np.asfortranarray([2.0, 2.0])
+        roots = self._call_function_under_test(coeffs)
+        self.assertEqual(roots.shape, (0,))
+
+    def test_quadratic(self):
+        # 2 s (s + 1)
+        coeffs = np.asfortranarray([0.0, 1.0, 4.0])
+        roots = self._call_function_under_test(coeffs)
+        self.assertEqual(roots, np.asfortranarray([-1.0, 0.0]))
+
+    def test_quadratic_drop_degree(self):
+        # 2 (s - 2) (s - 1)
+        coeffs = np.asfortranarray([4.0, 1.0, 0.0])
+        roots = self._call_function_under_test(coeffs)
+        self.assertEqual(roots, np.asfortranarray([2.0, 1.0]))
+
+    def test_quadratic_as_elevated(self):
+        # 2 (s + 1)
+        coeffs = np.asfortranarray([2.0, 3.0, 4.0])
+        roots = self._call_function_under_test(coeffs)
+        self.assertEqual(roots, np.asfortranarray([-1.0]))
+
+    def test_cubic(self):
+        # -(s - 17) (s - 5) (s - 2)
+        coeffs = np.asfortranarray([170.0, 127.0, 92.0, 64.0])
+        roots = self._call_function_under_test(coeffs)
+
+        roots = np.sort(roots)
+        expected = np.asfortranarray([2.0, 5.0, 17.0])
+        ulp_errs = np.abs(roots - expected) / SPACING(expected)
+        self.assertEqual(ulp_errs.shape, (3,))
+        self.assertLess(ulp_errs[0], 16)
+        self.assertLess(ulp_errs[1], 512)
+        self.assertLess(ulp_errs[2], 1024)
+
+    def test_cubic_drop_degree(self):
+        # 6 (1 - s)^2 (s + 1)
+        coeffs = np.asfortranarray([6.0, 4.0, 0.0, 0.0])
+        roots = self._call_function_under_test(coeffs)
+        self.assertEqual(roots, np.asfortranarray([-1.0, 1.0, 1.0]))
+
+    def test_cubic_as_elevated(self):
+        # 3 (s - 5) (4 s - 3)
+        coeffs = np.asfortranarray([45.0, 22.0, 3.0, -12.0])
+        roots = self._call_function_under_test(coeffs)
+
+        roots = np.sort(roots)
+        expected = np.asfortranarray([0.75, 5.0])
+        ulp_errs = np.abs(roots - expected) / SPACING(expected)
+        self.assertEqual(ulp_errs.shape, (2,))
+        self.assertLess(ulp_errs[0], 4)
+        self.assertLess(ulp_errs[1], 16)
+
+    def test_quartic(self):
+        # 4 s^3 (5 - s)
+        coeffs = np.asfortranarray([0.0, 0.0, 0.0, 5.0, 16.0])
+        roots = self._call_function_under_test(coeffs)
+
+        roots = np.sort(roots)
+        expected = np.asfortranarray([0.0, 0.0, 0.0, 5.0])
+        self.assertEqual(roots, expected)
 
 
 class Test_poly_to_power_basis(utils.NumPyTestCase):

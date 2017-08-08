@@ -59,6 +59,8 @@ _CHEB10 = 0.5 * (_CHEB10 + 1.0)
 _IMAGINARY_WIGGLE = 0.5**13
 _UNIT_INTERVAL_WIGGLE_START = -0.5**13
 _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
+_SIGMA_START = -1.0 - 0.5**50
+_SIGMA_END = -1.0 + 0.5**50
 # Detect almost zero polynomials.
 _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
 _ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
@@ -511,12 +513,149 @@ def normalize_polynomial(coeffs, threshold=_L2_THRESHOLD):
         return coeffs
 
 
+def bernstein_companion(coeffs):
+    r"""Compute a companion matrix for a polynomial in Bernstein basis.
+
+    .. note::
+
+       This assumes the caller passes in a 1D array but does not check.
+
+    This takes the polynomial
+
+    .. math::
+
+       f(s) = \sum_{j = 0}^n b_{j, n} \cdot C_j.
+
+    and uses the variable :math:`\sigma = \frac{s}{1 - s}` to rewrite as
+
+    .. math::
+
+       f(s) = (1 - s)^n \sum_{j = 0}^n \binom{n}{j} C_j \sigma^j.
+
+    This converts the Bernstein coefficients :math:`C_j` into "generalized
+    Bernstein" coefficients :math:`\widetilde{C_j} = \binom{n}{j} C_j`.
+
+    Args:
+        coeffs (numpy.ndarray): A 1D array of coefficients in
+            the Bernstein basis.
+
+    Returns:
+        Tuple[numpy.ndarray, int, int]: A triple of
+
+        * 2D NumPy array with the companion matrix.
+        * the "full degree" based on the size of ``coeffs``
+        * the "effective degree" determined by the number of leading zeros.
+    """
+    num_nodes, = coeffs.shape
+    degree = num_nodes - 1
+
+    effective_degree = None
+    for index in six.moves.range(degree, -1, -1):
+        if coeffs[index] != 0.0:
+            effective_degree = index
+            break
+
+    if effective_degree is None:
+        # NOTE: This means the whole thing is zero.
+        return np.empty((0, 0), order='F'), 0, 0
+
+    if effective_degree == 0:
+        return np.empty((0, 0), order='F'), degree, 0
+
+    companion = np.zeros((effective_degree, effective_degree), order='F')
+    companion.flat[effective_degree::effective_degree + 1] = 1.0
+    companion[:, effective_degree - 1] = (
+        -coeffs[:effective_degree] / coeffs[effective_degree])
+    # array([[  0. ,   0. ,   0. ,   0. , -12. ],
+    #        [  1. ,   0. ,   0. ,   0. ,  -9. ],
+    #        [  0. ,   1. ,   0. ,   0. ,  -6.4],
+    #        [  0. ,   0. ,   1. ,   0. ,  -4.2],
+    #        [  0. ,   0. ,   0. ,   1. ,  -2.4]])
+
+    # Now we need to add the binomial coefficients, but we avoid
+    # computing actual binomial coefficients.
+    # NOTE: The first ratio of binomial coefficients is
+    #             (d C (e - 1)) / (d C e)
+    #           = e / (d - e + 1)
+    binom_numerator = effective_degree
+    binom_denominator = degree - effective_degree + 1
+    for row in six.moves.xrange(effective_degree - 1, -1, -1):
+        companion[row, effective_degree - 1] *= binom_numerator
+        companion[row, effective_degree - 1] /= binom_denominator
+        # NOTE: We swap (d C r) with (d C (r - 1)), so `p / q` becomes
+        #             (p / q) (d C (r - 1)) / (d C r)
+        #           = (p r) / (q (d - r + 1))
+        binom_numerator *= row
+        binom_denominator *= degree - row + 1
+
+    return companion, degree, effective_degree
+
+
+def bezier_roots(coeffs):
+    r"""Compute polynomial roots from a polynomial in the Bernstein basis.
+
+    .. note::
+
+       This assumes the caller passes in a 1D array but does not check.
+
+    This takes the polynomial
+
+    .. math::
+
+       f(s) = \sum_{j = 0}^n b_{j, n} \cdot C_j.
+
+    and uses the variable :math:`\sigma = \frac{s}{1 - s}` to rewrite as
+
+    .. math::
+
+       \begin{align*}
+       f(s) &= (1 - s)^n \sum_{j = 0}^n \binom{n}{j} C_j \sigma^j \\
+            &= (1 - s)^n \sum_{j = 0}^n \widetilde{C_j} \sigma^j.
+       \end{align*}
+
+    Then it uses an eigenvalue solver to find the roots of
+
+    .. math::
+
+       g(\sigma) = \sum_{j = 0}^n \widetilde{C_j} \sigma^j
+
+    and convert them back into roots of :math:`f(s)` via
+    :math:`s = \frac{\sigma}{1 + \sigma}`.
+
+    Args:
+        coeffs (numpy.ndarray): A 1D array of coefficients in
+            the Bernstein basis.
+
+    Returns:
+        numpy.ndarray: A 1D array containing the roots.
+    """
+    companion, degree, effective_degree = bernstein_companion(coeffs)
+    if effective_degree:
+        sigma_roots = np.linalg.eigvals(companion)
+        # Filter out `sigma = -1`, i.e. "points at infinity".
+        to_keep = ~(
+            (sigma_roots.imag == 0.0) &
+            (sigma_roots.real > _SIGMA_START) &
+            (sigma_roots.real < _SIGMA_END)
+        )
+        sigma_roots = sigma_roots[to_keep]
+        s_vals = sigma_roots / (1.0 + sigma_roots)
+    else:
+        s_vals = np.empty((0,), order='F')
+
+    if effective_degree != degree:
+        delta = degree - effective_degree
+        s_vals = np.hstack([s_vals, [1] * delta])
+
+    return s_vals
+
+
 def roots_in_unit_interval(coeffs):
     r"""Compute roots of a polynomial in the unit interval.
 
     Args:
-        coeffs (numpy.ndarray): ``d + 1``-array of coefficients in monomial /
-            power basis.
+        coeffs (numpy.ndarray): A 1D array (size ``d + 1``) of coefficients in
+            monomial / power basis.
 
     Returns:
         numpy.ndarray: ``N``-array of real values in :math:`\left[0, 1\right]`.

@@ -17,6 +17,9 @@ import numpy as np
 from tests import utils
 
 
+SPACING = np.spacing  # pylint: disable=no-member
+
+
 class Test_vector_close(unittest.TestCase):
 
     @staticmethod
@@ -69,12 +72,12 @@ class Test_in_interval(unittest.TestCase):
             1.5, 1.0, 2.0))
 
     def test_barely_inside(self):
-        local_epsilon = np.spacing(1.0)  # pylint: disable=no-member
+        local_epsilon = SPACING(1.0)
         self.assertTrue(self._call_function_under_test(
             1.0 + local_epsilon, 1.0, 2.0))
 
     def test_barely_outside(self):
-        local_epsilon = np.spacing(1.0)  # pylint: disable=no-member
+        local_epsilon = SPACING(1.0)
         self.assertFalse(self._call_function_under_test(
             1.0 - local_epsilon / 2.0, 1.0, 2.0))
 
