@@ -58,20 +58,20 @@ _CHEB7 = np.asfortranarray([
     float.fromhex('0x1.c8261ba82ef26p-1'),
     float.fromhex('0x1.6f130135c6af0p-1'),
     float.fromhex('0x1.0000000000000p-1'),
-    float.fromhex('0x1.21d9fd9472a1fp-2'),
-    float.fromhex('0x1.becf22be886d4p-4'),
-    float.fromhex('0x1.9ac7f54e2d2e4p-7'),
+    float.fromhex('0x1.21d9fd9472a20p-2'),
+    float.fromhex('0x1.becf22be886e0p-4'),
+    float.fromhex('0x1.9ac7f54e2d2c0p-7'),
 ])
 _CHEB9 = np.asfortranarray([
     float.fromhex('0x1.fc1c5c6408e0cp-1'),
-    float.fromhex('0x1.ddb3d742c2655p-1'),
+    float.fromhex('0x1.ddb3d742c2656p-1'),
     float.fromhex('0x1.a48dba91e0b0ep-1'),
-    float.fromhex('0x1.578ea1d2282fdp-1'),
+    float.fromhex('0x1.578ea1d2282fep-1'),
     float.fromhex('0x1.0000000000000p-1'),
-    float.fromhex('0x1.50e2bc5bafa05p-2'),
-    float.fromhex('0x1.6dc915b87d3c7p-3'),
-    float.fromhex('0x1.126145e9ecd56p-4'),
-    float.fromhex('0x1.f1d1cdfb8fa29p-8'),
+    float.fromhex('0x1.50e2bc5bafa08p-2'),
+    float.fromhex('0x1.6dc915b87d3c6p-3'),
+    float.fromhex('0x1.126145e9ecd5cp-4'),
+    float.fromhex('0x1.f1d1cdfb8fa40p-8'),
 ])
 _CHEB10 = np.asfortranarray([
     float.fromhex('0x1.fcd924a17f22ep-1'),
@@ -79,11 +79,11 @@ _CHEB10 = np.asfortranarray([
     float.fromhex('0x1.b504f333f9de6p-1'),
     float.fromhex('0x1.7438b8ad13780p-1'),
     float.fromhex('0x1.280c16cf50a6fp-1'),
-    float.fromhex('0x1.afe7d2615eb23p-2'),
+    float.fromhex('0x1.afe7d2615eb25p-2'),
     float.fromhex('0x1.178e8ea5d9100p-2'),
-    float.fromhex('0x1.2bec333018867p-3'),
-    float.fromhex('0x1.be6ff16169c9bp-5'),
-    float.fromhex('0x1.936daf406e919p-8'),
+    float.fromhex('0x1.2bec333018868p-3'),
+    float.fromhex('0x1.be6ff16169ca0p-5'),
+    float.fromhex('0x1.936daf406e940p-8'),
 ])
 # Allow a buffer of sqrt(sqrt(machine precision)) for polynomial roots.
 _IMAGINARY_WIGGLE = 0.5**13
