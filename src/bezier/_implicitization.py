@@ -593,14 +593,8 @@ def bernstein_companion(coeffs):
 
     companion = np.zeros((effective_degree, effective_degree), order='F')
     companion.flat[effective_degree::effective_degree + 1] = 1.0
-    companion[:, effective_degree - 1] = (
-        -coeffs[:effective_degree] / coeffs[effective_degree])
-    # array([[  0. ,   0. ,   0. ,   0. , -12. ],
-    #        [  1. ,   0. ,   0. ,   0. ,  -9. ],
-    #        [  0. ,   1. ,   0. ,   0. ,  -6.4],
-    #        [  0. ,   0. ,   1. ,   0. ,  -4.2],
-    #        [  0. ,   0. ,   0. ,   1. ,  -2.4]])
-
+    companion[0, :] = (
+        -coeffs[effective_degree - 1::-1] / coeffs[effective_degree])
     # Now we need to add the binomial coefficients, but we avoid
     # computing actual binomial coefficients.
     # NOTE: The first ratio of binomial coefficients is
@@ -609,8 +603,9 @@ def bernstein_companion(coeffs):
     binom_numerator = effective_degree
     binom_denominator = degree - effective_degree + 1
     for row in six.moves.xrange(effective_degree - 1, -1, -1):
-        companion[row, effective_degree - 1] *= binom_numerator
-        companion[row, effective_degree - 1] /= binom_denominator
+        col = effective_degree - row - 1
+        companion[0, col] *= binom_numerator
+        companion[0, col] /= binom_denominator
         # NOTE: We swap (d C r) with (d C (r - 1)), so `p / q` becomes
         #             (p / q) (d C (r - 1)) / (d C r)
         #           = (p r) / (q (d - r + 1))

@@ -978,8 +978,8 @@ class Test_bernstein_companion(utils.NumPyTestCase):
         companion, degree, effective_degree = self._call_function_under_test(
             coeffs)
         expected = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, -0.5],
+            [-0.5, 0.0],
+            [1.0, 0.0],
         ])
         self.assertEqual(companion, expected)
         self.assertEqual(degree, 2)
@@ -1000,9 +1000,9 @@ class Test_bernstein_companion(utils.NumPyTestCase):
         companion, degree, effective_degree = self._call_function_under_test(
             coeffs)
         expected = np.asfortranarray([
-            [0.0, 0.0, -2.65625],
-            [1.0, 0.0, -5.953125],
-            [0.0, 1.0, -4.3125],
+            [-4.3125, -5.953125, -2.65625],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
         ])
         self.assertEqual(companion, expected)
         self.assertEqual(degree, 3)
@@ -1023,10 +1023,10 @@ class Test_bernstein_companion(utils.NumPyTestCase):
         companion, degree, effective_degree = self._call_function_under_test(
             coeffs)
         expected = np.asfortranarray([
-            [0.0, 0.0, 0.0, 0.0],
+            [-1.25, 0.0, 0.0, 0.0],
             [1.0, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0, -1.25],
+            [0.0, 0.0, 1.0, 0.0],
         ])
         self.assertEqual(companion, expected)
         self.assertEqual(degree, 4)
@@ -1069,7 +1069,10 @@ class Test_bezier_roots(utils.NumPyTestCase):
         # 2 s (s + 1)
         coeffs = np.asfortranarray([0.0, 1.0, 4.0])
         roots = self._call_function_under_test(coeffs)
-        self.assertEqual(roots, np.asfortranarray([-1.0, 0.0]))
+
+        roots = np.sort(roots)
+        expected = np.asfortranarray([-1.0, 0.0])
+        self.assertEqual(roots, expected)
 
     def test_quadratic_complex(self):
         # s^2 + 1
@@ -1080,8 +1083,8 @@ class Test_bezier_roots(utils.NumPyTestCase):
         expected = np.asfortranarray([-1.0j, 1.0j])
         ulp_errs = np.abs((roots - expected) / SPACING(expected.imag))
         self.assertEqual(ulp_errs.shape, (2,))
-        self.assertLess(ulp_errs[0], 4)
-        self.assertLess(ulp_errs[1], 4)
+        self.assertLess(ulp_errs[0], 2)
+        self.assertEqual(ulp_errs[0], ulp_errs[1])
 
     def test_quadratic_drop_degree(self):
         # 2 (s - 2) (s - 1)
@@ -1123,8 +1126,8 @@ class Test_bezier_roots(utils.NumPyTestCase):
         expected = np.asfortranarray([0.75, 5.0])
         ulp_errs = np.abs((roots - expected) / SPACING(expected))
         self.assertEqual(ulp_errs.shape, (2,))
-        self.assertLess(ulp_errs[0], 4)
-        self.assertLess(ulp_errs[1], 16)
+        self.assertEqual(ulp_errs[0], 0.0)
+        self.assertLess(ulp_errs[1], 64)
 
     def test_quartic(self):
         # 4 s^3 (5 - s)
@@ -1144,7 +1147,7 @@ class Test_bezier_roots(utils.NumPyTestCase):
         expected = np.asfortranarray([-7.0, 3.0])
         ulp_errs = np.abs((roots - expected) / SPACING(expected))
         self.assertEqual(ulp_errs.shape, (2,))
-        self.assertLess(ulp_errs[0], 8192)
+        self.assertLess(ulp_errs[0], 16384)
         self.assertLess(ulp_errs[1], 128)
 
 
