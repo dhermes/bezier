@@ -646,6 +646,53 @@ def bezier_roots(coeffs):
     and convert them back into roots of :math:`f(s)` via
     :math:`s = \frac{\sigma}{1 + \sigma}`.
 
+    For example, consider
+
+    .. math::
+
+       \begin{align*}
+       f(s) &= 2 (2 - s)(3 + s) \\
+            &= 12(1 - s)^2 + 11 \cdot 2s(1 - s) + 8 s^2
+       \end{align*}
+
+    First, we compute the companion matrix for
+
+    .. math::
+
+       g(\sigma) = 12 + 22 \sigma + 8 \sigma^2
+
+    .. testsetup:: bezier-roots
+
+       import numpy as np
+       import numpy.linalg
+       from bezier._implicitization import bernstein_companion
+       from bezier._implicitization import bezier_roots
+
+    .. doctest:: bezier-roots
+
+       >>> coeffs = np.asfortranarray([12.0, 11.0, 8.0])
+       >>> companion, _, _ = bernstein_companion(coeffs)
+       >>> companion
+       array([[-2.75, -1.5 ],
+              [ 1.  ,  0.  ]])
+
+    then take the eigenvalues of the companion matrix:
+
+    .. doctest:: bezier-roots
+
+       >>> sigma_values = np.linalg.eigvals(companion)
+       >>> sigma_values
+       array([-2.  , -0.75])
+
+    after transforming them, we have the roots of :math:`f(s)`:
+
+    .. doctest:: bezier-roots
+
+       >>> sigma_values / (1.0 + sigma_values)
+       array([ 2., -3.])
+       >>> bezier_roots(coeffs)
+       array([ 2., -3.])
+
     Args:
         coeffs (numpy.ndarray): A 1D array of coefficients in
             the Bernstein basis.

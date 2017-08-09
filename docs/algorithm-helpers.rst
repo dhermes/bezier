@@ -28,6 +28,7 @@ This is to help with the exposition of the computation and
    :members:
 .. autofunction:: bezier._surface_helpers.newton_refine
 .. autofunction:: bezier._surface_helpers.classify_intersection
+.. autofunction:: bezier._implicitization.bezier_roots
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
