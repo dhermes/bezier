@@ -937,6 +937,90 @@ class Test_normalize_polynomial(utils.NumPyTestCase):
         self.assertEqual(result, np.zeros(shape, order='F'))
 
 
+class Test__get_sigma_coeffs(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(coeffs):
+        from bezier import _implicitization
+
+        return _implicitization._get_sigma_coeffs(coeffs)
+
+    def test_all_zero(self):
+        for num_zeros in (1, 2, 3, 4):
+            coeffs = np.zeros((num_zeros,), order='F')
+            result = self._call_function_under_test(coeffs)
+            sigma_coeffs, degree, effective_degree = result
+            self.assertIsNone(sigma_coeffs)
+            self.assertEqual(degree, 0)
+            self.assertEqual(effective_degree, 0)
+
+    def test_linear(self):
+        # s
+        coeffs = np.asfortranarray([0.0, 1.0])
+        result = self._call_function_under_test(coeffs)
+        sigma_coeffs, degree, effective_degree = result
+        self.assertEqual(sigma_coeffs, np.asfortranarray([0.0]))
+        self.assertEqual(degree, 1)
+        self.assertEqual(effective_degree, 1)
+
+    def test_linear_drop_degree(self):
+        # 4 (1 - s)
+        coeffs = np.asfortranarray([4.0, 0.0])
+        result = self._call_function_under_test(coeffs)
+        sigma_coeffs, degree, effective_degree = result
+        self.assertIsNone(sigma_coeffs)
+        self.assertEqual(degree, 1)
+        self.assertEqual(effective_degree, 0)
+
+    def test_quadratic(self):
+        # 2 s (s + 1)
+        coeffs = np.asfortranarray([0.0, 1.0, 4.0])
+        result = self._call_function_under_test(coeffs)
+        sigma_coeffs, degree, effective_degree = result
+        expected = np.asfortranarray([0.0, 0.5])
+        self.assertEqual(sigma_coeffs, expected)
+        self.assertEqual(degree, 2)
+        self.assertEqual(effective_degree, 2)
+
+    def test_quadratic_drop_degree(self):
+        # 2 (s - 2) (s - 1)
+        coeffs = np.asfortranarray([4.0, 1.0, 0.0])
+        result = self._call_function_under_test(coeffs)
+        sigma_coeffs, degree, effective_degree = result
+        self.assertEqual(sigma_coeffs, np.asfortranarray([2.0]))
+        self.assertEqual(degree, 2)
+        self.assertEqual(effective_degree, 1)
+
+    def test_cubic(self):
+        # -(s - 17) (s - 5) (s - 2)
+        coeffs = np.asfortranarray([170.0, 127.0, 92.0, 64.0])
+        result = self._call_function_under_test(coeffs)
+        sigma_coeffs, degree, effective_degree = result
+        expected = np.asfortranarray([2.65625, 5.953125, 4.3125])
+        self.assertEqual(sigma_coeffs, expected)
+        self.assertEqual(degree, 3)
+        self.assertEqual(effective_degree, 3)
+
+    def test_cubic_drop_degree(self):
+        # 3 (1 - s)^2 (3 s + 1)
+        coeffs = np.asfortranarray([3.0, 4.0, 0.0, 0.0])
+        result = self._call_function_under_test(coeffs)
+        sigma_coeffs, degree, effective_degree = result
+        self.assertEqual(sigma_coeffs, np.asfortranarray([0.25]))
+        self.assertEqual(degree, 3)
+        self.assertEqual(effective_degree, 1)
+
+    def test_quartic(self):
+        # 4 s^3 (5 - s)
+        coeffs = np.asfortranarray([0.0, 0.0, 0.0, 5.0, 16.0])
+        result = self._call_function_under_test(coeffs)
+        sigma_coeffs, degree, effective_degree = result
+        expected = np.asfortranarray([0.0, 0.0, 0.0, 1.25])
+        self.assertEqual(sigma_coeffs, expected)
+        self.assertEqual(degree, 4)
+        self.assertEqual(effective_degree, 4)
+
+
 class Test_bernstein_companion(utils.NumPyTestCase):
 
     @staticmethod
@@ -954,24 +1038,6 @@ class Test_bernstein_companion(utils.NumPyTestCase):
             self.assertEqual(degree, 0)
             self.assertEqual(effective_degree, 0)
 
-    def test_linear(self):
-        # s
-        coeffs = np.asfortranarray([0.0, 1.0])
-        companion, degree, effective_degree = self._call_function_under_test(
-            coeffs)
-        self.assertEqual(companion, np.asfortranarray([[0.0]]))
-        self.assertEqual(degree, 1)
-        self.assertEqual(effective_degree, 1)
-
-    def test_linear_drop_degree(self):
-        # 4 (1 - s)
-        coeffs = np.asfortranarray([4.0, 0.0])
-        companion, degree, effective_degree = self._call_function_under_test(
-            coeffs)
-        self.assertEqual(companion.shape, (0, 0))
-        self.assertEqual(degree, 1)
-        self.assertEqual(effective_degree, 0)
-
     def test_quadratic(self):
         # 2 s (s + 1)
         coeffs = np.asfortranarray([0.0, 1.0, 4.0])
@@ -984,53 +1050,6 @@ class Test_bernstein_companion(utils.NumPyTestCase):
         self.assertEqual(companion, expected)
         self.assertEqual(degree, 2)
         self.assertEqual(effective_degree, 2)
-
-    def test_quadratic_drop_degree(self):
-        # 2 (s - 2) (s - 1)
-        coeffs = np.asfortranarray([4.0, 1.0, 0.0])
-        companion, degree, effective_degree = self._call_function_under_test(
-            coeffs)
-        self.assertEqual(companion, np.asfortranarray([[-2.0]]))
-        self.assertEqual(degree, 2)
-        self.assertEqual(effective_degree, 1)
-
-    def test_cubic(self):
-        # -(s - 17) (s - 5) (s - 2)
-        coeffs = np.asfortranarray([170.0, 127.0, 92.0, 64.0])
-        companion, degree, effective_degree = self._call_function_under_test(
-            coeffs)
-        expected = np.asfortranarray([
-            [-4.3125, -5.953125, -2.65625],
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-        ])
-        self.assertEqual(companion, expected)
-        self.assertEqual(degree, 3)
-        self.assertEqual(effective_degree, 3)
-
-    def test_cubic_drop_degree(self):
-        # 3 (1 - s)^2 (3 s + 1)
-        coeffs = np.asfortranarray([3.0, 4.0, 0.0, 0.0])
-        companion, degree, effective_degree = self._call_function_under_test(
-            coeffs)
-        self.assertEqual(companion, np.asfortranarray([[-0.25]]))
-        self.assertEqual(degree, 3)
-        self.assertEqual(effective_degree, 1)
-
-    def test_quartic(self):
-        # 4 s^3 (5 - s)
-        coeffs = np.asfortranarray([0.0, 0.0, 0.0, 5.0, 16.0])
-        companion, degree, effective_degree = self._call_function_under_test(
-            coeffs)
-        expected = np.asfortranarray([
-            [-1.25, 0.0, 0.0, 0.0],
-            [1.0, 0.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0, 0.0],
-        ])
-        self.assertEqual(companion, expected)
-        self.assertEqual(degree, 4)
-        self.assertEqual(effective_degree, 4)
 
 
 class Test_bezier_roots(utils.NumPyTestCase):

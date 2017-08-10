@@ -542,6 +542,87 @@ def normalize_polynomial(coeffs, threshold=_L2_THRESHOLD):
         return coeffs
 
 
+def _get_sigma_coeffs(coeffs):
+    r"""Compute "transformed" form of polynomial in Bernstein form.
+
+    Makes sure the "transformed" polynomial is monic (i.e. by dividing by the
+    lead coefficient) and just returns the coefficients of the non-lead terms.
+
+    For example, the polynomial
+
+    .. math::
+
+       f(s) = 4 (1 - s)^2 + 3 \cdot 2 s(1 - s) + 7 s^2
+
+    can be transformed into :math:`f(s) = 7 (1 - s)^2 g\left(\sigma\right)`
+    for :math:`\sigma = \frac{s}{1 - s}` and :math:`g(\sigma)` a
+    polynomial in the power basis:
+
+    .. math::
+
+       g(\sigma) = \frac{4}{7} + \frac{6}{7} \sigma + \sigma^2.
+
+    In cases where terms with "low exponents" of :math:`(1 - s)` have
+    coefficient zero, the degree of :math:`g(\sigma)` may not be the
+    same as the degree of :math:`f(s)`:
+
+
+    .. math::
+
+       \begin{align*}
+       f(s) &= 5 (1 - s)^4 - 3 \cdot 4 s(1 - s)^3 + 11 \cdot 6 s^2 (1 - s)^2 \\
+       \Longrightarrow g(\sigma) &= \frac{5}{66} - \frac{2}{11} \sigma +
+           \sigma^2.
+       \end{align*}
+
+    Args:
+        coeffs (numpy.ndarray): A 1D array of coefficients in
+            the Bernstein basis.
+
+    Returns:
+        Tuple[Optional[numpy.ndarray], int, int]: A triple of
+
+        * 1D array of the transformed coefficients (will be unset if
+          ``effective_degree == 0``)
+        * the "full degree" based on the size of ``coeffs``
+        * the "effective degree" determined by the number of leading zeros.
+    """
+    num_nodes, = coeffs.shape
+    degree = num_nodes - 1
+
+    effective_degree = None
+    for index in six.moves.range(degree, -1, -1):
+        if coeffs[index] != 0.0:
+            effective_degree = index
+            break
+
+    if effective_degree is None:
+        # NOTE: This means ``np.all(coeffs == 0.0)``.
+        return None, 0, 0
+
+    if effective_degree == 0:
+        return None, degree, 0
+
+    sigma_coeffs = coeffs[:effective_degree] / coeffs[effective_degree]
+    # Now we need to add the binomial coefficients, but we avoid
+    # computing actual binomial coefficients. Starting from the largest
+    # exponent, the first ratio of binomial coefficients is
+    #       (d C (e - 1)) / (d C e)
+    #     = e / (d - e + 1)
+    binom_numerator = effective_degree
+    binom_denominator = degree - effective_degree + 1
+    for exponent in six.moves.xrange(effective_degree - 1, -1, -1):
+        sigma_coeffs[exponent] *= binom_numerator
+        sigma_coeffs[exponent] /= binom_denominator
+        # We swap (d C j) with (d C (j - 1)), so `p / q` becomes
+        #       (p / q) (d C (j - 1)) / (d C j)
+        #     = (p j) / (q (d - j + 1))
+        binom_numerator *= exponent
+        binom_denominator *= degree - exponent + 1
+
+    return sigma_coeffs, degree, effective_degree
+
+
 def bernstein_companion(coeffs):
     r"""Compute a companion matrix for a polynomial in Bernstein basis.
 
@@ -575,43 +656,13 @@ def bernstein_companion(coeffs):
         * the "full degree" based on the size of ``coeffs``
         * the "effective degree" determined by the number of leading zeros.
     """
-    num_nodes, = coeffs.shape
-    degree = num_nodes - 1
-
-    effective_degree = None
-    for index in six.moves.range(degree, -1, -1):
-        if coeffs[index] != 0.0:
-            effective_degree = index
-            break
-
-    if effective_degree is None:
-        # NOTE: This means the whole thing is zero.
-        return np.empty((0, 0), order='F'), 0, 0
-
+    sigma_coeffs, degree, effective_degree = _get_sigma_coeffs(coeffs)
     if effective_degree == 0:
         return np.empty((0, 0), order='F'), degree, 0
 
     companion = np.zeros((effective_degree, effective_degree), order='F')
     companion.flat[effective_degree::effective_degree + 1] = 1.0
-    companion[0, :] = (
-        -coeffs[effective_degree - 1::-1] / coeffs[effective_degree])
-    # Now we need to add the binomial coefficients, but we avoid
-    # computing actual binomial coefficients.
-    # NOTE: The first ratio of binomial coefficients is
-    #             (d C (e - 1)) / (d C e)
-    #           = e / (d - e + 1)
-    binom_numerator = effective_degree
-    binom_denominator = degree - effective_degree + 1
-    for row in six.moves.xrange(effective_degree - 1, -1, -1):
-        col = effective_degree - row - 1
-        companion[0, col] *= binom_numerator
-        companion[0, col] /= binom_denominator
-        # NOTE: We swap (d C r) with (d C (r - 1)), so `p / q` becomes
-        #             (p / q) (d C (r - 1)) / (d C r)
-        #           = (p r) / (q (d - r + 1))
-        binom_numerator *= row
-        binom_denominator *= degree - row + 1
-
+    companion[0, :] = -sigma_coeffs[::-1]
     return companion, degree, effective_degree
 
 
