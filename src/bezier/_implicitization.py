@@ -734,7 +734,8 @@ def bezier_roots(coeffs):
 
        \begin{align*}
        f_2(s) &= 3 (s^2 + 1) \\
-              &= 3 (1 - s)^3 + 3 \cdot 3s(1 - s)^2 + 4 \cdot 3s^2(1 - s) + 6 s^3
+              &= 3 (1 - s)^3 + 3 \cdot 3s(1 - s)^2 +
+                 4 \cdot 3s^2(1 - s) + 6 s^3
        \end{align*}
 
     This results in a "point at infinity"
