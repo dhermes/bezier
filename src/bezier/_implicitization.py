@@ -651,47 +651,116 @@ def bezier_roots(coeffs):
     .. math::
 
        \begin{align*}
-       f(s) &= 2 (2 - s)(3 + s) \\
-            &= 12(1 - s)^2 + 11 \cdot 2s(1 - s) + 8 s^2
+       f_0(s) &= 2 (2 - s)(3 + s) \\
+              &= 12(1 - s)^2 + 11 \cdot 2s(1 - s) + 8 s^2
        \end{align*}
 
     First, we compute the companion matrix for
 
     .. math::
 
-       g(\sigma) = 12 + 22 \sigma + 8 \sigma^2
+       g_0(\sigma) = 12 + 22 \sigma + 8 \sigma^2
 
-    .. testsetup:: bezier-roots
+    .. testsetup:: bezier-roots0, bezier-roots1, bezier-roots2
 
        import numpy as np
        import numpy.linalg
        from bezier._implicitization import bernstein_companion
        from bezier._implicitization import bezier_roots
 
-    .. doctest:: bezier-roots
+    .. doctest:: bezier-roots0
 
-       >>> coeffs = np.asfortranarray([12.0, 11.0, 8.0])
-       >>> companion, _, _ = bernstein_companion(coeffs)
-       >>> companion
+       >>> coeffs0 = np.asfortranarray([12.0, 11.0, 8.0])
+       >>> companion0, _, _ = bernstein_companion(coeffs0)
+       >>> companion0
        array([[-2.75, -1.5 ],
               [ 1.  ,  0.  ]])
 
     then take the eigenvalues of the companion matrix:
 
-    .. doctest:: bezier-roots
+    .. doctest:: bezier-roots0
 
-       >>> sigma_values = np.linalg.eigvals(companion)
-       >>> sigma_values
+       >>> sigma_values0 = np.linalg.eigvals(companion0)
+       >>> sigma_values0
        array([-2.  , -0.75])
 
     after transforming them, we have the roots of :math:`f(s)`:
 
-    .. doctest:: bezier-roots
+    .. doctest:: bezier-roots0
 
-       >>> sigma_values / (1.0 + sigma_values)
+       >>> sigma_values0 / (1.0 + sigma_values0)
        array([ 2., -3.])
-       >>> bezier_roots(coeffs)
+       >>> bezier_roots(coeffs0)
        array([ 2., -3.])
+
+    In cases where :math:`s = 1` is a root, the lead coefficient of
+    :math:`g` would be :math:`0`, so there is a reduction in the
+    companion matrix.
+
+    .. math::
+
+       \begin{align*}
+       f_1(s) &= 6 (s - 1)^2 (s - 3) (s - 5) \\
+              &= 90 (1 - s)^4 + 33 \cdot 4s(1 - s)^3 + 8 \cdot 6s^2(1 - s)^2
+       \end{align*}
+
+    .. doctest:: bezier-roots1
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> coeffs1 = np.asfortranarray([90.0, 33.0, 8.0, 0.0, 0.0])
+       >>> companion1, degree1, effective_degree1 = bernstein_companion(
+       ...     coeffs1)
+       >>> companion1
+       array([[-2.75 , -1.875],
+              [ 1.   ,  0.   ]])
+       >>> degree1
+       4
+       >>> effective_degree1
+       2
+
+    so the roots are a combination of the roots determined from
+    :math:`s = \frac{\sigma}{1 + \sigma}` and the number of factors
+    of :math:`(1 - s)` (i.e. the difference between the degree and
+    the effective degree):
+
+    .. doctest:: bezier-roots1
+
+       >>> bezier_roots(coeffs1)
+       array([ 3.,  5.,  1.,  1.])
+
+    In some cases, a polynomial is represented with an "elevated" degree:
+
+    .. math::
+
+       \begin{align*}
+       f_2(s) &= 3 (s^2 + 1) \\
+              &= 3 (1 - s)^3 + 3 \cdot 3s(1 - s)^2 + 4 \cdot 3s^2(1 - s) + 6 s^3
+       \end{align*}
+
+    This results in a "point at infinity"
+    :math:`\sigma = -1 \Longleftrightarrow s = \infty`:
+
+    .. doctest:: bezier-roots2
+
+       >>> coeffs2 = np.asfortranarray([3.0, 3.0, 4.0, 6.0])
+       >>> companion2, _, _ = bernstein_companion(coeffs2)
+       >>> companion2
+       array([[-2. , -1.5, -0.5],
+              [ 1. ,  0. ,  0. ],
+              [ 0. ,  1. ,  0. ]])
+       >>> sigma_values2 = np.linalg.eigvals(companion2)
+       >>> sigma_values2
+       array([-1.0+0.j , -0.5+0.5j, -0.5-0.5j])
+
+    so we drop any values :math:`\sigma` that are sufficiently close to
+    :math:`-1`:
+
+    .. doctest:: bezier-roots2
+
+       >>> expected2 = np.asfortranarray([1.0j, -1.0j])
+       >>> roots2 = bezier_roots(coeffs2)
+       >>> np.allclose(expected2, roots2, rtol=2e-15, atol=0.0)
+       True
 
     Args:
         coeffs (numpy.ndarray): A 1D array of coefficients in
