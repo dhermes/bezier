@@ -14,6 +14,7 @@ import unittest
 
 import mock
 import numpy as np
+import six
 
 from tests import utils
 
@@ -1168,6 +1169,311 @@ class Test_bezier_roots(utils.NumPyTestCase):
         self.assertEqual(ulp_errs.shape, (2,))
         self.assertLess(ulp_errs[0], 16384)
         self.assertLess(ulp_errs[1], 128)
+
+
+class Test_lu_companion(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(top_row, value):
+        from bezier import _implicitization
+
+        return _implicitization.lu_companion(top_row, value)
+
+    def test_linear(self):
+        # t + 3
+        top_row = np.asfortranarray([-3.0])
+        lu_mat, one_norm = self._call_function_under_test(top_row, -2.0)
+        expected = np.asfortranarray([
+            [-1.0],
+        ])
+        self.assertEqual(expected, lu_mat)
+        self.assertEqual(one_norm, 1.0)
+
+    def _check_lu(self, lu_mat, expected_a):
+        from bezier import _helpers
+
+        rows, cols = lu_mat.shape
+        self.assertEqual(rows, cols)
+
+        l_mat = np.asfortranarray(np.tril(lu_mat, -1) + _helpers.eye(rows))
+        u_mat = np.triu(lu_mat)
+        a_mat = _helpers.matrix_product(l_mat, u_mat)
+        self.assertEqual(a_mat, expected_a)
+
+    def test_quadratic(self):
+        # t^2 + 5 t - 4
+        top_row = np.asfortranarray([-5.0, 4.0])
+        value = 2.0
+        lu_mat, one_norm = self._call_function_under_test(top_row, value)
+        expected = np.asfortranarray([
+            [1.0, -value],
+            [-7.0, -10.0],
+        ])
+        self.assertEqual(expected, lu_mat)
+        self.assertEqual(one_norm, 8.0)
+
+        expected_a = np.asfortranarray([
+            [1.0, -value],
+            [-7.0, 4.0],
+        ])
+        self._check_lu(lu_mat, expected_a)
+
+    def test_cubic(self):
+        # t^3 + 3 t^2 - t + 2
+        top_row = np.asfortranarray([-3.0, 1.0, -2.0])
+        value = 3.0
+        lu_mat, one_norm = self._call_function_under_test(top_row, value)
+        expected = np.asfortranarray([
+            [1.0, -value, 0.0],
+            [0.0, 1.0, -value],
+            [-6.0, -17.0, -53.0],
+        ])
+
+        self.assertEqual(expected, lu_mat)
+        self.assertEqual(one_norm, 7.0)
+
+        expected_a = np.asfortranarray([
+            [1.0, -value, 0.0],
+            [0.0, 1.0, -value],
+            [-6.0, 1.0, -2.0],
+        ])
+        self._check_lu(lu_mat, expected_a)
+
+    def test_quartic(self):
+        # t^4 + t^3 + t^2 - 5 t - 2
+        top_row = np.asfortranarray([-1.0, -1.0, 5.0, 2.0])
+        value = 4.0
+        lu_mat, one_norm = self._call_function_under_test(top_row, value)
+        expected = np.asfortranarray([
+            [1.0, -value, 0.0, 0.0],
+            [0.0, 1.0, -value, 0.0],
+            [0.0, 0.0, 1.0, -value],
+            [-5.0, -21.0, -79.0, -314.0],
+        ])
+        self.assertEqual(expected, lu_mat)
+        self.assertEqual(one_norm, 10.0)
+
+        expected_a = np.asfortranarray([
+            [1.0, -value, 0.0, 0.0],
+            [0.0, 1.0, -value, 0.0],
+            [0.0, 0.0, 1.0, -value],
+            [-5.0, -1.0, 5.0, 2.0],
+        ])
+        self._check_lu(lu_mat, expected_a)
+
+
+class Test__reciprocal_condition_number(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(lu_mat, one_norm):
+        from bezier import _implicitization
+
+        return _implicitization._reciprocal_condition_number(lu_mat, one_norm)
+
+    @mock.patch('bezier._implicitization._scipy_lapack', new=None)
+    def test_without_scipy(self):
+        lu_mat = np.zeros((2, 2), order='F')
+        one_norm = 0.0
+        with self.assertRaises(OSError):
+            self._call_function_under_test(lu_mat, one_norm)
+
+    @mock.patch('bezier._implicitization._scipy_lapack')
+    def test_dgecon_failure(self, _scipy_lapack):
+        rcond = 0.5
+        info = -1
+        _scipy_lapack.dgecon.return_value = rcond, info
+
+        one_norm = 1.0
+        with self.assertRaises(RuntimeError):
+            self._call_function_under_test(mock.sentinel.lu_mat, one_norm)
+
+        _scipy_lapack.dgecon.assert_called_once_with(
+            mock.sentinel.lu_mat, one_norm)
+
+    def test_singular(self):
+        # A = [[ 2.   3. ]
+        #      [ 1.   1.5]]
+        one_norm = 4.5
+        lu_mat = np.asfortranarray([
+            [2.0, 3.0],
+            [0.5, 0.0],
+        ])
+        rcond = self._call_function_under_test(lu_mat, one_norm)
+        self.assertEqual(rcond, 0.0)
+
+    def test_invertible(self):
+        # A = [[  4.,  10.,   0.],
+        #      [  0.,  16.,  32.],
+        #      [  2.,  -3.,   0.]]
+        one_norm = 32.0
+        lu_mat = np.asfortranarray([
+            [4.0, 10.0, 0.0],
+            [0.0, 16.0, 32.0],
+            [0.5, -0.5, 16.0],
+        ])
+        rcond = self._call_function_under_test(lu_mat, one_norm)
+        self.assertEqual(rcond, 0.0625)
+
+
+class Test_bezier_value_check(utils.NumPyTestCase):
+
+    CUBIC_COEFFS = np.asfortranarray([170.0, 127.0, 92.0, 64.0])
+
+    @staticmethod
+    def _call_function_under_test(coeffs, s_val, **kwargs):
+        from bezier import _implicitization
+
+        return _implicitization.bezier_value_check(coeffs, s_val, **kwargs)
+
+    def test_check_one_failure(self):
+        # 3 (s^2 + 3) (2 - s)
+        coeffs = np.asfortranarray([18, 15, 14, 12])
+        # 3 (1^2 + 3) (2 - 1) = 12
+        rhs_val = 10.0
+        self.assertFalse(
+            self._call_function_under_test(coeffs, 1.0, rhs_val=rhs_val))
+
+    def test_check_one_success(self):
+        # 2 (1 - s) (s + 4)
+        coeffs = np.asfortranarray([8.0, 5.0, 0.0])
+        self.assertTrue(self._call_function_under_test(coeffs, 1.0))
+
+    def test_constant(self):
+        input_s = (-9.0, -2.0, 0.0, 0.5, 1.0, 1.5, 4.0)
+        values = (1.0, 2.0, 4.5, 0.0)
+        for index, value in enumerate(values):
+            count = index + 1
+            coeffs = value * np.ones((count,), order='F')
+            for s_val in input_s:
+                is_root = self._call_function_under_test(
+                    coeffs, s_val, rhs_val=value)
+                self.assertTrue(is_root)
+
+                is_root = self._call_function_under_test(
+                    coeffs, s_val, rhs_val=value + 1.0)
+                self.assertFalse(is_root)
+
+    def test_all_zero(self):
+        for num_zeros in (1, 2, 3, 4):
+            coeffs = np.zeros((num_zeros,), order='F')
+            is_root = self._call_function_under_test(coeffs, 0.0)
+            self.assertTrue(is_root)
+
+    def test_linear(self):
+        # 8 s + 1
+        coeffs = np.asfortranarray([1.0, 9.0])
+        for s_val in (-2.0, -0.125, 0.0, 0.75, 1.0, 9.5):
+            rhs_val = 8.0 * s_val + 1.0
+            is_root = self._call_function_under_test(
+                coeffs, s_val, rhs_val=rhs_val)
+            self.assertTrue(is_root)
+
+            is_root = self._call_function_under_test(
+                coeffs, s_val, rhs_val=rhs_val + 2.0)
+            self.assertFalse(is_root)
+
+    def test_quadratic(self):
+        # 2 s (s + 1)
+        coeffs = np.asfortranarray([0.0, 1.0, 4.0])
+        s_vals = (-2.0, -1.0, -0.5, 0.0, 0.25, 1.0)
+        check_values = [
+            self._call_function_under_test(coeffs, s_val)
+            for s_val in s_vals
+        ]
+        self.assertEqual(
+            check_values, [False, True, False, True, False, False])
+
+    def test_quadratic_complex(self):
+        # s^2 + 1
+        coeffs = np.asfortranarray([1.0, 1.0, 2.0])
+        rhs_val = 10.0
+        s_vals = (-4.5, -3.0, -1.0, 0.0, 1.0, 3.0, 5.5)
+        check_values = [
+            self._call_function_under_test(coeffs, s_val, rhs_val=rhs_val)
+            for s_val in s_vals
+        ]
+        self.assertEqual(
+            check_values, [False, True, False, False, False, True, False])
+
+    def test_quadratic_drop_degree(self):
+        # 2 (s - 2) (s - 1)
+        coeffs = np.asfortranarray([4.0, 1.0, 0.0])
+        s_vals = (-2.25, -1.0, 0.0, 1.0, 1.25, 2.0, 4.5)
+        check_values = [
+            self._call_function_under_test(coeffs, s_val)
+            for s_val in s_vals
+        ]
+        self.assertEqual(
+            check_values, [False, False, False, True, False, True, False])
+
+    def test_quadratic_as_elevated(self):
+        # 2 (s + 1)
+        coeffs = np.asfortranarray([2.0, 3.0, 4.0])
+        s_vals = (-2.0, -1.0, -0.5, 0.0, 0.25, 1.0)
+        check_values = [
+            self._call_function_under_test(coeffs, s_val)
+            for s_val in s_vals
+        ]
+        self.assertEqual(
+            check_values, [False, True, False, False, False, False])
+
+    def test_cubic(self):
+        # -(s - 17) (s - 5) (s - 2)
+        s_vals = (0.0, 1.0, 2.0, 3.0, 5.0, 6.0, 16.0, 17.0, 18.0)
+        check_values = [
+            self._call_function_under_test(self.CUBIC_COEFFS, s_val)
+            for s_val in s_vals
+        ]
+        self.assertEqual(
+            check_values,
+            [False, False, True, False, True, False, False, True, False],
+        )
+
+    def _cubic_wiggle(self, root, max_ulps):
+        # -(s - 17) (s - 5) (s - 2)
+        coeffs = self.CUBIC_COEFFS
+        eps = SPACING(root)
+        for delta in six.moves.xrange(-32, 32 + 1):
+            s_val = root + delta * eps
+            self.assertTrue(self._call_function_under_test(coeffs, s_val))
+
+        s_val1 = root + max_ulps * eps
+        s_val2 = root - max_ulps * eps
+        s_val3 = root + (max_ulps + 1) * eps
+        s_val4 = root - (max_ulps + 1) * eps
+        self.assertTrue(self._call_function_under_test(coeffs, s_val1))
+        self.assertTrue(self._call_function_under_test(coeffs, s_val2))
+        check3 = self._call_function_under_test(coeffs, s_val3)
+        check4 = self._call_function_under_test(coeffs, s_val4)
+        self.assertFalse(check3 and check4)
+
+    def test_cubic_wiggle(self):
+        self._cubic_wiggle(2.0, 308)
+        # This wiggle room is especially egregious.
+        self._cubic_wiggle(5.0, 8129)
+        self._cubic_wiggle(17.0, 22503)
+
+    def test_cubic_drop_degree(self):
+        # 3 (1 - s)^2 (3 s + 1)
+        coeffs = np.asfortranarray([3.0, 4.0, 0.0, 0.0])
+        s_vals = (-2.5, -1.0, -1.0 / 3.0, 0.0, 0.5, 1.0, 1.25)
+        check_values = [
+            self._call_function_under_test(coeffs, s_val)
+            for s_val in s_vals
+        ]
+        self.assertEqual(
+            check_values, [False, False, True, False, False, True, False])
+
+    def test_quartic(self):
+        # 4 s^3 (5 - s)
+        coeffs = np.asfortranarray([0.0, 0.0, 0.0, 5.0, 16.0])
+        s_vals = (-1.0, 0.0, 1.0, 3.5, 5.0, 7.25)
+        check_values = [
+            self._call_function_under_test(coeffs, s_val)
+            for s_val in s_vals
+        ]
+        self.assertEqual(
+            check_values, [False, True, False, False, True, False])
 
 
 class Test_poly_to_power_basis(utils.NumPyTestCase):

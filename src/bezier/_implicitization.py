@@ -43,6 +43,11 @@ import numpy as np
 from numpy.polynomial import polynomial
 import six
 
+try:
+    import scipy.linalg.lapack as _scipy_lapack
+except ImportError:  # pragma: NO COVER
+    _scipy_lapack = None
+
 from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
@@ -90,6 +95,7 @@ _IMAGINARY_WIGGLE = 0.5**13
 _UNIT_INTERVAL_WIGGLE_START = -0.5**13
 _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
 _SIGMA_THRESHOLD = 0.5**20
+_SINGULAR_EPS = 0.5**52
 # Detect almost zero polynomials.
 _L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
 _ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
@@ -837,6 +843,233 @@ def bezier_roots(coeffs):
         s_vals = np.hstack([s_vals, [1] * delta])
 
     return s_vals
+
+
+def lu_companion(top_row, value):
+    r"""Compute an LU-factored :math:`C - t I` and it's 1-norm.
+
+    .. note::
+
+       The output of this function is intended to be used with ``dgecon``
+       from LAPACK. ``dgecon`` expects both the 1-norm of the matrix
+       and expects the matrix to be passed in an already LU-factored form
+       (via ``dgetrf``).
+
+    The companion matrix :math:`C` is given by the ``top_row``, for
+    example, the polynomial :math:`t^3 + 3 t^2 - t + 2` has
+    a top row of ``-3, 1, -2`` and the corresponding companion matrix
+    is:
+
+    .. math::
+
+       \left[\begin{array}{c c c}
+         -3 & 1 & -2 \\
+          1 & 0 &  0 \\
+          0 & 1 &  0
+       \end{array}\right]
+
+    After doing a full cycle of the rows (shifting the first to the last and
+    moving all other rows up), row reduction of :math:`C - t I` yields
+
+    .. math::
+
+       \left[\begin{array}{c c c}
+          1     & -t &  0 \\
+          0     &  1 & -t \\
+         -3 - t &  1 & -2
+       \end{array}\right] =
+       \left[\begin{array}{c c c}
+          1     & 0             & 0 \\
+          0     & 1             & 0 \\
+         -3 - t & 1 + t(-3 - t) & 1
+       \end{array}\right]
+       \left[\begin{array}{c c c}
+          1 & -t &  0                    \\
+          0 &  1 & -t                    \\
+          0 &  0 & -2 + t(1 + t(-3 - t))
+       \end{array}\right]
+
+    and in general, the terms in the bottom row correspond to the intermediate
+    values involved in evaluating the polynomial via `Horner's method`_.
+
+    .. _Horner's method: https://en.wikipedia.org/wiki/Horner%27s_method
+
+    .. testsetup:: lu-companion
+
+       import numpy as np
+       import numpy.linalg
+       from bezier._implicitization import lu_companion
+
+    .. doctest:: lu-companion
+
+       >>> top_row = np.asfortranarray([-3.0, 1.0, -2.0])
+       >>> t_val = 0.5
+       >>> lu_mat, one_norm = lu_companion(top_row, t_val)
+       >>> lu_mat
+       array([[ 1.   , -0.5  ,  0.   ],
+              [ 0.   ,  1.   , -0.5  ],
+              [-3.5  , -0.75 , -2.375]])
+       >>> one_norm
+       4.5
+       >>> l_mat = np.tril(lu_mat, k=-1) + np.eye(3)
+       >>> u_mat = np.triu(lu_mat)
+       >>> a_mat = l_mat.dot(u_mat)
+       >>> a_mat
+       array([[ 1. , -0.5,  0. ],
+              [ 0. ,  1. , -0.5],
+              [-3.5,  1. , -2. ]])
+       >>> np.linalg.norm(a_mat, ord=1)
+       4.5
+
+    Args:
+        top_row (numpy.ndarray): 1D array, top row of companion matrix.
+        value (float): The :math:`t` value used to form :math:`C - t I`.
+
+    Returns:
+        Tuple[numpy.ndarray, float]: Pair of
+
+        * 2D array of LU-factored form of :math:`C - t I`, with the
+          non-diagonal part of :math:`L` stored in the strictly lower triangle
+          and :math:`U` stored in the upper triangle (we skip the permutation
+          matrix, as it won't impact the 1-norm)
+        * the 1-norm the matrix :math:`C - t I`
+
+        As mentioned above, these two values are meant to be used with
+        ``dgecon``.
+    """
+    degree, = top_row.shape
+    lu_mat = np.zeros((degree, degree), order='F')
+
+    if degree == 1:
+        lu_mat[0, 0] = top_row[0] - value
+        return lu_mat, abs(lu_mat[0, 0])
+
+    # Column 0: Special case since it doesn't have ``-t`` above the diagonal.
+    horner_curr = top_row[0] - value
+    one_norm = 1.0 + abs(horner_curr)
+    lu_mat[0, 0] = 1.0
+    lu_mat[degree - 1, 0] = horner_curr
+
+    # Columns 1-(end - 1): Three values in LU and C - t I.
+    abs_one_plus = 1.0 + abs(value)
+    last_row = degree - 1
+    for col in six.moves.xrange(1, degree - 1):
+        curr_coeff = top_row[col]
+        horner_curr = value * horner_curr + curr_coeff
+        one_norm = max(one_norm, abs_one_plus + abs(curr_coeff))
+        lu_mat[col - 1, col] = -value
+        lu_mat[col, col] = 1.0
+        lu_mat[last_row, col] = horner_curr
+
+    # Last Column: Special case since it doesn't have ``-1`` on the diagonal.
+    curr_coeff = top_row[last_row]
+    horner_curr = value * horner_curr + curr_coeff
+    one_norm = max(one_norm, abs(value) + abs(curr_coeff))
+    lu_mat[last_row - 1, last_row] = -value
+    lu_mat[last_row, last_row] = horner_curr
+
+    return lu_mat, one_norm
+
+
+def _reciprocal_condition_number(lu_mat, one_norm):
+    r"""Compute reciprocal condition number of a matrix.
+
+    Args:
+        lu_mat (numpy.ndarray): A 2D array of a matrix :math:`A` that has been
+            LU-factored, with the non-diagonal part of :math:`L` stored in the
+            strictly lower triangle and :math:`U` stored in the upper triangle.
+        one_norm (float): The 1-norm of the original matrix :math:`A`.
+
+    Returns:
+        float: The reciprocal condition number of :math:`A`.
+
+    Raises:
+        OSError: If SciPy is not installed.
+        RuntimeError: If the reciprocal 1-norm condition number could not
+            be computed.
+    """
+    if _scipy_lapack is None:
+        raise OSError('This function requires SciPy for calling into LAPACK.')
+
+    rcond, info = _scipy_lapack.dgecon(lu_mat, one_norm)
+    if info != 0:
+        raise RuntimeError(
+            'The reciprocal 1-norm condition number could not be computed.')
+
+    return rcond
+
+
+def bezier_value_check(coeffs, s_val, rhs_val=0.0):
+    r"""Check if a polynomial in the Bernstein basis evaluates to a value.
+
+    This is intended to be used for root checking, i.e. for a polynomial
+    :math:`f(s)` and a particular value :math:`s_{\ast}`:
+
+       Is it true that :math:`f\left(s_{\ast}\right) = 0`?
+
+    Does so by re-stating as a matrix rank problem. As in
+    :func:`~bezier._implicitization.bezier_roots`, we can rewrite
+
+    .. math::
+
+       f(s) = (1 - s)^n g\left(\sigma\right)
+
+    for :math:`\sigma = \frac{s}{1 - s}` and :math:`g\left(\sigma\right)`
+    written in the power / monomial basis. Now, checking if
+    :math:`g\left(\sigma\right) = 0` is a matter of checking that
+    :math:`\det\left(C_g - \sigma I\right) = 0` (where :math:`C_g` is the
+    companion matrix of :math:`g`).
+
+    Due to issues of numerical stability, we'd rather ask if
+    :math:`C_g - \sigma I` is singular to numerical precision. A typical
+    approach to this using the singular values (assuming :math:`C_g` is
+    :math:`m \times m`) is that the matrix is singular if
+
+    .. math::
+
+       \sigma_m < m \varepsilon \sigma_1 \Longleftrightarrow
+           \frac{1}{\kappa_2} < m \varepsilon
+
+    (where :math:`\kappa_2` is the 2-norm condition number of the matrix).
+    Since we also know that :math:`\kappa_2 < \kappa_1`, a stronger
+    requirement would be
+
+    .. math::
+
+       \frac{1}{\kappa_1} < \frac{1}{\kappa_2} < m \varepsilon.
+
+    This is more useful since it is **much** easier to compute the 1-norm
+    condition number / reciprocal condition number (and methods in LAPACK are
+    provided for doing so).
+
+    Args:
+        coeffs (numpy.ndarray): A 1D array of coefficients in
+            the Bernstein basis representing a polynomial.
+        s_val (float): The value to check on the polynomial:
+            :math:`f(s) = r`.
+        rhs_val (Optional[float]): The value to check that the polynomial
+            evaluates to. Defaults to ``0.0``.
+
+    Returns:
+        bool: Indicates if :math:`f\left(s_{\ast}\right) = r` (where
+        :math:`s_{\ast}` is ``s_val`` and :math:`r` is ``rhs_val``).
+    """
+    if s_val == 1.0:
+        return coeffs[-1] == rhs_val
+
+    shifted_coeffs = coeffs - rhs_val
+    sigma_coeffs, _, effective_degree = _get_sigma_coeffs(shifted_coeffs)
+    if effective_degree == 0:
+        # This means that all coefficients except the ``(1 - s)^n``
+        # term are zero, so we have ``f(s) = C (1 - s)^n``. Since we know
+        # ``s != 1``, this can only be zero if ``C == 0``.
+        return shifted_coeffs[0] == 0.0
+
+    sigma_val = s_val / (1.0 - s_val)
+    lu_mat, one_norm = lu_companion(-sigma_coeffs[::-1], sigma_val)
+    rcond = _reciprocal_condition_number(lu_mat, one_norm)
+    # "Is a root?" IFF Singular IF ``1/kappa_1 < m epsilon``
+    return rcond < effective_degree * _SINGULAR_EPS
 
 
 def roots_in_unit_interval(coeffs):
