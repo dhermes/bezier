@@ -846,7 +846,7 @@ def bezier_roots(coeffs):
 
 
 def lu_companion(top_row, value):
-    r"""Compute an LU-factored :math:`C - t I` and it's 1-norm.
+    r"""Compute an LU-factored :math:`C - t I` and its 1-norm.
 
     .. note::
 
