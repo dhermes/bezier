@@ -52,7 +52,7 @@ _WIGGLE_END = 1.0 - _WIGGLE_START
 _SIMILAR_ULPS = 1
 
 
-def _check_close(s, curve1, t, curve2):
+def _check_close(s, nodes1, t, nodes2):
     r"""Checks that two curves intersect to some threshold.
 
     Verifies :math:`B_1(s) \approx B_2(t)` and then returns
@@ -60,9 +60,11 @@ def _check_close(s, curve1, t, curve2):
 
     Args:
         s (float): Parameter of a near-intersection along ``curve1``.
-        curve1 (.Curve): First curve forming intersection.
+        nodes1 (numpy.ndarray): Control points of first curve forming
+            intersection.
         t (float): Parameter of a near-intersection along ``curve2``.
-        curve2 (.Curve): Second curve forming intersection.
+        nodes2 (numpy.ndarray): Control points of second curve forming
+            intersection.
 
     Raises:
         ValueError: If :math:`B_1(s)` is not sufficiently close to
@@ -71,8 +73,10 @@ def _check_close(s, curve1, t, curve2):
     Returns:
         numpy.ndarray: The value of :math:`B_1(s)`.
     """
-    vec1 = curve1.evaluate(s)
-    vec2 = curve2.evaluate(t)
+    vec1 = _curve_helpers.evaluate_multi(
+        nodes1, np.asfortranarray([s]))
+    vec2 = _curve_helpers.evaluate_multi(
+        nodes2, np.asfortranarray([t]))
     if not _helpers.vector_close(vec1, vec2):
         raise ValueError('B_1(s) and B_2(t) are not sufficiently close')
 
@@ -1667,7 +1671,8 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         """
         if self.point is None:
             return _check_close(
-                self.s, self.first, self.t, self.second)
+                self.s, self.first._nodes,
+                self.t, self.second._nodes)
         else:
             return self.point
 

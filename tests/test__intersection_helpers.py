@@ -45,40 +45,34 @@ def check_intersection(test_case, intersection, expected,
 class Test__check_close(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(s, curve1, t, curve2):
+    def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _intersection_helpers
 
         return _intersection_helpers._check_close(
-            s, curve1, t, curve2)
+            s, nodes1, t, nodes2)
 
     def test_success(self):
-        import bezier
-
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],
         ])
-        curve = bezier.Curve(nodes, degree=2)
         s_val = 0.5
         wiggle = 2.0**(-50)
         result = self._call_function_under_test(
-            s_val, curve, s_val + wiggle, curve)
+            s_val, nodes, s_val + wiggle, nodes)
 
         expected = np.asfortranarray([[0.5, 0.5]])
         self.assertEqual(result, expected)
 
     def test_failure(self):
-        import bezier
-
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve = bezier.Curve(nodes, degree=1)
         # The nodes of thise curve are far away.
         with self.assertRaises(ValueError):
-            self._call_function_under_test(0.0, curve, 1.0, curve)
+            self._call_function_under_test(0.0, nodes, 1.0, nodes)
 
 
 class Test__bbox_intersect(unittest.TestCase):
@@ -1659,8 +1653,9 @@ class TestIntersection(unittest.TestCase):
     def test_get_point_on_the_fly(self):
         s_val = 1.0
         t_val = 0.0
-        intersection = self._make_one(
-            mock.sentinel.first, s_val, mock.sentinel.second, t_val)
+        first = mock.Mock(_nodes=mock.sentinel.nodes1, spec=['_nodes'])
+        second = mock.Mock(_nodes=mock.sentinel.nodes2, spec=['_nodes'])
+        intersection = self._make_one(first, s_val, second, t_val)
 
         patch = mock.patch(
             'bezier._intersection_helpers._check_close',
@@ -1669,4 +1664,4 @@ class TestIntersection(unittest.TestCase):
             self.assertIsNone(intersection.point)
             self.assertIs(intersection.get_point(), mock.sentinel.point)
             mocked.assert_called_once_with(
-                s_val, mock.sentinel.first, t_val, mock.sentinel.second)
+                s_val, mock.sentinel.nodes1, t_val, mock.sentinel.nodes2)
