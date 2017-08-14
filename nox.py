@@ -238,3 +238,18 @@ def lint(session):
         get_path('tests'),
         env=functional_env(),
     )
+
+
+@nox.session
+@nox.parametrize('target', ['memory'])
+def benchmark(session, target):
+    session.interpreter = SINGLE_INTERP
+
+    # Install all test dependencies.
+    local_deps = (NUMPY, 'psutil', 'memory_profiler')
+    session.install(*local_deps)
+    # Install this package.
+    session.install('.')
+
+    test_fi = get_path('benchmarks', 'memory', 'test_curves.py')
+    session.run('python', test_fi, env=functional_env())
