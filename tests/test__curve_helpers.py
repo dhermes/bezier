@@ -60,8 +60,6 @@ class Test_make_subdivision_matrices(utils.NumPyTestCase):
             _curve_helpers._CUBIC_SUBDIVIDE_RIGHT)
 
     def test_quartic(self):
-        from bezier import _curve_helpers
-
         expected_l = np.asfortranarray([
             [1.0, 0.0, 0.0, 0.0, 0.0],
             [1.0, 1.0, 0.0, 0.0, 0.0],
@@ -100,11 +98,11 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
     def _points_check(self, nodes, degree, pts_exponent=5):
         from bezier import _curve_helpers
 
+        left, right = self._call_function_under_test(nodes, degree)
+
         # Using the exponent means that ds = 1/2**exp, which
         # can be computed without roundoff.
         num_pts = 2**pts_exponent + 1
-        left, right = self._call_function_under_test(nodes, degree)
-
         left_half = np.linspace(0.0, 0.5, num_pts)
         right_half = np.linspace(0.5, 1.0, num_pts)
         unit_interval = np.linspace(0.0, 1.0, num_pts)
@@ -115,9 +113,10 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         ]
         for sub_curve, half in pairs:
             # Make sure sub_curve([0, 1]) == curve(half)
-            main_vals = _curve_helpers.evaluate_multi(nodes, half)
-            sub_vals = _curve_helpers.evaluate_multi(sub_curve, unit_interval)
-            self.assertEqual(main_vals, sub_vals)
+            self.assertEqual(
+                _curve_helpers.evaluate_multi(nodes, half),
+                _curve_helpers.evaluate_multi(sub_curve, unit_interval),
+            )
 
     def test_line(self):
         nodes = np.asfortranarray([
@@ -638,22 +637,21 @@ class Test_get_curvature(unittest.TestCase):
 class Test_newton_refine(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(curve, point, s):
+    def _call_function_under_test(nodes, degree, point, s):
         from bezier import _curve_helpers
 
-        return _curve_helpers.newton_refine(curve, point, s)
+        return _curve_helpers.newton_refine(nodes, degree, point, s)
 
     def test_it(self):
-        import bezier
-
-        curve = bezier.Curve.from_nodes(np.asfortranarray([
+        nodes = np.asfortranarray([
             [0.0, 0.0, 0.0],
             [1.0, -1.0, 1.0],
             [3.0, 2.0, 2.0],
             [2.0, 2.0, 4.0],
-        ]))
-        point = curve.evaluate_multi(np.asfortranarray([0.5]))
-        new_s = self._call_function_under_test(curve, point, 0.25)
+        ])
+        # curve(1/2) = p
+        point = np.asfortranarray([[1.75, 0.625, 1.625]])
+        new_s = self._call_function_under_test(nodes, 3, point, 0.25)
         self.assertEqual(110.0 * new_s, 57.0)
 
 

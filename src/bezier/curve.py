@@ -32,7 +32,6 @@ import numpy as np
 
 from bezier import _base
 from bezier import _curve_helpers
-from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
