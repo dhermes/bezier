@@ -1008,6 +1008,76 @@ class Test_newton_refine(unittest.TestCase):
         self.assertEqual(new_t, 31.0 / 128.0)
 
 
+class Test__update_locate_candidates(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(
+            candidate, next_candidates, x_val, y_val, degree):
+        from bezier import _surface_helpers
+
+        return _surface_helpers._update_locate_candidates(
+            candidate, next_candidates, x_val, y_val, degree)
+
+    @mock.patch('bezier._surface_helpers.subdivide_nodes',
+                return_value=(
+                    mock.sentinel.nodes_a,
+                    mock.sentinel.nodes_b,
+                    mock.sentinel.nodes_c,
+                    mock.sentinel.nodes_d,
+                ))
+    def test_contained(self, subdivide_nodes):
+        from bezier import _surface_helpers
+
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 0.25],
+            [1.0, 0.0],
+            [0.0, 0.5],
+            [0.75, 0.75],
+            [0.0, 1.0],
+        ])
+        candidate = (
+            1.25,
+            1.25,
+            -0.25,
+            nodes,
+        )
+        next_candidates = []
+
+        ret_val = self._call_function_under_test(
+            candidate, next_candidates, 0.5625, 0.375, 2)
+        self.assertIsNone(ret_val)
+
+        expected = [
+            (1.375, 1.375, -0.125, mock.sentinel.nodes_a),
+            (1.25, 1.25, 0.125, mock.sentinel.nodes_b),
+            (1.0, 1.375, -0.125, mock.sentinel.nodes_c),
+            (1.375, 1.0, -0.125, mock.sentinel.nodes_d),
+        ]
+        self.assertEqual(next_candidates, expected)
+        subdivide_nodes.assert_called_once_with(nodes, 2)
+
+    def test_not_contained(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [2.0, 3.0],
+            [-1.0, 2.0],
+        ])
+        candidate = (
+            2.0,
+            0.5,
+            0.5,
+            nodes,
+        )
+        next_candidates = []
+
+        ret_val = self._call_function_under_test(
+            candidate, next_candidates, 9.0, 9.0, 1)
+        self.assertIsNone(ret_val)
+
+        self.assertEqual(next_candidates, [])
+
+
 class Test_locate_point(unittest.TestCase):
 
     @staticmethod
