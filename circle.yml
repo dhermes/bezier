@@ -18,6 +18,7 @@ test:
     - nox -s doctest
     - nox -s lint
     - nox -s "functional(python_version='3.6')"
+    - nox -s benchmark
   post:
     - .nox/cover/bin/pip install coveralls
     - .nox/cover/bin/coveralls
