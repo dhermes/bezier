@@ -12,17 +12,8 @@
 
 import mock
 import numpy as np
-import pytest
 
 from tests import utils
-
-
-# pylint: disable=invalid-name,no-member
-slow = pytest.mark.skipif(
-    pytest.config.getoption('--ignore-slow') and utils.WITHOUT_SPEEDUPS,
-    reason='--ignore-slow ignores the slow tests',
-)
-# pylint: enable=invalid-name,no-member
 
 
 class TestSurface(utils.NumPyTestCase):
@@ -569,236 +560,67 @@ class TestSurface(utils.NumPyTestCase):
             self, call, self.UNIT_TRIANGLE,
             color='black', marker='o', linestyle='None')
 
-    def _subdivide_helper(self, nodes, expected_a, expected_b,
-                          expected_c, expected_d):
+    def test_subdivide(self):
         klass = self._get_target_class()
 
-        surface = klass.from_nodes(nodes)
+        degree = 1
+        surface = self._make_one(
+            self.UNIT_TRIANGLE, degree,
+            base_x=0.5, base_y=0.5, width=-0.125, _copy=False)
+
         surface_a, surface_b, surface_c, surface_d = surface.subdivide()
 
+        # Check sub-surface A.
         self.assertIsInstance(surface_a, klass)
+        self.assertEqual(surface_a._degree, degree)
+        self.assertEqual(surface_a._base_x, 0.5)
+        self.assertEqual(surface_a._base_y, 0.5)
+        self.assertEqual(surface_a._width, -0.0625)
+        expected_a = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 0.0],
+            [0.0, 0.5],
+        ])
         self.assertEqual(surface_a._nodes, expected_a)
+
+        # Check sub-surface B.
         self.assertIsInstance(surface_b, klass)
+        self.assertEqual(surface_b._degree, degree)
+        self.assertEqual(surface_b._base_x, 0.4375)
+        self.assertEqual(surface_b._base_y, 0.4375)
+        self.assertEqual(surface_b._width, 0.0625)
+        expected_b = np.asfortranarray([
+            [0.5, 0.5],
+            [0.0, 0.5],
+            [0.5, 0.0],
+        ])
         self.assertEqual(surface_b._nodes, expected_b)
+
+        # Check sub-surface C.
         self.assertIsInstance(surface_c, klass)
+        self.assertEqual(surface_c._degree, degree)
+        self.assertEqual(surface_c._base_x, 0.4375)
+        self.assertEqual(surface_c._base_y, 0.5)
+        self.assertEqual(surface_c._width, -0.0625)
+        expected_c = np.asfortranarray([
+            [0.5, 0.0],
+            [1.0, 0.0],
+            [0.5, 0.5],
+        ])
         self.assertEqual(surface_c._nodes, expected_c)
+
+        # Check sub-surface D.
         self.assertIsInstance(surface_d, klass)
+        self.assertEqual(surface_d._degree, degree)
+        self.assertEqual(surface_d._base_x, 0.5)
+        self.assertEqual(surface_d._base_y, 0.4375)
+        self.assertEqual(surface_d._width, -0.0625)
+        expected_d = np.asfortranarray([
+            [0.0, 0.5],
+            [0.5, 0.5],
+            [0.0, 1.0],
+        ])
         self.assertEqual(surface_d._nodes, expected_d)
-
-    def _subdivide_points_check(self, surface):
-        # Using the exponent means that we will divide by
-        # 2**exp, which can be done without roundoff (for small
-        # enough exponents).
-        sub_surfaces = surface.subdivide()
-
-        ref_triangle = self.REF_TRIANGLE
-        quarter_a = 0.5 * ref_triangle
-        quarters = [
-            quarter_a,
-            np.asfortranarray([0.5, 0.5]) - quarter_a,  # B
-            quarter_a + np.asfortranarray([0.5, 0.0]),  # C
-            quarter_a + np.asfortranarray([0.0, 0.5]),  # D
-        ]
-
-        for sub_surface, quarter in zip(sub_surfaces, quarters):
-            # Make sure sub_surface(ref_triangle) == surface(quarter)
-            main_vals = surface.evaluate_cartesian_multi(quarter)
-            sub_vals = sub_surface.evaluate_cartesian_multi(ref_triangle)
-            self.assertEqual(main_vals, sub_vals)
-
-    def test_subdivide_linear(self):
-        expected_a = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 0.0],
-            [0.0, 0.5],
-        ])
-        expected_b = np.asfortranarray([
-            [0.5, 0.5],
-            [0.0, 0.5],
-            [0.5, 0.0],
-        ])
-        expected_c = np.asfortranarray([
-            [0.5, 0.0],
-            [1.0, 0.0],
-            [0.5, 0.5],
-        ])
-        expected_d = np.asfortranarray([
-            [0.0, 0.5],
-            [0.5, 0.5],
-            [0.0, 1.0],
-        ])
-        self._subdivide_helper(self.UNIT_TRIANGLE, expected_a,
-                               expected_b, expected_c, expected_d)
-
-    @slow
-    def test_subdivide_line_check_evaluate(self):
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-        nodes = utils.get_random_nodes(
-            shape=(3, 2), seed=123987, num_bits=8)
-
-        klass = self._get_target_class()
-        surface = klass.from_nodes(nodes)
-        self.assertEqual(surface.degree, 1)
-        self._subdivide_points_check(surface)
-
-    def test_subdivide_quadratic(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 0.25],
-            [1.0, 0.0],
-            [0.5, 0.75],
-            [0.0, 1.0],
-            [0.0, 0.5],
-        ])
-        expected_a = np.asfortranarray([
-            [0.0, 0.0],
-            [0.25, 0.125],
-            [0.5, 0.125],
-            [0.25, 0.375],
-            [0.25, 0.5],
-            [0.25, 0.5],
-        ])
-        expected_b = np.asfortranarray([
-            [0.25, 0.625],
-            [0.25, 0.625],
-            [0.25, 0.5],
-            [0.5, 0.5],
-            [0.25, 0.5],
-            [0.5, 0.125],
-        ])
-        expected_c = np.asfortranarray([
-            [0.5, 0.125],
-            [0.75, 0.125],
-            [1.0, 0.0],
-            [0.5, 0.5],
-            [0.5, 0.5],
-            [0.25, 0.625],
-        ])
-        expected_d = np.asfortranarray([
-            [0.25, 0.5],
-            [0.25, 0.625],
-            [0.25, 0.625],
-            [0.25, 0.625],
-            [0.0, 0.75],
-            [0.0, 0.5],
-        ])
-        self._subdivide_helper(nodes, expected_a, expected_b,
-                               expected_c, expected_d)
-
-    @slow
-    def test_subdivide_quadratic_check_evaluate(self):
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-        nodes = utils.get_random_nodes(
-            shape=(6, 2), seed=45001, num_bits=8)
-
-        klass = self._get_target_class()
-        surface = klass.from_nodes(nodes)
-        self.assertEqual(surface.degree, 2)
-        self._subdivide_points_check(surface)
-
-    def test_subdivide_cubic(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [3.25, 1.5],
-            [6.5, 1.5],
-            [10.0, 0.0],
-            [1.5, 3.25],
-            [5.0, 5.0],
-            [10.0, 5.25],
-            [1.5, 6.5],
-            [5.25, 10.0],
-            [0.0, 10.0],
-        ])
-        expected_a = np.asfortranarray([
-            [0.0, 0.0],
-            [1.625, 0.75],
-            [3.25, 1.125],
-            [4.90625, 1.125],
-            [0.75, 1.625],
-            [2.4375, 2.4375],
-            [4.3125, 2.875],
-            [1.125, 3.25],
-            [2.875, 4.3125],
-            [1.125, 4.90625],
-        ])
-        expected_b = np.asfortranarray([
-            [6.96875, 6.96875],
-            [4.8125, 6.65625],
-            [2.875, 5.96875],
-            [1.125, 4.90625],
-            [6.65625, 4.8125],
-            [4.75, 4.75],
-            [2.875, 4.3125],
-            [5.96875, 2.875],
-            [4.3125, 2.875],
-            [4.90625, 1.125],
-        ])
-        expected_c = np.asfortranarray([
-            [4.90625, 1.125],
-            [6.5625, 1.125],
-            [8.25, 0.75],
-            [10.0, 0.0],
-            [5.96875, 2.875],
-            [7.875, 2.9375],
-            [10.0, 2.625],
-            [6.65625, 4.8125],
-            [8.8125, 5.125],
-            [6.96875, 6.96875],
-        ])
-        expected_d = np.asfortranarray([
-            [1.125, 4.90625],
-            [2.875, 5.96875],
-            [4.8125, 6.65625],
-            [6.96875, 6.96875],
-            [1.125, 6.5625],
-            [2.9375, 7.875],
-            [5.125, 8.8125],
-            [0.75, 8.25],
-            [2.625, 10.0],
-            [0.0, 10.0],
-        ])
-        self._subdivide_helper(nodes, expected_a, expected_b,
-                               expected_c, expected_d)
-
-    @slow
-    def test_subdivide_cubic_check_evaluate(self):
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-        nodes = utils.get_random_nodes(
-            shape=(10, 2), seed=346323, num_bits=8)
-
-        klass = self._get_target_class()
-        surface = klass.from_nodes(nodes)
-        self.assertEqual(surface.degree, 3)
-        self._subdivide_points_check(surface)
-
-    @slow
-    def test_subdivide_quartic_check_evaluate(self):
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-        nodes = utils.get_random_nodes(
-            shape=(15, 2), seed=741002, num_bits=8)
-
-        klass = self._get_target_class()
-        surface = klass.from_nodes(nodes)
-        self.assertEqual(surface.degree, 4)
-        self._subdivide_points_check(surface)
-
-    @slow
-    def test_subdivide_on_the_fly(self):
-        # Test for a degree where the subdivision is done on the fly
-        # rather than via a stored matrix.
-        nodes = utils.get_random_nodes(
-            shape=(21, 2), seed=446, num_bits=8)
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-
-        klass = self._get_target_class()
-        surface = klass.from_nodes(nodes)
-        self.assertEqual(surface.degree, 5)
-        self._subdivide_points_check(surface)
 
     def test__compute_valid_valid_linear(self):
         surface = self._make_one(self.UNIT_TRIANGLE, 1)

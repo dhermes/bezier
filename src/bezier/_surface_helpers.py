@@ -678,33 +678,87 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
     return _reduced_to_matrix(nodes.shape, degree, partial_vals)
 
 
+def subdivide_nodes(nodes, degree):
+    """Subdivide a surface into four sub-surfaces.
+
+    Does so by taking the unit triangle (i.e. the domain of the surface) and
+    splitting it into four sub-triangles by connecting the midpoints of each
+    side.
+
+    Args:
+        nodes (numpy.ndarray): Control points for a surface.
+        degree (int): The degree of the surface.
+
+    Returns:
+        Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]: The
+        nodes for the four sub-surfaces.
+    """
+    if degree == 1:
+        nodes_a = _helpers.matrix_product(LINEAR_SUBDIVIDE_A, nodes)
+        nodes_b = _helpers.matrix_product(LINEAR_SUBDIVIDE_B, nodes)
+        nodes_c = _helpers.matrix_product(LINEAR_SUBDIVIDE_C, nodes)
+        nodes_d = _helpers.matrix_product(LINEAR_SUBDIVIDE_D, nodes)
+    elif degree == 2:
+        nodes_a = _helpers.matrix_product(QUADRATIC_SUBDIVIDE_A, nodes)
+        nodes_b = _helpers.matrix_product(QUADRATIC_SUBDIVIDE_B, nodes)
+        nodes_c = _helpers.matrix_product(QUADRATIC_SUBDIVIDE_C, nodes)
+        nodes_d = _helpers.matrix_product(QUADRATIC_SUBDIVIDE_D, nodes)
+    elif degree == 3:
+        nodes_a = _helpers.matrix_product(CUBIC_SUBDIVIDE_A, nodes)
+        nodes_b = _helpers.matrix_product(CUBIC_SUBDIVIDE_B, nodes)
+        nodes_c = _helpers.matrix_product(CUBIC_SUBDIVIDE_C, nodes)
+        nodes_d = _helpers.matrix_product(CUBIC_SUBDIVIDE_D, nodes)
+    elif degree == 4:
+        nodes_a = _helpers.matrix_product(QUARTIC_SUBDIVIDE_A, nodes)
+        nodes_b = _helpers.matrix_product(QUARTIC_SUBDIVIDE_B, nodes)
+        nodes_c = _helpers.matrix_product(QUARTIC_SUBDIVIDE_C, nodes)
+        nodes_d = _helpers.matrix_product(QUARTIC_SUBDIVIDE_D, nodes)
+    else:
+        nodes_a = specialize_surface(
+            nodes, degree,
+            (1.0, 0.0, 0.0), (0.5, 0.5, 0.0), (0.5, 0.0, 0.5))
+        nodes_b = specialize_surface(
+            nodes, degree,
+            (0.0, 0.5, 0.5), (0.5, 0.0, 0.5), (0.5, 0.5, 0.0))
+        nodes_c = specialize_surface(
+            nodes, degree,
+            (0.5, 0.5, 0.0), (0.0, 1.0, 0.0), (0.0, 0.5, 0.5))
+        nodes_d = specialize_surface(
+            nodes, degree,
+            (0.5, 0.0, 0.5), (0.0, 0.5, 0.5), (0.0, 0.0, 1.0))
+
+    return nodes_a, nodes_b, nodes_c, nodes_d
+
+
 def _mean_centroid(candidates):
     """Take the mean of all centroids in set of reference triangles.
 
     Args:
-        candidates (List[.Surface]): List of surfaces. We'll only use
-            the base ``x`` and ``y`` and the width of the reference
-            triangle that each surface represents.
+        candidates (List[Tuple[float, float, float numpy.ndarray]): List of
+            4-tuples, each of which has been produced by :func:`locate_point`.
+            Each 4-tuple contains
+
+            * Three times centroid ``x``-value
+            * Three times centroid ``y``-value
+            * "Width" of a parameter space for a surface
+            * Control points for a surface
+
+            We only use the first two values, which are triple the desired
+            value so that we can put off division by three until summing in
+            our average. We don't use the other two values, they are just an
+            artifact of the way ``candidates`` is constructed by the caller.
 
     Returns:
         Tuple[float, float]: The mean of all centroids.
     """
     sum_x = 0.0
     sum_y = 0.0
-    sum_width = 0.0
-    for candidate in candidates:
-        # pylint: disable=protected-access
-        sum_x += candidate._base_x
-        sum_y += candidate._base_y
-        sum_width += candidate._width
-        # pylint: enable=protected-access
+    for centroid_x, centroid_y, _, _ in candidates:
+        sum_x += centroid_x
+        sum_y += centroid_y
 
-    denom = float(len(candidates))
-    mean_x = sum_x / denom
-    mean_y = sum_y / denom
-    width_delta = sum_width / (3.0 * denom)
-
-    return mean_x + width_delta, mean_y + width_delta
+    denom = 3.0 * len(candidates)
+    return sum_x / denom, sum_y / denom
 
 
 def jacobian_s(nodes, degree, dimension):
@@ -1040,7 +1094,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
     return s + delta_s, t + delta_t
 
 
-def locate_point(surface, x_val, y_val):
+def locate_point(nodes, degree, x_val, y_val):
     r"""Locate a point on a surface.
 
     Does so by recursively subdividing the surface and rejecting
@@ -1049,8 +1103,9 @@ def locate_point(surface, x_val, y_val):
     method to zoom in on the intersection.
 
     Args:
-        surface (.Surface): A B |eacute| zier surface (assumed to
-            be two-dimensional).
+        nodes (numpy.ndarray): Control points for B |eacute| zier surface
+            (assumed to be two-dimensional).
+        degree (int): The degree of the surface.
         x_val (float): The :math:`x`-coordinate of a point
             on the surface.
         y_val (float): The :math:`y`-coordinate of a point
@@ -1061,13 +1116,41 @@ def locate_point(surface, x_val, y_val):
         values corresponding to ``x_val`` and ``y_val`` or
         :data:`None` if the point is not on the ``surface``.
     """
-    candidates = [surface]
+    # We track the centroid rather than base_x/base_y/width (by storing triple
+    # the centroid -- to avoid division by three until needed). We also need
+    # to track the width (or rather, just the sign of the width).
+    candidates = [(1.0, 1.0, 1.0, nodes)]
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
-        for candidate in candidates:
-            nodes = candidate._nodes
-            if _helpers.contains(nodes, x_val, y_val):
-                next_candidates.extend(candidate.subdivide())
+        for centroid_x, centroid_y, width, candidate_nodes in candidates:
+            if _helpers.contains(candidate_nodes, x_val, y_val):
+                nodes_a, nodes_b, nodes_c, nodes_d = subdivide_nodes(
+                    candidate_nodes, degree)
+
+                half_width = 0.5 * width
+                next_candidates.extend((
+                    (
+                        centroid_x - half_width,
+                        centroid_y - half_width,
+                        half_width,
+                        nodes_a,
+                    ), (
+                        centroid_x,
+                        centroid_y,
+                        -half_width,
+                        nodes_b,
+                    ), (
+                        centroid_x + width,
+                        centroid_y - half_width,
+                        half_width,
+                        nodes_c,
+                    ), (
+                        centroid_x - half_width,
+                        centroid_y + width,
+                        half_width,
+                        nodes_d,
+                    ),
+                ))
 
         candidates = next_candidates
 
@@ -1078,13 +1161,13 @@ def locate_point(surface, x_val, y_val):
     # that may contain the point.
     s_approx, t_approx = _mean_centroid(candidates)
     s, t = newton_refine(
-        surface._nodes, surface._degree, x_val, y_val, s_approx, t_approx)
+        nodes, degree, x_val, y_val, s_approx, t_approx)
 
-    actual = surface.evaluate_cartesian(s, t, _verify=False)
+    actual = evaluate_barycentric(nodes, degree, 1.0 - s - t, s, t)
     expected = np.asfortranarray([[x_val, y_val]])
     if not _helpers.vector_close(actual, expected, eps=_LOCATE_EPS):
         s, t = newton_refine(
-            surface._nodes, surface._degree, x_val, y_val, s, t)
+            nodes, degree, x_val, y_val, s, t)
     return s, t
 
 

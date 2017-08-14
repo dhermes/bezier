@@ -874,55 +874,8 @@ class Surface(_base.Base):
             Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
             lower right and upper left sub-surfaces (in that order).
         """
-        if self._degree == 1:
-            nodes_a = _helpers.matrix_product(
-                _surface_helpers.LINEAR_SUBDIVIDE_A, self._nodes)
-            nodes_b = _helpers.matrix_product(
-                _surface_helpers.LINEAR_SUBDIVIDE_B, self._nodes)
-            nodes_c = _helpers.matrix_product(
-                _surface_helpers.LINEAR_SUBDIVIDE_C, self._nodes)
-            nodes_d = _helpers.matrix_product(
-                _surface_helpers.LINEAR_SUBDIVIDE_D, self._nodes)
-        elif self._degree == 2:
-            nodes_a = _helpers.matrix_product(
-                _surface_helpers.QUADRATIC_SUBDIVIDE_A, self._nodes)
-            nodes_b = _helpers.matrix_product(
-                _surface_helpers.QUADRATIC_SUBDIVIDE_B, self._nodes)
-            nodes_c = _helpers.matrix_product(
-                _surface_helpers.QUADRATIC_SUBDIVIDE_C, self._nodes)
-            nodes_d = _helpers.matrix_product(
-                _surface_helpers.QUADRATIC_SUBDIVIDE_D, self._nodes)
-        elif self._degree == 3:
-            nodes_a = _helpers.matrix_product(
-                _surface_helpers.CUBIC_SUBDIVIDE_A, self._nodes)
-            nodes_b = _helpers.matrix_product(
-                _surface_helpers.CUBIC_SUBDIVIDE_B, self._nodes)
-            nodes_c = _helpers.matrix_product(
-                _surface_helpers.CUBIC_SUBDIVIDE_C, self._nodes)
-            nodes_d = _helpers.matrix_product(
-                _surface_helpers.CUBIC_SUBDIVIDE_D, self._nodes)
-        elif self._degree == 4:
-            nodes_a = _helpers.matrix_product(
-                _surface_helpers.QUARTIC_SUBDIVIDE_A, self._nodes)
-            nodes_b = _helpers.matrix_product(
-                _surface_helpers.QUARTIC_SUBDIVIDE_B, self._nodes)
-            nodes_c = _helpers.matrix_product(
-                _surface_helpers.QUARTIC_SUBDIVIDE_C, self._nodes)
-            nodes_d = _helpers.matrix_product(
-                _surface_helpers.QUARTIC_SUBDIVIDE_D, self._nodes)
-        else:
-            nodes_a = _surface_helpers.specialize_surface(
-                self._nodes, self._degree,
-                (1.0, 0.0, 0.0), (0.5, 0.5, 0.0), (0.5, 0.0, 0.5))
-            nodes_b = _surface_helpers.specialize_surface(
-                self._nodes, self._degree,
-                (0.0, 0.5, 0.5), (0.5, 0.0, 0.5), (0.5, 0.5, 0.0))
-            nodes_c = _surface_helpers.specialize_surface(
-                self._nodes, self._degree,
-                (0.5, 0.5, 0.0), (0.0, 1.0, 0.0), (0.0, 0.5, 0.5))
-            nodes_d = _surface_helpers.specialize_surface(
-                self._nodes, self._degree,
-                (0.5, 0.0, 0.5), (0.0, 0.5, 0.5), (0.0, 0.0, 1.0))
+        nodes_a, nodes_b, nodes_c, nodes_d = _surface_helpers.subdivide_nodes(
+            self._nodes, self._degree)
 
         half_width = 0.5 * self._width
         shifted_x = self._base_x + half_width
@@ -1142,7 +1095,8 @@ class Surface(_base.Base):
                     self._dimension, self._dimension, point, point_dimensions)
                 raise ValueError(msg)
 
-        return _surface_helpers.locate_point(self, point[0, 0], point[0, 1])
+        return _surface_helpers.locate_point(
+            self._nodes, self._degree, point[0, 0], point[0, 1])
 
     def intersect(self, other, strategy=_STRATEGY.geometric, _verify=True):
         """Find the common intersection with another surface.

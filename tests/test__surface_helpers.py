@@ -14,6 +14,7 @@ import unittest
 
 import mock
 import numpy as np
+import pytest
 
 from tests import utils
 
@@ -24,6 +25,12 @@ UNIT_TRIANGLE = np.asfortranarray([
     [0.0, 1.0],
 ])
 FLOAT64 = np.float64  # pylint: disable=no-member
+# pylint: disable=invalid-name,no-member
+slow = pytest.mark.skipif(
+    pytest.config.getoption('--ignore-slow') and utils.WITHOUT_SPEEDUPS,
+    reason='--ignore-slow ignores the slow tests',
+)
+# pylint: enable=invalid-name,no-member
 
 
 def make_intersect(first, s, second, t, interior_curve=None):
@@ -465,6 +472,226 @@ class Test_specialize_surface(utils.NumPyTestCase):
             _surface_helpers.QUARTIC_SUBDIVIDE_D)
 
 
+class Test_subdivide_nodes(utils.NumPyTestCase):
+
+    REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.subdivide_nodes(nodes, degree)
+
+    def _helper(self, nodes, degree, expected_a,
+                expected_b, expected_c, expected_d):
+        nodes_a, nodes_b, nodes_c, nodes_d = self._call_function_under_test(
+            nodes, degree)
+
+        self.assertEqual(nodes_a, expected_a)
+        self.assertEqual(nodes_b, expected_b)
+        self.assertEqual(nodes_c, expected_c)
+        self.assertEqual(nodes_d, expected_d)
+
+    def _points_check(self, nodes, degree):
+        from bezier import _surface_helpers
+
+        _, dimension = nodes.shape
+        sub_surfaces = self._call_function_under_test(
+            nodes, degree)
+
+        ref_triangle = self.REF_TRIANGLE
+        quarter_a = 0.5 * ref_triangle
+        quarters = [
+            quarter_a,
+            np.asfortranarray([0.5, 0.5]) - quarter_a,  # B
+            quarter_a + np.asfortranarray([0.5, 0.0]),  # C
+            quarter_a + np.asfortranarray([0.0, 0.5]),  # D
+        ]
+
+        for sub_surface, quarter in zip(sub_surfaces, quarters):
+            # Make sure sub_surface(ref_triangle) == surface(quarter)
+            main_vals = _surface_helpers.evaluate_cartesian_multi(
+                nodes, degree, quarter, dimension)
+            sub_vals = _surface_helpers.evaluate_cartesian_multi(
+                sub_surface, degree, ref_triangle, dimension)
+            self.assertEqual(main_vals, sub_vals)
+
+    def test_linear(self):
+        expected_a = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 0.0],
+            [0.0, 0.5],
+        ])
+        expected_b = np.asfortranarray([
+            [0.5, 0.5],
+            [0.0, 0.5],
+            [0.5, 0.0],
+        ])
+        expected_c = np.asfortranarray([
+            [0.5, 0.0],
+            [1.0, 0.0],
+            [0.5, 0.5],
+        ])
+        expected_d = np.asfortranarray([
+            [0.0, 0.5],
+            [0.5, 0.5],
+            [0.0, 1.0],
+        ])
+        self._helper(
+            UNIT_TRIANGLE, 1,
+            expected_a, expected_b, expected_c, expected_d)
+
+    @slow
+    def test_line_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(3, 2), seed=123987, num_bits=8)
+        self._points_check(nodes, 1)
+
+    def test_quadratic(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 0.25],
+            [1.0, 0.0],
+            [0.5, 0.75],
+            [0.0, 1.0],
+            [0.0, 0.5],
+        ])
+        expected_a = np.asfortranarray([
+            [0.0, 0.0],
+            [0.25, 0.125],
+            [0.5, 0.125],
+            [0.25, 0.375],
+            [0.25, 0.5],
+            [0.25, 0.5],
+        ])
+        expected_b = np.asfortranarray([
+            [0.25, 0.625],
+            [0.25, 0.625],
+            [0.25, 0.5],
+            [0.5, 0.5],
+            [0.25, 0.5],
+            [0.5, 0.125],
+        ])
+        expected_c = np.asfortranarray([
+            [0.5, 0.125],
+            [0.75, 0.125],
+            [1.0, 0.0],
+            [0.5, 0.5],
+            [0.5, 0.5],
+            [0.25, 0.625],
+        ])
+        expected_d = np.asfortranarray([
+            [0.25, 0.5],
+            [0.25, 0.625],
+            [0.25, 0.625],
+            [0.25, 0.625],
+            [0.0, 0.75],
+            [0.0, 0.5],
+        ])
+        self._helper(
+            nodes, 2, expected_a, expected_b, expected_c, expected_d)
+
+    @slow
+    def test_quadratic_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(6, 2), seed=45001, num_bits=8)
+        self._points_check(nodes, 2)
+
+    def test_cubic(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [3.25, 1.5],
+            [6.5, 1.5],
+            [10.0, 0.0],
+            [1.5, 3.25],
+            [5.0, 5.0],
+            [10.0, 5.25],
+            [1.5, 6.5],
+            [5.25, 10.0],
+            [0.0, 10.0],
+        ])
+        expected_a = np.asfortranarray([
+            [0.0, 0.0],
+            [1.625, 0.75],
+            [3.25, 1.125],
+            [4.90625, 1.125],
+            [0.75, 1.625],
+            [2.4375, 2.4375],
+            [4.3125, 2.875],
+            [1.125, 3.25],
+            [2.875, 4.3125],
+            [1.125, 4.90625],
+        ])
+        expected_b = np.asfortranarray([
+            [6.96875, 6.96875],
+            [4.8125, 6.65625],
+            [2.875, 5.96875],
+            [1.125, 4.90625],
+            [6.65625, 4.8125],
+            [4.75, 4.75],
+            [2.875, 4.3125],
+            [5.96875, 2.875],
+            [4.3125, 2.875],
+            [4.90625, 1.125],
+        ])
+        expected_c = np.asfortranarray([
+            [4.90625, 1.125],
+            [6.5625, 1.125],
+            [8.25, 0.75],
+            [10.0, 0.0],
+            [5.96875, 2.875],
+            [7.875, 2.9375],
+            [10.0, 2.625],
+            [6.65625, 4.8125],
+            [8.8125, 5.125],
+            [6.96875, 6.96875],
+        ])
+        expected_d = np.asfortranarray([
+            [1.125, 4.90625],
+            [2.875, 5.96875],
+            [4.8125, 6.65625],
+            [6.96875, 6.96875],
+            [1.125, 6.5625],
+            [2.9375, 7.875],
+            [5.125, 8.8125],
+            [0.75, 8.25],
+            [2.625, 10.0],
+            [0.0, 10.0],
+        ])
+        self._helper(
+            nodes, 3, expected_a, expected_b, expected_c, expected_d)
+
+    @slow
+    def test_cubic_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(10, 2), seed=346323, num_bits=8)
+        self._points_check(nodes, 3)
+
+    @slow
+    def test_quartic_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(15, 2), seed=741002, num_bits=8)
+        self._points_check(nodes, 4)
+
+    @slow
+    def test_on_the_fly(self):
+        # Test for a degree where the subdivision is done on the fly
+        # rather than via a stored matrix.
+        nodes = utils.get_random_nodes(
+            shape=(21, 2), seed=446, num_bits=8)
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        self._points_check(nodes, 5)
+
+
 class Test__mean_centroid(unittest.TestCase):
 
     @staticmethod
@@ -474,21 +701,13 @@ class Test__mean_centroid(unittest.TestCase):
         return _surface_helpers._mean_centroid(candidates)
 
     def test_it(self):
-        import bezier
+        candidates = (
+            (1.0, 1.0, None, None),
+            (2.25, 1.5, None, None),
+            (1.25, 4.25, None, None),
+        )
 
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 1.0],
-        ])
-        surface1 = bezier.Surface(nodes, 1)
-        surface2 = bezier.Surface(
-            nodes, 1, base_x=0.5, base_y=0.25, width=0.75)
-        surface3 = bezier.Surface(
-            nodes, 1, base_x=0.25, base_y=1.25, width=0.5)
-
-        centroid_x, centroid_y = self._call_function_under_test(
-            [surface1, surface2, surface3])
+        centroid_x, centroid_y = self._call_function_under_test(candidates)
         self.assertEqual(centroid_x, 0.5)
         self.assertEqual(centroid_y, 0.75)
 
@@ -793,41 +1012,38 @@ class Test_newton_refine(unittest.TestCase):
 class Test_locate_point(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(surface, x_val, y_val):
+    def _call_function_under_test(nodes, degree, x_val, y_val):
         from bezier import _surface_helpers
 
-        return _surface_helpers.locate_point(surface, x_val, y_val)
+        return _surface_helpers.locate_point(nodes, degree, x_val, y_val)
 
     def test_it(self):
-        import bezier
-
-        surface = bezier.Surface(UNIT_TRIANGLE, 1)
+        nodes = UNIT_TRIANGLE.copy(order='F')
+        degree = 1
         x_val = 0.25
         y_val = 0.625
-        s, t = self._call_function_under_test(surface, x_val, y_val)
+        s, t = self._call_function_under_test(nodes, degree, x_val, y_val)
         self.assertEqual(s, x_val)
         self.assertEqual(t, y_val)
 
     def test_extra_newton_step(self):
-        import bezier
-
-        surface = bezier.Surface(UNIT_TRIANGLE, 1)
+        nodes = UNIT_TRIANGLE.copy(order='F')
+        degree = 1
         x_val = 1.0 / 3.0
         y_val = 1.0 / 3.0
         with mock.patch('bezier._surface_helpers._LOCATE_EPS', new=-1.0):
-            s, t = self._call_function_under_test(surface, x_val, y_val)
+            s, t = self._call_function_under_test(nodes, degree, x_val, y_val)
 
         self.assertEqual(s, x_val)
         self.assertEqual(t, y_val)
 
     def test_no_match(self):
-        import bezier
-
-        surface = bezier.Surface(UNIT_TRIANGLE, 1)
+        nodes = UNIT_TRIANGLE.copy(order='F')
+        degree = 1
         x_val = -0.125
         y_val = 0.25
         self.assertIsNone(
-            self._call_function_under_test(surface, x_val, y_val))
+            self._call_function_under_test(nodes, degree, x_val, y_val))
 
 
 class Test_classify_intersection(unittest.TestCase):
