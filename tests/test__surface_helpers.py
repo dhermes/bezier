@@ -49,47 +49,45 @@ def get_enum(str_val):
 class Test_polynomial_sign(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(poly_surface):
+    def _call_function_under_test(poly_surface, degree):
         from bezier import _surface_helpers
 
-        return _surface_helpers.polynomial_sign(poly_surface)
-
-    def _helper(self, bernstein, expected):
-        import bezier
-
-        poly_surface = bezier.Surface.from_nodes(bernstein)
-        result = self._call_function_under_test(poly_surface)
-        self.assertEqual(result, expected)
+        return _surface_helpers.polynomial_sign(poly_surface, degree)
 
     def test_positive(self):
         bernstein = np.asfortranarray(
             [[1.0], [2.0], [3.0], [4.0], [5.0], [6.0]])
-        self._helper(bernstein, 1)
+        sign = self._call_function_under_test(bernstein, 2)
+        self.assertEqual(sign, 1)
 
     def test_negative(self):
         bernstein = np.asfortranarray([[-1.0], [-2.0], [-1.0]])
-        self._helper(bernstein, -1)
+        sign = self._call_function_under_test(bernstein, 1)
+        self.assertEqual(sign, -1)
 
     def test_zero(self):
         bernstein = np.zeros((10, 1), order='F')
-        self._helper(bernstein, 0)
+        sign = self._call_function_under_test(bernstein, 3)
+        self.assertEqual(sign, 0)
 
     def test_mixed(self):
         bernstein = np.asfortranarray([[-1.0], [1.0], [-1.0]])
-        self._helper(bernstein, 0)
+        sign = self._call_function_under_test(bernstein, 1)
+        self.assertEqual(sign, 0)
 
     def test_max_iterations(self):
         bernstein = np.asfortranarray([[1.0], [2.0], [3.0]])
         subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=1):
-            self._helper(bernstein, 1)
+            sign = self._call_function_under_test(bernstein, 1)
+            self.assertEqual(sign, 1)
 
     def test_no_conclusion(self):
         bernstein = np.asfortranarray([[-1.0], [1.0], [2.0]])
         subs = 'bezier._surface_helpers._MAX_POLY_SUBDIVISIONS'
         with mock.patch(subs, new=0):
             with self.assertRaises(ValueError):
-                self._helper(bernstein, None)
+                self._call_function_under_test(bernstein, 1)
 
     def test_conclusion_from_corner_node(self):
         # NOTE: This comes from the surface defined by
@@ -101,7 +99,8 @@ class Test_polynomial_sign(unittest.TestCase):
         #          [0.25  1.0  ]
         bernstein = np.asfortranarray([
             [1.0], [0.5], [0.0], [0.75], [0.4375], [1.0]])
-        self._helper(bernstein, 0)
+        sign = self._call_function_under_test(bernstein, 2)
+        self.assertEqual(sign, 0)
 
 
 class Test__2x2_det(unittest.TestCase):

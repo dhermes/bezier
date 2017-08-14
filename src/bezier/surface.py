@@ -924,10 +924,8 @@ class Surface(_base.Base):
                     self._nodes)
                 jac_degree = 4
 
-            # Form the polynomial p(s, t) as a Surface.
-            jac_poly = Surface(bernstein, jac_degree, _copy=False)
             # Find the sign of the polynomial, where 0 means mixed.
-            poly_sign = _surface_helpers.polynomial_sign(jac_poly)
+            poly_sign = _surface_helpers.polynomial_sign(bernstein, jac_degree)
             return poly_sign != 0
         else:
             raise NotImplementedError(

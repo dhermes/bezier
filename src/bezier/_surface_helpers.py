@@ -308,7 +308,7 @@ _QUARTIC_TO_BERNSTEIN = np.asfortranarray([
 _QUARTIC_BERNSTEIN_FACTOR = 36.0
 
 
-def polynomial_sign(poly_surface):
+def polynomial_sign(poly_surface, degree):
     r"""Determine the "sign" of a polynomial on the reference triangle.
 
     Checks if a polynomial :math:`p(s, t)` is positive, negative
@@ -323,8 +323,10 @@ def polynomial_sign(poly_surface):
     sign.
 
     Args:
-        poly_surface (Surface): A polynomial on the reference triangle
-            specified as a surface.
+        poly_surface (numpy.ndarray): 2D array (with 1 column) of control
+            points for a "surface", i.e. a bivariate polynomial.
+        degree (int): The degree of the surface / polynomial given by
+            ``poly_surface``.
 
     Returns:
         int: The sign of the polynomial. Will be one of ``-1``, ``1``
@@ -336,22 +338,20 @@ def polynomial_sign(poly_surface):
             number of subdivisions.
     """
     # The indices where the corner nodes in a surface are.
-    corner_indices = (0, poly_surface._degree, -1)
+    corner_indices = (0, degree, -1)
     sub_polys = [poly_surface]
     signs = set()
     for _ in six.moves.xrange(_MAX_POLY_SUBDIVISIONS):
         undecided = []
         for poly in sub_polys:
-            # Avoid an unnecessarily copying the nodes.
-            nodes = poly._nodes
             # First add all the signs of the corner nodes.
-            signs.update(_SIGN(nodes[corner_indices, 0]).astype(int))
-            # Then check if the ``nodes`` are **uniformly** one sign.
-            if np.all(nodes == 0.0):
+            signs.update(_SIGN(poly[corner_indices, 0]).astype(int))
+            # Then check if the ``poly`` nodes are **uniformly** one sign.
+            if np.all(poly == 0.0):
                 signs.add(0)
-            elif np.all(nodes > 0.0):
+            elif np.all(poly > 0.0):
                 signs.add(1)
-            elif np.all(nodes < 0.0):
+            elif np.all(poly < 0.0):
                 signs.add(-1)
             else:
                 undecided.append(poly)
@@ -360,7 +360,10 @@ def polynomial_sign(poly_surface):
                 return 0
 
         sub_polys = functools.reduce(
-            operator.add, [poly.subdivide() for poly in undecided], ())
+            operator.add,
+            [subdivide_nodes(poly, degree) for poly in undecided],
+            (),
+        )
         if not sub_polys:
             break
 
