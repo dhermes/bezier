@@ -733,7 +733,7 @@ def newton_refine(nodes, degree, point, s):
     return s + delta_s
 
 
-def locate_point(curve, point):
+def locate_point(nodes, degree, point):
     r"""Locate a point on a curve.
 
     Does so by recursively subdividing the curve and rejecting
@@ -747,7 +747,9 @@ def locate_point(curve, point):
        where ``D`` is the dimension that ``curve`` is in.
 
     Args:
-        curve (.Curve): A B |eacute| zier curve.
+        nodes (numpy.ndarray): The nodes defining a B |eacute| zier curve.
+        degree (int): The degree of the curve (assumed to be one less than
+            the number of ``nodes``.
         point (numpy.ndarray): The point to locate.
 
     Returns:
@@ -759,30 +761,30 @@ def locate_point(curve, point):
             parameters among the subdivided intervals exceeds a given
             threshold (e.g. :math:`2^{-20}`).
     """
-    candidates = [curve]
+    candidates = [(0.0, 1.0, nodes)]
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
-        for candidate in candidates:
-            nodes = candidate._nodes  # pylint: disable=protected-access
-            if _helpers.contains_nd(nodes, point):
-                next_candidates.extend(candidate.subdivide())
+        for start, end, candidate in candidates:
+            if _helpers.contains_nd(candidate, point):
+                midpoint = 0.5 * (start + end)
+                left, right = subdivide_nodes(candidate, degree)
+                next_candidates.extend((
+                    (start, midpoint, left),
+                    (midpoint, end, right),
+                ))
 
         candidates = next_candidates
 
     if not candidates:
         return None
 
-    # pylint: disable=protected-access
-    params = [
-        (candidate._start, candidate._end) for candidate in candidates]
-    # pylint: enable=protected-access
-
+    params = [(start, end) for start, end, _ in candidates]
     if np.std(params) > _LOCATE_STD_CAP:
         raise ValueError(
             'Parameters not close enough to one another', params)
 
     s_approx = np.mean(params)
-    return newton_refine(curve._nodes, curve._degree, point, s_approx)
+    return newton_refine(nodes, degree, point, s_approx)
 
 
 def reduce_pseudo_inverse(nodes, degree):

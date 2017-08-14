@@ -857,4 +857,4 @@ class Curve(_base.Base):
                 self._dimension, self._dimension, point, point_dimensions)
             raise ValueError(msg)
 
-        return _curve_helpers.locate_point(self, point)
+        return _curve_helpers.locate_point(self._nodes, self._degree, point)

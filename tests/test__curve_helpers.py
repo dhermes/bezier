@@ -658,61 +658,52 @@ class Test_newton_refine(unittest.TestCase):
 class Test_locate_point(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(curve, point):
+    def _call_function_under_test(nodes, degree, point):
         from bezier import _curve_helpers
 
-        return _curve_helpers.locate_point(curve, point)
+        return _curve_helpers.locate_point(nodes, degree, point)
 
     def test_it(self):
-        import bezier
-
-        curve = bezier.Curve.from_nodes(np.asfortranarray([
+        nodes = np.asfortranarray([
             [0.0, 0.0, 0.0],
             [3.0, 0.0, -1.0],
             [1.0, 1.0, 3.0],
-        ]))
-        point = curve.evaluate_multi(np.asfortranarray([0.125]))
-        result = self._call_function_under_test(curve, point)
+        ])
+        # C(1/8) = p
+        point = np.asfortranarray([[43.0, 1.0, -11.0]]) / 64
+        result = self._call_function_under_test(nodes, 2, point)
         self.assertEqual(result, 0.125)
 
     def test_non_default_endpoints(self):
-        import bezier
-
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],
         ])
-        curve = bezier.Curve(nodes, degree=2, start=0.25, end=1.0)
         # C(1/2) = p
         point = np.asfortranarray([[0.5, 0.5]])
-        result = self._call_function_under_test(curve, point)
+        result = self._call_function_under_test(nodes, 2, point)
         self.assertEqual(result, 0.5)
 
     def test_no_match(self):
-        import bezier
-
-        curve = bezier.Curve.from_nodes(np.asfortranarray([
+        nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],
-        ]))
+        ])
         point = np.asfortranarray([[0.5, 2.0]])
-        self.assertIsNone(self._call_function_under_test(curve, point))
+        self.assertIsNone(self._call_function_under_test(nodes, 2, point))
 
     def test_failure_on_invalid(self):
-        import bezier
-
         nodes = np.asfortranarray([
             [0.0, 2.0],
             [-1.0, 0.0],
             [1.0, 1.0],
             [-0.75, 1.625],
         ])
-        curve = bezier.Curve(nodes, 3)
         point = np.asfortranarray([[-0.25, 1.375]])
         with self.assertRaises(ValueError):
-            self._call_function_under_test(curve, point)
+            self._call_function_under_test(nodes, 3, point)
 
 
 class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
