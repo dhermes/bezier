@@ -675,6 +675,20 @@ class Test_locate_point(unittest.TestCase):
         result = self._call_function_under_test(curve, point)
         self.assertEqual(result, 0.125)
 
+    def test_non_default_endpoints(self):
+        import bezier
+
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        curve = bezier.Curve(nodes, degree=2, start=0.25, end=1.0)
+        # C(1/2) = p
+        point = np.asfortranarray([[0.5, 0.5]])
+        result = self._call_function_under_test(curve, point)
+        self.assertEqual(result, 0.5)
+
     def test_no_match(self):
         import bezier
 
