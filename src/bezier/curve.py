@@ -326,8 +326,18 @@ class Curve(_base.Base):
         This also means that the current object can't be modified by the
         returned dictionary.
         """
-        return {name: getattr(self, name)
-                for name in self.__slots__}
+        return {
+            '_dimension': self._dimension,
+            '_nodes': self._nodes,
+            '_degree': self._degree,
+            '_start': self._start,
+            '_end': self._end,
+            '_root': self._root,
+            '_length': self._length,
+            '_edge_index': self._edge_index,
+            '_next_edge': self._next_edge,
+            '_previous_edge': self._previous_edge,
+        }
 
     def _copy(self):
         """Make a copy of the current curve.

@@ -215,8 +215,10 @@ class CurvedPolygon(object):
         This also means that the current object can't be modified by the
         returned dictionary.
         """
-        return {name: getattr(self, name)
-                for name in self.__slots__}
+        return {
+            '_edges': self._edges,
+            '_num_sides': self._num_sides,
+        }
 
     def __repr__(self):
         """Representation of current object.

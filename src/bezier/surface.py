@@ -1023,8 +1023,17 @@ class Surface(_base.Base):
         This also means that the current object can't be modified by the
         returned dictionary.
         """
-        return {name: getattr(self, name)
-                for name in self.__slots__}
+        return {
+            '_dimension': self._dimension,
+            '_nodes': self._nodes,
+            '_degree': self._degree,
+            '_base_x': self._base_x,
+            '_base_y': self._base_y,
+            '_width': self._width,
+            '_area': self._area,
+            '_edges': self._edges,
+            '_is_valid': self._is_valid,
+        }
 
     def locate(self, point, _verify=True):
         r"""Find a point on the current surface.

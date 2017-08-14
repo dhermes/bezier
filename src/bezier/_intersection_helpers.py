@@ -1656,8 +1656,14 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         This also means that the current object can't be modified by the
         returned dictionary.
         """
-        return {name: getattr(self, name)
-                for name in self.__slots__}
+        return {
+            'first': self.first,
+            's': self.s,
+            'second': self.second,
+            't': self.t,
+            'point': self.point,
+            'interior_curve': self.interior_curve,
+        }
 
     def get_point(self):
         """The point where the intersection occurs.
