@@ -737,7 +737,7 @@ def _mean_centroid(candidates):
     """Take the mean of all centroids in set of reference triangles.
 
     Args:
-        candidates (List[Tuple[float, float, float numpy.ndarray]): List of
+        candidates (List[Tuple[float, float, float, numpy.ndarray]): List of
             4-tuples, each of which has been produced by :func:`locate_point`.
             Each 4-tuple contains
 
@@ -1097,6 +1097,64 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
     return s + delta_s, t + delta_t
 
 
+def _update_locate_candidates(
+        candidate, next_candidates, x_val, y_val, degree):
+    """Update list of candidate surfaces during geometric search for a point.
+
+    Helper for :func:`locate_point`.
+
+    Checks if the point ``(x_val, y_val)`` is contained in the ``candidate``
+    surface. If not, this function does nothing. If the point is contaned,
+    the four subdivided surfaces from ``candidate`` are added to
+    ``next_candidates``.
+
+    Args:
+        candidate (Tuple[float, float, float, numpy.ndarray]): A 4-tuple
+            describing a surface and its centroid / width. Contains
+
+            * Three times centroid ``x``-value
+            * Three times centroid ``y``-value
+            * "Width" of parameter space for the surface
+            * Control points for the surface
+        next_candidates (list): List of "candidate" sub-surfaces that may
+            contain the point being located.
+        x_val (float): The ``x``-coordinate being located.
+        y_val (float): The ``y``-coordinate being located.
+        degree (int): The degree of the surface.
+    """
+    centroid_x, centroid_y, width, candidate_nodes = candidate
+    if not _helpers.contains(candidate_nodes, x_val, y_val):
+        return
+
+    nodes_a, nodes_b, nodes_c, nodes_d = subdivide_nodes(
+        candidate_nodes, degree)
+
+    half_width = 0.5 * width
+    next_candidates.extend((
+        (
+            centroid_x - half_width,
+            centroid_y - half_width,
+            half_width,
+            nodes_a,
+        ), (
+            centroid_x,
+            centroid_y,
+            -half_width,
+            nodes_b,
+        ), (
+            centroid_x + width,
+            centroid_y - half_width,
+            half_width,
+            nodes_c,
+        ), (
+            centroid_x - half_width,
+            centroid_y + width,
+            half_width,
+            nodes_d,
+        ),
+    ))
+
+
 def locate_point(nodes, degree, x_val, y_val):
     r"""Locate a point on a surface.
 
@@ -1125,35 +1183,9 @@ def locate_point(nodes, degree, x_val, y_val):
     candidates = [(1.0, 1.0, 1.0, nodes)]
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
-        for centroid_x, centroid_y, width, candidate_nodes in candidates:
-            if _helpers.contains(candidate_nodes, x_val, y_val):
-                nodes_a, nodes_b, nodes_c, nodes_d = subdivide_nodes(
-                    candidate_nodes, degree)
-
-                half_width = 0.5 * width
-                next_candidates.extend((
-                    (
-                        centroid_x - half_width,
-                        centroid_y - half_width,
-                        half_width,
-                        nodes_a,
-                    ), (
-                        centroid_x,
-                        centroid_y,
-                        -half_width,
-                        nodes_b,
-                    ), (
-                        centroid_x + width,
-                        centroid_y - half_width,
-                        half_width,
-                        nodes_c,
-                    ), (
-                        centroid_x - half_width,
-                        centroid_y + width,
-                        half_width,
-                        nodes_d,
-                    ),
-                ))
+        for candidate in candidates:
+            _update_locate_candidates(
+                candidate, next_candidates, x_val, y_val, degree)
 
         candidates = next_candidates
 

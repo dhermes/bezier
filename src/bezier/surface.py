@@ -28,7 +28,6 @@ import numpy as np
 import six
 
 from bezier import _base
-from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
