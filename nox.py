@@ -233,7 +233,7 @@ def lint(session):
         '--disable=missing-docstring',
         '--disable=protected-access',
         '--disable=too-many-public-methods',
-        '--max-module-lines=2609',
+        '--max-module-lines=2607',
         get_path('functional_tests'),
         get_path('tests'),
         env=functional_env(),

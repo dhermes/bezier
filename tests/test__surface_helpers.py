@@ -1026,8 +1026,6 @@ class Test__update_locate_candidates(unittest.TestCase):
                     mock.sentinel.nodes_d,
                 ))
     def test_contained(self, subdivide_nodes):
-        from bezier import _surface_helpers
-
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 0.25],
