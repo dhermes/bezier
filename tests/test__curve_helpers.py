@@ -39,23 +39,169 @@ class Test_make_subdivision_matrices(utils.NumPyTestCase):
         self.assertEqual(right, expected_r)
 
     def test_linear(self):
-        from bezier import curve
+        from bezier import _curve_helpers
 
         self._helper(
-            1, curve._LINEAR_SUBDIVIDE_LEFT, curve._LINEAR_SUBDIVIDE_RIGHT)
+            1, _curve_helpers._LINEAR_SUBDIVIDE_LEFT,
+            _curve_helpers._LINEAR_SUBDIVIDE_RIGHT)
 
     def test_quadratic(self):
-        from bezier import curve
+        from bezier import _curve_helpers
 
         self._helper(
-            2, curve._QUADRATIC_SUBDIVIDE_LEFT,
-            curve._QUADRATIC_SUBDIVIDE_RIGHT)
+            2, _curve_helpers._QUADRATIC_SUBDIVIDE_LEFT,
+            _curve_helpers._QUADRATIC_SUBDIVIDE_RIGHT)
 
     def test_cubic(self):
-        from bezier import curve
+        from bezier import _curve_helpers
 
         self._helper(
-            3, curve._CUBIC_SUBDIVIDE_LEFT, curve._CUBIC_SUBDIVIDE_RIGHT)
+            3, _curve_helpers._CUBIC_SUBDIVIDE_LEFT,
+            _curve_helpers._CUBIC_SUBDIVIDE_RIGHT)
+
+    def test_quartic(self):
+        from bezier import _curve_helpers
+
+        expected_l = np.asfortranarray([
+            [1.0, 0.0, 0.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0, 0.0, 0.0],
+            [1.0, 2.0, 1.0, 0.0, 0.0],
+            [1.0, 3.0, 3.0, 1.0, 0.0],
+            [1.0, 4.0, 6.0, 4.0, 1.0],
+        ])
+        expected_r = np.asfortranarray([
+            [1.0, 4.0, 6.0, 4.0, 1.0],
+            [0.0, 1.0, 3.0, 3.0, 1.0],
+            [0.0, 0.0, 1.0, 2.0, 1.0],
+            [0.0, 0.0, 0.0, 1.0, 1.0],
+            [0.0, 0.0, 0.0, 0.0, 1.0],
+        ])
+
+        row_scaling = np.asfortranarray([[1.0], [2.0], [4.0], [8.0], [16.0]])
+        expected_l /= row_scaling
+        expected_r /= row_scaling[::-1, :]
+
+        self._helper(4, expected_l, expected_r)
+
+
+class Test_subdivide_nodes(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _curve_helpers
+
+        return _curve_helpers.subdivide_nodes(nodes, degree)
+
+    def _helper(self, nodes, degree, expected_l, expected_r):
+        left, right = self._call_function_under_test(nodes, degree)
+        self.assertEqual(left, expected_l)
+        self.assertEqual(right, expected_r)
+
+    def _points_check(self, nodes, degree, pts_exponent=5):
+        from bezier import _curve_helpers
+
+        # Using the exponent means that ds = 1/2**exp, which
+        # can be computed without roundoff.
+        num_pts = 2**pts_exponent + 1
+        left, right = self._call_function_under_test(nodes, degree)
+
+        left_half = np.linspace(0.0, 0.5, num_pts)
+        right_half = np.linspace(0.5, 1.0, num_pts)
+        unit_interval = np.linspace(0.0, 1.0, num_pts)
+
+        pairs = [
+            (left, left_half),
+            (right, right_half),
+        ]
+        for sub_curve, half in pairs:
+            # Make sure sub_curve([0, 1]) == curve(half)
+            main_vals = _curve_helpers.evaluate_multi(nodes, half)
+            sub_vals = _curve_helpers.evaluate_multi(sub_curve, unit_interval)
+            self.assertEqual(main_vals, sub_vals)
+
+    def test_line(self):
+        nodes = np.asfortranarray([
+            [0.0, 1.0],
+            [4.0, 6.0],
+        ])
+        expected_l = np.asfortranarray([
+            [0.0, 1.0],
+            [2.0, 3.5],
+        ])
+        expected_r = np.asfortranarray([
+            [2.0, 3.5],
+            [4.0, 6.0],
+        ])
+        self._helper(nodes, 1, expected_l, expected_r)
+
+    def test_line_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(2, 2), seed=88991, num_bits=8)
+        self._points_check(nodes, 1)
+
+    def test_quadratic(self):
+        nodes = np.asfortranarray([
+            [0.0, 1.0],
+            [4.0, 6.0],
+            [7.0, 3.0],
+        ])
+        expected_l = np.asfortranarray([
+            [0.0, 1.0],
+            [2.0, 3.5],
+            [3.75, 4.0],
+        ])
+        expected_r = np.asfortranarray([
+            [3.75, 4.0],
+            [5.5, 4.5],
+            [7.0, 3.0],
+        ])
+        self._helper(nodes, 2, expected_l, expected_r)
+
+    def test_quadratic_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(3, 2), seed=10764, num_bits=8)
+        self._points_check(nodes, 2)
+
+    def test_cubic(self):
+        nodes = np.asfortranarray([
+            [0.0, 1.0],
+            [4.0, 6.0],
+            [7.0, 3.0],
+            [6.0, 5.0],
+        ])
+        expected_l = np.asfortranarray([
+            [0.0, 1.0],
+            [2.0, 3.5],
+            [3.75, 4.0],
+            [4.875, 4.125],
+        ])
+        expected_r = np.asfortranarray([
+            [4.875, 4.125],
+            [6.0, 4.25],
+            [6.5, 4.0],
+            [6.0, 5.0],
+        ])
+        self._helper(nodes, 3, expected_l, expected_r)
+
+    def test_cubic_check_evaluate(self):
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=(4, 2), seed=990077, num_bits=8)
+        self._points_check(nodes, 3)
+
+    def test_dynamic_subdivision_matrix(self):
+        degree = 4
+        shape = (degree + 1, 2)
+        # Use a fixed seed so the test is deterministic and round
+        # the nodes to 8 bits of precision to avoid round-off.
+        nodes = utils.get_random_nodes(
+            shape=shape, seed=103, num_bits=8)
+        self._points_check(nodes, degree)
 
 
 class Test__evaluate_multi_barycentric(utils.NumPyTestCase):

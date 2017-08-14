@@ -93,6 +93,36 @@ _REDUCTION3 = np.asfortranarray([
     [ -1.5,   6.0, -9.0,   6.0, 103.5],  # noqa: E201
 ])
 _REDUCTION_DENOM3 = 105.0
+_LINEAR_SUBDIVIDE_LEFT = np.asfortranarray([
+    [1.0, 0.0],
+    [0.5, 0.5],
+])
+_LINEAR_SUBDIVIDE_RIGHT = np.asfortranarray([
+    [0.5, 0.5],
+    [0.0, 1.0],
+])
+_QUADRATIC_SUBDIVIDE_LEFT = np.asfortranarray([
+    [1.0 , 0.0, 0.0 ],
+    [0.5 , 0.5, 0.0 ],
+    [0.25, 0.5, 0.25],
+])
+_QUADRATIC_SUBDIVIDE_RIGHT = np.asfortranarray([
+    [0.25, 0.5, 0.25],
+    [0.0 , 0.5, 0.5 ],
+    [0.0 , 0.0, 1.0 ],
+])
+_CUBIC_SUBDIVIDE_LEFT = np.asfortranarray([
+    [1.0  , 0.0  , 0.0  , 0.0  ],
+    [0.5  , 0.5  , 0.0  , 0.0  ],
+    [0.25 , 0.5  , 0.25 , 0.0  ],
+    [0.125, 0.375, 0.375, 0.125],
+])
+_CUBIC_SUBDIVIDE_RIGHT = np.asfortranarray([
+    [0.125, 0.375, 0.375, 0.125],
+    [0.0  , 0.25 , 0.5  , 0.25 ],
+    [0.0  , 0.0  , 0.5  , 0.5  ],
+    [0.0  , 0.0  , 0.0  , 1.0  ],
+])
 # pylint: enable=bad-whitespace
 
 
@@ -122,6 +152,38 @@ def make_subdivision_matrices(degree):
         right[complement, -(row + 1):] = left[row, :row + 1]
 
     return left, right
+
+
+def subdivide_nodes(nodes, degree):
+    """Subdivide a curve into two sub-curves.
+
+    Does so by taking the unit interval (i.e. the domain of the surface) and
+    splitting it into two sub-intervals by splitting down the middle.
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a B |eacute| zier curve.
+        degree (int): The degree of the curve (assumed to be one less than
+            the number of ``nodes``.
+
+    Returns:
+        Tuple[numpy.ndarray, numpy.ndarray]: The nodes for the two sub-curves.
+    """
+    if degree == 1:
+        left_nodes = _helpers.matrix_product(_LINEAR_SUBDIVIDE_LEFT, nodes)
+        right_nodes = _helpers.matrix_product(_LINEAR_SUBDIVIDE_RIGHT, nodes)
+    elif degree == 2:
+        left_nodes = _helpers.matrix_product(_QUADRATIC_SUBDIVIDE_LEFT, nodes)
+        right_nodes = _helpers.matrix_product(
+            _QUADRATIC_SUBDIVIDE_RIGHT, nodes)
+    elif degree == 3:
+        left_nodes = _helpers.matrix_product(_CUBIC_SUBDIVIDE_LEFT, nodes)
+        right_nodes = _helpers.matrix_product(_CUBIC_SUBDIVIDE_RIGHT, nodes)
+    else:
+        left_mat, right_mat = make_subdivision_matrices(degree)
+        left_nodes = _helpers.matrix_product(left_mat, nodes)
+        right_nodes = _helpers.matrix_product(right_mat, nodes)
+
+    return left_nodes, right_nodes
 
 
 def _evaluate_multi(nodes, s_vals):

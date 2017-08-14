@@ -310,6 +310,40 @@ class TestCurve(utils.NumPyTestCase):
         call = ax.plot.mock_calls[0]
         utils.check_plot_call(self, call, nodes, color=color, alpha=alpha)
 
+    def test_subdivide(self):
+        nodes = np.asfortranarray([
+            [0.0, 1.0],
+            [4.0, 6.0],
+        ])
+        klass = self._get_target_class()
+        curve = klass.from_nodes(nodes, start=0.25, end=0.75)
+
+        # Call ``subdivide()`` and then compare.
+        left, right = curve.subdivide()
+
+        # Check the "left" sub-curve.
+        self.assertIs(left._root, curve)
+        self.assertEqual(left._degree, 1)
+        self.assertEqual(left._start, 0.25)
+        self.assertEqual(left._end, 0.5)
+        self.assertIsInstance(left, klass)
+        expected_l = np.asfortranarray([
+            [0.0, 1.0],
+            [2.0, 3.5],
+        ])
+        self.assertEqual(left._nodes, expected_l)
+
+        # Check the "right" sub-curve.
+        self.assertIs(right._root, curve)
+        self.assertEqual(right._start, 0.5)
+        self.assertEqual(right._end, 0.75)
+        self.assertIsInstance(right, klass)
+        expected_r = np.asfortranarray([
+            [2.0, 3.5],
+            [4.0, 6.0],
+        ])
+        self.assertEqual(right._nodes, expected_r)
+
     def test_subdivide_multilevel_root(self):
         curve = self._make_one(self.ZEROS, 1)
         left, right = curve.subdivide()
@@ -322,135 +356,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertIs(two.root, curve)
         self.assertIs(three.root, curve)
         self.assertIs(four.root, curve)
-
-    def _subdivide_helper(self, nodes, expected_l, expected_r):
-        klass = self._get_target_class()
-
-        curve = klass.from_nodes(nodes)
-        left, right = curve.subdivide()
-        self.assertIs(left.root, curve)
-        self.assertIs(right.root, curve)
-
-        self.assertIsInstance(left, klass)
-        self.assertEqual(left._nodes, expected_l)
-        self.assertIsInstance(right, klass)
-        self.assertEqual(right._nodes, expected_r)
-
-    def _subdivide_points_check(self, curve, pts_exponent=5):
-        # Using the exponent means that ds = 1/2**exp, which
-        # can be computed without roundoff.
-        num_pts = 2**pts_exponent + 1
-        left, right = curve.subdivide()
-
-        left_half = np.linspace(0.0, 0.5, num_pts)
-        right_half = np.linspace(0.5, 1.0, num_pts)
-        unit_interval = np.linspace(0.0, 1.0, num_pts)
-
-        pairs = [
-            (left, left_half),
-            (right, right_half),
-        ]
-        for sub_curve, half in pairs:
-            # Make sure sub_curve([0, 1]) == curve(half)
-            main_vals = curve.evaluate_multi(half)
-            sub_vals = sub_curve.evaluate_multi(unit_interval)
-            self.assertEqual(main_vals, sub_vals)
-
-    def test_subdivide_line(self):
-        nodes = np.asfortranarray([
-            [0.0, 1.0],
-            [4.0, 6.0],
-        ])
-        expected_l = np.asfortranarray([
-            [0.0, 1.0],
-            [2.0, 3.5],
-        ])
-        expected_r = np.asfortranarray([
-            [2.0, 3.5],
-            [4.0, 6.0],
-        ])
-        self._subdivide_helper(nodes, expected_l, expected_r)
-
-    def test_subdivide_line_check_evaluate(self):
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-        nodes = utils.get_random_nodes(
-            shape=(2, 2), seed=88991, num_bits=8)
-
-        curve = self._make_one(nodes, 1)
-        self.assertEqual(curve.degree, 1)
-        self._subdivide_points_check(curve)
-
-    def test_subdivide_quadratic(self):
-        nodes = np.asfortranarray([
-            [0.0, 1.0],
-            [4.0, 6.0],
-            [7.0, 3.0],
-        ])
-        expected_l = np.asfortranarray([
-            [0.0, 1.0],
-            [2.0, 3.5],
-            [3.75, 4.0],
-        ])
-        expected_r = np.asfortranarray([
-            [3.75, 4.0],
-            [5.5, 4.5],
-            [7.0, 3.0],
-        ])
-        self._subdivide_helper(nodes, expected_l, expected_r)
-
-    def test_subdivide_quadratic_check_evaluate(self):
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-        nodes = utils.get_random_nodes(
-            shape=(3, 2), seed=10764, num_bits=8)
-
-        curve = self._make_one(nodes, 2)
-        self.assertEqual(curve.degree, 2)
-        self._subdivide_points_check(curve)
-
-    def test_subdivide_cubic(self):
-        nodes = np.asfortranarray([
-            [0.0, 1.0],
-            [4.0, 6.0],
-            [7.0, 3.0],
-            [6.0, 5.0],
-        ])
-        expected_l = np.asfortranarray([
-            [0.0, 1.0],
-            [2.0, 3.5],
-            [3.75, 4.0],
-            [4.875, 4.125],
-        ])
-        expected_r = np.asfortranarray([
-            [4.875, 4.125],
-            [6.0, 4.25],
-            [6.5, 4.0],
-            [6.0, 5.0],
-        ])
-        self._subdivide_helper(nodes, expected_l, expected_r)
-
-    def test_subdivide_cubic_check_evaluate(self):
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-        nodes = utils.get_random_nodes(
-            shape=(4, 2), seed=990077, num_bits=8)
-
-        curve = self._make_one(nodes, 3)
-        self.assertEqual(curve.degree, 3)
-        self._subdivide_points_check(curve)
-
-    def test_subdivide_dynamic_subdivision_matrix(self):
-        degree = 4
-        shape = (degree + 1, 2)
-        # Use a fixed seed so the test is deterministic and round
-        # the nodes to 8 bits of precision to avoid round-off.
-        nodes = utils.get_random_nodes(
-            shape=shape, seed=103, num_bits=8)
-
-        curve = self._make_one(nodes, degree)
-        self.assertEqual(curve.degree, degree)
-        self._subdivide_points_check(curve)
 
     def test_intersect_empty(self):
         nodes1 = np.asfortranarray([
