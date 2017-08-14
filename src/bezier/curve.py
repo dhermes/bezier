@@ -42,36 +42,6 @@ _REPR_TEMPLATE = (
 _LOCATE_ERROR_TEMPLATE = (
     'Dimension mismatch: This curve is {:d}-dimensional, so the point should '
     'be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
-_LINEAR_SUBDIVIDE_LEFT = np.asfortranarray([
-    [1.0, 0.0],
-    [0.5, 0.5],
-])
-_LINEAR_SUBDIVIDE_RIGHT = np.asfortranarray([
-    [0.5, 0.5],
-    [0.0, 1.0],
-])
-_QUADRATIC_SUBDIVIDE_LEFT = np.asfortranarray([
-    [1.0, 0.0, 0.0],
-    [0.5, 0.5, 0.0],
-    [0.25, 0.5, 0.25],
-])
-_QUADRATIC_SUBDIVIDE_RIGHT = np.asfortranarray([
-    [0.25, 0.5, 0.25],
-    [0.0, 0.5, 0.5],
-    [0.0, 0.0, 1.0],
-])
-_CUBIC_SUBDIVIDE_LEFT = np.asfortranarray([
-    [1.0, 0.0, 0.0, 0.0],
-    [0.5, 0.5, 0.0, 0.0],
-    [0.25, 0.5, 0.25, 0.0],
-    [0.125, 0.375, 0.375, 0.125],
-])
-_CUBIC_SUBDIVIDE_RIGHT = np.asfortranarray([
-    [0.125, 0.375, 0.375, 0.125],
-    [0.0, 0.25, 0.5, 0.25],
-    [0.0, 0.0, 0.5, 0.5],
-    [0.0, 0.0, 0.0, 1.0],
-])
 
 
 IntersectionStrategy = _intersection_helpers.IntersectionStrategy
@@ -521,27 +491,8 @@ class Curve(_base.Base):
         Returns:
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
-        if self._degree == 1:
-            left_nodes = _helpers.matrix_product(
-                _LINEAR_SUBDIVIDE_LEFT, self._nodes)
-            right_nodes = _helpers.matrix_product(
-                _LINEAR_SUBDIVIDE_RIGHT, self._nodes)
-        elif self._degree == 2:
-            left_nodes = _helpers.matrix_product(
-                _QUADRATIC_SUBDIVIDE_LEFT, self._nodes)
-            right_nodes = _helpers.matrix_product(
-                _QUADRATIC_SUBDIVIDE_RIGHT, self._nodes)
-        elif self._degree == 3:
-            left_nodes = _helpers.matrix_product(
-                _CUBIC_SUBDIVIDE_LEFT, self._nodes)
-            right_nodes = _helpers.matrix_product(
-                _CUBIC_SUBDIVIDE_RIGHT, self._nodes)
-        else:
-            left_mat, right_mat = _curve_helpers.make_subdivision_matrices(
-                self._degree)
-            left_nodes = _helpers.matrix_product(left_mat, self._nodes)
-            right_nodes = _helpers.matrix_product(right_mat, self._nodes)
-
+        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(
+            self._nodes, self._degree)
         midpoint = 0.5 * (self._start + self._end)
         left = Curve(
             left_nodes, self._degree, start=self._start, end=midpoint,
