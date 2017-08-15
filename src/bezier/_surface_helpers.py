@@ -1693,7 +1693,7 @@ def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
             that the intersection occurs in the middle of.
         corner_tangent (numpy.ndarray): Tangent vector at the corner
             where intersection occurs (at the beginning of edge).
-        corner_previous_edge (.Curve): Edge that ends at the corner
+        corner_previous_edge (numpy.ndarray): Edge that ends at the corner
             intersection (whereas ``corner_tangent`` comes from the edge
             that **begins** at the corner intersection).
 
@@ -1707,8 +1707,9 @@ def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
         return False
 
     # Do the same for the **other** tangent at the corner.
+    num_nodes, _ = corner_previous_edge.shape
     alt_corner_tangent = _curve_helpers.evaluate_hodograph(
-        1.0, corner_previous_edge._nodes, corner_previous_edge._degree)
+        1.0, corner_previous_edge, num_nodes - 1)
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
     cross_prod = _helpers.cross_product(edge_tangent, alt_corner_tangent)
@@ -1826,14 +1827,14 @@ def _ignored_corner(intersection, tangent_s, tangent_t):
         else:
             # s-only corner.
             prev_edge = intersection.first._previous_edge
-            return _ignored_edge_corner(tangent_t, tangent_s, prev_edge)
+            return _ignored_edge_corner(tangent_t, tangent_s, prev_edge._nodes)
         # pylint: enable=protected-access
     elif intersection.t == 0.0:
         # t-only corner.
         # pylint: disable=protected-access
         prev_edge = intersection.second._previous_edge
         # pylint: enable=protected-access
-        return _ignored_edge_corner(tangent_s, tangent_t, prev_edge)
+        return _ignored_edge_corner(tangent_s, tangent_t, prev_edge._nodes)
     else:
         # Not a corner.
         return False

@@ -1163,6 +1163,7 @@ class Test_classify_intersection(unittest.TestCase):
             [1.0, 1.0],
             [0.0, 0.0],
         ]))
+        first._previous_edge = mock.Mock(spec=['_nodes'])
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.0, 2.0],
@@ -1355,27 +1356,23 @@ class Test__ignored_edge_corner(unittest.TestCase):
             self._call_function_under_test(edge_tangent, corner_tangent, None))
 
     def test_outside(self):
-        import bezier
-
         edge_tangent = np.asfortranarray([[-1.0, 1.0]])
         corner_tangent = np.asfortranarray([[0.5, 0.5]])
-        corner_previous_edge = bezier.Curve.from_nodes(np.asfortranarray([
+        corner_previous_edge = np.asfortranarray([
             [0.5, 2.0],
             [0.5, 0.5],
-        ]))
+        ])
         result = self._call_function_under_test(
             edge_tangent, corner_tangent, corner_previous_edge)
         self.assertTrue(result)
 
     def test_straddle(self):
-        import bezier
-
         edge_tangent = np.asfortranarray([[1.0, 0.0]])
         corner_tangent = np.asfortranarray([[1.0, -1.0]])
-        corner_previous_edge = bezier.Curve.from_nodes(np.asfortranarray([
+        corner_previous_edge = np.asfortranarray([
             [1.0, 1.0],
             [0.5, 0.0],
-        ]))
+        ])
         result = self._call_function_under_test(
             edge_tangent, corner_tangent, corner_previous_edge)
         self.assertFalse(result)
@@ -1482,7 +1479,10 @@ class Test__ignored_corner(unittest.TestCase):
         self.assertFalse(result)
 
     def test_s_corner(self):
-        first = mock.Mock(spec=['_previous_edge'])
+        previous_edge = mock.Mock(
+            _nodes=mock.sentinel.nodes, spec=['_nodes'])
+        first = mock.Mock(
+            _previous_edge=previous_edge, spec=['_previous_edge'])
         intersection = make_intersect(first, 0.0, None, 0.5)
 
         patch = mock.patch(
@@ -1496,10 +1496,13 @@ class Test__ignored_corner(unittest.TestCase):
 
             mocked.assert_called_once_with(
                 mock.sentinel.tangent_t, mock.sentinel.tangent_s,
-                first._previous_edge)
+                mock.sentinel.nodes)
 
     def test_t_corner(self):
-        second = mock.Mock(spec=['_previous_edge'])
+        previous_edge = mock.Mock(
+            _nodes=mock.sentinel.nodes, spec=['_nodes'])
+        second = mock.Mock(
+            _previous_edge=previous_edge, spec=['_previous_edge'])
         intersection = make_intersect(None, 0.5, second, 0.0)
 
         patch = mock.patch(
@@ -1513,7 +1516,7 @@ class Test__ignored_corner(unittest.TestCase):
 
             mocked.assert_called_once_with(
                 mock.sentinel.tangent_s, mock.sentinel.tangent_t,
-                second._previous_edge)
+                mock.sentinel.nodes)
 
     def test_double_corner(self):
         intersection = make_intersect(None, 0.0, None, 0.0)
