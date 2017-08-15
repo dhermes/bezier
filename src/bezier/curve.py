@@ -70,7 +70,7 @@ class Curve(_base.Base):
        ...     [0.625, 0.5],
        ...     [1.0  , 0.5],
        ... ])
-       >>> curve = bezier.Curve.from_nodes(nodes)
+       >>> curve = bezier.Curve(nodes, degree=2)
        >>> curve
        <Curve (degree=2, dimension=2)>
 
