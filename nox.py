@@ -241,15 +241,22 @@ def lint(session):
 
 
 @nox.session
-@nox.parametrize('target', ['memory'])
+@nox.parametrize('target', ['memory', 'time'])
 def benchmark(session, target):
     session.interpreter = SINGLE_INTERP
 
+    if target == 'memory':
+        local_deps = (NUMPY, 'psutil', 'memory_profiler')
+        test_fi = get_path('benchmarks', 'memory', 'test_curves.py')
+        run_args = ('python', test_fi)
+    elif target == 'time':
+        local_deps = BASE_DEPS + ('pytest-benchmark',)
+        test_fi = get_path('benchmarks', 'time', 'test_curves.py')
+        run_args = ['py.test'] + session.posargs + [test_fi]
+
     # Install all test dependencies.
-    local_deps = (NUMPY, 'psutil', 'memory_profiler')
     session.install(*local_deps)
     # Install this package.
     session.install('.')
 
-    test_fi = get_path('benchmarks', 'memory', 'test_curves.py')
-    session.run('python', test_fi, env=functional_env())
+    session.run(*run_args, env=functional_env())
