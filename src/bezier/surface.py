@@ -1138,6 +1138,10 @@ class Surface(_base.Base):
         if bbox_int != _intersection_helpers.BoxIntersectionType.INTERSECTION:
             return []
 
+        # NOTE: We "linearize" here, rather than allow
+        #       `_all_intersections_geometric()` to do it. This is because each
+        #       curve is in **3** pairs, so we'd waste the computation on the
+        #       other 3 pairs. (18 linearizations when only 6 are needed)
         edges1 = self._get_edges()
         lin1 = six.moves.map(
             _intersection_helpers.Linearization.from_shape,
