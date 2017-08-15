@@ -1519,6 +1519,7 @@ def classify_intersection(intersection):
        >>> curve1b = bezier.Curve(nodes1b, degree=2)
        >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
+       >>> curve1b._previous_edge = curve1a
        >>> intersection = Intersection(curve1b, 0.0, curve2, t)
        >>> classify_intersection(intersection)
        <IntersectionClassification.first: 'first'>
