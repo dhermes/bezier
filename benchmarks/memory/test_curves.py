@@ -30,7 +30,7 @@ def get_bounds():
     # NOTE: These bounds assume **just** the interpeter is running this code.
     #       When using a test runner like `py.test`, usage goes up by 4-8 KB.
     if os.getenv('CIRCLECI') == 'true':
-        return 22, 26
+        return 22, 30
     else:
         return 28, 32
 
