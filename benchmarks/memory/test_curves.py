@@ -10,7 +10,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
+
 import gc
+import sys
 
 import memory_profiler
 
@@ -18,10 +21,12 @@ import runtime_utils
 
 
 FAILURES = (11, 20, 24, 42)
-
-
-def intersect(curve1, curve2):
-    return curve1.intersect(curve2)
+# NOTE: These bounds assume **just** the interpeter is running this code.
+#       When using a test runner like `py.test`, usage goes up by 4-8 KB.
+MIN_KB = 28
+MAX_KB = 32
+ERR_TEMPLATE = 'Memory usage {:g} outside of expected range {}-{}KB.'
+SUCCESS_TEMPLATE = 'Memory usage: {:g}KB.'
 
 
 def intersect_all():
@@ -37,9 +42,18 @@ def test_main():
     # This should be the **only** test function here.
     gc.disable()
     intersect_all()
-    kb_used = memory_profiler.memory_usage(max_usage=True)
-    assert 28 <= kb_used <= 32
+    kb_used_after = memory_profiler.memory_usage(max_usage=True)
+    if MIN_KB <= kb_used_after <= MAX_KB:
+        status = 0
+        msg = SUCCESS_TEMPLATE.format(kb_used_after)
+        print(msg)
+    else:
+        status = 1
+        msg = ERR_TEMPLATE.format(kb_used_after, MIN_KB, MAX_KB)
+        print(msg, file=sys.stderr)
+
     gc.enable()
+    sys.exit(status)
 
 
 if __name__ == '__main__':
