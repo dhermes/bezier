@@ -10,6 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 import pytest
 
 import runtime_utils
@@ -19,7 +21,10 @@ FAILURES = (11, 20, 24, 42)
 
 
 def get_bounds():
-    return 35.0 / 1024.0, 42.0 / 1024.0
+    if os.getenv('CIRCLECI') == 'true':
+        return 85.0 / 1024.0, 95.0 / 1024.0
+    else:
+        return 35.0 / 1024.0, 42.0 / 1024.0
 
 
 def intersect_all(intersections):
