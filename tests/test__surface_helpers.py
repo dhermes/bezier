@@ -1338,34 +1338,6 @@ class Test__classify_tangent_intersection(unittest.TestCase):
             self._call_helper(intersection)
 
 
-class Test_edge_cycle(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(edge1, edge2, edge3):
-        from bezier import _surface_helpers
-
-        return _surface_helpers.edge_cycle(edge1, edge2, edge3)
-
-    def test_it(self):
-        edge1 = mock.Mock()
-        edge2 = mock.Mock()
-        edge3 = mock.Mock()
-        self.assertIsNone(
-            self._call_function_under_test(edge1, edge2, edge3))
-
-        self.assertEqual(edge1._edge_index, 0)
-        self.assertIs(edge1._next_edge, edge2)
-        self.assertIs(edge1._previous_edge, edge3)
-
-        self.assertEqual(edge2._edge_index, 1)
-        self.assertIs(edge2._next_edge, edge3)
-        self.assertIs(edge2._previous_edge, edge1)
-
-        self.assertEqual(edge3._edge_index, 2)
-        self.assertIs(edge3._next_edge, edge1)
-        self.assertIs(edge3._previous_edge, edge2)
-
-
 class Test__ignored_edge_corner(unittest.TestCase):
 
     @staticmethod

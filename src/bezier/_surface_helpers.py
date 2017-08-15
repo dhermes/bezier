@@ -1682,32 +1682,6 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
             raise NotImplementedError(_SAME_CURVATURE)
 
 
-def edge_cycle(edge1, edge2, edge3):
-    """Make edges follow the cycle ``1->2->3->1``.
-
-    Does this by setting the "previous" and "next" edge
-    values on each curved edge.
-
-    Args:
-        edge1 (.Curve): First curve in cycle.
-        edge2 (.Curve): Second curve in cycle.
-        edge3 (.Curve): Third curve in cycle.
-    """
-    # pylint: disable=protected-access
-    edge1._edge_index = 0
-    edge1._next_edge = edge2
-    edge1._previous_edge = edge3
-
-    edge2._edge_index = 1
-    edge2._next_edge = edge3
-    edge2._previous_edge = edge1
-
-    edge3._edge_index = 2
-    edge3._next_edge = edge1
-    edge3._previous_edge = edge2
-    # pylint: enable=protected-access
-
-
 def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     """Check ignored when a corner lies **inside** another edge.
 
