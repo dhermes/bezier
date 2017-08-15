@@ -18,7 +18,8 @@ test:
     - nox -s doctest
     - nox -s lint
     - nox -s "functional(python_version='3.6')"
-    - nox -s benchmark
+    - nox -s "benchmark(target='memory')"
+    - nox -s "benchmark(target='time')"
   post:
     - .nox/cover/bin/pip install coveralls
     - .nox/cover/bin/coveralls
