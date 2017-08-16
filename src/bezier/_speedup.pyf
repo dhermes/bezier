@@ -13,21 +13,11 @@
 
 python module _speedup
     interface
-        module speedup
-            integer, parameter,optional :: dp=kind(0.d0)
-            integer, parameter,optional :: BoxIntersectionType_INTERSECTION=0
-            integer, parameter,optional :: BoxIntersectionType_TANGENT=1
-            integer, parameter,optional :: BoxIntersectionType_DISJOINT=2
-            subroutine de_casteljau_one_round(num_nodes,dimension_,nodes,degree,lambda1,lambda2,lambda3,new_nodes)
-                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
-                integer :: degree
-                real(kind=dp) intent(in) :: lambda1
-                real(kind=dp) intent(in) :: lambda2
-                real(kind=dp) intent(in) :: lambda3
-                real(kind=dp) dimension(num_nodes-degree-1,dimension_),intent(out),depend(num_nodes,degree,dimension_) :: new_nodes
-            end subroutine de_casteljau_one_round
+        module types
+            integer, parameter,public,optional :: dp=kind(0.d0)
+        end module types
+        module curve
+            use types, only: dp
             subroutine evaluate_curve_barycentric(nodes,degree,dimension_,lambda1,lambda2,num_vals,evaluated)
                 real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
                 integer, optional,intent(hide),depend(nodes) :: degree=size(nodes, 1)-1
@@ -45,6 +35,57 @@ python module _speedup
                 integer, optional,intent(hide),depend(s_vals) :: num_vals=size(s_vals)
                 real(kind=dp) dimension(num_vals,dimension_),intent(out),depend(num_vals,dimension_) :: evaluated
             end subroutine evaluate_multi
+            subroutine specialize_curve_generic(nodes,degree,dimension_,start,end_,new_nodes)
+                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
+                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) intent(in) :: start
+                real(kind=dp) intent(in) :: end_
+                real(kind=dp) dimension(degree + 1,dimension_),intent(out),depend(degree,dimension_) :: new_nodes
+            end subroutine specialize_curve_generic
+            subroutine specialize_curve_quadratic(nodes,dimension_,start,end_,new_nodes)
+                real(kind=dp) dimension(3,dimension_),intent(in) :: nodes
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) intent(in) :: start
+                real(kind=dp) intent(in) :: end_
+                real(kind=dp) dimension(3,dimension_),intent(out),depend(dimension_) :: new_nodes
+            end subroutine specialize_curve_quadratic
+            subroutine specialize_curve(nodes,degree,dimension_,start,end_,curve_start,curve_end,new_nodes,true_start,true_end)
+                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
+                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) intent(in) :: start
+                real(kind=dp) intent(in) :: end_
+                real(kind=dp) intent(in) :: curve_start
+                real(kind=dp) intent(in) :: curve_end
+                real(kind=dp) dimension(degree + 1,dimension_),intent(out),depend(degree,dimension_) :: new_nodes
+                real(kind=dp) intent(out) :: true_start
+                real(kind=dp) intent(out) :: true_end
+            end subroutine specialize_curve
+            subroutine evaluate_hodograph(s,nodes,dimension_,degree,hodograph)
+                real(kind=dp) intent(in) :: s
+                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
+                real(kind=dp) dimension(1,dimension_),intent(out),depend(dimension_) :: hodograph
+            end subroutine evaluate_hodograph
+        end module curve
+        module speedup
+            use types, only: dp
+            use curve, only: evaluate_curve_barycentric,evaluate_multi,evaluate_hodograph
+            integer, parameter,optional :: BoxIntersectionType_INTERSECTION=0
+            integer, parameter,optional :: BoxIntersectionType_TANGENT=1
+            integer, parameter,optional :: BoxIntersectionType_DISJOINT=2
+            subroutine de_casteljau_one_round(num_nodes,dimension_,nodes,degree,lambda1,lambda2,lambda3,new_nodes)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
+                integer :: degree
+                real(kind=dp) intent(in) :: lambda1
+                real(kind=dp) intent(in) :: lambda2
+                real(kind=dp) intent(in) :: lambda3
+                real(kind=dp) dimension(num_nodes-degree-1,dimension_),intent(out),depend(num_nodes,degree,dimension_) :: new_nodes
+            end subroutine de_casteljau_one_round
             subroutine linearization_error(nodes,degree,dimension_,error)
                 real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
                 integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
@@ -101,33 +142,6 @@ python module _speedup
                 real(kind=dp) intent(out) :: bottom
                 real(kind=dp) intent(out) :: top
             end subroutine bbox
-            subroutine specialize_curve_generic(nodes,degree,dimension_,start,end_,new_nodes)
-                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
-                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) intent(in) :: start
-                real(kind=dp) intent(in) :: end_
-                real(kind=dp) dimension(degree + 1,dimension_),intent(out),depend(degree,dimension_) :: new_nodes
-            end subroutine specialize_curve_generic
-            subroutine specialize_curve_quadratic(nodes,dimension_,start,end_,new_nodes)
-                real(kind=dp) dimension(3,dimension_),intent(in) :: nodes
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) intent(in) :: start
-                real(kind=dp) intent(in) :: end_
-                real(kind=dp) dimension(3,dimension_),intent(out),depend(dimension_) :: new_nodes
-            end subroutine specialize_curve_quadratic
-            subroutine specialize_curve(nodes,degree,dimension_,start,end_,curve_start,curve_end,new_nodes,true_start,true_end)
-                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
-                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) intent(in) :: start
-                real(kind=dp) intent(in) :: end_
-                real(kind=dp) intent(in) :: curve_start
-                real(kind=dp) intent(in) :: curve_end
-                real(kind=dp) dimension(degree + 1,dimension_),intent(out),depend(degree,dimension_) :: new_nodes
-                real(kind=dp) intent(out) :: true_start
-                real(kind=dp) intent(out) :: true_end
-            end subroutine specialize_curve
             subroutine jacobian_both(num_nodes,dimension_,nodes,degree,new_nodes)
                 integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
                 integer, optional,depend(nodes) :: dimension_=size(nodes, 2)
@@ -135,13 +149,6 @@ python module _speedup
                 integer :: degree
                 real(kind=dp) dimension(num_nodes-degree-1,2 * dimension_),intent(out),depend(num_nodes,degree,dimension_) :: new_nodes
             end subroutine jacobian_both
-            subroutine evaluate_hodograph(s,nodes,dimension_,degree,hodograph)
-                real(kind=dp) intent(in) :: s
-                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
-                real(kind=dp) dimension(1,dimension_),intent(out),depend(dimension_) :: hodograph
-            end subroutine evaluate_hodograph
             subroutine newton_refine_intersect(s,nodes1,degree1,t,nodes2,degree2,new_s,new_t)
                 real(kind=dp) intent(in) :: s
                 real(kind=dp) dimension(degree1 + 1,2),intent(in) :: nodes1

@@ -86,6 +86,8 @@ def _extension_modules():
         name='bezier._speedup',
         sources=[
             os.path.join(bezier_path, '_speedup.pyf'),
+            os.path.join(bezier_path, 'types.f90'),
+            os.path.join(bezier_path, 'curve.f90'),
             os.path.join(bezier_path, 'speedup.f90'),
         ],
         language='f90',

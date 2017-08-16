@@ -914,8 +914,8 @@ if _speedup is None:  # pragma: NO COVER
     specialize_curve = _specialize_curve
     evaluate_hodograph = _evaluate_hodograph
 else:
-    evaluate_multi_barycentric = _speedup.speedup.evaluate_curve_barycentric
-    evaluate_multi = _speedup.speedup.evaluate_multi
-    specialize_curve = _speedup.speedup.specialize_curve
-    evaluate_hodograph = _speedup.speedup.evaluate_hodograph
+    evaluate_multi_barycentric = _speedup.curve.evaluate_curve_barycentric
+    evaluate_multi = _speedup.curve.evaluate_multi
+    specialize_curve = _speedup.curve.specialize_curve
+    evaluate_hodograph = _speedup.curve.evaluate_hodograph
 # pylint: enable=invalid-name

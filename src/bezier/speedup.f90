@@ -12,20 +12,18 @@
 
 module speedup
 
+  use types, only: dp
+  use curve, only: &
+       evaluate_curve_barycentric, evaluate_multi, evaluate_hodograph
   implicit none
   private in_interval
   public &
-       de_casteljau_one_round, evaluate_curve_barycentric, evaluate_multi, &
-       linearization_error, evaluate_barycentric, evaluate_barycentric_multi, &
-       evaluate_cartesian_multi, cross_product, segment_intersection, bbox, &
-       specialize_curve_generic, specialize_curve_quadratic, &
-       specialize_curve, jacobian_both, evaluate_hodograph, &
-       newton_refine_intersect, jacobian_det, bbox_intersect, &
-       wiggle_interval, parallel_different, from_linearized, bbox_line_intersect
+       de_casteljau_one_round, linearization_error, evaluate_barycentric, &
+       evaluate_barycentric_multi, evaluate_cartesian_multi, cross_product, &
+       segment_intersection, bbox, jacobian_both, newton_refine_intersect, &
+       jacobian_det, bbox_intersect, wiggle_interval, parallel_different, &
+       from_linearized, bbox_line_intersect
 
-  ! NOTE: This still relies on .f2py_f2cmap being present
-  !       in the directory that build is called from.
-  integer, parameter :: dp=kind(0.d0)
   integer, parameter :: BoxIntersectionType_INTERSECTION = 0
   integer, parameter :: BoxIntersectionType_TANGENT = 1
   integer, parameter :: BoxIntersectionType_DISJOINT = 2
@@ -82,73 +80,6 @@ contains
     end do
 
   end subroutine de_casteljau_one_round
-
-  subroutine evaluate_curve_barycentric( &
-       nodes, degree, dimension_, lambda1, lambda2, num_vals, evaluated)
-
-    ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
-
-    !f2py integer intent(hide), depend(nodes) :: degree = size(nodes, 1) - 1
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(lambda1) :: num_vals = size(lambda1)
-    real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: degree
-    integer :: dimension_
-    real(dp), intent(in) :: lambda1(num_vals)
-    real(dp), intent(in) :: lambda2(num_vals)
-    integer :: num_vals
-    real(dp), intent(out) :: evaluated(num_vals, dimension_)
-    ! Variables outside of signature.
-    integer :: i, j
-    real(dp) :: lambda2_pow(num_vals)
-    integer :: binom_val
-
-    lambda2_pow = 1.0_dp
-    binom_val = 1
-
-    forall (i = 1:num_vals)
-       evaluated(i, :) = lambda1(i) * nodes(1, :)
-    end forall
-
-    do i = 2, degree
-       lambda2_pow = lambda2_pow * lambda2
-       binom_val = (binom_val * (degree - i + 2)) / (i - 1)
-       forall (j = 1:num_vals)
-          evaluated(j, :) = ( &
-               evaluated(j, :) + &
-               binom_val * lambda2_pow(j) * nodes(i, :)) * lambda1(j)
-       end forall
-    end do
-
-    forall (i = 1:num_vals)
-       evaluated(i, :) = ( &
-            evaluated(i, :) + &
-            lambda2_pow(i) * lambda2(i) * nodes(degree + 1, :))
-    end forall
-
-  end subroutine evaluate_curve_barycentric
-
-  subroutine evaluate_multi( &
-       nodes, degree, dimension_, s_vals, num_vals, evaluated)
-
-    ! NOTE: This is evaluate_multi for a Bezier curve.
-
-    !f2py integer intent(hide), depend(nodes) :: degree = size(nodes, 1) - 1
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(s_vals) :: num_vals = size(s_vals)
-    real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: degree
-    integer :: dimension_
-    real(dp), intent(in) :: s_vals(num_vals)
-    integer :: num_vals
-    real(dp), intent(out) :: evaluated(num_vals, dimension_)
-    ! Variables outside of signature.
-    real(dp) :: one_less(num_vals)
-
-    one_less = 1.0_dp - s_vals
-    call evaluate_curve_barycentric( &
-         nodes, degree, dimension_, one_less, s_vals, num_vals, evaluated)
-  end subroutine evaluate_multi
 
   subroutine linearization_error(nodes, degree, dimension_, error)
 
@@ -384,114 +315,6 @@ contains
 
   end subroutine bbox
 
-  subroutine specialize_curve_generic( &
-       nodes, degree, dimension_, start, end_, new_nodes)
-
-    ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
-
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: dimension_
-    integer, intent(in) :: degree
-    real(dp), intent(in) :: start, end_
-    real(dp), intent(out) :: new_nodes(degree + 1, dimension_)
-    ! Variables outside of signature.
-    real(dp) :: workspace(degree, dimension_, degree + 1)
-    integer :: index_, curr_size, j
-    real(dp) :: minus_start, minus_end
-
-    minus_start = 1.0_dp - start
-    minus_end = 1.0_dp - end_
-    workspace(:, :, 1) = minus_start * nodes(:degree, :) + start * nodes(2:, :)
-    workspace(:, :, 2) = minus_end * nodes(:degree, :) + end_ * nodes(2:, :)
-
-    curr_size = degree
-    do index_ = 3, degree + 1
-       curr_size = curr_size - 1
-       ! First add a new "column" (or whatever the 3rd dimension is called)
-       ! at the end using ``end_``.
-       workspace(:curr_size, :, index_) = ( &
-            minus_end * workspace(:curr_size, :, index_ - 1) + &
-            end_ * workspace(2:curr_size + 1, :, index_ - 1))
-       ! Update all the values in place by using de Casteljau with the
-       ! ``start`` parameter.
-       forall (j = 1:index_ - 1)
-          workspace(:curr_size, :, j) = ( &
-               minus_start * workspace(:curr_size, :, j) + &
-               start * workspace(2:curr_size + 1, :, j))
-       end forall
-    end do
-
-    ! Move the final "column" (or whatever the 3rd dimension is called)
-    ! of the workspace into ``new_nodes``.
-    forall (index_ = 1:degree + 1)
-       new_nodes(index_, :) = workspace(1, :, index_)
-    end forall
-
-  end subroutine specialize_curve_generic
-
-  subroutine specialize_curve_quadratic( &
-       nodes, dimension_, start, end_, new_nodes)
-
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    real(dp), intent(in) :: nodes(3, dimension_)
-    integer :: dimension_
-    real(dp), intent(in) :: start, end_
-    real(dp), intent(out) :: new_nodes(3, dimension_)
-    ! Variables outside of signature.
-    real(dp) :: minus_start, minus_end, prod_both
-
-    minus_start = 1.0_dp - start
-    minus_end = 1.0_dp - end_
-    prod_both = start * end_
-
-    new_nodes(1, :) = ( &
-         minus_start * minus_start * nodes(1, :) + &
-         2.0_dp * start * minus_start * nodes(2, :) + &
-         start * start * nodes(3, :))
-    new_nodes(2, :) = ( &
-         minus_start * minus_end * nodes(1, :) + &
-         (end_ + start - 2.0_dp * prod_both) * nodes(2, :) + &
-         prod_both * nodes(3, :))
-    new_nodes(3, :) = ( &
-         minus_end * minus_end * nodes(1, :) + &
-         2.0_dp * end_ * minus_end * nodes(2, :) + &
-         end_ * end_ * nodes(3, :))
-
-  end subroutine specialize_curve_quadratic
-
-  subroutine specialize_curve( &
-       nodes, degree, dimension_, start, end_, curve_start, curve_end, &
-       new_nodes, true_start, true_end)
-
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: dimension_
-    integer, intent(in) :: degree
-    real(dp), intent(in) :: start, end_, curve_start, curve_end
-    real(dp), intent(out) :: new_nodes(degree + 1, dimension_)
-    real(dp), intent(out) :: true_start, true_end
-    ! Variables outside of signature.
-    real(dp) :: interval_delta
-
-    if (degree == 1) then
-       new_nodes(1, :) = (1.0_dp - start) * nodes(1, :) + start * nodes(2, :)
-       new_nodes(2, :) = (1.0_dp - end_) * nodes(1, :) + end_ * nodes(2, :)
-    else if (degree == 2) then
-       call specialize_curve_quadratic( &
-            nodes, dimension_, start, end_, new_nodes)
-    else
-       call specialize_curve_generic( &
-            nodes, degree, dimension_, start, end_, new_nodes)
-    end if
-
-    ! Now, compute the new interval.
-    interval_delta = curve_end - curve_start
-    true_start = curve_start + start * interval_delta
-    true_end = curve_start + end_ * interval_delta
-
-  end subroutine specialize_curve
-
   subroutine jacobian_both( &
        num_nodes, dimension_, nodes, degree, new_nodes)
 
@@ -526,26 +349,6 @@ contains
     new_nodes = degree * new_nodes
 
   end subroutine jacobian_both
-
-  subroutine evaluate_hodograph(s, nodes, dimension_, degree, hodograph)
-
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    real(dp), intent(in) :: s
-    real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: dimension_
-    integer, intent(in) :: degree
-    real(dp), intent(out) :: hodograph(1, dimension_)
-    ! Variables outside of signature.
-    real(dp) :: first_deriv(degree, dimension_)
-    real(dp) :: param(1)
-
-    first_deriv = nodes(2:, :) - nodes(:degree, :)
-    param = s
-    call evaluate_multi( &
-         first_deriv, degree - 1, dimension_, param, 1, hodograph)
-    hodograph = degree * hodograph
-
-  end subroutine evaluate_hodograph
 
   subroutine newton_refine_intersect( &
        s, nodes1, degree1, t, nodes2, degree2, new_s, new_t)
