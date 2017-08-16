@@ -16,6 +16,27 @@ python module _speedup
         module types
             integer, parameter,public,optional :: dp=kind(0.d0)
         end module types
+        module helpers
+            use types, only: dp
+            subroutine cross_product(vec0,vec1,result_)
+                real(kind=dp) dimension(1,2),intent(in) :: vec0
+                real(kind=dp) dimension(1,2),intent(in) :: vec1
+                real(kind=dp) intent(out) :: result_
+            end subroutine cross_product
+            subroutine bbox(num_nodes,nodes,left,right,bottom,top)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                real(kind=dp) dimension(num_nodes,2),intent(in) :: nodes
+                real(kind=dp) intent(out) :: left
+                real(kind=dp) intent(out) :: right
+                real(kind=dp) intent(out) :: bottom
+                real(kind=dp) intent(out) :: top
+            end subroutine bbox
+            subroutine wiggle_interval(value_,result_,success)
+                real(kind=dp) intent(in) :: value_
+                real(kind=dp) intent(out) :: result_
+                logical(kind=1) intent(out) :: success
+            end subroutine wiggle_interval
+        end module helpers
         module curve
             use types, only: dp
             subroutine evaluate_curve_barycentric(nodes,degree,dimension_,lambda1,lambda2,num_vals,evaluated)
@@ -72,6 +93,7 @@ python module _speedup
         end module curve
         module speedup
             use types, only: dp
+            use helpers, only: cross_product,bbox,wiggle_interval
             use curve, only: evaluate_curve_barycentric,evaluate_multi,evaluate_hodograph
             integer, parameter,optional :: BoxIntersectionType_INTERSECTION=0
             integer, parameter,optional :: BoxIntersectionType_TANGENT=1
@@ -120,11 +142,6 @@ python module _speedup
                 integer, optional,depend(nodes) :: dimension_=size(nodes, 2)
                 real(kind=dp) dimension(num_vals,dimension_),intent(out),depend(num_vals,dimension_) :: evaluated
             end subroutine evaluate_cartesian_multi
-            subroutine cross_product(vec0,vec1,result_)
-                real(kind=dp) dimension(1,2),intent(in) :: vec0
-                real(kind=dp) dimension(1,2),intent(in) :: vec1
-                real(kind=dp) intent(out) :: result_
-            end subroutine cross_product
             subroutine segment_intersection(start0,end0,start1,end1,s,t,success)
                 real(kind=dp) dimension(1,2),intent(in) :: start0
                 real(kind=dp) dimension(1,2),intent(in) :: end0
@@ -134,14 +151,6 @@ python module _speedup
                 real(kind=dp) intent(out) :: t
                 logical(kind=1) intent(out) :: success
             end subroutine segment_intersection
-            subroutine bbox(num_nodes,nodes,left,right,bottom,top)
-                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
-                real(kind=dp) dimension(num_nodes,2),intent(in) :: nodes
-                real(kind=dp) intent(out) :: left
-                real(kind=dp) intent(out) :: right
-                real(kind=dp) intent(out) :: bottom
-                real(kind=dp) intent(out) :: top
-            end subroutine bbox
             subroutine jacobian_both(num_nodes,dimension_,nodes,degree,new_nodes)
                 integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
                 integer, optional,depend(nodes) :: dimension_=size(nodes, 2)
@@ -174,11 +183,6 @@ python module _speedup
                 real(kind=dp) dimension(num_nodes2,2),intent(in) :: nodes2
                 integer intent(out) :: enum_
             end subroutine bbox_intersect
-            subroutine wiggle_interval(value_,result_,success)
-                real(kind=dp) intent(in) :: value_
-                real(kind=dp) intent(out) :: result_
-                logical(kind=1) intent(out) :: success
-            end subroutine wiggle_interval
             subroutine parallel_different(start0,end0,start1,end1,result_)
                 real(kind=dp) dimension(1,2),intent(in) :: start0
                 real(kind=dp) dimension(1,2),intent(in) :: end0

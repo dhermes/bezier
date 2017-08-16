@@ -279,7 +279,7 @@ if _speedup is None:  # pragma: NO COVER
     wiggle_interval = _wiggle_interval_py
     cross_product = _cross_product
 else:
-    bbox = _speedup.speedup.bbox
-    wiggle_interval = _speedup.speedup.wiggle_interval
-    cross_product = _speedup.speedup.cross_product
+    bbox = _speedup.helpers.bbox
+    wiggle_interval = _speedup.helpers.wiggle_interval
+    cross_product = _speedup.helpers.cross_product
 # pylint: enable=invalid-name

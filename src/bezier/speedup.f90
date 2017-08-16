@@ -13,16 +13,17 @@
 module speedup
 
   use types, only: dp
+  use helpers, only: cross_product, bbox, wiggle_interval
   use curve, only: &
        evaluate_curve_barycentric, evaluate_multi, evaluate_hodograph
   implicit none
   private in_interval
   public &
        de_casteljau_one_round, linearization_error, evaluate_barycentric, &
-       evaluate_barycentric_multi, evaluate_cartesian_multi, cross_product, &
-       segment_intersection, bbox, jacobian_both, newton_refine_intersect, &
-       jacobian_det, bbox_intersect, wiggle_interval, parallel_different, &
-       from_linearized, bbox_line_intersect
+       evaluate_barycentric_multi, evaluate_cartesian_multi, &
+       segment_intersection, jacobian_both, newton_refine_intersect, &
+       jacobian_det, bbox_intersect, parallel_different, from_linearized, &
+       bbox_line_intersect
 
   integer, parameter :: BoxIntersectionType_INTERSECTION = 0
   integer, parameter :: BoxIntersectionType_TANGENT = 1
@@ -255,16 +256,6 @@ contains
 
   end subroutine evaluate_cartesian_multi
 
-  subroutine cross_product(vec0, vec1, result_)
-
-    real(dp), intent(in) :: vec0(1, 2)
-    real(dp), intent(in) :: vec1(1, 2)
-    real(dp), intent(out) :: result_
-
-    result_ = vec0(1, 1) * vec1(1, 2) - vec0(1, 2) * vec1(1, 1)
-
-  end subroutine cross_product
-
   subroutine segment_intersection(start0, end0, start1, end1, s, t, success)
 
     real(dp), intent(in) :: start0(1, 2)
@@ -296,24 +287,6 @@ contains
     end if
 
   end subroutine segment_intersection
-
-  subroutine bbox(num_nodes, nodes, left, right, bottom, top)
-
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    integer :: num_nodes
-    real(dp), intent(in) :: nodes(num_nodes, 2)
-    real(dp), intent(out) :: left, right, bottom, top
-    ! Variables outside of signature.
-    real(dp) :: workspace(2)
-
-    workspace = minval(nodes, 1)
-    left = workspace(1)
-    bottom = workspace(2)
-    workspace = maxval(nodes, 1)
-    right = workspace(1)
-    top = workspace(2)
-
-  end subroutine bbox
 
   subroutine jacobian_both( &
        num_nodes, dimension_, nodes, degree, new_nodes)
@@ -468,26 +441,6 @@ contains
     end if
 
   end subroutine bbox_intersect
-
-  subroutine wiggle_interval(value_, result_, success)
-
-    real(dp), intent(in) :: value_
-    real(dp), intent(out) :: result_
-    logical(1), intent(out) :: success
-
-    success = .TRUE.
-    if (-0.5_dp**45 < value_ .AND. value_ < 0.5_dp**45) then
-       result_ = 0.0_dp
-    else if (0.5_dp**45 <= value_ .AND. value_ <= 1.0_dp - 0.5_dp**45) then
-       result_ = value_
-    else if ( &
-         1.0_dp - 0.5_dp**45 < value_ .AND. value_ < 1.0_dp + 0.5_dp**45) then
-       result_ = 1.0_dp
-    else
-       success = .FALSE.
-    end if
-
-  end subroutine wiggle_interval
 
   subroutine parallel_different(start0, end0, start1, end1, result_)
 
