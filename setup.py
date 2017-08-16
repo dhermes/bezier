@@ -90,6 +90,7 @@ def _extension_modules():
             os.path.join(bezier_path, 'helpers.f90'),
             os.path.join(bezier_path, 'curve.f90'),
             os.path.join(bezier_path, 'speedup.f90'),
+            os.path.join(bezier_path, 'curve_intersection.f90'),
         ],
         language='f90',
     )

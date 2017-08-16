@@ -1693,11 +1693,11 @@ if _speedup is None:  # pragma: NO COVER
     _from_linearized_low_level = _from_linearized_low_level_py
     bbox_line_intersect = _bbox_line_intersect
 else:
-    linearization_error = _speedup.speedup.linearization_error
-    segment_intersection = _speedup.speedup.segment_intersection
-    newton_refine = _speedup.speedup.newton_refine_intersect
-    bbox_intersect = _speedup.speedup.bbox_intersect
-    parallel_different = _speedup.speedup.parallel_different
-    _from_linearized_low_level = _speedup.speedup.from_linearized
-    bbox_line_intersect = _speedup.speedup.bbox_line_intersect
+    linearization_error = _speedup.curve_intersection.linearization_error
+    segment_intersection = _speedup.curve_intersection.segment_intersection
+    newton_refine = _speedup.curve_intersection.newton_refine_intersect
+    bbox_intersect = _speedup.curve_intersection.bbox_intersect
+    parallel_different = _speedup.curve_intersection.parallel_different
+    _from_linearized_low_level = _speedup.curve_intersection.from_linearized
+    bbox_line_intersect = _speedup.curve_intersection.bbox_line_intersect
 # pylint: enable=invalid-name

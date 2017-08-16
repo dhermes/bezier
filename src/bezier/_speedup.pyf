@@ -93,11 +93,7 @@ python module _speedup
         end module curve
         module speedup
             use types, only: dp
-            use helpers, only: cross_product,bbox,wiggle_interval
-            use curve, only: evaluate_curve_barycentric,evaluate_multi,evaluate_hodograph
-            integer, parameter,optional :: BoxIntersectionType_INTERSECTION=0
-            integer, parameter,optional :: BoxIntersectionType_TANGENT=1
-            integer, parameter,optional :: BoxIntersectionType_DISJOINT=2
+            use curve, only: evaluate_curve_barycentric
             subroutine de_casteljau_one_round(num_nodes,dimension_,nodes,degree,lambda1,lambda2,lambda3,new_nodes)
                 integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
                 integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
@@ -108,12 +104,6 @@ python module _speedup
                 real(kind=dp) intent(in) :: lambda3
                 real(kind=dp) dimension(num_nodes-degree-1,dimension_),intent(out),depend(num_nodes,degree,dimension_) :: new_nodes
             end subroutine de_casteljau_one_round
-            subroutine linearization_error(nodes,degree,dimension_,error)
-                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
-                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) intent(out) :: error
-            end subroutine linearization_error
             subroutine evaluate_barycentric(num_nodes,dimension_,nodes,degree,lambda1,lambda2,lambda3,point)
                 integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
                 integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
@@ -142,6 +132,35 @@ python module _speedup
                 integer, optional,depend(nodes) :: dimension_=size(nodes, 2)
                 real(kind=dp) dimension(num_vals,dimension_),intent(out),depend(num_vals,dimension_) :: evaluated
             end subroutine evaluate_cartesian_multi
+            subroutine jacobian_both(num_nodes,dimension_,nodes,degree,new_nodes)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                integer, optional,depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
+                integer :: degree
+                real(kind=dp) dimension(num_nodes-degree-1,2 * dimension_),intent(out),depend(num_nodes,degree,dimension_) :: new_nodes
+            end subroutine jacobian_both
+            subroutine jacobian_det(num_nodes,nodes,degree,num_vals,param_vals,evaluated)
+                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
+                real(kind=dp) dimension(num_nodes,2),intent(in) :: nodes
+                integer :: degree
+                integer, optional,intent(hide),depend(param_vals) :: num_vals=size(param_vals, 1)
+                real(kind=dp) dimension(num_vals,2),intent(in) :: param_vals
+                real(kind=dp) dimension(num_vals),intent(out),depend(num_vals) :: evaluated
+            end subroutine jacobian_det
+        end module speedup
+        module curve_intersection
+            use types, only: dp
+            use helpers, only: cross_product,bbox,wiggle_interval
+            use curve, only: evaluate_multi,evaluate_hodograph
+            integer, parameter,optional :: BoxIntersectionType_INTERSECTION=0
+            integer, parameter,optional :: BoxIntersectionType_TANGENT=1
+            integer, parameter,optional :: BoxIntersectionType_DISJOINT=2
+            subroutine linearization_error(nodes,degree,dimension_,error)
+                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
+                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
+                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
+                real(kind=dp) intent(out) :: error
+            end subroutine linearization_error
             subroutine segment_intersection(start0,end0,start1,end1,s,t,success)
                 real(kind=dp) dimension(1,2),intent(in) :: start0
                 real(kind=dp) dimension(1,2),intent(in) :: end0
@@ -151,13 +170,6 @@ python module _speedup
                 real(kind=dp) intent(out) :: t
                 logical(kind=1) intent(out) :: success
             end subroutine segment_intersection
-            subroutine jacobian_both(num_nodes,dimension_,nodes,degree,new_nodes)
-                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
-                integer, optional,depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) dimension(num_nodes,dimension_),intent(in) :: nodes
-                integer :: degree
-                real(kind=dp) dimension(num_nodes-degree-1,2 * dimension_),intent(out),depend(num_nodes,degree,dimension_) :: new_nodes
-            end subroutine jacobian_both
             subroutine newton_refine_intersect(s,nodes1,degree1,t,nodes2,degree2,new_s,new_t)
                 real(kind=dp) intent(in) :: s
                 real(kind=dp) dimension(degree1 + 1,2),intent(in) :: nodes1
@@ -168,14 +180,6 @@ python module _speedup
                 real(kind=dp) intent(out) :: new_s
                 real(kind=dp) intent(out) :: new_t
             end subroutine newton_refine_intersect
-            subroutine jacobian_det(num_nodes,nodes,degree,num_vals,param_vals,evaluated)
-                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
-                real(kind=dp) dimension(num_nodes,2),intent(in) :: nodes
-                integer :: degree
-                integer, optional,intent(hide),depend(param_vals) :: num_vals=size(param_vals, 1)
-                real(kind=dp) dimension(num_vals,2),intent(in) :: param_vals
-                real(kind=dp) dimension(num_vals),intent(out),depend(num_vals) :: evaluated
-            end subroutine jacobian_det
             subroutine bbox_intersect(num_nodes1,nodes1,num_nodes2,nodes2,enum_)
                 integer, optional,intent(hide),depend(nodes1) :: num_nodes1=size(nodes1, 1)
                 real(kind=dp) dimension(num_nodes1,2),intent(in) :: nodes1
@@ -228,6 +232,6 @@ python module _speedup
                 real(kind=dp) dimension(1,2),intent(in) :: line_end
                 integer intent(out) :: enum_
             end subroutine bbox_line_intersect
-        end module speedup
+        end module curve_intersection
     end interface
 end python module _speedup
