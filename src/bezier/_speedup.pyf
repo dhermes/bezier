@@ -91,7 +91,7 @@ python module _speedup
                 real(kind=dp) dimension(1,dimension_),intent(out),depend(dimension_) :: hodograph
             end subroutine evaluate_hodograph
         end module curve
-        module speedup
+        module surface
             use types, only: dp
             use curve, only: evaluate_curve_barycentric
             subroutine de_casteljau_one_round(num_nodes,dimension_,nodes,degree,lambda1,lambda2,lambda3,new_nodes)
@@ -147,7 +147,7 @@ python module _speedup
                 real(kind=dp) dimension(num_vals,2),intent(in) :: param_vals
                 real(kind=dp) dimension(num_vals),intent(out),depend(num_vals) :: evaluated
             end subroutine jacobian_det
-        end module speedup
+        end module surface
         module curve_intersection
             use types, only: dp
             use helpers, only: cross_product,bbox,wiggle_interval

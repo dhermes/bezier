@@ -10,7 +10,7 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-module speedup
+module surface
 
   use types, only: dp
   use curve, only: evaluate_curve_barycentric
@@ -294,4 +294,4 @@ contains
 
   end subroutine jacobian_det
 
-end module speedup
+end module surface
