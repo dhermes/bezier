@@ -1,0 +1,56 @@
+---
+version: 2
+jobs:
+  build:
+    working_directory: /var/code/bezier/
+    docker:
+      - image: dhermes/bezier:latest
+    environment:
+      MATPLOTLIBRC: tests
+    steps:
+      - checkout
+      - run:
+          name: Unit tests in Python 3.5
+          command: nox -s "unit_tests(python_version='3.5')"
+      - run:
+          name: Unit tests in Python 3.6
+          command: nox -s "unit_tests(python_version='3.6')"
+      - run:
+          name: Unit tests AND line coverage in Python 2.7
+          command: nox -s cover
+      - run:
+          name: Build docs
+          command: nox -s docs
+      - run:
+          name: Run all doctests
+          command: nox -s doctest
+      - run:
+          name: Lint code for style issues
+          command: nox -s lint
+      - run:
+          name: Functional tests in Python 3.6
+          command: nox -s "functional(python_version='3.6')"
+      - run:
+          name: Run memory benchmark
+          command: nox -s "benchmark(target='memory')"
+      - run:
+          name: Run time benchmark
+          command: nox -s "benchmark(target='time')"
+      - deploy:
+          name: Upload coverage to coveralls
+          command: |
+            .nox/cover/bin/pip install coveralls
+            .nox/cover/bin/coveralls
+
+deployment:
+  tag_build_for_cci2:
+    # 1.0 style config for tag builds workaround
+    # For context, see:
+    # - https://discuss.circleci.com/t/build-on-tag/9864/30
+    # - https://discuss.circleci.com/t/git-tag-deploys-in-2-0/9493/8
+    # - https://circleci.com/gh/keybits/circulate/58#config/containers/0
+    tag: /.*/
+    commands:
+      - python3 setup.py sdist bdist_wheel
+      - python3 -m pip install --upgrade twine
+      - twine upload dist/*
