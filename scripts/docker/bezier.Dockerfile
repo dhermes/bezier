@@ -1,4 +1,4 @@
-FROM dhermes/python-multi:2017.08
+FROM dhermes/python-multi
 
 # Install the current versions of nox and NumPy.
 RUN pip install --no-cache-dir \
