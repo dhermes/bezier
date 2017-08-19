@@ -22,7 +22,7 @@ FAILURES = (11, 20, 24, 42)
 
 def get_bounds():
     if os.getenv('CIRCLECI') == 'true':
-        return 85.0 / 1024.0, 95.0 / 1024.0
+        return 42.0 / 1024.0, 52.0 / 1024.0
     else:
         return 35.0 / 1024.0, 42.0 / 1024.0
 
