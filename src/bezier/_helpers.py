@@ -16,9 +16,9 @@
 import numpy as np
 
 try:
-    from bezier import _speedup
+    from bezier import _helpers_speedup
 except ImportError:  # pragma: NO COVER
-    _speedup = None
+    _helpers_speedup = None
 
 
 _EPS = 0.5**40
@@ -274,12 +274,12 @@ def _wiggle_interval_py(value, wiggle=0.5**45):
 
 
 # pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
+if _helpers_speedup is None:  # pragma: NO COVER
     bbox = _bbox
     wiggle_interval = _wiggle_interval_py
     cross_product = _cross_product
 else:
-    bbox = _speedup.helpers.bbox
-    wiggle_interval = _speedup.helpers.wiggle_interval
-    cross_product = _speedup.helpers.cross_product
+    bbox = _helpers_speedup.bbox
+    wiggle_interval = _helpers_speedup.wiggle_interval
+    cross_product = _helpers_speedup.cross_product
 # pylint: enable=invalid-name

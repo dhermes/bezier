@@ -19,7 +19,9 @@ module helpers
 
 contains
 
-  subroutine cross_product(vec0, vec1, result_)
+  subroutine cross_product( &
+       vec0, vec1, result_) &
+       bind(c, name='cross_product')
 
     real(dp), intent(in) :: vec0(1, 2)
     real(dp), intent(in) :: vec1(1, 2)
@@ -29,7 +31,9 @@ contains
 
   end subroutine cross_product
 
-  subroutine bbox(num_nodes, nodes, left, right, bottom, top)
+  subroutine bbox( &
+       num_nodes, nodes, left, right, bottom, top) &
+       bind(c, name='bbox')
 
     !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
     integer :: num_nodes
@@ -47,7 +51,9 @@ contains
 
   end subroutine bbox
 
-  subroutine wiggle_interval(value_, result_, success)
+  subroutine wiggle_interval( &
+       value_, result_, success) &
+       bind(c, name='wiggle_interval')
 
     real(dp), intent(in) :: value_
     real(dp), intent(out) :: result_

@@ -90,6 +90,7 @@ def get_f90_compiler():
 def compile_fortran_obj_files(f90_compiler, bezier_path):
     source_files = [
         os.path.join(bezier_path, 'types.f90'),
+        os.path.join(bezier_path, 'helpers.f90'),
         os.path.join(bezier_path, 'curve.f90'),
     ]
     obj_files = f90_compiler.compile(
@@ -127,23 +128,31 @@ def _extension_modules(f90_compiler):
     if 'config_fc' not in sys.argv:
         sys.argv.extend(['config_fc', '--opt=-O3'])
 
-    cython_sources = [
-        os.path.join(bezier_path, '_curve_speedup.c'),
-    ]
     obj_files = compile_fortran_obj_files(f90_compiler, bezier_path)
-    cython_extension = setuptools.Extension(
+    include_dirs = [
+        np.get_include(),
+        os.path.join(bezier_path, 'include'),
+    ]
+    cython_kwargs = {
+        'include_dirs': include_dirs,
+        'libraries': f90_compiler.libraries,
+        'library_dirs': f90_compiler.library_dirs,
+        'extra_objects': obj_files,
+    }
+
+    cython_curve = setuptools.Extension(
         'bezier._curve_speedup',
-        cython_sources,
-        include_dirs=[
-            np.get_include(),
-            os.path.join(bezier_path, 'include'),
-        ],
-        libraries=f90_compiler.libraries,
-        library_dirs=f90_compiler.library_dirs,
-        extra_objects=obj_files,
+        [os.path.join(bezier_path, '_curve_speedup.c')],
+        **cython_kwargs
     )
 
-    return [f2py_extension, cython_extension]
+    cython_helpers = setuptools.Extension(
+        'bezier._helpers_speedup',
+        [os.path.join(bezier_path, '_helpers_speedup.c')],
+        **cython_kwargs
+    )
+
+    return [f2py_extension, cython_curve, cython_helpers]
 
 
 def extension_modules():

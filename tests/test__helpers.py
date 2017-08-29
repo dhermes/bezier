@@ -126,9 +126,9 @@ class Test_speedup_bbox(Test__bbox):
 
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _speedup
+        from bezier import _helpers_speedup
 
-        return _speedup.helpers.bbox(nodes)
+        return _helpers_speedup.bbox(nodes)
 
 
 class Test_contains(unittest.TestCase):
@@ -219,9 +219,9 @@ class Test_speedup_cross_product(Test__cross_product):
 
     @staticmethod
     def _call_function_under_test(vec0, vec1):
-        from bezier import _speedup
+        from bezier import _helpers_speedup
 
-        return _speedup.helpers.cross_product(vec0, vec1)
+        return _helpers_speedup.cross_product(vec0, vec1)
 
 
 class Test_ulps_away(unittest.TestCase):
@@ -471,10 +471,10 @@ class Test__wiggle_interval_py(unittest.TestCase):
 class Test_speedup_wiggle_interval(Test__wiggle_interval_py):
 
     def _call_function_under_test(self, value, **kwargs):
-        from bezier import _speedup
+        from bezier import _helpers_speedup
 
         self.assertEqual(kwargs, {})
-        return _speedup.helpers.wiggle_interval(value, **kwargs)
+        return _helpers_speedup.wiggle_interval(value, **kwargs)
 
     def test_custom_wiggle(self):
         # Fortran implementation doesn't support optional wiggle. This

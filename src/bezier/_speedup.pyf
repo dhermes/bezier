@@ -13,30 +13,6 @@
 
 python module _speedup
     interface
-        module types
-            integer, parameter,public,optional :: dp=kind(0.d0)
-        end module types
-        module helpers
-            use types, only: dp
-            subroutine cross_product(vec0,vec1,result_)
-                real(kind=dp) dimension(1,2),intent(in) :: vec0
-                real(kind=dp) dimension(1,2),intent(in) :: vec1
-                real(kind=dp) intent(out) :: result_
-            end subroutine cross_product
-            subroutine bbox(num_nodes,nodes,left,right,bottom,top)
-                integer, optional,intent(hide),depend(nodes) :: num_nodes=size(nodes, 1)
-                real(kind=dp) dimension(num_nodes,2),intent(in) :: nodes
-                real(kind=dp) intent(out) :: left
-                real(kind=dp) intent(out) :: right
-                real(kind=dp) intent(out) :: bottom
-                real(kind=dp) intent(out) :: top
-            end subroutine bbox
-            subroutine wiggle_interval(value_,result_,success)
-                real(kind=dp) intent(in) :: value_
-                real(kind=dp) intent(out) :: result_
-                logical(kind=1) intent(out) :: success
-            end subroutine wiggle_interval
-        end module helpers
         module surface
             use types, only: dp
             use curve, only: evaluate_curve_barycentric
