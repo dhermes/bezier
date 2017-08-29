@@ -54,10 +54,9 @@ def pypy_setup(local_deps):
 @nox.session
 @nox.parametrize('check', [True, False])
 def update_generated(session, check):
-    if check:
-        session.virtualenv_dirname = 'update-true'
-    else:
-        session.virtualenv_dirname = 'update-false'
+    name = 'update-{}'.format(check)
+    # NOTE: ``nox`` requires virtualenv_dirname to be lowercase.
+    session.virtualenv_dirname = name.lower()
 
     # Update Cython generated source code.
     session.interpreter = SINGLE_INTERP
@@ -76,7 +75,11 @@ def update_generated(session, check):
     command = get_path('scripts', 'clean_cython.py')
     c_glob = get_path('src', 'bezier', '*.c')
     for c_source in glob.glob(c_glob):
-        session.run('python', command, c_source)
+        session.run(
+            'python', command,
+            '--filename', c_source,
+            '--virtualenv-dirname', session.virtualenv_dirname,
+        )
 
     if check:
         command = get_path('scripts', 'cython_update_check.py')
