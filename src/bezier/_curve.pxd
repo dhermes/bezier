@@ -21,13 +21,13 @@ cdef extern from "bezier_curve.h":
         int *degree, int *dimension, double *nodes,
         int *num_vals, double *s_vals, double *evaluated)
     void specialize_curve_generic(
-        double *nodes, int *degree, int *dimension,
+        int *degree, int *dimension, double *nodes,
         double *start, double *end, double *new_nodes)
     void specialize_curve_quadratic(
-        double *nodes, int *dimension, double *start,
+        int *dimension, double *nodes, double *start,
         double *end, double *new_nodes)
     void specialize_curve(
-        double *nodes, int *degree, int *dimension, double *start, double *end,
+        int *degree, int *dimension, double *nodes, double *start, double *end,
         double *curve_start, double *curve_end, double *new_nodes,
         double *true_start, double *true_end)
     void evaluate_hodograph(

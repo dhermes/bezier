@@ -27,10 +27,9 @@ contains
 
     ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
 
-    integer :: degree
-    integer :: dimension_
+    integer, intent(in) :: degree, dimension_
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: num_vals
+    integer, intent(in) :: num_vals
     real(dp), intent(in) :: lambda1(num_vals)
     real(dp), intent(in) :: lambda2(num_vals)
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
@@ -70,10 +69,9 @@ contains
 
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
-    integer :: degree
-    integer :: dimension_
+    integer, intent(in) :: degree, dimension_
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: num_vals
+    integer, intent(in) :: num_vals
     real(dp), intent(in) :: s_vals(num_vals)
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
@@ -85,15 +83,13 @@ contains
   end subroutine evaluate_multi
 
   subroutine specialize_curve_generic( &
-       nodes, degree, dimension_, start, end_, new_nodes) &
+       degree, dimension_, nodes, start, end_, new_nodes) &
        bind(c, name='specialize_curve_generic')
 
     ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    integer, intent(in) :: degree, dimension_
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: dimension_
-    integer, intent(in) :: degree
     real(dp), intent(in) :: start, end_
     real(dp), intent(out) :: new_nodes(degree + 1, dimension_)
     ! Variables outside of signature.
@@ -132,12 +128,11 @@ contains
   end subroutine specialize_curve_generic
 
   subroutine specialize_curve_quadratic( &
-       nodes, dimension_, start, end_, new_nodes) &
+       dimension_, nodes, start, end_, new_nodes) &
        bind(c, name='specialize_curve_quadratic')
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    integer, intent(in) :: dimension_
     real(dp), intent(in) :: nodes(3, dimension_)
-    integer :: dimension_
     real(dp), intent(in) :: start, end_
     real(dp), intent(out) :: new_nodes(3, dimension_)
     ! Variables outside of signature.
@@ -163,14 +158,12 @@ contains
   end subroutine specialize_curve_quadratic
 
   subroutine specialize_curve( &
-       nodes, degree, dimension_, start, end_, curve_start, curve_end, &
+       degree, dimension_, nodes, start, end_, curve_start, curve_end, &
        new_nodes, true_start, true_end) &
        bind(c, name='specialize_curve')
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    integer, intent(in) :: degree, dimension_
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: dimension_
-    integer, intent(in) :: degree
     real(dp), intent(in) :: start, end_, curve_start, curve_end
     real(dp), intent(out) :: new_nodes(degree + 1, dimension_)
     real(dp), intent(out) :: true_start, true_end
@@ -182,10 +175,10 @@ contains
        new_nodes(2, :) = (1.0_dp - end_) * nodes(1, :) + end_ * nodes(2, :)
     else if (degree == 2) then
        call specialize_curve_quadratic( &
-            nodes, dimension_, start, end_, new_nodes)
+            dimension_, nodes, start, end_, new_nodes)
     else
        call specialize_curve_generic( &
-            nodes, degree, dimension_, start, end_, new_nodes)
+            degree, dimension_, nodes, start, end_, new_nodes)
     end if
 
     ! Now, compute the new interval.

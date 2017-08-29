@@ -72,9 +72,9 @@ def specialize_curve(
     new_nodes = np.empty((num_nodes, dimension), order='F')
 
     bezier._curve.specialize_curve(
-        &nodes[0, 0],
         &degree,
         &dimension,
+        &nodes[0, 0],
         &start,
         &end,
         &curve_start,

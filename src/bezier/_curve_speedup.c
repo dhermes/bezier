@@ -3699,12 +3699,12 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_4specialize_curve(CYTHON_UNUS
   __pyx_v_new_nodes = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "bezier/_curve_speedup.pyx":75
- *
- *     bezier._curve.specialize_curve(
- *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+  /* "bezier/_curve_speedup.pyx":77
  *         &degree,
  *         &dimension,
+ *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+ *         &start,
+ *         &end,
  */
   __pyx_t_13 = 0;
   __pyx_t_14 = 0;
@@ -3719,7 +3719,7 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_4specialize_curve(CYTHON_UNUS
   } else if (unlikely(__pyx_t_14 >= __pyx_v_nodes.shape[1])) __pyx_t_8 = 1;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 75, __pyx_L1_error)
+    __PYX_ERR(0, 77, __pyx_L1_error)
   }
 
   /* "bezier/_curve_speedup.pyx":82
@@ -3749,10 +3749,10 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_4specialize_curve(CYTHON_UNUS
  *     new_nodes = np.empty((num_nodes, dimension), order='F')
  *
  *     bezier._curve.specialize_curve(             # <<<<<<<<<<<<<<
- *         &nodes[0, 0],
  *         &degree,
+ *         &dimension,
  */
-  specialize_curve((&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_dimension), (&__pyx_v_start), (&__pyx_v_end), (&__pyx_v_curve_start), (&__pyx_v_curve_end), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_new_nodes.diminfo[1].strides))), (&__pyx_v_true_start), (&__pyx_v_true_end));
+  specialize_curve((&__pyx_v_degree), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_start), (&__pyx_v_end), (&__pyx_v_curve_start), (&__pyx_v_curve_end), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_new_nodes.diminfo[1].strides))), (&__pyx_v_true_start), (&__pyx_v_true_end));
 
   /* "bezier/_curve_speedup.pyx":87
  *     )
