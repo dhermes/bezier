@@ -30,12 +30,12 @@ def evaluate_multi_barycentric(
     num_vals, = np.shape(lambda1)
     evaluated = np.empty((num_vals, dimension), order='F')
     bezier._curve.evaluate_curve_barycentric(
-        &nodes[0, 0],
         &degree,
         &dimension,
+        &nodes[0, 0],
+        &num_vals,
         &lambda1[0],
         &lambda2[0],
-        &num_vals,
         &evaluated[0, 0],
     )
     return evaluated

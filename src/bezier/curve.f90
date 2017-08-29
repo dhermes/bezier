@@ -22,20 +22,17 @@ module curve
 contains
 
   subroutine evaluate_curve_barycentric( &
-       nodes, degree, dimension_, lambda1, lambda2, num_vals, evaluated) &
+       degree, dimension_, nodes, num_vals, lambda1, lambda2, evaluated) &
        bind(c, name='evaluate_curve_barycentric')
 
     ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
 
-    !f2py integer intent(hide), depend(nodes) :: degree = size(nodes, 1) - 1
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(lambda1) :: num_vals = size(lambda1)
-    real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: degree
     integer :: dimension_
+    real(dp), intent(in) :: nodes(degree + 1, dimension_)
+    integer :: num_vals
     real(dp), intent(in) :: lambda1(num_vals)
     real(dp), intent(in) :: lambda2(num_vals)
-    integer :: num_vals
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
     integer :: i, j
@@ -87,7 +84,7 @@ contains
 
     one_less = 1.0_dp - s_vals
     call evaluate_curve_barycentric( &
-         nodes, degree, dimension_, one_less, s_vals, num_vals, evaluated)
+         degree, dimension_, nodes, num_vals, one_less, s_vals, evaluated)
   end subroutine evaluate_multi
 
   subroutine specialize_curve_generic( &

@@ -148,8 +148,8 @@ contains
         ! lambda1 = param_vals(:, 1)
         ! lambda2 = param_vals(:, 2)
         call evaluate_curve_barycentric( &
-             nodes(new_index:index_, :), degree - k, dimension_, &
-             param_vals(:, 1), param_vals(:, 2), num_vals, row_result)
+             degree - k, dimension_, nodes(new_index:index_, :), &
+             num_vals, param_vals(:, 1), param_vals(:, 2), row_result)
 
         ! Update index for next iteration.
         index_ = new_index
@@ -212,8 +212,8 @@ contains
         ! lambda1 = param_vals(:, 1)
         ! lambda2 = param_vals(:, 1)
         call evaluate_curve_barycentric( &
-             nodes(new_index:index_, :), degree - k, dimension_, &
-             lambda1_vals, param_vals(:, 1), num_vals, row_result)
+             degree - k, dimension_, nodes(new_index:index_, :), &
+             num_vals, lambda1_vals, param_vals(:, 1), row_result)
 
         ! Update index for next iteration.
         index_ = new_index

@@ -2645,7 +2645,7 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_evaluate_multi_barycentric(CY
  *     num_vals, = np.shape(lambda1)
  *     evaluated = np.empty((num_vals, dimension), order='F')             # <<<<<<<<<<<<<<
  *     bezier._curve.evaluate_curve_barycentric(
- *         &nodes[0, 0],
+ *         &degree,
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -2699,12 +2699,12 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_evaluate_multi_barycentric(CY
   __pyx_v_evaluated = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "bezier/_curve_speedup.pyx":33
- *     evaluated = np.empty((num_vals, dimension), order='F')
- *     bezier._curve.evaluate_curve_barycentric(
- *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+  /* "bezier/_curve_speedup.pyx":35
  *         &degree,
  *         &dimension,
+ *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+ *         &num_vals,
+ *         &lambda1[0],
  */
   __pyx_t_13 = 0;
   __pyx_t_14 = 0;
@@ -2719,15 +2719,15 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_evaluate_multi_barycentric(CY
   } else if (unlikely(__pyx_t_14 >= __pyx_v_nodes.shape[1])) __pyx_t_8 = 1;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 33, __pyx_L1_error)
+    __PYX_ERR(0, 35, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_speedup.pyx":36
- *         &degree,
- *         &dimension,
+  /* "bezier/_curve_speedup.pyx":37
+ *         &nodes[0, 0],
+ *         &num_vals,
  *         &lambda1[0],             # <<<<<<<<<<<<<<
  *         &lambda2[0],
- *         &num_vals,
+ *         &evaluated[0, 0],
  */
   __pyx_t_15 = 0;
   __pyx_t_8 = -1;
@@ -2737,15 +2737,15 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_evaluate_multi_barycentric(CY
   } else if (unlikely(__pyx_t_15 >= __pyx_v_lambda1.shape[0])) __pyx_t_8 = 0;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 36, __pyx_L1_error)
+    __PYX_ERR(0, 37, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_speedup.pyx":37
- *         &dimension,
+  /* "bezier/_curve_speedup.pyx":38
+ *         &num_vals,
  *         &lambda1[0],
  *         &lambda2[0],             # <<<<<<<<<<<<<<
- *         &num_vals,
  *         &evaluated[0, 0],
+ *     )
  */
   __pyx_t_16 = 0;
   __pyx_t_8 = -1;
@@ -2755,12 +2755,12 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_evaluate_multi_barycentric(CY
   } else if (unlikely(__pyx_t_16 >= __pyx_v_lambda2.shape[0])) __pyx_t_8 = 0;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 37, __pyx_L1_error)
+    __PYX_ERR(0, 38, __pyx_L1_error)
   }
 
   /* "bezier/_curve_speedup.pyx":39
+ *         &lambda1[0],
  *         &lambda2[0],
- *         &num_vals,
  *         &evaluated[0, 0],             # <<<<<<<<<<<<<<
  *     )
  *     return evaluated
@@ -2785,10 +2785,10 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_evaluate_multi_barycentric(CY
  *     num_vals, = np.shape(lambda1)
  *     evaluated = np.empty((num_vals, dimension), order='F')
  *     bezier._curve.evaluate_curve_barycentric(             # <<<<<<<<<<<<<<
- *         &nodes[0, 0],
  *         &degree,
+ *         &dimension,
  */
-  evaluate_curve_barycentric((&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_dimension), (&(*((double *) ( /* dim=0 */ (__pyx_v_lambda1.data + __pyx_t_15 * __pyx_v_lambda1.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_lambda2.data + __pyx_t_16 * __pyx_v_lambda2.strides[0]) )))), (&__pyx_v_num_vals), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
+  evaluate_curve_barycentric((&__pyx_v_degree), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ (__pyx_v_lambda1.data + __pyx_t_15 * __pyx_v_lambda1.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_lambda2.data + __pyx_t_16 * __pyx_v_lambda2.strides[0]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
 
   /* "bezier/_curve_speedup.pyx":41
  *         &evaluated[0, 0],
