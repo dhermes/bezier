@@ -4098,12 +4098,12 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_6evaluate_hodograph(CYTHON_UN
   __pyx_v_hodograph = ((PyArrayObject *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "bezier/_curve_speedup.pyx":101
- *     bezier._curve.evaluate_hodograph(
- *         &s,
- *         &nodes[0, 0],             # <<<<<<<<<<<<<<
- *         &dimension,
+  /* "bezier/_curve_speedup.pyx":103
  *         &degree,
+ *         &dimension,
+ *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+ *         &hodograph[0, 0],
+ *     )
  */
   __pyx_t_12 = 0;
   __pyx_t_13 = 0;
@@ -4118,12 +4118,12 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_6evaluate_hodograph(CYTHON_UN
   } else if (unlikely(__pyx_t_13 >= __pyx_v_nodes.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 101, __pyx_L1_error)
+    __PYX_ERR(0, 103, __pyx_L1_error)
   }
 
   /* "bezier/_curve_speedup.pyx":104
  *         &dimension,
- *         &degree,
+ *         &nodes[0, 0],
  *         &hodograph[0, 0],             # <<<<<<<<<<<<<<
  *     )
  *
@@ -4149,9 +4149,9 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_6evaluate_hodograph(CYTHON_UN
  *
  *     bezier._curve.evaluate_hodograph(             # <<<<<<<<<<<<<<
  *         &s,
- *         &nodes[0, 0],
+ *         &degree,
  */
-  evaluate_hodograph((&__pyx_v_s), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_dimension), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_hodograph.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_hodograph.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_hodograph.diminfo[1].strides))));
+  evaluate_hodograph((&__pyx_v_s), (&__pyx_v_degree), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_hodograph.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_hodograph.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_hodograph.diminfo[1].strides))));
 
   /* "bezier/_curve_speedup.pyx":107
  *     )

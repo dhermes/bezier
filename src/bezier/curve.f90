@@ -189,14 +189,12 @@ contains
   end subroutine specialize_curve
 
   subroutine evaluate_hodograph( &
-       s, nodes, dimension_, degree, hodograph) &
+       s, degree, dimension_, nodes, hodograph) &
        bind(c, name='evaluate_hodograph')
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: s
+    integer, intent(in) :: degree, dimension_
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: dimension_
-    integer, intent(in) :: degree
     real(dp), intent(out) :: hodograph(1, dimension_)
     ! Variables outside of signature.
     real(dp) :: first_deriv(degree, dimension_)

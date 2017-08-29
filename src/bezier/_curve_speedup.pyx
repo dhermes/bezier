@@ -98,9 +98,9 @@ def evaluate_hodograph(double s, double[::1, :] nodes, int degree):
 
     bezier._curve.evaluate_hodograph(
         &s,
-        &nodes[0, 0],
-        &dimension,
         &degree,
+        &dimension,
+        &nodes[0, 0],
         &hodograph[0, 0],
     )
 
