@@ -31,9 +31,9 @@ from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import curved_polygon
 try:
-    from bezier import _speedup
+    from bezier import _surface_speedup
 except ImportError:  # pragma: NO COVER
-    _speedup = None
+    _surface_speedup = None
 
 
 _MAX_POLY_SUBDIVISIONS = 5
@@ -2541,7 +2541,7 @@ _IGNORED_TYPES = (
 )
 
 # pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
+if _surface_speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
     evaluate_barycentric = _evaluate_barycentric
     evaluate_barycentric_multi = _evaluate_barycentric_multi
@@ -2549,10 +2549,10 @@ if _speedup is None:  # pragma: NO COVER
     jacobian_both = _jacobian_both
     jacobian_det = _jacobian_det
 else:
-    de_casteljau_one_round = _speedup.surface.de_casteljau_one_round
-    evaluate_barycentric = _speedup.surface.evaluate_barycentric
-    evaluate_barycentric_multi = _speedup.surface.evaluate_barycentric_multi
-    evaluate_cartesian_multi = _speedup.surface.evaluate_cartesian_multi
-    jacobian_both = _speedup.surface.jacobian_both
-    jacobian_det = _speedup.surface.jacobian_det
+    de_casteljau_one_round = _surface_speedup.de_casteljau_one_round
+    evaluate_barycentric = _surface_speedup.evaluate_barycentric
+    evaluate_barycentric_multi = _surface_speedup.evaluate_barycentric_multi
+    evaluate_cartesian_multi = _surface_speedup.evaluate_cartesian_multi
+    jacobian_both = _surface_speedup.jacobian_both
+    jacobian_det = _surface_speedup.jacobian_det
 # pylint: enable=invalid-name

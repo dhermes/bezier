@@ -1,5 +1,4 @@
 include RELEASE_README.rst.template LICENSE
-include .f2py_f2cmap
 graft src/bezier
 global-exclude *.pyc
 global-exclude *.so

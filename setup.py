@@ -92,6 +92,7 @@ def compile_fortran_obj_files(f90_compiler, bezier_path):
         os.path.join(bezier_path, 'types.f90'),
         os.path.join(bezier_path, 'helpers.f90'),
         os.path.join(bezier_path, 'curve.f90'),
+        os.path.join(bezier_path, 'surface.f90'),
         os.path.join(bezier_path, 'curve_intersection.f90'),
     ]
     obj_files = f90_compiler.compile(
@@ -114,18 +115,6 @@ def _extension_modules(f90_compiler):
     import numpy.distutils.core
 
     bezier_path = os.path.join(PACKAGE_ROOT, 'src', 'bezier')
-    f2py_extension = numpy.distutils.core.Extension(
-        name='bezier._speedup',
-        sources=[
-            os.path.join(bezier_path, '_speedup.pyf'),
-            os.path.join(bezier_path, 'types.f90'),
-            os.path.join(bezier_path, 'helpers.f90'),
-            os.path.join(bezier_path, 'curve.f90'),
-            os.path.join(bezier_path, 'surface.f90'),
-            os.path.join(bezier_path, 'curve_intersection.f90'),
-        ],
-        language='f90',
-    )
     if 'config_fc' not in sys.argv:
         sys.argv.extend(['config_fc', '--opt=-O3'])
 
@@ -159,11 +148,17 @@ def _extension_modules(f90_compiler):
         **cython_kwargs
     )
 
+    cython_surface = setuptools.Extension(
+        'bezier._surface_speedup',
+        [os.path.join(bezier_path, '_surface_speedup.c')],
+        **cython_kwargs
+    )
+
     return [
-        f2py_extension,
         cython_curve,
         cython_helpers,
         cython_curve_intersection,
+        cython_surface,
     ]
 
 

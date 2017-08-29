@@ -14,7 +14,10 @@ import unittest
 
 try:
     # pylint: disable=unused-import
-    import bezier._speedup  # noqa: F401
+    import bezier._curve_intersection_speedup  # noqa: F401
+    import bezier._curve_speedup  # noqa: F401
+    import bezier._helpers_speedup  # noqa: F401
+    import bezier._surface_speedup  # noqa: F401
     # pylint: enable=unused-import
     WITHOUT_SPEEDUPS = False
 except ImportError:  # pragma: NO COVER

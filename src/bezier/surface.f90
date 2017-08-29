@@ -25,7 +25,8 @@ contains
 
   subroutine de_casteljau_one_round( &
        num_nodes, dimension_, nodes, degree, &
-       lambda1, lambda2, lambda3, new_nodes)
+       lambda1, lambda2, lambda3, new_nodes) &
+       bind(c, name='de_casteljau_one_round')
 
     ! NOTE: This is de Casteljau on a Bezier surface / triangle.
 
@@ -76,7 +77,8 @@ contains
 
   subroutine evaluate_barycentric( &
        num_nodes, dimension_, nodes, degree, &
-       lambda1, lambda2, lambda3, point)
+       lambda1, lambda2, lambda3, point) &
+       bind(c, name='evaluate_barycentric')
 
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
@@ -103,7 +105,8 @@ contains
   end subroutine evaluate_barycentric
 
   subroutine evaluate_barycentric_multi( &
-       num_nodes, nodes, degree, num_vals, param_vals, dimension_, evaluated)
+       num_nodes, nodes, degree, num_vals, param_vals, dimension_, evaluated) &
+       bind(c, name='evaluate_barycentric_multi')
 
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
@@ -162,7 +165,8 @@ contains
   end subroutine evaluate_barycentric_multi
 
   subroutine evaluate_cartesian_multi( &
-       num_nodes, nodes, degree, num_vals, param_vals, dimension_, evaluated)
+       num_nodes, nodes, degree, num_vals, param_vals, dimension_, evaluated) &
+       bind(c, name='evaluate_cartesian_multi')
 
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This mostly copies evaluate_barycentric_multi but does not just
@@ -225,7 +229,8 @@ contains
   end subroutine evaluate_cartesian_multi
 
   subroutine jacobian_both( &
-       num_nodes, dimension_, nodes, degree, new_nodes)
+       num_nodes, dimension_, nodes, degree, new_nodes) &
+       bind(c, name='jacobian_both')
 
     !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
     !f2py integer, depend(nodes) :: dimension_ = size(nodes, 2)
@@ -260,7 +265,8 @@ contains
   end subroutine jacobian_both
 
   subroutine jacobian_det( &
-       num_nodes, nodes, degree, num_vals, param_vals, evaluated)
+       num_nodes, nodes, degree, num_vals, param_vals, evaluated) &
+       bind(c, name='jacobian_det')
 
     !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
     !f2py integer intent(hide), depend(param_vals) :: num_vals &

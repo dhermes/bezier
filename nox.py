@@ -63,6 +63,11 @@ def update_generated(session):
     for pyx_module in glob.glob(pyx_glob):
         session.run('cython', pyx_module)
 
+    command = get_path('scripts', 'clean_cython.py')
+    c_glob = get_path('src', 'bezier', '*.c')
+    for c_source in glob.glob(c_glob):
+        session.run('python', command, c_source)
+
 
 @nox.session
 @nox.parametrize('python_version', ['2.7', '3.5', '3.6', PYPY])

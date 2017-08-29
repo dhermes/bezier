@@ -26,7 +26,10 @@ from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface
 try:
-    import bezier._speedup  # noqa: F401
+    import bezier._curve_intersection_speedup  # noqa: F401
+    import bezier._curve_speedup  # noqa: F401
+    import bezier._helpers_speedup  # noqa: F401
+    import bezier._surface_speedup  # noqa: F401
     _HAS_SPEEDUP = True
 except ImportError:  # pragma: NO COVER
     _HAS_SPEEDUP = False

@@ -299,9 +299,9 @@ class Test_speedup_de_casteljau_one_round(Test__de_casteljau_one_round):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _speedup
+        from bezier import _surface_speedup
 
-        return _speedup.surface.de_casteljau_one_round(
+        return _surface_speedup.de_casteljau_one_round(
             nodes, degree, lambda1, lambda2, lambda3)
 
 
@@ -908,9 +908,9 @@ class Test_speedup_jacobian_both(Test__jacobian_both):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _speedup
+        from bezier import _surface_speedup
 
-        return _speedup.surface.jacobian_both(nodes, degree, dimension)
+        return _surface_speedup.jacobian_both(nodes, degree, dimension)
 
 
 class Test__jacobian_det(utils.NumPyTestCase):
@@ -969,9 +969,9 @@ class Test_speedup_jacobian_det(Test__jacobian_det):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, st_vals):
-        from bezier import _speedup
+        from bezier import _surface_speedup
 
-        return _speedup.surface.jacobian_det(nodes, degree, st_vals)
+        return _surface_speedup.jacobian_det(nodes, degree, st_vals)
 
 
 class Test_newton_refine(unittest.TestCase):
@@ -2448,9 +2448,9 @@ class Test_speedup_evaluate_barycentric(Test__evaluate_barycentric):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _speedup
+        from bezier import _surface_speedup
 
-        return _speedup.surface.evaluate_barycentric(
+        return _surface_speedup.evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3)
 
 
@@ -2510,9 +2510,9 @@ class Test_speedup_evaluate_barycentric_multi(
 
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _speedup
+        from bezier import _surface_speedup
 
-        return _speedup.surface.evaluate_barycentric_multi(
+        return _surface_speedup.evaluate_barycentric_multi(
             nodes, degree, param_vals, dimension)
 
 
@@ -2576,7 +2576,7 @@ class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _speedup
+        from bezier import _surface_speedup
 
-        return _speedup.surface.evaluate_cartesian_multi(
+        return _surface_speedup.evaluate_cartesian_multi(
             nodes, degree, param_vals, dimension)

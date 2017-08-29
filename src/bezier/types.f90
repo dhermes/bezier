@@ -16,8 +16,6 @@ module types
   private
   public dp
 
-  ! NOTE: This still relies on .f2py_f2cmap being present
-  !       in the directory that build is called from.
   integer, parameter :: dp=kind(0.d0)
 
 end module types
