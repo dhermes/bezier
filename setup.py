@@ -67,22 +67,52 @@ def is_installed(requirement):
         return True
 
 
-def has_f90_compiler():
-    from distutils.ccompiler import new_compiler
-    from numpy.distutils.fcompiler import new_fcompiler
+def get_f90_compiler():
+    import distutils.ccompiler
+    import numpy.distutils.core
+    import numpy.distutils.fcompiler
 
-    c_compiler = new_compiler()
-    f90_compiler = new_fcompiler(requiref90=True, c_compiler=c_compiler)
-    return f90_compiler is not None
+    c_compiler = distutils.ccompiler.new_compiler()
+    if c_compiler is None:
+        return None
+
+    f90_compiler = numpy.distutils.fcompiler.new_fcompiler(
+        requiref90=True, c_compiler=c_compiler)
+    if f90_compiler is None:
+        return None
+
+    dist = numpy.distutils.core.get_distribution(always=True)
+    f90_compiler.customize(dist)
+
+    return f90_compiler
 
 
-def _extension_modules():
+def compile_fortran_obj_files(f90_compiler, bezier_path):
+    source_files = [
+        os.path.join(bezier_path, 'types.f90'),
+        os.path.join(bezier_path, 'curve.f90'),
+    ]
+    obj_files = f90_compiler.compile(
+        source_files,
+        output_dir=None,
+        macros=[],
+        include_dirs=[],
+        debug=None,
+        extra_postargs=[],
+        depends=[],
+    )
+
+    return obj_files
+
+
+def _extension_modules(f90_compiler):
     # NOTE: This assumes is_installed('numpy') has already passed.
     #       H/T to https://stackoverflow.com/a/41575848/1068170
-    from numpy.distutils import core
+    import numpy as np
+    import numpy.distutils.core
 
     bezier_path = os.path.join(PACKAGE_ROOT, 'src', 'bezier')
-    extension = core.Extension(
+    f2py_extension = numpy.distutils.core.Extension(
         name='bezier._speedup',
         sources=[
             os.path.join(bezier_path, '_speedup.pyf'),
@@ -96,15 +126,33 @@ def _extension_modules():
     )
     if 'config_fc' not in sys.argv:
         sys.argv.extend(['config_fc', '--opt=-O3'])
-    return [extension]
+
+    cython_sources = [
+        os.path.join(bezier_path, '_curve_speedup.c'),
+    ]
+    obj_files = compile_fortran_obj_files(f90_compiler, bezier_path)
+    cython_extension = setuptools.Extension(
+        'bezier._curve_speedup',
+        cython_sources,
+        include_dirs=[
+            np.get_include(),
+            os.path.join(bezier_path, 'include'),
+        ],
+        libraries=f90_compiler.libraries,
+        library_dirs=f90_compiler.library_dirs,
+        extra_objects=obj_files,
+    )
+
+    return [f2py_extension, cython_extension]
 
 
 def extension_modules():
+    f90_compiler = get_f90_compiler()
     if platform.system().lower() == 'windows':
         print(WINDOWS_MESSAGE, file=sys.stderr)
         return []
-    elif has_f90_compiler():
-        return _extension_modules()
+    elif f90_compiler is not None:
+        return _extension_modules(f90_compiler)
     else:
         print(MISSING_F90_MESSAGE, file=sys.stderr)
         return []

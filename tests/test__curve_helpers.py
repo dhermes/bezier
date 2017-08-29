@@ -232,14 +232,14 @@ class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_curve_barycentric(
+class Test_speedup_evaluate_multi_barycentric(
         Test__evaluate_multi_barycentric):
 
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
-        from bezier import _speedup
+        from bezier import _curve_speedup
 
-        return _speedup.curve.evaluate_curve_barycentric(
+        return _curve_speedup.evaluate_multi_barycentric(
             nodes, lambda1, lambda2)
 
 
@@ -293,9 +293,9 @@ class Test_speedup_evaluate_multi(Test__evaluate_multi):
 
     @staticmethod
     def _call_function_under_test(nodes, s_vals):
-        from bezier import _speedup
+        from bezier import _curve_speedup
 
-        return _speedup.curve.evaluate_multi(nodes, s_vals)
+        return _curve_speedup.evaluate_multi(nodes, s_vals)
 
 
 class Test__vec_size(unittest.TestCase):
@@ -510,9 +510,9 @@ class Test_speedup_specialize_curve(Test__specialize_curve):
     @staticmethod
     def _call_function_under_test(
             nodes, start, end, curve_start, curve_end, degree):
-        from bezier import _speedup
+        from bezier import _curve_speedup
 
-        return _speedup.curve.specialize_curve(
+        return _curve_speedup.specialize_curve(
             nodes, start, end, curve_start, curve_end, degree)
 
 
@@ -581,9 +581,9 @@ class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
 
     @staticmethod
     def _call_function_under_test(s, nodes, degree):
-        from bezier import _speedup
+        from bezier import _curve_speedup
 
-        return _speedup.curve.evaluate_hodograph(s, nodes, degree)
+        return _curve_speedup.evaluate_hodograph(s, nodes, degree)
 
 
 class Test_get_curvature(unittest.TestCase):

@@ -29,9 +29,9 @@ except ImportError:  # pragma: NO COVER
 
 from bezier import _helpers
 try:
-    from bezier import _speedup
+    from bezier import _curve_speedup
 except ImportError:  # pragma: NO COVER
-    _speedup = None
+    _curve_speedup = None
 
 
 _MAX_LOCATE_SUBDIVISIONS = 20
@@ -908,14 +908,14 @@ def full_reduce(nodes):
 
 
 # pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
+if _curve_speedup is None:  # pragma: NO COVER
     evaluate_multi_barycentric = _evaluate_multi_barycentric
     evaluate_multi = _evaluate_multi
     specialize_curve = _specialize_curve
     evaluate_hodograph = _evaluate_hodograph
 else:
-    evaluate_multi_barycentric = _speedup.curve.evaluate_curve_barycentric
-    evaluate_multi = _speedup.curve.evaluate_multi
-    specialize_curve = _speedup.curve.specialize_curve
-    evaluate_hodograph = _speedup.curve.evaluate_hodograph
+    evaluate_multi_barycentric = _curve_speedup.evaluate_multi_barycentric
+    evaluate_multi = _curve_speedup.evaluate_multi
+    specialize_curve = _curve_speedup.specialize_curve
+    evaluate_hodograph = _curve_speedup.evaluate_hodograph
 # pylint: enable=invalid-name

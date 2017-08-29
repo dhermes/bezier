@@ -22,7 +22,8 @@ module curve
 contains
 
   subroutine evaluate_curve_barycentric( &
-       nodes, degree, dimension_, lambda1, lambda2, num_vals, evaluated)
+       nodes, degree, dimension_, lambda1, lambda2, num_vals, evaluated) &
+       bind(c, name='evaluate_curve_barycentric')
 
     ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
 
@@ -67,7 +68,8 @@ contains
   end subroutine evaluate_curve_barycentric
 
   subroutine evaluate_multi( &
-       nodes, degree, dimension_, s_vals, num_vals, evaluated)
+       nodes, degree, dimension_, s_vals, num_vals, evaluated) &
+       bind(c, name='evaluate_multi')
 
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
@@ -89,7 +91,8 @@ contains
   end subroutine evaluate_multi
 
   subroutine specialize_curve_generic( &
-       nodes, degree, dimension_, start, end_, new_nodes)
+       nodes, degree, dimension_, start, end_, new_nodes) &
+       bind(c, name='specialize_curve_generic')
 
     ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
 
@@ -135,7 +138,8 @@ contains
   end subroutine specialize_curve_generic
 
   subroutine specialize_curve_quadratic( &
-       nodes, dimension_, start, end_, new_nodes)
+       nodes, dimension_, start, end_, new_nodes) &
+       bind(c, name='specialize_curve_quadratic')
 
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: nodes(3, dimension_)
@@ -166,7 +170,8 @@ contains
 
   subroutine specialize_curve( &
        nodes, degree, dimension_, start, end_, curve_start, curve_end, &
-       new_nodes, true_start, true_end)
+       new_nodes, true_start, true_end) &
+       bind(c, name='specialize_curve')
 
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
@@ -196,7 +201,9 @@ contains
 
   end subroutine specialize_curve
 
-  subroutine evaluate_hodograph(s, nodes, dimension_, degree, hodograph)
+  subroutine evaluate_hodograph( &
+       s, nodes, dimension_, degree, hodograph) &
+       bind(c, name='evaluate_hodograph')
 
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: s

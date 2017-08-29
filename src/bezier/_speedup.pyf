@@ -37,60 +37,6 @@ python module _speedup
                 logical(kind=1) intent(out) :: success
             end subroutine wiggle_interval
         end module helpers
-        module curve
-            use types, only: dp
-            subroutine evaluate_curve_barycentric(nodes,degree,dimension_,lambda1,lambda2,num_vals,evaluated)
-                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
-                integer, optional,intent(hide),depend(nodes) :: degree=size(nodes, 1)-1
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) dimension(num_vals),intent(in) :: lambda1
-                real(kind=dp) dimension(num_vals),intent(in),depend(num_vals) :: lambda2
-                integer, optional,intent(hide),depend(lambda1) :: num_vals=size(lambda1)
-                real(kind=dp) dimension(num_vals,dimension_),intent(out),depend(num_vals,dimension_) :: evaluated
-            end subroutine evaluate_curve_barycentric
-            subroutine evaluate_multi(nodes,degree,dimension_,s_vals,num_vals,evaluated)
-                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
-                integer, optional,intent(hide),depend(nodes) :: degree=size(nodes, 1)-1
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) dimension(num_vals),intent(in) :: s_vals
-                integer, optional,intent(hide),depend(s_vals) :: num_vals=size(s_vals)
-                real(kind=dp) dimension(num_vals,dimension_),intent(out),depend(num_vals,dimension_) :: evaluated
-            end subroutine evaluate_multi
-            subroutine specialize_curve_generic(nodes,degree,dimension_,start,end_,new_nodes)
-                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
-                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) intent(in) :: start
-                real(kind=dp) intent(in) :: end_
-                real(kind=dp) dimension(degree + 1,dimension_),intent(out),depend(degree,dimension_) :: new_nodes
-            end subroutine specialize_curve_generic
-            subroutine specialize_curve_quadratic(nodes,dimension_,start,end_,new_nodes)
-                real(kind=dp) dimension(3,dimension_),intent(in) :: nodes
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) intent(in) :: start
-                real(kind=dp) intent(in) :: end_
-                real(kind=dp) dimension(3,dimension_),intent(out),depend(dimension_) :: new_nodes
-            end subroutine specialize_curve_quadratic
-            subroutine specialize_curve(nodes,degree,dimension_,start,end_,curve_start,curve_end,new_nodes,true_start,true_end)
-                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
-                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                real(kind=dp) intent(in) :: start
-                real(kind=dp) intent(in) :: end_
-                real(kind=dp) intent(in) :: curve_start
-                real(kind=dp) intent(in) :: curve_end
-                real(kind=dp) dimension(degree + 1,dimension_),intent(out),depend(degree,dimension_) :: new_nodes
-                real(kind=dp) intent(out) :: true_start
-                real(kind=dp) intent(out) :: true_end
-            end subroutine specialize_curve
-            subroutine evaluate_hodograph(s,nodes,dimension_,degree,hodograph)
-                real(kind=dp) intent(in) :: s
-                real(kind=dp) dimension(degree + 1,dimension_),intent(in) :: nodes
-                integer, optional,intent(hide),depend(nodes) :: dimension_=size(nodes, 2)
-                integer, optional,intent(in),check((shape(nodes,0)-1)==degree),depend(nodes) :: degree=(shape(nodes,0)-1)
-                real(kind=dp) dimension(1,dimension_),intent(out),depend(dimension_) :: hodograph
-            end subroutine evaluate_hodograph
-        end module curve
         module surface
             use types, only: dp
             use curve, only: evaluate_curve_barycentric

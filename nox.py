@@ -52,6 +52,19 @@ def pypy_setup(local_deps):
 
 
 @nox.session
+def update_generated(session):
+    # Update Cython generated source code.
+    session.interpreter = SINGLE_INTERP
+
+    # Install all dependencies.
+    session.install('Cython')
+
+    pyx_glob = get_path('src', 'bezier', '*.pyx')
+    for pyx_module in glob.glob(pyx_glob):
+        session.run('cython', pyx_module)
+
+
+@nox.session
 @nox.parametrize('python_version', ['2.7', '3.5', '3.6', PYPY])
 def unit_tests(session, python_version):
     if python_version == PYPY:
