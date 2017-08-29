@@ -28,11 +28,11 @@ def clean_file(c_source):
         contents = file_obj.read().rstrip()
 
     # Replace the path to the Cython include files.
-    nox_env = 'update_generated'
     py_version = 'python{}.{}'.format(*sys.version_info[:2])
-    lib_path = os.path.join(
-        '.nox', nox_env, 'lib',  py_version, 'site-packages', '')
-    contents = contents.replace(lib_path, '')
+    for nox_env in ('update-true', 'update-false'):
+        lib_path = os.path.join(
+            '.nox', nox_env, 'lib',  py_version, 'site-packages', '')
+        contents = contents.replace(lib_path, '')
 
     # Write the files back, but strip all trailing whitespace.
     lines = contents.split('\n')

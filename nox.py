@@ -52,12 +52,22 @@ def pypy_setup(local_deps):
 
 
 @nox.session
-def update_generated(session):
+@nox.parametrize('check', [True, False])
+def update_generated(session, check):
+    if check:
+        session.virtualenv_dirname = 'update-true'
+    else:
+        session.virtualenv_dirname = 'update-false'
+
     # Update Cython generated source code.
     session.interpreter = SINGLE_INTERP
 
     # Install all dependencies.
     session.install('Cython')
+
+    if check:
+        command = get_path('scripts', 'remove_cython_files.py')
+        session.run('python', command)
 
     pyx_glob = get_path('src', 'bezier', '*.pyx')
     for pyx_module in glob.glob(pyx_glob):
@@ -67,6 +77,10 @@ def update_generated(session):
     c_glob = get_path('src', 'bezier', '*.c')
     for c_source in glob.glob(c_glob):
         session.run('python', command, c_source)
+
+    if check:
+        command = get_path('scripts', 'cython_update_check.py')
+        session.run('python', command)
 
 
 @nox.session

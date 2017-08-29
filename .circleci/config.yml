@@ -10,6 +10,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Check that all Cython generated files have been updated
+          command: nox -s "update_generated(check=True)"
+      - run:
           name: Unit tests in Python 3.5
           command: nox -s "unit_tests(python_version='3.5')"
       - run:
