@@ -130,9 +130,9 @@ class Test_speedup_bbox_intersect(Test__bbox_intersect):
 
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _speedup
+        from bezier import _curve_intersection_speedup
 
-        return _speedup.curve_intersection.bbox_intersect(nodes1, nodes2)
+        return _curve_intersection_speedup.bbox_intersect(nodes1, nodes2)
 
 
 class Test__linearization_error(unittest.TestCase):
@@ -293,9 +293,9 @@ class Test_speedup_linearization_error(Test__linearization_error):
 
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _speedup
+        from bezier import _curve_intersection_speedup
 
-        return _speedup.curve_intersection.linearization_error(nodes)
+        return _curve_intersection_speedup.linearization_error(nodes)
 
 
 class Test__newton_refine(utils.NumPyTestCase):
@@ -467,13 +467,13 @@ class Test__newton_refine(utils.NumPyTestCase):
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_newton_refine_intersect(Test__newton_refine):
+class Test_speedup_newton_refine(Test__newton_refine):
 
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
-        from bezier import _speedup
+        from bezier import _curve_intersection_speedup
 
-        return _speedup.curve_intersection.newton_refine_intersect(
+        return _curve_intersection_speedup.newton_refine(
             s, nodes1, t, nodes2)
 
 
@@ -535,9 +535,9 @@ class Test_speedup_segment_intersection(Test__segment_intersection):
 
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _speedup
+        from bezier import _curve_intersection_speedup
 
-        return _speedup.curve_intersection.segment_intersection(
+        return _curve_intersection_speedup.segment_intersection(
             start0, end0, start1, end1)
 
 
@@ -596,9 +596,9 @@ class Test_speedup_parallel_different(Test__parallel_different):
 
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _speedup
+        from bezier import _curve_intersection_speedup
 
-        return _speedup.curve_intersection.parallel_different(
+        return _curve_intersection_speedup.parallel_different(
             start0, end0, start1, end1)
 
 
@@ -824,16 +824,17 @@ class Test__from_linearized_low_level_py(utils.NumPyTestCase):
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_from_linearized(Test__from_linearized_low_level_py):
+class Test_speedup_from_linearized_low_level(
+        Test__from_linearized_low_level_py):
 
     # pylint: disable=too-many-arguments
     @staticmethod
     def _call_function_under_test(
             error1, start1, end1, start_node1, end_node1, nodes1,
             error2, start2, end2, start_node2, end_node2, nodes2):
-        from bezier import _speedup
+        from bezier import _curve_intersection_speedup
 
-        return _speedup.curve_intersection.from_linearized(
+        return _curve_intersection_speedup.from_linearized_low_level(
             error1, start1, end1, start_node1, end_node1, nodes1,
             error2, start2, end2, start_node2, end_node2, nodes2)
     # pylint: enable=too-many-arguments
@@ -1131,9 +1132,9 @@ class Test_speedup_bbox_line_intersect(Test__bbox_line_intersect):
 
     @staticmethod
     def _call_function_under_test(nodes, line_start, line_end):
-        from bezier import _speedup
+        from bezier import _curve_intersection_speedup
 
-        return _speedup.curve_intersection.bbox_line_intersect(
+        return _curve_intersection_speedup.bbox_line_intersect(
             nodes, line_start, line_end)
 
 
@@ -1442,7 +1443,7 @@ class TestBoxIntersectionType(unittest.TestCase):
 
     @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
     def test_verify_fortran_enums(self):
-        from bezier import _speedup
+        from bezier import _curve_intersection_speedup
 
         klass = self._get_target_class()
         props = set(
@@ -1454,7 +1455,7 @@ class TestBoxIntersectionType(unittest.TestCase):
         self.assertEqual(props, expected_props)
 
         # Actually verify the enums.
-        curve_mod = _speedup.curve_intersection
+        curve_mod = _curve_intersection_speedup
         self.assertEqual(
             klass.INTERSECTION, curve_mod.BoxIntersectionType_INTERSECTION)
         self.assertEqual(klass.TANGENT, curve_mod.BoxIntersectionType_TANGENT)

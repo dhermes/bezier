@@ -92,6 +92,7 @@ def compile_fortran_obj_files(f90_compiler, bezier_path):
         os.path.join(bezier_path, 'types.f90'),
         os.path.join(bezier_path, 'helpers.f90'),
         os.path.join(bezier_path, 'curve.f90'),
+        os.path.join(bezier_path, 'curve_intersection.f90'),
     ]
     obj_files = f90_compiler.compile(
         source_files,
@@ -152,7 +153,18 @@ def _extension_modules(f90_compiler):
         **cython_kwargs
     )
 
-    return [f2py_extension, cython_curve, cython_helpers]
+    cython_curve_intersection = setuptools.Extension(
+        'bezier._curve_intersection_speedup',
+        [os.path.join(bezier_path, '_curve_intersection_speedup.c')],
+        **cython_kwargs
+    )
+
+    return [
+        f2py_extension,
+        cython_curve,
+        cython_helpers,
+        cython_curve_intersection,
+    ]
 
 
 def extension_modules():

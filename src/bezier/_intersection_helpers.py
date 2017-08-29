@@ -26,9 +26,9 @@ import six
 from bezier import _curve_helpers
 from bezier import _helpers
 try:
-    from bezier import _speedup
+    from bezier import _curve_intersection_speedup
 except ImportError:  # pragma: NO COVER
-    _speedup = None
+    _curve_intersection_speedup = None
 
 
 # Set the threshold for exponent at half the bits available,
@@ -1684,7 +1684,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
 
 
 # pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
+if _curve_intersection_speedup is None:  # pragma: NO COVER
     linearization_error = _linearization_error
     segment_intersection = _segment_intersection
     newton_refine = _newton_refine
@@ -1693,11 +1693,12 @@ if _speedup is None:  # pragma: NO COVER
     _from_linearized_low_level = _from_linearized_low_level_py
     bbox_line_intersect = _bbox_line_intersect
 else:
-    linearization_error = _speedup.curve_intersection.linearization_error
-    segment_intersection = _speedup.curve_intersection.segment_intersection
-    newton_refine = _speedup.curve_intersection.newton_refine_intersect
-    bbox_intersect = _speedup.curve_intersection.bbox_intersect
-    parallel_different = _speedup.curve_intersection.parallel_different
-    _from_linearized_low_level = _speedup.curve_intersection.from_linearized
-    bbox_line_intersect = _speedup.curve_intersection.bbox_line_intersect
+    linearization_error = _curve_intersection_speedup.linearization_error
+    segment_intersection = _curve_intersection_speedup.segment_intersection
+    newton_refine = _curve_intersection_speedup.newton_refine
+    bbox_intersect = _curve_intersection_speedup.bbox_intersect
+    parallel_different = _curve_intersection_speedup.parallel_different
+    _from_linearized_low_level = (
+        _curve_intersection_speedup.from_linearized_low_level)
+    bbox_line_intersect = _curve_intersection_speedup.bbox_line_intersect
 # pylint: enable=invalid-name

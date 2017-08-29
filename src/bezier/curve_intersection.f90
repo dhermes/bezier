@@ -27,7 +27,9 @@ module curve_intersection
 
 contains
 
-  subroutine linearization_error(nodes, degree, dimension_, error)
+  subroutine linearization_error( &
+       nodes, degree, dimension_, error) &
+       bind(c, name='linearization_error')
 
     !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
@@ -51,7 +53,9 @@ contains
     error = 0.125_dp * degree * (degree - 1) * norm2(worst_case)
   end subroutine linearization_error
 
-  subroutine segment_intersection(start0, end0, start1, end1, s, t, success)
+  subroutine segment_intersection( &
+       start0, end0, start1, end1, s, t, success) &
+       bind(c, name='segment_intersection')
 
     real(dp), intent(in) :: start0(1, 2)
     real(dp), intent(in) :: end0(1, 2)
@@ -84,7 +88,8 @@ contains
   end subroutine segment_intersection
 
   subroutine newton_refine_intersect( &
-       s, nodes1, degree1, t, nodes2, degree2, new_s, new_t)
+       s, nodes1, degree1, t, nodes2, degree2, new_s, new_t) &
+       bind(c, name='newton_refine_intersect')
 
     !f2py integer intent(hide), depend(nodes1) :: degree1 = size(nodes1, 1) - 1
     !f2py integer intent(hide), depend(nodes2) :: degree2 = size(nodes2, 1) - 1
@@ -138,7 +143,9 @@ contains
 
   end subroutine newton_refine_intersect
 
-  subroutine bbox_intersect(num_nodes1, nodes1, num_nodes2, nodes2, enum_)
+  subroutine bbox_intersect( &
+       num_nodes1, nodes1, num_nodes2, nodes2, enum_) &
+       bind(c, name='bbox_intersect')
 
     !f2py integer intent(hide), depend(nodes1) :: num_nodes1 = size(nodes1, 1)
     !f2py integer intent(hide), depend(nodes2) :: num_nodes2 = size(nodes2, 1)
@@ -167,7 +174,9 @@ contains
 
   end subroutine bbox_intersect
 
-  subroutine parallel_different(start0, end0, start1, end1, result_)
+  subroutine parallel_different( &
+       start0, end0, start1, end1, result_) &
+       bind(c, name='parallel_different')
 
     real(dp), intent(in) :: start0(1, 2)
     real(dp), intent(in) :: end0(1, 2)
@@ -221,7 +230,8 @@ contains
   subroutine from_linearized( &
        error1, start1, end1, start_node1, end_node1, nodes1, degree1, &
        error2, start2, end2, start_node2, end_node2, nodes2, degree2, &
-       refined_s, refined_t, does_intersect, py_exc)
+       refined_s, refined_t, does_intersect, py_exc) &
+       bind(c, name='from_linearized')
 
     !f2py integer intent(hide), depend(nodes1) :: degree1 = size(nodes1, 1) - 1
     !f2py integer intent(hide), depend(nodes2) :: degree2 = size(nodes2, 1) - 1
@@ -320,7 +330,8 @@ contains
   end subroutine from_linearized
 
   subroutine bbox_line_intersect( &
-       num_nodes, nodes, line_start, line_end, enum_)
+       num_nodes, nodes, line_start, line_end, enum_) &
+       bind(c, name='bbox_line_intersect')
 
     !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
     integer :: num_nodes

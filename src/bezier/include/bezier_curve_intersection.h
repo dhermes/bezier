@@ -42,4 +42,4 @@ void from_linearized(
     bool *does_intersect, int *py_exc);
 void bbox_line_intersect(
     int *num_nodes, double *nodes, double *line_start, double *line_end,
-    int *enum_)
+    int *enum_);
