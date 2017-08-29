@@ -3179,7 +3179,7 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_2evaluate_multi(CYTHON_UNUSED
  *     num_vals, = np.shape(s_vals)
  *     evaluated = np.empty((num_vals, dimension), order='F')             # <<<<<<<<<<<<<<
  *     bezier._curve.evaluate_multi(
- *         &nodes[0, 0],
+ *         &degree,
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3233,12 +3233,12 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_2evaluate_multi(CYTHON_UNUSED
   __pyx_v_evaluated = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "bezier/_curve_speedup.pyx":54
- *     evaluated = np.empty((num_vals, dimension), order='F')
- *     bezier._curve.evaluate_multi(
- *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+  /* "bezier/_curve_speedup.pyx":56
  *         &degree,
  *         &dimension,
+ *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+ *         &num_vals,
+ *         &s_vals[0],
  */
   __pyx_t_13 = 0;
   __pyx_t_14 = 0;
@@ -3253,15 +3253,15 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_2evaluate_multi(CYTHON_UNUSED
   } else if (unlikely(__pyx_t_14 >= __pyx_v_nodes.shape[1])) __pyx_t_8 = 1;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 54, __pyx_L1_error)
+    __PYX_ERR(0, 56, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_speedup.pyx":57
- *         &degree,
- *         &dimension,
- *         &s_vals[0],             # <<<<<<<<<<<<<<
+  /* "bezier/_curve_speedup.pyx":58
+ *         &nodes[0, 0],
  *         &num_vals,
+ *         &s_vals[0],             # <<<<<<<<<<<<<<
  *         &evaluated[0, 0],
+ *     )
  */
   __pyx_t_15 = 0;
   __pyx_t_8 = -1;
@@ -3271,12 +3271,12 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_2evaluate_multi(CYTHON_UNUSED
   } else if (unlikely(__pyx_t_15 >= __pyx_v_s_vals.shape[0])) __pyx_t_8 = 0;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 57, __pyx_L1_error)
+    __PYX_ERR(0, 58, __pyx_L1_error)
   }
 
   /* "bezier/_curve_speedup.pyx":59
- *         &s_vals[0],
  *         &num_vals,
+ *         &s_vals[0],
  *         &evaluated[0, 0],             # <<<<<<<<<<<<<<
  *     )
  *     return evaluated
@@ -3301,10 +3301,10 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_2evaluate_multi(CYTHON_UNUSED
  *     num_vals, = np.shape(s_vals)
  *     evaluated = np.empty((num_vals, dimension), order='F')
  *     bezier._curve.evaluate_multi(             # <<<<<<<<<<<<<<
- *         &nodes[0, 0],
  *         &degree,
+ *         &dimension,
  */
-  evaluate_multi((&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_dimension), (&(*((double *) ( /* dim=0 */ (__pyx_v_s_vals.data + __pyx_t_15 * __pyx_v_s_vals.strides[0]) )))), (&__pyx_v_num_vals), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
+  evaluate_multi((&__pyx_v_degree), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ (__pyx_v_s_vals.data + __pyx_t_15 * __pyx_v_s_vals.strides[0]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
 
   /* "bezier/_curve_speedup.pyx":61
  *         &evaluated[0, 0],

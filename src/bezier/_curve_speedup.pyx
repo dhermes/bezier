@@ -51,11 +51,11 @@ def evaluate_multi(
     num_vals, = np.shape(s_vals)
     evaluated = np.empty((num_vals, dimension), order='F')
     bezier._curve.evaluate_multi(
-        &nodes[0, 0],
         &degree,
         &dimension,
-        &s_vals[0],
+        &nodes[0, 0],
         &num_vals,
+        &s_vals[0],
         &evaluated[0, 0],
     )
     return evaluated

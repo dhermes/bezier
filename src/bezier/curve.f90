@@ -65,19 +65,16 @@ contains
   end subroutine evaluate_curve_barycentric
 
   subroutine evaluate_multi( &
-       nodes, degree, dimension_, s_vals, num_vals, evaluated) &
+       degree, dimension_, nodes, num_vals, s_vals, evaluated) &
        bind(c, name='evaluate_multi')
 
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
-    !f2py integer intent(hide), depend(nodes) :: degree = size(nodes, 1) - 1
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(s_vals) :: num_vals = size(s_vals)
-    real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: degree
     integer :: dimension_
-    real(dp), intent(in) :: s_vals(num_vals)
+    real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: num_vals
+    real(dp), intent(in) :: s_vals(num_vals)
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
     real(dp) :: one_less(num_vals)
@@ -215,7 +212,7 @@ contains
     first_deriv = nodes(2:, :) - nodes(:degree, :)
     param = s
     call evaluate_multi( &
-         first_deriv, degree - 1, dimension_, param, 1, hodograph)
+         degree - 1, dimension_, first_deriv, 1, param, hodograph)
     hodograph = degree * hodograph
 
   end subroutine evaluate_hodograph

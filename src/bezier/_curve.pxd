@@ -18,8 +18,8 @@ cdef extern from "bezier_curve.h":
         int *degree, int *dimension, double *nodes, int *num_vals,
         double *lambda1, double *lambda2, double *evaluated)
     void evaluate_multi(
-        double *nodes, int *degree, int *dimension,
-        double *s_vals, int *num_vals, double *evaluated)
+        int *degree, int *dimension, double *nodes,
+        int *num_vals, double *s_vals, double *evaluated)
     void specialize_curve_generic(
         double *nodes, int *degree, int *dimension,
         double *start, double *end, double *new_nodes)
