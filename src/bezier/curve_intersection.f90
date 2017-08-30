@@ -12,6 +12,7 @@
 
 module curve_intersection
 
+  use iso_c_binding, only: c_double
   use types, only: dp
   use helpers, only: cross_product, bbox, wiggle_interval
   use curve, only: evaluate_multi, evaluate_hodograph
@@ -32,11 +33,11 @@ contains
        bind(c, name='linearization_error')
 
     integer, intent(in) :: degree, dimension_
-    real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    real(dp), intent(out) :: error
+    real(c_double), intent(in) :: nodes(degree + 1, dimension_)
+    real(c_double), intent(out) :: error
     ! Variables outside of signature.
-    real(dp) :: second_deriv(degree - 1, dimension_)
-    real(dp) :: worst_case(dimension_)
+    real(c_double) :: second_deriv(degree - 1, dimension_)
+    real(c_double) :: worst_case(dimension_)
 
     if (degree == 1) then
        error = 0.0_dp
@@ -55,18 +56,18 @@ contains
        start0, end0, start1, end1, s, t, success) &
        bind(c, name='segment_intersection')
 
-    real(dp), intent(in) :: start0(1, 2)
-    real(dp), intent(in) :: end0(1, 2)
-    real(dp), intent(in) :: start1(1, 2)
-    real(dp), intent(in) :: end1(1, 2)
-    real(dp), intent(out) :: s, t
+    real(c_double), intent(in) :: start0(1, 2)
+    real(c_double), intent(in) :: end0(1, 2)
+    real(c_double), intent(in) :: start1(1, 2)
+    real(c_double), intent(in) :: end1(1, 2)
+    real(c_double), intent(out) :: s, t
     logical(1), intent(out) :: success
     ! Variables outside of signature.
-    real(dp) :: delta0(1, 2)
-    real(dp) :: delta1(1, 2)
-    real(dp) :: start_delta(1, 2)
-    real(dp) :: cross_d0_d1
-    real(dp) :: other_cross
+    real(c_double) :: delta0(1, 2)
+    real(c_double) :: delta1(1, 2)
+    real(c_double) :: start_delta(1, 2)
+    real(c_double) :: cross_d0_d1
+    real(c_double) :: other_cross
 
     delta0 = end0 - start0
     delta1 = end1 - start1
@@ -89,19 +90,19 @@ contains
        s, degree1, nodes1, t, degree2, nodes2, new_s, new_t) &
        bind(c, name='newton_refine_intersect')
 
-    real(dp), intent(in) :: s
+    real(c_double), intent(in) :: s
     integer, intent(in) :: degree1
-    real(dp), intent(in) :: nodes1(degree1 + 1, 2)
-    real(dp), intent(in) :: t
+    real(c_double), intent(in) :: nodes1(degree1 + 1, 2)
+    real(c_double), intent(in) :: t
     integer, intent(in) :: degree2
-    real(dp), intent(in) :: nodes2(degree2 + 1, 2)
-    real(dp), intent(out) :: new_s, new_t
+    real(c_double), intent(in) :: nodes2(degree2 + 1, 2)
+    real(c_double), intent(out) :: new_s, new_t
     ! Variables outside of signature.
-    real(dp) :: param(1)
-    real(dp) :: func_val(1, 2)
-    real(dp) :: workspace(1, 2)
-    real(dp) :: jac_mat(2, 2)
-    real(dp) :: determinant, delta_s, delta_t
+    real(c_double) :: param(1)
+    real(c_double) :: func_val(1, 2)
+    real(c_double) :: workspace(1, 2)
+    real(c_double) :: jac_mat(2, 2)
+    real(c_double) :: determinant, delta_s, delta_t
 
     param = t
     call evaluate_multi( &
@@ -144,13 +145,13 @@ contains
        bind(c, name='bbox_intersect')
 
     integer, intent(in) :: num_nodes1
-    real(dp), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
     integer, intent(in) :: num_nodes2
-    real(dp), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
     integer, intent(out) :: enum_
     ! Variables outside of signature.
-    real(dp) :: left1, right1, bottom1, top1
-    real(dp) :: left2, right2, bottom2, top2
+    real(c_double) :: left1, right1, bottom1, top1
+    real(c_double) :: left2, right2, bottom2, top2
 
     call bbox(num_nodes1, nodes1, left1, right1, bottom1, top1)
     call bbox(num_nodes2, nodes2, left2, right2, bottom2, top2)
@@ -173,14 +174,14 @@ contains
        start0, end0, start1, end1, result_) &
        bind(c, name='parallel_different')
 
-    real(dp), intent(in) :: start0(1, 2)
-    real(dp), intent(in) :: end0(1, 2)
-    real(dp), intent(in) :: start1(1, 2)
-    real(dp), intent(in) :: end1(1, 2)
+    real(c_double), intent(in) :: start0(1, 2)
+    real(c_double), intent(in) :: end0(1, 2)
+    real(c_double), intent(in) :: start1(1, 2)
+    real(c_double), intent(in) :: end1(1, 2)
     logical(1), intent(out) :: result_
     ! Variables outside of signature.
-    real(dp) :: delta0(1, 2)
-    real(dp) :: val1, val2, val3
+    real(c_double) :: delta0(1, 2)
+    real(c_double) :: val1, val2, val3
 
     delta0 = end0 - start0
     call cross_product(start0, delta0, val1)  ! line0_const
@@ -228,21 +229,21 @@ contains
        refined_s, refined_t, does_intersect, py_exc) &
        bind(c, name='from_linearized')
 
-    real(dp), intent(in) :: error1, start1, end1
-    real(dp), intent(in) :: start_node1(1, 2)
-    real(dp), intent(in) :: end_node1(1, 2)
+    real(c_double), intent(in) :: error1, start1, end1
+    real(c_double), intent(in) :: start_node1(1, 2)
+    real(c_double), intent(in) :: end_node1(1, 2)
     integer, intent(in) :: degree1
-    real(dp), intent(in) :: nodes1(degree1 + 1, 2)
-    real(dp), intent(in) :: error2, start2, end2
-    real(dp), intent(in) :: start_node2(1, 2)
-    real(dp), intent(in) :: end_node2(1, 2)
+    real(c_double), intent(in) :: nodes1(degree1 + 1, 2)
+    real(c_double), intent(in) :: error2, start2, end2
+    real(c_double), intent(in) :: start_node2(1, 2)
+    real(c_double), intent(in) :: end_node2(1, 2)
     integer, intent(in) :: degree2
-    real(dp), intent(in) :: nodes2(degree2 + 1, 2)
-    real(dp), intent(out) :: refined_s, refined_t
+    real(c_double), intent(in) :: nodes2(degree2 + 1, 2)
+    real(c_double), intent(out) :: refined_s, refined_t
     logical(1), intent(out) :: does_intersect
     integer, intent(out) :: py_exc
     ! Variables outside of signature.
-    real(dp) :: s, t
+    real(c_double) :: s, t
     integer :: enum_
     logical(1) :: success
 
@@ -327,15 +328,15 @@ contains
        bind(c, name='bbox_line_intersect')
 
     integer, intent(in) :: num_nodes
-    real(dp), intent(in) :: nodes(num_nodes, 2)
-    real(dp), intent(in) :: line_start(1, 2)
-    real(dp), intent(in) :: line_end(1, 2)
+    real(c_double), intent(in) :: nodes(num_nodes, 2)
+    real(c_double), intent(in) :: line_start(1, 2)
+    real(c_double), intent(in) :: line_end(1, 2)
     integer, intent(out) :: enum_
     ! Variables outside of signature.
-    real(dp) :: left, right, bottom, top
-    real(dp) :: segment_start(1, 2)
-    real(dp) :: segment_end(1, 2)
-    real(dp) :: s_curr, t_curr
+    real(c_double) :: left, right, bottom, top
+    real(c_double) :: segment_start(1, 2)
+    real(c_double) :: segment_end(1, 2)
+    real(c_double) :: s_curr, t_curr
     logical(1) :: success
 
     call bbox(num_nodes, nodes, left, right, bottom, top)
@@ -426,7 +427,7 @@ contains
 
   pure function in_interval(value_, start, end) result(predicate)
 
-    real(dp), intent(in) :: value_, start, end
+    real(c_double), intent(in) :: value_, start, end
     logical(1) :: predicate
 
     predicate = (start <= value_) .AND. (value_ <= end)

@@ -12,6 +12,7 @@
 
 module surface
 
+  use iso_c_binding, only: c_double
   use types, only: dp
   use curve, only: evaluate_curve_barycentric
   implicit none
@@ -31,12 +32,12 @@ contains
     ! NOTE: This is de Casteljau on a Bezier surface / triangle.
 
     integer, intent(in) :: num_nodes, dimension_
-    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     integer, intent(in) :: degree
-    real(dp), intent(in) :: lambda1
-    real(dp), intent(in) :: lambda2
-    real(dp), intent(in) :: lambda3
-    real(dp), intent(out) :: new_nodes(num_nodes - degree - 1, dimension_)
+    real(c_double), intent(in) :: lambda1
+    real(c_double), intent(in) :: lambda2
+    real(c_double), intent(in) :: lambda3
+    real(c_double), intent(out) :: new_nodes(num_nodes - degree - 1, dimension_)
     ! Variables outside of signature.
     integer :: index_
     integer :: parent_i1
@@ -81,14 +82,14 @@ contains
     ! NOTE: This assumes degree >= 1.
 
     integer, intent(in) :: num_nodes, dimension_
-    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     integer, intent(in) :: degree
-    real(dp), intent(in) :: lambda1
-    real(dp), intent(in) :: lambda2
-    real(dp), intent(in) :: lambda3
-    real(dp), intent(out) :: point(1, dimension_)
+    real(c_double), intent(in) :: lambda1
+    real(c_double), intent(in) :: lambda2
+    real(c_double), intent(in) :: lambda3
+    real(c_double), intent(out) :: point(1, dimension_)
     ! Variables outside of signature.
-    real(dp) :: param_vals(1, 3)
+    real(c_double) :: param_vals(1, 3)
 
     param_vals(1, 1) = lambda1
     param_vals(1, 2) = lambda2
@@ -106,13 +107,13 @@ contains
     ! NOTE: This assumes degree >= 1.
 
     integer, intent(in) :: num_nodes, dimension_
-    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     integer, intent(in) :: degree, num_vals
-    real(dp), intent(in) :: param_vals(num_vals, 3)
-    real(dp), intent(out) :: evaluated(num_vals, dimension_)
+    real(c_double), intent(in) :: param_vals(num_vals, 3)
+    real(c_double), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
     integer :: k, binom_val, index_, new_index
-    real(dp) :: row_result(num_vals, dimension_)
+    real(c_double) :: row_result(num_vals, dimension_)
 
     index_ = num_nodes
     forall (new_index = 1:num_vals)  ! Borrow new_index for this loop.
@@ -161,14 +162,14 @@ contains
     !       call it directly. This is to avoid copying param_vals.
 
     integer, intent(in) :: num_nodes, dimension_
-    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     integer, intent(in) :: degree, num_vals
-    real(dp), intent(in) :: param_vals(num_vals, 2)
-    real(dp), intent(out) :: evaluated(num_vals, dimension_)
+    real(c_double), intent(in) :: param_vals(num_vals, 2)
+    real(c_double), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
     integer :: k, binom_val, index_, new_index
-    real(dp) :: row_result(num_vals, dimension_)
-    real(dp) :: lambda1_vals(num_vals)
+    real(c_double) :: row_result(num_vals, dimension_)
+    real(c_double) :: lambda1_vals(num_vals)
 
     index_ = num_nodes
     forall (new_index = 1:num_vals)  ! Borrow new_index for this loop.
@@ -215,9 +216,9 @@ contains
        bind(c, name='jacobian_both')
 
     integer, intent(in) :: num_nodes, dimension_
-    real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     integer, intent(in) :: degree
-    real(dp), intent(out) :: new_nodes(num_nodes - degree - 1, 2 * dimension_)
+    real(c_double), intent(out) :: new_nodes(num_nodes - degree - 1, 2 * dimension_)
     ! Variables outside of signature.
     integer :: index_, i, j, k, num_vals
 
@@ -248,14 +249,14 @@ contains
        bind(c, name='jacobian_det')
 
     integer, intent(in) :: num_nodes
-    real(dp), intent(in) :: nodes(num_nodes, 2)
+    real(c_double), intent(in) :: nodes(num_nodes, 2)
     integer, intent(in) :: degree, num_vals
-    real(dp), intent(in) :: param_vals(num_vals, 2)
-    real(dp), intent(out) :: evaluated(num_vals)
+    real(c_double), intent(in) :: param_vals(num_vals, 2)
+    real(c_double), intent(out) :: evaluated(num_vals)
     ! Variables outside of signature.
-    real(dp) :: jac_nodes(num_nodes - degree - 1, 4)
-    real(dp) :: Bs_Bt_vals(num_vals, 4)
-    real(dp) :: determinant
+    real(c_double) :: jac_nodes(num_nodes - degree - 1, 4)
+    real(c_double) :: Bs_Bt_vals(num_vals, 4)
+    real(c_double) :: determinant
 
     call jacobian_both( &
          num_nodes, 2, nodes, degree, jac_nodes)

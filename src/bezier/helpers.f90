@@ -12,6 +12,7 @@
 
 module helpers
 
+  use iso_c_binding, only: c_double
   use types, only: dp
   implicit none
   private
@@ -23,9 +24,9 @@ contains
        vec0, vec1, result_) &
        bind(c, name='cross_product')
 
-    real(dp), intent(in) :: vec0(1, 2)
-    real(dp), intent(in) :: vec1(1, 2)
-    real(dp), intent(out) :: result_
+    real(c_double), intent(in) :: vec0(1, 2)
+    real(c_double), intent(in) :: vec1(1, 2)
+    real(c_double), intent(out) :: result_
 
     result_ = vec0(1, 1) * vec1(1, 2) - vec0(1, 2) * vec1(1, 1)
 
@@ -36,10 +37,10 @@ contains
        bind(c, name='bbox')
 
     integer, intent(in) :: num_nodes
-    real(dp), intent(in) :: nodes(num_nodes, 2)
-    real(dp), intent(out) :: left, right, bottom, top
+    real(c_double), intent(in) :: nodes(num_nodes, 2)
+    real(c_double), intent(out) :: left, right, bottom, top
     ! Variables outside of signature.
-    real(dp) :: workspace(2)
+    real(c_double) :: workspace(2)
 
     workspace = minval(nodes, 1)
     left = workspace(1)
@@ -54,8 +55,8 @@ contains
        value_, result_, success) &
        bind(c, name='wiggle_interval')
 
-    real(dp), intent(in) :: value_
-    real(dp), intent(out) :: result_
+    real(c_double), intent(in) :: value_
+    real(c_double), intent(out) :: result_
     logical(1), intent(out) :: success
 
     success = .TRUE.
