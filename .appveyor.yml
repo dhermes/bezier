@@ -60,12 +60,6 @@ environment:
       CONDA_INSTALL_LOCN: C:\\Miniconda-x64
       TEST_TYPE: functional
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 35
-      PY_CONDITION: "python=3.5"
-      CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
-      TEST_TYPE: doctest
-
 install:
   # If there is a newer build queued for the same PR, cancel this one.
   # The AppVeyor 'rollout builds' option is supposed to serve the same
@@ -132,14 +126,6 @@ install:
           $env:PYTHONPATH = "functional_tests/";
         }
 
-  # Install (hardcoded) conditional (on doctest) test dependencies.
-  - ps: if ($env:TEST_TYPE -eq "doctest")
-        {
-          conda install Sphinx;
-          pip install sphinx-rtd-theme sphinx-docstring-typing mock;
-          $env:NO_IMAGES = "True";
-        }
-
 test_script:
   - ps: if ($env:TEST_TYPE -eq "base")
         {
@@ -157,12 +143,4 @@ test_script:
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
           py.test functional_tests
-        }
-  - ps: if ($env:TEST_TYPE -eq "doctest")
-        {
-          sphinx-build -W `
-            -b doctest `
-            -d docs/build/doctrees `
-            docs `
-            docs/build/doctest;
         }
