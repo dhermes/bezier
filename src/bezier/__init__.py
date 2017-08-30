@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects.
+r"""Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects.
 
 Intended to perform basic operations on B |eacute| zier objects such
 as intersections, length/area/etc. computations, subdivision,
@@ -20,6 +20,35 @@ Plotting utilities are also provided.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
+
+.. testsetup:: show-headers, show-lib
+
+   import os
+   import textwrap
+
+   import bezier
+
+   def sort_key(name):
+       return name.lower().lstrip('_')
+
+   def tree(directory):
+       names = sorted(os.listdir(directory), key=sort_key)
+       parts = []
+       for name in names:
+           path = os.path.join(directory, name)
+           if os.path.isdir(path):
+               sub_part = tree(path)
+               parts.append(name + os.path.sep)
+               parts.append(textwrap.indent(sub_part, '  '))
+           else:
+               parts.append(name)
+
+       return '\n'.join(parts)
+
+   def print_tree(directory):
+       print(os.path.basename(directory) + os.path.sep)
+       full_tree = tree(directory)
+       print(textwrap.indent(full_tree, '  '))
 """
 
 import pkg_resources
@@ -47,7 +76,7 @@ __all__ = [
 
 
 def get_include():
-    r"""Get the directory with ``.h`` header files.
+    """Get the directory with ``.h`` header files.
 
     Extension modules (and Cython modules) that need to compile against
     ``bezier`` should use this function to locate the appropriate include
@@ -79,35 +108,6 @@ def get_include():
 
     The headers are in the ``bezier`` subdirectory:
 
-    .. testsetup:: show-headers
-
-       import os
-       import textwrap
-
-       import bezier
-
-       def sort_key(name):
-           return name.lower().lstrip('_')
-
-       def tree(directory):
-           names = sorted(os.listdir(directory), key=sort_key)
-           parts = []
-           for name in names:
-               path = os.path.join(directory, name)
-               if os.path.isdir(path):
-                   sub_part = tree(path)
-                   parts.append(name + os.path.sep)
-                   parts.append(textwrap.indent(sub_part, '  '))
-               else:
-                   parts.append(name)
-
-           return '\n'.join(parts)
-
-       def print_tree(directory):
-           print(os.path.basename(directory) + os.path.sep)
-           full_tree = tree(directory)
-           print(textwrap.indent(full_tree, '  '))
-
     .. doctest:: show-headers
 
        >>> include_directory = bezier.get_include()
@@ -137,6 +137,18 @@ def get_lib():
 
     See :func:`~bezier.get_include` for an example on how / when to use
     this function.
+
+    We expect a single static library (a ``.lib`` file on Windows and a
+    ``.a`` file elsewhere):
+
+    .. doctest:: show-lib
+
+       >>> lib_directory = bezier.get_lib()
+       >>> lib_directory
+       '.../site-packages/bezier/lib'
+       >>> print_tree(lib_directory)
+       lib/
+         libbezier.a
 
     Returns:
         str: ``lib`` directory that contains static libraries for the
