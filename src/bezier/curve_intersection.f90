@@ -28,13 +28,11 @@ module curve_intersection
 contains
 
   subroutine linearization_error( &
-       nodes, degree, dimension_, error) &
+       degree, dimension_, nodes, error) &
        bind(c, name='linearization_error')
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
+    integer, intent(in) :: degree, dimension_
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
-    integer :: dimension_
-    integer, intent(in) :: degree
     real(dp), intent(out) :: error
     ! Variables outside of signature.
     real(dp) :: second_deriv(degree - 1, dimension_)

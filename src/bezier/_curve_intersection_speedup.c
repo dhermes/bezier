@@ -2077,12 +2077,12 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
  */
   __pyx_v_degree = (__pyx_v_num_nodes - 1);
 
-  /* "bezier/_curve_intersection_speedup.pyx":39
- *
- *     bezier._curve_intersection.linearization_error(
- *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+  /* "bezier/_curve_intersection_speedup.pyx":41
  *         &degree,
  *         &dimension,
+ *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+ *         &error,
+ *     )
  */
   __pyx_t_9 = 0;
   __pyx_t_10 = 0;
@@ -2097,17 +2097,17 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
   } else if (unlikely(__pyx_t_10 >= __pyx_v_nodes.shape[1])) __pyx_t_8 = 1;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 39, __pyx_L1_error)
+    __PYX_ERR(0, 41, __pyx_L1_error)
   }
 
   /* "bezier/_curve_intersection_speedup.pyx":38
  *     degree = num_nodes - 1
  *
  *     bezier._curve_intersection.linearization_error(             # <<<<<<<<<<<<<<
- *         &nodes[0, 0],
  *         &degree,
+ *         &dimension,
  */
-  linearization_error((&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_dimension), (&__pyx_v_error));
+  linearization_error((&__pyx_v_degree), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_error));
 
   /* "bezier/_curve_intersection_speedup.pyx":44
  *         &error,

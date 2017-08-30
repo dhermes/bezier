@@ -19,7 +19,7 @@ enum BoxIntersectionType {
 };
 
 void linearization_error(
-    double *nodes, int *degree, int *dimension, double *error);
+    int *degree, int *dimension, double *nodes, double *error);
 void segment_intersection(
     double *start0, double *end0, double *start1, double *end1,
     double *s, double *t, bool *success);

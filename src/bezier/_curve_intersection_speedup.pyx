@@ -36,9 +36,9 @@ def linearization_error(double[::1, :] nodes):
     degree = num_nodes - 1
 
     bezier._curve_intersection.linearization_error(
-        &nodes[0, 0],
         &degree,
         &dimension,
+        &nodes[0, 0],
         &error,
     )
     return error
