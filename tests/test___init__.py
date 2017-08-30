@@ -11,8 +11,12 @@
 # limitations under the License.
 
 import os
+import platform
 import sys
 import unittest
+
+
+PLATFORM_SYSTEM = platform.system().lower()
 
 
 class Test_get_include(unittest.TestCase):
@@ -25,8 +29,10 @@ class Test_get_include(unittest.TestCase):
 
     def test_it(self):
         include_directory = self._call_function_under_test()
-        postfix = _postfix('include')
-        self.assertTrue(include_directory.endswith(postfix))
+        suffix = _suffix('include')
+        msg = 'Expected suffix: {}\nFull path: {}'.format(
+            suffix, include_directory)
+        self.assertTrue(include_directory.endswith(suffix), msg=msg)
 
 
 class Test_get_lib(unittest.TestCase):
@@ -37,13 +43,15 @@ class Test_get_lib(unittest.TestCase):
 
         return bezier.get_lib()
 
+    @unittest.skipIf(
+        PLATFORM_SYSTEM == 'windows', 'Static library not yet built on Windows')
     def test_it(self):
         lib_directory = self._call_function_under_test()
-        postfix = _postfix('lib')
-        self.assertTrue(lib_directory.endswith(postfix))
+        suffix = _suffix('lib')
+        self.assertTrue(lib_directory.endswith(suffix))
 
 
-def _postfix(final_directory):
+def _suffix(final_directory):
     python_version = 'python{}.{}'.format(*sys.version_info[:2])
     return os.path.join(
         'lib', python_version, 'site-packages', 'bezier', final_directory)
