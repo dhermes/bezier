@@ -110,6 +110,14 @@ def compile_fortran_obj_files(f90_compiler, bezier_path):
         extra_postargs=[],
         depends=[],
     )
+
+    # Create a .a/.lib file.
+    c_compiler = f90_compiler.c_compiler
+    lib_dir = os.path.join(bezier_path, 'lib')
+    c_compiler.create_static_lib(
+        obj_files, 'bezier', output_dir=lib_dir)
+
+    # Split up the object files by module (and dependencies).
     types_o, helpers_o, curve_o, surface_o, intersection_o = obj_files
 
     return {
@@ -188,6 +196,8 @@ def setup():
             'bezier': [
                 '*.pxd',
                 os.path.join('include', 'bezier', '*.h'),
+                os.path.join('lib', '*.a'),
+                os.path.join('lib', '*.lib'),
             ],
         },
         zip_safe=True,
