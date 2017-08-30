@@ -106,7 +106,8 @@ def get_include():
        >>> extension
        <setuptools.extension.Extension('wrapper') at 0x...>
 
-    The headers are in the ``bezier`` subdirectory:
+    The headers are in the ``bezier`` subdirectory and there is a
+    catch-all ``bezier.h`` that just includes all of the headers:
 
     .. doctest:: show-headers
 
@@ -120,6 +121,7 @@ def get_include():
            curve_intersection.h
            helpers.h
            surface.h
+         bezier.h
 
     Returns:
         str: ``include`` directory that contains header files for the

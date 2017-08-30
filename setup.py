@@ -195,6 +195,7 @@ def setup():
         package_data={
             'bezier': [
                 '*.pxd',
+                os.path.join('include', '*.h'),
                 os.path.join('include', 'bezier', '*.h'),
                 os.path.join('lib', '*.a'),
                 os.path.join('lib', '*.lib'),
