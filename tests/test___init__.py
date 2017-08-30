@@ -10,7 +10,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import distutils.sysconfig
 import os
 import platform
 import unittest
@@ -19,7 +18,7 @@ import unittest
 PLATFORM_SYSTEM = platform.system().lower()
 CHECK_PKG_MSG = """\
 path     = {!r}
-expected = {!r}
+suffix   = {!r}
 site_pkg = {!r}
 from_egg = {!r}"""
 
@@ -54,13 +53,12 @@ class Test_get_lib(unittest.TestCase):
 
 
 def _check_pkg_filename(test_case, path, last_segment):
-    suffix = os.path.join('bezier', last_segment)
-    from_egg = path.endswith(suffix) and '.egg' in path
+    short = os.path.join('bezier', last_segment)
+    from_egg = path.endswith(short) and '.egg' in path
 
-    site_packages = distutils.sysconfig.get_python_lib()
-    expected = os.path.join(site_packages, suffix)
-    site_pkg = path == expected
+    verbose = os.path.join('site-packages', short)
+    site_pkg = path.endswith(verbose)
 
     msg = CHECK_PKG_MSG.format(
-        path, expected, site_pkg, from_egg)
+        path, verbose, site_pkg, from_egg)
     test_case.assertTrue(site_pkg or from_egg, msg=msg)
