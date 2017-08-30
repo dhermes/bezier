@@ -180,11 +180,16 @@ def setup():
         long_description=make_readme(),
         scripts=(),
         url='https://github.com/dhermes/bezier',
-        packages=setuptools.find_packages('src'),
+        packages=['bezier'],
         package_dir={'': 'src'},
         license='Apache 2.0',
         platforms='Posix; MacOS X; Windows',
-        include_package_data=True,
+        package_data={
+            'bezier': [
+                '*.pxd',
+                os.path.join('include', 'bezier', '*.h'),
+            ],
+        },
         zip_safe=True,
         install_requires=REQUIREMENTS,
         extras_require=EXTRAS_REQUIRE,
