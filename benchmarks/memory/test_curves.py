@@ -29,7 +29,10 @@ SUCCESS_TEMPLATE = 'Memory usage: {:g}KB.'
 def get_bounds():
     # NOTE: These bounds assume **just** the interpeter is running this code.
     #       When using a test runner like `py.test`, usage goes up by 4-8 KB.
-    return 28, 32
+    if os.getenv('CIRCLECI') == 'true':
+        return 28, 33
+    else:
+        return 28, 32
 
 
 def intersect_all():
