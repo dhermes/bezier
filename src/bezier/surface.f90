@@ -37,7 +37,8 @@ contains
     real(c_double), intent(in) :: lambda1
     real(c_double), intent(in) :: lambda2
     real(c_double), intent(in) :: lambda3
-    real(c_double), intent(out) :: new_nodes(num_nodes - degree - 1, dimension_)
+    real(c_double), intent(out) :: &
+         new_nodes(num_nodes - degree - 1, dimension_)
     ! Variables outside of signature.
     integer(c_int) :: index_
     integer(c_int) :: parent_i1, parent_i2, parent_i3
@@ -216,7 +217,8 @@ contains
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     integer(c_int), intent(in) :: degree
-    real(c_double), intent(out) :: new_nodes(num_nodes - degree - 1, 2 * dimension_)
+    real(c_double), intent(out) :: &
+         new_nodes(num_nodes - degree - 1, 2 * dimension_)
     ! Variables outside of signature.
     integer(c_int) :: index_, i, j, k, num_vals
 

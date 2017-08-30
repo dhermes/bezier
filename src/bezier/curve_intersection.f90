@@ -181,7 +181,7 @@ contains
     logical(c_bool), intent(out) :: result_
     ! Variables outside of signature.
     real(c_double) :: delta0(1, 2)
-    real(c_double) :: val1, val2, val3
+    real(c_double) :: val1, val2, val3  ! Workspace
 
     delta0 = end0 - start0
     call cross_product(start0, delta0, val1)  ! line0_const
@@ -193,7 +193,8 @@ contains
     end if
 
     val1 = dot_product(delta0(1, :), delta0(1, :))  ! norm0_sq
-    val2 = dot_product(start1(1, :) - start0(1, :), delta0(1, :))  ! start_numer
+    ! val2 == start_numer
+    val2 = dot_product(start1(1, :) - start0(1, :), delta0(1, :))
     !      0 <= start_numer / norm0_sq <= 1
     ! <==> 0 <= start_numer            <= norm0_sq
     if (0.0_dp <= val2 .AND. val2 <= val1) then
