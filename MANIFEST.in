@@ -1,4 +1,6 @@
 include RELEASE_README.rst.template LICENSE
 graft src/bezier
-global-exclude *.pyc
-global-exclude *.so
+global-exclude *.o
+global-exclude *.pyc __pycache__
+global-exclude *.pyx
+global-exclude *.so *.a

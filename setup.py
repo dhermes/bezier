@@ -104,53 +104,60 @@ def compile_fortran_obj_files(f90_compiler, bezier_path):
         extra_postargs=[],
         depends=[],
     )
+    types_o, helpers_o, curve_o, surface_o, intersection_o = obj_files
 
-    return obj_files
+    return {
+        'helpers': [types_o, helpers_o],
+        'curve': [types_o, curve_o],
+        'surface': [types_o, curve_o, surface_o],
+        'curve_intersection': [types_o, helpers_o, curve_o, intersection_o],
+    }
 
 
 def _extension_modules(f90_compiler):
     # NOTE: This assumes is_installed('numpy') has already passed.
     #       H/T to https://stackoverflow.com/a/41575848/1068170
     import numpy as np
-    import numpy.distutils.core
 
-    bezier_path = os.path.join(PACKAGE_ROOT, 'src', 'bezier')
-    if 'config_fc' not in sys.argv:
-        sys.argv.extend(['config_fc', '--opt=-O3'])
+    relative_path = os.path.join('src', 'bezier')
+    full_path = os.path.join(PACKAGE_ROOT, relative_path)
 
-    obj_files = compile_fortran_obj_files(f90_compiler, bezier_path)
+    obj_file_map = compile_fortran_obj_files(f90_compiler, full_path)
     include_dirs = [
         np.get_include(),
-        os.path.join(bezier_path, 'include'),
+        os.path.join(full_path, 'include'),
     ]
     cython_kwargs = {
         'include_dirs': include_dirs,
         'libraries': f90_compiler.libraries,
         'library_dirs': f90_compiler.library_dirs,
-        'extra_objects': obj_files,
     }
 
     cython_curve = setuptools.Extension(
         'bezier._curve_speedup',
-        [os.path.join(bezier_path, '_curve_speedup.c')],
+        [os.path.join(relative_path, '_curve_speedup.c')],
+        extra_objects=obj_file_map['curve'],
         **cython_kwargs
     )
 
     cython_helpers = setuptools.Extension(
         'bezier._helpers_speedup',
-        [os.path.join(bezier_path, '_helpers_speedup.c')],
+        [os.path.join(relative_path, '_helpers_speedup.c')],
+        extra_objects=obj_file_map['helpers'],
         **cython_kwargs
     )
 
     cython_curve_intersection = setuptools.Extension(
         'bezier._curve_intersection_speedup',
-        [os.path.join(bezier_path, '_curve_intersection_speedup.c')],
+        [os.path.join(relative_path, '_curve_intersection_speedup.c')],
+        extra_objects=obj_file_map['curve_intersection'],
         **cython_kwargs
     )
 
     cython_surface = setuptools.Extension(
         'bezier._surface_speedup',
-        [os.path.join(bezier_path, '_surface_speedup.c')],
+        [os.path.join(relative_path, '_surface_speedup.c')],
+        extra_objects=obj_file_map['surface'],
         **cython_kwargs
     )
 
@@ -182,9 +189,7 @@ def make_readme():
 
 
 def setup():
-    from numpy.distutils import core
-
-    core.setup(
+    setuptools.setup(
         name='bezier',
         version=VERSION,
         description=DESCRIPTION,
