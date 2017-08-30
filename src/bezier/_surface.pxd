@@ -24,8 +24,8 @@ cdef extern from "bezier_surface.h":
         int *num_nodes, int *dimension, double *nodes, int *degree,
         int *num_vals, double *param_vals, double *evaluated)
     void evaluate_cartesian_multi(
-        int *num_nodes, double *nodes, int *degree, int *num_vals,
-        double *param_vals, int *dimension, double *evaluated)
+        int *num_nodes, int *dimension, double *nodes, int *degree,
+        int *num_vals, double *param_vals, double *evaluated)
     void jacobian_both(
         int *num_nodes, int *dimension, double *nodes,
         int *degree, double *new_nodes)

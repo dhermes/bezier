@@ -156,22 +156,16 @@ contains
   end subroutine evaluate_barycentric_multi
 
   subroutine evaluate_cartesian_multi( &
-       num_nodes, nodes, degree, num_vals, param_vals, dimension_, evaluated) &
+       num_nodes, dimension_, nodes, degree, num_vals, param_vals, evaluated) &
        bind(c, name='evaluate_cartesian_multi')
 
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This mostly copies evaluate_barycentric_multi but does not just
     !       call it directly. This is to avoid copying param_vals.
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(param_vals) :: num_vals &
-    !f2py     = size(param_vals, 1)
-    integer :: num_nodes
-    integer :: dimension_
+    integer, intent(in) :: num_nodes, dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
-    integer :: degree
-    integer :: num_vals
+    integer, intent(in) :: degree, num_vals
     real(dp), intent(in) :: param_vals(num_vals, 2)
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
@@ -282,8 +276,8 @@ contains
        evaluated = determinant
     else
        call evaluate_cartesian_multi( &
-            num_nodes - degree - 1, jac_nodes, degree - 1, &
-            num_vals, param_vals, 4, Bs_Bt_vals)
+            num_nodes - degree - 1, 4, jac_nodes, degree - 1, &
+            num_vals, param_vals, Bs_Bt_vals)
        evaluated = ( &
             Bs_Bt_vals(:, 1) * Bs_Bt_vals(:, 4) - &
             Bs_Bt_vals(:, 2) * Bs_Bt_vals(:, 3))
