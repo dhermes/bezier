@@ -24,18 +24,18 @@ module surface
 contains
 
   subroutine de_casteljau_one_round( &
-       num_nodes, dimension_, nodes, &
-       lambda1, lambda2, lambda3, degree, new_nodes) &
+       num_nodes, dimension_, nodes, degree, &
+       lambda1, lambda2, lambda3, new_nodes) &
        bind(c, name='de_casteljau_one_round')
 
     ! NOTE: This is de Casteljau on a Bezier surface / triangle.
 
     integer, intent(in) :: num_nodes, dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
+    integer, intent(in) :: degree
     real(dp), intent(in) :: lambda1
     real(dp), intent(in) :: lambda2
     real(dp), intent(in) :: lambda3
-    integer, intent(in) :: degree
     real(dp), intent(out) :: new_nodes(num_nodes - degree - 1, dimension_)
     ! Variables outside of signature.
     integer :: index_
@@ -80,12 +80,9 @@ contains
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    integer :: num_nodes
-    integer :: dimension_
+    integer, intent(in) :: num_nodes, dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
-    integer :: degree
+    integer, intent(in) :: degree
     real(dp), intent(in) :: lambda1
     real(dp), intent(in) :: lambda2
     real(dp), intent(in) :: lambda3
@@ -217,12 +214,9 @@ contains
        num_nodes, dimension_, nodes, degree, new_nodes) &
        bind(c, name='jacobian_both')
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer, depend(nodes) :: dimension_ = size(nodes, 2)
-    integer :: num_nodes
-    integer :: dimension_
+    integer, intent(in) :: num_nodes, dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
-    integer :: degree
+    integer, intent(in) :: degree
     real(dp), intent(out) :: new_nodes(num_nodes - degree - 1, 2 * dimension_)
     ! Variables outside of signature.
     integer :: index_, i, j, k, num_vals
@@ -253,13 +247,9 @@ contains
        num_nodes, nodes, degree, num_vals, param_vals, evaluated) &
        bind(c, name='jacobian_det')
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer intent(hide), depend(param_vals) :: num_vals &
-    !f2py     = size(param_vals, 1)
-    integer :: num_nodes
+    integer, intent(in) :: num_nodes
     real(dp), intent(in) :: nodes(num_nodes, 2)
-    integer :: degree
-    integer :: num_vals
+    integer, intent(in) :: degree, num_vals
     real(dp), intent(in) :: param_vals(num_vals, 2)
     real(dp), intent(out) :: evaluated(num_vals)
     ! Variables outside of signature.

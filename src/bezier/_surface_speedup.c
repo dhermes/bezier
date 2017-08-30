@@ -2629,8 +2629,8 @@ static PyObject *__pyx_pf_6bezier_16_surface_speedup_de_casteljau_one_round(CYTH
  *         &num_nodes,
  *         &dimension,
  *         &nodes[0, 0],             # <<<<<<<<<<<<<<
+ *         &degree,
  *         &lambda1,
- *         &lambda2,
  */
   __pyx_t_13 = 0;
   __pyx_t_14 = 0;
@@ -2649,8 +2649,8 @@ static PyObject *__pyx_pf_6bezier_16_surface_speedup_de_casteljau_one_round(CYTH
   }
 
   /* "bezier/_surface_speedup.pyx":40
+ *         &lambda2,
  *         &lambda3,
- *         &degree,
  *         &new_nodes[0, 0],             # <<<<<<<<<<<<<<
  *     )
  *
@@ -2678,7 +2678,7 @@ static PyObject *__pyx_pf_6bezier_16_surface_speedup_de_casteljau_one_round(CYTH
  *         &num_nodes,
  *         &dimension,
  */
-  de_casteljau_one_round((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_lambda1), (&__pyx_v_lambda2), (&__pyx_v_lambda3), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_new_nodes.diminfo[1].strides))));
+  de_casteljau_one_round((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_lambda1), (&__pyx_v_lambda2), (&__pyx_v_lambda3), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_new_nodes.diminfo[1].strides))));
 
   /* "bezier/_surface_speedup.pyx":43
  *     )

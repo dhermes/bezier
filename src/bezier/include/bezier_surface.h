@@ -11,8 +11,8 @@
 // limitations under the License.
 
 void de_casteljau_one_round(
-    int *num_nodes, int *dimension, double *nodes, double *lambda1,
-    double *lambda2, double *lambda3, int *degree, double *new_nodes);
+    int *num_nodes, int *dimension, double *nodes, int *degree,
+    double *lambda1, double *lambda2, double *lambda3, double *new_nodes);
 void evaluate_barycentric(
     int *num_nodes, int *dimension, double *nodes, int *degree,
     double *lambda1, double *lambda2, double *lambda3, double *point);

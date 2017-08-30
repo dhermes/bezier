@@ -35,8 +35,7 @@ contains
        num_nodes, nodes, left, right, bottom, top) &
        bind(c, name='bbox')
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    integer :: num_nodes
+    integer, intent(in) :: num_nodes
     real(dp), intent(in) :: nodes(num_nodes, 2)
     real(dp), intent(out) :: left, right, bottom, top
     ! Variables outside of signature.
