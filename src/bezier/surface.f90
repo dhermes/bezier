@@ -12,7 +12,7 @@
 
 module surface
 
-  use iso_c_binding, only: c_double
+  use iso_c_binding, only: c_double, c_int
   use types, only: dp
   use curve, only: evaluate_curve_barycentric
   implicit none
@@ -31,19 +31,17 @@ contains
 
     ! NOTE: This is de Casteljau on a Bezier surface / triangle.
 
-    integer, intent(in) :: num_nodes, dimension_
+    integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    integer, intent(in) :: degree
+    integer(c_int), intent(in) :: degree
     real(c_double), intent(in) :: lambda1
     real(c_double), intent(in) :: lambda2
     real(c_double), intent(in) :: lambda3
     real(c_double), intent(out) :: new_nodes(num_nodes - degree - 1, dimension_)
     ! Variables outside of signature.
-    integer :: index_
-    integer :: parent_i1
-    integer :: parent_i2
-    integer :: parent_i3
-    integer :: k, j
+    integer(c_int) :: index_
+    integer(c_int) :: parent_i1, parent_i2, parent_i3
+    integer(c_int) :: k, j
 
     index_ = 1
     parent_i1 = 1
@@ -81,9 +79,9 @@ contains
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
 
-    integer, intent(in) :: num_nodes, dimension_
+    integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    integer, intent(in) :: degree
+    integer(c_int), intent(in) :: degree
     real(c_double), intent(in) :: lambda1
     real(c_double), intent(in) :: lambda2
     real(c_double), intent(in) :: lambda3
@@ -106,13 +104,13 @@ contains
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
 
-    integer, intent(in) :: num_nodes, dimension_
+    integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    integer, intent(in) :: degree, num_vals
+    integer(c_int), intent(in) :: degree, num_vals
     real(c_double), intent(in) :: param_vals(num_vals, 3)
     real(c_double), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
-    integer :: k, binom_val, index_, new_index
+    integer(c_int) :: k, binom_val, index_, new_index
     real(c_double) :: row_result(num_vals, dimension_)
 
     index_ = num_nodes
@@ -161,13 +159,13 @@ contains
     ! NOTE: This mostly copies evaluate_barycentric_multi but does not just
     !       call it directly. This is to avoid copying param_vals.
 
-    integer, intent(in) :: num_nodes, dimension_
+    integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    integer, intent(in) :: degree, num_vals
+    integer(c_int), intent(in) :: degree, num_vals
     real(c_double), intent(in) :: param_vals(num_vals, 2)
     real(c_double), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
-    integer :: k, binom_val, index_, new_index
+    integer(c_int) :: k, binom_val, index_, new_index
     real(c_double) :: row_result(num_vals, dimension_)
     real(c_double) :: lambda1_vals(num_vals)
 
@@ -215,12 +213,12 @@ contains
        num_nodes, dimension_, nodes, degree, new_nodes) &
        bind(c, name='jacobian_both')
 
-    integer, intent(in) :: num_nodes, dimension_
+    integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    integer, intent(in) :: degree
+    integer(c_int), intent(in) :: degree
     real(c_double), intent(out) :: new_nodes(num_nodes - degree - 1, 2 * dimension_)
     ! Variables outside of signature.
-    integer :: index_, i, j, k, num_vals
+    integer(c_int) :: index_, i, j, k, num_vals
 
     index_ = 1
     i = 1
@@ -248,9 +246,9 @@ contains
        num_nodes, nodes, degree, num_vals, param_vals, evaluated) &
        bind(c, name='jacobian_det')
 
-    integer, intent(in) :: num_nodes
+    integer(c_int), intent(in) :: num_nodes
     real(c_double), intent(in) :: nodes(num_nodes, 2)
-    integer, intent(in) :: degree, num_vals
+    integer(c_int), intent(in) :: degree, num_vals
     real(c_double), intent(in) :: param_vals(num_vals, 2)
     real(c_double), intent(out) :: evaluated(num_vals)
     ! Variables outside of signature.

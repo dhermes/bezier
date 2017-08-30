@@ -12,7 +12,7 @@
 
 module curve
 
-  use iso_c_binding, only: c_double
+  use iso_c_binding, only: c_double, c_int
   use types, only: dp
   implicit none
   private
@@ -28,16 +28,16 @@ contains
 
     ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
 
-    integer, intent(in) :: degree, dimension_
+    integer(c_int), intent(in) :: degree, dimension_
     real(c_double), intent(in) :: nodes(degree + 1, dimension_)
-    integer, intent(in) :: num_vals
+    integer(c_int), intent(in) :: num_vals
     real(c_double), intent(in) :: lambda1(num_vals)
     real(c_double), intent(in) :: lambda2(num_vals)
     real(c_double), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
-    integer :: i, j
+    integer(c_int) :: i, j
     real(c_double) :: lambda2_pow(num_vals)
-    integer :: binom_val
+    integer(c_int) :: binom_val
 
     lambda2_pow = 1.0_dp
     binom_val = 1
@@ -70,9 +70,9 @@ contains
 
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
-    integer, intent(in) :: degree, dimension_
+    integer(c_int), intent(in) :: degree, dimension_
     real(c_double), intent(in) :: nodes(degree + 1, dimension_)
-    integer, intent(in) :: num_vals
+    integer(c_int), intent(in) :: num_vals
     real(c_double), intent(in) :: s_vals(num_vals)
     real(c_double), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.
@@ -89,13 +89,13 @@ contains
 
     ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
 
-    integer, intent(in) :: degree, dimension_
+    integer(c_int), intent(in) :: degree, dimension_
     real(c_double), intent(in) :: nodes(degree + 1, dimension_)
     real(c_double), intent(in) :: start, end_
     real(c_double), intent(out) :: new_nodes(degree + 1, dimension_)
     ! Variables outside of signature.
     real(c_double) :: workspace(degree, dimension_, degree + 1)
-    integer :: index_, curr_size, j
+    integer(c_int) :: index_, curr_size, j
     real(c_double) :: minus_start, minus_end
 
     minus_start = 1.0_dp - start
@@ -132,7 +132,7 @@ contains
        dimension_, nodes, start, end_, new_nodes) &
        bind(c, name='specialize_curve_quadratic')
 
-    integer, intent(in) :: dimension_
+    integer(c_int), intent(in) :: dimension_
     real(c_double), intent(in) :: nodes(3, dimension_)
     real(c_double), intent(in) :: start, end_
     real(c_double), intent(out) :: new_nodes(3, dimension_)
@@ -163,7 +163,7 @@ contains
        new_nodes, true_start, true_end) &
        bind(c, name='specialize_curve')
 
-    integer, intent(in) :: degree, dimension_
+    integer(c_int), intent(in) :: degree, dimension_
     real(c_double), intent(in) :: nodes(degree + 1, dimension_)
     real(c_double), intent(in) :: start, end_, curve_start, curve_end
     real(c_double), intent(out) :: new_nodes(degree + 1, dimension_)
@@ -194,7 +194,7 @@ contains
        bind(c, name='evaluate_hodograph')
 
     real(c_double), intent(in) :: s
-    integer, intent(in) :: degree, dimension_
+    integer(c_int), intent(in) :: degree, dimension_
     real(c_double), intent(in) :: nodes(degree + 1, dimension_)
     real(c_double), intent(out) :: hodograph(1, dimension_)
     ! Variables outside of signature.

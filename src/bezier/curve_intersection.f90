@@ -12,7 +12,7 @@
 
 module curve_intersection
 
-  use iso_c_binding, only: c_double
+  use iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   use helpers, only: cross_product, bbox, wiggle_interval
   use curve, only: evaluate_multi, evaluate_hodograph
@@ -22,9 +22,9 @@ module curve_intersection
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, bbox_line_intersect
 
-  integer, parameter :: BoxIntersectionType_INTERSECTION = 0
-  integer, parameter :: BoxIntersectionType_TANGENT = 1
-  integer, parameter :: BoxIntersectionType_DISJOINT = 2
+  integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
+  integer(c_int), parameter :: BoxIntersectionType_TANGENT = 1
+  integer(c_int), parameter :: BoxIntersectionType_DISJOINT = 2
 
 contains
 
@@ -32,7 +32,7 @@ contains
        degree, dimension_, nodes, error) &
        bind(c, name='linearization_error')
 
-    integer, intent(in) :: degree, dimension_
+    integer(c_int), intent(in) :: degree, dimension_
     real(c_double), intent(in) :: nodes(degree + 1, dimension_)
     real(c_double), intent(out) :: error
     ! Variables outside of signature.
@@ -61,7 +61,7 @@ contains
     real(c_double), intent(in) :: start1(1, 2)
     real(c_double), intent(in) :: end1(1, 2)
     real(c_double), intent(out) :: s, t
-    logical(1), intent(out) :: success
+    logical(c_bool), intent(out) :: success
     ! Variables outside of signature.
     real(c_double) :: delta0(1, 2)
     real(c_double) :: delta1(1, 2)
@@ -91,10 +91,10 @@ contains
        bind(c, name='newton_refine_intersect')
 
     real(c_double), intent(in) :: s
-    integer, intent(in) :: degree1
+    integer(c_int), intent(in) :: degree1
     real(c_double), intent(in) :: nodes1(degree1 + 1, 2)
     real(c_double), intent(in) :: t
-    integer, intent(in) :: degree2
+    integer(c_int), intent(in) :: degree2
     real(c_double), intent(in) :: nodes2(degree2 + 1, 2)
     real(c_double), intent(out) :: new_s, new_t
     ! Variables outside of signature.
@@ -144,11 +144,11 @@ contains
        num_nodes1, nodes1, num_nodes2, nodes2, enum_) &
        bind(c, name='bbox_intersect')
 
-    integer, intent(in) :: num_nodes1
+    integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(num_nodes1, 2)
-    integer, intent(in) :: num_nodes2
+    integer(c_int), intent(in) :: num_nodes2
     real(c_double), intent(in) :: nodes2(num_nodes2, 2)
-    integer, intent(out) :: enum_
+    integer(c_int), intent(out) :: enum_
     ! Variables outside of signature.
     real(c_double) :: left1, right1, bottom1, top1
     real(c_double) :: left2, right2, bottom2, top2
@@ -178,7 +178,7 @@ contains
     real(c_double), intent(in) :: end0(1, 2)
     real(c_double), intent(in) :: start1(1, 2)
     real(c_double), intent(in) :: end1(1, 2)
-    logical(1), intent(out) :: result_
+    logical(c_bool), intent(out) :: result_
     ! Variables outside of signature.
     real(c_double) :: delta0(1, 2)
     real(c_double) :: val1, val2, val3
@@ -232,20 +232,20 @@ contains
     real(c_double), intent(in) :: error1, start1, end1
     real(c_double), intent(in) :: start_node1(1, 2)
     real(c_double), intent(in) :: end_node1(1, 2)
-    integer, intent(in) :: degree1
+    integer(c_int), intent(in) :: degree1
     real(c_double), intent(in) :: nodes1(degree1 + 1, 2)
     real(c_double), intent(in) :: error2, start2, end2
     real(c_double), intent(in) :: start_node2(1, 2)
     real(c_double), intent(in) :: end_node2(1, 2)
-    integer, intent(in) :: degree2
+    integer(c_int), intent(in) :: degree2
     real(c_double), intent(in) :: nodes2(degree2 + 1, 2)
     real(c_double), intent(out) :: refined_s, refined_t
-    logical(1), intent(out) :: does_intersect
-    integer, intent(out) :: py_exc
+    logical(c_bool), intent(out) :: does_intersect
+    integer(c_int), intent(out) :: py_exc
     ! Variables outside of signature.
     real(c_double) :: s, t
-    integer :: enum_
-    logical(1) :: success
+    integer(c_int) :: enum_
+    logical(c_bool) :: success
 
     py_exc = 0
     call segment_intersection( &
@@ -327,17 +327,17 @@ contains
        num_nodes, nodes, line_start, line_end, enum_) &
        bind(c, name='bbox_line_intersect')
 
-    integer, intent(in) :: num_nodes
+    integer(c_int), intent(in) :: num_nodes
     real(c_double), intent(in) :: nodes(num_nodes, 2)
     real(c_double), intent(in) :: line_start(1, 2)
     real(c_double), intent(in) :: line_end(1, 2)
-    integer, intent(out) :: enum_
+    integer(c_int), intent(out) :: enum_
     ! Variables outside of signature.
     real(c_double) :: left, right, bottom, top
     real(c_double) :: segment_start(1, 2)
     real(c_double) :: segment_end(1, 2)
     real(c_double) :: s_curr, t_curr
-    logical(1) :: success
+    logical(c_bool) :: success
 
     call bbox(num_nodes, nodes, left, right, bottom, top)
 
@@ -428,7 +428,7 @@ contains
   pure function in_interval(value_, start, end) result(predicate)
 
     real(c_double), intent(in) :: value_, start, end
-    logical(1) :: predicate
+    logical(c_bool) :: predicate
 
     predicate = (start <= value_) .AND. (value_ <= end)
 

@@ -12,7 +12,7 @@
 
 module helpers
 
-  use iso_c_binding, only: c_double
+  use iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   implicit none
   private
@@ -36,7 +36,7 @@ contains
        num_nodes, nodes, left, right, bottom, top) &
        bind(c, name='bbox')
 
-    integer, intent(in) :: num_nodes
+    integer(c_int), intent(in) :: num_nodes
     real(c_double), intent(in) :: nodes(num_nodes, 2)
     real(c_double), intent(out) :: left, right, bottom, top
     ! Variables outside of signature.
@@ -57,7 +57,7 @@ contains
 
     real(c_double), intent(in) :: value_
     real(c_double), intent(out) :: result_
-    logical(1), intent(out) :: success
+    logical(c_bool), intent(out) :: success
 
     success = .TRUE.
     if (-0.5_dp**45 < value_ .AND. value_ < 0.5_dp**45) then
