@@ -24,8 +24,8 @@ void segment_intersection(
     double *start0, double *end0, double *start1, double *end1,
     double *s, double *t, bool *success);
 void newton_refine_intersect(
-    double *s, double *nodes1, int *degree1,
-    double *t, double *nodes2, int *degree2,
+    double *s, int *degree1, double *nodes1,
+    double *t, int *degree2, double *nodes2,
     double *new_s, double *new_t);
 void bbox_intersect(
     int *num_nodes1, double *nodes1,

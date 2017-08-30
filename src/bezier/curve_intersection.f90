@@ -86,17 +86,15 @@ contains
   end subroutine segment_intersection
 
   subroutine newton_refine_intersect( &
-       s, nodes1, degree1, t, nodes2, degree2, new_s, new_t) &
+       s, degree1, nodes1, t, degree2, nodes2, new_s, new_t) &
        bind(c, name='newton_refine_intersect')
 
-    !f2py integer intent(hide), depend(nodes1) :: degree1 = size(nodes1, 1) - 1
-    !f2py integer intent(hide), depend(nodes2) :: degree2 = size(nodes2, 1) - 1
     real(dp), intent(in) :: s
+    integer, intent(in) :: degree1
     real(dp), intent(in) :: nodes1(degree1 + 1, 2)
-    integer :: degree1
     real(dp), intent(in) :: t
+    integer, intent(in) :: degree2
     real(dp), intent(in) :: nodes2(degree2 + 1, 2)
-    integer :: degree2
     real(dp), intent(out) :: new_s, new_t
     ! Variables outside of signature.
     real(dp) :: param(1)
@@ -307,7 +305,7 @@ contains
     ! Perform one step of Newton iteration to refine the computed
     ! values of s and t.
     call newton_refine_intersect( &
-         s, nodes1, degree1, t, nodes2, degree2, refined_s, refined_t)
+         s, degree1, nodes1, t, degree2, nodes2, refined_s, refined_t)
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then

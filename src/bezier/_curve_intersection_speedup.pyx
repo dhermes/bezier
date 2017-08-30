@@ -76,11 +76,11 @@ def newton_refine(
 
     bezier._curve_intersection.newton_refine_intersect(
         &s,
-        &nodes1[0, 0],
         &degree1,
+        &nodes1[0, 0],
         &t,
-        &nodes2[0, 0],
         &degree2,
+        &nodes2[0, 0],
         &new_s,
         &new_t,
     )

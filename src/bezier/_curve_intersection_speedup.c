@@ -2781,12 +2781,12 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
  */
   __pyx_v_degree2 = (__pyx_v_num_nodes2 - 1);
 
-  /* "bezier/_curve_intersection_speedup.pyx":79
- *     bezier._curve_intersection.newton_refine_intersect(
+  /* "bezier/_curve_intersection_speedup.pyx":80
  *         &s,
- *         &nodes1[0, 0],             # <<<<<<<<<<<<<<
  *         &degree1,
+ *         &nodes1[0, 0],             # <<<<<<<<<<<<<<
  *         &t,
+ *         &degree2,
  */
   __pyx_t_8 = 0;
   __pyx_t_9 = 0;
@@ -2801,15 +2801,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
   } else if (unlikely(__pyx_t_9 >= __pyx_v_nodes1.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 79, __pyx_L1_error)
+    __PYX_ERR(0, 80, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":82
- *         &degree1,
+  /* "bezier/_curve_intersection_speedup.pyx":83
  *         &t,
- *         &nodes2[0, 0],             # <<<<<<<<<<<<<<
  *         &degree2,
+ *         &nodes2[0, 0],             # <<<<<<<<<<<<<<
  *         &new_s,
+ *         &new_t,
  */
   __pyx_t_10 = 0;
   __pyx_t_11 = 0;
@@ -2824,7 +2824,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
   } else if (unlikely(__pyx_t_11 >= __pyx_v_nodes2.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 82, __pyx_L1_error)
+    __PYX_ERR(0, 83, __pyx_L1_error)
   }
 
   /* "bezier/_curve_intersection_speedup.pyx":77
@@ -2832,9 +2832,9 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
  *
  *     bezier._curve_intersection.newton_refine_intersect(             # <<<<<<<<<<<<<<
  *         &s,
- *         &nodes1[0, 0],
+ *         &degree1,
  */
-  newton_refine_intersect((&__pyx_v_s), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_degree1), (&__pyx_v_t), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_degree2), (&__pyx_v_new_s), (&__pyx_v_new_t));
+  newton_refine_intersect((&__pyx_v_s), (&__pyx_v_degree1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_t), (&__pyx_v_degree2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_new_s), (&__pyx_v_new_t));
 
   /* "bezier/_curve_intersection_speedup.pyx":88
  *     )
