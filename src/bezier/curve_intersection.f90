@@ -143,10 +143,9 @@ contains
        num_nodes1, nodes1, num_nodes2, nodes2, enum_) &
        bind(c, name='bbox_intersect')
 
-    !f2py integer intent(hide), depend(nodes1) :: num_nodes1 = size(nodes1, 1)
-    !f2py integer intent(hide), depend(nodes2) :: num_nodes2 = size(nodes2, 1)
-    integer :: num_nodes1, num_nodes2
+    integer, intent(in) :: num_nodes1
     real(dp), intent(in) :: nodes1(num_nodes1, 2)
+    integer, intent(in) :: num_nodes2
     real(dp), intent(in) :: nodes2(num_nodes2, 2)
     integer, intent(out) :: enum_
     ! Variables outside of signature.
@@ -224,23 +223,21 @@ contains
   end subroutine parallel_different
 
   subroutine from_linearized( &
-       error1, start1, end1, start_node1, end_node1, nodes1, degree1, &
-       error2, start2, end2, start_node2, end_node2, nodes2, degree2, &
+       error1, start1, end1, start_node1, end_node1, degree1, nodes1, &
+       error2, start2, end2, start_node2, end_node2, degree2, nodes2, &
        refined_s, refined_t, does_intersect, py_exc) &
        bind(c, name='from_linearized')
 
-    !f2py integer intent(hide), depend(nodes1) :: degree1 = size(nodes1, 1) - 1
-    !f2py integer intent(hide), depend(nodes2) :: degree2 = size(nodes2, 1) - 1
     real(dp), intent(in) :: error1, start1, end1
     real(dp), intent(in) :: start_node1(1, 2)
     real(dp), intent(in) :: end_node1(1, 2)
-    real(dp), intent(in) :: nodes1(degree1 + 1, 2)
     integer, intent(in) :: degree1
+    real(dp), intent(in) :: nodes1(degree1 + 1, 2)
     real(dp), intent(in) :: error2, start2, end2
     real(dp), intent(in) :: start_node2(1, 2)
     real(dp), intent(in) :: end_node2(1, 2)
-    real(dp), intent(in) :: nodes2(degree2 + 1, 2)
     integer, intent(in) :: degree2
+    real(dp), intent(in) :: nodes2(degree2 + 1, 2)
     real(dp), intent(out) :: refined_s, refined_t
     logical(1), intent(out) :: does_intersect
     integer, intent(out) :: py_exc
