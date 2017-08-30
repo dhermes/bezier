@@ -17,6 +17,11 @@ import unittest
 
 
 PLATFORM_SYSTEM = platform.system().lower()
+CHECK_PKG_MSG = """\
+path     = {!r}
+suffix   = {!r}
+site_pkg = {!r}
+from_egg = {!r}"""
 
 
 class Test_get_include(unittest.TestCase):
@@ -63,4 +68,7 @@ def _check_pkg_filename(test_case, path, last_segment):
     suffix = _full_suffix(last_segment)
     site_pkg = path.endswith(suffix)
     from_egg = _from_egg(path, last_segment)
-    test_case.assertTrue(site_pkg or from_egg)
+
+    msg = CHECK_PKG_MSG.format(
+        path, suffix, site_pkg, from_egg)
+    test_case.assertTrue(site_pkg or from_egg, msg=msg)
