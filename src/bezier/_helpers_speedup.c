@@ -479,7 +479,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 
 #define __PYX_HAVE__bezier___helpers_speedup
 #define __PYX_HAVE_API__bezier___helpers_speedup
-#include "bezier_helpers.h"
+#include "bezier/helpers.h"
 #include "pythread.h"
 #include <string.h>
 #include <stdlib.h>

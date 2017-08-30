@@ -16,7 +16,7 @@
 from libcpp cimport bool as bool_t
 
 
-cdef extern from "bezier_helpers.h":
+cdef extern from "bezier/helpers.h":
     void cross_product(double *vec0, double *vec1, double *result)
     void bbox(
         int *num_nodes, double *nodes, double *left,

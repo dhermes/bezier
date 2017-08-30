@@ -13,7 +13,7 @@
 """Cython wrapper for ``curve.f90``."""
 
 
-cdef extern from "bezier_curve.h":
+cdef extern from "bezier/curve.h":
     void evaluate_curve_barycentric(
         int *degree, int *dimension, double *nodes, int *num_vals,
         double *lambda1, double *lambda2, double *evaluated)

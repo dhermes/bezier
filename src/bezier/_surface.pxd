@@ -13,7 +13,7 @@
 """Cython wrapper for ``surface.f90``."""
 
 
-cdef extern from "bezier_surface.h":
+cdef extern from "bezier/surface.h":
     void de_casteljau_one_round(
         int *num_nodes, int *dimension, double *nodes, int *degree,
         double *lambda1, double *lambda2, double *lambda3, double *new_nodes)

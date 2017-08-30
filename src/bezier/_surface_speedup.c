@@ -484,7 +484,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include <stdlib.h>
 #include "numpy/arrayobject.h"
 #include "numpy/ufuncobject.h"
-#include "bezier_surface.h"
+#include "bezier/surface.h"
 #include "pythread.h"
 #include "pystate.h"
 #ifdef _OPENMP

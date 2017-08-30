@@ -479,7 +479,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 
 #define __PYX_HAVE__bezier___curve_intersection_speedup
 #define __PYX_HAVE_API__bezier___curve_intersection_speedup
-#include "bezier_curve_intersection.h"
+#include "bezier/curve_intersection.h"
 #include "pythread.h"
 #include <string.h>
 #include <stdlib.h>

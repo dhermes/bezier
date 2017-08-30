@@ -16,7 +16,7 @@
 from libcpp cimport bool as bool_t
 
 
-cdef extern from "bezier_curve_intersection.h":
+cdef extern from "bezier/curve_intersection.h":
     cpdef enum BoxIntersectionType:
         INTERSECTION = 0
         TANGENT = 1
