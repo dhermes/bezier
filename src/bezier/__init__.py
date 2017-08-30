@@ -22,12 +22,7 @@ Plotting utilities are also provided.
    :trim:
 """
 
-import os
-
-try:
-    import pkg_resources
-except ImportError:  # pragma: NO COVER
-    pkg_resources = None
+import pkg_resources
 
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
@@ -49,9 +44,6 @@ __all__ = [
     'get_lib',
     'Surface',
 ]
-
-
-_PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def get_include():
@@ -133,10 +125,7 @@ def get_include():
         str: ``include`` directory that contains header files for the
         ``libbezier`` Fortran library.
     """
-    if pkg_resources is None:
-        return os.path.join(_PACKAGE_ROOT, 'include')
-    else:
-        return pkg_resources.resource_filename('bezier', 'include')
+    return pkg_resources.resource_filename('bezier', 'include')
 
 
 def get_lib():
@@ -153,7 +142,4 @@ def get_lib():
         str: ``lib`` directory that contains static libraries for the
         ``libbezier`` Fortran library.
     """
-    if pkg_resources is None:
-        return os.path.join(_PACKAGE_ROOT, 'lib')
-    else:
-        return pkg_resources.resource_filename('bezier', 'lib')
+    return pkg_resources.resource_filename('bezier', 'lib')

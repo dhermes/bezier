@@ -14,8 +14,6 @@ import os
 import sys
 import unittest
 
-import mock
-
 
 class Test_get_include(unittest.TestCase):
 
@@ -25,13 +23,7 @@ class Test_get_include(unittest.TestCase):
 
         return bezier.get_include()
 
-    def test_with_pkg_resources(self):
-        include_directory = self._call_function_under_test()
-        postfix = _postfix('include')
-        self.assertTrue(include_directory.endswith(postfix))
-
-    @mock.patch('bezier.pkg_resources', new=None)
-    def test_without_pkg_resources(self):
+    def test_it(self):
         include_directory = self._call_function_under_test()
         postfix = _postfix('include')
         self.assertTrue(include_directory.endswith(postfix))
@@ -45,13 +37,7 @@ class Test_get_lib(unittest.TestCase):
 
         return bezier.get_lib()
 
-    def test_with_pkg_resources(self):
-        lib_directory = self._call_function_under_test()
-        postfix = _postfix('lib')
-        self.assertTrue(lib_directory.endswith(postfix))
-
-    @mock.patch('bezier.pkg_resources', new=None)
-    def test_without_pkg_resources(self):
+    def test_it(self):
         lib_directory = self._call_function_under_test()
         postfix = _postfix('lib')
         self.assertTrue(lib_directory.endswith(postfix))
