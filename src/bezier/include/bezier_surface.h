@@ -17,8 +17,8 @@ void evaluate_barycentric(
     int *num_nodes, int *dimension, double *nodes, int *degree,
     double *lambda1, double *lambda2, double *lambda3, double *point);
 void evaluate_barycentric_multi(
-    int *num_nodes, double *nodes, int *degree, int *num_vals,
-    double *param_vals, int *dimension, double *evaluated);
+    int *num_nodes, int *dimension, double *nodes, int *degree,
+    int *num_vals, double *param_vals, double *evaluated);
 void evaluate_cartesian_multi(
     int *num_nodes, double *nodes, int *degree, int *num_vals,
     double *param_vals, int *dimension, double *evaluated);

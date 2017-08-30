@@ -80,11 +80,11 @@ def evaluate_barycentric_multi(
 
     bezier._surface.evaluate_barycentric_multi(
         &num_nodes,
+        &dimension,
         &nodes[0, 0],
         &degree,
         &num_vals,
         &param_vals[0, 0],
-        &dimension,
         &evaluated[0, 0],
     )
 

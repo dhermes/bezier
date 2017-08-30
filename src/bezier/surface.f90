@@ -97,26 +97,20 @@ contains
     param_vals(1, 2) = lambda2
     param_vals(1, 3) = lambda3
     call evaluate_barycentric_multi( &
-         num_nodes, nodes, degree, 1, param_vals, dimension_, point)
+         num_nodes, dimension_, nodes, degree, 1, param_vals, point)
 
   end subroutine evaluate_barycentric
 
   subroutine evaluate_barycentric_multi( &
-       num_nodes, nodes, degree, num_vals, param_vals, dimension_, evaluated) &
+       num_nodes, dimension_, nodes, degree, num_vals, param_vals, evaluated) &
        bind(c, name='evaluate_barycentric_multi')
 
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(param_vals) :: num_vals &
-    !f2py     = size(param_vals, 1)
-    integer :: num_nodes
-    integer :: dimension_
+    integer, intent(in) :: num_nodes, dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
-    integer :: degree
-    integer :: num_vals
+    integer, intent(in) :: degree, num_vals
     real(dp), intent(in) :: param_vals(num_vals, 3)
     real(dp), intent(out) :: evaluated(num_vals, dimension_)
     ! Variables outside of signature.

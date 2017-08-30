@@ -3549,9 +3549,9 @@ static PyObject *__pyx_pf_6bezier_16_surface_speedup_4evaluate_barycentric_multi
   __pyx_v_evaluated = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "bezier/_surface_speedup.pyx":83
- *     bezier._surface.evaluate_barycentric_multi(
+  /* "bezier/_surface_speedup.pyx":84
  *         &num_nodes,
+ *         &dimension,
  *         &nodes[0, 0],             # <<<<<<<<<<<<<<
  *         &degree,
  *         &num_vals,
@@ -3569,15 +3569,15 @@ static PyObject *__pyx_pf_6bezier_16_surface_speedup_4evaluate_barycentric_multi
   } else if (unlikely(__pyx_t_13 >= __pyx_v_nodes.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 83, __pyx_L1_error)
+    __PYX_ERR(0, 84, __pyx_L1_error)
   }
 
-  /* "bezier/_surface_speedup.pyx":86
+  /* "bezier/_surface_speedup.pyx":87
  *         &degree,
  *         &num_vals,
  *         &param_vals[0, 0],             # <<<<<<<<<<<<<<
- *         &dimension,
  *         &evaluated[0, 0],
+ *     )
  */
   __pyx_t_14 = 0;
   __pyx_t_15 = 0;
@@ -3592,12 +3592,12 @@ static PyObject *__pyx_pf_6bezier_16_surface_speedup_4evaluate_barycentric_multi
   } else if (unlikely(__pyx_t_15 >= __pyx_v_param_vals.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 86, __pyx_L1_error)
+    __PYX_ERR(0, 87, __pyx_L1_error)
   }
 
   /* "bezier/_surface_speedup.pyx":88
+ *         &num_vals,
  *         &param_vals[0, 0],
- *         &dimension,
  *         &evaluated[0, 0],             # <<<<<<<<<<<<<<
  *     )
  *
@@ -3623,9 +3623,9 @@ static PyObject *__pyx_pf_6bezier_16_surface_speedup_4evaluate_barycentric_multi
  *
  *     bezier._surface.evaluate_barycentric_multi(             # <<<<<<<<<<<<<<
  *         &num_nodes,
- *         &nodes[0, 0],
+ *         &dimension,
  */
-  evaluate_barycentric_multi((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_param_vals.data) + __pyx_t_14)) ) + __pyx_t_15 * __pyx_v_param_vals.strides[1]) )))), (&__pyx_v_dimension), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
+  evaluate_barycentric_multi((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_param_vals.data) + __pyx_t_14)) ) + __pyx_t_15 * __pyx_v_param_vals.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
 
   /* "bezier/_surface_speedup.pyx":91
  *     )
