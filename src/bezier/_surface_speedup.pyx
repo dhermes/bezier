@@ -33,10 +33,10 @@ def de_casteljau_one_round(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
-        &degree,
         &lambda1,
         &lambda2,
         &lambda3,
+        &degree,
         &new_nodes[0, 0],
     )
 

@@ -24,21 +24,18 @@ module surface
 contains
 
   subroutine de_casteljau_one_round( &
-       num_nodes, dimension_, nodes, degree, &
-       lambda1, lambda2, lambda3, new_nodes) &
+       num_nodes, dimension_, nodes, &
+       lambda1, lambda2, lambda3, degree, new_nodes) &
        bind(c, name='de_casteljau_one_round')
 
     ! NOTE: This is de Casteljau on a Bezier surface / triangle.
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    integer :: num_nodes
-    integer :: dimension_
+    integer, intent(in) :: num_nodes, dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
-    integer :: degree
     real(dp), intent(in) :: lambda1
     real(dp), intent(in) :: lambda2
     real(dp), intent(in) :: lambda3
+    integer, intent(in) :: degree
     real(dp), intent(out) :: new_nodes(num_nodes - degree - 1, dimension_)
     ! Variables outside of signature.
     integer :: index_

@@ -326,8 +326,7 @@ contains
        num_nodes, nodes, line_start, line_end, enum_) &
        bind(c, name='bbox_line_intersect')
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    integer :: num_nodes
+    integer, intent(in) :: num_nodes
     real(dp), intent(in) :: nodes(num_nodes, 2)
     real(dp), intent(in) :: line_start(1, 2)
     real(dp), intent(in) :: line_end(1, 2)
