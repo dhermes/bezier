@@ -12,7 +12,6 @@
 
 import os
 import platform
-import sys
 import unittest
 
 
@@ -53,22 +52,13 @@ class Test_get_lib(unittest.TestCase):
         _check_pkg_filename(self, lib_directory, 'lib')
 
 
-def _full_suffix(last_segment):
-    python_version = 'python{}.{}'.format(*sys.version_info[:2])
-    return os.path.join(
-        'lib', python_version, 'site-packages', 'bezier', last_segment)
-
-
-def _from_egg(path, last_segment):
-    suffix = os.path.join('bezier', last_segment)
-    return path.endswith(suffix) and '.egg' in path
-
-
 def _check_pkg_filename(test_case, path, last_segment):
-    suffix = _full_suffix(last_segment)
-    site_pkg = path.endswith(suffix)
-    from_egg = _from_egg(path, last_segment)
+    short = os.path.join('bezier', last_segment)
+    from_egg = path.endswith(short) and '.egg' in path
+
+    verbose = os.path.join('site-packages', short)
+    site_pkg = path.endswith(verbose)
 
     msg = CHECK_PKG_MSG.format(
-        path, suffix, site_pkg, from_egg)
+        path, verbose, site_pkg, from_egg)
     test_case.assertTrue(site_pkg or from_egg, msg=msg)
