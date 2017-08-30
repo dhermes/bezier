@@ -21,7 +21,7 @@ Plotting utilities are also provided.
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
-.. testsetup:: show-headers, show-lib
+.. testsetup:: show-headers, show-lib, show-pxd
 
    import os
    import textwrap
@@ -31,23 +31,28 @@ Plotting utilities are also provided.
    def sort_key(name):
        return name.lower().lstrip('_')
 
-   def tree(directory):
+   def tree(directory, suffix=None):
        names = sorted(os.listdir(directory), key=sort_key)
        parts = []
        for name in names:
            path = os.path.join(directory, name)
            if os.path.isdir(path):
-               sub_part = tree(path)
-               parts.append(name + os.path.sep)
-               parts.append(textwrap.indent(sub_part, '  '))
+               sub_part = tree(path, suffix=suffix)
+               if sub_part is not None:
+                   parts.append(name + os.path.sep)
+                   parts.append(textwrap.indent(sub_part, '  '))
            else:
-               parts.append(name)
+               if suffix is None or name.endswith(suffix):
+                   parts.append(name)
 
-       return '\n'.join(parts)
+       if parts:
+           return '\n'.join(parts)
+       else:
+           return None
 
-   def print_tree(directory):
+   def print_tree(directory, suffix=None):
        print(os.path.basename(directory) + os.path.sep)
-       full_tree = tree(directory)
+       full_tree = tree(directory, suffix=suffix)
        print(textwrap.indent(full_tree, '  '))
 """
 
@@ -122,6 +127,25 @@ def get_include():
            helpers.h
            surface.h
          bezier.h
+
+    In addition to the header files, several ``cimport``-able ``.pxd``
+    Cython declaration files are provided:
+
+    .. doctest:: show-pxd
+
+       >>> include_directory = bezier.get_include()
+       >>> bezier_directory = os.path.dirname(include_directory)
+       >>> bezier_directory
+       '.../site-packages/bezier'
+       >>> print_tree(bezier_directory, suffix='.pxd')
+       bezier/
+         _curve.pxd
+         _curve_intersection.pxd
+         _helpers.pxd
+         _surface.pxd
+
+    For example, ``cimport bezier._curve`` will provide all the functions
+    in ``bezier/curve.h``.
 
     Returns:
         str: ``include`` directory that contains header files for the
