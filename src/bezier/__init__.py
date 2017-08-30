@@ -54,6 +54,9 @@ Plotting utilities are also provided.
        print(os.path.basename(directory) + os.path.sep)
        full_tree = tree(directory, suffix=suffix)
        print(textwrap.indent(full_tree, '  '))
+
+
+   include_directory = bezier.get_include()
 """
 
 import pkg_resources
@@ -133,7 +136,6 @@ def get_include():
 
     .. doctest:: show-pxd
 
-       >>> include_directory = bezier.get_include()
        >>> bezier_directory = os.path.dirname(include_directory)
        >>> bezier_directory
        '.../site-packages/bezier'
