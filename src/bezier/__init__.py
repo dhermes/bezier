@@ -28,8 +28,21 @@ Plotting utilities are also provided.
 
    import bezier
 
+
+   class Path(object):
+
+       def __init__(self, path):
+           # Hack to make the doctest work just fine on Windows.
+           self.path = path
+
+       def __repr__(self):
+           posix_path = self.path.replace(os.path.sep, '/')
+           return repr(posix_path)
+
+
    def sort_key(name):
        return name.lower().lstrip('_')
+
 
    def tree(directory, suffix=None):
        names = sorted(os.listdir(directory), key=sort_key)
@@ -50,13 +63,41 @@ Plotting utilities are also provided.
        else:
            return None
 
+
    def print_tree(directory, suffix=None):
+       assert isinstance(directory, Path)
+       directory = directory.path
        print(os.path.basename(directory) + os.path.sep)
        full_tree = tree(directory, suffix=suffix)
        print(textwrap.indent(full_tree, '  '))
 
 
-   include_directory = bezier.get_include()
+   def parent_directory(directory):
+       assert isinstance(directory, Path)
+       return Path(os.path.dirname(directory.path))
+
+
+   # Monkey-patch functions to return a ``Path``.
+   original_get_include = bezier.get_include
+   original_get_lib = bezier.get_lib
+
+   def get_include():
+       return Path(original_get_include())
+
+   def get_lib():
+       return Path(original_get_lib())
+
+   bezier.get_include = get_include
+   bezier.get_lib = get_lib
+
+   # Allow this value to be re-used.
+   include_directory = get_include()
+
+.. testcleanup:: show-headers, show-lib, show-pxd
+
+   # Restore the monkey-patched functions.
+   bezier.get_include = original_get_include
+   bezier.get_lib = original_get_lib
 """
 
 import pkg_resources
@@ -136,7 +177,7 @@ def get_include():
 
     .. doctest:: show-pxd
 
-       >>> bezier_directory = os.path.dirname(include_directory)
+       >>> bezier_directory = parent_directory(include_directory)
        >>> bezier_directory
        '.../site-packages/bezier'
        >>> print_tree(bezier_directory, suffix='.pxd')
