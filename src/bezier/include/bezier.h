@@ -10,7 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef BEZIER_H
+#define BEZIER_H
+
 #include "bezier/curve.h"
 #include "bezier/curve_intersection.h"
 #include "bezier/helpers.h"
 #include "bezier/surface.h"
+
+#endif /* BEZIER_H */

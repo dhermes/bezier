@@ -10,6 +10,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef BEZIER_CURVE_H
+#define BEZIER_CURVE_H
+
 void evaluate_curve_barycentric(
     int *degree, int *dimension, double *nodes, int *num_vals,
     double *lambda1, double *lambda2, double *evaluated);
@@ -28,3 +31,5 @@ void specialize_curve(
     double *true_start, double *true_end);
 void evaluate_hodograph(
     double *s, int *degree, int *dimension, double *nodes, double *hodograph);
+
+#endif /* BEZIER_CURVE_H */

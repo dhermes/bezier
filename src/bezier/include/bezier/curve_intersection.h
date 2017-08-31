@@ -10,6 +10,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef BEZIER_CURVE_INTERSECTION_H
+#define BEZIER_CURVE_INTERSECTION_H
+
 #include <stdbool.h>
 
 enum BoxIntersectionType {
@@ -43,3 +46,5 @@ void from_linearized(
 void bbox_line_intersect(
     int *num_nodes, double *nodes, double *line_start, double *line_end,
     int *enum_);
+
+#endif /* BEZIER_CURVE_INTERSECTION_H */

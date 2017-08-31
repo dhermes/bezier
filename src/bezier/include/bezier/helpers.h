@@ -10,6 +10,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef BEZIER_HELPERS_H
+#define BEZIER_HELPERS_H
+
 #include <stdbool.h>
 
 void cross_product(double *vec0, double *vec1, double *result);
@@ -17,3 +20,5 @@ void bbox(
     int *num_nodes, double *nodes, double *left,
     double *right, double *bottom, double *top);
 void wiggle_interval(double *value, double *result, bool *success);
+
+#endif /* BEZIER_HELPERS_H */

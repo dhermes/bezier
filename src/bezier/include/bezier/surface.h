@@ -10,6 +10,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef BEZIER_SURFACE_H
+#define BEZIER_SURFACE_H
+
 void de_casteljau_one_round(
     int *num_nodes, int *dimension, double *nodes, int *degree,
     double *lambda1, double *lambda2, double *lambda3, double *new_nodes);
@@ -28,3 +31,5 @@ void jacobian_both(
 void jacobian_det(
     int *num_nodes, double *nodes, int *degree,
     int *num_vals, double *param_vals, double *evaluated);
+
+#endif /* BEZIER_SURFACE_H */
