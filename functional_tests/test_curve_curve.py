@@ -165,7 +165,7 @@ INCORRECT_COUNT = {
     GEOMETRIC: (
         31,
     ),
-    ALGEBRAIC: {},
+    ALGEBRAIC: (),
 }
 
 
