@@ -15,10 +15,18 @@
 
 #include <stdbool.h>
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 void cross_product(double *vec0, double *vec1, double *result);
 void bbox(
     int *num_nodes, double *nodes, double *left,
     double *right, double *bottom, double *top);
 void wiggle_interval(double *value, double *result, bool *success);
+
+#if defined (__cplusplus)
+}
+#endif
 
 #endif /* BEZIER_HELPERS_H */

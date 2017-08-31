@@ -15,6 +15,10 @@
 
 #include <stdbool.h>
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 enum BoxIntersectionType {
   INTERSECTION = 0,
   TANGENT = 1,
@@ -46,5 +50,9 @@ void from_linearized(
 void bbox_line_intersect(
     int *num_nodes, double *nodes, double *line_start, double *line_end,
     int *enum_);
+
+#if defined (__cplusplus)
+}
+#endif
 
 #endif /* BEZIER_CURVE_INTERSECTION_H */

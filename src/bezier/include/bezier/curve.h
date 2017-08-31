@@ -13,6 +13,10 @@
 #ifndef BEZIER_CURVE_H
 #define BEZIER_CURVE_H
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 void evaluate_curve_barycentric(
     int *degree, int *dimension, double *nodes, int *num_vals,
     double *lambda1, double *lambda2, double *evaluated);
@@ -31,5 +35,9 @@ void specialize_curve(
     double *true_start, double *true_end);
 void evaluate_hodograph(
     double *s, int *degree, int *dimension, double *nodes, double *hodograph);
+
+#if defined (__cplusplus)
+}
+#endif
 
 #endif /* BEZIER_CURVE_H */
