@@ -17,6 +17,7 @@ from __future__ import print_function
 import os
 import pkg_resources
 import platform
+import subprocess
 import sys
 
 import setuptools
@@ -56,6 +57,10 @@ EXTRAS_REQUIRE = {
 }
 DESCRIPTION = (
     u'Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects')
+FORTRAN_LIBRARY_PREFIX = 'libraries: ='
+GFORTRAN_ERR_MSG = '``gfortran`` default library path not found.'
+GFORTRAN_BAD_PATH = '``gfortran`` library path {} is not a directory.'
+MAC_OS_X = 'darwin'
 EXTENSION_NAMES = (
     'helpers',
     'curve',
@@ -71,6 +76,82 @@ def is_installed(requirement):
         return False
     else:
         return True
+
+
+def gfortran_search_path(library_dirs):
+    """Get the library directory paths for ``gfortran``.
+
+    This is a helper for :func:`patch_library_dirs`. Looks for
+    ``libraries: =`` in the output of ``gfortran -print-search-dirs`` and
+    then parses the paths. If this fails for any reason, this method will
+    print an error and return ``library_dirs``.
+
+    Args:
+        library_dirs (List[str]): Existing library directories.
+
+    Returns:
+        List[str]: The library directories for ``gfortran``.
+    """
+    cmd = ('gfortran', '-print-search-dirs')
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    return_code = process.wait()
+
+    # Bail out if the command failed.
+    if return_code != 0:
+        return library_dirs
+
+    cmd_output = process.stdout.read().decode('utf-8')
+
+    # Find single line starting with ``libraries: ``.
+    search_lines = cmd_output.strip().split('\n')
+    library_lines = [
+        line[len(FORTRAN_LIBRARY_PREFIX):]
+        for line in search_lines
+        if line.startswith(FORTRAN_LIBRARY_PREFIX)
+    ]
+    if len(library_lines) != 1:
+        print(GFORTRAN_ERR_MSG, file=sys.stderr)
+        return library_dirs
+
+    # Go through each library in the ``libraries: = ...`` line.
+    library_line = library_lines[0]
+    accepted = set(library_dirs)
+    for part in library_line.split(':'):
+        full_path = os.path.abspath(part.strip())
+
+        if os.path.isdir(full_path):
+            accepted.add(full_path)
+        else:
+            # Ignore anything that isn't a path.
+            msg = GFORTRAN_BAD_PATH.format(full_path)
+            print(msg, file=sys.stderr)
+
+    return sorted(accepted)
+
+
+def patch_library_dirs(f90_compiler):
+    """Patch up ``f90_compiler.library_dirs``.
+
+    This is needed on Mac OS X for a Homebrew installed ``gfortran``, which
+    doesn't come with the correct library directories by default (this is
+    likely unintentional).
+
+    Args:
+        f90_compiler (numpy.distutils.fcompiler.FCompiler): A Fortran compiler
+            instance.
+    """
+    from numpy.distutils.fcompiler import gnu
+
+    # Only Mac OS X.
+    if sys.platform != MAC_OS_X:
+        return
+    # Only ``gfortran``.
+    if not isinstance(f90_compiler, gnu.Gnu95FCompiler):
+        return
+
+    library_dirs = f90_compiler.library_dirs
+    # ``library_dirs`` is a list (i.e. mutable), so update in place.
+    library_dirs[:] = gfortran_search_path(library_dirs)
 
 
 def get_f90_compiler():
@@ -89,6 +170,8 @@ def get_f90_compiler():
 
     dist = numpy.distutils.core.get_distribution(always=True)
     f90_compiler.customize(dist)
+
+    patch_library_dirs(f90_compiler)
 
     return f90_compiler
 
