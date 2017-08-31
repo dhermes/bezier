@@ -52,7 +52,8 @@ Plotting utilities are also provided.
            if os.path.isdir(path):
                sub_part = tree(path, suffix=suffix)
                if sub_part is not None:
-                   parts.append(name + os.path.sep)
+                   # NOTE: We **always** use posix separator.
+                   parts.append(name + '/')
                    parts.append(textwrap.indent(sub_part, '  '))
            else:
                if suffix is None or name.endswith(suffix):
@@ -67,7 +68,8 @@ Plotting utilities are also provided.
    def print_tree(directory, suffix=None):
        assert isinstance(directory, Path)
        directory = directory.path
-       print(os.path.basename(directory) + os.path.sep)
+       # NOTE: We **always** use posix separator.
+       print(os.path.basename(directory) + '/')
        full_tree = tree(directory, suffix=suffix)
        print(textwrap.indent(full_tree, '  '))
 
