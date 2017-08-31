@@ -76,6 +76,7 @@ TOCTREE = """\
    Bezier Package <reference/bezier>
    curve-curve-intersection
    algorithm-helpers
+   native-libraries
    development
 
 """
