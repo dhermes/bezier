@@ -379,16 +379,17 @@ def polynomial_sign(poly_surface, degree):
 def _2x2_det(mat):
     r"""Compute the determinant of a 2x2 matrix.
 
-    This is "needed" because :func:`numpy.linalg.det` rounds off
-    answers when it doesn't need to. For example:
+    This is "needed" because :func:`numpy.linalg.det` uses a more generic
+    determinant implementation which can introduce rounding even when the
+    simple :math:`a d - b c` will suffice. For example:
 
     .. doctest:: 2-by-2
 
        >>> import numpy as np
        >>> mat = np.asfortranarray([
-       ...     [-24.0, 3.0],
-       ...     [-27.0, 0.0],
-       ... ]) / 16.0
+       ...     [-1.5   , 0.1875],
+       ...     [-1.6875, 0.0   ],
+       ... ])
        >>> actual_det = -mat[0, 1] * mat[1, 0]
        >>> np_det = np.linalg.det(mat)
        >>> np.abs(actual_det - np_det) == np.spacing(actual_det)

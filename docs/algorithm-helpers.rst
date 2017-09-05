@@ -28,6 +28,8 @@ This is to help with the exposition of the computation and
    :members:
 .. autofunction:: bezier._surface_helpers.newton_refine
 .. autofunction:: bezier._surface_helpers.classify_intersection
+.. autofunction:: bezier._surface_helpers._jacobian_det
+.. autofunction:: bezier._surface_helpers._2x2_det
 .. autofunction:: bezier._implicitization.bezier_roots
 .. autofunction:: bezier._implicitization.lu_companion
 .. autofunction:: bezier._implicitization.bezier_value_check
