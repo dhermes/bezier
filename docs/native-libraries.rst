@@ -153,6 +153,8 @@ Cython declaration files are provided:
 For example, ``cimport bezier._curve`` will provide all the functions
 in ``bezier/curve.h``.
 
+.. _static-library:
+
 Static Library
 --------------
 
@@ -234,3 +236,6 @@ and library directories:
    ... )
    >>> extension
    <setuptools.extension.Extension('wrapper') at 0x...>
+
+Typically, depending on ``libbezier`` implies (transitive) dependence on
+``libgfortran``. See the warning in :ref:`static-library` for more details.
