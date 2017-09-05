@@ -11,9 +11,9 @@ Adding Features
 
 In order to add a feature to ``bezier``:
 
-#. **Discuss**: `File an issue`_ to notify maintainers of the
+#. **Discuss**: `File an issue`_ to notify maintainer(s) of the
    proposed changes (i.e. just sending a large PR with a finished
-   feature may catch maintainers off guard).
+   feature may catch maintainer(s) off guard).
 
 #. **Add tests**: The feature must work fully on the following
    CPython versions: 2.7, 3.5 and 3.6 on both UNIX and Windows.
@@ -40,7 +40,7 @@ We recommend using ``nox`` (`nox-automation`_) to run unit tests:
    $ nox -s unit_tests  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
-manage dependencies):
+manage dependencies or build extensions):
 
 .. code-block:: console
 
@@ -73,7 +73,9 @@ make sure you have a valid Fortran compiler and run
 
 .. code-block:: console
 
-   $ make
+   $ python setup.py build_ext --inplace
+   $ # OR
+   $ python setup.py build_ext --inplace --fcompiler=${FC}
 
 Test Coverage
 =============
@@ -107,13 +109,17 @@ marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
 
-   $ PYTHONPATH=src/ python -m pytest tests/ --ignore-slow
+   $ nox -s "unit_tests(python_version='2.7')" -- --ignore-slow
+   $ nox -s "unit_tests(python_version='3.5')" -- --ignore-slow
+   $ nox -s "unit_tests(python_version='3.6')" -- --ignore-slow
+   $ nox -s  unit_tests                        -- --ignore-slow
 
 These slow tests have been identified via:
 
 .. code-block:: console
 
-   $ PYTHONPATH=src/ python -m pytest tests/ --durations=10
+   $ ...
+   $ nox -s "unit_tests(python_version='3.6')" -- --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 
@@ -138,7 +144,7 @@ To run the functional tests:
    $ nox -s "functional(python_version='3.5')"
    $ nox -s "functional(python_version='3.6')"
    $ nox -s "functional(python_version='pypy')"
-   $ nox -s functional  # Run all versions
+   $ nox -s  functional  # Run all versions
    $ # OR
    $ export PYTHONPATH=src/:functional_tests/
    $ python2.7 -m pytest functional_tests/
@@ -324,20 +330,39 @@ which tests are run, see the `CircleCI config`_ and the
 
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
 .. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
-.. _CircleCI config: https://github.com/dhermes/bezier/blob/master/circle.yml
+.. _CircleCI config: https://github.com/dhermes/bezier/blob/master/.circleci/config.yml
 .. _AppVeyor config: https://github.com/dhermes/bezier/blob/master/.appveyor.yml
 
 **********************
 Deploying New Versions
 **********************
 
-New versions are deployed to `PyPI`_ automatically every time
-a new tag is pushed. To allow `twine`_ to authenticate (which
-is needed to upload) the ``TWINE_USERNAME`` and ``TWINE_PASSWORD``
-environment variables are set in the `CircleCI environment`_.
+New versions are pushed to `PyPI`_ manually after a ``git`` tag is
+created. The process is manual (rather than automated) for several
+reasons:
+
+* The documentation and README (which acts as the landing page text on
+  PyPI) will be updated with links scoped to the versioned tag (rather
+  than ``master``).
+* Several badges on the documentation landing page (``index.rst``) are
+  irrelevant to a fixed version (such as the "latest" version of the
+  package).
+* The build badges in the README and the documentation will be
+  changed to point to a fixed (and passing) build that has already
+  completed (will be the build that occurred when the tag was pushed). If
+  the builds pushed to PyPI automatically, a build would need to
+  link to itself **while** being run.
+* Wheels need be built for Linux, Windows and OS X. This process
+  is **becoming** better, but is still scattered across many
+  different build systems. Each wheel will be pushed directly to
+  PyPI via `twine`_.
+* The release will be manually pushed to `TestPyPI`_ so the landing
+  page can be visually inspected and the package can be installed
+  from TestPyPI rather than from a local file.
 
 .. _PyPI: https://pypi.python.org/pypi/bezier
 .. _twine: https://packaging.python.org/distributing/
+.. _TestPyPI: https://packaging.python.org/guides/using-testpypi/
 
 Supported Python Versions
 =========================

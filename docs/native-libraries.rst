@@ -200,8 +200,9 @@ The actual library ``libbezier`` is included as a single static library
 
    .. code-block:: console
 
-       python setup.py build
-       python setup.py build --fcompiler=${FC}
+      $ python setup.py build_ext
+      $ # OR
+      $ python setup.py build_ext --fcompiler=${FC}
 
 .. _pip: https://pip.pypa.io
 .. _Python wheel: https://wheel.readthedocs.io
