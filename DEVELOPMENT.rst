@@ -37,7 +37,7 @@ We recommend using ``nox`` (`nox-automation`_) to run unit tests:
    $ nox -s "unit_tests(python_version='3.5')"
    $ nox -s "unit_tests(python_version='3.6')"
    $ nox -s "unit_tests(python_version='pypy')"
-   $ nox -s unit_tests  # Run all versions
+   $ nox -s  unit_tests  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
 manage dependencies or build extensions):
