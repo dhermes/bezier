@@ -116,11 +116,11 @@ DOCS_IMG = """\
 """
 PYPI_IMG = """
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
-   :target: https://pypi.python.org/pypi/bezier
+   :target: https://pypi.org/project/bezier/
    :alt: PyPI Latest"""
 VERSIONS_IMG = """
 .. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
-   :target: https://pypi.python.org/pypi/bezier
+   :target: https://pypi.org/project/bezier/
    :alt: Package Versions"""
 ZENODO_IMG = """
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg

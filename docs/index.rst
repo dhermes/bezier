@@ -210,10 +210,10 @@ details, see `the LICENSE`_.
    :target: https://ci.appveyor.com/project/dhermes/bezier
    :alt: AppVeyor CI Build
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
-   :target: https://pypi.python.org/pypi/bezier
+   :target: https://pypi.org/project/bezier/
    :alt: PyPI Latest
 .. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
-   :target: https://pypi.python.org/pypi/bezier
+   :target: https://pypi.org/project/bezier/
    :alt: Package Versions
 .. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch=master
    :target: https://coveralls.io/github/dhermes/bezier?branch=master

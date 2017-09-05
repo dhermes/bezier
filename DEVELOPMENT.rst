@@ -250,7 +250,7 @@ Python 3.5).
 .. _PEP257: https://www.python.org/dev/peps/pep-0257/
 .. _Google style: https://google.github.io/styleguide/pyguide.html#Comments__body
 .. _Napoleon: https://sphinxcontrib-napoleon.readthedocs.io/en/latest/
-.. _sphinx-docstring-typing: https://pypi.python.org/pypi/sphinx-docstring-typing
+.. _sphinx-docstring-typing: https://pypi.org/project/sphinx-docstring-typing/
 .. _type annotation: https://docs.python.org/3/library/typing.html
 
 *************
@@ -360,7 +360,7 @@ reasons:
   page can be visually inspected and the package can be installed
   from TestPyPI rather than from a local file.
 
-.. _PyPI: https://pypi.python.org/pypi/bezier
+.. _PyPI: https://pypi.org/project/bezier/
 .. _twine: https://packaging.python.org/distributing/
 .. _TestPyPI: https://packaging.python.org/guides/using-testpypi/
 
