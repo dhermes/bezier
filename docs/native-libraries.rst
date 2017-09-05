@@ -176,6 +176,36 @@ The actual library ``libbezier`` is included as a single static library
    ``bezier`` can be installed in virtual environments, in different
    Python versions, as an egg or wheel, and so on.
 
+.. warning::
+
+   When ``bezier`` is installed via `pip`_, it will likely be installed
+   from a `Python wheel`_. These wheels will be pre-built and the Fortran
+   extensions will be compiled with `GNU Fortran`_ (``gfortran``). As a
+   result, ``libbezier`` will depend on ``libgfortran``.
+
+   This can be problematic due to version conflicts, ABI incompatibility,
+   a desire to use a different Fortran compiler (e.g. ``ifort``) and a host
+   of other reasons. Some of the standard `tooling`_ for building wheels
+   will try to address this by adding a ``bezier/.libs`` directory with a
+   version of ``libgfortran`` that is compatible with ``libbezier``, e.g.
+
+   .. code-block:: rest
+
+      .../site-packages/bezier/.libs/libgfortran-ed201abd.so.3.0.0
+
+   If present, this directory can be used when linking. If that is not
+   feasible, then ``bezier`` can be built from source via:
+
+   .. code-block:: console
+
+       python setup.py build
+       python setup.py build --fcompiler=${FC}
+
+.. _pip: https://pip.pypa.io
+.. _Python wheel: https://wheel.readthedocs.io
+.. _GNU Fortran: https://gcc.gnu.org/fortran/
+.. _tooling: https://github.com/pypa/auditwheel
+
 Building a Python Extension
 ---------------------------
 
