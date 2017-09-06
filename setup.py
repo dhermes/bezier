@@ -26,7 +26,7 @@ import setuptools
 import setuptools.command.build_ext
 
 
-VERSION = '0.4.0.dev1'  # Also in codemeta.json
+VERSION = '0.5.0'  # Also in codemeta.json
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 TEMPLATE_FILENAME = os.path.join(PACKAGE_ROOT, 'RELEASE_README.rst.template')
 NUMPY_MESSAGE = """\
