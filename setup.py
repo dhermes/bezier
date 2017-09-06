@@ -397,7 +397,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         static_lib_dir = os.path.join(self.build_lib, 'bezier', 'lib')
         compile_fortran_obj_files(self.F90_COMPILER, static_lib_dir)
 
-        result = super(BuildFortranThenExt, self).run()
+        result = setuptools.command.build_ext.build_ext.run(self)
         self.save_journal()
         return result
 
