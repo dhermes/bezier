@@ -14,6 +14,7 @@
 
 from __future__ import print_function
 
+import argparse
 import collections
 import distutils.ccompiler
 import os
@@ -63,6 +64,7 @@ DESCRIPTION = (
 FORTRAN_LIBRARY_PREFIX = 'libraries: ='
 GFORTRAN_ERR_MSG = '``gfortran`` default library path not found.'
 GFORTRAN_BAD_PATH = '``gfortran`` library path {} is not a directory.'
+BAD_JOURNAL = 'Saving journal failed with {!r}.'
 MAC_OS_X = 'darwin'
 # NOTE: This represents the Fortran module dependency graph. Order is
 #       important both of the keys and of the dependencies that are in
@@ -265,6 +267,38 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
 
     # Will be set at runtime, not import time.
     F90_COMPILER = None
+    JOURNAL_FILE = None
+    commands = None  # Will be set per-instance.
+
+    @classmethod
+    def set_journal(cls):
+        """Parse the "--journal" filename from CLI arguments.
+
+        If ``--journal`` is specified on the command line, then this
+        will parse that filename and patch ``sys.argv`` to remove the
+        value.
+
+        If ``pip`` is used, then the argument will need to be passed
+        through as ``--install-option="--journal=..."``.
+        """
+        if cls.JOURNAL_FILE is not None:
+            return
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--journal', help='Journal filename.')
+
+        args, unknown = parser.parse_known_args()
+        if args.journal is None:
+            return
+
+        patched_args = [sys.argv[0]] + unknown
+        sys.argv[::] = patched_args
+        cls.JOURNAL_FILE = args.journal
+
+    @classmethod
+    def has_journal(cls):
+        cls.set_journal()
+        return cls.JOURNAL_FILE is not None
 
     @classmethod
     def set_f90_compiler(cls):
@@ -281,16 +315,98 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         cls.set_f90_compiler()
         return cls.F90_COMPILER.libraries, cls.F90_COMPILER.library_dirs
 
+    def start_journaling(self):
+        """Capture calls to the system by compilers.
+
+        See: https://github.com/numpy/numpy/blob/v1.13.1/\
+        numpy/distutils/ccompiler.py#L154
+
+        Intercepts all calls to ``CCompiler.spawn`` and keeps the
+        arguments around to be stored in the local ``commands``
+        instance attribute.
+        """
+        import numpy.distutils.ccompiler
+
+        if not self.has_journal():
+            return
+
+        self.commands = []
+
+        def journaled_spawn(patched_self, cmd, display=None):
+            self.commands.append(cmd)
+            return numpy.distutils.ccompiler.CCompiler_spawn(
+                patched_self, cmd, display=None)
+
+        numpy.distutils.ccompiler.replace_method(
+            distutils.ccompiler.CCompiler,
+            'spawn',
+            journaled_spawn,
+        )
+
+    @staticmethod
+    def _command_to_text(command):
+        # NOTE: This assumes, but doesn't check that the command has 3
+        #       or more arguments.
+        first_line = '$ {} \\'
+        middle_line = '>   {} \\'
+        last_line = '>   {}'
+
+        parts = [first_line.format(command[0])]
+        for argument in command[1:-1]:
+            parts.append(middle_line.format(argument))
+        parts.append(last_line.format(command[-1]))
+
+        return '\n'.join(parts)
+
+    def _commands_to_text(self):
+        separator = '-' * 40
+
+        parts = [separator]
+        for command in self.commands:
+            command_text = self._command_to_text(command)
+            parts.extend([command_text, separator])
+
+        return '\n'.join(parts)
+
+    def save_journal(self):
+        """Save journaled commands to file.
+
+        If there is no active journal, does nothing.
+
+        If saving the commands to a file fails, a message will be printed to
+        STDERR but the failure will be swallowed so that the extension can
+        be built successfully.
+        """
+        if self.commands is None:
+            return
+
+        # NOTE: We assume but don't check that both ``commands`` and
+        #       ``JOURNAL_FILE`` will be set / unset (i.e. in the same state).
+        try:
+            as_text = self._commands_to_text()
+            with open(self.JOURNAL_FILE, 'w') as file_obj:
+                file_obj.write(as_text)
+        except Exception as exc:
+            msg = BAD_JOURNAL.format(exc)
+            print(msg, file=sys.stderr)
+
     def run(self):
         self.set_f90_compiler()
+        self.start_journaling()
 
         static_lib_dir = os.path.join(self.build_lib, 'bezier', 'lib')
         compile_fortran_obj_files(self.F90_COMPILER, static_lib_dir)
 
-        return super(BuildFortranThenExt, self).run()
+        result = super(BuildFortranThenExt, self).run()
+        self.save_journal()
+        return result
 
 
 def setup():
+    # Call ``set_journal`` before ``setup()`` so that the ``--journal``
+    # flag can be "patched" out of ``sys.argv`` before running any
+    # commands.
+    BuildFortranThenExt.set_journal()
     setuptools.setup(
         name='bezier',
         version=VERSION,
