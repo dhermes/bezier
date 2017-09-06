@@ -1,1 +1,202 @@
-MISSING
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/types.f90 \
+>   -o \
+>   src/bezier/types.o
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/helpers.f90 \
+>   -o \
+>   src/bezier/helpers.o
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/curve.f90 \
+>   -o \
+>   src/bezier/curve.o
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/surface.f90 \
+>   -o \
+>   src/bezier/surface.o
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/curve_intersection.f90 \
+>   -o \
+>   src/bezier/curve_intersection.o
+----------------------------------------
+$ ar \
+>   -cr \
+>   build/lib.linux-x86_64-3.6/bezier/lib/libbezier.a \
+>   src/bezier/types.o \
+>   src/bezier/helpers.o \
+>   src/bezier/curve.o \
+>   src/bezier/surface.o \
+>   src/bezier/curve_intersection.o
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -Wno-unused-result \
+>   -Wsign-compare \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -fPIC \
+>   -I/var/code/bezier/.nox/journal-circleci/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/usr/local/include/python3.6m \
+>   -c \
+>   src/bezier/_helpers_speedup.c \
+>   -o \
+>   build/temp.linux-x86_64-3.6/src/bezier/_helpers_speedup.o
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -shared \
+>   build/temp.linux-x86_64-3.6/src/bezier/_helpers_speedup.o \
+>   src/bezier/types.o \
+>   src/bezier/helpers.o \
+>   -L/usr/local/lib \
+>   -lgfortran \
+>   -lpython3.6m \
+>   -o \
+>   build/lib.linux-x86_64-3.6/bezier/_helpers_speedup.cpython-36m-x86_64-linux-gnu.so
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -Wno-unused-result \
+>   -Wsign-compare \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -fPIC \
+>   -I/var/code/bezier/.nox/journal-circleci/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/usr/local/include/python3.6m \
+>   -c \
+>   src/bezier/_curve_speedup.c \
+>   -o \
+>   build/temp.linux-x86_64-3.6/src/bezier/_curve_speedup.o
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -shared \
+>   build/temp.linux-x86_64-3.6/src/bezier/_curve_speedup.o \
+>   src/bezier/types.o \
+>   src/bezier/curve.o \
+>   -L/usr/local/lib \
+>   -lgfortran \
+>   -lpython3.6m \
+>   -o \
+>   build/lib.linux-x86_64-3.6/bezier/_curve_speedup.cpython-36m-x86_64-linux-gnu.so
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -Wno-unused-result \
+>   -Wsign-compare \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -fPIC \
+>   -I/var/code/bezier/.nox/journal-circleci/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/usr/local/include/python3.6m \
+>   -c \
+>   src/bezier/_surface_speedup.c \
+>   -o \
+>   build/temp.linux-x86_64-3.6/src/bezier/_surface_speedup.o
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -shared \
+>   build/temp.linux-x86_64-3.6/src/bezier/_surface_speedup.o \
+>   src/bezier/types.o \
+>   src/bezier/curve.o \
+>   src/bezier/surface.o \
+>   -L/usr/local/lib \
+>   -lgfortran \
+>   -lpython3.6m \
+>   -o \
+>   build/lib.linux-x86_64-3.6/bezier/_surface_speedup.cpython-36m-x86_64-linux-gnu.so
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -Wno-unused-result \
+>   -Wsign-compare \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -fPIC \
+>   -I/var/code/bezier/.nox/journal-circleci/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/usr/local/include/python3.6m \
+>   -c \
+>   src/bezier/_curve_intersection_speedup.c \
+>   -o \
+>   build/temp.linux-x86_64-3.6/src/bezier/_curve_intersection_speedup.o
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -shared \
+>   build/temp.linux-x86_64-3.6/src/bezier/_curve_intersection_speedup.o \
+>   src/bezier/types.o \
+>   src/bezier/helpers.o \
+>   src/bezier/curve.o \
+>   src/bezier/curve_intersection.o \
+>   -L/usr/local/lib \
+>   -lgfortran \
+>   -lpython3.6m \
+>   -o \
+>   build/lib.linux-x86_64-3.6/bezier/_curve_intersection_speedup.cpython-36m-x86_64-linux-gnu.so
+----------------------------------------

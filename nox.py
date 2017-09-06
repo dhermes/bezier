@@ -303,6 +303,9 @@ def benchmark(session, target):
 @nox.session
 @nox.parametrize('machine', ['circleci'])
 def check_journal(session, machine):
+    session.virtualenv_dirname = 'journal-{}'.format(machine)
+    session.interpreter = SINGLE_INTERP
+
     # Get a temporary file where the journal will be written.
     filehandle, journal_filename = tempfile.mkstemp(suffix='-journal.txt')
     os.close(filehandle)
