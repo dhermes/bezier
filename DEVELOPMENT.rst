@@ -77,6 +77,12 @@ make sure you have a valid Fortran compiler and run
    $ # OR
    $ python setup.py build_ext --inplace --fcompiler=${FC}
 
+To actually make sure the correct compiler commands are invoked,
+provide a filename as the ``BEZIER_JOURNAL`` environment variable and
+then the commands invoked will be written there. The ``nox`` session
+``check_journal`` uses this journaling option to verify the commands
+used to compile the extension on CircleCI.
+
 Test Coverage
 =============
 

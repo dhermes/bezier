@@ -204,6 +204,15 @@ The actual library ``libbezier`` is included as a single static library
       $ # OR
       $ python setup.py build_ext --fcompiler=${FC}
 
+   By providing a filename via an environment variable, a "journal" can
+   be stored of the compiler commands invoked to build the extension:
+
+   .. code-block:: console
+
+      $ export BEZIER_JOURNAL=path/to/journal.txt
+      $ python setup.py build_ext
+      $ unset BEZIER_JOURNAL
+
 .. _pip: https://pip.pypa.io
 .. _Python wheel: https://wheel.readthedocs.io
 .. _GNU Fortran: https://gcc.gnu.org/fortran/
