@@ -19,6 +19,9 @@ jobs:
           name: Unit tests in Python 3.6
           command: nox -s "unit_tests(python_version='3.6')"
       - run:
+          name: Unit tests in pypy
+          command: nox -s "unit_tests(python_version='pypy')"
+      - run:
           name: Unit tests AND line coverage in Python 2.7
           command: nox -s cover
       - run:

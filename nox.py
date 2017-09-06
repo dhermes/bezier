@@ -28,13 +28,13 @@ BASE_DEPS = (
     'pytest',
 )
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
+WHEELHOUSE = os.environ.get('WHEELHOUSE')
 DOCS_DEPS = (
     '--requirement',
     os.path.join(NOX_DIR, 'docs', 'requirements.txt'),
 )
 SINGLE_INTERP = 'python3.6'
 PYPY = 'pypy'
-PYPY_NUMPY = 'git+https://bitbucket.org/pypy/numpy.git'
 JOURNAL_PATHS = {
     'circleci': os.path.join('.circleci', 'expected_journal.txt'),
 }
@@ -44,11 +44,20 @@ def get_path(*names):
     return os.path.join(NOX_DIR, *names)
 
 
-def pypy_setup(local_deps):
-    local_deps = list(local_deps)
-    local_deps.remove(NUMPY)
-    local_deps.append(PYPY_NUMPY)
-    local_deps = tuple(local_deps)
+def pypy_setup(local_deps, session):
+    if WHEELHOUSE is not None:
+        # Remove NumPy from dependencies.
+        local_deps = list(local_deps)
+        local_deps.remove(NUMPY)
+        local_deps = tuple(local_deps)
+        # Install from the pre-built wheel.
+        session.install(
+            '--use-wheel',
+            '--no-index',
+            '--find-links',
+            WHEELHOUSE,
+            NUMPY,
+        )
 
     env = {'MATPLOTLIBRC': 'test'}
     return local_deps, env
@@ -94,7 +103,7 @@ def update_generated(session, check):
 def unit_tests(session, python_version):
     if python_version == PYPY:
         session.interpreter = PYPY
-        local_deps, env = pypy_setup(BASE_DEPS)
+        local_deps, env = pypy_setup(BASE_DEPS, session)
     else:
         session.interpreter = 'python{}'.format(python_version)
         local_deps = BASE_DEPS + ('scipy',)
@@ -137,12 +146,12 @@ def cover(session):
 @nox.session
 @nox.parametrize('python_version', ['2.7', '3.5', '3.6', PYPY])
 def functional(session, python_version):
-    local_deps = BASE_DEPS
     if python_version == PYPY:
         session.interpreter = PYPY
-        local_deps, env = pypy_setup(local_deps)
+        local_deps, env = pypy_setup(BASE_DEPS, session)
     else:
         session.interpreter = 'python{}'.format(python_version)
+        local_deps = BASE_DEPS
         env = {}
 
     # Install all test dependencies.

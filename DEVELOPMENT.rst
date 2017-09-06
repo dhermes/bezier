@@ -129,6 +129,32 @@ These slow tests have been identified via:
 
 and then marked with ``pytest.mark.skipif``.
 
+Slow Install
+============
+
+Installing NumPy with `PyPy`_ can take upwards of two minutes,
+which makes it prohibitive to create a new environment for
+testing.
+
+.. _PyPy: https://pypy.org/
+
+In order to avoid this penalty, the ``WHEELHOUSE`` environment
+variable can be used to instruct ``nox`` to install NumPy from
+locally built wheels when installing the ``pypy`` sessions.
+
+To pre-build a NumPy wheel:
+
+.. code-block:: console
+
+   $ pypy -m pip wheel --wheel-dir=${WHEELHOUSE} numpy
+
+The `Docker`_ image for the CircleCI test environment has already
+pre-built this wheel and stored it in the ``/wheelhouse`` directory.
+So, in the `CircleCI environment`_, the ``WHEELHOUSE`` environment
+variable is set to ``/wheelhouse``.
+
+.. _Docker: https://www.docker.com/
+
 ****************
 Functional Tests
 ****************
@@ -334,10 +360,18 @@ Tests are run on `CircleCI`_ and `AppVeyor`_ after every commit. To see
 which tests are run, see the `CircleCI config`_ and the
 `AppVeyor config`_.
 
+On CircleCI, a `Docker`_ image is used to provide fine-grained control over
+the environment. There is a base `python-multi Dockerfile`_ that just has the
+Python versions we test in. The image used in our CircleCI builds (from
+`bezier Dockerfile`_) installs dependencies needed for testing (such as
+``nox`` and NumPy).
+
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
 .. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
 .. _CircleCI config: https://github.com/dhermes/bezier/blob/master/.circleci/config.yml
 .. _AppVeyor config: https://github.com/dhermes/bezier/blob/master/.appveyor.yml
+.. _python-multi Dockerfile: https://github.com/dhermes/bezier/blob/master/scripts/docker/python-multi.Dockerfile
+.. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/master/scripts/docker/bezier.Dockerfile
 
 **********************
 Deploying New Versions
