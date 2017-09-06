@@ -29,7 +29,7 @@ SUCCESS_TEMPLATE = 'Memory usage: {:g}KB.'
 def get_bounds():
     # NOTE: These bounds assume **just** the interpeter is running this code.
     #       When using a test runner like `py.test`, usage goes up by 4-8 KB.
-    if os.getenv('CIRCLECI') == 'true':
+    if os.environ.get('CIRCLECI') == 'true':
         return 28, 41
     else:
         return 28, 32

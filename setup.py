@@ -14,7 +14,6 @@
 
 from __future__ import print_function
 
-import argparse
 import collections
 import distutils.ccompiler
 import os
@@ -65,6 +64,7 @@ FORTRAN_LIBRARY_PREFIX = 'libraries: ='
 GFORTRAN_ERR_MSG = '``gfortran`` default library path not found.'
 GFORTRAN_BAD_PATH = '``gfortran`` library path {} is not a directory.'
 BAD_JOURNAL = 'Saving journal failed with {!r}.'
+JOURNAL_ENV = 'BEZIER_JOURNAL'
 MAC_OS_X = 'darwin'
 # NOTE: This represents the Fortran module dependency graph. Order is
 #       important both of the keys and of the dependencies that are in
@@ -267,38 +267,11 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
 
     # Will be set at runtime, not import time.
     F90_COMPILER = None
-    JOURNAL_FILE = None
-    commands = None  # Will be set per-instance.
 
-    @classmethod
-    def set_journal(cls):
-        """Parse the "--journal" filename from CLI arguments.
-
-        If ``--journal`` is specified on the command line, then this
-        will parse that filename and patch ``sys.argv`` to remove the
-        value.
-
-        If ``pip`` is used, then the argument will need to be passed
-        through as ``--install-option="--journal=..."``.
-        """
-        if cls.JOURNAL_FILE is not None:
-            return
-
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--journal', help='Journal filename.')
-
-        args, unknown = parser.parse_known_args()
-        if args.journal is None:
-            return
-
-        patched_args = [sys.argv[0]] + unknown
-        sys.argv[::] = patched_args
-        cls.JOURNAL_FILE = args.journal
-
-    @classmethod
-    def has_journal(cls):
-        cls.set_journal()
-        return cls.JOURNAL_FILE is not None
+    def __init__(self, *args, **kwargs):
+        setuptools.command.build_ext.build_ext.__init__(self, *args, **kwargs)
+        self.journal_file = os.environ.get(JOURNAL_ENV)
+        self.commands = []
 
     @classmethod
     def set_f90_compiler(cls):
@@ -327,10 +300,8 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         """
         import numpy.distutils.ccompiler
 
-        if not self.has_journal():
+        if self.journal_file is None:
             return
-
-        self.commands = []
 
         def journaled_spawn(patched_self, cmd, display=None):
             self.commands.append(cmd)
@@ -366,6 +337,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             command_text = self._command_to_text(command)
             parts.extend([command_text, separator])
 
+        parts.append('')  # Trailing newline in file.
         return '\n'.join(parts)
 
     def save_journal(self):
@@ -377,14 +349,12 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         STDERR but the failure will be swallowed so that the extension can
         be built successfully.
         """
-        if self.commands is None:
+        if self.journal_file is None:
             return
 
-        # NOTE: We assume but don't check that both ``commands`` and
-        #       ``JOURNAL_FILE`` will be set / unset (i.e. in the same state).
         try:
             as_text = self._commands_to_text()
-            with open(self.JOURNAL_FILE, 'w') as file_obj:
+            with open(self.journal_file, 'w') as file_obj:
                 file_obj.write(as_text)
         except Exception as exc:
             msg = BAD_JOURNAL.format(exc)
@@ -403,10 +373,6 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
 
 
 def setup():
-    # Call ``set_journal`` before ``setup()`` so that the ``--journal``
-    # flag can be "patched" out of ``sys.argv`` before running any
-    # commands.
-    BuildFortranThenExt.set_journal()
     setuptools.setup(
         name='bezier',
         version=VERSION,

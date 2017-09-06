@@ -14,6 +14,7 @@ from __future__ import print_function
 
 import glob
 import os
+import tempfile
 
 import nox
 
@@ -34,6 +35,9 @@ DOCS_DEPS = (
 SINGLE_INTERP = 'python3.6'
 PYPY = 'pypy'
 PYPY_NUMPY = 'git+https://bitbucket.org/pypy/numpy.git'
+JOURNAL_PATHS = {
+    'circleci': os.path.join('.circleci', 'expected_journal.txt'),
+}
 
 
 def get_path(*names):
@@ -294,3 +298,20 @@ def benchmark(session, target):
     session.install('.')
 
     session.run(*run_args, env=functional_env())
+
+
+@nox.session
+@nox.parametrize('machine', ['circleci'])
+def check_journal(session, machine):
+    # Get a temporary file where the journal will be written.
+    filehandle, journal_filename = tempfile.mkstemp(suffix='-journal.txt')
+    os.close(filehandle)
+
+    # Set the journal environment variable and install ``bezier``.
+    session.install(NUMPY)  # Install requirement(s).
+    env = {'BEZIER_JOURNAL': journal_filename}
+    session.run('pip', 'install', '.', env=env)
+
+    # Compare the expected file to the actual results.
+    expected_journal = get_path(JOURNAL_PATHS[machine])
+    session.run('diff', journal_filename, expected_journal)

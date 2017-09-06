@@ -22,23 +22,26 @@ jobs:
           name: Unit tests AND line coverage in Python 2.7
           command: nox -s cover
       - run:
-          name: Build docs
-          command: nox -s docs
+          name: Functional tests in Python 3.6
+          command: nox -s "functional(python_version='3.6')"
       - run:
           name: Run all doctests
           command: nox -s doctest
-      - run:
-          name: Lint code for style issues
-          command: nox -s lint
-      - run:
-          name: Functional tests in Python 3.6
-          command: nox -s "functional(python_version='3.6')"
       - run:
           name: Run memory benchmark
           command: nox -s "benchmark(target='memory')"
       - run:
           name: Run time benchmark
           command: nox -s "benchmark(target='time')"
+      - run:
+          name: Build docs
+          command: nox -s docs
+      - run:
+          name: Lint code for style issues
+          command: nox -s lint
+      - run:
+          name: Check the journaled `build_ext` commands
+          command: nox -s "check_journal(machine='circleci')"
       - deploy:
           name: Upload coverage to coveralls
           command: |

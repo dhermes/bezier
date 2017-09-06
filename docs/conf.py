@@ -150,7 +150,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-ON_READ_THE_DOCS = os.getenv('READTHEDOCS') == 'True'
+ON_READ_THE_DOCS = os.environ.get('READTHEDOCS') == 'True'
 if not ON_READ_THE_DOCS:
     html_theme = 'sphinx_rtd_theme'
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
