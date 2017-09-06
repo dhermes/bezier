@@ -14,6 +14,8 @@
 
 from __future__ import print_function
 
+import collections
+import distutils.ccompiler
 import os
 import pkg_resources
 import platform
@@ -21,6 +23,7 @@ import subprocess
 import sys
 
 import setuptools
+import setuptools.command.build_ext
 
 
 VERSION = '0.4.0.dev1'  # Also in codemeta.json
@@ -61,12 +64,23 @@ FORTRAN_LIBRARY_PREFIX = 'libraries: ='
 GFORTRAN_ERR_MSG = '``gfortran`` default library path not found.'
 GFORTRAN_BAD_PATH = '``gfortran`` library path {} is not a directory.'
 MAC_OS_X = 'darwin'
-EXTENSION_NAMES = (
+# NOTE: This represents the Fortran module dependency graph. Order is
+#       important both of the keys and of the dependencies that are in
+#       each value.
+FORTRAN_MODULES = collections.OrderedDict()
+FORTRAN_MODULES['types'] = ('types',)
+FORTRAN_MODULES['helpers'] = ('types', 'helpers')
+FORTRAN_MODULES['curve'] = ('types', 'curve')
+FORTRAN_MODULES['surface'] = ('types', 'curve', 'surface')
+FORTRAN_MODULES['curve_intersection'] = (
+    'types',
     'helpers',
     'curve',
-    'surface',
     'curve_intersection',
 )
+FORTRAN_SOURCE_FILENAME = os.path.join('src', 'bezier', '{}.f90')
+OBJECT_FILENAME = os.path.join('src', 'bezier', '{}.o')
+SPEEDUP_FILENAME = os.path.join('src', 'bezier', '_{}_speedup.c')
 
 
 def is_installed(requirement):
@@ -155,7 +169,6 @@ def patch_library_dirs(f90_compiler):
 
 
 def get_f90_compiler():
-    import distutils.ccompiler
     import numpy.distutils.core
     import numpy.distutils.fcompiler
 
@@ -176,13 +189,10 @@ def get_f90_compiler():
     return f90_compiler
 
 
-def compile_fortran_obj_files(f90_compiler, bezier_path):
+def compile_fortran_obj_files(f90_compiler, static_lib_dir):
     source_files = [
-        os.path.join(bezier_path, 'types.f90'),
-        os.path.join(bezier_path, 'helpers.f90'),
-        os.path.join(bezier_path, 'curve.f90'),
-        os.path.join(bezier_path, 'surface.f90'),
-        os.path.join(bezier_path, 'curve_intersection.f90'),
+        FORTRAN_SOURCE_FILENAME.format(mod_name)
+        for mod_name in FORTRAN_MODULES
     ]
     obj_files = f90_compiler.compile(
         source_files,
@@ -194,48 +204,39 @@ def compile_fortran_obj_files(f90_compiler, bezier_path):
         depends=[],
     )
 
-    # Create a .a/.lib file.
+    # Create a .a/.lib file (i.e. a static library).
     c_compiler = f90_compiler.c_compiler
-    lib_dir = os.path.join(bezier_path, 'lib')
     c_compiler.create_static_lib(
-        obj_files, 'bezier', output_dir=lib_dir)
-
-    # Split up the object files by module (and dependencies).
-    types_o, helpers_o, curve_o, surface_o, intersection_o = obj_files
-
-    return {
-        'helpers': [types_o, helpers_o],
-        'curve': [types_o, curve_o],
-        'surface': [types_o, curve_o, surface_o],
-        'curve_intersection': [types_o, helpers_o, curve_o, intersection_o],
-    }
+        obj_files, 'bezier', output_dir=static_lib_dir)
 
 
-def _extension_modules(f90_compiler):
+def _extension_modules():
     # NOTE: This assumes is_installed('numpy') has already passed.
     #       H/T to https://stackoverflow.com/a/41575848/1068170
     import numpy as np
 
-    relative_path = os.path.join('src', 'bezier')
-    full_path = os.path.join(PACKAGE_ROOT, relative_path)
-
-    obj_file_map = compile_fortran_obj_files(f90_compiler, full_path)
-
+    libraries, library_dirs = BuildFortranThenExt.get_library_dirs()
     extensions = []
-    path_template = os.path.join(relative_path, '_{}_speedup.c')
-    for name in EXTENSION_NAMES:
+    for name, dependencies in FORTRAN_MODULES.items():
+        if name == 'types':  # No speedup.
+            continue
+
         mod_name = 'bezier._{}_speedup'.format(name)
-        path = path_template.format(name)
+        path = SPEEDUP_FILENAME.format(name)
+        extra_objects = [
+            OBJECT_FILENAME.format(dependency)
+            for dependency in dependencies
+        ]
         extension = setuptools.Extension(
             mod_name,
             [path],
-            extra_objects=obj_file_map[name],
+            extra_objects=extra_objects,
             include_dirs=[
                 np.get_include(),
-                os.path.join(full_path, 'include'),
+                os.path.join('src', 'bezier', 'include'),
             ],
-            libraries=f90_compiler.libraries,
-            library_dirs=f90_compiler.library_dirs,
+            libraries=libraries,
+            library_dirs=library_dirs,
         )
         extensions.append(extension)
 
@@ -243,12 +244,11 @@ def _extension_modules(f90_compiler):
 
 
 def extension_modules():
-    f90_compiler = get_f90_compiler()
     if platform.system().lower() == 'windows':
         print(WINDOWS_MESSAGE, file=sys.stderr)
         return []
-    elif f90_compiler is not None:
-        return _extension_modules(f90_compiler)
+    elif BuildFortranThenExt.has_f90_compiler():
+        return _extension_modules()
     else:
         print(MISSING_F90_MESSAGE, file=sys.stderr)
         return []
@@ -259,6 +259,35 @@ def make_readme():
         template = file_obj.read()
 
     return template.format(version=VERSION)
+
+
+class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
+
+    # Will be set at runtime, not import time.
+    F90_COMPILER = None
+
+    @classmethod
+    def set_f90_compiler(cls):
+        if cls.F90_COMPILER is None:
+            cls.F90_COMPILER = get_f90_compiler()
+
+    @classmethod
+    def has_f90_compiler(cls):
+        cls.set_f90_compiler()
+        return cls.F90_COMPILER is not None
+
+    @classmethod
+    def get_library_dirs(cls):
+        cls.set_f90_compiler()
+        return cls.F90_COMPILER.libraries, cls.F90_COMPILER.library_dirs
+
+    def run(self):
+        self.set_f90_compiler()
+
+        static_lib_dir = os.path.join(self.build_lib, 'bezier', 'lib')
+        compile_fortran_obj_files(self.F90_COMPILER, static_lib_dir)
+
+        return super(BuildFortranThenExt, self).run()
 
 
 def setup():
@@ -301,6 +330,7 @@ def setup():
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
         ),
+        cmdclass={'build_ext': BuildFortranThenExt},
     )
 
 
