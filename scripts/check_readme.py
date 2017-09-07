@@ -25,7 +25,7 @@ _SCRIPTS_DIR = os.path.dirname(__file__)
 _ROOT_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, '..'))
 TEMPLATE_FILE = os.path.join(_ROOT_DIR, 'README.rst.template')
 RELEASE_TEMPLATE_FILE = os.path.join(
-    _ROOT_DIR, 'RELEASE_README.rst.template')
+    _ROOT_DIR, 'README.rst.release.template')
 INDEX_FILE = os.path.join(_ROOT_DIR, 'docs', 'index.rst')
 README_FILE = os.path.join(_ROOT_DIR, 'README.rst')
 RTD_VERSION = 'latest'
@@ -306,7 +306,7 @@ def readme_verify():
 def release_readme_verify():
     """Specialize the template to a PyPI release template.
 
-    Once populated, compare to ``RELEASE_README.rst.template``.
+    Once populated, compare to ``README.rst.release.template``.
 
     Raises:
         ValueError: If the current template doesn't agree with the expected
@@ -343,11 +343,11 @@ def release_readme_verify():
     if contents != expected:
         err_msg = '\n' + get_diff(
             contents, expected,
-            'RELEASE_README.rst.actual',
-            'RELEASE_README.rst.expected')
+            'README.rst.release.actual',
+            'README.rst.release.expected')
         raise ValueError(err_msg)
     else:
-        print('RELEASE_README.rst.template contents are as expected.')
+        print('README.rst.release.template contents are as expected.')
 
 
 def docs_index_verify():
