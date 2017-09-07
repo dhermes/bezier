@@ -27,6 +27,8 @@ TEMPLATE_FILE = os.path.join(_ROOT_DIR, 'README.rst.template')
 RELEASE_TEMPLATE_FILE = os.path.join(
     _ROOT_DIR, 'README.rst.release.template')
 INDEX_FILE = os.path.join(_ROOT_DIR, 'docs', 'index.rst')
+RELEASE_INDEX_FILE = os.path.join(
+    _ROOT_DIR, 'docs', 'index.rst.release.template')
 README_FILE = os.path.join(_ROOT_DIR, 'README.rst')
 RTD_VERSION = 'latest'
 REVISION = 'master'
@@ -115,10 +117,19 @@ DOCS_IMG = """\
    :alt: Documentation Status
 """
 CIRCLECI_BADGE = 'https://circleci.com/gh/dhermes/bezier.svg?style=shield'
+CIRCLECI_BADGE_RELEASE = (
+    'https://cdn.rawgit.com/dhermes/bezier/{version}/'
+    'docs/circleci-passing.svg')
 APPVEYOR_BADGE = (
     'https://ci.appveyor.com/api/projects/status/github/'
     'dhermes/bezier?svg=true')
+APPVEYOR_BADGE_RELEASE = (
+    'https://cdn.rawgit.com/dhermes/bezier/{version}/'
+    'docs/appveyor-passing.svg')
 COVERALLS_BADGE = 'https://coveralls.io/repos/github/dhermes/bezier/badge.svg'
+COVERALLS_BADGE_RELEASE = (
+    'https://s3.amazonaws.com/assets.coveralls.io/'
+    'badges/coveralls_100.svg')
 COVERALLS_PATH = 'github/dhermes/bezier'
 PYPI_IMG = """
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
@@ -313,15 +324,6 @@ def release_readme_verify():
             value specialized from the template.
     """
     version = '{version}'
-    circleci_badge = (
-        'https://cdn.rawgit.com/dhermes/bezier/{version}/'
-        'docs/circleci-passing.svg')
-    appveyor_badge = (
-        'https://cdn.rawgit.com/dhermes/bezier/{version}/'
-        'docs/appveyor-passing.svg')
-    coveralls_badge = (
-        'https://s3.amazonaws.com/assets.coveralls.io/'
-        'badges/coveralls_100.svg')
     expected = populate_readme(
         version,
         version,
@@ -329,11 +331,11 @@ def release_readme_verify():
         pypi_img='',
         versions='\n\n',
         versions_img='',
-        circleci_badge=circleci_badge,
+        circleci_badge=CIRCLECI_BADGE_RELEASE,
         circleci_path='/{circleci_build}',
-        appveyor_badge=appveyor_badge,
+        appveyor_badge=APPVEYOR_BADGE_RELEASE,
         appveyor_path='/build/{appveyor_build}',
-        coveralls_badge=coveralls_badge,
+        coveralls_badge=COVERALLS_BADGE_RELEASE,
         coveralls_path='builds/{coveralls_build}',
     )
 
@@ -350,8 +352,14 @@ def release_readme_verify():
         print('README.rst.release.template contents are as expected.')
 
 
-def docs_index_verify():
-    """Populate the template and compare to ``docs/index.rst``.
+def _index_verify(index_file, **extra_kwargs):
+    """Populate the template and compare to documentation index file.
+
+    Used for both ``docs/index.rst`` and ``docs/index.rst.release.template``.
+
+    Args:
+        index_file (str): Filename to compare against.
+        extra_kwargs (Dict[str, str]): Over-ride for template arguments.
 
     Raises:
         ValueError: If the current ``index.rst`` doesn't agree with the
@@ -360,49 +368,87 @@ def docs_index_verify():
     with open(TEMPLATE_FILE, 'r') as file_obj:
         template = file_obj.read()
 
-    img_prefix = ''
-    extra_links = ''
-    docs_img = ''
-    expected = template.format(
-        code_block1=SPHINX_CODE_BLOCK1,
-        code_block2=SPHINX_CODE_BLOCK2,
-        code_block3=SPHINX_CODE_BLOCK3,
-        testcleanup=TEST_CLEANUP,
-        toctree=TOCTREE,
-        bernstein_basis=BERNSTEIN_BASIS_SPHINX,
-        bezier_defn=BEZIER_DEFN_SPHINX,
-        sum_to_unity=SUM_TO_UNITY_SPHINX,
-        img_prefix=img_prefix,
-        extra_links=extra_links,
-        docs='',
-        docs_img=docs_img,
-        pypi='\n\n|pypi| ',
-        pypi_img=PYPI_IMG,
-        versions='|versions|\n\n',
-        versions_img=VERSIONS_IMG,
-        rtd_version=RTD_VERSION,
-        revision=REVISION,
-        circleci_badge=CIRCLECI_BADGE,
-        circleci_path='',
-        appveyor_badge=APPVEYOR_BADGE,
-        appveyor_path='',
-        coveralls_badge=COVERALLS_BADGE,
-        coveralls_path=COVERALLS_PATH,
-        zenodo='|zenodo|',
-        zenodo_img=ZENODO_IMG,
-        joss=' |JOSS|',
-        joss_img=JOSS_IMG,
-    )
+    template_kwargs = {
+        'code_block1': SPHINX_CODE_BLOCK1,
+        'code_block2': SPHINX_CODE_BLOCK2,
+        'code_block3': SPHINX_CODE_BLOCK3,
+        'testcleanup': TEST_CLEANUP,
+        'toctree': TOCTREE,
+        'bernstein_basis': BERNSTEIN_BASIS_SPHINX,
+        'bezier_defn': BEZIER_DEFN_SPHINX,
+        'sum_to_unity': SUM_TO_UNITY_SPHINX,
+        'img_prefix': '',
+        'extra_links': '',
+        'docs': '',
+        'docs_img': '',
+        'pypi': '\n\n|pypi| ',
+        'pypi_img': PYPI_IMG,
+        'versions': '|versions|\n\n',
+        'versions_img': VERSIONS_IMG,
+        'rtd_version': RTD_VERSION,
+        'revision': REVISION,
+        'circleci_badge': CIRCLECI_BADGE,
+        'circleci_path': '',
+        'appveyor_badge': APPVEYOR_BADGE,
+        'appveyor_path': '',
+        'coveralls_badge': COVERALLS_BADGE,
+        'coveralls_path': COVERALLS_PATH,
+        'zenodo': '|zenodo|',
+        'zenodo_img': ZENODO_IMG,
+        'joss': ' |JOSS|',
+        'joss_img': JOSS_IMG,
+    }
 
-    with open(INDEX_FILE, 'r') as file_obj:
+    template_kwargs.update(**extra_kwargs)
+    expected = template.format(**template_kwargs)
+
+    with open(index_file, 'r') as file_obj:
         contents = file_obj.read()
 
     if contents != expected:
         err_msg = '\n' + get_diff(
-            contents, expected, 'index.rst.actual', 'index.rst.expected')
+            contents, expected,
+            index_file + '.actual', index_file + '.expected')
         raise ValueError(err_msg)
     else:
-        print('docs/index.rst contents are as expected.')
+        rel_name = os.path.relpath(index_file, _ROOT_DIR)
+        msg = '{} contents are as expected.'.format(rel_name)
+        print(msg)
+
+
+def docs_index_verify():
+    """Populate the template and compare to ``docs/index.rst``.
+
+    Raises:
+        ValueError: If the current ``index.rst`` doesn't agree with the
+            expected value computed from the template.
+    """
+    _index_verify(INDEX_FILE)
+
+
+def release_docs_index_verify():
+    """Populate template and compare to ``docs/index.rst.release.template``.
+
+    Raises:
+        ValueError: If the current ``index.rst.release.template`` doesn't
+            agree with the expected value computed from the template.
+    """
+    version = '{version}'
+    _index_verify(
+        RELEASE_INDEX_FILE,
+        pypi='',
+        pypi_img='',
+        versions='\n\n',
+        versions_img='',
+        rtd_version=version,
+        revision=version,
+        circleci_badge=CIRCLECI_BADGE_RELEASE,
+        circleci_path='/{circleci_build}',
+        appveyor_badge=APPVEYOR_BADGE_RELEASE,
+        appveyor_path='/build/{appveyor_build}',
+        coveralls_badge=COVERALLS_BADGE_RELEASE,
+        coveralls_path='builds/{coveralls_build}',
+    )
 
 
 def main():
@@ -410,6 +456,7 @@ def main():
     readme_verify()
     release_readme_verify()
     docs_index_verify()
+    release_docs_index_verify()
 
 
 if __name__ == '__main__':
