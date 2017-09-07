@@ -38,19 +38,19 @@ that uses the `Bernstein basis`_:
 
 .. math::
 
-   b_{j, n} = \binom{n}{j} s^j (1 - s)^{n - j}
+   b_{{j, n}} = \binom{{n}}{{j}} s^j (1 - s)^{{n - j}}
 
 to define a curve as a linear combination:
 
 .. math::
 
-   B(s) = \sum_{j = 0}^n b_{j, n} \cdot v_j.
+   B(s) = \sum_{{j = 0}}^n b_{{j, n}} \cdot v_j.
 
 This comes from the fact that the weights sum to one:
 
 .. math::
 
-   b_{0, n} + b_{1, n} + \cdots + b_{n, n} =
+   b_{{0, n}} + b_{{1, n}} + \cdots + b_{{n, n}} =
        \left(s + (1 - s)\right)^n = 1.
 
 This can be generalized to higher order by considering three, four, etc.

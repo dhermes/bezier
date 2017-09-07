@@ -32,14 +32,14 @@ import re
 
 
 _SCRIPTS_DIR = os.path.dirname(__file__)
-_ROOT_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, '..'))
+_ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
 TEMPLATE_FILE = os.path.join(_ROOT_DIR, 'README.rst.template')
-RELEASE_TEMPLATE_FILE = os.path.join(
+README_FILE = os.path.join(_ROOT_DIR, 'README.rst')
+RELEASE_README_FILE = os.path.join(
     _ROOT_DIR, 'README.rst.release.template')
 INDEX_FILE = os.path.join(_ROOT_DIR, 'docs', 'index.rst')
 RELEASE_INDEX_FILE = os.path.join(
     _ROOT_DIR, 'docs', 'index.rst.release.template')
-README_FILE = os.path.join(_ROOT_DIR, 'README.rst')
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst.template')
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst')
 RTD_VERSION = 'latest'
@@ -351,7 +351,7 @@ def release_readme_verify():
         coveralls_path='builds/{coveralls_build}',
     )
 
-    with open(RELEASE_TEMPLATE_FILE, 'r') as file_obj:
+    with open(RELEASE_README_FILE, 'r') as file_obj:
         contents = file_obj.read()
 
     if contents != expected:
@@ -372,11 +372,15 @@ def _index_verify(index_file, **extra_kwargs):
     Args:
         index_file (str): Filename to compare against.
         extra_kwargs (Dict[str, str]): Over-ride for template arguments.
+            One **special** keyword is ``side_effect``, which can be used
+            to update the template output after the fact.
 
     Raises:
         ValueError: If the current ``index.rst`` doesn't agree with the
             expected value computed from the template.
     """
+    side_effect = extra_kwargs.pop('side_effect', None)
+
     with open(TEMPLATE_FILE, 'r') as file_obj:
         template = file_obj.read()
 
@@ -413,6 +417,8 @@ def _index_verify(index_file, **extra_kwargs):
 
     template_kwargs.update(**extra_kwargs)
     expected = template.format(**template_kwargs)
+    if side_effect is not None:
+        expected = side_effect(expected)
 
     with open(index_file, 'r') as file_obj:
         contents = file_obj.read()
@@ -438,6 +444,27 @@ def docs_index_verify():
     _index_verify(INDEX_FILE)
 
 
+def release_docs_side_effect(content):
+    """Updates the template so that curly braces are escaped correctly.
+
+    Args:
+        content (str): The template for ``docs/index.rst.release.template``.
+
+    Returns:
+        str: The updated template with properly escaped curly braces.
+    """
+    # First replace **all** curly braces.
+    result = content.replace('{', '{{').replace('}', '}}')
+
+    # Then reset the actual template arguments.
+    result = result.replace('{{version}}', '{version}')
+    result = result.replace('{{circleci_build}}', '{circleci_build}')
+    result = result.replace('{{appveyor_build}}', '{appveyor_build}')
+    result = result.replace('{{coveralls_build}}', '{coveralls_build}')
+
+    return result
+
+
 def release_docs_index_verify():
     """Populate template and compare to ``docs/index.rst.release.template``.
 
@@ -448,6 +475,7 @@ def release_docs_index_verify():
     version = '{version}'
     _index_verify(
         RELEASE_INDEX_FILE,
+        side_effect=release_docs_side_effect,
         pypi='',
         pypi_img='',
         versions='\n\n',
