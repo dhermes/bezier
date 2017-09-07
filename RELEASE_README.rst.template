@@ -3,7 +3,9 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |appveyor-build| |coverage| |docs|
+|circle-build| |appveyor-build| |coverage|
+
+|docs| |zenodo| |JOSS|
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -166,12 +168,18 @@ details, see `the LICENSE`_.
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={version}
    :target: https://bezier.readthedocs.io/en/{version}/
    :alt: Documentation Status
-.. |circle-build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
-   :target: https://circleci.com/gh/dhermes/bezier
+.. |circle-build| image:: https://cdn.rawgit.com/dhermes/bezier/{version}/docs/circleci-passing.svg
+   :target: https://circleci.com/gh/dhermes/bezier/{circleci_build}
    :alt: CircleCI Build
-.. |appveyor-build| image:: https://ci.appveyor.com/api/projects/status/github/dhermes/bezier?svg=true
-   :target: https://ci.appveyor.com/project/dhermes/bezier
+.. |appveyor-build| image:: https://cdn.rawgit.com/dhermes/bezier/{version}/docs/appveyor-passing.svg
+   :target: https://ci.appveyor.com/project/dhermes/bezier/build/{appveyor_build}
    :alt: AppVeyor CI Build
-.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch={version}
-   :target: https://coveralls.io/github/dhermes/bezier?branch={version}
+.. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
+   :target: https://coveralls.io/builds/{coveralls_build}
    :alt: Code Coverage
+.. |zenodo| image:: https://zenodo.org/badge/73047402.svg
+   :target: https://zenodo.org/badge/latestdoi/73047402
+   :alt: Zenodo DOI for ``bezier``
+.. |JOSS| image:: http://joss.theoj.org/papers/10.21105/joss.00267/status.svg
+   :target: https://dx.doi.org/10.21105/joss.00267
+   :alt: "Journal of Open Source Science" DOI for ``bezier``

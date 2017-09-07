@@ -182,8 +182,8 @@ details, see `the LICENSE`_.
 .. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
    :target: https://pypi.org/project/bezier/
    :alt: Package Versions
-.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch=master
-   :target: https://coveralls.io/github/dhermes/bezier?branch=master
+.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg
+   :target: https://coveralls.io/github/dhermes/bezier
    :alt: Code Coverage
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402

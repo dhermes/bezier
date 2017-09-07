@@ -28,7 +28,7 @@ import setuptools.command.build_ext
 
 VERSION = '0.5.0'  # Also in codemeta.json
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
-TEMPLATE_FILENAME = os.path.join(PACKAGE_ROOT, 'RELEASE_README.rst.template')
+README_FILENAME = os.path.join(PACKAGE_ROOT, 'README.rst')
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
@@ -257,10 +257,8 @@ def extension_modules():
 
 
 def make_readme():
-    with open(TEMPLATE_FILENAME, 'r') as file_obj:
-        template = file_obj.read()
-
-    return template.format(version=VERSION)
+    with open(README_FILENAME, 'r') as file_obj:
+        return file_obj.read()
 
 
 class BuildFortranThenExt(setuptools.command.build_ext.build_ext):

@@ -114,6 +114,12 @@ DOCS_IMG = """\
    :target: https://bezier.readthedocs.io/en/{rtd_version}/
    :alt: Documentation Status
 """
+CIRCLECI_BADGE = 'https://circleci.com/gh/dhermes/bezier.svg?style=shield'
+APPVEYOR_BADGE = (
+    'https://ci.appveyor.com/api/projects/status/github/'
+    'dhermes/bezier?svg=true')
+COVERALLS_BADGE = 'https://coveralls.io/repos/github/dhermes/bezier/badge.svg'
+COVERALLS_PATH = 'github/dhermes/bezier'
 PYPI_IMG = """
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
    :target: https://pypi.org/project/bezier/
@@ -242,8 +248,13 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
         'versions': '|versions|\n\n',
         'versions_img': VERSIONS_IMG,
         'rtd_version': rtd_version,
-        'coveralls_branch': 'master',
         'revision': revision,
+        'circleci_badge': CIRCLECI_BADGE,
+        'circleci_path': '',
+        'appveyor_badge': APPVEYOR_BADGE,
+        'appveyor_path': '',
+        'coveralls_badge': COVERALLS_BADGE,
+        'coveralls_path': COVERALLS_PATH,
         'zenodo': '|zenodo|',
         'zenodo_img': ZENODO_IMG,
         'joss': ' |JOSS|',
@@ -302,19 +313,28 @@ def release_readme_verify():
             value specialized from the template.
     """
     version = '{version}'
+    circleci_badge = (
+        'https://cdn.rawgit.com/dhermes/bezier/{version}/'
+        'docs/circleci-passing.svg')
+    appveyor_badge = (
+        'https://cdn.rawgit.com/dhermes/bezier/{version}/'
+        'docs/appveyor-passing.svg')
+    coveralls_badge = (
+        'https://s3.amazonaws.com/assets.coveralls.io/'
+        'badges/coveralls_100.svg')
     expected = populate_readme(
         version,
         version,
-        docs='|docs|',
         pypi='',
         pypi_img='',
-        versions=' ',
+        versions='\n\n',
         versions_img='',
-        coveralls_branch=version,
-        zenodo='',
-        zenodo_img='',
-        joss='',
-        joss_img='',
+        circleci_badge=circleci_badge,
+        circleci_path='/{circleci_build}',
+        appveyor_badge=appveyor_badge,
+        appveyor_path='/build/{appveyor_build}',
+        coveralls_badge=coveralls_badge,
+        coveralls_path='builds/{coveralls_build}',
     )
 
     with open(RELEASE_TEMPLATE_FILE, 'r') as file_obj:
@@ -361,8 +381,13 @@ def docs_index_verify():
         versions='|versions|\n\n',
         versions_img=VERSIONS_IMG,
         rtd_version=RTD_VERSION,
-        coveralls_branch='master',
         revision=REVISION,
+        circleci_badge=CIRCLECI_BADGE,
+        circleci_path='',
+        appveyor_badge=APPVEYOR_BADGE,
+        appveyor_path='',
+        coveralls_badge=COVERALLS_BADGE,
+        coveralls_path=COVERALLS_PATH,
         zenodo='|zenodo|',
         zenodo_img=ZENODO_IMG,
         joss=' |JOSS|',

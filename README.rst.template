@@ -156,12 +156,12 @@ details, see `the LICENSE`_.
 
 {extra_links}.. _the LICENSE: https://github.com/dhermes/bezier/blob/{revision}/LICENSE
 
-{docs_img}.. |circle-build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
-   :target: https://circleci.com/gh/dhermes/bezier
+{docs_img}.. |circle-build| image:: {circleci_badge}
+   :target: https://circleci.com/gh/dhermes/bezier{circleci_path}
    :alt: CircleCI Build
-.. |appveyor-build| image:: https://ci.appveyor.com/api/projects/status/github/dhermes/bezier?svg=true
-   :target: https://ci.appveyor.com/project/dhermes/bezier
+.. |appveyor-build| image:: {appveyor_badge}
+   :target: https://ci.appveyor.com/project/dhermes/bezier{appveyor_path}
    :alt: AppVeyor CI Build{pypi_img}{versions_img}
-.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg?branch={coveralls_branch}
-   :target: https://coveralls.io/github/dhermes/bezier?branch={coveralls_branch}
+.. |coverage| image:: {coveralls_badge}
+   :target: https://coveralls.io/{coveralls_path}
    :alt: Code Coverage{zenodo_img}{joss_img}
