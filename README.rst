@@ -5,6 +5,8 @@
 
 |circle-build| |appveyor-build| |coverage|
 
+|pypi| |versions|
+
 |docs| |zenodo| |JOSS|
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -17,7 +19,7 @@ This library provides:
 
 Dive in and take a look!
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/0.5.0/docs/images/surfaces6Q_and_7Q.png
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/surfaces6Q_and_7Q.png
    :align: center
 
 Why B |eacute| zier?
@@ -26,17 +28,17 @@ Why B |eacute| zier?
 A B |eacute| zier curve (and surface, etc.) is a parametric curve
 that uses the `Bernstein basis`_:
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/0.5.0/docs/images/bernstein_basis.png
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/bernstein_basis.png
    :align: center
 
 to define a curve as a linear combination:
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/0.5.0/docs/images/bezier_defn.png
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/bezier_defn.png
    :align: center
 
 This comes from the fact that the weights sum to one:
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/0.5.0/docs/images/sum_to_unity.png
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/sum_to_unity.png
    :align: center
 
 This can be generalized to higher order by considering three, four, etc.
@@ -140,7 +142,7 @@ intersections):
    >>> _ = ax.set_ylim(-0.0625, 0.625)
    >>> plt.show()
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/0.5.0/docs/images/curves1_and_13.png
+.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/curves1_and_13.png
    :align: center
 
 For API-level documentation, check out the B |eacute| zier
@@ -159,23 +161,29 @@ License
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _Curves: https://bezier.readthedocs.io/en/0.5.0/reference/bezier.curve.html
-.. _Surfaces: https://bezier.readthedocs.io/en/0.5.0/reference/bezier.surface.html
-.. _Package: https://bezier.readthedocs.io/en/0.5.0/reference/bezier.html
-.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/0.5.0/DEVELOPMENT.rst
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/0.5.0/LICENSE
+.. _Curves: https://bezier.readthedocs.io/en/latest/reference/bezier.curve.html
+.. _Surfaces: https://bezier.readthedocs.io/en/latest/reference/bezier.surface.html
+.. _Package: https://bezier.readthedocs.io/en/latest/reference/bezier.html
+.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/master/DEVELOPMENT.rst
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
 
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.5.0
-   :target: https://bezier.readthedocs.io/en/0.5.0/
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=latest
+   :target: https://bezier.readthedocs.io/en/latest/
    :alt: Documentation Status
-.. |circle-build| image:: https://cdn.rawgit.com/dhermes/bezier/0.5.0/docs/circleci-passing.svg
-   :target: https://circleci.com/gh/dhermes/bezier/697
+.. |circle-build| image:: https://circleci.com/gh/dhermes/bezier.svg?style=shield
+   :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
-.. |appveyor-build| image:: https://cdn.rawgit.com/dhermes/bezier/0.5.0/docs/appveyor-passing.svg
-   :target: https://ci.appveyor.com/project/dhermes/bezier/build/1.0.430.master
+.. |appveyor-build| image:: https://ci.appveyor.com/api/projects/status/github/dhermes/bezier?svg=true
+   :target: https://ci.appveyor.com/project/dhermes/bezier
    :alt: AppVeyor CI Build
-.. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
-   :target: https://coveralls.io/builds/13176599
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
+   :target: https://pypi.org/project/bezier/
+   :alt: PyPI Latest
+.. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
+   :target: https://pypi.org/project/bezier/
+   :alt: Package Versions
+.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg
+   :target: https://coveralls.io/github/dhermes/bezier
    :alt: Code Coverage
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
