@@ -147,11 +147,11 @@ test_script:
         }
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
-          py.test
-              --cov=bezier
-              --cov=tests
-              --cov-fail-under=98
-              tests
+          py.test `
+              --cov=bezier `
+              --cov=tests `
+              --cov-fail-under=98 `
+              tests `
               functional_tests/test_segment_box.py;
         }
   - ps: if ($env:TEST_TYPE -eq "functional")
@@ -160,9 +160,9 @@ test_script:
         }
   - ps: if ($env:TEST_TYPE -eq "doctest")
         {
-          sphinx-build -W
-            -b doctest
-            -d docs/build/doctrees
-            docs
+          sphinx-build -W `
+            -b doctest `
+            -d docs/build/doctrees `
+            docs `
             docs/build/doctest;
         }
