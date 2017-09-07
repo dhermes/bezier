@@ -121,7 +121,7 @@ install:
   # Install (hardcoded) conditional (on cover) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
-          conda install pytest mock coverage pytest-cov scipy;
+          conda install pytest==3.2.1 mock coverage pytest-cov scipy;
           $env:PYTHONPATH = "functional_tests/";
         }
 
