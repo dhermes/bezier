@@ -10,7 +10,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Check that the current README.rst is built from the template."""
+"""Check that the current ``README.rst`` is built from the template.
+
+Also checks a collection of other documents:
+
+* ``README.rst.template`` (used for releases since the ``README`` text
+  is what is published on PyPI)
+* ``docs/index.rst`` (essentially identical to ``README.rst``)
+* ``docs/index.rst.release.template`` (used for releases)
+* ``DEVELOPMENT.rst`` (since it is included in docs as a symlink, we
+  want to be able to freeze the versioned references for releases)
+"""
 
 
 from __future__ import print_function
@@ -30,6 +40,8 @@ INDEX_FILE = os.path.join(_ROOT_DIR, 'docs', 'index.rst')
 RELEASE_INDEX_FILE = os.path.join(
     _ROOT_DIR, 'docs', 'index.rst.release.template')
 README_FILE = os.path.join(_ROOT_DIR, 'README.rst')
+DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst.template')
+DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst')
 RTD_VERSION = 'latest'
 REVISION = 'master'
 
@@ -451,12 +463,37 @@ def release_docs_index_verify():
     )
 
 
+def development_verify():
+    """Populate template and compare to ``DEVELOPMENT.rst``
+
+    Raises:
+        ValueError: If the current ``DEVELOPMENT.rst`` doesn't
+            agree with the expected value computed from the template.
+    """
+    with open(DEVELOPMENT_TEMPLATE, 'r') as file_obj:
+        template = file_obj.read()
+
+    expected = template.format(revision=REVISION, rtd_version=RTD_VERSION)
+
+    with open(DEVELOPMENT_FILE, 'r') as file_obj:
+        contents = file_obj.read()
+
+    if contents != expected:
+        err_msg = '\n' + get_diff(
+            contents, expected,
+            'DEVELOPMENT.rst.actual', 'DEVELOPMENT.rst.expected')
+        raise ValueError(err_msg)
+    else:
+        print('DEVELOPMENT.rst contents are as expected.')
+
+
 def main():
     """Verify specialized versions of ``README.rst.template``."""
     readme_verify()
     release_readme_verify()
     docs_index_verify()
     release_docs_index_verify()
+    development_verify()
 
 
 if __name__ == '__main__':
