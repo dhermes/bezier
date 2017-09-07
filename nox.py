@@ -252,8 +252,8 @@ def lint(session):
     # Install this package.
     session.install('.')
 
-    # Run the script to check that the README is valid.
-    check_path = get_path('scripts', 'check_readme.py')
+    # Run the script to check that the README and other docs are valid.
+    check_path = get_path('scripts', 'check_doc_templates.py')
     session.run('python', check_path)
     # Run the script to check that setup.py is valid.
     setup_file = get_path('setup.py')
