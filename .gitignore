@@ -18,3 +18,4 @@ __pycache__
 # Generated files
 src/bezier/_speedup*.so
 wheelhouse/
+scripts/osx/frankenstein/
