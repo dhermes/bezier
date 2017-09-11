@@ -84,11 +84,14 @@ ${VENV}/bin/pip install \
     --find-links ${DIST_WHEELS}
 
 set +e  # Allow tests to fail
-# Run unit tests.
-${VENV}/bin/py.test ${REPO_ROOT}/tests
-# Run functional tests.
+# Run unit tests (in both 32 and 64 bit).
+arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/tests
+arch -x86_64 ${VENV}/bin/py.test ${REPO_ROOT}/tests
+# Run functional tests (in both 32 and 64 bit).
 PYTHONPATH=${REPO_ROOT}/functional_tests \
-    ${VENV}/bin/py.test ${REPO_ROOT}/functional_tests
+    arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/functional_tests
+PYTHONPATH=${REPO_ROOT}/functional_tests \
+    arch -x86_64 ${VENV}/bin/py.test ${REPO_ROOT}/functional_tests
 
 # Clean-up.
 rm -fr ${VENV}
