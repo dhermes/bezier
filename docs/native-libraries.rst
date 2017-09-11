@@ -187,13 +187,27 @@ The actual library ``libbezier`` is included as a single static library
 
    This can be problematic due to version conflicts, ABI incompatibility,
    a desire to use a different Fortran compiler (e.g. ``ifort``) and a host
-   of other reasons. Some of the standard `tooling`_ for building wheels
-   will try to address this by adding a ``bezier/.libs`` directory with a
-   version of ``libgfortran`` that is compatible with ``libbezier``, e.g.
+   of other reasons. Some of the standard tooling for distributing wheels
+   tries to address this. For example, `auditwheel`_ adds a ``bezier/.libs``
+   directory with a version of ``libgfortran`` that is compatible with
+   ``libbezier``, e.g.
 
    .. code-block:: rest
 
-      .../site-packages/bezier/.libs/libgfortran-ed201abd.so.3.0.0
+      $ cd .../site-packages/bezier/.libs
+      $ ls -1
+      libgfortran-ed201abd.so.3.0.0*
+
+   and `delocate`_ adds a ``bezier/.dylibs`` directory with the same
+   purpose:
+
+   .. code-block:: rest
+
+      $ cd .../site-packages/bezier/.dylibs
+      $ ls -1
+      libgcc_s.1.dylib
+      libgfortran.4.dylib
+      libquadmath.0.dylib
 
    If present, this directory can be used when linking. If that is not
    feasible, then ``bezier`` can be built from source via:
@@ -216,7 +230,8 @@ The actual library ``libbezier`` is included as a single static library
 .. _pip: https://pip.pypa.io
 .. _Python wheel: https://wheel.readthedocs.io
 .. _GNU Fortran: https://gcc.gnu.org/fortran/
-.. _tooling: https://github.com/pypa/auditwheel
+.. _auditwheel: https://github.com/pypa/auditwheel
+.. _delocate: https://github.com/matthew-brett/delocate
 
 Building a Python Extension
 ---------------------------
