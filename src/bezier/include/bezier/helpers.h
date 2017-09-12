@@ -13,10 +13,26 @@
 #ifndef BEZIER_HELPERS_H
 #define BEZIER_HELPERS_H
 
-#include <stdbool.h>
-
 #if defined (__cplusplus)
 extern "C" {
+#elif !defined (_MSC_VER)
+#include <stdbool.h>
+#endif
+
+#if !defined (__cplusplus) && defined (_MSC_VER)
+#  if !defined (FALSE)
+#    define FALSE (0)
+#  endif
+#  if !defined (TRUE)
+#    define TRUE (!FALSE)
+#  endif
+#  if _MSC_VER >= 1800
+#    include <stdbool.h>
+#  else
+#    define bool int
+#    define true TRUE
+#    define false FALSE
+#  endif
 #endif
 
 void cross_product(double *vec0, double *vec1, double *result);

@@ -135,7 +135,7 @@ def gfortran_search_path(library_dirs):
     # Go through each library in the ``libraries: = ...`` line.
     library_line = library_lines[0]
     accepted = set(library_dirs)
-    for part in library_line.split(':'):
+    for part in library_line.split(os.pathsep):
         full_path = os.path.abspath(part.strip())
 
         if os.path.isdir(full_path):
@@ -482,6 +482,8 @@ def compile_fortran_obj_files(f90_compiler, static_lib_dir):
 
     # Create a .a/.lib file (i.e. a static library).
     c_compiler = f90_compiler.c_compiler
+    if not os.path.exists(static_lib_dir):
+        os.makedirs(static_lib_dir)
     c_compiler.create_static_lib(
         obj_files, 'bezier', output_dir=static_lib_dir)
 

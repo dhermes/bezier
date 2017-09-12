@@ -1,6 +1,6 @@
 include README.rst LICENSE
 graft src/bezier
-global-exclude *.o
+global-exclude *.o *.obj
 global-exclude *.pyc __pycache__
 global-exclude *.pyx
 global-exclude *.so *.a
