@@ -213,6 +213,7 @@ contains
   subroutine subdivide_nodes_generic( &
        num_nodes, dimension_, nodes, left_nodes, right_nodes) &
        bind(c, name='subdivide_nodes_generic')
+
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     real(c_double), intent(out) :: left_nodes(num_nodes, dimension_)
@@ -249,6 +250,7 @@ contains
   subroutine subdivide_nodes( &
        num_nodes, dimension_, nodes, left_nodes, right_nodes) &
        bind(c, name='subdivide_nodes')
+
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     real(c_double), intent(out) :: left_nodes(num_nodes, dimension_)

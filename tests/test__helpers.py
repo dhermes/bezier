@@ -157,13 +157,13 @@ class Test_contains(unittest.TestCase):
             self._call_function_under_test(self.UNIT_SQUARE, 0.25, 0.75))
 
 
-class Test_contains_nd(unittest.TestCase):
+class Test__contains_nd(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, point):
         from bezier import _helpers
 
-        return _helpers.contains_nd(nodes, point)
+        return _helpers._contains_nd(nodes, point)
 
     def test_below(self):
         nodes = np.asfortranarray([
@@ -189,6 +189,16 @@ class Test_contains_nd(unittest.TestCase):
         ])
         point = np.asfortranarray([[0.5, 0.0, 0.0, 2.0]])
         self.assertTrue(self._call_function_under_test(nodes, point))
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_contains_nd(Test__contains_nd):
+
+    @staticmethod
+    def _call_function_under_test(nodes, point):
+        from bezier import _helpers_speedup
+
+        return _helpers_speedup.contains_nd(nodes, point)
 
 
 class Test__cross_product(utils.NumPyTestCase):

@@ -28,6 +28,7 @@ def cross_product(double[::1, :] vec0, double[::1, :] vec1):
         &vec1[0, 0],
         &result,
     )
+
     return result
 
 
@@ -59,4 +60,25 @@ def wiggle_interval(double value):
         &result,
         &success,
     )
+
     return result, success
+
+
+def contains_nd(double[::1, :] nodes, double[::1, :] point):
+    cdef int num_nodes, dimension
+    cdef bool_t predicate
+
+    num_nodes, dimension = np.shape(nodes)
+    if np.shape(point) != (1, dimension):
+        msg = 'Point {} was expected to have shape (1, {})'.format(dimension)
+        raise ValueError(msg)
+
+    bezier._helpers.contains_nd(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &point[0, 0],
+        &predicate,
+    )
+
+    return predicate

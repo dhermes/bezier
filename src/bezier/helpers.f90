@@ -16,7 +16,7 @@ module helpers
   use types, only: dp
   implicit none
   private
-  public cross_product, bbox, wiggle_interval
+  public cross_product, bbox, wiggle_interval, contains_nd
 
 contains
 
@@ -72,5 +72,24 @@ contains
     end if
 
   end subroutine wiggle_interval
+
+  pure subroutine contains_nd( &
+       num_nodes, dimension_, nodes, point, predicate) &
+       bind(c, name='contains_nd')
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: point(dimension_)
+    logical(c_bool), intent(out) :: predicate
+
+    if (any(point < minval(nodes, 1))) then
+       predicate = .FALSE.
+    else if (any(maxval(nodes, 1) < point)) then
+       predicate = .FALSE.
+    else
+       predicate = .TRUE.
+    end if
+
+  end subroutine contains_nd
 
 end module helpers

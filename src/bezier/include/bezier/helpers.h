@@ -40,6 +40,9 @@ void bbox(
     int *num_nodes, double *nodes, double *left,
     double *right, double *bottom, double *top);
 void wiggle_interval(double *value, double *result, bool *success);
+void contains_nd(
+    int *num_nodes, int *dimension, double *nodes,
+    double *point, bool *predicate);
 
 #if defined (__cplusplus)
 }

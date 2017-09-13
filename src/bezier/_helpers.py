@@ -125,7 +125,7 @@ def contains(nodes, x_val, y_val):
     return True
 
 
-def contains_nd(nodes, point):
+def _contains_nd(nodes, point):
     r"""Predicate indicating if a point is within a bounding box.
 
     Like :func:`contains` but supports points in arbitrary dimension.
@@ -278,8 +278,10 @@ if _helpers_speedup is None:  # pragma: NO COVER
     bbox = _bbox
     wiggle_interval = _wiggle_interval_py
     cross_product = _cross_product
+    contains_nd = _contains_nd
 else:
     bbox = _helpers_speedup.bbox
     wiggle_interval = _helpers_speedup.wiggle_interval
     cross_product = _helpers_speedup.cross_product
+    contains_nd = _helpers_speedup.contains_nd
 # pylint: enable=invalid-name
