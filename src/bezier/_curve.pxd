@@ -42,3 +42,5 @@ cdef extern from "bezier/curve.h":
     void locate_point(
         int *num_nodes, int *dimension, double *nodes,
         double *point, double *s_approx)
+    void elevate_nodes(
+        int *num_nodes, int *dimension, double *nodes, double *elevated)

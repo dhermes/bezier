@@ -370,13 +370,13 @@ class Test_compute_length(unittest.TestCase):
                 self._call_function_under_test(nodes, 4)
 
 
-class Test_elevate_nodes(utils.NumPyTestCase):
+class Test__elevate_nodes(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
         from bezier import _curve_helpers
 
-        return _curve_helpers.elevate_nodes(nodes, degree, dimension)
+        return _curve_helpers._elevate_nodes(nodes, degree, dimension)
 
     def test_linear(self):
         nodes = np.asfortranarray([
@@ -405,6 +405,16 @@ class Test_elevate_nodes(utils.NumPyTestCase):
             [6.0, 0.5, 2.25],
         ])
         self.assertEqual(result, expected)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_elevate_nodes(Test__elevate_nodes):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, dimension):
+        from bezier import _curve_speedup
+
+        return _curve_speedup.elevate_nodes(nodes, degree, dimension)
 
 
 class Test_de_casteljau_one_round(utils.NumPyTestCase):

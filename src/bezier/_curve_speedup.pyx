@@ -173,3 +173,22 @@ def locate_point(
             'Parameters not close enough to one another')
     else:
         return s_approx
+
+
+def elevate_nodes(double[::1, :] nodes, int degree, int dimension):
+    cdef int num_nodes
+    cdef ndarray_t[double, ndim=2, mode='fortran'] elevated
+
+    # NOTE: We don't check that ``np.shape(nodes) == (num_nodes, dimension)``.
+    num_nodes = degree + 1
+
+    elevated = np.empty((num_nodes + 1, dimension), order='F')
+
+    bezier._curve.elevate_nodes(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &elevated[0, 0],
+    )
+
+    return elevated

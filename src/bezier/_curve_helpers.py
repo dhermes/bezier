@@ -129,6 +129,9 @@ _CUBIC_SUBDIVIDE_RIGHT = np.asfortranarray([
 def make_subdivision_matrices(degree):
     """Make the matrix used to subdivide a curve.
 
+    This is a helper for :func:`_subdivide_nodes`. It does not have a
+    Fortran speedup.
+
     Args:
         degree (int): The degree of the curve.
 
@@ -327,7 +330,7 @@ def compute_length(nodes, degree):
     return length
 
 
-def elevate_nodes(nodes, degree, dimension):
+def _elevate_nodes(nodes, degree, dimension):
     r"""Degree-elevate a B |eacute| zier curves.
 
     Does this by converting the current nodes :math:`v_0, \ldots, v_n`
@@ -350,7 +353,7 @@ def elevate_nodes(nodes, degree, dimension):
     Returns:
         numpy.ndarray: The nodes of the degree-elevated curve.
     """
-    new_nodes = np.zeros((degree + 2, dimension), order='F')
+    new_nodes = np.empty((degree + 2, dimension), order='F')
 
     multipliers = np.arange(1, degree + 1, dtype=_FLOAT64)[:, np.newaxis]
     denominator = degree + 1.0
@@ -916,6 +919,7 @@ if _curve_speedup is None:  # pragma: NO COVER
     subdivide_nodes = _subdivide_nodes
     newton_refine = _newton_refine
     locate_point = _locate_point
+    elevate_nodes = _elevate_nodes
 else:
     evaluate_multi_barycentric = _curve_speedup.evaluate_multi_barycentric
     evaluate_multi = _curve_speedup.evaluate_multi
@@ -924,4 +928,5 @@ else:
     subdivide_nodes = _curve_speedup.subdivide_nodes
     newton_refine = _curve_speedup.newton_refine
     locate_point = _curve_speedup.locate_point
+    elevate_nodes = _curve_speedup.elevate_nodes
 # pylint: enable=invalid-name

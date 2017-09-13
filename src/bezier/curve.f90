@@ -420,4 +420,23 @@ contains
 
   end subroutine locate_point
 
+  subroutine elevate_nodes( &
+       num_nodes, dimension_, nodes, elevated) &
+       bind(c, name='elevate_nodes')
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(out) :: elevated(num_nodes + 1, dimension_)
+    ! Variables outside of signature.
+    integer(c_int) :: i
+
+    elevated(1, :) = nodes(1, :)
+    forall (i = 1:num_nodes)
+       elevated(i + 1, :) = ( &
+            i * nodes(i, :) + (num_nodes - i) * nodes(i + 1, :)) / num_nodes
+    end forall
+    elevated(num_nodes + 1, :) = nodes(num_nodes, :)
+
+  end subroutine elevate_nodes
+
 end module curve
