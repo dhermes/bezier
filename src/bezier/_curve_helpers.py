@@ -154,7 +154,7 @@ def make_subdivision_matrices(degree):
     return left, right
 
 
-def subdivide_nodes(nodes, degree):
+def _subdivide_nodes(nodes, degree):
     """Subdivide a curve into two sub-curves.
 
     Does so by taking the unit interval (i.e. the domain of the surface) and
@@ -913,9 +913,11 @@ if _curve_speedup is None:  # pragma: NO COVER
     evaluate_multi = _evaluate_multi
     specialize_curve = _specialize_curve
     evaluate_hodograph = _evaluate_hodograph
+    subdivide_nodes = _subdivide_nodes
 else:
     evaluate_multi_barycentric = _curve_speedup.evaluate_multi_barycentric
     evaluate_multi = _curve_speedup.evaluate_multi
     specialize_curve = _curve_speedup.specialize_curve
     evaluate_hodograph = _curve_speedup.evaluate_hodograph
+    subdivide_nodes = _curve_speedup.subdivide_nodes
 # pylint: enable=invalid-name

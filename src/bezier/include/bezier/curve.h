@@ -35,6 +35,9 @@ void specialize_curve(
     double *true_start, double *true_end);
 void evaluate_hodograph(
     double *s, int *degree, int *dimension, double *nodes, double *hodograph);
+void subdivide_nodes(
+    int *num_nodes, int *dimension, double *nodes,
+    double *left_nodes, double *right_nodes);
 
 #if defined (__cplusplus)
 }

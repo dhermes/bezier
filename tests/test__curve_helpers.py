@@ -82,13 +82,13 @@ class Test_make_subdivision_matrices(utils.NumPyTestCase):
         self._helper(4, expected_l, expected_r)
 
 
-class Test_subdivide_nodes(utils.NumPyTestCase):
+class Test__subdivide_nodes(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree):
         from bezier import _curve_helpers
 
-        return _curve_helpers.subdivide_nodes(nodes, degree)
+        return _curve_helpers._subdivide_nodes(nodes, degree)
 
     def _helper(self, nodes, degree, expected_l, expected_r):
         left, right = self._call_function_under_test(nodes, degree)
@@ -201,6 +201,16 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         nodes = utils.get_random_nodes(
             shape=shape, seed=103, num_bits=8)
         self._points_check(nodes, degree)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _curve_speedup
+
+        return _curve_speedup.subdivide_nodes(nodes, degree)
 
 
 class Test__evaluate_multi_barycentric(utils.NumPyTestCase):

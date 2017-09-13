@@ -105,3 +105,23 @@ def evaluate_hodograph(double s, double[::1, :] nodes, int degree):
     )
 
     return hodograph
+
+
+def subdivide_nodes(double[::1, :] nodes, int unused_degree):
+    cdef int num_nodes, dimension
+    cdef ndarray_t[double, ndim=2, mode='fortran'] left_nodes, right_nodes
+
+    num_nodes, dimension = np.shape(nodes)
+
+    left_nodes = np.empty((num_nodes, dimension), order='F')
+    right_nodes = np.empty((num_nodes, dimension), order='F')
+
+    bezier._curve.subdivide_nodes(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &left_nodes[0, 0],
+        &right_nodes[0, 0],
+    )
+
+    return left_nodes, right_nodes

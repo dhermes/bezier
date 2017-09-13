@@ -18,7 +18,8 @@ module curve
   private
   public &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
-       specialize_curve_quadratic, specialize_curve, evaluate_hodograph
+       specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
+       subdivide_nodes_generic, subdivide_nodes
 
 contains
 
@@ -208,5 +209,81 @@ contains
     hodograph = degree * hodograph
 
   end subroutine evaluate_hodograph
+
+  subroutine subdivide_nodes_generic( &
+       num_nodes, dimension_, nodes, left_nodes, right_nodes) &
+       bind(c, name='subdivide_nodes_generic')
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(out) :: left_nodes(num_nodes, dimension_)
+    real(c_double), intent(out) :: right_nodes(num_nodes, dimension_)
+    ! Variables outside of signature.
+    real(c_double) :: pascals_triangle(num_nodes)
+    integer(c_int) :: elt_index, pascal_index
+
+    pascals_triangle = 0  ! Make sure all zero.
+    pascals_triangle(1) = 1
+
+    do elt_index = 1, num_nodes
+       ! Update Pascal's triangle (intentionally at beginning, not end).
+       if (elt_index > 1) then
+          pascals_triangle(:elt_index) = 0.5_dp * ( &
+               pascals_triangle(:elt_index) + pascals_triangle(elt_index:1:-1))
+       end if
+
+       left_nodes(elt_index, :) = 0
+       right_nodes(num_nodes + 1 - elt_index, :) = 0
+       do pascal_index = 1, elt_index
+          left_nodes(elt_index, :) = ( &
+               left_nodes(elt_index, :) + &
+               pascals_triangle(pascal_index) * nodes(pascal_index, :))
+          right_nodes(num_nodes + 1 - elt_index, :) = ( &
+               right_nodes(num_nodes + 1 - elt_index, :) + &
+               pascals_triangle(pascal_index) * &
+               nodes(num_nodes + 1 - pascal_index, :))
+       end do
+    end do
+
+  end subroutine subdivide_nodes_generic
+
+  subroutine subdivide_nodes( &
+       num_nodes, dimension_, nodes, left_nodes, right_nodes) &
+       bind(c, name='subdivide_nodes')
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(out) :: left_nodes(num_nodes, dimension_)
+    real(c_double), intent(out) :: right_nodes(num_nodes, dimension_)
+
+    if (num_nodes == 2) then
+       left_nodes(1, :) = nodes(1, :)
+       left_nodes(2, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
+       right_nodes(1, :) = left_nodes(2, :)
+       right_nodes(2, :) = nodes(2, :)
+    else if (num_nodes == 3) then
+       left_nodes(1, :) = nodes(1, :)
+       left_nodes(2, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
+       left_nodes(3, :) = 0.25_dp * ( &
+            nodes(1, :) + 2 * nodes(2, :) + nodes(3, :))
+       right_nodes(1, :) = left_nodes(3, :)
+       right_nodes(2, :) = 0.5_dp * (nodes(2, :) + nodes(3, :))
+       right_nodes(3, :) = nodes(3, :)
+    else if (num_nodes == 4) then
+       left_nodes(1, :) = nodes(1, :)
+       left_nodes(2, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
+       left_nodes(3, :) = 0.25_dp * ( &
+            nodes(1, :) + 2 * nodes(2, :) + nodes(3, :))
+       left_nodes(4, :) = 0.125_dp * ( &
+            nodes(1, :) + 3 * nodes(2, :) + 3 * nodes(3, :) + nodes(4, :))
+       right_nodes(1, :) = left_nodes(4, :)
+       right_nodes(2, :) = 0.25_dp * ( &
+            nodes(2, :) + 2 * nodes(3, :) + nodes(4, :))
+       right_nodes(3, :) = 0.5_dp * (nodes(3, :) + nodes(4, :))
+       right_nodes(4, :) = nodes(4, :)
+    else
+       call subdivide_nodes_generic( &
+            num_nodes, dimension_, nodes, left_nodes, right_nodes)
+    end if
+
+  end subroutine subdivide_nodes
 
 end module curve
