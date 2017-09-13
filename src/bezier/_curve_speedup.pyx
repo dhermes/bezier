@@ -239,3 +239,20 @@ def reduce_pseudo_inverse(double[::1, :] nodes, int unused_degree):
         raise NotImplementedError(num_nodes - 1)
 
     return reduced
+
+
+def projection_error(double[::1, :] nodes, double[::1, :] projected):
+    cdef int num_nodes, dimension
+    cdef double error
+
+    num_nodes, dimension = np.shape(nodes)
+
+    bezier._curve.projection_error(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &projected[0, 0],
+        &error,
+    )
+
+    return error

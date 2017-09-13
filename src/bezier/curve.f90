@@ -21,7 +21,7 @@ module curve
        evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
        specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
        subdivide_nodes_generic, subdivide_nodes, newton_refine, locate_point, &
-       elevate_nodes, get_curvature, reduce_pseudo_inverse
+       elevate_nodes, get_curvature, reduce_pseudo_inverse, projection_error
 
   ! For ``locate_point``.
   type :: LocateCandidate
@@ -520,5 +520,25 @@ contains
     end if
 
   end subroutine reduce_pseudo_inverse
+
+  subroutine projection_error( &
+       num_nodes, dimension_, nodes, projected, error) &
+       bind(c, name='projection_error')
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: projected(num_nodes, dimension_)
+    real(c_double), intent(out) :: error
+
+    ! If "dim" is not passed to ``norm2``, will be Frobenius norm.
+    error = norm2(nodes - projected)
+    if (error == 0.0_dp) then
+       return
+    end if
+
+    ! Make the error relative (in Frobenius norm).
+    error = error / norm2(nodes)
+
+  end subroutine projection_error
 
 end module curve

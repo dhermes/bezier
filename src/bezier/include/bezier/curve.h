@@ -70,6 +70,9 @@ void get_curvature(
 void reduce_pseudo_inverse(
     int *num_nodes, int *dimension, double *nodes, double *reduced,
     bool *not_implemented);
+void projection_error(
+    int *num_nodes, int *dimension, double *nodes,
+    double *projected, double *error);
 
 #if defined (__cplusplus)
 }

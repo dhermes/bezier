@@ -843,13 +843,12 @@ def _reduce_pseudo_inverse(nodes, degree):
     return result
 
 
-def projection_error(nodes, projected):
+def _projection_error(nodes, projected):
     """Compute the error between ``nodes`` and the projected nodes.
 
     .. note::
 
-        This is a helper for :func:`maybe_reduce` (which is itself a helper
-        function for :func:`full_reduce`). It does not have a Fortran speedup.
+        This is a helper for :func:`maybe_reduce`.
 
     For now, just compute the relative error in the Frobenius norm. But,
     we may wish to consider the error per row / point instead.
@@ -947,6 +946,7 @@ if _curve_speedup is None:  # pragma: NO COVER
     newton_refine = _newton_refine
     locate_point = _locate_point
     reduce_pseudo_inverse = _reduce_pseudo_inverse
+    projection_error = _projection_error
 else:
     subdivide_nodes = _curve_speedup.subdivide_nodes
     evaluate_multi = _curve_speedup.evaluate_multi
@@ -958,4 +958,5 @@ else:
     newton_refine = _curve_speedup.newton_refine
     locate_point = _curve_speedup.locate_point
     reduce_pseudo_inverse = _curve_speedup.reduce_pseudo_inverse
+    projection_error = _curve_speedup.projection_error
 # pylint: enable=invalid-name

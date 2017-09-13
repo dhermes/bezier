@@ -886,13 +886,13 @@ class Test_speedup__reduce_pseudo_inverse(Test__reduce_pseudo_inverse):
         return _curve_speedup.reduce_pseudo_inverse(nodes, degree)
 
 
-class Test_projection_error(unittest.TestCase):
+class Test__projection_error(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, projected):
         from bezier import _curve_helpers
 
-        return _curve_helpers.projection_error(nodes, projected)
+        return _curve_helpers._projection_error(nodes, projected)
 
     def test_it(self):
         nodes = np.asfortranarray([
@@ -915,6 +915,16 @@ class Test_projection_error(unittest.TestCase):
         ])
         result = self._call_function_under_test(nodes, nodes)
         self.assertEqual(result, 0.0)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_projection_error(Test__projection_error):
+
+    @staticmethod
+    def _call_function_under_test(nodes, projected):
+        from bezier import _curve_speedup
+
+        return _curve_speedup.projection_error(nodes, projected)
 
 
 class Test_maybe_reduce(utils.NumPyTestCase):
