@@ -1043,13 +1043,25 @@ class Test_speedup_maybe_reduce(Test__maybe_reduce):
         return _curve_speedup.maybe_reduce(nodes)
 
 
-class Test_full_reduce(utils.NumPyTestCase):
+class Test__full_reduce(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _curve_helpers
 
-        return _curve_helpers.full_reduce(nodes)
+        return _curve_helpers._full_reduce(nodes)
+
+    def test_linear(self):
+        nodes = np.asfortranarray([
+            [5.5],
+            [5.5],
+        ])
+        new_nodes = self._call_function_under_test(nodes)
+
+        expected = np.asfortranarray([
+            [5.5],
+        ])
+        self.assertEqual(expected, new_nodes)
 
     def test_single(self):
         nodes = np.asfortranarray([
@@ -1091,3 +1103,20 @@ class Test_full_reduce(utils.NumPyTestCase):
         ])
         new_nodes = self._call_function_under_test(nodes)
         self.assertIs(new_nodes, nodes)
+
+    def test_unsupported_degree(self):
+        degree = 5
+        nodes = utils.get_random_nodes(
+            shape=(degree + 1, 2), seed=360009, num_bits=8)
+        with self.assertRaises(NotImplementedError):
+            self._call_function_under_test(nodes)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_full_reduce(Test__full_reduce):
+
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier import _curve_speedup
+
+        return _curve_speedup.full_reduce(nodes)

@@ -58,3 +58,6 @@ cdef extern from "bezier/curve.h":
         double *projected, double *error)
     void can_reduce(
         int *num_nodes, int *dimension, double *nodes, int *success)
+    void full_reduce(
+        int *num_nodes, int *dimension, double *nodes,
+        int *num_reduced_nodes, double *reduced, bool_t *not_implemented)

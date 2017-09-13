@@ -24,7 +24,7 @@ module curve
        specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
        subdivide_nodes_generic, subdivide_nodes, newton_refine, locate_point, &
        elevate_nodes, get_curvature, reduce_pseudo_inverse, projection_error, &
-       can_reduce
+       can_reduce, full_reduce
 
   ! For ``locate_point``.
   type :: LocateCandidate
@@ -617,5 +617,56 @@ contains
     end if
 
   end subroutine can_reduce
+
+  subroutine full_reduce( &
+       num_nodes, dimension_, nodes, num_reduced_nodes, &
+       reduced, not_implemented) &
+       bind(c, name='full_reduce')
+
+    ! NOTE: The size of ``reduced`` represents the **maximum** possible
+    !       size, but ``num_reduced_nodes`` actually reflects the number
+    !       of nodes in the fully reduced nodes.
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    integer(c_int), intent(out) :: num_reduced_nodes
+    real(c_double), intent(out) :: reduced(num_nodes, dimension_)
+    logical(c_bool), intent(out) :: not_implemented
+    ! Variables outside of signature.
+    integer(c_int) :: i, cr_success
+    real(c_double) :: work(num_nodes - 1, dimension_)
+
+    reduced = nodes
+    num_reduced_nodes = num_nodes
+    not_implemented = .FALSE.
+    ! We can make at most ``num_nodes - 1`` reductions since
+    ! we can't reduce past one node (i.e. degree zero).
+    do i = 1, num_nodes - 1
+       call can_reduce( &
+            num_reduced_nodes, dimension_, &
+            reduced(:num_reduced_nodes, :), cr_success)
+
+       if (cr_success == 1) then
+          ! Actually reduce the nodes.
+          call reduce_pseudo_inverse( &
+               num_reduced_nodes, dimension_, reduced(:num_reduced_nodes, :), &
+               work(:num_reduced_nodes - 1, :), not_implemented)
+          if (not_implemented) then
+             return
+          else
+             num_reduced_nodes = num_reduced_nodes - 1
+             ! Update `reduced` based on the **new** number of nodes.
+             reduced(:num_reduced_nodes, :) = work(:num_reduced_nodes, :)
+          end if
+       else if (cr_success == 0) then
+          return
+       else
+          ! ``cr_success == -1`` means "Not Implemented"
+          not_implemented = .TRUE.
+          return
+       end if
+    end do
+
+  end subroutine full_reduce
 
 end module curve

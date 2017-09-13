@@ -283,3 +283,34 @@ def maybe_reduce(double[::1, :] nodes):
         return True, reduced
     else:
         raise NotImplementedError(num_nodes)
+
+
+def full_reduce(double[::1, :] nodes):
+    cdef int num_nodes, dimension
+    cdef int num_reduced_nodes
+    cdef ndarray_t[double, ndim=2, mode='fortran'] reduced
+    cdef bool_t not_implemented
+
+    num_nodes, dimension = np.shape(nodes)
+
+    reduced = np.empty((num_nodes, dimension), order='F')
+
+    bezier._curve.full_reduce(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &num_reduced_nodes,
+        &reduced[0, 0],
+        &not_implemented,
+    )
+
+    if not_implemented:
+        raise NotImplementedError(num_nodes)
+
+    if num_reduced_nodes == num_nodes:
+        if isinstance(nodes.base, np.ndarray):
+            return nodes.base
+        else:
+            return np.asarray(nodes)
+    else:
+        return np.asfortranarray(reduced[:num_reduced_nodes, :])

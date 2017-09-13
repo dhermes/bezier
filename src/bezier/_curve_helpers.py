@@ -919,7 +919,7 @@ def _maybe_reduce(nodes):
         return False, nodes
 
 
-def full_reduce(nodes):
+def _full_reduce(nodes):
     """Apply degree reduction to ``nodes`` until it can no longer be reduced.
 
     Args:
@@ -948,6 +948,7 @@ if _curve_speedup is None:  # pragma: NO COVER
     reduce_pseudo_inverse = _reduce_pseudo_inverse
     projection_error = _projection_error
     maybe_reduce = _maybe_reduce
+    full_reduce = _full_reduce
 else:
     subdivide_nodes = _curve_speedup.subdivide_nodes
     evaluate_multi = _curve_speedup.evaluate_multi
@@ -961,4 +962,5 @@ else:
     reduce_pseudo_inverse = _curve_speedup.reduce_pseudo_inverse
     projection_error = _curve_speedup.projection_error
     maybe_reduce = _curve_speedup.maybe_reduce
+    full_reduce = _curve_speedup.full_reduce
 # pylint: enable=invalid-name
