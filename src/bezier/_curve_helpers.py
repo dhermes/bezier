@@ -303,7 +303,7 @@ def vec_size(nodes, s_val):
     return np.linalg.norm(result_vec[0, :], ord=2)
 
 
-def compute_length(nodes, degree):
+def _compute_length(nodes, degree):
     r"""Approximately compute the length of a curve.
 
     .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
@@ -939,6 +939,7 @@ if _curve_speedup is None:  # pragma: NO COVER
     subdivide_nodes = _subdivide_nodes
     evaluate_multi = _evaluate_multi
     evaluate_multi_barycentric = _evaluate_multi_barycentric
+    compute_length = _compute_length
     elevate_nodes = _elevate_nodes
     specialize_curve = _specialize_curve
     evaluate_hodograph = _evaluate_hodograph
@@ -953,6 +954,7 @@ else:
     subdivide_nodes = _curve_speedup.subdivide_nodes
     evaluate_multi = _curve_speedup.evaluate_multi
     evaluate_multi_barycentric = _curve_speedup.evaluate_multi_barycentric
+    compute_length = _curve_speedup.compute_length
     elevate_nodes = _curve_speedup.elevate_nodes
     specialize_curve = _curve_speedup.specialize_curve
     evaluate_hodograph = _curve_speedup.evaluate_hodograph

@@ -18,13 +18,13 @@ module curve
   implicit none
   private &
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
-       REDUCE_THRESHOLD
+       SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse
   public &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
        specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
        subdivide_nodes_generic, subdivide_nodes, newton_refine, locate_point, &
        elevate_nodes, get_curvature, reduce_pseudo_inverse, projection_error, &
-       can_reduce, full_reduce
+       can_reduce, full_reduce, compute_length
 
   ! For ``locate_point``.
   type :: LocateCandidate
@@ -36,8 +36,52 @@ module curve
   ! NOTE: These values are also defined in `src/bezier/_curve_helpers.py`.
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
   real(c_double), parameter :: LOCATE_STD_CAP = 0.5_dp**20
-  ! sqrt(machine precision)
-  real(c_double), parameter :: REDUCE_THRESHOLD = 0.5_dp**26
+  ! NOTE: Should probably use ``d1mach`` to determine ``SQRT_PREC``.
+  real(c_double), parameter :: SQRT_PREC = 0.5_dp**26
+  real(c_double), parameter :: REDUCE_THRESHOLD = SQRT_PREC
+
+  ! Interface blocks for QUADPACK:dqagse
+  interface
+     ! f: real(c_double) --> real(c_double)
+     real(c_double) function scalar_func(x)
+       use iso_c_binding, only: c_double
+       implicit none
+
+       real(c_double), intent(in) :: x
+     end function scalar_func
+  end interface
+
+  interface
+     ! D - double precision
+     ! Q - quadrature
+     ! A - adaptive
+     ! G - General integrand (i.e. INT f(x), not weighted INT w(x) f(x))
+     ! S - Singularities handled
+     ! E - Extended
+     ! See: https://en.wikipedia.org/wiki/QUADPACK
+     ! QUADPACK is "Public Domain"
+     subroutine dqagse( &
+          f, a, b, epsabs, epsrel, limit, result_, &
+          abserr, neval, ier, alist, blist, rlist, &
+          elist, iord, last)
+       use iso_c_binding, only: c_double, c_int
+       implicit none
+
+       procedure(scalar_func) :: f
+       real(c_double), intent(in) :: a, b
+       real(c_double), intent(in) :: epsabs, epsrel
+       integer(c_int), intent(in) :: limit
+       real(c_double), intent(out) :: result_, abserr
+       integer(c_int), intent(out) :: neval, ier
+       real(c_double), intent(out) :: alist(limit)
+       real(c_double), intent(out) :: blist(limit)
+       real(c_double), intent(out) :: rlist(limit)
+       real(c_double), intent(out) :: elist(limit)
+       integer(c_int), intent(out) :: iord(limit)
+       integer(c_int), intent(out) :: last
+
+     end subroutine dqagse
+  end interface
 
 contains
 
@@ -668,5 +712,57 @@ contains
     end do
 
   end subroutine full_reduce
+
+  subroutine compute_length( &
+       num_nodes, dimension_, nodes, length) &
+       bind(c, name='compute_length')
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(out) :: length
+    ! Variables outside of signature.
+    real(c_double) :: first_deriv(num_nodes - 1, dimension_)
+    real(c_double) :: abserr
+    integer(c_int) :: neval, ier
+    real(c_double) :: alist(50)
+    real(c_double) :: blist(50)
+    real(c_double) :: rlist(50)
+    real(c_double) :: elist(50)
+    integer(c_int) :: iord(50)
+    integer(c_int) :: last
+
+    ! NOTE: We somewhat replicate code in ``evaluate_hodograph()``
+    !       here. This is so we don't re-compute the nodes for the first
+    !       derivative every time it is evaluated.
+    first_deriv = (num_nodes - 1) * (nodes(2:, :) - nodes(:num_nodes - 1, :))
+    if (num_nodes == 2) then
+       length = norm2(first_deriv)
+       return
+    end if
+
+    call dqagse( &
+         vec_size, 0.0_dp, 1.0_dp, SQRT_PREC, SQRT_PREC, 50, length, &
+         abserr, neval, ier, alist, blist, rlist, &
+         elist, iord, last)
+    ! NOTE: **Should** use ``ier``.
+
+    contains
+
+      ! Define a closure that evaluates ||B'(s)||_2 where ``s``
+      ! is the argument and ``B'(s)`` is parameterized by ``first_deriv``.
+      real(c_double) function vec_size(s_val) result(norm_)
+        real(c_double), intent(in) :: s_val
+        ! Variables outside of signature.
+        real(c_double) :: evaluated(1, dimension_)
+
+        ! ``evaluate_multi`` takes degree, which is one less than the number
+        ! of nodes, so our derivative is one less than that.
+        call evaluate_multi( &
+             num_nodes - 2, dimension_, first_deriv, 1, [s_val], evaluated)
+        norm_ = norm2(evaluated)
+
+      end function vec_size
+
+  end subroutine compute_length
 
 end module curve

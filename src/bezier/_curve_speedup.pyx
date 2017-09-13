@@ -314,3 +314,19 @@ def full_reduce(double[::1, :] nodes):
             return np.asarray(nodes)
     else:
         return np.asfortranarray(reduced[:num_reduced_nodes, :])
+
+
+def compute_length(double[::1, :] nodes, int unused_degree):
+    cdef int num_nodes, dimension
+    cdef double length
+
+    num_nodes, dimension = np.shape(nodes)
+
+    bezier._curve.compute_length(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &length,
+    )
+
+    return length

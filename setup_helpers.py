@@ -48,17 +48,51 @@ Can be used to determine how extension modules were compiled. This can be
 useful, for example, to track changes across different systems or simple
 to make sure the build is occurring as expected.
 """
+QUADPACK_DIR = 'quadpack'
+QUADPACK_SOURCE_FILENAME = os.path.join('src', 'bezier', QUADPACK_DIR, '{}.f')
+# NOTE: QUADPACK module dependencies: order is important.
+QUADPACK_MODULES = (
+    'd1mach',
+    'dqelg',
+    'dqpsrt',
+    'dqk21',
+    'dqagse',
+)
 # NOTE: This represents the Fortran module dependency graph. Order is
 #       important both of the keys and of the dependencies that are in
 #       each value.
 FORTRAN_MODULES = collections.OrderedDict()
 FORTRAN_MODULES['types'] = ('types',)
 FORTRAN_MODULES['helpers'] = ('types', 'helpers')
-FORTRAN_MODULES['curve'] = ('types', 'helpers', 'curve')
-FORTRAN_MODULES['surface'] = ('types', 'helpers', 'curve', 'surface')
+FORTRAN_MODULES['curve'] = (
+    'types',
+    'helpers',
+    os.path.join(QUADPACK_DIR, 'd1mach'),
+    os.path.join(QUADPACK_DIR, 'dqelg'),
+    os.path.join(QUADPACK_DIR, 'dqpsrt'),
+    os.path.join(QUADPACK_DIR, 'dqk21'),
+    os.path.join(QUADPACK_DIR, 'dqagse'),
+    'curve',
+)
+FORTRAN_MODULES['surface'] = (
+    'types',
+    'helpers',
+    os.path.join(QUADPACK_DIR, 'd1mach'),
+    os.path.join(QUADPACK_DIR, 'dqelg'),
+    os.path.join(QUADPACK_DIR, 'dqpsrt'),
+    os.path.join(QUADPACK_DIR, 'dqk21'),
+    os.path.join(QUADPACK_DIR, 'dqagse'),
+    'curve',
+    'surface',
+)
 FORTRAN_MODULES['curve_intersection'] = (
     'types',
     'helpers',
+    os.path.join(QUADPACK_DIR, 'd1mach'),
+    os.path.join(QUADPACK_DIR, 'dqelg'),
+    os.path.join(QUADPACK_DIR, 'dqpsrt'),
+    os.path.join(QUADPACK_DIR, 'dqk21'),
+    os.path.join(QUADPACK_DIR, 'dqagse'),
     'curve',
     'curve_intersection',
 )
@@ -312,10 +346,15 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             print(msg, file=sys.stderr)
 
     def compile_fortran_obj_files(self):
-        source_files = [
+        source_files_quadpack = [
+            QUADPACK_SOURCE_FILENAME.format(mod_name)
+            for mod_name in QUADPACK_MODULES
+        ]
+        source_files_bezier = [
             FORTRAN_SOURCE_FILENAME.format(mod_name)
             for mod_name in FORTRAN_MODULES
         ]
+        source_files = source_files_quadpack + source_files_bezier
         obj_files = self.F90_COMPILER.compile(
             source_files,
             output_dir=None,

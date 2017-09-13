@@ -334,13 +334,13 @@ class Test_vec_size(unittest.TestCase):
         self.assertEqual(size, 3.25)
 
 
-class Test_compute_length(unittest.TestCase):
+class Test__compute_length(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree):
         from bezier import _curve_helpers
 
-        return _curve_helpers.compute_length(nodes, degree)
+        return _curve_helpers._compute_length(nodes, degree)
 
     def test_linear(self):
         nodes = np.asfortranarray([
@@ -368,6 +368,21 @@ class Test_compute_length(unittest.TestCase):
         with mock.patch('bezier._curve_helpers._scipy_int', new=None):
             with self.assertRaises(OSError):
                 self._call_function_under_test(nodes, 4)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_compute_length(Test__compute_length):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _curve_speedup
+
+        return _curve_speedup.compute_length(nodes, degree)
+
+    def test_without_scipy(self):
+        # Fortran implementation directly includes QUADPACK, so the presence
+        # or absence of SciPy is irrelevant.
+        pass
 
 
 class Test__elevate_nodes(utils.NumPyTestCase):

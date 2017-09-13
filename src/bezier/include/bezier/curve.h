@@ -77,6 +77,8 @@ void can_reduce(int *num_nodes, int *dimension, double *nodes, int *success);
 void full_reduce(
     int *num_nodes, int *dimension, double *nodes,
     int *num_reduced_nodes, double *reduced, bool *not_implemented);
+void compute_length(
+    int *num_nodes, int *dimension, double *nodes, double *length);
 
 #if defined (__cplusplus)
 }
