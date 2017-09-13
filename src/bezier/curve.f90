@@ -19,7 +19,7 @@ module curve
   public &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
        specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
-       subdivide_nodes_generic, subdivide_nodes
+       subdivide_nodes_generic, subdivide_nodes, newton_refine
 
 contains
 
@@ -287,5 +287,32 @@ contains
     end if
 
   end subroutine subdivide_nodes
+
+  subroutine newton_refine( &
+       num_nodes, dimension_, nodes, point, s, updated_s) &
+       bind(c, name='newton_refine')
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: point(1, dimension_)
+    real(c_double), intent(in) :: s
+    real(c_double), intent(out) :: updated_s
+    ! Variables outside of signature.
+    real(c_double) :: pt_delta(1, dimension_)
+    real(c_double) :: derivative(1, dimension_)
+
+    call evaluate_multi( &
+         num_nodes - 1, dimension_, nodes, 1, [s], pt_delta)
+    pt_delta = point - pt_delta
+    ! At this point `pt_delta` is `p - B(s)`.
+    call evaluate_hodograph( &
+         s, num_nodes - 1, dimension_, nodes, derivative)
+
+    updated_s = ( &
+         s + &
+         (dot_product(pt_delta(1, :), derivative(1, :)) / &
+         dot_product(derivative(1, :), derivative(1, :))))
+
+  end subroutine newton_refine
 
 end module curve

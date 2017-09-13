@@ -561,7 +561,7 @@ def get_curvature(nodes, degree, tangent_vec, s):
     return curvature
 
 
-def newton_refine(nodes, degree, point, s):
+def _newton_refine(nodes, degree, point, s):
     r"""Refine a solution to :math:`B(s) = p` using Newton's method.
 
     Computes updates via
@@ -914,10 +914,12 @@ if _curve_speedup is None:  # pragma: NO COVER
     specialize_curve = _specialize_curve
     evaluate_hodograph = _evaluate_hodograph
     subdivide_nodes = _subdivide_nodes
+    newton_refine = _newton_refine
 else:
     evaluate_multi_barycentric = _curve_speedup.evaluate_multi_barycentric
     evaluate_multi = _curve_speedup.evaluate_multi
     specialize_curve = _curve_speedup.specialize_curve
     evaluate_hodograph = _curve_speedup.evaluate_hodograph
     subdivide_nodes = _curve_speedup.subdivide_nodes
+    newton_refine = _curve_speedup.newton_refine
 # pylint: enable=invalid-name

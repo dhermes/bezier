@@ -125,3 +125,25 @@ def subdivide_nodes(double[::1, :] nodes, int unused_degree):
     )
 
     return left_nodes, right_nodes
+
+
+def newton_refine(
+        double[::1, :] nodes, int unused_degree,
+        double[::1, :] point, double s):
+    cdef int num_nodes, dimension
+    cdef double updated_s
+
+    # NOTE: We don't check that there are ``degree + 1`` rows.
+    num_nodes, dimension = np.shape(nodes)
+    # NOTE: We don't check that ``np.shape(point) == (1, dimension)``.
+
+    bezier._curve.newton_refine(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &point[0, 0],
+        &s,
+        &updated_s,
+    )
+
+    return updated_s

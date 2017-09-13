@@ -38,6 +38,9 @@ void evaluate_hodograph(
 void subdivide_nodes(
     int *num_nodes, int *dimension, double *nodes,
     double *left_nodes, double *right_nodes);
+void newton_refine(
+    int *num_nodes, int *dimension, double *nodes,
+    double *point, double *s, double *updated_s);
 
 #if defined (__cplusplus)
 }
