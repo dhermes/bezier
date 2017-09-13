@@ -733,7 +733,7 @@ def _newton_refine(nodes, degree, point, s):
     return s + delta_s
 
 
-def locate_point(nodes, degree, point):
+def _locate_point(nodes, degree, point):
     r"""Locate a point on a curve.
 
     Does so by recursively subdividing the curve and rejecting
@@ -915,6 +915,7 @@ if _curve_speedup is None:  # pragma: NO COVER
     evaluate_hodograph = _evaluate_hodograph
     subdivide_nodes = _subdivide_nodes
     newton_refine = _newton_refine
+    locate_point = _locate_point
 else:
     evaluate_multi_barycentric = _curve_speedup.evaluate_multi_barycentric
     evaluate_multi = _curve_speedup.evaluate_multi
@@ -922,4 +923,5 @@ else:
     evaluate_hodograph = _curve_speedup.evaluate_hodograph
     subdivide_nodes = _curve_speedup.subdivide_nodes
     newton_refine = _curve_speedup.newton_refine
+    locate_point = _curve_speedup.locate_point
 # pylint: enable=invalid-name

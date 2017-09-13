@@ -147,3 +147,29 @@ def newton_refine(
     )
 
     return updated_s
+
+
+def locate_point(
+        double[::1, :] nodes, int unused_degree, double[::1, :] point):
+    cdef int num_nodes, dimension
+    cdef double s_approx
+
+    # NOTE: We don't check that there are ``degree + 1`` rows.
+    num_nodes, dimension = np.shape(nodes)
+    # NOTE: We don't check that ``np.shape(point) == (1, dimension)``.
+
+    bezier._curve.locate_point(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &point[0, 0],
+        &s_approx,
+    )
+
+    if s_approx == -1.0:
+        return None
+    elif s_approx == -2.0:
+        raise ValueError(
+            'Parameters not close enough to one another')
+    else:
+        return s_approx

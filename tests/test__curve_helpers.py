@@ -675,13 +675,13 @@ class Test_speedup_newton_refine(Test__newton_refine):
         return _curve_speedup.newton_refine(nodes, degree, point, s)
 
 
-class Test_locate_point(unittest.TestCase):
+class Test__locate_point(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, point):
         from bezier import _curve_helpers
 
-        return _curve_helpers.locate_point(nodes, degree, point)
+        return _curve_helpers._locate_point(nodes, degree, point)
 
     def test_it(self):
         nodes = np.asfortranarray([
@@ -724,6 +724,16 @@ class Test_locate_point(unittest.TestCase):
         point = np.asfortranarray([[-0.25, 1.375]])
         with self.assertRaises(ValueError):
             self._call_function_under_test(nodes, 3, point)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_locate_point(Test__locate_point):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, point):
+        from bezier import _curve_speedup
+
+        return _curve_speedup.locate_point(nodes, degree, point)
 
 
 class Test_reduce_pseudo_inverse(utils.NumPyTestCase):

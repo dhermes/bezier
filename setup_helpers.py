@@ -54,8 +54,8 @@ to make sure the build is occurring as expected.
 FORTRAN_MODULES = collections.OrderedDict()
 FORTRAN_MODULES['types'] = ('types',)
 FORTRAN_MODULES['helpers'] = ('types', 'helpers')
-FORTRAN_MODULES['curve'] = ('types', 'curve')
-FORTRAN_MODULES['surface'] = ('types', 'curve', 'surface')
+FORTRAN_MODULES['curve'] = ('types', 'helpers', 'curve')
+FORTRAN_MODULES['surface'] = ('types', 'helpers', 'curve', 'surface')
 FORTRAN_MODULES['curve_intersection'] = (
     'types',
     'helpers',

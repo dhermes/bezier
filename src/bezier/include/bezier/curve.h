@@ -41,6 +41,9 @@ void subdivide_nodes(
 void newton_refine(
     int *num_nodes, int *dimension, double *nodes,
     double *point, double *s, double *updated_s);
+void locate_point(
+    int *num_nodes, int *dimension, double *nodes,
+    double *point, double *s_approx);
 
 #if defined (__cplusplus)
 }

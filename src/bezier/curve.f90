@@ -12,14 +12,26 @@
 
 module curve
 
-  use iso_c_binding, only: c_double, c_int
+  use iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
+  use helpers, only: contains_nd
   implicit none
-  private
+  private LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP
   public &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
        specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
-       subdivide_nodes_generic, subdivide_nodes, newton_refine
+       subdivide_nodes_generic, subdivide_nodes, newton_refine, locate_point
+
+  ! For ``locate_point``.
+  type :: LocateCandidate
+     real(c_double) :: start
+     real(c_double) :: end_
+     real(c_double), allocatable :: nodes(:, :)
+  end type LocateCandidate
+
+  ! NOTE: These values are also defined in `src/bezier/_curve_helpers.py`.
+  integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
+  real(c_double), parameter :: LOCATE_STD_CAP = 0.5_dp**20
 
 contains
 
@@ -314,5 +326,98 @@ contains
          dot_product(derivative(1, :), derivative(1, :))))
 
   end subroutine newton_refine
+
+  subroutine locate_point( &
+       num_nodes, dimension_, nodes, point, s_approx) &
+       bind(c, name='locate_point')
+
+    ! NOTE: This returns ``-1`` as a signal for "point is not on the curve"
+    !       and ``-2`` for "point is on separate segments" (i.e. the
+    !       standard deviation of the parameters is too large)
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: point(1, dimension_)
+    real(c_double), intent(out) :: s_approx
+    ! Variables outside of signature.
+    type(LocateCandidate), allocatable :: candidates(:), next_candidates(:)
+    integer(c_int) :: sub_index, cand_index
+    integer(c_int) :: num_candidates, num_next_candidates
+    type(LocateCandidate) :: candidate
+    real(c_double), allocatable :: s_params(:)
+    real(c_double) :: midpoint, std_dev
+    logical(c_bool) :: predicate
+
+    ! Start out with the full curve.
+    allocate(candidates(1))
+    candidates(1) = LocateCandidate(0.0_dp, 1.0_dp, nodes)
+    ! NOTE: `num_candidates` will be tracked separately
+    !       from `size(candidates)`.
+    num_candidates = 1
+    s_approx = -1.0_dp
+
+    do sub_index = 1, MAX_LOCATE_SUBDIVISIONS + 1
+       num_next_candidates = 0
+       ! Allocate maximum amount of space needed.
+       allocate(next_candidates(2 * num_candidates))
+       do cand_index = 1, num_candidates
+          candidate = candidates(cand_index)
+          call contains_nd( &
+               num_nodes, dimension_, candidate%nodes, point(1, :), predicate)
+          if (predicate) then
+             num_next_candidates = num_next_candidates + 2
+
+             midpoint = 0.5_dp * (candidate%start + candidate%end_)
+
+             ! Left half.
+             next_candidates(num_next_candidates - 1)%start = candidate%start
+             next_candidates(num_next_candidates - 1)%end_ = midpoint
+             ! Right half.
+             next_candidates(num_next_candidates)%start = midpoint
+             next_candidates(num_next_candidates)%end_ = candidate%end_
+
+             ! Allocate the new nodes and call sub-divide.
+             allocate(next_candidates(num_next_candidates - 1)%nodes( &
+                  num_nodes, dimension_))
+             allocate(next_candidates(num_next_candidates)%nodes( &
+                  num_nodes, dimension_))
+             call subdivide_nodes( &
+                  num_nodes, dimension_, candidate%nodes, &
+                  next_candidates(num_next_candidates - 1)%nodes, &
+                  next_candidates(num_next_candidates)%nodes)
+          end if
+       end do
+
+       ! NOTE: This may copy empty slots, but this is OK since we track
+       !       `num_candidates` separately.
+       call move_alloc(next_candidates, candidates)
+       num_candidates = num_next_candidates
+
+       ! If there are no more candidates, we are done.
+       if (num_candidates == 0) then
+          return
+       end if
+
+    end do
+
+    ! Compute the s-parameter as the mean of the **start** and
+    ! **end** parameters.
+    allocate(s_params(2 * num_candidates))
+    s_params(:num_candidates) = candidates(:num_candidates)%start
+    s_params(num_candidates + 1:) = candidates(:num_candidates)%end_
+    s_approx = sum(s_params) / (2 * num_candidates)
+
+    std_dev = sqrt(sum((s_params - s_approx)**2) / (2 * num_candidates))
+    if (std_dev > LOCATE_STD_CAP) then
+       s_approx = -2.0_dp
+       return
+    end if
+
+    ! NOTE: We use ``midpoint`` as a "placeholder" for the update.
+    call newton_refine( &
+         num_nodes, dimension_, nodes, point, s_approx, midpoint)
+    s_approx = midpoint
+
+  end subroutine locate_point
 
 end module curve
