@@ -12,6 +12,16 @@
 
 """Private helper methods for B |eacute| zier curves.
 
+As a convention, the functions defined here with a leading underscore
+(e.g. :func:`_subdivide_nodes`) have a special meaning.
+
+Each of these functions have a Cython speedup with the exact same
+interface which calls out to a Fortran implementation. The speedup
+will be used if the extension can be built. The name **without** the
+leading underscore will be surfaced as the actual interface (e.g.
+``subdivide_nodes``) whether that is the pure Python implementation
+or the speedup.
+
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 """
@@ -129,8 +139,11 @@ _CUBIC_SUBDIVIDE_RIGHT = np.asfortranarray([
 def make_subdivision_matrices(degree):
     """Make the matrix used to subdivide a curve.
 
-    This is a helper for :func:`_subdivide_nodes`. It does not have a
-    Fortran speedup.
+    .. note::
+
+        This is a helper for :func:`_subdivide_nodes`. It does not have a
+        Fortran speedup because it is **only** used by a function which has
+        a Fortran speedup.
 
     Args:
         degree (int): The degree of the curve.
@@ -230,11 +243,6 @@ def _evaluate_multi_barycentric(nodes, lambda1, lambda2):
     in ``lambda1`` and ``lambda2``, rather than using the
     de Casteljau algorithm.
 
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
-
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
         lambda1 (numpy.ndarray): Parameters along the curve (as a
@@ -272,8 +280,16 @@ def _evaluate_multi_barycentric(nodes, lambda1, lambda2):
     return result
 
 
-def _vec_size(nodes, s_val):
+def vec_size(nodes, s_val):
     r"""Compute :math:`\|B(s)\|_2`.
+
+    .. note::
+
+        This is a helper for :func:`compute_length` and does not have
+        a Fortran speedup.
+
+    Intended to be used with ``functools.partial`` to fill in the
+    value of ``nodes`` and create a callable that only accepts ``s_val``.
 
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
@@ -325,7 +341,7 @@ def compute_length(nodes, degree):
     if _scipy_int is None:
         raise OSError('This function requires SciPy for quadrature.')
 
-    size_func = functools.partial(_vec_size, first_deriv)
+    size_func = functools.partial(vec_size, first_deriv)
     length, _ = _scipy_int.quad(size_func, 0.0, 1.0)
     return length
 
@@ -373,6 +389,12 @@ def _elevate_nodes(nodes, degree, dimension):
 
 def de_casteljau_one_round(nodes, lambda1, lambda2):
     """Perform one round of de Casteljau's algorithm.
+
+    .. note::
+
+        This is a helper for :func:`_specialize_curve`. It does not have a
+        Fortran speedup because it is **only** used by a function which has
+        a Fortran speedup.
 
     The weights are assumed to sum to one.
 
@@ -467,11 +489,6 @@ def _evaluate_hodograph(s, nodes, degree):
 
     where each forward difference is given by
     :math:`\Delta v_j = v_{j + 1} - v_j`.
-
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): The nodes of a curve.
@@ -826,10 +843,13 @@ def reduce_pseudo_inverse(nodes, degree):
     return result
 
 
-def _projection_error(nodes, projected):
+def projection_error(nodes, projected):
     """Compute the error between ``nodes`` and the projected nodes.
 
-    Helper for :func:`_maybe_reduce`.
+    .. note::
+
+        This is a helper for :func:`maybe_reduce` (which is itself a helper
+        function for :func:`full_reduce`). It does not have a Fortran speedup.
 
     For now, just compute the relative error in the Frobenius norm. But,
     we may wish to consider the error per row / point instead.
@@ -849,8 +869,13 @@ def _projection_error(nodes, projected):
     return relative_err
 
 
-def _maybe_reduce(nodes):
+def maybe_reduce(nodes):
     r"""Reduce nodes in a curve if they are degree-elevated.
+
+    .. note::
+
+        This is a helper for :func:`full_reduce`. It does not have a
+        Fortran speedup.
 
     We check if the nodes are degree-elevated by projecting onto the
     space of degree-elevated curves of the same degree, then comparing
@@ -888,7 +913,7 @@ def _maybe_reduce(nodes):
         raise NotImplementedError(num_nodes)
 
     projected = _helpers.matrix_product(projection, nodes) / denom
-    relative_err = _projection_error(nodes, projected)
+    relative_err = projection_error(nodes, projected)
     if relative_err < _REDUCE_THRESHOLD:
         return True, reduce_pseudo_inverse(nodes, num_nodes - 1)
     else:
@@ -904,29 +929,29 @@ def full_reduce(nodes):
     Returns:
         numpy.ndarray: The fully degree-reduced nodes.
     """
-    was_reduced, nodes = _maybe_reduce(nodes)
+    was_reduced, nodes = maybe_reduce(nodes)
     while was_reduced:
-        was_reduced, nodes = _maybe_reduce(nodes)
+        was_reduced, nodes = maybe_reduce(nodes)
     return nodes
 
 
 # pylint: disable=invalid-name
 if _curve_speedup is None:  # pragma: NO COVER
-    evaluate_multi_barycentric = _evaluate_multi_barycentric
+    subdivide_nodes = _subdivide_nodes
     evaluate_multi = _evaluate_multi
+    evaluate_multi_barycentric = _evaluate_multi_barycentric
+    elevate_nodes = _elevate_nodes
     specialize_curve = _specialize_curve
     evaluate_hodograph = _evaluate_hodograph
-    subdivide_nodes = _subdivide_nodes
     newton_refine = _newton_refine
     locate_point = _locate_point
-    elevate_nodes = _elevate_nodes
 else:
-    evaluate_multi_barycentric = _curve_speedup.evaluate_multi_barycentric
+    subdivide_nodes = _curve_speedup.subdivide_nodes
     evaluate_multi = _curve_speedup.evaluate_multi
+    evaluate_multi_barycentric = _curve_speedup.evaluate_multi_barycentric
+    elevate_nodes = _curve_speedup.elevate_nodes
     specialize_curve = _curve_speedup.specialize_curve
     evaluate_hodograph = _curve_speedup.evaluate_hodograph
-    subdivide_nodes = _curve_speedup.subdivide_nodes
     newton_refine = _curve_speedup.newton_refine
     locate_point = _curve_speedup.locate_point
-    elevate_nodes = _curve_speedup.elevate_nodes
 # pylint: enable=invalid-name

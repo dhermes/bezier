@@ -308,13 +308,13 @@ class Test_speedup_evaluate_multi(Test__evaluate_multi):
         return _curve_speedup.evaluate_multi(nodes, s_vals)
 
 
-class Test__vec_size(unittest.TestCase):
+class Test_vec_size(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, s_val):
         from bezier import _curve_helpers
 
-        return _curve_helpers._vec_size(nodes, s_val)
+        return _curve_helpers.vec_size(nodes, s_val)
 
     def test_linear(self):
         nodes = np.asfortranarray([
@@ -865,13 +865,13 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
             self._call_function_under_test(nodes, degree)
 
 
-class Test__projection_error(unittest.TestCase):
+class Test_projection_error(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, projected):
         from bezier import _curve_helpers
 
-        return _curve_helpers._projection_error(nodes, projected)
+        return _curve_helpers.projection_error(nodes, projected)
 
     def test_it(self):
         nodes = np.asfortranarray([
@@ -896,13 +896,13 @@ class Test__projection_error(unittest.TestCase):
         self.assertEqual(result, 0.0)
 
 
-class Test__maybe_reduce(utils.NumPyTestCase):
+class Test_maybe_reduce(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _curve_helpers
 
-        return _curve_helpers._maybe_reduce(nodes)
+        return _curve_helpers.maybe_reduce(nodes)
 
     def _low_degree_helper(self, nodes):
         was_reduced, new_nodes = self._call_function_under_test(nodes)
