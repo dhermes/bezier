@@ -359,13 +359,13 @@ class Test_matrix_product(utils.NumPyTestCase):
         self.assertFalse(result.flags.owndata)
 
 
-class Test__wiggle_interval_py(unittest.TestCase):
+class Test__wiggle_interval(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(value, **kwargs):
         from bezier import _helpers
 
-        return _helpers._wiggle_interval_py(value, **kwargs)
+        return _helpers._wiggle_interval(value, **kwargs)
 
     def test_at_endpoint(self):
         # Really just making sure the function doesn't raise.
@@ -489,7 +489,7 @@ class Test__wiggle_interval_py(unittest.TestCase):
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_wiggle_interval(Test__wiggle_interval_py):
+class Test_speedup_wiggle_interval(Test__wiggle_interval):
 
     def _call_function_under_test(self, value, **kwargs):
         from bezier import _helpers_speedup

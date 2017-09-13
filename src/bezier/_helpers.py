@@ -10,7 +10,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Generic geometry and floating point helpers."""
+"""Generic geometry and floating point helpers.
+
+As a convention, the functions defined here with a leading underscore
+(e.g. :func:`_bbox`) have a special meaning.
+
+Each of these functions have a Cython speedup with the exact same
+interface which calls out to a Fortran implementation. The speedup
+will be used if the extension can be built. The name **without** the
+leading underscore will be surfaced as the actual interface (e.g.
+``bbox``) whether that is the pure Python implementation or the speedup.
+"""
 
 
 import numpy as np
@@ -238,7 +248,7 @@ def matrix_product(mat1, mat2):
     return np.dot(mat2.T, mat1.T).T
 
 
-def _wiggle_interval_py(value, wiggle=0.5**45):
+def _wiggle_interval(value, wiggle=0.5**45):
     r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
 
     Allows a little bit of wiggle room outside the interval. Any value
@@ -276,12 +286,12 @@ def _wiggle_interval_py(value, wiggle=0.5**45):
 # pylint: disable=invalid-name
 if _helpers_speedup is None:  # pragma: NO COVER
     bbox = _bbox
-    wiggle_interval = _wiggle_interval_py
-    cross_product = _cross_product
     contains_nd = _contains_nd
+    cross_product = _cross_product
+    wiggle_interval = _wiggle_interval
 else:
     bbox = _helpers_speedup.bbox
-    wiggle_interval = _helpers_speedup.wiggle_interval
-    cross_product = _helpers_speedup.cross_product
     contains_nd = _helpers_speedup.contains_nd
+    cross_product = _helpers_speedup.cross_product
+    wiggle_interval = _helpers_speedup.wiggle_interval
 # pylint: enable=invalid-name
