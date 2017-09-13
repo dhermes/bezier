@@ -44,3 +44,6 @@ cdef extern from "bezier/curve.h":
         double *point, double *s_approx)
     void elevate_nodes(
         int *num_nodes, int *dimension, double *nodes, double *elevated)
+    void get_curvature(
+        int *num_nodes, int *dimension, double *nodes, double *tangent_vec,
+        double *s, double *curvature)

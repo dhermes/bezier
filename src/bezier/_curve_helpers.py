@@ -507,7 +507,7 @@ def _evaluate_hodograph(s, nodes, degree):
         first_deriv, np.asfortranarray([s]))
 
 
-def get_curvature(nodes, degree, tangent_vec, s):
+def _get_curvature(nodes, degree, tangent_vec, s):
     r"""Compute the signed curvature of a curve at :math:`s`.
 
     Computed via
@@ -943,6 +943,7 @@ if _curve_speedup is None:  # pragma: NO COVER
     elevate_nodes = _elevate_nodes
     specialize_curve = _specialize_curve
     evaluate_hodograph = _evaluate_hodograph
+    get_curvature = _get_curvature
     newton_refine = _newton_refine
     locate_point = _locate_point
 else:
@@ -952,6 +953,7 @@ else:
     elevate_nodes = _curve_speedup.elevate_nodes
     specialize_curve = _curve_speedup.specialize_curve
     evaluate_hodograph = _curve_speedup.evaluate_hodograph
+    get_curvature = _curve_speedup.get_curvature
     newton_refine = _curve_speedup.newton_refine
     locate_point = _curve_speedup.locate_point
 # pylint: enable=invalid-name

@@ -14,13 +14,14 @@ module curve
 
   use iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
-  use helpers, only: contains_nd
+  use helpers, only: cross_product, contains_nd
   implicit none
   private LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP
   public &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
        specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
-       subdivide_nodes_generic, subdivide_nodes, newton_refine, locate_point
+       subdivide_nodes_generic, subdivide_nodes, newton_refine, locate_point, &
+       elevate_nodes, get_curvature
 
   ! For ``locate_point``.
   type :: LocateCandidate
@@ -212,12 +213,10 @@ contains
     real(c_double), intent(out) :: hodograph(1, dimension_)
     ! Variables outside of signature.
     real(c_double) :: first_deriv(degree, dimension_)
-    real(c_double) :: param(1)
 
     first_deriv = nodes(2:, :) - nodes(:degree, :)
-    param = s
     call evaluate_multi( &
-         degree - 1, dimension_, first_deriv, 1, param, hodograph)
+         degree - 1, dimension_, first_deriv, 1, [s], hodograph)
     hodograph = degree * hodograph
 
   end subroutine evaluate_hodograph
@@ -438,5 +437,44 @@ contains
     elevated(num_nodes + 1, :) = nodes(num_nodes, :)
 
   end subroutine elevate_nodes
+
+  subroutine get_curvature( &
+       num_nodes, dimension_, nodes, tangent_vec, s, curvature) &
+       bind(c, name='get_curvature')
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: tangent_vec(1, dimension_)
+    real(c_double), intent(in) :: s
+    real(c_double), intent(out) :: curvature
+    ! Variables outside of signature.
+    real(c_double) :: work(num_nodes - 1, dimension_)
+    real(c_double) :: concavity(1, dimension_)
+
+    if (num_nodes == 2) then
+       curvature = 0
+       return
+    end if
+
+    ! NOTE: We somewhat replicate code in ``evaluate_hodograph()``
+    !       here. It may be worthwhile to implement store the hodograph
+    !       and "concavity" nodes for a given curve to avoid re-computing the
+    !       first and second node differences.
+
+    ! First derivative:
+    work = nodes(2:, :) - nodes(:num_nodes - 1, :)
+    ! Second derivative (no need for last element of work array):
+    work(:num_nodes - 2, :) = work(2:, :) - work(:num_nodes - 2, :)
+
+    ! NOTE: The degree being evaluated is ``degree - 2 == num_nodes - 3``.
+    call evaluate_multi( &
+         num_nodes - 3, dimension_, work(:num_nodes - 2, :), 1, [s], concavity)
+    ! B''(s) = d (d - 1) D(s) where D(s) is defined by the "double hodograph".
+    concavity = concavity * (num_nodes - 1) * (num_nodes - 2)
+
+    call cross_product(tangent_vec, concavity, curvature)
+    curvature = curvature / norm2(tangent_vec)**3
+
+  end subroutine get_curvature
 
 end module curve

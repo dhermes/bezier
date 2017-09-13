@@ -606,13 +606,13 @@ class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
         return _curve_speedup.evaluate_hodograph(s, nodes, degree)
 
 
-class Test_get_curvature(unittest.TestCase):
+class Test__get_curvature(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, tangent_vec, s):
         from bezier import _curve_helpers
 
-        return _curve_helpers.get_curvature(
+        return _curve_helpers._get_curvature(
             nodes, degree, tangent_vec, s)
 
     @staticmethod
@@ -652,6 +652,17 @@ class Test_get_curvature(unittest.TestCase):
         tangent_vec = self._get_tangent_vec(s, nodes, 2)
         result = self._call_function_under_test(nodes, 2, tangent_vec, s)
         self.assertEqual(result, -4.0)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_get_curvature(Test__get_curvature):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, tangent_vec, s):
+        from bezier import _curve_speedup
+
+        return _curve_speedup.get_curvature(
+            nodes, degree, tangent_vec, s)
 
 
 class Test__newton_refine(unittest.TestCase):

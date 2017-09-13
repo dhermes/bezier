@@ -192,3 +192,25 @@ def elevate_nodes(double[::1, :] nodes, int degree, int dimension):
     )
 
     return elevated
+
+
+def get_curvature(
+        double[::1, :] nodes, int unused_degree,
+        double[::1, :] tangent_vec, double s):
+    cdef int num_nodes, dimension
+    cdef double curvature
+
+    # NOTE: We don't check that there are ``degree + 1`` rows.
+    num_nodes, dimension = np.shape(nodes)
+    # NOTE: We don't check that ``np.shape(tangent_vec) == (1, dimension)``.
+
+    bezier._curve.get_curvature(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &tangent_vec[0, 0],
+        &s,
+        &curvature,
+    )
+
+    return curvature
