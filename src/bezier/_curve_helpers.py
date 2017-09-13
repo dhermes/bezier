@@ -807,7 +807,7 @@ def _locate_point(nodes, degree, point):
     return newton_refine(nodes, degree, point, s_approx)
 
 
-def reduce_pseudo_inverse(nodes, degree):
+def _reduce_pseudo_inverse(nodes, degree):
     """Performs degree-reduction for a B |eacute| zier curve.
 
     Does so by using the pseudo-inverse of the degree elevation
@@ -946,6 +946,7 @@ if _curve_speedup is None:  # pragma: NO COVER
     get_curvature = _get_curvature
     newton_refine = _newton_refine
     locate_point = _locate_point
+    reduce_pseudo_inverse = _reduce_pseudo_inverse
 else:
     subdivide_nodes = _curve_speedup.subdivide_nodes
     evaluate_multi = _curve_speedup.evaluate_multi
@@ -956,4 +957,5 @@ else:
     get_curvature = _curve_speedup.get_curvature
     newton_refine = _curve_speedup.newton_refine
     locate_point = _curve_speedup.locate_point
+    reduce_pseudo_inverse = _curve_speedup.reduce_pseudo_inverse
 # pylint: enable=invalid-name

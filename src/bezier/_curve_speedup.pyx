@@ -14,6 +14,7 @@
 """Cython "wrapped" interface for `_curve_helpers`."""
 
 
+from libcpp cimport bool as bool_t
 import numpy as np
 from numpy cimport ndarray as ndarray_t
 
@@ -214,3 +215,27 @@ def get_curvature(
     )
 
     return curvature
+
+
+def reduce_pseudo_inverse(double[::1, :] nodes, int unused_degree):
+    cdef int num_nodes, dimension
+    cdef bool_t not_implemented
+    cdef ndarray_t[double, ndim=2, mode='fortran'] reduced
+
+    # NOTE: We don't check that there are ``degree + 1`` rows.
+    num_nodes, dimension = np.shape(nodes)
+
+    reduced = np.empty((num_nodes - 1, dimension), order='F')
+
+    bezier._curve.reduce_pseudo_inverse(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &reduced[0, 0],
+        &not_implemented,
+    )
+
+    if not_implemented:
+        raise NotImplementedError(num_nodes - 1)
+
+    return reduced

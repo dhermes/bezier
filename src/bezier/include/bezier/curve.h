@@ -15,6 +15,24 @@
 
 #if defined (__cplusplus)
 extern "C" {
+#elif !defined (_MSC_VER)
+#include <stdbool.h>
+#endif
+
+#if !defined (__cplusplus) && defined (_MSC_VER)
+#  if !defined (FALSE)
+#    define FALSE (0)
+#  endif
+#  if !defined (TRUE)
+#    define TRUE (!FALSE)
+#  endif
+#  if _MSC_VER >= 1800
+#    include <stdbool.h>
+#  else
+#    define bool int
+#    define true TRUE
+#    define false FALSE
+#  endif
 #endif
 
 void evaluate_curve_barycentric(
@@ -49,6 +67,9 @@ void elevate_nodes(
 void get_curvature(
     int *num_nodes, int *dimension, double *nodes, double *tangent_vec,
     double *s, double *curvature);
+void reduce_pseudo_inverse(
+    int *num_nodes, int *dimension, double *nodes, double *reduced,
+    bool *not_implemented);
 
 #if defined (__cplusplus)
 }

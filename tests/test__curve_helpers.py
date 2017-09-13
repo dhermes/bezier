@@ -757,7 +757,7 @@ class Test_speedup_locate_point(Test__locate_point):
         return _curve_speedup.locate_point(nodes, degree, point)
 
 
-class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
+class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
 
     EPS = 0.5**52
 
@@ -765,7 +765,7 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
     def _call_function_under_test(nodes, degree):
         from bezier import _curve_helpers
 
-        return _curve_helpers.reduce_pseudo_inverse(nodes, degree)
+        return _curve_helpers._reduce_pseudo_inverse(nodes, degree)
 
     def test_to_constant(self):
         nodes = np.asfortranarray([
@@ -874,6 +874,16 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
             shape=(degree + 1, 2), seed=3820, num_bits=8)
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes, degree)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup__reduce_pseudo_inverse(Test__reduce_pseudo_inverse):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _curve_speedup
+
+        return _curve_speedup.reduce_pseudo_inverse(nodes, degree)
 
 
 class Test_projection_error(unittest.TestCase):

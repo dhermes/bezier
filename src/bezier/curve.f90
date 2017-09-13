@@ -21,7 +21,7 @@ module curve
        evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
        specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
        subdivide_nodes_generic, subdivide_nodes, newton_refine, locate_point, &
-       elevate_nodes, get_curvature
+       elevate_nodes, get_curvature, reduce_pseudo_inverse
 
   ! For ``locate_point``.
   type :: LocateCandidate
@@ -476,5 +476,49 @@ contains
     curvature = curvature / norm2(tangent_vec)**3
 
   end subroutine get_curvature
+
+  subroutine reduce_pseudo_inverse( &
+       num_nodes, dimension_, nodes, reduced, not_implemented) &
+       bind(c, name='reduce_pseudo_inverse')
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(out) :: reduced(num_nodes - 1, dimension_)
+    logical(c_bool), intent(out) :: not_implemented
+
+    not_implemented = .FALSE.
+    if (num_nodes == 2) then
+       reduced(1, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
+    else if (num_nodes == 3) then
+       reduced(1, :) = (5 * nodes(1, :) + 2 * nodes(2, :) - nodes(3, :)) / 6
+       reduced(2, :) = (-nodes(1, :) + 2 * nodes(2, :) + 5 * nodes(3, :)) / 6
+    else if (num_nodes == 4) then
+       reduced(1, :) = ( &
+            19 * nodes(1, :) + 3 * nodes(2, :) - &
+            3 * nodes(3, :) + nodes(4, :)) / 20
+       reduced(2, :) = 0.25_dp * ( &
+            -nodes(1, :) + 3 * nodes(2, :) + &
+            3 * nodes(3, :) - nodes(4, :))
+       reduced(3, :) = ( &
+            nodes(1, :) - 3 * nodes(2, :) + &
+            3 * nodes(3, :) + 19 * nodes(4, :)) / 20
+    else if (num_nodes == 5) then
+       reduced(1, :) = ( &
+            69 * nodes(1, :) + 4 * nodes(2, :) - 6 * nodes(3, :) + &
+            4 * nodes(4, :) - nodes(5, :)) / 70
+       reduced(2, :) = ( &
+            -53 * nodes(1, :) + 212 * nodes(2, :) + 102 * nodes(3, :) - &
+            68 * nodes(4, :) + 17 * nodes(5, :)) / 210
+       reduced(3, :) = ( &
+            17 * nodes(1, :) - 68 * nodes(2, :) + 102 * nodes(3, :) + &
+            212 * nodes(4, :) - 53 * nodes(5, :)) / 210
+       reduced(4, :) = ( &
+            -nodes(1, :) + 4 * nodes(2, :) - 6 * nodes(3, :) + &
+            4 * nodes(4, :) + 69 * nodes(5, :)) / 70
+    else
+       not_implemented = .TRUE.
+    end if
+
+  end subroutine reduce_pseudo_inverse
 
 end module curve

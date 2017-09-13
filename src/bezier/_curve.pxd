@@ -13,6 +13,9 @@
 """Cython wrapper for ``curve.f90``."""
 
 
+from libcpp cimport bool as bool_t
+
+
 cdef extern from "bezier/curve.h":
     void evaluate_curve_barycentric(
         int *degree, int *dimension, double *nodes, int *num_vals,
@@ -47,3 +50,6 @@ cdef extern from "bezier/curve.h":
     void get_curvature(
         int *num_nodes, int *dimension, double *nodes, double *tangent_vec,
         double *s, double *curvature)
+    void reduce_pseudo_inverse(
+        int *num_nodes, int *dimension, double *nodes, double *reduced,
+        bool_t *not_implemented)
