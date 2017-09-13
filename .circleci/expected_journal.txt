@@ -128,6 +128,7 @@ $ gcc \
 >   -shared \
 >   build/temp.linux-x86_64-3.6/src/bezier/_curve_speedup.o \
 >   src/bezier/types.o \
+>   src/bezier/helpers.o \
 >   src/bezier/curve.o \
 >   -L/usr/local/lib \
 >   -lgfortran \
@@ -159,6 +160,7 @@ $ gcc \
 >   -shared \
 >   build/temp.linux-x86_64-3.6/src/bezier/_surface_speedup.o \
 >   src/bezier/types.o \
+>   src/bezier/helpers.o \
 >   src/bezier/curve.o \
 >   src/bezier/surface.o \
 >   -L/usr/local/lib \
