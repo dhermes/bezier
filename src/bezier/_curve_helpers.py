@@ -71,13 +71,13 @@ _PROJECTION2 = np.asfortranarray([
 ])
 _PROJ_DENOM2 = 5.0
 _PROJECTION3 = np.asfortranarray([
-    [103.5,   6.0, -9.0,   6.0,  -1.5],
-    [  6.0,  81.0, 36.0, -24.0,   6.0],  # noqa: E201
-    [ -9.0,  36.0, 51.0,  36.0,  -9.0],  # noqa: E201
-    [  6.0, -24.0, 36.0,  81.0,   6.0],  # noqa: E201
-    [ -1.5,   6.0, -9.0,   6.0, 103.5],  # noqa: E201
+    [34.5,  2.0, -3.0,  2.0, -0.5],
+    [ 2.0, 27.0, 12.0, -8.0,  2.0],  # noqa: E201
+    [-3.0, 12.0, 17.0, 12.0, -3.0],
+    [ 2.0, -8.0, 12.0, 27.0,  2.0],  # noqa: E201
+    [-0.5,  2.0, -3.0,  2.0, 34.5],
 ])
-_PROJ_DENOM3 = 105.0
+_PROJ_DENOM3 = 35.0
 # Reductions for a set of degree-elevated nodes.
 # If v --> Ev is the elevation map, then R = (E^T E)^{-1} E^T -- the
 # pseudo-inverse of E -- actually reduces a set of nodes.
@@ -868,7 +868,7 @@ def _projection_error(nodes, projected):
     return relative_err
 
 
-def maybe_reduce(nodes):
+def _maybe_reduce(nodes):
     r"""Reduce nodes in a curve if they are degree-elevated.
 
     .. note::
@@ -947,6 +947,7 @@ if _curve_speedup is None:  # pragma: NO COVER
     locate_point = _locate_point
     reduce_pseudo_inverse = _reduce_pseudo_inverse
     projection_error = _projection_error
+    maybe_reduce = _maybe_reduce
 else:
     subdivide_nodes = _curve_speedup.subdivide_nodes
     evaluate_multi = _curve_speedup.evaluate_multi
@@ -959,4 +960,5 @@ else:
     locate_point = _curve_speedup.locate_point
     reduce_pseudo_inverse = _curve_speedup.reduce_pseudo_inverse
     projection_error = _curve_speedup.projection_error
+    maybe_reduce = _curve_speedup.maybe_reduce
 # pylint: enable=invalid-name

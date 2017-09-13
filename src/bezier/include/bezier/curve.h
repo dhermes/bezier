@@ -73,6 +73,7 @@ void reduce_pseudo_inverse(
 void projection_error(
     int *num_nodes, int *dimension, double *nodes,
     double *projected, double *error);
+void can_reduce(int *num_nodes, int *dimension, double *nodes, int *success);
 
 #if defined (__cplusplus)
 }

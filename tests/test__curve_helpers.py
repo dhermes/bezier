@@ -927,13 +927,13 @@ class Test_speedup_projection_error(Test__projection_error):
         return _curve_speedup.projection_error(nodes, projected)
 
 
-class Test_maybe_reduce(utils.NumPyTestCase):
+class Test__maybe_reduce(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _curve_helpers
 
-        return _curve_helpers.maybe_reduce(nodes)
+        return _curve_helpers._maybe_reduce(nodes)
 
     def _low_degree_helper(self, nodes):
         was_reduced, new_nodes = self._call_function_under_test(nodes)
@@ -1031,6 +1031,16 @@ class Test_maybe_reduce(utils.NumPyTestCase):
             shape=(degree + 1, 2), seed=77618, num_bits=8)
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes)
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_maybe_reduce(Test__maybe_reduce):
+
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier import _curve_speedup
+
+        return _curve_speedup.maybe_reduce(nodes)
 
 
 class Test_full_reduce(utils.NumPyTestCase):

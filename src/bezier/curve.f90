@@ -16,12 +16,15 @@ module curve
   use types, only: dp
   use helpers, only: cross_product, contains_nd
   implicit none
-  private LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP
+  private &
+       LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
+       REDUCE_THRESHOLD
   public &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
        specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
        subdivide_nodes_generic, subdivide_nodes, newton_refine, locate_point, &
-       elevate_nodes, get_curvature, reduce_pseudo_inverse, projection_error
+       elevate_nodes, get_curvature, reduce_pseudo_inverse, projection_error, &
+       can_reduce
 
   ! For ``locate_point``.
   type :: LocateCandidate
@@ -33,6 +36,8 @@ module curve
   ! NOTE: These values are also defined in `src/bezier/_curve_helpers.py`.
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
   real(c_double), parameter :: LOCATE_STD_CAP = 0.5_dp**20
+  ! sqrt(machine precision)
+  real(c_double), parameter :: REDUCE_THRESHOLD = 0.5_dp**26
 
 contains
 
@@ -540,5 +545,77 @@ contains
     error = error / norm2(nodes)
 
   end subroutine projection_error
+
+  subroutine can_reduce( &
+       num_nodes, dimension_, nodes, success) &
+       bind(c, name='can_reduce')
+
+    ! NOTE: This returns ``success = 0`` for "Failure", ``success = 1`` for
+    !       "Success" and ``success = -1`` for "Not Implemented".
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    integer(c_int), intent(out) :: success
+    ! Variables outside of signature.
+    real(c_double) :: reduced(num_nodes, dimension_)
+    real(c_double) :: relative_err
+
+    if (num_nodes < 2) then
+       ! Can't reduce past degree 1.
+       success = 0
+       return
+    else if (num_nodes > 5) then
+       ! Not Implemented.
+       success = -1
+       return
+    end if
+
+    ! First, put the "projection" in ``reduced``.
+    if (num_nodes == 2) then
+       reduced(1, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
+       reduced(2, :) = reduced(1, :)
+    else if (num_nodes == 3) then
+       reduced(1, :) = (5 * nodes(1, :) + 2 * nodes(2, :) - nodes(3, :)) / 6
+       reduced(2, :) = (nodes(1, :) + nodes(2, :) + nodes(3, :)) / 3
+       reduced(3, :) = (-nodes(1, :) + 2 * nodes(2, :) + 5 * nodes(3, :)) / 6
+    else if (num_nodes == 4) then
+       reduced(1, :) = ( &
+            19 * nodes(1, :) + 3 * nodes(2, :) - &
+            3 * nodes(3, :) + nodes(4, :)) / 20
+       reduced(2, :) = ( &
+            3 * nodes(1, :) + 11 * nodes(2, :) + &
+            9 * nodes(3, :) - 3 * nodes(4, :)) / 20
+       reduced(3, :) = ( &
+            -3 * nodes(1, :) + 9 * nodes(2, :) + &
+            11 * nodes(3, :) + 3 * nodes(4, :)) / 20
+       reduced(4, :) = ( &
+            nodes(1, :) - 3 * nodes(2, :) + &
+            3 * nodes(3, :) + 19 * nodes(4, :)) / 20
+    else if (num_nodes == 5) then
+       reduced(1, :) = ( &
+            69 * nodes(1, :) + 4 * nodes(2, :) - 6 * nodes(3, :) + &
+            4 * nodes(4, :) - nodes(5, :)) / 70
+       reduced(2, :) = ( &
+            2 * nodes(1, :) + 27 * nodes(2, :) + 12 * nodes(3, :) - &
+            8 * nodes(4, :) + 2 * nodes(5, :)) / 35
+       reduced(3, :) = ( &
+            -3 * nodes(1, :) + 12 * nodes(2, :) + 17 * nodes(3, :) + &
+            12 * nodes(4, :) - 3 * nodes(5, :)) / 35
+       reduced(4, :) = ( &
+            2 * nodes(1, :) - 8 * nodes(2, :) + 12 * nodes(3, :) + &
+            27 * nodes(4, :) + 2 * nodes(5, :)) / 35
+       reduced(5, :) = ( &
+            -nodes(1, :) + 4 * nodes(2, :) - 6 * nodes(3, :) + &
+            4 * nodes(4, :) + 69 * nodes(5, :)) / 70
+    end if
+
+    call projection_error(num_nodes, dimension_, nodes, reduced, relative_err)
+    if (relative_err < REDUCE_THRESHOLD) then
+       success = 1
+    else
+       success = 0
+    end if
+
+  end subroutine can_reduce
 
 end module curve
