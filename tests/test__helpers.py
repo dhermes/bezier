@@ -190,6 +190,17 @@ class Test__contains_nd(unittest.TestCase):
         point = np.asfortranarray([[0.5, 0.0, 0.0, 2.0]])
         self.assertTrue(self._call_function_under_test(nodes, point))
 
+    def test_shape_mismatch(self):
+        nodes = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 3.0],
+            [2.0, 6.0],
+        ])
+        point = np.asfortranarray([[0.0, 1.5, 1.0]])
+
+        with self.assertRaises(ValueError):
+            self._call_function_under_test(nodes, point)
+
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
 class Test_speedup_contains_nd(Test__contains_nd):

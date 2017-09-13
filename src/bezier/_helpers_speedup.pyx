@@ -70,7 +70,8 @@ def contains_nd(double[::1, :] nodes, double[::1, :] point):
 
     num_nodes, dimension = np.shape(nodes)
     if np.shape(point) != (1, dimension):
-        msg = 'Point {} was expected to have shape (1, {})'.format(dimension)
+        msg = 'Point {} was expected to have shape (1, {})'.format(
+            np.asarray(point), dimension)
         raise ValueError(msg)
 
     bezier._helpers.contains_nd(
