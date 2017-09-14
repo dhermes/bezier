@@ -376,7 +376,7 @@ def polynomial_sign(poly_surface, degree):
         return signs.pop()
 
 
-def _2x2_det(mat):
+def two_by_two_det(mat):
     r"""Compute the determinant of a 2x2 matrix.
 
     This is "needed" because :func:`numpy.linalg.det` uses a more generic
@@ -429,12 +429,12 @@ def quadratic_jacobian_polynomial(nodes):
         _QUADRATIC_JACOBIAN_HELPER, nodes)
     # pylint: enable=no-member
     jac_at_nodes = np.empty((6, 1), order='F')
-    jac_at_nodes[0, 0] = _2x2_det(jac_parts[:2, :])
-    jac_at_nodes[1, 0] = _2x2_det(jac_parts[2:4, :])
-    jac_at_nodes[2, 0] = _2x2_det(jac_parts[4:6, :])
-    jac_at_nodes[3, 0] = _2x2_det(jac_parts[6:8, :])
-    jac_at_nodes[4, 0] = _2x2_det(jac_parts[8:10, :])
-    jac_at_nodes[5, 0] = _2x2_det(jac_parts[10:, :])
+    jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:2, :])
+    jac_at_nodes[1, 0] = two_by_two_det(jac_parts[2:4, :])
+    jac_at_nodes[2, 0] = two_by_two_det(jac_parts[4:6, :])
+    jac_at_nodes[3, 0] = two_by_two_det(jac_parts[6:8, :])
+    jac_at_nodes[4, 0] = two_by_two_det(jac_parts[8:10, :])
+    jac_at_nodes[5, 0] = two_by_two_det(jac_parts[10:, :])
 
     # Convert the nodal values to the Bernstein basis...
     bernstein = _helpers.matrix_product(
@@ -466,21 +466,21 @@ def cubic_jacobian_polynomial(nodes):
     jac_parts = _helpers.matrix_product(
         _CUBIC_JACOBIAN_HELPER, nodes)
     jac_at_nodes = np.empty((15, 1), order='F')
-    jac_at_nodes[0, 0] = _2x2_det(jac_parts[:2, :])
-    jac_at_nodes[1, 0] = _2x2_det(jac_parts[2:4, :])
-    jac_at_nodes[2, 0] = _2x2_det(jac_parts[4:6, :])
-    jac_at_nodes[3, 0] = _2x2_det(jac_parts[6:8, :])
-    jac_at_nodes[4, 0] = _2x2_det(jac_parts[8:10, :])
-    jac_at_nodes[5, 0] = _2x2_det(jac_parts[10:12, :])
-    jac_at_nodes[6, 0] = _2x2_det(jac_parts[12:14, :])
-    jac_at_nodes[7, 0] = _2x2_det(jac_parts[14:16, :])
-    jac_at_nodes[8, 0] = _2x2_det(jac_parts[16:18, :])
-    jac_at_nodes[9, 0] = _2x2_det(jac_parts[18:20, :])
-    jac_at_nodes[10, 0] = _2x2_det(jac_parts[20:22, :])
-    jac_at_nodes[11, 0] = _2x2_det(jac_parts[22:24, :])
-    jac_at_nodes[12, 0] = _2x2_det(jac_parts[24:26, :])
-    jac_at_nodes[13, 0] = _2x2_det(jac_parts[26:28, :])
-    jac_at_nodes[14, 0] = _2x2_det(jac_parts[28:, :])
+    jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:2, :])
+    jac_at_nodes[1, 0] = two_by_two_det(jac_parts[2:4, :])
+    jac_at_nodes[2, 0] = two_by_two_det(jac_parts[4:6, :])
+    jac_at_nodes[3, 0] = two_by_two_det(jac_parts[6:8, :])
+    jac_at_nodes[4, 0] = two_by_two_det(jac_parts[8:10, :])
+    jac_at_nodes[5, 0] = two_by_two_det(jac_parts[10:12, :])
+    jac_at_nodes[6, 0] = two_by_two_det(jac_parts[12:14, :])
+    jac_at_nodes[7, 0] = two_by_two_det(jac_parts[14:16, :])
+    jac_at_nodes[8, 0] = two_by_two_det(jac_parts[16:18, :])
+    jac_at_nodes[9, 0] = two_by_two_det(jac_parts[18:20, :])
+    jac_at_nodes[10, 0] = two_by_two_det(jac_parts[20:22, :])
+    jac_at_nodes[11, 0] = two_by_two_det(jac_parts[22:24, :])
+    jac_at_nodes[12, 0] = two_by_two_det(jac_parts[24:26, :])
+    jac_at_nodes[13, 0] = two_by_two_det(jac_parts[26:28, :])
+    jac_at_nodes[14, 0] = two_by_two_det(jac_parts[28:, :])
 
     # Convert the nodal values to the Bernstein basis...
     # pylint: disable=no-member
@@ -2545,16 +2545,16 @@ _IGNORED_TYPES = (
 # pylint: disable=invalid-name
 if _surface_speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
+    jacobian_both = _jacobian_both
+    jacobian_det = _jacobian_det
     evaluate_barycentric = _evaluate_barycentric
     evaluate_barycentric_multi = _evaluate_barycentric_multi
     evaluate_cartesian_multi = _evaluate_cartesian_multi
-    jacobian_both = _jacobian_both
-    jacobian_det = _jacobian_det
 else:
     de_casteljau_one_round = _surface_speedup.de_casteljau_one_round
+    jacobian_both = _surface_speedup.jacobian_both
+    jacobian_det = _surface_speedup.jacobian_det
     evaluate_barycentric = _surface_speedup.evaluate_barycentric
     evaluate_barycentric_multi = _surface_speedup.evaluate_barycentric_multi
     evaluate_cartesian_multi = _surface_speedup.evaluate_cartesian_multi
-    jacobian_both = _surface_speedup.jacobian_both
-    jacobian_det = _surface_speedup.jacobian_det
 # pylint: enable=invalid-name

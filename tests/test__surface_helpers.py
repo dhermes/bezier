@@ -103,13 +103,13 @@ class Test_polynomial_sign(unittest.TestCase):
         self.assertEqual(sign, 0)
 
 
-class Test__2x2_det(unittest.TestCase):
+class Test_two_by_two_det(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(mat):
         from bezier import _surface_helpers
 
-        return _surface_helpers._2x2_det(mat)
+        return _surface_helpers.two_by_two_det(mat)
 
     def test_integers(self):
         mat = np.asfortranarray([
