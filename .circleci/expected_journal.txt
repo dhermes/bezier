@@ -64,9 +64,84 @@ $ /usr/bin/gfortran \
 >   -o \
 >   src/bezier/curve_intersection.o
 ----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/d1mach.f \
+>   -o \
+>   src/bezier/quadpack/d1mach.o
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqelg.f \
+>   -o \
+>   src/bezier/quadpack/dqelg.o
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqpsrt.f \
+>   -o \
+>   src/bezier/quadpack/dqpsrt.o
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqk21.f \
+>   -o \
+>   src/bezier/quadpack/dqk21.o
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqagse.f \
+>   -o \
+>   src/bezier/quadpack/dqagse.o
+----------------------------------------
 $ ar \
 >   -cr \
 >   build/lib.linux-x86_64-3.6/bezier/lib/libbezier.a \
+>   src/bezier/quadpack/d1mach.o \
+>   src/bezier/quadpack/dqelg.o \
+>   src/bezier/quadpack/dqpsrt.o \
+>   src/bezier/quadpack/dqk21.o \
+>   src/bezier/quadpack/dqagse.o \
 >   src/bezier/types.o \
 >   src/bezier/helpers.o \
 >   src/bezier/curve.o \
@@ -129,6 +204,11 @@ $ gcc \
 >   build/temp.linux-x86_64-3.6/src/bezier/_curve_speedup.o \
 >   src/bezier/types.o \
 >   src/bezier/helpers.o \
+>   src/bezier/quadpack/d1mach.o \
+>   src/bezier/quadpack/dqelg.o \
+>   src/bezier/quadpack/dqpsrt.o \
+>   src/bezier/quadpack/dqk21.o \
+>   src/bezier/quadpack/dqagse.o \
 >   src/bezier/curve.o \
 >   -L/usr/local/lib \
 >   -lgfortran \
@@ -161,6 +241,11 @@ $ gcc \
 >   build/temp.linux-x86_64-3.6/src/bezier/_surface_speedup.o \
 >   src/bezier/types.o \
 >   src/bezier/helpers.o \
+>   src/bezier/quadpack/d1mach.o \
+>   src/bezier/quadpack/dqelg.o \
+>   src/bezier/quadpack/dqpsrt.o \
+>   src/bezier/quadpack/dqk21.o \
+>   src/bezier/quadpack/dqagse.o \
 >   src/bezier/curve.o \
 >   src/bezier/surface.o \
 >   -L/usr/local/lib \
@@ -194,6 +279,11 @@ $ gcc \
 >   build/temp.linux-x86_64-3.6/src/bezier/_curve_intersection_speedup.o \
 >   src/bezier/types.o \
 >   src/bezier/helpers.o \
+>   src/bezier/quadpack/d1mach.o \
+>   src/bezier/quadpack/dqelg.o \
+>   src/bezier/quadpack/dqpsrt.o \
+>   src/bezier/quadpack/dqk21.o \
+>   src/bezier/quadpack/dqagse.o \
 >   src/bezier/curve.o \
 >   src/bezier/curve_intersection.o \
 >   -L/usr/local/lib \
