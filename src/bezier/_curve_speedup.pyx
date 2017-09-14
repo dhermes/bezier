@@ -14,11 +14,23 @@
 """Cython "wrapped" interface for `_curve_helpers`."""
 
 
+import warnings
+
 from libcpp cimport bool as bool_t
 import numpy as np
 from numpy cimport ndarray as ndarray_t
 
 cimport bezier._curve
+
+
+DQAGSE_ERR_MSGS = (
+    'Maximum number of subdivisions allowed has been achieved.',
+    'Roundoff error detected, which prevents convergence to tolerance.'
+    'Integrand behaves "extremely" at some point(s) in the interval.',
+    'Assumed: the requested tolerance cannot be achieved',
+    'Integral is probably divergent or converges too slowly.',
+    'Invalid input.',
+)
 
 
 def evaluate_multi_barycentric(
@@ -319,6 +331,7 @@ def full_reduce(double[::1, :] nodes):
 def compute_length(double[::1, :] nodes, int unused_degree):
     cdef int num_nodes, dimension
     cdef double length
+    cdef int error_val
 
     num_nodes, dimension = np.shape(nodes)
 
@@ -327,6 +340,17 @@ def compute_length(double[::1, :] nodes, int unused_degree):
         &dimension,
         &nodes[0, 0],
         &length,
+        &error_val,
     )
+
+    if error_val == 6:
+        err_msg = DQAGSE_ERR_MSGS[5]
+        raise ValueError(err_msg)
+    elif error_val != 0:
+        try:
+            err_msg = DQAGSE_ERR_MSGS[error_val - 1]
+        except IndexError:
+            err_msg = 'Unknown error: {!r}.'.format(error_val)
+        warnings.warn(err_msg, UserWarning)
 
     return length

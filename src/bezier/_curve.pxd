@@ -62,4 +62,5 @@ cdef extern from "bezier/curve.h":
         int *num_nodes, int *dimension, double *nodes,
         int *num_reduced_nodes, double *reduced, bool_t *not_implemented)
     void compute_length(
-        int *num_nodes, int *dimension, double *nodes, double *length)
+        int *num_nodes, int *dimension, double *nodes,
+        double *length, int *error_val)

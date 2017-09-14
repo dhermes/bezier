@@ -714,16 +714,17 @@ contains
   end subroutine full_reduce
 
   subroutine compute_length( &
-       num_nodes, dimension_, nodes, length) &
+       num_nodes, dimension_, nodes, length, error_val) &
        bind(c, name='compute_length')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     real(c_double), intent(out) :: length
+    integer(c_int), intent(out) :: error_val
     ! Variables outside of signature.
     real(c_double) :: first_deriv(num_nodes - 1, dimension_)
     real(c_double) :: abserr
-    integer(c_int) :: neval, ier
+    integer(c_int) :: neval
     real(c_double) :: alist(50)
     real(c_double) :: blist(50)
     real(c_double) :: rlist(50)
@@ -742,9 +743,8 @@ contains
 
     call dqagse( &
          vec_size, 0.0_dp, 1.0_dp, SQRT_PREC, SQRT_PREC, 50, length, &
-         abserr, neval, ier, alist, blist, rlist, &
+         abserr, neval, error_val, alist, blist, rlist, &
          elist, iord, last)
-    ! NOTE: **Should** use ``ier``.
 
     contains
 
