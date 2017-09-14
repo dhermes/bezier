@@ -25,6 +25,38 @@ In order to add a feature to ``bezier``:
 .. _File an issue: https://github.com/dhermes/bezier/issues/new
 .. _doctest: http://www.sphinx-doc.org/ext/doctest.html
 
+**********************
+Native Code Extensions
+**********************
+
+Many low-level computations have alternate implementations in Fortran.
+See the `Native Libraries`_ page in the documentation for a more
+detailed description.
+
+During development, it may be useful to track **how** extensions
+are being installed. To actually make sure the correct compiler commands
+are invoked, provide a filename as the ``BEZIER_JOURNAL`` environment
+variable and then the commands invoked will be written there. The ``nox``
+session ``check_journal`` uses this journaling option to verify the commands
+used to compile the extension on CircleCI.
+
+.. _Native Libraries: https://bezier.readthedocs.io/en/{rtd_version}/native-libraries.html
+
+Dependencies
+============
+
+Currently, the ``src/bezier/quadpack`` `directory`_ has a subset of Fortran 77
+subroutines from `QUADPACK`_. These are Public Domain, so they do not
+conflict with the Apache 2.0 license (as far as I know). In addition it
+contains another popular subroutine from NETLIB: ``d1mach`` (which the
+QUADPACK subroutines depend on).
+
+QUADPACK is for numerical quadrature when computing the length
+of a curve segment.
+
+.. _directory: https://github.com/dhermes/bezier/tree/{revision}/src/bezier/quadpack
+.. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
+
 ******************
 Running Unit Tests
 ******************
@@ -52,10 +84,9 @@ manage dependencies or build extensions):
 .. _nox-automation: https://nox.readthedocs.io
 .. _pytest: https://docs.pytest.org
 
-Native Code Extensions
-======================
+Testing Native Code
+===================
 
-Many low-level computations have alternate implementations in Fortran.
 When using ``nox``, the ``bezier`` package will automatically be installed
 into a virtual environment and the native extensions will be built during
 install.
@@ -66,7 +97,7 @@ However, if you run the tests directly from the source tree via
 
    $ PYTHONPATH=src/ python -m pytest tests/
 
-some unit tests may be skipped. The unit tests for the Fortran
+some unit tests may be skipped. The unit tests for the native
 implementations will skip (rather than fail) if the extensions aren't
 compiled and present in the source tree. To compile the native extensions,
 make sure you have a valid Fortran compiler and run
@@ -76,12 +107,6 @@ make sure you have a valid Fortran compiler and run
    $ python setup.py build_ext --inplace
    $ # OR
    $ python setup.py build_ext --inplace --fcompiler=${{FC}}
-
-To actually make sure the correct compiler commands are invoked,
-provide a filename as the ``BEZIER_JOURNAL`` environment variable and
-then the commands invoked will be written there. The ``nox`` session
-``check_journal`` uses this journaling option to verify the commands
-used to compile the extension on CircleCI.
 
 Test Coverage
 =============
