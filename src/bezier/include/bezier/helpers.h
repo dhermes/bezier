@@ -43,6 +43,7 @@ void wiggle_interval(double *value, double *result, bool *success);
 void contains_nd(
     int *num_nodes, int *dimension, double *nodes,
     double *point, bool *predicate);
+bool vector_close(int *num_values, double *vec1, double *vec2, double *eps);
 
 #if defined (__cplusplus)
 }

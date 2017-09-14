@@ -20,6 +20,9 @@ import numpy as np
 cimport bezier._helpers
 
 
+cdef double EPS = 0.5**40
+
+
 def cross_product(double[::1, :] vec0, double[::1, :] vec1):
     cdef double result
 
@@ -83,3 +86,18 @@ def contains_nd(double[::1, :] nodes, double[::1, :] point):
     )
 
     return predicate
+
+
+def vector_close(double[::1, :] vec1, double[::1, :] vec2, double eps=EPS):
+    cdef int num_values
+
+    # NOTE: We don't check that there is 1 row or that
+    #       ``np.shape(vec1) == np.shape(vec2)``.
+    _, num_values = np.shape(vec1)
+
+    return bezier._helpers.vector_close(
+        &num_values,
+        &vec1[0, 0],
+        &vec2[0, 0],
+        &eps,
+    )

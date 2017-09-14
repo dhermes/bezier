@@ -26,6 +26,7 @@ boundary.
 """
 
 
+import numpy as np
 import six
 
 from bezier import _helpers
@@ -159,13 +160,12 @@ class CurvedPolygon(object):
         if prev._dimension != 2:
             raise ValueError('Curve not in R^2', prev)
 
-        # NOTE: We want the nodes to be 1x2 but accessing
-        #       ``curve._nodes[[0], :]`` makes a copy while the access
-        #       below **does not** copy. See
-        #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
-        #        arrays.indexing.html#advanced-indexing)
-        end = prev._nodes[-1, :].reshape((1, 2), order='F')
-        start = curr._nodes[0, :].reshape((1, 2), order='F')
+        end = np.asfortranarray([
+            [prev._nodes[-1, 0], prev._nodes[-1, 1]],
+        ])
+        start = np.asfortranarray([
+            [curr._nodes[0, 0], curr._nodes[0, 1]],
+        ])
         if not _helpers.vector_close(end, start):
             raise ValueError(
                 'Not sufficiently close',

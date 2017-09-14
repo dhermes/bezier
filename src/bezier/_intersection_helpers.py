@@ -1164,6 +1164,8 @@ def _endpoint_check(first, node_first, s,
             intersections. If these curves intersect at their tangeny,
             then those intersections will be added to this list.
     """
+    node_first = _helpers.fortran_contiguous(node_first)
+    node_second = _helpers.fortran_contiguous(node_second)
     if _helpers.vector_close(node_first, node_second):
         # pylint: disable=protected-access
         orig_s = (1 - s) * first._start + s * first._end
@@ -1172,7 +1174,7 @@ def _endpoint_check(first, node_first, s,
         # the values aren't contiguous.
         intersection = Intersection(
             first._root, orig_s, second._root, orig_t,
-            point=np.asfortranarray(node_first))
+            point=node_first)
         # pylint: enable=protected-access
         _add_intersection(intersection, intersections)
 

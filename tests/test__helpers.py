@@ -20,13 +20,13 @@ from tests import utils
 SPACING = np.spacing  # pylint: disable=no-member
 
 
-class Test_vector_close(unittest.TestCase):
+class Test__vector_close(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(vec1, vec2, **kwargs):
         from bezier import _helpers
 
-        return _helpers.vector_close(vec1, vec2, **kwargs)
+        return _helpers._vector_close(vec1, vec2, **kwargs)
 
     def test_identical(self):
         vec1 = np.asfortranarray([[0.5, 4.0]])
@@ -57,6 +57,16 @@ class Test_vector_close(unittest.TestCase):
         vec1 = np.asfortranarray([[1.0, 0.0]]) / 2.0**20
         vec2 = np.asfortranarray([[0.0, 0.0]])
         self.assertFalse(self._call_function_under_test(vec1, vec2))
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_vector_close(Test__vector_close):
+
+    @staticmethod
+    def _call_function_under_test(vec1, vec2, **kwargs):
+        from bezier import _helpers_speedup
+
+        return _helpers_speedup.vector_close(vec1, vec2, **kwargs)
 
 
 class Test_in_interval(unittest.TestCase):
@@ -503,3 +513,43 @@ class Test_speedup_wiggle_interval(Test__wiggle_interval):
         # to allow the compiler to pre-compute 1 + wiggle / 1 - wiggle
         # rather than having to deal with it at run-time.
         pass
+
+
+class Test_fortran_contiguous(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(mat):
+        from bezier import _helpers
+
+        return _helpers.fortran_contiguous(mat)
+
+    def test_valid_fortran_only(self):
+        mat = np.asfortranarray([
+            [0.0, 1.0],
+            [2.0, 3.0],
+        ])
+        new_mat = self._call_function_under_test(mat)
+        self.assertIs(new_mat, mat)
+        self.assertTrue(mat.flags.f_contiguous)
+        self.assertFalse(mat.flags.c_contiguous)
+
+    def test_valid_both(self):
+        mat = np.array([[10.0, 5.5]], order='C')
+        new_mat = self._call_function_under_test(mat)
+        self.assertIs(new_mat, mat)
+        self.assertTrue(mat.flags.f_contiguous)
+        self.assertTrue(mat.flags.c_contiguous)
+
+    def test_copy(self):
+        mat = np.array([
+            [7.0, 2.0],
+            [8.0, 0.0],
+            [5.0, 1.0],
+        ], order='C')
+        new_mat = self._call_function_under_test(mat)
+        self.assertIsNot(new_mat, mat)
+        self.assertTrue(np.all(new_mat == mat))
+
+        self.assertTrue(new_mat.flags.f_contiguous)
+        self.assertFalse(mat.flags.f_contiguous)
+        self.assertTrue(mat.flags.c_contiguous)

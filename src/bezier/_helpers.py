@@ -34,7 +34,7 @@ except ImportError:  # pragma: NO COVER
 _EPS = 0.5**40
 
 
-def vector_close(vec1, vec2, eps=_EPS):
+def _vector_close(vec1, vec2, eps=_EPS):
     r"""Checks that two vectors are equal to some threshold.
 
     Does so by computing :math:`s_1 = \|v_1\|_2` and
@@ -283,13 +283,30 @@ def _wiggle_interval(value, wiggle=0.5**45):
         return np.nan, False
 
 
+def fortran_contiguous(mat):
+    """Make sure an array is Fortran contiguous or copy it.
+
+    Args:
+        mat (numpy.ndarray): An array to check and possibly copy.
+
+    Returns:
+        numpy.ndarray: The original (``mat``) or a copy.
+    """
+    if mat.flags.f_contiguous:
+        return mat
+    else:
+        return np.asfortranarray(mat)
+
+
 # pylint: disable=invalid-name
 if _helpers_speedup is None:  # pragma: NO COVER
+    vector_close = _vector_close
     bbox = _bbox
     contains_nd = _contains_nd
     cross_product = _cross_product
     wiggle_interval = _wiggle_interval
 else:
+    vector_close = _helpers_speedup.vector_close
     bbox = _helpers_speedup.bbox
     contains_nd = _helpers_speedup.contains_nd
     cross_product = _helpers_speedup.cross_product

@@ -16,7 +16,7 @@ module helpers
   use types, only: dp
   implicit none
   private
-  public cross_product, bbox, wiggle_interval, contains_nd
+  public cross_product, bbox, wiggle_interval, contains_nd, vector_close
 
 contains
 
@@ -91,5 +91,29 @@ contains
     end if
 
   end subroutine contains_nd
+
+  logical(c_bool) pure function vector_close( &
+       num_values, vec1, vec2, eps) result(is_close) &
+       bind(c, name='vector_close')
+
+    integer(c_int), intent(in) :: num_values
+    real(c_double), intent(in) :: vec1(1, num_values)
+    real(c_double), intent(in) :: vec2(1, num_values)
+    real(c_double), intent(in) :: eps
+    ! Variables outside of signature.
+    real(c_double) :: size1, size2
+
+    size1 = norm2(vec1)
+    size2 = norm2(vec2)
+    if (size1 == 0.0_dp) then
+       is_close = size2 <= eps
+    else if (size2 == 0.0_dp) then
+       is_close = size1 <= eps
+    else
+       ! This is the most common path.
+       is_close = norm2(vec1 - vec2) <= eps * min(size1, size2)
+    end if
+
+  end function vector_close
 
 end module helpers

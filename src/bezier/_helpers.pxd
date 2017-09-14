@@ -25,3 +25,5 @@ cdef extern from "bezier/helpers.h":
     void contains_nd(
         int *num_nodes, int *dimension, double *nodes,
         double *point, bool_t *predicate)
+    bool_t vector_close(
+        int *num_values, double *vec1, double *vec2, double *eps)
