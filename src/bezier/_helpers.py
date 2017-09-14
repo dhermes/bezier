@@ -80,7 +80,7 @@ def _vector_close(vec1, vec2, eps=_EPS):
         return np.linalg.norm(vec1[0, :] - vec2[0, :], ord=2) <= upper_bound
 
 
-def in_interval(value, start, end):
+def _in_interval(value, start, end):
     """Checks if a ``value`` is an interval (inclusive).
 
     .. note::
@@ -301,12 +301,14 @@ def fortran_contiguous(mat):
 # pylint: disable=invalid-name
 if _helpers_speedup is None:  # pragma: NO COVER
     vector_close = _vector_close
+    in_interval = _in_interval
     bbox = _bbox
     contains_nd = _contains_nd
     cross_product = _cross_product
     wiggle_interval = _wiggle_interval
 else:
     vector_close = _helpers_speedup.vector_close
+    in_interval = _helpers_speedup.in_interval
     bbox = _helpers_speedup.bbox
     contains_nd = _helpers_speedup.contains_nd
     cross_product = _helpers_speedup.cross_product

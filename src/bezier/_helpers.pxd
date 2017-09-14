@@ -27,3 +27,4 @@ cdef extern from "bezier/helpers.h":
         double *point, bool_t *predicate)
     bool_t vector_close(
         int *num_values, double *vec1, double *vec2, double *eps)
+    bool_t in_interval(double *value, double *start, double *end)

@@ -16,7 +16,9 @@ module helpers
   use types, only: dp
   implicit none
   private
-  public cross_product, bbox, wiggle_interval, contains_nd, vector_close
+  public &
+       cross_product, bbox, wiggle_interval, contains_nd, &
+       vector_close, in_interval
 
 contains
 
@@ -115,5 +117,16 @@ contains
     end if
 
   end function vector_close
+
+  pure function in_interval( &
+       value_, start, end) result(predicate) &
+       bind(c, name='in_interval')
+
+    real(c_double), intent(in) :: value_, start, end
+    logical(c_bool) :: predicate
+
+    predicate = (start <= value_) .AND. (value_ <= end)
+
+  end function in_interval
 
 end module helpers

@@ -69,13 +69,13 @@ class Test_speedup_vector_close(Test__vector_close):
         return _helpers_speedup.vector_close(vec1, vec2, **kwargs)
 
 
-class Test_in_interval(unittest.TestCase):
+class Test__in_interval(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(value, start, end):
         from bezier import _helpers
 
-        return _helpers.in_interval(value, start, end)
+        return _helpers._in_interval(value, start, end)
 
     def test_interior(self):
         self.assertTrue(self._call_function_under_test(
@@ -94,6 +94,16 @@ class Test_in_interval(unittest.TestCase):
     def test_outside(self):
         self.assertFalse(self._call_function_under_test(
             -1.0, 1.0, 2.0))
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_in_interval(Test__in_interval):
+
+    @staticmethod
+    def _call_function_under_test(value, start, end):
+        from bezier import _helpers_speedup
+
+        return _helpers_speedup.in_interval(value, start, end)
 
 
 class Test__bbox(unittest.TestCase):

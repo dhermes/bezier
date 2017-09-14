@@ -14,10 +14,10 @@ module curve_intersection
 
   use iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
-  use helpers, only: cross_product, bbox, wiggle_interval
+  use helpers, only: cross_product, bbox, wiggle_interval, in_interval
   use curve, only: evaluate_multi, evaluate_hodograph
   implicit none
-  private in_interval
+  private
   public &
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, bbox_line_intersect
@@ -425,14 +425,5 @@ contains
     enum_ = BoxIntersectionType_DISJOINT
 
   end subroutine bbox_line_intersect
-
-  pure function in_interval(value_, start, end) result(predicate)
-
-    real(c_double), intent(in) :: value_, start, end
-    logical(c_bool) :: predicate
-
-    predicate = (start <= value_) .AND. (value_ <= end)
-
-  end function in_interval
 
 end module curve_intersection

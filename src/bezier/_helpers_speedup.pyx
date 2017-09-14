@@ -101,3 +101,11 @@ def vector_close(double[::1, :] vec1, double[::1, :] vec2, double eps=EPS):
         &vec2[0, 0],
         &eps,
     )
+
+
+def in_interval(double value, double start, double end):
+    return bezier._helpers.in_interval(
+        &value,
+        &start,
+        &end,
+    )
