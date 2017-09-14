@@ -41,7 +41,7 @@ module curve
   real(c_double), parameter :: REDUCE_THRESHOLD = SQRT_PREC
 
   ! Interface blocks for QUADPACK:dqagse
-  interface
+  abstract interface
      ! f: real(c_double) --> real(c_double)
      real(c_double) function scalar_func(x)
        use iso_c_binding, only: c_double
