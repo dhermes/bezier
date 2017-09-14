@@ -116,25 +116,6 @@ def _bbox(nodes):
     return left, right, bottom, top
 
 
-def contains(nodes, x_val, y_val):
-    r"""Predicate indicating if a point is within a bounding box.
-
-    Args:
-       nodes (numpy.ndarray): A set of points.
-       x_val (float): The :math:`x`-coordinate of the point.
-       y_val (float): The :math:`y`-coordinate of the point.
-
-    Returns:
-        bool: Indicating containment.
-    """
-    left, right, bottom, top = bbox(nodes)
-    if not in_interval(x_val, left, right):
-        return False
-    if not in_interval(y_val, bottom, top):
-        return False
-    return True
-
-
 def _contains_nd(nodes, point):
     r"""Predicate indicating if a point is within a bounding box.
 

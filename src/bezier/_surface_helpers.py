@@ -1124,7 +1124,8 @@ def _update_locate_candidates(
         degree (int): The degree of the surface.
     """
     centroid_x, centroid_y, width, candidate_nodes = candidate
-    if not _helpers.contains(candidate_nodes, x_val, y_val):
+    point = np.asfortranarray([[x_val, y_val]])
+    if not _helpers.contains_nd(candidate_nodes, point):
         return
 
     nodes_a, nodes_b, nodes_c, nodes_d = subdivide_nodes(

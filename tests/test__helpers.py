@@ -151,32 +151,6 @@ class Test_speedup_bbox(Test__bbox):
         return _helpers_speedup.bbox(nodes)
 
 
-class Test_contains(unittest.TestCase):
-
-    UNIT_SQUARE = np.asfortranarray([
-        [0.0, 0.0],
-        [1.0, 1.0],
-    ])
-
-    @staticmethod
-    def _call_function_under_test(nodes, x_val, y_val):
-        from bezier import _helpers
-
-        return _helpers.contains(nodes, x_val, y_val)
-
-    def test_x_outside(self):
-        self.assertFalse(
-            self._call_function_under_test(self.UNIT_SQUARE, -1.0, 0.5))
-
-    def test_y_outside(self):
-        self.assertFalse(
-            self._call_function_under_test(self.UNIT_SQUARE, 0.625, 4.25))
-
-    def test_inside(self):
-        self.assertTrue(
-            self._call_function_under_test(self.UNIT_SQUARE, 0.25, 0.75))
-
-
 class Test__contains_nd(unittest.TestCase):
 
     @staticmethod
