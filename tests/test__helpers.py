@@ -239,13 +239,13 @@ class Test_speedup_cross_product(Test__cross_product):
         return _helpers_speedup.cross_product(vec0, vec1)
 
 
-class Test_ulps_away(unittest.TestCase):
+class Test__ulps_away(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(value1, value2, **kwargs):
         from bezier import _helpers
 
-        return _helpers.ulps_away(value1, value2, **kwargs)
+        return _helpers._ulps_away(value1, value2, **kwargs)
 
     def test_first_zero(self):
         self.assertTrue(
@@ -254,6 +254,13 @@ class Test_ulps_away(unittest.TestCase):
     def test_second_zero(self):
         self.assertFalse(
             self._call_function_under_test(1.0, 0.0))
+
+    def test_first_both_signs(self):
+        delta = 0.5**52
+        self.assertTrue(
+            self._call_function_under_test(1.0, 1.0 + delta))
+        self.assertTrue(
+            self._call_function_under_test(-1.0, -1.0 - delta))
 
     def test_default_single_bit(self):
         value1 = 1.0
@@ -290,6 +297,16 @@ class Test_ulps_away(unittest.TestCase):
             self._call_function_under_test(value1, value2, num_bits=4))
         self.assertTrue(
             self._call_function_under_test(value1, value2, num_bits=5))
+
+
+@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+class Test_speedup_ulps_away(Test__ulps_away):
+
+    @staticmethod
+    def _call_function_under_test(value1, value2, **kwargs):
+        from bezier import _helpers_speedup
+
+        return _helpers_speedup.ulps_away(value1, value2, **kwargs)
 
 
 class Test_eye(utils.NumPyTestCase):

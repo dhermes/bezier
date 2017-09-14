@@ -45,6 +45,7 @@ void contains_nd(
     double *point, bool *predicate);
 bool vector_close(int *num_values, double *vec1, double *vec2, double *eps);
 bool in_interval(double *value, double *start, double *end);
+bool ulps_away(double *value1, double *value2, int *num_bits, double *eps);
 
 #if defined (__cplusplus)
 }

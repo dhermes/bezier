@@ -109,3 +109,12 @@ def in_interval(double value, double start, double end):
         &start,
         &end,
     )
+
+
+def ulps_away(double value1, double value2, int num_bits=1, double eps=EPS):
+    return bezier._helpers.ulps_away(
+        &value1,
+        &value2,
+        &num_bits,
+        &eps,
+    )

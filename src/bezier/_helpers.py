@@ -165,7 +165,7 @@ def _cross_product(vec0, vec1):
     return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]
 
 
-def ulps_away(value1, value2, num_bits=1):
+def _ulps_away(value1, value2, num_bits=1):
     r"""Determines if ``value1`` is within ``n`` ULPs of ``value2``.
 
     Uses ``np.spacing`` to determine the unit of least precision (ULP)
@@ -286,6 +286,7 @@ if _helpers_speedup is None:  # pragma: NO COVER
     bbox = _bbox
     contains_nd = _contains_nd
     cross_product = _cross_product
+    ulps_away = _ulps_away
     wiggle_interval = _wiggle_interval
 else:
     vector_close = _helpers_speedup.vector_close
@@ -293,5 +294,6 @@ else:
     bbox = _helpers_speedup.bbox
     contains_nd = _helpers_speedup.contains_nd
     cross_product = _helpers_speedup.cross_product
+    ulps_away = _helpers_speedup.ulps_away
     wiggle_interval = _helpers_speedup.wiggle_interval
 # pylint: enable=invalid-name
