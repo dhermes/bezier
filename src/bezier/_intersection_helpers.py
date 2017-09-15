@@ -12,6 +12,16 @@
 
 """Private helper methods for intersecting B |eacute| zier shapes.
 
+As a convention, the functions defined here with a leading underscore
+(e.g. :func:`_linearization_error`) have a special meaning.
+
+Each of these functions have a Cython speedup with the exact same
+interface which calls out to a Fortran implementation. The speedup
+will be used if the extension can be built. The name **without** the
+leading underscore will be surfaced as the actual interface (e.g.
+``linearization_error``) whether that is the pure Python implementation
+or the speedup.
+
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 """
@@ -47,12 +57,12 @@ _TOO_MANY_TEMPLATE = (
 # call to _wiggle_interval() will fail the intersection.
 _WIGGLE_START = -2.0**(-16)
 _WIGGLE_END = 1.0 - _WIGGLE_START
-# Number of bits allowed in _add_intersection() to consider two
+# Number of bits allowed in ``add_intersection()`` to consider two
 # intersections to be "identical".
 _SIMILAR_ULPS = 1
 
 
-def _check_close(s, nodes1, t, nodes2):
+def check_close(s, nodes1, t, nodes2):
     r"""Checks that two curves intersect to some threshold.
 
     Verifies :math:`B_1(s) \approx B_2(t)` and then returns
@@ -993,7 +1003,7 @@ def _parallel_different(start0, end0, start1, end1):
     return not _helpers.in_interval(0.0, min_val, max_val)
 
 
-def _wiggle_pair(s_val, t_val):
+def wiggle_pair(s_val, t_val):
     """Coerce two parameter values into the unit interval.
 
     Returns:
@@ -1014,7 +1024,7 @@ def _wiggle_pair(s_val, t_val):
 
 
 # pylint: disable=too-many-arguments,too-many-return-statements
-def _from_linearized_low_level_py(
+def _from_linearized_low_level(
         error1, start1, end1, start_node1, end_node1, nodes1,
         error2, start2, end2, start_node2, end_node2, nodes2):
     """Determine curve-curve intersection from pair of linearizations.
@@ -1085,7 +1095,7 @@ def _from_linearized_low_level_py(
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
     refined_s, refined_t = newton_refine(orig_s, nodes1, orig_t, nodes2)
-    refined_s, refined_t = _wiggle_pair(refined_s, refined_t)
+    refined_s, refined_t = wiggle_pair(refined_s, refined_t)
     return refined_s, refined_t, True
     # pylint: enable=too-many-locals
 # pylint: enable=too-many-arguments,too-many-return-statements
@@ -1107,7 +1117,7 @@ def from_linearized(first, second, intersections):
     # pylint: disable=protected-access
     orig_first = curve1._root
     orig_second = curve2._root
-    refined_s, refined_t, success = _from_linearized_low_level(
+    refined_s, refined_t, success = from_linearized_low_level(
         first.error, curve1._start, curve1._end, first.start_node,
         first.end_node, orig_first._nodes,
         second.error, curve2._start, curve2._end, second.start_node,
@@ -1116,10 +1126,10 @@ def from_linearized(first, second, intersections):
     if success:
         intersection = Intersection(
             orig_first, refined_s, orig_second, refined_t)
-        _add_intersection(intersection, intersections)
+        add_intersection(intersection, intersections)
 
 
-def _add_intersection(intersection, intersections):
+def add_intersection(intersection, intersections):
     """Adds an intersection to list of ``intersections``.
 
     Accounts for repeated points at curve endpoints. If the
@@ -1141,11 +1151,11 @@ def _add_intersection(intersection, intersections):
     intersections.append(intersection)
 
 
-def _endpoint_check(first, node_first, s,
-                    second, node_second, t, intersections):
+def endpoint_check(
+        first, node_first, s, second, node_second, t, intersections):
     r"""Check if curve endpoints are identical.
 
-    Helper for :func:`_tangent_bbox_intersection`.
+    Helper for :func:`tangent_bbox_intersection`.
 
     Args:
         first (.Curve): First curve being intersected (assumed in
@@ -1176,10 +1186,10 @@ def _endpoint_check(first, node_first, s,
             first._root, orig_s, second._root, orig_t,
             point=node_first)
         # pylint: enable=protected-access
-        _add_intersection(intersection, intersections)
+        add_intersection(intersection, intersections)
 
 
-def _tangent_bbox_intersection(first, second, intersections):
+def tangent_bbox_intersection(first, second, intersections):
     r"""Check if two curves with tangent bounding boxes intersect.
 
     If the bounding boxes are tangent, intersection can
@@ -1233,13 +1243,13 @@ def _tangent_bbox_intersection(first, second, intersections):
     node_second1 = second._nodes[0, :].reshape((1, 2))
     node_second2 = second._nodes[-1, :].reshape((1, 2))
 
-    _endpoint_check(
+    endpoint_check(
         first, node_first1, 0.0, second, node_second1, 0.0, intersections)
-    _endpoint_check(
+    endpoint_check(
         first, node_first1, 0.0, second, node_second2, 1.0, intersections)
-    _endpoint_check(
+    endpoint_check(
         first, node_first2, 1.0, second, node_second1, 0.0, intersections)
-    _endpoint_check(
+    endpoint_check(
         first, node_first2, 1.0, second, node_second2, 1.0, intersections)
 
 
@@ -1364,7 +1374,7 @@ def intersect_one_round(candidates, intersections):
         if bbox_int == BoxIntersectionType.DISJOINT:
             continue
         elif bbox_int == BoxIntersectionType.TANGENT:
-            _tangent_bbox_intersection(first, second, intersections)
+            tangent_bbox_intersection(first, second, intersections)
             continue
 
         # If we haven't ``continue``-d, add the accepted pair.
@@ -1373,7 +1383,7 @@ def intersect_one_round(candidates, intersections):
     return accepted
 
 
-def _next_candidates(first, second):
+def next_candidates(first, second):
     """Take a pair of "accepted" curves and subdivide them.
 
     Attempts to replace the subdivided curves with linearizations
@@ -1407,7 +1417,7 @@ class IntersectionStrategy(enum.Enum):
     """Algebraic approach to intersection (via implicitization)."""
 
 
-def _all_intersections_geometric(candidates):
+def all_intersections_geometric(candidates):
     r"""Find the points of intersection among pairs of curves.
 
     .. note::
@@ -1454,7 +1464,7 @@ def _all_intersections_geometric(candidates):
         # If we **do** require more subdivisions, we need to update
         # the list of candidates.
         candidates = itertools.chain(*[
-            _next_candidates(first, second)
+            next_candidates(first, second)
             for first, second in accepted])
 
     raise ValueError(
@@ -1463,7 +1473,7 @@ def _all_intersections_geometric(candidates):
         _MAX_INTERSECT_SUBDIVISIONS)
 
 
-def _all_intersections_algebraic(candidates):
+def all_intersections_algebraic(candidates):
     r"""Find the points of intersection among pairs of curves.
 
     .. note::
@@ -1526,9 +1536,9 @@ def all_intersections(candidates, strategy=IntersectionStrategy.geometric):
         ValueError: If the strategy is not known.
     """
     if strategy is IntersectionStrategy.geometric:
-        return _all_intersections_geometric(candidates)
+        return all_intersections_geometric(candidates)
     elif strategy is IntersectionStrategy.algebraic:
-        return _all_intersections_algebraic(candidates)
+        return all_intersections_algebraic(candidates)
     else:
         raise ValueError('Unexpected strategy.')
 
@@ -1678,7 +1688,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             computes the value on the fly.
         """
         if self.point is None:
-            return _check_close(
+            return check_close(
                 self.s, self.first._nodes,
                 self.t, self.second._nodes)
         else:
@@ -1687,20 +1697,20 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
 
 # pylint: disable=invalid-name
 if _curve_intersection_speedup is None:  # pragma: NO COVER
-    linearization_error = _linearization_error
-    segment_intersection = _segment_intersection
-    newton_refine = _newton_refine
     bbox_intersect = _bbox_intersect
+    linearization_error = _linearization_error
+    newton_refine = _newton_refine
+    segment_intersection = _segment_intersection
     parallel_different = _parallel_different
-    _from_linearized_low_level = _from_linearized_low_level_py
+    from_linearized_low_level = _from_linearized_low_level
     bbox_line_intersect = _bbox_line_intersect
 else:
-    linearization_error = _curve_intersection_speedup.linearization_error
-    segment_intersection = _curve_intersection_speedup.segment_intersection
-    newton_refine = _curve_intersection_speedup.newton_refine
     bbox_intersect = _curve_intersection_speedup.bbox_intersect
+    linearization_error = _curve_intersection_speedup.linearization_error
+    newton_refine = _curve_intersection_speedup.newton_refine
+    segment_intersection = _curve_intersection_speedup.segment_intersection
     parallel_different = _curve_intersection_speedup.parallel_different
-    _from_linearized_low_level = (
+    from_linearized_low_level = (
         _curve_intersection_speedup.from_linearized_low_level)
     bbox_line_intersect = _curve_intersection_speedup.bbox_line_intersect
 # pylint: enable=invalid-name

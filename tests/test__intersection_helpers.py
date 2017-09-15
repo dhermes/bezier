@@ -42,13 +42,13 @@ def check_intersection(test_case, intersection, expected,
     test_case.assertEqual(intersection.t, t_val)
 
 
-class Test__check_close(utils.NumPyTestCase):
+class Test_check_close(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._check_close(
+        return _intersection_helpers.check_close(
             s, nodes1, t, nodes2)
 
     def test_success(self):
@@ -602,13 +602,13 @@ class Test_speedup_parallel_different(Test__parallel_different):
             start0, end0, start1, end1)
 
 
-class Test__wiggle_pair(unittest.TestCase):
+class Test_wiggle_pair(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(s_val, t_val):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._wiggle_pair(s_val, t_val)
+        return _intersection_helpers.wiggle_pair(s_val, t_val)
 
     def test_success(self):
         s_val = float.fromhex('-0x1.fffffffffffffp-46')
@@ -622,7 +622,7 @@ class Test__wiggle_pair(unittest.TestCase):
             self._call_function_under_test(-0.5, 0.5)
 
 
-class Test__from_linearized_low_level_py(utils.NumPyTestCase):
+class Test__from_linearized_low_level(utils.NumPyTestCase):
 
     # pylint: disable=too-many-arguments
     @staticmethod
@@ -631,7 +631,7 @@ class Test__from_linearized_low_level_py(utils.NumPyTestCase):
             error2, start2, end2, start_node2, end_node2, nodes2):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._from_linearized_low_level_py(
+        return _intersection_helpers._from_linearized_low_level(
             error1, start1, end1, start_node1, end_node1, nodes1,
             error2, start2, end2, start_node2, end_node2, nodes2)
     # pylint: enable=too-many-arguments
@@ -824,8 +824,7 @@ class Test__from_linearized_low_level_py(utils.NumPyTestCase):
 
 
 @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_from_linearized_low_level(
-        Test__from_linearized_low_level_py):
+class Test_speedup_from_linearized_low_level(Test__from_linearized_low_level):
 
     # pylint: disable=too-many-arguments
     @staticmethod
@@ -905,13 +904,13 @@ class Test_from_linearized(utils.NumPyTestCase):
         self.assertEqual(len(intersections), 0)
 
 
-class Test__add_intersection(unittest.TestCase):
+class Test_add_intersection(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(intersection, intersections):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._add_intersection(
+        return _intersection_helpers.add_intersection(
             intersection, intersections)
 
     def test_new(self):
@@ -971,14 +970,14 @@ class Test__add_intersection(unittest.TestCase):
             self.assertEqual(intersections, [intersection1, intersection2])
 
 
-class Test__endpoint_check(unittest.TestCase):
+class Test_endpoint_check(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(
             first, node_first, s, second, node_second, t, intersections):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._endpoint_check(
+        return _intersection_helpers.endpoint_check(
             first, node_first, s, second, node_second, t, intersections)
 
     def test_not_close(self):
@@ -1016,13 +1015,13 @@ class Test__endpoint_check(unittest.TestCase):
                 first, 1.0, second, 0.0, point=node_first)
 
 
-class Test__tangent_bbox_intersection(utils.NumPyTestCase):
+class Test_tangent_bbox_intersection(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(first, second, intersections):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._tangent_bbox_intersection(
+        return _intersection_helpers.tangent_bbox_intersection(
             first, second, intersections)
 
     def test_it(self):
@@ -1231,13 +1230,13 @@ class Test_intersect_one_round(utils.NumPyTestCase):
                            curve1, curve2, 0.5, 0.5)
 
 
-class Test__next_candidates(unittest.TestCase):
+class Test_next_candidates(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(first, second):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._next_candidates(first, second)
+        return _intersection_helpers.next_candidates(first, second)
 
     def test_it(self):
         import bezier
@@ -1257,13 +1256,13 @@ class Test__next_candidates(unittest.TestCase):
         self.assertEqual(pairs, [(lin, lin)])
 
 
-class Test__all_intersections_geometric(utils.NumPyTestCase):
+class Test_all_intersections_geometric(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(candidates):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._all_intersections_geometric(candidates)
+        return _intersection_helpers.all_intersections_geometric(candidates)
 
     def test_failure(self):
         patch = mock.patch(
@@ -1339,13 +1338,13 @@ class Test__all_intersections_geometric(utils.NumPyTestCase):
                            curve1, curve2, s_val, t_val)
 
 
-class Test__all_intersections_algebraic(utils.NumPyTestCase):
+class Test_all_intersections_algebraic(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(candidates):
         from bezier import _intersection_helpers
 
-        return _intersection_helpers._all_intersections_algebraic(candidates)
+        return _intersection_helpers.all_intersections_algebraic(candidates)
 
     def test_no_intersections(self):
         intersections = self._call_function_under_test([])
@@ -1399,7 +1398,7 @@ class Test_all_intersections(utils.NumPyTestCase):
 
         strategy = _intersection_helpers.IntersectionStrategy.geometric
         patch = mock.patch(
-            'bezier._intersection_helpers._all_intersections_geometric',
+            'bezier._intersection_helpers.all_intersections_geometric',
             return_value=mock.sentinel.intersections)
         with patch as mocked:
             result = self._call_function_under_test(
@@ -1412,7 +1411,7 @@ class Test_all_intersections(utils.NumPyTestCase):
 
         strategy = _intersection_helpers.IntersectionStrategy.algebraic
         patch = mock.patch(
-            'bezier._intersection_helpers._all_intersections_algebraic',
+            'bezier._intersection_helpers.all_intersections_algebraic',
             return_value=mock.sentinel.intersections)
         with patch as mocked:
             result = self._call_function_under_test(
@@ -1647,7 +1646,7 @@ class TestIntersection(unittest.TestCase):
             None, None, None, None, point=mock.sentinel.point)
 
         patch = mock.patch(
-            'bezier._intersection_helpers._check_close',
+            'bezier._intersection_helpers.check_close',
             return_value=mock.sentinel.point)
         with patch as mocked:
             self.assertIs(intersection.get_point(), mock.sentinel.point)
@@ -1661,7 +1660,7 @@ class TestIntersection(unittest.TestCase):
         intersection = self._make_one(first, s_val, second, t_val)
 
         patch = mock.patch(
-            'bezier._intersection_helpers._check_close',
+            'bezier._intersection_helpers.check_close',
             return_value=mock.sentinel.point)
         with patch as mocked:
             self.assertIsNone(intersection.point)
