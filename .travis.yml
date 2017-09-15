@@ -1,0 +1,6 @@
+language: generic
+os: osx
+
+script:
+- find /System/Library/Frameworks
+- find /Library/Frameworks
