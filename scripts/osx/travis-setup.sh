@@ -35,6 +35,6 @@ source osx_utils.sh
 install_mac_cpython ${PY_VERSION}
 
 # Make sure our installed CPython is set up for testing.
-${PYTHON_EXE} -m pip install --ignore-installed virtualenv pip
-${PYTHON_EXE} -m pip install --upgrade nox-automation
+${PIP_CMD} install --ignore-installed virtualenv pip
+${PIP_CMD} install --upgrade nox-automation
 export PY_BIN_DIR=$(dirname ${PYTHON_EXE})
