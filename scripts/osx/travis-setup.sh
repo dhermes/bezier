@@ -12,7 +12,7 @@
 
 #!/bin/bash
 
-set -e
+set -ev
 
 MB_COMMON_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/master/common_utils.sh"
 MB_OSX_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/master/osx_utils.sh"
