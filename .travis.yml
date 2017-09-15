@@ -1,6 +1,27 @@
 language: generic
 os: osx
 
+matrix:
+  include:
+    - os: osx
+      language: generic
+      env:
+        - PY_VERSION=2.7
+    - os: osx
+      language: generic
+      env:
+        - PY_VERSION=3.5
+    - os: osx
+      language: generic
+      env:
+        - PY_VERSION=3.6
+
+install:
+  - scripts/osx/travis-setup.sh
+
 script:
-- find /System/Library/Frameworks
-- find /Library/Frameworks
+  - if [[ "${PY_VERSION}" == "2.7" ]]; then ${PY_BIN_DIR}/nox -s cover                                ; fi
+  - if [[ "${PY_VERSION}" == "3.5" ]]; then ${PY_BIN_DIR}/nox -s "unit_tests(python_version='3.5')"   ; fi
+  - if [[ "${PY_VERSION}" == "3.6" ]]; then ${PY_BIN_DIR}/nox -s "unit_tests(python_version='3.6')"   ; fi
+  - if [[ "${PY_VERSION}" == "3.6" ]]; then ${PY_BIN_DIR}/nox -s doctest                              ; fi
+  - if [[ "${PY_VERSION}" == "3.6" ]]; then ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-osx')"; fi

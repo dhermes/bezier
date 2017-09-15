@@ -37,6 +37,7 @@ SINGLE_INTERP = 'python3.6'
 PYPY = 'pypy'
 JOURNAL_PATHS = {
     'circleci': os.path.join('.circleci', 'expected_journal.txt'),
+    'travis-osx': os.path.join('scripts', 'osx', 'travis_journal.txt'),
 }
 
 
@@ -310,7 +311,7 @@ def benchmark(session, target):
 
 
 @nox.session
-@nox.parametrize('machine', ['circleci'])
+@nox.parametrize('machine', ['circleci', 'travis-osx'])
 def check_journal(session, machine):
     session.virtualenv_dirname = 'journal-{}'.format(machine)
     session.interpreter = SINGLE_INTERP
