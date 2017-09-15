@@ -744,6 +744,7 @@ contains
     first_deriv = (num_nodes - 1) * (nodes(2:, :) - nodes(:num_nodes - 1, :))
     if (num_nodes == 2) then
        length = norm2(first_deriv)
+       error_val = 0
        return
     end if
 
