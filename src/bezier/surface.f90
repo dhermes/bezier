@@ -125,29 +125,29 @@ contains
 
     binom_val = 1
     do k = degree - 1, 0, -1
-        ! We want to go from (d C (k + 1)) to (d C k).
-        binom_val = (binom_val * (k + 1)) / (degree - k)
-        index_ = index_ - 1  ! Step to last element in row.
-        !     k = d - 1, d - 2, ...
-        ! d - k =     1,     2, ...
-        ! We know row k has (d - k + 1) elements.
-        new_index = index_ - degree + k  ! First element in row.
+       ! We want to go from (d C (k + 1)) to (d C k).
+       binom_val = (binom_val * (k + 1)) / (degree - k)
+       index_ = index_ - 1  ! Step to last element in row.
+       !     k = d - 1, d - 2, ...
+       ! d - k =     1,     2, ...
+       ! We know row k has (d - k + 1) elements.
+       new_index = index_ - degree + k  ! First element in row.
 
-        ! lambda1 = param_vals(:, 1)
-        ! lambda2 = param_vals(:, 2)
-        call evaluate_curve_barycentric( &
-             degree - k, dimension_, nodes(new_index:index_, :), &
-             num_vals, param_vals(:, 1), param_vals(:, 2), row_result)
+       ! lambda1 = param_vals(:, 1)
+       ! lambda2 = param_vals(:, 2)
+       call evaluate_curve_barycentric( &
+            degree - k, dimension_, nodes(new_index:index_, :), &
+            num_vals, param_vals(:, 1), param_vals(:, 2), row_result)
 
-        ! Update index for next iteration.
-        index_ = new_index
+       ! Update index for next iteration.
+       index_ = new_index
 
-        ! lambda3 = param_vals(:, 3)
-        forall (new_index = 1:num_vals)  ! Borrow new_index for this loop.
-           evaluated(new_index, :) = ( &
-                param_vals(new_index, 3) * evaluated(new_index, :) + &
-                binom_val * row_result(new_index, :))
-        end forall
+       ! lambda3 = param_vals(:, 3)
+       forall (new_index = 1:num_vals)  ! Borrow new_index for this loop.
+          evaluated(new_index, :) = ( &
+               param_vals(new_index, 3) * evaluated(new_index, :) + &
+               binom_val * row_result(new_index, :))
+       end forall
     end do
 
   end subroutine evaluate_barycentric_multi
@@ -183,29 +183,29 @@ contains
 
     binom_val = 1
     do k = degree - 1, 0, -1
-        ! We want to go from (d C (k + 1)) to (d C k).
-        binom_val = (binom_val * (k + 1)) / (degree - k)
-        index_ = index_ - 1  ! Step to last element in row.
-        !     k = d - 1, d - 2, ...
-        ! d - k =     1,     2, ...
-        ! We know row k has (d - k + 1) elements.
-        new_index = index_ - degree + k  ! First element in row.
+       ! We want to go from (d C (k + 1)) to (d C k).
+       binom_val = (binom_val * (k + 1)) / (degree - k)
+       index_ = index_ - 1  ! Step to last element in row.
+       !     k = d - 1, d - 2, ...
+       ! d - k =     1,     2, ...
+       ! We know row k has (d - k + 1) elements.
+       new_index = index_ - degree + k  ! First element in row.
 
-        ! lambda1 = param_vals(:, 1)
-        ! lambda2 = param_vals(:, 1)
-        call evaluate_curve_barycentric( &
-             degree - k, dimension_, nodes(new_index:index_, :), &
-             num_vals, lambda1_vals, param_vals(:, 1), row_result)
+       ! lambda1 = param_vals(:, 1)
+       ! lambda2 = param_vals(:, 1)
+       call evaluate_curve_barycentric( &
+            degree - k, dimension_, nodes(new_index:index_, :), &
+            num_vals, lambda1_vals, param_vals(:, 1), row_result)
 
-        ! Update index for next iteration.
-        index_ = new_index
+       ! Update index for next iteration.
+       index_ = new_index
 
-        ! lambda3 = param_vals(:, 2)
-        forall (new_index = 1:num_vals)  ! Borrow new_index for this loop.
-           evaluated(new_index, :) = ( &
-                param_vals(new_index, 2) * evaluated(new_index, :) + &
-                binom_val * row_result(new_index, :))
-        end forall
+       ! lambda3 = param_vals(:, 2)
+       forall (new_index = 1:num_vals)  ! Borrow new_index for this loop.
+          evaluated(new_index, :) = ( &
+               param_vals(new_index, 2) * evaluated(new_index, :) + &
+               binom_val * row_result(new_index, :))
+       end forall
     end do
 
   end subroutine evaluate_cartesian_multi

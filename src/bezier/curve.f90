@@ -752,22 +752,22 @@ contains
          abserr, neval, error_val, alist, blist, rlist, &
          elist, iord, last)
 
-    contains
+  contains
 
-      ! Define a closure that evaluates ||B'(s)||_2 where ``s``
-      ! is the argument and ``B'(s)`` is parameterized by ``first_deriv``.
-      real(c_double) function vec_size(s_val) result(norm_)
-        real(c_double), intent(in) :: s_val
-        ! Variables outside of signature.
-        real(c_double) :: evaluated(1, dimension_)
+    ! Define a closure that evaluates ||B'(s)||_2 where ``s``
+    ! is the argument and ``B'(s)`` is parameterized by ``first_deriv``.
+    real(c_double) function vec_size(s_val) result(norm_)
+      real(c_double), intent(in) :: s_val
+      ! Variables outside of signature.
+      real(c_double) :: evaluated(1, dimension_)
 
-        ! ``evaluate_multi`` takes degree, which is one less than the number
-        ! of nodes, so our derivative is one less than that.
-        call evaluate_multi( &
-             num_nodes - 2, dimension_, first_deriv, 1, [s_val], evaluated)
-        norm_ = norm2(evaluated)
+      ! ``evaluate_multi`` takes degree, which is one less than the number
+      ! of nodes, so our derivative is one less than that.
+      call evaluate_multi( &
+           num_nodes - 2, dimension_, first_deriv, 1, [s_val], evaluated)
+      norm_ = norm2(evaluated)
 
-      end function vec_size
+    end function vec_size
 
   end subroutine compute_length
 
