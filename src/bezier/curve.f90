@@ -18,7 +18,7 @@ module curve
   implicit none
   private &
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
-       SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse
+       SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse, split_candidate
   public &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
        specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
@@ -375,6 +375,28 @@ contains
 
   end subroutine newton_refine
 
+  subroutine split_candidate(num_nodes, dimension_, candidate, both_halves)
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    type(LocateCandidate), intent(in) :: candidate
+    type(LocateCandidate), intent(out) :: both_halves(2)
+
+    ! Left half.
+    both_halves(1)%start = candidate%start
+    both_halves(1)%end_ = 0.5_dp * (candidate%start + candidate%end_)
+    ! Right half.
+    both_halves(2)%start = both_halves(1)%end_
+    both_halves(2)%end_ = candidate%end_
+
+    ! Allocate the new nodes and call sub-divide.
+    allocate(both_halves(1)%nodes(num_nodes, dimension_))
+    allocate(both_halves(2)%nodes(num_nodes, dimension_))
+    call subdivide_nodes( &
+         num_nodes, dimension_, candidate%nodes, &
+         both_halves(1)%nodes, both_halves(2)%nodes)
+
+  end subroutine split_candidate
+
   subroutine locate_point( &
        num_nodes, dimension_, nodes, point, s_approx) &
        bind(c, name='locate_point')
@@ -393,7 +415,7 @@ contains
     integer(c_int) :: num_candidates, num_next_candidates
     type(LocateCandidate) :: candidate
     real(c_double), allocatable :: s_params(:)
-    real(c_double) :: midpoint, std_dev
+    real(c_double) :: std_dev
     logical(c_bool) :: predicate
 
     ! Start out with the full curve.
@@ -414,25 +436,9 @@ contains
                num_nodes, dimension_, candidate%nodes, point(1, :), predicate)
           if (predicate) then
              num_next_candidates = num_next_candidates + 2
-
-             midpoint = 0.5_dp * (candidate%start + candidate%end_)
-
-             ! Left half.
-             next_candidates(num_next_candidates - 1)%start = candidate%start
-             next_candidates(num_next_candidates - 1)%end_ = midpoint
-             ! Right half.
-             next_candidates(num_next_candidates)%start = midpoint
-             next_candidates(num_next_candidates)%end_ = candidate%end_
-
-             ! Allocate the new nodes and call sub-divide.
-             allocate(next_candidates(num_next_candidates - 1)%nodes( &
-                  num_nodes, dimension_))
-             allocate(next_candidates(num_next_candidates)%nodes( &
-                  num_nodes, dimension_))
-             call subdivide_nodes( &
-                  num_nodes, dimension_, candidate%nodes, &
-                  next_candidates(num_next_candidates - 1)%nodes, &
-                  next_candidates(num_next_candidates)%nodes)
+             call split_candidate( &
+                  num_nodes, dimension_, candidate, &
+                  next_candidates(num_next_candidates - 1:num_next_candidates))
           end if
        end do
 
@@ -461,10 +467,10 @@ contains
        return
     end if
 
-    ! NOTE: We use ``midpoint`` as a "placeholder" for the update.
+    ! NOTE: Use ``std_dev`` variable as a "placeholder" for the update.
     call newton_refine( &
-         num_nodes, dimension_, nodes, point, s_approx, midpoint)
-    s_approx = midpoint
+         num_nodes, dimension_, nodes, point, s_approx, std_dev)
+    s_approx = std_dev
 
   end subroutine locate_point
 
