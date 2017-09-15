@@ -23,6 +23,7 @@ from tests import utils
 
 
 FLOAT64 = np.float64  # pylint: disable=no-member
+SPACING = np.spacing  # pylint: disable=no-member
 
 
 class Test_make_subdivision_matrices(utils.NumPyTestCase):
@@ -361,7 +362,24 @@ class Test__compute_length(unittest.TestCase):
         # 2 INT_0^1 SQRT(16 s^2  - 16 s + 5) ds = SQRT(5) + sinh^{-1}(2)/2
         arcs2 = np.arcsinh(2.0)  # pylint: disable=no-member
         expected = np.sqrt(5.0) + 0.5 * arcs2
-        self.assertLess(abs(length - expected), 1e-15)
+        local_eps = abs(SPACING(expected))
+        self.assertAlmostEqual(length, expected, delta=local_eps)
+
+    @unittest.skipIf(SCIPY_INT is None, 'SciPy not installed')
+    def test_cubic(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [2.0, 0.0],
+            [3.5, 0.0],
+        ])
+        length = self._call_function_under_test(nodes, 3)
+        # x(s) = s (s^2 + 6) / 2
+        # y(s) = 6 s (s - 1)^2
+        # x'(s)^2 + y'(s)^2 = (9/4)(145s^4 - 384s^3 + 356s^2 - 128s + 20)
+        expected = float.fromhex('0x1.05dd184047a7bp+2')
+        local_eps = abs(SPACING(expected))
+        self.assertAlmostEqual(length, expected, delta=local_eps)
 
     def test_without_scipy(self):
         nodes = np.zeros((5, 2), order='F')
