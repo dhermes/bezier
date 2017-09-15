@@ -554,7 +554,7 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     return new_nodes
 
 
-def _make_transform(degree, weights_a, weights_b, weights_c):
+def make_transform(degree, weights_a, weights_b, weights_c):
     """Compute matrices corresponding to the de Casteljau algorithm.
 
     Applies the de Casteljau to the identity matrix, thus
@@ -594,7 +594,7 @@ def _make_transform(degree, weights_a, weights_b, weights_c):
     return transform
 
 
-def _reduced_to_matrix(shape, degree, vals_by_weight):
+def reduced_to_matrix(shape, degree, vals_by_weight):
     r"""Converts a reduced values dictionary into a matrix.
 
     The ``vals_by_weight`` mapping has keys of the form:
@@ -668,7 +668,7 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
 
     for reduced_deg in six.moves.xrange(degree - 1, 0, -1):
         new_partial = {}
-        transform = _make_transform(
+        transform = make_transform(
             reduced_deg, weights_a, weights_b, weights_c)
         for key, sub_nodes in six.iteritems(partial_vals):
             # Our keys are ascending so we increment from the last value.
@@ -679,7 +679,7 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
 
         partial_vals = new_partial
 
-    return _reduced_to_matrix(nodes.shape, degree, partial_vals)
+    return reduced_to_matrix(nodes.shape, degree, partial_vals)
 
 
 def subdivide_nodes(nodes, degree):
@@ -734,7 +734,7 @@ def subdivide_nodes(nodes, degree):
     return nodes_a, nodes_b, nodes_c, nodes_d
 
 
-def _mean_centroid(candidates):
+def mean_centroid(candidates):
     """Take the mean of all centroids in set of reference triangles.
 
     Args:
@@ -932,7 +932,7 @@ def _jacobian_det(nodes, degree, st_vals):
             bs_bt_vals[:, 1] * bs_bt_vals[:, 2])
 
 
-def _newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
+def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
     r"""Helper for :func:`newton_refine`.
 
     We have a system:
@@ -1093,12 +1093,12 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
     # The first column of the jacobian matrix is B_s (i.e. the
     # left-most values in ``jac_both``).
-    delta_s, delta_t = _newton_refine_solve(
+    delta_s, delta_t = newton_refine_solve(
         jac_both, x_val, surf_x, y_val, surf_y)
     return s + delta_s, t + delta_t
 
 
-def _update_locate_candidates(
+def update_locate_candidates(
         candidate, next_candidates, x_val, y_val, degree):
     """Update list of candidate surfaces during geometric search for a point.
 
@@ -1186,7 +1186,7 @@ def locate_point(nodes, degree, x_val, y_val):
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for candidate in candidates:
-            _update_locate_candidates(
+            update_locate_candidates(
                 candidate, next_candidates, x_val, y_val, degree)
 
         candidates = next_candidates
@@ -1196,7 +1196,7 @@ def locate_point(nodes, degree, x_val, y_val):
 
     # We take the average of all centroids from the candidates
     # that may contain the point.
-    s_approx, t_approx = _mean_centroid(candidates)
+    s_approx, t_approx = mean_centroid(candidates)
     s, t = newton_refine(
         nodes, degree, x_val, y_val, s_approx, t_approx)
 
@@ -1609,7 +1609,7 @@ def classify_intersection(intersection):
         intersection.t, intersection.second._nodes,
         intersection.second._degree)
 
-    if _ignored_corner(intersection, tangent1, tangent2):
+    if ignored_corner(intersection, tangent1, tangent2):
         return IntersectionClassification.ignored_corner
 
     # Take the cross product of tangent vectors to determine which one
@@ -1620,11 +1620,11 @@ def classify_intersection(intersection):
     elif cross_prod > 0:
         return IntersectionClassification.second
     else:
-        return _classify_tangent_intersection(
+        return classify_tangent_intersection(
             intersection, tangent1, tangent2)
 
 
-def _classify_tangent_intersection(intersection, tangent1, tangent2):
+def classify_tangent_intersection(intersection, tangent1, tangent2):
     """Helper for func:`classify_intersection` at tangencies.
 
     Args:
@@ -1685,10 +1685,10 @@ def _classify_tangent_intersection(intersection, tangent1, tangent2):
             raise NotImplementedError(_SAME_CURVATURE)
 
 
-def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
+def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     """Check ignored when a corner lies **inside** another edge.
 
-    Helper for :func:`_ignored_corner` where one of ``s`` and
+    Helper for :func:`ignored_corner` where one of ``s`` and
     ``t`` are ``0``, but **not both**.
 
     Args:
@@ -1719,10 +1719,10 @@ def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     return cross_prod <= 0.0
 
 
-def _ignored_double_corner(intersection, tangent_s, tangent_t):
+def ignored_double_corner(intersection, tangent_s, tangent_t):
     """Check if an intersection is an "ignored" double corner.
 
-    Helper for :func:`_ignored_corner` where both ``s`` and
+    Helper for :func:`ignored_corner` where both ``s`` and
     ``t`` are ``0``.
 
     Does so by checking if either edge through the ``t`` corner goes
@@ -1791,7 +1791,7 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
     return not (cross_prod1 <= 0.0 and cross_prod3 >= 0.0)
 
 
-def _ignored_corner(intersection, tangent_s, tangent_t):
+def ignored_corner(intersection, tangent_s, tangent_t):
     """Check if an intersection is an "ignored" corner.
 
     An "ignored" corner is one where the surfaces just "kiss" at
@@ -1825,19 +1825,19 @@ def _ignored_corner(intersection, tangent_s, tangent_t):
         # pylint: disable=protected-access
         if intersection.t == 0.0:
             # Double corner.
-            return _ignored_double_corner(
+            return ignored_double_corner(
                 intersection, tangent_s, tangent_t)
         else:
             # s-only corner.
             prev_edge = intersection.first._previous_edge
-            return _ignored_edge_corner(tangent_t, tangent_s, prev_edge._nodes)
+            return ignored_edge_corner(tangent_t, tangent_s, prev_edge._nodes)
         # pylint: enable=protected-access
     elif intersection.t == 0.0:
         # t-only corner.
         # pylint: disable=protected-access
         prev_edge = intersection.second._previous_edge
         # pylint: enable=protected-access
-        return _ignored_edge_corner(tangent_s, tangent_t, prev_edge._nodes)
+        return ignored_edge_corner(tangent_s, tangent_t, prev_edge._nodes)
     else:
         # Not a corner.
         return False
@@ -1887,7 +1887,7 @@ def handle_corners(intersection):
     return changed
 
 
-def _same_intersection(intersection1, intersection2, wiggle=0.5**40):
+def same_intersection(intersection1, intersection2, wiggle=0.5**40):
     """Check if two intersections are close to machine precision.
 
     Args:
@@ -1934,14 +1934,14 @@ def verify_duplicates(duplicates, uniques):
             times.
     """
     for uniq1, uniq2 in itertools.combinations(uniques, 2):
-        if _same_intersection(uniq1, uniq2):
+        if same_intersection(uniq1, uniq2):
             raise ValueError('Non-unique intersection')
 
     counter = collections.Counter()
     for dupe in duplicates:
         matches = []
         for index, uniq in enumerate(uniques):
-            if _same_intersection(dupe, uniq):
+            if same_intersection(dupe, uniq):
                 matches.append(index)
 
         if len(matches) != 1:
@@ -1962,7 +1962,7 @@ def verify_duplicates(duplicates, uniques):
             raise ValueError('Unexpected duplicate count', count)
 
 
-def _to_front(intersection, intersections, unused):
+def to_front(intersection, intersections, unused):
     """Rotates a node to the "front".
 
     Helper for :func:`combine_intersections`.
@@ -2027,12 +2027,12 @@ def _to_front(intersection, intersections, unused):
     return intersection
 
 
-def _get_next_first(intersection, intersections):
+def get_next_first(intersection, intersections):
     """Gets the next node along the current (first) edge.
 
-    Helper for :func:`_get_next` and along with :func:`_get_next_second`, this
+    Helper for :func:`get_next` and along with :func:`get_next_second`, this
     function does the majority of the heavy lifting. **Very** similar to
-    :func:`_get_next_second`, but this works with the first curve while the
+    :func:`get_next_second`, but this works with the first curve while the
     other function works with the second.
 
     Args:
@@ -2071,12 +2071,12 @@ def _get_next_first(intersection, intersections):
         return along_edge
 
 
-def _get_next_second(intersection, intersections):
+def get_next_second(intersection, intersections):
     """Gets the next node along the current (second) edge.
 
-    Helper for :func:`_get_next` and along with :func:`_get_next_first`, this
+    Helper for :func:`get_next` and along with :func:`get_next_first`, this
     function does the majority of the heavy lifting. **Very** similar to
-    :func:`_get_next_first`, but this works with the second curve while the
+    :func:`get_next_first`, but this works with the second curve while the
     other function works with the first.
 
     Args:
@@ -2115,7 +2115,7 @@ def _get_next_second(intersection, intersections):
         return along_edge
 
 
-def _get_next(intersection, intersections, unused):
+def get_next(intersection, intersections, unused):
     """Gets the next node along a given edge.
 
     Helper for :func:`combine_intersections`, but does the majority
@@ -2149,9 +2149,9 @@ def _get_next(intersection, intersections, unused):
     """
     result = None
     if intersection.interior_curve is IntersectionClassification.first:
-        result = _get_next_first(intersection, intersections)
+        result = get_next_first(intersection, intersections)
     elif intersection.interior_curve is IntersectionClassification.second:
-        result = _get_next_second(intersection, intersections)
+        result = get_next_second(intersection, intersections)
     else:
         raise ValueError('Cannot get next node if not starting from '
                          '"first" or "second".')
@@ -2161,7 +2161,7 @@ def _get_next(intersection, intersections, unused):
     return result
 
 
-def _ends_to_curve(start_node, end_node):
+def ends_to_curve(start_node, end_node):
     """Convert a "pair" of intersection nodes to a curve segment.
 
     .. note::
@@ -2206,7 +2206,7 @@ def _ends_to_curve(start_node, end_node):
                          '"first" or "second".')
 
 
-def _to_curved_polygon(surface):
+def to_curved_polygon(surface):
     """Convert a surface to a curved polygon.
 
     This is a helper for :func:`combine_intersections` to allow
@@ -2223,7 +2223,7 @@ def _to_curved_polygon(surface):
     return curved_polygon.CurvedPolygon(*edges, _verify=False)
 
 
-def _no_intersections(surface1, surface2):
+def no_intersections(surface1, surface2):
     r"""Determine if one surface is in the other.
 
     Helper for :func:`combine_intersections` that handles the case
@@ -2251,16 +2251,16 @@ def _no_intersections(surface1, surface2):
     #        arrays.indexing.html#advanced-indexing)
     corner1 = surface1._nodes[0, :].reshape((1, 2), order='F')
     if surface2.locate(corner1, _verify=False) is not None:
-        return [_to_curved_polygon(surface1)]
+        return [to_curved_polygon(surface1)]
 
     corner2 = surface2._nodes[0, :].reshape((1, 2), order='F')
     if surface1.locate(corner2, _verify=False) is not None:
-        return [_to_curved_polygon(surface2)]
+        return [to_curved_polygon(surface2)]
 
     return []
 
 
-def _tangent_only_intersections(intersections, surface1, surface2):
+def tangent_only_intersections(intersections, surface1, surface2):
     """Determine intersection in the case of only-tangent intersections.
 
     If the only intersections are tangencies, then either the surfaces
@@ -2304,14 +2304,14 @@ def _tangent_only_intersections(intersections, surface1, surface2):
     if point_type in _IGNORED_TYPES:
         return []
     elif point_type is IntersectionClassification.tangent_first:
-        return [_to_curved_polygon(surface1)]
+        return [to_curved_polygon(surface1)]
     elif point_type is IntersectionClassification.tangent_second:
-        return [_to_curved_polygon(surface2)]
+        return [to_curved_polygon(surface2)]
     else:
         raise ValueError('Point type not for tangency', point_type)
 
 
-def _basic_interior_combine(intersections, max_edges=10):
+def basic_interior_combine(intersections, max_edges=10):
     """Combine intersections that don't involve tangencies.
 
     Helper for :func:`combine_intersections`.
@@ -2342,23 +2342,23 @@ def _basic_interior_combine(intersections, max_edges=10):
     while unused:
         start = unused.pop()
         curr_node = start
-        next_node = _get_next(start, intersections, unused)
+        next_node = get_next(start, intersections, unused)
         edge_ends = [(curr_node, next_node)]
         while next_node is not start:
-            curr_node = _to_front(next_node, intersections, unused)
+            curr_node = to_front(next_node, intersections, unused)
             # NOTE: We also check to break when moving a corner node
             #       to the front. This is because ``intersections``
             #       de-duplicates corners by selecting the one
             #       (of 2 or 4 choices) at the front of segment(s).
             if curr_node is start:
                 break
-            next_node = _get_next(curr_node, intersections, unused)
+            next_node = get_next(curr_node, intersections, unused)
             edge_ends.append((curr_node, next_node))
             if len(edge_ends) > max_edges:
                 raise RuntimeError(
                     'Unexpected number of edges', len(edge_ends))
 
-        edge_gen = (_ends_to_curve(*pair) for pair in edge_ends)
+        edge_gen = (ends_to_curve(*pair) for pair in edge_ends)
         result.append(curved_polygon.CurvedPolygon(*edge_gen, _verify=False))
 
     return result
@@ -2387,13 +2387,13 @@ def combine_intersections(intersections, surface1, surface2):
         that compose the intersected objects.
     """
     if not intersections:
-        return _no_intersections(surface1, surface2)
+        return no_intersections(surface1, surface2)
 
-    result = _basic_interior_combine(intersections)
+    result = basic_interior_combine(intersections)
     if result:
         return result
 
-    return _tangent_only_intersections(intersections, surface1, surface2)
+    return tangent_only_intersections(intersections, surface1, surface2)
 
 
 def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
