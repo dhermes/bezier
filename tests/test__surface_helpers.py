@@ -16,6 +16,10 @@ import mock
 import numpy as np
 import pytest
 
+try:
+    from bezier import _HAS_SURFACE_SPEEDUP as HAS_SURFACE_SPEEDUP
+except ImportError:  # pragma: NO COVER
+    HAS_SURFACE_SPEEDUP = False
 from tests import utils
 
 
@@ -27,7 +31,7 @@ UNIT_TRIANGLE = np.asfortranarray([
 FLOAT64 = np.float64  # pylint: disable=no-member
 # pylint: disable=invalid-name,no-member
 slow = pytest.mark.skipif(
-    pytest.config.getoption('--ignore-slow') and utils.WITHOUT_SPEEDUPS,
+    pytest.config.getoption('--ignore-slow') and not HAS_SURFACE_SPEEDUP,
     reason='--ignore-slow ignores the slow tests',
 )
 # pylint: enable=invalid-name,no-member
@@ -294,7 +298,7 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_surface_speedup
 class Test_speedup_de_casteljau_one_round(Test__de_casteljau_one_round):
 
     @staticmethod
@@ -903,7 +907,7 @@ class Test__jacobian_both(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_surface_speedup
 class Test_speedup_jacobian_both(Test__jacobian_both):
 
     @staticmethod
@@ -964,7 +968,7 @@ class Test__jacobian_det(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_surface_speedup
 class Test_speedup_jacobian_det(Test__jacobian_det):
 
     @staticmethod
@@ -2443,7 +2447,7 @@ class Test__evaluate_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_surface_speedup
 class Test_speedup_evaluate_barycentric(Test__evaluate_barycentric):
 
     @staticmethod
@@ -2504,7 +2508,7 @@ class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_surface_speedup
 class Test_speedup_evaluate_barycentric_multi(
         Test__evaluate_barycentric_multi):
 
@@ -2571,7 +2575,7 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_surface_speedup
 class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
 
     @staticmethod

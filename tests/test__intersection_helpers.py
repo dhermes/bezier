@@ -125,7 +125,7 @@ class Test__bbox_intersect(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_intersection_speedup
 class Test_speedup_bbox_intersect(Test__bbox_intersect):
 
     @staticmethod
@@ -288,7 +288,7 @@ class Test__linearization_error(unittest.TestCase):
         self.assertEqual(error_val, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_intersection_speedup
 class Test_speedup_linearization_error(Test__linearization_error):
 
     @staticmethod
@@ -466,7 +466,7 @@ class Test__newton_refine(utils.NumPyTestCase):
                          curve2.evaluate(exact_t))
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_intersection_speedup
 class Test_speedup_newton_refine(Test__newton_refine):
 
     @staticmethod
@@ -528,7 +528,7 @@ class Test__segment_intersection(unittest.TestCase):
         self.assertFalse(success)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_intersection_speedup
 class Test_speedup_segment_intersection(Test__segment_intersection):
 
     WITH_NONES = False
@@ -591,7 +591,7 @@ class Test__parallel_different(unittest.TestCase):
             self._call_function_under_test(start0, end0, start1, end1))
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_intersection_speedup
 class Test_speedup_parallel_different(Test__parallel_different):
 
     @staticmethod
@@ -823,7 +823,7 @@ class Test__from_linearized_low_level(utils.NumPyTestCase):
                 error2, 0.0, 1.0, start_node2, end_node2, nodes2)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_intersection_speedup
 class Test_speedup_from_linearized_low_level(Test__from_linearized_low_level):
 
     # pylint: disable=too-many-arguments
@@ -1126,7 +1126,7 @@ class Test__bbox_line_intersect(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_intersection_speedup
 class Test_speedup_bbox_line_intersect(Test__bbox_line_intersect):
 
     @staticmethod
@@ -1440,7 +1440,7 @@ class TestBoxIntersectionType(unittest.TestCase):
         else:
             return False
 
-    @unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+    @utils.needs_curve_intersection_speedup
     def test_verify_fortran_enums(self):
         from bezier import _curve_intersection_speedup
 

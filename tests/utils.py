@@ -13,15 +13,9 @@
 import unittest
 
 try:
-    # pylint: disable=unused-import
-    import bezier._curve_intersection_speedup  # noqa: F401
-    import bezier._curve_speedup  # noqa: F401
-    import bezier._helpers_speedup  # noqa: F401
-    import bezier._surface_speedup  # noqa: F401
-    # pylint: enable=unused-import
-    WITHOUT_SPEEDUPS = False
+    import bezier
 except ImportError:  # pragma: NO COVER
-    WITHOUT_SPEEDUPS = True
+    bezier = None
 
 
 WRONG_FLAGS_TEMPLATE = """\
@@ -119,6 +113,52 @@ def check_plot_call(test_case, call, expected, **kwargs):
     test_case.assertEqual(len(positional), 2)
     test_case.assertEqual(positional[0], expected[:, 0])
     test_case.assertEqual(positional[1], expected[:, 1])
+
+
+def needs_helpers_speedup(test_class):
+    if bezier is None:
+        has_speedup = False
+    else:
+        has_speedup = bezier._HAS_HELPERS_SPEEDUP
+
+    decorator = unittest.skipUnless(
+        has_speedup, 'No helpers speedup available')
+    return decorator(test_class)
+
+
+def needs_curve_speedup(test_class):
+    if bezier is None:
+        has_speedup = False
+    else:
+        has_speedup = bezier._HAS_CURVE_SPEEDUP
+
+    decorator = unittest.skipUnless(
+        has_speedup, 'No curve speedup available')
+    return decorator(test_class)
+
+
+def needs_surface_speedup(test_class):
+    if bezier is None:
+        has_speedup = False
+    else:
+        has_speedup = bezier._HAS_SURFACE_SPEEDUP
+
+    decorator = unittest.skipUnless(
+        has_speedup, 'No surface speedup available')
+    return decorator(test_class)
+
+
+# pylint: disable=invalid-name
+def needs_curve_intersection_speedup(test_class):
+    if bezier is None:
+        has_speedup = False
+    else:
+        has_speedup = bezier._HAS_CURVE_INTERSECTION_SPEEDUP
+
+    decorator = unittest.skipUnless(
+        has_speedup, 'No curve intersection speedup available')
+    return decorator(test_class)
+# pylint: enable=invalid-name
 
 
 class NumPyTestCase(unittest.TestCase):

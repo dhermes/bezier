@@ -204,7 +204,7 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
         self._points_check(nodes, degree)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
 
     @staticmethod
@@ -242,7 +242,7 @@ class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_evaluate_multi_barycentric(
         Test__evaluate_multi_barycentric):
 
@@ -299,7 +299,7 @@ class Test__evaluate_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_evaluate_multi(Test__evaluate_multi):
 
     @staticmethod
@@ -343,6 +343,10 @@ class Test__compute_length(unittest.TestCase):
 
         return _curve_helpers._compute_length(nodes, degree)
 
+    def _scipy_skip(self):
+        if SCIPY_INT is None:
+            self.skipTest('SciPy not installed')
+
     def test_linear(self):
         nodes = np.asfortranarray([
             [0.0, 0.0],
@@ -351,8 +355,8 @@ class Test__compute_length(unittest.TestCase):
         length = self._call_function_under_test(nodes, 1)
         self.assertEqual(length, 5.0)
 
-    @unittest.skipIf(SCIPY_INT is None, 'SciPy not installed')
     def test_quadratic(self):
+        self._scipy_skip()
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
@@ -365,8 +369,8 @@ class Test__compute_length(unittest.TestCase):
         local_eps = abs(SPACING(expected))
         self.assertAlmostEqual(length, expected, delta=local_eps)
 
-    @unittest.skipIf(SCIPY_INT is None, 'SciPy not installed')
     def test_cubic(self):
+        self._scipy_skip()
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
@@ -388,7 +392,7 @@ class Test__compute_length(unittest.TestCase):
                 self._call_function_under_test(nodes, 4)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_compute_length(Test__compute_length):
 
     @staticmethod
@@ -396,6 +400,11 @@ class Test_speedup_compute_length(Test__compute_length):
         from bezier import _curve_speedup
 
         return _curve_speedup.compute_length(nodes, degree)
+
+    def _scipy_skip(self):
+        # Fortran implementation directly includes QUADPACK, so the presence
+        # or absence of SciPy is irrelevant.
+        pass
 
     def test_without_scipy(self):
         # Fortran implementation directly includes QUADPACK, so the presence
@@ -440,7 +449,7 @@ class Test__elevate_nodes(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_elevate_nodes(Test__elevate_nodes):
 
     @staticmethod
@@ -557,7 +566,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
         self.assertEqual(true_end, 0.75)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_specialize_curve(Test__specialize_curve):
 
     @staticmethod
@@ -629,7 +638,7 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
             self.assertEqual(first_deriv[0, 1], y_prime)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
 
     @staticmethod
@@ -687,7 +696,7 @@ class Test__get_curvature(unittest.TestCase):
         self.assertEqual(result, -4.0)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_get_curvature(Test__get_curvature):
 
     @staticmethod
@@ -719,7 +728,7 @@ class Test__newton_refine(unittest.TestCase):
         self.assertEqual(110.0 * new_s, 57.0)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_newton_refine(Test__newton_refine):
 
     @staticmethod
@@ -780,7 +789,7 @@ class Test__locate_point(unittest.TestCase):
             self._call_function_under_test(nodes, 3, point)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_locate_point(Test__locate_point):
 
     @staticmethod
@@ -909,7 +918,7 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
             self._call_function_under_test(nodes, degree)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup__reduce_pseudo_inverse(Test__reduce_pseudo_inverse):
 
     @staticmethod
@@ -950,7 +959,7 @@ class Test__projection_error(unittest.TestCase):
         self.assertEqual(result, 0.0)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_projection_error(Test__projection_error):
 
     @staticmethod
@@ -1066,7 +1075,7 @@ class Test__maybe_reduce(utils.NumPyTestCase):
             self._call_function_under_test(nodes)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_maybe_reduce(Test__maybe_reduce):
 
     @staticmethod
@@ -1145,7 +1154,7 @@ class Test__full_reduce(utils.NumPyTestCase):
             self._call_function_under_test(nodes)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
+@utils.needs_curve_speedup
 class Test_speedup_full_reduce(Test__full_reduce):
 
     @staticmethod
