@@ -204,49 +204,58 @@ class DualArchitectureCompile(object):
     def __init__(self, f90_compiler):
         self.f90_compiler = f90_compiler
         self.original_compile = f90_compiler._compile
-        self.compiler_cmd = f90_compiler.compiler_f90
-        self.arch_index = None  # Set in ``_verify()``.
-        self.arch_value = None  # Set in ``_verify()``.
+        self.compiler_cmds = {
+            '.f90': f90_compiler.compiler_f90,
+            '.f': f90_compiler.compiler_f77,
+        }
+        self.arch_indices = {}  # Populated in ``_verify()``.
+        self.arch_values = {}  # Populated in ``_verify()``.
         self._verify()
 
     def _verify(self):
         """Makes sure the constructor arguments are valid.
 
-        In particular, makes sure that ``compiler_cmd`` has exactly one
-        instance of ``-arch``.
+        In particular, makes sure that each command in ``compiler_cmds`` has
+        exactly one instance of ``-arch``.
 
-        If this succeeds, will set ``arch_index`` and ``arch_value`` on
-        the instance.
+        If this succeeds, will update the ``arch_index`` and ``arch_value``
+        dictionaries on the instance (for each extension supported in
+        ``compiler_cmds``).
 
         Raises:
-            TypeError: If ``compiler_cmd`` is not a ``list``.
-            ValueError: If ``compiler_cmd`` doesn't have exactly one ``-arch``
-                segment.
-            ValueError: If ``-arch`` is the **last** segment in
-                ``compiler_cmd``.
-            ValueError: If the ``-arch`` value is not ``i386`` or ``x86_64``.
+            TypeError: If a value in ``compiler_cmds`` is not a ``list``.
+            ValueError: If a value in ``compiler_cmds`` doesn't have exactly one
+                ``-arch`` segment.
+            ValueError: If ``-arch`` is the **last** segment in a value in
+                ``compiler_cmds``.
+            ValueError: If one of the ``-arch`` values is not ``i386`` or
+                ``x86_64``.
         """
-        if not isinstance(self.compiler_cmd, list):
-            raise TypeError('Expected a list', self.compiler_cmd)
+        for extension, compiler_cmd in self.compiler_cmds.items():
+            if not isinstance(compiler_cmd, list):
+                raise TypeError('Expected a list', compiler_cmd, extension)
 
-        if self.compiler_cmd.count('-arch') != 1:
-            raise ValueError(
-                'Did not find exactly one "-arch" in', self.compiler_cmd)
+            if compiler_cmd.count('-arch') != 1:
+                raise ValueError(
+                    'Did not find exactly one "-arch" in', compiler_cmd,
+                    extension)
 
-        arch_index = self.compiler_cmd.index('-arch') + 1
-        if arch_index == len(self.compiler_cmd):
-            raise ValueError(
-                'There is no architecture specified in', self.compiler_cmd)
+            arch_index = compiler_cmd.index('-arch') + 1
+            if arch_index == len(compiler_cmd):
+                raise ValueError(
+                    'There is no architecture specified in', compiler_cmd,
+                    extension)
 
-        arch_value = self.compiler_cmd[arch_index]
-        if arch_value not in ('i386', 'x86_64'):
-            raise ValueError(
-                'Unexpected architecture', arch_value, 'in', self.compiler_cmd)
+            arch_value = compiler_cmd[arch_index]
+            if arch_value not in ('i386', 'x86_64'):
+                raise ValueError(
+                    'Unexpected architecture', arch_value, 'in',
+                    compiler_cmd, extension)
 
-        self.arch_index = arch_index
-        self.arch_value = arch_value
+            self.arch_indices[extension] = arch_index
+            self.arch_values[extension] = arch_value
 
-    def _set_architecture(self, architecture):
+    def _set_architecture(self, architecture, extension):
         """Set the architecture on the Fortran compiler.
 
         ``compiler_cmd`` is actually a list (mutable), so we can update it here
@@ -254,15 +263,24 @@ class DualArchitectureCompile(object):
 
         Args:
             architecture (str): One of ``i386`` or ``x86_64``.
+            extension (str): The file extension being compiled.
         """
-        self.compiler_cmd[self.arch_index] = architecture
+        compiler_cmd = self.compiler_cmds[extension]
+        arch_index = self.arch_indices[extension]
+        compiler_cmd[arch_index] = architecture
 
-    def _restore_architecture(self):
+    def _restore_architecture(self, extension):
         """Restore the architecture on the Fortran compiler.
 
         Resets the ``-arch`` value in ``compiler_cmd`` to its original value.
+
+        Args:
+            extension (str): The file extension being compiled.
         """
-        self.compiler_cmd[self.arch_index] = self.arch_value
+        compiler_cmd = self.compiler_cmds[extension]
+        arch_index = self.arch_indices[extension]
+        arch_value = self.arch_values[extension]
+        compiler_cmd[arch_index] = arch_value
 
     def __call__(self, obj, src, ext, cc_args, extra_postargs, pp_opts):
         """Call-able replacement for ``_compile``.
@@ -285,20 +303,20 @@ class DualArchitectureCompile(object):
         # Create a directory and compile an object targeting i386.
         i386_dir = tempfile.mkdtemp(suffix='-i386')
         i386_obj = os.path.join(i386_dir, obj_name)
-        self._set_architecture('i386')
+        self._set_architecture('i386', ext)
         self.original_compile(
             i386_obj, src, ext, cc_args, extra_postargs, pp_opts)
 
         # Create a directory and compile an object targeting x86_64.
         x86_64_dir = tempfile.mkdtemp(suffix='-x86_64')
         x86_64_obj = os.path.join(x86_64_dir, obj_name)
-        self._set_architecture('x86_64')
+        self._set_architecture('x86_64', ext)
         self.original_compile(
             x86_64_obj, src, ext, cc_args, extra_postargs, pp_opts)
 
         # Restore the compiler back to how it was before we modified it (could
         # be done with a context manager).
-        self._restore_architecture()
+        self._restore_architecture(ext)
 
         # Use ``lipo`` to combine the object files into a universal.
         lipo_cmd = ('lipo', i386_obj, x86_64_obj, '-create', '-output', obj)
