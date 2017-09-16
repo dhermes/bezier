@@ -1,7 +1,12 @@
-language: generic
-os: osx
+language: python
+python: 3.6
+sudo: required
+dist: trusty
 
 matrix:
+  exclude:
+    # Exclude the default
+    - python: 3.6
   include:
     - os: osx
       language: generic
