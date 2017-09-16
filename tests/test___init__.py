@@ -56,9 +56,12 @@ def _check_pkg_filename(test_case, path, last_segment):
     short = os.path.join('bezier', last_segment)
     from_egg = path.endswith(short) and '.egg' in path
 
+    src_path = os.path.join('src', short)
+    from_source = path.endswith(src_path)
+
     verbose = os.path.join('site-packages', short)
     site_pkg = path.endswith(verbose)
 
     msg = CHECK_PKG_MSG.format(
         path, verbose, site_pkg, from_egg)
-    test_case.assertTrue(site_pkg or from_egg, msg=msg)
+    test_case.assertTrue(from_egg or from_source or site_pkg, msg=msg)
