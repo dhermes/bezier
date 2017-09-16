@@ -1174,8 +1174,6 @@ def endpoint_check(
             intersections. If these curves intersect at their tangeny,
             then those intersections will be added to this list.
     """
-    node_first = _helpers.fortran_contiguous(node_first)
-    node_second = _helpers.fortran_contiguous(node_second)
     if _helpers.vector_close(node_first, node_second):
         # pylint: disable=protected-access
         orig_s = (1 - s) * first._start + s * first._end
@@ -1231,17 +1229,18 @@ def tangent_bbox_intersection(first, second, intersections):
             intersections. If these curves intersect at their tangeny,
             then those intersections will be added to this list.
     """
-    # NOTE: We want the nodes to be 1x2 but accessing
-    #       ``first_nodes[[index], :]`` makes a copy while the
-    #       accesses below **do not** copy. See
-    #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
-    #        arrays.indexing.html#advanced-indexing)
-    #       We don't use order='F' when reshaping since the data isn't
-    #       contiguous (since we assume `_nodes` is Fortran contiguous).
-    node_first1 = first._nodes[0, :].reshape((1, 2))
-    node_first2 = first._nodes[-1, :].reshape((1, 2))
-    node_second1 = second._nodes[0, :].reshape((1, 2))
-    node_second2 = second._nodes[-1, :].reshape((1, 2))
+    node_first1 = np.asfortranarray([
+        [first._nodes[0, 0], first._nodes[0, 1]],
+    ])
+    node_first2 = np.asfortranarray([
+        [first._nodes[-1, 0], first._nodes[-1, 1]],
+    ])
+    node_second1 = np.asfortranarray([
+        [second._nodes[0, 0], second._nodes[0, 1]],
+    ])
+    node_second2 = np.asfortranarray([
+        [second._nodes[-1, 0], second._nodes[-1, 1]],
+    ])
 
     endpoint_check(
         first, node_first1, 0.0, second, node_second1, 0.0, intersections)

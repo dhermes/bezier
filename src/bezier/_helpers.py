@@ -264,21 +264,6 @@ def _wiggle_interval(value, wiggle=0.5**45):
         return np.nan, False
 
 
-def fortran_contiguous(mat):
-    """Make sure an array is Fortran contiguous or copy it.
-
-    Args:
-        mat (numpy.ndarray): An array to check and possibly copy.
-
-    Returns:
-        numpy.ndarray: The original (``mat``) or a copy.
-    """
-    if mat.flags.f_contiguous:
-        return mat
-    else:
-        return np.asfortranarray(mat)
-
-
 # pylint: disable=invalid-name
 if _helpers_speedup is None:  # pragma: NO COVER
     vector_close = _vector_close
