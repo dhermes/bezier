@@ -25,18 +25,25 @@ fi
 brew install gcc  # For `gfortran`
 which gfortran
 
+# No need to see the content being sourced.
+set +v
+
 # Get the "bare minimum" from `matthew-brett/multibuild`
 wget ${MB_COMMON_UTILS}
 source common_utils.sh
 wget ${MB_OSX_UTILS}
 source osx_utils.sh
 
+set -v
+
 # Use `multibuild` to install the given python.org version of CPython.
-install_mac_cpython ${PY_VERSION}
-install_pip
+get_macpython_environment ${PY_VERSION}
+echo ${PYTHON_EXE}
 echo ${PIP_CMD}
 
 # Make sure our installed CPython is set up for testing.
 ${PIP_CMD} install --ignore-installed virtualenv pip
 ${PIP_CMD} install --upgrade nox-automation
-export PY_BIN_DIR=$(dirname ${PYTHON_EXE})
+
+export PY_BIN_DIR=$(dirname "${PYTHON_EXE}")
+echo ${PY_BIN_DIR}

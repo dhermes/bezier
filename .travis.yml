@@ -17,7 +17,7 @@ matrix:
         - PY_VERSION=3.6
 
 install:
-  - scripts/osx/travis-setup.sh
+  - source scripts/osx/travis-setup.sh
 
 script:
   - if [[ "${PY_VERSION}" == "2.7" ]]; then ${PY_BIN_DIR}/nox -s cover                                ; fi
