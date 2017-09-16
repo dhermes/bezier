@@ -117,7 +117,7 @@ def check_plot_call(test_case, call, expected, **kwargs):
 
 def needs_helpers_speedup(test_class):
     if bezier is None:
-        has_speedup = False
+        has_speedup = False  # pragma: NO COVER
     else:
         has_speedup = bezier._HAS_HELPERS_SPEEDUP
 
@@ -128,7 +128,7 @@ def needs_helpers_speedup(test_class):
 
 def needs_curve_speedup(test_class):
     if bezier is None:
-        has_speedup = False
+        has_speedup = False  # pragma: NO COVER
     else:
         has_speedup = bezier._HAS_CURVE_SPEEDUP
 
@@ -139,7 +139,7 @@ def needs_curve_speedup(test_class):
 
 def needs_surface_speedup(test_class):
     if bezier is None:
-        has_speedup = False
+        has_speedup = False  # pragma: NO COVER
     else:
         has_speedup = bezier._HAS_SURFACE_SPEEDUP
 
@@ -151,7 +151,7 @@ def needs_surface_speedup(test_class):
 # pylint: disable=invalid-name
 def needs_curve_intersection_speedup(test_class):
     if bezier is None:
-        has_speedup = False
+        has_speedup = False  # pragma: NO COVER
     else:
         has_speedup = bezier._HAS_CURVE_INTERSECTION_SPEEDUP
 

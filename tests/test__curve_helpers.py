@@ -344,7 +344,7 @@ class Test__compute_length(unittest.TestCase):
         return _curve_helpers._compute_length(nodes, degree)
 
     def _scipy_skip(self):
-        if SCIPY_INT is None:
+        if SCIPY_INT is None:  # pragma: NO COVER
             self.skipTest('SciPy not installed')
 
     def test_linear(self):
