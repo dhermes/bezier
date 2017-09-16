@@ -33,9 +33,10 @@ source osx_utils.sh
 
 # Use `multibuild` to install the given python.org version of CPython.
 install_mac_cpython ${PY_VERSION}
+install_pip
+echo ${PIP_CMD}
 
 # Make sure our installed CPython is set up for testing.
-echo ${PIP_CMD}
 ${PIP_CMD} install --ignore-installed virtualenv pip
 ${PIP_CMD} install --upgrade nox-automation
 export PY_BIN_DIR=$(dirname ${PYTHON_EXE})
