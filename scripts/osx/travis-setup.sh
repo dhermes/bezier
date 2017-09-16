@@ -43,7 +43,7 @@ echo ${PIP_CMD}
 
 # Make sure our installed CPython is set up for testing.
 ${PIP_CMD} install --ignore-installed virtualenv pip
-${PIP_CMD} install --upgrade nox-automation
+${PIP_CMD} install --upgrade nox-automation numpy
 
 export PY_BIN_DIR=$(dirname "${PYTHON_EXE}")
 echo ${PY_BIN_DIR}

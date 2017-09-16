@@ -18,6 +18,7 @@ import collections
 import distutils.ccompiler
 import os
 import subprocess
+import sys
 
 import setuptools
 import setuptools.command.build_ext
