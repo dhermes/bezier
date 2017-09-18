@@ -54,6 +54,7 @@ elif sys.maxsize == 2**31 - 1:  # pragma: NO COVER
     IS_64_BIT = False
 else:  # pragma: NO COVER
     raise ImportError('Unexpected maxsize', sys.maxsize)
+IS_MAC_OS_X = sys.platform != 'darwin'
 
 
 def get_random(seed):
