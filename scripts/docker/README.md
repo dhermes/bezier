@@ -45,7 +45,7 @@ $ docker run \
 >   --rm \
 >   --tty \
 >   --interactive \
->   --volume $(pwd):/var/code/bezier/
+>   --volume $(pwd):/var/code/bezier/ \
 >   dhermes/bezier:latest \
 >   /bin/bash
 ```
