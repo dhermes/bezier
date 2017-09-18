@@ -47,6 +47,7 @@ array1 =
 array2 =
 {!r}
 """
+# See: https://docs.python.org/3/library/platform.html#cross-platform
 if sys.maxsize == 2**63 - 1:
     IS_64_BIT = True
 elif sys.maxsize == 2**31 - 1:  # pragma: NO COVER

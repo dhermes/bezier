@@ -26,7 +26,7 @@ fi
 
 if [[ "${PY_VERSION}" == "2.7" ]]; then
     ${PY_BIN_DIR}/nox -s cover;
-    arch -32 .nox/unit_tests-python_version-2-7/bin/python -m pytest tests/
+    arch -32 .nox/cover/bin/python -m pytest tests/
 elif [[ "${PY_VERSION}" == "3.5" ]]; then
     ${PY_BIN_DIR}/nox -s "unit_tests(python_version='3.5')";
     arch -32 .nox/unit_tests-python_version-3-5/bin/python -m pytest tests/
