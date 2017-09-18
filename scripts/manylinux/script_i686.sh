@@ -19,4 +19,9 @@ REPO_ROOT=$(dirname ${SCRIPTS_DIR});
 DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
 PRE_CMD=linux32
 
-docker run --rm -v ${REPO_ROOT}:/io ${DOCKER_IMAGE} ${PRE_CMD} /io/scripts/manylinux/build-wheels.sh
+docker run \
+    --rm \
+    --volume ${REPO_ROOT}:/io \
+    ${DOCKER_IMAGE} \
+    ${PRE_CMD} \
+    /io/scripts/manylinux/build-wheels.sh

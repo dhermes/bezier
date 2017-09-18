@@ -1331,7 +1331,7 @@ class Test_all_intersections_geometric(utils.NumPyTestCase):
         expected = np.asfortranarray([[0.5, 0.75]])
 
         s_val = 1.0 / 3.0
-        if utils.IS_64_BIT or not utils.IS_MAC_OS_X:  # pragma: NO COVER
+        if utils.IS_64_BIT or utils.IS_WINDOWS:  # pragma: NO COVER
             # Due to round-off, the answer is wrong by a tiny wiggle.
             s_val += SPACING(s_val)
         t_val = 2.0 / 3.0

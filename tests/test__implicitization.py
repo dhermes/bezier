@@ -1464,8 +1464,12 @@ class Test_bezier_value_check(utils.NumPyTestCase):
     def test_cubic_wiggle(self):
         self._cubic_wiggle(2.0, 308)
         # This wiggle room is especially egregious.
-        self._cubic_wiggle(5.0, 8129)
-        self._cubic_wiggle(17.0, 22503)
+        if utils.IS_LINUX and not utils.IS_64_BIT:  # pragma: NO COVER
+            self._cubic_wiggle(5.0, 8125)
+            self._cubic_wiggle(17.0, 22504)
+        else:
+            self._cubic_wiggle(5.0, 8129)
+            self._cubic_wiggle(17.0, 22503)
 
     @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
     def test_cubic_drop_degree(self):

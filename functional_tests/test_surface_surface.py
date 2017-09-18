@@ -34,8 +34,9 @@ BAD_TANGENT = (_surface_helpers._BAD_TANGENT,)
 TOO_MANY = _intersection_helpers._TOO_MANY_TEMPLATE
 WIGGLES = {
     GEOMETRIC: {
-        1: 46,  # Established on Ubuntu 16.04
+        1: 48,  # Established on CentOS 5 (i686 Docker image)
         3: 10,  # Established on AppVeyor (64-bit Python 2.7)
+        8: 18,  # Established on CentOS 5 (i686 Docker image)
         13: 19,  # Established on Ubuntu 16.04
         22: 37,  # Established on Ubuntu 16.04
         32: 1013,  # Established on Ubuntu 16.04
