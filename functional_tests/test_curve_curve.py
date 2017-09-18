@@ -14,6 +14,7 @@ from __future__ import absolute_import
 
 import itertools
 import operator
+import sys
 
 import numpy as np
 import pytest
@@ -115,6 +116,9 @@ ULPS_ALLOWED_OVERRIDE = {
         2: {
             (1, 3): 4,  # Established on Ubuntu 16.04
         },
+        12: {
+            (0, 1): 4,  # Established on OS X 10.11 in 32-bit (Early 2011 MBP)
+        },
         17: {
             (0, 7): ZERO_MISS,  # Established on Ubuntu 16.04
         },
@@ -189,6 +193,8 @@ INCORRECT_COUNT = {
     ),
     ALGEBRAIC: (),
 }
+if sys.platform == 'darwin':
+    INCORRECT_COUNT[ALGEBRAIC] += (10,)
 
 
 class IncorrectCount(ValueError):
@@ -368,7 +374,6 @@ def test_intersect(strategy, intersection_info):
     intersection_type = intersection_info.type_
 
     if id_ in INCORRECT_COUNT[strategy]:
-        assert intersection_info.type_ == CurveIntersectionType.tangent
         with pytest.raises(IncorrectCount):
             check_intersect(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.tangent:
