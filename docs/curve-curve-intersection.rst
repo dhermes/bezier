@@ -342,8 +342,8 @@ larger.
    ...     [x_val, y_val],
    ... ])
    >>> max_err = np.max(np.abs(intersections - expected))
-   >>> binary_exponent(max_err)
-   -50
+   >>> binary_exponent(max_err) <= -50
+   True
 
 .. image:: images/curves15_and_25.png
    :align: center

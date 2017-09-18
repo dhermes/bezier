@@ -208,6 +208,11 @@ class DualArchitectureCompile(object):
             '.f90': f90_compiler.compiler_f90,
             '.f': f90_compiler.compiler_f77,
         }
+        # NOTE: These **should** be cleaned up when this instance goes out
+        #       of scope, but that is not particularly simple to do.
+        self.i386_dir = self._i386_dir()
+        self.x86_64_dir = self._x86_64_dir()
+
         self.arch_indices = {}  # Populated in ``_verify()``.
         self.arch_values = {}  # Populated in ``_verify()``.
         self._verify()
@@ -282,6 +287,44 @@ class DualArchitectureCompile(object):
         arch_value = self.arch_values[extension]
         compiler_cmd[arch_index] = arch_value
 
+    @staticmethod
+    def _i386_dir():
+        """Temporary directory for building objects that target ``i386``.
+
+        If the ``TEMPDIR_I386`` environment variable is set (and that is a
+        valid directory), will just return that. Otherwise, will create a
+        temporary directory.
+
+        The environment variable is really just intended to be used by Travis
+        CI so that the build journal is "consistent".
+
+        Returns:
+            str: The directory created (or specified from the environment).
+        """
+        i386_dir = os.environ.get('TEMPDIR_I386')
+        if i386_dir is None or not os.path.isdir(i386_dir):
+            i386_dir = tempfile.mkdtemp(suffix='-i386')
+        return i386_dir
+
+    @staticmethod
+    def _x86_64_dir():
+        """Temporary directory for building objects that target ``x86_64``.
+
+        If the ``TEMPDIR_X86_64`` environment variable is set (and that is a
+        valid directory), will just return that. Otherwise, will create a
+        temporary directory.
+
+        The environment variable is really just intended to be used by Travis
+        CI so that the build journal is "consistent".
+
+        Returns:
+            str: The directory created (or specified from the environment).
+        """
+        x86_64_dir = os.environ.get('TEMPDIR_X86_64')
+        if x86_64_dir is None or not os.path.isdir(x86_64_dir):
+            x86_64_dir = tempfile.mkdtemp(suffix='-x86_64')
+        return x86_64_dir
+
     def __call__(self, obj, src, ext, cc_args, extra_postargs, pp_opts):
         """Call-able replacement for ``_compile``.
 
@@ -301,14 +344,14 @@ class DualArchitectureCompile(object):
         obj_name = os.path.basename(obj)
 
         # Create a directory and compile an object targeting i386.
-        i386_dir = tempfile.mkdtemp(suffix='-i386')
+        i386_dir = self.i386_dir
         i386_obj = os.path.join(i386_dir, obj_name)
         self._set_architecture('i386', ext)
         self.original_compile(
             i386_obj, src, ext, cc_args, extra_postargs, pp_opts)
 
         # Create a directory and compile an object targeting x86_64.
-        x86_64_dir = tempfile.mkdtemp(suffix='-x86_64')
+        x86_64_dir = self.x86_64_dir
         x86_64_obj = os.path.join(x86_64_dir, obj_name)
         self._set_architecture('x86_64', ext)
         self.original_compile(
@@ -321,8 +364,3 @@ class DualArchitectureCompile(object):
         # Use ``lipo`` to combine the object files into a universal.
         lipo_cmd = ('lipo', i386_obj, x86_64_obj, '-create', '-output', obj)
         self.f90_compiler.spawn(lipo_cmd)
-
-        # Clean up the temporary directories (could be done with a context
-        # manager).
-        shutil.rmtree(i386_dir)
-        shutil.rmtree(x86_64_dir)

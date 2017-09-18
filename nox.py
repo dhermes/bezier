@@ -14,9 +14,11 @@ from __future__ import print_function
 
 import glob
 import os
+import sys
 import tempfile
 
 import nox
+import nox.command
 
 
 NUMPY = 'numpy'
@@ -41,6 +43,33 @@ JOURNAL_PATHS = {
 }
 
 
+class InstallCommand(nox.command.InstallCommand):
+
+    def run(self, venv):
+        pyvenv_launcher = venv.env.pop('__PYVENV_LAUNCHER__', None)
+        if pyvenv_launcher is not None:
+            msg = 'Popped __PYVENV_LAUNCHER__={}'.format(pyvenv_launcher)
+            print(msg, file=sys.stderr)
+        return super(InstallCommand, self).run(venv)
+
+    __call__ = run
+
+
+def install(session, *args):
+    # NOTE: This does exactly the same thing as
+    #       `nox.sessions.SessionConfig.install` except it uses a custom
+    #       `InstallCommand`.
+    # See: https://github.com/jonparrott/nox/issues/44
+    if not session.virtualenv:
+        raise ValueError(
+            'A session without a virtualenv can not install dependencies.')
+    if not args:
+        raise ValueError('At least one argument required to install().')
+
+    command = InstallCommand(args)
+    session._commands.append(command)
+
+
 def get_path(*names):
     return os.path.join(NOX_DIR, *names)
 
@@ -52,7 +81,8 @@ def pypy_setup(local_deps, session):
         local_deps.remove(NUMPY)
         local_deps = tuple(local_deps)
         # Install from the pre-built wheel.
-        session.install(
+        install(
+            session,
             '--use-wheel',
             '--no-index',
             '--find-links',
@@ -75,7 +105,7 @@ def update_generated(session, check):
     session.interpreter = SINGLE_INTERP
 
     # Install all dependencies.
-    session.install('Cython')
+    install(session, 'Cython')
 
     if check:
         command = get_path('scripts', 'remove_cython_files.py')
@@ -111,9 +141,9 @@ def unit_tests(session, python_version):
         env = None
 
     # Install all test dependencies.
-    session.install(*local_deps)
+    install(session, *local_deps)
     # Install this package.
-    session.install('.')
+    install(session, '.')
 
     # Run py.test against the unit tests.
     run_args = ['py.test'] + session.posargs + [get_path('tests')]
@@ -130,9 +160,9 @@ def cover(session):
 
     # Install all test dependencies.
     local_deps = BASE_DEPS + ('scipy', 'pytest-cov', 'coverage')
-    session.install(*local_deps)
+    install(session, *local_deps)
     # Install this package.
-    session.install('.')
+    install(session, '.')
 
     # Run py.test with coverage against the unit tests.
     run_args = ['py.test', '--cov=bezier', '--cov=tests']
@@ -156,9 +186,9 @@ def functional(session, python_version):
         env = {}
 
     # Install all test dependencies.
-    session.install(*local_deps)
+    install(session, *local_deps)
     # Install this package.
-    session.install('.')
+    install(session, '.')
 
     # Run py.test against the functional tests.
     run_args = ['py.test'] + session.posargs + [get_path('functional_tests')]
@@ -171,9 +201,9 @@ def docs(session):
     session.interpreter = SINGLE_INTERP
 
     # Install all dependencies.
-    session.install(*DOCS_DEPS)
+    install(session, *DOCS_DEPS)
     # Install this package.
-    session.install('.')
+    install(session, '.')
 
     # Run the script for building docs.
     command = get_path('scripts', 'build_docs.sh')
@@ -197,9 +227,9 @@ def doctest(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
     local_deps = DOCS_DEPS + (MOCK_DEP,)
-    session.install(*local_deps)
+    install(session, *local_deps)
     # Install this package.
-    session.install('.')
+    install(session, '.')
 
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
@@ -212,9 +242,9 @@ def docs_images(session):
     # Install all dependencies.
     local_deps = DOCS_DEPS
     local_deps += ('matplotlib >= 2.0.0', MOCK_DEP, SEABORN_DEP, 'pytest')
-    session.install(*local_deps)
+    install(session, *local_deps)
     # Install this package.
-    session.install('.')
+    install(session, '.')
 
     # Use custom RC-file for matplotlib.
     env = {'MATPLOTLIBRC': 'docs'}
@@ -249,9 +279,9 @@ def lint(session):
         'Pygments',
         'pylint',
     )
-    session.install(*local_deps)
+    install(session, *local_deps)
     # Install this package.
-    session.install('.')
+    install(session, '.')
 
     # Run the script to check that the README and other docs are valid.
     check_path = get_path('scripts', 'check_doc_templates.py')
@@ -303,9 +333,9 @@ def benchmark(session, target):
         run_args = ['py.test'] + session.posargs + [test_fi]
 
     # Install all test dependencies.
-    session.install(*local_deps)
+    install(session, *local_deps)
     # Install this package.
-    session.install('.')
+    install(session, '.')
 
     session.run(*run_args, env=functional_env())
 
@@ -321,10 +351,16 @@ def check_journal(session, machine):
     os.close(filehandle)
 
     # Set the journal environment variable and install ``bezier``.
-    session.install(NUMPY)  # Install requirement(s).
+    install(session, NUMPY)  # Install requirement(s).
     env = {'BEZIER_JOURNAL': journal_filename}
     session.run('pip', 'install', '.', env=env)
 
     # Compare the expected file to the actual results.
+    session.run(
+        'python',
+        get_path('scripts', 'post_process_journal.py'),
+        '--journal-filename', journal_filename,
+        '--machine', machine,
+    )
     expected_journal = get_path(JOURNAL_PATHS[machine])
     session.run('diff', journal_filename, expected_journal)

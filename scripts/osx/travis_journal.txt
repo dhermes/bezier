@@ -1,0 +1,582 @@
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/types.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/types.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/types.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/types.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/types.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/types.o \
+>   -create \
+>   -output \
+>   src/bezier/types.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/helpers.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/helpers.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/helpers.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/helpers.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/helpers.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/helpers.o \
+>   -create \
+>   -output \
+>   src/bezier/helpers.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/curve.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/curve.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/curve.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/curve.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/curve.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/curve.o \
+>   -create \
+>   -output \
+>   src/bezier/curve.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/surface.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/surface.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/surface.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/surface.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/surface.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/surface.o \
+>   -create \
+>   -output \
+>   src/bezier/surface.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/curve_intersection.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/curve_intersection.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/curve_intersection.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/curve_intersection.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/curve_intersection.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/curve_intersection.o \
+>   -create \
+>   -output \
+>   src/bezier/curve_intersection.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/d1mach.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/d1mach.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/d1mach.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/d1mach.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/d1mach.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/d1mach.o \
+>   -create \
+>   -output \
+>   src/bezier/quadpack/d1mach.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqelg.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/dqelg.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqelg.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/dqelg.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/dqelg.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/dqelg.o \
+>   -create \
+>   -output \
+>   src/bezier/quadpack/dqelg.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqpsrt.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/dqpsrt.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqpsrt.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/dqpsrt.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/dqpsrt.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/dqpsrt.o \
+>   -create \
+>   -output \
+>   src/bezier/quadpack/dqpsrt.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqk21.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/dqk21.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqk21.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/dqk21.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/dqk21.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/dqk21.o \
+>   -create \
+>   -output \
+>   src/bezier/quadpack/dqk21.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqagse.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/dqagse.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqagse.f \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/dqagse.o
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/dqagse.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/dqagse.o \
+>   -create \
+>   -output \
+>   src/bezier/quadpack/dqagse.o
+----------------------------------------
+$ ar \
+>   -cr \
+>   build/lib.macosx-10.6-intel-3.6/bezier/lib/libbezier.a \
+>   src/bezier/quadpack/d1mach.o \
+>   src/bezier/quadpack/dqelg.o \
+>   src/bezier/quadpack/dqpsrt.o \
+>   src/bezier/quadpack/dqk21.o \
+>   src/bezier/quadpack/dqagse.o \
+>   src/bezier/types.o \
+>   src/bezier/helpers.o \
+>   src/bezier/curve.o \
+>   src/bezier/surface.o \
+>   src/bezier/curve_intersection.o
+----------------------------------------
+$ ranlib \
+>   build/lib.macosx-10.6-intel-3.6/bezier/lib/libbezier.a
+----------------------------------------
+$ /usr/bin/clang \
+>   -fno-strict-aliasing \
+>   -Wsign-compare \
+>   -fno-common \
+>   -dynamic \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   -I/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/Library/Frameworks/Python.framework/Versions/3.6/include/python3.6m \
+>   -c \
+>   src/bezier/_helpers_speedup.c \
+>   -o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_helpers_speedup.o
+----------------------------------------
+$ /usr/bin/clang \
+>   -bundle \
+>   -undefined \
+>   dynamic_lookup \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_helpers_speedup.o \
+>   src/bezier/types.o \
+>   src/bezier/helpers.o \
+>   -L${TRAVIS_BUILD_DIR}/scripts/osx/frankenstein \
+>   -lgfortran \
+>   -o \
+>   build/lib.macosx-10.6-intel-3.6/bezier/_helpers_speedup.cpython-36m-darwin.so
+----------------------------------------
+$ /usr/bin/clang \
+>   -fno-strict-aliasing \
+>   -Wsign-compare \
+>   -fno-common \
+>   -dynamic \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   -I/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/Library/Frameworks/Python.framework/Versions/3.6/include/python3.6m \
+>   -c \
+>   src/bezier/_curve_speedup.c \
+>   -o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_curve_speedup.o
+----------------------------------------
+$ /usr/bin/clang \
+>   -bundle \
+>   -undefined \
+>   dynamic_lookup \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_curve_speedup.o \
+>   src/bezier/types.o \
+>   src/bezier/helpers.o \
+>   src/bezier/quadpack/d1mach.o \
+>   src/bezier/quadpack/dqelg.o \
+>   src/bezier/quadpack/dqpsrt.o \
+>   src/bezier/quadpack/dqk21.o \
+>   src/bezier/quadpack/dqagse.o \
+>   src/bezier/curve.o \
+>   -L${TRAVIS_BUILD_DIR}/scripts/osx/frankenstein \
+>   -lgfortran \
+>   -o \
+>   build/lib.macosx-10.6-intel-3.6/bezier/_curve_speedup.cpython-36m-darwin.so
+----------------------------------------
+$ /usr/bin/clang \
+>   -fno-strict-aliasing \
+>   -Wsign-compare \
+>   -fno-common \
+>   -dynamic \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   -I/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/Library/Frameworks/Python.framework/Versions/3.6/include/python3.6m \
+>   -c \
+>   src/bezier/_surface_speedup.c \
+>   -o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_surface_speedup.o
+----------------------------------------
+$ /usr/bin/clang \
+>   -bundle \
+>   -undefined \
+>   dynamic_lookup \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_surface_speedup.o \
+>   src/bezier/types.o \
+>   src/bezier/helpers.o \
+>   src/bezier/quadpack/d1mach.o \
+>   src/bezier/quadpack/dqelg.o \
+>   src/bezier/quadpack/dqpsrt.o \
+>   src/bezier/quadpack/dqk21.o \
+>   src/bezier/quadpack/dqagse.o \
+>   src/bezier/curve.o \
+>   src/bezier/surface.o \
+>   -L${TRAVIS_BUILD_DIR}/scripts/osx/frankenstein \
+>   -lgfortran \
+>   -o \
+>   build/lib.macosx-10.6-intel-3.6/bezier/_surface_speedup.cpython-36m-darwin.so
+----------------------------------------
+$ /usr/bin/clang \
+>   -fno-strict-aliasing \
+>   -Wsign-compare \
+>   -fno-common \
+>   -dynamic \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   -I/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/Library/Frameworks/Python.framework/Versions/3.6/include/python3.6m \
+>   -c \
+>   src/bezier/_curve_intersection_speedup.c \
+>   -o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_curve_intersection_speedup.o
+----------------------------------------
+$ /usr/bin/clang \
+>   -bundle \
+>   -undefined \
+>   dynamic_lookup \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_curve_intersection_speedup.o \
+>   src/bezier/types.o \
+>   src/bezier/helpers.o \
+>   src/bezier/quadpack/d1mach.o \
+>   src/bezier/quadpack/dqelg.o \
+>   src/bezier/quadpack/dqpsrt.o \
+>   src/bezier/quadpack/dqk21.o \
+>   src/bezier/quadpack/dqagse.o \
+>   src/bezier/curve.o \
+>   src/bezier/curve_intersection.o \
+>   -L${TRAVIS_BUILD_DIR}/scripts/osx/frankenstein \
+>   -lgfortran \
+>   -o \
+>   build/lib.macosx-10.6-intel-3.6/bezier/_curve_intersection_speedup.cpython-36m-darwin.so
+----------------------------------------

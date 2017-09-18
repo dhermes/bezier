@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import unittest
 
 try:
@@ -46,6 +47,12 @@ array1 =
 array2 =
 {!r}
 """
+if sys.maxsize == 2**63 - 1:
+    IS_64_BIT = True
+elif sys.maxsize == 2**31 - 1:  # pragma: NO COVER
+    IS_64_BIT = False
+else:  # pragma: NO COVER
+    raise ImportError('Unexpected maxsize', sys.maxsize)
 
 
 def get_random(seed):
