@@ -301,7 +301,8 @@ def benchmark(session, target):
     # Install this package.
     session.install('.')
 
-    session.run(*run_args)
+    # NOTE: We need `tests` to be import-able.
+    session.run(*run_args, env={'PYTHONPATH': '.'})
 
 
 @nox.session
