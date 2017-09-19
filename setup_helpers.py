@@ -41,6 +41,26 @@ GFORTRAN_MISSING_LIBS = """\
 $ gfortran -print-search-dirs
 {}"""
 GFORTRAN_BAD_PATH = '``gfortran`` library path {} is not a directory.'
+# NOTE: These are mostly recommendations from Certik found here:
+#         http://www.fortran90.org/src/faq.html
+#       specifically "What compiler options should I use for ...?".
+#       I have dropped ``-ffast-math`` because (for now) it causes a headache
+#       in tests and doesn't give an appreciable speed up.
+GFORTRAN_OPTIMIZE_FLAGS = (
+    '-Wall',
+    '-Wextra',
+    # ``-Wextra`` includes ``no-compare-reals``, which warns about
+    # ``value == 0.0_dp``
+    '-Wno-compare-reals',
+    '-Wimplicit-interface',
+    '-fPIC',
+    '-Werror',
+    '-fmax-errors=1',
+    '-g',
+    '-O3',
+    '-march=native',
+    '-funroll-loops',
+)
 BAD_JOURNAL = 'Saving journal failed with {!r}.'
 JOURNAL_ENV = 'BEZIER_JOURNAL'
 """Environment variable to specify a text file for saving compiler commands.
@@ -212,6 +232,31 @@ def extension_modules():
         extensions.append(extension)
 
     return extensions
+
+
+def patch_f90_compiler(f90_compiler):
+    """Patch up ``f90_compiler``.
+
+    For now, only updates the flags for the ``gfortran`` if a specified set
+    of flags is not present.
+
+    Args:
+        f90_compiler (numpy.distutils.fcompiler.FCompiler): A Fortran compiler
+            instance.
+    """
+    # NOTE: NumPy may not be installed, but we don't want **this** module to
+    #       cause an import failure in ``setup.py``.
+    from numpy.distutils.fcompiler import gnu
+
+    # Only ``gfortran``.
+    if not isinstance(f90_compiler, gnu.Gnu95FCompiler):
+        return False
+
+    # NOTE: Should probably handle ``compiler_f77`` too.
+    f90_flags = f90_compiler.compiler_f90
+    for flag in GFORTRAN_OPTIMIZE_FLAGS:
+        if flag not in f90_flags:
+            f90_flags.append(flag)
 
 
 class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
