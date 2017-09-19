@@ -116,7 +116,7 @@ def unit_tests(session, python_version):
     session.install('.')
 
     # Run py.test against the unit tests.
-    run_args = ['py.test'] + session.posargs + [get_path('tests')]
+    run_args = ['py.test'] + session.posargs + [get_path('tests', 'unit')]
     session.run(*run_args, env=env)
 
 
@@ -135,10 +135,10 @@ def cover(session):
     session.install('.')
 
     # Run py.test with coverage against the unit tests.
-    run_args = ['py.test', '--cov=bezier', '--cov=tests']
+    run_args = ['py.test', '--cov=bezier', '--cov=tests.unit']
     run_args += session.posargs
     run_args += [
-        get_path('tests'),
+        get_path('tests', 'unit'),
         get_path('functional_tests', 'test_segment_box.py'),
     ]
     session.run(*run_args, env=functional_env())
@@ -268,6 +268,7 @@ def lint(session):
         '--application-import-names=bezier,tests',
         get_path('src', 'bezier'),
         get_path('tests'),
+        get_path('functional_tests'),
     )
     # Run Pylint over the library source.
     session.run(

@@ -143,15 +143,15 @@ install:
 test_script:
   - ps: if ($env:TEST_TYPE -eq "base")
         {
-          py.test tests;
+          py.test tests/unit;
         }
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
           py.test `
               --cov=bezier `
-              --cov=tests `
+              --cov=tests.unit `
               --cov-fail-under=98 `
-              tests `
+              tests/unit `
               functional_tests/test_segment_box.py;
         }
   - ps: if ($env:TEST_TYPE -eq "functional")

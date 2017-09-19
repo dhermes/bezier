@@ -484,7 +484,7 @@ class CurveIntersectionInfo(object):
 
     @property
     def test_id(self):
-        """str: The ID for this intersection in unit tests."""
+        """str: The ID for this intersection in functional tests."""
         return 'curves {!r} and {!r} (ID: {:d})'.format(
             self.curve1_info.id_, self.curve2_info.id_, self.id_)
 
@@ -810,7 +810,7 @@ class SurfaceIntersectionsInfo(object):
 
     @property
     def test_id(self):
-        """str: The ID for this intersection in unit tests."""
+        """str: The ID for this intersection in functional tests."""
         return 'surfaces {!r} and {!r} (ID: {:d})'.format(
             self.surface1_info.id_, self.surface2_info.id_, self.id_)
 

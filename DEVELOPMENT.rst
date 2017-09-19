@@ -76,10 +76,10 @@ manage dependencies or build extensions):
 
 .. code-block:: console
 
-   $ PYTHONPATH=src/ python2.7 -m pytest tests/
-   $ PYTHONPATH=src/ python3.5 -m pytest tests/
-   $ PYTHONPATH=src/ python3.6 -m pytest tests/
-   $ PYTHONPATH=src/ MATPLOTLIBRC=test/ pypy -m pytest tests/
+   $ PYTHONPATH=src/ python2.7 -m pytest tests/unit/
+   $ PYTHONPATH=src/ python3.5 -m pytest tests/unit/
+   $ PYTHONPATH=src/ python3.6 -m pytest tests/unit/
+   $ PYTHONPATH=src/ MATPLOTLIBRC=test/ pypy -m pytest tests/unit/
 
 .. _nox-automation: https://nox.readthedocs.io
 .. _pytest: https://docs.pytest.org
@@ -95,7 +95,7 @@ However, if you run the tests directly from the source tree via
 
 .. code-block:: console
 
-   $ PYTHONPATH=src/ python -m pytest tests/
+   $ PYTHONPATH=src/ python -m pytest tests/unit/
 
 some unit tests may be skipped. The unit tests for the native
 implementations will skip (rather than fail) if the extensions aren't
@@ -128,8 +128,8 @@ To run the coverage report locally:
    $ # OR
    $ PYTHONPATH=src/:functional_tests/ python -m pytest \
    >   --cov=bezier \
-   >   --cov=tests \
-   >   tests/ \
+   >   --cov=tests.unit \
+   >   tests/unit/ \
    >   functional_tests/test_segment_box.py
 
 Slow Tests

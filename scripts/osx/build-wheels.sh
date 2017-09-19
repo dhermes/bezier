@@ -85,8 +85,8 @@ ${VENV}/bin/pip install \
 
 set +e  # Allow tests to fail
 # Run unit tests (in both 32 and 64 bit).
-arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/tests
-arch -x86_64 ${VENV}/bin/py.test ${REPO_ROOT}/tests
+arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/tests/unit
+arch -x86_64 ${VENV}/bin/py.test ${REPO_ROOT}/tests/unit
 # Run functional tests (in both 32 and 64 bit).
 PYTHONPATH=${REPO_ROOT}/functional_tests \
     arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/functional_tests

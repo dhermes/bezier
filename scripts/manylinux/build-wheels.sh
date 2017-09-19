@@ -56,6 +56,6 @@ done
 for PYBIN in ${VERSION_WHITELIST}; do
     "${PYBIN}/pip" install bezier --no-index \
         --find-links /io/wheelhouse --find-links wheelhouse
-    (cd "$HOME"; "${PYBIN}/py.test" /io/tests/)
+    (cd "$HOME"; "${PYBIN}/py.test" /io/tests/unit/)
     (cd "$HOME"; PYTHONPATH=/io/functional_tests/ "${PYBIN}/py.test" /io/functional_tests/)
 done

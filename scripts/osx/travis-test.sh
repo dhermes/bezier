@@ -26,13 +26,13 @@ fi
 
 if [[ "${PY_VERSION}" == "2.7" ]]; then
     ${PY_BIN_DIR}/nox -s cover;
-    arch -32 .nox/cover/bin/python -m pytest tests/
+    arch -32 .nox/cover/bin/python -m pytest tests/unit/
 elif [[ "${PY_VERSION}" == "3.5" ]]; then
     ${PY_BIN_DIR}/nox -s "unit_tests(python_version='3.5')";
-    arch -32 .nox/unit_tests-python_version-3-5/bin/python -m pytest tests/
+    arch -32 .nox/unit_tests-python_version-3-5/bin/python -m pytest tests/unit/
 elif [[ "${PY_VERSION}" == "3.6" ]]; then
     ${PY_BIN_DIR}/nox -s "unit_tests(python_version='3.6')";
-    arch -32 .nox/unit_tests-python_version-3-6/bin/python -m pytest tests/
+    arch -32 .nox/unit_tests-python_version-3-6/bin/python -m pytest tests/unit/
     ${PY_BIN_DIR}/nox -s "functional(python_version='3.6')";
     PYTHONPATH="functional_tests/" arch -32 \
         .nox/functional-python_version-3-6/bin/python -m pytest \
