@@ -279,7 +279,7 @@ numbers, we can compute the intersection to machine precision:
    ... ]) / 14.0
    >>> max_err = np.max(np.abs(intersections - expected))
    >>> binary_exponent(max_err)
-   -54
+   -53
 
 .. image:: images/curves1_and_13.png
    :align: center

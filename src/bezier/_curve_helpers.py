@@ -727,7 +727,7 @@ def _newton_refine(nodes, degree, point, s):
        >>> terminal_s = s_vals[-1]
        >>> terminal_s == newton_refine(nodes, 3, point, terminal_s)
        True
-       >>> 2.0**(-31) <= abs(terminal_s - 0.5) <= 2.0**(-29)
+       >>> 2.0**(-31) <= abs(terminal_s - 0.5) <= 2.0**(-28)
        True
 
     Due to round-off near the cusp, the final error resembles
