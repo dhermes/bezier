@@ -17,7 +17,7 @@ import mock
 import numpy as np
 import six
 
-from tests import utils
+from tests.unit import utils
 
 
 SPACING = np.spacing  # pylint: disable=no-member

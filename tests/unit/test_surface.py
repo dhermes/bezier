@@ -15,7 +15,7 @@ import unittest
 import mock
 import numpy as np
 
-from tests import utils
+from tests.unit import utils
 
 
 class TestSurface(utils.NumPyTestCase):

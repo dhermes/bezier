@@ -13,7 +13,7 @@
 import mock
 import numpy as np
 
-from tests import utils
+from tests.unit import utils
 
 
 class TestCurvedPolygon(utils.NumPyTestCase):

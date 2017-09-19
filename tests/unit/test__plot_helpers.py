@@ -15,7 +15,7 @@ import unittest
 import mock
 import numpy as np
 
-from tests import utils
+from tests.unit import utils
 
 
 def run_fake_modules(modules, func):

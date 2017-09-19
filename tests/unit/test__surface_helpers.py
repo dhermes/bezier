@@ -20,7 +20,7 @@ try:
     from bezier import _HAS_SURFACE_SPEEDUP as HAS_SURFACE_SPEEDUP
 except ImportError:  # pragma: NO COVER
     HAS_SURFACE_SPEEDUP = False
-from tests import utils
+from tests.unit import utils
 
 
 UNIT_TRIANGLE = np.asfortranarray([

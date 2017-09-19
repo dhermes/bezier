@@ -20,7 +20,7 @@ except ImportError:  # pragma: NO COVER
     SCIPY_LAPACK = None
 import six
 
-from tests import utils
+from tests.unit import utils
 
 
 FLOAT64 = np.float64  # pylint: disable=no-member

@@ -14,7 +14,7 @@ import unittest
 
 import numpy as np
 
-from tests import utils
+from tests.unit import utils
 
 
 SPACING = np.spacing  # pylint: disable=no-member
