@@ -122,14 +122,14 @@ install:
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
           conda install pytest mock coverage pytest-cov scipy;
-          $env:PYTHONPATH = "functional_tests/";
+          $env:PYTHONPATH = "tests/functional/";
         }
 
   # Install (hardcoded) conditional (on functional) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
           conda install pytest mock;
-          $env:PYTHONPATH = "functional_tests/";
+          $env:PYTHONPATH = "tests/functional/";
         }
 
   # Install (hardcoded) conditional (on doctest) test dependencies.
@@ -152,11 +152,11 @@ test_script:
               --cov=tests.unit `
               --cov-fail-under=98 `
               tests/unit `
-              functional_tests/test_segment_box.py;
+              tests/functional/test_segment_box.py;
         }
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
-          py.test functional_tests
+          py.test tests/functional
         }
   - ps: if ($env:TEST_TYPE -eq "doctest")
         {

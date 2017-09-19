@@ -126,11 +126,11 @@ To run the coverage report locally:
 
    $ nox -s cover
    $ # OR
-   $ PYTHONPATH=src/:functional_tests/ python -m pytest \
+   $ PYTHONPATH=src/:tests/functional/ python -m pytest \
    >   --cov=bezier \
    >   --cov=tests.unit \
    >   tests/unit/ \
-   >   functional_tests/test_segment_box.py
+   >   tests/functional/test_segment_box.py
 
 Slow Tests
 ==========
@@ -203,14 +203,14 @@ To run the functional tests:
    $ nox -s "functional(python_version='pypy')"
    $ nox -s  functional  # Run all versions
    $ # OR
-   $ export PYTHONPATH=src/:functional_tests/
-   $ python2.7 -m pytest functional_tests/
-   $ python3.5 -m pytest functional_tests/
-   $ python3.6 -m pytest functional_tests/
-   $ MATPLOTLIBRC=test/ pypy -m pytest functional_tests/
+   $ export PYTHONPATH=src/:tests/functional/
+   $ python2.7 -m pytest tests/functional/
+   $ python3.5 -m pytest tests/functional/
+   $ python3.6 -m pytest tests/functional/
+   $ MATPLOTLIBRC=test/ pypy -m pytest tests/functional/
    $ unset PYTHONPATH
 
-.. _functional tests: https://github.com/dhermes/bezier/tree/master/functional_tests
+.. _functional tests: https://github.com/dhermes/bezier/tree/master/tests/functional
 
 For example, the following curve-curve intersection is a
 functional test case:
@@ -251,12 +251,12 @@ JSON files:
 
 This way, the test cases are programming language agnostic and can be
 repurposed. The `JSON schema`_ for these files are stored in the
-``functional_tests/schema`` directory.
+``tests/functional/schema`` directory.
 
-.. _curves.json: https://github.com/dhermes/bezier/blob/master/functional_tests/curves.json
-.. _curve_intersections.json: https://github.com/dhermes/bezier/blob/master/functional_tests/curve_intersections.json
-.. _surfaces.json: https://github.com/dhermes/bezier/blob/master/functional_tests/surfaces.json
-.. _surface_intersections.json: https://github.com/dhermes/bezier/blob/master/functional_tests/surface_intersections.json
+.. _curves.json: https://github.com/dhermes/bezier/blob/master/tests/functional/curves.json
+.. _curve_intersections.json: https://github.com/dhermes/bezier/blob/master/tests/functional/curve_intersections.json
+.. _surfaces.json: https://github.com/dhermes/bezier/blob/master/tests/functional/surfaces.json
+.. _surface_intersections.json: https://github.com/dhermes/bezier/blob/master/tests/functional/surface_intersections.json
 .. _JSON schema: http://json-schema.org/
 
 ************
@@ -371,10 +371,10 @@ To regenerate all the images:
    >   -d docs/build/doctrees \
    >   docs \
    >   docs/build/doctest
-   $ python functional_tests/test_segment_box.py --save-plot
-   $ python functional_tests/test_surface_locate.py --save-plot
-   $ python functional_tests/make_curve_curve_images.py
-   $ python functional_tests/make_surface_surface_images.py
+   $ python tests/functional/test_segment_box.py --save-plot
+   $ python tests/functional/test_surface_locate.py --save-plot
+   $ python tests/functional/make_curve_curve_images.py
+   $ python tests/functional/make_surface_surface_images.py
    $ unset MATPLOTLIBRC PYTHONPATH
 
 **********************

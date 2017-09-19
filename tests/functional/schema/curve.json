@@ -11,7 +11,7 @@
                 "type": "array",
                 "items": {
                     "description": "A coordinate as a numerical value.",
-                    "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/numerical.json"
+                    "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/numerical.json"
                 },
                 "minItems": 2,
                 "maxItems": 2

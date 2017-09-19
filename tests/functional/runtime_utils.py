@@ -310,7 +310,7 @@ class CurveInfo(object):  # pylint: disable=too-few-public-methods
 
     The ``curves.json`` file contains a dictionary where each key is the ID
     of the given curve and each value is a curve. The curves are described
-    by the JSON-schema in ``functional_tests/schema/curve.json``.
+    by the JSON-schema in ``tests/functional/schema/curve.json``.
 
     Args:
         id_ (str): The ID of the curve.
@@ -380,7 +380,7 @@ class CurveIntersectionInfo(object):
 
     The ``curve_intersections.json`` file contains a list of intersection
     cases. The intersection cases are described by the JSON-schema in
-    ``functional_tests/schema/curve_intersection.json``.
+    ``tests/functional/schema/curve_intersection.json``.
 
     Args:
         id_ (int): The intersection ID.
@@ -578,7 +578,7 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
 
     The ``surfaces.json`` file contains a dictionary where each key is the ID
     of the given surface and each value is a surface. The surfaces are
-    described by the JSON-schema in ``functional_tests/schema/surface.json``.
+    described by the JSON-schema in ``tests/functional/schema/surface.json``.
 
     Args:
         id_ (str): The ID of the surface.
@@ -625,7 +625,7 @@ class CurvedPolygonInfo(object):
     intersections, each of which may contain multiple curved polygons
     as the intersected area (e.g. the "6Q"-"7Q" intersection splits into two
     disjoint regions). Such a curved polygon is described by the JSON-schema
-    in ``functional_tests/schema/curved_polygon.json``.
+    in ``tests/functional/schema/curved_polygon.json``.
 
     Args:
         nodes (Optional[numpy.ndarray]): ``Nx2`` array of ``x-y``
@@ -778,7 +778,7 @@ class SurfaceIntersectionsInfo(object):
 
     The ``surface_intersections.json`` file contains a list of intersection
     cases. The intersection cases are described by the JSON-schema in
-    ``functional_tests/schema/surface_intersection.json``.
+    ``tests/functional/schema/surface_intersection.json``.
 
     Args:
         id_ (int): The intersection ID.

@@ -88,10 +88,10 @@ set +e  # Allow tests to fail
 arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/tests/unit
 arch -x86_64 ${VENV}/bin/py.test ${REPO_ROOT}/tests/unit
 # Run functional tests (in both 32 and 64 bit).
-PYTHONPATH=${REPO_ROOT}/functional_tests \
-    arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/functional_tests
-PYTHONPATH=${REPO_ROOT}/functional_tests \
-    arch -x86_64 ${VENV}/bin/py.test ${REPO_ROOT}/functional_tests
+PYTHONPATH=${REPO_ROOT}/tests/functional \
+    arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/tests/functional
+PYTHONPATH=${REPO_ROOT}/tests/functional \
+    arch -x86_64 ${VENV}/bin/py.test ${REPO_ROOT}/tests/functional
 
 # Clean-up.
 rm -fr ${VENV}

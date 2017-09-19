@@ -121,7 +121,7 @@ def unit_tests(session, python_version):
 
 
 def functional_env():
-    return {'PYTHONPATH': 'functional_tests'}
+    return {'PYTHONPATH': get_path('tests', 'functional')}
 
 
 @nox.session
@@ -139,7 +139,7 @@ def cover(session):
     run_args += session.posargs
     run_args += [
         get_path('tests', 'unit'),
-        get_path('functional_tests', 'test_segment_box.py'),
+        get_path('tests', 'functional', 'test_segment_box.py'),
     ]
     session.run(*run_args, env=functional_env())
 
@@ -161,7 +161,8 @@ def functional(session, python_version):
     session.install('.')
 
     # Run py.test against the functional tests.
-    run_args = ['py.test'] + session.posargs + [get_path('functional_tests')]
+    run_args = (
+        ['py.test'] + session.posargs + [get_path('tests', 'functional')])
     env.update(functional_env())
     session.run(*run_args, env=env)
 
@@ -224,13 +225,13 @@ def docs_images(session):
     session.run(*run_args, env=env)
 
     # Run the functional tests with --save-plot.
-    fnl_tests_glob = get_path('functional_tests', 'test_*.py')
+    fnl_tests_glob = get_path('tests', 'functional', 'test_*.py')
     modules_to_run = glob.glob(fnl_tests_glob)
     # Generate images for ``curve_intersections.json`` and
     # ``surface_intersections.json``.
     modules_to_run.extend((
-        get_path('functional_tests', 'make_curve_curve_images.py'),
-        get_path('functional_tests', 'make_surface_surface_images.py')
+        get_path('tests', 'functional', 'make_curve_curve_images.py'),
+        get_path('tests', 'functional', 'make_surface_surface_images.py')
     ))
 
     for filename in modules_to_run:
@@ -268,7 +269,6 @@ def lint(session):
         '--application-import-names=bezier,tests',
         get_path('src', 'bezier'),
         get_path('tests'),
-        get_path('functional_tests'),
     )
     # Run Pylint over the library source.
     session.run(
@@ -283,7 +283,6 @@ def lint(session):
         '--disable=protected-access',
         '--disable=too-many-public-methods',
         '--max-module-lines=2607',
-        get_path('functional_tests'),
         get_path('tests'),
         env=functional_env(),
     )

@@ -24,7 +24,7 @@
             "type": "array",
             "items": {
                 "description": "A curved polygon that occurs within the surface-surface intersection.",
-                "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/functional_tests/schema/curved_polygon.json"
+                "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/curved_polygon.json"
             }
         }
     },
