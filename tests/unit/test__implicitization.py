@@ -21,6 +21,7 @@ except ImportError:  # pragma: NO COVER
 import six
 
 from tests.unit import utils
+from tests import utils as base_utils
 
 
 FLOAT64 = np.float64  # pylint: disable=no-member
@@ -1464,7 +1465,8 @@ class Test_bezier_value_check(utils.NumPyTestCase):
     def test_cubic_wiggle(self):
         self._cubic_wiggle(2.0, 308)
         # This wiggle room is especially egregious.
-        if utils.IS_LINUX and not utils.IS_64_BIT:  # pragma: NO COVER
+        if (base_utils.IS_LINUX and
+                not base_utils.IS_64_BIT):  # pragma: NO COVER
             self._cubic_wiggle(5.0, 8125)
             self._cubic_wiggle(17.0, 22504)
         else:

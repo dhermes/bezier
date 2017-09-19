@@ -14,8 +14,6 @@ from __future__ import absolute_import
 
 import itertools
 import operator
-import platform
-import sys
 
 import numpy as np
 import pytest
@@ -27,6 +25,7 @@ import bezier.curve
 
 from tests.functional import utils
 from tests.functional.utils import CurveIntersectionType
+from tests import utils as base_utils
 
 
 SPACING = np.spacing  # pylint: disable=no-member
@@ -194,9 +193,7 @@ INCORRECT_COUNT = {
     ),
     ALGEBRAIC: (),
 }
-if sys.platform == 'darwin':
-    INCORRECT_COUNT[ALGEBRAIC] += (10,)
-if platform.python_implementation() == 'PyPy':
+if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:
     INCORRECT_COUNT[ALGEBRAIC] += (10,)
 
 

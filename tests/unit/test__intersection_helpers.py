@@ -18,6 +18,7 @@ import numpy as np
 import six
 
 from tests.unit import utils
+from tests import utils as base_utils
 
 
 SPACING = np.spacing  # pylint: disable=no-member
@@ -1331,7 +1332,7 @@ class Test_all_intersections_geometric(utils.NumPyTestCase):
         expected = np.asfortranarray([[0.5, 0.75]])
 
         s_val = 1.0 / 3.0
-        if utils.IS_64_BIT or utils.IS_WINDOWS:  # pragma: NO COVER
+        if base_utils.IS_64_BIT or base_utils.IS_WINDOWS:  # pragma: NO COVER
             # Due to round-off, the answer is wrong by a tiny wiggle.
             s_val += SPACING(s_val)
         t_val = 2.0 / 3.0
