@@ -101,7 +101,7 @@ def update_generated(session, check):
 
 @nox.session
 @nox.parametrize('py', ['2.7', '3.5', '3.6', PYPY])
-def unit_tests(session, py):
+def unit(session, py):
     if py == PYPY:
         session.interpreter = PYPY
         local_deps, env = pypy_setup(BASE_DEPS, session)

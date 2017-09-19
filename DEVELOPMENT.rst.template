@@ -65,11 +65,11 @@ We recommend using ``nox`` (`nox-automation`_) to run unit tests:
 
 .. code-block:: console
 
-   $ nox -s "unit_tests(py='2.7')"
-   $ nox -s "unit_tests(py='3.5')"
-   $ nox -s "unit_tests(py='3.6')"
-   $ nox -s "unit_tests(py='pypy')"
-   $ nox -s  unit_tests  # Run all versions
+   $ nox -s "unit(py='2.7')"
+   $ nox -s "unit(py='3.5')"
+   $ nox -s "unit(py='3.6')"
+   $ nox -s "unit(py='pypy')"
+   $ nox -s  unit  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
 manage dependencies or build extensions):
@@ -140,17 +140,17 @@ marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
 
-   $ nox -s "unit_tests(py='2.7')" -- --ignore-slow
-   $ nox -s "unit_tests(py='3.5')" -- --ignore-slow
-   $ nox -s "unit_tests(py='3.6')" -- --ignore-slow
-   $ nox -s  unit_tests            -- --ignore-slow
+   $ nox -s "unit(py='2.7')" -- --ignore-slow
+   $ nox -s "unit(py='3.5')" -- --ignore-slow
+   $ nox -s "unit(py='3.6')" -- --ignore-slow
+   $ nox -s  unit            -- --ignore-slow
 
 These slow tests have been identified via:
 
 .. code-block:: console
 
    $ ...
-   $ nox -s "unit_tests(py='3.6')" -- --durations=10
+   $ nox -s "unit(py='3.6')" -- --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 

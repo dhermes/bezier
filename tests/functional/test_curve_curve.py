@@ -23,9 +23,9 @@ from bezier import _implicitization
 from bezier import _intersection_helpers
 import bezier.curve
 
+from tests import utils as base_utils
 from tests.functional import utils
 from tests.functional.utils import CurveIntersectionType
-from tests import utils as base_utils
 
 
 SPACING = np.spacing  # pylint: disable=no-member
