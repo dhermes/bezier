@@ -238,7 +238,7 @@ def test_goes_through_box():
         ]),
         np.asfortranarray([
             [0.5, 1.25],
-            [-0.25, 0.5,]
+            [-0.25, 0.5],
         ]),
     )
 

@@ -15,8 +15,8 @@ from __future__ import absolute_import
 import matplotlib.pyplot as plt
 import six
 
-from bezier import _plot_helpers
 import bezier
+from bezier import _plot_helpers
 
 from tests.functional import utils
 

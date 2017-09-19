@@ -38,8 +38,8 @@ except ImportError:
 import six
 
 import bezier
-import bezier.curve
 from bezier import _helpers
+import bezier.curve
 
 
 if seaborn is not None:

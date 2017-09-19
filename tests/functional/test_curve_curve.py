@@ -14,6 +14,7 @@ from __future__ import absolute_import
 
 import itertools
 import operator
+import platform
 import sys
 
 import numpy as np
@@ -194,6 +195,8 @@ INCORRECT_COUNT = {
     ALGEBRAIC: (),
 }
 if sys.platform == 'darwin':
+    INCORRECT_COUNT[ALGEBRAIC] += (10,)
+if platform.python_implementation() == 'PyPy':
     INCORRECT_COUNT[ALGEBRAIC] += (10,)
 
 
