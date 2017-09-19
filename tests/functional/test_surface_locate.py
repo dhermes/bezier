@@ -21,10 +21,10 @@ import numpy as np
 import bezier
 from bezier import _plot_helpers
 
-import runtime_utils
+from tests.functional import utils
 
 
-CONFIG = runtime_utils.Config()
+CONFIG = utils.Config()
 
 
 # F1 = sympy.Matrix([[s, t]])
@@ -114,8 +114,8 @@ def test_surface1_and_point1():
 
 
 def test_surface2_and_point1():
-    s, _ = runtime_utils.real_roots([4, -32, -56, -24, 5])
-    _, t = runtime_utils.real_roots([4, 8, -16, 44, -11])
+    s, _ = utils.real_roots([4, -32, -56, -24, 5])
+    _, t = utils.real_roots([4, 8, -16, 44, -11])
     check_point(SURFACE2, 1, s, t)
 
 
@@ -128,8 +128,8 @@ def test_surface2_and_point4():
 
 
 def test_surface3_and_point1():
-    s, = runtime_utils.real_roots([2, -5, 15, -3])
-    t, = runtime_utils.real_roots([14, -61, 74, -15])
+    s, = utils.real_roots([2, -5, 15, -3])
+    t, = utils.real_roots([14, -61, 74, -15])
     check_point(SURFACE3, 1, s, t)
 
 
@@ -138,8 +138,8 @@ def test_surface3_and_point3():
 
 
 def test_surface4_and_point2():
-    s, = runtime_utils.real_roots([64, 101, 34, -5])
-    t, = runtime_utils.real_roots([128, -192, 91, -8])
+    s, = utils.real_roots([64, 101, 34, -5])
+    t, = utils.real_roots([128, -192, 91, -8])
     check_point(SURFACE4, 2, s, t)
 
 

@@ -18,7 +18,7 @@ import sys
 
 import memory_profiler
 
-import runtime_utils
+from tests.functional import utils
 
 
 FAILURES = (11, 20, 24, 42)
@@ -36,7 +36,7 @@ def get_bounds():
 
 
 def intersect_all():
-    _, intersections = runtime_utils.curve_intersections_info()
+    _, intersections = utils.curve_intersections_info()
     for intersection in intersections:
         try:
             intersection.curve1.intersect(intersection.curve2)

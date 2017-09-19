@@ -20,10 +20,10 @@ import numpy as np
 
 from bezier import _intersection_helpers
 
-import runtime_utils
+from tests.functional import utils
 
 
-CONFIG = runtime_utils.Config()
+CONFIG = utils.Config()
 # Always gives us the unit square.
 UNIT_SQUARE = np.asfortranarray([
     [0.0, 0.0],

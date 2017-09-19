@@ -34,9 +34,7 @@ elif [[ "${PY_VERSION}" == "3.6" ]]; then
     ${PY_BIN_DIR}/nox -s "unit_tests(python_version='3.6')";
     arch -32 .nox/unit_tests-python_version-3-6/bin/python -m pytest tests/unit/
     ${PY_BIN_DIR}/nox -s "functional(python_version='3.6')";
-    PYTHONPATH="tests/functional/" arch -32 \
-        .nox/functional-python_version-3-6/bin/python -m pytest \
-        tests/functional/;
+    arch -32 .nox/functional-python_version-3-6/bin/python -m pytest tests/functional/;
     ${PY_BIN_DIR}/nox -s doctest;
     ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-osx')";
 else

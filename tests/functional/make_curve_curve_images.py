@@ -16,11 +16,11 @@ import matplotlib.pyplot as plt
 
 from bezier import _plot_helpers
 
-import runtime_utils
+from tests.functional import utils
 
 
-CONFIG = runtime_utils.Config()
-_, INTERSECTIONS = runtime_utils.curve_intersections_info()
+CONFIG = utils.Config()
+_, INTERSECTIONS = utils.curve_intersections_info()
 
 
 def make_plot(intersection_info, save_plot):
@@ -49,7 +49,7 @@ def make_plot(intersection_info, save_plot):
 
 
 def main():
-    parser = runtime_utils.get_parser()
+    parser = utils.get_parser()
     args = parser.parse_args()
     for intersection_info in INTERSECTIONS:
         make_plot(intersection_info, args.save_plot)

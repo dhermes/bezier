@@ -122,14 +122,12 @@ install:
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
           conda install pytest mock coverage pytest-cov scipy;
-          $env:PYTHONPATH = "tests/functional/";
         }
 
   # Install (hardcoded) conditional (on functional) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
           conda install pytest mock;
-          $env:PYTHONPATH = "tests/functional/";
         }
 
   # Install (hardcoded) conditional (on doctest) test dependencies.

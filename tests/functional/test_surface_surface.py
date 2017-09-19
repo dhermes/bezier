@@ -23,12 +23,12 @@ from bezier import _intersection_helpers
 from bezier import _surface_helpers
 from bezier import curve
 
-import runtime_utils
+from tests.functional import utils
 
 
 ALGEBRAIC = curve.IntersectionStrategy.algebraic
 GEOMETRIC = curve.IntersectionStrategy.geometric
-_, INTERSECTIONS = runtime_utils.surface_intersections_info()
+_, INTERSECTIONS = utils.surface_intersections_info()
 PARALLEL_FAILURE = (_intersection_helpers._SEGMENTS_PARALLEL,)
 BAD_TANGENT = (_surface_helpers._BAD_TANGENT,)
 TOO_MANY = _intersection_helpers._TOO_MANY_TEMPLATE
@@ -78,7 +78,7 @@ FAILED_CASES_COINCIDENT = {
         5: {},
     },
 }
-CONFIG = runtime_utils.Config()
+CONFIG = utils.Config()
 
 
 def curved_polygon_edges(intersection, edges):
@@ -183,7 +183,7 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
         (GEOMETRIC, ALGEBRAIC),
         INTERSECTIONS,
     ),
-    ids=runtime_utils.id_func,
+    ids=utils.id_func,
 )
 def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_
@@ -196,7 +196,7 @@ def test_intersect(strategy, intersection_info):
     elif id_ in WIGGLES[strategy]:
         context = CONFIG.wiggle(WIGGLES[strategy][id_])
     else:
-        context = runtime_utils.no_op_manager()
+        context = utils.no_op_manager()
 
     surface1 = intersection_info.surface1
     surface2 = intersection_info.surface2

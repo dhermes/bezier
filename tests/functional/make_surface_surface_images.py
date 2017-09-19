@@ -18,11 +18,11 @@ import six
 from bezier import _plot_helpers
 import bezier
 
-import runtime_utils
+from tests.functional import utils
 
 
-CONFIG = runtime_utils.Config()
-_, INTERSECTIONS = runtime_utils.surface_intersections_info()
+CONFIG = utils.Config()
+_, INTERSECTIONS = utils.surface_intersections_info()
 
 
 def make_curved_polygon(surface1, surface2, curved_polygon_info):
@@ -76,7 +76,7 @@ def make_plot(intersection_info, save_plot):
 
 
 def main():
-    parser = runtime_utils.get_parser()
+    parser = utils.get_parser()
     args = parser.parse_args()
     for intersection_info in INTERSECTIONS:
         make_plot(intersection_info, args.save_plot)

@@ -126,7 +126,7 @@ To run the coverage report locally:
 
    $ nox -s cover
    $ # OR
-   $ PYTHONPATH=src/:tests/functional/ python -m pytest \
+   $ PYTHONPATH=src/ python -m pytest \
    >   --cov=bezier \
    >   --cov=tests.unit \
    >   tests/unit/ \
@@ -203,12 +203,10 @@ To run the functional tests:
    $ nox -s "functional(python_version='pypy')"
    $ nox -s  functional  # Run all versions
    $ # OR
-   $ export PYTHONPATH=src/:tests/functional/
-   $ python2.7 -m pytest tests/functional/
-   $ python3.5 -m pytest tests/functional/
-   $ python3.6 -m pytest tests/functional/
-   $ MATPLOTLIBRC=test/ pypy -m pytest tests/functional/
-   $ unset PYTHONPATH
+   $ PYTHONPATH=src/ python2.7 -m pytest tests/functional/
+   $ PYTHONPATH=src/ python3.5 -m pytest tests/functional/
+   $ PYTHONPATH=src/ python3.6 -m pytest tests/functional/
+   $ MATPLOTLIBRC=test/ PYTHONPATH=src/ pypy -m pytest tests/functional/
 
 .. _functional tests: https://github.com/dhermes/bezier/tree/{revision}/tests/functional
 

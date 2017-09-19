@@ -24,15 +24,15 @@ from bezier import _implicitization
 from bezier import _intersection_helpers
 import bezier.curve
 
-import runtime_utils
-from runtime_utils import CurveIntersectionType
+from tests.functional import utils
+from tests.functional.utils import CurveIntersectionType
 
 
 SPACING = np.spacing  # pylint: disable=no-member
 GEOMETRIC = bezier.curve.IntersectionStrategy.geometric
 ALGEBRAIC = bezier.curve.IntersectionStrategy.algebraic
 S_PROP = operator.attrgetter('s')
-_, INTERSECTIONS = runtime_utils.curve_intersections_info()
+_, INTERSECTIONS = utils.curve_intersections_info()
 INCORRECT_VALUES_MSG = """\
 Multipliers were:
 {}
@@ -366,7 +366,7 @@ def check_coincident(intersection_info, strategy):
         (GEOMETRIC, ALGEBRAIC),
         INTERSECTIONS,
     ),
-    ids=runtime_utils.id_func,
+    ids=utils.id_func,
 )
 def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_

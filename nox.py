@@ -120,10 +120,6 @@ def unit_tests(session, python_version):
     session.run(*run_args, env=env)
 
 
-def functional_env():
-    return {'PYTHONPATH': get_path('tests', 'functional')}
-
-
 @nox.session
 def cover(session):
     session.interpreter = 'python2.7'
@@ -141,7 +137,7 @@ def cover(session):
         get_path('tests', 'unit'),
         get_path('tests', 'functional', 'test_segment_box.py'),
     ]
-    session.run(*run_args, env=functional_env())
+    session.run(*run_args)
 
 
 @nox.session
@@ -163,7 +159,6 @@ def functional(session, python_version):
     # Run py.test against the functional tests.
     run_args = (
         ['py.test'] + session.posargs + [get_path('tests', 'functional')])
-    env.update(functional_env())
     session.run(*run_args, env=env)
 
 
@@ -284,7 +279,6 @@ def lint(session):
         '--disable=too-many-public-methods',
         '--max-module-lines=2607',
         get_path('tests'),
-        env=functional_env(),
     )
 
 
@@ -307,7 +301,7 @@ def benchmark(session, target):
     # Install this package.
     session.install('.')
 
-    session.run(*run_args, env=functional_env())
+    session.run(*run_args)
 
 
 @nox.session

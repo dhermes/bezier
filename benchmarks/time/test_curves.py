@@ -14,7 +14,7 @@ import os
 
 import pytest
 
-import runtime_utils
+from tests.functional import utils
 
 
 FAILURES = (11, 20, 24, 42)
@@ -41,7 +41,7 @@ def intersect_all(intersections):
     warmup=False
 )
 def test_intersections(benchmark):
-    _, intersections = runtime_utils.curve_intersections_info()
+    _, intersections = utils.curve_intersections_info()
     result = benchmark(intersect_all, intersections)
     assert result is None
 
