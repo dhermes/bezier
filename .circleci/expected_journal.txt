@@ -6,6 +6,12 @@ $ /usr/bin/gfortran \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -Werror \
+>   -fmax-errors=1 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/types.f90 \
