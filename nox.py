@@ -100,13 +100,13 @@ def update_generated(session, check):
 
 
 @nox.session
-@nox.parametrize('python_version', ['2.7', '3.5', '3.6', PYPY])
-def unit_tests(session, python_version):
-    if python_version == PYPY:
+@nox.parametrize('py', ['2.7', '3.5', '3.6', PYPY])
+def unit_tests(session, py):
+    if py == PYPY:
         session.interpreter = PYPY
         local_deps, env = pypy_setup(BASE_DEPS, session)
     else:
-        session.interpreter = 'python{}'.format(python_version)
+        session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS + ('scipy',)
         env = None
 
@@ -141,13 +141,13 @@ def cover(session):
 
 
 @nox.session
-@nox.parametrize('python_version', ['2.7', '3.5', '3.6', PYPY])
-def functional(session, python_version):
-    if python_version == PYPY:
+@nox.parametrize('py', ['2.7', '3.5', '3.6', PYPY])
+def functional(session, py):
+    if py == PYPY:
         session.interpreter = PYPY
         local_deps, env = pypy_setup(BASE_DEPS, session)
     else:
-        session.interpreter = 'python{}'.format(python_version)
+        session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS
         env = {}
 
