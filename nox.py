@@ -347,6 +347,7 @@ def clean(session):
         get_path('.cache'),
         get_path('.coverage'),
         get_path('build'),
+        get_path('src', 'bezier', '__pycache__'),
         get_path('tests', '__pycache__'),
         get_path('tests', 'functional', '__pycache__'),
         get_path('tests', 'unit', '__pycache__'),
