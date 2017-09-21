@@ -21,29 +21,36 @@ F90_SOURCES := \
 	$(SRC_DIR)/curve$(F90) \
 	$(SRC_DIR)/surface$(F90) \
 	$(SRC_DIR)/curve_intersection$(F90)
+TEST_SOURCES = $(wildcard $(CURR_DIR)/test_*$(F90))
 F77_OBJS := $(patsubst $(QUADPACK_DIR)/%$(F77), $(QUADPACK_DIR)/%$(OBJ), $(F77_SOURCES))
 F90_OBJS := $(patsubst $(SRC_DIR)/%$(F90), $(SRC_DIR)/%$(OBJ), $(F90_SOURCES))
+TEST_OBJS := $(patsubst $(CURR_DIR)/%$(F90), $(CURR_DIR)/%$(OBJ), $(TEST_SOURCES))
 
 test: $(CURR_DIR)/test-bin
 	$(CURR_DIR)/test-bin
 
-$(SRC_DIR)/%$(OBJ): $(SRC_DIR)/%$(F90)
-	$(FC) $(FCFLAGS) -c $< -o $@
-
 $(QUADPACK_DIR)/%$(OBJ): $(QUADPACK_DIR)/%$(F77)
 	$(FC) $(FCFLAGS) -c $< -o $@
 
-$(CURR_DIR)/test-bin: $(F77_OBJS) $(F90_OBJS) $(CURR_DIR)/test.f90
+$(SRC_DIR)/%$(OBJ): $(SRC_DIR)/%$(F90)
+	$(FC) $(FCFLAGS) -c $< -o $@
+
+$(CURR_DIR)/%$(OBJ): $(CURR_DIR)/%$(F90)
+	$(FC) $(FCFLAGS) -c $< -o $@
+
+$(CURR_DIR)/test-bin: $(F77_OBJS) $(F90_OBJS) $(TEST_OBJS) $(CURR_DIR)/test.f90
 	$(FC) $(FCFLAGS) \
 	  -o $(CURR_DIR)/test-bin \
 	  $(F77_OBJS) \
 	  $(F90_OBJS) \
+	  $(TEST_OBJS) \
 	  $(CURR_DIR)/test.f90
 
 clean:
 	rm -f $(CURR_DIR)/*.mod
-	rm -f $(SRC_DIR)/*$(OBJ)
 	rm -f $(QUADPACK_DIR)/*$(OBJ)
+	rm -f $(SRC_DIR)/*$(OBJ)
+	rm -f $(CURR_DIR)/*$(OBJ)
 	rm -f $(CURR_DIR)/test-bin
 
 .PHONY: all test clean
