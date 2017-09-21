@@ -15,6 +15,7 @@ import unittest
 import mock
 import numpy as np
 import pytest
+import six
 
 try:
     from bezier import _HAS_SURFACE_SPEEDUP as HAS_SURFACE_SPEEDUP
@@ -2584,3 +2585,19 @@ class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
 
         return _surface_speedup.evaluate_cartesian_multi(
             nodes, degree, param_vals, dimension)
+
+
+class TestIntersectionClassification(unittest.TestCase):
+
+    @utils.needs_surface_speedup
+    def test_verify_cython_enums(self):
+        from bezier import _surface_helpers
+        from bezier import _surface_speedup
+
+        python_enum = _surface_helpers._IntersectionClassification
+        cython_enum = _surface_speedup.IntersectionClassification
+        self.assertIs(cython_enum, _surface_helpers.IntersectionClassification)
+
+        python_members = python_enum.__members__
+        cython_members = cython_enum.__members__
+        self.assertEqual(set(python_members), set(cython_members))

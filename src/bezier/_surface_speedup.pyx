@@ -20,6 +20,15 @@ from numpy cimport ndarray as ndarray_t
 cimport bezier._surface
 
 
+cpdef enum IntersectionClassification:
+    first
+    second
+    opposed
+    tangent_first
+    tangent_second
+    ignored_corner
+
+
 def de_casteljau_one_round(
         double[::1, :] nodes, int degree,
         double lambda1, double lambda2, double lambda3):

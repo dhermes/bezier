@@ -2516,7 +2516,7 @@ def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
     return result
 
 
-class IntersectionClassification(enum.Enum):
+class _IntersectionClassification(enum.Enum):
     """Enum classifying the "interior" curve in an intersection.
 
     Provided as the output values for :func:`.classify_intersection`.
@@ -2541,17 +2541,6 @@ class IntersectionClassification(enum.Enum):
     """Intersection at a corner, interiors don't intersect."""
 
 
-# NOTE: This constant must be define **after** ``IntersectionClassification``
-#       is, hence we can't define it at the top with the other constants.
-_ACCEPTABLE = (
-    IntersectionClassification.first,
-    IntersectionClassification.second,
-)
-_IGNORED_TYPES = (
-    IntersectionClassification.opposed,
-    IntersectionClassification.ignored_corner,
-)
-
 # pylint: disable=invalid-name
 if _surface_speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
@@ -2560,6 +2549,7 @@ if _surface_speedup is None:  # pragma: NO COVER
     evaluate_barycentric = _evaluate_barycentric
     evaluate_barycentric_multi = _evaluate_barycentric_multi
     evaluate_cartesian_multi = _evaluate_cartesian_multi
+    IntersectionClassification = _IntersectionClassification
 else:
     de_casteljau_one_round = _surface_speedup.de_casteljau_one_round
     jacobian_both = _surface_speedup.jacobian_both
@@ -2567,4 +2557,17 @@ else:
     evaluate_barycentric = _surface_speedup.evaluate_barycentric
     evaluate_barycentric_multi = _surface_speedup.evaluate_barycentric_multi
     evaluate_cartesian_multi = _surface_speedup.evaluate_cartesian_multi
+    IntersectionClassification = _surface_speedup.IntersectionClassification
 # pylint: enable=invalid-name
+
+# NOTE: These constants must be defined **after** the intersection
+#       classification enum is, hence we can't define it at the top with
+#       the other constants.
+_ACCEPTABLE = (
+    IntersectionClassification.first,
+    IntersectionClassification.second,
+)
+_IGNORED_TYPES = (
+    IntersectionClassification.opposed,
+    IntersectionClassification.ignored_corner,
+)
