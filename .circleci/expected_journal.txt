@@ -1,7 +1,6 @@
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
@@ -9,8 +8,9 @@ $ /usr/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -20,7 +20,6 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
@@ -28,8 +27,9 @@ $ /usr/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -39,7 +39,6 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
@@ -47,8 +46,9 @@ $ /usr/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -58,7 +58,6 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
@@ -66,8 +65,9 @@ $ /usr/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -77,7 +77,6 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
@@ -85,8 +84,9 @@ $ /usr/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \

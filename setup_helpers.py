@@ -56,11 +56,14 @@ GFORTRAN_SHARED_FLAGS = (  # Used for both "DEBUG" and "OPTIMIZE"
     '-Wimplicit-interface',
     '-fPIC',
     '-fmax-errors=1',
+    '-std=f2008',
 )
 GFORTRAN_DEBUG_FLAGS = (
     '-g',
     '-fcheck=all',
     '-fbacktrace',
+    '-fimplicit-none',
+    '-pedantic',
 )
 GFORTRAN_OPTIMIZE_FLAGS = (
     '-Werror',

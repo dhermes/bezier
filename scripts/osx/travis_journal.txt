@@ -1,7 +1,6 @@
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   i386 \
@@ -11,8 +10,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -22,7 +22,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   x86_64 \
@@ -32,8 +31,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -50,7 +50,6 @@ $ lipo \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   i386 \
@@ -60,8 +59,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -71,7 +71,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   x86_64 \
@@ -81,8 +80,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -99,7 +99,6 @@ $ lipo \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   i386 \
@@ -109,8 +108,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -120,7 +120,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   x86_64 \
@@ -130,8 +129,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -148,7 +148,6 @@ $ lipo \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   i386 \
@@ -158,8 +157,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -169,7 +169,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   x86_64 \
@@ -179,8 +178,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -197,7 +197,6 @@ $ lipo \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   i386 \
@@ -207,8 +206,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
@@ -218,7 +218,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -fno-second-underscore \
 >   -arch \
 >   x86_64 \
@@ -228,8 +227,9 @@ $ /usr/local/bin/gfortran \
 >   -Wextra \
 >   -Wno-compare-reals \
 >   -Wimplicit-interface \
->   -Werror \
 >   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
 >   -march=native \
 >   -c \
 >   -c \
