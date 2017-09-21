@@ -21,7 +21,7 @@ code that depends on them.
 C Headers
 ---------
 
-The C headers for ``libbezier`` will be included in the source-tree
+The C headers for ``libbezier`` will be included in the installed package
 
 .. testsetup:: show-headers, show-lib, show-pxd
 

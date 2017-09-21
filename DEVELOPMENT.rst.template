@@ -33,14 +33,50 @@ Many low-level computations have alternate implementations in Fortran.
 See the `Native Libraries`_ page in the documentation for a more
 detailed description.
 
-During development, it may be useful to track **how** extensions
-are being installed. To actually make sure the correct compiler commands
-are invoked, provide a filename as the ``BEZIER_JOURNAL`` environment
-variable and then the commands invoked will be written there. The ``nox``
-session ``check_journal`` uses this journaling option to verify the commands
-used to compile the extension on CircleCI.
-
 .. _Native Libraries: https://bezier.readthedocs.io/en/{rtd_version}/native-libraries.html
+
+Building / Compiling
+====================
+
+To compile the native extensions (with a Fortran compiler installed) run:
+
+.. code-block:: console
+
+   $ python setup.py build_ext --inplace
+   $ # OR
+   $ python setup.py build_ext --inplace --fcompiler=${{FC}}
+
+By default the Fortran code will be compiled in "optimized" mode, which
+may make debugging more difficult. To compile with debug symbols, without
+optimizations that move code around, etc. use the ``DEBUG`` environment
+variable:
+
+.. code-block:: console
+
+   $ DEBUG=True python setup.py build_ext --inplace
+
+Using ``distutils`` and ``numpy.distutils`` to compile Fortran is not
+"fully-supported" (i.e. the tooling is ad-hoc). As a result, there is a
+decent amount of code in ``setup.py``, ``setup_helpers.py`` and
+``setup_helpers_osx.py`` to specify the build process. To make sure these
+are working as expected, it's possible to track **how** extensions are
+being installed. To actually make sure the correct compiler commands are
+invoked, provide a filename as the ``BEZIER_JOURNAL`` environment variable
+and then the commands invoked will be written there:
+
+.. code-block:: console
+
+   $ BEZIER_JOURNAL=$(pwd)/journal.txt python setup.py build_ext --inplace
+
+The ``nox`` session ``check_journal`` uses this journaling option to verify
+the commands used to compile the extensions in Linux on CircleCI and in
+Mac OS X on `Travis CI`_.
+
+As the build complexity grows, it may make more sense to transition the steps
+out of Python and into `CMake`_, `SCons`_ or another build tool.
+
+.. _CMake: https://cmake.org
+.. _SCons: http://scons.org
 
 Dependencies
 ============
@@ -51,10 +87,10 @@ conflict with the Apache 2.0 license (as far as I know). In addition it
 contains another popular subroutine from NETLIB: ``d1mach`` (which the
 QUADPACK subroutines depend on).
 
-QUADPACK is for numerical quadrature when computing the length
+QUADPACK is used to perform numerical quadrature to compute the length
 of a curve segment.
 
-.. _directory: https://github.com/dhermes/bezier/tree/{revision}/src/bezier/quadpack
+.. _directory: https://github.com/dhermes/bezier/tree/master/src/bezier/quadpack
 .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
 
 ******************
@@ -91,7 +127,7 @@ When using ``nox``, the ``bezier`` package will automatically be installed
 into a virtual environment and the native extensions will be built during
 install.
 
-However, if you run the tests directly from the source tree via
+However, if the tests are run directly from the source tree via
 
 .. code-block:: console
 
@@ -99,14 +135,7 @@ However, if you run the tests directly from the source tree via
 
 some unit tests may be skipped. The unit tests for the native
 implementations will skip (rather than fail) if the extensions aren't
-compiled and present in the source tree. To compile the native extensions,
-make sure you have a valid Fortran compiler and run
-
-.. code-block:: console
-
-   $ python setup.py build_ext --inplace
-   $ # OR
-   $ python setup.py build_ext --inplace --fcompiler=${{FC}}
+compiled (with ``build_ext --inplace``) and present in the source tree.
 
 Test Coverage
 =============
@@ -379,9 +408,9 @@ To regenerate all the images:
 Continuous Integration
 **********************
 
-Tests are run on `CircleCI`_ and `AppVeyor`_ after every commit. To see
-which tests are run, see the `CircleCI config`_ and the
-`AppVeyor config`_.
+Tests are run on `CircleCI`_ (Linux), `Travis CI`_ (Mac OS X) and
+`AppVeyor`_ (Windows) after every commit. To see which tests are run, see
+the `CircleCI config`_, the `Travis config`_ and the `AppVeyor config`_.
 
 On CircleCI, a `Docker`_ image is used to provide fine-grained control over
 the environment. There is a base `python-multi Dockerfile`_ that just has the
@@ -389,12 +418,22 @@ Python versions we test in. The image used in our CircleCI builds (from
 `bezier Dockerfile`_) installs dependencies needed for testing (such as
 ``nox`` and NumPy).
 
+On Travis CI, Matthew Brett's `multibuild`_ is used to install "official"
+python.org CPython binaries for Mac OS X. Then tests are run in both 32-bit
+and 64-bit mode.
+
+It's worth noting that the Windows build story still needs work. As a result,
+only pure Python code is tested on AppVeyor.
+
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
+.. _Travis CI: https://travis-ci.org/dhermes/bezier
 .. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
 .. _CircleCI config: https://github.com/dhermes/bezier/blob/{revision}/.circleci/config.yml
+.. _Travis config: https://github.com/dhermes/bezier/blob/{revision}/.travis.yml
 .. _AppVeyor config: https://github.com/dhermes/bezier/blob/{revision}/.appveyor.yml
 .. _python-multi Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/python-multi.Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/bezier.Dockerfile
+.. _multibuild: https://github.com/matthew-brett/multibuild
 
 **********************
 Deploying New Versions
@@ -415,7 +454,7 @@ reasons:
   completed (will be the build that occurred when the tag was pushed). If
   the builds pushed to PyPI automatically, a build would need to
   link to itself **while** being run.
-* Wheels need be built for Linux, Windows and OS X. This process
+* Wheels need be built for Linux, Mac OS X and Windows. This process
   is **becoming** better, but is still scattered across many
   different build systems. Each wheel will be pushed directly to
   PyPI via `twine`_.

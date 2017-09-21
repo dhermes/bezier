@@ -24,6 +24,7 @@ import setuptools
 import setuptools.command.build_ext
 
 
+DEBUG_ENV = 'DEBUG'
 GFORTRAN_LIB_ENV = 'GFORTRAN_LIB'
 """Environment variable used to over-ride the ``libgfortran`` search path.
 
@@ -46,7 +47,7 @@ GFORTRAN_BAD_PATH = '``gfortran`` library path {} is not a directory.'
 #       specifically "What compiler options should I use for ...?".
 #       I have dropped ``-ffast-math`` because (for now) it causes a headache
 #       in tests and doesn't give an appreciable speed up.
-GFORTRAN_OPTIMIZE_FLAGS = (
+GFORTRAN_SHARED_FLAGS = (  # Used for both "DEBUG" and "OPTIMIZE"
     '-Wall',
     '-Wextra',
     # ``-Wextra`` includes ``no-compare-reals``, which warns about
@@ -54,9 +55,15 @@ GFORTRAN_OPTIMIZE_FLAGS = (
     '-Wno-compare-reals',
     '-Wimplicit-interface',
     '-fPIC',
-    '-Werror',
     '-fmax-errors=1',
+)
+GFORTRAN_DEBUG_FLAGS = (
     '-g',
+    '-fcheck=all',
+    '-fbacktrace',
+)
+GFORTRAN_OPTIMIZE_FLAGS = (
+    '-Werror',
     '-O3',
     '-march=native',
     '-funroll-loops',
@@ -237,8 +244,12 @@ def extension_modules():
 def patch_f90_compiler(f90_compiler):
     """Patch up ``f90_compiler``.
 
-    For now, only updates the flags for the ``gfortran`` if a specified set
-    of flags is not present.
+    For now, only updates the flags for the ``gfortran``. In this case, it add
+    any of ``GFORTRAN_SHARED_FLAGS`` that are missing. In debug mode, it also
+    adds any flags in ``GFORTRAN_DEBUG_FLAGS`` and makes sure none of the flags
+    in ``GFORTRAN_OPTIMIZE_FLAGS`` are present. In standard mode ("OPTIMIZE"),
+    makes sure flags in ``GFORTRAN_OPTIMIZE_FLAGS`` are present and flags in
+    ``GFORTRAN_DEBUG_FLAGS`` are not.
 
     Args:
         f90_compiler (numpy.distutils.fcompiler.FCompiler): A Fortran compiler
@@ -254,9 +265,25 @@ def patch_f90_compiler(f90_compiler):
 
     # NOTE: Should probably handle ``compiler_f77`` too.
     f90_flags = f90_compiler.compiler_f90
-    for flag in GFORTRAN_OPTIMIZE_FLAGS:
+    for flag in GFORTRAN_SHARED_FLAGS:
         if flag not in f90_flags:
             f90_flags.append(flag)
+
+    if DEBUG_ENV in os.environ:
+        to_add = GFORTRAN_DEBUG_FLAGS
+        to_remove = GFORTRAN_OPTIMIZE_FLAGS
+    else:
+        to_add = GFORTRAN_OPTIMIZE_FLAGS
+        to_remove = GFORTRAN_DEBUG_FLAGS
+
+    for flag in to_add:
+        if flag not in f90_flags:
+            f90_flags.append(flag)
+
+    without = [flag for flag in f90_flags
+               if flag not in to_remove]
+    # Update in place.
+    f90_flags[:] = without
 
 
 class BuildFortranThenExt(setuptools.command.build_ext.build_ext):

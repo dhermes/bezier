@@ -14,6 +14,7 @@ from __future__ import print_function
 
 import glob
 import os
+import shutil
 import tempfile
 
 import nox
@@ -329,3 +330,40 @@ def check_journal(session, machine):
     )
     expected_journal = get_path(JOURNAL_PATHS[machine])
     session.run('diff', journal_filename, expected_journal)
+
+
+@nox.session
+def clean(session):
+    """Clean up build files.
+
+    Cleans up all artifacts that might get created during
+    other ``nox`` sessions.
+
+    There is no need for the session to create a ``virtualenv``
+    here (we are just pretending to be ``make``).
+    """
+    clean_dirs = (
+        get_path('__pycache__'),
+        get_path('.cache'),
+        get_path('.coverage'),
+        get_path('build'),
+        get_path('tests', '__pycache__'),
+        get_path('tests', 'functional', '__pycache__'),
+        get_path('tests', 'unit', '__pycache__'),
+    )
+    clean_globs = (
+        get_path('*.mod'),
+        get_path('src', 'bezier', '*.so'),
+        get_path('src', 'bezier', 'quadpack', '*.o'),
+        get_path('src', 'bezier', '*.o'),
+        get_path('tests', '*.pyc'),
+        get_path('tests', 'functional', '*.pyc'),
+        get_path('tests', 'unit', '*.pyc'),
+    )
+
+    for dir_path in clean_dirs:
+        session.run(shutil.rmtree, dir_path, ignore_errors=True)
+
+    for glob_path in clean_globs:
+        for filename in glob.glob(glob_path):
+            session.run(os.remove, filename)
