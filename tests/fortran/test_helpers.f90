@@ -13,11 +13,11 @@
 module test_helpers
 
   use iso_c_binding, only: c_double, c_bool
-  use helpers, only: vector_close
+  use helpers, only: vector_close, in_interval
   use types, only: dp
   implicit none
   private
-  public test_vector_close
+  public test_vector_close, test_in_interval
 
 contains
 
@@ -97,5 +97,48 @@ contains
     end if
 
   end subroutine test_vector_close
+
+  subroutine test_in_interval(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical(c_bool) :: is_inside
+
+    ! CASE 1: Interior value.
+    is_inside = in_interval(1.5_dp, 1.0_dp, 2.0_dp)
+    if (is_inside) then
+       write (*, "(A)") " in_interval: Case 1 success"
+    else
+       write (*, "(A)") " in_interval: Case 1 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Barely inside.
+    is_inside = in_interval(1.0_dp + 0.5_dp**52, 1.0_dp, 2.0_dp)
+    if (is_inside) then
+       write (*, "(A)") " in_interval: Case 2 success"
+    else
+       write (*, "(A)") " in_interval: Case 2 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Barely outside.
+    is_inside = in_interval(1.0_dp - 0.5_dp**53, 1.0_dp, 2.0_dp)
+    if (.NOT. is_inside) then
+       write (*, "(A)") " in_interval: Case 3 success"
+    else
+       write (*, "(A)") " in_interval: Case 3 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Exterior value.
+    is_inside = in_interval(-1.0_dp, 1.0_dp, 2.0_dp)
+    if (.NOT. is_inside) then
+       write (*, "(A)") " in_interval: Case 4 success"
+    else
+       write (*, "(A)") " in_interval: Case 4 failure"
+       success = .FALSE.
+    end if
+
+  end subroutine test_in_interval
 
 end module test_helpers

@@ -13,13 +13,14 @@
 program test
 
   use iso_c_binding, only: c_bool
-  use test_helpers, only: test_vector_close
+  use test_helpers, only: test_vector_close, test_in_interval
   implicit none
 
   logical(c_bool) :: success
 
   success = .TRUE.
   call test_vector_close(success)
+  call test_in_interval(success)
   if (.NOT. success) then
      call exit(1)
   end if
