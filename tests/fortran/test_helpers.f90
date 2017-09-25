@@ -13,7 +13,7 @@
 module test_helpers
 
   use iso_c_binding, only: c_double, c_bool
-  use helpers, only: cross_product, vector_close, in_interval
+  use helpers, only: cross_product, bbox, vector_close, in_interval
   use types, only: dp
   implicit none
   private test_cross_product, test_vector_close, test_in_interval
@@ -25,6 +25,7 @@ contains
     logical(c_bool), intent(inout) :: success
 
     call test_cross_product(success)
+    call test_bbox(success)
     call test_vector_close(success)
     call test_in_interval(success)
 
@@ -49,6 +50,42 @@ contains
     end if
 
   end subroutine test_cross_product
+
+  subroutine test_bbox(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes(6, 2)
+    real(c_double) :: left, right, bottom, top
+
+    ! CASE 1: Simple case (just two nodes).
+    nodes(1, :) = [0.0_dp, 5.0_dp]
+    nodes(2, :) = [1.0_dp, 3.0_dp]
+    call bbox(2, nodes(:2, :), left, right, bottom, top)
+    if (left == 0.0_dp .AND. right == 1.0_dp &
+         .AND. bottom == 3.0_dp .AND. top == 5.0_dp) then
+       write (*, "(A)") "         bbox: Case 1 success"
+    else
+       write (*, "(A)") "         bbox: Case 1 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 2: "Many" nodes.
+    nodes(1, :) = [1.0_dp, 0.0_dp]
+    nodes(2, :) = [2.0_dp, 1.0_dp]
+    nodes(3, :) = [-1.0_dp, 2.0_dp]
+    nodes(4, :) = [5.0_dp, -3.0_dp]
+    nodes(5, :) = [4.0_dp, 4.0_dp]
+    nodes(6, :) = [0.0_dp, 0.0_dp]
+    call bbox(6, nodes, left, right, bottom, top)
+    if (left == -1.0_dp .AND. right == 5.0_dp &
+         .AND. bottom == -3.0_dp .AND. top == 4.0_dp) then
+       write (*, "(A)") "         bbox: Case 2 success"
+    else
+       write (*, "(A)") "         bbox: Case 2 failure"
+       success = .FALSE.
+    end if
+
+  end subroutine test_bbox
 
   subroutine test_vector_close(success)
     logical(c_bool), intent(inout) :: success
