@@ -13,10 +13,10 @@
 module test_helpers
 
   use iso_c_binding, only: c_double, c_bool
-  use helpers, only: vector_close, in_interval
+  use helpers, only: cross_product, vector_close, in_interval
   use types, only: dp
   implicit none
-  private
+  private test_cross_product, test_vector_close, test_in_interval
   public helpers_all_tests
 
 contains
@@ -24,10 +24,31 @@ contains
   subroutine helpers_all_tests(success)
     logical(c_bool), intent(inout) :: success
 
+    call test_cross_product(success)
     call test_vector_close(success)
     call test_in_interval(success)
 
   end subroutine helpers_all_tests
+
+  subroutine test_cross_product(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: vec0(1, 2)
+    real(c_double) :: vec1(1, 2)
+    real(c_double) :: result_
+
+    ! CASE 1: Identical vector.
+    vec0(1, :) = [1.0_dp, 7.0_dp] / 8
+    vec1(1, :) = [-11.0_dp, 24.0_dp] / 32
+    call cross_product(vec0, vec1, result_)
+    if (result_ == 101.0_dp / 256) then
+       write (*, "(A)") "cross_product: Case 1 success"
+    else
+       write (*, "(A)") "cross_product: Case 1 failure"
+       success = .FALSE.
+    end if
+
+  end subroutine test_cross_product
 
   subroutine test_vector_close(success)
     logical(c_bool), intent(inout) :: success
@@ -43,9 +64,9 @@ contains
     vec1(1, :) = [0.5_dp, 4.0_dp]
     is_close = vector_close(2, vec1, vec1, eps)
     if (is_close) then
-       write (*, "(A)") "vector_close: Case 1 success"
+       write (*, "(A)") " vector_close: Case 1 success"
     else
-       write (*, "(A)") "vector_close: Case 1 failure"
+       write (*, "(A)") " vector_close: Case 1 failure"
        success = .FALSE.
     end if
 
@@ -54,9 +75,9 @@ contains
     vec2(1, :) = [1.0_dp, -4.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     if (.NOT. is_close) then
-       write (*, "(A)") "vector_close: Case 2 success"
+       write (*, "(A)") " vector_close: Case 2 success"
     else
-       write (*, "(A)") "vector_close: Case 2 failure"
+       write (*, "(A)") " vector_close: Case 2 failure"
        success = .FALSE.
     end if
 
@@ -65,9 +86,9 @@ contains
     vec2(1, :) = vec1(1, :) + 0.5_dp**43 * [-5.0_dp, 12.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     if (is_close) then
-       write (*, "(A)") "vector_close: Case 3 success"
+       write (*, "(A)") " vector_close: Case 3 success"
     else
-       write (*, "(A)") "vector_close: Case 3 failure"
+       write (*, "(A)") " vector_close: Case 3 failure"
        success = .FALSE.
     end if
 
@@ -76,9 +97,9 @@ contains
     vec2(1, :) = [2.0_dp, 5.0_dp]
     is_close = vector_close(2, vec1, vec2, 0.5_dp)
     if (is_close .AND. .NOT. vector_close(2, vec1, vec2, eps)) then
-       write (*, "(A)") "vector_close: Case 4 success"
+       write (*, "(A)") " vector_close: Case 4 success"
     else
-       write (*, "(A)") "vector_close: Case 4 failure"
+       write (*, "(A)") " vector_close: Case 4 failure"
        success = .FALSE.
     end if
 
@@ -87,9 +108,9 @@ contains
     vec2(1, :) = 0.5_dp**45 * [3.0_dp, 4.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     if (is_close) then
-       write (*, "(A)") "vector_close: Case 5 success"
+       write (*, "(A)") " vector_close: Case 5 success"
     else
-       write (*, "(A)") "vector_close: Case 5 failure"
+       write (*, "(A)") " vector_close: Case 5 failure"
        success = .FALSE.
     end if
 
@@ -98,9 +119,9 @@ contains
     vec2(1, :) = [0.0_dp, 0.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     if (.NOT. is_close) then
-       write (*, "(A)") "vector_close: Case 6 success"
+       write (*, "(A)") " vector_close: Case 6 success"
     else
-       write (*, "(A)") "vector_close: Case 6 failure"
+       write (*, "(A)") " vector_close: Case 6 failure"
        success = .FALSE.
     end if
 
@@ -114,36 +135,36 @@ contains
     ! CASE 1: Interior value.
     is_inside = in_interval(1.5_dp, 1.0_dp, 2.0_dp)
     if (is_inside) then
-       write (*, "(A)") " in_interval: Case 1 success"
+       write (*, "(A)") "  in_interval: Case 1 success"
     else
-       write (*, "(A)") " in_interval: Case 1 failure"
+       write (*, "(A)") "  in_interval: Case 1 failure"
        success = .FALSE.
     end if
 
     ! CASE 2: Barely inside.
     is_inside = in_interval(1.0_dp + 0.5_dp**52, 1.0_dp, 2.0_dp)
     if (is_inside) then
-       write (*, "(A)") " in_interval: Case 2 success"
+       write (*, "(A)") "  in_interval: Case 2 success"
     else
-       write (*, "(A)") " in_interval: Case 2 failure"
+       write (*, "(A)") "  in_interval: Case 2 failure"
        success = .FALSE.
     end if
 
     ! CASE 3: Barely outside.
     is_inside = in_interval(1.0_dp - 0.5_dp**53, 1.0_dp, 2.0_dp)
     if (.NOT. is_inside) then
-       write (*, "(A)") " in_interval: Case 3 success"
+       write (*, "(A)") "  in_interval: Case 3 success"
     else
-       write (*, "(A)") " in_interval: Case 3 failure"
+       write (*, "(A)") "  in_interval: Case 3 failure"
        success = .FALSE.
     end if
 
     ! CASE 4: Exterior value.
     is_inside = in_interval(-1.0_dp, 1.0_dp, 2.0_dp)
     if (.NOT. is_inside) then
-       write (*, "(A)") " in_interval: Case 4 success"
+       write (*, "(A)") "  in_interval: Case 4 success"
     else
-       write (*, "(A)") " in_interval: Case 4 failure"
+       write (*, "(A)") "  in_interval: Case 4 failure"
        success = .FALSE.
     end if
 
