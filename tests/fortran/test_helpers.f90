@@ -17,9 +17,17 @@ module test_helpers
   use types, only: dp
   implicit none
   private
-  public test_vector_close, test_in_interval
+  public helpers_all_tests
 
 contains
+
+  subroutine helpers_all_tests(success)
+    logical(c_bool), intent(inout) :: success
+
+    call test_vector_close(success)
+    call test_in_interval(success)
+
+  end subroutine helpers_all_tests
 
   subroutine test_vector_close(success)
     logical(c_bool), intent(inout) :: success
