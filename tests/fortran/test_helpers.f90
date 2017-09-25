@@ -52,6 +52,50 @@ contains
        success = .FALSE.
     end if
 
+    ! CASE 3: Close but different.
+    vec1(1, :) = [2.25_dp, -3.5_dp]
+    vec2(1, :) = vec1(1, :) + 0.5_dp**43 * [-5.0_dp, 12.0_dp]
+    is_close = vector_close(2, vec1, vec2, eps)
+    if (is_close) then
+       write (*, "(A)") "vector_close: Case 3 success"
+    else
+       write (*, "(A)") "vector_close: Case 3 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Custom epsilon.
+    vec1(1, :) = [3.0_dp, 4.0_dp]
+    vec2(1, :) = [2.0_dp, 5.0_dp]
+    is_close = vector_close(2, vec1, vec2, 0.5_dp)
+    if (is_close .AND. .NOT. vector_close(2, vec1, vec2, eps)) then
+       write (*, "(A)") "vector_close: Case 4 success"
+    else
+       write (*, "(A)") "vector_close: Case 4 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Near zero.
+    vec1(1, :) = [0.0_dp, 0.0_dp]
+    vec2(1, :) = 0.5_dp**45 * [3.0_dp, 4.0_dp]
+    is_close = vector_close(2, vec1, vec2, eps)
+    if (is_close) then
+       write (*, "(A)") "vector_close: Case 5 success"
+    else
+       write (*, "(A)") "vector_close: Case 5 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 6: Near zero failure (i.e. not near enough).
+    vec1(1, :) = 0.5_dp**20 * [1.0_dp, 0.0_dp]
+    vec2(1, :) = [0.0_dp, 0.0_dp]
+    is_close = vector_close(2, vec1, vec2, eps)
+    if (.NOT. is_close) then
+       write (*, "(A)") "vector_close: Case 6 success"
+    else
+       write (*, "(A)") "vector_close: Case 6 failure"
+       success = .FALSE.
+    end if
+
   end subroutine test_vector_close
 
 end module test_helpers
