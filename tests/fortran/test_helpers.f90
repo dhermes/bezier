@@ -14,8 +14,8 @@ module test_helpers
 
   use iso_c_binding, only: c_double, c_bool
   use helpers, only: &
-       WIGGLE, cross_product, bbox, wiggle_interval, vector_close, &
-       in_interval
+       WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
+       vector_close, in_interval, ulps_away
   use types, only: dp
   implicit none
   private test_cross_product, test_vector_close, test_in_interval
@@ -31,8 +31,10 @@ contains
     call test_cross_product(success)
     call test_bbox(success)
     call test_wiggle_interval(success)
+    call test_contains_nd(success)
     call test_vector_close(success)
     call test_in_interval(success)
+    call test_ulps_away(success)
 
   end subroutine helpers_all_tests
 
@@ -250,13 +252,59 @@ contains
 
   end subroutine test_wiggle_interval
 
+  subroutine test_contains_nd(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(3, 2), nodes2(2, 3), nodes3(2, 4)
+    real(c_double) :: point1(2), point2(3), point3(4)
+    logical(c_bool) :: is_contained
+
+    ! CASE 1: Below bounding box.
+    nodes1(1, :) = [0.0_dp, 1.0_dp]
+    nodes1(2, :) = [0.5_dp, 0.0_dp]
+    nodes1(3, :) = [1.0_dp, 2.0_dp]
+    point1 = [-0.5_dp, 1.0_dp]
+    call contains_nd(3, 2, nodes1, point1, is_contained)
+    if (.NOT. is_contained) then
+       write (*, "(A)") "    contains_nd: Case  1 success"
+    else
+       write (*, "(A)") "    in_interval: Case  1 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Above bounding box.
+    nodes2(1, :) = [0.0_dp, -4.0_dp, 2.0_dp]
+    nodes2(2, :) = [-1.0_dp, 1.0_dp, 3.0_dp]
+    point2 = [-0.5_dp, 2.0_dp, 2.5_dp]
+    call contains_nd(2, 3, nodes2, point2, is_contained)
+    if (.NOT. is_contained) then
+       write (*, "(A)") "    contains_nd: Case  2 success"
+    else
+       write (*, "(A)") "    in_interval: Case  2 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Inside bounding box.
+    nodes3(1, :) = [0.0_dp, 1.0_dp, 2.0_dp, 3.0_dp]
+    nodes3(2, :) = [1.0_dp, -2.0_dp, -4.0_dp, 1.0_dp]
+    point3 = [0.5_dp, 0.0_dp, 0.0_dp, 2.0_dp]
+    call contains_nd(2, 4, nodes3, point3, is_contained)
+    if (is_contained) then
+       write (*, "(A)") "    contains_nd: Case  2 success"
+    else
+       write (*, "(A)") "    in_interval: Case  2 failure"
+       success = .FALSE.
+    end if
+
+  end subroutine test_contains_nd
+
   subroutine test_vector_close(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
-    logical(c_bool) :: is_close
     real(c_double) :: eps
     real(c_double) :: vec1(1, 2)
     real(c_double) :: vec2(1, 2)
+    logical(c_bool) :: is_close
 
     eps = 0.5_dp**40
 
@@ -369,5 +417,80 @@ contains
     end if
 
   end subroutine test_in_interval
+
+  subroutine test_ulps_away(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: eps, value1, value2
+    logical(c_bool) :: is_near
+
+    eps = 0.5_dp**40
+
+    ! CASE 1: First value is zero.
+    is_near = ulps_away(0.0_dp, 0.0_dp, 1, eps)
+    if (is_near) then
+       write (*, "(A)") "      ulps_away: Case  1 success"
+    else
+       write (*, "(A)") "      ulps_away: Case  1 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Second value is zero.
+    is_near = ulps_away(1.0_dp, 0.0_dp, 1, eps)
+    if (.NOT. is_near) then
+       write (*, "(A)") "      ulps_away: Case  2 success"
+    else
+       write (*, "(A)") "      ulps_away: Case  2 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 3: First value positive **AND** negative.
+    is_near = ulps_away(1.0_dp, 1.0_dp + machine_eps, 1, eps)
+    if (is_near .AND. ulps_away(-1.0_dp, -1.0_dp - machine_eps, 1, eps)) then
+       write (*, "(A)") "      ulps_away: Case  3 success"
+    else
+       write (*, "(A)") "      ulps_away: Case  3 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Boundaries where a single bit works.
+    if ( &
+         ulps_away(1.0_dp, 1.0_dp, 1, eps) .AND. &
+         ulps_away(1.0_dp, 1.0_dp + machine_eps, 1, eps) .AND. &
+         ulps_away(1.0_dp + machine_eps, 1.0_dp, 1, eps) .AND. &
+         ulps_away(1.0_dp, 1.0_dp - machine_eps / 2, 1, eps) .AND. &
+         ulps_away(1.0_dp - machine_eps / 2, 1.0_dp, 1, eps)) then
+       write (*, "(A)") "      ulps_away: Case  4 success"
+    else
+       write (*, "(A)") "      ulps_away: Case  4 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Non-default ``num_bits``.
+    value1 = 1.5_dp
+    value2 = value1 + 0.5_dp**43
+    if ( &
+         .NOT. ulps_away(value1, value2, 1, eps) .AND. &
+         ulps_away(value1, value2, 1000, eps)) then
+       write (*, "(A)") "      ulps_away: Case  5 success"
+    else
+       write (*, "(A)") "      ulps_away: Case  5 failure"
+       success = .FALSE.
+    end if
+
+    ! CASE 6: Very close, but not close enough.
+    value1 = 0.25_dp - 5.625_dp * machine_eps
+    value2 = 0.25_dp - 6.25_dp * machine_eps
+    if ( &
+         .NOT. ulps_away(value1, value2, 1, eps) .AND. &
+         .NOT. ulps_away(value1, value2, 4, eps) .AND. &
+         ulps_away(value1, value2, 5, eps)) then
+       write (*, "(A)") "      ulps_away: Case  6 success"
+    else
+       write (*, "(A)") "      ulps_away: Case  6 failure"
+       success = .FALSE.
+    end if
+
+  end subroutine test_ulps_away
 
 end module test_helpers
