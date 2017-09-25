@@ -1104,7 +1104,7 @@ class Surface(_base.Base):
         return _surface_helpers.locate_point(
             self._nodes, self._degree, point[0, 0], point[0, 1])
 
-    def intersect(self, other, strategy=_STRATEGY.geometric, _verify=True):
+    def intersect(self, other, strategy=_STRATEGY.GEOMETRIC, _verify=True):
         """Find the common intersection with another surface.
 
         Args:

@@ -1279,7 +1279,7 @@ def classify_intersection(intersection):
        array([[ 2. , 0.5]])
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       <IntersectionClassification.first: 'first'>
+       <IntersectionClassification.FIRST: 0>
 
     .. testcleanup:: classify-intersection1
 
@@ -1334,7 +1334,7 @@ def classify_intersection(intersection):
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       <IntersectionClassification.tangent_second: 'tangent_second'>
+       <IntersectionClassification.TANGENT_SECOND: 4>
 
     .. testcleanup:: classify-intersection2
 
@@ -1370,7 +1370,7 @@ def classify_intersection(intersection):
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       <IntersectionClassification.tangent_first: 'tangent_first'>
+       <IntersectionClassification.TANGENT_FIRST: 3>
 
     .. testcleanup:: classify-intersection3
 
@@ -1404,7 +1404,7 @@ def classify_intersection(intersection):
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       <IntersectionClassification.opposed: 'opposed'>
+       <IntersectionClassification.OPPOSED: 2>
 
     .. testcleanup:: classify-intersection4
 
@@ -1534,7 +1534,7 @@ def classify_intersection(intersection):
        >>> curve1b._previous_edge = curve1a
        >>> intersection = Intersection(curve1b, 0.0, curve2, t)
        >>> classify_intersection(intersection)
-       <IntersectionClassification.first: 'first'>
+       <IntersectionClassification.FIRST: 0>
 
     .. testcleanup:: classify-intersection7
 
@@ -1576,7 +1576,7 @@ def classify_intersection(intersection):
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
        >>> classify_intersection(intersection)
-       <IntersectionClassification.ignored_corner: 'ignored_corner'>
+       <IntersectionClassification.IGNORED_CORNER: 5>
 
     .. testcleanup:: classify-intersection8
 
@@ -1620,15 +1620,15 @@ def classify_intersection(intersection):
         intersection.second._degree)
 
     if ignored_corner(intersection, tangent1, tangent2):
-        return IntersectionClassification.ignored_corner
+        return IntersectionClassification.IGNORED_CORNER
 
     # Take the cross product of tangent vectors to determine which one
     # is more "inside" / "to the left".
     cross_prod = _helpers.cross_product(tangent1, tangent2)
     if cross_prod < 0:
-        return IntersectionClassification.first
+        return IntersectionClassification.FIRST
     elif cross_prod > 0:
-        return IntersectionClassification.second
+        return IntersectionClassification.SECOND
     else:
         return classify_tangent_intersection(
             intersection, tangent1, tangent2)
@@ -1675,7 +1675,7 @@ def classify_tangent_intersection(intersection, tangent1, tangent2):
             # moving in opposite directions, the tangency isn't part of
             # the surface intersection.
             if sign1 == 1.0:
-                return IntersectionClassification.opposed
+                return IntersectionClassification.OPPOSED
             else:
                 raise NotImplementedError(_BAD_TANGENT)
         else:
@@ -1683,14 +1683,14 @@ def classify_tangent_intersection(intersection, tangent1, tangent2):
             if delta_c == 0.0:
                 raise NotImplementedError(_SAME_CURVATURE)
             elif sign1 == _SIGN(delta_c):
-                return IntersectionClassification.opposed
+                return IntersectionClassification.OPPOSED
             else:
                 raise NotImplementedError(_BAD_TANGENT)
     else:
         if curvature1 > curvature2:
-            return IntersectionClassification.tangent_first
+            return IntersectionClassification.TANGENT_FIRST
         elif curvature1 < curvature2:
-            return IntersectionClassification.tangent_second
+            return IntersectionClassification.TANGENT_SECOND
         else:
             raise NotImplementedError(_SAME_CURVATURE)
 
@@ -2075,7 +2075,7 @@ def get_next_first(intersection, intersections):
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
             first, 1.0, None, None,
-            interior_curve=IntersectionClassification.first)
+            interior_curve=IntersectionClassification.FIRST)
         return new_intersection
     else:
         return along_edge
@@ -2119,7 +2119,7 @@ def get_next_second(intersection, intersections):
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
             None, None, second, 1.0,
-            interior_curve=IntersectionClassification.second)
+            interior_curve=IntersectionClassification.SECOND)
         return new_intersection
     else:
         return along_edge
@@ -2158,9 +2158,9 @@ def get_next(intersection, intersections, unused):
             :attr:`~.IntersectionClassification.second`.
     """
     result = None
-    if intersection.interior_curve is IntersectionClassification.first:
+    if intersection.interior_curve is IntersectionClassification.FIRST:
         result = get_next_first(intersection, intersections)
-    elif intersection.interior_curve is IntersectionClassification.second:
+    elif intersection.interior_curve is IntersectionClassification.SECOND:
         result = get_next_second(intersection, intersections)
     else:
         raise ValueError('Cannot get next node if not starting from '
@@ -2201,12 +2201,12 @@ def ends_to_curve(start_node, end_node):
             :attr:`~.IntersectionClassification.first` or
             :attr:`~.IntersectionClassification.second`.
     """
-    if start_node.interior_curve is IntersectionClassification.first:
+    if start_node.interior_curve is IntersectionClassification.FIRST:
         first = start_node.first
         if end_node.first is not first:
             raise ValueError(_WRONG_CURVE)
         return first.specialize(start_node.s, end_node.s)
-    elif start_node.interior_curve is IntersectionClassification.second:
+    elif start_node.interior_curve is IntersectionClassification.SECOND:
         second = start_node.second
         if end_node.second is not second:
             raise ValueError(_WRONG_CURVE)
@@ -2313,9 +2313,9 @@ def tangent_only_intersections(intersections, surface1, surface2):
     point_type = all_types.pop()
     if point_type in _IGNORED_TYPES:
         return []
-    elif point_type is IntersectionClassification.tangent_first:
+    elif point_type is IntersectionClassification.TANGENT_FIRST:
         return [to_curved_polygon(surface1)]
-    elif point_type is IntersectionClassification.tangent_second:
+    elif point_type is IntersectionClassification.TANGENT_SECOND:
         return [to_curved_polygon(surface2)]
     else:
         raise ValueError('Point type not for tangency', point_type)
@@ -2522,22 +2522,17 @@ class _IntersectionClassification(enum.Enum):
     Provided as the output values for :func:`.classify_intersection`.
     """
 
-    first = 'first'
+    FIRST = 0
     """The first curve is on the interior."""
-
-    second = 'second'
+    SECOND = 1
     """The second curve is on the interior."""
-
-    opposed = 'opposed'
+    OPPOSED = 2
     """Tangent intersection with opposed interiors."""
-
-    tangent_first = 'tangent_first'
+    TANGENT_FIRST = 3
     """Tangent intersection, first curve is on the interior."""
-
-    tangent_second = 'tangent_second'
+    TANGENT_SECOND = 4
     """Tangent intersection, second curve is on the interior."""
-
-    ignored_corner = 'ignored_corner'
+    IGNORED_CORNER = 5
     """Intersection at a corner, interiors don't intersect."""
 
 
@@ -2564,10 +2559,10 @@ else:
 #       classification enum is, hence we can't define it at the top with
 #       the other constants.
 _ACCEPTABLE = (
-    IntersectionClassification.first,
-    IntersectionClassification.second,
+    IntersectionClassification.FIRST,
+    IntersectionClassification.SECOND,
 )
 _IGNORED_TYPES = (
-    IntersectionClassification.opposed,
-    IntersectionClassification.ignored_corner,
+    IntersectionClassification.OPPOSED,
+    IntersectionClassification.IGNORED_CORNER,
 )

@@ -512,7 +512,7 @@ class Curve(_base.Base):
         return left, right
 
     def intersect(self, other,
-                  strategy=IntersectionStrategy.geometric,
+                  strategy=IntersectionStrategy.GEOMETRIC,
                   _verify=True):
         """Find the points of intersection with another curve.
 

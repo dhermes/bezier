@@ -26,8 +26,8 @@ from bezier import curve
 from tests.functional import utils
 
 
-ALGEBRAIC = curve.IntersectionStrategy.algebraic
-GEOMETRIC = curve.IntersectionStrategy.geometric
+ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
+GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
 _, INTERSECTIONS = utils.surface_intersections_info()
 PARALLEL_FAILURE = (_intersection_helpers._SEGMENTS_PARALLEL,)
 BAD_TANGENT = (_surface_helpers._BAD_TANGENT,)

@@ -21,12 +21,12 @@ cimport bezier._surface
 
 
 cpdef enum IntersectionClassification:
-    first
-    second
-    opposed
-    tangent_first
-    tangent_second
-    ignored_corner
+    FIRST
+    SECOND
+    OPPOSED
+    TANGENT_FIRST
+    TANGENT_SECOND
+    IGNORED_CORNER
 
 
 def de_casteljau_one_round(

@@ -1398,7 +1398,7 @@ class Test_all_intersections(utils.NumPyTestCase):
     def test_geometric(self):
         from bezier import _intersection_helpers
 
-        strategy = _intersection_helpers.IntersectionStrategy.geometric
+        strategy = _intersection_helpers.IntersectionStrategy.GEOMETRIC
         patch = mock.patch(
             'bezier._intersection_helpers.all_intersections_geometric',
             return_value=mock.sentinel.intersections)
@@ -1411,7 +1411,7 @@ class Test_all_intersections(utils.NumPyTestCase):
     def test_algebraic(self):
         from bezier import _intersection_helpers
 
-        strategy = _intersection_helpers.IntersectionStrategy.algebraic
+        strategy = _intersection_helpers.IntersectionStrategy.ALGEBRAIC
         patch = mock.patch(
             'bezier._intersection_helpers.all_intersections_algebraic',
             return_value=mock.sentinel.intersections)

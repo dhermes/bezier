@@ -1070,16 +1070,16 @@ typedef npy_cdouble __pyx_t_5numpy_complex_t;
  *
  *
  * cpdef enum IntersectionClassification:             # <<<<<<<<<<<<<<
- *     first
- *     second
+ *     FIRST
+ *     SECOND
  */
 enum __pyx_t_6bezier_16_surface_speedup_IntersectionClassification {
-  __pyx_e_6bezier_16_surface_speedup_first,
-  __pyx_e_6bezier_16_surface_speedup_second,
-  __pyx_e_6bezier_16_surface_speedup_opposed,
-  __pyx_e_6bezier_16_surface_speedup_tangent_first,
-  __pyx_e_6bezier_16_surface_speedup_tangent_second,
-  __pyx_e_6bezier_16_surface_speedup_ignored_corner
+  __pyx_e_6bezier_16_surface_speedup_FIRST,
+  __pyx_e_6bezier_16_surface_speedup_SECOND,
+  __pyx_e_6bezier_16_surface_speedup_OPPOSED,
+  __pyx_e_6bezier_16_surface_speedup_TANGENT_FIRST,
+  __pyx_e_6bezier_16_surface_speedup_TANGENT_SECOND,
+  __pyx_e_6bezier_16_surface_speedup_IGNORED_CORNER
 };
 
 /* "EnumBase":15
@@ -2131,10 +2131,10 @@ static const char __pyx_k_step[] = "step";
 static const char __pyx_k_stop[] = "stop";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_ASCII[] = "ASCII";
+static const char __pyx_k_FIRST[] = "FIRST";
 static const char __pyx_k_class[] = "__class__";
 static const char __pyx_k_empty[] = "empty";
 static const char __pyx_k_error[] = "error";
-static const char __pyx_k_first[] = "first";
 static const char __pyx_k_flags[] = "flags";
 static const char __pyx_k_nodes[] = "nodes";
 static const char __pyx_k_numpy[] = "numpy";
@@ -2145,6 +2145,7 @@ static const char __pyx_k_s_s_d[] = "<%s.%s: %d>";
 static const char __pyx_k_shape[] = "shape";
 static const char __pyx_k_start[] = "start";
 static const char __pyx_k_value[] = "value";
+static const char __pyx_k_SECOND[] = "SECOND";
 static const char __pyx_k_degree[] = "degree";
 static const char __pyx_k_encode[] = "encode";
 static const char __pyx_k_format[] = "format";
@@ -2153,19 +2154,18 @@ static const char __pyx_k_module[] = "__module__";
 static const char __pyx_k_name_2[] = "__name__";
 static const char __pyx_k_pickle[] = "pickle";
 static const char __pyx_k_reduce[] = "__reduce__";
-static const char __pyx_k_second[] = "second";
 static const char __pyx_k_struct[] = "struct";
 static const char __pyx_k_unpack[] = "unpack";
 static const char __pyx_k_update[] = "update";
 static const char __pyx_k_values[] = "values";
 static const char __pyx_k_IntEnum[] = "IntEnum";
+static const char __pyx_k_OPPOSED[] = "OPPOSED";
 static const char __pyx_k_fortran[] = "fortran";
 static const char __pyx_k_lambda1[] = "lambda1";
 static const char __pyx_k_lambda2[] = "lambda2";
 static const char __pyx_k_lambda3[] = "lambda3";
 static const char __pyx_k_members[] = "__members__";
 static const char __pyx_k_memview[] = "memview";
-static const char __pyx_k_opposed[] = "opposed";
 static const char __pyx_k_parents[] = "parents";
 static const char __pyx_k_prepare[] = "__prepare__";
 static const char __pyx_k_st_vals[] = "st_vals";
@@ -2202,12 +2202,12 @@ static const char __pyx_k_RuntimeError[] = "RuntimeError";
 static const char __pyx_k_jacobian_det[] = "jacobian_det";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
 static const char __pyx_k_stringsource[] = "stringsource";
+static const char __pyx_k_TANGENT_FIRST[] = "TANGENT_FIRST";
 static const char __pyx_k_jacobian_both[] = "jacobian_both";
 static const char __pyx_k_pyx_getbuffer[] = "__pyx_getbuffer";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
-static const char __pyx_k_tangent_first[] = "tangent_first";
-static const char __pyx_k_ignored_corner[] = "ignored_corner";
-static const char __pyx_k_tangent_second[] = "tangent_second";
+static const char __pyx_k_IGNORED_CORNER[] = "IGNORED_CORNER";
+static const char __pyx_k_TANGENT_SECOND[] = "TANGENT_SECOND";
 static const char __pyx_k_View_MemoryView[] = "View.MemoryView";
 static const char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static const char __pyx_k_dtype_is_object[] = "dtype_is_object";
@@ -2268,8 +2268,10 @@ static PyObject *__pyx_kp_s_Empty_shape_tuple_for_cython_arr;
 static PyObject *__pyx_n_s_EnumBase;
 static PyObject *__pyx_n_s_EnumType;
 static PyObject *__pyx_n_s_F;
+static PyObject *__pyx_n_s_FIRST;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor_2;
+static PyObject *__pyx_n_s_IGNORED_CORNER;
 static PyObject *__pyx_n_s_ImportError;
 static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xb0;
 static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xd4;
@@ -2284,6 +2286,7 @@ static PyObject *__pyx_kp_s_MemoryView_of_r_at_0x_x;
 static PyObject *__pyx_kp_s_MemoryView_of_r_object;
 static PyObject *__pyx_kp_u_Non_native_byte_order_not_suppor;
 static PyObject *__pyx_n_b_O;
+static PyObject *__pyx_n_s_OPPOSED;
 static PyObject *__pyx_n_s_OrderedDict;
 static PyObject *__pyx_kp_s_Out_of_bounds_on_buffer_access_a;
 static PyObject *__pyx_n_s_PickleError;
@@ -2292,6 +2295,9 @@ static PyObject *__pyx_n_s_Pyx_EnumBase___new;
 static PyObject *__pyx_n_s_Pyx_EnumBase___repr;
 static PyObject *__pyx_n_s_Pyx_EnumBase___str;
 static PyObject *__pyx_n_s_RuntimeError;
+static PyObject *__pyx_n_s_SECOND;
+static PyObject *__pyx_n_s_TANGENT_FIRST;
+static PyObject *__pyx_n_s_TANGENT_SECOND;
 static PyObject *__pyx_n_s_TypeError;
 static PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
 static PyObject *__pyx_kp_s_Unknown_enum_value_s;
@@ -2325,7 +2331,6 @@ static PyObject *__pyx_n_s_evaluate_barycentric;
 static PyObject *__pyx_n_s_evaluate_barycentric_multi;
 static PyObject *__pyx_n_s_evaluate_cartesian_multi;
 static PyObject *__pyx_n_s_evaluated;
-static PyObject *__pyx_n_s_first;
 static PyObject *__pyx_n_s_flags;
 static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fortran;
@@ -2333,7 +2338,6 @@ static PyObject *__pyx_n_u_fortran;
 static PyObject *__pyx_n_s_getstate;
 static PyObject *__pyx_kp_s_got_differing_extents_in_dimensi;
 static PyObject *__pyx_n_s_id;
-static PyObject *__pyx_n_s_ignored_corner;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_init;
 static PyObject *__pyx_n_s_itemsize;
@@ -2365,7 +2369,6 @@ static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_kp_s_numpy_core_multiarray_failed_to;
 static PyObject *__pyx_kp_s_numpy_core_umath_failed_to_impor;
 static PyObject *__pyx_n_s_obj;
-static PyObject *__pyx_n_s_opposed;
 static PyObject *__pyx_n_s_order;
 static PyObject *__pyx_n_s_pack;
 static PyObject *__pyx_n_s_param_vals;
@@ -2391,7 +2394,6 @@ static PyObject *__pyx_n_s_repr;
 static PyObject *__pyx_n_s_res;
 static PyObject *__pyx_kp_s_s_s;
 static PyObject *__pyx_kp_s_s_s_d;
-static PyObject *__pyx_n_s_second;
 static PyObject *__pyx_n_s_self;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
@@ -2408,8 +2410,6 @@ static PyObject *__pyx_kp_s_strided_and_direct_or_indirect;
 static PyObject *__pyx_kp_s_strided_and_indirect;
 static PyObject *__pyx_kp_s_stringsource;
 static PyObject *__pyx_n_s_struct;
-static PyObject *__pyx_n_s_tangent_first;
-static PyObject *__pyx_n_s_tangent_second;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_kp_s_unable_to_allocate_array_data;
 static PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
@@ -23115,8 +23115,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_EnumBase, __pyx_k_EnumBase, sizeof(__pyx_k_EnumBase), 0, 0, 1, 1},
   {&__pyx_n_s_EnumType, __pyx_k_EnumType, sizeof(__pyx_k_EnumType), 0, 0, 1, 1},
   {&__pyx_n_s_F, __pyx_k_F, sizeof(__pyx_k_F), 0, 0, 1, 1},
+  {&__pyx_n_s_FIRST, __pyx_k_FIRST, sizeof(__pyx_k_FIRST), 0, 0, 1, 1},
   {&__pyx_kp_u_Format_string_allocated_too_shor, __pyx_k_Format_string_allocated_too_shor, sizeof(__pyx_k_Format_string_allocated_too_shor), 0, 1, 0, 0},
   {&__pyx_kp_u_Format_string_allocated_too_shor_2, __pyx_k_Format_string_allocated_too_shor_2, sizeof(__pyx_k_Format_string_allocated_too_shor_2), 0, 1, 0, 0},
+  {&__pyx_n_s_IGNORED_CORNER, __pyx_k_IGNORED_CORNER, sizeof(__pyx_k_IGNORED_CORNER), 0, 0, 1, 1},
   {&__pyx_n_s_ImportError, __pyx_k_ImportError, sizeof(__pyx_k_ImportError), 0, 0, 1, 1},
   {&__pyx_kp_s_Incompatible_checksums_s_vs_0xb0, __pyx_k_Incompatible_checksums_s_vs_0xb0, sizeof(__pyx_k_Incompatible_checksums_s_vs_0xb0), 0, 0, 1, 0},
   {&__pyx_kp_s_Incompatible_checksums_s_vs_0xd4, __pyx_k_Incompatible_checksums_s_vs_0xd4, sizeof(__pyx_k_Incompatible_checksums_s_vs_0xd4), 0, 0, 1, 0},
@@ -23131,6 +23133,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_MemoryView_of_r_object, __pyx_k_MemoryView_of_r_object, sizeof(__pyx_k_MemoryView_of_r_object), 0, 0, 1, 0},
   {&__pyx_kp_u_Non_native_byte_order_not_suppor, __pyx_k_Non_native_byte_order_not_suppor, sizeof(__pyx_k_Non_native_byte_order_not_suppor), 0, 1, 0, 0},
   {&__pyx_n_b_O, __pyx_k_O, sizeof(__pyx_k_O), 0, 0, 0, 1},
+  {&__pyx_n_s_OPPOSED, __pyx_k_OPPOSED, sizeof(__pyx_k_OPPOSED), 0, 0, 1, 1},
   {&__pyx_n_s_OrderedDict, __pyx_k_OrderedDict, sizeof(__pyx_k_OrderedDict), 0, 0, 1, 1},
   {&__pyx_kp_s_Out_of_bounds_on_buffer_access_a, __pyx_k_Out_of_bounds_on_buffer_access_a, sizeof(__pyx_k_Out_of_bounds_on_buffer_access_a), 0, 0, 1, 0},
   {&__pyx_n_s_PickleError, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
@@ -23139,6 +23142,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_Pyx_EnumBase___repr, __pyx_k_Pyx_EnumBase___repr, sizeof(__pyx_k_Pyx_EnumBase___repr), 0, 0, 1, 1},
   {&__pyx_n_s_Pyx_EnumBase___str, __pyx_k_Pyx_EnumBase___str, sizeof(__pyx_k_Pyx_EnumBase___str), 0, 0, 1, 1},
   {&__pyx_n_s_RuntimeError, __pyx_k_RuntimeError, sizeof(__pyx_k_RuntimeError), 0, 0, 1, 1},
+  {&__pyx_n_s_SECOND, __pyx_k_SECOND, sizeof(__pyx_k_SECOND), 0, 0, 1, 1},
+  {&__pyx_n_s_TANGENT_FIRST, __pyx_k_TANGENT_FIRST, sizeof(__pyx_k_TANGENT_FIRST), 0, 0, 1, 1},
+  {&__pyx_n_s_TANGENT_SECOND, __pyx_k_TANGENT_SECOND, sizeof(__pyx_k_TANGENT_SECOND), 0, 0, 1, 1},
   {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
   {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
   {&__pyx_kp_s_Unknown_enum_value_s, __pyx_k_Unknown_enum_value_s, sizeof(__pyx_k_Unknown_enum_value_s), 0, 0, 1, 0},
@@ -23172,7 +23178,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_evaluate_barycentric_multi, __pyx_k_evaluate_barycentric_multi, sizeof(__pyx_k_evaluate_barycentric_multi), 0, 0, 1, 1},
   {&__pyx_n_s_evaluate_cartesian_multi, __pyx_k_evaluate_cartesian_multi, sizeof(__pyx_k_evaluate_cartesian_multi), 0, 0, 1, 1},
   {&__pyx_n_s_evaluated, __pyx_k_evaluated, sizeof(__pyx_k_evaluated), 0, 0, 1, 1},
-  {&__pyx_n_s_first, __pyx_k_first, sizeof(__pyx_k_first), 0, 0, 1, 1},
   {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
   {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
   {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
@@ -23180,7 +23185,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
   {&__pyx_kp_s_got_differing_extents_in_dimensi, __pyx_k_got_differing_extents_in_dimensi, sizeof(__pyx_k_got_differing_extents_in_dimensi), 0, 0, 1, 0},
   {&__pyx_n_s_id, __pyx_k_id, sizeof(__pyx_k_id), 0, 0, 1, 1},
-  {&__pyx_n_s_ignored_corner, __pyx_k_ignored_corner, sizeof(__pyx_k_ignored_corner), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_init, __pyx_k_init, sizeof(__pyx_k_init), 0, 0, 1, 1},
   {&__pyx_n_s_itemsize, __pyx_k_itemsize, sizeof(__pyx_k_itemsize), 0, 0, 1, 1},
@@ -23212,7 +23216,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_numpy_core_multiarray_failed_to, __pyx_k_numpy_core_multiarray_failed_to, sizeof(__pyx_k_numpy_core_multiarray_failed_to), 0, 0, 1, 0},
   {&__pyx_kp_s_numpy_core_umath_failed_to_impor, __pyx_k_numpy_core_umath_failed_to_impor, sizeof(__pyx_k_numpy_core_umath_failed_to_impor), 0, 0, 1, 0},
   {&__pyx_n_s_obj, __pyx_k_obj, sizeof(__pyx_k_obj), 0, 0, 1, 1},
-  {&__pyx_n_s_opposed, __pyx_k_opposed, sizeof(__pyx_k_opposed), 0, 0, 1, 1},
   {&__pyx_n_s_order, __pyx_k_order, sizeof(__pyx_k_order), 0, 0, 1, 1},
   {&__pyx_n_s_pack, __pyx_k_pack, sizeof(__pyx_k_pack), 0, 0, 1, 1},
   {&__pyx_n_s_param_vals, __pyx_k_param_vals, sizeof(__pyx_k_param_vals), 0, 0, 1, 1},
@@ -23238,7 +23241,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_res, __pyx_k_res, sizeof(__pyx_k_res), 0, 0, 1, 1},
   {&__pyx_kp_s_s_s, __pyx_k_s_s, sizeof(__pyx_k_s_s), 0, 0, 1, 0},
   {&__pyx_kp_s_s_s_d, __pyx_k_s_s_d, sizeof(__pyx_k_s_s_d), 0, 0, 1, 0},
-  {&__pyx_n_s_second, __pyx_k_second, sizeof(__pyx_k_second), 0, 0, 1, 1},
   {&__pyx_n_s_self, __pyx_k_self, sizeof(__pyx_k_self), 0, 0, 1, 1},
   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
@@ -23255,8 +23257,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_strided_and_indirect, __pyx_k_strided_and_indirect, sizeof(__pyx_k_strided_and_indirect), 0, 0, 1, 0},
   {&__pyx_kp_s_stringsource, __pyx_k_stringsource, sizeof(__pyx_k_stringsource), 0, 0, 1, 0},
   {&__pyx_n_s_struct, __pyx_k_struct, sizeof(__pyx_k_struct), 0, 0, 1, 1},
-  {&__pyx_n_s_tangent_first, __pyx_k_tangent_first, sizeof(__pyx_k_tangent_first), 0, 0, 1, 1},
-  {&__pyx_n_s_tangent_second, __pyx_k_tangent_second, sizeof(__pyx_k_tangent_second), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_kp_s_unable_to_allocate_array_data, __pyx_k_unable_to_allocate_array_data, sizeof(__pyx_k_unable_to_allocate_array_data), 0, 0, 1, 0},
   {&__pyx_kp_s_unable_to_allocate_shape_and_str, __pyx_k_unable_to_allocate_shape_and_str, sizeof(__pyx_k_unable_to_allocate_shape_and_str), 0, 0, 1, 0},
@@ -24413,107 +24413,107 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     /* "EnumType":54
  *
  *     IntersectionClassification = __Pyx_EnumBase('IntersectionClassification', __Pyx_OrderedDict([
- *         ('first', first),             # <<<<<<<<<<<<<<
- *         ('second', second),
- *         ('opposed', opposed),
+ *         ('FIRST', FIRST),             # <<<<<<<<<<<<<<
+ *         ('SECOND', SECOND),
+ *         ('OPPOSED', OPPOSED),
  */
-    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_first); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 54, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_FIRST); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 54, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 54, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_INCREF(__pyx_n_s_first);
-    __Pyx_GIVEREF(__pyx_n_s_first);
-    PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_n_s_first);
+    __Pyx_INCREF(__pyx_n_s_FIRST);
+    __Pyx_GIVEREF(__pyx_n_s_FIRST);
+    PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_n_s_FIRST);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_4);
     __pyx_t_4 = 0;
 
     /* "EnumType":55
  *     IntersectionClassification = __Pyx_EnumBase('IntersectionClassification', __Pyx_OrderedDict([
- *         ('first', first),
- *         ('second', second),             # <<<<<<<<<<<<<<
- *         ('opposed', opposed),
- *         ('tangent_first', tangent_first),
+ *         ('FIRST', FIRST),
+ *         ('SECOND', SECOND),             # <<<<<<<<<<<<<<
+ *         ('OPPOSED', OPPOSED),
+ *         ('TANGENT_FIRST', TANGENT_FIRST),
  */
-    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_second); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 55, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_SECOND); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 55, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(2, 55, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_INCREF(__pyx_n_s_second);
-    __Pyx_GIVEREF(__pyx_n_s_second);
-    PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_n_s_second);
+    __Pyx_INCREF(__pyx_n_s_SECOND);
+    __Pyx_GIVEREF(__pyx_n_s_SECOND);
+    PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_n_s_SECOND);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_4);
     __pyx_t_4 = 0;
 
     /* "EnumType":56
- *         ('first', first),
- *         ('second', second),
- *         ('opposed', opposed),             # <<<<<<<<<<<<<<
- *         ('tangent_first', tangent_first),
- *         ('tangent_second', tangent_second),
+ *         ('FIRST', FIRST),
+ *         ('SECOND', SECOND),
+ *         ('OPPOSED', OPPOSED),             # <<<<<<<<<<<<<<
+ *         ('TANGENT_FIRST', TANGENT_FIRST),
+ *         ('TANGENT_SECOND', TANGENT_SECOND),
  */
-    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_opposed); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 56, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_OPPOSED); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 56, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 56, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_INCREF(__pyx_n_s_opposed);
-    __Pyx_GIVEREF(__pyx_n_s_opposed);
-    PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_n_s_opposed);
+    __Pyx_INCREF(__pyx_n_s_OPPOSED);
+    __Pyx_GIVEREF(__pyx_n_s_OPPOSED);
+    PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_n_s_OPPOSED);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_4);
     __pyx_t_4 = 0;
 
     /* "EnumType":57
- *         ('second', second),
- *         ('opposed', opposed),
- *         ('tangent_first', tangent_first),             # <<<<<<<<<<<<<<
- *         ('tangent_second', tangent_second),
- *         ('ignored_corner', ignored_corner),
+ *         ('SECOND', SECOND),
+ *         ('OPPOSED', OPPOSED),
+ *         ('TANGENT_FIRST', TANGENT_FIRST),             # <<<<<<<<<<<<<<
+ *         ('TANGENT_SECOND', TANGENT_SECOND),
+ *         ('IGNORED_CORNER', IGNORED_CORNER),
  */
-    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_tangent_first); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 57, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_TANGENT_FIRST); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 57, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 57, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    __Pyx_INCREF(__pyx_n_s_tangent_first);
-    __Pyx_GIVEREF(__pyx_n_s_tangent_first);
-    PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_n_s_tangent_first);
+    __Pyx_INCREF(__pyx_n_s_TANGENT_FIRST);
+    __Pyx_GIVEREF(__pyx_n_s_TANGENT_FIRST);
+    PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_n_s_TANGENT_FIRST);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_4);
     __pyx_t_4 = 0;
 
     /* "EnumType":58
- *         ('opposed', opposed),
- *         ('tangent_first', tangent_first),
- *         ('tangent_second', tangent_second),             # <<<<<<<<<<<<<<
- *         ('ignored_corner', ignored_corner),
+ *         ('OPPOSED', OPPOSED),
+ *         ('TANGENT_FIRST', TANGENT_FIRST),
+ *         ('TANGENT_SECOND', TANGENT_SECOND),             # <<<<<<<<<<<<<<
+ *         ('IGNORED_CORNER', IGNORED_CORNER),
  *     ]))
  */
-    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_tangent_second); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 58, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_TANGENT_SECOND); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(2, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_INCREF(__pyx_n_s_tangent_second);
-    __Pyx_GIVEREF(__pyx_n_s_tangent_second);
-    PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_n_s_tangent_second);
+    __Pyx_INCREF(__pyx_n_s_TANGENT_SECOND);
+    __Pyx_GIVEREF(__pyx_n_s_TANGENT_SECOND);
+    PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_n_s_TANGENT_SECOND);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_4);
     __pyx_t_4 = 0;
 
     /* "EnumType":59
- *         ('tangent_first', tangent_first),
- *         ('tangent_second', tangent_second),
- *         ('ignored_corner', ignored_corner),             # <<<<<<<<<<<<<<
+ *         ('TANGENT_FIRST', TANGENT_FIRST),
+ *         ('TANGENT_SECOND', TANGENT_SECOND),
+ *         ('IGNORED_CORNER', IGNORED_CORNER),             # <<<<<<<<<<<<<<
  *     ]))
- *     __Pyx_globals['first'] = IntersectionClassification.first
+ *     __Pyx_globals['FIRST'] = IntersectionClassification.FIRST
  */
-    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_ignored_corner); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 59, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_IGNORED_CORNER); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __Pyx_INCREF(__pyx_n_s_ignored_corner);
-    __Pyx_GIVEREF(__pyx_n_s_ignored_corner);
-    PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_n_s_ignored_corner);
+    __Pyx_INCREF(__pyx_n_s_IGNORED_CORNER);
+    __Pyx_GIVEREF(__pyx_n_s_IGNORED_CORNER);
+    PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_n_s_IGNORED_CORNER);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_4);
     __pyx_t_4 = 0;
@@ -24522,8 +24522,8 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
  * if PY_VERSION_HEX >= 0x03040000:
  *
  *     IntersectionClassification = __Pyx_EnumBase('IntersectionClassification', __Pyx_OrderedDict([             # <<<<<<<<<<<<<<
- *         ('first', first),
- *         ('second', second),
+ *         ('FIRST', FIRST),
+ *         ('SECOND', SECOND),
  */
     __pyx_t_4 = PyList_New(6); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 53, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
@@ -24644,117 +24644,117 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "EnumType":61
- *         ('ignored_corner', ignored_corner),
+ *         ('IGNORED_CORNER', IGNORED_CORNER),
  *     ]))
- *     __Pyx_globals['first'] = IntersectionClassification.first             # <<<<<<<<<<<<<<
- *     __Pyx_globals['second'] = IntersectionClassification.second
- *     __Pyx_globals['opposed'] = IntersectionClassification.opposed
+ *     __Pyx_globals['FIRST'] = IntersectionClassification.FIRST             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['SECOND'] = IntersectionClassification.SECOND
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification.OPPOSED
  */
     __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 61, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_first); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 61, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_FIRST); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 61, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (unlikely(__Pyx_globals == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 61, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_first, __pyx_t_11) < 0)) __PYX_ERR(2, 61, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_FIRST, __pyx_t_11) < 0)) __PYX_ERR(2, 61, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
     /* "EnumType":62
  *     ]))
- *     __Pyx_globals['first'] = IntersectionClassification.first
- *     __Pyx_globals['second'] = IntersectionClassification.second             # <<<<<<<<<<<<<<
- *     __Pyx_globals['opposed'] = IntersectionClassification.opposed
- *     __Pyx_globals['tangent_first'] = IntersectionClassification.tangent_first
+ *     __Pyx_globals['FIRST'] = IntersectionClassification.FIRST
+ *     __Pyx_globals['SECOND'] = IntersectionClassification.SECOND             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification.OPPOSED
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification.TANGENT_FIRST
  */
     __pyx_t_11 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 62, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_second); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 62, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_SECOND); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 62, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     if (unlikely(__Pyx_globals == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 62, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_second, __pyx_t_1) < 0)) __PYX_ERR(2, 62, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_SECOND, __pyx_t_1) < 0)) __PYX_ERR(2, 62, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "EnumType":63
- *     __Pyx_globals['first'] = IntersectionClassification.first
- *     __Pyx_globals['second'] = IntersectionClassification.second
- *     __Pyx_globals['opposed'] = IntersectionClassification.opposed             # <<<<<<<<<<<<<<
- *     __Pyx_globals['tangent_first'] = IntersectionClassification.tangent_first
- *     __Pyx_globals['tangent_second'] = IntersectionClassification.tangent_second
+ *     __Pyx_globals['FIRST'] = IntersectionClassification.FIRST
+ *     __Pyx_globals['SECOND'] = IntersectionClassification.SECOND
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification.OPPOSED             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification.TANGENT_FIRST
+ *     __Pyx_globals['TANGENT_SECOND'] = IntersectionClassification.TANGENT_SECOND
  */
     __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_opposed); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 63, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_OPPOSED); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (unlikely(__Pyx_globals == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 63, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_opposed, __pyx_t_11) < 0)) __PYX_ERR(2, 63, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_OPPOSED, __pyx_t_11) < 0)) __PYX_ERR(2, 63, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
     /* "EnumType":64
- *     __Pyx_globals['second'] = IntersectionClassification.second
- *     __Pyx_globals['opposed'] = IntersectionClassification.opposed
- *     __Pyx_globals['tangent_first'] = IntersectionClassification.tangent_first             # <<<<<<<<<<<<<<
- *     __Pyx_globals['tangent_second'] = IntersectionClassification.tangent_second
- *     __Pyx_globals['ignored_corner'] = IntersectionClassification.ignored_corner
+ *     __Pyx_globals['SECOND'] = IntersectionClassification.SECOND
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification.OPPOSED
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification.TANGENT_FIRST             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['TANGENT_SECOND'] = IntersectionClassification.TANGENT_SECOND
+ *     __Pyx_globals['IGNORED_CORNER'] = IntersectionClassification.IGNORED_CORNER
  */
     __pyx_t_11 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 64, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_tangent_first); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 64, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_TANGENT_FIRST); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 64, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     if (unlikely(__Pyx_globals == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 64, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_tangent_first, __pyx_t_1) < 0)) __PYX_ERR(2, 64, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_TANGENT_FIRST, __pyx_t_1) < 0)) __PYX_ERR(2, 64, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "EnumType":65
- *     __Pyx_globals['opposed'] = IntersectionClassification.opposed
- *     __Pyx_globals['tangent_first'] = IntersectionClassification.tangent_first
- *     __Pyx_globals['tangent_second'] = IntersectionClassification.tangent_second             # <<<<<<<<<<<<<<
- *     __Pyx_globals['ignored_corner'] = IntersectionClassification.ignored_corner
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification.OPPOSED
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification.TANGENT_FIRST
+ *     __Pyx_globals['TANGENT_SECOND'] = IntersectionClassification.TANGENT_SECOND             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['IGNORED_CORNER'] = IntersectionClassification.IGNORED_CORNER
  * else:
  */
     __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 65, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_tangent_second); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 65, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_TANGENT_SECOND); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 65, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (unlikely(__Pyx_globals == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 65, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_tangent_second, __pyx_t_11) < 0)) __PYX_ERR(2, 65, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_TANGENT_SECOND, __pyx_t_11) < 0)) __PYX_ERR(2, 65, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
     /* "EnumType":66
- *     __Pyx_globals['tangent_first'] = IntersectionClassification.tangent_first
- *     __Pyx_globals['tangent_second'] = IntersectionClassification.tangent_second
- *     __Pyx_globals['ignored_corner'] = IntersectionClassification.ignored_corner             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification.TANGENT_FIRST
+ *     __Pyx_globals['TANGENT_SECOND'] = IntersectionClassification.TANGENT_SECOND
+ *     __Pyx_globals['IGNORED_CORNER'] = IntersectionClassification.IGNORED_CORNER             # <<<<<<<<<<<<<<
  * else:
  *     class IntersectionClassification(__Pyx_EnumBase):
  */
     __pyx_t_11 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 66, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_ignored_corner); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 66, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_IGNORED_CORNER); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 66, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     if (unlikely(__Pyx_globals == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 66, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_ignored_corner, __pyx_t_1) < 0)) __PYX_ERR(2, 66, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_IGNORED_CORNER, __pyx_t_1) < 0)) __PYX_ERR(2, 66, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "EnumType":51
@@ -24768,11 +24768,11 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
   }
 
   /* "EnumType":68
- *     __Pyx_globals['ignored_corner'] = IntersectionClassification.ignored_corner
+ *     __Pyx_globals['IGNORED_CORNER'] = IntersectionClassification.IGNORED_CORNER
  * else:
  *     class IntersectionClassification(__Pyx_EnumBase):             # <<<<<<<<<<<<<<
  *         pass
- *     __Pyx_globals['first'] = IntersectionClassification(first, 'first')
+ *     __Pyx_globals['FIRST'] = IntersectionClassification(FIRST, 'FIRST')
  */
   /*else*/ {
     __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 68, __pyx_L1_error)
@@ -24795,13 +24795,13 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     /* "EnumType":70
  *     class IntersectionClassification(__Pyx_EnumBase):
  *         pass
- *     __Pyx_globals['first'] = IntersectionClassification(first, 'first')             # <<<<<<<<<<<<<<
- *     __Pyx_globals['second'] = IntersectionClassification(second, 'second')
- *     __Pyx_globals['opposed'] = IntersectionClassification(opposed, 'opposed')
+ *     __Pyx_globals['FIRST'] = IntersectionClassification(FIRST, 'FIRST')             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['SECOND'] = IntersectionClassification(SECOND, 'SECOND')
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification(OPPOSED, 'OPPOSED')
  */
     __pyx_t_11 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 70, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_first); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 70, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_FIRST); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 70, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_3 = NULL;
     __pyx_t_12 = 0;
@@ -24817,7 +24817,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     }
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_t_4, __pyx_n_s_first};
+      PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_t_4, __pyx_n_s_FIRST};
       __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 70, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -24826,7 +24826,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_t_4, __pyx_n_s_first};
+      PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_t_4, __pyx_n_s_FIRST};
       __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 70, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -24841,9 +24841,9 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       }
       __Pyx_GIVEREF(__pyx_t_4);
       PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_12, __pyx_t_4);
-      __Pyx_INCREF(__pyx_n_s_first);
-      __Pyx_GIVEREF(__pyx_n_s_first);
-      PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_12, __pyx_n_s_first);
+      __Pyx_INCREF(__pyx_n_s_FIRST);
+      __Pyx_GIVEREF(__pyx_n_s_FIRST);
+      PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_12, __pyx_n_s_FIRST);
       __pyx_t_4 = 0;
       __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 70, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -24854,19 +24854,19 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 70, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_first, __pyx_t_1) < 0)) __PYX_ERR(2, 70, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_FIRST, __pyx_t_1) < 0)) __PYX_ERR(2, 70, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "EnumType":71
  *         pass
- *     __Pyx_globals['first'] = IntersectionClassification(first, 'first')
- *     __Pyx_globals['second'] = IntersectionClassification(second, 'second')             # <<<<<<<<<<<<<<
- *     __Pyx_globals['opposed'] = IntersectionClassification(opposed, 'opposed')
- *     __Pyx_globals['tangent_first'] = IntersectionClassification(tangent_first, 'tangent_first')
+ *     __Pyx_globals['FIRST'] = IntersectionClassification(FIRST, 'FIRST')
+ *     __Pyx_globals['SECOND'] = IntersectionClassification(SECOND, 'SECOND')             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification(OPPOSED, 'OPPOSED')
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification(TANGENT_FIRST, 'TANGENT_FIRST')
  */
     __pyx_t_11 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_9 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_second); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 71, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_SECOND); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_4 = NULL;
     __pyx_t_12 = 0;
@@ -24882,7 +24882,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     }
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_9, __pyx_n_s_second};
+      PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_9, __pyx_n_s_SECOND};
       __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 71, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -24891,7 +24891,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_9, __pyx_n_s_second};
+      PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_9, __pyx_n_s_SECOND};
       __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 71, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -24906,9 +24906,9 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       }
       __Pyx_GIVEREF(__pyx_t_9);
       PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_12, __pyx_t_9);
-      __Pyx_INCREF(__pyx_n_s_second);
-      __Pyx_GIVEREF(__pyx_n_s_second);
-      PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_12, __pyx_n_s_second);
+      __Pyx_INCREF(__pyx_n_s_SECOND);
+      __Pyx_GIVEREF(__pyx_n_s_SECOND);
+      PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_12, __pyx_n_s_SECOND);
       __pyx_t_9 = 0;
       __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 71, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -24919,19 +24919,19 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 71, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_second, __pyx_t_1) < 0)) __PYX_ERR(2, 71, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_SECOND, __pyx_t_1) < 0)) __PYX_ERR(2, 71, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "EnumType":72
- *     __Pyx_globals['first'] = IntersectionClassification(first, 'first')
- *     __Pyx_globals['second'] = IntersectionClassification(second, 'second')
- *     __Pyx_globals['opposed'] = IntersectionClassification(opposed, 'opposed')             # <<<<<<<<<<<<<<
- *     __Pyx_globals['tangent_first'] = IntersectionClassification(tangent_first, 'tangent_first')
- *     __Pyx_globals['tangent_second'] = IntersectionClassification(tangent_second, 'tangent_second')
+ *     __Pyx_globals['FIRST'] = IntersectionClassification(FIRST, 'FIRST')
+ *     __Pyx_globals['SECOND'] = IntersectionClassification(SECOND, 'SECOND')
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification(OPPOSED, 'OPPOSED')             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification(TANGENT_FIRST, 'TANGENT_FIRST')
+ *     __Pyx_globals['TANGENT_SECOND'] = IntersectionClassification(TANGENT_SECOND, 'TANGENT_SECOND')
  */
     __pyx_t_11 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 72, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_3 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_opposed); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 72, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_OPPOSED); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 72, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_9 = NULL;
     __pyx_t_12 = 0;
@@ -24947,7 +24947,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     }
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, __pyx_n_s_opposed};
+      PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, __pyx_n_s_OPPOSED};
       __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 72, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -24956,7 +24956,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, __pyx_n_s_opposed};
+      PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, __pyx_n_s_OPPOSED};
       __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 72, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -24971,9 +24971,9 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       }
       __Pyx_GIVEREF(__pyx_t_3);
       PyTuple_SET_ITEM(__pyx_t_4, 0+__pyx_t_12, __pyx_t_3);
-      __Pyx_INCREF(__pyx_n_s_opposed);
-      __Pyx_GIVEREF(__pyx_n_s_opposed);
-      PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_12, __pyx_n_s_opposed);
+      __Pyx_INCREF(__pyx_n_s_OPPOSED);
+      __Pyx_GIVEREF(__pyx_n_s_OPPOSED);
+      PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_12, __pyx_n_s_OPPOSED);
       __pyx_t_3 = 0;
       __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 72, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -24984,19 +24984,19 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 72, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_opposed, __pyx_t_1) < 0)) __PYX_ERR(2, 72, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_OPPOSED, __pyx_t_1) < 0)) __PYX_ERR(2, 72, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "EnumType":73
- *     __Pyx_globals['second'] = IntersectionClassification(second, 'second')
- *     __Pyx_globals['opposed'] = IntersectionClassification(opposed, 'opposed')
- *     __Pyx_globals['tangent_first'] = IntersectionClassification(tangent_first, 'tangent_first')             # <<<<<<<<<<<<<<
- *     __Pyx_globals['tangent_second'] = IntersectionClassification(tangent_second, 'tangent_second')
- *     __Pyx_globals['ignored_corner'] = IntersectionClassification(ignored_corner, 'ignored_corner')
+ *     __Pyx_globals['SECOND'] = IntersectionClassification(SECOND, 'SECOND')
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification(OPPOSED, 'OPPOSED')
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification(TANGENT_FIRST, 'TANGENT_FIRST')             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['TANGENT_SECOND'] = IntersectionClassification(TANGENT_SECOND, 'TANGENT_SECOND')
+ *     __Pyx_globals['IGNORED_CORNER'] = IntersectionClassification(IGNORED_CORNER, 'IGNORED_CORNER')
  */
     __pyx_t_11 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 73, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_tangent_first); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 73, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_TANGENT_FIRST); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 73, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_3 = NULL;
     __pyx_t_12 = 0;
@@ -25012,7 +25012,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     }
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_t_4, __pyx_n_s_tangent_first};
+      PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_t_4, __pyx_n_s_TANGENT_FIRST};
       __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 73, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -25021,7 +25021,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_t_4, __pyx_n_s_tangent_first};
+      PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_t_4, __pyx_n_s_TANGENT_FIRST};
       __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 73, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -25036,9 +25036,9 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       }
       __Pyx_GIVEREF(__pyx_t_4);
       PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_12, __pyx_t_4);
-      __Pyx_INCREF(__pyx_n_s_tangent_first);
-      __Pyx_GIVEREF(__pyx_n_s_tangent_first);
-      PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_12, __pyx_n_s_tangent_first);
+      __Pyx_INCREF(__pyx_n_s_TANGENT_FIRST);
+      __Pyx_GIVEREF(__pyx_n_s_TANGENT_FIRST);
+      PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_12, __pyx_n_s_TANGENT_FIRST);
       __pyx_t_4 = 0;
       __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 73, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -25049,19 +25049,19 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 73, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_tangent_first, __pyx_t_1) < 0)) __PYX_ERR(2, 73, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_TANGENT_FIRST, __pyx_t_1) < 0)) __PYX_ERR(2, 73, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "EnumType":74
- *     __Pyx_globals['opposed'] = IntersectionClassification(opposed, 'opposed')
- *     __Pyx_globals['tangent_first'] = IntersectionClassification(tangent_first, 'tangent_first')
- *     __Pyx_globals['tangent_second'] = IntersectionClassification(tangent_second, 'tangent_second')             # <<<<<<<<<<<<<<
- *     __Pyx_globals['ignored_corner'] = IntersectionClassification(ignored_corner, 'ignored_corner')
+ *     __Pyx_globals['OPPOSED'] = IntersectionClassification(OPPOSED, 'OPPOSED')
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification(TANGENT_FIRST, 'TANGENT_FIRST')
+ *     __Pyx_globals['TANGENT_SECOND'] = IntersectionClassification(TANGENT_SECOND, 'TANGENT_SECOND')             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['IGNORED_CORNER'] = IntersectionClassification(IGNORED_CORNER, 'IGNORED_CORNER')
  *
  */
     __pyx_t_11 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 74, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_9 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_tangent_second); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 74, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_TANGENT_SECOND); if (unlikely(!__pyx_t_9)) __PYX_ERR(2, 74, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_4 = NULL;
     __pyx_t_12 = 0;
@@ -25077,7 +25077,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     }
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_9, __pyx_n_s_tangent_second};
+      PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_9, __pyx_n_s_TANGENT_SECOND};
       __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 74, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -25086,7 +25086,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_9, __pyx_n_s_tangent_second};
+      PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_9, __pyx_n_s_TANGENT_SECOND};
       __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 74, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -25101,9 +25101,9 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       }
       __Pyx_GIVEREF(__pyx_t_9);
       PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_12, __pyx_t_9);
-      __Pyx_INCREF(__pyx_n_s_tangent_second);
-      __Pyx_GIVEREF(__pyx_n_s_tangent_second);
-      PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_12, __pyx_n_s_tangent_second);
+      __Pyx_INCREF(__pyx_n_s_TANGENT_SECOND);
+      __Pyx_GIVEREF(__pyx_n_s_TANGENT_SECOND);
+      PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_12, __pyx_n_s_TANGENT_SECOND);
       __pyx_t_9 = 0;
       __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 74, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -25114,18 +25114,18 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 74, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_tangent_second, __pyx_t_1) < 0)) __PYX_ERR(2, 74, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_TANGENT_SECOND, __pyx_t_1) < 0)) __PYX_ERR(2, 74, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "EnumType":75
- *     __Pyx_globals['tangent_first'] = IntersectionClassification(tangent_first, 'tangent_first')
- *     __Pyx_globals['tangent_second'] = IntersectionClassification(tangent_second, 'tangent_second')
- *     __Pyx_globals['ignored_corner'] = IntersectionClassification(ignored_corner, 'ignored_corner')             # <<<<<<<<<<<<<<
+ *     __Pyx_globals['TANGENT_FIRST'] = IntersectionClassification(TANGENT_FIRST, 'TANGENT_FIRST')
+ *     __Pyx_globals['TANGENT_SECOND'] = IntersectionClassification(TANGENT_SECOND, 'TANGENT_SECOND')
+ *     __Pyx_globals['IGNORED_CORNER'] = IntersectionClassification(IGNORED_CORNER, 'IGNORED_CORNER')             # <<<<<<<<<<<<<<
  *
  */
     __pyx_t_11 = __Pyx_GetModuleGlobalName(__pyx_n_s_IntersectionClassification); if (unlikely(!__pyx_t_11)) __PYX_ERR(2, 75, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_3 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_ignored_corner); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 75, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum____pyx_t_6bezier_16_surface_speedup_IntersectionClassification(__pyx_e_6bezier_16_surface_speedup_IGNORED_CORNER); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 75, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_9 = NULL;
     __pyx_t_12 = 0;
@@ -25141,7 +25141,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     }
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, __pyx_n_s_ignored_corner};
+      PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, __pyx_n_s_IGNORED_CORNER};
       __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 75, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -25150,7 +25150,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_11)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, __pyx_n_s_ignored_corner};
+      PyObject *__pyx_temp[3] = {__pyx_t_9, __pyx_t_3, __pyx_n_s_IGNORED_CORNER};
       __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_12, 2+__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 75, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_GOTREF(__pyx_t_1);
@@ -25165,9 +25165,9 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       }
       __Pyx_GIVEREF(__pyx_t_3);
       PyTuple_SET_ITEM(__pyx_t_4, 0+__pyx_t_12, __pyx_t_3);
-      __Pyx_INCREF(__pyx_n_s_ignored_corner);
-      __Pyx_GIVEREF(__pyx_n_s_ignored_corner);
-      PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_12, __pyx_n_s_ignored_corner);
+      __Pyx_INCREF(__pyx_n_s_IGNORED_CORNER);
+      __Pyx_GIVEREF(__pyx_n_s_IGNORED_CORNER);
+      PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_12, __pyx_n_s_IGNORED_CORNER);
       __pyx_t_3 = 0;
       __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 75, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -25178,7 +25178,7 @@ PyMODINIT_FUNC PyInit__surface_speedup(void)
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(2, 75, __pyx_L1_error)
     }
-    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_ignored_corner, __pyx_t_1) < 0)) __PYX_ERR(2, 75, __pyx_L1_error)
+    if (unlikely(PyDict_SetItem(__Pyx_globals, __pyx_n_s_IGNORED_CORNER, __pyx_t_1) < 0)) __PYX_ERR(2, 75, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   __pyx_L4:;

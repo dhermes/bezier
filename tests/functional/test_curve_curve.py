@@ -29,8 +29,8 @@ from tests.functional.utils import CurveIntersectionType
 
 
 SPACING = np.spacing  # pylint: disable=no-member
-GEOMETRIC = bezier.curve.IntersectionStrategy.geometric
-ALGEBRAIC = bezier.curve.IntersectionStrategy.algebraic
+GEOMETRIC = bezier.curve.IntersectionStrategy.GEOMETRIC
+ALGEBRAIC = bezier.curve.IntersectionStrategy.ALGEBRAIC
 S_PROP = operator.attrgetter('s')
 _, INTERSECTIONS = utils.curve_intersections_info()
 INCORRECT_VALUES_MSG = """\

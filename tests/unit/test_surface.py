@@ -824,7 +824,7 @@ class TestSurface(utils.NumPyTestCase):
     def test_intersect_algebraic(self):
         from bezier import _intersection_helpers
 
-        strategy = _intersection_helpers.IntersectionStrategy.algebraic
+        strategy = _intersection_helpers.IntersectionStrategy.ALGEBRAIC
         self._basic_intersect_helper(strategy=strategy)
 
     def test_intersect_disjoint_bbox(self):

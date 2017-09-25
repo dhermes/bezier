@@ -1409,10 +1409,9 @@ def next_candidates(first, second):
 class IntersectionStrategy(enum.Enum):
     """Enum determining if the type of intersection algorithm to use."""
 
-    geometric = 'geometric'
+    GEOMETRIC = 0
     """Geometric approach to intersection (via subdivision)."""
-
-    algebraic = 'algebraic'
+    ALGEBRAIC = 1
     """Algebraic approach to intersection (via implicitization)."""
 
 
@@ -1512,7 +1511,7 @@ def all_intersections_algebraic(candidates):
     return result
 
 
-def all_intersections(candidates, strategy=IntersectionStrategy.geometric):
+def all_intersections(candidates, strategy=IntersectionStrategy.GEOMETRIC):
     r"""Find the points of intersection among pairs of curves.
 
     .. note::
@@ -1534,9 +1533,9 @@ def all_intersections(candidates, strategy=IntersectionStrategy.geometric):
     Raises:
         ValueError: If the strategy is not known.
     """
-    if strategy is IntersectionStrategy.geometric:
+    if strategy is IntersectionStrategy.GEOMETRIC:
         return all_intersections_geometric(candidates)
-    elif strategy is IntersectionStrategy.algebraic:
+    elif strategy is IntersectionStrategy.ALGEBRAIC:
         return all_intersections_algebraic(candidates)
     else:
         raise ValueError('Unexpected strategy.')
@@ -1550,9 +1549,13 @@ class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
        This class would be more "correct" as an ``enum.Enum``, but it we keep
        the values integers to make interfacing with Fortran easier.
     """
+
     INTERSECTION = 0
+    """Bounding boxes overlap with positive area."""
     TANGENT = 1
+    """Bounding boxes are tangent but do not overlap."""
     DISJOINT = 2
+    """Bounding boxes do not intersect or touch."""
 
 
 class Linearization(object):
