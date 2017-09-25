@@ -32,8 +32,7 @@ contains
     eps = 0.5_dp**40
 
     ! CASE 1: Identical vector.
-    vec1(1, 1) = 0.5_dp
-    vec1(1, 2) = 4.0_dp
+    vec1(1, :) = [0.5_dp, 4.0_dp]
     is_close = vector_close(2, vec1, vec1, eps)
     if (is_close) then
        write (*, "(A)") "vector_close: Case 1 success"
@@ -43,10 +42,8 @@ contains
     end if
 
     ! CASE 2: Far apart vectors.
-    vec1(1, 1) = 0.0_dp
-    vec1(1, 2) = 6.0_dp
-    vec2(1, 1) = 1.0_dp
-    vec2(1, 2) = -4.0_dp
+    vec1(1, :) = [0.0_dp, 6.0_dp]
+    vec2(1, :) = [1.0_dp, -4.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     if (.NOT. is_close) then
        write (*, "(A)") "vector_close: Case 2 success"
