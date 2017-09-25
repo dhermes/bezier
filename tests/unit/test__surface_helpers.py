@@ -21,6 +21,7 @@ try:
     from bezier import _HAS_SURFACE_SPEEDUP as HAS_SURFACE_SPEEDUP
 except ImportError:  # pragma: NO COVER
     HAS_SURFACE_SPEEDUP = False
+from tests import utils as base_utils
 from tests.unit import utils
 
 
@@ -2603,5 +2604,8 @@ class TestIntersectionClassification(unittest.TestCase):
         self.assertEqual(set(python_members), set(cython_members))
         for name, enum_value in six.iteritems(python_members):
             py_value = enum_value.value
-            cy_value = cython_members[name].value
+            if base_utils.IS_PYPY:  # pragma: NO COVER
+                cy_value = cython_members[name]
+            else:
+                cy_value = cython_members[name].value
             self.assertEqual(py_value, cy_value)
