@@ -17,8 +17,10 @@ module helpers
   implicit none
   private
   public &
-       cross_product, bbox, wiggle_interval, contains_nd, &
+       WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
        vector_close, in_interval, ulps_away
+
+  real(c_double), parameter :: WIGGLE = 0.5_dp**45
 
 contains
 
@@ -62,12 +64,12 @@ contains
     logical(c_bool), intent(out) :: success
 
     success = .TRUE.
-    if (-0.5_dp**45 < value_ .AND. value_ < 0.5_dp**45) then
+    if (-WIGGLE < value_ .AND. value_ < WIGGLE) then
        result_ = 0.0_dp
-    else if (0.5_dp**45 <= value_ .AND. value_ <= 1.0_dp - 0.5_dp**45) then
+    else if (WIGGLE <= value_ .AND. value_ <= 1.0_dp - WIGGLE) then
        result_ = value_
     else if ( &
-         1.0_dp - 0.5_dp**45 < value_ .AND. value_ < 1.0_dp + 0.5_dp**45) then
+         1.0_dp - WIGGLE < value_ .AND. value_ < 1.0_dp + WIGGLE) then
        result_ = 1.0_dp
     else
        success = .FALSE.
