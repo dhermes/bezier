@@ -1178,8 +1178,6 @@ def endpoint_check(
         # pylint: disable=protected-access
         orig_s = (1 - s) * first._start + s * first._end
         orig_t = (1 - t) * second._start + t * second._end
-        # ``node_first`` is a row in a Fortran-contiguous array, so
-        # the values aren't contiguous.
         intersection = Intersection(
             first._root, orig_s, second._root, orig_t,
             point=node_first)
