@@ -15,13 +15,13 @@ module test_curve
   use iso_c_binding, only: c_bool, c_double
   use curve, only: &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
-       subdivide_nodes
+       evaluate_hodograph, subdivide_nodes
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_evaluate_curve_barycentric, test_evaluate_multi, &
-       test_specialize_curve
+       test_specialize_curve, test_evaluate_hodograph
   public curve_all_tests
 
 contains
@@ -32,6 +32,7 @@ contains
     call test_evaluate_curve_barycentric(success)
     call test_evaluate_multi(success)
     call test_specialize_curve(success)
+    call test_evaluate_hodograph(success)
 
   end subroutine curve_all_tests
 
@@ -231,5 +232,99 @@ contains
     end if
 
   end subroutine test_specialize_curve
+
+  subroutine test_evaluate_hodograph(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical(c_bool) :: local_success
+    real(c_double) :: s_vals(5), s_val
+    real(c_double) :: hodograph(1, 2), expected(1, 2)
+    real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(4, 2)
+    integer :: i
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "evaluate_hodograph"
+
+    ! CASE 1: Linear curve.
+    nodes1(1, :) = [0.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 1.0_dp]
+    expected(1, :) = nodes1(2, :) - nodes1(1, :)
+    s_vals(:2) = [0.25_dp, 0.75_dp]
+    local_success = .TRUE.
+    do i = 1, 2
+       call evaluate_hodograph( &
+            s_vals(i), 1, 2, nodes1, hodograph)
+       if (any(hodograph /= expected)) then
+          local_success = .FALSE.
+          exit
+       end if
+    end do
+
+    if (local_success) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Quadratic curve.
+    nodes2(1, :) = [0.0_dp, 0.0_dp]
+    nodes2(2, :) = [0.5_dp, 1.0_dp]
+    nodes2(3, :) = [1.25_dp, 0.25_dp]
+    !  B(s) = [s(s + 4)/4, s(8 - 7s)/4]
+    ! B'(s) = [(2 + s)/2, (4 - 7s)/2]
+    s_vals = [0.0_dp, 0.25_dp, 0.5_dp, 0.625_dp, 0.875_dp]
+    local_success = .TRUE.
+    do i = 1, 5
+       s_val = s_vals(i)
+       call evaluate_hodograph( &
+            s_val, 2, 2, nodes2, hodograph)
+       expected(1, :) = [ &
+            (2.0_dp + s_val) / 2.0_dp, &
+            (4.0_dp - 7.0_dp * s_val) / 2.0_dp]
+       if (any(hodograph /= expected)) then
+          local_success = .FALSE.
+          exit
+       end if
+    end do
+    if (local_success) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Cubic curve.
+    nodes3(1, :) = [0.0_dp, 0.0_dp]
+    nodes3(2, :) = [0.25_dp, 1.0_dp]
+    nodes3(3, :) = [0.75_dp, 0.5_dp]
+    nodes3(4, :) = [1.25_dp, 1.0_dp]
+    !  B(s) = [s(3 + 3s - s^2)/4, s(5s^2 - 9s + 6)/2]
+    ! B'(s) = [3(1 + 2s - s^2)/4, 3(5s^2 - 6s + 2)/2]
+    s_vals = [0.125_dp, 0.5_dp, 0.75_dp, 1.0_dp, 1.125_dp]
+    local_success = .TRUE.
+    do i = 1, 5
+       s_val = s_vals(i)
+       call evaluate_hodograph( &
+            s_val, 3, 2, nodes3, hodograph)
+       expected(1, 1) = ( &
+            3.0_dp * (1.0_dp + 2.0_dp * s_val - s_val * s_val) / 4.0_dp)
+       expected(1, 2) = ( &
+            1.5_dp * (5.0_dp * s_val * s_val - 6.0_dp * s_val + 2.0_dp))
+       if (any(hodograph /= expected)) then
+          local_success = .FALSE.
+          exit
+       end if
+    end do
+    if (local_success) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_evaluate_hodograph
 
 end module test_curve
