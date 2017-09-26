@@ -502,7 +502,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
         self.assertEqual(true_start, 0.15625)
         self.assertEqual(true_end, 0.21875)
 
-    def test_againt_subdivision(self):
+    def test_against_subdivision(self):
         import bezier
 
         nodes = np.asfortranarray([

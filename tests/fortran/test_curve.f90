@@ -13,11 +13,15 @@
 module test_curve
 
   use iso_c_binding, only: c_bool, c_double
-  use curve, only: evaluate_curve_barycentric, evaluate_multi
+  use curve, only: &
+       evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
+       subdivide_nodes
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
-  private test_evaluate_curve_barycentric, test_evaluate_multi
+  private &
+       test_evaluate_curve_barycentric, test_evaluate_multi, &
+       test_specialize_curve
   public curve_all_tests
 
 contains
@@ -27,6 +31,7 @@ contains
 
     call test_evaluate_curve_barycentric(success)
     call test_evaluate_multi(success)
+    call test_specialize_curve(success)
 
   end subroutine curve_all_tests
 
@@ -119,5 +124,112 @@ contains
     end if
 
   end subroutine test_evaluate_multi
+
+  subroutine test_specialize_curve(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: true_start, true_end
+    real(c_double) :: nodes1(2, 2)
+    real(c_double) :: new_nodes1(2, 2), expected1(2, 2)
+    real(c_double) :: nodes2(3, 2), left_nodes(3, 2), right_nodes(3, 2)
+    real(c_double) :: new_nodes2(3, 2)
+    real(c_double) :: nodes3(4, 2), new_nodes3(4, 2), expected3(4, 2)
+    real(c_double) :: nodes4(5, 2), new_nodes4(5, 2), expected4(5, 2)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "specialize_curve"
+
+    ! CASE 1: Linear curve.
+    nodes1(1, :) = [0.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 1.0_dp]
+    expected1(1, :) = [0.25_dp, 0.25_dp]
+    expected1(2, :) = [0.75_dp, 0.75_dp]
+    call specialize_curve( &
+         1, 2, nodes1, 0.25_dp, 0.75_dp, 0.125_dp, 0.25_dp, &
+         new_nodes1, true_start, true_end)
+
+    if (all(new_nodes1 == expected1) .AND. &
+         true_start == 0.15625_dp .AND. true_end == 0.21875_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Quadratic curve, after subdivision.
+    nodes2(1, :) = [0.0_dp, 1.0_dp]
+    nodes2(2, :) = [1.0_dp, 6.0_dp]
+    nodes2(3, :) = [3.0_dp, 5.0_dp]
+    call subdivide_nodes( &
+         3, 2, nodes2, left_nodes, right_nodes)
+    call specialize_curve( &
+         2, 2, nodes2, 0.0_dp, 0.5_dp, 0.0_dp, 1.0_dp, &
+         new_nodes2, true_start, true_end)
+
+    if (all(new_nodes2 == left_nodes) .AND. &
+         true_start == 0.0_dp .AND. true_end == 0.5_dp) then
+       ! Do a "second" check for the right-hand nodes.
+       call specialize_curve( &
+            2, 2, nodes2, 0.5_dp, 1.0_dp, 0.0_dp, 1.0_dp, &
+            new_nodes2, true_start, true_end)
+       if (all(new_nodes2 == right_nodes) .AND. &
+            true_start == 0.5_dp .AND. true_end == 1.0_dp) then
+          call print_status(name, case_id, .TRUE.)
+       else
+          call print_status(name, case_id, .FALSE.)
+          success = .FALSE.
+       end if
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Cubic curve.
+    nodes3(1, :) = [0.0_dp, 0.0_dp]
+    nodes3(2, :) = [1.0_dp, -1.0_dp]
+    nodes3(3, :) = [1.0_dp, -2.0_dp]
+    nodes3(4, :) = [3.0_dp, 2.0_dp]
+    expected3(1, :) = [171.0_dp, -187.0_dp] / 512.0_dp
+    expected3(2, :) = [375.0_dp, -423.0_dp] / 512.0_dp
+    expected3(3, :) = [499.0_dp, -579.0_dp] / 512.0_dp
+    expected3(4, :) = [735.0_dp, -335.0_dp] / 512.0_dp
+    call specialize_curve( &
+         3, 2, nodes3, 0.125_dp, 0.625_dp, 0.0_dp, 1.0_dp, &
+         new_nodes3, true_start, true_end)
+
+    if (all(new_nodes3 == expected3) .AND. &
+         true_start == 0.125_dp .AND. true_end == 0.625_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Quartic curve.
+    nodes4(1, :) = [0.0_dp, 5.0_dp]
+    nodes4(2, :) = [1.0_dp, 6.0_dp]
+    nodes4(3, :) = [1.0_dp, 7.0_dp]
+    nodes4(4, :) = [3.0_dp, 6.0_dp]
+    nodes4(5, :) = [3.0_dp, 7.0_dp]
+    expected4(1, :) = [1.5625_dp, 6.375_dp]
+    expected4(2, :) = [1.78125_dp, 6.4375_dp]
+    expected4(3, :) = [2.015625_dp, 6.46875_dp]
+    expected4(4, :) = [2.2578125_dp, 6.484375_dp]
+    expected4(5, :) = [2.47265625_dp, 6.5234375_dp]
+    call specialize_curve( &
+         4, 2, nodes4, 0.5_dp, 0.75_dp, 0.0_dp, 1.0_dp, &
+         new_nodes4, true_start, true_end)
+
+    if (all(new_nodes4 == expected4) .AND. &
+         true_start == 0.5_dp .AND. true_end == 0.75_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_specialize_curve
 
 end module test_curve
