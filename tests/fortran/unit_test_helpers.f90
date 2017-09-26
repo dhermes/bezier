@@ -31,7 +31,7 @@ contains
        status_msg = " failure"
     end if
 
-    write (*, "(A15, A, I2, A)") name, ": Case ", case_id, status_msg
+    write (*, "(A26, A, I2, A)") name, ": Case ", case_id, status_msg
 
     ! Increment case ID for next case.
     case_id = case_id + 1

@@ -14,12 +14,14 @@ program test
 
   use iso_c_binding, only: c_bool
   use test_helpers, only: helpers_all_tests
+  use test_curve, only: curve_all_tests
   implicit none
 
   logical(c_bool) :: success
 
   success = .TRUE.
   call helpers_all_tests(success)
+  call curve_all_tests(success)
   if (.NOT. success) then
      call exit(1)
   end if
