@@ -15,14 +15,14 @@ module test_curve
   use iso_c_binding, only: c_bool, c_double
   use curve, only: &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
-       evaluate_hodograph, subdivide_nodes
+       evaluate_hodograph, subdivide_nodes, newton_refine
   use types, only: dp
   use unit_test_helpers, only: print_status, get_random_nodes, binary_round
   implicit none
   private &
        test_evaluate_curve_barycentric, test_evaluate_multi, &
        test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
-       subdivide_points_check
+       subdivide_points_check, test_newton_refine
   public curve_all_tests
 
 contains
@@ -35,6 +35,7 @@ contains
     call test_specialize_curve(success)
     call test_evaluate_hodograph(success)
     call test_subdivide_nodes(success)
+    call test_newton_refine(success)
 
   end subroutine curve_all_tests
 
@@ -495,5 +496,36 @@ contains
     end if
 
   end subroutine subdivide_points_check
+
+  subroutine test_newton_refine(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes(4, 3)
+    real(c_double) :: point(1, 3)
+    real(c_double) :: new_s
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "newton_refine"
+
+    ! CASE 1: Cubic in 3D.
+    nodes(1, :) = [0.0_dp, 0.0_dp, 0.0_dp]
+    nodes(2, :) = [1.0_dp, -1.0_dp, 1.0_dp]
+    nodes(3, :) = [3.0_dp, 2.0_dp, 2.0_dp]
+    nodes(4, :) = [2.0_dp, 2.0_dp, 4.0_dp]
+    ! curve(1/2) = p
+    point(1, :) = [1.75_dp, 0.625_dp, 1.625_dp]
+    call newton_refine( &
+         4, 3, nodes, point, 0.25_dp, new_s)
+
+    if (110.0_dp * new_s == 57.0_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_newton_refine
 
 end module test_curve
