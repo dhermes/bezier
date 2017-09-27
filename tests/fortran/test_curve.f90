@@ -16,7 +16,7 @@ module test_curve
   use curve, only: &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
        evaluate_hodograph, subdivide_nodes, newton_refine, LOCATE_MISS, &
-       LOCATE_INVALID, locate_point, elevate_nodes
+       LOCATE_INVALID, locate_point, elevate_nodes, get_curvature
   use types, only: dp
   use unit_test_helpers, only: print_status, get_random_nodes, binary_round
   implicit none
@@ -24,7 +24,7 @@ module test_curve
        test_evaluate_curve_barycentric, test_evaluate_multi, &
        test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
        subdivide_points_check, test_newton_refine, test_locate_point, &
-       test_elevate_nodes
+       test_elevate_nodes, test_get_curvature
   public curve_all_tests
 
 contains
@@ -40,6 +40,7 @@ contains
     call test_newton_refine(success)
     call test_locate_point(success)
     call test_elevate_nodes(success)
+    call test_get_curvature(success)
 
   end subroutine curve_all_tests
 
@@ -639,5 +640,65 @@ contains
     end if
 
   end subroutine test_elevate_nodes
+
+  subroutine test_get_curvature(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(2, 2), nodes2(3, 2)
+    real(c_double) :: s_val, tangent_vec(1, 2), curvature
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "get_curvature"
+
+    ! CASE 1: Linear curve.
+    nodes1(1, :) = 0
+    nodes1(2, :) = 1
+    s_val = 0.5_dp
+    call evaluate_hodograph( &
+         s_val, 1, 2, nodes1, tangent_vec)
+    call get_curvature( &
+         2, 2, nodes1, tangent_vec, s_val, curvature)
+    if (curvature == 0.0_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Linear curve, degree-elevated to quadratic.
+    nodes2(1, :) = 0
+    nodes2(2, :) = 0.5_dp
+    nodes2(3, :) = 1
+    s_val = 0.25_dp
+    call evaluate_hodograph( &
+         s_val, 2, 2, nodes2, tangent_vec)
+    call get_curvature( &
+         3, 2, nodes2, tangent_vec, s_val, curvature)
+    if (curvature == 0.0_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Quadraticr curve.
+    nodes2(1, :) = 0
+    nodes2(2, :) = [0.5_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    s_val = 0.5_dp
+    call evaluate_hodograph( &
+         s_val, 2, 2, nodes2, tangent_vec)
+    call get_curvature( &
+         3, 2, nodes2, tangent_vec, s_val, curvature)
+    if (curvature == -4.0_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_get_curvature
 
 end module test_curve
