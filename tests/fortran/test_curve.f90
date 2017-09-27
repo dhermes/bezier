@@ -17,11 +17,12 @@ module test_curve
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
        evaluate_hodograph, subdivide_nodes
   use types, only: dp
-  use unit_test_helpers, only: print_status
+  use unit_test_helpers, only: print_status, get_random_nodes, binary_round
   implicit none
   private &
        test_evaluate_curve_barycentric, test_evaluate_multi, &
-       test_specialize_curve, test_evaluate_hodograph
+       test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
+       subdivide_points_check
   public curve_all_tests
 
 contains
@@ -33,6 +34,7 @@ contains
     call test_evaluate_multi(success)
     call test_specialize_curve(success)
     call test_evaluate_hodograph(success)
+    call test_subdivide_nodes(success)
 
   end subroutine curve_all_tests
 
@@ -326,5 +328,172 @@ contains
     end if
 
   end subroutine test_evaluate_hodograph
+
+  subroutine test_subdivide_nodes(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical(c_bool) :: local_success
+    real(c_double) :: nodes1(2, 2), l_expected1(2, 2), r_expected1(2, 2)
+    real(c_double) :: left_nodes1(2, 2), right_nodes1(2, 2)
+    real(c_double) :: nodes2(3, 2), l_expected2(3, 2), r_expected2(3, 2)
+    real(c_double) :: left_nodes2(3, 2), right_nodes2(3, 2)
+    real(c_double) :: nodes3(4, 2), l_expected3(4, 2), r_expected3(4, 2)
+    real(c_double) :: left_nodes3(4, 2), right_nodes3(4, 2)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "subdivide_nodes"
+
+    ! CASE 1: Linear curve.
+    nodes1(1, :) = [0.0_dp, 1.0_dp]
+    nodes1(2, :) = [4.0_dp, 6.0_dp]
+    l_expected1(1, :) = [0.0_dp, 1.0_dp]
+    l_expected1(2, :) = [2.0_dp, 3.5_dp]
+    r_expected1(1, :) = [2.0_dp, 3.5_dp]
+    r_expected1(2, :) = [4.0_dp, 6.0_dp]
+    call subdivide_nodes( &
+         2, 2, nodes1, left_nodes1, right_nodes1)
+
+    if (all(left_nodes1 == l_expected1) .AND. &
+         all(right_nodes1 == r_expected1)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Evaluate subdivided parts of a line.
+    call subdivide_points_check( &
+         2, 2, 909203, 10489, local_success)
+    if (local_success) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Quadratic curve.
+    nodes2(1, :) = [0.0_dp, 1.0_dp]
+    nodes2(2, :) = [4.0_dp, 6.0_dp]
+    nodes2(3, :) = [7.0_dp, 3.0_dp]
+    l_expected2(1, :) = [0.0_dp, 1.0_dp]
+    l_expected2(2, :) = [2.0_dp, 3.5_dp]
+    l_expected2(3, :) = [3.75_dp, 4.0_dp]
+    r_expected2(1, :) = [3.75_dp, 4.0_dp]
+    r_expected2(2, :) = [5.5_dp, 4.5_dp]
+    r_expected2(3, :) = [7.0_dp, 3.0_dp]
+    call subdivide_nodes( &
+         3, 2, nodes2, left_nodes2, right_nodes2)
+
+    if (all(left_nodes2 == l_expected2) .AND. &
+         all(right_nodes2 == r_expected2)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Evaluate subdivided parts of a quadratic curve.
+    call subdivide_points_check( &
+         3, 2, 10920388, 7756, local_success)
+    if (local_success) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Cubic curve.
+    nodes3(1, :) = [0.0_dp, 1.0_dp]
+    nodes3(2, :) = [4.0_dp, 6.0_dp]
+    nodes3(3, :) = [7.0_dp, 3.0_dp]
+    nodes3(4, :) = [6.0_dp, 5.0_dp]
+    l_expected3(1, :) = [0.0_dp, 1.0_dp]
+    l_expected3(2, :) = [2.0_dp, 3.5_dp]
+    l_expected3(3, :) = [3.75_dp, 4.0_dp]
+    l_expected3(4, :) = [4.875_dp, 4.125_dp]
+    r_expected3(1, :) = [4.875_dp, 4.125_dp]
+    r_expected3(2, :) = [6.0_dp, 4.25_dp]
+    r_expected3(3, :) = [6.5_dp, 4.0_dp]
+    r_expected3(4, :) = [6.0_dp, 5.0_dp]
+    call subdivide_nodes( &
+         4, 2, nodes3, left_nodes3, right_nodes3)
+
+    if (all(left_nodes3 == l_expected3) .AND. &
+         all(right_nodes3 == r_expected3)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 6: Evaluate subdivided parts of a cubic curve.
+    call subdivide_points_check( &
+         4, 2, 33981020, 81902302, local_success)
+    if (local_success) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 7: Quartic curve (not hardcoded).
+    call subdivide_points_check( &
+         5, 2, 1190, 881, local_success)
+    if (local_success) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_subdivide_nodes
+
+  subroutine subdivide_points_check( &
+       num_nodes, dimension_, multiplier, modulus, success)
+    integer, intent(in) :: num_nodes, dimension_, multiplier, modulus
+    logical(c_bool), intent(out) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes(num_nodes, dimension_)
+    real(c_double) :: left(num_nodes, dimension_)
+    real(c_double) :: right(num_nodes, dimension_)
+    real(c_double) :: unit_interval(33), left_s(33), right_s(33)
+    real(c_double) :: evaluated1(33, dimension_)
+    real(c_double) :: evaluated2(33, dimension_)
+    integer :: i
+
+    success = .TRUE.
+
+    call get_random_nodes(nodes, multiplier, modulus)
+    call binary_round(nodes, 8)
+    call subdivide_nodes( &
+         num_nodes, dimension_, nodes, left, right)
+
+    do i = 1, 33
+       unit_interval(i) = (i - 1) / 32.0_dp
+       left_s(i) = (i - 1) / 64.0_dp
+       right_s(i) = (i + 31) / 64.0_dp
+    end do
+
+    call evaluate_multi( &
+         num_nodes - 1, dimension_, nodes, 33, left_s, evaluated1)
+    call evaluate_multi( &
+         num_nodes - 1, dimension_, left, 33, unit_interval, evaluated2)
+    if (.NOT. all(evaluated1 == evaluated2)) then
+       success = .FALSE.
+       return
+    end if
+
+    call evaluate_multi( &
+         num_nodes - 1, dimension_, nodes, 33, right_s, evaluated1)
+    call evaluate_multi( &
+         num_nodes - 1, dimension_, right, 33, unit_interval, evaluated2)
+    if (.NOT. all(evaluated1 == evaluated2)) then
+       success = .FALSE.
+       return
+    end if
+
+  end subroutine subdivide_points_check
 
 end module test_curve
