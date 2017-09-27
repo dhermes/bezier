@@ -12,12 +12,12 @@
 
 module test_curve
 
-  use iso_c_binding, only: c_bool, c_double
+  use iso_c_binding, only: c_bool, c_double, c_int
   use curve, only: &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
        evaluate_hodograph, subdivide_nodes, newton_refine, LOCATE_MISS, &
        LOCATE_INVALID, locate_point, elevate_nodes, get_curvature, &
-       reduce_pseudo_inverse, projection_error
+       reduce_pseudo_inverse, projection_error, can_reduce
   use types, only: dp
   use unit_test_helpers, only: &
        MACHINE_EPS, print_status, get_random_nodes, get_id_mat
@@ -27,7 +27,7 @@ module test_curve
        test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
        subdivide_points_check, test_newton_refine, test_locate_point, &
        test_elevate_nodes, test_get_curvature, test_reduce_pseudo_inverse, &
-       pseudo_inverse_helper, test_projection_error
+       pseudo_inverse_helper, test_projection_error, test_can_reduce
   public curve_all_tests
 
 contains
@@ -46,6 +46,7 @@ contains
     call test_get_curvature(success)
     call test_reduce_pseudo_inverse(success)
     call test_projection_error(success)
+    call test_can_reduce(success)
 
   end subroutine curve_all_tests
 
@@ -910,5 +911,154 @@ contains
     end if
 
   end subroutine test_projection_error
+
+  subroutine test_can_reduce(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(1, 2)
+    real(c_double) :: nodes2(2, 3)
+    real(c_double) :: nodes3(3, 2)
+    real(c_double) :: nodes4(4, 2)
+    real(c_double) :: nodes5(5, 2)
+    real(c_double) :: nodes6(6, 2)
+    integer(c_int) :: cr_success
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "can_reduce"
+
+    ! CASE 1: Point/constant.
+    nodes1(1, :) = [0.0_dp, 1.0_dp]
+    call can_reduce( &
+         1, 2, nodes1, cr_success)
+    if (cr_success == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Linear curve, reduce-able.
+    nodes2(1, :) = [1.0_dp, 3.0_dp, 4.0_dp]
+    nodes2(2, :) = nodes2(1, :)
+    call can_reduce( &
+         2, 3, nodes2, cr_success)
+    if (cr_success == 1) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Linear curve, **not** reduce-able.
+    nodes2(1, :) = [1.0_dp, 3.0_dp, 4.0_dp]
+    nodes2(2, :) = [2.0_dp, 5.0_dp, 0.5_dp]
+    call can_reduce( &
+         2, 3, nodes2, cr_success)
+    if (cr_success == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Quadratic curve, reduce-able.
+    nodes3(1, :) = [0.0_dp, 3.5_dp]
+    nodes3(3, :) = [2.0_dp, 2.0_dp]
+    nodes3(2, :) = 0.5_dp * (nodes3(1, :) + nodes3(3, :))
+    call can_reduce( &
+         3, 2, nodes3, cr_success)
+    if (cr_success == 1) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Quadratic curve, **not** reduce-able.
+    nodes3(1, :) = [0.0_dp, 3.5_dp]
+    nodes3(2, :) = [2.0_dp, 3.0_dp]
+    nodes3(3, :) = [2.0_dp, 2.0_dp]
+    call can_reduce( &
+         3, 2, nodes3, cr_success)
+    if (cr_success == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 6: Cubic curve, reduce-able.
+    nodes4(1, :) = [3.0_dp, 5.0_dp]
+    nodes4(2, :) = [1.0_dp, 6.0_dp]
+    nodes4(3, :) = [0.0_dp, 7.5_dp]
+    nodes4(4, :) = nodes4(1, :) - 3 * nodes4(2, :) + 3 * nodes4(3, :)
+    call can_reduce( &
+         4, 2, nodes4, cr_success)
+    if (cr_success == 1) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 7: Cubic curve, **not** reduce-able.
+    nodes4(1, :) = [5.0_dp, 0.0_dp]
+    nodes4(2, :) = [1.0_dp, 9.0_dp]
+    nodes4(3, :) = [5.0_dp, 17.5_dp]
+    nodes4(4, :) = [0.0_dp, 7.0_dp]
+    call can_reduce( &
+         4, 2, nodes4, cr_success)
+    if (cr_success == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 8: Quartic curve, reduce-able.
+    nodes5(1, :) = [0.0_dp, 0.0_dp]
+    nodes5(2, :) = [1.0_dp, 2.0_dp]
+    nodes5(3, :) = [2.0_dp, 3.5_dp]
+    nodes5(4, :) = [5.0_dp, 3.5_dp]
+    nodes5(5, :) = ( &
+         4 * nodes5(4, :) - 6 * nodes5(3, :) + 4 * nodes5(2, :) - nodes5(1, :))
+    call can_reduce( &
+         5, 2, nodes5, cr_success)
+    if (cr_success == 1) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 9: Quartic curve, **not** reduce-able.
+    nodes5(1, :) = [0.0_dp, 0.0_dp]
+    nodes5(2, :) = [1.0_dp, 2.0_dp]
+    nodes5(3, :) = [2.0_dp, 3.5_dp]
+    nodes5(4, :) = [5.0_dp, 3.5_dp]
+    nodes5(5, :) = [8.0_dp, 18.0_dp]
+    call can_reduce( &
+         5, 2, nodes5, cr_success)
+    if (cr_success == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 10: Quintic (degree 5) curve, unsupported.
+    nodes6 = 0
+    call can_reduce( &
+         6, 2, nodes6, cr_success)
+    if (cr_success == -1) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_can_reduce
 
 end module test_curve
