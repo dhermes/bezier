@@ -22,10 +22,11 @@ module curve
        specialize_curve_generic, specialize_curve_quadratic, &
        subdivide_nodes_generic, split_candidate
   public &
-       evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
-       evaluate_hodograph, subdivide_nodes, newton_refine, locate_point, &
-       elevate_nodes, get_curvature, reduce_pseudo_inverse, projection_error, &
-       can_reduce, full_reduce, compute_length
+       LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
+       evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
+       newton_refine, locate_point, elevate_nodes, get_curvature, &
+       reduce_pseudo_inverse, projection_error, can_reduce, full_reduce, &
+       compute_length
 
   ! For ``locate_point``.
   type :: LocateCandidate
@@ -40,6 +41,8 @@ module curve
   ! NOTE: Should probably use ``d1mach`` to determine ``SQRT_PREC``.
   real(c_double), parameter :: SQRT_PREC = 0.5_dp**26
   real(c_double), parameter :: REDUCE_THRESHOLD = SQRT_PREC
+  real(c_double), parameter :: LOCATE_MISS = -1
+  real(c_double), parameter :: LOCATE_INVALID = -2
 
   ! Interface blocks for QUADPACK:dqagse
   abstract interface
@@ -399,9 +402,10 @@ contains
        num_nodes, dimension_, nodes, point, s_approx) &
        bind(c, name='locate_point')
 
-    ! NOTE: This returns ``-1`` as a signal for "point is not on the curve"
-    !       and ``-2`` for "point is on separate segments" (i.e. the
-    !       standard deviation of the parameters is too large)
+    ! NOTE: This returns ``-1`` (``LOCATE_MISS``) as a signal for "point is
+    !       not on the curve" and ``-2`` (``LOCATE_INVALID``) for "point is
+    !       on separate segments" (i.e. the standard deviation of the
+    !       parameters is too large).
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
@@ -422,7 +426,7 @@ contains
     ! NOTE: `num_candidates` will be tracked separately
     !       from `size(candidates)`.
     num_candidates = 1
-    s_approx = -1.0_dp
+    s_approx = LOCATE_MISS
 
     do sub_index = 1, MAX_LOCATE_SUBDIVISIONS + 1
        num_next_candidates = 0
@@ -461,7 +465,7 @@ contains
 
     std_dev = sqrt(sum((s_params - s_approx)**2) / (2 * num_candidates))
     if (std_dev > LOCATE_STD_CAP) then
-       s_approx = -2.0_dp
+       s_approx = LOCATE_INVALID
        return
     end if
 

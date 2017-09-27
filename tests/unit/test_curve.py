@@ -529,3 +529,16 @@ class TestCurve(utils.NumPyTestCase):
         point = curve.evaluate_multi(np.asfortranarray([s_val]))
         result = curve.locate(point)
         self.assertEqual(result, s_val)
+
+    def test_locate_non_default_endpoints(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        curve = self._make_one(
+            nodes, degree=2, start=0.25, end=1.0, _copy=False)
+        # C(1/2) = p
+        point = np.asfortranarray([[0.5, 0.5]])
+        result = curve.locate(point)
+        self.assertEqual(result, 0.5)

@@ -757,17 +757,6 @@ class Test__locate_point(unittest.TestCase):
         result = self._call_function_under_test(nodes, 2, point)
         self.assertEqual(result, 0.125)
 
-    def test_non_default_endpoints(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 1.0],
-            [1.0, 0.0],
-        ])
-        # C(1/2) = p
-        point = np.asfortranarray([[0.5, 0.5]])
-        result = self._call_function_under_test(nodes, 2, point)
-        self.assertEqual(result, 0.5)
-
     def test_no_match(self):
         nodes = np.asfortranarray([
             [0.0, 0.0],

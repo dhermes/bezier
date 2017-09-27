@@ -15,14 +15,15 @@ module test_curve
   use iso_c_binding, only: c_bool, c_double
   use curve, only: &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
-       evaluate_hodograph, subdivide_nodes, newton_refine
+       evaluate_hodograph, subdivide_nodes, newton_refine, LOCATE_MISS, &
+       LOCATE_INVALID, locate_point
   use types, only: dp
   use unit_test_helpers, only: print_status, get_random_nodes, binary_round
   implicit none
   private &
        test_evaluate_curve_barycentric, test_evaluate_multi, &
        test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
-       subdivide_points_check, test_newton_refine
+       subdivide_points_check, test_newton_refine, test_locate_point
   public curve_all_tests
 
 contains
@@ -36,6 +37,7 @@ contains
     call test_evaluate_hodograph(success)
     call test_subdivide_nodes(success)
     call test_newton_refine(success)
+    call test_locate_point(success)
 
   end subroutine curve_all_tests
 
@@ -527,5 +529,66 @@ contains
     end if
 
   end subroutine test_newton_refine
+
+  subroutine test_locate_point(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(3, 3), point1(1, 3)
+    real(c_double) :: nodes2(3, 2), point2(1, 2)
+    real(c_double) :: nodes3(4, 2), point3(1, 2)
+    real(c_double) :: s_val
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "locate_point"
+
+    ! CASE 1: Quadratic in 3D (with match).
+    nodes1(1, :) = 0
+    nodes1(2, :) = [3.0_dp, 0.0_dp, -1.0_dp]
+    nodes1(3, :) = [1.0_dp, 1.0_dp, 3.0_dp]
+    point1(1, :) = [43.0_dp, 1.0_dp, -11.0_dp] / 64.0_dp
+    call locate_point( &
+         3, 3, nodes1, point1, s_val)
+
+    if (s_val == 0.125_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Quadratic in 2D (without match).
+    nodes2(1, :) = 0
+    nodes2(2, :) = [0.5_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    point2(1, :) = [0.5_dp, 2.0_dp]
+    call locate_point( &
+         3, 2, nodes2, point2, s_val)
+
+    if (s_val == LOCATE_MISS) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Self-intersecting cubic in 3D (will cause failure).
+    nodes3(1, :) = [0.0_dp, 2.0_dp]
+    nodes3(2, :) = [-1.0_dp, 0.0_dp]
+    nodes3(3, :) = [1.0_dp, 1.0_dp]
+    nodes3(4, :) = [-0.75_dp, 1.625_dp]
+    point3(1, :) = [-0.25_dp, 1.375_dp]
+    call locate_point( &
+         4, 2, nodes3, point3, s_val)
+
+    if (s_val == LOCATE_INVALID) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_locate_point
 
 end module test_curve
