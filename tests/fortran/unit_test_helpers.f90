@@ -16,7 +16,10 @@ module unit_test_helpers
   use types, only: dp
   implicit none
   private
-  public print_status, get_random_nodes, binary_round
+  public MACHINE_EPS, print_status, get_random_nodes, binary_round, get_id_mat
+
+  ! NOTE: Should probably use ``d1mach`` to determine this.
+  real(c_double), parameter :: MACHINE_EPS = 0.5_dp**52
 
 contains
 
@@ -85,5 +88,19 @@ contains
     value_ = sign(work * 2.0_dp**exponent(value_), value_)
 
   end subroutine binary_round
+
+  function get_id_mat(n) result(id_mat)
+    integer, intent(in) :: n
+    real(c_double) :: id_mat(n, n)
+    ! Variables outside of signature.
+    integer :: i
+
+    ! Populate both as the identity matrix.
+    id_mat = 0
+    forall (i = 1:n)
+       id_mat(i, i) = 1
+    end forall
+
+  end function get_id_mat
 
 end module unit_test_helpers

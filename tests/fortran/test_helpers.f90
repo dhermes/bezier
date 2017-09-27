@@ -17,14 +17,12 @@ module test_helpers
        WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
        vector_close, in_interval, ulps_away
   use types, only: dp
-  use unit_test_helpers, only: print_status
+  use unit_test_helpers, only: MACHINE_EPS, print_status
   implicit none
   private &
        test_cross_product, test_bbox, test_wiggle_interval, &
        test_contains_nd, test_vector_close, test_in_interval, test_ulps_away
   public helpers_all_tests
-
-  real(c_double), parameter :: machine_eps = 0.5_dp**52
 
 contains
 
@@ -182,7 +180,7 @@ contains
     end if
 
     ! CASE 7: Wiggle "above" the interval.
-    value1 = 1.0_dp + machine_eps
+    value1 = 1.0_dp + MACHINE_EPS
     call wiggle_interval(value1, result1, wiggle_success1)
     if (wiggle_success1 .AND. result1 == 1.0_dp) then
        call print_status(name, case_id, .TRUE.)
@@ -192,10 +190,10 @@ contains
     end if
 
     ! CASE 8: Test "lower outer" boundary, i.e. values in (-epsilon, 0).
-    value1 = -WIGGLE + machine_eps * WIGGLE
-    value2 = -WIGGLE + machine_eps * WIGGLE / 2
+    value1 = -WIGGLE + MACHINE_EPS * WIGGLE
+    value2 = -WIGGLE + MACHINE_EPS * WIGGLE / 2
     value3 = -WIGGLE
-    value4 = -WIGGLE - machine_eps * WIGGLE
+    value4 = -WIGGLE - MACHINE_EPS * WIGGLE
     call wiggle_interval(value1, result1, wiggle_success1)
     call wiggle_interval(value2, result2, wiggle_success2)
     call wiggle_interval(value3, result3, wiggle_success3)
@@ -210,10 +208,10 @@ contains
     end if
 
     ! CASE 9: Test "upper outer" boundary, i.e. values in (1, 1 + epsilon).
-    value1 = 1.0_dp + WIGGLE - 2 * machine_eps
-    value2 = 1.0_dp + WIGGLE - machine_eps
+    value1 = 1.0_dp + WIGGLE - 2 * MACHINE_EPS
+    value2 = 1.0_dp + WIGGLE - MACHINE_EPS
     value3 = 1.0_dp + WIGGLE
-    value4 = 1.0_dp + WIGGLE + machine_eps
+    value4 = 1.0_dp + WIGGLE + MACHINE_EPS
     call wiggle_interval(value1, result1, wiggle_success1)
     call wiggle_interval(value2, result2, wiggle_success2)
     call wiggle_interval(value3, result3, wiggle_success3)
@@ -228,10 +226,10 @@ contains
     end if
 
     ! CASE 10: Test "lower inner" boundary, i.e. values in (0, epsilon).
-    value1 = WIGGLE - WIGGLE * machine_eps
-    value2 = WIGGLE - WIGGLE * machine_eps / 2
+    value1 = WIGGLE - WIGGLE * MACHINE_EPS
+    value2 = WIGGLE - WIGGLE * MACHINE_EPS / 2
     value3 = WIGGLE
-    value4 = WIGGLE + WIGGLE * machine_eps
+    value4 = WIGGLE + WIGGLE * MACHINE_EPS
     call wiggle_interval(value1, result1, wiggle_success1)
     call wiggle_interval(value2, result2, wiggle_success2)
     call wiggle_interval(value3, result3, wiggle_success3)
@@ -247,11 +245,11 @@ contains
     end if
 
     ! CASE 11: Test "uper inner" boundary, i.e. values in (1 - epsilon, 1).
-    value1 = 1.0_dp - WIGGLE - machine_eps
-    value2 = 1.0_dp - WIGGLE - machine_eps / 2
+    value1 = 1.0_dp - WIGGLE - MACHINE_EPS
+    value2 = 1.0_dp - WIGGLE - MACHINE_EPS / 2
     value3 = 1.0_dp - WIGGLE
-    value4 = 1.0_dp - WIGGLE + machine_eps / 2
-    value5 = 1.0_dp - WIGGLE + machine_eps
+    value4 = 1.0_dp - WIGGLE + MACHINE_EPS / 2
+    value5 = 1.0_dp - WIGGLE + MACHINE_EPS
     call wiggle_interval(value1, result1, wiggle_success1)
     call wiggle_interval(value2, result2, wiggle_success2)
     call wiggle_interval(value3, result3, wiggle_success3)
@@ -422,7 +420,7 @@ contains
     end if
 
     ! CASE 2: Barely inside.
-    is_inside = in_interval(1.0_dp + machine_eps, 1.0_dp, 2.0_dp)
+    is_inside = in_interval(1.0_dp + MACHINE_EPS, 1.0_dp, 2.0_dp)
     if (is_inside) then
        call print_status(name, case_id, .TRUE.)
     else
@@ -431,7 +429,7 @@ contains
     end if
 
     ! CASE 3: Barely outside.
-    is_inside = in_interval(1.0_dp - machine_eps / 2, 1.0_dp, 2.0_dp)
+    is_inside = in_interval(1.0_dp - MACHINE_EPS / 2, 1.0_dp, 2.0_dp)
     if (.NOT. is_inside) then
        call print_status(name, case_id, .TRUE.)
     else
@@ -481,8 +479,8 @@ contains
     end if
 
     ! CASE 3: First value positive **AND** negative.
-    is_near = ulps_away(1.0_dp, 1.0_dp + machine_eps, 1, eps)
-    if (is_near .AND. ulps_away(-1.0_dp, -1.0_dp - machine_eps, 1, eps)) then
+    is_near = ulps_away(1.0_dp, 1.0_dp + MACHINE_EPS, 1, eps)
+    if (is_near .AND. ulps_away(-1.0_dp, -1.0_dp - MACHINE_EPS, 1, eps)) then
        call print_status(name, case_id, .TRUE.)
     else
        call print_status(name, case_id, .FALSE.)
@@ -492,10 +490,10 @@ contains
     ! CASE 4: Boundaries where a single bit works.
     if ( &
          ulps_away(1.0_dp, 1.0_dp, 1, eps) .AND. &
-         ulps_away(1.0_dp, 1.0_dp + machine_eps, 1, eps) .AND. &
-         ulps_away(1.0_dp + machine_eps, 1.0_dp, 1, eps) .AND. &
-         ulps_away(1.0_dp, 1.0_dp - machine_eps / 2, 1, eps) .AND. &
-         ulps_away(1.0_dp - machine_eps / 2, 1.0_dp, 1, eps)) then
+         ulps_away(1.0_dp, 1.0_dp + MACHINE_EPS, 1, eps) .AND. &
+         ulps_away(1.0_dp + MACHINE_EPS, 1.0_dp, 1, eps) .AND. &
+         ulps_away(1.0_dp, 1.0_dp - MACHINE_EPS / 2, 1, eps) .AND. &
+         ulps_away(1.0_dp - MACHINE_EPS / 2, 1.0_dp, 1, eps)) then
        call print_status(name, case_id, .TRUE.)
     else
        call print_status(name, case_id, .FALSE.)
@@ -515,8 +513,8 @@ contains
     end if
 
     ! CASE 6: Very close, but not close enough.
-    value1 = 0.25_dp - 5.625_dp * machine_eps
-    value2 = 0.25_dp - 6.25_dp * machine_eps
+    value1 = 0.25_dp - 5.625_dp * MACHINE_EPS
+    value2 = 0.25_dp - 6.25_dp * MACHINE_EPS
     if ( &
          .NOT. ulps_away(value1, value2, 1, eps) .AND. &
          .NOT. ulps_away(value1, value2, 4, eps) .AND. &

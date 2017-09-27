@@ -16,15 +16,18 @@ module test_curve
   use curve, only: &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
        evaluate_hodograph, subdivide_nodes, newton_refine, LOCATE_MISS, &
-       LOCATE_INVALID, locate_point, elevate_nodes, get_curvature
+       LOCATE_INVALID, locate_point, elevate_nodes, get_curvature, &
+       reduce_pseudo_inverse
   use types, only: dp
-  use unit_test_helpers, only: print_status, get_random_nodes, binary_round
+  use unit_test_helpers, only: &
+       MACHINE_EPS, print_status, get_random_nodes, binary_round, get_id_mat
   implicit none
   private &
        test_evaluate_curve_barycentric, test_evaluate_multi, &
        test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
        subdivide_points_check, test_newton_refine, test_locate_point, &
-       test_elevate_nodes, test_get_curvature
+       test_elevate_nodes, test_get_curvature, test_reduce_pseudo_inverse, &
+       pseudo_inverse_helper
   public curve_all_tests
 
 contains
@@ -41,6 +44,7 @@ contains
     call test_locate_point(success)
     call test_elevate_nodes(success)
     call test_get_curvature(success)
+    call test_reduce_pseudo_inverse(success)
 
   end subroutine curve_all_tests
 
@@ -683,7 +687,7 @@ contains
        success = .FALSE.
     end if
 
-    ! CASE 3: Quadraticr curve.
+    ! CASE 3: Quadratic curve.
     nodes2(1, :) = 0
     nodes2(2, :) = [0.5_dp, 1.0_dp]
     nodes2(3, :) = [1.0_dp, 0.0_dp]
@@ -700,5 +704,161 @@ contains
     end if
 
   end subroutine test_get_curvature
+
+  subroutine test_reduce_pseudo_inverse(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical(c_bool) :: not_implemented
+    real(c_double) :: nodes1(2, 2), reduced1(1, 2), expected1(1, 2)
+    real(c_double) :: nodes2(3, 2), reduced2(2, 2), expected2(2, 2)
+    real(c_double) :: nodes3(4, 3), reduced3(3, 3), expected3(3, 3)
+    real(c_double) :: nodes4(5, 1), reduced4(4, 1), expected4(4, 1)
+    real(c_double) :: reduced5(4, 4), expected5(4, 4)
+    real(c_double) :: nodes6(6, 2), reduced6(5, 2)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "reduce_pseudo_inverse"
+
+    ! CASE 1: Reduce from line to point/constant.
+    nodes1(1, :) = [-2.0_dp, 1.0_dp]
+    nodes1(2, :) = nodes1(1, :)
+    expected1(1, :) = nodes1(1, :)
+    call reduce_pseudo_inverse( &
+         2, 2, nodes1, reduced1, not_implemented)
+    if (all(reduced1 == expected1) .AND. .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Reduce a degree-elevated line (as quadratic).
+    nodes2(1, :) = 0
+    nodes2(2, :) = [1.0_dp, 2.0_dp]
+    nodes2(3, :) = [2.0_dp, 4.0_dp]
+    expected2(1, :) = 0
+    expected2(2, :) = [2.0_dp, 4.0_dp]
+    call reduce_pseudo_inverse( &
+         3, 2, nodes2, reduced2, not_implemented)
+    if (all(reduced2 == expected2) .AND. .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Test that degree 2->1 reduction is actually a pseudo-inverse.
+    call pseudo_inverse_helper(2, reduced2, expected2, not_implemented)
+    if (all(reduced2 == expected2) .AND. .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Reduce a quadratic that is not a deg.-elevated line.
+    nodes2(1, :) = 0
+    nodes2(2, :) = [1.0_dp, 1.5_dp]
+    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    expected2(1, :) = [0.0_dp, 0.5_dp]
+    expected2(2, :) = [2.0_dp, 0.5_dp]
+    call reduce_pseudo_inverse( &
+         3, 2, nodes2, reduced2, not_implemented)
+    if (all(reduced2 == expected2) .AND. .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Reduce a degree-elevated quadratic (as cubic).
+    nodes3(1, :) = [0.0_dp, 0.5_dp, 0.75_dp]
+    nodes3(2, :) = [2.0_dp, 0.5_dp, 2.25_dp]
+    nodes3(3, :) = [4.0_dp, 0.5_dp, 2.75_dp]
+    nodes3(4, :) = [6.0_dp, 0.5_dp, 2.25_dp]
+    expected3(1, :) = nodes3(1, :)
+    expected3(2, :) = [3.0_dp, 0.5_dp, 3.0_dp]
+    expected3(3, :) = nodes3(4, :)
+    call reduce_pseudo_inverse( &
+         4, 3, nodes3, reduced3, not_implemented)
+    if (all(reduced3 == expected3) .AND. .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 6: Test that degree 3->2 reduction is actually a pseudo-inverse.
+    call pseudo_inverse_helper(3, reduced3, expected3, not_implemented)
+    if (maxval(abs(reduced3 - expected3)) < MACHINE_EPS .AND. &
+         .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 7: Reduce a degree-elevated cubic (as quartic).
+    nodes4(:, 1) = [0.0_dp, 0.75_dp, 2.0_dp, 2.75_dp, 2.0_dp]
+    expected4(:, 1) = [0.0_dp, 1.0_dp, 3.0_dp, 2.0_dp]
+    call reduce_pseudo_inverse( &
+         5, 1, nodes4, reduced4, not_implemented)
+    if (all(reduced4 == expected4) .AND. .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 8: Test that degree 4->3 reduction is actually a pseudo-inverse.
+    call pseudo_inverse_helper(4, reduced5, expected5, not_implemented)
+    if (maxval(abs(reduced3 - expected3)) < MACHINE_EPS .AND. &
+         .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 9: Unsupported degree
+    call get_random_nodes(nodes6, 9177093, 16718)
+    call binary_round(nodes6, 8)
+    call reduce_pseudo_inverse( &
+         6, 2, nodes6, reduced6, not_implemented)
+    if (not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_reduce_pseudo_inverse
+
+  subroutine pseudo_inverse_helper(degree, result_, id_mat, not_implemented)
+    integer, intent(in) :: degree
+    real(c_double), intent(out) :: result_(degree, degree)
+    real(c_double), intent(out) :: id_mat(degree, degree)
+    logical(c_bool), intent(out) :: not_implemented
+    ! Variables outside of signature.
+    real(c_double) :: nodes(degree + 1, degree + 1)
+    real(c_double) :: reduction_mat(degree, degree + 1)
+    real(c_double) :: elevation_mat(degree + 1, degree)
+
+    nodes = get_id_mat(degree + 1)
+    call reduce_pseudo_inverse( &
+         degree + 1, degree + 1, nodes, reduction_mat, not_implemented)
+    if (not_implemented) then
+       return
+    end if
+
+    id_mat = get_id_mat(degree)
+    call elevate_nodes( &
+         degree, degree, id_mat, elevation_mat)
+
+    result_ = matmul(reduction_mat, elevation_mat)
+
+  end subroutine pseudo_inverse_helper
 
 end module test_curve
