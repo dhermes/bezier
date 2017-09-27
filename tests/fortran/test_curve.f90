@@ -20,7 +20,7 @@ module test_curve
        reduce_pseudo_inverse
   use types, only: dp
   use unit_test_helpers, only: &
-       MACHINE_EPS, print_status, get_random_nodes, binary_round, get_id_mat
+       MACHINE_EPS, print_status, get_random_nodes, get_id_mat
   implicit none
   private &
        test_evaluate_curve_barycentric, test_evaluate_multi, &
@@ -475,8 +475,7 @@ contains
 
     success = .TRUE.
 
-    call get_random_nodes(nodes, multiplier, modulus)
-    call binary_round(nodes, 8)
+    call get_random_nodes(nodes, multiplier, modulus, num_bits=8)
     call subdivide_nodes( &
          num_nodes, dimension_, nodes, left, right)
 
@@ -823,8 +822,7 @@ contains
     end if
 
     ! CASE 9: Unsupported degree
-    call get_random_nodes(nodes6, 9177093, 16718)
-    call binary_round(nodes6, 8)
+    call get_random_nodes(nodes6, 9177093, 16718, num_bits=8)
     call reduce_pseudo_inverse( &
          6, 2, nodes6, reduced6, not_implemented)
     if (not_implemented) then

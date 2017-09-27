@@ -43,9 +43,10 @@ contains
 
   end subroutine print_status
 
-  subroutine get_random_nodes(nodes, multiplier, modulus)
+  subroutine get_random_nodes(nodes, multiplier, modulus, num_bits)
     real(c_double), intent(inout) :: nodes(:, :)
     integer, intent(in) :: multiplier, modulus
+    integer, optional, intent(in) :: num_bits
     ! Variables outside of signature.
     integer, allocatable :: old_seed(:)
     integer, allocatable :: new_seed(:)
@@ -62,6 +63,11 @@ contains
     call random_seed(put=new_seed)
     ! Populate the matrix with random values from our seed.
     call random_number(nodes)
+
+    ! If ``num_bits`` is specified, then binary round the ``nodes``.
+    if (present(num_bits)) then
+       call binary_round(nodes, num_bits)
+    end if
 
     ! Put back the original seed.
     call random_seed(put=old_seed)
