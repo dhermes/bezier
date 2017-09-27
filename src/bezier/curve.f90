@@ -18,11 +18,12 @@ module curve
   implicit none
   private &
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
-       SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse, split_candidate
+       SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse, &
+       specialize_curve_generic, specialize_curve_quadratic, &
+       subdivide_nodes_generic, split_candidate
   public &
-       evaluate_curve_barycentric, evaluate_multi, specialize_curve_generic, &
-       specialize_curve_quadratic, specialize_curve, evaluate_hodograph, &
-       subdivide_nodes_generic, subdivide_nodes, newton_refine, locate_point, &
+       evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
+       evaluate_hodograph, subdivide_nodes, newton_refine, locate_point, &
        elevate_nodes, get_curvature, reduce_pseudo_inverse, projection_error, &
        can_reduce, full_reduce, compute_length
 
@@ -147,8 +148,7 @@ contains
   end subroutine evaluate_multi
 
   subroutine specialize_curve_generic( &
-       degree, dimension_, nodes, start, end_, new_nodes) &
-       bind(c, name='specialize_curve_generic')
+       degree, dimension_, nodes, start, end_, new_nodes)
 
     ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
 
@@ -192,8 +192,7 @@ contains
   end subroutine specialize_curve_generic
 
   subroutine specialize_curve_quadratic( &
-       dimension_, nodes, start, end_, new_nodes) &
-       bind(c, name='specialize_curve_quadratic')
+       dimension_, nodes, start, end_, new_nodes)
 
     integer(c_int), intent(in) :: dimension_
     real(c_double), intent(in) :: nodes(3, dimension_)
@@ -271,8 +270,7 @@ contains
   end subroutine evaluate_hodograph
 
   subroutine subdivide_nodes_generic( &
-       num_nodes, dimension_, nodes, left_nodes, right_nodes) &
-       bind(c, name='subdivide_nodes_generic')
+       num_nodes, dimension_, nodes, left_nodes, right_nodes)
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)

@@ -41,12 +41,6 @@ void evaluate_curve_barycentric(
 void evaluate_multi(
     int *degree, int *dimension, double *nodes,
     int *num_vals, double *s_vals, double *evaluated);
-void specialize_curve_generic(
-    int *degree, int *dimension, double *nodes,
-    double *start, double *end, double *new_nodes);
-void specialize_curve_quadratic(
-    int *dimension, double *nodes, double *start,
-    double *end, double *new_nodes);
 void specialize_curve(
     int *degree, int *dimension, double *nodes, double *start, double *end,
     double *curve_start, double *curve_end, double *new_nodes,
