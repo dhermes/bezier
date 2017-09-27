@@ -18,6 +18,7 @@ import shutil
 import tempfile
 
 import nox
+import py.path
 
 
 NUMPY = 'numpy'
@@ -342,6 +343,9 @@ def clean(session):
     There is no need for the session to create a ``virtualenv``
     here (we are just pretending to be ``make``).
     """
+    # No need to create a virtualenv.
+    session.virtualenv = False
+
     clean_dirs = (
         get_path('__pycache__'),
         get_path('.cache'),
@@ -371,3 +375,21 @@ def clean(session):
     for glob_path in clean_globs:
         for filename in glob.glob(glob_path):
             session.run(os.remove, filename)
+
+
+@nox.session
+def fortran_unit(session):
+    # No need to create a virtualenv.
+    session.virtualenv = False
+
+    if py.path.local.sysfind('make') is None:
+        session.skip('`make` must be installed')
+
+    if py.path.local.sysfind('gfortran') is None:
+        session.skip('`gfortran` must be installed')
+
+    test_dir = get_path('tests', 'fortran')
+    session.chdir(test_dir)
+
+    session.run('make', 'test')
+    session.run('make', 'clean')
