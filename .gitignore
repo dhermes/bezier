@@ -16,6 +16,11 @@ __pycache__
 .DS_Store
 
 # Generated files
+src/bezier/*.o
+src/bezier/quadpack/*.o
 src/bezier/_speedup*.so
 wheelhouse/
 scripts/osx/frankenstein/
+tests/fortran/*.o
+tests/fortran/*.mod
+tests/fortran/test-bin
