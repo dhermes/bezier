@@ -347,9 +347,9 @@ def compute_length(double[::1, :] nodes, int unused_degree):
         err_msg = DQAGSE_ERR_MSGS[5]
         raise ValueError(err_msg)
     elif error_val != 0:
-        try:
+        if 0 <= error_val - 1 < len(DQAGSE_ERR_MSGS):
             err_msg = DQAGSE_ERR_MSGS[error_val - 1]
-        except IndexError:
+        else:
             err_msg = 'Unknown error: {!r}.'.format(error_val)
         warnings.warn(err_msg, UserWarning)
 
