@@ -16,14 +16,15 @@ module test_curve
   use curve, only: &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
        evaluate_hodograph, subdivide_nodes, newton_refine, LOCATE_MISS, &
-       LOCATE_INVALID, locate_point
+       LOCATE_INVALID, locate_point, elevate_nodes
   use types, only: dp
   use unit_test_helpers, only: print_status, get_random_nodes, binary_round
   implicit none
   private &
        test_evaluate_curve_barycentric, test_evaluate_multi, &
        test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
-       subdivide_points_check, test_newton_refine, test_locate_point
+       subdivide_points_check, test_newton_refine, test_locate_point, &
+       test_elevate_nodes
   public curve_all_tests
 
 contains
@@ -38,6 +39,7 @@ contains
     call test_subdivide_nodes(success)
     call test_newton_refine(success)
     call test_locate_point(success)
+    call test_elevate_nodes(success)
 
   end subroutine curve_all_tests
 
@@ -590,5 +592,52 @@ contains
     end if
 
   end subroutine test_locate_point
+
+  subroutine test_elevate_nodes(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(2, 2), elevated1(3, 2), expected1(3, 2)
+    real(c_double) :: nodes2(3, 3), elevated2(4, 3), expected2(4, 3)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "elevate_nodes"
+
+    ! CASE 1: Linear curve.
+    nodes1(1, :) = 0
+    nodes1(2, :) = [2.0_dp, 4.0_dp]
+    expected1(1, :) = [0.0_dp, 0.0_dp]
+    expected1(2, :) = [1.0_dp, 2.0_dp]
+    expected1(3, :) = [2.0_dp, 4.0_dp]
+    call elevate_nodes( &
+         2, 2, nodes1, elevated1)
+
+    if (all(elevated1 == expected1)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Quadratic curve.
+    nodes2(1, :) = [0.0_dp, 0.5_dp, 0.75_dp]
+    nodes2(2, :) = [3.0_dp, 0.5_dp, 3.0_dp]
+    nodes2(3, :) = [6.0_dp, 0.5_dp, 2.25_dp]
+    expected2(1, :) = [0.0_dp, 0.5_dp, 0.75_dp]
+    expected2(2, :) = [2.0_dp, 0.5_dp, 2.25_dp]
+    expected2(3, :) = [4.0_dp, 0.5_dp, 2.75_dp]
+    expected2(4, :) = [6.0_dp, 0.5_dp, 2.25_dp]
+    call elevate_nodes( &
+         3, 3, nodes2, elevated2)
+
+    if (all(elevated2 == expected2)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_elevate_nodes
 
 end module test_curve
