@@ -12,16 +12,19 @@
 
 module test_curve_intersection
 
-  use iso_c_binding, only: c_bool, c_double
+  use iso_c_binding, only: c_bool, c_double, c_int
   use curve, only: evaluate_multi, subdivide_nodes
   use curve_intersection, only: &
-       linearization_error, segment_intersection, newton_refine_intersect
+       BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
+       BoxIntersectionType_DISJOINT, linearization_error, &
+       segment_intersection, newton_refine_intersect, &
+       bbox_intersect
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_linearization_error, test_segment_intersection, &
-       test_newton_refine_intersect
+       test_newton_refine_intersect, test_bbox_intersect
   public curve_intersection_all_tests
 
 contains
@@ -32,6 +35,7 @@ contains
     call test_linearization_error(success)
     call test_segment_intersection(success)
     call test_newton_refine_intersect(success)
+    call test_bbox_intersect(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -453,5 +457,109 @@ contains
     predicate = all(point1 == point2)
 
   end function curves_intersect
+
+  subroutine test_bbox_intersect(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(4, 2), nodes2(4, 2), delta
+    integer(c_int) :: enum_
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "bbox_intersect"
+
+    ! CASE 1: Intersecting bbox-es.
+    nodes1(1, :) = [0.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(3, :) = [1.0_dp, 1.0_dp]
+    nodes1(4, :) = [0.0_dp, 1.0_dp]
+    nodes2(1, :) = [0.5_dp, 0.5_dp]
+    nodes2(2, :) = [1.5_dp, 0.5_dp]
+    nodes2(3, :) = [1.5_dp, 1.5_dp]
+    nodes2(4, :) = [0.5_dp, 1.5_dp]
+    call bbox_intersect( &
+         4, nodes1, 4, nodes2, enum_)
+    if (enum_ == BoxIntersectionType_INTERSECTION) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Far apart bbox-es.
+    nodes1(1, :) = [0.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(3, :) = [1.0_dp, 1.0_dp]
+    nodes1(4, :) = [0.0_dp, 1.0_dp]
+    nodes2(1, :) = [100.0_dp, 100.0_dp]
+    nodes2(2, :) = [101.0_dp, 100.0_dp]
+    nodes2(3, :) = [101.0_dp, 101.0_dp]
+    nodes2(4, :) = [100.0_dp, 101.0_dp]
+    call bbox_intersect( &
+         4, nodes1, 4, nodes2, enum_)
+    if (enum_ == BoxIntersectionType_DISJOINT) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Disjoint bbox-es that have an "aligned" edge.
+    nodes1(1, :) = [0.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(3, :) = [1.0_dp, 1.0_dp]
+    nodes1(4, :) = [0.0_dp, 1.0_dp]
+    nodes2(1, :) = [1.0_dp, 2.0_dp]
+    nodes2(2, :) = [2.0_dp, 2.0_dp]
+    nodes2(3, :) = [2.0_dp, 3.0_dp]
+    nodes2(4, :) = [1.0_dp, 3.0_dp]
+    call bbox_intersect( &
+         4, nodes1, 4, nodes2, enum_)
+    if (enum_ == BoxIntersectionType_DISJOINT) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Tangent bbox-es.
+    nodes1(1, :) = [0.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(3, :) = [1.0_dp, 1.0_dp]
+    nodes1(4, :) = [0.0_dp, 1.0_dp]
+    nodes2(1, :) = [1.0_dp, 0.0_dp]
+    nodes2(2, :) = [2.0_dp, 0.0_dp]
+    nodes2(3, :) = [2.0_dp, 1.0_dp]
+    nodes2(4, :) = [1.0_dp, 1.0_dp]
+    call bbox_intersect( &
+         4, nodes1, 4, nodes2, enum_)
+    if (enum_ == BoxIntersectionType_TANGENT) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Almost tangent bbox-es.
+    delta = 1.0_dp + spacing(1.0_dp)
+    nodes1(1, :) = [0.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(3, :) = [1.0_dp, 1.0_dp]
+    nodes1(4, :) = [0.0_dp, 1.0_dp]
+    nodes2(1, :) = [delta, 0.0_dp]
+    nodes2(2, :) = [1.0_dp + delta, 0.0_dp]
+    nodes2(3, :) = [1.0_dp + delta, 1.0_dp]
+    nodes2(4, :) = [delta, 1.0_dp]
+    call bbox_intersect( &
+         4, nodes1, 4, nodes2, enum_)
+    if (enum_ == BoxIntersectionType_DISJOINT) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_bbox_intersect
 
 end module test_curve_intersection

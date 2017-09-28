@@ -19,8 +19,10 @@ module curve_intersection
   implicit none
   private
   public &
-       linearization_error, segment_intersection, newton_refine_intersect, &
-       bbox_intersect, parallel_different, from_linearized, bbox_line_intersect
+       BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
+       BoxIntersectionType_DISJOINT, linearization_error, &
+       segment_intersection, newton_refine_intersect, bbox_intersect, &
+       parallel_different, from_linearized, bbox_line_intersect
 
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
   integer(c_int), parameter :: BoxIntersectionType_TANGENT = 1
