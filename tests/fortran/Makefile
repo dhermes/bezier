@@ -6,7 +6,7 @@ FC = gfortran
 F77 = .f
 F90 = .f90
 OBJ = .o
-FCFLAGS = -fPIC -fprofile-arcs -ftest-coverage
+FCFLAGS = -fPIC -O0 -fprofile-arcs -ftest-coverage
 
 # NOTE: **Must** specify the order for source files.
 F77_SOURCES := \
@@ -53,10 +53,12 @@ lcov: $(CURR_DIR)/test-bin
 	$(CURR_DIR)/test-bin
 	lcov --capture \
 	  --directory $(CURR_DIR) \
-	  -output-file $(CURR_DIR)/coverage.info
+	  -output-file $(CURR_DIR)/coverage.info \
+	  --rc lcov_branch_coverage=1
 	genhtml \
 	  $(CURR_DIR)/coverage.info \
-	  --output-directory $(CURR_DIR)/lcov-html
+	  --output-directory $(CURR_DIR)/lcov-html \
+	  --branch-coverage
 
 clean:
 	rm -f $(CURR_DIR)/*.gcno
