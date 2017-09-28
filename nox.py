@@ -135,10 +135,7 @@ def cover(session):
     # Run py.test with coverage against the unit tests.
     run_args = ['py.test', '--cov=bezier', '--cov=tests.unit']
     run_args += session.posargs
-    run_args += [
-        get_path('tests', 'unit'),
-        get_path('tests', 'functional', 'test_segment_box.py'),
-    ]
+    run_args += [get_path('tests', 'unit')]
     session.run(*run_args)
 
 
