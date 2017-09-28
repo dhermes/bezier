@@ -20,7 +20,7 @@ module test_curve
        reduce_pseudo_inverse, full_reduce, compute_length
   use types, only: dp
   use unit_test_helpers, only: &
-       MACHINE_EPS, print_status, get_random_nodes, get_id_mat
+       MACHINE_EPS, print_status_full, get_random_nodes, get_id_mat
   implicit none
   private &
        test_evaluate_curve_barycentric, test_evaluate_multi, &
@@ -53,6 +53,7 @@ contains
   subroutine test_evaluate_curve_barycentric(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes(4, 3)
     real(c_double) :: lambda1(3), lambda2(3)
     real(c_double) :: evaluated(3, 3), expected(3, 3)
@@ -75,18 +76,15 @@ contains
     call evaluate_curve_barycentric( &
          3, 3, nodes, 3, lambda1, lambda2, evaluated)
 
-    if (all(evaluated == expected)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated == expected)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_evaluate_curve_barycentric
 
   subroutine test_evaluate_multi(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(2, 3), nodes2(3, 2)
     real(c_double) :: s_vals1(129), s_vals2(65)
     real(c_double) :: evaluated1(129, 3), expected1(129, 3)
@@ -110,13 +108,8 @@ contains
     expected1(:, 3) = -7.0_dp + 3.0_dp * s_vals1
     call evaluate_multi( &
          1, 3, nodes1, 129, s_vals1, evaluated1)
-
-    if (all(evaluated1 == expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated1 == expected1)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic curve.
     do i = 1, 65
@@ -130,19 +123,15 @@ contains
     expected2(:, 2) = 2.0_dp * s_vals2 * (2.0_dp * s_vals2 - 1.0_dp)
     call evaluate_multi( &
          2, 2, nodes2, 65, s_vals2, evaluated2)
-
-    if (all(evaluated2 == expected2)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated2 == expected2)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_evaluate_multi
 
   subroutine test_specialize_curve(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: true_start, true_end
     real(c_double) :: nodes1(2, 2)
     real(c_double) :: new_nodes1(2, 2), expected1(2, 2)
@@ -164,14 +153,10 @@ contains
     call specialize_curve( &
          1, 2, nodes1, 0.25_dp, 0.75_dp, 0.125_dp, 0.25_dp, &
          new_nodes1, true_start, true_end)
-
-    if (all(new_nodes1 == expected1) .AND. &
-         true_start == 0.15625_dp .AND. true_end == 0.21875_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         all(new_nodes1 == expected1) .AND. &
+         true_start == 0.15625_dp .AND. true_end == 0.21875_dp)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic curve, after subdivision.
     nodes2(1, :) = [0.0_dp, 1.0_dp]
@@ -182,24 +167,18 @@ contains
     call specialize_curve( &
          2, 2, nodes2, 0.0_dp, 0.5_dp, 0.0_dp, 1.0_dp, &
          new_nodes2, true_start, true_end)
-
-    if (all(new_nodes2 == left_nodes) .AND. &
-         true_start == 0.0_dp .AND. true_end == 0.5_dp) then
-       ! Do a "second" check for the right-hand nodes.
-       call specialize_curve( &
-            2, 2, nodes2, 0.5_dp, 1.0_dp, 0.0_dp, 1.0_dp, &
-            new_nodes2, true_start, true_end)
-       if (all(new_nodes2 == right_nodes) .AND. &
-            true_start == 0.5_dp .AND. true_end == 1.0_dp) then
-          call print_status(name, case_id, .TRUE.)
-       else
-          call print_status(name, case_id, .FALSE.)
-          success = .FALSE.
-       end if
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         all(new_nodes2 == left_nodes) .AND. &
+         true_start == 0.0_dp .AND. true_end == 0.5_dp)
+    ! Do a "second" check for the right-hand nodes.
+    call specialize_curve( &
+         2, 2, nodes2, 0.5_dp, 1.0_dp, 0.0_dp, 1.0_dp, &
+         new_nodes2, true_start, true_end)
+    case_success = ( &
+         case_success .AND. &
+         all(new_nodes2 == right_nodes) .AND. &
+         true_start == 0.5_dp .AND. true_end == 1.0_dp)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Cubic curve.
     nodes3(1, :) = [0.0_dp, 0.0_dp]
@@ -213,14 +192,10 @@ contains
     call specialize_curve( &
          3, 2, nodes3, 0.125_dp, 0.625_dp, 0.0_dp, 1.0_dp, &
          new_nodes3, true_start, true_end)
-
-    if (all(new_nodes3 == expected3) .AND. &
-         true_start == 0.125_dp .AND. true_end == 0.625_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         all(new_nodes3 == expected3) .AND. &
+         true_start == 0.125_dp .AND. true_end == 0.625_dp)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 4: Quartic curve.
     nodes4(1, :) = [0.0_dp, 5.0_dp]
@@ -237,20 +212,17 @@ contains
          4, 2, nodes4, 0.5_dp, 0.75_dp, 0.0_dp, 1.0_dp, &
          new_nodes4, true_start, true_end)
 
-    if (all(new_nodes4 == expected4) .AND. &
-         true_start == 0.5_dp .AND. true_end == 0.75_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         all(new_nodes4 == expected4) .AND. &
+         true_start == 0.5_dp .AND. true_end == 0.75_dp)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_specialize_curve
 
   subroutine test_evaluate_hodograph(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
-    logical(c_bool) :: local_success
+    logical :: case_success
     real(c_double) :: s_vals(5), s_val
     real(c_double) :: hodograph(1, 2), expected(1, 2)
     real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(4, 2)
@@ -266,22 +238,15 @@ contains
     nodes1(2, :) = [1.0_dp, 1.0_dp]
     expected(1, :) = nodes1(2, :) - nodes1(1, :)
     s_vals(:2) = [0.25_dp, 0.75_dp]
-    local_success = .TRUE.
+    case_success = .TRUE.
     do i = 1, 2
        call evaluate_hodograph( &
             s_vals(i), 1, 2, nodes1, hodograph)
-       if (any(hodograph /= expected)) then
-          local_success = .FALSE.
-          exit
-       end if
+       case_success = ( &
+            case_success .AND. &
+            all(hodograph == expected))
     end do
-
-    if (local_success) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic curve.
     nodes2(1, :) = [0.0_dp, 0.0_dp]
@@ -290,7 +255,7 @@ contains
     !  B(s) = [s(s + 4)/4, s(8 - 7s)/4]
     ! B'(s) = [(2 + s)/2, (4 - 7s)/2]
     s_vals = [0.0_dp, 0.25_dp, 0.5_dp, 0.625_dp, 0.875_dp]
-    local_success = .TRUE.
+    case_success = .TRUE.
     do i = 1, 5
        s_val = s_vals(i)
        call evaluate_hodograph( &
@@ -298,17 +263,11 @@ contains
        expected(1, :) = [ &
             (2.0_dp + s_val) / 2.0_dp, &
             (4.0_dp - 7.0_dp * s_val) / 2.0_dp]
-       if (any(hodograph /= expected)) then
-          local_success = .FALSE.
-          exit
-       end if
+       case_success = ( &
+            case_success .AND. &
+            all(hodograph == expected))
     end do
-    if (local_success) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Cubic curve.
     nodes3(1, :) = [0.0_dp, 0.0_dp]
@@ -318,7 +277,7 @@ contains
     !  B(s) = [s(3 + 3s - s^2)/4, s(5s^2 - 9s + 6)/2]
     ! B'(s) = [3(1 + 2s - s^2)/4, 3(5s^2 - 6s + 2)/2]
     s_vals = [0.125_dp, 0.5_dp, 0.75_dp, 1.0_dp, 1.125_dp]
-    local_success = .TRUE.
+    case_success = .TRUE.
     do i = 1, 5
        s_val = s_vals(i)
        call evaluate_hodograph( &
@@ -327,24 +286,18 @@ contains
             3.0_dp * (1.0_dp + 2.0_dp * s_val - s_val * s_val) / 4.0_dp)
        expected(1, 2) = ( &
             1.5_dp * (5.0_dp * s_val * s_val - 6.0_dp * s_val + 2.0_dp))
-       if (any(hodograph /= expected)) then
-          local_success = .FALSE.
-          exit
-       end if
+       case_success = ( &
+            case_success .AND. &
+            all(hodograph == expected))
     end do
-    if (local_success) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_evaluate_hodograph
 
   subroutine test_subdivide_nodes(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
-    logical(c_bool) :: local_success
+    logical :: case_success
     real(c_double) :: nodes1(2, 2), l_expected1(2, 2), r_expected1(2, 2)
     real(c_double) :: left_nodes1(2, 2), right_nodes1(2, 2)
     real(c_double) :: nodes2(3, 2), l_expected2(3, 2), r_expected2(3, 2)
@@ -367,23 +320,15 @@ contains
     call subdivide_nodes( &
          2, 2, nodes1, left_nodes1, right_nodes1)
 
-    if (all(left_nodes1 == l_expected1) .AND. &
-         all(right_nodes1 == r_expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         all(left_nodes1 == l_expected1) .AND. &
+         all(right_nodes1 == r_expected1))
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Evaluate subdivided parts of a line.
     call subdivide_points_check( &
-         2, 2, 909203, 10489, local_success)
-    if (local_success) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         2, 2, 909203, 10489, case_success)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Quadratic curve.
     nodes2(1, :) = [0.0_dp, 1.0_dp]
@@ -398,23 +343,15 @@ contains
     call subdivide_nodes( &
          3, 2, nodes2, left_nodes2, right_nodes2)
 
-    if (all(left_nodes2 == l_expected2) .AND. &
-         all(right_nodes2 == r_expected2)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         all(left_nodes2 == l_expected2) .AND. &
+         all(right_nodes2 == r_expected2))
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 4: Evaluate subdivided parts of a quadratic curve.
     call subdivide_points_check( &
-         3, 2, 10920388, 7756, local_success)
-    if (local_success) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         3, 2, 10920388, 7756, case_success)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 5: Cubic curve.
     nodes3(1, :) = [0.0_dp, 1.0_dp]
@@ -432,41 +369,29 @@ contains
     call subdivide_nodes( &
          4, 2, nodes3, left_nodes3, right_nodes3)
 
-    if (all(left_nodes3 == l_expected3) .AND. &
-         all(right_nodes3 == r_expected3)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         all(left_nodes3 == l_expected3) .AND. &
+         all(right_nodes3 == r_expected3))
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 6: Evaluate subdivided parts of a cubic curve.
     call subdivide_points_check( &
-         4, 2, 33981020, 81902302, local_success)
-    if (local_success) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         4, 2, 33981020, 81902302, case_success)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 7: Quartic curve (not hardcoded).
     call subdivide_points_check( &
-         5, 2, 1190, 881, local_success)
-    if (local_success) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         5, 2, 1190, 881, case_success)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_subdivide_nodes
 
   subroutine subdivide_points_check( &
        num_nodes, dimension_, multiplier, modulus, success)
     integer, intent(in) :: num_nodes, dimension_, multiplier, modulus
-    logical(c_bool), intent(out) :: success
+    logical, intent(out) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes(num_nodes, dimension_)
     real(c_double) :: left(num_nodes, dimension_)
     real(c_double) :: right(num_nodes, dimension_)
@@ -491,25 +416,24 @@ contains
          num_nodes - 1, dimension_, nodes, 33, left_s, evaluated1)
     call evaluate_multi( &
          num_nodes - 1, dimension_, left, 33, unit_interval, evaluated2)
-    if (.NOT. all(evaluated1 == evaluated2)) then
-       success = .FALSE.
-       return
-    end if
+    success = ( &
+         success .AND. &
+         all(evaluated1 == evaluated2))
 
     call evaluate_multi( &
          num_nodes - 1, dimension_, nodes, 33, right_s, evaluated1)
     call evaluate_multi( &
          num_nodes - 1, dimension_, right, 33, unit_interval, evaluated2)
-    if (.NOT. all(evaluated1 == evaluated2)) then
-       success = .FALSE.
-       return
-    end if
+    success = ( &
+         success .AND. &
+         all(evaluated1 == evaluated2))
 
   end subroutine subdivide_points_check
 
   subroutine test_newton_refine(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes(4, 3)
     real(c_double) :: point(1, 3)
     real(c_double) :: new_s
@@ -528,19 +452,15 @@ contains
     point(1, :) = [1.75_dp, 0.625_dp, 1.625_dp]
     call newton_refine( &
          4, 3, nodes, point, 0.25_dp, new_s)
-
-    if (110.0_dp * new_s == 57.0_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (110.0_dp * new_s == 57.0_dp)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_newton_refine
 
   subroutine test_locate_point(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(3, 3), point1(1, 3)
     real(c_double) :: nodes2(3, 2), point2(1, 2)
     real(c_double) :: nodes3(4, 2), point3(1, 2)
@@ -559,12 +479,8 @@ contains
     call locate_point( &
          3, 3, nodes1, point1, s_val)
 
-    if (s_val == 0.125_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (s_val == 0.125_dp)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic in 2D (without match).
     nodes2(1, :) = 0
@@ -574,12 +490,8 @@ contains
     call locate_point( &
          3, 2, nodes2, point2, s_val)
 
-    if (s_val == LOCATE_MISS) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (s_val == LOCATE_MISS)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Self-intersecting cubic in 3D (will cause failure).
     nodes3(1, :) = [0.0_dp, 2.0_dp]
@@ -590,18 +502,15 @@ contains
     call locate_point( &
          4, 2, nodes3, point3, s_val)
 
-    if (s_val == LOCATE_INVALID) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (s_val == LOCATE_INVALID)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_locate_point
 
   subroutine test_elevate_nodes(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(2, 2), elevated1(3, 2), expected1(3, 2)
     real(c_double) :: nodes2(3, 3), elevated2(4, 3), expected2(4, 3)
     integer :: case_id
@@ -618,13 +527,8 @@ contains
     expected1(3, :) = [2.0_dp, 4.0_dp]
     call elevate_nodes( &
          2, 2, nodes1, elevated1)
-
-    if (all(elevated1 == expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(elevated1 == expected1)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic curve.
     nodes2(1, :) = [0.0_dp, 0.5_dp, 0.75_dp]
@@ -636,19 +540,15 @@ contains
     expected2(4, :) = [6.0_dp, 0.5_dp, 2.25_dp]
     call elevate_nodes( &
          3, 3, nodes2, elevated2)
-
-    if (all(elevated2 == expected2)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(elevated2 == expected2)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_elevate_nodes
 
   subroutine test_get_curvature(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(2, 2), nodes2(3, 2)
     real(c_double) :: s_val, tangent_vec(1, 2), curvature
     integer :: case_id
@@ -665,12 +565,8 @@ contains
          s_val, 1, 2, nodes1, tangent_vec)
     call get_curvature( &
          2, 2, nodes1, tangent_vec, s_val, curvature)
-    if (curvature == 0.0_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (curvature == 0.0_dp)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Linear curve, degree-elevated to quadratic.
     nodes2(1, :) = 0
@@ -681,12 +577,8 @@ contains
          s_val, 2, 2, nodes2, tangent_vec)
     call get_curvature( &
          3, 2, nodes2, tangent_vec, s_val, curvature)
-    if (curvature == 0.0_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (curvature == 0.0_dp)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Quadratic curve.
     nodes2(1, :) = 0
@@ -697,18 +589,15 @@ contains
          s_val, 2, 2, nodes2, tangent_vec)
     call get_curvature( &
          3, 2, nodes2, tangent_vec, s_val, curvature)
-    if (curvature == -4.0_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (curvature == -4.0_dp)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_get_curvature
 
   subroutine test_reduce_pseudo_inverse(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     logical(c_bool) :: not_implemented
     real(c_double) :: nodes1(2, 2), reduced1(1, 2), expected1(1, 2)
     real(c_double) :: nodes2(3, 2), reduced2(2, 2), expected2(2, 2)
@@ -728,12 +617,8 @@ contains
     expected1(1, :) = nodes1(1, :)
     call reduce_pseudo_inverse( &
          2, 2, nodes1, reduced1, not_implemented)
-    if (all(reduced1 == expected1) .AND. .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (all(reduced1 == expected1) .AND. .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Reduce a degree-elevated line (as quadratic).
     nodes2(1, :) = 0
@@ -743,21 +628,13 @@ contains
     expected2(2, :) = [2.0_dp, 4.0_dp]
     call reduce_pseudo_inverse( &
          3, 2, nodes2, reduced2, not_implemented)
-    if (all(reduced2 == expected2) .AND. .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (all(reduced2 == expected2) .AND. .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Test that degree 2->1 reduction is actually a pseudo-inverse.
     call pseudo_inverse_helper(2, reduced2, expected2, not_implemented)
-    if (all(reduced2 == expected2) .AND. .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (all(reduced2 == expected2) .AND. .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 4: Reduce a quadratic that is not a deg.-elevated line.
     nodes2(1, :) = 0
@@ -767,12 +644,8 @@ contains
     expected2(2, :) = [2.0_dp, 0.5_dp]
     call reduce_pseudo_inverse( &
          3, 2, nodes2, reduced2, not_implemented)
-    if (all(reduced2 == expected2) .AND. .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (all(reduced2 == expected2) .AND. .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 5: Reduce a degree-elevated quadratic (as cubic).
     nodes3(1, :) = [0.0_dp, 0.5_dp, 0.75_dp]
@@ -784,55 +657,37 @@ contains
     expected3(3, :) = nodes3(4, :)
     call reduce_pseudo_inverse( &
          4, 3, nodes3, reduced3, not_implemented)
-    if (all(reduced3 == expected3) .AND. .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (all(reduced3 == expected3) .AND. .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 6: Test that degree 3->2 reduction is actually a pseudo-inverse.
     call pseudo_inverse_helper(3, reduced3, expected3, not_implemented)
-    if (maxval(abs(reduced3 - expected3)) < MACHINE_EPS .AND. &
-         .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         maxval(abs(reduced3 - expected3)) < MACHINE_EPS .AND. &
+         .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 7: Reduce a degree-elevated cubic (as quartic).
     nodes4(:, 1) = [0.0_dp, 0.75_dp, 2.0_dp, 2.75_dp, 2.0_dp]
     expected4(:, 1) = [0.0_dp, 1.0_dp, 3.0_dp, 2.0_dp]
     call reduce_pseudo_inverse( &
          5, 1, nodes4, reduced4, not_implemented)
-    if (all(reduced4 == expected4) .AND. .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (all(reduced4 == expected4) .AND. .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 8: Test that degree 4->3 reduction is actually a pseudo-inverse.
     call pseudo_inverse_helper(4, reduced5, expected5, not_implemented)
-    if (maxval(abs(reduced3 - expected3)) < MACHINE_EPS .AND. &
-         .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         maxval(abs(reduced3 - expected3)) < MACHINE_EPS .AND. &
+         .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 9: Unsupported degree
     call get_random_nodes(nodes6, 9177093, 16718, num_bits=8)
     call reduce_pseudo_inverse( &
          6, 2, nodes6, reduced6, not_implemented)
-    if (not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_reduce_pseudo_inverse
 
@@ -842,6 +697,7 @@ contains
     real(c_double), intent(out) :: id_mat(degree, degree)
     logical(c_bool), intent(out) :: not_implemented
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes(degree + 1, degree + 1)
     real(c_double) :: reduction_mat(degree, degree + 1)
     real(c_double) :: elevation_mat(degree + 1, degree)
@@ -849,9 +705,8 @@ contains
     nodes = get_id_mat(degree + 1)
     call reduce_pseudo_inverse( &
          degree + 1, degree + 1, nodes, reduction_mat, not_implemented)
-    if (not_implemented) then
-       return
-    end if
+    ! NOTE: We assume none of the callers will use inputs that force
+    !       ``not_implemeted`` to be ``.FALSE.``.
 
     id_mat = get_id_mat(degree)
     call elevate_nodes( &
@@ -864,6 +719,7 @@ contains
   subroutine test_full_reduce(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(2, 1), expected1(2, 1), reduced1(2, 1)
     real(c_double) :: nodes2(4, 2), expected2(4, 2), reduced2(4, 2)
     real(c_double) :: nodes3(6, 2), expected3(6, 2), reduced3(6, 2)
@@ -883,14 +739,11 @@ contains
     call full_reduce( &
          2, 1, nodes1, num_reduced_nodes, &
          reduced1, not_implemented)
-    if (num_reduced_nodes == 1 .AND. &
+    case_success = ( &
+         num_reduced_nodes == 1 .AND. &
          all(reduced1(:1, :) == expected1(:1, :)) .AND. &
-         .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Cubic curve, one reduction.
     nodes2(1, :) = 0
@@ -903,14 +756,11 @@ contains
     call full_reduce( &
          4, 2, nodes2, num_reduced_nodes, &
          reduced2, not_implemented)
-    if (num_reduced_nodes == 3 .AND. &
+    case_success = ( &
+         num_reduced_nodes == 3 .AND. &
          all(reduced2(:3, :) == expected2(:3, :)) .AND. &
-         .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Cubic curve, two reductions.
     nodes2(1, :) = [0.0_dp, 4.0_dp]
@@ -922,14 +772,11 @@ contains
     call full_reduce( &
          4, 2, nodes2, num_reduced_nodes, &
          reduced2, not_implemented)
-    if (num_reduced_nodes == 2 .AND. &
+    case_success = ( &
+         num_reduced_nodes == 2 .AND. &
          all(reduced2(:2, :) == expected2(:2, :)) .AND. &
-         .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 4: Cubic curve, no reductions.
     nodes2(1, :) = [0.0_dp, 2.0_dp]
@@ -940,26 +787,19 @@ contains
     call full_reduce( &
          4, 2, nodes2, num_reduced_nodes, &
          reduced2, not_implemented)
-    if (num_reduced_nodes == 4 .AND. &
+    case_success = ( &
+         num_reduced_nodes == 4 .AND. &
          all(reduced2(:4, :) == expected2(:4, :)) .AND. &
-         .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 5: Unsupported degree (quintic, degree 5).
     nodes3 = 0
     call full_reduce( &
          6, 2, nodes3, num_reduced_nodes, &
          reduced3, not_implemented)
-    if (not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 6: Point/constant (can't be any reduction).
     nodes4(1, :) = [0.0_dp, 1.0_dp]
@@ -967,14 +807,11 @@ contains
     call full_reduce( &
          1, 2, nodes4, num_reduced_nodes, &
          reduced4, not_implemented)
-    if (num_reduced_nodes == 1 .AND. &
+    case_success = ( &
+         num_reduced_nodes == 1 .AND. &
          all(reduced4 == expected4) .AND. &
-         .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 7: Quartic curve, one reduction.
     expected5(1, :) = [0.0_dp, 0.0_dp]
@@ -989,14 +826,11 @@ contains
     call full_reduce( &
          5, 2, nodes5, num_reduced_nodes, &
          reduced5, not_implemented)
-    if (num_reduced_nodes == 4 .AND. &
+    case_success = ( &
+         num_reduced_nodes == 4 .AND. &
          all(reduced5(:4, :) == expected5(:4, :)) .AND. &
-         .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 8: Quartic curve, no reductions.
     nodes5(1, :) = [0.0_dp, 0.0_dp]
@@ -1007,20 +841,18 @@ contains
     call full_reduce( &
          5, 2, nodes5, num_reduced_nodes, &
          reduced5, not_implemented)
-    if (num_reduced_nodes == 5 .AND. &
+    case_success = ( &
+         num_reduced_nodes == 5 .AND. &
          all(reduced5 == nodes5) .AND. &
-         .NOT. not_implemented) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+         .NOT. not_implemented)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_full_reduce
 
   subroutine test_compute_length(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(4, 2)
     real(c_double) :: length, expected
     integer(c_int) :: error_val
@@ -1035,12 +867,8 @@ contains
     nodes1(2, :) = [3.0_dp, 4.0_dp]
     call compute_length( &
          2, 2, nodes1, length, error_val)
-    if (length == 5.0_dp .AND. error_val == 0) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = (length == 5.0_dp .AND. error_val == 0)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 1: Quadratic curve.
     nodes2(1, :) = 0
@@ -1050,13 +878,10 @@ contains
          3, 2, nodes2, length, error_val)
     ! 2 INT_0^1 SQRT(16 s^2  - 16 s + 5) ds = SQRT(5) + sinh^{-1}(2)/2
     expected = sqrt(5.0_dp) + 0.5_dp * asinh(2.0_dp)
-    if (abs(length - expected) <= spacing(expected) .AND. &
-         error_val == 0) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         abs(length - expected) <= spacing(expected) .AND. &
+         error_val == 0)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Cubic curve.
     nodes3(1, :) = 0
@@ -1070,13 +895,10 @@ contains
     ! x'(s)^2 + y'(s)^2 = (9/4)(145s^4 - 384s^3 + 356s^2 - 128s + 20)
     ! NOTE: This "literal" has more precision than the type.
     expected = 4.0916195514424730685_dp
-    if (abs(length - expected) <= spacing(expected) .AND. &
-         error_val == 0) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = ( &
+         abs(length - expected) <= spacing(expected) .AND. &
+         error_val == 0)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_compute_length
 

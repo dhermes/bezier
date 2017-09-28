@@ -42,6 +42,7 @@ contains
   subroutine test_cross_product(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: vec0(1, 2)
     real(c_double) :: vec1(1, 2)
     real(c_double) :: result_
@@ -55,7 +56,8 @@ contains
     vec0(1, :) = [1.0_dp, 7.0_dp] / 8
     vec1(1, :) = [-11.0_dp, 24.0_dp] / 32
     call cross_product(vec0, vec1, result_)
-    call print_status_full(name, case_id, result_ == 101.0_dp / 256, success)
+    case_success = (result_ == 101.0_dp / 256)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_cross_product
 
