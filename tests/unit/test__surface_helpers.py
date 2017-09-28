@@ -2603,8 +2603,8 @@ class TestIntersectionClassification(unittest.TestCase):
         self.assertEqual(set(python_members), set(cython_members))
         for name, enum_value in six.iteritems(python_members):
             py_value = enum_value.value
-            if six.PY2:
-                cy_value = cython_members[name]
-            else:  # pragma: NO COVER
+            if six.PY3:
                 cy_value = cython_members[name].value
+            else:  # pragma: NO COVER
+                cy_value = cython_members[name]
             self.assertEqual(py_value, cy_value)
