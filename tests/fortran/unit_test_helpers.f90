@@ -12,11 +12,13 @@
 
 module unit_test_helpers
 
-  use, intrinsic :: iso_c_binding, only: c_double
+  use, intrinsic :: iso_c_binding, only: c_double, c_bool
   use types, only: dp
   implicit none
   private
-  public MACHINE_EPS, print_status, get_random_nodes, binary_round, get_id_mat
+  public &
+       MACHINE_EPS, print_status, print_status_full, get_random_nodes, &
+       binary_round, get_id_mat
 
   ! NOTE: Should probably use ``d1mach`` to determine this.
   real(c_double), parameter :: MACHINE_EPS = 0.5_dp**52
@@ -42,6 +44,19 @@ contains
     case_id = case_id + 1
 
   end subroutine print_status
+
+  subroutine print_status_full(name, case_id, case_success, suite_success)
+    character(len=*), intent(in) :: name
+    integer, intent(inout) :: case_id
+    logical, intent(in) :: case_success
+    logical(c_bool), intent(inout) :: suite_success
+
+    call print_status(name, case_id, case_success)
+    if (.NOT. case_success) then
+       suite_success = .FALSE.
+    end if
+
+  end subroutine print_status_full
 
   subroutine get_random_nodes(nodes, multiplier, modulus, num_bits)
     real(c_double), intent(inout) :: nodes(:, :)
