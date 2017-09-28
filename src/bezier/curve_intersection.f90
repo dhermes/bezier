@@ -12,7 +12,7 @@
 
 module curve_intersection
 
-  use iso_c_binding, only: c_double, c_int, c_bool
+  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   use helpers, only: cross_product, bbox, wiggle_interval, in_interval
   use curve, only: evaluate_multi, evaluate_hodograph

@@ -12,7 +12,7 @@
 
 module test_helpers
 
-  use iso_c_binding, only: c_double, c_bool
+  use, intrinsic :: iso_c_binding, only: c_double, c_bool
   use helpers, only: &
        WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
        vector_close, in_interval, ulps_away

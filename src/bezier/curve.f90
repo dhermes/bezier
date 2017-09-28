@@ -12,7 +12,7 @@
 
 module curve
 
-  use iso_c_binding, only: c_double, c_int, c_bool
+  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   use helpers, only: cross_product, contains_nd
   implicit none
@@ -47,7 +47,7 @@ module curve
   abstract interface
      ! f: real(c_double) --> real(c_double)
      real(c_double) function scalar_func(x)
-       use iso_c_binding, only: c_double
+       use, intrinsic :: iso_c_binding, only: c_double
        implicit none
 
        real(c_double), intent(in) :: x
@@ -67,7 +67,7 @@ module curve
           f, a, b, epsabs, epsrel, limit, result_, &
           abserr, neval, ier, alist, blist, rlist, &
           elist, iord, last)
-       use iso_c_binding, only: c_double, c_int
+       use, intrinsic :: iso_c_binding, only: c_double, c_int
        implicit none
 
        procedure(scalar_func) :: f

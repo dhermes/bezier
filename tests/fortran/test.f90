@@ -12,7 +12,7 @@
 
 program test
 
-  use iso_c_binding, only: c_bool
+  use, intrinsic :: iso_c_binding, only: c_bool
   use test_helpers, only: helpers_all_tests
   use test_curve, only: curve_all_tests
   use test_curve_intersection, only: curve_intersection_all_tests

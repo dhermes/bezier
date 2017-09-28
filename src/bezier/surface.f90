@@ -12,7 +12,7 @@
 
 module surface
 
-  use iso_c_binding, only: c_double, c_int
+  use, intrinsic :: iso_c_binding, only: c_double, c_int
   use types, only: dp
   use curve, only: evaluate_curve_barycentric
   implicit none

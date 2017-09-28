@@ -12,7 +12,7 @@
 
 module unit_test_helpers
 
-  use iso_c_binding, only: c_double
+  use, intrinsic :: iso_c_binding, only: c_double
   use types, only: dp
   implicit none
   private

@@ -12,7 +12,7 @@
 
 module helpers
 
-  use iso_c_binding, only: c_double, c_int, c_bool
+  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   implicit none
   private

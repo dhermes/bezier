@@ -12,7 +12,7 @@
 
 module test_curve
 
-  use iso_c_binding, only: c_bool, c_double, c_int
+  use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use curve, only: &
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
        evaluate_hodograph, subdivide_nodes, newton_refine, LOCATE_MISS, &
