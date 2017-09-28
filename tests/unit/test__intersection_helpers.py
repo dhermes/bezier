@@ -225,7 +225,7 @@ class Test__linearization_error(unittest.TestCase):
         self.assertEqual(error_val, expected)
 
     def test_hidden_quadratic(self):
-        # NOTE: This is the line y = 1 + x^2 / 4, but with the
+        # NOTE: This is the quadratic y = 1 + x^2 / 4, but with the
         #       parameterization x(s) = (3 s - 1)^2.
         nodes = np.asfortranarray([
             [1.0, 1.25],
