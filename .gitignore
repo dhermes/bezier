@@ -21,6 +21,8 @@ src/bezier/quadpack/*.o
 src/bezier/_speedup*.so
 wheelhouse/
 scripts/osx/frankenstein/
+tests/fortran/*.gcda
+tests/fortran/*.gcno
 tests/fortran/*.o
 tests/fortran/*.mod
 tests/fortran/test-bin

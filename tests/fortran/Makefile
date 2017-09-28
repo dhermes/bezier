@@ -6,7 +6,7 @@ FC = gfortran
 F77 = .f
 F90 = .f90
 OBJ = .o
-FCFLAGS = -fPIC -O3
+FCFLAGS = -fPIC -fprofile-arcs -ftest-coverage
 
 # NOTE: **Must** specify the order for source files.
 F77_SOURCES := \
@@ -50,6 +50,8 @@ $(CURR_DIR)/test-bin: $(F77_OBJS) $(F90_OBJS) $(TEST_OBJS) $(CURR_DIR)/test.f90
 	  $(CURR_DIR)/test.f90
 
 clean:
+	rm -f $(CURR_DIR)/*.gcno
+	rm -f $(CURR_DIR)/*.gcda
 	rm -f $(CURR_DIR)/*.mod
 	rm -f $(CURR_DIR)/*$(OBJ)
 	rm -f $(CURR_DIR)/test-bin
