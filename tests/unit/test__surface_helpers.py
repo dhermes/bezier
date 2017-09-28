@@ -2503,7 +2503,7 @@ class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
         param_vals = np.asfortranarray([
             [0.25, 0.25, 0.25],
             [-1.0, -1.0, 3.0],
-            [0.125, 0.75, 0.125]
+            [0.125, 0.75, 0.125],
         ])
         result = self._call_function_under_test(nodes, 1, param_vals, 2)
         self.assertEqual(result, expected)
@@ -2570,7 +2570,7 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
         param_vals = np.asfortranarray([
             [0.25, 0.25],
             [-1.0, 3.0],
-            [0.75, 0.125]
+            [0.75, 0.125],
         ])
         result = self._call_function_under_test(nodes, 1, param_vals, 2)
         self.assertEqual(result, expected)

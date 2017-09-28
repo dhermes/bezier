@@ -14,12 +14,14 @@ module test_surface
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double
   use surface, only: &
-       de_casteljau_one_round, evaluate_barycentric
+       de_casteljau_one_round, evaluate_barycentric, &
+       evaluate_barycentric_multi, evaluate_cartesian_multi
   use types, only: dp
   use unit_test_helpers, only: print_status, get_random_nodes
   implicit none
   private &
-       test_de_casteljau_one_round, test_evaluate_barycentric
+       test_de_casteljau_one_round, test_evaluate_barycentric, &
+       test_evaluate_barycentric_multi, test_evaluate_cartesian_multi
   public surface_all_tests
 
 contains
@@ -29,6 +31,8 @@ contains
 
     call test_de_casteljau_one_round(success)
     call test_evaluate_barycentric(success)
+    call test_evaluate_barycentric_multi(success)
+    call test_evaluate_cartesian_multi(success)
 
   end subroutine surface_all_tests
 
@@ -280,5 +284,114 @@ contains
     end if
 
   end subroutine test_evaluate_barycentric
+
+  subroutine test_evaluate_barycentric_multi(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes(3, 2), param_vals(3, 3)
+    real(c_double) :: evaluated(3, 2), expected(3, 2)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "evaluate_barycentric_multi"
+
+    ! CASE 1: Basic evaluation.
+    nodes(1, :) = [0.0_dp, 0.0_dp]
+    nodes(2, :) = [2.0_dp, 1.0_dp]
+    nodes(3, :) = [-3.0_dp, 2.0_dp]
+    param_vals(1, :) = [1.0_dp, 0.0_dp, 0.0_dp]
+    param_vals(2, :) = [0.0_dp, 1.0_dp, 0.0_dp]
+    param_vals(3, :) = [0.0_dp, 0.5_dp, 0.5_dp]
+    expected(1, :) = [0.0_dp, 0.0_dp]
+    expected(2, :) = [2.0_dp, 1.0_dp]
+    expected(3, :) = [-0.5_dp, 1.5_dp]
+    call evaluate_barycentric_multi( &
+         3, 2, nodes, 1, 3, param_vals, evaluated)
+    if (all(evaluated == expected)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Values outside the domain.
+    nodes(1, :) = [0.0_dp, 0.0_dp]
+    nodes(2, :) = [3.0_dp, -1.0_dp]
+    nodes(3, :) = [1.0_dp, 0.0_dp]
+    param_vals(1, :) = [0.25_dp, 0.25_dp, 0.25_dp]
+    param_vals(2, :) = [-1.0_dp, -1.0_dp, 3.0_dp]
+    param_vals(3, :) = [0.125_dp, 0.75_dp, 0.125_dp]
+    expected(1, :) = [1.0_dp, -0.25_dp]
+    expected(2, :) = [0.0_dp, 1.0_dp]
+    expected(3, :) = [2.375_dp, -0.75_dp]
+    call evaluate_barycentric_multi( &
+         3, 2, nodes, 1, 3, param_vals, evaluated)
+    if (all(evaluated == expected)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_evaluate_barycentric_multi
+
+  subroutine test_evaluate_cartesian_multi(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(6, 2), param_vals1(4, 2)
+    real(c_double) :: evaluated1(4, 2), expected1(4, 2)
+    real(c_double) :: nodes2(3, 2), param_vals2(3, 2)
+    real(c_double) :: evaluated2(3, 2), expected2(3, 2)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "evaluate_cartesian_multi"
+
+    ! CASE 1: Basic evaluation
+    nodes1(1, :) = [0.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 0.75_dp]
+    nodes1(3, :) = [2.0_dp, 1.0_dp]
+    nodes1(4, :) = [-1.5_dp, 1.0_dp]
+    nodes1(5, :) = [-0.5_dp, 1.5_dp]
+    nodes1(6, :) = [-3.0_dp, 2.0_dp]
+    param_vals1(1, :) = [0.25_dp, 0.75_dp]
+    param_vals1(2, :) = [0.0_dp, 0.0_dp]
+    param_vals1(3, :) = [0.5_dp, 0.25_dp]
+    param_vals1(4, :) = [0.25_dp, 0.375_dp]
+    expected1(1, :) = [-1.75_dp, 1.75_dp]
+    expected1(2, :) = [0.0_dp, 0.0_dp]
+    expected1(3, :) = [0.25_dp, 1.0625_dp]
+    expected1(4, :) = [-0.625_dp, 1.046875_dp]
+    call evaluate_cartesian_multi( &
+         6, 2, nodes1, 2, 4, param_vals1, evaluated1)
+    if (all(evaluated1 == expected1)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Values outside the domain.
+    nodes2(1, :) = [0.0_dp, 2.0_dp]
+    nodes2(2, :) = [1.0_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    param_vals2(1, :) = [0.25_dp, 0.25_dp]
+    param_vals2(2, :) = [-1.0_dp, 3.0_dp]
+    param_vals2(3, :) = [0.75_dp, 0.125_dp]
+    expected2(1, :) = [0.5_dp, 1.25_dp]
+    expected2(2, :) = [2.0_dp, -3.0_dp]
+    expected2(3, :) = [0.875_dp, 1.0_dp]
+    call evaluate_cartesian_multi( &
+         3, 2, nodes2, 1, 3, param_vals2, evaluated2)
+    if (all(evaluated2 == expected2)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_evaluate_cartesian_multi
 
 end module test_surface
