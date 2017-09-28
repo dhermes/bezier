@@ -20,12 +20,12 @@ module curve
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
        SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse, &
        specialize_curve_generic, specialize_curve_quadratic, &
-       subdivide_nodes_generic, split_candidate, projection_error
+       subdivide_nodes_generic, split_candidate, projection_error, can_reduce
   public &
        LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
        newton_refine, locate_point, elevate_nodes, get_curvature, &
-       reduce_pseudo_inverse, can_reduce, full_reduce, compute_length
+       reduce_pseudo_inverse, full_reduce, compute_length
 
   ! For ``locate_point``.
   type :: LocateCandidate
@@ -614,12 +614,10 @@ contains
     real(c_double) :: reduced(num_nodes, dimension_)
     real(c_double) :: relative_err
 
-    if (num_nodes < 2) then
-       ! Can't reduce past degree 1.
-       success = 0
-       return
-    else if (num_nodes > 5) then
-       ! Not Implemented.
+    if (num_nodes < 2 .OR. num_nodes > 5) then
+       ! The only caller `full_reduce` will never try to reduce a point
+       ! (i.e. `num_nodes == `). So these cases (along with higher degre
+       ! than quartics) are "Not Implemented".
        success = -1
        return
     end if
