@@ -124,7 +124,7 @@ def unit(session, py):
 
 @nox.session
 def cover(session):
-    session.interpreter = 'python2.7'
+    session.interpreter = SINGLE_INTERP
 
     # Install all test dependencies.
     local_deps = BASE_DEPS + ('scipy', 'pytest-cov', 'coverage')

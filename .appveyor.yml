@@ -24,6 +24,12 @@ environment:
       CONDA_INSTALL_LOCN: C:\\Miniconda
       TEST_TYPE: base
 
+    - TARGET_ARCH: x64
+      CONDA_PY: 27
+      PY_CONDITION: "python >=2.7.13,<3"
+      CONDA_INSTALL_LOCN: C:\\Miniconda-x64
+      TEST_TYPE: base
+
     - TARGET_ARCH: x86
       CONDA_PY: 35
       PY_CONDITION: "python=3.5"
@@ -46,24 +52,18 @@ environment:
       CONDA_PY: 36
       PY_CONDITION: "python=3.6"
       CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
-      TEST_TYPE: base
-
-    - TARGET_ARCH: x64
-      CONDA_PY: 27
-      PY_CONDITION: "python >=2.7.13,<3"
-      CONDA_INSTALL_LOCN: C:\\Miniconda-x64
       TEST_TYPE: cover
 
     - TARGET_ARCH: x64
-      CONDA_PY: 27
-      PY_CONDITION: "python >=2.7.13,<3"
-      CONDA_INSTALL_LOCN: C:\\Miniconda-x64
+      CONDA_PY: 36
+      PY_CONDITION: "python=3.6"
+      CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
       TEST_TYPE: functional
 
     - TARGET_ARCH: x64
-      CONDA_PY: 35
-      PY_CONDITION: "python=3.5"
-      CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
+      CONDA_PY: 36
+      PY_CONDITION: "python=3.6"
+      CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
       TEST_TYPE: doctest
 
 install:

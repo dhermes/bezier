@@ -17,8 +17,8 @@ MB_COMMON_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/mast
 MB_OSX_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/master/osx_utils.sh"
 
 if [[ -z "${PY_VERSION}" ]]; then
-  echo "PY_VERSION environment variable should be set by the caller."
-  exit 1
+    echo "PY_VERSION environment variable should be set by the caller."
+    exit 1
 fi
 
 # For ``gfortran``

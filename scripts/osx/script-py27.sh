@@ -20,6 +20,6 @@ export PY_BIN="${BIN_DIR}/python2"
 export PY_TAG="cp27-cp27m"
 
 # ``readlink -f`` is not our friend on OS X.
-SCRIPT_FI=$(${PY_BIN} -c "import os; print(os.path.realpath('${0}'))");
-CURR_DIR=$(dirname ${SCRIPT_FI});
+SCRIPT_FI=$(${PY_BIN} -c "import os; print(os.path.realpath('${0}'))")
+CURR_DIR=$(dirname ${SCRIPT_FI})
 ${CURR_DIR}/build-wheels.sh

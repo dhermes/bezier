@@ -15,29 +15,29 @@
 set -e -x
 
 if [[ -z "${PY_VERSION}" ]]; then
-  echo "PY_VERSION environment variable should be set by the caller."
-  exit 1
+    echo "PY_VERSION environment variable should be set by the caller."
+    exit 1
 fi
 
 if [[ -z "${PY_BIN_DIR}" ]]; then
-  echo "PY_BIN_DIR environment variable should be set by the caller."
-  exit 1
+    echo "PY_BIN_DIR environment variable should be set by the caller."
+    exit 1
 fi
 
 if [[ "${PY_VERSION}" == "2.7" ]]; then
-    ${PY_BIN_DIR}/nox -s cover;
-    arch -32 .nox/cover/bin/python -m pytest tests/unit/
+    ${PY_BIN_DIR}/nox -s "unit(py='2.7')"
+    arch -32 .nox/unit-py-2-7/bin/python -m pytest tests/unit/
 elif [[ "${PY_VERSION}" == "3.5" ]]; then
-    ${PY_BIN_DIR}/nox -s "unit(py='3.5')";
+    ${PY_BIN_DIR}/nox -s "unit(py='3.5')"
     arch -32 .nox/unit-py-3-5/bin/python -m pytest tests/unit/
 elif [[ "${PY_VERSION}" == "3.6" ]]; then
-    ${PY_BIN_DIR}/nox -s "unit(py='3.6')";
-    arch -32 .nox/unit-py-3-6/bin/python -m pytest tests/unit/
-    ${PY_BIN_DIR}/nox -s "functional(py='3.6')";
-    arch -32 .nox/functional-py-3-6/bin/python -m pytest tests/functional/;
-    ${PY_BIN_DIR}/nox -s doctest;
-    ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-osx')";
+    ${PY_BIN_DIR}/nox -s cover
+    arch -32 .nox/cover/bin/python -m pytest tests/unit/
+    ${PY_BIN_DIR}/nox -s "functional(py='3.6')"
+    arch -32 .nox/functional-py-3-6/bin/python -m pytest tests/functional/
+    ${PY_BIN_DIR}/nox -s doctest
+    ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-osx')"
 else
-    echo "Unexpected version: ${PY_VERSION}";
-    exit 1;
+    echo "Unexpected version: ${PY_VERSION}"
+    exit 1
 fi

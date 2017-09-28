@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SCRIPT_FI=$(readlink -f ${0});
-MANYLINUX_DIR=$(dirname ${SCRIPT_FI});
-SCRIPTS_DIR=$(dirname ${MANYLINUX_DIR});
-REPO_ROOT=$(dirname ${SCRIPTS_DIR});
+SCRIPT_FI=$(readlink -f ${0})
+MANYLINUX_DIR=$(dirname ${SCRIPT_FI})
+SCRIPTS_DIR=$(dirname ${MANYLINUX_DIR})
+REPO_ROOT=$(dirname ${SCRIPTS_DIR})
 DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
 PRE_CMD=
 

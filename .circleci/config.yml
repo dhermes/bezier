@@ -13,16 +13,16 @@ jobs:
           name: Check that all Cython generated files have been updated
           command: nox -s "update_generated(check=True)"
       - run:
+          name: Unit tests in Python 2.7
+          command: nox -s "unit(py='2.7')"
+      - run:
           name: Unit tests in Python 3.5
           command: nox -s "unit(py='3.5')"
-      - run:
-          name: Unit tests in Python 3.6
-          command: nox -s "unit(py='3.6')"
       - run:
           name: Unit tests in pypy
           command: nox -s "unit(py='pypy')"
       - run:
-          name: Unit tests AND line coverage in Python 2.7
+          name: Unit tests AND line coverage in Python 3.6
           command: nox -s cover
       - run:
           name: Fortran unit tests

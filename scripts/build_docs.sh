@@ -36,8 +36,8 @@ if [[ -n "$(git diff -- docs/)" ]]; then
 fi
 
 sphinx-build -W \
-  -b html \
-  -d docs/build/doctrees \
-  docs \
-  docs/build/html
+    -b html \
+    -d docs/build/doctrees \
+    docs \
+    docs/build/html
 echo "Build finished. The HTML pages are in docs/build/html."

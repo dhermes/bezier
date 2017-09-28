@@ -14,22 +14,22 @@
 
 set -e
 
-PKG_NAME="bezier";
+PKG_NAME="bezier"
 
 if [[ -z "${BIN_DIR}" ]]; then
-  echo "BIN_DIR environment variable should be set by the caller."
-  exit 1
+    echo "BIN_DIR environment variable should be set by the caller."
+    exit 1
 fi
 DELOCATE_WHEEL="${BIN_DIR}/delocate-wheel"
 
 if [[ -z "${PY_BIN}" ]]; then
-  echo "PY_BIN environment variable should be set by the caller."
-  exit 1
+    echo "PY_BIN environment variable should be set by the caller."
+    exit 1
 fi
 
 if [[ -z "${PY_TAG}" ]]; then
-  echo "PY_TAG environment variable should be set by the caller."
-  exit 1
+    echo "PY_TAG environment variable should be set by the caller."
+    exit 1
 fi
 
 if [[ -f ${PY_BIN} ]]; then
@@ -41,10 +41,10 @@ else
 fi
 
 # ``readlink -f`` is not our friend on OS X.
-SCRIPT_FI=$(${PY_BIN} -c "import os; print(os.path.realpath('${0}'))");
-OSX_DIR=$(dirname ${SCRIPT_FI});
-SCRIPTS_DIR=$(dirname ${OSX_DIR});
-REPO_ROOT=$(dirname ${SCRIPTS_DIR});
+SCRIPT_FI=$(${PY_BIN} -c "import os; print(os.path.realpath('${0}'))")
+OSX_DIR=$(dirname ${SCRIPT_FI})
+SCRIPTS_DIR=$(dirname ${OSX_DIR})
+REPO_ROOT=$(dirname ${SCRIPTS_DIR})
 
 # Make sure packaging tools are installed / up-to-date.
 ${PY_BIN} -m pip install --upgrade delocate wheel virtualenv
@@ -55,15 +55,15 @@ ${PY_BIN} -m pip install --upgrade setuptools numpy
 ${PY_BIN} ${OSX_DIR}/make_universal_libgfortran.py
 
 # Create the wheel (make sure to use the custom ``libgfortran``).
-DIST_WHEELS="${OSX_DIR}/dist_wheels";
+DIST_WHEELS="${OSX_DIR}/dist_wheels"
 mkdir -p ${DIST_WHEELS}
-FRANKENSTEIN="${OSX_DIR}/frankenstein";
+FRANKENSTEIN="${OSX_DIR}/frankenstein"
 GFORTRAN_LIB="${FRANKENSTEIN}" \
     ${PY_BIN} -m pip wheel ${REPO_ROOT} \
     --wheel-dir ${DIST_WHEELS}
 
 # Delocate the wheel.
-FIXED_WHEELS="${OSX_DIR}/fixed_wheels";
+FIXED_WHEELS="${OSX_DIR}/fixed_wheels"
 mkdir -p ${FIXED_WHEELS}
 ${DELOCATE_WHEEL} \
     --check-archs \
@@ -72,7 +72,7 @@ ${DELOCATE_WHEEL} \
     ${DIST_WHEELS}/${PKG_NAME}*${PY_TAG}*.whl
 
 # Test out the newly created wheel in a virtual environment.
-VENV="${OSX_DIR}/test-venv";
+VENV="${OSX_DIR}/test-venv"
 ${PY_BIN} -m virtualenv ${VENV}
 ${VENV}/bin/pip install \
     --upgrade \
