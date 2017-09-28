@@ -12,20 +12,21 @@
 
 module test_curve_intersection
 
-  use iso_c_binding, only: c_bool, c_double, c_int
+  use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+  use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use curve, only: evaluate_multi, subdivide_nodes
   use curve_intersection, only: &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, linearization_error, &
        segment_intersection, newton_refine_intersect, &
-       bbox_intersect, parallel_different
+       bbox_intersect, parallel_different, from_linearized
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_linearization_error, test_segment_intersection, &
        test_newton_refine_intersect, test_bbox_intersect, &
-       test_parallel_different
+       test_parallel_different, test_from_linearized
   public curve_intersection_all_tests
 
 contains
@@ -38,6 +39,7 @@ contains
     call test_newton_refine_intersect(success)
     call test_bbox_intersect(success)
     call test_parallel_different(success)
+    call test_from_linearized(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -629,5 +631,226 @@ contains
     end if
 
   end subroutine test_parallel_different
+
+  subroutine test_from_linearized(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nan_val
+    real(c_double) :: start_node1(1, 2), end_node1(1, 2), error1
+    real(c_double) :: start_node2(1, 2), end_node2(1, 2), error2
+    real(c_double) :: nodes1(3, 2), nodes2(3, 2)
+    real(c_double) :: nodes3(2, 2), nodes4(2, 2)
+    real(c_double) :: refined_s, refined_t
+    logical(c_bool) :: does_intersect
+    integer(c_int) :: py_exc
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "from_linearized"
+    nan_val = ieee_value(nan_val, ieee_quiet_nan)
+
+    ! CASE 1: Basic test of not-very-linearized quadratics.
+    nodes1(1, :) = 0
+    nodes1(2, :) = [0.5_dp, 1.0_dp]
+    nodes1(3, :) = 1
+    start_node1 = nodes1(:1, :)
+    end_node1 = nodes1(3:, :)
+    ! NOTE: This curve isn't close to linear, but that's OK.
+    error1 = nan_val
+
+    nodes2(1, :) = [0.0_dp, 1.0_dp]
+    nodes2(2, :) = [0.5_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    start_node2 = nodes2(:1, :)
+    end_node2 = nodes2(3:, :)
+    ! NOTE: This curve isn't close to linear, but that's OK.
+    error2 = nan_val
+
+    call from_linearized( &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes1, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
+         refined_s, refined_t, does_intersect, py_exc)
+    if (does_intersect .AND. py_exc == 0 .AND. &
+         refined_s == 0.5_dp .AND. refined_t == 0.5_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Bounding boxes intersect but the lines do not.
+    nodes3(1, :) = 0
+    nodes3(2, :) = 1
+    start_node1 = nodes3(:1, :)
+    end_node1 = nodes3(2:, :)
+    error1 = 0.0_dp
+
+    nodes4(1, :) = [1.75_dp, -0.75_dp]
+    nodes4(2, :) = [0.75_dp, 0.25_dp]
+    start_node2 = nodes4(:1, :)
+    end_node2 = nodes4(2:, :)
+    error2 = 0.0_dp
+
+    call from_linearized( &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
+         refined_s, refined_t, does_intersect, py_exc)
+    if (.NOT. does_intersect .AND. py_exc == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Same as CASE 2, but swap the inputs.
+    call from_linearized( &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
+         refined_s, refined_t, does_intersect, py_exc)
+    if (.NOT. does_intersect .AND. py_exc == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Bounding boxes intersect but the quadratics do not.
+    nodes1(1, :) = 0
+    nodes1(2, :) = [0.5_dp, 0.0_dp]
+    nodes1(3, :) = 1
+    start_node1 = nodes1(:1, :)
+    end_node1 = nodes1(3:, :)
+    error1 = 0.25_dp
+
+    nodes2(1, :) = [1.75_dp, -0.75_dp]
+    nodes2(2, :) = [1.25_dp, -0.75_dp]
+    nodes2(3, :) = [0.75_dp, 0.25_dp]
+    start_node2 = nodes2(:1, :)
+    end_node2 = nodes2(3:, :)
+    error2 = 0.25_dp
+
+    call from_linearized( &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes1, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
+         refined_s, refined_t, does_intersect, py_exc)
+    if (.NOT. does_intersect .AND. py_exc == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Same as CASE 4, but swap the inputs.
+    call from_linearized( &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes1, &
+         refined_s, refined_t, does_intersect, py_exc)
+    if (.NOT. does_intersect .AND. py_exc == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 6: Parallel lines that do not intersect.
+    nodes3(1, :) = 0
+    nodes3(2, :) = 1
+    start_node1 = nodes3(:1, :)
+    end_node1 = nodes3(2:, :)
+    error1 = 0.0_dp
+
+    nodes4(1, :) = [0.0_dp, 1.0_dp]
+    nodes4(2, :) = [1.0_dp, 2.0_dp]
+    start_node2 = nodes4(:1, :)
+    end_node2 = nodes4(2:, :)
+    error2 = 0.0_dp
+
+    call from_linearized( &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
+         refined_s, refined_t, does_intersect, py_exc)
+    if (.NOT. does_intersect .AND. py_exc == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 7: Parallel lines that **do** intersect.
+    nodes3(1, :) = 0
+    nodes3(2, :) = 1
+    start_node1 = nodes3(:1, :)
+    end_node1 = nodes3(2:, :)
+    error1 = 0.0_dp
+
+    nodes4(1, :) = [0.5_dp, 0.5_dp]
+    nodes4(2, :) = [3.0_dp, 3.0_dp]
+    start_node2 = nodes4(:1, :)
+    end_node2 = nodes4(2:, :)
+    error2 = 0.0_dp
+
+    call from_linearized( &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
+         refined_s, refined_t, does_intersect, py_exc)
+    if (py_exc == 1) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 8: Linearized parts are same line but disjoint segments.
+    nodes3(1, :) = 0
+    nodes3(2, :) = 1
+    start_node1 = nodes3(:1, :)
+    end_node1 = nodes3(2:, :)
+    error1 = 0.0_dp
+
+    nodes2(1, :) = 2
+    nodes2(2, :) = 2.5009765625_dp
+    nodes2(3, :) = 3
+    start_node2 = nodes2(:1, :)
+    end_node2 = nodes2(3:, :)
+    error2 = nan_val
+
+    call from_linearized( &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
+         refined_s, refined_t, does_intersect, py_exc)
+    if (.NOT.does_intersect .AND. py_exc == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 9: Linearized parts parallel / diff. lines / bbox-es overlap.
+    nodes3(1, :) = 0
+    nodes3(2, :) = 1
+    start_node1 = nodes3(:1, :)
+    end_node1 = nodes3(2:, :)
+    error1 = 0.0_dp
+
+    nodes2(1, :) = [0.5_dp, 0.75_dp]
+    nodes2(2, :) = [1.0009765625_dp, 1.2509765625_dp]
+    nodes2(3, :) = [1.5_dp, 1.75_dp]
+    start_node2 = nodes2(:1, :)
+    end_node2 = nodes2(3:, :)
+    error2 = nan_val
+
+    call from_linearized( &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
+         refined_s, refined_t, does_intersect, py_exc)
+    if (py_exc == 1) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_from_linearized
 
 end module test_curve_intersection
