@@ -49,8 +49,8 @@ Sorry for this inconvenience. For more information or to help, visit:
     https://github.com/dhermes/bezier/issues/26
 """
 REQUIREMENTS = (
-    'numpy >= 1.11.2',
-    'six >= 1.9.0',
+    'numpy >= 1.13.2',
+    'six >= 1.11.0',
 )
 EXTRAS_REQUIRE = {
     ':python_version<"3.4"': ['enum34'],
