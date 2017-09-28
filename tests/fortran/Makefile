@@ -8,6 +8,14 @@ F90 = .f90
 OBJ = .o
 FCFLAGS = -fPIC -O0 -fprofile-arcs -ftest-coverage
 
+ifdef BRANCH_COVERAGE
+LCOV_OPTIONS = --rc lcov_branch_coverage=1
+GENHTML_OPTIONS = --branch-coverage
+else
+LCOV_OPTIONS =
+GENHTML_OPTIONS =
+endif
+
 # NOTE: **Must** specify the order for source files.
 F77_SOURCES := \
 	$(QUADPACK_DIR)/d1mach$(F77) \
@@ -54,11 +62,11 @@ lcov: $(CURR_DIR)/test-bin
 	lcov --capture \
 	  --directory $(CURR_DIR) \
 	  -output-file $(CURR_DIR)/coverage.info \
-	  --rc lcov_branch_coverage=1
+	  $(LCOV_OPTIONS)
 	genhtml \
 	  $(CURR_DIR)/coverage.info \
 	  --output-directory $(CURR_DIR)/lcov-html \
-	  --branch-coverage
+	  $(GENHTML_OPTIONS)
 
 clean:
 	rm -f $(CURR_DIR)/*.gcno
