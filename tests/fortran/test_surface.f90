@@ -15,13 +15,15 @@ module test_surface
   use, intrinsic :: iso_c_binding, only: c_bool, c_double
   use surface, only: &
        de_casteljau_one_round, evaluate_barycentric, &
-       evaluate_barycentric_multi, evaluate_cartesian_multi
+       evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
+       jacobian_det
   use types, only: dp
   use unit_test_helpers, only: print_status, get_random_nodes
   implicit none
   private &
        test_de_casteljau_one_round, test_evaluate_barycentric, &
-       test_evaluate_barycentric_multi, test_evaluate_cartesian_multi
+       test_evaluate_barycentric_multi, test_evaluate_cartesian_multi, &
+       test_jacobian_both, test_jacobian_det
   public surface_all_tests
 
 contains
@@ -33,6 +35,8 @@ contains
     call test_evaluate_barycentric(success)
     call test_evaluate_barycentric_multi(success)
     call test_evaluate_cartesian_multi(success)
+    call test_jacobian_both(success)
+    call test_jacobian_det(success)
 
   end subroutine surface_all_tests
 
@@ -393,5 +397,159 @@ contains
     end if
 
   end subroutine test_evaluate_cartesian_multi
+
+  subroutine test_jacobian_both(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(3, 1), expected1(1, 2), new_nodes1(1, 2)
+    real(c_double) :: nodes2(6, 3), expected2(3, 6), new_nodes2(3, 6)
+    real(c_double) :: nodes3(10, 2), expected3(6, 4), new_nodes3(6, 4)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "jacobian_both"
+
+    ! CASE 1: Linear surface.
+    ! B(s, t) = -2s + 2t + 3
+    nodes1(:, 1) = [3.0_dp, 1.0_dp, 5.0_dp]
+    ! B_s = -2
+    ! B_t = 2
+    expected1(1, :) = [-2.0_dp, 2.0_dp]
+    call jacobian_both( &
+         3, 1, nodes1, 1, new_nodes1)
+    if (all(new_nodes1 == expected1)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Quadratic surface.
+    ! B(s, t) = [
+    !     4 s t - 2 s + 5 t^2 - 6 t + 3,
+    !     -s (s - 2 t),
+    !     8 s^2 - 10 s t - 2 s - 13 t^2 + 12 t + 1,
+    ! ]
+    !
+    nodes2(1, :) = [3.0_dp, 0.0_dp, 1.0_dp]
+    nodes2(2, :) = [2.0_dp, 0.0_dp, 0.0_dp]
+    nodes2(3, :) = [1.0_dp, -1.0_dp, 7.0_dp]
+    nodes2(4, :) = [0.0_dp, 0.0_dp, 7.0_dp]
+    nodes2(5, :) = [1.0_dp, 1.0_dp, 1.0_dp]
+    nodes2(6, :) = [2.0_dp, 0.0_dp, 0.0_dp]
+    ! B_s = [
+    !     4 t - 2,
+    !     -2 s + 2 t,
+    !     16 s - 10 t - 2,
+    ! ]
+    ! B_t = [
+    !     4 s + 10 t - 6,
+    !     2 s,
+    !    -10 s - 26 t + 12,
+    ! ]
+    expected2(1, :) = [-2.0_dp, 0.0_dp, -2.0_dp, -6.0_dp, 0.0_dp, 12.0_dp]
+    expected2(2, :) = [-2.0_dp, -2.0_dp, 14.0_dp, -2.0_dp, 2.0_dp, 2.0_dp]
+    expected2(3, :) = [2.0_dp, 2.0_dp, -12.0_dp, 4.0_dp, 0.0_dp, -14.0_dp]
+    call jacobian_both( &
+         6, 3, nodes2, 2, new_nodes2)
+    if (all(new_nodes2 == expected2)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Cubic surface.
+    ! B(s, t) = [
+    !     -2s^3 + 9s^2t + 12st^2 - 12st + 3s - 2t^3 + 6t,
+    !     (-10s^3 - 30s^2t + 30s^2 - 36st^2 + 42st -
+    !          18s - 15t^3 + 30t^2 - 18t + 7),
+    ! ]
+    nodes3(1, :) = [0.0_dp, 7.0_dp]
+    nodes3(2, :) = [1.0_dp, 1.0_dp]
+    nodes3(3, :) = [2.0_dp, 5.0_dp]
+    nodes3(4, :) = [1.0_dp, 9.0_dp]
+    nodes3(5, :) = [2.0_dp, 1.0_dp]
+    nodes3(6, :) = [1.0_dp, 2.0_dp]
+    nodes3(7, :) = [3.0_dp, 3.0_dp]
+    nodes3(8, :) = [4.0_dp, 5.0_dp]
+    nodes3(9, :) = [5.0_dp, 1.0_dp]
+    nodes3(10, :) = [4.0_dp, 4.0_dp]
+    ! B_s = [
+    !     -6s^2 + 18st + 12t^2 - 12t + 3,
+    !     -30s^2 - 60st + 60s - 36t^2 + 42t - 18,
+    ! ]
+    ! B_t = [
+    !     9s^2 + 24st - 12s - 6t^2 + 6,
+    !     -30s^2 - 72st + 42s - 45t^2 + 60t - 18,
+    ! ]
+    expected3(1, :) = [3.0_dp, -18.0_dp, 6.0_dp, -18.0_dp]
+    expected3(2, :) = [3.0_dp, 12.0_dp, 0.0_dp, 3.0_dp]
+    expected3(3, :) = [-3.0_dp, 12.0_dp, 3.0_dp, -6.0_dp]
+    expected3(4, :) = [-3.0_dp, 3.0_dp, 6.0_dp, 12.0_dp]
+    expected3(5, :) = [6.0_dp, 3.0_dp, 12.0_dp, -3.0_dp]
+    expected3(6, :) = [3.0_dp, -12.0_dp, 0.0_dp, -3.0_dp]
+    call jacobian_both( &
+         10, 2, nodes3, 3, new_nodes3)
+    if (all(new_nodes3 == expected3)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_jacobian_both
+
+  subroutine test_jacobian_det(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(3, 2), param_vals1(13, 2), evaluated1(13)
+    real(c_double) :: nodes2(6, 2), param_vals2(4, 2)
+    real(c_double) :: expected2(4), evaluated2(4)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "jacobian_det"
+
+    ! CASE 1: Linear surface (determinant is area).
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(3, :) = [0.0_dp, 2.0_dp]
+    call get_random_nodes(param_vals1, 308975611, 101301, num_bits=8)
+    call jacobian_det( &
+         3, nodes1, 1, 13, param_vals1, evaluated1)
+    if (all(evaluated1 == 2.0_dp)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Quadratic (i.e. non-linear) surface.
+    nodes2(1, :) = 0
+    nodes2(2, :) = [0.5_dp, 0.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    nodes2(4, :) = [0.0_dp, 0.5_dp]
+    nodes2(5, :) = [1.0_dp, 1.0_dp]
+    nodes2(6, :) = [0.0_dp, 1.0_dp]
+    ! B(s, t) = [s(t + 1), t(s + 1)]
+    param_vals2(1, :) = [0.125_dp, 0.125_dp]
+    param_vals2(2, :) = [0.5_dp, 0.375_dp]
+    param_vals2(3, :) = [0.25_dp, 0.75_dp]
+    param_vals2(4, :) = [1.0_dp, 0.0_dp]
+    ! det(DB) = s + t + 1
+    expected2 = param_vals2(:, 1) + param_vals2(:, 2) + 1.0_dp
+    call jacobian_det( &
+         6, nodes2, 2, 4, param_vals2, evaluated2)
+    if (all(evaluated2 == expected2)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_jacobian_det
 
 end module test_surface
