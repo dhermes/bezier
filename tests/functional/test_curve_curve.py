@@ -23,6 +23,7 @@ from bezier import _implicitization
 from bezier import _intersection_helpers
 import bezier.curve
 
+from tests import utils as base_utils
 from tests.functional import utils
 from tests.functional.utils import CurveIntersectionType
 
@@ -190,10 +191,10 @@ INCORRECT_COUNT = {
     GEOMETRIC: (
         31,
     ),
-    ALGEBRAIC: (
-        10,
-    ),
+    ALGEBRAIC: (),
 }
+if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:
+    INCORRECT_COUNT[ALGEBRAIC] += (10,)
 
 
 class IncorrectCount(ValueError):

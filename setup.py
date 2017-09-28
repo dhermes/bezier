@@ -49,7 +49,7 @@ Sorry for this inconvenience. For more information or to help, visit:
     https://github.com/dhermes/bezier/issues/26
 """
 REQUIREMENTS = (
-    'numpy >= 1.13.2',
+    'numpy >= 1.13.1, != 1.13.2, != 1.13.2.*',
     'six >= 1.11.0',
 )
 EXTRAS_REQUIRE = {
