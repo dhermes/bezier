@@ -13,14 +13,15 @@
 module test_curve_intersection
 
   use iso_c_binding, only: c_bool, c_double
-  use curve, only: subdivide_nodes
+  use curve, only: evaluate_multi, subdivide_nodes
   use curve_intersection, only: &
-       linearization_error, segment_intersection
+       linearization_error, segment_intersection, newton_refine_intersect
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
-       test_linearization_error, test_segment_intersection
+       test_linearization_error, test_segment_intersection, &
+       test_newton_refine_intersect
   public curve_intersection_all_tests
 
 contains
@@ -30,6 +31,7 @@ contains
 
     call test_linearization_error(success)
     call test_segment_intersection(success)
+    call test_newton_refine_intersect(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -281,5 +283,175 @@ contains
     end if
 
   end subroutine test_segment_intersection
+
+  subroutine test_newton_refine_intersect(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(2, 2), nodes2(2, 2)
+    real(c_double) :: nodes3(3, 2), nodes4(3, 2), nodes5(5, 2)
+    real(c_double) :: known_s, known_t
+    real(c_double) :: wrong_s, wrong_t
+    real(c_double) :: new_s, new_t
+    logical(c_bool) :: local_success
+    integer :: i
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "newton_refine_intersect"
+
+    ! CASE 1: Intersection of two lines.
+    ! Newton's method is exact on linear problems so will
+    ! always converge after one step.
+    nodes1(1, :) = 0
+    nodes1(2, :) = 1
+    known_s = 0.75_dp
+    nodes2(1, :) = [1.0_dp, 0.0_dp]
+    nodes2(2, :) = [0.0_dp, 3.0_dp]
+    known_t = 0.25_dp
+    ! NOTE: By construction, the Jacobian matrix will be
+    !           [1, 1], [1, -3]
+    !       which has determinant -4.0, hence there will
+    !       be no round-off when solving.
+    wrong_s = known_s - 0.125_dp
+    wrong_t = known_t + 0.125_dp
+    call newton_refine_intersect( &
+         wrong_s, 1, nodes1, wrong_t, 1, nodes2, new_s, new_t)
+    if (new_s == known_s .AND. new_t == known_t .AND. &
+         curves_intersect(nodes1, known_s, nodes2, known_t)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Mixed degree (line and quadratic).
+    nodes3(1, :) = 0
+    nodes3(2, :) = [0.5_dp, 1.0_dp]
+    nodes3(3, :) = [1.0_dp, 0.0_dp]
+    known_s = 0.5_dp
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    known_t = 0.5_dp
+    ! NOTE: By construction, the Jacobian matrix will be
+    !           [1, 1], [1, -1]
+    !       which has determinant -2.0, hence there will
+    !       be no round-off when solving.
+    wrong_s = 0.25_dp
+    wrong_t = 0.25_dp
+    call newton_refine_intersect( &
+         wrong_s, 2, nodes3, wrong_t, 1, nodes1, new_s, new_t)
+    if (new_s == 0.4375_dp .AND. &
+         abs(known_s - new_s) < abs(known_s - wrong_s) .AND. &
+         new_t == 0.5625_dp .AND. &
+         abs(known_t - new_t) < abs(known_t - wrong_t) .AND. &
+         curves_intersect(nodes3, known_s, nodes1, known_t)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Early exit (i.e. already an intersection).
+    nodes3(1, :) = 0
+    nodes3(2, :) = [0.5_dp, 1.0_dp]
+    nodes3(3, :) = [1.0_dp, 0.0_dp]
+    known_s = 0.25_dp
+    nodes4(1, :) = [1.0_dp, 0.75_dp]
+    nodes4(2, :) = [0.5_dp, -0.25_dp]
+    nodes4(3, :) = [0.0_dp, 0.75_dp]
+    known_t = 0.75_dp
+    call newton_refine_intersect( &
+         known_s, 2, nodes3, known_t, 2, nodes4, new_s, new_t)
+    if (new_s == known_s .AND. new_t == known_t .AND. &
+         curves_intersect(nodes3, known_s, nodes4, known_t)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Intersect quadratics.
+    nodes3(1, :) = 0
+    nodes3(2, :) = [0.5_dp, 1.0_dp]
+    nodes3(3, :) = [1.0_dp, 0.0_dp]
+    known_s = 0.25_dp
+    nodes4(1, :) = [1.0_dp, 0.75_dp]
+    nodes4(2, :) = [0.5_dp, -0.25_dp]
+    nodes4(3, :) = [0.0_dp, 0.75_dp]
+    known_t = 0.75_dp
+    ! NOTE: By construction, the Jacobian matrix will be
+    !           [1, 3/4], [1, -5/4]
+    !       which has determinant -2.0, hence there will
+    !       be no round-off when solving.
+    wrong_s = known_s + 0.0625_dp
+    wrong_t = known_t + 0.0625_dp
+    call newton_refine_intersect( &
+         wrong_s, 2, nodes3, wrong_t, 2, nodes4, new_s, new_t)
+    if (new_s == 0.2421875_dp .AND. &
+         abs(known_s - new_s) < abs(known_s - wrong_s) .AND. &
+         new_t == 0.7578125_dp .AND. &
+         abs(known_t - new_t) < abs(known_t - wrong_t) .AND. &
+         curves_intersect(nodes3, known_s, nodes4, known_t)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Convergence test.
+    nodes5(1, :) = [0.0_dp, 0.0_dp]
+    nodes5(2, :) = [0.25_dp, 1.0_dp]
+    nodes5(3, :) = [0.5_dp, -0.75_dp]
+    nodes5(4, :) = [0.75_dp, 1.0_dp]
+    nodes5(5, :) = [1.0_dp, 0.0_dp]
+    known_s = 0.5_dp
+    nodes1(1, :) = [0.5_dp, 0.0_dp]
+    nodes1(2, :) = [0.5_dp, 1.0_dp]
+    known_t = 0.21875_dp
+    ! We start with a very wrong guess and update it three times.
+    wrong_s = 0.0_dp
+    wrong_t = 0.0_dp
+    local_success = .TRUE.
+    do i = 1, 3
+       call newton_refine_intersect( &
+            wrong_s, 4, nodes5, wrong_t, 1, nodes1, new_s, new_t)
+       wrong_s = new_s
+       wrong_t = new_t
+       if (i == 1) then
+          if (new_s /= known_s .OR. new_t /= 2.0_dp) then
+             local_success = .FALSE.
+          end if
+       else
+          if (new_s /= known_s .OR. new_t /= known_t) then
+             local_success = .FALSE.
+          end if
+       end if
+    end do
+
+    if (local_success .AND. &
+         curves_intersect(nodes5, known_s, nodes1, known_t)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_newton_refine_intersect
+
+  function curves_intersect(nodes1, s, nodes2, t) result(predicate)
+    real(c_double), intent(in) :: nodes1(:, :), nodes2(:, :)
+    real(c_double), intent(in) :: s, t
+    logical(c_bool) :: predicate
+    ! Variables outside of signature.
+    real(c_double) :: point1(1, 2), point2(1, 2)
+
+    call evaluate_multi( &
+         size(nodes1, 1) - 1, size(nodes1, 2), nodes1, 1, [s], point1)
+    call evaluate_multi( &
+         size(nodes2, 1) - 1, size(nodes2, 2), nodes2, 1, [t], point2)
+    predicate = all(point1 == point2)
+
+  end function curves_intersect
 
 end module test_curve_intersection
