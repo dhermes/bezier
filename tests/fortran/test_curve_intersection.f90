@@ -19,14 +19,14 @@ module test_curve_intersection
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, linearization_error, &
        segment_intersection, newton_refine_intersect, &
-       bbox_intersect, parallel_different, from_linearized
+       bbox_intersect, parallel_different, from_linearized, bbox_line_intersect
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_linearization_error, test_segment_intersection, &
        test_newton_refine_intersect, test_bbox_intersect, &
-       test_parallel_different, test_from_linearized
+       test_parallel_different, test_from_linearized, test_bbox_line_intersect
   public curve_intersection_all_tests
 
 contains
@@ -40,6 +40,7 @@ contains
     call test_bbox_intersect(success)
     call test_parallel_different(success)
     call test_from_linearized(success)
+    call test_bbox_line_intersect(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -472,7 +473,6 @@ contains
 
     case_id = 1
     name = "bbox_intersect"
-
     unit_square(1, :) = [0.0_dp, 0.0_dp]
     unit_square(2, :) = [1.0_dp, 0.0_dp]
     unit_square(3, :) = [1.0_dp, 1.0_dp]
@@ -852,5 +852,95 @@ contains
     end if
 
   end subroutine test_from_linearized
+
+  subroutine test_bbox_line_intersect(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: unit_square(4, 2)
+    real(c_double) :: line_start(1, 2), line_end(1, 2)
+    integer(c_int) :: enum_
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "bbox_line_intersect"
+    unit_square(1, :) = [0.0_dp, 0.0_dp]
+    unit_square(2, :) = [1.0_dp, 0.0_dp]
+    unit_square(3, :) = [1.0_dp, 1.0_dp]
+    unit_square(4, :) = [0.0_dp, 1.0_dp]
+
+    ! CASE 1: Line starts inside bounding box.
+    line_start(1, :) = 0.5_dp
+    line_end(1, :) = [0.5_dp, 1.5_dp]
+    call bbox_line_intersect( &
+         4, unit_square, line_start, line_end, enum_)
+    if (enum_ == BoxIntersectionType_INTERSECTION) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Line ends (but does not start) in bounding box.
+    line_start(1, :) = [-1.0_dp, 0.5_dp]
+    line_end(1, :) = 0.5_dp
+    call bbox_line_intersect( &
+         4, unit_square, line_start, line_end, enum_)
+    if (enum_ == BoxIntersectionType_INTERSECTION) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Line segment "pierces" bbox from the bottom.
+    line_start(1, :) = [0.5_dp, -0.5_dp]
+    line_end(1, :) = [0.5_dp, 1.5_dp]
+    call bbox_line_intersect( &
+         4, unit_square, line_start, line_end, enum_)
+    if (enum_ == BoxIntersectionType_INTERSECTION) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Line segment "pierces" bbox from the right.
+    line_start(1, :) = [-0.5_dp, 0.5_dp]
+    line_end(1, :) = [1.5_dp, 0.5_dp]
+    call bbox_line_intersect( &
+         4, unit_square, line_start, line_end, enum_)
+    if (enum_ == BoxIntersectionType_INTERSECTION) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Line segment "pierces" bbox from the top.
+    line_start(1, :) = [-0.25_dp, 0.5_dp]
+    line_end(1, :) = [0.5_dp, 1.25_dp]
+    call bbox_line_intersect( &
+         4, unit_square, line_start, line_end, enum_)
+    if (enum_ == BoxIntersectionType_INTERSECTION) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 6: Line segment is disjoint from bbox.
+    line_start(1, :) = 2
+    line_end(1, :) = [2.0_dp, 5.0_dp]
+    call bbox_line_intersect( &
+         4, unit_square, line_start, line_end, enum_)
+    if (enum_ == BoxIntersectionType_DISJOINT) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_bbox_line_intersect
 
 end module test_curve_intersection
