@@ -294,6 +294,8 @@ contains
     ! Variables outside of signature.
     real(c_double) :: nodes(3, 2), param_vals(3, 3)
     real(c_double) :: evaluated(3, 2), expected(3, 2)
+    real(c_double) :: nodes_deg0(1, 2)
+    integer :: i
     integer :: case_id
     character(:), allocatable :: name
 
@@ -338,6 +340,23 @@ contains
        success = .FALSE.
     end if
 
+    ! CASE 3: Degree zero "surface"
+    nodes_deg0(1, :) = [1.5_dp, 7.75_dp]
+    param_vals(1, :) = [0.5_dp, 0.25_dp, 0.25_dp]
+    param_vals(2, :) = [0.25_dp, 0.125_dp, 0.625_dp]
+    param_vals(3, :) = [0.75_dp, 0.25_dp, 0.0_dp]
+    forall (i = 1:3)
+       expected(i, :) = nodes_deg0(1, :)
+    end forall
+    call evaluate_barycentric_multi( &
+         1, 2, nodes_deg0, 0, 3, param_vals, evaluated)
+    if (all(evaluated == expected)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
   end subroutine test_evaluate_barycentric_multi
 
   subroutine test_evaluate_cartesian_multi(success)
@@ -347,6 +366,9 @@ contains
     real(c_double) :: evaluated1(4, 2), expected1(4, 2)
     real(c_double) :: nodes2(3, 2), param_vals2(3, 2)
     real(c_double) :: evaluated2(3, 2), expected2(3, 2)
+    real(c_double) :: nodes3(1, 3), param_vals3(16, 2)
+    real(c_double) :: evaluated3(16, 3), expected3(16, 3)
+    integer :: i
     integer :: case_id
     character(:), allocatable :: name
 
@@ -390,6 +412,20 @@ contains
     call evaluate_cartesian_multi( &
          3, 2, nodes2, 1, 3, param_vals2, evaluated2)
     if (all(evaluated2 == expected2)) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Degree zero "surface"
+    nodes3(1, :) = [-1.5_dp, 0.75_dp, 5.0_dp]
+    forall (i = 1:16)
+       expected3(i, :) = nodes3(1, :)
+    end forall
+    call evaluate_cartesian_multi( &
+         1, 3, nodes3, 0, 16, param_vals3, evaluated3)
+    if (all(evaluated3 == expected3)) then
        call print_status(name, case_id, .TRUE.)
     else
        call print_status(name, case_id, .FALSE.)
