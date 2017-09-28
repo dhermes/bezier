@@ -391,7 +391,6 @@ contains
     integer, intent(in) :: num_nodes, dimension_, multiplier, modulus
     logical, intent(out) :: success
     ! Variables outside of signature.
-    logical :: case_success
     real(c_double) :: nodes(num_nodes, dimension_)
     real(c_double) :: left(num_nodes, dimension_)
     real(c_double) :: right(num_nodes, dimension_)
@@ -697,7 +696,6 @@ contains
     real(c_double), intent(out) :: id_mat(degree, degree)
     logical(c_bool), intent(out) :: not_implemented
     ! Variables outside of signature.
-    logical :: case_success
     real(c_double) :: nodes(degree + 1, degree + 1)
     real(c_double) :: reduction_mat(degree, degree + 1)
     real(c_double) :: elevation_mat(degree + 1, degree)
