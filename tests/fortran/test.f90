@@ -15,6 +15,7 @@ program test
   use, intrinsic :: iso_c_binding, only: c_bool
   use test_helpers, only: helpers_all_tests
   use test_curve, only: curve_all_tests
+  use test_surface, only: surface_all_tests
   use test_curve_intersection, only: curve_intersection_all_tests
   implicit none
 
@@ -23,6 +24,7 @@ program test
   success = .TRUE.
   call helpers_all_tests(success)
   call curve_all_tests(success)
+  call surface_all_tests(success)
   call curve_intersection_all_tests(success)
   if (.NOT. success) then
      call exit(1)

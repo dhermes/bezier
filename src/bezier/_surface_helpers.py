@@ -504,6 +504,11 @@ def cubic_jacobian_polynomial(nodes):
 def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     r"""Performs one "round" of the de Casteljau algorithm for surfaces.
 
+    .. note::
+
+       This is a helper function, used by :func:`make_transform` and
+       :func:`specialize_surface`.
+
     Converts the ``nodes`` into a basis for a surface one degree smaller
     by using the barycentric weights:
 

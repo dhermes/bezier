@@ -33,6 +33,7 @@ TEST_SOURCES := \
 	$(CURR_DIR)/unit_test_helpers$(F90) \
 	$(CURR_DIR)/test_helpers$(F90) \
 	$(CURR_DIR)/test_curve$(F90) \
+	$(CURR_DIR)/test_surface$(F90) \
 	$(CURR_DIR)/test_curve_intersection$(F90)
 F77_OBJS := $(patsubst $(QUADPACK_DIR)/%$(F77), $(CURR_DIR)/%$(OBJ), $(F77_SOURCES))
 F90_OBJS := $(patsubst $(SRC_DIR)/%$(F90), $(CURR_DIR)/%$(OBJ), $(F90_SOURCES))
