@@ -47,11 +47,6 @@ cdef extern from "bezier/curve.h":
     void reduce_pseudo_inverse(
         int *num_nodes, int *dimension, double *nodes, double *reduced,
         bool_t *not_implemented)
-    void projection_error(
-        int *num_nodes, int *dimension, double *nodes,
-        double *projected, double *error)
-    void can_reduce(
-        int *num_nodes, int *dimension, double *nodes, int *success)
     void full_reduce(
         int *num_nodes, int *dimension, double *nodes,
         int *num_reduced_nodes, double *reduced, bool_t *not_implemented)

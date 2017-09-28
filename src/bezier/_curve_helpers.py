@@ -843,12 +843,14 @@ def _reduce_pseudo_inverse(nodes, degree):
     return result
 
 
-def _projection_error(nodes, projected):
+def projection_error(nodes, projected):
     """Compute the error between ``nodes`` and the projected nodes.
 
     .. note::
 
-        This is a helper for :func:`maybe_reduce`.
+        This is a helper for :func:`maybe_reduce`, which is in turn a helper
+        for :func:`_full_reduce`. Hence there is no corresponding Fortran
+        speedup.
 
     For now, just compute the relative error in the Frobenius norm. But,
     we may wish to consider the error per row / point instead.
@@ -868,13 +870,13 @@ def _projection_error(nodes, projected):
     return relative_err
 
 
-def _maybe_reduce(nodes):
+def maybe_reduce(nodes):
     r"""Reduce nodes in a curve if they are degree-elevated.
 
     .. note::
 
-        This is a helper for :func:`full_reduce`. It does not have a
-        Fortran speedup.
+        This is a helper for :func:`_full_reduce`. Hence there is no
+        corresponding Fortran speedup.
 
     We check if the nodes are degree-elevated by projecting onto the
     space of degree-elevated curves of the same degree, then comparing
@@ -947,8 +949,6 @@ if _curve_speedup is None:  # pragma: NO COVER
     newton_refine = _newton_refine
     locate_point = _locate_point
     reduce_pseudo_inverse = _reduce_pseudo_inverse
-    projection_error = _projection_error
-    maybe_reduce = _maybe_reduce
     full_reduce = _full_reduce
 else:
     subdivide_nodes = _curve_speedup.subdivide_nodes
@@ -962,7 +962,5 @@ else:
     newton_refine = _curve_speedup.newton_refine
     locate_point = _curve_speedup.locate_point
     reduce_pseudo_inverse = _curve_speedup.reduce_pseudo_inverse
-    projection_error = _curve_speedup.projection_error
-    maybe_reduce = _curve_speedup.maybe_reduce
     full_reduce = _curve_speedup.full_reduce
 # pylint: enable=invalid-name

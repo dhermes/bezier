@@ -579,8 +579,7 @@ contains
   end subroutine reduce_pseudo_inverse
 
   subroutine projection_error( &
-       num_nodes, dimension_, nodes, projected, error) &
-       bind(c, name='projection_error')
+       num_nodes, dimension_, nodes, projected, error)
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
@@ -599,8 +598,7 @@ contains
   end subroutine projection_error
 
   subroutine can_reduce( &
-       num_nodes, dimension_, nodes, success) &
-       bind(c, name='can_reduce')
+       num_nodes, dimension_, nodes, success)
 
     ! NOTE: This returns ``success = 0`` for "Failure", ``success = 1`` for
     !       "Success" and ``success = -1`` for "Not Implemented".

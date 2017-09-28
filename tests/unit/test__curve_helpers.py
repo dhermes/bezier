@@ -917,13 +917,13 @@ class Test_speedup__reduce_pseudo_inverse(Test__reduce_pseudo_inverse):
         return _curve_speedup.reduce_pseudo_inverse(nodes, degree)
 
 
-class Test__projection_error(unittest.TestCase):
+class Test_projection_error(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, projected):
         from bezier import _curve_helpers
 
-        return _curve_helpers._projection_error(nodes, projected)
+        return _curve_helpers.projection_error(nodes, projected)
 
     def test_it(self):
         nodes = np.asfortranarray([
@@ -948,23 +948,13 @@ class Test__projection_error(unittest.TestCase):
         self.assertEqual(result, 0.0)
 
 
-@utils.needs_curve_speedup
-class Test_speedup_projection_error(Test__projection_error):
-
-    @staticmethod
-    def _call_function_under_test(nodes, projected):
-        from bezier import _curve_speedup
-
-        return _curve_speedup.projection_error(nodes, projected)
-
-
-class Test__maybe_reduce(utils.NumPyTestCase):
+class Test_maybe_reduce(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _curve_helpers
 
-        return _curve_helpers._maybe_reduce(nodes)
+        return _curve_helpers.maybe_reduce(nodes)
 
     def _low_degree_helper(self, nodes):
         was_reduced, new_nodes = self._call_function_under_test(nodes)
@@ -1062,16 +1052,6 @@ class Test__maybe_reduce(utils.NumPyTestCase):
             shape=(degree + 1, 2), seed=77618, num_bits=8)
         with self.assertRaises(NotImplementedError):
             self._call_function_under_test(nodes)
-
-
-@utils.needs_curve_speedup
-class Test_speedup_maybe_reduce(Test__maybe_reduce):
-
-    @staticmethod
-    def _call_function_under_test(nodes):
-        from bezier import _curve_speedup
-
-        return _curve_speedup.maybe_reduce(nodes)
 
 
 class Test__full_reduce(utils.NumPyTestCase):

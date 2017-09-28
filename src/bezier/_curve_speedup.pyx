@@ -253,50 +253,6 @@ def reduce_pseudo_inverse(double[::1, :] nodes, int unused_degree):
     return reduced
 
 
-def projection_error(double[::1, :] nodes, double[::1, :] projected):
-    cdef int num_nodes, dimension
-    cdef double error
-
-    num_nodes, dimension = np.shape(nodes)
-
-    bezier._curve.projection_error(
-        &num_nodes,
-        &dimension,
-        &nodes[0, 0],
-        &projected[0, 0],
-        &error,
-    )
-
-    return error
-
-
-def maybe_reduce(double[::1, :] nodes):
-    cdef int num_nodes, dimension
-    cdef int success
-    cdef ndarray_t[double, ndim=2, mode='fortran'] reduced
-
-    num_nodes, dimension = np.shape(nodes)
-
-    bezier._curve.can_reduce(
-        &num_nodes,
-        &dimension,
-        &nodes[0, 0],
-        &success,
-    )
-
-    if success == 0:
-        if isinstance(nodes.base, np.ndarray):
-            reduced = nodes.base
-        else:
-            reduced = np.asarray(nodes)
-        return False, reduced
-    elif success == 1:
-        reduced = reduce_pseudo_inverse(nodes, num_nodes - 1)
-        return True, reduced
-    else:
-        raise NotImplementedError(num_nodes)
-
-
 def full_reduce(double[::1, :] nodes):
     cdef int num_nodes, dimension
     cdef int num_reduced_nodes
