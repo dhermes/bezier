@@ -18,7 +18,7 @@ module test_surface
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
        jacobian_det
   use types, only: dp
-  use unit_test_helpers, only: print_status, get_random_nodes
+  use unit_test_helpers, only: print_status_full, get_random_nodes
   implicit none
   private &
        test_de_casteljau_one_round, test_evaluate_barycentric, &
@@ -43,6 +43,7 @@ contains
   subroutine test_de_casteljau_one_round(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(3, 2), nodes2(6, 2), nodes3(10, 2)
     real(c_double) :: new_nodes1(1, 2), new_nodes2(3, 2), new_nodes3(6, 2)
     real(c_double) :: expected1(1, 2), expected2(3, 2), expected3(6, 2)
@@ -64,12 +65,8 @@ contains
     call de_casteljau_one_round( &
          3, 2, nodes1, 1, &
          lambda1, lambda2, lambda3, new_nodes1)
-    if (all(new_nodes1 == expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(new_nodes1 == expected1)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic surface.
     call get_random_nodes(nodes2, 790931, 1483, num_bits=8)
@@ -93,12 +90,8 @@ contains
     call de_casteljau_one_round( &
          6, 2, nodes2, 2, &
          lambda1, lambda2, lambda3, new_nodes2)
-    if (all(new_nodes2 == expected2)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(new_nodes2 == expected2)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Cubic surface.
     nodes3(1, :) = [0.0_dp, 0.0_dp]
@@ -142,18 +135,15 @@ contains
     call de_casteljau_one_round( &
          10, 2, nodes3, 3, &
          lambda1, lambda2, lambda3, new_nodes3)
-    if (all(new_nodes3 == expected3)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(new_nodes3 == expected3)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_de_casteljau_one_round
 
   subroutine test_evaluate_barycentric(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(3, 2), nodes2(6, 2), nodes3(6, 3)
     real(c_double) :: nodes4(10, 2), nodes5(15, 2)
     real(c_double) :: point1(1, 2), point2(1, 3)
@@ -176,12 +166,8 @@ contains
     expected1(1, :) = [0.5_dp, 0.5625_dp]
     call evaluate_barycentric( &
          3, 2, nodes1, 1, lambda1, lambda2, lambda3, point1)
-    if (all(point1 == expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(point1 == expected1)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic surface.
     lambda1 = 0.0_dp
@@ -196,12 +182,8 @@ contains
     expected1(1, :) = [0.0625_dp, 0.78125_dp]
     call evaluate_barycentric( &
          6, 2, nodes2, 2, lambda1, lambda2, lambda3, point1)
-    if (all(point1 == expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(point1 == expected1)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Quadratic surface in 3D.
     nodes3(1, :) = [0.0_dp, 0.0_dp, 1.0_dp]
@@ -216,12 +198,8 @@ contains
     expected2(1, :) = [0.25_dp, 0.8203125_dp, 0.1328125_dp]
     call evaluate_barycentric( &
          6, 3, nodes3, 2, lambda1, lambda2, lambda3, point2)
-    if (all(point2 == expected2)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(point2 == expected2)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 4: Cubic surface.
     nodes4(1, :) = [0.0_dp, 0.0_dp]
@@ -240,12 +218,8 @@ contains
     expected1(1, :) = [0.447265625_dp, 0.37060546875_dp]
     call evaluate_barycentric( &
          10, 2, nodes4, 3, lambda1, lambda2, lambda3, point1)
-    if (all(point1 == expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(point1 == expected1)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 5: Quartic (random) surface.
     call get_random_nodes(nodes5, 64441, 222, num_bits=8)
@@ -280,18 +254,15 @@ contains
     end do
     call evaluate_barycentric( &
          15, 2, nodes5, 4, lambda1, lambda2, lambda3, point1)
-    if (all(point1 == expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(point1 == expected1)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_evaluate_barycentric
 
   subroutine test_evaluate_barycentric_multi(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes(3, 2), param_vals(3, 3)
     real(c_double) :: evaluated(3, 2), expected(3, 2)
     real(c_double) :: nodes_deg0(1, 2)
@@ -314,12 +285,8 @@ contains
     expected(3, :) = [-0.5_dp, 1.5_dp]
     call evaluate_barycentric_multi( &
          3, 2, nodes, 1, 3, param_vals, evaluated)
-    if (all(evaluated == expected)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated == expected)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Values outside the domain.
     nodes(1, :) = [0.0_dp, 0.0_dp]
@@ -333,12 +300,8 @@ contains
     expected(3, :) = [2.375_dp, -0.75_dp]
     call evaluate_barycentric_multi( &
          3, 2, nodes, 1, 3, param_vals, evaluated)
-    if (all(evaluated == expected)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated == expected)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Degree zero "surface"
     nodes_deg0(1, :) = [1.5_dp, 7.75_dp]
@@ -350,18 +313,15 @@ contains
     end forall
     call evaluate_barycentric_multi( &
          1, 2, nodes_deg0, 0, 3, param_vals, evaluated)
-    if (all(evaluated == expected)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated == expected)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_evaluate_barycentric_multi
 
   subroutine test_evaluate_cartesian_multi(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(6, 2), param_vals1(4, 2)
     real(c_double) :: evaluated1(4, 2), expected1(4, 2)
     real(c_double) :: nodes2(3, 2), param_vals2(3, 2)
@@ -392,12 +352,8 @@ contains
     expected1(4, :) = [-0.625_dp, 1.046875_dp]
     call evaluate_cartesian_multi( &
          6, 2, nodes1, 2, 4, param_vals1, evaluated1)
-    if (all(evaluated1 == expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated1 == expected1)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Values outside the domain.
     nodes2(1, :) = [0.0_dp, 2.0_dp]
@@ -411,12 +367,8 @@ contains
     expected2(3, :) = [0.875_dp, 1.0_dp]
     call evaluate_cartesian_multi( &
          3, 2, nodes2, 1, 3, param_vals2, evaluated2)
-    if (all(evaluated2 == expected2)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated2 == expected2)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Degree zero "surface"
     nodes3(1, :) = [-1.5_dp, 0.75_dp, 5.0_dp]
@@ -425,18 +377,15 @@ contains
     end forall
     call evaluate_cartesian_multi( &
          1, 3, nodes3, 0, 16, param_vals3, evaluated3)
-    if (all(evaluated3 == expected3)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated3 == expected3)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_evaluate_cartesian_multi
 
   subroutine test_jacobian_both(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(3, 1), expected1(1, 2), new_nodes1(1, 2)
     real(c_double) :: nodes2(6, 3), expected2(3, 6), new_nodes2(3, 6)
     real(c_double) :: nodes3(10, 2), expected3(6, 4), new_nodes3(6, 4)
@@ -454,12 +403,8 @@ contains
     expected1(1, :) = [-2.0_dp, 2.0_dp]
     call jacobian_both( &
          3, 1, nodes1, 1, new_nodes1)
-    if (all(new_nodes1 == expected1)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(new_nodes1 == expected1)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic surface.
     ! B(s, t) = [
@@ -489,12 +434,8 @@ contains
     expected2(3, :) = [2.0_dp, 2.0_dp, -12.0_dp, 4.0_dp, 0.0_dp, -14.0_dp]
     call jacobian_both( &
          6, 3, nodes2, 2, new_nodes2)
-    if (all(new_nodes2 == expected2)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(new_nodes2 == expected2)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 3: Cubic surface.
     ! B(s, t) = [
@@ -528,18 +469,15 @@ contains
     expected3(6, :) = [3.0_dp, -12.0_dp, 0.0_dp, -3.0_dp]
     call jacobian_both( &
          10, 2, nodes3, 3, new_nodes3)
-    if (all(new_nodes3 == expected3)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(new_nodes3 == expected3)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_jacobian_both
 
   subroutine test_jacobian_det(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
+    logical :: case_success
     real(c_double) :: nodes1(3, 2), param_vals1(13, 2), evaluated1(13)
     real(c_double) :: nodes2(6, 2), param_vals2(4, 2)
     real(c_double) :: expected2(4), evaluated2(4)
@@ -556,12 +494,8 @@ contains
     call get_random_nodes(param_vals1, 308975611, 101301, num_bits=8)
     call jacobian_det( &
          3, nodes1, 1, 13, param_vals1, evaluated1)
-    if (all(evaluated1 == 2.0_dp)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated1 == 2.0_dp)
+    call print_status_full(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic (i.e. non-linear) surface.
     nodes2(1, :) = 0
@@ -579,12 +513,8 @@ contains
     expected2 = param_vals2(:, 1) + param_vals2(:, 2) + 1.0_dp
     call jacobian_det( &
          6, nodes2, 2, 4, param_vals2, evaluated2)
-    if (all(evaluated2 == expected2)) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
+    case_success = all(evaluated2 == expected2)
+    call print_status_full(name, case_id, case_success, success)
 
   end subroutine test_jacobian_det
 
