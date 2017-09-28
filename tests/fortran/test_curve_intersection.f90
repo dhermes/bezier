@@ -14,11 +14,13 @@ module test_curve_intersection
 
   use iso_c_binding, only: c_bool, c_double
   use curve, only: subdivide_nodes
-  use curve_intersection, only: linearization_error
+  use curve_intersection, only: &
+       linearization_error, segment_intersection
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
-  private test_linearization_error
+  private &
+       test_linearization_error, test_segment_intersection
   public curve_intersection_all_tests
 
 contains
@@ -27,6 +29,7 @@ contains
     logical(c_bool), intent(inout) :: success
 
     call test_linearization_error(success)
+    call test_segment_intersection(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -234,5 +237,49 @@ contains
     end if
 
   end subroutine test_linearization_error
+
+  subroutine test_segment_intersection(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: start0(1, 2), end0(1, 2)
+    real(c_double) :: start1(1, 2), end1(1, 2)
+    real(c_double) :: s, t
+    logical(c_bool) :: si_success
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "segment_intersection"
+
+    ! CASE 1: Segments that intersect.
+    start0(1, :) = [1.75_dp, 2.125_dp]
+    end0(1, :) = [-1.25_dp, 1.625_dp]
+    start1(1, :) = [-0.25_dp, 2.625_dp]
+    end1(1, :) = [1.75_dp, 1.625_dp]
+    ! D0 x D1 == 4.0, so there will be no round-off in answer.
+    call segment_intersection( &
+         start0, end0, start1, end1, s, t, si_success)
+    if (si_success .AND. s == 0.25_dp .AND. t == 0.625_dp) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Parallel segments.
+    start0(1, :) = [0.0_dp, 0.5_dp]
+    end0(1, :) = [0.0_dp, -0.5_dp]
+    start1(1, :) = [0.0_dp, 1.0_dp]
+    end1(1, :) = [0.0_dp, -1.0_dp]
+    call segment_intersection( &
+         start0, end0, start1, end1, s, t, si_success)
+    if (.NOT. si_success) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_segment_intersection
 
 end module test_curve_intersection

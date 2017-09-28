@@ -59,7 +59,10 @@ def segment_intersection(
         &t,
         &success,
     )
-    return s, t, success
+    if success:
+        return s, t, True
+    else:
+        return None, None, False
 
 
 def newton_refine(

@@ -480,8 +480,6 @@ class Test_speedup_newton_refine(Test__newton_refine):
 
 class Test__segment_intersection(unittest.TestCase):
 
-    WITH_NONES = True
-
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
         from bezier import _intersection_helpers
@@ -523,16 +521,13 @@ class Test__segment_intersection(unittest.TestCase):
             intersection, s_val,
             direction0, t_val, direction1)
 
-        if self.WITH_NONES:
-            self.assertIsNone(computed_s)
-            self.assertIsNone(computed_t)
+        self.assertIsNone(computed_s)
+        self.assertIsNone(computed_t)
         self.assertFalse(success)
 
 
 @utils.needs_curve_intersection_speedup
 class Test_speedup_segment_intersection(Test__segment_intersection):
-
-    WITH_NONES = False
 
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
