@@ -49,11 +49,22 @@ $(CURR_DIR)/test-bin: $(F77_OBJS) $(F90_OBJS) $(TEST_OBJS) $(CURR_DIR)/test.f90
 	  $(TEST_OBJS) \
 	  $(CURR_DIR)/test.f90
 
+lcov: $(CURR_DIR)/test-bin
+	$(CURR_DIR)/test-bin
+	lcov --capture \
+	  --directory $(CURR_DIR) \
+	  -output-file $(CURR_DIR)/coverage.info
+	genhtml \
+	  $(CURR_DIR)/coverage.info \
+	  --output-directory $(CURR_DIR)/lcov-html
+
 clean:
 	rm -f $(CURR_DIR)/*.gcno
 	rm -f $(CURR_DIR)/*.gcda
 	rm -f $(CURR_DIR)/*.mod
 	rm -f $(CURR_DIR)/*$(OBJ)
 	rm -f $(CURR_DIR)/test-bin
+	rm -f $(CURR_DIR)/coverage.info
+	rm -fr $(CURR_DIR)/lcov-html
 
-.PHONY: all test clean
+.PHONY: test lcov clean

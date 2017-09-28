@@ -25,4 +25,6 @@ tests/fortran/*.gcda
 tests/fortran/*.gcno
 tests/fortran/*.o
 tests/fortran/*.mod
+tests/fortran/coverage.info
+tests/fortran/lcov-html/
 tests/fortran/test-bin
