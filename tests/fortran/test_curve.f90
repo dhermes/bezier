@@ -17,8 +17,7 @@ module test_curve
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
        evaluate_hodograph, subdivide_nodes, newton_refine, LOCATE_MISS, &
        LOCATE_INVALID, locate_point, elevate_nodes, get_curvature, &
-       reduce_pseudo_inverse, projection_error, can_reduce, full_reduce, &
-       compute_length
+       reduce_pseudo_inverse, can_reduce, full_reduce, compute_length
   use types, only: dp
   use unit_test_helpers, only: &
        MACHINE_EPS, print_status, get_random_nodes, get_id_mat
@@ -28,8 +27,8 @@ module test_curve
        test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
        subdivide_points_check, test_newton_refine, test_locate_point, &
        test_elevate_nodes, test_get_curvature, test_reduce_pseudo_inverse, &
-       pseudo_inverse_helper, test_projection_error, test_can_reduce, &
-       test_full_reduce, test_compute_length
+       pseudo_inverse_helper, test_can_reduce, test_full_reduce, &
+       test_compute_length
   public curve_all_tests
 
 contains
@@ -47,7 +46,6 @@ contains
     call test_elevate_nodes(success)
     call test_get_curvature(success)
     call test_reduce_pseudo_inverse(success)
-    call test_projection_error(success)
     call test_can_reduce(success)
     call test_full_reduce(success)
     call test_compute_length(success)
@@ -864,57 +862,6 @@ contains
     result_ = matmul(reduction_mat, elevation_mat)
 
   end subroutine pseudo_inverse_helper
-
-  subroutine test_projection_error(success)
-    logical(c_bool), intent(inout) :: success
-    ! Variables outside of signature.
-    real(c_double) :: nodes1(2, 2), projected1(2, 2)
-    real(c_double) :: nodes2(1, 2), projected2(1, 2)
-    real(c_double) :: error
-    integer :: case_id
-    character(:), allocatable :: name
-
-    case_id = 1
-    name = "projection_error"
-
-    ! CASE 1: Line projected onto self.
-    nodes1(1, :) = [0.0_dp, 4.0_dp]
-    nodes1(2, :) = [3.0_dp, 0.0_dp]
-    projected1 = nodes1
-    call projection_error( &
-         2, 2, nodes1, projected1, error)
-    if (error == 0.0_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
-
-    ! CASE 2: Line projected with some error.
-    projected1(1, :) = [0.5_dp, 4.5_dp]
-    projected1(2, :) = [2.5_dp, 0.5_dp]
-    call projection_error( &
-         2, 2, nodes1, projected1, error)
-    if (5.0_dp * error == 1.0_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
-
-    ! CASE 3: Point/constant projected onto self.
-    nodes2 = 0
-    projected2 = 0
-    call projection_error( &
-         1, 2, nodes2, projected2, error)
-    if (error == 0.0_dp) then
-       call print_status(name, case_id, .TRUE.)
-    else
-       call print_status(name, case_id, .FALSE.)
-       success = .FALSE.
-    end if
-
-  end subroutine test_projection_error
 
   subroutine test_can_reduce(success)
     logical(c_bool), intent(inout) :: success

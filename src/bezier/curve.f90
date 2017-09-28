@@ -20,13 +20,12 @@ module curve
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
        SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse, &
        specialize_curve_generic, specialize_curve_quadratic, &
-       subdivide_nodes_generic, split_candidate
+       subdivide_nodes_generic, split_candidate, projection_error
   public &
        LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
        newton_refine, locate_point, elevate_nodes, get_curvature, &
-       reduce_pseudo_inverse, projection_error, can_reduce, full_reduce, &
-       compute_length
+       reduce_pseudo_inverse, can_reduce, full_reduce, compute_length
 
   ! For ``locate_point``.
   type :: LocateCandidate
