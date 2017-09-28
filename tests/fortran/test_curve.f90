@@ -17,7 +17,8 @@ module test_curve
        evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
        evaluate_hodograph, subdivide_nodes, newton_refine, LOCATE_MISS, &
        LOCATE_INVALID, locate_point, elevate_nodes, get_curvature, &
-       reduce_pseudo_inverse, projection_error, can_reduce
+       reduce_pseudo_inverse, projection_error, can_reduce, full_reduce, &
+       compute_length
   use types, only: dp
   use unit_test_helpers, only: &
        MACHINE_EPS, print_status, get_random_nodes, get_id_mat
@@ -27,7 +28,8 @@ module test_curve
        test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
        subdivide_points_check, test_newton_refine, test_locate_point, &
        test_elevate_nodes, test_get_curvature, test_reduce_pseudo_inverse, &
-       pseudo_inverse_helper, test_projection_error, test_can_reduce
+       pseudo_inverse_helper, test_projection_error, test_can_reduce, &
+       test_full_reduce, test_compute_length
   public curve_all_tests
 
 contains
@@ -47,6 +49,8 @@ contains
     call test_reduce_pseudo_inverse(success)
     call test_projection_error(success)
     call test_can_reduce(success)
+    call test_full_reduce(success)
+    call test_compute_length(success)
 
   end subroutine curve_all_tests
 
@@ -1060,5 +1064,167 @@ contains
     end if
 
   end subroutine test_can_reduce
+
+  subroutine test_full_reduce(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(2, 1), expected1(2, 1), reduced1(2, 1)
+    real(c_double) :: nodes2(4, 2), expected2(4, 2), reduced2(4, 2)
+    real(c_double) :: nodes3(6, 2), expected3(6, 2), reduced3(6, 2)
+    integer(c_int) :: num_reduced_nodes
+    logical(c_bool) :: not_implemented
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "full_reduce"
+
+    ! CASE 1: Linear curve, one reduction.
+    nodes1 = 5.5_dp
+    expected1(1, :) = 5.5_dp
+    call full_reduce( &
+         2, 1, nodes1, num_reduced_nodes, &
+         reduced1, not_implemented)
+    if (num_reduced_nodes == 1 .AND. &
+         all(reduced1(:1, :) == expected1(:1, :)) .AND. &
+         .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Cubic curve, one reduction.
+    nodes2(1, :) = 0
+    nodes2(2, :) = [2.0_dp, 4.0_dp]
+    nodes2(3, :) = [4.0_dp, 6.0_dp]
+    nodes2(4, :) = [6.0_dp, 6.0_dp]
+    expected2(1, :) = 0
+    expected2(2, :) = [3.0_dp, 6.0_dp]
+    expected2(3, :) = [6.0_dp, 6.0_dp]
+    call full_reduce( &
+         4, 2, nodes2, num_reduced_nodes, &
+         reduced2, not_implemented)
+    if (num_reduced_nodes == 3 .AND. &
+         all(reduced2(:3, :) == expected2(:3, :)) .AND. &
+         .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Cubic curve, two reductions.
+    nodes2(1, :) = [0.0_dp, 4.0_dp]
+    nodes2(2, :) = [1.0_dp, 4.5_dp]
+    nodes2(3, :) = [2.0_dp, 5.0_dp]
+    nodes2(4, :) = [3.0_dp, 5.5_dp]
+    expected2(1, :) = [0.0_dp, 4.0_dp]
+    expected2(2, :) = [3.0_dp, 5.5_dp]
+    call full_reduce( &
+         4, 2, nodes2, num_reduced_nodes, &
+         reduced2, not_implemented)
+    if (num_reduced_nodes == 2 .AND. &
+         all(reduced2(:2, :) == expected2(:2, :)) .AND. &
+         .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Cubic curve, no reductions.
+    nodes2(1, :) = [0.0_dp, 2.0_dp]
+    nodes2(2, :) = [-1.0_dp, 0.0_dp]
+    nodes2(3, :) = 1
+    nodes2(4, :) = [-0.75_dp, 1.625_dp]
+    expected2 = nodes2
+    call full_reduce( &
+         4, 2, nodes2, num_reduced_nodes, &
+         reduced2, not_implemented)
+    if (num_reduced_nodes == 4 .AND. &
+         all(reduced2(:4, :) == expected2(:4, :)) .AND. &
+         .NOT. not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Unsupported degree (quintic, degre 5).
+    nodes3 = 0
+    call full_reduce( &
+         6, 2, nodes3, num_reduced_nodes, &
+         reduced3, not_implemented)
+    if (not_implemented) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_full_reduce
+
+  subroutine test_compute_length(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(4, 2)
+    real(c_double) :: length, expected
+    integer(c_int) :: error_val
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "compute_length"
+
+    ! CASE 1: Linear curve.
+    nodes1(1, :) = 0
+    nodes1(2, :) = [3.0_dp, 4.0_dp]
+    call compute_length( &
+         2, 2, nodes1, length, error_val)
+    if (length == 5.0_dp .AND. error_val == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 1: Quadratic curve.
+    nodes2(1, :) = 0
+    nodes2(2, :) = [1.0_dp, 2.0_dp]
+    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    call compute_length( &
+         3, 2, nodes2, length, error_val)
+    ! 2 INT_0^1 SQRT(16 s^2  - 16 s + 5) ds = SQRT(5) + sinh^{-1}(2)/2
+    expected = sqrt(5.0_dp) + 0.5_dp * asinh(2.0_dp)
+    if (abs(length - expected) <= spacing(expected) .AND. &
+         error_val == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Cubic curve.
+    nodes3(1, :) = 0
+    nodes3(2, :) = [1.0_dp, 2.0_dp]
+    nodes3(3, :) = [2.0_dp, 0.0_dp]
+    nodes3(4, :) = [3.5_dp, 0.0_dp]
+    call compute_length( &
+         4, 2, nodes3, length, error_val)
+    ! x(s) = s (s^2 + 6) / 2
+    ! y(s) = 6 s (s - 1)^2
+    ! x'(s)^2 + y'(s)^2 = (9/4)(145s^4 - 384s^3 + 356s^2 - 128s + 20)
+    ! NOTE: This "literal" has more precision than the type.
+    expected = 4.0916195514424730685_dp
+    if (abs(length - expected) <= spacing(expected) .AND. &
+         error_val == 0) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_compute_length
 
 end module test_curve
