@@ -18,13 +18,14 @@ module test_curve_intersection
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, linearization_error, &
        segment_intersection, newton_refine_intersect, &
-       bbox_intersect
+       bbox_intersect, parallel_different
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_linearization_error, test_segment_intersection, &
-       test_newton_refine_intersect, test_bbox_intersect
+       test_newton_refine_intersect, test_bbox_intersect, &
+       test_parallel_different
   public curve_intersection_all_tests
 
 contains
@@ -36,6 +37,7 @@ contains
     call test_segment_intersection(success)
     call test_newton_refine_intersect(success)
     call test_bbox_intersect(success)
+    call test_parallel_different(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -541,5 +543,91 @@ contains
     end if
 
   end subroutine test_bbox_intersect
+
+  subroutine test_parallel_different(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical(c_bool) :: result_
+    real(c_double) :: start0(1, 2), end0(1, 2)
+    real(c_double) :: start1(1, 2), end1(1, 2)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "parallel_different"
+
+    ! CASE 1: Same line, but segments don't overlap.
+    start0(1, :) = 0
+    end0(1, :) = [3.0_dp, 4.0_dp]
+    start1(1, :) = [6.0_dp, 8.0_dp]
+    end1(1, :) = [9.0_dp, 12.0_dp]
+    call parallel_different( &
+         start0, end0, start1, end1, result_)
+    if (result_) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 2: Same line, ``start1`` contained in segment "0".
+    ! NOTE: All of segment "1" is contained in segment "0", but the
+    !       computation stops after ``start1`` is found on the segment.
+    start0(1, :) = [6.0_dp, -3.0_dp]
+    end0(1, :) = [-7.0_dp, 1.0_dp]
+    start1(1, :) = [1.125_dp, -1.5_dp]
+    end1(1, :) = [-5.375_dp, 0.5_dp]
+    call parallel_different( &
+         start0, end0, start1, end1, result_)
+    if (.NOT. result_) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 3: Same line, ``end1`` contained in segment "0".
+    start0(1, :) = [1.0_dp, 2.0_dp]
+    end0(1, :) = [3.0_dp, 5.0_dp]
+    start1(1, :) = [-0.5_dp, -0.25_dp]
+    end1(1, :) = [2.0_dp, 3.5_dp]
+    call parallel_different( &
+         start0, end0, start1, end1, result_)
+    if (.NOT. result_) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 4: Same line, segment "0" fully contained in segment "1".
+    start0(1, :) = [-9.0_dp, 0.0_dp]
+    end0(1, :) = [4.0_dp, 5.0_dp]
+    start1(1, :) = [23.5_dp, 12.5_dp]
+    end1(1, :) = [-25.25_dp, -6.25_dp]
+    call parallel_different( &
+         start0, end0, start1, end1, result_)
+    if (.NOT. result_) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+    ! CASE 5: Parallel, but different lines.
+    start0(1, :) = [3.0_dp, 2.0_dp]
+    end0(1, :) = [3.0_dp, 0.75_dp]
+    start1(1, :) = 0
+    end1(1, :) = [0.0_dp, 2.0_dp]
+    call parallel_different( &
+         start0, end0, start1, end1, result_)
+    if (result_) then
+       call print_status(name, case_id, .TRUE.)
+    else
+       call print_status(name, case_id, .FALSE.)
+       success = .FALSE.
+    end if
+
+  end subroutine test_parallel_different
 
 end module test_curve_intersection

@@ -183,7 +183,7 @@ contains
     logical(c_bool), intent(out) :: result_
     ! Variables outside of signature.
     real(c_double) :: delta0(1, 2)
-    real(c_double) :: val1, val2, val3  ! Workspace
+    real(c_double) :: val1, val2  ! Workspace
 
     delta0 = end0 - start0
     call cross_product(start0, delta0, val1)  ! line0_const
@@ -213,16 +213,9 @@ contains
     end if
 
     ! We know neither the start or end parameters are in [0, 1], but
-    ! they may contain [0, 1] between them.
-    val3 = min(val1, val2)  ! min_val
-    val1 = max(val1, val2)  ! max_val
-
-    ! So we make sure that 0 isn't between them.
-    if (val3 <= 0.0_dp .AND. 0.0_dp <= val1) then
-       result_ = .FALSE.
-    else
-       result_ = .TRUE.
-    end if
+    ! they may contain [0, 1] between them, so we make sure that 0
+    ! isn't between them.
+    result_ = (0.0_dp < min(val1, val2) .OR. max(val1, val2) < 0.0_dp)
 
   end subroutine parallel_different
 

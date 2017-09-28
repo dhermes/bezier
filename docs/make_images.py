@@ -184,7 +184,7 @@ def segment_intersection2(start0, end0, start1, end1):
 
 
 def helper_parallel_different(start0, end0, start1, end1, filename):
-    """Image for :func:`.parallel_different` docstring."""
+    """Image for :func:`._parallel_different` docstring."""
     if NO_IMAGES:
         return
 

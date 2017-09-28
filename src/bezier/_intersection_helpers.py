@@ -756,7 +756,7 @@ def _segment_intersection(start0, end0, start1, end1):
        >>> start1 = np.asfortranarray([[-1.0, 3.0]])
        >>> end1 = np.asfortranarray([[3.0, -1.0]])
        >>> _, _, success = segment_intersection(start0, end0, start1, end1)
-       >>> bool(success)
+       >>> success
        False
 
     .. testcleanup:: segment-intersection2
@@ -764,7 +764,7 @@ def _segment_intersection(start0, end0, start1, end1):
        import make_images
        make_images.segment_intersection2(start0, end0, start1, end1)
 
-    Instead, we use :func:`.parallel_different`:
+    Instead, we use :func:`parallel_different() <._parallel_different>`:
 
     .. testsetup:: segment-intersection2-continued
 
@@ -778,7 +778,7 @@ def _segment_intersection(start0, end0, start1, end1):
 
     .. doctest:: segment-intersection2-continued
 
-       >>> bool(parallel_different(start0, end0, start1, end1))
+       >>> parallel_different(start0, end0, start1, end1)
        True
 
     .. note::
@@ -817,7 +817,8 @@ def _segment_intersection(start0, end0, start1, end1):
 def _parallel_different(start0, end0, start1, end1):
     r"""Checks if two parallel lines ever meet.
 
-    Meant as a back-up when :func:`.segment_intersection` fails.
+    Meant as a back-up when
+    :func:`segment_intersection() <._segment_intersection>` fails.
 
     .. note::
 
@@ -829,8 +830,8 @@ def _parallel_different(start0, end0, start1, end1):
     they are parallel but on **different** lines, then there is a
     **guarantee** of no intersection.
 
-    In :func:`.segment_intersection`, we utilized the normal form of the
-    lines (via the cross product):
+    In :func:`segment_intersection() <._segment_intersection>`, we utilized
+    the normal form of the lines (via the cross product):
 
     .. math::
 
@@ -865,7 +866,7 @@ def _parallel_different(start0, end0, start1, end1):
        >>> # Vertical shift up: y = 2
        >>> start1 = np.asfortranarray([[-1.0, 2.0]])
        >>> end1 = np.asfortranarray([[3.0, 2.0]])
-       >>> bool(parallel_different(start0, end0, start1, end1))
+       >>> parallel_different(start0, end0, start1, end1)
        True
 
     .. testcleanup:: parallel-different1
@@ -900,7 +901,7 @@ def _parallel_different(start0, end0, start1, end1):
        >>> end0 = start0 + 1.0 * delta0
        >>> start1 = start0 + 1.5 * delta0
        >>> end1 = start0 + 2.0 * delta0
-       >>> bool(parallel_different(start0, end0, start1, end1))
+       >>> parallel_different(start0, end0, start1, end1)
        True
 
     .. testcleanup:: parallel-different2
@@ -928,7 +929,7 @@ def _parallel_different(start0, end0, start1, end1):
 
        >>> start1 = start0 - 1.0 * delta0
        >>> end1 = start0 + 0.5 * delta0
-       >>> bool(parallel_different(start0, end0, start1, end1))
+       >>> parallel_different(start0, end0, start1, end1)
        False
 
     .. testcleanup:: parallel-different3
@@ -947,7 +948,7 @@ def _parallel_different(start0, end0, start1, end1):
 
        >>> start1 = start0 + 3.0 * delta0
        >>> end1 = start0 - 2.0 * delta0
-       >>> bool(parallel_different(start0, end0, start1, end1))
+       >>> parallel_different(start0, end0, start1, end1)
        False
 
     .. testcleanup:: parallel-different4
