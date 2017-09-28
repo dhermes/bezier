@@ -461,25 +461,25 @@ contains
   subroutine test_bbox_intersect(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
-    real(c_double) :: nodes1(4, 2), nodes2(4, 2), delta
-    integer(c_int) :: enum_
+    real(c_double) :: unit_square(4, 2), other(4, 2), delta
+    integer(c_int) :: enum_, i
     integer :: case_id
     character(:), allocatable :: name
 
     case_id = 1
     name = "bbox_intersect"
 
+    unit_square(1, :) = [0.0_dp, 0.0_dp]
+    unit_square(2, :) = [1.0_dp, 0.0_dp]
+    unit_square(3, :) = [1.0_dp, 1.0_dp]
+    unit_square(4, :) = [0.0_dp, 1.0_dp]
+
     ! CASE 1: Intersecting bbox-es.
-    nodes1(1, :) = [0.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
-    nodes1(3, :) = [1.0_dp, 1.0_dp]
-    nodes1(4, :) = [0.0_dp, 1.0_dp]
-    nodes2(1, :) = [0.5_dp, 0.5_dp]
-    nodes2(2, :) = [1.5_dp, 0.5_dp]
-    nodes2(3, :) = [1.5_dp, 1.5_dp]
-    nodes2(4, :) = [0.5_dp, 1.5_dp]
+    forall (i = 1:4)
+       other(i, :) = unit_square(i, :) + [0.5_dp, 0.5_dp]
+    end forall
     call bbox_intersect( &
-         4, nodes1, 4, nodes2, enum_)
+         4, unit_square, 4, other, enum_)
     if (enum_ == BoxIntersectionType_INTERSECTION) then
        call print_status(name, case_id, .TRUE.)
     else
@@ -488,16 +488,11 @@ contains
     end if
 
     ! CASE 2: Far apart bbox-es.
-    nodes1(1, :) = [0.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
-    nodes1(3, :) = [1.0_dp, 1.0_dp]
-    nodes1(4, :) = [0.0_dp, 1.0_dp]
-    nodes2(1, :) = [100.0_dp, 100.0_dp]
-    nodes2(2, :) = [101.0_dp, 100.0_dp]
-    nodes2(3, :) = [101.0_dp, 101.0_dp]
-    nodes2(4, :) = [100.0_dp, 101.0_dp]
+    forall (i = 1:4)
+       other(i, :) = unit_square(i, :) + [100.0_dp, 100.0_dp]
+    end forall
     call bbox_intersect( &
-         4, nodes1, 4, nodes2, enum_)
+         4, unit_square, 4, other, enum_)
     if (enum_ == BoxIntersectionType_DISJOINT) then
        call print_status(name, case_id, .TRUE.)
     else
@@ -506,16 +501,11 @@ contains
     end if
 
     ! CASE 3: Disjoint bbox-es that have an "aligned" edge.
-    nodes1(1, :) = [0.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
-    nodes1(3, :) = [1.0_dp, 1.0_dp]
-    nodes1(4, :) = [0.0_dp, 1.0_dp]
-    nodes2(1, :) = [1.0_dp, 2.0_dp]
-    nodes2(2, :) = [2.0_dp, 2.0_dp]
-    nodes2(3, :) = [2.0_dp, 3.0_dp]
-    nodes2(4, :) = [1.0_dp, 3.0_dp]
+    forall (i = 1:4)
+       other(i, :) = unit_square(i, :) + [1.0_dp, 2.0_dp]
+    end forall
     call bbox_intersect( &
-         4, nodes1, 4, nodes2, enum_)
+         4, unit_square, 4, other, enum_)
     if (enum_ == BoxIntersectionType_DISJOINT) then
        call print_status(name, case_id, .TRUE.)
     else
@@ -524,16 +514,11 @@ contains
     end if
 
     ! CASE 4: Tangent bbox-es.
-    nodes1(1, :) = [0.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
-    nodes1(3, :) = [1.0_dp, 1.0_dp]
-    nodes1(4, :) = [0.0_dp, 1.0_dp]
-    nodes2(1, :) = [1.0_dp, 0.0_dp]
-    nodes2(2, :) = [2.0_dp, 0.0_dp]
-    nodes2(3, :) = [2.0_dp, 1.0_dp]
-    nodes2(4, :) = [1.0_dp, 1.0_dp]
+    forall (i = 1:4)
+       other(i, :) = unit_square(i, :) + [1.0_dp, 0.0_dp]
+    end forall
     call bbox_intersect( &
-         4, nodes1, 4, nodes2, enum_)
+         4, unit_square, 4, other, enum_)
     if (enum_ == BoxIntersectionType_TANGENT) then
        call print_status(name, case_id, .TRUE.)
     else
@@ -543,16 +528,11 @@ contains
 
     ! CASE 5: Almost tangent bbox-es.
     delta = 1.0_dp + spacing(1.0_dp)
-    nodes1(1, :) = [0.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
-    nodes1(3, :) = [1.0_dp, 1.0_dp]
-    nodes1(4, :) = [0.0_dp, 1.0_dp]
-    nodes2(1, :) = [delta, 0.0_dp]
-    nodes2(2, :) = [1.0_dp + delta, 0.0_dp]
-    nodes2(3, :) = [1.0_dp + delta, 1.0_dp]
-    nodes2(4, :) = [delta, 1.0_dp]
+    forall (i = 1:4)
+       other(i, :) = unit_square(i, :) + [delta, 0.0_dp]
+    end forall
     call bbox_intersect( &
-         4, nodes1, 4, nodes2, enum_)
+         4, unit_square, 4, other, enum_)
     if (enum_ == BoxIntersectionType_DISJOINT) then
        call print_status(name, case_id, .TRUE.)
     else
