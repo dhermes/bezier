@@ -570,8 +570,8 @@ contains
     error2 = nan_val
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes1, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = ( &
          does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS .AND. &
@@ -592,8 +592,8 @@ contains
     error2 = 0.0_dp
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = ( &
          .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
@@ -601,8 +601,8 @@ contains
 
     ! CASE 3: Same as CASE 2, but swap the inputs.
     call from_linearized( &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = ( &
          .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
@@ -624,8 +624,8 @@ contains
     error2 = 0.25_dp
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes1, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = ( &
          .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
@@ -633,8 +633,8 @@ contains
 
     ! CASE 5: Same as CASE 4, but swap the inputs.
     call from_linearized( &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes1, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = ( &
          .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
@@ -654,8 +654,8 @@ contains
     error2 = 0.0_dp
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = ( &
          .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
@@ -675,8 +675,8 @@ contains
     error2 = 0.0_dp
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (py_exc == FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
@@ -696,8 +696,8 @@ contains
     error2 = nan_val
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = ( &
          .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
@@ -718,8 +718,8 @@ contains
     error2 = nan_val
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
+         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
+         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (py_exc == FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)

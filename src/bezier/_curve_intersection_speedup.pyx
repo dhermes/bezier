@@ -129,17 +129,15 @@ def from_linearized_low_level(
         double error2, double start2, double end2,
         double[::1, :] start_node2, double[::1, :] end_node2,
         double[::1, :] nodes2):
-    cdef int num_nodes1, degree1, num_nodes2, degree2
+    cdef int num_nodes1, num_nodes2
     cdef double refined_s, refined_t
     cdef bool_t does_intersect
     cdef int py_exc
 
     # NOTE: We don't check that there are 2 columns.
     num_nodes1, _ = np.shape(nodes1)
-    degree1 = num_nodes1 - 1
     # NOTE: We don't check that there are 2 columns.
     num_nodes2, _ = np.shape(nodes2)
-    degree2 = num_nodes2 - 1
 
     bezier._curve_intersection.from_linearized(
         &error1,
@@ -147,14 +145,14 @@ def from_linearized_low_level(
         &end1,
         &start_node1[0, 0],
         &end_node1[0, 0],
-        &degree1,
+        &num_nodes1,
         &nodes1[0, 0],
         &error2,
         &start2,
         &end2,
         &start_node2[0, 0],
         &end_node2[0, 0],
-        &degree2,
+        &num_nodes2,
         &nodes2[0, 0],
         &refined_s,
         &refined_t,
