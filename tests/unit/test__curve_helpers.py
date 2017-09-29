@@ -481,11 +481,11 @@ class Test__specialize_curve(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(
-            nodes, start, end, curve_start, curve_end, degree):
+            nodes, start, end, curve_start, curve_end):
         from bezier import _curve_helpers
 
         return _curve_helpers._specialize_curve(
-            nodes, start, end, curve_start, curve_end, degree)
+            nodes, start, end, curve_start, curve_end)
 
     def test_linear(self):
         nodes = np.asfortranarray([
@@ -493,7 +493,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         result, true_start, true_end = self._call_function_under_test(
-            nodes, 0.25, 0.75, 0.125, 0.25, 1)
+            nodes, 0.25, 0.75, 0.125, 0.25)
         expected = np.asfortranarray([
             [0.25, 0.25],
             [0.75, 0.75],
@@ -514,13 +514,13 @@ class Test__specialize_curve(utils.NumPyTestCase):
         left, right = curve.subdivide()
 
         left_nodes, true_start, true_end = self._call_function_under_test(
-            nodes, 0.0, 0.5, 0.0, 1.0, 2)
+            nodes, 0.0, 0.5, 0.0, 1.0)
         self.assertEqual(left.nodes, left_nodes)
         self.assertEqual(true_start, left.start)
         self.assertEqual(true_end, left.end)
 
         right_nodes, true_start, true_end = self._call_function_under_test(
-            nodes, 0.5, 1.0, 0.0, 1.0, 2)
+            nodes, 0.5, 1.0, 0.0, 1.0)
         self.assertEqual(right.nodes, right_nodes)
         self.assertEqual(true_start, right.start)
         self.assertEqual(true_end, right.end)
@@ -533,7 +533,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [3.0, 2.0],
         ])
         result, true_start, true_end = self._call_function_under_test(
-            nodes, 0.125, 0.625, 0.0, 1.0, 3)
+            nodes, 0.125, 0.625, 0.0, 1.0)
         expected = np.asfortranarray([
             [171, -187],
             [375, -423],
@@ -553,7 +553,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [3.0, 7.0],
         ])
         result, true_start, true_end = self._call_function_under_test(
-            nodes, 0.5, 0.75, 0.0, 1.0, 4)
+            nodes, 0.5, 0.75, 0.0, 1.0)
         expected = np.asfortranarray([
             [1.5625, 6.375],
             [1.78125, 6.4375],
@@ -571,11 +571,11 @@ class Test_speedup_specialize_curve(Test__specialize_curve):
 
     @staticmethod
     def _call_function_under_test(
-            nodes, start, end, curve_start, curve_end, degree):
+            nodes, start, end, curve_start, curve_end):
         from bezier import _curve_speedup
 
         return _curve_speedup.specialize_curve(
-            nodes, start, end, curve_start, curve_end, degree)
+            nodes, start, end, curve_start, curve_end)
 
 
 class Test__evaluate_hodograph(utils.NumPyTestCase):

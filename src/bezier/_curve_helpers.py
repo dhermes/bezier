@@ -411,7 +411,7 @@ def de_casteljau_one_round(nodes, lambda1, lambda2):
         lambda1 * nodes[:-1, :] + lambda2 * nodes[1:, :])
 
 
-def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
+def _specialize_curve(nodes, start, end, curve_start, curve_end):
     """Specialize a curve to a re-parameterization
 
     Does so by taking two points along the number line and then
@@ -435,7 +435,6 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
             the curve defined by ``nodes`` defines.
         curve_end (float): The end of the original interval which the
             the curve defined by ``nodes`` defines.
-        degree (int): The degree of the curve.
 
     Returns:
         Tuple[numpy.ndarray, float, float]: The control points for the
@@ -443,6 +442,8 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
         newly created curve.
     """
     # pylint: disable=too-many-locals
+    num_nodes, _ = np.shape(nodes)
+
     # Uses start-->0, end-->1 to represent the specialization used.
     weights = (
         (1.0 - start, start),
@@ -453,7 +454,7 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
         (1,): de_casteljau_one_round(nodes, *weights[1]),
     }
 
-    for _ in six.moves.xrange(degree - 1, 0, -1):
+    for _ in six.moves.xrange(num_nodes - 2, 0, -1):
         new_partial = {}
         for key, sub_nodes in six.iteritems(partial_vals):
             # Our keys are ascending so we increment from the last value.
@@ -465,8 +466,8 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
         partial_vals = new_partial
 
     result = np.empty(nodes.shape, order='F')
-    for index in six.moves.xrange(degree + 1):
-        key = (0,) * (degree - index) + (1,) * index
+    for index in six.moves.xrange(num_nodes):
+        key = (0,) * (num_nodes - index - 1) + (1,) * index
         result[index, :] = partial_vals[key]
 
     interval_delta = curve_end - curve_start

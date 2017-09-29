@@ -74,7 +74,7 @@ def evaluate_multi(
 
 def specialize_curve(
         double[::1, :] nodes, double start, double end,
-        double curve_start, double curve_end, int degree):
+        double curve_start, double curve_end):
     cdef int num_nodes, dimension
     cdef double true_start, true_end
     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
@@ -83,7 +83,7 @@ def specialize_curve(
     new_nodes = np.empty((num_nodes, dimension), order='F')
 
     bezier._curve.specialize_curve(
-        &degree,
+        &num_nodes,
         &dimension,
         &nodes[0, 0],
         &start,

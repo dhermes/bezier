@@ -150,26 +150,28 @@ contains
   end subroutine evaluate_multi
 
   subroutine specialize_curve_generic( &
-       degree, dimension_, nodes, start, end_, new_nodes)
+       num_nodes, dimension_, nodes, start, end_, new_nodes)
 
     ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
 
-    integer(c_int), intent(in) :: degree, dimension_
-    real(c_double), intent(in) :: nodes(degree + 1, dimension_)
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     real(c_double), intent(in) :: start, end_
-    real(c_double), intent(out) :: new_nodes(degree + 1, dimension_)
+    real(c_double), intent(out) :: new_nodes(num_nodes, dimension_)
     ! Variables outside of signature.
-    real(c_double) :: workspace(degree, dimension_, degree + 1)
+    real(c_double) :: workspace(num_nodes - 1, dimension_, num_nodes)
     integer(c_int) :: index_, curr_size, j
     real(c_double) :: minus_start, minus_end
 
     minus_start = 1.0_dp - start
     minus_end = 1.0_dp - end_
-    workspace(:, :, 1) = minus_start * nodes(:degree, :) + start * nodes(2:, :)
-    workspace(:, :, 2) = minus_end * nodes(:degree, :) + end_ * nodes(2:, :)
+    workspace(:, :, 1) = ( &
+         minus_start * nodes(:num_nodes - 1, :) + start * nodes(2:, :))
+    workspace(:, :, 2) = ( &
+         minus_end * nodes(:num_nodes - 1, :) + end_ * nodes(2:, :))
 
-    curr_size = degree
-    do index_ = 3, degree + 1
+    curr_size = num_nodes - 1
+    do index_ = 3, num_nodes
        curr_size = curr_size - 1
        ! First add a new "column" (or whatever the 3rd dimension is called)
        ! at the end using ``end_``.
@@ -187,7 +189,7 @@ contains
 
     ! Move the final "column" (or whatever the 3rd dimension is called)
     ! of the workspace into ``new_nodes``.
-    forall (index_ = 1:degree + 1)
+    forall (index_ = 1:num_nodes)
        new_nodes(index_, :) = workspace(1, :, index_)
     end forall
 
@@ -223,27 +225,27 @@ contains
   end subroutine specialize_curve_quadratic
 
   subroutine specialize_curve( &
-       degree, dimension_, nodes, start, end_, curve_start, curve_end, &
+       num_nodes, dimension_, nodes, start, end_, curve_start, curve_end, &
        new_nodes, true_start, true_end) &
        bind(c, name='specialize_curve')
 
-    integer(c_int), intent(in) :: degree, dimension_
-    real(c_double), intent(in) :: nodes(degree + 1, dimension_)
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     real(c_double), intent(in) :: start, end_, curve_start, curve_end
-    real(c_double), intent(out) :: new_nodes(degree + 1, dimension_)
+    real(c_double), intent(out) :: new_nodes(num_nodes, dimension_)
     real(c_double), intent(out) :: true_start, true_end
     ! Variables outside of signature.
     real(c_double) :: interval_delta
 
-    if (degree == 1) then
+    if (num_nodes == 2) then
        new_nodes(1, :) = (1.0_dp - start) * nodes(1, :) + start * nodes(2, :)
        new_nodes(2, :) = (1.0_dp - end_) * nodes(1, :) + end_ * nodes(2, :)
-    else if (degree == 2) then
+    else if (num_nodes == 3) then
        call specialize_curve_quadratic( &
             dimension_, nodes, start, end_, new_nodes)
     else
        call specialize_curve_generic( &
-            degree, dimension_, nodes, start, end_, new_nodes)
+            num_nodes, dimension_, nodes, start, end_, new_nodes)
     end if
 
     ! Now, compute the new interval.
