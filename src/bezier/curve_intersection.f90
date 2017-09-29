@@ -130,11 +130,11 @@ contains
        return
     end if
 
-    call evaluate_hodograph(s, degree1, 2, nodes1, jac_mat(1:1, :))
+    call evaluate_hodograph(s, degree1 + 1, 2, nodes1, jac_mat(1:1, :))
     ! NOTE: We actually want the negative, since we want -B2'(t), but
     !       since we manually solve the system, it's just algebra
     !       to figure out how to use the negative values.
-    call evaluate_hodograph(t, degree2, 2, nodes2, jac_mat(2:2, :))
+    call evaluate_hodograph(t, degree2 + 1, 2, nodes2, jac_mat(2:2, :))
 
     determinant = ( &
          jac_mat(1, 1) * jac_mat(2, 2) - jac_mat(1, 2) * jac_mat(2, 1))

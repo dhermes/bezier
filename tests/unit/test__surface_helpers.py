@@ -1240,11 +1240,9 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         from bezier import _curve_helpers
 
         tangent1 = _curve_helpers.evaluate_hodograph(
-            intersection.s, intersection.first._nodes,
-            intersection.first.degree)
+            intersection.s, intersection.first._nodes)
         tangent2 = _curve_helpers.evaluate_hodograph(
-            intersection.t, intersection.second._nodes,
-            intersection.second.degree)
+            intersection.t, intersection.second._nodes)
 
         return self._call_function_under_test(
             intersection, tangent1, tangent2)

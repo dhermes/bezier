@@ -256,20 +256,20 @@ contains
   end subroutine specialize_curve
 
   subroutine evaluate_hodograph( &
-       s, degree, dimension_, nodes, hodograph) &
+       s, num_nodes, dimension_, nodes, hodograph) &
        bind(c, name='evaluate_hodograph')
 
     real(c_double), intent(in) :: s
-    integer(c_int), intent(in) :: degree, dimension_
-    real(c_double), intent(in) :: nodes(degree + 1, dimension_)
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     real(c_double), intent(out) :: hodograph(1, dimension_)
     ! Variables outside of signature.
-    real(c_double) :: first_deriv(degree, dimension_)
+    real(c_double) :: first_deriv(num_nodes - 1, dimension_)
 
-    first_deriv = nodes(2:, :) - nodes(:degree, :)
+    first_deriv = nodes(2:, :) - nodes(:num_nodes - 1, :)
     call evaluate_multi( &
-         degree, dimension_, first_deriv, 1, [s], hodograph)
-    hodograph = degree * hodograph
+         num_nodes - 1, dimension_, first_deriv, 1, [s], hodograph)
+    hodograph = (num_nodes - 1) * hodograph
 
   end subroutine evaluate_hodograph
 
@@ -368,7 +368,7 @@ contains
     pt_delta = point - pt_delta
     ! At this point `pt_delta` is `p - B(s)`.
     call evaluate_hodograph( &
-         s, num_nodes - 1, dimension_, nodes, derivative)
+         s, num_nodes, dimension_, nodes, derivative)
 
     updated_s = ( &
          s + &

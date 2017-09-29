@@ -241,7 +241,7 @@ contains
     case_success = .TRUE.
     do i = 1, 2
        call evaluate_hodograph( &
-            s_vals(i), 1, 2, nodes1, hodograph)
+            s_vals(i), 2, 2, nodes1, hodograph)
        case_success = ( &
             case_success .AND. &
             all(hodograph == expected))
@@ -259,7 +259,7 @@ contains
     do i = 1, 5
        s_val = s_vals(i)
        call evaluate_hodograph( &
-            s_val, 2, 2, nodes2, hodograph)
+            s_val, 3, 2, nodes2, hodograph)
        expected(1, :) = [ &
             (2.0_dp + s_val) / 2.0_dp, &
             (4.0_dp - 7.0_dp * s_val) / 2.0_dp]
@@ -281,7 +281,7 @@ contains
     do i = 1, 5
        s_val = s_vals(i)
        call evaluate_hodograph( &
-            s_val, 3, 2, nodes3, hodograph)
+            s_val, 4, 2, nodes3, hodograph)
        expected(1, 1) = ( &
             3.0_dp * (1.0_dp + 2.0_dp * s_val - s_val * s_val) / 4.0_dp)
        expected(1, 2) = ( &
@@ -561,7 +561,7 @@ contains
     nodes1(2, :) = 1
     s_val = 0.5_dp
     call evaluate_hodograph( &
-         s_val, 1, 2, nodes1, tangent_vec)
+         s_val, 2, 2, nodes1, tangent_vec)
     call get_curvature( &
          2, 2, nodes1, tangent_vec, s_val, curvature)
     case_success = (curvature == 0.0_dp)
@@ -573,7 +573,7 @@ contains
     nodes2(3, :) = 1
     s_val = 0.25_dp
     call evaluate_hodograph( &
-         s_val, 2, 2, nodes2, tangent_vec)
+         s_val, 3, 2, nodes2, tangent_vec)
     call get_curvature( &
          3, 2, nodes2, tangent_vec, s_val, curvature)
     case_success = (curvature == 0.0_dp)
@@ -585,7 +585,7 @@ contains
     nodes2(3, :) = [1.0_dp, 0.0_dp]
     s_val = 0.5_dp
     call evaluate_hodograph( &
-         s_val, 2, 2, nodes2, tangent_vec)
+         s_val, 3, 2, nodes2, tangent_vec)
     call get_curvature( &
          3, 2, nodes2, tangent_vec, s_val, curvature)
     case_success = (curvature == -4.0_dp)

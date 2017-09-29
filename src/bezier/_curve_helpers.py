@@ -477,7 +477,7 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end):
     # pylint: enable=too-many-locals
 
 
-def _evaluate_hodograph(s, nodes, degree):
+def _evaluate_hodograph(s, nodes):
     r"""Evaluate the Hodograph curve at a point :math:`s`.
 
     The Hodograph (first derivative) of a B |eacute| zier curve
@@ -493,8 +493,6 @@ def _evaluate_hodograph(s, nodes, degree):
 
     Args:
         nodes (numpy.ndarray): The nodes of a curve.
-        degree (int): The degree of the curve (assumed to be one less than
-            the number of ``nodes``.
         s (float): A parameter along the curve at which the Hodograph
             is to be evaluated.
 
@@ -502,9 +500,9 @@ def _evaluate_hodograph(s, nodes, degree):
         numpy.ndarray: The point on the Hodograph curve (as a two
         dimensional NumPy array with a single row).
     """
+    num_nodes, _ = np.shape(nodes)
     first_deriv = nodes[1:, :] - nodes[:-1, :]
-    # NOTE: Taking the derivative drops the degree by 1.
-    return degree * evaluate_multi(
+    return (num_nodes - 1) * evaluate_multi(
         first_deriv, np.asfortranarray([s]))
 
 
@@ -527,10 +525,6 @@ def _get_curvature(nodes, degree, tangent_vec, s):
        from bezier._curve_helpers import evaluate_hodograph
        from bezier._curve_helpers import get_curvature
 
-       def hodograph(nodes, s):
-           degree = nodes.shape[0] - 1
-           return evaluate_hodograph(s, nodes, degree)
-
     .. doctest:: get-curvature
        :options: +NORMALIZE_WHITESPACE
 
@@ -542,7 +536,7 @@ def _get_curvature(nodes, degree, tangent_vec, s):
        ...     [0.0 ,  0.0],
        ... ])
        >>> s = 0.5
-       >>> tangent_vec = hodograph(nodes, s)
+       >>> tangent_vec = evaluate_hodograph(s, nodes)
        >>> tangent_vec
        array([[-1., 0.]])
        >>> curvature = get_curvature(nodes, 4, tangent_vec, s)
@@ -746,7 +740,7 @@ def _newton_refine(nodes, degree, point, s):
         float: The updated value :math:`s + \Delta s`.
     """
     pt_delta = point - evaluate_multi(nodes, np.asfortranarray([s]))
-    derivative = evaluate_hodograph(s, nodes, degree)
+    derivative = evaluate_hodograph(s, nodes)
     # Each array is 1x2 (i.e. a row vector), we want the vector dot product.
     delta_s = (
         np.vdot(pt_delta[0, :], derivative[0, :]) /

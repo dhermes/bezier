@@ -1249,12 +1249,12 @@ def classify_intersection(intersection):
 
        def hodograph(curve, s):
            return _curve_helpers.evaluate_hodograph(
-               s, curve._nodes, curve._degree)
+               s, curve._nodes)
 
        def curvature(curve, s):
            nodes = curve._nodes
            tangent = _curve_helpers.evaluate_hodograph(
-               s, nodes, curve._degree)
+               s, nodes)
            return _curve_helpers.get_curvature(
                nodes, curve._degree, tangent, s)
 
@@ -1619,10 +1619,9 @@ def classify_intersection(intersection):
                          's', intersection.s, 't', intersection.t)
 
     tangent1 = _curve_helpers.evaluate_hodograph(
-        intersection.s, intersection.first._nodes, intersection.first._degree)
+        intersection.s, intersection.first._nodes)
     tangent2 = _curve_helpers.evaluate_hodograph(
-        intersection.t, intersection.second._nodes,
-        intersection.second._degree)
+        intersection.t, intersection.second._nodes)
 
     if ignored_corner(intersection, tangent1, tangent2):
         return IntersectionClassification.IGNORED_CORNER
@@ -1725,9 +1724,8 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
         return False
 
     # Do the same for the **other** tangent at the corner.
-    num_nodes, _ = corner_previous_edge.shape
     alt_corner_tangent = _curve_helpers.evaluate_hodograph(
-        1.0, corner_previous_edge, num_nodes - 1)
+        1.0, corner_previous_edge)
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
     cross_prod = _helpers.cross_product(edge_tangent, alt_corner_tangent)
@@ -1759,7 +1757,7 @@ def ignored_double_corner(intersection, tangent_s, tangent_t):
     prev_edge = intersection.first._previous_edge
     # pylint: enable=protected-access
     alt_tangent_s = _curve_helpers.evaluate_hodograph(
-        1.0, prev_edge._nodes, prev_edge._degree)
+        1.0, prev_edge._nodes)
 
     # First check if ``tangent_t`` is interior to the ``s`` surface.
     cross_prod1 = _helpers.cross_product(tangent_s, tangent_t)
@@ -1780,7 +1778,7 @@ def ignored_double_corner(intersection, tangent_s, tangent_t):
     prev_edge = intersection.second._previous_edge
     # pylint: enable=protected-access
     alt_tangent_t = _curve_helpers.evaluate_hodograph(
-        1.0, prev_edge._nodes, prev_edge._degree)
+        1.0, prev_edge._nodes)
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
 

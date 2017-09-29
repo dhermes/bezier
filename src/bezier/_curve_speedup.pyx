@@ -98,18 +98,16 @@ def specialize_curve(
     return new_nodes, true_start, true_end
 
 
-def evaluate_hodograph(double s, double[::1, :] nodes, int degree):
-    cdef int dimension
+def evaluate_hodograph(double s, double[::1, :] nodes):
+    cdef int num_nodes, dimension
     cdef ndarray_t[double, ndim=2, mode='fortran'] hodograph
 
-    # NOTE: We don't check that there are ``degree + 1`` rows.
-    _, dimension = np.shape(nodes)
-
+    num_nodes, dimension = np.shape(nodes)
     hodograph = np.empty((1, dimension), order='F')
 
     bezier._curve.evaluate_hodograph(
         &s,
-        &degree,
+        &num_nodes,
         &dimension,
         &nodes[0, 0],
         &hodograph[0, 0],

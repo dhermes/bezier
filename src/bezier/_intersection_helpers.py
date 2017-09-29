@@ -632,16 +632,12 @@ def _newton_refine(s, nodes1, t, nodes2):
         # No refinement is needed.
         return s, t
 
-    # NOTE: This assumes nodes are (d + 1)x2.
-    degree1 = nodes1.shape[0] - 1
-    degree2 = nodes2.shape[0] - 1
-
     # NOTE: This assumes the curves are 2D.
     jac_mat = np.empty((2, 2), order='F')
     # In curve.evaluate() and evaluate_hodograph() the roles of
     # columns and rows are swapped.
-    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(s, nodes1, degree1)
-    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(t, nodes2, degree2)
+    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(s, nodes1)
+    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(t, nodes2)
 
     # Solve the system (via the transposes, since, as above, the roles
     # of columns and rows are reversed).
