@@ -17,7 +17,7 @@ module test_helpers
        WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
        vector_close, in_interval, ulps_away
   use types, only: dp
-  use unit_test_helpers, only: MACHINE_EPS, print_status_full
+  use unit_test_helpers, only: MACHINE_EPS, print_status
   implicit none
   private &
        test_cross_product, test_bbox, test_wiggle_interval, &
@@ -57,7 +57,7 @@ contains
     vec1(1, :) = [-11.0_dp, 24.0_dp] / 32
     call cross_product(vec0, vec1, result_)
     case_success = (result_ == 101.0_dp / 256)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_cross_product
 
@@ -80,7 +80,7 @@ contains
     case_success = ( &
          left == 0.0_dp .AND. right == 1.0_dp &
          .AND. bottom == 3.0_dp .AND. top == 5.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: "Many" nodes.
     nodes(1, :) = [1.0_dp, 0.0_dp]
@@ -93,7 +93,7 @@ contains
     case_success = ( &
          left == -1.0_dp .AND. right == 5.0_dp &
          .AND. bottom == -3.0_dp .AND. top == 4.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_bbox
 
@@ -116,43 +116,43 @@ contains
     value1 = 0.0_dp
     call wiggle_interval(value1, result1, wiggle_success1)
     case_success = (wiggle_success1 .AND. result1 == 0.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Near endpoint.
     value1 = 1.0_dp + 0.5_dp**20
     call wiggle_interval(value1, result1, wiggle_success1)
     case_success = (.NOT. wiggle_success1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: "Below" the interval.
     value1 = -0.25_dp
     call wiggle_interval(value1, result1, wiggle_success1)
     case_success = (.NOT. wiggle_success1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: "Above" the interval.
     value1 = 1.5_dp
     call wiggle_interval(value1, result1, wiggle_success1)
     case_success = (.NOT. wiggle_success1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Inside the interval.
     value1 = 0.25_dp
     call wiggle_interval(value1, result1, wiggle_success1)
     case_success = (wiggle_success1 .AND. result1 == value1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Wiggle "below" the interval.
     value1 = -0.5_dp**60
     call wiggle_interval(value1, result1, wiggle_success1)
     case_success = (wiggle_success1 .AND. result1 == 0.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 7: Wiggle "above" the interval.
     value1 = 1.0_dp + MACHINE_EPS
     call wiggle_interval(value1, result1, wiggle_success1)
     case_success = (wiggle_success1 .AND. result1 == 1.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Test "lower outer" boundary, i.e. values in (-epsilon, 0).
     value1 = -WIGGLE + MACHINE_EPS * WIGGLE
@@ -167,7 +167,7 @@ contains
          wiggle_success1 .AND. result1 == 0.0_dp .AND. &
          wiggle_success2 .AND. result2 == 0.0_dp .AND. &
          .NOT. wiggle_success3 .AND. .NOT. wiggle_success4)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 9: Test "upper outer" boundary, i.e. values in (1, 1 + epsilon).
     value1 = 1.0_dp + WIGGLE - 2 * MACHINE_EPS
@@ -182,7 +182,7 @@ contains
          wiggle_success1 .AND. result1 == 1.0_dp .AND. &
          wiggle_success2 .AND. result2 == 1.0_dp .AND. &
          .NOT. wiggle_success3 .AND. .NOT. wiggle_success4)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 10: Test "lower inner" boundary, i.e. values in (0, epsilon).
     value1 = WIGGLE - WIGGLE * MACHINE_EPS
@@ -198,7 +198,7 @@ contains
          wiggle_success2 .AND. result2 == 0.0_dp .AND. &
          wiggle_success3 .AND. result3 == value3 .AND. &
          wiggle_success4 .AND. result4 == value4)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 11: Test "uper inner" boundary, i.e. values in (1 - epsilon, 1).
     value1 = 1.0_dp - WIGGLE - MACHINE_EPS
@@ -217,7 +217,7 @@ contains
          wiggle_success3 .AND. result3 == value3 .AND. &
          wiggle_success4 .AND. result4 == 1.0_dp .AND. &
          wiggle_success5 .AND. result5 == 1.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_wiggle_interval
 
@@ -241,7 +241,7 @@ contains
     point1 = [-0.5_dp, 1.0_dp]
     call contains_nd(3, 2, nodes1, point1, is_contained)
     case_success = (.NOT. is_contained)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Above bounding box.
     nodes2(1, :) = [0.0_dp, -4.0_dp, 2.0_dp]
@@ -249,7 +249,7 @@ contains
     point2 = [-0.5_dp, 2.0_dp, 2.5_dp]
     call contains_nd(2, 3, nodes2, point2, is_contained)
     case_success = (.NOT. is_contained)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Inside bounding box.
     nodes3(1, :) = [0.0_dp, 1.0_dp, 2.0_dp, 3.0_dp]
@@ -257,7 +257,7 @@ contains
     point3 = [0.5_dp, 0.0_dp, 0.0_dp, 2.0_dp]
     call contains_nd(2, 4, nodes3, point3, is_contained)
     case_success = (is_contained)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_contains_nd
 
@@ -280,42 +280,42 @@ contains
     vec1(1, :) = [0.5_dp, 4.0_dp]
     is_close = vector_close(2, vec1, vec1, eps)
     case_success = (is_close)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Far apart vectors.
     vec1(1, :) = [0.0_dp, 6.0_dp]
     vec2(1, :) = [1.0_dp, -4.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     case_success = (.NOT. is_close)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Close but different.
     vec1(1, :) = [2.25_dp, -3.5_dp]
     vec2(1, :) = vec1(1, :) + 0.5_dp**43 * [-5.0_dp, 12.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     case_success = (is_close)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Custom epsilon.
     vec1(1, :) = [3.0_dp, 4.0_dp]
     vec2(1, :) = [2.0_dp, 5.0_dp]
     is_close = vector_close(2, vec1, vec2, 0.5_dp)
     case_success = (is_close .AND. .NOT. vector_close(2, vec1, vec2, eps))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Near zero.
     vec1(1, :) = [0.0_dp, 0.0_dp]
     vec2(1, :) = 0.5_dp**45 * [3.0_dp, 4.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     case_success = (is_close)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Near zero failure (i.e. not near enough).
     vec1(1, :) = 0.5_dp**20 * [1.0_dp, 0.0_dp]
     vec2(1, :) = [0.0_dp, 0.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     case_success = (.NOT. is_close)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_vector_close
 
@@ -333,22 +333,22 @@ contains
     ! CASE 1: Interior value.
     is_inside = in_interval(1.5_dp, 1.0_dp, 2.0_dp)
     case_success = (is_inside)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Barely inside.
     is_inside = in_interval(1.0_dp + MACHINE_EPS, 1.0_dp, 2.0_dp)
     case_success = (is_inside)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Barely outside.
     is_inside = in_interval(1.0_dp - MACHINE_EPS / 2, 1.0_dp, 2.0_dp)
     case_success = (.NOT. is_inside)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Exterior value.
     is_inside = in_interval(-1.0_dp, 1.0_dp, 2.0_dp)
     case_success = (.NOT. is_inside)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_in_interval
 
@@ -368,18 +368,18 @@ contains
     ! CASE 1: First value is zero.
     is_near = ulps_away(0.0_dp, 0.0_dp, 1, eps)
     case_success = (is_near)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Second value is zero.
     is_near = ulps_away(1.0_dp, 0.0_dp, 1, eps)
     case_success = (.NOT. is_near)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: First value positive **AND** negative.
     is_near = ulps_away(1.0_dp, 1.0_dp + MACHINE_EPS, 1, eps)
     case_success = ( &
          is_near .AND. ulps_away(-1.0_dp, -1.0_dp - MACHINE_EPS, 1, eps))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Boundaries where a single bit works.
     case_success = ( &
@@ -388,7 +388,7 @@ contains
          ulps_away(1.0_dp + MACHINE_EPS, 1.0_dp, 1, eps) .AND. &
          ulps_away(1.0_dp, 1.0_dp - MACHINE_EPS / 2, 1, eps) .AND. &
          ulps_away(1.0_dp - MACHINE_EPS / 2, 1.0_dp, 1, eps))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Non-default ``num_bits``.
     value1 = 1.5_dp
@@ -396,7 +396,7 @@ contains
     case_success = ( &
          .NOT. ulps_away(value1, value2, 1, eps) .AND. &
          ulps_away(value1, value2, 1000, eps))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Very close, but not close enough.
     value1 = 0.25_dp - 5.625_dp * MACHINE_EPS
@@ -405,7 +405,7 @@ contains
          .NOT. ulps_away(value1, value2, 1, eps) .AND. &
          .NOT. ulps_away(value1, value2, 4, eps) .AND. &
          ulps_away(value1, value2, 5, eps))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_ulps_away
 

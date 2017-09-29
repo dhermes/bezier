@@ -18,7 +18,7 @@ module test_surface
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
        jacobian_det
   use types, only: dp
-  use unit_test_helpers, only: print_status_full, get_random_nodes
+  use unit_test_helpers, only: print_status, get_random_nodes
   implicit none
   private &
        test_de_casteljau_one_round, test_evaluate_barycentric, &
@@ -66,7 +66,7 @@ contains
          3, 2, nodes1, 1, &
          lambda1, lambda2, lambda3, new_nodes1)
     case_success = all(new_nodes1 == expected1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic surface.
     call get_random_nodes(nodes2, 790931, 1483, num_bits=8)
@@ -91,7 +91,7 @@ contains
          6, 2, nodes2, 2, &
          lambda1, lambda2, lambda3, new_nodes2)
     case_success = all(new_nodes2 == expected2)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Cubic surface.
     nodes3(1, :) = [0.0_dp, 0.0_dp]
@@ -136,7 +136,7 @@ contains
          10, 2, nodes3, 3, &
          lambda1, lambda2, lambda3, new_nodes3)
     case_success = all(new_nodes3 == expected3)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_de_casteljau_one_round
 
@@ -167,7 +167,7 @@ contains
     call evaluate_barycentric( &
          3, 2, nodes1, 1, lambda1, lambda2, lambda3, point1)
     case_success = all(point1 == expected1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic surface.
     lambda1 = 0.0_dp
@@ -183,7 +183,7 @@ contains
     call evaluate_barycentric( &
          6, 2, nodes2, 2, lambda1, lambda2, lambda3, point1)
     case_success = all(point1 == expected1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Quadratic surface in 3D.
     nodes3(1, :) = [0.0_dp, 0.0_dp, 1.0_dp]
@@ -199,7 +199,7 @@ contains
     call evaluate_barycentric( &
          6, 3, nodes3, 2, lambda1, lambda2, lambda3, point2)
     case_success = all(point2 == expected2)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Cubic surface.
     nodes4(1, :) = [0.0_dp, 0.0_dp]
@@ -219,7 +219,7 @@ contains
     call evaluate_barycentric( &
          10, 2, nodes4, 3, lambda1, lambda2, lambda3, point1)
     case_success = all(point1 == expected1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Quartic (random) surface.
     call get_random_nodes(nodes5, 64441, 222, num_bits=8)
@@ -255,7 +255,7 @@ contains
     call evaluate_barycentric( &
          15, 2, nodes5, 4, lambda1, lambda2, lambda3, point1)
     case_success = all(point1 == expected1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_evaluate_barycentric
 
@@ -286,7 +286,7 @@ contains
     call evaluate_barycentric_multi( &
          3, 2, nodes, 1, 3, param_vals, evaluated)
     case_success = all(evaluated == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Values outside the domain.
     nodes(1, :) = [0.0_dp, 0.0_dp]
@@ -301,7 +301,7 @@ contains
     call evaluate_barycentric_multi( &
          3, 2, nodes, 1, 3, param_vals, evaluated)
     case_success = all(evaluated == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Degree zero "surface"
     nodes_deg0(1, :) = [1.5_dp, 7.75_dp]
@@ -314,7 +314,7 @@ contains
     call evaluate_barycentric_multi( &
          1, 2, nodes_deg0, 0, 3, param_vals, evaluated)
     case_success = all(evaluated == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_evaluate_barycentric_multi
 
@@ -353,7 +353,7 @@ contains
     call evaluate_cartesian_multi( &
          6, 2, nodes1, 2, 4, param_vals1, evaluated1)
     case_success = all(evaluated1 == expected1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Values outside the domain.
     nodes2(1, :) = [0.0_dp, 2.0_dp]
@@ -368,7 +368,7 @@ contains
     call evaluate_cartesian_multi( &
          3, 2, nodes2, 1, 3, param_vals2, evaluated2)
     case_success = all(evaluated2 == expected2)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Degree zero "surface"
     nodes3(1, :) = [-1.5_dp, 0.75_dp, 5.0_dp]
@@ -378,7 +378,7 @@ contains
     call evaluate_cartesian_multi( &
          1, 3, nodes3, 0, 16, param_vals3, evaluated3)
     case_success = all(evaluated3 == expected3)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_evaluate_cartesian_multi
 
@@ -404,7 +404,7 @@ contains
     call jacobian_both( &
          3, 1, nodes1, 1, new_nodes1)
     case_success = all(new_nodes1 == expected1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic surface.
     ! B(s, t) = [
@@ -435,7 +435,7 @@ contains
     call jacobian_both( &
          6, 3, nodes2, 2, new_nodes2)
     case_success = all(new_nodes2 == expected2)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Cubic surface.
     ! B(s, t) = [
@@ -470,7 +470,7 @@ contains
     call jacobian_both( &
          10, 2, nodes3, 3, new_nodes3)
     case_success = all(new_nodes3 == expected3)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_jacobian_both
 
@@ -495,7 +495,7 @@ contains
     call jacobian_det( &
          3, nodes1, 1, 13, param_vals1, evaluated1)
     case_success = all(evaluated1 == 2.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic (i.e. non-linear) surface.
     nodes2(1, :) = 0
@@ -514,7 +514,7 @@ contains
     call jacobian_det( &
          6, nodes2, 2, 4, param_vals2, evaluated2)
     case_success = all(evaluated2 == expected2)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_jacobian_det
 

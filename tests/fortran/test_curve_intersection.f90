@@ -21,7 +21,7 @@ module test_curve_intersection
        segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, bbox_line_intersect
   use types, only: dp
-  use unit_test_helpers, only: print_status_full
+  use unit_test_helpers, only: print_status
   implicit none
   private &
        test_linearization_error, test_segment_intersection, &
@@ -64,7 +64,7 @@ contains
     call linearization_error( &
          1, 2, nodes1, error1)
     case_success = (error1 == 0.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Degree-elevated line (i.e. no error) as quadratic.
     nodes2(1, :) = 0
@@ -73,7 +73,7 @@ contains
     call linearization_error( &
          2, 2, nodes2, error1)
     case_success = (error1 == 0.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Degree-elevated line (i.e. no error) as quartic.
     nodes3(1, :) = 0
@@ -84,7 +84,7 @@ contains
     call linearization_error( &
          4, 2, nodes3, error1)
     case_success = (error1 == 0.0_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Line with bad parameterization.
     ! NOTE: This is the line 3 y = 4 x, but with the parameterization
@@ -97,7 +97,7 @@ contains
     ! D^2 v = [-9, -12]
     expected = 0.125_dp * 2 * 1 * 15.0_dp
     case_success = (error1 == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Quadratic curve.
     nodes2(1, :) = 0
@@ -111,7 +111,7 @@ contains
     !       so that sqrt(3^2 + 4^2) = 5.0
     expected = 0.125_dp * 2 * 1 * 5.0_dp
     case_success = (error1 == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Subdivided curves (left and right) from CASE 5.
     call subdivide_nodes( &
@@ -125,7 +125,7 @@ contains
     ! of (1/2)^2 = 4.
     expected = 0.25_dp * expected
     case_success = (error1 == expected .AND. error2 == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 7: Quadratic curve in 3D.
     nodes4(1, :) = [1.5_dp, 0.0_dp, 6.25_dp]
@@ -139,7 +139,7 @@ contains
     !       so that sqrt(3^2 + 12^2 + 4^2) = 13.0
     expected = 0.125_dp * 2 * 1 * 13.0_dp
     case_success = (error1 == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Quadratic with bad parameterization.
     ! NOTE: This is the quadratic y = 1 + x^2 / 4, but with the
@@ -154,7 +154,7 @@ contains
     ! D^2 v = [1.5, 2.25], [1.5, -4.5], [1.5, 9]
     expected = 0.125_dp * 4 * 3 * sqrt(1.5_dp**2 + 9.0_dp**2)
     case_success = (abs(error1 - expected) <= spacing(expected))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 9: Cubic curve.
     nodes5(1, :) = 0
@@ -169,7 +169,7 @@ contains
     !       so that sqrt(3^2 + 4^2) = 5.0
     expected = 0.125_dp * 3 * 2 * 5.0_dp
     case_success = (error1 == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 10: Quartic curve.
     nodes3(1, :) = 0
@@ -185,7 +185,7 @@ contains
     !       so that sqrt(3^2 + 4^2) = 5.0
     expected = 0.125_dp * 4 * 3 * 5.0_dp
     case_success = (error1 == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 11: Quintic curve (i.e. degree 5).
     nodes6(1, :) = [0.0_dp, 0.0_dp]
@@ -202,7 +202,7 @@ contains
     !       so that sqrt(5^2 + 12^2) = 13.0
     expected = 0.125_dp * 5 * 4 * 13.0_dp
     case_success = (error1 == expected)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_linearization_error
 
@@ -229,7 +229,7 @@ contains
     call segment_intersection( &
          start0, end0, start1, end1, s, t, si_success)
     case_success = (si_success .AND. s == 0.25_dp .AND. t == 0.625_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Parallel segments.
     start0(1, :) = [0.0_dp, 0.5_dp]
@@ -239,7 +239,7 @@ contains
     call segment_intersection( &
          start0, end0, start1, end1, s, t, si_success)
     case_success = (.NOT. si_success)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_segment_intersection
 
@@ -279,7 +279,7 @@ contains
     case_success = ( &
          new_s == known_s .AND. new_t == known_t .AND. &
          curves_intersect(nodes1, known_s, nodes2, known_t))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Mixed degree (line and quadratic).
     nodes3(1, :) = 0
@@ -303,7 +303,7 @@ contains
          new_t == 0.5625_dp .AND. &
          abs(known_t - new_t) < abs(known_t - wrong_t) .AND. &
          curves_intersect(nodes3, known_s, nodes1, known_t))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Early exit (i.e. already an intersection).
     nodes3(1, :) = 0
@@ -319,7 +319,7 @@ contains
     case_success = ( &
          new_s == known_s .AND. new_t == known_t .AND. &
          curves_intersect(nodes3, known_s, nodes4, known_t))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Intersect quadratics.
     nodes3(1, :) = 0
@@ -344,7 +344,7 @@ contains
          new_t == 0.7578125_dp .AND. &
          abs(known_t - new_t) < abs(known_t - wrong_t) .AND. &
          curves_intersect(nodes3, known_s, nodes4, known_t))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Convergence test.
     nodes5(1, :) = [0.0_dp, 0.0_dp]
@@ -381,7 +381,7 @@ contains
     case_success = ( &
          case_success .AND. &
          curves_intersect(nodes5, known_s, nodes1, known_t))
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_newton_refine_intersect
 
@@ -424,7 +424,7 @@ contains
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Far apart bbox-es.
     forall (i = 1:4)
@@ -433,7 +433,7 @@ contains
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
     case_success = (enum_ == BoxIntersectionType_DISJOINT)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Disjoint bbox-es that have an "aligned" edge.
     forall (i = 1:4)
@@ -442,7 +442,7 @@ contains
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
     case_success = (enum_ == BoxIntersectionType_DISJOINT)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Tangent bbox-es.
     forall (i = 1:4)
@@ -451,7 +451,7 @@ contains
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
     case_success = (enum_ == BoxIntersectionType_TANGENT)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Almost tangent bbox-es.
     delta = 1.0_dp + spacing(1.0_dp)
@@ -461,7 +461,7 @@ contains
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
     case_success = (enum_ == BoxIntersectionType_DISJOINT)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_bbox_intersect
 
@@ -486,7 +486,7 @@ contains
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (result_)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Same line, ``start1`` contained in segment "0".
     ! NOTE: All of segment "1" is contained in segment "0", but the
@@ -498,7 +498,7 @@ contains
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (.NOT. result_)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Same line, ``end1`` contained in segment "0".
     start0(1, :) = [1.0_dp, 2.0_dp]
@@ -508,7 +508,7 @@ contains
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (.NOT. result_)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Same line, segment "0" fully contained in segment "1".
     start0(1, :) = [-9.0_dp, 0.0_dp]
@@ -518,7 +518,7 @@ contains
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (.NOT. result_)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Parallel, but different lines.
     start0(1, :) = [3.0_dp, 2.0_dp]
@@ -528,7 +528,7 @@ contains
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (result_)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_parallel_different
 
@@ -575,7 +575,7 @@ contains
     case_success = ( &
          does_intersect .AND. py_exc == 0 .AND. &
          refined_s == 0.5_dp .AND. refined_t == 0.5_dp)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Bounding boxes intersect but the lines do not.
     nodes3(1, :) = 0
@@ -595,7 +595,7 @@ contains
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (.NOT. does_intersect .AND. py_exc == 0)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Same as CASE 2, but swap the inputs.
     call from_linearized( &
@@ -603,7 +603,7 @@ contains
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (.NOT. does_intersect .AND. py_exc == 0)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Bounding boxes intersect but the quadratics do not.
     nodes1(1, :) = 0
@@ -625,7 +625,7 @@ contains
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (.NOT. does_intersect .AND. py_exc == 0)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Same as CASE 4, but swap the inputs.
     call from_linearized( &
@@ -633,7 +633,7 @@ contains
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes1, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (.NOT. does_intersect .AND. py_exc == 0)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Parallel lines that do not intersect.
     nodes3(1, :) = 0
@@ -653,7 +653,7 @@ contains
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (.NOT. does_intersect .AND. py_exc == 0)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 7: Parallel lines that **do** intersect.
     nodes3(1, :) = 0
@@ -673,7 +673,7 @@ contains
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (py_exc == 1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Linearized parts are same line but disjoint segments.
     nodes3(1, :) = 0
@@ -694,7 +694,7 @@ contains
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (.NOT.does_intersect .AND. py_exc == 0)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 9: Linearized parts parallel / diff. lines / bbox-es overlap.
     nodes3(1, :) = 0
@@ -715,7 +715,7 @@ contains
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = (py_exc == 1)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_from_linearized
 
@@ -742,7 +742,7 @@ contains
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Line ends (but does not start) in bounding box.
     line_start(1, :) = [-1.0_dp, 0.5_dp]
@@ -750,7 +750,7 @@ contains
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Line segment "pierces" bbox from the bottom.
     line_start(1, :) = [0.5_dp, -0.5_dp]
@@ -758,7 +758,7 @@ contains
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Line segment "pierces" bbox from the right.
     line_start(1, :) = [-0.5_dp, 0.5_dp]
@@ -766,7 +766,7 @@ contains
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Line segment "pierces" bbox from the top.
     line_start(1, :) = [-0.25_dp, 0.5_dp]
@@ -774,7 +774,7 @@ contains
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Line segment is disjoint from bbox.
     line_start(1, :) = 2
@@ -782,7 +782,7 @@ contains
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_DISJOINT)
-    call print_status_full(name, case_id, case_success, success)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_bbox_line_intersect
 

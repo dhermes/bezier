@@ -17,7 +17,7 @@ module unit_test_helpers
   implicit none
   private
   public &
-       MACHINE_EPS, print_status_full, get_random_nodes, binary_round, &
+       MACHINE_EPS, print_status, get_random_nodes, binary_round, &
        get_id_mat
 
   ! NOTE: Should probably use ``d1mach`` to determine this.
@@ -25,7 +25,7 @@ module unit_test_helpers
 
 contains
 
-  subroutine print_status_full(name, case_id, case_success, suite_success)
+  subroutine print_status(name, case_id, case_success, suite_success)
     character(len=*), intent(in) :: name
     integer, intent(inout) :: case_id
     logical, intent(in) :: case_success
@@ -48,7 +48,7 @@ contains
        suite_success = .FALSE.
     end if
 
-  end subroutine print_status_full
+  end subroutine print_status
 
   subroutine get_random_nodes(nodes, multiplier, modulus, num_bits)
     real(c_double), intent(inout) :: nodes(:, :)
