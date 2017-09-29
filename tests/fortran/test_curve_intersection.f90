@@ -17,9 +17,10 @@ module test_curve_intersection
   use curve, only: evaluate_multi, subdivide_nodes
   use curve_intersection, only: &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
-       BoxIntersectionType_DISJOINT, linearization_error, &
-       segment_intersection, newton_refine_intersect, &
-       bbox_intersect, parallel_different, from_linearized, bbox_line_intersect
+       BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
+       FROM_LINEARIZED_PARALLEL, linearization_error, segment_intersection, &
+       newton_refine_intersect, bbox_intersect, parallel_different, &
+       from_linearized, bbox_line_intersect
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -573,7 +574,7 @@ contains
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
     case_success = ( &
-         does_intersect .AND. py_exc == 0 .AND. &
+         does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS .AND. &
          refined_s == 0.5_dp .AND. refined_t == 0.5_dp)
     call print_status(name, case_id, case_success, success)
 
@@ -594,7 +595,8 @@ contains
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
          refined_s, refined_t, does_intersect, py_exc)
-    case_success = (.NOT. does_intersect .AND. py_exc == 0)
+    case_success = ( &
+         .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Same as CASE 2, but swap the inputs.
@@ -602,7 +604,8 @@ contains
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
          refined_s, refined_t, does_intersect, py_exc)
-    case_success = (.NOT. does_intersect .AND. py_exc == 0)
+    case_success = ( &
+         .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Bounding boxes intersect but the quadratics do not.
@@ -624,7 +627,8 @@ contains
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes1, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
-    case_success = (.NOT. does_intersect .AND. py_exc == 0)
+    case_success = ( &
+         .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Same as CASE 4, but swap the inputs.
@@ -632,7 +636,8 @@ contains
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes1, &
          refined_s, refined_t, does_intersect, py_exc)
-    case_success = (.NOT. does_intersect .AND. py_exc == 0)
+    case_success = ( &
+         .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Parallel lines that do not intersect.
@@ -652,7 +657,8 @@ contains
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
          refined_s, refined_t, does_intersect, py_exc)
-    case_success = (.NOT. does_intersect .AND. py_exc == 0)
+    case_success = ( &
+         .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 7: Parallel lines that **do** intersect.
@@ -672,7 +678,7 @@ contains
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 1, nodes4, &
          refined_s, refined_t, does_intersect, py_exc)
-    case_success = (py_exc == 1)
+    case_success = (py_exc == FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Linearized parts are same line but disjoint segments.
@@ -693,7 +699,8 @@ contains
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
-    case_success = (.NOT.does_intersect .AND. py_exc == 0)
+    case_success = ( &
+         .NOT. does_intersect .AND. py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 9: Linearized parts parallel / diff. lines / bbox-es overlap.
@@ -714,7 +721,7 @@ contains
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 1, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
-    case_success = (py_exc == 1)
+    case_success = (py_exc == FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_from_linearized

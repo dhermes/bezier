@@ -20,13 +20,21 @@ module curve_intersection
   private
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
-       BoxIntersectionType_DISJOINT, linearization_error, &
-       segment_intersection, newton_refine_intersect, bbox_intersect, &
-       parallel_different, from_linearized, bbox_line_intersect
+       BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
+       FROM_LINEARIZED_PARALLEL, FROM_LINEARIZED_WIGGLE_FAIL, &
+       linearization_error, segment_intersection, newton_refine_intersect, &
+       bbox_intersect, parallel_different, from_linearized, bbox_line_intersect
 
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
   integer(c_int), parameter :: BoxIntersectionType_TANGENT = 1
   integer(c_int), parameter :: BoxIntersectionType_DISJOINT = 2
+  integer(c_int), parameter :: FROM_LINEARIZED_SUCCESS = 0
+  ! In ``from_linearized``, ``py_exc == 1`` corresponds to
+  ! ``NotImplementedError('Line segments parallel.')``
+  integer(c_int), parameter :: FROM_LINEARIZED_PARALLEL = 1
+  ! In ``from_linearized``, ``py_exc == 2`` indicates that
+  ! ``wiggle_interval`` failed.
+  integer(c_int), parameter :: FROM_LINEARIZED_WIGGLE_FAIL = 2
 
 contains
 
@@ -243,7 +251,7 @@ contains
     integer(c_int) :: enum_
     logical(c_bool) :: success
 
-    py_exc = 0
+    py_exc = FROM_LINEARIZED_SUCCESS
     call segment_intersection( &
          start_node1, end_node1, start_node2, end_node2, s, t, success)
 
@@ -286,9 +294,8 @@ contains
           end if
        end if
 
-       ! Expect the wrapper code to raise
-       ! NotImplementedError('Line segments parallel.')
-       py_exc = 1
+       ! Expect the wrapper code to raise.
+       py_exc = FROM_LINEARIZED_PARALLEL
        return
     end if
 
@@ -303,16 +310,14 @@ contains
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then
-       ! py_exc==2 indicates ``wiggle_interval`` failed.
-       py_exc = 2
+       py_exc = FROM_LINEARIZED_WIGGLE_FAIL
        return
     end if
     refined_s = s
 
     call wiggle_interval(refined_t, t, success)
     if (.NOT. success) then
-       ! py_exc==2 indicates ``wiggle_interval`` failed.
-       py_exc = 2
+       py_exc = FROM_LINEARIZED_WIGGLE_FAIL
        return
     end if
     refined_t = t
