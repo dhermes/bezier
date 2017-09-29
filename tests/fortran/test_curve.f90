@@ -107,7 +107,7 @@ contains
     expected1(:, 2) = 1.0_dp - 2.0_dp * s_vals1
     expected1(:, 3) = -7.0_dp + 3.0_dp * s_vals1
     call evaluate_multi( &
-         1, 3, nodes1, 129, s_vals1, evaluated1)
+         2, 3, nodes1, 129, s_vals1, evaluated1)
     case_success = all(evaluated1 == expected1)
     call print_status(name, case_id, case_success, success)
 
@@ -122,7 +122,7 @@ contains
     expected2(:, 1) = s_vals2 * (4.0_dp - s_vals2)
     expected2(:, 2) = 2.0_dp * s_vals2 * (2.0_dp * s_vals2 - 1.0_dp)
     call evaluate_multi( &
-         2, 2, nodes2, 65, s_vals2, evaluated2)
+         3, 2, nodes2, 65, s_vals2, evaluated2)
     case_success = all(evaluated2 == expected2)
     call print_status(name, case_id, case_success, success)
 
@@ -412,17 +412,17 @@ contains
     end do
 
     call evaluate_multi( &
-         num_nodes - 1, dimension_, nodes, 33, left_s, evaluated1)
+         num_nodes, dimension_, nodes, 33, left_s, evaluated1)
     call evaluate_multi( &
-         num_nodes - 1, dimension_, left, 33, unit_interval, evaluated2)
+         num_nodes, dimension_, left, 33, unit_interval, evaluated2)
     success = ( &
          success .AND. &
          all(evaluated1 == evaluated2))
 
     call evaluate_multi( &
-         num_nodes - 1, dimension_, nodes, 33, right_s, evaluated1)
+         num_nodes, dimension_, nodes, 33, right_s, evaluated1)
     call evaluate_multi( &
-         num_nodes - 1, dimension_, right, 33, unit_interval, evaluated2)
+         num_nodes, dimension_, right, 33, unit_interval, evaluated2)
     success = ( &
          success .AND. &
          all(evaluated1 == evaluated2))

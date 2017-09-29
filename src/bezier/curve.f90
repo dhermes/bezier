@@ -131,13 +131,13 @@ contains
   end subroutine evaluate_curve_barycentric
 
   subroutine evaluate_multi( &
-       degree, dimension_, nodes, num_vals, s_vals, evaluated) &
+       num_nodes, dimension_, nodes, num_vals, s_vals, evaluated) &
        bind(c, name='evaluate_multi')
 
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
-    integer(c_int), intent(in) :: degree, dimension_
-    real(c_double), intent(in) :: nodes(degree + 1, dimension_)
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     integer(c_int), intent(in) :: num_vals
     real(c_double), intent(in) :: s_vals(num_vals)
     real(c_double), intent(out) :: evaluated(num_vals, dimension_)
@@ -146,7 +146,7 @@ contains
 
     one_less = 1.0_dp - s_vals
     call evaluate_curve_barycentric( &
-         degree + 1, dimension_, nodes, num_vals, one_less, s_vals, evaluated)
+         num_nodes, dimension_, nodes, num_vals, one_less, s_vals, evaluated)
   end subroutine evaluate_multi
 
   subroutine specialize_curve_generic( &
@@ -266,7 +266,7 @@ contains
 
     first_deriv = nodes(2:, :) - nodes(:degree, :)
     call evaluate_multi( &
-         degree - 1, dimension_, first_deriv, 1, [s], hodograph)
+         degree, dimension_, first_deriv, 1, [s], hodograph)
     hodograph = degree * hodograph
 
   end subroutine evaluate_hodograph
@@ -362,7 +362,7 @@ contains
     real(c_double) :: derivative(1, dimension_)
 
     call evaluate_multi( &
-         num_nodes - 1, dimension_, nodes, 1, [s], pt_delta)
+         num_nodes, dimension_, nodes, 1, [s], pt_delta)
     pt_delta = point - pt_delta
     ! At this point `pt_delta` is `p - B(s)`.
     call evaluate_hodograph( &
@@ -524,7 +524,7 @@ contains
 
     ! NOTE: The degree being evaluated is ``degree - 2 == num_nodes - 3``.
     call evaluate_multi( &
-         num_nodes - 3, dimension_, work(:num_nodes - 2, :), 1, [s], concavity)
+         num_nodes - 2, dimension_, work(:num_nodes - 2, :), 1, [s], concavity)
     ! B''(s) = d (d - 1) D(s) where D(s) is defined by the "double hodograph".
     concavity = concavity * (num_nodes - 1) * (num_nodes - 2)
 
@@ -767,7 +767,7 @@ contains
       ! ``evaluate_multi`` takes degree, which is one less than the number
       ! of nodes, so our derivative is one less than that.
       call evaluate_multi( &
-           num_nodes - 2, dimension_, first_deriv, 1, [s_val], evaluated)
+           num_nodes - 1, dimension_, first_deriv, 1, [s_val], evaluated)
       norm_ = norm2(evaluated)
 
     end function vec_size

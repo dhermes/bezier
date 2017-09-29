@@ -55,15 +55,14 @@ def evaluate_multi_barycentric(
 
 def evaluate_multi(
         double[::1, :] nodes, double[:] s_vals):
-    cdef int num_nodes, dimension, degree, num_vals
+    cdef int num_nodes, dimension, num_vals
     cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
 
     num_nodes, dimension = np.shape(nodes)
-    degree = num_nodes - 1
     num_vals, = np.shape(s_vals)
     evaluated = np.empty((num_vals, dimension), order='F')
     bezier._curve.evaluate_multi(
-        &degree,
+        &num_nodes,
         &dimension,
         &nodes[0, 0],
         &num_vals,

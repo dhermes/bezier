@@ -118,10 +118,10 @@ contains
 
     param = t
     call evaluate_multi( &
-         degree2, 2, nodes2, 1, param, func_val)
+         degree2 + 1, 2, nodes2, 1, param, func_val)
     param = s
     call evaluate_multi( &
-         degree1, 2, nodes1, 1, param, workspace)
+         degree1 + 1, 2, nodes1, 1, param, workspace)
     func_val = func_val - workspace
 
     if (all(func_val == 0.0_dp)) then

@@ -395,9 +395,9 @@ contains
     real(c_double) :: point1(1, 2), point2(1, 2)
 
     call evaluate_multi( &
-         size(nodes1, 1) - 1, size(nodes1, 2), nodes1, 1, [s], point1)
+         size(nodes1, 1), size(nodes1, 2), nodes1, 1, [s], point1)
     call evaluate_multi( &
-         size(nodes2, 1) - 1, size(nodes2, 2), nodes2, 1, [t], point2)
+         size(nodes2, 1), size(nodes2, 2), nodes2, 1, [t], point2)
     predicate = all(point1 == point2)
 
   end function curves_intersect
