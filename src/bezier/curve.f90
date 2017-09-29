@@ -89,13 +89,13 @@ module curve
 contains
 
   subroutine evaluate_curve_barycentric( &
-       degree, dimension_, nodes, num_vals, lambda1, lambda2, evaluated) &
+       num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated) &
        bind(c, name='evaluate_curve_barycentric')
 
     ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
 
-    integer(c_int), intent(in) :: degree, dimension_
-    real(c_double), intent(in) :: nodes(degree + 1, dimension_)
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     integer(c_int), intent(in) :: num_vals
     real(c_double), intent(in) :: lambda1(num_vals)
     real(c_double), intent(in) :: lambda2(num_vals)
@@ -112,9 +112,9 @@ contains
        evaluated(i, :) = lambda1(i) * nodes(1, :)
     end forall
 
-    do i = 2, degree
+    do i = 2, num_nodes - 1
        lambda2_pow = lambda2_pow * lambda2
-       binom_val = (binom_val * (degree - i + 2)) / (i - 1)
+       binom_val = (binom_val * (num_nodes - i + 1)) / (i - 1)
        forall (j = 1:num_vals)
           evaluated(j, :) = ( &
                evaluated(j, :) + &
@@ -125,7 +125,7 @@ contains
     forall (i = 1:num_vals)
        evaluated(i, :) = ( &
             evaluated(i, :) + &
-            lambda2_pow(i) * lambda2(i) * nodes(degree + 1, :))
+            lambda2_pow(i) * lambda2(i) * nodes(num_nodes, :))
     end forall
 
   end subroutine evaluate_curve_barycentric
@@ -146,7 +146,7 @@ contains
 
     one_less = 1.0_dp - s_vals
     call evaluate_curve_barycentric( &
-         degree, dimension_, nodes, num_vals, one_less, s_vals, evaluated)
+         degree + 1, dimension_, nodes, num_vals, one_less, s_vals, evaluated)
   end subroutine evaluate_multi
 
   subroutine specialize_curve_generic( &

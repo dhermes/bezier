@@ -36,7 +36,7 @@ extern "C" {
 #endif
 
 void evaluate_curve_barycentric(
-    int *degree, int *dimension, double *nodes, int *num_vals,
+    int *num_nodes, int *dimension, double *nodes, int *num_vals,
     double *lambda1, double *lambda2, double *evaluated);
 void evaluate_multi(
     int *degree, int *dimension, double *nodes,

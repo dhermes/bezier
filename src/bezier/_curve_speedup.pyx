@@ -35,15 +35,14 @@ DQAGSE_ERR_MSGS = (
 
 def evaluate_multi_barycentric(
         double[::1, :] nodes, double[:] lambda1, double[:] lambda2):
-    cdef int num_nodes, dimension, degree, num_vals
+    cdef int num_nodes, dimension, num_vals
     cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
 
     num_nodes, dimension = np.shape(nodes)
-    degree = num_nodes - 1
     num_vals, = np.shape(lambda1)
     evaluated = np.empty((num_vals, dimension), order='F')
     bezier._curve.evaluate_curve_barycentric(
-        &degree,
+        &num_nodes,
         &dimension,
         &nodes[0, 0],
         &num_vals,

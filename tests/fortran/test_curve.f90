@@ -74,7 +74,7 @@ contains
     expected(2, :) = [0.0859375_dp, 0.390625_dp, 0.119140625_dp]
     expected(3, :) = [0.421875_dp, -2.109375_dp, -0.421875_dp]
     call evaluate_curve_barycentric( &
-         3, 3, nodes, 3, lambda1, lambda2, evaluated)
+         4, 3, nodes, 3, lambda1, lambda2, evaluated)
 
     case_success = all(evaluated == expected)
     call print_status(name, case_id, case_success, success)
