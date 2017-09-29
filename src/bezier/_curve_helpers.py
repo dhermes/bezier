@@ -576,7 +576,7 @@ def _get_curvature(nodes, degree, tangent_vec, s):
     return curvature
 
 
-def _newton_refine(nodes, degree, point, s):
+def _newton_refine(nodes, point, s):
     r"""Refine a solution to :math:`B(s) = p` using Newton's method.
 
     Computes updates via
@@ -639,7 +639,7 @@ def _newton_refine(nodes, degree, point, s):
        >>> point
        array([[ 0.5625, 0.8125]])
        >>> s = 0.75
-       >>> new_s = newton_refine(nodes, 2, point, s)
+       >>> new_s = newton_refine(nodes, point, s)
        >>> 5 * (new_s - s)
        -2.0
 
@@ -672,19 +672,19 @@ def _newton_refine(nodes, degree, point, s):
        >>> s_vals = [0.625, None, None, None, None, None]
        >>> np.log2(abs(expected - s_vals[0]))
        -3.0
-       >>> s_vals[1] = newton_refine(nodes, 3, point, s_vals[0])
+       >>> s_vals[1] = newton_refine(nodes, point, s_vals[0])
        >>> np.log2(abs(expected - s_vals[1]))
        -3.983...
-       >>> s_vals[2] = newton_refine(nodes, 3, point, s_vals[1])
+       >>> s_vals[2] = newton_refine(nodes, point, s_vals[1])
        >>> np.log2(abs(expected - s_vals[2]))
        -4.979...
-       >>> s_vals[3] = newton_refine(nodes, 3, point, s_vals[2])
+       >>> s_vals[3] = newton_refine(nodes, point, s_vals[2])
        >>> np.log2(abs(expected - s_vals[3]))
        -5.978...
-       >>> s_vals[4] = newton_refine(nodes, 3, point, s_vals[3])
+       >>> s_vals[4] = newton_refine(nodes, point, s_vals[3])
        >>> np.log2(abs(expected - s_vals[4]))
        -6.978...
-       >>> s_vals[5] = newton_refine(nodes, 3, point, s_vals[4])
+       >>> s_vals[5] = newton_refine(nodes, point, s_vals[4])
        >>> np.log2(abs(expected - s_vals[5]))
        -7.978...
 
@@ -714,13 +714,13 @@ def _newton_refine(nodes, degree, point, s):
     .. doctest:: newton-refine-curve-cusp-continued
 
        >>> s_vals = [0.625]
-       >>> new_s = newton_refine(nodes, 3, point, s_vals[-1])
+       >>> new_s = newton_refine(nodes, point, s_vals[-1])
        >>> while new_s not in s_vals:
        ...     s_vals.append(new_s)
-       ...     new_s = newton_refine(nodes, 3, point, s_vals[-1])
+       ...     new_s = newton_refine(nodes, point, s_vals[-1])
        ...
        >>> terminal_s = s_vals[-1]
-       >>> terminal_s == newton_refine(nodes, 3, point, terminal_s)
+       >>> terminal_s == newton_refine(nodes, point, terminal_s)
        True
        >>> 2.0**(-31) <= abs(terminal_s - 0.5) <= 2.0**(-28)
        True
@@ -731,8 +731,6 @@ def _newton_refine(nodes, degree, point, s):
 
     Args:
         nodes (numpy.ndarray): The nodes defining a B |eacute| zier curve.
-        degree (int): The degree of the curve (assumed to be one less than
-            the number of ``nodes``.
         point (numpy.ndarray): A point on the curve.
         s (float): An "almost" solution to :math:`B(s) = p`.
 
@@ -799,7 +797,7 @@ def _locate_point(nodes, degree, point):
             'Parameters not close enough to one another', params)
 
     s_approx = np.mean(params)
-    return newton_refine(nodes, degree, point, s_approx)
+    return newton_refine(nodes, point, s_approx)
 
 
 def _reduce_pseudo_inverse(nodes, degree):

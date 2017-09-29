@@ -137,12 +137,10 @@ def subdivide_nodes(double[::1, :] nodes, int unused_degree):
 
 
 def newton_refine(
-        double[::1, :] nodes, int unused_degree,
-        double[::1, :] point, double s):
+        double[::1, :] nodes, double[::1, :] point, double s):
     cdef int num_nodes, dimension
     cdef double updated_s
 
-    # NOTE: We don't check that there are ``degree + 1`` rows.
     num_nodes, dimension = np.shape(nodes)
     # NOTE: We don't check that ``np.shape(point) == (1, dimension)``.
 

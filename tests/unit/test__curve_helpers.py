@@ -707,10 +707,10 @@ class Test_speedup_get_curvature(Test__get_curvature):
 class Test__newton_refine(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, point, s):
+    def _call_function_under_test(nodes, point, s):
         from bezier import _curve_helpers
 
-        return _curve_helpers._newton_refine(nodes, degree, point, s)
+        return _curve_helpers._newton_refine(nodes, point, s)
 
     def test_it(self):
         nodes = np.asfortranarray([
@@ -721,7 +721,7 @@ class Test__newton_refine(unittest.TestCase):
         ])
         # curve(1/2) = p
         point = np.asfortranarray([[1.75, 0.625, 1.625]])
-        new_s = self._call_function_under_test(nodes, 3, point, 0.25)
+        new_s = self._call_function_under_test(nodes, point, 0.25)
         self.assertEqual(110.0 * new_s, 57.0)
 
 
@@ -729,10 +729,10 @@ class Test__newton_refine(unittest.TestCase):
 class Test_speedup_newton_refine(Test__newton_refine):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, point, s):
+    def _call_function_under_test(nodes, point, s):
         from bezier import _curve_speedup
 
-        return _curve_speedup.newton_refine(nodes, degree, point, s)
+        return _curve_speedup.newton_refine(nodes, point, s)
 
 
 class Test__locate_point(unittest.TestCase):
