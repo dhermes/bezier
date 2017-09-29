@@ -28,8 +28,8 @@ cdef extern from "bezier/curve_intersection.h":
         double *start0, double *end0, double *start1, double *end1,
         double *s, double *t, bool_t *success)
     void newton_refine_intersect(
-        double *s, int *degree1, double *nodes1,
-        double *t, int *degree2, double *nodes2,
+        double *s, int *num_nodes1, double *nodes1,
+        double *t, int *num_nodes2, double *nodes2,
         double *new_s, double *new_t)
     void bbox_intersect(
         int *num_nodes1, double *nodes1,

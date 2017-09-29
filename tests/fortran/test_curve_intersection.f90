@@ -276,7 +276,7 @@ contains
     wrong_s = known_s - 0.125_dp
     wrong_t = known_t + 0.125_dp
     call newton_refine_intersect( &
-         wrong_s, 1, nodes1, wrong_t, 1, nodes2, new_s, new_t)
+         wrong_s, 2, nodes1, wrong_t, 2, nodes2, new_s, new_t)
     case_success = ( &
          new_s == known_s .AND. new_t == known_t .AND. &
          curves_intersect(nodes1, known_s, nodes2, known_t))
@@ -297,7 +297,7 @@ contains
     wrong_s = 0.25_dp
     wrong_t = 0.25_dp
     call newton_refine_intersect( &
-         wrong_s, 2, nodes3, wrong_t, 1, nodes1, new_s, new_t)
+         wrong_s, 3, nodes3, wrong_t, 2, nodes1, new_s, new_t)
     case_success = ( &
          new_s == 0.4375_dp .AND. &
          abs(known_s - new_s) < abs(known_s - wrong_s) .AND. &
@@ -316,7 +316,7 @@ contains
     nodes4(3, :) = [0.0_dp, 0.75_dp]
     known_t = 0.75_dp
     call newton_refine_intersect( &
-         known_s, 2, nodes3, known_t, 2, nodes4, new_s, new_t)
+         known_s, 3, nodes3, known_t, 3, nodes4, new_s, new_t)
     case_success = ( &
          new_s == known_s .AND. new_t == known_t .AND. &
          curves_intersect(nodes3, known_s, nodes4, known_t))
@@ -338,7 +338,7 @@ contains
     wrong_s = known_s + 0.0625_dp
     wrong_t = known_t + 0.0625_dp
     call newton_refine_intersect( &
-         wrong_s, 2, nodes3, wrong_t, 2, nodes4, new_s, new_t)
+         wrong_s, 3, nodes3, wrong_t, 3, nodes4, new_s, new_t)
     case_success = ( &
          new_s == 0.2421875_dp .AND. &
          abs(known_s - new_s) < abs(known_s - wrong_s) .AND. &
@@ -363,7 +363,7 @@ contains
     case_success = .TRUE.
     do i = 1, 3
        call newton_refine_intersect( &
-            wrong_s, 4, nodes5, wrong_t, 1, nodes1, new_s, new_t)
+            wrong_s, 5, nodes5, wrong_t, 2, nodes1, new_s, new_t)
        wrong_s = new_s
        wrong_t = new_t
        if (i == 1) then

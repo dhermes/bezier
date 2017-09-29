@@ -66,22 +66,20 @@ def segment_intersection(
 
 def newton_refine(
         double s, double[::1, :] nodes1, double t, double[::1, :] nodes2):
-    cdef int num_nodes1, degree1, num_nodes2, degree2
+    cdef int num_nodes1, num_nodes2
     cdef double new_s, new_t
 
     # NOTE: We don't check that there are 2 columns.
     num_nodes1, _ = np.shape(nodes1)
-    degree1 = num_nodes1 - 1
     # NOTE: We don't check that there are 2 columns.
     num_nodes2, _ = np.shape(nodes2)
-    degree2 = num_nodes2 - 1
 
     bezier._curve_intersection.newton_refine_intersect(
         &s,
-        &degree1,
+        &num_nodes1,
         &nodes1[0, 0],
         &t,
-        &degree2,
+        &num_nodes2,
         &nodes2[0, 0],
         &new_s,
         &new_t,

@@ -99,15 +99,15 @@ contains
   end subroutine segment_intersection
 
   subroutine newton_refine_intersect( &
-       s, degree1, nodes1, t, degree2, nodes2, new_s, new_t) &
+       s, num_nodes1, nodes1, t, num_nodes2, nodes2, new_s, new_t) &
        bind(c, name='newton_refine_intersect')
 
     real(c_double), intent(in) :: s
-    integer(c_int), intent(in) :: degree1
-    real(c_double), intent(in) :: nodes1(degree1 + 1, 2)
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
     real(c_double), intent(in) :: t
-    integer(c_int), intent(in) :: degree2
-    real(c_double), intent(in) :: nodes2(degree2 + 1, 2)
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
     real(c_double), intent(out) :: new_s, new_t
     ! Variables outside of signature.
     real(c_double) :: param(1)
@@ -118,10 +118,10 @@ contains
 
     param = t
     call evaluate_multi( &
-         degree2 + 1, 2, nodes2, 1, param, func_val)
+         num_nodes2, 2, nodes2, 1, param, func_val)
     param = s
     call evaluate_multi( &
-         degree1 + 1, 2, nodes1, 1, param, workspace)
+         num_nodes1, 2, nodes1, 1, param, workspace)
     func_val = func_val - workspace
 
     if (all(func_val == 0.0_dp)) then
@@ -130,11 +130,11 @@ contains
        return
     end if
 
-    call evaluate_hodograph(s, degree1 + 1, 2, nodes1, jac_mat(1:1, :))
+    call evaluate_hodograph(s, num_nodes1, 2, nodes1, jac_mat(1:1, :))
     ! NOTE: We actually want the negative, since we want -B2'(t), but
     !       since we manually solve the system, it's just algebra
     !       to figure out how to use the negative values.
-    call evaluate_hodograph(t, degree2 + 1, 2, nodes2, jac_mat(2:2, :))
+    call evaluate_hodograph(t, num_nodes2, 2, nodes2, jac_mat(2:2, :))
 
     determinant = ( &
          jac_mat(1, 1) * jac_mat(2, 2) - jac_mat(1, 2) * jac_mat(2, 1))
@@ -308,7 +308,7 @@ contains
     ! Perform one step of Newton iteration to refine the computed
     ! values of s and t.
     call newton_refine_intersect( &
-         s, degree1, nodes1, t, degree2, nodes2, refined_s, refined_t)
+         s, degree1 + 1, nodes1, t, degree2 + 1, nodes2, refined_s, refined_t)
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then
