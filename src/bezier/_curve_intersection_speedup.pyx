@@ -29,14 +29,13 @@ BoxIntersectionType_DISJOINT = (
 
 
 def linearization_error(double[::1, :] nodes):
-    cdef int num_nodes, dimension, degree
+    cdef int num_nodes, dimension
     cdef double error
 
     num_nodes, dimension = np.shape(nodes)
-    degree = num_nodes - 1
 
     bezier._curve_intersection.linearization_error(
-        &degree,
+        &num_nodes,
         &dimension,
         &nodes[0, 0],
         &error,

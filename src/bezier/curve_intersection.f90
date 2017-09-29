@@ -39,27 +39,29 @@ module curve_intersection
 contains
 
   subroutine linearization_error( &
-       degree, dimension_, nodes, error) &
+       num_nodes, dimension_, nodes, error) &
        bind(c, name='linearization_error')
 
-    integer(c_int), intent(in) :: degree, dimension_
-    real(c_double), intent(in) :: nodes(degree + 1, dimension_)
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     real(c_double), intent(out) :: error
     ! Variables outside of signature.
-    real(c_double) :: second_deriv(degree - 1, dimension_)
+    real(c_double) :: second_deriv(num_nodes - 2, dimension_)
     real(c_double) :: worst_case(dimension_)
 
-    if (degree == 1) then
+    ! A line has no linearization error.
+    if (num_nodes == 2) then
        error = 0.0_dp
        return
     end if
 
     second_deriv = ( &
-         nodes(:degree - 1, :) - &
-         2.0_dp * nodes(2:degree, :) + &
+         nodes(:num_nodes - 2, :) - &
+         2.0_dp * nodes(2:num_nodes - 1, :) + &
          nodes(3:, :))
     worst_case = maxval(abs(second_deriv), 1)
-    error = 0.125_dp * degree * (degree - 1) * norm2(worst_case)
+    error = 0.125_dp * (num_nodes - 1) * (num_nodes - 2) * norm2(worst_case)
+
   end subroutine linearization_error
 
   subroutine segment_intersection( &

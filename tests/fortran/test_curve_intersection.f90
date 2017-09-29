@@ -63,7 +63,7 @@ contains
     nodes1(1, :) = 0
     nodes1(2, :) = [1.0_dp, 2.0_dp]
     call linearization_error( &
-         1, 2, nodes1, error1)
+         2, 2, nodes1, error1)
     case_success = (error1 == 0.0_dp)
     call print_status(name, case_id, case_success, success)
 
@@ -72,7 +72,7 @@ contains
     nodes2(2, :) = [0.5_dp, 1.0_dp]
     nodes2(3, :) = [1.0_dp, 2.0_dp]
     call linearization_error( &
-         2, 2, nodes2, error1)
+         3, 2, nodes2, error1)
     case_success = (error1 == 0.0_dp)
     call print_status(name, case_id, case_success, success)
 
@@ -83,7 +83,7 @@ contains
     nodes3(4, :) = [0.75_dp, 1.5_dp]
     nodes3(5, :) = [1.0_dp, 2.0_dp]
     call linearization_error( &
-         4, 2, nodes3, error1)
+         5, 2, nodes3, error1)
     case_success = (error1 == 0.0_dp)
     call print_status(name, case_id, case_success, success)
 
@@ -94,7 +94,7 @@ contains
     nodes2(2, :) = [6.0_dp, 8.0_dp]
     nodes2(3, :) = [3.0_dp, 4.0_dp]
     call linearization_error( &
-         2, 2, nodes2, error1)
+         3, 2, nodes2, error1)
     ! D^2 v = [-9, -12]
     expected = 0.125_dp * 2 * 1 * 15.0_dp
     case_success = (error1 == expected)
@@ -105,7 +105,7 @@ contains
     nodes2(2, :) = [1.0_dp, 1.0_dp]
     nodes2(3, :) = [5.0_dp, 6.0_dp]
     call linearization_error( &
-         2, 2, nodes2, error1)
+         3, 2, nodes2, error1)
     ! NOTE: This is hand picked so that
     !             d Nodes = [1, 1], [4, 5]
     !           d^2 Nodes = [3, 4]
@@ -118,9 +118,9 @@ contains
     call subdivide_nodes( &
          3, 2, nodes2, left_nodes2, right_nodes2)
     call linearization_error( &
-         2, 2, left_nodes2, error1)
+         3, 2, left_nodes2, error1)
     call linearization_error( &
-         2, 2, right_nodes2, error2)
+         3, 2, right_nodes2, error2)
     ! For a degree two curve, the 2nd derivative is constant
     ! so by subdividing, our error should drop by a factor
     ! of (1/2)^2 = 4.
@@ -133,7 +133,7 @@ contains
     nodes4(2, :) = [3.5_dp, -5.0_dp, 10.25_dp]
     nodes4(3, :) = [8.5_dp, 2.0_dp, 10.25_dp]
     call linearization_error( &
-         2, 3, nodes4, error1)
+         3, 3, nodes4, error1)
     ! NOTE: This is hand picked so that
     !             d Nodes = [2, -5, 4], [5, 7, 0]
     !           d^2 Nodes = [3, 12, -4]
@@ -151,7 +151,7 @@ contains
     nodes3(4, :) = [1.0_dp, -1.0_dp]
     nodes3(5, :) = [4.0_dp, 5.0_dp]
     call linearization_error( &
-         4, 2, nodes3, error1)
+         5, 2, nodes3, error1)
     ! D^2 v = [1.5, 2.25], [1.5, -4.5], [1.5, 9]
     expected = 0.125_dp * 4 * 3 * sqrt(1.5_dp**2 + 9.0_dp**2)
     case_success = (abs(error1 - expected) <= spacing(expected))
@@ -163,7 +163,7 @@ contains
     nodes5(3, :) = [5.0_dp, 6.0_dp]
     nodes5(4, :) = [6.0_dp, 7.0_dp]
     call linearization_error( &
-         3, 2, nodes5, error1)
+         4, 2, nodes5, error1)
     ! NOTE: This is hand picked so that
     !             d Nodes = [1, 1], [4, 5], [1, 1]
     !           d^2 Nodes = [3, 4], [-3, -4]
@@ -179,7 +179,7 @@ contains
     nodes3(4, :) = [6.0_dp, 7.0_dp]
     nodes3(5, :) = [4.0_dp, 7.0_dp]
     call linearization_error( &
-         4, 2, nodes3, error1)
+         5, 2, nodes3, error1)
     ! NOTE: This is hand picked so that
     !             d Nodes = [1, 1], [4, 5], [1, 1], [-2, 0]
     !           d^2 Nodes = [3, 4], [-3, -4], [-3, -1]
@@ -196,7 +196,7 @@ contains
     nodes6(5, :) = [15.0_dp, 1.0_dp]
     nodes6(6, :) = [16.0_dp, -3.0_dp]
     call linearization_error( &
-         5, 2, nodes6, error1)
+         6, 2, nodes6, error1)
     ! NOTE: This is hand picked so that
     !             d Nodes = [1, 1], [6, 2], [4, 5], [4, -7], [1, -4]
     !           d^2 Nodes = [5, 1], [-2, 3], [0, -12], [-3, 3]
