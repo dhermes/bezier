@@ -174,8 +174,7 @@ class Curve(_base.Base):
     def length(self):
         """float: The length of the current curve."""
         if self._length is None:
-            self._length = _curve_helpers.compute_length(
-                self._nodes, self._degree)
+            self._length = _curve_helpers.compute_length(self._nodes)
         return self._length
 
     @property
@@ -500,8 +499,7 @@ class Curve(_base.Base):
         Returns:
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
-        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(
-            self._nodes, self._degree)
+        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self._nodes)
         midpoint = 0.5 * (self._start + self._end)
         left = Curve(
             left_nodes, self._degree, start=self._start, end=midpoint,
@@ -628,8 +626,7 @@ class Curve(_base.Base):
         Returns:
             Curve: The degree-elevated curve.
         """
-        new_nodes = _curve_helpers.elevate_nodes(
-            self._nodes, self._degree, self._dimension)
+        new_nodes = _curve_helpers.elevate_nodes(self._nodes)
         root = None if self._root is self else self._root
         return Curve(
             new_nodes, self._degree + 1, start=self._start, end=self._end,
@@ -735,8 +732,7 @@ class Curve(_base.Base):
         Returns:
             Curve: The degree-reduced curve.
         """
-        new_nodes = _curve_helpers.reduce_pseudo_inverse(
-            self._nodes, self._degree)
+        new_nodes = _curve_helpers.reduce_pseudo_inverse(self._nodes)
         root = None if self._root is self else self._root
         return Curve(
             new_nodes, self._degree - 1, start=self._start, end=self._end,
@@ -867,4 +863,4 @@ class Curve(_base.Base):
                 self._dimension, self._dimension, point, point_dimensions)
             raise ValueError(msg)
 
-        return _curve_helpers.locate_point(self._nodes, self._degree, point)
+        return _curve_helpers.locate_point(self._nodes, point)

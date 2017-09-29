@@ -170,7 +170,7 @@ def make_subdivision_matrices(degree):
     return left, right
 
 
-def _subdivide_nodes(nodes, degree):
+def _subdivide_nodes(nodes):
     """Subdivide a curve into two sub-curves.
 
     Does so by taking the unit interval (i.e. the domain of the surface) and
@@ -178,24 +178,23 @@ def _subdivide_nodes(nodes, degree):
 
     Args:
         nodes (numpy.ndarray): The nodes defining a B |eacute| zier curve.
-        degree (int): The degree of the curve (assumed to be one less than
-            the number of ``nodes``.
 
     Returns:
         Tuple[numpy.ndarray, numpy.ndarray]: The nodes for the two sub-curves.
     """
-    if degree == 1:
+    num_nodes, _ = np.shape(nodes)
+    if num_nodes == 2:
         left_nodes = _helpers.matrix_product(_LINEAR_SUBDIVIDE_LEFT, nodes)
         right_nodes = _helpers.matrix_product(_LINEAR_SUBDIVIDE_RIGHT, nodes)
-    elif degree == 2:
+    elif num_nodes == 3:
         left_nodes = _helpers.matrix_product(_QUADRATIC_SUBDIVIDE_LEFT, nodes)
         right_nodes = _helpers.matrix_product(
             _QUADRATIC_SUBDIVIDE_RIGHT, nodes)
-    elif degree == 3:
+    elif num_nodes == 4:
         left_nodes = _helpers.matrix_product(_CUBIC_SUBDIVIDE_LEFT, nodes)
         right_nodes = _helpers.matrix_product(_CUBIC_SUBDIVIDE_RIGHT, nodes)
     else:
-        left_mat, right_mat = make_subdivision_matrices(degree)
+        left_mat, right_mat = make_subdivision_matrices(num_nodes - 1)
         left_nodes = _helpers.matrix_product(left_mat, nodes)
         right_nodes = _helpers.matrix_product(right_mat, nodes)
 
@@ -285,7 +284,7 @@ def vec_size(nodes, s_val):
 
     .. note::
 
-        This is a helper for :func:`compute_length` and does not have
+        This is a helper for :func:`_compute_length` and does not have
         a Fortran speedup.
 
     Intended to be used with ``functools.partial`` to fill in the
@@ -303,7 +302,7 @@ def vec_size(nodes, s_val):
     return np.linalg.norm(result_vec[0, :], ord=2)
 
 
-def _compute_length(nodes, degree):
+def _compute_length(nodes):
     r"""Approximately compute the length of a curve.
 
     .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
@@ -321,8 +320,6 @@ def _compute_length(nodes, degree):
 
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
-        degree (int): The degree of the curve (assumed to be one less than
-            the number of ``nodes``.
 
     Returns:
         float: The length of the curve.
@@ -330,11 +327,12 @@ def _compute_length(nodes, degree):
     Raises:
         OSError: If SciPy is not installed.
     """
+    num_nodes, _ = np.shape(nodes)
     # NOTE: We somewhat replicate code in ``evaluate_hodograph()``
     #       here. This is so we don't re-compute the nodes for the first
     #       derivative every time it is evaluated.
-    first_deriv = degree * (nodes[1:, :] - nodes[:-1, :])
-    if degree == 1:
+    first_deriv = (num_nodes - 1) * (nodes[1:, :] - nodes[:-1, :])
+    if num_nodes == 2:
         # NOTE: We convert to 1D to make sure NumPy uses vector norm.
         return np.linalg.norm(first_deriv[0, :], ord=2)
 
@@ -346,7 +344,7 @@ def _compute_length(nodes, degree):
     return length
 
 
-def _elevate_nodes(nodes, degree, dimension):
+def _elevate_nodes(nodes):
     r"""Degree-elevate a B |eacute| zier curves.
 
     Does this by converting the current nodes :math:`v_0, \ldots, v_n`
@@ -362,17 +360,15 @@ def _elevate_nodes(nodes, degree, dimension):
 
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
-        degree (int): The degree of the curve (assumed to be one less than
-            the number of ``nodes``.
-        dimension (int): The dimension of the curve.
 
     Returns:
         numpy.ndarray: The nodes of the degree-elevated curve.
     """
-    new_nodes = np.empty((degree + 2, dimension), order='F')
+    num_nodes, dimension = np.shape(nodes)
+    new_nodes = np.empty((num_nodes + 1, dimension), order='F')
 
-    multipliers = np.arange(1, degree + 1, dtype=_FLOAT64)[:, np.newaxis]
-    denominator = degree + 1.0
+    multipliers = np.arange(1, num_nodes, dtype=_FLOAT64)[:, np.newaxis]
+    denominator = float(num_nodes)
     new_nodes[1:-1, :] = (
         multipliers * nodes[:-1, :] +
         (denominator - multipliers) * nodes[1:, :])
@@ -506,7 +502,7 @@ def _evaluate_hodograph(s, nodes):
         first_deriv, np.asfortranarray([s]))
 
 
-def _get_curvature(nodes, degree, tangent_vec, s):
+def _get_curvature(nodes, tangent_vec, s):
     r"""Compute the signed curvature of a curve at :math:`s`.
 
     Computed via
@@ -539,7 +535,7 @@ def _get_curvature(nodes, degree, tangent_vec, s):
        >>> tangent_vec = evaluate_hodograph(s, nodes)
        >>> tangent_vec
        array([[-1., 0.]])
-       >>> curvature = get_curvature(nodes, 4, tangent_vec, s)
+       >>> curvature = get_curvature(nodes, tangent_vec, s)
        >>> curvature
        -12.0
 
@@ -550,7 +546,6 @@ def _get_curvature(nodes, degree, tangent_vec, s):
 
     Args:
         nodes (numpy.ndarray): The nodes of a curve.
-        degree (int): The degree of the curve.
         tangent_vec (numpy.ndarray): The already computed value of
             :math:`B'(s)`
         s (float): The parameter value along the curve.
@@ -558,7 +553,8 @@ def _get_curvature(nodes, degree, tangent_vec, s):
     Returns:
         float: The signed curvature.
     """
-    if degree == 1:
+    num_nodes, _ = np.shape(nodes)
+    if num_nodes == 2:  # Lines have no curvature.
         return 0.0
 
     # NOTE: We somewhat replicate code in ``evaluate_hodograph()``
@@ -567,7 +563,7 @@ def _get_curvature(nodes, degree, tangent_vec, s):
     #       first and second node differences.
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     second_deriv = first_deriv[1:, :] - first_deriv[:-1, :]
-    concavity = degree * (degree - 1) * evaluate_multi(
+    concavity = (num_nodes - 1) * (num_nodes - 2) * evaluate_multi(
         second_deriv, np.asfortranarray([s]))
 
     curvature = _helpers.cross_product(tangent_vec, concavity)
@@ -746,7 +742,7 @@ def _newton_refine(nodes, point, s):
     return s + delta_s
 
 
-def _locate_point(nodes, degree, point):
+def _locate_point(nodes, point):
     r"""Locate a point on a curve.
 
     Does so by recursively subdividing the curve and rejecting
@@ -761,8 +757,6 @@ def _locate_point(nodes, degree, point):
 
     Args:
         nodes (numpy.ndarray): The nodes defining a B |eacute| zier curve.
-        degree (int): The degree of the curve (assumed to be one less than
-            the number of ``nodes``.
         point (numpy.ndarray): The point to locate.
 
     Returns:
@@ -780,7 +774,7 @@ def _locate_point(nodes, degree, point):
         for start, end, candidate in candidates:
             if _helpers.contains_nd(candidate, point):
                 midpoint = 0.5 * (start + end)
-                left, right = subdivide_nodes(candidate, degree)
+                left, right = subdivide_nodes(candidate)
                 next_candidates.extend((
                     (start, midpoint, left),
                     (midpoint, end, right),
@@ -800,7 +794,7 @@ def _locate_point(nodes, degree, point):
     return newton_refine(nodes, point, s_approx)
 
 
-def _reduce_pseudo_inverse(nodes, degree):
+def _reduce_pseudo_inverse(nodes):
     """Performs degree-reduction for a B |eacute| zier curve.
 
     Does so by using the pseudo-inverse of the degree elevation
@@ -808,7 +802,6 @@ def _reduce_pseudo_inverse(nodes, degree):
 
     Args:
         nodes (numpy.ndarray): The nodes in the curve.
-        degree (int): The degree of the curve.
 
     Returns:
         numpy.ndarray: The reduced nodes.
@@ -816,20 +809,21 @@ def _reduce_pseudo_inverse(nodes, degree):
     Raises:
         NotImplementedError: If the degree is not 1, 2, 3 or 4.
     """
-    if degree == 1:
+    num_nodes, _ = np.shape(nodes)
+    if num_nodes == 2:
         reduction = _REDUCTION0
         denom = _REDUCTION_DENOM0
-    elif degree == 2:
+    elif num_nodes == 3:
         reduction = _REDUCTION1
         denom = _REDUCTION_DENOM1
-    elif degree == 3:
+    elif num_nodes == 4:
         reduction = _REDUCTION2
         denom = _REDUCTION_DENOM2
-    elif degree == 4:
+    elif num_nodes == 5:
         reduction = _REDUCTION3
         denom = _REDUCTION_DENOM3
     else:
-        raise NotImplementedError(degree)
+        raise NotImplementedError('Unsupported degree', num_nodes - 1)
 
     result = _helpers.matrix_product(reduction, nodes)
     result /= denom
@@ -909,7 +903,7 @@ def maybe_reduce(nodes):
     projected = _helpers.matrix_product(projection, nodes) / denom
     relative_err = projection_error(nodes, projected)
     if relative_err < _REDUCE_THRESHOLD:
-        return True, reduce_pseudo_inverse(nodes, num_nodes - 1)
+        return True, reduce_pseudo_inverse(nodes)
     else:
         return False, nodes
 

@@ -86,20 +86,20 @@ class Test_make_subdivision_matrices(utils.NumPyTestCase):
 class Test__subdivide_nodes(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree):
+    def _call_function_under_test(nodes):
         from bezier import _curve_helpers
 
-        return _curve_helpers._subdivide_nodes(nodes, degree)
+        return _curve_helpers._subdivide_nodes(nodes)
 
-    def _helper(self, nodes, degree, expected_l, expected_r):
-        left, right = self._call_function_under_test(nodes, degree)
+    def _helper(self, nodes, expected_l, expected_r):
+        left, right = self._call_function_under_test(nodes)
         self.assertEqual(left, expected_l)
         self.assertEqual(right, expected_r)
 
-    def _points_check(self, nodes, degree, pts_exponent=5):
+    def _points_check(self, nodes, pts_exponent=5):
         from bezier import _curve_helpers
 
-        left, right = self._call_function_under_test(nodes, degree)
+        left, right = self._call_function_under_test(nodes)
 
         # Using the exponent means that ds = 1/2**exp, which
         # can be computed without roundoff.
@@ -132,14 +132,14 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
             [2.0, 3.5],
             [4.0, 6.0],
         ])
-        self._helper(nodes, 1, expected_l, expected_r)
+        self._helper(nodes, expected_l, expected_r)
 
     def test_line_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
         nodes = utils.get_random_nodes(
             shape=(2, 2), seed=88991, num_bits=8)
-        self._points_check(nodes, 1)
+        self._points_check(nodes)
 
     def test_quadratic(self):
         nodes = np.asfortranarray([
@@ -157,14 +157,14 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
             [5.5, 4.5],
             [7.0, 3.0],
         ])
-        self._helper(nodes, 2, expected_l, expected_r)
+        self._helper(nodes, expected_l, expected_r)
 
     def test_quadratic_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
         nodes = utils.get_random_nodes(
             shape=(3, 2), seed=10764, num_bits=8)
-        self._points_check(nodes, 2)
+        self._points_check(nodes)
 
     def test_cubic(self):
         nodes = np.asfortranarray([
@@ -185,33 +185,32 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
             [6.5, 4.0],
             [6.0, 5.0],
         ])
-        self._helper(nodes, 3, expected_l, expected_r)
+        self._helper(nodes, expected_l, expected_r)
 
     def test_cubic_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
         nodes = utils.get_random_nodes(
             shape=(4, 2), seed=990077, num_bits=8)
-        self._points_check(nodes, 3)
+        self._points_check(nodes)
 
     def test_dynamic_subdivision_matrix(self):
-        degree = 4
-        shape = (degree + 1, 2)
+        shape = (5, 2)
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
         nodes = utils.get_random_nodes(
             shape=shape, seed=103, num_bits=8)
-        self._points_check(nodes, degree)
+        self._points_check(nodes)
 
 
 @utils.needs_curve_speedup
 class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree):
+    def _call_function_under_test(nodes):
         from bezier import _curve_speedup
 
-        return _curve_speedup.subdivide_nodes(nodes, degree)
+        return _curve_speedup.subdivide_nodes(nodes)
 
 
 class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
@@ -338,10 +337,10 @@ class Test_vec_size(unittest.TestCase):
 class Test__compute_length(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree):
+    def _call_function_under_test(nodes):
         from bezier import _curve_helpers
 
-        return _curve_helpers._compute_length(nodes, degree)
+        return _curve_helpers._compute_length(nodes)
 
     def _scipy_skip(self):
         if SCIPY_INT is None:  # pragma: NO COVER
@@ -352,7 +351,7 @@ class Test__compute_length(unittest.TestCase):
             [0.0, 0.0],
             [3.0, 4.0],
         ])
-        length = self._call_function_under_test(nodes, 1)
+        length = self._call_function_under_test(nodes)
         self.assertEqual(length, 5.0)
 
     def test_quadratic(self):
@@ -362,7 +361,7 @@ class Test__compute_length(unittest.TestCase):
             [1.0, 2.0],
             [2.0, 0.0],
         ])
-        length = self._call_function_under_test(nodes, 2)
+        length = self._call_function_under_test(nodes)
         # 2 INT_0^1 SQRT(16 s^2  - 16 s + 5) ds = SQRT(5) + sinh^{-1}(2)/2
         arcs2 = np.arcsinh(2.0)  # pylint: disable=no-member
         expected = np.sqrt(5.0) + 0.5 * arcs2
@@ -377,7 +376,7 @@ class Test__compute_length(unittest.TestCase):
             [2.0, 0.0],
             [3.5, 0.0],
         ])
-        length = self._call_function_under_test(nodes, 3)
+        length = self._call_function_under_test(nodes)
         # x(s) = s (s^2 + 6) / 2
         # y(s) = 6 s (s - 1)^2
         # x'(s)^2 + y'(s)^2 = (9/4)(145s^4 - 384s^3 + 356s^2 - 128s + 20)
@@ -389,17 +388,17 @@ class Test__compute_length(unittest.TestCase):
         nodes = np.zeros((5, 2), order='F')
         with mock.patch('bezier._curve_helpers._scipy_int', new=None):
             with self.assertRaises(OSError):
-                self._call_function_under_test(nodes, 4)
+                self._call_function_under_test(nodes)
 
 
 @utils.needs_curve_speedup
 class Test_speedup_compute_length(Test__compute_length):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree):
+    def _call_function_under_test(nodes):
         from bezier import _curve_speedup
 
-        return _curve_speedup.compute_length(nodes, degree)
+        return _curve_speedup.compute_length(nodes)
 
     def _scipy_skip(self):
         # Fortran implementation directly includes QUADPACK, so the presence
@@ -415,17 +414,17 @@ class Test_speedup_compute_length(Test__compute_length):
 class Test__elevate_nodes(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, dimension):
+    def _call_function_under_test(nodes):
         from bezier import _curve_helpers
 
-        return _curve_helpers._elevate_nodes(nodes, degree, dimension)
+        return _curve_helpers._elevate_nodes(nodes)
 
     def test_linear(self):
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [2.0, 4.0],
         ])
-        result = self._call_function_under_test(nodes, 1, 2)
+        result = self._call_function_under_test(nodes)
         expected = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 2.0],
@@ -439,7 +438,7 @@ class Test__elevate_nodes(utils.NumPyTestCase):
             [3.0, 0.5, 3.0],
             [6.0, 0.5, 2.25],
         ])
-        result = self._call_function_under_test(nodes, 2, 3)
+        result = self._call_function_under_test(nodes)
         expected = np.asfortranarray([
             [0.0, 0.5, 0.75],
             [2.0, 0.5, 2.25],
@@ -453,10 +452,10 @@ class Test__elevate_nodes(utils.NumPyTestCase):
 class Test_speedup_elevate_nodes(Test__elevate_nodes):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, dimension):
+    def _call_function_under_test(nodes):
         from bezier import _curve_speedup
 
-        return _curve_speedup.elevate_nodes(nodes, degree, dimension)
+        return _curve_speedup.elevate_nodes(nodes)
 
 
 class Test_de_casteljau_one_round(utils.NumPyTestCase):
@@ -648,11 +647,10 @@ class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
 class Test__get_curvature(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, tangent_vec, s):
+    def _call_function_under_test(nodes, tangent_vec, s):
         from bezier import _curve_helpers
 
-        return _curve_helpers._get_curvature(
-            nodes, degree, tangent_vec, s)
+        return _curve_helpers._get_curvature(nodes, tangent_vec, s)
 
     @staticmethod
     def _get_tangent_vec(s, nodes):
@@ -667,7 +665,7 @@ class Test__get_curvature(unittest.TestCase):
             [1.0, 1.0],
         ])
         tangent_vec = self._get_tangent_vec(s, nodes)
-        result = self._call_function_under_test(nodes, 1, tangent_vec, s)
+        result = self._call_function_under_test(nodes, tangent_vec, s)
         self.assertEqual(result, 0.0)
 
     def test_elevated_line(self):
@@ -678,7 +676,7 @@ class Test__get_curvature(unittest.TestCase):
             [1.0, 1.0],
         ])
         tangent_vec = self._get_tangent_vec(s, nodes)
-        result = self._call_function_under_test(nodes, 2, tangent_vec, s)
+        result = self._call_function_under_test(nodes, tangent_vec, s)
         self.assertEqual(result, 0.0)
 
     def test_quadratic(self):
@@ -689,7 +687,7 @@ class Test__get_curvature(unittest.TestCase):
             [1.0, 0.0],
         ])
         tangent_vec = self._get_tangent_vec(s, nodes)
-        result = self._call_function_under_test(nodes, 2, tangent_vec, s)
+        result = self._call_function_under_test(nodes, tangent_vec, s)
         self.assertEqual(result, -4.0)
 
 
@@ -697,11 +695,10 @@ class Test__get_curvature(unittest.TestCase):
 class Test_speedup_get_curvature(Test__get_curvature):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, tangent_vec, s):
+    def _call_function_under_test(nodes, tangent_vec, s):
         from bezier import _curve_speedup
 
-        return _curve_speedup.get_curvature(
-            nodes, degree, tangent_vec, s)
+        return _curve_speedup.get_curvature(nodes, tangent_vec, s)
 
 
 class Test__newton_refine(unittest.TestCase):
@@ -738,10 +735,10 @@ class Test_speedup_newton_refine(Test__newton_refine):
 class Test__locate_point(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, point):
+    def _call_function_under_test(nodes, point):
         from bezier import _curve_helpers
 
-        return _curve_helpers._locate_point(nodes, degree, point)
+        return _curve_helpers._locate_point(nodes, point)
 
     def test_it(self):
         nodes = np.asfortranarray([
@@ -751,7 +748,7 @@ class Test__locate_point(unittest.TestCase):
         ])
         # C(1/8) = p
         point = np.asfortranarray([[43.0, 1.0, -11.0]]) / 64
-        result = self._call_function_under_test(nodes, 2, point)
+        result = self._call_function_under_test(nodes, point)
         self.assertEqual(result, 0.125)
 
     def test_no_match(self):
@@ -761,7 +758,7 @@ class Test__locate_point(unittest.TestCase):
             [1.0, 0.0],
         ])
         point = np.asfortranarray([[0.5, 2.0]])
-        self.assertIsNone(self._call_function_under_test(nodes, 2, point))
+        self.assertIsNone(self._call_function_under_test(nodes, point))
 
     def test_failure_on_invalid(self):
         nodes = np.asfortranarray([
@@ -772,17 +769,17 @@ class Test__locate_point(unittest.TestCase):
         ])
         point = np.asfortranarray([[-0.25, 1.375]])
         with self.assertRaises(ValueError):
-            self._call_function_under_test(nodes, 3, point)
+            self._call_function_under_test(nodes, point)
 
 
 @utils.needs_curve_speedup
 class Test_speedup_locate_point(Test__locate_point):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, point):
+    def _call_function_under_test(nodes, point):
         from bezier import _curve_speedup
 
-        return _curve_speedup.locate_point(nodes, degree, point)
+        return _curve_speedup.locate_point(nodes, point)
 
 
 class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
@@ -790,17 +787,17 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
     EPS = 0.5**52
 
     @staticmethod
-    def _call_function_under_test(nodes, degree):
+    def _call_function_under_test(nodes):
         from bezier import _curve_helpers
 
-        return _curve_helpers._reduce_pseudo_inverse(nodes, degree)
+        return _curve_helpers._reduce_pseudo_inverse(nodes)
 
     def test_to_constant(self):
         nodes = np.asfortranarray([
             [-2.0, 1.0],
             [-2.0, 1.0],
         ])
-        result = self._call_function_under_test(nodes, 1)
+        result = self._call_function_under_test(nodes)
         expected = np.asfortranarray([
             [-2.0, 1.0],
         ])
@@ -812,7 +809,7 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
             [1.0, 2.0],
             [2.0, 4.0],
         ])
-        result = self._call_function_under_test(nodes, 2)
+        result = self._call_function_under_test(nodes)
         expected = np.asfortranarray([
             [0.0, 0.0],
             [2.0, 4.0],
@@ -824,10 +821,9 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
         from bezier import _helpers
 
         nodes = _helpers.eye(degree + 2)
-        reduction_mat = self._call_function_under_test(nodes, degree + 1)
+        reduction_mat = self._call_function_under_test(nodes)
         id_mat = _helpers.eye(degree + 1)
-        elevation_mat = _curve_helpers.elevate_nodes(
-            id_mat, degree, degree + 1)
+        elevation_mat = _curve_helpers.elevate_nodes(id_mat)
 
         result = _helpers.matrix_product(reduction_mat, elevation_mat)
         return result, id_mat
@@ -844,14 +840,14 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
             [1.0, 1.5],
             [2.0, 0.0],
         ])
-        result = self._call_function_under_test(nodes, 2)
+        result = self._call_function_under_test(nodes)
         expected = np.asfortranarray([
             [0.0, 0.5],
             [2.0, 0.5],
         ])
         self.assertEqual(result, expected)
 
-        re_elevated = _curve_helpers.elevate_nodes(result, 1, 2)
+        re_elevated = _curve_helpers.elevate_nodes(result)
         self.assertTrue(np.any(nodes != re_elevated))
 
     def test_to_quadratic(self):
@@ -861,7 +857,7 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
             [4.0, 0.5, 2.75],
             [6.0, 0.5, 2.25],
         ])
-        result = self._call_function_under_test(nodes, 3)
+        result = self._call_function_under_test(nodes)
         expected = np.asfortranarray([
             [0.0, 0.5, 0.75],
             [3.0, 0.5, 3.0],
@@ -882,7 +878,7 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
             [2.75],
             [2.0],
         ])
-        result = self._call_function_under_test(nodes, 4)
+        result = self._call_function_under_test(nodes)
         expected = np.asfortranarray([
             [0.0],
             [1.0],
@@ -897,21 +893,20 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
         self.assertLess(max_err, self.EPS)
 
     def test_unsupported_degree(self):
-        degree = 5
         nodes = utils.get_random_nodes(
-            shape=(degree + 1, 2), seed=3820, num_bits=8)
+            shape=(6, 2), seed=3820, num_bits=8)
         with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(nodes, degree)
+            self._call_function_under_test(nodes)
 
 
 @utils.needs_curve_speedup
 class Test_speedup__reduce_pseudo_inverse(Test__reduce_pseudo_inverse):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree):
+    def _call_function_under_test(nodes):
         from bezier import _curve_speedup
 
-        return _curve_speedup.reduce_pseudo_inverse(nodes, degree)
+        return _curve_speedup.reduce_pseudo_inverse(nodes)
 
 
 class Test_projection_error(unittest.TestCase):

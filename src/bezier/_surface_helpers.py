@@ -1256,7 +1256,7 @@ def classify_intersection(intersection):
            tangent = _curve_helpers.evaluate_hodograph(
                s, nodes)
            return _curve_helpers.get_curvature(
-               nodes, curve._degree, tangent, s)
+               nodes, tangent, s)
 
     .. doctest:: classify-intersection1
        :options: +NORMALIZE_WHITESPACE
@@ -1665,11 +1665,9 @@ def classify_tangent_intersection(intersection, tangent1, tangent2):
     #       here, because lines that are tangent at an intersection are
     #       parallel and we don't handle that case.
     curvature1 = _curve_helpers.get_curvature(
-        intersection.first._nodes, intersection.first._degree,
-        tangent1, intersection.s)
+        intersection.first._nodes, tangent1, intersection.s)
     curvature2 = _curve_helpers.get_curvature(
-        intersection.second._nodes, intersection.second._degree,
-        tangent2, intersection.t)
+        intersection.second._nodes, tangent2, intersection.t)
     if dot_prod < 0:
         # If the tangent vectors are pointing in the opposite direction,
         # then the curves are facing opposite directions.

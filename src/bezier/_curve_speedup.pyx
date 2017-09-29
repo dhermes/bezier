@@ -116,7 +116,7 @@ def evaluate_hodograph(double s, double[::1, :] nodes):
     return hodograph
 
 
-def subdivide_nodes(double[::1, :] nodes, int unused_degree):
+def subdivide_nodes(double[::1, :] nodes):
     cdef int num_nodes, dimension
     cdef ndarray_t[double, ndim=2, mode='fortran'] left_nodes, right_nodes
 
@@ -156,12 +156,10 @@ def newton_refine(
     return updated_s
 
 
-def locate_point(
-        double[::1, :] nodes, int unused_degree, double[::1, :] point):
+def locate_point(double[::1, :] nodes, double[::1, :] point):
     cdef int num_nodes, dimension
     cdef double s_approx
 
-    # NOTE: We don't check that there are ``degree + 1`` rows.
     num_nodes, dimension = np.shape(nodes)
     # NOTE: We don't check that ``np.shape(point) == (1, dimension)``.
 
@@ -182,13 +180,11 @@ def locate_point(
         return s_approx
 
 
-def elevate_nodes(double[::1, :] nodes, int degree, int dimension):
-    cdef int num_nodes
+def elevate_nodes(double[::1, :] nodes):
+    cdef int num_nodes, dimension
     cdef ndarray_t[double, ndim=2, mode='fortran'] elevated
 
-    # NOTE: We don't check that ``np.shape(nodes) == (num_nodes, dimension)``.
-    num_nodes = degree + 1
-
+    num_nodes, dimension = np.shape(nodes)
     elevated = np.empty((num_nodes + 1, dimension), order='F')
 
     bezier._curve.elevate_nodes(
@@ -201,13 +197,10 @@ def elevate_nodes(double[::1, :] nodes, int degree, int dimension):
     return elevated
 
 
-def get_curvature(
-        double[::1, :] nodes, int unused_degree,
-        double[::1, :] tangent_vec, double s):
+def get_curvature(double[::1, :] nodes, double[::1, :] tangent_vec, double s):
     cdef int num_nodes, dimension
     cdef double curvature
 
-    # NOTE: We don't check that there are ``degree + 1`` rows.
     num_nodes, dimension = np.shape(nodes)
     # NOTE: We don't check that ``np.shape(tangent_vec) == (1, dimension)``.
 
@@ -223,12 +216,11 @@ def get_curvature(
     return curvature
 
 
-def reduce_pseudo_inverse(double[::1, :] nodes, int unused_degree):
+def reduce_pseudo_inverse(double[::1, :] nodes):
     cdef int num_nodes, dimension
     cdef bool_t not_implemented
     cdef ndarray_t[double, ndim=2, mode='fortran'] reduced
 
-    # NOTE: We don't check that there are ``degree + 1`` rows.
     num_nodes, dimension = np.shape(nodes)
 
     reduced = np.empty((num_nodes - 1, dimension), order='F')
@@ -278,7 +270,7 @@ def full_reduce(double[::1, :] nodes):
         return np.asfortranarray(reduced[:num_reduced_nodes, :])
 
 
-def compute_length(double[::1, :] nodes, int unused_degree):
+def compute_length(double[::1, :] nodes):
     cdef int num_nodes, dimension
     cdef double length
     cdef int error_val

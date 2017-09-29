@@ -124,9 +124,8 @@ class TestCurve(utils.NumPyTestCase):
             call = mocked.mock_calls[0]
             _, positional, keyword = call
             self.assertEqual(keyword, {})
-            self.assertEqual(len(positional), 2)
+            self.assertEqual(len(positional), 1)
             self.assertEqual(positional[0], nodes)
-            self.assertEqual(positional[1], 1)
 
     def test_length_property(self):
         nodes = np.asfortranarray([
