@@ -1273,7 +1273,8 @@ class Test__reciprocal_condition_number(utils.NumPyTestCase):
     def _call_function_under_test(lu_mat, one_norm):
         from bezier import _algebraic_intersection
 
-        return _algebraic_intersection._reciprocal_condition_number(lu_mat, one_norm)
+        return _algebraic_intersection._reciprocal_condition_number(
+            lu_mat, one_norm)
 
     @mock.patch('bezier._algebraic_intersection._scipy_lapack', new=None)
     def test_without_scipy(self):
@@ -1330,7 +1331,8 @@ class Test_bezier_value_check(utils.NumPyTestCase):
     def _call_function_under_test(coeffs, s_val, **kwargs):
         from bezier import _algebraic_intersection
 
-        return _algebraic_intersection.bezier_value_check(coeffs, s_val, **kwargs)
+        return _algebraic_intersection.bezier_value_check(
+            coeffs, s_val, **kwargs)
 
     def test_check_one_failure(self):
         # 3 (s^2 + 3) (2 - s)
