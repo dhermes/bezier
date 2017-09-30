@@ -10,7 +10,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-r"""Helper for implicitizing B |eacute| zier curves.
+r"""Helpers for intersecting B |eacute| zier curves via algebraic methods.
+
+Primarily helps implicitize B |eacute| zier curves.
 
 .. _resultant: https://en.wikipedia.org/wiki/Resultant
 .. _algebraic curve: https://en.wikipedia.org/wiki/Algebraic_curve
