@@ -21,7 +21,7 @@ import nox
 import py.path
 
 
-NUMPY = 'numpy >= 1.13.1, != 1.13.2, != 1.13.2.*'
+NUMPY = 'numpy >= 1.13.3'
 MOCK_DEP = 'mock >= 1.3.0'
 SEABORN_DEP = 'seaborn >= 0.8'
 BASE_DEPS = (
