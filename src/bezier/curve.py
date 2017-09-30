@@ -30,8 +30,10 @@ See :doc:`../curve-curve-intersection` for examples using the
 
 import numpy as np
 
+from bezier import _algebraic_intersection
 from bezier import _base
 from bezier import _curve_helpers
+from bezier import _geometric_intersection
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
@@ -558,6 +560,8 @@ class Curve(_base.Base):
             TypeError: If ``other`` is not a curve (and ``_verify=True``).
             NotImplementedError: If at least one of the curves
                 isn't two-dimensional (and ``_verify=True``).
+            ValueError: If ``strategy`` is not a valid
+                :attr:`.IntersectionStrategy`.
         """
         if _verify:
             if not isinstance(other, Curve):
@@ -567,9 +571,14 @@ class Curve(_base.Base):
                 raise NotImplementedError(
                     'Intersection only implemented in 2D')
 
-        candidates = [(self, other)]
-        intersections = _intersection_helpers.all_intersections(
-            candidates, strategy=strategy)
+        if strategy is IntersectionStrategy.GEOMETRIC:
+            all_intersections = _geometric_intersection.all_intersections
+        elif strategy is IntersectionStrategy.ALGEBRAIC:
+            all_intersections = _algebraic_intersection.all_intersections
+        else:
+            raise ValueError('Unexpected strategy.', strategy)
+
+        intersections = all_intersections([(self, other)])
         if intersections:
             result = np.empty((len(intersections), 2), order='F')
             for index, intersection in enumerate(intersections):

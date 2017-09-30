@@ -821,6 +821,15 @@ class TestSurface(utils.NumPyTestCase):
     def test_intersect_no_verify(self):
         self._basic_intersect_helper(_verify=False)
 
+    def test_intersect_bad_strategy(self):
+        surface = self._make_one(self.UNIT_TRIANGLE, 1)
+        strategy = mock.sentinel.bad_strategy
+        with self.assertRaises(ValueError) as exc_info:
+            surface.intersect(surface, strategy=strategy)
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(exc_args, ('Unexpected strategy.', strategy))
+
     def test_intersect_algebraic(self):
         from bezier import _intersection_helpers
 

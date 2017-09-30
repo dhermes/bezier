@@ -19,7 +19,6 @@ extension-pkg-whitelist=bezier
 disable =
     similarities,
     I,
-    cyclic-import,
     no-else-return,
 
 [REPORTS]

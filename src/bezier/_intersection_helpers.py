@@ -520,42 +520,6 @@ class IntersectionStrategy(enum.Enum):
     """Algebraic approach to intersection (via implicitization)."""
 
 
-def all_intersections(candidates, strategy=IntersectionStrategy.GEOMETRIC):
-    r"""Find the points of intersection among pairs of curves.
-
-    .. note::
-
-       This assumes all curves in a candidate pair are in
-       :math:`\mathbf{R}^2`, but does not **explicitly** check this.
-       However, functions used here will fail if that assumption
-       fails.
-
-    Args:
-        candidates (iterable): Iterable of pairs of curves that may
-            intersect.
-        strategy (Optional[~bezier.curve.IntersectionStrategy]): The
-            intersection algorithm to use. Defaults to geometric.
-
-    Returns:
-        list: List of all :class:`Intersection`s (possibly empty).
-
-    Raises:
-        ValueError: If the strategy is not known.
-    """
-    if strategy is IntersectionStrategy.GEOMETRIC:
-        # NOTE: This cyclic import need be resolved.
-        from bezier import _geometric_intersection
-
-        return _geometric_intersection.all_intersections(candidates)
-    elif strategy is IntersectionStrategy.ALGEBRAIC:
-        # NOTE: This cyclic import need be resolved.
-        from bezier import _algebraic_intersection
-
-        return _algebraic_intersection.all_intersections(candidates)
-    else:
-        raise ValueError('Unexpected strategy.')
-
-
 # pylint: disable=invalid-name
 if _curve_intersection_speedup is None:  # pragma: NO COVER
     newton_refine = _newton_refine

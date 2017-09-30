@@ -2288,8 +2288,8 @@ def tangent_only_intersections(intersections, surface1, surface2):
 
     Args:
         intersections (list): A list of :class:`.Intersection` objects
-            produced by :func:`.all_intersections` applied to each of
-            the 9 edge-edge pairs from a surface-surface pairing.
+            (produced by one of the ``all_intersections`` functions) applied
+            to each of the 9 edge-edge pairs from a surface-surface pairing.
         surface1 (.Surface): First surface in intersection.
         surface2 (.Surface): Second surface in intersection.
 
@@ -2334,8 +2334,8 @@ def basic_interior_combine(intersections, max_edges=10):
 
     Args:
         intersections (list): A list of :class:`.Intersection` objects
-            produced by :func:`.all_intersections` applied to each of
-            the 9 edge-edge pairs from a surface-surface pairing.
+            (produced by one of the ``all_intersections`` functions) applied
+            to each of the 9 edge-edge pairs from a surface-surface pairing.
         max_edges (Optional[int]): The maximum number of allowed / expected
             edges per intersection. This is to avoid infinite loops.
 
@@ -2388,8 +2388,8 @@ def combine_intersections(intersections, surface1, surface2):
 
     Args:
         intersections (list): A list of :class:`.Intersection` objects
-            produced by :func:`.all_intersections` applied to each of
-            the 9 edge-edge pairs from a surface-surface pairing.
+            (produced by one of the ``all_intersections`` functions) applied
+            to each of the 9 edge-edge pairs from a surface-surface pairing.
         surface1 (.Surface): First surface in intersection.
         surface2 (.Surface): Second surface in intersection.
 

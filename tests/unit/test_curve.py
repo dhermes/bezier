@@ -356,6 +356,36 @@ class TestCurve(utils.NumPyTestCase):
         self.assertIs(three.root, curve)
         self.assertIs(four.root, curve)
 
+    def test_intersect_bad_strategy(self):
+        curve = self._make_one(self.ZEROS, 1)
+        strategy = mock.sentinel.bad_strategy
+        with self.assertRaises(ValueError) as exc_info:
+            curve.intersect(curve, strategy=strategy)
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(exc_args, ('Unexpected strategy.', strategy))
+
+    def test_intersect_algebraic(self):
+        from bezier import _intersection_helpers
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve1 = self._make_one(nodes1, 1)
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 0.0],
+        ])
+        curve2 = self._make_one(nodes2, 1)
+        strategy = _intersection_helpers.IntersectionStrategy.ALGEBRAIC
+
+        intersections = curve1.intersect(curve2, strategy=strategy)
+        expected = np.asfortranarray([
+            [0.5, 0.5],
+        ])
+        self.assertEqual(intersections, expected)
+
     def test_intersect_empty(self):
         nodes1 = np.asfortranarray([
             [0.0, 0.0],

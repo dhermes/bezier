@@ -27,6 +27,7 @@ import itertools
 import numpy as np
 import six
 
+from bezier import _algebraic_intersection
 from bezier import _base
 from bezier import _geometric_intersection
 from bezier import _intersection_helpers
@@ -1116,6 +1117,8 @@ class Surface(_base.Base):
             TypeError: If ``other`` is not a surface.
             NotImplementedError: If at least one of the surfaces
                 isn't two-dimensional.
+            ValueError: If ``strategy`` is not a valid
+                :attr:`.IntersectionStrategy`.
         """
         if _verify:
             if not isinstance(other, Surface):
@@ -1124,6 +1127,13 @@ class Surface(_base.Base):
             if self._dimension != 2 or other._dimension != 2:
                 raise NotImplementedError(
                     'Intersection only implemented in 2D')
+
+        if strategy is _STRATEGY.GEOMETRIC:
+            all_intersections = _geometric_intersection.all_intersections
+        elif strategy is _STRATEGY.ALGEBRAIC:
+            all_intersections = _algebraic_intersection.all_intersections
+        else:
+            raise ValueError('Unexpected strategy.', strategy)
 
         bbox_int = _geometric_intersection.bbox_intersect(
             self._nodes, other._nodes)
@@ -1144,8 +1154,7 @@ class Surface(_base.Base):
             edges2)
 
         edge_pairs = itertools.product(lin1, lin2)
-        intersections = _intersection_helpers.all_intersections(
-            edge_pairs, strategy=strategy)
+        intersections = all_intersections(edge_pairs)
 
         # Classify each intersection.
         duplicates = []

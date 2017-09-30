@@ -1379,8 +1379,8 @@ def all_intersections(candidates):
         curve2 = second.curve if second.__class__ is _LINEARIZATION else second
         nodes2 = curve2._nodes
         # Only attempt this if the bounding boxes intersect.
-        int_type = _geometric_intersection.bbox_intersect(nodes1, nodes2)
-        if int_type == _DISJOINT:
+        bbox_int = _geometric_intersection.bbox_intersect(nodes1, nodes2)
+        if bbox_int == _DISJOINT:
             continue
 
         st_vals = intersect_curves(nodes1, nodes2)
