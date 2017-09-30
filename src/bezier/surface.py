@@ -1032,7 +1032,7 @@ class Surface(_base.Base):
 
         This method acts as a (partial) inverse to :meth:`evaluate_cartesian`.
 
-        .. note::
+        .. warning::
 
            A unique solution is only guaranteed if the current surface is
            valid. This code assumes a valid surface, but doesn't check.

@@ -12,10 +12,10 @@ Curve-Curve Intersection
        return result - 1
 
 The problem of intersecting two curves is a difficult one
-in computational geometry. The :meth:`.Curve.intersect`
-method uses a combination of curve subdivision, bounding
-box intersection, and curve approximation (by lines) to
-find intersections.
+in computational geometry. The :meth:`.Curve.intersect` method (when using
+the :attr:`~.IntersectionStrategy.GEOMETRIC` strategy) uses a combination of
+curve subdivision, bounding box intersection, and curve approximation (by
+lines) to find intersections.
 
 Curve-Line Intersection
 -----------------------

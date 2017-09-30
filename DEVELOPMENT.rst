@@ -83,7 +83,7 @@ Dependencies
 
 Currently, the ``src/bezier/quadpack`` `directory`_ has a subset of Fortran 77
 subroutines from `QUADPACK`_. These are Public Domain, so they do not
-conflict with the Apache 2.0 license (as far as I know). In addition it
+conflict with the Apache 2.0 license (as far as we know). In addition it
 contains another popular subroutine from NETLIB: ``d1mach`` (which the
 QUADPACK subroutines depend on).
 
@@ -115,7 +115,7 @@ manage dependencies or build extensions):
    $ PYTHONPATH=src/ python2.7 -m pytest tests/unit/
    $ PYTHONPATH=src/ python3.5 -m pytest tests/unit/
    $ PYTHONPATH=src/ python3.6 -m pytest tests/unit/
-   $ PYTHONPATH=src/ MATPLOTLIBRC=test/ pypy -m pytest tests/unit/
+   $ PYTHONPATH=src/ pypy      -m pytest tests/unit/
 
 .. _nox-automation: https://nox.readthedocs.io
 .. _pytest: https://docs.pytest.org
@@ -235,7 +235,7 @@ To run the functional tests:
    $ PYTHONPATH=src/ python2.7 -m pytest tests/functional/
    $ PYTHONPATH=src/ python3.5 -m pytest tests/functional/
    $ PYTHONPATH=src/ python3.6 -m pytest tests/functional/
-   $ MATPLOTLIBRC=test/ PYTHONPATH=src/ pypy -m pytest tests/functional/
+   $ PYTHONPATH=src/ pypy      -m pytest tests/functional/
 
 .. _functional tests: https://github.com/dhermes/bezier/tree/master/tests/functional
 

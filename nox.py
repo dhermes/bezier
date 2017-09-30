@@ -62,8 +62,7 @@ def pypy_setup(local_deps, session):
             NUMPY,
         )
 
-    env = {'MATPLOTLIBRC': 'test'}
-    return local_deps, env
+    return local_deps
 
 
 @nox.session
@@ -106,11 +105,10 @@ def update_generated(session, check):
 def unit(session, py):
     if py == PYPY:
         session.interpreter = PYPY
-        local_deps, env = pypy_setup(BASE_DEPS, session)
+        local_deps = pypy_setup(BASE_DEPS, session)
     else:
         session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS + ('scipy',)
-        env = None
 
     # Install all test dependencies.
     session.install(*local_deps)
@@ -119,7 +117,7 @@ def unit(session, py):
 
     # Run py.test against the unit tests.
     run_args = ['py.test'] + session.posargs + [get_path('tests', 'unit')]
-    session.run(*run_args, env=env)
+    session.run(*run_args)
 
 
 @nox.session
@@ -144,11 +142,10 @@ def cover(session):
 def functional(session, py):
     if py == PYPY:
         session.interpreter = PYPY
-        local_deps, env = pypy_setup(BASE_DEPS, session)
+        local_deps = pypy_setup(BASE_DEPS, session)
     else:
         session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS
-        env = {}
 
     # Install all test dependencies.
     session.install(*local_deps)
@@ -158,7 +155,7 @@ def functional(session, py):
     # Run py.test against the functional tests.
     run_args = (
         ['py.test'] + session.posargs + [get_path('tests', 'functional')])
-    session.run(*run_args, env=env)
+    session.run(*run_args)
 
 
 @nox.session

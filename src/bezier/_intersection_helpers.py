@@ -358,6 +358,9 @@ def _newton_refine(s, nodes1, t, nodes2):
        import bezier
        from bezier._intersection_helpers import newton_refine
 
+       def cuberoot(value):
+           return np.cbrt(value)
+
     .. doctest:: newton-refine1
 
        >>> nodes1 = np.asfortranarray([
@@ -408,7 +411,7 @@ def _newton_refine(s, nodes1, t, nodes2):
        ... ])
        >>> # The expected intersection is the only real root of
        >>> # 28 s^3 - 30 s^2 + 9 s - 1.
-       >>> omega = (28.0 * np.sqrt(17.0) + 132.0)**(1.0 / 3.0) / 28.0
+       >>> omega = cuberoot(28.0 * np.sqrt(17.0) + 132.0) / 28.0
        >>> expected = 5.0 / 14.0 + omega + 1 / (49.0 * omega)
        >>> s_vals = [0.625, None, None, None, None]
        >>> t = 0.625
@@ -1562,7 +1565,7 @@ class Linearization(object):
     Args:
         curve (.Curve): A curve that is linearized.
         error (float): The linearization error. Expected to have been
-            computed via :func:`.linearization_error`.
+            computed via :func:`linearization_error() <._linearization_error>`.
     """
 
     __slots__ = ('curve', 'error', 'start_node', 'end_node')

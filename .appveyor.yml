@@ -149,8 +149,7 @@ test_script:
               --cov=bezier `
               --cov=tests.unit `
               --cov-fail-under=98 `
-              tests/unit `
-              tests/functional/test_segment_box.py;
+              tests/unit;
         }
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
