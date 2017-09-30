@@ -18,7 +18,7 @@ import pytest
 import six
 
 import bezier
-from bezier import _implicitization
+from bezier import _algebraic_intersection
 from bezier import _intersection_helpers
 from bezier import _surface_helpers
 from bezier import curve
@@ -113,7 +113,7 @@ def check_tangent_manager(
             assert exc_args == (err_msg,)
     else:
         assert len(exc_args) == 2
-        assert exc_args[0] == _implicitization._NON_SIMPLE_ERR
+        assert exc_args[0] == _algebraic_intersection._NON_SIMPLE_ERR
 
 
 @contextlib.contextmanager
@@ -133,7 +133,7 @@ def check_coincident_manager(strategy, parallel=False, too_many=None):
             err_msg = TOO_MANY.format(too_many, 4 * too_many)
             assert exc_args == (err_msg,)
     else:
-        assert exc_args == (_implicitization._COINCIDENT_ERR,)
+        assert exc_args == (_algebraic_intersection._COINCIDENT_ERR,)
 
 
 def surface_surface_check(strategy, surface1, surface2, *all_intersected):

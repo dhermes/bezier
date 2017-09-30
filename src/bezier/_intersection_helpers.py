@@ -1487,7 +1487,7 @@ def all_intersections_algebraic(candidates):
         list: List of all :class:`Intersection`s (possibly empty).
     """
     # NOTE: This cyclic import need be resolved.
-    from bezier import _implicitization
+    from bezier import _algebraic_intersection
 
     result = []
     for first, second in candidates:
@@ -1501,7 +1501,7 @@ def all_intersections_algebraic(candidates):
         if bbox_intersect(nodes1, nodes2) == BoxIntersectionType.DISJOINT:
             continue
 
-        st_vals = _implicitization.intersect_curves(nodes1, nodes2)
+        st_vals = _algebraic_intersection.intersect_curves(nodes1, nodes2)
         for s, t in st_vals:
             intersection = Intersection(curve1, s, curve2, t)
             result.append(intersection)

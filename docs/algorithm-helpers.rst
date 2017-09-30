@@ -30,9 +30,9 @@ This is to help with the exposition of the computation and
 .. autofunction:: bezier._surface_helpers.classify_intersection
 .. autofunction:: bezier._surface_helpers._jacobian_det
 .. autofunction:: bezier._surface_helpers.two_by_two_det
-.. autofunction:: bezier._implicitization.bezier_roots
-.. autofunction:: bezier._implicitization.lu_companion
-.. autofunction:: bezier._implicitization.bezier_value_check
+.. autofunction:: bezier._algebraic_intersection.bezier_roots
+.. autofunction:: bezier._algebraic_intersection.lu_companion
+.. autofunction:: bezier._algebraic_intersection.bezier_value_check
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
