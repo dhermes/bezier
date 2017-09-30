@@ -209,8 +209,12 @@ class IncorrectCount(ValueError):
 def get_sorted_intersections(intersection_info, strategy):
     curve1 = intersection_info.curve1
     curve2 = intersection_info.curve2
-    intersections = _intersection_helpers.all_intersections(
-        [(curve1, curve2)], strategy=strategy)
+    if strategy is GEOMETRIC:
+        intersections = _geometric_intersection.all_intersections(
+            [(curve1, curve2)])
+    else:
+        intersections = _algebraic_intersection.all_intersections(
+            [(curve1, curve2)])
 
     # Make we have the right number of intersections.
     if len(intersections) != intersection_info.num_params:
