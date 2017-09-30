@@ -631,11 +631,6 @@ class Surface(_base.Base):
            import make_images
            make_images.surface_evaluate_barycentric_multi(surface, points)
 
-        .. note::
-
-           There is also a Fortran implementation of this function, which
-           will be used if it can be built.
-
         Args:
             param_vals (numpy.ndarray): Array of parameter values (as a
                 ``Nx3`` array).
@@ -760,11 +755,6 @@ class Surface(_base.Base):
 
            import make_images
            make_images.surface_evaluate_cartesian_multi(surface, points)
-
-        .. note::
-
-           There is also a Fortran implementation of this function, which
-           will be used if it can be built.
 
         Args:
             param_vals (numpy.ndarray): Array of parameter values (as a
