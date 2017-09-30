@@ -51,6 +51,7 @@ except ImportError:  # pragma: NO COVER
     _scipy_lapack = None
 
 from bezier import _curve_helpers
+from bezier import _geometric_intersection
 from bezier import _helpers
 from bezier import _intersection_helpers
 
@@ -108,6 +109,8 @@ _NON_SIMPLE_ERR = 'Polynomial has non-simple roots'
 _POWER_BASIS_ERR = (
     'Currently only supporting degree pairs '
     '1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3.')
+_LINEARIZATION = _geometric_intersection.Linearization
+_DISJOINT = _geometric_intersection.BoxIntersectionType.DISJOINT
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -1348,3 +1351,42 @@ def locate_point(nodes, x_val, y_val):
 
     if near_zero[index] < _ZERO_THRESHOLD:
         return all_roots[index]
+
+
+def all_intersections(candidates):
+    r"""Find the points of intersection among pairs of curves.
+
+    .. note::
+
+       This assumes all curves in a candidate pair are in
+       :math:`\mathbf{R}^2`, but does not **explicitly** check this.
+       However, functions used here will fail if that assumption
+       fails.
+
+    Args:
+        candidates (iterable): Iterable of pairs of curves that may
+            intersect.
+
+    Returns:
+        list: List of all :class:`Intersection`s (possibly empty).
+    """
+    result = []
+    for first, second in candidates:
+        # NOTE: In the below we replace ``isinstance(a, B)`` with
+        #       ``a.__class__ is B``, which is a 3-3.5x speedup.
+        curve1 = first.curve if first.__class__ is _LINEARIZATION else first
+        nodes1 = curve1._nodes
+        curve2 = second.curve if second.__class__ is _LINEARIZATION else second
+        nodes2 = curve2._nodes
+        # Only attempt this if the bounding boxes intersect.
+        int_type = _geometric_intersection.bbox_intersect(nodes1, nodes2)
+        if int_type == _DISJOINT:
+            continue
+
+        st_vals = intersect_curves(nodes1, nodes2)
+        for s, t in st_vals:
+            intersection = _intersection_helpers.Intersection(
+                curve1, s, curve2, t)
+            result.append(intersection)
+
+    return result

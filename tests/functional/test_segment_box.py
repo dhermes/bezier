@@ -18,7 +18,7 @@ except ImportError:
     plt = None
 import numpy as np
 
-from bezier import _intersection_helpers
+from bezier import _geometric_intersection
 
 from tests.functional import utils
 
@@ -61,9 +61,9 @@ def make_plot(segment, index):
 
 def run_it(segment, expected=None, index=0):
     if expected is None:
-        expected = _intersection_helpers.BoxIntersectionType.INTERSECTION
+        expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
 
-    result = _intersection_helpers.bbox_line_intersect(
+    result = _geometric_intersection.bbox_line_intersect(
         UNIT_SQUARE, segment[[0], :], segment[[1], :])
     assert result == expected
 
@@ -97,7 +97,7 @@ def test_outside():
         segment_top_right,
         segment_top_left,
     )
-    expected = _intersection_helpers.BoxIntersectionType.DISJOINT
+    expected = _geometric_intersection.BoxIntersectionType.DISJOINT
     for index, segment in enumerate(segments):
         run_it(segment, expected, index)
 

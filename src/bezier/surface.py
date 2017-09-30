@@ -28,6 +28,7 @@ import numpy as np
 import six
 
 from bezier import _base
+from bezier import _geometric_intersection
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
@@ -40,6 +41,7 @@ _LOCATE_ERROR_TEMPLATE = (
     'Dimension mismatch: This surface is {:d}-dimensional, so the point '
     'should be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
 _STRATEGY = _intersection_helpers.IntersectionStrategy
+_INTERSECTION_T = _geometric_intersection.BoxIntersectionType.INTERSECTION
 
 
 class Surface(_base.Base):
@@ -1123,9 +1125,9 @@ class Surface(_base.Base):
                 raise NotImplementedError(
                     'Intersection only implemented in 2D')
 
-        bbox_int = _intersection_helpers.bbox_intersect(
+        bbox_int = _geometric_intersection.bbox_intersect(
             self._nodes, other._nodes)
-        if bbox_int != _intersection_helpers.BoxIntersectionType.INTERSECTION:
+        if bbox_int != _INTERSECTION_T:
             return []
 
         # NOTE: We "linearize" here, rather than allow
@@ -1134,11 +1136,11 @@ class Surface(_base.Base):
         #       other 3 pairs. (18 linearizations when only 6 are needed)
         edges1 = self._get_edges()
         lin1 = six.moves.map(
-            _intersection_helpers.Linearization.from_shape,
+            _geometric_intersection.Linearization.from_shape,
             edges1)
         edges2 = other._get_edges()  # pylint: disable=protected-access
         lin2 = six.moves.map(
-            _intersection_helpers.Linearization.from_shape,
+            _geometric_intersection.Linearization.from_shape,
             edges2)
 
         edge_pairs = itertools.product(lin1, lin2)

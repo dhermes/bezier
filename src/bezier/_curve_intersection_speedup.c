@@ -1709,7 +1709,7 @@ static const char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direc
 static const char __pyx_k_BoxIntersectionType_INTERSECTION[] = "BoxIntersectionType_INTERSECTION";
 static const char __pyx_k_Buffer_view_does_not_expose_stri[] = "Buffer view does not expose strides";
 static const char __pyx_k_Can_only_create_a_buffer_that_is[] = "Can only create a buffer that is contiguous in memory.";
-static const char __pyx_k_Cython_wrapped_interface_for__in[] = "Cython \"wrapped\" interface for `_intersection_helpers`.";
+static const char __pyx_k_Cython_wrapped_interface_for_cur[] = "Cython \"wrapped\" interface for `curve_intersection.f90`.";
 static const char __pyx_k_Empty_shape_tuple_for_cython_arr[] = "Empty shape tuple for cython.array";
 static const char __pyx_k_Incompatible_checksums_s_vs_0xb0[] = "Incompatible checksums (%s vs 0xb068931 = (name))";
 static const char __pyx_k_Indirect_dimensions_not_supporte[] = "Indirect dimensions not supported";
@@ -18150,7 +18150,7 @@ static PyModuleDef_Slot __pyx_moduledef_slots[] = {
 static struct PyModuleDef __pyx_moduledef = {
     PyModuleDef_HEAD_INIT,
     "_curve_intersection_speedup",
-    __pyx_k_Cython_wrapped_interface_for__in, /* m_doc */
+    __pyx_k_Cython_wrapped_interface_for_cur, /* m_doc */
   #if CYTHON_PEP489_MULTI_PHASE_INIT
     0, /* m_size */
   #else
@@ -18821,7 +18821,7 @@ static int __pyx_pymod_exec__curve_intersection_speedup(PyObject *__pyx_pyinit_m
   Py_INCREF(__pyx_m);
   #else
   #if PY_MAJOR_VERSION < 3
-  __pyx_m = Py_InitModule4("_curve_intersection_speedup", __pyx_methods, __pyx_k_Cython_wrapped_interface_for__in, 0, PYTHON_API_VERSION); Py_XINCREF(__pyx_m);
+  __pyx_m = Py_InitModule4("_curve_intersection_speedup", __pyx_methods, __pyx_k_Cython_wrapped_interface_for_cur, 0, PYTHON_API_VERSION); Py_XINCREF(__pyx_m);
   #else
   __pyx_m = PyModule_Create(&__pyx_moduledef);
   #endif

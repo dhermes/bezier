@@ -19,7 +19,7 @@ import six
 
 import bezier
 from bezier import _algebraic_intersection
-from bezier import _intersection_helpers
+from bezier import _geometric_intersection
 from bezier import _surface_helpers
 from bezier import curve
 
@@ -29,9 +29,9 @@ from tests.functional import utils
 ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
 GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
 _, INTERSECTIONS = utils.surface_intersections_info()
-PARALLEL_FAILURE = (_intersection_helpers._SEGMENTS_PARALLEL,)
+PARALLEL_FAILURE = (_geometric_intersection._SEGMENTS_PARALLEL,)
 BAD_TANGENT = (_surface_helpers._BAD_TANGENT,)
-TOO_MANY = _intersection_helpers._TOO_MANY_TEMPLATE
+TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
 WIGGLES = {
     GEOMETRIC: {
         1: 48,  # Established on CentOS 5 (i686 Docker image)

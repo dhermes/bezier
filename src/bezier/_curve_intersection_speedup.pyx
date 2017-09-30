@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Cython "wrapped" interface for `_intersection_helpers`."""
+"""Cython "wrapped" interface for `curve_intersection.f90`."""
 
 
 from libcpp cimport bool as bool_t

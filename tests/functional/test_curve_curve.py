@@ -20,6 +20,7 @@ import pytest
 import six
 
 from bezier import _algebraic_intersection
+from bezier import _geometric_intersection
 from bezier import _intersection_helpers
 import bezier.curve
 
@@ -163,8 +164,8 @@ ULPS_ALLOWED_OVERRIDE = {
     },
 }
 NON_SIMPLE_ERR = _algebraic_intersection._NON_SIMPLE_ERR
-SEGMENTS_PARALLEL = (_intersection_helpers._SEGMENTS_PARALLEL,)
-TOO_MANY = _intersection_helpers._TOO_MANY_TEMPLATE
+SEGMENTS_PARALLEL = (_geometric_intersection._SEGMENTS_PARALLEL,)
+TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
 COINCIDENT_ERR = (_algebraic_intersection._COINCIDENT_ERR,)
 TANGENT_OVERRIDES = {
     GEOMETRIC: {
