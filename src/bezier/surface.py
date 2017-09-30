@@ -179,12 +179,12 @@ class Surface(_base.Base):
             :meth:`from_nodes` if the degree has not yet been computed.
         base_x (Optional[float]): The :math:`x`-coordinate of the base
            vertex of the sub-triangle that this surface represents.
-           See :meth:`width` for more info.
+           See :attr:`width` for more info.
         base_y (Optional[float]): The :math:`y`-coordinate of the base
            vertex of the sub-triangle that this surface represents.
-           See :meth:`width` for more info.
+           See :attr:`width` for more info.
         width (Optional[float]): The width of the sub-triangle that
-           this surface represents. See :meth:`width` for more info.
+           this surface represents. See :attr:`width` for more info.
         _copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
@@ -356,7 +356,7 @@ class Surface(_base.Base):
     def base_x(self):
         """float: The ``x``-coordinate of the base vertex.
 
-        See :meth:`width` for more detail.
+        See :attr:`width` for more detail.
         """
         return self._base_x
 
@@ -364,7 +364,7 @@ class Surface(_base.Base):
     def base_y(self):
         """float: The ``y``-coordinate of the base vertex.
 
-        See :meth:`width` for more detail.
+        See :attr:`width` for more detail.
         """
         return self._base_y
 
