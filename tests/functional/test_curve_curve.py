@@ -21,7 +21,6 @@ import six
 
 from bezier import _algebraic_intersection
 from bezier import _geometric_intersection
-from bezier import _intersection_helpers
 import bezier.curve
 
 from tests import utils as base_utils
