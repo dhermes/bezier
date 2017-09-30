@@ -1153,8 +1153,8 @@ class Surface(_base.Base):
             _geometric_intersection.Linearization.from_shape,
             edges2)
 
-        edge_pairs = itertools.product(lin1, lin2)
-        intersections = all_intersections(edge_pairs)
+        # We need **all** pairs of (potentially linearized) edges.
+        intersections = all_intersections(itertools.product(lin1, lin2))
 
         # Classify each intersection.
         duplicates = []
