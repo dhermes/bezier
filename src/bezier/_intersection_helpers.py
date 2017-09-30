@@ -429,7 +429,7 @@ def _newton_refine(s, nodes1, t, nodes2):
        >>> np.log2(abs(expected - s_vals[3]))
        -32.110...
        >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, t, nodes2)
-       >>> np.allclose(s_vals[4], expected, rtol=2e-16, atol=0.0)
+       >>> np.allclose(s_vals[4], expected, rtol=machine_eps, atol=0.0)
        True
 
     .. testcleanup:: newton-refine2
