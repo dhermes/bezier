@@ -16,7 +16,8 @@ RUN virtualenv --python=pypy pypy-env \
   && pypy-env/bin/pip wheel --wheel-dir=/wheelhouse numpy==1.13.3 \
   && rm -fr pypy-env
 
-# Install `gfortran`.
+# Install `gfortran` and `lcov`.
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-    gfortran
+    gfortran \
+    lcov

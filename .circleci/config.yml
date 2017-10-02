@@ -27,7 +27,7 @@ jobs:
       - run:
           name: Fortran unit tests
           command: |
-            apt-get install lcov
+            apt-get install -y --no-install-recommends lcov
             nox -s fortran_unit
       - run:
           name: Functional tests in Python 3.6

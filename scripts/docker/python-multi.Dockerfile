@@ -24,7 +24,6 @@ RUN apt-get update \
     tk \
     tk-dev \
     wget \
-    lcov \
   && apt-get clean autoclean \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/* \
