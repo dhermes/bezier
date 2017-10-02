@@ -388,9 +388,11 @@ def fortran_unit(session):
 
     test_dir = get_path('tests', 'fortran')
     lcov_filename = os.path.join(test_dir, 'coverage.info')
-    session.chdir(test_dir)
 
+    session.chdir(test_dir)
     session.run('make', 'test')
+    session.chdir(NOX_DIR)
+
     session.run(
         'lcov', '--capture',
         '--directory', test_dir,
@@ -401,4 +403,6 @@ def fortran_unit(session):
         get_path('scripts', 'report_lcov.py'),
         '--lcov-filename', lcov_filename,
     )
+
+    session.chdir(test_dir)
     session.run('make', 'clean')
