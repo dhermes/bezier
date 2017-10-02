@@ -36,17 +36,14 @@ contains
     if (case_success) then
        status_msg = " success"
     else
-       status_msg = " failure"
+       status_msg = " failure"  ! LCOV_EXCL_LINE
+       suite_success = .FALSE.  ! LCOV_EXCL_LINE
     end if
 
     write (*, "(A26, A, I2, A)") name, ": Case ", case_id, status_msg
 
     ! Increment case ID for next case.
     case_id = case_id + 1
-
-    if (.NOT. case_success) then
-       suite_success = .FALSE.
-    end if
 
   end subroutine print_status
 

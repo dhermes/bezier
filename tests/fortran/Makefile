@@ -6,7 +6,8 @@ FC = gfortran
 F77 = .f
 F90 = .f90
 OBJ = .o
-FCFLAGS = -fPIC -O0 -fprofile-arcs -ftest-coverage
+FCFLAGS = -fPIC -O0
+COV_FLAGS = -fprofile-arcs -ftest-coverage
 
 ifdef BRANCH_COVERAGE
 LCOV_OPTIONS = --rc lcov_branch_coverage=1
@@ -46,13 +47,13 @@ $(CURR_DIR)/%$(OBJ): $(QUADPACK_DIR)/%$(F77)
 	$(FC) $(FCFLAGS) -c $< -o $@
 
 $(CURR_DIR)/%$(OBJ): $(SRC_DIR)/%$(F90)
-	$(FC) $(FCFLAGS) -c $< -o $@
+	$(FC) $(FCFLAGS) $(COV_FLAGS) -c $< -o $@
 
 $(CURR_DIR)/%$(OBJ): $(CURR_DIR)/%$(F90)
-	$(FC) $(FCFLAGS) -c $< -o $@
+	$(FC) $(FCFLAGS) $(COV_FLAGS) -c $< -o $@
 
 $(CURR_DIR)/test-bin: $(F77_OBJS) $(F90_OBJS) $(TEST_OBJS) $(CURR_DIR)/test.f90
-	$(FC) $(FCFLAGS) \
+	$(FC) $(FCFLAGS) $(COV_FLAGS) \
 	  -o $(CURR_DIR)/test-bin \
 	  $(F77_OBJS) \
 	  $(F90_OBJS) \
@@ -63,7 +64,7 @@ lcov: $(CURR_DIR)/test-bin
 	$(CURR_DIR)/test-bin
 	lcov --capture \
 	  --directory $(CURR_DIR) \
-	  -output-file $(CURR_DIR)/coverage.info \
+	  --output-file $(CURR_DIR)/coverage.info \
 	  $(LCOV_OPTIONS)
 	genhtml \
 	  $(CURR_DIR)/coverage.info \

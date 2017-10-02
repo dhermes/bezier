@@ -26,7 +26,9 @@ jobs:
           command: nox -s cover
       - run:
           name: Fortran unit tests
-          command: nox -s fortran_unit
+          command: |
+            apt-get install lcov
+            nox -s fortran_unit
       - run:
           name: Functional tests in Python 3.6
           command: nox -s "functional(py='3.6')"

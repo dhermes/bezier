@@ -706,7 +706,7 @@ contains
                num_reduced_nodes, dimension_, reduced(:num_reduced_nodes, :), &
                work(:num_reduced_nodes - 1, :), not_implemented)
           if (not_implemented) then
-             return
+             return  ! LCOV_EXCL_LINE
           else
              num_reduced_nodes = num_reduced_nodes - 1
              ! Update `reduced` based on the **new** number of nodes.

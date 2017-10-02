@@ -374,8 +374,8 @@ def clean(session):
 
 @nox.session
 def fortran_unit(session):
-    # No need to create a virtualenv.
-    session.virtualenv = False
+    session.interpreter = SINGLE_INTERP
+    session.install('lcov_cobertura', 'pycobertura')
 
     if py.path.local.sysfind('make') is None:
         session.skip('`make` must be installed')
@@ -383,8 +383,22 @@ def fortran_unit(session):
     if py.path.local.sysfind('gfortran') is None:
         session.skip('`gfortran` must be installed')
 
+    if py.path.local.sysfind('lcov') is None:
+        session.skip('`lcov` must be installed')
+
     test_dir = get_path('tests', 'fortran')
+    lcov_filename = os.path.join(test_dir, 'coverage.info')
     session.chdir(test_dir)
 
     session.run('make', 'test')
+    session.run(
+        'lcov', '--capture',
+        '--directory', test_dir,
+        '--output-file', lcov_filename,
+    )
+    session.run(
+        'python',
+        get_path('scripts', 'report_lcov.py'),
+        '--lcov-filename', lcov_filename,
+    )
     session.run('make', 'clean')

@@ -312,15 +312,15 @@ contains
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then
-       py_exc = FROM_LINEARIZED_WIGGLE_FAIL
-       return
+       py_exc = FROM_LINEARIZED_WIGGLE_FAIL  ! LCOV_EXCL_LINE
+       return  ! LCOV_EXCL_LINE
     end if
     refined_s = s
 
     call wiggle_interval(refined_t, t, success)
     if (.NOT. success) then
-       py_exc = FROM_LINEARIZED_WIGGLE_FAIL
-       return
+       py_exc = FROM_LINEARIZED_WIGGLE_FAIL  ! LCOV_EXCL_LINE
+       return  ! LCOV_EXCL_LINE
     end if
     refined_t = t
 
