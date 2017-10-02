@@ -853,12 +853,17 @@ def bezier_roots(coeffs):
 def lu_companion(top_row, value):
     r"""Compute an LU-factored :math:`C - t I` and its 1-norm.
 
+    .. _dgecon:
+        http://www.netlib.org/lapack/explore-html/dd/d9a/group__double_g_ecomputational_ga188b8d30443d14b1a3f7f8331d87ae60.html#ga188b8d30443d14b1a3f7f8331d87ae60
+    .. _dgetrf:
+        http://www.netlib.org/lapack/explore-html/dd/d9a/group__double_g_ecomputational_ga0019443faea08275ca60a734d0593e60.html#ga0019443faea08275ca60a734d0593e60
+
     .. note::
 
-       The output of this function is intended to be used with ``dgecon``
+       The output of this function is intended to be used with `dgecon`_
        from LAPACK. ``dgecon`` expects both the 1-norm of the matrix
        and expects the matrix to be passed in an already LU-factored form
-       (via ``dgetrf``).
+       (via `dgetrf`_).
 
     The companion matrix :math:`C` is given by the ``top_row``, for
     example, the polynomial :math:`t^3 + 3 t^2 - t + 2` has
@@ -940,7 +945,7 @@ def lu_companion(top_row, value):
         * the 1-norm the matrix :math:`C - t I`
 
         As mentioned above, these two values are meant to be used with
-        ``dgecon``.
+        `dgecon`_.
     """
     degree, = top_row.shape
     lu_mat = np.zeros((degree, degree), order='F')

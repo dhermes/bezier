@@ -165,7 +165,8 @@ def docs(session):
     # Install all dependencies.
     session.install(*DOCS_DEPS)
     # Install this package.
-    session.install('.')
+    env = {'BEZIER_NO_EXTENSIONS': 'True'}
+    session.run('pip', 'install', '.', env=env)
 
     # Run the script for building docs.
     command = get_path('scripts', 'build_docs.sh')

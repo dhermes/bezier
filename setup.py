@@ -48,6 +48,11 @@ Sorry for this inconvenience. For more information or to help, visit:
 
     https://github.com/dhermes/bezier/issues/26
 """
+NO_EXTENSIONS_ENV = 'BEZIER_NO_EXTENSIONS'
+NO_SPEEDUPS_MESSAGE = """\
+The {} environment variable has been used to explicitly disable the
+building of extension modules.
+""".format(NO_EXTENSIONS_ENV)
 REQUIREMENTS = (
     'numpy >= 1.13.3',
     'six >= 1.11.0',
@@ -69,7 +74,10 @@ def is_installed(requirement):
 
 
 def extension_modules():
-    if os.name == 'nt':
+    if NO_EXTENSIONS_ENV in os.environ:
+        print(NO_SPEEDUPS_MESSAGE)
+        return []
+    elif os.name == 'nt':
         print(WINDOWS_MESSAGE, file=sys.stderr)
         return []
     elif setup_helpers.BuildFortranThenExt.has_f90_compiler():

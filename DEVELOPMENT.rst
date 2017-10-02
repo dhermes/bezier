@@ -78,6 +78,17 @@ out of Python and into `CMake`_, `SCons`_ or another build tool.
 .. _CMake: https://cmake.org
 .. _SCons: http://scons.org
 
+To explicitly disable the building of extensions, the ``BEZIER_NO_EXTENSIONS``
+can be used:
+
+.. code-block:: console
+
+   $ BEZIER_NO_EXTENSIONS=True .../bin/pip install .
+
+This environment variable is actually used for the ``nox -s docs`` session
+to emulate the `RTD`_ build environment (where no Fortran compiler is
+present).
+
 Dependencies
 ============
 
