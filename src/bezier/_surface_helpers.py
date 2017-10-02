@@ -1418,8 +1418,9 @@ def classify_intersection(intersection):
 
     or the point of tangency is a "degenerate" part of two
     :class:`.CurvedPolygon` intersections. It is "degenerate"
-    because from one direction, the point should be classified
-    as ``1`` and from another as ``0``:
+    because from one direction, the point should be classified as
+    :attr:`~._IntersectionClassification.FIRST` and from another as
+    :attr:`~._IntersectionClassification.SECOND`.
 
     .. image:: images/classify_intersection5.png
        :align: center
@@ -1605,7 +1606,7 @@ def classify_intersection(intersection):
         intersection (.Intersection): An intersection object.
 
     Returns:
-        IntersectionClassification: The "inside" curve type, based on
+        _IntersectionClassification: The "inside" curve type, based on
         the classification enum.
 
     Raises:
@@ -2155,8 +2156,8 @@ def get_next(intersection, intersections, unused):
 
     Raises:
         ValueError: If the intersection is not classified as
-            :attr:`~.IntersectionClassification.first` or
-            :attr:`~.IntersectionClassification.second`.
+            :attr:`~._IntersectionClassification.FIRST` or
+            :attr:`~._IntersectionClassification.SECOND`.
     """
     result = None
     if intersection.interior_curve is IntersectionClassification.FIRST:
@@ -2199,8 +2200,8 @@ def ends_to_curve(start_node, end_node):
             the first curve when classified as "first" or disagree on
             the second curve when classified as "second".
         ValueError: If the ``start_node`` is not classified as
-            :attr:`~.IntersectionClassification.first` or
-            :attr:`~.IntersectionClassification.second`.
+            :attr:`~._IntersectionClassification.FIRST` or
+            :attr:`~._IntersectionClassification.SECOND`.
     """
     if start_node.interior_curve is IntersectionClassification.FIRST:
         first = start_node.first
@@ -2279,9 +2280,9 @@ def tangent_only_intersections(intersections, surface1, surface2):
     internally tangent to the other.
 
     Thus we expect every intersection in ``intersections`` to be
-    classified as :attr:`~.IntersectionClassification.tangent_first`,
-    :attr:`~.IntersectionClassification.tangent_second` or
-    :attr:`~.IntersectionClassification.opposed`.
+    classified as :attr:`~._IntersectionClassification.TANGENT_FIRST`,
+    :attr:`~._IntersectionClassification.TANGENT_SECOND` or
+    :attr:`~._IntersectionClassification.OPPOSED`.
 
     What's more, we expect all intersections to be classified the same for
     a given pairing.
@@ -2300,9 +2301,9 @@ def tangent_only_intersections(intersections, surface1, surface2):
 
     Raises:
         ValueError: If there are intersections of more than one type among
-            :attr:`~.IntersectionClassification.tangent_first`,
-            :attr:`~.IntersectionClassification.tangent_second` or
-            :attr:`~.IntersectionClassification.opposed`.
+            :attr:`~._IntersectionClassification.TANGENT_FIRST`,
+            :attr:`~._IntersectionClassification.TANGENT_SECOND` or
+            :attr:`~._IntersectionClassification.OPPOSED`.
         ValueError: If there is a unique classification, but it isn't one
             of the tangent types.
     """
@@ -2521,6 +2522,13 @@ class _IntersectionClassification(enum.Enum):
     """Enum classifying the "interior" curve in an intersection.
 
     Provided as the output values for :func:`.classify_intersection`.
+
+    .. note::
+
+       There is also a Cython implementation of this enum, which
+       will be used if it can be built. If the Cython type is **not**
+       available, this type will be aliased within the module as
+       ``IntersectionClassification`` (i.e. it will be made public).
     """
 
     FIRST = 0

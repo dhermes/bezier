@@ -449,7 +449,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         point (Optional[numpy.ndarray]): The point where the two
             curves actually intersect.
         interior_curve (Optional[ \
-            ~bezier._surface_helpers.IntersectionClassification]): The
+            ~bezier._surface_helpers._IntersectionClassification]): The
             classification of the intersection.
     """
 
