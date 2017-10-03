@@ -176,6 +176,11 @@ def _subdivide_nodes(nodes):
     Does so by taking the unit interval (i.e. the domain of the surface) and
     splitting it into two sub-intervals by splitting down the middle.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         nodes (numpy.ndarray): The nodes defining a B |eacute| zier curve.
 
@@ -241,6 +246,11 @@ def _evaluate_multi_barycentric(nodes, lambda1, lambda2):
     Does so via a modified Horner's method for each pair of values
     in ``lambda1`` and ``lambda2``, rather than using the
     de Casteljau algorithm.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
@@ -318,6 +328,11 @@ def _compute_length(nodes):
 
     using `QUADPACK`_ (via SciPy).
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
 
@@ -357,6 +372,11 @@ def _elevate_nodes(nodes):
        w_j &= \frac{j}{n + 1} v_{j - 1} + \frac{n + 1 - j}{n + 1} v_j \\
        w_{n + 1} &= v_n
        \end{align*}
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
@@ -487,6 +507,11 @@ def _evaluate_hodograph(s, nodes):
     where each forward difference is given by
     :math:`\Delta v_j = v_{j + 1} - v_j`.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         nodes (numpy.ndarray): The nodes of a curve.
         s (float): A parameter along the curve at which the Hodograph
@@ -543,6 +568,11 @@ def _get_curvature(nodes, tangent_vec, s):
 
        import make_images
        make_images.get_curvature(nodes, s, tangent_vec, curvature)
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): The nodes of a curve.
@@ -725,6 +755,11 @@ def _newton_refine(nodes, point, s):
     :math:`\sqrt{\varepsilon}` rather than machine precision
     as expected.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         nodes (numpy.ndarray): The nodes defining a B |eacute| zier curve.
         point (numpy.ndarray): A point on the curve.
@@ -754,6 +789,11 @@ def _locate_point(nodes, point):
 
        This assumes, but does not check, that ``point`` is ``1xD``,
        where ``D`` is the dimension that ``curve`` is in.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): The nodes defining a B |eacute| zier curve.
@@ -799,6 +839,11 @@ def _reduce_pseudo_inverse(nodes):
 
     Does so by using the pseudo-inverse of the degree elevation
     operator (which is overdetermined).
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): The nodes in the curve.
@@ -910,6 +955,11 @@ def maybe_reduce(nodes):
 
 def _full_reduce(nodes):
     """Apply degree reduction to ``nodes`` until it can no longer be reduced.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): The nodes in the curve.

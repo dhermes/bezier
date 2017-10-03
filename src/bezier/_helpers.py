@@ -59,6 +59,11 @@ def _vector_close(vec1, vec2, eps=_EPS):
        i.e. that no NaN or infinite numbers occur. NumPy provides
        :func:`np.allclose` for coverage of **all** cases.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         vec1 (numpy.ndarray): First vector for comparison.
         vec2 (numpy.ndarray): Second vector for comparison.
@@ -90,6 +95,11 @@ def _in_interval(value, start, end):
        that allows wiggle room around the endpoints to account
        for round-off.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         value (float): The value to check.
         start (float): The (inclusive) start of the interval.
@@ -103,6 +113,11 @@ def _in_interval(value, start, end):
 
 def _bbox(nodes):
     """Get the bounding box for set of points.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
        nodes (numpy.ndarray): A set of points.
@@ -122,6 +137,11 @@ def _contains_nd(nodes, point):
     Like :func:`contains` but supports points in arbitrary dimension.
     Unlike :func:`contains`, this function directly uses ``<=`` and
     ``>=`` for comparison (:func:`contains` uses :func:`in_interval`).
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
        nodes (numpy.ndarray): A set of points.
@@ -155,6 +175,11 @@ def _cross_product(vec0, vec1):
 
     and just returns the :math:`z` component.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         vec0 (numpy.ndarray): A vector as a 1x2 NumPy array.
         vec1 (numpy.ndarray): A vector as a 1x2 NumPy array.
@@ -172,8 +197,13 @@ def _ulps_away(value1, value2, num_bits=1):
     for ``value1`` and then checks that the different between the values
     does not exceed ``n`` ULPs.
 
-    When ``value1=0`` or ``value2=0``, we instead check that the other is
-    less than :math:`2^{-40}` (``_EPS``) in magnitude.
+    When ``value1 == 0`` or ``value2 == 0``, we instead check that the other
+    is less than :math:`2^{-40}` (``_EPS``) in magnitude.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         value1 (float): The first value that being compared.

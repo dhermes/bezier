@@ -567,6 +567,11 @@ def _parallel_different(start0, end0, start1, end1):
        However, the most "correct" version of this function likely
        should allow for some round off.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         start0 (numpy.ndarray): A 1x2 NumPy array that is the start
             vector :math:`S_0` of the parametric line :math:`L_0(s)`.
@@ -635,6 +640,11 @@ def _from_linearized_low_level(
 
     The inputs are the "fully-unpacked" values from two
     :class:`.Linearization` objects: ``first`` and ``second``.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         error1 (float): The linearization error for the first curve.
@@ -869,6 +879,11 @@ def _bbox_line_intersect(nodes, line_start, line_end):
        "tangent" intersections of the box and segment and other types
        of intersection. However, the distinction is worthwhile, so this
        function should be "upgraded" at some point.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): Points (Nx2) that determine a bounding box.

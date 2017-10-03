@@ -372,6 +372,11 @@ def _newton_refine(s, nodes1, t, nodes2):
        >>> s3 == t3 == 0.5
        True
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         s (float): Parameter of a near-intersection along the first curve.
         nodes1 (numpy.ndarray): Nodes of first curve forming intersection.

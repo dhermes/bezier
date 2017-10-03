@@ -922,6 +922,11 @@ def _jacobian_det(nodes, degree, st_vals):
        >>> 2 * (s_vals + t_vals + 2)
        array([ 4.5 , 5.75, 6. ])
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Args:
         nodes (numpy.ndarray): Nodes defining a B |eacute| zier
             surface :math:`B(s, t)`.
