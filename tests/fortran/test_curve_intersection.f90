@@ -14,13 +14,14 @@ module test_curve_intersection
 
   use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
-  use curve, only: evaluate_multi, subdivide_nodes
+  use curve, only: CurveData, evaluate_multi, subdivide_nodes
   use curve_intersection, only: &
-       BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
-       BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
-       FROM_LINEARIZED_PARALLEL, linearization_error, segment_intersection, &
-       newton_refine_intersect, bbox_intersect, parallel_different, &
-       from_linearized, bbox_line_intersect
+       Intersection, BoxIntersectionType_INTERSECTION, &
+       BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
+       FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
+       linearization_error, segment_intersection, newton_refine_intersect, &
+       bbox_intersect, parallel_different, from_linearized, &
+       bbox_line_intersect, add_intersection
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -42,6 +43,7 @@ contains
     call test_parallel_different(success)
     call test_from_linearized(success)
     call test_bbox_line_intersect(success)
+    call test_add_intersection(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -792,5 +794,56 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_bbox_line_intersect
+
+  subroutine test_add_intersection(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    real(c_double) :: nodes1(3, 2), nodes2(3, 2)
+    type(CurveData), target :: first, second
+    type(Intersection), allocatable :: intersections(:)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "add_intersection"
+
+    ! CASE 1: Intersections is **not allocated**.
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [2.0_dp, 1.0_dp]
+    nodes1(3, :) = [1.0_dp, 5.0_dp]
+    first%nodes = nodes1
+
+    nodes2(1, :) = [0.0_dp, 4.0_dp]
+    nodes2(2, :) = [2.0_dp, 4.0_dp]
+    nodes2(3, :) = [3.0_dp, 4.0_dp]
+    second%nodes = nodes2
+
+    case_success = .NOT. allocated(intersections)
+    call add_intersection(first, 0.25_dp, second, 0.5_dp, intersections)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         intersections(1)%s == 0.25_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         intersections(1)%t == 0.5_dp .AND. &
+         associated(intersections(1)%second, second))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Intersections is allocated.
+    case_success = allocated(intersections)
+    call add_intersection(second, 0.375_dp, first, 0.125_dp, intersections)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         intersections(2)%s == 0.375_dp .AND. &
+         associated(intersections(2)%first, second) .AND. &
+         intersections(2)%t == 0.125_dp .AND. &
+         associated(intersections(2)%second, first))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_add_intersection
 
 end module test_curve_intersection

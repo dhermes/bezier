@@ -15,15 +15,25 @@ module curve_intersection
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   use helpers, only: cross_product, bbox, wiggle_interval, in_interval
-  use curve, only: evaluate_multi, evaluate_hodograph
+  use curve, only: CurveData, evaluate_multi, evaluate_hodograph
   implicit none
   private
   public &
-       BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
-       BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
-       FROM_LINEARIZED_PARALLEL, FROM_LINEARIZED_WIGGLE_FAIL, &
-       linearization_error, segment_intersection, newton_refine_intersect, &
-       bbox_intersect, parallel_different, from_linearized, bbox_line_intersect
+       Intersection, BoxIntersectionType_INTERSECTION, &
+       BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
+       FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
+       FROM_LINEARIZED_WIGGLE_FAIL, linearization_error, &
+       segment_intersection, newton_refine_intersect, bbox_intersect, &
+       parallel_different, from_linearized, bbox_line_intersect, &
+       add_intersection
+
+  ! NOTE: This (for now) is not meant to be C-interoperable.
+  type :: Intersection
+     real(c_double) :: s = -1.0_dp
+     real(c_double) :: t = -1.0_dp
+     type(CurveData), pointer :: first => null()
+     type(CurveData), pointer :: second => null()
+  end type Intersection
 
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
   integer(c_int), parameter :: BoxIntersectionType_TANGENT = 1
@@ -427,5 +437,43 @@ contains
     enum_ = BoxIntersectionType_DISJOINT
 
   end subroutine bbox_line_intersect
+
+  subroutine add_intersection(first, s, second, t, intersections)
+
+    ! Adds an intersection to list of ``intersections``.
+    !
+    ! **DOES NOT** accounts for repeated intersections, but should.
+
+    type(CurveData), target, intent(in) :: first
+    real(c_double), intent(in) :: s
+    type(CurveData), target, intent(in) :: second
+    real(c_double), intent(in) :: t
+    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    ! Variables outside of signature.
+    integer(c_int) :: num_intersections, index_
+    type(Intersection), allocatable :: intersections_swap(:)
+
+    if (allocated(intersections)) then
+       ! NOTE: It's expensive to re-size just to add a single intersection,
+       !       but we expect the number of intersections to be low. The
+       !       trade-off is that we don't have to track the "length" of
+       !       ``intersections`` separate from the capacity.
+       num_intersections = size(intersections)
+       allocate(intersections_swap(num_intersections + 1))
+       intersections_swap(:num_intersections) = ( &
+            intersections(:num_intersections))
+       call move_alloc(intersections_swap, intersections)
+       index_ = num_intersections + 1
+    else
+       allocate(intersections(1))
+       index_ = 1
+    end if
+
+    intersections(index_)%s = s
+    intersections(index_)%t = t
+    intersections(index_)%first => first
+    intersections(index_)%second => second
+
+  end subroutine add_intersection
 
 end module curve_intersection

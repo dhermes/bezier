@@ -891,7 +891,7 @@ contains
     ! x(s) = s (s^2 + 6) / 2
     ! y(s) = 6 s (s - 1)^2
     ! x'(s)^2 + y'(s)^2 = (9/4)(145s^4 - 384s^3 + 356s^2 - 128s + 20)
-    ! NOTE: This "literal" has more precision than the type.
+    ! NOTE: This "literal" has more precision than the type provides.
     expected = 4.0916195514424730685_dp
     case_success = ( &
          abs(length - expected) <= spacing(expected) .AND. &

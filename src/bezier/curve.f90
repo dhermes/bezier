@@ -22,15 +22,27 @@ module curve
        specialize_curve_generic, specialize_curve_quadratic, &
        subdivide_nodes_generic, split_candidate, projection_error, can_reduce
   public &
-       LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
+       CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
        newton_refine, locate_point, elevate_nodes, get_curvature, &
        reduce_pseudo_inverse, full_reduce, compute_length
 
+  ! NOTE: This (for now) is not meant to be C-interoperable. This is mostly
+  !       because the shape is encoded in `nodes`, so it would be wasteful to
+  !       also store `num_nodes` and `dimension`. In addition, `allocatable`
+  !       (rather than `pointer`) is used for the `nodes` so that the data
+  !       is scoped with the `CurveData` instance.
+  type :: CurveData
+     real(c_double) :: start = 0.0_dp
+     real(c_double) :: end_ = 1.0_dp
+     real(c_double), allocatable :: nodes(:, :)
+     type(CurveData), pointer :: root => null()
+  end type CurveData
+
   ! For ``locate_point``.
   type :: LocateCandidate
-     real(c_double) :: start
-     real(c_double) :: end_
+     real(c_double) :: start = 0.0_dp
+     real(c_double) :: end_ = 1.0_dp
      real(c_double), allocatable :: nodes(:, :)
   end type LocateCandidate
 
