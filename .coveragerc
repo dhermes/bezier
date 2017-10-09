@@ -1,4 +1,6 @@
 [run]
+omit =
+    */bezier/__config__.py
 branch = True
 
 [report]
