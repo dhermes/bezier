@@ -16,7 +16,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/types.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/types.o
+>   build/temp.linux-x86_64-3.6/src/bezier/types.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
@@ -35,7 +37,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/helpers.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/helpers.o
+>   build/temp.linux-x86_64-3.6/src/bezier/helpers.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
@@ -54,7 +58,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/curve.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/curve.o
+>   build/temp.linux-x86_64-3.6/src/bezier/curve.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
@@ -73,7 +79,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/surface.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/surface.o
+>   build/temp.linux-x86_64-3.6/src/bezier/surface.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
@@ -92,7 +100,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/curve_intersection.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/curve_intersection.o
+>   build/temp.linux-x86_64-3.6/src/bezier/curve_intersection.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
@@ -106,7 +116,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/quadpack/d1mach.f \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/quadpack/d1mach.o
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/d1mach.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
@@ -120,7 +132,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/quadpack/dqelg.f \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqelg.o
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqelg.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
@@ -134,7 +148,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/quadpack/dqpsrt.f \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqpsrt.o
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqpsrt.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
@@ -148,7 +164,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/quadpack/dqk21.f \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqk21.o
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqk21.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
@@ -162,7 +180,9 @@ $ /usr/bin/gfortran \
 >   -c \
 >   src/bezier/quadpack/dqagse.f \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqagse.o
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqagse.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
 ----------------------------------------
 $ ar \
 >   -cr \
