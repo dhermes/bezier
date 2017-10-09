@@ -17,7 +17,9 @@ from __future__ import print_function
 import collections
 import copy
 import distutils.ccompiler
+import glob
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -528,6 +530,12 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         else:
             self.CLEANUP()
 
+        if is_wsl():
+            so_glob = os.path.join(self.build_lib, 'bezier', '*.so')
+            for filename in glob.glob(so_glob):
+                cmd = ('execstack', '-c', filename)
+                subprocess.check_call(cmd)
+
     def run(self):
         self.set_f90_compiler()
         self.start_journaling()
@@ -539,3 +547,26 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         self.cleanup()
 
         return result
+
+
+def is_wsl():
+    """Check if currently running in Windows Subsystem for Linux.
+
+    WSL will manifest as Linux, but the version information for the
+    Linux distribution will contain Microsoft:
+
+      $ uname --kernel-release
+      4.4.0-43-Microsoft
+      $ uname --kernel-version
+      #1-Microsoft Wed Dec 31 14:42:53 PST 2014
+
+    Returns:
+        bool: Indicating if running on WSL.
+    """
+    if sys.platform in ('linux', 'linux2'):
+        return (
+            'microsoft' in platform.release().lower() or
+            'microsoft' in platform.version().lower()
+        )
+    else:
+        return False

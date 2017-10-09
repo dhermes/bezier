@@ -20,7 +20,8 @@ module curve
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
        SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse, &
        specialize_curve_generic, specialize_curve_quadratic, &
-       subdivide_nodes_generic, split_candidate, projection_error, can_reduce
+       subdivide_nodes_generic, split_candidate, projection_error, &
+       can_reduce, VEC_SIZE_FIRST_DERIV, vec_size
   public &
        CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
@@ -54,6 +55,8 @@ module curve
   real(c_double), parameter :: REDUCE_THRESHOLD = SQRT_PREC
   real(c_double), parameter :: LOCATE_MISS = -1
   real(c_double), parameter :: LOCATE_INVALID = -2
+
+  real(c_double), allocatable :: VEC_SIZE_FIRST_DERIV(:, :)
 
   ! Interface blocks for QUADPACK:dqagse
   abstract interface
@@ -744,7 +747,6 @@ contains
     real(c_double), intent(out) :: length
     integer(c_int), intent(out) :: error_val
     ! Variables outside of signature.
-    real(c_double) :: first_deriv(num_nodes - 1, dimension_)
     real(c_double) :: abserr
     integer(c_int) :: neval
     real(c_double) :: alist(50)
@@ -757,9 +759,9 @@ contains
     ! NOTE: We somewhat replicate code in ``evaluate_hodograph()``
     !       here. This is so we don't re-compute the nodes for the first
     !       derivative every time it is evaluated.
-    first_deriv = (num_nodes - 1) * (nodes(2:, :) - nodes(:num_nodes - 1, :))
+    VEC_SIZE_FIRST_DERIV = (num_nodes - 1) * (nodes(2:, :) - nodes(:num_nodes - 1, :))
     if (num_nodes == 2) then
-       length = norm2(first_deriv)
+       length = norm2(VEC_SIZE_FIRST_DERIV)
        error_val = 0
        return
     end if
@@ -769,23 +771,27 @@ contains
          abserr, neval, error_val, alist, blist, rlist, &
          elist, iord, last)
 
-  contains
-
-    ! Define a closure that evaluates ||B'(s)||_2 where ``s``
-    ! is the argument and ``B'(s)`` is parameterized by ``first_deriv``.
-    real(c_double) function vec_size(s_val) result(norm_)
-      real(c_double), intent(in) :: s_val
-      ! Variables outside of signature.
-      real(c_double) :: evaluated(1, dimension_)
-
-      ! ``evaluate_multi`` takes degree, which is one less than the number
-      ! of nodes, so our derivative is one less than that.
-      call evaluate_multi( &
-           num_nodes - 1, dimension_, first_deriv, 1, [s_val], evaluated)
-      norm_ = norm2(evaluated)
-
-    end function vec_size
-
   end subroutine compute_length
+
+  ! NOTE: This is mean to **ACT** as a closure.
+  ! Evaluates ||B'(s)||_2 where ``s`` is the argument and ``B'(s)`` is
+  ! parameterized by ``VEC_SIZE_FIRST_DERIV``.
+  real(c_double) function vec_size(s_val) result(norm_)
+    real(c_double), intent(in) :: s_val
+    ! Variables outside of signature.
+    real(c_double), allocatable :: evaluated(:, :)
+    integer(c_int) :: num_nodes, dimension_
+
+    num_nodes = size(VEC_SIZE_FIRST_DERIV, 1)
+    dimension_ = size(VEC_SIZE_FIRST_DERIV, 2)
+    allocate(evaluated(1, dimension_))
+
+    ! ``evaluate_multi`` takes degree, which is one less than the number
+    ! of nodes, so our derivative is one less than that.
+    call evaluate_multi( &
+         num_nodes, dimension_, VEC_SIZE_FIRST_DERIV, 1, [s_val], evaluated)
+    norm_ = norm2(evaluated)
+
+  end function vec_size
 
 end module curve
