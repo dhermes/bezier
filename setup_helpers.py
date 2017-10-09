@@ -17,6 +17,7 @@ from __future__ import print_function
 import collections
 import distutils.ccompiler
 import os
+import shutil
 import subprocess
 import sys
 
@@ -47,6 +48,7 @@ GFORTRAN_BAD_PATH = '``gfortran`` library path {} is not a directory.'
 #       specifically "What compiler options should I use for ...?".
 #       I have dropped ``-ffast-math`` because (for now) it causes a headache
 #       in tests and doesn't give an appreciable speed up.
+FPIC = '-fPIC'
 GFORTRAN_SHARED_FLAGS = (  # Used for both "DEBUG" and "OPTIMIZE"
     '-Wall',
     '-Wextra',
@@ -54,7 +56,7 @@ GFORTRAN_SHARED_FLAGS = (  # Used for both "DEBUG" and "OPTIMIZE"
     # ``value == 0.0_dp``
     '-Wno-compare-reals',
     '-Wimplicit-interface',
-    '-fPIC',
+    FPIC,
     '-fmax-errors=1',
     '-std=f2008',
 )
@@ -224,10 +226,17 @@ def extension_modules():
 
         mod_name = 'bezier._{}_speedup'.format(name)
         path = SPEEDUP_FILENAME.format(name)
-        extra_objects = [
-            OBJECT_FILENAME.format(dependency)
-            for dependency in dependencies
-        ]
+        if BuildFortranThenExt.USE_SHARED_LIBRARY:
+            # Here we don't depend on object files since the functionality
+            # is contained in the shared library.
+            extra_objects = []
+        else:
+            # NOTE: These may be treated as relative paths and replaced
+            #       before the extension is actually built.
+            extra_objects = [
+                OBJECT_FILENAME.format(dependency)
+                for dependency in dependencies
+            ]
         extension = setuptools.Extension(
             mod_name,
             [path],
@@ -299,14 +308,25 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
     * Provides an optional "journaling" feature which allows commands invoked
       during the compilation to be logged (or journaled) to a text file.
 
-    Provides a mutable ``PATCH_FUNCTIONS`` list to allow for "patching" when
-    first creating the Fortran compiler ``F90_COMPILER`` that will be
-    attached to the class (not the instances).
+    Provides mutable class attributes:
+
+    * ``PATCH_FUNCTIONS`` list to allow for "patching" when first creating
+      the Fortran compiler ``F90_COMPILER`` that will be attached to the
+      class (not the instances).
+    * ``CUSTOM_STATIC_LIB`` callable that takes a list of object files and
+      uses them to create a static / shared library. If not provided, then
+      :meth:`_default_static_lib` will be used.
+    * ``USE_SHARED_LIBRARY`` flag indicating if extensions will contain built
+      object files or if they will refer to a shared library.
+    * ``CLEANUP`` optional callable that cleans up at the end of :meth:`run`.
     """
 
     # Will be set at runtime, not import time.
     F90_COMPILER = None
     PATCH_FUNCTIONS = []
+    CUSTOM_STATIC_LIB = None
+    USE_SHARED_LIBRARY = False
+    CLEANUP = None
 
     def __init__(self, *args, **kwargs):
         setuptools.command.build_ext.build_ext.__init__(self, *args, **kwargs)
@@ -324,6 +344,8 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         c_compiler = distutils.ccompiler.new_compiler()
         if c_compiler is None:
             return
+        if c_compiler.compiler_type == 'msvc':
+            c_compiler.initialize()
 
         f90_compiler = numpy.distutils.fcompiler.new_fcompiler(
             requiref90=True, c_compiler=c_compiler)
@@ -347,7 +369,17 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
     @classmethod
     def get_library_dirs(cls):
         cls.set_f90_compiler()
-        return cls.F90_COMPILER.libraries, cls.F90_COMPILER.library_dirs
+        if cls.USE_SHARED_LIBRARY:
+            # NOTE: This assumes that the `libbezier` shared library will
+            #       contain all libraries needed (e.g. there is no
+            #       dependendence on ``libgfortran`` or similar). It's expected
+            #       that ``library_dirs`` will be updated at run-time to have
+            #       temporary build directories added.
+            libraries = ['bezier']
+            library_dirs = []
+            return libraries, library_dirs
+        else:
+            return cls.F90_COMPILER.libraries, cls.F90_COMPILER.library_dirs
 
     def start_journaling(self):
         """Capture calls to the system by compilers.
@@ -421,6 +453,29 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             msg = BAD_JOURNAL.format(exc)
             print(msg, file=sys.stderr)
 
+    def _default_static_lib(self, obj_files):
+        """Create a static library (i.e. a ``.a`` / ``.lib`` file).
+
+        Args:
+            obj_files (List[str]): List of paths of compiled object files.
+        """
+        c_compiler = self.F90_COMPILER.c_compiler
+
+        static_lib_dir = os.path.join(self.build_lib, 'bezier', 'lib')
+        if not os.path.exists(static_lib_dir):
+            os.makedirs(static_lib_dir)
+        c_compiler.create_static_lib(
+            obj_files, 'bezier', output_dir=static_lib_dir)
+
+        # NOTE: We must "modify" the paths for the ``extra_objects`` in
+        #       each extension since they were compiled with
+        #       ``output_dir=self.build_temp``.
+        for extension in self.extensions:
+            extension.extra_objects[:] = [
+                os.path.join(self.build_temp, rel_path)
+                for rel_path in extension.extra_objects
+            ]
+
     def compile_fortran_obj_files(self):
         source_files_quadpack = [
             QUADPACK_SOURCE_FILENAME.format(mod_name)
@@ -433,22 +488,42 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         source_files = source_files_quadpack + source_files_bezier
         obj_files = self.F90_COMPILER.compile(
             source_files,
-            output_dir=None,
+            output_dir=self.build_temp,
             macros=[],
             include_dirs=[],
             debug=None,
-            extra_postargs=[],
+            extra_postargs=[
+                '-J',
+                self.build_temp,
+            ],
             depends=[],
         )
 
-        # Create a static library (i.e. a ``.a`` / ``.lib`` file).
-        c_compiler = self.F90_COMPILER.c_compiler
+        if self.CUSTOM_STATIC_LIB is None:
+            self._default_static_lib(obj_files)
+        else:
+            self.CUSTOM_STATIC_LIB(obj_files)
 
-        static_lib_dir = os.path.join(self.build_lib, 'bezier', 'lib')
-        if not os.path.exists(static_lib_dir):
-            os.makedirs(static_lib_dir)
-        c_compiler.create_static_lib(
-            obj_files, 'bezier', output_dir=static_lib_dir)
+    def _default_cleanup(self):
+        """Default cleanup after :meth:`run`.
+
+        For in-place builds, moves the built shared library into the source
+        directory.
+        """
+        if not self.inplace:
+            return
+
+        shutil.move(
+            os.path.join(self.build_lib, 'bezier', 'lib'),
+            os.path.join('src', 'bezier'),
+        )
+
+    def cleanup(self):
+        """Cleanup after :meth:`run`."""
+        if self.CLEANUP is None:
+            self._default_cleanup()
+        else:
+            self.CLEANUP()
 
     def run(self):
         self.set_f90_compiler()
@@ -458,4 +533,6 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
 
         result = setuptools.command.build_ext.build_ext.run(self)
         self.save_journal()
+        self.cleanup()
+
         return result

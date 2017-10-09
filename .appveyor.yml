@@ -158,8 +158,8 @@ test_script:
   - ps: if ($env:TEST_TYPE -eq "doctest")
         {
           sphinx-build -W `
-            -b doctest `
-            -d docs/build/doctrees `
-            docs `
-            docs/build/doctest;
+              -b doctest `
+              -d docs/build/doctrees `
+              docs `
+              docs/build/doctest;
         }

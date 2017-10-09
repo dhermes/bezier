@@ -1,7 +1,8 @@
 include README.rst LICENSE
 include setup_helpers.py setup_helpers_osx.py
 graft src/bezier
+global-exclude *.so *.pyd
 global-exclude *.o *.obj
-global-exclude *.pyc __pycache__
+global-exclude *.a *.def *.exp
 global-exclude *.pyx
-global-exclude *.so *.a
+global-exclude *.pyc __pycache__

@@ -22,6 +22,7 @@ import py.path
 
 
 NUMPY = 'numpy >= 1.13.3'
+SCIPY = 'scipy >= 1.0.0rc1'
 MOCK_DEP = 'mock >= 1.3.0'
 SEABORN_DEP = 'seaborn >= 0.8'
 BASE_DEPS = (
@@ -108,7 +109,7 @@ def unit(session, py):
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
         session.interpreter = 'python{}'.format(py)
-        local_deps = BASE_DEPS + ('scipy',)
+        local_deps = BASE_DEPS + (SCIPY,)
 
     # Install all test dependencies.
     session.install(*local_deps)
@@ -125,7 +126,7 @@ def cover(session):
     session.interpreter = SINGLE_INTERP
 
     # Install all test dependencies.
-    local_deps = BASE_DEPS + ('scipy', 'pytest-cov', 'coverage')
+    local_deps = BASE_DEPS + (SCIPY, 'pytest-cov', 'coverage')
     session.install(*local_deps)
     # Install this package.
     session.install('.')
@@ -349,6 +350,8 @@ def clean(session):
         get_path('docs', '__pycache__'),
         get_path('docs', 'build'),
         get_path('src', 'bezier', '__pycache__'),
+        get_path('src', 'bezier', 'extra-dll'),
+        get_path('src', 'bezier', 'lib'),
         get_path('tests', '__pycache__'),
         get_path('tests', 'functional', '__pycache__'),
         get_path('tests', 'unit', '__pycache__'),
@@ -356,6 +359,9 @@ def clean(session):
     clean_globs = (
         get_path('.coverage'),
         get_path('*.mod'),
+        get_path('*.pyc'),
+        get_path('src', 'bezier', '*.pyc'),
+        get_path('src', 'bezier', '*.pyd'),
         get_path('src', 'bezier', '*.so'),
         get_path('src', 'bezier', 'quadpack', '*.o'),
         get_path('src', 'bezier', '*.o'),
