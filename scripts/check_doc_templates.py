@@ -128,13 +128,21 @@ DOCS_IMG = """\
    :target: https://bezier.readthedocs.io/en/{rtd_version}/
    :alt: Documentation Status
 """
-CIRCLECI_BADGE = 'https://circleci.com/gh/dhermes/bezier.svg?style=shield'
+CIRCLECI_BADGE = (
+    'https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?'
+    'maxAge=3600&label=Linux')
 CIRCLECI_BADGE_RELEASE = (
     'https://cdn.rawgit.com/dhermes/bezier/{version}/'
     'docs/circleci-passing.svg')
+TRAVIS_BADGE = (
+    'https://img.shields.io/travis/dhermes/bezier/master.svg?'
+    'maxAge=3600&label=Mac%20OSX')
+TRAVIS_BADGE_RELEASE = (
+    'https://cdn.rawgit.com/dhermes/bezier/{version}/'
+    'docs/travis-passing.svg')
 APPVEYOR_BADGE = (
-    'https://ci.appveyor.com/api/projects/status/github/'
-    'dhermes/bezier?svg=true')
+    'https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?'
+    'maxAge=3600&label=Windows')
 APPVEYOR_BADGE_RELEASE = (
     'https://cdn.rawgit.com/dhermes/bezier/{version}/'
     'docs/appveyor-passing.svg')
@@ -274,6 +282,8 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
         'revision': revision,
         'circleci_badge': CIRCLECI_BADGE,
         'circleci_path': '',
+        'travis_badge': TRAVIS_BADGE,
+        'travis_path': '',
         'appveyor_badge': APPVEYOR_BADGE,
         'appveyor_path': '',
         'coveralls_badge': COVERALLS_BADGE,
@@ -345,6 +355,8 @@ def release_readme_verify():
         versions_img='',
         circleci_badge=CIRCLECI_BADGE_RELEASE,
         circleci_path='/{circleci_build}',
+        travis_badge=TRAVIS_BADGE_RELEASE,
+        travis_path='/builds/{travis_build}',
         appveyor_badge=APPVEYOR_BADGE_RELEASE,
         appveyor_path='/build/{appveyor_build}',
         coveralls_badge=COVERALLS_BADGE_RELEASE,
@@ -405,6 +417,8 @@ def _index_verify(index_file, **extra_kwargs):
         'revision': REVISION,
         'circleci_badge': CIRCLECI_BADGE,
         'circleci_path': '',
+        'travis_badge': TRAVIS_BADGE,
+        'travis_path': '',
         'appveyor_badge': APPVEYOR_BADGE,
         'appveyor_path': '',
         'coveralls_badge': COVERALLS_BADGE,
@@ -459,6 +473,7 @@ def release_docs_side_effect(content):
     # Then reset the actual template arguments.
     result = result.replace('{{version}}', '{version}')
     result = result.replace('{{circleci_build}}', '{circleci_build}')
+    result = result.replace('{{travis_build}}', '{travis_build}')
     result = result.replace('{{appveyor_build}}', '{appveyor_build}')
     result = result.replace('{{coveralls_build}}', '{coveralls_build}')
 
@@ -484,6 +499,8 @@ def release_docs_index_verify():
         revision=version,
         circleci_badge=CIRCLECI_BADGE_RELEASE,
         circleci_path='/{circleci_build}',
+        travis_badge=TRAVIS_BADGE_RELEASE,
+        travis_path='/builds/{travis_build}',
         appveyor_badge=APPVEYOR_BADGE_RELEASE,
         appveyor_path='/build/{appveyor_build}',
         coveralls_badge=COVERALLS_BADGE_RELEASE,

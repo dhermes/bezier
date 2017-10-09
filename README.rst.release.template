@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |appveyor-build| |coverage|
+|circle-build| |travis-build| |appveyor-build| |coverage|
 
 |docs| |zenodo| |JOSS|
 
@@ -171,6 +171,9 @@ details, see `the LICENSE`_.
 .. |circle-build| image:: https://cdn.rawgit.com/dhermes/bezier/{version}/docs/circleci-passing.svg
    :target: https://circleci.com/gh/dhermes/bezier/{circleci_build}
    :alt: CircleCI Build
+.. |travis-build| image:: https://cdn.rawgit.com/dhermes/bezier/{version}/docs/travis-passing.svg
+   :target: https://travis-ci.org/dhermes/bezier/builds/{travis_build}
+   :alt: Travis Build
 .. |appveyor-build| image:: https://cdn.rawgit.com/dhermes/bezier/{version}/docs/appveyor-passing.svg
    :target: https://ci.appveyor.com/project/dhermes/bezier/build/{appveyor_build}
    :alt: AppVeyor CI Build
