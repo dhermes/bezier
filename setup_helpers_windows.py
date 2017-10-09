@@ -117,11 +117,14 @@ def patch_cmd(cmd_class):
     cmd_class.USE_SHARED_LIBRARY = False
     cmd_class.CLEANUP = run_cleanup
 
+    cmd_class.set_f90_compiler()
+    f90_compiler = cmd_class.F90_COMPILER
+    if f90_compiler is None:
+        return
+
     # If the Fortan compiler is ``gfortran``, remove ``-fPIC``.
     # NOTE: Calling ``set_f90_compiler`` relies on the set of
     #       patch functions added to ``cmd_class``.
-    cmd_class.set_f90_compiler()
-    f90_compiler = cmd_class.F90_COMPILER
     if isinstance(f90_compiler, gnu.Gnu95FCompiler):
         setup_helpers.GFORTRAN_SHARED_FLAGS = tuple(
             value for value in setup_helpers.GFORTRAN_SHARED_FLAGS
@@ -130,4 +133,5 @@ def patch_cmd(cmd_class):
 
     c_compiler = f90_compiler.c_compiler
     if c_compiler.compiler_type != 'msvc':
-        raise RuntimeError('')
+        raise NotImplementedError(
+            'MSVC is the only supported C compiler on Windows.')
