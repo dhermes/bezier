@@ -22,14 +22,15 @@ import pkg_resources
 
 
 def modify_path():
+    """Modify the module search path."""
     # Only modify path on Windows.
     if os.name != 'nt':
         return
 
     try:
-        _EXTRA_DLL_DIR = pkg_resources.resource_filename('bezier', 'extra-dll')
-        if os.path.isdir(_EXTRA_DLL_DIR):
-            os.environ['PATH'] += os.pathsep + _EXTRA_DLL_DIR
+        extra_dll_dir = pkg_resources.resource_filename('bezier', 'extra-dll')
+        if os.path.isdir(extra_dll_dir):
+            os.environ['PATH'] += os.pathsep + extra_dll_dir
     except ImportError:
         pass
 

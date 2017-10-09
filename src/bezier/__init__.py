@@ -26,7 +26,7 @@ import pkg_resources
 
 # NOTE: ``__config__`` **must** be the first import because it (may)
 #       modify the search path used to locate shared libraries.
-from bezier import __config__
+from bezier import __config__  # noqa: F401
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface
