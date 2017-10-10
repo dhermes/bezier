@@ -51,7 +51,9 @@ def make_static_lib(build_ext_cmd, obj_files):
 
     # Add build lib dir to extensions (for linking).
     for extension in build_ext_cmd.extensions:
-        extension.library_dirs.append(static_lib_dir)
+        library_dirs = extension.library_dirs
+        if static_lib_dir not in library_dirs:
+            library_dirs.append(static_lib_dir)
 
     # NOTE: Would prefer to use a `tuple` but command must be
     #       mutable on Windows.
@@ -114,7 +116,7 @@ def patch_cmd(cmd_class):
         return
 
     cmd_class.CUSTOM_STATIC_LIB = make_static_lib
-    cmd_class.USE_SHARED_LIBRARY = False
+    cmd_class.USE_SHARED_LIBRARY = True
     cmd_class.CLEANUP = run_cleanup
 
     cmd_class.set_f90_compiler()
@@ -126,10 +128,10 @@ def patch_cmd(cmd_class):
     # NOTE: Calling ``set_f90_compiler`` relies on the set of
     #       patch functions added to ``cmd_class``.
     if isinstance(f90_compiler, gnu.Gnu95FCompiler):
-        setup_helpers.GFORTRAN_SHARED_FLAGS = tuple(
-            value for value in setup_helpers.GFORTRAN_SHARED_FLAGS
+        f90_compiler.compiler_f90[:] = [
+            value for value in f90_compiler.compiler_f90
             if value != setup_helpers.FPIC
-        )
+        ]
 
     c_compiler = f90_compiler.c_compiler
     if c_compiler.compiler_type != 'msvc':

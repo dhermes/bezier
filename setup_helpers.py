@@ -15,6 +15,7 @@
 from __future__ import print_function
 
 import collections
+import copy
 import distutils.ccompiler
 import os
 import shutil
@@ -237,6 +238,8 @@ def extension_modules():
                 OBJECT_FILENAME.format(dependency)
                 for dependency in dependencies
             ]
+        # NOTE: Copy ``libraries`` and ``library_dirs`` so they
+        #       aren't shared (and mutable) between extensions.
         extension = setuptools.Extension(
             mod_name,
             [path],
@@ -245,8 +248,8 @@ def extension_modules():
                 np.get_include(),
                 os.path.join('src', 'bezier', 'include'),
             ],
-            libraries=libraries,
-            library_dirs=library_dirs,
+            libraries=copy.deepcopy(libraries),
+            library_dirs=copy.deepcopy(library_dirs),
         )
         extensions.append(extension)
 

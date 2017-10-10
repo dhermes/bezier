@@ -22,7 +22,11 @@ import py.path
 
 
 NUMPY = 'numpy >= 1.13.3'
-SCIPY = 'scipy >= 1.0.0rc1'
+if os.name == 'nt':
+    # Windows wheels don't exist until 1.0.0.
+    SCIPY = 'scipy >= 1.0.0rc1'
+else:
+    SCIPY = 'scipy'
 MOCK_DEP = 'mock >= 1.3.0'
 SEABORN_DEP = 'seaborn >= 0.8'
 BASE_DEPS = (
