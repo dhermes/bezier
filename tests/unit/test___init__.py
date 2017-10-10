@@ -11,11 +11,9 @@
 # limitations under the License.
 
 import os
-import platform
 import unittest
 
 
-PLATFORM_SYSTEM = platform.system().lower()
 CHECK_PKG_MSG = """\
 path     = {!r}
 suffix   = {!r}
@@ -44,9 +42,6 @@ class Test_get_lib(unittest.TestCase):
 
         return bezier.get_lib()
 
-    @unittest.skipIf(
-        PLATFORM_SYSTEM == 'windows',
-        'Static library not yet built on Windows')
     def test_it(self):
         lib_directory = self._call_function_under_test()
         _check_pkg_filename(self, lib_directory, 'lib')
