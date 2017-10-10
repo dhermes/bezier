@@ -2,6 +2,9 @@ version: 1.0.{build}.{branch}
 
 build: off
 
+matrix:
+    fast_finish: true
+
 environment:
 
   global:
