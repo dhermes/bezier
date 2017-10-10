@@ -136,7 +136,7 @@ CIRCLECI_BADGE_RELEASE = (
     'docs/circleci-passing.svg')
 TRAVIS_BADGE = (
     'https://img.shields.io/travis/dhermes/bezier/master.svg?'
-    'maxAge=3600&label=Mac%20OSX')
+    'maxAge=3600&label=Mac%20OS%20X')
 TRAVIS_BADGE_RELEASE = (
     'https://cdn.rawgit.com/dhermes/bezier/{version}/'
     'docs/travis-passing.svg')
