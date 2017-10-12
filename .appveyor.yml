@@ -3,7 +3,12 @@ version: 1.0.{build}.{branch}
 build: off
 
 matrix:
-    fast_finish: true
+  fast_finish: true
+
+# We always use a 64-bit machine, but can build x86 distributions
+# with the PYTHON_ARCH variable.
+platform:
+    - x64
 
 environment:
 
@@ -12,151 +17,132 @@ environment:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: https://stackoverflow.com/a/13751649/163740
-    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\obvci_appveyor_python_build_env.cmd"
+    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\windows_sdk.cmd"
 
   matrix:
 
-    # Pre-installed Miniconda versions, which AppVeyor may upgrade to
-    # a later point release.
     # See: https://www.appveyor.com/docs/installed-software/#python
-    # Borrowed from conda-forge recipes.
 
-    - TARGET_ARCH: x86
-      CONDA_PY: 27
-      PY_CONDITION: "python >=2.7.13,<3"
-      CONDA_INSTALL_LOCN: C:\\Miniconda
+    - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "32"
       TEST_TYPE: base
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 27
-      PY_CONDITION: "python >=2.7.13,<3"
-      CONDA_INSTALL_LOCN: C:\\Miniconda-x64
+    - PYTHON: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "64"
       TEST_TYPE: base
 
-    - TARGET_ARCH: x86
-      CONDA_PY: 35
-      PY_CONDITION: "python=3.5"
-      CONDA_INSTALL_LOCN: C:\\Miniconda35
+    - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "32"
+      MINGW: "C:\\mingw-w64\\i686-6.3.0-posix-dwarf-rt_v5-rev1\\mingw32\\bin"
       TEST_TYPE: base
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 35
-      PY_CONDITION: "python=3.5"
-      CONDA_INSTALL_LOCN: C:\\Miniconda35-x64
+    - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "64"
+      MINGW: "C:\\mingw-w64\\x86_64-6.3.0-posix-seh-rt_v5-rev1\\mingw64\\bin"
       TEST_TYPE: base
 
-    - TARGET_ARCH: x86
-      CONDA_PY: 36
-      PY_CONDITION: "python=3.6"
-      CONDA_INSTALL_LOCN: C:\\Miniconda36
+    - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "32"
+      MINGW: "C:\\mingw-w64\\i686-6.3.0-posix-dwarf-rt_v5-rev1\\mingw32\\bin"
       TEST_TYPE: base
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 36
-      PY_CONDITION: "python=3.6"
-      CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      MINGW: "C:\\mingw-w64\\x86_64-6.3.0-posix-seh-rt_v5-rev1\\mingw64\\bin"
       TEST_TYPE: cover
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 36
-      PY_CONDITION: "python=3.6"
-      CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      MINGW: "C:\\mingw-w64\\x86_64-6.3.0-posix-seh-rt_v5-rev1\\mingw64\\bin"
       TEST_TYPE: functional
 
-    - TARGET_ARCH: x64
-      CONDA_PY: 36
-      PY_CONDITION: "python=3.6"
-      CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      MINGW: "C:\\mingw-w64\\x86_64-6.3.0-posix-seh-rt_v5-rev1\\mingw64\\bin"
       TEST_TYPE: doctest
 
 install:
-  # If there is a newer build queued for the same PR, cancel this one.
-  # The AppVeyor 'rollout builds' option is supposed to serve the same
-  # purpose but it is problematic because it tends to cancel builds pushed
-  # directly to master instead of just PR builds (or the converse).
-  # credits: JuliaLang developers.
-  - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
-      https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
-      Where-Object pullRequestId -eq $env:APPVEYOR_PULL_REQUEST_NUMBER)[0].buildNumber) { `
-        throw "There are newer queued builds for this pull request, failing early." }
+  - cmd: echo "Filesystem root:"
+  - dir C:\
 
-  # Update paths for ``conda``.
-  - cmd: set "OLDPATH=%PATH%"
-  - cmd: set "PATH=%CONDA_INSTALL_LOCN%\\Scripts;%CONDA_INSTALL_LOCN%\\Library\\bin;%PATH%"
+  - echo "Installed SDKs:"
+  - dir "C:/Program Files/Microsoft SDKs/Windows"
 
-  # Update ``conda`` settings.
-  - cmd: conda config --set show_channel_urls true
-  - cmd: conda config --set always_yes true
-  - cmd: conda config --set changeps1 false
-  - cmd: conda config --add channels conda-forge
+  # Prepend "current" Python to the PATH of this build (this cannot be
+  # done from inside the powershell script as it would require to restart
+  # the parent CMD process).
+  - SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
 
-  # Make ``conda`` environment scoped for desired version.
-  - cmd: conda update conda
-  - cmd: conda create --name testing "%PY_CONDITION%"
-
-  # Sleuth: ``conda`` install info.
-  - cmd: conda --version
-  - cmd: conda info --envs
-  - cmd: conda info
-
-  # Activate and update ``conda``.
-  - cmd: set PYTHONUNBUFFERED=1
-  - cmd: activate testing
+  # Prepend MinGW to the PATH of this build so ``gfortran`` is visible
+  # to ``numpy.distutils``.
+  - ps: if (Test-Path env:MINGW)
+        {
+          $env:PATH += ";" + $env:MINGW;
+        }
 
   # Check that we have the expected version and architecture for Python
-  - cmd: python --version
-  - cmd: python -c "import struct; print(struct.calcsize('P') * 8)"
+  - python appveyor\env_info.py
 
-  # Install some of the "difficult" dependencies for ``bezier``.
-  - cmd: conda install matplotlib numpy
+  # Packaging requirements
+  - python -m pip install --upgrade pip setuptools
+  - python -m pip install --upgrade wheel
+
+  # Requirements for `bezier` install
+  - python -m pip install --upgrade numpy
 
   # Install ``bezier``.
-  - "%CMD_IN_ENV% pip install ."
+  - "%CMD_IN_ENV% python -m pip install -vv ."
 
   # Install (hardcoded) test dependencies (should use ``nox``).
 
   # Install (hardcoded) conditional (on base) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "base")
         {
-          conda install pytest mock scipy;
+          python -m pip install pytest mock "scipy >= 1.0.0rc1";
         }
 
   # Install (hardcoded) conditional (on cover) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
-          conda install pytest mock coverage pytest-cov scipy;
+          python -m pip install pytest mock coverage pytest-cov "scipy >= 1.0.0rc1";
         }
 
   # Install (hardcoded) conditional (on functional) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
-          conda install pytest mock;
+          python -m pip install pytest mock;
         }
 
   # Install (hardcoded) conditional (on doctest) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "doctest")
         {
-          conda install Sphinx;
-          pip install sphinx-rtd-theme sphinx-docstring-typing mock;
+          python -m pip install Sphinx sphinx-rtd-theme sphinx-docstring-typing mock;
           $env:NO_IMAGES = "True";
         }
 
 test_script:
   - ps: if ($env:TEST_TYPE -eq "base")
         {
-          py.test tests/unit;
+          python -m pytest tests/unit;
         }
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
-          py.test `
+          python -m pytest `
               --cov=bezier `
               --cov=tests.unit `
-              --cov-fail-under=98 `
               tests/unit;
         }
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
-          py.test tests/functional
+          python -m pytest tests/functional
         }
   - ps: if ($env:TEST_TYPE -eq "doctest")
         {

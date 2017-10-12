@@ -78,9 +78,11 @@ The C headers for ``libbezier`` will be included in the installed package
        print(os.path.basename(directory) + '/')
 
        if directory.endswith('lib') and PLATFORM_SYSTEM == 'windows':
-           # NOTE: This is a (temporary) hack so that doctests can pass
-           #       on Windows even though the directory contents differ.
-           assert not os.path.exists(directory)
+           # NOTE: This is a hack so that doctests can pass on Windows
+           #       even though the directory contents differ. This hack
+           #       assumes that the speedups have been installed.
+           assert os.path.isdir(directory)
+           assert os.listdir(directory) == ['bezier.lib']
            full_tree = 'libbezier.a'
        else:
            full_tree = tree(directory, suffix=suffix)
