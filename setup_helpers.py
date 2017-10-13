@@ -259,7 +259,7 @@ def extension_modules():
 def patch_f90_compiler(f90_compiler):
     """Patch up ``f90_compiler``.
 
-    For now, only updates the flags for the ``gfortran``. In this case, it add
+    For now, only updates the flags for ``gfortran``. In this case, it add
     any of ``GFORTRAN_SHARED_FLAGS`` that are missing. In debug mode, it also
     adds any flags in ``GFORTRAN_DEBUG_FLAGS`` and makes sure none of the flags
     in ``GFORTRAN_OPTIMIZE_FLAGS`` are present. In standard mode ("OPTIMIZE"),
