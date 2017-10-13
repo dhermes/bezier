@@ -26,11 +26,13 @@ environment:
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "32"
+      MINGW: "C:\\mingw-w64\\i686-6.3.0-posix-dwarf-rt_v5-rev1\\mingw32\\bin"
       TEST_TYPE: base
 
     - PYTHON: "C:\\Python27-x64"
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "64"
+      MINGW: "C:\\mingw-w64\\x86_64-6.3.0-posix-seh-rt_v5-rev1\\mingw64\\bin"
       TEST_TYPE: base
 
     - PYTHON: "C:\\Python35"
@@ -83,10 +85,7 @@ install:
 
   # Prepend MinGW to the PATH of this build so ``gfortran`` is visible
   # to ``numpy.distutils``.
-  - ps: if (Test-Path env:MINGW)
-        {
-          $env:PATH += ";" + $env:MINGW;
-        }
+  - SET PATH=%MINGW%;%PATH%
 
   # Check that we have the expected version and architecture for Python
   - python appveyor\env_info.py

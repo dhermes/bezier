@@ -29,7 +29,9 @@ extern "C" {
 #  if _MSC_VER >= 1800
 #    include <stdbool.h>
 #  else
-#    define bool int
+//   NOTE: We must use `char` because it is 1 byte, as `bool` is
+//         in C99 and later (which is what `gfortran` uses).
+#    define bool char
 #    define true TRUE
 #    define false FALSE
 #  endif
