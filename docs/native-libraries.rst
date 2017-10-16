@@ -2,6 +2,17 @@
 Native Libraries
 ################
 
+.. note::
+
+   This content was last updated October 16, 2017 (shortly after the
+   ``0.5.0`` release). Much of the content is tested automatically to keep
+   from getting stale, but some of the console code blocks are not. As a
+   result, this material may be out of date. If anything does not seem
+   correct --- or even if the explanation is insufficient --- please
+   `file an issue`_.
+
+   .. _file an issue: https://github.com/dhermes/bezier/issues/new
+
 ``bezier`` has optional speedups implemented in `Fortran`_.
 These are incorporated into the Python interface via
 `Cython`_.
