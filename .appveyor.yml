@@ -26,43 +26,27 @@ environment:
     # See: https://www.appveyor.com/docs/installed-software/#python
 
     - PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7"
-      PYTHON_ARCH: "32"
       TEST_TYPE: base
 
     - PYTHON: "C:\\Python27-x64"
-      PYTHON_VERSION: "2.7"
-      PYTHON_ARCH: "64"
       TEST_TYPE: base
 
     - PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5"
-      PYTHON_ARCH: "32"
       TEST_TYPE: base
 
     - PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5"
-      PYTHON_ARCH: "64"
       TEST_TYPE: base
 
     - PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6"
-      PYTHON_ARCH: "32"
       TEST_TYPE: base
 
     - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_ARCH: "64"
       TEST_TYPE: cover
 
     - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_ARCH: "64"
       TEST_TYPE: functional
 
     - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6"
-      PYTHON_ARCH: "64"
       TEST_TYPE: doctest
 
 install:
@@ -77,6 +61,17 @@ install:
   # the parent CMD process).
   - SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
 
+  # https://stackoverflow.com/a/4509885/1068170
+  # Set `PYTHON_ARCH` (either 32 or 64)
+  - set PY_CMD=python -c "import platform; print(platform.architecture()[0][:2])"
+  - for /f "tokens=1 delims=" %%i in ('%PY_CMD%') do set PYTHON_ARCH=%%i
+  # Set `PYTHON_VERSION`
+  - set PY_CMD=python -c "import platform; print(platform.python_version())"
+  - for /f "tokens=1 delims=" %%i in ('%PY_CMD%') do set PYTHON_VERSION=%%i
+
+  # Check that we have the expected version and architecture for Python
+  - python appveyor\env_info.py
+
   # Append MinGW to the PATH of this build so ``gfortran`` is visible
   # to ``numpy.distutils``.
   - ps: |
@@ -87,9 +82,6 @@ install:
           $MINGW = $env:MINGW_64
       }
       $env:Path += ";$MINGW"
-
-  # Check that we have the expected version and architecture for Python
-  - python appveyor\env_info.py
 
   # Packaging requirements
   - python -m pip install --upgrade pip setuptools

@@ -19,8 +19,15 @@ import struct
 import sys
 
 
+def env_var(var_name):
+    value = os.environ.get(var_name)
+    print('os.environ[{!r}]: {}'.format(var_name, value))
+
+
 def main():
     print('os.name: {}'.format(os.name))
+    env_var('PYTHON_ARCH')
+    env_var('PYTHON_VERSION')
     print('sys.platform: {}'.format(sys.platform))
 
     if sys.maxsize == 2**63 - 1:
