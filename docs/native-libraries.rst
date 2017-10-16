@@ -36,11 +36,16 @@ The C headers for ``libbezier`` will be included in the installed package
 
    PLATFORM_SYSTEM = platform.system().lower()
 
-
    class Path(object):
+       """This class is a hack for Windows.
+
+       It wraps a simple string but prints / repr-s it with Windows
+       path separator converted to the standard *nix separator.
+
+       This way doctests will succeed on Windows without modification.
+       """
 
        def __init__(self, path):
-           # Hack to make the doctest work just fine on Windows.
            self.path = path
 
        def __repr__(self):
@@ -186,7 +191,7 @@ library (i.e. a ``.a`` file):
    Python versions, as an egg or wheel, and so on.
 
 On Windows, an `import library`_ --- ``lib/bezier.lib`` --- is included
-to specify the symbols in the DLL ``extra-dll/libbezier.dll``.
+to specify the symbols in the **shared** library ``extra-dll/libbezier.dll``.
 
 .. _import library: https://docs.python.org/3/extending/windows.html#differences-between-unix-and-windows
 
@@ -422,8 +427,11 @@ on MinGW:
 
    and modified to replace instances of ``-lmsvcrt`` with a substitute, e.g.
    ``-lmsvcr90``. Then ``gfortran`` can be invoked with the flag
-   ``-specs=${SPECS_FILENAME}`` to use the custom spec. (Some other dependencies
-   may also indirectly depend on ``msvcrt.dll``, such as ``-lmoldname``.)
+   ``-specs=${SPECS_FILENAME}`` to use the custom spec. (Some
+   `other dependencies`_ may also indirectly depend on ``msvcrt.dll``,
+   such as ``-lmoldname``.)
+
+   .. _other dependencies: https://www.spiria.com/en/blog/desktop-software/building-mingw-w64-toolchain-links-specific-visual-studio-runtime-library
 
 From there, an `import library`_ must be created
 
