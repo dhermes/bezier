@@ -1,5 +1,6 @@
+################
 Native Libraries
-================
+################
 
 ``bezier`` has optional speedups implemented in `Fortran`_.
 These are incorporated into the Python interface via
@@ -8,18 +9,19 @@ These are incorporated into the Python interface via
 .. _Fortran: https://en.wikipedia.org/wiki/Fortran
 .. _Cython: https://cython.readthedocs.io/
 
-The subroutines provided there can be called from Fortran,
-C, C++, Cython and any other language that can invoke
-a foreign C function (e.g. `Go`_ via ``cgo``).
+The subroutines provided there are available in a C ABI ``libbezier``.
+They can be called from Fortran, C, C++, Cython and any other language
+that can invoke a foreign C function (e.g. `Go`_ via ``cgo``).
 
 .. _Go: https://golang.org
 
 After ``bezier`` has been installed **with** these speedups,
 the library provides helpers to make it easier to build
-code that depends on them.
+non-Python code that depends on them.
 
+*********
 C Headers
----------
+*********
 
 The C headers for ``libbezier`` will be included in the installed package
 
@@ -135,8 +137,9 @@ The C headers for ``libbezier`` will be included in the installed package
 Note that this includes a catch-all ``bezier.h`` that just includes all of
 the headers.
 
+****************************
 Cython ``.pxd`` Declarations
-----------------------------
+****************************
 
 In addition to the header files, several ``cimport``-able ``.pxd``
 Cython declaration files are provided:
@@ -158,11 +161,12 @@ in ``bezier/curve.h``.
 
 .. _static-library:
 
+**************
 Static Library
---------------
+**************
 
-The actual library ``libbezier`` is included as a single static library
-(a ``.lib`` file on Windows and a ``.a`` file elsewhere):
+On Linux and Mac OS X, ``libbezier`` is included as a single static
+library (i.e. a ``.a`` file):
 
 .. doctest:: show-lib
 
@@ -181,63 +185,293 @@ The actual library ``libbezier`` is included as a single static library
    ``bezier`` can be installed in virtual environments, in different
    Python versions, as an egg or wheel, and so on.
 
-.. warning::
+On Windows, an `import library`_ --- ``lib/bezier.lib`` --- is included
+to specify the symbols in the DLL ``extra-dll/libbezier.dll``.
 
-   When ``bezier`` is installed via `pip`_, it will likely be installed
-   from a `Python wheel`_. These wheels will be pre-built and the Fortran
-   extensions will be compiled with `GNU Fortran`_ (``gfortran``). As a
-   result, ``libbezier`` will depend on ``libgfortran``.
+.. _import library: https://docs.python.org/3/extending/windows.html#differences-between-unix-and-windows
 
-   This can be problematic due to version conflicts, ABI incompatibility,
-   a desire to use a different Fortran compiler (e.g. ``ifort``) and a host
-   of other reasons. Some of the standard tooling for distributing wheels
-   tries to address this. For example, `auditwheel`_ adds a ``bezier/.libs``
-   directory with a version of ``libgfortran`` that is compatible with
-   ``libbezier``, e.g.
+******************
+Extra Dependencies
+******************
 
-   .. code-block:: rest
+When ``bezier`` is installed via `pip`_, it will likely be installed
+from a `Python wheel`_. The wheels uploaded to PyPI are pre-built, with
+Fortran extensions compiled with `GNU Fortran`_ (``gfortran``). As a
+result, ``libbezier`` will depend on ``libgfortran``. This can be problematic
+due to version conflicts, ABI incompatibility, a desire to use a different
+Fortran compiler (e.g. ``ifort``) and a host of other reasons.
 
-      $ cd .../site-packages/bezier/.libs
-      $ ls -1
-      libgfortran-ed201abd.so.3.0.0*
-
-   and `delocate`_ adds a ``bezier/.dylibs`` directory with the same
-   purpose:
-
-   .. code-block:: rest
-
-      $ cd .../site-packages/bezier/.dylibs
-      $ ls -1
-      libgcc_s.1.dylib
-      libgfortran.4.dylib
-      libquadmath.0.dylib
-
-   If present, this directory can be used when linking. If that is not
-   feasible, then ``bezier`` can be built from source via:
-
-   .. code-block:: console
-
-      $ python setup.py build_ext
-      $ # OR
-      $ python setup.py build_ext --fcompiler=${FC}
-
-   By providing a filename via an environment variable, a "journal" can
-   be stored of the compiler commands invoked to build the extension:
-
-   .. code-block:: console
-
-      $ export BEZIER_JOURNAL=path/to/journal.txt
-      $ python setup.py build_ext
-      $ unset BEZIER_JOURNAL
+Some of the standard tooling for distributing wheels tries to address this. On
+Linux and Mac OS X, they address it by placing a copy of ``libgfortran`` (and
+potentially its dependencies) in the built wheel. (On Windows, there is no
+standard tooling beyond that provided by ``distutils`` and ``setuptools``.)
+This means that libraries that depend on ``libbezier`` should also link
+against these local copies of dependencies.
 
 .. _pip: https://pip.pypa.io
 .. _Python wheel: https://wheel.readthedocs.io
 .. _GNU Fortran: https://gcc.gnu.org/fortran/
+
+Linux
+=====
+
+The command line tool `auditwheel`_ adds a ``bezier/.libs`` directory
+with a version of ``libgfortran`` that is used by ``libbezier``, e.g.
+
+.. code-block:: console
+
+   $ cd .../site-packages/bezier/.libs
+   $ ls -1
+   libgfortran-ed201abd.so.3.0.0*
+
+For example, the ``_curve_speedup`` module speedup depends on this
+local copy:
+
+.. code-block:: console
+
+   $ readelf -d _curve_speedup.cpython-36m-x86_64-linux-gnu.so
+
+   Dynamic section at offset 0x10d000 contains 27 entries:
+     Tag        Type                         Name/Value
+    0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/.libs]
+    0x0000000000000001 (NEEDED)             Shared library: [libgfortran-ed201abd.so.3.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+   ...
+
+.. note::
+
+   The runtime path (``RPATH``) uses ``$ORIGIN`` to specify a path
+   relative to the directory where the extension module (``.so`` file) is.
+
 .. _auditwheel: https://github.com/pypa/auditwheel
+
+Mac OS X
+========
+
+The command line tool `delocate`_ adds a ``bezier/.dylibs`` directory
+with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
+
+.. code-block:: console
+
+   $ cd .../site-packages/bezier/.dylibs
+   $ ls -1
+   libgcc_s.1.dylib
+   libgfortran.4.dylib
+   libquadmath.0.dylib
+
+For example, the ``_curve_speedup`` module speedup depends on the
+local copy of ``libgfortran``:
+
+.. code-block:: console
+
+   $ otool -L _curve_speedup.cpython-36m-darwin.so
+   _curve_speedup.cpython-36m-darwin.so:
+           @loader_path/.dylibs/libgfortran.4.dylib (...)
+           /usr/lib/libSystem.B.dylib (...)
+
+Though the Python extension modules (``.so`` files) only depend on
+``libgfortran``, they indirectly depend on ``libquadmath`` and
+``libgcc_s``:
+
+.. code-block:: console
+
+   $ otool -L .dylibs/libgfortran.4.dylib
+   .dylibs/libgfortran.4.dylib:
+           /DLC/bezier/libgfortran.4.dylib (...)
+           @loader_path/libquadmath.0.dylib (...)
+           /usr/lib/libSystem.B.dylib (...)
+           @loader_path/libgcc_s.1.dylib (...)
+
+.. note::
+
+   To allow the package to be relocatable, the ``libgfortran`` dependency is
+   relative to the ``@loader_path`` (i.e. the path where the Python extension
+   module is loaded) instead of being an absolute path within the file
+   system.
+
+   Notice also that ``delocate`` uses the nonexistent root ``/DLC`` for
+   the ``install_name`` of ``libgfortran`` to avoid accidentally pointing
+   to an existing file on the target system.
+
 .. _delocate: https://github.com/matthew-brett/delocate
 
+Windows
+=======
+
+A single Windows shared library (DLL) is provided: ``extra-dll/libbezier.dll``.
+The Python extension modules (``.pyd`` files) depend directly on this library:
+
+.. code-block:: rest
+
+   > dumpbin /dependents .\bezier\_curve_speedup.cp36-win_amd64.pyd
+   ...
+     Image has the following dependencies:
+
+       libbezier.dll
+       python36.dll
+       KERNEL32.dll
+       VCRUNTIME140.dll
+       api-ms-win-crt-stdio-l1-1-0.dll
+       api-ms-win-crt-heap-l1-1-0.dll
+       api-ms-win-crt-runtime-l1-1-0.dll
+
+In order to ensure this DLL can be found, the ``bezier.__config__``
+module adds the ``extra-dll`` directory to ``os.environ['PATH']`` on import
+(``%PATH%`` is used on Windows as part of the DLL search path).
+
+The ``libbezier`` DLL has **no external dependencies**, but does have
+a corresponding `import library`_ --- ``lib/bezier.lib`` --- which is
+provided to specify the symbols in the DLL.
+
+On Windows, building Python extensions is a bit more constrained. Each
+official Python is built with a particular `version of MSVC`_ and
+Python extension modules must be built with the same compiler. This
+is primarily because the C runtime (provided by Microsoft) **changes** from
+Python version to Python version. To see why the same C runtime must be used,
+consider the following example. If an extension uses ``malloc`` from
+``MSVCRT.dll`` to allocate memory for an object and the Python interpreter
+tries to free that memory with ``free`` from ``MSVCR90.dll``, bad things
+can happen. This problem has been `largely fixed`_ in newer versions of
+Python but is still worth knowing, especially for older but still prominent
+Python 2.7.
+
+Unfortunately, there is no Fortran compiler provided by MSVC. The
+`MinGW-w64`_ suite of tools is a port of the GNU Compiler Collection (``gcc``)
+for Windows. In particular, MinGW includes ``gfortran``. However, mixing the
+two compiler families (MSVC and MinGW) can be problematic because MinGW uses
+a fixed version of the C runtime (``MSVCRT.dll``) and this dependency cannot
+be easily dropped or changed.
+
+A Windows shared library (DLL) can be created after compiling
+each of the Fortran submodules:
+
+.. code-block:: console
+
+   $ gfortran \
+   >   -shared \
+   >   -o extra-dll/libbezier.dll \
+   >   ${OBJ_FILES} \
+   >   -Wl,--output-def,libbezier.def
+
+.. note::
+
+   Invoking ``gfortran`` **can** be done from the Windows command prompt (e.g.
+   it works just fine on AppVeyor), but it is easier to do from a shell that
+   explicitly supports MinGW, such as MSYS2.
+
+By default, the created shared library will depend on ``gcc`` libraries
+provided by MinGW:
+
+.. code-block:: rest
+
+   > dumpbin /dependents .\extra-dll\libbezier.dll
+   ...
+     Image has the following dependencies:
+
+       KERNEL32.dll
+       msvcrt.dll
+       libgcc_s_seh-1.dll
+       libgfortran-3.dll
+
+Unlike Linux and Mac OS X, on Windows relocating and copying any dependencies
+on MinGW (at either compile, link or run time) is explicitly avoided. By adding
+the ``-static`` flag
+
+.. code-block:: console
+
+   $ gfortran \
+   >   -static \
+   >   -shared \
+   >   -o extra-dll/libbezier.dll \
+   >   ${OBJ_FILES} \
+   >   -Wl,--output-def,libbezier.def
+
+all the symbols used from ``libgfortran`` or ``libgcc_s`` are statically
+included and the resulting shared library ``libbezier.dll`` has no dependency
+on MinGW:
+
+.. code-block:: rest
+
+   > dumpbin /dependents .\extra-dll\libbezier.dll
+   ...
+     Image has the following dependencies:
+
+       KERNEL32.dll
+       msvcrt.dll
+       USER32.dll
+
+.. note::
+
+   Although ``msvcrt.dll`` is a dependency of ``libbezier.dll``, it is not
+   a problem. Any values returned from Fortran (as ``intent(out)``) will
+   have already been allocated by the caller (e.g. the Python interpreter).
+   This won't necessarily be true for generic Fortran subroutines, but
+   subroutines marked with ``bind(c)`` (i.e. marked as part of the C ABI
+   of ``libbezier``) will not be allowed to use ``allocatable`` or
+   `assumed-shape`_ output variables. Any memory allocated in Fortran will be
+   isolated within the Fortran code.
+
+   .. _assumed-shape: https://stackoverflow.com/a/24545407/1068170
+
+   However, this dependency can still be avoided if desired. The MinGW
+   ``gfortran`` default "specs file" can be captured:
+
+   .. code-block:: console
+
+      $ gfortran -dumpspecs > ${SPECS_FILENAME}
+
+   and modified to replace instances of ``-lmsvcrt`` with a substitute, e.g.
+   ``-lmsvcr90``. Then ``gfortran`` can be invoked with the flag
+   ``-specs=${SPECS_FILENAME}`` to use the custom spec. (Some other dependencies
+   may also indirectly depend on ``msvcrt.dll``, such as ``-lmoldname``.)
+
+From there, an `import library`_ must be created
+
+.. code-block:: rest
+
+   > lib /def:.\libbezier.def /out:.\lib\bezier.lib /machine:${ARCH}
+
+.. note::
+
+   ``lib.exe`` is used from the same version of MSVC that compiled the
+   target Python. Luckily ``distutils`` enables this without difficulty.
+
+.. _version of MSVC: http://matthew-brett.github.io/pydagogue/python_msvc.html
+.. _largely fixed: http://stevedower.id.au/blog/building-for-python-3-5-part-two/
+.. _MinGW-w64: https://mingw-w64.org
+
+Source
+======
+
+For code that depends on ``libgfortran``, it may be problematic to **also**
+depend on the local copy distributed with the ``bezier`` wheels.
+
+``bezier`` can be built from source if it is not feasible to link with
+these libraries, if a different Fortran compiler is required or just
+because.
+
+The Python extension modules (along with ``libbezier``) can be built from
+source via:
+
+.. code-block:: console
+
+   $ python setup.py build_ext
+   $ # OR
+   $ python setup.py build_ext --fcompiler=${FC}
+
+By providing a filename via an environment variable, a "journal" can
+be stored of the compiler commands invoked to build the extension:
+
+.. code-block:: console
+
+   $ export BEZIER_JOURNAL=path/to/journal.txt
+   $ python setup.py build_ext
+   $ unset BEZIER_JOURNAL
+
+***************************
 Building a Python Extension
----------------------------
+***************************
 
 To incorporate ``libbezier`` into a Python extension, either via
 Cython, C, C++ or some other means, simply include the header
