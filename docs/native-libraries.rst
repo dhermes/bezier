@@ -224,8 +224,7 @@ with a version of ``libgfortran`` that is used by ``libbezier``, e.g.
    $ ls -1
    libgfortran-ed201abd.so.3.0.0*
 
-For example, the ``_curve_speedup`` module speedup depends on this
-local copy:
+For example, the ``_curve_speedup`` module depends on this local copy:
 
 .. code-block:: console
 
@@ -260,8 +259,8 @@ with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
    libgfortran.4.dylib
    libquadmath.0.dylib
 
-For example, the ``_curve_speedup`` module speedup depends on the
-local copy of ``libgfortran``:
+For example, the ``_curve_speedup`` module depends on the local copy
+of ``libgfortran``:
 
 .. code-block:: console
 
