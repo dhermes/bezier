@@ -137,6 +137,7 @@ def main():
     setup_helpers.BuildFortranThenExt.PATCH_FUNCTIONS[:] = [
         setup_helpers.patch_f90_compiler,
         setup_helpers_osx.patch_f90_compiler,
+        setup_helpers_windows.patch_f90_compiler,
     ]
 
     setup_helpers_windows.patch_cmd(setup_helpers.BuildFortranThenExt)

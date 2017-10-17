@@ -108,9 +108,41 @@ def run_cleanup(build_ext_cmd):
     )
 
 
-def patch_cmd(cmd_class):
+def patch_f90_compiler(f90_compiler):
+    """Patch up ``f90_compiler.library_dirs``.
+
+    Updates flags in ``gfortran`` and ignores other compilers. The only
+    modification is the removal of ``-fPIC`` since it is not used on Windows
+    and the build flags turn warnings into errors.
+
+    Args:
+        f90_compiler (numpy.distutils.fcompiler.FCompiler): A Fortran compiler
+            instance.
+    """
+    # NOTE: NumPy may not be installed, but we don't want **this** module to
+    #       cause an import failure.
     from numpy.distutils.fcompiler import gnu
 
+    # Only Windows.
+    if os.name != 'nt':
+        return
+
+    # Only ``gfortran``.
+    if not isinstance(f90_compiler, gnu.Gnu95FCompiler):
+        return
+
+    f90_compiler.compiler_f90[:] = [
+        value for value in f90_compiler.compiler_f90
+        if value != setup_helpers.FPIC
+    ]
+
+    c_compiler = f90_compiler.c_compiler
+    if c_compiler.compiler_type != 'msvc':
+        raise NotImplementedError(
+            'MSVC is the only supported C compiler on Windows.')
+
+
+def patch_cmd(cmd_class):
     # Only Windows.
     if os.name != 'nt':
         return
@@ -118,22 +150,3 @@ def patch_cmd(cmd_class):
     cmd_class.CUSTOM_STATIC_LIB = make_static_lib
     cmd_class.USE_SHARED_LIBRARY = True
     cmd_class.CLEANUP = run_cleanup
-
-    cmd_class.set_f90_compiler()
-    f90_compiler = cmd_class.F90_COMPILER
-    if f90_compiler is None:
-        return
-
-    # If the Fortan compiler is ``gfortran``, remove ``-fPIC``.
-    # NOTE: Calling ``set_f90_compiler`` relies on the set of
-    #       patch functions added to ``cmd_class``.
-    if isinstance(f90_compiler, gnu.Gnu95FCompiler):
-        f90_compiler.compiler_f90[:] = [
-            value for value in f90_compiler.compiler_f90
-            if value != setup_helpers.FPIC
-        ]
-
-    c_compiler = f90_compiler.c_compiler
-    if c_compiler.compiler_type != 'msvc':
-        raise NotImplementedError(
-            'MSVC is the only supported C compiler on Windows.')
