@@ -93,6 +93,13 @@ install:
   # Requirements for `bezier` install
   - python -m pip install --upgrade numpy
 
+  # Save command journal while building, if relevant.
+  - ps: if ($env:TEST_TYPE -eq "journal")
+        {
+          $env:BEZIER_JOURNAL = $env:APPVEYOR_BUILD_FOLDER + "\\journal.txt";
+          Write-Host $env:BEZIER_JOURNAL;
+        }
+
   # Install ``bezier``.
   - "%CMD_IN_ENV% python -m pip install -vv ."
 
@@ -123,12 +130,6 @@ install:
           $env:NO_IMAGES = "True";
         }
 
-  # Install (hardcoded) conditional (on journal) test dependencies.
-  - ps: if ($env:TEST_TYPE -eq "journal")
-        {
-          python -m pip install nox-automation;
-        }
-
 test_script:
   - ps: if ($env:TEST_TYPE -eq "base")
         {
@@ -143,7 +144,7 @@ test_script:
         }
   - ps: if ($env:TEST_TYPE -eq "functional")
         {
-          python -m pytest tests/functional
+          python -m pytest tests/functional;
         }
   - ps: if ($env:TEST_TYPE -eq "doctest")
         {
@@ -155,5 +156,12 @@ test_script:
         }
   - ps: if ($env:TEST_TYPE -eq "journal")
         {
-          "%CMD_IN_ENV% nox -s \"check_journal(machine='appveyor')\""
+          python `
+              .\scripts\post_process_journal.py `
+              --journal-filename $env:BEZIER_JOURNAL `
+              --machine appveyor;
+          python `
+              .\scripts\diff.py `
+              $env:BEZIER_JOURNAL `
+              .\appveyor\expected_journal.txt;
         }

@@ -1,1 +1,418 @@
-MISSING
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -fno-second-underscore \
+>   -O0 \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -O3 \
+>   -march=native \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src\bezier\types.f90 \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\types.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -fno-second-underscore \
+>   -O0 \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -O3 \
+>   -march=native \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src\bezier\helpers.f90 \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\helpers.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -fno-second-underscore \
+>   -O0 \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -O3 \
+>   -march=native \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src\bezier\curve.f90 \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\curve.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -fno-second-underscore \
+>   -O0 \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -O3 \
+>   -march=native \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src\bezier\surface.f90 \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\surface.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -fno-second-underscore \
+>   -O0 \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -O3 \
+>   -march=native \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src\bezier\curve_intersection.f90 \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\curve_intersection.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -O0 \
+>   -c \
+>   -c \
+>   src\bezier\quadpack\d1mach.f \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\d1mach.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -O0 \
+>   -c \
+>   -c \
+>   src\bezier\quadpack\dqelg.f \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqelg.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -O0 \
+>   -c \
+>   -c \
+>   src\bezier\quadpack\dqpsrt.f \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqpsrt.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -O0 \
+>   -c \
+>   -c \
+>   src\bezier\quadpack\dqk21.f \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqk21.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -O0 \
+>   -c \
+>   -c \
+>   src\bezier\quadpack\dqagse.f \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqagse.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -static \
+>   -shared \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\libbezier.dll \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\d1mach.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqelg.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqpsrt.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqk21.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqagse.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\types.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\helpers.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\curve.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\surface.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\curve_intersection.o \
+>   -Wl,--output-def,build\temp.win-amd64-3.6\Release\libbezier.def
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\lib.exe \
+>   /def:build\temp.win-amd64-3.6\Release\libbezier.def \
+>   /out:build\temp.win-amd64-3.6\Release\bezier.lib \
+>   /machine:x64
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe \
+>   /c \
+>   /nologo \
+>   /Ox \
+>   /W3 \
+>   /GL \
+>   /DNDEBUG \
+>   /MD \
+>   -IC:\Python36-x64\lib\site-packages\numpy\core\include \
+>   -Isrc\bezier\include \
+>   -IC:\Python36-x64\include \
+>   -IC:\Python36-x64\include \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" \
+>   -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" \
+>   -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" \
+>   /Tcsrc\bezier\_helpers_speedup.c \
+>   /Fobuild\temp.win-amd64-3.6\Release\src\bezier\_helpers_speedup.obj
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe \
+>   /nologo \
+>   /INCREMENTAL:NO \
+>   /LTCG \
+>   /DLL \
+>   /MANIFEST:EMBED,ID=2 \
+>   /MANIFESTUAC:NO \
+>   /LIBPATH:build\lib.win-amd64-3.6\bezier\lib \
+>   /LIBPATH:C:\Python36-x64\libs \
+>   /LIBPATH:C:\Python36-x64\PCbuild\amd64 \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" \
+>   bezier.lib \
+>   /EXPORT:PyInit__helpers_speedup \
+>   build\temp.win-amd64-3.6\Release\src\bezier\_helpers_speedup.obj \
+>   /OUT:build\lib.win-amd64-3.6\bezier\_helpers_speedup.cp36-win_amd64.pyd \
+>   /IMPLIB:build\temp.win-amd64-3.6\Release\src\bezier\_helpers_speedup.cp36-win_amd64.lib
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe \
+>   /c \
+>   /nologo \
+>   /Ox \
+>   /W3 \
+>   /GL \
+>   /DNDEBUG \
+>   /MD \
+>   -IC:\Python36-x64\lib\site-packages\numpy\core\include \
+>   -Isrc\bezier\include \
+>   -IC:\Python36-x64\include \
+>   -IC:\Python36-x64\include \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" \
+>   -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" \
+>   -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" \
+>   /Tcsrc\bezier\_curve_speedup.c \
+>   /Fobuild\temp.win-amd64-3.6\Release\src\bezier\_curve_speedup.obj
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe \
+>   /nologo \
+>   /INCREMENTAL:NO \
+>   /LTCG \
+>   /DLL \
+>   /MANIFEST:EMBED,ID=2 \
+>   /MANIFESTUAC:NO \
+>   /LIBPATH:build\lib.win-amd64-3.6\bezier\lib \
+>   /LIBPATH:C:\Python36-x64\libs \
+>   /LIBPATH:C:\Python36-x64\PCbuild\amd64 \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" \
+>   bezier.lib \
+>   /EXPORT:PyInit__curve_speedup \
+>   build\temp.win-amd64-3.6\Release\src\bezier\_curve_speedup.obj \
+>   /OUT:build\lib.win-amd64-3.6\bezier\_curve_speedup.cp36-win_amd64.pyd \
+>   /IMPLIB:build\temp.win-amd64-3.6\Release\src\bezier\_curve_speedup.cp36-win_amd64.lib
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe \
+>   /c \
+>   /nologo \
+>   /Ox \
+>   /W3 \
+>   /GL \
+>   /DNDEBUG \
+>   /MD \
+>   -IC:\Python36-x64\lib\site-packages\numpy\core\include \
+>   -Isrc\bezier\include \
+>   -IC:\Python36-x64\include \
+>   -IC:\Python36-x64\include \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" \
+>   -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" \
+>   -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" \
+>   /Tcsrc\bezier\_surface_speedup.c \
+>   /Fobuild\temp.win-amd64-3.6\Release\src\bezier\_surface_speedup.obj
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe \
+>   /nologo \
+>   /INCREMENTAL:NO \
+>   /LTCG \
+>   /DLL \
+>   /MANIFEST:EMBED,ID=2 \
+>   /MANIFESTUAC:NO \
+>   /LIBPATH:build\lib.win-amd64-3.6\bezier\lib \
+>   /LIBPATH:C:\Python36-x64\libs \
+>   /LIBPATH:C:\Python36-x64\PCbuild\amd64 \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" \
+>   bezier.lib \
+>   /EXPORT:PyInit__surface_speedup \
+>   build\temp.win-amd64-3.6\Release\src\bezier\_surface_speedup.obj \
+>   /OUT:build\lib.win-amd64-3.6\bezier\_surface_speedup.cp36-win_amd64.pyd \
+>   /IMPLIB:build\temp.win-amd64-3.6\Release\src\bezier\_surface_speedup.cp36-win_amd64.lib
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe \
+>   /c \
+>   /nologo \
+>   /Ox \
+>   /W3 \
+>   /GL \
+>   /DNDEBUG \
+>   /MD \
+>   -IC:\Python36-x64\lib\site-packages\numpy\core\include \
+>   -Isrc\bezier\include \
+>   -IC:\Python36-x64\include \
+>   -IC:\Python36-x64\include \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" \
+>   -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" \
+>   -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" \
+>   -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" \
+>   /Tcsrc\bezier\_curve_intersection_speedup.c \
+>   /Fobuild\temp.win-amd64-3.6\Release\src\bezier\_curve_intersection_speedup.obj
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe \
+>   /nologo \
+>   /INCREMENTAL:NO \
+>   /LTCG \
+>   /DLL \
+>   /MANIFEST:EMBED,ID=2 \
+>   /MANIFESTUAC:NO \
+>   /LIBPATH:build\lib.win-amd64-3.6\bezier\lib \
+>   /LIBPATH:C:\Python36-x64\libs \
+>   /LIBPATH:C:\Python36-x64\PCbuild\amd64 \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" \
+>   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" \
+>   bezier.lib \
+>   /EXPORT:PyInit__curve_intersection_speedup \
+>   build\temp.win-amd64-3.6\Release\src\bezier\_curve_intersection_speedup.obj \
+>   /OUT:build\lib.win-amd64-3.6\bezier\_curve_intersection_speedup.cp36-win_amd64.pyd \
+>   /IMPLIB:build\temp.win-amd64-3.6\Release\src\bezier\_curve_intersection_speedup.cp36-win_amd64.lib
+----------------------------------------
