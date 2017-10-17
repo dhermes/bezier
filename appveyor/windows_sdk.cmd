@@ -15,7 +15,7 @@
 :: cmd interpreter, at least for (SDK v7.0)
 ::
 :: More details at:
-:: https://github.com/cython/cython/wiki/64BitCythonExtensionsOnWindows
+:: https://github.com/cython/cython/wiki/CythonExtensionsOnWindows
 :: https://stackoverflow.com/a/13751649/163740
 ::
 :: Original Author: Olivier Grisel
