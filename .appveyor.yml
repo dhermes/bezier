@@ -49,6 +49,9 @@ environment:
     - PYTHON: "C:\\Python36-x64"
       TEST_TYPE: doctest
 
+    - PYTHON: "C:\\Python36-x64"
+      TEST_TYPE: journal
+
 install:
   - cmd: echo "Filesystem root:"
   - dir C:\
@@ -120,6 +123,12 @@ install:
           $env:NO_IMAGES = "True";
         }
 
+  # Install (hardcoded) conditional (on journal) test dependencies.
+  - ps: if ($env:TEST_TYPE -eq "journal")
+        {
+          python -m pip install nox-automation;
+        }
+
 test_script:
   - ps: if ($env:TEST_TYPE -eq "base")
         {
@@ -143,4 +152,8 @@ test_script:
               -d docs/build/doctrees `
               docs `
               docs/build/doctest;
+        }
+  - ps: if ($env:TEST_TYPE -eq "journal")
+        {
+          "%CMD_IN_ENV% nox -s \"check_journal(machine='appveyor')\""
         }

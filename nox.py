@@ -43,6 +43,7 @@ DOCS_DEPS = (
 SINGLE_INTERP = 'python3.6'
 PYPY = 'pypy'
 JOURNAL_PATHS = {
+    'appveyor': os.path.join('appveyor', 'expected_journal.txt'),
     'circleci': os.path.join('.circleci', 'expected_journal.txt'),
     'travis-osx': os.path.join('scripts', 'osx', 'travis_journal.txt'),
 }
@@ -308,7 +309,7 @@ def benchmark(session, target):
 
 
 @nox.session
-@nox.parametrize('machine', ['circleci', 'travis-osx'])
+@nox.parametrize('machine', ['appveyor', 'circleci', 'travis-osx'])
 def check_journal(session, machine):
     session.virtualenv_dirname = 'journal-{}'.format(machine)
     session.interpreter = SINGLE_INTERP
@@ -330,7 +331,8 @@ def check_journal(session, machine):
         '--machine', machine,
     )
     expected_journal = get_path(JOURNAL_PATHS[machine])
-    session.run('diff', journal_filename, expected_journal)
+    diff_tool = get_path('scripts', 'diff.py')
+    session.run('python', diff_tool, journal_filename, expected_journal)
 
 
 @nox.session
