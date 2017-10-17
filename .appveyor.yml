@@ -97,7 +97,6 @@ install:
   - ps: if ($env:TEST_TYPE -eq "journal")
         {
           $env:BEZIER_JOURNAL = $env:APPVEYOR_BUILD_FOLDER + "\\journal.txt";
-          Write-Host $env:BEZIER_JOURNAL;
         }
 
   # Install ``bezier``.
