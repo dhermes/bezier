@@ -346,8 +346,19 @@ is primarily because the C runtime (provided by Microsoft) **changes** from
 Python version to Python version. To see why the same C runtime must be used,
 consider the following example. If an extension uses ``malloc`` from
 ``MSVCRT.dll`` to allocate memory for an object and the Python interpreter
-tries to free that memory with ``free`` from ``MSVCR90.dll``, bad things
-can happen. This problem has been `largely fixed`_ in newer versions of
+tries to free that memory with ``free`` from ``MSVCR90.dll``, `bad things`_
+can happen:
+
+.. _bad things: https://stackoverflow.com/questions/30790494/what-are-the-differences-among-the-ways-to-access-msvcrt-in-python-on-windows#comment49633975_30790494
+
+    Python's linked CRT, which is ``msvcr90.dll`` for Python 2.7,
+    ``msvcr100.dll`` for Python 3.4, and several ``api-ms-win-crt`` DLLs
+    (forwarded to ``ucrtbase.dll``) for Python 3.5 ... Additionally each CRT
+    uses its own heap for malloc and free (wrapping Windows ``HeapAlloc`` and
+    ``HeapFree``), so allocating memory with one and freeing with another is
+    an error.
+
+This problem has been `largely fixed`_ in newer versions of
 Python but is still worth knowing, especially for older but still prominent
 Python 2.7.
 
@@ -440,9 +451,10 @@ on MinGW:
    ``-lmsvcr90``. Then ``gfortran`` can be invoked with the flag
    ``-specs=${SPECS_FILENAME}`` to use the custom spec. (Some
    `other dependencies`_ may also indirectly depend on ``msvcrt.dll``,
-   such as ``-lmoldname``.)
+   such as ``-lmoldname``. `Removing dependencies`_ is not an easy process.)
 
    .. _other dependencies: https://www.spiria.com/en/blog/desktop-software/building-mingw-w64-toolchain-links-specific-visual-studio-runtime-library
+   .. _Removing dependencies: http://www.pygame.org/wiki/PreparingMinGW
 
 From there, an `import library`_ must be created
 
