@@ -52,7 +52,9 @@ except ImportError:  # pragma: NO COVER
     _HAS_CURVE_INTERSECTION_SPEEDUP = False
 
 
+__version__ = pkg_resources.get_distribution('bezier').version
 __all__ = [
+    '__version__',
     'Curve',
     'CurvedPolygon',
     'get_include',
