@@ -435,13 +435,13 @@ on MinGW:
    This won't necessarily be true for generic Fortran subroutines, but
    subroutines marked with ``bind(c)`` (i.e. marked as part of the C ABI
    of ``libbezier``) will not be allowed to use ``allocatable`` or
-   `assumed-shape`_ output variables. Any memory allocated in Fortran will be
+   `deferred-shape`_ output variables. Any memory allocated in Fortran will be
    isolated within the Fortran code.
 
-   .. _assumed-shape: https://stackoverflow.com/a/24545407/1068170
+   .. _deferred-shape: http://thinkingeek.com/2017/01/14/gfortran-array-descriptor/
 
-   However, this dependency can still be avoided if desired. The MinGW
-   ``gfortran`` default "specs file" can be captured:
+   However, the dependency on ``msvcrt.dll`` can still be avoided if desired.
+   The MinGW ``gfortran`` default "specs file" can be captured:
 
    .. code-block:: console
 

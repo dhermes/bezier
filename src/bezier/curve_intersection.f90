@@ -25,7 +25,7 @@ module curve_intersection
        FROM_LINEARIZED_WIGGLE_FAIL, linearization_error, &
        segment_intersection, newton_refine_intersect, bbox_intersect, &
        parallel_different, from_linearized, bbox_line_intersect, &
-       add_intersection
+       add_intersection, add_from_linearized
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -475,5 +475,65 @@ contains
     intersections(index_)%second => second
 
   end subroutine add_intersection
+
+  subroutine add_from_linearized(first, second, intersections, py_exc)
+
+    ! Adds an intersection from two linearizations.
+    !
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+
+    type(CurveData), target, intent(in) :: first, second
+    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    integer(c_int), intent(out) :: py_exc
+    ! Variables outside of signature.
+    type(CurveData), pointer :: root1, root2
+    real(c_double) :: linearization_error1, linearization_error2
+    integer(c_int) :: num_nodes1, num_nodes2
+    real(c_double) :: refined_s, refined_t
+    logical(c_bool) :: does_intersect
+
+    if (associated(first%root)) then
+       root1 => first%root
+    else
+       root1 => first
+    end if
+
+    if (associated(second%root)) then
+       root2 => second%root
+    else
+       root2 => second
+    end if
+
+    num_nodes1 = size(first%nodes, 1)
+    num_nodes2 = size(second%nodes, 1)
+
+    ! NOTE: This assumes, but does not check, that `dimension_ == 2`.
+    call linearization_error( &
+         num_nodes1, 2, first%nodes, linearization_error1)
+    call linearization_error( &
+         num_nodes2, 2, second%nodes, linearization_error2)
+
+    ! NOTE: It doesn't make sense to pass ``start_nodeX`` and ``end_nodeX``
+    !       but for now we do it for Python compatibility reasons.
+    call from_linearized( &
+         linearization_error1, first%start, first%end_, &
+         first%nodes(1, :), first%nodes(num_nodes1, :), &
+         num_nodes1, root1%nodes, &
+         linearization_error2, second%start, second%end_, &
+         second%nodes(1, :), second%nodes(num_nodes2, :), &
+         num_nodes2, root2%nodes, &
+         refined_s, refined_t, does_intersect, py_exc)
+
+    if (py_exc /= FROM_LINEARIZED_SUCCESS) then
+       return
+    end if
+
+    if (.NOT. does_intersect) then
+       return
+    end if
+
+    call add_intersection(root1, refined_s, root2, refined_t, intersections)
+
+  end subroutine add_from_linearized
 
 end module curve_intersection

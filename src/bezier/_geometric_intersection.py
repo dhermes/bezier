@@ -656,7 +656,7 @@ def _from_linearized_low_level(
             first curve (also in the linearization).
         end_node1 (numpy.ndarray): The (``1x2``) end node in the
             first curve (also in the linearization).
-        nodes1 (numpy.ndarray): The (``(D + 1)x2``) nodes of the "root"
+        nodes1 (numpy.ndarray): The (``(D1 + 1)x2``) nodes of the "root"
             curve that contains the first curve.
         error2 (float): The linearization error for the second curve.
         start2 (float): The start parameter of the (potentially

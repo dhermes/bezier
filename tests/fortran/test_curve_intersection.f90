@@ -21,7 +21,7 @@ module test_curve_intersection
        FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
-       bbox_line_intersect, add_intersection
+       bbox_line_intersect, add_intersection, add_from_linearized
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -44,6 +44,7 @@ contains
     call test_from_linearized(success)
     call test_bbox_line_intersect(success)
     call test_add_intersection(success)
+    call test_add_from_linearized(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -845,5 +846,135 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_intersection
+
+  subroutine test_add_from_linearized(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer(c_int) :: py_exc
+    real(c_double) :: nodes1(2, 2), nodes2(3, 2)
+    type(CurveData), target :: first, root1, second, root2
+    type(Intersection), allocatable :: intersections(:)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "add_from_linearized"
+
+    ! CASE 1: Lines that intersect. Since lines, there are 0 subdivisions.
+    first%start = 0.0_dp
+    first%end_ = 1.0_dp
+    nodes1(1, :) = 0
+    nodes1(2, :) = 1
+    first%nodes = nodes1
+
+    second%start = 0.0_dp
+    second%end_ = 1.0_dp
+    nodes1(1, :) = [0.0_dp, 1.0_dp]
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    second%nodes = nodes1
+
+    case_success = .NOT. allocated(intersections)
+    call add_from_linearized(first, second, intersections, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         py_exc == FROM_LINEARIZED_SUCCESS .AND. &
+         intersections(1)%s == 0.5_dp .AND. &
+         intersections(1)%t == 0.5_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         associated(intersections(1)%second, second))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Lines that **do not** intersect.
+    first%start = 0.0_dp
+    first%end_ = 1.0_dp
+    nodes1(1, :) = 0
+    nodes1(2, :) = 1
+    first%nodes = nodes1
+
+    second%start = 0.0_dp
+    second%end_ = 1.0_dp
+    nodes1(1, :) = [3.0_dp, 0.0_dp]
+    nodes1(2, :) = [2.0_dp, 1.0_dp]
+    second%nodes = nodes1
+
+    deallocate(intersections)
+    case_success = .NOT. allocated(intersections)
+    call add_from_linearized(first, second, intersections, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         py_exc == FROM_LINEARIZED_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Quadratic curves that intersect after many (12) subdivisions.
+    nodes2(1, :) = [0.25_dp, 0.4375_dp]
+    nodes2(2, :) = [0.625_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 1.0_dp]
+    root1%nodes = nodes2
+    first%start = 1365.0_dp / 4096.0_dp
+    first%end_ = 1366.0_dp / 4096.0_dp
+    first%root => root1
+    ! NOTE: This is the result of
+    !       call specialize_curve( &
+    !            3, 2, root1%nodes, first%start, first%end_, ...)
+    nodes2(1, :) = [134201344.0_dp, 201310207.0_dp]
+    nodes2(2, :) = [134225920.0_dp, 201334786.0_dp]
+    nodes2(3, :) = [134250496.0_dp, 201359356.0_dp]
+    first%nodes = 0.5_dp**28 * nodes2
+
+    nodes2(1, :) = [0.0_dp, 1.0_dp]
+    nodes2(2, :) = [0.375_dp, 1.0_dp]
+    nodes2(3, :) = [0.75_dp, 0.4375_dp]
+    root2%nodes = nodes2
+    second%start = 2730.0_dp / 4096.0_dp
+    second%end_ = 2731.0_dp / 4096.0_dp
+    second%root => root2
+    ! NOTE: This is the result of
+    !       call specialize_curve( &
+    !            3, 2, root2%nodes, second%start, second%end_, ...)
+    nodes2(1, :) = [134184960.0_dp, 201359356.0_dp]
+    nodes2(2, :) = [134209536.0_dp, 201334786.0_dp]
+    nodes2(3, :) = [134234112.0_dp, 201310207.0_dp]
+    second%nodes = 0.5_dp**28 * nodes2
+
+    case_success = .NOT. allocated(intersections)
+    call add_from_linearized(first, second, intersections, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         py_exc == FROM_LINEARIZED_SUCCESS .AND. &
+         3.0_dp * intersections(1)%s == 1.0_dp .AND. &
+         3.0_dp * intersections(1)%t == 2.0_dp .AND. &
+         associated(intersections(1)%first, root1) .AND. &
+         associated(intersections(1)%second, root2))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Parallel lines that **do** intersect.
+    first%start = 0.0_dp
+    first%end_ = 1.0_dp
+    nodes1(1, :) = 0
+    nodes1(2, :) = 1
+    first%nodes = nodes1
+
+    second%start = 0.0_dp
+    second%end_ = 1.0_dp
+    nodes1(1, :) = [0.5_dp, 0.5_dp]
+    nodes1(2, :) = [3.0_dp, 3.0_dp]
+    second%nodes = nodes1
+
+    deallocate(intersections)
+    case_success = .NOT. allocated(intersections)
+    call add_from_linearized(first, second, intersections, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         py_exc == FROM_LINEARIZED_PARALLEL)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_add_from_linearized
 
 end module test_curve_intersection
