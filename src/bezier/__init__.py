@@ -53,6 +53,7 @@ except ImportError:  # pragma: NO COVER
 
 
 __version__ = pkg_resources.get_distribution('bezier').version
+"""str: The current version of :mod:`bezier`."""
 __all__ = [
     '__version__',
     'Curve',

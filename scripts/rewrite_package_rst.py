@@ -27,6 +27,9 @@ except ImportError:
     bezier = None
 
 
+SPECIAL_MEMBERS = (
+    '__version__',
+)
 EXPECTED = """\
 bezier package
 ==============
@@ -91,7 +94,7 @@ def get_public_members():
     all_members = set()
     for name in dir(bezier):
         # Filter out non-public.
-        if name.startswith('_'):
+        if name.startswith('_') and name not in SPECIAL_MEMBERS:
             continue
         value = getattr(bezier, name)
         # Filter out imported modules.
