@@ -993,16 +993,16 @@ class Test_speedup_bbox_line_intersect(Test__bbox_line_intersect):
 
 class Test_intersect_one_round(utils.NumPyTestCase):
 
-    # NOTE: NODES1 is a specialization of [0, 0], [1/2, 1], [1, 1]
+    # NOTE: QUADRATIC1 is a specialization of [0, 0], [1/2, 1], [1, 1]
     #       onto the interval [1/4, 1].
-    NODES1 = np.asfortranarray([
+    QUADRATIC1 = np.asfortranarray([
         [0.25, 0.4375],
         [0.625, 1.0],
         [1.0, 1.0],
     ])
-    # NOTE: NODES2 is a specialization of [0, 1], [1/2, 1], [1, 0]
+    # NOTE: QUADRATIC2 is a specialization of [0, 1], [1/2, 1], [1, 0]
     #       onto the interval [0, 3/4].
-    NODES2 = np.asfortranarray([
+    QUADRATIC2 = np.asfortranarray([
         [0.0, 1.0],
         [0.375, 1.0],
         [0.75, 0.4375],
@@ -1026,8 +1026,8 @@ class Test_intersect_one_round(utils.NumPyTestCase):
     def test_simple(self):
         import bezier
 
-        curve1 = bezier.Curve(self.NODES1, degree=2)
-        curve2 = bezier.Curve(self.NODES2, degree=2)
+        curve1 = bezier.Curve(self.QUADRATIC1, degree=2)
+        curve2 = bezier.Curve(self.QUADRATIC2, degree=2)
         candidates = [(curve1, curve2)]
         accepted = self._call_function_under_test(
             candidates, [])
@@ -1040,7 +1040,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 
         curve1 = bezier.Curve(self.LINE1, degree=1)
         lin1 = _geometric_intersection.Linearization(curve1, 0.0)
-        curve2 = bezier.Curve(self.LINE2, degree=1)
+        curve2 = bezier.Curve(self.QUADRATIC2, degree=1)
 
         intersections = []
         accepted = self._call_function_under_test(
@@ -1053,7 +1053,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         import bezier
         from bezier import _geometric_intersection
 
-        curve1 = bezier.Curve(self.LINE1, degree=1)
+        curve1 = bezier.Curve(self.QUADRATIC1, degree=1)
         curve2 = bezier.Curve(self.LINE2, degree=1)
         lin2 = _geometric_intersection.Linearization(curve2, 0.0)
 

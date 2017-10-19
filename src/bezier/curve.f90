@@ -25,7 +25,8 @@ module curve
        CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
        newton_refine, locate_point, elevate_nodes, get_curvature, &
-       reduce_pseudo_inverse, full_reduce, compute_length, curve_root
+       reduce_pseudo_inverse, full_reduce, compute_length, curve_root, &
+       curves_equal
 
   ! NOTE: This (for now) is not meant to be C-interoperable. This is mostly
   !       because the shape is encoded in `nodes`, so it would be wasteful to
@@ -804,5 +805,59 @@ contains
     end if
 
   end function curve_root
+
+  logical(c_bool) function curves_equal(curve1, curve2) result(same)
+
+    ! NOTE: This is really intended to be used by diagnostic / test code
+    !       and not during the course of computation.
+
+    type(CurveData), intent(in) :: curve1, curve2
+
+    same = .TRUE.
+
+    ! First, check the scalars.
+    if (curve1%start /= curve2%start .OR. curve1%end_ /= curve2%end_) then
+       same = .FALSE.
+       return
+    end if
+
+    ! Then, check the nodes.
+    if (allocated(curve1%nodes)) then
+       if (allocated(curve2%nodes)) then
+          if (all(shape(curve1%nodes) == shape(curve2%nodes))) then
+             ! Here, since the same shape, we only exit early
+             ! if the nodes aren't identical.
+             if (.NOT. all(curve1%nodes == curve2%nodes)) then
+                same = .FALSE.
+                return
+             end if
+          else
+             ! Different shapes can't be equal.
+             same = .FALSE.
+             return
+          end if
+       else
+          ! nodes1 are allocated, nodes2 are not, can't be equal.
+          same = .FALSE.
+          return
+       end if
+    else
+       if (allocated(curve2%nodes)) then
+          ! nodes2 are allocated, nodes1 are not, can't be equal.
+          same = .FALSE.
+          return
+       end if
+       ! In the implicit ``else`` branch here, both sets of nots are
+       ! un-allocated, hence they are the "same".
+    end if
+
+    ! Finally, check the root.
+    if (associated(curve1%root)) then
+       same = associated(curve1%root, curve2%root)
+    else
+       same = .NOT. associated(curve2%root)
+    end if
+
+  end function curves_equal
 
 end module curve

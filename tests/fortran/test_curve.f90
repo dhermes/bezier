@@ -14,10 +14,11 @@ module test_curve
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use curve, only: &
-       evaluate_curve_barycentric, evaluate_multi, specialize_curve, &
-       evaluate_hodograph, subdivide_nodes, newton_refine, LOCATE_MISS, &
-       LOCATE_INVALID, locate_point, elevate_nodes, get_curvature, &
-       reduce_pseudo_inverse, full_reduce, compute_length
+       CurveData, evaluate_curve_barycentric, evaluate_multi, &
+       specialize_curve, evaluate_hodograph, subdivide_nodes, newton_refine, &
+       LOCATE_MISS, LOCATE_INVALID, locate_point, elevate_nodes, &
+       get_curvature, reduce_pseudo_inverse, full_reduce, compute_length, &
+       curves_equal
   use types, only: dp
   use unit_test_helpers, only: &
        MACHINE_EPS, print_status, get_random_nodes, get_id_mat
@@ -27,7 +28,8 @@ module test_curve
        test_specialize_curve, test_evaluate_hodograph, test_subdivide_nodes, &
        subdivide_points_check, test_newton_refine, test_locate_point, &
        test_elevate_nodes, test_get_curvature, test_reduce_pseudo_inverse, &
-       pseudo_inverse_helper, test_full_reduce, test_compute_length
+       pseudo_inverse_helper, test_full_reduce, test_compute_length, &
+       test_curves_equal
   public curve_all_tests
 
 contains
@@ -47,6 +49,7 @@ contains
     call test_reduce_pseudo_inverse(success)
     call test_full_reduce(success)
     call test_compute_length(success)
+    call test_curves_equal(success)
 
   end subroutine curve_all_tests
 
@@ -899,5 +902,117 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_compute_length
+
+  subroutine test_curves_equal(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    type(CurveData), target :: curve1, curve8
+    type(CurveData) :: curve2, curve3, curve4, curve5, curve6, curve7, curve9
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "curves_equal"
+
+    ! curve1 is the basis for all comparisons.
+    curve1%start = 0.25_dp
+    curve1%end_ = 0.75_dp
+    allocate(curve1%nodes(2, 2))
+    curve1%nodes(1, :) = [0.5_dp, 2.5_dp]
+    curve1%nodes(2, :) = [7.0_dp, -2.0_dp]
+    curve1%root => curve1
+
+    ! CASE 1: Compare curve1 to itself.
+    case_success = curves_equal(curve1, curve1)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Compare curve1 to uninitialized nodes.
+    curve2%start = curve1%start
+    curve2%end_ = curve1%end_
+    curve2%root => curve1%root
+    case_success = ( &
+         .NOT. allocated(curve2%nodes) .AND. &
+         .NOT. curves_equal(curve1, curve2) .AND. &
+         .NOT. curves_equal(curve2, curve1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Compare curve1 to an identical, but different curve.
+    curve3%start = curve1%start
+    curve3%end_ = curve1%end_
+    curve3%nodes = curve1%nodes
+    curve3%root => curve1%root
+    case_success = ( &
+         curves_equal(curve1, curve3) .AND. curves_equal(curve3, curve1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Compare curve1 to a curve that differs only in ``start``.
+    curve4%start = curve1%start - 0.25_dp
+    curve4%end_ = curve1%end_
+    curve4%nodes = curve1%nodes
+    curve4%root => curve1%root
+    case_success = ( &
+         .NOT. curves_equal(curve1, curve4) .AND. &
+         .NOT. curves_equal(curve4, curve1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Compare curve1 to a curve that differs only in ``end_``.
+    curve5%start = curve1%start
+    curve5%end_ = curve1%end_ + 0.25_dp
+    curve5%nodes = curve1%nodes
+    curve5%root => curve1%root
+    case_success = ( &
+         .NOT. curves_equal(curve1, curve5) .AND. &
+         .NOT. curves_equal(curve5, curve1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Compare curve1 to a curve that differs in node shape
+    curve6%start = curve1%start
+    curve6%end_ = curve1%end_
+    curve6%root => curve1%root
+    allocate(curve6%nodes(1, 2))
+    curve6%nodes(1, :) = curve1%nodes(1, :)
+    case_success = ( &
+         .NOT. curves_equal(curve1, curve6) .AND. &
+         .NOT. curves_equal(curve6, curve1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: Compare curve1 to a curve that differs in
+    !         ``nodes`` value but not shape.
+    curve7%start = curve1%start
+    curve7%end_ = curve1%end_
+    curve7%nodes = curve1%nodes + 2.5_dp
+    curve7%root => curve1%root
+    case_success = ( &
+         .NOT. curves_equal(curve1, curve7) .AND. &
+         .NOT. curves_equal(curve7, curve1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Compare curve1 to a curve that differs only in ``root``.
+    curve8%start = curve1%start
+    curve8%end_ = curve1%end_
+    curve8%nodes = curve1%nodes
+    curve8%root => curve8
+    case_success = ( &
+         .NOT. curves_equal(curve1, curve8) .AND. &
+         .NOT. curves_equal(curve8, curve1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 9: Compare curve1 to a curve that differs has a null root.
+    curve9%start = curve1%start
+    curve9%end_ = curve1%end_
+    curve9%nodes = curve1%nodes
+    case_success = ( &
+         .NOT. curves_equal(curve1, curve9) .AND. &
+         .NOT. curves_equal(curve9, curve1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 10: Compare curve with uninitialized nodes to **itself**.
+    case_success = ( &
+         .NOT. allocated(curve2%nodes) .AND. &
+         curves_equal(curve2, curve2))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_curves_equal
 
 end module test_curve

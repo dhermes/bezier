@@ -14,7 +14,7 @@ module test_curve_intersection
 
   use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
-  use curve, only: CurveData, evaluate_multi, subdivide_nodes
+  use curve, only: CurveData, evaluate_multi, subdivide_nodes, curves_equal
   use curve_intersection, only: &
        Intersection, BoxIntersectionType_INTERSECTION, &
        BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
@@ -22,7 +22,7 @@ module test_curve_intersection
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
-       endpoint_check, tangent_bbox_intersection
+       endpoint_check, tangent_bbox_intersection, intersect_one_round
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -32,7 +32,7 @@ module test_curve_intersection
        test_parallel_different, test_from_linearized, &
        test_bbox_line_intersect, test_add_intersection, &
        test_add_from_linearized, test_endpoint_check, &
-       test_tangent_bbox_intersection
+       test_tangent_bbox_intersection, test_intersect_one_round
   public curve_intersection_all_tests
 
 contains
@@ -51,6 +51,7 @@ contains
     call test_add_from_linearized(success)
     call test_endpoint_check(success)
     call test_tangent_bbox_intersection(success)
+    call test_intersect_one_round(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -892,6 +893,7 @@ contains
          associated(intersections(1)%first, first) .AND. &
          associated(intersections(1)%second, second))
     call print_status(name, case_id, case_success, success)
+    deallocate(intersections)
 
     ! CASE 2: Lines that **do not** intersect.
     first%start = 0.0_dp
@@ -906,7 +908,6 @@ contains
     nodes1(2, :) = [2.0_dp, 1.0_dp]
     second%nodes = nodes1
 
-    deallocate(intersections)
     case_success = .NOT. allocated(intersections)
     call add_from_linearized(first, second, intersections, py_exc)
     case_success = ( &
@@ -958,6 +959,7 @@ contains
          associated(intersections(1)%first, root1) .AND. &
          associated(intersections(1)%second, root2))
     call print_status(name, case_id, case_success, success)
+    deallocate(intersections)
 
     ! CASE 4: Parallel lines that **do** intersect.
     first%start = 0.0_dp
@@ -972,7 +974,6 @@ contains
     nodes1(2, :) = [3.0_dp, 3.0_dp]
     second%nodes = nodes1
 
-    deallocate(intersections)
     case_success = .NOT. allocated(intersections)
     call add_from_linearized(first, second, intersections, py_exc)
     case_success = ( &
@@ -1043,6 +1044,7 @@ contains
          associated(intersections(1)%first, first) .AND. &
          associated(intersections(1)%second, second))
     call print_status(name, case_id, case_success, success)
+    deallocate(intersections)
 
     ! CASE 3: An intersection after one subdivision.
     nodes2(1, :) = 0
@@ -1077,7 +1079,6 @@ contains
     second%nodes = nodes2
     node_second(1, :) = second%nodes(1, :)
 
-    deallocate(intersections)
     case_success = .NOT. allocated(intersections)
     call endpoint_check( &
          first, node_first, s, &
@@ -1129,6 +1130,7 @@ contains
          associated(intersections(1)%first, first) .AND. &
          associated(intersections(1)%second, second))
     call print_status(name, case_id, case_success, success)
+    deallocate(intersections)
 
     ! CASE 2: Two quadratics that touch at both endpoints.
     nodes1(1, :) = 0
@@ -1141,7 +1143,6 @@ contains
     nodes1(3, :) = [0.0_dp, 1.0_dp]
     second%nodes = nodes1
 
-    deallocate(intersections)
     case_success = .NOT. allocated(intersections)
     call tangent_bbox_intersection(first, second, intersections)
     case_success = ( &
@@ -1157,6 +1158,7 @@ contains
          associated(intersections(2)%first, first) .AND. &
          associated(intersections(2)%second, second))
     call print_status(name, case_id, case_success, success)
+    deallocate(intersections)
 
     ! CASE 3: Two lines that don't touch at endpoints, but have
     !         tangent bounding boxes.
@@ -1168,7 +1170,6 @@ contains
     nodes2(2, :) = [2.5_dp, 2.0_dp]
     second%nodes = nodes2
 
-    deallocate(intersections)
     case_success = .NOT. allocated(intersections)
     call tangent_bbox_intersection(first, second, intersections)
     case_success = ( &
@@ -1177,5 +1178,233 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_tangent_bbox_intersection
+
+  subroutine test_intersect_one_round(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    real(c_double) :: fixed_quadratic1(3, 2), fixed_quadratic2(3, 2)
+    real(c_double) :: fixed_line1(2, 2), fixed_line2(2, 2)
+    integer(c_int) :: num_candidates
+    type(CurveData), target, allocatable :: candidates(:, :)
+    type(Intersection), allocatable :: intersections(:)
+    type(CurveData), allocatable :: accepted(:, :)
+    integer(c_int) :: num_accepted
+    integer(c_int) :: py_exc
+    type(CurveData), pointer :: first, second
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "intersect_one_round"
+
+    ! NOTE: ``fixed_quadratic1`` is a specialization of
+    !       [0, 0], [1/2, 1], [1, 1] onto the interval [1/4, 1].
+    fixed_quadratic1(1, :) = [0.25_dp, 0.4375_dp]
+    fixed_quadratic1(2, :) = [0.625_dp, 1.0_dp]
+    fixed_quadratic1(3, :) = [1.0_dp, 1.0_dp]
+    ! NOTE: ``fixed_quadratic2`` is a specialization of
+    !       [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
+    fixed_quadratic2(1, :) = [0.0_dp, 1.0_dp]
+    fixed_quadratic2(2, :) = [0.375_dp, 1.0_dp]
+    fixed_quadratic2(3, :) = [0.75_dp, 0.4375_dp]
+
+    fixed_line1(1, :) = [0.0_dp, 0.0_dp]
+    fixed_line1(2, :) = [1.0_dp, 1.0_dp]
+
+    fixed_line2(1, :) = [0.0_dp, 1.0_dp]
+    fixed_line2(2, :) = [1.0_dp, 0.0_dp]
+
+    ! CASE 1: Simple test, non-linearized quadratics.
+    num_candidates = 1
+    allocate(candidates(2, num_candidates))
+    allocate(accepted(2, num_candidates))
+    ! Populate the "first" curve.
+    candidates(1, 1)%nodes = fixed_quadratic1
+    ! Populate the "second" curve.
+    candidates(2, 1)%nodes = fixed_quadratic2
+
+    case_success = .NOT. allocated(intersections)
+    call intersect_one_round( &
+         num_candidates, candidates, intersections, &
+         accepted, num_accepted, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_accepted == 1 .AND. &
+         curves_equal(accepted(1, 1), candidates(1, 1)) .AND. &
+         curves_equal(accepted(2, 1), candidates(2, 1)) .AND. &
+         py_exc == FROM_LINEARIZED_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+    deallocate(accepted)
+
+    ! CASE 2: First curve is linearized, second is not.
+    num_candidates = 1
+    allocate(candidates(2, num_candidates))
+    allocate(accepted(2, num_candidates))
+    ! Populate the "first" curve with a line.
+    candidates(1, 1)%nodes = fixed_line1
+    ! Populate the "second" curve.
+    candidates(2, 1)%nodes = fixed_quadratic2
+
+    case_success = .NOT. allocated(intersections)
+    call intersect_one_round( &
+         num_candidates, candidates, intersections, &
+         accepted, num_accepted, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_accepted == 1 .AND. &
+         curves_equal(accepted(1, 1), candidates(1, 1)) .AND. &
+         curves_equal(accepted(2, 1), candidates(2, 1)) .AND. &
+         py_exc == FROM_LINEARIZED_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+    deallocate(accepted)
+
+    ! CASE 3: Second curve is linearized, first is not.
+    num_candidates = 1
+    allocate(candidates(2, num_candidates))
+    allocate(accepted(2, num_candidates))
+    ! Populate the "first" curve.
+    candidates(1, 1)%nodes = fixed_quadratic1
+    ! Populate the "second" curve with a line.
+    candidates(2, 1)%nodes = fixed_line2
+
+    case_success = .NOT. allocated(intersections)
+    call intersect_one_round( &
+         num_candidates, candidates, intersections, &
+         accepted, num_accepted, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_accepted == 1 .AND. &
+         curves_equal(accepted(1, 1), candidates(1, 1)) .AND. &
+         curves_equal(accepted(2, 1), candidates(2, 1)) .AND. &
+         py_exc == FROM_LINEARIZED_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+    deallocate(accepted)
+
+    ! CASE 4: Both curves are linearized.
+    num_candidates = 1
+    allocate(candidates(2, num_candidates))
+    allocate(accepted(2, num_candidates))
+    ! Populate the "first" curve with a line.
+    candidates(1, 1)%nodes = fixed_line1
+    first => candidates(1, 1)
+    ! Populate the "second" curve with a line.
+    candidates(2, 1)%nodes = fixed_line2
+    second => candidates(2, 1)
+
+    case_success = .NOT. allocated(intersections)
+    call intersect_one_round( &
+         num_candidates, candidates, intersections, &
+         accepted, num_accepted, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         intersections(1)%s == 0.5_dp .AND. &
+         intersections(1)%t == 0.5_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         associated(intersections(1)%second, second) .AND. &
+         num_accepted == 0 .AND. &
+         py_exc == FROM_LINEARIZED_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+    deallocate(accepted)
+    deallocate(intersections)
+
+    ! CASE 5: Failure caused by parallel lines that **do** intersect.
+    num_candidates = 1
+    allocate(candidates(2, num_candidates))
+    allocate(accepted(2, num_candidates))
+    ! Populate the "first" curve with a line.
+    allocate(candidates(1, 1)%nodes(2, 2))
+    candidates(1, 1)%nodes(1, :) = 0
+    candidates(1, 1)%nodes(2, :) = 1
+    ! Populate the "second" curve with a line.
+    allocate(candidates(2, 1)%nodes(2, 2))
+    candidates(2, 1)%nodes(1, :) = [0.5_dp, 0.5_dp]
+    candidates(2, 1)%nodes(2, :) = [3.0_dp, 3.0_dp]
+
+    case_success = .NOT. allocated(intersections)
+    call intersect_one_round( &
+         num_candidates, candidates, intersections, &
+         accepted, num_accepted, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_accepted == 0 .AND. &
+         py_exc == FROM_LINEARIZED_PARALLEL)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+    deallocate(accepted)
+
+    ! CASE 6: Disjoint bounding boxes.
+    num_candidates = 1
+    allocate(candidates(2, num_candidates))
+    allocate(accepted(2, num_candidates))
+    ! Populate the "first" curve with a line.
+    candidates(1, 1)%nodes = fixed_quadratic1
+    ! Populate the "second" curve with a line.
+    allocate(candidates(2, 1)%nodes(2, 2))
+    candidates(2, 1)%nodes(1, :) = [1.0_dp, 1.25_dp]
+    candidates(2, 1)%nodes(2, :) = [0.0_dp, 2.0_dp]
+
+    case_success = .NOT. allocated(intersections)
+    call intersect_one_round( &
+         num_candidates, candidates, intersections, &
+         accepted, num_accepted, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_accepted == 0 .AND. &
+         py_exc == FROM_LINEARIZED_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+    deallocate(accepted)
+
+    ! CASE 7: Tangent bounding boxes (**with** an intersection), noting
+    !         that tangency is only allowed for a pair with both curves
+    !         can't be linearized (since tangency can be resolved in the
+    !         linearized case by checking endpoints).
+    num_candidates = 1
+    allocate(candidates(2, num_candidates))
+    allocate(accepted(2, num_candidates))
+    ! Populate the "first" curve.
+    first => candidates(1, 1)
+    allocate(first%nodes(3, 2))
+    first%nodes(1, :) = [0.0_dp, 0.0_dp]
+    first%nodes(2, :) = [0.5_dp, 1.0_dp]
+    first%nodes(3, :) = [1.0_dp, 0.0_dp]
+    ! [0 <= x <= 1.0], [0.0 <= y <= 1.0]
+    ! Populate the "second" curve.
+    second => candidates(2, 1)
+    allocate(second%nodes(3, 2))
+    second%nodes(1, :) = [1.0_dp, 0.0_dp]
+    second%nodes(2, :) = [1.5_dp, 0.5_dp]
+    second%nodes(3, :) = [2.0_dp, -0.25_dp]
+    ! [1.0 <= x <= 2.0], [-0.25 <= y <= 0.5]
+
+    case_success = .NOT. allocated(intersections)
+    call intersect_one_round( &
+         num_candidates, candidates, intersections, &
+         accepted, num_accepted, py_exc)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         intersections(1)%s == 1.0_dp .AND. &
+         intersections(1)%t == 0.0_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         associated(intersections(1)%second, second) .AND. &
+         num_accepted == 0 .AND. &
+         py_exc == FROM_LINEARIZED_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_intersect_one_round
 
 end module test_curve_intersection

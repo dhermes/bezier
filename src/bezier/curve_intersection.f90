@@ -24,11 +24,11 @@ module curve_intersection
        Intersection, BoxIntersectionType_INTERSECTION, &
        BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
        FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
-       FROM_LINEARIZED_WIGGLE_FAIL, linearization_error, &
-       segment_intersection, newton_refine_intersect, bbox_intersect, &
-       parallel_different, from_linearized, bbox_line_intersect, &
-       add_intersection, add_from_linearized, endpoint_check, &
-       tangent_bbox_intersection
+       FROM_LINEARIZED_WIGGLE_FAIL, LINEARIZATION_THRESHOLD, &
+       linearization_error, segment_intersection, newton_refine_intersect, &
+       bbox_intersect, parallel_different, from_linearized, &
+       bbox_line_intersect, add_intersection, add_from_linearized, &
+       endpoint_check, tangent_bbox_intersection, intersect_one_round
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -48,6 +48,8 @@ module curve_intersection
   ! In ``from_linearized``, ``py_exc == 2`` indicates that
   ! ``wiggle_interval`` failed.
   integer(c_int), parameter :: FROM_LINEARIZED_WIGGLE_FAIL = 2
+  ! Set the threshold for linearization error at half the bits available.
+  real(c_double), parameter :: LINEARIZATION_THRESHOLD = 0.5_dp**26
 
 contains
 
@@ -586,5 +588,91 @@ contains
          second, nodes2_end, 1.0_dp, intersections)
 
   end subroutine tangent_bbox_intersection
+
+  subroutine intersect_one_round( &
+       num_candidates, candidates, intersections, &
+       accepted, num_accepted, py_exc)
+
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+    ! NOTE: It may make more sense to use an ``allocatable`` array for
+    !       ``accepted``, since it will be **at most** the same size as
+    !       ``candidates``, but in some cases will be **size zero**.
+
+    integer(c_int), intent(in) :: num_candidates
+    type(CurveData), target, intent(in) :: candidates(2, num_candidates)
+    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    type(CurveData), intent(out) :: accepted(2, num_candidates)
+    integer(c_int), intent(out) :: num_accepted
+    integer(c_int), intent(out) :: py_exc
+    ! Variables outside of signature.
+    type(CurveData), pointer :: first, second
+    real(c_double) :: linearization_error1, linearization_error2
+    integer(c_int) :: bbox_int, index_, num_nodes1, num_nodes2
+
+    num_accepted = 0
+    py_exc = FROM_LINEARIZED_SUCCESS
+    do index_ = 1, num_candidates
+       ! NOTE: It is a **strict necessity** to use pointers here, because
+       !       the intersections must be identified outside the scope of
+       !       this subroutine. This is likely an indication that a "curve
+       !       index" should be used within a standard array of original
+       !       curves rather than keeping around **brittle** references.
+       first => candidates(1, index_)
+       second => candidates(2, index_)
+
+       ! Compute the linearization error for each curve.
+       num_nodes1 = size(first%nodes, 1)
+       num_nodes2 = size(second%nodes, 1)
+       call linearization_error( &
+            num_nodes1, 2, first%nodes, linearization_error1)
+       call linearization_error( &
+            num_nodes2, 2, second%nodes, linearization_error2)
+
+       if (linearization_error1 < LINEARIZATION_THRESHOLD) then
+          if (linearization_error2 < LINEARIZATION_THRESHOLD) then
+             ! If both ``first`` and ``second`` are linearizations, then
+             ! we can (attempt to) intersect them immediately.
+             call add_from_linearized(first, second, intersections, py_exc)
+
+             ! If there was a failure, exit this subroutine.
+             if (py_exc /= FROM_LINEARIZED_SUCCESS) then
+                return
+             end if
+
+             ! If there was no failure, move to the next iteration.
+             exit
+          else
+             call bbox_line_intersect( &
+                  num_nodes2, second%nodes, &
+                  first%nodes(1, :), first%nodes(num_nodes1, :), bbox_int)
+          end if
+       else
+          if (linearization_error2 < LINEARIZATION_THRESHOLD) then
+             call bbox_line_intersect( &
+                  num_nodes1, first%nodes, &
+                  second%nodes(1, :), second%nodes(num_nodes2, :), bbox_int)
+          else
+             ! If neither curve is close to a line, we can still reject the
+             ! pair if the bounding boxes are disjoint.
+             call bbox_intersect( &
+                  num_nodes1, first%nodes, num_nodes2, second%nodes, bbox_int)
+          end if
+       end if
+
+       ! Reject if the bounding boxes do not intersect.
+       if (bbox_int == BoxIntersectionType_DISJOINT) then
+          exit
+       else if (bbox_int == BoxIntersectionType_TANGENT) then
+          call tangent_bbox_intersection(first, second, intersections)
+          exit
+       end if
+
+       ! If we haven't ``exit``-d this iteration, add the accepted pair.
+       num_accepted = num_accepted + 1
+       accepted(1, num_accepted) = first
+       accepted(2, num_accepted) = second
+    end do
+
+  end subroutine intersect_one_round
 
 end module curve_intersection
