@@ -240,8 +240,8 @@ contains
   end subroutine parallel_different
 
   subroutine from_linearized( &
-       error1, start1, end1, start_node1, end_node1, num_nodes1, nodes1, &
-       error2, start2, end2, start_node2, end_node2, num_nodes2, nodes2, &
+       error1, start1, end1, start_node1, end_node1, num_nodes1, root_nodes1, &
+       error2, start2, end2, start_node2, end_node2, num_nodes2, root_nodes2, &
        refined_s, refined_t, does_intersect, py_exc) &
        bind(c, name='from_linearized')
 
@@ -249,12 +249,12 @@ contains
     real(c_double), intent(in) :: start_node1(1, 2)
     real(c_double), intent(in) :: end_node1(1, 2)
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: root_nodes1(num_nodes1, 2)
     real(c_double), intent(in) :: error2, start2, end2
     real(c_double), intent(in) :: start_node2(1, 2)
     real(c_double), intent(in) :: end_node2(1, 2)
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: root_nodes2(num_nodes2, 2)
     real(c_double), intent(out) :: refined_s, refined_t
     logical(c_bool), intent(out) :: does_intersect
     integer(c_int), intent(out) :: py_exc
@@ -295,7 +295,7 @@ contains
           end if
        else
           call bbox_intersect( &
-               num_nodes1, nodes1, num_nodes2, nodes2, enum_)
+               num_nodes1, root_nodes1, num_nodes2, root_nodes2, enum_)
           if (enum_ == BoxIntersectionType_DISJOINT) then
              return
           end if
@@ -313,7 +313,8 @@ contains
     ! Perform one step of Newton iteration to refine the computed
     ! values of s and t.
     call newton_refine_intersect( &
-         s, num_nodes1, nodes1, t, num_nodes2, nodes2, refined_s, refined_t)
+         s, num_nodes1, root_nodes1, t, &
+         num_nodes2, root_nodes2, refined_s, refined_t)
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then

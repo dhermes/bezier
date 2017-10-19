@@ -634,8 +634,8 @@ def wiggle_pair(s_val, t_val):
 
 # pylint: disable=too-many-arguments,too-many-return-statements
 def _from_linearized_low_level(
-        error1, start1, end1, start_node1, end_node1, nodes1,
-        error2, start2, end2, start_node2, end_node2, nodes2):
+        error1, start1, end1, start_node1, end_node1, root_nodes1,
+        error2, start2, end2, start_node2, end_node2, root_nodes2):
     """Determine curve-curve intersection from pair of linearizations.
 
     The inputs are the "fully-unpacked" values from two
@@ -656,7 +656,7 @@ def _from_linearized_low_level(
             first curve (also in the linearization).
         end_node1 (numpy.ndarray): The (``1x2``) end node in the
             first curve (also in the linearization).
-        nodes1 (numpy.ndarray): The (``(D1 + 1)x2``) nodes of the "root"
+        root_nodes1 (numpy.ndarray): The (``(D1 + 1)x2``) nodes of the "root"
             curve that contains the first curve.
         error2 (float): The linearization error for the second curve.
         start2 (float): The start parameter of the (potentially
@@ -667,7 +667,7 @@ def _from_linearized_low_level(
             second curve (also in the linearization).
         end_node2 (numpy.ndarray): The (``1x2``) end node in the
             second curve (also in the linearization).
-        nodes2 (numpy.ndarray): The (``(D2 + 1)x2``) nodes of the "root"
+        root_nodes2 (numpy.ndarray): The (``(D2 + 1)x2``) nodes of the "root"
             curve that contains the second curve.
 
     Returns:
@@ -698,8 +698,10 @@ def _from_linearized_low_level(
             if parallel_different(start_node1, end_node1,
                                   start_node2, end_node2):
                 return None, None, False
-        elif bbox_intersect(nodes1, nodes2) == BoxIntersectionType.DISJOINT:
-            return None, None, False
+        else:
+            bbox_int = bbox_intersect(root_nodes1, root_nodes2)
+            if bbox_int == BoxIntersectionType.DISJOINT:
+                return None, None, False
 
         raise NotImplementedError(_SEGMENTS_PARALLEL)
 
@@ -709,7 +711,7 @@ def _from_linearized_low_level(
     # Perform one step of Newton iteration to refine the computed
     # values of s and t.
     refined_s, refined_t = _intersection_helpers.newton_refine(
-        orig_s, nodes1, orig_t, nodes2)
+        orig_s, root_nodes1, orig_t, root_nodes2)
     refined_s, refined_t = wiggle_pair(refined_s, refined_t)
     return refined_s, refined_t, True
     # pylint: enable=too-many-locals
