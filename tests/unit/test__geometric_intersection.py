@@ -1083,6 +1083,72 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         utils.check_intersection(
             self, intersection, expected, curve1, curve2, 0.5, 0.5)
 
+    def test_failure_due_to_parallel(self):
+        import bezier
+        from bezier import _geometric_intersection
+
+        curve1 = bezier.Curve(self.LINE1, degree=1)
+        lin1 = _geometric_intersection.Linearization(curve1, 0.0)
+        nodes2 = np.asfortranarray([
+            [0.5, 0.5],
+            [3.0, 3.0],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=2, _copy=False)
+        lin2 = _geometric_intersection.Linearization(curve2, 0.0)
+
+        intersections = []
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test([(lin1, lin2)], intersections)
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(
+            exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
+        self.assertEqual(intersections, [])
+
+    def test_disjoint_bboxes(self):
+        import bezier
+        from bezier import _geometric_intersection
+
+        curve1 = bezier.Curve(self.QUADRATIC1, degree=1)
+        nodes2 = np.asfortranarray([
+            [1.0, 1.25],
+            [0.0, 2.0 ],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=1, _copy=False)
+        lin2 = _geometric_intersection.Linearization(curve2, 0.0)
+
+        intersections = []
+        accepted = self._call_function_under_test(
+            [(curve1, lin2)], intersections)
+        self.assertEqual(accepted, [])
+        self.assertEqual(intersections, [])
+
+    def test_tangent_bboxes(self):
+        import bezier
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        curve1 = bezier.Curve(nodes1, degree=2, _copy=False)
+        nodes2 = np.asfortranarray([
+            [1.0, 0.0],
+            [1.5, 0.5],
+            [2.0, -0.25],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=2, _copy=False)
+
+        intersections = []
+        accepted = self._call_function_under_test(
+            [(curve1, curve2)], intersections)
+        self.assertEqual(accepted, [])
+        self.assertEqual(len(intersections), 1)
+        intersection = intersections[0]
+        expected = nodes1[[-1], :]
+        utils.check_intersection(
+            self, intersection, expected, curve1, curve2, 1.0, 0.0)
+
 
 class Test_next_candidates(unittest.TestCase):
 

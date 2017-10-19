@@ -1322,9 +1322,7 @@ contains
     allocate(candidates(2, num_candidates))
     allocate(accepted(2, num_candidates))
     ! Populate the "first" curve with a line.
-    allocate(candidates(1, 1)%nodes(2, 2))
-    candidates(1, 1)%nodes(1, :) = 0
-    candidates(1, 1)%nodes(2, :) = 1
+    candidates(1, 1)%nodes = fixed_line1
     ! Populate the "second" curve with a line.
     allocate(candidates(2, 1)%nodes(2, 2))
     candidates(2, 1)%nodes(1, :) = [0.5_dp, 0.5_dp]
