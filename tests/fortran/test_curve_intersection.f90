@@ -22,7 +22,7 @@ module test_curve_intersection
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
-       endpoint_check
+       endpoint_check, tangent_bbox_intersection
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -31,7 +31,8 @@ module test_curve_intersection
        test_newton_refine_intersect, test_bbox_intersect, &
        test_parallel_different, test_from_linearized, &
        test_bbox_line_intersect, test_add_intersection, &
-       test_add_from_linearized, test_endpoint_check
+       test_add_from_linearized, test_endpoint_check, &
+       test_tangent_bbox_intersection
   public curve_intersection_all_tests
 
 contains
@@ -49,6 +50,7 @@ contains
     call test_add_intersection(success)
     call test_add_from_linearized(success)
     call test_endpoint_check(success)
+    call test_tangent_bbox_intersection(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -1091,5 +1093,89 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_endpoint_check
+
+  subroutine test_tangent_bbox_intersection(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    type(CurveData), target :: first, second
+    real(c_double) :: nodes1(3, 2), nodes2(2, 2)
+    type(Intersection), allocatable :: intersections(:)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "tangent_bbox_intersection"
+
+    ! CASE 1: Standard case of two quadratics that touch at a single endpoint.
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 2.0_dp]
+    nodes1(3, :) = [2.0_dp, 0.0_dp]
+    first%nodes = nodes1
+
+    nodes1(1, :) = [2.0_dp, 0.0_dp]
+    nodes1(2, :) = [3.0_dp, 2.0_dp]
+    nodes1(3, :) = [4.0_dp, 0.0_dp]
+    second%nodes = nodes1
+
+    case_success = .NOT. allocated(intersections)
+    call tangent_bbox_intersection(first, second, intersections)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         intersections(1)%s == 1.0_dp .AND. &
+         intersections(1)%t == 0.0_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         associated(intersections(1)%second, second))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Two quadratics that touch at both endpoints.
+    nodes1(1, :) = 0
+    nodes1(2, :) = [-1.0_dp, 0.5_dp]
+    nodes1(3, :) = [0.0_dp, 1.0_dp]
+    first%nodes = nodes1
+
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.5_dp]
+    nodes1(3, :) = [0.0_dp, 1.0_dp]
+    second%nodes = nodes1
+
+    deallocate(intersections)
+    case_success = .NOT. allocated(intersections)
+    call tangent_bbox_intersection(first, second, intersections)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         intersections(1)%s == 0.0_dp .AND. &
+         intersections(1)%t == 0.0_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         associated(intersections(1)%second, second) .AND. &
+         intersections(2)%s == 1.0_dp .AND. &
+         intersections(2)%t == 1.0_dp .AND. &
+         associated(intersections(2)%first, first) .AND. &
+         associated(intersections(2)%second, second))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Two lines that don't touch at endpoints, but have
+    !         tangent bounding boxes.
+    nodes2(1, :) = 0
+    nodes2(2, :) = [2.0_dp, 1.0_dp]
+    first%nodes = nodes2
+
+    nodes2(1, :) = [0.5_dp, 1.0_dp]
+    nodes2(2, :) = [2.5_dp, 2.0_dp]
+    second%nodes = nodes2
+
+    deallocate(intersections)
+    case_success = .NOT. allocated(intersections)
+    call tangent_bbox_intersection(first, second, intersections)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_tangent_bbox_intersection
 
 end module test_curve_intersection

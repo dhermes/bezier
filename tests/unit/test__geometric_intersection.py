@@ -748,7 +748,7 @@ class Test_add_intersection(unittest.TestCase):
             self.assertEqual(intersections, [intersection1, intersection2])
 
 
-class Test_endpoint_check(unittest.TestCase):
+class Test_endpoint_check(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(
@@ -789,13 +789,8 @@ class Test_endpoint_check(unittest.TestCase):
             second, node_second, t_val, intersections)
 
         self.assertEqual(len(intersections), 1)
-        intersection = intersections[0]
-        self.assertIs(intersection.first, first)
-        self.assertEqual(intersection.s, s_val)
-        self.assertIs(intersection.second, second)
-        self.assertEqual(intersection.t, t_val)
-        self.assertIs(intersection.point, node_first)
-        self.assertIsNone(intersection.interior_curve)
+        utils.check_intersection(
+            self, intersections[0], node_first, first, second, s_val, t_val)
 
     def test_subcurves_middle(self):
         import bezier
@@ -824,13 +819,8 @@ class Test_endpoint_check(unittest.TestCase):
             second, node_second, t_val, intersections)
 
         self.assertEqual(len(intersections), 1)
-        intersection = intersections[0]
-        self.assertIs(intersection.first, root1)
-        self.assertEqual(intersection.s, 0.5)
-        self.assertIs(intersection.second, root2)
-        self.assertEqual(intersection.t, 0.5)
-        self.assertIs(intersection.point, node_first)
-        self.assertIsNone(intersection.interior_curve)
+        utils.check_intersection(
+            self, intersections[0], node_first, root1, root2, 0.5, 0.5)
 
 
 class Test_tangent_bbox_intersection(utils.NumPyTestCase):
@@ -842,7 +832,7 @@ class Test_tangent_bbox_intersection(utils.NumPyTestCase):
         return _geometric_intersection.tangent_bbox_intersection(
             first, second, intersections)
 
-    def test_it(self):
+    def test_one_endpoint(self):
         import bezier
 
         nodes1 = np.asfortranarray([
@@ -862,10 +852,56 @@ class Test_tangent_bbox_intersection(utils.NumPyTestCase):
         self.assertIsNone(
             self._call_function_under_test(curve1, curve2, intersections))
         self.assertEqual(len(intersections), 1)
-        intersection = intersections[0]
-        expected = curve1.evaluate(1.0)
+        expected = nodes1[[-1], :]
         utils.check_intersection(
-            self, intersection, expected, curve1, curve2, 1.0, 0.0)
+            self, intersections[0], expected, curve1, curve2, 1.0, 0.0)
+
+    def test_two_endpoints(self):
+        import bezier
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [-1.0, 0.5],
+            [0.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1, degree=2)
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.5],
+            [0.0, 1.0],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=2)
+
+        intersections = []
+        self.assertIsNone(
+            self._call_function_under_test(curve1, curve2, intersections))
+        self.assertEqual(len(intersections), 2)
+        expected = nodes1[[0], :]
+        utils.check_intersection(
+            self, intersections[0], expected, curve1, curve2, 0.0, 0.0)
+        expected = nodes1[[-1], :]
+        utils.check_intersection(
+            self, intersections[1], expected, curve1, curve2, 1.0, 1.0)
+
+    def test_no_endpoints(self):
+        # Lines have tangent bounding boxes but don't intersect.
+        import bezier
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [2.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1, degree=1)
+        nodes2 = np.asfortranarray([
+            [0.5, 1.0],
+            [2.5, 2.0],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=1)
+
+        intersections = []
+        self.assertIsNone(
+            self._call_function_under_test(curve1, curve2, intersections))
+        self.assertEqual(intersections, [])
 
 
 class Test__bbox_line_intersect(utils.NumPyTestCase):

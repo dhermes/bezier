@@ -27,7 +27,8 @@ module curve_intersection
        FROM_LINEARIZED_WIGGLE_FAIL, linearization_error, &
        segment_intersection, newton_refine_intersect, bbox_intersect, &
        parallel_different, from_linearized, bbox_line_intersect, &
-       add_intersection, add_from_linearized, endpoint_check
+       add_intersection, add_from_linearized, endpoint_check, &
+       tangent_bbox_intersection
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -551,5 +552,39 @@ contains
     call add_intersection(root1, orig_s, root2, orig_t, intersections)
 
   end subroutine endpoint_check
+
+  subroutine tangent_bbox_intersection(first, second, intersections)
+
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+
+    type(CurveData), intent(in) :: first, second
+    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    ! Variables outside of signature.
+    integer(c_int) :: num_nodes1, num_nodes2
+    real(c_double) :: nodes1_start(1, 2), nodes1_end(1, 2)
+    real(c_double) :: nodes2_start(1, 2), nodes2_end(1, 2)
+
+    num_nodes1 = size(first%nodes, 1)
+    nodes1_start(1, :) = first%nodes(1, :2)
+    nodes2_start(1, :) = first%nodes(num_nodes1, :2)
+
+    num_nodes2 = size(second%nodes, 1)
+    nodes1_end(1, :) = second%nodes(1, :2)
+    nodes2_end(1, :) = second%nodes(num_nodes2, :2)
+
+    call endpoint_check( &
+         first, nodes1_start, 0.0_dp, &
+         second, nodes1_end, 0.0_dp, intersections)
+    call endpoint_check( &
+         first, nodes1_start, 0.0_dp, &
+         second, nodes2_end, 1.0_dp, intersections)
+    call endpoint_check( &
+         first, nodes2_start, 1.0_dp, &
+         second, nodes1_end, 0.0_dp, intersections)
+    call endpoint_check( &
+         first, nodes2_start, 1.0_dp, &
+         second, nodes2_end, 1.0_dp, intersections)
+
+  end subroutine tangent_bbox_intersection
 
 end module curve_intersection
