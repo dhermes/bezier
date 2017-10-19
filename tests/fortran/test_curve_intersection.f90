@@ -21,14 +21,17 @@ module test_curve_intersection
        FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
-       bbox_line_intersect, add_intersection, add_from_linearized
+       bbox_line_intersect, add_intersection, add_from_linearized, &
+       endpoint_check
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_linearization_error, test_segment_intersection, &
        test_newton_refine_intersect, test_bbox_intersect, &
-       test_parallel_different, test_from_linearized, test_bbox_line_intersect
+       test_parallel_different, test_from_linearized, &
+       test_bbox_line_intersect, test_add_intersection, &
+       test_add_from_linearized, test_endpoint_check
   public curve_intersection_all_tests
 
 contains
@@ -45,6 +48,7 @@ contains
     call test_bbox_line_intersect(success)
     call test_add_intersection(success)
     call test_add_from_linearized(success)
+    call test_endpoint_check(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -976,5 +980,116 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_from_linearized
+
+  subroutine test_endpoint_check(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    type(CurveData), target :: first, root1, second, root2
+    real(c_double) :: node_first(1, 2), node_second(1, 2)
+    real(c_double) :: s, t
+    real(c_double) :: nodes1(2, 2), nodes2(3, 2)
+    type(Intersection), allocatable :: intersections(:)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "endpoint_check"
+
+    ! CASE 1: Endpoints that are not close to one another.
+    node_first = 0
+    s = 0.0_dp
+
+    node_second = 1
+    t = 0.0_dp
+
+    ! NOTE: We use ``first`` and ``second`` without any actual info,
+    !       but it won't matter because ``node_first`` and ``node_second``
+    !       are not close.
+    case_success = .NOT. allocated(intersections)
+    call endpoint_check( &
+         first, node_first, 0.0_dp, &
+         second, node_second, 0.0_dp, intersections)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: The endpoints are actually the same.
+    nodes1(1, :) = 0
+    nodes1(2, :) = 1
+    first%nodes = nodes1
+    s = 1.0_dp
+    node_first(1, :) = first%nodes(2, :)
+
+    nodes1(1, :) = 1
+    nodes1(2, :) = [2.0_dp, 1.0_dp]
+    second%nodes = nodes1
+    t = 0.0_dp
+    node_second(1, :) = second%nodes(1, :)
+
+    case_success = .NOT. allocated(intersections)
+    call endpoint_check( &
+         first, node_first, s, &
+         second, node_second, t, intersections)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         intersections(1)%s == s .AND. &
+         intersections(1)%t == t .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         associated(intersections(1)%second, second))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: An intersection after one subdivision.
+    nodes2(1, :) = 0
+    nodes2(2, :) = [0.5_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    root1%nodes = nodes2
+    first%start = 0.0_dp
+    first%end_ = 0.5_dp
+    first%root => root1
+    ! NOTE: This is the result of
+    !       call specialize_curve( &
+    !            3, 2, root1%nodes, first%start, first%end_, ...)
+    nodes2(1, :) = 0
+    nodes2(2, :) = [0.25_dp, 0.5_dp]
+    nodes2(3, :) = 0.5_dp
+    first%nodes = nodes2
+    node_first(1, :) = first%nodes(3, :)
+
+    nodes2(1, :) = [1.0_dp, 1.5_dp]
+    nodes2(2, :) = [0.0_dp, 0.5_dp]
+    nodes2(3, :) = [1.0_dp, -0.5_dp]
+    root2%nodes = nodes2
+    second%start = 0.5_dp
+    second%end_ = 1.0_dp
+    second%root => root2
+    ! NOTE: This is the result of
+    !       call specialize_curve( &
+    !            3, 2, root2%nodes, second%start, second%end_, ...)
+    nodes2(1, :) = 0.5_dp
+    nodes2(2, :) = [0.5_dp, 0.0_dp]
+    nodes2(3, :) = [1.0_dp, -0.5_dp]
+    second%nodes = nodes2
+    node_second(1, :) = second%nodes(1, :)
+
+    deallocate(intersections)
+    case_success = .NOT. allocated(intersections)
+    call endpoint_check( &
+         first, node_first, s, &
+         second, node_second, t, intersections)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         intersections(1)%s == 0.5_dp .AND. &
+         intersections(1)%t == 0.5_dp .AND. &
+         associated(intersections(1)%first, root1) .AND. &
+         associated(intersections(1)%second, root2))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_endpoint_check
 
 end module test_curve_intersection

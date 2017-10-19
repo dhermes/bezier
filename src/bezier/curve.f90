@@ -25,7 +25,7 @@ module curve
        CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
        newton_refine, locate_point, elevate_nodes, get_curvature, &
-       reduce_pseudo_inverse, full_reduce, compute_length
+       reduce_pseudo_inverse, full_reduce, compute_length, curve_root
 
   ! NOTE: This (for now) is not meant to be C-interoperable. This is mostly
   !       because the shape is encoded in `nodes`, so it would be wasteful to
@@ -36,6 +36,8 @@ module curve
      real(c_double) :: start = 0.0_dp
      real(c_double) :: end_ = 1.0_dp
      real(c_double), allocatable :: nodes(:, :)
+     ! NOTE: We assume that users of ``CurveData`` will set ``root`` to point
+     !       to the current value if there is no ``root``.
      type(CurveData), pointer :: root => null()
   end type CurveData
 
@@ -787,5 +789,20 @@ contains
     end function vec_size
 
   end subroutine compute_length
+
+  function curve_root(curve_data) result(root)
+
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+
+    type(CurveData), target, intent(in) :: curve_data
+    type(CurveData), pointer :: root
+
+    if (associated(curve_data%root)) then
+       root => curve_data%root
+    else
+       root => curve_data
+    end if
+
+  end function curve_root
 
 end module curve

@@ -14,8 +14,10 @@ module curve_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
-  use helpers, only: cross_product, bbox, wiggle_interval, in_interval
-  use curve, only: CurveData, evaluate_multi, evaluate_hodograph
+  use helpers, only: &
+       VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
+       vector_close, in_interval
+  use curve, only: CurveData, evaluate_multi, evaluate_hodograph, curve_root
   implicit none
   private
   public &
@@ -25,7 +27,7 @@ module curve_intersection
        FROM_LINEARIZED_WIGGLE_FAIL, linearization_error, &
        segment_intersection, newton_refine_intersect, bbox_intersect, &
        parallel_different, from_linearized, bbox_line_intersect, &
-       add_intersection, add_from_linearized
+       add_intersection, add_from_linearized, endpoint_check
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -488,18 +490,8 @@ contains
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
 
-    if (associated(first%root)) then
-       root1 => first%root
-    else
-       root1 => first
-    end if
-
-    if (associated(second%root)) then
-       root2 => second%root
-    else
-       root2 => second
-    end if
-
+    root1 => curve_root(first)
+    root2 => curve_root(second)
     num_nodes1 = size(first%nodes, 1)
     num_nodes2 = size(second%nodes, 1)
 
@@ -531,5 +523,33 @@ contains
     call add_intersection(root1, refined_s, root2, refined_t, intersections)
 
   end subroutine add_from_linearized
+
+  subroutine endpoint_check( &
+       first, node_first, s, second, node_second, t, intersections)
+
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+
+    type(CurveData), target, intent(in) :: first
+    real(c_double), intent(in) :: node_first(1, 2)
+    real(c_double), intent(in) :: s
+    type(CurveData), target, intent(in) :: second
+    real(c_double), intent(in) :: node_second(1, 2)
+    real(c_double), intent(in) :: t
+    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    ! Variables outside of signature.
+    type(CurveData), pointer :: root1, root2
+    real(c_double) :: orig_s, orig_t
+
+    if (.NOT. vector_close(2, node_first, node_second, VECTOR_CLOSE_EPS)) then
+       return
+    end if
+
+    root1 => curve_root(first)
+    root2 => curve_root(second)
+    orig_s = (1 - s) * first%start + s * first%end_
+    orig_t = (1 - t) * second%start + t * second%end_
+    call add_intersection(root1, orig_s, root2, orig_t, intersections)
+
+  end subroutine endpoint_check
 
 end module curve_intersection

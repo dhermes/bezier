@@ -17,10 +17,13 @@ module helpers
   implicit none
   private
   public &
-       WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
-       vector_close, in_interval, ulps_away
+       WIGGLE, VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
+       contains_nd, vector_close, in_interval, ulps_away
 
   real(c_double), parameter :: WIGGLE = 0.5_dp**45
+  ! NOTE: This is intended to be used as the default value for ``eps``
+  !       in ``vector_close``.
+  real(c_double), parameter :: VECTOR_CLOSE_EPS = 0.5_dp**40
 
 contains
 

@@ -778,19 +778,59 @@ class Test_endpoint_check(unittest.TestCase):
             [2.0, 1.0],
         ]))
 
+        s_val = 1.0
         node_first = np.asfortranarray(first.nodes[[1], :])
+        t_val = 0.0
         node_second = np.asfortranarray(second.nodes[[0], :])
-        intersections = []
 
-        patch = mock.patch('bezier._intersection_helpers.Intersection',
-                           return_value=mock.sentinel.endpoint)
-        with patch as mocked:
-            self._call_function_under_test(
-                first, node_first, 1.0,
-                second, node_second, 0.0, intersections)
-            self.assertEqual(intersections, [mock.sentinel.endpoint])
-            mocked.assert_called_once_with(
-                first, 1.0, second, 0.0, point=node_first)
+        intersections = []
+        self._call_function_under_test(
+            first, node_first, s_val,
+            second, node_second, t_val, intersections)
+
+        self.assertEqual(len(intersections), 1)
+        intersection = intersections[0]
+        self.assertIs(intersection.first, first)
+        self.assertEqual(intersection.s, s_val)
+        self.assertIs(intersection.second, second)
+        self.assertEqual(intersection.t, t_val)
+        self.assertIs(intersection.point, node_first)
+        self.assertIsNone(intersection.interior_curve)
+
+    def test_subcurves_middle(self):
+        import bezier
+
+        root1 = bezier.Curve.from_nodes(np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ]))
+        first, _ = root1.subdivide()
+        root2 = bezier.Curve.from_nodes(np.asfortranarray([
+            [1.0, 1.5],
+            [0.0, 0.5],
+            [1.0, -0.5],
+        ]))
+        _, second = root2.subdivide()
+
+        s_val = 1.0
+        node_first = np.asfortranarray(first.nodes[[2], :])
+        t_val = 0.0
+        node_second = np.asfortranarray(second.nodes[[0], :])
+
+        intersections = []
+        self._call_function_under_test(
+            first, node_first, s_val,
+            second, node_second, t_val, intersections)
+
+        self.assertEqual(len(intersections), 1)
+        intersection = intersections[0]
+        self.assertIs(intersection.first, root1)
+        self.assertEqual(intersection.s, 0.5)
+        self.assertIs(intersection.second, root2)
+        self.assertEqual(intersection.t, 0.5)
+        self.assertIs(intersection.point, node_first)
+        self.assertIsNone(intersection.interior_curve)
 
 
 class Test_tangent_bbox_intersection(utils.NumPyTestCase):
