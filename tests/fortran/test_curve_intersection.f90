@@ -22,7 +22,8 @@ module test_curve_intersection
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
-       endpoint_check, tangent_bbox_intersection, intersect_one_round
+       endpoint_check, tangent_bbox_intersection, add_candidate, &
+       intersect_one_round
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -32,7 +33,8 @@ module test_curve_intersection
        test_parallel_different, test_from_linearized, &
        test_bbox_line_intersect, test_add_intersection, &
        test_add_from_linearized, test_endpoint_check, &
-       test_tangent_bbox_intersection, test_intersect_one_round
+       test_tangent_bbox_intersection, test_add_candidate, &
+       test_intersect_one_round
   public curve_intersection_all_tests
 
 contains
@@ -51,6 +53,7 @@ contains
     call test_add_from_linearized(success)
     call test_endpoint_check(success)
     call test_tangent_bbox_intersection(success)
+    call test_add_candidate(success)
     call test_intersect_one_round(success)
 
   end subroutine curve_intersection_all_tests
@@ -1179,6 +1182,87 @@ contains
 
   end subroutine test_tangent_bbox_intersection
 
+  subroutine test_add_candidate(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    type(CurveData), allocatable :: accepted(:, :)
+    type(CurveData), target :: curve1, curve2, curve3
+    integer(c_int) :: num_accepted
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "add_candidate"
+
+    ! Pre-populate the curves.
+    allocate(curve1%nodes(3, 2))
+    curve1%nodes(1, :) = [0.0_dp, 1.0_dp]
+    curve1%nodes(2, :) = [1.0_dp, 2.0_dp]
+    curve1%nodes(3, :) = [2.0_dp, 1.0_dp]
+    allocate(curve2%nodes(2, 2))
+    curve2%nodes(1, :) = [0.0_dp, 1.25_dp]
+    curve2%nodes(2, :) = [2.0_dp, 1.25_dp]
+    allocate(curve3%nodes(2, 2))
+    curve3%nodes(1, :) = [0.0_dp, 1.25_dp]
+    curve3%nodes(2, :) = [1.0_dp, 1.25_dp]
+    curve3%end_ = 0.5_dp
+    curve3%root => curve2
+
+    ! CASE 1: Add when ``accepted`` is un-allocated.
+    num_accepted = 0
+    case_success = .NOT. allocated(accepted)
+    call add_candidate(accepted, num_accepted, curve1, curve2)
+    case_success = ( &
+         case_success .AND. &
+         num_accepted == 1 .AND. &
+         size(accepted, 1) == 2 .AND. &
+         size(accepted, 2) == 1 .AND. &
+         curves_equal(accepted(1, 1), curve1) .AND. &
+         curves_equal(accepted(2, 1), curve2))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Add when ``accepted`` is allocated but too small.
+    case_success = ( &
+         num_accepted == 1 .AND. &
+         allocated(accepted) .AND. &
+         size(accepted, 1) == 2 .AND. &
+         size(accepted, 2) == 1)
+    call add_candidate(accepted, num_accepted, curve3, curve1)
+    case_success = ( &
+         case_success .AND. &
+         num_accepted == 2 .AND. &
+         size(accepted, 1) == 2 .AND. &
+         size(accepted, 2) == 2 .AND. &
+         curves_equal(accepted(1, 2), curve3) .AND. &
+         curves_equal(accepted(2, 2), curve1))
+    call print_status(name, case_id, case_success, success)
+    deallocate(accepted)
+
+    ! CASE 3: Add when ``accepted`` is bigger than necessary.
+    allocate(accepted(2, 5))
+    accepted(1, 1) = curve1
+    accepted(2, 1) = curve2
+    accepted(1, 2) = curve3
+    accepted(2, 2) = curve1
+
+    case_success = ( &
+         num_accepted == 2 .AND. &
+         allocated(accepted) .AND. &
+         size(accepted, 1) == 2 .AND. &
+         size(accepted, 2) == 5)
+    call add_candidate(accepted, num_accepted, curve2, curve3)
+    case_success = ( &
+         case_success .AND. &
+         num_accepted == 3 .AND. &
+         size(accepted, 1) == 2 .AND. &
+         size(accepted, 2) == 5 .AND. &
+         curves_equal(accepted(1, 3), curve2) .AND. &
+         curves_equal(accepted(2, 3), curve3))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_add_candidate
+
   subroutine test_intersect_one_round(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
@@ -1314,7 +1398,6 @@ contains
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
-    deallocate(accepted)
     deallocate(intersections)
 
     ! CASE 5: Failure caused by parallel lines that **do** intersect.
@@ -1339,7 +1422,6 @@ contains
          py_exc == FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
-    deallocate(accepted)
 
     ! CASE 6: Disjoint bounding boxes.
     num_candidates = 1
@@ -1363,7 +1445,6 @@ contains
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
-    deallocate(accepted)
 
     ! CASE 7: Tangent bounding boxes (**with** an intersection), noting
     !         that tangency is only allowed for a pair with both curves

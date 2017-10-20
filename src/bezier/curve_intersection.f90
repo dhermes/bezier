@@ -28,7 +28,8 @@ module curve_intersection
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
-       endpoint_check, tangent_bbox_intersection, intersect_one_round
+       endpoint_check, tangent_bbox_intersection, add_candidate, &
+       intersect_one_round
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -594,12 +595,28 @@ contains
 
     ! Helper for ``intersect_one_round``.
 
-    type(CurveData), intent(inout) :: accepted(:, :)
+    type(CurveData), allocatable, intent(inout) :: accepted(:, :)
     integer(c_int), intent(inout) :: num_accepted
     type(CurveData), pointer, intent(in) :: first, second
+    ! Variables outside of signature.
+    integer(c_int) :: curr_size
+    type(CurveData), allocatable :: accepted_swap(:, :)
 
     num_accepted = num_accepted + 1
-    ! NOTE: This assumes, but does not that that accepted is MxN with
+
+    if (allocated(accepted)) then
+       curr_size = size(accepted, 2)
+       if (curr_size < num_accepted) then
+          allocate(accepted_swap(2, num_accepted))
+          ! NOTE: This assumes, but does not check ``accepted`` has two rows.
+          accepted_swap(:, :curr_size) = accepted(:, :curr_size)
+          call move_alloc(accepted_swap, accepted)
+       end if
+    else
+       allocate(accepted(2, num_accepted))
+    end if
+
+    ! NOTE: This assumes, but does not check, that accepted is MxN with
     !       M == 2 and num_accepted <= N.
     accepted(1, num_accepted) = first
     accepted(2, num_accepted) = second
@@ -611,14 +628,11 @@ contains
        accepted, num_accepted, py_exc)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
-    ! NOTE: It may make more sense to use an ``allocatable`` array for
-    !       ``accepted``, since it will be **at most** the same size as
-    !       ``candidates``, but in some cases will be **size zero**.
 
     integer(c_int), intent(in) :: num_candidates
     type(CurveData), target, intent(in) :: candidates(2, num_candidates)
     type(Intersection), allocatable, intent(inout) :: intersections(:)
-    type(CurveData), intent(out) :: accepted(2, num_candidates)
+    type(CurveData), allocatable, intent(out) :: accepted(:, :)
     integer(c_int), intent(out) :: num_accepted
     integer(c_int), intent(out) :: py_exc
     ! Variables outside of signature.
