@@ -1112,7 +1112,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         curve1 = bezier.Curve(self.QUADRATIC1, degree=1)
         nodes2 = np.asfortranarray([
             [1.0, 1.25],
-            [0.0, 2.0 ],
+            [0.0, 2.0],
         ])
         curve2 = bezier.Curve(nodes2, degree=1, _copy=False)
         lin2 = _geometric_intersection.Linearization(curve2, 0.0)
