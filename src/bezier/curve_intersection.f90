@@ -589,6 +589,23 @@ contains
 
   end subroutine tangent_bbox_intersection
 
+  subroutine add_candidate( &
+       accepted, num_accepted, first, second)
+
+    ! Helper for ``intersect_one_round``.
+
+    type(CurveData), intent(inout) :: accepted(:, :)
+    integer(c_int), intent(inout) :: num_accepted
+    type(CurveData), pointer, intent(in) :: first, second
+
+    num_accepted = num_accepted + 1
+    ! NOTE: This assumes, but does not that that accepted is MxN with
+    !       M == 2 and num_accepted <= N.
+    accepted(1, num_accepted) = first
+    accepted(2, num_accepted) = second
+
+  end subroutine add_candidate
+
   subroutine intersect_one_round( &
        num_candidates, candidates, intersections, &
        accepted, num_accepted, py_exc)
@@ -668,9 +685,8 @@ contains
        end if
 
        ! If we haven't ``exit``-d this iteration, add the accepted pair.
-       num_accepted = num_accepted + 1
-       accepted(1, num_accepted) = first
-       accepted(2, num_accepted) = second
+       call add_candidate( &
+            accepted, num_accepted, first, second)
     end do
 
   end subroutine intersect_one_round
