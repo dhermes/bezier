@@ -1023,16 +1023,50 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         return _geometric_intersection.intersect_one_round(
             candidates, intersections)
 
+    def _curves_compare(self, curve1, curve2):
+        import bezier
+        from bezier import _geometric_intersection
+
+        if isinstance(curve1, _geometric_intersection.Linearization):
+            self.assertIsInstance(
+                curve2, _geometric_intersection.Linearization)
+            # We just check identity, since we assume a ``Linearization``
+            # can't be subdivided.
+            self.assertIs(curve1, curve2)
+        else:
+            self.assertIsInstance(curve1, bezier.Curve)
+            self.assertIsInstance(curve2, bezier.Curve)
+            self.assertIs(curve1.root, curve2.root)
+            self.assertEqual(curve1.start, curve2.start)
+            self.assertEqual(curve1.end, curve2.end)
+            self.assertEqual(curve1._nodes, curve2._nodes)
+
+    def _candidates_compare(self, actual, expected):
+        self.assertEqual(len(actual), len(expected))
+        for first, second in zip(actual, expected):
+            self.assertEqual(len(first), 2)
+            self.assertEqual(len(second), 2)
+            self._curves_compare(first[0], second[0])
+            self._curves_compare(first[1], second[1])
+
     def test_simple(self):
         import bezier
 
         curve1 = bezier.Curve(self.QUADRATIC1, degree=2)
         curve2 = bezier.Curve(self.QUADRATIC2, degree=2)
         candidates = [(curve1, curve2)]
-        accepted = self._call_function_under_test(
+        next_candidates = self._call_function_under_test(
             candidates, [])
 
-        self.assertEqual(accepted, [(curve1, curve2)])
+        left1, right1 = curve1.subdivide()
+        left2, right2 = curve2.subdivide()
+        expected = [
+            (left1, left2),
+            (left1, right2),
+            (right1, left2),
+            (right1, right2),
+        ]
+        self._candidates_compare(next_candidates, expected)
 
     def test_first_linearized(self):
         import bezier
@@ -1043,11 +1077,16 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         curve2 = bezier.Curve(self.QUADRATIC2, degree=1)
 
         intersections = []
-        accepted = self._call_function_under_test(
+        next_candidates = self._call_function_under_test(
             [(lin1, curve2)], intersections)
 
         self.assertEqual(intersections, [])
-        self.assertEqual(accepted, [(lin1, curve2)])
+        left2, right2 = curve2.subdivide()
+        expected = [
+            (lin1, left2),
+            (lin1, right2),
+        ]
+        self._candidates_compare(next_candidates, expected)
 
     def test_second_linearized(self):
         import bezier
@@ -1058,11 +1097,16 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         lin2 = _geometric_intersection.Linearization(curve2, 0.0)
 
         intersections = []
-        accepted = self._call_function_under_test(
+        next_candidates = self._call_function_under_test(
             [(curve1, lin2)], intersections)
 
         self.assertEqual(intersections, [])
-        self.assertEqual(accepted, [(curve1, lin2)])
+        left1, right1 = curve1.subdivide()
+        expected = [
+            (left1, lin2),
+            (right1, lin2),
+        ]
+        self._candidates_compare(next_candidates, expected)
 
     def test_both_linearized(self):
         import bezier
@@ -1074,9 +1118,9 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         lin2 = _geometric_intersection.Linearization(curve2, 0.0)
 
         intersections = []
-        accepted = self._call_function_under_test(
+        next_candidates = self._call_function_under_test(
             [(lin1, lin2)], intersections)
-        self.assertEqual(accepted, [])
+        self.assertEqual(next_candidates, [])
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
         expected = np.asfortranarray([[0.5, 0.5]])
@@ -1118,9 +1162,9 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         lin2 = _geometric_intersection.Linearization(curve2, 0.0)
 
         intersections = []
-        accepted = self._call_function_under_test(
+        next_candidates = self._call_function_under_test(
             [(curve1, lin2)], intersections)
-        self.assertEqual(accepted, [])
+        self.assertEqual(next_candidates, [])
         self.assertEqual(intersections, [])
 
     def test_tangent_bboxes(self):
@@ -1140,40 +1184,14 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         curve2 = bezier.Curve(nodes2, degree=2, _copy=False)
 
         intersections = []
-        accepted = self._call_function_under_test(
+        next_candidates = self._call_function_under_test(
             [(curve1, curve2)], intersections)
-        self.assertEqual(accepted, [])
+        self.assertEqual(next_candidates, [])
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
         expected = nodes1[[-1], :]
         utils.check_intersection(
             self, intersection, expected, curve1, curve2, 1.0, 0.0)
-
-
-class Test_next_candidates(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(first, second):
-        from bezier import _geometric_intersection
-
-        return _geometric_intersection.next_candidates(first, second)
-
-    def test_it(self):
-        import bezier
-        from bezier import _geometric_intersection
-
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
-        curve = bezier.Curve(nodes, degree=1)
-        lin = _geometric_intersection.Linearization(curve, 0.0)
-
-        result = self._call_function_under_test(lin, lin)
-
-        self.assertIsInstance(result, itertools.product)
-        pairs = list(result)
-        self.assertEqual(pairs, [(lin, lin)])
 
 
 class Test_all_intersections(utils.NumPyTestCase):

@@ -45,11 +45,11 @@ except ImportError:  # pragma: NO COVER
 # by squaring the error.
 _ERROR_VAL = 0.5**26
 _MAX_INTERSECT_SUBDIVISIONS = 20
-_MAX_CANDIDATES = 16
+_MAX_CANDIDATES = 64
 _SEGMENTS_PARALLEL = 'Line segments parallel.'
 _TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
-    '{:d} accepted pairs gives {:d} candidate pairs.')
+    '{:d} candidate pairs.')
 # Allow wiggle room for ``s`` and ``t`` computed during segment
 # intersection. Any over- or under-shooting will (hopefully) be
 # resolved in the Newton refinement step. If it isn't resolved, the
@@ -967,9 +967,9 @@ def intersect_one_round(candidates, intersections):
             to this list.
 
     Returns:
-        list: Returns a list of ``accepted`` pairs (among ``candidates``).
+        list: Returns a list of the next round of ``candidates``.
     """
-    accepted = []
+    next_candidates = []
 
     # NOTE: In the below we replace ``isinstance(a, B)`` with
     #       ``a.__class__ is B``, which is a 3-3.5x speedup.
@@ -997,33 +997,16 @@ def intersect_one_round(candidates, intersections):
             continue
 
         # If we haven't ``continue``-d, add the accepted pair.
-        accepted.append((first, second))
+        # NOTE: This may be a wasted computation, e.g. if ``first``
+        #       or ``second`` occur in multiple accepted pairs (the caller
+        #       only passes one pair at a time). However, in practice
+        #       the number of such pairs will be small so this cost
+        #       will be low.
+        lin1 = six.moves.map(Linearization.from_shape, first.subdivide())
+        lin2 = six.moves.map(Linearization.from_shape, second.subdivide())
+        next_candidates.extend(itertools.product(lin1, lin2))
 
-    return accepted
-
-
-def next_candidates(first, second):
-    """Take a pair of "accepted" curves and subdivide them.
-
-    Attempts to replace the subdivided curves with linearizations
-    if they are close enough to lines.
-
-    Args:
-        first (Union[.Curve, Linearization]): First curve in pair.
-        second (Union[.Curve, Linearization]): Second curve in pair.
-
-    Returns:
-        itertools.product: Iterator of pairs of first and second curves after
-        subdivision, some of which may be linearized.
-    """
-    # NOTE: This may be a wasted computation, e.g. if ``first``
-    #       or ``second`` occur in multiple accepted pairs (the caller
-    #       only passes one pair at a time). However, in practice
-    #       the number of such pairs will be small so this cost
-    #       will be low.
-    lin1 = six.moves.map(Linearization.from_shape, first.subdivide())
-    lin2 = six.moves.map(Linearization.from_shape, second.subdivide())
-    return itertools.product(lin1, lin2)
+    return next_candidates
 
 
 def all_intersections(candidates):
@@ -1060,22 +1043,15 @@ def all_intersections(candidates):
 
     intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
-        accepted = intersect_one_round(candidates, intersections)
-        if len(accepted) > _MAX_CANDIDATES:
-            msg = _TOO_MANY_TEMPLATE.format(
-                len(accepted), 4 * len(accepted))
+        candidates = intersect_one_round(candidates, intersections)
+        if len(candidates) > _MAX_CANDIDATES:
+            msg = _TOO_MANY_TEMPLATE.format(len(candidates))
             raise NotImplementedError(msg)
 
-        # If none of the pairs have been accepted, then there is
-        # no intersection.
-        if not accepted:
+        # If none of the candidate pairs have been accepted, then there are
+        # no more intersections to find.
+        if not candidates:
             return intersections
-
-        # If we **do** require more subdivisions, we need to update
-        # the list of candidates.
-        candidates = itertools.chain(*[
-            next_candidates(first, second)
-            for first, second in accepted])
 
     raise ValueError(
         'Curve intersection failed to converge to approximately '

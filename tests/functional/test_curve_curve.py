@@ -172,15 +172,15 @@ TANGENT_OVERRIDES = {
         11: {'parallel': True},
         14: {'success': True},
         19: {'success': True},
-        24: {'too_many': 22},
+        24: {'too_many': 88},
         41: {'success': True},
-        42: {'too_many': 20},
+        42: {'too_many': 80},
     },
     ALGEBRAIC: {},
 }
 COINCIDENT_OVERRIDES = {
     GEOMETRIC: {
-        20: {'too_many': 24},
+        20: {'too_many': 96},
         33: {'success': True},
         34: {'success': True},
         35: {'success': True},
@@ -339,7 +339,7 @@ def check_tangent(intersection_info, strategy):
             else:
                 too_many = tangent_kwargs.get('too_many')
                 assert tangent_kwargs == {'too_many': too_many}
-                err_msg = TOO_MANY.format(too_many, 4 * too_many)
+                err_msg = TOO_MANY.format(too_many)
                 assert exc_args == (err_msg,)
 
 
@@ -360,7 +360,7 @@ def check_coincident(intersection_info, strategy):
         else:
             too_many = coincident_kwargs.get('too_many')
             assert coincident_kwargs == {'too_many': too_many}
-            err_msg = TOO_MANY.format(too_many, 4 * too_many)
+            err_msg = TOO_MANY.format(too_many)
             assert exc_args == (err_msg,)
 
 

@@ -51,10 +51,10 @@ WIGGLES = {
 }
 FAILED_CASES_TANGENT = {
     GEOMETRIC: {
-        7: {'too_many': 21},
+        7: {'too_many': 74},
         10: {'parallel': True},
-        11: {'too_many': 18},
-        12: {'too_many': 22},
+        11: {'too_many': 80},
+        12: {'too_many': 80},
         21: {'bad_tangent': True},
     },
     ALGEBRAIC: {
@@ -70,7 +70,7 @@ FAILED_CASES_TANGENT = {
 }
 FAILED_CASES_COINCIDENT = {
     GEOMETRIC: {
-        4: {'too_many': 28},
+        4: {'too_many': 104},
         5: {'parallel': True},
     },
     ALGEBRAIC: {
@@ -109,7 +109,7 @@ def check_tangent_manager(
         elif bad_tangent:
             assert exc_args == BAD_TANGENT
         else:
-            err_msg = TOO_MANY.format(too_many, 4 * too_many)
+            err_msg = TOO_MANY.format(too_many)
             assert exc_args == (err_msg,)
     else:
         assert len(exc_args) == 2
@@ -130,7 +130,7 @@ def check_coincident_manager(strategy, parallel=False, too_many=None):
         if parallel:
             assert exc_args == PARALLEL_FAILURE
         else:
-            err_msg = TOO_MANY.format(too_many, 4 * too_many)
+            err_msg = TOO_MANY.format(too_many)
             assert exc_args == (err_msg,)
     else:
         assert exc_args == (_algebraic_intersection._COINCIDENT_ERR,)
