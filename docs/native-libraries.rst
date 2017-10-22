@@ -39,13 +39,10 @@ The C headers for ``libbezier`` will be included in the installed package
 .. testsetup:: show-headers, show-lib, show-pxd
 
    import os
-   import platform
    import textwrap
 
    import bezier
 
-
-   PLATFORM_SYSTEM = platform.system().lower()
 
    class Path(object):
        """This class is a hack for Windows.
@@ -94,17 +91,7 @@ The C headers for ``libbezier`` will be included in the installed package
        directory = directory.path
        # NOTE: We **always** use posix separator.
        print(os.path.basename(directory) + '/')
-
-       if directory.endswith('lib') and PLATFORM_SYSTEM == 'windows':
-           # NOTE: This is a hack so that doctests can pass on Windows
-           #       even though the directory contents differ. This hack
-           #       assumes that the speedups have been installed.
-           assert os.path.isdir(directory)
-           assert os.listdir(directory) == ['bezier.lib']
-           full_tree = 'libbezier.a'
-       else:
-           full_tree = tree(directory, suffix=suffix)
-
+       full_tree = tree(directory, suffix=suffix)
        print(textwrap.indent(full_tree, '  '))
 
 
@@ -115,16 +102,11 @@ The C headers for ``libbezier`` will be included in the installed package
 
    # Monkey-patch functions to return a ``Path``.
    original_get_include = bezier.get_include
-   original_get_lib = bezier.get_lib
 
    def get_include():
        return Path(original_get_include())
 
-   def get_lib():
-       return Path(original_get_lib())
-
    bezier.get_include = get_include
-   bezier.get_lib = get_lib
 
    # Allow this value to be re-used.
    include_directory = get_include()
@@ -146,9 +128,8 @@ The C headers for ``libbezier`` will be included in the installed package
 
 .. testcleanup:: show-headers, show-lib, show-pxd
 
-   # Restore the monkey-patched functions.
+   # Restore the monkey-patched function.
    bezier.get_include = original_get_include
-   bezier.get_lib = original_get_lib
 
 Note that this includes a catch-all ``bezier.h`` that just includes all of
 the headers.
@@ -185,6 +166,7 @@ On Linux and Mac OS X, ``libbezier`` is included as a single static
 library (i.e. a ``.a`` file):
 
 .. doctest:: show-lib
+   :windows-skip:
 
    >>> lib_directory = bezier.get_lib()
    >>> lib_directory
@@ -201,8 +183,24 @@ library (i.e. a ``.a`` file):
    ``bezier`` can be installed in virtual environments, in different
    Python versions, as an egg or wheel, and so on.
 
-On Windows, an `import library`_ --- ``lib/bezier.lib`` --- is included
-to specify the symbols in the **shared** library ``extra-dll/libbezier.dll``.
+On Windows, an `import library`_ (i.e. a ``.lib`` file) is included to
+specify the symbols in the Windows **shared** library (DLL):
+
+.. doctest:: show-lib
+   :windows-only:
+
+   >>> lib_directory = bezier.get_lib()
+   >>> lib_directory
+   '.../site-packages/bezier/lib'
+   >>> print_tree(lib_directory)
+   lib/
+     bezier.lib
+   >>> dll_directory = bezier.get_dll()
+   >>> dll_directory
+   '.../site-packages/bezier/extra-dll'
+   >>> print_tree(dll_directory)
+   extra-dll/
+     libbezier.dll
 
 .. _import library: https://docs.python.org/3/extending/windows.html#differences-between-unix-and-windows
 

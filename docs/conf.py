@@ -58,6 +58,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx_docstring_typing',
     'custom_html_writer',
+    'doctest_monkeypatch',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

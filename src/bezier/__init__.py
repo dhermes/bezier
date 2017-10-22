@@ -22,6 +22,8 @@ Plotting utilities are also provided.
    :trim:
 """
 
+import os
+
 import pkg_resources
 
 # NOTE: ``__config__`` **must** be the first import because it (may)
@@ -68,8 +70,8 @@ def get_include():
     """Get the directory with ``.h`` header files.
 
     Extension modules (and Cython modules) that need to compile against
-    ``bezier`` should use this function to locate the appropriate include
-    directory.
+    ``libbezier`` should use this function to locate the appropriate
+    include directory.
 
     For more information, see :doc:`../native-libraries`.
 
@@ -84,8 +86,8 @@ def get_lib():
     """Get the directory with ``.a`` / ``.lib`` static libraries.
 
     Extension modules (and Cython modules) that need to compile against
-    the ``libbezier`` static library should use this function to locate the
-    appropriate lib directory.
+    ``libbezier`` should use this function to locate the appropriate lib
+    directory.
 
     For more information, see :doc:`../native-libraries`.
 
@@ -94,3 +96,25 @@ def get_lib():
         ``libbezier`` Fortran library.
     """
     return pkg_resources.resource_filename('bezier', 'lib')
+
+
+def get_dll():
+    """Get the directory with the Windows shared library.
+
+    Extension modules (and Cython modules) that need to compile against
+    ``libbezier`` should use this function to locate the appropriate
+    Windows shared library or libraries (DLLs).
+
+    For more information, see :doc:`../native-libraries`.
+
+    Returns:
+        str: ``extra-dll`` directory that contains the Windows shared library
+        for the ``libbezier`` Fortran library.
+
+    Raises:
+        OSError: If this function is used anywhere other than Windows.
+    """
+    if os.name == 'nt':
+        return pkg_resources.resource_filename('bezier', 'extra-dll')
+    else:
+        raise OSError('This function should only be used on Windows.')

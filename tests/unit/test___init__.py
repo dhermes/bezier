@@ -13,6 +13,8 @@
 import os
 import unittest
 
+import mock
+
 
 CHECK_PKG_MSG = """\
 path     = {!r}
@@ -45,6 +47,25 @@ class Test_get_lib(unittest.TestCase):
     def test_it(self):
         lib_directory = self._call_function_under_test()
         _check_pkg_filename(self, lib_directory, 'lib')
+
+
+class Test_get_dll(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test():
+        import bezier
+
+        return bezier.get_dll()
+
+    @mock.patch('os.name', new='nt')
+    def test_windows(self):
+        dll_directory = self._call_function_under_test()
+        _check_pkg_filename(self, dll_directory, 'extra-dll')
+
+    @mock.patch('os.name', new='posix')
+    def test_non_windows(self):
+        with self.assertRaises(OSError):
+            self._call_function_under_test()
 
 
 def _check_pkg_filename(test_case, path, last_segment):
