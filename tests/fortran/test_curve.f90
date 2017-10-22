@@ -18,7 +18,7 @@ module test_curve
        specialize_curve, evaluate_hodograph, subdivide_nodes, newton_refine, &
        LOCATE_MISS, LOCATE_INVALID, locate_point, elevate_nodes, &
        get_curvature, reduce_pseudo_inverse, full_reduce, compute_length, &
-       curves_equal
+       curves_equal, subdivide_curve
   use types, only: dp
   use unit_test_helpers, only: &
        MACHINE_EPS, print_status, get_random_nodes, get_id_mat
@@ -29,7 +29,7 @@ module test_curve
        subdivide_points_check, test_newton_refine, test_locate_point, &
        test_elevate_nodes, test_get_curvature, test_reduce_pseudo_inverse, &
        pseudo_inverse_helper, test_full_reduce, test_compute_length, &
-       test_curves_equal
+       test_curves_equal, test_subdivide_curve
   public curve_all_tests
 
 contains
@@ -50,6 +50,7 @@ contains
     call test_full_reduce(success)
     call test_compute_length(success)
     call test_curves_equal(success)
+    call test_subdivide_curve(success)
 
   end subroutine curve_all_tests
 
@@ -1014,5 +1015,71 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_curves_equal
+
+  subroutine test_subdivide_curve(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    type(CurveData), target :: curve_data, left1
+    type(CurveData) :: left2, right
+    real(c_double) :: left_nodes(4, 2), right_nodes(4, 2)
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "subdivide_curve"
+
+    ! CASE 1: Curve has no root.
+    allocate(curve_data%nodes(4, 2))
+    curve_data%nodes(1, :) = [0.0_dp, 1.0_dp]
+    curve_data%nodes(2, :) = [1.0_dp, 2.0_dp]
+    curve_data%nodes(3, :) = [1.0_dp, 2.0_dp]
+    curve_data%nodes(4, :) = [3.0_dp, 0.0_dp]
+
+    left_nodes(1, :) = [0.0_dp, 1.0_dp]
+    left_nodes(2, :) = [0.5_dp, 1.5_dp]
+    left_nodes(3, :) = [0.75_dp, 1.75_dp]
+    left_nodes(4, :) = [1.125_dp, 1.625_dp]
+    right_nodes(1, :) = [1.125_dp, 1.625_dp]
+    right_nodes(2, :) = [1.5_dp, 1.5_dp]
+    right_nodes(3, :) = [2.0_dp, 1.0_dp]
+    right_nodes(4, :) = [3.0_dp, 0.0_dp]
+
+    call subdivide_curve(curve_data, left1, right)
+    case_success = ( &
+         left1%start == 0.0_dp .AND. &
+         left1%end_ == 0.5_dp .AND. &
+         all(left1%nodes == left_nodes) .AND. &
+         associated(left1%root, curve_data) .AND. &
+         right%start == 0.5_dp .AND. &
+         right%end_ == 1.0_dp .AND. &
+         all(right%nodes == right_nodes) .AND. &
+         associated(right%root, curve_data))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Curve has **already** been subdivided.
+    left_nodes(1, :) = [0.0_dp, 1.0_dp]
+    left_nodes(2, :) = [0.25_dp, 1.25_dp]
+    left_nodes(3, :) = [0.4375_dp, 1.4375_dp]
+    left_nodes(4, :) = [0.609375_dp, 1.546875_dp]
+    right_nodes(1, :) = [0.609375_dp, 1.546875_dp]
+    right_nodes(2, :) = [0.78125_dp, 1.65625_dp]
+    right_nodes(3, :) = [0.9375_dp, 1.6875_dp]
+    right_nodes(4, :) = [1.125_dp, 1.625_dp]
+
+    call subdivide_curve(left1, left2, right)
+    case_success = ( &
+         left2%start == 0.0_dp .AND. &
+         left2%end_ == 0.25_dp .AND. &
+         all(left2%nodes == left_nodes) .AND. &
+         associated(left2%root, curve_data) .AND. &
+         right%start == 0.25_dp .AND. &
+         right%end_ == 0.5_dp .AND. &
+         all(right%nodes == right_nodes) .AND. &
+         associated(right%root, curve_data))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_subdivide_curve
+
 
 end module test_curve

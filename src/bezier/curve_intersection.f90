@@ -17,18 +17,21 @@ module curve_intersection
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
        vector_close, in_interval
-  use curve, only: CurveData, evaluate_multi, evaluate_hodograph, curve_root
+  use curve, only: &
+       CurveData, evaluate_multi, evaluate_hodograph, curve_root, &
+       subdivide_curve
   implicit none
   private
   public &
        Intersection, BoxIntersectionType_INTERSECTION, &
        BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
        FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
-       FROM_LINEARIZED_WIGGLE_FAIL, LINEARIZATION_THRESHOLD, &
+       FROM_LINEARIZED_WIGGLE_FAIL, LINEARIZATION_THRESHOLD, Subdivide_FIRST, &
+       Subdivide_SECOND, Subdivide_BOTH, Subdivide_NEITHER, &
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
-       endpoint_check, tangent_bbox_intersection, add_candidate, &
+       endpoint_check, tangent_bbox_intersection, add_candidates, &
        intersect_one_round
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
@@ -51,6 +54,10 @@ module curve_intersection
   integer(c_int), parameter :: FROM_LINEARIZED_WIGGLE_FAIL = 2
   ! Set the threshold for linearization error at half the bits available.
   real(c_double), parameter :: LINEARIZATION_THRESHOLD = 0.5_dp**26
+  integer(c_int), parameter :: Subdivide_FIRST = 0
+  integer(c_int), parameter :: Subdivide_SECOND = 1
+  integer(c_int), parameter :: Subdivide_BOTH = 2
+  integer(c_int), parameter :: Subdivide_NEITHER = -1
 
 contains
 
@@ -590,57 +597,90 @@ contains
 
   end subroutine tangent_bbox_intersection
 
-  subroutine add_candidate( &
-       accepted, num_accepted, first, second)
+  subroutine add_candidates( &
+       candidates, num_candidates, first, second, enum_)
 
     ! Helper for ``intersect_one_round``.
 
-    type(CurveData), allocatable, intent(inout) :: accepted(:, :)
-    integer(c_int), intent(inout) :: num_accepted
+    type(CurveData), allocatable, intent(inout) :: candidates(:, :)
+    integer(c_int), intent(inout) :: num_candidates
     type(CurveData), pointer, intent(in) :: first, second
+    integer(c_int), intent(in) :: enum_
     ! Variables outside of signature.
     integer(c_int) :: curr_size
-    type(CurveData), allocatable :: accepted_swap(:, :)
+    type(CurveData), allocatable :: candidates_swap(:, :)
+    type(CurveData) :: left1, right1, left2, right2
 
-    num_accepted = num_accepted + 1
-
-    if (allocated(accepted)) then
-       curr_size = size(accepted, 2)
-       if (curr_size < num_accepted) then
-          allocate(accepted_swap(2, num_accepted))
-          ! NOTE: This assumes, but does not check ``accepted`` has two rows.
-          accepted_swap(:, :curr_size) = accepted(:, :curr_size)
-          call move_alloc(accepted_swap, accepted)
-       end if
+    ! First, update the number of candidates.
+    if (enum_ == Subdivide_FIRST .OR. enum_ == Subdivide_SECOND) then
+       num_candidates = num_candidates + 2
+    else if (enum_ == Subdivide_BOTH) then
+       num_candidates = num_candidates + 4
     else
-       allocate(accepted(2, num_accepted))
+       return
     end if
 
-    ! NOTE: This assumes, but does not check, that accepted is MxN with
-    !       M == 2 and num_accepted <= N.
-    accepted(1, num_accepted) = first
-    accepted(2, num_accepted) = second
+    if (allocated(candidates)) then
+       curr_size = size(candidates, 2)
+       if (curr_size < num_candidates) then
+          allocate(candidates_swap(2, num_candidates))
+          ! NOTE: This assumes, but does not check ``candidates`` has two rows.
+          candidates_swap(:, :curr_size) = candidates(:, :curr_size)
+          call move_alloc(candidates_swap, candidates)
+       end if
+    else
+       allocate(candidates(2, num_candidates))
+    end if
 
-  end subroutine add_candidate
+    ! NOTE: This assumes, but does not check, that ``candidates`` is MxN with
+    !       M == 2 and ``num_candidates`` <= N.
+
+    if (enum_ == Subdivide_FIRST) then
+       call subdivide_curve(first, left1, right1)
+       candidates(1, num_candidates - 1) = left1
+       candidates(2, num_candidates - 1) = second
+       candidates(1, num_candidates) = right1
+       candidates(2, num_candidates) = second
+    else if (enum_ == Subdivide_SECOND) then
+       call subdivide_curve(second, left2, right2)
+       candidates(1, num_candidates - 1) = first
+       candidates(2, num_candidates - 1) = left2
+       candidates(1, num_candidates) = first
+       candidates(2, num_candidates) = right2
+    else if (enum_ == Subdivide_BOTH) then
+       call subdivide_curve(first, left1, right1)
+       call subdivide_curve(second, left2, right2)
+       candidates(1, num_candidates - 3) = left1
+       candidates(2, num_candidates - 3) = left2
+       candidates(1, num_candidates - 2) = left1
+       candidates(2, num_candidates - 2) = right2
+       candidates(1, num_candidates - 1) = right1
+       candidates(2, num_candidates - 1) = left2
+       candidates(1, num_candidates) = right1
+       candidates(2, num_candidates) = right2
+    end if
+
+  end subroutine add_candidates
 
   subroutine intersect_one_round( &
        num_candidates, candidates, intersections, &
-       accepted, num_accepted, py_exc)
+       next_candidates, num_next_candidates, py_exc)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
     integer(c_int), intent(in) :: num_candidates
     type(CurveData), target, intent(in) :: candidates(2, num_candidates)
     type(Intersection), allocatable, intent(inout) :: intersections(:)
-    type(CurveData), allocatable, intent(out) :: accepted(:, :)
-    integer(c_int), intent(out) :: num_accepted
+    type(CurveData), allocatable, intent(out) :: next_candidates(:, :)
+    integer(c_int), intent(out) :: num_next_candidates
     integer(c_int), intent(out) :: py_exc
     ! Variables outside of signature.
     type(CurveData), pointer :: first, second
     real(c_double) :: linearization_error1, linearization_error2
     integer(c_int) :: bbox_int, index_, num_nodes1, num_nodes2
+    integer(c_int) :: subdivide_enum
 
-    num_accepted = 0
+    num_next_candidates = 0
     py_exc = FROM_LINEARIZED_SUCCESS
     do index_ = 1, num_candidates
        ! NOTE: It is a **strict necessity** to use pointers here, because
@@ -661,6 +701,7 @@ contains
 
        if (linearization_error1 < LINEARIZATION_THRESHOLD) then
           if (linearization_error2 < LINEARIZATION_THRESHOLD) then
+             subdivide_enum = Subdivide_NEITHER
              ! If both ``first`` and ``second`` are linearizations, then
              ! we can (attempt to) intersect them immediately.
              call add_from_linearized(first, second, intersections, py_exc)
@@ -673,16 +714,19 @@ contains
              ! If there was no failure, move to the next iteration.
              exit
           else
+             subdivide_enum = Subdivide_SECOND
              call bbox_line_intersect( &
                   num_nodes2, second%nodes, &
                   first%nodes(1, :), first%nodes(num_nodes1, :), bbox_int)
           end if
        else
           if (linearization_error2 < LINEARIZATION_THRESHOLD) then
+             subdivide_enum = Subdivide_FIRST
              call bbox_line_intersect( &
                   num_nodes1, first%nodes, &
                   second%nodes(1, :), second%nodes(num_nodes2, :), bbox_int)
           else
+             subdivide_enum = Subdivide_BOTH
              ! If neither curve is close to a line, we can still reject the
              ! pair if the bounding boxes are disjoint.
              call bbox_intersect( &
@@ -698,9 +742,11 @@ contains
           exit
        end if
 
-       ! If we haven't ``exit``-d this iteration, add the accepted pair.
-       call add_candidate( &
-            accepted, num_accepted, first, second)
+       ! If we haven't ``exit``-d this iteration, add the
+       ! ``next_candidates`` pair.
+       call add_candidates( &
+            next_candidates, num_next_candidates, &
+            first, second, subdivide_enum)
     end do
 
   end subroutine intersect_one_round

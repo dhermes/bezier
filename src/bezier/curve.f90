@@ -26,7 +26,7 @@ module curve
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
        newton_refine, locate_point, elevate_nodes, get_curvature, &
        reduce_pseudo_inverse, full_reduce, compute_length, curve_root, &
-       curves_equal
+       curves_equal, subdivide_curve
 
   ! NOTE: This (for now) is not meant to be C-interoperable. This is mostly
   !       because the shape is encoded in `nodes`, so it would be wasteful to
@@ -808,6 +808,7 @@ contains
 
   logical(c_bool) function curves_equal(curve1, curve2) result(same)
 
+    ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This is really intended to be used by diagnostic / test code
     !       and not during the course of computation.
 
@@ -859,5 +860,38 @@ contains
     end if
 
   end function curves_equal
+
+  subroutine subdivide_curve(curve_data, left, right)
+
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+    ! NOTE: This **assumes** but does not check that ``curve_data%nodes``
+    !       is allocated.
+    ! NOTE: We use a ``pointer`` for ``curve_data`` so that we can refer
+    !       to it as a root (which must leave the scope of this subroutine).
+    !       This is a sign of an inherent issue with the approach of using
+    !       a ``CurveData`` pointer for the root field.
+
+    type(CurveData), pointer, intent(in) :: curve_data
+    type(CurveData), intent(out) :: left, right
+    ! Variables outside of signature.
+    integer(c_int) :: num_nodes, dimension_
+
+    num_nodes = size(curve_data%nodes, 1)
+    dimension_ = size(curve_data%nodes, 2)
+
+    left%start = curve_data%start
+    left%end_ = 0.5_dp * (curve_data%start + curve_data%end_)
+    allocate(left%nodes(num_nodes, dimension_))
+    left%root => curve_root(curve_data)
+
+    right%start = left%end_
+    right%end_ = curve_data%end_
+    allocate(right%nodes(num_nodes, dimension_))
+    right%root => left%root
+
+    call subdivide_nodes( &
+         num_nodes, dimension_, curve_data%nodes, left%nodes, right%nodes)
+
+  end subroutine subdivide_curve
 
 end module curve

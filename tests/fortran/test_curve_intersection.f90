@@ -14,15 +14,18 @@ module test_curve_intersection
 
   use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
-  use curve, only: CurveData, evaluate_multi, subdivide_nodes, curves_equal
+  use curve, only: &
+       CurveData, evaluate_multi, subdivide_nodes, curves_equal, &
+       subdivide_curve
   use curve_intersection, only: &
        Intersection, BoxIntersectionType_INTERSECTION, &
        BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
        FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
+       Subdivide_FIRST, Subdivide_SECOND, Subdivide_BOTH, Subdivide_NEITHER, &
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
-       endpoint_check, tangent_bbox_intersection, add_candidate, &
+       endpoint_check, tangent_bbox_intersection, add_candidates, &
        intersect_one_round
   use types, only: dp
   use unit_test_helpers, only: print_status
@@ -33,7 +36,7 @@ module test_curve_intersection
        test_parallel_different, test_from_linearized, &
        test_bbox_line_intersect, test_add_intersection, &
        test_add_from_linearized, test_endpoint_check, &
-       test_tangent_bbox_intersection, test_add_candidate, &
+       test_tangent_bbox_intersection, test_add_candidates, &
        test_intersect_one_round
   public curve_intersection_all_tests
 
@@ -53,7 +56,7 @@ contains
     call test_add_from_linearized(success)
     call test_endpoint_check(success)
     call test_tangent_bbox_intersection(success)
-    call test_add_candidate(success)
+    call test_add_candidates(success)
     call test_intersect_one_round(success)
 
   end subroutine curve_intersection_all_tests
@@ -1182,18 +1185,19 @@ contains
 
   end subroutine test_tangent_bbox_intersection
 
-  subroutine test_add_candidate(success)
+  subroutine test_add_candidates(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    type(CurveData), allocatable :: accepted(:, :)
+    type(CurveData), allocatable :: candidates(:, :)
     type(CurveData), target :: curve1, curve2, curve3
-    integer(c_int) :: num_accepted
+    type(CurveData) :: right1, left3, right3
+    integer(c_int) :: num_candidates
     integer :: case_id
     character(:), allocatable :: name
 
     case_id = 1
-    name = "add_candidate"
+    name = "add_candidates"
 
     ! Pre-populate the curves.
     allocate(curve1%nodes(3, 2))
@@ -1203,65 +1207,96 @@ contains
     allocate(curve2%nodes(2, 2))
     curve2%nodes(1, :) = [0.0_dp, 1.25_dp]
     curve2%nodes(2, :) = [2.0_dp, 1.25_dp]
-    allocate(curve3%nodes(2, 2))
-    curve3%nodes(1, :) = [0.0_dp, 1.25_dp]
-    curve3%nodes(2, :) = [1.0_dp, 1.25_dp]
-    curve3%end_ = 0.5_dp
-    curve3%root => curve2
+    call subdivide_curve(curve1, curve3, right1)
+    call subdivide_curve(curve3, left3, right3)
 
-    ! CASE 1: Add when ``accepted`` is un-allocated.
-    num_accepted = 0
-    case_success = .NOT. allocated(accepted)
-    call add_candidate(accepted, num_accepted, curve1, curve2)
+    ! CASE 1: Add when ``candidates`` is un-allocated. (Also ``enum_`` is
+    !         ``Subdivide_FIRST``.)
+    num_candidates = 0
+    case_success = .NOT. allocated(candidates)
+    call add_candidates( &
+         candidates, num_candidates, curve1, curve2, Subdivide_FIRST)
     case_success = ( &
          case_success .AND. &
-         num_accepted == 1 .AND. &
-         size(accepted, 1) == 2 .AND. &
-         size(accepted, 2) == 1 .AND. &
-         curves_equal(accepted(1, 1), curve1) .AND. &
-         curves_equal(accepted(2, 1), curve2))
+         num_candidates == 2 .AND. &
+         all(shape(candidates) == [2, 2]) .AND. &
+         curves_equal(candidates(1, 1), curve3) .AND. &
+         curves_equal(candidates(2, 1), curve2) .AND. &
+         curves_equal(candidates(1, 2), right1) .AND. &
+         curves_equal(candidates(2, 2), curve2))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Add when ``accepted`` is allocated but too small.
+    ! CASE 2: Add when ``candidates`` is allocated but too small. (Also
+    !         ``enum_`` is ``Subdivide_BOTH``.)
     case_success = ( &
-         num_accepted == 1 .AND. &
-         allocated(accepted) .AND. &
-         size(accepted, 1) == 2 .AND. &
-         size(accepted, 2) == 1)
-    call add_candidate(accepted, num_accepted, curve3, curve1)
+         num_candidates == 2 .AND. &
+         allocated(candidates) .AND. &
+         all(shape(candidates) == [2, 2]))
+    call add_candidates( &
+         candidates, num_candidates, curve3, curve1, Subdivide_BOTH)
     case_success = ( &
          case_success .AND. &
-         num_accepted == 2 .AND. &
-         size(accepted, 1) == 2 .AND. &
-         size(accepted, 2) == 2 .AND. &
-         curves_equal(accepted(1, 2), curve3) .AND. &
-         curves_equal(accepted(2, 2), curve1))
+         num_candidates == 6 .AND. &
+         all(shape(candidates) == [2, 6]) .AND. &
+         curves_equal(candidates(1, 3), left3) .AND. &
+         curves_equal(candidates(2, 3), curve3) .AND. &
+         curves_equal(candidates(1, 4), left3) .AND. &
+         curves_equal(candidates(2, 4), right1) .AND. &
+         curves_equal(candidates(1, 5), right3) .AND. &
+         curves_equal(candidates(2, 5), curve3) .AND. &
+         curves_equal(candidates(1, 6), right3) .AND. &
+         curves_equal(candidates(2, 6), right1))
     call print_status(name, case_id, case_success, success)
-    deallocate(accepted)
+    deallocate(candidates)
 
-    ! CASE 3: Add when ``accepted`` is bigger than necessary.
-    allocate(accepted(2, 5))
-    accepted(1, 1) = curve1
-    accepted(2, 1) = curve2
-    accepted(1, 2) = curve3
-    accepted(2, 2) = curve1
+    ! CASE 3: Add when ``candidates`` is bigger than necessary. (Also
+    !         ``enum_`` is ``Subdivide_SECOND``.)
+    num_candidates = 2
+    allocate(candidates(2, 5))
 
     case_success = ( &
-         num_accepted == 2 .AND. &
-         allocated(accepted) .AND. &
-         size(accepted, 1) == 2 .AND. &
-         size(accepted, 2) == 5)
-    call add_candidate(accepted, num_accepted, curve2, curve3)
+         num_candidates == 2 .AND. &
+         allocated(candidates) .AND. &
+         all(shape(candidates) == [2, 5]))
+    call add_candidates( &
+         candidates, num_candidates, curve2, curve3, Subdivide_SECOND)
     case_success = ( &
          case_success .AND. &
-         num_accepted == 3 .AND. &
-         size(accepted, 1) == 2 .AND. &
-         size(accepted, 2) == 5 .AND. &
-         curves_equal(accepted(1, 3), curve2) .AND. &
-         curves_equal(accepted(2, 3), curve3))
+         num_candidates == 4 .AND. &
+         all(shape(candidates) == [2, 5]) .AND. &
+         curves_equal(candidates(1, 3), curve2) .AND. &
+         curves_equal(candidates(2, 3), left3) .AND. &
+         curves_equal(candidates(1, 4), curve2) .AND. &
+         curves_equal(candidates(2, 4), right3))
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+
+    ! CASE 4: ``enum_`` does not require subdivision, ``candidates`` is
+    !         **not** allocated.
+    num_candidates = -6  ! This is a nonsense value.
+    case_success = .NOT. allocated(candidates)
+    call add_candidates( &
+         candidates, num_candidates, curve1, curve2, Subdivide_NEITHER)
+    case_success = ( &
+         case_success .AND. &
+         num_candidates == -6 .AND. &
+         .NOT. allocated(candidates))
     call print_status(name, case_id, case_success, success)
 
-  end subroutine test_add_candidate
+    ! CASE 5: ``enum_`` does not require subdivision, ``candidates`` is
+    !         allocated.
+    num_candidates = 13  ! This does not reflect the size.
+    allocate(candidates(2, 1))
+
+    call add_candidates( &
+         candidates, num_candidates, curve1, curve2, Subdivide_NEITHER)
+    case_success = ( &
+         case_success .AND. &
+         num_candidates == 13 .AND. &
+         all(shape(candidates) == [2, 1]))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_add_candidates
 
   subroutine test_intersect_one_round(success)
     logical(c_bool), intent(inout) :: success
@@ -1272,10 +1307,11 @@ contains
     integer(c_int) :: num_candidates
     type(CurveData), target, allocatable :: candidates(:, :)
     type(Intersection), allocatable :: intersections(:)
-    type(CurveData), allocatable :: accepted(:, :)
-    integer(c_int) :: num_accepted
+    type(CurveData), allocatable :: next_candidates(:, :)
+    integer(c_int) :: num_next_candidates
     integer(c_int) :: py_exc
     type(CurveData), pointer :: first, second
+    type(CurveData) :: left1, right1, left2, right2
     integer :: case_id
     character(:), allocatable :: name
 
@@ -1302,79 +1338,89 @@ contains
     ! CASE 1: Simple test, non-linearized quadratics.
     num_candidates = 1
     allocate(candidates(2, num_candidates))
-    allocate(accepted(2, num_candidates))
     ! Populate the "first" curve.
     candidates(1, 1)%nodes = fixed_quadratic1
+    call subdivide_curve(candidates(1, 1), left1, right1)
     ! Populate the "second" curve.
     candidates(2, 1)%nodes = fixed_quadratic2
+    call subdivide_curve(candidates(2, 1), left2, right2)
 
     case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, intersections, &
-         accepted, num_accepted, py_exc)
+         next_candidates, num_next_candidates, py_exc)
     case_success = ( &
          case_success .AND. &
          .NOT. allocated(intersections) .AND. &
-         num_accepted == 1 .AND. &
-         curves_equal(accepted(1, 1), candidates(1, 1)) .AND. &
-         curves_equal(accepted(2, 1), candidates(2, 1)) .AND. &
+         num_next_candidates == 4 .AND. &
+         curves_equal(next_candidates(1, 1), left1) .AND. &
+         curves_equal(next_candidates(2, 1), left2) .AND. &
+         curves_equal(next_candidates(1, 2), left1) .AND. &
+         curves_equal(next_candidates(2, 2), right2) .AND. &
+         curves_equal(next_candidates(1, 3), right1) .AND. &
+         curves_equal(next_candidates(2, 3), left2) .AND. &
+         curves_equal(next_candidates(1, 4), right1) .AND. &
+         curves_equal(next_candidates(2, 4), right2) .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
-    deallocate(accepted)
+    deallocate(next_candidates)
 
     ! CASE 2: First curve is linearized, second is not.
     num_candidates = 1
     allocate(candidates(2, num_candidates))
-    allocate(accepted(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
     ! Populate the "second" curve.
     candidates(2, 1)%nodes = fixed_quadratic2
+    call subdivide_curve(candidates(2, 1), left2, right2)
 
     case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, intersections, &
-         accepted, num_accepted, py_exc)
+         next_candidates, num_next_candidates, py_exc)
     case_success = ( &
          case_success .AND. &
          .NOT. allocated(intersections) .AND. &
-         num_accepted == 1 .AND. &
-         curves_equal(accepted(1, 1), candidates(1, 1)) .AND. &
-         curves_equal(accepted(2, 1), candidates(2, 1)) .AND. &
+         num_next_candidates == 2 .AND. &
+         curves_equal(next_candidates(1, 1), candidates(1, 1)) .AND. &
+         curves_equal(next_candidates(2, 1), left2) .AND. &
+         curves_equal(next_candidates(1, 2), candidates(1, 1)) .AND. &
+         curves_equal(next_candidates(2, 2), right2) .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
-    deallocate(accepted)
+    deallocate(next_candidates)
 
     ! CASE 3: Second curve is linearized, first is not.
     num_candidates = 1
     allocate(candidates(2, num_candidates))
-    allocate(accepted(2, num_candidates))
     ! Populate the "first" curve.
     candidates(1, 1)%nodes = fixed_quadratic1
+    call subdivide_curve(candidates(1, 1), left1, right1)
     ! Populate the "second" curve with a line.
     candidates(2, 1)%nodes = fixed_line2
 
     case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, intersections, &
-         accepted, num_accepted, py_exc)
+         next_candidates, num_next_candidates, py_exc)
     case_success = ( &
          case_success .AND. &
          .NOT. allocated(intersections) .AND. &
-         num_accepted == 1 .AND. &
-         curves_equal(accepted(1, 1), candidates(1, 1)) .AND. &
-         curves_equal(accepted(2, 1), candidates(2, 1)) .AND. &
+         num_next_candidates == 2 .AND. &
+         curves_equal(next_candidates(1, 1), left1) .AND. &
+         curves_equal(next_candidates(2, 1), candidates(2, 1)) .AND. &
+         curves_equal(next_candidates(1, 2), right1) .AND. &
+         curves_equal(next_candidates(2, 2), candidates(2, 1)) .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
-    deallocate(accepted)
+    deallocate(next_candidates)
 
     ! CASE 4: Both curves are linearized.
     num_candidates = 1
     allocate(candidates(2, num_candidates))
-    allocate(accepted(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
     first => candidates(1, 1)
@@ -1385,7 +1431,7 @@ contains
     case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, intersections, &
-         accepted, num_accepted, py_exc)
+         next_candidates, num_next_candidates, py_exc)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
@@ -1394,7 +1440,7 @@ contains
          intersections(1)%t == 0.5_dp .AND. &
          associated(intersections(1)%first, first) .AND. &
          associated(intersections(1)%second, second) .AND. &
-         num_accepted == 0 .AND. &
+         num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
@@ -1403,7 +1449,6 @@ contains
     ! CASE 5: Failure caused by parallel lines that **do** intersect.
     num_candidates = 1
     allocate(candidates(2, num_candidates))
-    allocate(accepted(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
     ! Populate the "second" curve with a line.
@@ -1414,11 +1459,11 @@ contains
     case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, intersections, &
-         accepted, num_accepted, py_exc)
+         next_candidates, num_next_candidates, py_exc)
     case_success = ( &
          case_success .AND. &
          .NOT. allocated(intersections) .AND. &
-         num_accepted == 0 .AND. &
+         num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
@@ -1426,7 +1471,6 @@ contains
     ! CASE 6: Disjoint bounding boxes.
     num_candidates = 1
     allocate(candidates(2, num_candidates))
-    allocate(accepted(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_quadratic1
     ! Populate the "second" curve with a line.
@@ -1437,11 +1481,11 @@ contains
     case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, intersections, &
-         accepted, num_accepted, py_exc)
+         next_candidates, num_next_candidates, py_exc)
     case_success = ( &
          case_success .AND. &
          .NOT. allocated(intersections) .AND. &
-         num_accepted == 0 .AND. &
+         num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
@@ -1452,7 +1496,6 @@ contains
     !         linearized case by checking endpoints).
     num_candidates = 1
     allocate(candidates(2, num_candidates))
-    allocate(accepted(2, num_candidates))
     ! Populate the "first" curve.
     first => candidates(1, 1)
     allocate(first%nodes(3, 2))
@@ -1471,7 +1514,7 @@ contains
     case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, intersections, &
-         accepted, num_accepted, py_exc)
+         next_candidates, num_next_candidates, py_exc)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
@@ -1480,7 +1523,7 @@ contains
          intersections(1)%t == 0.0_dp .AND. &
          associated(intersections(1)%first, first) .AND. &
          associated(intersections(1)%second, second) .AND. &
-         num_accepted == 0 .AND. &
+         num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
