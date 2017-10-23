@@ -36,7 +36,7 @@ C Headers
 
 The C headers for ``libbezier`` will be included in the installed package
 
-.. testsetup:: show-headers, show-lib, show-pxd
+.. testsetup:: show-headers, show-lib, show-dll, show-pxd
 
    import os
    import textwrap
@@ -136,7 +136,7 @@ The C headers for ``libbezier`` will be included in the installed package
        surface.h
      bezier.h
 
-.. testcleanup:: show-headers, show-lib, show-pxd
+.. testcleanup:: show-headers, show-lib, show-dll, show-pxd
 
    # Restore the monkey-patched functions.
    bezier.get_include = original_get_include
@@ -202,7 +202,7 @@ library (i.e. a ``.a`` file):
 On Windows, an `import library`_ (i.e. a ``.lib`` file) is included to
 specify the symbols in the Windows **shared** library (DLL):
 
-.. doctest:: show-lib
+.. doctest:: show-dll
    :windows-only:
 
    >>> lib_directory = bezier.get_lib()
