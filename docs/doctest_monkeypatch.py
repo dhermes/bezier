@@ -18,7 +18,12 @@ Does so by monkey-patching the ``option_spec`` in
 * ``TestcodeDirective``
 * ``TestoutputDirective``
 
-with some extra options ``:windows-skip:`` and ``:windows-only:``.
+with some extra options:
+
+* ``:linux-only:``
+* ``:mac-os-x-only:``
+* ``:windows-skip:``
+* ``:windows-only:``
 
 Also monkey-patches ``TestDirective.run`` to honor these directives
 and skip a test based on the options.
@@ -32,15 +37,27 @@ and skip a test based on the options.
 
 import doctest
 import os
+import sys
 
 import docutils.parsers.rst
 import sphinx.ext.doctest
 
 
 IS_WINDOWS = os.name == 'nt'
+IS_LINUX = sys.platform in ('linux', 'linux2')
+IS_MAC_OS_X = sys.platform == 'darwin'
+LINUX_ONLY = 'linux-only'
+MAC_OS_X_ONLY = 'mac-os-x-only'
 WINDOWS_ONLY = 'windows-only'
 WINDOWS_SKIP = 'windows-skip'
+OPTION_NAMES = (
+    LINUX_ONLY,
+    MAC_OS_X_ONLY,
+    WINDOWS_ONLY,
+    WINDOWS_SKIP,
+)
 OLD_RUN = sphinx.ext.doctest.TestDirective.run
+SKIP_FLAG = doctest.OPTIONFLAGS_BY_NAME['SKIP']
 
 
 def custom_run(directive):
@@ -62,19 +79,26 @@ def custom_run(directive):
     """
     node, = OLD_RUN(directive)
 
-    if WINDOWS_ONLY in directive.options and WINDOWS_SKIP in directive.options:
+    num_options = sum(1 for name in OPTION_NAMES if name in directive.options)
+    if num_options > 1:
         raise RuntimeError(
-            'At most one option can be used among', WINDOWS_ONLY, WINDOWS_SKIP)
+            'At most one option can be used among', *OPTION_NAMES)
+
+    if LINUX_ONLY in directive.options:
+        if not IS_LINUX:
+            node['options'][SKIP_FLAG] = True
+
+    if MAC_OS_X_ONLY in directive.options:
+        if not IS_MAC_OS_X:
+            node['options'][SKIP_FLAG] = True
 
     if WINDOWS_ONLY in directive.options:
         if not IS_WINDOWS:
-            flag = doctest.OPTIONFLAGS_BY_NAME['SKIP']
-            node['options'][flag] = True  # Skip the test
+            node['options'][SKIP_FLAG] = True
 
     if WINDOWS_SKIP in directive.options:
         if IS_WINDOWS:
-            flag = doctest.OPTIONFLAGS_BY_NAME['SKIP']
-            node['options'][flag] = True  # Skip the test
+            node['options'][SKIP_FLAG] = True
 
     return [node]
 
@@ -87,10 +111,6 @@ def setup(app):
     """
     sphinx.ext.doctest.TestDirective.run = custom_run
 
-    options = (
-        WINDOWS_ONLY,
-        WINDOWS_SKIP,
-    )
     directive_types = (
         sphinx.ext.doctest.DoctestDirective,
         sphinx.ext.doctest.TestcodeDirective,
@@ -98,7 +118,7 @@ def setup(app):
     )
     for directive in directive_types:
         option_spec = directive.option_spec
-        for option in options:
+        for option in OPTION_NAMES:
             if option in option_spec:
                 raise RuntimeError(
                     'Unexpected option in option spec', option)

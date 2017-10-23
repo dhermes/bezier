@@ -15,6 +15,7 @@ from __future__ import print_function
 import glob
 import os
 import shutil
+import sys
 import tempfile
 
 import nox
@@ -22,7 +23,9 @@ import py.path
 
 
 NUMPY = 'numpy >= 1.13.3'
-if os.name == 'nt':
+IS_MAC_OS_X = sys.platform == 'darwin'
+IS_WINDOWS = os.name == 'nt'
+if IS_WINDOWS:
     # Windows wheels don't exist until 1.0.0.
     SCIPY = 'scipy >= 1.0.0rc1'
 else:
@@ -198,7 +201,11 @@ def doctest(session):
     local_deps = DOCS_DEPS + (MOCK_DEP,)
     session.install(*local_deps)
     # Install this package.
-    session.install('.')
+    if IS_MAC_OS_X:
+        command = get_path('scripts', 'osx', 'nox-install-for-doctest.sh')
+        session.run(command)
+    else:
+        session.install('.')
 
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)

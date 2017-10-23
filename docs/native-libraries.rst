@@ -36,7 +36,7 @@ C Headers
 
 The C headers for ``libbezier`` will be included in the installed package
 
-.. testsetup:: show-headers, show-lib, show-dll, show-pxd
+.. testsetup:: show-headers, show-lib, show-dll, show-pxd, os-x-dylibs
 
    import os
    import textwrap
@@ -117,6 +117,10 @@ The C headers for ``libbezier`` will be included in the installed package
    # Allow this value to be re-used.
    include_directory = get_include()
 
+   # OS X specific.
+   base_dir = os.path.dirname(include_directory.path)
+   dylibs_directory = os.path.join(base_dir, '.dylibs')
+
 .. doctest:: show-headers
 
    >>> include_directory = bezier.get_include()
@@ -132,7 +136,7 @@ The C headers for ``libbezier`` will be included in the installed package
        surface.h
      bezier.h
 
-.. testcleanup:: show-headers, show-lib, show-dll, show-pxd
+.. testcleanup:: show-headers, show-lib, show-dll, show-pxd, os-x-dylibs
 
    # Restore the monkey-patched functions.
    bezier.get_include = original_get_include
@@ -275,19 +279,47 @@ Mac OS X
 The command line tool `delocate`_ adds a ``bezier/.dylibs`` directory
 with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 
-.. code-block:: console
+.. doctest:: os-x-dylibs
+   :mac-os-x-only:
 
-   $ cd .../site-packages/bezier/.dylibs
-   $ ls -1
-   libgcc_s.1.dylib
-   libgfortran.4.dylib
-   libquadmath.0.dylib
+   >>> dylibs_directory
+   '.../site-packages/bezier/.dylibs'
+   >>> print_tree(dylibs_directory)
+   .dylibs/
+     libgcc_s.1.dylib
+     libgfortran.4.dylib
+     libquadmath.0.dylib
 
 For example, the ``_curve_speedup`` module depends on the local copy
 of ``libgfortran``:
 
-.. code-block:: console
+.. testsetup:: os-x-extension, os-x-delocated-libgfortran
 
+   import os
+   import subprocess
+
+   import bezier
+
+
+   def invoke_shell(*args):
+       print('$ ' + ' '.join(args))
+       prev_cwd = os.getcwd()
+       os.chdir(bezier_directory)
+       # NOTE: We print to the stdout of the doctest, rather than using
+       #       `subprocess.call()` directly.
+       output_bytes = subprocess.check_output(args).rstrip()
+       print(output_bytes.decode('utf-8'))
+       os.chdir(prev_cwd)
+
+
+   bezier_directory = os.path.dirname(bezier.__file__)
+
+.. doctest:: os-x-extension
+   :options: +NORMALIZE_WHITESPACE
+   :mac-os-x-only:
+   :pyversion: >= 3.6
+
+   >>> invoke_shell('otool', '-L', '_curve_speedup.cpython-36m-darwin.so')
    $ otool -L _curve_speedup.cpython-36m-darwin.so
    _curve_speedup.cpython-36m-darwin.so:
            @loader_path/.dylibs/libgfortran.4.dylib (...)
@@ -297,8 +329,11 @@ Though the Python extension modules (``.so`` files) only depend on
 ``libgfortran``, they indirectly depend on ``libquadmath`` and
 ``libgcc_s``:
 
-.. code-block:: console
+.. doctest:: os-x-delocated-libgfortran
+   :options: +NORMALIZE_WHITESPACE
+   :mac-os-x-only:
 
+   >>> invoke_shell('otool', '-L', '.dylibs/libgfortran.4.dylib')
    $ otool -L .dylibs/libgfortran.4.dylib
    .dylibs/libgfortran.4.dylib:
            /DLC/bezier/libgfortran.4.dylib (...)
