@@ -301,6 +301,9 @@ of ``libgfortran``:
    import bezier
 
 
+   bezier_directory = os.path.dirname(bezier.__file__)
+
+
    def invoke_shell(*args):
        print('$ ' + ' '.join(args))
        prev_cwd = os.getcwd()
@@ -310,9 +313,6 @@ of ``libgfortran``:
        output_bytes = subprocess.check_output(args).rstrip()
        print(output_bytes.decode('utf-8'))
        os.chdir(prev_cwd)
-
-
-   bezier_directory = os.path.dirname(bezier.__file__)
 
 .. doctest:: os-x-extension
    :options: +NORMALIZE_WHITESPACE
@@ -360,12 +360,62 @@ Windows
 A single Windows shared library (DLL) is provided: ``extra-dll/libbezier.dll``.
 The Python extension modules (``.pyd`` files) depend directly on this library:
 
-.. code-block:: rest
+.. testsetup:: windows-extension, windows-dll
 
-   > dumpbin /dependents .\bezier\_curve_speedup.cp36-win_amd64.pyd
-   ...
+   import distutils.ccompiler
+   import os
+   import subprocess
+
+   import bezier
+
+
+   c_compiler = distutils.ccompiler.new_compiler()
+   assert c_compiler.compiler_type == 'msvc'
+   c_compiler.initialize()
+
+   dumpbin_exe = os.path.join(
+       os.path.dirname(c_compiler.lib), 'dumpbin.exe')
+   assert os.path.isfile(dumpbin_exe)
+
+   bezier_directory = os.path.dirname(bezier.__file__)
+
+
+   def replace_dumpbin(value):
+       if value == 'dumpbin':
+           return dumpbin_exe
+       else:
+           return value
+
+
+   def invoke_shell(*args):
+       print('> ' + ' '.join(args))
+       # Replace `'dumpbin'` with `dumpbin_exe`.
+       cmd = tuple(map(replace_dumpbin, args))
+       prev_cwd = os.getcwd()
+       os.chdir(bezier_directory)
+       # NOTE: We print to the stdout of the doctest, rather than using
+       #       `subprocess.call()` directly.
+       output_bytes = subprocess.check_output(cmd).rstrip()
+       print(output_bytes.decode('utf-8'))
+       os.chdir(prev_cwd)
+
+.. doctest:: windows-extension
+   :options: +NORMALIZE_WHITESPACE
+   :windows-only:
+   :pyversion: >= 3.6
+
+   >>> invoke_shell('dumpbin', '/dependents', '_curve_speedup.cp36-win_amd64.pyd')
+   > dumpbin /dependents _curve_speedup.cp36-win_amd64.pyd
+   Microsoft (R) COFF/PE Dumper Version ...
+   Copyright (C) Microsoft Corporation.  All rights reserved.
+   <BLANKLINE>
+   <BLANKLINE>
+   Dump of file _curve_speedup.cp36-win_amd64.pyd
+   <BLANKLINE>
+   File Type: DLL
+   <BLANKLINE>
      Image has the following dependencies:
-
+   <BLANKLINE>
        libbezier.dll
        python36.dll
        KERNEL32.dll
@@ -373,6 +423,7 @@ The Python extension modules (``.pyd`` files) depend directly on this library:
        api-ms-win-crt-stdio-l1-1-0.dll
        api-ms-win-crt-heap-l1-1-0.dll
        api-ms-win-crt-runtime-l1-1-0.dll
+   ...
 
 In order to ensure this DLL can be found, the ``bezier.__config__``
 module adds the ``extra-dll`` directory to ``os.environ['PATH']`` on import
@@ -460,12 +511,22 @@ all the symbols used from ``libgfortran`` or ``libgcc_s`` are statically
 included and the resulting shared library ``libbezier.dll`` has no dependency
 on MinGW:
 
-.. code-block:: rest
+.. doctest:: windows-dll
+   :options: +NORMALIZE_WHITESPACE
+   :windows-only:
 
-   > dumpbin /dependents .\extra-dll\libbezier.dll
-   ...
+   >>> invoke_shell('dumpbin', '/dependents', 'extra-dll\\libbezier.dll')
+   > dumpbin /dependents extra-dll\libbezier.dll
+   Microsoft (R) COFF/PE Dumper Version ...
+   Copyright (C) Microsoft Corporation.  All rights reserved.
+   <BLANKLINE>
+   <BLANKLINE>
+   Dump of file extra-dll\libbezier.dll
+   <BLANKLINE>
+   File Type: DLL
+   <BLANKLINE>
      Image has the following dependencies:
-
+   <BLANKLINE>
        KERNEL32.dll
        msvcrt.dll
        USER32.dll
