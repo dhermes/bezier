@@ -23,7 +23,9 @@ pip wheel . --wheel-dir ${BASIC_DIR}
 
 # 2. "delocate" the built wheel.
 DELOCATED_DIR=$(mktemp -d)
-# NOTE: This intentionally does not use ``--check-archs``.
+# NOTE: This intentionally does not use ``--check-archs``, since
+#       the caller may not have set ``GFORTRAN_LIB`` with a universal
+#       ``libgfortran`` (i.e. via ``make_universal_libgfortran.py``).
 delocate-wheel \
     --wheel-dir ${DELOCATED_DIR} \
     --verbose \
