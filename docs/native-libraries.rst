@@ -87,36 +87,32 @@ The C headers for ``libbezier`` will be included in the installed package
 
 
    def print_tree(directory, suffix=None):
-       assert isinstance(directory, Path)
-       directory = directory.path
-       # NOTE: We **always** use posix separator.
-       print(os.path.basename(directory) + '/')
+       if isinstance(directory, Path):
+           # Make Windows act like posix.
+           directory = directory.path
+           separator = '/'
+       else:
+           separator = os.path.sep
+       print(os.path.basename(directory) + separator)
        full_tree = tree(directory, suffix=suffix)
        print(textwrap.indent(full_tree, '  '))
 
 
    def parent_directory(directory):
-       assert isinstance(directory, Path)
-       return Path(os.path.dirname(directory.path))
+       if isinstance(directory, Path):
+           return Path(os.path.dirname(directory.path))
+       else:
+           return os.path.dirname(directory)
 
 
    # Monkey-patch functions to return a ``Path``.
    original_get_include = bezier.get_include
    original_get_lib = bezier.get_lib
-   original_get_dll = bezier.get_dll
 
    def get_include():
        return Path(original_get_include())
 
-   def get_lib():
-       return Path(original_get_lib())
-
-   def get_dll():
-       return Path(original_get_dll())
-
    bezier.get_include = get_include
-   bezier.get_lib = get_lib
-   bezier.get_dll = get_dll
 
    # Allow this value to be re-used.
    include_directory = get_include()
@@ -140,8 +136,6 @@ The C headers for ``libbezier`` will be included in the installed package
 
    # Restore the monkey-patched functions.
    bezier.get_include = original_get_include
-   bezier.get_lib = original_get_lib
-   bezier.get_dll = original_get_dll
 
 Note that this includes a catch-all ``bezier.h`` that just includes all of
 the headers.
@@ -207,15 +201,15 @@ specify the symbols in the Windows **shared** library (DLL):
 
    >>> lib_directory = bezier.get_lib()
    >>> lib_directory
-   '.../site-packages/bezier/lib'
+   '...\\site-packages\\bezier\\lib'
    >>> print_tree(lib_directory)
-   lib/
+   lib\
      bezier.lib
    >>> dll_directory = bezier.get_dll()
    >>> dll_directory
-   '.../site-packages/bezier/extra-dll'
+   '...\\site-packages\\bezier\\extra-dll'
    >>> print_tree(dll_directory)
-   extra-dll/
+   extra-dll\
      libbezier.dll
 
 .. _import library: https://docs.python.org/3/extending/windows.html#differences-between-unix-and-windows
