@@ -530,6 +530,7 @@ on MinGW:
        KERNEL32.dll
        msvcrt.dll
        USER32.dll
+   ...
 
 .. note::
 
