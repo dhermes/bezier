@@ -60,6 +60,7 @@ __all__ = [
     '__version__',
     'Curve',
     'CurvedPolygon',
+    'get_dll',
     'get_include',
     'get_lib',
     'Surface',

@@ -2,7 +2,7 @@ bezier package
 ==============
 
 .. automodule:: bezier
-    :members: __version__, get_include, get_lib
+    :members: __version__, get_dll, get_include, get_lib
 
 Submodules
 ----------

@@ -102,11 +102,21 @@ The C headers for ``libbezier`` will be included in the installed package
 
    # Monkey-patch functions to return a ``Path``.
    original_get_include = bezier.get_include
+   original_get_lib = bezier.get_lib
+   original_get_dll = bezier.get_dll
 
    def get_include():
        return Path(original_get_include())
 
+   def get_lib():
+       return Path(original_get_lib())
+
+   def get_dll():
+       return Path(original_get_dll())
+
    bezier.get_include = get_include
+   bezier.get_lib = get_lib
+   bezier.get_dll = get_dll
 
    # Allow this value to be re-used.
    include_directory = get_include()
@@ -128,8 +138,10 @@ The C headers for ``libbezier`` will be included in the installed package
 
 .. testcleanup:: show-headers, show-lib, show-pxd
 
-   # Restore the monkey-patched function.
+   # Restore the monkey-patched functions.
    bezier.get_include = original_get_include
+   bezier.get_lib = original_get_lib
+   bezier.get_dll = original_get_dll
 
 Note that this includes a catch-all ``bezier.h`` that just includes all of
 the headers.
@@ -158,9 +170,9 @@ in ``bezier/curve.h``.
 
 .. _static-library:
 
-**************
-Static Library
-**************
+***********************
+Static / Shared Library
+***********************
 
 On Linux and Mac OS X, ``libbezier`` is included as a single static
 library (i.e. a ``.a`` file):
@@ -181,7 +193,11 @@ library (i.e. a ``.a`` file):
    because the "final" install location of the Python package is not
    dependable. Even on the same machine with the same operating system,
    ``bezier`` can be installed in virtual environments, in different
-   Python versions, as an egg or wheel, and so on.
+   Python versions, as an egg or wheel, and so on. Given the capabilities
+   of ``auditwheel`` and ``delocate`` discussed below, it may be possible
+   to use a shared library. See `issue 54`_ for more discussion.
+
+.. _issue 54: https://github.com/dhermes/bezier/issues/54
 
 On Windows, an `import library`_ (i.e. a ``.lib`` file) is included to
 specify the symbols in the Windows **shared** library (DLL):
