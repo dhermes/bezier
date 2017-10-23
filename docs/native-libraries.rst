@@ -368,14 +368,17 @@ The Python extension modules (``.pyd`` files) depend directly on this library:
 
    import bezier
 
+   if os.name == 'nt':
+       c_compiler = distutils.ccompiler.new_compiler()
+       assert c_compiler.compiler_type == 'msvc'
+       c_compiler.initialize()
 
-   c_compiler = distutils.ccompiler.new_compiler()
-   assert c_compiler.compiler_type == 'msvc'
-   c_compiler.initialize()
-
-   dumpbin_exe = os.path.join(
-       os.path.dirname(c_compiler.lib), 'dumpbin.exe')
-   assert os.path.isfile(dumpbin_exe)
+       dumpbin_exe = os.path.join(
+           os.path.dirname(c_compiler.lib), 'dumpbin.exe')
+       assert os.path.isfile(dumpbin_exe)
+   else:
+       # This won't matter if not on Windows.
+       dumpbin_exe = None
 
    bezier_directory = os.path.dirname(bezier.__file__)
 
