@@ -609,7 +609,6 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: curr_size
     type(CurveData), allocatable :: candidates_swap(:, :)
-    type(CurveData) :: left1, right1, left2, right2
 
     ! First, update the number of candidates.
     if (enum_ == Subdivide_FIRST .OR. enum_ == Subdivide_SECOND) then
@@ -636,28 +635,33 @@ contains
     !       M == 2 and ``num_candidates`` <= N.
 
     if (enum_ == Subdivide_FIRST) then
-       call subdivide_curve(first, left1, right1)
-       candidates(1, num_candidates - 1) = left1
        candidates(2, num_candidates - 1) = second
-       candidates(1, num_candidates) = right1
        candidates(2, num_candidates) = second
+       call subdivide_curve( &
+            first, &
+            candidates(1, num_candidates - 1), &
+            candidates(1, num_candidates))
     else if (enum_ == Subdivide_SECOND) then
-       call subdivide_curve(second, left2, right2)
        candidates(1, num_candidates - 1) = first
-       candidates(2, num_candidates - 1) = left2
        candidates(1, num_candidates) = first
-       candidates(2, num_candidates) = right2
+       call subdivide_curve( &
+            second, &
+            candidates(2, num_candidates - 1), &
+            candidates(2, num_candidates))
     else if (enum_ == Subdivide_BOTH) then
-       call subdivide_curve(first, left1, right1)
-       call subdivide_curve(second, left2, right2)
-       candidates(1, num_candidates - 3) = left1
-       candidates(2, num_candidates - 3) = left2
-       candidates(1, num_candidates - 2) = left1
-       candidates(2, num_candidates - 2) = right2
-       candidates(1, num_candidates - 1) = right1
-       candidates(2, num_candidates - 1) = left2
-       candidates(1, num_candidates) = right1
-       candidates(2, num_candidates) = right2
+       call subdivide_curve( &
+            first, &
+            candidates(1, num_candidates - 3), &
+            candidates(1, num_candidates - 1))
+       call subdivide_curve( &
+            second, &
+            candidates(2, num_candidates - 3), &
+            candidates(2, num_candidates - 2))
+
+       candidates(1, num_candidates - 2) = candidates(1, num_candidates - 3)
+       candidates(2, num_candidates - 1) = candidates(2, num_candidates - 3)
+       candidates(1, num_candidates) = candidates(1, num_candidates - 1)
+       candidates(2, num_candidates) = candidates(2, num_candidates - 2)
     end if
 
   end subroutine add_candidates
@@ -667,9 +671,11 @@ contains
        next_candidates, num_next_candidates, py_exc)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
+    ! NOTE: This assumes, but does not check, that ``candidates`` has
+    !       two rows and has at **least** ``num_candidates`` columns.
 
     integer(c_int), intent(in) :: num_candidates
-    type(CurveData), target, intent(in) :: candidates(2, num_candidates)
+    type(CurveData), target, intent(in) :: candidates(:, :)
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     type(CurveData), allocatable, intent(out) :: next_candidates(:, :)
     integer(c_int), intent(out) :: num_next_candidates
