@@ -718,7 +718,7 @@ contains
              end if
 
              ! If there was no failure, move to the next iteration.
-             exit
+             cycle
           else
              subdivide_enum = Subdivide_SECOND
              call bbox_line_intersect( &
@@ -742,13 +742,13 @@ contains
 
        ! Reject if the bounding boxes do not intersect.
        if (bbox_int == BoxIntersectionType_DISJOINT) then
-          exit
+          cycle
        else if (bbox_int == BoxIntersectionType_TANGENT) then
           call tangent_bbox_intersection(first, second, intersections)
-          exit
+          cycle
        end if
 
-       ! If we haven't ``exit``-d this iteration, add the
+       ! If we haven't ``cycle``-d this iteration, add the
        ! ``next_candidates`` pair.
        call add_candidates( &
             next_candidates, num_next_candidates, &
