@@ -50,6 +50,9 @@ _SEGMENTS_PARALLEL = 'Line segments parallel.'
 _TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
     '{:d} candidate pairs.')
+_NO_CONVERGE_TEMPLATE = (
+    'Curve intersection failed to converge to approximately linear '
+    'subdivisions after {:d} iterations.')
 # Allow wiggle room for ``s`` and ``t`` computed during segment
 # intersection. Any over- or under-shooting will (hopefully) be
 # resolved in the Newton refinement step. If it isn't resolved, the
@@ -1053,10 +1056,8 @@ def all_intersections(candidates):
         if not candidates:
             return intersections
 
-    raise ValueError(
-        'Curve intersection failed to converge to approximately '
-        'linear subdivisions after max iterations.',
-        _MAX_INTERSECT_SUBDIVISIONS)
+    msg = _NO_CONVERGE_TEMPLATE.format(_MAX_INTERSECT_SUBDIVISIONS)
+    raise ValueError(msg)
 
 
 class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods

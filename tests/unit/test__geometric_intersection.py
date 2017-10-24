@@ -1208,42 +1208,9 @@ class Test_all_intersections(utils.NumPyTestCase):
 
         return _geometric_intersection.all_intersections(candidates)
 
-    def test_failure(self):
-        patch = unittest.mock.patch(
-            'bezier._geometric_intersection._MAX_INTERSECT_SUBDIVISIONS',
-            new=-1)
-        with patch:
-            with self.assertRaises(ValueError):
-                self._call_function_under_test([])
-
     def test_no_intersections(self):
         intersections = self._call_function_under_test([])
         self.assertEqual(intersections, [])
-
-    def test_tangent(self):
-        import bezier
-
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 1.0],
-            [1.0, 0.0],
-        ])
-        curve = bezier.Curve(nodes, degree=2)
-
-        # Start with two pieces.
-        pieces = itertools.chain(*[curve.subdivide()])
-        # Double the number of pieces 3 times.
-        for unused_exponent in (2, 3, 4):
-            pieces = itertools.chain(*[
-                piece.subdivide() for piece in pieces])
-
-        # Match each piece with itself.
-        candidates = [(piece, piece) for piece in pieces]
-        # But we need **more** than 16.
-        candidates.append((curve, curve))
-
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(candidates)
 
     def test_success(self):
         import bezier
@@ -1281,6 +1248,85 @@ class Test_all_intersections(utils.NumPyTestCase):
         t_val = 2.0 / 3.0
         utils.check_intersection(
             self, intersection, expected, curve1, curve2, s_val, t_val)
+
+    def test_parallel_failure(self):
+        import bezier
+        from bezier import _geometric_intersection
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [0.375, 0.75],
+            [0.75, 0.375],
+        ])
+        curve1 = bezier.Curve(nodes1, degree=2)
+
+        nodes2 = np.asfortranarray([
+            [0.25, 0.625],
+            [0.625, 0.25],
+            [1.0, 1.0],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=2)
+
+        candidates = [(curve1, curve2)]
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(candidates)
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(
+            exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
+
+    def test_too_many_candidates(self):
+        import bezier
+        from bezier import _geometric_intersection
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [-0.5, 1.5],
+            [1.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1, degree=2)
+
+        nodes2 = np.asfortranarray([
+            [-1.0, 1.0],
+            [0.5, 0.5],
+            [0.0, 2.0],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=2)
+
+        candidates = [(curve1, curve2)]
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(candidates)
+
+        exc_args = exc_info.exception.args
+        expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(88)
+        self.assertEqual(exc_args, (expected,))
+
+    def test_non_convergence(self):
+        import bezier
+        from bezier import _geometric_intersection
+
+        multiplier = 16384.0
+        nodes1 = multiplier * np.asfortranarray([
+            [0.0, 0.0],
+            [4.5, 9.0],
+            [9.0, 0.0],
+        ])
+        curve1 = bezier.Curve(nodes1, degree=2)
+
+        nodes2 = multiplier * np.asfortranarray([
+            [0.0, 8.0],
+            [6.0, 0.0],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=2)
+
+        candidates = [(curve1, curve2)]
+        with self.assertRaises(ValueError) as exc_info:
+            self._call_function_under_test(candidates)
+
+        exc_args = exc_info.exception.args
+        expected = _geometric_intersection._NO_CONVERGE_TEMPLATE.format(
+            _geometric_intersection._MAX_INTERSECT_SUBDIVISIONS)
+        self.assertEqual(exc_args, (expected,))
 
 
 class TestBoxIntersectionType(unittest.TestCase):
