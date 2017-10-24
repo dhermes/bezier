@@ -22,11 +22,13 @@ module test_curve_intersection
        BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
        FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
        Subdivide_FIRST, Subdivide_SECOND, Subdivide_BOTH, Subdivide_NEITHER, &
+       ALL_INTERSECTIONS_SUCCESS, ALL_INTERSECTIONS_TOO_MANY, &
+       ALL_INTERSECTIONS_NO_CONVERGE, ALL_INTERSECTIONS_OFFSET, &
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
        endpoint_check, tangent_bbox_intersection, add_candidates, &
-       intersect_one_round
+       intersect_one_round, all_intersections
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -37,7 +39,7 @@ module test_curve_intersection
        test_bbox_line_intersect, test_add_intersection, &
        test_add_from_linearized, test_endpoint_check, &
        test_tangent_bbox_intersection, test_add_candidates, &
-       test_intersect_one_round
+       test_intersect_one_round, test_all_intersections
   public curve_intersection_all_tests
 
 contains
@@ -58,6 +60,7 @@ contains
     call test_tangent_bbox_intersection(success)
     call test_add_candidates(success)
     call test_intersect_one_round(success)
+    call test_all_intersections(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -1528,5 +1531,138 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_intersect_one_round
+
+  subroutine test_all_intersections(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    type(CurveData), target, allocatable :: candidates(:, :)
+    type(Intersection), allocatable :: intersections(:)
+    integer(c_int) :: status
+    type(CurveData), pointer :: first, second
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "all_intersections"
+
+    ! CASE 1: No intersections.
+    allocate(candidates(2, 0))
+
+    call all_intersections(candidates, intersections, status)
+    case_success = ( &
+         .NOT. allocated(intersections) .AND. &
+         status == ALL_INTERSECTIONS_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+
+    ! CASE 2: Intersection of two quadratic curves.
+    ! NOTE: The first candidate is a specialization of [0, 0], [1/2, 1], [1, 1]
+    !       onto the interval [1/4, 1] and the second candidate is
+    !       specialization of [0, 1], [1/2, 1], [1, 0] onto the interval
+    !       [0, 3/4]. We expect them to intersect at s = 1/3, t = 2/3, which is
+    !       the point [1/2, 3/4].
+    allocate(candidates(2, 1))
+    first => candidates(1, 1)
+    allocate(first%nodes(3, 2))
+    first%nodes(1, :) = [0.25_dp, 0.4375_dp]
+    first%nodes(2, :) = [0.625_dp, 1.0_dp]
+    first%nodes(3, :) = 1
+    second => candidates(2, 1)
+    allocate(second%nodes(3, 2))
+    second%nodes(1, :) = [0.0_dp, 1.0_dp]
+    second%nodes(2, :) = [0.375_dp, 1.0_dp]
+    second%nodes(3, :) = [0.75_dp, 0.4375_dp]
+
+    call all_intersections(candidates, intersections, status)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         3 * intersections(1)%s == 1.0_dp .AND. &
+         3 * intersections(1)%t == 2.0_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         associated(intersections(1)%second, second) .AND. &
+         status == ALL_INTERSECTIONS_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+    deallocate(intersections)
+
+    ! CASE 3: Tangent curves, with a ``py_exc`` failure due to parallel lines.
+    allocate(candidates(2, 1))
+    first => candidates(1, 1)
+    allocate(first%nodes(3, 2))
+    first%nodes(1, :) = 0
+    first%nodes(2, :) = [0.375_dp, 0.75_dp]
+    first%nodes(3, :) = [0.75_dp, 0.375_dp]
+    second => candidates(2, 1)
+    allocate(second%nodes(3, 2))
+    second%nodes(1, :) = [0.25_dp, 0.625_dp]
+    second%nodes(2, :) = [0.625_dp, 0.25_dp]
+    second%nodes(3, :) = 1
+
+    call all_intersections(candidates, intersections, status)
+    case_success = ( &
+         .NOT. allocated(intersections) .AND. &
+         status == ALL_INTERSECTIONS_OFFSET + FROM_LINEARIZED_PARALLEL)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+
+    ! CASE 4: Tangent curves, which cause the number of candidate pairs
+    !         to become to high.
+    allocate(candidates(2, 1))
+    first => candidates(1, 1)
+    allocate(first%nodes(3, 2))
+    first%nodes(1, :) = 0
+    first%nodes(2, :) = [-0.5_dp, 1.5_dp]
+    first%nodes(3, :) = 1
+    second => candidates(2, 1)
+    allocate(second%nodes(3, 2))
+    second%nodes(1, :) = [-1.0_dp, 1.0_dp]
+    second%nodes(2, :) = 0.5_dp
+    second%nodes(3, :) = [0.0_dp, 2.0_dp]
+
+    call all_intersections(candidates, intersections, status)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         intersections(1)%s == 0.5_dp .AND. &
+         intersections(1)%t == 0.5_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         associated(intersections(1)%second, second) .AND. &
+         intersections(1)%s == 0.5_dp .AND. &
+         intersections(1)%t == 0.5_dp .AND. &
+         associated(intersections(2)%first, first) .AND. &
+         associated(intersections(2)%second, second) .AND. &
+         status == ALL_INTERSECTIONS_TOO_MANY)
+    call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
+    deallocate(intersections)
+
+    ! CASE 5: Badly scaled curves, which cause the subdivision proceass to
+    !         take too many iterations before being "almost linear".
+    ! NOTE: This is just the quadratic given by [0, 0], [4.5, 9], [9, 0] and
+    !       the line given by [0, 8], [6, 0], but scaled up by a factor of
+    !       2**14 == 16384. This makes the linearization error large.
+    !       This definitely points out a flaw in using absolute vs. relative
+    !       linearization error. However, there is an upside in not using
+    !       relative error: it is faster to compute without normalization.
+    allocate(candidates(2, 1))
+    first => candidates(1, 1)
+    allocate(first%nodes(3, 2))
+    first%nodes(1, :) = 0
+    first%nodes(2, :) = [73728.0_dp, 147456.0_dp]
+    first%nodes(3, :) = [147456.0_dp, 0.0_dp]
+    second => candidates(2, 1)
+    allocate(second%nodes(2, 2))
+    second%nodes(1, :) = [0.0_dp, 131072.0_dp]
+    second%nodes(2, :) = [98304.0_dp, 0.0_dp]
+
+    call all_intersections(candidates, intersections, status)
+    case_success = ( &
+         .NOT. allocated(intersections) .AND. &
+         status == ALL_INTERSECTIONS_NO_CONVERGE)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_all_intersections
 
 end module test_curve_intersection

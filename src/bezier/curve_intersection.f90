@@ -21,18 +21,20 @@ module curve_intersection
        CurveData, evaluate_multi, evaluate_hodograph, curve_root, &
        subdivide_curve
   implicit none
-  private
+  private MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES
   public &
        Intersection, BoxIntersectionType_INTERSECTION, &
        BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
        FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
        FROM_LINEARIZED_WIGGLE_FAIL, LINEARIZATION_THRESHOLD, Subdivide_FIRST, &
        Subdivide_SECOND, Subdivide_BOTH, Subdivide_NEITHER, &
+       ALL_INTERSECTIONS_SUCCESS, ALL_INTERSECTIONS_TOO_MANY, &
+       ALL_INTERSECTIONS_NO_CONVERGE, ALL_INTERSECTIONS_OFFSET, &
        linearization_error, segment_intersection, newton_refine_intersect, &
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
        endpoint_check, tangent_bbox_intersection, add_candidates, &
-       intersect_one_round
+       intersect_one_round, all_intersections
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -58,6 +60,12 @@ module curve_intersection
   integer(c_int), parameter :: Subdivide_SECOND = 1
   integer(c_int), parameter :: Subdivide_BOTH = 2
   integer(c_int), parameter :: Subdivide_NEITHER = -1
+  integer(c_int), parameter :: MAX_INTERSECT_SUBDIVISIONS = 20
+  integer(c_int), parameter :: MAX_CANDIDATES = 64
+  integer(c_int), parameter :: ALL_INTERSECTIONS_SUCCESS = 0
+  integer(c_int), parameter :: ALL_INTERSECTIONS_TOO_MANY = 1
+  integer(c_int), parameter :: ALL_INTERSECTIONS_NO_CONVERGE = 2
+  integer(c_int), parameter :: ALL_INTERSECTIONS_OFFSET = 10
 
 contains
 
@@ -756,5 +764,73 @@ contains
     end do
 
   end subroutine intersect_one_round
+
+  subroutine all_intersections(candidates, intersections, status)
+
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+
+    type(CurveData), intent(in) :: candidates(:, :)
+    type(Intersection), allocatable, intent(out) :: intersections(:)
+    integer(c_int), intent(out) :: status
+    ! Variables outside of signature.
+    integer(c_int) :: num_candidates, num_next_candidates, index_, py_exc
+    type(CurveData), allocatable :: candidates_odd(:, :), candidates_even(:, :)
+    logical(c_bool) :: is_even
+
+    num_candidates = size(candidates, 2)
+    status = ALL_INTERSECTIONS_SUCCESS  ! Default.
+
+    is_even = .TRUE.  ! At zero.
+    do index_ = 1, MAX_INTERSECT_SUBDIVISIONS
+       is_even = .NOT. is_even  ! Switch parity.
+
+       if (index_ == 1) then
+          ! For the **first** iteration, we need the ``root``-s to point
+          ! to our passed in ``candidates``. We still WRITE to
+          ! ``candidates_even``.
+          call intersect_one_round( &
+               num_candidates, candidates, intersections, &
+               candidates_even, num_next_candidates, py_exc)
+       else if (is_even) then
+          ! Since ``index_`` is even, we READ from ``candidates_even``
+          ! and WRITE to ``candidates_odd``.
+          call intersect_one_round( &
+               num_candidates, candidates_even, intersections, &
+               candidates_odd, num_next_candidates, py_exc)
+       else
+          ! Since ``index_`` is odd, we READ from ``candidates_odd``
+          ! and WRITE to ``candidates_even``.
+          call intersect_one_round( &
+               num_candidates, candidates_odd, intersections, &
+               candidates_even, num_next_candidates, py_exc)
+       end if
+
+       if (py_exc /= FROM_LINEARIZED_SUCCESS) then
+          status = ALL_INTERSECTIONS_OFFSET + py_exc
+          return
+       end if
+
+       ! Update the number of candidates.
+       num_candidates = num_next_candidates
+
+       ! Bail out of there are too many candidates.
+       if (num_candidates > MAX_CANDIDATES) then
+          status = ALL_INTERSECTIONS_TOO_MANY
+          return
+       end if
+
+       ! If none of the candidate pairs have been accepted, then there are
+       ! no more intersections to find.
+       if (num_candidates == 0) then
+          return
+       end if
+    end do
+
+    ! If we've reached this point, then the curve intersection failed to
+    ! converge to "approximately linear" subdivided curves after
+    ! ``MAX_INTERSECT_SUBDIVISIONS``.
+    status = ALL_INTERSECTIONS_NO_CONVERGE
+
+  end subroutine all_intersections
 
 end module curve_intersection
