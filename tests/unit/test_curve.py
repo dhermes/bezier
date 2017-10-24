@@ -10,7 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
+import unittest.mock
+
 import numpy as np
 
 from tests.unit import utils
@@ -65,7 +66,7 @@ class TestCurve(utils.NumPyTestCase):
         klass = self._get_target_class()
 
         curve = klass.from_nodes(
-            nodes, start=0.25, end=0.75, root=mock.sentinel.root)
+            nodes, start=0.25, end=0.75, root=unittest.mock.sentinel.root)
         self.assertIsInstance(curve, klass)
         self.assertEqual(curve._degree, 1)
         self.assertEqual(curve._dimension, 3)
@@ -76,7 +77,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertIsNone(curve._previous_edge)
         self.assertEqual(curve._start, 0.25)
         self.assertEqual(curve._end, 0.75)
-        self.assertIs(curve._root, mock.sentinel.root)
+        self.assertIs(curve._root, unittest.mock.sentinel.root)
 
     def test___repr__(self):
         degree = 4
@@ -114,11 +115,11 @@ class TestCurve(utils.NumPyTestCase):
         curve = self._make_one(nodes, 1)
         self.assertIsNone(curve._length)
 
-        patch = mock.patch(
+        patch = unittest.mock.patch(
             'bezier._curve_helpers.compute_length',
-            return_value=mock.sentinel.length)
+            return_value=unittest.mock.sentinel.length)
         with patch as mocked:
-            self.assertEqual(curve.length, mock.sentinel.length)
+            self.assertEqual(curve.length, unittest.mock.sentinel.length)
 
             self.assertEqual(mocked.call_count, 1)
             call = mocked.mock_calls[0]
@@ -139,18 +140,18 @@ class TestCurve(utils.NumPyTestCase):
 
     def test_start_property(self):
         curve = self._make_one(self.ZEROS, 1,
-                               start=mock.sentinel.start)
-        self.assertIs(curve.start, mock.sentinel.start)
+                               start=unittest.mock.sentinel.start)
+        self.assertIs(curve.start, unittest.mock.sentinel.start)
 
     def test_end_property(self):
         curve = self._make_one(self.ZEROS, 1,
-                               end=mock.sentinel.end)
-        self.assertIs(curve.end, mock.sentinel.end)
+                               end=unittest.mock.sentinel.end)
+        self.assertIs(curve.end, unittest.mock.sentinel.end)
 
     def test_root_property(self):
         curve = self._make_one(self.ZEROS, 1,
-                               root=mock.sentinel.root)
-        self.assertIs(curve.root, mock.sentinel.root)
+                               root=unittest.mock.sentinel.root)
+        self.assertIs(curve.root, unittest.mock.sentinel.root)
 
     def test_edge_index_property(self):
         curve = self._make_one(self.ZEROS, 1)
@@ -159,13 +160,13 @@ class TestCurve(utils.NumPyTestCase):
 
     def test_next_edge_property(self):
         curve = self._make_one(self.ZEROS, 1)
-        curve._next_edge = mock.sentinel.next_edge
-        self.assertIs(curve.next_edge, mock.sentinel.next_edge)
+        curve._next_edge = unittest.mock.sentinel.next_edge
+        self.assertIs(curve.next_edge, unittest.mock.sentinel.next_edge)
 
     def test_previous_edge_property(self):
         curve = self._make_one(self.ZEROS, 1)
-        curve._previous_edge = mock.sentinel.previous
-        self.assertIs(curve.previous_edge, mock.sentinel.previous)
+        curve._previous_edge = unittest.mock.sentinel.previous
+        self.assertIs(curve.previous_edge, unittest.mock.sentinel.previous)
 
     def test___dict___property(self):
         curve = self._make_one(self.ZEROS, 1, _copy=False)
@@ -192,7 +193,7 @@ class TestCurve(utils.NumPyTestCase):
         length = kwargs.pop('_length', None)
         curve = self._make_one(np.zeros(np_shape, order='F'), 1, **kwargs)
         curve._length = length
-        fake_nodes = mock.Mock(
+        fake_nodes = unittest.mock.Mock(
             ndim=2, shape=np_shape, spec=['ndim', 'shape', 'copy'])
         curve._nodes = fake_nodes
 
@@ -222,7 +223,8 @@ class TestCurve(utils.NumPyTestCase):
 
     def test__copy_with_root(self):
         self._copy_helper(
-            start=0.25, end=0.5, root=mock.sentinel.root, _length=2.25)
+            start=0.25, end=0.5,
+            root=unittest.mock.sentinel.root, _length=2.25)
 
     def test_evaluate(self):
         s = 0.25
@@ -263,9 +265,9 @@ class TestCurve(utils.NumPyTestCase):
         with self.assertRaises(NotImplementedError):
             curve.plot(32)
 
-    @mock.patch('bezier._plot_helpers.new_axis')
+    @unittest.mock.patch('bezier._plot_helpers.new_axis')
     def test_plot_defaults(self, new_axis_mock):
-        ax = mock.Mock(spec=['plot'])
+        ax = unittest.mock.Mock(spec=['plot'])
         new_axis_mock.return_value = ax
 
         nodes = np.asfortranarray([
@@ -286,7 +288,7 @@ class TestCurve(utils.NumPyTestCase):
         call = ax.plot.mock_calls[0]
         utils.check_plot_call(self, call, nodes, color=None, alpha=None)
 
-    @mock.patch('bezier._plot_helpers.new_axis')
+    @unittest.mock.patch('bezier._plot_helpers.new_axis')
     def test_plot_explicit(self, new_axis_mock):
         nodes = np.asfortranarray([
             [0.0, 0.0],
@@ -295,7 +297,7 @@ class TestCurve(utils.NumPyTestCase):
         curve = self._make_one(nodes, 1, _copy=False)
 
         num_pts = 2  # This value is crucial for the plot call.
-        ax = mock.Mock(spec=['plot'])
+        ax = unittest.mock.Mock(spec=['plot'])
         color = (0.75, 1.0, 1.0)
         alpha = 0.625
         result = curve.plot(num_pts, color=color, alpha=alpha, ax=ax)
@@ -358,7 +360,7 @@ class TestCurve(utils.NumPyTestCase):
 
     def test_intersect_bad_strategy(self):
         curve = self._make_one(self.ZEROS, 1)
-        strategy = mock.sentinel.bad_strategy
+        strategy = unittest.mock.sentinel.bad_strategy
         with self.assertRaises(ValueError) as exc_info:
             curve.intersect(curve, strategy=strategy)
 

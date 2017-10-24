@@ -11,8 +11,8 @@
 # limitations under the License.
 
 import unittest
+import unittest.mock
 
-import mock
 import numpy as np
 try:
     import scipy.linalg.lapack as SCIPY_LAPACK
@@ -755,12 +755,12 @@ class Test__resolve_and_add(utils.NumPyTestCase):
             nodes1, s_val, final_s, nodes2, t_val, final_t)
 
     def _helper(self, s, t):
-        nodes1 = mock.sentinel.nodes1
-        nodes2 = mock.sentinel.nodes2
+        nodes1 = unittest.mock.sentinel.nodes1
+        nodes2 = unittest.mock.sentinel.nodes2
         final_s = []
         final_t = []
 
-        patch = mock.patch(
+        patch = unittest.mock.patch(
             'bezier._intersection_helpers.newton_refine',
             return_value=(s, t))
         with patch as mocked:
@@ -1276,14 +1276,15 @@ class Test__reciprocal_condition_number(utils.NumPyTestCase):
         return _algebraic_intersection._reciprocal_condition_number(
             lu_mat, one_norm)
 
-    @mock.patch('bezier._algebraic_intersection._scipy_lapack', new=None)
+    @unittest.mock.patch(
+        'bezier._algebraic_intersection._scipy_lapack', new=None)
     def test_without_scipy(self):
         lu_mat = np.zeros((2, 2), order='F')
         one_norm = 0.0
         with self.assertRaises(OSError):
             self._call_function_under_test(lu_mat, one_norm)
 
-    @mock.patch('bezier._algebraic_intersection._scipy_lapack')
+    @unittest.mock.patch('bezier._algebraic_intersection._scipy_lapack')
     def test_dgecon_failure(self, _scipy_lapack):
         rcond = 0.5
         info = -1
@@ -1291,10 +1292,11 @@ class Test__reciprocal_condition_number(utils.NumPyTestCase):
 
         one_norm = 1.0
         with self.assertRaises(RuntimeError):
-            self._call_function_under_test(mock.sentinel.lu_mat, one_norm)
+            self._call_function_under_test(
+                unittest.mock.sentinel.lu_mat, one_norm)
 
         _scipy_lapack.dgecon.assert_called_once_with(
-            mock.sentinel.lu_mat, one_norm)
+            unittest.mock.sentinel.lu_mat, one_norm)
 
     @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
     def test_singular(self):

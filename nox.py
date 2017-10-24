@@ -33,7 +33,6 @@ else:
 MOCK_DEP = 'mock >= 1.3.0'
 SEABORN_DEP = 'seaborn >= 0.8'
 BASE_DEPS = (
-    MOCK_DEP,
     NUMPY,
     'pytest',
 )
@@ -119,6 +118,9 @@ def unit(session, py):
         session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS + (SCIPY,)
 
+    if py == '2.7':
+        local_deps += (MOCK_DEP,)
+
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
@@ -155,6 +157,9 @@ def functional(session, py):
     else:
         session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS
+
+    if py == '2.7':
+        local_deps += (MOCK_DEP,)
 
     # Install all test dependencies.
     session.install(*local_deps)
@@ -198,7 +203,7 @@ def get_doctest_args(session):
 def doctest(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
-    local_deps = DOCS_DEPS + (MOCK_DEP,)
+    local_deps = DOCS_DEPS
     session.install(*local_deps)
     # Install this package.
     if IS_MAC_OS_X:
@@ -217,7 +222,7 @@ def docs_images(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
     local_deps = DOCS_DEPS
-    local_deps += ('matplotlib >= 2.0.0', MOCK_DEP, SEABORN_DEP, 'pytest')
+    local_deps += ('matplotlib >= 2.0.0', SEABORN_DEP, 'pytest')
     session.install(*local_deps)
     # Install this package.
     session.install('.')
@@ -287,7 +292,7 @@ def lint(session):
         '--disable=missing-docstring',
         '--disable=protected-access',
         '--disable=too-many-public-methods',
-        '--max-module-lines=2610',
+        '--max-module-lines=2646',
         get_path('tests'),
     )
 

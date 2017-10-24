@@ -11,8 +11,8 @@
 # limitations under the License.
 
 import unittest
+import unittest.mock
 
-import mock
 import numpy as np
 
 from tests.unit import utils
@@ -270,22 +270,23 @@ class TestSurface(utils.NumPyTestCase):
 
     def test__get_edges(self):
         surface = self._make_one_no_slots(self.ZEROS, 1)
-        compute_mock = mock.Mock(return_value=mock.sentinel.edges)
+        compute_mock = unittest.mock.Mock(
+            return_value=unittest.mock.sentinel.edges)
         surface._compute_edges = compute_mock
 
         self.assertIsNone(surface._edges)
-        self.assertIs(surface._get_edges(), mock.sentinel.edges)
-        self.assertIs(surface._edges, mock.sentinel.edges)
+        self.assertIs(surface._get_edges(), unittest.mock.sentinel.edges)
+        self.assertIs(surface._edges, unittest.mock.sentinel.edges)
 
         compute_mock.assert_called_once_with()
 
     def test__get_edges_cached(self):
         surface = self._make_one_no_slots(self.ZEROS, 1)
-        compute_mock = mock.Mock()
+        compute_mock = unittest.mock.Mock()
         surface._compute_edges = compute_mock
 
-        surface._edges = mock.sentinel.edges
-        self.assertIs(surface._get_edges(), mock.sentinel.edges)
+        surface._edges = unittest.mock.sentinel.edges
+        self.assertIs(surface._get_edges(), unittest.mock.sentinel.edges)
 
         compute_mock.assert_not_called()
 
@@ -304,11 +305,11 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one_no_slots(self.ZEROS, 1)
 
         # Create mock "edges" to be computed.
-        sentinel1 = mock.Mock(spec=['_copy'])
-        sentinel2 = mock.Mock(spec=['_copy'])
-        sentinel3 = mock.Mock(spec=['_copy'])
+        sentinel1 = unittest.mock.Mock(spec=['_copy'])
+        sentinel2 = unittest.mock.Mock(spec=['_copy'])
+        sentinel3 = unittest.mock.Mock(spec=['_copy'])
         expected = sentinel1, sentinel2, sentinel3
-        surface._compute_edges = mock.Mock(return_value=expected)
+        surface._compute_edges = unittest.mock.Mock(return_value=expected)
 
         # Make sure the "edges" when copied just return themselves.
         sentinel1._copy.return_value = sentinel1
@@ -354,11 +355,12 @@ class TestSurface(utils.NumPyTestCase):
         lambda_vals = (0.25, 0.0, 0.75)
 
         # Just make sure we call the helper.
-        patch = mock.patch('bezier._surface_helpers.evaluate_barycentric',
-                           return_value=mock.sentinel.evaluated)
+        patch = unittest.mock.patch(
+            'bezier._surface_helpers.evaluate_barycentric',
+            return_value=unittest.mock.sentinel.evaluated)
         with patch as mocked:
             result = surface.evaluate_barycentric(*lambda_vals)
-            self.assertIs(result, mock.sentinel.evaluated)
+            self.assertIs(result, unittest.mock.sentinel.evaluated)
             mocked.assert_called_once_with(
                 self.UNIT_TRIANGLE, 1, *lambda_vals)
 
@@ -407,12 +409,12 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 1, _copy=False)
         param_vals = np.asfortranarray([[1.0, 0.0, 0.0]])
 
-        patch = mock.patch(
+        patch = unittest.mock.patch(
             'bezier._surface_helpers.evaluate_barycentric_multi',
-            return_value=mock.sentinel.evaluated)
+            return_value=unittest.mock.sentinel.evaluated)
         with patch as mocked:
             result = surface.evaluate_barycentric_multi(param_vals, **kwargs)
-            self.assertEqual(result, mock.sentinel.evaluated)
+            self.assertEqual(result, unittest.mock.sentinel.evaluated)
 
             mocked.assert_called_once_with(nodes, 1, param_vals, 2)
 
@@ -470,14 +472,15 @@ class TestSurface(utils.NumPyTestCase):
     def test_evaluate_cartesian_calls_helper(self):
         nodes = self.ZEROS
         surface = self._make_one_no_slots(nodes, 1, _copy=False)
-        patch = mock.patch('bezier._surface_helpers.evaluate_barycentric',
-                           return_value=mock.sentinel.point)
+        patch = unittest.mock.patch(
+            'bezier._surface_helpers.evaluate_barycentric',
+            return_value=unittest.mock.sentinel.point)
 
         s_val = 0.25
         t_val = 0.25
         with patch as mocked:
             result = surface.evaluate_cartesian(s_val, t_val)
-            self.assertIs(result, mock.sentinel.point)
+            self.assertIs(result, unittest.mock.sentinel.point)
 
             mocked.assert_called_once_with(nodes, 1, 0.5, s_val, t_val)
 
@@ -496,12 +499,12 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 1, _copy=False)
         param_vals = np.asfortranarray([[1.0, 0.0]])
 
-        patch = mock.patch(
+        patch = unittest.mock.patch(
             'bezier._surface_helpers.evaluate_cartesian_multi',
-            return_value=mock.sentinel.evaluated)
+            return_value=unittest.mock.sentinel.evaluated)
         with patch as mocked:
             result = surface.evaluate_cartesian_multi(param_vals, **kwargs)
-            self.assertEqual(result, mock.sentinel.evaluated)
+            self.assertEqual(result, unittest.mock.sentinel.evaluated)
 
             mocked.assert_called_once_with(nodes, 1, param_vals, 2)
 
@@ -521,10 +524,10 @@ class TestSurface(utils.NumPyTestCase):
         with self.assertRaises(NotImplementedError):
             surface.plot(32)
 
-    @mock.patch('bezier._plot_helpers.new_axis')
-    @mock.patch('bezier._plot_helpers.add_patch')
+    @unittest.mock.patch('bezier._plot_helpers.new_axis')
+    @unittest.mock.patch('bezier._plot_helpers.add_patch')
     def test_plot_defaults(self, add_patch_mock, new_axis_mock):
-        ax = mock.Mock(spec=[])
+        ax = unittest.mock.Mock(spec=[])
         new_axis_mock.return_value = ax
 
         curve = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
@@ -538,10 +541,10 @@ class TestSurface(utils.NumPyTestCase):
         add_patch_mock.assert_called_once_with(
             ax, None, pts_per_edge, *curve._edges)
 
-    @mock.patch('bezier._plot_helpers.new_axis')
-    @mock.patch('bezier._plot_helpers.add_patch')
+    @unittest.mock.patch('bezier._plot_helpers.new_axis')
+    @unittest.mock.patch('bezier._plot_helpers.add_patch')
     def test_plot_explicit(self, add_patch_mock, new_axis_mock):
-        ax = mock.Mock(spec=['plot'])
+        ax = unittest.mock.Mock(spec=['plot'])
         color = (0.5, 0.5, 0.5)
         curve = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
 
@@ -713,7 +716,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_is_valid_property_cached(self):
         surface = self._make_one_no_slots(self.ZEROS, 1)
-        compute_valid = mock.Mock()
+        compute_valid = unittest.mock.Mock()
         surface._compute_valid = compute_valid
         compute_valid.return_value = True
 
@@ -823,7 +826,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_intersect_bad_strategy(self):
         surface = self._make_one(self.UNIT_TRIANGLE, 1)
-        strategy = mock.sentinel.bad_strategy
+        strategy = unittest.mock.sentinel.bad_strategy
         with self.assertRaises(ValueError) as exc_info:
             surface.intersect(surface, strategy=strategy)
 
@@ -926,9 +929,9 @@ class Test__edge_cycle(unittest.TestCase):
         return surface._edge_cycle(edge1, edge2, edge3)
 
     def test_it(self):
-        edge1 = mock.Mock()
-        edge2 = mock.Mock()
-        edge3 = mock.Mock()
+        edge1 = unittest.mock.Mock()
+        edge2 = unittest.mock.Mock()
+        edge3 = unittest.mock.Mock()
         self.assertIsNone(
             self._call_function_under_test(edge1, edge2, edge3))
 

@@ -109,19 +109,19 @@ For example, to create a curve:
 .. testsetup:: getting-started
 
    import sys
+   import unittest.mock
 
-   import mock
    import numpy as np
 
    import bezier
 
    # Fake the matplotlib/seaborn imports.
-   plt_mod = mock.Mock(spec=['figure', 'show'])
+   plt_mod = unittest.mock.Mock(spec=['figure', 'show'])
    plt_mod.show.return_value = None
    sys.modules['matplotlib.pyplot'] = plt_mod
-   mpl_mod = mock.Mock(pyplot=plt_mod, spec=[])
+   mpl_mod = unittest.mock.Mock(pyplot=plt_mod, spec=[])
    sys.modules['matplotlib'] = mpl_mod
-   seaborn_mod = mock.Mock(spec=['set'])
+   seaborn_mod = unittest.mock.Mock(spec=['set'])
    seaborn_mod.set.return_value = None
    sys.modules['seaborn'] = seaborn_mod
 

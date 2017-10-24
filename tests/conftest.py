@@ -14,10 +14,22 @@
 
 This
 
-* gets slow imports out of the way before running tests, so
+* Gets slow imports out of the way before running tests, so
   as not to have the cost of imports reflected in
   ``py.test --durations=N``.
+* Monkey-patches ``mock`` as ``unittest.mock`` for Python 2.7.
 """
+
+import sys
+import unittest
+
+import six
+
+
+if six.PY2:
+    import mock
+    unittest.mock = mock
+    sys.modules['unittest.mock'] = unittest.mock
 
 
 def pytest_addoption(parser):

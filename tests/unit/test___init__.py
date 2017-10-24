@@ -12,8 +12,7 @@
 
 import os
 import unittest
-
-import mock
+import unittest.mock
 
 
 CHECK_PKG_MSG = """\
@@ -57,12 +56,12 @@ class Test_get_dll(unittest.TestCase):
 
         return bezier.get_dll()
 
-    @mock.patch('os.name', new='nt')
+    @unittest.mock.patch('os.name', new='nt')
     def test_windows(self):
         dll_directory = self._call_function_under_test()
         _check_pkg_filename(self, dll_directory, 'extra-dll')
 
-    @mock.patch('os.name', new='posix')
+    @unittest.mock.patch('os.name', new='posix')
     def test_non_windows(self):
         with self.assertRaises(OSError):
             self._call_function_under_test()

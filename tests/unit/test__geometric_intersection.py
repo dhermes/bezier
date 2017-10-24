@@ -12,8 +12,8 @@
 
 import itertools
 import unittest
+import unittest.mock
 
-import mock
 import numpy as np
 import six
 
@@ -688,9 +688,11 @@ class Test_add_intersection(unittest.TestCase):
         from bezier import _intersection_helpers
 
         intersection1 = _intersection_helpers.Intersection(
-            mock.sentinel.first, 0.5, mock.sentinel.second, 0.5)
+            unittest.mock.sentinel.first, 0.5,
+            unittest.mock.sentinel.second, 0.5)
         intersection2 = _intersection_helpers.Intersection(
-            mock.sentinel.first, 0.75, mock.sentinel.second, 0.25)
+            unittest.mock.sentinel.first, 0.75,
+            unittest.mock.sentinel.second, 0.25)
         intersections = [intersection1]
         self.assertIsNone(
             self._call_function_under_test(intersection2, intersections))
@@ -701,9 +703,11 @@ class Test_add_intersection(unittest.TestCase):
         from bezier import _intersection_helpers
 
         intersection1 = _intersection_helpers.Intersection(
-            mock.sentinel.first, 0.0, mock.sentinel.second, 1.0)
+            unittest.mock.sentinel.first, 0.0,
+            unittest.mock.sentinel.second, 1.0)
         intersection2 = _intersection_helpers.Intersection(
-            mock.sentinel.first, 0.0, mock.sentinel.second, 1.0)
+            unittest.mock.sentinel.first, 0.0,
+            unittest.mock.sentinel.second, 1.0)
         intersections = [intersection1]
         self.assertIsNone(
             self._call_function_under_test(intersection2, intersections))
@@ -717,13 +721,15 @@ class Test_add_intersection(unittest.TestCase):
         from bezier import _intersection_helpers
 
         intersection1 = _intersection_helpers.Intersection(
-            mock.sentinel.first, 0.5, mock.sentinel.second, 0.5)
+            unittest.mock.sentinel.first, 0.5,
+            unittest.mock.sentinel.second, 0.5)
         delta = 3 * SPACING(0.5)
         intersection2 = _intersection_helpers.Intersection(
-            mock.sentinel.first, 0.5 + delta, mock.sentinel.second, 0.5)
+            unittest.mock.sentinel.first, 0.5 + delta,
+            unittest.mock.sentinel.second, 0.5)
         intersections = [intersection1]
 
-        patch = mock.patch.object(
+        patch = unittest.mock.patch.object(
             _geometric_intersection, '_SIMILAR_ULPS', new=10)
         with patch:
             self.assertIsNone(
@@ -731,7 +737,7 @@ class Test_add_intersection(unittest.TestCase):
             # No change since delta is within 10 ULPs.
             self.assertEqual(intersections, [intersection1])
 
-        patch = mock.patch.object(
+        patch = unittest.mock.patch.object(
             _geometric_intersection, '_SIMILAR_ULPS', new=3)
         with patch:
             self.assertIsNone(
@@ -739,7 +745,7 @@ class Test_add_intersection(unittest.TestCase):
             # No change since delta is within 3 ULPs.
             self.assertEqual(intersections, [intersection1])
 
-        patch = mock.patch.object(
+        patch = unittest.mock.patch.object(
             _geometric_intersection, '_SIMILAR_ULPS', new=2)
         with patch:
             self.assertIsNone(
@@ -1203,7 +1209,7 @@ class Test_all_intersections(utils.NumPyTestCase):
         return _geometric_intersection.all_intersections(candidates)
 
     def test_failure(self):
-        patch = mock.patch(
+        patch = unittest.mock.patch(
             'bezier._geometric_intersection._MAX_INTERSECT_SUBDIVISIONS',
             new=-1)
         with patch:
@@ -1335,15 +1341,15 @@ class TestLinearization(utils.NumPyTestCase):
 
     @staticmethod
     def _mock_curve():
-        nodes = mock.MagicMock(spec=np.ndarray)
-        return mock.Mock(_nodes=nodes, spec=['_nodes'])
+        nodes = unittest.mock.MagicMock(spec=np.ndarray)
+        return unittest.mock.Mock(_nodes=nodes, spec=['_nodes'])
 
     def test_constructor(self):
         nodes = np.asfortranarray([
             [4.0, -5.0],
             [0.0, 7.0],
         ])
-        curve = mock.Mock(_nodes=nodes, spec=['_nodes'])
+        curve = unittest.mock.Mock(_nodes=nodes, spec=['_nodes'])
         error = 0.125
         linearization = self._make_one(curve, error)
         self.assertIs(linearization.curve, curve)

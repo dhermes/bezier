@@ -11,8 +11,8 @@
 # limitations under the License.
 
 import unittest
+import unittest.mock
 
-import mock
 import numpy as np
 
 from tests.unit import utils
@@ -45,20 +45,20 @@ class Test_new_axis(unittest.TestCase):
         return _plot_helpers.new_axis()
 
     def test_it(self):
-        figure = mock.Mock(spec=['gca'])
-        figure.gca.return_value = mock.sentinel.ax
+        figure = unittest.mock.Mock(spec=['gca'])
+        figure.gca.return_value = unittest.mock.sentinel.ax
 
-        plt = mock.Mock(spec=['figure'])
+        plt = unittest.mock.Mock(spec=['figure'])
         plt.figure.return_value = figure
 
-        matplotlib = mock.Mock(pyplot=plt, spec=['pyplot'])
+        matplotlib = unittest.mock.Mock(pyplot=plt, spec=['pyplot'])
 
         modules = {
             'matplotlib': matplotlib,
             'matplotlib.pyplot': plt,
         }
         result = run_fake_modules(modules, self._call_function_under_test)
-        self.assertIs(result, mock.sentinel.ax)
+        self.assertIs(result, unittest.mock.sentinel.ax)
 
         # Verify mocks.
         plt.figure.assert_called_once_with()
@@ -74,12 +74,13 @@ class Test_add_plot_boundary(unittest.TestCase):
         return _plot_helpers.add_plot_boundary(ax, **kwargs)
 
     def _helper(self, **kwargs):
-        line = mock.Mock(spec=['get_xydata'])
+        line = unittest.mock.Mock(spec=['get_xydata'])
         line.get_xydata.return_value = np.asfortranarray([
             [-1.0, -1.0],
             [1.0, 1.0],
         ])
-        ax = mock.Mock(lines=[line], spec=['lines', 'set_xlim', 'set_ylim'])
+        ax = unittest.mock.Mock(
+            lines=[line], spec=['lines', 'set_xlim', 'set_ylim'])
 
         self.assertIsNone(self._call_function_under_test(ax, **kwargs))
         padding = kwargs.get('padding', 0.125)
@@ -149,13 +150,13 @@ class Test_add_patch(utils.NumPyTestCase):
         expected, edges = self._get_info(points)
 
         # Set-up mocks (quite a lot).
-        patches = mock.Mock(spec=['PathPatch'])
-        path = mock.Mock(spec=['Path'])
-        matplotlib = mock.Mock(
+        patches = unittest.mock.Mock(spec=['PathPatch'])
+        path = unittest.mock.Mock(spec=['Path'])
+        matplotlib = unittest.mock.Mock(
             patches=patches, path=path, spec=['patches', 'path'])
 
-        ax = mock.Mock(spec=['add_patch', 'plot'])
-        line = mock.Mock(spec=['get_color'])
+        ax = unittest.mock.Mock(spec=['add_patch', 'plot'])
+        line = unittest.mock.Mock(spec=['get_color'])
         line.get_color.return_value = color
         ax.plot.return_value = (line,)
 

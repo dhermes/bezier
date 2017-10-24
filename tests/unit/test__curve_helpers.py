@@ -11,8 +11,8 @@
 # limitations under the License.
 
 import unittest
+import unittest.mock
 
-import mock
 import numpy as np
 try:
     import scipy.integrate as SCIPY_INT
@@ -386,7 +386,7 @@ class Test__compute_length(unittest.TestCase):
 
     def test_without_scipy(self):
         nodes = np.zeros((5, 2), order='F')
-        with mock.patch('bezier._curve_helpers._scipy_int', new=None):
+        with unittest.mock.patch('bezier._curve_helpers._scipy_int', new=None):
             with self.assertRaises(OSError):
                 self._call_function_under_test(nodes)
 

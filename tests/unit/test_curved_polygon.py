@@ -10,7 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
+import unittest.mock
+
 import numpy as np
 
 from tests.unit import utils
@@ -114,10 +115,10 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         self.assertEqual(repr(curved_poly),
                          '<CurvedPolygon (num_sides=2)>')
 
-    @mock.patch('bezier._plot_helpers.new_axis')
-    @mock.patch('bezier._plot_helpers.add_patch')
+    @unittest.mock.patch('bezier._plot_helpers.new_axis')
+    @unittest.mock.patch('bezier._plot_helpers.add_patch')
     def test_plot_defaults(self, add_patch_mock, new_axis_mock):
-        ax = mock.Mock(spec=[])
+        ax = unittest.mock.Mock(spec=[])
         new_axis_mock.return_value = ax
 
         curved_poly = self._make_default()
@@ -130,10 +131,10 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         add_patch_mock.assert_called_once_with(
             ax, None, pts_per_edge, *curved_poly._edges)
 
-    @mock.patch('bezier._plot_helpers.new_axis')
-    @mock.patch('bezier._plot_helpers.add_patch')
+    @unittest.mock.patch('bezier._plot_helpers.new_axis')
+    @unittest.mock.patch('bezier._plot_helpers.add_patch')
     def test_plot_explicit(self, add_patch_mock, new_axis_mock):
-        ax = mock.Mock(spec=[])
+        ax = unittest.mock.Mock(spec=[])
         color = (0.5, 0.5, 0.5)
         curved_poly = self._make_default()
 

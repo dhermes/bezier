@@ -11,8 +11,8 @@
 # limitations under the License.
 
 import unittest
+import unittest.mock
 
-import mock
 import numpy as np
 import six
 
@@ -244,9 +244,9 @@ class TestIntersection(unittest.TestCase):
         return klass(*args, **kwargs)
 
     def _constructor_helper(self, **kwargs):
-        first = mock.sentinel.first
+        first = unittest.mock.sentinel.first
         s_val = 0.25
-        second = mock.sentinel.second
+        second = unittest.mock.sentinel.second
         t_val = 0.75
 
         intersection = self._make_one(
@@ -264,30 +264,32 @@ class TestIntersection(unittest.TestCase):
         self.assertIsNone(intersection.interior_curve)
 
     def test_constructor_with_point(self):
-        intersection = self._constructor_helper(point=mock.sentinel.point)
-        self.assertIs(intersection.point, mock.sentinel.point)
+        intersection = self._constructor_helper(
+            point=unittest.mock.sentinel.point)
+        self.assertIs(intersection.point, unittest.mock.sentinel.point)
         self.assertIsNone(intersection.interior_curve)
 
     def test_constructor_with_interior_curve(self):
         intersection = self._constructor_helper(
-            interior_curve=mock.sentinel.interior_curve)
+            interior_curve=unittest.mock.sentinel.interior_curve)
         self.assertIsNone(intersection.point)
-        self.assertIs(intersection.interior_curve,
-                      mock.sentinel.interior_curve)
+        self.assertIs(
+            intersection.interior_curve,
+            unittest.mock.sentinel.interior_curve)
 
     def test___dict___property(self):
         intersection = self._constructor_helper(
-            point=mock.sentinel.point,
-            interior_curve=mock.sentinel.interior_curve,
+            point=unittest.mock.sentinel.point,
+            interior_curve=unittest.mock.sentinel.interior_curve,
         )
         props_dict = intersection.__dict__
         expected = {
-            'first': mock.sentinel.first,
+            'first': unittest.mock.sentinel.first,
             's': 0.25,
-            'second': mock.sentinel.second,
+            'second': unittest.mock.sentinel.second,
             't': 0.75,
-            'point': mock.sentinel.point,
-            'interior_curve': mock.sentinel.interior_curve,
+            'point': unittest.mock.sentinel.point,
+            'interior_curve': unittest.mock.sentinel.interior_curve,
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curve``.
@@ -296,27 +298,32 @@ class TestIntersection(unittest.TestCase):
 
     def test_get_point_stored(self):
         intersection = self._make_one(
-            None, None, None, None, point=mock.sentinel.point)
+            None, None, None, None, point=unittest.mock.sentinel.point)
 
-        patch = mock.patch(
+        patch = unittest.mock.patch(
             'bezier._intersection_helpers.check_close',
-            return_value=mock.sentinel.point)
+            return_value=unittest.mock.sentinel.point)
         with patch as mocked:
-            self.assertIs(intersection.get_point(), mock.sentinel.point)
+            self.assertIs(
+                intersection.get_point(), unittest.mock.sentinel.point)
             mocked.assert_not_called()
 
     def test_get_point_on_the_fly(self):
         s_val = 1.0
         t_val = 0.0
-        first = mock.Mock(_nodes=mock.sentinel.nodes1, spec=['_nodes'])
-        second = mock.Mock(_nodes=mock.sentinel.nodes2, spec=['_nodes'])
+        first = unittest.mock.Mock(
+            _nodes=unittest.mock.sentinel.nodes1, spec=['_nodes'])
+        second = unittest.mock.Mock(
+            _nodes=unittest.mock.sentinel.nodes2, spec=['_nodes'])
         intersection = self._make_one(first, s_val, second, t_val)
 
-        patch = mock.patch(
+        patch = unittest.mock.patch(
             'bezier._intersection_helpers.check_close',
-            return_value=mock.sentinel.point)
+            return_value=unittest.mock.sentinel.point)
         with patch as mocked:
             self.assertIsNone(intersection.point)
-            self.assertIs(intersection.get_point(), mock.sentinel.point)
+            self.assertIs(
+                intersection.get_point(), unittest.mock.sentinel.point)
             mocked.assert_called_once_with(
-                s_val, mock.sentinel.nodes1, t_val, mock.sentinel.nodes2)
+                s_val, unittest.mock.sentinel.nodes1,
+                t_val, unittest.mock.sentinel.nodes2)
