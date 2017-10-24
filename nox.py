@@ -118,7 +118,7 @@ def unit(session, py):
         session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS + (SCIPY,)
 
-    if py == '2.7':
+    if py in ('2.7', PYPY):
         local_deps += (MOCK_DEP,)
 
     # Install all test dependencies.
@@ -158,7 +158,7 @@ def functional(session, py):
         session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS
 
-    if py == '2.7':
+    if py in ('2.7', PYPY):
         local_deps += (MOCK_DEP,)
 
     # Install all test dependencies.
