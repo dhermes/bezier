@@ -844,8 +844,14 @@ contains
     ! NOTE: This **should** be run during clean-up for any code which
     !       invokes ``all_intersections()``.
 
-    deallocate(CANDIDATES_ODD)
-    deallocate(CANDIDATES_EVEN)
+    if (allocated(CANDIDATES_ODD)) then
+       deallocate(CANDIDATES_ODD)
+    end if
+
+    if (allocated(CANDIDATES_EVEN)) then
+       deallocate(CANDIDATES_EVEN)
+    end if
+
   end subroutine free_all_intersections_workspace
 
 end module curve_intersection
