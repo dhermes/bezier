@@ -24,7 +24,7 @@ See :doc:`../curve-curve-intersection` for examples using the
    import bezier
 
 .. autoclass:: IntersectionStrategy
-   :members: GEOMETRIC, ALGEBRAIC
+   :members:
 """
 
 

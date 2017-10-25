@@ -2,3 +2,4 @@ numpy >= 1.13.3
 Sphinx >= 1.6.4
 sphinx-rtd-theme
 sphinx-docstring-typing >= 0.0.2
+.

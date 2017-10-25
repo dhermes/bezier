@@ -67,11 +67,22 @@ def is_installed(requirement):
         return True
 
 
+def require_numpy():
+    if not is_installed('numpy>=1.9.0'):
+        print(NUMPY_MESSAGE, file=sys.stderr)
+        sys.exit(1)
+
+
 def extension_modules():
     if NO_EXTENSIONS_ENV in os.environ:
         print(NO_SPEEDUPS_MESSAGE)
         return []
-    elif setup_helpers.BuildFortranThenExt.has_f90_compiler():
+    elif os.environ.get('READTHEDOCS') == 'True':
+        print('Building on readthedocs.org, skipping speedups.')
+        return []
+
+    require_numpy()
+    if setup_helpers.BuildFortranThenExt.has_f90_compiler():
         return setup_helpers.extension_modules()
     else:
         print(MISSING_F90_MESSAGE, file=sys.stderr)
@@ -129,10 +140,6 @@ def setup():
 
 
 def main():
-    if not is_installed('numpy>=1.9.0'):
-        print(NUMPY_MESSAGE, file=sys.stderr)
-        sys.exit(1)
-
     # Add any "patches" needed for the Fortran compiler.
     setup_helpers.BuildFortranThenExt.PATCH_FUNCTIONS[:] = [
         setup_helpers.patch_f90_compiler,

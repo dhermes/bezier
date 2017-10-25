@@ -517,7 +517,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
 
 
 class IntersectionStrategy(enum.Enum):
-    """Enum determining if the type of intersection algorithm to use."""
+    """Enum determining the type of intersection algorithm to use."""
 
     GEOMETRIC = 0
     """Geometric approach to intersection (via subdivision)."""
