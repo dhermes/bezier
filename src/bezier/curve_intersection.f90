@@ -462,7 +462,8 @@ contains
 
   end subroutine bbox_line_intersect
 
-  subroutine add_intersection(first, s, second, t, intersections)
+  subroutine add_intersection( &
+       first, s, second, t, num_intersections, intersections)
 
     ! Adds an intersection to list of ``intersections``.
     !
@@ -472,41 +473,42 @@ contains
     real(c_double), intent(in) :: s
     type(CurveData), target, intent(in) :: second
     real(c_double), intent(in) :: t
+    integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     ! Variables outside of signature.
-    integer(c_int) :: num_intersections, index_
+    integer(c_int) :: curr_size
     type(Intersection), allocatable :: intersections_swap(:)
 
+    ! Update the number of intersections.
+    num_intersections = num_intersections + 1
+
     if (allocated(intersections)) then
-       ! NOTE: It's expensive to re-size just to add a single intersection,
-       !       but we expect the number of intersections to be low. The
-       !       trade-off is that we don't have to track the "length" of
-       !       ``intersections`` separate from the capacity.
-       num_intersections = size(intersections)
-       allocate(intersections_swap(num_intersections + 1))
-       intersections_swap(:num_intersections) = ( &
-            intersections(:num_intersections))
-       call move_alloc(intersections_swap, intersections)
-       index_ = num_intersections + 1
+       curr_size = size(intersections)
+       if (curr_size < num_intersections) then
+          allocate(intersections_swap(num_intersections))
+          intersections_swap(:curr_size) = intersections(:curr_size)
+          call move_alloc(intersections_swap, intersections)
+       end if
     else
-       allocate(intersections(1))
-       index_ = 1
+       allocate(intersections(num_intersections))
     end if
 
-    intersections(index_)%s = s
-    intersections(index_)%t = t
-    intersections(index_)%first => first
-    intersections(index_)%second => second
+    intersections(num_intersections)%s = s
+    intersections(num_intersections)%t = t
+    intersections(num_intersections)%first => first
+    intersections(num_intersections)%second => second
 
   end subroutine add_intersection
 
-  subroutine add_from_linearized(first, second, intersections, py_exc)
+  subroutine add_from_linearized( &
+       first, second, num_intersections, intersections, py_exc)
 
     ! Adds an intersection from two linearizations.
     !
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
     type(CurveData), target, intent(in) :: first, second
+    integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     integer(c_int), intent(out) :: py_exc
     ! Variables outside of signature.
@@ -546,12 +548,14 @@ contains
        return
     end if
 
-    call add_intersection(root1, refined_s, root2, refined_t, intersections)
+    call add_intersection( &
+         root1, refined_s, root2, refined_t, num_intersections, intersections)
 
   end subroutine add_from_linearized
 
   subroutine endpoint_check( &
-       first, node_first, s, second, node_second, t, intersections)
+       first, node_first, s, second, node_second, t, &
+       num_intersections, intersections)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
@@ -561,6 +565,7 @@ contains
     type(CurveData), target, intent(in) :: second
     real(c_double), intent(in) :: node_second(1, 2)
     real(c_double), intent(in) :: t
+    integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     ! Variables outside of signature.
     type(CurveData), pointer :: root1, root2
@@ -574,15 +579,18 @@ contains
     root2 => curve_root(second)
     orig_s = (1 - s) * first%start + s * first%end_
     orig_t = (1 - t) * second%start + t * second%end_
-    call add_intersection(root1, orig_s, root2, orig_t, intersections)
+    call add_intersection( &
+         root1, orig_s, root2, orig_t, num_intersections, intersections)
 
   end subroutine endpoint_check
 
-  subroutine tangent_bbox_intersection(first, second, intersections)
+  subroutine tangent_bbox_intersection( &
+       first, second, num_intersections, intersections)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
     type(CurveData), intent(in) :: first, second
+    integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     ! Variables outside of signature.
     integer(c_int) :: num_nodes1, num_nodes2
@@ -599,16 +607,20 @@ contains
 
     call endpoint_check( &
          first, nodes1_start, 0.0_dp, &
-         second, nodes1_end, 0.0_dp, intersections)
+         second, nodes1_end, 0.0_dp, &
+         num_intersections, intersections)
     call endpoint_check( &
          first, nodes1_start, 0.0_dp, &
-         second, nodes2_end, 1.0_dp, intersections)
+         second, nodes2_end, 1.0_dp, &
+         num_intersections, intersections)
     call endpoint_check( &
          first, nodes2_start, 1.0_dp, &
-         second, nodes1_end, 0.0_dp, intersections)
+         second, nodes1_end, 0.0_dp, &
+         num_intersections, intersections)
     call endpoint_check( &
          first, nodes2_start, 1.0_dp, &
-         second, nodes2_end, 1.0_dp, intersections)
+         second, nodes2_end, 1.0_dp, &
+         num_intersections, intersections)
 
   end subroutine tangent_bbox_intersection
 
@@ -682,7 +694,7 @@ contains
   end subroutine add_candidates
 
   subroutine intersect_one_round( &
-       num_candidates, candidates, intersections, &
+       num_candidates, candidates, num_intersections, intersections, &
        next_candidates, num_next_candidates, py_exc)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
@@ -691,6 +703,7 @@ contains
 
     integer(c_int), intent(in) :: num_candidates
     type(CurveData), target, intent(in) :: candidates(:, :)
+    integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     type(CurveData), allocatable, intent(inout) :: next_candidates(:, :)
     integer(c_int), intent(out) :: num_next_candidates
@@ -725,7 +738,8 @@ contains
              subdivide_enum = Subdivide_NEITHER
              ! If both ``first`` and ``second`` are linearizations, then
              ! we can (attempt to) intersect them immediately.
-             call add_from_linearized(first, second, intersections, py_exc)
+             call add_from_linearized( &
+                  first, second, num_intersections, intersections, py_exc)
 
              ! If there was a failure, exit this subroutine.
              if (py_exc /= FROM_LINEARIZED_SUCCESS) then
@@ -759,7 +773,8 @@ contains
        if (bbox_int == BoxIntersectionType_DISJOINT) then
           cycle
        else if (bbox_int == BoxIntersectionType_TANGENT) then
-          call tangent_bbox_intersection(first, second, intersections)
+          call tangent_bbox_intersection( &
+               first, second, num_intersections, intersections)
           cycle
        end if
 
@@ -772,17 +787,20 @@ contains
 
   end subroutine intersect_one_round
 
-  subroutine all_intersections(candidates, intersections, status)
+  subroutine all_intersections( &
+       candidates, num_intersections, intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
     type(CurveData), intent(in) :: candidates(:, :)
+    integer(c_int), intent(out) :: num_intersections
     type(Intersection), allocatable, intent(out) :: intersections(:)
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: num_candidates, num_next_candidates, index_, py_exc
     logical(c_bool) :: is_even
 
+    num_intersections = 0
     num_candidates = size(candidates, 2)
     status = ALL_INTERSECTIONS_SUCCESS  ! Default.
 
@@ -795,19 +813,22 @@ contains
           ! to our passed in ``candidates``. We still WRITE to
           ! ``CANDIDATES_EVEN``.
           call intersect_one_round( &
-               num_candidates, candidates, intersections, &
+               num_candidates, candidates, &
+               num_intersections, intersections, &
                CANDIDATES_EVEN, num_next_candidates, py_exc)
        else if (is_even) then
           ! Since ``index_`` is even, we READ from ``CANDIDATES_EVEN``
           ! and WRITE to ``CANDIDATES_ODD``.
           call intersect_one_round( &
-               num_candidates, CANDIDATES_EVEN, intersections, &
+               num_candidates, CANDIDATES_EVEN, &
+               num_intersections, intersections, &
                CANDIDATES_ODD, num_next_candidates, py_exc)
        else
           ! Since ``index_`` is odd, we READ from ``CANDIDATES_ODD``
           ! and WRITE to ``CANDIDATES_EVEN``.
           call intersect_one_round( &
-               num_candidates, CANDIDATES_ODD, intersections, &
+               num_candidates, CANDIDATES_ODD, &
+               num_intersections, intersections, &
                CANDIDATES_EVEN, num_next_candidates, py_exc)
        end if
 
