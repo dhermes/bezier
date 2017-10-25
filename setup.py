@@ -17,6 +17,7 @@ from __future__ import print_function
 import os
 import pkg_resources
 import sys
+import time
 
 import setuptools
 
@@ -47,6 +48,7 @@ NO_SPEEDUPS_MESSAGE = """\
 The {} environment variable has been used to explicitly disable the
 building of extension modules.
 """.format(NO_EXTENSIONS_ENV)
+ON_READ_THE_DOCS = os.environ.get('READTHEDOCS') == 'True'
 RTD_MESSAGE = 'Building on readthedocs.org, skipping speedups.'
 REQUIREMENTS = (
     'numpy >= 1.13.3',
@@ -78,7 +80,7 @@ def extension_modules():
     if NO_EXTENSIONS_ENV in os.environ:
         print(NO_SPEEDUPS_MESSAGE, file=sys.stderr)
         return []
-    elif os.environ.get('READTHEDOCS') == 'True':
+    elif ON_READ_THE_DOCS:
         print(RTD_MESSAGE, file=sys.stderr)
         return []
 
@@ -95,10 +97,38 @@ def make_readme():
         return file_obj.read()
 
 
+def get_version():
+    """Get the current version of ``bezier``.
+
+    This is purpose built to bust the cache on RTD (readthedocs.org).
+    If ``setup.py`` detects it is being run in a RTD build, it
+    will swap out the ``.devN`` in the version for ``.dev{NOW}``
+    where ``NOW`` is the current time in seconds from the epoch.
+
+    If there is no ``.devN`` suffix, will just return ``VERSION``,
+    since this likely indicates the build is for a release.
+
+    The change in version will bust the cache and allow ``bezier``
+    to be re-installed on every build.
+
+    Returns:
+        str: The version, typically will be ``VERSION``.
+    """
+    if ON_READ_THE_DOCS and '.' in VERSION:
+        now = int(time.time())
+        pre, post = VERSION.rsplit('.', 1)
+        if post.startswith('dev'):
+            return '{}.dev{:d}'.format(pre, now)
+        else:
+            return VERSION
+    else:
+        return VERSION
+
+
 def setup():
     setuptools.setup(
         name='bezier',
-        version=VERSION,
+        version=get_version(),
         description=DESCRIPTION,
         author='Danny Hermes',
         author_email='daniel.j.hermes@gmail.com',
