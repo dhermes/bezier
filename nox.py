@@ -15,7 +15,6 @@ from __future__ import print_function
 import glob
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 
@@ -52,19 +51,14 @@ def get_path(*names):
 
 
 def on_ubuntu():
-    if py.path.local.sysfind('lsb_release') is None:
+    release_filename = '/etc/os-release'
+    if not os.path.isfile(release_filename):
         return False
 
-    cmd = ('lsb_release', '-a')
-    process = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return_code = process.wait()
+    with open(release_filename, 'r') as file_obj:
+        contents = file_obj.read()
 
-    if return_code != 0:
-        return False
-
-    output_bytes = process.stdout.read()
-    return b'distributor id:\tubuntu' in output_bytes.lower()
+    return 'NAME="Ubuntu"' in contents
 
 
 def pypy_setup(local_deps, session):
