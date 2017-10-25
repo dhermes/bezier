@@ -47,6 +47,7 @@ NO_SPEEDUPS_MESSAGE = """\
 The {} environment variable has been used to explicitly disable the
 building of extension modules.
 """.format(NO_EXTENSIONS_ENV)
+RTD_MESSAGE = 'Building on readthedocs.org, skipping speedups.'
 REQUIREMENTS = (
     'numpy >= 1.13.3',
     'six >= 1.11.0',
@@ -75,10 +76,10 @@ def require_numpy():
 
 def extension_modules():
     if NO_EXTENSIONS_ENV in os.environ:
-        print(NO_SPEEDUPS_MESSAGE)
+        print(NO_SPEEDUPS_MESSAGE, file=sys.stderr)
         return []
     elif os.environ.get('READTHEDOCS') == 'True':
-        print('Building on readthedocs.org, skipping speedups.')
+        print(RTD_MESSAGE, file=sys.stderr)
         return []
 
     require_numpy()
