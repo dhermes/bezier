@@ -685,7 +685,7 @@ contains
     integer(c_int), intent(in) :: num_candidates
     type(CurveData), target, intent(in) :: candidates(:, :)
     type(Intersection), allocatable, intent(inout) :: intersections(:)
-    type(CurveData), allocatable, intent(out) :: next_candidates(:, :)
+    type(CurveData), allocatable, intent(inout) :: next_candidates(:, :)
     integer(c_int), intent(out) :: num_next_candidates
     integer(c_int), intent(out) :: py_exc
     ! Variables outside of signature.
