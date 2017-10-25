@@ -21,7 +21,9 @@ module curve_intersection
        CurveData, evaluate_multi, evaluate_hodograph, curve_root, &
        subdivide_curve
   implicit none
-  private MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES
+  private &
+       MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, CANDIDATES_ODD, &
+       CANDIDATES_EVEN
   public &
        Intersection, BoxIntersectionType_INTERSECTION, &
        BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
@@ -34,7 +36,7 @@ module curve_intersection
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
        endpoint_check, tangent_bbox_intersection, add_candidates, &
-       intersect_one_round, all_intersections
+       intersect_one_round, all_intersections, free_all_intersections_workspace
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -66,6 +68,11 @@ module curve_intersection
   integer(c_int), parameter :: ALL_INTERSECTIONS_TOO_MANY = 1
   integer(c_int), parameter :: ALL_INTERSECTIONS_NO_CONVERGE = 2
   integer(c_int), parameter :: ALL_INTERSECTIONS_OFFSET = 10
+
+  ! Long-lived workspaces for ``all_intersections()``. If multiple
+  ! threads are used, this should be thread-local.
+  type(CurveData), allocatable :: CANDIDATES_ODD(:, :)
+  type(CurveData), allocatable :: CANDIDATES_EVEN(:, :)
 
 contains
 
@@ -774,7 +781,6 @@ contains
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: num_candidates, num_next_candidates, index_, py_exc
-    type(CurveData), allocatable :: candidates_odd(:, :), candidates_even(:, :)
     logical(c_bool) :: is_even
 
     num_candidates = size(candidates, 2)
@@ -787,22 +793,22 @@ contains
        if (index_ == 1) then
           ! For the **first** iteration, we need the ``root``-s to point
           ! to our passed in ``candidates``. We still WRITE to
-          ! ``candidates_even``.
+          ! ``CANDIDATES_EVEN``.
           call intersect_one_round( &
                num_candidates, candidates, intersections, &
-               candidates_even, num_next_candidates, py_exc)
+               CANDIDATES_EVEN, num_next_candidates, py_exc)
        else if (is_even) then
-          ! Since ``index_`` is even, we READ from ``candidates_even``
-          ! and WRITE to ``candidates_odd``.
+          ! Since ``index_`` is even, we READ from ``CANDIDATES_EVEN``
+          ! and WRITE to ``CANDIDATES_ODD``.
           call intersect_one_round( &
-               num_candidates, candidates_even, intersections, &
-               candidates_odd, num_next_candidates, py_exc)
+               num_candidates, CANDIDATES_EVEN, intersections, &
+               CANDIDATES_ODD, num_next_candidates, py_exc)
        else
-          ! Since ``index_`` is odd, we READ from ``candidates_odd``
-          ! and WRITE to ``candidates_even``.
+          ! Since ``index_`` is odd, we READ from ``CANDIDATES_ODD``
+          ! and WRITE to ``CANDIDATES_EVEN``.
           call intersect_one_round( &
-               num_candidates, candidates_odd, intersections, &
-               candidates_even, num_next_candidates, py_exc)
+               num_candidates, CANDIDATES_ODD, intersections, &
+               CANDIDATES_EVEN, num_next_candidates, py_exc)
        end if
 
        if (py_exc /= FROM_LINEARIZED_SUCCESS) then
@@ -832,5 +838,14 @@ contains
     status = ALL_INTERSECTIONS_NO_CONVERGE
 
   end subroutine all_intersections
+
+  subroutine free_all_intersections_workspace()
+
+    ! NOTE: This **should** be run during clean-up for any code which
+    !       invokes ``all_intersections()``.
+
+    deallocate(CANDIDATES_ODD)
+    deallocate(CANDIDATES_EVEN)
+  end subroutine free_all_intersections_workspace
 
 end module curve_intersection

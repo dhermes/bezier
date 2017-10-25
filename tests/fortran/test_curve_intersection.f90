@@ -28,7 +28,7 @@ module test_curve_intersection
        bbox_intersect, parallel_different, from_linearized, &
        bbox_line_intersect, add_intersection, add_from_linearized, &
        endpoint_check, tangent_bbox_intersection, add_candidates, &
-       intersect_one_round, all_intersections
+       intersect_one_round, all_intersections, free_all_intersections_workspace
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -1662,6 +1662,8 @@ contains
          .NOT. allocated(intersections) .AND. &
          status == ALL_INTERSECTIONS_NO_CONVERGE)
     call print_status(name, case_id, case_success, success)
+
+    call free_all_intersections_workspace()
 
   end subroutine test_all_intersections
 
