@@ -870,6 +870,23 @@ contains
          associated(intersections(2)%second, first))
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 3: Intersections is allocated and has enough space for
+    !         another intersection.
+    deallocate(intersections)
+    allocate(intersections(2))
+    num_intersections = 0
+    call add_intersection( &
+         first, 0.75_dp, second, 1.0_dp, num_intersections, intersections)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         num_intersections == 1 .AND. &
+         intersections(1)%s == 0.75_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         intersections(1)%t == 1.0_dp .AND. &
+         associated(intersections(1)%second, second))
+    call print_status(name, case_id, case_success, success)
+
   end subroutine test_add_intersection
 
   subroutine test_add_from_linearized(success)
