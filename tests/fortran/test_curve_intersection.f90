@@ -852,7 +852,7 @@ contains
          associated(intersections(1)%second, second))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Intersections is allocated.
+    ! CASE 2: Intersections is allocated, but not big enough.
     case_success = ( &
          allocated(intersections) .AND. &
          size(intersections) == 1 .AND. &
@@ -901,11 +901,9 @@ contains
     nodes1(2, :) = [1.0_dp, 0.0_dp]
     second%nodes = nodes1
 
-    case_success = .NOT. allocated(intersections)
     call add_from_linearized( &
          first, second, num_intersections, intersections, py_exc)
     case_success = ( &
-         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 1 .AND. &
          num_intersections == 1 .AND. &
@@ -915,7 +913,6 @@ contains
          associated(intersections(1)%first, first) .AND. &
          associated(intersections(1)%second, second))
     call print_status(name, case_id, case_success, success)
-    deallocate(intersections)
     num_intersections = 0
 
     ! CASE 2: Lines that **do not** intersect.
@@ -931,12 +928,9 @@ contains
     nodes1(2, :) = [2.0_dp, 1.0_dp]
     second%nodes = nodes1
 
-    case_success = .NOT. allocated(intersections)
     call add_from_linearized( &
          first, second, num_intersections, intersections, py_exc)
     case_success = ( &
-         case_success .AND. &
-         .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -972,13 +966,9 @@ contains
     nodes2(3, :) = [134234112.0_dp, 201310207.0_dp]
     second%nodes = 0.5_dp**28 * nodes2
 
-    case_success = ( &
-         .NOT. allocated(intersections) .AND. &
-         num_intersections == 0)
     call add_from_linearized( &
          first, second, num_intersections, intersections, py_exc)
     case_success = ( &
-         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 1 .AND. &
          num_intersections == 1 .AND. &
@@ -988,7 +978,6 @@ contains
          associated(intersections(1)%first, root1) .AND. &
          associated(intersections(1)%second, root2))
     call print_status(name, case_id, case_success, success)
-    deallocate(intersections)
     num_intersections = 0
 
     ! CASE 4: Parallel lines that **do** intersect.
@@ -1004,12 +993,9 @@ contains
     nodes1(2, :) = [3.0_dp, 3.0_dp]
     second%nodes = nodes1
 
-    case_success = .NOT. allocated(intersections)
     call add_from_linearized( &
          first, second, num_intersections, intersections, py_exc)
     case_success = ( &
-         case_success .AND. &
-         .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          py_exc == FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
@@ -1043,13 +1029,11 @@ contains
     ! NOTE: We use ``first`` and ``second`` without any actual info,
     !       but it won't matter because ``node_first`` and ``node_second``
     !       are not close.
-    case_success = .NOT. allocated(intersections)
     call endpoint_check( &
          first, node_first, 0.0_dp, &
          second, node_second, 0.0_dp, &
          num_intersections, intersections)
     case_success = ( &
-         case_success .AND. &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0)
     call print_status(name, case_id, case_success, success)
@@ -1067,13 +1051,11 @@ contains
     t = 0.0_dp
     node_second(1, :) = second%nodes(1, :)
 
-    case_success = .NOT. allocated(intersections)
     call endpoint_check( &
          first, node_first, s, &
          second, node_second, t, &
          num_intersections, intersections)
     case_success = ( &
-         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 1 .AND. &
          num_intersections == 1 .AND. &
@@ -1082,7 +1064,6 @@ contains
          associated(intersections(1)%first, first) .AND. &
          associated(intersections(1)%second, second))
     call print_status(name, case_id, case_success, success)
-    deallocate(intersections)
     num_intersections = 0
 
     ! CASE 3: An intersection after one subdivision.
@@ -1118,13 +1099,11 @@ contains
     second%nodes = nodes2
     node_second(1, :) = second%nodes(1, :)
 
-    case_success = .NOT. allocated(intersections)
     call endpoint_check( &
          first, node_first, s, &
          second, node_second, t, &
          num_intersections, intersections)
     case_success = ( &
-         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 1 .AND. &
          num_intersections == 1 .AND. &
@@ -1162,11 +1141,9 @@ contains
     nodes1(3, :) = [4.0_dp, 0.0_dp]
     second%nodes = nodes1
 
-    case_success = .NOT. allocated(intersections)
     call tangent_bbox_intersection( &
          first, second, num_intersections, intersections)
     case_success = ( &
-         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 1 .AND. &
          num_intersections == 1 .AND. &
@@ -1175,7 +1152,6 @@ contains
          associated(intersections(1)%first, first) .AND. &
          associated(intersections(1)%second, second))
     call print_status(name, case_id, case_success, success)
-    deallocate(intersections)
     num_intersections = 0
 
     ! CASE 2: Two quadratics that touch at both endpoints.
@@ -1189,11 +1165,9 @@ contains
     nodes1(3, :) = [0.0_dp, 1.0_dp]
     second%nodes = nodes1
 
-    case_success = .NOT. allocated(intersections)
     call tangent_bbox_intersection( &
          first, second, num_intersections, intersections)
     case_success = ( &
-         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 2 .AND. &
          num_intersections == 2 .AND. &
@@ -1206,7 +1180,6 @@ contains
          associated(intersections(2)%first, first) .AND. &
          associated(intersections(2)%second, second))
     call print_status(name, case_id, case_success, success)
-    deallocate(intersections)
     num_intersections = 0
 
     ! CASE 3: Two lines that don't touch at endpoints, but have
@@ -1219,13 +1192,9 @@ contains
     nodes2(2, :) = [2.5_dp, 2.0_dp]
     second%nodes = nodes2
 
-    case_success = .NOT. allocated(intersections)
     call tangent_bbox_intersection( &
          first, second, num_intersections, intersections)
-    case_success = ( &
-         case_success .AND. &
-         .NOT. allocated(intersections) .AND. &
-         num_intersections == 0)
+    case_success = (num_intersections == 0)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_tangent_bbox_intersection
@@ -1392,12 +1361,10 @@ contains
     candidates(2, 1)%nodes = fixed_quadratic2
     call subdivide_curve(candidates(2, 1), left2, right2)
 
-    case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
-         case_success .AND. &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          num_next_candidates == 4 .AND. &
@@ -1423,12 +1390,10 @@ contains
     candidates(2, 1)%nodes = fixed_quadratic2
     call subdivide_curve(candidates(2, 1), left2, right2)
 
-    case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
-         case_success .AND. &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          num_next_candidates == 2 .AND. &
@@ -1450,12 +1415,10 @@ contains
     ! Populate the "second" curve with a line.
     candidates(2, 1)%nodes = fixed_line2
 
-    case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
-         case_success .AND. &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          num_next_candidates == 2 .AND. &
@@ -1478,12 +1441,10 @@ contains
     candidates(2, 1)%nodes = fixed_line2
     second => candidates(2, 1)
 
-    case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
-         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 1 .AND. &
          num_intersections == 1 .AND. &
@@ -1495,7 +1456,6 @@ contains
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
-    deallocate(intersections)
     num_intersections = 0
 
     ! CASE 5: Failure caused by parallel lines that **do** intersect.
@@ -1508,13 +1468,10 @@ contains
     candidates(2, 1)%nodes(1, :) = [0.5_dp, 0.5_dp]
     candidates(2, 1)%nodes(2, :) = [3.0_dp, 3.0_dp]
 
-    case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
-         case_success .AND. &
-         .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_PARALLEL)
@@ -1531,13 +1488,10 @@ contains
     candidates(2, 1)%nodes(1, :) = [1.0_dp, 1.25_dp]
     candidates(2, 1)%nodes(2, :) = [0.0_dp, 2.0_dp]
 
-    case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
-         case_success .AND. &
-         .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
@@ -1565,12 +1519,10 @@ contains
     second%nodes(3, :) = [2.0_dp, -0.25_dp]
     ! [1.0 <= x <= 2.0], [-0.25 <= y <= 0.5]
 
-    case_success = .NOT. allocated(intersections)
     call intersect_one_round( &
          num_candidates, candidates, num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
-         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 1 .AND. &
          num_intersections == 1 .AND. &
@@ -1642,7 +1594,6 @@ contains
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
-    deallocate(intersections)
 
     ! CASE 3: Tangent curves, with a ``py_exc`` failure due to parallel lines.
     allocate(candidates(2, 1))
@@ -1697,7 +1648,6 @@ contains
          status == ALL_INTERSECTIONS_TOO_MANY)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
-    deallocate(intersections)
 
     ! CASE 5: Badly scaled curves, which cause the subdivision proceass to
     !         take too many iterations before being "almost linear".
