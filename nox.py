@@ -15,6 +15,7 @@ from __future__ import print_function
 import glob
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 
@@ -24,12 +25,7 @@ import py.path
 
 NUMPY = 'numpy >= 1.13.3'
 IS_MAC_OS_X = sys.platform == 'darwin'
-IS_WINDOWS = os.name == 'nt'
-if IS_WINDOWS:
-    # Windows wheels don't exist until 1.0.0.
-    SCIPY = 'scipy >= 1.0.0rc1'
-else:
-    SCIPY = 'scipy'
+SCIPY = 'scipy >= 1.0.0'
 MOCK_DEP = 'mock >= 1.3.0'
 SEABORN_DEP = 'seaborn >= 0.8'
 BASE_DEPS = (
@@ -55,13 +51,27 @@ def get_path(*names):
     return os.path.join(NOX_DIR, *names)
 
 
+def on_ubuntu():
+    if py.path.local.sysfind('lsb_release') is None:
+        return False
+
+    cmd = ('lsb_release', '-a')
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return_code = process.wait()
+
+    if return_code != 0:
+        return False
+
+    output_bytes = process.stdout.read()
+    return b'distributor id:\tubuntu' in output_bytes.lower()
+
+
 def pypy_setup(local_deps, session):
+    numpy_installed = False
+
     if WHEELHOUSE is not None:
-        # Remove NumPy from dependencies.
-        local_deps = list(local_deps)
-        local_deps.remove(NUMPY)
-        local_deps = tuple(local_deps)
-        # Install from the pre-built wheel.
+        # Install NumPy from the pre-built wheel.
         session.install(
             '--use-wheel',
             '--no-index',
@@ -69,6 +79,24 @@ def pypy_setup(local_deps, session):
             WHEELHOUSE,
             NUMPY,
         )
+        numpy_installed = True
+
+    if on_ubuntu():
+        # Install NumPy and SciPy from "PyPy-PyPI".
+        session.install(
+            '--use-wheel',
+            '--extra-index',
+            'https://antocuni.github.io/pypy-wheels/ubuntu',
+            NUMPY,
+            SCIPY,
+        )
+        numpy_installed = True
+
+    if numpy_installed:
+        # Remove NumPy from dependencies.
+        local_deps = list(local_deps)
+        local_deps.remove(NUMPY)
+        local_deps = tuple(local_deps)
 
     return local_deps
 
