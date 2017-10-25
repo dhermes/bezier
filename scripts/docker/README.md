@@ -1,13 +1,13 @@
 ## [`python-multi`][1] Dockerfile
 
-> Multiple Python versions installed into Ubuntu LTS (16.04 as of September 2017)
+> Multiple Python versions installed into Ubuntu LTS (16.04 as of October 2017)
 
 Currently
 
-- CPython 2.7.13
+- CPython 2.7.14
 - CPython 3.5.4
-- CPython 3.6.2
-- PyPy 2.7.13 (version 5.8.0)
+- CPython 3.6.3
+- PyPy 2.7.13 (version 5.9.0)
 
 ## [`bezier`][2] Dockerfile
 
@@ -22,6 +22,7 @@ This repository is intended to be used as a fully-functional environment for ins
 - `/wheelhouse` directory with NumPy pre-built for PyPy
 - `gfortran` compiler
 - `nox` test runner
+- `lcov` line coverage tool
 
 ## Commands
 

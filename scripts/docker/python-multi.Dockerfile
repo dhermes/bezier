@@ -30,17 +30,17 @@ RUN apt-get update \
   && rm -f /var/cache/apt/archives/*.deb
 
 # Install the desired versions of Python.
-RUN for PYTHON_VERSION in 2.7.13 3.5.4 3.6.2; do \
+RUN for PYTHON_VERSION in 2.7.14 3.5.4 3.6.3; do \
   set -ex \
     && wget --no-check-certificate -O python-${PYTHON_VERSION}.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
     && wget --no-check-certificate -O python-${PYTHON_VERSION}.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
     && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys \
-      # 2.7.13 (REF: https://github.com/docker-library/python/blob/c9954b06c8b178d7888bc1626bed5a14e43a9203/2.7/stretch/Dockerfile#L16)
+      # 2.7.14 (REF: https://github.com/docker-library/python/blob/0b0fb40ad8aaa4c6f57192300b2ab61dd481ce86/2.7/stretch/Dockerfile#L16)
       C01E1CAD5EA2C4F0B8E3571504C367C218ADD4FF \
-      # 3.5.4 (REF: https://github.com/docker-library/python/blob/6ebbaa8a56cdf4021c78e87b3872be3861ac072a/3.5/jessie/Dockerfile#L22)
+      # 3.5.4 (REF: https://github.com/docker-library/python/blob/0b0fb40ad8aaa4c6f57192300b2ab61dd481ce86/3.5/jessie/Dockerfile#L22)
       97FC712E4C024BBEA48A61ED3A5CA953F73C700D \
-      # 3.6.2 (REF: https://github.com/docker-library/python/blob/c9954b06c8b178d7888bc1626bed5a14e43a9203/3.6/stretch/Dockerfile#L22)
+      # 3.6.3 (REF: https://github.com/docker-library/python/blob/0b0fb40ad8aaa4c6f57192300b2ab61dd481ce86/3.6/stretch/Dockerfile#L22)
       0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D \
     && gpg --batch --verify python-${PYTHON_VERSION}.tar.xz.asc python-${PYTHON_VERSION}.tar.xz \
     && rm -r "$GNUPGHOME" python-${PYTHON_VERSION}.tar.xz.asc \
@@ -60,21 +60,21 @@ RUN for PYTHON_VERSION in 2.7.13 3.5.4 3.6.2; do \
   && rm -rf /usr/src/python* \
   && rm -rf ~/.cache/
 
-# REF: https://github.com/docker-library/pypy/blob/19f27e6e89012de63a5cb39e5e1d011651fd3a61/2/Dockerfile
-ENV PYPY_VERSION 5.8.0
+# REF: https://github.com/docker-library/pypy/blob/1959d8cab4eb9d7e6970298bc5a3ef8417ad4251/2/Dockerfile
+ENV PYPY_VERSION 5.9.0
 RUN set -ex; \
   \
 # this "case" statement is generated via "update.sh"
     dpkgArch="$(dpkg --print-architecture)"; \
     case "${dpkgArch##*-}" in \
 # amd64
-    amd64) pypyArch='linux64'; sha256='6274292d0e954a2609b15978cde6efa30942ba20aa5d2acbbf1c70c0a54e9b1e' ;; \
+    amd64) pypyArch='linux64'; sha256='790febd4f09e22d6e2f81154efc7dc4b2feec72712aaf4f82aa91b550abb4b48' ;; \
 # arm32v5
-    armel) pypyArch='linux-armel'; sha256='28b7fd0cc7418ffc66c71520728e87941be40ebf4b82675c57e25598a2a702b0' ;; \
+    armel) pypyArch='linux-armel'; sha256='ac0676d91dfb388c799ec5c2845f42018a666423376f52f3ae13d61fd2e6f87d' ;; \
 # arm32v7
-    armhf) pypyArch='linux-armhf-raring'; sha256='ddceca9c5c9a456d4bf1beab177660adffbbdf255a922244e1cc05f20318be46' ;; \
+    armhf) pypyArch='linux-armhf-raring'; sha256='2597b7b21acdef4f2b81074a594157c9450363c74a17f005548c6b102f93cff4' ;; \
 # i386
-    i386) pypyArch='linux32'; sha256='a0b125a5781f7e5ddfc3baca46503b14f4ee6a0e234e8d72bfcf3afdf4120bef' ;; \
+    i386) pypyArch='linux32'; sha256='a2431a9e4ef879da1a2b56b111013b4a6efb87d4173a37bf650de47834ac5fe4' ;; \
     *) echo >&2 "error: current architecture ($dpkgArch) does not have a corresponding PyPy $PYPY_VERSION binary release"; exit 1 ;; \
   esac; \
   \
