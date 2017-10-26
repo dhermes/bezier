@@ -1560,7 +1560,7 @@ contains
     type(CurveData), target, allocatable :: candidates(:, :)
     integer(c_int) :: num_intersections
     type(Intersection), allocatable :: intersections(:)
-    integer(c_int) :: status
+    integer(c_int) :: status, index_
     type(CurveData), pointer :: first, second
     integer :: case_id
     character(:), allocatable :: name
@@ -1692,7 +1692,47 @@ contains
          num_intersections == 0 .AND. &
          status == ALL_INTERSECTIONS_NO_CONVERGE)
     call print_status(name, case_id, case_success, success)
+    deallocate(candidates)
 
+    ! CASE 6: Curves where there are duplicate intersections caused by
+    !         bounding boxes touching at corners.
+    allocate(candidates(2, 1))
+    first => candidates(1, 1)
+    allocate(first%nodes(3, 2))
+    first%nodes(1, :) = 0
+    first%nodes(2, :) = [0.5_dp, 1.0_dp]
+    first%nodes(3, :) = [1.0_dp, 0.0_dp]
+    second => candidates(2, 1)
+    allocate(second%nodes(3, 2))
+    second%nodes(1, :) = [0.0_dp, 0.75_dp]
+    second%nodes(2, :) = [0.5_dp, -0.25_dp]
+    second%nodes(3, :) = [1.0_dp, 0.75_dp]
+
+    call all_intersections( &
+         candidates, num_intersections, intersections, status)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         num_intersections == 8 .AND. &
+         status == ALL_INTERSECTIONS_SUCCESS)
+    do index_ = 1, 4
+       case_success = ( &
+            case_success .AND. &
+            intersections(index_)%s == 0.25_dp .AND. &
+            intersections(index_)%t == 0.25_dp .AND. &
+            associated(intersections(index_)%first, first) .AND. &
+            associated(intersections(index_)%second, second))
+    end do
+    do index_ = 5, 8
+       case_success = ( &
+            case_success .AND. &
+            intersections(index_)%s == 0.75_dp .AND. &
+            intersections(index_)%t == 0.75_dp .AND. &
+            associated(intersections(index_)%first, first) .AND. &
+            associated(intersections(index_)%second, second))
+    end do
+    call print_status(name, case_id, case_success, success)
+
+    ! Wrap up.
     call free_all_intersections_workspace()
 
   end subroutine test_all_intersections

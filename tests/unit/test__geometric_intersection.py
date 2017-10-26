@@ -1316,7 +1316,7 @@ class Test_all_intersections(utils.NumPyTestCase):
             [0.0, 8.0],
             [6.0, 0.0],
         ])
-        curve2 = bezier.Curve(nodes2, degree=2)
+        curve2 = bezier.Curve(nodes2, degree=1)
 
         candidates = [(curve1, curve2)]
         with self.assertRaises(ValueError) as exc_info:
@@ -1326,6 +1326,42 @@ class Test_all_intersections(utils.NumPyTestCase):
         expected = _geometric_intersection._NO_CONVERGE_TEMPLATE.format(
             _geometric_intersection._MAX_INTERSECT_SUBDIVISIONS)
         self.assertEqual(exc_args, (expected,))
+
+    def test_duplicates(self):
+        # After three subdivisions, there are 8 pairs of curve segments
+        # which have bounding boxes that touch at corners (these corners are
+        # also intersections). This test makes sure the duplicates are
+        # de-duplicated.
+        import bezier
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 1.0],
+            [1.0, 0.0],
+        ])
+        curve1 = bezier.Curve(nodes1, degree=2)
+
+        nodes2 = np.asfortranarray([
+            [0.0, 0.75],
+            [0.5, -0.25],
+            [1.0, 0.75],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=2)
+
+        candidates = [(curve1, curve2)]
+        intersections = self._call_function_under_test(candidates)
+
+        self.assertEqual(len(intersections), 2)
+        # First intersection.
+        intersection0 = intersections[0]
+        expected = np.asfortranarray([[0.25, 0.375]])
+        utils.check_intersection(
+            self, intersection0, expected, curve1, curve2, 0.25, 0.25)
+        # Second intersection.
+        intersection1 = intersections[1]
+        expected = np.asfortranarray([[0.75, 0.375]])
+        utils.check_intersection(
+            self, intersection1, expected, curve1, curve2, 0.75, 0.75)
 
 
 class TestBoxIntersectionType(unittest.TestCase):
