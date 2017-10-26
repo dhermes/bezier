@@ -1379,14 +1379,9 @@ def all_intersections(candidates_left, candidates_right):
     """
     result = []
     for index_first, first in enumerate(candidates_left):
-        # NOTE: In the below we replace ``isinstance(a, B)`` with
-        #       ``a.__class__ is B``, which is a 3-3.5x speedup.
-        curve1 = first.curve if first.__class__ is _LINEARIZATION else first
-        nodes1 = curve1._nodes
+        nodes1 = first._nodes
         for index_second, second in enumerate(candidates_right):
-            curve2 = (
-                second.curve if second.__class__ is _LINEARIZATION else second)
-            nodes2 = curve2._nodes
+            nodes2 = second._nodes
 
             # Only attempt this if the bounding boxes intersect.
             bbox_int = _geometric_intersection.bbox_intersect(nodes1, nodes2)
@@ -1396,7 +1391,7 @@ def all_intersections(candidates_left, candidates_right):
             st_vals = intersect_curves(nodes1, nodes2)
             for s, t in st_vals:
                 intersection = _intersection_helpers.Intersection(
-                    curve1, s, curve2, t)
+                    first, s, second, t)
                 intersection.index_first = index_first
                 intersection.index_second = index_second
                 result.append(intersection)
