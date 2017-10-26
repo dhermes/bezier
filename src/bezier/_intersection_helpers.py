@@ -458,8 +458,11 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             classification of the intersection.
     """
 
-    __slots__ = ('first', 's', 'second', 't',
-                 'point', 'interior_curve')
+    __slots__ = (
+        'first', 'index_first', 's',
+        'second', 'index_second', 't',
+        'point', 'interior_curve',
+    )
 
     def __init__(self, first, s, second, t, point=None, interior_curve=None):
         self.first = first
@@ -478,6 +481,14 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         See :func:`.classify_intersection` for more details.
         """
 
+        # NOTE: These are intentionally not documented for the time being.
+        #       They are intended as a replacement for ``first`` and ``second``
+        #       to make this class easier to reach across the C boundary.
+        #       The only callers of this constructor (``all_intersections``)
+        #       will have access the index of each curve.
+        self.index_first = -1
+        self.index_second = -1
+
     @property
     def __dict__(self):
         """dict: Dictionary of current intersection's property namespace.
@@ -491,8 +502,10 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         """
         return {
             'first': self.first,
+            'index_first': self.index_first,
             's': self.s,
             'second': self.second,
+            'index_second': self.index_second,
             't': self.t,
             'point': self.point,
             'interior_curve': self.interior_curve,

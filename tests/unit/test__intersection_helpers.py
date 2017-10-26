@@ -285,8 +285,10 @@ class TestIntersection(unittest.TestCase):
         props_dict = intersection.__dict__
         expected = {
             'first': unittest.mock.sentinel.first,
+            'index_first': -1,
             's': 0.25,
             'second': unittest.mock.sentinel.second,
+            'index_second': -1,
             't': 0.75,
             'point': unittest.mock.sentinel.point,
             'interior_curve': unittest.mock.sentinel.interior_curve,
