@@ -26,7 +26,7 @@ import setup_helpers_osx
 import setup_helpers_windows
 
 
-VERSION = '0.5.1.dev1'  # Also in codemeta.json
+VERSION = '0.5.1.dev1'  # Also in ``codemeta.json`` and ``_init__.py``.
 README_FILENAME = os.path.join(os.path.dirname(__file__), 'README.rst')
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:

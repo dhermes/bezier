@@ -54,7 +54,12 @@ except ImportError:  # pragma: NO COVER
     _HAS_CURVE_INTERSECTION_SPEEDUP = False
 
 
-__version__ = pkg_resources.get_distribution('bezier').version
+# NOTE: The ``__version__`` is hard-coded here, rather than using
+#       ``pkg_resources.get_distribution('bezier').version``.
+#       This is **entirely** to accomodate the RTD build, which
+#       uses the current time (e.g. ``bezier-0.5.1.dev1508976208``)
+#       in the version in the package metadata.
+__version__ = '0.5.1.dev1'
 """str: The current version of :mod:`bezier`."""
 __all__ = [
     '__version__',
