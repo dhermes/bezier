@@ -1638,4 +1638,5 @@ class Test_all_intersections(utils.NumPyTestCase):
         s_val = 1.0 / 3.0
         t_val = 2.0 / 3.0
         utils.check_intersection(
-            self, intersection, expected, curve1, curve2, s_val, t_val)
+            self, intersection, expected, curve1, curve2, s_val, t_val,
+            index_first=0, index_second=0)
