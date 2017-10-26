@@ -16,7 +16,7 @@ module curve_intersection
   use types, only: dp
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
-       vector_close, in_interval
+       vector_close, in_interval, ulps_away
   use curve, only: &
        CurveData, evaluate_multi, evaluate_hodograph, curve_root, &
        subdivide_curve
@@ -466,8 +466,6 @@ contains
        first, s, second, t, num_intersections, intersections)
 
     ! Adds an intersection to list of ``intersections``.
-    !
-    ! **DOES NOT** accounts for repeated intersections, but should.
 
     type(CurveData), target, intent(in) :: first
     real(c_double), intent(in) :: s
@@ -476,8 +474,20 @@ contains
     integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     ! Variables outside of signature.
-    integer(c_int) :: curr_size
+    integer(c_int) :: curr_size, index_
     type(Intersection), allocatable :: intersections_swap(:)
+
+    ! First, check if the intersection is a duplicate (up to precision,
+    ! determined by ``ulps_away``).
+    do index_ = 1, num_intersections
+       if ( &
+            associated(intersections(index_)%first, first) .AND. &
+            associated(intersections(index_)%second, second) .AND. &
+            ulps_away(intersections(index_)%s, s, 1, VECTOR_CLOSE_EPS) .AND. &
+            ulps_away(intersections(index_)%t, t, 1, VECTOR_CLOSE_EPS)) then
+          return
+       end if
+    end do
 
     ! Update the number of intersections.
     num_intersections = num_intersections + 1

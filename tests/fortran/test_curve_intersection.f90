@@ -887,6 +887,34 @@ contains
          associated(intersections(1)%second, second))
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 4: Proposed intersection is a duplicate, matches first.
+    intersections(1)%first => first
+    intersections(1)%second => second
+    intersections(1)%s = 0.125_dp
+    intersections(1)%t = 0.75_dp
+    intersections(2)%first => second
+    intersections(2)%second => first
+    intersections(2)%s = 1.0_dp
+    intersections(2)%t = 0.25_dp
+    num_intersections = 2
+
+    call add_intersection( &
+         first, 0.125_dp, second, 0.75_dp, num_intersections, intersections)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         num_intersections == 2)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Proposed intersection is a duplicate, matches second.
+    call add_intersection( &
+         second, 1.0_dp, first, 0.25_dp, num_intersections, intersections)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         num_intersections == 2)
+    call print_status(name, case_id, case_success, success)
+
   end subroutine test_add_intersection
 
   subroutine test_add_from_linearized(success)
@@ -1652,16 +1680,12 @@ contains
          candidates, num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 2 .AND. &
-         num_intersections == 2 .AND. &
+         size(intersections) == 1 .AND. &
+         num_intersections == 1 .AND. &
          intersections(1)%s == 0.5_dp .AND. &
          intersections(1)%t == 0.5_dp .AND. &
          associated(intersections(1)%first, first) .AND. &
          associated(intersections(1)%second, second) .AND. &
-         intersections(1)%s == 0.5_dp .AND. &
-         intersections(1)%t == 0.5_dp .AND. &
-         associated(intersections(2)%first, first) .AND. &
-         associated(intersections(2)%second, second) .AND. &
          status == ALL_INTERSECTIONS_TOO_MANY)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
@@ -1712,24 +1736,16 @@ contains
          candidates, num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
-         num_intersections == 8 .AND. &
-         status == ALL_INTERSECTIONS_SUCCESS)
-    do index_ = 1, 4
-       case_success = ( &
-            case_success .AND. &
-            intersections(index_)%s == 0.25_dp .AND. &
-            intersections(index_)%t == 0.25_dp .AND. &
-            associated(intersections(index_)%first, first) .AND. &
-            associated(intersections(index_)%second, second))
-    end do
-    do index_ = 5, 8
-       case_success = ( &
-            case_success .AND. &
-            intersections(index_)%s == 0.75_dp .AND. &
-            intersections(index_)%t == 0.75_dp .AND. &
-            associated(intersections(index_)%first, first) .AND. &
-            associated(intersections(index_)%second, second))
-    end do
+         num_intersections == 2 .AND. &
+         status == ALL_INTERSECTIONS_SUCCESS .AND. &
+         intersections(1)%s == 0.25_dp .AND. &
+         intersections(1)%t == 0.25_dp .AND. &
+         associated(intersections(1)%first, first) .AND. &
+         associated(intersections(1)%second, second) .AND. &
+         intersections(2)%s == 0.75_dp .AND. &
+         intersections(2)%t == 0.75_dp .AND. &
+         associated(intersections(2)%first, first) .AND. &
+         associated(intersections(2)%second, second))
     call print_status(name, case_id, case_success, success)
 
     ! Wrap up.

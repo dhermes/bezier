@@ -212,9 +212,9 @@ To pre-build NumPy and SciPy wheels:
 .. code-block:: console
 
    $ pypy -m virtualenv pypy-venv
-   $ pypy-venv/bin/pip wheel --wheel-dir=${WHEELHOUSE} numpy
-   $ pypy-venv/bin/pip install ${WHEELHOUSE}/numpy*.whl
-   $ pypy-venv/bin/pip wheel --wheel-dir=${WHEELHOUSE} scipy
+   $ pypy-venv/bin/pip wheel --wheel-dir=${{WHEELHOUSE}} numpy
+   $ pypy-venv/bin/pip install ${{WHEELHOUSE}}/numpy*.whl
+   $ pypy-venv/bin/pip wheel --wheel-dir=${{WHEELHOUSE}} scipy
    $ rm -fr pypy-venv/
 
 Alternatively, wheels can be downloaded from `pypy-wheels`_, however
