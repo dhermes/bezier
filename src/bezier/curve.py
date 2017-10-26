@@ -578,7 +578,7 @@ class Curve(_base.Base):
         else:
             raise ValueError('Unexpected strategy.', strategy)
 
-        intersections = all_intersections([(self, other)])
+        intersections = all_intersections([self], [other])
         if intersections:
             result = np.empty((len(intersections), 2), order='F')
             for index, intersection in enumerate(intersections):

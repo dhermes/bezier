@@ -41,6 +41,8 @@ is the "intersection polynomial" for :math:`t`.
 """
 
 
+import itertools
+
 import numpy as np
 from numpy.polynomial import polynomial
 import six
@@ -1358,7 +1360,7 @@ def locate_point(nodes, x_val, y_val):
         return all_roots[index]
 
 
-def all_intersections(candidates):
+def all_intersections(candidates_left, candidates_right):
     r"""Find the points of intersection among pairs of curves.
 
     .. note::
@@ -1369,12 +1371,16 @@ def all_intersections(candidates):
        fails.
 
     Args:
-        candidates (iterable): Iterable of pairs of curves that may
-            intersect.
+        candidates_left (Iterable[.Curve]): Iterable of curves to be
+            intersected with each curve in ``candidates_right``.
+        candidates_right (Iterable[.Curve]): Iterable of curves to be
+            intersected with each curve in ``candidates_left``.
 
     Returns:
         list: List of all :class:`Intersection`s (possibly empty).
     """
+    candidates = itertools.product(candidates_left, candidates_right)
+
     result = []
     for first, second in candidates:
         # NOTE: In the below we replace ``isinstance(a, B)`` with

@@ -1145,16 +1145,10 @@ class Surface(_base.Base):
         #       curve is in **3** pairs, so we'd waste the computation on the
         #       other 3 pairs. (18 linearizations when only 6 are needed)
         edges1 = self._get_edges()
-        lin1 = six.moves.map(
-            _geometric_intersection.Linearization.from_shape,
-            edges1)
         edges2 = other._get_edges()  # pylint: disable=protected-access
-        lin2 = six.moves.map(
-            _geometric_intersection.Linearization.from_shape,
-            edges2)
 
         # We need **all** pairs of (potentially linearized) edges.
-        intersections = all_intersections(itertools.product(lin1, lin2))
+        intersections = all_intersections(edges1, edges2)
 
         # Classify each intersection.
         duplicates = []

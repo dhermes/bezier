@@ -210,10 +210,10 @@ def get_sorted_intersections(intersection_info, strategy):
     curve2 = intersection_info.curve2
     if strategy is GEOMETRIC:
         intersections = _geometric_intersection.all_intersections(
-            [(curve1, curve2)])
+            [curve1], [curve2])
     else:
         intersections = _algebraic_intersection.all_intersections(
-            [(curve1, curve2)])
+            [curve1], [curve2])
 
     # Make we have the right number of intersections.
     if len(intersections) != intersection_info.num_params:

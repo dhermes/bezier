@@ -1202,13 +1202,14 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 class Test_all_intersections(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(candidates):
+    def _call_function_under_test(candidates_left, candidates_right):
         from bezier import _geometric_intersection
 
-        return _geometric_intersection.all_intersections(candidates)
+        return _geometric_intersection.all_intersections(
+            candidates_left, candidates_right)
 
     def test_no_intersections(self):
-        intersections = self._call_function_under_test([])
+        intersections = self._call_function_under_test([], [])
         self.assertEqual(intersections, [])
 
     def test_success(self):
@@ -1233,8 +1234,7 @@ class Test_all_intersections(utils.NumPyTestCase):
         ])
         curve2 = bezier.Curve(nodes2, degree=2)
 
-        candidates = [(curve1, curve2)]
-        intersections = self._call_function_under_test(candidates)
+        intersections = self._call_function_under_test([curve1], [curve2])
 
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
@@ -1266,9 +1266,8 @@ class Test_all_intersections(utils.NumPyTestCase):
         ])
         curve2 = bezier.Curve(nodes2, degree=2)
 
-        candidates = [(curve1, curve2)]
         with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(candidates)
+            self._call_function_under_test([curve1], [curve2])
 
         exc_args = exc_info.exception.args
         self.assertEqual(
@@ -1292,9 +1291,8 @@ class Test_all_intersections(utils.NumPyTestCase):
         ])
         curve2 = bezier.Curve(nodes2, degree=2)
 
-        candidates = [(curve1, curve2)]
         with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(candidates)
+            self._call_function_under_test([curve1], [curve2])
 
         exc_args = exc_info.exception.args
         expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(88)
@@ -1318,9 +1316,8 @@ class Test_all_intersections(utils.NumPyTestCase):
         ])
         curve2 = bezier.Curve(nodes2, degree=1)
 
-        candidates = [(curve1, curve2)]
         with self.assertRaises(ValueError) as exc_info:
-            self._call_function_under_test(candidates)
+            self._call_function_under_test([curve1], [curve2])
 
         exc_args = exc_info.exception.args
         expected = _geometric_intersection._NO_CONVERGE_TEMPLATE.format(
@@ -1348,8 +1345,7 @@ class Test_all_intersections(utils.NumPyTestCase):
         ])
         curve2 = bezier.Curve(nodes2, degree=2)
 
-        candidates = [(curve1, curve2)]
-        intersections = self._call_function_under_test(candidates)
+        intersections = self._call_function_under_test([curve1], [curve2])
 
         self.assertEqual(len(intersections), 2)
         # First intersection.

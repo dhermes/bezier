@@ -1597,13 +1597,14 @@ class Test_locate_point(unittest.TestCase):
 class Test_all_intersections(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(candidates):
+    def _call_function_under_test(candidates_left, candidates_right):
         from bezier import _algebraic_intersection
 
-        return _algebraic_intersection.all_intersections(candidates)
+        return _algebraic_intersection.all_intersections(
+            candidates_left, candidates_right)
 
     def test_no_intersections(self):
-        intersections = self._call_function_under_test([])
+        intersections = self._call_function_under_test([], [])
         self.assertEqual(intersections, [])
 
     def test_success(self):
@@ -1628,8 +1629,7 @@ class Test_all_intersections(utils.NumPyTestCase):
         ])
         curve2 = bezier.Curve(nodes2, degree=2, _copy=False)
 
-        candidates = [(curve1, curve2)]
-        intersections = self._call_function_under_test(candidates)
+        intersections = self._call_function_under_test([curve1], [curve2])
 
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]

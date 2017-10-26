@@ -1012,7 +1012,7 @@ def intersect_one_round(candidates, intersections):
     return next_candidates
 
 
-def all_intersections(candidates):
+def all_intersections(candidates_left, candidates_right):
     r"""Find the points of intersection among pairs of curves.
 
     .. note::
@@ -1024,8 +1024,10 @@ def all_intersections(candidates):
        :func:`newton_refine() <~._intersection_helpers._newton_refine>`.
 
     Args:
-        candidates (iterable): Iterable of pairs of curves that may
-            intersect.
+        candidates_left (Iterable[.Curve]): Iterable of curves to be
+            intersected with each curve in ``candidates_right``.
+        candidates_right (Iterable[.Curve]): Iterable of curves to be
+            intersected with each curve in ``candidates_left``.
 
     Returns:
         list: List of all :class:`.Intersection`s (possibly empty).
@@ -1039,10 +1041,11 @@ def all_intersections(candidates):
     """
     # First make sure any curves that are linear / near-linear are
     # linearized (to avoid unnecessary checks, e.g. bbox intersect check).
-    candidates = [
-        (Linearization.from_shape(first), Linearization.from_shape(second))
-        for first, second in candidates
-    ]
+    linearized_left = six.moves.map(
+        Linearization.from_shape, candidates_left)
+    linearized_right = six.moves.map(
+        Linearization.from_shape, candidates_right)
+    candidates = itertools.product(linearized_left, linearized_right)
 
     intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
