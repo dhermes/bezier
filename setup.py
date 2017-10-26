@@ -17,7 +17,6 @@ from __future__ import print_function
 import os
 import pkg_resources
 import sys
-import time
 
 import setuptools
 
@@ -26,7 +25,8 @@ import setup_helpers_osx
 import setup_helpers_windows
 
 
-VERSION = '0.5.1.dev1'  # Also in ``codemeta.json`` and ``_init__.py``.
+VERSION = '0.5.1.dev1'  # Also in ``codemeta.json`` and ``__init__.py``.
+AUTHOR = 'Danny Hermes'  # Also in ``__init__.py``.
 README_FILENAME = os.path.join(os.path.dirname(__file__), 'README.rst')
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
@@ -48,8 +48,6 @@ NO_SPEEDUPS_MESSAGE = """\
 The {} environment variable has been used to explicitly disable the
 building of extension modules.
 """.format(NO_EXTENSIONS_ENV)
-ON_READ_THE_DOCS = os.environ.get('READTHEDOCS') == 'True'
-RTD_MESSAGE = 'Building on readthedocs.org, skipping speedups.'
 REQUIREMENTS = (
     'numpy >= 1.13.3',
     'six >= 1.11.0',
@@ -80,9 +78,6 @@ def extension_modules():
     if NO_EXTENSIONS_ENV in os.environ:
         print(NO_SPEEDUPS_MESSAGE, file=sys.stderr)
         return []
-    elif ON_READ_THE_DOCS:
-        print(RTD_MESSAGE, file=sys.stderr)
-        return []
 
     require_numpy()
     if setup_helpers.BuildFortranThenExt.has_f90_compiler():
@@ -97,40 +92,12 @@ def make_readme():
         return file_obj.read()
 
 
-def get_version():
-    """Get the current version of ``bezier``.
-
-    This is purpose built to bust the cache on RTD (readthedocs.org).
-    If ``setup.py`` detects it is being run in a RTD build, it
-    will swap out the ``.devN`` in the version for ``.dev{NOW}``
-    where ``NOW`` is the current time in seconds from the epoch.
-
-    If there is no ``.devN`` suffix, will just return ``VERSION``,
-    since this likely indicates the build is for a release.
-
-    The change in version will bust the cache and allow ``bezier``
-    to be re-installed on every build.
-
-    Returns:
-        str: The version, typically will be ``VERSION``.
-    """
-    if ON_READ_THE_DOCS and '.' in VERSION:
-        now = int(time.time())
-        pre, post = VERSION.rsplit('.', 1)
-        if post.startswith('dev'):
-            return '{}.dev{:d}'.format(pre, now)
-        else:
-            return VERSION
-    else:
-        return VERSION
-
-
 def setup():
     setuptools.setup(
         name='bezier',
-        version=get_version(),
+        version=VERSION,
         description=DESCRIPTION,
-        author='Danny Hermes',
+        author=AUTHOR,
         author_email='daniel.j.hermes@gmail.com',
         long_description=make_readme(),
         scripts=(),

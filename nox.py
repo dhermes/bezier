@@ -33,16 +33,9 @@ BASE_DEPS = (
 )
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
 WHEELHOUSE = os.environ.get('WHEELHOUSE')
-# NOTE: This is a "verbatim" copy of ``docs/requirements.txt``
-#       except it **won't** install the current package (i.e.
-#       it leaves out the ``.`` on the last line). To make
-#       sure these values don't drift, they'll be checked in
-#       ``verify_rtd_deps``, which gets run by ``nox -s docs``.
 DOCS_DEPS = (
-    NUMPY,
-    'Sphinx >= 1.6.4',
-    'sphinx-rtd-theme',
-    'sphinx-docstring-typing >= 0.0.2',
+    '--requirement',
+    os.path.join(NOX_DIR, 'docs', 'requirements.txt'),
 )
 SINGLE_INTERP = 'python3.6'
 PYPY = 'pypy'
@@ -175,44 +168,21 @@ def functional(session, py):
     session.run(*run_args)
 
 
-def verify_rtd_deps():
-    requirements_txt = get_path('docs', 'requirements.txt')
-    if not os.path.isfile(requirements_txt):
-        msg = 'requirements.txt file does not exist'
-        print(msg, file=sys.stderr)
-        sys.exit(1)
-
-    with open(requirements_txt, 'r') as file_obj:
-        content = file_obj.read()
-
-    requirements = content.strip().split('\n')
-    expected = list(DOCS_DEPS) + ['.']
-    if requirements != expected:
-        template = (
-            'requirements.txt has drifted from nox docs dependencies\n\n'
-            'requirements.txt (expected):\n================\n{}\n\n'
-            'requirements.txt (actual):\n================\n{}')
-        msg = template.format('\n'.join(expected), content.rstrip())
-        print(msg, file=sys.stderr)
-        sys.exit(1)
-
-
 @nox.session
 def docs(session):
     session.interpreter = SINGLE_INTERP
 
     # Install all dependencies.
     session.install(*DOCS_DEPS)
-    # Install this package.
-    env = {'BEZIER_NO_EXTENSIONS': 'True'}
-    session.run('pip', 'install', '.', env=env)
-
-    # Verify the dependencies haven't drifted from the RTD dependencies.
-    session.run(verify_rtd_deps)
+    # NOTE: We **don't** install this package, since RTD doesn't either,
+    #       so we modify the ``PYTHONPATH`` so that ``bezier`` can still
+    #       be imported.
+    src_dir = get_path('src')
+    env = {'PYTHONPATH': src_dir}
 
     # Run the script for building docs.
     command = get_path('scripts', 'build_docs.sh')
-    session.run(command)
+    session.run(command, env=env)
 
 
 def get_doctest_args(session):
@@ -389,12 +359,14 @@ def clean(session):
     session.virtualenv = False
 
     clean_dirs = (
-        get_path('__pycache__'),
         get_path('.cache'),
         get_path('.coverage'),
+        get_path('__pycache__'),
         get_path('build'),
+        get_path('dist'),
         get_path('docs', '__pycache__'),
         get_path('docs', 'build'),
+        get_path('src', 'bezier.egg-info'),
         get_path('src', 'bezier', '__pycache__'),
         get_path('src', 'bezier', 'extra-dll'),
         get_path('src', 'bezier', 'lib'),

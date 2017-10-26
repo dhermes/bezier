@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import email
 import os
 import unittest
 import unittest.mock
@@ -26,8 +27,8 @@ from_egg = {!r}"""
 
 class Test___version__(unittest.TestCase):
     # NOTE: The ``__version__`` is hard-coded in ``__init__.py`` to
-    #       accomodate a quirk of the RTD build. So we verify that
-    #       the hard-coded version actually matches the installed version.
+    #       accomodate builds where ``bezier`` is imported from source
+    #       but not installed.
 
     def test_it(self):
         import bezier
@@ -35,6 +36,21 @@ class Test___version__(unittest.TestCase):
         hardcoded_version = bezier.__version__
         installed_version = pkg_resources.get_distribution('bezier').version
         self.assertEqual(hardcoded_version, installed_version)
+
+
+class Test___author__(unittest.TestCase):
+    # NOTE: The ``__author__`` is hard-coded in ``__init__.py`` to
+    #       accomodate builds where ``bezier`` is imported from source
+    #       but not installed.
+
+    def test_it(self):
+        import bezier
+
+        hardcoded_author = bezier.__author__
+        distrib = pkg_resources.get_distribution('bezier')
+        metadata = distrib.get_metadata(distrib.PKG_INFO)
+        installed_author = email.message_from_string(metadata).get('Author')
+        self.assertEqual(hardcoded_author, installed_author)
 
 
 class Test_get_include(unittest.TestCase):
