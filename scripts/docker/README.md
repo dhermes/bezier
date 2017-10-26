@@ -19,10 +19,11 @@ This repository is intended to be used as a fully-functional environment for ins
 
 - CPython 2.7, 3.5, 3.6 and PyPy 2.7
 - NumPy pre-installed (needed for installing extensions)
-- `/wheelhouse` directory with NumPy pre-built for PyPy
+- `/wheelhouse` directory with NumPy and SciPy pre-built for PyPy
 - `gfortran` compiler
 - `nox` test runner
 - `lcov` line coverage tool
+- `libatlas-dev`, `libblas-dev` and `liblapack-dev` (needed by SciPy)
 
 ## Commands
 

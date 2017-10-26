@@ -57,21 +57,12 @@ def get_path(*names):
     return os.path.join(NOX_DIR, *names)
 
 
-def on_ubuntu():
-    release_filename = '/etc/os-release'
-    if not os.path.isfile(release_filename):
-        return False
-
-    with open(release_filename, 'r') as file_obj:
-        contents = file_obj.read()
-
-    return 'NAME="Ubuntu"' in contents
-
-
 def pypy_setup(local_deps, session):
-    numpy_installed = False
-
     if WHEELHOUSE is not None:
+        # Remove NumPy from dependencies.
+        local_deps = list(local_deps)
+        local_deps.remove(NUMPY)
+        local_deps = tuple(local_deps)
         # Install NumPy from the pre-built wheel.
         session.install(
             '--use-wheel',
@@ -79,25 +70,8 @@ def pypy_setup(local_deps, session):
             '--find-links',
             WHEELHOUSE,
             NUMPY,
-        )
-        numpy_installed = True
-
-    if on_ubuntu():
-        # Install NumPy and SciPy from "PyPy-PyPI".
-        session.install(
-            '--use-wheel',
-            '--extra-index',
-            'https://antocuni.github.io/pypy-wheels/ubuntu',
-            NUMPY,
             SCIPY,
         )
-        numpy_installed = True
-
-    if numpy_installed:
-        # Remove NumPy from dependencies.
-        local_deps = list(local_deps)
-        local_deps.remove(NUMPY)
-        local_deps = tuple(local_deps)
 
     return local_deps
 

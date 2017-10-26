@@ -197,28 +197,37 @@ and then marked with ``pytest.mark.skipif``.
 Slow Install
 ============
 
-Installing NumPy with `PyPy`_ can take upwards of two minutes,
-which makes it prohibitive to create a new environment for
-testing.
+Installing NumPy with `PyPy`_ can take upwards of two minutes and
+installing SciPy can take as much as seven minutes. This makes it
+prohibitive to create a new environment for testing.
 
 .. _PyPy: https://pypy.org/
 
 In order to avoid this penalty, the ``WHEELHOUSE`` environment
-variable can be used to instruct ``nox`` to install NumPy from
-locally built wheels when installing the ``pypy`` sessions.
+variable can be used to instruct ``nox`` to install NumPy and SciPy
+from locally built wheels when installing the ``pypy`` sessions.
 
-To pre-build a NumPy wheel:
+To pre-build NumPy and SciPy wheels:
 
 .. code-block:: console
 
-   $ pypy -m pip wheel --wheel-dir=${{WHEELHOUSE}} numpy
+   $ pypy -m virtualenv pypy-venv
+   $ pypy-venv/bin/pip wheel --wheel-dir=${WHEELHOUSE} numpy
+   $ pypy-venv/bin/pip install ${WHEELHOUSE}/numpy*.whl
+   $ pypy-venv/bin/pip wheel --wheel-dir=${WHEELHOUSE} scipy
+   $ rm -fr pypy-venv/
+
+Alternatively, wheels can be downloaded from `pypy-wheels`_, however
+the SciPy wheel will still require ``libatlas-dev``, ``libblas-dev`` and
+``liblapack-dev``.
 
 The `Docker`_ image for the CircleCI test environment has already
-pre-built this wheel and stored it in the ``/wheelhouse`` directory.
+pre-built these wheels and stored them in the ``/wheelhouse`` directory.
 So, in the `CircleCI environment`_, the ``WHEELHOUSE`` environment
 variable is set to ``/wheelhouse``.
 
 .. _Docker: https://www.docker.com/
+.. _pypy-wheels: https://antocuni.github.io/pypy-wheels/
 
 ****************
 Functional Tests

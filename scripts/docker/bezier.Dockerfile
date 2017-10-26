@@ -29,6 +29,6 @@ RUN virtualenv --python=pypy pypy-env \
   && pypy-env/bin/pip install --upgrade pip wheel \
   && mkdir /wheelhouse \
   && pypy-env/bin/pip wheel --wheel-dir=/wheelhouse numpy==1.13.3 \
-  && pypy-env/bin/pip install /wheelhouse/*.whl \
+  && pypy-env/bin/pip install /wheelhouse/numpy*.whl \
   && pypy-env/bin/pip wheel --wheel-dir=/wheelhouse scipy==1.0.0 \
   && rm -fr pypy-env
