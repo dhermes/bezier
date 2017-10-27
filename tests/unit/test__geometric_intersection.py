@@ -1199,6 +1199,39 @@ class Test_intersect_one_round(utils.NumPyTestCase):
             self, intersection, expected, curve1, curve2, 1.0, 0.0)
 
 
+class Test_patch_intersections(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(
+            candidates_left, candidates_right, intersections):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection.patch_intersections(
+            candidates_left, candidates_right, intersections)
+
+    def test_all_matching(self):
+        from bezier import _intersection_helpers
+
+        curve1 = unittest.mock.sentinel.curve1
+        curve2 = unittest.mock.sentinel.curve2
+        curve3 = unittest.mock.sentinel.curve3
+        curve4 = unittest.mock.sentinel.curve4
+        candidates_left = [curve1, curve2]
+        candidates_right = [curve3, curve4]
+        intersections = [
+            _intersection_helpers.Intersection(curve1, 0.0, curve4, 0.5),
+            _intersection_helpers.Intersection(curve2, 0.5, curve3, 1.0),
+        ]
+
+        return_value = self._call_function_under_test(
+            candidates_left, candidates_right, intersections)
+        self.assertIsNone(return_value)
+        self.assertEqual(intersections[0].index_first, 0)
+        self.assertEqual(intersections[0].index_second, 1)
+        self.assertEqual(intersections[1].index_first, 1)
+        self.assertEqual(intersections[1].index_second, 0)
+
+
 class Test_all_intersections(utils.NumPyTestCase):
 
     @staticmethod
@@ -1246,7 +1279,8 @@ class Test_all_intersections(utils.NumPyTestCase):
             s_val += SPACING(s_val)
         t_val = 2.0 / 3.0
         utils.check_intersection(
-            self, intersection, expected, curve1, curve2, s_val, t_val)
+            self, intersection, expected, curve1, curve2, s_val, t_val,
+            index_first=0, index_second=0)
 
     def test_parallel_failure(self):
         import bezier
@@ -1352,12 +1386,14 @@ class Test_all_intersections(utils.NumPyTestCase):
         intersection0 = intersections[0]
         expected = np.asfortranarray([[0.25, 0.375]])
         utils.check_intersection(
-            self, intersection0, expected, curve1, curve2, 0.25, 0.25)
+            self, intersection0, expected, curve1, curve2, 0.25, 0.25,
+            index_first=0, index_second=0)
         # Second intersection.
         intersection1 = intersections[1]
         expected = np.asfortranarray([[0.75, 0.375]])
         utils.check_intersection(
-            self, intersection1, expected, curve1, curve2, 0.75, 0.75)
+            self, intersection1, expected, curve1, curve2, 0.75, 0.75,
+            index_first=0, index_second=0)
 
 
 class TestBoxIntersectionType(unittest.TestCase):

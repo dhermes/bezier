@@ -412,6 +412,10 @@ class TestCurve(utils.NumPyTestCase):
         ])
         curve = self._make_one(nodes, 2)
         left, right = curve.subdivide()
+        # Patch the ``root``-s because intersection assumes (correctly or
+        # incorrectly) that ``root is self``.
+        left._root = left
+        right._root = right
 
         result = left.intersect(right)
         expected = np.asfortranarray([[0.5, -0.125]])
