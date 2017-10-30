@@ -46,7 +46,7 @@ if seaborn is not None:
     seaborn.set()  # Required in `seaborn >= 0.8`
 _DOCS_DIR = os.path.abspath(os.path.dirname(__file__))
 IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
-NO_IMAGES = 'NO_IMAGES' in os.environ
+NO_IMAGES = 'GENERATE_IMAGES' not in os.environ
 
 
 def save_image(figure, filename):

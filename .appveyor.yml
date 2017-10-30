@@ -126,7 +126,6 @@ install:
   - ps: if ($env:TEST_TYPE -eq "doctest")
         {
           python -m pip install Sphinx sphinx-rtd-theme sphinx-docstring-typing mock;
-          $env:NO_IMAGES = "True";
         }
 
 test_script:

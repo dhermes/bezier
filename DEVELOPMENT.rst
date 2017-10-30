@@ -389,7 +389,7 @@ To run the documentation tests:
 
    $ nox -s doctest
    $ # OR (from a Python 3.5 or later environment)
-   $ PYTHONPATH=src/ NO_IMAGES=True sphinx-build -W \
+   $ PYTHONPATH=src/ sphinx-build -W \
    >   -b doctest \
    >   -d docs/build/doctrees \
    >   docs \
@@ -412,7 +412,7 @@ To regenerate all the images:
 
    $ nox -s docs_images
    $ # OR (from a Python 3.5 or later environment)
-   $ export MATPLOTLIBRC=docs/ PYTHONPATH=src/
+   $ export MATPLOTLIBRC=docs/ GENERATE_IMAGES=True PYTHONPATH=src/
    $ sphinx-build -W \
    >   -b doctest \
    >   -d docs/build/doctrees \

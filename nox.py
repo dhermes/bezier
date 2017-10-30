@@ -212,7 +212,7 @@ def doctest(session):
 
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
-    session.run(*run_args, env={'NO_IMAGES': 'True'})
+    session.run(*run_args)
 
 
 @nox.session
@@ -226,7 +226,7 @@ def docs_images(session):
     session.install('.')
 
     # Use custom RC-file for matplotlib.
-    env = {'MATPLOTLIBRC': 'docs'}
+    env = {'MATPLOTLIBRC': 'docs', 'GENERATE_IMAGES': 'True'}
 
     # Run the script for generating images for docs.
     run_args = get_doctest_args(session)
