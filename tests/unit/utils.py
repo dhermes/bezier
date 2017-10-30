@@ -161,6 +161,7 @@ def needs_curve_intersection_speedup(test_class):
 # pylint: enable=invalid-name
 
 
+# pylint: disable=too-many-arguments
 def check_intersection(test_case, intersection, expected,
                        curve1, curve2, s_val, t_val,
                        index_first=-1, index_second=-1):
@@ -175,6 +176,7 @@ def check_intersection(test_case, intersection, expected,
     test_case.assertIs(intersection.second, curve2)
     test_case.assertEqual(intersection.index_second, index_second)
     test_case.assertEqual(intersection.t, t_val)
+# pylint: enable=too-many-arguments
 
 
 class NumPyTestCase(unittest.TestCase):
