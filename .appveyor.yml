@@ -8,7 +8,7 @@ matrix:
 # We always use a 64-bit machine, but can build x86 distributions
 # with the PYTHON_ARCH variable.
 platform:
-    - x64
+  - x64
 
 environment:
 
