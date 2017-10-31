@@ -266,6 +266,59 @@ $ lipo \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
+>   -fno-second-underscore \
+>   -arch \
+>   i386 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -march=native \
+>   -c \
+>   -c \
+>   src/bezier/surface_intersection.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/surface_intersection.o \
+>   -J \
+>   build/temp.macosx-10.6-intel-3.6
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
+>   -fno-second-underscore \
+>   -arch \
+>   x86_64 \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -march=native \
+>   -c \
+>   -c \
+>   src/bezier/surface_intersection.f90 \
+>   -o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/surface_intersection.o \
+>   -J \
+>   build/temp.macosx-10.6-intel-3.6
+----------------------------------------
+$ lipo \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386/surface_intersection.o \
+>   ${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64/surface_intersection.o \
+>   -create \
+>   -output \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/surface_intersection.o
+----------------------------------------
+$ /usr/local/bin/gfortran \
+>   -Wall \
 >   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
@@ -491,7 +544,8 @@ $ ar \
 >   build/temp.macosx-10.6-intel-3.6/src/bezier/helpers.o \
 >   build/temp.macosx-10.6-intel-3.6/src/bezier/curve.o \
 >   build/temp.macosx-10.6-intel-3.6/src/bezier/surface.o \
->   build/temp.macosx-10.6-intel-3.6/src/bezier/curve_intersection.o
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/curve_intersection.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/surface_intersection.o
 ----------------------------------------
 $ ranlib \
 >   build/lib.macosx-10.6-intel-3.6/bezier/lib/libbezier.a
@@ -679,4 +733,53 @@ $ /usr/bin/clang \
 >   -lgfortran \
 >   -o \
 >   build/lib.macosx-10.6-intel-3.6/bezier/_curve_intersection_speedup.cpython-36m-darwin.so
+----------------------------------------
+$ /usr/bin/clang \
+>   -fno-strict-aliasing \
+>   -Wsign-compare \
+>   -fno-common \
+>   -dynamic \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   -I${TRAVIS_BUILD_DIR}/.nox/journal-travis-osx/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/Library/Frameworks/Python.framework/Versions/3.6/include/python3.6m \
+>   -c \
+>   src/bezier/_surface_intersection_speedup.c \
+>   -o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_surface_intersection_speedup.o
+----------------------------------------
+$ /usr/bin/clang \
+>   -bundle \
+>   -undefined \
+>   dynamic_lookup \
+>   -arch \
+>   i386 \
+>   -arch \
+>   x86_64 \
+>   -g \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/_surface_intersection_speedup.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/types.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/helpers.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/quadpack/d1mach.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/quadpack/dqelg.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/quadpack/dqpsrt.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/quadpack/dqk21.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/quadpack/dqagse.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/curve.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/surface.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/surface_intersection.o \
+>   -L${TRAVIS_BUILD_DIR}/scripts/osx/frankenstein \
+>   -lgfortran \
+>   -o \
+>   build/lib.macosx-10.6-intel-3.6/bezier/_surface_intersection_speedup.cpython-36m-darwin.so
 ----------------------------------------
