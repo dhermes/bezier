@@ -909,8 +909,9 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    type(CurveData), target :: curve1, curve8
-    type(CurveData) :: curve2, curve3, curve4, curve5, curve6, curve7, curve9
+    type(CurveData) :: &
+         curve1, curve2, curve3, curve4, curve5, curve6, &
+         curve7, curve8, curve9
     character(:), allocatable :: name
 
     case_id = 1
@@ -922,7 +923,7 @@ contains
     allocate(curve1%nodes(2, 2))
     curve1%nodes(1, :) = [0.5_dp, 2.5_dp]
     curve1%nodes(2, :) = [7.0_dp, -2.0_dp]
-    curve1%root => curve1
+    curve1%root_index = 6
 
     ! CASE 1: Compare curve1 to itself.
     case_success = curves_equal(curve1, curve1)
@@ -931,7 +932,7 @@ contains
     ! CASE 2: Compare curve1 to uninitialized nodes.
     curve2%start = curve1%start
     curve2%end_ = curve1%end_
-    curve2%root => curve1%root
+    curve2%root_index = curve1%root_index
     case_success = ( &
          .NOT. allocated(curve2%nodes) .AND. &
          .NOT. curves_equal(curve1, curve2) .AND. &
@@ -942,7 +943,7 @@ contains
     curve3%start = curve1%start
     curve3%end_ = curve1%end_
     curve3%nodes = curve1%nodes
-    curve3%root => curve1%root
+    curve3%root_index = curve1%root_index
     case_success = ( &
          curves_equal(curve1, curve3) .AND. curves_equal(curve3, curve1))
     call print_status(name, case_id, case_success, success)
@@ -951,7 +952,7 @@ contains
     curve4%start = curve1%start - 0.25_dp
     curve4%end_ = curve1%end_
     curve4%nodes = curve1%nodes
-    curve4%root => curve1%root
+    curve4%root_index = curve1%root_index
     case_success = ( &
          .NOT. curves_equal(curve1, curve4) .AND. &
          .NOT. curves_equal(curve4, curve1))
@@ -961,7 +962,7 @@ contains
     curve5%start = curve1%start
     curve5%end_ = curve1%end_ + 0.25_dp
     curve5%nodes = curve1%nodes
-    curve5%root => curve1%root
+    curve5%root_index = curve1%root_index
     case_success = ( &
          .NOT. curves_equal(curve1, curve5) .AND. &
          .NOT. curves_equal(curve5, curve1))
@@ -970,7 +971,7 @@ contains
     ! CASE 6: Compare curve1 to a curve that differs in node shape
     curve6%start = curve1%start
     curve6%end_ = curve1%end_
-    curve6%root => curve1%root
+    curve6%root_index = curve1%root_index
     allocate(curve6%nodes(1, 2))
     curve6%nodes(1, :) = curve1%nodes(1, :)
     case_success = ( &
@@ -983,23 +984,24 @@ contains
     curve7%start = curve1%start
     curve7%end_ = curve1%end_
     curve7%nodes = curve1%nodes + 2.5_dp
-    curve7%root => curve1%root
+    curve7%root_index = curve1%root_index
     case_success = ( &
          .NOT. curves_equal(curve1, curve7) .AND. &
          .NOT. curves_equal(curve7, curve1))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 8: Compare curve1 to a curve that differs only in ``root``.
+    ! CASE 8: Compare curve1 to a curve that differs only in ``root_index``.
     curve8%start = curve1%start
     curve8%end_ = curve1%end_
     curve8%nodes = curve1%nodes
-    curve8%root => curve8
+    curve8%root_index = 121
     case_success = ( &
          .NOT. curves_equal(curve1, curve8) .AND. &
          .NOT. curves_equal(curve8, curve1))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 9: Compare curve1 to a curve that differs has a null root.
+    ! CASE 9: Compare curve1 to a curve that differs has a
+    !         default root index.
     curve9%start = curve1%start
     curve9%end_ = curve1%end_
     curve9%nodes = curve1%nodes
@@ -1021,15 +1023,14 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    type(CurveData), target :: curve_data, left1
-    type(CurveData) :: left2, right
+    type(CurveData) :: curve_data, left1, left2, right
     real(c_double) :: left_nodes(4, 2), right_nodes(4, 2)
     character(:), allocatable :: name
 
     case_id = 1
     name = "subdivide_curve"
 
-    ! CASE 1: Curve has no root.
+    ! CASE 1: Curve has no ``root_index``.
     allocate(curve_data%nodes(4, 2))
     curve_data%nodes(1, :) = [0.0_dp, 1.0_dp]
     curve_data%nodes(2, :) = [1.0_dp, 2.0_dp]
@@ -1050,12 +1051,10 @@ contains
          left1%start == 0.0_dp .AND. &
          left1%end_ == 0.5_dp .AND. &
          all(left1%nodes == left_nodes) .AND. &
-         associated(left1%root, curve_data) .AND. &
          left1%root_index == -1 .AND. &
          right%start == 0.5_dp .AND. &
          right%end_ == 1.0_dp .AND. &
          all(right%nodes == right_nodes) .AND. &
-         associated(right%root, curve_data) .AND. &
          right%root_index == -1)
     call print_status(name, case_id, case_success, success)
 
@@ -1075,13 +1074,11 @@ contains
          left2%start == 0.0_dp .AND. &
          left2%end_ == 0.25_dp .AND. &
          all(left2%nodes == left_nodes) .AND. &
-         associated(left2%root, curve_data) .AND. &
-         left2%root_index == 7 .AND. &
+         left2%root_index == left1%root_index .AND. &
          right%start == 0.25_dp .AND. &
          right%end_ == 0.5_dp .AND. &
          all(right%nodes == right_nodes) .AND. &
-         associated(right%root, curve_data) .AND. &
-         right%root_index == 7)
+         right%root_index == left1%root_index)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_subdivide_curve

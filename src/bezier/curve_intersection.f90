@@ -18,8 +18,7 @@ module curve_intersection
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
        vector_close, in_interval, ulps_away
   use curve, only: &
-       CurveData, evaluate_multi, evaluate_hodograph, curve_root, &
-       subdivide_curve
+       CurveData, evaluate_multi, evaluate_hodograph, subdivide_curve
   implicit none
   private &
        MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, CANDIDATES_ODD, &
@@ -42,8 +41,6 @@ module curve_intersection
   type :: Intersection
      real(c_double) :: s = -1.0_dp
      real(c_double) :: t = -1.0_dp
-     type(CurveData), pointer :: first => null()
-     type(CurveData), pointer :: second => null()
      integer(c_int) :: index_first = -1
      integer(c_int) :: index_second = -1
   end type Intersection
@@ -465,13 +462,13 @@ contains
   end subroutine bbox_line_intersect
 
   subroutine add_intersection( &
-       first, s, second, t, num_intersections, intersections)
+       index_first, s, index_second, t, num_intersections, intersections)
 
     ! Adds an intersection to list of ``intersections``.
 
-    type(CurveData), target, intent(in) :: first
+    integer(c_int), intent(in) :: index_first
     real(c_double), intent(in) :: s
-    type(CurveData), target, intent(in) :: second
+    integer(c_int), intent(in) :: index_second
     real(c_double), intent(in) :: t
     integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
@@ -483,11 +480,9 @@ contains
     ! determined by ``ulps_away``).
     do index_ = 1, num_intersections
        if ( &
-            associated(intersections(index_)%first, first) .AND. &
-            associated(intersections(index_)%second, second) .AND. &
-            intersections(index_)%index_first == first%root_index .AND. &
-            intersections(index_)%index_second == second%root_index .AND. &
+            intersections(index_)%index_first == index_first .AND. &
             ulps_away(intersections(index_)%s, s, 1, VECTOR_CLOSE_EPS) .AND. &
+            intersections(index_)%index_second == index_second .AND. &
             ulps_away(intersections(index_)%t, t, 1, VECTOR_CLOSE_EPS)) then
           return
        end if
@@ -509,37 +504,36 @@ contains
 
     intersections(num_intersections)%s = s
     intersections(num_intersections)%t = t
-    intersections(num_intersections)%first => first
-    intersections(num_intersections)%second => second
-    intersections(num_intersections)%index_first = first%root_index
-    intersections(num_intersections)%index_second = second%root_index
+    intersections(num_intersections)%index_first = index_first
+    intersections(num_intersections)%index_second = index_second
 
   end subroutine add_intersection
 
   subroutine add_from_linearized( &
-       first, second, num_intersections, intersections, py_exc)
+       first, root_nodes1, second, root_nodes2, &
+       num_intersections, intersections, py_exc)
 
     ! Adds an intersection from two linearizations.
     !
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
-    type(CurveData), target, intent(in) :: first, second
+    type(CurveData), intent(in) :: first
+    real(c_double), intent(in) :: root_nodes1(:, :)
+    type(CurveData), intent(in) :: second
+    real(c_double), intent(in) :: root_nodes2(:, :)
     integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     integer(c_int), intent(out) :: py_exc
     ! Variables outside of signature.
-    type(CurveData), pointer :: root1, root2
     real(c_double) :: linearization_error1, linearization_error2
     integer(c_int) :: num_nodes1, num_nodes2
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
 
-    root1 => curve_root(first)
-    root2 => curve_root(second)
     num_nodes1 = size(first%nodes, 1)
     num_nodes2 = size(second%nodes, 1)
 
-    ! NOTE: This assumes, but does not check, that `dimension_ == 2`.
+    ! NOTE: This assumes, but does not check, that ``dimension_ == 2``.
     call linearization_error( &
          num_nodes1, 2, first%nodes, linearization_error1)
     call linearization_error( &
@@ -550,10 +544,10 @@ contains
     call from_linearized( &
          linearization_error1, first%start, first%end_, &
          first%nodes(1, :), first%nodes(num_nodes1, :), &
-         num_nodes1, root1%nodes, &
+         num_nodes1, root_nodes1, &
          linearization_error2, second%start, second%end_, &
          second%nodes(1, :), second%nodes(num_nodes2, :), &
-         num_nodes2, root2%nodes, &
+         num_nodes2, root_nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
 
     if (py_exc /= FROM_LINEARIZED_SUCCESS) then
@@ -565,7 +559,8 @@ contains
     end if
 
     call add_intersection( &
-         root1, refined_s, root2, refined_t, num_intersections, intersections)
+         first%root_index, refined_s, second%root_index, refined_t, &
+         num_intersections, intersections)
 
   end subroutine add_from_linearized
 
@@ -575,28 +570,26 @@ contains
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
-    type(CurveData), target, intent(in) :: first
+    type(CurveData), intent(in) :: first
     real(c_double), intent(in) :: node_first(1, 2)
     real(c_double), intent(in) :: s
-    type(CurveData), target, intent(in) :: second
+    type(CurveData), intent(in) :: second
     real(c_double), intent(in) :: node_second(1, 2)
     real(c_double), intent(in) :: t
     integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     ! Variables outside of signature.
-    type(CurveData), pointer :: root1, root2
     real(c_double) :: orig_s, orig_t
 
     if (.NOT. vector_close(2, node_first, node_second, VECTOR_CLOSE_EPS)) then
        return
     end if
 
-    root1 => curve_root(first)
-    root2 => curve_root(second)
     orig_s = (1 - s) * first%start + s * first%end_
     orig_t = (1 - t) * second%start + t * second%end_
     call add_intersection( &
-         root1, orig_s, root2, orig_t, num_intersections, intersections)
+         first%root_index, orig_s, second%root_index, orig_t, &
+         num_intersections, intersections)
 
   end subroutine endpoint_check
 
@@ -647,7 +640,7 @@ contains
 
     type(CurveData), allocatable, intent(inout) :: candidates(:, :)
     integer(c_int), intent(inout) :: num_candidates
-    type(CurveData), pointer, intent(in) :: first, second
+    type(CurveData), intent(in) :: first, second
     integer(c_int), intent(in) :: enum_
     ! Variables outside of signature.
     integer(c_int) :: curr_size
@@ -710,22 +703,25 @@ contains
   end subroutine add_candidates
 
   subroutine intersect_one_round( &
-       num_candidates, candidates, num_intersections, intersections, &
+       roots_left, roots_right, num_candidates, candidates, &
+       num_intersections, intersections, &
        next_candidates, num_next_candidates, py_exc)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This assumes, but does not check, that ``candidates`` has
     !       two rows and has at **least** ``num_candidates`` columns.
 
+    type(CurveData), intent(in) :: roots_left(:)
+    type(CurveData), intent(in) :: roots_right(:)
     integer(c_int), intent(in) :: num_candidates
-    type(CurveData), target, intent(in) :: candidates(:, :)
+    type(CurveData), intent(in) :: candidates(:, :)
     integer(c_int), intent(inout) :: num_intersections
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     type(CurveData), allocatable, intent(inout) :: next_candidates(:, :)
     integer(c_int), intent(out) :: num_next_candidates
     integer(c_int), intent(out) :: py_exc
     ! Variables outside of signature.
-    type(CurveData), pointer :: first, second
+    type(CurveData) :: first, second
     real(c_double) :: linearization_error1, linearization_error2
     integer(c_int) :: bbox_int, index_, num_nodes1, num_nodes2
     integer(c_int) :: subdivide_enum
@@ -733,14 +729,10 @@ contains
     num_next_candidates = 0
     py_exc = FROM_LINEARIZED_SUCCESS
     do index_ = 1, num_candidates
-       ! NOTE: It is a **strict necessity** to use pointers here, because
-       !       the intersections must be identified outside the scope of
-       !       this subroutine. This is likely an indication that a "curve
-       !       index" should be used within a standard array of original
-       !       curves rather than keeping around **brittle** references.
-       first => candidates(1, index_)
-       second => candidates(2, index_)
-
+       ! NOTE: We **hope** that the compiler avoids turning this alias (for
+       !       the sake of typing fewer characters) into a copy.
+       first = candidates(1, index_)
+       second = candidates(2, index_)
        ! Compute the linearization error for each curve.
        num_nodes1 = size(first%nodes, 1)
        num_nodes2 = size(second%nodes, 1)
@@ -751,11 +743,18 @@ contains
 
        if (linearization_error1 < LINEARIZATION_THRESHOLD) then
           if (linearization_error2 < LINEARIZATION_THRESHOLD) then
-             subdivide_enum = Subdivide_NEITHER
              ! If both ``first`` and ``second`` are linearizations, then
              ! we can (attempt to) intersect them immediately.
+             subdivide_enum = Subdivide_NEITHER
+             ! NOTE: This makes **two** assumptions, both of which are
+             !       important (i.e. a SEGFAULT may occur if not met). The
+             !       first is that ``first%root_index`` is a valid index
+             !       and the second is that ``%nodes`` is allocated for each
+             !       value.
              call add_from_linearized( &
-                  first, second, num_intersections, intersections, py_exc)
+                  first, roots_left(first%root_index)%nodes, &
+                  second, roots_right(second%root_index)%nodes, &
+                  num_intersections, intersections, py_exc)
 
              ! If there was a failure, exit this subroutine.
              if (py_exc /= FROM_LINEARIZED_SUCCESS) then
@@ -810,10 +809,10 @@ contains
     ! NOTE: This assumes, but does not check that ``candidates``
     !       is not allocated.
 
-    type(CurveData), target, intent(in) :: candidates_left(:)
-    type(CurveData), target, intent(in) :: candidates_right(:)
+    type(CurveData), intent(in) :: candidates_left(:)
+    type(CurveData), intent(in) :: candidates_right(:)
     integer(c_int), intent(out) :: num_candidates
-    type(CurveData), allocatable, intent(out) :: candidates(:, :)
+    type(CurveData), allocatable, intent(inout) :: candidates(:, :)
     ! Variables outside of signature.
     integer(c_int) :: num_candidates_left, num_candidates_right
     integer(c_int) :: i, j, index_
@@ -821,16 +820,23 @@ contains
     num_candidates_left = size(candidates_left)
     num_candidates_right = size(candidates_right)
     num_candidates = num_candidates_left * num_candidates_right
-    allocate(candidates(2, num_candidates))
+    if (allocated(candidates)) then
+       if (size(candidates, 2) < num_candidates) then
+          ! NOTE: We want to totally over-write, so just de-allocate
+          !       and re-allocate.
+          deallocate(candidates)
+          allocate(candidates(2, num_candidates))
+       end if
+    else
+       allocate(candidates(2, num_candidates))
+    end if
 
     index_ = 1
     do i = 1, num_candidates_left
        do j = 1, num_candidates_right
           candidates(1, index_) = candidates_left(i)
-          candidates(1, index_)%root => candidates_left(i)
           candidates(1, index_)%root_index = i
           candidates(2, index_) = candidates_right(j)
-          candidates(2, index_)%root => candidates_right(j)
           candidates(2, index_)%root_index = j
           ! Update the cumulative index.
           index_ = index_ + 1
@@ -851,31 +857,24 @@ contains
     type(Intersection), allocatable, intent(out) :: intersections(:)
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
-    type(CurveData), allocatable :: candidates(:, :)
     integer(c_int) :: num_candidates, num_next_candidates, index_, py_exc
     logical(c_bool) :: is_even
 
     num_intersections = 0
+    ! First iteration is odd (i.e. ``index_ == 1``).
     call make_candidates( &
-       candidates_left, candidates_right, num_candidates, candidates)
+       candidates_left, candidates_right, num_candidates, CANDIDATES_ODD)
     status = ALL_INTERSECTIONS_SUCCESS  ! Default.
 
     is_even = .TRUE.  ! At zero.
     do index_ = 1, MAX_INTERSECT_SUBDIVISIONS
        is_even = .NOT. is_even  ! Switch parity.
 
-       if (index_ == 1) then
-          ! For the **first** iteration, we need the ``root``-s to point
-          ! to our passed in ``candidates``. We still WRITE to
-          ! ``CANDIDATES_EVEN``.
-          call intersect_one_round( &
-               num_candidates, candidates, &
-               num_intersections, intersections, &
-               CANDIDATES_EVEN, num_next_candidates, py_exc)
-       else if (is_even) then
+       if (is_even) then
           ! Since ``index_`` is even, we READ from ``CANDIDATES_EVEN``
           ! and WRITE to ``CANDIDATES_ODD``.
           call intersect_one_round( &
+               candidates_left, candidates_right, &
                num_candidates, CANDIDATES_EVEN, &
                num_intersections, intersections, &
                CANDIDATES_ODD, num_next_candidates, py_exc)
@@ -883,6 +882,7 @@ contains
           ! Since ``index_`` is odd, we READ from ``CANDIDATES_ODD``
           ! and WRITE to ``CANDIDATES_EVEN``.
           call intersect_one_round( &
+               candidates_left, candidates_right, &
                num_candidates, CANDIDATES_ODD, &
                num_intersections, intersections, &
                CANDIDATES_EVEN, num_next_candidates, py_exc)
