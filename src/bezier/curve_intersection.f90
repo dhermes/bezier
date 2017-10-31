@@ -23,7 +23,7 @@ module curve_intersection
   implicit none
   private &
        MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, CANDIDATES_ODD, &
-       CANDIDATES_EVEN
+       CANDIDATES_EVEN, make_candidates
   public &
        Intersection, BoxIntersectionType_INTERSECTION, &
        BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
@@ -797,21 +797,59 @@ contains
 
   end subroutine intersect_one_round
 
+  subroutine make_candidates( &
+       candidates_left, candidates_right, num_candidates, candidates)
+
+    ! NOTE: This is a (private) helper for ``all_intersections``.
+    ! NOTE: This assumes, but does not check that ``candidates``
+    !       is not allocated.
+
+    type(CurveData), target, intent(in) :: candidates_left(:)
+    type(CurveData), target, intent(in) :: candidates_right(:)
+    integer(c_int), intent(out) :: num_candidates
+    type(CurveData), allocatable, intent(out) :: candidates(:, :)
+    ! Variables outside of signature.
+    integer(c_int) :: num_candidates_left, num_candidates_right
+    integer(c_int) :: i, j, index_
+
+    num_candidates_left = size(candidates_left)
+    num_candidates_right = size(candidates_right)
+    num_candidates = num_candidates_left * num_candidates_right
+    allocate(candidates(2, num_candidates))
+
+    index_ = 1
+    do i = 1, num_candidates_left
+       do j = 1, num_candidates_right
+          candidates(1, index_) = candidates_left(i)
+          candidates(1, index_)%root => candidates_left(i)
+          candidates(2, index_) = candidates_right(j)
+          candidates(2, index_)%root => candidates_right(j)
+          ! Update the cumulative index.
+          index_ = index_ + 1
+       end do
+    end do
+
+  end subroutine make_candidates
+
   subroutine all_intersections( &
-       candidates, num_intersections, intersections, status)
+       candidates_left, candidates_right, &
+       num_intersections, intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
-    type(CurveData), intent(in) :: candidates(:, :)
+    type(CurveData), intent(in) :: candidates_left(:)
+    type(CurveData), intent(in) :: candidates_right(:)
     integer(c_int), intent(out) :: num_intersections
     type(Intersection), allocatable, intent(out) :: intersections(:)
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
+    type(CurveData), allocatable :: candidates(:, :)
     integer(c_int) :: num_candidates, num_next_candidates, index_, py_exc
     logical(c_bool) :: is_even
 
     num_intersections = 0
-    num_candidates = size(candidates, 2)
+    call make_candidates( &
+       candidates_left, candidates_right, num_candidates, candidates)
     status = ALL_INTERSECTIONS_SUCCESS  ! Default.
 
     is_even = .TRUE.  ! At zero.
