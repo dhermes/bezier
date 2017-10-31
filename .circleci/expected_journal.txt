@@ -106,6 +106,27 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -march=native \
+>   -c \
+>   -c \
+>   src/bezier/surface_intersection.f90 \
+>   -o \
+>   build/temp.linux-x86_64-3.6/src/bezier/surface_intersection.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
 >   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
@@ -196,7 +217,8 @@ $ ar \
 >   build/temp.linux-x86_64-3.6/src/bezier/helpers.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/curve.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/surface.o \
->   build/temp.linux-x86_64-3.6/src/bezier/curve_intersection.o
+>   build/temp.linux-x86_64-3.6/src/bezier/curve_intersection.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/surface_intersection.o
 ----------------------------------------
 $ gcc \
 >   -pthread \
@@ -341,4 +363,43 @@ $ gcc \
 >   -lpython3.6m \
 >   -o \
 >   build/lib.linux-x86_64-3.6/bezier/_curve_intersection_speedup.cpython-36m-x86_64-linux-gnu.so
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -Wno-unused-result \
+>   -Wsign-compare \
+>   -DNDEBUG \
+>   -g \
+>   -fwrapv \
+>   -O3 \
+>   -Wall \
+>   -Wstrict-prototypes \
+>   -fPIC \
+>   -I/var/code/bezier/.nox/journal-circleci/lib/python3.6/site-packages/numpy/core/include \
+>   -Isrc/bezier/include \
+>   -I/usr/local/include/python3.6m \
+>   -c \
+>   src/bezier/_surface_intersection_speedup.c \
+>   -o \
+>   build/temp.linux-x86_64-3.6/src/bezier/_surface_intersection_speedup.o
+----------------------------------------
+$ gcc \
+>   -pthread \
+>   -shared \
+>   build/temp.linux-x86_64-3.6/src/bezier/_surface_intersection_speedup.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/types.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/helpers.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/d1mach.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqelg.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqpsrt.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqk21.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqagse.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/curve.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/surface.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/surface_intersection.o \
+>   -L/usr/local/lib \
+>   -lgfortran \
+>   -lpython3.6m \
+>   -o \
+>   build/lib.linux-x86_64-3.6/bezier/_surface_intersection_speedup.cpython-36m-x86_64-linux-gnu.so
 ----------------------------------------
