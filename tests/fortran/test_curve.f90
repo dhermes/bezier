@@ -1051,13 +1051,16 @@ contains
          left1%end_ == 0.5_dp .AND. &
          all(left1%nodes == left_nodes) .AND. &
          associated(left1%root, curve_data) .AND. &
+         left1%root_index == -1 .AND. &
          right%start == 0.5_dp .AND. &
          right%end_ == 1.0_dp .AND. &
          all(right%nodes == right_nodes) .AND. &
-         associated(right%root, curve_data))
+         associated(right%root, curve_data) .AND. &
+         right%root_index == -1)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Curve has **already** been subdivided.
+    left1%root_index = 7
     left_nodes(1, :) = [0.0_dp, 1.0_dp]
     left_nodes(2, :) = [0.25_dp, 1.25_dp]
     left_nodes(3, :) = [0.4375_dp, 1.4375_dp]
@@ -1073,13 +1076,14 @@ contains
          left2%end_ == 0.25_dp .AND. &
          all(left2%nodes == left_nodes) .AND. &
          associated(left2%root, curve_data) .AND. &
+         left2%root_index == 7 .AND. &
          right%start == 0.25_dp .AND. &
          right%end_ == 0.5_dp .AND. &
          all(right%nodes == right_nodes) .AND. &
-         associated(right%root, curve_data))
+         associated(right%root, curve_data) .AND. &
+         right%root_index == 7)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_subdivide_curve
-
 
 end module test_curve

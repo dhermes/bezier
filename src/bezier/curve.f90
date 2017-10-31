@@ -40,6 +40,7 @@ module curve
      ! NOTE: We assume that users of ``CurveData`` will set ``root`` to point
      !       to the current value if there is no ``root``.
      type(CurveData), pointer :: root => null()
+     integer(c_int) :: root_index = -1
   end type CurveData
 
   ! For ``locate_point``.
@@ -883,11 +884,13 @@ contains
     left%end_ = 0.5_dp * (curve_data%start + curve_data%end_)
     allocate(left%nodes(num_nodes, dimension_))
     left%root => curve_root(curve_data)
+    left%root_index = curve_data%root_index
 
     right%start = left%end_
     right%end_ = curve_data%end_
     allocate(right%nodes(num_nodes, dimension_))
     right%root => left%root
+    right%root_index = curve_data%root_index
 
     call subdivide_nodes( &
          num_nodes, dimension_, curve_data%nodes, left%nodes, right%nodes)

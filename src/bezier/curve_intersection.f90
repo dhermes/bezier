@@ -44,6 +44,8 @@ module curve_intersection
      real(c_double) :: t = -1.0_dp
      type(CurveData), pointer :: first => null()
      type(CurveData), pointer :: second => null()
+     integer(c_int) :: index_first = -1
+     integer(c_int) :: index_second = -1
   end type Intersection
 
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
@@ -483,6 +485,8 @@ contains
        if ( &
             associated(intersections(index_)%first, first) .AND. &
             associated(intersections(index_)%second, second) .AND. &
+            intersections(index_)%index_first == first%root_index .AND. &
+            intersections(index_)%index_second == second%root_index .AND. &
             ulps_away(intersections(index_)%s, s, 1, VECTOR_CLOSE_EPS) .AND. &
             ulps_away(intersections(index_)%t, t, 1, VECTOR_CLOSE_EPS)) then
           return
@@ -507,6 +511,8 @@ contains
     intersections(num_intersections)%t = t
     intersections(num_intersections)%first => first
     intersections(num_intersections)%second => second
+    intersections(num_intersections)%index_first = first%root_index
+    intersections(num_intersections)%index_second = second%root_index
 
   end subroutine add_intersection
 
@@ -822,8 +828,10 @@ contains
        do j = 1, num_candidates_right
           candidates(1, index_) = candidates_left(i)
           candidates(1, index_)%root => candidates_left(i)
+          candidates(1, index_)%root_index = i
           candidates(2, index_) = candidates_right(j)
           candidates(2, index_)%root => candidates_right(j)
+          candidates(2, index_)%root_index = j
           ! Update the cumulative index.
           index_ = index_ + 1
        end do
