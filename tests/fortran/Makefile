@@ -29,13 +29,15 @@ F90_SOURCES := \
 	$(SRC_DIR)/helpers$(F90) \
 	$(SRC_DIR)/curve$(F90) \
 	$(SRC_DIR)/surface$(F90) \
-	$(SRC_DIR)/curve_intersection$(F90)
+	$(SRC_DIR)/curve_intersection$(F90) \
+	$(SRC_DIR)/surface_intersection$(F90)
 TEST_SOURCES := \
 	$(CURR_DIR)/unit_test_helpers$(F90) \
 	$(CURR_DIR)/test_helpers$(F90) \
 	$(CURR_DIR)/test_curve$(F90) \
 	$(CURR_DIR)/test_surface$(F90) \
-	$(CURR_DIR)/test_curve_intersection$(F90)
+	$(CURR_DIR)/test_curve_intersection$(F90) \
+	$(CURR_DIR)/test_surface_intersection$(F90)
 F77_OBJS := $(patsubst $(QUADPACK_DIR)/%$(F77), $(CURR_DIR)/%$(OBJ), $(F77_SOURCES))
 F90_OBJS := $(patsubst $(SRC_DIR)/%$(F90), $(CURR_DIR)/%$(OBJ), $(F90_SOURCES))
 TEST_OBJS := $(patsubst $(CURR_DIR)/%$(F90), $(CURR_DIR)/%$(OBJ), $(TEST_SOURCES))

@@ -581,6 +581,10 @@ def make_transform(degree, weights_a, weights_b, weights_c):
        saved from "caching" one round of de Casteljau is cancelled
        out by the extra storage required for the 3 matrices.
 
+    .. note::
+
+       This is a helper used only by :func:`specialize_surface`.
+
     Args:
         degree (int): The degree of a candidate surface.
         weights_a (Tuple[float, float, float]): Barycentric weights for a
@@ -783,6 +787,11 @@ def mean_centroid(candidates):
 def jacobian_s(nodes, degree, dimension):
     r"""Compute :math:`\frac{\partial B}{\partial s}`.
 
+    .. note::
+
+       This is a helper for :func:`_jacobian_both`, which has an
+       equivalent Fortran implementation.
+
     Args:
         nodes (numpy.ndarray): Array of nodes in a surface.
         degree (int): The degree of the surface.
@@ -812,6 +821,11 @@ def jacobian_s(nodes, degree, dimension):
 
 def jacobian_t(nodes, degree, dimension):
     r"""Compute :math:`\frac{\partial B}{\partial t}`.
+
+    .. note::
+
+       This is a helper for :func:`_jacobian_both`, which has an
+       equivalent Fortran implementation.
 
     Args:
         nodes (numpy.ndarray): Array of nodes in a surface.
@@ -1097,8 +1111,9 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
     Returns:
         Tuple[float, float]: The refined :math:`s` and :math:`t` values.
     """
+    lambda1 = 1.0 - s - t
     (surf_x, surf_y), = evaluate_barycentric(
-        nodes, degree, 1.0 - s - t, s, t)
+        nodes, degree, lambda1, s, t)
     if surf_x == x_val and surf_y == y_val:
         # No refinement is needed.
         return s, t
@@ -1106,7 +1121,6 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
     # NOTE: This function assumes ``dimension==2`` (i.e. since ``x, y``).
     jac_nodes = jacobian_both(nodes, degree, 2)
 
-    lambda1 = 1.0 - s - t
     # The degree of the jacobian is one less.
     jac_both = evaluate_barycentric(
         jac_nodes, degree - 1, lambda1, s, t)

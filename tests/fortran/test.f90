@@ -17,6 +17,7 @@ program test
   use test_curve, only: curve_all_tests
   use test_surface, only: surface_all_tests
   use test_curve_intersection, only: curve_intersection_all_tests
+  use test_surface_intersection, only: surface_intersection_all_tests
   implicit none
 
   logical(c_bool) :: success
@@ -26,6 +27,7 @@ program test
   call curve_all_tests(success)
   call surface_all_tests(success)
   call curve_intersection_all_tests(success)
+  call surface_intersection_all_tests(success)
   if (.NOT. success) then
      call exit(1)  ! LCOV_EXCL_LINE
   end if
