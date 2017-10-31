@@ -10,13 +10,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BEZIER_H
-#define BEZIER_H
+#ifndef BEZIER_SURFACE_INTERSECTION_H
+#define BEZIER_SURFACE_INTERSECTION_H
 
-#include "bezier/curve.h"
-#include "bezier/curve_intersection.h"
-#include "bezier/helpers.h"
-#include "bezier/surface.h"
-#include "bezier/surface_intersection.h"
+#if defined (__cplusplus)
+extern "C" {
+#endif
 
-#endif /* BEZIER_H */
+void newton_refine_surface(
+    int *num_nodes, double *nodes, int *degree,
+    double *x_val, double *y_val, double *s, double *t,
+    double *updated_s, double *updated_t);
+
+#if defined (__cplusplus)
+}
+#endif
+
+#endif /* BEZIER_SURFACE_INTERSECTION_H */

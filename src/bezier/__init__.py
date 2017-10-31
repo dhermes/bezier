@@ -52,6 +52,11 @@ try:
     _HAS_CURVE_INTERSECTION_SPEEDUP = True
 except ImportError:  # pragma: NO COVER
     _HAS_CURVE_INTERSECTION_SPEEDUP = False
+try:
+    import bezier._surface_intersection_speedup  # noqa: F401
+    _HAS_SURFACE_INTERSECTION_SPEEDUP = True
+except ImportError:  # pragma: NO COVER
+    _HAS_SURFACE_INTERSECTION_SPEEDUP = False
 
 
 # NOTE: The ``__version__`` and ``__author__`` are hard-coded here, rather

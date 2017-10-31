@@ -161,6 +161,19 @@ def needs_curve_intersection_speedup(test_class):
 # pylint: enable=invalid-name
 
 
+# pylint: disable=invalid-name
+def needs_surface_intersection_speedup(test_class):
+    if bezier is None:
+        has_speedup = False  # pragma: NO COVER
+    else:
+        has_speedup = bezier._HAS_SURFACE_INTERSECTION_SPEEDUP
+
+    decorator = unittest.skipUnless(
+        has_speedup, 'No surface intersection speedup available')
+    return decorator(test_class)
+# pylint: enable=invalid-name
+
+
 # pylint: disable=too-many-arguments
 def check_intersection(test_case, intersection, expected,
                        curve1, curve2, s_val, t_val,

@@ -134,6 +134,7 @@ The C headers for ``libbezier`` will be included in the installed package
        curve_intersection.h
        helpers.h
        surface.h
+       surface_intersection.h
      bezier.h
 
 .. testcleanup:: show-headers, show-lib, show-dll, show-pxd, os-x-dylibs
@@ -162,6 +163,7 @@ Cython declaration files are provided:
      _curve_intersection.pxd
      _helpers.pxd
      _surface.pxd
+     _surface_intersection.pxd
 
 For example, ``cimport bezier._curve`` will provide all the functions
 in ``bezier/curve.h``.

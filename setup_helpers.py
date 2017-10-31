@@ -130,6 +130,18 @@ FORTRAN_MODULES['curve_intersection'] = (
     'curve',
     'curve_intersection',
 )
+FORTRAN_MODULES['surface_intersection'] = (
+    'types',
+    'helpers',
+    os.path.join(QUADPACK_DIR, 'd1mach'),
+    os.path.join(QUADPACK_DIR, 'dqelg'),
+    os.path.join(QUADPACK_DIR, 'dqpsrt'),
+    os.path.join(QUADPACK_DIR, 'dqk21'),
+    os.path.join(QUADPACK_DIR, 'dqagse'),
+    'curve',
+    'surface',
+    'surface_intersection',
+)
 FORTRAN_SOURCE_FILENAME = os.path.join('src', 'bezier', '{}.f90')
 OBJECT_FILENAME = os.path.join('src', 'bezier', '{}.o')
 SPEEDUP_FILENAME = os.path.join('src', 'bezier', '_{}_speedup.c')

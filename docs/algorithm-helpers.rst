@@ -26,10 +26,10 @@ This is to help with the exposition of the computation and
 .. autofunction:: bezier._curve_helpers._newton_refine
 .. autoclass:: bezier._surface_helpers._IntersectionClassification
    :members:
-.. autofunction:: bezier._surface_helpers.newton_refine
 .. autofunction:: bezier._surface_helpers.classify_intersection
 .. autofunction:: bezier._surface_helpers._jacobian_det
 .. autofunction:: bezier._surface_helpers.two_by_two_det
+.. autofunction:: bezier._surface_intersection._newton_refine
 .. autofunction:: bezier._algebraic_intersection.bezier_roots
 .. autofunction:: bezier._algebraic_intersection.lu_companion
 .. autofunction:: bezier._algebraic_intersection.bezier_value_check

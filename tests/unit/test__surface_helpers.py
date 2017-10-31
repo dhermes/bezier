@@ -979,40 +979,6 @@ class Test_speedup_jacobian_det(Test__jacobian_det):
         return _surface_speedup.jacobian_det(nodes, degree, st_vals)
 
 
-class Test_newton_refine(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
-        from bezier import _surface_helpers
-
-        return _surface_helpers.newton_refine(
-            nodes, degree, x_val, y_val, s, t)
-
-    def test_it(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, -0.25],
-            [1.0, 0.0],
-            [0.0, 0.5],
-            [0.5, 0.5],
-            [-0.25, 0.875],
-        ])
-        # This surface is given by
-        #     [(4 s - t^2) / 4, (4 s^2 + 4 s t - t^2 - 4 s + 8 t) / 8]
-        s, t = 0.25, 0.5
-        # At our points, the Jacobian is
-        #     [1, -1/4]
-        #     [0,  1  ]
-        # hence there will be no round-off when applying the inverse.
-        # (x_val, y_val), = surface.evaluate_cartesian(0.5, 0.25)
-        x_val = 0.484375
-        y_val = 0.1796875
-        new_s, new_t = self._call_function_under_test(
-            nodes, 2, x_val, y_val, s, t)
-        self.assertEqual(new_s, 247.0 / 512.0)
-        self.assertEqual(new_t, 31.0 / 128.0)
-
-
 class Test_update_locate_candidates(unittest.TestCase):
 
     @staticmethod
