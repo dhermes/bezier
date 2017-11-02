@@ -535,6 +535,11 @@ contains
     real(c_double) :: nodes_c2(6, 2), nodes_d2(6, 2)
     real(c_double) :: expected_a2(6, 2), expected_b2(6, 2)
     real(c_double) :: expected_c2(6, 2), expected_d2(6, 2)
+    real(c_double) :: nodes3(10, 2)
+    real(c_double) :: nodes_a3(10, 2), nodes_b3(10, 2)
+    real(c_double) :: nodes_c3(10, 2), nodes_d3(10, 2)
+    real(c_double) :: expected_a3(10, 2), expected_b3(10, 2)
+    real(c_double) :: expected_c3(10, 2), expected_d3(10, 2)
     integer :: case_id
     character(:), allocatable :: name
 
@@ -616,6 +621,72 @@ contains
     ! CASE 4: Evaluate subdivided parts of a linear surface.
     call subdivide_points_check( &
          6, 2, 2, 219803, 7086, case_success)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Cubic surface.
+    nodes3(1, :) = [0.0_dp, 0.0_dp]
+    nodes3(2, :) = [3.25_dp, 1.5_dp]
+    nodes3(3, :) = [6.5_dp, 1.5_dp]
+    nodes3(4, :) = [10.0_dp, 0.0_dp]
+    nodes3(5, :) = [1.5_dp, 3.25_dp]
+    nodes3(6, :) = [5.0_dp, 5.0_dp]
+    nodes3(7, :) = [10.0_dp, 5.25_dp]
+    nodes3(8, :) = [1.5_dp, 6.5_dp]
+    nodes3(9, :) = [5.25_dp, 10.0_dp]
+    nodes3(10, :) = [0.0_dp, 10.0_dp]
+    expected_a3(1, :) = [0.0_dp, 0.0_dp]
+    expected_a3(2, :) = [1.625_dp, 0.75_dp]
+    expected_a3(3, :) = [3.25_dp, 1.125_dp]
+    expected_a3(4, :) = [4.90625_dp, 1.125_dp]
+    expected_a3(5, :) = [0.75_dp, 1.625_dp]
+    expected_a3(6, :) = [2.4375_dp, 2.4375_dp]
+    expected_a3(7, :) = [4.3125_dp, 2.875_dp]
+    expected_a3(8, :) = [1.125_dp, 3.25_dp]
+    expected_a3(9, :) = [2.875_dp, 4.3125_dp]
+    expected_a3(10, :) = [1.125_dp, 4.90625_dp]
+    expected_b3(1, :) = [6.96875_dp, 6.96875_dp]
+    expected_b3(2, :) = [4.8125_dp, 6.65625_dp]
+    expected_b3(3, :) = [2.875_dp, 5.96875_dp]
+    expected_b3(4, :) = [1.125_dp, 4.90625_dp]
+    expected_b3(5, :) = [6.65625_dp, 4.8125_dp]
+    expected_b3(6, :) = [4.75_dp, 4.75_dp]
+    expected_b3(7, :) = [2.875_dp, 4.3125_dp]
+    expected_b3(8, :) = [5.96875_dp, 2.875_dp]
+    expected_b3(9, :) = [4.3125_dp, 2.875_dp]
+    expected_b3(10, :) = [4.90625_dp, 1.125_dp]
+    expected_c3(1, :) = [4.90625_dp, 1.125_dp]
+    expected_c3(2, :) = [6.5625_dp, 1.125_dp]
+    expected_c3(3, :) = [8.25_dp, 0.75_dp]
+    expected_c3(4, :) = [10.0_dp, 0.0_dp]
+    expected_c3(5, :) = [5.96875_dp, 2.875_dp]
+    expected_c3(6, :) = [7.875_dp, 2.9375_dp]
+    expected_c3(7, :) = [10.0_dp, 2.625_dp]
+    expected_c3(8, :) = [6.65625_dp, 4.8125_dp]
+    expected_c3(9, :) = [8.8125_dp, 5.125_dp]
+    expected_c3(10, :) = [6.96875_dp, 6.96875_dp]
+    expected_d3(1, :) = [1.125_dp, 4.90625_dp]
+    expected_d3(2, :) = [2.875_dp, 5.96875_dp]
+    expected_d3(3, :) = [4.8125_dp, 6.65625_dp]
+    expected_d3(4, :) = [6.96875_dp, 6.96875_dp]
+    expected_d3(5, :) = [1.125_dp, 6.5625_dp]
+    expected_d3(6, :) = [2.9375_dp, 7.875_dp]
+    expected_d3(7, :) = [5.125_dp, 8.8125_dp]
+    expected_d3(8, :) = [0.75_dp, 8.25_dp]
+    expected_d3(9, :) = [2.625_dp, 10.0_dp]
+    expected_d3(10, :) = [0.0_dp, 10.0_dp]
+    call subdivide_nodes( &
+         10, 2, nodes3, 3, &
+         nodes_a3, nodes_b3, nodes_c3, nodes_d3)
+    case_success = ( &
+         all(nodes_a3 == expected_a3) .AND. &
+         all(nodes_b3 == expected_b3) .AND. &
+         all(nodes_c3 == expected_c3) .AND. &
+         all(nodes_d3 == expected_d3))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Evaluate subdivided parts of a linear surface.
+    call subdivide_points_check( &
+         10, 2, 3, 439028340, 2184938, case_success)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_subdivide_nodes
