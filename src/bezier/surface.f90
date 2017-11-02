@@ -391,6 +391,130 @@ contains
        nodes_d(8, :) = 0.5_dp * (nodes(8, :) + nodes(10, :))
        nodes_d(9, :) = 0.5_dp * (nodes(9, :) + nodes(10, :))
        nodes_d(10, :) = nodes(10, :)
+    else if (degree == 4) then
+       nodes_a(1, :) = nodes(1, :)
+       nodes_a(2, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
+       nodes_a(3, :) = 0.25_dp * (nodes(1, :) + 2 * nodes(2, :) + nodes(3, :))
+       nodes_a(4, :) = 0.125_dp * ( &
+            nodes(1, :) + 3 * nodes(2, :) + 3 * nodes(3, :) + nodes(4, :))
+       nodes_a(5, :) = 0.0625_dp * ( &
+            nodes(1, :) + 4 * nodes(2, :) + 6 * nodes(3, :) + &
+            4 * nodes(4, :) + nodes(5, :))
+       nodes_a(6, :) = 0.5_dp * (nodes(1, :) + nodes(6, :))
+       nodes_a(7, :) = 0.25_dp * ( &
+            nodes(1, :) + nodes(2, :) + nodes(6, :) + nodes(7, :))
+       nodes_a(8, :) = 0.125_dp * ( &
+            nodes(1, :) + 2 * nodes(2, :) + nodes(3, :) + nodes(6, :) + &
+            2 * nodes(7, :) + nodes(8, :))
+       nodes_a(9, :) = 0.0625_dp * ( &
+            nodes(1, :) + 3 * nodes(2, :) + 3 * nodes(3, :) + nodes(4, :) + &
+            nodes(6, :) + 3 * nodes(7, :) + 3 * nodes(8, :) + nodes(9, :))
+       nodes_a(10, :) = 0.25_dp * ( &
+            nodes(1, :) + 2 * nodes(6, :) + nodes(10, :))
+       nodes_a(11, :) = 0.125_dp * ( &
+            nodes(1, :) + nodes(2, :) + 2 * nodes(6, :) + 2 * nodes(7, :) + &
+            nodes(10, :) + nodes(11, :))
+       nodes_a(12, :) = 0.0625_dp * ( &
+            nodes(1, :) + 2 * nodes(2, :) + nodes(3, :) + 2 * nodes(6, :) + &
+            4 * nodes(7, :) + 2 * nodes(8, :) + nodes(10, :) + &
+            2 * nodes(11, :) + nodes(12, :))
+       nodes_a(13, :) = 0.125_dp * ( &
+            nodes(1, :) + 3 * nodes(6, :) + 3 * nodes(10, :) + nodes(13, :))
+       nodes_a(14, :) = 0.0625_dp * ( &
+            nodes(1, :) + nodes(2, :) + 3 * nodes(6, :) + 3 * nodes(7, :) + &
+            3 * nodes(10, :) + 3 * nodes(11, :) + nodes(13, :) + nodes(14, :))
+       nodes_a(15, :) = 0.0625_dp * ( &
+            nodes(1, :) + 4 * nodes(6, :) + 6 * nodes(10, :) + &
+            4 * nodes(13, :) + nodes(15, :))
+       nodes_b(1, :) = 0.0625_dp * ( &
+            nodes(5, :) + 4 * nodes(9, :) + 6 * nodes(12, :) + &
+            4 * nodes(14, :) + nodes(15, :))
+       nodes_b(2, :) = 0.0625_dp * ( &
+            nodes(4, :) + 3 * nodes(8, :) + nodes(9, :) + 3 * nodes(11, :) + &
+            3 * nodes(12, :) + nodes(13, :) + 3 * nodes(14, :) + nodes(15, :))
+       nodes_b(3, :) = 0.0625_dp * ( &
+            nodes(3, :) + 2 * nodes(7, :) + 2 * nodes(8, :) + nodes(10, :) + &
+            4 * nodes(11, :) + nodes(12, :) + 2 * nodes(13, :) + &
+            2 * nodes(14, :) + nodes(15, :))
+       nodes_b(4, :) = 0.0625_dp * ( &
+            nodes(2, :) + nodes(6, :) + 3 * nodes(7, :) + 3 * nodes(10, :) + &
+            3 * nodes(11, :) + 3 * nodes(13, :) + nodes(14, :) + nodes(15, :))
+       nodes_b(5, :) = nodes_a(15, :)
+       nodes_b(6, :) = 0.0625_dp * ( &
+            nodes(4, :) + nodes(5, :) + 3 * nodes(8, :) + 3 * nodes(9, :) + &
+            3 * nodes(11, :) + 3 * nodes(12, :) + nodes(13, :) + nodes(14, :))
+       nodes_b(7, :) = 0.0625_dp * ( &
+            nodes(3, :) + nodes(4, :) + 2 * nodes(7, :) + 3 * nodes(8, :) + &
+            nodes(9, :) + nodes(10, :) + 3 * nodes(11, :) + &
+            2 * nodes(12, :) + nodes(13, :) + nodes(14, :))
+       nodes_b(8, :) = 0.0625_dp * ( &
+            nodes(2, :) + nodes(3, :) + nodes(6, :) + 3 * nodes(7, :) + &
+            2 * nodes(8, :) + 2 * nodes(10, :) + 3 * nodes(11, :) + &
+            nodes(12, :) + nodes(13, :) + nodes(14, :))
+       nodes_b(9, :) = nodes_a(14, :)
+       nodes_b(10, :) = 0.0625_dp * ( &
+            nodes(3, :) + 2 * nodes(4, :) + nodes(5, :) + 2 * nodes(7, :) + &
+            4 * nodes(8, :) + 2 * nodes(9, :) + nodes(10, :) + &
+            2 * nodes(11, :) + nodes(12, :))
+       nodes_b(11, :) = 0.0625_dp * ( &
+            nodes(2, :) + 2 * nodes(3, :) + nodes(4, :) + nodes(6, :) + &
+            3 * nodes(7, :) + 3 * nodes(8, :) + nodes(9, :) + nodes(10, :) + &
+            2 * nodes(11, :) + nodes(12, :))
+       nodes_b(12, :) = nodes_a(12, :)
+       nodes_b(13, :) = 0.0625_dp * ( &
+            nodes(2, :) + 3 * nodes(3, :) + 3 * nodes(4, :) + nodes(5, :) + &
+            nodes(6, :) + 3 * nodes(7, :) + 3 * nodes(8, :) + nodes(9, :))
+       nodes_b(14, :) = nodes_a(9, :)
+       nodes_b(15, :) = nodes_a(5, :)
+       nodes_c(1, :) = nodes_a(5, :)
+       nodes_c(2, :) = 0.125_dp * ( &
+            nodes(2, :) + 3 * nodes(3, :) + 3 * nodes(4, :) + nodes(5, :))
+       nodes_c(3, :) = 0.25_dp * ( &
+            nodes(3, :) + 2 * nodes(4, :) + nodes(5, :))
+       nodes_c(4, :) = 0.5_dp * ( &
+            nodes(4, :) + nodes(5, :))
+       nodes_c(5, :) = nodes(5, :)
+       nodes_c(6, :) = nodes_b(13, :)
+       nodes_c(7, :) = 0.125_dp * ( &
+            nodes(3, :) + 2 * nodes(4, :) + nodes(5, :) + nodes(7, :) + &
+            2 * nodes(8, :) + nodes(9, :))
+       nodes_c(8, :) = 0.25_dp * ( &
+            nodes(4, :) + nodes(5, :) + nodes(8, :) + nodes(9, :))
+       nodes_c(9, :) = 0.5_dp * (nodes(5, :) + nodes(9, :))
+       nodes_c(10, :) = nodes_b(10, :)
+       nodes_c(11, :) = 0.125_dp * ( &
+            nodes(4, :) + nodes(5, :) + 2 * nodes(8, :) + 2 * nodes(9, :) + &
+            nodes(11, :) + nodes(12, :))
+       nodes_c(12, :) = 0.25_dp * ( &
+            nodes(5, :) + 2 * nodes(9, :) + nodes(12, :))
+       nodes_c(13, :) = nodes_b(6, :)
+       nodes_c(14, :) = 0.125_dp * ( &
+            nodes(5, :) + 3 * nodes(9, :) + 3 * nodes(12, :) + nodes(14, :))
+       nodes_c(15, :) = nodes_b(1, :)
+       nodes_d(1, :) = nodes_a(15, :)
+       nodes_d(2, :) = nodes_b(4, :)
+       nodes_d(3, :) = nodes_b(3, :)
+       nodes_d(4, :) = nodes_b(2, :)
+       nodes_d(5, :) = nodes_b(1, :)
+       nodes_d(6, :) = 0.125_dp * ( &
+            nodes(6, :) + 3 * nodes(10, :) + 3 * nodes(13, :) + nodes(15, :))
+       nodes_d(7, :) = 0.125_dp * ( &
+            nodes(7, :) + nodes(10, :) + 2 * nodes(11, :) + &
+            2 * nodes(13, :) + nodes(14, :) + nodes(15, :))
+       nodes_d(8, :) = 0.125_dp * ( &
+            nodes(8, :) + 2 * nodes(11, :) + nodes(12, :) + nodes(13, :) + &
+            2 * nodes(14, :) + nodes(15, :))
+       nodes_d(9, :) = 0.125_dp * ( &
+            nodes(9, :) + 3 * nodes(12, :) + 3 * nodes(14, :) + nodes(15, :))
+       nodes_d(10, :) = 0.25_dp * ( &
+            nodes(10, :) + 2 * nodes(13, :) + nodes(15, :))
+       nodes_d(11, :) = 0.25_dp * ( &
+            nodes(11, :) + nodes(13, :) + nodes(14, :) + nodes(15, :))
+       nodes_d(12, :) = 0.25_dp * ( &
+            nodes(12, :) + 2 * nodes(14, :) + nodes(15, :))
+       nodes_d(13, :) = 0.5_dp * (nodes(13, :) + nodes(15, :))
+       nodes_d(14, :) = 0.5_dp * (nodes(14, :) + nodes(15, :))
+       nodes_d(15, :) = nodes(15, :)
     end if
 
   end subroutine subdivide_nodes

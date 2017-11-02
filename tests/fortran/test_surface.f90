@@ -618,7 +618,7 @@ contains
          all(nodes_d2 == expected_d2))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: Evaluate subdivided parts of a linear surface.
+    ! CASE 4: Evaluate subdivided parts of a quadratic surface.
     call subdivide_points_check( &
          6, 2, 2, 219803, 7086, case_success)
     call print_status(name, case_id, case_success, success)
@@ -684,9 +684,14 @@ contains
          all(nodes_d3 == expected_d3))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 6: Evaluate subdivided parts of a linear surface.
+    ! CASE 6: Evaluate subdivided parts of a cubic surface.
     call subdivide_points_check( &
          10, 2, 3, 439028340, 2184938, case_success)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Evaluate subdivided parts of a quartic surface.
+    call subdivide_points_check( &
+         15, 2, 4, 1029038, 890012, case_success)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_subdivide_nodes
