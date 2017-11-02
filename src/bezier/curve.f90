@@ -325,7 +325,7 @@ contains
 
   subroutine subdivide_nodes( &
        num_nodes, dimension_, nodes, left_nodes, right_nodes) &
-       bind(c, name='subdivide_nodes')
+       bind(c, name='subdivide_nodes_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)

@@ -125,7 +125,7 @@ def subdivide_nodes(double[::1, :] nodes):
     left_nodes = np.empty((num_nodes, dimension), order='F')
     right_nodes = np.empty((num_nodes, dimension), order='F')
 
-    bezier._curve.subdivide_nodes(
+    bezier._curve.subdivide_nodes_curve(
         &num_nodes,
         &dimension,
         &nodes[0, 0],

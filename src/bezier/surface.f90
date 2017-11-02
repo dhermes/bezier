@@ -20,7 +20,7 @@ module surface
   public &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det
+       jacobian_det, subdivide_nodes
 
 contains
 
@@ -275,5 +275,35 @@ contains
     end if
 
   end subroutine jacobian_det
+
+  subroutine subdivide_nodes( &
+       num_nodes, dimension_, nodes, degree, &
+       nodes_a, nodes_b, nodes_c, nodes_d) &
+       bind(c, name='subdivide_nodes_surface')
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    integer(c_int), intent(in) :: degree
+    real(c_double), intent(out) :: nodes_a(num_nodes, dimension_)
+    real(c_double), intent(out) :: nodes_b(num_nodes, dimension_)
+    real(c_double), intent(out) :: nodes_c(num_nodes, dimension_)
+    real(c_double), intent(out) :: nodes_d(num_nodes, dimension_)
+
+    if (degree == 1) then
+       nodes_a(1, :) = nodes(1, :)
+       nodes_a(2, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
+       nodes_a(3, :) = 0.5_dp * (nodes(1, :) + nodes(3, :))
+       nodes_b(1, :) = 0.5_dp * (nodes(2, :) + nodes(3, :))
+       nodes_b(2, :) = nodes_a(3, :)
+       nodes_b(3, :) = nodes_a(2, :)
+       nodes_c(1, :) = nodes_a(2, :)
+       nodes_c(2, :) = nodes(2, :)
+       nodes_c(3, :) = nodes_b(1, :)
+       nodes_d(1, :) = nodes_a(3, :)
+       nodes_d(2, :) = nodes_b(1, :)
+       nodes_d(3, :) = nodes(3, :)
+    end if
+
+  end subroutine subdivide_nodes
 
 end module surface

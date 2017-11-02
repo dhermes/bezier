@@ -32,3 +32,6 @@ cdef extern from "bezier/surface.h":
     void jacobian_det(
         int *num_nodes, double *nodes, int *degree,
         int *num_vals, double *param_vals, double *evaluated)
+    void subdivide_nodes_surface(
+        int *num_nodes, int *dimension, double *nodes, int *degree,
+        double *nodes_a, double *nodes_b, double *nodes_c, double *nodes_d)

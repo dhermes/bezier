@@ -4596,7 +4596,7 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_8subdivide_nodes(CYTHON_UNUSE
  *     left_nodes = np.empty((num_nodes, dimension), order='F')
  *     right_nodes = np.empty((num_nodes, dimension), order='F')             # <<<<<<<<<<<<<<
  *
- *     bezier._curve.subdivide_nodes(
+ *     bezier._curve.subdivide_nodes_curve(
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -4723,11 +4723,11 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_8subdivide_nodes(CYTHON_UNUSE
   /* "bezier/_curve_speedup.pyx":128
  *     right_nodes = np.empty((num_nodes, dimension), order='F')
  *
- *     bezier._curve.subdivide_nodes(             # <<<<<<<<<<<<<<
+ *     bezier._curve.subdivide_nodes_curve(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
-  subdivide_nodes((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_left_nodes.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_left_nodes.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_left_nodes.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_right_nodes.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_right_nodes.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_right_nodes.diminfo[1].strides))));
+  subdivide_nodes_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_left_nodes.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_left_nodes.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_left_nodes.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_right_nodes.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_right_nodes.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_right_nodes.diminfo[1].strides))));
 
   /* "bezier/_curve_speedup.pyx":136
  *     )

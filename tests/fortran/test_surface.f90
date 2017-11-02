@@ -16,14 +16,16 @@ module test_surface
   use surface, only: &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det
+       jacobian_det, subdivide_nodes
   use types, only: dp
-  use unit_test_helpers, only: print_status, get_random_nodes
+  use unit_test_helpers, only: &
+       print_status, get_random_nodes, ref_triangle_uniform_nodes
   implicit none
   private &
        test_de_casteljau_one_round, test_evaluate_barycentric, &
        test_evaluate_barycentric_multi, test_evaluate_cartesian_multi, &
-       test_jacobian_both, test_jacobian_det
+       test_jacobian_both, test_jacobian_det, test_subdivide_nodes, &
+       subdivide_points_check
   public surface_all_tests
 
 contains
@@ -37,6 +39,7 @@ contains
     call test_evaluate_cartesian_multi(success)
     call test_jacobian_both(success)
     call test_jacobian_det(success)
+    call test_subdivide_nodes(success)
 
   end subroutine surface_all_tests
 
@@ -517,5 +520,128 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_jacobian_det
+
+  subroutine test_subdivide_nodes(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    real(c_double) :: unit_triangle(3, 2)
+    real(c_double) :: nodes_a1(3, 2), nodes_b1(3, 2)
+    real(c_double) :: nodes_c1(3, 2), nodes_d1(3, 2)
+    real(c_double) :: expected_a1(3, 2), expected_b1(3, 2)
+    real(c_double) :: expected_c1(3, 2), expected_d1(3, 2)
+    integer :: case_id
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "subdivide_nodes (Surface)"
+
+    unit_triangle(1, :) = 0
+    unit_triangle(2, :) = [1.0_dp, 0.0_dp]
+    unit_triangle(3, :) = [0.0_dp, 1.0_dp]
+
+    ! CASE 1: Linear surface.
+    expected_a1(1, :) = 0
+    expected_a1(2, :) = [0.5_dp, 0.0_dp]
+    expected_a1(3, :) = [0.0_dp, 0.5_dp]
+    expected_b1(1, :) = 0.5_dp
+    expected_b1(2, :) = [0.0_dp, 0.5_dp]
+    expected_b1(3, :) = [0.5_dp, 0.0_dp]
+    expected_c1(1, :) = [0.5_dp, 0.0_dp]
+    expected_c1(2, :) = [1.0_dp, 0.0_dp]
+    expected_c1(3, :) = 0.5_dp
+    expected_d1(1, :) = [0.0_dp, 0.5_dp]
+    expected_d1(2, :) = 0.5_dp
+    expected_d1(3, :) = [0.0_dp, 1.0_dp]
+    call subdivide_nodes( &
+         3, 2, unit_triangle, 1, &
+         nodes_a1, nodes_b1, nodes_c1, nodes_d1)
+    case_success = ( &
+         all(nodes_a1 == expected_a1) .AND. &
+         all(nodes_b1 == expected_b1) .AND. &
+         all(nodes_c1 == expected_c1) .AND. &
+         all(nodes_d1 == expected_d1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Evaluate subdivided parts of a linear surface.
+    call subdivide_points_check( &
+         3, 2, 1, 290289, 111228, case_success)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_subdivide_nodes
+
+  subroutine subdivide_points_check( &
+       num_nodes, dimension_, degree, multiplier, modulus, success)
+    integer, intent(in) :: num_nodes, dimension_, degree
+    integer, intent(in) :: multiplier, modulus
+    logical, intent(out) :: success
+    ! Variables outside of signature.
+    real(c_double) :: nodes(num_nodes, dimension_)
+    real(c_double) :: nodes_a(num_nodes, dimension_)
+    real(c_double) :: nodes_b(num_nodes, dimension_)
+    real(c_double) :: nodes_c(num_nodes, dimension_)
+    real(c_double) :: nodes_d(num_nodes, dimension_)
+    real(c_double) :: ref_triangle(561, 2), local_vals(561, 2)
+    real(c_double) :: evaluated1(561, dimension_)
+    real(c_double) :: evaluated2(561, dimension_)
+
+    success = .TRUE.
+
+    call get_random_nodes(nodes, multiplier, modulus, num_bits=8)
+    call subdivide_nodes( &
+         num_nodes, dimension_, nodes, degree, &
+         nodes_a, nodes_b, nodes_c, nodes_d)
+
+    ref_triangle = ref_triangle_uniform_nodes(5)
+
+    ! Evaluate the **original** at ``local_vals`` and the subdivided version
+    ! on the full unit triangle.
+    call evaluate_cartesian_multi( &
+         num_nodes, dimension_, nodes_a, degree, &
+         561, ref_triangle, evaluated1)
+    local_vals = 0.5_dp * ref_triangle
+    call evaluate_cartesian_multi( &
+         num_nodes, dimension_, nodes, degree, &
+         561, local_vals, evaluated2)
+    success = ( &
+         success .AND. &
+         all(evaluated1 == evaluated2))
+
+    call evaluate_cartesian_multi( &
+         num_nodes, dimension_, nodes_b, degree, &
+         561, ref_triangle, evaluated1)
+    local_vals = 0.5_dp - 0.5_dp * ref_triangle
+    call evaluate_cartesian_multi( &
+         num_nodes, dimension_, nodes, degree, &
+         561, local_vals, evaluated2)
+    success = ( &
+         success .AND. &
+         all(evaluated1 == evaluated2))
+
+    call evaluate_cartesian_multi( &
+         num_nodes, dimension_, nodes_c, degree, &
+         561, ref_triangle, evaluated1)
+    local_vals = 0.5_dp * ref_triangle
+    local_vals(:, 1) = local_vals(:, 1) + 0.5_dp
+    call evaluate_cartesian_multi( &
+         num_nodes, dimension_, nodes, degree, &
+         561, local_vals, evaluated2)
+    success = ( &
+         success .AND. &
+         all(evaluated1 == evaluated2))
+
+    call evaluate_cartesian_multi( &
+         num_nodes, dimension_, nodes_d, degree, &
+         561, ref_triangle, evaluated1)
+    local_vals = 0.5_dp * ref_triangle
+    local_vals(:, 2) = local_vals(:, 2) + 0.5_dp
+    call evaluate_cartesian_multi( &
+         num_nodes, dimension_, nodes, degree, &
+         561, local_vals, evaluated2)
+    success = ( &
+         success .AND. &
+         all(evaluated1 == evaluated2))
+
+  end subroutine subdivide_points_check
 
 end module test_surface

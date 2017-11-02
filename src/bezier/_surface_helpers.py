@@ -757,6 +757,10 @@ def subdivide_nodes(nodes, degree):
 def mean_centroid(candidates):
     """Take the mean of all centroids in set of reference triangles.
 
+    .. note::
+
+       This is used **only** as a helper for :func:`locate_point`.
+
     Args:
         candidates (List[Tuple[float, float, float, numpy.ndarray]): List of
             4-tuples, each of which has been produced by :func:`locate_point`.
@@ -971,7 +975,9 @@ def update_locate_candidates(
         candidate, next_candidates, x_val, y_val, degree):
     """Update list of candidate surfaces during geometric search for a point.
 
-    Helper for :func:`locate_point`.
+    .. note::
+
+       This is used **only** as a helper for :func:`locate_point`.
 
     Checks if the point ``(x_val, y_val)`` is contained in the ``candidate``
     surface. If not, this function does nothing. If the point is contaned,

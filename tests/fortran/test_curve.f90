@@ -312,7 +312,7 @@ contains
     character(:), allocatable :: name
 
     case_id = 1
-    name = "subdivide_nodes"
+    name = "subdivide_nodes (Curve)"
 
     ! CASE 1: Linear curve.
     nodes1(1, :) = [0.0_dp, 1.0_dp]

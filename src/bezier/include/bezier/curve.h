@@ -32,7 +32,7 @@ void specialize_curve(
 void evaluate_hodograph(
     double *s, int *num_nodes, int *dimension, double *nodes,
     double *hodograph);
-void subdivide_nodes(
+void subdivide_nodes_curve(
     int *num_nodes, int *dimension, double *nodes,
     double *left_nodes, double *right_nodes);
 void newton_refine(
