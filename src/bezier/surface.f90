@@ -302,6 +302,34 @@ contains
        nodes_d(1, :) = nodes_a(3, :)
        nodes_d(2, :) = nodes_b(1, :)
        nodes_d(3, :) = nodes(3, :)
+    else if (degree == 2) then
+       nodes_a(1, :) = nodes(1, :)
+       nodes_a(2, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
+       nodes_a(3, :) = 0.25_dp * (nodes(1, :) + 2 * nodes(2, :) + nodes(3, :))
+       nodes_a(4, :) = 0.5_dp * (nodes(1, :) + nodes(4, :))
+       nodes_a(5, :) = 0.25_dp * ( &
+            nodes(1, :) + nodes(2, :) + nodes(4, :) + nodes(5, :))
+       nodes_a(6, :) = 0.25_dp * (nodes(1, :) + 2 * nodes(4, :) + nodes(6, :))
+       nodes_b(1, :) = 0.25_dp * (nodes(3, :) + 2 * nodes(5, :) + nodes(6, :))
+       nodes_b(2, :) = 0.25_dp * ( &
+            nodes(2, :) + nodes(4, :) + nodes(5, :) + nodes(6, :))
+       nodes_b(3, :) = nodes_a(6, :)
+       nodes_b(4, :) = 0.25_dp * ( &
+            nodes(2, :) + nodes(3, :) + nodes(4, :) + nodes(5, :))
+       nodes_b(5, :) = nodes_a(5, :)
+       nodes_b(6, :) = nodes_a(3, :)
+       nodes_c(1, :) = nodes_a(3, :)
+       nodes_c(2, :) = 0.5_dp * (nodes(2, :) + nodes(3, :))
+       nodes_c(3, :) = nodes(3, :)
+       nodes_c(4, :) = nodes_b(4, :)
+       nodes_c(5, :) = 0.5_dp * (nodes(3, :) + nodes(5, :))
+       nodes_c(6, :) = nodes_b(1, :)
+       nodes_d(1, :) = nodes_a(6, :)
+       nodes_d(2, :) = nodes_b(2, :)
+       nodes_d(3, :) = nodes_b(1, :)
+       nodes_d(4, :) = 0.5_dp * (nodes(4, :) + nodes(6, :))
+       nodes_d(5, :) = 0.5_dp * (nodes(5, :) + nodes(6, :))
+       nodes_d(6, :) = nodes(6, :)
     end if
 
   end subroutine subdivide_nodes

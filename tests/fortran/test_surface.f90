@@ -525,22 +525,26 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: unit_triangle(3, 2)
+    real(c_double) :: nodes1(3, 2)
     real(c_double) :: nodes_a1(3, 2), nodes_b1(3, 2)
     real(c_double) :: nodes_c1(3, 2), nodes_d1(3, 2)
     real(c_double) :: expected_a1(3, 2), expected_b1(3, 2)
     real(c_double) :: expected_c1(3, 2), expected_d1(3, 2)
+    real(c_double) :: nodes2(6, 2)
+    real(c_double) :: nodes_a2(6, 2), nodes_b2(6, 2)
+    real(c_double) :: nodes_c2(6, 2), nodes_d2(6, 2)
+    real(c_double) :: expected_a2(6, 2), expected_b2(6, 2)
+    real(c_double) :: expected_c2(6, 2), expected_d2(6, 2)
     integer :: case_id
     character(:), allocatable :: name
 
     case_id = 1
     name = "subdivide_nodes (Surface)"
 
-    unit_triangle(1, :) = 0
-    unit_triangle(2, :) = [1.0_dp, 0.0_dp]
-    unit_triangle(3, :) = [0.0_dp, 1.0_dp]
-
     ! CASE 1: Linear surface.
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(3, :) = [0.0_dp, 1.0_dp]
     expected_a1(1, :) = 0
     expected_a1(2, :) = [0.5_dp, 0.0_dp]
     expected_a1(3, :) = [0.0_dp, 0.5_dp]
@@ -554,7 +558,7 @@ contains
     expected_d1(2, :) = 0.5_dp
     expected_d1(3, :) = [0.0_dp, 1.0_dp]
     call subdivide_nodes( &
-         3, 2, unit_triangle, 1, &
+         3, 2, nodes1, 1, &
          nodes_a1, nodes_b1, nodes_c1, nodes_d1)
     case_success = ( &
          all(nodes_a1 == expected_a1) .AND. &
@@ -566,6 +570,52 @@ contains
     ! CASE 2: Evaluate subdivided parts of a linear surface.
     call subdivide_points_check( &
          3, 2, 1, 290289, 111228, case_success)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Quadratic surface.
+    nodes2(1, :) = [0.0_dp, 0.0_dp]
+    nodes2(2, :) = [0.5_dp, 0.25_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    nodes2(4, :) = [0.5_dp, 0.75_dp]
+    nodes2(5, :) = [0.0_dp, 1.0_dp]
+    nodes2(6, :) = [0.0_dp, 0.5_dp]
+    expected_a2(1, :) = [0.0_dp, 0.0_dp]
+    expected_a2(2, :) = [0.25_dp, 0.125_dp]
+    expected_a2(3, :) = [0.5_dp, 0.125_dp]
+    expected_a2(4, :) = [0.25_dp, 0.375_dp]
+    expected_a2(5, :) = [0.25_dp, 0.5_dp]
+    expected_a2(6, :) = [0.25_dp, 0.5_dp]
+    expected_b2(1, :) = [0.25_dp, 0.625_dp]
+    expected_b2(2, :) = [0.25_dp, 0.625_dp]
+    expected_b2(3, :) = [0.25_dp, 0.5_dp]
+    expected_b2(4, :) = [0.5_dp, 0.5_dp]
+    expected_b2(5, :) = [0.25_dp, 0.5_dp]
+    expected_b2(6, :) = [0.5_dp, 0.125_dp]
+    expected_c2(1, :) = [0.5_dp, 0.125_dp]
+    expected_c2(2, :) = [0.75_dp, 0.125_dp]
+    expected_c2(3, :) = [1.0_dp, 0.0_dp]
+    expected_c2(4, :) = [0.5_dp, 0.5_dp]
+    expected_c2(5, :) = [0.5_dp, 0.5_dp]
+    expected_c2(6, :) = [0.25_dp, 0.625_dp]
+    expected_d2(1, :) = [0.25_dp, 0.5_dp]
+    expected_d2(2, :) = [0.25_dp, 0.625_dp]
+    expected_d2(3, :) = [0.25_dp, 0.625_dp]
+    expected_d2(4, :) = [0.25_dp, 0.625_dp]
+    expected_d2(5, :) = [0.0_dp, 0.75_dp]
+    expected_d2(6, :) = [0.0_dp, 0.5_dp]
+    call subdivide_nodes( &
+         6, 2, nodes2, 2, &
+         nodes_a2, nodes_b2, nodes_c2, nodes_d2)
+    case_success = ( &
+         all(nodes_a2 == expected_a2) .AND. &
+         all(nodes_b2 == expected_b2) .AND. &
+         all(nodes_c2 == expected_c2) .AND. &
+         all(nodes_d2 == expected_d2))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Evaluate subdivided parts of a linear surface.
+    call subdivide_points_check( &
+         6, 2, 2, 219803, 7086, case_success)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_subdivide_nodes
