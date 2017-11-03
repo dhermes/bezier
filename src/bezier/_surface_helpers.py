@@ -624,12 +624,12 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
     for ``1`` and ``2``.
 
     These points correspond to barycentric weights in their
-    own right. For example ``(0, 0, 1, 2)`` corresponds to
-    the Barycentric weight
-    :math:`\left(\frac{2}{4}, \frac{1}{4}, \frac{1}{4}\right)`.
+    own right. For example ``(0, 0, 0, 1, 2, 2)`` corresponds to
+    the barycentric weight
+    :math:`\left(\frac{3}{6}, \frac{1}{6}, \frac{2}{6}\right)`.
 
     Once the keys in ``vals_by_weight`` have been converted
-    to Barycentric coordinates, we order them according to
+    to barycentric coordinates, we order them according to
     our rule (bottom to top, left to right) and then return
     them in a single matrix.
 
@@ -658,13 +658,19 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
 def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
     """Specialize a surface to a reparameterization
 
-    Does so by taking three points (in Barycentric form) within the
+    Does so by taking three points (in barycentric form) within the
     reference triangle and then reparameterizing the surface onto
     the triangle formed by those three points.
 
     .. note::
 
        This assumes the surface is degree 1 or greater but doesn't check.
+
+    .. note::
+
+       This is used **only** as a helper for :func:`subdivide_nodes`, however
+       it may be worth adding this to :class:`Surface` as an analogue to
+       :meth:`Curve.specialize`.
 
     Args:
         nodes (numpy.ndarray): Control points for a surface.

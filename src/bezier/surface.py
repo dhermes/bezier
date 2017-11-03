@@ -467,7 +467,7 @@ class Surface(_base.Base):
 
     @staticmethod
     def _verify_barycentric(lambda1, lambda2, lambda3):
-        """Verifies that weights are Barycentric and on the reference triangle.
+        """Verifies that weights are barycentric and on the reference triangle.
 
         I.e., checks that they sum to one and are all non-negative.
 
@@ -543,7 +543,7 @@ class Surface(_base.Base):
              ...
            ValueError: ('Parameters must be positive', -0.25, 0.75, 0.5)
 
-        or for non-Barycentric coordinates;
+        or for non-barycentric coordinates;
 
         .. doctest:: surface-barycentric-fail
 
@@ -593,7 +593,7 @@ class Surface(_base.Base):
     def evaluate_barycentric_multi(self, param_vals, _verify=True):
         r"""Compute multiple points on the surface.
 
-        Assumes ``param_vals`` has three columns of Barycentric coordinates.
+        Assumes ``param_vals`` has three columns of barycentric coordinates.
         See :meth:`evaluate_barycentric` for more details on how each row of
         parameter values is evaluated.
 
