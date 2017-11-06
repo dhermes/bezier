@@ -188,3 +188,30 @@ def specialize_surface(
     )
 
     return specialized
+
+
+def subdivide_nodes(double[::1, :] nodes, int degree):
+    cdef int num_nodes, dimension
+    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_a
+    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_b
+    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_c
+    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_d
+
+    num_nodes, dimension = np.shape(nodes)
+    nodes_a = np.empty((num_nodes, dimension), order='F')
+    nodes_b = np.empty((num_nodes, dimension), order='F')
+    nodes_c = np.empty((num_nodes, dimension), order='F')
+    nodes_d = np.empty((num_nodes, dimension), order='F')
+
+    bezier._surface.subdivide_nodes_surface(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &degree,
+        &nodes_a[0, 0],
+        &nodes_b[0, 0],
+        &nodes_c[0, 0],
+        &nodes_d[0, 0],
+    )
+
+    return nodes_a, nodes_b, nodes_c, nodes_d

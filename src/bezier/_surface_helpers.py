@@ -680,7 +680,7 @@ def _specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
 
     .. note::
 
-       This is used **only** as a helper for :func:`subdivide_nodes`, however
+       This is used **only** as a helper for :func:`_subdivide_nodes`, however
        it may be worth adding this to :class:`Surface` as an analogue to
        :meth:`Curve.specialize`.
 
@@ -720,8 +720,13 @@ def _specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
     return reduced_to_matrix(nodes.shape, degree, partial_vals)
 
 
-def subdivide_nodes(nodes, degree):
+def _subdivide_nodes(nodes, degree):
     """Subdivide a surface into four sub-surfaces.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Does so by taking the unit triangle (i.e. the domain of the surface) and
     splitting it into four sub-triangles by connecting the midpoints of each
@@ -2427,6 +2432,7 @@ class _IntersectionClassification(enum.Enum):
 if _surface_speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
     specialize_surface = _specialize_surface
+    subdivide_nodes = _subdivide_nodes
     jacobian_both = _jacobian_both
     jacobian_det = _jacobian_det
     evaluate_barycentric = _evaluate_barycentric
@@ -2436,6 +2442,7 @@ if _surface_speedup is None:  # pragma: NO COVER
 else:
     de_casteljau_one_round = _surface_speedup.de_casteljau_one_round
     specialize_surface = _surface_speedup.specialize_surface
+    subdivide_nodes = _surface_speedup.subdivide_nodes
     jacobian_both = _surface_speedup.jacobian_both
     jacobian_det = _surface_speedup.jacobian_det
     evaluate_barycentric = _surface_speedup.evaluate_barycentric

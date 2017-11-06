@@ -488,7 +488,7 @@ class Test_speedup_specialize_surface(Test__specialize_surface):
             nodes, degree, weights_a, weights_b, weights_c)
 
 
-class Test_subdivide_nodes(utils.NumPyTestCase):
+class Test__subdivide_nodes(utils.NumPyTestCase):
 
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
 
@@ -496,7 +496,7 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
     def _call_function_under_test(nodes, degree):
         from bezier import _surface_helpers
 
-        return _surface_helpers.subdivide_nodes(nodes, degree)
+        return _surface_helpers._subdivide_nodes(nodes, degree)
 
     def _helper(self, nodes, degree, expected_a,
                 expected_b, expected_c, expected_d):
@@ -706,6 +706,16 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
         self._points_check(nodes, 5)
+
+
+@utils.needs_surface_speedup
+class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _surface_speedup
+
+        return _surface_speedup.subdivide_nodes(nodes, degree)
 
 
 class Test_mean_centroid(unittest.TestCase):
