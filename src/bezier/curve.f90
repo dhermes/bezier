@@ -48,7 +48,7 @@ module curve
      real(c_double), allocatable :: nodes(:, :)
   end type LocateCandidate
 
-  ! NOTE: These values are also defined in `src/bezier/_curve_helpers.py`.
+  ! NOTE: These values are also defined in equivalent Python source.
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
   real(c_double), parameter :: LOCATE_STD_CAP = 0.5_dp**20
   ! NOTE: Should probably use ``d1mach`` to determine ``SQRT_PREC``.
@@ -459,15 +459,15 @@ contains
           end if
        end do
 
-       ! NOTE: This may copy empty slots, but this is OK since we track
-       !       `num_candidates` separately.
-       call move_alloc(next_candidates, candidates)
-       num_candidates = num_next_candidates
-
        ! If there are no more candidates, we are done.
        if (num_candidates == 0) then
           return
        end if
+
+       ! NOTE: This may copy empty slots, but this is OK since we track
+       !       `num_candidates` separately.
+       call move_alloc(next_candidates, candidates)
+       num_candidates = num_next_candidates
 
     end do
 

@@ -13,11 +13,12 @@
 module test_surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
-  use surface_intersection, only: newton_refine
+  use curve, only: LOCATE_MISS
+  use surface_intersection, only: newton_refine, locate_point
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
-  private test_newton_refine
+  private test_newton_refine, test_locate_point
   public surface_intersection_all_tests
 
 contains
@@ -26,6 +27,7 @@ contains
     logical(c_bool), intent(inout) :: success
 
     call test_newton_refine(success)
+    call test_locate_point(success)
 
   end subroutine surface_intersection_all_tests
 
@@ -39,7 +41,7 @@ contains
     real(c_double) :: updated_s, updated_t
 
     case_id = 1
-    name = "newton_refine (surface)"
+    name = "newton_refine (Surface)"
 
     ! CASE 1: Quadratic surface.
     ! NOTE: This surface is given by
@@ -80,5 +82,40 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_newton_refine
+
+  subroutine test_locate_point(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    real(c_double), allocatable :: nodes(:, :)
+    integer(c_int) :: degree
+    real(c_double) :: x_val, y_val, s_val, t_val
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "newton_refine (Surface)"
+
+    ! CASE 1: B(s, t) = (s, t), match.
+    allocate(nodes(3, 2))
+    nodes(1, :) = 0
+    nodes(2, :) = [1.0_dp, 0.0_dp]
+    nodes(3, :) = [0.0_dp, 1.0_dp]
+    x_val = 0.25_dp
+    y_val = 0.625_dp
+    call locate_point( &
+         3, nodes, 1, x_val, y_val, s_val, t_val)
+    case_success = (x_val == s_val .AND. y_val == t_val)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: B(s, t) = (s, t), no match.
+    x_val = -0.125_dp
+    y_val = 0.25_dp
+    call locate_point( &
+         3, nodes, 1, x_val, y_val, s_val, t_val)
+    case_success = (s_val == LOCATE_MISS)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_locate_point
 
 end module test_surface_intersection

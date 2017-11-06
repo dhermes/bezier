@@ -12,12 +12,27 @@
 
 module surface_intersection
 
-  use, intrinsic :: iso_c_binding, only: c_double, c_int
+  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
+  use curve, only: LOCATE_MISS
+  use helpers, only: contains_nd
   use types, only: dp
-  use surface, only: evaluate_barycentric, jacobian_both
+  use surface, only: evaluate_barycentric, jacobian_both, subdivide_nodes
   implicit none
-  private newton_refine_solve
-  public newton_refine
+  private &
+       LocateCandidate, MAX_LOCATE_SUBDIVISIONS, newton_refine_solve, &
+       split_candidate
+  public newton_refine, locate_point
+
+  ! For ``locate_point``.
+  type :: LocateCandidate
+     real(c_double) :: centroid_x = 1.0_dp  ! Actually triple.
+     real(c_double) :: centroid_y = 1.0_dp  ! Actually triple.
+     real(c_double) :: width = 1.0_dp
+     real(c_double), allocatable :: nodes(:, :)
+  end type LocateCandidate
+
+  ! NOTE: These values are also defined in equivalent Python source.
+  integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
 
 contains
 
@@ -81,5 +96,130 @@ contains
     updated_t = t + delta_t
 
   end subroutine newton_refine
+
+  subroutine split_candidate(num_nodes, degree, candidate, sub_candidates)
+
+    ! NOTE: This assumes nodes are 2-dimensional.
+    ! NOTE: This assumes that the nodes in each sub-candidate are
+    !       not yet allocated.
+
+    integer(c_int), intent(in) :: num_nodes
+    integer(c_int), intent(in) :: degree
+    type(LocateCandidate), intent(in) :: candidate
+    type(LocateCandidate), intent(out) :: sub_candidates(4)
+    ! Variables outside of signature.
+    real(c_double) :: half_width
+
+    ! Allocate the new nodes and call sub-divide.
+    allocate(sub_candidates(1)%nodes(num_nodes, 2))
+    allocate(sub_candidates(2)%nodes(num_nodes, 2))
+    allocate(sub_candidates(3)%nodes(num_nodes, 2))
+    allocate(sub_candidates(4)%nodes(num_nodes, 2))
+
+    call subdivide_nodes( &
+         num_nodes, 2, candidate%nodes, degree, &
+         sub_candidates(1)%nodes, &
+         sub_candidates(2)%nodes, &
+         sub_candidates(3)%nodes, &
+         sub_candidates(4)%nodes)
+
+    half_width = 0.5_dp * candidate%width
+
+    ! Subdivision A.
+    sub_candidates(1)%centroid_x = candidate%centroid_x - half_width
+    sub_candidates(1)%centroid_y = candidate%centroid_y - half_width
+    sub_candidates(1)%width = half_width
+
+    ! Subdivision B.
+    sub_candidates(2)%centroid_x = candidate%centroid_x
+    sub_candidates(2)%centroid_y = candidate%centroid_y
+    sub_candidates(2)%width = -half_width
+
+    ! Subdivision C.
+    sub_candidates(3)%centroid_x = candidate%centroid_x + candidate%width
+    sub_candidates(3)%centroid_y = sub_candidates(1)%centroid_y
+    sub_candidates(3)%width = half_width
+
+    ! Subdivision D.
+    sub_candidates(4)%centroid_x = sub_candidates(1)%centroid_x
+    sub_candidates(4)%centroid_y = candidate%centroid_y + candidate%width
+    sub_candidates(4)%width = half_width
+
+  end subroutine split_candidate
+
+  subroutine locate_point( &
+       num_nodes, nodes, degree, x_val, y_val, s_val, t_val) &
+       bind(c, name='locate_point_surface')
+
+    ! NOTE: This solves the inverse problem B(s, t) = (x, y) (if it can be
+    !       solved). Does so by subdividing the surface until the sub-surfaces
+    !       are sufficiently small, then using Newton's method to narrow
+    !       in on the pre-image of the point.
+    ! NOTE: This returns ``-1`` (``LOCATE_MISS``) for ``s_val`` as a signal
+    !       for "point is not on the surface".
+    ! NOTE: This assumes, but does not check, that the surface is "valid",
+    !       i.e. all pre-image are unique.
+
+    integer(c_int), intent(in) :: num_nodes
+    real(c_double), intent(in) :: nodes(num_nodes, 2)
+    integer(c_int), intent(in) :: degree
+    real(c_double), intent(in) :: x_val, y_val
+    real(c_double), intent(out) :: s_val, t_val
+    ! Variables outside of signature.
+    real(c_double) :: point(2)
+    integer(c_int) :: sub_index, cand_index
+    integer(c_int) :: num_candidates, num_next_candidates
+    type(LocateCandidate), allocatable :: candidates(:), next_candidates(:)
+    logical(c_bool) :: predicate
+    real(c_double) :: s_approx, t_approx
+
+    point = [x_val, y_val]
+    ! Start out with the full curve.
+    allocate(candidates(1))
+    candidates(1) = LocateCandidate(1.0_dp, 1.0_dp, 1.0_dp, nodes)
+    num_candidates = 1
+    s_val = LOCATE_MISS
+
+    do sub_index = 1, MAX_LOCATE_SUBDIVISIONS + 1
+       num_next_candidates = 0
+       ! Allocate maximum amount of space needed.
+       allocate(next_candidates(4 * num_candidates))
+       do cand_index = 1, num_candidates
+          call contains_nd( &
+               num_nodes, 2, candidates(cand_index)%nodes, &
+               point, predicate)
+          if (predicate) then
+             num_next_candidates = num_next_candidates + 4
+             call split_candidate( &
+                  num_nodes, degree, candidates(cand_index), &
+                  next_candidates(num_next_candidates - 3:num_next_candidates))
+          end if
+       end do
+
+       ! If there are no more candidates, we are done.
+       if (num_candidates == 0) then
+          return
+       end if
+
+       ! NOTE: This may copy empty slots, but this is OK since we track
+       !       `num_candidates` separately.
+       call move_alloc(next_candidates, candidates)
+       num_candidates = num_next_candidates
+
+    end do
+
+    ! Compute the s- and t-parameters as the mean of the centroid positions.
+    s_approx = ( &
+         sum(candidates(:num_candidates)%centroid_x) / &
+         (3.0_dp * num_candidates))
+    t_approx = ( &
+         sum(candidates(:num_candidates)%centroid_y) / &
+         (3.0_dp * num_candidates))
+
+    call newton_refine( &
+         num_nodes, nodes, degree, x_val, y_val, &
+         s_approx, t_approx, s_val, t_val)
+
+  end subroutine locate_point
 
 end module surface_intersection
