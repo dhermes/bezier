@@ -12,19 +12,20 @@
 
 module test_surface
 
-  use, intrinsic :: iso_c_binding, only: c_bool, c_double
+  use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use surface, only: &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det, subdivide_nodes
+       jacobian_det, specialize_surface, subdivide_nodes
   use types, only: dp
   use unit_test_helpers, only: &
-       print_status, get_random_nodes, ref_triangle_uniform_nodes
+       print_status, get_random_nodes, get_id_mat, ref_triangle_uniform_nodes
   implicit none
   private &
        test_de_casteljau_one_round, test_evaluate_barycentric, &
        test_evaluate_barycentric_multi, test_evaluate_cartesian_multi, &
-       test_jacobian_both, test_jacobian_det, test_subdivide_nodes, &
+       test_jacobian_both, test_jacobian_det, &
+       test_specialize_surface, test_subdivide_nodes, &
        subdivide_points_check
   public surface_all_tests
 
@@ -39,6 +40,7 @@ contains
     call test_evaluate_cartesian_multi(success)
     call test_jacobian_both(success)
     call test_jacobian_det(success)
+    call test_specialize_surface(success)
     call test_subdivide_nodes(success)
 
   end subroutine surface_all_tests
@@ -520,6 +522,321 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_jacobian_det
+
+  subroutine test_specialize_surface(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    real(c_double), allocatable :: id_mat(:, :), specialized(:, :)
+    real(c_double), allocatable :: expected(:, :)
+    real(c_double) :: &
+         weights0(3), weights1(3), weights2(3), weights3(3), &
+         weights4(3), weights5(3)
+    character(:), allocatable :: name
+
+    case_id = 1
+    name = "specialize_surface"
+
+    weights0 = [1.0_dp, 0.0_dp, 0.0_dp]
+    weights1 = [0.5_dp, 0.5_dp, 0.0_dp]
+    weights2 = [0.0_dp, 1.0_dp, 0.0_dp]
+    weights3 = [0.5_dp, 0.0_dp, 0.5_dp]
+    weights4 = [0.0_dp, 0.5_dp, 0.5_dp]
+    weights5 = [0.0_dp, 0.0_dp, 1.0_dp]
+
+    ! CASE 1: degree == 1, subdivision A
+    id_mat = get_id_mat(3)
+    allocate(specialized(3, 3))
+    allocate(expected(3, 3))
+    call specialize_surface( &
+         3, 3, id_mat, 1, &
+         weights0, weights1, weights3, &
+         specialized)
+    expected(1, :) = [1.0_dp, 0.0_dp, 0.0_dp]
+    expected(2, :) = [0.5_dp, 0.5_dp, 0.0_dp]
+    expected(3, :) = [0.5_dp, 0.0_dp, 0.5_dp]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: degree == 1, subdivision B
+    call specialize_surface( &
+         3, 3, id_mat, 1, &
+         weights4, weights3, weights1, &
+         specialized)
+    expected(1, :) = [0.0_dp, 0.5_dp, 0.5_dp]
+    expected(2, :) = [0.5_dp, 0.0_dp, 0.5_dp]
+    expected(3, :) = [0.5_dp, 0.5_dp, 0.0_dp]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: degree == 1, subdivision C
+    call specialize_surface( &
+         3, 3, id_mat, 1, &
+         weights1, weights2, weights4, &
+         specialized)
+    expected(1, :) = [0.5_dp, 0.5_dp, 0.0_dp]
+    expected(2, :) = [0.0_dp, 1.0_dp, 0.0_dp]
+    expected(3, :) = [0.0_dp, 0.5_dp, 0.5_dp]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: degree == 1, subdivision D
+    call specialize_surface( &
+         3, 3, id_mat, 1, &
+         weights3, weights4, weights5, &
+         specialized)
+    expected(1, :) = [0.5_dp, 0.0_dp, 0.5_dp]
+    expected(2, :) = [0.0_dp, 0.5_dp, 0.5_dp]
+    expected(3, :) = [0.0_dp, 0.0_dp, 1.0_dp]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! De-allocate and prepare for degree == 2
+    deallocate(id_mat)
+    deallocate(specialized)
+    deallocate(expected)
+
+    ! CASE 5: degree == 2, subdivision A
+    id_mat = get_id_mat(6)
+    allocate(specialized(6, 6))
+    allocate(expected(6, 6))
+    call specialize_surface( &
+         6, 6, id_mat, 2, &
+         weights0, weights1, weights3, &
+         specialized)
+    expected(1, :) = [1.0_dp, 0.0_dp, 0.0_dp, 0.0_dp, 0.0_dp, 0.0_dp]
+    expected(2, :) = [0.5_dp, 0.5_dp, 0.0_dp, 0.0_dp, 0.0_dp, 0.0_dp]
+    expected(3, :) = [0.25_dp, 0.5_dp, 0.25_dp, 0.0_dp, 0.0_dp, 0.0_dp]
+    expected(4, :) = [0.5_dp, 0.0_dp, 0.0_dp, 0.5_dp, 0.0_dp, 0.0_dp]
+    expected(5, :) = [0.25_dp, 0.25_dp, 0.0_dp, 0.25_dp, 0.25_dp, 0.0_dp]
+    expected(6, :) = [0.25_dp, 0.0_dp, 0.0_dp, 0.5_dp, 0.0_dp, 0.25_dp]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: degree == 2, subdivision B
+    call specialize_surface( &
+         6, 6, id_mat, 2, &
+         weights4, weights3, weights1, &
+         specialized)
+    expected(1, :) = [0.0_dp, 0.0_dp, 0.25_dp, 0.0_dp, 0.5_dp, 0.25_dp]
+    expected(2, :) = [0.0_dp, 0.25_dp, 0.0_dp, 0.25_dp, 0.25_dp, 0.25_dp]
+    expected(3, :) = [0.25_dp, 0.0_dp, 0.0_dp, 0.5_dp, 0.0_dp, 0.25_dp]
+    expected(4, :) = [0.0_dp, 0.25_dp, 0.25_dp, 0.25_dp, 0.25_dp, 0.0_dp]
+    expected(5, :) = [0.25_dp, 0.25_dp, 0.0_dp, 0.25_dp, 0.25_dp, 0.0_dp]
+    expected(6, :) = [0.25_dp, 0.5_dp, 0.25_dp, 0.0_dp, 0.0_dp, 0.0_dp]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: degree == 2, subdivision C
+    call specialize_surface( &
+         6, 6, id_mat, 2, &
+         weights1, weights2, weights4, &
+         specialized)
+    expected(1, :) = [0.25_dp, 0.5_dp, 0.25_dp, 0.0_dp, 0.0_dp, 0.0_dp]
+    expected(2, :) = [0.0_dp, 0.5_dp, 0.5_dp, 0.0_dp, 0.0_dp, 0.0_dp]
+    expected(3, :) = [0.0_dp, 0.0_dp, 1.0_dp, 0.0_dp, 0.0_dp, 0.0_dp]
+    expected(4, :) = [0.0_dp, 0.25_dp, 0.25_dp, 0.25_dp, 0.25_dp, 0.0_dp]
+    expected(5, :) = [0.0_dp, 0.0_dp, 0.5_dp, 0.0_dp, 0.5_dp, 0.0_dp]
+    expected(6, :) = [0.0_dp, 0.0_dp, 0.25_dp, 0.0_dp, 0.5_dp, 0.25_dp]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: degree == 2, subdivision D
+    call specialize_surface( &
+         6, 6, id_mat, 2, &
+         weights3, weights4, weights5, &
+         specialized)
+    expected(1, :) = [0.25_dp, 0.0_dp, 0.0_dp, 0.5_dp, 0.0_dp, 0.25_dp]
+    expected(2, :) = [0.0_dp, 0.25_dp, 0.0_dp, 0.25_dp, 0.25_dp, 0.25_dp]
+    expected(3, :) = [0.0_dp, 0.0_dp, 0.25_dp, 0.0_dp, 0.5_dp, 0.25_dp]
+    expected(4, :) = [0.0_dp, 0.0_dp, 0.0_dp, 0.5_dp, 0.0_dp, 0.5_dp]
+    expected(5, :) = [0.0_dp, 0.0_dp, 0.0_dp, 0.0_dp, 0.5_dp, 0.5_dp]
+    expected(6, :) = [0.0_dp, 0.0_dp, 0.0_dp, 0.0_dp, 0.0_dp, 1.0_dp]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! De-allocate and prepare for degree == 3
+    deallocate(id_mat)
+    deallocate(specialized)
+    deallocate(expected)
+
+    ! CASE 9: degree == 3, subdivision A
+    id_mat = get_id_mat(10)
+    allocate(specialized(10, 10))
+    allocate(expected(10, 10))
+    call specialize_surface( &
+         10, 10, id_mat, 3, &
+         weights0, weights1, weights3, &
+         specialized)
+    expected(1, :) = 0.125_dp * [8, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(2, :) = 0.125_dp * [4, 4, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(3, :) = 0.125_dp * [2, 4, 2, 0, 0, 0, 0, 0, 0, 0]
+    expected(4, :) = 0.125_dp * [1, 3, 3, 1, 0, 0, 0, 0, 0, 0]
+    expected(5, :) = 0.125_dp * [4, 0, 0, 0, 4, 0, 0, 0, 0, 0]
+    expected(6, :) = 0.125_dp * [2, 2, 0, 0, 2, 2, 0, 0, 0, 0]
+    expected(7, :) = 0.125_dp * [1, 2, 1, 0, 1, 2, 1, 0, 0, 0]
+    expected(8, :) = 0.125_dp * [2, 0, 0, 0, 4, 0, 0, 2, 0, 0]
+    expected(9, :) = 0.125_dp * [1, 1, 0, 0, 2, 2, 0, 1, 1, 0]
+    expected(10, :) = 0.125_dp * [1, 0, 0, 0, 3, 0, 0, 3, 0, 1]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 10: degree == 3, subdivision B
+    call specialize_surface( &
+         10, 10, id_mat, 3, &
+         weights4, weights3, weights1, &
+         specialized)
+    expected(1, :) = 0.125_dp * [0, 0, 0, 1, 0, 0, 3, 0, 3, 1]
+    expected(2, :) = 0.125_dp * [0, 0, 1, 0, 0, 2, 1, 1, 2, 1]
+    expected(3, :) = 0.125_dp * [0, 1, 0, 0, 1, 2, 0, 2, 1, 1]
+    expected(4, :) = 0.125_dp * [1, 0, 0, 0, 3, 0, 0, 3, 0, 1]
+    expected(5, :) = 0.125_dp * [0, 0, 1, 1, 0, 2, 2, 1, 1, 0]
+    expected(6, :) = 0.125_dp * [0, 1, 1, 0, 1, 2, 1, 1, 1, 0]
+    expected(7, :) = 0.125_dp * [1, 1, 0, 0, 2, 2, 0, 1, 1, 0]
+    expected(8, :) = 0.125_dp * [0, 1, 2, 1, 1, 2, 1, 0, 0, 0]
+    expected(9, :) = 0.125_dp * [1, 2, 1, 0, 1, 2, 1, 0, 0, 0]
+    expected(10, :) = 0.125_dp * [1, 3, 3, 1, 0, 0, 0, 0, 0, 0]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 11: degree == 3, subdivision C
+    call specialize_surface( &
+         10, 10, id_mat, 3, &
+         weights1, weights2, weights4, &
+         specialized)
+    expected(1, :) = 0.125_dp * [1, 3, 3, 1, 0, 0, 0, 0, 0, 0]
+    expected(2, :) = 0.125_dp * [0, 2, 4, 2, 0, 0, 0, 0, 0, 0]
+    expected(3, :) = 0.125_dp * [0, 0, 4, 4, 0, 0, 0, 0, 0, 0]
+    expected(4, :) = 0.125_dp * [0, 0, 0, 8, 0, 0, 0, 0, 0, 0]
+    expected(5, :) = 0.125_dp * [0, 1, 2, 1, 1, 2, 1, 0, 0, 0]
+    expected(6, :) = 0.125_dp * [0, 0, 2, 2, 0, 2, 2, 0, 0, 0]
+    expected(7, :) = 0.125_dp * [0, 0, 0, 4, 0, 0, 4, 0, 0, 0]
+    expected(8, :) = 0.125_dp * [0, 0, 1, 1, 0, 2, 2, 1, 1, 0]
+    expected(9, :) = 0.125_dp * [0, 0, 0, 2, 0, 0, 4, 0, 2, 0]
+    expected(10, :) = 0.125_dp * [0, 0, 0, 1, 0, 0, 3, 0, 3, 1]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 12: degree == 3, subdivision D
+    call specialize_surface( &
+         10, 10, id_mat, 3, &
+         weights3, weights4, weights5, &
+         specialized)
+    expected(1, :) = 0.125_dp * [1, 0, 0, 0, 3, 0, 0, 3, 0, 1]
+    expected(2, :) = 0.125_dp * [0, 1, 0, 0, 1, 2, 0, 2, 1, 1]
+    expected(3, :) = 0.125_dp * [0, 0, 1, 0, 0, 2, 1, 1, 2, 1]
+    expected(4, :) = 0.125_dp * [0, 0, 0, 1, 0, 0, 3, 0, 3, 1]
+    expected(5, :) = 0.125_dp * [0, 0, 0, 0, 2, 0, 0, 4, 0, 2]
+    expected(6, :) = 0.125_dp * [0, 0, 0, 0, 0, 2, 0, 2, 2, 2]
+    expected(7, :) = 0.125_dp * [0, 0, 0, 0, 0, 0, 2, 0, 4, 2]
+    expected(8, :) = 0.125_dp * [0, 0, 0, 0, 0, 0, 0, 4, 0, 4]
+    expected(9, :) = 0.125_dp * [0, 0, 0, 0, 0, 0, 0, 0, 4, 4]
+    expected(10, :) = 0.125_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 8]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! De-allocate and prepare for degree == 4
+    deallocate(id_mat)
+    deallocate(specialized)
+    deallocate(expected)
+
+    ! CASE 13: degree == 4, subdivision A
+    id_mat = get_id_mat(15)
+    allocate(specialized(15, 15))
+    allocate(expected(15, 15))
+    call specialize_surface( &
+         15, 15, id_mat, 4, &
+         weights0, weights1, weights3, &
+         specialized)
+    expected(1, :) = 0.0625_dp * [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(2, :) = 0.0625_dp * [8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(3, :) = 0.0625_dp * [4, 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(4, :) = 0.0625_dp * [2, 6, 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(5, :) = 0.0625_dp * [1, 4, 6, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(6, :) = 0.0625_dp * [8, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(7, :) = 0.0625_dp * [4, 4, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(8, :) = 0.0625_dp * [2, 4, 2, 0, 0, 2, 4, 2, 0, 0, 0, 0, 0, 0, 0]
+    expected(9, :) = 0.0625_dp * [1, 3, 3, 1, 0, 1, 3, 3, 1, 0, 0, 0, 0, 0, 0]
+    expected(10, :) = 0.0625_dp * [4, 0, 0, 0, 0, 8, 0, 0, 0, 4, 0, 0, 0, 0, 0]
+    expected(11, :) = 0.0625_dp * [2, 2, 0, 0, 0, 4, 4, 0, 0, 2, 2, 0, 0, 0, 0]
+    expected(12, :) = 0.0625_dp * [1, 2, 1, 0, 0, 2, 4, 2, 0, 1, 2, 1, 0, 0, 0]
+    expected(13, :) = 0.0625_dp * [2, 0, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 2, 0, 0]
+    expected(14, :) = 0.0625_dp * [1, 1, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 1, 1, 0]
+    expected(15, :) = 0.0625_dp * [1, 0, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 4, 0, 1]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 14: degree == 4, subdivision B
+    call specialize_surface( &
+         15, 15, id_mat, 4, &
+         weights4, weights3, weights1, &
+         specialized)
+    expected(1, :) = 0.0625_dp * [0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 6, 0, 4, 1]
+    expected(2, :) = 0.0625_dp * [0, 0, 0, 1, 0, 0, 0, 3, 1, 0, 3, 3, 1, 3, 1]
+    expected(3, :) = 0.0625_dp * [0, 0, 1, 0, 0, 0, 2, 2, 0, 1, 4, 1, 2, 2, 1]
+    expected(4, :) = 0.0625_dp * [0, 1, 0, 0, 0, 1, 3, 0, 0, 3, 3, 0, 3, 1, 1]
+    expected(5, :) = 0.0625_dp * [1, 0, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 4, 0, 1]
+    expected(6, :) = 0.0625_dp * [0, 0, 0, 1, 1, 0, 0, 3, 3, 0, 3, 3, 1, 1, 0]
+    expected(7, :) = 0.0625_dp * [0, 0, 1, 1, 0, 0, 2, 3, 1, 1, 3, 2, 1, 1, 0]
+    expected(8, :) = 0.0625_dp * [0, 1, 1, 0, 0, 1, 3, 2, 0, 2, 3, 1, 1, 1, 0]
+    expected(9, :) = 0.0625_dp * [1, 1, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 1, 1, 0]
+    expected(10, :) = 0.0625_dp * [0, 0, 1, 2, 1, 0, 2, 4, 2, 1, 2, 1, 0, 0, 0]
+    expected(11, :) = 0.0625_dp * [0, 1, 2, 1, 0, 1, 3, 3, 1, 1, 2, 1, 0, 0, 0]
+    expected(12, :) = 0.0625_dp * [1, 2, 1, 0, 0, 2, 4, 2, 0, 1, 2, 1, 0, 0, 0]
+    expected(13, :) = 0.0625_dp * [0, 1, 3, 3, 1, 1, 3, 3, 1, 0, 0, 0, 0, 0, 0]
+    expected(14, :) = 0.0625_dp * [1, 3, 3, 1, 0, 1, 3, 3, 1, 0, 0, 0, 0, 0, 0]
+    expected(15, :) = 0.0625_dp * [1, 4, 6, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 15: degree == 4, subdivision C
+    call specialize_surface( &
+         15, 15, id_mat, 4, &
+         weights1, weights2, weights4, &
+         specialized)
+    expected(1, :) = 0.0625_dp * [1, 4, 6, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(2, :) = 0.0625_dp * [0, 2, 6, 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(3, :) = 0.0625_dp * [0, 0, 4, 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(4, :) = 0.0625_dp * [0, 0, 0, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(5, :) = 0.0625_dp * [0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected(6, :) = 0.0625_dp * [0, 1, 3, 3, 1, 1, 3, 3, 1, 0, 0, 0, 0, 0, 0]
+    expected(7, :) = 0.0625_dp * [0, 0, 2, 4, 2, 0, 2, 4, 2, 0, 0, 0, 0, 0, 0]
+    expected(8, :) = 0.0625_dp * [0, 0, 0, 4, 4, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0]
+    expected(9, :) = 0.0625_dp * [0, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0]
+    expected(10, :) = 0.0625_dp * [0, 0, 1, 2, 1, 0, 2, 4, 2, 1, 2, 1, 0, 0, 0]
+    expected(11, :) = 0.0625_dp * [0, 0, 0, 2, 2, 0, 0, 4, 4, 0, 2, 2, 0, 0, 0]
+    expected(12, :) = 0.0625_dp * [0, 0, 0, 0, 4, 0, 0, 0, 8, 0, 0, 4, 0, 0, 0]
+    expected(13, :) = 0.0625_dp * [0, 0, 0, 1, 1, 0, 0, 3, 3, 0, 3, 3, 1, 1, 0]
+    expected(14, :) = 0.0625_dp * [0, 0, 0, 0, 2, 0, 0, 0, 6, 0, 0, 6, 0, 2, 0]
+    expected(15, :) = 0.0625_dp * [0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 6, 0, 4, 1]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 16: degree == 4, subdivision D
+    call specialize_surface( &
+         15, 15, id_mat, 4, &
+         weights3, weights4, weights5, &
+         specialized)
+    expected(1, :) = 0.0625_dp * [1, 0, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 4, 0, 1]
+    expected(2, :) = 0.0625_dp * [0, 1, 0, 0, 0, 1, 3, 0, 0, 3, 3, 0, 3, 1, 1]
+    expected(3, :) = 0.0625_dp * [0, 0, 1, 0, 0, 0, 2, 2, 0, 1, 4, 1, 2, 2, 1]
+    expected(4, :) = 0.0625_dp * [0, 0, 0, 1, 0, 0, 0, 3, 1, 0, 3, 3, 1, 3, 1]
+    expected(5, :) = 0.0625_dp * [0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 6, 0, 4, 1]
+    expected(6, :) = 0.0625_dp * [0, 0, 0, 0, 0, 2, 0, 0, 0, 6, 0, 0, 6, 0, 2]
+    expected(7, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 4, 0, 4, 2, 2]
+    expected(8, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 4, 2, 2, 4, 2]
+    expected(9, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 6, 0, 6, 2]
+    expected(10, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 8, 0, 4]
+    expected(11, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 4, 4]
+    expected(12, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 8, 4]
+    expected(13, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8]
+    expected(14, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8]
+    expected(15, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16]
+    case_success = all(specialized == expected)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_specialize_surface
 
   subroutine test_subdivide_nodes(success)
     logical(c_bool), intent(inout) :: success

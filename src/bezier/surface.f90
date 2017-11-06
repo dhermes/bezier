@@ -12,15 +12,15 @@
 
 module surface
 
-  use, intrinsic :: iso_c_binding, only: c_double, c_int
+  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   use curve, only: evaluate_curve_barycentric
   implicit none
-  private
+  private specialize_workspace_sizes, specialize_surface_one_round
   public &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det, subdivide_nodes
+       jacobian_det, specialize_surface, subdivide_nodes
 
 contains
 
@@ -275,6 +275,225 @@ contains
     end if
 
   end subroutine jacobian_det
+
+  subroutine specialize_workspace_sizes(degree, size_odd, size_even)
+    integer(c_int), intent(in) :: degree
+    integer(c_int), intent(out) :: size_odd, size_even
+
+    ! NOTE: This is a helper for ``specialize_surface``.
+    if (mod(degree, 2) == 1) then
+       size_odd = ((degree + 1) * (degree + 3)**2 * (degree + 5)) / 64
+       size_even = size_odd
+    else if (mod(degree, 4) == 0) then
+       size_odd = (degree * (degree + 2) * (degree + 4) * (degree + 6)) / 64
+       size_even = (((degree + 2) * (degree + 4)) / 8)**2
+    else
+       size_odd = (((degree + 2) * (degree + 4)) / 8)**2
+       size_even = (degree * (degree + 2) * (degree + 4) * (degree + 6)) / 64
+    end if
+
+  end subroutine specialize_workspace_sizes
+
+  subroutine specialize_surface_one_round( &
+       dimension_, num_read, read_nodes, num_write, write_nodes, &
+       size_read, size_write, step, local_degree, &
+       weights_a, weights_b, weights_c)
+
+    ! INVARIANT: `step + local_degree == (total) degree`
+
+    integer(c_int), intent(in) :: dimension_
+    integer(c_int), intent(in) :: num_read
+    real(c_double), intent(in) :: read_nodes(num_read, dimension_)
+    integer(c_int), intent(in) :: num_write
+    real(c_double), intent(inout) :: write_nodes(num_write, dimension_)
+    integer(c_int), intent(in) :: size_read, size_write
+    integer(c_int), intent(in) :: step, local_degree
+    real(c_double), intent(in) :: weights_a(3), weights_b(3), weights_c(3)
+    ! Variables outside of signature.
+    integer(c_int) :: write_index, new_write, read_index, new_read, i
+
+    ! First: (step, 0, 0)
+    ! INVARIANT: `size_write` == `size_read - local_degree - 1`
+    call de_casteljau_one_round( &
+         size_read, dimension_, read_nodes(1:size_read, :), &
+         local_degree, weights_a(1), weights_a(2), weights_a(3), &
+         write_nodes(1:size_write, :))
+
+    ! Second: (i, j, 0) for j > 0, i + j = step
+    write_index = size_write + 1
+    read_index = 1
+    do i = 1, step
+       new_write = write_index + size_write - 1
+       new_read = read_index + size_read - 1
+       call de_casteljau_one_round( &
+            size_read, dimension_, read_nodes(read_index:new_read, :), &
+            local_degree, weights_b(1), weights_b(2), weights_b(3), &
+            write_nodes(write_index:new_write, :))
+       ! Update the indices.
+       write_index = new_write + 1
+       read_index = new_read + 1
+    end do
+
+    ! Third:  (i, j, k) for k > 0, i + j + k = step
+    read_index = 1
+    do i = 1, ((step + 1) * step) / 2
+       new_write = write_index + size_write - 1
+       new_read = read_index + size_read - 1
+       call de_casteljau_one_round( &
+            size_read, dimension_, read_nodes(read_index:new_read, :), &
+            local_degree, weights_c(1), weights_c(2), weights_c(3), &
+            write_nodes(write_index:new_write, :))
+       ! Update the indices.
+       write_index = new_write + 1
+       read_index = new_read + 1
+    end do
+
+  end subroutine specialize_surface_one_round
+
+  subroutine specialize_surface( &
+       num_nodes, dimension_, nodes, degree, &
+       weights_a, weights_b, weights_c, specialized) &
+       bind(c, name='specialize_surface')
+
+    ! This re-parameterizes by "specializing" to a subregion of the unit
+    ! triangle. This happens in waves by applying one round of de Casteljau
+    ! with the given sets of barycentric weights. For example, in the degree
+    ! 1 case, we transform
+    !     [n0]          [dC(n0(1:3), a)]
+    !     [  ] --> n1 = [dC(n0(1:3), b)]
+    !     [  ]          [dC(n0(1:3), c)]
+    ! where `n` on the LHS is 3xDIM and each of the transformed sets of
+    ! nodes are 1xDIM (since de Casteljau drops the degree by 1). (NOTE:
+    ! here I'm using `dC` as a shorthand for "de Casteljau" and `a` as a
+    ! shorthand `weights_a`.) In the degree 2 case:
+    !     [n0]          [dC(n0(1:6), a)]          [dC(n1(1:3), a)]
+    !     [  ]          [              ]          [dC(n1(1:3), b)]
+    !     [  ]          [              ] --> n2 = [dC(n1(4:6), b)]
+    !     [  ] --> n1 = [dC(n0(1:6), b)]          [dC(n1(1:3), c)]
+    !     [  ]          [              ]          [dC(n1(4:6), c)]
+    !     [  ]          [              ]          [dC(n1(7:9), c)]
+    !                   [dC(n0(1:6), c)]
+    !                   [              ]
+    !                   [              ]
+    ! In the degree 3 case:
+    !     [n0]          [dC(n0(1:10), a)]          [dC(n1( 1:6 ), a)]
+    !     [  ]          [               ]          [                ]
+    !     [  ]          [               ]          [                ]
+    !     [  ]          [               ]          [dC(n1( 1:6 ), b)]
+    !     [  ]          [               ]          [                ]
+    !     [  ] --> n1 = [               ]          [                ]
+    !     [  ]          [dC(n0(1:10), b)]          [dC(n1( 7:12), b)]
+    !     [  ]          [               ]          [                ]
+    !     [  ]          [               ]          [                ]
+    !     [  ]          [               ] --> n2 = [dC(n1( 1:6 ), c)]
+    !                   [               ]          [                ]
+    !                   [               ]          [                ]
+    !                   [dC(n0(1:10), c)]          [dC(n1( 7:12), c)]
+    !                   [               ]          [                ]
+    !                   [               ]          [                ]
+    !                   [               ]          [dC(n1(13:18), c)]
+    !                   [               ]          [                ]
+    !                   [               ]          [                ]
+    ! ... CONTINUTING DEGREE 3 ...
+    !                 [dC(n2( 1:3 ), a)]
+    !                 [dC(n2( 1:3 ), b)]
+    !                 [dC(n2( 4:6 ), b)]
+    !                 [dC(n2( 7:9 ), b)]
+    !                 [dC(n2( 1:3 ), c)]
+    !     n2 --> n3 = [dC(n2( 4:6 ), c)]
+    !                 [dC(n2( 7:9 ), c)]
+    !                 [dC(n2(10:12), c)]
+    !                 [dC(n2(13:15), c)]
+    !                 [dC(n2(16:18), c)]
+    ! For **all** cases, we are tracking applications of weights at
+    ! each step:
+    !     STEP 1: {a}, {b}, {c}
+    !     STEP 2: {aa}, {ab}, {bb}, {ac}, {bc}, {cc}
+    !     STEP 3: {aaa}, {aab}, {abb}, {bbb}, {aac}, ...
+    ! and each of these quantities can be computed using the ones computed
+    ! at the previous step. So in STEP 2, we compute {aa} by applying
+    ! the `a` weights to {a}, we compute {ab} and {bb} by applying the
+    ! `b` weights to {a} and {b} and we compute {ac}, {bc}, {cc} by
+    ! applying the `c` weights to the whole set.
+    !
+    ! For a "general" step, we can treat the triple (#a, #b, #c) just like
+    ! we treat an index triple (i, j, k), which we know has linear index
+    ! (1-based) `1 + j + (k/2) (2(i + j) + k + 3)`. This is very useful because
+    ! we can find the **previous** quantity by using this index. For example,
+    ! to compute {aabccc} by applying `c` to {aabcc}, we know the index
+    ! of the {aabcc} is 13 and the index of {aabccc} is 20. In fact, one can
+    ! show that when dropping from (i, j, k) to (i, j, k - 1) the index will
+    ! always drop by `(i + j + k) + 1 = step + 1`. Unfortunately, some values
+    ! have no `c` weights at all, i.e. `k = 0`. For these special cases we
+    ! also use the formula to show `(step, 0, 0) --> (step - 1, 0, 0)` has
+    ! no change in index (both are the first index). From `(i, j, 0)` to
+    ! `(i, j - 1, 0)` drops the index by `1`.
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    integer(c_int), intent(in) :: degree
+    real(c_double), intent(in) :: weights_a(3), weights_b(3), weights_c(3)
+    real(c_double), intent(out) :: specialized(num_nodes, dimension_)
+    ! Variables outside of signature.
+    integer(c_int) :: num_curves, size, size_odd, size_even
+    real(c_double), allocatable :: workspace_odd(:, :), workspace_even(:, :)
+    integer(c_int) :: delta_nc, delta_size, curr_degree, size_new, step
+    logical(c_bool) :: is_even
+
+    num_curves = 1
+    size = ((degree + 1) * (degree + 2)) / 2
+    call specialize_workspace_sizes(degree, size_odd, size_even)
+    allocate(workspace_odd(size_odd, dimension_))
+    allocate(workspace_even(size_even, dimension_))
+
+    ! `num_curves` and `delta_size` are triangular numbers going in
+    ! the opposite direction. `num_curves` will go from 1, 3, 6, 10, ...
+    ! and `delta_size` will go (d + 2 C 2), (d + 1 C 2), ...
+    ! Since the delta between consecutive terms grows linearly, we track
+    ! them as well to avoid multiplications.
+    delta_nc = 2
+    delta_size = -degree - 1
+    is_even = .FALSE.  ! At `step == 1`.
+
+    do step = 1, degree
+       num_curves = num_curves + delta_nc
+       size_new = size + delta_size
+       if (step == 1) then
+          ! Read from `nodes`, write to `workspace_odd`.
+          call specialize_surface_one_round( &
+               dimension_, num_nodes, nodes, size_odd, workspace_odd, &
+               size, size_new, step, degree + 1 - step, &
+               weights_a, weights_b, weights_c)
+       else if (is_even) then
+          ! Read from `workspace_odd`, write to `workspace_even`.
+          call specialize_surface_one_round( &
+               dimension_, size_odd, workspace_odd, &
+               size_even, workspace_even, &
+               size, size_new, step, degree + 1 - step, &
+               weights_a, weights_b, weights_c)
+       else
+          ! Read from `workspace_even`, write to `workspace_odd`.
+          call specialize_surface_one_round( &
+               dimension_, size_even, workspace_even, &
+               size_odd, workspace_odd, &
+               size, size_new, step, degree + 1 - step, &
+               weights_a, weights_b, weights_c)
+       end if
+
+       ! Update our index values.
+       size = size_new
+       delta_nc = delta_nc + 1
+       delta_size = delta_size + 1
+       is_even = .NOT. is_even  ! Switch parity.
+    end do
+
+    ! Read from the last workspace that was written to.
+    if (is_even) then
+       specialized = workspace_odd(1:num_nodes, :)
+    else
+       specialized = workspace_even(1:num_nodes, :)
+    end if
+
+  end subroutine specialize_surface
 
   subroutine subdivide_nodes( &
        num_nodes, dimension_, nodes, degree, &
