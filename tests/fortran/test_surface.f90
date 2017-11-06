@@ -1011,6 +1011,13 @@ contains
          15, 2, 4, 1029038, 890012, case_success)
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 8: Evaluate subdivided parts of a quantic surface. This
+    !         will use ``specialize_surface`` rather than a hard-coded
+    !         process.
+    call subdivide_points_check( &
+         21, 2, 5, 91889, 1303497, case_success)
+    call print_status(name, case_id, case_success, success)
+
   end subroutine test_subdivide_nodes
 
   subroutine subdivide_points_check( &

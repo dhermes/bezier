@@ -734,6 +734,31 @@ contains
        nodes_d(13, :) = 0.5_dp * (nodes(13, :) + nodes(15, :))
        nodes_d(14, :) = 0.5_dp * (nodes(14, :) + nodes(15, :))
        nodes_d(15, :) = nodes(15, :)
+    else
+       call specialize_surface( &
+            num_nodes, dimension_, nodes, degree, &
+            [1.0_dp, 0.0_dp, 0.0_dp], &
+            [0.5_dp, 0.5_dp, 0.0_dp], &
+            [0.5_dp, 0.0_dp, 0.5_dp], &
+            nodes_a)
+       call specialize_surface( &
+            num_nodes, dimension_, nodes, degree, &
+            [0.0_dp, 0.5_dp, 0.5_dp], &
+            [0.5_dp, 0.0_dp, 0.5_dp], &
+            [0.5_dp, 0.5_dp, 0.0_dp], &
+            nodes_b)
+       call specialize_surface( &
+            num_nodes, dimension_, nodes, degree, &
+            [0.5_dp, 0.5_dp, 0.0_dp], &
+            [0.0_dp, 1.0_dp, 0.0_dp], &
+            [0.0_dp, 0.5_dp, 0.5_dp], &
+            nodes_c)
+       call specialize_surface( &
+            num_nodes, dimension_, nodes, degree, &
+            [0.5_dp, 0.0_dp, 0.5_dp], &
+            [0.0_dp, 0.5_dp, 0.5_dp], &
+            [0.0_dp, 0.0_dp, 1.0_dp], &
+            nodes_d)
     end if
 
   end subroutine subdivide_nodes
