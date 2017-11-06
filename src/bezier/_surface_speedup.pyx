@@ -165,3 +165,26 @@ def jacobian_det(double[::1, :] nodes, int degree, double[::1, :] st_vals):
     )
 
     return evaluated
+
+
+def specialize_surface(
+        double[::1, :] nodes, int degree,
+        double[:] weights_a, double[:] weights_b, double[:] weights_c):
+    cdef int num_nodes, dimension
+    cdef ndarray_t[double, ndim=2, mode='fortran'] specialized
+
+    num_nodes, dimension = np.shape(nodes)
+    specialized = np.empty((num_nodes, dimension), order='F')
+
+    bezier._surface.specialize_surface(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &degree,
+        &weights_a[0],
+        &weights_b[0],
+        &weights_c[0],
+        &specialized[0, 0],
+    )
+
+    return specialized

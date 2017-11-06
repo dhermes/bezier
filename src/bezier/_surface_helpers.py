@@ -227,6 +227,12 @@ QUARTIC_SUBDIVIDE_D = np.asfortranarray([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16],
 ], dtype=_FLOAT64) / 16.0
+_WEIGHTS_SUBDIVIDE0 = np.asfortranarray([1.0, 0.0, 0.0])
+_WEIGHTS_SUBDIVIDE1 = np.asfortranarray([0.5, 0.5, 0.0])
+_WEIGHTS_SUBDIVIDE2 = np.asfortranarray([0.5, 0.0, 0.5])
+_WEIGHTS_SUBDIVIDE3 = np.asfortranarray([0.0, 0.5, 0.5])
+_WEIGHTS_SUBDIVIDE4 = np.asfortranarray([0.0, 1.0, 0.0])
+_WEIGHTS_SUBDIVIDE5 = np.asfortranarray([0.0, 0.0, 1.0])
 # The Jacobian of a quadratric (in any dimension) as given by
 # dB/ds = [-2L1, 2(L1 - L2), 2L2, -2L3, 2L3, 0] * nodes
 # dB/dt = [-2L1, -2L2, 0, 2(L1 - L3), 2L2, 2L3] * nodes
@@ -508,7 +514,8 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     .. note::
 
        This is a helper function, used by :func:`make_transform` and
-       :func:`specialize_surface`.
+       :func:`_specialize_surface` (and :func:`make_transform` is **only**
+       used by :func:`_specialize_surface`).
 
     Converts the ``nodes`` into a basis for a surface one degree smaller
     by using the barycentric weights:
@@ -584,16 +591,16 @@ def make_transform(degree, weights_a, weights_b, weights_c):
 
     .. note::
 
-       This is a helper used only by :func:`specialize_surface`.
+       This is a helper used only by :func:`_specialize_surface`.
 
     Args:
         degree (int): The degree of a candidate surface.
-        weights_a (Tuple[float, float, float]): Barycentric weights for a
-            point in the reference triangle
-        weights_b (Tuple[float, float, float]): Barycentric weights for a
-            point in the reference triangle
-        weights_c (Tuple[float, float, float]): Barycentric weights for a
-            point in the reference triangle
+        weights_a (numpy.ndarray): Triple (1D array) of barycentric weights
+            for a point in the reference triangle
+        weights_b (numpy.ndarray): Triple (1D array) of barycentric weights
+            for a point in the reference triangle
+        weights_c (numpy.ndarray): Triple (1D array) of barycentric weights
+            for a point in the reference triangle
 
     Returns:
         Mapping[int, numpy.ndarray]: Mapping from keys to the de Casteljau
@@ -655,8 +662,13 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
     return result
 
 
-def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
+def _specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
     """Specialize a surface to a reparameterization
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Does so by taking three points (in barycentric form) within the
     reference triangle and then reparameterizing the surface onto
@@ -675,12 +687,12 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
     Args:
         nodes (numpy.ndarray): Control points for a surface.
         degree (int): The degree of the surface.
-        weights_a (Tuple[float, float, float]): Barycentric weights for a
-            point in the reference triangle
-        weights_b (Tuple[float, float, float]): Barycentric weights for a
-            point in the reference triangle
-        weights_c (Tuple[float, float, float]): Barycentric weights for a
-            point in the reference triangle
+        weights_a (numpy.ndarray): Triple (1D array) of barycentric weights
+            for a point in the reference triangle
+        weights_b (numpy.ndarray): Triple (1D array) of barycentric weights
+            for a point in the reference triangle
+        weights_c (numpy.ndarray): Triple (1D array) of barycentric weights
+            for a point in the reference triangle
 
     Returns:
         numpy.ndarray: The control points for the specialized surface.
@@ -746,16 +758,16 @@ def subdivide_nodes(nodes, degree):
     else:
         nodes_a = specialize_surface(
             nodes, degree,
-            (1.0, 0.0, 0.0), (0.5, 0.5, 0.0), (0.5, 0.0, 0.5))
+            _WEIGHTS_SUBDIVIDE0, _WEIGHTS_SUBDIVIDE1, _WEIGHTS_SUBDIVIDE2)
         nodes_b = specialize_surface(
             nodes, degree,
-            (0.0, 0.5, 0.5), (0.5, 0.0, 0.5), (0.5, 0.5, 0.0))
+            _WEIGHTS_SUBDIVIDE3, _WEIGHTS_SUBDIVIDE2, _WEIGHTS_SUBDIVIDE1)
         nodes_c = specialize_surface(
             nodes, degree,
-            (0.5, 0.5, 0.0), (0.0, 1.0, 0.0), (0.0, 0.5, 0.5))
+            _WEIGHTS_SUBDIVIDE1, _WEIGHTS_SUBDIVIDE4, _WEIGHTS_SUBDIVIDE3)
         nodes_d = specialize_surface(
             nodes, degree,
-            (0.5, 0.0, 0.5), (0.0, 0.5, 0.5), (0.0, 0.0, 1.0))
+            _WEIGHTS_SUBDIVIDE2, _WEIGHTS_SUBDIVIDE3, _WEIGHTS_SUBDIVIDE5)
 
     return nodes_a, nodes_b, nodes_c, nodes_d
 
@@ -2414,6 +2426,7 @@ class _IntersectionClassification(enum.Enum):
 # pylint: disable=invalid-name
 if _surface_speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
+    specialize_surface = _specialize_surface
     jacobian_both = _jacobian_both
     jacobian_det = _jacobian_det
     evaluate_barycentric = _evaluate_barycentric
@@ -2422,6 +2435,7 @@ if _surface_speedup is None:  # pragma: NO COVER
     IntersectionClassification = _IntersectionClassification
 else:
     de_casteljau_one_round = _surface_speedup.de_casteljau_one_round
+    specialize_surface = _surface_speedup.specialize_surface
     jacobian_both = _surface_speedup.jacobian_both
     jacobian_det = _surface_speedup.jacobian_det
     evaluate_barycentric = _surface_speedup.evaluate_barycentric

@@ -436,7 +436,7 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: num_curves, size, size_odd, size_even
     real(c_double), allocatable :: workspace_odd(:, :), workspace_even(:, :)
-    integer(c_int) :: delta_nc, delta_size, curr_degree, size_new, step
+    integer(c_int) :: delta_nc, delta_size, size_new, step
     logical(c_bool) :: is_even
 
     num_curves = 1

@@ -398,21 +398,21 @@ class Test_reduced_to_matrix(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test_specialize_surface(utils.NumPyTestCase):
+class Test__specialize_surface(utils.NumPyTestCase):
 
-    WEIGHTS0 = (1.0, 0.0, 0.0)
-    WEIGHTS1 = (0.5, 0.5, 0.0)
-    WEIGHTS2 = (0.0, 1.0, 0.0)
-    WEIGHTS3 = (0.5, 0.0, 0.5)
-    WEIGHTS4 = (0.0, 0.5, 0.5)
-    WEIGHTS5 = (0.0, 0.0, 1.0)
+    WEIGHTS0 = np.asfortranarray([1.0, 0.0, 0.0])
+    WEIGHTS1 = np.asfortranarray([0.5, 0.5, 0.0])
+    WEIGHTS2 = np.asfortranarray([0.0, 1.0, 0.0])
+    WEIGHTS3 = np.asfortranarray([0.5, 0.0, 0.5])
+    WEIGHTS4 = np.asfortranarray([0.0, 0.5, 0.5])
+    WEIGHTS5 = np.asfortranarray([0.0, 0.0, 1.0])
 
     @staticmethod
-    def _call_function_under_test(nodes, degree,
-                                  weights_a, weights_b, weights_c):
+    def _call_function_under_test(
+            nodes, degree, weights_a, weights_b, weights_c):
         from bezier import _surface_helpers
 
-        return _surface_helpers.specialize_surface(
+        return _surface_helpers._specialize_surface(
             nodes, degree, weights_a, weights_b, weights_c)
 
     def _helper(self, degree, expected_a, expected_b, expected_c, expected_d):
@@ -474,6 +474,18 @@ class Test_specialize_surface(utils.NumPyTestCase):
             _surface_helpers.QUARTIC_SUBDIVIDE_B,
             _surface_helpers.QUARTIC_SUBDIVIDE_C,
             _surface_helpers.QUARTIC_SUBDIVIDE_D)
+
+
+@utils.needs_surface_speedup
+class Test_speedup_specialize_surface(Test__specialize_surface):
+
+    @staticmethod
+    def _call_function_under_test(
+            nodes, degree, weights_a, weights_b, weights_c):
+        from bezier import _surface_speedup
+
+        return _surface_speedup.specialize_surface(
+            nodes, degree, weights_a, weights_b, weights_c)
 
 
 class Test_subdivide_nodes(utils.NumPyTestCase):

@@ -35,6 +35,10 @@ void jacobian_both(
 void jacobian_det(
     int *num_nodes, double *nodes, int *degree,
     int *num_vals, double *param_vals, double *evaluated);
+void specialize_surface(
+    int *num_nodes, int *dimension, double *nodes, int *degree,
+    double *weights_a, double *weights_b, double *weights_c,
+    double *specialized);
 void subdivide_nodes_surface(
     int *num_nodes, int *dimension, double *nodes, int *degree,
     double *nodes_a, double *nodes_b, double *nodes_c, double *nodes_d);
