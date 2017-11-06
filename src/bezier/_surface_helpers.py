@@ -1061,7 +1061,7 @@ def locate_point(nodes, degree, x_val, y_val):
     Does so by recursively subdividing the surface and rejecting
     sub-surfaces with bounding boxes that don't contain the point.
     After the sub-surfaces are sufficiently small, uses Newton's
-    method to zoom in on the intersection.
+    method to narrow in on the pre-image of the point.
 
     Args:
         nodes (numpy.ndarray): Control points for B |eacute| zier surface

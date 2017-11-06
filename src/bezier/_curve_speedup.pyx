@@ -163,7 +163,7 @@ def locate_point(double[::1, :] nodes, double[::1, :] point):
     num_nodes, dimension = np.shape(nodes)
     # NOTE: We don't check that ``np.shape(point) == (1, dimension)``.
 
-    bezier._curve.locate_point(
+    bezier._curve.locate_point_curve(
         &num_nodes,
         &dimension,
         &nodes[0, 0],

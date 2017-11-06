@@ -38,7 +38,7 @@ void subdivide_nodes_curve(
 void newton_refine(
     int *num_nodes, int *dimension, double *nodes,
     double *point, double *s, double *updated_s);
-void locate_point(
+void locate_point_curve(
     int *num_nodes, int *dimension, double *nodes,
     double *point, double *s_approx);
 void elevate_nodes(

@@ -472,7 +472,7 @@ contains
     character(:), allocatable :: name
 
     case_id = 1
-    name = "locate_point"
+    name = "locate_point (Curve)"
 
     ! CASE 1: Quadratic in 3D (with match).
     nodes1(1, :) = 0

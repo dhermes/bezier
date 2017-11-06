@@ -5356,11 +5356,11 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_12locate_point(CYTHON_UNUSED 
   /* "bezier/_curve_speedup.pyx":166
  *     # NOTE: We don't check that ``np.shape(point) == (1, dimension)``.
  *
- *     bezier._curve.locate_point(             # <<<<<<<<<<<<<<
+ *     bezier._curve.locate_point_curve(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
-  locate_point((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_point.strides[1]) )))), (&__pyx_v_s_approx));
+  locate_point_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_point.strides[1]) )))), (&__pyx_v_s_approx));
 
   /* "bezier/_curve_speedup.pyx":174
  *     )

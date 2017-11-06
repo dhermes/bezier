@@ -415,7 +415,7 @@ contains
 
   subroutine locate_point( &
        num_nodes, dimension_, nodes, point, s_approx) &
-       bind(c, name='locate_point')
+       bind(c, name='locate_point_curve')
 
     ! NOTE: This returns ``-1`` (``LOCATE_MISS``) as a signal for "point is
     !       not on the curve" and ``-2`` (``LOCATE_INVALID``) for "point is
