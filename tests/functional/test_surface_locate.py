@@ -20,7 +20,6 @@ import numpy as np
 
 import bezier
 from bezier import _plot_helpers
-
 from tests.functional import utils
 
 

@@ -19,7 +19,6 @@ except ImportError:
 import numpy as np
 
 from bezier import _geometric_intersection
-
 from tests.functional import utils
 
 

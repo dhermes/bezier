@@ -11,6 +11,7 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+
 import contextlib
 import itertools
 
@@ -22,7 +23,6 @@ from bezier import _algebraic_intersection
 from bezier import _geometric_intersection
 from bezier import _surface_helpers
 from bezier import curve
-
 from tests.functional import utils
 
 

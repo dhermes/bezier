@@ -18,7 +18,7 @@ try:
     import scipy.linalg.lapack as SCIPY_LAPACK
 except ImportError:  # pragma: NO COVER
     SCIPY_LAPACK = None
-import six
+import six  # noqa: I202
 
 from tests import utils as base_utils
 from tests.unit import utils

@@ -35,7 +35,7 @@ try:
     import seaborn  # pylint: disable=unused-import
 except ImportError:
     seaborn = None
-import six
+import six  # noqa: I202
 
 import bezier
 from bezier import _helpers
