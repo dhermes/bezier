@@ -1110,7 +1110,7 @@ class Test_locate_point(unittest.TestCase):
         #       Using extended precision, we can find these values to more
         #       digits than what is supported by IEEE-754.
         expected_s = 0.109190958136897160638
-        self.assertAlmostEqual(s, expected_s, delta=SPACING(expected_s))
+        self.assertAlmostEqual(s, expected_s, delta=6 * SPACING(expected_s))
         expected_t = 0.11269475204698919699
         self.assertAlmostEqual(t, expected_t, delta=SPACING(expected_t))
 
