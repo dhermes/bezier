@@ -98,7 +98,8 @@ contains
 
   end subroutine newton_refine
 
-  subroutine split_candidate(num_nodes, degree, candidate, sub_candidates)
+  subroutine split_candidate( &
+       num_nodes, degree, candidate, num_next_candidates, next_candidates)
 
     ! NOTE: This assumes nodes are 2-dimensional.
     ! NOTE: This assumes that the nodes in each sub-candidate are
@@ -107,44 +108,51 @@ contains
     integer(c_int), intent(in) :: num_nodes
     integer(c_int), intent(in) :: degree
     type(LocateCandidate), intent(in) :: candidate
-    type(LocateCandidate), intent(out) :: sub_candidates(4)
+    integer(c_int), intent(in) :: num_next_candidates
+    type(LocateCandidate), intent(inout) :: next_candidates(:)
     ! Variables outside of signature.
     real(c_double) :: half_width
 
     ! Allocate the new nodes and call sub-divide.
-    allocate(sub_candidates(1)%nodes(num_nodes, 2))
-    allocate(sub_candidates(2)%nodes(num_nodes, 2))
-    allocate(sub_candidates(3)%nodes(num_nodes, 2))
-    allocate(sub_candidates(4)%nodes(num_nodes, 2))
+    allocate(next_candidates(num_next_candidates - 3)%nodes(num_nodes, 2))
+    allocate(next_candidates(num_next_candidates - 2)%nodes(num_nodes, 2))
+    allocate(next_candidates(num_next_candidates - 1)%nodes(num_nodes, 2))
+    allocate(next_candidates(num_next_candidates)%nodes(num_nodes, 2))
 
     call subdivide_nodes( &
          num_nodes, 2, candidate%nodes, degree, &
-         sub_candidates(1)%nodes, &
-         sub_candidates(2)%nodes, &
-         sub_candidates(3)%nodes, &
-         sub_candidates(4)%nodes)
+         next_candidates(num_next_candidates - 3)%nodes, &
+         next_candidates(num_next_candidates - 2)%nodes, &
+         next_candidates(num_next_candidates - 1)%nodes, &
+         next_candidates(num_next_candidates)%nodes)
 
     half_width = 0.5_dp * candidate%width
 
     ! Subdivision A.
-    sub_candidates(1)%centroid_x = candidate%centroid_x - half_width
-    sub_candidates(1)%centroid_y = candidate%centroid_y - half_width
-    sub_candidates(1)%width = half_width
+    next_candidates(num_next_candidates - 3)%centroid_x = ( &
+         candidate%centroid_x - half_width)
+    next_candidates(num_next_candidates - 3)%centroid_y = ( &
+         candidate%centroid_y - half_width)
+    next_candidates(num_next_candidates - 3)%width = half_width
 
     ! Subdivision B.
-    sub_candidates(2)%centroid_x = candidate%centroid_x
-    sub_candidates(2)%centroid_y = candidate%centroid_y
-    sub_candidates(2)%width = -half_width
+    next_candidates(num_next_candidates - 2)%centroid_x = candidate%centroid_x
+    next_candidates(num_next_candidates - 2)%centroid_y = candidate%centroid_y
+    next_candidates(num_next_candidates - 2)%width = -half_width
 
     ! Subdivision C.
-    sub_candidates(3)%centroid_x = candidate%centroid_x + candidate%width
-    sub_candidates(3)%centroid_y = sub_candidates(1)%centroid_y
-    sub_candidates(3)%width = half_width
+    next_candidates(num_next_candidates - 1)%centroid_x = ( &
+         candidate%centroid_x + candidate%width)
+    next_candidates(num_next_candidates - 1)%centroid_y = ( &
+         next_candidates(num_next_candidates - 3)%centroid_y)
+    next_candidates(num_next_candidates - 1)%width = half_width
 
     ! Subdivision D.
-    sub_candidates(4)%centroid_x = sub_candidates(1)%centroid_x
-    sub_candidates(4)%centroid_y = candidate%centroid_y + candidate%width
-    sub_candidates(4)%width = half_width
+    next_candidates(num_next_candidates)%centroid_x = ( &
+         next_candidates(num_next_candidates - 3)%centroid_x)
+    next_candidates(num_next_candidates)%centroid_y = ( &
+         candidate%centroid_y + candidate%width)
+    next_candidates(num_next_candidates)%width = half_width
 
   end subroutine split_candidate
 
@@ -194,7 +202,7 @@ contains
              num_next_candidates = num_next_candidates + 4
              call split_candidate( &
                   num_nodes, degree, candidates(cand_index), &
-                  next_candidates(num_next_candidates - 3:num_next_candidates))
+                  num_next_candidates, next_candidates)
           end if
        end do
 
