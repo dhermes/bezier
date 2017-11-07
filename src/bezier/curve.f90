@@ -20,7 +20,8 @@ module curve
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
        SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse, &
        specialize_curve_generic, specialize_curve_quadratic, &
-       subdivide_nodes_generic, split_candidate, projection_error, can_reduce
+       subdivide_nodes_generic, split_candidate, allocate_candidates, &
+       update_candidates, projection_error, can_reduce
   public &
        CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
@@ -391,27 +392,85 @@ contains
 
   end subroutine newton_refine
 
-  subroutine split_candidate(num_nodes, dimension_, candidate, both_halves)
+  subroutine split_candidate( &
+       num_nodes, dimension_, candidate, num_next_candidates, next_candidates)
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     type(LocateCandidate), intent(in) :: candidate
-    type(LocateCandidate), intent(out) :: both_halves(2)
-
-    ! Left half.
-    both_halves(1)%start = candidate%start
-    both_halves(1)%end_ = 0.5_dp * (candidate%start + candidate%end_)
-    ! Right half.
-    both_halves(2)%start = both_halves(1)%end_
-    both_halves(2)%end_ = candidate%end_
+    integer(c_int), intent(in) :: num_next_candidates
+    type(LocateCandidate), intent(inout) :: next_candidates(:)
 
     ! Allocate the new nodes and call sub-divide.
-    allocate(both_halves(1)%nodes(num_nodes, dimension_))
-    allocate(both_halves(2)%nodes(num_nodes, dimension_))
+    ! NOTE: This **assumes** but does not check that if the nodes are
+    !       allocated, they are also the correct shape.
+    if (.NOT. allocated(next_candidates(num_next_candidates - 1)%nodes)) then
+       allocate(next_candidates(num_next_candidates - 1)%nodes(num_nodes, dimension_))
+    end if
+    if (.NOT. allocated(next_candidates(num_next_candidates)%nodes)) then
+       allocate(next_candidates(num_next_candidates)%nodes(num_nodes, dimension_))
+    end if
+
     call subdivide_nodes( &
          num_nodes, dimension_, candidate%nodes, &
-         both_halves(1)%nodes, both_halves(2)%nodes)
+         next_candidates(num_next_candidates - 1)%nodes, &
+         next_candidates(num_next_candidates)%nodes)
+
+    ! Left half.
+    next_candidates(num_next_candidates - 1)%start = candidate%start
+    next_candidates(num_next_candidates - 1)%end_ = ( &
+         0.5_dp * (candidate%start + candidate%end_))
+    ! Right half.
+    next_candidates(num_next_candidates)%start = ( &
+         next_candidates(num_next_candidates - 1)%end_)
+    next_candidates(num_next_candidates)%end_ = candidate%end_
 
   end subroutine split_candidate
+
+  subroutine allocate_candidates(num_candidates, next_candidates)
+    integer(c_int), intent(in) :: num_candidates
+    type(LocateCandidate), allocatable, intent(inout) :: next_candidates(:)
+
+    if (allocated(next_candidates)) then
+       if (size(next_candidates) < 2 * num_candidates) then
+          deallocate(next_candidates)
+          allocate(next_candidates(2 * num_candidates))
+       end if
+    else
+       allocate(next_candidates(2 * num_candidates))
+    end if
+
+  end subroutine allocate_candidates
+
+  subroutine update_candidates( &
+       num_nodes, dimension_, point, num_candidates, candidates, &
+       num_next_candidates, next_candidates)
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: point(1, dimension_)
+    integer(c_int), intent(in) :: num_candidates
+    type(LocateCandidate), intent(in) :: candidates(:)
+    integer(c_int), intent(inout) :: num_next_candidates
+    type(LocateCandidate), allocatable, intent(inout) :: next_candidates(:)
+    ! Variables outside of signature.
+    integer(c_int) :: cand_index
+    logical(c_bool) :: predicate
+
+    ! Allocate maximum amount of space needed.
+    call allocate_candidates(num_candidates, next_candidates)
+
+    do cand_index = 1, num_candidates
+       call contains_nd( &
+            num_nodes, dimension_, candidates(cand_index)%nodes, &
+            point(1, :), predicate)
+       if (predicate) then
+          num_next_candidates = num_next_candidates + 2
+          call split_candidate( &
+               num_nodes, dimension_, candidates(cand_index), &
+               num_next_candidates, next_candidates)
+       end if
+    end do
+
+  end subroutine update_candidates
 
   subroutine locate_point( &
        num_nodes, dimension_, nodes, point, s_approx) &
@@ -427,46 +486,43 @@ contains
     real(c_double), intent(in) :: point(1, dimension_)
     real(c_double), intent(out) :: s_approx
     ! Variables outside of signature.
-    type(LocateCandidate), allocatable :: candidates(:), next_candidates(:)
-    integer(c_int) :: sub_index, cand_index
+    integer(c_int) :: sub_index
     integer(c_int) :: num_candidates, num_next_candidates
-    type(LocateCandidate) :: candidate
+    type(LocateCandidate), allocatable :: candidates_odd(:), candidates_even(:)
     real(c_double), allocatable :: s_params(:)
     real(c_double) :: std_dev
-    logical(c_bool) :: predicate
+    logical(c_bool) :: is_even
 
     ! Start out with the full curve.
-    allocate(candidates(1))
-    candidates(1) = LocateCandidate(0.0_dp, 1.0_dp, nodes)
+    allocate(candidates_odd(1))  ! First iteration is odd.
+    candidates_odd(1) = LocateCandidate(0.0_dp, 1.0_dp, nodes)
     ! NOTE: `num_candidates` will be tracked separately
     !       from `size(candidates)`.
     num_candidates = 1
     s_approx = LOCATE_MISS
 
+    is_even = .TRUE.  ! At zero.
     do sub_index = 1, MAX_LOCATE_SUBDIVISIONS + 1
+       is_even = .NOT. is_even  ! Switch parity.
        num_next_candidates = 0
-       ! Allocate maximum amount of space needed.
-       allocate(next_candidates(2 * num_candidates))
-       do cand_index = 1, num_candidates
-          candidate = candidates(cand_index)
-          call contains_nd( &
-               num_nodes, dimension_, candidate%nodes, point(1, :), predicate)
-          if (predicate) then
-             num_next_candidates = num_next_candidates + 2
-             call split_candidate( &
-                  num_nodes, dimension_, candidate, &
-                  next_candidates(num_next_candidates - 1:num_next_candidates))
-          end if
-       end do
+
+       if (is_even) then
+          ! Read from even, write to odd.
+          call update_candidates( &
+               num_nodes, dimension_, point, num_candidates, candidates_even, &
+               num_next_candidates, candidates_odd)
+       else
+          ! Read from odd, write to even.
+          call update_candidates( &
+               num_nodes, dimension_, point, num_candidates, candidates_odd, &
+               num_next_candidates, candidates_even)
+       end if
 
        ! If there are no more candidates, we are done.
        if (num_next_candidates == 0) then
           return
        end if
 
-       ! NOTE: This may copy empty slots, but this is OK since we track
-       !       `num_candidates` separately.
-       call move_alloc(next_candidates, candidates)
        num_candidates = num_next_candidates
 
     end do
@@ -474,8 +530,17 @@ contains
     ! Compute the s-parameter as the mean of the **start** and
     ! **end** parameters.
     allocate(s_params(2 * num_candidates))
-    s_params(:num_candidates) = candidates(:num_candidates)%start
-    s_params(num_candidates + 1:) = candidates(:num_candidates)%end_
+    if (is_even) then
+       ! NOTE: We "exclude" this block from ``lcov`` because it can never
+       !       be invoked while ``MAX_LOCATE_SUBDIVISIONS`` is even.
+       s_params(:num_candidates) = ( &
+            candidates_odd(:num_candidates)%start)  ! LCOV_EXCL_LINE
+       s_params(num_candidates + 1:) = ( &
+            candidates_odd(:num_candidates)%end_)  ! LCOV_EXCL_LINE
+    else
+       s_params(:num_candidates) = candidates_even(:num_candidates)%start
+       s_params(num_candidates + 1:) = candidates_even(:num_candidates)%end_
+    end if
     s_approx = sum(s_params) / (2 * num_candidates)
 
     std_dev = sqrt(sum((s_params - s_approx)**2) / (2 * num_candidates))
