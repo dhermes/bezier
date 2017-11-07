@@ -25,7 +25,7 @@ cimport bezier._curve
 
 DQAGSE_ERR_MSGS = (
     'Maximum number of subdivisions allowed has been achieved.',
-    'Roundoff error detected, which prevents convergence to tolerance.'
+    'Roundoff error detected, which prevents convergence to tolerance.',
     'Integrand behaves "extremely" at some point(s) in the interval.',
     'Assumed: the requested tolerance cannot be achieved',
     'Integral is probably divergent or converges too slowly.',

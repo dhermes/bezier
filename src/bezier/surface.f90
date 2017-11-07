@@ -300,6 +300,7 @@ contains
        weights_a, weights_b, weights_c)
 
     ! INVARIANT: `step + local_degree == (total) degree`
+    ! INVARIANT: `size_write` == `size_read - local_degree - 1`
 
     integer(c_int), intent(in) :: dimension_
     integer(c_int), intent(in) :: num_read
@@ -313,7 +314,6 @@ contains
     integer(c_int) :: write_index, new_write, read_index, new_read, i
 
     ! First: (step, 0, 0)
-    ! INVARIANT: `size_write` == `size_read - local_degree - 1`
     call de_casteljau_one_round( &
          size_read, dimension_, read_nodes(1:size_read, :), &
          local_degree, weights_a(1), weights_a(2), weights_a(3), &
@@ -394,7 +394,7 @@ contains
     !                   [               ]          [dC(n1(13:18), c)]
     !                   [               ]          [                ]
     !                   [               ]          [                ]
-    ! ... CONTINUTING DEGREE 3 ...
+    ! ... CONTINUING TO DEGREE 3 ...
     !                 [dC(n2( 1:3 ), a)]
     !                 [dC(n2( 1:3 ), b)]
     !                 [dC(n2( 4:6 ), b)]

@@ -56,7 +56,7 @@ def pypy_setup(local_deps, session):
         local_deps = list(local_deps)
         local_deps.remove(NUMPY)
         local_deps = tuple(local_deps)
-        # Install NumPy from the pre-built wheel.
+        # Install NumPy and SciPy from pre-built wheels.
         session.install(
             '--use-wheel',
             '--no-index',

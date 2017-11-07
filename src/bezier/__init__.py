@@ -68,6 +68,7 @@ __author__ = 'Danny Hermes'
 __version__ = '0.5.1.dev1'
 """str: The current version of :mod:`bezier`."""
 __all__ = [
+    '__author__',
     '__version__',
     'Curve',
     'CurvedPolygon',

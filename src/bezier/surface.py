@@ -1139,14 +1139,9 @@ class Surface(_base.Base):
         if bbox_int != _INTERSECTION_T:
             return []
 
-        # NOTE: We "linearize" here, rather than allow
-        #       `all_intersections_geometric()` to do it. This is because each
-        #       curve is in **3** pairs, so we'd waste the computation on the
-        #       other 3 pairs. (18 linearizations when only 6 are needed)
+        # We need **all** pairs of edges.
         edges1 = self._get_edges()
         edges2 = other._get_edges()  # pylint: disable=protected-access
-
-        # We need **all** pairs of (potentially linearized) edges.
         intersections = all_intersections(edges1, edges2)
 
         # Classify each intersection.

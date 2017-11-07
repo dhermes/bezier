@@ -32,9 +32,9 @@ NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
 $ pip              install numpy
-$ python    -m pip install numpy --user
-$ python2.7 -m pip install numpy --user
-$ python3.6 -m pip install numpy --user
+$ python    -m pip install numpy
+$ python2.7 -m pip install numpy
+$ python3.6 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
