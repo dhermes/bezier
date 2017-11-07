@@ -91,6 +91,7 @@ contains
     real(c_double), allocatable :: nodes(:, :)
     integer(c_int) :: degree
     real(c_double) :: x_val, y_val, s_val, t_val
+    real(c_double) :: expected_s, expected_t
     character(:), allocatable :: name
 
     case_id = 1
@@ -114,6 +115,33 @@ contains
     call locate_point( &
          3, nodes, 1, x_val, y_val, s_val, t_val)
     case_success = (s_val == LOCATE_MISS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: B(s, t) = (-2 (s + 2 t) (t - 1), 2 (s + 1) t), one extra
+    !         Newton refinement required (verified by hand).
+    deallocate(nodes)
+    allocate(nodes(6, 2))
+    nodes(1, :) = 0
+    nodes(2, :) = [1.0_dp, 0.0_dp]
+    nodes(3, :) = [2.0_dp, 0.0_dp]
+    nodes(4, :) = [2.0_dp, 1.0_dp]
+    nodes(5, :) = [2.0_dp, 2.0_dp]
+    nodes(6, :) = [0.0_dp, 2.0_dp]
+    x_val = 0.59375_dp
+    y_val = 0.25_dp
+    call locate_point( &
+         6, nodes, 2, x_val, y_val, s_val, t_val)
+    ! NOTE: We can use the resultant to find that the **true** answers
+    !       are roots of the following polynomials.
+    !           64 s^3 + 101 s^2 + 34 s - 5 = 0
+    !           128 t^3 - 192 t^2 + 91 t - 8 = 0
+    !       Using extended precision, we can find these values to more
+    !       digits than what is supported by IEEE-754.
+    expected_s = 0.109190958136897160638_dp
+    expected_t = 0.11269475204698919699_dp
+    case_success = ( &
+         abs(s_val - expected_s) <= 5 * spacing(expected_s) .AND. &
+         abs(t_val - expected_t) <= spacing(expected_t))
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_locate_point

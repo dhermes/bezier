@@ -14,13 +14,13 @@ module surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use curve, only: LOCATE_MISS
-  use helpers, only: contains_nd
+  use helpers, only: contains_nd, vector_close
   use types, only: dp
   use surface, only: evaluate_barycentric, jacobian_both, subdivide_nodes
   implicit none
   private &
-       LocateCandidate, MAX_LOCATE_SUBDIVISIONS, newton_refine_solve, &
-       split_candidate
+       LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, &
+       newton_refine_solve, split_candidate
   public newton_refine, locate_point
 
   ! For ``locate_point``.
@@ -33,6 +33,7 @@ module surface_intersection
 
   ! NOTE: These values are also defined in equivalent Python source.
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
+  real(c_double), parameter :: LOCATE_EPS = 0.5_dp**47
 
 contains
 
@@ -166,14 +167,15 @@ contains
     real(c_double), intent(in) :: x_val, y_val
     real(c_double), intent(out) :: s_val, t_val
     ! Variables outside of signature.
-    real(c_double) :: point(2)
+    real(c_double) :: point(1, 2)
     integer(c_int) :: sub_index, cand_index
     integer(c_int) :: num_candidates, num_next_candidates
     type(LocateCandidate), allocatable :: candidates(:), next_candidates(:)
     logical(c_bool) :: predicate
     real(c_double) :: s_approx, t_approx
+    real(c_double) :: actual(1, 2)
 
-    point = [x_val, y_val]
+    point(1, :) = [x_val, y_val]
     ! Start out with the full curve.
     allocate(candidates(1))
     candidates(1) = LocateCandidate(1.0_dp, 1.0_dp, 1.0_dp, nodes)
@@ -187,7 +189,7 @@ contains
        do cand_index = 1, num_candidates
           call contains_nd( &
                num_nodes, 2, candidates(cand_index)%nodes, &
-               point, predicate)
+               point(1, :), predicate)
           if (predicate) then
              num_next_candidates = num_next_candidates + 4
              call split_candidate( &
@@ -197,7 +199,7 @@ contains
        end do
 
        ! If there are no more candidates, we are done.
-       if (num_candidates == 0) then
+       if (num_next_candidates == 0) then
           return
        end if
 
@@ -209,6 +211,9 @@ contains
     end do
 
     ! Compute the s- and t-parameters as the mean of the centroid positions.
+    ! We divide by `3n` rather than `n` since we have tracked thrice the
+    ! centroid rather than the centroid itself (to avoid round-off until
+    ! right now).
     s_approx = ( &
          sum(candidates(:num_candidates)%centroid_x) / &
          (3.0_dp * num_candidates))
@@ -216,6 +221,23 @@ contains
          sum(candidates(:num_candidates)%centroid_y) / &
          (3.0_dp * num_candidates))
 
+    call newton_refine( &
+         num_nodes, nodes, degree, x_val, y_val, &
+         s_approx, t_approx, s_val, t_val)
+
+    ! Check if the solution is "close enough" ...
+    call evaluate_barycentric( &
+         num_nodes, 2, nodes, degree, &
+         1.0_dp - s_val - t_val, s_val, t_val, actual)
+
+    if (vector_close(2, point, actual, LOCATE_EPS)) then
+       return
+    end if
+
+    ! ... and if **not** close enough, do one more round of
+    ! Newton's method if not.
+    s_approx = s_val
+    t_approx = t_val
     call newton_refine( &
          num_nodes, nodes, degree, x_val, y_val, &
          s_approx, t_approx, s_val, t_val)

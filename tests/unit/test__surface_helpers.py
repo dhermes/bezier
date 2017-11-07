@@ -30,6 +30,7 @@ UNIT_TRIANGLE = np.asfortranarray([
     [0.0, 1.0],
 ])
 FLOAT64 = np.float64  # pylint: disable=no-member
+SPACING = np.spacing  # pylint: disable=no-member
 # pylint: disable=invalid-name,no-member
 slow = pytest.mark.skipif(
     pytest.config.getoption('--ignore-slow') and not HAS_SURFACE_SPEEDUP,
@@ -1088,17 +1089,30 @@ class Test_locate_point(unittest.TestCase):
         self.assertEqual(t, y_val)
 
     def test_extra_newton_step(self):
-        nodes = UNIT_TRIANGLE.copy(order='F')
-        degree = 1
-        x_val = 1.0 / 3.0
-        y_val = 1.0 / 3.0
-        patch = unittest.mock.patch(
-            'bezier._surface_helpers._LOCATE_EPS', new=-1.0)
-        with patch:
-            s, t = self._call_function_under_test(nodes, degree, x_val, y_val)
-
-        self.assertEqual(s, x_val)
-        self.assertEqual(t, y_val)
+        # x(s, t) = -2 (s + 2 t) (t - 1)
+        # y(s, t) =  2 (s + 1) t
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [2.0, 0.0],
+            [2.0, 1.0],
+            [2.0, 2.0],
+            [0.0, 2.0],
+        ])
+        degree = 2
+        x_val = 0.59375
+        y_val = 0.25
+        s, t = self._call_function_under_test(nodes, degree, x_val, y_val)
+        # NOTE: We can use the resultant to find that the **true** answers
+        #       are roots of the following polynomials.
+        #           64 s^3 + 101 s^2 + 34 s - 5 = 0
+        #           128 t^3 - 192 t^2 + 91 t - 8 = 0
+        #       Using extended precision, we can find these values to more
+        #       digits than what is supported by IEEE-754.
+        expected_s = 0.109190958136897160638
+        self.assertAlmostEqual(s, expected_s, delta=SPACING(expected_s))
+        expected_t = 0.11269475204698919699
+        self.assertAlmostEqual(t, expected_t, delta=SPACING(expected_t))
 
     def test_no_match(self):
         nodes = UNIT_TRIANGLE.copy(order='F')

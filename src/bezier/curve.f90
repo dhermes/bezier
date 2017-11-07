@@ -460,7 +460,7 @@ contains
        end do
 
        ! If there are no more candidates, we are done.
-       if (num_candidates == 0) then
+       if (num_next_candidates == 0) then
           return
        end if
 
