@@ -5365,18 +5365,18 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_12locate_point(CYTHON_UNUSED 
   /* "bezier/_curve_speedup.pyx":174
  *     )
  *
- *     if s_approx == -1.0:             # <<<<<<<<<<<<<<
+ *     if s_approx == -1.0:  # LOCATE_MISS             # <<<<<<<<<<<<<<
  *         return None
- *     elif s_approx == -2.0:
+ *     elif s_approx == -2.0:  # LOCATE_INVALID
  */
   __pyx_t_13 = ((__pyx_v_s_approx == -1.0) != 0);
   if (__pyx_t_13) {
 
     /* "bezier/_curve_speedup.pyx":175
  *
- *     if s_approx == -1.0:
+ *     if s_approx == -1.0:  # LOCATE_MISS
  *         return None             # <<<<<<<<<<<<<<
- *     elif s_approx == -2.0:
+ *     elif s_approx == -2.0:  # LOCATE_INVALID
  *         raise ValueError(
  */
     __Pyx_XDECREF(__pyx_r);
@@ -5387,16 +5387,16 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_12locate_point(CYTHON_UNUSED 
     /* "bezier/_curve_speedup.pyx":174
  *     )
  *
- *     if s_approx == -1.0:             # <<<<<<<<<<<<<<
+ *     if s_approx == -1.0:  # LOCATE_MISS             # <<<<<<<<<<<<<<
  *         return None
- *     elif s_approx == -2.0:
+ *     elif s_approx == -2.0:  # LOCATE_INVALID
  */
   }
 
   /* "bezier/_curve_speedup.pyx":176
- *     if s_approx == -1.0:
+ *     if s_approx == -1.0:  # LOCATE_MISS
  *         return None
- *     elif s_approx == -2.0:             # <<<<<<<<<<<<<<
+ *     elif s_approx == -2.0:  # LOCATE_INVALID             # <<<<<<<<<<<<<<
  *         raise ValueError(
  *             'Parameters not close enough to one another')
  */
@@ -5405,7 +5405,7 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_12locate_point(CYTHON_UNUSED 
 
     /* "bezier/_curve_speedup.pyx":177
  *         return None
- *     elif s_approx == -2.0:
+ *     elif s_approx == -2.0:  # LOCATE_INVALID
  *         raise ValueError(             # <<<<<<<<<<<<<<
  *             'Parameters not close enough to one another')
  *     else:
@@ -5417,9 +5417,9 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_12locate_point(CYTHON_UNUSED 
     __PYX_ERR(0, 177, __pyx_L1_error)
 
     /* "bezier/_curve_speedup.pyx":176
- *     if s_approx == -1.0:
+ *     if s_approx == -1.0:  # LOCATE_MISS
  *         return None
- *     elif s_approx == -2.0:             # <<<<<<<<<<<<<<
+ *     elif s_approx == -2.0:  # LOCATE_INVALID             # <<<<<<<<<<<<<<
  *         raise ValueError(
  *             'Parameters not close enough to one another')
  */
@@ -23850,7 +23850,7 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_curve_speedup.pyx":177
  *         return None
- *     elif s_approx == -2.0:
+ *     elif s_approx == -2.0:  # LOCATE_INVALID
  *         raise ValueError(             # <<<<<<<<<<<<<<
  *             'Parameters not close enough to one another')
  *     else:

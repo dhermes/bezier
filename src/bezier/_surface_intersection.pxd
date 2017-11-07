@@ -18,3 +18,6 @@ cdef extern from "bezier/surface_intersection.h":
         int *num_nodes, double *nodes, int *degree,
         double *x_val, double *y_val, double *s, double *t,
         double *updated_s, double *updated_t)
+    void locate_point_surface(
+        int *num_nodes, double *nodes, int *degree,
+        double *x_val, double *y_val, double *s_val, double *t_val)

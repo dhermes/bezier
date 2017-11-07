@@ -171,9 +171,9 @@ def locate_point(double[::1, :] nodes, double[::1, :] point):
         &s_approx,
     )
 
-    if s_approx == -1.0:
+    if s_approx == -1.0:  # LOCATE_MISS
         return None
-    elif s_approx == -2.0:
+    elif s_approx == -2.0:  # LOCATE_INVALID
         raise ValueError(
             'Parameters not close enough to one another')
     else:

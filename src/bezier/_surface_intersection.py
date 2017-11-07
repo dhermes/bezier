@@ -305,8 +305,13 @@ def mean_centroid(candidates):
     return sum_x / denom, sum_y / denom
 
 
-def locate_point(nodes, degree, x_val, y_val):
+def _locate_point(nodes, degree, x_val, y_val):
     r"""Locate a point on a surface.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Does so by recursively subdividing the surface and rejecting
     sub-surfaces with bounding boxes that don't contain the point.
@@ -360,6 +365,8 @@ def locate_point(nodes, degree, x_val, y_val):
 # pylint: disable=invalid-name
 if _surface_intersection_speedup is None:  # pragma: NO COVER
     newton_refine = _newton_refine
+    locate_point = _locate_point
 else:
     newton_refine = _surface_intersection_speedup.newton_refine
+    locate_point = _surface_intersection_speedup.locate_point
 # pylint: enable=invalid-name

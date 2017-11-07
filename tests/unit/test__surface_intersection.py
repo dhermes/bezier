@@ -197,13 +197,13 @@ class Test_mean_centroid(unittest.TestCase):
         self.assertEqual(centroid_y, 0.75)
 
 
-class Test_locate_point(unittest.TestCase):
+class Test__locate_point(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
         from bezier import _surface_intersection
 
-        return _surface_intersection.locate_point(nodes, degree, x_val, y_val)
+        return _surface_intersection._locate_point(nodes, degree, x_val, y_val)
 
     def test_it(self):
         nodes = UNIT_TRIANGLE.copy(order='F')
@@ -247,3 +247,14 @@ class Test_locate_point(unittest.TestCase):
         y_val = 0.25
         self.assertIsNone(
             self._call_function_under_test(nodes, degree, x_val, y_val))
+
+
+@utils.needs_surface_intersection_speedup
+class Test_speedup_locate_point(Test__locate_point):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree, x_val, y_val):
+        from bezier import _surface_intersection_speedup
+
+        return _surface_intersection_speedup.locate_point(
+            nodes, degree, x_val, y_val)

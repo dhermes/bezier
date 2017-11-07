@@ -41,3 +41,26 @@ def newton_refine(
     )
 
     return updated_s, updated_t
+
+
+def locate_point(double[::1, :] nodes, int degree, double x_val, double y_val):
+    cdef int num_nodes
+    cdef double s_val, t_val
+
+    # NOTE: We don't check that there are 2 columns.
+    num_nodes, _ = np.shape(nodes)
+
+    bezier._surface_intersection.locate_point_surface(
+        &num_nodes,
+        &nodes[0, 0],
+        &degree,
+        &x_val,
+        &y_val,
+        &s_val,
+        &t_val,
+    )
+
+    if s_val == -1.0:  # LOCATE_MISS
+        return None
+    else:
+        return s_val, t_val
