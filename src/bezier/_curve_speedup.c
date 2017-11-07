@@ -2199,12 +2199,13 @@ static const char __pyx_k_Format_string_allocated_too_shor[] = "Format string al
 static const char __pyx_k_Incompatible_checksums_s_vs_0xb0[] = "Incompatible checksums (%s vs 0xb068931 = (name))";
 static const char __pyx_k_Indirect_dimensions_not_supporte[] = "Indirect dimensions not supported";
 static const char __pyx_k_Integral_is_probably_divergent_o[] = "Integral is probably divergent or converges too slowly.";
+static const char __pyx_k_Integrand_behaves_extremely_at_s[] = "Integrand behaves \"extremely\" at some point(s) in the interval.";
 static const char __pyx_k_Invalid_mode_expected_c_or_fortr[] = "Invalid mode, expected 'c' or 'fortran', got %s";
 static const char __pyx_k_Maximum_number_of_subdivisions_a[] = "Maximum number of subdivisions allowed has been achieved.";
 static const char __pyx_k_Non_native_byte_order_not_suppor[] = "Non-native byte order not supported";
 static const char __pyx_k_Out_of_bounds_on_buffer_access_a[] = "Out of bounds on buffer access (axis %d)";
 static const char __pyx_k_Parameters_not_close_enough_to_o[] = "Parameters not close enough to one another";
-static const char __pyx_k_Roundoff_error_detected_which_pr[] = "Roundoff error detected, which prevents convergence to tolerance.Integrand behaves \"extremely\" at some point(s) in the interval.";
+static const char __pyx_k_Roundoff_error_detected_which_pr[] = "Roundoff error detected, which prevents convergence to tolerance.";
 static const char __pyx_k_Unable_to_convert_item_to_object[] = "Unable to convert item to object";
 static const char __pyx_k_got_differing_extents_in_dimensi[] = "got differing extents in dimension %d (got %d and %d)";
 static const char __pyx_k_ndarray_is_not_Fortran_contiguou[] = "ndarray is not Fortran contiguous";
@@ -2228,6 +2229,7 @@ static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xb0;
 static PyObject *__pyx_n_s_IndexError;
 static PyObject *__pyx_kp_s_Indirect_dimensions_not_supporte;
 static PyObject *__pyx_kp_s_Integral_is_probably_divergent_o;
+static PyObject *__pyx_kp_s_Integrand_behaves_extremely_at_s;
 static PyObject *__pyx_kp_s_Invalid_input;
 static PyObject *__pyx_kp_s_Invalid_mode_expected_c_or_fortr;
 static PyObject *__pyx_kp_s_Invalid_shape_in_axis_d_d;
@@ -23682,6 +23684,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_IndexError, __pyx_k_IndexError, sizeof(__pyx_k_IndexError), 0, 0, 1, 1},
   {&__pyx_kp_s_Indirect_dimensions_not_supporte, __pyx_k_Indirect_dimensions_not_supporte, sizeof(__pyx_k_Indirect_dimensions_not_supporte), 0, 0, 1, 0},
   {&__pyx_kp_s_Integral_is_probably_divergent_o, __pyx_k_Integral_is_probably_divergent_o, sizeof(__pyx_k_Integral_is_probably_divergent_o), 0, 0, 1, 0},
+  {&__pyx_kp_s_Integrand_behaves_extremely_at_s, __pyx_k_Integrand_behaves_extremely_at_s, sizeof(__pyx_k_Integrand_behaves_extremely_at_s), 0, 0, 1, 0},
   {&__pyx_kp_s_Invalid_input, __pyx_k_Invalid_input, sizeof(__pyx_k_Invalid_input), 0, 0, 1, 0},
   {&__pyx_kp_s_Invalid_mode_expected_c_or_fortr, __pyx_k_Invalid_mode_expected_c_or_fortr, sizeof(__pyx_k_Invalid_mode_expected_c_or_fortr), 0, 0, 1, 0},
   {&__pyx_kp_s_Invalid_shape_in_axis_d_d, __pyx_k_Invalid_shape_in_axis_d_d, sizeof(__pyx_k_Invalid_shape_in_axis_d_d), 0, 0, 1, 0},
@@ -24174,10 +24177,10 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * DQAGSE_ERR_MSGS = (
  *     'Maximum number of subdivisions allowed has been achieved.',             # <<<<<<<<<<<<<<
- *     'Roundoff error detected, which prevents convergence to tolerance.'
+ *     'Roundoff error detected, which prevents convergence to tolerance.',
  *     'Integrand behaves "extremely" at some point(s) in the interval.',
  */
-  __pyx_tuple__31 = PyTuple_Pack(5, __pyx_kp_s_Maximum_number_of_subdivisions_a, __pyx_kp_s_Roundoff_error_detected_which_pr, __pyx_kp_s_Assumed_the_requested_tolerance, __pyx_kp_s_Integral_is_probably_divergent_o, __pyx_kp_s_Invalid_input); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_tuple__31 = PyTuple_Pack(6, __pyx_kp_s_Maximum_number_of_subdivisions_a, __pyx_kp_s_Roundoff_error_detected_which_pr, __pyx_kp_s_Integrand_behaves_extremely_at_s, __pyx_kp_s_Assumed_the_requested_tolerance, __pyx_kp_s_Integral_is_probably_divergent_o, __pyx_kp_s_Invalid_input); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__31);
   __Pyx_GIVEREF(__pyx_tuple__31);
 
@@ -24632,7 +24635,7 @@ static int __pyx_pymod_exec__curve_speedup(PyObject *__pyx_pyinit_module)
  *
  * DQAGSE_ERR_MSGS = (
  *     'Maximum number of subdivisions allowed has been achieved.',             # <<<<<<<<<<<<<<
- *     'Roundoff error detected, which prevents convergence to tolerance.'
+ *     'Roundoff error detected, which prevents convergence to tolerance.',
  *     'Integrand behaves "extremely" at some point(s) in the interval.',
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_DQAGSE_ERR_MSGS, __pyx_tuple__31) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
