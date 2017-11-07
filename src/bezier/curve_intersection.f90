@@ -863,7 +863,7 @@ contains
     num_intersections = 0
     ! First iteration is odd (i.e. ``index_ == 1``).
     call make_candidates( &
-       candidates_left, candidates_right, num_candidates, CANDIDATES_ODD)
+         candidates_left, candidates_right, num_candidates, CANDIDATES_ODD)
     status = ALL_INTERSECTIONS_SUCCESS  ! Default.
 
     is_even = .TRUE.  ! At zero.
