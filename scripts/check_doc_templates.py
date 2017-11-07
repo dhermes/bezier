@@ -42,6 +42,9 @@ RELEASE_INDEX_FILE = os.path.join(
     _ROOT_DIR, 'docs', 'index.rst.release.template')
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst.template')
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst')
+NATIVE_LIBS_FILE = os.path.join(_ROOT_DIR, 'docs', 'native-libraries.rst')
+NATIVE_LIBS_TEMPLATE = os.path.join(
+    _ROOT_DIR, 'docs', 'native-libraries.rst.template')
 RTD_VERSION = 'latest'
 REVISION = 'master'
 
@@ -532,6 +535,31 @@ def development_verify():
         print('DEVELOPMENT.rst contents are as expected.')
 
 
+def native_libraries_verify():
+    """Populate the template and compare to ``docs/native-libraries.rst``.
+
+    Raises:
+        ValueError: If the current ``docs/native-libraries.rst`` doesn't
+            agree with the expected value computed from the template.
+    """
+    with open(NATIVE_LIBS_TEMPLATE, 'r') as file_obj:
+        template = file_obj.read()
+
+    expected = template.format(revision=REVISION)
+
+    with open(NATIVE_LIBS_FILE, 'r') as file_obj:
+        contents = file_obj.read()
+
+    if contents != expected:
+        err_msg = '\n' + get_diff(
+            contents, expected,
+            'docs/native-libraries.rst.actual',
+            'docs/native-libraries.rst.expected')
+        raise ValueError(err_msg)
+    else:
+        print('docs/native-libraries.rst contents are as expected.')
+
+
 def main():
     """Verify specialized versions of ``README.rst.template``."""
     readme_verify()
@@ -539,6 +567,7 @@ def main():
     docs_index_verify()
     release_docs_index_verify()
     development_verify()
+    native_libraries_verify()
 
 
 if __name__ == '__main__':

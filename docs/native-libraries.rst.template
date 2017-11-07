@@ -476,7 +476,7 @@ each of the Fortran submodules:
    $ gfortran \
    >   -shared \
    >   -o extra-dll/libbezier.dll \
-   >   ${OBJ_FILES} \
+   >   ${{OBJ_FILES}} \
    >   -Wl,--output-def,libbezier.def
 
 .. note::
@@ -509,7 +509,7 @@ the ``-static`` flag
    >   -static \
    >   -shared \
    >   -o extra-dll/libbezier.dll \
-   >   ${OBJ_FILES} \
+   >   ${{OBJ_FILES}} \
    >   -Wl,--output-def,libbezier.def
 
 all the symbols used from ``libgfortran`` or ``libgcc_s`` are statically
@@ -555,11 +555,11 @@ on MinGW:
 
    .. code-block:: console
 
-      $ gfortran -dumpspecs > ${SPECS_FILENAME}
+      $ gfortran -dumpspecs > ${{SPECS_FILENAME}}
 
    and modified to replace instances of ``-lmsvcrt`` with a substitute, e.g.
    ``-lmsvcr90``. Then ``gfortran`` can be invoked with the flag
-   ``-specs=${SPECS_FILENAME}`` to use the custom spec. (Some
+   ``-specs=${{SPECS_FILENAME}}`` to use the custom spec. (Some
    `other dependencies`_ may also indirectly depend on ``msvcrt.dll``,
    such as ``-lmoldname``. `Removing dependencies`_ is not an easy process.)
 
@@ -570,7 +570,7 @@ From there, an `import library`_ must be created
 
 .. code-block:: rest
 
-   > lib /def:.\libbezier.def /out:.\lib\bezier.lib /machine:${ARCH}
+   > lib /def:.\libbezier.def /out:.\lib\bezier.lib /machine:${{ARCH}}
 
 .. note::
 
@@ -598,7 +598,7 @@ source via:
 
    $ python setup.py build_ext
    $ # OR
-   $ python setup.py build_ext --fcompiler=${FC}
+   $ python setup.py build_ext --fcompiler=${{FC}}
 
 By providing a filename via an environment variable, a "journal" can
 be stored of the compiler commands invoked to build the extension:
@@ -615,9 +615,9 @@ For examples, see:
 * `Mac OS X journal`_
 * `Windows journal`_
 
-.. _Linux journal: https://github.com/dhermes/bezier/blob/master/.circleci/expected_journal.txt
-.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/master/scripts/osx/travis_journal.txt
-.. _Windows journal: https://github.com/dhermes/bezier/blob/master/appveyor/expected_journal.txt
+.. _Linux journal: https://github.com/dhermes/bezier/blob/{revision}/.circleci/expected_journal.txt
+.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/{revision}/scripts/osx/travis_journal.txt
+.. _Windows journal: https://github.com/dhermes/bezier/blob/{revision}/appveyor/expected_journal.txt
 
 ***************************
 Building a Python Extension

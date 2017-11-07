@@ -455,9 +455,9 @@ only pure Python code is tested on AppVeyor.
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/bezier.Dockerfile
 .. _multibuild: https://github.com/matthew-brett/multibuild
 
-**********************
-Deploying New Versions
-**********************
+****************************************
+Release Process / Deploying New Versions
+****************************************
 
 New versions are pushed to `PyPI`_ manually after a ``git`` tag is
 created. The process is manual (rather than automated) for several
@@ -465,7 +465,8 @@ reasons:
 
 * The documentation and README (which acts as the landing page text on
   PyPI) will be updated with links scoped to the versioned tag (rather
-  than ``master``).
+  than ``master``). This update occurs via the ``doc_template_release.py``
+  script.
 * Several badges on the documentation landing page (``index.rst``) are
   irrelevant to a fixed version (such as the "latest" version of the
   package).

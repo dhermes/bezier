@@ -16,6 +16,7 @@ This will introduce one-off changes in
 
 * ``README.rst``
 * ``docs/index.rst``
+* ``docs/native-libraries.rst``
 * ``DEVELOPMENT.rst``
 
 that are not intended to be checked into ``master`` (except maybe
@@ -28,6 +29,7 @@ script.
 
 import imp
 import os
+import sys
 
 import six
 
@@ -42,6 +44,9 @@ RELEASE_INDEX_FILE = os.path.join(
     _ROOT_DIR, 'docs', 'index.rst.release.template')
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst.template')
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst')
+NATIVE_LIBS_FILE = os.path.join(_ROOT_DIR, 'docs', 'native-libraries.rst')
+NATIVE_LIBS_TEMPLATE = os.path.join(
+    _ROOT_DIR, 'docs', 'native-libraries.rst.template')
 
 
 def get_version():
@@ -53,12 +58,19 @@ def get_version():
     Returns:
         str: The current version in ``setup.py``.
     """
+    # "Spoof" the ``setup.py`` helper modules.
+    sys.modules['setup_helpers'] = object()
+    sys.modules['setup_helpers_osx'] = object()
+    sys.modules['setup_helpers_windows'] = object()
+
     filename = os.path.join(_ROOT_DIR, 'setup.py')
     setup_mod = imp.load_source('setup', filename)
     return setup_mod.VERSION
 
 
-def populate_readme(version, circleci_build, appveyor_build, coveralls_build):
+def populate_readme(
+        version, circleci_build, appveyor_build,
+        coveralls_build, travis_build):
     """Populates ``README.rst`` with release-specific data.
 
     This is because ``README.rst`` is used on PyPI.
@@ -71,6 +83,8 @@ def populate_readme(version, circleci_build, appveyor_build, coveralls_build):
             release.
         coveralls_build (Union[str, int]): The Coveralls.io build ID
             corresponding to the release.
+        travis_build (int): The Travis CI build ID corresponding to
+            the release.
     """
     with open(RELEASE_README_FILE, 'r') as file_obj:
         template = file_obj.read()
@@ -80,13 +94,16 @@ def populate_readme(version, circleci_build, appveyor_build, coveralls_build):
         circleci_build=circleci_build,
         appveyor_build=appveyor_build,
         coveralls_build=coveralls_build,
+        travis_build=travis_build,
     )
 
     with open(README_FILE, 'w') as file_obj:
         file_obj.write(contents)
 
 
-def populate_index(version, circleci_build, appveyor_build, coveralls_build):
+def populate_index(
+        version, circleci_build, appveyor_build,
+        coveralls_build, travis_build):
     """Populates ``docs/index.rst`` with release-specific data.
 
     Args:
@@ -97,6 +114,8 @@ def populate_index(version, circleci_build, appveyor_build, coveralls_build):
             release.
         coveralls_build (Union[str, int]): The Coveralls.io build ID
             corresponding to the release.
+        travis_build (int): The Travis CI build ID corresponding to
+            the release.
     """
     with open(RELEASE_INDEX_FILE, 'r') as file_obj:
         template = file_obj.read()
@@ -106,9 +125,27 @@ def populate_index(version, circleci_build, appveyor_build, coveralls_build):
         circleci_build=circleci_build,
         appveyor_build=appveyor_build,
         coveralls_build=coveralls_build,
+        travis_build=travis_build,
     )
 
     with open(INDEX_FILE, 'w') as file_obj:
+        file_obj.write(contents)
+
+
+def populate_native_libraries(version):
+    """Populates ``docs/native-libraries.rst`` with release-specific data.
+
+    Args:
+        version (str): The current version.
+    """
+    with open(NATIVE_LIBS_TEMPLATE, 'r') as file_obj:
+        template = file_obj.read()
+
+    contents = template.format(
+        revision=version,
+    )
+
+    with open(NATIVE_LIBS_FILE, 'w') as file_obj:
         file_obj.write(contents)
 
 
@@ -135,16 +172,20 @@ def populate_development(version):
 def main():
     """Populate the templates with release-specific fields.
 
-    Requires user input for the CircleCI, AppVeyor and Coveralls.io
+    Requires user input for the CircleCI, AppVeyor, Coveralls.io and Travis
     build IDs.
     """
     version = get_version()
     circleci_build = six.moves.input('CircleCI Build ID: ')
     appveyor_build = six.moves.input('AppVeyor Build ID: ')
     coveralls_build = six.moves.input('Coveralls Build ID: ')
+    travis_build = six.moves.input('Travis Build ID: ')
 
-    populate_readme(version, circleci_build, appveyor_build, coveralls_build)
-    populate_index(version, circleci_build, appveyor_build, coveralls_build)
+    populate_readme(
+        version, circleci_build, appveyor_build, coveralls_build, travis_build)
+    populate_index(
+        version, circleci_build, appveyor_build, coveralls_build, travis_build)
+    populate_native_libraries(version)
     populate_development(version)
 
 
