@@ -325,6 +325,12 @@ _QUARTIC_BERNSTEIN_FACTOR = 36.0
 def polynomial_sign(poly_surface, degree):
     r"""Determine the "sign" of a polynomial on the reference triangle.
 
+    .. note::
+
+       This is used **only** by :meth:`Surface._compute_valid` (which is
+       in turn used to compute / cache the :attr:`Surface.is_valid`
+       property).
+
     Checks if a polynomial :math:`p(s, t)` is positive, negative
     or mixed sign on the reference triangle.
 
@@ -393,6 +399,11 @@ def polynomial_sign(poly_surface, degree):
 def two_by_two_det(mat):
     r"""Compute the determinant of a 2x2 matrix.
 
+    .. note::
+
+       This is used **only** by :func:`quadratic_jacobian_polynomial` and
+       :func:`cubic_jacobian_polynomial`.
+
     This is "needed" because :func:`numpy.linalg.det` uses a more generic
     determinant implementation which can introduce rounding even when the
     simple :math:`a d - b c` will suffice. For example:
@@ -420,6 +431,12 @@ def two_by_two_det(mat):
 
 def quadratic_jacobian_polynomial(nodes):
     r"""Compute the Jacobian determinant of a quadratic surface.
+
+    .. note::
+
+       This is used **only** by :meth:`Surface._compute_valid` (which is
+       in turn used to compute / cache the :attr:`Surface.is_valid`
+       property).
 
     Converts :math:`\det(J(s, t))` to a polynomial on the reference
     triangle and represents it as a surface object.
@@ -458,6 +475,12 @@ def quadratic_jacobian_polynomial(nodes):
 
 def cubic_jacobian_polynomial(nodes):
     r"""Compute the Jacobian determinant of a cubic surface.
+
+    .. note::
+
+       This is used **only** by :meth:`Surface._compute_valid` (which is
+       in turn used to compute / cache the :attr:`Surface.is_valid`
+       property).
 
     Converts :math:`\det(J(s, t))` to a polynomial on the reference
     triangle and represents it as a surface object.
@@ -577,6 +600,10 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
 def make_transform(degree, weights_a, weights_b, weights_c):
     """Compute matrices corresponding to the de Casteljau algorithm.
 
+    .. note::
+
+       This is a helper used only by :func:`_specialize_surface`.
+
     Applies the de Casteljau to the identity matrix, thus
     effectively caching the algorithm in a transformation matrix.
 
@@ -585,10 +612,6 @@ def make_transform(degree, weights_a, weights_b, weights_c):
        This is premature optimization. It's unclear if the time
        saved from "caching" one round of de Casteljau is cancelled
        out by the extra storage required for the 3 matrices.
-
-    .. note::
-
-       This is a helper used only by :func:`_specialize_surface`.
 
     Args:
         degree (int): The degree of a candidate surface.
@@ -620,6 +643,10 @@ def make_transform(degree, weights_a, weights_b, weights_c):
 
 def reduced_to_matrix(shape, degree, vals_by_weight):
     r"""Converts a reduced values dictionary into a matrix.
+
+    .. note::
+
+       This is a helper used only by :func:`_specialize_surface`.
 
     The ``vals_by_weight`` mapping has keys of the form:
     ``(0, ..., 1, ..., 2, ...)`` where the ``0`` corresponds
