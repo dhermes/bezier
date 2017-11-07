@@ -20,7 +20,8 @@ module surface_intersection
   implicit none
   private &
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, &
-       newton_refine_solve, split_candidate
+       newton_refine_solve, split_candidate, allocate_candidates, &
+       update_candidates
   public newton_refine, locate_point
 
   ! For ``locate_point``.
@@ -114,10 +115,20 @@ contains
     real(c_double) :: half_width
 
     ! Allocate the new nodes and call sub-divide.
-    allocate(next_candidates(num_next_candidates - 3)%nodes(num_nodes, 2))
-    allocate(next_candidates(num_next_candidates - 2)%nodes(num_nodes, 2))
-    allocate(next_candidates(num_next_candidates - 1)%nodes(num_nodes, 2))
-    allocate(next_candidates(num_next_candidates)%nodes(num_nodes, 2))
+    ! NOTE: This **assumes** but does not check that if the nodes are
+    !       allocated, they are also the correct shape.
+    if (.NOT. allocated(next_candidates(num_next_candidates - 3)%nodes)) then
+       allocate(next_candidates(num_next_candidates - 3)%nodes(num_nodes, 2))
+    end if
+    if (.NOT. allocated(next_candidates(num_next_candidates - 2)%nodes)) then
+       allocate(next_candidates(num_next_candidates - 2)%nodes(num_nodes, 2))
+    end if
+    if (.NOT. allocated(next_candidates(num_next_candidates - 1)%nodes)) then
+       allocate(next_candidates(num_next_candidates - 1)%nodes(num_nodes, 2))
+    end if
+    if (.NOT. allocated(next_candidates(num_next_candidates)%nodes)) then
+       allocate(next_candidates(num_next_candidates)%nodes(num_nodes, 2))
+    end if
 
     call subdivide_nodes( &
          num_nodes, 2, candidate%nodes, degree, &
@@ -156,6 +167,52 @@ contains
 
   end subroutine split_candidate
 
+  subroutine allocate_candidates(num_candidates, next_candidates)
+    integer(c_int), intent(in) :: num_candidates
+    type(LocateCandidate), allocatable, intent(inout) :: next_candidates(:)
+
+    if (allocated(next_candidates)) then
+       if (size(next_candidates) < 4 * num_candidates) then
+          deallocate(next_candidates)
+          allocate(next_candidates(4 * num_candidates))
+       end if
+    else
+       allocate(next_candidates(4 * num_candidates))
+    end if
+
+  end subroutine allocate_candidates
+
+  subroutine update_candidates( &
+       num_nodes, degree, point, num_candidates, candidates, &
+       num_next_candidates, next_candidates)
+
+    integer(c_int), intent(in) :: num_nodes, degree
+    real(c_double), intent(in) :: point(1, 2)
+    integer(c_int), intent(in) :: num_candidates
+    type(LocateCandidate), intent(in) :: candidates(:)
+    integer(c_int), intent(inout) :: num_next_candidates
+    type(LocateCandidate), allocatable, intent(inout) :: next_candidates(:)
+    ! Variables outside of signature.
+    integer(c_int) :: cand_index
+    logical(c_bool) :: predicate
+
+    call allocate_candidates(num_candidates, next_candidates)
+
+    do cand_index = 1, num_candidates
+       call contains_nd( &
+            num_nodes, 2, candidates(cand_index)%nodes, &
+            point(1, :), predicate)
+
+       if (predicate) then
+          num_next_candidates = num_next_candidates + 4
+          call split_candidate( &
+               num_nodes, degree, candidates(cand_index), &
+               num_next_candidates, next_candidates)
+       end if
+    end do
+
+  end subroutine update_candidates
+
   subroutine locate_point( &
        num_nodes, nodes, degree, x_val, y_val, s_val, t_val) &
        bind(c, name='locate_point_surface')
@@ -176,44 +233,42 @@ contains
     real(c_double), intent(out) :: s_val, t_val
     ! Variables outside of signature.
     real(c_double) :: point(1, 2)
-    integer(c_int) :: sub_index, cand_index
+    integer(c_int) :: sub_index
     integer(c_int) :: num_candidates, num_next_candidates
-    type(LocateCandidate), allocatable :: candidates(:), next_candidates(:)
-    logical(c_bool) :: predicate
+    type(LocateCandidate), allocatable :: candidates_odd(:), candidates_even(:)
     real(c_double) :: s_approx, t_approx
     real(c_double) :: actual(1, 2)
+    logical(c_bool) :: is_even
 
     point(1, :) = [x_val, y_val]
     ! Start out with the full curve.
-    allocate(candidates(1))
-    candidates(1) = LocateCandidate(1.0_dp, 1.0_dp, 1.0_dp, nodes)
+    allocate(candidates_odd(1))  ! First iteration is odd.
+    candidates_odd(1) = LocateCandidate(1.0_dp, 1.0_dp, 1.0_dp, nodes)
     num_candidates = 1
     s_val = LOCATE_MISS
 
+    is_even = .TRUE.  ! At zero.
     do sub_index = 1, MAX_LOCATE_SUBDIVISIONS + 1
+       is_even = .NOT. is_even  ! Switch parity.
        num_next_candidates = 0
-       ! Allocate maximum amount of space needed.
-       allocate(next_candidates(4 * num_candidates))
-       do cand_index = 1, num_candidates
-          call contains_nd( &
-               num_nodes, 2, candidates(cand_index)%nodes, &
-               point(1, :), predicate)
-          if (predicate) then
-             num_next_candidates = num_next_candidates + 4
-             call split_candidate( &
-                  num_nodes, degree, candidates(cand_index), &
-                  num_next_candidates, next_candidates)
-          end if
-       end do
+
+       if (is_even) then
+          ! Read from even, write to odd.
+          call update_candidates( &
+               num_nodes, degree, point, num_candidates, candidates_even, &
+               num_next_candidates, candidates_odd)
+       else
+          ! Read from odd, write to even.
+          call update_candidates( &
+               num_nodes, degree, point, num_candidates, candidates_odd, &
+               num_next_candidates, candidates_even)
+       end if
 
        ! If there are no more candidates, we are done.
        if (num_next_candidates == 0) then
           return
        end if
 
-       ! NOTE: This may copy empty slots, but this is OK since we track
-       !       `num_candidates` separately.
-       call move_alloc(next_candidates, candidates)
        num_candidates = num_next_candidates
 
     end do
@@ -222,12 +277,23 @@ contains
     ! We divide by `3n` rather than `n` since we have tracked thrice the
     ! centroid rather than the centroid itself (to avoid round-off until
     ! right now).
-    s_approx = ( &
-         sum(candidates(:num_candidates)%centroid_x) / &
-         (3.0_dp * num_candidates))
-    t_approx = ( &
-         sum(candidates(:num_candidates)%centroid_y) / &
-         (3.0_dp * num_candidates))
+    if (is_even) then
+       ! NOTE: We "exclude" this block from ``lcov`` because it can never
+       !       be invoked while ``MAX_LOCATE_SUBDIVISIONS`` is even.
+       s_approx = ( &
+            sum(candidates_odd(:num_candidates)%centroid_x) / &
+            (3.0_dp * num_candidates))  ! LCOV_EXCL_LINE
+       t_approx = ( &
+            sum(candidates_odd(:num_candidates)%centroid_y) / &
+            (3.0_dp * num_candidates))  ! LCOV_EXCL_LINE
+    else
+       s_approx = ( &
+            sum(candidates_even(:num_candidates)%centroid_x) / &
+            (3.0_dp * num_candidates))
+       t_approx = ( &
+            sum(candidates_even(:num_candidates)%centroid_y) / &
+            (3.0_dp * num_candidates))
+    end if
 
     call newton_refine( &
          num_nodes, nodes, degree, x_val, y_val, &
