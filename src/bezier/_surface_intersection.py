@@ -27,6 +27,7 @@ import numpy as np
 import six
 
 from bezier import _helpers
+from bezier import _surface_helpers
 try:
     from bezier import _surface_intersection_speedup
 except ImportError:  # pragma: NO COVER
@@ -187,11 +188,6 @@ def _newton_refine(nodes, degree, x_val, y_val, s, t):
     Returns:
         Tuple[float, float]: The refined :math:`s` and :math:`t` values.
     """
-    # NOTE: This circular import is temporary (will be resolved) once
-    #       the surface intersection helpers are excised from
-    #       ``_surface_helpers.py``.
-    from bezier import _surface_helpers
-
     lambda1 = 1.0 - s - t
     (surf_x, surf_y), = _surface_helpers.evaluate_barycentric(
         nodes, degree, lambda1, s, t)
@@ -240,11 +236,6 @@ def update_locate_candidates(
         y_val (float): The ``y``-coordinate being located.
         degree (int): The degree of the surface.
     """
-    # NOTE: This circular import is temporary (will be resolved) once
-    #       the surface intersection helpers are excised from
-    #       ``_surface_helpers.py``.
-    from bezier import _surface_helpers
-
     centroid_x, centroid_y, width, candidate_nodes = candidate
     point = np.asfortranarray([[x_val, y_val]])
     if not _helpers.contains_nd(candidate_nodes, point):
@@ -336,11 +327,6 @@ def locate_point(nodes, degree, x_val, y_val):
         values corresponding to ``x_val`` and ``y_val`` or
         :data:`None` if the point is not on the ``surface``.
     """
-    # NOTE: This circular import is temporary (will be resolved) once
-    #       the surface intersection helpers are excised from
-    #       ``_surface_helpers.py``.
-    from bezier import _surface_helpers
-
     # We track the centroid rather than base_x/base_y/width (by storing triple
     # the centroid -- to avoid division by three until needed). We also need
     # to track the width (or rather, just the sign of the width).

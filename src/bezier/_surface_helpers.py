@@ -39,7 +39,6 @@ import six
 from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
-from bezier import _surface_intersection
 from bezier import curved_polygon
 try:
     from bezier import _surface_speedup
