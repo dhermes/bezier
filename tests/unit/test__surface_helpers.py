@@ -30,7 +30,6 @@ UNIT_TRIANGLE = np.asfortranarray([
     [0.0, 1.0],
 ])
 FLOAT64 = np.float64  # pylint: disable=no-member
-SPACING = np.spacing  # pylint: disable=no-member
 # pylint: disable=invalid-name,no-member
 slow = pytest.mark.skipif(
     pytest.config.getoption('--ignore-slow') and not HAS_SURFACE_SPEEDUP,
@@ -719,26 +718,6 @@ class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
         return _surface_speedup.subdivide_nodes(nodes, degree)
 
 
-class Test_mean_centroid(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(candidates):
-        from bezier import _surface_helpers
-
-        return _surface_helpers.mean_centroid(candidates)
-
-    def test_it(self):
-        candidates = (
-            (1.0, 1.0, None, None),
-            (2.25, 1.5, None, None),
-            (1.25, 4.25, None, None),
-        )
-
-        centroid_x, centroid_y = self._call_function_under_test(candidates)
-        self.assertEqual(centroid_x, 0.5)
-        self.assertEqual(centroid_y, 0.75)
-
-
 class Test_jacobian_s(utils.NumPyTestCase):
 
     @staticmethod
@@ -1000,127 +979,6 @@ class Test_speedup_jacobian_det(Test__jacobian_det):
         from bezier import _surface_speedup
 
         return _surface_speedup.jacobian_det(nodes, degree, st_vals)
-
-
-class Test_update_locate_candidates(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(
-            candidate, next_candidates, x_val, y_val, degree):
-        from bezier import _surface_helpers
-
-        return _surface_helpers.update_locate_candidates(
-            candidate, next_candidates, x_val, y_val, degree)
-
-    @unittest.mock.patch(
-        'bezier._surface_helpers.subdivide_nodes',
-        return_value=(
-            unittest.mock.sentinel.nodes_a,
-            unittest.mock.sentinel.nodes_b,
-            unittest.mock.sentinel.nodes_c,
-            unittest.mock.sentinel.nodes_d,
-        ))
-    def test_contained(self, subdivide_nodes):
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 0.25],
-            [1.0, 0.0],
-            [0.0, 0.5],
-            [0.75, 0.75],
-            [0.0, 1.0],
-        ])
-        candidate = (
-            1.25,
-            1.25,
-            -0.25,
-            nodes,
-        )
-        next_candidates = []
-
-        ret_val = self._call_function_under_test(
-            candidate, next_candidates, 0.5625, 0.375, 2)
-        self.assertIsNone(ret_val)
-
-        expected = [
-            (1.375, 1.375, -0.125, unittest.mock.sentinel.nodes_a),
-            (1.25, 1.25, 0.125, unittest.mock.sentinel.nodes_b),
-            (1.0, 1.375, -0.125, unittest.mock.sentinel.nodes_c),
-            (1.375, 1.0, -0.125, unittest.mock.sentinel.nodes_d),
-        ]
-        self.assertEqual(next_candidates, expected)
-        subdivide_nodes.assert_called_once_with(nodes, 2)
-
-    def test_not_contained(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [2.0, 3.0],
-            [-1.0, 2.0],
-        ])
-        candidate = (
-            2.0,
-            0.5,
-            0.5,
-            nodes,
-        )
-        next_candidates = []
-
-        ret_val = self._call_function_under_test(
-            candidate, next_candidates, 9.0, 9.0, 1)
-        self.assertIsNone(ret_val)
-
-        self.assertEqual(next_candidates, [])
-
-
-class Test_locate_point(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, x_val, y_val):
-        from bezier import _surface_helpers
-
-        return _surface_helpers.locate_point(nodes, degree, x_val, y_val)
-
-    def test_it(self):
-        nodes = UNIT_TRIANGLE.copy(order='F')
-        degree = 1
-        x_val = 0.25
-        y_val = 0.625
-        s, t = self._call_function_under_test(nodes, degree, x_val, y_val)
-        self.assertEqual(s, x_val)
-        self.assertEqual(t, y_val)
-
-    def test_extra_newton_step(self):
-        # x(s, t) = -2 (s + 2 t) (t - 1)
-        # y(s, t) =  2 (s + 1) t
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [2.0, 0.0],
-            [2.0, 1.0],
-            [2.0, 2.0],
-            [0.0, 2.0],
-        ])
-        degree = 2
-        x_val = 0.59375
-        y_val = 0.25
-        s, t = self._call_function_under_test(nodes, degree, x_val, y_val)
-        # NOTE: We can use the resultant to find that the **true** answers
-        #       are roots of the following polynomials.
-        #           64 s^3 + 101 s^2 + 34 s - 5 = 0
-        #           128 t^3 - 192 t^2 + 91 t - 8 = 0
-        #       Using extended precision, we can find these values to more
-        #       digits than what is supported by IEEE-754.
-        expected_s = 0.109190958136897160638
-        self.assertAlmostEqual(s, expected_s, delta=6 * SPACING(expected_s))
-        expected_t = 0.11269475204698919699
-        self.assertAlmostEqual(t, expected_t, delta=SPACING(expected_t))
-
-    def test_no_match(self):
-        nodes = UNIT_TRIANGLE.copy(order='F')
-        degree = 1
-        x_val = -0.125
-        y_val = 0.25
-        self.assertIsNone(
-            self._call_function_under_test(nodes, degree, x_val, y_val))
 
 
 class Test_classify_intersection(unittest.TestCase):

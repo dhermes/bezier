@@ -48,8 +48,6 @@ except ImportError:  # pragma: NO COVER
 
 
 _MAX_POLY_SUBDIVISIONS = 5
-_MAX_LOCATE_SUBDIVISIONS = 20
-_LOCATE_EPS = 2.0**(-47)
 _SIGN = np.sign  # pylint: disable=no-member
 _FLOAT64 = np.float64  # pylint: disable=no-member
 _SAME_CURVATURE = 'Tangent curves have same curvature.'
@@ -777,41 +775,6 @@ def _subdivide_nodes(nodes, degree):
     return nodes_a, nodes_b, nodes_c, nodes_d
 
 
-def mean_centroid(candidates):
-    """Take the mean of all centroids in set of reference triangles.
-
-    .. note::
-
-       This is used **only** as a helper for :func:`locate_point`.
-
-    Args:
-        candidates (List[Tuple[float, float, float, numpy.ndarray]): List of
-            4-tuples, each of which has been produced by :func:`locate_point`.
-            Each 4-tuple contains
-
-            * Three times centroid ``x``-value
-            * Three times centroid ``y``-value
-            * "Width" of a parameter space for a surface
-            * Control points for a surface
-
-            We only use the first two values, which are triple the desired
-            value so that we can put off division by three until summing in
-            our average. We don't use the other two values, they are just an
-            artifact of the way ``candidates`` is constructed by the caller.
-
-    Returns:
-        Tuple[float, float]: The mean of all centroids.
-    """
-    sum_x = 0.0
-    sum_y = 0.0
-    for centroid_x, centroid_y, _, _ in candidates:
-        sum_x += centroid_x
-        sum_y += centroid_y
-
-    denom = 3.0 * len(candidates)
-    return sum_x / denom, sum_y / denom
-
-
 def jacobian_s(nodes, degree, dimension):
     r"""Compute :math:`\frac{\partial B}{\partial s}`.
 
@@ -992,118 +955,6 @@ def _jacobian_det(nodes, degree, st_vals):
     # Take the determinant for each (s, t).
     return (bs_bt_vals[:, 0] * bs_bt_vals[:, 3] -
             bs_bt_vals[:, 1] * bs_bt_vals[:, 2])
-
-
-def update_locate_candidates(
-        candidate, next_candidates, x_val, y_val, degree):
-    """Update list of candidate surfaces during geometric search for a point.
-
-    .. note::
-
-       This is used **only** as a helper for :func:`locate_point`.
-
-    Checks if the point ``(x_val, y_val)`` is contained in the ``candidate``
-    surface. If not, this function does nothing. If the point is contaned,
-    the four subdivided surfaces from ``candidate`` are added to
-    ``next_candidates``.
-
-    Args:
-        candidate (Tuple[float, float, float, numpy.ndarray]): A 4-tuple
-            describing a surface and its centroid / width. Contains
-
-            * Three times centroid ``x``-value
-            * Three times centroid ``y``-value
-            * "Width" of parameter space for the surface
-            * Control points for the surface
-        next_candidates (list): List of "candidate" sub-surfaces that may
-            contain the point being located.
-        x_val (float): The ``x``-coordinate being located.
-        y_val (float): The ``y``-coordinate being located.
-        degree (int): The degree of the surface.
-    """
-    centroid_x, centroid_y, width, candidate_nodes = candidate
-    point = np.asfortranarray([[x_val, y_val]])
-    if not _helpers.contains_nd(candidate_nodes, point):
-        return
-
-    nodes_a, nodes_b, nodes_c, nodes_d = subdivide_nodes(
-        candidate_nodes, degree)
-
-    half_width = 0.5 * width
-    next_candidates.extend((
-        (
-            centroid_x - half_width,
-            centroid_y - half_width,
-            half_width,
-            nodes_a,
-        ), (
-            centroid_x,
-            centroid_y,
-            -half_width,
-            nodes_b,
-        ), (
-            centroid_x + width,
-            centroid_y - half_width,
-            half_width,
-            nodes_c,
-        ), (
-            centroid_x - half_width,
-            centroid_y + width,
-            half_width,
-            nodes_d,
-        ),
-    ))
-
-
-def locate_point(nodes, degree, x_val, y_val):
-    r"""Locate a point on a surface.
-
-    Does so by recursively subdividing the surface and rejecting
-    sub-surfaces with bounding boxes that don't contain the point.
-    After the sub-surfaces are sufficiently small, uses Newton's
-    method to narrow in on the pre-image of the point.
-
-    Args:
-        nodes (numpy.ndarray): Control points for B |eacute| zier surface
-            (assumed to be two-dimensional).
-        degree (int): The degree of the surface.
-        x_val (float): The :math:`x`-coordinate of a point
-            on the surface.
-        y_val (float): The :math:`y`-coordinate of a point
-            on the surface.
-
-    Returns:
-        Optional[Tuple[float, float]]: The :math:`s` and :math:`t`
-        values corresponding to ``x_val`` and ``y_val`` or
-        :data:`None` if the point is not on the ``surface``.
-    """
-    # We track the centroid rather than base_x/base_y/width (by storing triple
-    # the centroid -- to avoid division by three until needed). We also need
-    # to track the width (or rather, just the sign of the width).
-    candidates = [(1.0, 1.0, 1.0, nodes)]
-    for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
-        next_candidates = []
-        for candidate in candidates:
-            update_locate_candidates(
-                candidate, next_candidates, x_val, y_val, degree)
-
-        candidates = next_candidates
-
-    if not candidates:
-        return None
-
-    # We take the average of all centroids from the candidates
-    # that may contain the point.
-    s_approx, t_approx = mean_centroid(candidates)
-    s, t = _surface_intersection.newton_refine(
-        nodes, degree, x_val, y_val, s_approx, t_approx)
-
-    actual = evaluate_barycentric(nodes, degree, 1.0 - s - t, s, t)
-    expected = np.asfortranarray([[x_val, y_val]])
-    if not _helpers.vector_close(actual, expected, eps=_LOCATE_EPS):
-        s, t = _surface_intersection.newton_refine(
-            nodes, degree, x_val, y_val, s, t)
-    return s, t
 
 
 def classify_intersection(intersection):

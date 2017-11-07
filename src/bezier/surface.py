@@ -31,6 +31,7 @@ from bezier import _geometric_intersection
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
+from bezier import _surface_intersection
 from bezier import curve as _curve_mod
 
 
@@ -1092,7 +1093,7 @@ class Surface(_base.Base):
                     self._dimension, self._dimension, point, point_dimensions)
                 raise ValueError(msg)
 
-        return _surface_helpers.locate_point(
+        return _surface_intersection.locate_point(
             self._nodes, self._degree, point[0, 0], point[0, 1])
 
     def intersect(self, other, strategy=_STRATEGY.GEOMETRIC, _verify=True):
