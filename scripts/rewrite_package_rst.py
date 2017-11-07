@@ -28,7 +28,11 @@ except ImportError:
 
 
 SPECIAL_MEMBERS = (
+    '__author__',
     '__version__',
+)
+UNDOCUMENTED_SPECIAL_MEMBERS = (
+    '__author__',
 )
 EXPECTED = """\
 bezier package
@@ -117,6 +121,8 @@ def get_public_members():
             '__all__ does not agree with the publicly imported members',
             all_exports, all_members)
 
+    local_members = [member for member in local_members
+                     if member not in UNDOCUMENTED_SPECIAL_MEMBERS]
     return local_members
 
 
