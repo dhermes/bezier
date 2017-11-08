@@ -13,12 +13,21 @@
 module test_surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
-  use curve, only: LOCATE_MISS
-  use surface_intersection, only: newton_refine, locate_point
+  use curve, only: CurveData, LOCATE_MISS
+  use curve_intersection, only: Intersection
+  use surface_intersection, only: &
+       IntersectionClassification_SAME_CURVATURE, &
+       IntersectionClassification_BAD_TANGENT, &
+       IntersectionClassification_EDGE_END, IntersectionClassification_FIRST, &
+       IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
+       IntersectionClassification_TANGENT_FIRST, &
+       IntersectionClassification_TANGENT_SECOND, &
+       IntersectionClassification_IGNORED_CORNER, newton_refine, &
+       locate_point, classify_intersection
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
-  private test_newton_refine, test_locate_point
+  private test_newton_refine, test_locate_point, test_classify_intersection
   public surface_intersection_all_tests
 
 contains
@@ -28,6 +37,7 @@ contains
 
     call test_newton_refine(success)
     call test_locate_point(success)
+    call test_classify_intersection(success)
 
   end subroutine surface_intersection_all_tests
 
@@ -145,5 +155,391 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_locate_point
+
+  subroutine test_classify_intersection(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(:), allocatable :: name
+    type(Intersection) :: intersection_
+    type(CurveData) :: curves_left(3), curves_right(3)
+    real(c_double) :: nodes1(2, 2), nodes2(3, 2)
+    integer(c_int) :: enum_
+
+    case_id = 1
+    name = "classify_intersection"
+
+    ! CASE 1: Intersection is on "the end" of the first edge.
+    intersection_%s = 1.0_dp
+    intersection_%t = 0.5_dp
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_EDGE_END)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Intersection is on "the end" of the second edge.
+    intersection_%s = 0.5_dp
+    intersection_%t = 1.0_dp
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_EDGE_END)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Intersection is on interior, "second".
+    nodes1(1, :) = 0
+    nodes1(2, :) = 1
+    curves_left(1)%nodes = nodes1
+
+    nodes1(1, :) = [0.25_dp, 0.0_dp]
+    nodes1(2, :) = [0.75_dp, 1.0_dp]
+    curves_right(1)%nodes = nodes1
+
+    intersection_%s = 0.5_dp
+    intersection_%index_first = 1
+    intersection_%t = 0.5_dp
+    intersection_%index_second = 1
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_SECOND)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Intersection is on interior, "first".
+    call classify_intersection(curves_right, curves_left, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_FIRST)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Intersection is tangent, "first".
+    nodes2(1, :) = 0
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [3.0_dp, 0.0_dp]
+    curves_left(1)%nodes = nodes2
+
+    nodes2(1, :) = [1.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    curves_right(1)%nodes = nodes2
+
+    intersection_%s = 0.5_dp
+    intersection_%index_first = 1
+    intersection_%t = 0.5_dp
+    intersection_%index_second = 1
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_TANGENT_FIRST)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Intersection is tangent, "second".
+    call classify_intersection(curves_right, curves_left, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_TANGENT_SECOND)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: Intersection is an ignored corner.
+    ! NOTE: The curves in ``curves_left`` are the edges of the
+    !       "unit simplex" ...
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    curves_left(1)%nodes = nodes1
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    curves_left(2)%nodes = nodes1
+    nodes1(1, :) = [0.0_dp, 1.0_dp]
+    nodes1(2, :) = 0
+    curves_left(3)%nodes = nodes1
+    ! ... and those in ``curves_right`` are the edges in the surface given by
+    !           [ 0,  0]
+    !           [-1,  0]
+    !           [ 0, -1]
+    nodes1(1, :) = [-1.0_dp, 0.0_dp]
+    nodes1(2, :) = [0.0_dp, -1.0_dp]
+    curves_right(1)%nodes = nodes1
+    nodes1(1, :) = [0.0_dp, -1.0_dp]
+    nodes1(2, :) = 0
+    curves_right(2)%nodes = nodes1
+    nodes1(1, :) = 0
+    nodes1(2, :) = [-1.0_dp, 0.0_dp]
+    curves_right(3)%nodes = nodes1
+
+    intersection_%s = 0.0_dp
+    intersection_%index_first = 1
+    intersection_%t = 0.0_dp
+    intersection_%index_second = 3
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_IGNORED_CORNER)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Intersection is a corner.
+    nodes1(1, :) = [0.0_dp, 0.5_dp]
+    nodes1(2, :) = 1
+    curves_left(1)%nodes = nodes1
+    nodes1(1, :) = 1
+    nodes1(2, :) = 0
+    curves_left(2)%nodes = nodes1
+    deallocate(curves_left(3)%nodes)  ! Unset.
+
+    deallocate(curves_right(1)%nodes)  ! Unset.
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 2.0_dp]
+    curves_right(2)%nodes = nodes1
+    deallocate(curves_right(3)%nodes)  ! Unset.
+
+    intersection_%s = 0.0_dp
+    intersection_%index_first = 2
+    intersection_%t = 0.5_dp
+    intersection_%index_second = 2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_FIRST)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 9: Intersection is tangent, use curvature of "first".
+    deallocate(curves_left(1)%nodes)  ! Unset.
+    nodes2(1, :) = [2.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    curves_left(2)%nodes = nodes2
+
+    nodes2(1, :) = [3.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [0.0_dp, 0.0_dp]
+    curves_right(2)%nodes = nodes2
+
+    intersection_%s = 0.5_dp
+    intersection_%index_first = 2
+    intersection_%t = 0.5_dp
+    intersection_%index_second = 2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_TANGENT_FIRST)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 10: Intersection is tangent, use curvature of "second".
+    nodes2(1, :) = [1.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    curves_left(2)%nodes = nodes2
+
+    nodes2(1, :) = [0.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [3.0_dp, 0.0_dp]
+    curves_right(2)%nodes = nodes2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_TANGENT_SECOND)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 11: Intersection is tangent, same curvature and direction.
+    nodes2(1, :) = [1.0_dp, 0.25_dp]
+    nodes2(2, :) = [-0.5_dp, -0.25_dp]
+    nodes2(3, :) = [0.0_dp, 0.25_dp]
+    curves_left(2)%nodes = nodes2
+
+    nodes2(1, :) = [0.75_dp, 0.25_dp]
+    nodes2(2, :) = [-0.25_dp, -0.25_dp]
+    nodes2(3, :) = [-0.25_dp, 0.25_dp]
+    curves_right(2)%nodes = nodes2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_SAME_CURVATURE)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 12: Intersection is tangent, same curvature, opposite direction.
+    nodes2(1, :) = [0.0_dp, 0.25_dp]
+    nodes2(2, :) = [-0.5_dp, -0.25_dp]
+    nodes2(3, :) = [1.0_dp, 0.25_dp]
+    curves_left(2)%nodes = nodes2
+
+    nodes2(1, :) = [0.75_dp, 0.25_dp]
+    nodes2(2, :) = [-0.25_dp, -0.25_dp]
+    nodes2(3, :) = [-0.25_dp, 0.25_dp]
+    curves_right(2)%nodes = nodes2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_SAME_CURVATURE)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 13: Intersection is tangent, opposite direction, curvatures have
+    !          same sign and there is no overlap.
+    nodes2(1, :) = [2.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    curves_left(2)%nodes = nodes2
+
+    nodes2(1, :) = 1
+    nodes2(2, :) = [1.5_dp, 0.0_dp]
+    nodes2(3, :) = [2.0_dp, 1.0_dp]
+    curves_right(2)%nodes = nodes2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_OPPOSED)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 14: Intersection is tangent, opposite direction, curvatures have
+    !          same sign and there **is** overlap.
+    nodes2(1, :) = [1.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    curves_left(2)%nodes = nodes2
+
+    nodes2(1, :) = [2.0_dp, 1.0_dp]
+    nodes2(2, :) = [1.5_dp, 0.0_dp]
+    nodes2(3, :) = 1
+    curves_right(2)%nodes = nodes2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_BAD_TANGENT)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 15: Intersection is tangent, opposite direction, curvatures have
+    !          opposite sign and there is no overlap.
+    nodes2(1, :) = [2.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    curves_left(2)%nodes = nodes2
+
+    nodes2(1, :) = [0.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [3.0_dp, 0.0_dp]
+    curves_right(2)%nodes = nodes2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_OPPOSED)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 16: Intersection is tangent, opposite direction, curvatures have
+    !          opposite sign and there **is** overlap.
+    nodes2(1, :) = [1.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    curves_left(2)%nodes = nodes2
+
+    nodes2(1, :) = [3.0_dp, 0.0_dp]
+    nodes2(2, :) = [1.5_dp, 1.0_dp]
+    nodes2(3, :) = [0.0_dp, 0.0_dp]
+    curves_right(2)%nodes = nodes2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_BAD_TANGENT)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 17: Intersection at corner, but the corner "staddles" an edge.
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    curves_left(2)%nodes = nodes1
+
+    nodes1(1, :) = [1.0_dp, 1.0_dp]
+    nodes1(2, :) = [0.5_dp, 0.0_dp]
+    curves_right(1)%nodes = nodes1
+    nodes1(1, :) = [0.5_dp, 0.0_dp]
+    nodes1(2, :) = [1.5_dp, -1.0_dp]
+    curves_right(2)%nodes = nodes1
+
+    intersection_%s = 0.5_dp
+    intersection_%index_first = 2
+    intersection_%t = 0.0_dp
+    intersection_%index_second = 2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_FIRST)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 18: Intersection at corner of **both** edges, the corners just
+    !          "kiss", hence are ignored.
+    nodes1(1, :) = [0.5_dp, 1.0_dp]
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    curves_left(1)%nodes = nodes1
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.5_dp, 0.25_dp]
+    curves_left(2)%nodes = nodes1
+
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    curves_right(1)%nodes = nodes1
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    curves_right(2)%nodes = nodes1
+
+    intersection_%s = 0.0_dp
+    intersection_%index_first = 2
+    intersection_%t = 0.0_dp
+    intersection_%index_second = 2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_IGNORED_CORNER)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 19: Intersection at corner of **both** edges, "first" is interior.
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    curves_left(1)%nodes = nodes1
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    curves_left(2)%nodes = nodes1
+
+    nodes1(1, :) = [0.5_dp, 0.25_dp]
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    curves_right(1)%nodes = nodes1
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 1.0_dp]
+    curves_right(2)%nodes = nodes1
+
+    intersection_%s = 0.0_dp
+    intersection_%index_first = 2
+    intersection_%t = 0.0_dp
+    intersection_%index_second = 2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_FIRST)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 20: Intersection at corner of **both** edges, "second" is interior.
+    nodes1(1, :) = [0.5_dp, 0.25_dp]
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    curves_left(1)%nodes = nodes1
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [1.0_dp, 1.0_dp]
+    curves_left(2)%nodes = nodes1
+
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    curves_right(1)%nodes = nodes1
+    nodes1(1, :) = [1.0_dp, 0.0_dp]
+    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    curves_right(2)%nodes = nodes1
+
+    intersection_%s = 0.0_dp
+    intersection_%index_first = 2
+    intersection_%t = 0.0_dp
+    intersection_%index_second = 2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_SECOND)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 21: Intersection at corner of **both** edges, one corner is
+    !          completely contained in the area of the other corner.
+    nodes1(1, :) = [0.5_dp, 1.0_dp]
+    nodes1(2, :) = 0
+    curves_left(1)%nodes = nodes1
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.5_dp]
+    curves_left(2)%nodes = nodes1
+
+    nodes1(1, :) = [0.0_dp, 1.0_dp]
+    nodes1(2, :) = 0
+    curves_right(1)%nodes = nodes1
+    nodes1(1, :) = 0
+    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    curves_right(2)%nodes = nodes1
+
+    intersection_%s = 0.0_dp
+    intersection_%index_first = 2
+    intersection_%t = 0.0_dp
+    intersection_%index_second = 2
+
+    call classify_intersection(curves_left, curves_right, intersection_, enum_)
+    case_success = (enum_ == IntersectionClassification_FIRST)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_classify_intersection
 
 end module test_surface_intersection

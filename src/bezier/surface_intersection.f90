@@ -13,16 +13,26 @@
 module surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
-  use curve, only: LOCATE_MISS
-  use helpers, only: contains_nd, vector_close
+  use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
+  use curve_intersection, only: Intersection
+  use helpers, only: cross_product, contains_nd, vector_close
   use types, only: dp
   use surface, only: evaluate_barycentric, jacobian_both, subdivide_nodes
   implicit none
   private &
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, &
        newton_refine_solve, split_candidate, allocate_candidates, &
-       update_candidates
-  public newton_refine, locate_point
+       update_candidates, ignored_edge_corner, ignored_double_corner, &
+       ignored_corner, classify_tangent_intersection
+  public &
+       IntersectionClassification_SAME_CURVATURE, &
+       IntersectionClassification_BAD_TANGENT, &
+       IntersectionClassification_EDGE_END, IntersectionClassification_FIRST, &
+       IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
+       IntersectionClassification_TANGENT_FIRST, &
+       IntersectionClassification_TANGENT_SECOND, &
+       IntersectionClassification_IGNORED_CORNER, newton_refine, &
+       locate_point, classify_intersection
 
   ! For ``locate_point``.
   type :: LocateCandidate
@@ -35,6 +45,15 @@ module surface_intersection
   ! NOTE: These values are also defined in equivalent Python source.
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
   real(c_double), parameter :: LOCATE_EPS = 0.5_dp**47
+  integer(c_int), parameter :: IntersectionClassification_SAME_CURVATURE = -3
+  integer(c_int), parameter :: IntersectionClassification_BAD_TANGENT = -2
+  integer(c_int), parameter :: IntersectionClassification_EDGE_END = -1
+  integer(c_int), parameter :: IntersectionClassification_FIRST = 0
+  integer(c_int), parameter :: IntersectionClassification_SECOND = 1
+  integer(c_int), parameter :: IntersectionClassification_OPPOSED = 2
+  integer(c_int), parameter :: IntersectionClassification_TANGENT_FIRST = 3
+  integer(c_int), parameter :: IntersectionClassification_TANGENT_SECOND = 4
+  integer(c_int), parameter :: IntersectionClassification_IGNORED_CORNER = 5
 
 contains
 
@@ -317,5 +336,302 @@ contains
          s_approx, t_approx, s_val, t_val)
 
   end subroutine locate_point
+
+  logical(c_bool) function ignored_edge_corner( &
+       edge_tangent, corner_tangent, num_nodes, &
+       previous_edge_nodes) result(predicate)
+
+    real(c_double), intent(in) :: edge_tangent(1, 2)
+    real(c_double), intent(in) :: corner_tangent(1, 2)
+    integer(c_int), intent(in) :: num_nodes
+    real(c_double), intent(in) :: previous_edge_nodes(num_nodes, 2)
+    ! Variables outside of signature.
+    real(c_double) :: cross_prod
+    real(c_double) :: alt_corner_tangent(1, 2)
+
+    call cross_product( &
+         edge_tangent, corner_tangent, cross_prod)
+    ! A negative cross product indicates that ``edge_tangent`` is
+    ! "inside" / "to the left" of ``corner_tangent`` (due to right-hand rule).
+    if (cross_prod > 0.0_dp) then
+       predicate = .FALSE.
+       return
+    end if
+
+    ! Do the same for the **other** tangent at the corner.
+    call evaluate_hodograph( &
+         1.0_dp, num_nodes, 2, &
+         previous_edge_nodes, alt_corner_tangent)
+    ! Change the direction of the "in" tangent so that it points "out".
+    alt_corner_tangent = -alt_corner_tangent
+    call cross_product( &
+         edge_tangent, alt_corner_tangent, cross_prod)
+    predicate = (cross_prod <= 0.0_dp)
+
+  end function ignored_edge_corner
+
+  logical(c_bool) function ignored_double_corner( &
+       curves_left, curves_right, intersection_, &
+       tangent_s, tangent_t) result(predicate)
+
+    ! NOTE: This assumes that ``intersection_%index_(first|second)``
+    !       are in [1, 2, 3] (marked as the edges of a surface).
+
+    type(CurveData), intent(in) :: curves_left(:), curves_right(:)
+    type(Intersection), intent(in) :: intersection_
+    real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
+    ! Variables outside of signature.
+    integer(c_int) :: index, num_nodes
+    real(c_double) :: alt_tangent_s(1, 2), alt_tangent_t(1, 2)
+    real(c_double) :: cross_prod1, cross_prod2, cross_prod3
+
+    ! Compute the other edge for the ``s`` surface.
+    index = 1 + modulo(intersection_%index_first - 2, 3)
+    num_nodes = size(curves_left(index)%nodes, 1)
+    call evaluate_hodograph( &
+         1.0_dp, num_nodes, 2, &
+         curves_left(index)%nodes, alt_tangent_s)
+
+    ! First check if ``tangent_t`` is interior to the ``s`` surface.
+    call cross_product( &
+         tangent_s, tangent_t, cross_prod1)
+    ! A positive cross product indicates that ``tangent_t`` is
+    ! interior to ``tangent_s``. Similar for ``alt_tangent_s``.
+    ! If ``tangent_t`` is interior to both, then the surfaces
+    ! do more than just "kiss" at the corner, so the corner should
+    ! not be ignored.
+    if (cross_prod1 >= 0.0_dp) then
+       ! Only compute ``cross_prod2`` if we need to.
+       call cross_product( &
+            alt_tangent_s, tangent_t, cross_prod2)
+       if (cross_prod2 >= 0.0_dp) then
+          predicate = .FALSE.
+          return
+       end if
+    end if
+
+    ! If ``tangent_t`` is not interior, we check the other ``t``
+    ! edge that ends at the corner.
+    index = 1 + modulo(intersection_%index_second - 2, 3)
+    num_nodes = size(curves_right(index)%nodes, 1)
+    call evaluate_hodograph( &
+         1.0_dp, num_nodes, 2, &
+         curves_right(index)%nodes, alt_tangent_t)
+    ! Change the direction of the "in" tangent so that it points "out".
+    alt_tangent_t = -alt_tangent_t
+
+    call cross_product( &
+         tangent_s, alt_tangent_t, cross_prod2)
+    if (cross_prod2 >= 0.0_dp) then
+       ! Only compute ``cross_prod3`` if we need to.
+       call cross_product( &
+            alt_tangent_s, alt_tangent_t, cross_prod3)
+       if (cross_prod3 >= 0.0_dp) then
+          predicate = .FALSE.
+          return
+       end if
+    end if
+
+    ! If neither of ``tangent_t`` or ``alt_tangent_t`` are interior
+    ! to the ``s`` surface, one of two things is true. Either
+    ! the two surfaces have no interior intersection (1) or the
+    ! ``s`` surface is bounded by both edges of the ``t`` surface
+    ! at the corner intersection (2). To detect (2), we only need
+    ! check if ``tangent_s`` is interior to both ``tangent_t``
+    ! and ``alt_tangent_t``. ``cross_prod1`` contains
+    ! (tangent_s) x (tangent_t), so it's negative will tell if
+    ! ``tangent_s`` is interior. Similarly, ``cross_prod3``
+    ! contains (tangent_s) x (alt_tangent_t), but we also reversed
+    ! the sign on ``alt_tangent_t`` so switching the sign back
+    ! and reversing the arguments in the cross product cancel out.
+    predicate = (cross_prod1 > 0.0_dp .OR. cross_prod2 < 0.0_dp)
+
+  end function ignored_double_corner
+
+  logical(c_bool) function ignored_corner( &
+       curves_left, curves_right, intersection_, &
+       tangent_s, tangent_t) result(predicate)
+
+    ! NOTE: This assumes that ``intersection_%index_(first|second)``
+    !       are in [1, 2, 3] (marked as the edges of a surface).
+
+    type(CurveData), intent(in) :: curves_left(:), curves_right(:)
+    type(Intersection), intent(in) :: intersection_
+    real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
+    ! Variables outside of signature.
+    integer(c_int) :: index, num_nodes
+
+    if (intersection_%s == 0.0_dp) then
+       if (intersection_%t == 0.0_dp) then
+          ! Double corner.
+          predicate = ignored_double_corner( &
+               curves_left, curves_right, intersection_, &
+               tangent_s, tangent_t)
+       else
+          ! s-only corner.
+          index = 1 + modulo(intersection_%index_first - 2, 3)
+          ! NOTE: This is a "trick" which requires `modulo` (not `mod`)
+          !       since it will return values in {0, 1, 2}. The goal is
+          !       to send [1, 2, 3] --> [3, 1, 2] (i.e. move indices to
+          !       the left and wrap around).
+          num_nodes = size(curves_left(index)%nodes, 1)
+          predicate = ignored_edge_corner( &
+               tangent_t, tangent_s, num_nodes, curves_left(index)%nodes)
+       end if
+    else if (intersection_%t == 0.0_dp) then
+       ! t-only corner.
+       index = 1 + modulo(intersection_%index_second - 2, 3)
+       ! NOTE: This is a "trick" which requires `modulo` (not `mod`)
+       !       since it will return values in {0, 1, 2}. The goal is
+       !       to send [1, 2, 3] --> [3, 1, 2] (i.e. move indices to
+       !       the left and wrap around).
+       num_nodes = size(curves_right(index)%nodes, 1)
+       predicate = ignored_edge_corner( &
+            tangent_s, tangent_t, num_nodes, curves_right(index)%nodes)
+    else
+       predicate = .FALSE.
+    end if
+
+  end function ignored_corner
+
+  subroutine classify_tangent_intersection( &
+       curves_left, curves_right, intersection_, &
+       tangent_s, tangent_t, enum_)
+
+    ! NOTE: This **assumes**, but does not check that
+    !       ``intersection_%index_(first|second)`` are valid indices within
+    !       ``curves_(left|right)`` and that each of those ``CurveData``
+    !       instances have already allocated ``%nodes``.
+
+    type(CurveData), intent(in) :: curves_left(:), curves_right(:)
+    type(Intersection), intent(in) :: intersection_
+    real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
+    integer(c_int), intent(out) :: enum_
+    ! Variables outside of signature.
+    real(c_double) :: dot_prod
+    integer(c_int) :: num_nodes
+    real(c_double) :: curvature1, curvature2
+    real(c_double) :: sign1, sign2
+    real(c_double) :: delta_c
+
+    dot_prod = dot_product(tangent_s(1, :), tangent_t(1, :))
+    ! NOTE: When computing curvatures we assume that we don't have lines
+    !       here, because lines that are tangent at an intersection are
+    !       parallel and we don't handle that case.
+    num_nodes = size(curves_left(intersection_%index_first)%nodes, 1)
+    call get_curvature( &
+         num_nodes, 2, curves_left(intersection_%index_first)%nodes, &
+         tangent_s, intersection_%s, curvature1)
+
+    num_nodes = size(curves_right(intersection_%index_second)%nodes, 1)
+    call get_curvature( &
+         num_nodes, 2, curves_right(intersection_%index_second)%nodes, &
+         tangent_t, intersection_%t, curvature2)
+
+    if (dot_prod < 0.0_dp) then
+       ! If the tangent vectors are pointing in the opposite direction,
+       ! then the curves are facing opposite directions.
+       sign1 = sign(1.0_dp, curvature1)
+       sign2 = sign(1.0_dp, curvature2)
+       if (sign1 == sign2) then
+          ! If both curvatures are positive, since the curves are
+          ! moving in opposite directions, the tangency isn't part of
+          ! the surface intersection.
+          if (sign1 == 1.0_dp) then
+             enum_ = IntersectionClassification_OPPOSED
+          else
+             ! NOTE: This is an error state.
+             enum_ = IntersectionClassification_BAD_TANGENT
+          end if
+       else
+          delta_c = abs(curvature1) - abs(curvature2)
+          if (delta_c == 0.0_dp) then
+             ! NOTE: This is an error state.
+             enum_ = IntersectionClassification_SAME_CURVATURE
+          else
+             sign2 = sign(1.0_dp, delta_c)
+             if (sign1 == sign2) then
+                enum_ = IntersectionClassification_OPPOSED
+             else
+                ! NOTE: This is an error state.
+                enum_ = IntersectionClassification_BAD_TANGENT
+             end if
+          end if
+       end if
+    else
+       if (curvature1 > curvature2) then
+          enum_ = IntersectionClassification_TANGENT_FIRST
+       else if (curvature1 < curvature2) then
+          enum_ = IntersectionClassification_TANGENT_SECOND
+       else
+          ! NOTE: This is an error state.
+          enum_ = IntersectionClassification_SAME_CURVATURE
+       end if
+    end if
+
+  end subroutine classify_tangent_intersection
+
+  subroutine classify_intersection( &
+       curves_left, curves_right, intersection_, enum_)
+
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+    ! NOTE: This returns ``IntersectionClassification_EDGE_END`` if
+    !       the intersection occurs at the end of an edge.
+    ! NOTE: This **assumes**, but does not check that
+    !       ``intersection_%index_(first|second)`` are valid indices within
+    !       ``curves_(left|right)`` and that each of those ``CurveData``
+    !       instances have already allocated ``%nodes``.
+
+    type(CurveData), intent(in) :: curves_left(:), curves_right(:)
+    type(Intersection), intent(in) :: intersection_
+    integer(c_int), intent(out) :: enum_
+    ! Variables outside of signature.
+    integer(c_int) :: num_nodes
+    real(c_double) :: tangent_s(1, 2), tangent_t(1, 2)
+    real(c_double) :: cross_prod
+
+    if (intersection_%s == 1.0_dp .OR. intersection_%t == 1.0_dp) then
+       enum_ = IntersectionClassification_EDGE_END
+       return
+    end if
+
+    ! NOTE: We assume, but don't check that ``%nodes`` is allocated
+    !       and that it has 2 columns.
+    num_nodes = size(curves_left(intersection_%index_first)%nodes, 1)
+    call evaluate_hodograph( &
+         intersection_%s, num_nodes, 2, &
+         curves_left(intersection_%index_first)%nodes, tangent_s)
+
+    ! NOTE: We assume, but don't check that ``%nodes`` is allocated
+    !       and that it has 2 columns.
+    num_nodes = size(curves_right(intersection_%index_second)%nodes, 1)
+    call evaluate_hodograph( &
+         intersection_%t, num_nodes, 2, &
+         curves_right(intersection_%index_second)%nodes, tangent_t)
+
+    if (ignored_corner( &
+         curves_left, curves_right, intersection_, &
+         tangent_s, tangent_t)) then
+       enum_ = IntersectionClassification_IGNORED_CORNER
+       return
+    end if
+
+    ! Take the cross product of tangent vectors to determine which one
+    ! is more "inside" / "to the left".
+    call cross_product( &
+         tangent_s, tangent_t, cross_prod)
+    if (cross_prod < 0.0_dp) then
+       enum_ = IntersectionClassification_FIRST
+    else if (cross_prod > 0.0_dp) then
+       enum_ = IntersectionClassification_SECOND
+    else
+       call classify_tangent_intersection( &
+            curves_left, curves_right, intersection_, &
+            tangent_s, tangent_t, enum_)
+    end if
+
+  end subroutine classify_intersection
 
 end module surface_intersection
