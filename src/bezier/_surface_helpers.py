@@ -2278,6 +2278,35 @@ def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
     return result
 
 
+def compute_edge_nodes(nodes, degree):
+    """Compute the nodes of each edges of a surface.
+
+    Args:
+        nodes (numpy.ndarray): Control point nodes that define the surface.
+        degree (int): The degree of the surface define by ``nodes``.
+
+    Returns:
+        Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]: The nodes in
+        the edges of the surface.
+    """
+    _, dimension = np.shape(nodes)
+    nodes1 = np.empty((degree + 1, dimension), order='F')
+    nodes2 = np.empty((degree + 1, dimension), order='F')
+    nodes3 = np.empty((degree + 1, dimension), order='F')
+
+    curr2 = degree
+    curr3 = -1
+    for i in six.moves.xrange(degree + 1):
+        nodes1[i, :] = nodes[i, :]
+        nodes2[i, :] = nodes[curr2, :]
+        nodes3[i, :] = nodes[curr3, :]
+        # Update the indices.
+        curr2 += degree - i
+        curr3 -= i + 2
+
+    return nodes1, nodes2, nodes3
+
+
 class _IntersectionClassification(enum.Enum):
     """Enum classifying the "interior" curve in an intersection.
 

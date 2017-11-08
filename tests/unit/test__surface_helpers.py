@@ -2483,6 +2483,74 @@ class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
             nodes, degree, param_vals, dimension)
 
 
+class Test_compute_edge_nodes(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.compute_edge_nodes(nodes, degree)
+
+    def test_linear(self):
+        nodes = np.asfortranarray([
+            [1.0, 2.0],
+            [4.0, 2.5],
+            [0.0, 4.0],
+        ])
+        p100, p010, p001 = nodes
+
+        nodes1, nodes2, nodes3 = self._call_function_under_test(nodes, 1)
+        expected1 = np.asfortranarray(np.vstack([p100, p010]))
+        expected2 = np.asfortranarray(np.vstack([p010, p001]))
+        expected3 = np.asfortranarray(np.vstack([p001, p100]))
+        self.assertEqual(nodes1, expected1)
+        self.assertEqual(nodes2, expected2)
+        self.assertEqual(nodes3, expected3)
+
+    def test_quadratic(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.25, 0.5],
+            [2.0, 1.0],
+            [-1.5, 0.75],
+            [0.0, 2.0],
+            [-3.0, 3.0],
+        ])
+        p200, p110, p020, p101, p011, p002 = nodes
+
+        nodes1, nodes2, nodes3 = self._call_function_under_test(nodes, 2)
+        expected1 = np.asfortranarray(np.vstack([p200, p110, p020]))
+        expected2 = np.asfortranarray(np.vstack([p020, p011, p002]))
+        expected3 = np.asfortranarray(np.vstack([p002, p101, p200]))
+        self.assertEqual(nodes1, expected1)
+        self.assertEqual(nodes2, expected2)
+        self.assertEqual(nodes3, expected3)
+
+    def test_cubic(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [0.328125, 0.1484375],
+            [0.65625, 0.1484375],
+            [1.0, 0.0],
+            [0.1484375, 0.328125],
+            [0.5, 0.5],
+            [1.0, 0.53125],
+            [0.1484375, 0.65625],
+            [0.53125, 1.0],
+            [0.0, 1.0],
+        ])
+        (p300, p210, p120, p030, p201,
+         unused_p111, p021, p102, p012, p003) = nodes
+
+        nodes1, nodes2, nodes3 = self._call_function_under_test(nodes, 3)
+        expected1 = np.asfortranarray(np.vstack([p300, p210, p120, p030]))
+        expected2 = np.asfortranarray(np.vstack([p030, p021, p012, p003]))
+        expected3 = np.asfortranarray(np.vstack([p003, p102, p201, p300]))
+        self.assertEqual(nodes1, expected1)
+        self.assertEqual(nodes2, expected2)
+        self.assertEqual(nodes3, expected3)
+
+
 class TestIntersectionClassification(unittest.TestCase):
 
     @utils.needs_surface_speedup

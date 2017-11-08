@@ -177,23 +177,6 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(self.ZEROS, 1)
         self.assertEqual(surface.base_y, 0.0)
 
-    def test__compute_edge_nodes(self):
-        nodes = np.asfortranarray([
-            [1.0, 2.0],
-            [4.0, 2.5],
-            [0.0, 4.0],
-        ])
-        p100, p010, p001 = nodes
-        surface = self._make_one(nodes, 1)
-
-        nodes1, nodes2, nodes3 = surface._compute_edge_nodes()
-        expected1 = np.asfortranarray(np.vstack([p100, p010]))
-        self.assertEqual(nodes1, expected1)
-        expected2 = np.asfortranarray(np.vstack([p010, p001]))
-        self.assertEqual(nodes2, expected2)
-        expected3 = np.asfortranarray(np.vstack([p001, p100]))
-        self.assertEqual(nodes3, expected3)
-
     def _edges_helper(self, edge1, edge2, edge3,
                       nodes1, nodes2, nodes3):
         import bezier

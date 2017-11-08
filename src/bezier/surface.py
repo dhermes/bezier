@@ -370,30 +370,6 @@ class Surface(_base.Base):
         """
         return self._base_y
 
-    def _compute_edge_nodes(self):
-        """Compute the nodes of each edges of the current surface.
-
-        Returns:
-            Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]: The nodes in
-            the edges of the surface.
-        """
-        nodes1 = np.empty((self._degree + 1, self._dimension), order='F')
-        nodes2 = np.empty((self._degree + 1, self._dimension), order='F')
-        nodes3 = np.empty((self._degree + 1, self._dimension), order='F')
-
-        curr2 = self._degree
-        curr3 = -1
-        all_nodes = self._nodes
-        for i in six.moves.xrange(self._degree + 1):
-            nodes1[i, :] = all_nodes[i, :]
-            nodes2[i, :] = all_nodes[curr2, :]
-            nodes3[i, :] = all_nodes[curr3, :]
-            # Update the indices.
-            curr2 += self._degree - i
-            curr3 -= i + 2
-
-        return nodes1, nodes2, nodes3
-
     def _compute_edges(self):
         """Compute the edges of the current surface.
 
@@ -401,7 +377,8 @@ class Surface(_base.Base):
             Tuple[~curve.Curve, ~curve.Curve, ~curve.Curve]: The edges of
             the surface.
         """
-        nodes1, nodes2, nodes3 = self._compute_edge_nodes()
+        nodes1, nodes2, nodes3 = _surface_helpers.compute_edge_nodes(
+            self._nodes, self._degree)
         edge1 = _curve_mod.Curve(nodes1, self._degree, _copy=False)
         edge2 = _curve_mod.Curve(nodes2, self._degree, _copy=False)
         edge3 = _curve_mod.Curve(nodes3, self._degree, _copy=False)
