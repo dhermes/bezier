@@ -144,7 +144,7 @@ def newton_refine(
     num_nodes, dimension = np.shape(nodes)
     # NOTE: We don't check that ``np.shape(point) == (1, dimension)``.
 
-    bezier._curve.newton_refine(
+    bezier._curve.newton_refine_curve(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
@@ -187,7 +187,7 @@ def elevate_nodes(double[::1, :] nodes):
     num_nodes, dimension = np.shape(nodes)
     elevated = np.empty((num_nodes + 1, dimension), order='F')
 
-    bezier._curve.elevate_nodes(
+    bezier._curve.elevate_nodes_curve(
         &num_nodes,
         &dimension,
         &nodes[0, 0],

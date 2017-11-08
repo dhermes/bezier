@@ -33,13 +33,13 @@ cdef extern from "bezier/curve.h":
     void subdivide_nodes_curve(
         int *num_nodes, int *dimension, double *nodes,
         double *left_nodes, double *right_nodes)
-    void newton_refine(
+    void newton_refine_curve(
         int *num_nodes, int *dimension, double *nodes,
         double *point, double *s, double *updated_s)
     void locate_point_curve(
         int *num_nodes, int *dimension, double *nodes,
         double *point, double *s_approx)
-    void elevate_nodes(
+    void elevate_nodes_curve(
         int *num_nodes, int *dimension, double *nodes, double *elevated)
     void get_curvature(
         int *num_nodes, int *dimension, double *nodes, double *tangent_vec,

@@ -367,7 +367,7 @@ contains
 
   subroutine newton_refine( &
        num_nodes, dimension_, nodes, point, s, updated_s) &
-       bind(c, name='newton_refine')
+       bind(c, name='newton_refine_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
@@ -558,7 +558,7 @@ contains
 
   subroutine elevate_nodes( &
        num_nodes, dimension_, nodes, elevated) &
-       bind(c, name='elevate_nodes')
+       bind(c, name='elevate_nodes_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)

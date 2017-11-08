@@ -5056,11 +5056,11 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_10newton_refine(CYTHON_UNUSED
   /* "bezier/_curve_speedup.pyx":147
  *     # NOTE: We don't check that ``np.shape(point) == (1, dimension)``.
  *
- *     bezier._curve.newton_refine(             # <<<<<<<<<<<<<<
+ *     bezier._curve.newton_refine_curve(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
-  newton_refine((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_point.strides[1]) )))), (&__pyx_v_s), (&__pyx_v_updated_s));
+  newton_refine_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_point.strides[1]) )))), (&__pyx_v_s), (&__pyx_v_updated_s));
 
   /* "bezier/_curve_speedup.pyx":156
  *     )
@@ -5652,7 +5652,7 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_14elevate_nodes(CYTHON_UNUSED
  *     num_nodes, dimension = np.shape(nodes)
  *     elevated = np.empty((num_nodes + 1, dimension), order='F')             # <<<<<<<<<<<<<<
  *
- *     bezier._curve.elevate_nodes(
+ *     bezier._curve.elevate_nodes_curve(
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -5756,11 +5756,11 @@ static PyObject *__pyx_pf_6bezier_14_curve_speedup_14elevate_nodes(CYTHON_UNUSED
   /* "bezier/_curve_speedup.pyx":190
  *     elevated = np.empty((num_nodes + 1, dimension), order='F')
  *
- *     bezier._curve.elevate_nodes(             # <<<<<<<<<<<<<<
+ *     bezier._curve.elevate_nodes_curve(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
-  elevate_nodes((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_elevated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_elevated.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_elevated.diminfo[1].strides))));
+  elevate_nodes_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_elevated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_elevated.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_elevated.diminfo[1].strides))));
 
   /* "bezier/_curve_speedup.pyx":197
  *     )
