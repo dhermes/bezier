@@ -1363,7 +1363,7 @@ contains
     real(c_double) :: fixed_quadratic1(3, 2), fixed_quadratic2(3, 2)
     real(c_double) :: fixed_line1(2, 2), fixed_line2(2, 2)
     integer(c_int) :: num_candidates
-    type(CurveData), allocatable :: roots_left(:), roots_right(:)
+    type(CurveData) :: root_left, root_right
     type(CurveData), allocatable :: candidates(:, :)
     integer(c_int) :: num_intersections
     type(Intersection), allocatable :: intersections(:)
@@ -1400,17 +1400,15 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve.
     candidates(1, 1)%nodes = fixed_quadratic1
-    allocate(roots_left(1))
-    roots_left(1) = candidates(1, 1)
+    root_left = candidates(1, 1)
     call subdivide_curve(candidates(1, 1), left1, right1)
     ! Populate the "second" curve.
     candidates(2, 1)%nodes = fixed_quadratic2
-    allocate(roots_right(1))
-    roots_right(1) = candidates(2, 1)
+    root_right = candidates(2, 1)
     call subdivide_curve(candidates(2, 1), left2, right2)
 
     call intersect_one_round( &
-         roots_left, roots_right, num_candidates, candidates, &
+         root_left, root_right, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1427,8 +1425,6 @@ contains
          curves_equal(next_candidates(2, 4), right2) .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
-    deallocate(roots_left)
-    deallocate(roots_right)
     deallocate(candidates)
     deallocate(next_candidates)
 
@@ -1437,16 +1433,14 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
-    allocate(roots_left(1))
-    roots_left(1) = candidates(1, 1)
+    root_left = candidates(1, 1)
     ! Populate the "second" curve.
     candidates(2, 1)%nodes = fixed_quadratic2
-    allocate(roots_right(1))
-    roots_right(1) = candidates(2, 1)
+    root_right = candidates(2, 1)
     call subdivide_curve(candidates(2, 1), left2, right2)
 
     call intersect_one_round( &
-         roots_left, roots_right, num_candidates, candidates, &
+         root_left, root_right, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1459,8 +1453,6 @@ contains
          curves_equal(next_candidates(2, 2), right2) .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
-    deallocate(roots_left)
-    deallocate(roots_right)
     deallocate(candidates)
     deallocate(next_candidates)
 
@@ -1469,16 +1461,14 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve.
     candidates(1, 1)%nodes = fixed_quadratic1
-    allocate(roots_left(1))
-    roots_left(1) = candidates(1, 1)
+    root_left = candidates(1, 1)
     call subdivide_curve(candidates(1, 1), left1, right1)
     ! Populate the "second" curve with a line.
     candidates(2, 1)%nodes = fixed_line2
-    allocate(roots_right(1))
-    roots_right(1) = candidates(2, 1)
+    root_right = candidates(2, 1)
 
     call intersect_one_round( &
-         roots_left, roots_right, num_candidates, candidates, &
+         root_left, root_right, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1491,8 +1481,6 @@ contains
          curves_equal(next_candidates(2, 2), candidates(2, 1)) .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
-    deallocate(roots_left)
-    deallocate(roots_right)
     deallocate(candidates)
     deallocate(next_candidates)
 
@@ -1501,17 +1489,15 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
-    allocate(roots_left(1))
-    roots_left(1) = candidates(1, 1)
+    root_left = candidates(1, 1)
     candidates(1, 1)%root_index = 1
     ! Populate the "second" curve with a line.
     candidates(2, 1)%nodes = fixed_line2
-    allocate(roots_right(1))
-    roots_right(1) = candidates(2, 1)
+    root_right = candidates(2, 1)
     candidates(2, 1)%root_index = 1
 
     call intersect_one_round( &
-         roots_left, roots_right, num_candidates, candidates, &
+         root_left, root_right, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1525,8 +1511,6 @@ contains
          num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
-    deallocate(roots_left)
-    deallocate(roots_right)
     deallocate(candidates)
     num_intersections = 0
 
@@ -1536,18 +1520,16 @@ contains
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
     candidates(1, 1)%root_index = 1
-    allocate(roots_left(1))
-    roots_left(1) = candidates(1, 1)
+    root_left = candidates(1, 1)
     ! Populate the "second" curve with a line.
     allocate(candidates(2, 1)%nodes(2, 2))
     candidates(2, 1)%nodes(1, :) = [0.5_dp, 0.5_dp]
     candidates(2, 1)%nodes(2, :) = [3.0_dp, 3.0_dp]
     candidates(2, 1)%root_index = 1
-    allocate(roots_right(1))
-    roots_right(1) = candidates(2, 1)
+    root_right = candidates(2, 1)
 
     call intersect_one_round( &
-         roots_left, roots_right, num_candidates, candidates, &
+         root_left, root_right, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1555,8 +1537,6 @@ contains
          num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
-    deallocate(roots_left)
-    deallocate(roots_right)
     deallocate(candidates)
 
     ! CASE 6: Disjoint bounding boxes.
@@ -1564,17 +1544,15 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_quadratic1
-    allocate(roots_left(1))
-    roots_left(1) = candidates(1, 1)
+    root_left = candidates(1, 1)
     ! Populate the "second" curve with a line.
     allocate(candidates(2, 1)%nodes(2, 2))
     candidates(2, 1)%nodes(1, :) = [1.0_dp, 1.25_dp]
     candidates(2, 1)%nodes(2, :) = [0.0_dp, 2.0_dp]
-    allocate(roots_right(1))
-    roots_right(1) = candidates(2, 1)
+    root_right = candidates(2, 1)
 
     call intersect_one_round( &
-         roots_left, roots_right, num_candidates, candidates, &
+         root_left, root_right, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1582,8 +1560,6 @@ contains
          num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
-    deallocate(roots_left)
-    deallocate(roots_right)
     deallocate(candidates)
 
     ! CASE 7: Tangent bounding boxes (**with** an intersection), noting
@@ -1598,8 +1574,7 @@ contains
     candidates(1, 1)%nodes(2, :) = [0.5_dp, 1.0_dp]
     candidates(1, 1)%nodes(3, :) = [1.0_dp, 0.0_dp]
     candidates(1, 1)%root_index = 1
-    allocate(roots_left(1))
-    roots_left(1) = candidates(1, 1)
+    root_left = candidates(1, 1)
     ! [0 <= x <= 1.0], [0.0 <= y <= 1.0]
     ! Populate the "second" curve.
     allocate(candidates(2, 1)%nodes(3, 2))
@@ -1608,11 +1583,10 @@ contains
     candidates(2, 1)%nodes(3, :) = [2.0_dp, -0.25_dp]
     candidates(2, 1)%root_index = 1
     ! [1.0 <= x <= 2.0], [-0.25 <= y <= 0.5]
-    allocate(roots_right(1))
-    roots_right(1) = candidates(2, 1)
+    root_right = candidates(2, 1)
 
     call intersect_one_round( &
-         roots_left, roots_right, num_candidates, candidates, &
+         root_left, root_right, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1633,8 +1607,8 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    type(CurveData), allocatable :: candidates_left(:)
-    type(CurveData), allocatable :: candidates_right(:)
+    type(CurveData) :: candidate_left, candidate_right
+    real(c_double) :: nodes1(2, 2), nodes2(3, 2)
     integer(c_int) :: num_intersections
     type(Intersection), allocatable :: intersections(:)
     integer(c_int) :: status, index_
@@ -1645,19 +1619,22 @@ contains
     name = "all_intersections"
 
     ! CASE 1: No intersections.
-    allocate(candidates_left(0))
-    allocate(candidates_right(0))
+    nodes1(1, :) = 0
+    nodes1(2, :) = 1
+    candidate_left%nodes = nodes1
+
+    nodes1(1, :) = [3.0_dp, 3.0_dp]
+    nodes1(2, :) = [4.0_dp, 3.0_dp]
+    candidate_right%nodes = nodes1
 
     call all_intersections( &
-         candidates_left, candidates_right, &
+         candidate_left, candidate_right, &
          num_intersections, intersections, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
-    deallocate(candidates_left)
-    deallocate(candidates_right)
 
     ! CASE 2: Intersection of two quadratic curves.
     ! NOTE: The first candidate is a specialization of [0, 0], [1/2, 1], [1, 1]
@@ -1665,19 +1642,18 @@ contains
     !       specialization of [0, 1], [1/2, 1], [1, 0] onto the interval
     !       [0, 3/4]. We expect them to intersect at s = 1/3, t = 2/3, which is
     !       the point [1/2, 3/4].
-    allocate(candidates_left(1))
-    allocate(candidates_left(1)%nodes(3, 2))
-    candidates_left(1)%nodes(1, :) = [0.25_dp, 0.4375_dp]
-    candidates_left(1)%nodes(2, :) = [0.625_dp, 1.0_dp]
-    candidates_left(1)%nodes(3, :) = 1
-    allocate(candidates_right(1))
-    allocate(candidates_right(1)%nodes(3, 2))
-    candidates_right(1)%nodes(1, :) = [0.0_dp, 1.0_dp]
-    candidates_right(1)%nodes(2, :) = [0.375_dp, 1.0_dp]
-    candidates_right(1)%nodes(3, :) = [0.75_dp, 0.4375_dp]
+    nodes2(1, :) = [0.25_dp, 0.4375_dp]
+    nodes2(2, :) = [0.625_dp, 1.0_dp]
+    nodes2(3, :) = 1
+    candidate_left%nodes = nodes2
+
+    nodes2(1, :) = [0.0_dp, 1.0_dp]
+    nodes2(2, :) = [0.375_dp, 1.0_dp]
+    nodes2(3, :) = [0.75_dp, 0.4375_dp]
+    candidate_right%nodes = nodes2
 
     call all_intersections( &
-         candidates_left, candidates_right, &
+         candidate_left, candidate_right, &
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
@@ -1689,47 +1665,41 @@ contains
          intersections(1)%index_second == 1 .AND. &
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
-    deallocate(candidates_left)
-    deallocate(candidates_right)
 
     ! CASE 3: Tangent curves, with a ``py_exc`` failure due to parallel lines.
-    allocate(candidates_left(1))
-    allocate(candidates_left(1)%nodes(3, 2))
-    candidates_left(1)%nodes(1, :) = 0
-    candidates_left(1)%nodes(2, :) = [0.375_dp, 0.75_dp]
-    candidates_left(1)%nodes(3, :) = [0.75_dp, 0.375_dp]
-    allocate(candidates_right(1))
-    allocate(candidates_right(1)%nodes(3, 2))
-    candidates_right(1)%nodes(1, :) = [0.25_dp, 0.625_dp]
-    candidates_right(1)%nodes(2, :) = [0.625_dp, 0.25_dp]
-    candidates_right(1)%nodes(3, :) = 1
+    nodes2(1, :) = 0
+    nodes2(2, :) = [0.375_dp, 0.75_dp]
+    nodes2(3, :) = [0.75_dp, 0.375_dp]
+    candidate_left%nodes = nodes2
+
+    nodes2(1, :) = [0.25_dp, 0.625_dp]
+    nodes2(2, :) = [0.625_dp, 0.25_dp]
+    nodes2(3, :) = 1
+    candidate_right%nodes = nodes2
 
     call all_intersections( &
-         candidates_left, candidates_right, &
+         candidate_left, candidate_right, &
          num_intersections, intersections, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          status == ALL_INTERSECTIONS_OFFSET + FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
-    deallocate(candidates_left)
-    deallocate(candidates_right)
 
     ! CASE 4: Tangent curves, which cause the number of candidate pairs
     !         to become to high.
-    allocate(candidates_left(1))
-    allocate(candidates_left(1)%nodes(3, 2))
-    candidates_left(1)%nodes(1, :) = 0
-    candidates_left(1)%nodes(2, :) = [-0.5_dp, 1.5_dp]
-    candidates_left(1)%nodes(3, :) = 1
-    allocate(candidates_right(1))
-    allocate(candidates_right(1)%nodes(3, 2))
-    candidates_right(1)%nodes(1, :) = [-1.0_dp, 1.0_dp]
-    candidates_right(1)%nodes(2, :) = 0.5_dp
-    candidates_right(1)%nodes(3, :) = [0.0_dp, 2.0_dp]
+    nodes2(1, :) = 0
+    nodes2(2, :) = [-0.5_dp, 1.5_dp]
+    nodes2(3, :) = 1
+    candidate_left%nodes = nodes2
+
+    nodes2(1, :) = [-1.0_dp, 1.0_dp]
+    nodes2(2, :) = 0.5_dp
+    nodes2(3, :) = [0.0_dp, 2.0_dp]
+    candidate_right%nodes = nodes2
 
     call all_intersections( &
-         candidates_left, candidates_right, &
+         candidate_left, candidate_right, &
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
@@ -1741,8 +1711,6 @@ contains
          intersections(1)%index_second == 1 .AND. &
          status == ALL_INTERSECTIONS_TOO_MANY)
     call print_status(name, case_id, case_success, success)
-    deallocate(candidates_left)
-    deallocate(candidates_right)
 
     ! CASE 5: Badly scaled curves, which cause the subdivision proceass to
     !         take too many iterations before being "almost linear".
@@ -1752,42 +1720,38 @@ contains
     !       This definitely points out a flaw in using absolute vs. relative
     !       linearization error. However, there is an upside in not using
     !       relative error: it is faster to compute without normalization.
-    allocate(candidates_left(1))
-    allocate(candidates_left(1)%nodes(3, 2))
-    candidates_left(1)%nodes(1, :) = 0
-    candidates_left(1)%nodes(2, :) = [73728.0_dp, 147456.0_dp]
-    candidates_left(1)%nodes(3, :) = [147456.0_dp, 0.0_dp]
-    allocate(candidates_right(1))
-    allocate(candidates_right(1)%nodes(2, 2))
-    candidates_right(1)%nodes(1, :) = [0.0_dp, 131072.0_dp]
-    candidates_right(1)%nodes(2, :) = [98304.0_dp, 0.0_dp]
+    nodes2(1, :) = 0
+    nodes2(2, :) = [73728.0_dp, 147456.0_dp]
+    nodes2(3, :) = [147456.0_dp, 0.0_dp]
+    candidate_left%nodes = nodes2
+
+    nodes1(1, :) = [0.0_dp, 131072.0_dp]
+    nodes1(2, :) = [98304.0_dp, 0.0_dp]
+    candidate_right%nodes = nodes1
 
     call all_intersections( &
-         candidates_left, candidates_right, &
+         candidate_left, candidate_right, &
          num_intersections, intersections, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          status == ALL_INTERSECTIONS_NO_CONVERGE)
     call print_status(name, case_id, case_success, success)
-    deallocate(candidates_left)
-    deallocate(candidates_right)
 
     ! CASE 6: Curves where there are duplicate intersections caused by
     !         bounding boxes touching at corners.
-    allocate(candidates_left(1))
-    allocate(candidates_left(1)%nodes(3, 2))
-    candidates_left(1)%nodes(1, :) = 0
-    candidates_left(1)%nodes(2, :) = [0.5_dp, 1.0_dp]
-    candidates_left(1)%nodes(3, :) = [1.0_dp, 0.0_dp]
-    allocate(candidates_right(1))
-    allocate(candidates_right(1)%nodes(3, 2))
-    candidates_right(1)%nodes(1, :) = [0.0_dp, 0.75_dp]
-    candidates_right(1)%nodes(2, :) = [0.5_dp, -0.25_dp]
-    candidates_right(1)%nodes(3, :) = [1.0_dp, 0.75_dp]
+    nodes2(1, :) = 0
+    nodes2(2, :) = [0.5_dp, 1.0_dp]
+    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    candidate_left%nodes = nodes2
+
+    nodes2(1, :) = [0.0_dp, 0.75_dp]
+    nodes2(2, :) = [0.5_dp, -0.25_dp]
+    nodes2(3, :) = [1.0_dp, 0.75_dp]
+    candidate_right%nodes = nodes2
 
     call all_intersections( &
-         candidates_left, candidates_right, &
+         candidate_left, candidate_right, &
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &

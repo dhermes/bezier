@@ -703,7 +703,7 @@ contains
   end subroutine add_candidates
 
   subroutine intersect_one_round( &
-       roots_left, roots_right, num_candidates, candidates, &
+       root_left, root_right, num_candidates, candidates, &
        num_intersections, intersections, &
        next_candidates, num_next_candidates, py_exc)
 
@@ -711,8 +711,8 @@ contains
     ! NOTE: This assumes, but does not check, that ``candidates`` has
     !       two rows and has at **least** ``num_candidates`` columns.
 
-    type(CurveData), intent(in) :: roots_left(:)
-    type(CurveData), intent(in) :: roots_right(:)
+    type(CurveData), intent(in) :: root_left
+    type(CurveData), intent(in) :: root_right
     integer(c_int), intent(in) :: num_candidates
     type(CurveData), intent(in) :: candidates(:, :)
     integer(c_int), intent(inout) :: num_intersections
@@ -746,14 +746,12 @@ contains
              ! If both ``first`` and ``second`` are linearizations, then
              ! we can (attempt to) intersect them immediately.
              subdivide_enum = Subdivide_NEITHER
-             ! NOTE: This makes **two** assumptions, both of which are
-             !       important (i.e. a SEGFAULT may occur if not met). The
-             !       first is that ``first%root_index`` is a valid index
-             !       and the second is that ``%nodes`` is allocated for each
-             !       value.
+             ! NOTE: This makes an assumptions which is important (i.e. a
+             !       SEGFAULT may occur if not met). The assumption is that
+             !       ``%nodes`` is allocated for each of ``root_left`` and
+             !       ``root_right``.
              call add_from_linearized( &
-                  first, roots_left(first%root_index)%nodes, &
-                  second, roots_right(second%root_index)%nodes, &
+                  first, root_left%nodes, second, root_right%nodes, &
                   num_intersections, intersections, py_exc)
 
              ! If there was a failure, exit this subroutine.
@@ -803,56 +801,35 @@ contains
   end subroutine intersect_one_round
 
   subroutine make_candidates( &
-       candidates_left, candidates_right, num_candidates, candidates)
+       candidate_left, candidate_right, candidates)
 
     ! NOTE: This is a (private) helper for ``all_intersections``.
-    ! NOTE: This assumes, but does not check that ``candidates``
-    !       is not allocated.
 
-    type(CurveData), intent(in) :: candidates_left(:)
-    type(CurveData), intent(in) :: candidates_right(:)
-    integer(c_int), intent(out) :: num_candidates
+    type(CurveData), intent(in) :: candidate_left
+    type(CurveData), intent(in) :: candidate_right
     type(CurveData), allocatable, intent(inout) :: candidates(:, :)
-    ! Variables outside of signature.
-    integer(c_int) :: num_candidates_left, num_candidates_right
-    integer(c_int) :: i, j, index_
 
-    num_candidates_left = size(candidates_left)
-    num_candidates_right = size(candidates_right)
-    num_candidates = num_candidates_left * num_candidates_right
-    if (allocated(candidates)) then
-       if (size(candidates, 2) < num_candidates) then
-          ! NOTE: We want to totally over-write, so just de-allocate
-          !       and re-allocate.
-          deallocate(candidates)
-          allocate(candidates(2, num_candidates))
-       end if
-    else
-       allocate(candidates(2, num_candidates))
+    ! NOTE: This assumes (but does not verify) that if ``candidates`` has
+    !       been allocated, then it is ``2 x N`` with ``N > 0``.
+    if (.NOT. allocated(candidates)) then
+       allocate(candidates(2, 1))
     end if
 
-    index_ = 1
-    do i = 1, num_candidates_left
-       do j = 1, num_candidates_right
-          candidates(1, index_) = candidates_left(i)
-          candidates(1, index_)%root_index = i
-          candidates(2, index_) = candidates_right(j)
-          candidates(2, index_)%root_index = j
-          ! Update the cumulative index.
-          index_ = index_ + 1
-       end do
-    end do
+    candidates(1, 1) = candidate_left
+    candidates(1, 1)%root_index = 1
+    candidates(2, 1) = candidate_right
+    candidates(2, 1)%root_index = 1
 
   end subroutine make_candidates
 
   subroutine all_intersections( &
-       candidates_left, candidates_right, &
+       candidate_left, candidate_right, &
        num_intersections, intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
-    type(CurveData), intent(in) :: candidates_left(:)
-    type(CurveData), intent(in) :: candidates_right(:)
+    type(CurveData), intent(in) :: candidate_left
+    type(CurveData), intent(in) :: candidate_right
     integer(c_int), intent(out) :: num_intersections
     type(Intersection), allocatable, intent(out) :: intersections(:)
     integer(c_int), intent(out) :: status
@@ -862,8 +839,9 @@ contains
 
     num_intersections = 0
     ! First iteration is odd (i.e. ``index_ == 1``).
+    num_candidates = 1
     call make_candidates( &
-         candidates_left, candidates_right, num_candidates, CANDIDATES_ODD)
+         candidate_left, candidate_right, CANDIDATES_ODD)
     status = ALL_INTERSECTIONS_SUCCESS  ! Default.
 
     is_even = .TRUE.  ! At zero.
@@ -874,7 +852,7 @@ contains
           ! Since ``index_`` is even, we READ from ``CANDIDATES_EVEN``
           ! and WRITE to ``CANDIDATES_ODD``.
           call intersect_one_round( &
-               candidates_left, candidates_right, &
+               candidate_left, candidate_right, &
                num_candidates, CANDIDATES_EVEN, &
                num_intersections, intersections, &
                CANDIDATES_ODD, num_next_candidates, py_exc)
@@ -882,7 +860,7 @@ contains
           ! Since ``index_`` is odd, we READ from ``CANDIDATES_ODD``
           ! and WRITE to ``CANDIDATES_EVEN``.
           call intersect_one_round( &
-               candidates_left, candidates_right, &
+               candidate_left, candidate_right, &
                num_candidates, CANDIDATES_ODD, &
                num_intersections, intersections, &
                CANDIDATES_EVEN, num_next_candidates, py_exc)
