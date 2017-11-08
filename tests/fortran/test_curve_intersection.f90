@@ -18,17 +18,17 @@ module test_curve_intersection
        CurveData, evaluate_multi, subdivide_nodes, curves_equal, &
        subdivide_curve
   use curve_intersection, only: &
-       Intersection, BoxIntersectionType_INTERSECTION, &
-       BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
-       FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
-       Subdivide_FIRST, Subdivide_SECOND, Subdivide_BOTH, Subdivide_NEITHER, &
-       ALL_INTERSECTIONS_SUCCESS, ALL_INTERSECTIONS_TOO_MANY, &
-       ALL_INTERSECTIONS_NO_CONVERGE, ALL_INTERSECTIONS_OFFSET, &
-       linearization_error, segment_intersection, newton_refine_intersect, &
-       bbox_intersect, parallel_different, from_linearized, &
-       bbox_line_intersect, add_intersection, add_from_linearized, &
-       endpoint_check, tangent_bbox_intersection, add_candidates, &
-       intersect_one_round, all_intersections, free_all_intersections_workspace
+       BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
+       BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
+       FROM_LINEARIZED_PARALLEL, Subdivide_FIRST, Subdivide_SECOND, &
+       Subdivide_BOTH, Subdivide_NEITHER, ALL_INTERSECTIONS_SUCCESS, &
+       ALL_INTERSECTIONS_TOO_MANY, ALL_INTERSECTIONS_NO_CONVERGE, &
+       ALL_INTERSECTIONS_OFFSET, linearization_error, segment_intersection, &
+       newton_refine_intersect, bbox_intersect, parallel_different, &
+       from_linearized, bbox_line_intersect, add_intersection, &
+       add_from_linearized, endpoint_check, tangent_bbox_intersection, &
+       add_candidates, intersect_one_round, all_intersections, &
+       free_all_intersections_workspace
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -817,8 +817,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer(c_int) :: num_intersections
-    integer(c_int) :: index_first, index_second
-    type(Intersection), allocatable :: intersections(:)
+    real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
     character(:), allocatable :: name
 
@@ -827,99 +826,71 @@ contains
     num_intersections = 0
 
     ! CASE 1: Intersections is **not allocated**.
-    index_first = -1
-    index_second = -1
     case_success = .NOT. allocated(intersections)
     call add_intersection( &
-         index_first, 0.25_dp, index_second, 0.5_dp, &
-         num_intersections, intersections)
+         0.25_dp, 0.5_dp, num_intersections, intersections)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 0.25_dp .AND. &
-         intersections(1)%index_first == index_first .AND. &
-         intersections(1)%t == 0.5_dp .AND. &
-         intersections(1)%index_second == index_second)
+         intersections(1, 1) == 0.25_dp .AND. &
+         intersections(2, 1) == 0.5_dp)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Intersections is allocated, but not big enough.
-    index_first = 13
-    index_second = 21
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1)
     call add_intersection( &
-         index_first, 0.375_dp, index_second, 0.125_dp, &
-         num_intersections, intersections)
+         0.375_dp, 0.125_dp, num_intersections, intersections)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
-         size(intersections) == 2 .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 2 .AND. &
-         intersections(2)%s == 0.375_dp .AND. &
-         intersections(2)%index_first == index_first .AND. &
-         intersections(2)%t == 0.125_dp .AND. &
-         intersections(2)%index_second == index_second)
+         intersections(1, 2) == 0.375_dp .AND. &
+         intersections(2, 2) == 0.125_dp)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Intersections is allocated and has enough space for
     !         another intersection.
-    index_first = 34
-    index_second = 55
     deallocate(intersections)
-    allocate(intersections(2))
+    allocate(intersections(2, 2))
     num_intersections = 0
     call add_intersection( &
-         index_first, 0.75_dp, index_second, 1.0_dp, &
+         0.75_dp, 1.0_dp, &
          num_intersections, intersections)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 2 .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 0.75_dp .AND. &
-         intersections(1)%index_first == index_first .AND. &
-         intersections(1)%t == 1.0_dp .AND. &
-         intersections(1)%index_second == index_second)
+         intersections(1, 1) == 0.75_dp .AND. &
+         intersections(2, 1) == 1.0_dp)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Proposed intersection is a duplicate, matches first.
-    index_first = 377
-    index_second = 610
-    intersections(1)%s = 0.125_dp
-    intersections(1)%index_first = index_first
-    intersections(1)%t = 0.75_dp
-    intersections(1)%index_second = index_second
-    intersections(2)%s = 1.0_dp
-    intersections(2)%index_first = -1
-    intersections(2)%t = 0.25_dp
-    intersections(2)%index_second = -1
+    intersections(1, 1) = 0.125_dp
+    intersections(2, 1) = 0.75_dp
+    intersections(1, 2) = 1.0_dp
+    intersections(2, 2) = 0.25_dp
     num_intersections = 2
 
     call add_intersection( &
-         index_first, 0.125_dp, index_second, 0.75_dp, &
-         num_intersections, intersections)
+         0.125_dp, 0.75_dp, num_intersections, intersections)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 2 .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 2)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Proposed intersection is a duplicate, matches second.
-    index_first = 233
-    index_second = 144
-    intersections(1)%index_first = -1
-    intersections(1)%index_second = -1
-    intersections(2)%index_first = index_first
-    intersections(2)%index_second = index_second
     call add_intersection( &
-         index_first, 1.0_dp, index_second, 0.25_dp, &
-         num_intersections, intersections)
+         1.0_dp, 0.25_dp, num_intersections, intersections)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 2 .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 2)
     call print_status(name, case_id, case_success, success)
 
@@ -934,7 +905,7 @@ contains
     real(c_double) :: root_nodes1(3, 2), root_nodes2(3, 2)
     type(CurveData) :: first, second
     integer(c_int) :: num_intersections
-    type(Intersection), allocatable :: intersections(:)
+    real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
     character(:), allocatable :: name
 
@@ -960,13 +931,11 @@ contains
          num_intersections, intersections, py_exc)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS .AND. &
-         intersections(1)%s == 0.5_dp .AND. &
-         intersections(1)%index_first == -1 .AND. &
-         intersections(1)%t == 0.5_dp .AND. &
-         intersections(1)%index_second == -1)
+         intersections(1, 1) == 0.5_dp .AND. &
+         intersections(2, 1) == 0.5_dp)
     call print_status(name, case_id, case_success, success)
     num_intersections = 0
 
@@ -997,7 +966,6 @@ contains
     root_nodes1(3, :) = [1.0_dp, 1.0_dp]
     first%start = 1365.0_dp / 4096.0_dp
     first%end_ = 1366.0_dp / 4096.0_dp
-    first%root_index = 3
     ! NOTE: This is the result of
     !       call specialize_curve( &
     !            3, 2, root_nodes1, first%start, first%end_, ...)
@@ -1011,7 +979,6 @@ contains
     root_nodes2(3, :) = [0.75_dp, 0.4375_dp]
     second%start = 2730.0_dp / 4096.0_dp
     second%end_ = 2731.0_dp / 4096.0_dp
-    second%root_index = 43
     ! NOTE: This is the result of
     !       call specialize_curve( &
     !            3, 2, root_nodes2, second%start, second%end_, ...)
@@ -1025,13 +992,11 @@ contains
          num_intersections, intersections, py_exc)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS .AND. &
-         3.0_dp * intersections(1)%s == 1.0_dp .AND. &
-         intersections(1)%index_first == first%root_index .AND. &
-         3.0_dp * intersections(1)%t == 2.0_dp .AND. &
-         intersections(1)%index_second == second%root_index)
+         3.0_dp * intersections(1, 1) == 1.0_dp .AND. &
+         3.0_dp * intersections(2, 1) == 2.0_dp)
     call print_status(name, case_id, case_success, success)
     num_intersections = 0
 
@@ -1067,7 +1032,7 @@ contains
     real(c_double) :: s, t
     real(c_double) :: nodes1(2, 2), nodes2(3, 2)
     integer(c_int) :: num_intersections
-    type(Intersection), allocatable :: intersections(:)
+    real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
     character(:), allocatable :: name
 
@@ -1113,19 +1078,16 @@ contains
          num_intersections, intersections)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == s .AND. &
-         intersections(1)%index_first == -1 .AND. &
-         intersections(1)%t == t .AND. &
-         intersections(1)%index_second == -1)
+         intersections(1, 1) == s .AND. &
+         intersections(2, 1) == t)
     call print_status(name, case_id, case_success, success)
     num_intersections = 0
 
     ! CASE 3: An intersection after one subdivision.
     first%start = 0.0_dp
     first%end_ = 0.5_dp
-    first%root_index = 97
     nodes2(1, :) = 0
     nodes2(2, :) = [0.25_dp, 0.5_dp]
     nodes2(3, :) = 0.5_dp
@@ -1134,7 +1096,6 @@ contains
 
     second%start = 0.5_dp
     second%end_ = 1.0_dp
-    second%root_index = 101
     nodes2(1, :) = 0.5_dp
     nodes2(2, :) = [0.5_dp, 0.0_dp]
     nodes2(3, :) = [1.0_dp, -0.5_dp]
@@ -1147,12 +1108,10 @@ contains
          num_intersections, intersections)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 0.5_dp .AND. &
-         intersections(1)%index_first == first%root_index .AND. &
-         intersections(1)%t == 0.5_dp .AND. &
-         intersections(1)%index_second == second%root_index)
+         intersections(1, 1) == 0.5_dp .AND. &
+         intersections(2, 1) == 0.5_dp)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_endpoint_check
@@ -1164,7 +1123,7 @@ contains
     type(CurveData) :: first, second
     real(c_double) :: nodes1(3, 2), nodes2(2, 2)
     integer(c_int) :: num_intersections
-    type(Intersection), allocatable :: intersections(:)
+    real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
     character(:), allocatable :: name
 
@@ -1187,12 +1146,10 @@ contains
          first, second, num_intersections, intersections)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 1.0_dp .AND. &
-         intersections(1)%index_first == -1 .AND. &
-         intersections(1)%t == 0.0_dp .AND. &
-         intersections(1)%index_second == -1)
+         intersections(1, 1) == 1.0_dp .AND. &
+         intersections(2, 1) == 0.0_dp)
     call print_status(name, case_id, case_success, success)
     num_intersections = 0
 
@@ -1201,28 +1158,22 @@ contains
     nodes1(2, :) = [-1.0_dp, 0.5_dp]
     nodes1(3, :) = [0.0_dp, 1.0_dp]
     first%nodes = nodes1
-    first%root_index = 1001
 
     nodes1(1, :) = 0
     nodes1(2, :) = [1.0_dp, 0.5_dp]
     nodes1(3, :) = [0.0_dp, 1.0_dp]
     second%nodes = nodes1
-    second%root_index = 3223
 
     call tangent_bbox_intersection( &
          first, second, num_intersections, intersections)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 2 .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 2 .AND. &
-         intersections(1)%s == 0.0_dp .AND. &
-         intersections(1)%index_first == first%root_index .AND. &
-         intersections(1)%t == 0.0_dp .AND. &
-         intersections(1)%index_second == second%root_index .AND. &
-         intersections(2)%s == 1.0_dp .AND. &
-         intersections(2)%index_first == first%root_index .AND. &
-         intersections(2)%t == 1.0_dp .AND. &
-         intersections(2)%index_second == second%root_index)
+         intersections(1, 1) == 0.0_dp .AND. &
+         intersections(2, 1) == 0.0_dp .AND. &
+         intersections(2, 2) == 1.0_dp .AND. &
+         intersections(2, 2) == 1.0_dp)
     call print_status(name, case_id, case_success, success)
     num_intersections = 0
 
@@ -1366,7 +1317,7 @@ contains
     type(CurveData) :: root_left, root_right
     type(CurveData), allocatable :: candidates(:, :)
     integer(c_int) :: num_intersections
-    type(Intersection), allocatable :: intersections(:)
+    real(c_double), allocatable :: intersections(:, :)
     type(CurveData), allocatable :: next_candidates(:, :)
     integer(c_int) :: num_next_candidates
     integer(c_int) :: py_exc
@@ -1490,11 +1441,9 @@ contains
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
     root_left = candidates(1, 1)
-    candidates(1, 1)%root_index = 1
     ! Populate the "second" curve with a line.
     candidates(2, 1)%nodes = fixed_line2
     root_right = candidates(2, 1)
-    candidates(2, 1)%root_index = 1
 
     call intersect_one_round( &
          root_left, root_right, num_candidates, candidates, &
@@ -1502,12 +1451,10 @@ contains
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 0.5_dp .AND. &
-         intersections(1)%index_first == 1 .AND. &
-         intersections(1)%t == 0.5_dp .AND. &
-         intersections(1)%index_second == 1 .AND. &
+         intersections(1, 1) == 0.5_dp .AND. &
+         intersections(2, 1) == 0.5_dp .AND. &
          num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1519,13 +1466,11 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
-    candidates(1, 1)%root_index = 1
     root_left = candidates(1, 1)
     ! Populate the "second" curve with a line.
     allocate(candidates(2, 1)%nodes(2, 2))
     candidates(2, 1)%nodes(1, :) = [0.5_dp, 0.5_dp]
     candidates(2, 1)%nodes(2, :) = [3.0_dp, 3.0_dp]
-    candidates(2, 1)%root_index = 1
     root_right = candidates(2, 1)
 
     call intersect_one_round( &
@@ -1573,7 +1518,6 @@ contains
     candidates(1, 1)%nodes(1, :) = [0.0_dp, 0.0_dp]
     candidates(1, 1)%nodes(2, :) = [0.5_dp, 1.0_dp]
     candidates(1, 1)%nodes(3, :) = [1.0_dp, 0.0_dp]
-    candidates(1, 1)%root_index = 1
     root_left = candidates(1, 1)
     ! [0 <= x <= 1.0], [0.0 <= y <= 1.0]
     ! Populate the "second" curve.
@@ -1581,7 +1525,6 @@ contains
     candidates(2, 1)%nodes(1, :) = [1.0_dp, 0.0_dp]
     candidates(2, 1)%nodes(2, :) = [1.5_dp, 0.5_dp]
     candidates(2, 1)%nodes(3, :) = [2.0_dp, -0.25_dp]
-    candidates(2, 1)%root_index = 1
     ! [1.0 <= x <= 2.0], [-0.25 <= y <= 0.5]
     root_right = candidates(2, 1)
 
@@ -1591,12 +1534,10 @@ contains
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 1.0_dp .AND. &
-         intersections(1)%index_first == 1 .AND. &
-         intersections(1)%t == 0.0_dp .AND. &
-         intersections(1)%index_second == 1 .AND. &
+         intersections(1, 1) == 1.0_dp .AND. &
+         intersections(2, 1) == 0.0_dp .AND. &
          num_next_candidates == 0 .AND. &
          py_exc == FROM_LINEARIZED_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1610,7 +1551,7 @@ contains
     type(CurveData) :: candidate_left, candidate_right
     real(c_double) :: nodes1(2, 2), nodes2(3, 2)
     integer(c_int) :: num_intersections
-    type(Intersection), allocatable :: intersections(:)
+    real(c_double), allocatable :: intersections(:, :)
     integer(c_int) :: status, index_
     integer :: case_id
     character(:), allocatable :: name
@@ -1657,12 +1598,10 @@ contains
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         3 * intersections(1)%s == 1.0_dp .AND. &
-         intersections(1)%index_first == 1 .AND. &
-         3 * intersections(1)%t == 2.0_dp .AND. &
-         intersections(1)%index_second == 1 .AND. &
+         3 * intersections(1, 1) == 1.0_dp .AND. &
+         3 * intersections(2, 1) == 2.0_dp .AND. &
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1703,12 +1642,10 @@ contains
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 1 .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 0.5_dp .AND. &
-         intersections(1)%index_first == 1 .AND. &
-         intersections(1)%t == 0.5_dp .AND. &
-         intersections(1)%index_second == 1 .AND. &
+         intersections(1, 1) == 0.5_dp .AND. &
+         intersections(2, 1) == 0.5_dp .AND. &
          status == ALL_INTERSECTIONS_TOO_MANY)
     call print_status(name, case_id, case_success, success)
 
@@ -1756,14 +1693,10 @@ contains
     case_success = ( &
          allocated(intersections) .AND. &
          num_intersections == 2 .AND. &
-         intersections(1)%s == 0.25_dp .AND. &
-         intersections(1)%index_first == 1 .AND. &
-         intersections(1)%t == 0.25_dp .AND. &
-         intersections(1)%index_second == 1 .AND. &
-         intersections(2)%s == 0.75_dp .AND. &
-         intersections(2)%index_first == 1 .AND. &
-         intersections(2)%t == 0.75_dp .AND. &
-         intersections(2)%index_second == 1 .AND. &
+         intersections(1, 1) == 0.25_dp .AND. &
+         intersections(2, 1) == 0.25_dp .AND. &
+         intersections(1, 2) == 0.75_dp .AND. &
+         intersections(2, 2) == 0.75_dp .AND. &
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
 

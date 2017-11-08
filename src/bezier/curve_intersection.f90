@@ -462,28 +462,24 @@ contains
   end subroutine bbox_line_intersect
 
   subroutine add_intersection( &
-       index_first, s, index_second, t, num_intersections, intersections)
+       s, t, num_intersections, intersections)
 
     ! Adds an intersection to list of ``intersections``.
 
-    integer(c_int), intent(in) :: index_first
     real(c_double), intent(in) :: s
-    integer(c_int), intent(in) :: index_second
     real(c_double), intent(in) :: t
     integer(c_int), intent(inout) :: num_intersections
-    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    real(c_double), allocatable, intent(inout) :: intersections(:, :)
     ! Variables outside of signature.
     integer(c_int) :: curr_size, index_
-    type(Intersection), allocatable :: intersections_swap(:)
+    real(c_double), allocatable :: intersections_swap(:, :)
 
     ! First, check if the intersection is a duplicate (up to precision,
     ! determined by ``ulps_away``).
     do index_ = 1, num_intersections
        if ( &
-            intersections(index_)%index_first == index_first .AND. &
-            ulps_away(intersections(index_)%s, s, 1, VECTOR_CLOSE_EPS) .AND. &
-            intersections(index_)%index_second == index_second .AND. &
-            ulps_away(intersections(index_)%t, t, 1, VECTOR_CLOSE_EPS)) then
+            ulps_away(intersections(1, index_), s, 1, VECTOR_CLOSE_EPS) .AND. &
+            ulps_away(intersections(2, index_), t, 1, VECTOR_CLOSE_EPS)) then
           return
        end if
     end do
@@ -492,20 +488,18 @@ contains
     num_intersections = num_intersections + 1
 
     if (allocated(intersections)) then
-       curr_size = size(intersections)
+       curr_size = size(intersections, 2)
        if (curr_size < num_intersections) then
-          allocate(intersections_swap(num_intersections))
-          intersections_swap(:curr_size) = intersections(:curr_size)
+          allocate(intersections_swap(2, num_intersections))
+          intersections_swap(:, :curr_size) = intersections(:, :curr_size)
           call move_alloc(intersections_swap, intersections)
        end if
     else
-       allocate(intersections(num_intersections))
+       allocate(intersections(2, num_intersections))
     end if
 
-    intersections(num_intersections)%s = s
-    intersections(num_intersections)%t = t
-    intersections(num_intersections)%index_first = index_first
-    intersections(num_intersections)%index_second = index_second
+    intersections(1, num_intersections) = s
+    intersections(2, num_intersections) = t
 
   end subroutine add_intersection
 
@@ -522,7 +516,7 @@ contains
     type(CurveData), intent(in) :: second
     real(c_double), intent(in) :: root_nodes2(:, :)
     integer(c_int), intent(inout) :: num_intersections
-    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    real(c_double), allocatable, intent(inout) :: intersections(:, :)
     integer(c_int), intent(out) :: py_exc
     ! Variables outside of signature.
     real(c_double) :: linearization_error1, linearization_error2
@@ -559,8 +553,7 @@ contains
     end if
 
     call add_intersection( &
-         first%root_index, refined_s, second%root_index, refined_t, &
-         num_intersections, intersections)
+         refined_s, refined_t, num_intersections, intersections)
 
   end subroutine add_from_linearized
 
@@ -577,7 +570,7 @@ contains
     real(c_double), intent(in) :: node_second(1, 2)
     real(c_double), intent(in) :: t
     integer(c_int), intent(inout) :: num_intersections
-    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    real(c_double), allocatable, intent(inout) :: intersections(:, :)
     ! Variables outside of signature.
     real(c_double) :: orig_s, orig_t
 
@@ -587,9 +580,7 @@ contains
 
     orig_s = (1 - s) * first%start + s * first%end_
     orig_t = (1 - t) * second%start + t * second%end_
-    call add_intersection( &
-         first%root_index, orig_s, second%root_index, orig_t, &
-         num_intersections, intersections)
+    call add_intersection(orig_s, orig_t, num_intersections, intersections)
 
   end subroutine endpoint_check
 
@@ -600,7 +591,7 @@ contains
 
     type(CurveData), intent(in) :: first, second
     integer(c_int), intent(inout) :: num_intersections
-    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    real(c_double), allocatable, intent(inout) :: intersections(:, :)
     ! Variables outside of signature.
     integer(c_int) :: num_nodes1, num_nodes2
     real(c_double) :: nodes1_start(1, 2), nodes1_end(1, 2)
@@ -716,7 +707,7 @@ contains
     integer(c_int), intent(in) :: num_candidates
     type(CurveData), intent(in) :: candidates(:, :)
     integer(c_int), intent(inout) :: num_intersections
-    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    real(c_double), allocatable, intent(inout) :: intersections(:, :)
     type(CurveData), allocatable, intent(inout) :: next_candidates(:, :)
     integer(c_int), intent(out) :: num_next_candidates
     integer(c_int), intent(out) :: py_exc
@@ -816,9 +807,7 @@ contains
     end if
 
     candidates(1, 1) = candidate_left
-    candidates(1, 1)%root_index = 1
     candidates(2, 1) = candidate_right
-    candidates(2, 1)%root_index = 1
 
   end subroutine make_candidates
 
@@ -827,11 +816,14 @@ contains
        num_intersections, intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
+    ! NOTE: ``intersections`` will be ``2 x N`` where ``N`` is the number
+    !       of intersections. The first row contains ``s`` values at each
+    !       intersection and the second row contains ``t`` values.
 
     type(CurveData), intent(in) :: candidate_left
     type(CurveData), intent(in) :: candidate_right
     integer(c_int), intent(out) :: num_intersections
-    type(Intersection), allocatable, intent(out) :: intersections(:)
+    real(c_double), allocatable, intent(out) :: intersections(:, :)
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: num_candidates, num_next_candidates, index_, py_exc
