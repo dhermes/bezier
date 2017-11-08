@@ -2491,6 +2491,12 @@ class Test__compute_edge_nodes(utils.NumPyTestCase):
 
         return _surface_helpers._compute_edge_nodes(nodes, degree)
 
+    def _check(self, nodes, degree, expected1, expected2, expected3):
+        nodes1, nodes2, nodes3 = self._call_function_under_test(nodes, degree)
+        self.assertEqual(nodes1, expected1)
+        self.assertEqual(nodes2, expected2)
+        self.assertEqual(nodes3, expected3)
+
     def test_linear(self):
         nodes = np.asfortranarray([
             [1.0, 2.0],
@@ -2499,13 +2505,11 @@ class Test__compute_edge_nodes(utils.NumPyTestCase):
         ])
         p100, p010, p001 = nodes
 
-        nodes1, nodes2, nodes3 = self._call_function_under_test(nodes, 1)
-        expected1 = np.asfortranarray(np.vstack([p100, p010]))
-        expected2 = np.asfortranarray(np.vstack([p010, p001]))
-        expected3 = np.asfortranarray(np.vstack([p001, p100]))
-        self.assertEqual(nodes1, expected1)
-        self.assertEqual(nodes2, expected2)
-        self.assertEqual(nodes3, expected3)
+        self._check(
+            nodes, 1,
+            np.asfortranarray(np.vstack([p100, p010])),
+            np.asfortranarray(np.vstack([p010, p001])),
+            np.asfortranarray(np.vstack([p001, p100])))
 
     def test_quadratic(self):
         nodes = np.asfortranarray([
@@ -2518,13 +2522,11 @@ class Test__compute_edge_nodes(utils.NumPyTestCase):
         ])
         p200, p110, p020, p101, p011, p002 = nodes
 
-        nodes1, nodes2, nodes3 = self._call_function_under_test(nodes, 2)
-        expected1 = np.asfortranarray(np.vstack([p200, p110, p020]))
-        expected2 = np.asfortranarray(np.vstack([p020, p011, p002]))
-        expected3 = np.asfortranarray(np.vstack([p002, p101, p200]))
-        self.assertEqual(nodes1, expected1)
-        self.assertEqual(nodes2, expected2)
-        self.assertEqual(nodes3, expected3)
+        self._check(
+            nodes, 2,
+            np.asfortranarray(np.vstack([p200, p110, p020])),
+            np.asfortranarray(np.vstack([p020, p011, p002])),
+            np.asfortranarray(np.vstack([p002, p101, p200])))
 
     def test_cubic(self):
         nodes = np.asfortranarray([
@@ -2542,13 +2544,11 @@ class Test__compute_edge_nodes(utils.NumPyTestCase):
         (p300, p210, p120, p030, p201,
          unused_p111, p021, p102, p012, p003) = nodes
 
-        nodes1, nodes2, nodes3 = self._call_function_under_test(nodes, 3)
-        expected1 = np.asfortranarray(np.vstack([p300, p210, p120, p030]))
-        expected2 = np.asfortranarray(np.vstack([p030, p021, p012, p003]))
-        expected3 = np.asfortranarray(np.vstack([p003, p102, p201, p300]))
-        self.assertEqual(nodes1, expected1)
-        self.assertEqual(nodes2, expected2)
-        self.assertEqual(nodes3, expected3)
+        self._check(
+            nodes, 3,
+            np.asfortranarray(np.vstack([p300, p210, p120, p030])),
+            np.asfortranarray(np.vstack([p030, p021, p012, p003])),
+            np.asfortranarray(np.vstack([p003, p102, p201, p300])))
 
 
 @utils.needs_surface_speedup
