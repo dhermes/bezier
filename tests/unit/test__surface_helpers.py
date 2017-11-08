@@ -2483,13 +2483,13 @@ class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
             nodes, degree, param_vals, dimension)
 
 
-class Test_compute_edge_nodes(utils.NumPyTestCase):
+class Test__compute_edge_nodes(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree):
         from bezier import _surface_helpers
 
-        return _surface_helpers.compute_edge_nodes(nodes, degree)
+        return _surface_helpers._compute_edge_nodes(nodes, degree)
 
     def test_linear(self):
         nodes = np.asfortranarray([
@@ -2549,6 +2549,16 @@ class Test_compute_edge_nodes(utils.NumPyTestCase):
         self.assertEqual(nodes1, expected1)
         self.assertEqual(nodes2, expected2)
         self.assertEqual(nodes3, expected3)
+
+
+@utils.needs_surface_speedup
+class Test_speedup_compute_edge_nodes(Test__compute_edge_nodes):
+
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _surface_speedup
+
+        return _surface_speedup.compute_edge_nodes(nodes, degree)
 
 
 class TestIntersectionClassification(unittest.TestCase):

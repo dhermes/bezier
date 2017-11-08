@@ -215,3 +215,27 @@ def subdivide_nodes(double[::1, :] nodes, int degree):
     )
 
     return nodes_a, nodes_b, nodes_c, nodes_d
+
+
+def compute_edge_nodes(double[::1, :] nodes, int degree):
+    cdef int num_nodes, dimension
+    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes1
+    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes2
+    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes3
+
+    num_nodes, dimension = np.shape(nodes)
+    nodes1 = np.empty((degree + 1, dimension), order='F')
+    nodes2 = np.empty((degree + 1, dimension), order='F')
+    nodes3 = np.empty((degree + 1, dimension), order='F')
+
+    bezier._surface.compute_edge_nodes(
+        &num_nodes,
+        &dimension,
+        &nodes[0, 0],
+        &degree,
+        &nodes1[0, 0],
+        &nodes2[0, 0],
+        &nodes3[0, 0],
+    )
+
+    return nodes1, nodes2, nodes3

@@ -42,6 +42,9 @@ void specialize_surface(
 void subdivide_nodes_surface(
     int *num_nodes, int *dimension, double *nodes, int *degree,
     double *nodes_a, double *nodes_b, double *nodes_c, double *nodes_d);
+void compute_edge_nodes(
+    int *num_nodes, int *dimension, double *nodes, int *degree,
+    double *nodes1, double *nodes2, double *nodes3);
 
 #if defined (__cplusplus)
 }

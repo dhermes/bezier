@@ -533,6 +533,11 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
 
     .. note::
 
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    .. note::
+
        This is a helper function, used by :func:`make_transform` and
        :func:`_specialize_surface` (and :func:`make_transform` is **only**
        used by :func:`_specialize_surface`).
@@ -549,11 +554,6 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
 
        For degree :math:`d`d, the number of nodes should be
        :math:`(d + 1)(d + 2)/2`, but we don't verify this property.
-
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): The nodes to reduce.
@@ -2278,8 +2278,13 @@ def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
     return result
 
 
-def compute_edge_nodes(nodes, degree):
+def _compute_edge_nodes(nodes, degree):
     """Compute the nodes of each edges of a surface.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): Control point nodes that define the surface.
@@ -2344,6 +2349,7 @@ if _surface_speedup is None:  # pragma: NO COVER
     evaluate_barycentric = _evaluate_barycentric
     evaluate_barycentric_multi = _evaluate_barycentric_multi
     evaluate_cartesian_multi = _evaluate_cartesian_multi
+    compute_edge_nodes = _compute_edge_nodes
     IntersectionClassification = _IntersectionClassification
 else:
     de_casteljau_one_round = _surface_speedup.de_casteljau_one_round
@@ -2354,6 +2360,7 @@ else:
     evaluate_barycentric = _surface_speedup.evaluate_barycentric
     evaluate_barycentric_multi = _surface_speedup.evaluate_barycentric_multi
     evaluate_cartesian_multi = _surface_speedup.evaluate_cartesian_multi
+    compute_edge_nodes = _surface_speedup.compute_edge_nodes
     IntersectionClassification = _surface_speedup.IntersectionClassification
 # pylint: enable=invalid-name
 
