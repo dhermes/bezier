@@ -20,7 +20,7 @@ module surface
   public &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det, specialize_surface, subdivide_nodes
+       jacobian_det, specialize_surface, subdivide_nodes, compute_edge_nodes
 
 contains
 
@@ -762,5 +762,31 @@ contains
     end if
 
   end subroutine subdivide_nodes
+
+  subroutine compute_edge_nodes( &
+       num_nodes, dimension_, nodes, degree, nodes1, nodes2, nodes3) &
+       bind(c, name='compute_edge_nodes')
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    integer(c_int), intent(in) :: degree
+    real(c_double), intent(out) :: nodes1(degree + 1, dimension_)
+    real(c_double), intent(out) :: nodes2(degree + 1, dimension_)
+    real(c_double), intent(out) :: nodes3(degree + 1, dimension_)
+    ! Variables outside of signature.
+    integer(c_int) :: index1, index2, index3
+
+    index2 = degree + 1
+    index3 = num_nodes
+    do index1 = 1, degree + 1
+       nodes1(index1, :) = nodes(index1, :)
+       nodes2(index1, :) = nodes(index2, :)
+       nodes3(index1, :) = nodes(index3, :)
+       ! Update the indices.
+       index2 = index2 - index1 + degree + 1
+       index3 = index3 - index1 - 1
+    end do
+
+  end subroutine compute_edge_nodes
 
 end module surface

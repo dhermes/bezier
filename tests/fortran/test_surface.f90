@@ -16,7 +16,7 @@ module test_surface
   use surface, only: &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det, specialize_surface, subdivide_nodes
+       jacobian_det, specialize_surface, subdivide_nodes, compute_edge_nodes
   use types, only: dp
   use unit_test_helpers, only: &
        print_status, get_random_nodes, get_id_mat, ref_triangle_uniform_nodes
@@ -26,7 +26,7 @@ module test_surface
        test_evaluate_barycentric_multi, test_evaluate_cartesian_multi, &
        test_jacobian_both, test_jacobian_det, &
        test_specialize_surface, test_subdivide_nodes, &
-       subdivide_points_check
+       subdivide_points_check, test_compute_edge_nodes
   public surface_all_tests
 
 contains
@@ -42,6 +42,7 @@ contains
     call test_jacobian_det(success)
     call test_specialize_surface(success)
     call test_subdivide_nodes(success)
+    call test_compute_edge_nodes(success)
 
   end subroutine surface_all_tests
 
@@ -1093,5 +1094,88 @@ contains
          all(evaluated1 == evaluated2))
 
   end subroutine subdivide_points_check
+
+  subroutine test_compute_edge_nodes(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(:), allocatable :: name
+    real(c_double), allocatable :: nodes(:, :)
+    real(c_double), allocatable :: nodes1(:, :), nodes2(:, :), nodes3(:, :)
+
+    case_id = 1
+    name = "compute_edge_nodes"
+
+    ! CASE 1: Linear surface.
+    allocate(nodes(3, 2))
+    allocate(nodes1(2, 2))
+    allocate(nodes2(2, 2))
+    allocate(nodes3(2, 2))
+    nodes(1, :) = [1.0_dp, 2.0_dp]
+    nodes(2, :) = [4.0_dp, 2.5_dp]
+    nodes(3, :) = [0.0_dp, 4.0_dp]
+
+    call compute_edge_nodes( &
+         3, 2, nodes, 1, nodes1, nodes2, nodes3)
+    case_success = ( &
+         all(nodes1 == nodes([1, 2], :)) .AND. &
+         all(nodes2 == nodes([2, 3], :)) .AND. &
+         all(nodes3 == nodes([3, 1], :)))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Quadratic surface.
+    deallocate(nodes)
+    deallocate(nodes1)
+    deallocate(nodes2)
+    deallocate(nodes3)
+    allocate(nodes(6, 2))
+    allocate(nodes1(3, 2))
+    allocate(nodes2(3, 2))
+    allocate(nodes3(3, 2))
+    nodes(1, :) = 0
+    nodes(2, :) = [1.25_dp, 0.5_dp]
+    nodes(3, :) = [2.0_dp, 1.0_dp]
+    nodes(4, :) = [-1.5_dp, 0.75_dp]
+    nodes(5, :) = [0.0_dp, 2.0_dp]
+    nodes(6, :) = [-3.0_dp, 3.0_dp]
+
+    call compute_edge_nodes( &
+         6, 2, nodes, 2, nodes1, nodes2, nodes3)
+    case_success = ( &
+         all(nodes1 == nodes([1, 2, 3], :)) .AND. &
+         all(nodes2 == nodes([3, 5, 6], :)) .AND. &
+         all(nodes3 == nodes([6, 4, 1], :)))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Cubic surface.
+    deallocate(nodes)
+    deallocate(nodes1)
+    deallocate(nodes2)
+    deallocate(nodes3)
+    allocate(nodes(10, 2))
+    allocate(nodes1(4, 2))
+    allocate(nodes2(4, 2))
+    allocate(nodes3(4, 2))
+    nodes(1, :) = [0.0_dp, 0.0_dp]
+    nodes(2, :) = [0.328125_dp, 0.1484375_dp]
+    nodes(3, :) = [0.65625_dp, 0.1484375_dp]
+    nodes(4, :) = [1.0_dp, 0.0_dp]
+    nodes(5, :) = [0.1484375_dp, 0.328125_dp]
+    nodes(6, :) = [0.5_dp, 0.5_dp]
+    nodes(7, :) = [1.0_dp, 0.53125_dp]
+    nodes(8, :) = [0.1484375_dp, 0.65625_dp]
+    nodes(9, :) = [0.53125_dp, 1.0_dp]
+    nodes(10, :) = [0.0_dp, 1.0_dp]
+
+    call compute_edge_nodes( &
+         10, 2, nodes, 3, nodes1, nodes2, nodes3)
+    case_success = ( &
+         all(nodes1 == nodes([1, 2, 3, 4], :)) .AND. &
+         all(nodes2 == nodes([4, 7, 9, 10], :)) .AND. &
+         all(nodes3 == nodes([10, 8, 5, 1], :)))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_compute_edge_nodes
 
 end module test_surface

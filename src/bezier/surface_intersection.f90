@@ -500,7 +500,7 @@ contains
 
     ! NOTE: This **assumes**, but does not check that
     !       ``intersection_%index_(first|second)`` are valid indices within
-    !       ``curves_(left|right)`` and that each of those ``CurveData``
+    !       ``edges_(first|second)`` and that each of those ``CurveData``
     !       instances have already allocated ``%nodes``.
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
@@ -581,7 +581,7 @@ contains
     !       the intersection occurs at the end of an edge.
     ! NOTE: This **assumes**, but does not check that
     !       ``intersection_%index_(first|second)`` are valid indices within
-    !       ``curves_(left|right)`` and that each of those ``CurveData``
+    !       ``edges_(first|second)`` and that each of those ``CurveData``
     !       instances have already allocated ``%nodes``.
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
