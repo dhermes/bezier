@@ -55,7 +55,7 @@ contains
 
     ! CASE 1: Quadratic surface.
     ! NOTE: This surface is given by
-    !     [(4 s - t^2) / 4, (4 s^2 + 4 s t - t^2 - 4 s + 8 t) / 8]
+    !       [(4 s - t^2) / 4, (4 s^2 + 4 s t - t^2 - 4 s + 8 t) / 8]
     nodes(1, :) = [0.0_dp, 0.0_dp]
     nodes(2, :) = [0.5_dp, -0.25_dp]
     nodes(3, :) = [1.0_dp, 0.0_dp]

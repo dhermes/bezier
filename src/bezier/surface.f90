@@ -299,8 +299,8 @@ contains
        size_read, size_write, step, local_degree, &
        weights_a, weights_b, weights_c)
 
-    ! INVARIANT: `step + local_degree == (total) degree`
-    ! INVARIANT: `size_write` == `size_read - local_degree - 1`
+    ! INVARIANT: `step + local_degree == (total) degree + 1`
+    ! INVARIANT: `size_write == size_read - local_degree - 1`
 
     integer(c_int), intent(in) :: dimension_
     integer(c_int), intent(in) :: num_read
