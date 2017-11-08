@@ -371,13 +371,13 @@ contains
   end function ignored_edge_corner
 
   logical(c_bool) function ignored_double_corner( &
-       curves_left, curves_right, intersection_, &
+       edges_first, edges_second, intersection_, &
        tangent_s, tangent_t) result(predicate)
 
     ! NOTE: This assumes that ``intersection_%index_(first|second)``
     !       are in [1, 2, 3] (marked as the edges of a surface).
 
-    type(CurveData), intent(in) :: curves_left(:), curves_right(:)
+    type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
     real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
     ! Variables outside of signature.
@@ -387,10 +387,10 @@ contains
 
     ! Compute the other edge for the ``s`` surface.
     index = 1 + modulo(intersection_%index_first - 2, 3)
-    num_nodes = size(curves_left(index)%nodes, 1)
+    num_nodes = size(edges_first(index)%nodes, 1)
     call evaluate_hodograph( &
          1.0_dp, num_nodes, 2, &
-         curves_left(index)%nodes, alt_tangent_s)
+         edges_first(index)%nodes, alt_tangent_s)
 
     ! First check if ``tangent_t`` is interior to the ``s`` surface.
     call cross_product( &
@@ -413,10 +413,10 @@ contains
     ! If ``tangent_t`` is not interior, we check the other ``t``
     ! edge that ends at the corner.
     index = 1 + modulo(intersection_%index_second - 2, 3)
-    num_nodes = size(curves_right(index)%nodes, 1)
+    num_nodes = size(edges_second(index)%nodes, 1)
     call evaluate_hodograph( &
          1.0_dp, num_nodes, 2, &
-         curves_right(index)%nodes, alt_tangent_t)
+         edges_second(index)%nodes, alt_tangent_t)
     ! Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t = -alt_tangent_t
 
@@ -449,13 +449,13 @@ contains
   end function ignored_double_corner
 
   logical(c_bool) function ignored_corner( &
-       curves_left, curves_right, intersection_, &
+       edges_first, edges_second, intersection_, &
        tangent_s, tangent_t) result(predicate)
 
     ! NOTE: This assumes that ``intersection_%index_(first|second)``
     !       are in [1, 2, 3] (marked as the edges of a surface).
 
-    type(CurveData), intent(in) :: curves_left(:), curves_right(:)
+    type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
     real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
     ! Variables outside of signature.
@@ -465,7 +465,7 @@ contains
        if (intersection_%t == 0.0_dp) then
           ! Double corner.
           predicate = ignored_double_corner( &
-               curves_left, curves_right, intersection_, &
+               edges_first, edges_second, intersection_, &
                tangent_s, tangent_t)
        else
           ! s-only corner.
@@ -474,9 +474,9 @@ contains
           !       since it will return values in {0, 1, 2}. The goal is
           !       to send [1, 2, 3] --> [3, 1, 2] (i.e. move indices to
           !       the left and wrap around).
-          num_nodes = size(curves_left(index)%nodes, 1)
+          num_nodes = size(edges_first(index)%nodes, 1)
           predicate = ignored_edge_corner( &
-               tangent_t, tangent_s, num_nodes, curves_left(index)%nodes)
+               tangent_t, tangent_s, num_nodes, edges_first(index)%nodes)
        end if
     else if (intersection_%t == 0.0_dp) then
        ! t-only corner.
@@ -485,9 +485,9 @@ contains
        !       since it will return values in {0, 1, 2}. The goal is
        !       to send [1, 2, 3] --> [3, 1, 2] (i.e. move indices to
        !       the left and wrap around).
-       num_nodes = size(curves_right(index)%nodes, 1)
+       num_nodes = size(edges_second(index)%nodes, 1)
        predicate = ignored_edge_corner( &
-            tangent_s, tangent_t, num_nodes, curves_right(index)%nodes)
+            tangent_s, tangent_t, num_nodes, edges_second(index)%nodes)
     else
        predicate = .FALSE.
     end if
@@ -495,7 +495,7 @@ contains
   end function ignored_corner
 
   subroutine classify_tangent_intersection( &
-       curves_left, curves_right, intersection_, &
+       edges_first, edges_second, intersection_, &
        tangent_s, tangent_t, enum_)
 
     ! NOTE: This **assumes**, but does not check that
@@ -503,7 +503,7 @@ contains
     !       ``curves_(left|right)`` and that each of those ``CurveData``
     !       instances have already allocated ``%nodes``.
 
-    type(CurveData), intent(in) :: curves_left(:), curves_right(:)
+    type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
     real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
     integer(c_int), intent(out) :: enum_
@@ -518,14 +518,14 @@ contains
     ! NOTE: When computing curvatures we assume that we don't have lines
     !       here, because lines that are tangent at an intersection are
     !       parallel and we don't handle that case.
-    num_nodes = size(curves_left(intersection_%index_first)%nodes, 1)
+    num_nodes = size(edges_first(intersection_%index_first)%nodes, 1)
     call get_curvature( &
-         num_nodes, 2, curves_left(intersection_%index_first)%nodes, &
+         num_nodes, 2, edges_first(intersection_%index_first)%nodes, &
          tangent_s, intersection_%s, curvature1)
 
-    num_nodes = size(curves_right(intersection_%index_second)%nodes, 1)
+    num_nodes = size(edges_second(intersection_%index_second)%nodes, 1)
     call get_curvature( &
-         num_nodes, 2, curves_right(intersection_%index_second)%nodes, &
+         num_nodes, 2, edges_second(intersection_%index_second)%nodes, &
          tangent_t, intersection_%t, curvature2)
 
     if (dot_prod < 0.0_dp) then
@@ -572,7 +572,7 @@ contains
   end subroutine classify_tangent_intersection
 
   subroutine classify_intersection( &
-       curves_left, curves_right, intersection_, enum_)
+       edges_first, edges_second, intersection_, enum_)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This subroutine is not part of the C ABI for this module,
@@ -584,7 +584,7 @@ contains
     !       ``curves_(left|right)`` and that each of those ``CurveData``
     !       instances have already allocated ``%nodes``.
 
-    type(CurveData), intent(in) :: curves_left(:), curves_right(:)
+    type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
     integer(c_int), intent(out) :: enum_
     ! Variables outside of signature.
@@ -599,20 +599,20 @@ contains
 
     ! NOTE: We assume, but don't check that ``%nodes`` is allocated
     !       and that it has 2 columns.
-    num_nodes = size(curves_left(intersection_%index_first)%nodes, 1)
+    num_nodes = size(edges_first(intersection_%index_first)%nodes, 1)
     call evaluate_hodograph( &
          intersection_%s, num_nodes, 2, &
-         curves_left(intersection_%index_first)%nodes, tangent_s)
+         edges_first(intersection_%index_first)%nodes, tangent_s)
 
     ! NOTE: We assume, but don't check that ``%nodes`` is allocated
     !       and that it has 2 columns.
-    num_nodes = size(curves_right(intersection_%index_second)%nodes, 1)
+    num_nodes = size(edges_second(intersection_%index_second)%nodes, 1)
     call evaluate_hodograph( &
          intersection_%t, num_nodes, 2, &
-         curves_right(intersection_%index_second)%nodes, tangent_t)
+         edges_second(intersection_%index_second)%nodes, tangent_t)
 
     if (ignored_corner( &
-         curves_left, curves_right, intersection_, &
+         edges_first, edges_second, intersection_, &
          tangent_s, tangent_t)) then
        enum_ = IntersectionClassification_IGNORED_CORNER
        return
@@ -628,7 +628,7 @@ contains
        enum_ = IntersectionClassification_SECOND
     else
        call classify_tangent_intersection( &
-            curves_left, curves_right, intersection_, &
+            edges_first, edges_second, intersection_, &
             tangent_s, tangent_t, enum_)
     end if
 
