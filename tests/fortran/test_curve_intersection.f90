@@ -12,7 +12,6 @@
 
 module test_curve_intersection
 
-  use, intrinsic :: ieee_arithmetic, only: ieee_value, ieee_quiet_nan
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use curve, only: &
        CurveData, evaluate_multi, subdivide_nodes, curves_equal, &
@@ -555,7 +554,6 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nan_val
     real(c_double) :: start_node1(1, 2), end_node1(1, 2), error1
     real(c_double) :: start_node2(1, 2), end_node2(1, 2), error2
     real(c_double) :: nodes1(3, 2), nodes2(3, 2)
@@ -568,7 +566,6 @@ contains
 
     case_id = 1
     name = "from_linearized"
-    nan_val = ieee_value(nan_val, ieee_quiet_nan)
 
     ! CASE 1: Basic test of not-very-linearized quadratics.
     nodes1(1, :) = 0
@@ -577,7 +574,8 @@ contains
     start_node1 = nodes1(:1, :)
     end_node1 = nodes1(3:, :)
     ! NOTE: This curve isn't close to linear, but that's OK.
-    error1 = nan_val
+    call linearization_error( &
+         3, 2, nodes1, error1)
 
     nodes2(1, :) = [0.0_dp, 1.0_dp]
     nodes2(2, :) = [0.5_dp, 1.0_dp]
@@ -585,7 +583,8 @@ contains
     start_node2 = nodes2(:1, :)
     end_node2 = nodes2(3:, :)
     ! NOTE: This curve isn't close to linear, but that's OK.
-    error2 = nan_val
+    call linearization_error( &
+         3, 2, nodes2, error2)
 
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
@@ -711,7 +710,8 @@ contains
     nodes2(3, :) = 3
     start_node2 = nodes2(:1, :)
     end_node2 = nodes2(3:, :)
-    error2 = nan_val
+    call linearization_error( &
+         3, 2, nodes2, error2)
 
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
@@ -733,7 +733,8 @@ contains
     nodes2(3, :) = [1.5_dp, 1.75_dp]
     start_node2 = nodes2(:1, :)
     end_node2 = nodes2(3:, :)
-    error2 = nan_val
+    call linearization_error( &
+         3, 2, nodes2, error2)
 
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
