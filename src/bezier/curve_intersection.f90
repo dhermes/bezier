@@ -694,7 +694,7 @@ contains
   end subroutine add_candidates
 
   subroutine intersect_one_round( &
-       root_first, root_second, num_candidates, candidates, &
+       root_nodes_first, root_nodes_second, num_candidates, candidates, &
        num_intersections, intersections, &
        next_candidates, num_next_candidates, py_exc)
 
@@ -702,8 +702,8 @@ contains
     ! NOTE: This assumes, but does not check, that ``candidates`` has
     !       two rows and has at **least** ``num_candidates`` columns.
 
-    type(CurveData), intent(in) :: root_first
-    type(CurveData), intent(in) :: root_second
+    real(c_double), intent(in) :: root_nodes_first(:, :)
+    real(c_double), intent(in) :: root_nodes_second(:, :)
     integer(c_int), intent(in) :: num_candidates
     type(CurveData), intent(in) :: candidates(:, :)
     integer(c_int), intent(inout) :: num_intersections
@@ -737,12 +737,8 @@ contains
              ! If both ``first`` and ``second`` are linearizations, then
              ! we can (attempt to) intersect them immediately.
              subdivide_enum = Subdivide_NEITHER
-             ! NOTE: This makes an assumptions which is important (i.e. a
-             !       SEGFAULT may occur if not met). The assumption is that
-             !       ``%nodes`` is allocated for each of ``root_first`` and
-             !       ``root_second``.
              call add_from_linearized( &
-                  first, root_first%nodes, second, root_second%nodes, &
+                  first, root_nodes_first, second, root_nodes_second, &
                   num_intersections, intersections, py_exc)
 
              ! If there was a failure, exit this subroutine.
@@ -792,12 +788,12 @@ contains
   end subroutine intersect_one_round
 
   subroutine make_candidates( &
-       candidate_first, candidate_second, candidates)
+       nodes_first, nodes_second, candidates)
 
     ! NOTE: This is a (private) helper for ``all_intersections``.
 
-    type(CurveData), intent(in) :: candidate_first
-    type(CurveData), intent(in) :: candidate_second
+    real(c_double), intent(in) :: nodes_first(:, :)
+    real(c_double), intent(in) :: nodes_second(:, :)
     type(CurveData), allocatable, intent(inout) :: candidates(:, :)
 
     ! NOTE: This assumes (but does not verify) that if ``candidates`` has
@@ -806,13 +802,19 @@ contains
        allocate(candidates(2, 1))
     end if
 
-    candidates(1, 1) = candidate_first
-    candidates(2, 1) = candidate_second
+    ! NOTE: Since we **might** be re-using ``candidates``, we can't rely on
+    !       the default values of all fields being intact.
+    candidates(1, 1)%start = 0.0_dp
+    candidates(1, 1)%end_ = 1.0_dp
+    candidates(1, 1)%nodes = nodes_first
+    candidates(2, 1)%start = 0.0_dp
+    candidates(2, 1)%end_ = 1.0_dp
+    candidates(2, 1)%nodes = nodes_second
 
   end subroutine make_candidates
 
   subroutine all_intersections( &
-       candidate_first, candidate_second, &
+       num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
        num_intersections, intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
@@ -820,8 +822,10 @@ contains
     !       of intersections. The first row contains ``s`` values at each
     !       intersection and the second row contains ``t`` values.
 
-    type(CurveData), intent(in) :: candidate_first
-    type(CurveData), intent(in) :: candidate_second
+    integer(c_int), intent(in) :: num_nodes_first
+    real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)
+    integer(c_int), intent(in) :: num_nodes_second
+    real(c_double), intent(in) :: nodes_second(num_nodes_second, 2)
     integer(c_int), intent(out) :: num_intersections
     real(c_double), allocatable, intent(out) :: intersections(:, :)
     integer(c_int), intent(out) :: status
@@ -833,7 +837,7 @@ contains
     ! First iteration is odd (i.e. ``index_ == 1``).
     num_candidates = 1
     call make_candidates( &
-         candidate_first, candidate_second, CANDIDATES_ODD)
+         nodes_first, nodes_second, CANDIDATES_ODD)
     status = ALL_INTERSECTIONS_SUCCESS  ! Default.
 
     is_even = .TRUE.  ! At zero.
@@ -844,7 +848,7 @@ contains
           ! Since ``index_`` is even, we READ from ``CANDIDATES_EVEN``
           ! and WRITE to ``CANDIDATES_ODD``.
           call intersect_one_round( &
-               candidate_first, candidate_second, &
+               nodes_first, nodes_second, &
                num_candidates, CANDIDATES_EVEN, &
                num_intersections, intersections, &
                CANDIDATES_ODD, num_next_candidates, py_exc)
@@ -852,7 +856,7 @@ contains
           ! Since ``index_`` is odd, we READ from ``CANDIDATES_ODD``
           ! and WRITE to ``CANDIDATES_EVEN``.
           call intersect_one_round( &
-               candidate_first, candidate_second, &
+               nodes_first, nodes_second, &
                num_candidates, CANDIDATES_ODD, &
                num_intersections, intersections, &
                CANDIDATES_EVEN, num_next_candidates, py_exc)
