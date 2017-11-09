@@ -30,16 +30,15 @@ module curve
        subdivide_curve
 
   ! NOTE: This (for now) is not meant to be C-interoperable. This is mostly
-  !       because the shape is encoded in `nodes`, so it would be wasteful to
-  !       also store `num_nodes` and `dimension`. In addition, `allocatable`
-  !       (rather than `type(c_ptr)`) is used for the `nodes` so that the data
-  !       is scoped with the `CurveData` instance and we don't need to worry
-  !       about memory management.
+  !       because the shape is encoded in ``nodes``, so it would be wasteful to
+  !       also store ``num_nodes`` and ``dimension``. In addition,
+  !       ``allocatable`` (rather than ``type(c_ptr)``) is used for the
+  !       ``nodes`` so that the data is scoped with the ``CurveData`` instance
+  !       and we don't need to worry about memory management.
   type :: CurveData
      real(c_double) :: start = 0.0_dp
      real(c_double) :: end_ = 1.0_dp
      real(c_double), allocatable :: nodes(:, :)
-     integer(c_int) :: root_index = -1
   end type CurveData
 
   ! For ``locate_point``.
@@ -901,9 +900,6 @@ contains
        ! un-allocated, hence they are the "same".
     end if
 
-    ! Finally, check the root index.
-    same = (curve1%root_index == curve2%root_index)
-
   end function curves_equal
 
   subroutine subdivide_curve(curve_data, left, right)
@@ -923,12 +919,10 @@ contains
     left%start = curve_data%start
     left%end_ = 0.5_dp * (curve_data%start + curve_data%end_)
     allocate(left%nodes(num_nodes, dimension_))
-    left%root_index = curve_data%root_index
 
     right%start = left%end_
     right%end_ = curve_data%end_
     allocate(right%nodes(num_nodes, dimension_))
-    right%root_index = curve_data%root_index
 
     call subdivide_nodes( &
          num_nodes, dimension_, curve_data%nodes, left%nodes, right%nodes)
