@@ -1203,11 +1203,11 @@ class Test_patch_intersections(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(
-            candidates_left, candidates_right, intersections):
+            candidates_first, candidates_second, intersections):
         from bezier import _geometric_intersection
 
         return _geometric_intersection.patch_intersections(
-            candidates_left, candidates_right, intersections)
+            candidates_first, candidates_second, intersections)
 
     def test_all_matching(self):
         from bezier import _intersection_helpers
@@ -1216,15 +1216,15 @@ class Test_patch_intersections(utils.NumPyTestCase):
         curve2 = unittest.mock.sentinel.curve2
         curve3 = unittest.mock.sentinel.curve3
         curve4 = unittest.mock.sentinel.curve4
-        candidates_left = [curve1, curve2]
-        candidates_right = [curve3, curve4]
+        candidates_first = [curve1, curve2]
+        candidates_second = [curve3, curve4]
         intersections = [
             _intersection_helpers.Intersection(curve1, 0.0, curve4, 0.5),
             _intersection_helpers.Intersection(curve2, 0.5, curve3, 1.0),
         ]
 
         return_value = self._call_function_under_test(
-            candidates_left, candidates_right, intersections)
+            candidates_first, candidates_second, intersections)
         self.assertIsNone(return_value)
         self.assertEqual(intersections[0].index_first, 0)
         self.assertEqual(intersections[0].index_second, 1)
@@ -1235,11 +1235,11 @@ class Test_patch_intersections(utils.NumPyTestCase):
 class Test_all_intersections(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(candidates_left, candidates_right):
+    def _call_function_under_test(candidates_first, candidates_second):
         from bezier import _geometric_intersection
 
         return _geometric_intersection.all_intersections(
-            candidates_left, candidates_right)
+            candidates_first, candidates_second)
 
     def test_no_intersections(self):
         intersections = self._call_function_under_test([], [])

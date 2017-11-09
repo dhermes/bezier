@@ -1358,7 +1358,7 @@ def locate_point(nodes, x_val, y_val):
         return all_roots[index]
 
 
-def all_intersections(candidates_left, candidates_right):
+def all_intersections(candidates_first, candidates_second):
     r"""Find the points of intersection among pairs of curves.
 
     .. note::
@@ -1369,18 +1369,18 @@ def all_intersections(candidates_left, candidates_right):
        fails.
 
     Args:
-        candidates_left (Iterable[.Curve]): Iterable of curves to be
-            intersected with each curve in ``candidates_right``.
-        candidates_right (Iterable[.Curve]): Iterable of curves to be
-            intersected with each curve in ``candidates_left``.
+        candidates_first (Iterable[.Curve]): Iterable of curves to be
+            intersected with each curve in ``candidates_second``.
+        candidates_second (Iterable[.Curve]): Iterable of curves to be
+            intersected with each curve in ``candidates_first``.
 
     Returns:
         list: List of all :class:`Intersection`s (possibly empty).
     """
     result = []
-    for index_first, first in enumerate(candidates_left):
+    for index_first, first in enumerate(candidates_first):
         nodes1 = first._nodes
-        for index_second, second in enumerate(candidates_right):
+        for index_second, second in enumerate(candidates_second):
             nodes2 = second._nodes
 
             # Only attempt this if the bounding boxes intersect.

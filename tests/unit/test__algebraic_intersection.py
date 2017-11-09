@@ -1597,11 +1597,11 @@ class Test_locate_point(unittest.TestCase):
 class Test_all_intersections(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(candidates_left, candidates_right):
+    def _call_function_under_test(candidates_first, candidates_second):
         from bezier import _algebraic_intersection
 
         return _algebraic_intersection.all_intersections(
-            candidates_left, candidates_right)
+            candidates_first, candidates_second)
 
     def test_no_intersections(self):
         intersections = self._call_function_under_test([], [])

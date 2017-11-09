@@ -1012,37 +1012,37 @@ def intersect_one_round(candidates, intersections):
     return next_candidates
 
 
-def patch_intersections(candidates_left, candidates_right, intersections):
+def patch_intersections(candidates_first, candidates_second, intersections):
     """Attempt to bolt on ``index_(first|second)`` for each intersection.
 
-    Uses ``candidates_left.index()`` to determine the index of each
-    intersection within ``candidates_left`` (similar for
-    ``candidates_right``).
+    Uses ``candidates_first.index()`` to determine the index of each
+    intersection within ``candidates_first`` (similar for
+    ``candidates_second``).
 
     .. warning::
 
        This will fail with a :class:`ValueError` if one of the curves
-       involved in an intersection is not among ``candidates_left`` (or
-       ``candidates_right```). This **should** not occur.
+       involved in an intersection is not among ``candidates_first`` (or
+       ``candidates_second```). This **should** not occur.
 
     Args:
-        candidates_left (Sequence[.Curve]): Iterable of curves that was
-            used to intersect each curve in ``candidates_right`` when
+        candidates_first (Sequence[.Curve]): Iterable of curves that was
+            used to intersect each curve in ``candidates_second`` when
             creating ``intersections``.
-        candidates_right (Sequence[.Curve]): Iterable of curves that was
-            used to intersect each curve in ``candidates_left`` when
+        candidates_second (Sequence[.Curve]): Iterable of curves that was
+            used to intersect each curve in ``candidates_first`` when
             creating ``intersections``.
         intersections (Iterable[.Intersection]): Iterable of intersections
             to be modified.
     """
     for intersection in intersections:
-        intersection.index_first = candidates_left.index(
+        intersection.index_first = candidates_first.index(
             intersection.first)
-        intersection.index_second = candidates_right.index(
+        intersection.index_second = candidates_second.index(
             intersection.second)
 
 
-def all_intersections(candidates_left, candidates_right):
+def all_intersections(candidates_first, candidates_second):
     r"""Find the points of intersection among pairs of curves.
 
     .. note::
@@ -1054,10 +1054,10 @@ def all_intersections(candidates_left, candidates_right):
        :func:`newton_refine() <~._intersection_helpers._newton_refine>`.
 
     Args:
-        candidates_left (Sequence[.Curve]): Sequence of curves to be
-            intersected with each curve in ``candidates_right``.
-        candidates_right (Sequence[.Curve]): Sequence of curves to be
-            intersected with each curve in ``candidates_left``.
+        candidates_first (Sequence[.Curve]): Sequence of curves to be
+            intersected with each curve in ``candidates_second``.
+        candidates_second (Sequence[.Curve]): Sequence of curves to be
+            intersected with each curve in ``candidates_first``.
 
     Returns:
         list: List of all :class:`.Intersection`s (possibly empty).
@@ -1071,11 +1071,11 @@ def all_intersections(candidates_left, candidates_right):
     """
     # First make sure any curves that are linear / near-linear are
     # linearized (to avoid unnecessary checks, e.g. bbox intersect check).
-    linearized_left = six.moves.map(
-        Linearization.from_shape, candidates_left)
-    linearized_right = six.moves.map(
-        Linearization.from_shape, candidates_right)
-    candidates = itertools.product(linearized_left, linearized_right)
+    linearized_first = six.moves.map(
+        Linearization.from_shape, candidates_first)
+    linearized_second = six.moves.map(
+        Linearization.from_shape, candidates_second)
+    candidates = itertools.product(linearized_first, linearized_second)
 
     intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
@@ -1088,7 +1088,7 @@ def all_intersections(candidates_left, candidates_right):
         # no more intersections to find.
         if not candidates:
             patch_intersections(
-                candidates_left, candidates_right, intersections)
+                candidates_first, candidates_second, intersections)
             return intersections
 
     msg = _NO_CONVERGE_TEMPLATE.format(_MAX_INTERSECT_SUBDIVISIONS)
