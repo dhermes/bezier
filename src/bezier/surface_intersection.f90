@@ -300,10 +300,10 @@ contains
        ! NOTE: We "exclude" this block from ``lcov`` because it can never
        !       be invoked while ``MAX_LOCATE_SUBDIVISIONS`` is even.
        s_approx = ( &
-            sum(candidates_odd(:num_candidates)%centroid_x) / &
+            sum(candidates_odd(:num_candidates)%centroid_x) / &  ! LCOV_EXCL_LINE
             (3.0_dp * num_candidates))  ! LCOV_EXCL_LINE
        t_approx = ( &
-            sum(candidates_odd(:num_candidates)%centroid_y) / &
+            sum(candidates_odd(:num_candidates)%centroid_y) / &  ! LCOV_EXCL_LINE
             (3.0_dp * num_candidates))  ! LCOV_EXCL_LINE
     else
        s_approx = ( &

@@ -533,9 +533,9 @@ contains
     if (is_even) then
        ! NOTE: We "exclude" this block from ``lcov`` because it can never
        !       be invoked while ``MAX_LOCATE_SUBDIVISIONS`` is even.
-       s_params(:num_candidates) = ( &
+       s_params(:num_candidates) = ( &  ! LCOV_EXCL_LINE
             candidates_odd(:num_candidates)%start)  ! LCOV_EXCL_LINE
-       s_params(num_candidates + 1:) = ( &
+       s_params(num_candidates + 1:) = ( &  ! LCOV_EXCL_LINE
             candidates_odd(:num_candidates)%end_)  ! LCOV_EXCL_LINE
     else
        s_params(:num_candidates) = candidates_even(:num_candidates)%start
@@ -567,7 +567,7 @@ contains
     integer(c_int) :: i
 
     elevated(1, :) = nodes(1, :)
-    forall (i = 1:num_nodes)
+    forall (i = 1:num_nodes - 1)
        elevated(i + 1, :) = ( &
             i * nodes(i, :) + (num_nodes - i) * nodes(i + 1, :)) / num_nodes
     end forall

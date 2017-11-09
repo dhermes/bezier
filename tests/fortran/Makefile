@@ -6,7 +6,7 @@ FC = gfortran
 F77 = .f
 F90 = .f90
 OBJ = .o
-FCFLAGS = -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0
+FCFLAGS = -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic
 FC77FLAGS = -fPIC -O0
 COV_FLAGS = -fprofile-arcs -ftest-coverage
 
