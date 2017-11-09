@@ -47,7 +47,7 @@ contains
     real(c_double) :: vec1(1, 2)
     real(c_double) :: result_
     integer :: case_id
-    character(:), allocatable :: name
+    character(13) :: name
 
     case_id = 1
     name = "cross_product"
@@ -68,7 +68,7 @@ contains
     real(c_double) :: nodes(6, 2)
     real(c_double) :: left, right, bottom, top
     integer :: case_id
-    character(:), allocatable :: name
+    character(4) :: name
 
     case_id = 1
     name = "bbox"
@@ -107,7 +107,7 @@ contains
          wiggle_success1, wiggle_success2, wiggle_success3, &
          wiggle_success4, wiggle_success5
     integer :: case_id
-    character(:), allocatable :: name
+    character(15) :: name
 
     case_id = 1
     name = "wiggle_interval"
@@ -229,7 +229,7 @@ contains
     real(c_double) :: point1(2), point2(3), point3(4)
     logical(c_bool) :: is_contained
     integer :: case_id
-    character(:), allocatable :: name
+    character(11) :: name
 
     case_id = 1
     name = "contains_nd"
@@ -270,7 +270,7 @@ contains
     real(c_double) :: vec2(1, 2)
     logical(c_bool) :: is_close
     integer :: case_id
-    character(:), allocatable :: name
+    character(12) :: name
 
     eps = 0.5_dp**40
     case_id = 1
@@ -325,7 +325,7 @@ contains
     logical :: case_success
     logical(c_bool) :: is_inside
     integer :: case_id
-    character(:), allocatable :: name
+    character(11) :: name
 
     case_id = 1
     name = "in_interval"
@@ -359,7 +359,7 @@ contains
     real(c_double) :: eps, value1, value2
     logical(c_bool) :: is_near
     integer :: case_id
-    character(:), allocatable :: name
+    character(9) :: name
 
     eps = 0.5_dp**40
     case_id = 1

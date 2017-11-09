@@ -6,7 +6,8 @@ FC = gfortran
 F77 = .f
 F90 = .f90
 OBJ = .o
-FCFLAGS = -fPIC -fmax-errors=1 -std=f2008 -O0
+FCFLAGS = -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0
+FC77FLAGS = -fPIC -O0
 COV_FLAGS = -fprofile-arcs -ftest-coverage
 
 ifdef BRANCH_COVERAGE
@@ -46,7 +47,7 @@ test: $(CURR_DIR)/test-bin
 	$(CURR_DIR)/test-bin
 
 $(CURR_DIR)/%$(OBJ): $(QUADPACK_DIR)/%$(F77)
-	$(FC) $(FCFLAGS) -c $< -o $@
+	$(FC) $(FC77FLAGS) -c $< -o $@
 
 $(CURR_DIR)/%$(OBJ): $(SRC_DIR)/%$(F90)
 	$(FC) $(FCFLAGS) $(COV_FLAGS) -c $< -o $@

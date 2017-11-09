@@ -62,7 +62,7 @@ contains
     real(c_double) :: lambda1(3), lambda2(3)
     real(c_double) :: evaluated(3, 3), expected(3, 3)
     integer :: case_id
-    character(:), allocatable :: name
+    character(26) :: name
 
     case_id = 1
     name = "evaluate_curve_barycentric"
@@ -95,7 +95,7 @@ contains
     real(c_double) :: evaluated2(65, 2), expected2(65, 2)
     integer :: i
     integer :: case_id
-    character(:), allocatable :: name
+    character(14) :: name
 
     case_id = 1
     name = "evaluate_multi"
@@ -144,7 +144,7 @@ contains
     real(c_double) :: nodes3(4, 2), new_nodes3(4, 2), expected3(4, 2)
     real(c_double) :: nodes4(5, 2), new_nodes4(5, 2), expected4(5, 2)
     integer :: case_id
-    character(:), allocatable :: name
+    character(16) :: name
 
     case_id = 1
     name = "specialize_curve"
@@ -232,7 +232,7 @@ contains
     real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(4, 2)
     integer :: i
     integer :: case_id
-    character(:), allocatable :: name
+    character(18) :: name
 
     case_id = 1
     name = "evaluate_hodograph"
@@ -309,7 +309,7 @@ contains
     real(c_double) :: nodes3(4, 2), l_expected3(4, 2), r_expected3(4, 2)
     real(c_double) :: left_nodes3(4, 2), right_nodes3(4, 2)
     integer :: case_id
-    character(:), allocatable :: name
+    character(23) :: name
 
     case_id = 1
     name = "subdivide_nodes (Curve)"
@@ -441,7 +441,7 @@ contains
     real(c_double) :: point(1, 3)
     real(c_double) :: new_s
     integer :: case_id
-    character(:), allocatable :: name
+    character(13) :: name
 
     case_id = 1
     name = "newton_refine"
@@ -469,7 +469,7 @@ contains
     real(c_double) :: nodes3(4, 2), point3(1, 2)
     real(c_double) :: s_val
     integer :: case_id
-    character(:), allocatable :: name
+    character(20) :: name
 
     case_id = 1
     name = "locate_point (Curve)"
@@ -517,7 +517,7 @@ contains
     real(c_double) :: nodes1(2, 2), elevated1(3, 2), expected1(3, 2)
     real(c_double) :: nodes2(3, 3), elevated2(4, 3), expected2(4, 3)
     integer :: case_id
-    character(:), allocatable :: name
+    character(13) :: name
 
     case_id = 1
     name = "elevate_nodes"
@@ -555,7 +555,7 @@ contains
     real(c_double) :: nodes1(2, 2), nodes2(3, 2)
     real(c_double) :: s_val, tangent_vec(1, 2), curvature
     integer :: case_id
-    character(:), allocatable :: name
+    character(13) :: name
 
     case_id = 1
     name = "get_curvature"
@@ -609,7 +609,7 @@ contains
     real(c_double) :: reduced5(4, 4), expected5(4, 4)
     real(c_double) :: nodes6(6, 2), reduced6(5, 2)
     integer :: case_id
-    character(:), allocatable :: name
+    character(21) :: name
 
     case_id = 1
     name = "reduce_pseudo_inverse"
@@ -724,13 +724,13 @@ contains
     logical :: case_success
     real(c_double) :: nodes1(2, 1), expected1(2, 1), reduced1(2, 1)
     real(c_double) :: nodes2(4, 2), expected2(4, 2), reduced2(4, 2)
-    real(c_double) :: nodes3(6, 2), expected3(6, 2), reduced3(6, 2)
+    real(c_double) :: nodes3(6, 2), reduced3(6, 2)
     real(c_double) :: nodes4(1, 2), expected4(1, 2), reduced4(1, 2)
     real(c_double) :: nodes5(5, 2), expected5(5, 2), reduced5(5, 2)
     integer(c_int) :: num_reduced_nodes
     logical(c_bool) :: not_implemented
     integer :: case_id
-    character(:), allocatable :: name
+    character(11) :: name
 
     case_id = 1
     name = "full_reduce"
@@ -859,7 +859,7 @@ contains
     real(c_double) :: length, expected
     integer(c_int) :: error_val
     integer :: case_id
-    character(:), allocatable :: name
+    character(14) :: name
 
     case_id = 1
     name = "compute_length"
@@ -912,7 +912,7 @@ contains
     type(CurveData) :: &
          curve1, curve2, curve3, curve4, curve5, curve6, &
          curve7, curve8, curve9
-    character(:), allocatable :: name
+    character(12) :: name
 
     case_id = 1
     name = "curves_equal"
@@ -1025,7 +1025,7 @@ contains
     integer :: case_id
     type(CurveData) :: curve_data, left1, left2, right
     real(c_double) :: left_nodes(4, 2), right_nodes(4, 2)
-    character(:), allocatable :: name
+    character(15) :: name
 
     case_id = 1
     name = "subdivide_curve"

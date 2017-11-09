@@ -46,7 +46,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    character(:), allocatable :: name
+    character(23) :: name
     real(c_double) :: nodes(6, 2)
     real(c_double) :: updated_s, updated_t
 
@@ -99,10 +99,9 @@ contains
     logical :: case_success
     integer :: case_id
     real(c_double), allocatable :: nodes(:, :)
-    integer(c_int) :: degree
     real(c_double) :: x_val, y_val, s_val, t_val
     real(c_double) :: expected_s, expected_t
-    character(:), allocatable :: name
+    character(23) :: name
 
     case_id = 1
     name = "newton_refine (Surface)"
@@ -161,7 +160,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    character(:), allocatable :: name
+    character(21) :: name
     type(Intersection) :: intersection_
     type(CurveData) :: edges_first(3), edges_second(3)
     real(c_double) :: nodes1(2, 2), nodes2(3, 2)

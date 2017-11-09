@@ -55,7 +55,7 @@ contains
     real(c_double) :: expected1(1, 2), expected2(3, 2), expected3(6, 2)
     real(c_double) :: lambda1, lambda2, lambda3
     integer :: case_id
-    character(:), allocatable :: name
+    character(22) :: name
 
     case_id = 1
     name = "de_casteljau_one_round"
@@ -157,7 +157,7 @@ contains
     real(c_double) :: lambda1, lambda2, lambda3
     integer :: index_, i, j, k, trinomial
     integer :: case_id
-    character(:), allocatable :: name
+    character(20) :: name
 
     case_id = 1
     name = "evaluate_barycentric"
@@ -274,7 +274,7 @@ contains
     real(c_double) :: nodes_deg0(1, 2)
     integer :: i
     integer :: case_id
-    character(:), allocatable :: name
+    character(26) :: name
 
     case_id = 1
     name = "evaluate_barycentric_multi"
@@ -336,7 +336,7 @@ contains
     real(c_double) :: evaluated3(16, 3), expected3(16, 3)
     integer :: i
     integer :: case_id
-    character(:), allocatable :: name
+    character(24) :: name
 
     case_id = 1
     name = "evaluate_cartesian_multi"
@@ -396,7 +396,7 @@ contains
     real(c_double) :: nodes2(6, 3), expected2(3, 6), new_nodes2(3, 6)
     real(c_double) :: nodes3(10, 2), expected3(6, 4), new_nodes3(6, 4)
     integer :: case_id
-    character(:), allocatable :: name
+    character(13) :: name
 
     case_id = 1
     name = "jacobian_both"
@@ -488,7 +488,7 @@ contains
     real(c_double) :: nodes2(6, 2), param_vals2(4, 2)
     real(c_double) :: expected2(4), evaluated2(4)
     integer :: case_id
-    character(:), allocatable :: name
+    character(12) :: name
 
     case_id = 1
     name = "jacobian_det"
@@ -534,7 +534,7 @@ contains
     real(c_double) :: &
          weights0(3), weights1(3), weights2(3), weights3(3), &
          weights4(3), weights5(3)
-    character(:), allocatable :: name
+    character(18) :: name
 
     case_id = 1
     name = "specialize_surface"
@@ -859,7 +859,7 @@ contains
     real(c_double) :: expected_a3(10, 2), expected_b3(10, 2)
     real(c_double) :: expected_c3(10, 2), expected_d3(10, 2)
     integer :: case_id
-    character(:), allocatable :: name
+    character(25) :: name
 
     case_id = 1
     name = "subdivide_nodes (Surface)"
@@ -1100,7 +1100,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    character(:), allocatable :: name
+    character(18) :: name
     real(c_double), allocatable :: nodes(:, :)
     real(c_double), allocatable :: nodes1(:, :), nodes2(:, :), nodes3(:, :)
 

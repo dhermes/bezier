@@ -73,7 +73,7 @@ contains
     real(c_double) :: left_nodes2(3, 2), right_nodes2(3, 2)
     real(c_double) :: error1, error2, expected
     integer :: case_id
-    character(:), allocatable :: name
+    character(19) :: name
 
     case_id = 1
     name = "linearization_error"
@@ -235,7 +235,7 @@ contains
     real(c_double) :: s, t
     logical(c_bool) :: si_success
     integer :: case_id
-    character(:), allocatable :: name
+    character(20) :: name
 
     case_id = 1
     name = "segment_intersection"
@@ -274,7 +274,7 @@ contains
     real(c_double) :: new_s, new_t
     integer :: i
     integer :: case_id
-    character(:), allocatable :: name
+    character(23) :: name
 
     case_id = 1
     name = "newton_refine_intersect"
@@ -410,7 +410,6 @@ contains
     real(c_double), intent(in) :: s, t
     logical(c_bool) :: predicate
     ! Variables outside of signature.
-    logical :: case_success
     real(c_double) :: point1(1, 2), point2(1, 2)
 
     call evaluate_multi( &
@@ -428,7 +427,7 @@ contains
     real(c_double) :: unit_square(4, 2), other(4, 2), delta
     integer(c_int) :: enum_, i
     integer :: case_id
-    character(:), allocatable :: name
+    character(14) :: name
 
     case_id = 1
     name = "bbox_intersect"
@@ -493,7 +492,7 @@ contains
     real(c_double) :: start0(1, 2), end0(1, 2)
     real(c_double) :: start1(1, 2), end1(1, 2)
     integer :: case_id
-    character(:), allocatable :: name
+    character(18) :: name
 
     case_id = 1
     name = "parallel_different"
@@ -565,7 +564,7 @@ contains
     logical(c_bool) :: does_intersect
     integer(c_int) :: py_exc
     integer :: case_id
-    character(:), allocatable :: name
+    character(15) :: name
 
     case_id = 1
     name = "from_linearized"
@@ -753,7 +752,7 @@ contains
     real(c_double) :: line_start(1, 2), line_end(1, 2)
     integer(c_int) :: enum_
     integer :: case_id
-    character(:), allocatable :: name
+    character(19) :: name
 
     case_id = 1
     name = "bbox_line_intersect"
@@ -819,7 +818,7 @@ contains
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
-    character(:), allocatable :: name
+    character(16) :: name
 
     case_id = 1
     name = "add_intersection"
@@ -907,7 +906,7 @@ contains
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
-    character(:), allocatable :: name
+    character(19) :: name
 
     case_id = 1
     name = "add_from_linearized"
@@ -1034,7 +1033,7 @@ contains
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
-    character(:), allocatable :: name
+    character(14) :: name
 
     case_id = 1
     name = "endpoint_check"
@@ -1125,7 +1124,7 @@ contains
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
-    character(:), allocatable :: name
+    character(25) :: name
 
     case_id = 1
     name = "tangent_bbox_intersection"
@@ -1203,7 +1202,7 @@ contains
     type(CurveData) :: right1, left3, right3
     integer(c_int) :: num_candidates
     integer :: case_id
-    character(:), allocatable :: name
+    character(14) :: name
 
     case_id = 1
     name = "add_candidates"
@@ -1323,7 +1322,7 @@ contains
     integer(c_int) :: py_exc
     type(CurveData) :: left1, right1, left2, right2
     integer :: case_id
-    character(:), allocatable :: name
+    character(19) :: name
 
     case_id = 1
     name = "intersect_one_round"
@@ -1552,9 +1551,9 @@ contains
     real(c_double) :: nodes1(2, 2), nodes2(3, 2)
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
-    integer(c_int) :: status, index_
+    integer(c_int) :: status
     integer :: case_id
-    character(:), allocatable :: name
+    character(17) :: name
 
     case_id = 1
     name = "all_intersections"
