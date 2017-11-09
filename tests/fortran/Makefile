@@ -6,7 +6,7 @@ FC = gfortran
 F77 = .f
 F90 = .f90
 OBJ = .o
-FCFLAGS = -fPIC -O0
+FCFLAGS = -fPIC -fmax-errors=1 -std=f2008 -O0
 COV_FLAGS = -fprofile-arcs -ftest-coverage
 
 ifdef BRANCH_COVERAGE

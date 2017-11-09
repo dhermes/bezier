@@ -29,7 +29,7 @@ program test
   call curve_intersection_all_tests(success)
   call surface_intersection_all_tests(success)
   if (.NOT. success) then
-     call exit(1)  ! LCOV_EXCL_LINE
+     stop 1  ! LCOV_EXCL_LINE
   end if
 
 end program test
