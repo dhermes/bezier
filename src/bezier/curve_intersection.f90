@@ -504,7 +504,8 @@ contains
   end subroutine add_intersection
 
   subroutine add_from_linearized( &
-       first, root_nodes1, second, root_nodes2, &
+       first, root_nodes1, linearization_error1, &
+       second, root_nodes2, linearization_error2, &
        num_intersections, intersections, py_exc)
 
     ! Adds an intersection from two linearizations.
@@ -513,25 +514,20 @@ contains
 
     type(CurveData), intent(in) :: first
     real(c_double), intent(in) :: root_nodes1(:, :)
+    real(c_double), intent(in) :: linearization_error1
     type(CurveData), intent(in) :: second
     real(c_double), intent(in) :: root_nodes2(:, :)
+    real(c_double), intent(in) :: linearization_error2
     integer(c_int), intent(inout) :: num_intersections
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
     integer(c_int), intent(out) :: py_exc
     ! Variables outside of signature.
-    real(c_double) :: linearization_error1, linearization_error2
     integer(c_int) :: num_nodes1, num_nodes2
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
 
     num_nodes1 = size(first%nodes, 1)
     num_nodes2 = size(second%nodes, 1)
-
-    ! NOTE: This assumes, but does not check, that ``dimension_ == 2``.
-    call linearization_error( &
-         num_nodes1, 2, first%nodes, linearization_error1)
-    call linearization_error( &
-         num_nodes2, 2, second%nodes, linearization_error2)
 
     ! NOTE: It doesn't make sense to pass ``start_nodeX`` and ``end_nodeX``
     !       but for now we do it for Python compatibility reasons.
@@ -738,7 +734,8 @@ contains
              ! we can (attempt to) intersect them immediately.
              subdivide_enum = Subdivide_NEITHER
              call add_from_linearized( &
-                  first, root_nodes_first, second, root_nodes_second, &
+                  first, root_nodes_first, linearization_error1, &
+                  second, root_nodes_second, linearization_error2, &
                   num_intersections, intersections, py_exc)
 
              ! If there was a failure, exit this subroutine.

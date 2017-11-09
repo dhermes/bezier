@@ -905,6 +905,7 @@ contains
     type(CurveData) :: first, second
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
+    real(c_double) :: linearization_error1, linearization_error2
     integer :: case_id
     character(19) :: name
 
@@ -926,7 +927,8 @@ contains
     second%nodes = nodes1
 
     call add_from_linearized( &
-         first, first%nodes, second, second%nodes, &
+         first, first%nodes, 0.0_dp, &
+         second, second%nodes, 0.0_dp, &
          num_intersections, intersections, py_exc)
     case_success = ( &
          allocated(intersections) .AND. &
@@ -952,7 +954,8 @@ contains
     second%nodes = nodes1
 
     call add_from_linearized( &
-         first, first%nodes, second, second%nodes, &
+         first, first%nodes, 0.0_dp, &
+         second, second%nodes, 0.0_dp, &
          num_intersections, intersections, py_exc)
     case_success = ( &
          num_intersections == 0 .AND. &
@@ -986,8 +989,13 @@ contains
     nodes2(3, :) = [134234112.0_dp, 201310207.0_dp]
     second%nodes = 0.5_dp**28 * nodes2
 
+    call linearization_error( &
+         3, 2, first%nodes, linearization_error1)
+    call linearization_error( &
+         3, 2, second%nodes, linearization_error2)
     call add_from_linearized( &
-         first, root_nodes1, second, root_nodes2, &
+         first, root_nodes1, linearization_error1, &
+         second, root_nodes2, linearization_error2, &
          num_intersections, intersections, py_exc)
     case_success = ( &
          allocated(intersections) .AND. &
@@ -1013,7 +1021,8 @@ contains
     second%nodes = nodes1
 
     call add_from_linearized( &
-         first, first%nodes, second, second%nodes, &
+         first, first%nodes, 0.0_dp, &
+         second, second%nodes, 0.0_dp, &
          num_intersections, intersections, py_exc)
     case_success = ( &
          num_intersections == 0 .AND. &
