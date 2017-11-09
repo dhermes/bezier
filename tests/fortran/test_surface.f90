@@ -833,7 +833,7 @@ contains
     expected(12, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 8, 4]
     expected(13, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8]
     expected(14, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8]
-    expected(15, :) = 0.0625_dp * [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16]
+    expected(15, :) = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
     case_success = all(specialized == expected)
     call print_status(name, case_id, case_success, success)
 

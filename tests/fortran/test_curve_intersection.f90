@@ -1313,7 +1313,7 @@ contains
     real(c_double) :: fixed_quadratic1(3, 2), fixed_quadratic2(3, 2)
     real(c_double) :: fixed_line1(2, 2), fixed_line2(2, 2)
     integer(c_int) :: num_candidates
-    type(CurveData) :: root_left, root_right
+    type(CurveData) :: root_first, root_second
     type(CurveData), allocatable :: candidates(:, :)
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
@@ -1350,15 +1350,15 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve.
     candidates(1, 1)%nodes = fixed_quadratic1
-    root_left = candidates(1, 1)
+    root_first = candidates(1, 1)
     call subdivide_curve(candidates(1, 1), left1, right1)
     ! Populate the "second" curve.
     candidates(2, 1)%nodes = fixed_quadratic2
-    root_right = candidates(2, 1)
+    root_second = candidates(2, 1)
     call subdivide_curve(candidates(2, 1), left2, right2)
 
     call intersect_one_round( &
-         root_left, root_right, num_candidates, candidates, &
+         root_first, root_second, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1383,14 +1383,14 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
-    root_left = candidates(1, 1)
+    root_first = candidates(1, 1)
     ! Populate the "second" curve.
     candidates(2, 1)%nodes = fixed_quadratic2
-    root_right = candidates(2, 1)
+    root_second = candidates(2, 1)
     call subdivide_curve(candidates(2, 1), left2, right2)
 
     call intersect_one_round( &
-         root_left, root_right, num_candidates, candidates, &
+         root_first, root_second, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1411,14 +1411,14 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve.
     candidates(1, 1)%nodes = fixed_quadratic1
-    root_left = candidates(1, 1)
+    root_first = candidates(1, 1)
     call subdivide_curve(candidates(1, 1), left1, right1)
     ! Populate the "second" curve with a line.
     candidates(2, 1)%nodes = fixed_line2
-    root_right = candidates(2, 1)
+    root_second = candidates(2, 1)
 
     call intersect_one_round( &
-         root_left, root_right, num_candidates, candidates, &
+         root_first, root_second, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1439,13 +1439,13 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
-    root_left = candidates(1, 1)
+    root_first = candidates(1, 1)
     ! Populate the "second" curve with a line.
     candidates(2, 1)%nodes = fixed_line2
-    root_right = candidates(2, 1)
+    root_second = candidates(2, 1)
 
     call intersect_one_round( &
-         root_left, root_right, num_candidates, candidates, &
+         root_first, root_second, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1465,15 +1465,15 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_line1
-    root_left = candidates(1, 1)
+    root_first = candidates(1, 1)
     ! Populate the "second" curve with a line.
     allocate(candidates(2, 1)%nodes(2, 2))
     candidates(2, 1)%nodes(1, :) = [0.5_dp, 0.5_dp]
     candidates(2, 1)%nodes(2, :) = [3.0_dp, 3.0_dp]
-    root_right = candidates(2, 1)
+    root_second = candidates(2, 1)
 
     call intersect_one_round( &
-         root_left, root_right, num_candidates, candidates, &
+         root_first, root_second, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1488,15 +1488,15 @@ contains
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve with a line.
     candidates(1, 1)%nodes = fixed_quadratic1
-    root_left = candidates(1, 1)
+    root_first = candidates(1, 1)
     ! Populate the "second" curve with a line.
     allocate(candidates(2, 1)%nodes(2, 2))
     candidates(2, 1)%nodes(1, :) = [1.0_dp, 1.25_dp]
     candidates(2, 1)%nodes(2, :) = [0.0_dp, 2.0_dp]
-    root_right = candidates(2, 1)
+    root_second = candidates(2, 1)
 
     call intersect_one_round( &
-         root_left, root_right, num_candidates, candidates, &
+         root_first, root_second, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1517,7 +1517,7 @@ contains
     candidates(1, 1)%nodes(1, :) = [0.0_dp, 0.0_dp]
     candidates(1, 1)%nodes(2, :) = [0.5_dp, 1.0_dp]
     candidates(1, 1)%nodes(3, :) = [1.0_dp, 0.0_dp]
-    root_left = candidates(1, 1)
+    root_first = candidates(1, 1)
     ! [0 <= x <= 1.0], [0.0 <= y <= 1.0]
     ! Populate the "second" curve.
     allocate(candidates(2, 1)%nodes(3, 2))
@@ -1525,10 +1525,10 @@ contains
     candidates(2, 1)%nodes(2, :) = [1.5_dp, 0.5_dp]
     candidates(2, 1)%nodes(3, :) = [2.0_dp, -0.25_dp]
     ! [1.0 <= x <= 2.0], [-0.25 <= y <= 0.5]
-    root_right = candidates(2, 1)
+    root_second = candidates(2, 1)
 
     call intersect_one_round( &
-         root_left, root_right, num_candidates, candidates, &
+         root_first, root_second, num_candidates, candidates, &
          num_intersections, intersections, &
          next_candidates, num_next_candidates, py_exc)
     case_success = ( &
@@ -1547,7 +1547,7 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    type(CurveData) :: candidate_left, candidate_right
+    type(CurveData) :: candidate_first, candidate_second
     real(c_double) :: nodes1(2, 2), nodes2(3, 2)
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
@@ -1561,14 +1561,14 @@ contains
     ! CASE 1: No intersections.
     nodes1(1, :) = 0
     nodes1(2, :) = 1
-    candidate_left%nodes = nodes1
+    candidate_first%nodes = nodes1
 
     nodes1(1, :) = [3.0_dp, 3.0_dp]
     nodes1(2, :) = [4.0_dp, 3.0_dp]
-    candidate_right%nodes = nodes1
+    candidate_second%nodes = nodes1
 
     call all_intersections( &
-         candidate_left, candidate_right, &
+         candidate_first, candidate_second, &
          num_intersections, intersections, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
@@ -1585,15 +1585,15 @@ contains
     nodes2(1, :) = [0.25_dp, 0.4375_dp]
     nodes2(2, :) = [0.625_dp, 1.0_dp]
     nodes2(3, :) = 1
-    candidate_left%nodes = nodes2
+    candidate_first%nodes = nodes2
 
     nodes2(1, :) = [0.0_dp, 1.0_dp]
     nodes2(2, :) = [0.375_dp, 1.0_dp]
     nodes2(3, :) = [0.75_dp, 0.4375_dp]
-    candidate_right%nodes = nodes2
+    candidate_second%nodes = nodes2
 
     call all_intersections( &
-         candidate_left, candidate_right, &
+         candidate_first, candidate_second, &
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
@@ -1608,15 +1608,15 @@ contains
     nodes2(1, :) = 0
     nodes2(2, :) = [0.375_dp, 0.75_dp]
     nodes2(3, :) = [0.75_dp, 0.375_dp]
-    candidate_left%nodes = nodes2
+    candidate_first%nodes = nodes2
 
     nodes2(1, :) = [0.25_dp, 0.625_dp]
     nodes2(2, :) = [0.625_dp, 0.25_dp]
     nodes2(3, :) = 1
-    candidate_right%nodes = nodes2
+    candidate_second%nodes = nodes2
 
     call all_intersections( &
-         candidate_left, candidate_right, &
+         candidate_first, candidate_second, &
          num_intersections, intersections, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
@@ -1629,15 +1629,15 @@ contains
     nodes2(1, :) = 0
     nodes2(2, :) = [-0.5_dp, 1.5_dp]
     nodes2(3, :) = 1
-    candidate_left%nodes = nodes2
+    candidate_first%nodes = nodes2
 
     nodes2(1, :) = [-1.0_dp, 1.0_dp]
     nodes2(2, :) = 0.5_dp
     nodes2(3, :) = [0.0_dp, 2.0_dp]
-    candidate_right%nodes = nodes2
+    candidate_second%nodes = nodes2
 
     call all_intersections( &
-         candidate_left, candidate_right, &
+         candidate_first, candidate_second, &
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
@@ -1659,14 +1659,14 @@ contains
     nodes2(1, :) = 0
     nodes2(2, :) = [73728.0_dp, 147456.0_dp]
     nodes2(3, :) = [147456.0_dp, 0.0_dp]
-    candidate_left%nodes = nodes2
+    candidate_first%nodes = nodes2
 
     nodes1(1, :) = [0.0_dp, 131072.0_dp]
     nodes1(2, :) = [98304.0_dp, 0.0_dp]
-    candidate_right%nodes = nodes1
+    candidate_second%nodes = nodes1
 
     call all_intersections( &
-         candidate_left, candidate_right, &
+         candidate_first, candidate_second, &
          num_intersections, intersections, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
@@ -1679,15 +1679,15 @@ contains
     nodes2(1, :) = 0
     nodes2(2, :) = [0.5_dp, 1.0_dp]
     nodes2(3, :) = [1.0_dp, 0.0_dp]
-    candidate_left%nodes = nodes2
+    candidate_first%nodes = nodes2
 
     nodes2(1, :) = [0.0_dp, 0.75_dp]
     nodes2(2, :) = [0.5_dp, -0.25_dp]
     nodes2(3, :) = [1.0_dp, 0.75_dp]
-    candidate_right%nodes = nodes2
+    candidate_second%nodes = nodes2
 
     call all_intersections( &
-         candidate_left, candidate_right, &
+         candidate_first, candidate_second, &
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
