@@ -24,26 +24,18 @@ module curve_intersection
        MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, CANDIDATES_ODD, &
        CANDIDATES_EVEN, make_candidates
   public &
-       Intersection, BoxIntersectionType_INTERSECTION, &
-       BoxIntersectionType_TANGENT, BoxIntersectionType_DISJOINT, &
-       FROM_LINEARIZED_SUCCESS, FROM_LINEARIZED_PARALLEL, &
-       FROM_LINEARIZED_WIGGLE_FAIL, LINEARIZATION_THRESHOLD, Subdivide_FIRST, &
-       Subdivide_SECOND, Subdivide_BOTH, Subdivide_NEITHER, &
-       ALL_INTERSECTIONS_SUCCESS, ALL_INTERSECTIONS_TOO_MANY, &
-       ALL_INTERSECTIONS_NO_CONVERGE, ALL_INTERSECTIONS_OFFSET, &
-       linearization_error, segment_intersection, newton_refine_intersect, &
-       bbox_intersect, parallel_different, from_linearized, &
-       bbox_line_intersect, add_intersection, add_from_linearized, &
-       endpoint_check, tangent_bbox_intersection, add_candidates, &
-       intersect_one_round, all_intersections, free_all_intersections_workspace
-
-  ! NOTE: This (for now) is not meant to be C-interoperable.
-  type :: Intersection
-     real(c_double) :: s = -1.0_dp
-     real(c_double) :: t = -1.0_dp
-     integer(c_int) :: index_first = -1
-     integer(c_int) :: index_second = -1
-  end type Intersection
+       BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
+       BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
+       FROM_LINEARIZED_PARALLEL, FROM_LINEARIZED_WIGGLE_FAIL, &
+       LINEARIZATION_THRESHOLD, Subdivide_FIRST, Subdivide_SECOND, &
+       Subdivide_BOTH, Subdivide_NEITHER, ALL_INTERSECTIONS_SUCCESS, &
+       ALL_INTERSECTIONS_TOO_MANY, ALL_INTERSECTIONS_NO_CONVERGE, &
+       ALL_INTERSECTIONS_OFFSET, linearization_error, segment_intersection, &
+       newton_refine_intersect, bbox_intersect, parallel_different, &
+       from_linearized, bbox_line_intersect, add_intersection, &
+       add_from_linearized, endpoint_check, tangent_bbox_intersection, &
+       add_candidates, intersect_one_round, all_intersections, &
+       free_all_intersections_workspace
 
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
   integer(c_int), parameter :: BoxIntersectionType_TANGENT = 1

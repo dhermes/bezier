@@ -14,9 +14,8 @@ module test_surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use curve, only: CurveData, LOCATE_MISS
-  use curve_intersection, only: Intersection
   use surface_intersection, only: &
-       IntersectionClassification_SAME_CURVATURE, &
+       Intersection, IntersectionClassification_SAME_CURVATURE, &
        IntersectionClassification_BAD_TANGENT, &
        IntersectionClassification_EDGE_END, IntersectionClassification_FIRST, &
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &

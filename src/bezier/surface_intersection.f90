@@ -14,7 +14,6 @@ module surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
-  use curve_intersection, only: Intersection
   use helpers, only: cross_product, contains_nd, vector_close
   use types, only: dp
   use surface, only: evaluate_barycentric, jacobian_both, subdivide_nodes
@@ -25,7 +24,7 @@ module surface_intersection
        update_candidates, ignored_edge_corner, ignored_double_corner, &
        ignored_corner, classify_tangent_intersection
   public &
-       IntersectionClassification_SAME_CURVATURE, &
+       Intersection, IntersectionClassification_SAME_CURVATURE, &
        IntersectionClassification_BAD_TANGENT, &
        IntersectionClassification_EDGE_END, IntersectionClassification_FIRST, &
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
@@ -33,6 +32,14 @@ module surface_intersection
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, newton_refine, &
        locate_point, classify_intersection
+
+  ! NOTE: This (for now) is not meant to be C-interoperable.
+  type :: Intersection
+     real(c_double) :: s = -1.0_dp
+     real(c_double) :: t = -1.0_dp
+     integer(c_int) :: index_first = -1
+     integer(c_int) :: index_second = -1
+  end type Intersection
 
   ! For ``locate_point``.
   type :: LocateCandidate
