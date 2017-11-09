@@ -17,7 +17,7 @@ module curve
   use helpers, only: cross_product, contains_nd
   implicit none
   private &
-       LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
+       MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
        SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse, &
        specialize_curve_generic, specialize_curve_quadratic, &
        subdivide_nodes_generic, split_candidate, allocate_candidates, &
@@ -40,13 +40,6 @@ module curve
      real(c_double) :: end_ = 1.0_dp
      real(c_double), allocatable :: nodes(:, :)
   end type CurveData
-
-  ! For ``locate_point``.
-  type :: LocateCandidate
-     real(c_double) :: start = 0.0_dp
-     real(c_double) :: end_ = 1.0_dp
-     real(c_double), allocatable :: nodes(:, :)
-  end type LocateCandidate
 
   ! NOTE: These values are also defined in equivalent Python source.
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
@@ -395,9 +388,9 @@ contains
        num_nodes, dimension_, candidate, num_next_candidates, next_candidates)
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    type(LocateCandidate), intent(in) :: candidate
+    type(CurveData), intent(in) :: candidate
     integer(c_int), intent(in) :: num_next_candidates
-    type(LocateCandidate), intent(inout) :: next_candidates(:)
+    type(CurveData), intent(inout) :: next_candidates(:)
 
     ! Allocate the new nodes and call sub-divide.
     ! NOTE: This **assumes** but does not check that if the nodes are
@@ -427,7 +420,7 @@ contains
 
   subroutine allocate_candidates(num_candidates, next_candidates)
     integer(c_int), intent(in) :: num_candidates
-    type(LocateCandidate), allocatable, intent(inout) :: next_candidates(:)
+    type(CurveData), allocatable, intent(inout) :: next_candidates(:)
 
     if (allocated(next_candidates)) then
        if (size(next_candidates) < 2 * num_candidates) then
@@ -447,9 +440,9 @@ contains
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: point(1, dimension_)
     integer(c_int), intent(in) :: num_candidates
-    type(LocateCandidate), intent(in) :: candidates(:)
+    type(CurveData), intent(in) :: candidates(:)
     integer(c_int), intent(inout) :: num_next_candidates
-    type(LocateCandidate), allocatable, intent(inout) :: next_candidates(:)
+    type(CurveData), allocatable, intent(inout) :: next_candidates(:)
     ! Variables outside of signature.
     integer(c_int) :: cand_index
     logical(c_bool) :: predicate
@@ -487,14 +480,14 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: sub_index
     integer(c_int) :: num_candidates, num_next_candidates
-    type(LocateCandidate), allocatable :: candidates_odd(:), candidates_even(:)
+    type(CurveData), allocatable :: candidates_odd(:), candidates_even(:)
     real(c_double), allocatable :: s_params(:)
     real(c_double) :: std_dev
     logical(c_bool) :: is_even
 
     ! Start out with the full curve.
     allocate(candidates_odd(1))  ! First iteration is odd.
-    candidates_odd(1) = LocateCandidate(0.0_dp, 1.0_dp, nodes)
+    candidates_odd(1) = CurveData(0.0_dp, 1.0_dp, nodes)
     ! NOTE: `num_candidates` will be tracked separately
     !       from `size(candidates)`.
     num_candidates = 1
