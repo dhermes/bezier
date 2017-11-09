@@ -65,7 +65,7 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes(6, 2)
+    real(c_double) :: nodes1(2, 2), nodes2(6, 2)
     real(c_double) :: left, right, bottom, top
     integer :: case_id
     character(4) :: name
@@ -74,22 +74,22 @@ contains
     name = "bbox"
 
     ! CASE 1: Simple case (just two nodes).
-    nodes(1, :) = [0.0_dp, 5.0_dp]
-    nodes(2, :) = [1.0_dp, 3.0_dp]
-    call bbox(2, nodes(:2, :), left, right, bottom, top)
+    nodes1(1, :) = [0.0_dp, 5.0_dp]
+    nodes1(2, :) = [1.0_dp, 3.0_dp]
+    call bbox(2, nodes1, left, right, bottom, top)
     case_success = ( &
          left == 0.0_dp .AND. right == 1.0_dp &
          .AND. bottom == 3.0_dp .AND. top == 5.0_dp)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: "Many" nodes.
-    nodes(1, :) = [1.0_dp, 0.0_dp]
-    nodes(2, :) = [2.0_dp, 1.0_dp]
-    nodes(3, :) = [-1.0_dp, 2.0_dp]
-    nodes(4, :) = [5.0_dp, -3.0_dp]
-    nodes(5, :) = [4.0_dp, 4.0_dp]
-    nodes(6, :) = [0.0_dp, 0.0_dp]
-    call bbox(6, nodes, left, right, bottom, top)
+    nodes2(1, :) = [1.0_dp, 0.0_dp]
+    nodes2(2, :) = [2.0_dp, 1.0_dp]
+    nodes2(3, :) = [-1.0_dp, 2.0_dp]
+    nodes2(4, :) = [5.0_dp, -3.0_dp]
+    nodes2(5, :) = [4.0_dp, 4.0_dp]
+    nodes2(6, :) = [0.0_dp, 0.0_dp]
+    call bbox(6, nodes2, left, right, bottom, top)
     case_success = ( &
          left == -1.0_dp .AND. right == 5.0_dp &
          .AND. bottom == -3.0_dp .AND. top == 4.0_dp)
