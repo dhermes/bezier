@@ -51,10 +51,10 @@ WIGGLES = {
 }
 FAILED_CASES_TANGENT = {
     GEOMETRIC: {
-        7: {'too_many': 74},
+        7: {'too_many': 66},
         10: {'parallel': True},
-        11: {'too_many': 80},
-        12: {'too_many': 80},
+        11: {'too_many': 78},
+        12: {'too_many': 76},
         21: {'bad_tangent': True},
     },
     ALGEBRAIC: {
@@ -70,7 +70,7 @@ FAILED_CASES_TANGENT = {
 }
 FAILED_CASES_COINCIDENT = {
     GEOMETRIC: {
-        4: {'too_many': 104},
+        4: {'too_many': 96},
         5: {'parallel': True},
     },
     ALGEBRAIC: {

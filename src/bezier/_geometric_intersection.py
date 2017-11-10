@@ -744,31 +744,28 @@ def from_linearized(first, second, intersections):
         second.end_node, orig_second._nodes)
     # pylint: enable=protected-access
     if success:
-        intersection = _intersection_helpers.Intersection(
-            orig_first, refined_s, orig_second, refined_t)
-        add_intersection(intersection, intersections)
+        add_intersection(refined_s, refined_t, intersections)
 
 
-def add_intersection(intersection, intersections):
+def add_intersection(s, t, intersections):
     """Adds an intersection to list of ``intersections``.
 
     Accounts for repeated points at curve endpoints. If the
     intersection has already been found, does nothing.
 
     Args:
-        intersection (.Intersection): A new intersection to add.
+        s (float): The first parameter in an intersection.
+        t (float): The second parameter in an intersection.
         intersections (list): List of existing intersections.
     """
-    for existing in intersections:
-        if (existing.first is intersection.first and
-                existing.second is intersection.second and
+    for existing_s, existing_t in intersections:
+        if (_helpers.ulps_away(
+                existing_s, s, num_bits=_SIMILAR_ULPS) and
                 _helpers.ulps_away(
-                    existing.s, intersection.s, num_bits=_SIMILAR_ULPS) and
-                _helpers.ulps_away(
-                    existing.t, intersection.t, num_bits=_SIMILAR_ULPS)):
+                    existing_t, t, num_bits=_SIMILAR_ULPS)):
             return
 
-    intersections.append(intersection)
+    intersections.append((s, t))
 
 
 def endpoint_check(
@@ -798,11 +795,8 @@ def endpoint_check(
         # pylint: disable=protected-access
         orig_s = (1 - s) * first._start + s * first._end
         orig_t = (1 - t) * second._start + t * second._end
-        intersection = _intersection_helpers.Intersection(
-            first._root, orig_s, second._root, orig_t,
-            point=node_first)
         # pylint: enable=protected-access
-        add_intersection(intersection, intersections)
+        add_intersection(orig_s, orig_t, intersections)
 
 
 def tangent_bbox_intersection(first, second, intersections):
@@ -1012,55 +1006,33 @@ def intersect_one_round(candidates, intersections):
     return next_candidates
 
 
-def patch_intersections(candidates_first, candidates_second, intersections):
-    """Attempt to bolt on ``index_(first|second)`` for each intersection.
-
-    Uses ``candidates_first.index()`` to determine the index of each
-    intersection within ``candidates_first`` (similar for
-    ``candidates_second``).
-
-    .. warning::
-
-       This will fail with a :class:`ValueError` if one of the curves
-       involved in an intersection is not among ``candidates_first`` (or
-       ``candidates_second```). This **should** not occur.
-
-    Args:
-        candidates_first (Sequence[.Curve]): Iterable of curves that was
-            used to intersect each curve in ``candidates_second`` when
-            creating ``intersections``.
-        candidates_second (Sequence[.Curve]): Iterable of curves that was
-            used to intersect each curve in ``candidates_first`` when
-            creating ``intersections``.
-        intersections (Iterable[.Intersection]): Iterable of intersections
-            to be modified.
-    """
-    for intersection in intersections:
-        intersection.index_first = candidates_first.index(
-            intersection.first)
-        intersection.index_second = candidates_second.index(
-            intersection.second)
-
-
-def all_intersections(candidates_first, candidates_second):
-    r"""Find the points of intersection among pairs of curves.
+def all_intersections(curve_first, curve_second):
+    r"""Find the points of intersection among a pair of curves.
 
     .. note::
 
-       This assumes all curves in a candidate pair are in
-       :math:`\mathbf{R}^2`, but does not **explicitly** check this.
-       However, functions used here will fail if that assumption
-       fails, e.g. :func:`bbox_intersect` and
-       :func:`newton_refine() <~._intersection_helpers._newton_refine>`.
+       This assumes both curves are in :math:`\mathbf{R}^2`, but does not
+       **explicitly** check this. However, functions used here will fail if
+       that assumption fails, e.g. :func:`bbox_intersect` and
+       :func:`newton_refine() <._intersection_helpers._newton_refine>`.
+
+    .. note::
+
+       For the "optimal" experience, the caller should make that that if
+       the curves are linear / near-linear, they are linearized. This will
+       avoid unnecessary checks, e.g. bbox intersect check.
 
     Args:
-        candidates_first (Sequence[.Curve]): Sequence of curves to be
-            intersected with each curve in ``candidates_second``.
-        candidates_second (Sequence[.Curve]): Sequence of curves to be
-            intersected with each curve in ``candidates_first``.
+        curve_first (Union[.Curve, .Linearization]): Curve to be intersected
+            with ``curve_second``.
+        curve_second (Union[.Curve, .Linearization]): Curve to be intersected
+            with ``curve_first``.
 
     Returns:
-        list: List of all :class:`.Intersection`s (possibly empty).
+        numpy.ndarray: ``Nx2`` array of intersection parameters.
+        Each row contains a pair of values :math:`s` and :math:`t`
+        (each in :math:`\left[0, 1\right]`) such that the curves
+        intersect: :math:`B_1(s) = B_2(t)`.
 
     Raises:
         ValueError: If the subdivision iteration does not terminate
@@ -1069,14 +1041,7 @@ def all_intersections(candidates_first, candidates_second):
             many candidate pairs. This typically indicates tangent
             curves or coincident curves.
     """
-    # First make sure any curves that are linear / near-linear are
-    # linearized (to avoid unnecessary checks, e.g. bbox intersect check).
-    linearized_first = six.moves.map(
-        Linearization.from_shape, candidates_first)
-    linearized_second = six.moves.map(
-        Linearization.from_shape, candidates_second)
-    candidates = itertools.product(linearized_first, linearized_second)
-
+    candidates = [(curve_first, curve_second)]
     intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
         candidates = intersect_one_round(candidates, intersections)
@@ -1087,9 +1052,10 @@ def all_intersections(candidates_first, candidates_second):
         # If none of the candidate pairs have been accepted, then there are
         # no more intersections to find.
         if not candidates:
-            patch_intersections(
-                candidates_first, candidates_second, intersections)
-            return intersections
+            if intersections:
+                return np.asfortranarray(intersections)
+            else:
+                return np.empty((0, 2), order='F')
 
     msg = _NO_CONVERGE_TEMPLATE.format(_MAX_INTERSECT_SUBDIVISIONS)
     raise ValueError(msg)

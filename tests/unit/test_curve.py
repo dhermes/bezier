@@ -416,17 +416,20 @@ class TestCurve(utils.NumPyTestCase):
         # incorrectly) that ``root is self``.
         left._root = left
         right._root = right
+        # Patch the start/end as well for similar reasons.
+        left._end = 1.0
+        right._start = 0.0
 
         result = left.intersect(right)
-        expected = np.asfortranarray([[0.5, -0.125]])
+        # The "right" end of ``left`` and the "left" end of ``right``.
+        expected = np.asfortranarray([[1.0, 0.0]])
         self.assertEqual(result, expected)
 
     def _intersect_helper(self, **kwargs):
         # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
         #       onto the interval [1/4, 1] and ``nodes`` is a specialization
         #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
-        #       We expect them to intersect at s = 1/3, t = 2/3, which is
-        #       the point [1/2, 3/4].
+        #       We expect them to intersect at s = 1/3, t = 2/3.
         nodes_left = np.asfortranarray([
             [0.25, 0.4375],
             [0.625, 1.0],
@@ -442,8 +445,9 @@ class TestCurve(utils.NumPyTestCase):
         right = self._make_one(nodes_right, 2)
 
         result = left.intersect(right, **kwargs)
-        expected = np.asfortranarray([[0.5, 0.75]])
-        self.assertEqual(result, expected)
+        expected = np.asfortranarray([[1.0, 2.0]]) / 3.0
+        self.assertTrue(
+            np.allclose(result, expected, atol=0.0, rtol=0.5**52))
 
     def test_intersect(self):
         self._intersect_helper()

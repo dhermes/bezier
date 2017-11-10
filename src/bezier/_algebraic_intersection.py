@@ -1358,42 +1358,29 @@ def locate_point(nodes, x_val, y_val):
         return all_roots[index]
 
 
-def all_intersections(candidates_first, candidates_second):
-    r"""Find the points of intersection among pairs of curves.
+def all_intersections(curve_first, curve_second):
+    r"""Find the points of intersection among a pair of curves.
 
     .. note::
 
-       This assumes all curves in a candidate pair are in
-       :math:`\mathbf{R}^2`, but does not **explicitly** check this.
-       However, functions used here will fail if that assumption
-       fails.
+       This assumes both curves are :math:`\mathbf{R}^2`, but does not
+       **explicitly** check this. However, functions used here will fail if
+       that assumption fails.
 
     Args:
-        candidates_first (Iterable[.Curve]): Iterable of curves to be
-            intersected with each curve in ``candidates_second``.
-        candidates_second (Iterable[.Curve]): Iterable of curves to be
-            intersected with each curve in ``candidates_first``.
+        curve_first (.Curve): Curve to be intersected with ``curve_second``.
+        curve_second (.Curve): Curve to be intersected with ``curve_first``.
 
     Returns:
-        list: List of all :class:`Intersection`s (possibly empty).
+        numpy.ndarray: ``Nx2`` array of intersection parameters.
+        Each row contains a pair of values :math:`s` and :math:`t`
+        (each in :math:`\left[0, 1\right]`) such that the curves
+        intersect: :math:`B_1(s) = B_2(t)`.
     """
-    result = []
-    for index_first, first in enumerate(candidates_first):
-        nodes1 = first._nodes
-        for index_second, second in enumerate(candidates_second):
-            nodes2 = second._nodes
+    # Only attempt this if the bounding boxes intersect.
+    bbox_int = _geometric_intersection.bbox_intersect(
+        curve_first._nodes, curve_second._nodes)
+    if bbox_int == _DISJOINT:
+        return np.empty((0, 2), order='F')
 
-            # Only attempt this if the bounding boxes intersect.
-            bbox_int = _geometric_intersection.bbox_intersect(nodes1, nodes2)
-            if bbox_int == _DISJOINT:
-                continue
-
-            st_vals = intersect_curves(nodes1, nodes2)
-            for s, t in st_vals:
-                intersection = _intersection_helpers.Intersection(
-                    first, s, second, t)
-                intersection.index_first = index_first
-                intersection.index_second = index_second
-                result.append(intersection)
-
-    return result
+    return intersect_curves(curve_first._nodes, curve_second._nodes)

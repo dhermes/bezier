@@ -643,11 +643,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         intersections = []
         self.assertIsNone(
             self._call_function_under_test(lin1, lin2, intersections))
-        self.assertEqual(len(intersections), 1)
-
-        expected = np.asfortranarray([[0.5, 0.75]])
-        utils.check_intersection(
-            self, intersections[0], expected, curve1, curve2, 0.5, 0.5)
+        self.assertEqual(intersections, [(0.5, 0.5)])
 
     def test_failure(self):
         import bezier
@@ -677,80 +673,60 @@ class Test_from_linearized(utils.NumPyTestCase):
 class Test_add_intersection(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersection, intersections):
+    def _call_function_under_test(s, t, intersections):
         from bezier import _geometric_intersection
 
-        return _geometric_intersection.add_intersection(
-            intersection, intersections)
+        return _geometric_intersection.add_intersection(s, t, intersections)
 
     def test_new(self):
-        from bezier import _intersection_helpers
-
-        intersection1 = _intersection_helpers.Intersection(
-            unittest.mock.sentinel.first, 0.5,
-            unittest.mock.sentinel.second, 0.5)
-        intersection2 = _intersection_helpers.Intersection(
-            unittest.mock.sentinel.first, 0.75,
-            unittest.mock.sentinel.second, 0.25)
-        intersections = [intersection1]
+        intersections = [(0.5, 0.5)]
         self.assertIsNone(
-            self._call_function_under_test(intersection2, intersections))
+            self._call_function_under_test(0.75, 0.25, intersections))
 
-        self.assertEqual(intersections, [intersection1, intersection2])
+        expected = [
+            (0.5, 0.5),
+            (0.75, 0.25),
+        ]
+        self.assertEqual(intersections, expected)
 
     def test_existing(self):
-        from bezier import _intersection_helpers
-
-        intersection1 = _intersection_helpers.Intersection(
-            unittest.mock.sentinel.first, 0.0,
-            unittest.mock.sentinel.second, 1.0)
-        intersection2 = _intersection_helpers.Intersection(
-            unittest.mock.sentinel.first, 0.0,
-            unittest.mock.sentinel.second, 1.0)
-        intersections = [intersection1]
+        intersections = [(0.0, 1.0)]
         self.assertIsNone(
-            self._call_function_under_test(intersection2, intersections))
+            self._call_function_under_test(0.0, 1.0, intersections))
 
-        self.assertEqual(len(intersections), 1)
-        self.assertIs(intersections[0], intersection1)
-        self.assertIsNot(intersections[0], intersection2)
+        self.assertEqual(intersections, [(0.0, 1.0)])
 
     def test_ulp_wiggle(self):
         from bezier import _geometric_intersection
-        from bezier import _intersection_helpers
 
-        intersection1 = _intersection_helpers.Intersection(
-            unittest.mock.sentinel.first, 0.5,
-            unittest.mock.sentinel.second, 0.5)
         delta = 3 * SPACING(0.5)
-        intersection2 = _intersection_helpers.Intersection(
-            unittest.mock.sentinel.first, 0.5 + delta,
-            unittest.mock.sentinel.second, 0.5)
-        intersections = [intersection1]
+        intersections = [(0.5, 0.5)]
+        s_val = 0.5 + delta
+        t_val = 0.5
 
         patch = unittest.mock.patch.object(
             _geometric_intersection, '_SIMILAR_ULPS', new=10)
         with patch:
             self.assertIsNone(
-                self._call_function_under_test(intersection2, intersections))
+                self._call_function_under_test(s_val, t_val, intersections))
             # No change since delta is within 10 ULPs.
-            self.assertEqual(intersections, [intersection1])
+            self.assertEqual(intersections, [(0.5, 0.5)])
 
         patch = unittest.mock.patch.object(
             _geometric_intersection, '_SIMILAR_ULPS', new=3)
         with patch:
             self.assertIsNone(
-                self._call_function_under_test(intersection2, intersections))
+                self._call_function_under_test(s_val, t_val, intersections))
             # No change since delta is within 3 ULPs.
-            self.assertEqual(intersections, [intersection1])
+            self.assertEqual(intersections, [(0.5, 0.5)])
 
         patch = unittest.mock.patch.object(
             _geometric_intersection, '_SIMILAR_ULPS', new=2)
         with patch:
             self.assertIsNone(
-                self._call_function_under_test(intersection2, intersections))
+                self._call_function_under_test(s_val, t_val, intersections))
             # Add new intersection since delta is not within 2 ULPs.
-            self.assertEqual(intersections, [intersection1, intersection2])
+            self.assertEqual(intersections, [(0.5, 0.5), (s_val, t_val)])
 
 
 class Test_endpoint_check(utils.NumPyTestCase):
@@ -793,9 +769,7 @@ class Test_endpoint_check(utils.NumPyTestCase):
             first, node_first, s_val,
             second, node_second, t_val, intersections)
 
-        self.assertEqual(len(intersections), 1)
-        utils.check_intersection(
-            self, intersections[0], node_first, first, second, s_val, t_val)
+        self.assertEqual(intersections, [(s_val, t_val)])
 
     def test_subcurves_middle(self):
         import bezier
@@ -823,9 +797,7 @@ class Test_endpoint_check(utils.NumPyTestCase):
             first, node_first, s_val,
             second, node_second, t_val, intersections)
 
-        self.assertEqual(len(intersections), 1)
-        utils.check_intersection(
-            self, intersections[0], node_first, root1, root2, 0.5, 0.5)
+        self.assertEqual(intersections, [(0.5, 0.5)])
 
 
 class Test_tangent_bbox_intersection(utils.NumPyTestCase):
@@ -856,10 +828,7 @@ class Test_tangent_bbox_intersection(utils.NumPyTestCase):
         intersections = []
         self.assertIsNone(
             self._call_function_under_test(curve1, curve2, intersections))
-        self.assertEqual(len(intersections), 1)
-        expected = nodes1[[-1], :]
-        utils.check_intersection(
-            self, intersections[0], expected, curve1, curve2, 1.0, 0.0)
+        self.assertEqual(intersections, [(1.0, 0.0)])
 
     def test_two_endpoints(self):
         import bezier
@@ -880,13 +849,11 @@ class Test_tangent_bbox_intersection(utils.NumPyTestCase):
         intersections = []
         self.assertIsNone(
             self._call_function_under_test(curve1, curve2, intersections))
-        self.assertEqual(len(intersections), 2)
-        expected = nodes1[[0], :]
-        utils.check_intersection(
-            self, intersections[0], expected, curve1, curve2, 0.0, 0.0)
-        expected = nodes1[[-1], :]
-        utils.check_intersection(
-            self, intersections[1], expected, curve1, curve2, 1.0, 1.0)
+        expected = [
+            (0.0, 0.0),
+            (1.0, 1.0),
+        ]
+        self.assertEqual(intersections, expected)
 
     def test_no_endpoints(self):
         # Lines have tangent bounding boxes but don't intersect.
@@ -1126,11 +1093,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         next_candidates = self._call_function_under_test(
             [(lin1, lin2)], intersections)
         self.assertEqual(next_candidates, [])
-        self.assertEqual(len(intersections), 1)
-        intersection = intersections[0]
-        expected = np.asfortranarray([[0.5, 0.5]])
-        utils.check_intersection(
-            self, intersection, expected, curve1, curve2, 0.5, 0.5)
+        self.assertEqual(intersections, [(0.5, 0.5)])
 
     def test_failure_due_to_parallel(self):
         import bezier
@@ -1192,58 +1155,38 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         next_candidates = self._call_function_under_test(
             [(curve1, curve2)], intersections)
         self.assertEqual(next_candidates, [])
-        self.assertEqual(len(intersections), 1)
-        intersection = intersections[0]
-        expected = nodes1[[-1], :]
-        utils.check_intersection(
-            self, intersection, expected, curve1, curve2, 1.0, 0.0)
-
-
-class Test_patch_intersections(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(
-            candidates_first, candidates_second, intersections):
-        from bezier import _geometric_intersection
-
-        return _geometric_intersection.patch_intersections(
-            candidates_first, candidates_second, intersections)
-
-    def test_all_matching(self):
-        from bezier import _intersection_helpers
-
-        curve1 = unittest.mock.sentinel.curve1
-        curve2 = unittest.mock.sentinel.curve2
-        curve3 = unittest.mock.sentinel.curve3
-        curve4 = unittest.mock.sentinel.curve4
-        candidates_first = [curve1, curve2]
-        candidates_second = [curve3, curve4]
-        intersections = [
-            _intersection_helpers.Intersection(curve1, 0.0, curve4, 0.5),
-            _intersection_helpers.Intersection(curve2, 0.5, curve3, 1.0),
-        ]
-
-        return_value = self._call_function_under_test(
-            candidates_first, candidates_second, intersections)
-        self.assertIsNone(return_value)
-        self.assertEqual(intersections[0].index_first, 0)
-        self.assertEqual(intersections[0].index_second, 1)
-        self.assertEqual(intersections[1].index_first, 1)
-        self.assertEqual(intersections[1].index_second, 0)
+        self.assertEqual(intersections, [(1.0, 0.0)])
 
 
 class Test_all_intersections(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(candidates_first, candidates_second):
+    def _call_function_under_test(curve_first, curve_second):
         from bezier import _geometric_intersection
 
         return _geometric_intersection.all_intersections(
-            candidates_first, candidates_second)
+            curve_first, curve_second)
 
     def test_no_intersections(self):
-        intersections = self._call_function_under_test([], [])
-        self.assertEqual(intersections, [])
+        import bezier
+        from bezier import _geometric_intersection
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        curve1 = bezier.Curve(nodes1, degree=1, _copy=False)
+        lin1 = _geometric_intersection.Linearization(curve1, 0.0)
+
+        nodes2 = np.asfortranarray([
+            [3.0, 3.0],
+            [4.0, 3.0],
+        ])
+        curve2 = bezier.Curve(nodes2, degree=1, _copy=False)
+        lin2 = _geometric_intersection.Linearization(curve2, 0.0)
+
+        intersections = self._call_function_under_test(lin1, lin2)
+        self.assertEqual(intersections.shape, (0, 2))
 
     def test_success(self):
         import bezier
@@ -1267,20 +1210,15 @@ class Test_all_intersections(utils.NumPyTestCase):
         ])
         curve2 = bezier.Curve(nodes2, degree=2)
 
-        intersections = self._call_function_under_test([curve1], [curve2])
-
-        self.assertEqual(len(intersections), 1)
-        intersection = intersections[0]
-        expected = np.asfortranarray([[0.5, 0.75]])
-
         s_val = 1.0 / 3.0
         if base_utils.IS_64_BIT or base_utils.IS_WINDOWS:  # pragma: NO COVER
             # Due to round-off, the answer is wrong by a tiny wiggle.
             s_val += SPACING(s_val)
         t_val = 2.0 / 3.0
-        utils.check_intersection(
-            self, intersection, expected, curve1, curve2, s_val, t_val,
-            index_first=0, index_second=0)
+
+        intersections = self._call_function_under_test(curve1, curve2)
+        expected = np.asfortranarray([[s_val, t_val]])
+        self.assertEqual(intersections, expected)
 
     def test_parallel_failure(self):
         import bezier
@@ -1301,7 +1239,7 @@ class Test_all_intersections(utils.NumPyTestCase):
         curve2 = bezier.Curve(nodes2, degree=2)
 
         with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test([curve1], [curve2])
+            self._call_function_under_test(curve1, curve2)
 
         exc_args = exc_info.exception.args
         self.assertEqual(
@@ -1326,7 +1264,7 @@ class Test_all_intersections(utils.NumPyTestCase):
         curve2 = bezier.Curve(nodes2, degree=2)
 
         with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test([curve1], [curve2])
+            self._call_function_under_test(curve1, curve2)
 
         exc_args = exc_info.exception.args
         expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(88)
@@ -1349,9 +1287,10 @@ class Test_all_intersections(utils.NumPyTestCase):
             [6.0, 0.0],
         ])
         curve2 = bezier.Curve(nodes2, degree=1)
+        lin2 = _geometric_intersection.Linearization(curve2, 0.0)
 
         with self.assertRaises(ValueError) as exc_info:
-            self._call_function_under_test([curve1], [curve2])
+            self._call_function_under_test(curve1, lin2)
 
         exc_args = exc_info.exception.args
         expected = _geometric_intersection._NO_CONVERGE_TEMPLATE.format(
@@ -1379,21 +1318,12 @@ class Test_all_intersections(utils.NumPyTestCase):
         ])
         curve2 = bezier.Curve(nodes2, degree=2)
 
-        intersections = self._call_function_under_test([curve1], [curve2])
-
-        self.assertEqual(len(intersections), 2)
-        # First intersection.
-        intersection0 = intersections[0]
-        expected = np.asfortranarray([[0.25, 0.375]])
-        utils.check_intersection(
-            self, intersection0, expected, curve1, curve2, 0.25, 0.25,
-            index_first=0, index_second=0)
-        # Second intersection.
-        intersection1 = intersections[1]
-        expected = np.asfortranarray([[0.75, 0.375]])
-        utils.check_intersection(
-            self, intersection1, expected, curve1, curve2, 0.75, 0.75,
-            index_first=0, index_second=0)
+        intersections = self._call_function_under_test(curve1, curve2)
+        expected = np.asfortranarray([
+            [0.25, 0.25],
+            [0.75, 0.75],
+        ])
+        self.assertEqual(intersections, expected)
 
 
 class TestBoxIntersectionType(unittest.TestCase):

@@ -42,6 +42,7 @@ _LOCATE_ERROR_TEMPLATE = (
     'should be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
 _STRATEGY = _intersection_helpers.IntersectionStrategy
 _INTERSECTION_T = _geometric_intersection.BoxIntersectionType.INTERSECTION
+_FROM_SHAPE = _geometric_intersection.Linearization.from_shape
 
 
 class Surface(_base.Base):
@@ -1090,11 +1091,9 @@ class Surface(_base.Base):
             intersections (possibly empty).
 
         Raises:
-            TypeError: If ``other`` is not a surface.
+            TypeError: If ``other`` is not a surface (and ``_verify=True``).
             NotImplementedError: If at least one of the surfaces
-                isn't two-dimensional.
-            ValueError: If ``strategy`` is not a valid
-                :attr:`.IntersectionStrategy`.
+                isn't two-dimensional (and ``_verify=True``).
         """
         if _verify:
             if not isinstance(other, Surface):
@@ -1104,22 +1103,17 @@ class Surface(_base.Base):
                 raise NotImplementedError(
                     'Intersection only implemented in 2D')
 
-        if strategy is _STRATEGY.GEOMETRIC:
-            all_intersections = _geometric_intersection.all_intersections
-        elif strategy is _STRATEGY.ALGEBRAIC:
-            all_intersections = _algebraic_intersection.all_intersections
-        else:
-            raise ValueError('Unexpected strategy.', strategy)
-
         bbox_int = _geometric_intersection.bbox_intersect(
             self._nodes, other._nodes)
         if bbox_int != _INTERSECTION_T:
             return []
 
         # We need **all** pairs of edges.
-        edges1 = self._get_edges()
-        edges2 = other._get_edges()  # pylint: disable=protected-access
-        intersections = all_intersections(edges1, edges2)
+        intersections = _surface_intersections(
+            self._get_edges(),
+            other._get_edges(),  # pylint: disable=protected-access
+            strategy,
+        )
 
         # Classify each intersection.
         duplicates = []
@@ -1272,3 +1266,51 @@ def _edge_cycle(edge1, edge2, edge3):
     edge3._next_edge = edge1
     edge3._previous_edge = edge2
     # pylint: enable=protected-access
+
+
+# pylint: disable=too-many-locals
+def _surface_intersections(edges1, edges2, strategy):
+    """Find all intersections among edges of two surfaces.
+
+    Args:
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
+        strategy (Optional[~bezier.curve.IntersectionStrategy]): The
+            intersection algorithm to use. Defaults to geometric.
+
+    Returns:
+        list: List of all :class:`Intersection`s (possibly empty).
+
+    Raises:
+        ValueError: If ``strategy`` is not a valid
+            :attr:`.IntersectionStrategy`.
+    """
+    if strategy is _STRATEGY.GEOMETRIC:
+        # Linearize ahead of time to avoid re-doing computation.
+        linearized1 = [_FROM_SHAPE(edge) for edge in edges1]
+        linearized2 = [_FROM_SHAPE(edge) for edge in edges2]
+        all_intersections = _geometric_intersection.all_intersections
+    elif strategy is _STRATEGY.ALGEBRAIC:
+        linearized1 = edges1
+        linearized2 = edges2
+        all_intersections = _algebraic_intersection.all_intersections
+    else:
+        raise ValueError('Unexpected strategy.', strategy)
+
+    intersections = []
+    for index1, lin1 in enumerate(linearized1):
+        edge1 = edges1[index1]
+        for index2, lin2 in enumerate(linearized2):
+            edge2 = edges2[index2]
+            st_vals = all_intersections(lin1, lin2)
+            for s, t in st_vals:
+                intersection = _intersection_helpers.Intersection(
+                    edge1, s, edge2, t)
+                intersection.index_first = index1
+                intersection.index_second = index2
+                intersections.append(intersection)
+
+    return intersections
+# pylint: enable=too-many-locals

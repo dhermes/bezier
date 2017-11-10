@@ -260,26 +260,17 @@ class TestIntersection(unittest.TestCase):
 
     def test_constructor(self):
         intersection = self._constructor_helper()
-        self.assertIsNone(intersection.point)
-        self.assertIsNone(intersection.interior_curve)
-
-    def test_constructor_with_point(self):
-        intersection = self._constructor_helper(
-            point=unittest.mock.sentinel.point)
-        self.assertIs(intersection.point, unittest.mock.sentinel.point)
         self.assertIsNone(intersection.interior_curve)
 
     def test_constructor_with_interior_curve(self):
         intersection = self._constructor_helper(
             interior_curve=unittest.mock.sentinel.interior_curve)
-        self.assertIsNone(intersection.point)
         self.assertIs(
             intersection.interior_curve,
             unittest.mock.sentinel.interior_curve)
 
     def test___dict___property(self):
         intersection = self._constructor_helper(
-            point=unittest.mock.sentinel.point,
             interior_curve=unittest.mock.sentinel.interior_curve,
         )
         props_dict = intersection.__dict__
@@ -290,7 +281,6 @@ class TestIntersection(unittest.TestCase):
             'second': unittest.mock.sentinel.second,
             'index_second': -1,
             't': 0.75,
-            'point': unittest.mock.sentinel.point,
             'interior_curve': unittest.mock.sentinel.interior_curve,
         }
         self.assertEqual(props_dict, expected)
@@ -298,19 +288,7 @@ class TestIntersection(unittest.TestCase):
         expected['s'] = 0.5
         self.assertNotEqual(intersection.s, expected['s'])
 
-    def test_get_point_stored(self):
-        intersection = self._make_one(
-            None, None, None, None, point=unittest.mock.sentinel.point)
-
-        patch = unittest.mock.patch(
-            'bezier._intersection_helpers.check_close',
-            return_value=unittest.mock.sentinel.point)
-        with patch as mocked:
-            self.assertIs(
-                intersection.get_point(), unittest.mock.sentinel.point)
-            mocked.assert_not_called()
-
-    def test_get_point_on_the_fly(self):
+    def test_get_point(self):
         s_val = 1.0
         t_val = 0.0
         first = unittest.mock.Mock(
@@ -323,7 +301,6 @@ class TestIntersection(unittest.TestCase):
             'bezier._intersection_helpers.check_close',
             return_value=unittest.mock.sentinel.point)
         with patch as mocked:
-            self.assertIsNone(intersection.point)
             self.assertIs(
                 intersection.get_point(), unittest.mock.sentinel.point)
             mocked.assert_called_once_with(

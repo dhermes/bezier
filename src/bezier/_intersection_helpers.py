@@ -451,8 +451,6 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         second (.Curve): The "second" curve in the intersection.
         t (float): The parameter along ``second`` where the
             intersection occurs.
-        point (Optional[numpy.ndarray]): The point where the two
-            curves actually intersect.
         interior_curve (Optional[ \
             ~bezier._surface_helpers._IntersectionClassification]): The
             classification of the intersection.
@@ -461,10 +459,10 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
     __slots__ = (
         'first', 'index_first', 's',
         'second', 'index_second', 't',
-        'point', 'interior_curve',
+        'interior_curve',
     )
 
-    def __init__(self, first, s, second, t, point=None, interior_curve=None):
+    def __init__(self, first, s, second, t, interior_curve=None):
         self.first = first
         """Curve: The "first" curve in the intersection."""
         self.s = s
@@ -473,8 +471,6 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         """Curve: The "second" curve in the intersection."""
         self.t = t
         """float: The intersection parameter for the ``second`` curve."""
-        self.point = point
-        """numpy.ndarray: The point where the intersection occurs."""
         self.interior_curve = interior_curve
         """IntersectionClassification: Which of the curves is on the interior.
 
@@ -507,7 +503,6 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             'second': self.second,
             'index_second': self.index_second,
             't': self.t,
-            'point': self.point,
             'interior_curve': self.interior_curve,
         }
 
@@ -518,15 +513,10 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
 
         Returns:
             numpy.ndarray: The point where the intersection occurs.
-            Returns ``point`` if stored on the current value, otherwise
-            computes the value on the fly.
         """
-        if self.point is None:
-            return check_close(
-                self.s, self.first._nodes,
-                self.t, self.second._nodes)
-        else:
-            return self.point
+        return check_close(
+            self.s, self.first._nodes,
+            self.t, self.second._nodes)
 
 
 class IntersectionStrategy(enum.Enum):

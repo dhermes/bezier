@@ -13,7 +13,6 @@
 from __future__ import absolute_import
 
 import itertools
-import operator
 
 import numpy as np
 import pytest
@@ -30,7 +29,6 @@ from tests.functional.utils import CurveIntersectionType
 SPACING = np.spacing  # pylint: disable=no-member
 GEOMETRIC = bezier.curve.IntersectionStrategy.GEOMETRIC
 ALGEBRAIC = bezier.curve.IntersectionStrategy.ALGEBRAIC
-S_PROP = operator.attrgetter('s')
 _, INTERSECTIONS = utils.curve_intersections_info()
 INCORRECT_VALUES_MSG = """\
 Multipliers were:
@@ -60,43 +58,33 @@ ULPS_ALLOWED_OVERRIDE = {
             (0, 1): 4,  # Established on Ubuntu 16.04
         },
         17: {
-            (0, 7): ZERO_MISS,  # Established on Ubuntu 16.04
+            (0, 5): ZERO_MISS,  # Established on Ubuntu 16.04
             (2, 1): 8,  # Established on CentOS 5 (i686 Docker image)
-            (2, 2): 4,  # Established on CentOS 5 (i686 Docker image)
             (3, 1): 4,  # Established on Ubuntu 16.04
-            (3, 2): 7,  # Established on Ubuntu 16.04
         },
         18: {
-            (0, 6): 5,  # Established on Ubuntu 16.04
+            (0, 4): 5,  # Established on Ubuntu 16.04
             (1, 0): 8,  # Established on Ubuntu 16.04
-            (1, 2): 10,  # Established on Ubuntu 16.04
-            (1, 3): 11,  # Established on Ubuntu 16.04
-            (1, 6): 4,  # Established on Ubuntu 16.04
+            (1, 4): 4,  # Established on Ubuntu 16.04
             (2, 0): 4,  # Established on CentOS 5 (i686 Docker image)
-            (2, 2): 5,  # Established on CentOS 5 (i686 Docker image)
-            (2, 3): 6,  # Established on CentOS 5 (i686 Docker image)
             (3, 3): ZERO_MISS,  # Established on Ubuntu 16.04
             (3, 5): ZERO_MISS,  # Established on Ubuntu 16.04
-            (3, 7): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         22: {
             (0, 0): 8,  # Established on CentOS 5 (i686 Docker image)
             (0, 1): 18,  # Established on CentOS 5 (i686 Docker image)
-            (0, 2): 6,  # Established on CentOS 5 (i686 Docker image)
         },
         23: {
             (0, 0): 14,  # Established on Ubuntu 16.04
             (0, 1): 41,  # Established on Ubuntu 16.04
-            (0, 2): 14,  # Established on Ubuntu 16.04
             (1, 0): 16,  # Established on Ubuntu 16.04
             (1, 1): 21,  # Established on Ubuntu 16.04
-            (1, 2): 16,  # Established on Ubuntu 16.04
         },
         25: {
-            (0, 6): ZERO_MISS,  # Established on Ubuntu 16.04
+            (0, 4): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         28: {
-            (0, 4): 4,  # Established on CentOS 5 (i686 Docker image)
+            (0, 2): 4,  # Established on CentOS 5 (i686 Docker image)
         },
         37: {
             (0, 1): 91,  # Established on Ubuntu 16.04
@@ -112,40 +100,33 @@ ULPS_ALLOWED_OVERRIDE = {
         },
     },
     ALGEBRAIC: {
-        2: {
-            (1, 3): 4,  # Established on Ubuntu 16.04
-        },
         12: {
             (0, 1): 4,  # Established on OS X 10.11 in 32-bit (Early 2011 MBP)
         },
         17: {
-            (0, 7): ZERO_MISS,  # Established on Ubuntu 16.04
+            (0, 5): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         18: {
-            (0, 6): 5,  # Established on Ubuntu 16.04
-            (1, 6): 4,  # Established on Ubuntu 16.04
+            (0, 4): 5,  # Established on Ubuntu 16.04
+            (1, 4): 4,  # Established on Ubuntu 16.04
             (3, 1): 5,  # Established on CentOS 5 (i686 Docker image)
             (3, 3): ZERO_MISS,  # Established on Ubuntu 16.04
             (3, 5): ZERO_MISS,  # Established on Ubuntu 16.04
-            (3, 7): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         22: {
             (0, 0): 12,  # Established on Ubuntu 16.04
             (0, 1): 29,  # Established on Ubuntu 16.04
-            (0, 2): 9,  # Established on Ubuntu 16.04
             (1, 0): 4,  # Established on CentOS 5 (i686 Docker image)
             (1, 1): 4,  # Established on CentOS 5 (i686 Docker image)
-            (1, 2): 6,  # Established on CentOS 5 (i686 Docker image)
-            (1, 3): 4,  # Established on CentOS 5 (i686 Docker image)
         },
         23: {
             (0, 1): 4,  # Established on Ubuntu 16.04
         },
         25: {
-            (0, 6): ZERO_MISS,  # Established on Ubuntu 16.04
+            (0, 4): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         28: {
-            (0, 4): 4,  # Established on CentOS 5 (i686 Docker image)
+            (0, 2): 4,  # Established on CentOS 5 (i686 Docker image)
         },
         37: {
             (0, 1): 165,  # Established on Ubuntu 16.04
@@ -208,22 +189,23 @@ def get_sorted_intersections(intersection_info, strategy):
     curve1 = intersection_info.curve1
     curve2 = intersection_info.curve2
     if strategy is GEOMETRIC:
-        intersections = _geometric_intersection.all_intersections(
-            [curve1], [curve2])
+        lin1 = _geometric_intersection.Linearization.from_shape(curve1)
+        lin2 = _geometric_intersection.Linearization.from_shape(curve2)
+        intersections = _geometric_intersection.all_intersections(lin1, lin2)
     else:
         intersections = _algebraic_intersection.all_intersections(
-            [curve1], [curve2])
+            curve1, curve2)
 
     # Make we have the right number of intersections.
-    if len(intersections) != intersection_info.num_params:
+    if intersections.shape != (intersection_info.num_params, 2):
         raise IncorrectCount(
             'Received wrong number of intersections',
-            len(intersections), 'Expected', intersection_info.num_params,
+            intersections.shape, 'Expected', intersection_info.num_params,
             intersection_info.test_id)
 
     # Sort the intersections by s-value.
-    intersections.sort(key=S_PROP)
-    return intersections
+    sorted_inds = np.argsort(intersections[:, 0])
+    return intersections[sorted_inds, :]
 
 
 def intersection_values(intersection_info, strategy):
@@ -232,30 +214,23 @@ def intersection_values(intersection_info, strategy):
 
     # Put the computed and expected values into matrices to be compared.
     s_vals, t_vals, intersection_pts = intersection_info.params
-    computed = np.zeros((intersection_info.num_params, 8), order='F')
+    computed = np.zeros((intersection_info.num_params, 6), order='F')
     exact = np.zeros(computed.shape, order='F')
 
     info = six.moves.zip(intersections, s_vals, t_vals, intersection_pts)
     for index, (intersection, s_val, t_val, point) in enumerate(info):
-        assert intersection.first is intersection_info.curve1
-        assert intersection.second is intersection_info.curve2
-
-        computed[index, (0, 1)] = intersection.s, intersection.t
+        computed[index, (0, 1)] = intersection
         exact[index, (0, 1)] = s_val, t_val
-
-        # Make sure the "best" point is close to the exact one.
-        computed[index, (2, 3)] = intersection.get_point()
-        exact[index, (2, 3)] = point
 
         # Make sure the point corresponding to the parameter on curve 1
         # is close to the exact one.
-        computed[index, (4, 5)] = intersection_info.curve1.evaluate(s_val)
-        exact[index, (4, 5)] = point
+        computed[index, (2, 3)] = intersection_info.curve1.evaluate(s_val)
+        exact[index, (2, 3)] = point
 
         # Make sure the point corresponding to the parameter on curve 2
         # is close to the exact one.
-        computed[index, (6, 7)] = intersection_info.curve2.evaluate(t_val)
-        exact[index, (6, 7)] = point
+        computed[index, (4, 5)] = intersection_info.curve2.evaluate(t_val)
+        exact[index, (4, 5)] = point
 
     return computed, exact
 
