@@ -816,7 +816,7 @@ contains
     integer(c_int), intent(in) :: num_nodes_second
     real(c_double), intent(in) :: nodes_second(num_nodes_second, 2)
     integer(c_int), intent(out) :: num_intersections
-    real(c_double), allocatable, intent(out) :: intersections(:, :)
+    real(c_double), allocatable, intent(inout) :: intersections(:, :)
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: num_candidates, num_next_candidates, index_, py_exc

@@ -1604,7 +1604,8 @@ contains
          3, quadratic1, 3, quadratic2, &
          num_intersections, intersections, status)
     case_success = ( &
-         .NOT. allocated(intersections) .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 0 .AND. &
          status == ALL_INTERSECTIONS_OFFSET + FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
@@ -1645,7 +1646,8 @@ contains
     call all_intersections( &
          3, quadratic1, 2, linear1, num_intersections, intersections, status)
     case_success = ( &
-         .NOT. allocated(intersections) .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 0 .AND. &
          status == ALL_INTERSECTIONS_NO_CONVERGE)
     call print_status(name, case_id, case_success, success)
@@ -1663,6 +1665,7 @@ contains
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 2 .AND. &
          intersections(1, 1) == 0.25_dp .AND. &
          intersections(2, 1) == 0.25_dp .AND. &
