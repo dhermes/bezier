@@ -259,8 +259,8 @@ numbers, we can compute the intersection to machine precision:
    ...     [9 + sq31, 9 - sq31],
    ... ]) / 16.0
    >>> max_err = np.max(np.abs(intersections - expected_ints))
-   >>> binary_exponent(max_err)
-   -53
+   >>> binary_exponent(max_err) <= -53
+   True
    >>> points = curve1.evaluate_multi(intersections[:, 0])
    >>> expected_pts = np.asfortranarray([
    ...     [36 - 4 * sq31, 16 + sq31],
