@@ -22,7 +22,8 @@ module test_curve_intersection
        FROM_LINEARIZED_PARALLEL, Subdivide_FIRST, Subdivide_SECOND, &
        Subdivide_BOTH, Subdivide_NEITHER, ALL_INTERSECTIONS_SUCCESS, &
        ALL_INTERSECTIONS_TOO_MANY, ALL_INTERSECTIONS_NO_CONVERGE, &
-       ALL_INTERSECTIONS_OFFSET, linearization_error, segment_intersection, &
+       ALL_INTERSECTIONS_OFFSET, ALL_INTERSECTIONS_TOO_SMALL, &
+       linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
@@ -1546,8 +1547,9 @@ contains
     logical :: case_success
     real(c_double) :: linear1(2, 2), linear2(2, 2)
     real(c_double) :: quadratic1(3, 2), quadratic2(3, 2)
+    real(c_double) :: cubic1(4, 2)
     integer(c_int) :: num_intersections
-    real(c_double), allocatable :: intersections(:, :)
+    real(c_double) :: intersections1(2, 2), intersections2(2, 3)
     integer(c_int) :: status
     integer :: case_id
     character(17) :: name
@@ -1562,9 +1564,9 @@ contains
     linear2(2, :) = [4.0_dp, 3.0_dp]
 
     call all_intersections( &
-         2, linear1, 2, linear2, num_intersections, intersections, status)
+         2, linear1, 2, linear2, 2, intersections1, &
+         num_intersections, status)
     case_success = ( &
-         .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1582,14 +1584,12 @@ contains
     quadratic2(2, :) = [0.375_dp, 1.0_dp]
     quadratic2(3, :) = [0.75_dp, 0.4375_dp]
     call all_intersections( &
-         3, quadratic1, 3, quadratic2, &
-         num_intersections, intersections, status)
+         3, quadratic1, 3, quadratic2, 2, intersections1, &
+         num_intersections, status)
     case_success = ( &
-         allocated(intersections) .AND. &
-         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         3 * intersections(1, 1) == 1.0_dp .AND. &
-         3 * intersections(2, 1) == 2.0_dp .AND. &
+         3 * intersections1(1, 1) == 1.0_dp .AND. &
+         3 * intersections1(2, 1) == 2.0_dp .AND. &
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1601,11 +1601,9 @@ contains
     quadratic2(2, :) = [0.625_dp, 0.25_dp]
     quadratic2(3, :) = 1
     call all_intersections( &
-         3, quadratic1, 3, quadratic2, &
-         num_intersections, intersections, status)
+         3, quadratic1, 3, quadratic2, 2, intersections1, &
+         num_intersections, status)
     case_success = ( &
-         allocated(intersections) .AND. &
-         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 0 .AND. &
          status == ALL_INTERSECTIONS_OFFSET + FROM_LINEARIZED_PARALLEL)
     call print_status(name, case_id, case_success, success)
@@ -1619,14 +1617,10 @@ contains
     quadratic2(2, :) = 0.5_dp
     quadratic2(3, :) = [0.0_dp, 2.0_dp]
     call all_intersections( &
-         3, quadratic1, 3, quadratic2, &
-         num_intersections, intersections, status)
+         3, quadratic1, 3, quadratic2, 2, intersections1, &
+         num_intersections, status)
     case_success = ( &
-         allocated(intersections) .AND. &
-         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         intersections(1, 1) == 0.5_dp .AND. &
-         intersections(2, 1) == 0.5_dp .AND. &
          status == ALL_INTERSECTIONS_TOO_MANY)
     call print_status(name, case_id, case_success, success)
 
@@ -1644,10 +1638,9 @@ contains
     linear1(1, :) = [0.0_dp, 131072.0_dp]
     linear1(2, :) = [98304.0_dp, 0.0_dp]
     call all_intersections( &
-         3, quadratic1, 2, linear1, num_intersections, intersections, status)
+         3, quadratic1, 2, linear1, 2, intersections1, &
+         num_intersections, status)
     case_success = ( &
-         allocated(intersections) .AND. &
-         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 0 .AND. &
          status == ALL_INTERSECTIONS_NO_CONVERGE)
     call print_status(name, case_id, case_success, success)
@@ -1661,16 +1654,45 @@ contains
     quadratic2(2, :) = [0.5_dp, -0.25_dp]
     quadratic2(3, :) = [1.0_dp, 0.75_dp]
     call all_intersections( &
-         3, quadratic1, 3, quadratic2, &
-         num_intersections, intersections, status)
+         3, quadratic1, 3, quadratic2, 2, intersections1, &
+         num_intersections, status)
     case_success = ( &
-         allocated(intersections) .AND. &
-         all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 2 .AND. &
-         intersections(1, 1) == 0.25_dp .AND. &
-         intersections(2, 1) == 0.25_dp .AND. &
-         intersections(1, 2) == 0.75_dp .AND. &
-         intersections(2, 2) == 0.75_dp .AND. &
+         intersections1(1, 1) == 0.25_dp .AND. &
+         intersections1(2, 1) == 0.25_dp .AND. &
+         intersections1(1, 2) == 0.75_dp .AND. &
+         intersections1(2, 2) == 0.75_dp .AND. &
+         status == ALL_INTERSECTIONS_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: ``intersections`` is not large enough.
+    linear1(1, :) = [-3.0_dp, 0.0_dp]
+    linear1(2, :) = [5.0_dp, 0.0_dp]
+    cubic1(1, :) = [-7.0_dp, -9.0_dp]
+    cubic1(2, :) = [9.0_dp, 13.0_dp]
+    cubic1(3, :) = [-7.0_dp, -13.0_dp]
+    cubic1(4, :) = [9.0_dp, 9.0_dp]
+
+    call all_intersections( &
+         2, linear1, 4, cubic1, 2, intersections1, &
+         num_intersections, status)
+    case_success = ( &
+         num_intersections == 3 .AND. &
+         status == ALL_INTERSECTIONS_TOO_SMALL)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Just case 7, but with large enough ``intersections``.
+    call all_intersections( &
+         2, linear1, 4, cubic1, 3, intersections2, &
+         num_intersections, status)
+    case_success = ( &
+         num_intersections == 3 .AND. &
+         intersections2(1, 1) == 0.5_dp .AND. &
+         intersections2(2, 1) == 0.5_dp .AND. &
+         intersections2(1, 2) == 0.375_dp .AND. &
+         intersections2(2, 2) == 0.25_dp .AND. &
+         intersections2(1, 3) == 0.625_dp .AND. &
+         intersections2(2, 3) == 0.75_dp .AND. &
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
