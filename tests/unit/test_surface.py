@@ -929,3 +929,87 @@ class Test__edge_cycle(unittest.TestCase):
         self.assertEqual(edge3._edge_index, 2)
         self.assertIs(edge3._next_edge, edge1)
         self.assertIs(edge3._previous_edge, edge2)
+
+
+class Test__surface_intersections(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(edges1, edges2, strategy):
+        from bezier import surface
+
+        return surface._surface_intersections(edges1, edges2, strategy)
+
+    # pylint: disable=too-many-arguments
+    def _check_intersection(self, intersection, expected,
+                            curve1, curve2, s_val, t_val,
+                            index_first, index_second):
+        from bezier import _intersection_helpers
+
+        self.assertIsInstance(
+            intersection, _intersection_helpers.Intersection)
+        self.assertEqual(intersection.get_point(), expected)
+        self.assertIs(intersection.first, curve1)
+        self.assertEqual(intersection.index_first, index_first)
+        self.assertEqual(intersection.s, s_val)
+        self.assertIs(intersection.second, curve2)
+        self.assertEqual(intersection.index_second, index_second)
+        self.assertEqual(intersection.t, t_val)
+    # pylint: enable=too-many-arguments
+
+    def test_geometric(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface1 = bezier.Surface(nodes1, 1, _copy=False)
+        nodes2 = np.asfortranarray([
+            [0.5, -0.25],
+            [1.5, -0.25],
+            [0.5, 0.75],
+        ])
+        surface2 = bezier.Surface(nodes2, 1, _copy=False)
+
+        edges1 = surface1.edges
+        edges2 = surface2.edges
+        strategy = _intersection_helpers.IntersectionStrategy.GEOMETRIC
+        intersections = self._call_function_under_test(
+            edges1, edges2, strategy)
+
+        self.assertEqual(len(intersections), 2)
+        expected = np.asfortranarray([[0.5, 0.0]])
+        self._check_intersection(
+            intersections[0], expected,
+            edges1[0], edges2[2], 0.5, 0.75, 0, 2)
+        expected = np.asfortranarray([[0.5, 0.5]])
+        self._check_intersection(
+            intersections[1], expected,
+            edges1[1], edges2[2], 0.5, 0.25, 1, 2)
+
+    def test_algebraic(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface1 = bezier.Surface(nodes1, 1, _copy=False)
+        surface2 = bezier.Surface(nodes1 + 10.0, 1, _copy=False)
+
+        strategy = _intersection_helpers.IntersectionStrategy.ALGEBRAIC
+        intersections = self._call_function_under_test(
+            surface1.edges, surface2.edges, strategy)
+        self.assertEqual(intersections, [])
+
+    def test_bad_strategy(self):
+        strategy = unittest.mock.sentinel.bad_strategy
+        with self.assertRaises(ValueError) as exc_info:
+            self._call_function_under_test([], [], strategy)
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(exc_args, ('Unexpected strategy.', strategy))
