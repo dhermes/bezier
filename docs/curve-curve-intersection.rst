@@ -7,6 +7,8 @@ Curve-Curve Intersection
    import numpy as np
 
    def binary_exponent(value):
+       if value == 0.0:
+           return -np.inf
        _, result = np.frexp(value)
        # Shift [1/2, 1) --> [1, 2) borrows one from exponent
        return result - 1
@@ -336,8 +338,8 @@ numbers, we can compute the intersection to machine precision:
    ...     [     14, 14     ],
    ... ]) / 14.0
    >>> max_err = np.max(np.abs(intersections - expected_ints))
-   >>> binary_exponent(max_err)
-   -53
+   >>> binary_exponent(max_err) <= -53
+   True
    >>> expected_pts = np.asfortranarray([
    ...     [7 - sq7, 6],
    ...     [7 + sq7, 6],
@@ -375,8 +377,8 @@ numbers, we can compute the intersection to machine precision:
    ...     [4 + sq5, 6 + sq5],
    ... ]) / 10.0
    >>> max_err = np.max(np.abs(intersections - expected_ints))
-   >>> binary_exponent(max_err)
-   -52
+   >>> binary_exponent(max_err) <= -51
+   True
    >>> points = curve1.evaluate_multi(intersections[:, 0])
    >>> expected_pts = np.asfortranarray([
    ...     [6 - 2 * sq5, 5 - sq5],
