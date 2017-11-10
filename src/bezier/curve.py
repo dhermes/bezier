@@ -537,7 +537,10 @@ class Curve(_base.Base):
            ... ])
            >>> curve2 = bezier.Curve(nodes2, degree=1)
            >>> intersections = curve1.intersect(curve2)
-           >>> intersections
+           >>> 3.0 * intersections
+           array([[ 2., 2.]])
+           >>> s_vals = intersections[:, 0]
+           >>> curve1.evaluate_multi(s_vals)
            array([[ 0.5, 0.5]])
 
         .. testcleanup:: curve-intersect
