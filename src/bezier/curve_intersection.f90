@@ -22,7 +22,7 @@ module curve_intersection
   implicit none
   private &
        MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, CANDIDATES_ODD, &
-       CANDIDATES_EVEN, make_candidates
+       CANDIDATES_EVEN, INTERSECTIONS_WORKSPACE, make_candidates
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
@@ -65,6 +65,7 @@ module curve_intersection
   ! threads are used, this should be thread-local.
   type(CurveData), allocatable :: CANDIDATES_ODD(:, :)
   type(CurveData), allocatable :: CANDIDATES_EVEN(:, :)
+  real(c_double), allocatable :: INTERSECTIONS_WORKSPACE(:, :)
 
 contains
 
@@ -826,7 +827,6 @@ contains
     integer(c_int), intent(out) :: num_intersections
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
-    real(c_double), allocatable :: intersections_workspace(:, :)
     integer(c_int) :: num_candidates, num_next_candidates, index_, py_exc
     logical(c_bool) :: is_even
 
@@ -847,7 +847,7 @@ contains
           call intersect_one_round( &
                nodes_first, nodes_second, &
                num_candidates, CANDIDATES_EVEN, &
-               num_intersections, intersections_workspace, &
+               num_intersections, INTERSECTIONS_WORKSPACE, &
                CANDIDATES_ODD, num_next_candidates, py_exc)
        else
           ! Since ``index_`` is odd, we READ from ``CANDIDATES_ODD``
@@ -855,7 +855,7 @@ contains
           call intersect_one_round( &
                nodes_first, nodes_second, &
                num_candidates, CANDIDATES_ODD, &
-               num_intersections, intersections_workspace, &
+               num_intersections, INTERSECTIONS_WORKSPACE, &
                CANDIDATES_EVEN, num_next_candidates, py_exc)
        end if
 
@@ -880,10 +880,10 @@ contains
              status = ALL_INTERSECTIONS_TOO_SMALL
           else if (num_intersections > 0) then
              ! NOTE: This assumes, but doesn't check that
-             !       ``intersections_workspace`` has been allocated
+             !       ``INTERSECTIONS_WORKSPACE`` has been allocated
              !       and that is has 2 rows, just like ``intersections``.
              intersections(:, :num_intersections) = ( &
-                  intersections_workspace(:, :num_intersections))
+                  INTERSECTIONS_WORKSPACE(:, :num_intersections))
           end if
 
           return
@@ -908,6 +908,10 @@ contains
 
     if (allocated(CANDIDATES_EVEN)) then
        deallocate(CANDIDATES_EVEN)
+    end if
+
+    if (allocated(INTERSECTIONS_WORKSPACE)) then
+       deallocate(INTERSECTIONS_WORKSPACE)
     end if
 
   end subroutine free_all_intersections_workspace
