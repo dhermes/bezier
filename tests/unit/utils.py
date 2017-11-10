@@ -174,24 +174,6 @@ def needs_surface_intersection_speedup(test_class):
 # pylint: enable=invalid-name
 
 
-# pylint: disable=too-many-arguments
-def check_intersection(test_case, intersection, expected,
-                       curve1, curve2, s_val, t_val,
-                       index_first=-1, index_second=-1):
-    from bezier import _intersection_helpers
-
-    test_case.assertIsInstance(
-        intersection, _intersection_helpers.Intersection)
-    test_case.assertEqual(intersection.get_point(), expected)
-    test_case.assertIs(intersection.first, curve1)
-    test_case.assertEqual(intersection.index_first, index_first)
-    test_case.assertEqual(intersection.s, s_val)
-    test_case.assertIs(intersection.second, curve2)
-    test_case.assertEqual(intersection.index_second, index_second)
-    test_case.assertEqual(intersection.t, t_val)
-# pylint: enable=too-many-arguments
-
-
 class NumPyTestCase(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
