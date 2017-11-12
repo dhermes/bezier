@@ -16,6 +16,7 @@
 
 from libcpp cimport bool as bool_t
 import numpy as np
+from numpy cimport ndarray as ndarray_t
 
 cimport bezier._curve_intersection
 
@@ -26,6 +27,13 @@ BoxIntersectionType_TANGENT = (
     bezier._curve_intersection.BoxIntersectionType.TANGENT)
 BoxIntersectionType_DISJOINT = (
     bezier._curve_intersection.BoxIntersectionType.DISJOINT)
+cdef double[::1, :] WORKSPACE = np.empty((2, 2), order='F')
+TOO_MANY_TEMPLATE = (
+    'The number of candidate intersections is too high.\n'
+    '{:d} candidate pairs.')
+TOO_SMALL_TEMPLATE = (
+    'Did not have enough space for intersections. Needed space '
+    'for {:d} intersections but only had space for {:d}.')
 
 
 def linearization_error(double[::1, :] nodes):
@@ -185,3 +193,84 @@ def bbox_line_intersect(
     )
 
     return enum_val
+
+
+def reset_workspace(int workspace_size):
+    global WORKSPACE
+    WORKSPACE = np.empty((2, workspace_size), order='F')
+
+
+def workspace_size():
+    global WORKSPACE
+    cdef int intersections_size
+
+    # NOTE: We don't check that there are 2 rows.
+    _, intersections_size = np.shape(WORKSPACE)
+    return intersections_size
+
+
+def all_intersections(
+        double[::1, :] nodes_first, double[::1, :] nodes_second,
+        bool_t allow_resize=True):
+    global WORKSPACE
+    cdef int num_nodes_first, num_nodes_second
+    cdef int intersections_size, num_intersections, status
+    cdef ndarray_t[double, ndim=2, mode='fortran'] intersections
+
+    # NOTE: We don't check that there are 2 columns.
+    num_nodes_first, _ = np.shape(nodes_first)
+    num_nodes_second, _ = np.shape(nodes_second)
+    # NOTE: We don't check that there are 2 rows.
+    _, intersections_size = np.shape(WORKSPACE)
+
+    bezier._curve_intersection.all_intersections(
+        &num_nodes_first,
+        &nodes_first[0, 0],
+        &num_nodes_second,
+        &nodes_second[0, 0],
+        &intersections_size,
+        &WORKSPACE[0, 0],
+        &num_intersections,
+        &status,
+    )
+
+    if status == bezier._curve_intersection.AllIntersectionsStatus.SUCCESS:
+        intersections = np.empty((num_intersections, 2), order='F')
+        intersections[:, :] = WORKSPACE[:, :num_intersections].T
+        return intersections
+    elif (status ==
+              bezier._curve_intersection.AllIntersectionsStatus.NO_CONVERGE):
+        # NOTE: This assumes, but does not verify, that the Fortran subroutine
+        #       uses ``MAX_INTERSECT_SUBDIVISIONS = 20``.
+        raise ValueError(
+            'Curve intersection failed to converge to approximately linear '
+            'subdivisions after 20 iterations.')
+    elif status == bezier._curve_intersection.AllIntersectionsStatus.TOO_SMALL:
+        if allow_resize:
+            reset_workspace(num_intersections)
+            return all_intersections(
+                nodes_first, nodes_second, allow_resize=False)
+        else:
+            msg = TOO_SMALL_TEMPLATE.format(
+                intersections_size, num_intersections)
+            raise ValueError(msg)
+    elif status == bezier._curve_intersection.AllIntersectionsStatus.PARALLEL:
+        raise NotImplementedError('Line segments parallel.')
+    elif (status ==
+              bezier._curve_intersection.AllIntersectionsStatus.WIGGLE_FAIL):
+        # NOTE: This branch may not be tested because it's quite difficult to
+        #       come up with an example that causes it.
+        raise ValueError('outside of unit interval')
+    elif status == bezier._curve_intersection.AllIntersectionsStatus.UNKNOWN:
+        # NOTE: We exclude this block from testing because it **should**
+        #       never occur. It's just a "future-proofing" mechanism of the
+        #       Fortran code.
+        raise ValueError('Unknown error.')
+    else:
+        # NOTE: If ``status`` isn't one of the enum values, then it is the
+        #       number of candidate intersections.
+        raise NotImplementedError(TOO_MANY_TEMPLATE.format(status))
+
+
+def free_all_intersections_workspace():
+    bezier._curve_intersection.free_all_intersections_workspace()

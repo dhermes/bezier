@@ -25,6 +25,15 @@ enum BoxIntersectionType {
   DISJOINT = 2,
 };
 
+enum AllIntersectionsStatus {
+  SUCCESS = 0,
+  NO_CONVERGE = 1,
+  TOO_SMALL = 2,
+  PARALLEL = 3,
+  WIGGLE_FAIL = 4,
+  UNKNOWN = 5,
+};
+
 void linearization_error(
     int *num_nodes, int *dimension, double *nodes, double *error);
 void segment_intersection(
@@ -52,6 +61,12 @@ void from_linearized(
 void bbox_line_intersect(
     int *num_nodes, double *nodes, double *line_start, double *line_end,
     int *enum_);
+void all_intersections(
+    int *num_nodes_first, double *nodes_first,
+    int *num_nodes_second, double *nodes_second,
+    int *intersections_size, double *intersections,
+    int *num_intersections, int *status);
+void free_all_intersections_workspace(void);
 
 #if defined (__cplusplus)
 }

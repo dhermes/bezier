@@ -21,8 +21,9 @@ module test_curve_intersection
        BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
        FROM_LINEARIZED_PARALLEL, Subdivide_FIRST, Subdivide_SECOND, &
        Subdivide_BOTH, Subdivide_NEITHER, ALL_INTERSECTIONS_SUCCESS, &
-       ALL_INTERSECTIONS_TOO_MANY, ALL_INTERSECTIONS_NO_CONVERGE, &
-       ALL_INTERSECTIONS_OFFSET, ALL_INTERSECTIONS_TOO_SMALL, &
+       ALL_INTERSECTIONS_NO_CONVERGE, ALL_INTERSECTIONS_TOO_SMALL, &
+       ALL_INTERSECTIONS_PARALLEL, ALL_INTERSECTIONS_WIGGLE_FAIL, &
+       ALL_INTERSECTIONS_UNKNOWN, &
        linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
@@ -1605,7 +1606,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == ALL_INTERSECTIONS_OFFSET + FROM_LINEARIZED_PARALLEL)
+         status == ALL_INTERSECTIONS_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Tangent curves, which cause the number of candidate pairs
@@ -1621,7 +1622,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 1 .AND. &
-         status == ALL_INTERSECTIONS_TOO_MANY)
+         status == 88)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Badly scaled curves, which cause the subdivision proceass to

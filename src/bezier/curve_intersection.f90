@@ -29,8 +29,10 @@ module curve_intersection
        FROM_LINEARIZED_PARALLEL, FROM_LINEARIZED_WIGGLE_FAIL, &
        LINEARIZATION_THRESHOLD, Subdivide_FIRST, Subdivide_SECOND, &
        Subdivide_BOTH, Subdivide_NEITHER, ALL_INTERSECTIONS_SUCCESS, &
-       ALL_INTERSECTIONS_TOO_MANY, ALL_INTERSECTIONS_NO_CONVERGE, &
-       ALL_INTERSECTIONS_OFFSET, linearization_error, segment_intersection, &
+       ALL_INTERSECTIONS_NO_CONVERGE, ALL_INTERSECTIONS_TOO_SMALL, &
+       ALL_INTERSECTIONS_PARALLEL, ALL_INTERSECTIONS_WIGGLE_FAIL, &
+       ALL_INTERSECTIONS_UNKNOWN, &
+       linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
@@ -56,10 +58,11 @@ module curve_intersection
   integer(c_int), parameter :: MAX_INTERSECT_SUBDIVISIONS = 20
   integer(c_int), parameter :: MAX_CANDIDATES = 64
   integer(c_int), parameter :: ALL_INTERSECTIONS_SUCCESS = 0
-  integer(c_int), parameter :: ALL_INTERSECTIONS_TOO_MANY = 1
-  integer(c_int), parameter :: ALL_INTERSECTIONS_NO_CONVERGE = 2
-  integer(c_int), parameter :: ALL_INTERSECTIONS_TOO_SMALL = 3
-  integer(c_int), parameter :: ALL_INTERSECTIONS_OFFSET = 10
+  integer(c_int), parameter :: ALL_INTERSECTIONS_NO_CONVERGE = 1
+  integer(c_int), parameter :: ALL_INTERSECTIONS_TOO_SMALL = 2
+  integer(c_int), parameter :: ALL_INTERSECTIONS_PARALLEL = 3
+  integer(c_int), parameter :: ALL_INTERSECTIONS_WIGGLE_FAIL = 4
+  integer(c_int), parameter :: ALL_INTERSECTIONS_UNKNOWN = 5
 
   ! Long-lived workspaces for ``all_intersections()``. If multiple
   ! threads are used, this should be thread-local.
@@ -859,8 +862,23 @@ contains
                CANDIDATES_EVEN, num_next_candidates, py_exc)
        end if
 
-       if (py_exc /= FROM_LINEARIZED_SUCCESS) then
-          status = ALL_INTERSECTIONS_OFFSET + py_exc
+       if (py_exc == FROM_LINEARIZED_PARALLEL) then
+          status = ALL_INTERSECTIONS_PARALLEL
+          return
+       else if (py_exc == FROM_LINEARIZED_WIGGLE_FAIL) then
+          ! NOTE: We exclude this block from testing because it's
+          !       quite difficult to come up with an example that
+          !       causes it.
+          status = ALL_INTERSECTIONS_WIGGLE_FAIL  ! LCOV_EXCL_LINE
+          return
+       else if (py_exc /= FROM_LINEARIZED_SUCCESS) then
+          ! NOTE: We exclude this block from testing because it
+          !       **should** never occur. It is here simply to
+          !       future-proof this code, since it is a hard-coded
+          !       remapping of the error codes from ``from_linearized()``.
+          !       If those error codes change and this section doesn't,
+          !       then an "unknown" error will occur.
+          status = ALL_INTERSECTIONS_UNKNOWN  ! LCOV_EXCL_LINE
           return
        end if
 
@@ -869,7 +887,9 @@ contains
 
        ! Bail out of there are too many candidates.
        if (num_candidates > MAX_CANDIDATES) then
-          status = ALL_INTERSECTIONS_TOO_MANY
+          ! NOTE: This assumes that all of the status enum values are less
+          !       than ``MAX_CANDIDATES + 1``.
+          status = num_candidates
           return
        end if
 
@@ -897,7 +917,8 @@ contains
 
   end subroutine all_intersections
 
-  subroutine free_all_intersections_workspace()
+  subroutine free_all_intersections_workspace() &
+       bind(c, name='free_all_intersections_workspace')
 
     ! NOTE: This **should** be run during clean-up for any code which
     !       invokes ``all_intersections()``.
