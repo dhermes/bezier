@@ -1006,8 +1006,13 @@ def intersect_one_round(candidates, intersections):
     return next_candidates
 
 
-def all_intersections(curve_first, curve_second):
+def _all_intersections(curve_first, curve_second):
     r"""Find the points of intersection among a pair of curves.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     .. note::
 
@@ -1059,6 +1064,40 @@ def all_intersections(curve_first, curve_second):
 
     msg = _NO_CONVERGE_TEMPLATE.format(_MAX_INTERSECT_SUBDIVISIONS)
     raise ValueError(msg)
+
+
+def _all_intersections_cython(curve_first, curve_second):
+    """Find the points of intersection among a pair of curves.
+
+    .. note::
+
+       This is just a thin wrapper that sends the **nodes** of the curves
+       into the Cython-wrapped Fortran subroutine.
+
+    Args:
+        curve_first (.Curve): Curve to be intersected with ``curve_second``.
+        curve_second (.Curve): Curve to be intersected with ``curve_first``.
+
+    Returns:
+        numpy.ndarray: ``Nx2`` array of intersection parameters.
+        Each row contains a pair of values :math:`s` and :math:`t`
+        (each in :math:`\left[0, 1\right]`) such that the curves
+        intersect: :math:`B_1(s) = B_2(t)`.
+    """
+    # NOTE: In the below we replace ``isinstance(a, B)`` with
+    #       ``a.__class__ is B``, which is a 3-3.5x speedup.
+    if curve_first.__class__ is Linearization:
+        nodes_first = curve_first.curve._nodes
+    else:
+        nodes_first = curve_first._nodes
+
+    if curve_second.__class__ is Linearization:
+        nodes_second = curve_second.curve._nodes
+    else:
+        nodes_second = curve_second._nodes
+
+    return _curve_intersection_speedup.all_intersections(
+        nodes_first, nodes_second)
 
 
 class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
@@ -1150,6 +1189,7 @@ if _curve_intersection_speedup is None:  # pragma: NO COVER
     parallel_different = _parallel_different
     from_linearized_low_level = _from_linearized_low_level
     bbox_line_intersect = _bbox_line_intersect
+    all_intersections = _all_intersections
 else:
     bbox_intersect = _curve_intersection_speedup.bbox_intersect
     linearization_error = _curve_intersection_speedup.linearization_error
@@ -1158,4 +1198,5 @@ else:
     from_linearized_low_level = (
         _curve_intersection_speedup.from_linearized_low_level)
     bbox_line_intersect = _curve_intersection_speedup.bbox_line_intersect
+    all_intersections = _all_intersections_cython
 # pylint: enable=invalid-name
