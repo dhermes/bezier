@@ -1022,17 +1022,9 @@ def _all_intersections(curve_first, curve_second):
        that assumption fails, e.g. :func:`bbox_intersect` and
        :func:`newton_refine() <._intersection_helpers._newton_refine>`.
 
-    .. note::
-
-       For the "optimal" experience, the caller should make that that if
-       the curves are linear / near-linear, they are linearized. This will
-       avoid unnecessary checks, e.g. bbox intersect check.
-
     Args:
-        curve_first (Union[.Curve, .Linearization]): Curve to be intersected
-            with ``curve_second``.
-        curve_second (Union[.Curve, .Linearization]): Curve to be intersected
-            with ``curve_first``.
+        curve_first (.Curve): Curve to be intersected with ``curve_second``.
+        curve_second (.Curve): Curve to be intersected with ``curve_first``.
 
     Returns:
         numpy.ndarray: ``Nx2`` array of intersection parameters.
@@ -1047,7 +1039,12 @@ def _all_intersections(curve_first, curve_second):
             many candidate pairs. This typically indicates tangent
             curves or coincident curves.
     """
-    candidates = [(curve_first, curve_second)]
+    candidates = [
+        (
+            Linearization.from_shape(curve_first),
+            Linearization.from_shape(curve_second),
+        ),
+    ]
     intersections = []
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
         candidates = intersect_one_round(candidates, intersections)
@@ -1085,20 +1082,8 @@ def _all_intersections_cython(curve_first, curve_second):
         (each in :math:`\left[0, 1\right]`) such that the curves
         intersect: :math:`B_1(s) = B_2(t)`.
     """
-    # NOTE: In the below we replace ``isinstance(a, B)`` with
-    #       ``a.__class__ is B``, which is a 3-3.5x speedup.
-    if curve_first.__class__ is Linearization:
-        nodes_first = curve_first.curve._nodes
-    else:
-        nodes_first = curve_first._nodes
-
-    if curve_second.__class__ is Linearization:
-        nodes_second = curve_second.curve._nodes
-    else:
-        nodes_second = curve_second._nodes
-
     return _curve_intersection_speedup.all_intersections(
-        nodes_first, nodes_second)
+        curve_first._nodes, curve_second._nodes)
 
 
 class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods

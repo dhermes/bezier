@@ -189,9 +189,8 @@ def get_sorted_intersections(intersection_info, strategy):
     curve1 = intersection_info.curve1
     curve2 = intersection_info.curve2
     if strategy is GEOMETRIC:
-        lin1 = _geometric_intersection.Linearization.from_shape(curve1)
-        lin2 = _geometric_intersection.Linearization.from_shape(curve2)
-        intersections = _geometric_intersection.all_intersections(lin1, lin2)
+        intersections = _geometric_intersection.all_intersections(
+            curve1, curve2)
     else:
         intersections = _algebraic_intersection.all_intersections(
             curve1, curve2)

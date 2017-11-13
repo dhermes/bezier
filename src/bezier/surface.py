@@ -42,7 +42,6 @@ _LOCATE_ERROR_TEMPLATE = (
     'should be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
 _STRATEGY = _intersection_helpers.IntersectionStrategy
 _INTERSECTION_T = _geometric_intersection.BoxIntersectionType.INTERSECTION
-_FROM_SHAPE = _geometric_intersection.Linearization.from_shape
 
 
 class Surface(_base.Base):
@@ -1268,7 +1267,6 @@ def _edge_cycle(edge1, edge2, edge3):
     # pylint: enable=protected-access
 
 
-# pylint: disable=too-many-locals
 def _surface_intersections(edges1, edges2, strategy):
     """Find all intersections among edges of two surfaces.
 
@@ -1288,23 +1286,16 @@ def _surface_intersections(edges1, edges2, strategy):
             :attr:`.IntersectionStrategy`.
     """
     if strategy is _STRATEGY.GEOMETRIC:
-        # Linearize ahead of time to avoid re-doing computation.
-        linearized1 = [_FROM_SHAPE(edge) for edge in edges1]
-        linearized2 = [_FROM_SHAPE(edge) for edge in edges2]
         all_intersections = _geometric_intersection.all_intersections
     elif strategy is _STRATEGY.ALGEBRAIC:
-        linearized1 = edges1
-        linearized2 = edges2
         all_intersections = _algebraic_intersection.all_intersections
     else:
         raise ValueError('Unexpected strategy.', strategy)
 
     intersections = []
-    for index1, lin1 in enumerate(linearized1):
-        edge1 = edges1[index1]
-        for index2, lin2 in enumerate(linearized2):
-            edge2 = edges2[index2]
-            st_vals = all_intersections(lin1, lin2)
+    for index1, edge1 in enumerate(edges1):
+        for index2, edge2 in enumerate(edges2):
+            st_vals = all_intersections(edge1, edge2)
             for s, t in st_vals:
                 intersection = _intersection_helpers.Intersection(
                     edge1, s, edge2, t)
@@ -1313,4 +1304,3 @@ def _surface_intersections(edges1, edges2, strategy):
                 intersections.append(intersection)
 
     return intersections
-# pylint: enable=too-many-locals

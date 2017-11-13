@@ -43,7 +43,6 @@ _REPR_TEMPLATE = (
 _LOCATE_ERROR_TEMPLATE = (
     'Dimension mismatch: This curve is {:d}-dimensional, so the point should '
     'be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
-_FROM_SHAPE = _geometric_intersection.Linearization.from_shape
 
 
 IntersectionStrategy = _intersection_helpers.IntersectionStrategy
@@ -577,17 +576,13 @@ class Curve(_base.Base):
                     'Intersection only implemented in 2D')
 
         if strategy is IntersectionStrategy.GEOMETRIC:
-            linearized_first = _FROM_SHAPE(self)
-            linearized_second = _FROM_SHAPE(other)
             all_intersections = _geometric_intersection.all_intersections
         elif strategy is IntersectionStrategy.ALGEBRAIC:
-            linearized_first = self
-            linearized_second = other
             all_intersections = _algebraic_intersection.all_intersections
         else:
             raise ValueError('Unexpected strategy.', strategy)
 
-        return all_intersections(linearized_first, linearized_second)
+        return all_intersections(self, other)
 
     def elevate(self):
         r"""Return a degree-elevated version of the current curve.

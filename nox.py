@@ -362,6 +362,8 @@ def clean(session):
         get_path('.cache'),
         get_path('.coverage'),
         get_path('__pycache__'),
+        get_path('benchmarks', 'memory', '__pycache__'),
+        get_path('benchmarks', 'time', '__pycache__'),
         get_path('build'),
         get_path('dist'),
         get_path('docs', '__pycache__'),
