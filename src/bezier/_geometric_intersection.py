@@ -27,6 +27,7 @@ or the speedup.
 """
 
 
+import atexit
 import itertools
 
 import numpy as np
@@ -1199,4 +1200,6 @@ else:
         _curve_intersection_speedup.from_linearized_low_level)
     bbox_line_intersect = _curve_intersection_speedup.bbox_line_intersect
     all_intersections = _all_intersections_cython
+    atexit.register(
+        _curve_intersection_speedup.free_all_intersections_workspace)
 # pylint: enable=invalid-name
