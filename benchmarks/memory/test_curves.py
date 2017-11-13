@@ -32,7 +32,7 @@ def get_bounds():
     if os.environ.get('CIRCLECI') == 'true':
         return 28, 41
     else:
-        return 28, 32
+        return 28, 35
 
 
 def intersect_all():
