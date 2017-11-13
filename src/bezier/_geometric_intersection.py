@@ -1068,7 +1068,7 @@ def _all_intersections(curve_first, curve_second):
 
 
 def _all_intersections_cython(curve_first, curve_second):
-    """Find the points of intersection among a pair of curves.
+    r"""Find the points of intersection among a pair of curves.
 
     .. note::
 
