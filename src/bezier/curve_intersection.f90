@@ -870,7 +870,7 @@ contains
           !       quite difficult to come up with an example that
           !       causes it.
           status = ALL_INTERSECTIONS_WIGGLE_FAIL  ! LCOV_EXCL_LINE
-          return
+          return  ! LCOV_EXCL_LINE
        else if (py_exc /= FROM_LINEARIZED_SUCCESS) then
           ! NOTE: We exclude this block from testing because it
           !       **should** never occur. It is here simply to
@@ -879,7 +879,7 @@ contains
           !       If those error codes change and this section doesn't,
           !       then an "unknown" error will occur.
           status = ALL_INTERSECTIONS_UNKNOWN  ! LCOV_EXCL_LINE
-          return
+          return  ! LCOV_EXCL_LINE
        end if
 
        ! Update the number of candidates.
