@@ -1648,12 +1648,14 @@ def handle_corners(intersection):
         # pylint: disable=protected-access
         intersection.first = intersection.first._next_edge
         # pylint: enable=protected-access
+        intersection.index_first = (intersection.index_first + 1) % 3
         changed = True
     if intersection.t == 1.0:
         intersection.t = 0.0
         # pylint: disable=protected-access
         intersection.second = intersection.second._next_edge
         # pylint: enable=protected-access
+        intersection.index_second = (intersection.index_second + 1) % 3
         changed = True
 
     return changed
@@ -1768,6 +1770,8 @@ def to_front(intersection, intersections, unused):
             intersection.first._next_edge, 0.0,
             intersection.second, intersection.t,
             interior_curve=intersection.interior_curve)
+        new_intersection.index_first = (intersection.index_first + 1) % 3
+        new_intersection.index_second = intersection.index_second
         # pylint: enable=protected-access
         intersection = new_intersection
 
@@ -1778,6 +1782,8 @@ def to_front(intersection, intersections, unused):
             intersection.first, intersection.s,
             intersection.second._next_edge, 0.0,
             interior_curve=intersection.interior_curve)
+        new_intersection.index_first = intersection.index_first
+        new_intersection.index_second = (intersection.index_second + 1) % 3
         # pylint: enable=protected-access
         intersection = new_intersection
 
@@ -1838,6 +1844,7 @@ def get_next_first(intersection, intersections):
         new_intersection = _intersection_helpers.Intersection(
             first, 1.0, None, None,
             interior_curve=IntersectionClassification.FIRST)
+        new_intersection.index_first = intersection.index_first
         return new_intersection
     else:
         return along_edge
@@ -1882,6 +1889,7 @@ def get_next_second(intersection, intersections):
         new_intersection = _intersection_helpers.Intersection(
             None, None, second, 1.0,
             interior_curve=IntersectionClassification.SECOND)
+        new_intersection.index_second = intersection.index_second
         return new_intersection
     else:
         return along_edge
@@ -2048,8 +2056,8 @@ def tangent_only_intersections(intersections, surface1, surface2):
     a given pairing.
 
     Args:
-        intersections (list): A list of :class:`.Intersection` objects applied
-            to each of the 9 edge-edge pairs from a surface-surface pairing.
+        intersections (List[.Intersection]): Intersections from each of the
+            9 edge-edge pairs from a surface-surface pairing.
         surface1 (.Surface): First surface in intersection.
         surface2 (.Surface): Second surface in intersection.
 
@@ -2093,8 +2101,8 @@ def basic_interior_combine(intersections, max_edges=10):
        enforce it.
 
     Args:
-        intersections (list): A list of :class:`.Intersection` objects applied
-            to each of the 9 edge-edge pairs from a surface-surface pairing.
+        intersections (List[.Intersection]): Intersections from each of the
+            9 edge-edge pairs from a surface-surface pairing.
         max_edges (Optional[int]): The maximum number of allowed / expected
             edges per intersection. This is to avoid infinite loops.
 
@@ -2146,8 +2154,8 @@ def combine_intersections(intersections, surface1, surface2):
        :func:`classify_intersection`.
 
     Args:
-        intersections (list): A list of :class:`.Intersection` objects applied
-            to each of the 9 edge-edge pairs from a surface-surface pairing.
+        intersections (List[.Intersection]): Intersections from each of the
+            9 edge-edge pairs from a surface-surface pairing.
         surface1 (.Surface): First surface in intersection.
         surface2 (.Surface): Second surface in intersection.
 

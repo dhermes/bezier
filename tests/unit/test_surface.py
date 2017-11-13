@@ -265,7 +265,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test__get_edges_cached(self):
         surface = self._make_one_no_slots(self.ZEROS, 1)
-        compute_mock = unittest.mock.Mock()
+        compute_mock = unittest.mock.Mock(spec=[])
         surface._compute_edges = compute_mock
 
         surface._edges = unittest.mock.sentinel.edges
@@ -699,7 +699,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_is_valid_property_cached(self):
         surface = self._make_one_no_slots(self.ZEROS, 1)
-        compute_valid = unittest.mock.Mock()
+        compute_valid = unittest.mock.Mock(spec=[])
         surface._compute_valid = compute_valid
         compute_valid.return_value = True
 
@@ -912,9 +912,9 @@ class Test__edge_cycle(unittest.TestCase):
         return surface._edge_cycle(edge1, edge2, edge3)
 
     def test_it(self):
-        edge1 = unittest.mock.Mock()
-        edge2 = unittest.mock.Mock()
-        edge3 = unittest.mock.Mock()
+        edge1 = unittest.mock.Mock(spec=[])
+        edge2 = unittest.mock.Mock(spec=[])
+        edge3 = unittest.mock.Mock(spec=[])
         self.assertIsNone(
             self._call_function_under_test(edge1, edge2, edge3))
 
