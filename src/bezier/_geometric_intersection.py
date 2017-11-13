@@ -109,8 +109,10 @@ def _bbox_intersect(nodes1, nodes2):
 def _linearization_error(nodes):
     r"""Compute the maximum error of a linear approximation.
 
-    Helper for :class:`.Linearization`, which is used during the
-    curve-curve intersection process.
+    .. note::
+
+       This is a helper for :class:`.Linearization`, which is used during the
+       curve-curve intersection process.
 
     We use the line
 
@@ -751,6 +753,13 @@ def from_linearized(first, second, intersections):
 def add_intersection(s, t, intersections):
     """Adds an intersection to list of ``intersections``.
 
+    .. note::
+
+       This is a helper for :func:`from_linearized` and :func:`endpoint_check`.
+       These functions are used (directly or indirectly) by
+       :func:`_all_intersections` exclusively, and that function has a
+       Fortran equivalent.
+
     Accounts for repeated points at curve endpoints. If the
     intersection has already been found, does nothing.
 
@@ -773,7 +782,12 @@ def endpoint_check(
         first, node_first, s, second, node_second, t, intersections):
     r"""Check if curve endpoints are identical.
 
-    Helper for :func:`tangent_bbox_intersection`.
+    .. note::
+
+       This is a helper for :func:`tangent_bbox_intersection`. These
+       functions are used (directly or indirectly) by
+       :func:`_all_intersections` exclusively, and that function has a
+       Fortran equivalent.
 
     Args:
         first (.Curve): First curve being intersected (assumed in
@@ -803,6 +817,13 @@ def endpoint_check(
 def tangent_bbox_intersection(first, second, intersections):
     r"""Check if two curves with tangent bounding boxes intersect.
 
+    .. note::
+
+       This is a helper for :func:`intersect_one_round`. These
+       functions are used (directly or indirectly) by
+       :func:`_all_intersections` exclusively, and that function has a
+       Fortran equivalent.
+
     If the bounding boxes are tangent, intersection can
     only occur along that tangency.
 
@@ -829,7 +850,7 @@ def tangent_bbox_intersection(first, second, intersections):
     .. note::
 
        This function assumes callers will not pass curves that can be
-       linearized / are linear. In :func:`all_intersections`, curves
+       linearized / are linear. In :func:`_all_intersections`, curves
        are pre-processed to do any linearization before the
        subdivision / intersection process begins.
 
@@ -867,6 +888,11 @@ def tangent_bbox_intersection(first, second, intersections):
 
 def _bbox_line_intersect(nodes, line_start, line_end):
     r"""Determine intersection of a bounding box and a line.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     We do this by first checking if either the start or end node of the
     segment are contained in the bounding box. If they aren't, then
@@ -948,6 +974,11 @@ def _bbox_line_intersect(nodes, line_start, line_end):
 
 def intersect_one_round(candidates, intersections):
     """Perform one step of the intersection process.
+
+    .. note::
+
+       This is a helper for :func:`_all_intersections` and that function
+       has a Fortran equivalent.
 
     Checks if the bounding boxes of each pair in ``candidates``
     intersect. If the bounding boxes do not intersect, the pair

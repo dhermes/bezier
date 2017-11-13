@@ -480,8 +480,8 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         # NOTE: These are intentionally not documented for the time being.
         #       They are intended as a replacement for ``first`` and ``second``
         #       to make this class easier to reach across the C boundary.
-        #       The only callers of this constructor (``all_intersections``)
-        #       will have access the index of each curve.
+        #       The only callers of this constructor will have access to the
+        #       index of each curve.
         self.index_first = -1
         self.index_second = -1
 
