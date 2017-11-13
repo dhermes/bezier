@@ -530,6 +530,24 @@ class CurveIntersectionInfo(object):
         return self.curve2_info.curve
     # pylint: enable=missing-return-type-doc
 
+    @property
+    def nodes1(self):
+        """The first B |eacute| zier nodes in the intersection.
+
+        Returns:
+            numpy.ndarray: The first B |eacute| zier nodes.
+        """
+        return self.curve1_info.control_points
+
+    @property
+    def nodes2(self):
+        """The second B |eacute| zier nodes in the intersection.
+
+        Returns:
+            numpy.ndarray: The second B |eacute| zier nodes.
+        """
+        return self.curve2_info.control_points
+
     @classmethod
     def from_json(cls, info, curves):
         """Convert JSON curve intersection info into ``CurveIntersectionInfo``.

@@ -1597,33 +1597,25 @@ class Test_locate_point(unittest.TestCase):
 class Test_all_intersections(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(curve_first, curve_second):
+    def _call_function_under_test(nodes_first, nodes_second):
         from bezier import _algebraic_intersection
 
         return _algebraic_intersection.all_intersections(
-            curve_first, curve_second)
+            nodes_first, nodes_second)
 
     def test_no_intersections(self):
-        import bezier
-
         nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve1 = bezier.Curve(nodes1, degree=1, _copy=False)
-
         nodes2 = np.asfortranarray([
             [3.0, 3.0],
             [4.0, 3.0],
         ])
-        curve2 = bezier.Curve(nodes2, degree=1, _copy=False)
-
-        intersections = self._call_function_under_test(curve1, curve2)
+        intersections = self._call_function_under_test(nodes1, nodes2)
         self.assertEqual(intersections.shape, (0, 2))
 
     def test_success(self):
-        import bezier
-
         # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
         #       onto the interval [1/4, 1] and ``nodes`` is a specialization
         #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
@@ -1634,17 +1626,14 @@ class Test_all_intersections(utils.NumPyTestCase):
             [0.625, 1.0],
             [1.0, 1.0],
         ])
-        curve1 = bezier.Curve(nodes1, degree=2, _copy=False)
-
         nodes2 = np.asfortranarray([
             [0.0, 1.0],
             [0.375, 1.0],
             [0.75, 0.4375],
         ])
-        curve2 = bezier.Curve(nodes2, degree=2, _copy=False)
         s_val = 1.0 / 3.0
         t_val = 2.0 / 3.0
 
-        intersections = self._call_function_under_test(curve1, curve2)
+        intersections = self._call_function_under_test(nodes1, nodes2)
         expected = np.asfortranarray([[s_val, t_val]])
         self.assertEqual(intersections, expected)

@@ -1038,7 +1038,7 @@ def intersect_one_round(candidates, intersections):
     return next_candidates
 
 
-def _all_intersections(curve_first, curve_second):
+def _all_intersections(nodes_first, nodes_second):
     r"""Find the points of intersection among a pair of curves.
 
     .. note::
@@ -1054,8 +1054,10 @@ def _all_intersections(curve_first, curve_second):
        :func:`newton_refine() <._intersection_helpers._newton_refine>`.
 
     Args:
-        curve_first (.Curve): Curve to be intersected with ``curve_second``.
-        curve_second (.Curve): Curve to be intersected with ``curve_first``.
+        nodes_first (numpy.ndarray): Control points of a curve to be
+            intersected with ``nodes_second``.
+        nodes_second (numpy.ndarray): Control points of a curve to be
+            intersected with ``nodes_first``.
 
     Returns:
         numpy.ndarray: ``Nx2`` array of intersection parameters.
@@ -1070,6 +1072,9 @@ def _all_intersections(curve_first, curve_second):
             many candidate pairs. This typically indicates tangent
             curves or coincident curves.
     """
+    import bezier.curve  # cyclic import.
+    curve_first = bezier.curve.Curve.from_nodes(nodes_first, _copy=False)
+    curve_second = bezier.curve.Curve.from_nodes(nodes_second, _copy=False)
     candidates = [
         (
             Linearization.from_shape(curve_first),
@@ -1093,28 +1098,6 @@ def _all_intersections(curve_first, curve_second):
 
     msg = _NO_CONVERGE_TEMPLATE.format(_MAX_INTERSECT_SUBDIVISIONS)
     raise ValueError(msg)
-
-
-def _all_intersections_cython(curve_first, curve_second):
-    r"""Find the points of intersection among a pair of curves.
-
-    .. note::
-
-       This is just a thin wrapper that sends the **nodes** of the curves
-       into the Cython-wrapped Fortran subroutine.
-
-    Args:
-        curve_first (.Curve): Curve to be intersected with ``curve_second``.
-        curve_second (.Curve): Curve to be intersected with ``curve_first``.
-
-    Returns:
-        numpy.ndarray: ``Nx2`` array of intersection parameters.
-        Each row contains a pair of values :math:`s` and :math:`t`
-        (each in :math:`\left[0, 1\right]`) such that the curves
-        intersect: :math:`B_1(s) = B_2(t)`.
-    """
-    return _curve_intersection_speedup.all_intersections(
-        curve_first._nodes, curve_second._nodes)
 
 
 class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
@@ -1215,7 +1198,7 @@ else:
     from_linearized_low_level = (
         _curve_intersection_speedup.from_linearized_low_level)
     bbox_line_intersect = _curve_intersection_speedup.bbox_line_intersect
-    all_intersections = _all_intersections_cython
+    all_intersections = _curve_intersection_speedup.all_intersections
     atexit.register(
         _curve_intersection_speedup.free_all_intersections_workspace)
 # pylint: enable=invalid-name

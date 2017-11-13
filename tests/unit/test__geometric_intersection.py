@@ -1161,33 +1161,25 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 class Test__all_intersections(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(curve_first, curve_second):
+    def _call_function_under_test(nodes_first, nodes_second, **kwargs):
         from bezier import _geometric_intersection
 
         return _geometric_intersection._all_intersections(
-            curve_first, curve_second)
+            nodes_first, nodes_second, **kwargs)
 
     def test_no_intersections(self):
-        import bezier
-
         nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        curve1 = bezier.Curve(nodes1, degree=1, _copy=False)
-
         nodes2 = np.asfortranarray([
             [3.0, 3.0],
             [4.0, 3.0],
         ])
-        curve2 = bezier.Curve(nodes2, degree=1, _copy=False)
-
-        intersections = self._call_function_under_test(curve1, curve2)
+        intersections = self._call_function_under_test(nodes1, nodes2)
         self.assertEqual(intersections.shape, (0, 2))
 
     def test_quadratics_intersect_once(self):
-        import bezier
-
         # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
         #       onto the interval [1/4, 1] and ``nodes`` is a specialization
         #       of [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
@@ -1198,27 +1190,22 @@ class Test__all_intersections(utils.NumPyTestCase):
             [0.625, 1.0],
             [1.0, 1.0],
         ])
-        curve1 = bezier.Curve(nodes1, degree=2)
-
         nodes2 = np.asfortranarray([
             [0.0, 1.0],
             [0.375, 1.0],
             [0.75, 0.4375],
         ])
-        curve2 = bezier.Curve(nodes2, degree=2)
-
         s_val = 1.0 / 3.0
         if base_utils.IS_64_BIT or base_utils.IS_WINDOWS:  # pragma: NO COVER
             # Due to round-off, the answer is wrong by a tiny wiggle.
             s_val += SPACING(s_val)
         t_val = 2.0 / 3.0
 
-        intersections = self._call_function_under_test(curve1, curve2)
+        intersections = self._call_function_under_test(nodes1, nodes2)
         expected = np.asfortranarray([[s_val, t_val]])
         self.assertEqual(intersections, expected)
 
     def test_parallel_failure(self):
-        import bezier
         from bezier import _geometric_intersection
 
         nodes1 = np.asfortranarray([
@@ -1226,24 +1213,19 @@ class Test__all_intersections(utils.NumPyTestCase):
             [0.375, 0.75],
             [0.75, 0.375],
         ])
-        curve1 = bezier.Curve(nodes1, degree=2)
-
         nodes2 = np.asfortranarray([
             [0.25, 0.625],
             [0.625, 0.25],
             [1.0, 1.0],
         ])
-        curve2 = bezier.Curve(nodes2, degree=2)
-
         with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(curve1, curve2)
+            self._call_function_under_test(nodes1, nodes2)
 
         exc_args = exc_info.exception.args
         self.assertEqual(
             exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
 
     def test_too_many_candidates(self):
-        import bezier
         from bezier import _geometric_intersection
 
         nodes1 = np.asfortranarray([
@@ -1251,24 +1233,19 @@ class Test__all_intersections(utils.NumPyTestCase):
             [-0.5, 1.5],
             [1.0, 1.0],
         ])
-        curve1 = bezier.Curve(nodes1, degree=2)
-
         nodes2 = np.asfortranarray([
             [-1.0, 1.0],
             [0.5, 0.5],
             [0.0, 2.0],
         ])
-        curve2 = bezier.Curve(nodes2, degree=2)
-
         with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(curve1, curve2)
+            self._call_function_under_test(nodes1, nodes2)
 
         exc_args = exc_info.exception.args
         expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(88)
         self.assertEqual(exc_args, (expected,))
 
     def test_non_convergence(self):
-        import bezier
         from bezier import _geometric_intersection
 
         multiplier = 16384.0
@@ -1277,16 +1254,12 @@ class Test__all_intersections(utils.NumPyTestCase):
             [4.5, 9.0],
             [9.0, 0.0],
         ])
-        curve1 = bezier.Curve(nodes1, degree=2)
-
         nodes2 = multiplier * np.asfortranarray([
             [0.0, 8.0],
             [6.0, 0.0],
         ])
-        curve2 = bezier.Curve(nodes2, degree=1)
-
         with self.assertRaises(ValueError) as exc_info:
-            self._call_function_under_test(curve1, curve2)
+            self._call_function_under_test(nodes1, nodes2)
 
         exc_args = exc_info.exception.args
         expected = _geometric_intersection._NO_CONVERGE_TEMPLATE.format(
@@ -1298,23 +1271,17 @@ class Test__all_intersections(utils.NumPyTestCase):
         # which have bounding boxes that touch at corners (these corners are
         # also intersections). This test makes sure the duplicates are
         # de-duplicated.
-        import bezier
-
         nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
             [1.0, 0.0],
         ])
-        curve1 = bezier.Curve(nodes1, degree=2)
-
         nodes2 = np.asfortranarray([
             [0.0, 0.75],
             [0.5, -0.25],
             [1.0, 0.75],
         ])
-        curve2 = bezier.Curve(nodes2, degree=2)
-
-        intersections = self._call_function_under_test(curve1, curve2)
+        intersections = self._call_function_under_test(nodes1, nodes2)
         expected = np.asfortranarray([
             [0.25, 0.25],
             [0.75, 0.75],
@@ -1323,37 +1290,32 @@ class Test__all_intersections(utils.NumPyTestCase):
 
 
 @utils.needs_curve_intersection_speedup
-class Test__all_intersections_cython(Test__all_intersections):
+class Test_speedup_all_intersections(Test__all_intersections):
 
     @staticmethod
-    def _call_function_under_test(curve_first, curve_second):
-        from bezier import _geometric_intersection
+    def _call_function_under_test(nodes_first, nodes_second, **kwargs):
+        from bezier import _curve_intersection_speedup
 
-        return _geometric_intersection._all_intersections_cython(
-            curve_first, curve_second)
+        return _curve_intersection_speedup.all_intersections(
+            nodes_first, nodes_second, **kwargs)
 
     def test_workspace_resize(self):
-        import bezier
         from bezier import _curve_intersection_speedup
 
         nodes1 = np.asfortranarray([
             [-3.0, 0.0],
             [5.0, 0.0],
         ])
-        curve1 = bezier.Curve(nodes1, degree=1)
-
         nodes2 = np.asfortranarray([
             [-7.0, -9.0],
             [9.0, 13.0],
             [-7.0, -13.0],
             [9.0, 9.0],
         ])
-        curve2 = bezier.Curve(nodes2, degree=3)
-
         # NOTE: These curves intersect 3 times, so a workspace of
         #       2 is not large enough.
         _curve_intersection_speedup.reset_workspace(2)
-        intersections = self._call_function_under_test(curve1, curve2)
+        intersections = self._call_function_under_test(nodes1, nodes2)
         expected = np.asfortranarray([
             [0.5, 0.5],
             [0.375, 0.25],
@@ -1362,17 +1324,6 @@ class Test__all_intersections_cython(Test__all_intersections):
         self.assertEqual(intersections, expected)
         # Make sure the workspace was resized.
         self.assertEqual(_curve_intersection_speedup.workspace_size(), 3)
-
-
-@utils.needs_curve_intersection_speedup
-class Test_speedup_all_intersections(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(nodes_first, nodes_second, **kwargs):
-        from bezier import _curve_intersection_speedup
-
-        return _curve_intersection_speedup.all_intersections(
-            nodes_first, nodes_second, **kwargs)
 
     def test_workspace_too_small(self):
         from bezier import _curve_intersection_speedup
@@ -1387,7 +1338,6 @@ class Test_speedup_all_intersections(utils.NumPyTestCase):
             [-7.0, -13.0],
             [9.0, 9.0],
         ])
-
         # NOTE: These curves intersect 3 times, so a workspace of
         #       2 is not large enough.
         _curve_intersection_speedup.reset_workspace(2)

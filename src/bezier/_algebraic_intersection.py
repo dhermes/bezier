@@ -1358,7 +1358,7 @@ def locate_point(nodes, x_val, y_val):
         return all_roots[index]
 
 
-def all_intersections(curve_first, curve_second):
+def all_intersections(nodes_first, nodes_second):
     r"""Find the points of intersection among a pair of curves.
 
     .. note::
@@ -1368,8 +1368,10 @@ def all_intersections(curve_first, curve_second):
        that assumption fails.
 
     Args:
-        curve_first (.Curve): Curve to be intersected with ``curve_second``.
-        curve_second (.Curve): Curve to be intersected with ``curve_first``.
+        nodes_first (numpy.ndarray): Control points of a curve to be
+            intersected with ``nodes_second``.
+        nodes_second (numpy.ndarray): Control points of a curve to be
+            intersected with ``nodes_first``.
 
     Returns:
         numpy.ndarray: ``Nx2`` array of intersection parameters.
@@ -1379,8 +1381,8 @@ def all_intersections(curve_first, curve_second):
     """
     # Only attempt this if the bounding boxes intersect.
     bbox_int = _geometric_intersection.bbox_intersect(
-        curve_first._nodes, curve_second._nodes)
+        nodes_first, nodes_second)
     if bbox_int == _DISJOINT:
         return np.empty((0, 2), order='F')
 
-    return intersect_curves(curve_first._nodes, curve_second._nodes)
+    return intersect_curves(nodes_first, nodes_second)

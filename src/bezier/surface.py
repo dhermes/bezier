@@ -1295,7 +1295,7 @@ def _surface_intersections(edges1, edges2, strategy):
     intersections = []
     for index1, edge1 in enumerate(edges1):
         for index2, edge2 in enumerate(edges2):
-            st_vals = all_intersections(edge1, edge2)
+            st_vals = all_intersections(edge1._nodes, edge2._nodes)
             for s, t in st_vals:
                 intersection = _intersection_helpers.Intersection(
                     edge1, s, edge2, t)

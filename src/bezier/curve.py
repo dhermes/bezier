@@ -582,7 +582,7 @@ class Curve(_base.Base):
         else:
             raise ValueError('Unexpected strategy.', strategy)
 
-        return all_intersections(self, other)
+        return all_intersections(self._nodes, other._nodes)
 
     def elevate(self):
         r"""Return a degree-elevated version of the current curve.
