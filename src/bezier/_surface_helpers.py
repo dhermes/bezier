@@ -1820,18 +1820,16 @@ def to_front(intersection, intersections, unused):
         changed = True
         next_index = (intersection.index_first + 1) % 3
         new_intersection = _intersection_helpers.Intersection(
-            0.0, intersection.t, interior_curve=intersection.interior_curve)
-        new_intersection.index_first = next_index
-        new_intersection.index_second = intersection.index_second
+            next_index, 0.0, intersection.index_second, intersection.t,
+            interior_curve=intersection.interior_curve)
         intersection = new_intersection
 
     if intersection.t == 1.0:
         changed = True
         next_index = (intersection.index_second + 1) % 3
         new_intersection = _intersection_helpers.Intersection(
-            intersection.s, 0.0, interior_curve=intersection.interior_curve)
-        new_intersection.index_first = intersection.index_first
-        new_intersection.index_second = next_index
+            intersection.index_first, intersection.s, next_index, 0.0,
+            interior_curve=intersection.interior_curve)
         intersection = new_intersection
 
     if changed:
@@ -1894,11 +1892,9 @@ def get_next_first(intersection, intersections):
     if along_edge is None:
         # If there is no other intersection on the edge, just return
         # the segment end.
-        new_intersection = _intersection_helpers.Intersection(
-            1.0, None, interior_curve=IntersectionClassification.FIRST)
-        new_intersection.index_first = index_first
-        new_intersection.index_second = None
-        return new_intersection
+        return _intersection_helpers.Intersection(
+            index_first, 1.0, None, None,
+            interior_curve=IntersectionClassification.FIRST)
     else:
         return along_edge
 
@@ -1945,11 +1941,9 @@ def get_next_second(intersection, intersections):
     if along_edge is None:
         # If there is no other intersection on the edge, just return
         # the segment end.
-        new_intersection = _intersection_helpers.Intersection(
-            None, 1.0, interior_curve=IntersectionClassification.SECOND)
-        new_intersection.index_first = None
-        new_intersection.index_second = index_second
-        return new_intersection
+        return _intersection_helpers.Intersection(
+            None, None, index_second, 1.0,
+            interior_curve=IntersectionClassification.SECOND)
     else:
         return along_edge
 

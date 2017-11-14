@@ -413,9 +413,15 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
     """Representation of a curve-curve intersection.
 
     Args:
-        s (float): The parameter along ``first`` where the
+        index_first (int): The index of the first curve within a list of
+            curve edges. Expected to be used to index within the three
+            edges of a surface.
+        s (float): The parameter along the first curve where the
             intersection occurs.
-        t (float): The parameter along ``second`` where the
+        index_second (int): The index of the second curve within a list of
+            curve edges. Expected to be used to index within the three
+            edges of a surface.
+        t (float): The parameter along the second curve where the
             intersection occurs.
         interior_curve (Optional[ \
             ~bezier._surface_helpers._IntersectionClassification]): The
@@ -428,24 +434,20 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         'interior_curve',
     )
 
-    def __init__(self, s, t, interior_curve=None):
+    def __init__(self, index_first, s, index_second, t, interior_curve=None):
+        self.index_first = index_first
+        """int: Index of the first curve within a list of edges."""
         self.s = s
-        """float: The intersection parameter for the ``first`` curve."""
+        """float: The intersection parameter for the first curve."""
+        self.index_second = index_second
+        """int: Index of the second curve within a list of edges."""
         self.t = t
-        """float: The intersection parameter for the ``second`` curve."""
+        """float: The intersection parameter for the second curve."""
         self.interior_curve = interior_curve
         """IntersectionClassification: Which of the curves is on the interior.
 
         See :func:`.classify_intersection` for more details.
         """
-
-        # NOTE: These are intentionally not documented for the time being.
-        #       They are intended as a replacement for ``first`` and ``second``
-        #       to make this class easier to reach across the C boundary.
-        #       The only callers of this constructor will have access to the
-        #       index of each curve.
-        self.index_first = -1
-        self.index_second = -1
 
     @property
     def __dict__(self):
