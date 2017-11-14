@@ -1290,7 +1290,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> tangent2 = hodograph(curve2, t)
        >>> tangent2
        array([[ 2. , 0.5]])
-       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> intersection = Intersection(s, t)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.FIRST: 0>
 
@@ -1345,7 +1345,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> intersection = Intersection(s, t)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.TANGENT_SECOND: 4>
 
@@ -1381,7 +1381,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> intersection = Intersection(s, t)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.TANGENT_FIRST: 3>
 
@@ -1415,7 +1415,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> intersection = Intersection(s, t)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.OPPOSED: 2>
 
@@ -1451,7 +1451,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> intersection = Intersection(s, t)
        >>> classify_intersection(intersection, edges1, edges2)
        Traceback (most recent call last):
          ...
@@ -1495,7 +1495,7 @@ def classify_intersection(intersection, edges1, edges2):
        -2.0
        >>> curvature(curve2, t)
        -2.0
-       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> intersection = Intersection(s, t)
        >>> classify_intersection(intersection, edges1, edges2)
        Traceback (most recent call last):
          ...
@@ -1530,7 +1530,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 1.0, 0.375
        >>> curve1a.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(curve1a, s, curve2, t)
+       >>> intersection = Intersection(s, t)
        >>> classify_intersection(intersection, edges1, edges2)
        Traceback (most recent call last):
          ...
@@ -1546,7 +1546,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> edges1 = (curve1a, curve1b, None)
-       >>> intersection = Intersection(curve1b, 0.0, curve2, t)
+       >>> intersection = Intersection(0.0, t)
        >>> intersection.index_first = 1
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.FIRST: 0>
@@ -1591,7 +1591,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.0
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(curve1, s, curve2, t)
+       >>> intersection = Intersection(s, t)
        >>> intersection.index_first = 0
        >>> intersection.index_second = 0
        >>> classify_intersection(intersection, edges1, edges2)
@@ -1656,7 +1656,7 @@ def classify_intersection(intersection, edges1, edges2):
             intersection, nodes1, tangent1, nodes2, tangent2)
 
 
-def handle_corners(intersection, edges1, edges2):
+def handle_corners(intersection):
     """Mutates an intersection if it is on a corner.
 
     .. note::
@@ -1683,10 +1683,6 @@ def handle_corners(intersection, edges1, edges2):
 
     Args:
         intersection (.Intersection): An intersection to mutate.
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
 
     Returns:
         bool: Indicating if the object was changed.
@@ -1695,13 +1691,11 @@ def handle_corners(intersection, edges1, edges2):
     if intersection.s == 1.0:
         intersection.s = 0.0
         next_index = (intersection.index_first + 1) % 3
-        intersection.first = edges1[next_index]
         intersection.index_first = next_index
         changed = True
     if intersection.t == 1.0:
         intersection.t = 0.0
         next_index = (intersection.index_second + 1) % 3
-        intersection.second = edges2[next_index]
         intersection.index_second = next_index
         changed = True
 
@@ -1792,7 +1786,7 @@ def verify_duplicates(duplicates, uniques):
             raise ValueError('Unexpected duplicate count', count)
 
 
-def to_front(intersection, intersections, unused, edges1, edges2):
+def to_front(intersection, intersections, unused):
     """Rotates a node to the "front".
 
     .. note::
@@ -1816,10 +1810,6 @@ def to_front(intersection, intersections, unused, edges1, edges2):
             points to arrive at.
         unused (List[.Intersection]): List of nodes that haven't been
             used yet in an intersection curved polygon
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
 
     Returns:
         .Intersection: An intersection to (maybe) move to the beginning
@@ -1830,9 +1820,7 @@ def to_front(intersection, intersections, unused, edges1, edges2):
         changed = True
         next_index = (intersection.index_first + 1) % 3
         new_intersection = _intersection_helpers.Intersection(
-            edges1[next_index], 0.0,
-            intersection.second, intersection.t,
-            interior_curve=intersection.interior_curve)
+            0.0, intersection.t, interior_curve=intersection.interior_curve)
         new_intersection.index_first = next_index
         new_intersection.index_second = intersection.index_second
         intersection = new_intersection
@@ -1841,9 +1829,7 @@ def to_front(intersection, intersections, unused, edges1, edges2):
         changed = True
         next_index = (intersection.index_second + 1) % 3
         new_intersection = _intersection_helpers.Intersection(
-            intersection.first, intersection.s,
-            edges2[next_index], 0.0,
-            interior_curve=intersection.interior_curve)
+            intersection.s, 0.0, interior_curve=intersection.interior_curve)
         new_intersection.index_first = intersection.index_first
         new_intersection.index_second = next_index
         intersection = new_intersection
@@ -1909,8 +1895,7 @@ def get_next_first(intersection, intersections):
         # If there is no other intersection on the edge, just return
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
-            intersection.first, 1.0, None, None,
-            interior_curve=IntersectionClassification.FIRST)
+            1.0, None, interior_curve=IntersectionClassification.FIRST)
         new_intersection.index_first = index_first
         new_intersection.index_second = None
         return new_intersection
@@ -1961,8 +1946,7 @@ def get_next_second(intersection, intersections):
         # If there is no other intersection on the edge, just return
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
-            None, None, intersection.second, 1.0,
-            interior_curve=IntersectionClassification.SECOND)
+            None, 1.0, interior_curve=IntersectionClassification.SECOND)
         new_intersection.index_first = None
         new_intersection.index_second = index_second
         return new_intersection
@@ -2216,8 +2200,7 @@ def basic_interior_combine(intersections, edges1, edges2, max_edges=10):
         next_node = get_next(start, intersections, unused)
         edge_ends = [(curr_node, next_node)]
         while next_node is not start:
-            curr_node = to_front(
-                next_node, intersections, unused, edges1, edges2)
+            curr_node = to_front(next_node, intersections, unused)
             # NOTE: We also check to break when moving a corner node
             #       to the front. This is because ``intersections``
             #       de-duplicates corners by selecting the one

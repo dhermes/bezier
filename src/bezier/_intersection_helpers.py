@@ -413,10 +413,8 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
     """Representation of a curve-curve intersection.
 
     Args:
-        first (.Curve): The "first" curve in the intersection.
         s (float): The parameter along ``first`` where the
             intersection occurs.
-        second (.Curve): The "second" curve in the intersection.
         t (float): The parameter along ``second`` where the
             intersection occurs.
         interior_curve (Optional[ \
@@ -425,18 +423,14 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
     """
 
     __slots__ = (
-        'first', 'index_first', 's',
-        'second', 'index_second', 't',
+        'index_first', 's',
+        'index_second', 't',
         'interior_curve',
     )
 
-    def __init__(self, first, s, second, t, interior_curve=None):
-        self.first = first
-        """Curve: The "first" curve in the intersection."""
+    def __init__(self, s, t, interior_curve=None):
         self.s = s
         """float: The intersection parameter for the ``first`` curve."""
-        self.second = second
-        """Curve: The "second" curve in the intersection."""
         self.t = t
         """float: The intersection parameter for the ``second`` curve."""
         self.interior_curve = interior_curve
@@ -465,10 +459,8 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         returned dictionary.
         """
         return {
-            'first': self.first,
             'index_first': self.index_first,
             's': self.s,
-            'second': self.second,
             'index_second': self.index_second,
             't': self.t,
             'interior_curve': self.interior_curve,

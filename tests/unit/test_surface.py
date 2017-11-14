@@ -910,12 +910,12 @@ class Test__surface_intersections(utils.NumPyTestCase):
 
         self.assertIsInstance(
             intersection, _intersection_helpers.Intersection)
-        point = intersection.first.evaluate(intersection.s)
-        self.assertEqual(point, expected)
-        self.assertIs(intersection.first, curve1)
+        point1 = curve1.evaluate(intersection.s)
+        self.assertEqual(point1, expected)
+        point2 = curve2.evaluate(intersection.t)
+        self.assertEqual(point2, expected)
         self.assertEqual(intersection.index_first, index_first)
         self.assertEqual(intersection.s, s_val)
-        self.assertIs(intersection.second, curve2)
         self.assertEqual(intersection.index_second, index_second)
         self.assertEqual(intersection.t, t_val)
     # pylint: enable=too-many-arguments

@@ -211,17 +211,11 @@ class TestIntersection(unittest.TestCase):
         return klass(*args, **kwargs)
 
     def _constructor_helper(self, **kwargs):
-        first = unittest.mock.sentinel.first
         s_val = 0.25
-        second = unittest.mock.sentinel.second
         t_val = 0.75
+        intersection = self._make_one(s_val, t_val, **kwargs)
 
-        intersection = self._make_one(
-            first, s_val, second, t_val, **kwargs)
-
-        self.assertIs(intersection.first, first)
         self.assertEqual(intersection.s, s_val)
-        self.assertIs(intersection.second, second)
         self.assertEqual(intersection.t, t_val)
         return intersection
 
@@ -242,10 +236,8 @@ class TestIntersection(unittest.TestCase):
         )
         props_dict = intersection.__dict__
         expected = {
-            'first': unittest.mock.sentinel.first,
             'index_first': -1,
             's': 0.25,
-            'second': unittest.mock.sentinel.second,
             'index_second': -1,
             't': 0.75,
             'interior_curve': unittest.mock.sentinel.interior_curve,

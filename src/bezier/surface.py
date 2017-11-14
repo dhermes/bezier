@@ -1113,8 +1113,7 @@ class Surface(_base.Base):
         duplicates = []
         uniques = []
         for intersection in intersections:
-            changed = _surface_helpers.handle_corners(
-                intersection, edges1, edges2)
+            changed = _surface_helpers.handle_corners(intersection)
             if changed:
                 duplicates.append(intersection)
             else:
@@ -1267,8 +1266,7 @@ def _surface_intersections(edges1, edges2, strategy):
         for index2, edge2 in enumerate(edges2):
             st_vals = all_intersections(edge1._nodes, edge2._nodes)
             for s, t in st_vals:
-                intersection = _intersection_helpers.Intersection(
-                    edge1, s, edge2, t)
+                intersection = _intersection_helpers.Intersection(s, t)
                 intersection.index_first = index1
                 intersection.index_second = index2
                 intersections.append(intersection)
