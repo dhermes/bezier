@@ -14,9 +14,11 @@ module surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
+  use curve_intersection, only: all_intersections, ALL_INTERSECTIONS_SUCCESS
   use helpers, only: cross_product, contains_nd, vector_close
   use types, only: dp
-  use surface, only: evaluate_barycentric, jacobian_both, subdivide_nodes
+  use surface, only: &
+       evaluate_barycentric, jacobian_both, subdivide_nodes, compute_edge_nodes
   implicit none
   private &
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, &
@@ -31,7 +33,7 @@ module surface_intersection
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, newton_refine, &
-       locate_point, classify_intersection
+       locate_point, classify_intersection, add_st_vals
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -640,5 +642,51 @@ contains
     end if
 
   end subroutine classify_intersection
+
+  subroutine add_st_vals( &
+       num_st_vals, st_vals, index_first, index_second, &
+       intersections, num_intersections)
+
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    integer(c_int), intent(in) :: num_st_vals
+    real(c_double), intent(in) :: st_vals(2, num_st_vals)
+    integer(c_int), intent(in) :: index_first, index_second
+    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    integer(c_int), intent(inout) :: num_intersections
+    ! Variables outside of signature.
+    integer(c_int) :: curr_size, i, intersection_index
+    type(Intersection), allocatable :: intersections_swap(:)
+
+    ! NOTE: This assumes but does not check that ``num_st_vals >= 0``.
+    if (num_st_vals == 0) then
+       return
+    end if
+
+    intersection_index = num_intersections + 1
+    num_intersections = num_intersections + num_st_vals
+    if (allocated(intersections)) then
+       curr_size = size(intersections)
+       if (curr_size < num_intersections) then
+          allocate(intersections_swap(num_intersections))
+          intersections_swap(:curr_size) = intersections(:curr_size)
+          call move_alloc(intersections_swap, intersections)
+       end if
+    else
+       allocate(intersections(num_intersections))
+    end if
+
+    do i = 1, num_st_vals
+       intersections(intersection_index)%s = st_vals(1, i)
+       intersections(intersection_index)%t = st_vals(2, i)
+       intersections(intersection_index)%index_first = index_first
+       intersections(intersection_index)%index_second = index_second
+       ! Update index for next loop.
+       intersection_index = intersection_index + 1
+    end do
+
+  end subroutine add_st_vals
 
 end module surface_intersection

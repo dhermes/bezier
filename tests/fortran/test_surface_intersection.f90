@@ -22,11 +22,13 @@ module test_surface_intersection
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, newton_refine, &
-       locate_point, classify_intersection
+       locate_point, classify_intersection, add_st_vals
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
-  private test_newton_refine, test_locate_point, test_classify_intersection
+  private &
+       test_newton_refine, test_locate_point, test_classify_intersection, &
+       test_add_st_vals
   public surface_intersection_all_tests
 
 contains
@@ -37,6 +39,7 @@ contains
     call test_newton_refine(success)
     call test_locate_point(success)
     call test_classify_intersection(success)
+    call test_add_st_vals(success)
 
   end subroutine surface_intersection_all_tests
 
@@ -524,5 +527,83 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_classify_intersection
+
+  subroutine test_add_st_vals(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(11) :: name
+    real(c_double), allocatable :: st_vals(:, :)
+    type(Intersection), allocatable :: intersections(:)
+    integer(c_int) :: num_intersections
+
+    case_id = 1
+    name = "add_st_vals"
+
+    ! CASE 1: ``st_vals`` is empty.
+    num_intersections = 0
+    allocate(st_vals(2, 0))
+    call add_st_vals( &
+         0, st_vals, 1, 1, intersections, num_intersections)
+    case_success = ( &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: ``intersections`` must be allocated.
+    deallocate(st_vals)
+    allocate(st_vals(2, 1))
+    st_vals(:, 1) = [0.25_dp, 0.75_dp]
+    case_success = ( &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0)
+    call add_st_vals( &
+         1, st_vals, 2, 3, intersections, num_intersections)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 1 .AND. &
+         num_intersections == 1 .AND. &
+         intersections(1)%s == 0.25_dp .AND. &
+         intersections(1)%t == 0.75_dp .AND. &
+         intersections(1)%index_first == 2 .AND. &
+         intersections(1)%index_second == 3)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: ``intersections`` must be re-allocated.
+    st_vals(:, 1) = [0.0_dp, 0.5_dp]
+    case_success = ( &
+         allocated(intersections) .AND. &
+         num_intersections == 1)
+    call add_st_vals( &
+         1, st_vals, 3, 1, intersections, num_intersections)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         num_intersections == 2 .AND. &
+         intersections(2)%s == 0.0_dp .AND. &
+         intersections(2)%t == 0.5_dp .AND. &
+         intersections(2)%index_first == 3 .AND. &
+         intersections(2)%index_second == 1)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: ``intersections`` is large enough.
+    num_intersections = 0
+    st_vals(:, 1) = [1.0_dp, 0.125_dp]
+    case_success = allocated(intersections)
+    call add_st_vals( &
+         1, st_vals, 2, 2, intersections, num_intersections)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         num_intersections == 1 .AND. &
+         intersections(1)%s == 1.0_dp .AND. &
+         intersections(1)%t == 0.125_dp .AND. &
+         intersections(1)%index_first == 2 .AND. &
+         intersections(1)%index_second == 2)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_add_st_vals
 
 end module test_surface_intersection
