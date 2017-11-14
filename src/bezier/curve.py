@@ -102,7 +102,7 @@ class Curve(_base.Base):
     __slots__ = (
         '_dimension', '_nodes',  # From base class
         '_degree', '_start', '_end', '_root',  # From constructor
-        '_length', '_edge_index', '_next_edge',  # Empty defaults
+        '_length', '_next_edge',  # Empty defaults
         '_previous_edge',  # Empty defaults
     )
 
@@ -116,7 +116,6 @@ class Curve(_base.Base):
             root = self
         self._root = root
         self._length = None
-        self._edge_index = None
         self._next_edge = None
         self._previous_edge = None
 
@@ -261,42 +260,6 @@ class Curve(_base.Base):
         return self._root
 
     @property
-    def edge_index(self):
-        """Optional[int]: The index of the edge among a group of edges.
-
-        .. testsetup:: edge-index
-
-           import numpy as np
-           import bezier
-
-           nodes = np.asfortranarray([
-               [0.0, 0.0],
-               [1.0, 0.0],
-               [0.0, 1.0],
-           ])
-           surface = bezier.Surface(nodes, degree=1)
-           _, curve, _ = surface.edges
-
-        .. doctest:: edge-index
-
-           >>> curve.edge_index
-           1
-           >>> curve.previous_edge
-           <Curve (degree=1, dimension=2)>
-           >>> curve.previous_edge.edge_index
-           0
-           >>> curve.next_edge
-           <Curve (degree=1, dimension=2)>
-           >>> curve.next_edge.edge_index
-           2
-
-        This is intended to be used when a :class:`Curve` is created as part
-        of a larger structure like a :class:`.Surface` or
-        :class:`.CurvedPolygon`.
-        """
-        return self._edge_index
-
-    @property
     def next_edge(self):
         """Optional[Curve]: An edge that comes after the current one.
 
@@ -335,7 +298,6 @@ class Curve(_base.Base):
             '_end': self._end,
             '_root': self._root,
             '_length': self._length,
-            '_edge_index': self._edge_index,
             '_next_edge': self._next_edge,
             '_previous_edge': self._previous_edge,
         }

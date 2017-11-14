@@ -42,7 +42,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
         self.assertIsNone(curve._length)
-        self.assertIsNone(curve._edge_index)
         self.assertIsNone(curve._next_edge)
         self.assertIsNone(curve._previous_edge)
         self.assertEqual(curve._start, 0.0)
@@ -72,7 +71,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve._dimension, 3)
         self.assertEqual(curve._nodes, nodes)
         self.assertIsNone(curve._length)
-        self.assertIsNone(curve._edge_index)
         self.assertIsNone(curve._next_edge)
         self.assertIsNone(curve._previous_edge)
         self.assertEqual(curve._start, 0.25)
@@ -153,11 +151,6 @@ class TestCurve(utils.NumPyTestCase):
                                root=unittest.mock.sentinel.root)
         self.assertIs(curve.root, unittest.mock.sentinel.root)
 
-    def test_edge_index_property(self):
-        curve = self._make_one(self.ZEROS, 1)
-        curve._edge_index = 7
-        self.assertEqual(curve.edge_index, 7)
-
     def test_next_edge_property(self):
         curve = self._make_one(self.ZEROS, 1)
         curve._next_edge = unittest.mock.sentinel.next_edge
@@ -179,7 +172,6 @@ class TestCurve(utils.NumPyTestCase):
             '_end': 1.0,
             '_root': curve,
             '_length': None,
-            '_edge_index': None,
             '_next_edge': None,
             '_previous_edge': None,
         }
@@ -212,7 +204,6 @@ class TestCurve(utils.NumPyTestCase):
         else:
             self.assertIs(new_curve._root, new_curve)
         self.assertEqual(new_curve._length, curve._length)
-        self.assertIsNone(new_curve._edge_index)
         self.assertIsNone(new_curve._next_edge)
         self.assertIsNone(new_curve._previous_edge)
 

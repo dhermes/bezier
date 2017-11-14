@@ -1675,9 +1675,9 @@ def same_intersection(intersection1, intersection2, wiggle=0.5**40):
         machine precision.
     """
     # pylint: disable=protected-access
-    if intersection1.first._edge_index != intersection2.first._edge_index:
+    if intersection1.index_first != intersection2.index_first:
         return False
-    if intersection1.second._edge_index != intersection2.second._edge_index:
+    if intersection1.index_second != intersection2.index_second:
         return False
     # pylint: enable=protected-access
 

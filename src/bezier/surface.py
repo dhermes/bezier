@@ -1253,15 +1253,12 @@ def _edge_cycle(edge1, edge2, edge3):
         edge3 (.Curve): Third curve in cycle.
     """
     # pylint: disable=protected-access
-    edge1._edge_index = 0
     edge1._next_edge = edge2
     edge1._previous_edge = edge3
 
-    edge2._edge_index = 1
     edge2._next_edge = edge3
     edge2._previous_edge = edge1
 
-    edge3._edge_index = 2
     edge3._next_edge = edge1
     edge3._previous_edge = edge2
     # pylint: enable=protected-access

@@ -983,22 +983,18 @@ class Test_classify_intersection(unittest.TestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ]))
-        first._edge_index = 2
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [0.25, 0.0],
             [0.75, 1.0],
         ]))
-        second._edge_index = 0
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=2, index_second=0)
+            first, 0.5, second, 0.5, index_first=2, index_second=0)
         result = self._call_function_under_test(intersection)
         self.assertIs(result, get_enum('SECOND'))
 
         # Swap and classify.
         intersection = make_intersect(
-            second, 0.5, first, 0.5,
-            index_first=0, index_second=2)
+            second, 0.5, first, 0.5, index_first=0, index_second=2)
         result = self._call_function_under_test(intersection)
         self.assertIs(result, get_enum('FIRST'))
 
@@ -1009,37 +1005,30 @@ class Test_classify_intersection(unittest.TestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ]))
-        first._edge_index = 2
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.0, 2.0],
         ]))
-        second._edge_index = 2
         intersection = make_intersect(
-            first, 1.0, second, 0.5,
-            index_first=2, index_second=2)
+            first, 1.0, second, 0.5, index_first=2, index_second=2)
         with self.assertRaises(ValueError):
             self._call_function_under_test(intersection)
 
     def test_corner_start(self):
         import bezier
 
-        first = bezier.Curve.from_nodes(np.asfortranarray([
+        surface = bezier.Surface.from_nodes(np.asfortranarray([
             [1.0, 1.0],
             [0.0, 0.0],
+            [2.0, 0.0],
         ]))
-        first._edge_index = 1
-        first._previous_edge = unittest.mock.Mock(
-            _edge_index=0, spec=['_edge_index', '_nodes'])
+        first, _, _ = surface.edges
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.0, 2.0],
         ]))
-        second._edge_index = 2
         intersection = make_intersect(
-            first, 0.0, second, 0.5,
-            index_first=1, index_second=2,
-        )
+            first, 0.0, second, 0.5, index_first=1, index_second=2)
         result = self._call_function_under_test(intersection)
         self.assertIs(result, get_enum('FIRST'))
 
@@ -1051,17 +1040,13 @@ class Test_classify_intersection(unittest.TestCase):
             [1.5, 1.0],
             [3.0, 0.0],
         ]))
-        first._edge_index = 0
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.5, 1.0],
             [2.0, 0.0],
         ]))
-        second._edge_index = 1
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=0, index_second=1,
-        )
+            first, 0.5, second, 0.5, index_first=0, index_second=1)
         result = self._call_function_under_test(intersection)
         self.assertIs(result, get_enum('TANGENT_FIRST'))
 
@@ -1078,9 +1063,7 @@ class Test_classify_intersection(unittest.TestCase):
         second, _, _ = surface2.edges
 
         intersection = make_intersect(
-            first, 0.0, second, 0.0,
-            index_first=0, index_second=0,
-        )
+            first, 0.0, second, 0.0, index_first=0, index_second=0)
         result = self._call_function_under_test(intersection)
         self.assertIs(result, get_enum('IGNORED_CORNER'))
 
@@ -1125,12 +1108,9 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         import bezier
 
         first = bezier.Curve(self.QUADRATIC1[::-1, :], 2)
-        first._edge_index = 1
         second = bezier.Curve(self.QUADRATIC2[::-1, :], 2)
-        second._edge_index = 1
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=1, index_second=1)
+            first, 0.5, second, 0.5, index_first=1, index_second=1)
 
         result = self._call_helper(intersection)
         self.assertIs(result, get_enum('TANGENT_FIRST'))
@@ -1139,12 +1119,9 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         import bezier
 
         first = bezier.Curve(self.QUADRATIC1, 2)
-        first._edge_index = 1
         second = bezier.Curve(self.QUADRATIC2, 2)
-        second._edge_index = 0
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=1, index_second=0)
+            first, 0.5, second, 0.5, index_first=1, index_second=0)
 
         result = self._call_helper(intersection)
         self.assertIs(result, get_enum('TANGENT_SECOND'))
@@ -1157,16 +1134,13 @@ class Test_classify_tangent_intersection(unittest.TestCase):
             [-0.5, -0.25],
             [0.0, 0.25],
         ]))
-        first._edge_index = 0
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [0.75, 0.25],
             [-0.25, -0.25],
             [-0.25, 0.25],
         ]))
-        second._edge_index = 0
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=0, index_second=0)
+            first, 0.5, second, 0.5, index_first=0, index_second=0)
         with self.assertRaises(NotImplementedError):
             self._call_helper(intersection)
 
@@ -1178,16 +1152,13 @@ class Test_classify_tangent_intersection(unittest.TestCase):
             [-0.5, -0.25],
             [1.0, 0.25],
         ]))
-        first._edge_index = 1
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [0.75, 0.25],
             [-0.25, -0.25],
             [-0.25, 0.25],
         ]))
-        second._edge_index = 2
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=1, index_second=2)
+            first, 0.5, second, 0.5, index_first=1, index_second=2)
         with self.assertRaises(NotImplementedError):
             self._call_helper(intersection)
 
@@ -1195,12 +1166,9 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         import bezier
 
         first = bezier.Curve(self.QUADRATIC1[::-1, :], 2)
-        first._edge_index = 2
         second = bezier.Curve(self.QUADRATIC3, 2)
-        second._edge_index = 1
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=2, index_second=1)
+            first, 0.5, second, 0.5, index_first=2, index_second=1)
 
         result = self._call_helper(intersection)
         self.assertIs(result, get_enum('OPPOSED'))
@@ -1209,12 +1177,9 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         import bezier
 
         first = bezier.Curve(self.QUADRATIC1, 2)
-        first._edge_index = 1
         second = bezier.Curve(self.QUADRATIC3[::-1, :], 2)
-        second._edge_index = 1
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=1, index_second=1)
+            first, 0.5, second, 0.5, index_first=1, index_second=1)
 
         with self.assertRaises(NotImplementedError):
             self._call_helper(intersection)
@@ -1223,12 +1188,9 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         import bezier
 
         first = bezier.Curve(self.QUADRATIC1[::-1, :], 2)
-        first._edge_index = 1
         second = bezier.Curve(self.QUADRATIC2, 2)
-        second._edge_index = 2
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=1, index_second=2)
+            first, 0.5, second, 0.5, index_first=1, index_second=2)
 
         result = self._call_helper(intersection)
         self.assertIs(result, get_enum('OPPOSED'))
@@ -1237,12 +1199,9 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         import bezier
 
         first = bezier.Curve(self.QUADRATIC1, 2)
-        first._edge_index = 1
         second = bezier.Curve(self.QUADRATIC2[::-1, :], 2)
-        second._edge_index = 0
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=1, index_second=0)
+            first, 0.5, second, 0.5, index_first=1, index_second=0)
 
         with self.assertRaises(NotImplementedError):
             self._call_helper(intersection)
@@ -1308,8 +1267,7 @@ class Test_ignored_double_corner(unittest.TestCase):
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
         _, second, _ = surface2.edges
         intersection = make_intersect(
-            first, 0.0, second, 0.0,
-            index_first=0, index_second=1)
+            first, 0.0, second, 0.0, index_first=0, index_second=1)
         tangent_s = np.asfortranarray([[0.5, 0.25]])
         tangent_t = np.asfortranarray([[-1.0, 1.0]])
 
@@ -1329,8 +1287,7 @@ class Test_ignored_double_corner(unittest.TestCase):
         ]))
         second, _, _ = surface2.edges
         intersection = make_intersect(
-            first, 0.0, second, 0.0,
-            index_first=1, index_second=0)
+            first, 0.0, second, 0.0, index_first=1, index_second=0)
         tangent_s = np.asfortranarray([[-1.0, 1.0]])
         tangent_t = np.asfortranarray([[0.0, 1.0]])
 
@@ -1350,8 +1307,7 @@ class Test_ignored_double_corner(unittest.TestCase):
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
         _, second, _ = surface2.edges
         intersection = make_intersect(
-            first, 0.0, second, 0.0,
-            index_first=0, index_second=1)
+            first, 0.0, second, 0.0, index_first=0, index_second=1)
         tangent_s = np.asfortranarray([[0.0, 1.0]])
         tangent_t = np.asfortranarray([[-1.0, 1.0]])
 
@@ -1371,8 +1327,7 @@ class Test_ignored_double_corner(unittest.TestCase):
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
         second, _, _ = surface2.edges
         intersection = make_intersect(
-            first, 0.0, second, 0.0,
-            index_first=0, index_second=0)
+            first, 0.0, second, 0.0, index_first=0, index_second=0)
         tangent_s = np.asfortranarray([[1.0, 0.5]])
         tangent_t = np.asfortranarray([[1.0, 0.0]])
 
@@ -1391,7 +1346,8 @@ class Test_ignored_corner(utils.NumPyTestCase):
             intersection, tangent_s, tangent_t)
 
     def test_not_corner(self):
-        intersection = make_intersect(None, 0.5, None, 0.5)
+        intersection = make_intersect(
+            None, 0.5, None, 0.5, index_first=0, index_second=2)
         result = self._call_function_under_test(intersection, None, None)
         self.assertFalse(result)
 
@@ -1400,7 +1356,8 @@ class Test_ignored_corner(utils.NumPyTestCase):
 
         surface = bezier.Surface(UNIT_TRIANGLE, degree=1, _copy=False)
         _, previous_edge, first = surface.edges
-        intersection = make_intersect(first, 0.0, None, 0.5, index_first=2)
+        intersection = make_intersect(
+            first, 0.0, None, 0.5, index_first=2, index_second=None)
 
         patch = unittest.mock.patch(
             'bezier._surface_helpers.ignored_edge_corner',
@@ -1424,7 +1381,8 @@ class Test_ignored_corner(utils.NumPyTestCase):
 
         surface = bezier.Surface(UNIT_TRIANGLE, degree=1, _copy=False)
         previous_edge, second, _ = surface.edges
-        intersection = make_intersect(None, 0.5, second, 0.0, index_second=1)
+        intersection = make_intersect(
+            None, 0.5, second, 0.0, index_first=None, index_second=1)
 
         patch = unittest.mock.patch(
             'bezier._surface_helpers.ignored_edge_corner',
@@ -1445,7 +1403,8 @@ class Test_ignored_corner(utils.NumPyTestCase):
         self.assertEqual(positional[2], previous_edge.nodes)
 
     def test_double_corner(self):
-        intersection = make_intersect(None, 0.0, None, 0.0)
+        intersection = make_intersect(
+            None, 0.0, None, 0.0, index_first=0, index_second=2)
 
         patch = unittest.mock.patch(
             'bezier._surface_helpers.ignored_double_corner',
@@ -1470,13 +1429,10 @@ class Test_handle_corners(unittest.TestCase):
         return _surface_helpers.handle_corners(intersection)
 
     def test_neither(self):
-        first = unittest.mock.Mock(_edge_index=0, spec=['_edge_index'])
-        second = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
+        first = unittest.mock.sentinel.first
+        second = unittest.mock.sentinel.second
         intersection = make_intersect(
-            first, 0.5, second, 0.5,
-            index_first=first._edge_index,
-            index_second=second._edge_index,
-        )
+            first, 0.5, second, 0.5, index_first=0, index_second=1)
 
         self.assertFalse(self._call_function_under_test(intersection))
         self.assertEqual(intersection.s, 0.5)
@@ -1485,18 +1441,11 @@ class Test_handle_corners(unittest.TestCase):
         self.assertIs(intersection.second, second)
 
     def test_s(self):
-        third = unittest.mock.Mock(_edge_index=0, spec=['_edge_index'])
-        first = unittest.mock.Mock(
-            _edge_index=2, _next_edge=third,
-            spec=['_edge_index', '_next_edge'],
-        )
-        second = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
+        third = unittest.mock.sentinel.next_edge
+        first = unittest.mock.Mock(_next_edge=third, spec=['_next_edge'])
+        second = unittest.mock.sentinel.second
         intersection = make_intersect(
-            first, 1.0, second, 0.25,
-            index_first=first._edge_index,
-            index_second=second._edge_index,
-        )
-
+            first, 1.0, second, 0.25, index_first=2, index_second=1)
         self.assertTrue(self._call_function_under_test(intersection))
         self.assertEqual(intersection.s, 0.0)
         self.assertIs(intersection.first, third)
@@ -1504,17 +1453,11 @@ class Test_handle_corners(unittest.TestCase):
         self.assertIs(intersection.second, second)
 
     def test_t(self):
-        first = unittest.mock.Mock(_edge_index=2, spec=['_edge_index'])
-        third = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
-        second = unittest.mock.Mock(
-            _edge_index=0, _next_edge=third,
-            spec=['_edge_index', '_next_edge'],
-        )
+        first = unittest.mock.sentinel.first
+        third = unittest.mock.sentinel.next_edge
+        second = unittest.mock.Mock(_next_edge=third, spec=['_next_edge'])
         intersection = make_intersect(
-            first, 0.75, second, 1.0,
-            index_first=first._edge_index,
-            index_second=second._edge_index,
-        )
+            first, 0.75, second, 1.0, index_first=2, index_second=0)
 
         self.assertTrue(self._call_function_under_test(intersection))
         self.assertEqual(intersection.s, 0.75)
@@ -1534,10 +1477,10 @@ class Test_same_intersection(unittest.TestCase):
 
     @staticmethod
     def _make_one(index1, s, index2, t):
-        first = unittest.mock.Mock(_edge_index=index1, spec=['_edge_index'])
-        second = unittest.mock.Mock(_edge_index=index2, spec=['_edge_index'])
         return make_intersect(
-            first, s, second, t, index_first=index1, index_second=index2)
+            unittest.mock.sentinel.first, s,
+            unittest.mock.sentinel.second, t,
+            index_first=index1, index_second=index2)
 
     def test_same(self):
         intersection = self._make_one(10, 0.5, 99, 0.75)
@@ -1582,10 +1525,10 @@ class Test_verify_duplicates(unittest.TestCase):
 
     @staticmethod
     def _make_one(index1, s, index2, t):
-        first = unittest.mock.Mock(_edge_index=index1, spec=['_edge_index'])
-        second = unittest.mock.Mock(_edge_index=index2, spec=['_edge_index'])
         return make_intersect(
-            first, s, second, t, index_first=index1, index_second=index2)
+            unittest.mock.sentinel.first, s,
+            unittest.mock.sentinel.second, t,
+            index_first=index1, index_second=index2)
 
     def test_empty(self):
         self.assertIsNone(self._call_function_under_test([], []))
@@ -1637,12 +1580,14 @@ class Test_to_front(unittest.TestCase):
             intersection, intersections, unused)
 
     def test_no_change(self):
-        intersection = make_intersect(None, 0.5, None, 0.5)
+        intersection = make_intersect(
+            None, 0.5, None, 0.5, index_first=1, index_second=2)
         result = self._call_function_under_test(intersection, [], [])
         self.assertIs(result, intersection)
 
     def test_remove_from_unused(self):
-        intersection = make_intersect(None, 0.5, None, 0.5)
+        intersection = make_intersect(
+            None, 0.5, None, 0.5, index_first=2, index_second=1)
         unused = [intersection]
         result = self._call_function_under_test(intersection, [], unused)
         self.assertIs(result, intersection)
@@ -1651,18 +1596,12 @@ class Test_to_front(unittest.TestCase):
     def test_move_s(self):
         from bezier import _intersection_helpers
 
-        third = unittest.mock.Mock(_edge_index=0, spec=['_edge_index'])
-        first = unittest.mock.Mock(
-            _edge_index=2, _next_edge=third,
-            spec=['_edge_index', '_next_edge'],
-        )
-        second = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
+        third = unittest.mock.sentinel.next_edge
+        first = unittest.mock.Mock(_next_edge=third, spec=['_next_edge'])
+        second = unittest.mock.sentinel.second
         intersection = make_intersect(
-            first, 1.0, second, 0.5,
-            index_first=first._edge_index,
-            index_second=second._edge_index,
-            interior_curve=unittest.mock.sentinel.interior_curve,
-        )
+            first, 1.0, second, 0.5, index_first=2, index_second=1,
+            interior_curve=unittest.mock.sentinel.interior_curve)
 
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
@@ -1675,23 +1614,14 @@ class Test_to_front(unittest.TestCase):
             result.interior_curve, unittest.mock.sentinel.interior_curve)
 
     def test_move_s_to_existing(self):
-        third = unittest.mock.Mock(_edge_index=2, spec=['_edge_index'])
-        first = unittest.mock.Mock(
-            _edge_index=1, _next_edge=third,
-            spec=['_edge_index', '_next_edge'],
-        )
-        second = unittest.mock.Mock(_edge_index=0, spec=['_edge_index'])
+        third = unittest.mock.sentinel.next_edge
+        first = unittest.mock.Mock(_next_edge=third, spec=['_next_edge'])
+        second = unittest.mock.sentinel.second
         intersection = make_intersect(
-            first, 1.0, second, 0.5,
-            index_first=first._edge_index,
-            index_second=second._edge_index,
-        )
-
+            first, 1.0, second, 0.5, index_first=1, index_second=0)
         existing_int = make_intersect(
-            third, 0.0, second, 0.5,
-            index_first=third._edge_index,
-            index_second=second._edge_index,
-        )
+            third, 0.0, second, 0.5, index_first=2, index_second=0)
+
         result = self._call_function_under_test(
             intersection, [existing_int], [])
         self.assertIs(result, existing_int)
@@ -1699,18 +1629,12 @@ class Test_to_front(unittest.TestCase):
     def test_move_t(self):
         from bezier import _intersection_helpers
 
-        first = unittest.mock.Mock(_edge_index=0, spec=['_edge_index'])
-        third = unittest.mock.Mock(_edge_index=2, spec=['_edge_index'])
-        second = unittest.mock.Mock(
-            _edge_index=1, _next_edge=third,
-            spec=['_edge_index', '_next_edge'],
-        )
+        first = unittest.mock.sentinel.first
+        third = unittest.mock.sentinel.next_edge
+        second = unittest.mock.Mock(_next_edge=third, spec=['_next_edge'])
         intersection = make_intersect(
-            first, 0.5, second, 1.0,
-            interior_curve=unittest.mock.sentinel.interior_curve,
-            index_first=first._edge_index,
-            index_second=second._edge_index,
-        )
+            first, 0.5, second, 1.0, index_first=0, index_second=1,
+            interior_curve=unittest.mock.sentinel.interior_curve)
 
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
@@ -1723,23 +1647,14 @@ class Test_to_front(unittest.TestCase):
             result.interior_curve, unittest.mock.sentinel.interior_curve)
 
     def test_move_t_to_existing(self):
-        first = unittest.mock.Mock(_edge_index=2, spec=['_edge_index'])
-        third = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
-        second = unittest.mock.Mock(
-            _edge_index=0, _next_edge=third,
-            spec=['_edge_index', '_next_edge'],
-        )
+        first = unittest.mock.sentinel.first
+        third = unittest.mock.sentinel.next_edge
+        second = unittest.mock.Mock(_next_edge=third, spec=['_next_edge'])
         intersection = make_intersect(
-            first, 0.5, second, 1.0,
-            index_first=first._edge_index,
-            index_second=second._edge_index,
-        )
-
+            first, 0.5, second, 1.0, index_first=2, index_second=0)
         existing_int = make_intersect(
-            first, 0.5, third, 0.0,
-            index_first=first._edge_index,
-            index_second=third._edge_index,
-        )
+            first, 0.5, third, 0.0, index_first=2, index_second=1)
+
         result = self._call_function_under_test(
             intersection, [existing_int], [])
         self.assertIs(result, existing_int)
@@ -1756,9 +1671,9 @@ class Test_get_next_first(unittest.TestCase):
     def test_move_to_corner(self):
         from bezier import _intersection_helpers
 
-        first = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
+        first = unittest.mock.sentinel.first
         intersection = make_intersect(
-            first, 0.25, None, None, index_first=first._edge_index)
+            first, 0.25, None, None, index_first=1, index_second=None)
         result = self._call_function_under_test(intersection, [])
         self.assertIsInstance(result, _intersection_helpers.Intersection)
         self.assertIs(result.first, first)
@@ -1768,62 +1683,48 @@ class Test_get_next_first(unittest.TestCase):
         self.assertIs(result.interior_curve, get_enum('FIRST'))
 
     def test_move_to_existing(self):
-        first = unittest.mock.Mock(_edge_index=2, spec=['_edge_index'])
-        not_first = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
+        first = unittest.mock.sentinel.first
+        not_first = unittest.mock.sentinel.not_first
         intersection = make_intersect(
-            first, 0.25, None, None, index_first=first._edge_index)
+            first, 0.25, None, None, index_first=2, index_second=None)
         intersections = [
             # An "unacceptable" intersection with ``other_int.first is first``
             # and ``other_s > s``.
             make_intersect(
-                first, 0.375, None, None,
-                interior_curve=get_enum('OPPOSED'),
-                index_first=first._edge_index,
-            ),
+                first, 0.375, None, None, index_first=2, index_second=None,
+                interior_curve=get_enum('OPPOSED')),
             # An "acceptable" intersection that will be overtaken by the
             # next since 0.25 < 0.5 < 0.875.
             make_intersect(
-                first, 0.875, None, None,
-                interior_curve=get_enum('SECOND'),
-                index_first=first._edge_index,
-            ),
+                first, 0.875, None, None, index_first=2, index_second=None,
+                interior_curve=get_enum('SECOND')),
             make_intersect(
-                first, 0.5, None, None,
-                interior_curve=get_enum('FIRST'),
-                index_first=first._edge_index,
-            ),
+                first, 0.5, None, None, index_first=2, index_second=None,
+                interior_curve=get_enum('FIRST')),
             # On a different curve.
             make_intersect(
-                not_first, None, None, None,
-                index_first=not_first._edge_index,
-            ),
+                not_first, None, None, None, index_first=1, index_second=None),
             # Same curve, but before.
             make_intersect(
-                first, 0.125, None, None,
-                interior_curve=get_enum('FIRST'),
-                index_first=first._edge_index,
-            ),
+                first, 0.125, None, None, index_first=2, index_second=None,
+                interior_curve=get_enum('FIRST')),
             # Past the already accepted intersection.
             make_intersect(
-                first, 0.625, None, None,
-                interior_curve=get_enum('FIRST'),
-                index_first=first._edge_index,
-            ),
+                first, 0.625, None, None, index_first=2, index_second=None,
+                interior_curve=get_enum('FIRST')),
         ]
         result = self._call_function_under_test(intersection, intersections)
         self.assertIs(result, intersections[2])
 
     def test_move_to_intersected_corner(self):
-        first = unittest.mock.Mock(_edge_index=0, spec=['_edge_index'])
+        first = unittest.mock.sentinel.first
         intersection = make_intersect(
-            first, 0.625, None, None, index_first=first._edge_index)
+            first, 0.625, None, None, index_first=0, index_second=None)
         intersections = [
             # An "unacceptable" intersection that is still OK since a corner.
             make_intersect(
-                first, 1.0, None, None,
-                interior_curve=get_enum('TANGENT_FIRST'),
-                index_first=first._edge_index,
-            ),
+                first, 1.0, None, None, index_first=0, index_second=None,
+                interior_curve=get_enum('TANGENT_FIRST'))
         ]
         result = self._call_function_under_test(intersection, intersections)
         self.assertIs(result, intersections[0])
@@ -1840,9 +1741,9 @@ class Test_get_next_second(unittest.TestCase):
     def test_move_to_corner(self):
         from bezier import _intersection_helpers
 
-        second = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
+        second = unittest.mock.sentinel.second
         intersection = make_intersect(
-            None, None, second, 0.625, index_second=second._edge_index)
+            None, None, second, 0.625, index_first=None, index_second=1)
         result = self._call_function_under_test(intersection, [])
         self.assertIsInstance(result, _intersection_helpers.Intersection)
         self.assertIsNone(result.first)
@@ -1852,63 +1753,49 @@ class Test_get_next_second(unittest.TestCase):
         self.assertIs(result.interior_curve, get_enum('SECOND'))
 
     def test_move_to_existing(self):
-        second = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
-        not_second = unittest.mock.Mock(_edge_index=2, spec=['_edge_index'])
+        second = unittest.mock.sentinel.second
+        not_second = unittest.mock.sentinel.not_second
         intersection = make_intersect(
-            None, None, second, 0.125, index_second=second._edge_index)
+            None, None, second, 0.125, index_first=None, index_second=1)
         intersections = [
             # An "unacceptable" intersection with
             # ``other_int.second is second`` and ``other_t > t``.
             make_intersect(
-                None, None, second, 0.5,
-                interior_curve=get_enum('TANGENT_SECOND'),
-                index_second=second._edge_index,
-            ),
+                None, None, second, 0.5, index_first=None, index_second=1,
+                interior_curve=get_enum('TANGENT_SECOND')),
             # An "acceptable" intersection that will be overtaken by the
             # next since 0.125 < 0.625 < 0.75.
             make_intersect(
-                None, None, second, 0.75,
-                interior_curve=get_enum('FIRST'),
-                index_second=second._edge_index,
-            ),
+                None, None, second, 0.75, index_first=None, index_second=1,
+                interior_curve=get_enum('FIRST')),
             make_intersect(
-                None, None, second, 0.625,
-                interior_curve=get_enum('SECOND'),
-                index_second=second._edge_index,
-            ),
+                None, None, second, 0.625, index_first=None, index_second=1,
+                interior_curve=get_enum('SECOND')),
             # On a different curve.
             make_intersect(
                 None, None, not_second, None,
-                index_second=not_second._edge_index,
-            ),
+                index_first=None, index_second=2),
             # Same curve, but before.
             make_intersect(
-                None, None, second, 0.0625,
-                interior_curve=get_enum('FIRST'),
-                index_second=second._edge_index,
-            ),
+                None, None, second, 0.0625, index_first=None, index_second=1,
+                interior_curve=get_enum('FIRST')),
             # Past the already accepted intersection.
             make_intersect(
-                None, None, second, 0.6875,
-                interior_curve=get_enum('SECOND'),
-                index_second=second._edge_index,
-            ),
+                None, None, second, 0.6875, index_first=None, index_second=1,
+                interior_curve=get_enum('SECOND')),
         ]
         result = self._call_function_under_test(intersection, intersections)
         self.assertIs(result, intersections[2])
 
     def test_move_to_intersected_corner(self):
-        second = unittest.mock.Mock(_edge_index=0, spec=['_edge_index'])
+        second = unittest.mock.sentinel.second
         intersection = make_intersect(
-            None, None, second, 0.5,
-            index_second=second._edge_index)
+            None, None, second, 0.5, index_first=None, index_second=0)
         intersections = [
             # An "unacceptable" intersection that is still OK since a corner.
             make_intersect(
-                None, None, second, 1.0,
-                interior_curve=get_enum('TANGENT_FIRST'),
-                index_second=second._edge_index,
-            ),
+                None, None, second, 1.0, index_first=None, index_second=0,
+                interior_curve=get_enum('TANGENT_FIRST')),
         ]
         result = self._call_function_under_test(intersection, intersections)
         self.assertIs(result, intersections[0])
@@ -1927,7 +1814,8 @@ class Test_get_next(unittest.TestCase):
         # Also tests branch through "first".
         unused = [unittest.mock.sentinel.result]
         intersection = make_intersect(
-            None, None, None, None, interior_curve=get_enum('FIRST'))
+            None, None, None, None, index_first=2, index_second=2,
+            interior_curve=get_enum('FIRST'))
 
         patch = unittest.mock.patch(
             'bezier._surface_helpers.get_next_first',
@@ -1943,7 +1831,8 @@ class Test_get_next(unittest.TestCase):
 
     def test_second(self):
         intersection = make_intersect(
-            None, None, None, None, interior_curve=get_enum('SECOND'))
+            None, None, None, None, index_first=0, index_second=2,
+            interior_curve=get_enum('SECOND'))
 
         patch = unittest.mock.patch(
             'bezier._surface_helpers.get_next_second',
@@ -1958,7 +1847,8 @@ class Test_get_next(unittest.TestCase):
 
     def test_invalid_classification(self):
         intersection = make_intersect(
-            None, None, None, None, interior_curve=get_enum('OPPOSED'))
+            None, None, None, None, index_first=1, index_second=1,
+            interior_curve=get_enum('OPPOSED'))
         with self.assertRaises(ValueError):
             self._call_function_under_test(intersection, [], [])
 
@@ -1972,23 +1862,23 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         return _surface_helpers.ends_to_curve(start_node, end_node)
 
     def test_bad_classification(self):
-        start_node = make_intersect(None, 0.5, None, 0.5)
-        end_node = make_intersect(None, 0.75, None, 0.75)
+        start_node = make_intersect(
+            None, 0.5, None, 0.5, index_first=0, index_second=0)
+        end_node = make_intersect(
+            None, 0.75, None, 0.75, index_first=0, index_second=0)
         with self.assertRaises(ValueError):
             self._call_function_under_test(start_node, end_node)
 
     def _on_different_curves(self, interior_curve):
-        first1 = unittest.mock.Mock(_edge_index=0, spec=['_edge_index'])
-        second1 = unittest.mock.Mock(_edge_index=2, spec=['_edge_index'])
+        first1 = unittest.mock.sentinel.first1
+        second1 = unittest.mock.sentinel.second1
         start_node = make_intersect(
-            first1, 0.5, second1, 0.5,
-            interior_curve=interior_curve,
-            index_first=0, index_second=2)
-        first2 = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
-        second2 = unittest.mock.Mock(_edge_index=1, spec=['_edge_index'])
+            first1, 0.5, second1, 0.5, index_first=0, index_second=2,
+            interior_curve=interior_curve)
+        first2 = unittest.mock.sentinel.first2
+        second2 = unittest.mock.sentinel.second2
         end_node = make_intersect(
-            first2, 0.5, second2, 0.5,
-            index_first=1, index_second=1)
+            first2, 0.5, second2, 0.5, index_first=1, index_second=1)
         with self.assertRaises(ValueError):
             self._call_function_under_test(start_node, end_node)
 
@@ -2005,14 +1895,11 @@ class Test_ends_to_curve(utils.NumPyTestCase):
             [0.0, 1.0],
             [1.0, 3.0],
         ]))
-        first._edge_index = 0
         start_node = make_intersect(
-            first, 0.5, None, None,
-            interior_curve=get_enum('FIRST'),
-            index_first=first._edge_index)
+            first, 0.5, None, None, index_first=0, index_second=None,
+            interior_curve=get_enum('FIRST'))
         end_node = make_intersect(
-            first, 0.75, None, None,
-            index_first=first._edge_index)
+            first, 0.75, None, None, index_first=0, index_second=None)
 
         result = self._call_function_under_test(start_node, end_node)
         self.assertIsInstance(result, bezier.Curve)
@@ -2033,14 +1920,11 @@ class Test_ends_to_curve(utils.NumPyTestCase):
             [2.0, 1.0],
         ])
         second = bezier.Curve(nodes, 1)
-        second._edge_index = 2
         start_node = make_intersect(
-            None, None, second, 0.125,
-            interior_curve=get_enum('SECOND'),
-            index_second=second._edge_index)
+            None, None, second, 0.125, index_first=None, index_second=2,
+            interior_curve=get_enum('SECOND'))
         end_node = make_intersect(
-            None, None, second, 0.25,
-            index_second=second._edge_index)
+            None, None, second, 0.25, index_first=None, index_second=2)
 
         result = self._call_function_under_test(start_node, end_node)
         self.assertIsInstance(result, bezier.Curve)
@@ -2212,15 +2096,11 @@ class Test_basic_interior_combine(utils.NumPyTestCase):
         edges2 = surface2.edges
 
         intersection1 = make_intersect(
-            edges1[1], 0.25, edges2[0], 0.4375,
-            interior_curve=get_enum('FIRST'),
-            index_first=1, index_second=0,
-        )
+            edges1[1], 0.25, edges2[0], 0.4375, index_first=1, index_second=0,
+            interior_curve=get_enum('FIRST'))
         intersection2 = make_intersect(
-            edges1[1], 0.5, edges2[2], 0.75,
-            interior_curve=get_enum('SECOND'),
-            index_first=1, index_second=2,
-        )
+            edges1[1], 0.5, edges2[2], 0.75, index_first=1, index_second=2,
+            interior_curve=get_enum('SECOND'))
 
         result = self._call_function_under_test(
             [intersection1, intersection2])
@@ -2270,19 +2150,16 @@ class Test_basic_interior_combine(utils.NumPyTestCase):
         intersections = [
             make_intersect(
                 edges1[0], 0.875, edges2[1], 0.0,
-                interior_curve=get_enum('SECOND'),
                 index_first=0, index_second=1,
-            ),
+                interior_curve=get_enum('SECOND')),
             make_intersect(
                 edges1[1], 0.75, edges2[2], 0.0,
-                interior_curve=get_enum('SECOND'),
                 index_first=1, index_second=2,
-            ),
+                interior_curve=get_enum('SECOND')),
             make_intersect(
                 edges1[2], 0.875, edges2[0], 0.0,
-                interior_curve=get_enum('SECOND'),
                 index_first=2, index_second=0,
-            ),
+                interior_curve=get_enum('SECOND')),
         ]
         result = self._call_function_under_test(intersections)
 
@@ -2306,7 +2183,8 @@ class Test_basic_interior_combine(utils.NumPyTestCase):
 
     def _too_many_edges_helper(self, to_front, get_next, **kwargs):
         start = make_intersect(
-            None, 0.0, None, 0.0, interior_curve=get_enum('SECOND'))
+            None, 0.0, None, 0.0, index_first=1, index_second=1,
+            interior_curve=get_enum('SECOND'))
         with self.assertRaises(RuntimeError):
             self._call_function_under_test([start], **kwargs)
 
@@ -2370,34 +2248,28 @@ class Test_combine_intersections(utils.NumPyTestCase):
         intersections = [
             make_intersect(
                 edges1[0], 0.75, edges2[0], 0.25,
-                interior_curve=get_enum('SECOND'),
                 index_first=0, index_second=0,
-            ),
+                interior_curve=get_enum('SECOND')),
             make_intersect(
                 edges1[0], 0.5, edges2[2], 0.75,
-                interior_curve=get_enum('FIRST'),
                 index_first=0, index_second=2,
-            ),
+                interior_curve=get_enum('FIRST')),
             make_intersect(
                 edges1[1], 0.25, edges2[0], 0.5,
-                interior_curve=get_enum('FIRST'),
                 index_first=1, index_second=0,
-            ),
+                interior_curve=get_enum('FIRST')),
             make_intersect(
                 edges1[1], 0.75, edges2[1], 0.5,
-                interior_curve=get_enum('SECOND'),
                 index_first=1, index_second=1,
-            ),
+                interior_curve=get_enum('SECOND')),
             make_intersect(
                 edges1[2], 0.25, edges2[1], 0.75,
-                interior_curve=get_enum('FIRST'),
                 index_first=2, index_second=1,
-            ),
+                interior_curve=get_enum('FIRST')),
             make_intersect(
                 edges1[2], 0.5, edges2[2], 0.25,
-                interior_curve=get_enum('SECOND'),
                 index_first=2, index_second=2,
-            ),
+                interior_curve=get_enum('SECOND')),
         ]
         result = self._call_function_under_test(
             intersections, surface1, surface2)
@@ -2438,7 +2310,8 @@ class Test_combine_intersections(utils.NumPyTestCase):
         second, _, _ = surface2.edges
 
         intersection = make_intersect(
-            first, 0.5, second, 0.5, interior_curve=get_enum('TANGENT_FIRST'))
+            first, 0.5, second, 0.5, index_first=0, index_second=2,
+            interior_curve=get_enum('TANGENT_FIRST'))
         result = self._call_function_under_test(
             [intersection], surface1, surface2)
         self.assertEqual(len(result), 1)
@@ -2789,8 +2662,8 @@ class TestIntersectionClassification(unittest.TestCase):
 
 
 def make_intersect(
-        first, s, second, t, interior_curve=None,
-        index_first=-1, index_second=-1):
+        first, s, second, t, index_first, index_second,
+        interior_curve=None):
     from bezier import _intersection_helpers
 
     intersection = _intersection_helpers.Intersection(
