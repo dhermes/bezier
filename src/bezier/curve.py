@@ -102,8 +102,7 @@ class Curve(_base.Base):
     __slots__ = (
         '_dimension', '_nodes',  # From base class
         '_degree', '_start', '_end', '_root',  # From constructor
-        '_length', '_next_edge',  # Empty defaults
-        '_previous_edge',  # Empty defaults
+        '_length', '_next_edge', '_previous_edge',  # Empty defaults
     )
 
     def __init__(self, nodes, degree, start=0.0, end=1.0,

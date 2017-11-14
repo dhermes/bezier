@@ -1423,10 +1423,10 @@ class Test_ignored_corner(utils.NumPyTestCase):
 class Test_handle_corners(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersection):
+    def _call_function_under_test(intersection, edges1, edges2):
         from bezier import _surface_helpers
 
-        return _surface_helpers.handle_corners(intersection)
+        return _surface_helpers.handle_corners(intersection, edges1, edges2)
 
     def test_neither(self):
         first = unittest.mock.sentinel.first
@@ -1434,7 +1434,7 @@ class Test_handle_corners(unittest.TestCase):
         intersection = make_intersect(
             first, 0.5, second, 0.5, index_first=0, index_second=1)
 
-        self.assertFalse(self._call_function_under_test(intersection))
+        self.assertFalse(self._call_function_under_test(intersection, (), ()))
         self.assertEqual(intersection.s, 0.5)
         self.assertIs(intersection.first, first)
         self.assertEqual(intersection.index_first, 0)
@@ -1443,12 +1443,16 @@ class Test_handle_corners(unittest.TestCase):
         self.assertEqual(intersection.index_second, 1)
 
     def test_s(self):
-        third = unittest.mock.sentinel.next_edge
-        first = unittest.mock.Mock(_next_edge=third, spec=['_next_edge'])
+        first = unittest.mock.sentinel.first
         second = unittest.mock.sentinel.second
+        third = unittest.mock.sentinel.next_edge
         intersection = make_intersect(
             first, 1.0, second, 0.25, index_first=2, index_second=1)
-        self.assertTrue(self._call_function_under_test(intersection))
+
+        edges1 = (third, None, first)
+        edges2 = ()
+        self.assertTrue(
+            self._call_function_under_test(intersection, edges1, edges2))
         self.assertEqual(intersection.s, 0.0)
         self.assertIs(intersection.first, third)
         self.assertEqual(intersection.index_first, 0)
@@ -1458,12 +1462,15 @@ class Test_handle_corners(unittest.TestCase):
 
     def test_t(self):
         first = unittest.mock.sentinel.first
+        second = unittest.mock.sentinel.second
         third = unittest.mock.sentinel.next_edge
-        second = unittest.mock.Mock(_next_edge=third, spec=['_next_edge'])
         intersection = make_intersect(
             first, 0.75, second, 1.0, index_first=2, index_second=0)
 
-        self.assertTrue(self._call_function_under_test(intersection))
+        edges1 = ()
+        edges2 = (second, third, None)
+        self.assertTrue(
+            self._call_function_under_test(intersection, edges1, edges2))
         self.assertEqual(intersection.s, 0.75)
         self.assertIs(intersection.first, first)
         self.assertEqual(intersection.index_first, 2)

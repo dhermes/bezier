@@ -1637,7 +1637,7 @@ def classify_intersection(intersection):
             intersection, tangent1, tangent2)
 
 
-def handle_corners(intersection):
+def handle_corners(intersection, edges1, edges2):
     """Mutates an intersection if it is on a corner.
 
     .. note::
@@ -1664,6 +1664,10 @@ def handle_corners(intersection):
 
     Args:
         intersection (.Intersection): An intersection to mutate.
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
 
     Returns:
         bool: Indicating if the object was changed.
@@ -1671,17 +1675,15 @@ def handle_corners(intersection):
     changed = False
     if intersection.s == 1.0:
         intersection.s = 0.0
-        # pylint: disable=protected-access
-        intersection.first = intersection.first._next_edge
-        # pylint: enable=protected-access
-        intersection.index_first = (intersection.index_first + 1) % 3
+        next_index = (intersection.index_first + 1) % 3
+        intersection.first = edges1[next_index]
+        intersection.index_first = next_index
         changed = True
     if intersection.t == 1.0:
         intersection.t = 0.0
-        # pylint: disable=protected-access
-        intersection.second = intersection.second._next_edge
-        # pylint: enable=protected-access
-        intersection.index_second = (intersection.index_second + 1) % 3
+        next_index = (intersection.index_second + 1) % 3
+        intersection.second = edges2[next_index]
+        intersection.index_second = next_index
         changed = True
 
     return changed

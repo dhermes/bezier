@@ -1108,17 +1108,16 @@ class Surface(_base.Base):
             return []
 
         # We need **all** pairs of edges.
-        intersections = _surface_intersections(
-            self._get_edges(),
-            other._get_edges(),  # pylint: disable=protected-access
-            strategy,
-        )
+        edges1 = self._get_edges()
+        edges2 = other._get_edges()  # pylint: disable=protected-access
+        intersections = _surface_intersections(edges1, edges2, strategy)
 
         # Classify each intersection.
         duplicates = []
         uniques = []
         for intersection in intersections:
-            changed = _surface_helpers.handle_corners(intersection)
+            changed = _surface_helpers.handle_corners(
+                intersection, edges1, edges2)
             if changed:
                 duplicates.append(intersection)
             else:
