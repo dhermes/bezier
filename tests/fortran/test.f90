@@ -13,6 +13,7 @@
 program test
 
   use, intrinsic :: iso_c_binding, only: c_bool
+  use curve_intersection, only: free_curve_intersections_workspace
   use test_helpers, only: helpers_all_tests
   use test_curve, only: curve_all_tests
   use test_surface, only: surface_all_tests
@@ -28,6 +29,8 @@ program test
   call surface_all_tests(success)
   call curve_intersection_all_tests(success)
   call surface_intersection_all_tests(success)
+  ! Wrap up allocated globals.
+  call free_curve_intersections_workspace()
   if (.NOT. success) then
      stop 1  ! LCOV_EXCL_LINE
   end if

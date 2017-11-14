@@ -33,7 +33,7 @@ module surface_intersection
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, newton_refine, &
-       locate_point, classify_intersection, add_st_vals
+       locate_point, classify_intersection, add_st_vals, surfaces_intersect
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -650,6 +650,7 @@ contains
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This subroutine is not part of the C ABI for this module,
     !       but it is (for now) public, so that it can be tested.
+    ! NOTE: This assumes but does not check that ``num_st_vals > 0``.
 
     integer(c_int), intent(in) :: num_st_vals
     real(c_double), intent(in) :: st_vals(2, num_st_vals)
@@ -659,11 +660,6 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: curr_size, i, intersection_index
     type(Intersection), allocatable :: intersections_swap(:)
-
-    ! NOTE: This assumes but does not check that ``num_st_vals >= 0``.
-    if (num_st_vals == 0) then
-       return
-    end if
 
     intersection_index = num_intersections + 1
     num_intersections = num_intersections + num_st_vals
@@ -688,5 +684,64 @@ contains
     end do
 
   end subroutine add_st_vals
+
+  subroutine surfaces_intersect( &
+       num_nodes1, nodes1, degree1, &
+       num_nodes2, nodes2, degree2, &
+       intersections, num_intersections, status)
+
+    ! NOTE: This is **explicitly** not intended for C inter-op.
+
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    integer(c_int), intent(in) :: degree1
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    integer(c_int), intent(in) :: degree2
+    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    integer(c_int), intent(out) :: num_intersections
+    integer(c_int), intent(out) :: status
+    ! Variables outside of signature.
+    type(CurveData) :: edges_first(3), edges_second(3)
+    integer(c_int) :: index1, index2
+    real(c_double), allocatable :: st_vals(:, :)
+    integer(c_int) :: num_st_vals
+
+    ! Compute the edge nodes for the first surface.
+    allocate(edges_first(1)%nodes(degree1 + 1, 2))
+    allocate(edges_first(2)%nodes(degree1 + 1, 2))
+    allocate(edges_first(3)%nodes(degree1 + 1, 2))
+    call compute_edge_nodes( &
+         num_nodes1, 2, nodes1, degree1, &
+         edges_first(1)%nodes, edges_first(2)%nodes, edges_first(3)%nodes)
+
+    ! Compute the edge nodes for the second surface.
+    allocate(edges_second(1)%nodes(degree2 + 1, 2))
+    allocate(edges_second(2)%nodes(degree2 + 1, 2))
+    allocate(edges_second(3)%nodes(degree2 + 1, 2))
+    call compute_edge_nodes( &
+         num_nodes2, 2, nodes2, degree2, &
+         edges_second(1)%nodes, edges_second(2)%nodes, edges_second(3)%nodes)
+
+    num_intersections = 0
+    do index1 = 1, 3
+       do index2 = 1, 3
+          call all_intersections( &
+               degree1 + 1, edges_first(index1)%nodes, &
+               degree2 + 1, edges_second(index2)%nodes, &
+               st_vals, num_st_vals, status)
+          if (status == ALL_INTERSECTIONS_SUCCESS) then
+             if (num_st_vals > 0) then
+                call add_st_vals( &
+                     num_st_vals, st_vals, index1, index2, &
+                     intersections, num_intersections)
+             end if
+          else
+             return
+          end if
+       end do
+    end do
+
+  end subroutine surfaces_intersect
 
 end module surface_intersection

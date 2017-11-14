@@ -29,7 +29,7 @@ module test_curve_intersection
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, all_intersections, &
-       all_intersections_c, free_curve_intersections_workspace
+       all_intersections_c
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -1671,9 +1671,6 @@ contains
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! Wrap up.
-    call free_curve_intersections_workspace()
-
   end subroutine test_all_intersections
 
   subroutine test_all_intersections_c(success)
@@ -1735,9 +1732,6 @@ contains
          intersections2(2, 3) == 0.75_dp .AND. &
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
-
-    ! Wrap up.
-    call free_curve_intersections_workspace()
 
   end subroutine test_all_intersections_c
 

@@ -14,6 +14,8 @@ module test_surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use curve, only: CurveData, LOCATE_MISS
+  use curve_intersection, only: &
+       ALL_INTERSECTIONS_SUCCESS, ALL_INTERSECTIONS_PARALLEL
   use surface_intersection, only: &
        Intersection, IntersectionClassification_SAME_CURVATURE, &
        IntersectionClassification_BAD_TANGENT, &
@@ -22,13 +24,13 @@ module test_surface_intersection
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, newton_refine, &
-       locate_point, classify_intersection, add_st_vals
+       locate_point, classify_intersection, add_st_vals, surfaces_intersect
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
-       test_add_st_vals
+       test_add_st_vals, test_surfaces_intersect, intersection_check
   public surface_intersection_all_tests
 
 contains
@@ -40,6 +42,7 @@ contains
     call test_locate_point(success)
     call test_classify_intersection(success)
     call test_add_st_vals(success)
+    call test_surfaces_intersect(success)
 
   end subroutine surface_intersection_all_tests
 
@@ -541,23 +544,11 @@ contains
     case_id = 1
     name = "add_st_vals"
 
-    ! CASE 1: ``st_vals`` is empty.
+    ! CASE 1: ``intersections`` must be allocated.
     num_intersections = 0
-    allocate(st_vals(2, 0))
-    call add_st_vals( &
-         0, st_vals, 1, 1, intersections, num_intersections)
-    case_success = ( &
-         .NOT. allocated(intersections) .AND. &
-         num_intersections == 0)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 2: ``intersections`` must be allocated.
-    deallocate(st_vals)
     allocate(st_vals(2, 1))
     st_vals(:, 1) = [0.25_dp, 0.75_dp]
-    case_success = ( &
-         .NOT. allocated(intersections) .AND. &
-         num_intersections == 0)
+    case_success = .NOT. allocated(intersections)
     call add_st_vals( &
          1, st_vals, 2, 3, intersections, num_intersections)
     case_success = ( &
@@ -571,7 +562,7 @@ contains
          intersections(1)%index_second == 3)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: ``intersections`` must be re-allocated.
+    ! CASE 2: ``intersections`` must be re-allocated.
     st_vals(:, 1) = [0.0_dp, 0.5_dp]
     case_success = ( &
          allocated(intersections) .AND. &
@@ -588,7 +579,7 @@ contains
          intersections(2)%index_second == 1)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: ``intersections`` is large enough.
+    ! CASE 3: ``intersections`` is large enough.
     num_intersections = 0
     st_vals(:, 1) = [1.0_dp, 0.125_dp]
     case_success = allocated(intersections)
@@ -605,5 +596,82 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_st_vals
+
+  subroutine test_surfaces_intersect(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(18) :: name
+    real(c_double) :: linear1(3, 2), linear2(3, 2)
+    real(c_double) :: quadratic1(6, 2), quadratic2(6, 2)
+    type(Intersection), allocatable :: intersections(:)
+    integer(c_int) :: num_intersections
+    integer(c_int) :: status
+
+    case_id = 1
+    name = "surfaces_intersect"
+
+    ! CASE 1: Overlapping triangles (i.e. degree 1 surfaces).
+    linear1(1, :) = 0
+    linear1(2, :) = [2.0_dp, 0.0_dp]
+    linear1(3, :) = [1.0_dp, 2.0_dp]
+    linear2(1, :) = [0.0_dp, 1.0_dp]
+    linear2(2, :) = [2.0_dp, 1.0_dp]
+    linear2(3, :) = [1.0_dp, -1.0_dp]
+    call surfaces_intersect( &
+         3, linear1, 1, 3, linear2, 1, &
+         intersections, num_intersections, status)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 6 .AND. &
+         num_intersections == 6 .AND. &
+         intersection_check(intersections(1), 0.75_dp, 0.5_dp, 1, 2) .AND. &
+         intersection_check(intersections(2), 0.25_dp, 0.5_dp, 1, 3) .AND. &
+         intersection_check(intersections(3), 0.5_dp, 0.75_dp, 2, 1) .AND. &
+         intersection_check(intersections(4), 0.25_dp, 0.25_dp, 2, 2) .AND. &
+         intersection_check(intersections(5), 0.5_dp, 0.25_dp, 3, 1) .AND. &
+         intersection_check(intersections(6), 0.75_dp, 0.75_dp, 3, 3) .AND. &
+         status == ALL_INTERSECTIONS_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Tangent intersection (causes error).
+    quadratic1(1, :) = 0
+    quadratic1(2, :) = [6.0_dp, 12.0_dp]
+    quadratic1(3, :) = [12.0_dp, 6.0_dp]
+    quadratic1(4, :) = [4.0_dp, -8.0_dp]
+    quadratic1(5, :) = [10.0_dp, -5.0_dp]
+    quadratic1(6, :) = [8.0_dp, -16.0_dp]
+    quadratic2(1, :) = [4.0_dp, 10.0_dp]
+    quadratic2(2, :) = [10.0_dp, 4.0_dp]
+    quadratic2(3, :) = [16.0_dp, 16.0_dp]
+    quadratic2(4, :) = [6.0_dp, 21.0_dp]
+    quadratic2(5, :) = [12.0_dp, 24.0_dp]
+    quadratic2(6, :) = [8.0_dp, 32.0_dp]
+    call surfaces_intersect( &
+         6, quadratic1, 2, 6, quadratic2, 2, &
+         intersections, num_intersections, status)
+    case_success = ( &
+         num_intersections == 0 .AND. &
+         status == ALL_INTERSECTIONS_PARALLEL)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_surfaces_intersect
+
+  function intersection_check( &
+       intersection_, s, t, index_first, index_second) result(same)
+
+    type(intersection), intent(in) :: intersection_
+    real(c_double), intent(in) :: s, t
+    integer(c_int), intent(in) :: index_first, index_second
+    logical(c_bool) :: same
+
+    same = ( &
+         intersection_%s == s .AND. &
+         intersection_%t == t .AND. &
+         intersection_%index_first == index_first .AND. &
+         intersection_%index_second == index_second)
+
+  end function intersection_check
 
 end module test_surface_intersection
