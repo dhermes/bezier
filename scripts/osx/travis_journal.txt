@@ -776,6 +776,7 @@ $ /usr/bin/clang \
 >   build/temp.macosx-10.6-intel-3.6/src/bezier/quadpack/dqk21.o \
 >   build/temp.macosx-10.6-intel-3.6/src/bezier/quadpack/dqagse.o \
 >   build/temp.macosx-10.6-intel-3.6/src/bezier/curve.o \
+>   build/temp.macosx-10.6-intel-3.6/src/bezier/curve_intersection.o \
 >   build/temp.macosx-10.6-intel-3.6/src/bezier/surface.o \
 >   build/temp.macosx-10.6-intel-3.6/src/bezier/surface_intersection.o \
 >   -L${TRAVIS_BUILD_DIR}/scripts/osx/frankenstein \
