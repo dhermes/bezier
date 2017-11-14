@@ -1845,6 +1845,7 @@ def get_next_first(intersection, intersections):
             first, 1.0, None, None,
             interior_curve=IntersectionClassification.FIRST)
         new_intersection.index_first = intersection.index_first
+        new_intersection.index_second = None
         return new_intersection
     else:
         return along_edge
@@ -1889,6 +1890,7 @@ def get_next_second(intersection, intersections):
         new_intersection = _intersection_helpers.Intersection(
             None, None, second, 1.0,
             interior_curve=IntersectionClassification.SECOND)
+        new_intersection.index_first = None
         new_intersection.index_second = intersection.index_second
         return new_intersection
     else:

@@ -83,12 +83,12 @@ class Test_polynomial_sign(unittest.TestCase):
 
     def test_conclusion_from_corner_node(self):
         # NOTE: This comes from the surface defined by
-        #          [0.0   0.0  ]
-        #          [0.5   0.5  ]
-        #          [1.0   0.625]
-        #          [0.0   0.5  ]
-        #          [0.5   0.5  ]
-        #          [0.25  1.0  ]
+        #          [0.0 , 0.0  ]
+        #          [0.5 , 0.5  ]
+        #          [1.0 , 0.625]
+        #          [0.0 , 0.5  ]
+        #          [0.5 , 0.5  ]
+        #          [0.25, 1.0  ]
         bernstein = np.asfortranarray([
             [1.0], [0.5], [0.0], [0.75], [0.4375], [1.0]])
         sign = self._call_function_under_test(bernstein, 2)
@@ -1437,8 +1437,10 @@ class Test_handle_corners(unittest.TestCase):
         self.assertFalse(self._call_function_under_test(intersection))
         self.assertEqual(intersection.s, 0.5)
         self.assertIs(intersection.first, first)
+        self.assertEqual(intersection.index_first, 0)
         self.assertEqual(intersection.t, 0.5)
         self.assertIs(intersection.second, second)
+        self.assertEqual(intersection.index_second, 1)
 
     def test_s(self):
         third = unittest.mock.sentinel.next_edge
@@ -1449,8 +1451,10 @@ class Test_handle_corners(unittest.TestCase):
         self.assertTrue(self._call_function_under_test(intersection))
         self.assertEqual(intersection.s, 0.0)
         self.assertIs(intersection.first, third)
+        self.assertEqual(intersection.index_first, 0)
         self.assertEqual(intersection.t, 0.25)
         self.assertIs(intersection.second, second)
+        self.assertEqual(intersection.index_second, 1)
 
     def test_t(self):
         first = unittest.mock.sentinel.first
@@ -1462,8 +1466,10 @@ class Test_handle_corners(unittest.TestCase):
         self.assertTrue(self._call_function_under_test(intersection))
         self.assertEqual(intersection.s, 0.75)
         self.assertIs(intersection.first, first)
+        self.assertEqual(intersection.index_first, 2)
         self.assertEqual(intersection.t, 0.0)
         self.assertIs(intersection.second, third)
+        self.assertEqual(intersection.index_second, 1)
 
 
 class Test_same_intersection(unittest.TestCase):
@@ -1608,8 +1614,10 @@ class Test_to_front(unittest.TestCase):
         self.assertIsInstance(result, _intersection_helpers.Intersection)
         self.assertIs(result.first, third)
         self.assertEqual(result.s, 0.0)
+        self.assertEqual(result.index_first, 0)
         self.assertIs(result.second, second)
         self.assertEqual(result.t, 0.5)
+        self.assertEqual(result.index_second, 1)
         self.assertIs(
             result.interior_curve, unittest.mock.sentinel.interior_curve)
 
@@ -1641,8 +1649,10 @@ class Test_to_front(unittest.TestCase):
         self.assertIsInstance(result, _intersection_helpers.Intersection)
         self.assertIs(result.first, first)
         self.assertEqual(result.s, 0.5)
+        self.assertEqual(result.index_first, 0)
         self.assertIs(result.second, third)
         self.assertEqual(result.t, 0.0)
+        self.assertEqual(result.index_second, 2)
         self.assertIs(
             result.interior_curve, unittest.mock.sentinel.interior_curve)
 
@@ -1678,8 +1688,10 @@ class Test_get_next_first(unittest.TestCase):
         self.assertIsInstance(result, _intersection_helpers.Intersection)
         self.assertIs(result.first, first)
         self.assertEqual(result.s, 1.0)
+        self.assertEqual(result.index_first, 1)
         self.assertIsNone(result.second)
         self.assertIsNone(result.t)
+        self.assertIsNone(result.index_second)
         self.assertIs(result.interior_curve, get_enum('FIRST'))
 
     def test_move_to_existing(self):
@@ -1748,8 +1760,10 @@ class Test_get_next_second(unittest.TestCase):
         self.assertIsInstance(result, _intersection_helpers.Intersection)
         self.assertIsNone(result.first)
         self.assertIsNone(result.s)
+        self.assertIsNone(result.index_first)
         self.assertIs(result.second, second)
         self.assertEqual(result.t, 1.0)
+        self.assertEqual(result.index_second, 1)
         self.assertIs(result.interior_curve, get_enum('SECOND'))
 
     def test_move_to_existing(self):
@@ -1823,11 +1837,11 @@ class Test_get_next(unittest.TestCase):
         with patch as mocked:
             result = self._call_function_under_test(
                 intersection, unittest.mock.sentinel.intersections, unused)
-            self.assertIs(result, unittest.mock.sentinel.result)
-            self.assertEqual(unused, [])
 
-            mocked.assert_called_once_with(
-                intersection, unittest.mock.sentinel.intersections)
+        self.assertIs(result, unittest.mock.sentinel.result)
+        self.assertEqual(unused, [])
+        mocked.assert_called_once_with(
+            intersection, unittest.mock.sentinel.intersections)
 
     def test_second(self):
         intersection = make_intersect(
@@ -1840,10 +1854,10 @@ class Test_get_next(unittest.TestCase):
         with patch as mocked:
             result = self._call_function_under_test(
                 intersection, unittest.mock.sentinel.intersections, [])
-            self.assertIs(result, unittest.mock.sentinel.result)
 
-            mocked.assert_called_once_with(
-                intersection, unittest.mock.sentinel.intersections)
+        self.assertIs(result, unittest.mock.sentinel.result)
+        mocked.assert_called_once_with(
+            intersection, unittest.mock.sentinel.intersections)
 
     def test_invalid_classification(self):
         intersection = make_intersect(
