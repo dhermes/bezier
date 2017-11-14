@@ -1260,6 +1260,9 @@ def classify_intersection(intersection, edges1, edges2):
            return _curve_helpers.get_curvature(
                nodes, tangent, s)
 
+       edges1 = ()
+       edges2 = ()
+
     .. doctest:: classify-intersection1
        :options: +NORMALIZE_WHITESPACE
 
@@ -1285,7 +1288,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> tangent2
        array([[ 2. , 0.5]])
        >>> intersection = Intersection(curve1, s, curve2, t)
-       >>> classify_intersection(intersection)
+       >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.FIRST: 0>
 
     .. testcleanup:: classify-intersection1
@@ -1340,7 +1343,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
-       >>> classify_intersection(intersection)
+       >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.TANGENT_SECOND: 4>
 
     .. testcleanup:: classify-intersection2
@@ -1376,7 +1379,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
-       >>> classify_intersection(intersection)
+       >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.TANGENT_FIRST: 3>
 
     .. testcleanup:: classify-intersection3
@@ -1410,7 +1413,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
-       >>> classify_intersection(intersection)
+       >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.OPPOSED: 2>
 
     .. testcleanup:: classify-intersection4
@@ -1446,7 +1449,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
-       >>> classify_intersection(intersection)
+       >>> classify_intersection(intersection, edges1, edges2)
        Traceback (most recent call last):
          ...
        NotImplementedError: Curves moving in opposite direction
@@ -1490,7 +1493,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curvature(curve2, t)
        -2.0
        >>> intersection = Intersection(curve1, s, curve2, t)
-       >>> classify_intersection(intersection)
+       >>> classify_intersection(intersection, edges1, edges2)
        Traceback (most recent call last):
          ...
        NotImplementedError: Tangent curves have same curvature.
@@ -1525,7 +1528,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1a.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1a, s, curve2, t)
-       >>> classify_intersection(intersection)
+       >>> classify_intersection(intersection, edges1, edges2)
        Traceback (most recent call last):
          ...
        ValueError: ('Intersection occurs at the end of an edge',
@@ -1539,9 +1542,10 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1b = bezier.Curve(nodes1b, degree=2)
        >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> curve1b._previous_edge = curve1a
+       >>> edges1 = (curve1a, curve1b, None)
        >>> intersection = Intersection(curve1b, 0.0, curve2, t)
-       >>> classify_intersection(intersection)
+       >>> intersection.index_first = 1
+       >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.FIRST: 0>
 
     .. testcleanup:: classify-intersection7
@@ -1577,13 +1581,17 @@ def classify_intersection(intersection, edges1, edges2):
        ...     [-1.0   , 0.0  ],
        ... ])
        >>> surface2 = bezier.Surface(nodes2, degree=2)
-       >>> curve1, _, _ = surface1.edges
-       >>> curve2, _, _ = surface2.edges
+       >>> edges1 = surface1.edges
+       >>> curve1, _, _ = edges1
+       >>> edges2 = surface2.edges
+       >>> curve2, _, _ = edges2
        >>> s, t = 0.5, 0.0
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(curve1, s, curve2, t)
-       >>> classify_intersection(intersection)
+       >>> intersection.index_first = 0
+       >>> intersection.index_second = 0
+       >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.IGNORED_CORNER: 5>
 
     .. testcleanup:: classify-intersection8
@@ -1606,10 +1614,10 @@ def classify_intersection(intersection, edges1, edges2):
 
     Args:
         intersection (.Intersection): An intersection object.
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
+        edges1 (Tuple[~bezier.curve.Curve, ...]): The three edges of the
+            first surface being intersected.
+        edges2 (Tuple[~bezier.curve.Curve, ...]): The three edges of the
+            second surface being intersected.
 
     Returns:
         _IntersectionClassification: The "inside" curve type, based on
