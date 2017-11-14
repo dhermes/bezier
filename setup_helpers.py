@@ -139,6 +139,7 @@ FORTRAN_MODULES['surface_intersection'] = (
     os.path.join(QUADPACK_DIR, 'dqk21'),
     os.path.join(QUADPACK_DIR, 'dqagse'),
     'curve',
+    'curve_intersection',
     'surface',
     'surface_intersection',
 )
