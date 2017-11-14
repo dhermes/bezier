@@ -984,19 +984,21 @@ class Test_classify_intersection(unittest.TestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ]))
+        edges1 = (None, None, first)
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [0.25, 0.0],
             [0.75, 1.0],
         ]))
+        edges2 = (second, None, None)
         intersection = make_intersect(
             first, 0.5, second, 0.5, index_first=2, index_second=0)
-        result = self._call_function_under_test(intersection, (), ())
+        result = self._call_function_under_test(intersection, edges1, edges2)
         self.assertIs(result, get_enum('SECOND'))
 
         # Swap and classify.
         intersection = make_intersect(
             second, 0.5, first, 0.5, index_first=0, index_second=2)
-        result = self._call_function_under_test(intersection, (), ())
+        result = self._call_function_under_test(intersection, edges2, edges1)
         self.assertIs(result, get_enum('FIRST'))
 
     def test_corner_end(self):
@@ -1029,9 +1031,9 @@ class Test_classify_intersection(unittest.TestCase):
             [1.0, 0.0],
             [1.0, 2.0],
         ]))
-        edges2 = ()
+        edges2 = (None, None, second)
         intersection = make_intersect(
-            first, 0.0, second, 0.5, index_first=1, index_second=2)
+            first, 0.0, second, 0.5, index_first=0, index_second=2)
         result = self._call_function_under_test(intersection, edges1, edges2)
         self.assertIs(result, get_enum('FIRST'))
 
@@ -1043,14 +1045,16 @@ class Test_classify_intersection(unittest.TestCase):
             [1.5, 1.0],
             [3.0, 0.0],
         ]))
+        edges1 = (first, None, None)
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.5, 1.0],
             [2.0, 0.0],
         ]))
+        edges2 = (None, second, None)
         intersection = make_intersect(
             first, 0.5, second, 0.5, index_first=0, index_second=1)
-        result = self._call_function_under_test(intersection, (), ())
+        result = self._call_function_under_test(intersection, edges1, edges2)
         self.assertIs(result, get_enum('TANGENT_FIRST'))
 
     def test_ignored_corner(self):

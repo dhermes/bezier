@@ -1636,9 +1636,9 @@ def classify_intersection(intersection, edges1, edges2):
         raise ValueError('Intersection occurs at the end of an edge',
                          's', intersection.s, 't', intersection.t)
 
-    nodes1 = intersection.first._nodes
+    nodes1 = edges1[intersection.index_first]._nodes
     tangent1 = _curve_helpers.evaluate_hodograph(intersection.s, nodes1)
-    nodes2 = intersection.second._nodes
+    nodes2 = edges2[intersection.index_second]._nodes
     tangent2 = _curve_helpers.evaluate_hodograph(intersection.t, nodes2)
 
     if ignored_corner(intersection, tangent1, tangent2, edges1, edges2):
