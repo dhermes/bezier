@@ -1263,9 +1263,6 @@ def classify_intersection(intersection, edges1, edges2):
            return _curve_helpers.get_curvature(
                nodes, tangent, s)
 
-       edges1 = ()
-       edges2 = ()
-
     .. doctest:: classify-intersection1
        :options: +NORMALIZE_WHITESPACE
 
@@ -1290,7 +1287,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> tangent2 = hodograph(curve2, t)
        >>> tangent2
        array([[ 2. , 0.5]])
-       >>> intersection = Intersection(s, t)
+       >>> intersection = Intersection(0, s, 0, t)
+       >>> edges1 = (curve1, None, None)
+       >>> edges2 = (curve2, None, None)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.FIRST: 0>
 
@@ -1345,7 +1344,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(s, t)
+       >>> intersection = Intersection(0, s, 0, t)
+       >>> edges1 = (curve1, None, None)
+       >>> edges2 = (curve2, None, None)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.TANGENT_SECOND: 4>
 
@@ -1381,7 +1382,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(s, t)
+       >>> intersection = Intersection(0, s, 0, t)
+       >>> edges1 = (curve1, None, None)
+       >>> edges2 = (curve2, None, None)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.TANGENT_FIRST: 3>
 
@@ -1415,7 +1418,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(s, t)
+       >>> intersection = Intersection(0, s, 0, t)
+       >>> edges1 = (curve1, None, None)
+       >>> edges2 = (curve2, None, None)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.OPPOSED: 2>
 
@@ -1451,7 +1456,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(s, t)
+       >>> intersection = Intersection(0, s, 0, t)
+       >>> edges1 = (curve1, None, None)
+       >>> edges2 = (curve2, None, None)
        >>> classify_intersection(intersection, edges1, edges2)
        Traceback (most recent call last):
          ...
@@ -1495,7 +1502,9 @@ def classify_intersection(intersection, edges1, edges2):
        -2.0
        >>> curvature(curve2, t)
        -2.0
-       >>> intersection = Intersection(s, t)
+       >>> intersection = Intersection(0, s, 0, t)
+       >>> edges1 = (curve1, None, None)
+       >>> edges2 = (curve2, None, None)
        >>> classify_intersection(intersection, edges1, edges2)
        Traceback (most recent call last):
          ...
@@ -1530,7 +1539,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 1.0, 0.375
        >>> curve1a.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(s, t)
+       >>> intersection = Intersection(0, s, 0, t)
+       >>> edges1 = (curve1a, None, None)
+       >>> edges2 = (curve2, None, None)
        >>> classify_intersection(intersection, edges1, edges2)
        Traceback (most recent call last):
          ...
@@ -1546,8 +1557,8 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> edges1 = (curve1a, curve1b, None)
-       >>> intersection = Intersection(0.0, t)
-       >>> intersection.index_first = 1
+       >>> intersection = Intersection(1, 0.0, 0, t)
+       >>> edges1 = (curve1a, curve1b, None)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.FIRST: 0>
 
@@ -1591,9 +1602,7 @@ def classify_intersection(intersection, edges1, edges2):
        >>> s, t = 0.5, 0.0
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> intersection = Intersection(s, t)
-       >>> intersection.index_first = 0
-       >>> intersection.index_second = 0
+       >>> intersection = Intersection(0, s, 0, t)
        >>> classify_intersection(intersection, edges1, edges2)
        <IntersectionClassification.IGNORED_CORNER: 5>
 
