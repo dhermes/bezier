@@ -1361,6 +1361,90 @@ class TestBoxIntersectionType(unittest.TestCase):
             klass.DISJOINT, curve_mod.BoxIntersectionType_DISJOINT)
 
 
+class TestSubdividedCurve(utils.NumPyTestCase):
+
+    @staticmethod
+    def _get_target_class():
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection.SubdividedCurve
+
+    def _make_one(self, *args, **kwargs):
+        klass = self._get_target_class()
+        return klass(*args, **kwargs)
+
+    def test_constructor_defaults(self):
+        subdivided_curve = self._make_one(
+            unittest.mock.sentinel.nodes,
+            unittest.mock.sentinel.original_nodes)
+        self.assertIs(subdivided_curve.nodes, unittest.mock.sentinel.nodes)
+        self.assertIs(
+            subdivided_curve.original_nodes,
+            unittest.mock.sentinel.original_nodes)
+        self.assertEqual(subdivided_curve.start, 0.0)
+        self.assertEqual(subdivided_curve.end, 1.0)
+
+    def test_constructor_explicit(self):
+        subdivided_curve = self._make_one(
+            unittest.mock.sentinel.nodes,
+            unittest.mock.sentinel.original_nodes,
+            start=3.0, end=5.0)
+        self.assertIs(subdivided_curve.nodes, unittest.mock.sentinel.nodes)
+        self.assertIs(
+            subdivided_curve.original_nodes,
+            unittest.mock.sentinel.original_nodes)
+        self.assertEqual(subdivided_curve.start, 3.0)
+        self.assertEqual(subdivided_curve.end, 5.0)
+
+    def test___dict___property(self):
+        subdivided_curve = self._make_one(
+            unittest.mock.sentinel.nodes,
+            unittest.mock.sentinel.original_nodes,
+            start=0.25, end=0.75)
+        props_dict = subdivided_curve.__dict__
+        expected = {
+            'nodes': unittest.mock.sentinel.nodes,
+            'original_nodes': unittest.mock.sentinel.original_nodes,
+            'start': 0.25,
+            'end': 0.75,
+        }
+        self.assertEqual(props_dict, expected)
+        # Check that modifying ``props_dict`` won't modify
+        # ``subdivided_curve``.
+        props_dict['start'] = -1.0
+        self.assertNotEqual(subdivided_curve.start, props_dict['start'])
+
+    def test_subdivide(self):
+        klass = self._get_target_class()
+
+        nodes = np.asfortranarray([
+            [0.0, 2.0],
+            [2.0, 0.0],
+        ])
+        subdivided_curve = self._make_one(nodes, nodes)
+        left, right = subdivided_curve.subdivide()
+
+        self.assertIsInstance(left, klass)
+        self.assertIs(left.original_nodes, nodes)
+        self.assertEqual(left.start, 0.0)
+        self.assertEqual(left.end, 0.5)
+        expected = np.asfortranarray([
+            [0.0, 2.0],
+            [1.0, 1.0],
+        ])
+        self.assertEqual(left.nodes, expected)
+
+        self.assertIsInstance(right, klass)
+        self.assertIs(right.original_nodes, nodes)
+        self.assertEqual(right.start, 0.5)
+        self.assertEqual(right.end, 1.0)
+        expected = np.asfortranarray([
+            [1.0, 1.0],
+            [2.0, 0.0],
+        ])
+        self.assertEqual(right.nodes, expected)
+
+
 class TestLinearization(utils.NumPyTestCase):
 
     NODES = np.asfortranarray([
@@ -1398,6 +1482,26 @@ class TestLinearization(utils.NumPyTestCase):
         self.assertEqual(
             np.asfortranarray(linearization.end_node),
             np.asfortranarray(nodes[[1], :]))
+
+    def test___dict___property(self):
+        nodes = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 2.0],
+        ])
+        curve = subdivided_curve(nodes)
+        error = 0.0
+        linearization = self._make_one(curve, error)
+        props_dict = linearization.__dict__
+        # NOTE: We cannot use dictionary equality check because of
+        #       the comparison of NumPy arrays.
+        self.assertEqual(len(props_dict), 4)
+        self.assertIs(props_dict['curve'], curve)
+        self.assertEqual(props_dict['error'], error)
+        self.assertEqual(props_dict['start_node'], nodes[[0], :])
+        self.assertEqual(props_dict['end_node'], nodes[[1], :])
+        # Check that modifying ``props_dict`` won't modify ``linearization``.
+        props_dict['error'] = 0.5
+        self.assertNotEqual(linearization.error, props_dict['error'])
 
     def test_subdivide(self):
         linearization = self._make_one(self._simple_curve(), np.nan)

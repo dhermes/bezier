@@ -1126,11 +1126,31 @@ class SubdividedCurve(object):  # pylint: disable=too-few-public-methods
         end (Optional[float]): The start parameter after subdivision.
     """
 
+    __slots__ = ('nodes', 'original_nodes', 'start', 'end')
+
     def __init__(self, nodes, original_nodes, start=0.0, end=1.0):
         self.nodes = nodes
         self.original_nodes = original_nodes
         self.start = start
         self.end = end
+
+    @property
+    def __dict__(self):
+        """dict: Dictionary of current subdivided curve's property namespace.
+
+        This is just a stand-in property for the usual ``__dict__``. This
+        class defines ``__slots__`` so by default would not provide a
+        ``__dict__``.
+
+        This also means that the current object can't be modified by the
+        returned dictionary.
+        """
+        return {
+            'nodes': self.nodes,
+            'original_nodes': self.original_nodes,
+            'start': self.start,
+            'end': self.end,
+        }
 
     def subdivide(self):
         """Split the curve into a left and right half.
@@ -1179,6 +1199,24 @@ class Linearization(object):
             [curve.nodes[-1, 0], curve.nodes[-1, 1]],
         ])
         """numpy.ndarray: The end vector of this linearization."""
+
+    @property
+    def __dict__(self):
+        """dict: Dictionary of current linearization's property namespace.
+
+        This is just a stand-in property for the usual ``__dict__``. This
+        class defines ``__slots__`` so by default would not provide a
+        ``__dict__``.
+
+        This also means that the current object can't be modified by the
+        returned dictionary.
+        """
+        return {
+            'curve': self.curve,
+            'error': self.error,
+            'start_node': self.start_node,
+            'end_node': self.end_node,
+        }
 
     def subdivide(self):
         """Do-nothing method to match the :class:`.Curve` interface.

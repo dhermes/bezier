@@ -249,5 +249,5 @@ class TestIntersection(unittest.TestCase):
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curve``.
-        expected['s'] = 0.5
-        self.assertNotEqual(intersection.s, expected['s'])
+        props_dict['s'] = 0.5
+        self.assertNotEqual(intersection.s, props_dict['s'])
