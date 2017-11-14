@@ -1789,7 +1789,7 @@ def verify_duplicates(duplicates, uniques):
             raise ValueError('Unexpected duplicate count', count)
 
 
-def to_front(intersection, intersections, unused):
+def to_front(intersection, intersections, unused, edges1, edges2):
     """Rotates a node to the "front".
 
     .. note::
@@ -1813,6 +1813,10 @@ def to_front(intersection, intersections, unused):
             points to arrive at.
         unused (List[.Intersection]): List of nodes that haven't been
             used yet in an intersection curved polygon
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
 
     Returns:
         .Intersection: An intersection to (maybe) move to the beginning
@@ -1821,26 +1825,24 @@ def to_front(intersection, intersections, unused):
     changed = False
     if intersection.s == 1.0:
         changed = True
-        # pylint: disable=protected-access
+        next_index = (intersection.index_first + 1) % 3
         new_intersection = _intersection_helpers.Intersection(
-            intersection.first._next_edge, 0.0,
+            edges1[next_index], 0.0,
             intersection.second, intersection.t,
             interior_curve=intersection.interior_curve)
-        new_intersection.index_first = (intersection.index_first + 1) % 3
+        new_intersection.index_first = next_index
         new_intersection.index_second = intersection.index_second
-        # pylint: enable=protected-access
         intersection = new_intersection
 
     if intersection.t == 1.0:
         changed = True
-        # pylint: disable=protected-access
+        next_index = (intersection.index_second + 1) % 3
         new_intersection = _intersection_helpers.Intersection(
             intersection.first, intersection.s,
-            intersection.second._next_edge, 0.0,
+            edges2[next_index], 0.0,
             interior_curve=intersection.interior_curve)
         new_intersection.index_first = intersection.index_first
-        new_intersection.index_second = (intersection.index_second + 1) % 3
-        # pylint: enable=protected-access
+        new_intersection.index_second = next_index
         intersection = new_intersection
 
     if changed:
@@ -2168,7 +2170,7 @@ def tangent_only_intersections(intersections, surface1, surface2):
         raise ValueError('Point type not for tangency', point_type)
 
 
-def basic_interior_combine(intersections, max_edges=10):
+def basic_interior_combine(intersections, edges1, edges2, max_edges=10):
     """Combine intersections that don't involve tangencies.
 
     .. note::
@@ -2183,6 +2185,10 @@ def basic_interior_combine(intersections, max_edges=10):
     Args:
         intersections (List[.Intersection]): Intersections from each of the
             9 edge-edge pairs from a surface-surface pairing.
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
         max_edges (Optional[int]): The maximum number of allowed / expected
             edges per intersection. This is to avoid infinite loops.
 
@@ -2203,7 +2209,8 @@ def basic_interior_combine(intersections, max_edges=10):
         next_node = get_next(start, intersections, unused)
         edge_ends = [(curr_node, next_node)]
         while next_node is not start:
-            curr_node = to_front(next_node, intersections, unused)
+            curr_node = to_front(
+                next_node, intersections, unused, edges1, edges2)
             # NOTE: We also check to break when moving a corner node
             #       to the front. This is because ``intersections``
             #       de-duplicates corners by selecting the one
@@ -2222,7 +2229,7 @@ def basic_interior_combine(intersections, max_edges=10):
     return result
 
 
-def combine_intersections(intersections, surface1, surface2):
+def combine_intersections(intersections, surface1, edges1, surface2, edges2):
     """Combine curve-curve intersections into curved polygon(s).
 
     .. note::
@@ -2241,7 +2248,11 @@ def combine_intersections(intersections, surface1, surface2):
         intersections (List[.Intersection]): Intersections from each of the
             9 edge-edge pairs from a surface-surface pairing.
         surface1 (.Surface): First surface in intersection.
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
         surface2 (.Surface): Second surface in intersection.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
 
     Returns:
         List[~bezier.curved_polygon.CurvedPolygon]: A list of curved polygons
@@ -2250,7 +2261,7 @@ def combine_intersections(intersections, surface1, surface2):
     if not intersections:
         return no_intersections(surface1, surface2)
 
-    result = basic_interior_combine(intersections)
+    result = basic_interior_combine(intersections, edges1, edges2)
     if result:
         return result
 

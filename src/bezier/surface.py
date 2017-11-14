@@ -1129,7 +1129,7 @@ class Surface(_base.Base):
         if _verify:
             _surface_helpers.verify_duplicates(duplicates, uniques)
         return _surface_helpers.combine_intersections(
-            uniques, self, other)
+            uniques, self, edges1, other, edges2)
 
     def elevate(self):
         r"""Return a degree-elevated version of the current surface.
