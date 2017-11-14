@@ -42,8 +42,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
         self.assertIsNone(curve._length)
-        self.assertIsNone(curve._next_edge)
-        self.assertIsNone(curve._previous_edge)
         self.assertEqual(curve._start, 0.0)
         self.assertEqual(curve._end, 1.0)
         self.assertIs(curve._root, curve)
@@ -71,8 +69,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve._dimension, 3)
         self.assertEqual(curve._nodes, nodes)
         self.assertIsNone(curve._length)
-        self.assertIsNone(curve._next_edge)
-        self.assertIsNone(curve._previous_edge)
         self.assertEqual(curve._start, 0.25)
         self.assertEqual(curve._end, 0.75)
         self.assertIs(curve._root, unittest.mock.sentinel.root)
@@ -151,16 +147,6 @@ class TestCurve(utils.NumPyTestCase):
                                root=unittest.mock.sentinel.root)
         self.assertIs(curve.root, unittest.mock.sentinel.root)
 
-    def test_next_edge_property(self):
-        curve = self._make_one(self.ZEROS, 1)
-        curve._next_edge = unittest.mock.sentinel.next_edge
-        self.assertIs(curve.next_edge, unittest.mock.sentinel.next_edge)
-
-    def test_previous_edge_property(self):
-        curve = self._make_one(self.ZEROS, 1)
-        curve._previous_edge = unittest.mock.sentinel.previous
-        self.assertIs(curve.previous_edge, unittest.mock.sentinel.previous)
-
     def test___dict___property(self):
         curve = self._make_one(self.ZEROS, 1, _copy=False)
         props_dict = curve.__dict__
@@ -172,8 +158,6 @@ class TestCurve(utils.NumPyTestCase):
             '_end': 1.0,
             '_root': curve,
             '_length': None,
-            '_next_edge': None,
-            '_previous_edge': None,
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curve``.
@@ -204,8 +188,6 @@ class TestCurve(utils.NumPyTestCase):
         else:
             self.assertIs(new_curve._root, new_curve)
         self.assertEqual(new_curve._length, curve._length)
-        self.assertIsNone(new_curve._next_edge)
-        self.assertIsNone(new_curve._previous_edge)
 
         fake_nodes.copy.assert_called_once_with(order='F')
 

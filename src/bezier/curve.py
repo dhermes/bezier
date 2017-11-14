@@ -102,7 +102,7 @@ class Curve(_base.Base):
     __slots__ = (
         '_dimension', '_nodes',  # From base class
         '_degree', '_start', '_end', '_root',  # From constructor
-        '_length', '_next_edge', '_previous_edge',  # Empty defaults
+        '_length',  # Empty defaults
     )
 
     def __init__(self, nodes, degree, start=0.0, end=1.0,
@@ -115,8 +115,6 @@ class Curve(_base.Base):
             root = self
         self._root = root
         self._length = None
-        self._next_edge = None
-        self._previous_edge = None
 
     @classmethod
     def from_nodes(cls, nodes, start=0.0, end=1.0, root=None, _copy=True):
@@ -259,26 +257,6 @@ class Curve(_base.Base):
         return self._root
 
     @property
-    def next_edge(self):
-        """Optional[Curve]: An edge that comes after the current one.
-
-        This is intended to be used when a :class:`Curve` is created as part
-        of a larger structure like a :class:`.Surface` or
-        :class:`.CurvedPolygon`.
-        """
-        return self._next_edge
-
-    @property
-    def previous_edge(self):
-        """Optional[Curve]: An edge that comes before the current one.
-
-        This is intended to be used when a :class:`Curve` is created as part
-        of a larger structure like a :class:`.Surface` or
-        :class:`.CurvedPolygon`.
-        """
-        return self._previous_edge
-
-    @property
     def __dict__(self):
         """dict: Dictionary of current curve's property namespace.
 
@@ -297,8 +275,6 @@ class Curve(_base.Base):
             '_end': self._end,
             '_root': self._root,
             '_length': self._length,
-            '_next_edge': self._next_edge,
-            '_previous_edge': self._previous_edge,
         }
 
     def _copy(self):

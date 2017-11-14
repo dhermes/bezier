@@ -382,8 +382,6 @@ class Surface(_base.Base):
         edge1 = _curve_mod.Curve(nodes1, self._degree, _copy=False)
         edge2 = _curve_mod.Curve(nodes2, self._degree, _copy=False)
         edge3 = _curve_mod.Curve(nodes3, self._degree, _copy=False)
-
-        _edge_cycle(edge1, edge2, edge3)
         return edge1, edge2, edge3
 
     def _get_edges(self):
@@ -440,7 +438,6 @@ class Surface(_base.Base):
         edge1 = edge1._copy()  # pylint: disable=protected-access
         edge2 = edge2._copy()  # pylint: disable=protected-access
         edge3 = edge3._copy()  # pylint: disable=protected-access
-        _edge_cycle(edge1, edge2, edge3)
         return edge1, edge2, edge3
 
     @staticmethod
@@ -1238,29 +1235,6 @@ class Surface(_base.Base):
         new_nodes /= denominator
 
         return Surface(new_nodes, self._degree + 1, _copy=False)
-
-
-def _edge_cycle(edge1, edge2, edge3):
-    """Make edges follow the cycle ``1->2->3->1``.
-
-    Does this by setting the "previous" and "next" edge
-    values on each curved edge.
-
-    Args:
-        edge1 (.Curve): First curve in cycle.
-        edge2 (.Curve): Second curve in cycle.
-        edge3 (.Curve): Third curve in cycle.
-    """
-    # pylint: disable=protected-access
-    edge1._next_edge = edge2
-    edge1._previous_edge = edge3
-
-    edge2._next_edge = edge3
-    edge2._previous_edge = edge1
-
-    edge3._next_edge = edge1
-    edge3._previous_edge = edge2
-    # pylint: enable=protected-access
 
 
 def _surface_intersections(edges1, edges2, strategy):
