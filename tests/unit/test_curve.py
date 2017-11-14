@@ -44,7 +44,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertIsNone(curve._length)
         self.assertEqual(curve._start, 0.0)
         self.assertEqual(curve._end, 1.0)
-        self.assertIs(curve._root, curve)
 
     def test_constructor_wrong_dimension(self):
         nodes = np.asfortranarray([1.0, 2.0])
@@ -62,8 +61,7 @@ class TestCurve(utils.NumPyTestCase):
         ])
         klass = self._get_target_class()
 
-        curve = klass.from_nodes(
-            nodes, start=0.25, end=0.75, root=unittest.mock.sentinel.root)
+        curve = klass.from_nodes(nodes, start=0.25, end=0.75)
         self.assertIsInstance(curve, klass)
         self.assertEqual(curve._degree, 1)
         self.assertEqual(curve._dimension, 3)
@@ -71,7 +69,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertIsNone(curve._length)
         self.assertEqual(curve._start, 0.25)
         self.assertEqual(curve._end, 0.75)
-        self.assertIs(curve._root, unittest.mock.sentinel.root)
 
     def test___repr__(self):
         degree = 4
@@ -142,11 +139,6 @@ class TestCurve(utils.NumPyTestCase):
                                end=unittest.mock.sentinel.end)
         self.assertIs(curve.end, unittest.mock.sentinel.end)
 
-    def test_root_property(self):
-        curve = self._make_one(self.ZEROS, 1,
-                               root=unittest.mock.sentinel.root)
-        self.assertIs(curve.root, unittest.mock.sentinel.root)
-
     def test___dict___property(self):
         curve = self._make_one(self.ZEROS, 1, _copy=False)
         props_dict = curve.__dict__
@@ -156,7 +148,6 @@ class TestCurve(utils.NumPyTestCase):
             '_degree': 1,
             '_start': 0.0,
             '_end': 1.0,
-            '_root': curve,
             '_length': None,
         }
         self.assertEqual(props_dict, expected)
@@ -183,21 +174,12 @@ class TestCurve(utils.NumPyTestCase):
         self.assertIs(new_curve._nodes, copied_nodes)
         self.assertEqual(new_curve._start, curve._start)
         self.assertEqual(new_curve._end, curve._end)
-        if 'root' in kwargs:
-            self.assertIs(new_curve._root, kwargs['root'])
-        else:
-            self.assertIs(new_curve._root, new_curve)
         self.assertEqual(new_curve._length, curve._length)
 
         fake_nodes.copy.assert_called_once_with(order='F')
 
     def test__copy(self):
         self._copy_helper()
-
-    def test__copy_with_root(self):
-        self._copy_helper(
-            start=0.25, end=0.5,
-            root=unittest.mock.sentinel.root, _length=2.25)
 
     def test_evaluate(self):
         s = 0.25
@@ -296,7 +278,6 @@ class TestCurve(utils.NumPyTestCase):
         left, right = curve.subdivide()
 
         # Check the "left" sub-curve.
-        self.assertIs(left._root, curve)
         self.assertEqual(left._degree, 1)
         self.assertEqual(left._start, 0.25)
         self.assertEqual(left._end, 0.5)
@@ -308,7 +289,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(left._nodes, expected_l)
 
         # Check the "right" sub-curve.
-        self.assertIs(right._root, curve)
         self.assertEqual(right._start, 0.5)
         self.assertEqual(right._end, 0.75)
         self.assertIsInstance(right, klass)
@@ -317,19 +297,6 @@ class TestCurve(utils.NumPyTestCase):
             [4.0, 6.0],
         ])
         self.assertEqual(right._nodes, expected_r)
-
-    def test_subdivide_multilevel_root(self):
-        curve = self._make_one(self.ZEROS, 1)
-        left, right = curve.subdivide()
-        self.assertIs(left.root, curve)
-        self.assertIs(right.root, curve)
-
-        one, two = left.subdivide()
-        three, four = right.subdivide()
-        self.assertIs(one.root, curve)
-        self.assertIs(two.root, curve)
-        self.assertIs(three.root, curve)
-        self.assertIs(four.root, curve)
 
     def test_intersect_bad_strategy(self):
         curve = self._make_one(self.ZEROS, 1)
@@ -385,10 +352,6 @@ class TestCurve(utils.NumPyTestCase):
         ])
         curve = self._make_one(nodes, 2)
         left, right = curve.subdivide()
-        # Patch the ``root``-s because intersection assumes (correctly or
-        # incorrectly) that ``root is self``.
-        left._root = left
-        right._root = right
         # Patch the start/end as well for similar reasons.
         left._end = 1.0
         right._start = 0.0
@@ -463,7 +426,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve.degree, 3)
         elevated = curve.elevate()
         self.assertEqual(elevated.degree, 4)
-        self.assertIs(elevated.root, elevated)
         self.assertEqual(elevated.start, curve.start)
         self.assertEqual(elevated.end, curve.end)
 
@@ -489,7 +451,6 @@ class TestCurve(utils.NumPyTestCase):
             [3.0, 0.0],
         ])
         self.assertEqual(reduced.nodes, expected)
-        self.assertIs(reduced.root, reduced)
         self.assertEqual(reduced.start, curve.start)
         self.assertEqual(reduced.end, curve.end)
 
@@ -511,7 +472,6 @@ class TestCurve(utils.NumPyTestCase):
 
         self.assertEqual(new_curve.start, start)
         self.assertEqual(new_curve.end, end)
-        self.assertIs(new_curve.root, curve)
         expected = np.asfortranarray([
             [0.6875, 2.375],
             [1.78125, 4.5625],

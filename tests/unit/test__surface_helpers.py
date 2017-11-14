@@ -1812,7 +1812,6 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         self.assertEqual(result._nodes, expected)
         self.assertEqual(result.start, 0.5)
         self.assertEqual(result.end, 0.75)
-        self.assertIs(result.root, first)
 
     def test_second(self):
         import bezier
@@ -1838,7 +1837,6 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         self.assertEqual(result._nodes, expected)
         self.assertEqual(result.start, 0.125)
         self.assertEqual(result.end, 0.25)
-        self.assertIs(result.root, second)
 
 
 class Test_to_curved_polygon(utils.NumPyTestCase):
@@ -2163,15 +2161,12 @@ class Test_combine_intersections(utils.NumPyTestCase):
         self.assertIsInstance(curved_polygon, bezier.CurvedPolygon)
         self.assertEqual(curved_polygon.num_sides, 6)
 
-        edge_choices = surface1._get_edges() + surface2._get_edges()
         start_vals = [0.25, 0.5, 0.25, 0.25, 0.5, 0.25]
         end_vals = [0.75, 0.75, 0.5, 0.75, 0.75, 0.5]
-        edge_inds = [5, 0, 3, 1, 4, 2]
         for index in range(6):
             edge = curved_polygon._edges[index]
             self.assertEqual(edge.start, start_vals[index])
             self.assertEqual(edge.end, end_vals[index])
-            self.assertIs(edge.root, edge_choices[edge_inds[index]])
 
     def test_tangent(self):
         import bezier

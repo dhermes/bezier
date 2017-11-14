@@ -781,16 +781,40 @@ class TestSurface(utils.NumPyTestCase):
 
         intersection = intersections[0]
         self.assertIsInstance(intersection, bezier.CurvedPolygon)
-
-        all_edges = surface1._get_edges() + surface2._get_edges()
-        # Check which sides the intersectioned edges come from.
-        self.assertEqual(
-            [all_edges.index(edge.root) for edge in intersection._edges],
-            [5, 3, 1, 2])
-        self.assertEqual([edge.start for edge in intersection._edges],
-                         [0.5, 0.0, 0.5, 0.0])
-        self.assertEqual([edge.end for edge in intersection._edges],
-                         [1.0, 0.5, 1.0, 0.5])
+        cp_edges = intersection._edges
+        self.assertEqual(len(cp_edges), 4)
+        # Edge 0.
+        self.assertEqual(cp_edges[0].start, 0.5)
+        self.assertEqual(cp_edges[0].end, 1.0)
+        expected = np.asfortranarray([
+            [0.0, 0.5],
+            [0.5, 0.0],
+        ])
+        self.assertEqual(cp_edges[0].nodes, expected)
+        # Edge 1.
+        self.assertEqual(cp_edges[1].start, 0.0)
+        self.assertEqual(cp_edges[1].end, 0.5)
+        expected = np.asfortranarray([
+            [0.5, 0.0],
+            [0.5, 0.5],
+        ])
+        self.assertEqual(cp_edges[1].nodes, expected)
+        # Edge 2.
+        self.assertEqual(cp_edges[2].start, 0.5)
+        self.assertEqual(cp_edges[2].end, 1.0)
+        expected = np.asfortranarray([
+            [0.5, 0.5],
+            [0.0, 1.0],
+        ])
+        self.assertEqual(cp_edges[2].nodes, expected)
+        # Edge 3.
+        self.assertEqual(cp_edges[3].start, 0.0)
+        self.assertEqual(cp_edges[3].end, 0.5)
+        expected = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 0.5],
+        ])
+        self.assertEqual(cp_edges[3].nodes, expected)
 
     def test_intersect(self):
         self._basic_intersect_helper()

@@ -983,7 +983,6 @@ class Test_intersect_one_round(utils.NumPyTestCase):
             candidates, intersections)
 
     def _curves_compare(self, curve1, curve2):
-        import bezier
         from bezier import _geometric_intersection
 
         if isinstance(curve1, _geometric_intersection.Linearization):

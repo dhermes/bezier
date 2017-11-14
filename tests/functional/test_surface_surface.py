@@ -15,6 +15,7 @@ from __future__ import absolute_import
 import contextlib
 import itertools
 
+import numpy as np
 import pytest
 import six
 
@@ -81,13 +82,26 @@ FAILED_CASES_COINCIDENT = {
 CONFIG = utils.Config()
 
 
-def curved_polygon_edges(intersection, edges):
-    edges1, edges2 = edges
-    all_edges = edges1 + edges2
+def find_edge_index(edge, root_edges):
+    for index, root_edge in enumerate(root_edges):
+        if root_edge.degree != edge.degree:
+            continue
+        specialized = root_edge.specialize(edge.start, edge.end)
+        if np.allclose(specialized._nodes, edge._nodes):
+            return index
+
+    raise RuntimeError('No match found.')
+
+
+def curved_polygon_edges(intersection, root_edges_pair):
+    edges1, edges2 = root_edges_pair
+    root_edges = edges1 + edges2
     # Re-sort the edges to be in the same order independent of strategy.
     edge_list = intersection._edges
-    edge_info = [(all_edges.index(edge.root), edge.start, edge.end)
-                 for edge in edge_list]
+    edge_info = [
+        (find_edge_index(edge, root_edges), edge.start, edge.end)
+        for edge in edge_list
+    ]
     index = edge_info.index(min(edge_info))
     return edge_list[index:] + edge_list[:index]
 
@@ -167,8 +181,9 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
         assert num_edges == len(nodes)
         for edge, edge_pair, start_val, end_val, node in info:
             surf_index, edge_index = edge_pair
-            expected = edges[surf_index][edge_index]
-            assert expected is edge.root
+            expected_root = edges[surf_index][edge_index]
+            specialized = expected_root.specialize(start_val, end_val)
+            assert np.allclose(specialized._nodes, edge._nodes)
 
             CONFIG.assert_close(edge.start, start_val)
             CONFIG.assert_close(edge.end, end_val)

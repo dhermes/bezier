@@ -13,19 +13,6 @@ Curve-Curve Intersection
        # Shift [1/2, 1) --> [1, 2) borrows one from exponent
        return result - 1
 
-   def subdivide(curve):
-       # This is a "hack" for ``intersect-12-self``.
-       left, right = curve.subdivide()
-       # Patch the ``root``-s because intersection assumes (correctly or
-       # incorrectly) that ``root is self``.
-       left._root = left
-       left._start = 0.0
-       left._end = 1.0
-       right._root = right
-       right._start = 0.0
-       right._end = 1.0
-       return left, right
-
 The problem of intersecting two curves is a difficult one
 in computational geometry. The :meth:`.Curve.intersect` method (when using
 the :attr:`~.IntersectionStrategy.GEOMETRIC` strategy) uses a combination of
@@ -600,7 +587,7 @@ Detecting Self-Intersections
    ...     [-0.75, 1.625],
    ... ])
    >>> curve = bezier.Curve(nodes, degree=3)
-   >>> left, right = subdivide(curve)
+   >>> left, right = curve.subdivide()
    >>> intersections = left.intersect(right)
    >>> sq5 = np.sqrt(5.0)
    >>> expected_ints = np.asfortranarray([

@@ -92,8 +92,6 @@ class Curve(_base.Base):
             that this curve represents.
         end (Optional[float]): The end of the sub-interval
             that this curve represents.
-        root (Optional[Curve]): The root curve that contains this
-            current curve.
         _copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
@@ -101,23 +99,19 @@ class Curve(_base.Base):
 
     __slots__ = (
         '_dimension', '_nodes',  # From base class
-        '_degree', '_start', '_end', '_root',  # From constructor
+        '_degree', '_start', '_end',  # From constructor
         '_length',  # Empty defaults
     )
 
-    def __init__(self, nodes, degree, start=0.0, end=1.0,
-                 root=None, _copy=True):
+    def __init__(self, nodes, degree, start=0.0, end=1.0, _copy=True):
         super(Curve, self).__init__(nodes, _copy=_copy)
         self._degree = degree
         self._start = start
         self._end = end
-        if root is None:
-            root = self
-        self._root = root
         self._length = None
 
     @classmethod
-    def from_nodes(cls, nodes, start=0.0, end=1.0, root=None, _copy=True):
+    def from_nodes(cls, nodes, start=0.0, end=1.0, _copy=True):
         """Create a :class:`.Curve` from nodes.
 
         Computes the ``degree`` based on the shape of ``nodes``.
@@ -130,8 +124,6 @@ class Curve(_base.Base):
                 that this curve represents.
             end (Optional[float]): The end of the sub-interval
                 that this curve represents.
-            root (Optional[Curve]): The root curve that contains this
-                current curve.
             _copy (bool): Flag indicating if the nodes should be copied before
                 being stored. Defaults to :data:`True` since callers may
                 freely mutate ``nodes`` after passing in.
@@ -141,7 +133,7 @@ class Curve(_base.Base):
         """
         num_nodes, _ = nodes.shape
         degree = cls._get_degree(num_nodes)
-        return cls(nodes, degree, start=start, end=end, root=root, _copy=_copy)
+        return cls(nodes, degree, start=start, end=end, _copy=_copy)
 
     def __repr__(self):
         """Representation of current object.
@@ -217,46 +209,6 @@ class Curve(_base.Base):
         return self._end
 
     @property
-    def root(self):
-        """Curve: The "root" curve that contains the current curve.
-
-        This indicates that the current curve is a section of the
-        "root" curve. For example:
-
-        .. testsetup:: curve-root
-
-           import numpy as np
-           import bezier
-
-           nodes = np.asfortranarray([
-               [0.0, 0.0],
-               [0.75, 0.0],
-               [1.0, 1.0],
-           ])
-           curve = bezier.Curve(nodes, degree=2)
-
-        .. doctest:: curve-root
-           :options: +NORMALIZE_WHITESPACE
-
-           >>> _, right = curve.subdivide()
-           >>> right
-           <Curve (degree=2, dimension=2, start=0.5, end=1)>
-           >>> right.root is curve
-           True
-           >>> right.evaluate(0.0) == curve.evaluate(0.5)
-           array([[ True, True]], dtype=bool)
-           >>>
-           >>> mid_left, _ = right.subdivide()
-           >>> mid_left
-           <Curve (degree=2, dimension=2, start=0.5, end=0.75)>
-           >>> mid_left.root is curve
-           True
-           >>> mid_left.evaluate(1.0) == curve.evaluate(0.75)
-           array([[ True, True]], dtype=bool)
-        """
-        return self._root
-
-    @property
     def __dict__(self):
         """dict: Dictionary of current curve's property namespace.
 
@@ -273,7 +225,6 @@ class Curve(_base.Base):
             '_degree': self._degree,
             '_start': self._start,
             '_end': self._end,
-            '_root': self._root,
             '_length': self._length,
         }
 
@@ -283,10 +234,9 @@ class Curve(_base.Base):
         Returns:
             .Curve: Copy of current curve.
         """
-        root = None if self._root is self else self._root
         result = Curve(
             self._nodes, self._degree, start=self._start, end=self._end,
-            root=root, _copy=True)
+            _copy=True)
         # Also copy over any cached computed values. (Ignore the
         # prev/next/index information though: YAGNI.)
         result._length = self._length  # pylint: disable=protected-access
@@ -442,10 +392,10 @@ class Curve(_base.Base):
         midpoint = 0.5 * (self._start + self._end)
         left = Curve(
             left_nodes, self._degree, start=self._start, end=midpoint,
-            root=self._root, _copy=False)
+            _copy=False)
         right = Curve(
             right_nodes, self._degree, start=midpoint, end=self._end,
-            root=self._root, _copy=False)
+            _copy=False)
         return left, right
 
     def intersect(self, other,
@@ -570,10 +520,9 @@ class Curve(_base.Base):
             Curve: The degree-elevated curve.
         """
         new_nodes = _curve_helpers.elevate_nodes(self._nodes)
-        root = None if self._root is self else self._root
         return Curve(
             new_nodes, self._degree + 1, start=self._start, end=self._end,
-            root=root, _copy=False)
+            _copy=False)
 
     def reduce_(self):
         r"""Return a degree-reduced version of the current curve.
@@ -676,10 +625,9 @@ class Curve(_base.Base):
             Curve: The degree-reduced curve.
         """
         new_nodes = _curve_helpers.reduce_pseudo_inverse(self._nodes)
-        root = None if self._root is self else self._root
         return Curve(
             new_nodes, self._degree - 1, start=self._start, end=self._end,
-            root=root, _copy=False)
+            _copy=False)
 
     def specialize(self, start, end):
         """Specialize the curve to a given sub-interval.
@@ -746,7 +694,7 @@ class Curve(_base.Base):
             self._nodes, start, end, self._start, self._end)
         return Curve(
             new_nodes, self._degree, start=true_start, end=true_end,
-            root=self._root, _copy=False)
+            _copy=False)
 
     def locate(self, point):
         r"""Find a point on the current curve.

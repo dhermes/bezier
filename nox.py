@@ -290,7 +290,7 @@ def lint(session):
         '--disable=missing-docstring',
         '--disable=protected-access',
         '--disable=too-many-public-methods',
-        '--max-module-lines=2555',
+        '--max-module-lines=2552',
         get_path('tests'),
     )
 
