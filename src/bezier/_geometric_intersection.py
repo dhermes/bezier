@@ -739,10 +739,10 @@ def from_linearized(first, second, intersections):
     curve1 = first.curve
     curve2 = second.curve
     refined_s, refined_t, success = from_linearized_low_level(
-        first.error, curve1.start_REFACTOR, curve1.end_REFACTOR, first.start_node,
-        first.end_node, curve1.original_REFACTOR,
-        second.error, curve2.start_REFACTOR, curve2.end_REFACTOR, second.start_node,
-        second.end_node, curve2.original_REFACTOR)
+        first.error, curve1.start, curve1.end, first.start_node,
+        first.end_node, curve1.original_nodes,
+        second.error, curve2.start, curve2.end, second.start_node,
+        second.end_node, curve2.original_nodes)
     if success:
         add_intersection(refined_s, refined_t, intersections)
 
@@ -804,8 +804,8 @@ def endpoint_check(
             then those intersections will be added to this list.
     """
     if _helpers.vector_close(node_first, node_second):
-        orig_s = (1 - s) * first.start_REFACTOR + s * first.end_REFACTOR
-        orig_t = (1 - t) * second.start_REFACTOR + t * second.end_REFACTOR
+        orig_s = (1 - s) * first.start + s * first.end
+        orig_t = (1 - t) * second.start + t * second.end
         add_intersection(orig_s, orig_t, intersections)
 
 
@@ -859,16 +859,16 @@ def tangent_bbox_intersection(first, second, intersections):
             then those intersections will be added to this list.
     """
     node_first1 = np.asfortranarray([
-        [first.nodes_REFACTOR[0, 0], first.nodes_REFACTOR[0, 1]],
+        [first.nodes[0, 0], first.nodes[0, 1]],
     ])
     node_first2 = np.asfortranarray([
-        [first.nodes_REFACTOR[-1, 0], first.nodes_REFACTOR[-1, 1]],
+        [first.nodes[-1, 0], first.nodes[-1, 1]],
     ])
     node_second1 = np.asfortranarray([
-        [second.nodes_REFACTOR[0, 0], second.nodes_REFACTOR[0, 1]],
+        [second.nodes[0, 0], second.nodes[0, 1]],
     ])
     node_second2 = np.asfortranarray([
-        [second.nodes_REFACTOR[-1, 0], second.nodes_REFACTOR[-1, 1]],
+        [second.nodes[-1, 0], second.nodes[-1, 1]],
     ])
 
     endpoint_check(
@@ -1006,13 +1006,13 @@ def intersect_one_round(candidates, intersections):
                 continue
             else:
                 bbox_int = bbox_line_intersect(
-                    second.nodes_REFACTOR, first.start_node, first.end_node)
+                    second.nodes, first.start_node, first.end_node)
         else:
             if second.__class__ is Linearization:
                 bbox_int = bbox_line_intersect(
-                    first.nodes_REFACTOR, second.start_node, second.end_node)
+                    first.nodes, second.start_node, second.end_node)
             else:
-                bbox_int = bbox_intersect(first.nodes_REFACTOR, second.nodes_REFACTOR)
+                bbox_int = bbox_intersect(first.nodes, second.nodes)
 
         if bbox_int == BoxIntersectionType.DISJOINT:
             continue
@@ -1111,23 +1111,44 @@ class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
     """Bounding boxes do not intersect or touch."""
 
 
-class SubdividedCurve(object):
+class SubdividedCurve(object):  # pylint: disable=too-few-public-methods
+    """A data wrapper for a B |eacute| zier curve
 
-    def __init__(self, nodes, original, start=0.0, end=1.0):
-        self.nodes_REFACTOR = nodes
-        self.original_REFACTOR = original
-        self.start_REFACTOR = start
-        self.end_REFACTOR = end
+    To be used for intersection algorithm via repeated subdivision,
+    where the ``start`` and ``end`` parameters must be tracked.
+
+    Args:
+        nodes (numpy.ndarray): The control points of the current
+            subdivided curve
+        original_nodes (numpy.ndarray): The control points of the original
+            curve used to define the current one (before subdivision began).
+        start (Optional[float]): The start parameter after subdivision.
+        end (Optional[float]): The start parameter after subdivision.
+    """
+
+    def __init__(self, nodes, original_nodes, start=0.0, end=1.0):
+        self.nodes = nodes
+        self.original_nodes = original_nodes
+        self.start = start
+        self.end = end
 
     def subdivide(self):
-        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self.nodes_REFACTOR)
-        midpoint = 0.5 * (self.start_REFACTOR + self.end_REFACTOR)
+        """Split the curve into a left and right half.
+
+        See :meth:`.Curve.subdivide` for more information.
+
+        Returns:
+            Tuple[SubdividedCurve, SubdividedCurve]: The left and right
+            sub-curves.
+        """
+        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self.nodes)
+        midpoint = 0.5 * (self.start + self.end)
         left = SubdividedCurve(
-            left_nodes, self.original_REFACTOR,
-            start=self.start_REFACTOR, end=midpoint)
+            left_nodes, self.original_nodes,
+            start=self.start, end=midpoint)
         right = SubdividedCurve(
-            right_nodes, self.original_REFACTOR,
-            start=midpoint, end=self.end_REFACTOR)
+            right_nodes, self.original_nodes,
+            start=midpoint, end=self.end)
         return left, right
 
 
@@ -1151,11 +1172,11 @@ class Linearization(object):
         self.error = error
         """float: The linearization error for the linearized curve."""
         self.start_node = np.asfortranarray([
-            [curve.nodes_REFACTOR[0, 0], curve.nodes_REFACTOR[0, 1]],
+            [curve.nodes[0, 0], curve.nodes[0, 1]],
         ])
         """numpy.ndarray: The start vector of this linearization."""
         self.end_node = np.asfortranarray([
-            [curve.nodes_REFACTOR[-1, 0], curve.nodes_REFACTOR[-1, 1]],
+            [curve.nodes[-1, 0], curve.nodes[-1, 1]],
         ])
         """numpy.ndarray: The end vector of this linearization."""
 
@@ -1187,7 +1208,7 @@ class Linearization(object):
         if shape.__class__ is cls:
             return shape
         else:
-            error = linearization_error(shape.nodes_REFACTOR)
+            error = linearization_error(shape.nodes)
             if error < _ERROR_VAL:
                 linearized = cls(shape, error)
                 return linearized

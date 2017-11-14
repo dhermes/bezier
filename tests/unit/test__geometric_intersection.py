@@ -753,9 +753,9 @@ class Test_endpoint_check(utils.NumPyTestCase):
         second = subdivided_curve(nodes_second)
 
         s_val = 1.0
-        node_first = np.asfortranarray(first.nodes_REFACTOR[[1], :])
+        node_first = np.asfortranarray(first.nodes[[1], :])
         t_val = 0.0
-        node_second = np.asfortranarray(second.nodes_REFACTOR[[0], :])
+        node_second = np.asfortranarray(second.nodes[[0], :])
 
         intersections = []
         self._call_function_under_test(
@@ -781,9 +781,9 @@ class Test_endpoint_check(utils.NumPyTestCase):
         _, second = root2.subdivide()
 
         s_val = 1.0
-        node_first = np.asfortranarray(first.nodes_REFACTOR[[2], :])
+        node_first = np.asfortranarray(first.nodes[[2], :])
         t_val = 0.0
-        node_second = np.asfortranarray(second.nodes_REFACTOR[[0], :])
+        node_second = np.asfortranarray(second.nodes[[0], :])
 
         intersections = []
         self._call_function_under_test(
@@ -996,10 +996,10 @@ class Test_intersect_one_round(utils.NumPyTestCase):
                 curve1, _geometric_intersection.SubdividedCurve)
             self.assertIsInstance(
                 curve2, _geometric_intersection.SubdividedCurve)
-            self.assertIs(curve1.original_REFACTOR, curve2.original_REFACTOR)
-            self.assertEqual(curve1.start_REFACTOR, curve2.start_REFACTOR)
-            self.assertEqual(curve1.end_REFACTOR, curve2.end_REFACTOR)
-            self.assertEqual(curve1.nodes_REFACTOR, curve2.nodes_REFACTOR)
+            self.assertIs(curve1.original_nodes, curve2.original_nodes)
+            self.assertEqual(curve1.start, curve2.start)
+            self.assertEqual(curve1.end, curve2.end)
+            self.assertEqual(curve1.nodes, curve2.nodes)
 
     def _candidates_compare(self, actual, expected):
         self.assertEqual(len(actual), len(expected))
