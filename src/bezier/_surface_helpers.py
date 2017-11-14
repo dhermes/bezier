@@ -1993,9 +1993,9 @@ def get_next(intersection, intersections, unused):
             :attr:`~._IntersectionClassification.SECOND`.
     """
     result = None
-    if intersection.interior_curve is IntersectionClassification.FIRST:
+    if intersection.interior_curve == IntersectionClassification.FIRST:
         result = get_next_first(intersection, intersections)
-    elif intersection.interior_curve is IntersectionClassification.SECOND:
+    elif intersection.interior_curve == IntersectionClassification.SECOND:
         result = get_next_second(intersection, intersections)
     else:
         raise ValueError('Cannot get next node if not starting from '
@@ -2045,12 +2045,12 @@ def ends_to_curve(start_node, end_node, edges1, edges2):
             :attr:`~._IntersectionClassification.FIRST` or
             :attr:`~._IntersectionClassification.SECOND`.
     """
-    if start_node.interior_curve is IntersectionClassification.FIRST:
+    if start_node.interior_curve == IntersectionClassification.FIRST:
         if end_node.index_first != start_node.index_first:
             raise ValueError(_WRONG_CURVE)
         edge = edges1[start_node.index_first]
         return edge.specialize(start_node.s, end_node.s)
-    elif start_node.interior_curve is IntersectionClassification.SECOND:
+    elif start_node.interior_curve == IntersectionClassification.SECOND:
         if end_node.index_second != start_node.index_second:
             raise ValueError(_WRONG_CURVE)
         edge = edges2[start_node.index_second]
@@ -2156,9 +2156,9 @@ def tangent_only_intersections(intersections, surface1, surface2):
     point_type = all_types.pop()
     if point_type in _IGNORED_TYPES:
         return []
-    elif point_type is IntersectionClassification.TANGENT_FIRST:
+    elif point_type == IntersectionClassification.TANGENT_FIRST:
         return [to_curved_polygon(surface1)]
-    elif point_type is IntersectionClassification.TANGENT_SECOND:
+    elif point_type == IntersectionClassification.TANGENT_SECOND:
         return [to_curved_polygon(surface2)]
     else:
         raise ValueError('Point type not for tangency', point_type)

@@ -1254,9 +1254,9 @@ def _surface_intersections(edges1, edges2, strategy):
         ValueError: If ``strategy`` is not a valid
             :attr:`.IntersectionStrategy`.
     """
-    if strategy is _STRATEGY.GEOMETRIC:
+    if strategy == _STRATEGY.GEOMETRIC:
         all_intersections = _geometric_intersection.all_intersections
-    elif strategy is _STRATEGY.ALGEBRAIC:
+    elif strategy == _STRATEGY.ALGEBRAIC:
         all_intersections = _algebraic_intersection.all_intersections
     else:
         raise ValueError('Unexpected strategy.', strategy)

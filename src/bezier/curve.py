@@ -512,9 +512,9 @@ class Curve(_base.Base):
                 raise NotImplementedError(
                     'Intersection only implemented in 2D')
 
-        if strategy is IntersectionStrategy.GEOMETRIC:
+        if strategy == IntersectionStrategy.GEOMETRIC:
             all_intersections = _geometric_intersection.all_intersections
-        elif strategy is IntersectionStrategy.ALGEBRAIC:
+        elif strategy == IntersectionStrategy.ALGEBRAIC:
             all_intersections = _algebraic_intersection.all_intersections
         else:
             raise ValueError('Unexpected strategy.', strategy)
