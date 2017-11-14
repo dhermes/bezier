@@ -1915,10 +1915,11 @@ class Test_get_next(unittest.TestCase):
 class Test_ends_to_curve(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(start_node, end_node):
+    def _call_function_under_test(start_node, end_node, edges1, edges2):
         from bezier import _surface_helpers
 
-        return _surface_helpers.ends_to_curve(start_node, end_node)
+        return _surface_helpers.ends_to_curve(
+            start_node, end_node, edges1, edges2)
 
     def test_bad_classification(self):
         start_node = make_intersect(
@@ -1926,7 +1927,7 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         end_node = make_intersect(
             None, 0.75, None, 0.75, index_first=0, index_second=0)
         with self.assertRaises(ValueError):
-            self._call_function_under_test(start_node, end_node)
+            self._call_function_under_test(start_node, end_node, (), ())
 
     def _on_different_curves(self, interior_curve):
         first1 = unittest.mock.sentinel.first1
@@ -1939,7 +1940,7 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         end_node = make_intersect(
             first2, 0.5, second2, 0.5, index_first=1, index_second=1)
         with self.assertRaises(ValueError):
-            self._call_function_under_test(start_node, end_node)
+            self._call_function_under_test(start_node, end_node, (), ())
 
     def test_first_on_different_curves(self):
         self._on_different_curves(get_enum('FIRST'))
@@ -1959,8 +1960,11 @@ class Test_ends_to_curve(utils.NumPyTestCase):
             interior_curve=get_enum('FIRST'))
         end_node = make_intersect(
             first, 0.75, None, None, index_first=0, index_second=None)
+        edges1 = (first, None, None)
+        edges2 = ()
 
-        result = self._call_function_under_test(start_node, end_node)
+        result = self._call_function_under_test(
+            start_node, end_node, edges1, edges2)
         self.assertIsInstance(result, bezier.Curve)
         expected = np.asfortranarray([
             [0.5, 2.0],
@@ -1984,8 +1988,11 @@ class Test_ends_to_curve(utils.NumPyTestCase):
             interior_curve=get_enum('SECOND'))
         end_node = make_intersect(
             None, None, second, 0.25, index_first=None, index_second=2)
+        edges1 = ()
+        edges2 = (None, None, second)
 
-        result = self._call_function_under_test(start_node, end_node)
+        result = self._call_function_under_test(
+            start_node, end_node, edges1, edges2)
         self.assertIsInstance(result, bezier.Curve)
         expected = np.asfortranarray([
             [3.75, -0.75],

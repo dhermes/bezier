@@ -2019,7 +2019,7 @@ def get_next(intersection, intersections, unused):
     return result
 
 
-def ends_to_curve(start_node, end_node):
+def ends_to_curve(start_node, end_node, edges1, edges2):
     """Convert a "pair" of intersection nodes to a curve segment.
 
     .. note::
@@ -2042,6 +2042,10 @@ def ends_to_curve(start_node, end_node):
     Args:
         start_node (.Intersection): The beginning of a segment.
         end_node (.Intersection): The end of (the same) segment.
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
 
     Returns:
         .Curve: The segment between the nodes.
@@ -2057,11 +2061,13 @@ def ends_to_curve(start_node, end_node):
     if start_node.interior_curve is IntersectionClassification.FIRST:
         if end_node.index_first != start_node.index_first:
             raise ValueError(_WRONG_CURVE)
-        return start_node.first.specialize(start_node.s, end_node.s)
+        edge = edges1[start_node.index_first]
+        return edge.specialize(start_node.s, end_node.s)
     elif start_node.interior_curve is IntersectionClassification.SECOND:
         if end_node.index_second != start_node.index_second:
             raise ValueError(_WRONG_CURVE)
-        return start_node.second.specialize(start_node.t, end_node.t)
+        edge = edges2[start_node.index_second]
+        return edge.specialize(start_node.t, end_node.t)
     else:
         raise ValueError('Segment start must be classified as '
                          '"first" or "second".')
@@ -2224,7 +2230,10 @@ def basic_interior_combine(intersections, edges1, edges2, max_edges=10):
                 raise RuntimeError(
                     'Unexpected number of edges', len(edge_ends))
 
-        edge_gen = (ends_to_curve(*pair) for pair in edge_ends)
+        edge_gen = (
+            ends_to_curve(start_node, end_node, edges1, edges2)
+            for start_node, end_node in edge_ends
+        )
         result.append(curved_polygon.CurvedPolygon(*edge_gen, _verify=False))
 
     return result
