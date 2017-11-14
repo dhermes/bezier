@@ -1852,12 +1852,12 @@ def to_front(intersection, intersections, unused, edges1, edges2):
         # Make sure we haven't accidentally ignored an existing intersection.
         for other_int in intersections:
             if (other_int.s == intersection.s and
-                    other_int.first is intersection.first):
+                    other_int.index_first == intersection.index_first):
                 intersection = other_int
                 break
 
             if (other_int.t == intersection.t and
-                    other_int.second is intersection.second):
+                    other_int.index_second == intersection.index_second):
                 intersection = other_int
                 break
 
@@ -1892,11 +1892,11 @@ def get_next_first(intersection, intersections):
         edge or the end of the same edge.
     """
     along_edge = None
-    first = intersection.first
+    index_first = intersection.index_first
     s = intersection.s
     for other_int in intersections:
         other_s = other_int.s
-        if other_int.first is first and other_s > s:
+        if other_int.index_first == index_first and other_s > s:
             # NOTE: We skip tangent intersections that don't occur
             #       at a corner.
             if (other_s < 1.0 and
@@ -1909,9 +1909,9 @@ def get_next_first(intersection, intersections):
         # If there is no other intersection on the edge, just return
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
-            first, 1.0, None, None,
+            intersection.first, 1.0, None, None,
             interior_curve=IntersectionClassification.FIRST)
-        new_intersection.index_first = intersection.index_first
+        new_intersection.index_first = index_first
         new_intersection.index_second = None
         return new_intersection
     else:
@@ -1944,11 +1944,11 @@ def get_next_second(intersection, intersections):
         edge or the end of the same edge.
     """
     along_edge = None
-    second = intersection.second
+    index_second = intersection.index_second
     t = intersection.t
     for other_int in intersections:
         other_t = other_int.t
-        if other_int.second is second and other_t > t:
+        if other_int.index_second == index_second and other_t > t:
             # NOTE: We skip tangent intersections that don't occur
             #       at a corner.
             if (other_t < 1.0 and
@@ -1961,10 +1961,10 @@ def get_next_second(intersection, intersections):
         # If there is no other intersection on the edge, just return
         # the segment end.
         new_intersection = _intersection_helpers.Intersection(
-            None, None, second, 1.0,
+            None, None, intersection.second, 1.0,
             interior_curve=IntersectionClassification.SECOND)
         new_intersection.index_first = None
-        new_intersection.index_second = intersection.index_second
+        new_intersection.index_second = index_second
         return new_intersection
     else:
         return along_edge
@@ -2055,15 +2055,13 @@ def ends_to_curve(start_node, end_node):
             :attr:`~._IntersectionClassification.SECOND`.
     """
     if start_node.interior_curve is IntersectionClassification.FIRST:
-        first = start_node.first
-        if end_node.first is not first:
+        if end_node.index_first != start_node.index_first:
             raise ValueError(_WRONG_CURVE)
-        return first.specialize(start_node.s, end_node.s)
+        return start_node.first.specialize(start_node.s, end_node.s)
     elif start_node.interior_curve is IntersectionClassification.SECOND:
-        second = start_node.second
-        if end_node.second is not second:
+        if end_node.index_second != start_node.index_second:
             raise ValueError(_WRONG_CURVE)
-        return second.specialize(start_node.t, end_node.t)
+        return start_node.second.specialize(start_node.t, end_node.t)
     else:
         raise ValueError('Segment start must be classified as '
                          '"first" or "second".')
