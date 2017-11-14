@@ -983,7 +983,8 @@ def _jacobian_det(nodes, degree, st_vals):
             bs_bt_vals[:, 1] * bs_bt_vals[:, 2])
 
 
-def classify_tangent_intersection(intersection, tangent1, tangent2):
+def classify_tangent_intersection(
+        intersection, nodes1, tangent1, nodes2, tangent2):
     """Helper for func:`classify_intersection` at tangencies.
 
     .. note::
@@ -992,8 +993,12 @@ def classify_tangent_intersection(intersection, tangent1, tangent2):
 
     Args:
         intersection (.Intersection): An intersection object.
+        nodes1 (numpy.ndarray): Control points for the first curve at
+            the intersection.
         tangent1 (numpy.ndarray): The tangent vector to the first curve
             at the intersection.
+        nodes2 (numpy.ndarray): Control points for the second curve at
+            the intersection.
         tangent2 (numpy.ndarray): The tangent vector to the second curve
             at the intersection.
 
@@ -1013,10 +1018,8 @@ def classify_tangent_intersection(intersection, tangent1, tangent2):
     # NOTE: When computing curvatures we assume that we don't have lines
     #       here, because lines that are tangent at an intersection are
     #       parallel and we don't handle that case.
-    curvature1 = _curve_helpers.get_curvature(
-        intersection.first._nodes, tangent1, intersection.s)
-    curvature2 = _curve_helpers.get_curvature(
-        intersection.second._nodes, tangent2, intersection.t)
+    curvature1 = _curve_helpers.get_curvature(nodes1, tangent1, intersection.s)
+    curvature2 = _curve_helpers.get_curvature(nodes2, tangent2, intersection.t)
     if dot_prod < 0:
         # If the tangent vectors are pointing in the opposite direction,
         # then the curves are facing opposite directions.
@@ -1633,10 +1636,10 @@ def classify_intersection(intersection, edges1, edges2):
         raise ValueError('Intersection occurs at the end of an edge',
                          's', intersection.s, 't', intersection.t)
 
-    tangent1 = _curve_helpers.evaluate_hodograph(
-        intersection.s, intersection.first._nodes)
-    tangent2 = _curve_helpers.evaluate_hodograph(
-        intersection.t, intersection.second._nodes)
+    nodes1 = intersection.first._nodes
+    tangent1 = _curve_helpers.evaluate_hodograph(intersection.s, nodes1)
+    nodes2 = intersection.second._nodes
+    tangent2 = _curve_helpers.evaluate_hodograph(intersection.t, nodes2)
 
     if ignored_corner(intersection, tangent1, tangent2, edges1, edges2):
         return IntersectionClassification.IGNORED_CORNER
@@ -1650,7 +1653,7 @@ def classify_intersection(intersection, edges1, edges2):
         return IntersectionClassification.SECOND
     else:
         return classify_tangent_intersection(
-            intersection, tangent1, tangent2)
+            intersection, nodes1, tangent1, nodes2, tangent2)
 
 
 def handle_corners(intersection, edges1, edges2):

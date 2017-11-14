@@ -1092,22 +1092,23 @@ class Test_classify_tangent_intersection(unittest.TestCase):
     ])
 
     @staticmethod
-    def _call_function_under_test(intersection, tangent1, tangent2):
+    def _call_function_under_test(
+            intersection, nodes1, tangent1, nodes2, tangent2):
         from bezier import _surface_helpers
 
         return _surface_helpers.classify_tangent_intersection(
-            intersection, tangent1, tangent2)
+            intersection, nodes1, tangent1, nodes2, tangent2)
 
     def _call_helper(self, intersection):
         from bezier import _curve_helpers
 
-        tangent1 = _curve_helpers.evaluate_hodograph(
-            intersection.s, intersection.first._nodes)
-        tangent2 = _curve_helpers.evaluate_hodograph(
-            intersection.t, intersection.second._nodes)
+        nodes1 = intersection.first._nodes
+        tangent1 = _curve_helpers.evaluate_hodograph(intersection.s, nodes1)
+        nodes2 = intersection.second._nodes
+        tangent2 = _curve_helpers.evaluate_hodograph(intersection.t, nodes2)
 
         return self._call_function_under_test(
-            intersection, tangent1, tangent2)
+            intersection, nodes1, tangent1, nodes2, tangent2)
 
     def test_first_curvature(self):
         import bezier
