@@ -1084,7 +1084,7 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     return cross_prod <= 0.0
 
 
-def ignored_double_corner(intersection, tangent_s, tangent_t):
+def ignored_double_corner(intersection, tangent_s, tangent_t, edges1, edges2):
     """Check if an intersection is an "ignored" double corner.
 
     .. note::
@@ -1105,14 +1105,17 @@ def ignored_double_corner(intersection, tangent_s, tangent_t):
             at the intersection.
         tangent_t (numpy.ndarray): The tangent vector to the second curve
             at the intersection.
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
 
     Returns:
         bool: Indicates if the corner is to be ignored.
     """
     # Compute the other edge for the ``s`` surface.
-    # pylint: disable=protected-access
-    prev_edge = intersection.first._previous_edge
-    # pylint: enable=protected-access
+    prev_index = (intersection.index_first - 1) % 3
+    prev_edge = edges1[prev_index]
     alt_tangent_s = _curve_helpers.evaluate_hodograph(
         1.0, prev_edge._nodes)
 
@@ -1131,9 +1134,8 @@ def ignored_double_corner(intersection, tangent_s, tangent_t):
 
     # If ``tangent_t`` is not interior, we check the other ``t``
     # edge that ends at the corner.
-    # pylint: disable=protected-access
-    prev_edge = intersection.second._previous_edge
-    # pylint: enable=protected-access
+    prev_index = (intersection.index_second - 1) % 3
+    prev_edge = edges2[prev_index]
     alt_tangent_t = _curve_helpers.evaluate_hodograph(
         1.0, prev_edge._nodes)
     # Change the direction of the "in" tangent so that it points "out".
@@ -1161,7 +1163,7 @@ def ignored_double_corner(intersection, tangent_s, tangent_t):
     return not (cross_prod1 <= 0.0 and cross_prod3 >= 0.0)
 
 
-def ignored_corner(intersection, tangent_s, tangent_t):
+def ignored_corner(intersection, tangent_s, tangent_t, edges1, edges2):
     """Check if an intersection is an "ignored" corner.
 
     .. note::
@@ -1191,33 +1193,35 @@ def ignored_corner(intersection, tangent_s, tangent_t):
             at the intersection.
         tangent_t (numpy.ndarray): The tangent vector to the second curve
             at the intersection.
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
 
     Returns:
         bool: Indicates if the corner is to be ignored.
     """
     if intersection.s == 0.0:
-        # pylint: disable=protected-access
         if intersection.t == 0.0:
             # Double corner.
             return ignored_double_corner(
-                intersection, tangent_s, tangent_t)
+                intersection, tangent_s, tangent_t, edges1, edges2)
         else:
             # s-only corner.
-            prev_edge = intersection.first._previous_edge
+            prev_index = (intersection.index_first - 1) % 3
+            prev_edge = edges1[prev_index]
             return ignored_edge_corner(tangent_t, tangent_s, prev_edge._nodes)
-        # pylint: enable=protected-access
     elif intersection.t == 0.0:
         # t-only corner.
-        # pylint: disable=protected-access
-        prev_edge = intersection.second._previous_edge
-        # pylint: enable=protected-access
+        prev_index = (intersection.index_second - 1) % 3
+        prev_edge = edges2[prev_index]
         return ignored_edge_corner(tangent_s, tangent_t, prev_edge._nodes)
     else:
         # Not a corner.
         return False
 
 
-def classify_intersection(intersection):
+def classify_intersection(intersection, edges1, edges2):
     r"""Determine which curve is on the "inside of the intersection".
 
     .. note::
@@ -1602,6 +1606,10 @@ def classify_intersection(intersection):
 
     Args:
         intersection (.Intersection): An intersection object.
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
 
     Returns:
         _IntersectionClassification: The "inside" curve type, based on
@@ -1622,7 +1630,7 @@ def classify_intersection(intersection):
     tangent2 = _curve_helpers.evaluate_hodograph(
         intersection.t, intersection.second._nodes)
 
-    if ignored_corner(intersection, tangent1, tangent2):
+    if ignored_corner(intersection, tangent1, tangent2, edges1, edges2):
         return IntersectionClassification.IGNORED_CORNER
 
     # Take the cross product of tangent vectors to determine which one

@@ -1122,7 +1122,7 @@ class Surface(_base.Base):
                 duplicates.append(intersection)
             else:
                 interior = _surface_helpers.classify_intersection(
-                    intersection)
+                    intersection, edges1, edges2)
                 intersection.interior_curve = interior
                 uniques.append(intersection)
 

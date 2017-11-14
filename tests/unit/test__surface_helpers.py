@@ -971,10 +971,11 @@ class Test_speedup_jacobian_det(Test__jacobian_det):
 class Test_classify_intersection(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersection):
+    def _call_function_under_test(intersection, edges1, edges2):
         from bezier import _surface_helpers
 
-        return _surface_helpers.classify_intersection(intersection)
+        return _surface_helpers.classify_intersection(
+            intersection, edges1, edges2)
 
     def test_simple(self):
         import bezier
@@ -989,13 +990,13 @@ class Test_classify_intersection(unittest.TestCase):
         ]))
         intersection = make_intersect(
             first, 0.5, second, 0.5, index_first=2, index_second=0)
-        result = self._call_function_under_test(intersection)
+        result = self._call_function_under_test(intersection, (), ())
         self.assertIs(result, get_enum('SECOND'))
 
         # Swap and classify.
         intersection = make_intersect(
             second, 0.5, first, 0.5, index_first=0, index_second=2)
-        result = self._call_function_under_test(intersection)
+        result = self._call_function_under_test(intersection, (), ())
         self.assertIs(result, get_enum('FIRST'))
 
     def test_corner_end(self):
@@ -1012,7 +1013,7 @@ class Test_classify_intersection(unittest.TestCase):
         intersection = make_intersect(
             first, 1.0, second, 0.5, index_first=2, index_second=2)
         with self.assertRaises(ValueError):
-            self._call_function_under_test(intersection)
+            self._call_function_under_test(intersection, (), ())
 
     def test_corner_start(self):
         import bezier
@@ -1022,14 +1023,16 @@ class Test_classify_intersection(unittest.TestCase):
             [0.0, 0.0],
             [2.0, 0.0],
         ]))
-        first, _, _ = surface.edges
+        edges1 = surface.edges
+        first, _, _ = edges1
         second = bezier.Curve.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.0, 2.0],
         ]))
+        edges2 = ()
         intersection = make_intersect(
             first, 0.0, second, 0.5, index_first=1, index_second=2)
-        result = self._call_function_under_test(intersection)
+        result = self._call_function_under_test(intersection, edges1, edges2)
         self.assertIs(result, get_enum('FIRST'))
 
     def test_tangent(self):
@@ -1047,24 +1050,26 @@ class Test_classify_intersection(unittest.TestCase):
         ]))
         intersection = make_intersect(
             first, 0.5, second, 0.5, index_first=0, index_second=1)
-        result = self._call_function_under_test(intersection)
+        result = self._call_function_under_test(intersection, (), ())
         self.assertIs(result, get_enum('TANGENT_FIRST'))
 
     def test_ignored_corner(self):
         import bezier
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
-        first, _, _ = surface1.edges
+        edges1 = surface1.edges
+        first, _, _ = edges1
         surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [-1.0, 0.0],
             [0.0, -1.0],
         ]))
-        second, _, _ = surface2.edges
+        edges2 = surface2.edges
+        second, _, _ = edges2
 
         intersection = make_intersect(
             first, 0.0, second, 0.0, index_first=0, index_second=0)
-        result = self._call_function_under_test(intersection)
+        result = self._call_function_under_test(intersection, edges1, edges2)
         self.assertIs(result, get_enum('IGNORED_CORNER'))
 
 
@@ -1249,11 +1254,12 @@ class Test_ignored_edge_corner(unittest.TestCase):
 class Test_ignored_double_corner(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersection, tangent_s, tangent_t):
+    def _call_function_under_test(
+            intersection, tangent_s, tangent_t, edges1, edges2):
         from bezier import _surface_helpers
 
         return _surface_helpers.ignored_double_corner(
-            intersection, tangent_s, tangent_t)
+            intersection, tangent_s, tangent_t, edges1, edges2)
 
     def test_ignored(self):
         import bezier
@@ -1263,36 +1269,40 @@ class Test_ignored_double_corner(unittest.TestCase):
             [1.5, 0.25],
             [0.5, 1.0],
         ]))
-        first, _, _ = surface1.edges
+        edges1 = surface1.edges
+        first, _, _ = edges1
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
-        _, second, _ = surface2.edges
+        edges2 = surface2.edges
+        _, second, _ = edges2
         intersection = make_intersect(
             first, 0.0, second, 0.0, index_first=0, index_second=1)
         tangent_s = np.asfortranarray([[0.5, 0.25]])
         tangent_t = np.asfortranarray([[-1.0, 1.0]])
 
         result = self._call_function_under_test(
-            intersection, tangent_s, tangent_t)
+            intersection, tangent_s, tangent_t, edges1, edges2)
         self.assertTrue(result)
 
     def test_overlap_first(self):
         import bezier
 
         surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
-        _, first, _ = surface1.edges
+        edges1 = surface1.edges
+        _, first, _ = edges1
         surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [1.0, 0.0],
             [1.0, 1.0],
             [0.5, 0.25],
         ]))
-        second, _, _ = surface2.edges
+        edges2 = surface2.edges
+        second, _, _ = edges2
         intersection = make_intersect(
             first, 0.0, second, 0.0, index_first=1, index_second=0)
         tangent_s = np.asfortranarray([[-1.0, 1.0]])
         tangent_t = np.asfortranarray([[0.0, 1.0]])
 
         result = self._call_function_under_test(
-            intersection, tangent_s, tangent_t)
+            intersection, tangent_s, tangent_t, edges1, edges2)
         self.assertFalse(result)
 
     def test_overlap_second(self):
@@ -1303,16 +1313,18 @@ class Test_ignored_double_corner(unittest.TestCase):
             [1.0, 1.0],
             [0.5, 0.25],
         ]))
-        first, _, _ = surface1.edges
+        edges1 = surface1.edges
+        first, _, _ = edges1
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
-        _, second, _ = surface2.edges
+        edges2 = surface2.edges
+        _, second, _ = edges2
         intersection = make_intersect(
             first, 0.0, second, 0.0, index_first=0, index_second=1)
         tangent_s = np.asfortranarray([[0.0, 1.0]])
         tangent_t = np.asfortranarray([[-1.0, 1.0]])
 
         result = self._call_function_under_test(
-            intersection, tangent_s, tangent_t)
+            intersection, tangent_s, tangent_t, edges1, edges2)
         self.assertFalse(result)
 
     def test_segment_contained(self):
@@ -1323,39 +1335,45 @@ class Test_ignored_double_corner(unittest.TestCase):
             [1.0, 0.5],
             [0.5, 1.0],
         ]))
-        first, _, _ = surface1.edges
+        edges1 = surface1.edges
+        first, _, _ = edges1
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
-        second, _, _ = surface2.edges
+        edges2 = surface2.edges
+        second, _, _ = edges2
         intersection = make_intersect(
             first, 0.0, second, 0.0, index_first=0, index_second=0)
         tangent_s = np.asfortranarray([[1.0, 0.5]])
         tangent_t = np.asfortranarray([[1.0, 0.0]])
 
         result = self._call_function_under_test(
-            intersection, tangent_s, tangent_t)
+            intersection, tangent_s, tangent_t, edges1, edges2)
         self.assertFalse(result)
 
 
 class Test_ignored_corner(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(intersection, tangent_s, tangent_t):
+    def _call_function_under_test(
+            intersection, tangent_s, tangent_t, edges1, edges2):
         from bezier import _surface_helpers
 
         return _surface_helpers.ignored_corner(
-            intersection, tangent_s, tangent_t)
+            intersection, tangent_s, tangent_t, edges1, edges2)
 
     def test_not_corner(self):
         intersection = make_intersect(
             None, 0.5, None, 0.5, index_first=0, index_second=2)
-        result = self._call_function_under_test(intersection, None, None)
+        result = self._call_function_under_test(
+            intersection, None, None, (), ())
         self.assertFalse(result)
 
     def test_s_corner(self):
         import bezier
 
         surface = bezier.Surface(UNIT_TRIANGLE, degree=1, _copy=False)
-        _, previous_edge, first = surface.edges
+        edges1 = surface.edges
+        _, previous_edge, first = edges1
+        edges2 = ()
         intersection = make_intersect(
             first, 0.0, None, 0.5, index_first=2, index_second=None)
 
@@ -1365,7 +1383,8 @@ class Test_ignored_corner(utils.NumPyTestCase):
         with patch as mocked:
             result = self._call_function_under_test(
                 intersection, unittest.mock.sentinel.tangent_s,
-                unittest.mock.sentinel.tangent_t)
+                unittest.mock.sentinel.tangent_t, edges1, edges2)
+
         self.assertIs(result, unittest.mock.sentinel.edge_result)
         self.assertEqual(mocked.call_count, 1)
         call = mocked.mock_calls[0]
@@ -1379,8 +1398,10 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def test_t_corner(self):
         import bezier
 
+        edges1 = ()
         surface = bezier.Surface(UNIT_TRIANGLE, degree=1, _copy=False)
-        previous_edge, second, _ = surface.edges
+        edges2 = surface.edges
+        previous_edge, second, _ = edges2
         intersection = make_intersect(
             None, 0.5, second, 0.0, index_first=None, index_second=1)
 
@@ -1390,7 +1411,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
         with patch as mocked:
             result = self._call_function_under_test(
                 intersection, unittest.mock.sentinel.tangent_s,
-                unittest.mock.sentinel.tangent_t)
+                unittest.mock.sentinel.tangent_t, edges1, edges2)
 
         self.assertIs(result, unittest.mock.sentinel.edge_result)
         self.assertEqual(mocked.call_count, 1)
@@ -1412,12 +1433,12 @@ class Test_ignored_corner(utils.NumPyTestCase):
         with patch as mocked:
             result = self._call_function_under_test(
                 intersection, unittest.mock.sentinel.tangent_s,
-                unittest.mock.sentinel.tangent_t)
-            self.assertIs(result, unittest.mock.sentinel.double_result)
+                unittest.mock.sentinel.tangent_t, (), ())
 
-            mocked.assert_called_once_with(
-                intersection, unittest.mock.sentinel.tangent_s,
-                unittest.mock.sentinel.tangent_t)
+        self.assertIs(result, unittest.mock.sentinel.double_result)
+        mocked.assert_called_once_with(
+            intersection, unittest.mock.sentinel.tangent_s,
+            unittest.mock.sentinel.tangent_t, (), ())
 
 
 class Test_handle_corners(unittest.TestCase):
