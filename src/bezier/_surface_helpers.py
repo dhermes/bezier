@@ -986,6 +986,10 @@ def _jacobian_det(nodes, degree, st_vals):
 def classify_tangent_intersection(intersection, tangent1, tangent2):
     """Helper for func:`classify_intersection` at tangencies.
 
+    .. note::
+
+       This is a helper used only by :func:`classify_intersection`.
+
     Args:
         intersection (.Intersection): An intersection object.
         tangent1 (numpy.ndarray): The tangent vector to the first curve
@@ -1045,6 +1049,11 @@ def classify_tangent_intersection(intersection, tangent1, tangent2):
 def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     """Check ignored when a corner lies **inside** another edge.
 
+    .. note::
+
+       This is a helper used only by :func:`ignored_corner`, which in turn is
+       only used by :func:`classify_intersection`.
+
     Helper for :func:`ignored_corner` where one of ``s`` and
     ``t`` are ``0``, but **not both**.
 
@@ -1077,6 +1086,11 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
 
 def ignored_double_corner(intersection, tangent_s, tangent_t):
     """Check if an intersection is an "ignored" double corner.
+
+    .. note::
+
+       This is a helper used only by :func:`ignored_corner`, which in turn is
+       only used by :func:`classify_intersection`.
 
     Helper for :func:`ignored_corner` where both ``s`` and
     ``t`` are ``0``.
@@ -1150,6 +1164,10 @@ def ignored_double_corner(intersection, tangent_s, tangent_t):
 def ignored_corner(intersection, tangent_s, tangent_t):
     """Check if an intersection is an "ignored" corner.
 
+    .. note::
+
+       This is a helper used only by :func:`classify_intersection`.
+
     An "ignored" corner is one where the surfaces just "kiss" at
     the point of intersection but their interiors do not meet.
 
@@ -1201,6 +1219,10 @@ def ignored_corner(intersection, tangent_s, tangent_t):
 
 def classify_intersection(intersection):
     r"""Determine which curve is on the "inside of the intersection".
+
+    .. note::
+
+       This is a helper used only by :meth:`.Surface.intersect`.
 
     This is intended to be a helper for forming a :class:`.CurvedPolygon`
     from the edge intersections of two :class:`.Surface`-s. In order
@@ -1618,6 +1640,10 @@ def classify_intersection(intersection):
 def handle_corners(intersection):
     """Mutates an intersection if it is on a corner.
 
+    .. note::
+
+       This is a helper used only by :meth:`.Surface.intersect`.
+
     Does nothing if the intersection happens in the middle of two
     edges.
 
@@ -1664,6 +1690,11 @@ def handle_corners(intersection):
 def same_intersection(intersection1, intersection2, wiggle=0.5**40):
     """Check if two intersections are close to machine precision.
 
+    .. note::
+
+       This is a helper used only by :func:`verify_duplicates`, which in turn
+       is only used by :meth:`.Surface.intersect`.
+
     Args:
         intersection1 (.Intersection): The first intersection.
         intersection2 (.Intersection): The second intersection.
@@ -1689,6 +1720,10 @@ def same_intersection(intersection1, intersection2, wiggle=0.5**40):
 
 def verify_duplicates(duplicates, uniques):
     """Verify that a set of intersections had expected duplicates.
+
+    .. note::
+
+       This is a helper used only by :meth:`.Surface.intersect`.
 
     Args:
         duplicates (List[.Intersection]): List of intersections
@@ -1739,7 +1774,10 @@ def verify_duplicates(duplicates, uniques):
 def to_front(intersection, intersections, unused):
     """Rotates a node to the "front".
 
-    Helper for :func:`combine_intersections`.
+    .. note::
+
+       This is a helper used only by :func:`basic_interior_combine`, which in
+       turn is only used by :func:`combine_intersections`.
 
     If a node is at the end of a segment, moves it to the beginning
     of the next segment (at the exact same point).
@@ -1808,8 +1846,14 @@ def to_front(intersection, intersections, unused):
 def get_next_first(intersection, intersections):
     """Gets the next node along the current (first) edge.
 
-    Helper for :func:`get_next` and along with :func:`get_next_second`, this
-    function does the majority of the heavy lifting. **Very** similar to
+    .. note::
+
+       This is a helper used only by :func:`get_next`, which in
+       turn is only used by :func:`basic_interior_combine`, which itself
+       is only used by :func:`combine_intersections`.
+
+    Along with :func:`get_next_second`, this function does the majority of the
+    heavy lifting in :func:`get_next`. **Very** similar to
     :func:`get_next_second`, but this works with the first curve while the
     other function works with the second.
 
@@ -1854,8 +1898,14 @@ def get_next_first(intersection, intersections):
 def get_next_second(intersection, intersections):
     """Gets the next node along the current (second) edge.
 
-    Helper for :func:`get_next` and along with :func:`get_next_first`, this
-    function does the majority of the heavy lifting. **Very** similar to
+    .. note::
+
+       This is a helper used only by :func:`get_next`, which in
+       turn is only used by :func:`basic_interior_combine`, which itself
+       is only used by :func:`combine_intersections`.
+
+    Along with :func:`get_next_first`, this function does the majority of the
+    heavy lifting in :func:`get_next`. **Very** similar to
     :func:`get_next_first`, but this works with the second curve while the
     other function works with the first.
 
@@ -1900,8 +1950,11 @@ def get_next_second(intersection, intersections):
 def get_next(intersection, intersections, unused):
     """Gets the next node along a given edge.
 
-    Helper for :func:`combine_intersections`, but does the majority
-    of the heavy lifting.
+    .. note::
+
+       This is a helper used only by :func:`basic_interior_combine`, which in
+       turn is only used by :func:`combine_intersections`. This function does
+       the majority of the heavy lifting for :func:`basic_interior_combine`.
 
     .. note::
 
@@ -1945,6 +1998,11 @@ def get_next(intersection, intersections, unused):
 
 def ends_to_curve(start_node, end_node):
     """Convert a "pair" of intersection nodes to a curve segment.
+
+    .. note::
+
+       This is a helper used only by :func:`basic_interior_combine`, which in
+       turn is only used by :func:`combine_intersections`.
 
     .. note::
 
@@ -2095,7 +2153,9 @@ def tangent_only_intersections(intersections, surface1, surface2):
 def basic_interior_combine(intersections, max_edges=10):
     """Combine intersections that don't involve tangencies.
 
-    Helper for :func:`combine_intersections`.
+    .. note::
+
+       This is a helper used only by :func:`combine_intersections`.
 
     .. note::
 
@@ -2146,6 +2206,10 @@ def basic_interior_combine(intersections, max_edges=10):
 
 def combine_intersections(intersections, surface1, surface2):
     """Combine curve-curve intersections into curved polygon(s).
+
+    .. note::
+
+       This is a helper used only by :meth:`.Surface.intersect`.
 
     Does so assuming each intersection lies on an edge of one of
     two :class:`.Surface`-s.

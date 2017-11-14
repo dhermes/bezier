@@ -198,39 +198,6 @@ class Test_speedup_newton_refine(Test__newton_refine):
             s, nodes1, t, nodes2)
 
 
-class Test_check_close(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(s, nodes1, t, nodes2):
-        from bezier import _intersection_helpers
-
-        return _intersection_helpers.check_close(
-            s, nodes1, t, nodes2)
-
-    def test_success(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 1.0],
-            [1.0, 0.0],
-        ])
-        s_val = 0.5
-        wiggle = 2.0**(-50)
-        result = self._call_function_under_test(
-            s_val, nodes, s_val + wiggle, nodes)
-
-        expected = np.asfortranarray([[0.5, 0.5]])
-        self.assertEqual(result, expected)
-
-    def test_failure(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
-        # The nodes of thise curve are far away.
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(0.0, nodes, 1.0, nodes)
-
-
 class TestIntersection(unittest.TestCase):
 
     @staticmethod
@@ -287,22 +254,3 @@ class TestIntersection(unittest.TestCase):
         # Check that modifying ``props_dict`` won't modify ``curve``.
         expected['s'] = 0.5
         self.assertNotEqual(intersection.s, expected['s'])
-
-    def test_get_point(self):
-        s_val = 1.0
-        t_val = 0.0
-        first = unittest.mock.Mock(
-            _nodes=unittest.mock.sentinel.nodes1, spec=['_nodes'])
-        second = unittest.mock.Mock(
-            _nodes=unittest.mock.sentinel.nodes2, spec=['_nodes'])
-        intersection = self._make_one(first, s_val, second, t_val)
-
-        patch = unittest.mock.patch(
-            'bezier._intersection_helpers.check_close',
-            return_value=unittest.mock.sentinel.point)
-        with patch as mocked:
-            self.assertIs(
-                intersection.get_point(), unittest.mock.sentinel.point)
-            mocked.assert_called_once_with(
-                s_val, unittest.mock.sentinel.nodes1,
-                t_val, unittest.mock.sentinel.nodes2)

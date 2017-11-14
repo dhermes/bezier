@@ -32,7 +32,6 @@ import enum
 import numpy as np
 
 from bezier import _curve_helpers
-from bezier import _helpers
 try:
     from bezier import _curve_intersection_speedup
 except ImportError:  # pragma: NO COVER
@@ -41,6 +40,11 @@ except ImportError:  # pragma: NO COVER
 
 def _newton_refine(s, nodes1, t, nodes2):
     r"""Apply one step of 2D Newton's method.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     We want to use Newton's method on the function
 
@@ -372,11 +376,6 @@ def _newton_refine(s, nodes1, t, nodes2):
        >>> s3 == t3 == 0.5
        True
 
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
-
     Args:
         s (float): Parameter of a near-intersection along the first curve.
         nodes1 (numpy.ndarray): Nodes of first curve forming intersection.
@@ -408,37 +407,6 @@ def _newton_refine(s, nodes1, t, nodes2):
     # Convert to row-vector and unpack (also makes assertion on shape).
     (delta_s, delta_t), = result.T
     return s + delta_s, t + delta_t
-
-
-def check_close(s, nodes1, t, nodes2):
-    r"""Checks that two curves intersect to some threshold.
-
-    Verifies :math:`B_1(s) \approx B_2(t)` and then returns
-    :math:`B_1(s)` if they are sufficiently close.
-
-    Args:
-        s (float): Parameter of a near-intersection along ``curve1``.
-        nodes1 (numpy.ndarray): Control points of first curve forming
-            intersection.
-        t (float): Parameter of a near-intersection along ``curve2``.
-        nodes2 (numpy.ndarray): Control points of second curve forming
-            intersection.
-
-    Raises:
-        ValueError: If :math:`B_1(s)` is not sufficiently close to
-            :math:`B_2(t)`.
-
-    Returns:
-        numpy.ndarray: The value of :math:`B_1(s)`.
-    """
-    vec1 = _curve_helpers.evaluate_multi(
-        nodes1, np.asfortranarray([s]))
-    vec2 = _curve_helpers.evaluate_multi(
-        nodes2, np.asfortranarray([t]))
-    if not _helpers.vector_close(vec1, vec2):
-        raise ValueError('B_1(s) and B_2(t) are not sufficiently close')
-
-    return vec1
 
 
 class Intersection(object):  # pylint: disable=too-few-public-methods
@@ -505,18 +473,6 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             't': self.t,
             'interior_curve': self.interior_curve,
         }
-
-    def get_point(self):
-        """The point where the intersection occurs.
-
-        This exists primarily for :meth:`.Curve.intersect`.
-
-        Returns:
-            numpy.ndarray: The point where the intersection occurs.
-        """
-        return check_close(
-            self.s, self.first._nodes,
-            self.t, self.second._nodes)
 
 
 class IntersectionStrategy(enum.Enum):

@@ -111,6 +111,11 @@ def _linearization_error(nodes):
 
     .. note::
 
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    .. note::
+
        This is a helper for :class:`.Linearization`, which is used during the
        curve-curve intersection process.
 
@@ -233,11 +238,6 @@ def _linearization_error(nodes):
        the domain :math:`\left[0, 1\right]` means the error is **already**
        adequately scaled or if the error should be scaled by the arc
        length of the curve or the (easier-to-compute) length of the line.
-
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): Nodes of a curve.

@@ -941,7 +941,8 @@ class Test__surface_intersections(utils.NumPyTestCase):
 
         self.assertIsInstance(
             intersection, _intersection_helpers.Intersection)
-        self.assertEqual(intersection.get_point(), expected)
+        point = intersection.first.evaluate(intersection.s)
+        self.assertEqual(point, expected)
         self.assertIs(intersection.first, curve1)
         self.assertEqual(intersection.index_first, index_first)
         self.assertEqual(intersection.s, s_val)
