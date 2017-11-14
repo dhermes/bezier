@@ -1273,5 +1273,5 @@ else:
     bbox_line_intersect = _curve_intersection_speedup.bbox_line_intersect
     all_intersections = _curve_intersection_speedup.all_intersections
     atexit.register(
-        _curve_intersection_speedup.free_all_intersections_workspace)
+        _curve_intersection_speedup.free_curve_intersections_workspace)
 # pylint: enable=invalid-name

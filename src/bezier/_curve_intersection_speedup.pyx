@@ -223,7 +223,7 @@ def all_intersections(
     # NOTE: We don't check that there are 2 rows.
     _, intersections_size = np.shape(WORKSPACE)
 
-    bezier._curve_intersection.all_intersections(
+    bezier._curve_intersection.curve_intersections(
         &num_nodes_first,
         &nodes_first[0, 0],
         &num_nodes_second,
@@ -272,5 +272,5 @@ def all_intersections(
         raise NotImplementedError(TOO_MANY_TEMPLATE.format(status))
 
 
-def free_all_intersections_workspace():
-    bezier._curve_intersection.free_all_intersections_workspace()
+def free_curve_intersections_workspace():
+    bezier._curve_intersection.free_curve_intersections_workspace()

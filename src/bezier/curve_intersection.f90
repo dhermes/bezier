@@ -36,8 +36,8 @@ module curve_intersection
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
-       add_candidates, intersect_one_round, all_intersections, &
-       free_all_intersections_workspace
+       add_candidates, intersect_one_round, all_intersections_c, &
+       free_curve_intersections_workspace
 
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
   integer(c_int), parameter :: BoxIntersectionType_TANGENT = 1
@@ -809,24 +809,16 @@ contains
 
   subroutine all_intersections( &
        num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
-       intersections_size, intersections, num_intersections, status) &
-       bind(c, name='all_intersections')
+       intersections, num_intersections, status)
 
-    ! NOTE: The number of intersections cannot be known beforehand (though it
-    !       will be **at most** the product of the degrees of the two curves,
-    !       by Bezout's theorem). If ``intersections`` is not large enough
-    !       (i.e. if ``intersections_size`` < num_intersections``), then
-    !       ``intersections`` will not be populated and the ``status`` will be
-    !       set to ``ALL_INTERSECTIONS_TOO_SMALL``. However, the value of
-    !       ``num_intersections`` will be accurate and ``intersections``
-    !       should be re-sized by the caller to accommodate.
+    ! NOTE: This is **explicitly** not intended for C inter-op, but
+    !       a C compatible interface is exposed as ``all_intersections_c``.
 
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)
     integer(c_int), intent(in) :: num_nodes_second
     real(c_double), intent(in) :: nodes_second(num_nodes_second, 2)
-    integer(c_int), intent(in) :: intersections_size
-    real(c_double), intent(out) :: intersections(2, intersections_size)
+    real(c_double), allocatable, intent(inout) :: intersections(:, :)
     integer(c_int), intent(out) :: num_intersections
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
@@ -850,7 +842,7 @@ contains
           call intersect_one_round( &
                nodes_first, nodes_second, &
                num_candidates, CANDIDATES_EVEN, &
-               num_intersections, INTERSECTIONS_WORKSPACE, &
+               num_intersections, intersections, &
                CANDIDATES_ODD, num_next_candidates, py_exc)
        else
           ! Since ``index_`` is odd, we READ from ``CANDIDATES_ODD``
@@ -858,7 +850,7 @@ contains
           call intersect_one_round( &
                nodes_first, nodes_second, &
                num_candidates, CANDIDATES_ODD, &
-               num_intersections, INTERSECTIONS_WORKSPACE, &
+               num_intersections, intersections, &
                CANDIDATES_EVEN, num_next_candidates, py_exc)
        end if
 
@@ -896,16 +888,6 @@ contains
        ! If none of the candidate pairs have been accepted, then there are
        ! no more intersections to find.
        if (num_candidates == 0) then
-          if (num_intersections > intersections_size) then
-             status = ALL_INTERSECTIONS_TOO_SMALL
-          else if (num_intersections > 0) then
-             ! NOTE: This assumes, but doesn't check that
-             !       ``INTERSECTIONS_WORKSPACE`` has been allocated
-             !       and that is has 2 rows, just like ``intersections``.
-             intersections(:, :num_intersections) = ( &
-                  INTERSECTIONS_WORKSPACE(:, :num_intersections))
-          end if
-
           return
        end if
     end do
@@ -917,8 +899,51 @@ contains
 
   end subroutine all_intersections
 
-  subroutine free_all_intersections_workspace() &
-       bind(c, name='free_all_intersections_workspace')
+  subroutine all_intersections_c( &
+       num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
+       intersections_size, intersections, num_intersections, status) &
+       bind(c, name='curve_intersections')
+
+    ! NOTE: The number of intersections cannot be known beforehand (though it
+    !       will be **at most** the product of the degrees of the two curves,
+    !       by Bezout's theorem). If ``intersections`` is not large enough
+    !       (i.e. if ``intersections_size`` < num_intersections``), then
+    !       ``intersections`` will not be populated and the ``status`` will be
+    !       set to ``ALL_INTERSECTIONS_TOO_SMALL``. However, the value of
+    !       ``num_intersections`` will be accurate and ``intersections``
+    !       should be re-sized by the caller to accommodate.
+
+    integer(c_int), intent(in) :: num_nodes_first
+    real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)
+    integer(c_int), intent(in) :: num_nodes_second
+    real(c_double), intent(in) :: nodes_second(num_nodes_second, 2)
+    integer(c_int), intent(in) :: intersections_size
+    real(c_double), intent(out) :: intersections(2, intersections_size)
+    integer(c_int), intent(out) :: num_intersections
+    integer(c_int), intent(out) :: status
+
+    call all_intersections( &
+         num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
+         INTERSECTIONS_WORKSPACE, num_intersections, status)
+
+    if (status /= ALL_INTERSECTIONS_SUCCESS) then
+       return
+    end if
+
+    if (num_intersections > intersections_size) then
+       status = ALL_INTERSECTIONS_TOO_SMALL
+    else if (num_intersections > 0) then
+       ! NOTE: This assumes, but doesn't check that
+       !       ``INTERSECTIONS_WORKSPACE`` has been allocated
+       !       and that is has 2 rows, just like ``intersections``.
+       intersections(:, :num_intersections) = ( &
+            INTERSECTIONS_WORKSPACE(:, :num_intersections))
+    end if
+
+  end subroutine all_intersections_c
+
+  subroutine free_curve_intersections_workspace() &
+       bind(c, name='free_curve_intersections_workspace')
 
     ! NOTE: This **should** be run during clean-up for any code which
     !       invokes ``all_intersections()``.
@@ -935,6 +960,6 @@ contains
        deallocate(INTERSECTIONS_WORKSPACE)
     end if
 
-  end subroutine free_all_intersections_workspace
+  end subroutine free_curve_intersections_workspace
 
 end module curve_intersection

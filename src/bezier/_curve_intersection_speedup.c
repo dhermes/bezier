@@ -2214,7 +2214,7 @@ static const char __pyx_k_Out_of_bounds_on_buffer_access_a[] = "Out of bounds on
 static const char __pyx_k_The_number_of_candidate_intersec[] = "The number of candidate intersections is too high.\n{:d} candidate pairs.";
 static const char __pyx_k_Unable_to_convert_item_to_object[] = "Unable to convert item to object";
 static const char __pyx_k_bezier__curve_intersection_speed[] = "bezier._curve_intersection_speedup";
-static const char __pyx_k_free_all_intersections_workspace[] = "free_all_intersections_workspace";
+static const char __pyx_k_free_curve_intersections_workspa[] = "free_curve_intersections_workspace";
 static const char __pyx_k_got_differing_extents_in_dimensi[] = "got differing extents in dimension %d (got %d and %d)";
 static const char __pyx_k_ndarray_is_not_Fortran_contiguou[] = "ndarray is not Fortran contiguous";
 static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
@@ -2294,7 +2294,7 @@ static PyObject *__pyx_n_s_flags;
 static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fortran;
 static PyObject *__pyx_n_u_fortran;
-static PyObject *__pyx_n_s_free_all_intersections_workspace;
+static PyObject *__pyx_n_s_free_curve_intersections_workspa;
 static PyObject *__pyx_n_s_from_linearized_low_level;
 static PyObject *__pyx_n_s_getstate;
 static PyObject *__pyx_kp_s_got_differing_extents_in_dimensi;
@@ -2401,7 +2401,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
 static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_14reset_workspace(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_workspace_size); /* proto */
 static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersections(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes_first, __Pyx_memviewslice __pyx_v_nodes_second, bool __pyx_v_allow_resize); /* proto */
-static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_20free_all_intersections_workspace(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_20free_curve_intersections_workspace(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
@@ -5906,7 +5906,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
  *     # NOTE: We don't check that there are 2 rows.
  *     _, intersections_size = np.shape(WORKSPACE)             # <<<<<<<<<<<<<<
  *
- *     bezier._curve_intersection.all_intersections(
+ *     bezier._curve_intersection.curve_intersections(
  */
   __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 224, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -6019,7 +6019,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
   __pyx_v_intersections_size = __pyx_t_7;
 
   /* "bezier/_curve_intersection_speedup.pyx":228
- *     bezier._curve_intersection.all_intersections(
+ *     bezier._curve_intersection.curve_intersections(
  *         &num_nodes_first,
  *         &nodes_first[0, 0],             # <<<<<<<<<<<<<<
  *         &num_nodes_second,
@@ -6091,11 +6091,11 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
   /* "bezier/_curve_intersection_speedup.pyx":226
  *     _, intersections_size = np.shape(WORKSPACE)
  *
- *     bezier._curve_intersection.all_intersections(             # <<<<<<<<<<<<<<
+ *     bezier._curve_intersection.curve_intersections(             # <<<<<<<<<<<<<<
  *         &num_nodes_first,
  *         &nodes_first[0, 0],
  */
-  all_intersections((&__pyx_v_num_nodes_first), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_first.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes_first.strides[1]) )))), (&__pyx_v_num_nodes_second), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_second.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes_second.strides[1]) )))), (&__pyx_v_intersections_size), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.strides[1]) )))), (&__pyx_v_num_intersections), (&__pyx_v_status));
+  curve_intersections((&__pyx_v_num_nodes_first), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_first.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes_first.strides[1]) )))), (&__pyx_v_num_nodes_second), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_second.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes_second.strides[1]) )))), (&__pyx_v_intersections_size), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.strides[1]) )))), (&__pyx_v_num_intersections), (&__pyx_v_status));
 
   /* "bezier/_curve_intersection_speedup.pyx":237
  *     )
@@ -6734,41 +6734,41 @@ __pyx_t_19 = __pyx_t_18;
 /* "bezier/_curve_intersection_speedup.pyx":275
  *
  *
- * def free_all_intersections_workspace():             # <<<<<<<<<<<<<<
- *     bezier._curve_intersection.free_all_intersections_workspace()
+ * def free_curve_intersections_workspace():             # <<<<<<<<<<<<<<
+ *     bezier._curve_intersection.free_curve_intersections_workspace()
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_21free_all_intersections_workspace(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_27_curve_intersection_speedup_21free_all_intersections_workspace = {"free_all_intersections_workspace", (PyCFunction)__pyx_pw_6bezier_27_curve_intersection_speedup_21free_all_intersections_workspace, METH_NOARGS, 0};
-static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_21free_all_intersections_workspace(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_21free_curve_intersections_workspace(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_27_curve_intersection_speedup_21free_curve_intersections_workspace = {"free_curve_intersections_workspace", (PyCFunction)__pyx_pw_6bezier_27_curve_intersection_speedup_21free_curve_intersections_workspace, METH_NOARGS, 0};
+static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_21free_curve_intersections_workspace(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("free_all_intersections_workspace (wrapper)", 0);
-  __pyx_r = __pyx_pf_6bezier_27_curve_intersection_speedup_20free_all_intersections_workspace(__pyx_self);
+  __Pyx_RefNannySetupContext("free_curve_intersections_workspace (wrapper)", 0);
+  __pyx_r = __pyx_pf_6bezier_27_curve_intersection_speedup_20free_curve_intersections_workspace(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_20free_all_intersections_workspace(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_20free_curve_intersections_workspace(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("free_all_intersections_workspace", 0);
+  __Pyx_RefNannySetupContext("free_curve_intersections_workspace", 0);
 
   /* "bezier/_curve_intersection_speedup.pyx":276
  *
- * def free_all_intersections_workspace():
- *     bezier._curve_intersection.free_all_intersections_workspace()             # <<<<<<<<<<<<<<
+ * def free_curve_intersections_workspace():
+ *     bezier._curve_intersection.free_curve_intersections_workspace()             # <<<<<<<<<<<<<<
  */
-  free_all_intersections_workspace();
+  free_curve_intersections_workspace();
 
   /* "bezier/_curve_intersection_speedup.pyx":275
  *
  *
- * def free_all_intersections_workspace():             # <<<<<<<<<<<<<<
- *     bezier._curve_intersection.free_all_intersections_workspace()
+ * def free_curve_intersections_workspace():             # <<<<<<<<<<<<<<
+ *     bezier._curve_intersection.free_curve_intersections_workspace()
  */
 
   /* function exit code */
@@ -22947,7 +22947,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
   {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
   {&__pyx_n_u_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 1, 0, 1},
-  {&__pyx_n_s_free_all_intersections_workspace, __pyx_k_free_all_intersections_workspace, sizeof(__pyx_k_free_all_intersections_workspace), 0, 0, 1, 1},
+  {&__pyx_n_s_free_curve_intersections_workspa, __pyx_k_free_curve_intersections_workspa, sizeof(__pyx_k_free_curve_intersections_workspa), 0, 0, 1, 1},
   {&__pyx_n_s_from_linearized_low_level, __pyx_k_from_linearized_low_level, sizeof(__pyx_k_from_linearized_low_level), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
   {&__pyx_kp_s_got_differing_extents_in_dimensi, __pyx_k_got_differing_extents_in_dimensi, sizeof(__pyx_k_got_differing_extents_in_dimensi), 0, 0, 1, 0},
@@ -23598,10 +23598,10 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_curve_intersection_speedup.pyx":275
  *
  *
- * def free_all_intersections_workspace():             # <<<<<<<<<<<<<<
- *     bezier._curve_intersection.free_all_intersections_workspace()
+ * def free_curve_intersections_workspace():             # <<<<<<<<<<<<<<
+ *     bezier._curve_intersection.free_curve_intersections_workspace()
  */
-  __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_free_all_intersections_workspace, 275, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_free_curve_intersections_workspa, 275, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 275, __pyx_L1_error)
 
   /* "View.MemoryView":284
  *         return self.name
@@ -24102,12 +24102,12 @@ static int __pyx_pymod_exec__curve_intersection_speedup(PyObject *__pyx_pyinit_m
   /* "bezier/_curve_intersection_speedup.pyx":275
  *
  *
- * def free_all_intersections_workspace():             # <<<<<<<<<<<<<<
- *     bezier._curve_intersection.free_all_intersections_workspace()
+ * def free_curve_intersections_workspace():             # <<<<<<<<<<<<<<
+ *     bezier._curve_intersection.free_curve_intersections_workspace()
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_21free_all_intersections_workspace, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_21free_curve_intersections_workspace, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_free_all_intersections_workspace, __pyx_t_3) < 0) __PYX_ERR(0, 275, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_free_curve_intersections_workspa, __pyx_t_3) < 0) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "bezier/_curve_intersection_speedup.pyx":1
