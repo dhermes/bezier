@@ -33,6 +33,7 @@ import itertools
 import numpy as np
 import six
 
+from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
 try:
@@ -737,15 +738,11 @@ def from_linearized(first, second, intersections):
     """
     curve1 = first.curve
     curve2 = second.curve
-    # pylint: disable=protected-access
-    orig_first = curve1._root
-    orig_second = curve2._root
     refined_s, refined_t, success = from_linearized_low_level(
-        first.error, curve1._start, curve1._end, first.start_node,
-        first.end_node, orig_first._nodes,
-        second.error, curve2._start, curve2._end, second.start_node,
-        second.end_node, orig_second._nodes)
-    # pylint: enable=protected-access
+        first.error, curve1.start_REFACTOR, curve1.end_REFACTOR, first.start_node,
+        first.end_node, curve1.original_REFACTOR,
+        second.error, curve2.start_REFACTOR, curve2.end_REFACTOR, second.start_node,
+        second.end_node, curve2.original_REFACTOR)
     if success:
         add_intersection(refined_s, refined_t, intersections)
 
@@ -790,13 +787,13 @@ def endpoint_check(
        Fortran equivalent.
 
     Args:
-        first (.Curve): First curve being intersected (assumed in
+        first (SubdividedCurve): First curve being intersected (assumed in
             :math:\mathbf{R}^2`).
         node_first (numpy.ndarray): ``1x2`` array, one of the endpoints
             of ``first``.
         s (float): The parameter corresponding to ``node_first``, so
              expected to be one of ``0.0`` or ``1.0``.
-        second (.Curve): Second curve being intersected (assumed in
+        second (SubdividedCurve): Second curve being intersected (assumed in
             :math:\mathbf{R}^2`).
         node_second (numpy.ndarray): ``1x2`` array, one of the endpoints
             of ``second``.
@@ -807,10 +804,8 @@ def endpoint_check(
             then those intersections will be added to this list.
     """
     if _helpers.vector_close(node_first, node_second):
-        # pylint: disable=protected-access
-        orig_s = (1 - s) * first._start + s * first._end
-        orig_t = (1 - t) * second._start + t * second._end
-        # pylint: enable=protected-access
+        orig_s = (1 - s) * first.start_REFACTOR + s * first.end_REFACTOR
+        orig_t = (1 - t) * second.start_REFACTOR + t * second.end_REFACTOR
         add_intersection(orig_s, orig_t, intersections)
 
 
@@ -855,25 +850,25 @@ def tangent_bbox_intersection(first, second, intersections):
        subdivision / intersection process begins.
 
     Args:
-        first (.Curve): First curve being intersected (assumed in
+        first (SubdividedCurve): First curve being intersected (assumed in
             :math:\mathbf{R}^2`).
-        second (.Curve): Second curve being intersected (assumed in
+        second (SubdividedCurve): Second curve being intersected (assumed in
             :math:\mathbf{R}^2`).
         intersections (list): A list of already encountered
             intersections. If these curves intersect at their tangeny,
             then those intersections will be added to this list.
     """
     node_first1 = np.asfortranarray([
-        [first._nodes[0, 0], first._nodes[0, 1]],
+        [first.nodes_REFACTOR[0, 0], first.nodes_REFACTOR[0, 1]],
     ])
     node_first2 = np.asfortranarray([
-        [first._nodes[-1, 0], first._nodes[-1, 1]],
+        [first.nodes_REFACTOR[-1, 0], first.nodes_REFACTOR[-1, 1]],
     ])
     node_second1 = np.asfortranarray([
-        [second._nodes[0, 0], second._nodes[0, 1]],
+        [second.nodes_REFACTOR[0, 0], second.nodes_REFACTOR[0, 1]],
     ])
     node_second2 = np.asfortranarray([
-        [second._nodes[-1, 0], second._nodes[-1, 1]],
+        [second.nodes_REFACTOR[-1, 0], second.nodes_REFACTOR[-1, 1]],
     ])
 
     endpoint_check(
@@ -1011,13 +1006,13 @@ def intersect_one_round(candidates, intersections):
                 continue
             else:
                 bbox_int = bbox_line_intersect(
-                    second._nodes, first.start_node, first.end_node)
+                    second.nodes_REFACTOR, first.start_node, first.end_node)
         else:
             if second.__class__ is Linearization:
                 bbox_int = bbox_line_intersect(
-                    first._nodes, second.start_node, second.end_node)
+                    first.nodes_REFACTOR, second.start_node, second.end_node)
             else:
-                bbox_int = bbox_intersect(first._nodes, second._nodes)
+                bbox_int = bbox_intersect(first.nodes_REFACTOR, second.nodes_REFACTOR)
 
         if bbox_int == BoxIntersectionType.DISJOINT:
             continue
@@ -1072,9 +1067,8 @@ def _all_intersections(nodes_first, nodes_second):
             many candidate pairs. This typically indicates tangent
             curves or coincident curves.
     """
-    import bezier.curve  # cyclic import.
-    curve_first = bezier.curve.Curve.from_nodes(nodes_first, _copy=False)
-    curve_second = bezier.curve.Curve.from_nodes(nodes_second, _copy=False)
+    curve_first = SubdividedCurve(nodes_first, nodes_first)
+    curve_second = SubdividedCurve(nodes_second, nodes_second)
     candidates = [
         (
             Linearization.from_shape(curve_first),
@@ -1117,6 +1111,26 @@ class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
     """Bounding boxes do not intersect or touch."""
 
 
+class SubdividedCurve(object):
+
+    def __init__(self, nodes, original, start=0.0, end=1.0):
+        self.nodes_REFACTOR = nodes
+        self.original_REFACTOR = original
+        self.start_REFACTOR = start
+        self.end_REFACTOR = end
+
+    def subdivide(self):
+        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self.nodes_REFACTOR)
+        midpoint = 0.5 * (self.start_REFACTOR + self.end_REFACTOR)
+        left = SubdividedCurve(
+            left_nodes, self.original_REFACTOR,
+            start=self.start_REFACTOR, end=midpoint)
+        right = SubdividedCurve(
+            right_nodes, self.original_REFACTOR,
+            start=midpoint, end=self.end_REFACTOR)
+        return left, right
+
+
 class Linearization(object):
     """A linearization of a curve.
 
@@ -1124,7 +1138,7 @@ class Linearization(object):
     provides a similar interface.
 
     Args:
-        curve (.Curve): A curve that is linearized.
+        curve (SubdividedCurve): A curve that is linearized.
         error (float): The linearization error. Expected to have been
             computed via :func:`linearization_error() <._linearization_error>`.
     """
@@ -1133,15 +1147,15 @@ class Linearization(object):
 
     def __init__(self, curve, error):
         self.curve = curve
-        """Curve: The curve that this linearization approximates."""
+        """SubdividedCurve: The curve that this linearization approximates."""
         self.error = error
         """float: The linearization error for the linearized curve."""
         self.start_node = np.asfortranarray([
-            [curve._nodes[0, 0], curve._nodes[0, 1]],
+            [curve.nodes_REFACTOR[0, 0], curve.nodes_REFACTOR[0, 1]],
         ])
         """numpy.ndarray: The start vector of this linearization."""
         self.end_node = np.asfortranarray([
-            [curve._nodes[-1, 0], curve._nodes[-1, 1]],
+            [curve.nodes_REFACTOR[-1, 0], curve.nodes_REFACTOR[-1, 1]],
         ])
         """numpy.ndarray: The end vector of this linearization."""
 
@@ -1159,12 +1173,12 @@ class Linearization(object):
         """Try to linearize a curve (or an already linearized curve).
 
         Args:
-            shape (Union[~bezier.curve.Curve, \
+            shape (Union[SubdividedCurve, \
             ~bezier._geometric_intersection.Linearization]): A curve or an
                 already linearized curve.
 
         Returns:
-            Union[~bezier.curve.Curve, \
+            Union[SubdividedCurve, \
             ~bezier._geometric_intersection.Linearization]: The
             (potentially linearized) curve.
         """
@@ -1173,7 +1187,7 @@ class Linearization(object):
         if shape.__class__ is cls:
             return shape
         else:
-            error = linearization_error(shape._nodes)
+            error = linearization_error(shape.nodes_REFACTOR)
             if error < _ERROR_VAL:
                 linearized = cls(shape, error)
                 return linearized
