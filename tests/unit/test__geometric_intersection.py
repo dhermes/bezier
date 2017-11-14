@@ -1374,34 +1374,32 @@ class TestSubdividedCurve(utils.NumPyTestCase):
         return klass(*args, **kwargs)
 
     def test_constructor_defaults(self):
-        subdivided_curve = self._make_one(
+        curve = self._make_one(
             unittest.mock.sentinel.nodes,
             unittest.mock.sentinel.original_nodes)
-        self.assertIs(subdivided_curve.nodes, unittest.mock.sentinel.nodes)
+        self.assertIs(curve.nodes, unittest.mock.sentinel.nodes)
         self.assertIs(
-            subdivided_curve.original_nodes,
-            unittest.mock.sentinel.original_nodes)
-        self.assertEqual(subdivided_curve.start, 0.0)
-        self.assertEqual(subdivided_curve.end, 1.0)
+            curve.original_nodes, unittest.mock.sentinel.original_nodes)
+        self.assertEqual(curve.start, 0.0)
+        self.assertEqual(curve.end, 1.0)
 
     def test_constructor_explicit(self):
-        subdivided_curve = self._make_one(
+        curve = self._make_one(
             unittest.mock.sentinel.nodes,
             unittest.mock.sentinel.original_nodes,
             start=3.0, end=5.0)
-        self.assertIs(subdivided_curve.nodes, unittest.mock.sentinel.nodes)
+        self.assertIs(curve.nodes, unittest.mock.sentinel.nodes)
         self.assertIs(
-            subdivided_curve.original_nodes,
-            unittest.mock.sentinel.original_nodes)
-        self.assertEqual(subdivided_curve.start, 3.0)
-        self.assertEqual(subdivided_curve.end, 5.0)
+            curve.original_nodes, unittest.mock.sentinel.original_nodes)
+        self.assertEqual(curve.start, 3.0)
+        self.assertEqual(curve.end, 5.0)
 
     def test___dict___property(self):
-        subdivided_curve = self._make_one(
+        curve = self._make_one(
             unittest.mock.sentinel.nodes,
             unittest.mock.sentinel.original_nodes,
             start=0.25, end=0.75)
-        props_dict = subdivided_curve.__dict__
+        props_dict = curve.__dict__
         expected = {
             'nodes': unittest.mock.sentinel.nodes,
             'original_nodes': unittest.mock.sentinel.original_nodes,
@@ -1409,10 +1407,9 @@ class TestSubdividedCurve(utils.NumPyTestCase):
             'end': 0.75,
         }
         self.assertEqual(props_dict, expected)
-        # Check that modifying ``props_dict`` won't modify
-        # ``subdivided_curve``.
+        # Check that modifying ``props_dict`` won't modify ``curve``.
         props_dict['start'] = -1.0
-        self.assertNotEqual(subdivided_curve.start, props_dict['start'])
+        self.assertNotEqual(curve.start, props_dict['start'])
 
     def test_subdivide(self):
         klass = self._get_target_class()
@@ -1421,8 +1418,8 @@ class TestSubdividedCurve(utils.NumPyTestCase):
             [0.0, 2.0],
             [2.0, 0.0],
         ])
-        subdivided_curve = self._make_one(nodes, nodes)
-        left, right = subdivided_curve.subdivide()
+        curve = self._make_one(nodes, nodes)
+        left, right = curve.subdivide()
 
         self.assertIsInstance(left, klass)
         self.assertIs(left.original_nodes, nodes)
