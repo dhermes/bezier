@@ -41,6 +41,7 @@ module surface_intersection
      real(c_double) :: t = -1.0_dp
      integer(c_int) :: index_first = -1
      integer(c_int) :: index_second = -1
+     integer(c_int) :: interior_curve = -99  ! Hopefully an unused enum value
   end type Intersection
 
   ! For ``locate_point``.
@@ -505,7 +506,7 @@ contains
 
   subroutine classify_tangent_intersection( &
        edges_first, edges_second, intersection_, &
-       tangent_s, tangent_t, enum_)
+       tangent_s, tangent_t)
 
     ! NOTE: This **assumes**, but does not check that
     !       ``intersection_%index_(first|second)`` are valid indices within
@@ -513,9 +514,8 @@ contains
     !       instances have already allocated ``%nodes``.
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
-    type(Intersection), intent(in) :: intersection_
+    type(Intersection), intent(inout) :: intersection_
     real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
-    integer(c_int), intent(out) :: enum_
     ! Variables outside of signature.
     real(c_double) :: dot_prod
     integer(c_int) :: num_nodes
@@ -547,41 +547,48 @@ contains
           ! moving in opposite directions, the tangency isn't part of
           ! the surface intersection.
           if (sign1 == 1.0_dp) then
-             enum_ = IntersectionClassification_OPPOSED
+             intersection_%interior_curve = IntersectionClassification_OPPOSED
           else
              ! NOTE: This is an error state.
-             enum_ = IntersectionClassification_BAD_TANGENT
+             intersection_%interior_curve = ( &
+                  IntersectionClassification_BAD_TANGENT)
           end if
        else
           delta_c = abs(curvature1) - abs(curvature2)
           if (delta_c == 0.0_dp) then
              ! NOTE: This is an error state.
-             enum_ = IntersectionClassification_SAME_CURVATURE
+             intersection_%interior_curve = ( &
+                  IntersectionClassification_SAME_CURVATURE)
           else
              sign2 = sign(1.0_dp, delta_c)
              if (sign1 == sign2) then
-                enum_ = IntersectionClassification_OPPOSED
+                intersection_%interior_curve = ( &
+                     IntersectionClassification_OPPOSED)
              else
                 ! NOTE: This is an error state.
-                enum_ = IntersectionClassification_BAD_TANGENT
+                intersection_%interior_curve = ( &
+                     IntersectionClassification_BAD_TANGENT)
              end if
           end if
        end if
     else
        if (curvature1 > curvature2) then
-          enum_ = IntersectionClassification_TANGENT_FIRST
+          intersection_%interior_curve = ( &
+               IntersectionClassification_TANGENT_FIRST)
        else if (curvature1 < curvature2) then
-          enum_ = IntersectionClassification_TANGENT_SECOND
+          intersection_%interior_curve = ( &
+               IntersectionClassification_TANGENT_SECOND)
        else
           ! NOTE: This is an error state.
-          enum_ = IntersectionClassification_SAME_CURVATURE
+          intersection_%interior_curve = ( &
+               IntersectionClassification_SAME_CURVATURE)
        end if
     end if
 
   end subroutine classify_tangent_intersection
 
   subroutine classify_intersection( &
-       edges_first, edges_second, intersection_, enum_)
+       edges_first, edges_second, intersection_)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This subroutine is not part of the C ABI for this module,
@@ -594,15 +601,15 @@ contains
     !       instances have already allocated ``%nodes``.
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
-    type(Intersection), intent(in) :: intersection_
-    integer(c_int), intent(out) :: enum_
+    type(Intersection), intent(inout) :: intersection_
     ! Variables outside of signature.
     integer(c_int) :: num_nodes
     real(c_double) :: tangent_s(1, 2), tangent_t(1, 2)
     real(c_double) :: cross_prod
 
     if (intersection_%s == 1.0_dp .OR. intersection_%t == 1.0_dp) then
-       enum_ = IntersectionClassification_EDGE_END
+       ! NOTE: This is an error state.
+       intersection_%interior_curve = IntersectionClassification_EDGE_END
        return
     end if
 
@@ -623,7 +630,7 @@ contains
     if (ignored_corner( &
          edges_first, edges_second, intersection_, &
          tangent_s, tangent_t)) then
-       enum_ = IntersectionClassification_IGNORED_CORNER
+       intersection_%interior_curve = IntersectionClassification_IGNORED_CORNER
        return
     end if
 
@@ -632,13 +639,13 @@ contains
     call cross_product( &
          tangent_s, tangent_t, cross_prod)
     if (cross_prod < 0.0_dp) then
-       enum_ = IntersectionClassification_FIRST
+       intersection_%interior_curve = IntersectionClassification_FIRST
     else if (cross_prod > 0.0_dp) then
-       enum_ = IntersectionClassification_SECOND
+       intersection_%interior_curve = IntersectionClassification_SECOND
     else
        call classify_tangent_intersection( &
             edges_first, edges_second, intersection_, &
-            tangent_s, tangent_t, enum_)
+            tangent_s, tangent_t)
     end if
 
   end subroutine classify_intersection
