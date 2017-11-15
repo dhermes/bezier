@@ -2143,8 +2143,9 @@ def tangent_only_intersections(intersections, surface1, surface2):
     Raises:
         ValueError: If there are intersections of more than one type among
             :attr:`~._IntersectionClassification.TANGENT_FIRST`,
-            :attr:`~._IntersectionClassification.TANGENT_SECOND` or
-            :attr:`~._IntersectionClassification.OPPOSED`.
+            :attr:`~._IntersectionClassification.TANGENT_SECOND`,
+            :attr:`~._IntersectionClassification.OPPOSED` or
+            :attr:`~._IntersectionClassification.IGNORED_CORNER`.
         ValueError: If there is a unique classification, but it isn't one
             of the tangent types.
     """
@@ -2154,7 +2155,9 @@ def tangent_only_intersections(intersections, surface1, surface2):
         raise ValueError('Unexpected value, types should all match',
                          all_types)
     point_type = all_types.pop()
-    if point_type in _IGNORED_TYPES:
+    if point_type == IntersectionClassification.OPPOSED:
+        return []
+    elif point_type == IntersectionClassification.IGNORED_CORNER:
         return []
     elif point_type == IntersectionClassification.TANGENT_FIRST:
         return [to_curved_polygon(surface1)]
@@ -2466,8 +2469,4 @@ else:
 _ACCEPTABLE = (
     IntersectionClassification.FIRST,
     IntersectionClassification.SECOND,
-)
-_IGNORED_TYPES = (
-    IntersectionClassification.OPPOSED,
-    IntersectionClassification.IGNORED_CORNER,
 )
