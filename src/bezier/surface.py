@@ -1107,25 +1107,19 @@ class Surface(_base.Base):
         # We need **all** pairs of edges.
         edges1 = self._get_edges()
         edges2 = other._get_edges()  # pylint: disable=protected-access
-        intersections = _surface_intersections(edges1, edges2, strategy)
+        intersections, duplicates = _surface_intersections(
+            edges1, edges2, strategy)
 
         # Classify each intersection.
-        duplicates = []
-        uniques = []
         for intersection in intersections:
-            changed = _surface_helpers.handle_corners(intersection)
-            if changed:
-                duplicates.append(intersection)
-            else:
-                interior = _surface_helpers.classify_intersection(
-                    intersection, edges1, edges2)
-                intersection.interior_curve = interior
-                uniques.append(intersection)
+            interior = _surface_helpers.classify_intersection(
+                intersection, edges1, edges2)
+            intersection.interior_curve = interior
 
         if _verify:
-            _surface_helpers.verify_duplicates(duplicates, uniques)
+            _surface_helpers.verify_duplicates(duplicates, intersections)
         return _surface_helpers.combine_intersections(
-            uniques, self, edges1, other, edges2)
+            intersections, self, edges1, other, edges2)
 
     def elevate(self):
         r"""Return a degree-elevated version of the current surface.
@@ -1239,6 +1233,10 @@ class Surface(_base.Base):
 def _surface_intersections(edges1, edges2, strategy):
     """Find all intersections among edges of two surfaces.
 
+    This treats intersections which have ``s == 1.0`` or ``t == 1.0``
+    as duplicates. The duplicates may be checked by the caller, e.g.
+    by :func:`~bezier._surface_helpers.verify_duplicates`.
+
     Args:
         edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
             of the first surface being intersected.
@@ -1248,7 +1246,11 @@ def _surface_intersections(edges1, edges2, strategy):
             intersection algorithm to use. Defaults to geometric.
 
     Returns:
-        list: List of all :class:`Intersection`s (possibly empty).
+        Tuple[list, list]: Pair of lists (both of which could be empty)
+
+        * The actual "unique" :class:`Intersection`-s
+        * Duplicate :class:`Intersection`-s encountered (these will be
+          corner intersections)
 
     Raises:
         ValueError: If ``strategy`` is not a valid
@@ -1262,12 +1264,20 @@ def _surface_intersections(edges1, edges2, strategy):
         raise ValueError('Unexpected strategy.', strategy)
 
     intersections = []
+    duplicates = []
     for index1, edge1 in enumerate(edges1):
         for index2, edge2 in enumerate(edges2):
             st_vals = all_intersections(edge1._nodes, edge2._nodes)
             for s, t in st_vals:
-                intersection = _intersection_helpers.Intersection(
+                edge_end, intersection_args = _surface_helpers.handle_ends(
                     index1, s, index2, t)
-                intersections.append(intersection)
+                if edge_end:
+                    intersection = _intersection_helpers.Intersection(
+                        *intersection_args)
+                    duplicates.append(intersection)
+                else:
+                    intersection = _intersection_helpers.Intersection(
+                        index1, s, index2, t)
+                    intersections.append(intersection)
 
-    return intersections
+    return intersections, duplicates

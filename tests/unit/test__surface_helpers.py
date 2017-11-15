@@ -1403,40 +1403,37 @@ class Test_ignored_corner(utils.NumPyTestCase):
             unittest.mock.sentinel.tangent_t, (), ())
 
 
-class Test_handle_corners(unittest.TestCase):
+class Test_handle_ends(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersection):
+    def _call_function_under_test(index1, s, index2, t):
         from bezier import _surface_helpers
 
-        return _surface_helpers.handle_corners(intersection)
+        return _surface_helpers.handle_ends(index1, s, index2, t)
 
     def test_neither(self):
-        intersection = make_intersect(0, 0.5, 1, 0.5)
-
-        self.assertFalse(self._call_function_under_test(intersection))
-        self.assertEqual(intersection.s, 0.5)
-        self.assertEqual(intersection.index_first, 0)
-        self.assertEqual(intersection.t, 0.5)
-        self.assertEqual(intersection.index_second, 1)
+        edge_end, intersection_args = self._call_function_under_test(
+            0, 0.5, 1, 0.5)
+        self.assertFalse(edge_end)
+        self.assertEqual(intersection_args, (0, 0.5, 1, 0.5))
 
     def test_s(self):
-        intersection = make_intersect(2, 1.0, 1, 0.25)
-
-        self.assertTrue(self._call_function_under_test(intersection))
-        self.assertEqual(intersection.s, 0.0)
-        self.assertEqual(intersection.index_first, 0)
-        self.assertEqual(intersection.t, 0.25)
-        self.assertEqual(intersection.index_second, 1)
+        edge_end, intersection_args = self._call_function_under_test(
+            2, 1.0, 1, 0.25)
+        self.assertTrue(edge_end)
+        self.assertEqual(intersection_args, (0, 0.0, 1, 0.25))
 
     def test_t(self):
-        intersection = make_intersect(2, 0.75, 0, 1.0)
+        edge_end, intersection_args = self._call_function_under_test(
+            2, 0.75, 0, 1.0)
+        self.assertTrue(edge_end)
+        self.assertEqual(intersection_args, (2, 0.75, 1, 0.0))
 
-        self.assertTrue(self._call_function_under_test(intersection))
-        self.assertEqual(intersection.s, 0.75)
-        self.assertEqual(intersection.index_first, 2)
-        self.assertEqual(intersection.t, 0.0)
-        self.assertEqual(intersection.index_second, 1)
+    def test_both(self):
+        edge_end, intersection_args = self._call_function_under_test(
+            1, 1.0, 1, 1.0)
+        self.assertTrue(edge_end)
+        self.assertEqual(intersection_args, (2, 0.0, 2, 0.0))
 
 
 class Test_same_intersection(unittest.TestCase):

@@ -67,8 +67,7 @@ except ImportError as exc:  # pragma: NO COVER
 # NOTE: The ``__version__`` and ``__author__`` are hard-coded here, rather
 #       than using ``pkg_resources.get_distribution('bezier').version``
 #       and related. This is **entirely** to accomodate builds where
-#       ``bezier`` is imported from source (and not installed), for example
-#       on RTD.
+#       ``bezier`` is imported from source (and not installed).
 __author__ = 'Danny Hermes'
 __version__ = '0.5.1.dev1'
 """str: The current version of :mod:`bezier`."""

@@ -964,9 +964,10 @@ class Test__surface_intersections(utils.NumPyTestCase):
         edges1 = surface1.edges
         edges2 = surface2.edges
         strategy = _intersection_helpers.IntersectionStrategy.GEOMETRIC
-        intersections = self._call_function_under_test(
+        intersections, duplicates = self._call_function_under_test(
             edges1, edges2, strategy)
 
+        self.assertEqual(duplicates, [])
         self.assertEqual(len(intersections), 2)
         expected = np.asfortranarray([[0.5, 0.0]])
         self._check_intersection(
@@ -990,9 +991,10 @@ class Test__surface_intersections(utils.NumPyTestCase):
         surface2 = bezier.Surface(nodes1 + 10.0, 1, _copy=False)
 
         strategy = _intersection_helpers.IntersectionStrategy.ALGEBRAIC
-        intersections = self._call_function_under_test(
+        intersections, duplicates = self._call_function_under_test(
             surface1.edges, surface2.edges, strategy)
         self.assertEqual(intersections, [])
+        self.assertEqual(duplicates, [])
 
     def test_bad_strategy(self):
         strategy = unittest.mock.sentinel.bad_strategy

@@ -1665,8 +1665,8 @@ def classify_intersection(intersection, edges1, edges2):
             intersection, nodes1, tangent1, nodes2, tangent2)
 
 
-def handle_corners(intersection):
-    """Mutates an intersection if it is on a corner.
+def handle_ends(index1, s, index2, t):
+    """Updates intersection parameters if it is on the end of an edge.
 
     .. note::
 
@@ -1684,31 +1684,31 @@ def handle_corners(intersection):
     corners that **begin** an edge are considered, since that
     function is trying to determine which edge to **move forward** on.
 
-    .. note::
-
-       This assumes the first and second curves in ``intersection`` are edges
-       in a surface, so the code (may) rely on ``next_edge`` and / or
-       ``previous_edge`` being valid.
-
     Args:
-        intersection (.Intersection): An intersection to mutate.
+        index1 (int): The index (among 0, 1, 2) of the first edge in the
+            intersection.
+        s (float): The parameter along the first curve of the intersection.
+        index2 (int): The index (among 0, 1, 2) of the second edge in the
+            intersection.
+        t (float): The parameter along the second curve of the intersection.
 
     Returns:
-        bool: Indicating if the object was changed.
-    """
-    changed = False
-    if intersection.s == 1.0:
-        intersection.s = 0.0
-        next_index = (intersection.index_first + 1) % 3
-        intersection.index_first = next_index
-        changed = True
-    if intersection.t == 1.0:
-        intersection.t = 0.0
-        next_index = (intersection.index_second + 1) % 3
-        intersection.index_second = next_index
-        changed = True
+        Tuple[bool, Tuple[int, float, int, float]]: A pair of:
 
-    return changed
+        * flag indicating if the intersection is at the end of an edge
+        * 4-tuple of the "updated" values ``(index1, s, index2, t)``
+    """
+    edge_end = False
+    if s == 1.0:
+        s = 0.0
+        index1 = (index1 + 1) % 3
+        edge_end = True
+    if t == 1.0:
+        t = 0.0
+        index2 = (index2 + 1) % 3
+        edge_end = True
+
+    return edge_end, (index1, s, index2, t)
 
 
 def same_intersection(intersection1, intersection2, wiggle=0.5**40):
