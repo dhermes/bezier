@@ -651,14 +651,17 @@ contains
   end subroutine classify_intersection
 
   subroutine add_st_vals( &
-       num_st_vals, st_vals, index_first, index_second, &
-       intersections, num_intersections)
+       edges_first, edges_second, num_st_vals, st_vals, &
+       index_first, index_second, intersections, num_intersections)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This subroutine is not part of the C ABI for this module,
     !       but it is (for now) public, so that it can be tested.
     ! NOTE: This assumes but does not check that ``num_st_vals > 0``.
+    ! NOTE: This assumes but does not check that each of ``index_first``
+    !       and ``index_second`` is in {1, 2, 3}.
 
+    type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     integer(c_int), intent(in) :: num_st_vals
     real(c_double), intent(in) :: st_vals(2, num_st_vals)
     integer(c_int), intent(in) :: index_first, index_second
@@ -695,6 +698,8 @@ contains
        intersections(intersection_index)%t = st_vals(2, i)
        intersections(intersection_index)%index_first = index_first
        intersections(intersection_index)%index_second = index_second
+       call classify_intersection( &
+            edges_first, edges_second, intersections(intersection_index))
     end do
 
     ! Actually set ``num_intersections`` based on the number of **accepted**
@@ -751,8 +756,8 @@ contains
           if (status == ALL_INTERSECTIONS_SUCCESS) then
              if (num_st_vals > 0) then
                 call add_st_vals( &
-                     num_st_vals, st_vals, index1, index2, &
-                     intersections, num_intersections)
+                     edges_first, edges_second, num_st_vals, st_vals, &
+                     index1, index2, intersections, num_intersections)
              end if
           else
              return

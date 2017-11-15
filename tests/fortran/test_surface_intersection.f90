@@ -570,61 +570,81 @@ contains
     real(c_double), allocatable :: st_vals(:, :)
     type(Intersection), allocatable :: intersections(:)
     integer(c_int) :: num_intersections
+    type(CurveData) :: edges_first(3), edges_second(3)
+    integer(c_int) :: first, second
 
     case_id = 1
     name = "add_st_vals"
+
+    first = IntersectionClassification_FIRST
+    second = IntersectionClassification_SECOND
 
     ! CASE 1: ``intersections`` must be allocated.
     num_intersections = 0
     allocate(st_vals(2, 1))
     st_vals(:, 1) = [0.25_dp, 0.75_dp]
     case_success = .NOT. allocated(intersections)
+    ! Set the relevant edges as lines.
+    allocate(edges_first(2)%nodes(2, 2))
+    allocate(edges_second(3)%nodes(2, 2))
+    edges_first(2)%nodes(1, :) = [0.0_dp, 0.0_dp]
+    edges_first(2)%nodes(2, :) = [1.0_dp, 1.0_dp]
+    edges_second(3)%nodes(1, :) = [1.0_dp, -0.5_dp]
+    edges_second(3)%nodes(2, :) = [0.0_dp, 0.5_dp]
     call add_st_vals( &
-         1, st_vals, 2, 3, intersections, num_intersections)
+         edges_first, edges_second, 1, st_vals, &
+         2, 3, intersections, num_intersections)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 1 .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 0.25_dp .AND. &
-         intersections(1)%t == 0.75_dp .AND. &
-         intersections(1)%index_first == 2 .AND. &
-         intersections(1)%index_second == 3)
+         intersection_check(intersections(1), 0.25_dp, 0.75_dp, 2, 3, second))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: ``intersections`` must be re-allocated.
     st_vals(:, 1) = [0.0_dp, 0.5_dp]
+    ! Set the relevant edges as lines.
+    allocate(edges_first(3)%nodes(2, 2))
+    allocate(edges_second(1)%nodes(2, 2))
+    edges_first(3)%nodes(1, :) = [0.0_dp, 0.0_dp]
+    edges_first(3)%nodes(2, :) = [1.0_dp, 1.0_dp]
+    edges_second(1)%nodes(1, :) = [1.0_dp, -1.0_dp]
+    edges_second(1)%nodes(2, :) = [-1.0_dp, 1.0_dp]
     case_success = ( &
          allocated(intersections) .AND. &
          num_intersections == 1)
     call add_st_vals( &
-         1, st_vals, 3, 1, intersections, num_intersections)
+         edges_first, edges_second, 1, st_vals, &
+         3, 1, intersections, num_intersections)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 2 .AND. &
          num_intersections == 2 .AND. &
-         intersections(2)%s == 0.0_dp .AND. &
-         intersections(2)%t == 0.5_dp .AND. &
-         intersections(2)%index_first == 3 .AND. &
-         intersections(2)%index_second == 1)
+         intersection_check(intersections(2), 0.0_dp, 0.5_dp, 3, 1, second))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: ``intersections`` is large enough.
     num_intersections = 0
     st_vals(:, 1) = [0.875_dp, 0.125_dp]
+    ! Set the relevant edges as lines.
+    allocate(edges_second(2)%nodes(2, 2))
+    edges_first(2)%nodes(1, :) = [0.0_dp, 0.0_dp]
+    edges_first(2)%nodes(2, :) = [1.0_dp, 1.0_dp]
+    edges_second(2)%nodes(1, :) = [0.75_dp, 0.625_dp]
+    edges_second(2)%nodes(2, :) = [1.75_dp, 2.625_dp]
     case_success = allocated(intersections)
     call add_st_vals( &
-         1, st_vals, 2, 2, intersections, num_intersections)
+         edges_first, edges_second, 1, st_vals, &
+         2, 2, intersections, num_intersections)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 2 .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 0.875_dp .AND. &
-         intersections(1)%t == 0.125_dp .AND. &
-         intersections(1)%index_first == 2 .AND. &
-         intersections(1)%index_second == 2)
+         intersection_check( &
+         intersections(1), 0.875_dp, 0.125_dp, 2, 2, second))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: ``intersections`` has edge ends, gets "over-allocated".
@@ -634,16 +654,20 @@ contains
     num_intersections = 0
     st_vals(:, 1) = [1.0_dp, 0.125_dp]
     st_vals(:, 2) = [0.5_dp, 0.5_dp]
+    ! Set the relevant edges as lines.
+    allocate(edges_first(1)%nodes(2, 2))
+    edges_first(1)%nodes(1, :) = [0.0_dp, 0.0_dp]
+    edges_first(1)%nodes(2, :) = [1.0_dp, 1.0_dp]
+    edges_second(1)%nodes(1, :) = [0.0_dp, 1.0_dp]
+    edges_second(1)%nodes(2, :) = [1.0_dp, 0.0_dp]
     call add_st_vals( &
-         2, st_vals, 0, 0, intersections, num_intersections)
+         edges_first, edges_second, 2, st_vals, &
+         1, 1, intersections, num_intersections)
     case_success = ( &
          allocated(intersections) .AND. &
          size(intersections) == 2 .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 0.5_dp .AND. &
-         intersections(1)%t == 0.5_dp .AND. &
-         intersections(1)%index_first == 0 .AND. &
-         intersections(1)%index_second == 0)
+         intersection_check(intersections(1), 0.5_dp, 0.5_dp, 1, 1, first))
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_st_vals
@@ -659,9 +683,13 @@ contains
     type(Intersection), allocatable :: intersections(:)
     integer(c_int) :: num_intersections
     integer(c_int) :: status
+    integer(c_int) :: first, second
 
     case_id = 1
     name = "surfaces_intersect"
+
+    first = IntersectionClassification_FIRST
+    second = IntersectionClassification_SECOND
 
     ! CASE 1: Overlapping triangles (i.e. degree 1 surfaces).
     linear1(1, :) = 0
@@ -677,12 +705,18 @@ contains
          allocated(intersections) .AND. &
          size(intersections) == 6 .AND. &
          num_intersections == 6 .AND. &
-         intersection_check(intersections(1), 0.75_dp, 0.5_dp, 1, 2) .AND. &
-         intersection_check(intersections(2), 0.25_dp, 0.5_dp, 1, 3) .AND. &
-         intersection_check(intersections(3), 0.5_dp, 0.75_dp, 2, 1) .AND. &
-         intersection_check(intersections(4), 0.25_dp, 0.25_dp, 2, 2) .AND. &
-         intersection_check(intersections(5), 0.5_dp, 0.25_dp, 3, 1) .AND. &
-         intersection_check(intersections(6), 0.75_dp, 0.75_dp, 3, 3) .AND. &
+         intersection_check( &
+         intersections(1), 0.75_dp, 0.5_dp, 1, 2, first) .AND. &
+         intersection_check( &
+         intersections(2), 0.25_dp, 0.5_dp, 1, 3, second) .AND. &
+         intersection_check( &
+         intersections(3), 0.5_dp, 0.75_dp, 2, 1, first) .AND. &
+         intersection_check( &
+         intersections(4), 0.25_dp, 0.25_dp, 2, 2, second) .AND. &
+         intersection_check( &
+         intersections(5), 0.5_dp, 0.25_dp, 3, 1, second) .AND. &
+         intersection_check( &
+         intersections(6), 0.75_dp, 0.75_dp, 3, 3, first) .AND. &
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -710,18 +744,21 @@ contains
   end subroutine test_surfaces_intersect
 
   function intersection_check( &
-       intersection_, s, t, index_first, index_second) result(same)
+       intersection_, s, t, index_first, index_second, &
+       interior_curve) result(same)
 
     type(intersection), intent(in) :: intersection_
     real(c_double), intent(in) :: s, t
     integer(c_int), intent(in) :: index_first, index_second
+    integer(c_int), intent(in) :: interior_curve
     logical(c_bool) :: same
 
     same = ( &
          intersection_%s == s .AND. &
          intersection_%t == t .AND. &
          intersection_%index_first == index_first .AND. &
-         intersection_%index_second == index_second)
+         intersection_%index_second == index_second .AND. &
+         intersection_%interior_curve == interior_curve)
 
   end function intersection_check
 
