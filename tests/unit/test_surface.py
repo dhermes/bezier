@@ -929,7 +929,7 @@ class Test__surface_intersections(utils.NumPyTestCase):
     # pylint: disable=too-many-arguments
     def _check_intersection(self, intersection, expected,
                             curve1, curve2, s_val, t_val,
-                            index_first, index_second):
+                            index_first, index_second, interior_curve):
         from bezier import _intersection_helpers
 
         self.assertIsInstance(
@@ -942,6 +942,7 @@ class Test__surface_intersections(utils.NumPyTestCase):
         self.assertEqual(intersection.s, s_val)
         self.assertEqual(intersection.index_second, index_second)
         self.assertEqual(intersection.t, t_val)
+        self.assertEqual(intersection.interior_curve, interior_curve)
     # pylint: enable=too-many-arguments
 
     def test_geometric(self):
@@ -972,11 +973,11 @@ class Test__surface_intersections(utils.NumPyTestCase):
         expected = np.asfortranarray([[0.5, 0.0]])
         self._check_intersection(
             intersections[0], expected,
-            edges1[0], edges2[2], 0.5, 0.75, 0, 2)
+            edges1[0], edges2[2], 0.5, 0.75, 0, 2, get_enum('FIRST'))
         expected = np.asfortranarray([[0.5, 0.5]])
         self._check_intersection(
             intersections[1], expected,
-            edges1[1], edges2[2], 0.5, 0.25, 1, 2)
+            edges1[1], edges2[2], 0.5, 0.25, 1, 2, get_enum('SECOND'))
 
     def test_algebraic(self):
         import bezier
@@ -1003,3 +1004,9 @@ class Test__surface_intersections(utils.NumPyTestCase):
 
         exc_args = exc_info.exception.args
         self.assertEqual(exc_args, ('Unexpected strategy.', strategy))
+
+
+def get_enum(str_val):
+    from bezier import _surface_helpers
+
+    return _surface_helpers.IntersectionClassification[str_val]

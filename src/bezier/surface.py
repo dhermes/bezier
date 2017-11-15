@@ -1110,12 +1110,6 @@ class Surface(_base.Base):
         intersections, duplicates = _surface_intersections(
             edges1, edges2, strategy)
 
-        # Classify each intersection.
-        for intersection in intersections:
-            interior = _surface_helpers.classify_intersection(
-                intersection, edges1, edges2)
-            intersection.interior_curve = interior
-
         if _verify:
             _surface_helpers.verify_duplicates(duplicates, intersections)
         return _surface_helpers.combine_intersections(
@@ -1278,6 +1272,10 @@ def _surface_intersections(edges1, edges2, strategy):
                 else:
                     intersection = _intersection_helpers.Intersection(
                         index1, s, index2, t)
+                    # Classify the intersection.
+                    interior = _surface_helpers.classify_intersection(
+                        intersection, edges1, edges2)
+                    intersection.interior_curve = interior
                     intersections.append(intersection)
 
     return intersections, duplicates
