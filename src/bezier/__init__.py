@@ -28,34 +28,39 @@ import pkg_resources
 
 # NOTE: ``__config__`` **must** be the first import because it (may)
 #       modify the search path used to locate shared libraries.
-from bezier import __config__  # noqa: F401
+from bezier import __config__
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface
 try:
     import bezier._helpers_speedup  # noqa: F401
     _HAS_HELPERS_SPEEDUP = True
-except ImportError:  # pragma: NO COVER
+except ImportError as exc:  # pragma: NO COVER
+    __config__.handle_import_error(exc, '_helpers_speedup')
     _HAS_HELPERS_SPEEDUP = False
 try:
     import bezier._curve_speedup  # noqa: F401
     _HAS_CURVE_SPEEDUP = True
-except ImportError:  # pragma: NO COVER
+except ImportError as exc:  # pragma: NO COVER
+    __config__.handle_import_error(exc, '_curve_speedup')
     _HAS_CURVE_SPEEDUP = False
 try:
     import bezier._surface_speedup  # noqa: F401
     _HAS_SURFACE_SPEEDUP = True
-except ImportError:  # pragma: NO COVER
+except ImportError as exc:  # pragma: NO COVER
+    __config__.handle_import_error(exc, '_surface_speedup')
     _HAS_SURFACE_SPEEDUP = False
 try:
     import bezier._curve_intersection_speedup  # noqa: F401
     _HAS_CURVE_INTERSECTION_SPEEDUP = True
-except ImportError:  # pragma: NO COVER
+except ImportError as exc:  # pragma: NO COVER
+    __config__.handle_import_error(exc, '_curve_intersection_speedup')
     _HAS_CURVE_INTERSECTION_SPEEDUP = False
 try:
     import bezier._surface_intersection_speedup  # noqa: F401
     _HAS_SURFACE_INTERSECTION_SPEEDUP = True
-except ImportError:  # pragma: NO COVER
+except ImportError as exc:  # pragma: NO COVER
+    __config__.handle_import_error(exc, '_surface_intersection_speedup')
     _HAS_SURFACE_INTERSECTION_SPEEDUP = False
 
 

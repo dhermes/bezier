@@ -21,6 +21,14 @@ import os
 import pkg_resources
 
 
+# Error messages for ``handle_import_error``.
+TEMPLATES = (
+    'No module named \'bezier.{}\'',  # 3.5, 3.6, pypy3
+    'No module named {}',  # 2.7
+    'No module named bezier.{}',  # pypy2
+)
+
+
 def modify_path():
     """Modify the module search path."""
     # Only modify path on Windows.
@@ -33,6 +41,33 @@ def modify_path():
             os.environ['PATH'] += os.pathsep + extra_dll_dir
     except ImportError:
         pass
+
+
+def handle_import_error(caught_exc, name):
+    """Allow or re-raise an import error.
+
+    This is to distinguish between expected and unexpected import errors.
+    If the module is not found, it simply means the Cython / Fortran speedups
+    were not built with the package. If the error message is different, e.g.
+    ``... undefined symbol: __curve_intersection_MOD_all_intersections``, then
+    the import error **should** be raised.
+
+    Args:
+        caught_exc (ImportError): An exception caught when trying to import
+            a Cython module.
+        name (str): The name of the module. For example, for the module
+            ``bezier._curve_speedup``, the name is ``'_curve_speedup'``.
+
+    Raises:
+        ImportError: If the error message is different than the basic
+            "missing module" error message.
+    """
+    for template in TEMPLATES:
+        expected_msg = template.format(name)
+        if caught_exc.args == (expected_msg,):
+            return
+
+    raise caught_exc
 
 
 modify_path()
