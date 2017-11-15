@@ -1263,19 +1263,47 @@ def _surface_intersections(edges1, edges2, strategy):
         for index2, edge2 in enumerate(edges2):
             st_vals = all_intersections(edge1._nodes, edge2._nodes)
             for s, t in st_vals:
-                edge_end, intersection_args = _surface_helpers.handle_ends(
-                    index1, s, index2, t)
-                if edge_end:
-                    intersection = _intersection_helpers.Intersection(
-                        *intersection_args)
-                    duplicates.append(intersection)
-                else:
-                    intersection = _intersection_helpers.Intersection(
-                        index1, s, index2, t)
-                    # Classify the intersection.
-                    interior = _surface_helpers.classify_intersection(
-                        intersection, edges1, edges2)
-                    intersection.interior_curve = interior
-                    intersections.append(intersection)
+                _add_intersection(
+                    index1, s, index2, t, edges1, edges2,
+                    duplicates, intersections)
 
     return intersections, duplicates
+
+
+def _add_intersection(  # pylint: disable=too-many-arguments
+        index1, s, index2, t, edges1, edges2, duplicates, intersections):
+    """Create an :class:`Intersection` and append.
+
+    The intersection will be classified as either a duplicate or a valid
+    intersection and appended to one of ``duplicates`` or ``intersections``
+    depending on that classification.
+
+    Args:
+        index1 (int): The index (among 0, 1, 2) of the first edge in the
+            intersection.
+        s (float): The parameter along the first curve of the intersection.
+        index2 (int): The index (among 0, 1, 2) of the second edge in the
+            intersection.
+        t (float): The parameter along the second curve of the intersection.
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
+        duplicates (List[.Intersection]): List of duplicate intersections.
+        intersections (List[.Intersection]): List of "accepted" (i.e.
+            non-duplicate) intersections.
+    """
+    edge_end, intersection_args = _surface_helpers.handle_ends(
+        index1, s, index2, t)
+    if edge_end:
+        intersection = _intersection_helpers.Intersection(
+            *intersection_args)
+        duplicates.append(intersection)
+    else:
+        intersection = _intersection_helpers.Intersection(
+            index1, s, index2, t)
+        # Classify the intersection.
+        interior = _surface_helpers.classify_intersection(
+            intersection, edges1, edges2)
+        intersection.interior_curve = interior
+        intersections.append(intersection)
