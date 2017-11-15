@@ -1619,7 +1619,7 @@ class Test_reset_workspace(unittest.TestCase):
 
 
 @utils.needs_curve_intersection_speedup
-class test_workspace_size(unittest.TestCase):
+class Test_workspace_size(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test():
