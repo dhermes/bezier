@@ -174,11 +174,9 @@ def docs(session):
 
     # Install all dependencies.
     session.install(*DOCS_DEPS)
-    # NOTE: We **don't** install this package, since RTD doesn't either,
-    #       so we modify the ``PYTHONPATH`` so that ``bezier`` can still
-    #       be imported.
-    src_dir = get_path('src')
-    env = {'PYTHONPATH': src_dir}
+    # Install this package.
+    env = {'BEZIER_NO_EXTENSIONS': 'True'}
+    session.run('pip', 'install', '.', env=env)
 
     # Run the script for building docs.
     command = get_path('scripts', 'build_docs.sh')

@@ -29,24 +29,12 @@ import sys
 
 import sphinx_rtd_theme
 
-try:
-    import bezier
-except ImportError:
-    bezier = None
+import bezier  # ``bezier`` must be installed to build the docs.
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-_docs_dir = os.path.dirname(__file__)
-sys.path.insert(
-    0, os.path.abspath(_docs_dir))
-if bezier is None:
-    # In some environments, like RTD, we import from source.
-    sys.path.insert(
-        0, os.path.abspath(os.path.join(_docs_dir, '..', 'src')))
-    import bezier
-del _docs_dir
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # -- General configuration ------------------------------------------------
 
@@ -88,14 +76,8 @@ master_doc = 'index'
 # General information about the project.
 project = u'bezier'
 copyright = u'2016, Danny Hermes'
-try:
-    distrib = pkg_resources.get_distribution(project)
-    metadata = distrib.get_metadata(distrib.PKG_INFO)
-    author = email.message_from_string(metadata).get('Author')
-    version = distrib.version
-except pkg_resources.DistributionNotFound:
-    author = bezier.__author__
-    version = bezier.__version__
+author = bezier.__author__
+version = bezier.__version__
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
