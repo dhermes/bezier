@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import threading
 import unittest
 import unittest.mock
 
@@ -1566,6 +1567,74 @@ class TestLinearization(utils.NumPyTestCase):
         self.assertEqual(new_shape.error, error)
 
 
+@utils.needs_curve_intersection_speedup
+class Test_reset_workspace(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(workspace_size):
+        from bezier import _curve_intersection_speedup
+
+        return _curve_intersection_speedup.reset_workspace(workspace_size)
+
+    def test_it(self):
+        from bezier import _curve_intersection_speedup
+
+        size = 5
+        return_value = self._call_function_under_test(size)
+        self.assertIsNone(return_value)
+        self.assertEqual(_curve_intersection_speedup.workspace_size(), size)
+
+    @unittest.expectedFailure
+    def test_threadsafe(self):
+        from bezier import _curve_intersection_speedup
+
+        size_main = 3
+        self._call_function_under_test(size_main)
+
+        worker = WorkspaceThreadedAccess()
+        self.assertIsNone(worker.size1)
+        self.assertIsNone(worker.size2)
+
+        size1 = 7
+        size2 = 8
+        thread1 = threading.Thread(target=worker.task1, args=(size1,))
+        thread2 = threading.Thread(target=worker.task2, args=(size2,))
+        thread1.start()
+        thread2.start()
+        thread1.join()
+        thread2.join()
+
+        # This check demonstrates the **broken-ness** of the implementation.
+        # The sizes for each thread should be the sizes actually **set** in
+        # the given thread and the workspace in the main thread should be
+        # unchanged (i.e. should have ``size_main``). What we'll actually
+        # observe is ``(size2, size1, size2)``.
+        expected = (size1, size2, size_main)
+        actual = (
+            worker.size1,
+            worker.size2,
+            _curve_intersection_speedup.workspace_size(),
+        )
+        self.assertEqual(actual, expected)
+
+
+@utils.needs_curve_intersection_speedup
+class test_workspace_size(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test():
+        from bezier import _curve_intersection_speedup
+
+        return _curve_intersection_speedup.workspace_size()
+
+    def test_it(self):
+        from bezier import _curve_intersection_speedup
+
+        size = 5
+        _curve_intersection_speedup.reset_workspace(size)
+        self.assertEqual(self._call_function_under_test(), size)
+
+
 def subdivided_curve(nodes):
     from bezier import _geometric_intersection
 
@@ -1576,3 +1645,50 @@ def make_linearization(curve, error=np.nan):
     from bezier import _geometric_intersection
 
     return _geometric_intersection.Linearization(curve, error)
+
+
+class WorkspaceThreadedAccess(object):
+
+    def __init__(self):
+        self.barrier1 = threading.Event()
+        self.barrier2 = threading.Event()
+        self.barrier3 = threading.Event()
+        self.size1 = None
+        self.size2 = None
+
+    def event1(self, size):
+        from bezier import _curve_intersection_speedup
+
+        # NOTE: There is no need to ``wait`` since this is the first event.
+        _curve_intersection_speedup.reset_workspace(size)
+        self.barrier1.set()
+
+    def event2(self):
+        from bezier import _curve_intersection_speedup
+
+        self.barrier1.wait()
+        result = _curve_intersection_speedup.workspace_size()
+        self.barrier2.set()
+        return result
+
+    def event3(self, size):
+        from bezier import _curve_intersection_speedup
+
+        self.barrier2.wait()
+        _curve_intersection_speedup.reset_workspace(size)
+        self.barrier3.set()
+
+    def event4(self):
+        from bezier import _curve_intersection_speedup
+
+        self.barrier3.wait()
+        # NOTE: There is no barrier to ``set`` since this is the last event.
+        return _curve_intersection_speedup.workspace_size()
+
+    def task1(self, size):
+        self.event1(size)
+        self.size1 = self.event4()
+
+    def task2(self, size):
+        self.size2 = self.event2()
+        self.event3(size)
