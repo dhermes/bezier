@@ -661,7 +661,9 @@ contains
     integer(c_int) :: curr_size, i, intersection_index
     type(Intersection), allocatable :: intersections_swap(:)
 
-    intersection_index = num_intersections + 1
+    intersection_index = num_intersections
+    ! NOTE: Intersections at the end of an edge will be skipped, so this
+    !       may over-estimate the number of intersections.
     num_intersections = num_intersections + num_st_vals
     if (allocated(intersections)) then
        curr_size = size(intersections)
@@ -675,13 +677,22 @@ contains
     end if
 
     do i = 1, num_st_vals
+       if (st_vals(1, i) == 1.0_dp .OR. st_vals(2, i) == 1.0_dp) then
+          ! If the intersection is at the end of an edge, ignore it.
+          ! This intersection **could** be saved to verify that it matches an
+          ! equivalent intersection from the beginning of the previous edge.
+          cycle
+       end if
+       intersection_index = intersection_index + 1
        intersections(intersection_index)%s = st_vals(1, i)
        intersections(intersection_index)%t = st_vals(2, i)
        intersections(intersection_index)%index_first = index_first
        intersections(intersection_index)%index_second = index_second
-       ! Update index for next loop.
-       intersection_index = intersection_index + 1
     end do
+
+    ! Actually set ``num_intersections`` based on the number of **accepted**
+    ! ``s-t`` pairs.
+    num_intersections = intersection_index
 
   end subroutine add_st_vals
 

@@ -570,6 +570,7 @@ contains
     call add_st_vals( &
          1, st_vals, 3, 1, intersections, num_intersections)
     case_success = ( &
+         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 2 .AND. &
          num_intersections == 2 .AND. &
@@ -581,18 +582,38 @@ contains
 
     ! CASE 3: ``intersections`` is large enough.
     num_intersections = 0
-    st_vals(:, 1) = [1.0_dp, 0.125_dp]
+    st_vals(:, 1) = [0.875_dp, 0.125_dp]
     case_success = allocated(intersections)
     call add_st_vals( &
          1, st_vals, 2, 2, intersections, num_intersections)
     case_success = ( &
+         case_success .AND. &
          allocated(intersections) .AND. &
          size(intersections) == 2 .AND. &
          num_intersections == 1 .AND. &
-         intersections(1)%s == 1.0_dp .AND. &
+         intersections(1)%s == 0.875_dp .AND. &
          intersections(1)%t == 0.125_dp .AND. &
          intersections(1)%index_first == 2 .AND. &
          intersections(1)%index_second == 2)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: ``intersections`` has edge ends, gets "over-allocated".
+    deallocate(intersections)
+    deallocate(st_vals)
+    allocate(st_vals(2, 2))
+    num_intersections = 0
+    st_vals(:, 1) = [1.0_dp, 0.125_dp]
+    st_vals(:, 2) = [0.5_dp, 0.5_dp]
+    call add_st_vals( &
+         2, st_vals, 0, 0, intersections, num_intersections)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         num_intersections == 1 .AND. &
+         intersections(1)%s == 0.5_dp .AND. &
+         intersections(1)%t == 0.5_dp .AND. &
+         intersections(1)%index_first == 0 .AND. &
+         intersections(1)%index_second == 0)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_st_vals
