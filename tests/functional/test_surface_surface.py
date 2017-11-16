@@ -166,13 +166,7 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
     for intersection, intersected in six.moves.zip(
             intersections, all_intersected):
         if isinstance(intersection, bezier.CurvedPolygon):
-            if intersected.parent.id_ in (18, 19, 30):
-                # NOTE: This branch is a **temporary** hack. Once resolved,
-                #       the properties (such as ``edge_nodes``) can be removed
-                #       from ``SurfaceIntersectionInfo``.
-                assert isinstance(intersected, utils.SurfaceIntersectionInfo)
-            else:
-                assert isinstance(intersected, utils.CurvedPolygonInfo)
+            assert isinstance(intersected, utils.CurvedPolygonInfo)
             start_vals = intersected.start_params
             end_vals = intersected.end_params
             nodes = intersected.nodes

@@ -643,92 +643,10 @@ class SurfaceIntersectionInfo(object):
             intersection is contained in the other.
     """
 
-    _START_PARAMS = np.zeros((3,), order='F')
-    _END_PARAMS = np.ones((3,), order='F')
-
     def __init__(self, first):
         self.first = first
         # Will be set later by the `SurfaceIntersectionsInfo` constructor.
         self.parent = None
-
-    @property
-    def start_params(self):
-        """Get the start parameters for the "edge curves".
-
-        Will always be ``[0, 0, 0]``.
-
-        Returns:
-            numpy.ndarray: The start parameters for the curve edges.
-
-        Raises:
-            AttributeError: If the parent is not set.
-        """
-        if self.parent is None:
-            raise AttributeError('Parent is not yet set.')
-        else:
-            return self._START_PARAMS
-
-    @property
-    def end_params(self):
-        """Get the end parameters for the "edge curves".
-
-        Will always be ``[1, 1, 1]``.
-
-        Returns:
-            numpy.ndarray: The end parameters for the curve edges.
-
-        Raises:
-            AttributeError: If the parent is not set.
-        """
-        if self.parent is None:
-            raise AttributeError('Parent is not yet set.')
-        else:
-            return self._END_PARAMS
-
-    @property
-    def nodes(self):
-        """Get the corner nodes for the surface.
-
-        Returns:
-            numpy.ndarray: The corner nodes.
-        """
-        if self.first:
-            info = self.parent.surface1_info
-        else:
-            info = self.parent.surface2_info
-
-        degree = info.surface.degree
-        control_points = info.control_points
-        return control_points[(0, degree, -1), :]
-
-    @property
-    def edge_pairs(self):
-        """Get the edge pairs for the surface (as an intersection).
-
-        Will always be ``[[i, 0], [i, 1], [i, 2]]`` where ``i``
-        is determined by the value of ``_first``.
-
-        Returns:
-            List[List[int]]: The edge pairs.
-
-        Raises:
-            AttributeError: If the parent is not set.
-        """
-        if self.parent is None:
-            raise AttributeError('Parent is not yet set.')
-
-        if self.first:
-            return [
-                [0, 0],
-                [0, 1],
-                [0, 2],
-            ]
-        else:
-            return [
-                [1, 0],
-                [1, 1],
-                [1, 2],
-            ]
 
 
 # pylint: disable=too-few-public-methods

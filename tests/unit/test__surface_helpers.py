@@ -1761,24 +1761,23 @@ class Test_get_next(unittest.TestCase):
 class Test_ends_to_curve(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(start_node, end_node, edges1, edges2):
+    def _call_function_under_test(start_node, end_node):
         from bezier import _surface_helpers
 
-        return _surface_helpers.ends_to_curve(
-            start_node, end_node, edges1, edges2)
+        return _surface_helpers.ends_to_curve(start_node, end_node)
 
     def test_bad_classification(self):
         start_node = make_intersect(0, 0.5, 0, 0.5)
         end_node = make_intersect(0, 0.75, 0, 0.75)
         with self.assertRaises(ValueError):
-            self._call_function_under_test(start_node, end_node, (), ())
+            self._call_function_under_test(start_node, end_node)
 
     def _on_different_curves(self, interior_curve):
         start_node = make_intersect(
             0, 0.5, 2, 0.5, interior_curve=interior_curve)
         end_node = make_intersect(1, 0.5, 1, 0.5)
         with self.assertRaises(ValueError):
-            self._call_function_under_test(start_node, end_node, (), ())
+            self._call_function_under_test(start_node, end_node)
 
     def test_first_on_different_curves(self):
         self._on_different_curves(get_enum('FIRST'))
@@ -1787,53 +1786,18 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         self._on_different_curves(get_enum('SECOND'))
 
     def test_first(self):
-        import bezier
-
-        first = bezier.Curve.from_nodes(np.asfortranarray([
-            [0.0, 1.0],
-            [1.0, 3.0],
-        ]))
         start_node = make_intersect(
             0, 0.5, None, None, interior_curve=get_enum('FIRST'))
         end_node = make_intersect(0, 0.75, None, None)
-        edges1 = (first, None, None)
-        edges2 = ()
-
-        result = self._call_function_under_test(
-            start_node, end_node, edges1, edges2)
-        self.assertIsInstance(result, bezier.Curve)
-        expected = np.asfortranarray([
-            [0.5, 2.0],
-            [0.75, 2.5],
-        ])
-        self.assertEqual(result._nodes, expected)
-        self.assertEqual(result.start, 0.5)
-        self.assertEqual(result.end, 0.75)
+        result = self._call_function_under_test(start_node, end_node)
+        self.assertEqual(result, (True, 0, 0.5, 0.75))
 
     def test_second(self):
-        import bezier
-
-        nodes = np.asfortranarray([
-            [4.0, -1.0],
-            [2.0, 1.0],
-        ])
-        second = bezier.Curve(nodes, 1)
         start_node = make_intersect(
             None, None, 2, 0.125, interior_curve=get_enum('SECOND'))
         end_node = make_intersect(None, None, 2, 0.25)
-        edges1 = ()
-        edges2 = (None, None, second)
-
-        result = self._call_function_under_test(
-            start_node, end_node, edges1, edges2)
-        self.assertIsInstance(result, bezier.Curve)
-        expected = np.asfortranarray([
-            [3.75, -0.75],
-            [3.5, -0.5],
-        ])
-        self.assertEqual(result._nodes, expected)
-        self.assertEqual(result.start, 0.125)
-        self.assertEqual(result.end, 0.25)
+        result = self._call_function_under_test(start_node, end_node)
+        self.assertEqual(result, (False, 2, 0.125, 0.25))
 
 
 class Test_no_intersections(unittest.TestCase):
@@ -1925,14 +1889,105 @@ class Test_tangent_only_intersections(unittest.TestCase):
         self.assertEqual(result, [unittest.mock.sentinel.surface2])
 
 
+class Test_make_intersection(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(
+            edge_info, surface1, edges1, surface2, edges2):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.make_intersection(
+            edge_info, surface1, edges1, surface2, edges2)
+
+    def test_surface1(self):
+        from bezier import _surface_helpers
+
+        edge_info = _surface_helpers.FIRST_SURFACE_INFO
+        result = self._call_function_under_test(
+            edge_info, unittest.mock.sentinel.surface1, (), None, ())
+        self.assertIs(result, unittest.mock.sentinel.surface1)
+
+    def test_surface2(self):
+        from bezier import _surface_helpers
+
+        edge_info = _surface_helpers.SECOND_SURFACE_INFO
+        result = self._call_function_under_test(
+            edge_info, None, (), unittest.mock.sentinel.surface2, ())
+        self.assertIs(result, unittest.mock.sentinel.surface2)
+
+    def test_curved_polygon(self):
+        import bezier
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface1 = bezier.Surface(nodes1, degree=1, _copy=False)
+        edges1 = surface1.edges
+        nodes2 = np.asfortranarray([
+            [0.25, 0.25],
+            [-0.75, 0.25],
+            [0.25, -0.75],
+        ])
+        surface2 = bezier.Surface(nodes2, degree=1, _copy=False)
+        edges2 = surface2.edges
+
+        edge_info = (
+            (True, 0, 0.0, 0.25),
+            (False, 2, 0.75, 1.0),
+            (False, 0, 0.0, 0.25),
+            (True, 2, 0.75, 1.0),
+        )
+        result = self._call_function_under_test(
+            edge_info, surface1, edges1, surface2, edges2)
+        self.assertIsInstance(result, bezier.CurvedPolygon)
+        self.assertEqual(result.num_sides, 4)
+        edge0, edge1, edge2, edge3 = result._edges
+
+        # First edge.
+        self.assertEqual(edge0.start, edge_info[0][2])
+        self.assertEqual(edge0.end, edge_info[0][3])
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [0.25, 0.0],
+        ])
+        self.assertEqual(edge0.nodes, expected)
+        # Second edge.
+        self.assertEqual(edge1.start, edge_info[1][2])
+        self.assertEqual(edge1.end, edge_info[1][3])
+        expected = np.asfortranarray([
+            [0.25, 0.0],
+            [0.25, 0.25],
+        ])
+        self.assertEqual(edge1.nodes, expected)
+        # Third edge.
+        self.assertEqual(edge2.start, edge_info[2][2])
+        self.assertEqual(edge2.end, edge_info[2][3])
+        expected = np.asfortranarray([
+            [0.25, 0.25],
+            [0.0, 0.25],
+        ])
+        self.assertEqual(edge2.nodes, expected)
+        # Fourth edge.
+        self.assertEqual(edge3.start, edge_info[3][2])
+        self.assertEqual(edge3.end, edge_info[3][3])
+        expected = np.asfortranarray([
+            [0.0, 0.25],
+            [0.0, 0.0],
+        ])
+        self.assertEqual(edge3.nodes, expected)
+
+
 class Test_basic_interior_combine(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(intersections, edges1, edges2, **kwargs):
+    def _call_function_under_test(
+            intersections, surface1, edges1, surface2, edges2, **kwargs):
         from bezier import _surface_helpers
 
         return _surface_helpers.basic_interior_combine(
-            intersections, edges1, edges2, **kwargs)
+            intersections, surface1, edges1, surface2, edges2, **kwargs)
 
     def test_it(self):
         import bezier
@@ -1952,7 +2007,8 @@ class Test_basic_interior_combine(utils.NumPyTestCase):
             1, 0.5, 2, 0.75, interior_curve=get_enum('SECOND'))
 
         result = self._call_function_under_test(
-            [intersection1, intersection2], edges1, edges2)
+            [intersection1, intersection2],
+            surface1, edges1, surface2, edges2)
         self.assertEqual(len(result), 1)
         curved_polygon = result[0]
         self.assertIsInstance(curved_polygon, bezier.CurvedPolygon)
@@ -2004,31 +2060,19 @@ class Test_basic_interior_combine(utils.NumPyTestCase):
             make_intersect(
                 2, 0.875, 0, 0.0, interior_curve=get_enum('SECOND')),
         ]
-        result = self._call_function_under_test(intersections, edges1, edges2)
+        result = self._call_function_under_test(
+            intersections, surface1, edges1, surface2, edges2)
 
         self.assertEqual(len(result), 1)
         curved_polygon = result[0]
-        self.assertIsInstance(curved_polygon, bezier.CurvedPolygon)
-        self.assertEqual(curved_polygon.num_sides, 3)
-
-        self.assertEqual(curved_polygon._edges[0].nodes, np.asfortranarray([
-            [0.0, 0.125],
-            [0.875, 0.0],
-        ]))
-        self.assertEqual(curved_polygon._edges[1].nodes, np.asfortranarray([
-            [0.875, 0.0],
-            [0.25, 0.75],
-        ]))
-        self.assertEqual(curved_polygon._edges[2].nodes, np.asfortranarray([
-            [0.25, 0.75],
-            [0.0, 0.125],
-        ]))
+        self.assertIs(curved_polygon, surface2)
 
     def _too_many_edges_helper(self, to_front, get_next, **kwargs):
         start = make_intersect(
             1, 0.0, 1, 0.0, interior_curve=get_enum('SECOND'))
         with self.assertRaises(RuntimeError):
-            self._call_function_under_test([start], (), (), **kwargs)
+            self._call_function_under_test(
+                [start], None, (), None, (), **kwargs)
 
         max_edges = kwargs.pop('max_edges', 10)
         self.assertEqual(kwargs, {})

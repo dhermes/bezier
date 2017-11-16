@@ -320,6 +320,18 @@ _QUARTIC_TO_BERNSTEIN = np.asfortranarray([
 # NOTE: We avoid round-off until after ``_QUARTIC_TO_BERNSTEIN``
 #       has been applied.
 _QUARTIC_BERNSTEIN_FACTOR = 36.0
+# Constants for ``make_intersection``. Each row is a return value
+# of ``ends_to_curve``.
+FIRST_SURFACE_INFO = (
+    (True, 0, 0.0, 1.0),
+    (True, 1, 0.0, 1.0),
+    (True, 2, 0.0, 1.0),
+)
+SECOND_SURFACE_INFO = (
+    (False, 0, 0.0, 1.0),
+    (False, 1, 0.0, 1.0),
+    (False, 2, 0.0, 1.0),
+)
 
 
 def polynomial_sign(poly_surface, degree):
@@ -2006,7 +2018,7 @@ def get_next(intersection, intersections, unused):
     return result
 
 
-def ends_to_curve(start_node, end_node, edges1, edges2):
+def ends_to_curve(start_node, end_node):
     """Convert a "pair" of intersection nodes to a curve segment.
 
     .. note::
@@ -2029,13 +2041,15 @@ def ends_to_curve(start_node, end_node, edges1, edges2):
     Args:
         start_node (.Intersection): The beginning of a segment.
         end_node (.Intersection): The end of (the same) segment.
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
 
     Returns:
-        .Curve: The segment between the nodes.
+        Tuple[bool, int, float, float]: The 4-tuple of:
+
+        * Flag indicating if the edge comes from the first (:data:`True`)
+          or second (:data:`False`) surface
+        * The edge index along that surface
+        * The start parameter along the edge
+        * The end parameter along the edge
 
     Raises:
         ValueError: If the ``start_node`` and ``end_node`` disagree on
@@ -2048,13 +2062,11 @@ def ends_to_curve(start_node, end_node, edges1, edges2):
     if start_node.interior_curve == IntersectionClassification.FIRST:
         if end_node.index_first != start_node.index_first:
             raise ValueError(_WRONG_CURVE)
-        edge = edges1[start_node.index_first]
-        return edge.specialize(start_node.s, end_node.s)
+        return True, start_node.index_first, start_node.s, end_node.s
     elif start_node.interior_curve == IntersectionClassification.SECOND:
         if end_node.index_second != start_node.index_second:
             raise ValueError(_WRONG_CURVE)
-        edge = edges2[start_node.index_second]
-        return edge.specialize(start_node.t, end_node.t)
+        return False, start_node.index_second, start_node.t, end_node.t
     else:
         raise ValueError('Segment start must be classified as '
                          '"FIRST" or "SECOND".')
@@ -2150,7 +2162,50 @@ def tangent_only_intersections(intersections, surface1, surface2):
         raise ValueError('Point type not for tangency', point_type)
 
 
-def basic_interior_combine(intersections, edges1, edges2, max_edges=10):
+def make_intersection(edge_info, surface1, edges1, surface2, edges2):
+    """Convert a description of edges into a curved polygon.
+
+    .. note::
+
+       This is a helper used only by :func:`basic_interior_combine`, which in
+       turn is only used by :func:`combine_intersections`.
+
+    Args:
+        edge_info (Tuple[Tuple[bool, int, float, float], ...]): Information
+            describing each edge in the curved polygon by indicating which
+            surface (first or second?), which edge on the surface and then
+            start and end parameters along that edge.
+        surface1 (.Surface): First surface in intersection.
+        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the first surface being intersected.
+        surface2 (.Surface): Second surface in intersection.
+        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
+            of the second surface being intersected.
+
+    Returns:
+        Union[.CurvedPolygon, .Surface]: The intersection corresponding to
+        ``edge_info``. If ``edge_info`` simply contains the edges of the
+        first or second surface, will return ``surface1`` or ``surface2``
+        (depending on which is correct) instead of a curved polygon.
+    """
+    if edge_info == FIRST_SURFACE_INFO:
+        return surface1
+    elif edge_info == SECOND_SURFACE_INFO:
+        return surface2
+    else:
+        edges = []
+        for first, index, start, end in edge_info:
+            if first:
+                edge = edges1[index].specialize(start, end)
+            else:
+                edge = edges2[index].specialize(start, end)
+            edges.append(edge)
+
+        return curved_polygon.CurvedPolygon(*edges, _verify=False)
+
+
+def basic_interior_combine(
+        intersections, surface1, edges1, surface2, edges2, max_edges=10):
     """Combine intersections that don't involve tangencies.
 
     .. note::
@@ -2165,15 +2220,19 @@ def basic_interior_combine(intersections, edges1, edges2, max_edges=10):
     Args:
         intersections (List[.Intersection]): Intersections from each of the
             9 edge-edge pairs from a surface-surface pairing.
+        surface1 (.Surface): First surface in intersection.
         edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
             of the first surface being intersected.
+        surface2 (.Surface): Second surface in intersection.
         edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
             of the second surface being intersected.
         max_edges (Optional[int]): The maximum number of allowed / expected
             edges per intersection. This is to avoid infinite loops.
 
     Returns:
-        List[.CurvedPolygon]: All of the intersections encountered.
+        List[Union[.CurvedPolygon, .Surface]]: All of the intersections
+        encountered. Assumes, but does not check, that if a surface is
+        returned, there must be exactly one intersection.
 
     Raises:
         RuntimeError: If the number of edges in a curved polygon
@@ -2202,11 +2261,12 @@ def basic_interior_combine(intersections, edges1, edges2, max_edges=10):
                 raise RuntimeError(
                     'Unexpected number of edges', len(edge_ends))
 
-        edge_gen = (
-            ends_to_curve(start_node, end_node, edges1, edges2)
+        edge_info = tuple(
+            ends_to_curve(start_node, end_node)
             for start_node, end_node in edge_ends
         )
-        result.append(curved_polygon.CurvedPolygon(*edge_gen, _verify=False))
+        result.append(
+            make_intersection(edge_info, surface1, edges1, surface2, edges2))
 
     return result
 
@@ -2244,7 +2304,8 @@ def combine_intersections(intersections, surface1, edges1, surface2, edges2):
     if not intersections:
         return no_intersections(surface1, surface2)
 
-    result = basic_interior_combine(intersections, edges1, edges2)
+    result = basic_interior_combine(
+        intersections, surface1, edges1, surface2, edges2)
     if result:
         return result
 
