@@ -2057,7 +2057,7 @@ def ends_to_curve(start_node, end_node, edges1, edges2):
         return edge.specialize(start_node.t, end_node.t)
     else:
         raise ValueError('Segment start must be classified as '
-                         '"first" or "second".')
+                         '"FIRST" or "SECOND".')
 
 
 def to_curved_polygon(surface):
