@@ -201,10 +201,8 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
             assert isinstance(intersected, utils.SurfaceIntersectionInfo)
             if intersected.first:
                 assert intersection is surface1
-                assert intersected.parent.surface1_info.id_ == intersected.id_
             else:
                 assert intersection is surface2
-                assert intersected.parent.surface2_info.id_ == intersected.id_
     # pylint: enable=too-many-locals
 
 

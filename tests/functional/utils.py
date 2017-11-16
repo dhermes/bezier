@@ -639,62 +639,17 @@ class SurfaceIntersectionInfo(object):
     """Basic wrapper indicating an intersection is one of the two surfaces.
 
     Args:
-        id_ (str): The ID of the curve.
+        first (bool): Flag indicating if the first or second surface in an
+            intersection is contained in the other.
     """
 
     _START_PARAMS = np.zeros((3,), order='F')
     _END_PARAMS = np.ones((3,), order='F')
 
-    def __init__(self, id_):
-        self.id_ = id_
+    def __init__(self, first):
+        self.first = first
         # Will be set later by the `SurfaceIntersectionsInfo` constructor.
-        self._parent = None
-        self._first = None
-
-    @property
-    def parent(self):
-        """Get the parent of this particular intersection.
-
-        Returns:
-            SurfaceIntersectionsInfo: The parent of this "intersection".
-        """
-        return self._parent
-
-    @parent.setter
-    def parent(self, parent):
-        """Set (and verify) the parent of this particular intersection.
-
-        Args:
-            parent (SurfaceIntersectionsInfo): The parent of this
-                "intersection".
-
-        Raises:
-            ValueError: If the ``parent`` does not match the current ID.
-        """
-        if self.id_ == parent.surface1_info.id_:
-            self._parent = parent
-            self._first = True
-        elif self.id_ == parent.surface2_info.id_:
-            self._parent = parent
-            self._first = False
-        else:
-            raise ValueError(
-                'The current ID is not among the IDs in the parent')
-
-    @property
-    def first(self):
-        """Determine if the intersection is the first or second ID.
-
-        Returns:
-            bool: Flag indicating which.
-
-        Raises:
-            AttributeError: If the parent is not set.
-        """
-        if self._parent is None:
-            raise AttributeError('Parent is not yet set.')
-        else:
-            return self._first
+        self.parent = None
 
     @property
     def start_params(self):
@@ -708,7 +663,7 @@ class SurfaceIntersectionInfo(object):
         Raises:
             AttributeError: If the parent is not set.
         """
-        if self._parent is None:
+        if self.parent is None:
             raise AttributeError('Parent is not yet set.')
         else:
             return self._START_PARAMS
@@ -725,7 +680,7 @@ class SurfaceIntersectionInfo(object):
         Raises:
             AttributeError: If the parent is not set.
         """
-        if self._parent is None:
+        if self.parent is None:
             raise AttributeError('Parent is not yet set.')
         else:
             return self._END_PARAMS
@@ -736,17 +691,11 @@ class SurfaceIntersectionInfo(object):
 
         Returns:
             numpy.ndarray: The corner nodes.
-
-        Raises:
-            AttributeError: If the parent is not set.
         """
-        if self._parent is None:
-            raise AttributeError('Parent is not yet set.')
-
-        if self._first:
-            info = self._parent.surface1_info
+        if self.first:
+            info = self.parent.surface1_info
         else:
-            info = self._parent.surface2_info
+            info = self.parent.surface2_info
 
         degree = info.surface.degree
         control_points = info.control_points
@@ -765,10 +714,10 @@ class SurfaceIntersectionInfo(object):
         Raises:
             AttributeError: If the parent is not set.
         """
-        if self._parent is None:
+        if self.parent is None:
             raise AttributeError('Parent is not yet set.')
 
-        if self._first:
+        if self.first:
             return [
                 [0, 0],
                 [0, 1],
@@ -910,8 +859,9 @@ class CurvedPolygonInfo(object):
         values (rationals and IEEE-754) to Python ``float``-s.
 
         Args:
-            info (Union[dict, str]): The JSON data of the curved polygon or the
-                ID of the surface that is the intersection.
+            info (Union[dict, bool]): The JSON data of the curved polygon or
+                a boolean indicating if the first or second surface is the
+                intersection (i.e. one is fully contained in the other).
 
         Returns:
             Union[SurfaceIntersectionInfo, CurvedPolygonInfo]: A basic
@@ -919,7 +869,7 @@ class CurvedPolygonInfo(object):
             contained in the other) or the curved polygon info parsed from
             the JSON.
         """
-        if isinstance(info, six.string_types):
+        if isinstance(info, bool):
             return SurfaceIntersectionInfo(info)
         else:
             nodes = np.asfortranarray(

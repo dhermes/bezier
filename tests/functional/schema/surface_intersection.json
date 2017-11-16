@@ -23,9 +23,9 @@
             "description": "List of info describing curved polygon(s) in the intersection.",
             "type": "array",
             "items": {
-                "description": "Either a curved polygon that occurs within the surface-surface intersection or the string ID of one of the two surfaces (if one is fully contained in the other).",
+                "description": "Either a curved polygon that occurs within the surface-surface intersection or a boolean. If a boolean, `true` indicates that the intersection is the first surface (i.e. it's fully contained in the second) and `false` indicates that the intersection is the second surface.",
                 "oneOf": [
-                    {"type": "string"},
+                    {"type": "boolean"},
                     {"$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/curved_polygon.json"}
                 ]
             }
