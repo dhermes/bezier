@@ -42,7 +42,7 @@ WIGGLES = {
         22: 37,  # Established on Ubuntu 16.04
         32: 1013,  # Established on Ubuntu 16.04
         33: 1013,  # Established on Ubuntu 16.04
-        34: 18,  # Established on Ubuntu 16.04
+        34: 19,  # Established on Ubuntu 16.04 on CircleCI
     },
     ALGEBRAIC: {
         3: 12,  # Established on Ubuntu 16.04
