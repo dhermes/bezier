@@ -117,15 +117,28 @@ For example, to create a curve:
 
    import bezier
 
-   # Fake the matplotlib/seaborn imports.
-   plt_mod = unittest.mock.Mock(spec=['figure', 'show'])
-   plt_mod.show.return_value = None
-   sys.modules['matplotlib.pyplot'] = plt_mod
-   mpl_mod = unittest.mock.Mock(pyplot=plt_mod, spec=[])
-   sys.modules['matplotlib'] = mpl_mod
-   seaborn_mod = unittest.mock.Mock(spec=['set'])
-   seaborn_mod.set.return_value = None
-   sys.modules['seaborn'] = seaborn_mod
+   try:
+       import matplotlib
+       import matplotlib.pyplot as plt
+       mpl_installed = True
+   except ImportError:
+       mpl_installed = False
+       # Fake the matplotlib imports.
+       plt_mod = unittest.mock.Mock(spec=['figure', 'show'])
+       plt_mod.show.return_value = None
+       sys.modules['matplotlib.pyplot'] = plt_mod
+       mpl_mod = unittest.mock.Mock(pyplot=plt_mod, spec=[])
+       sys.modules['matplotlib'] = mpl_mod
+
+   try:
+       import seaborn
+       seaborn_installed = True
+   except ImportError:
+       seaborn_installed = False
+       # Fake the seaborn imports.
+       seaborn_mod = unittest.mock.Mock(spec=['set'])
+       seaborn_mod.set.return_value = None
+       sys.modules['seaborn'] = seaborn_mod
 
 .. doctest:: getting-started
 
@@ -185,9 +198,11 @@ intersections):
 
 .. testcleanup:: getting-started
 
-   sys.modules.pop('matplotlib')
-   sys.modules.pop('matplotlib.pyplot')
-   sys.modules.pop('seaborn')
+   if not mpl_installed:
+       sys.modules.pop('matplotlib')
+       sys.modules.pop('matplotlib.pyplot')
+   if not seaborn_installed:
+       sys.modules.pop('seaborn')
 
 .. image:: images/curves1_and_13.png
    :align: center
