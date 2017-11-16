@@ -1836,29 +1836,6 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         self.assertEqual(result.end, 0.25)
 
 
-class Test_to_curved_polygon(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(surface):
-        from bezier import _surface_helpers
-
-        return _surface_helpers.to_curved_polygon(surface)
-
-    def test_it(self):
-        import bezier
-
-        surface = bezier.Surface(UNIT_TRIANGLE, 1)
-        result = self._call_function_under_test(surface)
-        self.assertIsInstance(result, bezier.CurvedPolygon)
-        self.assertEqual(result._num_sides, 3)
-        expected = np.asfortranarray(UNIT_TRIANGLE[(0, 1), :])
-        self.assertEqual(result._edges[0].nodes, expected)
-        expected = np.asfortranarray(UNIT_TRIANGLE[(1, 2), :])
-        self.assertEqual(result._edges[1].nodes, expected)
-        expected = np.asfortranarray(UNIT_TRIANGLE[(2, 0), :])
-        self.assertEqual(result._edges[2].nodes, expected)
-
-
 class Test_no_intersections(unittest.TestCase):
 
     @staticmethod
@@ -1883,14 +1860,8 @@ class Test_no_intersections(unittest.TestCase):
         surface2 = bezier.Surface(
             4.0 * UNIT_TRIANGLE - np.asfortranarray([[1.0, 1.0]]), 1)
 
-        patch = unittest.mock.patch(
-            'bezier._surface_helpers.to_curved_polygon',
-            return_value=unittest.mock.sentinel.curved)
-        with patch as mocked:
-            result = self._call_function_under_test(surface1, surface2)
-            self.assertEqual(result, [unittest.mock.sentinel.curved])
-
-            mocked.assert_called_once_with(surface1)
+        result = self._call_function_under_test(surface1, surface2)
+        self.assertEqual(result, [surface1])
 
     def test_second_contained(self):
         import bezier
@@ -1899,14 +1870,8 @@ class Test_no_intersections(unittest.TestCase):
             4.0 * UNIT_TRIANGLE - np.asfortranarray([[1.0, 1.0]]), 1)
         surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
 
-        patch = unittest.mock.patch(
-            'bezier._surface_helpers.to_curved_polygon',
-            return_value=unittest.mock.sentinel.curved)
-        with patch as mocked:
-            result = self._call_function_under_test(surface1, surface2)
-            self.assertEqual(result, [unittest.mock.sentinel.curved])
-
-            mocked.assert_called_once_with(surface2)
+        result = self._call_function_under_test(surface1, surface2)
+        self.assertEqual(result, [surface2])
 
 
 class Test_tangent_only_intersections(unittest.TestCase):
@@ -1947,29 +1912,17 @@ class Test_tangent_only_intersections(unittest.TestCase):
         intersection = unittest.mock.Mock(
             interior_curve=get_enum('TANGENT_FIRST'))
 
-        patch = unittest.mock.patch(
-            'bezier._surface_helpers.to_curved_polygon',
-            return_value=unittest.mock.sentinel.curved)
-        with patch as mocked:
-            result = self._call_function_under_test(
-                [intersection], unittest.mock.sentinel.surface1, None)
-            self.assertEqual(result, [unittest.mock.sentinel.curved])
-
-            mocked.assert_called_once_with(unittest.mock.sentinel.surface1)
+        result = self._call_function_under_test(
+            [intersection], unittest.mock.sentinel.surface1, None)
+        self.assertEqual(result, [unittest.mock.sentinel.surface1])
 
     def test_second(self):
         intersection = unittest.mock.Mock(
             interior_curve=get_enum('TANGENT_SECOND'))
 
-        patch = unittest.mock.patch(
-            'bezier._surface_helpers.to_curved_polygon',
-            return_value=unittest.mock.sentinel.curved)
-        with patch as mocked:
-            result = self._call_function_under_test(
-                [intersection], None, unittest.mock.sentinel.surface2)
-            self.assertEqual(result, [unittest.mock.sentinel.curved])
-
-            mocked.assert_called_once_with(unittest.mock.sentinel.surface2)
+        result = self._call_function_under_test(
+            [intersection], None, unittest.mock.sentinel.surface2)
+        self.assertEqual(result, [unittest.mock.sentinel.surface2])
 
 
 class Test_basic_interior_combine(utils.NumPyTestCase):
@@ -2190,13 +2143,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
             [intersection], surface1, edges1, surface2, edges2)
         self.assertEqual(len(result), 1)
         curved_polygon = result[0]
-        self.assertIsInstance(curved_polygon, bezier.CurvedPolygon)
-        self.assertEqual(curved_polygon.num_sides, 3)
-
-        for index in range(3):
-            self.assertEqual(
-                curved_polygon._edges[index].nodes,
-                edges1[index].nodes)
+        self.assertIs(curved_polygon, surface1)
 
 
 class Test__evaluate_barycentric(utils.NumPyTestCase):

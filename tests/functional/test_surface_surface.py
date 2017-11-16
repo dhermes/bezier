@@ -165,31 +165,46 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
 
     for intersection, intersected in six.moves.zip(
             intersections, all_intersected):
-        assert isinstance(intersection, bezier.CurvedPolygon)
+        if isinstance(intersection, bezier.CurvedPolygon):
+            if intersected.parent.id_ in (18, 19, 30):
+                # NOTE: This branch is a **temporary** hack. Once resolved,
+                #       the properties (such as ``edge_nodes``) can be removed
+                #       from ``SurfaceIntersectionInfo``.
+                assert isinstance(intersected, utils.SurfaceIntersectionInfo)
+            else:
+                assert isinstance(intersected, utils.CurvedPolygonInfo)
+            start_vals = intersected.start_params
+            end_vals = intersected.end_params
+            nodes = intersected.nodes
+            edge_pairs = intersected.edge_pairs
 
-        start_vals = intersected.start_params
-        end_vals = intersected.end_params
-        nodes = intersected.nodes
-        edge_pairs = intersected.edge_pairs
+            int_edges = curved_polygon_edges(intersection, edges)
+            info = six.moves.zip(
+                int_edges, edge_pairs, start_vals, end_vals, nodes)
+            num_edges = len(int_edges)
+            assert num_edges == len(edge_pairs)
+            assert num_edges == len(start_vals)
+            assert num_edges == len(end_vals)
+            assert num_edges == len(nodes)
+            for edge, edge_pair, start_val, end_val, node in info:
+                surf_index, edge_index = edge_pair
+                expected_root = edges[surf_index][edge_index]
+                specialized = expected_root.specialize(start_val, end_val)
+                assert np.allclose(specialized._nodes, edge._nodes)
 
-        int_edges = curved_polygon_edges(intersection, edges)
-        info = six.moves.zip(
-            int_edges, edge_pairs, start_vals, end_vals, nodes)
-        num_edges = len(int_edges)
-        assert num_edges == len(edge_pairs)
-        assert num_edges == len(start_vals)
-        assert num_edges == len(end_vals)
-        assert num_edges == len(nodes)
-        for edge, edge_pair, start_val, end_val, node in info:
-            surf_index, edge_index = edge_pair
-            expected_root = edges[surf_index][edge_index]
-            specialized = expected_root.specialize(start_val, end_val)
-            assert np.allclose(specialized._nodes, edge._nodes)
-
-            CONFIG.assert_close(edge.start, start_val)
-            CONFIG.assert_close(edge.end, end_val)
-            CONFIG.assert_close(edge._nodes[0, 0], node[0])
-            CONFIG.assert_close(edge._nodes[0, 1], node[1])
+                CONFIG.assert_close(edge.start, start_val)
+                CONFIG.assert_close(edge.end, end_val)
+                CONFIG.assert_close(edge._nodes[0, 0], node[0])
+                CONFIG.assert_close(edge._nodes[0, 1], node[1])
+        else:
+            assert isinstance(intersection, bezier.Surface)
+            assert isinstance(intersected, utils.SurfaceIntersectionInfo)
+            if intersected.first:
+                assert intersection is surface1
+                assert intersected.parent.surface1_info.id_ == intersected.id_
+            else:
+                assert intersection is surface2
+                assert intersected.parent.surface2_info.id_ == intersected.id_
     # pylint: enable=too-many-locals
 
 

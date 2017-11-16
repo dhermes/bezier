@@ -341,7 +341,7 @@ class CurveInfo(object):  # pylint: disable=too-few-public-methods
             info (dict): The JSON data of the curve.
 
         Returns:
-            .CurveInfo: The curve info parsed from the JSON.
+            CurveInfo: The curve info parsed from the JSON.
         """
         control_points = info.pop('control_points')
         control_points = np.asfortranarray(_convert_float(control_points))
@@ -388,7 +388,7 @@ class CurveIntersectionInfo(object):
             the intersection.
         curve2_info (CurveInfo): The curve information for the second curve in
             the intersection.
-        type_ (.CurveIntersectionType): Describes how the curves intersect.
+        type_ (CurveIntersectionType): Describes how the curves intersect.
         intersections (numpy.ndarray): ``Nx2`` array of ``x-y`` coordinate
             pairs of intersection points.
         curve1_params (numpy.ndarray): 1D array, the parameters along
@@ -561,7 +561,7 @@ class CurveIntersectionInfo(object):
                 curve information.
 
         Returns:
-            .CurveIntersectionInfo: The intersection info parsed from the JSON.
+            CurveIntersectionInfo: The intersection info parsed from the JSON.
         """
         id_ = info.pop('id')
         curve1_info = curves[info.pop('curve1')]
@@ -623,7 +623,7 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
             info (dict): The JSON data of the surface.
 
         Returns:
-            .SurfaceInfo: The surface info parsed from the JSON.
+            SurfaceInfo: The surface info parsed from the JSON.
         """
         control_points = info.pop('control_points')
         control_points = np.asfortranarray(_convert_float(control_points))
@@ -633,6 +633,153 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
         _ensure_empty(info)
 
         return cls(id_, control_points, note=note)
+
+
+class SurfaceIntersectionInfo(object):
+    """Basic wrapper indicating an intersection is one of the two surfaces.
+
+    Args:
+        id_ (str): The ID of the curve.
+    """
+
+    _START_PARAMS = np.zeros((3,), order='F')
+    _END_PARAMS = np.ones((3,), order='F')
+
+    def __init__(self, id_):
+        self.id_ = id_
+        # Will be set later by the `SurfaceIntersectionsInfo` constructor.
+        self._parent = None
+        self._first = None
+
+    @property
+    def parent(self):
+        """Get the parent of this particular intersection.
+
+        Returns:
+            SurfaceIntersectionsInfo: The parent of this "intersection".
+        """
+        return self._parent
+
+    @parent.setter
+    def parent(self, parent):
+        """Set (and verify) the parent of this particular intersection.
+
+        Args:
+            parent (SurfaceIntersectionsInfo): The parent of this
+                "intersection".
+
+        Raises:
+            ValueError: If the ``parent`` does not match the current ID.
+        """
+        if self.id_ == parent.surface1_info.id_:
+            self._parent = parent
+            self._first = True
+        elif self.id_ == parent.surface2_info.id_:
+            self._parent = parent
+            self._first = False
+        else:
+            raise ValueError(
+                'The current ID is not among the IDs in the parent')
+
+    @property
+    def first(self):
+        """Determine if the intersection is the first or second ID.
+
+        Returns:
+            bool: Flag indicating which.
+
+        Raises:
+            AttributeError: If the parent is not set.
+        """
+        if self._parent is None:
+            raise AttributeError('Parent is not yet set.')
+        else:
+            return self._first
+
+    @property
+    def start_params(self):
+        """Get the start parameters for the "edge curves".
+
+        Will always be ``[0, 0, 0]``.
+
+        Returns:
+            numpy.ndarray: The start parameters for the curve edges.
+
+        Raises:
+            AttributeError: If the parent is not set.
+        """
+        if self._parent is None:
+            raise AttributeError('Parent is not yet set.')
+        else:
+            return self._START_PARAMS
+
+    @property
+    def end_params(self):
+        """Get the end parameters for the "edge curves".
+
+        Will always be ``[1, 1, 1]``.
+
+        Returns:
+            numpy.ndarray: The end parameters for the curve edges.
+
+        Raises:
+            AttributeError: If the parent is not set.
+        """
+        if self._parent is None:
+            raise AttributeError('Parent is not yet set.')
+        else:
+            return self._END_PARAMS
+
+    @property
+    def nodes(self):
+        """Get the corner nodes for the surface.
+
+        Returns:
+            numpy.ndarray: The corner nodes.
+
+        Raises:
+            AttributeError: If the parent is not set.
+        """
+        if self._parent is None:
+            raise AttributeError('Parent is not yet set.')
+
+        if self._first:
+            info = self._parent.surface1_info
+        else:
+            info = self._parent.surface2_info
+
+        degree = info.surface.degree
+        control_points = info.control_points
+        return control_points[(0, degree, -1), :]
+
+    @property
+    def edge_pairs(self):
+        """Get the edge pairs for the surface (as an intersection).
+
+        Will always be ``[[i, 0], [i, 1], [i, 2]]`` where ``i``
+        is determined by the value of ``_first``.
+
+        Returns:
+            List[List[int]]: The edge pairs.
+
+        Raises:
+            AttributeError: If the parent is not set.
+        """
+        if self._parent is None:
+            raise AttributeError('Parent is not yet set.')
+
+        if self._first:
+            return [
+                [0, 0],
+                [0, 1],
+                [0, 2],
+            ]
+        else:
+            return [
+                [1, 0],
+                [1, 1],
+                [1, 2],
+            ]
 
 
 # pylint: disable=too-few-public-methods
@@ -763,31 +910,38 @@ class CurvedPolygonInfo(object):
         values (rationals and IEEE-754) to Python ``float``-s.
 
         Args:
-            info (dict): The JSON data of the curved polygon.
+            info (Union[dict, str]): The JSON data of the curved polygon or the
+                ID of the surface that is the intersection.
 
         Returns:
-            .CurvedPolygonInfo: The curved polygon info parsed from the JSON.
+            Union[SurfaceIntersectionInfo, CurvedPolygonInfo]: A basic
+            object containing surface information (if one of the surfaces is
+            contained in the other) or the curved polygon info parsed from
+            the JSON.
         """
-        nodes = np.asfortranarray(
-            _convert_float(info.pop('nodes')))
-        if nodes.size == 0:
-            nodes = nodes.reshape((0, 2), order='F')
+        if isinstance(info, six.string_types):
+            return SurfaceIntersectionInfo(info)
+        else:
+            nodes = np.asfortranarray(
+                _convert_float(info.pop('nodes')))
+            if nodes.size == 0:
+                nodes = nodes.reshape((0, 2), order='F')
 
-        start_params = np.asfortranarray(
-            _convert_float(info.pop('start_params')))
-        end_params = np.asfortranarray(
-            _convert_float(info.pop('end_params')))
-        edge_pairs = info.pop('edge_pairs')
+            start_params = np.asfortranarray(
+                _convert_float(info.pop('start_params')))
+            end_params = np.asfortranarray(
+                _convert_float(info.pop('end_params')))
+            edge_pairs = info.pop('edge_pairs')
 
-        # Optional fields.
-        start_param_polys = info.pop('start_param_polys', None)
-        end_param_polys = info.pop('end_param_polys', None)
+            # Optional fields.
+            start_param_polys = info.pop('start_param_polys', None)
+            end_param_polys = info.pop('end_param_polys', None)
 
-        _ensure_empty(info)
-        return cls(
-            nodes, edge_pairs, start_params, end_params,
-            start_param_polys=start_param_polys,
-            end_param_polys=end_param_polys)
+            _ensure_empty(info)
+            return cls(
+                nodes, edge_pairs, start_params, end_params,
+                start_param_polys=start_param_polys,
+                end_param_polys=end_param_polys)
 # pylint: enable=too-few-public-methods
 
 
@@ -804,8 +958,8 @@ class SurfaceIntersectionsInfo(object):
             surface in the intersection.
         surface2_info (SurfaceInfo): The surface information for the second
             surface in the intersection.
-        intersections (List[CurvedPolygonInfo]): The info for
-            each intersection region.
+        intersections (List[Union[SurfaceIntersectionInfo, \
+            CurvedPolygonInfo]]): The info for each intersection region.
         note (Optional[str]): A note about the intersection(s) (e.g. why
             unique / problematic).
     """
@@ -871,7 +1025,7 @@ class SurfaceIntersectionsInfo(object):
                 surface information.
 
         Returns:
-            .SurfaceIntersectionsInfo: The intersection info parsed from
+            SurfaceIntersectionsInfo: The intersection info parsed from
                 the JSON.
         """
         id_ = info.pop('id')

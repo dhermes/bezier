@@ -2060,23 +2060,6 @@ def ends_to_curve(start_node, end_node, edges1, edges2):
                          '"FIRST" or "SECOND".')
 
 
-def to_curved_polygon(surface):
-    """Convert a surface to a curved polygon.
-
-    This is a helper for :func:`combine_intersections` to allow
-    returning a curved polygon when the intersection is the
-    entirety of one surface.
-
-    Args:
-        surface (.Surface): The surface to convert.
-
-    Returns:
-        .CurvedPolygon: The converted object.
-    """
-    edges = surface._get_edges()  # pylint: disable=protected-access
-    return curved_polygon.CurvedPolygon(*edges, _verify=False)
-
-
 def no_intersections(surface1, surface2):
     r"""Determine if one surface is in the other.
 
@@ -2096,7 +2079,7 @@ def no_intersections(surface1, surface2):
     Returns:
         list: Either an empty list if one surface isn't contained
         in the other. Otherwise, the list will have a single
-        :class:`.CurvedPolygon` corresponding to the internal surface.
+        :class:`.Surface` corresponding to the internal surface.
     """
     # NOTE: We want the nodes to be 1x2 but accessing ``nodes1[[0], :]``
     #       and ``nodes2[[0], :]`` makes a copy while the accesses
@@ -2105,11 +2088,11 @@ def no_intersections(surface1, surface2):
     #        arrays.indexing.html#advanced-indexing)
     corner1 = surface1._nodes[0, :].reshape((1, 2), order='F')
     if surface2.locate(corner1, _verify=False) is not None:
-        return [to_curved_polygon(surface1)]
+        return [surface1]
 
     corner2 = surface2._nodes[0, :].reshape((1, 2), order='F')
     if surface1.locate(corner2, _verify=False) is not None:
-        return [to_curved_polygon(surface2)]
+        return [surface2]
 
     return []
 
@@ -2138,7 +2121,7 @@ def tangent_only_intersections(intersections, surface1, surface2):
     Returns:
         list: Either an empty list if one surface isn't contained
         in the other. Otherwise, the list will have a single
-        :class:`.CurvedPolygon` corresponding to the internal surface.
+        :class:`.Surface` corresponding to the internal surface.
 
     Raises:
         ValueError: If there are intersections of more than one type among
@@ -2160,9 +2143,9 @@ def tangent_only_intersections(intersections, surface1, surface2):
     elif point_type == IntersectionClassification.IGNORED_CORNER:
         return []
     elif point_type == IntersectionClassification.TANGENT_FIRST:
-        return [to_curved_polygon(surface1)]
+        return [surface1]
     elif point_type == IntersectionClassification.TANGENT_SECOND:
-        return [to_curved_polygon(surface2)]
+        return [surface2]
     else:
         raise ValueError('Point type not for tangency', point_type)
 
@@ -2254,7 +2237,8 @@ def combine_intersections(intersections, surface1, edges1, surface2, edges2):
             of the second surface being intersected.
 
     Returns:
-        List[~bezier.curved_polygon.CurvedPolygon]: A list of curved polygons
+        List[Union[~bezier.curved_polygon.CurvedPolygon, \
+        ~bezier.surface.Surface]]: A list of curved polygons (or surfaces)
         that compose the intersected objects.
     """
     if not intersections:
