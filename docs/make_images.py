@@ -1047,7 +1047,7 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
 
     figure, (ax1, ax2) = plt.subplots(2, 1)
     classify_help(s, curve1a, surface1, curve2, surface2, None, ax=ax1)
-    surface1._nodes = surface1._nodes[(2, 4, 5, 1, 3, 0), :]
+    surface1._nodes = np.asfortranarray(surface1._nodes[(2, 4, 5, 1, 3, 0), :])
     surface1._edges = None
     classify_help(0.0, curve1b, surface1, curve2, surface2, 0, ax=ax2)
 

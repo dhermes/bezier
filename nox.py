@@ -240,6 +240,9 @@ def docs_images(session):
         get_path('tests', 'functional', 'make_surface_surface_images.py')
     ))
 
+    # Make sure that the root directory is on the Python path so that
+    # ``tests`` is import-able.
+    env['PYTHONPATH'] = get_path()
     for filename in modules_to_run:
         session.run('python', filename, '--save-plot', env=env)
 

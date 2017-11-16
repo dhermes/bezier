@@ -46,7 +46,7 @@ if seaborn is not None:
     seaborn.set()  # Required in `seaborn >= 0.8`
 FNL_TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 _DOCS_DIR = os.path.abspath(
-    os.path.join(FNL_TESTS_DIR, '..', 'docs'))
+    os.path.join(FNL_TESTS_DIR, '..', '..', 'docs'))
 IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
 
 
