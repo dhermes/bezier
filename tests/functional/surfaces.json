@@ -410,5 +410,16 @@
             ["1137/512", "23/8"]
         ],
         "note": "Edge 1 (0-indexed) is curve 54, which has a ``bad'' parameterization, but this is not a problem for `s` in [0, 1]."
+    },
+    "34Q": {
+        "control_points": [
+            [1, "3/8"],
+            ["5/8", "-1/8"],
+            [0, "3/8"],
+            ["3/4", "-3/16"],
+            ["-1/4", "-7/16"],
+            ["1/2", "-3/4"]
+        ],
+        "note": "This surface is 7Q, with the left edge (edge 1, 0-indexed) changed to a quadratic."
     }
 }

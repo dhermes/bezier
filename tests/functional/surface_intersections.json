@@ -1093,5 +1093,81 @@
                 ]
             }
         ]
+    }, {
+        "surface1": "6Q",
+        "surface2": "34Q",
+        "id": 34,
+        "note": "This is almost identical to intersection ID 13 (6Q-7Q), but the 34Q has an edge that goes **outside** of 6Q instead. This way, one of the two curved polygons has 3 sides and the other has 4. (In intersection ID 13, both curved polygons have 4 sides.)",
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    ["0x1.4992c2bb413cdp-2", "0x1.6a2c9c8740ffbp-3"],
+                    ["0x1.19b38124cf430p-3", "0x1.19b38124cf430p-2"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.7493d4d9eb51ap-1",
+                    "0x1.73263f6d985e8p-1"
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [369, -1548, 1504, -104, 4],
+                    [-871, 784, 576]
+                ],
+                "end_params": [
+                    "0x1.85ef877c76bcdp-2",
+                    "0x1.c65caf923246ep-1",
+                    1
+                ],
+                "end_param_polys": [
+                    [489, -1908, 1592, 120, 4],
+                    [-13, 4, 12],
+                    [-1, 1]
+                ],
+                "edge_pairs": [
+                    [0, 0],
+                    [1, 0],
+                    [0, 2]
+                ]
+            }, {
+                "nodes": [
+                    ["0x1.636735920066ep-1", "0x1.260ab6afe06ccp-3"],
+                    ["0x1.bb55a2b2a6aa8p-1", "0x1.2c05708fb7fcdp-4"],
+                    ["31/34", "3/17"],
+                    ["0x1.c17e2caa2b536p-1", "0x1.f40e9aaea564dp-3"]
+                ],
+                "start_params": [
+                    "0x1.7be81a20a86ffp-1",
+                    "0x1.76ab45654d550p-1",
+                    "3/17",
+                    "0x1.3d03a6aba9593p-3"
+                ],
+                "start_param_polys": [
+                    [489, -1908, 1592, 120, 4],
+                    [-76, 68, 49],
+                    [-3, 17],
+                    [3, -20, 4]
+                ],
+                "end_params": [
+                    "0x1.c7d5dcb8a3aa6p-1",
+                    "14/17",
+                    "0x1.f40e9aaea564dp-3",
+                    "0x1.74703e060324bp-2"
+                ],
+                "end_param_polys": [
+                    [-10, 5, 7],
+                    [-14, 17],
+                    [297, -1232, 64],
+                    [369, -1548, 1504, -104, 4]
+                ],
+                "edge_pairs": [
+                    [0, 0],
+                    [1, 2],
+                    [0, 1],
+                    [1, 0]
+                ]
+            }
+        ]
     }
 ]
