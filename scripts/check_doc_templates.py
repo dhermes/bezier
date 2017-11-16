@@ -66,10 +66,12 @@ SPHINX_CODE_BLOCK1 = """\
    except ImportError:
        mpl_installed = False
        # Fake the matplotlib imports.
-       plt_mod = unittest.mock.Mock(spec=['figure', 'show'])
+       plt_mod = unittest.mock.Mock(
+           name='matplotlib.pyplot', spec=['figure', 'show'])
        plt_mod.show.return_value = None
        sys.modules['matplotlib.pyplot'] = plt_mod
-       mpl_mod = unittest.mock.Mock(pyplot=plt_mod, spec=[])
+       mpl_mod = unittest.mock.Mock(
+           name='matplotlib', pyplot=plt_mod, spec=[])
        sys.modules['matplotlib'] = mpl_mod
 
    try:
@@ -78,7 +80,7 @@ SPHINX_CODE_BLOCK1 = """\
    except ImportError:
        seaborn_installed = False
        # Fake the seaborn imports.
-       seaborn_mod = unittest.mock.Mock(spec=['set'])
+       seaborn_mod = unittest.mock.Mock(name='seaborn', spec=['set'])
        seaborn_mod.set.return_value = None
        sys.modules['seaborn'] = seaborn_mod
 
