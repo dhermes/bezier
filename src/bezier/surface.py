@@ -35,6 +35,7 @@ from bezier import _surface_intersection
 from bezier import curve as _curve_mod
 
 
+_SIGN = np.sign  # pylint: disable=no-member
 _REPR_TEMPLATE = (
     '<{} (degree={:d}, dimension={:d}, base=({:g}, {:g}), width={:g})>')
 _LOCATE_ERROR_TEMPLATE = (
@@ -879,7 +880,7 @@ class Surface(_base.Base):
             # In the linear case, we are only invalid if the points
             # are collinear.
             first_deriv = self._nodes[1:, :] - self._nodes[:-1, :]
-            poly_sign = np.sign(np.linalg.det(first_deriv))
+            poly_sign = _SIGN(np.linalg.det(first_deriv))
         elif self._degree == 2:
             bernstein = _surface_helpers.quadratic_jacobian_polynomial(
                 self._nodes)
