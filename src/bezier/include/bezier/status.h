@@ -10,14 +10,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BEZIER_H
-#define BEZIER_H
+#ifndef BEZIER_STATUS_H
+#define BEZIER_STATUS_H
 
-#include "bezier/status.h"
-#include "bezier/curve.h"
-#include "bezier/curve_intersection.h"
-#include "bezier/helpers.h"
-#include "bezier/surface.h"
-#include "bezier/surface_intersection.h"
+#if defined (__cplusplus)
+extern "C" {
+#endif
 
-#endif /* BEZIER_H */
+enum Status {
+  SUCCESS = 0,
+  PARALLEL = 1,
+  WIGGLE_FAIL = 2,
+  NO_CONVERGE = 3,
+  TOO_SMALL = 4,
+  SAME_CURVATURE = 5,
+  BAD_TANGENT = 6,
+  EDGE_END = 7,
+  UNKNOWN = 999,
+};
+
+#if defined (__cplusplus)
+}
+#endif
+
+#endif /* BEZIER_STATUS_H */

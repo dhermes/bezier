@@ -13,13 +13,12 @@
 module test_surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
+  use status, only: &
+       Status_SUCCESS, Status_PARALLEL, Status_SAME_CURVATURE, &
+       Status_BAD_TANGENT, Status_EDGE_END
   use curve, only: CurveData, LOCATE_MISS
-  use curve_intersection, only: &
-       AllIntersections_SUCCESS, AllIntersections_PARALLEL
   use surface_intersection, only: &
-       Intersection, IntersectionClassification_SAME_CURVATURE, &
-       IntersectionClassification_BAD_TANGENT, &
-       IntersectionClassification_EDGE_END, IntersectionClassification_FIRST, &
+       Intersection, IntersectionClassification_FIRST, &
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
@@ -178,16 +177,14 @@ contains
     intersection_%s = 1.0_dp
     intersection_%t = 0.5_dp
     call classify_intersection(edges_first, edges_second, intersection_, enum_)
-    case_success = ( &
-         enum_ == IntersectionClassification_EDGE_END)
+    case_success = (enum_ == Status_EDGE_END)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Intersection is on "the end" of the second edge.
     intersection_%s = 0.5_dp
     intersection_%t = 1.0_dp
     call classify_intersection(edges_first, edges_second, intersection_, enum_)
-    case_success = ( &
-         enum_ == IntersectionClassification_EDGE_END)
+    case_success = (enum_ == Status_EDGE_END)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Intersection is on interior, "second".
@@ -353,8 +350,7 @@ contains
     edges_second(2)%nodes = nodes2
 
     call classify_intersection(edges_first, edges_second, intersection_, enum_)
-    case_success = ( &
-         enum_ == IntersectionClassification_SAME_CURVATURE)
+    case_success = (enum_ == Status_SAME_CURVATURE)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 12: Intersection is tangent, same curvature, opposite direction.
@@ -369,8 +365,7 @@ contains
     edges_second(2)%nodes = nodes2
 
     call classify_intersection(edges_first, edges_second, intersection_, enum_)
-    case_success = ( &
-         enum_ == IntersectionClassification_SAME_CURVATURE)
+    case_success = (enum_ == Status_SAME_CURVATURE)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 13: Intersection is tangent, opposite direction, curvatures have
@@ -403,8 +398,7 @@ contains
     edges_second(2)%nodes = nodes2
 
     call classify_intersection(edges_first, edges_second, intersection_, enum_)
-    case_success = ( &
-         enum_ == IntersectionClassification_BAD_TANGENT)
+    case_success = (enum_ == Status_BAD_TANGENT)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 15: Intersection is tangent, opposite direction, curvatures have
@@ -437,8 +431,7 @@ contains
     edges_second(2)%nodes = nodes2
 
     call classify_intersection(edges_first, edges_second, intersection_, enum_)
-    case_success = ( &
-         enum_ == IntersectionClassification_BAD_TANGENT)
+    case_success = (enum_ == Status_BAD_TANGENT)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 17: Intersection at corner, but the corner "staddles" an edge.
@@ -711,7 +704,7 @@ contains
          intersections(5), 0.5_dp, 0.25_dp, 3, 1, second) .AND. &
          intersection_check( &
          intersections(6), 0.75_dp, 0.75_dp, 3, 3, first) .AND. &
-         status == AllIntersections_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Tangent intersection (causes error).
@@ -732,7 +725,7 @@ contains
          intersections, num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == AllIntersections_PARALLEL)
+         status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_surfaces_intersect

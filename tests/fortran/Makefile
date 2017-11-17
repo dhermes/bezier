@@ -27,6 +27,7 @@ F77_SOURCES := \
 	$(QUADPACK_DIR)/dqagse$(F77)
 F90_SOURCES := \
 	$(SRC_DIR)/types$(F90) \
+	$(SRC_DIR)/status$(F90) \
 	$(SRC_DIR)/helpers$(F90) \
 	$(SRC_DIR)/curve$(F90) \
 	$(SRC_DIR)/surface$(F90) \

@@ -19,6 +19,7 @@ import numpy as np
 from numpy cimport ndarray as ndarray_t
 
 cimport bezier._curve_intersection
+cimport bezier._status
 
 
 BoxIntersectionType_INTERSECTION = (
@@ -140,7 +141,7 @@ def from_linearized_low_level(
     cdef int num_nodes1, num_nodes2
     cdef double refined_s, refined_t
     cdef bool_t does_intersect
-    cdef int py_exc
+    cdef int status
 
     # NOTE: We don't check that there are 2 columns.
     num_nodes1, _ = np.shape(root_nodes1)
@@ -165,12 +166,12 @@ def from_linearized_low_level(
         &refined_s,
         &refined_t,
         &does_intersect,
-        &py_exc,
+        &status,
     )
 
-    if py_exc == 1:
+    if status == bezier._status.Status.PARALLEL:
         raise NotImplementedError('Line segments parallel.')
-    elif py_exc == 2:
+    elif status == bezier._status.Status.WIGGLE_FAIL:
         raise ValueError('outside of unit interval')
 
     return refined_s, refined_t, does_intersect
@@ -234,18 +235,17 @@ def all_intersections(
         &status,
     )
 
-    if status == bezier._curve_intersection.AllIntersectionsStatus.SUCCESS:
+    if status == bezier._status.Status.SUCCESS:
         intersections = np.empty((num_intersections, 2), order='F')
         intersections[:, :] = WORKSPACE[:, :num_intersections].T
         return intersections
-    elif (status ==
-              bezier._curve_intersection.AllIntersectionsStatus.NO_CONVERGE):
+    elif status == bezier._status.Status.NO_CONVERGE:
         # NOTE: This assumes, but does not verify, that the Fortran subroutine
         #       uses ``MAX_INTERSECT_SUBDIVISIONS = 20``.
         raise ValueError(
             'Curve intersection failed to converge to approximately linear '
             'subdivisions after 20 iterations.')
-    elif status == bezier._curve_intersection.AllIntersectionsStatus.TOO_SMALL:
+    elif status == bezier._status.Status.TOO_SMALL:
         if allow_resize:
             reset_workspace(num_intersections)
             return all_intersections(
@@ -254,14 +254,13 @@ def all_intersections(
             msg = TOO_SMALL_TEMPLATE.format(
                 intersections_size, num_intersections)
             raise ValueError(msg)
-    elif status == bezier._curve_intersection.AllIntersectionsStatus.PARALLEL:
+    elif status == bezier._status.Status.PARALLEL:
         raise NotImplementedError('Line segments parallel.')
-    elif (status ==
-              bezier._curve_intersection.AllIntersectionsStatus.WIGGLE_FAIL):
+    elif status == bezier._status.Status.WIGGLE_FAIL:
         # NOTE: This branch may not be tested because it's quite difficult to
         #       come up with an example that causes it.
         raise ValueError('outside of unit interval')
-    elif status == bezier._curve_intersection.AllIntersectionsStatus.UNKNOWN:
+    elif status == bezier._status.Status.UNKNOWN:
         # NOTE: We exclude this block from testing because it **should**
         #       never occur. It's just a "future-proofing" mechanism of the
         #       Fortran code.

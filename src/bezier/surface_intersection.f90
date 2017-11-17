@@ -13,8 +13,11 @@
 module surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
+  use status, only: &
+       Status_SUCCESS, Status_SAME_CURVATURE, Status_BAD_TANGENT, &
+       Status_EDGE_END
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
-  use curve_intersection, only: all_intersections, AllIntersections_SUCCESS
+  use curve_intersection, only: all_intersections
   use helpers, only: cross_product, contains_nd, vector_close
   use types, only: dp
   use surface, only: &
@@ -26,9 +29,7 @@ module surface_intersection
        update_candidates, ignored_edge_corner, ignored_double_corner, &
        ignored_corner, classify_tangent_intersection
   public &
-       Intersection, IntersectionClassification_SAME_CURVATURE, &
-       IntersectionClassification_BAD_TANGENT, &
-       IntersectionClassification_EDGE_END, IntersectionClassification_FIRST, &
+       Intersection, IntersectionClassification_FIRST, &
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
@@ -56,15 +57,12 @@ module surface_intersection
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
   real(c_double), parameter :: LOCATE_EPS = 0.5_dp**47
   ! Values of IntersectionClassification enum:
-  integer(c_int), parameter :: IntersectionClassification_SAME_CURVATURE = -3
-  integer(c_int), parameter :: IntersectionClassification_BAD_TANGENT = -2
-  integer(c_int), parameter :: IntersectionClassification_EDGE_END = -1
   integer(c_int), parameter :: IntersectionClassification_FIRST = 0
   integer(c_int), parameter :: IntersectionClassification_SECOND = 1
   integer(c_int), parameter :: IntersectionClassification_OPPOSED = 2
   integer(c_int), parameter :: IntersectionClassification_TANGENT_FIRST = 3
   integer(c_int), parameter :: IntersectionClassification_TANGENT_SECOND = 4
-  integer(c_int), parameter :: IntersectionClassification_IGNORED_CORNER = 5
+  integer(c_int), parameter :: IntersectionClassification_IGNORED_CORNER = 8
 
 contains
 
@@ -552,20 +550,20 @@ contains
              enum_ = IntersectionClassification_OPPOSED
           else
              ! NOTE: This is an error state.
-             enum_ = IntersectionClassification_BAD_TANGENT
+             enum_ = Status_BAD_TANGENT
           end if
        else
           delta_c = abs(curvature1) - abs(curvature2)
           if (delta_c == 0.0_dp) then
              ! NOTE: This is an error state.
-             enum_ = IntersectionClassification_SAME_CURVATURE
+             enum_ = Status_SAME_CURVATURE
           else
              sign2 = sign(1.0_dp, delta_c)
              if (sign1 == sign2) then
                 enum_ = IntersectionClassification_OPPOSED
              else
                 ! NOTE: This is an error state.
-                enum_ = IntersectionClassification_BAD_TANGENT
+                enum_ = Status_BAD_TANGENT
              end if
           end if
        end if
@@ -576,7 +574,7 @@ contains
           enum_ = IntersectionClassification_TANGENT_SECOND
        else
           ! NOTE: This is an error state.
-          enum_ = IntersectionClassification_SAME_CURVATURE
+          enum_ = Status_SAME_CURVATURE
        end if
     end if
 
@@ -588,8 +586,8 @@ contains
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This subroutine is not part of the C ABI for this module,
     !       but it is (for now) public, so that it can be tested.
-    ! NOTE: This returns ``IntersectionClassification_EDGE_END`` if
-    !       the intersection occurs at the end of an edge.
+    ! NOTE: This returns ``Status_EDGE_END`` if the intersection occurs at
+    !       the end of an edge.
     ! NOTE: This **assumes**, but does not check that
     !       ``intersection_%index_(first|second)`` are valid indices within
     !       ``edges_(first|second)`` and that each of those ``CurveData``
@@ -605,7 +603,7 @@ contains
 
     if (intersection_%s == 1.0_dp .OR. intersection_%t == 1.0_dp) then
        ! NOTE: This is an error state.
-       enum_ = IntersectionClassification_EDGE_END
+       enum_ = Status_EDGE_END
        return
     end if
 
@@ -752,7 +750,7 @@ contains
                degree1 + 1, edges_first(index1)%nodes, &
                degree2 + 1, edges_second(index2)%nodes, &
                st_vals, num_st_vals, status)
-          if (status == AllIntersections_SUCCESS) then
+          if (status == Status_SUCCESS) then
              if (num_st_vals > 0) then
                 call add_st_vals( &
                      edges_first, edges_second, num_st_vals, st_vals, &

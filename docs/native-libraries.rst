@@ -133,6 +133,7 @@ The C headers for ``libbezier`` will be included in the installed package
        curve.h
        curve_intersection.h
        helpers.h
+       status.h
        surface.h
        surface_intersection.h
      bezier.h
@@ -162,6 +163,7 @@ Cython declaration files are provided:
      _curve.pxd
      _curve_intersection.pxd
      _helpers.pxd
+     _status.pxd
      _surface.pxd
      _surface_intersection.pxd
 

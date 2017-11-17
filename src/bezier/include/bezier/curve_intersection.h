@@ -25,15 +25,6 @@ enum BoxIntersectionType {
   DISJOINT = 2,
 };
 
-enum AllIntersectionsStatus {
-  SUCCESS = 0,
-  NO_CONVERGE = 1,
-  TOO_SMALL = 2,
-  PARALLEL = 3,
-  WIGGLE_FAIL = 4,
-  UNKNOWN = 5,
-};
-
 void linearization_error(
     int *num_nodes, int *dimension, double *nodes, double *error);
 void segment_intersection(
@@ -57,7 +48,7 @@ void from_linearized(
     double *start_node2, double *end_node2,
     int *num_nodes2, double *root_nodes2,
     double *refined_s, double *refined_t,
-    bool *does_intersect, int *py_exc);
+    bool *does_intersect, int *status);
 void bbox_line_intersect(
     int *num_nodes, double *nodes, double *line_start, double *line_end,
     int *enum_);

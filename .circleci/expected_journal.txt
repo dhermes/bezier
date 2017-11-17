@@ -35,6 +35,27 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
+>   src/bezier/status.f90 \
+>   -o \
+>   build/temp.linux-x86_64-3.6/src/bezier/status.o \
+>   -J \
+>   build/temp.linux-x86_64-3.6
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -march=native \
+>   -c \
+>   -c \
 >   src/bezier/helpers.f90 \
 >   -o \
 >   build/temp.linux-x86_64-3.6/src/bezier/helpers.o \
@@ -214,6 +235,7 @@ $ ar \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqk21.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqagse.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/types.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/status.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/helpers.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/curve.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/surface.o \
@@ -350,6 +372,7 @@ $ gcc \
 >   -shared \
 >   build/temp.linux-x86_64-3.6/src/bezier/_curve_intersection_speedup.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/types.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/status.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/helpers.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/d1mach.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqelg.o \
@@ -388,6 +411,7 @@ $ gcc \
 >   -shared \
 >   build/temp.linux-x86_64-3.6/src/bezier/_surface_intersection_speedup.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/types.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/status.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/helpers.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/d1mach.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqelg.o \

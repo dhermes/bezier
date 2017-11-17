@@ -14,6 +14,9 @@ module curve_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
+  use status, only: &
+       Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
+       Status_NO_CONVERGE, Status_TOO_SMALL, Status_UNKNOWN
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
        vector_close, in_interval, ulps_away
@@ -25,37 +28,19 @@ module curve_intersection
        CANDIDATES_EVEN, INTERSECTIONS_WORKSPACE, make_candidates
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
-       BoxIntersectionType_DISJOINT, FromLinearized_SUCCESS, &
-       FromLinearized_PARALLEL, FromLinearized_WIGGLE_FAIL, &
-       LINEARIZATION_THRESHOLD, Subdivide_FIRST, Subdivide_SECOND, &
-       Subdivide_BOTH, Subdivide_NEITHER, AllIntersections_SUCCESS, &
-       AllIntersections_NO_CONVERGE, AllIntersections_TOO_SMALL, &
-       AllIntersections_PARALLEL, AllIntersections_WIGGLE_FAIL, &
-       AllIntersections_UNKNOWN, &
-       linearization_error, segment_intersection, &
-       newton_refine_intersect, bbox_intersect, parallel_different, &
-       from_linearized, bbox_line_intersect, add_intersection, &
-       add_from_linearized, endpoint_check, tangent_bbox_intersection, &
-       add_candidates, intersect_one_round, all_intersections_abi, &
+       BoxIntersectionType_DISJOINT, Subdivide_FIRST, Subdivide_SECOND, &
+       Subdivide_BOTH, Subdivide_NEITHER, LINEARIZATION_THRESHOLD, &
+       linearization_error, segment_intersection, newton_refine_intersect, &
+       bbox_intersect, parallel_different, from_linearized, &
+       bbox_line_intersect, add_intersection, add_from_linearized, &
+       endpoint_check, tangent_bbox_intersection, add_candidates, &
+       intersect_one_round, all_intersections, all_intersections_abi, &
        free_curve_intersections_workspace
 
   ! Values of BoxIntersectionType enum:
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
   integer(c_int), parameter :: BoxIntersectionType_TANGENT = 1
   integer(c_int), parameter :: BoxIntersectionType_DISJOINT = 2
-  ! Values of FromLinearized enum. In ``from_linearized``, ``py_exc == 1``
-  ! corresponds to ``NotImplementedError('Line segments parallel.')`` and
-  ! ``py_exc == 2`` indicates that ``wiggle_interval`` failed.
-  integer(c_int), parameter :: FromLinearized_SUCCESS = 0
-  integer(c_int), parameter :: FromLinearized_PARALLEL = 1
-  integer(c_int), parameter :: FromLinearized_WIGGLE_FAIL = 2
-  ! Values of AllIntersections enum:
-  integer(c_int), parameter :: AllIntersections_SUCCESS = 0
-  integer(c_int), parameter :: AllIntersections_NO_CONVERGE = 1
-  integer(c_int), parameter :: AllIntersections_TOO_SMALL = 2
-  integer(c_int), parameter :: AllIntersections_PARALLEL = 3
-  integer(c_int), parameter :: AllIntersections_WIGGLE_FAIL = 4
-  integer(c_int), parameter :: AllIntersections_UNKNOWN = 5
   ! Values of Subdivide enum:
   integer(c_int), parameter :: Subdivide_FIRST = 0
   integer(c_int), parameter :: Subdivide_SECOND = 1
@@ -267,7 +252,7 @@ contains
   subroutine from_linearized( &
        error1, start1, end1, start_node1, end_node1, num_nodes1, root_nodes1, &
        error2, start2, end2, start_node2, end_node2, num_nodes2, root_nodes2, &
-       refined_s, refined_t, does_intersect, py_exc) &
+       refined_s, refined_t, does_intersect, status) &
        bind(c, name='from_linearized')
 
     real(c_double), intent(in) :: error1, start1, end1
@@ -282,13 +267,13 @@ contains
     real(c_double), intent(in) :: root_nodes2(num_nodes2, 2)
     real(c_double), intent(out) :: refined_s, refined_t
     logical(c_bool), intent(out) :: does_intersect
-    integer(c_int), intent(out) :: py_exc
+    integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     real(c_double) :: s, t
     integer(c_int) :: enum_
     logical(c_bool) :: success
 
-    py_exc = FromLinearized_SUCCESS
+    status = Status_SUCCESS
     does_intersect = .FALSE.  ! Default value.
     call segment_intersection( &
          start_node1, end_node1, start_node2, end_node2, s, t, success)
@@ -327,7 +312,7 @@ contains
        end if
 
        ! Expect the wrapper code to raise.
-       py_exc = FromLinearized_PARALLEL
+       status = Status_PARALLEL
        return
     end if
 
@@ -343,14 +328,14 @@ contains
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then
-       py_exc = FromLinearized_WIGGLE_FAIL  ! LCOV_EXCL_LINE
+       status = Status_WIGGLE_FAIL  ! LCOV_EXCL_LINE
        return  ! LCOV_EXCL_LINE
     end if
     refined_s = s
 
     call wiggle_interval(refined_t, t, success)
     if (.NOT. success) then
-       py_exc = FromLinearized_WIGGLE_FAIL  ! LCOV_EXCL_LINE
+       status = Status_WIGGLE_FAIL  ! LCOV_EXCL_LINE
        return  ! LCOV_EXCL_LINE
     end if
     refined_t = t
@@ -504,7 +489,7 @@ contains
   subroutine add_from_linearized( &
        first, root_nodes1, linearization_error1, &
        second, root_nodes2, linearization_error2, &
-       num_intersections, intersections, py_exc)
+       num_intersections, intersections, status)
 
     ! Adds an intersection from two linearizations.
     !
@@ -518,7 +503,7 @@ contains
     real(c_double), intent(in) :: linearization_error2
     integer(c_int), intent(inout) :: num_intersections
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
-    integer(c_int), intent(out) :: py_exc
+    integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: num_nodes1, num_nodes2
     real(c_double) :: refined_s, refined_t
@@ -536,9 +521,9 @@ contains
          linearization_error2, second%start, second%end_, &
          second%nodes(1, :), second%nodes(num_nodes2, :), &
          num_nodes2, root_nodes2, &
-         refined_s, refined_t, does_intersect, py_exc)
+         refined_s, refined_t, does_intersect, status)
 
-    if (py_exc /= FromLinearized_SUCCESS) then
+    if (status /= Status_SUCCESS) then
        return
     end if
 
@@ -690,7 +675,7 @@ contains
   subroutine intersect_one_round( &
        root_nodes_first, root_nodes_second, num_candidates, candidates, &
        num_intersections, intersections, &
-       next_candidates, num_next_candidates, py_exc)
+       next_candidates, num_next_candidates, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This assumes, but does not check, that ``candidates`` has
@@ -704,7 +689,7 @@ contains
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
     type(CurveData), allocatable, intent(inout) :: next_candidates(:, :)
     integer(c_int), intent(out) :: num_next_candidates
-    integer(c_int), intent(out) :: py_exc
+    integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     type(CurveData) :: first, second
     real(c_double) :: linearization_error1, linearization_error2
@@ -712,7 +697,7 @@ contains
     integer(c_int) :: subdivide_enum
 
     num_next_candidates = 0
-    py_exc = FromLinearized_SUCCESS
+    status = Status_SUCCESS
     do index_ = 1, num_candidates
        ! NOTE: We **hope** that the compiler avoids turning this alias (for
        !       the sake of typing fewer characters) into a copy.
@@ -734,10 +719,10 @@ contains
              call add_from_linearized( &
                   first, root_nodes_first, linearization_error1, &
                   second, root_nodes_second, linearization_error2, &
-                  num_intersections, intersections, py_exc)
+                  num_intersections, intersections, status)
 
              ! If there was a failure, exit this subroutine.
-             if (py_exc /= FromLinearized_SUCCESS) then
+             if (status /= Status_SUCCESS) then
                 return
              end if
 
@@ -823,7 +808,8 @@ contains
     integer(c_int), intent(out) :: num_intersections
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
-    integer(c_int) :: num_candidates, num_next_candidates, index_, py_exc
+    integer(c_int) :: num_candidates, num_next_candidates
+    integer(c_int) :: index_, intersect_status
     logical(c_bool) :: is_even
 
     num_intersections = 0
@@ -831,7 +817,7 @@ contains
     num_candidates = 1
     call make_candidates( &
          nodes_first, nodes_second, CANDIDATES_ODD)
-    status = AllIntersections_SUCCESS  ! Default.
+    status = Status_SUCCESS  ! Default.
 
     is_even = .TRUE.  ! At zero.
     do index_ = 1, MAX_INTERSECT_SUBDIVISIONS
@@ -844,7 +830,7 @@ contains
                nodes_first, nodes_second, &
                num_candidates, CANDIDATES_EVEN, &
                num_intersections, intersections, &
-               CANDIDATES_ODD, num_next_candidates, py_exc)
+               CANDIDATES_ODD, num_next_candidates, intersect_status)
        else
           ! Since ``index_`` is odd, we READ from ``CANDIDATES_ODD``
           ! and WRITE to ``CANDIDATES_EVEN``.
@@ -852,26 +838,26 @@ contains
                nodes_first, nodes_second, &
                num_candidates, CANDIDATES_ODD, &
                num_intersections, intersections, &
-               CANDIDATES_EVEN, num_next_candidates, py_exc)
+               CANDIDATES_EVEN, num_next_candidates, intersect_status)
        end if
 
-       if (py_exc == FromLinearized_PARALLEL) then
-          status = AllIntersections_PARALLEL
+       if (intersect_status == Status_PARALLEL) then
+          status = Status_PARALLEL
           return
-       else if (py_exc == FromLinearized_WIGGLE_FAIL) then
+       else if (intersect_status == Status_WIGGLE_FAIL) then
           ! NOTE: We exclude this block from testing because it's
           !       quite difficult to come up with an example that
           !       causes it.
-          status = AllIntersections_WIGGLE_FAIL  ! LCOV_EXCL_LINE
+          status = Status_WIGGLE_FAIL  ! LCOV_EXCL_LINE
           return  ! LCOV_EXCL_LINE
-       else if (py_exc /= FromLinearized_SUCCESS) then
+       else if (intersect_status /= Status_SUCCESS) then
           ! NOTE: We exclude this block from testing because it
           !       **should** never occur. It is here simply to
           !       future-proof this code, since it is a hard-coded
           !       remapping of the error codes from ``from_linearized()``.
           !       If those error codes change and this section doesn't,
           !       then an "unknown" error will occur.
-          status = AllIntersections_UNKNOWN  ! LCOV_EXCL_LINE
+          status = Status_UNKNOWN  ! LCOV_EXCL_LINE
           return  ! LCOV_EXCL_LINE
        end if
 
@@ -896,7 +882,7 @@ contains
     ! If we've reached this point, then the curve intersection failed to
     ! converge to "approximately linear" subdivided curves after
     ! ``MAX_INTERSECT_SUBDIVISIONS``.
-    status = AllIntersections_NO_CONVERGE
+    status = Status_NO_CONVERGE
 
   end subroutine all_intersections
 
@@ -910,7 +896,7 @@ contains
     !       by Bezout's theorem). If ``intersections`` is not large enough
     !       (i.e. if ``intersections_size`` < num_intersections``), then
     !       ``intersections`` will not be populated and the ``status`` will be
-    !       set to ``AllIntersections_TOO_SMALL``. However, the value of
+    !       set to ``Status_TOO_SMALL``. However, the value of
     !       ``num_intersections`` will be accurate and ``intersections``
     !       should be re-sized by the caller to accommodate.
 
@@ -927,12 +913,12 @@ contains
          num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
          INTERSECTIONS_WORKSPACE, num_intersections, status)
 
-    if (status /= AllIntersections_SUCCESS) then
+    if (status /= Status_SUCCESS) then
        return
     end if
 
     if (num_intersections > intersections_size) then
-       status = AllIntersections_TOO_SMALL
+       status = Status_TOO_SMALL
     else if (num_intersections > 0) then
        ! NOTE: This assumes, but doesn't check that
        !       ``INTERSECTIONS_WORKSPACE`` has been allocated

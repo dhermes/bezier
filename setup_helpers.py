@@ -97,6 +97,7 @@ QUADPACK_MODULES = (
 #       each value.
 FORTRAN_MODULES = collections.OrderedDict()
 FORTRAN_MODULES['types'] = ('types',)
+FORTRAN_MODULES['status'] = ('status',)
 FORTRAN_MODULES['helpers'] = ('types', 'helpers')
 FORTRAN_MODULES['curve'] = (
     'types',
@@ -121,6 +122,7 @@ FORTRAN_MODULES['surface'] = (
 )
 FORTRAN_MODULES['curve_intersection'] = (
     'types',
+    'status',
     'helpers',
     os.path.join(QUADPACK_DIR, 'd1mach'),
     os.path.join(QUADPACK_DIR, 'dqelg'),
@@ -132,6 +134,7 @@ FORTRAN_MODULES['curve_intersection'] = (
 )
 FORTRAN_MODULES['surface_intersection'] = (
     'types',
+    'status',
     'helpers',
     os.path.join(QUADPACK_DIR, 'd1mach'),
     os.path.join(QUADPACK_DIR, 'dqelg'),
@@ -235,7 +238,7 @@ def extension_modules():
     libraries, library_dirs = BuildFortranThenExt.get_library_dirs()
     extensions = []
     for name, dependencies in FORTRAN_MODULES.items():
-        if name == 'types':  # No speedup.
+        if name in ('types', 'status'):  # No speedup.
             continue
 
         mod_name = 'bezier._{}_speedup'.format(name)

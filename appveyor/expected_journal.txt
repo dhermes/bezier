@@ -35,6 +35,27 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -funroll-loops \
 >   -c \
 >   -c \
+>   src\beziers\status.f90 \
+>   -o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\status.o \
+>   -J \
+>   build\temp.win-amd64-3.6\Release
+----------------------------------------
+$ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
+>   -Wall \
+>   -fno-second-underscore \
+>   -O0 \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -Werror \
+>   -O3 \
+>   -march=native \
+>   -funroll-loops \
+>   -c \
+>   -c \
 >   src\bezier\helpers.f90 \
 >   -o \
 >   build\temp.win-amd64-3.6\Release\src\bezier\helpers.o \
@@ -206,6 +227,7 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqk21.o \
 >   build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqagse.o \
 >   build\temp.win-amd64-3.6\Release\src\bezier\types.o \
+>   build\temp.win-amd64-3.6\Release\src\bezier\status.o \
 >   build\temp.win-amd64-3.6\Release\src\bezier\helpers.o \
 >   build\temp.win-amd64-3.6\Release\src\bezier\curve.o \
 >   build\temp.win-amd64-3.6\Release\src\bezier\surface.o \

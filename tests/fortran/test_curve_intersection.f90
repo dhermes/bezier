@@ -13,17 +13,16 @@
 module test_curve_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
+  use status, only: &
+       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, Status_TOO_SMALL
   use curve, only: &
        CurveData, evaluate_multi, subdivide_nodes, curves_equal, &
        subdivide_curve
   use curve_intersection, only: &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
-       BoxIntersectionType_DISJOINT, FromLinearized_SUCCESS, &
-       FromLinearized_PARALLEL, Subdivide_FIRST, Subdivide_SECOND, &
-       Subdivide_BOTH, Subdivide_NEITHER, AllIntersections_SUCCESS, &
-       AllIntersections_NO_CONVERGE, AllIntersections_TOO_SMALL, &
-       AllIntersections_PARALLEL, AllIntersections_WIGGLE_FAIL, &
-       AllIntersections_UNKNOWN, &
+       BoxIntersectionType_DISJOINT, &
+       Subdivide_FIRST, Subdivide_SECOND, &
+       Subdivide_BOTH, Subdivide_NEITHER, &
        linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
@@ -564,7 +563,7 @@ contains
     real(c_double) :: nodes3(2, 2), nodes4(2, 2)
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
-    integer(c_int) :: py_exc
+    integer(c_int) :: status
     integer :: case_id
     character(15) :: name
 
@@ -593,9 +592,9 @@ contains
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
-         refined_s, refined_t, does_intersect, py_exc)
+         refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         does_intersect .AND. py_exc == FromLinearized_SUCCESS .AND. &
+         does_intersect .AND. status == Status_SUCCESS .AND. &
          refined_s == 0.5_dp .AND. refined_t == 0.5_dp)
     call print_status(name, case_id, case_success, success)
 
@@ -615,18 +614,18 @@ contains
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
-         refined_s, refined_t, does_intersect, py_exc)
+         refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. py_exc == FromLinearized_SUCCESS)
+         .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Same as CASE 2, but swap the inputs.
     call from_linearized( &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
-         refined_s, refined_t, does_intersect, py_exc)
+         refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. py_exc == FromLinearized_SUCCESS)
+         .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Bounding boxes intersect but the quadratics do not.
@@ -647,18 +646,18 @@ contains
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
-         refined_s, refined_t, does_intersect, py_exc)
+         refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. py_exc == FromLinearized_SUCCESS)
+         .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Same as CASE 4, but swap the inputs.
     call from_linearized( &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
-         refined_s, refined_t, does_intersect, py_exc)
+         refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. py_exc == FromLinearized_SUCCESS)
+         .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Parallel lines that do not intersect.
@@ -677,9 +676,9 @@ contains
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
-         refined_s, refined_t, does_intersect, py_exc)
+         refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. py_exc == FromLinearized_SUCCESS)
+         .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 7: Parallel lines that **do** intersect.
@@ -698,8 +697,8 @@ contains
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
-         refined_s, refined_t, does_intersect, py_exc)
-    case_success = (py_exc == FromLinearized_PARALLEL)
+         refined_s, refined_t, does_intersect, status)
+    case_success = (status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Linearized parts are same line but disjoint segments.
@@ -720,9 +719,9 @@ contains
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
-         refined_s, refined_t, does_intersect, py_exc)
+         refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. py_exc == FromLinearized_SUCCESS)
+         .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 9: Linearized parts parallel / diff. lines / bbox-es overlap.
@@ -743,8 +742,8 @@ contains
     call from_linearized( &
          error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
          error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
-         refined_s, refined_t, does_intersect, py_exc)
-    case_success = (py_exc == FromLinearized_PARALLEL)
+         refined_s, refined_t, does_intersect, status)
+    case_success = (status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_from_linearized
@@ -904,7 +903,7 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    integer(c_int) :: py_exc
+    integer(c_int) :: status
     real(c_double) :: nodes1(2, 2), nodes2(3, 2)
     real(c_double) :: root_nodes1(3, 2), root_nodes2(3, 2)
     type(CurveData) :: first, second
@@ -934,12 +933,12 @@ contains
     call add_from_linearized( &
          first, first%nodes, 0.0_dp, &
          second, second%nodes, 0.0_dp, &
-         num_intersections, intersections, py_exc)
+         num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         py_exc == FromLinearized_SUCCESS .AND. &
+         status == Status_SUCCESS .AND. &
          intersections(1, 1) == 0.5_dp .AND. &
          intersections(2, 1) == 0.5_dp)
     call print_status(name, case_id, case_success, success)
@@ -961,10 +960,10 @@ contains
     call add_from_linearized( &
          first, first%nodes, 0.0_dp, &
          second, second%nodes, 0.0_dp, &
-         num_intersections, intersections, py_exc)
+         num_intersections, intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         py_exc == FromLinearized_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Quadratic curves that intersect after many (12) subdivisions.
@@ -1001,12 +1000,12 @@ contains
     call add_from_linearized( &
          first, root_nodes1, linearization_error1, &
          second, root_nodes2, linearization_error2, &
-         num_intersections, intersections, py_exc)
+         num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         py_exc == FromLinearized_SUCCESS .AND. &
+         status == Status_SUCCESS .AND. &
          3.0_dp * intersections(1, 1) == 1.0_dp .AND. &
          3.0_dp * intersections(2, 1) == 2.0_dp)
     call print_status(name, case_id, case_success, success)
@@ -1028,10 +1027,10 @@ contains
     call add_from_linearized( &
          first, first%nodes, 0.0_dp, &
          second, second%nodes, 0.0_dp, &
-         num_intersections, intersections, py_exc)
+         num_intersections, intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         py_exc == FromLinearized_PARALLEL)
+         status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_from_linearized
@@ -1332,7 +1331,7 @@ contains
     real(c_double), allocatable :: intersections(:, :)
     type(CurveData), allocatable :: next_candidates(:, :)
     integer(c_int) :: num_next_candidates
-    integer(c_int) :: py_exc
+    integer(c_int) :: status
     type(CurveData) :: left1, right1, left2, right2
     integer :: case_id
     character(19) :: name
@@ -1371,7 +1370,7 @@ contains
     call intersect_one_round( &
          fixed_quadratic1, fixed_quadratic2, num_candidates, candidates, &
          num_intersections, intersections, &
-         next_candidates, num_next_candidates, py_exc)
+         next_candidates, num_next_candidates, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
@@ -1384,7 +1383,7 @@ contains
          curves_equal(next_candidates(2, 3), left2) .AND. &
          curves_equal(next_candidates(1, 4), right1) .AND. &
          curves_equal(next_candidates(2, 4), right2) .AND. &
-         py_exc == FromLinearized_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
     deallocate(next_candidates)
@@ -1401,7 +1400,7 @@ contains
     call intersect_one_round( &
          fixed_line1, fixed_quadratic2, num_candidates, candidates, &
          num_intersections, intersections, &
-         next_candidates, num_next_candidates, py_exc)
+         next_candidates, num_next_candidates, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
@@ -1410,7 +1409,7 @@ contains
          curves_equal(next_candidates(2, 1), left2) .AND. &
          curves_equal(next_candidates(1, 2), candidates(1, 1)) .AND. &
          curves_equal(next_candidates(2, 2), right2) .AND. &
-         py_exc == FromLinearized_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
     deallocate(next_candidates)
@@ -1427,7 +1426,7 @@ contains
     call intersect_one_round( &
          fixed_quadratic1, fixed_line2, num_candidates, candidates, &
          num_intersections, intersections, &
-         next_candidates, num_next_candidates, py_exc)
+         next_candidates, num_next_candidates, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
@@ -1436,7 +1435,7 @@ contains
          curves_equal(next_candidates(2, 1), candidates(2, 1)) .AND. &
          curves_equal(next_candidates(1, 2), right1) .AND. &
          curves_equal(next_candidates(2, 2), candidates(2, 1)) .AND. &
-         py_exc == FromLinearized_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
     deallocate(next_candidates)
@@ -1452,7 +1451,7 @@ contains
     call intersect_one_round( &
          fixed_line1, fixed_line2, num_candidates, candidates, &
          num_intersections, intersections, &
-         next_candidates, num_next_candidates, py_exc)
+         next_candidates, num_next_candidates, status)
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 1]) .AND. &
@@ -1460,7 +1459,7 @@ contains
          intersections(1, 1) == 0.5_dp .AND. &
          intersections(2, 1) == 0.5_dp .AND. &
          num_next_candidates == 0 .AND. &
-         py_exc == FromLinearized_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
     num_intersections = 0
@@ -1478,11 +1477,11 @@ contains
     call intersect_one_round( &
          fixed_line1, candidates(2, 1)%nodes, num_candidates, candidates, &
          num_intersections, intersections, &
-         next_candidates, num_next_candidates, py_exc)
+         next_candidates, num_next_candidates, status)
     case_success = ( &
          num_intersections == 0 .AND. &
          num_next_candidates == 0 .AND. &
-         py_exc == FromLinearized_PARALLEL)
+         status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
 
@@ -1500,11 +1499,11 @@ contains
          fixed_quadratic1, candidates(2, 1)%nodes, &
          num_candidates, candidates, &
          num_intersections, intersections, &
-         next_candidates, num_next_candidates, py_exc)
+         next_candidates, num_next_candidates, status)
     case_success = ( &
          num_intersections == 0 .AND. &
          num_next_candidates == 0 .AND. &
-         py_exc == FromLinearized_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
 
@@ -1531,7 +1530,7 @@ contains
          candidates(1, 1)%nodes, candidates(2, 1)%nodes, &
          num_candidates, candidates, &
          num_intersections, intersections, &
-         next_candidates, num_next_candidates, py_exc)
+         next_candidates, num_next_candidates, status)
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 1]) .AND. &
@@ -1539,7 +1538,7 @@ contains
          intersections(1, 1) == 1.0_dp .AND. &
          intersections(2, 1) == 0.0_dp .AND. &
          num_next_candidates == 0 .AND. &
-         py_exc == FromLinearized_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_intersect_one_round
@@ -1571,7 +1570,7 @@ contains
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
-         status == AllIntersections_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Intersection of two quadratic curves.
@@ -1595,10 +1594,10 @@ contains
          num_intersections == 1 .AND. &
          3 * intersections(1, 1) == 1.0_dp .AND. &
          3 * intersections(2, 1) == 2.0_dp .AND. &
-         status == AllIntersections_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Tangent curves, with a ``py_exc`` failure due to parallel lines.
+    ! CASE 3: Tangent curves, with a ``status`` failure due to parallel lines.
     quadratic1(1, :) = 0
     quadratic1(2, :) = [0.375_dp, 0.75_dp]
     quadratic1(3, :) = [0.75_dp, 0.375_dp]
@@ -1610,7 +1609,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == AllIntersections_PARALLEL)
+         status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Tangent curves, which cause the number of candidate pairs
@@ -1647,7 +1646,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == AllIntersections_NO_CONVERGE)
+         status == Status_NO_CONVERGE)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Curves where there are duplicate intersections caused by
@@ -1668,7 +1667,7 @@ contains
          intersections(2, 1) == 0.25_dp .AND. &
          intersections(1, 2) == 0.75_dp .AND. &
          intersections(2, 2) == 0.75_dp .AND. &
-         status == AllIntersections_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_all_intersections
@@ -1699,7 +1698,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == AllIntersections_PARALLEL)
+         status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: ``intersections`` is not large enough.
@@ -1715,7 +1714,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 3 .AND. &
-         status == AllIntersections_TOO_SMALL)
+         status == Status_TOO_SMALL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Just case 7, but with large enough ``intersections``.
@@ -1730,7 +1729,7 @@ contains
          intersections2(2, 2) == 0.25_dp .AND. &
          intersections2(1, 3) == 0.625_dp .AND. &
          intersections2(2, 3) == 0.75_dp .AND. &
-         status == AllIntersections_SUCCESS)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_all_intersections_abi

@@ -525,6 +525,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "numpy/arrayobject.h"
 #include "numpy/ufuncobject.h"
 #include "bezier/curve_intersection.h"
+#include "bezier/status.h"
 #include "pythread.h"
 #include <stdlib.h>
 #include "pystate.h"
@@ -1989,6 +1990,8 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, cha
 
 /* Module declarations from 'bezier._curve_intersection' */
 
+/* Module declarations from 'bezier._status' */
+
 /* Module declarations from 'bezier' */
 
 /* Module declarations from 'bezier._curve_intersection_speedup' */
@@ -2101,7 +2104,6 @@ static const char __pyx_k_name_2[] = "__name__";
 static const char __pyx_k_nodes1[] = "nodes1";
 static const char __pyx_k_nodes2[] = "nodes2";
 static const char __pyx_k_pickle[] = "pickle";
-static const char __pyx_k_py_exc[] = "py_exc";
 static const char __pyx_k_reduce[] = "__reduce__";
 static const char __pyx_k_result[] = "result";
 static const char __pyx_k_start0[] = "start0";
@@ -2342,7 +2344,6 @@ static PyObject *__pyx_kp_s_outside_of_unit_interval;
 static PyObject *__pyx_n_s_pack;
 static PyObject *__pyx_n_s_parallel_different;
 static PyObject *__pyx_n_s_pickle;
-static PyObject *__pyx_n_s_py_exc;
 static PyObject *__pyx_n_s_pyx_PickleError;
 static PyObject *__pyx_n_s_pyx_checksum;
 static PyObject *__pyx_n_s_pyx_getbuffer;
@@ -2524,7 +2525,7 @@ static PyObject *__pyx_codeobj__61;
 static PyObject *__pyx_codeobj__62;
 static PyObject *__pyx_codeobj__69;
 
-/* "bezier/_curve_intersection_speedup.pyx":39
+/* "bezier/_curve_intersection_speedup.pyx":40
  *
  *
  * def linearization_error(double[::1, :] nodes):             # <<<<<<<<<<<<<<
@@ -2541,7 +2542,7 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_1linearization_e
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("linearization_error (wrapper)", 0);
   assert(__pyx_arg_nodes); {
-    __pyx_v_nodes = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(__pyx_arg_nodes); if (unlikely(!__pyx_v_nodes.memview)) __PYX_ERR(0, 39, __pyx_L3_error)
+    __pyx_v_nodes = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(__pyx_arg_nodes); if (unlikely(!__pyx_v_nodes.memview)) __PYX_ERR(0, 40, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2574,19 +2575,19 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
   Py_ssize_t __pyx_t_10;
   __Pyx_RefNannySetupContext("linearization_error", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":43
+  /* "bezier/_curve_intersection_speedup.pyx":44
  *     cdef double error
  *
  *     num_nodes, dimension = np.shape(nodes)             # <<<<<<<<<<<<<<
  *
  *     bezier._curve_intersection.linearization_error(
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 44, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 44, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 44, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -2599,14 +2600,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -2615,20 +2616,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 43, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 44, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -2644,7 +2645,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 43, __pyx_L1_error)
+      __PYX_ERR(0, 44, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -2657,15 +2658,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_5);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 43, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 43, __pyx_L1_error)
+    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext;
@@ -2673,7 +2674,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_5 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_5);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 43, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 44, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     goto __pyx_L4_unpacking_done;
@@ -2681,17 +2682,17 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 43, __pyx_L1_error)
+    __PYX_ERR(0, 44, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 44, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 44, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_num_nodes = __pyx_t_7;
   __pyx_v_dimension = __pyx_t_8;
 
-  /* "bezier/_curve_intersection_speedup.pyx":48
+  /* "bezier/_curve_intersection_speedup.pyx":49
  *         &num_nodes,
  *         &dimension,
  *         &nodes[0, 0],             # <<<<<<<<<<<<<<
@@ -2711,10 +2712,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
   } else if (unlikely(__pyx_t_10 >= __pyx_v_nodes.shape[1])) __pyx_t_8 = 1;
   if (unlikely(__pyx_t_8 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_8);
-    __PYX_ERR(0, 48, __pyx_L1_error)
+    __PYX_ERR(0, 49, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":45
+  /* "bezier/_curve_intersection_speedup.pyx":46
  *     num_nodes, dimension = np.shape(nodes)
  *
  *     bezier._curve_intersection.linearization_error(             # <<<<<<<<<<<<<<
@@ -2723,7 +2724,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
  */
   linearization_error((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_error));
 
-  /* "bezier/_curve_intersection_speedup.pyx":51
+  /* "bezier/_curve_intersection_speedup.pyx":52
  *         &error,
  *     )
  *     return error             # <<<<<<<<<<<<<<
@@ -2731,13 +2732,13 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
  *
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_error); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_error); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":39
+  /* "bezier/_curve_intersection_speedup.pyx":40
  *
  *
  * def linearization_error(double[::1, :] nodes):             # <<<<<<<<<<<<<<
@@ -2761,7 +2762,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_linearization_er
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":54
+/* "bezier/_curve_intersection_speedup.pyx":55
  *
  *
  * def segment_intersection(             # <<<<<<<<<<<<<<
@@ -2807,23 +2808,23 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_3segment_interse
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_end0)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("segment_intersection", 1, 4, 4, 1); __PYX_ERR(0, 54, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("segment_intersection", 1, 4, 4, 1); __PYX_ERR(0, 55, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_start1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("segment_intersection", 1, 4, 4, 2); __PYX_ERR(0, 54, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("segment_intersection", 1, 4, 4, 2); __PYX_ERR(0, 55, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_end1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("segment_intersection", 1, 4, 4, 3); __PYX_ERR(0, 54, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("segment_intersection", 1, 4, 4, 3); __PYX_ERR(0, 55, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "segment_intersection") < 0)) __PYX_ERR(0, 54, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "segment_intersection") < 0)) __PYX_ERR(0, 55, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -2833,14 +2834,14 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_3segment_interse
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_start0 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_start0.memview)) __PYX_ERR(0, 55, __pyx_L3_error)
-    __pyx_v_end0 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_end0.memview)) __PYX_ERR(0, 55, __pyx_L3_error)
-    __pyx_v_start1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[2]); if (unlikely(!__pyx_v_start1.memview)) __PYX_ERR(0, 56, __pyx_L3_error)
-    __pyx_v_end1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[3]); if (unlikely(!__pyx_v_end1.memview)) __PYX_ERR(0, 56, __pyx_L3_error)
+    __pyx_v_start0 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_start0.memview)) __PYX_ERR(0, 56, __pyx_L3_error)
+    __pyx_v_end0 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_end0.memview)) __PYX_ERR(0, 56, __pyx_L3_error)
+    __pyx_v_start1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[2]); if (unlikely(!__pyx_v_start1.memview)) __PYX_ERR(0, 57, __pyx_L3_error)
+    __pyx_v_end1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[3]); if (unlikely(!__pyx_v_end1.memview)) __PYX_ERR(0, 57, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("segment_intersection", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 54, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("segment_intersection", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 55, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("bezier._curve_intersection_speedup.segment_intersection", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2874,7 +2875,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
   PyObject *__pyx_t_13 = NULL;
   __Pyx_RefNannySetupContext("segment_intersection", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":61
+  /* "bezier/_curve_intersection_speedup.pyx":62
  *
  *     bezier._curve_intersection.segment_intersection(
  *         &start0[0, 0],             # <<<<<<<<<<<<<<
@@ -2894,10 +2895,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
   } else if (unlikely(__pyx_t_2 >= __pyx_v_start0.shape[1])) __pyx_t_3 = 1;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    __PYX_ERR(0, 61, __pyx_L1_error)
+    __PYX_ERR(0, 62, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":62
+  /* "bezier/_curve_intersection_speedup.pyx":63
  *     bezier._curve_intersection.segment_intersection(
  *         &start0[0, 0],
  *         &end0[0, 0],             # <<<<<<<<<<<<<<
@@ -2917,10 +2918,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
   } else if (unlikely(__pyx_t_5 >= __pyx_v_end0.shape[1])) __pyx_t_3 = 1;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    __PYX_ERR(0, 62, __pyx_L1_error)
+    __PYX_ERR(0, 63, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":63
+  /* "bezier/_curve_intersection_speedup.pyx":64
  *         &start0[0, 0],
  *         &end0[0, 0],
  *         &start1[0, 0],             # <<<<<<<<<<<<<<
@@ -2940,10 +2941,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
   } else if (unlikely(__pyx_t_7 >= __pyx_v_start1.shape[1])) __pyx_t_3 = 1;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    __PYX_ERR(0, 63, __pyx_L1_error)
+    __PYX_ERR(0, 64, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":64
+  /* "bezier/_curve_intersection_speedup.pyx":65
  *         &end0[0, 0],
  *         &start1[0, 0],
  *         &end1[0, 0],             # <<<<<<<<<<<<<<
@@ -2963,10 +2964,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
   } else if (unlikely(__pyx_t_9 >= __pyx_v_end1.shape[1])) __pyx_t_3 = 1;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    __PYX_ERR(0, 64, __pyx_L1_error)
+    __PYX_ERR(0, 65, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":60
+  /* "bezier/_curve_intersection_speedup.pyx":61
  *     cdef bool_t success
  *
  *     bezier._curve_intersection.segment_intersection(             # <<<<<<<<<<<<<<
@@ -2975,7 +2976,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
  */
   segment_intersection((&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_start0.data) + __pyx_t_1)) ) + __pyx_t_2 * __pyx_v_start0.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_end0.data) + __pyx_t_4)) ) + __pyx_t_5 * __pyx_v_end0.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_start1.data) + __pyx_t_6)) ) + __pyx_t_7 * __pyx_v_start1.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_end1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_end1.strides[1]) )))), (&__pyx_v_s), (&__pyx_v_t), (&__pyx_v_success));
 
-  /* "bezier/_curve_intersection_speedup.pyx":69
+  /* "bezier/_curve_intersection_speedup.pyx":70
  *         &success,
  *     )
  *     if success:             # <<<<<<<<<<<<<<
@@ -2985,7 +2986,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
   __pyx_t_10 = (__pyx_v_success != 0);
   if (__pyx_t_10) {
 
-    /* "bezier/_curve_intersection_speedup.pyx":70
+    /* "bezier/_curve_intersection_speedup.pyx":71
  *     )
  *     if success:
  *         return s, t, True             # <<<<<<<<<<<<<<
@@ -2993,11 +2994,11 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
  *         return None, None, False
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_11 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __pyx_t_11 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_12 = PyFloat_FromDouble(__pyx_v_t); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __pyx_t_12 = PyFloat_FromDouble(__pyx_v_t); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __pyx_t_13 = PyTuple_New(3); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __pyx_t_13 = PyTuple_New(3); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_13);
     __Pyx_GIVEREF(__pyx_t_11);
     PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_11);
@@ -3012,7 +3013,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
     __pyx_t_13 = 0;
     goto __pyx_L0;
 
-    /* "bezier/_curve_intersection_speedup.pyx":69
+    /* "bezier/_curve_intersection_speedup.pyx":70
  *         &success,
  *     )
  *     if success:             # <<<<<<<<<<<<<<
@@ -3021,7 +3022,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
  */
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":72
+  /* "bezier/_curve_intersection_speedup.pyx":73
  *         return s, t, True
  *     else:
  *         return None, None, False             # <<<<<<<<<<<<<<
@@ -3035,7 +3036,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
     goto __pyx_L0;
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":54
+  /* "bezier/_curve_intersection_speedup.pyx":55
  *
  *
  * def segment_intersection(             # <<<<<<<<<<<<<<
@@ -3060,7 +3061,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_2segment_interse
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":75
+/* "bezier/_curve_intersection_speedup.pyx":76
  *
  *
  * def newton_refine(             # <<<<<<<<<<<<<<
@@ -3106,23 +3107,23 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_5newton_refine(P
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_nodes1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("newton_refine", 1, 4, 4, 1); __PYX_ERR(0, 75, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("newton_refine", 1, 4, 4, 1); __PYX_ERR(0, 76, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_t)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("newton_refine", 1, 4, 4, 2); __PYX_ERR(0, 75, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("newton_refine", 1, 4, 4, 2); __PYX_ERR(0, 76, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_nodes2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("newton_refine", 1, 4, 4, 3); __PYX_ERR(0, 75, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("newton_refine", 1, 4, 4, 3); __PYX_ERR(0, 76, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "newton_refine") < 0)) __PYX_ERR(0, 75, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "newton_refine") < 0)) __PYX_ERR(0, 76, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3132,14 +3133,14 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_5newton_refine(P
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 76, __pyx_L3_error)
-    __pyx_v_nodes1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_nodes1.memview)) __PYX_ERR(0, 76, __pyx_L3_error)
-    __pyx_v_t = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_t == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 76, __pyx_L3_error)
-    __pyx_v_nodes2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[3]); if (unlikely(!__pyx_v_nodes2.memview)) __PYX_ERR(0, 76, __pyx_L3_error)
+    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 77, __pyx_L3_error)
+    __pyx_v_nodes1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_nodes1.memview)) __PYX_ERR(0, 77, __pyx_L3_error)
+    __pyx_v_t = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_t == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 77, __pyx_L3_error)
+    __pyx_v_nodes2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[3]); if (unlikely(!__pyx_v_nodes2.memview)) __PYX_ERR(0, 77, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("newton_refine", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 75, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("newton_refine", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 76, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("bezier._curve_intersection_speedup.newton_refine", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3173,19 +3174,19 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
   Py_ssize_t __pyx_t_11;
   __Pyx_RefNannySetupContext("newton_refine", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":81
+  /* "bezier/_curve_intersection_speedup.pyx":82
  *
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes1, _ = np.shape(nodes1)             # <<<<<<<<<<<<<<
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes2, _ = np.shape(nodes2)
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes1, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes1, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3198,14 +3199,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -3214,20 +3215,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 82, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -3243,7 +3244,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 81, __pyx_L1_error)
+      __PYX_ERR(0, 82, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -3256,15 +3257,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_5);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 81, __pyx_L1_error)
+    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 82, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext;
@@ -3272,7 +3273,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_5 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_5);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     goto __pyx_L4_unpacking_done;
@@ -3280,28 +3281,28 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 81, __pyx_L1_error)
+    __PYX_ERR(0, 82, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_num_nodes1 = __pyx_t_7;
   __pyx_v__ = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":83
+  /* "bezier/_curve_intersection_speedup.pyx":84
  *     num_nodes1, _ = np.shape(nodes1)
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes2, _ = np.shape(nodes2)             # <<<<<<<<<<<<<<
  *
  *     bezier._curve_intersection.newton_refine_intersect(
  */
-  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_nodes2, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_nodes2, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3314,14 +3315,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     }
   }
   if (!__pyx_t_2) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -3330,20 +3331,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else
     #endif
     {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 84, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2); __pyx_t_2 = NULL;
       __Pyx_GIVEREF(__pyx_t_5);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_t_5);
       __pyx_t_5 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
@@ -3359,7 +3360,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 83, __pyx_L1_error)
+      __PYX_ERR(0, 84, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -3372,15 +3373,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_4);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 84, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
+    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 84, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 83, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 84, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_5)->tp_iternext;
@@ -3388,7 +3389,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_4 = __pyx_t_6(__pyx_t_5); if (unlikely(!__pyx_t_4)) goto __pyx_L5_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_4);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 83, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 84, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     goto __pyx_L6_unpacking_done;
@@ -3396,16 +3397,16 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 83, __pyx_L1_error)
+    __PYX_ERR(0, 84, __pyx_L1_error)
     __pyx_L6_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_num_nodes2 = __pyx_t_7;
   __Pyx_DECREF_SET(__pyx_v__, __pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":88
+  /* "bezier/_curve_intersection_speedup.pyx":89
  *         &s,
  *         &num_nodes1,
  *         &nodes1[0, 0],             # <<<<<<<<<<<<<<
@@ -3425,10 +3426,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
   } else if (unlikely(__pyx_t_9 >= __pyx_v_nodes1.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 88, __pyx_L1_error)
+    __PYX_ERR(0, 89, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":91
+  /* "bezier/_curve_intersection_speedup.pyx":92
  *         &t,
  *         &num_nodes2,
  *         &nodes2[0, 0],             # <<<<<<<<<<<<<<
@@ -3448,10 +3449,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
   } else if (unlikely(__pyx_t_11 >= __pyx_v_nodes2.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 91, __pyx_L1_error)
+    __PYX_ERR(0, 92, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":85
+  /* "bezier/_curve_intersection_speedup.pyx":86
  *     num_nodes2, _ = np.shape(nodes2)
  *
  *     bezier._curve_intersection.newton_refine_intersect(             # <<<<<<<<<<<<<<
@@ -3460,7 +3461,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
  */
   newton_refine_intersect((&__pyx_v_s), (&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_t), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_new_s), (&__pyx_v_new_t));
 
-  /* "bezier/_curve_intersection_speedup.pyx":96
+  /* "bezier/_curve_intersection_speedup.pyx":97
  *     )
  *
  *     return new_s, new_t             # <<<<<<<<<<<<<<
@@ -3468,11 +3469,11 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
  *
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_new_s); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_new_s); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_new_t); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_new_t); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
@@ -3484,7 +3485,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":75
+  /* "bezier/_curve_intersection_speedup.pyx":76
  *
  *
  * def newton_refine(             # <<<<<<<<<<<<<<
@@ -3510,7 +3511,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_4newton_refine(C
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":99
+/* "bezier/_curve_intersection_speedup.pyx":100
  *
  *
  * def bbox_intersect(double[::1, :] nodes1, double[::1, :] nodes2):             # <<<<<<<<<<<<<<
@@ -3550,11 +3551,11 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_7bbox_intersect(
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_nodes2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("bbox_intersect", 1, 2, 2, 1); __PYX_ERR(0, 99, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("bbox_intersect", 1, 2, 2, 1); __PYX_ERR(0, 100, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "bbox_intersect") < 0)) __PYX_ERR(0, 99, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "bbox_intersect") < 0)) __PYX_ERR(0, 100, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3562,12 +3563,12 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_7bbox_intersect(
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_nodes1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes1.memview)) __PYX_ERR(0, 99, __pyx_L3_error)
-    __pyx_v_nodes2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_nodes2.memview)) __PYX_ERR(0, 99, __pyx_L3_error)
+    __pyx_v_nodes1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes1.memview)) __PYX_ERR(0, 100, __pyx_L3_error)
+    __pyx_v_nodes2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_nodes2.memview)) __PYX_ERR(0, 100, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("bbox_intersect", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 99, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("bbox_intersect", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 100, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("bezier._curve_intersection_speedup.bbox_intersect", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3600,19 +3601,19 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
   Py_ssize_t __pyx_t_11;
   __Pyx_RefNannySetupContext("bbox_intersect", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":103
+  /* "bezier/_curve_intersection_speedup.pyx":104
  *
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes1, _ = np.shape(nodes1)             # <<<<<<<<<<<<<<
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes2, _ = np.shape(nodes2)
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes1, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes1, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3625,14 +3626,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -3641,20 +3642,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 104, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -3670,7 +3671,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 103, __pyx_L1_error)
+      __PYX_ERR(0, 104, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -3683,15 +3684,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_5);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext;
@@ -3699,7 +3700,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_5 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_5);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 103, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     goto __pyx_L4_unpacking_done;
@@ -3707,28 +3708,28 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 103, __pyx_L1_error)
+    __PYX_ERR(0, 104, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_num_nodes1 = __pyx_t_7;
   __pyx_v__ = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":105
+  /* "bezier/_curve_intersection_speedup.pyx":106
  *     num_nodes1, _ = np.shape(nodes1)
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes2, _ = np.shape(nodes2)             # <<<<<<<<<<<<<<
  *
  *     bezier._curve_intersection.bbox_intersect(
  */
-  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_nodes2, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
+  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_nodes2, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3741,14 +3742,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     }
   }
   if (!__pyx_t_2) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -3757,20 +3758,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else
     #endif
     {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2); __pyx_t_2 = NULL;
       __Pyx_GIVEREF(__pyx_t_5);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_t_5);
       __pyx_t_5 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
@@ -3786,7 +3787,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 105, __pyx_L1_error)
+      __PYX_ERR(0, 106, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -3799,15 +3800,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_4);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_5)->tp_iternext;
@@ -3815,7 +3816,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_4 = __pyx_t_6(__pyx_t_5); if (unlikely(!__pyx_t_4)) goto __pyx_L5_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_4);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 105, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 106, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     goto __pyx_L6_unpacking_done;
@@ -3823,16 +3824,16 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 105, __pyx_L1_error)
+    __PYX_ERR(0, 106, __pyx_L1_error)
     __pyx_L6_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 105, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_num_nodes2 = __pyx_t_7;
   __Pyx_DECREF_SET(__pyx_v__, __pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":109
+  /* "bezier/_curve_intersection_speedup.pyx":110
  *     bezier._curve_intersection.bbox_intersect(
  *         &num_nodes1,
  *         &nodes1[0, 0],             # <<<<<<<<<<<<<<
@@ -3852,10 +3853,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
   } else if (unlikely(__pyx_t_9 >= __pyx_v_nodes1.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 109, __pyx_L1_error)
+    __PYX_ERR(0, 110, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":111
+  /* "bezier/_curve_intersection_speedup.pyx":112
  *         &nodes1[0, 0],
  *         &num_nodes2,
  *         &nodes2[0, 0],             # <<<<<<<<<<<<<<
@@ -3875,10 +3876,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
   } else if (unlikely(__pyx_t_11 >= __pyx_v_nodes2.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 111, __pyx_L1_error)
+    __PYX_ERR(0, 112, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":107
+  /* "bezier/_curve_intersection_speedup.pyx":108
  *     num_nodes2, _ = np.shape(nodes2)
  *
  *     bezier._curve_intersection.bbox_intersect(             # <<<<<<<<<<<<<<
@@ -3887,7 +3888,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
  */
   bbox_intersect((&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_enum_val));
 
-  /* "bezier/_curve_intersection_speedup.pyx":115
+  /* "bezier/_curve_intersection_speedup.pyx":116
  *     )
  *
  *     return enum_val             # <<<<<<<<<<<<<<
@@ -3895,13 +3896,13 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
  *
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_enum_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_enum_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":99
+  /* "bezier/_curve_intersection_speedup.pyx":100
  *
  *
  * def bbox_intersect(double[::1, :] nodes1, double[::1, :] nodes2):             # <<<<<<<<<<<<<<
@@ -3927,7 +3928,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_6bbox_intersect(
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":118
+/* "bezier/_curve_intersection_speedup.pyx":119
  *
  *
  * def parallel_different(             # <<<<<<<<<<<<<<
@@ -3973,23 +3974,23 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_9parallel_differ
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_end0)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("parallel_different", 1, 4, 4, 1); __PYX_ERR(0, 118, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("parallel_different", 1, 4, 4, 1); __PYX_ERR(0, 119, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_start1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("parallel_different", 1, 4, 4, 2); __PYX_ERR(0, 118, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("parallel_different", 1, 4, 4, 2); __PYX_ERR(0, 119, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_end1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("parallel_different", 1, 4, 4, 3); __PYX_ERR(0, 118, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("parallel_different", 1, 4, 4, 3); __PYX_ERR(0, 119, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "parallel_different") < 0)) __PYX_ERR(0, 118, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "parallel_different") < 0)) __PYX_ERR(0, 119, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3999,14 +4000,14 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_9parallel_differ
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_start0 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_start0.memview)) __PYX_ERR(0, 119, __pyx_L3_error)
-    __pyx_v_end0 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_end0.memview)) __PYX_ERR(0, 119, __pyx_L3_error)
-    __pyx_v_start1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[2]); if (unlikely(!__pyx_v_start1.memview)) __PYX_ERR(0, 120, __pyx_L3_error)
-    __pyx_v_end1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[3]); if (unlikely(!__pyx_v_end1.memview)) __PYX_ERR(0, 120, __pyx_L3_error)
+    __pyx_v_start0 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_start0.memview)) __PYX_ERR(0, 120, __pyx_L3_error)
+    __pyx_v_end0 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_end0.memview)) __PYX_ERR(0, 120, __pyx_L3_error)
+    __pyx_v_start1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[2]); if (unlikely(!__pyx_v_start1.memview)) __PYX_ERR(0, 121, __pyx_L3_error)
+    __pyx_v_end1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[3]); if (unlikely(!__pyx_v_end1.memview)) __PYX_ERR(0, 121, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("parallel_different", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 118, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("parallel_different", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 119, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("bezier._curve_intersection_speedup.parallel_different", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4035,7 +4036,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_8parallel_differ
   PyObject *__pyx_t_10 = NULL;
   __Pyx_RefNannySetupContext("parallel_different", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":124
+  /* "bezier/_curve_intersection_speedup.pyx":125
  *
  *     bezier._curve_intersection.parallel_different(
  *         &start0[0, 0],             # <<<<<<<<<<<<<<
@@ -4055,10 +4056,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_8parallel_differ
   } else if (unlikely(__pyx_t_2 >= __pyx_v_start0.shape[1])) __pyx_t_3 = 1;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    __PYX_ERR(0, 124, __pyx_L1_error)
+    __PYX_ERR(0, 125, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":125
+  /* "bezier/_curve_intersection_speedup.pyx":126
  *     bezier._curve_intersection.parallel_different(
  *         &start0[0, 0],
  *         &end0[0, 0],             # <<<<<<<<<<<<<<
@@ -4078,10 +4079,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_8parallel_differ
   } else if (unlikely(__pyx_t_5 >= __pyx_v_end0.shape[1])) __pyx_t_3 = 1;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    __PYX_ERR(0, 125, __pyx_L1_error)
+    __PYX_ERR(0, 126, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":126
+  /* "bezier/_curve_intersection_speedup.pyx":127
  *         &start0[0, 0],
  *         &end0[0, 0],
  *         &start1[0, 0],             # <<<<<<<<<<<<<<
@@ -4101,10 +4102,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_8parallel_differ
   } else if (unlikely(__pyx_t_7 >= __pyx_v_start1.shape[1])) __pyx_t_3 = 1;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    __PYX_ERR(0, 126, __pyx_L1_error)
+    __PYX_ERR(0, 127, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":127
+  /* "bezier/_curve_intersection_speedup.pyx":128
  *         &end0[0, 0],
  *         &start1[0, 0],
  *         &end1[0, 0],             # <<<<<<<<<<<<<<
@@ -4124,10 +4125,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_8parallel_differ
   } else if (unlikely(__pyx_t_9 >= __pyx_v_end1.shape[1])) __pyx_t_3 = 1;
   if (unlikely(__pyx_t_3 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_3);
-    __PYX_ERR(0, 127, __pyx_L1_error)
+    __PYX_ERR(0, 128, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":123
+  /* "bezier/_curve_intersection_speedup.pyx":124
  *     cdef bool_t result
  *
  *     bezier._curve_intersection.parallel_different(             # <<<<<<<<<<<<<<
@@ -4136,7 +4137,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_8parallel_differ
  */
   parallel_different((&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_start0.data) + __pyx_t_1)) ) + __pyx_t_2 * __pyx_v_start0.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_end0.data) + __pyx_t_4)) ) + __pyx_t_5 * __pyx_v_end0.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_start1.data) + __pyx_t_6)) ) + __pyx_t_7 * __pyx_v_start1.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_end1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_end1.strides[1]) )))), (&__pyx_v_result));
 
-  /* "bezier/_curve_intersection_speedup.pyx":130
+  /* "bezier/_curve_intersection_speedup.pyx":131
  *         &result,
  *     )
  *     return result             # <<<<<<<<<<<<<<
@@ -4144,13 +4145,13 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_8parallel_differ
  *
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_10 = __Pyx_PyBool_FromLong(__pyx_v_result); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyBool_FromLong(__pyx_v_result); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 131, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __pyx_r = __pyx_t_10;
   __pyx_t_10 = 0;
   goto __pyx_L0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":118
+  /* "bezier/_curve_intersection_speedup.pyx":119
  *
  *
  * def parallel_different(             # <<<<<<<<<<<<<<
@@ -4173,7 +4174,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_8parallel_differ
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":133
+/* "bezier/_curve_intersection_speedup.pyx":134
  *
  *
  * def from_linearized_low_level(             # <<<<<<<<<<<<<<
@@ -4243,71 +4244,71 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_11from_linearize
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_start1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 1); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 1); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_end1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 2); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 2); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_start_node1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 3); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 3); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_end_node1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 4); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 4); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_root_nodes1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 5); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 5); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  6:
         if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_error2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 6); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 6); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  7:
         if (likely((values[7] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_start2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 7); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 7); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  8:
         if (likely((values[8] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_end2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 8); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 8); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  9:
         if (likely((values[9] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_start_node2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 9); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 9); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 10:
         if (likely((values[10] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_end_node2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 10); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 10); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case 11:
         if (likely((values[11] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_root_nodes2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 11); __PYX_ERR(0, 133, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, 11); __PYX_ERR(0, 134, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "from_linearized_low_level") < 0)) __PYX_ERR(0, 133, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "from_linearized_low_level") < 0)) __PYX_ERR(0, 134, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 12) {
       goto __pyx_L5_argtuple_error;
@@ -4325,22 +4326,22 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_11from_linearize
       values[10] = PyTuple_GET_ITEM(__pyx_args, 10);
       values[11] = PyTuple_GET_ITEM(__pyx_args, 11);
     }
-    __pyx_v_error1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_error1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L3_error)
-    __pyx_v_start1 = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_start1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L3_error)
-    __pyx_v_end1 = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_end1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L3_error)
-    __pyx_v_start_node1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[3]); if (unlikely(!__pyx_v_start_node1.memview)) __PYX_ERR(0, 135, __pyx_L3_error)
-    __pyx_v_end_node1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[4]); if (unlikely(!__pyx_v_end_node1.memview)) __PYX_ERR(0, 135, __pyx_L3_error)
-    __pyx_v_root_nodes1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[5]); if (unlikely(!__pyx_v_root_nodes1.memview)) __PYX_ERR(0, 136, __pyx_L3_error)
-    __pyx_v_error2 = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_error2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L3_error)
-    __pyx_v_start2 = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_start2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L3_error)
-    __pyx_v_end2 = __pyx_PyFloat_AsDouble(values[8]); if (unlikely((__pyx_v_end2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L3_error)
-    __pyx_v_start_node2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[9]); if (unlikely(!__pyx_v_start_node2.memview)) __PYX_ERR(0, 138, __pyx_L3_error)
-    __pyx_v_end_node2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[10]); if (unlikely(!__pyx_v_end_node2.memview)) __PYX_ERR(0, 138, __pyx_L3_error)
-    __pyx_v_root_nodes2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[11]); if (unlikely(!__pyx_v_root_nodes2.memview)) __PYX_ERR(0, 139, __pyx_L3_error)
+    __pyx_v_error1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_error1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 135, __pyx_L3_error)
+    __pyx_v_start1 = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_start1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 135, __pyx_L3_error)
+    __pyx_v_end1 = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_end1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 135, __pyx_L3_error)
+    __pyx_v_start_node1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[3]); if (unlikely(!__pyx_v_start_node1.memview)) __PYX_ERR(0, 136, __pyx_L3_error)
+    __pyx_v_end_node1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[4]); if (unlikely(!__pyx_v_end_node1.memview)) __PYX_ERR(0, 136, __pyx_L3_error)
+    __pyx_v_root_nodes1 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[5]); if (unlikely(!__pyx_v_root_nodes1.memview)) __PYX_ERR(0, 137, __pyx_L3_error)
+    __pyx_v_error2 = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_error2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L3_error)
+    __pyx_v_start2 = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_start2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L3_error)
+    __pyx_v_end2 = __pyx_PyFloat_AsDouble(values[8]); if (unlikely((__pyx_v_end2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L3_error)
+    __pyx_v_start_node2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[9]); if (unlikely(!__pyx_v_start_node2.memview)) __PYX_ERR(0, 139, __pyx_L3_error)
+    __pyx_v_end_node2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[10]); if (unlikely(!__pyx_v_end_node2.memview)) __PYX_ERR(0, 139, __pyx_L3_error)
+    __pyx_v_root_nodes2 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[11]); if (unlikely(!__pyx_v_root_nodes2.memview)) __PYX_ERR(0, 140, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 133, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("from_linearized_low_level", 1, 12, 12, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 134, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("bezier._curve_intersection_speedup.from_linearized_low_level", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4359,7 +4360,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   double __pyx_v_refined_s;
   double __pyx_v_refined_t;
   bool __pyx_v_does_intersect;
-  int __pyx_v_py_exc;
+  int __pyx_v_status;
   CYTHON_UNUSED PyObject *__pyx_v__ = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -4384,19 +4385,19 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   Py_ssize_t __pyx_t_19;
   __Pyx_RefNannySetupContext("from_linearized_low_level", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":146
+  /* "bezier/_curve_intersection_speedup.pyx":147
  *
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes1, _ = np.shape(root_nodes1)             # <<<<<<<<<<<<<<
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes2, _ = np.shape(root_nodes2)
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_root_nodes1, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_root_nodes1, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -4409,14 +4410,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 147, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 147, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -4425,20 +4426,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 147, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 146, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 147, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 147, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -4454,7 +4455,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 146, __pyx_L1_error)
+      __PYX_ERR(0, 147, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -4467,15 +4468,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_5);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 146, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 147, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 146, __pyx_L1_error)
+    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 147, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 146, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 147, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext;
@@ -4483,7 +4484,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_5 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_5);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 146, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     goto __pyx_L4_unpacking_done;
@@ -4491,28 +4492,28 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 146, __pyx_L1_error)
+    __PYX_ERR(0, 147, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_num_nodes1 = __pyx_t_7;
   __pyx_v__ = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":148
+  /* "bezier/_curve_intersection_speedup.pyx":149
  *     num_nodes1, _ = np.shape(root_nodes1)
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes2, _ = np.shape(root_nodes2)             # <<<<<<<<<<<<<<
  *
  *     bezier._curve_intersection.from_linearized(
  */
-  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_root_nodes2, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_root_nodes2, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -4525,14 +4526,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     }
   }
   if (!__pyx_t_2) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 148, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -4541,20 +4542,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 148, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else
     #endif
     {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 148, __pyx_L1_error)
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 149, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2); __pyx_t_2 = NULL;
       __Pyx_GIVEREF(__pyx_t_5);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_t_5);
       __pyx_t_5 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 148, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
@@ -4570,7 +4571,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 148, __pyx_L1_error)
+      __PYX_ERR(0, 149, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -4583,15 +4584,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_4);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 149, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 149, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 148, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 149, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_5)->tp_iternext;
@@ -4599,7 +4600,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_4 = __pyx_t_6(__pyx_t_5); if (unlikely(!__pyx_t_4)) goto __pyx_L5_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_4);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 148, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 149, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     goto __pyx_L6_unpacking_done;
@@ -4607,16 +4608,16 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 148, __pyx_L1_error)
+    __PYX_ERR(0, 149, __pyx_L1_error)
     __pyx_L6_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 148, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_num_nodes2 = __pyx_t_7;
   __Pyx_DECREF_SET(__pyx_v__, __pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":154
+  /* "bezier/_curve_intersection_speedup.pyx":155
  *         &start1,
  *         &end1,
  *         &start_node1[0, 0],             # <<<<<<<<<<<<<<
@@ -4636,10 +4637,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   } else if (unlikely(__pyx_t_9 >= __pyx_v_start_node1.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 154, __pyx_L1_error)
+    __PYX_ERR(0, 155, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":155
+  /* "bezier/_curve_intersection_speedup.pyx":156
  *         &end1,
  *         &start_node1[0, 0],
  *         &end_node1[0, 0],             # <<<<<<<<<<<<<<
@@ -4659,10 +4660,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   } else if (unlikely(__pyx_t_11 >= __pyx_v_end_node1.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 155, __pyx_L1_error)
+    __PYX_ERR(0, 156, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":157
+  /* "bezier/_curve_intersection_speedup.pyx":158
  *         &end_node1[0, 0],
  *         &num_nodes1,
  *         &root_nodes1[0, 0],             # <<<<<<<<<<<<<<
@@ -4682,10 +4683,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   } else if (unlikely(__pyx_t_13 >= __pyx_v_root_nodes1.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 157, __pyx_L1_error)
+    __PYX_ERR(0, 158, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":161
+  /* "bezier/_curve_intersection_speedup.pyx":162
  *         &start2,
  *         &end2,
  *         &start_node2[0, 0],             # <<<<<<<<<<<<<<
@@ -4705,10 +4706,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   } else if (unlikely(__pyx_t_15 >= __pyx_v_start_node2.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 161, __pyx_L1_error)
+    __PYX_ERR(0, 162, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":162
+  /* "bezier/_curve_intersection_speedup.pyx":163
  *         &end2,
  *         &start_node2[0, 0],
  *         &end_node2[0, 0],             # <<<<<<<<<<<<<<
@@ -4728,10 +4729,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   } else if (unlikely(__pyx_t_17 >= __pyx_v_end_node2.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 162, __pyx_L1_error)
+    __PYX_ERR(0, 163, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":164
+  /* "bezier/_curve_intersection_speedup.pyx":165
  *         &end_node2[0, 0],
  *         &num_nodes2,
  *         &root_nodes2[0, 0],             # <<<<<<<<<<<<<<
@@ -4751,76 +4752,76 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   } else if (unlikely(__pyx_t_19 >= __pyx_v_root_nodes2.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 164, __pyx_L1_error)
+    __PYX_ERR(0, 165, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":150
+  /* "bezier/_curve_intersection_speedup.pyx":151
  *     num_nodes2, _ = np.shape(root_nodes2)
  *
  *     bezier._curve_intersection.from_linearized(             # <<<<<<<<<<<<<<
  *         &error1,
  *         &start1,
  */
-  from_linearized((&__pyx_v_error1), (&__pyx_v_start1), (&__pyx_v_end1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_start_node1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_start_node1.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_end_node1.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_end_node1.strides[1]) )))), (&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_root_nodes1.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_root_nodes1.strides[1]) )))), (&__pyx_v_error2), (&__pyx_v_start2), (&__pyx_v_end2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_start_node2.data) + __pyx_t_14)) ) + __pyx_t_15 * __pyx_v_start_node2.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_end_node2.data) + __pyx_t_16)) ) + __pyx_t_17 * __pyx_v_end_node2.strides[1]) )))), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_root_nodes2.data) + __pyx_t_18)) ) + __pyx_t_19 * __pyx_v_root_nodes2.strides[1]) )))), (&__pyx_v_refined_s), (&__pyx_v_refined_t), (&__pyx_v_does_intersect), (&__pyx_v_py_exc));
+  from_linearized((&__pyx_v_error1), (&__pyx_v_start1), (&__pyx_v_end1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_start_node1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_start_node1.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_end_node1.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_end_node1.strides[1]) )))), (&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_root_nodes1.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_root_nodes1.strides[1]) )))), (&__pyx_v_error2), (&__pyx_v_start2), (&__pyx_v_end2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_start_node2.data) + __pyx_t_14)) ) + __pyx_t_15 * __pyx_v_start_node2.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_end_node2.data) + __pyx_t_16)) ) + __pyx_t_17 * __pyx_v_end_node2.strides[1]) )))), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_root_nodes2.data) + __pyx_t_18)) ) + __pyx_t_19 * __pyx_v_root_nodes2.strides[1]) )))), (&__pyx_v_refined_s), (&__pyx_v_refined_t), (&__pyx_v_does_intersect), (&__pyx_v_status));
 
-  /* "bezier/_curve_intersection_speedup.pyx":171
+  /* "bezier/_curve_intersection_speedup.pyx":172
  *     )
  *
- *     if py_exc == 1:             # <<<<<<<<<<<<<<
+ *     if status == bezier._status.Status.PARALLEL:             # <<<<<<<<<<<<<<
  *         raise NotImplementedError('Line segments parallel.')
- *     elif py_exc == 2:
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
  */
-  switch (__pyx_v_py_exc) {
-    case 1:
+  switch (__pyx_v_status) {
+    case PARALLEL:
 
-    /* "bezier/_curve_intersection_speedup.pyx":172
+    /* "bezier/_curve_intersection_speedup.pyx":173
  *
- *     if py_exc == 1:
+ *     if status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')             # <<<<<<<<<<<<<<
- *     elif py_exc == 2:
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
  *         raise ValueError('outside of unit interval')
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 173, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 172, __pyx_L1_error)
+    __PYX_ERR(0, 173, __pyx_L1_error)
 
-    /* "bezier/_curve_intersection_speedup.pyx":171
+    /* "bezier/_curve_intersection_speedup.pyx":172
  *     )
  *
- *     if py_exc == 1:             # <<<<<<<<<<<<<<
+ *     if status == bezier._status.Status.PARALLEL:             # <<<<<<<<<<<<<<
  *         raise NotImplementedError('Line segments parallel.')
- *     elif py_exc == 2:
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
  */
     break;
 
-    /* "bezier/_curve_intersection_speedup.pyx":173
- *     if py_exc == 1:
+    /* "bezier/_curve_intersection_speedup.pyx":174
+ *     if status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')
- *     elif py_exc == 2:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:             # <<<<<<<<<<<<<<
  *         raise ValueError('outside of unit interval')
  *
  */
-    case 2:
+    case WIGGLE_FAIL:
 
-    /* "bezier/_curve_intersection_speedup.pyx":174
+    /* "bezier/_curve_intersection_speedup.pyx":175
  *         raise NotImplementedError('Line segments parallel.')
- *     elif py_exc == 2:
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
  *         raise ValueError('outside of unit interval')             # <<<<<<<<<<<<<<
  *
  *     return refined_s, refined_t, does_intersect
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 175, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 174, __pyx_L1_error)
+    __PYX_ERR(0, 175, __pyx_L1_error)
 
-    /* "bezier/_curve_intersection_speedup.pyx":173
- *     if py_exc == 1:
+    /* "bezier/_curve_intersection_speedup.pyx":174
+ *     if status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')
- *     elif py_exc == 2:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:             # <<<<<<<<<<<<<<
  *         raise ValueError('outside of unit interval')
  *
  */
@@ -4828,7 +4829,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
     default: break;
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":176
+  /* "bezier/_curve_intersection_speedup.pyx":177
  *         raise ValueError('outside of unit interval')
  *
  *     return refined_s, refined_t, does_intersect             # <<<<<<<<<<<<<<
@@ -4836,13 +4837,13 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
  *
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_refined_s); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_refined_s); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 177, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_refined_t); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_refined_t); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 177, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_v_does_intersect); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_v_does_intersect); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 177, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 177, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
@@ -4857,7 +4858,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":133
+  /* "bezier/_curve_intersection_speedup.pyx":134
  *
  *
  * def from_linearized_low_level(             # <<<<<<<<<<<<<<
@@ -4887,7 +4888,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_10from_linearize
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":179
+/* "bezier/_curve_intersection_speedup.pyx":180
  *
  *
  * def bbox_line_intersect(             # <<<<<<<<<<<<<<
@@ -4930,17 +4931,17 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_13bbox_line_inte
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_line_start)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("bbox_line_intersect", 1, 3, 3, 1); __PYX_ERR(0, 179, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("bbox_line_intersect", 1, 3, 3, 1); __PYX_ERR(0, 180, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_line_end)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("bbox_line_intersect", 1, 3, 3, 2); __PYX_ERR(0, 179, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("bbox_line_intersect", 1, 3, 3, 2); __PYX_ERR(0, 180, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "bbox_line_intersect") < 0)) __PYX_ERR(0, 179, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "bbox_line_intersect") < 0)) __PYX_ERR(0, 180, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -4949,13 +4950,13 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_13bbox_line_inte
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_nodes = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes.memview)) __PYX_ERR(0, 180, __pyx_L3_error)
-    __pyx_v_line_start = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_line_start.memview)) __PYX_ERR(0, 181, __pyx_L3_error)
-    __pyx_v_line_end = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[2]); if (unlikely(!__pyx_v_line_end.memview)) __PYX_ERR(0, 181, __pyx_L3_error)
+    __pyx_v_nodes = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes.memview)) __PYX_ERR(0, 181, __pyx_L3_error)
+    __pyx_v_line_start = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_line_start.memview)) __PYX_ERR(0, 182, __pyx_L3_error)
+    __pyx_v_line_end = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[2]); if (unlikely(!__pyx_v_line_end.memview)) __PYX_ERR(0, 182, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("bbox_line_intersect", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 179, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("bbox_line_intersect", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 180, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("bezier._curve_intersection_speedup.bbox_line_intersect", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4989,19 +4990,19 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
   Py_ssize_t __pyx_t_13;
   __Pyx_RefNannySetupContext("bbox_line_intersect", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":185
+  /* "bezier/_curve_intersection_speedup.pyx":186
  *
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes, _ = np.shape(nodes)             # <<<<<<<<<<<<<<
  *
  *     bezier._curve_intersection.bbox_line_intersect(
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 185, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 186, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 185, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 186, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 185, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 186, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -5014,14 +5015,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5030,20 +5031,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 185, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -5059,7 +5060,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 185, __pyx_L1_error)
+      __PYX_ERR(0, 186, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -5072,15 +5073,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_5);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 185, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 186, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 185, __pyx_L1_error)
+    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 186, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 185, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 186, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext;
@@ -5088,7 +5089,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_5 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_5);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 185, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 186, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     goto __pyx_L4_unpacking_done;
@@ -5096,16 +5097,16 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 185, __pyx_L1_error)
+    __PYX_ERR(0, 186, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 185, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 186, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_num_nodes = __pyx_t_7;
   __pyx_v__ = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":189
+  /* "bezier/_curve_intersection_speedup.pyx":190
  *     bezier._curve_intersection.bbox_line_intersect(
  *         &num_nodes,
  *         &nodes[0, 0],             # <<<<<<<<<<<<<<
@@ -5125,10 +5126,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
   } else if (unlikely(__pyx_t_9 >= __pyx_v_nodes.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 189, __pyx_L1_error)
+    __PYX_ERR(0, 190, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":190
+  /* "bezier/_curve_intersection_speedup.pyx":191
  *         &num_nodes,
  *         &nodes[0, 0],
  *         &line_start[0, 0],             # <<<<<<<<<<<<<<
@@ -5148,10 +5149,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
   } else if (unlikely(__pyx_t_11 >= __pyx_v_line_start.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 190, __pyx_L1_error)
+    __PYX_ERR(0, 191, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":191
+  /* "bezier/_curve_intersection_speedup.pyx":192
  *         &nodes[0, 0],
  *         &line_start[0, 0],
  *         &line_end[0, 0],             # <<<<<<<<<<<<<<
@@ -5171,10 +5172,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
   } else if (unlikely(__pyx_t_13 >= __pyx_v_line_end.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 191, __pyx_L1_error)
+    __PYX_ERR(0, 192, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":187
+  /* "bezier/_curve_intersection_speedup.pyx":188
  *     num_nodes, _ = np.shape(nodes)
  *
  *     bezier._curve_intersection.bbox_line_intersect(             # <<<<<<<<<<<<<<
@@ -5183,7 +5184,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
  */
   bbox_line_intersect((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_line_start.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_line_start.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_line_end.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_line_end.strides[1]) )))), (&__pyx_v_enum_val));
 
-  /* "bezier/_curve_intersection_speedup.pyx":195
+  /* "bezier/_curve_intersection_speedup.pyx":196
  *     )
  *
  *     return enum_val             # <<<<<<<<<<<<<<
@@ -5191,13 +5192,13 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
  *
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_enum_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_enum_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 196, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":179
+  /* "bezier/_curve_intersection_speedup.pyx":180
  *
  *
  * def bbox_line_intersect(             # <<<<<<<<<<<<<<
@@ -5224,7 +5225,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_12bbox_line_inte
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":198
+/* "bezier/_curve_intersection_speedup.pyx":199
  *
  *
  * def reset_workspace(int workspace_size):             # <<<<<<<<<<<<<<
@@ -5241,7 +5242,7 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_15reset_workspac
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("reset_workspace (wrapper)", 0);
   assert(__pyx_arg_workspace_size); {
-    __pyx_v_workspace_size = __Pyx_PyInt_As_int(__pyx_arg_workspace_size); if (unlikely((__pyx_v_workspace_size == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 198, __pyx_L3_error)
+    __pyx_v_workspace_size = __Pyx_PyInt_As_int(__pyx_arg_workspace_size); if (unlikely((__pyx_v_workspace_size == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 199, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5266,21 +5267,21 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_14reset_workspac
   __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_RefNannySetupContext("reset_workspace", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":200
+  /* "bezier/_curve_intersection_speedup.pyx":201
  * def reset_workspace(int workspace_size):
  *     global WORKSPACE
  *     WORKSPACE = np.empty((2, workspace_size), order='F')             # <<<<<<<<<<<<<<
  *
  *
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 201, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 201, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_workspace_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_workspace_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 201, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 201, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(__pyx_int_2);
   __Pyx_GIVEREF(__pyx_int_2);
@@ -5288,28 +5289,28 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_14reset_workspac
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 201, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_3);
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 201, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_order, __pyx_n_s_F) < 0) __PYX_ERR(0, 200, __pyx_L1_error)
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 200, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_order, __pyx_n_s_F) < 0) __PYX_ERR(0, 201, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 201, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(__pyx_t_4);
-  if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 200, __pyx_L1_error)
+  if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 201, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __PYX_XDEC_MEMVIEW(&__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE, 1);
   __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "bezier/_curve_intersection_speedup.pyx":198
+  /* "bezier/_curve_intersection_speedup.pyx":199
  *
  *
  * def reset_workspace(int workspace_size):             # <<<<<<<<<<<<<<
@@ -5334,7 +5335,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_14reset_workspac
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":203
+/* "bezier/_curve_intersection_speedup.pyx":204
  *
  *
  * def workspace_size():             # <<<<<<<<<<<<<<
@@ -5370,20 +5371,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size
   int __pyx_t_7;
   __Pyx_RefNannySetupContext("workspace_size", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":208
+  /* "bezier/_curve_intersection_speedup.pyx":209
  *
  *     # NOTE: We don't check that there are 2 rows.
  *     _, intersections_size = np.shape(WORKSPACE)             # <<<<<<<<<<<<<<
  *     return intersections_size
  *
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 208, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 209, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 208, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 209, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("WORKSPACE"); __PYX_ERR(0, 208, __pyx_L1_error) }
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 208, __pyx_L1_error)
+  if (unlikely(!__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("WORKSPACE"); __PYX_ERR(0, 209, __pyx_L1_error) }
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 209, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -5396,14 +5397,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 209, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5412,20 +5413,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 208, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -5441,7 +5442,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 208, __pyx_L1_error)
+      __PYX_ERR(0, 209, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -5454,15 +5455,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_5);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 208, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 209, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 208, __pyx_L1_error)
+    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 209, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 208, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 209, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext;
@@ -5470,7 +5471,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_5 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_5);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 208, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 209, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     goto __pyx_L4_unpacking_done;
@@ -5478,16 +5479,16 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 208, __pyx_L1_error)
+    __PYX_ERR(0, 209, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 208, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 209, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v__ = __pyx_t_3;
   __pyx_t_3 = 0;
   __pyx_v_intersections_size = __pyx_t_7;
 
-  /* "bezier/_curve_intersection_speedup.pyx":209
+  /* "bezier/_curve_intersection_speedup.pyx":210
  *     # NOTE: We don't check that there are 2 rows.
  *     _, intersections_size = np.shape(WORKSPACE)
  *     return intersections_size             # <<<<<<<<<<<<<<
@@ -5495,13 +5496,13 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size
  *
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_intersections_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 209, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_intersections_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 210, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":203
+  /* "bezier/_curve_intersection_speedup.pyx":204
  *
  *
  * def workspace_size():             # <<<<<<<<<<<<<<
@@ -5525,7 +5526,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_16workspace_size
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":212
+/* "bezier/_curve_intersection_speedup.pyx":213
  *
  *
  * def all_intersections(             # <<<<<<<<<<<<<<
@@ -5568,7 +5569,7 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_19all_intersecti
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_nodes_second)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("all_intersections", 0, 2, 3, 1); __PYX_ERR(0, 212, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("all_intersections", 0, 2, 3, 1); __PYX_ERR(0, 213, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
@@ -5578,7 +5579,7 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_19all_intersecti
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "all_intersections") < 0)) __PYX_ERR(0, 212, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "all_intersections") < 0)) __PYX_ERR(0, 213, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -5590,13 +5591,13 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_19all_intersecti
         default: goto __pyx_L5_argtuple_error;
       }
     }
-    __pyx_v_nodes_first = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes_first.memview)) __PYX_ERR(0, 213, __pyx_L3_error)
-    __pyx_v_nodes_second = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_nodes_second.memview)) __PYX_ERR(0, 213, __pyx_L3_error)
+    __pyx_v_nodes_first = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes_first.memview)) __PYX_ERR(0, 214, __pyx_L3_error)
+    __pyx_v_nodes_second = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[1]); if (unlikely(!__pyx_v_nodes_second.memview)) __PYX_ERR(0, 214, __pyx_L3_error)
     if (values[2]) {
-      __pyx_v_allow_resize = __Pyx_PyObject_IsTrue(values[2]); if (unlikely((__pyx_v_allow_resize == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 214, __pyx_L3_error)
+      __pyx_v_allow_resize = __Pyx_PyObject_IsTrue(values[2]); if (unlikely((__pyx_v_allow_resize == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 215, __pyx_L3_error)
     } else {
 
-      /* "bezier/_curve_intersection_speedup.pyx":214
+      /* "bezier/_curve_intersection_speedup.pyx":215
  * def all_intersections(
  *         double[::1, :] nodes_first, double[::1, :] nodes_second,
  *         bool_t allow_resize=True):             # <<<<<<<<<<<<<<
@@ -5608,7 +5609,7 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_19all_intersecti
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("all_intersections", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 212, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("all_intersections", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 213, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("bezier._curve_intersection_speedup.all_intersections", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5616,7 +5617,7 @@ static PyObject *__pyx_pw_6bezier_27_curve_intersection_speedup_19all_intersecti
   __pyx_L4_argument_unpacking_done:;
   __pyx_r = __pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersections(__pyx_self, __pyx_v_nodes_first, __pyx_v_nodes_second, __pyx_v_allow_resize);
 
-  /* "bezier/_curve_intersection_speedup.pyx":212
+  /* "bezier/_curve_intersection_speedup.pyx":213
  *
  *
  * def all_intersections(             # <<<<<<<<<<<<<<
@@ -5669,19 +5670,19 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
   __pyx_pybuffernd_intersections.data = NULL;
   __pyx_pybuffernd_intersections.rcbuffer = &__pyx_pybuffer_intersections;
 
-  /* "bezier/_curve_intersection_speedup.pyx":221
+  /* "bezier/_curve_intersection_speedup.pyx":222
  *
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes_first, _ = np.shape(nodes_first)             # <<<<<<<<<<<<<<
  *     num_nodes_second, _ = np.shape(nodes_second)
  *     # NOTE: We don't check that there are 2 rows.
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 222, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes_first, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes_first, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -5694,14 +5695,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5710,138 +5711,22 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 221, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 222, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    }
-  }
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if ((likely(PyTuple_CheckExact(__pyx_t_1))) || (PyList_CheckExact(__pyx_t_1))) {
-    PyObject* sequence = __pyx_t_1;
-    #if !CYTHON_COMPILING_IN_PYPY
-    Py_ssize_t size = Py_SIZE(sequence);
-    #else
-    Py_ssize_t size = PySequence_Size(sequence);
-    #endif
-    if (unlikely(size != 2)) {
-      if (size > 2) __Pyx_RaiseTooManyValuesError(2);
-      else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 221, __pyx_L1_error)
-    }
-    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    if (likely(PyTuple_CheckExact(sequence))) {
-      __pyx_t_3 = PyTuple_GET_ITEM(sequence, 0);
-      __pyx_t_5 = PyTuple_GET_ITEM(sequence, 1);
-    } else {
-      __pyx_t_3 = PyList_GET_ITEM(sequence, 0);
-      __pyx_t_5 = PyList_GET_ITEM(sequence, 1);
-    }
-    __Pyx_INCREF(__pyx_t_3);
-    __Pyx_INCREF(__pyx_t_5);
-    #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 221, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 221, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    #endif
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  } else {
-    Py_ssize_t index = -1;
-    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 221, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext;
-    index = 0; __pyx_t_3 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_3)) goto __pyx_L3_unpacking_failed;
-    __Pyx_GOTREF(__pyx_t_3);
-    index = 1; __pyx_t_5 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L3_unpacking_failed;
-    __Pyx_GOTREF(__pyx_t_5);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 221, __pyx_L1_error)
-    __pyx_t_6 = NULL;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    goto __pyx_L4_unpacking_done;
-    __pyx_L3_unpacking_failed:;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_6 = NULL;
-    if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 221, __pyx_L1_error)
-    __pyx_L4_unpacking_done:;
-  }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 221, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_v_num_nodes_first = __pyx_t_7;
-  __pyx_v__ = __pyx_t_5;
-  __pyx_t_5 = 0;
-
-  /* "bezier/_curve_intersection_speedup.pyx":222
- *     # NOTE: We don't check that there are 2 columns.
- *     num_nodes_first, _ = np.shape(nodes_first)
- *     num_nodes_second, _ = np.shape(nodes_second)             # <<<<<<<<<<<<<<
- *     # NOTE: We don't check that there are 2 rows.
- *     _, intersections_size = np.shape(WORKSPACE)
- */
-  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 222, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 222, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_nodes_second, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 222, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_2 = NULL;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_2)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_2);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_3, function);
-    }
-  }
-  if (!__pyx_t_2) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_GOTREF(__pyx_t_1);
-  } else {
-    #if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(__pyx_t_3)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    } else
-    #endif
-    #if CYTHON_FAST_PYCCALL
-    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    } else
-    #endif
-    {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 222, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2); __pyx_t_2 = NULL;
-      __Pyx_GIVEREF(__pyx_t_5);
-      PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_t_5);
-      __pyx_t_5 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -5860,6 +5745,122 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
       __pyx_t_3 = PyTuple_GET_ITEM(sequence, 0);
+      __pyx_t_5 = PyTuple_GET_ITEM(sequence, 1);
+    } else {
+      __pyx_t_3 = PyList_GET_ITEM(sequence, 0);
+      __pyx_t_5 = PyList_GET_ITEM(sequence, 1);
+    }
+    __Pyx_INCREF(__pyx_t_3);
+    __Pyx_INCREF(__pyx_t_5);
+    #else
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    #endif
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  } else {
+    Py_ssize_t index = -1;
+    __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext;
+    index = 0; __pyx_t_3 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_3)) goto __pyx_L3_unpacking_failed;
+    __Pyx_GOTREF(__pyx_t_3);
+    index = 1; __pyx_t_5 = __pyx_t_6(__pyx_t_2); if (unlikely(!__pyx_t_5)) goto __pyx_L3_unpacking_failed;
+    __Pyx_GOTREF(__pyx_t_5);
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_2), 2) < 0) __PYX_ERR(0, 222, __pyx_L1_error)
+    __pyx_t_6 = NULL;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    goto __pyx_L4_unpacking_done;
+    __pyx_L3_unpacking_failed:;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_6 = NULL;
+    if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+    __PYX_ERR(0, 222, __pyx_L1_error)
+    __pyx_L4_unpacking_done:;
+  }
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 222, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_v_num_nodes_first = __pyx_t_7;
+  __pyx_v__ = __pyx_t_5;
+  __pyx_t_5 = 0;
+
+  /* "bezier/_curve_intersection_speedup.pyx":223
+ *     # NOTE: We don't check that there are 2 columns.
+ *     num_nodes_first, _ = np.shape(nodes_first)
+ *     num_nodes_second, _ = np.shape(nodes_second)             # <<<<<<<<<<<<<<
+ *     # NOTE: We don't check that there are 2 rows.
+ *     _, intersections_size = np.shape(WORKSPACE)
+ */
+  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_nodes_second, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_2 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_2) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_5};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    } else
+    #endif
+    {
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2); __pyx_t_2 = NULL;
+      __Pyx_GIVEREF(__pyx_t_5);
+      PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_t_5);
+      __pyx_t_5 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if ((likely(PyTuple_CheckExact(__pyx_t_1))) || (PyList_CheckExact(__pyx_t_1))) {
+    PyObject* sequence = __pyx_t_1;
+    #if !CYTHON_COMPILING_IN_PYPY
+    Py_ssize_t size = Py_SIZE(sequence);
+    #else
+    Py_ssize_t size = PySequence_Size(sequence);
+    #endif
+    if (unlikely(size != 2)) {
+      if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+      else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+      __PYX_ERR(0, 223, __pyx_L1_error)
+    }
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    if (likely(PyTuple_CheckExact(sequence))) {
+      __pyx_t_3 = PyTuple_GET_ITEM(sequence, 0);
       __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1);
     } else {
       __pyx_t_3 = PyList_GET_ITEM(sequence, 0);
@@ -5868,15 +5869,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_4);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 223, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 223, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 223, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_5)->tp_iternext;
@@ -5884,7 +5885,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_4 = __pyx_t_6(__pyx_t_5); if (unlikely(!__pyx_t_4)) goto __pyx_L5_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_4);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 222, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_5), 2) < 0) __PYX_ERR(0, 223, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     goto __pyx_L6_unpacking_done;
@@ -5892,29 +5893,29 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 222, __pyx_L1_error)
+    __PYX_ERR(0, 223, __pyx_L1_error)
     __pyx_L6_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 222, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 223, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_num_nodes_second = __pyx_t_7;
   __Pyx_DECREF_SET(__pyx_v__, __pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":224
+  /* "bezier/_curve_intersection_speedup.pyx":225
  *     num_nodes_second, _ = np.shape(nodes_second)
  *     # NOTE: We don't check that there are 2 rows.
  *     _, intersections_size = np.shape(WORKSPACE)             # <<<<<<<<<<<<<<
  *
  *     bezier._curve_intersection.curve_intersections(
  */
-  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 224, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 225, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 224, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 225, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("WORKSPACE"); __PYX_ERR(0, 224, __pyx_L1_error) }
-  __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 224, __pyx_L1_error)
+  if (unlikely(!__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("WORKSPACE"); __PYX_ERR(0, 225, __pyx_L1_error) }
+  __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 225, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -5927,14 +5928,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     }
   }
   if (!__pyx_t_5) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 224, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_4};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 224, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -5943,20 +5944,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_4};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 224, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else
     #endif
     {
-      __pyx_t_2 = PyTuple_New(1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 224, __pyx_L1_error)
+      __pyx_t_2 = PyTuple_New(1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 225, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_5); __pyx_t_5 = NULL;
       __Pyx_GIVEREF(__pyx_t_4);
       PyTuple_SET_ITEM(__pyx_t_2, 0+1, __pyx_t_4);
       __pyx_t_4 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 224, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     }
@@ -5972,7 +5973,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 224, __pyx_L1_error)
+      __PYX_ERR(0, 225, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -5985,15 +5986,15 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     __Pyx_INCREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_t_2);
     #else
-    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 224, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 225, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 224, __pyx_L1_error)
+    __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 225, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_4 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 224, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 225, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_6 = Py_TYPE(__pyx_t_4)->tp_iternext;
@@ -6001,7 +6002,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     __Pyx_GOTREF(__pyx_t_3);
     index = 1; __pyx_t_2 = __pyx_t_6(__pyx_t_4); if (unlikely(!__pyx_t_2)) goto __pyx_L7_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_2);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_4), 2) < 0) __PYX_ERR(0, 224, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_6(__pyx_t_4), 2) < 0) __PYX_ERR(0, 225, __pyx_L1_error)
     __pyx_t_6 = NULL;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     goto __pyx_L8_unpacking_done;
@@ -6009,16 +6010,16 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_6 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 224, __pyx_L1_error)
+    __PYX_ERR(0, 225, __pyx_L1_error)
     __pyx_L8_unpacking_done:;
   }
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 224, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF_SET(__pyx_v__, __pyx_t_3);
   __pyx_t_3 = 0;
   __pyx_v_intersections_size = __pyx_t_7;
 
-  /* "bezier/_curve_intersection_speedup.pyx":228
+  /* "bezier/_curve_intersection_speedup.pyx":229
  *     bezier._curve_intersection.curve_intersections(
  *         &num_nodes_first,
  *         &nodes_first[0, 0],             # <<<<<<<<<<<<<<
@@ -6038,10 +6039,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
   } else if (unlikely(__pyx_t_9 >= __pyx_v_nodes_first.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 228, __pyx_L1_error)
+    __PYX_ERR(0, 229, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":230
+  /* "bezier/_curve_intersection_speedup.pyx":231
  *         &nodes_first[0, 0],
  *         &num_nodes_second,
  *         &nodes_second[0, 0],             # <<<<<<<<<<<<<<
@@ -6061,17 +6062,17 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
   } else if (unlikely(__pyx_t_11 >= __pyx_v_nodes_second.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 230, __pyx_L1_error)
+    __PYX_ERR(0, 231, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":232
+  /* "bezier/_curve_intersection_speedup.pyx":233
  *         &nodes_second[0, 0],
  *         &intersections_size,
  *         &WORKSPACE[0, 0],             # <<<<<<<<<<<<<<
  *         &num_intersections,
  *         &status,
  */
-  if (unlikely(!__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("WORKSPACE"); __PYX_ERR(0, 232, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("WORKSPACE"); __PYX_ERR(0, 233, __pyx_L1_error) }
   __pyx_t_12 = 0;
   __pyx_t_13 = 0;
   __pyx_t_7 = -1;
@@ -6085,10 +6086,10 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
   } else if (unlikely(__pyx_t_13 >= __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.shape[1])) __pyx_t_7 = 1;
   if (unlikely(__pyx_t_7 != -1)) {
     __Pyx_RaiseBufferIndexError(__pyx_t_7);
-    __PYX_ERR(0, 232, __pyx_L1_error)
+    __PYX_ERR(0, 233, __pyx_L1_error)
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":226
+  /* "bezier/_curve_intersection_speedup.pyx":227
  *     _, intersections_size = np.shape(WORKSPACE)
  *
  *     bezier._curve_intersection.curve_intersections(             # <<<<<<<<<<<<<<
@@ -6097,31 +6098,31 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
  */
   curve_intersections((&__pyx_v_num_nodes_first), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_first.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes_first.strides[1]) )))), (&__pyx_v_num_nodes_second), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_second.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes_second.strides[1]) )))), (&__pyx_v_intersections_size), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.strides[1]) )))), (&__pyx_v_num_intersections), (&__pyx_v_status));
 
-  /* "bezier/_curve_intersection_speedup.pyx":237
+  /* "bezier/_curve_intersection_speedup.pyx":238
  *     )
  *
- *     if status == bezier._curve_intersection.AllIntersectionsStatus.SUCCESS:             # <<<<<<<<<<<<<<
+ *     if status == bezier._status.Status.SUCCESS:             # <<<<<<<<<<<<<<
  *         intersections = np.empty((num_intersections, 2), order='F')
  *         intersections[:, :] = WORKSPACE[:, :num_intersections].T
  */
   switch (__pyx_v_status) {
     case SUCCESS:
 
-    /* "bezier/_curve_intersection_speedup.pyx":238
+    /* "bezier/_curve_intersection_speedup.pyx":239
  *
- *     if status == bezier._curve_intersection.AllIntersectionsStatus.SUCCESS:
+ *     if status == bezier._status.Status.SUCCESS:
  *         intersections = np.empty((num_intersections, 2), order='F')             # <<<<<<<<<<<<<<
  *         intersections[:, :] = WORKSPACE[:, :num_intersections].T
  *         return intersections
  */
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 238, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 239, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 238, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 239, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_num_intersections); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 238, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_num_intersections); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 239, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 238, __pyx_L1_error)
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 239, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
@@ -6129,20 +6130,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
     __Pyx_GIVEREF(__pyx_int_2);
     PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_int_2);
     __pyx_t_1 = 0;
-    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 238, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 239, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 238, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 239, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_order, __pyx_n_s_F) < 0) __PYX_ERR(0, 238, __pyx_L1_error)
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 238, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_order, __pyx_n_s_F) < 0) __PYX_ERR(0, 239, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 239, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 238, __pyx_L1_error)
+    if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 239, __pyx_L1_error)
     __pyx_t_14 = ((PyArrayObject *)__pyx_t_4);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -6159,20 +6160,20 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_18all_intersecti
         __pyx_t_15 = __pyx_t_16 = __pyx_t_17 = 0;
       }
       __pyx_pybuffernd_intersections.diminfo[0].strides = __pyx_pybuffernd_intersections.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_intersections.diminfo[0].shape = __pyx_pybuffernd_intersections.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_intersections.diminfo[1].strides = __pyx_pybuffernd_intersections.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_intersections.diminfo[1].shape = __pyx_pybuffernd_intersections.rcbuffer->pybuffer.shape[1];
-      if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 238, __pyx_L1_error)
+      if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 239, __pyx_L1_error)
     }
     __pyx_t_14 = 0;
     __pyx_v_intersections = ((PyArrayObject *)__pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "bezier/_curve_intersection_speedup.pyx":239
- *     if status == bezier._curve_intersection.AllIntersectionsStatus.SUCCESS:
+    /* "bezier/_curve_intersection_speedup.pyx":240
+ *     if status == bezier._status.Status.SUCCESS:
  *         intersections = np.empty((num_intersections, 2), order='F')
  *         intersections[:, :] = WORKSPACE[:, :num_intersections].T             # <<<<<<<<<<<<<<
  *         return intersections
- *     elif (status ==
+ *     elif status == bezier._status.Status.NO_CONVERGE:
  */
-    if (unlikely(!__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("WORKSPACE"); __PYX_ERR(0, 239, __pyx_L1_error) }
+    if (unlikely(!__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("WORKSPACE"); __PYX_ERR(0, 240, __pyx_L1_error) }
     __pyx_t_18.data = __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.data;
     __pyx_t_18.memview = __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE.memview;
     __PYX_INC_MEMVIEW(&__pyx_t_18, 0);
@@ -6195,48 +6196,48 @@ __pyx_t_7 = -1;
     0,
     1) < 0))
 {
-    __PYX_ERR(0, 239, __pyx_L1_error)
+    __PYX_ERR(0, 240, __pyx_L1_error)
 }
 
 __pyx_t_19 = __pyx_t_18;
     __PYX_INC_MEMVIEW(&__pyx_t_19, 1);
-    if (unlikely(__pyx_memslice_transpose(&__pyx_t_19) == 0)) __PYX_ERR(0, 239, __pyx_L1_error)
+    if (unlikely(__pyx_memslice_transpose(&__pyx_t_19) == 0)) __PYX_ERR(0, 240, __pyx_L1_error)
     __PYX_XDEC_MEMVIEW(&__pyx_t_18, 1);
     __pyx_t_18.memview = NULL;
     __pyx_t_18.data = NULL;
-    __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_t_19, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 239, __pyx_L1_error)
+    __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_t_19, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 240, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __PYX_XDEC_MEMVIEW(&__pyx_t_19, 1);
     __pyx_t_19.memview = NULL;
     __pyx_t_19.data = NULL;
-    if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_intersections), __pyx_tuple__6, __pyx_t_4) < 0)) __PYX_ERR(0, 239, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_intersections), __pyx_tuple__6, __pyx_t_4) < 0)) __PYX_ERR(0, 240, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "bezier/_curve_intersection_speedup.pyx":240
+    /* "bezier/_curve_intersection_speedup.pyx":241
  *         intersections = np.empty((num_intersections, 2), order='F')
  *         intersections[:, :] = WORKSPACE[:, :num_intersections].T
  *         return intersections             # <<<<<<<<<<<<<<
- *     elif (status ==
- *               bezier._curve_intersection.AllIntersectionsStatus.NO_CONVERGE):
+ *     elif status == bezier._status.Status.NO_CONVERGE:
+ *         # NOTE: This assumes, but does not verify, that the Fortran subroutine
  */
     __Pyx_XDECREF(__pyx_r);
     __Pyx_INCREF(((PyObject *)__pyx_v_intersections));
     __pyx_r = ((PyObject *)__pyx_v_intersections);
     goto __pyx_L0;
 
-    /* "bezier/_curve_intersection_speedup.pyx":237
+    /* "bezier/_curve_intersection_speedup.pyx":238
  *     )
  *
- *     if status == bezier._curve_intersection.AllIntersectionsStatus.SUCCESS:             # <<<<<<<<<<<<<<
+ *     if status == bezier._status.Status.SUCCESS:             # <<<<<<<<<<<<<<
  *         intersections = np.empty((num_intersections, 2), order='F')
  *         intersections[:, :] = WORKSPACE[:, :num_intersections].T
  */
     break;
 
     /* "bezier/_curve_intersection_speedup.pyx":242
+ *         intersections[:, :] = WORKSPACE[:, :num_intersections].T
  *         return intersections
- *     elif (status ==
- *               bezier._curve_intersection.AllIntersectionsStatus.NO_CONVERGE):             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.NO_CONVERGE:             # <<<<<<<<<<<<<<
  *         # NOTE: This assumes, but does not verify, that the Fortran subroutine
  *         #       uses ``MAX_INTERSECT_SUBDIVISIONS = 20``.
  */
@@ -6255,19 +6256,19 @@ __pyx_t_19 = __pyx_t_18;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __PYX_ERR(0, 245, __pyx_L1_error)
 
-    /* "bezier/_curve_intersection_speedup.pyx":241
+    /* "bezier/_curve_intersection_speedup.pyx":242
  *         intersections[:, :] = WORKSPACE[:, :num_intersections].T
  *         return intersections
- *     elif (status ==             # <<<<<<<<<<<<<<
- *               bezier._curve_intersection.AllIntersectionsStatus.NO_CONVERGE):
+ *     elif status == bezier._status.Status.NO_CONVERGE:             # <<<<<<<<<<<<<<
  *         # NOTE: This assumes, but does not verify, that the Fortran subroutine
+ *         #       uses ``MAX_INTERSECT_SUBDIVISIONS = 20``.
  */
     break;
 
     /* "bezier/_curve_intersection_speedup.pyx":248
  *             'Curve intersection failed to converge to approximately linear '
  *             'subdivisions after 20 iterations.')
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.TOO_SMALL:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.TOO_SMALL:             # <<<<<<<<<<<<<<
  *         if allow_resize:
  *             reset_workspace(num_intersections)
  */
@@ -6275,7 +6276,7 @@ __pyx_t_19 = __pyx_t_18;
 
     /* "bezier/_curve_intersection_speedup.pyx":249
  *             'subdivisions after 20 iterations.')
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.TOO_SMALL:
+ *     elif status == bezier._status.Status.TOO_SMALL:
  *         if allow_resize:             # <<<<<<<<<<<<<<
  *             reset_workspace(num_intersections)
  *             return all_intersections(
@@ -6284,7 +6285,7 @@ __pyx_t_19 = __pyx_t_18;
     if (__pyx_t_20) {
 
       /* "bezier/_curve_intersection_speedup.pyx":250
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.TOO_SMALL:
+ *     elif status == bezier._status.Status.TOO_SMALL:
  *         if allow_resize:
  *             reset_workspace(num_intersections)             # <<<<<<<<<<<<<<
  *             return all_intersections(
@@ -6410,7 +6411,7 @@ __pyx_t_19 = __pyx_t_18;
 
       /* "bezier/_curve_intersection_speedup.pyx":249
  *             'subdivisions after 20 iterations.')
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.TOO_SMALL:
+ *     elif status == bezier._status.Status.TOO_SMALL:
  *         if allow_resize:             # <<<<<<<<<<<<<<
  *             reset_workspace(num_intersections)
  *             return all_intersections(
@@ -6436,7 +6437,7 @@ __pyx_t_19 = __pyx_t_18;
  *             msg = TOO_SMALL_TEMPLATE.format(
  *                 intersections_size, num_intersections)             # <<<<<<<<<<<<<<
  *             raise ValueError(msg)
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.PARALLEL:
+ *     elif status == bezier._status.Status.PARALLEL:
  */
       __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_intersections_size); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 255, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
@@ -6498,7 +6499,7 @@ __pyx_t_19 = __pyx_t_18;
  *             msg = TOO_SMALL_TEMPLATE.format(
  *                 intersections_size, num_intersections)
  *             raise ValueError(msg)             # <<<<<<<<<<<<<<
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.PARALLEL:
+ *     elif status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')
  */
       __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 256, __pyx_L1_error)
@@ -6517,7 +6518,7 @@ __pyx_t_19 = __pyx_t_18;
     /* "bezier/_curve_intersection_speedup.pyx":248
  *             'Curve intersection failed to converge to approximately linear '
  *             'subdivisions after 20 iterations.')
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.TOO_SMALL:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.TOO_SMALL:             # <<<<<<<<<<<<<<
  *         if allow_resize:
  *             reset_workspace(num_intersections)
  */
@@ -6526,18 +6527,18 @@ __pyx_t_19 = __pyx_t_18;
     /* "bezier/_curve_intersection_speedup.pyx":257
  *                 intersections_size, num_intersections)
  *             raise ValueError(msg)
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.PARALLEL:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.PARALLEL:             # <<<<<<<<<<<<<<
  *         raise NotImplementedError('Line segments parallel.')
- *     elif (status ==
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
  */
     case PARALLEL:
 
     /* "bezier/_curve_intersection_speedup.pyx":258
  *             raise ValueError(msg)
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.PARALLEL:
+ *     elif status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')             # <<<<<<<<<<<<<<
- *     elif (status ==
- *               bezier._curve_intersection.AllIntersectionsStatus.WIGGLE_FAIL):
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
+ *         # NOTE: This branch may not be tested because it's quite difficult to
  */
     __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -6548,88 +6549,88 @@ __pyx_t_19 = __pyx_t_18;
     /* "bezier/_curve_intersection_speedup.pyx":257
  *                 intersections_size, num_intersections)
  *             raise ValueError(msg)
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.PARALLEL:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.PARALLEL:             # <<<<<<<<<<<<<<
  *         raise NotImplementedError('Line segments parallel.')
- *     elif (status ==
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
  */
     break;
 
-    /* "bezier/_curve_intersection_speedup.pyx":260
+    /* "bezier/_curve_intersection_speedup.pyx":259
+ *     elif status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')
- *     elif (status ==
- *               bezier._curve_intersection.AllIntersectionsStatus.WIGGLE_FAIL):             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:             # <<<<<<<<<<<<<<
  *         # NOTE: This branch may not be tested because it's quite difficult to
  *         #       come up with an example that causes it.
  */
     case WIGGLE_FAIL:
 
-    /* "bezier/_curve_intersection_speedup.pyx":263
+    /* "bezier/_curve_intersection_speedup.pyx":262
  *         # NOTE: This branch may not be tested because it's quite difficult to
  *         #       come up with an example that causes it.
  *         raise ValueError('outside of unit interval')             # <<<<<<<<<<<<<<
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.UNKNOWN:
+ *     elif status == bezier._status.Status.UNKNOWN:
  *         # NOTE: We exclude this block from testing because it **should**
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 263, __pyx_L1_error)
+    __PYX_ERR(0, 262, __pyx_L1_error)
 
     /* "bezier/_curve_intersection_speedup.pyx":259
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.PARALLEL:
+ *     elif status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')
- *     elif (status ==             # <<<<<<<<<<<<<<
- *               bezier._curve_intersection.AllIntersectionsStatus.WIGGLE_FAIL):
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:             # <<<<<<<<<<<<<<
  *         # NOTE: This branch may not be tested because it's quite difficult to
+ *         #       come up with an example that causes it.
  */
     break;
 
-    /* "bezier/_curve_intersection_speedup.pyx":264
+    /* "bezier/_curve_intersection_speedup.pyx":263
  *         #       come up with an example that causes it.
  *         raise ValueError('outside of unit interval')
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.UNKNOWN:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.UNKNOWN:             # <<<<<<<<<<<<<<
  *         # NOTE: We exclude this block from testing because it **should**
  *         #       never occur. It's just a "future-proofing" mechanism of the
  */
     case UNKNOWN:
 
-    /* "bezier/_curve_intersection_speedup.pyx":268
+    /* "bezier/_curve_intersection_speedup.pyx":267
  *         #       never occur. It's just a "future-proofing" mechanism of the
  *         #       Fortran code.
  *         raise ValueError('Unknown error.')             # <<<<<<<<<<<<<<
  *     else:
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 268, __pyx_L1_error)
+    __PYX_ERR(0, 267, __pyx_L1_error)
 
-    /* "bezier/_curve_intersection_speedup.pyx":264
+    /* "bezier/_curve_intersection_speedup.pyx":263
  *         #       come up with an example that causes it.
  *         raise ValueError('outside of unit interval')
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.UNKNOWN:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.UNKNOWN:             # <<<<<<<<<<<<<<
  *         # NOTE: We exclude this block from testing because it **should**
  *         #       never occur. It's just a "future-proofing" mechanism of the
  */
     break;
     default:
 
-    /* "bezier/_curve_intersection_speedup.pyx":272
+    /* "bezier/_curve_intersection_speedup.pyx":271
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  *         #       number of candidate intersections.
  *         raise NotImplementedError(TOO_MANY_TEMPLATE.format(status))             # <<<<<<<<<<<<<<
  *
  *
  */
-    __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_TOO_MANY_TEMPLATE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 272, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_TOO_MANY_TEMPLATE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_21 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_format); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 272, __pyx_L1_error)
+    __pyx_t_21 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_format); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 271, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_21);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_status); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 272, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_status); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_4 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_21))) {
@@ -6642,14 +6643,14 @@ __pyx_t_19 = __pyx_t_18;
       }
     }
     if (!__pyx_t_4) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_21, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_21, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_1);
     } else {
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_21)) {
         PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_3};
-        __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_21, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_21, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -6658,40 +6659,40 @@ __pyx_t_19 = __pyx_t_18;
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_21)) {
         PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_3};
-        __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_21, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_21, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       } else
       #endif
       {
-        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 272, __pyx_L1_error)
+        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 271, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
         __Pyx_GIVEREF(__pyx_t_3);
         PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_3);
         __pyx_t_3 = 0;
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_21, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_21, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       }
     }
     __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
-    __pyx_t_21 = PyTuple_New(1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 272, __pyx_L1_error)
+    __pyx_t_21 = PyTuple_New(1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 271, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_21);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_21, 0, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_t_21, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_t_21, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 272, __pyx_L1_error)
+    __PYX_ERR(0, 271, __pyx_L1_error)
     break;
   }
 
-  /* "bezier/_curve_intersection_speedup.pyx":212
+  /* "bezier/_curve_intersection_speedup.pyx":213
  *
  *
  * def all_intersections(             # <<<<<<<<<<<<<<
@@ -6731,7 +6732,7 @@ __pyx_t_19 = __pyx_t_18;
   return __pyx_r;
 }
 
-/* "bezier/_curve_intersection_speedup.pyx":275
+/* "bezier/_curve_intersection_speedup.pyx":274
  *
  *
  * def free_curve_intersections_workspace():             # <<<<<<<<<<<<<<
@@ -6757,14 +6758,14 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_20free_curve_int
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("free_curve_intersections_workspace", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":276
+  /* "bezier/_curve_intersection_speedup.pyx":275
  *
  * def free_curve_intersections_workspace():
  *     bezier._curve_intersection.free_curve_intersections_workspace()             # <<<<<<<<<<<<<<
  */
   free_curve_intersections_workspace();
 
-  /* "bezier/_curve_intersection_speedup.pyx":275
+  /* "bezier/_curve_intersection_speedup.pyx":274
  *
  *
  * def free_curve_intersections_workspace():             # <<<<<<<<<<<<<<
@@ -22995,7 +22996,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_pack, __pyx_k_pack, sizeof(__pyx_k_pack), 0, 0, 1, 1},
   {&__pyx_n_s_parallel_different, __pyx_k_parallel_different, sizeof(__pyx_k_parallel_different), 0, 0, 1, 1},
   {&__pyx_n_s_pickle, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
-  {&__pyx_n_s_py_exc, __pyx_k_py_exc, sizeof(__pyx_k_py_exc), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_PickleError, __pyx_k_pyx_PickleError, sizeof(__pyx_k_pyx_PickleError), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_checksum, __pyx_k_pyx_checksum, sizeof(__pyx_k_pyx_checksum), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_getbuffer, __pyx_k_pyx_getbuffer, sizeof(__pyx_k_pyx_getbuffer), 0, 0, 1, 1},
@@ -23047,8 +23047,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_NotImplementedError = __Pyx_GetBuiltinName(__pyx_n_s_NotImplementedError); if (!__pyx_builtin_NotImplementedError) __PYX_ERR(0, 172, __pyx_L1_error)
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 174, __pyx_L1_error)
+  __pyx_builtin_NotImplementedError = __Pyx_GetBuiltinName(__pyx_n_s_NotImplementedError); if (!__pyx_builtin_NotImplementedError) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 175, __pyx_L1_error)
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(1, 248, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(1, 823, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 1013, __pyx_L1_error)
@@ -23067,53 +23067,53 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "bezier/_curve_intersection_speedup.pyx":72
+  /* "bezier/_curve_intersection_speedup.pyx":73
  *         return s, t, True
  *     else:
  *         return None, None, False             # <<<<<<<<<<<<<<
  *
  *
  */
-  __pyx_tuple_ = PyTuple_Pack(3, Py_None, Py_None, Py_False); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(3, Py_None, Py_None, Py_False); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 73, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "bezier/_curve_intersection_speedup.pyx":172
+  /* "bezier/_curve_intersection_speedup.pyx":173
  *
- *     if py_exc == 1:
+ *     if status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')             # <<<<<<<<<<<<<<
- *     elif py_exc == 2:
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
  *         raise ValueError('outside of unit interval')
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_Line_segments_parallel); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_Line_segments_parallel); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 173, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "bezier/_curve_intersection_speedup.pyx":174
+  /* "bezier/_curve_intersection_speedup.pyx":175
  *         raise NotImplementedError('Line segments parallel.')
- *     elif py_exc == 2:
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
  *         raise ValueError('outside of unit interval')             # <<<<<<<<<<<<<<
  *
  *     return refined_s, refined_t, does_intersect
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_outside_of_unit_interval); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 174, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_outside_of_unit_interval); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 175, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "bezier/_curve_intersection_speedup.pyx":239
- *     if status == bezier._curve_intersection.AllIntersectionsStatus.SUCCESS:
+  /* "bezier/_curve_intersection_speedup.pyx":240
+ *     if status == bezier._status.Status.SUCCESS:
  *         intersections = np.empty((num_intersections, 2), order='F')
  *         intersections[:, :] = WORKSPACE[:, :num_intersections].T             # <<<<<<<<<<<<<<
  *         return intersections
- *     elif (status ==
+ *     elif status == bezier._status.Status.NO_CONVERGE:
  */
-  __pyx_slice__4 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__4)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_slice__4 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__4)) __PYX_ERR(0, 240, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__4);
   __Pyx_GIVEREF(__pyx_slice__4);
-  __pyx_slice__5 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__5)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_slice__5 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__5)) __PYX_ERR(0, 240, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__5);
   __Pyx_GIVEREF(__pyx_slice__5);
-  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_slice__4, __pyx_slice__5); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_slice__4, __pyx_slice__5); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 240, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
@@ -23130,34 +23130,34 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_curve_intersection_speedup.pyx":258
  *             raise ValueError(msg)
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.PARALLEL:
+ *     elif status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')             # <<<<<<<<<<<<<<
- *     elif (status ==
- *               bezier._curve_intersection.AllIntersectionsStatus.WIGGLE_FAIL):
+ *     elif status == bezier._status.Status.WIGGLE_FAIL:
+ *         # NOTE: This branch may not be tested because it's quite difficult to
  */
   __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_Line_segments_parallel); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 258, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "bezier/_curve_intersection_speedup.pyx":263
+  /* "bezier/_curve_intersection_speedup.pyx":262
  *         # NOTE: This branch may not be tested because it's quite difficult to
  *         #       come up with an example that causes it.
  *         raise ValueError('outside of unit interval')             # <<<<<<<<<<<<<<
- *     elif status == bezier._curve_intersection.AllIntersectionsStatus.UNKNOWN:
+ *     elif status == bezier._status.Status.UNKNOWN:
  *         # NOTE: We exclude this block from testing because it **should**
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_outside_of_unit_interval); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 263, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_outside_of_unit_interval); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 262, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "bezier/_curve_intersection_speedup.pyx":268
+  /* "bezier/_curve_intersection_speedup.pyx":267
  *         #       never occur. It's just a "future-proofing" mechanism of the
  *         #       Fortran code.
  *         raise ValueError('Unknown error.')             # <<<<<<<<<<<<<<
  *     else:
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_Unknown_error); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_Unknown_error); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 267, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
@@ -23461,147 +23461,147 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__38);
   __Pyx_GIVEREF(__pyx_tuple__38);
 
-  /* "bezier/_curve_intersection_speedup.pyx":30
+  /* "bezier/_curve_intersection_speedup.pyx":31
  * BoxIntersectionType_DISJOINT = (
  *     bezier._curve_intersection.BoxIntersectionType.DISJOINT)
  * cdef double[::1, :] WORKSPACE = np.empty((2, 2), order='F')             # <<<<<<<<<<<<<<
  * TOO_MANY_TEMPLATE = (
  *     'The number of candidate intersections is too high.\n'
  */
-  __pyx_tuple__39 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_2); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_tuple__39 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_2); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__39);
   __Pyx_GIVEREF(__pyx_tuple__39);
-  __pyx_tuple__40 = PyTuple_Pack(1, __pyx_tuple__39); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_tuple__40 = PyTuple_Pack(1, __pyx_tuple__39); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__40);
   __Pyx_GIVEREF(__pyx_tuple__40);
 
-  /* "bezier/_curve_intersection_speedup.pyx":39
+  /* "bezier/_curve_intersection_speedup.pyx":40
  *
  *
  * def linearization_error(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef double error
  */
-  __pyx_tuple__41 = PyTuple_Pack(5, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_error); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __pyx_tuple__41 = PyTuple_Pack(5, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_error); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 40, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__41);
   __Pyx_GIVEREF(__pyx_tuple__41);
-  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(1, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_linearization_error, 39, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(1, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_linearization_error, 40, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 40, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":54
+  /* "bezier/_curve_intersection_speedup.pyx":55
  *
  *
  * def segment_intersection(             # <<<<<<<<<<<<<<
  *         double[::1, :] start0, double[::1, :] end0,
  *         double[::1, :] start1, double[::1, :] end1):
  */
-  __pyx_tuple__43 = PyTuple_Pack(7, __pyx_n_s_start0, __pyx_n_s_end0, __pyx_n_s_start1, __pyx_n_s_end1, __pyx_n_s_s, __pyx_n_s_t, __pyx_n_s_success); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_tuple__43 = PyTuple_Pack(7, __pyx_n_s_start0, __pyx_n_s_end0, __pyx_n_s_start1, __pyx_n_s_end1, __pyx_n_s_s, __pyx_n_s_t, __pyx_n_s_success); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 55, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__43);
   __Pyx_GIVEREF(__pyx_tuple__43);
-  __pyx_codeobj__44 = (PyObject*)__Pyx_PyCode_New(4, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__43, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_segment_intersection, 54, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__44)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_codeobj__44 = (PyObject*)__Pyx_PyCode_New(4, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__43, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_segment_intersection, 55, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__44)) __PYX_ERR(0, 55, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":75
+  /* "bezier/_curve_intersection_speedup.pyx":76
  *
  *
  * def newton_refine(             # <<<<<<<<<<<<<<
  *         double s, double[::1, :] nodes1, double t, double[::1, :] nodes2):
  *     cdef int num_nodes1, num_nodes2
  */
-  __pyx_tuple__46 = PyTuple_Pack(9, __pyx_n_s_s, __pyx_n_s_nodes1, __pyx_n_s_t, __pyx_n_s_nodes2, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_new_s, __pyx_n_s_new_t, __pyx_n_s__45); if (unlikely(!__pyx_tuple__46)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __pyx_tuple__46 = PyTuple_Pack(9, __pyx_n_s_s, __pyx_n_s_nodes1, __pyx_n_s_t, __pyx_n_s_nodes2, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_new_s, __pyx_n_s_new_t, __pyx_n_s__45); if (unlikely(!__pyx_tuple__46)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__46);
   __Pyx_GIVEREF(__pyx_tuple__46);
-  __pyx_codeobj__47 = (PyObject*)__Pyx_PyCode_New(4, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__46, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_newton_refine, 75, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__47)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __pyx_codeobj__47 = (PyObject*)__Pyx_PyCode_New(4, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__46, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_newton_refine, 76, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__47)) __PYX_ERR(0, 76, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":99
+  /* "bezier/_curve_intersection_speedup.pyx":100
  *
  *
  * def bbox_intersect(double[::1, :] nodes1, double[::1, :] nodes2):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes1, num_nodes2, enum_val
  *
  */
-  __pyx_tuple__48 = PyTuple_Pack(6, __pyx_n_s_nodes1, __pyx_n_s_nodes2, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_enum_val, __pyx_n_s__45); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_tuple__48 = PyTuple_Pack(6, __pyx_n_s_nodes1, __pyx_n_s_nodes2, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_enum_val, __pyx_n_s__45); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__48);
   __Pyx_GIVEREF(__pyx_tuple__48);
-  __pyx_codeobj__49 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__48, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_bbox_intersect, 99, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__49)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_codeobj__49 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__48, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_bbox_intersect, 100, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__49)) __PYX_ERR(0, 100, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":118
+  /* "bezier/_curve_intersection_speedup.pyx":119
  *
  *
  * def parallel_different(             # <<<<<<<<<<<<<<
  *         double[::1, :] start0, double[::1, :] end0,
  *         double[::1, :] start1, double[::1, :] end1):
  */
-  __pyx_tuple__50 = PyTuple_Pack(5, __pyx_n_s_start0, __pyx_n_s_end0, __pyx_n_s_start1, __pyx_n_s_end1, __pyx_n_s_result); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_tuple__50 = PyTuple_Pack(5, __pyx_n_s_start0, __pyx_n_s_end0, __pyx_n_s_start1, __pyx_n_s_end1, __pyx_n_s_result); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__50);
   __Pyx_GIVEREF(__pyx_tuple__50);
-  __pyx_codeobj__51 = (PyObject*)__Pyx_PyCode_New(4, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__50, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_parallel_different, 118, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__51)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_codeobj__51 = (PyObject*)__Pyx_PyCode_New(4, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__50, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_parallel_different, 119, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__51)) __PYX_ERR(0, 119, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":133
+  /* "bezier/_curve_intersection_speedup.pyx":134
  *
  *
  * def from_linearized_low_level(             # <<<<<<<<<<<<<<
  *         double error1, double start1, double end1,
  *         double[::1, :] start_node1, double[::1, :] end_node1,
  */
-  __pyx_tuple__52 = PyTuple_Pack(19, __pyx_n_s_error1, __pyx_n_s_start1, __pyx_n_s_end1, __pyx_n_s_start_node1, __pyx_n_s_end_node1, __pyx_n_s_root_nodes1, __pyx_n_s_error2, __pyx_n_s_start2, __pyx_n_s_end2, __pyx_n_s_start_node2, __pyx_n_s_end_node2, __pyx_n_s_root_nodes2, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_refined_s, __pyx_n_s_refined_t, __pyx_n_s_does_intersect, __pyx_n_s_py_exc, __pyx_n_s__45); if (unlikely(!__pyx_tuple__52)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __pyx_tuple__52 = PyTuple_Pack(19, __pyx_n_s_error1, __pyx_n_s_start1, __pyx_n_s_end1, __pyx_n_s_start_node1, __pyx_n_s_end_node1, __pyx_n_s_root_nodes1, __pyx_n_s_error2, __pyx_n_s_start2, __pyx_n_s_end2, __pyx_n_s_start_node2, __pyx_n_s_end_node2, __pyx_n_s_root_nodes2, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_refined_s, __pyx_n_s_refined_t, __pyx_n_s_does_intersect, __pyx_n_s_status, __pyx_n_s__45); if (unlikely(!__pyx_tuple__52)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__52);
   __Pyx_GIVEREF(__pyx_tuple__52);
-  __pyx_codeobj__53 = (PyObject*)__Pyx_PyCode_New(12, 0, 19, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__52, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_from_linearized_low_level, 133, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__53)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __pyx_codeobj__53 = (PyObject*)__Pyx_PyCode_New(12, 0, 19, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__52, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_from_linearized_low_level, 134, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__53)) __PYX_ERR(0, 134, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":179
+  /* "bezier/_curve_intersection_speedup.pyx":180
  *
  *
  * def bbox_line_intersect(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes,
  *         double[::1, :] line_start, double[::1, :] line_end):
  */
-  __pyx_tuple__54 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_line_start, __pyx_n_s_line_end, __pyx_n_s_num_nodes, __pyx_n_s_enum_val, __pyx_n_s__45); if (unlikely(!__pyx_tuple__54)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_tuple__54 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_line_start, __pyx_n_s_line_end, __pyx_n_s_num_nodes, __pyx_n_s_enum_val, __pyx_n_s__45); if (unlikely(!__pyx_tuple__54)) __PYX_ERR(0, 180, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__54);
   __Pyx_GIVEREF(__pyx_tuple__54);
-  __pyx_codeobj__55 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__54, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_bbox_line_intersect, 179, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__55)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_codeobj__55 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__54, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_bbox_line_intersect, 180, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__55)) __PYX_ERR(0, 180, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":198
+  /* "bezier/_curve_intersection_speedup.pyx":199
  *
  *
  * def reset_workspace(int workspace_size):             # <<<<<<<<<<<<<<
  *     global WORKSPACE
  *     WORKSPACE = np.empty((2, workspace_size), order='F')
  */
-  __pyx_tuple__56 = PyTuple_Pack(2, __pyx_n_s_workspace_size, __pyx_n_s_workspace_size); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(0, 198, __pyx_L1_error)
+  __pyx_tuple__56 = PyTuple_Pack(2, __pyx_n_s_workspace_size, __pyx_n_s_workspace_size); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(0, 199, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__56);
   __Pyx_GIVEREF(__pyx_tuple__56);
-  __pyx_codeobj__57 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__56, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_reset_workspace, 198, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__57)) __PYX_ERR(0, 198, __pyx_L1_error)
+  __pyx_codeobj__57 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__56, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_reset_workspace, 199, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__57)) __PYX_ERR(0, 199, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":203
+  /* "bezier/_curve_intersection_speedup.pyx":204
  *
  *
  * def workspace_size():             # <<<<<<<<<<<<<<
  *     global WORKSPACE
  *     cdef int intersections_size
  */
-  __pyx_tuple__58 = PyTuple_Pack(2, __pyx_n_s_intersections_size, __pyx_n_s__45); if (unlikely(!__pyx_tuple__58)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __pyx_tuple__58 = PyTuple_Pack(2, __pyx_n_s_intersections_size, __pyx_n_s__45); if (unlikely(!__pyx_tuple__58)) __PYX_ERR(0, 204, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__58);
   __Pyx_GIVEREF(__pyx_tuple__58);
-  __pyx_codeobj__59 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__58, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_workspace_size, 203, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__59)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __pyx_codeobj__59 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__58, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_workspace_size, 204, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__59)) __PYX_ERR(0, 204, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":212
+  /* "bezier/_curve_intersection_speedup.pyx":213
  *
  *
  * def all_intersections(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes_first, double[::1, :] nodes_second,
  *         bool_t allow_resize=True):
  */
-  __pyx_tuple__60 = PyTuple_Pack(11, __pyx_n_s_nodes_first, __pyx_n_s_nodes_second, __pyx_n_s_allow_resize, __pyx_n_s_num_nodes_first, __pyx_n_s_num_nodes_second, __pyx_n_s_intersections_size, __pyx_n_s_num_intersections, __pyx_n_s_status, __pyx_n_s_intersections, __pyx_n_s__45, __pyx_n_s_msg); if (unlikely(!__pyx_tuple__60)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_tuple__60 = PyTuple_Pack(11, __pyx_n_s_nodes_first, __pyx_n_s_nodes_second, __pyx_n_s_allow_resize, __pyx_n_s_num_nodes_first, __pyx_n_s_num_nodes_second, __pyx_n_s_intersections_size, __pyx_n_s_num_intersections, __pyx_n_s_status, __pyx_n_s_intersections, __pyx_n_s__45, __pyx_n_s_msg); if (unlikely(!__pyx_tuple__60)) __PYX_ERR(0, 213, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__60);
   __Pyx_GIVEREF(__pyx_tuple__60);
-  __pyx_codeobj__61 = (PyObject*)__Pyx_PyCode_New(3, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__60, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_all_intersections, 212, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__61)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_codeobj__61 = (PyObject*)__Pyx_PyCode_New(3, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__60, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_all_intersections, 213, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__61)) __PYX_ERR(0, 213, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":275
+  /* "bezier/_curve_intersection_speedup.pyx":274
  *
  *
  * def free_curve_intersections_workspace():             # <<<<<<<<<<<<<<
  *     bezier._curve_intersection.free_curve_intersections_workspace()
  */
-  __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_free_curve_intersections_workspa, 275, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__curve_intersection_s, __pyx_n_s_free_curve_intersections_workspa, 274, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 274, __pyx_L1_error)
 
   /* "View.MemoryView":284
  *         return self.name
@@ -23898,216 +23898,216 @@ static int __pyx_pymod_exec__curve_intersection_speedup(PyObject *__pyx_pyinit_m
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 18, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":25
+  /* "bezier/_curve_intersection_speedup.pyx":26
  *
  * BoxIntersectionType_INTERSECTION = (
  *     bezier._curve_intersection.BoxIntersectionType.INTERSECTION)             # <<<<<<<<<<<<<<
  * BoxIntersectionType_TANGENT = (
  *     bezier._curve_intersection.BoxIntersectionType.TANGENT)
  */
-  __pyx_t_1 = __Pyx_PyInt_From_enum__BoxIntersectionType(INTERSECTION); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_enum__BoxIntersectionType(INTERSECTION); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_BoxIntersectionType_INTERSECTION, __pyx_t_1) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_BoxIntersectionType_INTERSECTION, __pyx_t_1) < 0) __PYX_ERR(0, 25, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":27
+  /* "bezier/_curve_intersection_speedup.pyx":28
  *     bezier._curve_intersection.BoxIntersectionType.INTERSECTION)
  * BoxIntersectionType_TANGENT = (
  *     bezier._curve_intersection.BoxIntersectionType.TANGENT)             # <<<<<<<<<<<<<<
  * BoxIntersectionType_DISJOINT = (
  *     bezier._curve_intersection.BoxIntersectionType.DISJOINT)
  */
-  __pyx_t_1 = __Pyx_PyInt_From_enum__BoxIntersectionType(TANGENT); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_enum__BoxIntersectionType(TANGENT); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_BoxIntersectionType_TANGENT, __pyx_t_1) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_BoxIntersectionType_TANGENT, __pyx_t_1) < 0) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":29
+  /* "bezier/_curve_intersection_speedup.pyx":30
  *     bezier._curve_intersection.BoxIntersectionType.TANGENT)
  * BoxIntersectionType_DISJOINT = (
  *     bezier._curve_intersection.BoxIntersectionType.DISJOINT)             # <<<<<<<<<<<<<<
  * cdef double[::1, :] WORKSPACE = np.empty((2, 2), order='F')
  * TOO_MANY_TEMPLATE = (
  */
-  __pyx_t_1 = __Pyx_PyInt_From_enum__BoxIntersectionType(DISJOINT); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_enum__BoxIntersectionType(DISJOINT); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_BoxIntersectionType_DISJOINT, __pyx_t_1) < 0) __PYX_ERR(0, 28, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_BoxIntersectionType_DISJOINT, __pyx_t_1) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":30
+  /* "bezier/_curve_intersection_speedup.pyx":31
  * BoxIntersectionType_DISJOINT = (
  *     bezier._curve_intersection.BoxIntersectionType.DISJOINT)
  * cdef double[::1, :] WORKSPACE = np.empty((2, 2), order='F')             # <<<<<<<<<<<<<<
  * TOO_MANY_TEMPLATE = (
  *     'The number of candidate intersections is too high.\n'
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_order, __pyx_n_s_F) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__40, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_order, __pyx_n_s_F) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__40, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_4 = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(__pyx_t_3);
-  if (unlikely(!__pyx_t_4.memview)) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (unlikely(!__pyx_t_4.memview)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __PYX_XDEC_MEMVIEW(&__pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE, 1);
   __pyx_v_6bezier_27_curve_intersection_speedup_WORKSPACE = __pyx_t_4;
   __pyx_t_4.memview = NULL;
   __pyx_t_4.data = NULL;
 
-  /* "bezier/_curve_intersection_speedup.pyx":32
+  /* "bezier/_curve_intersection_speedup.pyx":33
  * cdef double[::1, :] WORKSPACE = np.empty((2, 2), order='F')
  * TOO_MANY_TEMPLATE = (
  *     'The number of candidate intersections is too high.\n'             # <<<<<<<<<<<<<<
  *     '{:d} candidate pairs.')
  * TOO_SMALL_TEMPLATE = (
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_TOO_MANY_TEMPLATE, __pyx_kp_s_The_number_of_candidate_intersec) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_TOO_MANY_TEMPLATE, __pyx_kp_s_The_number_of_candidate_intersec) < 0) __PYX_ERR(0, 32, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":35
+  /* "bezier/_curve_intersection_speedup.pyx":36
  *     '{:d} candidate pairs.')
  * TOO_SMALL_TEMPLATE = (
  *     'Did not have enough space for intersections. Needed space '             # <<<<<<<<<<<<<<
  *     'for {:d} intersections but only had space for {:d}.')
  *
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_TOO_SMALL_TEMPLATE, __pyx_kp_s_Did_not_have_enough_space_for_in) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_TOO_SMALL_TEMPLATE, __pyx_kp_s_Did_not_have_enough_space_for_in) < 0) __PYX_ERR(0, 35, __pyx_L1_error)
 
-  /* "bezier/_curve_intersection_speedup.pyx":39
+  /* "bezier/_curve_intersection_speedup.pyx":40
  *
  *
  * def linearization_error(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef double error
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_1linearization_error, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_1linearization_error, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 40, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_linearization_error, __pyx_t_3) < 0) __PYX_ERR(0, 39, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_linearization_error, __pyx_t_3) < 0) __PYX_ERR(0, 40, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":54
+  /* "bezier/_curve_intersection_speedup.pyx":55
  *
  *
  * def segment_intersection(             # <<<<<<<<<<<<<<
  *         double[::1, :] start0, double[::1, :] end0,
  *         double[::1, :] start1, double[::1, :] end1):
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_3segment_intersection, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_3segment_intersection, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 55, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_segment_intersection, __pyx_t_3) < 0) __PYX_ERR(0, 54, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_segment_intersection, __pyx_t_3) < 0) __PYX_ERR(0, 55, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":75
+  /* "bezier/_curve_intersection_speedup.pyx":76
  *
  *
  * def newton_refine(             # <<<<<<<<<<<<<<
  *         double s, double[::1, :] nodes1, double t, double[::1, :] nodes2):
  *     cdef int num_nodes1, num_nodes2
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_5newton_refine, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_5newton_refine, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_newton_refine, __pyx_t_3) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_newton_refine, __pyx_t_3) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":99
+  /* "bezier/_curve_intersection_speedup.pyx":100
  *
  *
  * def bbox_intersect(double[::1, :] nodes1, double[::1, :] nodes2):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes1, num_nodes2, enum_val
  *
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_7bbox_intersect, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_7bbox_intersect, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_bbox_intersect, __pyx_t_3) < 0) __PYX_ERR(0, 99, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_bbox_intersect, __pyx_t_3) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":118
+  /* "bezier/_curve_intersection_speedup.pyx":119
  *
  *
  * def parallel_different(             # <<<<<<<<<<<<<<
  *         double[::1, :] start0, double[::1, :] end0,
  *         double[::1, :] start1, double[::1, :] end1):
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_9parallel_different, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_9parallel_different, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_parallel_different, __pyx_t_3) < 0) __PYX_ERR(0, 118, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_parallel_different, __pyx_t_3) < 0) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":133
+  /* "bezier/_curve_intersection_speedup.pyx":134
  *
  *
  * def from_linearized_low_level(             # <<<<<<<<<<<<<<
  *         double error1, double start1, double end1,
  *         double[::1, :] start_node1, double[::1, :] end_node1,
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_11from_linearized_low_level, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_11from_linearized_low_level, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_from_linearized_low_level, __pyx_t_3) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_from_linearized_low_level, __pyx_t_3) < 0) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":179
+  /* "bezier/_curve_intersection_speedup.pyx":180
  *
  *
  * def bbox_line_intersect(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes,
  *         double[::1, :] line_start, double[::1, :] line_end):
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_13bbox_line_intersect, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_13bbox_line_intersect, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 180, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_bbox_line_intersect, __pyx_t_3) < 0) __PYX_ERR(0, 179, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_bbox_line_intersect, __pyx_t_3) < 0) __PYX_ERR(0, 180, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":198
+  /* "bezier/_curve_intersection_speedup.pyx":199
  *
  *
  * def reset_workspace(int workspace_size):             # <<<<<<<<<<<<<<
  *     global WORKSPACE
  *     WORKSPACE = np.empty((2, workspace_size), order='F')
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_15reset_workspace, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 198, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_15reset_workspace, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 199, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_reset_workspace, __pyx_t_3) < 0) __PYX_ERR(0, 198, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_reset_workspace, __pyx_t_3) < 0) __PYX_ERR(0, 199, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":203
+  /* "bezier/_curve_intersection_speedup.pyx":204
  *
  *
  * def workspace_size():             # <<<<<<<<<<<<<<
  *     global WORKSPACE
  *     cdef int intersections_size
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_17workspace_size, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_17workspace_size, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 204, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_workspace_size, __pyx_t_3) < 0) __PYX_ERR(0, 203, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_workspace_size, __pyx_t_3) < 0) __PYX_ERR(0, 204, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":212
+  /* "bezier/_curve_intersection_speedup.pyx":213
  *
  *
  * def all_intersections(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes_first, double[::1, :] nodes_second,
  *         bool_t allow_resize=True):
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_19all_intersections, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_19all_intersections, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 213, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_all_intersections, __pyx_t_3) < 0) __PYX_ERR(0, 212, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_all_intersections, __pyx_t_3) < 0) __PYX_ERR(0, 213, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "bezier/_curve_intersection_speedup.pyx":275
+  /* "bezier/_curve_intersection_speedup.pyx":274
  *
  *
  * def free_curve_intersections_workspace():             # <<<<<<<<<<<<<<
  *     bezier._curve_intersection.free_curve_intersections_workspace()
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_21free_curve_intersections_workspace, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_6bezier_27_curve_intersection_speedup_21free_curve_intersections_workspace, NULL, __pyx_n_s_bezier__curve_intersection_speed); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 274, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_free_curve_intersections_workspa, __pyx_t_3) < 0) __PYX_ERR(0, 275, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_free_curve_intersections_workspa, __pyx_t_3) < 0) __PYX_ERR(0, 274, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "bezier/_curve_intersection_speedup.pyx":1
