@@ -601,20 +601,33 @@ class TestSurface(utils.NumPyTestCase):
         ])
         self.assertEqual(surface_d._nodes, expected_d)
 
-    def test__compute_valid_valid_linear(self):
-        surface = self._make_one(self.UNIT_TRIANGLE, 1)
-        self.assertTrue(surface._compute_valid())
+    def test__compute_valid_bad_dimension(self):
+        nodes = np.zeros((6, 3), order='F')
+        surface = self._make_one(nodes, 2)
+        with self.assertRaises(NotImplementedError):
+            surface._compute_valid()
 
-    def test__compute_valid_invalid_linear(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.0, 0.0],
-            [1.0, 2.0, 2.0],
-            [2.0, 4.0, 4.0],
-        ])
+    def test__compute_valid_linear(self):
+        # Positively signed Jacobian (i.e. edges have inward normals).
+        nodes = self.UNIT_TRIANGLE
         surface = self._make_one(nodes, 1)
+        self.assertTrue(surface._compute_valid())
+        # Change the nodes from counterclockwise to clockwise, so the
+        # Jacobian becomes negatively signed.
+        nodes = np.asfortranarray(nodes[(1, 0, 2), :])
+        surface = self._make_one(nodes, 1, _copy=False)
+        self.assertFalse(surface._compute_valid())
+        # Collinear.
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [2.0, 4.0],
+        ])
+        surface = self._make_one(nodes, 1, _copy=False)
         self.assertFalse(surface._compute_valid())
 
-    def test__compute_valid_quadratic_valid(self):
+    def test__compute_valid_quadratic(self):
+        # Positively signed Jacobian (i.e. edges have inward normals).
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, -0.1875],
@@ -623,11 +636,14 @@ class TestSurface(utils.NumPyTestCase):
             [0.625, 0.625],
             [0.0, 1.0],
         ])
-        surface = self._make_one(nodes, 2)
+        surface = self._make_one(nodes, 2, _copy=False)
         self.assertTrue(surface._compute_valid())
-
-    def test__compute_valid_quadratic_invalid(self):
-        # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
+        # Change the nodes from counterclockwise to clockwise, so the
+        # Jacobian becomes negatively signed.
+        nodes = np.asfortranarray(nodes[(2, 1, 0, 4, 3, 5), :])
+        surface = self._make_one(nodes, 2, _copy=False)
+        self.assertFalse(surface._compute_valid())
+        # Mixed sign Jacobian: B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
         nodes = np.asfortranarray([
             [1.0, 0.0],
             [0.0, 0.0],
@@ -636,16 +652,11 @@ class TestSurface(utils.NumPyTestCase):
             [0.0, 0.0],
             [0.0, 1.0],
         ])
-        surface = self._make_one(nodes, 2)
+        surface = self._make_one(nodes, 2, _copy=False)
         self.assertFalse(surface._compute_valid())
 
-    def test__compute_valid_quadratic_bad_dimension(self):
-        nodes = np.zeros((6, 3), order='F')
-        surface = self._make_one(nodes, 2)
-        with self.assertRaises(NotImplementedError):
-            surface._compute_valid()
-
-    def test__compute_valid_cubic_valid(self):
+    def test__compute_valid_cubic(self):
+        # Positively signed Jacobian (i.e. edges have inward normals).
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.0],
@@ -658,11 +669,14 @@ class TestSurface(utils.NumPyTestCase):
             [1.25, 2.25],
             [0.0, 3.0],
         ])
-        surface = self._make_one(nodes, 3)
+        surface = self._make_one(nodes, 3, _copy=False)
         self.assertTrue(surface._compute_valid())
-
-    def test__compute_valid_cubic_invalid(self):
-        # B(L1, L2, L3) = [L1^3 + L2^3, L2^3 + L3^3]
+        # Change the nodes from counterclockwise to clockwise, so the
+        # Jacobian becomes negatively signed.
+        nodes = np.asfortranarray(nodes[(3, 2, 1, 0, 6, 5, 4, 8, 7, 9), :])
+        surface = self._make_one(nodes, 3, _copy=False)
+        self.assertFalse(surface._compute_valid())
+        # Mixed sign Jacobian: B(L1, L2, L3) = [L1^3 + L2^3, L2^3 + L3^3]
         nodes = np.asfortranarray([
             [1.0, 0.0],
             [0.0, 0.0],
@@ -675,7 +689,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.0, 0.0],
             [0.0, 1.0],
         ])
-        surface = self._make_one(nodes, 3)
+        surface = self._make_one(nodes, 3, _copy=False)
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_bad_degree(self):

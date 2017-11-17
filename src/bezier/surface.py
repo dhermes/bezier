@@ -860,51 +860,51 @@ class Surface(_base.Base):
         r"""Determines if the current surface is "valid".
 
         Does this by checking if the Jacobian of the map from the
-        reference triangle is nonzero.
+        reference triangle is everywhere positive.
 
         Returns:
             bool: Flag indicating if the current surface is valid.
 
         Raises:
-            NotImplementedError: If the degree is greater than 3.
-            NotImplementedError: If the surface is quadratic or cubic
-                but in dimension other than :math:`\mathbf{R}^2`.
+            NotImplementedError: If the surface is in a dimension other
+                than :math:`\mathbf{R}^2`.
+            NotImplementedError: If the degree is not 1, 2 or 3.
         """
+        if self._dimension != 2:
+            raise NotImplementedError(
+                'Validity check only implemented in R^2')
+
+        poly_sign = None
         if self._degree == 1:
             # In the linear case, we are only invalid if the points
             # are collinear.
             first_deriv = self._nodes[1:, :] - self._nodes[:-1, :]
-            return np.linalg.matrix_rank(first_deriv) == 2
-        elif self._degree in (2, 3):
-            if self._dimension != 2:
-                raise NotImplementedError(
-                    'Cubic/quadratic validity check only implemented in R^2')
-
-            if self._degree == 2:
-                bernstein = _surface_helpers.quadratic_jacobian_polynomial(
-                    self._nodes)
-                jac_degree = 2
-            else:
-                bernstein = _surface_helpers.cubic_jacobian_polynomial(
-                    self._nodes)
-                jac_degree = 4
-
-            # Find the sign of the polynomial, where 0 means mixed.
-            poly_sign = _surface_helpers.polynomial_sign(bernstein, jac_degree)
-            return poly_sign != 0
+            poly_sign = np.sign(np.linalg.det(first_deriv))
+        elif self._degree == 2:
+            bernstein = _surface_helpers.quadratic_jacobian_polynomial(
+                self._nodes)
+            poly_sign = _surface_helpers.polynomial_sign(bernstein, 2)
+        elif self._degree == 3:
+            bernstein = _surface_helpers.cubic_jacobian_polynomial(
+                self._nodes)
+            poly_sign = _surface_helpers.polynomial_sign(bernstein, 4)
         else:
             raise NotImplementedError(
                 'Degrees 1, 2 and 3 only supported at this time')
+
+        return poly_sign == 1
 
     @property
     def is_valid(self):
         """bool: Flag indicating if the surface is "valid".
 
         Here, "valid" means there are no self-intersections or
-        singularities.
+        singularities and the edges are oriented with the interior
+        (i.e. a 90 degree rotation of the tangent vector to the left is
+        the interior).
 
         This checks if the Jacobian of the map from the reference
-        triangle is nonzero. For example, a linear "surface"
+        triangle is everywhere positive. For example, a linear "surface"
         with collinear points is invalid:
 
         .. image:: ../images/surface_is_valid1.png
