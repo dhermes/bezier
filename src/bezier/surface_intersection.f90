@@ -62,7 +62,7 @@ module surface_intersection
   integer(c_int), parameter :: IntersectionClassification_OPPOSED = 2
   integer(c_int), parameter :: IntersectionClassification_TANGENT_FIRST = 3
   integer(c_int), parameter :: IntersectionClassification_TANGENT_SECOND = 4
-  integer(c_int), parameter :: IntersectionClassification_IGNORED_CORNER = 8
+  integer(c_int), parameter :: IntersectionClassification_IGNORED_CORNER = 5
 
 contains
 
@@ -505,17 +505,25 @@ contains
 
   subroutine classify_tangent_intersection( &
        edges_first, edges_second, intersection_, &
-       tangent_s, tangent_t, enum_)
+       tangent_s, tangent_t, enum_, status)
 
     ! NOTE: This **assumes**, but does not check that
     !       ``intersection_%index_(first|second)`` are valid indices within
     !       ``edges_(first|second)`` and that each of those ``CurveData``
     !       instances have already allocated ``%nodes``.
 
+    ! Possible error states:
+    ! * Status_SUCCESS       : On success.
+    ! * Status_BAD_TANGENT   : If the curves move in an opposite direction
+    !                          while defining overlapping arcs.
+    ! * Status_SAME_CURVATURE: If the curves have identical curvature at the
+    !                          point of tangency.
+
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
     real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
     integer(c_int), intent(out) :: enum_
+    integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     real(c_double) :: dot_prod
     integer(c_int) :: num_nodes
@@ -523,6 +531,7 @@ contains
     real(c_double) :: sign1, sign2
     real(c_double) :: delta_c
 
+    status = Status_SUCCESS
     dot_prod = dot_product(tangent_s(1, :), tangent_t(1, :))
     ! NOTE: When computing curvatures we assume that we don't have lines
     !       here, because lines that are tangent at an intersection are
@@ -549,21 +558,18 @@ contains
           if (sign1 == 1.0_dp) then
              enum_ = IntersectionClassification_OPPOSED
           else
-             ! NOTE: This is an error state.
-             enum_ = Status_BAD_TANGENT
+             status = Status_BAD_TANGENT
           end if
        else
           delta_c = abs(curvature1) - abs(curvature2)
           if (delta_c == 0.0_dp) then
-             ! NOTE: This is an error state.
-             enum_ = Status_SAME_CURVATURE
+             status = Status_SAME_CURVATURE
           else
              sign2 = sign(1.0_dp, delta_c)
              if (sign1 == sign2) then
                 enum_ = IntersectionClassification_OPPOSED
              else
-                ! NOTE: This is an error state.
-                enum_ = Status_BAD_TANGENT
+                status = Status_BAD_TANGENT
              end if
           end if
        end if
@@ -573,37 +579,46 @@ contains
        else if (curvature1 < curvature2) then
           enum_ = IntersectionClassification_TANGENT_SECOND
        else
-          ! NOTE: This is an error state.
-          enum_ = Status_SAME_CURVATURE
+          status = Status_SAME_CURVATURE
        end if
     end if
 
   end subroutine classify_tangent_intersection
 
   subroutine classify_intersection( &
-       edges_first, edges_second, intersection_, enum_)
+       edges_first, edges_second, intersection_, enum_, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This subroutine is not part of the C ABI for this module,
     !       but it is (for now) public, so that it can be tested.
-    ! NOTE: This returns ``Status_EDGE_END`` if the intersection occurs at
-    !       the end of an edge.
     ! NOTE: This **assumes**, but does not check that
     !       ``intersection_%index_(first|second)`` are valid indices within
     !       ``edges_(first|second)`` and that each of those ``CurveData``
     !       instances have already allocated ``%nodes``.
 
+    ! Possible error states:
+    ! * Status_SUCCESS       : On success.
+    ! * Status_EDGE_END      : If either the s- or t-parameter of the
+    !                          intersection is equal to ``1.0``, i.e. if the
+    !                          intersection is at the end of an edge. Since
+    !                          another edge of the surface will also contain
+    !                          that point (at it's beginning), that edge
+    !                          should be used.
+    ! * Status_BAD_TANGENT   : Via ``classify_tangent_intersection()``.
+    ! * Status_SAME_CURVATURE: Via ``classify_tangent_intersection()``.
+
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
     integer(c_int), intent(out) :: enum_
+    integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: num_nodes
     real(c_double) :: tangent_s(1, 2), tangent_t(1, 2)
     real(c_double) :: cross_prod
 
+    status = Status_SUCCESS
     if (intersection_%s == 1.0_dp .OR. intersection_%t == 1.0_dp) then
-       ! NOTE: This is an error state.
-       enum_ = Status_EDGE_END
+       status = Status_EDGE_END
        return
     end if
 
@@ -639,14 +654,14 @@ contains
     else
        call classify_tangent_intersection( &
             edges_first, edges_second, intersection_, &
-            tangent_s, tangent_t, enum_)
+            tangent_s, tangent_t, enum_, status)
     end if
 
   end subroutine classify_intersection
 
   subroutine add_st_vals( &
        edges_first, edges_second, num_st_vals, st_vals, &
-       index_first, index_second, intersections, num_intersections)
+       index_first, index_second, intersections, num_intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This subroutine is not part of the C ABI for this module,
@@ -655,16 +670,25 @@ contains
     ! NOTE: This assumes but does not check that each of ``index_first``
     !       and ``index_second`` is in {1, 2, 3}.
 
+    ! Possible error states:
+    ! * Status_SUCCESS       : On success.
+    ! * Status_EDGE_END      : Via ``classify_intersection()``.
+    ! * Status_BAD_TANGENT   : Via ``classify_intersection()``.
+    ! * Status_SAME_CURVATURE: Via ``classify_intersection()``.
+
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     integer(c_int), intent(in) :: num_st_vals
     real(c_double), intent(in) :: st_vals(2, num_st_vals)
     integer(c_int), intent(in) :: index_first, index_second
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     integer(c_int), intent(inout) :: num_intersections
+    integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: curr_size, i, intersection_index
     type(Intersection), allocatable :: intersections_swap(:)
     integer(c_int) :: enum_
+
+    status = Status_SUCCESS
 
     intersection_index = num_intersections
     ! NOTE: Intersections at the end of an edge will be skipped, so this
@@ -695,7 +719,10 @@ contains
        intersections(intersection_index)%index_second = index_second
        call classify_intersection( &
             edges_first, edges_second, &
-            intersections(intersection_index), enum_)
+            intersections(intersection_index), enum_, status)
+       if (status /= Status_SUCCESS) then
+          return
+       end if
        intersections(intersection_index)%interior_curve = enum_
     end do
 
@@ -711,6 +738,16 @@ contains
        intersections, num_intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
+
+    ! Possible error states:
+    ! * Status_SUCCESS       : On success.
+    ! * Status_PARALLEL      : Via ``curve_intersection.all_intersections()``.
+    ! * Status_WIGGLE_FAIL   : Via ``curve_intersection.all_intersections()``.
+    ! * Status_NO_CONVERGE   : Via ``curve_intersection.all_intersections()``.
+    ! * (N >= 64)            : Via ``curve_intersection.all_intersections()``.
+    ! * Status_EDGE_END      : Via ``add_st_vals()``.
+    ! * Status_BAD_TANGENT   : Via ``add_st_vals()``.
+    ! * Status_SAME_CURVATURE: Via ``add_st_vals()``.
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(num_nodes1, 2)
@@ -754,7 +791,10 @@ contains
              if (num_st_vals > 0) then
                 call add_st_vals( &
                      edges_first, edges_second, num_st_vals, st_vals, &
-                     index1, index2, intersections, num_intersections)
+                     index1, index2, intersections, num_intersections, status)
+                if (status /= Status_SUCCESS) then
+                   return
+                end if
              end if
           else
              return
