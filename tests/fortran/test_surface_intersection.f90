@@ -15,7 +15,7 @@ module test_surface_intersection
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use curve, only: CurveData, LOCATE_MISS
   use curve_intersection, only: &
-       ALL_INTERSECTIONS_SUCCESS, ALL_INTERSECTIONS_PARALLEL
+       AllIntersections_SUCCESS, AllIntersections_PARALLEL
   use surface_intersection, only: &
        Intersection, IntersectionClassification_SAME_CURVATURE, &
        IntersectionClassification_BAD_TANGENT, &
@@ -711,7 +711,7 @@ contains
          intersections(5), 0.5_dp, 0.25_dp, 3, 1, second) .AND. &
          intersection_check( &
          intersections(6), 0.75_dp, 0.75_dp, 3, 3, first) .AND. &
-         status == ALL_INTERSECTIONS_SUCCESS)
+         status == AllIntersections_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Tangent intersection (causes error).
@@ -732,7 +732,7 @@ contains
          intersections, num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == ALL_INTERSECTIONS_PARALLEL)
+         status == AllIntersections_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_surfaces_intersect

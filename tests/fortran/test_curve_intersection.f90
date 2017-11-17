@@ -20,10 +20,10 @@ module test_curve_intersection
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
        FROM_LINEARIZED_PARALLEL, Subdivide_FIRST, Subdivide_SECOND, &
-       Subdivide_BOTH, Subdivide_NEITHER, ALL_INTERSECTIONS_SUCCESS, &
-       ALL_INTERSECTIONS_NO_CONVERGE, ALL_INTERSECTIONS_TOO_SMALL, &
-       ALL_INTERSECTIONS_PARALLEL, ALL_INTERSECTIONS_WIGGLE_FAIL, &
-       ALL_INTERSECTIONS_UNKNOWN, &
+       Subdivide_BOTH, Subdivide_NEITHER, AllIntersections_SUCCESS, &
+       AllIntersections_NO_CONVERGE, AllIntersections_TOO_SMALL, &
+       AllIntersections_PARALLEL, AllIntersections_WIGGLE_FAIL, &
+       AllIntersections_UNKNOWN, &
        linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
@@ -1571,7 +1571,7 @@ contains
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
-         status == ALL_INTERSECTIONS_SUCCESS)
+         status == AllIntersections_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Intersection of two quadratic curves.
@@ -1595,7 +1595,7 @@ contains
          num_intersections == 1 .AND. &
          3 * intersections(1, 1) == 1.0_dp .AND. &
          3 * intersections(2, 1) == 2.0_dp .AND. &
-         status == ALL_INTERSECTIONS_SUCCESS)
+         status == AllIntersections_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Tangent curves, with a ``py_exc`` failure due to parallel lines.
@@ -1610,7 +1610,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == ALL_INTERSECTIONS_PARALLEL)
+         status == AllIntersections_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Tangent curves, which cause the number of candidate pairs
@@ -1647,7 +1647,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == ALL_INTERSECTIONS_NO_CONVERGE)
+         status == AllIntersections_NO_CONVERGE)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Curves where there are duplicate intersections caused by
@@ -1668,7 +1668,7 @@ contains
          intersections(2, 1) == 0.25_dp .AND. &
          intersections(1, 2) == 0.75_dp .AND. &
          intersections(2, 2) == 0.75_dp .AND. &
-         status == ALL_INTERSECTIONS_SUCCESS)
+         status == AllIntersections_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_all_intersections
@@ -1699,7 +1699,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == ALL_INTERSECTIONS_PARALLEL)
+         status == AllIntersections_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: ``intersections`` is not large enough.
@@ -1715,7 +1715,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 3 .AND. &
-         status == ALL_INTERSECTIONS_TOO_SMALL)
+         status == AllIntersections_TOO_SMALL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Just case 7, but with large enough ``intersections``.
@@ -1730,7 +1730,7 @@ contains
          intersections2(2, 2) == 0.25_dp .AND. &
          intersections2(1, 3) == 0.625_dp .AND. &
          intersections2(2, 3) == 0.75_dp .AND. &
-         status == ALL_INTERSECTIONS_SUCCESS)
+         status == AllIntersections_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_all_intersections_abi

@@ -14,7 +14,7 @@ module surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
-  use curve_intersection, only: all_intersections, ALL_INTERSECTIONS_SUCCESS
+  use curve_intersection, only: all_intersections, AllIntersections_SUCCESS
   use helpers, only: cross_product, contains_nd, vector_close
   use types, only: dp
   use surface, only: &
@@ -752,7 +752,7 @@ contains
                degree1 + 1, edges_first(index1)%nodes, &
                degree2 + 1, edges_second(index2)%nodes, &
                st_vals, num_st_vals, status)
-          if (status == ALL_INTERSECTIONS_SUCCESS) then
+          if (status == AllIntersections_SUCCESS) then
              if (num_st_vals > 0) then
                 call add_st_vals( &
                      edges_first, edges_second, num_st_vals, st_vals, &

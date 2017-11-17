@@ -28,10 +28,10 @@ module curve_intersection
        BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
        FROM_LINEARIZED_PARALLEL, FROM_LINEARIZED_WIGGLE_FAIL, &
        LINEARIZATION_THRESHOLD, Subdivide_FIRST, Subdivide_SECOND, &
-       Subdivide_BOTH, Subdivide_NEITHER, ALL_INTERSECTIONS_SUCCESS, &
-       ALL_INTERSECTIONS_NO_CONVERGE, ALL_INTERSECTIONS_TOO_SMALL, &
-       ALL_INTERSECTIONS_PARALLEL, ALL_INTERSECTIONS_WIGGLE_FAIL, &
-       ALL_INTERSECTIONS_UNKNOWN, &
+       Subdivide_BOTH, Subdivide_NEITHER, AllIntersections_SUCCESS, &
+       AllIntersections_NO_CONVERGE, AllIntersections_TOO_SMALL, &
+       AllIntersections_PARALLEL, AllIntersections_WIGGLE_FAIL, &
+       AllIntersections_UNKNOWN, &
        linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
@@ -57,12 +57,12 @@ module curve_intersection
   integer(c_int), parameter :: Subdivide_NEITHER = -1
   integer(c_int), parameter :: MAX_INTERSECT_SUBDIVISIONS = 20
   integer(c_int), parameter :: MAX_CANDIDATES = 64
-  integer(c_int), parameter :: ALL_INTERSECTIONS_SUCCESS = 0
-  integer(c_int), parameter :: ALL_INTERSECTIONS_NO_CONVERGE = 1
-  integer(c_int), parameter :: ALL_INTERSECTIONS_TOO_SMALL = 2
-  integer(c_int), parameter :: ALL_INTERSECTIONS_PARALLEL = 3
-  integer(c_int), parameter :: ALL_INTERSECTIONS_WIGGLE_FAIL = 4
-  integer(c_int), parameter :: ALL_INTERSECTIONS_UNKNOWN = 5
+  integer(c_int), parameter :: AllIntersections_SUCCESS = 0
+  integer(c_int), parameter :: AllIntersections_NO_CONVERGE = 1
+  integer(c_int), parameter :: AllIntersections_TOO_SMALL = 2
+  integer(c_int), parameter :: AllIntersections_PARALLEL = 3
+  integer(c_int), parameter :: AllIntersections_WIGGLE_FAIL = 4
+  integer(c_int), parameter :: AllIntersections_UNKNOWN = 5
 
   ! Long-lived workspaces for ``all_intersections()``. If multiple
   ! threads are used, this should be thread-local.
@@ -830,7 +830,7 @@ contains
     num_candidates = 1
     call make_candidates( &
          nodes_first, nodes_second, CANDIDATES_ODD)
-    status = ALL_INTERSECTIONS_SUCCESS  ! Default.
+    status = AllIntersections_SUCCESS  ! Default.
 
     is_even = .TRUE.  ! At zero.
     do index_ = 1, MAX_INTERSECT_SUBDIVISIONS
@@ -855,13 +855,13 @@ contains
        end if
 
        if (py_exc == FROM_LINEARIZED_PARALLEL) then
-          status = ALL_INTERSECTIONS_PARALLEL
+          status = AllIntersections_PARALLEL
           return
        else if (py_exc == FROM_LINEARIZED_WIGGLE_FAIL) then
           ! NOTE: We exclude this block from testing because it's
           !       quite difficult to come up with an example that
           !       causes it.
-          status = ALL_INTERSECTIONS_WIGGLE_FAIL  ! LCOV_EXCL_LINE
+          status = AllIntersections_WIGGLE_FAIL  ! LCOV_EXCL_LINE
           return  ! LCOV_EXCL_LINE
        else if (py_exc /= FROM_LINEARIZED_SUCCESS) then
           ! NOTE: We exclude this block from testing because it
@@ -870,7 +870,7 @@ contains
           !       remapping of the error codes from ``from_linearized()``.
           !       If those error codes change and this section doesn't,
           !       then an "unknown" error will occur.
-          status = ALL_INTERSECTIONS_UNKNOWN  ! LCOV_EXCL_LINE
+          status = AllIntersections_UNKNOWN  ! LCOV_EXCL_LINE
           return  ! LCOV_EXCL_LINE
        end if
 
@@ -895,7 +895,7 @@ contains
     ! If we've reached this point, then the curve intersection failed to
     ! converge to "approximately linear" subdivided curves after
     ! ``MAX_INTERSECT_SUBDIVISIONS``.
-    status = ALL_INTERSECTIONS_NO_CONVERGE
+    status = AllIntersections_NO_CONVERGE
 
   end subroutine all_intersections
 
@@ -909,7 +909,7 @@ contains
     !       by Bezout's theorem). If ``intersections`` is not large enough
     !       (i.e. if ``intersections_size`` < num_intersections``), then
     !       ``intersections`` will not be populated and the ``status`` will be
-    !       set to ``ALL_INTERSECTIONS_TOO_SMALL``. However, the value of
+    !       set to ``AllIntersections_TOO_SMALL``. However, the value of
     !       ``num_intersections`` will be accurate and ``intersections``
     !       should be re-sized by the caller to accommodate.
 
@@ -926,12 +926,12 @@ contains
          num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
          INTERSECTIONS_WORKSPACE, num_intersections, status)
 
-    if (status /= ALL_INTERSECTIONS_SUCCESS) then
+    if (status /= AllIntersections_SUCCESS) then
        return
     end if
 
     if (num_intersections > intersections_size) then
-       status = ALL_INTERSECTIONS_TOO_SMALL
+       status = AllIntersections_TOO_SMALL
     else if (num_intersections > 0) then
        ! NOTE: This assumes, but doesn't check that
        !       ``INTERSECTIONS_WORKSPACE`` has been allocated
