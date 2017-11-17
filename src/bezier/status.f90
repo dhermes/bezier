@@ -17,19 +17,34 @@ module status
   private
   public &
        Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
-       Status_NO_CONVERGE, Status_TOO_SMALL, Status_SAME_CURVATURE, &
+       Status_NO_CONVERGE, Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, &
        Status_BAD_TANGENT, Status_EDGE_END
 
   ! Values of Status enum:
+  ! SUCCESS: Procedure exited with no error.
   integer(c_int), parameter :: Status_SUCCESS = 0
   ! PARALLEL: Corresponds to ``NotImplementedError('Line segments parallel.')``
   integer(c_int), parameter :: Status_PARALLEL = 1
-  ! WIGGLE_FAIL: Indicates that ``wiggle_interval`` failed.
+  ! WIGGLE_FAIL: Indicates that ``helpers.wiggle_interval()`` failed.
   integer(c_int), parameter :: Status_WIGGLE_FAIL = 2
+  ! NO_CONVERGE: An iterative algorithm has failed to converge. Used by
+  !              ``curve_intersection.all_intersections()``.
   integer(c_int), parameter :: Status_NO_CONVERGE = 3
-  integer(c_int), parameter :: Status_TOO_SMALL = 4
+  ! INSUFFICIENT_SPACE: Intended to be used by ABI versions of procedures. Will
+  !                     be used when the caller has not allocated enough space
+  !                     for the output values. (On the Fortran side, an
+  !                     ``allocatable`` array can be resized, but in the ABI,
+  !                     we can only use what the caller has passed.)
+  integer(c_int), parameter :: Status_INSUFFICIENT_SPACE = 4
+  ! SAME_CURVATURE: Can't classify curve-curve intersection when the curves
+  !                 have identical curvature at the point of intersection.
   integer(c_int), parameter :: Status_SAME_CURVATURE = 5
+  ! BAD_TANGENT: Two curves are tangent where they intersect, but they move
+  !              in an opposite direction while defining overlapping arcs.
   integer(c_int), parameter :: Status_BAD_TANGENT = 6
+  ! EDGE_END: A surface-surface intersection point occurs at the **end** of
+  !           an edge (only intersections at the beginning of an edge should
+  !           be used).
   integer(c_int), parameter :: Status_EDGE_END = 7
 
 end module status

@@ -14,7 +14,8 @@ module test_curve_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, Status_TOO_SMALL
+       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
+       Status_INSUFFICIENT_SPACE
   use curve, only: &
        CurveData, evaluate_multi, subdivide_nodes, curves_equal, &
        subdivide_curve
@@ -1714,7 +1715,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 3 .AND. &
-         status == Status_TOO_SMALL)
+         status == Status_INSUFFICIENT_SPACE)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Just case 7, but with large enough ``intersections``.

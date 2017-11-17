@@ -16,7 +16,7 @@ module curve_intersection
   use types, only: dp
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
-       Status_NO_CONVERGE, Status_TOO_SMALL
+       Status_NO_CONVERGE, Status_INSUFFICIENT_SPACE
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
        vector_close, in_interval, ulps_away
@@ -255,6 +255,16 @@ contains
        refined_s, refined_t, does_intersect, status) &
        bind(c, name='from_linearized')
 
+    ! Possible error states:
+    ! * Status_SUCCESS    : On success.
+    ! * Status_PARALLEL   : If ``segment_intersection()`` fails (which means
+    !                       the linearized segments are parallel). This
+    !                       can still be avoided if the "root" curves are
+    !                       also (parallel) lines that don't overlap or if
+    !                       the "root" curves have disjoint bounding boxes.
+    ! * Status_WIGGLE_FAIL: If the s- or t-parameter are too far outside of
+    !                       [0, 1] to be "wiggled" into it.
+
     real(c_double), intent(in) :: error1, start1, end1
     real(c_double), intent(in) :: start_node1(1, 2)
     real(c_double), intent(in) :: end_node1(1, 2)
@@ -311,7 +321,6 @@ contains
           end if
        end if
 
-       ! Expect the wrapper code to raise.
        status = Status_PARALLEL
        return
     end if
@@ -494,6 +503,11 @@ contains
     ! Adds an intersection from two linearizations.
     !
     ! NOTE: This is **explicitly** not intended for C inter-op.
+
+    ! Possible error states:
+    ! * Status_SUCCESS    : On success.
+    ! * Status_PARALLEL   : Via ``from_linearized()``.
+    ! * Status_WIGGLE_FAIL: Via ``from_linearized()``.
 
     type(CurveData), intent(in) :: first
     real(c_double), intent(in) :: root_nodes1(:, :)
@@ -681,6 +695,11 @@ contains
     ! NOTE: This assumes, but does not check, that ``candidates`` has
     !       two rows and has at **least** ``num_candidates`` columns.
 
+    ! Possible error states:
+    ! * Status_SUCCESS    : On success.
+    ! * Status_PARALLEL   : Via ``add_from_linearized()``.
+    ! * Status_WIGGLE_FAIL: Via ``add_from_linearized()``.
+
     real(c_double), intent(in) :: root_nodes_first(:, :)
     real(c_double), intent(in) :: root_nodes_second(:, :)
     integer(c_int), intent(in) :: num_candidates
@@ -800,6 +819,15 @@ contains
     ! NOTE: This is **explicitly** not intended for C inter-op, but
     !       a C compatible interface is exposed as ``all_intersections_abi``.
 
+    ! Possible error states:
+    ! * Status_SUCCESS    : On success.
+    ! * Status_PARALLEL   : Via ``intersect_one_round()``.
+    ! * Status_WIGGLE_FAIL: Via ``intersect_one_round()``.
+    ! * Status_NO_CONVERGE: If the curves don't converge to linear after
+    !                       ``MAX_INTERSECT_SUBDIVISIONS``.
+    ! * (N >= 64)         : The number of candidates if it exceeds the limit
+    !                       ``MAX_CANDIDATES == 64``.
+
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)
     integer(c_int), intent(in) :: num_nodes_second
@@ -844,15 +872,9 @@ contains
        ! NOTE: This only checks for two error statuses from
        !       ``intersect_one_round()``, so it is inherently brittle
        !       to changes there.
-       if (intersect_status == Status_PARALLEL) then
-          status = Status_PARALLEL
+       if (intersect_status /= Status_SUCCESS) then
+          status = intersect_status
           return
-       else if (intersect_status == Status_WIGGLE_FAIL) then
-          ! NOTE: We exclude this block from testing because it's
-          !       quite difficult to come up with an example that
-          !       causes it.
-          status = Status_WIGGLE_FAIL  ! LCOV_EXCL_LINE
-          return  ! LCOV_EXCL_LINE
        end if
 
        ! Update the number of candidates.
@@ -890,9 +912,18 @@ contains
     !       by Bezout's theorem). If ``intersections`` is not large enough
     !       (i.e. if ``intersections_size`` < num_intersections``), then
     !       ``intersections`` will not be populated and the ``status`` will be
-    !       set to ``Status_TOO_SMALL``. However, the value of
+    !       set to ``Status_INSUFFICIENT_SPACE``. However, the value of
     !       ``num_intersections`` will be accurate and ``intersections``
     !       should be re-sized by the caller to accommodate.
+
+    ! Possible error states:
+    ! * Status_SUCCESS           : On success.
+    ! * Status_PARALLEL          : Via ``all_intersections()``.
+    ! * Status_WIGGLE_FAIL       : Via ``all_intersections()``.
+    ! * Status_NO_CONVERGE       : Via ``all_intersections()``.
+    ! * Status_INSUFFICIENT_SPACE: If ``intersections_size`` is smaller than
+    !                              the number of intersections.
+    ! * (N >= 64)                : Via ``all_intersections()``.
 
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)
@@ -912,7 +943,7 @@ contains
     end if
 
     if (num_intersections > intersections_size) then
-       status = Status_TOO_SMALL
+       status = Status_INSUFFICIENT_SPACE
     else if (num_intersections > 0) then
        ! NOTE: This assumes, but doesn't check that
        !       ``INTERSECTIONS_WORKSPACE`` has been allocated
