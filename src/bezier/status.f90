@@ -18,7 +18,7 @@ module status
   public &
        Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
        Status_NO_CONVERGE, Status_TOO_SMALL, Status_SAME_CURVATURE, &
-       Status_BAD_TANGENT, Status_EDGE_END, Status_UNKNOWN
+       Status_BAD_TANGENT, Status_EDGE_END
 
   ! Values of Status enum:
   integer(c_int), parameter :: Status_SUCCESS = 0
@@ -31,6 +31,5 @@ module status
   integer(c_int), parameter :: Status_SAME_CURVATURE = 5
   integer(c_int), parameter :: Status_BAD_TANGENT = 6
   integer(c_int), parameter :: Status_EDGE_END = 7
-  integer(c_int), parameter :: Status_UNKNOWN = 999
 
 end module status

@@ -16,7 +16,7 @@ module curve_intersection
   use types, only: dp
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
-       Status_NO_CONVERGE, Status_TOO_SMALL, Status_UNKNOWN
+       Status_NO_CONVERGE, Status_TOO_SMALL
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
        vector_close, in_interval, ulps_away
@@ -841,6 +841,9 @@ contains
                CANDIDATES_EVEN, num_next_candidates, intersect_status)
        end if
 
+       ! NOTE: This only checks for two error statuses from
+       !       ``intersect_one_round()``, so it is inherently brittle
+       !       to changes there.
        if (intersect_status == Status_PARALLEL) then
           status = Status_PARALLEL
           return
@@ -849,15 +852,6 @@ contains
           !       quite difficult to come up with an example that
           !       causes it.
           status = Status_WIGGLE_FAIL  ! LCOV_EXCL_LINE
-          return  ! LCOV_EXCL_LINE
-       else if (intersect_status /= Status_SUCCESS) then
-          ! NOTE: We exclude this block from testing because it
-          !       **should** never occur. It is here simply to
-          !       future-proof this code, since it is a hard-coded
-          !       remapping of the error codes from ``from_linearized()``.
-          !       If those error codes change and this section doesn't,
-          !       then an "unknown" error will occur.
-          status = Status_UNKNOWN  ! LCOV_EXCL_LINE
           return  ! LCOV_EXCL_LINE
        end if
 

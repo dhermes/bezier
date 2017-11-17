@@ -260,11 +260,6 @@ def all_intersections(
         # NOTE: This branch may not be tested because it's quite difficult to
         #       come up with an example that causes it.
         raise ValueError('outside of unit interval')
-    elif status == bezier._status.Status.UNKNOWN:
-        # NOTE: We exclude this block from testing because it **should**
-        #       never occur. It's just a "future-proofing" mechanism of the
-        #       Fortran code.
-        raise ValueError('Unknown error.')
     else:
         # NOTE: If ``status`` isn't one of the enum values, then it is the
         #       number of candidate intersections.

@@ -23,4 +23,3 @@ cdef extern from "bezier/status.h":
         SAME_CURVATURE = 5
         BAD_TANGENT = 6
         EDGE_END = 7
-        UNKNOWN = 999
