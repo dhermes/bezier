@@ -35,7 +35,7 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -funroll-loops \
 >   -c \
 >   -c \
->   src\beziers\status.f90 \
+>   src\bezier\status.f90 \
 >   -o \
 >   build\temp.win-amd64-3.6\Release\src\bezier\status.o \
 >   -J \
