@@ -635,6 +635,7 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
         return cls(id_, control_points, note=note)
 
 
+# pylint: disable=too-few-public-methods
 class SurfaceIntersectionInfo(object):
     """Basic wrapper indicating an intersection is one of the two surfaces.
 
@@ -647,6 +648,7 @@ class SurfaceIntersectionInfo(object):
         self.first = first
         # Will be set later by the `SurfaceIntersectionsInfo` constructor.
         self.parent = None
+# pylint: enable=too-few-public-methods
 
 
 # pylint: disable=too-few-public-methods

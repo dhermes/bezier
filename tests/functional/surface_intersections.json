@@ -1022,5 +1022,13 @@
                 ]
             }
         ]
+    }, {
+        "surface1": "9L",
+        "surface2": "1L",
+        "id": 35,
+        "note": "This is identical to intersection ID 30 (1L-9L), but now the ``first'' surface is the one that is fully interior at the double corner.",
+        "intersections": [
+            true
+        ]
     }
 ]

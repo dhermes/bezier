@@ -1902,7 +1902,7 @@ class Test_make_intersection(utils.NumPyTestCase):
     def test_surface1(self):
         from bezier import _surface_helpers
 
-        edge_info = _surface_helpers.FIRST_SURFACE_INFO
+        edge_info = _surface_helpers.FIRST_SURFACE_INFO[0]
         result = self._call_function_under_test(
             edge_info, unittest.mock.sentinel.surface1, (), None, ())
         self.assertIs(result, unittest.mock.sentinel.surface1)
@@ -1910,7 +1910,7 @@ class Test_make_intersection(utils.NumPyTestCase):
     def test_surface2(self):
         from bezier import _surface_helpers
 
-        edge_info = _surface_helpers.SECOND_SURFACE_INFO
+        edge_info = _surface_helpers.SECOND_SURFACE_INFO[2]
         result = self._call_function_under_test(
             edge_info, None, (), unittest.mock.sentinel.surface2, ())
         self.assertIs(result, unittest.mock.sentinel.surface2)

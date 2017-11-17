@@ -282,7 +282,7 @@ def lint(session):
     # Run Pylint over the library source.
     session.run(
         'pylint', '--rcfile', 'pylintrc',
-        '--max-module-lines=2517',
+        '--max-module-lines=2538',
         get_path('src', 'bezier'),
     )
     # Run Pylint over the tests source.

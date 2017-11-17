@@ -320,17 +320,38 @@ _QUARTIC_TO_BERNSTEIN = np.asfortranarray([
 # NOTE: We avoid round-off until after ``_QUARTIC_TO_BERNSTEIN``
 #       has been applied.
 _QUARTIC_BERNSTEIN_FACTOR = 36.0
-# Constants for ``make_intersection``. Each row is a return value
-# of ``ends_to_curve``.
+# List of constants for ``make_intersection``. In each constant, each row is
+# a return value of ``ends_to_curve``. The second and third constant are
+# just obtained from the first by rotating the rows.
 FIRST_SURFACE_INFO = (
-    (True, 0, 0.0, 1.0),
-    (True, 1, 0.0, 1.0),
-    (True, 2, 0.0, 1.0),
+    (
+        (True, 0, 0.0, 1.0),
+        (True, 1, 0.0, 1.0),
+        (True, 2, 0.0, 1.0),
+    ), (
+        (True, 1, 0.0, 1.0),
+        (True, 2, 0.0, 1.0),
+        (True, 0, 0.0, 1.0),
+    ), (
+        (True, 2, 0.0, 1.0),
+        (True, 0, 0.0, 1.0),
+        (True, 1, 0.0, 1.0),
+    ),
 )
 SECOND_SURFACE_INFO = (
-    (False, 0, 0.0, 1.0),
-    (False, 1, 0.0, 1.0),
-    (False, 2, 0.0, 1.0),
+    (
+        (False, 0, 0.0, 1.0),
+        (False, 1, 0.0, 1.0),
+        (False, 2, 0.0, 1.0),
+    ), (
+        (False, 1, 0.0, 1.0),
+        (False, 2, 0.0, 1.0),
+        (False, 0, 0.0, 1.0),
+    ), (
+        (False, 2, 0.0, 1.0),
+        (False, 0, 0.0, 1.0),
+        (False, 1, 0.0, 1.0),
+    ),
 )
 
 
@@ -2188,9 +2209,9 @@ def make_intersection(edge_info, surface1, edges1, surface2, edges2):
         first or second surface, will return ``surface1`` or ``surface2``
         (depending on which is correct) instead of a curved polygon.
     """
-    if edge_info == FIRST_SURFACE_INFO:
+    if edge_info in FIRST_SURFACE_INFO:
         return surface1
-    elif edge_info == SECOND_SURFACE_INFO:
+    elif edge_info in SECOND_SURFACE_INFO:
         return surface2
     else:
         edges = []
