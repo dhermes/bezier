@@ -29,7 +29,7 @@ module test_curve_intersection
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, all_intersections, &
-       all_intersections_c
+       all_intersections_abi
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -41,7 +41,7 @@ module test_curve_intersection
        test_add_from_linearized, test_endpoint_check, &
        test_tangent_bbox_intersection, test_add_candidates, &
        test_intersect_one_round, test_all_intersections, &
-       test_all_intersections_c
+       test_all_intersections_abi
   public curve_intersection_all_tests
 
 contains
@@ -63,7 +63,7 @@ contains
     call test_add_candidates(success)
     call test_intersect_one_round(success)
     call test_all_intersections(success)
-    call test_all_intersections_c(success)
+    call test_all_intersections_abi(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -1673,7 +1673,7 @@ contains
 
   end subroutine test_all_intersections
 
-  subroutine test_all_intersections_c(success)
+  subroutine test_all_intersections_abi(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
@@ -1683,10 +1683,10 @@ contains
     real(c_double) :: intersections1(2, 2), intersections2(2, 3)
     integer(c_int) :: status
     integer :: case_id
-    character(19) :: name
+    character(21) :: name
 
     case_id = 1
-    name = "all_intersections_c"
+    name = "all_intersections_abi"
 
     ! CASE 1: **Other** failure (overlapping lines).
     linear1(1, :) = [0.0_dp, 0.0_dp]
@@ -1694,7 +1694,7 @@ contains
     linear2(1, :) = [1.0_dp, 2.0_dp]
     linear2(2, :) = [3.0_dp, 6.0_dp]
 
-    call all_intersections_c( &
+    call all_intersections_abi( &
          2, linear1, 2, linear2, 2, intersections1, &
          num_intersections, status)
     case_success = ( &
@@ -1710,7 +1710,7 @@ contains
     cubic1(3, :) = [-7.0_dp, -13.0_dp]
     cubic1(4, :) = [9.0_dp, 9.0_dp]
 
-    call all_intersections_c( &
+    call all_intersections_abi( &
          2, linear1, 4, cubic1, 2, intersections1, &
          num_intersections, status)
     case_success = ( &
@@ -1719,7 +1719,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Just case 7, but with large enough ``intersections``.
-    call all_intersections_c( &
+    call all_intersections_abi( &
          2, linear1, 4, cubic1, 3, intersections2, &
          num_intersections, status)
     case_success = ( &
@@ -1733,6 +1733,6 @@ contains
          status == ALL_INTERSECTIONS_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-  end subroutine test_all_intersections_c
+  end subroutine test_all_intersections_abi
 
 end module test_curve_intersection

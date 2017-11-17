@@ -36,7 +36,7 @@ module curve_intersection
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
-       add_candidates, intersect_one_round, all_intersections_c, &
+       add_candidates, intersect_one_round, all_intersections_abi, &
        free_curve_intersections_workspace
 
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
@@ -812,7 +812,7 @@ contains
        intersections, num_intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op, but
-    !       a C compatible interface is exposed as ``all_intersections_c``.
+    !       a C compatible interface is exposed as ``all_intersections_abi``.
 
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)
@@ -899,7 +899,7 @@ contains
 
   end subroutine all_intersections
 
-  subroutine all_intersections_c( &
+  subroutine all_intersections_abi( &
        num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
        intersections_size, intersections, num_intersections, status) &
        bind(c, name='curve_intersections')
@@ -940,7 +940,7 @@ contains
             INTERSECTIONS_WORKSPACE(:, :num_intersections))
     end if
 
-  end subroutine all_intersections_c
+  end subroutine all_intersections_abi
 
   subroutine free_curve_intersections_workspace() &
        bind(c, name='free_curve_intersections_workspace')
