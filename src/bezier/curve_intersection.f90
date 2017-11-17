@@ -39,31 +39,32 @@ module curve_intersection
        add_candidates, intersect_one_round, all_intersections_abi, &
        free_curve_intersections_workspace
 
+  ! Values of BoxIntersectionType enum:
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
   integer(c_int), parameter :: BoxIntersectionType_TANGENT = 1
   integer(c_int), parameter :: BoxIntersectionType_DISJOINT = 2
+  ! Values of FromLinearized enum. In ``from_linearized``, ``py_exc == 1``
+  ! corresponds to ``NotImplementedError('Line segments parallel.')`` and
+  ! ``py_exc == 2`` indicates that ``wiggle_interval`` failed.
   integer(c_int), parameter :: FromLinearized_SUCCESS = 0
-  ! In ``from_linearized``, ``py_exc == 1`` corresponds to
-  ! ``NotImplementedError('Line segments parallel.')``
   integer(c_int), parameter :: FromLinearized_PARALLEL = 1
-  ! In ``from_linearized``, ``py_exc == 2`` indicates that
-  ! ``wiggle_interval`` failed.
   integer(c_int), parameter :: FromLinearized_WIGGLE_FAIL = 2
-  ! Set the threshold for linearization error at half the bits available.
-  real(c_double), parameter :: LINEARIZATION_THRESHOLD = 0.5_dp**26
-  integer(c_int), parameter :: Subdivide_FIRST = 0
-  integer(c_int), parameter :: Subdivide_SECOND = 1
-  integer(c_int), parameter :: Subdivide_BOTH = 2
-  integer(c_int), parameter :: Subdivide_NEITHER = -1
-  integer(c_int), parameter :: MAX_INTERSECT_SUBDIVISIONS = 20
-  integer(c_int), parameter :: MAX_CANDIDATES = 64
+  ! Values of AllIntersections enum:
   integer(c_int), parameter :: AllIntersections_SUCCESS = 0
   integer(c_int), parameter :: AllIntersections_NO_CONVERGE = 1
   integer(c_int), parameter :: AllIntersections_TOO_SMALL = 2
   integer(c_int), parameter :: AllIntersections_PARALLEL = 3
   integer(c_int), parameter :: AllIntersections_WIGGLE_FAIL = 4
   integer(c_int), parameter :: AllIntersections_UNKNOWN = 5
-
+  ! Values of Subdivide enum:
+  integer(c_int), parameter :: Subdivide_FIRST = 0
+  integer(c_int), parameter :: Subdivide_SECOND = 1
+  integer(c_int), parameter :: Subdivide_BOTH = 2
+  integer(c_int), parameter :: Subdivide_NEITHER = -1
+  ! Set the threshold for linearization error at half the bits available.
+  real(c_double), parameter :: LINEARIZATION_THRESHOLD = 0.5_dp**26
+  integer(c_int), parameter :: MAX_INTERSECT_SUBDIVISIONS = 20
+  integer(c_int), parameter :: MAX_CANDIDATES = 64
   ! Long-lived workspaces for ``all_intersections()``. If multiple
   ! threads are used, this should be thread-local.
   type(CurveData), allocatable :: CANDIDATES_ODD(:, :)
