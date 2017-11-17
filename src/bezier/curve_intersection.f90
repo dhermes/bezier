@@ -25,8 +25,8 @@ module curve_intersection
        CANDIDATES_EVEN, INTERSECTIONS_WORKSPACE, make_candidates
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
-       BoxIntersectionType_DISJOINT, FROM_LINEARIZED_SUCCESS, &
-       FROM_LINEARIZED_PARALLEL, FROM_LINEARIZED_WIGGLE_FAIL, &
+       BoxIntersectionType_DISJOINT, FromLinearized_SUCCESS, &
+       FromLinearized_PARALLEL, FromLinearized_WIGGLE_FAIL, &
        LINEARIZATION_THRESHOLD, Subdivide_FIRST, Subdivide_SECOND, &
        Subdivide_BOTH, Subdivide_NEITHER, AllIntersections_SUCCESS, &
        AllIntersections_NO_CONVERGE, AllIntersections_TOO_SMALL, &
@@ -42,13 +42,13 @@ module curve_intersection
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
   integer(c_int), parameter :: BoxIntersectionType_TANGENT = 1
   integer(c_int), parameter :: BoxIntersectionType_DISJOINT = 2
-  integer(c_int), parameter :: FROM_LINEARIZED_SUCCESS = 0
+  integer(c_int), parameter :: FromLinearized_SUCCESS = 0
   ! In ``from_linearized``, ``py_exc == 1`` corresponds to
   ! ``NotImplementedError('Line segments parallel.')``
-  integer(c_int), parameter :: FROM_LINEARIZED_PARALLEL = 1
+  integer(c_int), parameter :: FromLinearized_PARALLEL = 1
   ! In ``from_linearized``, ``py_exc == 2`` indicates that
   ! ``wiggle_interval`` failed.
-  integer(c_int), parameter :: FROM_LINEARIZED_WIGGLE_FAIL = 2
+  integer(c_int), parameter :: FromLinearized_WIGGLE_FAIL = 2
   ! Set the threshold for linearization error at half the bits available.
   real(c_double), parameter :: LINEARIZATION_THRESHOLD = 0.5_dp**26
   integer(c_int), parameter :: Subdivide_FIRST = 0
@@ -287,7 +287,7 @@ contains
     integer(c_int) :: enum_
     logical(c_bool) :: success
 
-    py_exc = FROM_LINEARIZED_SUCCESS
+    py_exc = FromLinearized_SUCCESS
     does_intersect = .FALSE.  ! Default value.
     call segment_intersection( &
          start_node1, end_node1, start_node2, end_node2, s, t, success)
@@ -326,7 +326,7 @@ contains
        end if
 
        ! Expect the wrapper code to raise.
-       py_exc = FROM_LINEARIZED_PARALLEL
+       py_exc = FromLinearized_PARALLEL
        return
     end if
 
@@ -342,14 +342,14 @@ contains
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then
-       py_exc = FROM_LINEARIZED_WIGGLE_FAIL  ! LCOV_EXCL_LINE
+       py_exc = FromLinearized_WIGGLE_FAIL  ! LCOV_EXCL_LINE
        return  ! LCOV_EXCL_LINE
     end if
     refined_s = s
 
     call wiggle_interval(refined_t, t, success)
     if (.NOT. success) then
-       py_exc = FROM_LINEARIZED_WIGGLE_FAIL  ! LCOV_EXCL_LINE
+       py_exc = FromLinearized_WIGGLE_FAIL  ! LCOV_EXCL_LINE
        return  ! LCOV_EXCL_LINE
     end if
     refined_t = t
@@ -537,7 +537,7 @@ contains
          num_nodes2, root_nodes2, &
          refined_s, refined_t, does_intersect, py_exc)
 
-    if (py_exc /= FROM_LINEARIZED_SUCCESS) then
+    if (py_exc /= FromLinearized_SUCCESS) then
        return
     end if
 
@@ -711,7 +711,7 @@ contains
     integer(c_int) :: subdivide_enum
 
     num_next_candidates = 0
-    py_exc = FROM_LINEARIZED_SUCCESS
+    py_exc = FromLinearized_SUCCESS
     do index_ = 1, num_candidates
        ! NOTE: We **hope** that the compiler avoids turning this alias (for
        !       the sake of typing fewer characters) into a copy.
@@ -736,7 +736,7 @@ contains
                   num_intersections, intersections, py_exc)
 
              ! If there was a failure, exit this subroutine.
-             if (py_exc /= FROM_LINEARIZED_SUCCESS) then
+             if (py_exc /= FromLinearized_SUCCESS) then
                 return
              end if
 
@@ -854,16 +854,16 @@ contains
                CANDIDATES_EVEN, num_next_candidates, py_exc)
        end if
 
-       if (py_exc == FROM_LINEARIZED_PARALLEL) then
+       if (py_exc == FromLinearized_PARALLEL) then
           status = AllIntersections_PARALLEL
           return
-       else if (py_exc == FROM_LINEARIZED_WIGGLE_FAIL) then
+       else if (py_exc == FromLinearized_WIGGLE_FAIL) then
           ! NOTE: We exclude this block from testing because it's
           !       quite difficult to come up with an example that
           !       causes it.
           status = AllIntersections_WIGGLE_FAIL  ! LCOV_EXCL_LINE
           return  ! LCOV_EXCL_LINE
-       else if (py_exc /= FROM_LINEARIZED_SUCCESS) then
+       else if (py_exc /= FromLinearized_SUCCESS) then
           ! NOTE: We exclude this block from testing because it
           !       **should** never occur. It is here simply to
           !       future-proof this code, since it is a hard-coded
