@@ -40,7 +40,7 @@ contains
        suite_success = .FALSE.  ! LCOV_EXCL_LINE
     end if
 
-    write (*, "(A26, A, I2, A)") name, ": Case ", case_id, status_msg
+    write (*, "(A28, A, I2, A)") name, ": Case ", case_id, status_msg
 
     ! Increment case ID for next case.
     case_id = case_id + 1

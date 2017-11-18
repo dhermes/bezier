@@ -23,13 +23,14 @@ module test_surface_intersection
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, newton_refine, &
-       locate_point, classify_intersection, add_st_vals, surfaces_intersect
+       locate_point, classify_intersection, add_st_vals, &
+       surfaces_intersection_points
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
-       test_add_st_vals, test_surfaces_intersect, intersection_check
+       test_add_st_vals, test_surfaces_intersection_points, intersection_check
   public surface_intersection_all_tests
 
 contains
@@ -41,7 +42,7 @@ contains
     call test_locate_point(success)
     call test_classify_intersection(success)
     call test_add_st_vals(success)
-    call test_surfaces_intersect(success)
+    call test_surfaces_intersection_points(success)
 
   end subroutine surface_intersection_all_tests
 
@@ -718,12 +719,12 @@ contains
 
   end subroutine test_add_st_vals
 
-  subroutine test_surfaces_intersect(success)
+  subroutine test_surfaces_intersection_points(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    character(18) :: name
+    character(28) :: name
     real(c_double) :: linear1(3, 2), linear2(3, 2)
     real(c_double) :: quadratic1(6, 2), quadratic2(6, 2)
     type(Intersection), allocatable :: intersections(:)
@@ -732,7 +733,7 @@ contains
     integer(c_int) :: first, second
 
     case_id = 1
-    name = "surfaces_intersect"
+    name = "surfaces_intersection_points"
 
     first = IntersectionClassification_FIRST
     second = IntersectionClassification_SECOND
@@ -744,7 +745,7 @@ contains
     linear2(1, :) = [0.0_dp, 1.0_dp]
     linear2(2, :) = [2.0_dp, 1.0_dp]
     linear2(3, :) = [1.0_dp, -1.0_dp]
-    call surfaces_intersect( &
+    call surfaces_intersection_points( &
          3, linear1, 1, 3, linear2, 1, &
          intersections, num_intersections, status)
     case_success = ( &
@@ -779,7 +780,7 @@ contains
     quadratic2(4, :) = [6.0_dp, 21.0_dp]
     quadratic2(5, :) = [12.0_dp, 24.0_dp]
     quadratic2(6, :) = [8.0_dp, 32.0_dp]
-    call surfaces_intersect( &
+    call surfaces_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, status)
     case_success = ( &
@@ -801,7 +802,7 @@ contains
     quadratic2(4, :) = [3.0_dp, 1.0_dp]
     quadratic2(5, :) = [1.0_dp, 1.0_dp]
     quadratic2(6, :) = [2.0_dp, -2.0_dp]
-    call surfaces_intersect( &
+    call surfaces_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, status)
     case_success = ( &
@@ -809,7 +810,7 @@ contains
          status == Status_BAD_TANGENT)
     call print_status(name, case_id, case_success, success)
 
-  end subroutine test_surfaces_intersect
+  end subroutine test_surfaces_intersection_points
 
   function intersection_check( &
        intersection_, s, t, index_first, index_second, &

@@ -34,7 +34,8 @@ module surface_intersection
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, newton_refine, &
-       locate_point, classify_intersection, add_st_vals, surfaces_intersect
+       locate_point, classify_intersection, add_st_vals, &
+       surfaces_intersection_points
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -732,7 +733,7 @@ contains
 
   end subroutine add_st_vals
 
-  subroutine surfaces_intersect( &
+  subroutine surfaces_intersection_points( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
        intersections, num_intersections, status)
@@ -740,13 +741,12 @@ contains
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This (and ``add_st_vals``) ignores duplicate nodes (caused when
     !       an intersection happens at a corner of the surface, which will
-    !       end subroutine surfaces_intersect at the end of edge and the
-    !       start of another). If desired, a "verify" option could be added
-    !       (as is done in Python) to make sure that any "duplicate"
-    !       intersections (i.e. ones that occur at the end of an edge) do
-    !       match with the corresponding intersection at the beginning of an
-    !       edge (in the case of a double corner, this means **three**
-    !       duplicate intersections).
+    !       be at the end of one edge and the start of another). If desired,
+    !       a "verify" option could be added (as is done in Python) to make
+    !       sure that any "duplicate" intersections (i.e. ones that occur at
+    !       the end of an edge) do match with the corresponding intersection
+    !       at the beginning of an edge (in the case of a double corner, this
+    !       means **three** duplicate intersections).
 
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
@@ -811,6 +811,6 @@ contains
        end do
     end do
 
-  end subroutine surfaces_intersect
+  end subroutine surfaces_intersection_points
 
 end module surface_intersection
