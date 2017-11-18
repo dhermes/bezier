@@ -15,7 +15,7 @@ module surface_intersection
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use status, only: &
        Status_SUCCESS, Status_SAME_CURVATURE, Status_BAD_TANGENT, &
-       Status_EDGE_END
+       Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
   use curve_intersection, only: &
        BoxIntersectionType_INTERSECTION, bbox_intersect, all_intersections
@@ -28,7 +28,8 @@ module surface_intersection
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, &
        newton_refine_solve, split_candidate, allocate_candidates, &
        update_candidates, ignored_edge_corner, ignored_double_corner, &
-       ignored_corner, classify_tangent_intersection, no_intersections
+       ignored_corner, classify_tangent_intersection, no_intersections, &
+       reduce_intersections
   public &
        Intersection, IntersectionClassification_FIRST, &
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
@@ -315,12 +316,14 @@ contains
     if (is_even) then
        ! NOTE: We "exclude" this block from ``lcov`` because it can never
        !       be invoked while ``MAX_LOCATE_SUBDIVISIONS`` is even.
+       ! LCOV_EXCL_START
        s_approx = ( &
-            sum(candidates_odd(:num_candidates)%centroid_x) / &  ! LCOV_EXCL_LINE
-            (3.0_dp * num_candidates))  ! LCOV_EXCL_LINE
+            sum(candidates_odd(:num_candidates)%centroid_x) / &
+            (3.0_dp * num_candidates))
        t_approx = ( &
-            sum(candidates_odd(:num_candidates)%centroid_y) / &  ! LCOV_EXCL_LINE
-            (3.0_dp * num_candidates))  ! LCOV_EXCL_LINE
+            sum(candidates_odd(:num_candidates)%centroid_y) / &
+            (3.0_dp * num_candidates))
+       ! LCOV_EXCL_STOP
     else
        s_approx = ( &
             sum(candidates_even(:num_candidates)%centroid_x) / &
@@ -860,6 +863,56 @@ contains
 
   end subroutine no_intersections
 
+  subroutine reduce_intersections(num_intersections, intersections, all_types)
+
+    ! NOTE: This is a helper for ``surfaces_intersect``.
+    ! The returned ``all_types`` uses the first 6 bits to identify
+    ! which classified states are among the intersections. (There
+    ! are 6 possible classifications).
+
+    integer(c_int), intent(inout) :: num_intersections
+    type(Intersection), allocatable, intent(inout) :: intersections(:)
+    integer(c_int), intent(out) :: all_types
+    ! Variables outside of signature.
+    integer(c_int) :: original_size, i, index
+
+    original_size = num_intersections
+    index = 1
+    all_types = 0
+    ! NOTE: We use a do-loop rather than a while loop for "safety".
+    !       It'd be more proper to do ``while (index <= num_intersections)``.
+    do i = 1, original_size
+       ! NOTE: We assume, but do not check that the invariant
+       !           ``index <= num_intersections``
+       !       remains true. It **must** be so since each intersection must be
+       !       considered, hence we need **exactly** ``original_size``
+       !       iterations.
+
+       ! NOTE: This assumes, but does not check, that ``interior_curve``
+       !       is non-negative (and should be an enum value from
+       !       ``IntersectionClassification``).
+       all_types = ior(all_types, 2**intersections(index)%interior_curve)
+
+       if ( &
+            intersections(index)%interior_curve == &
+            IntersectionClassification_FIRST .OR. &
+            intersections(index)%interior_curve == &
+            IntersectionClassification_SECOND) then
+          ! We accept the intersection and move to the next.
+          index = index + 1
+       else
+          ! We simply discard tangent / opposed / ignored intersections,
+          ! so we preserve ``index``, delete the current intersection
+          ! from the list, and reduce the total number of intersections.
+          intersections(index:num_intersections - 1) = ( &
+               intersections(index + 1:num_intersections))
+          num_intersections = num_intersections - 1
+       end if
+
+    end do
+
+  end subroutine reduce_intersections
+
   subroutine surfaces_intersect( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
@@ -876,6 +929,10 @@ contains
     ! * Status_EDGE_END      : Via ``surfaces_intersection_points()``.
     ! * Status_BAD_TANGENT   : Via ``surfaces_intersection_points()``.
     ! * Status_SAME_CURVATURE: Via ``surfaces_intersection_points()``.
+    ! * Status_UNKNOWN       : If all of the intersections are classified
+    !                          as ``OPPOSED / IGNORED_CORNER / TANGENT_*``
+    !                          but not uniquely one type. (This should
+    !                          never occur).
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(num_nodes1, 2)
@@ -888,7 +945,7 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: bbox_int
     type(Intersection), allocatable :: intersections(:)
-    integer(c_int) :: num_intersections
+    integer(c_int) :: num_intersections, all_types
 
     ! If the bounded boxes do not intersect, the surfaces cannot.
     call bbox_intersect( &
@@ -912,6 +969,34 @@ contains
             num_nodes1, nodes1, degree1, &
             num_nodes2, nodes2, degree2, contained)
        return
+    end if
+
+    call reduce_intersections(num_intersections, intersections, all_types)
+
+    if (num_intersections == 0) then
+       if (all_types == 2**IntersectionClassification_OPPOSED) then
+          contained = SurfaceContained_NEITHER
+          return
+       else if (all_types == 2**IntersectionClassification_IGNORED_CORNER) then
+          contained = SurfaceContained_NEITHER
+          return
+       else if (all_types == 2**IntersectionClassification_TANGENT_FIRST) then
+          contained = SurfaceContained_FIRST
+          return
+       else if (all_types == 2**IntersectionClassification_TANGENT_SECOND) then
+          contained = SurfaceContained_SECOND
+          return
+       else
+          ! NOTE: We "exclude" this block from ``lcov`` because it **should**
+          !       never occur. In the case that **none** of the intersections
+          !       are ``FIRST`` or ``SECOND``, then they all **should** fall
+          !       into the exact same category (which would be one of the
+          !       four states above).
+          ! LCOV_EXCL_START
+          status = Status_UNKNOWN
+          return
+          ! LCOV_EXCL_STOP
+       end if
     end if
 
     ! The remaining parts are not yet implemented.

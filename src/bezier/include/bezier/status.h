@@ -26,6 +26,7 @@ enum Status {
   SAME_CURVATURE = 5,
   BAD_TANGENT = 6,
   EDGE_END = 7,
+  UNKNOWN = 999,
 };
 
 #if defined (__cplusplus)

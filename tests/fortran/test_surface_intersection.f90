@@ -842,6 +842,7 @@ contains
     character(18) :: name
     integer(c_int) :: contained, status
     real(c_double) :: linear1(3, 2), linear2(3, 2)
+    real(c_double) :: quadratic1(6, 2), quadratic2(6, 2)
 
     case_id = 1
     name = "surfaces_intersect"
@@ -917,6 +918,72 @@ contains
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, contained, status)
     case_success = (status == -1234)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: The only intersection(s) are ``OPPOSED``.
+    quadratic1(1, :) = [4.0_dp, 0.0_dp]
+    quadratic1(2, :) = [2.0_dp, 4.0_dp]
+    quadratic1(3, :) = [0.0_dp, 0.0_dp]
+    quadratic1(4, :) = [3.0_dp, -2.0_dp]
+    quadratic1(5, :) = [1.0_dp, -2.0_dp]
+    quadratic1(6, :) = [2.0_dp, -4.0_dp]
+    quadratic2(1, :) = [0.0_dp, 4.0_dp]
+    quadratic2(2, :) = [2.0_dp, 0.0_dp]
+    quadratic2(3, :) = [4.0_dp, 4.0_dp]
+    quadratic2(4, :) = [1.0_dp, 6.0_dp]
+    quadratic2(5, :) = [3.0_dp, 6.0_dp]
+    quadratic2(6, :) = [2.0_dp, 8.0_dp]
+
+    call surfaces_intersect( &
+         6, quadratic1, 2, 6, quadratic2, 2, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: The only intersection(s) are ``IGNORED_CORNER``.
+    linear1(1, :) = 0
+    linear1(2, :) = [1.0_dp, 0.0_dp]
+    linear1(3, :) = [0.0_dp, 1.0_dp]
+    linear2(1, :) = 0
+    linear2(2, :) = [-2.0_dp, 3.0_dp]
+    linear2(3, :) = [1.0_dp, -3.0_dp]
+
+    call surfaces_intersect( &
+         3, linear1, 1, 3, linear2, 1, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 9: The only intersection(s) are ``TANGENT_FIRST``.
+    quadratic1(1, :) = [2.0_dp, 1.25_dp]
+    quadratic1(2, :) = [4.0_dp, 0.75_dp]
+    quadratic1(3, :) = [6.0_dp, 1.25_dp]
+    quadratic1(4, :) = [3.0_dp, 3.0_dp]
+    quadratic1(5, :) = [5.0_dp, 3.0_dp]
+    quadratic1(6, :) = [4.0_dp, 5.0_dp]
+    quadratic2(1, :) = [0.0_dp, 0.0_dp]
+    quadratic2(2, :) = [4.0_dp, 2.0_dp]
+    quadratic2(3, :) = [8.0_dp, 0.0_dp]
+    quadratic2(4, :) = [1.5_dp, 7.5_dp]
+    quadratic2(5, :) = [11.0_dp, 6.0_dp]
+    quadratic2(6, :) = [8.0_dp, 8.0_dp]
+
+    call surfaces_intersect( &
+         6, quadratic1, 2, 6, quadratic2, 2, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_FIRST .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 10: The only intersection(s) are ``TANGENT_SECOND`` (re-uses
+    !          **all** data from CASE 9).
+    call surfaces_intersect( &
+         6, quadratic2, 2, 6, quadratic1, 2, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_SECOND .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_surfaces_intersect

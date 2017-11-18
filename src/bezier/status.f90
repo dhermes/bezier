@@ -18,7 +18,7 @@ module status
   public &
        Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
        Status_NO_CONVERGE, Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, &
-       Status_BAD_TANGENT, Status_EDGE_END
+       Status_BAD_TANGENT, Status_EDGE_END, Status_UNKNOWN
 
   ! Values of Status enum:
   ! SUCCESS: Procedure exited with no error.
@@ -46,5 +46,9 @@ module status
   !           an edge (only intersections at the beginning of an edge should
   !           be used).
   integer(c_int), parameter :: Status_EDGE_END = 7
+  ! UNKNOWN: Signifies a block of code reached an "impossible" state. Either
+  !          the code has violated some mathematical invariant or the author
+  !          misunderstood the possible states of the system.
+  integer(c_int), parameter :: Status_UNKNOWN = 999
 
 end module status
