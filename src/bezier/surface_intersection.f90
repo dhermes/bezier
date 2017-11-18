@@ -879,8 +879,6 @@ contains
     original_size = num_intersections
     index = 1
     all_types = 0
-    ! NOTE: We use a do-loop rather than a while loop for "safety".
-    !       It'd be more proper to do ``while (index <= num_intersections)``.
     do i = 1, original_size
        ! NOTE: We assume, but do not check that the invariant
        !           ``index <= num_intersections``
