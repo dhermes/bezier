@@ -738,6 +738,15 @@ contains
        intersections, num_intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
+    ! NOTE: This (and ``add_st_vals``) ignores duplicate nodes (caused when
+    !       an intersection happens at a corner of the surface, which will
+    !       end subroutine surfaces_intersect at the end of edge and the
+    !       start of another). If desired, a "verify" option could be added
+    !       (as is done in Python) to make sure that any "duplicate"
+    !       intersections (i.e. ones that occur at the end of an edge) do
+    !       match with the corresponding intersection at the beginning of an
+    !       edge (in the case of a double corner, this means **three**
+    !       duplicate intersections).
 
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
