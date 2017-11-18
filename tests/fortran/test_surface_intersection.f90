@@ -22,15 +22,17 @@ module test_surface_intersection
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
-       IntersectionClassification_IGNORED_CORNER, newton_refine, &
+       IntersectionClassification_IGNORED_CORNER, SurfaceContained_NEITHER, &
+       SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
-       surfaces_intersection_points
+       surfaces_intersection_points, surfaces_intersect
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
-       test_add_st_vals, test_surfaces_intersection_points, intersection_check
+       test_add_st_vals, test_surfaces_intersection_points, &
+       intersection_check, test_surfaces_intersect
   public surface_intersection_all_tests
 
 contains
@@ -43,6 +45,7 @@ contains
     call test_classify_intersection(success)
     call test_add_st_vals(success)
     call test_surfaces_intersection_points(success)
+    call test_surfaces_intersect(success)
 
   end subroutine surface_intersection_all_tests
 
@@ -830,5 +833,92 @@ contains
          intersection_%interior_curve == interior_curve)
 
   end function intersection_check
+
+  subroutine test_surfaces_intersect(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(18) :: name
+    integer(c_int) :: contained, status
+    real(c_double) :: linear1(3, 2), linear2(3, 2)
+
+    case_id = 1
+    name = "surfaces_intersect"
+
+    ! CASE 1: Disjoint bounding boxes.
+    linear1(1, :) = 0
+    linear1(2, :) = [1.0_dp, 0.0_dp]
+    linear1(3, :) = [0.0_dp, 1.0_dp]
+    linear2(1, :) = 10
+    linear2(2, :) = [11.0_dp, 10.0_dp]
+    linear2(3, :) = [10.0_dp, 11.0_dp]
+
+    call surfaces_intersect( &
+         3, linear1, 1, 3, linear2, 1, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Intersecting edges results in error.
+    linear1(1, :) = 0
+    linear1(2, :) = [5.0_dp, 0.0_dp]
+    linear1(3, :) = [0.0_dp, 5.0_dp]
+    linear2(1, :) = [2.0_dp, 0.0_dp]
+    linear2(2, :) = [3.0_dp, 0.0_dp]
+    linear2(3, :) = [2.0_dp, 1.0_dp]
+
+    call surfaces_intersect( &
+         3, linear1, 1, 3, linear2, 1, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_PARALLEL)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Surface 2 contained in surface 1 (re-uses ``linear1``).
+    linear2(1, :) = [2.0_dp, 1.0_dp]
+    linear2(2, :) = [3.0_dp, 1.0_dp]
+    linear2(3, :) = [2.0_dp, 2.0_dp]
+
+    call surfaces_intersect( &
+         3, linear1, 1, 3, linear2, 1, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_SECOND .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Surface 1 contained in surface 2 (re-uses all data from CASE 3).
+    call surfaces_intersect( &
+         3, linear2, 1, 3, linear1, 1, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_FIRST .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Surfaces disjoint with overlapping bounding boxes (re-uses
+    !         ``linear1`` from previous cases).
+    linear2(1, :) = [4.0_dp, 2.0_dp]
+    linear2(2, :) = [4.0_dp, 3.0_dp]
+    linear2(3, :) = [3.0_dp, 3.0_dp]
+
+    call surfaces_intersect( &
+         3, linear1, 1, 3, linear2, 1, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Surfaces intersect (re-uses ``linear1`` from previous cases).
+    linear2(1, :) = [3.0_dp, -2.0_dp]
+    linear2(2, :) = [3.0_dp, 3.0_dp]
+    linear2(3, :) = [-2.0_dp, 3.0_dp]
+
+    call surfaces_intersect( &
+         3, linear1, 1, 3, linear2, 1, contained, status)
+    case_success = (status == -1234)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_surfaces_intersect
 
 end module test_surface_intersection

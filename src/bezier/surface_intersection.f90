@@ -17,7 +17,8 @@ module surface_intersection
        Status_SUCCESS, Status_SAME_CURVATURE, Status_BAD_TANGENT, &
        Status_EDGE_END
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
-  use curve_intersection, only: all_intersections
+  use curve_intersection, only: &
+       BoxIntersectionType_INTERSECTION, bbox_intersect, all_intersections
   use helpers, only: cross_product, contains_nd, vector_close
   use types, only: dp
   use surface, only: &
@@ -27,15 +28,16 @@ module surface_intersection
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, &
        newton_refine_solve, split_candidate, allocate_candidates, &
        update_candidates, ignored_edge_corner, ignored_double_corner, &
-       ignored_corner, classify_tangent_intersection
+       ignored_corner, classify_tangent_intersection, no_intersections
   public &
        Intersection, IntersectionClassification_FIRST, &
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
-       IntersectionClassification_IGNORED_CORNER, newton_refine, &
+       IntersectionClassification_IGNORED_CORNER, SurfaceContained_NEITHER, &
+       SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
-       surfaces_intersection_points
+       surfaces_intersection_points, surfaces_intersect
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -64,6 +66,10 @@ module surface_intersection
   integer(c_int), parameter :: IntersectionClassification_TANGENT_FIRST = 3
   integer(c_int), parameter :: IntersectionClassification_TANGENT_SECOND = 4
   integer(c_int), parameter :: IntersectionClassification_IGNORED_CORNER = 5
+  ! Values of SurfaceContained enum:
+  integer(c_int), parameter :: SurfaceContained_NEITHER = 0
+  integer(c_int), parameter :: SurfaceContained_FIRST = 1
+  integer(c_int), parameter :: SurfaceContained_SECOND = 2
 
 contains
 
@@ -812,5 +818,105 @@ contains
     end do
 
   end subroutine surfaces_intersection_points
+
+  subroutine no_intersections( &
+       num_nodes1, nodes1, degree1, &
+       num_nodes2, nodes2, degree2, contained)
+
+    ! NOTE: This is a helper for ``surfaces_intersect()``.
+
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    integer(c_int), intent(in) :: degree1
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    integer(c_int), intent(in) :: degree2
+    integer(c_int), intent(out) :: contained
+    ! Variables outside of signature.
+    real(c_double) :: s_val, t_val
+
+    ! If the first corner of ``surface1`` is contained in ``surface2``,
+    ! then the whole surface must be since there are no intersections.
+    call locate_point( &
+         num_nodes2, nodes2, degree2, &
+         nodes1(1, 1), nodes1(1, 2), s_val, t_val)
+    if (s_val /= LOCATE_MISS) then
+       contained = SurfaceContained_FIRST
+       return
+    end if
+
+    ! If the first corner of ``surface2`` is contained in ``surface1``,
+    ! then the whole surface must be since there are no intersections.
+    call locate_point( &
+         num_nodes1, nodes1, degree1, &
+         nodes2(1, 1), nodes2(1, 2), s_val, t_val)
+    if (s_val /= LOCATE_MISS) then
+       contained = SurfaceContained_SECOND
+       return
+    end if
+
+    ! If neither corner is contained, then there is no intersection.
+    contained = SurfaceContained_NEITHER
+
+  end subroutine no_intersections
+
+  subroutine surfaces_intersect( &
+       num_nodes1, nodes1, degree1, &
+       num_nodes2, nodes2, degree2, &
+       contained, status)
+
+    ! NOTE: ``contained`` will be a ``SurfaceContained`` enum.
+
+    ! Possible error states:
+    ! * Status_SUCCESS       : On success.
+    ! * Status_PARALLEL      : Via ``surfaces_intersection_points()``.
+    ! * Status_WIGGLE_FAIL   : Via ``surfaces_intersection_points()``.
+    ! * Status_NO_CONVERGE   : Via ``surfaces_intersection_points()``.
+    ! * (N >= 64)            : Via ``surfaces_intersection_points()``.
+    ! * Status_EDGE_END      : Via ``surfaces_intersection_points()``.
+    ! * Status_BAD_TANGENT   : Via ``surfaces_intersection_points()``.
+    ! * Status_SAME_CURVATURE: Via ``surfaces_intersection_points()``.
+
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    integer(c_int), intent(in) :: degree1
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    integer(c_int), intent(in) :: degree2
+    integer(c_int), intent(out) :: contained
+    integer(c_int), intent(out) :: status
+    ! Variables outside of signature.
+    integer(c_int) :: bbox_int
+    type(Intersection), allocatable :: intersections(:)
+    integer(c_int) :: num_intersections
+
+    ! If the bounded boxes do not intersect, the surfaces cannot.
+    call bbox_intersect( &
+         num_nodes1, nodes1, num_nodes2, nodes2, bbox_int)
+    if (bbox_int /= BoxIntersectionType_INTERSECTION) then
+       contained = SurfaceContained_NEITHER
+       status = Status_SUCCESS
+       return
+    end if
+
+    call surfaces_intersection_points( &
+       num_nodes1, nodes1, degree1, &
+       num_nodes2, nodes2, degree2, &
+       intersections, num_intersections, status)
+    if (status /= Status_SUCCESS) then
+       return
+    end if
+
+    if (num_intersections == 0) then
+       call no_intersections( &
+            num_nodes1, nodes1, degree1, &
+            num_nodes2, nodes2, degree2, contained)
+       return
+    end if
+
+    ! The remaining parts are not yet implemented.
+    status = -1234
+
+  end subroutine surfaces_intersect
 
 end module surface_intersection
