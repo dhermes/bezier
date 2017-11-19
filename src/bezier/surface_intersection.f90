@@ -734,9 +734,10 @@ contains
        if (status /= Status_SUCCESS) then
           return
        end if
-       ! NOTE: This assumes, but does not check, that ``enum_`` is
-       !       non-negative (and should be an enum value from
-       !       ``IntersectionClassification``).
+       ! NOTE: This assumes, but does not check, that ``enum_`` is in
+       !       {0, 1, 2, 3, 4, 5} (should be an enum value from
+       !       ``IntersectionClassification``) which limits the value of
+       !       ``all_types`` to [0, 63] (inclusive).
        all_types = ior(all_types, 2**enum_)
        if ( &
             enum_ == IntersectionClassification_FIRST .OR. &
@@ -770,8 +771,8 @@ contains
     !       at the beginning of an edge (in the case of a double corner, this
     !       means **three** duplicate intersections).
     ! NOTE: The returned ``all_types`` uses the first 6 bits to identify
-    !       which classified states are among the intersections. (There
-    !       are 6 possible classifications).
+    !       which classified states are among the intersections. (The
+    !       possible classifications must be in {0, 1, 2, 3, 4, 5}).
 
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
