@@ -49,6 +49,7 @@ WIGGLES = {
         22: 14,  # Established on Ubuntu 16.04
         32: 18,  # Established on Ubuntu 16.04
         33: 18,  # Established on Ubuntu 16.04
+        36: 9,  # Established on Ubuntu 16.04 on CircleCI and OS X.
     },
 }
 FAILED_CASES_TANGENT = {
