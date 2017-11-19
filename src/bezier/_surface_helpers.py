@@ -1513,28 +1513,28 @@ def classify_intersection(intersection, edges1, edges2):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes1 = np.asfortranarray([
-       ...     [ 0.375,  0.0625],
-       ...     [-0.125, -0.0625],
        ...     [-0.125,  0.0625],
+       ...     [-0.125, -0.0625],
+       ...     [ 0.375,  0.0625],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
-       ...     [ 0.75,  0.25],
-       ...     [-0.25, -0.25],
        ...     [-0.25,  0.25],
+       ...     [-0.25, -0.25],
+       ...     [ 0.75,  0.25],
        ... ])
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> hodograph(curve1, s)
-       array([[-0.5, 0. ]])
+       array([[ 0.5, 0. ]])
        >>> hodograph(curve2, t)
-       array([[-1., 0.]])
+       array([[ 1., 0.]])
        >>> curvature(curve1, s)
-       -2.0
+       2.0
        >>> curvature(curve2, t)
-       -2.0
+       2.0
        >>> intersection = Intersection(0, s, 0, t)
        >>> edges1 = (curve1, None, None)
        >>> edges2 = (curve2, None, None)

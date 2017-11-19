@@ -25,22 +25,29 @@ _, INTERSECTIONS = utils.surface_intersections_info()
 
 
 def make_curved_polygon(surface1, surface2, curved_polygon_info):
-    base_edges = (
-        surface1._get_edges(),
-        surface2._get_edges(),
-    )
+    if isinstance(curved_polygon_info, utils.CurvedPolygonInfo):
+        base_edges = (
+            surface1._get_edges(),
+            surface2._get_edges(),
+        )
 
-    edge_pairs = curved_polygon_info.edge_pairs
-    start_params = curved_polygon_info.start_params
-    end_params = curved_polygon_info.end_params
-    info = six.moves.zip(edge_pairs, start_params, end_params)
-    edges = []
-    for edge_pair, start_param, end_param in info:
-        surf_index, edge_index = edge_pair
-        base_edge = base_edges[surf_index][edge_index]
-        edges.append(base_edge.specialize(start_param, end_param))
+        edge_pairs = curved_polygon_info.edge_pairs
+        start_params = curved_polygon_info.start_params
+        end_params = curved_polygon_info.end_params
+        info = six.moves.zip(edge_pairs, start_params, end_params)
+        edges = []
+        for edge_pair, start_param, end_param in info:
+            surf_index, edge_index = edge_pair
+            base_edge = base_edges[surf_index][edge_index]
+            edges.append(base_edge.specialize(start_param, end_param))
 
-    return bezier.CurvedPolygon(*edges)
+        return bezier.CurvedPolygon(*edges)
+    else:
+        assert isinstance(curved_polygon_info, utils.SurfaceIntersectionInfo)
+        if curved_polygon_info.first:
+            return surface1
+        else:
+            return surface2
 
 
 def make_plot(intersection_info, save_plot):
