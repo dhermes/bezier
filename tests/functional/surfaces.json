@@ -76,6 +76,13 @@
             ["37/16", "91/32"]
         ]
     },
+    "12L": {
+        "control_points": [
+            [-4, "1/2"],
+            [16, "11/2"],
+            [-4, 15]
+        ]
+    },
     "1Q": {
         "control_points": [
             [0, 0],
@@ -421,5 +428,19 @@
             ["1/2", "-3/4"]
         ],
         "note": "This surface is 7Q, with the left edge (edge 1, 0-indexed) changed to a quadratic."
+    },
+    "1C": {
+        "control_points": [
+            [0, 0],
+            [3, 9],
+            [9, -3],
+            [12, 6],
+            [0, 6],
+            [5, 5],
+            [8, 10],
+            [0, 12],
+            [4, 14],
+            [0, 18]
+        ]
     }
 }
