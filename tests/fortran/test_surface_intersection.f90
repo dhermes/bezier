@@ -596,7 +596,7 @@ contains
     integer(c_int) :: num_intersections
     type(CurveData) :: edges_first(3), edges_second(3)
     integer(c_int) :: first, second
-    integer(c_int) :: status
+    integer(c_int) :: all_types, status
 
     case_id = 1
     name = "add_st_vals"
@@ -606,6 +606,7 @@ contains
 
     ! CASE 1: ``intersections`` must be allocated.
     num_intersections = 0
+    all_types = 0
     allocate(st_vals(2, 1))
     st_vals(:, 1) = [0.25_dp, 0.75_dp]
     case_success = .NOT. allocated(intersections)
@@ -618,7 +619,7 @@ contains
     edges_second(3)%nodes(2, :) = [0.0_dp, 0.5_dp]
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, &
-         2, 3, intersections, num_intersections, status)
+         2, 3, intersections, num_intersections, all_types, status)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
@@ -626,10 +627,12 @@ contains
          num_intersections == 1 .AND. &
          intersection_check( &
          intersections(1), 0.25_dp, 0.75_dp, 2, 3, second) .AND. &
+         all_types == 2**second .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: ``intersections`` must be re-allocated.
+    all_types = 0
     st_vals(:, 1) = [0.0_dp, 0.5_dp]
     ! Set the relevant edges as lines.
     allocate(edges_first(3)%nodes(2, 2))
@@ -643,7 +646,7 @@ contains
          num_intersections == 1)
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, &
-         3, 1, intersections, num_intersections, status)
+         3, 1, intersections, num_intersections, all_types, status)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
@@ -651,11 +654,13 @@ contains
          num_intersections == 2 .AND. &
          intersection_check( &
          intersections(2), 0.0_dp, 0.5_dp, 3, 1, second) .AND. &
+         all_types == 2**second .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: ``intersections`` is large enough.
     num_intersections = 0
+    all_types = 0
     st_vals(:, 1) = [0.875_dp, 0.125_dp]
     ! Set the relevant edges as lines.
     allocate(edges_second(2)%nodes(2, 2))
@@ -666,7 +671,7 @@ contains
     case_success = allocated(intersections)
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, &
-         2, 2, intersections, num_intersections, status)
+         2, 2, intersections, num_intersections, all_types, status)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
@@ -674,10 +679,12 @@ contains
          num_intersections == 1 .AND. &
          intersection_check( &
          intersections(1), 0.875_dp, 0.125_dp, 2, 2, second) .AND. &
+         all_types == 2**second .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Intersection causes error.
+    all_types = 0
     st_vals(:, 1) = [0.5_dp, 0.5_dp]
     deallocate(edges_first(2)%nodes)
     allocate(edges_first(2)%nodes(3, 2))
@@ -691,8 +698,10 @@ contains
     edges_second(2)%nodes(3, :) = [-0.25_dp, 0.25_dp]
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, &
-         2, 2, intersections, num_intersections, status)
-    case_success = (status == Status_SAME_CURVATURE)
+         2, 2, intersections, num_intersections, all_types, status)
+    case_success = ( &
+         all_types == 0 .AND. &
+         status == Status_SAME_CURVATURE)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: ``intersections`` has edge ends, gets "over-allocated".
@@ -700,6 +709,7 @@ contains
     deallocate(st_vals)
     allocate(st_vals(2, 2))
     num_intersections = 0
+    all_types = 0
     st_vals(:, 1) = [1.0_dp, 0.125_dp]
     st_vals(:, 2) = [0.5_dp, 0.5_dp]
     ! Set the relevant edges as lines.
@@ -710,13 +720,14 @@ contains
     edges_second(1)%nodes(2, :) = [1.0_dp, 0.0_dp]
     call add_st_vals( &
          edges_first, edges_second, 2, st_vals, &
-         1, 1, intersections, num_intersections, status)
+         1, 1, intersections, num_intersections, all_types, status)
     case_success = ( &
          allocated(intersections) .AND. &
          size(intersections) == 2 .AND. &
          num_intersections == 1 .AND. &
          intersection_check( &
          intersections(1), 0.5_dp, 0.5_dp, 1, 1, first) .AND. &
+         all_types == 2**first .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -732,7 +743,7 @@ contains
     real(c_double) :: quadratic1(6, 2), quadratic2(6, 2)
     type(Intersection), allocatable :: intersections(:)
     integer(c_int) :: num_intersections
-    integer(c_int) :: status
+    integer(c_int) :: all_types, status
     integer(c_int) :: first, second
 
     case_id = 1
@@ -750,7 +761,7 @@ contains
     linear2(3, :) = [1.0_dp, -1.0_dp]
     call surfaces_intersection_points( &
          3, linear1, 1, 3, linear2, 1, &
-         intersections, num_intersections, status)
+         intersections, num_intersections, all_types, status)
     case_success = ( &
          allocated(intersections) .AND. &
          size(intersections) == 6 .AND. &
@@ -767,6 +778,7 @@ contains
          intersections(5), 0.5_dp, 0.25_dp, 3, 1, second) .AND. &
          intersection_check( &
          intersections(6), 0.75_dp, 0.75_dp, 3, 3, first) .AND. &
+         all_types == (2**first + 2**second) .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -785,9 +797,10 @@ contains
     quadratic2(6, :) = [8.0_dp, 32.0_dp]
     call surfaces_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
-         intersections, num_intersections, status)
+         intersections, num_intersections, all_types, status)
     case_success = ( &
          num_intersections == 0 .AND. &
+         all_types == 0 .AND. &
          status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
@@ -807,9 +820,10 @@ contains
     quadratic2(6, :) = [2.0_dp, -2.0_dp]
     call surfaces_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
-         intersections, num_intersections, status)
+         intersections, num_intersections, all_types, status)
     case_success = ( &
          num_intersections == 1 .AND. &
+         all_types == 0 .AND. &
          status == Status_BAD_TANGENT)
     call print_status(name, case_id, case_success, success)
 

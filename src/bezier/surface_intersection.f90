@@ -28,8 +28,7 @@ module surface_intersection
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, &
        newton_refine_solve, split_candidate, allocate_candidates, &
        update_candidates, ignored_edge_corner, ignored_double_corner, &
-       ignored_corner, classify_tangent_intersection, no_intersections, &
-       reduce_intersections
+       ignored_corner, classify_tangent_intersection, no_intersections
   public &
        Intersection, IntersectionClassification_FIRST, &
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
@@ -671,7 +670,8 @@ contains
 
   subroutine add_st_vals( &
        edges_first, edges_second, num_st_vals, st_vals, &
-       index_first, index_second, intersections, num_intersections, status)
+       index_first, index_second, intersections, num_intersections, &
+       all_types, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This subroutine is not part of the C ABI for this module,
@@ -692,6 +692,7 @@ contains
     integer(c_int), intent(in) :: index_first, index_second
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     integer(c_int), intent(inout) :: num_intersections
+    integer(c_int), intent(inout) :: all_types
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: curr_size, i, intersection_index
@@ -733,7 +734,19 @@ contains
        if (status /= Status_SUCCESS) then
           return
        end if
-       intersections(intersection_index)%interior_curve = enum_
+       ! NOTE: This assumes, but does not check, that ``enum_`` is
+       !       non-negative (and should be an enum value from
+       !       ``IntersectionClassification``).
+       all_types = ior(all_types, 2**enum_)
+       if ( &
+            enum_ == IntersectionClassification_FIRST .OR. &
+            enum_ == IntersectionClassification_SECOND) then
+          ! "Keep" the intersection if it is ``FIRST`` or ``SECOND``.
+          intersections(intersection_index)%interior_curve = enum_
+       else
+          ! "Discard" the intersection (rather, allow it to be over-written).
+          intersection_index = intersection_index - 1
+       end if
     end do
 
     ! Actually set ``num_intersections`` based on the number of **accepted**
@@ -745,7 +758,7 @@ contains
   subroutine surfaces_intersection_points( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
-       intersections, num_intersections, status)
+       intersections, num_intersections, all_types, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This (and ``add_st_vals``) ignores duplicate nodes (caused when
@@ -756,6 +769,9 @@ contains
     !       the end of an edge) do match with the corresponding intersection
     !       at the beginning of an edge (in the case of a double corner, this
     !       means **three** duplicate intersections).
+    ! NOTE: The returned ``all_types`` uses the first 6 bits to identify
+    !       which classified states are among the intersections. (There
+    !       are 6 possible classifications).
 
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
@@ -775,6 +791,7 @@ contains
     integer(c_int), intent(in) :: degree2
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     integer(c_int), intent(out) :: num_intersections
+    integer(c_int), intent(out) :: all_types
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     type(CurveData) :: edges_first(3), edges_second(3)
@@ -799,6 +816,7 @@ contains
          edges_second(1)%nodes, edges_second(2)%nodes, edges_second(3)%nodes)
 
     num_intersections = 0
+    all_types = 0
     do index1 = 1, 3
        do index2 = 1, 3
           call all_intersections( &
@@ -809,7 +827,8 @@ contains
              if (num_st_vals > 0) then
                 call add_st_vals( &
                      edges_first, edges_second, num_st_vals, st_vals, &
-                     index1, index2, intersections, num_intersections, status)
+                     index1, index2, intersections, num_intersections, &
+                     all_types, status)
                 if (status /= Status_SUCCESS) then
                    return
                 end if
@@ -863,54 +882,6 @@ contains
 
   end subroutine no_intersections
 
-  subroutine reduce_intersections(num_intersections, intersections, all_types)
-
-    ! NOTE: This is a helper for ``surfaces_intersect``.
-    ! The returned ``all_types`` uses the first 6 bits to identify
-    ! which classified states are among the intersections. (There
-    ! are 6 possible classifications).
-
-    integer(c_int), intent(inout) :: num_intersections
-    type(Intersection), allocatable, intent(inout) :: intersections(:)
-    integer(c_int), intent(out) :: all_types
-    ! Variables outside of signature.
-    integer(c_int) :: original_size, i, index
-
-    original_size = num_intersections
-    index = 1
-    all_types = 0
-    do i = 1, original_size
-       ! NOTE: We assume, but do not check that the invariant
-       !           ``index <= num_intersections``
-       !       remains true. It **must** be so since each intersection must be
-       !       considered, hence we need **exactly** ``original_size``
-       !       iterations.
-
-       ! NOTE: This assumes, but does not check, that ``interior_curve``
-       !       is non-negative (and should be an enum value from
-       !       ``IntersectionClassification``).
-       all_types = ior(all_types, 2**intersections(index)%interior_curve)
-
-       if ( &
-            intersections(index)%interior_curve == &
-            IntersectionClassification_FIRST .OR. &
-            intersections(index)%interior_curve == &
-            IntersectionClassification_SECOND) then
-          ! We accept the intersection and move to the next.
-          index = index + 1
-       else
-          ! We simply discard tangent / opposed / ignored intersections.
-          ! So we preserve ``index``, delete the current intersection
-          ! from the list, and reduce the total number of intersections.
-          intersections(index:num_intersections - 1) = ( &
-               intersections(index + 1:num_intersections))
-          num_intersections = num_intersections - 1
-       end if
-
-    end do
-
-  end subroutine reduce_intersections
-
   subroutine surfaces_intersect( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
@@ -957,22 +928,18 @@ contains
     call surfaces_intersection_points( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
-       intersections, num_intersections, status)
+       intersections, num_intersections, all_types, status)
     if (status /= Status_SUCCESS) then
        return
     end if
 
     if (num_intersections == 0) then
-       call no_intersections( &
-            num_nodes1, nodes1, degree1, &
-            num_nodes2, nodes2, degree2, contained)
-       return
-    end if
-
-    call reduce_intersections(num_intersections, intersections, all_types)
-
-    if (num_intersections == 0) then
-       if (all_types == 2**IntersectionClassification_OPPOSED) then
+       if (all_types == 0) then
+          call no_intersections( &
+               num_nodes1, nodes1, degree1, &
+               num_nodes2, nodes2, degree2, contained)
+          return
+       else if (all_types == 2**IntersectionClassification_OPPOSED) then
           contained = SurfaceContained_NEITHER
           return
        else if (all_types == 2**IntersectionClassification_IGNORED_CORNER) then
