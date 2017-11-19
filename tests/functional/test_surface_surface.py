@@ -171,19 +171,21 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
             start_vals = intersected.start_params
             end_vals = intersected.end_params
             nodes = intersected.nodes
-            edge_pairs = intersected.edge_pairs
+            edge_list = intersected.edge_list
 
             int_edges = curved_polygon_edges(intersection, edges)
             info = six.moves.zip(
-                int_edges, edge_pairs, start_vals, end_vals, nodes)
+                int_edges, edge_list, start_vals, end_vals, nodes)
             num_edges = len(int_edges)
-            assert num_edges == len(edge_pairs)
+            assert num_edges == len(edge_list)
             assert num_edges == len(start_vals)
             assert num_edges == len(end_vals)
             assert num_edges == len(nodes)
-            for edge, edge_pair, start_val, end_val, node in info:
-                surf_index, edge_index = edge_pair
-                expected_root = edges[surf_index][edge_index]
+            for edge, edge_index, start_val, end_val, node in info:
+                if edge_index < 3:
+                    expected_root = edges[0][edge_index]
+                else:
+                    expected_root = edges[1][edge_index - 3]
                 specialized = expected_root.specialize(start_val, end_val)
                 assert np.allclose(specialized._nodes, edge._nodes)
 

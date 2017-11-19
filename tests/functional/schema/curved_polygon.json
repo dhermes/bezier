@@ -34,17 +34,12 @@
                 "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/numerical.json"
             }
         },
-        "edge_pairs": {
-            "description": "List of pairs of ``surface_index, edge_index`` for each edge that defines the curved polygon.",
+        "edge_list": {
+            "description": "List of integers in {0, 1, 2, 3, 4, 5} identifying each edge (from the original surfaces) that define the curved polygon.",
             "type": "array",
             "items": {
-                "description": "A ``surface_index, edge_index`` pair. The ``surface_index`` determines which surface the edge lies on (i.e. surface 1 or surface 2) and the edge ``edge_index`` determines which edge **of that surface** (i.e. edge 0 or edge 1 or edge 2).",
-                "type": "array",
-                "items": {
-                    "type": "integer"
-                },
-                "minItems": 2,
-                "maxItems": 2
+                "description": "A ``hybrid'' index. The values {0, 1, 2} indicate an edge on the first surface and the values {3, 4, 5} indicate an edge on the second surface.",
+                "type": "integer",
             }
         },
         "start_param_polys": {
@@ -79,6 +74,6 @@
         "nodes",
         "start_params",
         "end_params",
-        "edge_pairs"
+        "edge_list"
     ]
 }

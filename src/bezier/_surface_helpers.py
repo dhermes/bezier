@@ -325,32 +325,32 @@ _QUARTIC_BERNSTEIN_FACTOR = 36.0
 # just obtained from the first by rotating the rows.
 FIRST_SURFACE_INFO = (
     (
-        (True, 0, 0.0, 1.0),
-        (True, 1, 0.0, 1.0),
-        (True, 2, 0.0, 1.0),
+        (0, 0.0, 1.0),
+        (1, 0.0, 1.0),
+        (2, 0.0, 1.0),
     ), (
-        (True, 1, 0.0, 1.0),
-        (True, 2, 0.0, 1.0),
-        (True, 0, 0.0, 1.0),
+        (1, 0.0, 1.0),
+        (2, 0.0, 1.0),
+        (0, 0.0, 1.0),
     ), (
-        (True, 2, 0.0, 1.0),
-        (True, 0, 0.0, 1.0),
-        (True, 1, 0.0, 1.0),
+        (2, 0.0, 1.0),
+        (0, 0.0, 1.0),
+        (1, 0.0, 1.0),
     ),
 )
 SECOND_SURFACE_INFO = (
     (
-        (False, 0, 0.0, 1.0),
-        (False, 1, 0.0, 1.0),
-        (False, 2, 0.0, 1.0),
+        (3, 0.0, 1.0),
+        (4, 0.0, 1.0),
+        (5, 0.0, 1.0),
     ), (
-        (False, 1, 0.0, 1.0),
-        (False, 2, 0.0, 1.0),
-        (False, 0, 0.0, 1.0),
+        (4, 0.0, 1.0),
+        (5, 0.0, 1.0),
+        (3, 0.0, 1.0),
     ), (
-        (False, 2, 0.0, 1.0),
-        (False, 0, 0.0, 1.0),
-        (False, 1, 0.0, 1.0),
+        (5, 0.0, 1.0),
+        (3, 0.0, 1.0),
+        (4, 0.0, 1.0),
     ),
 )
 
@@ -2052,11 +2052,11 @@ def ends_to_curve(start_node, end_node):
         end_node (.Intersection): The end of (the same) segment.
 
     Returns:
-        Tuple[bool, int, float, float]: The 4-tuple of:
+        Tuple[int, float, float]: The 4-tuple of:
 
-        * Flag indicating if the edge comes from the first (:data:`True`)
-          or second (:data:`False`) surface
-        * The edge index along that surface
+        * The edge index along the first surface (if in ``{0, 1, 2}``)
+          or the edge index along the second surface shifted to the right by
+          3 (if in ``{3, 4, 5}``)
         * The start parameter along the edge
         * The end parameter along the edge
 
@@ -2071,11 +2071,11 @@ def ends_to_curve(start_node, end_node):
     if start_node.interior_curve == IntersectionClassification.FIRST:
         if end_node.index_first != start_node.index_first:
             raise ValueError(_WRONG_CURVE)
-        return True, start_node.index_first, start_node.s, end_node.s
+        return start_node.index_first, start_node.s, end_node.s
     elif start_node.interior_curve == IntersectionClassification.SECOND:
         if end_node.index_second != start_node.index_second:
             raise ValueError(_WRONG_CURVE)
-        return False, start_node.index_second, start_node.t, end_node.t
+        return start_node.index_second + 3, start_node.t, end_node.t
     else:
         raise ValueError('Segment start must be classified as '
                          '"FIRST" or "SECOND".')
@@ -2180,10 +2180,10 @@ def make_intersection(edge_info, surface1, edges1, surface2, edges2):
        turn is only used by :func:`combine_intersections`.
 
     Args:
-        edge_info (Tuple[Tuple[bool, int, float, float], ...]): Information
+        edge_info (Tuple[Tuple[int, float, float], ...]): Information
             describing each edge in the curved polygon by indicating which
-            surface (first or second?), which edge on the surface and then
-            start and end parameters along that edge.
+            surface / edge on the surface and then start and end parameters
+            along that edge. (See :func:`ends_to_curve`.)
         surface1 (.Surface): First surface in intersection.
         edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
             of the first surface being intersected.
@@ -2203,11 +2203,11 @@ def make_intersection(edge_info, surface1, edges1, surface2, edges2):
         return surface2
     else:
         edges = []
-        for first, index, start, end in edge_info:
-            if first:
+        for index, start, end in edge_info:
+            if index < 3:
                 edge = edges1[index].specialize(start, end)
             else:
-                edge = edges2[index].specialize(start, end)
+                edge = edges2[index - 3].specialize(start, end)
             edges.append(edge)
 
         return curved_polygon.CurvedPolygon(*edges, _verify=False)

@@ -664,10 +664,11 @@ class CurvedPolygonInfo(object):
     Args:
         nodes (Optional[numpy.ndarray]): ``Nx2`` array of ``x-y``
             coordinate pairs of intersection points.
-        edge_pairs (List[List[int]]): List of pairs of
-            ``surface_index, edge_index`` for each intersection. I.e. the
-            intersection occurs on ``surface_index`` (one of 1 or 2) and on
-            the edge ``edge_index`` (one of 0, 1 or 2) **of that surface**.
+        edge_list (List[int]): List of edge indices among
+            ``{0, 1, 2, 3, 4, 5}``. If the index is in ``{0, 1, 2}``, the
+            intersection occurs on the first surface and on the edge
+            index (one of 0, 1 or 2) **of that surface**. If the index is in
+            ``{3, 4, 5}``, the intersection is on the second surface.
             An intersection requires **two** edges, but this one is the edge
             that the boundary (of the intersection) continues along.
         start_params (numpy.ndarray): 1D array, the parameters along
@@ -685,13 +686,13 @@ class CurvedPolygonInfo(object):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, nodes, edge_pairs, start_params, end_params,
+    def __init__(self, nodes, edge_list, start_params, end_params,
                  start_param_polys=None, end_param_polys=None):
         # Will be set later by the `SurfaceIntersectionsInfo` constructor.
         self.parent = None
 
         self.nodes = nodes
-        self.edge_pairs = edge_pairs
+        self.edge_list = edge_list
 
         self.start_params = start_params
         self.start_param_polys = start_param_polys
@@ -750,10 +751,10 @@ class CurvedPolygonInfo(object):
         if cols != 2:
             raise ValueError('Unexpected shape of nodes')
 
-        np_edges = np.asfortranarray(self.edge_pairs, dtype=int)
-        if np_edges.shape != (num_nodes, 2):
-            raise ValueError('Unexpected shape of edge pairs')
-        if not np.all(np_edges == self.edge_pairs):
+        np_edges = np.asfortranarray(self.edge_list, dtype=int)
+        if np_edges.shape != (num_nodes,):
+            raise ValueError('Unexpected shape of edge list')
+        if not np.all(np_edges == self.edge_list):
             raise ValueError('Edge pairs were expected to be integers.')
 
         if self.start_params.shape != (num_nodes,):
@@ -801,7 +802,7 @@ class CurvedPolygonInfo(object):
                 _convert_float(info.pop('start_params')))
             end_params = np.asfortranarray(
                 _convert_float(info.pop('end_params')))
-            edge_pairs = info.pop('edge_pairs')
+            edge_list = info.pop('edge_list')
 
             # Optional fields.
             start_param_polys = info.pop('start_param_polys', None)
@@ -809,7 +810,7 @@ class CurvedPolygonInfo(object):
 
             _ensure_empty(info)
             return cls(
-                nodes, edge_pairs, start_params, end_params,
+                nodes, edge_list, start_params, end_params,
                 start_param_polys=start_param_polys,
                 end_param_polys=end_param_polys)
 # pylint: enable=too-few-public-methods
