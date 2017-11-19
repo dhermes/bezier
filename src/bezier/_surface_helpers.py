@@ -1861,18 +1861,16 @@ def to_front(intersection, intersections, unused):
     if intersection.s == 1.0:
         changed = True
         next_index = (intersection.index_first + 1) % 3
-        new_intersection = _intersection_helpers.Intersection(
+        intersection = _intersection_helpers.Intersection(
             next_index, 0.0, intersection.index_second, intersection.t,
             interior_curve=intersection.interior_curve)
-        intersection = new_intersection
 
     if intersection.t == 1.0:
         changed = True
         next_index = (intersection.index_second + 1) % 3
-        new_intersection = _intersection_helpers.Intersection(
+        intersection = _intersection_helpers.Intersection(
             intersection.index_first, intersection.s, next_index, 0.0,
             interior_curve=intersection.interior_curve)
-        intersection = new_intersection
 
     if changed:
         # Make sure we haven't accidentally ignored an existing intersection.

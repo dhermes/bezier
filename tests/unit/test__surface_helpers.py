@@ -1535,12 +1535,14 @@ class Test_to_front(unittest.TestCase):
         return _surface_helpers.to_front(intersection, intersections, unused)
 
     def test_no_change(self):
-        intersection = make_intersect(1, 0.5, 2, 0.5)
+        intersection = make_intersect(
+            1, 0.5, 2, 0.5, interior_curve=get_enum('FIRST'))
         result = self._call_function_under_test(intersection, [], [])
         self.assertIs(result, intersection)
 
     def test_remove_from_unused(self):
-        intersection = make_intersect(2, 0.5, 1, 0.5)
+        intersection = make_intersect(
+            2, 0.5, 1, 0.5, interior_curve=get_enum('SECOND'))
         unused = [intersection]
         result = self._call_function_under_test(intersection, [], unused)
         self.assertIs(result, intersection)
@@ -1549,9 +1551,8 @@ class Test_to_front(unittest.TestCase):
     def test_move_s(self):
         from bezier import _intersection_helpers
 
-        intersection = make_intersect(
-            2, 1.0, 1, 0.5,
-            interior_curve=unittest.mock.sentinel.interior_curve)
+        enum_val = get_enum('FIRST')
+        intersection = make_intersect(2, 1.0, 1, 0.5, interior_curve=enum_val)
 
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
@@ -1560,12 +1561,13 @@ class Test_to_front(unittest.TestCase):
         self.assertEqual(result.index_first, 0)
         self.assertEqual(result.t, 0.5)
         self.assertEqual(result.index_second, 1)
-        self.assertIs(
-            result.interior_curve, unittest.mock.sentinel.interior_curve)
+        self.assertEqual(result.interior_curve, enum_val)
 
     def test_move_s_to_existing(self):
-        intersection = make_intersect(1, 1.0, 0, 0.5)
-        existing_int = make_intersect(2, 0.0, 0, 0.5)
+        intersection = make_intersect(
+            1, 1.0, 0, 0.5, interior_curve=get_enum('FIRST'))
+        existing_int = make_intersect(
+            2, 0.0, 0, 0.5, interior_curve=get_enum('FIRST'))
 
         result = self._call_function_under_test(
             intersection, [existing_int], [])
@@ -1574,9 +1576,8 @@ class Test_to_front(unittest.TestCase):
     def test_move_t(self):
         from bezier import _intersection_helpers
 
-        intersection = make_intersect(
-            0, 0.5, 1, 1.0,
-            interior_curve=unittest.mock.sentinel.interior_curve)
+        enum_val = get_enum('SECOND')
+        intersection = make_intersect(0, 0.5, 1, 1.0, interior_curve=enum_val)
 
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
@@ -1585,12 +1586,13 @@ class Test_to_front(unittest.TestCase):
         self.assertEqual(result.index_first, 0)
         self.assertEqual(result.t, 0.0)
         self.assertEqual(result.index_second, 2)
-        self.assertIs(
-            result.interior_curve, unittest.mock.sentinel.interior_curve)
+        self.assertEqual(result.interior_curve, enum_val)
 
     def test_move_t_to_existing(self):
-        intersection = make_intersect(2, 0.5, 0, 1.0)
-        existing_int = make_intersect(2, 0.5, 1, 0.0)
+        intersection = make_intersect(
+            2, 0.5, 0, 1.0, interior_curve=get_enum('SECOND'))
+        existing_int = make_intersect(
+            2, 0.5, 1, 0.0, interior_curve=get_enum('SECOND'))
 
         result = self._call_function_under_test(
             intersection, [existing_int], [])
@@ -1720,34 +1722,38 @@ class Test_get_next(unittest.TestCase):
 
     def test_remove_from_unused(self):
         # Also tests branch through "first".
-        unused = [unittest.mock.sentinel.result]
+        return_value = make_intersect(
+            1, None, 0, None, interior_curve=get_enum('SECOND'))
+        unused = [return_value]
         intersection = make_intersect(
             2, None, 2, None, interior_curve=get_enum('FIRST'))
 
         patch = unittest.mock.patch(
             'bezier._surface_helpers.get_next_first',
-            return_value=unittest.mock.sentinel.result)
+            return_value=return_value)
         with patch as mocked:
             result = self._call_function_under_test(
                 intersection, unittest.mock.sentinel.intersections, unused)
 
-        self.assertIs(result, unittest.mock.sentinel.result)
+        self.assertIs(result, return_value)
         self.assertEqual(unused, [])
         mocked.assert_called_once_with(
             intersection, unittest.mock.sentinel.intersections)
 
     def test_second(self):
+        return_value = make_intersect(
+            0, None, 2, None, interior_curve=get_enum('FIRST'))
         intersection = make_intersect(
             0, None, 2, None, interior_curve=get_enum('SECOND'))
 
         patch = unittest.mock.patch(
             'bezier._surface_helpers.get_next_second',
-            return_value=unittest.mock.sentinel.result)
+            return_value=return_value)
         with patch as mocked:
             result = self._call_function_under_test(
                 intersection, unittest.mock.sentinel.intersections, [])
 
-        self.assertIs(result, unittest.mock.sentinel.result)
+        self.assertIs(result, return_value)
         mocked.assert_called_once_with(
             intersection, unittest.mock.sentinel.intersections)
 

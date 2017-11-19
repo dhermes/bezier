@@ -899,8 +899,8 @@ contains
           ! We accept the intersection and move to the next.
           index = index + 1
        else
-          ! We simply discard tangent / opposed / ignored intersections,
-          ! so we preserve ``index``, delete the current intersection
+          ! We simply discard tangent / opposed / ignored intersections.
+          ! So we preserve ``index``, delete the current intersection
           ! from the list, and reduce the total number of intersections.
           intersections(index:num_intersections - 1) = ( &
                intersections(index + 1:num_intersections))
