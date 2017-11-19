@@ -1921,11 +1921,6 @@ def get_next_first(intersection, intersections):
     for other_int in intersections:
         other_s = other_int.s
         if other_int.index_first == index_first and other_s > s:
-            # NOTE: We skip tangent intersections that don't occur
-            #       at a corner.
-            if (other_s < 1.0 and
-                    other_int.interior_curve not in _ACCEPTABLE):
-                continue
             if along_edge is None or other_s < along_edge.s:
                 along_edge = other_int
 
@@ -1970,11 +1965,6 @@ def get_next_second(intersection, intersections):
     for other_int in intersections:
         other_t = other_int.t
         if other_int.index_second == index_second and other_t > t:
-            # NOTE: We skip tangent intersections that don't occur
-            #       at a corner.
-            if (other_t < 1.0 and
-                    other_int.interior_curve not in _ACCEPTABLE):
-                continue
             if along_edge is None or other_t < along_edge.t:
                 along_edge = other_int
 
@@ -2128,24 +2118,26 @@ def no_intersections(surface1, surface2):
     return []
 
 
-def tangent_only_intersections(intersections, surface1, surface2):
+def tangent_only_intersections(all_types, surface1, surface2):
     """Determine intersection in the case of only-tangent intersections.
 
     If the only intersections are tangencies, then either the surfaces
     are tangent but don't meet ("kissing" edges) or one surface is
     internally tangent to the other.
 
-    Thus we expect every intersection in ``intersections`` to be
-    classified as :attr:`~._IntersectionClassification.TANGENT_FIRST`,
-    :attr:`~._IntersectionClassification.TANGENT_SECOND` or
-    :attr:`~._IntersectionClassification.OPPOSED`.
+    Thus we expect every intersection to be classified as
+    :attr:`~._IntersectionClassification.TANGENT_FIRST`,
+    :attr:`~._IntersectionClassification.TANGENT_SECOND`,
+    :attr:`~._IntersectionClassification.OPPOSED` or
+    :attr:`~._IntersectionClassification.IGNORED_CORNER`.
 
     What's more, we expect all intersections to be classified the same for
     a given pairing.
 
     Args:
-        intersections (List[.Intersection]): Intersections from each of the
-            9 edge-edge pairs from a surface-surface pairing.
+        all_types (Set[.IntersectionClassification]): The set of all
+            intersection classifications encountered among the intersections
+            for the given surface-surface pair.
         surface1 (.Surface): First surface in intersection.
         surface2 (.Surface): Second surface in intersection.
 
@@ -2163,8 +2155,6 @@ def tangent_only_intersections(intersections, surface1, surface2):
         ValueError: If there is a unique classification, but it isn't one
             of the tangent types.
     """
-    all_types = set([intersection.interior_curve
-                     for intersection in intersections])
     if len(all_types) != 1:
         raise ValueError('Unexpected value, types should all match',
                          all_types)
@@ -2258,8 +2248,7 @@ def basic_interior_combine(
             exceeds ``max_edges``. This is interpreted as a sign
             that the algorithm failed.
     """
-    unused = [intersection for intersection in intersections
-              if intersection.interior_curve in _ACCEPTABLE]
+    unused = intersections[:]
     result = []
     while unused:
         start = unused.pop()
@@ -2290,7 +2279,8 @@ def basic_interior_combine(
     return result
 
 
-def combine_intersections(intersections, surface1, edges1, surface2, edges2):
+def combine_intersections(
+        intersections, surface1, edges1, surface2, edges2, all_types):
     """Combine curve-curve intersections into curved polygon(s).
 
     .. note::
@@ -2303,7 +2293,8 @@ def combine_intersections(intersections, surface1, edges1, surface2, edges2):
     .. note ::
 
        This assumes that each ``intersection`` has been classified via
-       :func:`classify_intersection`.
+       :func:`classify_intersection` and only the intersections classified
+       as ``FIRST`` and ``SECOND`` were kept.
 
     Args:
         intersections (List[.Intersection]): Intersections from each of the
@@ -2314,21 +2305,22 @@ def combine_intersections(intersections, surface1, edges1, surface2, edges2):
         surface2 (.Surface): Second surface in intersection.
         edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
             of the second surface being intersected.
+        all_types (Set[.IntersectionClassification]): The set of all
+            intersection classifications encountered among the intersections
+            for the given surface-surface pair.
 
     Returns:
         List[Union[~bezier.curved_polygon.CurvedPolygon, \
         ~bezier.surface.Surface]]: A list of curved polygons (or surfaces)
         that compose the intersected objects.
     """
-    if not intersections:
+    if intersections:
+        return basic_interior_combine(
+            intersections, surface1, edges1, surface2, edges2)
+    elif all_types:
+        return tangent_only_intersections(all_types, surface1, surface2)
+    else:
         return no_intersections(surface1, surface2)
-
-    result = basic_interior_combine(
-        intersections, surface1, edges1, surface2, edges2)
-    if result:
-        return result
-
-    return tangent_only_intersections(intersections, surface1, surface2)
 
 
 def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
@@ -2526,11 +2518,3 @@ else:
     compute_edge_nodes = _surface_speedup.compute_edge_nodes
     IntersectionClassification = _surface_speedup.IntersectionClassification
 # pylint: enable=invalid-name
-
-# NOTE: These constants must be defined **after** the intersection
-#       classification enum is, hence we can't define it at the top with
-#       the other constants.
-_ACCEPTABLE = (
-    IntersectionClassification.FIRST,
-    IntersectionClassification.SECOND,
-)

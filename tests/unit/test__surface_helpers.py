@@ -1622,10 +1622,6 @@ class Test_get_next_first(unittest.TestCase):
     def test_move_to_existing(self):
         intersection = make_intersect(2, 0.25, None, None)
         intersections = [
-            # An "unacceptable" intersection with ``other_s > s`` and
-            # ``other_int.index_first == index_first``.
-            make_intersect(
-                2, 0.375, None, None, interior_curve=get_enum('OPPOSED')),
             # An "acceptable" intersection that will be overtaken by the
             # next since 0.25 < 0.5 < 0.875.
             make_intersect(
@@ -1642,7 +1638,7 @@ class Test_get_next_first(unittest.TestCase):
                 2, 0.625, None, None, interior_curve=get_enum('FIRST')),
         ]
         result = self._call_function_under_test(intersection, intersections)
-        self.assertIs(result, intersections[2])
+        self.assertIs(result, intersections[1])
 
     def test_move_to_intersected_corner(self):
         intersection = make_intersect(0, 0.625, None, None)
@@ -1678,10 +1674,6 @@ class Test_get_next_second(unittest.TestCase):
     def test_move_to_existing(self):
         intersection = make_intersect(None, None, 1, 0.125)
         intersections = [
-            # An "unacceptable" intersection with ``other_t > t`` and
-            # ``other_int.index_second == index_second``.
-            make_intersect(
-                None, None, 1, 0.5, interior_curve=get_enum('TANGENT_SECOND')),
             # An "acceptable" intersection that will be overtaken by the
             # next since 0.125 < 0.625 < 0.75.
             make_intersect(
@@ -1698,7 +1690,7 @@ class Test_get_next_second(unittest.TestCase):
                 None, None, 1, 0.6875, interior_curve=get_enum('SECOND')),
         ]
         result = self._call_function_under_test(intersection, intersections)
-        self.assertIs(result, intersections[2])
+        self.assertIs(result, intersections[1])
 
     def test_move_to_intersected_corner(self):
         intersection = make_intersect(None, None, 0, 0.5)
@@ -1847,51 +1839,45 @@ class Test_no_intersections(unittest.TestCase):
 class Test_tangent_only_intersections(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersections, surface1, surface2):
+    def _call_function_under_test(all_types, surface1, surface2):
         from bezier import _surface_helpers
 
         return _surface_helpers.tangent_only_intersections(
-            intersections, surface1, surface2)
+            all_types, surface1, surface2)
 
     def test_too_few_types(self):
         with self.assertRaises(ValueError):
-            self._call_function_under_test([], None, None)
+            self._call_function_under_test(set(), None, None)
 
     def test_too_many_types(self):
-        int1 = unittest.mock.Mock(interior_curve=get_enum('FIRST'))
-        int2 = unittest.mock.Mock(interior_curve=get_enum('SECOND'))
+        all_types = set([get_enum('FIRST'), get_enum('SECOND')])
         with self.assertRaises(ValueError):
-            self._call_function_under_test([int1, int2], None, None)
+            self._call_function_under_test(all_types, None, None)
 
     def test_bad_types(self):
-        intersection = unittest.mock.Mock(interior_curve=get_enum('FIRST'))
+        all_types = set([get_enum('FIRST')])
         with self.assertRaises(ValueError):
-            self._call_function_under_test([intersection], None, None)
+            self._call_function_under_test(all_types, None, None)
 
     def test_ignored_types(self):
-        intersection = unittest.mock.Mock(interior_curve=get_enum('OPPOSED'))
-        result = self._call_function_under_test([intersection], None, None)
+        all_types = set([get_enum('OPPOSED')])
+        result = self._call_function_under_test(all_types, None, None)
         self.assertEqual(result, [])
 
-        intersection = unittest.mock.Mock(
-            interior_curve=get_enum('IGNORED_CORNER'))
-        result = self._call_function_under_test([intersection], None, None)
+        all_types = set([get_enum('IGNORED_CORNER')])
+        result = self._call_function_under_test(all_types, None, None)
         self.assertEqual(result, [])
 
     def test_first(self):
-        intersection = unittest.mock.Mock(
-            interior_curve=get_enum('TANGENT_FIRST'))
-
+        all_types = set([get_enum('TANGENT_FIRST')])
         result = self._call_function_under_test(
-            [intersection], unittest.mock.sentinel.surface1, None)
+            all_types, unittest.mock.sentinel.surface1, None)
         self.assertEqual(result, [unittest.mock.sentinel.surface1])
 
     def test_second(self):
-        intersection = unittest.mock.Mock(
-            interior_curve=get_enum('TANGENT_SECOND'))
-
+        all_types = set([get_enum('TANGENT_SECOND')])
         result = self._call_function_under_test(
-            [intersection], None, unittest.mock.sentinel.surface2)
+            all_types, None, unittest.mock.sentinel.surface2)
         self.assertEqual(result, [unittest.mock.sentinel.surface2])
 
 
@@ -2109,11 +2095,11 @@ class Test_combine_intersections(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(
-            intersections, surface1, edges1, surface2, edges2):
+            intersections, surface1, edges1, surface2, edges2, all_types):
         from bezier import _surface_helpers
 
         return _surface_helpers.combine_intersections(
-            intersections, surface1, edges1, surface2, edges2)
+            intersections, surface1, edges1, surface2, edges2, all_types)
 
     def test_empty(self):
         import bezier
@@ -2125,7 +2111,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
             [-2.0, 1.0],
         ]))
         result = self._call_function_under_test(
-            [], surface1, surface1.edges, surface2, surface2.edges)
+            [], surface1, surface1.edges, surface2, surface2.edges, None)
         self.assertEqual(result, [])
 
     def test_basic(self):
@@ -2154,7 +2140,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
                 2, 0.5, 2, 0.25, interior_curve=get_enum('SECOND')),
         ]
         result = self._call_function_under_test(
-            intersections, surface1, edges1, surface2, edges2)
+            intersections, surface1, edges1, surface2, edges2, None)
 
         self.assertEqual(len(result), 1)
         curved_polygon = result[0]
@@ -2187,10 +2173,11 @@ class Test_combine_intersections(utils.NumPyTestCase):
         ]))
         edges2 = surface2.edges
 
-        intersection = make_intersect(
-            0, 0.5, 2, 0.5, interior_curve=get_enum('TANGENT_FIRST'))
+        # Surface1-Edge0(0.5) = Surface2-Edge2(0.5)
+        enum_val = get_enum('TANGENT_FIRST')
+        all_types = set([enum_val])
         result = self._call_function_under_test(
-            [intersection], surface1, edges1, surface2, edges2)
+            [], surface1, edges1, surface2, edges2, all_types)
         self.assertEqual(len(result), 1)
         curved_polygon = result[0]
         self.assertIs(curved_polygon, surface1)

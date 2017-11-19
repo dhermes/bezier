@@ -1108,13 +1108,14 @@ class Surface(_base.Base):
         # We need **all** pairs of edges.
         edges1 = self._get_edges()
         edges2 = other._get_edges()  # pylint: disable=protected-access
-        intersections, duplicates = _surface_intersections(
+        intersections, duplicates, unused, all_types = _surface_intersections(
             edges1, edges2, strategy)
 
         if _verify:
-            _surface_helpers.verify_duplicates(duplicates, intersections)
+            _surface_helpers.verify_duplicates(
+                duplicates, intersections + unused)
         return _surface_helpers.combine_intersections(
-            intersections, self, edges1, other, edges2)
+            intersections, self, edges1, other, edges2, all_types)
 
     def elevate(self):
         r"""Return a degree-elevated version of the current surface.
@@ -1241,11 +1242,14 @@ def _surface_intersections(edges1, edges2, strategy):
             intersection algorithm to use. Defaults to geometric.
 
     Returns:
-        Tuple[list, list]: Pair of lists (both of which could be empty)
+        Tuple[list, list, list, set]: 4-tuple of
 
         * The actual "unique" :class:`Intersection`-s
         * Duplicate :class:`Intersection`-s encountered (these will be
           corner intersections)
+        * Intersections that won't be used, such as a tangent intersection
+          along an edge
+        * All the intersection classifications encountered
 
     Raises:
         ValueError: If ``strategy`` is not a valid
@@ -1258,21 +1262,24 @@ def _surface_intersections(edges1, edges2, strategy):
     else:
         raise ValueError('Unexpected strategy.', strategy)
 
+    all_types = set()
     intersections = []
     duplicates = []
+    unused = []
     for index1, edge1 in enumerate(edges1):
         for index2, edge2 in enumerate(edges2):
             st_vals = all_intersections(edge1._nodes, edge2._nodes)
             for s, t in st_vals:
                 _add_intersection(
                     index1, s, index2, t, edges1, edges2,
-                    duplicates, intersections)
+                    duplicates, intersections, unused, all_types)
 
-    return intersections, duplicates
+    return intersections, duplicates, unused, all_types
 
 
 def _add_intersection(  # pylint: disable=too-many-arguments
-        index1, s, index2, t, edges1, edges2, duplicates, intersections):
+        index1, s, index2, t, edges1, edges2, duplicates,
+        intersections, unused, all_types):
     """Create an :class:`Intersection` and append.
 
     The intersection will be classified as either a duplicate or a valid
@@ -1293,6 +1300,12 @@ def _add_intersection(  # pylint: disable=too-many-arguments
         duplicates (List[.Intersection]): List of duplicate intersections.
         intersections (List[.Intersection]): List of "accepted" (i.e.
             non-duplicate) intersections.
+        unused (List[.Intersection]): Intersections that won't be used,
+            such as a tangent intersection along an edge. This is
+            provided for the case where the output will be verified.
+        all_types (Set[.IntersectionClassification]): The set of all
+            intersection classifications encountered among the intersections
+            for the given surface-surface pair.
     """
     edge_end, intersection_args = _surface_helpers.handle_ends(
         index1, s, index2, t)
@@ -1306,5 +1319,12 @@ def _add_intersection(  # pylint: disable=too-many-arguments
         # Classify the intersection.
         interior = _surface_helpers.classify_intersection(
             intersection, edges1, edges2)
+        all_types.add(interior)
         intersection.interior_curve = interior
-        intersections.append(intersection)
+        # Only keep the intersections which are ``ACCEPTABLE``.
+        if interior == _surface_helpers.IntersectionClassification.FIRST:
+            intersections.append(intersection)
+        elif interior == _surface_helpers.IntersectionClassification.SECOND:
+            intersections.append(intersection)
+        else:
+            unused.append(intersection)

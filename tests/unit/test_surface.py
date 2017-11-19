@@ -963,26 +963,28 @@ class Test__surface_intersections(utils.NumPyTestCase):
         import bezier
         from bezier import _intersection_helpers
 
-        nodes1 = np.asfortranarray([
+        surface1 = bezier.Surface.from_nodes(np.asfortranarray([
             [0.0, 0.0],
             [1.0, 0.0],
             [0.0, 1.0],
-        ])
-        surface1 = bezier.Surface(nodes1, 1, _copy=False)
-        nodes2 = np.asfortranarray([
+        ]))
+        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
             [0.5, -0.25],
             [1.5, -0.25],
             [0.5, 0.75],
-        ])
-        surface2 = bezier.Surface(nodes2, 1, _copy=False)
+        ]))
 
         edges1 = surface1.edges
         edges2 = surface2.edges
         strategy = _intersection_helpers.IntersectionStrategy.GEOMETRIC
-        intersections, duplicates = self._call_function_under_test(
+        result = self._call_function_under_test(
             edges1, edges2, strategy)
+        intersections, duplicates, unused, all_types = result
 
         self.assertEqual(duplicates, [])
+        self.assertEqual(unused, [])
+        self.assertEqual(
+            all_types, set([get_enum('FIRST'), get_enum('SECOND')]))
         self.assertEqual(len(intersections), 2)
         expected = np.asfortranarray([[0.5, 0.0]])
         self._check_intersection(
@@ -1006,10 +1008,13 @@ class Test__surface_intersections(utils.NumPyTestCase):
         surface2 = bezier.Surface(nodes1 + 10.0, 1, _copy=False)
 
         strategy = _intersection_helpers.IntersectionStrategy.ALGEBRAIC
-        intersections, duplicates = self._call_function_under_test(
+        result = self._call_function_under_test(
             surface1.edges, surface2.edges, strategy)
+        intersections, duplicates, unused, all_types = result
         self.assertEqual(intersections, [])
         self.assertEqual(duplicates, [])
+        self.assertEqual(unused, [])
+        self.assertEqual(all_types, set())
 
     def test_bad_strategy(self):
         strategy = unittest.mock.sentinel.bad_strategy
@@ -1018,6 +1023,49 @@ class Test__surface_intersections(utils.NumPyTestCase):
 
         exc_args = exc_info.exception.args
         self.assertEqual(exc_args, ('Unexpected strategy.', strategy))
+
+    def test_with_unused(self):
+        import bezier
+        from bezier import _intersection_helpers
+
+        surface1 = bezier.Surface.from_nodes(np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ]))
+        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
+            [0.0, 0.0],
+            [-2.0, 3.0],
+            [1.0, -3.0],
+        ]))
+
+        edges1 = surface1.edges
+        edges2 = surface2.edges
+        strategy = _intersection_helpers.IntersectionStrategy.GEOMETRIC
+        result = self._call_function_under_test(
+            edges1, edges2, strategy)
+        intersections, duplicates, unused, all_types = result
+
+        self.assertEqual(intersections, [])
+
+        self.assertEqual(len(duplicates), 3)
+        self._check_intersection(
+            duplicates[0], np.zeros((1, 2)),
+            edges1[0], edges2[0], 0.0, 0.0, 0, 0, None)
+        self._check_intersection(
+            duplicates[1], np.zeros((1, 2)),
+            edges1[0], edges2[0], 0.0, 0.0, 0, 0, None)
+        self._check_intersection(
+            duplicates[2], np.zeros((1, 2)),
+            edges1[0], edges2[0], 0.0, 0.0, 0, 0, None)
+
+        self.assertEqual(len(unused), 1)
+        enum_val = get_enum('IGNORED_CORNER')
+        self._check_intersection(
+            unused[0], np.zeros((1, 2)),
+            edges1[0], edges2[0], 0.0, 0.0, 0, 0, enum_val)
+
+        self.assertEqual(all_types, set([enum_val]))
 
 
 def get_enum(str_val):
