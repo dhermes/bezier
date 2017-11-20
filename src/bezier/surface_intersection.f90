@@ -916,12 +916,11 @@ contains
   end subroutine remove_node
 
   subroutine get_next( &
-       num_intersections, intersections, curr_node, next_node, status)
+       num_intersections, intersections, curr_node, &
+       intersection_, next_node, status)
 
-    ! NOTE: In the case that there is no next intersection along the edge,
-    !       ``next_node`` will be ``-1`` (if classified as ``FIRST``)
-    !       or ``-2`` (if classified as ``SECOND``). These are intended
-    !       to signal "go to the corner / edge end".
+    ! NOTE: In the case that there is no corresponding intersection at the
+    !       end of the edge, ``next_node`` will be ``-1``.
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
 
@@ -933,6 +932,7 @@ contains
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
     integer(c_int), intent(in) :: curr_node
+    type(Intersection), intent(out) :: intersection_
     integer(c_int), intent(out) :: next_node
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
@@ -942,9 +942,9 @@ contains
 
     status = Status_SUCCESS
     enum_ = intersections(curr_node)%interior_curve
+    next_node = -1
 
     if (enum_ == IntersectionClassification_FIRST) then
-       next_node = -1
        index = intersections(curr_node)%index_first
        s = intersections(curr_node)%s
        do i = 1, num_intersections
@@ -960,15 +960,24 @@ contains
              end if
           end if
        end do
+
+       ! If there is no other intersection on the edge, just return
+       ! the segment end.
+       if (next_node == -1) then
+          intersection_%index_first = index
+          intersection_%s = 1.0_dp
+          intersection_%interior_curve = IntersectionClassification_FIRST
+       else
+          intersection_ = intersections(next_node)
+       end if
     else if (enum_ == IntersectionClassification_SECOND) then
-       next_node = -2
        index = intersections(curr_node)%index_second
        t = intersections(curr_node)%t
        do i = 1, num_intersections
           if ( &
                intersections(i)%index_second == index .AND. &
                intersections(i)%t > t) then
-             if (next_node == -2) then
+             if (next_node == -1) then
                 next_node = i
              else
                 if (intersections(i)%t < intersections(next_node)%t) then
@@ -977,6 +986,16 @@ contains
              end if
           end if
        end do
+
+       ! If there is no other intersection on the edge, just return
+       ! the segment end.
+       if (next_node == -1) then
+          intersection_%index_second = index
+          intersection_%t = 1.0_dp
+          intersection_%interior_curve = IntersectionClassification_SECOND
+       else
+          intersection_ = intersections(next_node)
+       end if
     else
        status = Status_UNKNOWN
        return
@@ -990,7 +1009,7 @@ contains
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
     ! NOTE: In the case that there is no corresponding intersection at the
-    !       beginning of the edge, ``next_node`` will be ``-1``.
+    !       beginning of the next edge, ``next_node`` will be ``-1``.
 
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)

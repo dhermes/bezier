@@ -929,6 +929,7 @@ contains
     character(8) :: name
     integer(c_int) :: first, second
     type(Intersection) :: intersections(6)
+    type(Intersection) :: intersection_
     integer(c_int) :: curr_node, next_node
     integer(c_int) :: status
 
@@ -943,7 +944,7 @@ contains
     intersections(curr_node)%interior_curve = ( &
          IntersectionClassification_OPPOSED)
     call get_next( &
-         1, intersections(:1), curr_node, next_node, status)
+         1, intersections(:1), curr_node, intersection_, next_node, status)
     case_success = (status == Status_UNKNOWN)
     call print_status(name, case_id, case_success, success)
 
@@ -953,9 +954,11 @@ contains
     intersections(curr_node)%s = 0.25_dp
     intersections(curr_node)%interior_curve = first
     call get_next( &
-         1, intersections(:1), curr_node, next_node, status)
+         1, intersections(:1), curr_node, intersection_, next_node, status)
     case_success = ( &
          next_node == -1 .AND. &
+         intersection_check( &
+         intersection_, 1.0_dp, -1.0_dp, 1, -1, first) .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -984,9 +987,11 @@ contains
     intersections(6)%s = 0.625_dp
     intersections(6)%interior_curve = first
     call get_next( &
-         6, intersections, curr_node, next_node, status)
+         6, intersections, curr_node, intersection_, next_node, status)
     case_success = ( &
          next_node == 2 .AND. &
+         intersection_check( &
+         intersection_, 0.5_dp, -1.0_dp, 3, -1, first) .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1000,9 +1005,12 @@ contains
     intersections(1)%s = 1.0_dp
     intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
     call get_next( &
-         2, intersections(:2), curr_node, next_node, status)
+         2, intersections(:2), curr_node, intersection_, next_node, status)
     case_success = ( &
          next_node == 1 .AND. &
+         intersection_check( &
+         intersection_, 1.0_dp, -1.0_dp, 1, -1, &
+         IntersectionClassification_TANGENT_FIRST) .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1012,9 +1020,11 @@ contains
     intersections(curr_node)%t = 0.625_dp
     intersections(curr_node)%interior_curve = second
     call get_next( &
-         1, intersections(:1), curr_node, next_node, status)
+         1, intersections(:1), curr_node, intersection_, next_node, status)
     case_success = ( &
-         next_node == -2 .AND. &
+         next_node == -1 .AND. &
+         intersection_check( &
+         intersection_, -1.0_dp, 1.0_dp, -1, 2, second) .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1043,9 +1053,11 @@ contains
     intersections(6)%t = 0.6875_dp
     intersections(6)%interior_curve = second
     call get_next( &
-         6, intersections, curr_node, next_node, status)
+         6, intersections, curr_node, intersection_, next_node, status)
     case_success = ( &
          next_node == 3 .AND. &
+         intersection_check( &
+         intersection_, 0.25_dp, 0.625_dp, 3, 2, second) .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1059,9 +1071,12 @@ contains
     intersections(2)%t = 1.0_dp
     intersections(2)%interior_curve = IntersectionClassification_TANGENT_FIRST
     call get_next( &
-         2, intersections(:2), curr_node, next_node, status)
+         2, intersections(:2), curr_node, intersection_, next_node, status)
     case_success = ( &
          next_node == 2 .AND. &
+         intersection_check( &
+         intersection_, 0.625_dp, 1.0_dp, 1, 1, &
+         IntersectionClassification_TANGENT_FIRST) .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
