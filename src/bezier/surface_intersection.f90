@@ -37,7 +37,7 @@ module surface_intersection
        IntersectionClassification_IGNORED_CORNER, SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
-       surfaces_intersection_points, get_next, surfaces_intersect
+       surfaces_intersection_points, remove_node, get_next, surfaces_intersect
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -882,6 +882,36 @@ contains
     contained = SurfaceContained_NEITHER
 
   end subroutine no_intersections
+
+  subroutine remove_node(node, values, remaining)
+
+    ! Removes a value from a list, if it is contained there.
+    ! For example, if ``node == 4``, ``values == [1, 2, 4, 7, ...]`` and
+    ! ``remainining == 4``, then after this subroutine will update to
+    ! ``values == [1, 2, 7, ...]`` and ``remainining == 3``.
+    ! NOTE: This assumes the values in ``values`` are in ascending order
+    !       and unique.
+    ! NOTE: This assumes that ``remaining`` does not exceed ``size(values)``
+
+    integer(c_int), intent(in) :: node
+    integer(c_int), intent(inout) :: values(:)
+    integer(c_int), intent(inout) :: remaining
+    ! Variables outside of signature.
+    integer(c_int) :: i
+
+    ! NOTE: Since we assume the values are in ascending order and unique, a
+    !       binary search could speed this up. In practice, ``values``
+    !       will likely be too small for this to matter.
+    do i = 1, remaining
+       if (values(i) == node) then
+          ! Remove ``values(i)`` by shifting down all remaining values.
+          values(i:remaining - 1) = values(i + 1:remaining)
+          remaining = remaining - 1
+          return
+       end if
+    end do
+
+  end subroutine remove_node
 
   subroutine get_next( &
        num_intersections, intersections, curr_node, next_node, status)
