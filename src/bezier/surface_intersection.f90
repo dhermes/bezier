@@ -937,26 +937,26 @@ contains
     type(SegmentNode), intent(in) :: curr_node
     type(SegmentNode), intent(out) :: next_node
     ! Variables outside of signature.
-    integer(c_int) :: i, index
-    logical(c_bool) :: already_set
+    integer(c_int) :: i, local_index, intersection_index
 
-    already_set = .FALSE.
+    intersection_index = -1
     if (curr_node%edge_index <= 3) then
        ! NOTE: This assumes but does not check that ``curr_node%edge_index``
        !       is in {1, 2, 3}.
-       index = curr_node%edge_index
+       local_index = curr_node%edge_index
        do i = 1, num_intersections
           if ( &
-               intersections(i)%index_first == index .AND. &
+               intersections(i)%index_first == local_index .AND. &
                intersections(i)%s > curr_node%edge_param) then
-             if (.NOT. already_set) then
-                already_set = .TRUE.
+             if (intersection_index == -1) then
+                intersection_index = i
                 next_node%edge_index = curr_node%edge_index
                 next_node%edge_param = intersections(i)%s
                 next_node%interior_curve = intersections(i)%interior_curve
              else
                 if (intersections(i)%s < next_node%edge_param) then
                    ! Assumes ``edge_index`` is already set.
+                   intersection_index = i
                    next_node%edge_param = intersections(i)%s
                    next_node%interior_curve = intersections(i)%interior_curve
                 end if
@@ -966,7 +966,7 @@ contains
 
        ! If there is no other intersection on the edge, just return
        ! the segment end.
-       if (.NOT. already_set) then
+       if (intersection_index == -1) then
           next_node%edge_index = curr_node%edge_index
           next_node%edge_param = 1.0_dp
           next_node%interior_curve = IntersectionClassification_FIRST
@@ -974,19 +974,20 @@ contains
     else
        ! NOTE: This assumes but does not check that ``curr_node%edge_index``
        !       is in {4, 5, 6}.
-       index = curr_node%edge_index - 3
+       local_index = curr_node%edge_index - 3
        do i = 1, num_intersections
           if ( &
-               intersections(i)%index_second == index .AND. &
+               intersections(i)%index_second == local_index .AND. &
                intersections(i)%t > curr_node%edge_param) then
-             if (.NOT. already_set) then
-                already_set = .TRUE.
+             if (intersection_index == -1) then
+                intersection_index = i
                 next_node%edge_index = curr_node%edge_index
                 next_node%edge_param = intersections(i)%t
                 next_node%interior_curve = intersections(i)%interior_curve
              else
                 if (intersections(i)%t < next_node%edge_param) then
                    ! Assumes ``edge_index`` is already set.
+                   intersection_index = i
                    next_node%edge_param = intersections(i)%t
                    next_node%interior_curve = intersections(i)%interior_curve
                 end if
@@ -996,7 +997,7 @@ contains
 
        ! If there is no other intersection on the edge, just return
        ! the segment end.
-       if (.NOT. already_set) then
+       if (intersection_index == -1) then
           next_node%edge_index = curr_node%edge_index
           next_node%edge_param = 1.0_dp
           next_node%interior_curve = IntersectionClassification_SECOND
