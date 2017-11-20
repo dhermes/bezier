@@ -30,7 +30,7 @@ module surface_intersection
        update_candidates, ignored_edge_corner, ignored_double_corner, &
        ignored_corner, classify_tangent_intersection, no_intersections
   public &
-       Intersection, IntersectionClassification_FIRST, &
+       Intersection, SegmentNode, IntersectionClassification_FIRST, &
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
@@ -48,13 +48,24 @@ module surface_intersection
      integer(c_int) :: interior_curve = -99  ! Hopefully an unused enum value
   end type Intersection
 
-  ! For ``locate_point``.
+  ! For ``locate_point``; this is not meant to be C-interoperable.
   type :: LocateCandidate
      real(c_double) :: centroid_x = 1.0_dp  ! Actually triple.
      real(c_double) :: centroid_y = 1.0_dp  ! Actually triple.
      real(c_double) :: width = 1.0_dp
      real(c_double), allocatable :: nodes(:, :)
   end type LocateCandidate
+
+  ! For ``surfaces_intersect`` and its helpers; this is not meant to be
+  ! C-interoperable.
+  ! NOTE: This type is not meant to be part of the interface for this
+  !       module, but it is (for now) public, so that ``get_next()`` and
+  !       ``to_front()`` can be tested.
+  type :: SegmentNode
+     real(c_double) :: edge_param = -1.0_dp
+     integer(c_int) :: edge_index = -1
+     integer(c_int) :: interior_curve = -99  ! Hopefully an unused enum value
+  end type SegmentNode
 
   ! NOTE: These values are also defined in equivalent Python source.
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
@@ -916,46 +927,38 @@ contains
   end subroutine remove_node
 
   subroutine get_next( &
-       num_intersections, intersections, curr_node, &
-       intersection_, next_node, status)
+       num_intersections, intersections, curr_node, next_node)
 
-    ! NOTE: In the case that there is no corresponding intersection at the
-    !       end of the edge, ``next_node`` will be ``-1``.
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
 
-    ! Possible error states:
-    ! * Status_SUCCESS: On success.
-    ! * Status_UNKNOWN: If the ``curr_node`` is not ``FIRST`` or ``SECOND``,
-    !                   which should never occur.
-
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
-    integer(c_int), intent(in) :: curr_node
-    type(Intersection), intent(out) :: intersection_
-    integer(c_int), intent(out) :: next_node
-    integer(c_int), intent(out) :: status
+    type(SegmentNode), intent(in) :: curr_node
+    type(SegmentNode), intent(out) :: next_node
     ! Variables outside of signature.
-    real(c_double) :: s, t
-    integer(c_int) :: enum_, index
-    integer(c_int) :: i
+    integer(c_int) :: i, index
+    logical(c_bool) :: already_set
 
-    status = Status_SUCCESS
-    enum_ = intersections(curr_node)%interior_curve
-    next_node = -1
-
-    if (enum_ == IntersectionClassification_FIRST) then
-       index = intersections(curr_node)%index_first
-       s = intersections(curr_node)%s
+    already_set = .FALSE.
+    if (curr_node%edge_index <= 3) then
+       ! NOTE: This assumes but does not check that ``curr_node%edge_index``
+       !       is in {1, 2, 3}.
+       index = curr_node%edge_index
        do i = 1, num_intersections
           if ( &
                intersections(i)%index_first == index .AND. &
-               intersections(i)%s > s) then
-             if (next_node == -1) then
-                next_node = i
+               intersections(i)%s > curr_node%edge_param) then
+             if (.NOT. already_set) then
+                already_set = .TRUE.
+                next_node%edge_index = curr_node%edge_index
+                next_node%edge_param = intersections(i)%s
+                next_node%interior_curve = intersections(i)%interior_curve
              else
-                if (intersections(i)%s < intersections(next_node)%s) then
-                   next_node = i
+                if (intersections(i)%s < next_node%edge_param) then
+                   ! Assumes ``edge_index`` is already set.
+                   next_node%edge_param = intersections(i)%s
+                   next_node%interior_curve = intersections(i)%interior_curve
                 end if
              end if
           end if
@@ -963,25 +966,29 @@ contains
 
        ! If there is no other intersection on the edge, just return
        ! the segment end.
-       if (next_node == -1) then
-          intersection_%index_first = index
-          intersection_%s = 1.0_dp
-          intersection_%interior_curve = IntersectionClassification_FIRST
-       else
-          intersection_ = intersections(next_node)
+       if (.NOT. already_set) then
+          next_node%edge_index = curr_node%edge_index
+          next_node%edge_param = 1.0_dp
+          next_node%interior_curve = IntersectionClassification_FIRST
        end if
-    else if (enum_ == IntersectionClassification_SECOND) then
-       index = intersections(curr_node)%index_second
-       t = intersections(curr_node)%t
+    else
+       ! NOTE: This assumes but does not check that ``curr_node%edge_index``
+       !       is in {4, 5, 6}.
+       index = curr_node%edge_index - 3
        do i = 1, num_intersections
           if ( &
                intersections(i)%index_second == index .AND. &
-               intersections(i)%t > t) then
-             if (next_node == -1) then
-                next_node = i
+               intersections(i)%t > curr_node%edge_param) then
+             if (.NOT. already_set) then
+                already_set = .TRUE.
+                next_node%edge_index = curr_node%edge_index
+                next_node%edge_param = intersections(i)%t
+                next_node%interior_curve = intersections(i)%interior_curve
              else
-                if (intersections(i)%t < intersections(next_node)%t) then
-                   next_node = i
+                if (intersections(i)%t < next_node%edge_param) then
+                   ! Assumes ``edge_index`` is already set.
+                   next_node%edge_param = intersections(i)%t
+                   next_node%interior_curve = intersections(i)%interior_curve
                 end if
              end if
           end if
@@ -989,16 +996,11 @@ contains
 
        ! If there is no other intersection on the edge, just return
        ! the segment end.
-       if (next_node == -1) then
-          intersection_%index_second = index
-          intersection_%t = 1.0_dp
-          intersection_%interior_curve = IntersectionClassification_SECOND
-       else
-          intersection_ = intersections(next_node)
+       if (.NOT. already_set) then
+          next_node%edge_index = curr_node%edge_index
+          next_node%edge_param = 1.0_dp
+          next_node%interior_curve = IntersectionClassification_SECOND
        end if
-    else
-       status = Status_UNKNOWN
-       return
     end if
 
   end subroutine get_next
