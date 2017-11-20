@@ -2253,7 +2253,7 @@ def basic_interior_combine(
     while unused:
         start = unused.pop()
         curr_node = start
-        next_node = get_next(start, intersections, unused)
+        next_node = get_next(curr_node, intersections, unused)
         edge_ends = [(curr_node, next_node)]
         while next_node is not start:
             curr_node = to_front(next_node, intersections, unused)
