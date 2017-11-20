@@ -930,6 +930,7 @@ contains
     integer(c_int) :: first, second
     type(Intersection) :: intersections(5)
     type(SegmentNode) :: curr_node, next_node
+    logical(c_bool) :: at_start
 
     case_id = 1
     name = "get_next"
@@ -944,11 +945,12 @@ contains
     intersections(1)%s = 0.5_dp
     intersections(1)%interior_curve = first
     call get_next( &
-         1, intersections(:1), curr_node, next_node)
+         1, intersections(:1), 1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == curr_node%edge_index .AND. &
          next_node%edge_param == 1.0_dp .AND. &
-         next_node%interior_curve == first)
+         next_node%interior_curve == first .AND. &
+         .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: On an edge of first surface, **multiple** other intersections
@@ -975,11 +977,12 @@ contains
     intersections(5)%s = 0.625_dp
     intersections(5)%interior_curve = first
     call get_next( &
-         5, intersections, curr_node, next_node)
+         5, intersections, 2, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(2)%index_first .AND. &
          next_node%edge_param == intersections(2)%s .AND. &
-         next_node%interior_curve == intersections(2)%interior_curve)
+         next_node%interior_curve == intersections(2)%interior_curve .AND. &
+         at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: On an edge of first surface, move to a corner that is **also** an
@@ -990,11 +993,12 @@ contains
     intersections(1)%s = 1.0_dp
     intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
     call get_next( &
-         1, intersections(:1), curr_node, next_node)
+         1, intersections(:1), -1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(1)%index_first .AND. &
          next_node%edge_param == intersections(1)%s .AND. &
-         next_node%interior_curve == intersections(1)%interior_curve)
+         next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: On an edge of second surface, no other intersections on
@@ -1005,11 +1009,12 @@ contains
     intersections(1)%s = 0.5_dp
     intersections(1)%interior_curve = first
     call get_next( &
-         1, intersections(:1), curr_node, next_node)
+         1, intersections(:1), 1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == curr_node%edge_index .AND. &
          next_node%edge_param == 1.0_dp .AND. &
-         next_node%interior_curve == second)
+         next_node%interior_curve == second .AND. &
+         .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: On an edge of second surface, **multiple** other intersections
@@ -1036,11 +1041,12 @@ contains
     intersections(5)%t = 0.6875_dp
     intersections(5)%interior_curve = second
     call get_next( &
-         5, intersections, curr_node, next_node)
+         5, intersections, 1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(3)%index_second + 3 .AND. &
          next_node%edge_param == intersections(3)%t .AND. &
-         next_node%interior_curve == intersections(3)%interior_curve)
+         next_node%interior_curve == intersections(3)%interior_curve .AND. &
+         .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: On an edge of second surface, move to a corner that is **also**
@@ -1051,11 +1057,12 @@ contains
     intersections(1)%t = 1.0_dp
     intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
     call get_next( &
-         1, intersections(:1), curr_node, next_node)
+         1, intersections(:1), 1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(1)%index_second + 3 .AND. &
          next_node%edge_param == intersections(1)%t .AND. &
-         next_node%interior_curve == intersections(1)%interior_curve)
+         next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         at_start)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_get_next

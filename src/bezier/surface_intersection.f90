@@ -927,19 +927,22 @@ contains
   end subroutine remove_node
 
   subroutine get_next( &
-       num_intersections, intersections, curr_node, next_node)
+       num_intersections, intersections, start, curr_node, next_node, at_start)
 
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
 
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
+    integer(c_int), intent(in) :: start
     type(SegmentNode), intent(in) :: curr_node
     type(SegmentNode), intent(out) :: next_node
+    logical(c_bool), intent(out) :: at_start
     ! Variables outside of signature.
     integer(c_int) :: i, local_index, intersection_index
 
     intersection_index = -1
+    at_start = .FALSE.
     if (curr_node%edge_index <= 3) then
        ! NOTE: This assumes but does not check that ``curr_node%edge_index``
        !       is in {1, 2, 3}.
@@ -970,6 +973,8 @@ contains
           next_node%edge_index = curr_node%edge_index
           next_node%edge_param = 1.0_dp
           next_node%interior_curve = IntersectionClassification_FIRST
+       else
+          at_start = (intersection_index == start)
        end if
     else
        ! NOTE: This assumes but does not check that ``curr_node%edge_index``
@@ -1001,6 +1006,8 @@ contains
           next_node%edge_index = curr_node%edge_index
           next_node%edge_param = 1.0_dp
           next_node%interior_curve = IntersectionClassification_SECOND
+       else
+          at_start = (intersection_index == start)
        end if
     end if
 
