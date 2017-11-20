@@ -18,21 +18,23 @@ module test_surface_intersection
        Status_BAD_TANGENT, Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
   use surface_intersection, only: &
-       Intersection, SegmentNode, IntersectionClassification_FIRST, &
-       IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
+       Intersection, SegmentNode, CurvedPolygonSegment, &
+       IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
+       IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
-       surfaces_intersection_points, get_next, to_front, surfaces_intersect
+       surfaces_intersection_points, get_next, to_front, add_segment, &
+       surfaces_intersect
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
        test_add_st_vals, test_surfaces_intersection_points, &
-       intersection_check, test_get_next, test_to_front, &
+       intersection_check, test_get_next, test_to_front, test_add_segment, &
        test_surfaces_intersect
   public surface_intersection_all_tests
 
@@ -48,6 +50,7 @@ contains
     call test_surfaces_intersection_points(success)
     call test_get_next(success)
     call test_to_front(success)
+    call test_add_segment(success)
     call test_surfaces_intersect(success)
 
   end subroutine surface_intersection_all_tests
@@ -1137,6 +1140,76 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_to_front
+
+  subroutine test_add_segment(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(11) :: name
+    type(SegmentNode) :: curr_node, next_node
+    type(CurvedPolygonSegment), allocatable :: segments(:)
+    integer(c_int) :: index
+
+    case_id = 1
+    name = "add_segment"
+
+    ! CASE 1: ``segments`` is not allocated.
+    index = 1
+    curr_node%edge_param = 0.25_dp
+    curr_node%edge_index = 4
+    next_node%edge_param = 0.5_dp
+    case_success = .NOT. allocated(segments)
+    call add_segment(curr_node, next_node, index, segments)
+    case_success = ( &
+         case_success .AND. &
+         index == 2 .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 1 .AND. &
+         segments(1)%start == curr_node%edge_param .AND. &
+         segments(1)%end_ == next_node%edge_param .AND. &
+         segments(1)%edge_index == curr_node%edge_index)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: ``segments`` is allocated, but not large enough.
+    index = 2
+    curr_node%edge_param = 0.5_dp
+    curr_node%edge_index = 2
+    next_node%edge_param = 1.0_dp
+    case_success = ( &
+         allocated(segments) .AND. &
+         size(segments) == 1)
+    call add_segment(curr_node, next_node, index, segments)
+    case_success = ( &
+         case_success .AND. &
+         index == 3 .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 2 .AND. &
+         segments(2)%start == curr_node%edge_param .AND. &
+         segments(2)%end_ == next_node%edge_param .AND. &
+         segments(2)%edge_index == curr_node%edge_index)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: ``segments`` is allocated and does not need to be resized.
+    index = 2
+    curr_node%edge_param = 0.125_dp
+    curr_node%edge_index = 3
+    next_node%edge_param = 0.75_dp
+    case_success = ( &
+         allocated(segments) .AND. &
+         size(segments) == 2)
+    call add_segment(curr_node, next_node, index, segments)
+    case_success = ( &
+         case_success .AND. &
+         index == 3 .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 2 .AND. &
+         segments(2)%start == curr_node%edge_param .AND. &
+         segments(2)%end_ == next_node%edge_param .AND. &
+         segments(2)%edge_index == curr_node%edge_index)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_add_segment
 
   subroutine test_surfaces_intersect(success)
     logical(c_bool), intent(inout) :: success

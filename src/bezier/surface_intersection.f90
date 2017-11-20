@@ -31,14 +31,16 @@ module surface_intersection
        ignored_corner, classify_tangent_intersection, no_intersections, &
        remove_node
   public &
-       Intersection, SegmentNode, IntersectionClassification_FIRST, &
-       IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
+       Intersection, SegmentNode, CurvedPolygonSegment, &
+       IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
+       IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
-       surfaces_intersection_points, get_next, surfaces_intersect
+       surfaces_intersection_points, get_next, to_front, add_segment, &
+       surfaces_intersect
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -67,6 +69,12 @@ module surface_intersection
      integer(c_int) :: edge_index = -1
      integer(c_int) :: interior_curve = -99  ! Hopefully an unused enum value
   end type SegmentNode
+
+  type, bind(c) :: CurvedPolygonSegment
+     real(c_double) :: start
+     real(c_double) :: end_
+     integer(c_int) :: edge_index
+  end type CurvedPolygonSegment
 
   ! NOTE: These values are also defined in equivalent Python source.
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
@@ -1096,6 +1104,41 @@ contains
     end if
 
   end subroutine to_front
+
+  subroutine add_segment(curr_node, next_node, index, segments)
+
+    ! NOTE: This subroutine is not meant to be part of the interface for this
+    !       module, but it is (for now) public, so that it can be tested.
+
+    type(SegmentNode), intent(in) :: curr_node, next_node
+    integer(c_int), intent(inout) :: index
+    type(CurvedPolygonSegment), allocatable, intent(inout) :: segments(:)
+    ! Variables outside of signature.
+    integer(c_int) :: curr_size
+    type(CurvedPolygonSegment), allocatable :: segments_swap(:)
+
+    ! First, make sure we have enough space.
+    if (allocated(segments)) then
+       curr_size = size(segments)
+       if (curr_size < index) then
+          allocate(segments_swap(index))
+          segments_swap(:curr_size) = segments(:curr_size)
+          call move_alloc(segments_swap, segments)
+       end if
+    else
+       allocate(segments(index))
+    end if
+
+    segments(index)%start = curr_node%edge_param
+    segments(index)%end_ = next_node%edge_param
+    ! NOTE: This **assumes**, but does not check that ``curr_node%edge_index``
+    !       and ``next_node%edge_index`` agree.
+    segments(index)%edge_index = curr_node%edge_index
+
+    ! Update the index.
+    index = index + 1
+
+  end subroutine add_segment
 
   subroutine surfaces_intersect( &
        num_nodes1, nodes1, degree1, &
