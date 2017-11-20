@@ -892,6 +892,8 @@ contains
     ! NOTE: This assumes the values in ``values`` are in ascending order
     !       and unique.
     ! NOTE: This assumes that ``remaining`` does not exceed ``size(values)``
+    ! NOTE: This subroutine is not meant to be part of the interface for this
+    !       module, but it is (for now) public, so that it can be tested.
 
     integer(c_int), intent(in) :: node
     integer(c_int), intent(inout) :: values(:)
@@ -981,6 +983,67 @@ contains
     end if
 
   end subroutine get_next
+
+  subroutine to_front( &
+       num_intersections, intersections, curr_node, intersection_, next_node)
+
+    ! NOTE: This subroutine is not meant to be part of the interface for this
+    !       module, but it is (for now) public, so that it can be tested.
+    ! NOTE: In the case that there is no corresponding intersection at the
+    !       beginning of the edge, ``next_node`` will be ``-1``.
+
+    integer(c_int), intent(in) :: num_intersections
+    type(Intersection), intent(in) :: intersections(num_intersections)
+    integer(c_int), intent(in) :: curr_node
+    type(Intersection), intent(out) :: intersection_
+    integer(c_int), intent(out) :: next_node
+    ! Variables outside of signature.
+    logical(c_bool) :: changed
+    integer(c_int) :: i
+
+    changed = .FALSE.
+    next_node = -1
+
+    if (intersections(curr_node)%s == 1.0_dp) then
+       intersection_%s = 0.0_dp
+       intersection_%index_first = ( &
+            1 + modulo(intersections(curr_node)%index_first, 3))
+       changed = .TRUE.
+    else
+       intersection_%s = intersections(curr_node)%s
+       intersection_%index_first = intersections(curr_node)%index_first
+    end if
+
+    if (intersections(curr_node)%t == 1.0_dp) then
+       intersection_%t = 0.0_dp
+       intersection_%index_second = ( &
+            1 + modulo(intersections(curr_node)%index_second, 3))
+       changed = .TRUE.
+    else
+       intersection_%t = intersections(curr_node)%t
+       intersection_%index_second = intersections(curr_node)%index_second
+    end if
+
+    if (changed) then
+       intersection_%interior_curve = intersections(curr_node)%interior_curve
+    else
+       ! The node doesn't need to be moved to the front of the edge.
+       next_node = curr_node
+       return
+    end if
+
+    do i = 1, num_intersections
+       if ( &
+            intersections(i)%s == intersection_%s .AND. &
+            intersections(i)%index_first == intersection_%index_first .AND. &
+            intersections(i)%t == intersection_%t .AND. &
+            intersections(i)%index_second == intersection_%index_second) then
+          next_node = i
+          return
+       end if
+    end do
+
+  end subroutine to_front
 
   subroutine surfaces_intersect( &
        num_nodes1, nodes1, degree1, &
