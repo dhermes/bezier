@@ -429,6 +429,16 @@
         ],
         "note": "This surface is 7Q, with the left edge (edge 1, 0-indexed) changed to a quadratic."
     },
+    "35Q": {
+        "control_points": [
+            [0, 0],
+            ["1/2", "1/4"],
+            [1, 0],
+            ["1/2", "5/8"],
+            [1, "5/8"],
+            [1, "5/4"]
+        ]
+    },
     "1C": {
         "control_points": [
             [0, 0],

@@ -69,6 +69,7 @@ FAILED_CASES_TANGENT = {
         15: {},
         17: {},
         21: {},
+        37: {},
     },
 }
 FAILED_CASES_COINCIDENT = {
