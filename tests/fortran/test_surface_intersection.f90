@@ -1035,6 +1035,8 @@ contains
     type(Intersection) :: intersections(1)
     type(SegmentNode) :: curr_node, next_node
     logical(c_bool) :: at_start
+    integer(c_int) :: unused(4)
+    integer(c_int) :: remaining
 
     case_id = 1
     name = "to_front"
@@ -1046,12 +1048,15 @@ contains
     curr_node%edge_param = 0.5_dp
     curr_node%edge_index = 3
     curr_node%interior_curve = first
+    remaining = 4
     call to_front( &
-         0, intersections(:0), -1, curr_node, next_node, at_start)
+         0, intersections(:0), unused, remaining, &
+         -1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == curr_node%edge_index .AND. &
          next_node%edge_param == curr_node%edge_param .AND. &
          next_node%interior_curve == curr_node%interior_curve .AND. &
+         remaining == 4 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
@@ -1059,12 +1064,15 @@ contains
     curr_node%edge_param = 1.0_dp
     curr_node%edge_index = 3
     curr_node%interior_curve = first
+    remaining = 3
     call to_front( &
-         0, intersections(:0), -1, curr_node, next_node, at_start)
+         0, intersections(:0), unused, remaining, &
+         -1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == curr_node%edge_index - 2 .AND. &
          next_node%edge_param == 0.0_dp .AND. &
          next_node%interior_curve == curr_node%interior_curve .AND. &
+         remaining == 3 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
@@ -1077,12 +1085,17 @@ contains
     intersections(1)%index_second = 1
     intersections(1)%t = 0.5
     intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
+    unused = [1, 3, 4, 6]
+    remaining = 4
     call to_front( &
-         1, intersections, -1, curr_node, next_node, at_start)
+         1, intersections, unused, remaining, &
+         -1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(1)%index_first .AND. &
          next_node%edge_param == intersections(1)%s .AND. &
          next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         remaining == 3 .AND. &
+         all(unused == [3, 4, 6, 6]) .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
@@ -1090,12 +1103,15 @@ contains
     curr_node%edge_param = 1.0_dp
     curr_node%edge_index = 5
     curr_node%interior_curve = second
+    remaining = 4
     call to_front( &
-         0, intersections(:0), -1, curr_node, next_node, at_start)
+         0, intersections(:0), unused, remaining, &
+         -1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == curr_node%edge_index + 1 .AND. &
          next_node%edge_param == 0.0_dp .AND. &
          next_node%interior_curve == curr_node%interior_curve .AND. &
+         remaining == 4 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
@@ -1108,12 +1124,15 @@ contains
     intersections(1)%index_second = 2
     intersections(1)%t = 0.0_dp
     intersections(1)%interior_curve = IntersectionClassification_TANGENT_SECOND
+    remaining = 0
     call to_front( &
-         1, intersections, 1, curr_node, next_node, at_start)
+         1, intersections, unused, remaining, &
+         1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(1)%index_second + 3 .AND. &
          next_node%edge_param == intersections(1)%t .AND. &
          next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         remaining == 0 .AND. &
          at_start)
     call print_status(name, case_id, case_success, success)
 

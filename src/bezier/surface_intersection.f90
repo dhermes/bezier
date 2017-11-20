@@ -1024,13 +1024,18 @@ contains
   end subroutine get_next
 
   subroutine to_front( &
-       num_intersections, intersections, start, curr_node, next_node, at_start)
+       num_intersections, intersections, unused, remaining, &
+       start, curr_node, next_node, at_start)
 
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
 
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
+    ! ``unused`` contains the indices of intersections that have not yet been
+    ! used as a ``SegmentNode``.
+    integer(c_int), intent(inout) :: unused(:)
+    integer(c_int), intent(inout) :: remaining
     integer(c_int), intent(in) :: start
     type(SegmentNode), intent(in) :: curr_node
     type(SegmentNode), intent(out) :: next_node
@@ -1065,6 +1070,9 @@ contains
              ! Assumes ``edge_param`` and ``edge_index`` are already set.
              next_node%interior_curve = intersections(i)%interior_curve
              at_start = (i == start)
+             ! Remove the index from the set of ``unused`` intersections, if
+             ! it is contained there.
+             call remove_node(i, unused, remaining)
              return
           end if
        end do
@@ -1079,6 +1087,9 @@ contains
              ! Assumes ``edge_param`` and ``edge_index`` are already set.
              next_node%interior_curve = intersections(i)%interior_curve
              at_start = (i == start)
+             ! Remove the index from the set of ``unused`` intersections, if
+             ! it is contained there.
+             call remove_node(i, unused, remaining)
              return
           end if
        end do
