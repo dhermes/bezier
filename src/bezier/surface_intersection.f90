@@ -1014,18 +1014,21 @@ contains
   end subroutine get_next
 
   subroutine to_front( &
-       num_intersections, intersections, curr_node, next_node)
+       num_intersections, intersections, start, curr_node, next_node, at_start)
 
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
 
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
+    integer(c_int), intent(in) :: start
     type(SegmentNode), intent(in) :: curr_node
     type(SegmentNode), intent(out) :: next_node
+    logical(c_bool), intent(out) :: at_start
     ! Variables outside of signature.
     integer(c_int) :: i, local_index
 
+    at_start = .FALSE.
     if (curr_node%edge_param == 1.0_dp) then
        next_node%edge_param = 0.0_dp
        if (curr_node%edge_index == 3 .OR. curr_node%edge_index == 6) then
@@ -1051,6 +1054,7 @@ contains
                intersections(i)%index_first == local_index) then
              ! Assumes ``edge_param`` and ``edge_index`` are already set.
              next_node%interior_curve = intersections(i)%interior_curve
+             at_start = (i == start)
              return
           end if
        end do
@@ -1064,6 +1068,7 @@ contains
                intersections(i)%index_second == local_index) then
              ! Assumes ``edge_param`` and ``edge_index`` are already set.
              next_node%interior_curve = intersections(i)%interior_curve
+             at_start = (i == start)
              return
           end if
        end do
