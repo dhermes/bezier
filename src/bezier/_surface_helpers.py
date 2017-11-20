@@ -1875,6 +1875,10 @@ def to_front(intersection, intersections, unused):
     if changed:
         # Make sure we haven't accidentally ignored an existing intersection.
         for other_int in intersections:
+            # NOTE: We check these separately as a way of handling corner
+            #       nodes, which will be a sort of "artificial"
+            #       ``Intersection`` with ``s = None, index_first = None``
+            #       (or vice versa).
             if (other_int.s == intersection.s and
                     other_int.index_first == intersection.index_first):
                 intersection = other_int
