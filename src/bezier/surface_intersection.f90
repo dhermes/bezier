@@ -28,7 +28,8 @@ module surface_intersection
        LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, &
        newton_refine_solve, split_candidate, allocate_candidates, &
        update_candidates, ignored_edge_corner, ignored_double_corner, &
-       ignored_corner, classify_tangent_intersection, no_intersections
+       ignored_corner, classify_tangent_intersection, no_intersections, &
+       remove_node
   public &
        Intersection, SegmentNode, IntersectionClassification_FIRST, &
        IntersectionClassification_SECOND, IntersectionClassification_OPPOSED, &
@@ -37,7 +38,7 @@ module surface_intersection
        IntersectionClassification_IGNORED_CORNER, SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
-       surfaces_intersection_points, remove_node, get_next, surfaces_intersect
+       surfaces_intersection_points, get_next, surfaces_intersect
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -903,8 +904,6 @@ contains
     ! NOTE: This assumes the values in ``values`` are in ascending order
     !       and unique.
     ! NOTE: This assumes that ``remaining`` does not exceed ``size(values)``
-    ! NOTE: This subroutine is not meant to be part of the interface for this
-    !       module, but it is (for now) public, so that it can be tested.
 
     integer(c_int), intent(in) :: node
     integer(c_int), intent(inout) :: values(:)

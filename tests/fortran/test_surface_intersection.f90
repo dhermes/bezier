@@ -25,15 +25,14 @@ module test_surface_intersection
        IntersectionClassification_IGNORED_CORNER, SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
-       surfaces_intersection_points, remove_node, get_next, to_front, &
-       surfaces_intersect
+       surfaces_intersection_points, get_next, to_front, surfaces_intersect
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
        test_add_st_vals, test_surfaces_intersection_points, &
-       intersection_check, test_remove_node, test_get_next, test_to_front, &
+       intersection_check, test_get_next, test_to_front, &
        test_surfaces_intersect
   public surface_intersection_all_tests
 
@@ -47,7 +46,6 @@ contains
     call test_classify_intersection(success)
     call test_add_st_vals(success)
     call test_surfaces_intersection_points(success)
-    call test_remove_node(success)
     call test_get_next(success)
     call test_to_front(success)
     call test_surfaces_intersect(success)
@@ -852,74 +850,6 @@ contains
          intersection_%interior_curve == interior_curve)
 
   end function intersection_check
-
-  subroutine test_remove_node(success)
-    logical(c_bool), intent(inout) :: success
-    ! Variables outside of signature.
-    logical :: case_success
-    integer :: case_id
-    character(11) :: name
-    integer(c_int) :: values(4)
-    integer(c_int) :: remaining
-
-    case_id = 1
-    name = "remove_node"
-
-    ! CASE 1: Not contained.
-    values = [1, 3, 4, 8]
-    remaining = 4
-    call remove_node(2, values, remaining)
-    case_success = ( &
-         all(values == [1, 3, 4, 8]) .AND. &
-         remaining == 4)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 2: Is contained, not at end.
-    values = [2, 3, 7, 8]
-    remaining = 4
-    call remove_node(3, values, remaining)
-    case_success = ( &
-         all(values == [2, 7, 8, 8]) .AND. &
-         remaining == 3)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 3: Is contained, from end.
-    values = [3, 5, 8, 11]
-    remaining = 4
-    call remove_node(11, values, remaining)
-    case_success = ( &
-         all(values == [3, 5, 8, 11]) .AND. &
-         remaining == 3)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 4: ``remaining`` is less than ``size(values)``, not contained.
-    values = [11, 13, 18, -1]
-    remaining = 3
-    call remove_node(15, values, remaining)
-    case_success = ( &
-         all(values == [11, 13, 18, -1]) .AND. &
-         remaining == 3)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 5: ``remaining`` is less than ``size(values)``, is contained.
-    values = [1, 8, 9, -1]
-    remaining = 3
-    call remove_node(8, values, remaining)
-    case_success = ( &
-         all(values == [1, 9, 9, -1]) .AND. &
-         remaining == 2)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 6: ``remaining`` is less than ``size(values)``, at end.
-    values = [2, 3, 6, -1]
-    remaining = 3
-    call remove_node(6, values, remaining)
-    case_success = ( &
-         all(values == [2, 3, 6, -1]) .AND. &
-         remaining == 2)
-    call print_status(name, case_id, case_success, success)
-
-  end subroutine test_remove_node
 
   subroutine test_get_next(success)
     logical(c_bool), intent(inout) :: success
