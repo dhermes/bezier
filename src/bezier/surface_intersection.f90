@@ -927,13 +927,18 @@ contains
   end subroutine remove_node
 
   subroutine get_next( &
-       num_intersections, intersections, start, curr_node, next_node, at_start)
+       num_intersections, intersections, unused, remaining, &
+       start, curr_node, next_node, at_start)
 
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
 
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
+    ! ``unused`` contains the indices of intersections that have not yet been
+    ! used as a ``SegmentNode``.
+    integer(c_int), intent(inout) :: unused(:)
+    integer(c_int), intent(inout) :: remaining
     integer(c_int), intent(in) :: start
     type(SegmentNode), intent(in) :: curr_node
     type(SegmentNode), intent(out) :: next_node
@@ -975,6 +980,9 @@ contains
           next_node%interior_curve = IntersectionClassification_FIRST
        else
           at_start = (intersection_index == start)
+          ! Remove the index from the set of ``unused`` intersections, if
+          ! it is contained there.
+          call remove_node(intersection_index, unused, remaining)
        end if
     else
        ! NOTE: This assumes but does not check that ``curr_node%edge_index``
@@ -1008,6 +1016,9 @@ contains
           next_node%interior_curve = IntersectionClassification_SECOND
        else
           at_start = (intersection_index == start)
+          ! Remove the index from the set of ``unused`` intersections, if
+          ! it is contained there.
+          call remove_node(intersection_index, unused, remaining)
        end if
     end if
 

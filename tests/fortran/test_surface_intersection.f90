@@ -931,6 +931,8 @@ contains
     type(Intersection) :: intersections(5)
     type(SegmentNode) :: curr_node, next_node
     logical(c_bool) :: at_start
+    integer(c_int) :: unused(4)
+    integer(c_int) :: remaining
 
     case_id = 1
     name = "get_next"
@@ -944,12 +946,15 @@ contains
     intersections(1)%index_first = 3
     intersections(1)%s = 0.5_dp
     intersections(1)%interior_curve = first
+    remaining = 4
     call get_next( &
-         1, intersections(:1), 1, curr_node, next_node, at_start)
+         1, intersections(:1), unused, remaining, &
+         1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == curr_node%edge_index .AND. &
          next_node%edge_param == 1.0_dp .AND. &
          next_node%interior_curve == first .AND. &
+         remaining == 4 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
@@ -976,12 +981,18 @@ contains
     intersections(5)%index_first = 3
     intersections(5)%s = 0.625_dp
     intersections(5)%interior_curve = first
+    ! Populate the list of indices to be removed.
+    unused = [1, 2, 3, 5]
+    remaining = 4
     call get_next( &
-         5, intersections, 2, curr_node, next_node, at_start)
+         5, intersections, unused, remaining, &
+         2, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(2)%index_first .AND. &
          next_node%edge_param == intersections(2)%s .AND. &
          next_node%interior_curve == intersections(2)%interior_curve .AND. &
+         remaining == 3 .AND. &
+         all(unused == [1, 3, 5, 5]) .AND. &
          at_start)
     call print_status(name, case_id, case_success, success)
 
@@ -992,12 +1003,16 @@ contains
     intersections(1)%index_first = 1
     intersections(1)%s = 1.0_dp
     intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
+    unused(1) = 2  ! Won't contain ``intersection_index == 1``.
+    remaining = 1
     call get_next( &
-         1, intersections(:1), -1, curr_node, next_node, at_start)
+         1, intersections(:1), unused, remaining, &
+         -1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(1)%index_first .AND. &
          next_node%edge_param == intersections(1)%s .AND. &
          next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         remaining == 1 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
@@ -1008,12 +1023,15 @@ contains
     intersections(1)%index_second = 1
     intersections(1)%s = 0.5_dp
     intersections(1)%interior_curve = first
+    remaining = 2
     call get_next( &
-         1, intersections(:1), 1, curr_node, next_node, at_start)
+         1, intersections(:1), unused, remaining, &
+         1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == curr_node%edge_index .AND. &
          next_node%edge_param == 1.0_dp .AND. &
          next_node%interior_curve == second .AND. &
+         remaining == 2 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
@@ -1040,12 +1058,17 @@ contains
     intersections(5)%index_second = 2
     intersections(5)%t = 0.6875_dp
     intersections(5)%interior_curve = second
+    ! Populate the list of indices to be removed, missing 3.
+    unused(:3) = [1, 2, 4]
+    remaining = 3
     call get_next( &
-         5, intersections, 1, curr_node, next_node, at_start)
+         5, intersections, unused, remaining, &
+         1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(3)%index_second + 3 .AND. &
          next_node%edge_param == intersections(3)%t .AND. &
          next_node%interior_curve == intersections(3)%interior_curve .AND. &
+         remaining == 3 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
@@ -1056,12 +1079,17 @@ contains
     intersections(1)%index_second = 1
     intersections(1)%t = 1.0_dp
     intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
+    unused = [1, -1, -1, -1]  ! Will be removed.
+    remaining = 1
     call get_next( &
-         1, intersections(:1), 1, curr_node, next_node, at_start)
+         1, intersections(:1), unused, remaining, &
+         1, curr_node, next_node, at_start)
     case_success = ( &
          next_node%edge_index == intersections(1)%index_second + 3 .AND. &
          next_node%edge_param == intersections(1)%t .AND. &
          next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         remaining == 0 .AND. &
+         all(unused == [1, -1, -1, -1]) .AND. &
          at_start)
     call print_status(name, case_id, case_success, success)
 
