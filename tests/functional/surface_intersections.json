@@ -1074,5 +1074,39 @@
                 "edge_list": [0, 3, 4]
             }
         ]
+    }, {
+        "surface1": "1L",
+        "surface2": "39Q",
+        "id": 40,
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    [1, 0],
+                    [0, 1]
+                ],
+                "start_params": [
+                    0,
+                    0,
+                    0
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [0, 1],
+                    [0, 1]
+                ],
+                "end_params": [
+                    1,
+                    1,
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 1],
+                    [-1, 1],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 3, 2]
+            }
+        ]
     }
 ]
