@@ -1837,12 +1837,15 @@ def to_front(intersection, intersections, unused):
        turn is only used by :func:`combine_intersections`.
 
     If a node is at the end of a segment, moves it to the beginning
-    of the next segment (at the exact same point).
+    of the next segment (at the exact same point). We assume that
+    callers have pruned ``intersections`` so that there are none
+    with ``s == 1.0`` or ``t == 1.0``. Hence, any such intersection
+    will be an "artificial" intersection added by :func:`get_next`.
 
     .. note::
 
         This method checks for **exact** endpoints, i.e. parameter
-        bitwise identical to ``1.0``. But we should probably allow
+        bitwise identical to ``1.0``. But it may make sense to allow
         some wiggle room.
 
     Args:
@@ -1855,43 +1858,40 @@ def to_front(intersection, intersections, unused):
 
     Returns:
         .Intersection: An intersection to (maybe) move to the beginning
-        of the next segment(s).
+        of the next edge of the surface.
     """
-    changed = False
     if intersection.s == 1.0:
-        changed = True
         next_index = (intersection.index_first + 1) % 3
-        intersection = _intersection_helpers.Intersection(
-            next_index, 0.0, intersection.index_second, intersection.t,
-            interior_curve=intersection.interior_curve)
-
-    if intersection.t == 1.0:
-        changed = True
-        next_index = (intersection.index_second + 1) % 3
-        intersection = _intersection_helpers.Intersection(
-            intersection.index_first, intersection.s, next_index, 0.0,
-            interior_curve=intersection.interior_curve)
-
-    if changed:
         # Make sure we haven't accidentally ignored an existing intersection.
         for other_int in intersections:
-            # NOTE: We check these separately as a way of handling corner
-            #       nodes, which will be a sort of "artificial"
-            #       ``Intersection`` with ``s = None, index_first = None``
-            #       (or vice versa).
-            if (other_int.s == intersection.s and
-                    other_int.index_first == intersection.index_first):
-                intersection = other_int
-                break
+            if other_int.s == 0.0 and other_int.index_first == next_index:
+                if other_int in unused:
+                    unused.remove(other_int)
+                return other_int
 
-            if (other_int.t == intersection.t and
-                    other_int.index_second == intersection.index_second):
-                intersection = other_int
-                break
+        # If we haven't already returned, create **another** artificial
+        # intersection.
+        return _intersection_helpers.Intersection(
+            next_index, 0.0, None, None,
+            interior_curve=IntersectionClassification.FIRST)
+    elif intersection.t == 1.0:
+        # NOTE: We assume, but do not check, that ``s == 1.0`` and ``t == 1.0``
+        #       are mutually exclusive.
+        next_index = (intersection.index_second + 1) % 3
+        # Make sure we haven't accidentally ignored an existing intersection.
+        for other_int in intersections:
+            if other_int.t == 0.0 and other_int.index_second == next_index:
+                if other_int in unused:
+                    unused.remove(other_int)
+                return other_int
 
-    if intersection in unused:
-        unused.remove(intersection)
-    return intersection
+        # If we haven't already returned, create **another** artificial
+        # intersection.
+        return _intersection_helpers.Intersection(
+            None, None, next_index, 0.0,
+            interior_curve=IntersectionClassification.SECOND)
+    else:
+        return intersection
 
 
 def get_next_first(intersection, intersections):

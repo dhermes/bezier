@@ -1540,32 +1540,25 @@ class Test_to_front(unittest.TestCase):
         result = self._call_function_under_test(intersection, [], [])
         self.assertIs(result, intersection)
 
-    def test_remove_from_unused(self):
-        intersection = make_intersect(
-            2, 0.5, 1, 0.5, interior_curve=get_enum('SECOND'))
-        unused = [intersection]
-        result = self._call_function_under_test(intersection, [], unused)
-        self.assertIs(result, intersection)
-        self.assertEqual(unused, [])
-
     def test_move_s(self):
         from bezier import _intersection_helpers
 
         enum_val = get_enum('FIRST')
-        intersection = make_intersect(2, 1.0, 1, 0.5, interior_curve=enum_val)
+        intersection = make_intersect(
+            2, 1.0, None, None, interior_curve=enum_val)
 
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
         self.assertIsInstance(result, _intersection_helpers.Intersection)
         self.assertEqual(result.s, 0.0)
         self.assertEqual(result.index_first, 0)
-        self.assertEqual(result.t, 0.5)
-        self.assertEqual(result.index_second, 1)
+        self.assertIsNone(result.t)
+        self.assertIsNone(result.index_second)
         self.assertEqual(result.interior_curve, enum_val)
 
     def test_move_s_to_existing(self):
         intersection = make_intersect(
-            1, 1.0, 0, 0.5, interior_curve=get_enum('FIRST'))
+            1, 1.0, None, None, interior_curve=get_enum('FIRST'))
         existing_int = make_intersect(
             2, 0.0, 0, 0.5, interior_curve=get_enum('FIRST'))
 
@@ -1573,30 +1566,55 @@ class Test_to_front(unittest.TestCase):
             intersection, [existing_int], [])
         self.assertIs(result, existing_int)
 
+    def test_move_s_to_existing_and_remove(self):
+        intersection = make_intersect(
+            1, 1.0, None, None, interior_curve=get_enum('FIRST'))
+        existing_int = make_intersect(
+            2, 0.0, 0, 0.5, interior_curve=get_enum('FIRST'))
+        unused = [existing_int]
+
+        result = self._call_function_under_test(
+            intersection, [existing_int], unused)
+        self.assertIs(result, existing_int)
+        self.assertEqual(unused, [])
+
     def test_move_t(self):
         from bezier import _intersection_helpers
 
         enum_val = get_enum('SECOND')
-        intersection = make_intersect(0, 0.5, 1, 1.0, interior_curve=enum_val)
+        intersection = make_intersect(
+            None, None, 1, 1.0, interior_curve=enum_val)
 
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
         self.assertIsInstance(result, _intersection_helpers.Intersection)
-        self.assertEqual(result.s, 0.5)
-        self.assertEqual(result.index_first, 0)
+        self.assertIsNone(result.s)
+        self.assertIsNone(result.index_first)
         self.assertEqual(result.t, 0.0)
         self.assertEqual(result.index_second, 2)
         self.assertEqual(result.interior_curve, enum_val)
 
     def test_move_t_to_existing(self):
         intersection = make_intersect(
-            2, 0.5, 0, 1.0, interior_curve=get_enum('SECOND'))
+            None, None, 0, 1.0, interior_curve=get_enum('SECOND'))
         existing_int = make_intersect(
             2, 0.5, 1, 0.0, interior_curve=get_enum('SECOND'))
 
         result = self._call_function_under_test(
             intersection, [existing_int], [])
         self.assertIs(result, existing_int)
+
+    def test_move_t_to_existing_and_remove(self):
+        intersection = make_intersect(
+            None, None, 0, 1.0, interior_curve=get_enum('SECOND'))
+        existing_int = make_intersect(
+            2, 0.5, 1, 0.0, interior_curve=get_enum('SECOND'))
+        unused = [existing_int]
+
+        result = self._call_function_under_test(
+            intersection, [existing_int], unused)
+        self.assertIs(result, existing_int)
+        self.assertEqual(unused, [])
 
 
 class Test_get_next_first(unittest.TestCase):
