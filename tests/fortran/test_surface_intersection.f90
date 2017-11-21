@@ -27,7 +27,7 @@ module test_surface_intersection
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
-       surfaces_intersect
+       interior_combine, surfaces_intersect
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -35,7 +35,8 @@ module test_surface_intersection
        test_newton_refine, test_locate_point, test_classify_intersection, &
        test_add_st_vals, test_surfaces_intersection_points, &
        intersection_check, intersection_equal, test_get_next, test_to_front, &
-       test_add_segment, test_surfaces_intersect
+       test_add_segment, test_interior_combine, segment_check, &
+       test_surfaces_intersect
   public surface_intersection_all_tests
 
 contains
@@ -51,6 +52,7 @@ contains
     call test_get_next(success)
     call test_to_front(success)
     call test_add_segment(success)
+    call test_interior_combine(success)
     call test_surfaces_intersect(success)
 
   end subroutine surface_intersection_all_tests
@@ -839,7 +841,7 @@ contains
        intersection_, s, t, index_first, index_second, &
        interior_curve) result(same)
 
-    type(intersection), intent(in) :: intersection_
+    type(Intersection), intent(in) :: intersection_
     real(c_double), intent(in) :: s, t
     integer(c_int), intent(in) :: index_first, index_second
     integer(c_int), intent(in) :: interior_curve
@@ -856,7 +858,7 @@ contains
 
   function intersection_equal(intersection1, intersection2) result(same)
 
-    type(intersection), intent(in) :: intersection1, intersection2
+    type(Intersection), intent(in) :: intersection1, intersection2
     logical(c_bool) :: same
 
     same = intersection_check( &
@@ -1178,6 +1180,122 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_segment
+
+  subroutine test_interior_combine(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(16) :: name
+    integer(c_int) :: first, second
+    type(Intersection) :: intersections(4)
+    integer(c_int), allocatable :: segment_ends(:)
+    type(CurvedPolygonSegment), allocatable :: segments(:)
+    integer(c_int) :: status
+
+    case_id = 1
+    name = "interior_combine"
+
+    first = IntersectionClassification_FIRST
+    second = IntersectionClassification_SECOND
+
+    ! CASE 1: ``segments`` and ``segment_ends`` are not allocated,
+    !         from 1L-6L (ID: 23).
+    intersections(1) = Intersection(0.25_dp, 0.75_dp, 1, 3, second)
+    intersections(2) = Intersection(0.75_dp, 0.25_dp, 3, 1, first)
+
+    case_success = ( &
+         .NOT. allocated(segments) .AND. &
+         .NOT. allocated(segment_ends))
+    call interior_combine( &
+         2, intersections(:2), segment_ends, segments, status)
+    case_success = ( &
+         case_success .AND. &
+         allocated(segment_ends) .AND. &
+         all(segment_ends == [4]) .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 4 .AND. &
+         segment_check(segments(1), 0.75_dp, 1.0_dp, 3) .AND. &
+         segment_check(segments(2), 0.0_dp, 0.25_dp, 1) .AND. &
+         segment_check(segments(3), 0.75_dp, 1.0_dp, 6) .AND. &
+         segment_check(segments(4), 0.0_dp, 0.25_dp, 4) .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: ``segments`` and ``segment_ends`` must be re-allocated;
+    !         two disjoint intersections, from 13L-38Q (ID: 39).
+    intersections(1) = Intersection(0.625_dp, 0.25_dp, 1, 1, first)
+    intersections(2) = Intersection(0.375_dp, 0.75_dp, 1, 1, second)
+    intersections(3) = Intersection(0.3125_dp, 0.25_dp, 1, 2, first)
+    intersections(4) = Intersection(0.6875_dp, 0.75_dp, 1, 3, second)
+
+    case_success = ( &
+         allocated(segment_ends) .AND. &
+         size(segment_ends) == 1 .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 4)
+    call interior_combine( &
+         4, intersections, segment_ends, segments, status)
+    case_success = ( &
+         case_success .AND. &
+         allocated(segment_ends) .AND. &
+         all(segment_ends == [3, 6]) .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 6 .AND. &
+         segment_check(segments(1), 0.75_dp, 1.0_dp, 6) .AND. &
+         segment_check(segments(2), 0.0_dp, 0.25_dp, 4) .AND. &
+         segment_check(segments(3), 0.625_dp, 0.6875_dp, 1) .AND. &
+         segment_check(segments(4), 0.3125_dp, 0.375_dp, 1) .AND. &
+         segment_check(segments(5), 0.75_dp, 1.0_dp, 4) .AND. &
+         segment_check(segments(6), 0.0_dp, 0.25_dp, 5) .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: ``segments`` has been allocated but is not large enough;
+    !         intersection terminates after node is "rotated" via
+    !         ``to_front()``, from 1L-28Q (ID: 25) with rounded parameters
+    !         from ``s = 0.40587727318528016`` and
+    !         ``t == 0.59412272681471978``.
+    intersections(1) = Intersection(0.375_dp, 0.5625_dp, 2, 2, second)
+    intersections(2) = Intersection(0.1875_dp, 0.0_dp, 1, 3, first)
+    ! Note that the corner is the last intersection, which will be used
+    ! as ``start``.
+    deallocate(segments)
+    allocate(segments(1))  ! Too small.
+    case_success = ( &
+         allocated(segment_ends) .AND. &
+         size(segment_ends) == 2 .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 1)
+    call interior_combine( &
+         2, intersections(:2), segment_ends, segments, status)
+    case_success = ( &
+         case_success .AND. &
+         allocated(segment_ends) .AND. &
+         all(segment_ends == [3]) .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 3 .AND. &
+         segment_check(segments(1), 0.1875_dp, 1.0_dp, 1) .AND. &
+         segment_check(segments(2), 0.0_dp, 0.375_dp, 2) .AND. &
+         segment_check(segments(3), 0.5625_dp, 1.0_dp, 5) .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_interior_combine
+
+  function segment_check(segment, start, end_, edge_index) result(same)
+
+    type(CurvedPolygonSegment), intent(in) :: segment
+    real(c_double), intent(in) :: start, end_
+    integer(c_int), intent(in) :: edge_index
+    logical(c_bool) :: same
+
+    same = ( &
+         segment%start == start .AND. &
+         segment%end_ == end_ .AND. &
+         segment%edge_index == edge_index)
+
+  end function segment_check
 
   subroutine test_surfaces_intersect(success)
     logical(c_bool), intent(inout) :: success

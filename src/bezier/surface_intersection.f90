@@ -25,11 +25,11 @@ module surface_intersection
        evaluate_barycentric, jacobian_both, subdivide_nodes, compute_edge_nodes
   implicit none
   private &
-       LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, &
+       LocateCandidate, MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, MAX_EDGES, &
        newton_refine_solve, split_candidate, allocate_candidates, &
        update_candidates, ignored_edge_corner, ignored_double_corner, &
        ignored_corner, classify_tangent_intersection, no_intersections, &
-       remove_node
+       remove_node, finalize_segment
   public &
        Intersection, CurvedPolygonSegment, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
@@ -40,7 +40,7 @@ module surface_intersection
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
-       surfaces_intersect
+       interior_combine, surfaces_intersect
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -68,6 +68,7 @@ module surface_intersection
   ! NOTE: These values are also defined in equivalent Python source.
   integer(c_int), parameter :: MAX_LOCATE_SUBDIVISIONS = 20
   real(c_double), parameter :: LOCATE_EPS = 0.5_dp**47
+  integer(c_int), parameter :: MAX_EDGES = 10
   ! Values of IntersectionClassification enum:
   integer(c_int), parameter :: IntersectionClassification_FIRST = 0
   integer(c_int), parameter :: IntersectionClassification_SECOND = 1
@@ -1139,6 +1140,127 @@ contains
     index = index + 1
 
   end subroutine add_segment
+
+  subroutine finalize_segment(segment_ends, index, count)
+
+    integer(c_int), allocatable, intent(inout) :: segment_ends(:)
+    integer(c_int), intent(inout) :: index
+    integer(c_int), intent(in) :: count
+    ! Variables outside of signature.
+    integer(c_int) :: curr_size
+    integer(c_int), allocatable :: segment_ends_swap(:)
+
+    if (allocated(segment_ends)) then
+       curr_size = size(segment_ends)
+       if (curr_size < index) then
+          allocate(segment_ends_swap(index))
+          segment_ends_swap(:curr_size) = segment_ends(:curr_size)
+          call move_alloc(segment_ends_swap, segment_ends)
+       end if
+    else
+       allocate(segment_ends(index))
+    end if
+
+    segment_ends(index) = count
+    index = index + 1
+
+  end subroutine finalize_segment
+
+  subroutine interior_combine( &
+       num_intersections, intersections, &
+       segment_ends, segments, status)
+
+    ! NOTE: This subroutine is not meant to be part of the interface for this
+    !       module, but it is (for now) public, so that it can be tested.
+    ! NOTE: This assumes, but does not check, that ``num_intersections > 0``.
+    ! NOTE: If ``segments`` is already allocated / with data, the data will be
+    !       overwritten in place.
+
+    ! Possible error states:
+    ! * Status_SUCCESS: On success.
+    ! * Status_UNKNOWN: If a curved polygon requires more than ``MAX_EDGES``
+    !                   sides. (This could be due to either a particular
+    !                   complex intersection or a programming error which
+    !                   causes ``at_start`` to never be true.)
+
+    integer(c_int), intent(in) :: num_intersections
+    type(Intersection), intent(in) :: intersections(num_intersections)
+    integer(c_int), allocatable, intent(out) :: segment_ends(:)
+    type(CurvedPolygonSegment), allocatable, intent(inout) :: segments(:)
+    integer(c_int), intent(out) :: status
+    ! Variables outside of signature.
+    integer(c_int) :: unused(num_intersections)
+    integer(c_int) :: segment_index, segment_ends_index
+    integer(c_int) :: remaining, i, start
+    type(Intersection) :: curr_node, next_node
+    logical(c_bool) :: at_start
+
+    ! In this case, we know we'll have at least ``num_intersections`` segments
+    ! (and may have more due to corners).
+    if (allocated(segments)) then
+       if (size(segments) < num_intersections) then
+          deallocate(segments)
+          allocate(segments(num_intersections))
+       end if
+    else
+       allocate(segments(num_intersections))
+    end if
+
+    status = Status_SUCCESS
+
+    ! Set all of the unused indices.
+    unused = [ (i, i = 1, num_intersections) ]
+    remaining = num_intersections
+    segment_index = 1
+    segment_ends_index = 1
+    do while (remaining > 0)
+       ! "Pop" off intersection from the end to start a curved polygon.
+       start = unused(remaining)
+       remaining = remaining - 1
+
+       curr_node = intersections(start)
+       at_start = .FALSE.
+       ! Now move around the edge segments until the curved polygon's
+       ! entire boundary has been traversed.
+       edge_loop: do i = 1, MAX_EDGES
+          ! Follow along the current edge to the next node.
+          call get_next( &
+               num_intersections, intersections, unused, remaining, &
+               start, curr_node, next_node, at_start)
+          call add_segment(curr_node, next_node, segment_index, segments)
+          ! After adding the segment, check if we are back where we started.
+          if (at_start) then
+             exit edge_loop
+          end if
+
+          ! Now the ``next_node`` becomes the current node, but we may
+          ! need to "rotate" it to the next edge if on a corner.
+          call to_front( &
+               num_intersections, intersections, unused, remaining, &
+               start, next_node, curr_node, at_start)
+          ! After "rotating" to the next edge, check if we are back where
+          ! we started.
+          if (at_start) then
+             exit edge_loop
+          end if
+       end do edge_loop
+
+       if (at_start) then
+          ! NOTE: We pass ``segment_index - 1`` because it has been incremented
+          !       one past the last written index.
+          call finalize_segment( &
+               segment_ends, segment_ends_index, segment_index - 1)
+       else
+          ! If the loop terminated without reaching the start node, then
+          ! we have encountered an error.
+          ! LCOV_EXCL_START
+          status = Status_UNKNOWN
+          return
+          ! LCOV_EXCL_STOP
+       end if
+    end do
+
+  end subroutine interior_combine
 
   subroutine surfaces_intersect( &
        num_nodes1, nodes1, degree1, &
