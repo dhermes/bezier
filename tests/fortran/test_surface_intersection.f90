@@ -1046,22 +1046,22 @@ contains
     character(11) :: name
     type(Intersection) :: curr_node, next_node
     type(CurvedPolygonSegment), allocatable :: segments(:)
-    integer(c_int) :: index
+    integer(c_int) :: count
 
     case_id = 1
     name = "add_segment"
 
     ! CASE 1: ``segments`` is not allocated; intersection is classified as
     !         SECOND.
-    index = 1
+    count = 0
     curr_node = Intersection( &
          -1.0_dp, 0.25_dp, -1, 1, IntersectionClassification_SECOND)
     next_node = Intersection(t=0.5_dp)
     case_success = .NOT. allocated(segments)
-    call add_segment(curr_node, next_node, index, segments)
+    call add_segment(curr_node, next_node, count, segments)
     case_success = ( &
          case_success .AND. &
-         index == 2 .AND. &
+         count == 1 .AND. &
          allocated(segments) .AND. &
          size(segments) == 1 .AND. &
          segments(1)%start == curr_node%t .AND. &
@@ -1071,17 +1071,17 @@ contains
 
     ! CASE 2: ``segments`` is allocated, but not large enough; intersection
     !         is classified as FIRST.
-    index = 2
+    count = 1
     curr_node = Intersection( &
          0.5_dp, -1.0_dp, 2, -1, IntersectionClassification_FIRST)
     next_node = Intersection(s=1.0_dp)
     case_success = ( &
          allocated(segments) .AND. &
          size(segments) == 1)
-    call add_segment(curr_node, next_node, index, segments)
+    call add_segment(curr_node, next_node, count, segments)
     case_success = ( &
          case_success .AND. &
-         index == 3 .AND. &
+         count == 2 .AND. &
          allocated(segments) .AND. &
          size(segments) == 2 .AND. &
          segments(2)%start == curr_node%s .AND. &
@@ -1091,17 +1091,17 @@ contains
 
     ! CASE 3: ``segments`` is allocated and does not need to be resized;
     !         intersection is classified as FIRST.
-    index = 2
+    count = 1
     curr_node = Intersection( &
          0.125_dp, -1.0_dp, 3, -1, IntersectionClassification_FIRST)
     next_node = Intersection(s=0.75_dp)
     case_success = ( &
          allocated(segments) .AND. &
          size(segments) == 2)
-    call add_segment(curr_node, next_node, index, segments)
+    call add_segment(curr_node, next_node, count, segments)
     case_success = ( &
          case_success .AND. &
-         index == 3 .AND. &
+         count == 2 .AND. &
          allocated(segments) .AND. &
          size(segments) == 2 .AND. &
          segments(2)%start == curr_node%s .AND. &
@@ -1121,7 +1121,7 @@ contains
     type(Intersection) :: intersections(4)
     integer(c_int), allocatable :: segment_ends(:)
     type(CurvedPolygonSegment), allocatable :: segments(:)
-    integer(c_int) :: contained, status
+    integer(c_int) :: num_intersected, contained, status
 
     case_id = 1
     name = "interior_combine"
@@ -1138,9 +1138,12 @@ contains
          .NOT. allocated(segments) .AND. &
          .NOT. allocated(segment_ends))
     call interior_combine( &
-         2, intersections(:2), segment_ends, segments, contained, status)
+         2, intersections(:2), &
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
          case_success .AND. &
+         num_intersected == 1 .AND. &
          allocated(segment_ends) .AND. &
          all(segment_ends == [4]) .AND. &
          allocated(segments) .AND. &
@@ -1153,7 +1156,8 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: ``segments`` and ``segment_ends`` must be re-allocated;
+    ! CASE 2: ``segments`` and ``segment_ends`` must be re-allocated
+    !         (``segment_ends`` is re-allocated in ``finalize_segment()``);
     !         two disjoint intersections, from 13L-38Q (ID: 39).
     intersections(1) = Intersection(0.625_dp, 0.25_dp, 1, 1, first)
     intersections(2) = Intersection(0.375_dp, 0.75_dp, 1, 1, second)
@@ -1166,9 +1170,12 @@ contains
          allocated(segments) .AND. &
          size(segments) == 4)
     call interior_combine( &
-         4, intersections, segment_ends, segments, contained, status)
+         4, intersections, &
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
          case_success .AND. &
+         num_intersected == 2 .AND. &
          allocated(segment_ends) .AND. &
          all(segment_ends == [3, 6]) .AND. &
          allocated(segments) .AND. &
@@ -1183,10 +1190,11 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: ``segments`` has been allocated but is not large enough;
-    !         intersection terminates after node is "rotated" via
-    !         ``to_front()``, from 1L-28Q (ID: 25) with rounded parameters
-    !         from ``s = 0.40587727318528016`` and
+    ! CASE 3: ``segments`` has been allocated but is not large enough (at the
+    !         outset of the subroutine ``segments`` is resized based on the
+    !         size of ``intersections``); intersection terminates after node
+    !         is "rotated" via ``to_front()``, from 1L-28Q (ID: 25) with
+    !         rounded parameters from ``s = 0.40587727318528016`` and
     !         ``t == 0.59412272681471978``.
     intersections(1) = Intersection(0.375_dp, 0.5625_dp, 2, 2, second)
     intersections(2) = Intersection(0.1875_dp, 0.0_dp, 1, 3, first)
@@ -1200,11 +1208,15 @@ contains
          allocated(segments) .AND. &
          size(segments) == 1)
     call interior_combine( &
-         2, intersections(:2), segment_ends, segments, contained, status)
+         2, intersections(:2), &
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
          case_success .AND. &
+         num_intersected == 1 .AND. &
          allocated(segment_ends) .AND. &
-         all(segment_ends == [3]) .AND. &
+         size(segment_ends) == 2 .AND. &  ! Unchanged
+         segment_ends(1) == 3 .AND. &
          allocated(segments) .AND. &
          size(segments) == 3 .AND. &
          segment_check(segments(1), 0.1875_dp, 1.0_dp, 1) .AND. &
@@ -1214,37 +1226,75 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: First surface is completely contained in the other; from
+    ! CASE 4: ``segments`` is larger than needed; inspired by 11Q-12Q (ID: 16)
+    !         with rounded parameters from ``0.14644660940672624`` and
+    !         ``0.8535533905932737``.
+    intersections(1) = Intersection(0.140625_dp, 0.84375_dp, 1, 1, first)
+    intersections(2) = Intersection(0.84375_dp, 0.140625_dp, 1, 1, second)
+    case_success = ( &
+         allocated(segment_ends) .AND. &
+         size(segment_ends) == 2 .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 3)
+    call interior_combine( &
+         2, intersections(:2), &
+         num_intersected, segment_ends, segments, &
+         contained, status)
+    case_success = ( &
+         case_success .AND. &
+         num_intersected == 1 .AND. &
+         allocated(segment_ends) .AND. &
+         size(segment_ends) == 2 .AND. &  ! Unchanged
+         segment_ends(1) == 2 .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 3 .AND. &  ! Unchanged
+         segment_check(segments(1), 0.140625_dp, 0.84375_dp, 4) .AND. &
+         segment_check(segments(2), 0.140625_dp, 0.84375_dp, 1) .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: First surface is completely contained in the other; from
     !         13Q-35Q (ID: 37).
     intersections(1) = Intersection(0.0_dp, 0.5_dp, 3, 3, first)
     call interior_combine( &
-         1, intersections(:1), segment_ends, segments, contained, status)
+         1, intersections(:1), &
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
+         num_intersected == 0 .AND. &
          contained == SurfaceContained_FIRST .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: Second surface is completely contained in the other; from
+    ! CASE 6: Second surface is completely contained in the other; from
     !         1L-9L (ID: 30).
     intersections(1) = Intersection(0.875_dp, 0.0_dp, 1, 2, second)
     intersections(2) = Intersection(0.75_dp, 0.0_dp, 2, 3, second)
     intersections(3) = Intersection(0.875_dp, 0.0_dp, 3, 1, second)
     call interior_combine( &
-         3, intersections(:3), segment_ends, segments, contained, status)
+         3, intersections(:3), &
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
+         num_intersected == 0 .AND. &
          contained == SurfaceContained_SECOND .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 6: Intersection only contains "whole" edges of each surface, but
+    ! CASE 7: Intersection only contains "whole" edges of each surface, but
     !         is not either one of the surface; from 1L-39Q (ID: 40).
     intersections(1) = Intersection(0.0_dp, 0.0_dp, 2, 1, second)
     intersections(2) = Intersection(0.0_dp, 0.0_dp, 3, 2, first)
     call interior_combine( &
-         2, intersections(:2), segment_ends, segments, contained, status)
+         2, intersections(:2), &
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
+         num_intersected == 1 .AND. &
          allocated(segment_ends) .AND. &
-         all(segment_ends == [3]) .AND. &
+         size(segment_ends) == 2 .AND. &
+         segment_ends(1) == 3 .AND. &
          allocated(segments) .AND. &
          size(segments) == 3 .AND. &
          segment_check(segments(1), 0.0_dp, 1.0_dp, 3) .AND. &
@@ -1276,7 +1326,7 @@ contains
     logical :: case_success
     integer :: case_id
     character(18) :: name
-    integer(c_int) :: contained, status
+    integer(c_int) :: num_intersected, contained, status
     real(c_double) :: linear1(3, 2), linear2(3, 2)
     real(c_double) :: quadratic1(6, 2), quadratic2(6, 2)
     integer(c_int), allocatable :: segment_ends(:)
@@ -1295,8 +1345,10 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
+         num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
@@ -1313,8 +1365,10 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
+         num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
@@ -1328,8 +1382,10 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
+         num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_SECOND .AND. &
@@ -1339,8 +1395,10 @@ contains
     ! CASE 4: Surface 1 contained in surface 2 (re-uses all data from CASE 3).
     call surfaces_intersect( &
          3, linear2, 1, 3, linear1, 1, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
+         num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_FIRST .AND. &
@@ -1355,8 +1413,10 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
+         num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
@@ -1373,8 +1433,10 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
+         num_intersected == 1 .AND. &
          allocated(segment_ends) .AND. &
          all(segment_ends == [6]) .AND. &
          allocated(segments) .AND. &
@@ -1405,10 +1467,12 @@ contains
 
     call surfaces_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
-         .NOT. allocated(segment_ends) .AND. &
-         .NOT. allocated(segments) .AND. &
+         num_intersected == 0 .AND. &
+         allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
+         allocated(segments) .AND. &  ! Though unused, not de-allocated.
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1423,10 +1487,12 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
-         .NOT. allocated(segment_ends) .AND. &
-         .NOT. allocated(segments) .AND. &
+         num_intersected == 0 .AND. &
+         allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
+         allocated(segments) .AND. &  ! Though unused, not de-allocated.
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1447,10 +1513,12 @@ contains
 
     call surfaces_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
-         .NOT. allocated(segment_ends) .AND. &
-         .NOT. allocated(segments) .AND. &
+         num_intersected == 0 .AND. &
+         allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
+         allocated(segments) .AND. &  ! Though unused, not de-allocated.
          contained == SurfaceContained_FIRST .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1459,10 +1527,12 @@ contains
     !          **all** data from CASE 9).
     call surfaces_intersect( &
          6, quadratic2, 2, 6, quadratic1, 2, &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, &
+         contained, status)
     case_success = ( &
-         .NOT. allocated(segment_ends) .AND. &
-         .NOT. allocated(segments) .AND. &
+         num_intersected == 0 .AND. &
+         allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
+         allocated(segments) .AND. &  ! Though unused, not de-allocated.
          contained == SurfaceContained_SECOND .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)

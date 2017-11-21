@@ -1096,7 +1096,7 @@ contains
 
   end subroutine to_front
 
-  subroutine add_segment(curr_node, next_node, index, segments)
+  subroutine add_segment(curr_node, next_node, count, segments)
 
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
@@ -1104,85 +1104,82 @@ contains
     !       is either ``FIRST`` or ``SECOND``.
 
     type(Intersection), intent(in) :: curr_node, next_node
-    integer(c_int), intent(inout) :: index
+    integer(c_int), intent(inout) :: count
     type(CurvedPolygonSegment), allocatable, intent(inout) :: segments(:)
     ! Variables outside of signature.
     integer(c_int) :: curr_size
     type(CurvedPolygonSegment), allocatable :: segments_swap(:)
 
+    ! Update the count (assumes caller will start with zero).
+    count = count + 1
+
     ! First, make sure we have enough space.
     if (allocated(segments)) then
        curr_size = size(segments)
-       if (curr_size < index) then
-          allocate(segments_swap(index))
+       if (curr_size < count) then
+          allocate(segments_swap(count))
           segments_swap(:curr_size) = segments(:curr_size)
           call move_alloc(segments_swap, segments)
        end if
     else
-       allocate(segments(index))
+       allocate(segments(count))
     end if
 
     if (curr_node%interior_curve == IntersectionClassification_FIRST) then
-       segments(index)%start = curr_node%s
-       segments(index)%end_ = next_node%s
+       segments(count)%start = curr_node%s
+       segments(count)%end_ = next_node%s
        ! NOTE: This **assumes**, but does not check that ``index_first``
        !       is the same for both ``curr_node`` and ``next_node``.
-       segments(index)%edge_index = curr_node%index_first
+       segments(count)%edge_index = curr_node%index_first
     else
-       segments(index)%start = curr_node%t
-       segments(index)%end_ = next_node%t
+       segments(count)%start = curr_node%t
+       segments(count)%end_ = next_node%t
        ! NOTE: This **assumes**, but does not check that ``index_second``
        !       is the same for both ``curr_node`` and ``next_node``.
-       segments(index)%edge_index = curr_node%index_second + 3
+       segments(count)%edge_index = curr_node%index_second + 3
     end if
-
-    ! Update the index.
-    index = index + 1
 
   end subroutine add_segment
 
-  subroutine finalize_segment(segment_ends, index, count)
+  subroutine finalize_segment(segment_ends, num_intersected, count)
 
     integer(c_int), allocatable, intent(inout) :: segment_ends(:)
-    integer(c_int), intent(inout) :: index
+    integer(c_int), intent(inout) :: num_intersected
     integer(c_int), intent(in) :: count
     ! Variables outside of signature.
     integer(c_int) :: curr_size
     integer(c_int), allocatable :: segment_ends_swap(:)
 
+    ! Update the number intersected (assumes caller will start with zero).
+    num_intersected = num_intersected + 1
+
     if (allocated(segment_ends)) then
        curr_size = size(segment_ends)
-       if (curr_size < index) then
-          allocate(segment_ends_swap(index))
+       if (curr_size < num_intersected) then
+          allocate(segment_ends_swap(num_intersected))
           segment_ends_swap(:curr_size) = segment_ends(:curr_size)
           call move_alloc(segment_ends_swap, segment_ends)
        end if
     else
-       allocate(segment_ends(index))
+       allocate(segment_ends(num_intersected))
     end if
 
-    segment_ends(index) = count
-    index = index + 1
+    segment_ends(num_intersected) = count
 
   end subroutine finalize_segment
 
-  subroutine check_contained(segment_ends, segments, contained)
+  subroutine check_contained( &
+       num_intersected, segment_ends, segments, contained)
 
-    integer(c_int), allocatable, intent(in) :: segment_ends(:)
-    type(CurvedPolygonSegment), allocatable, intent(in) :: segments(:)
+    integer(c_int), intent(inout) :: num_intersected
+    integer(c_int), intent(in) :: segment_ends(:)
+    type(CurvedPolygonSegment), intent(in) :: segments(:)
     integer(c_int), intent(out) :: contained
 
     contained = SurfaceContained_NEITHER
 
-    if (.NOT. allocated(segment_ends)) then
-       ! NOTE: This should never occur, since the caller will have
-       !       exhausted ``intersections(:)`` which was already checked
-       !       to have size greater than 0.
-       return  ! LCOV_EXCL_LINE
-    end if
-
     ! Only consider cases where there is exactly one curved polygon.
-    if (size(segment_ends) /= 1) then
+    if (num_intersected /= 1) then
        return
     end if
 
@@ -1205,11 +1202,13 @@ contains
          all(segments(:3)%edge_index == [1, 2, 3]) .OR. &
          all(segments(:3)%edge_index == [2, 3, 1]) .OR. &
          all(segments(:3)%edge_index == [3, 1, 2])) then
+       num_intersected = 0
        contained = SurfaceContained_FIRST
     else if ( &
          all(segments(:3)%edge_index == [4, 5, 6]) .OR. &
          all(segments(:3)%edge_index == [5, 6, 4]) .OR. &
          all(segments(:3)%edge_index == [6, 4, 5])) then
+       num_intersected = 0
        contained = SurfaceContained_SECOND
     end if
 
@@ -1217,10 +1216,14 @@ contains
 
   subroutine interior_combine( &
        num_intersections, intersections, &
-       segment_ends, segments, contained, status)
+       num_intersected, segment_ends, segments, &
+       contained, status)
 
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
+    ! NOTE: ``num_intersected`` will be the **actual** size of
+    !       ``segment_ends``. The size is de-coupled from the **actual**
+    !       size since allocatable and we want to allow re-use.
     ! NOTE: This assumes, but does not check, that ``num_intersections > 0``.
     ! NOTE: If ``segments`` is already allocated / with data, the data will be
     !       overwritten in place.
@@ -1234,13 +1237,14 @@ contains
 
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
-    integer(c_int), allocatable, intent(out) :: segment_ends(:)
+    integer(c_int), intent(out) :: num_intersected
+    integer(c_int), allocatable, intent(inout) :: segment_ends(:)
     type(CurvedPolygonSegment), allocatable, intent(inout) :: segments(:)
     integer(c_int), intent(out) :: contained
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: unused(num_intersections)
-    integer(c_int) :: segment_index, segment_ends_index
+    integer(c_int) :: segment_index
     integer(c_int) :: remaining, i, start
     type(Intersection) :: curr_node, next_node
     logical(c_bool) :: at_start
@@ -1262,8 +1266,8 @@ contains
     ! Set all of the unused indices.
     unused = [ (i, i = 1, num_intersections) ]
     remaining = num_intersections
-    segment_index = 1
-    segment_ends_index = 1
+    segment_index = 0  ! Last written index.
+    num_intersected = 0
     do while (remaining > 0)
        ! "Pop" off intersection from the end to start a curved polygon.
        start = unused(remaining)
@@ -1297,10 +1301,8 @@ contains
        end do edge_loop
 
        if (at_start) then
-          ! NOTE: We pass ``segment_index - 1`` because it has been incremented
-          !       one past the last written index.
           call finalize_segment( &
-               segment_ends, segment_ends_index, segment_index - 1)
+               segment_ends, num_intersected, segment_index)
        else
           ! If the loop terminated without reaching the start node, then
           ! we have encountered an error.
@@ -1312,16 +1314,20 @@ contains
     end do
 
     ! As a final pass, check if the intersection is one of the two surfaces.
-    call check_contained(segment_ends, segments, contained)
+    call check_contained(num_intersected, segment_ends, segments, contained)
 
   end subroutine interior_combine
 
   subroutine surfaces_intersect( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
-       segment_ends, segments, contained, status)
+       num_intersected, segment_ends, segments, &
+       contained, status)
 
     ! NOTE: ``contained`` will be a ``SurfaceContained`` enum.
+    ! NOTE: ``num_intersected`` will be the **actual** size of
+    !       ``segment_ends``. The size is de-coupled from the allocated
+    !       size since we want to allow re-use.
     ! NOTE: ``segment_ends`` will contain the indices that split
     !       ``segments`` into distinct curved polygons. For example,
     !       if the first 3 segments correspond to one curved polygon
@@ -1348,8 +1354,9 @@ contains
     integer(c_int), intent(in) :: num_nodes2
     real(c_double), intent(in) :: nodes2(num_nodes2, 2)
     integer(c_int), intent(in) :: degree2
-    integer(c_int), allocatable, intent(out) :: segment_ends(:)
-    type(CurvedPolygonSegment), allocatable, intent(out) :: segments(:)
+    integer(c_int), intent(out) :: num_intersected
+    integer(c_int), allocatable, intent(inout) :: segment_ends(:)
+    type(CurvedPolygonSegment), allocatable, intent(inout) :: segments(:)
     integer(c_int), intent(out) :: contained
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
@@ -1357,12 +1364,14 @@ contains
     type(Intersection), allocatable :: intersections(:)
     integer(c_int) :: num_intersections, all_types
 
+    num_intersected = 0
+    contained = SurfaceContained_NEITHER
+    status = Status_SUCCESS
+
     ! If the bounded boxes do not intersect, the surfaces cannot.
     call bbox_intersect( &
          num_nodes1, nodes1, num_nodes2, nodes2, bbox_int)
     if (bbox_int /= BoxIntersectionType_INTERSECTION) then
-       contained = SurfaceContained_NEITHER
-       status = Status_SUCCESS
        return
     end if
 
@@ -1381,10 +1390,8 @@ contains
                num_nodes2, nodes2, degree2, contained)
           return
        else if (all_types == 2**IntersectionClassification_OPPOSED) then
-          contained = SurfaceContained_NEITHER
           return
        else if (all_types == 2**IntersectionClassification_IGNORED_CORNER) then
-          contained = SurfaceContained_NEITHER
           return
        else if (all_types == 2**IntersectionClassification_TANGENT_FIRST) then
           contained = SurfaceContained_FIRST
@@ -1407,7 +1414,7 @@ contains
 
     call interior_combine( &
          num_intersections, intersections(:num_intersections), &
-         segment_ends, segments, contained, status)
+         num_intersected, segment_ends, segments, contained, status)
 
   end subroutine surfaces_intersect
 
