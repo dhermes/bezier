@@ -14,8 +14,9 @@ module test_surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_SAME_CURVATURE, &
-       Status_BAD_TANGENT, Status_EDGE_END, Status_UNKNOWN
+       Status_SUCCESS, Status_PARALLEL, Status_INSUFFICIENT_SPACE, &
+       Status_SAME_CURVATURE, Status_BAD_TANGENT, Status_EDGE_END, &
+       Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
   use surface_intersection, only: &
        Intersection, CurvedPolygonSegment, &
@@ -27,7 +28,7 @@ module test_surface_intersection
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
-       interior_combine, surfaces_intersect
+       interior_combine, surfaces_intersect, surfaces_intersect_abi
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -36,7 +37,7 @@ module test_surface_intersection
        test_add_st_vals, test_surfaces_intersection_points, &
        intersection_check, intersection_equal, test_get_next, test_to_front, &
        test_add_segment, test_interior_combine, segment_check, &
-       test_surfaces_intersect
+       test_surfaces_intersect, test_surfaces_intersect_abi
   public surface_intersection_all_tests
 
 contains
@@ -54,6 +55,7 @@ contains
     call test_add_segment(success)
     call test_interior_combine(success)
     call test_surfaces_intersect(success)
+    call test_surfaces_intersect_abi(success)
 
   end subroutine surface_intersection_all_tests
 
@@ -1538,5 +1540,93 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_surfaces_intersect
+
+  subroutine test_surfaces_intersect_abi(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(22) :: name
+    real(c_double) :: linear1(3, 2), linear2(3, 2), quadratic(6, 2)
+    integer(c_int) :: num_intersected, contained, status
+    integer(c_int) :: segment_ends(2)
+    type(CurvedPolygonSegment) :: segments(6)
+
+    case_id = 1
+    name = "surfaces_intersect_abi"
+
+    ! CASE 1: Intersection results in error.
+    linear1(1, :) = 0
+    linear1(2, :) = [5.0_dp, 0.0_dp]
+    linear1(3, :) = [0.0_dp, 5.0_dp]
+    linear2(1, :) = [2.0_dp, 0.0_dp]
+    linear2(2, :) = [3.0_dp, 0.0_dp]
+    linear2(3, :) = [2.0_dp, 1.0_dp]
+    call surfaces_intersect_abi( &
+         3, linear1, 1, 3, linear2, 1, &
+         0, 0, num_intersected, segment_ends(:0), segments(:0), &
+         contained, status)
+    case_success = ( &
+         num_intersected == 0 .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_PARALLEL)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: ``segment_ends`` is not large enough; two disjoint intersections
+    !         from 13L-38Q (ID: 39).
+    linear1(1, :) = [-8.0_dp, 0.0_dp]
+    linear1(2, :) = [8.0_dp, 0.0_dp]
+    linear1(3, :) = [0.0_dp, 8.0_dp]
+    quadratic(1, :) = [4.0_dp, 3.0_dp]
+    quadratic(2, :) = [0.0_dp, -5.0_dp]
+    quadratic(3, :) = [-4.0_dp, 3.0_dp]
+    quadratic(4, :) = [2.0_dp, -3.0_dp]
+    quadratic(5, :) = [-2.0_dp, -3.0_dp]
+    quadratic(6, :) = [0.0_dp, -9.0_dp]
+    segment_ends(:2) = [-1337, -42]
+    call surfaces_intersect_abi( &
+         3, linear1, 1, 6, quadratic, 2, &
+         1, 3, num_intersected, segment_ends, segments(:3), &
+         contained, status)
+    case_success = ( &
+         num_intersected == 2 .AND. &
+         all(segment_ends(:2) == [-1337, -42]) .AND. &  ! Unchanged.
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_INSUFFICIENT_SPACE)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: ``segments`` is not large enough; two disjoint intersections
+    !         from 13L-38Q (ID: 39).
+    call surfaces_intersect_abi( &
+         3, linear1, 1, 6, quadratic, 2, &
+         2, 3, num_intersected, segment_ends, segments(:3), &
+         contained, status)
+    case_success = ( &
+         num_intersected == 2 .AND. &
+         all(segment_ends(:2) == [3, 6]) .AND. &  ! Changed.
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_INSUFFICIENT_SPACE)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Successful intersection; two disjoint intersections
+    !         from 13L-38Q (ID: 39).
+    call surfaces_intersect_abi( &
+         3, linear1, 1, 6, quadratic, 2, &
+         2, 6, num_intersected, segment_ends, segments, &
+         contained, status)
+    case_success = ( &
+         num_intersected == 2 .AND. &
+         all(segment_ends(:2) == [3, 6]) .AND. &
+         segment_check(segments(1), 0.75_dp, 1.0_dp, 6) .AND. &
+         segment_check(segments(2), 0.0_dp, 0.25_dp, 4) .AND. &
+         segment_check(segments(3), 0.625_dp, 0.6875_dp, 1) .AND. &
+         segment_check(segments(4), 0.3125_dp, 0.375_dp, 1) .AND. &
+         segment_check(segments(5), 0.75_dp, 1.0_dp, 4) .AND. &
+         segment_check(segments(6), 0.0_dp, 0.25_dp, 5) .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_surfaces_intersect_abi
 
 end module test_surface_intersection

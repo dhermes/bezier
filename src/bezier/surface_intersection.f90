@@ -14,8 +14,8 @@ module surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use status, only: &
-       Status_SUCCESS, Status_SAME_CURVATURE, Status_BAD_TANGENT, &
-       Status_EDGE_END, Status_UNKNOWN
+       Status_SUCCESS, Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, &
+       Status_BAD_TANGENT, Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
   use curve_intersection, only: &
        BoxIntersectionType_INTERSECTION, bbox_intersect, all_intersections
@@ -40,7 +40,7 @@ module surface_intersection
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
-       interior_combine, surfaces_intersect
+       interior_combine, surfaces_intersect, surfaces_intersect_abi
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -1417,5 +1417,84 @@ contains
          num_intersected, segment_ends, segments, contained, status)
 
   end subroutine surfaces_intersect
+
+  subroutine surfaces_intersect_abi( &
+       num_nodes1, nodes1, degree1, &
+       num_nodes2, nodes2, degree2, &
+       segment_ends_size, segments_size, &
+       num_intersected, segment_ends, segments, &
+       contained, status) &
+       bind(c, name='surface_intersections')
+
+    ! NOTE: The number of intersections cannot be known beforehand. If
+    !       ``segment_ends`` is not large enough, then it will not be
+    !       populated and ``status`` will be set to ``INSUFFICIENT_SPACE``.
+    !       However, the value of ``num_intersected`` will be accurate and
+    !       ``segment_ends`` should be re-sized by the caller to accommodate.
+    !       Additionally, the final element of ``segment_ends`` determines
+    !       the number of segments and this may exceed ``segments_size``.
+    !       In this case, the ``status`` will also be ``INSUFFICIENT_SPACE``
+    !       but the size can be determined by the final element of
+    !       ``segment_ends`` and the caller can resize ``segments``
+    !       accordingly.
+
+    ! Possible error states:
+    ! * Status_SUCCESS           : Via ``surfaces_intersect()``.
+    ! * Status_PARALLEL          : Via ``surfaces_intersect()``.
+    ! * Status_WIGGLE_FAIL       : Via ``surfaces_intersect()``.
+    ! * Status_NO_CONVERGE       : Via ``surfaces_intersect()``.
+    ! * (N >= 64)                : Via ``surfaces_intersect()``.
+    ! * Status_EDGE_END          : Via ``surfaces_intersect()``.
+    ! * Status_BAD_TANGENT       : Via ``surfaces_intersect()``.
+    ! * Status_SAME_CURVATURE    : Via ``surfaces_intersect()``.
+    ! * Status_UNKNOWN           : Via ``surfaces_intersect()``.
+    ! * Status_INSUFFICIENT_SPACE: If ``segment_ends_size`` is smaller than
+    !                              ``num_intersected`` **OR** if
+    !                              ``segments_size`` is smaller than the number
+    !                              of segments.
+
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    integer(c_int), intent(in) :: degree1
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    integer(c_int), intent(in) :: degree2
+    integer(c_int), intent(in) :: segment_ends_size, segments_size
+    integer(c_int), intent(out) :: num_intersected
+    integer(c_int), intent(out) :: segment_ends(segment_ends_size)
+    type(CurvedPolygonSegment), intent(out) :: segments(segments_size)
+    integer(c_int), intent(out) :: contained
+    integer(c_int), intent(out) :: status
+    ! Variables outside of signature.
+    integer(c_int), allocatable :: segment_ends_workspace(:)
+    type(CurvedPolygonSegment), allocatable :: segments_workspace(:)
+    integer(c_int) :: num_segments
+
+    call surfaces_intersect( &
+         num_nodes1, nodes1, degree1, &
+         num_nodes2, nodes2, degree2, &
+         num_intersected, segment_ends_workspace, segments_workspace, &
+         contained, status)
+
+    if (status /= Status_SUCCESS) then
+       return
+    end if
+
+    if (num_intersected > segment_ends_size) then
+       status = Status_INSUFFICIENT_SPACE
+       return
+    end if
+
+    segment_ends(:num_intersected) = ( &
+         segment_ends_workspace(:num_intersected))
+    num_segments = segment_ends(num_intersected)
+    if (num_segments > segments_size) then
+       status = Status_INSUFFICIENT_SPACE
+       return
+    end if
+
+    segments(:num_segments) = segments_workspace(:num_segments)
+
+  end subroutine surfaces_intersect_abi
 
 end module surface_intersection
