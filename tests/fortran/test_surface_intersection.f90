@@ -1121,7 +1121,7 @@ contains
     type(Intersection) :: intersections(4)
     integer(c_int), allocatable :: segment_ends(:)
     type(CurvedPolygonSegment), allocatable :: segments(:)
-    integer(c_int) :: status
+    integer(c_int) :: contained, status
 
     case_id = 1
     name = "interior_combine"
@@ -1138,7 +1138,7 @@ contains
          .NOT. allocated(segments) .AND. &
          .NOT. allocated(segment_ends))
     call interior_combine( &
-         2, intersections(:2), segment_ends, segments, status)
+         2, intersections(:2), segment_ends, segments, contained, status)
     case_success = ( &
          case_success .AND. &
          allocated(segment_ends) .AND. &
@@ -1149,6 +1149,7 @@ contains
          segment_check(segments(2), 0.0_dp, 0.25_dp, 1) .AND. &
          segment_check(segments(3), 0.75_dp, 1.0_dp, 6) .AND. &
          segment_check(segments(4), 0.0_dp, 0.25_dp, 4) .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1165,7 +1166,7 @@ contains
          allocated(segments) .AND. &
          size(segments) == 4)
     call interior_combine( &
-         4, intersections, segment_ends, segments, status)
+         4, intersections, segment_ends, segments, contained, status)
     case_success = ( &
          case_success .AND. &
          allocated(segment_ends) .AND. &
@@ -1178,6 +1179,7 @@ contains
          segment_check(segments(4), 0.3125_dp, 0.375_dp, 1) .AND. &
          segment_check(segments(5), 0.75_dp, 1.0_dp, 4) .AND. &
          segment_check(segments(6), 0.0_dp, 0.25_dp, 5) .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1198,7 +1200,7 @@ contains
          allocated(segments) .AND. &
          size(segments) == 1)
     call interior_combine( &
-         2, intersections(:2), segment_ends, segments, status)
+         2, intersections(:2), segment_ends, segments, contained, status)
     case_success = ( &
          case_success .AND. &
          allocated(segment_ends) .AND. &
@@ -1208,6 +1210,47 @@ contains
          segment_check(segments(1), 0.1875_dp, 1.0_dp, 1) .AND. &
          segment_check(segments(2), 0.0_dp, 0.375_dp, 2) .AND. &
          segment_check(segments(3), 0.5625_dp, 1.0_dp, 5) .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: First surface is completely contained in the other; from
+    !         13Q-35Q (ID: 37).
+    intersections(1) = Intersection(0.0_dp, 0.5_dp, 3, 3, first)
+    call interior_combine( &
+         1, intersections(:1), segment_ends, segments, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_FIRST .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Second surface is completely contained in the other; from
+    !         1L-9L (ID: 30).
+    intersections(1) = Intersection(0.875_dp, 0.0_dp, 1, 2, second)
+    intersections(2) = Intersection(0.75_dp, 0.0_dp, 2, 3, second)
+    intersections(3) = Intersection(0.875_dp, 0.0_dp, 3, 1, second)
+    call interior_combine( &
+         3, intersections(:3), segment_ends, segments, contained, status)
+    case_success = ( &
+         contained == SurfaceContained_SECOND .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Intersection only contains "whole" edges of each surface, but
+    !         is not either one of the surface; from 1L-39Q (ID: 40).
+    intersections(1) = Intersection(0.0_dp, 0.0_dp, 2, 1, second)
+    intersections(2) = Intersection(0.0_dp, 0.0_dp, 3, 2, first)
+    call interior_combine( &
+         2, intersections(:2), segment_ends, segments, contained, status)
+    case_success = ( &
+         allocated(segment_ends) .AND. &
+         all(segment_ends == [3]) .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 3 .AND. &
+         segment_check(segments(1), 0.0_dp, 1.0_dp, 3) .AND. &
+         segment_check(segments(2), 0.0_dp, 1.0_dp, 1) .AND. &
+         segment_check(segments(3), 0.0_dp, 1.0_dp, 4) .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 

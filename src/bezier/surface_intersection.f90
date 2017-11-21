@@ -29,7 +29,7 @@ module surface_intersection
        newton_refine_solve, split_candidate, allocate_candidates, &
        update_candidates, ignored_edge_corner, ignored_double_corner, &
        ignored_corner, classify_tangent_intersection, no_intersections, &
-       remove_node, finalize_segment
+       remove_node, finalize_segment, check_contained
   public &
        Intersection, CurvedPolygonSegment, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
@@ -1166,9 +1166,58 @@ contains
 
   end subroutine finalize_segment
 
+  subroutine check_contained(segment_ends, segments, contained)
+
+    integer(c_int), allocatable, intent(in) :: segment_ends(:)
+    type(CurvedPolygonSegment), allocatable, intent(in) :: segments(:)
+    integer(c_int), intent(out) :: contained
+
+    contained = SurfaceContained_NEITHER
+
+    if (.NOT. allocated(segment_ends)) then
+       ! NOTE: This should never occur, since the caller will have
+       !       exhausted ``intersections(:)`` which was already checked
+       !       to have size greater than 0.
+       return  ! LCOV_EXCL_LINE
+    end if
+
+    ! Only consider cases where there is exactly one curved polygon.
+    if (size(segment_ends) /= 1) then
+       return
+    end if
+
+    ! Only consider cases where the curved polygon has 3 edges.
+    if (segment_ends(1) /= 3) then
+       return
+    end if
+
+    ! NOTE: This assumes, but does not check, that if ``segment_ends == [3]``
+    !       then ``segments`` is allocated and at least length 3.
+    ! Only consider cases where the **entire** edge is used (no roundoff).
+    if ( &
+         any(segments(:3)%start /= 0.0_dp) .OR. &
+         any(segments(:3)%end_ /= 1.0_dp)) then
+       return
+    end if
+
+    ! Finally, check if the edges all come from the same surface.
+    if ( &
+         all(segments(:3)%edge_index == [1, 2, 3]) .OR. &
+         all(segments(:3)%edge_index == [2, 3, 1]) .OR. &
+         all(segments(:3)%edge_index == [3, 1, 2])) then
+       contained = SurfaceContained_FIRST
+    else if ( &
+         all(segments(:3)%edge_index == [4, 5, 6]) .OR. &
+         all(segments(:3)%edge_index == [5, 6, 4]) .OR. &
+         all(segments(:3)%edge_index == [6, 4, 5])) then
+       contained = SurfaceContained_SECOND
+    end if
+
+  end subroutine check_contained
+
   subroutine interior_combine( &
        num_intersections, intersections, &
-       segment_ends, segments, status)
+       segment_ends, segments, contained, status)
 
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
@@ -1187,6 +1236,7 @@ contains
     type(Intersection), intent(in) :: intersections(num_intersections)
     integer(c_int), allocatable, intent(out) :: segment_ends(:)
     type(CurvedPolygonSegment), allocatable, intent(inout) :: segments(:)
+    integer(c_int), intent(out) :: contained
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: unused(num_intersections)
@@ -1207,6 +1257,7 @@ contains
     end if
 
     status = Status_SUCCESS
+    contained = SurfaceContained_NEITHER
 
     ! Set all of the unused indices.
     unused = [ (i, i = 1, num_intersections) ]
@@ -1259,6 +1310,9 @@ contains
           ! LCOV_EXCL_STOP
        end if
     end do
+
+    ! As a final pass, check if the intersection is one of the two surfaces.
+    call check_contained(segment_ends, segments, contained)
 
   end subroutine interior_combine
 
@@ -1353,7 +1407,7 @@ contains
 
     call interior_combine( &
          num_intersections, intersections(:num_intersections), &
-         segment_ends, segments, status)
+         segment_ends, segments, contained, status)
 
   end subroutine surfaces_intersect
 
