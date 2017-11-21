@@ -942,26 +942,7 @@ contains
          at_start)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: On an edge of first surface, move to a corner that is **also** an
-    !         intersection.
-    curr_node%index_first = 1
-    curr_node%s = 0.625_dp
-    curr_node%interior_curve = first
-    intersections(1)%index_first = 1
-    intersections(1)%s = 1.0_dp
-    intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
-    unused(1) = 2  ! Won't contain ``intersection_index == 1``.
-    remaining = 1
-    call get_next( &
-         1, intersections(:1), unused, remaining, &
-         -1, curr_node, next_node, at_start)
-    case_success = ( &
-         intersection_equal(next_node, intersections(1)) .AND. &
-         remaining == 1 .AND. &
-         .NOT. at_start)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 4: On an edge of second surface, no other intersections on
+    ! CASE 3: On an edge of second surface, no other intersections on
     !         that edge.
     curr_node%index_second = 3
     curr_node%t = 0.625_dp
@@ -979,7 +960,7 @@ contains
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: On an edge of second surface, **multiple** other intersections
+    ! CASE 4: On an edge of second surface, **multiple** other intersections
     !         on same edge.
     curr_node%index_second = 2
     curr_node%t = 0.125_dp
@@ -1013,26 +994,6 @@ contains
          intersection_equal(next_node, intersections(3)) .AND. &
          remaining == 3 .AND. &
          .NOT. at_start)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 6: On an edge of second surface, move to a corner that is **also**
-    !         an intersection.
-    curr_node%index_second = 1
-    curr_node%t = 0.5_dp
-    curr_node%interior_curve = second
-    intersections(1)%index_second = 1
-    intersections(1)%t = 1.0_dp
-    intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
-    unused = [1, -1, -1, -1]  ! Will be removed.
-    remaining = 1
-    call get_next( &
-         1, intersections(:1), unused, remaining, &
-         1, curr_node, next_node, at_start)
-    case_success = ( &
-         intersection_equal(next_node, intersections(1)) .AND. &
-         remaining == 0 .AND. &
-         all(unused == [1, -1, -1, -1]) .AND. &
-         at_start)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_get_next

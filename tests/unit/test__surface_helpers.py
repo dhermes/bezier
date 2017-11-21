@@ -1640,16 +1640,6 @@ class Test_get_next_first(unittest.TestCase):
         result = self._call_function_under_test(intersection, intersections)
         self.assertIs(result, intersections[1])
 
-    def test_move_to_intersected_corner(self):
-        intersection = make_intersect(0, 0.625, None, None)
-        intersections = [
-            # An "unacceptable" intersection that is still OK since a corner.
-            make_intersect(
-                0, 1.0, None, None, interior_curve=get_enum('TANGENT_FIRST')),
-        ]
-        result = self._call_function_under_test(intersection, intersections)
-        self.assertIs(result, intersections[0])
-
 
 class Test_get_next_second(unittest.TestCase):
 
@@ -1691,16 +1681,6 @@ class Test_get_next_second(unittest.TestCase):
         ]
         result = self._call_function_under_test(intersection, intersections)
         self.assertIs(result, intersections[1])
-
-    def test_move_to_intersected_corner(self):
-        intersection = make_intersect(None, None, 0, 0.5)
-        intersections = [
-            # An "unacceptable" intersection that is still OK since a corner.
-            make_intersect(
-                None, None, 0, 1.0, interior_curve=get_enum('TANGENT_FIRST')),
-        ]
-        result = self._call_function_under_test(intersection, intersections)
-        self.assertIs(result, intersections[0])
 
 
 class Test_get_next(unittest.TestCase):
