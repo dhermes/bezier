@@ -15,12 +15,25 @@
 
 
 import numpy as np
+from numpy cimport dtype as dtype_t
+from numpy cimport ndarray as ndarray_t
 
 cimport bezier._status
 cimport bezier._surface_intersection
+from bezier._surface_intersection cimport CurvedPolygonSegment
 
 
 cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+cdef dtype_t SEGMENT_DTYPE = np.dtype(
+    [
+        ('start', np.double),
+        ('end', np.double),
+        ('edge_index', np.intc),
+    ],
+    align=True,
+)
+cdef CurvedPolygonSegment[:] SEGMENTS_WORKSPACE = np.empty(
+    6, dtype=SEGMENT_DTYPE)
 
 
 def newton_refine(
@@ -72,24 +85,30 @@ def locate_point(double[::1, :] nodes, int degree, double x_val, double y_val):
 
 def reset_workspaces(int segment_ends_size, int segments_size):
     global SEGMENT_ENDS_WORKSPACE
+    global SEGMENTS_WORKSPACE
     SEGMENT_ENDS_WORKSPACE = np.empty(segment_ends_size, dtype=np.intc)
+    SEGMENTS_WORKSPACE = np.empty(segments_size, dtype=SEGMENT_DTYPE)
 
 
 def workspace_sizes():
     global SEGMENT_ENDS_WORKSPACE
+    global SEGMENTS_WORKSPACE
     cdef int segment_ends_size
+    cdef int segments_size
 
     segment_ends_size, = np.shape(SEGMENT_ENDS_WORKSPACE)
-    return segment_ends_size, None
+    segments_size, = np.shape(SEGMENTS_WORKSPACE)
+    return segment_ends_size, segments_size
 
 
 def surface_intersections(
         double[::1, :] nodes1, int degree1,
         double[::1, :] nodes2, int degree2):
+    global SEGMENT_ENDS_WORKSPACE
+    global SEGMENTS_WORKSPACE
     cdef int num_nodes1, num_nodes2
     cdef int segment_ends_size
     cdef int segments_size
-    cdef bezier._surface_intersection.CurvedPolygonSegment segments[6]
     cdef int num_intersected, contained, status
     cdef int num_segments, i
 
@@ -97,8 +116,7 @@ def surface_intersections(
     num_nodes1, _ = np.shape(nodes1)
     num_nodes2, _ = np.shape(nodes2)
 
-    segment_ends_size, _ = workspace_sizes()
-    segments_size = 6
+    segment_ends_size, segments_size = workspace_sizes()
 
     bezier._surface_intersection.surface_intersections(
         &num_nodes1,
@@ -110,7 +128,7 @@ def surface_intersections(
         &segment_ends_size,
         &SEGMENT_ENDS_WORKSPACE[0],
         &segments_size,
-        &segments[0],
+        &SEGMENTS_WORKSPACE[0],
         &num_intersected,
         &contained,
         &status,
@@ -147,7 +165,7 @@ def surface_intersections(
             return (
                 SEGMENT_ENDS_WORKSPACE[:num_intersected],
                 [
-                    segments[i]
+                    SEGMENTS_WORKSPACE[i]
                     for i in range(num_segments)
                 ],
                 num_intersected,
