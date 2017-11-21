@@ -1031,69 +1031,77 @@ contains
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
 
+    ! This assumes (but does not check) that all intersections at the "end" of
+    ! an edge (i.e. with ``s == 1.0`` or ``t == 1.0``) have been pruned from
+    ! ``intersections`` (see e.g. ``add_st_vals()``). Therefore, if
+    ! ``curr_node`` **is** at the end of an edge, it must be one of the
+    ! artificial nodes created by ``get_next()``.
+
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
     ! ``unused`` contains the indices of intersections that have not yet been
-    ! used as a ``SegmentNode``.
+    ! used as a node.
     integer(c_int), intent(inout) :: unused(:)
     integer(c_int), intent(inout) :: remaining
     integer(c_int), intent(in) :: start
-    type(SegmentNode), intent(in) :: curr_node
-    type(SegmentNode), intent(out) :: next_node
+    type(Intersection), intent(in) :: curr_node
+    type(Intersection), intent(out) :: next_node
     logical(c_bool), intent(out) :: at_start
     ! Variables outside of signature.
-    integer(c_int) :: i, local_index
+    integer(c_int) :: i, index
 
     at_start = .FALSE.
-    if (curr_node%edge_param == 1.0_dp) then
-       next_node%edge_param = 0.0_dp
-       if (curr_node%edge_index == 3 .OR. curr_node%edge_index == 6) then
-          next_node%edge_index = curr_node%edge_index - 2
-       else
-          next_node%edge_index = curr_node%edge_index + 1
-       end if
-       next_node%interior_curve = curr_node%interior_curve
+    if (curr_node%s == 1.0_dp) then
+       ! This means ``curr_node`` is an "artificial" corner.
+       index = 1 + modulo(curr_node%index_first, 3)
+       ! First check if the intersection exists when "rotated" to the
+       ! next edge.
+       do i = 1, num_intersections
+          if ( &
+               intersections(i)%s == 0.0_dp .AND. &
+               intersections(i)%index_first == index) then
+             next_node = intersections(i)
+             at_start = (i == start)
+             ! Remove the index from the set of ``unused`` intersections, if
+             ! it is contained there.
+             call remove_node(i, unused, remaining)
+             return
+          end if
+       end do
+
+       ! If we didn't match an existing intersection, create another artificial
+       ! intersection.
+       next_node%s = 0.0_dp
+       next_node%index_first = index
+       next_node%interior_curve = IntersectionClassification_FIRST
+    else if (curr_node%t == 1.0_dp) then
+       ! NOTE: We assume, but do not verify, that ``s == 1`` and ``t == 1``
+       !       are mutually exclusive since each **must** correspond to an
+       !       artificial node.
+       ! This means ``curr_node`` is an "artificial" corner.
+       index = 1 + modulo(curr_node%index_second, 3)
+       do i = 1, num_intersections
+          if ( &
+               intersections(i)%t == 0.0_dp .AND. &
+               intersections(i)%index_second == index) then
+             next_node = intersections(i)
+             at_start = (i == start)
+             ! Remove the index from the set of ``unused`` intersections, if
+             ! it is contained there.
+             call remove_node(i, unused, remaining)
+             return
+          end if
+       end do
+
+       ! If we didn't match an existing intersection, create another artificial
+       ! intersection.
+       next_node%t = 0.0_dp
+       next_node%index_second = index
+       next_node%interior_curve = IntersectionClassification_SECOND
     else
        ! The node doesn't need to be moved to the front of the edge.
        next_node = curr_node
        return
-    end if
-
-    ! NOTE: If we've reached this point, we know that ``edge_param == 0.0``.
-    if (next_node%edge_index <= 3) then
-       ! NOTE: This assumes but does not check that ``next_node%edge_index``
-       !       is in {1, 2, 3}.
-       local_index = next_node%edge_index
-       do i = 1, num_intersections
-          if ( &
-               intersections(i)%s == 0.0_dp .AND. &
-               intersections(i)%index_first == local_index) then
-             ! Assumes ``edge_param`` and ``edge_index`` are already set.
-             next_node%interior_curve = intersections(i)%interior_curve
-             at_start = (i == start)
-             ! Remove the index from the set of ``unused`` intersections, if
-             ! it is contained there.
-             call remove_node(i, unused, remaining)
-             return
-          end if
-       end do
-    else
-       ! NOTE: This assumes but does not check that ``next_node%edge_index``
-       !       is in {4, 5, 6}.
-       local_index = next_node%edge_index - 3
-       do i = 1, num_intersections
-          if ( &
-               intersections(i)%t == 0.0_dp .AND. &
-               intersections(i)%index_second == local_index) then
-             ! Assumes ``edge_param`` and ``edge_index`` are already set.
-             next_node%interior_curve = intersections(i)%interior_curve
-             at_start = (i == start)
-             ! Remove the index from the set of ``unused`` intersections, if
-             ! it is contained there.
-             call remove_node(i, unused, remaining)
-             return
-          end if
-       end do
     end if
 
   end subroutine to_front

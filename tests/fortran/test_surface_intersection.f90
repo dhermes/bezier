@@ -1045,7 +1045,7 @@ contains
     character(8) :: name
     integer(c_int) :: first, second
     type(Intersection) :: intersections(1)
-    type(SegmentNode) :: curr_node, next_node
+    type(Intersection) :: curr_node, next_node
     logical(c_bool) :: at_start
     integer(c_int) :: unused(4)
     integer(c_int) :: remaining
@@ -1057,40 +1057,36 @@ contains
     second = IntersectionClassification_SECOND
 
     ! CASE 1: Unchanged node (i.e. not at the end).
-    curr_node%edge_param = 0.5_dp
-    curr_node%edge_index = 3
+    curr_node%index_first = 3
+    curr_node%s = 0.5_dp
     curr_node%interior_curve = first
     remaining = 4
     call to_front( &
          0, intersections(:0), unused, remaining, &
          -1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == curr_node%edge_index .AND. &
-         next_node%edge_param == curr_node%edge_param .AND. &
-         next_node%interior_curve == curr_node%interior_curve .AND. &
+         intersection_equal(curr_node, next_node) .AND. &
          remaining == 4 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Change the ``s`` parameter, no corresponding node.
-    curr_node%edge_param = 1.0_dp
-    curr_node%edge_index = 3
+    curr_node%index_first = 3
+    curr_node%s = 1.0_dp
     curr_node%interior_curve = first
     remaining = 3
     call to_front( &
          0, intersections(:0), unused, remaining, &
          -1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == curr_node%edge_index - 2 .AND. &
-         next_node%edge_param == 0.0_dp .AND. &
-         next_node%interior_curve == curr_node%interior_curve .AND. &
+         intersection_check(next_node, 0.0_dp, -1.0_dp, 1, -1, first) .AND. &
          remaining == 3 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Change the ``s`` parameter, new corner node exists.
-    curr_node%edge_param = 1.0_dp
-    curr_node%edge_index = 2
+    curr_node%index_first = 2
+    curr_node%s = 1.0_dp
     curr_node%interior_curve = first
     intersections(1)%index_first = 3
     intersections(1)%s = 0.0
@@ -1103,33 +1099,31 @@ contains
          1, intersections, unused, remaining, &
          -1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == intersections(1)%index_first .AND. &
-         next_node%edge_param == intersections(1)%s .AND. &
-         next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         intersection_equal(next_node, intersections(1)) .AND. &
          remaining == 3 .AND. &
          all(unused == [3, 4, 6, 6]) .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Change the ``t`` parameter, no corresponding node.
-    curr_node%edge_param = 1.0_dp
-    curr_node%edge_index = 5
+    curr_node%index_first = -1
+    curr_node%s = -1.0_dp
+    curr_node%index_second = 2
+    curr_node%t = 1.0_dp
     curr_node%interior_curve = second
     remaining = 4
     call to_front( &
          0, intersections(:0), unused, remaining, &
          -1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == curr_node%edge_index + 1 .AND. &
-         next_node%edge_param == 0.0_dp .AND. &
-         next_node%interior_curve == curr_node%interior_curve .AND. &
+         intersection_check(next_node, -1.0_dp, 0.0_dp, -1, 3, second) .AND. &
          remaining == 4 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Change the ``t`` parameter, new corner node exists.
-    curr_node%edge_param = 1.0_dp
-    curr_node%edge_index = 4
+    curr_node%index_second = 1
+    curr_node%t = 1.0_dp
     curr_node%interior_curve = second
     intersections(1)%index_first = 3
     intersections(1)%s = 0.5_dp
@@ -1141,9 +1135,7 @@ contains
          1, intersections, unused, remaining, &
          1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == intersections(1)%index_second + 3 .AND. &
-         next_node%edge_param == intersections(1)%t .AND. &
-         next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         intersection_equal(next_node, intersections(1)) .AND. &
          remaining == 0 .AND. &
          at_start)
     call print_status(name, case_id, case_success, success)
