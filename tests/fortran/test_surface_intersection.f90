@@ -34,8 +34,8 @@ module test_surface_intersection
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
        test_add_st_vals, test_surfaces_intersection_points, &
-       intersection_check, test_get_next, test_to_front, test_add_segment, &
-       test_surfaces_intersect
+       intersection_check, intersection_equal, test_get_next, test_to_front, &
+       test_add_segment, test_surfaces_intersect
   public surface_intersection_all_tests
 
 contains
@@ -854,6 +854,21 @@ contains
 
   end function intersection_check
 
+  function intersection_equal(intersection1, intersection2) result(same)
+
+    type(intersection), intent(in) :: intersection1, intersection2
+    logical(c_bool) :: same
+
+    same = intersection_check( &
+         intersection2, &
+         intersection1%s, &
+         intersection1%t, &
+         intersection1%index_first, &
+         intersection1%index_second, &
+         intersection1%interior_curve)
+
+  end function intersection_equal
+
   subroutine test_get_next(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
@@ -862,7 +877,7 @@ contains
     character(8) :: name
     integer(c_int) :: first, second
     type(Intersection) :: intersections(5)
-    type(SegmentNode) :: curr_node, next_node
+    type(Intersection) :: curr_node, next_node
     logical(c_bool) :: at_start
     integer(c_int) :: unused(4)
     integer(c_int) :: remaining
@@ -874,8 +889,9 @@ contains
     second = IntersectionClassification_SECOND
 
     ! CASE 1: On an edge of first surface, no other intersections on that edge.
-    curr_node%edge_index = 2
-    curr_node%edge_param = 0.125_dp
+    curr_node%index_first = 2
+    curr_node%s = 0.125_dp
+    curr_node%interior_curve = first
     intersections(1)%index_first = 3
     intersections(1)%s = 0.5_dp
     intersections(1)%interior_curve = first
@@ -884,17 +900,16 @@ contains
          1, intersections(:1), unused, remaining, &
          1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == curr_node%edge_index .AND. &
-         next_node%edge_param == 1.0_dp .AND. &
-         next_node%interior_curve == first .AND. &
+         intersection_check(next_node, 1.0_dp, -1.0_dp, 2, -1, first) .AND. &
          remaining == 4 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: On an edge of first surface, **multiple** other intersections
     !         on same edge.
-    curr_node%edge_index = 3
-    curr_node%edge_param = 0.25_dp
+    curr_node%index_first = 3
+    curr_node%s = 0.25_dp
+    curr_node%interior_curve = first
     ! An "acceptable" intersection that will be overtaken by the
     ! next since 0.25 < 0.5 < 0.875.
     intersections(1)%index_first = 3
@@ -921,9 +936,7 @@ contains
          5, intersections, unused, remaining, &
          2, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == intersections(2)%index_first .AND. &
-         next_node%edge_param == intersections(2)%s .AND. &
-         next_node%interior_curve == intersections(2)%interior_curve .AND. &
+         intersection_equal(next_node, intersections(2)) .AND. &
          remaining == 3 .AND. &
          all(unused == [1, 3, 5, 5]) .AND. &
          at_start)
@@ -931,8 +944,9 @@ contains
 
     ! CASE 3: On an edge of first surface, move to a corner that is **also** an
     !         intersection.
-    curr_node%edge_index = 1
-    curr_node%edge_param = 0.625_dp
+    curr_node%index_first = 1
+    curr_node%s = 0.625_dp
+    curr_node%interior_curve = first
     intersections(1)%index_first = 1
     intersections(1)%s = 1.0_dp
     intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
@@ -942,17 +956,16 @@ contains
          1, intersections(:1), unused, remaining, &
          -1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == intersections(1)%index_first .AND. &
-         next_node%edge_param == intersections(1)%s .AND. &
-         next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         intersection_equal(next_node, intersections(1)) .AND. &
          remaining == 1 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: On an edge of second surface, no other intersections on
     !         that edge.
-    curr_node%edge_index = 6
-    curr_node%edge_param = 0.625_dp
+    curr_node%index_second = 3
+    curr_node%t = 0.625_dp
+    curr_node%interior_curve = second
     intersections(1)%index_second = 1
     intersections(1)%s = 0.5_dp
     intersections(1)%interior_curve = first
@@ -961,17 +974,16 @@ contains
          1, intersections(:1), unused, remaining, &
          1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == curr_node%edge_index .AND. &
-         next_node%edge_param == 1.0_dp .AND. &
-         next_node%interior_curve == second .AND. &
+         intersection_check(next_node, -1.0_dp, 1.0_dp, -1, 3, second) .AND. &
          remaining == 2 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: On an edge of second surface, **multiple** other intersections
     !         on same edge.
-    curr_node%edge_index = 5
-    curr_node%edge_param = 0.125_dp
+    curr_node%index_second = 2
+    curr_node%t = 0.125_dp
+    curr_node%interior_curve = second
     ! An "acceptable" intersection that will be overtaken by the
     ! next since 0.125 < 0.625 < 0.75.
     intersections(1)%index_second = 2
@@ -998,17 +1010,16 @@ contains
          5, intersections, unused, remaining, &
          1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == intersections(3)%index_second + 3 .AND. &
-         next_node%edge_param == intersections(3)%t .AND. &
-         next_node%interior_curve == intersections(3)%interior_curve .AND. &
+         intersection_equal(next_node, intersections(3)) .AND. &
          remaining == 3 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: On an edge of second surface, move to a corner that is **also**
     !         an intersection.
-    curr_node%edge_index = 4
-    curr_node%edge_param = 0.5_dp
+    curr_node%index_second = 1
+    curr_node%t = 0.5_dp
+    curr_node%interior_curve = second
     intersections(1)%index_second = 1
     intersections(1)%t = 1.0_dp
     intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
@@ -1018,9 +1029,7 @@ contains
          1, intersections(:1), unused, remaining, &
          1, curr_node, next_node, at_start)
     case_success = ( &
-         next_node%edge_index == intersections(1)%index_second + 3 .AND. &
-         next_node%edge_param == intersections(1)%t .AND. &
-         next_node%interior_curve == intersections(1)%interior_curve .AND. &
+         intersection_equal(next_node, intersections(1)) .AND. &
          remaining == 0 .AND. &
          all(unused == [1, -1, -1, -1]) .AND. &
          at_start)

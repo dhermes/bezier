@@ -943,37 +943,31 @@ contains
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
     ! ``unused`` contains the indices of intersections that have not yet been
-    ! used as a ``SegmentNode``.
+    ! used as a node.
     integer(c_int), intent(inout) :: unused(:)
     integer(c_int), intent(inout) :: remaining
     integer(c_int), intent(in) :: start
-    type(SegmentNode), intent(in) :: curr_node
-    type(SegmentNode), intent(out) :: next_node
+    type(Intersection), intent(in) :: curr_node
+    type(Intersection), intent(out) :: next_node
     logical(c_bool), intent(out) :: at_start
     ! Variables outside of signature.
-    integer(c_int) :: i, local_index, intersection_index
+    real(c_double) :: edge_param
+    integer(c_int) :: i, intersection_index
 
     intersection_index = -1
     at_start = .FALSE.
-    if (curr_node%edge_index <= 3) then
-       ! NOTE: This assumes but does not check that ``curr_node%edge_index``
-       !       is in {1, 2, 3}.
-       local_index = curr_node%edge_index
+    if (curr_node%interior_curve == IntersectionClassification_FIRST) then
        do i = 1, num_intersections
           if ( &
-               intersections(i)%index_first == local_index .AND. &
-               intersections(i)%s > curr_node%edge_param) then
+               intersections(i)%index_first == curr_node%index_first .AND. &
+               intersections(i)%s > curr_node%s) then
              if (intersection_index == -1) then
                 intersection_index = i
-                next_node%edge_index = curr_node%edge_index
-                next_node%edge_param = intersections(i)%s
-                next_node%interior_curve = intersections(i)%interior_curve
+                edge_param = intersections(i)%s
              else
-                if (intersections(i)%s < next_node%edge_param) then
-                   ! Assumes ``edge_index`` is already set.
+                if (intersections(i)%s < edge_param) then
                    intersection_index = i
-                   next_node%edge_param = intersections(i)%s
-                   next_node%interior_curve = intersections(i)%interior_curve
+                   edge_param = intersections(i)%s
                 end if
              end if
           end if
@@ -982,34 +976,31 @@ contains
        ! If there is no other intersection on the edge, just return
        ! the segment end.
        if (intersection_index == -1) then
-          next_node%edge_index = curr_node%edge_index
-          next_node%edge_param = 1.0_dp
+          ! NOTE: We **explicitly** do not set ``t`` or ``index_second``.
+          next_node%index_first = curr_node%index_first
+          next_node%s = 1.0_dp
           next_node%interior_curve = IntersectionClassification_FIRST
        else
+          next_node = intersections(intersection_index)
           at_start = (intersection_index == start)
           ! Remove the index from the set of ``unused`` intersections, if
           ! it is contained there.
           call remove_node(intersection_index, unused, remaining)
        end if
     else
-       ! NOTE: This assumes but does not check that ``curr_node%edge_index``
-       !       is in {4, 5, 6}.
-       local_index = curr_node%edge_index - 3
+       ! NOTE: This assumes but does not check that
+       !       ``curr_node%interior_curve`` is ``SECOND``.
        do i = 1, num_intersections
           if ( &
-               intersections(i)%index_second == local_index .AND. &
-               intersections(i)%t > curr_node%edge_param) then
+               intersections(i)%index_second == curr_node%index_second .AND. &
+               intersections(i)%t > curr_node%t) then
              if (intersection_index == -1) then
                 intersection_index = i
-                next_node%edge_index = curr_node%edge_index
-                next_node%edge_param = intersections(i)%t
-                next_node%interior_curve = intersections(i)%interior_curve
+                edge_param = intersections(i)%t
              else
-                if (intersections(i)%t < next_node%edge_param) then
-                   ! Assumes ``edge_index`` is already set.
+                if (intersections(i)%t < edge_param) then
                    intersection_index = i
-                   next_node%edge_param = intersections(i)%t
-                   next_node%interior_curve = intersections(i)%interior_curve
+                   edge_param = intersections(i)%t
                 end if
              end if
           end if
@@ -1018,10 +1009,12 @@ contains
        ! If there is no other intersection on the edge, just return
        ! the segment end.
        if (intersection_index == -1) then
-          next_node%edge_index = curr_node%edge_index
-          next_node%edge_param = 1.0_dp
+          ! NOTE: We **explicitly** do not set ``s`` or ``index_first``.
+          next_node%index_second = curr_node%index_second
+          next_node%t = 1.0_dp
           next_node%interior_curve = IntersectionClassification_SECOND
        else
+          next_node = intersections(intersection_index)
           at_start = (intersection_index == start)
           ! Remove the index from the set of ``unused`` intersections, if
           ! it is contained there.
