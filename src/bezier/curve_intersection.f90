@@ -721,7 +721,7 @@ contains
 
     num_next_candidates = 0
     status = Status_SUCCESS
-    do index_ = 1, num_candidates
+    subdivide_loop: do index_ = 1, num_candidates
        ! NOTE: We **hope** that the compiler avoids turning this alias (for
        !       the sake of typing fewer characters) into a copy.
        first = candidates(1, index_)
@@ -750,7 +750,7 @@ contains
              end if
 
              ! If there was no failure, move to the next iteration.
-             cycle
+             cycle subdivide_loop
           else
              subdivide_enum = Subdivide_SECOND
              call bbox_line_intersect( &
@@ -774,11 +774,11 @@ contains
 
        ! Reject if the bounding boxes do not intersect.
        if (bbox_int == BoxIntersectionType_DISJOINT) then
-          cycle
+          cycle subdivide_loop
        else if (bbox_int == BoxIntersectionType_TANGENT) then
           call tangent_bbox_intersection( &
                first, second, num_intersections, intersections)
-          cycle
+          cycle subdivide_loop
        end if
 
        ! If we haven't ``cycle``-d this iteration, add the
@@ -786,7 +786,7 @@ contains
        call add_candidates( &
             next_candidates, num_next_candidates, &
             first, second, subdivide_enum)
-    end do
+    end do subdivide_loop
 
   end subroutine intersect_one_round
 
