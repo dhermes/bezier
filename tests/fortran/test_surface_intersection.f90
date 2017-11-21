@@ -210,10 +210,7 @@ contains
     nodes1(2, :) = [0.75_dp, 1.0_dp]
     edges_second(1)%nodes = nodes1
 
-    intersection_%s = 0.5_dp
-    intersection_%index_first = 1
-    intersection_%t = 0.5_dp
-    intersection_%index_second = 1
+    intersection_ = Intersection(0.5_dp, 0.5_dp, 1, 1)
 
     call classify_intersection( &
          edges_first, edges_second, intersection_, enum_, status)
@@ -241,10 +238,7 @@ contains
     nodes2(3, :) = [2.0_dp, 0.0_dp]
     edges_second(1)%nodes = nodes2
 
-    intersection_%s = 0.5_dp
-    intersection_%index_first = 1
-    intersection_%t = 0.5_dp
-    intersection_%index_second = 1
+    intersection_ = Intersection(0.5_dp, 0.5_dp, 1, 1)
 
     call classify_intersection( &
          edges_first, edges_second, intersection_, enum_, status)
@@ -287,10 +281,7 @@ contains
     nodes1(2, :) = [-1.0_dp, 0.0_dp]
     edges_second(3)%nodes = nodes1
 
-    intersection_%s = 0.0_dp
-    intersection_%index_first = 1
-    intersection_%t = 0.0_dp
-    intersection_%index_second = 3
+    intersection_ = Intersection(0.0_dp, 0.0_dp, 1, 3)
 
     call classify_intersection( &
          edges_first, edges_second, intersection_, enum_, status)
@@ -314,10 +305,7 @@ contains
     edges_second(2)%nodes = nodes1
     deallocate(edges_second(3)%nodes)  ! Unset.
 
-    intersection_%s = 0.0_dp
-    intersection_%index_first = 2
-    intersection_%t = 0.5_dp
-    intersection_%index_second = 2
+    intersection_ = Intersection(0.0_dp, 0.5_dp, 2, 2)
 
     call classify_intersection( &
          edges_first, edges_second, intersection_, enum_, status)
@@ -338,10 +326,7 @@ contains
     nodes2(3, :) = [0.0_dp, 0.0_dp]
     edges_second(2)%nodes = nodes2
 
-    intersection_%s = 0.5_dp
-    intersection_%index_first = 2
-    intersection_%t = 0.5_dp
-    intersection_%index_second = 2
+    intersection_ = Intersection(0.5_dp, 0.5_dp, 2, 2)
 
     call classify_intersection( &
          edges_first, edges_second, intersection_, enum_, status)
@@ -484,10 +469,7 @@ contains
     nodes1(2, :) = [1.5_dp, -1.0_dp]
     edges_second(2)%nodes = nodes1
 
-    intersection_%s = 0.5_dp
-    intersection_%index_first = 2
-    intersection_%t = 0.0_dp
-    intersection_%index_second = 2
+    intersection_ = Intersection(0.5_dp, 0.0_dp, 2, 2)
 
     call classify_intersection( &
          edges_first, edges_second, intersection_, enum_, status)
@@ -512,10 +494,7 @@ contains
     nodes1(2, :) = [0.0_dp, 1.0_dp]
     edges_second(2)%nodes = nodes1
 
-    intersection_%s = 0.0_dp
-    intersection_%index_first = 2
-    intersection_%t = 0.0_dp
-    intersection_%index_second = 2
+    intersection_ = Intersection(0.0_dp, 0.0_dp, 2, 2)
 
     call classify_intersection( &
          edges_first, edges_second, intersection_, enum_, status)
@@ -891,12 +870,8 @@ contains
     second = IntersectionClassification_SECOND
 
     ! CASE 1: On an edge of first surface, no other intersections on that edge.
-    curr_node%index_first = 2
-    curr_node%s = 0.125_dp
-    curr_node%interior_curve = first
-    intersections(1)%index_first = 3
-    intersections(1)%s = 0.5_dp
-    intersections(1)%interior_curve = first
+    curr_node = Intersection(0.125_dp, -1.0_dp, 2, -1, first)
+    intersections(1) = Intersection(0.5_dp, -1.0_dp, 3, -1, first)
     remaining = 4
     call get_next( &
          1, intersections(:1), unused, remaining, &
@@ -909,28 +884,18 @@ contains
 
     ! CASE 2: On an edge of first surface, **multiple** other intersections
     !         on same edge.
-    curr_node%index_first = 3
-    curr_node%s = 0.25_dp
-    curr_node%interior_curve = first
+    curr_node = Intersection(0.25_dp, -1.0_dp, 3, -1, first)
     ! An "acceptable" intersection that will be overtaken by the
     ! next since 0.25 < 0.5 < 0.875.
-    intersections(1)%index_first = 3
-    intersections(1)%s = 0.875_dp
-    intersections(1)%interior_curve = second
+    intersections(1) = Intersection(0.875_dp, -1.0_dp, 3, -1, second)
     ! Closer to ``curr_node`` then previous.
-    intersections(2)%index_first = 3
-    intersections(2)%s = 0.5_dp
-    intersections(2)%interior_curve = first
+    intersections(2) = Intersection(0.5_dp, -1.0_dp, 3, -1, first)
     ! On a different edge.
-    intersections(3)%index_first = 2
+    intersections(3) = Intersection(-1.0_dp, -1.0_dp, 2, -1)
     ! Same edge, but parameter comes **before** ``curr_node``.
-    intersections(4)%index_first = 3
-    intersections(4)%s = 0.125_dp
-    intersections(4)%interior_curve = first
+    intersections(4) = Intersection(0.125_dp, -1.0_dp, 3, -1, first)
     ! Past the already accepted intersection: 0.25 < 0.5 < 0.625
-    intersections(5)%index_first = 3
-    intersections(5)%s = 0.625_dp
-    intersections(5)%interior_curve = first
+    intersections(5) = Intersection(0.625_dp, -1.0_dp, 3, -1, first)
     ! Populate the list of indices to be removed.
     unused = [1, 2, 3, 5]
     remaining = 4
@@ -946,12 +911,8 @@ contains
 
     ! CASE 3: On an edge of second surface, no other intersections on
     !         that edge.
-    curr_node%index_second = 3
-    curr_node%t = 0.625_dp
-    curr_node%interior_curve = second
-    intersections(1)%index_second = 1
-    intersections(1)%s = 0.5_dp
-    intersections(1)%interior_curve = first
+    curr_node = Intersection(-1.0_dp, 0.625_dp, -1, 3, second)
+    intersections(1) = Intersection(-1.0_dp, 0.5_dp, -1, 1, first)
     remaining = 2
     call get_next( &
          1, intersections(:1), unused, remaining, &
@@ -964,28 +925,18 @@ contains
 
     ! CASE 4: On an edge of second surface, **multiple** other intersections
     !         on same edge.
-    curr_node%index_second = 2
-    curr_node%t = 0.125_dp
-    curr_node%interior_curve = second
+    curr_node = Intersection(-1.0_dp, 0.125_dp, -1, 2, second)
     ! An "acceptable" intersection that will be overtaken by the
     ! next since 0.125 < 0.625 < 0.75.
-    intersections(1)%index_second = 2
-    intersections(1)%t = 0.75_dp
-    intersections(1)%interior_curve = first
+    intersections(1) = Intersection(-1.0_dp, 0.75_dp, -1, 2, first)
     ! On a different edge.
-    intersections(2)%index_second = 3
+    intersections(2) = Intersection(-1.0_dp, -1.0_dp, -1, 3)
     ! Closer to ``curr_node`` then previous accepted.
-    intersections(3)%index_second = 2
-    intersections(3)%t = 0.625_dp
-    intersections(3)%interior_curve = second
+    intersections(3) = Intersection(-1.0_dp, 0.625_dp, -1, 2, second)
     ! Same edge, but parameter comes **before** ``curr_node``.
-    intersections(4)%index_second = 2
-    intersections(4)%t = 0.0625_dp
-    intersections(4)%interior_curve = first
+    intersections(4) = Intersection(-1.0_dp, 0.0625_dp, -1, 2, first)
     ! Past the already accepted intersection: 0.125 < 0.625 < 0.6875
-    intersections(5)%index_second = 2
-    intersections(5)%t = 0.6875_dp
-    intersections(5)%interior_curve = second
+    intersections(5) = Intersection(-1.0_dp, 0.6875_dp, -1, 2, second)
     ! Populate the list of indices to be removed, missing 3.
     unused(:3) = [1, 2, 4]
     remaining = 3
@@ -1020,9 +971,7 @@ contains
     second = IntersectionClassification_SECOND
 
     ! CASE 1: Unchanged node (i.e. not at the end).
-    curr_node%index_first = 3
-    curr_node%s = 0.5_dp
-    curr_node%interior_curve = first
+    curr_node = Intersection(0.5_dp, -1.0_dp, 3, -1, first)
     remaining = 4
     call to_front( &
          0, intersections(:0), unused, remaining, &
@@ -1034,9 +983,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Change the ``s`` parameter, no corresponding node.
-    curr_node%index_first = 3
-    curr_node%s = 1.0_dp
-    curr_node%interior_curve = first
+    curr_node = Intersection(1.0_dp, -1.0_dp, 3, -1, first)
     remaining = 3
     call to_front( &
          0, intersections(:0), unused, remaining, &
@@ -1048,14 +995,9 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Change the ``s`` parameter, new corner node exists.
-    curr_node%index_first = 2
-    curr_node%s = 1.0_dp
-    curr_node%interior_curve = first
-    intersections(1)%index_first = 3
-    intersections(1)%s = 0.0
-    intersections(1)%index_second = 1
-    intersections(1)%t = 0.5
-    intersections(1)%interior_curve = IntersectionClassification_TANGENT_FIRST
+    curr_node = Intersection(1.0_dp, -1.0_dp, 2, -1, first)
+    intersections(1) = Intersection( &
+         0.0_dp, 0.5_dp, 3, 1, IntersectionClassification_TANGENT_FIRST)
     unused = [1, 3, 4, 6]
     remaining = 4
     call to_front( &
@@ -1069,11 +1011,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Change the ``t`` parameter, no corresponding node.
-    curr_node%index_first = -1
-    curr_node%s = -1.0_dp
-    curr_node%index_second = 2
-    curr_node%t = 1.0_dp
-    curr_node%interior_curve = second
+    curr_node = Intersection(-1.0_dp, 1.0_dp, -1, 2, second)
     remaining = 4
     call to_front( &
          0, intersections(:0), unused, remaining, &
@@ -1085,14 +1023,9 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Change the ``t`` parameter, new corner node exists.
-    curr_node%index_second = 1
-    curr_node%t = 1.0_dp
-    curr_node%interior_curve = second
-    intersections(1)%index_first = 3
-    intersections(1)%s = 0.5_dp
-    intersections(1)%index_second = 2
-    intersections(1)%t = 0.0_dp
-    intersections(1)%interior_curve = IntersectionClassification_TANGENT_SECOND
+    curr_node = Intersection(-1.0_dp, 1.0_dp, -1, 1, second)
+    intersections(1) = Intersection( &
+         0.5_dp, 0.0_dp, 3, 2, IntersectionClassification_TANGENT_SECOND)
     remaining = 0
     call to_front( &
          1, intersections, unused, remaining, &
@@ -1121,10 +1054,9 @@ contains
     ! CASE 1: ``segments`` is not allocated; intersection is classified as
     !         SECOND.
     index = 1
-    curr_node%index_second = 1
-    curr_node%t = 0.25_dp
-    curr_node%interior_curve = IntersectionClassification_SECOND
-    next_node%t = 0.5_dp
+    curr_node = Intersection( &
+         -1.0_dp, 0.25_dp, -1, 1, IntersectionClassification_SECOND)
+    next_node = Intersection(t=0.5_dp)
     case_success = .NOT. allocated(segments)
     call add_segment(curr_node, next_node, index, segments)
     case_success = ( &
@@ -1140,10 +1072,9 @@ contains
     ! CASE 2: ``segments`` is allocated, but not large enough; intersection
     !         is classified as FIRST.
     index = 2
-    curr_node%index_first = 2
-    curr_node%s = 0.5_dp
-    curr_node%interior_curve = IntersectionClassification_FIRST
-    next_node%s = 1.0_dp
+    curr_node = Intersection( &
+         0.5_dp, -1.0_dp, 2, -1, IntersectionClassification_FIRST)
+    next_node = Intersection(s=1.0_dp)
     case_success = ( &
          allocated(segments) .AND. &
          size(segments) == 1)
@@ -1161,10 +1092,9 @@ contains
     ! CASE 3: ``segments`` is allocated and does not need to be resized;
     !         intersection is classified as FIRST.
     index = 2
-    curr_node%index_first = 3
-    curr_node%s = 0.125_dp
-    curr_node%interior_curve = IntersectionClassification_FIRST
-    next_node%s = 0.75_dp
+    curr_node = Intersection( &
+         0.125_dp, -1.0_dp, 3, -1, IntersectionClassification_FIRST)
+    next_node = Intersection(s=0.75_dp)
     case_success = ( &
          allocated(segments) .AND. &
          size(segments) == 2)
