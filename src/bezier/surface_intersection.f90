@@ -1265,9 +1265,14 @@ contains
   subroutine surfaces_intersect( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
-       contained, status)
+       segment_ends, segments, contained, status)
 
     ! NOTE: ``contained`` will be a ``SurfaceContained`` enum.
+    ! NOTE: ``segment_ends`` will contain the indices that split
+    !       ``segments`` into distinct curved polygons. For example,
+    !       if the first 3 segments correspond to one curved polygon
+    !       and the second 4 segments correspond to another, then
+    !       ``segment_ends`` will be ``[3, 7]``.
 
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
@@ -1289,6 +1294,8 @@ contains
     integer(c_int), intent(in) :: num_nodes2
     real(c_double), intent(in) :: nodes2(num_nodes2, 2)
     integer(c_int), intent(in) :: degree2
+    integer(c_int), allocatable, intent(out) :: segment_ends(:)
+    type(CurvedPolygonSegment), allocatable, intent(out) :: segments(:)
     integer(c_int), intent(out) :: contained
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
@@ -1344,8 +1351,9 @@ contains
        end if
     end if
 
-    ! The remaining parts are not yet implemented.
-    status = -1234
+    call interior_combine( &
+         num_intersections, intersections(:num_intersections), &
+         segment_ends, segments, status)
 
   end subroutine surfaces_intersect
 

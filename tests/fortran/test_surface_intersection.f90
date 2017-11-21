@@ -1306,6 +1306,8 @@ contains
     integer(c_int) :: contained, status
     real(c_double) :: linear1(3, 2), linear2(3, 2)
     real(c_double) :: quadratic1(6, 2), quadratic2(6, 2)
+    integer(c_int), allocatable :: segment_ends(:)
+    type(CurvedPolygonSegment), allocatable :: segments(:)
 
     case_id = 1
     name = "surfaces_intersect"
@@ -1319,8 +1321,11 @@ contains
     linear2(3, :) = [10.0_dp, 11.0_dp]
 
     call surfaces_intersect( &
-         3, linear1, 1, 3, linear2, 1, contained, status)
+         3, linear1, 1, 3, linear2, 1, &
+         segment_ends, segments, contained, status)
     case_success = ( &
+         .NOT. allocated(segment_ends) .AND. &
+         .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1334,8 +1339,11 @@ contains
     linear2(3, :) = [2.0_dp, 1.0_dp]
 
     call surfaces_intersect( &
-         3, linear1, 1, 3, linear2, 1, contained, status)
+         3, linear1, 1, 3, linear2, 1, &
+         segment_ends, segments, contained, status)
     case_success = ( &
+         .NOT. allocated(segment_ends) .AND. &
+         .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
@@ -1346,16 +1354,22 @@ contains
     linear2(3, :) = [2.0_dp, 2.0_dp]
 
     call surfaces_intersect( &
-         3, linear1, 1, 3, linear2, 1, contained, status)
+         3, linear1, 1, 3, linear2, 1, &
+         segment_ends, segments, contained, status)
     case_success = ( &
+         .NOT. allocated(segment_ends) .AND. &
+         .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_SECOND .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Surface 1 contained in surface 2 (re-uses all data from CASE 3).
     call surfaces_intersect( &
-         3, linear2, 1, 3, linear1, 1, contained, status)
+         3, linear2, 1, 3, linear1, 1, &
+         segment_ends, segments, contained, status)
     case_success = ( &
+         .NOT. allocated(segment_ends) .AND. &
+         .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_FIRST .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1367,20 +1381,39 @@ contains
     linear2(3, :) = [3.0_dp, 3.0_dp]
 
     call surfaces_intersect( &
-         3, linear1, 1, 3, linear2, 1, contained, status)
+         3, linear1, 1, 3, linear2, 1, &
+         segment_ends, segments, contained, status)
     case_success = ( &
+         .NOT. allocated(segment_ends) .AND. &
+         .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 6: Surfaces intersect (re-uses ``linear1`` from previous cases).
-    linear2(1, :) = [3.0_dp, -2.0_dp]
-    linear2(2, :) = [3.0_dp, 3.0_dp]
-    linear2(3, :) = [-2.0_dp, 3.0_dp]
+    ! CASE 6: Surfaces intersect.
+    linear1(1, :) = 0
+    linear1(2, :) = [8.0_dp, 0.0_dp]
+    linear1(3, :) = [0.0_dp, 8.0_dp]
+    linear2(1, :) = [4.0_dp, 5.0_dp]
+    linear2(2, :) = [-4.0_dp, 5.0_dp]
+    linear2(3, :) = [4.0_dp, -3.0_dp]
 
     call surfaces_intersect( &
-         3, linear1, 1, 3, linear2, 1, contained, status)
-    case_success = (status == -1234)
+         3, linear1, 1, 3, linear2, 1, &
+         segment_ends, segments, contained, status)
+    case_success = ( &
+         allocated(segment_ends) .AND. &
+         all(segment_ends == [6]) .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 6 .AND. &
+         segment_check(segments(1), 0.5_dp, 0.625_dp, 5) .AND. &
+         segment_check(segments(2), 0.125_dp, 0.5_dp, 1) .AND. &
+         segment_check(segments(3), 0.375_dp, 0.875_dp, 6) .AND. &
+         segment_check(segments(4), 0.5_dp, 0.625_dp, 2) .AND. &
+         segment_check(segments(5), 0.125_dp, 0.5_dp, 4) .AND. &
+         segment_check(segments(6), 0.375_dp, 0.875_dp, 3) .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 7: The only intersection(s) are ``OPPOSED``.
@@ -1398,8 +1431,11 @@ contains
     quadratic2(6, :) = [2.0_dp, 8.0_dp]
 
     call surfaces_intersect( &
-         6, quadratic1, 2, 6, quadratic2, 2, contained, status)
+         6, quadratic1, 2, 6, quadratic2, 2, &
+         segment_ends, segments, contained, status)
     case_success = ( &
+         .NOT. allocated(segment_ends) .AND. &
+         .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1413,8 +1449,11 @@ contains
     linear2(3, :) = [1.0_dp, -3.0_dp]
 
     call surfaces_intersect( &
-         3, linear1, 1, 3, linear2, 1, contained, status)
+         3, linear1, 1, 3, linear2, 1, &
+         segment_ends, segments, contained, status)
     case_success = ( &
+         .NOT. allocated(segment_ends) .AND. &
+         .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1434,8 +1473,11 @@ contains
     quadratic2(6, :) = [8.0_dp, 8.0_dp]
 
     call surfaces_intersect( &
-         6, quadratic1, 2, 6, quadratic2, 2, contained, status)
+         6, quadratic1, 2, 6, quadratic2, 2, &
+         segment_ends, segments, contained, status)
     case_success = ( &
+         .NOT. allocated(segment_ends) .AND. &
+         .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_FIRST .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
@@ -1443,8 +1485,11 @@ contains
     ! CASE 10: The only intersection(s) are ``TANGENT_SECOND`` (re-uses
     !          **all** data from CASE 9).
     call surfaces_intersect( &
-         6, quadratic2, 2, 6, quadratic1, 2, contained, status)
+         6, quadratic2, 2, 6, quadratic1, 2, &
+         segment_ends, segments, contained, status)
     case_success = ( &
+         .NOT. allocated(segment_ends) .AND. &
+         .NOT. allocated(segments) .AND. &
          contained == SurfaceContained_SECOND .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
