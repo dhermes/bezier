@@ -6265,15 +6265,15 @@ __pyx_t_19 = __pyx_t_18;
     /* "bezier/_curve_intersection_speedup.pyx":248
  *             'Curve intersection failed to converge to approximately linear '
  *             'subdivisions after 20 iterations.')
- *     elif status == bezier._status.Status.TOO_SMALL:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:             # <<<<<<<<<<<<<<
  *         if allow_resize:
  *             reset_workspace(num_intersections)
  */
-    case TOO_SMALL:
+    case INSUFFICIENT_SPACE:
 
     /* "bezier/_curve_intersection_speedup.pyx":249
  *             'subdivisions after 20 iterations.')
- *     elif status == bezier._status.Status.TOO_SMALL:
+ *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
  *         if allow_resize:             # <<<<<<<<<<<<<<
  *             reset_workspace(num_intersections)
  *             return all_intersections(
@@ -6282,7 +6282,7 @@ __pyx_t_19 = __pyx_t_18;
     if (__pyx_t_20) {
 
       /* "bezier/_curve_intersection_speedup.pyx":250
- *     elif status == bezier._status.Status.TOO_SMALL:
+ *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
  *         if allow_resize:
  *             reset_workspace(num_intersections)             # <<<<<<<<<<<<<<
  *             return all_intersections(
@@ -6408,7 +6408,7 @@ __pyx_t_19 = __pyx_t_18;
 
       /* "bezier/_curve_intersection_speedup.pyx":249
  *             'subdivisions after 20 iterations.')
- *     elif status == bezier._status.Status.TOO_SMALL:
+ *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
  *         if allow_resize:             # <<<<<<<<<<<<<<
  *             reset_workspace(num_intersections)
  *             return all_intersections(
@@ -6515,7 +6515,7 @@ __pyx_t_19 = __pyx_t_18;
     /* "bezier/_curve_intersection_speedup.pyx":248
  *             'Curve intersection failed to converge to approximately linear '
  *             'subdivisions after 20 iterations.')
- *     elif status == bezier._status.Status.TOO_SMALL:             # <<<<<<<<<<<<<<
+ *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:             # <<<<<<<<<<<<<<
  *         if allow_resize:
  *             reset_workspace(num_intersections)
  */

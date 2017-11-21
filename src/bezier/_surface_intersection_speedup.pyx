@@ -16,6 +16,7 @@
 
 import numpy as np
 
+cimport bezier._status
 cimport bezier._surface_intersection
 
 
@@ -64,3 +65,78 @@ def locate_point(double[::1, :] nodes, int degree, double x_val, double y_val):
         return None
     else:
         return s_val, t_val
+
+
+def surface_intersections(
+        double[::1, :] nodes1, int degree1,
+        double[::1, :] nodes2, int degree2):
+    cdef int num_nodes1, num_nodes2
+    cdef int segment_ends_size
+    cdef int[:] segment_ends
+    cdef int segments_size
+    cdef bezier._surface_intersection.CurvedPolygonSegment segments[6]
+    cdef int num_intersected, contained, status
+    cdef int num_segments, i
+
+    # NOTE: We don't check that there are 2 columns.
+    num_nodes1, _ = np.shape(nodes1)
+    num_nodes2, _ = np.shape(nodes2)
+
+    segment_ends_size = 3
+    segment_ends = np.empty((segment_ends_size,), dtype=np.intc, order='F')
+    segments_size = 6
+
+    bezier._surface_intersection.surface_intersections(
+        &num_nodes1,
+        &nodes1[0, 0],
+        &degree1,
+        &num_nodes2,
+        &nodes2[0, 0],
+        &degree2,
+        &segment_ends_size,
+        &segment_ends[0],
+        &segments_size,
+        &segments[0],
+        &num_intersected,
+        &contained,
+        &status,
+    )
+
+    if status == bezier._status.Status.INSUFFICIENT_SPACE:
+        if num_intersected > segment_ends_size:
+            return (
+                None,
+                None,
+                num_intersected,
+                contained,
+                status,
+            )
+        else:
+            return (
+                segment_ends[:num_intersected],
+                None,
+                num_intersected,
+                contained,
+                status,
+            )
+    else:
+        if num_intersected == 0:
+            return (
+                None,
+                None,
+                num_intersected,
+                contained,
+                status,
+            )
+        else:
+            num_segments = segment_ends[num_intersected - 1]
+            return (
+                segment_ends[:num_intersected],
+                [
+                    segments[i]
+                    for i in range(num_segments)
+                ],
+                num_intersected,
+                contained,
+                status,
+            )

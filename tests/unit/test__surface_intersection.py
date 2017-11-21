@@ -258,3 +258,89 @@ class Test_speedup_locate_point(Test__locate_point):
 
         return _surface_intersection_speedup.locate_point(
             nodes, degree, x_val, y_val)
+
+
+@utils.needs_surface_intersection_speedup
+class Test_speedup_surface_intersections(utils.NumPyTestCase):
+
+    # pylint: disable=too-few-public-methods
+    class Status(object):
+        SUCCESS = 0
+        PARALLEL = 1
+        WIGGLE_FAIL = 2
+        NO_CONVERGE = 3
+        INSUFFICIENT_SPACE = 4
+        SAME_CURVATURE = 5
+        BAD_TANGENT = 6
+        EDGE_END = 7
+        UNKNOWN = 999
+
+    class SurfaceContained(object):
+        NEITHER = 0
+        FIRST = 1
+        SECOND = 2
+    # pylint: enable=too-few-public-methods
+
+    @staticmethod
+    def _call_function_under_test(nodes1, degree1, nodes2, degree2):
+        from bezier import _surface_intersection_speedup
+
+        return _surface_intersection_speedup.surface_intersections(
+            nodes1, degree1, nodes2, degree2)
+
+    def test_parallel(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [5.0, 0.0],
+            [0.0, 5.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [2.0, 0.0],
+            [3.0, 0.0],
+            [2.0, 1.0],
+        ])
+
+        info = self._call_function_under_test(nodes1, 1, nodes2, 1)
+        segment_ends, segments, num_intersected, contained, status = info
+
+        self.assertIsNone(segment_ends)
+        self.assertIsNone(segments)
+        self.assertEqual(num_intersected, 0)
+        self.assertEqual(contained, self.SurfaceContained.NEITHER)
+        self.assertEqual(status, self.Status.PARALLEL)
+
+    def test_two_curved_polygons(self):
+        nodes1 = np.asfortranarray([
+            [-8.0, 0.0],
+            [8.0, 0.0],
+            [0.0, 8.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [4.0, 3.0],
+            [0.0, -5.0],
+            [-4.0, 3.0],
+            [2.0, -3.0],
+            [-2.0, -3.0],
+            [0.0, -9.0],
+        ])
+
+        info = self._call_function_under_test(nodes1, 1, nodes2, 2)
+        segment_ends, segments, num_intersected, contained, status = info
+
+        self.assertEqual(list(segment_ends), [3, 6])
+        segment_triples = [
+            (0.75, 1.0, 6),
+            (0.0, 0.25, 4),
+            (0.625, 0.6875, 1),
+            (0.3125, 0.375, 1),
+            (0.75, 1.0, 4),
+            (0.0, 0.25, 5),
+        ]
+        expected = [
+            {'start': start, 'end': end, 'edge_index': edge_index}
+            for start, end, edge_index in segment_triples
+        ]
+        self.assertEqual(segments, expected)
+        self.assertEqual(num_intersected, 2)
+        self.assertEqual(contained, self.SurfaceContained.NEITHER)
+        self.assertEqual(status, self.Status.SUCCESS)

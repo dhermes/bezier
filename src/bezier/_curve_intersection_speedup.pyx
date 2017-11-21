@@ -245,7 +245,7 @@ def all_intersections(
         raise ValueError(
             'Curve intersection failed to converge to approximately linear '
             'subdivisions after 20 iterations.')
-    elif status == bezier._status.Status.TOO_SMALL:
+    elif status == bezier._status.Status.INSUFFICIENT_SPACE:
         if allow_resize:
             reset_workspace(num_intersections)
             return all_intersections(

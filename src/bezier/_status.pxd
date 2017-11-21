@@ -19,7 +19,7 @@ cdef extern from "bezier/status.h":
         PARALLEL = 1
         WIGGLE_FAIL = 2
         NO_CONVERGE = 3
-        TOO_SMALL = 4
+        INSUFFICIENT_SPACE = 4
         SAME_CURVATURE = 5
         BAD_TANGENT = 6
         EDGE_END = 7
