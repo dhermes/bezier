@@ -1321,8 +1321,8 @@ contains
   subroutine surfaces_intersect( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
-       num_intersected, segment_ends, segments, &
-       contained, status)
+       segment_ends, segments, &
+       num_intersected, contained, status)
 
     ! NOTE: ``contained`` will be a ``SurfaceContained`` enum.
     ! NOTE: ``num_intersected`` will be the **actual** size of
@@ -1354,9 +1354,9 @@ contains
     integer(c_int), intent(in) :: num_nodes2
     real(c_double), intent(in) :: nodes2(num_nodes2, 2)
     integer(c_int), intent(in) :: degree2
-    integer(c_int), intent(out) :: num_intersected
     integer(c_int), allocatable, intent(inout) :: segment_ends(:)
     type(CurvedPolygonSegment), allocatable, intent(inout) :: segments(:)
+    integer(c_int), intent(out) :: num_intersected
     integer(c_int), intent(out) :: contained
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
@@ -1421,9 +1421,8 @@ contains
   subroutine surfaces_intersect_abi( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
-       segment_ends_size, segments_size, &
-       num_intersected, segment_ends, segments, &
-       contained, status) &
+       segment_ends_size, segment_ends, segments_size, segments, &
+       num_intersected, contained, status) &
        bind(c, name='surface_intersections')
 
     ! NOTE: The number of intersections cannot be known beforehand. If
@@ -1459,10 +1458,11 @@ contains
     integer(c_int), intent(in) :: num_nodes2
     real(c_double), intent(in) :: nodes2(num_nodes2, 2)
     integer(c_int), intent(in) :: degree2
-    integer(c_int), intent(in) :: segment_ends_size, segments_size
-    integer(c_int), intent(out) :: num_intersected
+    integer(c_int), intent(in) :: segment_ends_size
     integer(c_int), intent(out) :: segment_ends(segment_ends_size)
+    integer(c_int), intent(in) :: segments_size
     type(CurvedPolygonSegment), intent(out) :: segments(segments_size)
+    integer(c_int), intent(out) :: num_intersected
     integer(c_int), intent(out) :: contained
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
@@ -1473,7 +1473,7 @@ contains
     call surfaces_intersect( &
          num_nodes1, nodes1, degree1, &
          num_nodes2, nodes2, degree2, &
-         num_intersected, segment_ends_workspace, segments_workspace, &
+         segment_ends_workspace, segments_workspace, num_intersected, &
          contained, status)
 
     if (status /= Status_SUCCESS) then

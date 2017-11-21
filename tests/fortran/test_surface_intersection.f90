@@ -1347,8 +1347,8 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
@@ -1367,8 +1367,8 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
@@ -1384,8 +1384,8 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
@@ -1397,8 +1397,8 @@ contains
     ! CASE 4: Surface 1 contained in surface 2 (re-uses all data from CASE 3).
     call surfaces_intersect( &
          3, linear2, 1, 3, linear1, 1, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
@@ -1415,8 +1415,8 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
@@ -1435,8 +1435,8 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 1 .AND. &
          allocated(segment_ends) .AND. &
@@ -1469,8 +1469,8 @@ contains
 
     call surfaces_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
@@ -1489,8 +1489,8 @@ contains
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
@@ -1515,8 +1515,8 @@ contains
 
     call surfaces_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
@@ -1529,8 +1529,8 @@ contains
     !          **all** data from CASE 9).
     call surfaces_intersect( &
          6, quadratic2, 2, 6, quadratic1, 2, &
-         num_intersected, segment_ends, segments, &
-         contained, status)
+         segment_ends, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
@@ -1564,8 +1564,8 @@ contains
     linear2(3, :) = [2.0_dp, 1.0_dp]
     call surfaces_intersect_abi( &
          3, linear1, 1, 3, linear2, 1, &
-         0, 0, num_intersected, segment_ends(:0), segments(:0), &
-         contained, status)
+         2, segment_ends, 6, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
          contained == SurfaceContained_NEITHER .AND. &
@@ -1586,8 +1586,8 @@ contains
     segment_ends(:2) = [-1337, -42]
     call surfaces_intersect_abi( &
          3, linear1, 1, 6, quadratic, 2, &
-         1, 3, num_intersected, segment_ends, segments(:3), &
-         contained, status)
+         1, segment_ends, 3, segments(:3), &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 2 .AND. &
          all(segment_ends(:2) == [-1337, -42]) .AND. &  ! Unchanged.
@@ -1599,8 +1599,8 @@ contains
     !         from 13L-38Q (ID: 39).
     call surfaces_intersect_abi( &
          3, linear1, 1, 6, quadratic, 2, &
-         2, 3, num_intersected, segment_ends, segments(:3), &
-         contained, status)
+         2, segment_ends, 3, segments(:3), &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 2 .AND. &
          all(segment_ends(:2) == [3, 6]) .AND. &  ! Changed.
@@ -1612,8 +1612,8 @@ contains
     !         from 13L-38Q (ID: 39).
     call surfaces_intersect_abi( &
          3, linear1, 1, 6, quadratic, 2, &
-         2, 6, num_intersected, segment_ends, segments, &
-         contained, status)
+         2, segment_ends, 6, segments, &
+         num_intersected, contained, status)
     case_success = ( &
          num_intersected == 2 .AND. &
          all(segment_ends(:2) == [3, 6]) .AND. &
