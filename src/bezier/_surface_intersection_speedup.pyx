@@ -20,6 +20,9 @@ cimport bezier._status
 cimport bezier._surface_intersection
 
 
+cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+
+
 def newton_refine(
         double[::1, :] nodes, int degree,
         double x_val, double y_val, double s, double t):
@@ -67,12 +70,24 @@ def locate_point(double[::1, :] nodes, int degree, double x_val, double y_val):
         return s_val, t_val
 
 
+def reset_workspaces(int segment_ends_size, int segments_size):
+    global SEGMENT_ENDS_WORKSPACE
+    SEGMENT_ENDS_WORKSPACE = np.empty(segment_ends_size, dtype=np.intc)
+
+
+def workspace_sizes():
+    global SEGMENT_ENDS_WORKSPACE
+    cdef int segment_ends_size
+
+    segment_ends_size, = np.shape(SEGMENT_ENDS_WORKSPACE)
+    return segment_ends_size, None
+
+
 def surface_intersections(
         double[::1, :] nodes1, int degree1,
         double[::1, :] nodes2, int degree2):
     cdef int num_nodes1, num_nodes2
     cdef int segment_ends_size
-    cdef int[:] segment_ends
     cdef int segments_size
     cdef bezier._surface_intersection.CurvedPolygonSegment segments[6]
     cdef int num_intersected, contained, status
@@ -82,8 +97,7 @@ def surface_intersections(
     num_nodes1, _ = np.shape(nodes1)
     num_nodes2, _ = np.shape(nodes2)
 
-    segment_ends_size = 3
-    segment_ends = np.empty((segment_ends_size,), dtype=np.intc, order='F')
+    segment_ends_size, _ = workspace_sizes()
     segments_size = 6
 
     bezier._surface_intersection.surface_intersections(
@@ -94,7 +108,7 @@ def surface_intersections(
         &nodes2[0, 0],
         &degree2,
         &segment_ends_size,
-        &segment_ends[0],
+        &SEGMENT_ENDS_WORKSPACE[0],
         &segments_size,
         &segments[0],
         &num_intersected,
@@ -113,7 +127,7 @@ def surface_intersections(
             )
         else:
             return (
-                segment_ends[:num_intersected],
+                SEGMENT_ENDS_WORKSPACE[:num_intersected],
                 None,
                 num_intersected,
                 contained,
@@ -129,9 +143,9 @@ def surface_intersections(
                 status,
             )
         else:
-            num_segments = segment_ends[num_intersected - 1]
+            num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]
             return (
-                segment_ends[:num_intersected],
+                SEGMENT_ENDS_WORKSPACE[:num_intersected],
                 [
                     segments[i]
                     for i in range(num_segments)
