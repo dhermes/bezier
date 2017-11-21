@@ -18,7 +18,7 @@ module test_surface_intersection
        Status_BAD_TANGENT, Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
   use surface_intersection, only: &
-       Intersection, SegmentNode, CurvedPolygonSegment, &
+       Intersection, CurvedPolygonSegment, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
        IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
@@ -1109,18 +1109,20 @@ contains
     logical :: case_success
     integer :: case_id
     character(11) :: name
-    type(SegmentNode) :: curr_node, next_node
+    type(Intersection) :: curr_node, next_node
     type(CurvedPolygonSegment), allocatable :: segments(:)
     integer(c_int) :: index
 
     case_id = 1
     name = "add_segment"
 
-    ! CASE 1: ``segments`` is not allocated.
+    ! CASE 1: ``segments`` is not allocated; intersection is classified as
+    !         SECOND.
     index = 1
-    curr_node%edge_param = 0.25_dp
-    curr_node%edge_index = 4
-    next_node%edge_param = 0.5_dp
+    curr_node%index_second = 1
+    curr_node%t = 0.25_dp
+    curr_node%interior_curve = IntersectionClassification_SECOND
+    next_node%t = 0.5_dp
     case_success = .NOT. allocated(segments)
     call add_segment(curr_node, next_node, index, segments)
     case_success = ( &
@@ -1128,16 +1130,18 @@ contains
          index == 2 .AND. &
          allocated(segments) .AND. &
          size(segments) == 1 .AND. &
-         segments(1)%start == curr_node%edge_param .AND. &
-         segments(1)%end_ == next_node%edge_param .AND. &
-         segments(1)%edge_index == curr_node%edge_index)
+         segments(1)%start == curr_node%t .AND. &
+         segments(1)%end_ == next_node%t .AND. &
+         segments(1)%edge_index == curr_node%index_second + 3)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: ``segments`` is allocated, but not large enough.
+    ! CASE 2: ``segments`` is allocated, but not large enough; intersection
+    !         is classified as FIRST.
     index = 2
-    curr_node%edge_param = 0.5_dp
-    curr_node%edge_index = 2
-    next_node%edge_param = 1.0_dp
+    curr_node%index_first = 2
+    curr_node%s = 0.5_dp
+    curr_node%interior_curve = IntersectionClassification_FIRST
+    next_node%s = 1.0_dp
     case_success = ( &
          allocated(segments) .AND. &
          size(segments) == 1)
@@ -1147,16 +1151,18 @@ contains
          index == 3 .AND. &
          allocated(segments) .AND. &
          size(segments) == 2 .AND. &
-         segments(2)%start == curr_node%edge_param .AND. &
-         segments(2)%end_ == next_node%edge_param .AND. &
-         segments(2)%edge_index == curr_node%edge_index)
+         segments(2)%start == curr_node%s .AND. &
+         segments(2)%end_ == next_node%s .AND. &
+         segments(2)%edge_index == curr_node%index_first)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: ``segments`` is allocated and does not need to be resized.
+    ! CASE 3: ``segments`` is allocated and does not need to be resized;
+    !         intersection is classified as FIRST.
     index = 2
-    curr_node%edge_param = 0.125_dp
-    curr_node%edge_index = 3
-    next_node%edge_param = 0.75_dp
+    curr_node%index_first = 3
+    curr_node%s = 0.125_dp
+    curr_node%interior_curve = IntersectionClassification_FIRST
+    next_node%s = 0.75_dp
     case_success = ( &
          allocated(segments) .AND. &
          size(segments) == 2)
@@ -1166,9 +1172,9 @@ contains
          index == 3 .AND. &
          allocated(segments) .AND. &
          size(segments) == 2 .AND. &
-         segments(2)%start == curr_node%edge_param .AND. &
-         segments(2)%end_ == next_node%edge_param .AND. &
-         segments(2)%edge_index == curr_node%edge_index)
+         segments(2)%start == curr_node%s .AND. &
+         segments(2)%end_ == next_node%s .AND. &
+         segments(2)%edge_index == curr_node%index_first)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_segment

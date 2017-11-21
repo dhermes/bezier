@@ -31,7 +31,7 @@ module surface_intersection
        ignored_corner, classify_tangent_intersection, no_intersections, &
        remove_node
   public &
-       Intersection, SegmentNode, CurvedPolygonSegment, &
+       Intersection, CurvedPolygonSegment, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
        IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
@@ -58,17 +58,6 @@ module surface_intersection
      real(c_double) :: width = 1.0_dp
      real(c_double), allocatable :: nodes(:, :)
   end type LocateCandidate
-
-  ! For ``surfaces_intersect`` and its helpers; this is not meant to be
-  ! C-interoperable.
-  ! NOTE: This type is not meant to be part of the interface for this
-  !       module, but it is (for now) public, so that ``get_next()`` and
-  !       ``to_front()`` can be tested.
-  type :: SegmentNode
-     real(c_double) :: edge_param = -1.0_dp
-     integer(c_int) :: edge_index = -1
-     integer(c_int) :: interior_curve = -99  ! Hopefully an unused enum value
-  end type SegmentNode
 
   type, bind(c) :: CurvedPolygonSegment
      real(c_double) :: start
@@ -1110,8 +1099,10 @@ contains
 
     ! NOTE: This subroutine is not meant to be part of the interface for this
     !       module, but it is (for now) public, so that it can be tested.
+    ! NOTE: We assume, but do not check, that ``curr_node%interior_curve``
+    !       is either ``FIRST`` or ``SECOND``.
 
-    type(SegmentNode), intent(in) :: curr_node, next_node
+    type(Intersection), intent(in) :: curr_node, next_node
     integer(c_int), intent(inout) :: index
     type(CurvedPolygonSegment), allocatable, intent(inout) :: segments(:)
     ! Variables outside of signature.
@@ -1130,11 +1121,19 @@ contains
        allocate(segments(index))
     end if
 
-    segments(index)%start = curr_node%edge_param
-    segments(index)%end_ = next_node%edge_param
-    ! NOTE: This **assumes**, but does not check that ``curr_node%edge_index``
-    !       and ``next_node%edge_index`` agree.
-    segments(index)%edge_index = curr_node%edge_index
+    if (curr_node%interior_curve == IntersectionClassification_FIRST) then
+       segments(index)%start = curr_node%s
+       segments(index)%end_ = next_node%s
+       ! NOTE: This **assumes**, but does not check that ``index_first``
+       !       is the same for both ``curr_node`` and ``next_node``.
+       segments(index)%edge_index = curr_node%index_first
+    else
+       segments(index)%start = curr_node%t
+       segments(index)%end_ = next_node%t
+       ! NOTE: This **assumes**, but does not check that ``index_second``
+       !       is the same for both ``curr_node`` and ``next_node``.
+       segments(index)%edge_index = curr_node%index_second + 3
+    end if
 
     ! Update the index.
     index = index + 1
