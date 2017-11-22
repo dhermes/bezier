@@ -109,6 +109,62 @@ def workspace_sizes():
     return segment_ends_size, segments_size
 
 
+def _surface_intersections_success(int num_intersected):
+    global SEGMENT_ENDS_WORKSPACE
+    global SEGMENTS_WORKSPACE
+    cdef int begin_index, end_index
+    cdef size_t i, j
+
+    curved_polygons = []
+    for i in range(num_intersected):
+        if i == 0:
+            begin_index = 0
+        else:
+            begin_index = SEGMENT_ENDS_WORKSPACE[i - 1]
+        end_index = SEGMENT_ENDS_WORKSPACE[i]
+        triples = [
+            (
+                SEGMENTS_WORKSPACE[j].start,
+                SEGMENTS_WORKSPACE[j].end,
+                SEGMENTS_WORKSPACE[j].edge_index,
+            )
+            for j in range(begin_index, end_index)
+        ]
+        curved_polygons.append(triples)
+
+    return curved_polygons
+
+
+def _surface_intersections_resize(
+        double[::1, :] nodes1, int degree1,
+        double[::1, :] nodes2, int degree2,
+        int segment_ends_size, int segments_size,
+        int num_intersected, int resizes_allowed):
+    global SEGMENT_ENDS_WORKSPACE
+    cdef int num_segments
+
+    if resizes_allowed > 0:
+        if num_intersected > segment_ends_size:
+            reset_workspaces(segment_ends_size=num_intersected)
+        else:
+            num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]
+            reset_workspaces(segments_size=num_segments)
+
+        return surface_intersections(
+            nodes1, degree1, nodes2, degree2,
+            resizes_allowed=resizes_allowed - 1)
+    else:
+        if num_intersected > segment_ends_size:
+            msg = SEGMENT_ENDS_TOO_SMALL.format(
+                num_intersected, segment_ends_size)
+            raise ValueError(msg)
+        else:
+            num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]
+            msg = SEGMENTS_TOO_SMALL.format(
+                num_segments, segments_size)
+            raise ValueError(msg)
+
+
 def surface_intersections(
         double[::1, :] nodes1, int degree1,
         double[::1, :] nodes2, int degree2,
@@ -119,9 +175,6 @@ def surface_intersections(
     cdef int segment_ends_size
     cdef int segments_size
     cdef int num_intersected, contained, status
-    cdef int num_segments
-    cdef int begin_index, end_index
-    cdef size_t i
 
     # NOTE: We don't check that there are 2 columns.
     num_nodes1, _ = np.shape(nodes1)
@@ -145,47 +198,13 @@ def surface_intersections(
         &status,
     )
 
-    if num_intersected <= segment_ends_size:
-        num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]
-
     # Try to resize workspaces if needed.
     if status == bezier._status.Status.SUCCESS:
-        curved_polygons = []
-        for i in range(num_intersected):
-            if i == 0:
-                begin_index = 0
-            else:
-                begin_index = SEGMENT_ENDS_WORKSPACE[i - 1]
-            end_index = SEGMENT_ENDS_WORKSPACE[i]
-            triples = [
-                (
-                    SEGMENTS_WORKSPACE[j].start,
-                    SEGMENTS_WORKSPACE[j].end,
-                    SEGMENTS_WORKSPACE[j].edge_index,
-                )
-                for j in range(begin_index, end_index)
-            ]
-            curved_polygons.append(triples)
-
-        return curved_polygons, contained
+        return _surface_intersections_success(num_intersected), contained
     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
-        if resizes_allowed > 0:
-            if num_intersected > segment_ends_size:
-                reset_workspaces(segment_ends_size=num_intersected)
-            else:
-                reset_workspaces(segments_size=num_segments)
-
-            return surface_intersections(
-                nodes1, degree1, nodes2, degree2,
-                resizes_allowed=resizes_allowed - 1)
-        else:
-            if num_intersected > segment_ends_size:
-                msg = SEGMENT_ENDS_TOO_SMALL.format(
-                    num_intersected, segment_ends_size)
-                raise ValueError(msg)
-            else:
-                msg = SEGMENTS_TOO_SMALL.format(
-                    num_segments, segments_size)
-                raise ValueError(msg)
+        return _surface_intersections_resize(
+            nodes1, degree1, nodes2, degree2,
+            segment_ends_size, segments_size,
+            num_intersected, resizes_allowed)
     else:
         raise ValueError(status)
