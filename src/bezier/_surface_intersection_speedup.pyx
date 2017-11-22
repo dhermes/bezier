@@ -128,11 +128,13 @@ def _surface_intersections_success(int num_intersected):
         else:
             begin_index = SEGMENT_ENDS_WORKSPACE[i - 1]
         end_index = SEGMENT_ENDS_WORKSPACE[i]
+        # NOTE: We switch from 1-based to 0-based indexing since
+        #       the data moves from Fortran to Python.
         triples = [
             (
+                SEGMENTS_WORKSPACE[j].edge_index - 1,
                 SEGMENTS_WORKSPACE[j].start,
                 SEGMENTS_WORKSPACE[j].end,
-                SEGMENTS_WORKSPACE[j].edge_index,
             )
             for j in range(begin_index, end_index)
         ]
