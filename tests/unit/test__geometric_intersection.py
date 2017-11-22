@@ -1318,7 +1318,7 @@ class Test_speedup_all_intersections(Test__all_intersections):
                 nodes1, nodes2, allow_resize=False)
 
         exc_args = exc_info.exception.args
-        expected = _curve_intersection_speedup.TOO_SMALL_TEMPLATE.format(2, 3)
+        expected = _curve_intersection_speedup.TOO_SMALL_TEMPLATE.format(3, 2)
         self.assertEqual(exc_args, (expected,))
         # Make sure the workspace was **not** resized.
         self.assertEqual(_curve_intersection_speedup.workspace_size(), 2)

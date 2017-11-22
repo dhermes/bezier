@@ -282,11 +282,23 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
     # pylint: enable=too-few-public-methods
 
     @staticmethod
-    def _call_function_under_test(nodes1, degree1, nodes2, degree2):
+    def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
         from bezier import _surface_intersection_speedup
 
         return _surface_intersection_speedup.surface_intersections(
-            nodes1, degree1, nodes2, degree2)
+            nodes1, degree1, nodes2, degree2, **kwargs)
+
+    @staticmethod
+    def reset_workspaces(**kwargs):
+        from bezier import _surface_intersection_speedup
+
+        return _surface_intersection_speedup.reset_workspaces(**kwargs)
+
+    @staticmethod
+    def workspace_sizes(**kwargs):
+        from bezier import _surface_intersection_speedup
+
+        return _surface_intersection_speedup.workspace_sizes()
 
     def test_parallel(self):
         nodes1 = np.asfortranarray([
@@ -300,16 +312,13 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
             [2.0, 1.0],
         ])
 
-        info = self._call_function_under_test(nodes1, 1, nodes2, 1)
-        segment_ends, segments, num_intersected, contained, status = info
+        with self.assertRaises(ValueError) as exc_info:
+            self._call_function_under_test(nodes1, 1, nodes2, 1)
 
-        self.assertIsNone(segment_ends)
-        self.assertIsNone(segments)
-        self.assertEqual(num_intersected, 0)
-        self.assertEqual(contained, self.SurfaceContained.NEITHER)
-        self.assertEqual(status, self.Status.PARALLEL)
+        exc_args = exc_info.exception.args
+        self.assertEqual(exc_args, (self.Status.PARALLEL,))
 
-    def test_two_curved_polygons(self):
+    def _two_curved_polygons(self, **kwargs):
         nodes1 = np.asfortranarray([
             [-8.0, 0.0],
             [8.0, 0.0],
@@ -324,23 +333,74 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
             [0.0, -9.0],
         ])
 
-        info = self._call_function_under_test(nodes1, 1, nodes2, 2)
-        segment_ends, segments, num_intersected, contained, status = info
-
-        self.assertEqual(list(segment_ends), [3, 6])
-        segment_triples = [
-            (0.75, 1.0, 6),
-            (0.0, 0.25, 4),
-            (0.625, 0.6875, 1),
-            (0.3125, 0.375, 1),
-            (0.75, 1.0, 4),
-            (0.0, 0.25, 5),
-        ]
         expected = [
-            {'start': start, 'end': end, 'edge_index': edge_index}
-            for start, end, edge_index in segment_triples
+            [
+                (0.75, 1.0, 6),
+                (0.0, 0.25, 4),
+                (0.625, 0.6875, 1),
+            ], [
+                (0.3125, 0.375, 1),
+                (0.75, 1.0, 4),
+                (0.0, 0.25, 5),
+            ],
         ]
-        self.assertEqual(segments, expected)
-        self.assertEqual(num_intersected, 2)
+        return (
+            self._call_function_under_test(nodes1, 1, nodes2, 2, **kwargs),
+            expected,
+        )
+
+    def test_two_curved_polygons(self):
+        # Make sure there is enough space so that no resize is needed.
+        sizes = self.workspace_sizes()
+        segment_ends_size, segments_size = sizes
+        self.assertGreaterEqual(segment_ends_size, 2)
+        self.assertGreaterEqual(segments_size, 6)
+
+        result, expected = self._two_curved_polygons()
+        curved_polygons, contained = result
         self.assertEqual(contained, self.SurfaceContained.NEITHER)
-        self.assertEqual(status, self.Status.SUCCESS)
+        self.assertEqual(curved_polygons, expected)
+
+        # Make sure the workspace was **not** resized.
+        self.assertEqual(self.workspace_sizes(), sizes)
+
+    def test_resize_both(self):
+        self.reset_workspaces(segment_ends_size=1, segments_size=1)
+
+        result, expected = self._two_curved_polygons()
+        curved_polygons, contained = result
+        self.assertEqual(contained, self.SurfaceContained.NEITHER)
+        self.assertEqual(curved_polygons, expected)
+
+        # Make sure the sizes were resized from (1, 1).
+        self.assertEqual(self.workspace_sizes(), (2, 6))
+
+    def test_insufficient_segment_ends(self):
+        from bezier import _surface_intersection_speedup
+
+        self.reset_workspaces(segment_ends_size=1)
+        sizes = self.workspace_sizes()
+
+        with self.assertRaises(ValueError) as exc_info:
+            self._two_curved_polygons(resizes_allowed=0)
+
+        exc_args = exc_info.exception.args
+        template = _surface_intersection_speedup.SEGMENT_ENDS_TOO_SMALL
+        self.assertEqual(exc_args, (template.format(2, 1),))
+        # Make sure the workspace was **not** resized.
+        self.assertEqual(self.workspace_sizes(), sizes)
+
+    def test_insufficient_segments(self):
+        from bezier import _surface_intersection_speedup
+
+        self.reset_workspaces(segment_ends_size=2, segments_size=2)
+        sizes = self.workspace_sizes()
+
+        with self.assertRaises(ValueError) as exc_info:
+            self._two_curved_polygons(resizes_allowed=0)
+
+        exc_args = exc_info.exception.args
+        template = _surface_intersection_speedup.SEGMENTS_TOO_SMALL
+        self.assertEqual(exc_args, (template.format(6, 2),))
+        # Make sure the workspace was **not** resized.
+        self.assertEqual(self.workspace_sizes(), sizes)

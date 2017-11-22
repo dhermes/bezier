@@ -252,7 +252,7 @@ def all_intersections(
                 nodes_first, nodes_second, allow_resize=False)
         else:
             msg = TOO_SMALL_TEMPLATE.format(
-                intersections_size, num_intersections)
+                num_intersections, intersections_size)
             raise ValueError(msg)
     elif status == bezier._status.Status.PARALLEL:
         raise NotImplementedError('Line segments parallel.')

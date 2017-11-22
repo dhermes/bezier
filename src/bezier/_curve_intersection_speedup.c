@@ -6419,7 +6419,7 @@ __pyx_t_19 = __pyx_t_18;
  *                 nodes_first, nodes_second, allow_resize=False)
  *         else:
  *             msg = TOO_SMALL_TEMPLATE.format(             # <<<<<<<<<<<<<<
- *                 intersections_size, num_intersections)
+ *                 num_intersections, intersections_size)
  *             raise ValueError(msg)
  */
     /*else*/ {
@@ -6432,13 +6432,13 @@ __pyx_t_19 = __pyx_t_18;
       /* "bezier/_curve_intersection_speedup.pyx":255
  *         else:
  *             msg = TOO_SMALL_TEMPLATE.format(
- *                 intersections_size, num_intersections)             # <<<<<<<<<<<<<<
+ *                 num_intersections, intersections_size)             # <<<<<<<<<<<<<<
  *             raise ValueError(msg)
  *     elif status == bezier._status.Status.PARALLEL:
  */
-      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_intersections_size); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 255, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_num_intersections); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 255, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_num_intersections); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 255, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_intersections_size); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 255, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __pyx_t_2 = NULL;
       __pyx_t_7 = 0;
@@ -6494,7 +6494,7 @@ __pyx_t_19 = __pyx_t_18;
 
       /* "bezier/_curve_intersection_speedup.pyx":256
  *             msg = TOO_SMALL_TEMPLATE.format(
- *                 intersections_size, num_intersections)
+ *                 num_intersections, intersections_size)
  *             raise ValueError(msg)             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.PARALLEL:
  *         raise NotImplementedError('Line segments parallel.')
@@ -6522,7 +6522,7 @@ __pyx_t_19 = __pyx_t_18;
     break;
 
     /* "bezier/_curve_intersection_speedup.pyx":257
- *                 intersections_size, num_intersections)
+ *                 num_intersections, intersections_size)
  *             raise ValueError(msg)
  *     elif status == bezier._status.Status.PARALLEL:             # <<<<<<<<<<<<<<
  *         raise NotImplementedError('Line segments parallel.')
@@ -6544,7 +6544,7 @@ __pyx_t_19 = __pyx_t_18;
     __PYX_ERR(0, 258, __pyx_L1_error)
 
     /* "bezier/_curve_intersection_speedup.pyx":257
- *                 intersections_size, num_intersections)
+ *                 num_intersections, intersections_size)
  *             raise ValueError(msg)
  *     elif status == bezier._status.Status.PARALLEL:             # <<<<<<<<<<<<<<
  *         raise NotImplementedError('Line segments parallel.')

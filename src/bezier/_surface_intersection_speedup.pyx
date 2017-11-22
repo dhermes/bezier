@@ -34,6 +34,12 @@ cdef dtype_t SEGMENT_DTYPE = np.dtype(
 )
 cdef CurvedPolygonSegment[:] SEGMENTS_WORKSPACE = np.empty(
     6, dtype=SEGMENT_DTYPE)
+SEGMENT_ENDS_TOO_SMALL = (
+    'Did not have enough space for segment ends. Needed space '
+    'for {:d} integers but only had space for {:d}.')
+SEGMENTS_TOO_SMALL = (
+    'Did not have enough space for segments. Needed space '
+    'for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.')
 
 
 def newton_refine(
@@ -83,11 +89,13 @@ def locate_point(double[::1, :] nodes, int degree, double x_val, double y_val):
         return s_val, t_val
 
 
-def reset_workspaces(int segment_ends_size, int segments_size):
+def reset_workspaces(int segment_ends_size=-1, int segments_size=-1):
     global SEGMENT_ENDS_WORKSPACE
     global SEGMENTS_WORKSPACE
-    SEGMENT_ENDS_WORKSPACE = np.empty(segment_ends_size, dtype=np.intc)
-    SEGMENTS_WORKSPACE = np.empty(segments_size, dtype=SEGMENT_DTYPE)
+    if segment_ends_size != -1:
+        SEGMENT_ENDS_WORKSPACE = np.empty(segment_ends_size, dtype=np.intc)
+    if segments_size != -1:
+        SEGMENTS_WORKSPACE = np.empty(segments_size, dtype=SEGMENT_DTYPE)
 
 
 def workspace_sizes():
@@ -103,14 +111,17 @@ def workspace_sizes():
 
 def surface_intersections(
         double[::1, :] nodes1, int degree1,
-        double[::1, :] nodes2, int degree2):
+        double[::1, :] nodes2, int degree2,
+        int resizes_allowed=2):
     global SEGMENT_ENDS_WORKSPACE
     global SEGMENTS_WORKSPACE
     cdef int num_nodes1, num_nodes2
     cdef int segment_ends_size
     cdef int segments_size
     cdef int num_intersected, contained, status
-    cdef int num_segments, i
+    cdef int num_segments
+    cdef int begin_index, end_index
+    cdef size_t i
 
     # NOTE: We don't check that there are 2 columns.
     num_nodes1, _ = np.shape(nodes1)
@@ -134,41 +145,47 @@ def surface_intersections(
         &status,
     )
 
-    if status == bezier._status.Status.INSUFFICIENT_SPACE:
-        if num_intersected > segment_ends_size:
-            return (
-                None,
-                None,
-                num_intersected,
-                contained,
-                status,
-            )
+    if num_intersected <= segment_ends_size:
+        num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]
+
+    # Try to resize workspaces if needed.
+    if status == bezier._status.Status.SUCCESS:
+        curved_polygons = []
+        for i in range(num_intersected):
+            if i == 0:
+                begin_index = 0
+            else:
+                begin_index = SEGMENT_ENDS_WORKSPACE[i - 1]
+            end_index = SEGMENT_ENDS_WORKSPACE[i]
+            triples = [
+                (
+                    SEGMENTS_WORKSPACE[j].start,
+                    SEGMENTS_WORKSPACE[j].end,
+                    SEGMENTS_WORKSPACE[j].edge_index,
+                )
+                for j in range(begin_index, end_index)
+            ]
+            curved_polygons.append(triples)
+
+        return curved_polygons, contained
+    elif status == bezier._status.Status.INSUFFICIENT_SPACE:
+        if resizes_allowed > 0:
+            if num_intersected > segment_ends_size:
+                reset_workspaces(segment_ends_size=num_intersected)
+            else:
+                reset_workspaces(segments_size=num_segments)
+
+            return surface_intersections(
+                nodes1, degree1, nodes2, degree2,
+                resizes_allowed=resizes_allowed - 1)
         else:
-            return (
-                SEGMENT_ENDS_WORKSPACE[:num_intersected],
-                None,
-                num_intersected,
-                contained,
-                status,
-            )
+            if num_intersected > segment_ends_size:
+                msg = SEGMENT_ENDS_TOO_SMALL.format(
+                    num_intersected, segment_ends_size)
+                raise ValueError(msg)
+            else:
+                msg = SEGMENTS_TOO_SMALL.format(
+                    num_segments, segments_size)
+                raise ValueError(msg)
     else:
-        if num_intersected == 0:
-            return (
-                None,
-                None,
-                num_intersected,
-                contained,
-                status,
-            )
-        else:
-            num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]
-            return (
-                SEGMENT_ENDS_WORKSPACE[:num_intersected],
-                [
-                    SEGMENTS_WORKSPACE[i]
-                    for i in range(num_segments)
-                ],
-                num_intersected,
-                contained,
-                status,
-            )
+        raise ValueError(status)
