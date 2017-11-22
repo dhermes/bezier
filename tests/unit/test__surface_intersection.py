@@ -282,6 +282,23 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
 
         return _surface_intersection_speedup.workspace_sizes()
 
+    def test_disjoint_bbox(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [10.0, 10.0],
+            [11.0, 10.0],
+            [10.0, 11.0],
+        ])
+
+        curved_polygons, contained = self._call_function_under_test(
+            nodes1, 1, nodes2, 1)
+        self.assertEqual(curved_polygons, [])
+        self.assertIsNone(contained)
+
     def test_parallel(self):
         from bezier import _geometric_intersection
 
@@ -302,6 +319,142 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
         exc_args = exc_info.exception.args
         self.assertEqual(
             exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
+
+    def test_contained(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [5.0, 0.0],
+            [0.0, 5.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [2.0, 1.0],
+            [3.0, 1.0],
+            [2.0, 2.0],
+        ])
+
+        curved_polygons, contained = self._call_function_under_test(
+            nodes1, 1, nodes2, 1)
+        self.assertIsNone(curved_polygons)
+        self.assertIsNotNone(contained)
+        self.assertFalse(contained)
+
+        curved_polygons, contained = self._call_function_under_test(
+            nodes2, 1, nodes1, 1)
+        self.assertIsNone(curved_polygons)
+        self.assertTrue(contained)
+
+    def test_disjoint_with_intersecting_bbox(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [5.0, 0.0],
+            [0.0, 5.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [4.0, 2.0],
+            [4.0, 3.0],
+            [3.0, 3.0],
+        ])
+
+        curved_polygons, contained = self._call_function_under_test(
+            nodes1, 1, nodes2, 1)
+        self.assertEqual(curved_polygons, [])
+        self.assertIsNone(contained)
+
+    def test_linear_intersection(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [8.0, 0.0],
+            [0.0, 8.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [4.0, 5.0],
+            [-4.0, 5.0],
+            [4.0, -3.0],
+        ])
+
+        curved_polygons, contained = self._call_function_under_test(
+            nodes1, 1, nodes2, 1)
+        expected = [
+            [
+                (0.5, 0.625, 5),
+                (0.125, 0.5, 1),
+                (0.375, 0.875, 6),
+                (0.5, 0.625, 2),
+                (0.125, 0.5, 4),
+                (0.375, 0.875, 3),
+            ],
+        ]
+        self.assertEqual(curved_polygons, expected)
+        self.assertIsNone(contained)
+
+    def test_opposed_tangencies(self):
+        nodes1 = np.asfortranarray([
+            [4.0, 0.0],
+            [2.0, 4.0],
+            [0.0, 0.0],
+            [3.0, -2.0],
+            [1.0, -2.0],
+            [2.0, -4.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [0.0, 4.0],
+            [2.0, 0.0],
+            [4.0, 4.0],
+            [1.0, 6.0],
+            [3.0, 6.0],
+            [2.0, 8.0],
+        ])
+
+        curved_polygons, contained = self._call_function_under_test(
+            nodes1, 2, nodes2, 2)
+        self.assertEqual(curved_polygons, [])
+        self.assertIsNone(contained)
+
+    def test_ignored_corner(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [-2.0, 3.0],
+            [1.0, -3.0],
+        ])
+
+        curved_polygons, contained = self._call_function_under_test(
+            nodes1, 1, nodes2, 1)
+        self.assertEqual(curved_polygons, [])
+        self.assertIsNone(contained)
+
+    def test_tangent_contained(self):
+        nodes1 = np.asfortranarray([
+            [2.0, 1.25],
+            [4.0, 0.75],
+            [6.0, 1.25],
+            [3.0, 3.0],
+            [5.0, 3.0],
+            [4.0, 5.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [4.0, 2.0],
+            [8.0, 0.0],
+            [1.5, 7.5],
+            [11.0, 6.0],
+            [8.0, 8.0],
+        ])
+
+        curved_polygons, contained = self._call_function_under_test(
+            nodes1, 2, nodes2, 2)
+        self.assertIsNone(curved_polygons)
+        self.assertTrue(contained)
+
+        curved_polygons, contained = self._call_function_under_test(
+            nodes2, 2, nodes1, 2)
+        self.assertIsNone(curved_polygons)
+        self.assertIsNotNone(contained)
+        self.assertFalse(contained)
 
     def _two_curved_polygons(self, **kwargs):
         nodes1 = np.asfortranarray([
@@ -341,8 +494,10 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
         self.assertGreaterEqual(segment_ends_size, 2)
         self.assertGreaterEqual(segments_size, 6)
 
-        curved_polygons, expected = self._two_curved_polygons()
+        result, expected = self._two_curved_polygons()
+        curved_polygons, contained = result
         self.assertEqual(curved_polygons, expected)
+        self.assertIsNone(contained)
 
         # Make sure the workspace was **not** resized.
         self.assertEqual(self.workspace_sizes(), sizes)
@@ -350,8 +505,10 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
     def test_resize_both(self):
         self.reset_workspaces(segment_ends_size=1, segments_size=1)
 
-        curved_polygons, expected = self._two_curved_polygons()
+        result, expected = self._two_curved_polygons()
+        curved_polygons, contained = result
         self.assertEqual(curved_polygons, expected)
+        self.assertIsNone(contained)
 
         # Make sure the sizes were resized from (1, 1).
         self.assertEqual(self.workspace_sizes(), (2, 6))

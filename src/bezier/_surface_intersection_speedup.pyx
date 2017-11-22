@@ -206,13 +206,13 @@ def surface_intersections(
 
     if status == bezier._status.Status.SUCCESS:
         if contained == bezier._surface_intersection.FIRST:
-            return True
+            return None, True
         elif contained == bezier._surface_intersection.SECOND:
-            return False
+            return None, False
         else:
             # Assumes, but does not check, that ``contained`` is equal to
             # ``bezier._surface_intersection.NEITHER``.
-            return _surface_intersections_success(num_intersected)
+            return _surface_intersections_success(num_intersected), None
     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
         return _surface_intersections_resize(
             nodes1, degree1, nodes2, degree2,
