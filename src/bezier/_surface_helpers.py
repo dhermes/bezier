@@ -39,7 +39,6 @@ import six
 from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
-from bezier import curved_polygon
 try:
     from bezier import _surface_speedup
 except ImportError:  # pragma: NO COVER
@@ -320,9 +319,9 @@ _QUARTIC_TO_BERNSTEIN = np.asfortranarray([
 # NOTE: We avoid round-off until after ``_QUARTIC_TO_BERNSTEIN``
 #       has been applied.
 _QUARTIC_BERNSTEIN_FACTOR = 36.0
-# List of constants for ``make_intersection``. In each constant, each row is
-# a return value of ``ends_to_curve``. The second and third constant are
-# just obtained from the first by rotating the rows.
+# List of constants for ``basic_interior_combine()``. In each constant, each
+# row is a return value of ``ends_to_curve()``. The second and third constant
+# are just obtained from the first by rotating the rows.
 FIRST_SURFACE_INFO = (
     (
         (0, 0.0, 1.0),
@@ -2102,9 +2101,11 @@ def no_intersections(surface1, surface2):
             :math:\mathbf{R}^2`).
 
     Returns:
-        list: Either an empty list if one surface isn't contained
-        in the other. Otherwise, the list will have a single
-        :class:`.Surface` corresponding to the internal surface.
+        Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of
+
+        * Edges info list; will be empty or :data:`None`
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
     """
     # NOTE: We want the nodes to be 1x2 but accessing ``nodes1[[0], :]``
     #       and ``nodes2[[0], :]`` makes a copy while the accesses
@@ -2113,16 +2114,16 @@ def no_intersections(surface1, surface2):
     #        arrays.indexing.html#advanced-indexing)
     corner1 = surface1._nodes[0, :].reshape((1, 2), order='F')
     if surface2.locate(corner1, _verify=False) is not None:
-        return [surface1]
+        return None, True
 
     corner2 = surface2._nodes[0, :].reshape((1, 2), order='F')
     if surface1.locate(corner2, _verify=False) is not None:
-        return [surface2]
+        return None, False
 
-    return []
+    return [], None
 
 
-def tangent_only_intersections(all_types, surface1, surface2):
+def tangent_only_intersections(all_types):
     """Determine intersection in the case of only-tangent intersections.
 
     If the only intersections are tangencies, then either the surfaces
@@ -2142,13 +2143,13 @@ def tangent_only_intersections(all_types, surface1, surface2):
         all_types (Set[.IntersectionClassification]): The set of all
             intersection classifications encountered among the intersections
             for the given surface-surface pair.
-        surface1 (.Surface): First surface in intersection.
-        surface2 (.Surface): Second surface in intersection.
 
     Returns:
-        list: Either an empty list if one surface isn't contained
-        in the other. Otherwise, the list will have a single
-        :class:`.Surface` corresponding to the internal surface.
+        Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of
+
+        * Edges info list; will be empty or :data:`None`
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
 
     Raises:
         ValueError: If there are intersections of more than one type among
@@ -2164,61 +2165,18 @@ def tangent_only_intersections(all_types, surface1, surface2):
                          all_types)
     point_type = all_types.pop()
     if point_type == IntersectionClassification.OPPOSED:
-        return []
+        return [], None
     elif point_type == IntersectionClassification.IGNORED_CORNER:
-        return []
+        return [], None
     elif point_type == IntersectionClassification.TANGENT_FIRST:
-        return [surface1]
+        return None, True
     elif point_type == IntersectionClassification.TANGENT_SECOND:
-        return [surface2]
+        return None, False
     else:
         raise ValueError('Point type not for tangency', point_type)
 
 
-def make_intersection(edge_info, surface1, edges1, surface2, edges2):
-    """Convert a description of edges into a curved polygon.
-
-    .. note::
-
-       This is a helper used only by :func:`basic_interior_combine`, which in
-       turn is only used by :func:`combine_intersections`.
-
-    Args:
-        edge_info (Tuple[Tuple[int, float, float], ...]): Information
-            describing each edge in the curved polygon by indicating which
-            surface / edge on the surface and then start and end parameters
-            along that edge. (See :func:`ends_to_curve`.)
-        surface1 (.Surface): First surface in intersection.
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        surface2 (.Surface): Second surface in intersection.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
-
-    Returns:
-        Union[.CurvedPolygon, .Surface]: The intersection corresponding to
-        ``edge_info``. If ``edge_info`` simply contains the edges of the
-        first or second surface, will return ``surface1`` or ``surface2``
-        (depending on which is correct) instead of a curved polygon.
-    """
-    if edge_info in FIRST_SURFACE_INFO:
-        return surface1
-    elif edge_info in SECOND_SURFACE_INFO:
-        return surface2
-    else:
-        edges = []
-        for index, start, end in edge_info:
-            if index < 3:
-                edge = edges1[index].specialize(start, end)
-            else:
-                edge = edges2[index - 3].specialize(start, end)
-            edges.append(edge)
-
-        return curved_polygon.CurvedPolygon(*edges, _verify=False)
-
-
-def basic_interior_combine(
-        intersections, surface1, edges1, surface2, edges2, max_edges=10):
+def basic_interior_combine(intersections, max_edges=10):
     """Combine intersections that don't involve tangencies.
 
     .. note::
@@ -2233,19 +2191,17 @@ def basic_interior_combine(
     Args:
         intersections (List[.Intersection]): Intersections from each of the
             9 edge-edge pairs from a surface-surface pairing.
-        surface1 (.Surface): First surface in intersection.
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        surface2 (.Surface): Second surface in intersection.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
         max_edges (Optional[int]): The maximum number of allowed / expected
             edges per intersection. This is to avoid infinite loops.
 
     Returns:
-        List[Union[.CurvedPolygon, .Surface]]: All of the intersections
-        encountered. Assumes, but does not check, that if a surface is
-        returned, there must be exactly one intersection.
+        Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of
+
+        * List of "edge info" lists. Each list represents a curved polygon
+          and contains 3-tuples of edge index, start and end (see the
+          output of :func:`ends_to_curve`).
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
 
     Raises:
         RuntimeError: If the number of edges in a curved polygon
@@ -2277,14 +2233,18 @@ def basic_interior_combine(
             ends_to_curve(start_node, end_node)
             for start_node, end_node in edge_ends
         )
-        result.append(
-            make_intersection(edge_info, surface1, edges1, surface2, edges2))
+        result.append(edge_info)
 
-    return result
+    if len(result) == 1:
+        if result[0] in FIRST_SURFACE_INFO:
+            return None, True
+        elif result[0] in SECOND_SURFACE_INFO:
+            return None, False
+
+    return result, None
 
 
-def combine_intersections(
-        intersections, surface1, edges1, surface2, edges2, all_types):
+def combine_intersections(intersections, surface1, surface2, all_types):
     """Combine curve-curve intersections into curved polygon(s).
 
     .. note::
@@ -2304,25 +2264,24 @@ def combine_intersections(
         intersections (List[.Intersection]): Intersections from each of the
             9 edge-edge pairs from a surface-surface pairing.
         surface1 (.Surface): First surface in intersection.
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
         surface2 (.Surface): Second surface in intersection.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
         all_types (Set[.IntersectionClassification]): The set of all
             intersection classifications encountered among the intersections
             for the given surface-surface pair.
 
     Returns:
-        List[Union[~bezier.curved_polygon.CurvedPolygon, \
-        ~bezier.surface.Surface]]: A list of curved polygons (or surfaces)
-        that compose the intersected objects.
+        Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of
+
+        * List of "edge info" lists. Each list represents a curved polygon
+          and contains 3-tuples of edge index, start and end (see the
+          output of :func:`ends_to_curve`).
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
     """
     if intersections:
-        return basic_interior_combine(
-            intersections, surface1, edges1, surface2, edges2)
+        return basic_interior_combine(intersections)
     elif all_types:
-        return tangent_only_intersections(all_types, surface1, surface2)
+        return tangent_only_intersections(all_types)
     else:
         return no_intersections(surface1, surface2)
 

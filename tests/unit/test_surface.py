@@ -875,6 +875,30 @@ class TestSurface(utils.NumPyTestCase):
         intersections = surface1.intersect(surface2)
         self.assertEqual(intersections, [])
 
+    def test_intersect_first_contained(self):
+        surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
+        nodes = np.asfortranarray([
+            [-1.0, -1.0],
+            [3.0, -1.0],
+            [-1.0, 3.0],
+        ])
+        surface2 = self._make_one(nodes, 1)
+
+        intersections = surface1.intersect(surface2)
+        self.assertEqual(intersections, [surface1])
+
+    def test_intersect_second_contained(self):
+        nodes = np.asfortranarray([
+            [-1.0, -1.0],
+            [3.0, -1.0],
+            [-1.0, 3.0],
+        ])
+        surface1 = self._make_one(nodes, 1)
+        surface2 = self._make_one(self.UNIT_TRIANGLE, 1)
+
+        intersections = surface1.intersect(surface2)
+        self.assertEqual(intersections, [surface2])
+
     def test_intersect_non_surface(self):
         surface = self._make_one(self.UNIT_TRIANGLE, 1)
         with self.assertRaises(TypeError):
@@ -1066,6 +1090,79 @@ class Test__surface_intersections(utils.NumPyTestCase):
             edges1[0], edges2[0], 0.0, 0.0, 0, 0, enum_val)
 
         self.assertEqual(all_types, set([enum_val]))
+
+
+class Test__make_intersection(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(edge_info, all_edges):
+        from bezier import surface
+
+        return surface._make_intersection(edge_info, all_edges)
+
+    def test_it(self):
+        import bezier
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        ])
+        surface1 = bezier.Surface(nodes1, degree=1, _copy=False)
+        edges1 = surface1.edges
+        nodes2 = np.asfortranarray([
+            [0.25, 0.25],
+            [-0.75, 0.25],
+            [0.25, -0.75],
+        ])
+        surface2 = bezier.Surface(nodes2, degree=1, _copy=False)
+        edges2 = surface2.edges
+
+        edge_info = (
+            (0, 0.0, 0.25),
+            (5, 0.75, 1.0),
+            (3, 0.0, 0.25),
+            (2, 0.75, 1.0),
+        )
+        result = self._call_function_under_test(edge_info, edges1 + edges2)
+        self.assertIsInstance(result, bezier.CurvedPolygon)
+        self.assertEqual(result.num_sides, 4)
+        # pylint: disable=unbalanced-tuple-unpacking
+        edge0, edge1, edge2, edge3 = result._edges
+        # pylint: enable=unbalanced-tuple-unpacking
+
+        # First edge.
+        self.assertEqual(edge0.start, edge_info[0][1])
+        self.assertEqual(edge0.end, edge_info[0][2])
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [0.25, 0.0],
+        ])
+        self.assertEqual(edge0.nodes, expected)
+        # Second edge.
+        self.assertEqual(edge1.start, edge_info[1][1])
+        self.assertEqual(edge1.end, edge_info[1][2])
+        expected = np.asfortranarray([
+            [0.25, 0.0],
+            [0.25, 0.25],
+        ])
+        self.assertEqual(edge1.nodes, expected)
+        # Third edge.
+        self.assertEqual(edge2.start, edge_info[2][1])
+        self.assertEqual(edge2.end, edge_info[2][2])
+        expected = np.asfortranarray([
+            [0.25, 0.25],
+            [0.0, 0.25],
+        ])
+        self.assertEqual(edge2.nodes, expected)
+        # Fourth edge.
+        self.assertEqual(edge3.start, edge_info[3][1])
+        self.assertEqual(edge3.end, edge_info[3][2])
+        expected = np.asfortranarray([
+            [0.0, 0.25],
+            [0.0, 0.0],
+        ])
+        self.assertEqual(edge3.nodes, expected)
 
 
 def get_enum(str_val):

@@ -33,6 +33,7 @@ from bezier import _plot_helpers
 from bezier import _surface_helpers
 from bezier import _surface_intersection
 from bezier import curve as _curve_mod
+from bezier import curved_polygon
 
 
 _SIGN = np.sign  # pylint: disable=no-member
@@ -1114,8 +1115,20 @@ class Surface(_base.Base):
         if _verify:
             _surface_helpers.verify_duplicates(
                 duplicates, intersections + unused)
-        return _surface_helpers.combine_intersections(
-            intersections, self, edges1, other, edges2, all_types)
+
+        edge_infos, contained = _surface_helpers.combine_intersections(
+            intersections, self, other, all_types)
+        if edge_infos is None:
+            if contained:
+                return [self]
+            else:
+                return [other]
+        else:
+            all_edges = edges1 + edges2
+            return [
+                _make_intersection(edge_info, all_edges)
+                for edge_info in edge_infos
+            ]
 
     def elevate(self):
         r"""Return a degree-elevated version of the current surface.
@@ -1328,3 +1341,29 @@ def _add_intersection(  # pylint: disable=too-many-arguments
             intersections.append(intersection)
         else:
             unused.append(intersection)
+
+
+def _make_intersection(edge_info, all_edges):
+    """Convert a description of edges into a curved polygon.
+
+    .. note::
+
+       This is a helper used only by :meth:`.Surface.intersect`.
+
+    Args:
+        edge_info (Tuple[Tuple[int, float, float], ...]): Information
+            describing each edge in the curved polygon by indicating which
+            surface / edge on the surface and then start and end parameters
+            along that edge. (See :func:`.ends_to_curve`.)
+        all_edges (Tuple[.Curve, ...]): The three edges of the first surface
+            being intersected followed by the three edges of the second.
+
+    Returns:
+        .CurvedPolygon: The intersection corresponding to ``edge_info``.
+    """
+    edges = []
+    for index, start, end in edge_info:
+        edge = all_edges[index].specialize(start, end)
+        edges.append(edge)
+
+    return curved_polygon.CurvedPolygon(*edges, _verify=False)
