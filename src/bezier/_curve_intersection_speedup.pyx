@@ -29,6 +29,8 @@ BoxIntersectionType_TANGENT = (
 BoxIntersectionType_DISJOINT = (
     bezier._curve_intersection.BoxIntersectionType.DISJOINT)
 cdef double[::1, :] WORKSPACE = np.empty((2, 2), order='F')
+# NOTE: This value (``TOO_MANY_TEMPLATE``) is also defined (as a copy)
+#       in ``_surface_intersection_speedup.pyx``.
 TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
     '{:d} candidate pairs.')

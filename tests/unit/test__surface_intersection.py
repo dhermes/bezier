@@ -264,17 +264,6 @@ class Test_speedup_locate_point(Test__locate_point):
 class Test_speedup_surface_intersections(utils.NumPyTestCase):
 
     # pylint: disable=too-few-public-methods
-    class Status(object):
-        SUCCESS = 0
-        PARALLEL = 1
-        WIGGLE_FAIL = 2
-        NO_CONVERGE = 3
-        INSUFFICIENT_SPACE = 4
-        SAME_CURVATURE = 5
-        BAD_TANGENT = 6
-        EDGE_END = 7
-        UNKNOWN = 999
-
     class SurfaceContained(object):
         NEITHER = 0
         FIRST = 1
@@ -295,12 +284,14 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
         return _surface_intersection_speedup.reset_workspaces(**kwargs)
 
     @staticmethod
-    def workspace_sizes(**kwargs):
+    def workspace_sizes():
         from bezier import _surface_intersection_speedup
 
         return _surface_intersection_speedup.workspace_sizes()
 
     def test_parallel(self):
+        from bezier import _geometric_intersection
+
         nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [5.0, 0.0],
@@ -312,11 +303,12 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
             [2.0, 1.0],
         ])
 
-        with self.assertRaises(ValueError) as exc_info:
+        with self.assertRaises(NotImplementedError) as exc_info:
             self._call_function_under_test(nodes1, 1, nodes2, 1)
 
         exc_args = exc_info.exception.args
-        self.assertEqual(exc_args, (self.Status.PARALLEL,))
+        self.assertEqual(
+            exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
 
     def _two_curved_polygons(self, **kwargs):
         nodes1 = np.asfortranarray([

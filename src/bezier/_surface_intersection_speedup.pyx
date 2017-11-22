@@ -40,6 +40,12 @@ SEGMENT_ENDS_TOO_SMALL = (
 SEGMENTS_TOO_SMALL = (
     'Did not have enough space for segments. Needed space '
     'for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.')
+# NOTE: ``TOO_MANY_TEMPLATE`` is copy-pasted from
+#       ``_curve_intersection_speedup.pyx`` to avoid defining a `.pxd`
+#       for either of these modules.
+cdef str TOO_MANY_TEMPLATE = (
+    'The number of candidate intersections is too high.\n'
+    '{:d} candidate pairs.')
 
 
 def newton_refine(
@@ -206,5 +212,38 @@ def surface_intersections(
             nodes1, degree1, nodes2, degree2,
             segment_ends_size, segments_size,
             num_intersected, resizes_allowed)
+    elif status == bezier._status.Status.NO_CONVERGE:
+        # NOTE: This assumes, but does not verify, that the this comes from
+        #       ``curve_intersections()``.
+        raise ValueError(
+            'Curve intersection failed to converge to approximately linear '
+            'subdivisions after 20 iterations.')
+    elif status == bezier._status.Status.PARALLEL:
+        raise NotImplementedError('Line segments parallel.')
+    elif status == bezier._status.Status.WIGGLE_FAIL:
+        # NOTE: This branch may not be tested because it's quite difficult to
+        #       come up with an example that causes it.
+        raise ValueError('outside of unit interval')
+    elif status == bezier._status.Status.EDGE_END:
+        # NOTE: This text is identical (or should be) to the exception
+        #       in the Python ``classify_intersection()``.
+        raise ValueError('Intersection occurs at the end of an edge')
+    elif status == bezier._status.Status.BAD_TANGENT:
+        # NOTE: This text is identical (or should be) to the exception(s)
+        #       in the Python ``classify_tangent_intersection()``.
+        raise NotImplementedError(
+            'Curves moving in opposite direction but define overlapping arcs.')
+    elif status == bezier._status.Status.SAME_CURVATURE:
+        # NOTE: This text is identical (or should be) to the exception(s)
+        #       in the Python ``classify_tangent_intersection()``.
+        raise NotImplementedError('Tangent curves have same curvature.')
+    elif status == bezier._status.Status.UNKNOWN:
+        # NOTE: This assumes that ``interior_combine()`` has failed after
+        #       to return to return to the start node after ``MAX_EDGES = 10``
+        #       edges have been added. As the status name indicates, this
+        #       should never occur, hence will be difficult to test.
+        raise RuntimeError('Unexpected number of edges', 11)
     else:
-        raise ValueError(status)
+        # NOTE: If ``status`` isn't one of the enum values, then it is the
+        #       number of candidate intersections.
+        raise NotImplementedError(TOO_MANY_TEMPLATE.format(status))

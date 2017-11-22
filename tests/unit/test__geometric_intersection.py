@@ -1271,9 +1271,19 @@ class Test_speedup_all_intersections(Test__all_intersections):
         return _curve_intersection_speedup.all_intersections(
             nodes_first, nodes_second, **kwargs)
 
-    def test_workspace_resize(self):
+    @staticmethod
+    def reset_workspace(workspace_size):
         from bezier import _curve_intersection_speedup
 
+        return _curve_intersection_speedup.reset_workspace(workspace_size)
+
+    @staticmethod
+    def workspace_size():
+        from bezier import _curve_intersection_speedup
+
+        return _curve_intersection_speedup.workspace_size()
+
+    def test_workspace_resize(self):
         nodes1 = np.asfortranarray([
             [-3.0, 0.0],
             [5.0, 0.0],
@@ -1286,7 +1296,7 @@ class Test_speedup_all_intersections(Test__all_intersections):
         ])
         # NOTE: These curves intersect 3 times, so a workspace of
         #       2 is not large enough.
-        _curve_intersection_speedup.reset_workspace(2)
+        self.reset_workspace(2)
         intersections = self._call_function_under_test(nodes1, nodes2)
         expected = np.asfortranarray([
             [0.5, 0.5],
@@ -1295,7 +1305,7 @@ class Test_speedup_all_intersections(Test__all_intersections):
         ])
         self.assertEqual(intersections, expected)
         # Make sure the workspace was resized.
-        self.assertEqual(_curve_intersection_speedup.workspace_size(), 3)
+        self.assertEqual(self.workspace_size(), 3)
 
     def test_workspace_too_small(self):
         from bezier import _curve_intersection_speedup
@@ -1312,7 +1322,7 @@ class Test_speedup_all_intersections(Test__all_intersections):
         ])
         # NOTE: These curves intersect 3 times, so a workspace of
         #       2 is not large enough.
-        _curve_intersection_speedup.reset_workspace(2)
+        self.reset_workspace(2)
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(
                 nodes1, nodes2, allow_resize=False)
@@ -1321,7 +1331,7 @@ class Test_speedup_all_intersections(Test__all_intersections):
         expected = _curve_intersection_speedup.TOO_SMALL_TEMPLATE.format(3, 2)
         self.assertEqual(exc_args, (expected,))
         # Make sure the workspace was **not** resized.
-        self.assertEqual(_curve_intersection_speedup.workspace_size(), 2)
+        self.assertEqual(self.workspace_size(), 2)
 
 
 class TestBoxIntersectionType(unittest.TestCase):
