@@ -204,16 +204,22 @@ def surface_intersections(
         &status,
     )
 
-    # Try to resize workspaces if needed.
     if status == bezier._status.Status.SUCCESS:
-        return _surface_intersections_success(num_intersected), contained
+        if contained == bezier._surface_intersection.FIRST:
+            return True
+        elif contained == bezier._surface_intersection.SECOND:
+            return False
+        else:
+            # Assumes, but does not check, that ``contained`` is equal to
+            # ``bezier._surface_intersection.NEITHER``.
+            return _surface_intersections_success(num_intersected)
     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
         return _surface_intersections_resize(
             nodes1, degree1, nodes2, degree2,
             segment_ends_size, segments_size,
             num_intersected, resizes_allowed)
     elif status == bezier._status.Status.NO_CONVERGE:
-        # NOTE: This assumes, but does not verify, that the this comes from
+        # NOTE: This assumes, but does not verify, that this comes from
         #       ``curve_intersections()``.
         raise ValueError(
             'Curve intersection failed to converge to approximately linear '
@@ -238,8 +244,8 @@ def surface_intersections(
         #       in the Python ``classify_tangent_intersection()``.
         raise NotImplementedError('Tangent curves have same curvature.')
     elif status == bezier._status.Status.UNKNOWN:
-        # NOTE: This assumes that ``interior_combine()`` has failed after
-        #       to return to return to the start node after ``MAX_EDGES = 10``
+        # NOTE: This assumes that the Fortran ``interior_combine()`` has
+        #       failed to return to the start node after ``MAX_EDGES = 10``
         #       edges have been added. As the status name indicates, this
         #       should never occur, hence will be difficult to test.
         raise RuntimeError('Unexpected number of edges', 11)

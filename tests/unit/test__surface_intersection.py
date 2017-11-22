@@ -263,13 +263,6 @@ class Test_speedup_locate_point(Test__locate_point):
 @utils.needs_surface_intersection_speedup
 class Test_speedup_surface_intersections(utils.NumPyTestCase):
 
-    # pylint: disable=too-few-public-methods
-    class SurfaceContained(object):
-        NEITHER = 0
-        FIRST = 1
-        SECOND = 2
-    # pylint: enable=too-few-public-methods
-
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
         from bezier import _surface_intersection_speedup
@@ -348,9 +341,7 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
         self.assertGreaterEqual(segment_ends_size, 2)
         self.assertGreaterEqual(segments_size, 6)
 
-        result, expected = self._two_curved_polygons()
-        curved_polygons, contained = result
-        self.assertEqual(contained, self.SurfaceContained.NEITHER)
+        curved_polygons, expected = self._two_curved_polygons()
         self.assertEqual(curved_polygons, expected)
 
         # Make sure the workspace was **not** resized.
@@ -359,9 +350,7 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
     def test_resize_both(self):
         self.reset_workspaces(segment_ends_size=1, segments_size=1)
 
-        result, expected = self._two_curved_polygons()
-        curved_polygons, contained = result
-        self.assertEqual(contained, self.SurfaceContained.NEITHER)
+        curved_polygons, expected = self._two_curved_polygons()
         self.assertEqual(curved_polygons, expected)
 
         # Make sure the sizes were resized from (1, 1).

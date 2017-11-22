@@ -14,6 +14,11 @@
 
 
 cdef extern from "bezier/surface_intersection.h":
+    cpdef enum SurfaceContained:
+        NEITHER = 0
+        FIRST = 1
+        SECOND = 2
+
     ctypedef struct CurvedPolygonSegment:
         double start
         double end

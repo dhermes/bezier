@@ -17,6 +17,12 @@
 extern "C" {
 #endif
 
+enum SurfaceContained {
+  NEITHER = 0,
+  FIRST = 1,
+  SECOND = 2,
+};
+
 typedef struct CurvedPolygonSegment {
   double start;
   double end;
