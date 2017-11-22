@@ -40,7 +40,8 @@ module surface_intersection
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
-       interior_combine, surfaces_intersect, surfaces_intersect_abi
+       interior_combine, surfaces_intersect, surfaces_intersect_abi, &
+       free_surface_intersections_workspace
 
   ! NOTE: This (for now) is not meant to be C-interoperable.
   type :: Intersection
@@ -80,6 +81,10 @@ module surface_intersection
   integer(c_int), parameter :: SurfaceContained_NEITHER = 0
   integer(c_int), parameter :: SurfaceContained_FIRST = 1
   integer(c_int), parameter :: SurfaceContained_SECOND = 2
+  ! Long-lived workspaces for ``surfaces_intersect_abi()``. If multiple
+  ! threads are used, each of these **should** be thread-local.
+  integer(c_int), allocatable :: SEGMENT_ENDS_WORKSPACE(:)
+  type(CurvedPolygonSegment), allocatable :: SEGMENTS_WORKSPACE(:)
 
 contains
 
@@ -1466,14 +1471,12 @@ contains
     integer(c_int), intent(out) :: contained
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
-    integer(c_int), allocatable :: segment_ends_workspace(:)
-    type(CurvedPolygonSegment), allocatable :: segments_workspace(:)
     integer(c_int) :: num_segments
 
     call surfaces_intersect( &
          num_nodes1, nodes1, degree1, &
          num_nodes2, nodes2, degree2, &
-         segment_ends_workspace, segments_workspace, num_intersected, &
+         SEGMENT_ENDS_WORKSPACE, SEGMENTS_WORKSPACE, num_intersected, &
          contained, status)
 
     if (status /= Status_SUCCESS) then
@@ -1486,15 +1489,31 @@ contains
     end if
 
     segment_ends(:num_intersected) = ( &
-         segment_ends_workspace(:num_intersected))
+         SEGMENT_ENDS_WORKSPACE(:num_intersected))
     num_segments = segment_ends(num_intersected)
     if (num_segments > segments_size) then
        status = Status_INSUFFICIENT_SPACE
        return
     end if
 
-    segments(:num_segments) = segments_workspace(:num_segments)
+    segments(:num_segments) = SEGMENTS_WORKSPACE(:num_segments)
 
   end subroutine surfaces_intersect_abi
+
+  subroutine free_surface_intersections_workspace() &
+       bind(c, name='free_surface_intersections_workspace')
+
+    ! NOTE: This **should** be run during clean-up for any code which
+    !       invokes ``surfaces_intersect_abi()``.
+
+    if (allocated(SEGMENT_ENDS_WORKSPACE)) then
+       deallocate(SEGMENT_ENDS_WORKSPACE)
+    end if
+
+    if (allocated(SEGMENTS_WORKSPACE)) then
+       deallocate(SEGMENTS_WORKSPACE)
+    end if
+
+  end subroutine free_surface_intersections_workspace
 
 end module surface_intersection

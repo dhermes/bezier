@@ -50,8 +50,9 @@ module curve_intersection
   real(c_double), parameter :: LINEARIZATION_THRESHOLD = 0.5_dp**26
   integer(c_int), parameter :: MAX_INTERSECT_SUBDIVISIONS = 20
   integer(c_int), parameter :: MAX_CANDIDATES = 64
-  ! Long-lived workspaces for ``all_intersections()``. If multiple
-  ! threads are used, this should be thread-local.
+  ! Long-lived workspaces for ``all_intersections()`` and
+  ! ``all_intersections_abi()``. If multiple threads are used, each of these
+  ! **should** be thread-local.
   type(CurveData), allocatable :: CANDIDATES_ODD(:, :)
   type(CurveData), allocatable :: CANDIDATES_EVEN(:, :)
   real(c_double), allocatable :: INTERSECTIONS_WORKSPACE(:, :)
