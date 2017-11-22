@@ -37,3 +37,4 @@ cdef extern from "bezier/surface_intersection.h":
         int *segment_ends_size, int *segment_ends,
         int *segments_size, CurvedPolygonSegment *segments,
         int *num_intersected, int *contained, int *status)
+    void free_surface_intersections_workspace()

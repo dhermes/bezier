@@ -253,3 +253,7 @@ def surface_intersections(
         # NOTE: If ``status`` isn't one of the enum values, then it is the
         #       number of candidate intersections.
         raise NotImplementedError(TOO_MANY_TEMPLATE.format(status))
+
+
+def free_surface_intersections_workspace():
+    bezier._surface_intersection.free_surface_intersections_workspace()
