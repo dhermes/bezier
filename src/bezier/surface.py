@@ -37,8 +37,6 @@ from bezier import curved_polygon
 
 
 _SIGN = np.sign  # pylint: disable=no-member
-_REPR_TEMPLATE = (
-    '<{} (degree={:d}, dimension={:d}, base=({:g}, {:g}), width={:g})>')
 _LOCATE_ERROR_TEMPLATE = (
     'Dimension mismatch: This surface is {:d}-dimensional, so the point '
     'should be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
@@ -181,14 +179,6 @@ class Surface(_base.Base):
         degree (int): The degree of the surface. This is assumed to
             correctly correspond to the number of ``nodes``. Use
             :meth:`from_nodes` if the degree has not yet been computed.
-        base_x (Optional[float]): The :math:`x`-coordinate of the base
-           vertex of the sub-triangle that this surface represents.
-           See :attr:`width` for more info.
-        base_y (Optional[float]): The :math:`y`-coordinate of the base
-           vertex of the sub-triangle that this surface represents.
-           See :attr:`width` for more info.
-        width (Optional[float]): The width of the sub-triangle that
-           this surface represents. See :attr:`width` for more info.
         _copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
@@ -196,23 +186,19 @@ class Surface(_base.Base):
 
     __slots__ = (
         '_dimension', '_nodes',  # From base class
-        '_degree', '_base_x', '_base_y', '_width',  # From constructor
+        '_degree',  # From constructor
         '_area', '_edges', '_is_valid',  # Empty defaults
     )
 
-    def __init__(self, nodes, degree, base_x=0.0, base_y=0.0,
-                 width=1.0, _copy=True):
+    def __init__(self, nodes, degree, _copy=True):
         super(Surface, self).__init__(nodes, _copy=_copy)
         self._degree = degree
-        self._base_x = base_x
-        self._base_y = base_y
-        self._width = width
         self._area = None
         self._edges = None
         self._is_valid = None
 
     @classmethod
-    def from_nodes(cls, nodes, base_x=0.0, base_y=0.0, width=1.0, _copy=True):
+    def from_nodes(cls, nodes, _copy=True):
         """Create a :class:`.Surface` from nodes.
 
         Computes the ``degree`` based on the shape of ``nodes``.
@@ -221,12 +207,6 @@ class Surface(_base.Base):
             nodes (numpy.ndarray): The nodes in the surface. The rows
                 represent each node while the columns are the dimension
                 of the ambient space.
-            base_x (Optional[float]): The :math:`x`-coordinate of the base
-               vertex of the sub-triangle that this surface represents.
-            base_y (Optional[float]): The :math:`y`-coordinate of the base
-               vertex of the sub-triangle that this surface represents.
-            width (Optional[float]): The width of the sub-triangle that
-               this surface represents.
             _copy (bool): Flag indicating if the nodes should be copied before
                 being stored. Defaults to :data:`True` since callers may
                 freely mutate ``nodes`` after passing in.
@@ -236,21 +216,7 @@ class Surface(_base.Base):
         """
         num_nodes, _ = nodes.shape
         degree = cls._get_degree(num_nodes)
-        return cls(nodes, degree, base_x=base_x, base_y=base_y,
-                   width=width, _copy=True)
-
-    def __repr__(self):
-        """Representation of current object.
-
-        Returns:
-            str: Object representation.
-        """
-        if self._base_x == 0.0 and self._base_y == 0.0 and self._width == 1.0:
-            return super(Surface, self).__repr__()
-        else:
-            return _REPR_TEMPLATE.format(
-                self.__class__.__name__, self._degree, self._dimension,
-                self._base_x, self._base_y, self._width)
+        return cls(nodes, degree, _copy=True)
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -290,87 +256,6 @@ class Surface(_base.Base):
                 'Area computation not yet implemented.')
         return self._area
     # pylint: enable=missing-return-doc,missing-return-type-doc
-
-    @property
-    def width(self):
-        """float: The "width" of the parameterized triangle.
-
-        When re-parameterizing (e.g. via :meth:`subdivide`) we
-        specialize the surface from the unit triangle to some
-        sub-triangle. After doing this, we re-parameterize so that
-        that sub-triangle is treated like the unit triangle.
-
-        To track which sub-triangle we are in during the subdivision
-        process, we use the coordinates of the base vertex as well
-        as the "width" of each leg.
-
-        .. image:: ../images/surface_width1.png
-           :align: center
-
-        .. testsetup:: surface-width1, surface-width2
-
-           import numpy as np
-           import bezier
-
-           nodes = np.asfortranarray([
-               [0.0, 0.0],
-               [1.0, 0.0],
-               [0.0, 1.0],
-           ])
-           surface = bezier.Surface(nodes, degree=1)
-
-        .. doctest:: surface-width1
-
-           >>> surface.base_x, surface.base_y
-           (0.0, 0.0)
-           >>> surface.width
-           1.0
-
-        .. testcleanup:: surface-width1
-
-           import make_images
-           make_images.surface_width1(surface)
-
-        Upon subdivision, the width halves (and potentially changes sign) and
-        the vertex moves to one of four points:
-
-        .. image:: ../images/surface_width2.png
-           :align: center
-
-        .. doctest:: surface-width2
-
-           >>> _, sub_surface_b, sub_surface_c, _ = surface.subdivide()
-           >>> sub_surface_b.base_x, sub_surface_b.base_y
-           (0.5, 0.5)
-           >>> sub_surface_b.width
-           -0.5
-           >>> sub_surface_c.base_x, sub_surface_c.base_y
-           (0.5, 0.0)
-           >>> sub_surface_c.width
-           0.5
-
-        .. testcleanup:: surface-width2
-
-           import make_images
-           make_images.surface_width2(sub_surface_b, sub_surface_c)
-        """
-        return self._width
-
-    @property
-    def base_x(self):
-        """float: The ``x``-coordinate of the base vertex.
-
-        See :attr:`width` for more detail.
-        """
-        return self._base_x
-
-    @property
-    def base_y(self):
-        """float: The ``y``-coordinate of the base vertex.
-
-        See :attr:`width` for more detail.
-        """
-        return self._base_y
 
     def _compute_edges(self):
         """Compute the edges of the current surface.
@@ -822,7 +707,7 @@ class Surface(_base.Base):
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> _, sub_surface_b, _, _ = surface.subdivide()
            >>> sub_surface_b
-           <Surface (degree=2, dimension=2, base=(0.5, 0.5), width=-0.5)>
+           <Surface (degree=2, dimension=2)>
            >>> sub_surface_b.nodes
            array([[ 1.5   , 2.5   ],
                   [ 0.6875, 2.3125],
@@ -844,18 +729,11 @@ class Surface(_base.Base):
         nodes_a, nodes_b, nodes_c, nodes_d = _surface_helpers.subdivide_nodes(
             self._nodes, self._degree)
 
-        half_width = 0.5 * self._width
-        shifted_x = self._base_x + half_width
-        shifted_y = self._base_y + half_width
         return (
-            Surface(nodes_a, self._degree, base_x=self._base_x,
-                    base_y=self._base_y, width=half_width, _copy=False),
-            Surface(nodes_b, self._degree, base_x=shifted_x, base_y=shifted_y,
-                    width=-half_width, _copy=False),
-            Surface(nodes_c, self._degree, base_x=shifted_x,
-                    base_y=self._base_y, width=half_width, _copy=False),
-            Surface(nodes_d, self._degree, base_x=self._base_x,
-                    base_y=shifted_y, width=half_width, _copy=False),
+            Surface(nodes_a, self._degree, _copy=False),
+            Surface(nodes_b, self._degree, _copy=False),
+            Surface(nodes_c, self._degree, _copy=False),
+            Surface(nodes_d, self._degree, _copy=False),
         )
 
     def _compute_valid(self):
@@ -995,9 +873,6 @@ class Surface(_base.Base):
             '_dimension': self._dimension,
             '_nodes': self._nodes,
             '_degree': self._degree,
-            '_base_x': self._base_x,
-            '_base_y': self._base_y,
-            '_width': self._width,
             '_area': self._area,
             '_edges': self._edges,
             '_is_valid': self._is_valid,
@@ -1116,6 +991,7 @@ class Surface(_base.Base):
             _surface_helpers.verify_duplicates(
                 duplicates, intersections + unused)
 
+        # MERP: NEED _surface_intersections()
         edge_infos, contained = _surface_helpers.combine_intersections(
             intersections, self, other, all_types)
         if edge_infos is None:

@@ -63,9 +63,6 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(surface._degree, 1)
         self.assertEqual(surface._dimension, 2)
         self.assertIs(surface._nodes, nodes)
-        self.assertEqual(surface._base_x, 0.0)
-        self.assertEqual(surface._base_y, 0.0)
-        self.assertEqual(surface._width, 1.0)
         self.assertIsNone(surface._area)
         self.assertIsNone(surface._edges)
         self.assertIsNone(surface._is_valid)
@@ -90,15 +87,11 @@ class TestSurface(utils.NumPyTestCase):
         ])
         klass = self._get_target_class()
 
-        surface = klass.from_nodes(
-            nodes, base_x=0.25, base_y=0.0, width=0.625)
+        surface = klass.from_nodes(nodes)
         self.assertIsInstance(surface, klass)
         self.assertEqual(surface._degree, 2)
         self.assertEqual(surface._dimension, 3)
         self.assertEqual(surface._nodes, nodes)
-        self.assertEqual(surface._base_x, 0.25)
-        self.assertEqual(surface._base_y, 0.0)
-        self.assertEqual(surface._width, 0.625)
         self.assertIsNone(surface._area)
         self.assertIsNone(surface._edges)
         self.assertIsNone(surface._is_valid)
@@ -107,22 +100,6 @@ class TestSurface(utils.NumPyTestCase):
         nodes = np.zeros((15, 3), order='F')
         surface = self._make_one(nodes, 4)
         expected = '<Surface (degree=4, dimension=3)>'
-        self.assertEqual(repr(surface), expected)
-
-    def test___repr__custom_triangle(self):
-        from bezier import surface as surface_mod
-
-        degree = 4
-        dimension = 3
-        num_nodes = ((degree + 1) * (degree + 2)) // 2
-        nodes = np.zeros((num_nodes, dimension), order='F')
-        base_x = 0.46875
-        base_y = 0.3125
-        width = 0.03125
-        surface = self._make_one(
-            nodes, degree, base_x=base_x, base_y=base_y, width=width)
-        expected = surface_mod._REPR_TEMPLATE.format(
-            'Surface', degree, dimension, base_x, base_y, width)
         self.assertEqual(repr(surface), expected)
 
     def test__get_degree_valid(self):
@@ -164,18 +141,6 @@ class TestSurface(utils.NumPyTestCase):
         area = 3.14159
         surface._area = area
         self.assertEqual(surface.area, area)
-
-    def test_width_property(self):
-        surface = self._make_one(self.ZEROS, 1)
-        self.assertEqual(surface.width, 1.0)
-
-    def test_base_x_property(self):
-        surface = self._make_one(self.ZEROS, 1)
-        self.assertEqual(surface.base_x, 0.0)
-
-    def test_base_y_property(self):
-        surface = self._make_one(self.ZEROS, 1)
-        self.assertEqual(surface.base_y, 0.0)
 
     def _edges_helper(self, edge1, edge2, edge3,
                       nodes1, nodes2, nodes3):
@@ -544,17 +509,13 @@ class TestSurface(utils.NumPyTestCase):
 
         degree = 1
         surface = self._make_one(
-            self.UNIT_TRIANGLE, degree,
-            base_x=0.5, base_y=0.5, width=-0.125, _copy=False)
+            self.UNIT_TRIANGLE, degree, _copy=False)
 
         surface_a, surface_b, surface_c, surface_d = surface.subdivide()
 
         # Check sub-surface A.
         self.assertIsInstance(surface_a, klass)
         self.assertEqual(surface_a._degree, degree)
-        self.assertEqual(surface_a._base_x, 0.5)
-        self.assertEqual(surface_a._base_y, 0.5)
-        self.assertEqual(surface_a._width, -0.0625)
         expected_a = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 0.0],
@@ -565,9 +526,6 @@ class TestSurface(utils.NumPyTestCase):
         # Check sub-surface B.
         self.assertIsInstance(surface_b, klass)
         self.assertEqual(surface_b._degree, degree)
-        self.assertEqual(surface_b._base_x, 0.4375)
-        self.assertEqual(surface_b._base_y, 0.4375)
-        self.assertEqual(surface_b._width, 0.0625)
         expected_b = np.asfortranarray([
             [0.5, 0.5],
             [0.0, 0.5],
@@ -578,9 +536,6 @@ class TestSurface(utils.NumPyTestCase):
         # Check sub-surface C.
         self.assertIsInstance(surface_c, klass)
         self.assertEqual(surface_c._degree, degree)
-        self.assertEqual(surface_c._base_x, 0.4375)
-        self.assertEqual(surface_c._base_y, 0.5)
-        self.assertEqual(surface_c._width, -0.0625)
         expected_c = np.asfortranarray([
             [0.5, 0.0],
             [1.0, 0.0],
@@ -591,9 +546,6 @@ class TestSurface(utils.NumPyTestCase):
         # Check sub-surface D.
         self.assertIsInstance(surface_d, klass)
         self.assertEqual(surface_d._degree, degree)
-        self.assertEqual(surface_d._base_x, 0.5)
-        self.assertEqual(surface_d._base_y, 0.4375)
-        self.assertEqual(surface_d._width, -0.0625)
         expected_d = np.asfortranarray([
             [0.0, 0.5],
             [0.5, 0.5],
@@ -726,17 +678,14 @@ class TestSurface(utils.NumPyTestCase):
             '_nodes': self.UNIT_TRIANGLE,
             '_dimension': 2,
             '_degree': 1,
-            '_base_x': 0.0,
-            '_base_y': 0.0,
-            '_width': 1.0,
             '_area': None,
             '_edges': None,
             '_is_valid': None,
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``surface``.
-        expected['_width'] = 1.5
-        self.assertNotEqual(surface._width, expected['_width'])
+        expected['_dimension'] = -42
+        self.assertNotEqual(surface._dimension, expected['_dimension'])
 
     def test_locate(self):
         surface = self._make_one(self.QUADRATIC, 2)
