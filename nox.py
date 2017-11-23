@@ -282,7 +282,7 @@ def lint(session):
     # Run Pylint over the library source.
     session.run(
         'pylint', '--rcfile', 'pylintrc',
-        '--max-module-lines=2483',
+        '--max-module-lines=2485',
         get_path('src', 'bezier'),
     )
     # Run Pylint over the tests source.
@@ -291,7 +291,7 @@ def lint(session):
         '--disable=missing-docstring',
         '--disable=protected-access',
         '--disable=too-many-public-methods',
-        '--max-module-lines=2436',
+        '--max-module-lines=2416',
         get_path('tests'),
     )
 

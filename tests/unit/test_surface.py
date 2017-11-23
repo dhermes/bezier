@@ -147,13 +147,13 @@ class TestSurface(utils.NumPyTestCase):
         import bezier
 
         self.assertIsInstance(edge1, bezier.Curve)
-        self.assertEqual(edge1.nodes, nodes1)
+        self.assertEqual(edge1._nodes, nodes1)
 
         self.assertIsInstance(edge2, bezier.Curve)
-        self.assertEqual(edge2.nodes, nodes2)
+        self.assertEqual(edge2._nodes, nodes2)
 
         self.assertIsInstance(edge3, bezier.Curve)
-        self.assertEqual(edge3.nodes, nodes3)
+        self.assertEqual(edge3._nodes, nodes3)
 
     def test__compute_edges_linear(self):
         nodes = np.asfortranarray([
@@ -753,7 +753,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.0, 0.5],
             [0.5, 0.0],
         ])
-        self.assertEqual(cp_edges[0].nodes, expected)
+        self.assertEqual(cp_edges[0]._nodes, expected)
         # Edge 1.
         self.assertEqual(cp_edges[1].start, 0.0)
         self.assertEqual(cp_edges[1].end, 0.5)
@@ -761,7 +761,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.5, 0.0],
             [0.5, 0.5],
         ])
-        self.assertEqual(cp_edges[1].nodes, expected)
+        self.assertEqual(cp_edges[1]._nodes, expected)
         # Edge 2.
         self.assertEqual(cp_edges[2].start, 0.5)
         self.assertEqual(cp_edges[2].end, 1.0)
@@ -769,7 +769,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.5, 0.5],
             [0.0, 1.0],
         ])
-        self.assertEqual(cp_edges[2].nodes, expected)
+        self.assertEqual(cp_edges[2]._nodes, expected)
         # Edge 3.
         self.assertEqual(cp_edges[3].start, 0.0)
         self.assertEqual(cp_edges[3].end, 0.5)
@@ -777,7 +777,7 @@ class TestSurface(utils.NumPyTestCase):
             [0.0, 1.0],
             [0.0, 0.5],
         ])
-        self.assertEqual(cp_edges[3].nodes, expected)
+        self.assertEqual(cp_edges[3]._nodes, expected)
 
     def test_intersect(self):
         self._basic_intersect_helper()
@@ -879,9 +879,9 @@ class TestSurface(utils.NumPyTestCase):
             [0.5, 1.5],
             [-1.0, 2.0],
         ])
-        self.assertEqual(surface.degree, 1)
-        self.assertEqual(elevated.degree, 2)
-        self.assertEqual(elevated.nodes, expected)
+        self.assertEqual(surface._degree, 1)
+        self.assertEqual(elevated._degree, 2)
+        self.assertEqual(elevated._nodes, expected)
 
         main_vals = surface.evaluate_cartesian_multi(self.REF_TRIANGLE3)
         sub_vals = elevated.evaluate_cartesian_multi(self.REF_TRIANGLE3)
@@ -896,9 +896,9 @@ class TestSurface(utils.NumPyTestCase):
         expected = np.asfortranarray([
             [0.0], [4.0], [7.0], [9.0], [0.0],
             [4.0], [7.0], [-1.0], [3.0], [-3.0]])
-        self.assertEqual(surface.degree, 2)
-        self.assertEqual(elevated.degree, 3)
-        self.assertEqual(elevated.nodes, expected)
+        self.assertEqual(surface._degree, 2)
+        self.assertEqual(elevated._degree, 3)
+        self.assertEqual(elevated._nodes, expected)
 
         main_vals = surface.evaluate_cartesian_multi(self.REF_TRIANGLE3)
         sub_vals = elevated.evaluate_cartesian_multi(self.REF_TRIANGLE3)
@@ -908,22 +908,26 @@ class TestSurface(utils.NumPyTestCase):
 class Test__surface_intersections(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(edges1, edges2, strategy):
+    def _call_function_under_test(edge_nodes1, edge_nodes2, strategy):
         from bezier import surface
 
-        return surface._surface_intersections(edges1, edges2, strategy)
+        return surface._surface_intersections(
+            edge_nodes1, edge_nodes2, strategy)
 
     # pylint: disable=too-many-arguments
     def _check_intersection(self, intersection, expected,
-                            curve1, curve2, s_val, t_val,
+                            nodes1, nodes2, s_val, t_val,
                             index_first, index_second, interior_curve):
+        from bezier import _curve_helpers
         from bezier import _intersection_helpers
 
         self.assertIsInstance(
             intersection, _intersection_helpers.Intersection)
-        point1 = curve1.evaluate(intersection.s)
+        point1 = _curve_helpers.evaluate_multi(
+            nodes1, np.asfortranarray([intersection.s]))
         self.assertEqual(point1, expected)
-        point2 = curve2.evaluate(intersection.t)
+        point2 = _curve_helpers.evaluate_multi(
+            nodes2, np.asfortranarray([intersection.t]))
         self.assertEqual(point2, expected)
         self.assertEqual(intersection.index_first, index_first)
         self.assertEqual(intersection.s, s_val)
@@ -947,11 +951,11 @@ class Test__surface_intersections(utils.NumPyTestCase):
             [0.5, 0.75],
         ]))
 
-        edges1 = surface1.edges
-        edges2 = surface2.edges
+        edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
+        edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
         strategy = _intersection_helpers.IntersectionStrategy.GEOMETRIC
         result = self._call_function_under_test(
-            edges1, edges2, strategy)
+            edge_nodes1, edge_nodes2, strategy)
         intersections, duplicates, unused, all_types = result
 
         self.assertEqual(duplicates, [])
@@ -961,12 +965,12 @@ class Test__surface_intersections(utils.NumPyTestCase):
         self.assertEqual(len(intersections), 2)
         expected = np.asfortranarray([[0.5, 0.0]])
         self._check_intersection(
-            intersections[0], expected,
-            edges1[0], edges2[2], 0.5, 0.75, 0, 2, get_enum('FIRST'))
+            intersections[0], expected, edge_nodes1[0], edge_nodes2[2],
+            0.5, 0.75, 0, 2, get_enum('FIRST'))
         expected = np.asfortranarray([[0.5, 0.5]])
         self._check_intersection(
-            intersections[1], expected,
-            edges1[1], edges2[2], 0.5, 0.25, 1, 2, get_enum('SECOND'))
+            intersections[1], expected, edge_nodes1[1], edge_nodes2[2],
+            0.5, 0.25, 1, 2, get_enum('SECOND'))
 
     def test_algebraic(self):
         import bezier
@@ -981,8 +985,10 @@ class Test__surface_intersections(utils.NumPyTestCase):
         surface2 = bezier.Surface(nodes1 + 10.0, 1, _copy=False)
 
         strategy = _intersection_helpers.IntersectionStrategy.ALGEBRAIC
+        edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
+        edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
         result = self._call_function_under_test(
-            surface1.edges, surface2.edges, strategy)
+            edge_nodes1, edge_nodes2, strategy)
         intersections, duplicates, unused, all_types = result
         self.assertEqual(intersections, [])
         self.assertEqual(duplicates, [])
@@ -992,7 +998,7 @@ class Test__surface_intersections(utils.NumPyTestCase):
     def test_bad_strategy(self):
         strategy = unittest.mock.sentinel.bad_strategy
         with self.assertRaises(ValueError) as exc_info:
-            self._call_function_under_test([], [], strategy)
+            self._call_function_under_test((), (), strategy)
 
         exc_args = exc_info.exception.args
         self.assertEqual(exc_args, ('Unexpected strategy.', strategy))
@@ -1012,11 +1018,11 @@ class Test__surface_intersections(utils.NumPyTestCase):
             [1.0, -3.0],
         ]))
 
-        edges1 = surface1.edges
-        edges2 = surface2.edges
+        edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
+        edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
         strategy = _intersection_helpers.IntersectionStrategy.GEOMETRIC
         result = self._call_function_under_test(
-            edges1, edges2, strategy)
+            edge_nodes1, edge_nodes2, strategy)
         intersections, duplicates, unused, all_types = result
 
         self.assertEqual(intersections, [])
@@ -1024,19 +1030,19 @@ class Test__surface_intersections(utils.NumPyTestCase):
         self.assertEqual(len(duplicates), 3)
         self._check_intersection(
             duplicates[0], np.zeros((1, 2)),
-            edges1[0], edges2[0], 0.0, 0.0, 0, 0, None)
+            edge_nodes1[0], edge_nodes2[0], 0.0, 0.0, 0, 0, None)
         self._check_intersection(
             duplicates[1], np.zeros((1, 2)),
-            edges1[0], edges2[0], 0.0, 0.0, 0, 0, None)
+            edge_nodes1[0], edge_nodes2[0], 0.0, 0.0, 0, 0, None)
         self._check_intersection(
             duplicates[2], np.zeros((1, 2)),
-            edges1[0], edges2[0], 0.0, 0.0, 0, 0, None)
+            edge_nodes1[0], edge_nodes2[0], 0.0, 0.0, 0, 0, None)
 
         self.assertEqual(len(unused), 1)
         enum_val = get_enum('IGNORED_CORNER')
         self._check_intersection(
             unused[0], np.zeros((1, 2)),
-            edges1[0], edges2[0], 0.0, 0.0, 0, 0, enum_val)
+            edge_nodes1[0], edge_nodes2[0], 0.0, 0.0, 0, 0, enum_val)
 
         self.assertEqual(all_types, set([enum_val]))
 
@@ -1044,10 +1050,10 @@ class Test__surface_intersections(utils.NumPyTestCase):
 class Test__make_intersection(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(edge_info, all_edges):
+    def _call_function_under_test(edge_info, all_edge_nodes):
         from bezier import surface
 
-        return surface._make_intersection(edge_info, all_edges)
+        return surface._make_intersection(edge_info, all_edge_nodes)
 
     def test_it(self):
         import bezier
@@ -1058,14 +1064,14 @@ class Test__make_intersection(utils.NumPyTestCase):
             [0.0, 1.0],
         ])
         surface1 = bezier.Surface(nodes1, degree=1, _copy=False)
-        edges1 = surface1.edges
+        edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
         nodes2 = np.asfortranarray([
             [0.25, 0.25],
             [-0.75, 0.25],
             [0.25, -0.75],
         ])
         surface2 = bezier.Surface(nodes2, degree=1, _copy=False)
-        edges2 = surface2.edges
+        edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
 
         edge_info = (
             (0, 0.0, 0.25),
@@ -1073,7 +1079,8 @@ class Test__make_intersection(utils.NumPyTestCase):
             (3, 0.0, 0.25),
             (2, 0.75, 1.0),
         )
-        result = self._call_function_under_test(edge_info, edges1 + edges2)
+        result = self._call_function_under_test(
+            edge_info, edge_nodes1 + edge_nodes2)
         self.assertIsInstance(result, bezier.CurvedPolygon)
         self.assertEqual(result.num_sides, 4)
         # pylint: disable=unbalanced-tuple-unpacking
@@ -1087,7 +1094,7 @@ class Test__make_intersection(utils.NumPyTestCase):
             [0.0, 0.0],
             [0.25, 0.0],
         ])
-        self.assertEqual(edge0.nodes, expected)
+        self.assertEqual(edge0._nodes, expected)
         # Second edge.
         self.assertEqual(edge1.start, edge_info[1][1])
         self.assertEqual(edge1.end, edge_info[1][2])
@@ -1095,7 +1102,7 @@ class Test__make_intersection(utils.NumPyTestCase):
             [0.25, 0.0],
             [0.25, 0.25],
         ])
-        self.assertEqual(edge1.nodes, expected)
+        self.assertEqual(edge1._nodes, expected)
         # Third edge.
         self.assertEqual(edge2.start, edge_info[2][1])
         self.assertEqual(edge2.end, edge_info[2][2])
@@ -1103,7 +1110,7 @@ class Test__make_intersection(utils.NumPyTestCase):
             [0.25, 0.25],
             [0.0, 0.25],
         ])
-        self.assertEqual(edge2.nodes, expected)
+        self.assertEqual(edge2._nodes, expected)
         # Fourth edge.
         self.assertEqual(edge3.start, edge_info[3][1])
         self.assertEqual(edge3.end, edge_info[3][2])
@@ -1111,7 +1118,7 @@ class Test__make_intersection(utils.NumPyTestCase):
             [0.0, 0.25],
             [0.0, 0.0],
         ])
-        self.assertEqual(edge3.nodes, expected)
+        self.assertEqual(edge3._nodes, expected)
 
 
 def get_enum(str_val):

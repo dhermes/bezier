@@ -27,6 +27,7 @@ import six
 
 from bezier import _algebraic_intersection
 from bezier import _base
+from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
@@ -982,27 +983,29 @@ class Surface(_base.Base):
             return []
 
         # We need **all** pairs of edges.
-        edges1 = self._get_edges()
-        edges2 = other._get_edges()  # pylint: disable=protected-access
+        edge_nodes1 = _surface_helpers.compute_edge_nodes(
+            self._nodes, self._degree)
+        edge_nodes2 = _surface_helpers.compute_edge_nodes(
+            other._nodes, other._degree)
         intersections, duplicates, unused, all_types = _surface_intersections(
-            edges1, edges2, strategy)
+            edge_nodes1, edge_nodes2, strategy)
 
         if _verify:
             _surface_helpers.verify_duplicates(
                 duplicates, intersections + unused)
 
-        # MERP: NEED _surface_intersections()
         edge_infos, contained = _surface_helpers.combine_intersections(
-            intersections, self, other, all_types)
+            intersections, self._nodes, self._degree,
+            other._nodes, other._degree, all_types)
         if edge_infos is None:
             if contained:
                 return [self]
             else:
                 return [other]
         else:
-            all_edges = edges1 + edges2
+            all_edge_nodes = edge_nodes1 + edge_nodes2
             return [
-                _make_intersection(edge_info, all_edges)
+                _make_intersection(edge_info, all_edge_nodes)
                 for edge_info in edge_infos
             ]
 
@@ -1115,7 +1118,7 @@ class Surface(_base.Base):
         return Surface(new_nodes, self._degree + 1, _copy=False)
 
 
-def _surface_intersections(edges1, edges2, strategy):
+def _surface_intersections(edge_nodes1, edge_nodes2, strategy):
     """Find all intersections among edges of two surfaces.
 
     This treats intersections which have ``s == 1.0`` or ``t == 1.0``
@@ -1123,10 +1126,10 @@ def _surface_intersections(edges1, edges2, strategy):
     by :func:`~bezier._surface_helpers.verify_duplicates`.
 
     Args:
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
+        edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the first surface being intersected.
+        edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the second surface being intersected.
         strategy (Optional[~bezier.curve.IntersectionStrategy]): The
             intersection algorithm to use. Defaults to geometric.
 
@@ -1155,19 +1158,19 @@ def _surface_intersections(edges1, edges2, strategy):
     intersections = []
     duplicates = []
     unused = []
-    for index1, edge1 in enumerate(edges1):
-        for index2, edge2 in enumerate(edges2):
-            st_vals = all_intersections(edge1._nodes, edge2._nodes)
+    for index1, nodes1 in enumerate(edge_nodes1):
+        for index2, nodes2 in enumerate(edge_nodes2):
+            st_vals = all_intersections(nodes1, nodes2)
             for s, t in st_vals:
                 _add_intersection(
-                    index1, s, index2, t, edges1, edges2,
+                    index1, s, index2, t, edge_nodes1, edge_nodes2,
                     duplicates, intersections, unused, all_types)
 
     return intersections, duplicates, unused, all_types
 
 
 def _add_intersection(  # pylint: disable=too-many-arguments
-        index1, s, index2, t, edges1, edges2, duplicates,
+        index1, s, index2, t, edge_nodes1, edge_nodes2, duplicates,
         intersections, unused, all_types):
     """Create an :class:`Intersection` and append.
 
@@ -1182,10 +1185,10 @@ def _add_intersection(  # pylint: disable=too-many-arguments
         index2 (int): The index (among 0, 1, 2) of the second edge in the
             intersection.
         t (float): The parameter along the second curve of the intersection.
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
+        edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the first surface being intersected.
+        edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the second surface being intersected.
         duplicates (List[.Intersection]): List of duplicate intersections.
         intersections (List[.Intersection]): List of "accepted" (i.e.
             non-duplicate) intersections.
@@ -1207,7 +1210,7 @@ def _add_intersection(  # pylint: disable=too-many-arguments
             index1, s, index2, t)
         # Classify the intersection.
         interior = _surface_helpers.classify_intersection(
-            intersection, edges1, edges2)
+            intersection, edge_nodes1, edge_nodes2)
         all_types.add(interior)
         intersection.interior_curve = interior
         # Only keep the intersections which are ``ACCEPTABLE``.
@@ -1219,7 +1222,7 @@ def _add_intersection(  # pylint: disable=too-many-arguments
             unused.append(intersection)
 
 
-def _make_intersection(edge_info, all_edges):
+def _make_intersection(edge_info, all_edge_nodes):
     """Convert a description of edges into a curved polygon.
 
     .. note::
@@ -1231,15 +1234,21 @@ def _make_intersection(edge_info, all_edges):
             describing each edge in the curved polygon by indicating which
             surface / edge on the surface and then start and end parameters
             along that edge. (See :func:`.ends_to_curve`.)
-        all_edges (Tuple[.Curve, ...]): The three edges of the first surface
-            being intersected followed by the three edges of the second.
+        all_edge_nodes (Tuple[numpy.ndarray, ...]): The nodes of three edges
+            of the first surface being intersected followed by the nodes of
+            the three edges of the second.
 
     Returns:
         .CurvedPolygon: The intersection corresponding to ``edge_info``.
     """
     edges = []
     for index, start, end in edge_info:
-        edge = all_edges[index].specialize(start, end)
+        nodes = all_edge_nodes[index]
+        new_nodes, _, _ = _curve_helpers.specialize_curve(
+            nodes, start, end, 0.0, 1.0)
+        degree = new_nodes.shape[0] - 1
+        edge = _curve_mod.Curve(
+            new_nodes, degree, start=start, end=end, _copy=False)
         edges.append(edge)
 
     return curved_polygon.CurvedPolygon(*edges, _verify=False)

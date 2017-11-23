@@ -1119,7 +1119,8 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     return cross_prod <= 0.0
 
 
-def ignored_double_corner(intersection, tangent_s, tangent_t, edges1, edges2):
+def ignored_double_corner(
+        intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2):
     """Check if an intersection is an "ignored" double corner.
 
     .. note::
@@ -1140,19 +1141,18 @@ def ignored_double_corner(intersection, tangent_s, tangent_t, edges1, edges2):
             at the intersection.
         tangent_t (numpy.ndarray): The tangent vector to the second curve
             at the intersection.
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
+        edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the first surface being intersected.
+        edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the second surface being intersected.
 
     Returns:
         bool: Indicates if the corner is to be ignored.
     """
     # Compute the other edge for the ``s`` surface.
     prev_index = (intersection.index_first - 1) % 3
-    prev_edge = edges1[prev_index]
-    alt_tangent_s = _curve_helpers.evaluate_hodograph(
-        1.0, prev_edge._nodes)
+    prev_edge = edge_nodes1[prev_index]
+    alt_tangent_s = _curve_helpers.evaluate_hodograph(1.0, prev_edge)
 
     # First check if ``tangent_t`` is interior to the ``s`` surface.
     cross_prod1 = _helpers.cross_product(tangent_s, tangent_t)
@@ -1170,9 +1170,8 @@ def ignored_double_corner(intersection, tangent_s, tangent_t, edges1, edges2):
     # If ``tangent_t`` is not interior, we check the other ``t``
     # edge that ends at the corner.
     prev_index = (intersection.index_second - 1) % 3
-    prev_edge = edges2[prev_index]
-    alt_tangent_t = _curve_helpers.evaluate_hodograph(
-        1.0, prev_edge._nodes)
+    prev_edge = edge_nodes2[prev_index]
+    alt_tangent_t = _curve_helpers.evaluate_hodograph(1.0, prev_edge)
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
 
@@ -1198,7 +1197,8 @@ def ignored_double_corner(intersection, tangent_s, tangent_t, edges1, edges2):
     return not (cross_prod1 <= 0.0 and cross_prod3 >= 0.0)
 
 
-def ignored_corner(intersection, tangent_s, tangent_t, edges1, edges2):
+def ignored_corner(
+        intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2):
     """Check if an intersection is an "ignored" corner.
 
     .. note::
@@ -1217,21 +1217,16 @@ def ignored_corner(intersection, tangent_s, tangent_t, edges1, edges2):
        beginning of a curve so only checks if ``s == 0.0`` or ``t == 0.0``
        (rather than also checking for ``1.0``).
 
-    .. note::
-
-       This assumes the first and second curves in ``intersection`` are edges
-       in a surface, so the code relies on ``previous_edge`` being valid.
-
     Args:
         intersection (.Intersection): An intersection to "diagnose".
         tangent_s (numpy.ndarray): The tangent vector to the first curve
             at the intersection.
         tangent_t (numpy.ndarray): The tangent vector to the second curve
             at the intersection.
-        edges1 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the first surface being intersected.
-        edges2 (Tuple[.Curve, .Curve, .Curve]): The three edges
-            of the second surface being intersected.
+        edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the first surface being intersected.
+        edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the second surface being intersected.
 
     Returns:
         bool: Indicates if the corner is to be ignored.
@@ -1240,23 +1235,23 @@ def ignored_corner(intersection, tangent_s, tangent_t, edges1, edges2):
         if intersection.t == 0.0:
             # Double corner.
             return ignored_double_corner(
-                intersection, tangent_s, tangent_t, edges1, edges2)
+                intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2)
         else:
             # s-only corner.
             prev_index = (intersection.index_first - 1) % 3
-            prev_edge = edges1[prev_index]
-            return ignored_edge_corner(tangent_t, tangent_s, prev_edge._nodes)
+            prev_edge = edge_nodes1[prev_index]
+            return ignored_edge_corner(tangent_t, tangent_s, prev_edge)
     elif intersection.t == 0.0:
         # t-only corner.
         prev_index = (intersection.index_second - 1) % 3
-        prev_edge = edges2[prev_index]
-        return ignored_edge_corner(tangent_s, tangent_t, prev_edge._nodes)
+        prev_edge = edge_nodes2[prev_index]
+        return ignored_edge_corner(tangent_s, tangent_t, prev_edge)
     else:
         # Not a corner.
         return False
 
 
-def classify_intersection(intersection, edges1, edges2):
+def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     r"""Determine which curve is on the "inside of the intersection".
 
     .. note::
@@ -1320,9 +1315,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> tangent2
        array([[ 2. , 0.5]])
        >>> intersection = Intersection(0, s, 0, t)
-       >>> edges1 = (curve1, None, None)
-       >>> edges2 = (curve2, None, None)
-       >>> classify_intersection(intersection, edges1, edges2)
+       >>> edge_nodes1 = (nodes1, None, None)
+       >>> edge_nodes2 = (nodes2, None, None)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        <IntersectionClassification.FIRST: 0>
 
     .. testcleanup:: classify-intersection1
@@ -1377,9 +1372,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(0, s, 0, t)
-       >>> edges1 = (curve1, None, None)
-       >>> edges2 = (curve2, None, None)
-       >>> classify_intersection(intersection, edges1, edges2)
+       >>> edge_nodes1 = (nodes1, None, None)
+       >>> edge_nodes2 = (nodes2, None, None)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        <IntersectionClassification.TANGENT_SECOND: 4>
 
     .. testcleanup:: classify-intersection2
@@ -1415,9 +1410,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(0, s, 0, t)
-       >>> edges1 = (curve1, None, None)
-       >>> edges2 = (curve2, None, None)
-       >>> classify_intersection(intersection, edges1, edges2)
+       >>> edge_nodes1 = (nodes1, None, None)
+       >>> edge_nodes2 = (nodes2, None, None)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        <IntersectionClassification.TANGENT_FIRST: 3>
 
     .. testcleanup:: classify-intersection3
@@ -1451,9 +1446,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(0, s, 0, t)
-       >>> edges1 = (curve1, None, None)
-       >>> edges2 = (curve2, None, None)
-       >>> classify_intersection(intersection, edges1, edges2)
+       >>> edge_nodes1 = (nodes1, None, None)
+       >>> edge_nodes2 = (nodes2, None, None)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        <IntersectionClassification.OPPOSED: 2>
 
     .. testcleanup:: classify-intersection4
@@ -1489,9 +1484,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(0, s, 0, t)
-       >>> edges1 = (curve1, None, None)
-       >>> edges2 = (curve2, None, None)
-       >>> classify_intersection(intersection, edges1, edges2)
+       >>> edge_nodes1 = (nodes1, None, None)
+       >>> edge_nodes2 = (nodes2, None, None)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        Traceback (most recent call last):
          ...
        NotImplementedError: Curves moving in opposite direction
@@ -1535,9 +1530,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curvature(curve2, t)
        2.0
        >>> intersection = Intersection(0, s, 0, t)
-       >>> edges1 = (curve1, None, None)
-       >>> edges2 = (curve2, None, None)
-       >>> classify_intersection(intersection, edges1, edges2)
+       >>> edge_nodes1 = (nodes1, None, None)
+       >>> edge_nodes2 = (nodes2, None, None)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        Traceback (most recent call last):
          ...
        NotImplementedError: Tangent curves have same curvature.
@@ -1572,9 +1567,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1a.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(0, s, 0, t)
-       >>> edges1 = (curve1a, None, None)
-       >>> edges2 = (curve2, None, None)
-       >>> classify_intersection(intersection, edges1, edges2)
+       >>> edge_nodes1 = (nodes1a, None, None)
+       >>> edge_nodes2 = (nodes2, None, None)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        Traceback (most recent call last):
          ...
        ValueError: ('Intersection occurs at the end of an edge',
@@ -1588,10 +1583,9 @@ def classify_intersection(intersection, edges1, edges2):
        >>> curve1b = bezier.Curve(nodes1b, degree=2)
        >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
-       >>> edges1 = (curve1a, curve1b, None)
        >>> intersection = Intersection(1, 0.0, 0, t)
-       >>> edges1 = (curve1a, curve1b, None)
-       >>> classify_intersection(intersection, edges1, edges2)
+       >>> edge_nodes1 = (nodes1a, nodes1b, None)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        <IntersectionClassification.FIRST: 0>
 
     .. testcleanup:: classify-intersection7
@@ -1627,15 +1621,15 @@ def classify_intersection(intersection, edges1, edges2):
        ...     [-1.0   , 0.0  ],
        ... ])
        >>> surface2 = bezier.Surface(nodes2, degree=2)
-       >>> edges1 = surface1.edges
-       >>> curve1, _, _ = edges1
-       >>> edges2 = surface2.edges
-       >>> curve2, _, _ = edges2
+       >>> curve1, _, _ = surface1.edges
+       >>> edge_nodes1 = [curve.nodes for curve in surface1.edges]
+       >>> curve2, _, _ = surface2.edges
+       >>> edge_nodes2 = [curve.nodes for curve in surface2.edges]
        >>> s, t = 0.5, 0.0
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True, True]], dtype=bool)
        >>> intersection = Intersection(0, s, 0, t)
-       >>> classify_intersection(intersection, edges1, edges2)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        <IntersectionClassification.IGNORED_CORNER: 5>
 
     .. testcleanup:: classify-intersection8
@@ -1658,10 +1652,10 @@ def classify_intersection(intersection, edges1, edges2):
 
     Args:
         intersection (.Intersection): An intersection object.
-        edges1 (Tuple[~bezier.curve.Curve, ...]): The three edges of the
-            first surface being intersected.
-        edges2 (Tuple[~bezier.curve.Curve, ...]): The three edges of the
-            second surface being intersected.
+        edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the first surface being intersected.
+        edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the second surface being intersected.
 
     Returns:
         _IntersectionClassification: The "inside" curve type, based on
@@ -1677,12 +1671,13 @@ def classify_intersection(intersection, edges1, edges2):
         raise ValueError('Intersection occurs at the end of an edge',
                          's', intersection.s, 't', intersection.t)
 
-    nodes1 = edges1[intersection.index_first]._nodes
+    nodes1 = edge_nodes1[intersection.index_first]
     tangent1 = _curve_helpers.evaluate_hodograph(intersection.s, nodes1)
-    nodes2 = edges2[intersection.index_second]._nodes
+    nodes2 = edge_nodes2[intersection.index_second]
     tangent2 = _curve_helpers.evaluate_hodograph(intersection.t, nodes2)
 
-    if ignored_corner(intersection, tangent1, tangent2, edges1, edges2):
+    if ignored_corner(
+            intersection, tangent1, tangent2, edge_nodes1, edge_nodes2):
         return IntersectionClassification.IGNORED_CORNER
 
     # Take the cross product of tangent vectors to determine which one
@@ -2084,7 +2079,7 @@ def ends_to_curve(start_node, end_node):
                          '"FIRST" or "SECOND".')
 
 
-def no_intersections(surface1, surface2):
+def no_intersections(nodes1, degree1, nodes2, degree2):
     r"""Determine if one surface is in the other.
 
     Helper for :func:`combine_intersections` that handles the case
@@ -2095,10 +2090,12 @@ def no_intersections(surface1, surface2):
     is contained in the other surface.
 
     Args:
-        surface1 (.Surface): First surface in intersection (assumed in
-            :math:\mathbf{R}^2`).
-        surface2 (.Surface): Second surface in intersection (assumed in
-            :math:\mathbf{R}^2`).
+        nodes1 (numpy.ndarray): The nodes defining the first surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree1 (int): The degree of the surface given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree2 (int): The degree of the surface given by ``nodes2``.
 
     Returns:
         Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of
@@ -2107,17 +2104,17 @@ def no_intersections(surface1, surface2):
         * "Contained" boolean. If not :data:`None`, indicates
           that one of the surfaces is contained in the other.
     """
-    # NOTE: We want the nodes to be 1x2 but accessing ``nodes1[[0], :]``
-    #       and ``nodes2[[0], :]`` makes a copy while the accesses
-    #       below **do not** copy. See
-    #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
-    #        arrays.indexing.html#advanced-indexing)
-    corner1 = surface1._nodes[0, :].reshape((1, 2), order='F')
-    if surface2.locate(corner1, _verify=False) is not None:
+    # NOTE: This is a circular import.
+    from bezier import _surface_intersection
+
+    located = _surface_intersection.locate_point(
+        nodes2, degree2, nodes1[0, 0], nodes1[0, 1])
+    if located is not None:
         return None, True
 
-    corner2 = surface2._nodes[0, :].reshape((1, 2), order='F')
-    if surface1.locate(corner2, _verify=False) is not None:
+    located = _surface_intersection.locate_point(
+        nodes1, degree1, nodes2[0, 0], nodes2[0, 1])
+    if located is not None:
         return None, False
 
     return [], None
@@ -2244,8 +2241,9 @@ def basic_interior_combine(intersections, max_edges=10):
     return result, None
 
 
-def combine_intersections(intersections, surface1, surface2, all_types):
-    """Combine curve-curve intersections into curved polygon(s).
+def combine_intersections(
+        intersections, nodes1, degree1, nodes2, degree2, all_types):
+    r"""Combine curve-curve intersections into curved polygon(s).
 
     .. note::
 
@@ -2263,8 +2261,12 @@ def combine_intersections(intersections, surface1, surface2, all_types):
     Args:
         intersections (List[.Intersection]): Intersections from each of the
             9 edge-edge pairs from a surface-surface pairing.
-        surface1 (.Surface): First surface in intersection.
-        surface2 (.Surface): Second surface in intersection.
+        nodes1 (numpy.ndarray): The nodes defining the first surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree1 (int): The degree of the surface given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree2 (int): The degree of the surface given by ``nodes2``.
         all_types (Set[.IntersectionClassification]): The set of all
             intersection classifications encountered among the intersections
             for the given surface-surface pair.
@@ -2283,7 +2285,7 @@ def combine_intersections(intersections, surface1, surface2, all_types):
     elif all_types:
         return tangent_only_intersections(all_types)
     else:
-        return no_intersections(surface1, surface2)
+        return no_intersections(nodes1, degree1, nodes2, degree2)
 
 
 def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
