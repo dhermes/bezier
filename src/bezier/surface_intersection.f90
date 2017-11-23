@@ -18,7 +18,8 @@ module surface_intersection
        Status_BAD_TANGENT, Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
   use curve_intersection, only: &
-       BoxIntersectionType_INTERSECTION, bbox_intersect, all_intersections
+       BoxIntersectionType_INTERSECTION, INTERSECTIONS_WORKSPACE, &
+       bbox_intersect, all_intersections
   use helpers, only: cross_product, contains_nd, vector_close
   use types, only: dp
   use surface, only: &
@@ -812,7 +813,6 @@ contains
     ! Variables outside of signature.
     type(CurveData) :: edges_first(3), edges_second(3)
     integer(c_int) :: index1, index2
-    real(c_double), allocatable :: st_vals(:, :)
     integer(c_int) :: num_st_vals
 
     ! Compute the edge nodes for the first surface.
@@ -838,13 +838,14 @@ contains
           call all_intersections( &
                degree1 + 1, edges_first(index1)%nodes, &
                degree2 + 1, edges_second(index2)%nodes, &
-               st_vals, num_st_vals, status)
+               INTERSECTIONS_WORKSPACE, num_st_vals, status)
           if (status == Status_SUCCESS) then
              if (num_st_vals > 0) then
                 call add_st_vals( &
-                     edges_first, edges_second, num_st_vals, st_vals, &
-                     index1, index2, intersections, num_intersections, &
-                     all_types, status)
+                     edges_first, edges_second, &
+                     num_st_vals, INTERSECTIONS_WORKSPACE(:, :num_st_vals), &
+                     index1, index2, intersections, &
+                     num_intersections, all_types, status)
                 if (status /= Status_SUCCESS) then
                    return
                 end if

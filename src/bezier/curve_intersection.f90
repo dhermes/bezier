@@ -25,17 +25,17 @@ module curve_intersection
   implicit none
   private &
        MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, CANDIDATES_ODD, &
-       CANDIDATES_EVEN, INTERSECTIONS_WORKSPACE, make_candidates
+       CANDIDATES_EVEN, make_candidates
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, Subdivide_FIRST, Subdivide_SECOND, &
        Subdivide_BOTH, Subdivide_NEITHER, LINEARIZATION_THRESHOLD, &
-       linearization_error, segment_intersection, newton_refine_intersect, &
-       bbox_intersect, parallel_different, from_linearized, &
-       bbox_line_intersect, add_intersection, add_from_linearized, &
-       endpoint_check, tangent_bbox_intersection, add_candidates, &
-       intersect_one_round, all_intersections, all_intersections_abi, &
-       free_curve_intersections_workspace
+       INTERSECTIONS_WORKSPACE, linearization_error, segment_intersection, &
+       newton_refine_intersect, bbox_intersect, parallel_different, &
+       from_linearized, bbox_line_intersect, add_intersection, &
+       add_from_linearized, endpoint_check, tangent_bbox_intersection, &
+       add_candidates, intersect_one_round, all_intersections, &
+       all_intersections_abi, free_curve_intersections_workspace
 
   ! Values of BoxIntersectionType enum:
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
