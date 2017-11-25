@@ -19,6 +19,7 @@ from numpy cimport dtype as dtype_t
 from numpy cimport ndarray as ndarray_t
 
 cimport bezier._status
+cimport bezier._surface
 cimport bezier._surface_intersection
 from bezier._surface_intersection cimport CurvedPolygonSegment
 
@@ -115,11 +116,21 @@ def workspace_sizes():
     return segment_ends_size, segments_size
 
 
-def _surface_intersections_success(int num_intersected):
+def _surface_intersections_success(
+        double[::1, :] nodes1, int degree1,
+        double[::1, :] nodes2, int degree2,
+        int num_intersected):
     global SEGMENT_ENDS_WORKSPACE
     global SEGMENTS_WORKSPACE
     cdef int begin_index, end_index
     cdef size_t i, j
+    cdef int num_nodes, dimension
+    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes1
+    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes2
+    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes3
+    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes4
+    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes5
+    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes6
 
     curved_polygons = []
     for i in range(num_intersected):
@@ -140,7 +151,45 @@ def _surface_intersections_success(int num_intersected):
         ]
         curved_polygons.append(triples)
 
-    return curved_polygons
+    # NOTE: We compute the nodes for each of the six edges. This is a
+    #       "wasted" computation / storage.
+    num_nodes, dimension = np.shape(nodes1)
+    edge_nodes1 = np.empty((degree1 + 1, dimension), order='F')
+    edge_nodes2 = np.empty((degree1 + 1, dimension), order='F')
+    edge_nodes3 = np.empty((degree1 + 1, dimension), order='F')
+    bezier._surface.compute_edge_nodes(
+        &num_nodes,
+        &dimension,
+        &nodes1[0, 0],
+        &degree1,
+        &edge_nodes1[0, 0],
+        &edge_nodes2[0, 0],
+        &edge_nodes3[0, 0],
+    )
+
+    num_nodes, dimension = np.shape(nodes2)
+    edge_nodes4 = np.empty((degree2 + 1, 2), order='F')
+    edge_nodes5 = np.empty((degree2 + 1, 2), order='F')
+    edge_nodes6 = np.empty((degree2 + 1, 2), order='F')
+    bezier._surface.compute_edge_nodes(
+        &num_nodes,
+        &dimension,
+        &nodes2[0, 0],
+        &degree2,
+        &edge_nodes4[0, 0],
+        &edge_nodes5[0, 0],
+        &edge_nodes6[0, 0],
+    )
+
+    all_edge_nodes = (
+        edge_nodes1,
+        edge_nodes2,
+        edge_nodes3,
+        edge_nodes4,
+        edge_nodes5,
+        edge_nodes6,
+    )
+    return curved_polygons, None, all_edge_nodes
 
 
 def _surface_intersections_resize(
@@ -176,7 +225,9 @@ def _surface_intersections_resize(
 def surface_intersections(
         double[::1, :] nodes1, int degree1,
         double[::1, :] nodes2, int degree2,
-        int resizes_allowed=2):
+        bint verify=True, int resizes_allowed=2):
+    # NOTE: ``verify`` is unused. It is only provided as compatibility
+    #       with the Python version.
     global SEGMENT_ENDS_WORKSPACE
     global SEGMENTS_WORKSPACE
     cdef int num_nodes1, num_nodes2
@@ -208,13 +259,14 @@ def surface_intersections(
 
     if status == bezier._status.Status.SUCCESS:
         if contained == bezier._surface_intersection.FIRST:
-            return None, True
+            return None, True, ()
         elif contained == bezier._surface_intersection.SECOND:
-            return None, False
+            return None, False, ()
         else:
             # Assumes, but does not check, that ``contained`` is equal to
             # ``bezier._surface_intersection.NEITHER``.
-            return _surface_intersections_success(num_intersected), None
+            return _surface_intersections_success(
+                nodes1, degree1, nodes2, degree2, num_intersected)
     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
         return _surface_intersections_resize(
             nodes1, degree1, nodes2, degree2,
