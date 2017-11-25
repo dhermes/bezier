@@ -259,3 +259,12 @@ def surface_intersections(
 
 def free_surface_intersections_workspace():
     bezier._surface_intersection.free_surface_intersections_workspace()
+
+
+def _type_info():
+    return (
+        SEGMENT_DTYPE.isnative,
+        SEGMENT_DTYPE.itemsize,
+        SEGMENT_DTYPE.num,
+        sizeof(CurvedPolygonSegment),
+    )

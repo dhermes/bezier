@@ -11,6 +11,7 @@
 # limitations under the License.
 
 import unittest
+import unittest.mock
 
 import numpy as np
 
@@ -822,6 +823,21 @@ class Test_speedup_surface_intersections(utils.NumPyTestCase):
         self.assertEqual(exc_args, (template.format(6, 2),))
         # Make sure the workspace was **not** resized.
         self.assertEqual(self.workspace_sizes(), sizes)
+
+
+@utils.needs_surface_intersection_speedup
+class Test_speedup__type_info(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test():
+        from bezier import _surface_intersection_speedup
+
+        return _surface_intersection_speedup._type_info()
+
+    def test_it(self):
+        expected = (True, 24, 20, 24)
+        result = self._call_function_under_test()
+        self.assertEqual(expected, result)
 
 
 def make_intersect(*args, **kwargs):
