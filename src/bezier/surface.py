@@ -968,6 +968,8 @@ class Surface(_base.Base):
             TypeError: If ``other`` is not a surface (and ``_verify=True``).
             NotImplementedError: If at least one of the surfaces
                 isn't two-dimensional (and ``_verify=True``).
+            ValueError: If ``strategy`` is not a valid
+                :attr:`.IntersectionStrategy`.
         """
         if _verify:
             if not isinstance(other, Surface):
@@ -977,33 +979,21 @@ class Surface(_base.Base):
                 raise NotImplementedError(
                     'Intersection only implemented in 2D')
 
-        bbox_int = _geometric_intersection.bbox_intersect(
-            self._nodes, other._nodes)
-        if bbox_int != _INTERSECTION_T:
-            return []
+        if strategy == _STRATEGY.GEOMETRIC:
+            do_intersect = _geometric_intersect
+        elif strategy == _STRATEGY.ALGEBRAIC:
+            do_intersect = _algebraic_intersect
+        else:
+            raise ValueError('Unexpected strategy.', strategy)
 
-        # We need **all** pairs of edges.
-        edge_nodes1 = _surface_helpers.compute_edge_nodes(
-            self._nodes, self._degree)
-        edge_nodes2 = _surface_helpers.compute_edge_nodes(
-            other._nodes, other._degree)
-        intersections, duplicates, unused, all_types = _surface_intersections(
-            edge_nodes1, edge_nodes2, strategy)
-
-        if _verify:
-            _surface_helpers.verify_duplicates(
-                duplicates, intersections + unused)
-
-        edge_infos, contained = _surface_helpers.combine_intersections(
-            intersections, self._nodes, self._degree,
-            other._nodes, other._degree, all_types)
+        edge_infos, contained, all_edge_nodes = do_intersect(
+            self._nodes, self._degree, other._nodes, other._degree, _verify)
         if edge_infos is None:
             if contained:
                 return [self]
             else:
                 return [other]
         else:
-            all_edge_nodes = edge_nodes1 + edge_nodes2
             return [
                 _make_intersection(edge_info, all_edge_nodes)
                 for edge_info in edge_infos
@@ -1118,7 +1108,7 @@ class Surface(_base.Base):
         return Surface(new_nodes, self._degree + 1, _copy=False)
 
 
-def _surface_intersections(edge_nodes1, edge_nodes2, strategy):
+def _surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
     """Find all intersections among edges of two surfaces.
 
     This treats intersections which have ``s == 1.0`` or ``t == 1.0``
@@ -1130,8 +1120,9 @@ def _surface_intersections(edge_nodes1, edge_nodes2, strategy):
             nodes of the three edges of the first surface being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the second surface being intersected.
-        strategy (Optional[~bezier.curve.IntersectionStrategy]): The
-            intersection algorithm to use. Defaults to geometric.
+        all_intersections (Callable): A helper that intersects B |eacute| zier
+            curves. Takes the nodes of each curve as input and returns an
+            array (``N x 2``) of intersections.
 
     Returns:
         Tuple[list, list, list, set]: 4-tuple of
@@ -1142,18 +1133,7 @@ def _surface_intersections(edge_nodes1, edge_nodes2, strategy):
         * Intersections that won't be used, such as a tangent intersection
           along an edge
         * All the intersection classifications encountered
-
-    Raises:
-        ValueError: If ``strategy`` is not a valid
-            :attr:`.IntersectionStrategy`.
     """
-    if strategy == _STRATEGY.GEOMETRIC:
-        all_intersections = _geometric_intersection.all_intersections
-    elif strategy == _STRATEGY.ALGEBRAIC:
-        all_intersections = _algebraic_intersection.all_intersections
-    else:
-        raise ValueError('Unexpected strategy.', strategy)
-
     all_types = set()
     intersections = []
     duplicates = []
@@ -1252,3 +1232,122 @@ def _make_intersection(edge_info, all_edge_nodes):
         edges.append(edge)
 
     return curved_polygon.CurvedPolygon(*edges, _verify=False)
+
+
+def _generic_intersect(
+        nodes1, degree1, nodes2, degree2, verify, all_intersections):
+    r"""Find all intersections among edges of two surfaces.
+
+    This treats intersections which have ``s == 1.0`` or ``t == 1.0``
+    as duplicates. The duplicates will be checked by
+    :func:`~bezier._surface_helpers.verify_duplicates` if ``verify`` is
+    :data:`True`.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes defining the first surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree1 (int): The degree of the surface given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree2 (int): The degree of the surface given by ``nodes2``.
+        verify (Optional[bool]): Indicates if duplicate intersections
+            should be checked.
+        all_intersections (Callable): A helper that intersects B |eacute| zier
+            curves. Takes the nodes of each curve as input and returns an
+            array (``N x 2``) of intersections.
+
+    Returns:
+        Tuple[Optional[list], Optional[bool], tuple]: 3-tuple of
+
+        * List of "edge info" lists. Each list represents a curved polygon
+          and contains 3-tuples of edge index, start and end (see the
+          output of :func:`ends_to_curve`).
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
+        * The nodes of three edges of the first surface being intersected
+          followed by the nodes of the three edges of the second.
+    """
+    bbox_int = _geometric_intersection.bbox_intersect(nodes1, nodes2)
+    if bbox_int != _INTERSECTION_T:
+        return [], None, ()
+
+    # We need **all** edges (as nodes).
+    edge_nodes1 = _surface_helpers.compute_edge_nodes(nodes1, degree1)
+    edge_nodes2 = _surface_helpers.compute_edge_nodes(nodes2, degree2)
+
+    # Run through **all** pairs of edges.
+    intersections, duplicates, unused, all_types = _surface_intersections(
+        edge_nodes1, edge_nodes2, all_intersections)
+
+    # Verify duplicates if need be.
+    if verify:
+        _surface_helpers.verify_duplicates(
+            duplicates, intersections + unused)
+
+    edge_infos, contained = _surface_helpers.combine_intersections(
+        intersections, nodes1, degree1, nodes2, degree2, all_types)
+    return edge_infos, contained, edge_nodes1 + edge_nodes2
+
+
+def _geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
+    r"""Find all intersections among edges of two surfaces.
+
+    Uses :func:`_generic_intersect` with the
+    :attr:`~.IntersectionStrategy.GEOMETRIC` intersection strategy.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes defining the first surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree1 (int): The degree of the surface given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree2 (int): The degree of the surface given by ``nodes2``.
+        verify (Optional[bool]): Indicates if duplicate intersections
+            should be checked.
+
+    Returns:
+        Tuple[Optional[list], Optional[bool], tuple]: 3-tuple of
+
+        * List of "edge info" lists. Each list represents a curved polygon
+          and contains 3-tuples of edge index, start and end (see the
+          output of :func:`ends_to_curve`).
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
+        * The nodes of three edges of the first surface being intersected
+          followed by the nodes of the three edges of the second.
+    """
+    all_intersections = _geometric_intersection.all_intersections
+    return _generic_intersect(
+        nodes1, degree1, nodes2, degree2, verify, all_intersections)
+
+
+def _algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
+    r"""Find all intersections among edges of two surfaces.
+
+    Uses :func:`_generic_intersect` with the
+    :attr:`~.IntersectionStrategy.ALGEBRAIC` intersection strategy.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes defining the first surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree1 (int): The degree of the surface given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree2 (int): The degree of the surface given by ``nodes2``.
+        verify (Optional[bool]): Indicates if duplicate intersections
+            should be checked.
+
+    Returns:
+        Tuple[Optional[list], Optional[bool], tuple]: 3-tuple of
+
+        * List of "edge info" lists. Each list represents a curved polygon
+          and contains 3-tuples of edge index, start and end (see the
+          output of :func:`ends_to_curve`).
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
+        * The nodes of three edges of the first surface being intersected
+          followed by the nodes of the three edges of the second.
+    """
+    all_intersections = _algebraic_intersection.all_intersections
+    return _generic_intersect(
+        nodes1, degree1, nodes2, degree2, verify, all_intersections)
