@@ -303,12 +303,18 @@ def benchmark(session, target):
 
     if target == 'memory':
         local_deps = (NUMPY, 'psutil', 'memory_profiler')
-        test_fi = get_path('benchmarks', 'memory', 'test_curves.py')
-        run_args = ('python', test_fi)
+        test_fi1 = get_path('benchmarks', 'memory', 'test_curves.py')
+        test_fi2 = get_path('benchmarks', 'memory', 'test_surfaces.py')
+        all_run_args = [
+            ['python', test_fi1],
+            ['python', test_fi2],
+        ]
     elif target == 'time':
         local_deps = BASE_DEPS + ('pytest-benchmark',)
-        test_fi = get_path('benchmarks', 'time', 'test_curves.py')
-        run_args = ['py.test'] + session.posargs + [test_fi]
+        test_dir = get_path('benchmarks', 'time')
+        all_run_args = [
+            ['py.test'] + session.posargs + [test_dir],
+        ]
 
     # Install all test dependencies.
     session.install(*local_deps)
@@ -316,7 +322,8 @@ def benchmark(session, target):
     session.install('.')
 
     # NOTE: We need `tests` to be import-able.
-    session.run(*run_args, env={'PYTHONPATH': '.'})
+    for run_args in all_run_args:
+        session.run(*run_args, env={'PYTHONPATH': '.'})
 
 
 @nox.session
