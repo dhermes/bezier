@@ -27,10 +27,8 @@ or the speedup.
 """
 
 
-import collections
 import enum
 import functools
-import itertools
 import operator
 
 import numpy as np
@@ -1736,90 +1734,6 @@ def handle_ends(index1, s, index2, t):
         edge_end = True
 
     return edge_end, (index1, s, index2, t)
-
-
-def same_intersection(intersection1, intersection2, wiggle=0.5**40):
-    """Check if two intersections are close to machine precision.
-
-    .. note::
-
-       This is a helper used only by :func:`verify_duplicates`, which in turn
-       is only used by :meth:`.Surface.intersect`.
-
-    Args:
-        intersection1 (.Intersection): The first intersection.
-        intersection2 (.Intersection): The second intersection.
-        wiggle (Optional[float]): The amount of relative error allowed
-            in parameter values.
-
-    Returns:
-        bool: Indicates if the two intersections are the same to
-        machine precision.
-    """
-    # pylint: disable=protected-access
-    if intersection1.index_first != intersection2.index_first:
-        return False
-    if intersection1.index_second != intersection2.index_second:
-        return False
-    # pylint: enable=protected-access
-
-    return np.allclose(
-        [intersection1.s, intersection1.t],
-        [intersection2.s, intersection2.t],
-        atol=0.0, rtol=wiggle)
-
-
-def verify_duplicates(duplicates, uniques):
-    """Verify that a set of intersections had expected duplicates.
-
-    .. note::
-
-       This is a helper used only by :meth:`.Surface.intersect`.
-
-    Args:
-        duplicates (List[.Intersection]): List of intersections
-            corresponding to duplicates that were filtered out.
-        uniques (List[.Intersection]): List of "final" intersections
-            with duplicates filtered out.
-
-    Raises:
-        ValueError: If the ``uniques`` are not actually all unique.
-        ValueError: If one of the ``duplicates`` does not correspond to
-            an intersection in ``uniques``.
-        ValueError: If a duplicate occurs only once but does not have
-            exactly one of ``s`` and ``t`` equal to ``0.0``.
-        ValueError: If a duplicate occurs three times but does not have
-            exactly both ``s == t == 0.0``.
-        ValueError: If a duplicate occurs a number other than one or three
-            times.
-    """
-    for uniq1, uniq2 in itertools.combinations(uniques, 2):
-        if same_intersection(uniq1, uniq2):
-            raise ValueError('Non-unique intersection')
-
-    counter = collections.Counter()
-    for dupe in duplicates:
-        matches = []
-        for index, uniq in enumerate(uniques):
-            if same_intersection(dupe, uniq):
-                matches.append(index)
-
-        if len(matches) != 1:
-            raise ValueError('Duplicate not among uniques', dupe)
-
-        matched = matches[0]
-        counter[matched] += 1
-
-    for index, count in six.iteritems(counter):
-        uniq = uniques[index]
-        if count == 1:
-            if (uniq.s, uniq.t).count(0.0) != 1:
-                raise ValueError('Count == 1 should be a single corner', uniq)
-        elif count == 3:
-            if (uniq.s, uniq.t) != (0.0, 0.0):
-                raise ValueError('Count == 3 should be a double corner', uniq)
-        else:
-            raise ValueError('Unexpected duplicate count', count)
 
 
 def to_front(intersection, intersections, unused):

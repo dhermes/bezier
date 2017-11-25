@@ -23,10 +23,16 @@ leading underscore will be surfaced as the actual interface (e.g.
 or the speedup.
 """
 
+import collections
+import itertools
+
 import numpy as np
 import six
 
+from bezier import _algebraic_intersection
+from bezier import _geometric_intersection
 from bezier import _helpers
+from bezier import _intersection_helpers
 from bezier import _surface_helpers
 try:
     from bezier import _surface_intersection_speedup
@@ -34,8 +40,9 @@ except ImportError:  # pragma: NO COVER
     _surface_intersection_speedup = None
 
 
-_MAX_LOCATE_SUBDIVISIONS = 20
-_LOCATE_EPS = 2.0**(-47)
+MAX_LOCATE_SUBDIVISIONS = 20
+LOCATE_EPS = 2.0**(-47)
+INTERSECTION_T = _geometric_intersection.BoxIntersectionType.INTERSECTION
 
 
 def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
@@ -336,7 +343,7 @@ def _locate_point(nodes, degree, x_val, y_val):
     # the centroid -- to avoid division by three until needed). We also need
     # to track the width (or rather, just the sign of the width).
     candidates = [(1.0, 1.0, 1.0, nodes)]
-    for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
+    for _ in six.moves.xrange(MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for candidate in candidates:
             update_locate_candidates(
@@ -356,10 +363,305 @@ def _locate_point(nodes, degree, x_val, y_val):
     actual = _surface_helpers.evaluate_barycentric(
         nodes, degree, 1.0 - s - t, s, t)
     expected = np.asfortranarray([[x_val, y_val]])
-    if not _helpers.vector_close(actual, expected, eps=_LOCATE_EPS):
+    if not _helpers.vector_close(actual, expected, eps=LOCATE_EPS):
         s, t = newton_refine(
             nodes, degree, x_val, y_val, s, t)
     return s, t
+
+
+def same_intersection(intersection1, intersection2, wiggle=0.5**40):
+    """Check if two intersections are close to machine precision.
+
+    .. note::
+
+       This is a helper used only by :func:`verify_duplicates`, which in turn
+       is only used by :meth:`.Surface.intersect`.
+
+    Args:
+        intersection1 (.Intersection): The first intersection.
+        intersection2 (.Intersection): The second intersection.
+        wiggle (Optional[float]): The amount of relative error allowed
+            in parameter values.
+
+    Returns:
+        bool: Indicates if the two intersections are the same to
+        machine precision.
+    """
+    # pylint: disable=protected-access
+    if intersection1.index_first != intersection2.index_first:
+        return False
+    if intersection1.index_second != intersection2.index_second:
+        return False
+    # pylint: enable=protected-access
+
+    return np.allclose(
+        [intersection1.s, intersection1.t],
+        [intersection2.s, intersection2.t],
+        atol=0.0, rtol=wiggle)
+
+
+def verify_duplicates(duplicates, uniques):
+    """Verify that a set of intersections had expected duplicates.
+
+    .. note::
+
+       This is a helper used only by :meth:`.Surface.intersect`.
+
+    Args:
+        duplicates (List[.Intersection]): List of intersections
+            corresponding to duplicates that were filtered out.
+        uniques (List[.Intersection]): List of "final" intersections
+            with duplicates filtered out.
+
+    Raises:
+        ValueError: If the ``uniques`` are not actually all unique.
+        ValueError: If one of the ``duplicates`` does not correspond to
+            an intersection in ``uniques``.
+        ValueError: If a duplicate occurs only once but does not have
+            exactly one of ``s`` and ``t`` equal to ``0.0``.
+        ValueError: If a duplicate occurs three times but does not have
+            exactly both ``s == t == 0.0``.
+        ValueError: If a duplicate occurs a number other than one or three
+            times.
+    """
+    for uniq1, uniq2 in itertools.combinations(uniques, 2):
+        if same_intersection(uniq1, uniq2):
+            raise ValueError('Non-unique intersection')
+
+    counter = collections.Counter()
+    for dupe in duplicates:
+        matches = []
+        for index, uniq in enumerate(uniques):
+            if same_intersection(dupe, uniq):
+                matches.append(index)
+
+        if len(matches) != 1:
+            raise ValueError('Duplicate not among uniques', dupe)
+
+        matched = matches[0]
+        counter[matched] += 1
+
+    for index, count in six.iteritems(counter):
+        uniq = uniques[index]
+        if count == 1:
+            if (uniq.s, uniq.t).count(0.0) != 1:
+                raise ValueError('Count == 1 should be a single corner', uniq)
+        elif count == 3:
+            if (uniq.s, uniq.t) != (0.0, 0.0):
+                raise ValueError('Count == 3 should be a double corner', uniq)
+        else:
+            raise ValueError('Unexpected duplicate count', count)
+
+
+def add_intersection(  # pylint: disable=too-many-arguments
+        index1, s, index2, t, edge_nodes1, edge_nodes2, duplicates,
+        intersections, unused, all_types):
+    """Create an :class:`Intersection` and append.
+
+    The intersection will be classified as either a duplicate or a valid
+    intersection and appended to one of ``duplicates`` or ``intersections``
+    depending on that classification.
+
+    Args:
+        index1 (int): The index (among 0, 1, 2) of the first edge in the
+            intersection.
+        s (float): The parameter along the first curve of the intersection.
+        index2 (int): The index (among 0, 1, 2) of the second edge in the
+            intersection.
+        t (float): The parameter along the second curve of the intersection.
+        edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the first surface being intersected.
+        edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the second surface being intersected.
+        duplicates (List[.Intersection]): List of duplicate intersections.
+        intersections (List[.Intersection]): List of "accepted" (i.e.
+            non-duplicate) intersections.
+        unused (List[.Intersection]): Intersections that won't be used,
+            such as a tangent intersection along an edge. This is
+            provided for the case where the output will be verified.
+        all_types (Set[.IntersectionClassification]): The set of all
+            intersection classifications encountered among the intersections
+            for the given surface-surface pair.
+    """
+    edge_end, intersection_args = _surface_helpers.handle_ends(
+        index1, s, index2, t)
+    if edge_end:
+        intersection = _intersection_helpers.Intersection(
+            *intersection_args)
+        duplicates.append(intersection)
+    else:
+        intersection = _intersection_helpers.Intersection(
+            index1, s, index2, t)
+        # Classify the intersection.
+        interior = _surface_helpers.classify_intersection(
+            intersection, edge_nodes1, edge_nodes2)
+        all_types.add(interior)
+        intersection.interior_curve = interior
+        # Only keep the intersections which are ``ACCEPTABLE``.
+        if interior == _surface_helpers.IntersectionClassification.FIRST:
+            intersections.append(intersection)
+        elif interior == _surface_helpers.IntersectionClassification.SECOND:
+            intersections.append(intersection)
+        else:
+            unused.append(intersection)
+
+
+def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
+    """Find all intersections among edges of two surfaces.
+
+    This treats intersections which have ``s == 1.0`` or ``t == 1.0``
+    as duplicates. The duplicates may be checked by the caller, e.g.
+    by :func:`verify_duplicates`.
+
+    Args:
+        edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the first surface being intersected.
+        edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
+            nodes of the three edges of the second surface being intersected.
+        all_intersections (Callable): A helper that intersects B |eacute| zier
+            curves. Takes the nodes of each curve as input and returns an
+            array (``N x 2``) of intersections.
+
+    Returns:
+        Tuple[list, list, list, set]: 4-tuple of
+
+        * The actual "unique" :class:`Intersection`-s
+        * Duplicate :class:`Intersection`-s encountered (these will be
+          corner intersections)
+        * Intersections that won't be used, such as a tangent intersection
+          along an edge
+        * All the intersection classifications encountered
+    """
+    all_types = set()
+    intersections = []
+    duplicates = []
+    unused = []
+    for index1, nodes1 in enumerate(edge_nodes1):
+        for index2, nodes2 in enumerate(edge_nodes2):
+            st_vals = all_intersections(nodes1, nodes2)
+            for s, t in st_vals:
+                add_intersection(
+                    index1, s, index2, t, edge_nodes1, edge_nodes2,
+                    duplicates, intersections, unused, all_types)
+
+    return intersections, duplicates, unused, all_types
+
+
+def generic_intersect(
+        nodes1, degree1, nodes2, degree2, verify, all_intersections):
+    r"""Find all intersections among edges of two surfaces.
+
+    This treats intersections which have ``s == 1.0`` or ``t == 1.0``
+    as duplicates. The duplicates will be checked by :func:`verify_duplicates`
+    if ``verify`` is :data:`True`.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes defining the first surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree1 (int): The degree of the surface given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree2 (int): The degree of the surface given by ``nodes2``.
+        verify (Optional[bool]): Indicates if duplicate intersections
+            should be checked.
+        all_intersections (Callable): A helper that intersects B |eacute| zier
+            curves. Takes the nodes of each curve as input and returns an
+            array (``N x 2``) of intersections.
+
+    Returns:
+        Tuple[Optional[list], Optional[bool], tuple]: 3-tuple of
+
+        * List of "edge info" lists. Each list represents a curved polygon
+          and contains 3-tuples of edge index, start and end (see the
+          output of :func:`ends_to_curve`).
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
+        * The nodes of three edges of the first surface being intersected
+          followed by the nodes of the three edges of the second.
+    """
+    bbox_int = _geometric_intersection.bbox_intersect(nodes1, nodes2)
+    if bbox_int != INTERSECTION_T:
+        return [], None, ()
+
+    # We need **all** edges (as nodes).
+    edge_nodes1 = _surface_helpers.compute_edge_nodes(nodes1, degree1)
+    edge_nodes2 = _surface_helpers.compute_edge_nodes(nodes2, degree2)
+
+    # Run through **all** pairs of edges.
+    intersections, duplicates, unused, all_types = surface_intersections(
+        edge_nodes1, edge_nodes2, all_intersections)
+
+    # Verify duplicates if need be.
+    if verify:
+        verify_duplicates(duplicates, intersections + unused)
+
+    edge_infos, contained = _surface_helpers.combine_intersections(
+        intersections, nodes1, degree1, nodes2, degree2, all_types)
+    return edge_infos, contained, edge_nodes1 + edge_nodes2
+
+
+def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
+    r"""Find all intersections among edges of two surfaces.
+
+    Uses :func:`generic_intersect` with the
+    :attr:`~.IntersectionStrategy.GEOMETRIC` intersection strategy.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes defining the first surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree1 (int): The degree of the surface given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree2 (int): The degree of the surface given by ``nodes2``.
+        verify (Optional[bool]): Indicates if duplicate intersections
+            should be checked.
+
+    Returns:
+        Tuple[Optional[list], Optional[bool], tuple]: 3-tuple of
+
+        * List of "edge info" lists. Each list represents a curved polygon
+          and contains 3-tuples of edge index, start and end (see the
+          output of :func:`ends_to_curve`).
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
+        * The nodes of three edges of the first surface being intersected
+          followed by the nodes of the three edges of the second.
+    """
+    all_intersections = _geometric_intersection.all_intersections
+    return generic_intersect(
+        nodes1, degree1, nodes2, degree2, verify, all_intersections)
+
+
+def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
+    r"""Find all intersections among edges of two surfaces.
+
+    Uses :func:`generic_intersect` with the
+    :attr:`~.IntersectionStrategy.ALGEBRAIC` intersection strategy.
+
+    Args:
+        nodes1 (numpy.ndarray): The nodes defining the first surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree1 (int): The degree of the surface given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second surface in
+            the intersection (assumed in :math:\mathbf{R}^2`).
+        degree2 (int): The degree of the surface given by ``nodes2``.
+        verify (Optional[bool]): Indicates if duplicate intersections
+            should be checked.
+
+    Returns:
+        Tuple[Optional[list], Optional[bool], tuple]: 3-tuple of
+
+        * List of "edge info" lists. Each list represents a curved polygon
+          and contains 3-tuples of edge index, start and end (see the
+          output of :func:`ends_to_curve`).
+        * "Contained" boolean. If not :data:`None`, indicates
+          that one of the surfaces is contained in the other.
+        * The nodes of three edges of the first surface being intersected
+          followed by the nodes of the three edges of the second.
+    """
+    all_intersections = _algebraic_intersection.all_intersections
+    return generic_intersect(
+        nodes1, degree1, nodes2, degree2, verify, all_intersections)
 
 
 # pylint: disable=invalid-name
