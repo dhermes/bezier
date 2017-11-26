@@ -525,7 +525,7 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         ])
 
         result = self._call_function_under_test(
-            nodes1, 1, nodes2, 1, verify=True)
+            nodes1, 1, nodes2, 1, verify=False)
         curved_polygons, contained, all_edge_nodes = result
         self.assertIsNone(curved_polygons)
         self.assertIsNotNone(contained)
