@@ -597,11 +597,19 @@ def generic_intersect(
 
     edge_infos, contained = _surface_helpers.combine_intersections(
         intersections, nodes1, degree1, nodes2, degree2, all_types)
+    if edge_infos is None or edge_infos == []:
+        return edge_infos, contained, ()
+
     return edge_infos, contained, edge_nodes1 + edge_nodes2
 
 
-def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
+def _geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
     r"""Find all intersections among edges of two surfaces.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
 
     Uses :func:`generic_intersect` with the
     :attr:`~.IntersectionStrategy.GEOMETRIC` intersection strategy.
@@ -668,7 +676,9 @@ def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
 if _surface_intersection_speedup is None:  # pragma: NO COVER
     newton_refine = _newton_refine
     locate_point = _locate_point
+    geometric_intersect = _geometric_intersect
 else:
     newton_refine = _surface_intersection_speedup.newton_refine
     locate_point = _surface_intersection_speedup.locate_point
+    geometric_intersect = _surface_intersection_speedup.surface_intersections
 # pylint: enable=invalid-name

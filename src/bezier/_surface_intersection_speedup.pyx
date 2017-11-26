@@ -141,15 +141,18 @@ def _surface_intersections_success(
         end_index = SEGMENT_ENDS_WORKSPACE[i]
         # NOTE: We switch from 1-based to 0-based indexing since
         #       the data moves from Fortran to Python.
-        triples = [
+        triples = tuple(
             (
                 SEGMENTS_WORKSPACE[j].edge_index - 1,
                 SEGMENTS_WORKSPACE[j].start,
                 SEGMENTS_WORKSPACE[j].end,
             )
             for j in range(begin_index, end_index)
-        ]
+        )
         curved_polygons.append(triples)
+
+    if not curved_polygons:
+        return [], None, ()
 
     # NOTE: We compute the nodes for each of the six edges. This is a
     #       "wasted" computation / storage.
