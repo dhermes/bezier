@@ -90,13 +90,13 @@ class Test_speedup_bbox_intersect(Test__bbox_intersect):
         return _curve_intersection_speedup.bbox_intersect(nodes1, nodes2)
 
 
-class Test__linearization_error(unittest.TestCase):
+class Test_linearization_error(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _geometric_intersection
 
-        return _geometric_intersection._linearization_error(nodes)
+        return _geometric_intersection.linearization_error(nodes)
 
     def test_linear(self):
         nodes = np.asfortranarray([
@@ -240,16 +240,6 @@ class Test__linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(nodes)
         expected = 0.125 * 5 * 4 * 13.0
         self.assertEqual(error_val, expected)
-
-
-@utils.needs_curve_intersection_speedup
-class Test_speedup_linearization_error(Test__linearization_error):
-
-    @staticmethod
-    def _call_function_under_test(nodes):
-        from bezier import _curve_intersection_speedup
-
-        return _curve_intersection_speedup.linearization_error(nodes)
 
 
 class Test__segment_intersection(unittest.TestCase):

@@ -39,21 +39,6 @@ TOO_SMALL_TEMPLATE = (
     'for {:d} intersections but only had space for {:d}.')
 
 
-def linearization_error(double[::1, :] nodes):
-    cdef int num_nodes, dimension
-    cdef double error
-
-    num_nodes, dimension = np.shape(nodes)
-
-    bezier._curve_intersection.linearization_error(
-        &num_nodes,
-        &dimension,
-        &nodes[0, 0],
-        &error,
-    )
-    return error
-
-
 def segment_intersection(
         double[::1, :] start0, double[::1, :] end0,
         double[::1, :] start1, double[::1, :] end1):

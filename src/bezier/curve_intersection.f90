@@ -60,8 +60,7 @@ module curve_intersection
 contains
 
   subroutine linearization_error( &
-       num_nodes, dimension_, nodes, error) &
-       bind(c, name='linearization_error')
+       num_nodes, dimension_, nodes, error)
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
@@ -253,8 +252,7 @@ contains
   subroutine from_linearized( &
        error1, start1, end1, start_node1, end_node1, num_nodes1, root_nodes1, &
        error2, start2, end2, start_node2, end_node2, num_nodes2, root_nodes2, &
-       refined_s, refined_t, does_intersect, status) &
-       bind(c, name='from_linearized')
+       refined_s, refined_t, does_intersect, status)
 
     ! Possible error states:
     ! * Status_SUCCESS    : On success.
@@ -357,8 +355,7 @@ contains
   end subroutine from_linearized
 
   subroutine bbox_line_intersect( &
-       num_nodes, nodes, line_start, line_end, enum_) &
-       bind(c, name='bbox_line_intersect')
+       num_nodes, nodes, line_start, line_end, enum_)
 
     integer(c_int), intent(in) :: num_nodes
     real(c_double), intent(in) :: nodes(num_nodes, 2)

@@ -13,13 +13,13 @@
 """Helpers for intersecting B |eacute| zier curves via geometric methods.
 
 As a convention, the functions defined here with a leading underscore
-(e.g. :func:`_linearization_error`) have a special meaning.
+(e.g. :func:`_bbox_intersect`) have a special meaning.
 
 Each of these functions have a Cython speedup with the exact same
 interface which calls out to a Fortran implementation. The speedup
 will be used if the extension can be built. The name **without** the
 leading underscore will be surfaced as the actual interface (e.g.
-``linearization_error``) whether that is the pure Python implementation
+``bbox_intersect``) whether that is the pure Python implementation
 or the speedup.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -107,7 +107,7 @@ def _bbox_intersect(nodes1, nodes2):
         return BoxIntersectionType.INTERSECTION
 
 
-def _linearization_error(nodes):
+def linearization_error(nodes):
     r"""Compute the maximum error of a linear approximation.
 
     .. note::
@@ -1115,7 +1115,7 @@ class Linearization(object):
     Args:
         curve (SubdividedCurve): A curve that is linearized.
         error (float): The linearization error. Expected to have been
-            computed via :func:`linearization_error() <._linearization_error>`.
+            computed via :func:`linearization_error`.
     """
 
     __slots__ = ('curve', 'error', 'start_node', 'end_node')
@@ -1191,13 +1191,11 @@ class Linearization(object):
 # pylint: disable=invalid-name
 if _curve_intersection_speedup is None:  # pragma: NO COVER
     bbox_intersect = _bbox_intersect
-    linearization_error = _linearization_error
     segment_intersection = _segment_intersection
     parallel_different = _parallel_different
     all_intersections = _all_intersections
 else:
     bbox_intersect = _curve_intersection_speedup.bbox_intersect
-    linearization_error = _curve_intersection_speedup.linearization_error
     segment_intersection = _curve_intersection_speedup.segment_intersection
     parallel_different = _curve_intersection_speedup.parallel_different
     all_intersections = _curve_intersection_speedup.all_intersections
