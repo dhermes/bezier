@@ -797,13 +797,13 @@ class Test_tangent_bbox_intersection(utils.NumPyTestCase):
         self.assertEqual(intersections, [])
 
 
-class Test__bbox_line_intersect(utils.NumPyTestCase):
+class Test_bbox_line_intersect(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, line_start, line_end):
         from bezier import _geometric_intersection
 
-        return _geometric_intersection._bbox_line_intersect(
+        return _geometric_intersection.bbox_line_intersect(
             nodes, line_start, line_end)
 
     def test_start_in_bbox(self):
@@ -871,17 +871,6 @@ class Test__bbox_line_intersect(utils.NumPyTestCase):
             UNIT_SQUARE, line_start, line_end)
         expected = _geometric_intersection.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
-
-
-@utils.needs_curve_intersection_speedup
-class Test_speedup_bbox_line_intersect(Test__bbox_line_intersect):
-
-    @staticmethod
-    def _call_function_under_test(nodes, line_start, line_end):
-        from bezier import _curve_intersection_speedup
-
-        return _curve_intersection_speedup.bbox_line_intersect(
-            nodes, line_start, line_end)
 
 
 class Test_intersect_one_round(utils.NumPyTestCase):

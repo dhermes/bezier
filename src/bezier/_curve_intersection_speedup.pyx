@@ -133,25 +133,6 @@ def parallel_different(
     return result
 
 
-def bbox_line_intersect(
-        double[::1, :] nodes,
-        double[::1, :] line_start, double[::1, :] line_end):
-    cdef int num_nodes, enum_val
-
-    # NOTE: We don't check that there are 2 columns.
-    num_nodes, _ = np.shape(nodes)
-
-    bezier._curve_intersection.bbox_line_intersect(
-        &num_nodes,
-        &nodes[0, 0],
-        &line_start[0, 0],
-        &line_end[0, 0],
-        &enum_val,
-    )
-
-    return enum_val
-
-
 def reset_workspace(int workspace_size):
     global WORKSPACE
     WORKSPACE = np.empty((2, workspace_size), order='F')

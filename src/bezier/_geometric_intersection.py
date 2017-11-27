@@ -69,6 +69,11 @@ _SIMILAR_ULPS = 1
 def _bbox_intersect(nodes1, nodes2):
     r"""Bounding box intersection predicate.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Determines if the bounding box of two sets of control points
     intersects in :math:`\mathbf{R}^2` with non-trivial
     intersection (i.e. tangent bounding boxes are insufficient).
@@ -77,11 +82,6 @@ def _bbox_intersect(nodes1, nodes2):
 
        Though we assume (and the code relies on this fact) that
        the nodes are two-dimensional, we don't check it.
-
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
 
     Args:
         nodes1 (numpy.ndarray): Set of control points for a
@@ -825,13 +825,8 @@ def tangent_bbox_intersection(first, second, intersections):
         first, node_first2, 1.0, second, node_second2, 1.0, intersections)
 
 
-def _bbox_line_intersect(nodes, line_start, line_end):
+def bbox_line_intersect(nodes, line_start, line_end):
     r"""Determine intersection of a bounding box and a line.
-
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
 
     We do this by first checking if either the start or end node of the
     segment are contained in the bounding box. If they aren't, then
@@ -844,11 +839,6 @@ def _bbox_line_intersect(nodes, line_start, line_end):
        "tangent" intersections of the box and segment and other types
        of intersection. However, the distinction is worthwhile, so this
        function should be "upgraded" at some point.
-
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
 
     Args:
         nodes (numpy.ndarray): Points (Nx2) that determine a bounding box.
@@ -1204,14 +1194,12 @@ if _curve_intersection_speedup is None:  # pragma: NO COVER
     linearization_error = _linearization_error
     segment_intersection = _segment_intersection
     parallel_different = _parallel_different
-    bbox_line_intersect = _bbox_line_intersect
     all_intersections = _all_intersections
 else:
     bbox_intersect = _curve_intersection_speedup.bbox_intersect
     linearization_error = _curve_intersection_speedup.linearization_error
     segment_intersection = _curve_intersection_speedup.segment_intersection
     parallel_different = _curve_intersection_speedup.parallel_different
-    bbox_line_intersect = _curve_intersection_speedup.bbox_line_intersect
     all_intersections = _curve_intersection_speedup.all_intersections
     atexit.register(
         _curve_intersection_speedup.free_curve_intersections_workspace)

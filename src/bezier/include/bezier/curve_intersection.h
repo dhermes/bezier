@@ -40,9 +40,6 @@ void bbox_intersect(
 void parallel_different(
     double *start0, double *end0,
     double *start1, double *end1, bool *result);
-void bbox_line_intersect(
-    int *num_nodes, double *nodes, double *line_start, double *line_end,
-    int *enum_);
 void curve_intersections(
     int *num_nodes_first, double *nodes_first,
     int *num_nodes_second, double *nodes_second,
