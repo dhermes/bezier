@@ -13,13 +13,13 @@
 """Private helper methods for intersecting B |eacute| zier shapes.
 
 As a convention, the functions defined here with a leading underscore
-(e.g. :func:`_linearization_error`) have a special meaning.
+(e.g. :func:`_newton_refine`) have a special meaning.
 
 Each of these functions have a Cython speedup with the exact same
 interface which calls out to a Fortran implementation. The speedup
 will be used if the extension can be built. The name **without** the
 leading underscore will be surfaced as the actual interface (e.g.
-``linearization_error``) whether that is the pure Python implementation
+``newton_refine``) whether that is the pure Python implementation
 or the speedup.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE

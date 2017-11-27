@@ -19,7 +19,7 @@ This is to help with the exposition of the computation and
 .. autofunction:: bezier._intersection_helpers._newton_refine
 .. autoclass:: bezier._geometric_intersection.Linearization
    :members:
-.. autofunction:: bezier._geometric_intersection._linearization_error
+.. autofunction:: bezier._geometric_intersection.linearization_error
 .. autofunction:: bezier._geometric_intersection._segment_intersection
 .. autofunction:: bezier._geometric_intersection._parallel_different
 .. autofunction:: bezier._curve_helpers._get_curvature
