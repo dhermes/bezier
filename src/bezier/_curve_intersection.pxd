@@ -37,13 +37,6 @@ cdef extern from "bezier/curve_intersection.h":
     void parallel_different(
         double *start0, double *end0,
         double *start1, double *end1, bool_t *result)
-    void from_linearized(
-        double *error1, double *start1, double *end1, double *start_node1,
-        double *end_node1, int *num_nodes1, double *root_nodes1,
-        double *error2, double *start2, double *end2, double *start_node2,
-        double *end_node2, int *num_nodes2, double *root_nodes2,
-        double *refined_s, double *refined_t,
-        bool_t *does_intersect, int *status)
     void bbox_line_intersect(
         int *num_nodes, double *nodes, double *line_start, double *line_end,
         int *enum_)

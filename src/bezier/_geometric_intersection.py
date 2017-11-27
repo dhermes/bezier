@@ -639,92 +639,6 @@ def wiggle_pair(s_val, t_val):
     return new_s, new_t
 
 
-# pylint: disable=too-many-arguments,too-many-return-statements
-def _from_linearized_low_level(
-        error1, start1, end1, start_node1, end_node1, root_nodes1,
-        error2, start2, end2, start_node2, end_node2, root_nodes2):
-    """Determine curve-curve intersection from pair of linearizations.
-
-    The inputs are the "fully-unpacked" values from two
-    :class:`.Linearization` objects: ``first`` and ``second``.
-
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
-
-    Args:
-        error1 (float): The linearization error for the first curve.
-        start1 (float): The start parameter of the (potentially
-            subdivided) first curve.
-        end1 (float): The end parameter of the (potentially
-            subdivided) first curve.
-        start_node1 (numpy.ndarray): The (``1x2``) start node in the
-            first curve (also in the linearization).
-        end_node1 (numpy.ndarray): The (``1x2``) end node in the
-            first curve (also in the linearization).
-        root_nodes1 (numpy.ndarray): The (``(D1 + 1)x2``) nodes of the "root"
-            curve that contains the first curve.
-        error2 (float): The linearization error for the second curve.
-        start2 (float): The start parameter of the (potentially
-            subdivided) second curve.
-        end2 (float): The end parameter of the (potentially
-            subdivided) second curve.
-        start_node2 (numpy.ndarray): The (``1x2``) start node in the
-            second curve (also in the linearization).
-        end_node2 (numpy.ndarray): The (``1x2``) end node in the
-            second curve (also in the linearization).
-        root_nodes2 (numpy.ndarray): The (``(D2 + 1)x2``) nodes of the "root"
-            curve that contains the second curve.
-
-    Returns:
-        Tuple[float, float, bool]: Triple of:
-
-        * ``s``-coordinate of intersection
-        * ``t``-coordinate of intersection
-        * Flag indicating of the linearizations actually intersect
-
-    Raises:
-        NotImplementedError: If the segment intersection fails.
-    """
-    # pylint: disable=too-many-locals
-    s, t, success = segment_intersection(
-        start_node1, end_node1, start_node2, end_node2)
-    if success:
-        if error1 == 0.0 and not _helpers.in_interval(s, 0.0, 1.0):
-            return None, None, False
-        if error2 == 0.0 and not _helpers.in_interval(t, 0.0, 1.0):
-            return None, None, False
-        if not _helpers.in_interval(s, _WIGGLE_START, _WIGGLE_END):
-            return None, None, False
-        if not _helpers.in_interval(t, _WIGGLE_START, _WIGGLE_END):
-            return None, None, False
-    else:
-        # Handle special case where the curves are actually lines.
-        if error1 == 0.0 and error2 == 0.0:
-            if parallel_different(start_node1, end_node1,
-                                  start_node2, end_node2):
-                return None, None, False
-        else:
-            bbox_int = bbox_intersect(root_nodes1, root_nodes2)
-            if bbox_int == BoxIntersectionType.DISJOINT:
-                return None, None, False
-
-        raise NotImplementedError(_SEGMENTS_PARALLEL)
-
-    # Now, promote `s` and `t` onto the original curves.
-    orig_s = (1 - s) * start1 + s * end1
-    orig_t = (1 - t) * start2 + t * end2
-    # Perform one step of Newton iteration to refine the computed
-    # values of s and t.
-    refined_s, refined_t = _intersection_helpers.newton_refine(
-        orig_s, root_nodes1, orig_t, root_nodes2)
-    refined_s, refined_t = wiggle_pair(refined_s, refined_t)
-    return refined_s, refined_t, True
-    # pylint: enable=too-many-locals
-# pylint: enable=too-many-arguments,too-many-return-statements
-
-
 def from_linearized(first, second, intersections):
     """Determine curve-curve intersection from pair of linearizations.
 
@@ -735,16 +649,46 @@ def from_linearized(first, second, intersections):
         first (Linearization): First curve being intersected.
         second (Linearization): Second curve being intersected.
         intersections (list): A list of existing intersections.
+
+    Raises:
+        NotImplementedError: If the segment intersection fails.
     """
-    curve1 = first.curve
-    curve2 = second.curve
-    refined_s, refined_t, success = from_linearized_low_level(
-        first.error, curve1.start, curve1.end, first.start_node,
-        first.end_node, curve1.original_nodes,
-        second.error, curve2.start, curve2.end, second.start_node,
-        second.end_node, curve2.original_nodes)
+    s, t, success = segment_intersection(
+        first.start_node, first.end_node, second.start_node, second.end_node)
     if success:
-        add_intersection(refined_s, refined_t, intersections)
+        if first.error == 0.0 and not _helpers.in_interval(s, 0.0, 1.0):
+            return
+        if second.error == 0.0 and not _helpers.in_interval(t, 0.0, 1.0):
+            return
+        if not _helpers.in_interval(s, _WIGGLE_START, _WIGGLE_END):
+            return
+        if not _helpers.in_interval(t, _WIGGLE_START, _WIGGLE_END):
+            return
+    else:
+        # Handle special case where the curves are actually lines.
+        if first.error == 0.0 and second.error == 0.0:
+            if parallel_different(
+                    first.start_node, first.end_node,
+                    second.start_node, second.end_node):
+                return
+        else:
+            bbox_int = bbox_intersect(
+                first.curve.original_nodes, second.curve.original_nodes)
+            if bbox_int == BoxIntersectionType.DISJOINT:
+                return
+
+        raise NotImplementedError(_SEGMENTS_PARALLEL)
+
+    # Now, promote `s` and `t` onto the original curves.
+    orig_s = (1 - s) * first.curve.start + s * first.curve.end
+    orig_t = (1 - t) * second.curve.start + t * second.curve.end
+    # Perform one step of Newton iteration to refine the computed
+    # values of s and t.
+    refined_s, refined_t = _intersection_helpers.newton_refine(
+        orig_s, first.curve.original_nodes,
+        orig_t, second.curve.original_nodes)
+    refined_s, refined_t = wiggle_pair(refined_s, refined_t)
+    add_intersection(refined_s, refined_t, intersections)
 
 
 def add_intersection(s, t, intersections):
@@ -1260,7 +1204,6 @@ if _curve_intersection_speedup is None:  # pragma: NO COVER
     linearization_error = _linearization_error
     segment_intersection = _segment_intersection
     parallel_different = _parallel_different
-    from_linearized_low_level = _from_linearized_low_level
     bbox_line_intersect = _bbox_line_intersect
     all_intersections = _all_intersections
 else:
@@ -1268,8 +1211,6 @@ else:
     linearization_error = _curve_intersection_speedup.linearization_error
     segment_intersection = _curve_intersection_speedup.segment_intersection
     parallel_different = _curve_intersection_speedup.parallel_different
-    from_linearized_low_level = (
-        _curve_intersection_speedup.from_linearized_low_level)
     bbox_line_intersect = _curve_intersection_speedup.bbox_line_intersect
     all_intersections = _curve_intersection_speedup.all_intersections
     atexit.register(

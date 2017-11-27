@@ -133,52 +133,6 @@ def parallel_different(
     return result
 
 
-def from_linearized_low_level(
-        double error1, double start1, double end1,
-        double[::1, :] start_node1, double[::1, :] end_node1,
-        double[::1, :] root_nodes1,
-        double error2, double start2, double end2,
-        double[::1, :] start_node2, double[::1, :] end_node2,
-        double[::1, :] root_nodes2):
-    cdef int num_nodes1, num_nodes2
-    cdef double refined_s, refined_t
-    cdef bool_t does_intersect
-    cdef int status
-
-    # NOTE: We don't check that there are 2 columns.
-    num_nodes1, _ = np.shape(root_nodes1)
-    # NOTE: We don't check that there are 2 columns.
-    num_nodes2, _ = np.shape(root_nodes2)
-
-    bezier._curve_intersection.from_linearized(
-        &error1,
-        &start1,
-        &end1,
-        &start_node1[0, 0],
-        &end_node1[0, 0],
-        &num_nodes1,
-        &root_nodes1[0, 0],
-        &error2,
-        &start2,
-        &end2,
-        &start_node2[0, 0],
-        &end_node2[0, 0],
-        &num_nodes2,
-        &root_nodes2[0, 0],
-        &refined_s,
-        &refined_t,
-        &does_intersect,
-        &status,
-    )
-
-    if status == bezier._status.Status.PARALLEL:
-        raise NotImplementedError('Line segments parallel.')
-    elif status == bezier._status.Status.WIGGLE_FAIL:
-        raise ValueError('outside of unit interval')
-
-    return refined_s, refined_t, does_intersect
-
-
 def bbox_line_intersect(
         double[::1, :] nodes,
         double[::1, :] line_start, double[::1, :] line_end):
