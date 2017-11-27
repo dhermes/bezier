@@ -22,9 +22,6 @@ cdef extern from "bezier/curve_intersection.h":
         TANGENT = 1
         DISJOINT = 2
 
-    void segment_intersection(
-        double *start0, double *end0, double *start1, double *end1,
-        double *s, double *t, bool_t *success)
     void newton_refine_intersect(
         double *s, int *num_nodes1, double *nodes1,
         double *t, int *num_nodes2, double *nodes2,

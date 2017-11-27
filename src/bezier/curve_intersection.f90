@@ -85,8 +85,7 @@ contains
   end subroutine linearization_error
 
   subroutine segment_intersection( &
-       start0, end0, start1, end1, s, t, success) &
-       bind(c, name='segment_intersection')
+       start0, end0, start1, end1, s, t, success)
 
     real(c_double), intent(in) :: start0(1, 2)
     real(c_double), intent(in) :: end0(1, 2)

@@ -39,27 +39,6 @@ TOO_SMALL_TEMPLATE = (
     'for {:d} intersections but only had space for {:d}.')
 
 
-def segment_intersection(
-        double[::1, :] start0, double[::1, :] end0,
-        double[::1, :] start1, double[::1, :] end1):
-    cdef double s, t
-    cdef bool_t success
-
-    bezier._curve_intersection.segment_intersection(
-        &start0[0, 0],
-        &end0[0, 0],
-        &start1[0, 0],
-        &end1[0, 0],
-        &s,
-        &t,
-        &success,
-    )
-    if success:
-        return s, t, True
-    else:
-        return None, None, False
-
-
 def newton_refine(
         double s, double[::1, :] nodes1, double t, double[::1, :] nodes2):
     cdef int num_nodes1, num_nodes2

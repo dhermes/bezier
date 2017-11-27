@@ -261,7 +261,7 @@ def linearization_error(nodes):
     return multiplier * np.linalg.norm(worst_case, ord=2)
 
 
-def _segment_intersection(start0, end0, start1, end1):
+def segment_intersection(start0, end0, start1, end1):
     r"""Determine the intersection of two line segments.
 
     Assumes each line is parametric
@@ -427,8 +427,7 @@ def _segment_intersection(start0, end0, start1, end1):
 def _parallel_different(start0, end0, start1, end1):
     r"""Checks if two parallel lines ever meet.
 
-    Meant as a back-up when
-    :func:`segment_intersection() <._segment_intersection>` fails.
+    Meant as a back-up when :func:`segment_intersection` fails.
 
     .. note::
 
@@ -440,8 +439,8 @@ def _parallel_different(start0, end0, start1, end1):
     they are parallel but on **different** lines, then there is a
     **guarantee** of no intersection.
 
-    In :func:`segment_intersection() <._segment_intersection>`, we utilized
-    the normal form of the lines (via the cross product):
+    In :func:`segment_intersection`, we utilized the normal form of the
+    lines (via the cross product):
 
     .. math::
 
@@ -1191,12 +1190,10 @@ class Linearization(object):
 # pylint: disable=invalid-name
 if _curve_intersection_speedup is None:  # pragma: NO COVER
     bbox_intersect = _bbox_intersect
-    segment_intersection = _segment_intersection
     parallel_different = _parallel_different
     all_intersections = _all_intersections
 else:
     bbox_intersect = _curve_intersection_speedup.bbox_intersect
-    segment_intersection = _curve_intersection_speedup.segment_intersection
     parallel_different = _curve_intersection_speedup.parallel_different
     all_intersections = _curve_intersection_speedup.all_intersections
     atexit.register(
