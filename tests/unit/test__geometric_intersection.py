@@ -15,7 +15,6 @@ import unittest
 import unittest.mock
 
 import numpy as np
-import six
 
 from tests import utils as base_utils
 from tests.unit import utils

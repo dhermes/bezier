@@ -15,7 +15,6 @@ import unittest.mock
 
 import numpy as np
 import pytest
-import six
 
 try:
     from bezier import _HAS_SURFACE_SPEEDUP as HAS_SURFACE_SPEEDUP
