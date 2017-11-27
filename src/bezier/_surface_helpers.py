@@ -1457,8 +1457,8 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     or the point of tangency is a "degenerate" part of two
     :class:`.CurvedPolygon` intersections. It is "degenerate"
     because from one direction, the point should be classified as
-    :attr:`~._IntersectionClassification.FIRST` and from another as
-    :attr:`~._IntersectionClassification.SECOND`.
+    :attr:`~.IntersectionClassification.FIRST` and from another as
+    :attr:`~.IntersectionClassification.SECOND`.
 
     .. image:: images/classify_intersection5.png
        :align: center
@@ -1656,7 +1656,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
             nodes of the three edges of the second surface being intersected.
 
     Returns:
-        _IntersectionClassification: The "inside" curve type, based on
+        IntersectionClassification: The "inside" curve type, based on
         the classification enum.
 
     Raises:
@@ -1922,8 +1922,8 @@ def get_next(intersection, intersections, unused):
 
     Raises:
         ValueError: If the intersection is not classified as
-            :attr:`~._IntersectionClassification.FIRST` or
-            :attr:`~._IntersectionClassification.SECOND`.
+            :attr:`~.IntersectionClassification.FIRST` or
+            :attr:`~.IntersectionClassification.SECOND`.
     """
     result = None
     if intersection.interior_curve == IntersectionClassification.FIRST:
@@ -1977,8 +1977,8 @@ def ends_to_curve(start_node, end_node):
             the first curve when classified as "first" or disagree on
             the second curve when classified as "second".
         ValueError: If the ``start_node`` is not classified as
-            :attr:`~._IntersectionClassification.FIRST` or
-            :attr:`~._IntersectionClassification.SECOND`.
+            :attr:`~.IntersectionClassification.FIRST` or
+            :attr:`~.IntersectionClassification.SECOND`.
     """
     if start_node.interior_curve == IntersectionClassification.FIRST:
         if end_node.index_first != start_node.index_first:
@@ -2042,10 +2042,10 @@ def tangent_only_intersections(all_types):
     internally tangent to the other.
 
     Thus we expect every intersection to be classified as
-    :attr:`~._IntersectionClassification.TANGENT_FIRST`,
-    :attr:`~._IntersectionClassification.TANGENT_SECOND`,
-    :attr:`~._IntersectionClassification.OPPOSED` or
-    :attr:`~._IntersectionClassification.IGNORED_CORNER`.
+    :attr:`~.IntersectionClassification.TANGENT_FIRST`,
+    :attr:`~.IntersectionClassification.TANGENT_SECOND`,
+    :attr:`~.IntersectionClassification.OPPOSED` or
+    :attr:`~.IntersectionClassification.IGNORED_CORNER`.
 
     What's more, we expect all intersections to be classified the same for
     a given pairing.
@@ -2064,10 +2064,10 @@ def tangent_only_intersections(all_types):
 
     Raises:
         ValueError: If there are intersections of more than one type among
-            :attr:`~._IntersectionClassification.TANGENT_FIRST`,
-            :attr:`~._IntersectionClassification.TANGENT_SECOND`,
-            :attr:`~._IntersectionClassification.OPPOSED` or
-            :attr:`~._IntersectionClassification.IGNORED_CORNER`.
+            :attr:`~.IntersectionClassification.TANGENT_FIRST`,
+            :attr:`~.IntersectionClassification.TANGENT_SECOND`,
+            :attr:`~.IntersectionClassification.OPPOSED` or
+            :attr:`~.IntersectionClassification.IGNORED_CORNER`.
         ValueError: If there is a unique classification, but it isn't one
             of the tangent types.
     """
@@ -2346,17 +2346,10 @@ def _compute_edge_nodes(nodes, degree):
     return nodes1, nodes2, nodes3
 
 
-class _IntersectionClassification(enum.Enum):
+class IntersectionClassification(enum.Enum):
     """Enum classifying the "interior" curve in an intersection.
 
     Provided as the output values for :func:`.classify_intersection`.
-
-    .. note::
-
-       There is also a Cython implementation of this enum, which
-       will be used if it can be built. If the Cython type is **not**
-       available, this type will be aliased within the module as
-       ``IntersectionClassification`` (i.e. it will be made public).
     """
 
     FIRST = 0
@@ -2384,7 +2377,6 @@ if _surface_speedup is None:  # pragma: NO COVER
     evaluate_barycentric_multi = _evaluate_barycentric_multi
     evaluate_cartesian_multi = _evaluate_cartesian_multi
     compute_edge_nodes = _compute_edge_nodes
-    IntersectionClassification = _IntersectionClassification
 else:
     de_casteljau_one_round = _surface_speedup.de_casteljau_one_round
     specialize_surface = _surface_speedup.specialize_surface
@@ -2395,5 +2387,4 @@ else:
     evaluate_barycentric_multi = _surface_speedup.evaluate_barycentric_multi
     evaluate_cartesian_multi = _surface_speedup.evaluate_cartesian_multi
     compute_edge_nodes = _surface_speedup.compute_edge_nodes
-    IntersectionClassification = _surface_speedup.IntersectionClassification
 # pylint: enable=invalid-name

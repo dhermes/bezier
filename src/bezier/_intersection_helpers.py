@@ -424,7 +424,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         t (float): The parameter along the second curve where the
             intersection occurs.
         interior_curve (Optional[ \
-            ~bezier._surface_helpers._IntersectionClassification]): The
+            ~bezier._surface_helpers.IntersectionClassification]): The
             classification of the intersection.
     """
 

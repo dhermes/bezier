@@ -20,15 +20,6 @@ from numpy cimport ndarray as ndarray_t
 cimport bezier._surface
 
 
-cpdef enum IntersectionClassification:
-    FIRST
-    SECOND
-    OPPOSED
-    TANGENT_FIRST
-    TANGENT_SECOND
-    IGNORED_CORNER
-
-
 def de_casteljau_one_round(
         double[::1, :] nodes, int degree,
         double lambda1, double lambda2, double lambda3):

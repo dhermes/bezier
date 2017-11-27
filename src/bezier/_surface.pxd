@@ -14,6 +14,14 @@
 
 
 cdef extern from "bezier/surface.h":
+    cpdef enum IntersectionClassification:
+        FIRST = 0
+        SECOND = 1
+        OPPOSED = 2
+        TANGENT_FIRST = 3
+        TANGENT_SECOND = 4
+        IGNORED_CORNER = 5
+
     void de_casteljau_one_round(
         int *num_nodes, int *dimension, double *nodes, int *degree,
         double *lambda1, double *lambda2, double *lambda3, double *new_nodes)

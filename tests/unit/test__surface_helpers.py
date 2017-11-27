@@ -2291,29 +2291,6 @@ class Test_speedup_compute_edge_nodes(Test__compute_edge_nodes):
         return _surface_speedup.compute_edge_nodes(nodes, degree)
 
 
-class TestIntersectionClassification(unittest.TestCase):
-
-    @utils.needs_surface_speedup
-    def test_verify_cython_enums(self):
-        from bezier import _surface_helpers
-        from bezier import _surface_speedup
-
-        python_enum = _surface_helpers._IntersectionClassification
-        cython_enum = _surface_speedup.IntersectionClassification
-        self.assertIs(cython_enum, _surface_helpers.IntersectionClassification)
-
-        python_members = python_enum.__members__
-        cython_members = cython_enum.__members__
-        self.assertEqual(set(python_members), set(cython_members))
-        for name, enum_value in six.iteritems(python_members):
-            py_value = enum_value.value
-            if six.PY3:
-                cy_value = cython_members[name].value
-            else:  # pragma: NO COVER
-                cy_value = cython_members[name]
-            self.assertEqual(py_value, cy_value)
-
-
 def make_intersect(*args, **kwargs):
     from bezier import _intersection_helpers
 
