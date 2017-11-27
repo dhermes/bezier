@@ -558,10 +558,8 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: start_node1(1, 2), end_node1(1, 2), error1
-    real(c_double) :: start_node2(1, 2), end_node2(1, 2), error2
-    real(c_double) :: nodes1(3, 2), nodes2(3, 2)
-    real(c_double) :: nodes3(2, 2), nodes4(2, 2)
+    type(CurveData) :: curve1, curve2
+    real(c_double) :: error1, error2
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
     integer(c_int) :: status
@@ -571,50 +569,54 @@ contains
     case_id = 1
     name = "from_linearized"
 
-    ! CASE 1: Basic test of not-very-linearized quadratics.
-    nodes1(1, :) = 0
-    nodes1(2, :) = [0.5_dp, 1.0_dp]
-    nodes1(3, :) = 1
-    start_node1 = nodes1(:1, :)
-    end_node1 = nodes1(3:, :)
-    ! NOTE: This curve isn't close to linear, but that's OK.
-    call linearization_error( &
-         3, 2, nodes1, error1)
+    ! Will hold throughout.
+    curve1%start = 0.0_dp
+    curve1%end_ = 1.0_dp
+    curve2%start = 0.0_dp
+    curve2%end_ = 1.0_dp
 
-    nodes2(1, :) = [0.0_dp, 1.0_dp]
-    nodes2(2, :) = [0.5_dp, 1.0_dp]
-    nodes2(3, :) = [1.0_dp, 0.0_dp]
-    start_node2 = nodes2(:1, :)
-    end_node2 = nodes2(3:, :)
+    ! CASE 1: Basic test of not-very-linearized quadratics.
+    allocate(curve1%nodes(3, 2))
+    curve1%nodes(1, :) = 0
+    curve1%nodes(2, :) = [0.5_dp, 1.0_dp]
+    curve1%nodes(3, :) = 1
     ! NOTE: This curve isn't close to linear, but that's OK.
     call linearization_error( &
-         3, 2, nodes2, error2)
+         3, 2, curve1%nodes, error1)
+
+    allocate(curve2%nodes(3, 2))
+    curve2%nodes(1, :) = [0.0_dp, 1.0_dp]
+    curve2%nodes(2, :) = [0.5_dp, 1.0_dp]
+    curve2%nodes(3, :) = [1.0_dp, 0.0_dp]
+    ! NOTE: This curve isn't close to linear, but that's OK.
+    call linearization_error( &
+         3, 2, curve2%nodes, error2)
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
+         error1, curve1, 3, curve1%nodes, &
+         error2, curve2, 3, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
          does_intersect .AND. status == Status_SUCCESS .AND. &
          refined_s == 0.5_dp .AND. refined_t == 0.5_dp)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Bounding boxes intersect but the lines do not.
-    nodes3(1, :) = 0
-    nodes3(2, :) = 1
-    start_node1 = nodes3(:1, :)
-    end_node1 = nodes3(2:, :)
-    error1 = 0.0_dp
+    ! CASE 2: Bounding boxes intersect but the quadratics do not.
+    curve1%nodes(1, :) = 0
+    curve1%nodes(2, :) = [0.5_dp, 0.0_dp]
+    curve1%nodes(3, :) = 1
+    error1 = 0.25_dp
 
-    nodes4(1, :) = [1.75_dp, -0.75_dp]
-    nodes4(2, :) = [0.75_dp, 0.25_dp]
-    start_node2 = nodes4(:1, :)
-    end_node2 = nodes4(2:, :)
-    error2 = 0.0_dp
+    deallocate(curve2%nodes)
+    allocate(curve2%nodes(3, 2))
+    curve2%nodes(1, :) = [1.75_dp, -0.75_dp]
+    curve2%nodes(2, :) = [1.25_dp, -0.75_dp]
+    curve2%nodes(3, :) = [0.75_dp, 0.25_dp]
+    error2 = 0.25_dp
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
+         error1, curve1, 3, curve1%nodes, &
+         error2, curve2, 3, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
          .NOT. does_intersect .AND. status == Status_SUCCESS)
@@ -622,127 +624,109 @@ contains
 
     ! CASE 3: Same as CASE 2, but swap the inputs.
     call from_linearized( &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
+         error2, curve2, 3, curve2%nodes, &
+         error1, curve1, 3, curve1%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
          .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: Bounding boxes intersect but the quadratics do not.
-    nodes1(1, :) = 0
-    nodes1(2, :) = [0.5_dp, 0.0_dp]
-    nodes1(3, :) = 1
-    start_node1 = nodes1(:1, :)
-    end_node1 = nodes1(3:, :)
-    error1 = 0.25_dp
-
-    nodes2(1, :) = [1.75_dp, -0.75_dp]
-    nodes2(2, :) = [1.25_dp, -0.75_dp]
-    nodes2(3, :) = [0.75_dp, 0.25_dp]
-    start_node2 = nodes2(:1, :)
-    end_node2 = nodes2(3:, :)
-    error2 = 0.25_dp
-
-    call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
-         refined_s, refined_t, does_intersect, status)
-    case_success = ( &
-         .NOT. does_intersect .AND. status == Status_SUCCESS)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 5: Same as CASE 4, but swap the inputs.
-    call from_linearized( &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 3, nodes1, &
-         refined_s, refined_t, does_intersect, status)
-    case_success = ( &
-         .NOT. does_intersect .AND. status == Status_SUCCESS)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 6: Parallel lines that do not intersect.
-    nodes3(1, :) = 0
-    nodes3(2, :) = 1
-    start_node1 = nodes3(:1, :)
-    end_node1 = nodes3(2:, :)
+    ! CASE 4: Linearized parts are same line but disjoint segments.
+    deallocate(curve1%nodes)
+    allocate(curve1%nodes(2, 2))
+    curve1%nodes(1, :) = 0
+    curve1%nodes(2, :) = 1
     error1 = 0.0_dp
 
-    nodes4(1, :) = [0.0_dp, 1.0_dp]
-    nodes4(2, :) = [1.0_dp, 2.0_dp]
-    start_node2 = nodes4(:1, :)
-    end_node2 = nodes4(2:, :)
-    error2 = 0.0_dp
+    curve2%nodes(1, :) = 2
+    curve2%nodes(2, :) = 2.5009765625_dp
+    curve2%nodes(3, :) = 3
+    call linearization_error( &
+         3, 2, curve2%nodes, error2)
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
+         error1, curve1, 2, curve1%nodes, &
+         error2, curve2, 3, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
          .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 7: Parallel lines that **do** intersect.
-    nodes3(1, :) = 0
-    nodes3(2, :) = 1
-    start_node1 = nodes3(:1, :)
-    end_node1 = nodes3(2:, :)
+    ! CASE 5: Linearized parts parallel / diff. lines / bbox-es overlap.
+    curve1%nodes(1, :) = 0
+    curve1%nodes(2, :) = 1
     error1 = 0.0_dp
 
-    nodes4(1, :) = [0.5_dp, 0.5_dp]
-    nodes4(2, :) = [3.0_dp, 3.0_dp]
-    start_node2 = nodes4(:1, :)
-    end_node2 = nodes4(2:, :)
-    error2 = 0.0_dp
+    curve2%nodes(1, :) = [0.5_dp, 0.75_dp]
+    curve2%nodes(2, :) = [1.0009765625_dp, 1.2509765625_dp]
+    curve2%nodes(3, :) = [1.5_dp, 1.75_dp]
+    call linearization_error( &
+         3, 2, curve2%nodes, error2)
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 2, nodes4, &
+         error1, curve1, 2, curve1%nodes, &
+         error2, curve2, 3, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = (status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 8: Linearized parts are same line but disjoint segments.
-    nodes3(1, :) = 0
-    nodes3(2, :) = 1
-    start_node1 = nodes3(:1, :)
-    end_node1 = nodes3(2:, :)
+    ! CASE 6: Bounding boxes intersect but the lines do not.
+    curve1%nodes(1, :) = 0
+    curve1%nodes(2, :) = 1
     error1 = 0.0_dp
 
-    nodes2(1, :) = 2
-    nodes2(2, :) = 2.5009765625_dp
-    nodes2(3, :) = 3
-    start_node2 = nodes2(:1, :)
-    end_node2 = nodes2(3:, :)
-    call linearization_error( &
-         3, 2, nodes2, error2)
+    deallocate(curve2%nodes)
+    allocate(curve2%nodes(2, 2))
+    curve2%nodes(1, :) = [1.75_dp, -0.75_dp]
+    curve2%nodes(2, :) = [0.75_dp, 0.25_dp]
+    error2 = 0.0_dp
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
+         error1, curve1, 2, curve1%nodes, &
+         error2, curve2, 2, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
          .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 9: Linearized parts parallel / diff. lines / bbox-es overlap.
-    nodes3(1, :) = 0
-    nodes3(2, :) = 1
-    start_node1 = nodes3(:1, :)
-    end_node1 = nodes3(2:, :)
+    ! CASE 7: Same as CASE 6, but swap the inputs.
+    call from_linearized( &
+         error2, curve2, 2, curve2%nodes, &
+         error1, curve1, 2, curve1%nodes, &
+         refined_s, refined_t, does_intersect, status)
+    case_success = ( &
+         .NOT. does_intersect .AND. status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Parallel lines that do not intersect.
+    curve1%nodes(1, :) = 0
+    curve1%nodes(2, :) = 1
     error1 = 0.0_dp
 
-    nodes2(1, :) = [0.5_dp, 0.75_dp]
-    nodes2(2, :) = [1.0009765625_dp, 1.2509765625_dp]
-    nodes2(3, :) = [1.5_dp, 1.75_dp]
-    start_node2 = nodes2(:1, :)
-    end_node2 = nodes2(3:, :)
-    call linearization_error( &
-         3, 2, nodes2, error2)
+    curve2%nodes(1, :) = [0.0_dp, 1.0_dp]
+    curve2%nodes(2, :) = [1.0_dp, 2.0_dp]
+    error2 = 0.0_dp
 
     call from_linearized( &
-         error1, 0.0_dp, 1.0_dp, start_node1, end_node1, 2, nodes3, &
-         error2, 0.0_dp, 1.0_dp, start_node2, end_node2, 3, nodes2, &
+         error1, curve1, 2, curve1%nodes, &
+         error2, curve2, 2, curve2%nodes, &
+         refined_s, refined_t, does_intersect, status)
+    case_success = ( &
+         .NOT. does_intersect .AND. status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 9: Parallel lines that **do** intersect.
+    curve1%nodes(1, :) = 0
+    curve1%nodes(2, :) = 1
+    error1 = 0.0_dp
+
+    curve2%nodes(1, :) = [0.5_dp, 0.5_dp]
+    curve2%nodes(2, :) = [3.0_dp, 3.0_dp]
+    error2 = 0.0_dp
+
+    call from_linearized( &
+         error1, curve1, 2, curve1%nodes, &
+         error2, curve2, 2, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = (status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)

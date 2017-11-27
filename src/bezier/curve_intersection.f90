@@ -250,8 +250,8 @@ contains
   end subroutine parallel_different
 
   subroutine from_linearized( &
-       error1, start1, end1, start_node1, end_node1, num_nodes1, root_nodes1, &
-       error2, start2, end2, start_node2, end_node2, num_nodes2, root_nodes2, &
+       error1, curve1, num_nodes1, root_nodes1, &
+       error2, curve2, num_nodes2, root_nodes2, &
        refined_s, refined_t, does_intersect, status)
 
     ! Possible error states:
@@ -264,14 +264,12 @@ contains
     ! * Status_WIGGLE_FAIL: If the s- or t-parameter are too far outside of
     !                       [0, 1] to be "wiggled" into it.
 
-    real(c_double), intent(in) :: error1, start1, end1
-    real(c_double), intent(in) :: start_node1(1, 2)
-    real(c_double), intent(in) :: end_node1(1, 2)
+    real(c_double), intent(in) :: error1
+    type(CurveData), intent(in) :: curve1
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: root_nodes1(num_nodes1, 2)
-    real(c_double), intent(in) :: error2, start2, end2
-    real(c_double), intent(in) :: start_node2(1, 2)
-    real(c_double), intent(in) :: end_node2(1, 2)
+    real(c_double), intent(in) :: error2
+    type(CurveData), intent(in) :: curve2
     integer(c_int), intent(in) :: num_nodes2
     real(c_double), intent(in) :: root_nodes2(num_nodes2, 2)
     real(c_double), intent(out) :: refined_s, refined_t
@@ -285,7 +283,9 @@ contains
     status = Status_SUCCESS
     does_intersect = .FALSE.  ! Default value.
     call segment_intersection( &
-         start_node1, end_node1, start_node2, end_node2, s, t, success)
+         curve1%nodes(1, :), curve1%nodes(num_nodes1, :), &
+         curve2%nodes(1, :), curve2%nodes(num_nodes2, :), &
+         s, t, success)
 
     if (success) then
        ! Special case for lines, allow no leeway on almost intersections.
@@ -308,7 +308,9 @@ contains
        ! Handle special case where the curves are actually lines.
        if (error1 == 0.0_dp .AND. error2 == 0.0_dp) then
           call parallel_different( &
-               start_node1, end_node1, start_node2, end_node2, success)
+               curve1%nodes(1, :), curve1%nodes(num_nodes1, :), &
+               curve2%nodes(1, :), curve2%nodes(num_nodes2, :), &
+               success)
           if (success) then
              return
           end if
@@ -326,8 +328,8 @@ contains
 
     does_intersect = .TRUE.
     ! Now, promote ``s`` and ``t`` onto the original curves.
-    s = (1.0_dp - s) * start1 + s * end1  ! orig_s
-    t = (1.0_dp - t) * start2 + t * end2  ! orig_t
+    s = (1.0_dp - s) * curve1%start + s * curve1%end_  ! orig_s
+    t = (1.0_dp - t) * curve2%start + t * curve2%end_  ! orig_t
     ! Perform one step of Newton iteration to refine the computed
     ! values of s and t.
     call newton_refine_intersect( &
@@ -528,15 +530,9 @@ contains
     num_nodes1 = size(first%nodes, 1)
     num_nodes2 = size(second%nodes, 1)
 
-    ! NOTE: It doesn't make sense to pass ``start_nodeX`` and ``end_nodeX``
-    !       but for now we do it for Python compatibility reasons.
     call from_linearized( &
-         linearization_error1, first%start, first%end_, &
-         first%nodes(1, :), first%nodes(num_nodes1, :), &
-         num_nodes1, root_nodes1, &
-         linearization_error2, second%start, second%end_, &
-         second%nodes(1, :), second%nodes(num_nodes2, :), &
-         num_nodes2, root_nodes2, &
+         linearization_error1, first, num_nodes1, root_nodes1, &
+         linearization_error2, second, num_nodes2, root_nodes2, &
          refined_s, refined_t, does_intersect, status)
 
     if (status /= Status_SUCCESS) then
