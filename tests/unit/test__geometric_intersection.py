@@ -1224,44 +1224,6 @@ class Test_speedup_all_intersections(Test__all_intersections):
         self.assertEqual(self.workspace_size(), 2)
 
 
-class TestBoxIntersectionType(unittest.TestCase):
-
-    @staticmethod
-    def _get_target_class():
-        from bezier import _geometric_intersection
-
-        return _geometric_intersection.BoxIntersectionType
-
-    def _is_magic_method(self, name):
-        if name.startswith('_'):
-            self.assertTrue(name.startswith('__'))
-            self.assertTrue(name.endswith('__'))
-            return True
-        else:
-            return False
-
-    @utils.needs_curve_intersection_speedup
-    def test_verify_fortran_enums(self):
-        from bezier import _curve_intersection_speedup
-
-        klass = self._get_target_class()
-        props = set(
-            name
-            for name in six.iterkeys(klass.__dict__)
-            if not self._is_magic_method(name)
-        )
-        expected_props = set(['INTERSECTION', 'TANGENT', 'DISJOINT'])
-        self.assertEqual(props, expected_props)
-
-        # Actually verify the enums.
-        curve_mod = _curve_intersection_speedup
-        self.assertEqual(
-            klass.INTERSECTION, curve_mod.BoxIntersectionType_INTERSECTION)
-        self.assertEqual(klass.TANGENT, curve_mod.BoxIntersectionType_TANGENT)
-        self.assertEqual(
-            klass.DISJOINT, curve_mod.BoxIntersectionType_DISJOINT)
-
-
 class TestSubdividedCurve(utils.NumPyTestCase):
 
     @staticmethod

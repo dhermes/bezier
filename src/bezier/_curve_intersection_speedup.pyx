@@ -22,12 +22,6 @@ cimport bezier._curve_intersection
 cimport bezier._status
 
 
-BoxIntersectionType_INTERSECTION = (
-    bezier._curve_intersection.BoxIntersectionType.INTERSECTION)
-BoxIntersectionType_TANGENT = (
-    bezier._curve_intersection.BoxIntersectionType.TANGENT)
-BoxIntersectionType_DISJOINT = (
-    bezier._curve_intersection.BoxIntersectionType.DISJOINT)
 cdef double[::1, :] WORKSPACE = np.empty((2, 2), order='F')
 # NOTE: This value (``TOO_MANY_TEMPLATE``) is also defined (as a copy)
 #       in ``_surface_intersection_speedup.pyx``.
