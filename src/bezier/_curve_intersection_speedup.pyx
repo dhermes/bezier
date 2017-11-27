@@ -82,21 +82,6 @@ def bbox_intersect(double[::1, :] nodes1, double[::1, :] nodes2):
     return enum_val
 
 
-def parallel_different(
-        double[::1, :] start0, double[::1, :] end0,
-        double[::1, :] start1, double[::1, :] end1):
-    cdef bool_t result
-
-    bezier._curve_intersection.parallel_different(
-        &start0[0, 0],
-        &end0[0, 0],
-        &start1[0, 0],
-        &end1[0, 0],
-        &result,
-    )
-    return result
-
-
 def reset_workspace(int workspace_size):
     global WORKSPACE
     WORKSPACE = np.empty((2, workspace_size), order='F')

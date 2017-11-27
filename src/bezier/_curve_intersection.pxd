@@ -29,9 +29,6 @@ cdef extern from "bezier/curve_intersection.h":
     void bbox_intersect(
         int *num_nodes1, double *nodes1,
         int *num_nodes2, double *nodes2, int *enum_)
-    void parallel_different(
-        double *start0, double *end0,
-        double *start1, double *end1, bool_t *result)
     void curve_intersections(
         int *num_nodes_first, double *nodes_first,
         int *num_nodes_second, double *nodes_second,

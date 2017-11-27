@@ -242,13 +242,13 @@ class Test_linearization_error(unittest.TestCase):
         self.assertEqual(error_val, expected)
 
 
-class Test__segment_intersection(unittest.TestCase):
+class Test_segment_intersection(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
         from bezier import _geometric_intersection
 
-        return _geometric_intersection._segment_intersection(
+        return _geometric_intersection.segment_intersection(
             start0, end0, start1, end1)
 
     def _helper(self, intersection, s_val, direction0,
@@ -290,24 +290,13 @@ class Test__segment_intersection(unittest.TestCase):
         self.assertFalse(success)
 
 
-@utils.needs_curve_intersection_speedup
-class Test_speedup_segment_intersection(Test__segment_intersection):
-
-    @staticmethod
-    def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _curve_intersection_speedup
-
-        return _curve_intersection_speedup.segment_intersection(
-            start0, end0, start1, end1)
-
-
-class Test__parallel_different(unittest.TestCase):
+class Test_parallel_different(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
         from bezier import _geometric_intersection
 
-        return _geometric_intersection._parallel_different(
+        return _geometric_intersection.parallel_different(
             start0, end0, start1, end1)
 
     def test_same_line_no_overlap(self):
@@ -349,17 +338,6 @@ class Test__parallel_different(unittest.TestCase):
         end1 = np.asfortranarray([[0.0, 2.0]])
         self.assertTrue(
             self._call_function_under_test(start0, end0, start1, end1))
-
-
-@utils.needs_curve_intersection_speedup
-class Test_speedup_parallel_different(Test__parallel_different):
-
-    @staticmethod
-    def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _curve_intersection_speedup
-
-        return _curve_intersection_speedup.parallel_different(
-            start0, end0, start1, end1)
 
 
 class Test_wiggle_pair(unittest.TestCase):

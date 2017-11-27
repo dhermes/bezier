@@ -202,8 +202,7 @@ contains
   end subroutine bbox_intersect
 
   subroutine parallel_different( &
-       start0, end0, start1, end1, result_) &
-       bind(c, name='parallel_different')
+       start0, end0, start1, end1, result_)
 
     real(c_double), intent(in) :: start0(1, 2)
     real(c_double), intent(in) :: end0(1, 2)

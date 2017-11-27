@@ -374,7 +374,7 @@ def segment_intersection(start0, end0, start1, end1):
        import make_images
        make_images.segment_intersection2(start0, end0, start1, end1)
 
-    Instead, we use :func:`parallel_different() <._parallel_different>`:
+    Instead, we use :func:`parallel_different`:
 
     .. testsetup:: segment-intersection2-continued
 
@@ -424,7 +424,7 @@ def segment_intersection(start0, end0, start1, end1):
         return s, t, True
 
 
-def _parallel_different(start0, end0, start1, end1):
+def parallel_different(start0, end0, start1, end1):
     r"""Checks if two parallel lines ever meet.
 
     Meant as a back-up when :func:`segment_intersection` fails.
@@ -1190,11 +1190,9 @@ class Linearization(object):
 # pylint: disable=invalid-name
 if _curve_intersection_speedup is None:  # pragma: NO COVER
     bbox_intersect = _bbox_intersect
-    parallel_different = _parallel_different
     all_intersections = _all_intersections
 else:
     bbox_intersect = _curve_intersection_speedup.bbox_intersect
-    parallel_different = _curve_intersection_speedup.parallel_different
     all_intersections = _curve_intersection_speedup.all_intersections
     atexit.register(
         _curve_intersection_speedup.free_curve_intersections_workspace)
