@@ -82,6 +82,7 @@ clean:
 	rm -f $(CURR_DIR)/*$(OBJ)
 	rm -f $(CURR_DIR)/test-bin
 	rm -f $(CURR_DIR)/coverage.info
+	rm -fr $(CURR_DIR)/test-bin.dSYM
 	rm -fr $(CURR_DIR)/lcov-html
 
 .PHONY: test lcov clean
