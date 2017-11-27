@@ -2680,7 +2680,7 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_newton_refine(CY
  *     # NOTE: We don't check that there are 2 columns.
  *     num_nodes2, _ = np.shape(nodes2)             # <<<<<<<<<<<<<<
  *
- *     bezier._curve_intersection.newton_refine_intersect(
+ *     bezier._curve_intersection.newton_refine_curve_intersect(
  */
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
@@ -2840,11 +2840,11 @@ static PyObject *__pyx_pf_6bezier_27_curve_intersection_speedup_newton_refine(CY
   /* "bezier/_curve_intersection_speedup.pyx":52
  *     num_nodes2, _ = np.shape(nodes2)
  *
- *     bezier._curve_intersection.newton_refine_intersect(             # <<<<<<<<<<<<<<
+ *     bezier._curve_intersection.newton_refine_curve_intersect(             # <<<<<<<<<<<<<<
  *         &s,
  *         &num_nodes1,
  */
-  newton_refine_intersect((&__pyx_v_s), (&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_t), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_new_s), (&__pyx_v_new_t));
+  newton_refine_curve_intersect((&__pyx_v_s), (&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_t), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_new_s), (&__pyx_v_new_t));
 
   /* "bezier/_curve_intersection_speedup.pyx":63
  *     )

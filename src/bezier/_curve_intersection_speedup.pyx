@@ -49,7 +49,7 @@ def newton_refine(
     # NOTE: We don't check that there are 2 columns.
     num_nodes2, _ = np.shape(nodes2)
 
-    bezier._curve_intersection.newton_refine_intersect(
+    bezier._curve_intersection.newton_refine_curve_intersect(
         &s,
         &num_nodes1,
         &nodes1[0, 0],

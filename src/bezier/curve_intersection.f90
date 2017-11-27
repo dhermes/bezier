@@ -119,7 +119,7 @@ contains
 
   subroutine newton_refine_intersect( &
        s, num_nodes1, nodes1, t, num_nodes2, nodes2, new_s, new_t) &
-       bind(c, name='newton_refine_intersect')
+       bind(c, name='newton_refine_curve_intersect')
 
     real(c_double), intent(in) :: s
     integer(c_int), intent(in) :: num_nodes1
