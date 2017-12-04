@@ -23,6 +23,7 @@ leading underscore will be surfaced as the actual interface (e.g.
 or the speedup.
 """
 
+import atexit
 import collections
 import itertools
 
@@ -681,4 +682,6 @@ else:
     newton_refine = _surface_intersection_speedup.newton_refine
     locate_point = _surface_intersection_speedup.locate_point
     geometric_intersect = _surface_intersection_speedup.surface_intersections
+    atexit.register(
+        _surface_intersection_speedup.free_surface_intersections_workspace)
 # pylint: enable=invalid-name
