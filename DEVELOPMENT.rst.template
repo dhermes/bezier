@@ -83,7 +83,7 @@ can be used:
 
 .. code-block:: console
 
-   $ BEZIER_NO_EXTENSIONS=True .../bin/pip install .
+   $ BEZIER_NO_EXTENSIONS=True .../bin/python -m pip install .
 
 This environment variable is actually used for the ``nox -s docs`` session
 to emulate the `RTD`_ build environment (where no Fortran compiler is
@@ -212,9 +212,9 @@ To pre-build NumPy and SciPy wheels:
 .. code-block:: console
 
    $ pypy -m virtualenv pypy-venv
-   $ pypy-venv/bin/pip wheel --wheel-dir=${{WHEELHOUSE}} numpy
-   $ pypy-venv/bin/pip install ${{WHEELHOUSE}}/numpy*.whl
-   $ pypy-venv/bin/pip wheel --wheel-dir=${{WHEELHOUSE}} scipy
+   $ pypy-venv/bin/python -m pip wheel --wheel-dir=${{WHEELHOUSE}} numpy
+   $ pypy-venv/bin/python -m pip install ${{WHEELHOUSE}}/numpy*.whl
+   $ pypy-venv/bin/python -m pip wheel --wheel-dir=${{WHEELHOUSE}} scipy
    $ rm -fr pypy-venv/
 
 Alternatively, wheels can be downloaded from `pypy-wheels`_, however

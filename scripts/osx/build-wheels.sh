@@ -74,10 +74,10 @@ ${DELOCATE_WHEEL} \
 # Test out the newly created wheel in a virtual environment.
 VENV="${OSX_DIR}/test-venv"
 ${PY_BIN} -m virtualenv ${VENV}
-${VENV}/bin/pip install \
+${VENV}/bin/python -m pip install \
     --upgrade \
     --requirement ${OSX_DIR}/requirements.txt
-${VENV}/bin/pip install \
+${VENV}/bin/python -m pip install \
     ${PKG_NAME} \
     --no-index \
     --find-links ${FIXED_WHEELS} \

@@ -51,5 +51,5 @@ jobs:
       - deploy:
           name: Upload coverage to coveralls
           command: |
-            .nox/cover/bin/pip install coveralls
+            .nox/cover/bin/python -m pip install coveralls
             .nox/cover/bin/coveralls

@@ -15,11 +15,11 @@
 set -e -x
 
 # 0. Install the ``delocate`` tool.
-pip install --upgrade delocate
+python -m pip install --upgrade delocate
 
 # 1. Build the wheel from source.
 BASIC_DIR=$(mktemp -d)
-pip wheel . --wheel-dir ${BASIC_DIR}
+python -m pip wheel . --wheel-dir ${BASIC_DIR}
 
 # 2. "delocate" the built wheel.
 DELOCATED_DIR=$(mktemp -d)
@@ -32,7 +32,7 @@ delocate-wheel \
     ${BASIC_DIR}/bezier*.whl
 
 # 3. Install from the "delocated" wheel.
-pip install ${DELOCATED_DIR}/bezier*.whl
+python -m pip install ${DELOCATED_DIR}/bezier*.whl
 
 # Clean up temporary directories.
 rm -fr ${BASIC_DIR}

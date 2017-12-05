@@ -1,7 +1,7 @@
 FROM dhermes/python-multi
 
 # Install the current versions of nox and NumPy.
-RUN pip install --no-cache-dir \
+RUN python3.6 -m pip install --no-cache-dir \
   colorlog==2.10.0 \
   nox-automation==0.18.2 \
   numpy==1.13.3 \
@@ -26,9 +26,9 @@ RUN apt-get update \
 
 # Build NumPy and SciPy wheels for PyPy since it takes a bit of time
 RUN virtualenv --python=pypy pypy-env \
-  && pypy-env/bin/pip install --upgrade pip wheel \
+  && pypy-env/bin/python -m pip install --upgrade pip wheel \
   && mkdir /wheelhouse \
-  && pypy-env/bin/pip wheel --wheel-dir=/wheelhouse numpy==1.13.3 \
-  && pypy-env/bin/pip install /wheelhouse/numpy*.whl \
-  && pypy-env/bin/pip wheel --wheel-dir=/wheelhouse scipy==1.0.0 \
+  && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse numpy==1.13.3 \
+  && pypy-env/bin/python -m pip install /wheelhouse/numpy*.whl \
+  && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse scipy==1.0.0 \
   && rm -fr pypy-env

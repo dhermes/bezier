@@ -92,7 +92,6 @@ Installing
 
 .. code-block:: console
 
-   $ pip              install --upgrade bezier
    $ python    -m pip install --upgrade bezier
    $ python2.7 -m pip install --upgrade bezier
    $ python3.6 -m pip install --upgrade bezier
