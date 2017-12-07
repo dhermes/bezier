@@ -34,6 +34,9 @@ source osx_utils.sh
 # Use ``multibuild`` to install the given python.org version of CPython.
 get_macpython_environment ${PY_VERSION}
 echo "PYTHON_EXE=${PYTHON_EXE}"
+# NOTE: This assumes that ``multibuild`` uses ``sudo .../bin/python/pipX.Y``
+#       as the command (i.e. it's missing the ``-H`` flag).
+export PIP_CMD=${PIP_CMD/sudo/sudo -H}
 echo "PIP_CMD=${PIP_CMD}"
 
 # Make sure our installed CPython is set up for testing.
