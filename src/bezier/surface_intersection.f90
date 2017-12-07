@@ -1484,6 +1484,10 @@ contains
        return
     end if
 
+    if (num_intersected == 0) then
+       return
+    end if
+
     if (num_intersected > segment_ends_size) then
        status = Status_INSUFFICIENT_SPACE
        return

@@ -1627,6 +1627,23 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 5: No intersections.
+    linear1(1, :) = [0.0_dp, 0.0_dp]
+    linear1(2, :) = [1.0_dp, 0.0_dp]
+    linear1(3, :) = [0.0_dp, 1.0_dp]
+    linear2(1, :) = [3.0_dp, 3.0_dp]
+    linear2(2, :) = [4.0_dp, 3.0_dp]
+    linear2(3, :) = [3.0_dp, 4.0_dp]
+    call surfaces_intersect_abi( &
+         3, linear1, 1, 3, linear2, 1, &
+         2, segment_ends, 6, segments, &
+         num_intersected, contained, status)
+    case_success = ( &
+         num_intersected == 0 .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
   end subroutine test_surfaces_intersect_abi
 
 end module test_surface_intersection
