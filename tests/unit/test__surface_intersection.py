@@ -837,7 +837,7 @@ class Test_speedup__type_info(unittest.TestCase):
 
         self.assertTrue(is_native)
         self.assertEqual(dtype_num, 20)
-        if base_utils.IS_64_BIT:
+        if base_utils.IS_64_BIT or base_utils.IS_WINDOWS:
             self.assertEqual(item_size, 24)
             self.assertEqual(size_of_struct, 24)
         else:  # pragma: NO COVER
