@@ -17,7 +17,6 @@ matrix:
         - PY_VERSION=3.6
 
 install:
-  - export HOMEBREW_NO_AUTO_UPDATE=1
   - source scripts/osx/travis-setup.sh
 
 script:

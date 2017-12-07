@@ -22,6 +22,7 @@ if [[ -z "${PY_VERSION}" ]]; then
 fi
 
 # For ``gfortran``
+brew cask uninstall --force oclint
 brew install gcc
 
 # Get the "bare minimum" from ``matthew-brett/multibuild``
