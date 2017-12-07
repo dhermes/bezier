@@ -33,7 +33,7 @@ source osx_utils.sh
 
 # Use ``multibuild`` to install the given python.org version of CPython.
 get_macpython_environment ${PY_VERSION}
-echo "PYTHON_EXE}=${PYTHON_EXE}"
+echo "PYTHON_EXE=${PYTHON_EXE}"
 echo "PIP_CMD=${PIP_CMD}"
 
 # Make sure our installed CPython is set up for testing.

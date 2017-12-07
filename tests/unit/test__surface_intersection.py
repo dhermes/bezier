@@ -15,6 +15,7 @@ import unittest.mock
 
 import numpy as np
 
+from tests import utils as base_utils
 from tests.unit import utils
 
 
@@ -831,9 +832,17 @@ class Test_speedup__type_info(unittest.TestCase):
         return _surface_intersection_speedup._type_info()
 
     def test_it(self):
-        expected = (True, 24, 20, 24)
         result = self._call_function_under_test()
-        self.assertEqual(expected, result)
+        is_native, item_size, dtype_num, size_of_struct = result
+
+        self.assertTrue(is_native)
+        self.assertEqual(dtype_num, 20)
+        if base_utils.IS_64_BIT:
+            self.assertEqual(item_size, 24)
+            self.assertEqual(size_of_struct, 24)
+        else:  # pragma: NO COVER
+            self.assertEqual(item_size, 20)
+            self.assertEqual(size_of_struct, 20)
 
 
 def make_intersect(*args, **kwargs):

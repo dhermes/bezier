@@ -35,9 +35,6 @@ elif [[ "${PY_VERSION}" == "3.6" ]]; then
     arch -32 .nox/cover/bin/python -m pytest tests/unit/
     ${PY_BIN_DIR}/nox -s "functional(py='3.6')"
     arch -32 .nox/functional-py-3-6/bin/python -m pytest tests/functional/
-    # Apply patch to get ``nox -s doctest`` to work.
-    # See: https://github.com/dhermes/bezier/issues/73
-    git apply scripts/osx/issue-73.patch
     ${PY_BIN_DIR}/nox -s doctest
     ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-osx')"
 else

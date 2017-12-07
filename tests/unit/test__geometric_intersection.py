@@ -16,7 +16,6 @@ import unittest.mock
 
 import numpy as np
 
-from tests import utils as base_utils
 from tests.unit import utils
 
 
@@ -1057,14 +1056,14 @@ class Test__all_intersections(utils.NumPyTestCase):
             [0.75, 0.4375],
         ])
         s_val = 1.0 / 3.0
-        if base_utils.IS_64_BIT or base_utils.IS_WINDOWS:  # pragma: NO COVER
-            # Due to round-off, the answer is wrong by a tiny wiggle.
-            s_val += SPACING(s_val)
         t_val = 2.0 / 3.0
-
         intersections = self._call_function_under_test(nodes1, nodes2)
-        expected = np.asfortranarray([[s_val, t_val]])
-        self.assertEqual(intersections, expected)
+
+        # Due to round-off, the answer may be wrong by a tiny wiggle.
+        self.assertEqual(intersections.shape, (1, 2))
+        self.assertAlmostEqual(
+            intersections[0, 0], s_val, delta=SPACING(s_val))
+        self.assertEqual(intersections[0, 1], t_val)
 
     def test_parallel_failure(self):
         from bezier import _geometric_intersection
