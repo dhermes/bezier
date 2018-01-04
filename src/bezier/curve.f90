@@ -585,10 +585,7 @@ contains
        return
     end if
 
-    ! NOTE: We somewhat replicate code in ``evaluate_hodograph()``
-    !       here. It may be worthwhile to implement store the hodograph
-    !       and "concavity" nodes for a given curve to avoid re-computing the
-    !       first and second node differences.
+    ! NOTE: We somewhat replicate code in ``evaluate_hodograph()`` here.
 
     ! First derivative:
     work = nodes(2:, :) - nodes(:num_nodes - 1, :)

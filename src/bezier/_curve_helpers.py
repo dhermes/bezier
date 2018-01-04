@@ -587,10 +587,7 @@ def _get_curvature(nodes, tangent_vec, s):
     if num_nodes == 2:  # Lines have no curvature.
         return 0.0
 
-    # NOTE: We somewhat replicate code in ``evaluate_hodograph()``
-    #       here. It may be worthwhile to implement ``Curve.hodograph()``
-    #       and ``Curve.concavity()`` to avoid re-computing the
-    #       first and second node differences.
+    # NOTE: We somewhat replicate code in ``evaluate_hodograph()`` here.
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     second_deriv = first_deriv[1:, :] - first_deriv[:-1, :]
     concavity = (num_nodes - 1) * (num_nodes - 2) * evaluate_multi(
