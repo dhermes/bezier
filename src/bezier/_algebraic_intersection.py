@@ -1345,7 +1345,7 @@ def locate_point(nodes, x_val, y_val):
     power_basis1 = poly_to_power_basis(zero1[:, 0])
     all_roots = roots_in_unit_interval(power_basis1)
     if all_roots.size == 0:
-        return
+        return None
 
     # NOTE: We normalize ``power_basis2`` because we want to check for
     #       "zero" values, i.e. f2(s) == 0.
@@ -1356,6 +1356,8 @@ def locate_point(nodes, x_val, y_val):
 
     if near_zero[index] < _ZERO_THRESHOLD:
         return all_roots[index]
+
+    return None
 
 
 def all_intersections(nodes_first, nodes_second):

@@ -243,11 +243,11 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
         s_val = 0.25
         t_val = 0.125
 
-        q100 = (1.0 - s_val - t_val) * p200 + s_val * p110 + t_val * p101
-        q010 = (1.0 - s_val - t_val) * p110 + s_val * p020 + t_val * p011
-        q001 = (1.0 - s_val - t_val) * p101 + s_val * p011 + t_val * p002
-
-        expected = np.asfortranarray(np.vstack([q100, q010, q001]))
+        expected = np.asfortranarray([
+            (1.0 - s_val - t_val) * p200 + s_val * p110 + t_val * p101,
+            (1.0 - s_val - t_val) * p110 + s_val * p020 + t_val * p011,
+            (1.0 - s_val - t_val) * p101 + s_val * p011 + t_val * p002,
+        ])
         result = self._call_function_under_test(
             nodes, 2, 1.0 - s_val - t_val, s_val, t_val)
         self.assertEqual(result, expected)

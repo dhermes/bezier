@@ -175,12 +175,12 @@ class TestSurface(utils.NumPyTestCase):
         p200, p110, p020, p101, p011, p002 = nodes
         surface = self._make_one(nodes, 2)
 
-        edge1, edge2, edge3 = surface._compute_edges()
+        edges = surface._compute_edges()
         nodes1 = np.asfortranarray(np.vstack([p200, p110, p020]))
         nodes2 = np.asfortranarray(np.vstack([p020, p011, p002]))
         nodes3 = np.asfortranarray(np.vstack([p002, p101, p200]))
         self._edges_helper(
-            edge1, edge2, edge3, nodes1, nodes2, nodes3)
+            edges[0], edges[1], edges[2], nodes1, nodes2, nodes3)
 
     def test__compute_edges_cubic(self):
         nodes = np.asfortranarray([
@@ -921,23 +921,24 @@ class Test__make_intersection(utils.NumPyTestCase):
             [0.0, 1.0],
         ])
         surface1 = bezier.Surface(nodes1, degree=1, _copy=False)
-        edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
+
         nodes2 = np.asfortranarray([
             [0.25, 0.25],
             [-0.75, 0.25],
             [0.25, -0.75],
         ])
         surface2 = bezier.Surface(nodes2, degree=1, _copy=False)
-        edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
 
+        edge_nodes = (
+            tuple(edge._nodes for edge in surface1.edges) +
+            tuple(edge._nodes for edge in surface2.edges))
         edge_info = (
             (0, 0.0, 0.25),
             (5, 0.75, 1.0),
             (3, 0.0, 0.25),
             (2, 0.75, 1.0),
         )
-        result = self._call_function_under_test(
-            edge_info, edge_nodes1 + edge_nodes2)
+        result = self._call_function_under_test(edge_info, edge_nodes)
         self.assertIsInstance(result, bezier.CurvedPolygon)
         self.assertEqual(result.num_sides, 4)
         # pylint: disable=unbalanced-tuple-unpacking

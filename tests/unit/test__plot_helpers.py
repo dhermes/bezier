@@ -10,6 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
+import sys
 import unittest
 import unittest.mock
 
@@ -19,8 +21,6 @@ from tests.unit import utils
 
 
 def run_fake_modules(modules, func):
-    import sys
-
     existing = {}
     for name, mod_obj in modules.items():
         if name in sys.modules:  # pragma: NO COVER
@@ -137,8 +137,6 @@ class Test_add_patch(utils.NumPyTestCase):
         return expected, edges
 
     def test_it(self):
-        import functools
-
         # Set-up input values.
         color = (0.25, 0.5, 0.75)
         pts_per_edge = 3
