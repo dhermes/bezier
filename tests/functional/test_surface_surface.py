@@ -89,8 +89,12 @@ def curved_polygon_edges(intersection):
     # Re-sort the edges to be in the same order independent of strategy.
     edge_info = intersection._metadata
     index = edge_info.index(min(edge_info))
+    edge_info = edge_info[index:] + edge_info[:index]
+
     edge_list = intersection._edges
-    return edge_list[index:] + edge_list[:index]
+    edge_list = edge_list[index:] + edge_list[:index]
+
+    return edge_info, edge_list
 
 
 @contextlib.contextmanager
@@ -144,10 +148,7 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
 
     intersections = surface1.intersect(surface2, strategy=strategy)
     assert len(intersections) == len(all_intersected)
-    edges = (
-        surface1._get_edges(),
-        surface2._get_edges(),
-    )
+    all_edges = surface1._get_edges() + surface2._get_edges()
 
     for intersection, intersected in six.moves.zip(
             intersections, all_intersected):
@@ -158,24 +159,28 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
             nodes = intersected.nodes
             edge_list = intersected.edge_list
 
-            int_edges = curved_polygon_edges(intersection)
-            info = six.moves.zip(
-                int_edges, edge_list, start_vals, end_vals, nodes)
-            num_edges = len(int_edges)
+            edge_info, int_edges = curved_polygon_edges(intersection)
+            num_edges = len(edge_info)
             assert num_edges == len(edge_list)
             assert num_edges == len(start_vals)
             assert num_edges == len(end_vals)
             assert num_edges == len(nodes)
-            for edge, edge_index, start_val, end_val, node in info:
-                if edge_index < 3:
-                    expected_root = edges[0][edge_index]
-                else:
-                    expected_root = edges[1][edge_index - 3]
+
+            for index in six.moves.xrange(num_edges):
+                edge_triple = edge_info[index]
+                edge = int_edges[index]
+                edge_index = edge_list[index]
+                start_val = start_vals[index]
+                end_val = end_vals[index]
+                node = nodes[index]
+
+                assert edge_triple[0] == edge_index
+                expected_root = all_edges[edge_index]
                 specialized = expected_root.specialize(start_val, end_val)
                 assert np.allclose(specialized._nodes, edge._nodes)
 
-                CONFIG.assert_close(edge.start, start_val)
-                CONFIG.assert_close(edge.end, end_val)
+                CONFIG.assert_close(edge_triple[1], start_val)
+                CONFIG.assert_close(edge_triple[2], end_val)
                 CONFIG.assert_close(edge._nodes[0, 0], node[0])
                 CONFIG.assert_close(edge._nodes[0, 1], node[1])
         else:
