@@ -154,33 +154,30 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
             intersections, all_intersected):
         if isinstance(intersection, bezier.CurvedPolygon):
             assert isinstance(intersected, utils.CurvedPolygonInfo)
-            start_vals = intersected.start_params
-            end_vals = intersected.end_params
-            nodes = intersected.nodes
-            edge_list = intersected.edge_list
 
             edge_info, int_edges = curved_polygon_edges(intersection)
             num_edges = len(edge_info)
-            assert num_edges == len(edge_list)
-            assert num_edges == len(start_vals)
-            assert num_edges == len(end_vals)
-            assert num_edges == len(nodes)
+            assert num_edges == len(intersected.edge_list)
+            assert num_edges == len(intersected.start_params)
+            assert num_edges == len(intersected.end_params)
+            assert num_edges == len(intersected.nodes)
 
             for index in six.moves.xrange(num_edges):
                 edge_triple = edge_info[index]
-                edge = int_edges[index]
-                edge_index = edge_list[index]
-                start_val = start_vals[index]
-                end_val = end_vals[index]
-                node = nodes[index]
-
+                edge_index = intersected.edge_list[index]
                 assert edge_triple[0] == edge_index
-                expected_root = all_edges[edge_index]
-                specialized = expected_root.specialize(start_val, end_val)
-                assert np.allclose(specialized._nodes, edge._nodes)
 
+                start_val = intersected.start_params[index]
+                end_val = intersected.end_params[index]
                 CONFIG.assert_close(edge_triple[1], start_val)
                 CONFIG.assert_close(edge_triple[2], end_val)
+
+                expected_root = all_edges[edge_index]
+                specialized = expected_root.specialize(start_val, end_val)
+                edge = int_edges[index]
+                assert np.allclose(specialized._nodes, edge._nodes)
+
+                node = intersected.nodes[index]
                 CONFIG.assert_close(edge._nodes[0, 0], node[0])
                 CONFIG.assert_close(edge._nodes[0, 1], node[1])
         else:
