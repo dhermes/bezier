@@ -30,12 +30,18 @@ class Test_modify_path(unittest.TestCase):
         self.assertEqual(os.environ, {})
 
     @unittest.mock.patch.multiple(os, name='nt', environ={})
+    def test_no_path(self):
+        return_value = self._call_function_under_test()
+        self.assertIsNone(return_value)
+        self.assertEqual(os.environ, {})
+
+    @unittest.mock.patch.multiple(os, name='nt', environ={'PATH': ''})
     @unittest.mock.patch(
         'pkg_resources.resource_filename', side_effect=ImportError)
     def test_windows_without_dll(self, resource_filename):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
-        self.assertEqual(os.environ, {})
+        self.assertEqual(os.environ, {'PATH': ''})
         # Check mock.
         resource_filename.assert_called_once_with('bezier', 'extra-dll')
 
@@ -52,14 +58,14 @@ class Test_modify_path(unittest.TestCase):
         resource_filename.assert_called_once_with('bezier', 'extra-dll')
         isdir.assert_called_once_with(resource_filename.return_value)
 
-    @unittest.mock.patch.multiple(os, name='nt', environ={})
+    @unittest.mock.patch.multiple(os, name='nt', environ={'PATH': ''})
     @unittest.mock.patch('os.path.isdir', return_value=False)
     @unittest.mock.patch(
         'pkg_resources.resource_filename', return_value='not-a-path')
     def test_windows_with_dll_but_not_a_dir(self, resource_filename, isdir):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
-        self.assertEqual(os.environ, {})
+        self.assertEqual(os.environ, {'PATH': ''})
         # Check mocks.
         resource_filename.assert_called_once_with('bezier', 'extra-dll')
         isdir.assert_called_once_with(resource_filename.return_value)

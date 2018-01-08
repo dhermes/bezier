@@ -35,10 +35,14 @@ def modify_path():
     if os.name != 'nt':
         return
 
+    path = os.environ.get('PATH')
+    if path is None:
+        return
+
     try:
         extra_dll_dir = pkg_resources.resource_filename('bezier', 'extra-dll')
         if os.path.isdir(extra_dll_dir):
-            os.environ['PATH'] += os.pathsep + extra_dll_dir
+            os.environ['PATH'] = path + os.pathsep + extra_dll_dir
     except ImportError:
         pass
 
