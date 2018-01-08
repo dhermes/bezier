@@ -85,9 +85,7 @@ FAILED_CASES_COINCIDENT = {
 CONFIG = utils.Config()
 
 
-def curved_polygon_edges(intersection, root_edges_pair):
-    edges1, edges2 = root_edges_pair
-    root_edges = edges1 + edges2
+def curved_polygon_edges(intersection):
     # Re-sort the edges to be in the same order independent of strategy.
     edge_info = intersection._metadata
     index = edge_info.index(min(edge_info))
@@ -160,7 +158,7 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
             nodes = intersected.nodes
             edge_list = intersected.edge_list
 
-            int_edges = curved_polygon_edges(intersection, edges)
+            int_edges = curved_polygon_edges(intersection)
             info = six.moves.zip(
                 int_edges, edge_list, start_vals, end_vals, nodes)
             num_edges = len(int_edges)

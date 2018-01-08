@@ -744,7 +744,7 @@ class TestSurface(utils.NumPyTestCase):
         intersection = intersections[0]
         self.assertIsInstance(intersection, bezier.CurvedPolygon)
         self.assertEqual(
-            intersection._metadata,
+            intersection._metadata,  # pylint: disable=no-member
             (
                 (5, 0.5, 1.0),
                 (3, 0.0, 0.5),
