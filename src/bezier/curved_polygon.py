@@ -127,16 +127,24 @@ class CurvedPolygon(object):
     Args:
         edges (Tuple[~bezier.curve.Curve, ...]): The boundary edges
             of the curved polygon.
-        kwargs: The only keyword argument accepted is ``_verify``, which is
-            a :class:`bool` indicating if the edges should be verified as
-            having shared endpoints. It defaults to :data:`True`.
+        kwargs: There are two keyword arguments accepted:
+
+            * ``metadata`` (:class:`~typing.Sequence`): A sequence of triples
+              associated with this curved polygon. This is intended to be used
+              by callers that have created a curved polygon as an intersection
+              between two B |eacute| zier surfaces.
+            * ``_verify`` (:class:`bool`): Indicates if the edges should be
+              verified as having shared endpoints. Defaults to :data:`True`.
+
+            Other keyword arguments specified will be silently ignored.
     """
 
-    __slots__ = ('_edges', '_num_sides')
+    __slots__ = ('_edges', '_num_sides', '_metadata')
 
     def __init__(self, *edges, **kwargs):
         self._edges = edges
         self._num_sides = len(edges)
+        self._metadata = kwargs.pop('metadata', None)
         if kwargs.pop('_verify', True):
             self._verify()
 

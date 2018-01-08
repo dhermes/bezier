@@ -56,6 +56,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         curved_poly = self._make_one(edge0, edge1)
         self.assertEqual(curved_poly._edges, (edge0, edge1))
         self.assertEqual(curved_poly._num_sides, 2)
+        self.assertIsNone(curved_poly._metadata)
 
     def test_constructor_without_verify(self):
         import bezier
@@ -67,6 +68,21 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         curved_poly = self._make_one(edge0, _verify=False)
         self.assertEqual(curved_poly._edges, (edge0,))
         self.assertEqual(curved_poly._num_sides, 1)
+        self.assertIsNone(curved_poly._metadata)
+
+    def test_constructor_with_metadata(self):
+        import bezier
+
+        edge0 = bezier.Curve(self.NODES0, 2)
+        edge1 = bezier.Curve(self.NODES1, 2)
+        metadata = (
+            (0, 0.0, 0.5),
+            (4, 0.5, 1.0),
+        )
+        curved_poly = self._make_one(edge0, edge1, metadata=metadata)
+        self.assertEqual(curved_poly._edges, (edge0, edge1))
+        self.assertEqual(curved_poly._num_sides, 2)
+        self.assertEqual(curved_poly._metadata, metadata)
 
     def test__verify_too_few(self):
         with self.assertRaises(ValueError):
