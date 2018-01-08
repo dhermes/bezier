@@ -85,27 +85,13 @@ FAILED_CASES_COINCIDENT = {
 CONFIG = utils.Config()
 
 
-def find_edge_index(edge, root_edges):
-    for index, root_edge in enumerate(root_edges):
-        if root_edge.degree != edge.degree:
-            continue
-        specialized = root_edge.specialize(edge.start, edge.end)
-        if np.allclose(specialized._nodes, edge._nodes):
-            return index
-
-    raise RuntimeError('No match found.')
-
-
 def curved_polygon_edges(intersection, root_edges_pair):
     edges1, edges2 = root_edges_pair
     root_edges = edges1 + edges2
     # Re-sort the edges to be in the same order independent of strategy.
-    edge_list = intersection._edges
-    edge_info = [
-        (find_edge_index(edge, root_edges), edge.start, edge.end)
-        for edge in edge_list
-    ]
+    edge_info = intersection._metadata
     index = edge_info.index(min(edge_info))
+    edge_list = intersection._edges
     return edge_list[index:] + edge_list[:index]
 
 

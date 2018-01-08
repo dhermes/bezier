@@ -1134,4 +1134,5 @@ def _make_intersection(edge_info, all_edge_nodes):
             new_nodes, degree, start=start, end=end, _copy=False)
         edges.append(edge)
 
-    return curved_polygon.CurvedPolygon(*edges, _verify=False)
+    return curved_polygon.CurvedPolygon(
+        *edges, metadata=edge_info, _verify=False)

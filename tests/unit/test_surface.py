@@ -743,6 +743,16 @@ class TestSurface(utils.NumPyTestCase):
 
         intersection = intersections[0]
         self.assertIsInstance(intersection, bezier.CurvedPolygon)
+        self.assertEqual(
+            intersection._metadata,
+            (
+                (5, 0.5, 1.0),
+                (3, 0.0, 0.5),
+                (1, 0.5, 1.0),
+                (2, 0.0, 0.5),
+            ),
+        )
+
         cp_edges = intersection._edges
         self.assertEqual(len(cp_edges), 4)
         # Edge 0.
@@ -940,6 +950,16 @@ class Test__make_intersection(utils.NumPyTestCase):
         )
         result = self._call_function_under_test(edge_info, edge_nodes)
         self.assertIsInstance(result, bezier.CurvedPolygon)
+        self.assertEqual(
+            result._metadata,
+            (
+                (0, 0.0, 0.25),
+                (5, 0.75, 1.0),
+                (3, 0.0, 0.25),
+                (2, 0.75, 1.0),
+            ),
+        )
+
         self.assertEqual(result.num_sides, 4)
         # pylint: disable=unbalanced-tuple-unpacking
         edge0, edge1, edge2, edge3 = result._edges
