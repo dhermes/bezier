@@ -267,6 +267,8 @@ $ gcc \
 >   build/temp.linux-x86_64-3.6/src/bezier/_helpers_speedup.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/types.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/helpers.o \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
 >   -L/usr/local/lib \
 >   -lgfortran \
 >   -lpython3.6m \
@@ -304,6 +306,8 @@ $ gcc \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqk21.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqagse.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/curve.o \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
 >   -L/usr/local/lib \
 >   -lgfortran \
 >   -lpython3.6m \
@@ -342,6 +346,8 @@ $ gcc \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqagse.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/curve.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/surface.o \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
 >   -L/usr/local/lib \
 >   -lgfortran \
 >   -lpython3.6m \
@@ -381,6 +387,8 @@ $ gcc \
 >   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqagse.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/curve.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/curve_intersection.o \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
 >   -L/usr/local/lib \
 >   -lgfortran \
 >   -lpython3.6m \
@@ -422,6 +430,8 @@ $ gcc \
 >   build/temp.linux-x86_64-3.6/src/bezier/curve_intersection.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/surface.o \
 >   build/temp.linux-x86_64-3.6/src/bezier/surface_intersection.o \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
 >   -L/usr/local/lib \
 >   -lgfortran \
 >   -lpython3.6m \
