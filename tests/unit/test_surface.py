@@ -756,32 +756,24 @@ class TestSurface(utils.NumPyTestCase):
         cp_edges = intersection._edges
         self.assertEqual(len(cp_edges), 4)
         # Edge 0.
-        self.assertEqual(cp_edges[0].start, 0.5)
-        self.assertEqual(cp_edges[0].end, 1.0)
         expected = np.asfortranarray([
             [0.0, 0.5],
             [0.5, 0.0],
         ])
         self.assertEqual(cp_edges[0]._nodes, expected)
         # Edge 1.
-        self.assertEqual(cp_edges[1].start, 0.0)
-        self.assertEqual(cp_edges[1].end, 0.5)
         expected = np.asfortranarray([
             [0.5, 0.0],
             [0.5, 0.5],
         ])
         self.assertEqual(cp_edges[1]._nodes, expected)
         # Edge 2.
-        self.assertEqual(cp_edges[2].start, 0.5)
-        self.assertEqual(cp_edges[2].end, 1.0)
         expected = np.asfortranarray([
             [0.5, 0.5],
             [0.0, 1.0],
         ])
         self.assertEqual(cp_edges[2]._nodes, expected)
         # Edge 3.
-        self.assertEqual(cp_edges[3].start, 0.0)
-        self.assertEqual(cp_edges[3].end, 0.5)
         expected = np.asfortranarray([
             [0.0, 1.0],
             [0.0, 0.5],
@@ -950,15 +942,7 @@ class Test__make_intersection(utils.NumPyTestCase):
         )
         result = self._call_function_under_test(edge_info, edge_nodes)
         self.assertIsInstance(result, bezier.CurvedPolygon)
-        self.assertEqual(
-            result._metadata,
-            (
-                (0, 0.0, 0.25),
-                (5, 0.75, 1.0),
-                (3, 0.0, 0.25),
-                (2, 0.75, 1.0),
-            ),
-        )
+        self.assertEqual(result._metadata, edge_info)
 
         self.assertEqual(result.num_sides, 4)
         # pylint: disable=unbalanced-tuple-unpacking
@@ -966,32 +950,24 @@ class Test__make_intersection(utils.NumPyTestCase):
         # pylint: enable=unbalanced-tuple-unpacking
 
         # First edge.
-        self.assertEqual(edge0.start, edge_info[0][1])
-        self.assertEqual(edge0.end, edge_info[0][2])
         expected = np.asfortranarray([
             [0.0, 0.0],
             [0.25, 0.0],
         ])
         self.assertEqual(edge0._nodes, expected)
         # Second edge.
-        self.assertEqual(edge1.start, edge_info[1][1])
-        self.assertEqual(edge1.end, edge_info[1][2])
         expected = np.asfortranarray([
             [0.25, 0.0],
             [0.25, 0.25],
         ])
         self.assertEqual(edge1._nodes, expected)
         # Third edge.
-        self.assertEqual(edge2.start, edge_info[2][1])
-        self.assertEqual(edge2.end, edge_info[2][2])
         expected = np.asfortranarray([
             [0.25, 0.25],
             [0.0, 0.25],
         ])
         self.assertEqual(edge2._nodes, expected)
         # Fourth edge.
-        self.assertEqual(edge3.start, edge_info[3][1])
-        self.assertEqual(edge3.end, edge_info[3][2])
         expected = np.asfortranarray([
             [0.0, 0.25],
             [0.0, 0.0],

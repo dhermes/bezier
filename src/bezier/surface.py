@@ -1130,8 +1130,7 @@ def _make_intersection(edge_info, all_edge_nodes):
         new_nodes, _, _ = _curve_helpers.specialize_curve(
             nodes, start, end, 0.0, 1.0)
         degree = new_nodes.shape[0] - 1
-        edge = _curve_mod.Curve(
-            new_nodes, degree, start=start, end=end, _copy=False)
+        edge = _curve_mod.Curve(new_nodes, degree, _copy=False)
         edges.append(edge)
 
     return curved_polygon.CurvedPolygon(

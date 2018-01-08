@@ -515,14 +515,14 @@ class Test__specialize_curve(utils.NumPyTestCase):
         left_nodes, true_start, true_end = self._call_function_under_test(
             nodes, 0.0, 0.5, 0.0, 1.0)
         self.assertEqual(left.nodes, left_nodes)
-        self.assertEqual(true_start, left.start)
-        self.assertEqual(true_end, left.end)
+        self.assertEqual(true_start, 0.0)
+        self.assertEqual(true_end, 0.5)
 
         right_nodes, true_start, true_end = self._call_function_under_test(
             nodes, 0.5, 1.0, 0.0, 1.0)
         self.assertEqual(right.nodes, right_nodes)
-        self.assertEqual(true_start, right.start)
-        self.assertEqual(true_end, right.end)
+        self.assertEqual(true_start, 0.5)
+        self.assertEqual(true_end, 1.0)
 
     def test_cubic(self):
         nodes = np.asfortranarray([

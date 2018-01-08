@@ -42,8 +42,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
         self.assertIsNone(curve._length)
-        self.assertEqual(curve._start, 0.0)
-        self.assertEqual(curve._end, 1.0)
 
     def test_constructor_wrong_dimension(self):
         nodes = np.asfortranarray([1.0, 2.0])
@@ -61,36 +59,12 @@ class TestCurve(utils.NumPyTestCase):
         ])
         klass = self._get_target_class()
 
-        curve = klass.from_nodes(nodes, start=0.25, end=0.75)
+        curve = klass.from_nodes(nodes)
         self.assertIsInstance(curve, klass)
         self.assertEqual(curve._degree, 1)
         self.assertEqual(curve._dimension, 3)
         self.assertEqual(curve._nodes, nodes)
         self.assertIsNone(curve._length)
-        self.assertEqual(curve._start, 0.25)
-        self.assertEqual(curve._end, 0.75)
-
-    def test___repr__(self):
-        degree = 4
-        dimension = 3
-        nodes = np.zeros((degree + 1, dimension), order='F')
-        curve = self._make_one(nodes, degree)
-        expected = '<Curve (degree={:d}, dimension={:d})>'.format(
-            degree, dimension)
-        self.assertEqual(repr(curve), expected)
-
-    def test___repr__custom_endpoints(self):
-        from bezier import curve as curve_mod
-
-        degree = 4
-        dimension = 3
-        start = 0.25
-        end = 0.75
-        nodes = np.zeros((degree + 1, dimension), order='F')
-        curve = self._make_one(nodes, degree, start=start, end=end)
-        expected = curve_mod._REPR_TEMPLATE.format(
-            'Curve', degree, dimension, start, end)
-        self.assertEqual(repr(curve), expected)
 
     def test__get_degree(self):
         klass = self._get_target_class()
@@ -129,16 +103,6 @@ class TestCurve(utils.NumPyTestCase):
         curve._length = length
         self.assertEqual(curve.length, length)
 
-    def test_start_property(self):
-        curve = self._make_one(self.ZEROS, 1,
-                               start=unittest.mock.sentinel.start)
-        self.assertIs(curve.start, unittest.mock.sentinel.start)
-
-    def test_end_property(self):
-        curve = self._make_one(self.ZEROS, 1,
-                               end=unittest.mock.sentinel.end)
-        self.assertIs(curve.end, unittest.mock.sentinel.end)
-
     def test___dict___property(self):
         curve = self._make_one(self.ZEROS, 1, _copy=False)
         props_dict = curve.__dict__
@@ -146,14 +110,12 @@ class TestCurve(utils.NumPyTestCase):
             '_nodes': self.ZEROS,
             '_dimension': 2,
             '_degree': 1,
-            '_start': 0.0,
-            '_end': 1.0,
             '_length': None,
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curve``.
-        expected['_end'] = 1.5
-        self.assertNotEqual(curve._end, expected['_end'])
+        expected['_length'] = 1.5
+        self.assertIsNone(curve._length)
 
     def _copy_helper(self, **kwargs):
         np_shape = (2, 2)
@@ -172,8 +134,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(new_curve._degree, curve._degree)
         self.assertEqual(new_curve._dimension, curve._dimension)
         self.assertIs(new_curve._nodes, copied_nodes)
-        self.assertEqual(new_curve._start, curve._start)
-        self.assertEqual(new_curve._end, curve._end)
         self.assertEqual(new_curve._length, curve._length)
 
         fake_nodes.copy.assert_called_once_with(order='F')
@@ -272,15 +232,13 @@ class TestCurve(utils.NumPyTestCase):
             [4.0, 6.0],
         ])
         klass = self._get_target_class()
-        curve = klass.from_nodes(nodes, start=0.25, end=0.75)
+        curve = klass.from_nodes(nodes)
 
         # Call ``subdivide()`` and then compare.
         left, right = curve.subdivide()
 
         # Check the "left" sub-curve.
         self.assertEqual(left._degree, 1)
-        self.assertEqual(left._start, 0.25)
-        self.assertEqual(left._end, 0.5)
         self.assertIsInstance(left, klass)
         expected_l = np.asfortranarray([
             [0.0, 1.0],
@@ -289,8 +247,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(left._nodes, expected_l)
 
         # Check the "right" sub-curve.
-        self.assertEqual(right._start, 0.5)
-        self.assertEqual(right._end, 0.75)
         self.assertIsInstance(right, klass)
         expected_r = np.asfortranarray([
             [2.0, 3.5],
@@ -352,9 +308,6 @@ class TestCurve(utils.NumPyTestCase):
         ])
         curve = self._make_one(nodes, 2)
         left, right = curve.subdivide()
-        # Patch the start/end as well for similar reasons.
-        left._end = 1.0
-        right._start = 0.0
 
         result = left.intersect(right)
         # The "right" end of ``left`` and the "left" end of ``right``.
@@ -426,8 +379,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve.degree, 3)
         elevated = curve.elevate()
         self.assertEqual(elevated.degree, 4)
-        self.assertEqual(elevated.start, curve.start)
-        self.assertEqual(elevated.end, curve.end)
 
         s_vals = np.linspace(0.0, 1.0, 64 + 1)
         orig_vals = curve.evaluate_multi(s_vals)
@@ -451,8 +402,6 @@ class TestCurve(utils.NumPyTestCase):
             [3.0, 0.0],
         ])
         self.assertEqual(reduced.nodes, expected)
-        self.assertEqual(reduced.start, curve.start)
-        self.assertEqual(reduced.end, curve.end)
 
         s_vals = np.linspace(0.0, 1.0, 64 + 1)
         orig_vals = curve.evaluate_multi(s_vals)
@@ -466,12 +415,8 @@ class TestCurve(utils.NumPyTestCase):
             [5.0, 2.0],
         ])
         curve = self._make_one(nodes, 2)
-        start = 0.25
-        end = 0.875
-        new_curve = curve.specialize(start, end)
+        new_curve = curve.specialize(0.25, 0.875)
 
-        self.assertEqual(new_curve.start, start)
-        self.assertEqual(new_curve.end, end)
         expected = np.asfortranarray([
             [0.6875, 2.375],
             [1.78125, 4.5625],
@@ -501,16 +446,3 @@ class TestCurve(utils.NumPyTestCase):
         point = curve.evaluate_multi(np.asfortranarray([s_val]))
         result = curve.locate(point)
         self.assertEqual(result, s_val)
-
-    def test_locate_non_default_endpoints(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 1.0],
-            [1.0, 0.0],
-        ])
-        curve = self._make_one(
-            nodes, degree=2, start=0.25, end=1.0, _copy=False)
-        # C(1/2) = p
-        point = np.asfortranarray([[0.5, 0.5]])
-        result = curve.locate(point)
-        self.assertEqual(result, 0.5)

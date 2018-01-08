@@ -38,8 +38,6 @@ from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
 
-_REPR_TEMPLATE = (
-    '<{} (degree={:d}, dimension={:d}, start={:g}, end={:g})>')
 _LOCATE_ERROR_TEMPLATE = (
     'Dimension mismatch: This curve is {:d}-dimensional, so the point should '
     'be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
@@ -88,10 +86,6 @@ class Curve(_base.Base):
         degree (int): The degree of the curve. This is assumed to
             correctly correspond to the number of ``nodes``. Use
             :meth:`from_nodes` if the degree has not yet been computed.
-        start (Optional[float]): The beginning of the sub-interval
-            that this curve represents.
-        end (Optional[float]): The end of the sub-interval
-            that this curve represents.
         _copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
@@ -99,19 +93,17 @@ class Curve(_base.Base):
 
     __slots__ = (
         '_dimension', '_nodes',  # From base class
-        '_degree', '_start', '_end',  # From constructor
+        '_degree',  # From constructor
         '_length',  # Empty defaults
     )
 
-    def __init__(self, nodes, degree, start=0.0, end=1.0, _copy=True):
+    def __init__(self, nodes, degree, _copy=True):
         super(Curve, self).__init__(nodes, _copy=_copy)
         self._degree = degree
-        self._start = start
-        self._end = end
         self._length = None
 
     @classmethod
-    def from_nodes(cls, nodes, start=0.0, end=1.0, _copy=True):
+    def from_nodes(cls, nodes, _copy=True):
         """Create a :class:`.Curve` from nodes.
 
         Computes the ``degree`` based on the shape of ``nodes``.
@@ -120,10 +112,6 @@ class Curve(_base.Base):
             nodes (numpy.ndarray): The nodes in the curve. The rows
                 represent each node while the columns are the dimension
                 of the ambient space.
-            start (Optional[float]): The beginning of the sub-interval
-                that this curve represents.
-            end (Optional[float]): The end of the sub-interval
-                that this curve represents.
             _copy (bool): Flag indicating if the nodes should be copied before
                 being stored. Defaults to :data:`True` since callers may
                 freely mutate ``nodes`` after passing in.
@@ -133,20 +121,7 @@ class Curve(_base.Base):
         """
         num_nodes, _ = nodes.shape
         degree = cls._get_degree(num_nodes)
-        return cls(nodes, degree, start=start, end=end, _copy=_copy)
-
-    def __repr__(self):
-        """Representation of current object.
-
-        Returns:
-            str: Object representation.
-        """
-        if self._start == 0.0 and self._end == 1.0:
-            return super(Curve, self).__repr__()
-        else:
-            return _REPR_TEMPLATE.format(
-                self.__class__.__name__, self._degree,
-                self._dimension, self._start, self._end)
+        return cls(nodes, degree, _copy=_copy)
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -168,47 +143,6 @@ class Curve(_base.Base):
         return self._length
 
     @property
-    def start(self):
-        """float: Start of sub-interval this curve represents.
-
-        This value is used to track the current curve in the
-        re-parameterization / subdivision process. The curve is still
-        defined on the unit interval, but this value illustrates
-        how this curve relates to a "parent" curve. For example:
-
-        .. doctest:: curve-start
-           :options: +NORMALIZE_WHITESPACE
-
-           >>> nodes = np.asfortranarray([
-           ...     [0.0, 0.0],
-           ...     [1.0, 2.0],
-           ... ])
-           >>> curve = bezier.Curve(nodes, degree=1)
-           >>> curve
-           <Curve (degree=1, dimension=2)>
-           >>> left, right = curve.subdivide()
-           >>> left
-           <Curve (degree=1, dimension=2, start=0, end=0.5)>
-           >>> right
-           <Curve (degree=1, dimension=2, start=0.5, end=1)>
-           >>> _, mid_right = left.subdivide()
-           >>> mid_right
-           <Curve (degree=1, dimension=2, start=0.25, end=0.5)>
-           >>> mid_right.nodes
-           array([[0.25, 0.5 ],
-                  [0.5 , 1.  ]])
-        """
-        return self._start
-
-    @property
-    def end(self):
-        """float: End of sub-interval this curve represents.
-
-        See :attr:`~Curve.start` for more information.
-        """
-        return self._end
-
-    @property
     def __dict__(self):
         """dict: Dictionary of current curve's property namespace.
 
@@ -223,8 +157,6 @@ class Curve(_base.Base):
             '_dimension': self._dimension,
             '_nodes': self._nodes,
             '_degree': self._degree,
-            '_start': self._start,
-            '_end': self._end,
             '_length': self._length,
         }
 
@@ -234,11 +166,8 @@ class Curve(_base.Base):
         Returns:
             .Curve: Copy of current curve.
         """
-        result = Curve(
-            self._nodes, self._degree, start=self._start, end=self._end,
-            _copy=True)
-        # Also copy over any cached computed values. (Ignore the
-        # prev/next/index information though: YAGNI.)
+        result = Curve(self._nodes, self._degree, _copy=True)
+        # Also copy over any cached computed values.
         result._length = self._length  # pylint: disable=protected-access
         return result
 
@@ -367,14 +296,10 @@ class Curve(_base.Base):
            ... ])
            >>> curve = bezier.Curve(nodes, degree=2)
            >>> left, right = curve.subdivide()
-           >>> left
-           <Curve (degree=2, dimension=2, start=0, end=0.5)>
            >>> left.nodes
            array([[0.   , 0.   ],
                   [0.625, 1.5  ],
                   [1.125, 1.75 ]])
-           >>> right
-           <Curve (degree=2, dimension=2, start=0.5, end=1)>
            >>> right.nodes
            array([[1.125, 1.75 ],
                   [1.625, 2.   ],
@@ -389,13 +314,8 @@ class Curve(_base.Base):
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
         left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self._nodes)
-        midpoint = 0.5 * (self._start + self._end)
-        left = Curve(
-            left_nodes, self._degree, start=self._start, end=midpoint,
-            _copy=False)
-        right = Curve(
-            right_nodes, self._degree, start=midpoint, end=self._end,
-            _copy=False)
+        left = Curve(left_nodes, self._degree, _copy=False)
+        right = Curve(right_nodes, self._degree, _copy=False)
         return left, right
 
     def intersect(self, other,
@@ -520,9 +440,7 @@ class Curve(_base.Base):
             Curve: The degree-elevated curve.
         """
         new_nodes = _curve_helpers.elevate_nodes(self._nodes)
-        return Curve(
-            new_nodes, self._degree + 1, start=self._start, end=self._end,
-            _copy=False)
+        return Curve(new_nodes, self._degree + 1, _copy=False)
 
     def reduce_(self):
         r"""Return a degree-reduced version of the current curve.
@@ -625,9 +543,7 @@ class Curve(_base.Base):
             Curve: The degree-reduced curve.
         """
         new_nodes = _curve_helpers.reduce_pseudo_inverse(self._nodes)
-        return Curve(
-            new_nodes, self._degree - 1, start=self._start, end=self._end,
-            _copy=False)
+        return Curve(new_nodes, self._degree - 1, _copy=False)
 
     def specialize(self, start, end):
         """Specialize the curve to a given sub-interval.
@@ -644,8 +560,6 @@ class Curve(_base.Base):
            ... ])
            >>> curve = bezier.Curve(nodes, degree=2)
            >>> new_curve = curve.specialize(-0.25, 0.75)
-           >>> new_curve
-           <Curve (degree=2, dimension=2, start=-0.25, end=0.75)>
            >>> new_curve.nodes
            array([[-0.25 , -0.625],
                   [ 0.25 ,  0.875],
@@ -690,11 +604,9 @@ class Curve(_base.Base):
         Returns:
             Curve: The newly-specialized curve.
         """
-        new_nodes, true_start, true_end = _curve_helpers.specialize_curve(
-            self._nodes, start, end, self._start, self._end)
-        return Curve(
-            new_nodes, self._degree, start=true_start, end=true_end,
-            _copy=False)
+        new_nodes, _, _ = _curve_helpers.specialize_curve(
+            self._nodes, start, end, 0.0, 1.0)
+        return Curve(new_nodes, self._degree, _copy=False)
 
     def locate(self, point):
         r"""Find a point on the current curve.
