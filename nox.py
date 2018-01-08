@@ -22,7 +22,7 @@ import nox
 import py.path
 
 
-NUMPY = 'numpy >= 1.13.3'
+NUMPY = 'numpy >= 1.14.0'
 IS_MAC_OS_X = sys.platform == 'darwin'
 SCIPY = 'scipy >= 1.0.0'
 MOCK_DEP = 'mock >= 1.3.0'

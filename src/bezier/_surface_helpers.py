@@ -969,19 +969,19 @@ def _jacobian_det(nodes, degree, st_vals):
        ... ])
        >>> s_vals, t_vals = st_vals.T
        >>> surface.evaluate_cartesian_multi(st_vals)
-       array([[ 0.5    , 0.     ],
-              [ 1.59375, 0.34375],
-              [ 1.25   , 1.25   ]])
+       array([[0.5    , 0.     ],
+              [1.59375, 0.34375],
+              [1.25   , 1.25   ]])
        >>> # B(s, t) = [s(t + 2), t(s + 2)]
        >>> s_vals * (t_vals + 2)
-       array([ 0.5 , 1.59375, 1.25 ])
+       array([0.5 , 1.59375, 1.25 ])
        >>> t_vals * (s_vals + 2)
-       array([ 0. , 0.34375, 1.25 ])
+       array([0. , 0.34375, 1.25 ])
        >>> jacobian_det(nodes, 2, st_vals)
-       array([ 4.5 , 5.75, 6. ])
+       array([4.5 , 5.75, 6. ])
        >>> # det(DB) = 2(s + t + 2)
        >>> 2 * (s_vals + t_vals + 2)
-       array([ 4.5 , 5.75, 6. ])
+       array([4.5 , 5.75, 6. ])
 
     .. note::
 
@@ -1305,13 +1305,13 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.25, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]], dtype=bool)
+       array([[ True, True]])
        >>> tangent1 = hodograph(curve1, s)
        >>> tangent1
-       array([[ 1.25, 0.75]])
+       array([[1.25, 0.75]])
        >>> tangent2 = hodograph(curve2, t)
        >>> tangent2
-       array([[ 2. , 0.5]])
+       array([[2. , 0.5]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1368,7 +1368,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]], dtype=bool)
+       array([[ True, True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1406,7 +1406,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]], dtype=bool)
+       array([[ True, True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1442,7 +1442,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]], dtype=bool)
+       array([[ True, True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1480,7 +1480,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]], dtype=bool)
+       array([[ True, True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1518,11 +1518,11 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]], dtype=bool)
+       array([[ True, True]])
        >>> hodograph(curve1, s)
-       array([[ 0.5, 0. ]])
+       array([[0.5, 0. ]])
        >>> hodograph(curve2, t)
-       array([[ 1., 0.]])
+       array([[1., 0.]])
        >>> curvature(curve1, s)
        2.0
        >>> curvature(curve2, t)
@@ -1563,7 +1563,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 1.0, 0.375
        >>> curve1a.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]], dtype=bool)
+       array([[ True, True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1a, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1580,7 +1580,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        ... ])
        >>> curve1b = bezier.Curve(nodes1b, degree=2)
        >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
-       array([[ True, True]], dtype=bool)
+       array([[ True, True]])
        >>> intersection = Intersection(1, 0.0, 0, t)
        >>> edge_nodes1 = (nodes1a, nodes1b, None)
        >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
@@ -1625,7 +1625,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> edge_nodes2 = [curve.nodes for curve in surface2.edges]
        >>> s, t = 0.5, 0.0
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]], dtype=bool)
+       array([[ True, True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        <IntersectionClassification.IGNORED_CORNER: 5>

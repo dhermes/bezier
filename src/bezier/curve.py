@@ -195,8 +195,8 @@ class Curve(_base.Base):
            >>> mid_right
            <Curve (degree=1, dimension=2, start=0.25, end=0.5)>
            >>> mid_right.nodes
-           array([[ 0.25, 0.5 ],
-                  [ 0.5 , 1.  ]])
+           array([[0.25, 0.5 ],
+                  [0.5 , 1.  ]])
         """
         return self._start
 
@@ -262,7 +262,7 @@ class Curve(_base.Base):
            ... ])
            >>> curve = bezier.Curve(nodes, degree=2)
            >>> curve.evaluate(0.75)
-           array([[ 0.796875, 0.46875 ]])
+           array([[0.796875, 0.46875 ]])
 
         .. testcleanup:: curve-eval
 
@@ -297,11 +297,11 @@ class Curve(_base.Base):
            <Curve (degree=1, dimension=3)>
            >>> s_vals = np.linspace(0.0, 1.0, 5)
            >>> curve.evaluate_multi(s_vals)
-           array([[ 0.  , 0.  , 0.  ],
-                  [ 0.25, 0.5 , 0.75],
-                  [ 0.5 , 1.  , 1.5 ],
-                  [ 0.75, 1.5 , 2.25],
-                  [ 1.  , 2.  , 3.  ]])
+           array([[0.  , 0.  , 0.  ],
+                  [0.25, 0.5 , 0.75],
+                  [0.5 , 1.  , 1.5 ],
+                  [0.75, 1.5 , 2.25],
+                  [1.  , 2.  , 3.  ]])
 
         Args:
             s_vals (numpy.ndarray): Parameters along the curve (as a
@@ -370,15 +370,15 @@ class Curve(_base.Base):
            >>> left
            <Curve (degree=2, dimension=2, start=0, end=0.5)>
            >>> left.nodes
-           array([[ 0.   , 0.   ],
-                  [ 0.625, 1.5  ],
-                  [ 1.125, 1.75 ]])
+           array([[0.   , 0.   ],
+                  [0.625, 1.5  ],
+                  [1.125, 1.75 ]])
            >>> right
            <Curve (degree=2, dimension=2, start=0.5, end=1)>
            >>> right.nodes
-           array([[ 1.125, 1.75 ],
-                  [ 1.625, 2.   ],
-                  [ 2.   , 1.   ]])
+           array([[1.125, 1.75 ],
+                  [1.625, 2.   ],
+                  [2.   , 1.   ]])
 
         .. testcleanup:: curve-subdivide
 
@@ -424,10 +424,10 @@ class Curve(_base.Base):
            >>> curve2 = bezier.Curve(nodes2, degree=1)
            >>> intersections = curve1.intersect(curve2)
            >>> 3.0 * intersections
-           array([[ 2., 2.]])
+           array([[2., 2.]])
            >>> s_vals = intersections[:, 0]
            >>> curve1.evaluate_multi(s_vals)
-           array([[ 0.5, 0.5]])
+           array([[0.5, 0.5]])
 
         .. testcleanup:: curve-intersect
 
@@ -506,10 +506,10 @@ class Curve(_base.Base):
            >>> elevated
            <Curve (degree=3, dimension=2)>
            >>> elevated.nodes
-           array([[ 0., 0.],
-                  [ 1., 1.],
-                  [ 2., 1.],
-                  [ 3., 0.]])
+           array([[0., 0.],
+                  [1., 1.],
+                  [2., 1.],
+                  [3., 0.]])
 
         .. testcleanup:: curve-elevate
 

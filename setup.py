@@ -48,7 +48,7 @@ The {} environment variable has been used to explicitly disable the
 building of extension modules.
 """.format(NO_EXTENSIONS_ENV)
 REQUIREMENTS = (
-    'numpy >= 1.13.3',
+    'numpy >= 1.14.0',
     'six >= 1.11.0',
 )
 EXTRAS_REQUIRE = {

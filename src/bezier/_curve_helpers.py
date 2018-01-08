@@ -660,7 +660,7 @@ def _newton_refine(nodes, point, s):
        >>> curve = bezier.Curve(nodes, degree=2)
        >>> point = curve.evaluate(0.25)
        >>> point
-       array([[ 0.5625, 0.8125]])
+       array([[0.5625, 0.8125]])
        >>> s = 0.75
        >>> new_s = newton_refine(nodes, point, s)
        >>> 5 * (new_s - s)
@@ -691,7 +691,7 @@ def _newton_refine(nodes, point, s):
        >>> expected = 0.5
        >>> point = curve.evaluate(expected)
        >>> point
-       array([[ 0., 0.]])
+       array([[0., 0.]])
        >>> s_vals = [0.625, None, None, None, None, None]
        >>> np.log2(abs(expected - s_vals[0]))
        -3.0

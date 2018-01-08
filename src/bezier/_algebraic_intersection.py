@@ -788,7 +788,7 @@ def bezier_roots(coeffs):
     .. doctest:: bezier-roots1
 
        >>> bezier_roots(coeffs1)
-       array([ 3.,  5.,  1.,  1.])
+       array([3., 5., 1., 1.])
 
     In some cases, a polynomial is represented with an "elevated" degree:
 
@@ -813,7 +813,7 @@ def bezier_roots(coeffs):
               [ 0. ,  1. ,  0. ]])
        >>> sigma_values2 = np.linalg.eigvals(companion2)
        >>> sigma_values2
-       array([-1.0+0.j , -0.5+0.5j, -0.5-0.5j])
+       array([-1. +0. j, -0.5+0.5j, -0.5-0.5j])
 
     so we drop any values :math:`\sigma` that are sufficiently close to
     :math:`-1`:

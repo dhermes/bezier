@@ -117,17 +117,17 @@ also be determined:
    >>> curve2 = bezier.Curve.from_nodes(nodes2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.31101776, 0.31101776],
-          [ 0.68898224, 0.68898224],
-          [ 0.        , 0.        ],
-          [ 1.        , 1.        ]])
+   array([[0.31101776, 0.31101776],
+          [0.68898224, 0.68898224],
+          [0.        , 0.        ],
+          [1.        , 1.        ]])
    >>> s_vals = intersections[:, 0]
    >>> points = curve1.evaluate_multi(s_vals)
    >>> points
-   array([[ 0.31101776, 0.42857143],
-          [ 0.68898224, 0.42857143],
-          [ 0.        , 0.        ],
-          [ 1.        , 0.        ]])
+   array([[0.31101776, 0.42857143],
+          [0.68898224, 0.42857143],
+          [0.        , 0.        ],
+          [1.        , 0.        ]])
 
 and then we can plot these curves (along with their
 intersections):

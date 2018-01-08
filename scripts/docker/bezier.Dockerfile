@@ -4,7 +4,7 @@ FROM dhermes/python-multi
 RUN python3.6 -m pip install --no-cache-dir \
   colorlog==2.10.0 \
   nox-automation==0.18.2 \
-  numpy==1.13.3 \
+  numpy==1.14.0 \
   py==1.4.34 \
   six==1.11.0 \
   virtualenv==15.1.0
@@ -28,7 +28,7 @@ RUN apt-get update \
 RUN virtualenv --python=pypy pypy-env \
   && pypy-env/bin/python -m pip install --upgrade pip wheel \
   && mkdir /wheelhouse \
-  && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse numpy==1.13.3 \
+  && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse numpy==1.14.0 \
   && pypy-env/bin/python -m pip install /wheelhouse/numpy*.whl \
   && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse scipy==1.0.0 \
   && rm -fr pypy-env

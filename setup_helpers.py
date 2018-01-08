@@ -403,7 +403,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
     def start_journaling(self):
         """Capture calls to the system by compilers.
 
-        See: https://github.com/numpy/numpy/blob/v1.13.3/\
+        See: https://github.com/numpy/numpy/blob/v1.14.0/\
         numpy/distutils/ccompiler.py#L154
 
         Intercepts all calls to ``CCompiler.spawn`` and keeps the

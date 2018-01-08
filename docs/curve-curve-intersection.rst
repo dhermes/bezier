@@ -38,11 +38,11 @@ Curve-Line Intersection
    >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.25, 0.25],
-          [ 0.75, 0.75]])
+   array([[0.25, 0.25],
+          [0.75, 0.75]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 0.25 , 0.375],
-          [ 0.75 , 0.375]])
+   array([[0.25 , 0.375],
+          [0.75 , 0.375]])
 
 .. image:: images/curves1_and_8.png
    :align: center
@@ -63,9 +63,9 @@ Curve-Line Intersection
    >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.5 , 0.6666...]])
+   array([[0.5 , 0.6666...]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 0.5, 0.5]])
+   array([[0.5, 0.5]])
 
 .. image:: images/curves1_and_9.png
    :align: center
@@ -86,9 +86,9 @@ Curve-Line Intersection
    >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.3333..., 0.5 ]])
+   array([[0.3333..., 0.5 ]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 3., 4.]])
+   array([[3., 4.]])
 
 .. image:: images/curves10_and_11.png
    :align: center
@@ -108,9 +108,9 @@ Curve-Line Intersection
    >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.5, 0.5]])
+   array([[0.5, 0.5]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 0.5 , 0.375]])
+   array([[0.5 , 0.375]])
 
 .. image:: images/curves8_and_9.png
    :align: center
@@ -131,9 +131,9 @@ Curve-Line Intersection
    >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.5 , 0.6666...]])
+   array([[0.5 , 0.6666...]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 0., 1.]])
+   array([[0., 1.]])
 
 .. image:: images/curves29_and_30.png
    :align: center
@@ -162,11 +162,11 @@ with zero error:
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.25, 0.25],
-          [ 0.75, 0.75]])
+   array([[0.25, 0.25],
+          [0.75, 0.75]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 0.25 , 0.375],
-          [ 0.75 , 0.375]])
+   array([[0.25 , 0.375],
+          [0.75 , 0.375]])
 
 .. image:: images/curves1_and_5.png
    :align: center
@@ -188,11 +188,11 @@ with zero error:
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.25 , 0.75 ],
-          [ 0.875, 0.25 ]])
+   array([[0.25 , 0.75 ],
+          [0.875, 0.25 ]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 0.75  , 1.125  ],
-          [ 2.625 , 0.65625]])
+   array([[0.75  , 1.125  ],
+          [2.625 , 0.65625]])
 
 .. image:: images/curves3_and_4.png
    :align: center
@@ -214,11 +214,11 @@ with zero error:
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.5       , 0.16666...],
-          [ 0.83333..., 0.5       ]])
+   array([[0.5       , 0.16666...],
+          [0.83333..., 0.5       ]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 0.375 , 0.46875],
-          [ 0.625 , 0.46875]])
+   array([[0.375 , 0.46875],
+          [0.625 , 0.46875]])
 
 .. image:: images/curves14_and_16.png
    :align: center
@@ -519,9 +519,9 @@ Intersections at Endpoints
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 1., 0.]])
+   array([[1., 0.]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 1., 0.]])
+   array([[1., 0.]])
 
 .. image:: images/curves1_and_18.png
    :align: center
@@ -543,9 +543,9 @@ Intersections at Endpoints
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 1., 1.]])
+   array([[1., 1.]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 1., 0.]])
+   array([[1., 0.]])
 
 .. image:: images/curves1_and_19.png
    :align: center
@@ -567,9 +567,9 @@ Intersections at Endpoints
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.3333..., 1. ]])
+   array([[0.3333..., 1. ]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 3., 4.]])
+   array([[3., 4.]])
 
 .. image:: images/curves10_and_17.png
    :align: center
@@ -644,9 +644,9 @@ successfully terminates
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.5, 0.5]])
+   array([[0.5, 0.5]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 0.5, 0.5]])
+   array([[0.5, 0.5]])
 
 .. image:: images/curves1_and_6.png
    :align: center
@@ -702,9 +702,9 @@ are resolved:
    >>> curve2 = bezier.Curve(nodes2, degree=1)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[ 0.5, 0.3]])
+   array([[0.5, 0.3]])
    >>> curve1.evaluate_multi(intersections[:, 0])
-   array([[ 4.5, 4.5]])
+   array([[4.5, 4.5]])
 
 .. image:: images/curves10_and_23.png
    :align: center

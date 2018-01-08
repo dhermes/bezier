@@ -386,7 +386,7 @@ class Surface(_base.Base):
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> point = surface.evaluate_barycentric(0.125, 0.125, 0.75)
            >>> point
-           array([[ 0.265625 , 0.73046875]])
+           array([[0.265625  , 0.73046875]])
 
         .. testcleanup:: surface-barycentric
 
@@ -419,9 +419,9 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> surface.evaluate_barycentric(-0.25, 0.75, 0.5, _verify=False)
-           array([[ 0.6875 , 0.546875]])
+           array([[0.6875 , 0.546875]])
            >>> surface.evaluate_barycentric(0.25, 0.25, 0.25, _verify=False)
-           array([[ 0.203125, 0.1875 ]])
+           array([[0.203125, 0.1875 ]])
 
         Args:
             lambda1 (float): Parameter along the reference triangle.
@@ -559,9 +559,9 @@ class Surface(_base.Base):
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> point = surface.evaluate_cartesian(0.125, 0.375)
            >>> point
-           array([[ 0.16015625, 0.44726562]])
+           array([[0.16015625, 0.44726562]])
            >>> surface.evaluate_barycentric(0.5, 0.125, 0.375)
-           array([[ 0.16015625, 0.44726562]])
+           array([[0.16015625, 0.44726562]])
 
         Args:
             s (float): Parameter along the reference triangle.
@@ -1048,16 +1048,16 @@ class Surface(_base.Base):
            >>> elevated
            <Surface (degree=3, dimension=2)>
            >>> elevated.nodes
-           array([[ 0.  , 0.  ],
-                  [ 1.  , 0.  ],
-                  [ 2.  , 0.  ],
-                  [ 3.  , 0.  ],
-                  [ 0.5 , 1.  ],
-                  [ 1.5 , 1.25],
-                  [ 2.5 , 1.5 ],
-                  [ 0.5 , 2.  ],
-                  [ 1.5 , 2.5 ],
-                  [ 0.  , 3.  ]])
+           array([[0.  , 0.  ],
+                  [1.  , 0.  ],
+                  [2.  , 0.  ],
+                  [3.  , 0.  ],
+                  [0.5 , 1.  ],
+                  [1.5 , 1.25],
+                  [2.5 , 1.5 ],
+                  [0.5 , 2.  ],
+                  [1.5 , 2.5 ],
+                  [0.  , 3.  ]])
 
         .. testcleanup:: surface-elevate
 
