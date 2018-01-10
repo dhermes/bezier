@@ -223,22 +223,6 @@ def _ulps_away(value1, value2, num_bits=1):
         return abs(value1 - value2) <= num_bits * abs(local_epsilon)
 
 
-def eye(num_elts):
-    """Get ``n x n`` identity matrix.
-
-    Provided here because ``np.eye`` doesn't allow creation in Fortran order.
-
-    Args:
-        num_elts (int): The number of elements (``n``) on each side.
-
-    Returns:
-        numpy.ndarray: The identity matrix.
-    """
-    id_mat = np.zeros((num_elts, num_elts), order='F')
-    id_mat.flat[::num_elts + 1] = 1.0
-    return id_mat
-
-
 def matrix_product(mat1, mat2):
     """Compute the product of two Fortran contiguous matrices.
 

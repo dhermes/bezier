@@ -658,7 +658,7 @@ def make_transform(degree, weights_a, weights_b, weights_c):
         ``weights_a``, ``1`` to ``weights_b`` and ``2`` to ``weights_c``.
     """
     num_nodes = ((degree + 1) * (degree + 2)) // 2
-    id_mat = _helpers.eye(num_nodes)
+    id_mat = np.eye(num_nodes, order='F')
 
     # Pre-compute the matrices that do the reduction so we don't
     # have to **actually** perform the de Casteljau algorithm

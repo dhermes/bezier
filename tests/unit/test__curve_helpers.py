@@ -820,9 +820,9 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
         from bezier import _curve_helpers
         from bezier import _helpers
 
-        nodes = _helpers.eye(degree + 2)
+        nodes = np.eye(degree + 2, order='F')
         reduction_mat = self._call_function_under_test(nodes)
-        id_mat = _helpers.eye(degree + 1)
+        id_mat = np.eye(degree + 1, order='F')
         elevation_mat = _curve_helpers.elevate_nodes(id_mat)
 
         result = _helpers.matrix_product(reduction_mat, elevation_mat)

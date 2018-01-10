@@ -402,10 +402,8 @@ class Test__specialize_surface(utils.NumPyTestCase):
             nodes, degree, weights_a, weights_b, weights_c)
 
     def _helper(self, degree, expected_a, expected_b, expected_c, expected_d):
-        from bezier import _helpers
-
         num_nodes = ((degree + 1) * (degree + 2)) // 2
-        id_mat = _helpers.eye(num_nodes)
+        id_mat = np.eye(num_nodes, order='F')
 
         computed_a = self._call_function_under_test(
             id_mat, degree,

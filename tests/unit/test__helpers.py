@@ -309,33 +309,6 @@ class Test_speedup_ulps_away(Test__ulps_away):
         return _helpers_speedup.ulps_away(value1, value2, **kwargs)
 
 
-class Test_eye(utils.NumPyTestCase):
-
-    @staticmethod
-    def _call_function_under_test(num_elts):
-        from bezier import _helpers
-
-        return _helpers.eye(num_elts)
-
-    def test_it(self):
-        expected3 = np.asfortranarray([
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ])
-        self.assertEqual(self._call_function_under_test(3), expected3)
-
-        expected6 = np.asfortranarray([
-            [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
-        ])
-        self.assertEqual(self._call_function_under_test(6), expected6)
-
-
 class Test_matrix_product(utils.NumPyTestCase):
 
     @staticmethod

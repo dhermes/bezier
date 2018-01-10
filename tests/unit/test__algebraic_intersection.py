@@ -1200,7 +1200,8 @@ class Test_lu_companion(utils.NumPyTestCase):
         rows, cols = lu_mat.shape
         self.assertEqual(rows, cols)
 
-        l_mat = np.asfortranarray(np.tril(lu_mat, -1) + _helpers.eye(rows))
+        l_mat = np.asfortranarray(
+            np.tril(lu_mat, -1) + np.eye(rows, order='F'))
         u_mat = np.triu(lu_mat)
         a_mat = _helpers.matrix_product(l_mat, u_mat)
         self.assertEqual(a_mat, expected_a)

@@ -1158,7 +1158,7 @@ def _check_non_simple(coeffs):
     companion = companion.T
     # Use Horner's method to evaluate f(companion)
     num_companion, _ = companion.shape
-    id_mat = _helpers.eye(num_companion)
+    id_mat = np.eye(num_companion, order='F')
     evaluated = coeffs[-1] * id_mat
     for index in six.moves.xrange(num_coeffs - 2, -1, -1):
         coeff = coeffs[index]
