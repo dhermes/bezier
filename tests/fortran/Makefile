@@ -18,7 +18,7 @@ FC = gfortran
 F77 = .f
 F90 = .f90
 OBJ = .o
-FCFLAGS = -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic
+FCFLAGS = -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic
 FC77FLAGS = -fPIC -O0
 COV_FLAGS = -fprofile-arcs -ftest-coverage
 
@@ -52,16 +52,21 @@ TEST_SOURCES := \
 	$(CURR_DIR)/test_surface$(F90) \
 	$(CURR_DIR)/test_curve_intersection$(F90) \
 	$(CURR_DIR)/test_surface_intersection$(F90)
+FNL_TEST_SOURCES := \
+	$(CURR_DIR)/functional_test_helpers$(F90) \
+	$(CURR_DIR)/functional_curve$(F90)
 F77_OBJS := $(patsubst $(QUADPACK_DIR)/%$(F77), $(CURR_DIR)/%$(OBJ), $(F77_SOURCES))
 F90_OBJS := $(patsubst $(SRC_DIR)/%$(F90), $(CURR_DIR)/%$(OBJ), $(F90_SOURCES))
 TEST_OBJS := $(patsubst $(CURR_DIR)/%$(F90), $(CURR_DIR)/%$(OBJ), $(TEST_SOURCES))
+FNL_TEST_OBJS := $(patsubst $(CURR_DIR)/%$(F90), $(CURR_DIR)/%$(OBJ), $(FNL_TEST_SOURCES))
 
 help:
-	@echo 'Makefile for Fortran unit tests'
+	@echo 'Makefile for Fortran unit and functional tests'
 	@echo ''
 	@echo 'Usage:'
 	@echo '   make unit          Build and run unit tests'
 	@echo '   make lcov          Run unit tests with coverage'
+	@echo '   make functional    Build and run functional tests'
 	@echo '   make clean         Clean generated files'
 	@echo ''
 
@@ -96,14 +101,27 @@ lcov: $(CURR_DIR)/unit-test-bin
 	  --output-directory $(CURR_DIR)/lcov-html \
 	  $(GENHTML_OPTIONS)
 
+$(CURR_DIR)/functional-test-bin: $(F77_OBJS) $(F90_OBJS) $(FNL_TEST_OBJS) $(CURR_DIR)/functional$(F90)
+	$(FC) $(FCFLAGS) $(COV_FLAGS) \
+	  -o $(CURR_DIR)/functional-test-bin \
+	  $(F77_OBJS) \
+	  $(F90_OBJS) \
+	  $(FNL_TEST_OBJS) \
+	  $(CURR_DIR)/functional$(F90)
+
+functional: $(CURR_DIR)/functional-test-bin
+	$(CURR_DIR)/functional-test-bin
+
 clean:
 	rm -f $(CURR_DIR)/*.gcno
 	rm -f $(CURR_DIR)/*.gcda
 	rm -f $(CURR_DIR)/*.mod
 	rm -f $(CURR_DIR)/*$(OBJ)
+	rm -f $(CURR_DIR)/functional-test-bin
 	rm -f $(CURR_DIR)/unit-test-bin
 	rm -f $(CURR_DIR)/coverage.info
 	rm -fr $(CURR_DIR)/unit-test-bin.dSYM
+	rm -fr $(CURR_DIR)/functional-test-bin.dSYM
 	rm -fr $(CURR_DIR)/lcov-html
 
-.PHONY: help unit lcov clean
+.PHONY: help unit lcov functional clean
