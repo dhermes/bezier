@@ -1,3 +1,15 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 CURR_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 SRC_DIR := $(realpath $(CURR_DIR)/../../src/bezier)
 QUADPACK_DIR := $(realpath $(SRC_DIR)/quadpack)
@@ -44,8 +56,14 @@ F77_OBJS := $(patsubst $(QUADPACK_DIR)/%$(F77), $(CURR_DIR)/%$(OBJ), $(F77_SOURC
 F90_OBJS := $(patsubst $(SRC_DIR)/%$(F90), $(CURR_DIR)/%$(OBJ), $(F90_SOURCES))
 TEST_OBJS := $(patsubst $(CURR_DIR)/%$(F90), $(CURR_DIR)/%$(OBJ), $(TEST_SOURCES))
 
-test: $(CURR_DIR)/test-bin
-	$(CURR_DIR)/test-bin
+help:
+	@echo 'Makefile for Fortran unit tests'
+	@echo ''
+	@echo 'Usage:'
+	@echo '   make unit          Build and run unit tests'
+	@echo '   make lcov          Run unit tests with coverage'
+	@echo '   make clean         Clean generated files'
+	@echo ''
 
 $(CURR_DIR)/%$(OBJ): $(QUADPACK_DIR)/%$(F77)
 	$(FC) $(FC77FLAGS) -c $< -o $@
@@ -56,16 +74,19 @@ $(CURR_DIR)/%$(OBJ): $(SRC_DIR)/%$(F90)
 $(CURR_DIR)/%$(OBJ): $(CURR_DIR)/%$(F90)
 	$(FC) $(FCFLAGS) $(COV_FLAGS) -c $< -o $@
 
-$(CURR_DIR)/test-bin: $(F77_OBJS) $(F90_OBJS) $(TEST_OBJS) $(CURR_DIR)/test.f90
+$(CURR_DIR)/unit-test-bin: $(F77_OBJS) $(F90_OBJS) $(TEST_OBJS) $(CURR_DIR)/unit_test$(F90)
 	$(FC) $(FCFLAGS) $(COV_FLAGS) \
-	  -o $(CURR_DIR)/test-bin \
+	  -o $(CURR_DIR)/unit-test-bin \
 	  $(F77_OBJS) \
 	  $(F90_OBJS) \
 	  $(TEST_OBJS) \
-	  $(CURR_DIR)/test.f90
+	  $(CURR_DIR)/unit_test$(F90)
 
-lcov: $(CURR_DIR)/test-bin
-	$(CURR_DIR)/test-bin
+unit: $(CURR_DIR)/unit-test-bin
+	$(CURR_DIR)/unit-test-bin
+
+lcov: $(CURR_DIR)/unit-test-bin
+	$(CURR_DIR)/unit-test-bin
 	lcov --capture \
 	  --directory $(CURR_DIR) \
 	  --output-file $(CURR_DIR)/coverage.info \
@@ -80,9 +101,9 @@ clean:
 	rm -f $(CURR_DIR)/*.gcda
 	rm -f $(CURR_DIR)/*.mod
 	rm -f $(CURR_DIR)/*$(OBJ)
-	rm -f $(CURR_DIR)/test-bin
+	rm -f $(CURR_DIR)/unit-test-bin
 	rm -f $(CURR_DIR)/coverage.info
-	rm -fr $(CURR_DIR)/test-bin.dSYM
+	rm -fr $(CURR_DIR)/unit-test-bin.dSYM
 	rm -fr $(CURR_DIR)/lcov-html
 
-.PHONY: test lcov clean
+.PHONY: help unit lcov clean

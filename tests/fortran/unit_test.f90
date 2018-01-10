@@ -10,7 +10,7 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-program test
+program unit_test
 
   use, intrinsic :: iso_c_binding, only: c_bool
   use curve_intersection, only: free_curve_intersections_workspace
@@ -37,4 +37,4 @@ program test
      stop 1  ! LCOV_EXCL_LINE
   end if
 
-end program test
+end program unit_test

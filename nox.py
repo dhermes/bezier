@@ -424,7 +424,7 @@ def fortran_unit(session):
     lcov_filename = os.path.join(test_dir, 'coverage.info')
 
     session.chdir(test_dir)
-    session.run('make', 'test')
+    session.run('make', 'unit')
     session.chdir(NOX_DIR)
 
     session.run(
