@@ -33,7 +33,7 @@ Docs: https://bezier.readthedocs.io/en/0.5.0/
     [`975ac6b`][0.5.0-8])
 -   Updating error message for `locate()` methods and adding a note that
     `locate()` / `evaluate*()` are (essentially) inverses. H/T to
-    @pdknsk [#36][0.5.0-4]
+    [@pdknsk][0.5.0-22] [#36][0.5.0-4]
 -   Using Fortran-contiguous arrays in
     `_check_non_simple()`. ([`b06c78e`][0.5.0-6])
 -   Moving most of `Curve.subdivide()` and `Surface.subdivide()` logic into
@@ -69,6 +69,7 @@ Docs: https://bezier.readthedocs.io/en/0.5.0/
 [0.5.0-19]: https://github.com/dhermes/bezier/commit/c326c00a5c0ee74f9aa53c2b104ac6d4eb5c6794
 [0.5.0-20]: https://github.com/dhermes/bezier/commit/3d832e78af2a951a642ff5860b9593abfa674ec3
 [0.5.0-21]: https://github.com/dhermes/bezier/commit/c64a97aa5599220b927094a41de04b0c75bbec33
+[0.5.0-22]: https://github.com/pdknsk
 
 ## 0.4.0
 
@@ -245,10 +246,11 @@ Docs: http://bezier.readthedocs.io/en/0.3.0/
     intersecions that don't contribute to a surface-surface intersection
 -   Throwing exception in
     [`Curve.locate()`](http://bezier.readthedocs.io/en/0.3.0/reference/bezier.curve.html#bezier.curve.Curve.locate)
-    when the subdivided intervals are very far apart (#13)
+    when the subdivided intervals are very far apart ([#13][0.3.0-2])
 -   Improving
     [`Surface.is_valid`](http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.is_valid)
-    by considering the signs of the Jacobian determinant at corner nodes (#12)
+    by considering the signs of the Jacobian determinant at corner
+    nodes ([#12][0.3.0-1])
 
 ### Miscellany
 
@@ -257,6 +259,9 @@ Docs: http://bezier.readthedocs.io/en/0.3.0/
 -   Adding AppVeyor configuration to make sure there are no Windows
     issues, testing exclusively with `conda` install
 -   Updating generated images with `matplotlib` 2.0
+
+[0.3.0-1]: https://github.com/dhermes/bezier/issues/12
+[0.3.0-2]: https://github.com/dhermes/bezier/issues/13
 
 ## 0.2.1
 
@@ -349,7 +354,7 @@ Changes:
 
 ## 0.1.0
 
-Second Release: https://pypi.org/project/bezier/0.1.0/
+Second Release: https://pypi.org/project/bezier/0.1.0/ <br>
 Docs: http://bezier.readthedocs.io/en/0.1.0/
 
 Primary changes since previous release
