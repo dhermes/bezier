@@ -2,10 +2,11 @@
 
 ## 0.5.0
 
-PyPI: https://pypi.org/project/bezier/0.5.0/
+PyPI: https://pypi.org/project/bezier/0.5.0/ <br>
 Docs: https://bezier.readthedocs.io/en/0.5.0/
 
-## Performance Optimizations
+### Performance Optimizations
+
 -   Change `wiggle_interval` to return `success` bool instead of raising an
     exception. This allows the implicitization approach to use it without
     having to use exceptions for flow-control. (Fixes [#22][0.5.0-5].)
@@ -14,7 +15,8 @@ Docs: https://bezier.readthedocs.io/en/0.5.0/
 -   Moving some more code to Fortran (e.g. `bbox_line_intersect()`
     [`3dcf640`][0.5.0-11])
 
-## New Features
+### New Features
+
 -   Making Fortran features available outside of Python (see
     [Native Libraries][0.5.0-1])
 -   C headers for each Fortran module (via
@@ -24,7 +26,8 @@ Docs: https://bezier.readthedocs.io/en/0.5.0/
 -   Implementing [`bezier_roots()`][0.5.0-13] polynomial root solver for
     polynomials written in Bernstein basis. ([`0dd6369`][0.5.0-12])
 
-## Miscellany
+### Miscellany
+
 -   Getting `bezier` [published][0.5.0-10] in the Journal of Open Source
     Science (JOSS). See [review][0.5.0-9]. ([`e6c4536`][0.5.0-7] and
     [`975ac6b`][0.5.0-8])
@@ -69,10 +72,11 @@ Docs: https://bezier.readthedocs.io/en/0.5.0/
 
 ## 0.4.0
 
-PyPI: https://pypi.org/project/bezier/0.4.0/
+PyPI: https://pypi.org/project/bezier/0.4.0/ <br>
 Docs: https://bezier.readthedocs.io/en/0.4.0/
 
-## Performance Optimizations
+### Performance Optimizations
+
 -   [Adding][0.4.0-29] Fortran [speedups][0.4.0-30] for many crucial computation helpers
     including
     -   intersecting line segments
@@ -98,7 +102,8 @@ Docs: https://bezier.readthedocs.io/en/0.4.0/
     intersections. For "nearby" intersections, parameter values can be
     rounded to `0` or `1`. ([`4a8458c`][0.4.0-25])
 
-## New Features
+### New Features
+
 -   [Adding][0.4.0-23] optional `strategy` argument (one of geometric or
     algebraic) to [`Surface.intersect()`][0.4.0-24]
     -   Added "algebraic" [`IntersectionStrategy`][0.4.0-20] via curve
@@ -108,7 +113,8 @@ Docs: https://bezier.readthedocs.io/en/0.4.0/
     is degree-elevated, otherwise it returns the "best" reduced form (in the
     least squares sense).
 
-## Interface Changes
+### Interface Changes
+
 -   (**Breaking change**) [Removing][0.4.0-5] `show` keyword from
     [`Curve.plot()`][0.4.0-2], [`Surface.plot()`][0.4.0-3] and
     [`CurvedPolygon.plot()`][0.4.0-4]
@@ -122,7 +128,8 @@ Docs: https://bezier.readthedocs.io/en/0.4.0/
     `Surface`. These are `@property`s intended only for REPL use, since
     classes with `__slots__` no longer have a `__dict__` attribute.
 
-## Miscellany
+### Miscellany
+
 -   Adding [`IntersectionClassification`][0.4.0-1] to docs ([ref][0.4.0-5])
 -   [Moving][0.4.0-12] most plotting into a dedicated module. More
     importantly, importing plotting helpers at **run-time** rather at
@@ -165,10 +172,11 @@ Docs: https://bezier.readthedocs.io/en/0.4.0/
 
 ## 0.3.0
 
-PyPI: https://pypi.org/project/bezier/0.3.0/
+PyPI: https://pypi.org/project/bezier/0.3.0/ <br>
 Docs: http://bezier.readthedocs.io/en/0.3.0/
 
-## Performance Optimizations
+### Performance Optimizations
+
 -   Adding `__slots__` for all classes
 -   Removing all usage of `@property` calls from internal callers (to avoid
     function call overhead)
@@ -192,7 +200,8 @@ Docs: http://bezier.readthedocs.io/en/0.3.0/
     if surface bounding boxes are disjoint in
     [`Surface.intersect()`](http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.intersect)
 
-## Breaking Changes
+### Breaking Changes
+
 -   Requiring `degree` in
     [`Curve`](http://bezier.readthedocs.io/en/0.3.0/reference/bezier.curve.html#bezier.curve.Curve) and
     [`Surface`](http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface)
@@ -227,7 +236,8 @@ Docs: http://bezier.readthedocs.io/en/0.3.0/
     reference to where they were used **in code**, not geometry. This class
     is not part of the public interface, but it is documented.)
 
-## Bug Fixes
+### Bug Fixes
+
 -   Handling cases where one corner of a surface touches another but their
     interiors don't intersect (in
     [`Surface.intersect()`](http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.intersect)).
@@ -240,7 +250,8 @@ Docs: http://bezier.readthedocs.io/en/0.3.0/
     [`Surface.is_valid`](http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.is_valid)
     by considering the signs of the Jacobian determinant at corner nodes (#12)
 
-## Miscellany
+### Miscellany
+
 -   Adding possible strategy to avoid linear convergence in
     [`newton_refine()`](http://bezier.readthedocs.io/en/0.3.0/algorithm-helpers.html#bezier._intersection_helpers.newton_refine)
 -   Adding AppVeyor configuration to make sure there are no Windows
@@ -249,7 +260,7 @@ Docs: http://bezier.readthedocs.io/en/0.3.0/
 
 ## 0.2.1
 
-PyPI: https://pypi.org/project/bezier/0.2.1/
+PyPI: https://pypi.org/project/bezier/0.2.1/ <br>
 Docs: http://bezier.readthedocs.io/en/0.2.1/
 
 - Added
@@ -275,7 +286,7 @@ Docs: http://bezier.readthedocs.io/en/0.2.1/
 
 ## 0.2.0
 
-PyPI: https://pypi.org/project/bezier/0.2.0/
+PyPI: https://pypi.org/project/bezier/0.2.0/ <br>
 Docs: http://bezier.readthedocs.io/en/0.2.0/
 
 - **Primary feature**:
@@ -316,10 +327,11 @@ Docs: http://bezier.readthedocs.io/en/0.2.0/
 
 ## 0.1.1
 
-PyPI: https://pypi.org/project/bezier/0.1.1/
+PyPI: https://pypi.org/project/bezier/0.1.1/ <br>
 Docs: http://bezier.readthedocs.io/en/0.1.1/
 
 Changes:
+
 - Adding
   [`Curve.elevate()`](http://bezier.readthedocs.io/en/0.1.1/reference/bezier.curve.html#bezier.curve.Curve.elevate) for degree elevation
 - Upgrading curve-curve intersection algorithm to ignore parallel line
