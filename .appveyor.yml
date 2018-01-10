@@ -107,13 +107,13 @@ install:
   # Install (hardcoded) conditional (on base) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "base")
         {
-          python -m pip install pytest mock "scipy >= 1.0.0rc1";
+          python -m pip install pytest mock "scipy >= 1.0.0";
         }
 
   # Install (hardcoded) conditional (on cover) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
-          python -m pip install pytest mock coverage pytest-cov "scipy >= 1.0.0rc1";
+          python -m pip install pytest mock coverage pytest-cov "scipy >= 1.0.0";
         }
 
   # Install (hardcoded) conditional (on functional) test dependencies.
