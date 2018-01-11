@@ -13,6 +13,8 @@
 #ifndef BEZIER_SURFACE_INTERSECTION_H
 #define BEZIER_SURFACE_INTERSECTION_H
 
+#include "bezier/status.h"
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -41,7 +43,7 @@ void surface_intersections(
     int *num_nodes2, double *nodes2, int *degree2,
     int *segment_ends_size, int *segment_ends,
     int *segments_size, CurvedPolygonSegment *segments,
-    int *num_intersected, SurfaceContained *contained, int *status);
+    int *num_intersected, SurfaceContained *contained, Status *status);
 void free_surface_intersections_workspace(void);
 
 #if defined (__cplusplus)

@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-enum Status {
+typedef enum Status {
   SUCCESS = 0,
   PARALLEL = 1,
   WIGGLE_FAIL = 2,
@@ -27,7 +27,7 @@ enum Status {
   BAD_TANGENT = 6,
   EDGE_END = 7,
   UNKNOWN = 999,
-};
+} Status;
 
 #if defined (__cplusplus)
 }

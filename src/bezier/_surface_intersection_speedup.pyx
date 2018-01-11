@@ -237,8 +237,9 @@ def surface_intersections(
     cdef int num_nodes1, num_nodes2
     cdef int segment_ends_size
     cdef int segments_size
-    cdef int num_intersected, status
+    cdef int num_intersected
     cdef SurfaceContained contained
+    cdef bezier._status.Status status
 
     # NOTE: We don't check that there are 2 columns.
     num_nodes1, _ = np.shape(nodes1)
@@ -263,9 +264,9 @@ def surface_intersections(
     )
 
     if status == bezier._status.Status.SUCCESS:
-        if contained == bezier._surface_intersection.FIRST:
+        if contained == bezier._surface_intersection.SurfaceContained.FIRST:
             return None, True, ()
-        elif contained == bezier._surface_intersection.SECOND:
+        elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
             return None, False, ()
         else:
             # Assumes, but does not check, that ``contained`` is equal to

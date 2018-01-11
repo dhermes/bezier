@@ -13,6 +13,9 @@
 """Cython wrapper for ``surface_intersection.f90``."""
 
 
+from bezier._status cimport Status
+
+
 cdef extern from "bezier/surface_intersection.h":
     cpdef enum SurfaceContained:
         NEITHER = 0
@@ -36,5 +39,5 @@ cdef extern from "bezier/surface_intersection.h":
         int *num_nodes2, double *nodes2, int *degree2,
         int *segment_ends_size, int *segment_ends,
         int *segments_size, CurvedPolygonSegment *segments,
-        int *num_intersected, SurfaceContained *contained, int *status)
+        int *num_intersected, SurfaceContained *contained, Status *status)
     void free_surface_intersections_workspace()
