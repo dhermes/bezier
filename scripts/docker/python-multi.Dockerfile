@@ -60,21 +60,19 @@ RUN for PYTHON_VERSION in 2.7.14 3.5.4 3.6.4; do \
   && rm -rf /usr/src/python* \
   && rm -rf ~/.cache/
 
-# REF: https://github.com/docker-library/pypy/blob/1959d8cab4eb9d7e6970298bc5a3ef8417ad4251/2/Dockerfile
-ENV PYPY_VERSION 5.9.0
+# REF: https://github.com/docker-library/pypy/blob/a530900865836dcb7eef819e48e6b969fc698217/2/Dockerfile
+ENV PYPY_VERSION 5.10.0
 RUN set -ex; \
   \
 # this "case" statement is generated via "update.sh"
     dpkgArch="$(dpkg --print-architecture)"; \
     case "${dpkgArch##*-}" in \
 # amd64
-    amd64) pypyArch='linux64'; sha256='790febd4f09e22d6e2f81154efc7dc4b2feec72712aaf4f82aa91b550abb4b48' ;; \
+    amd64) pypyArch='linux64'; sha256='da85af9240220179493ad66c857934dc7ea91aef8f168cd293a2d99af8346ee2' ;; \
 # arm32v5
-    armel) pypyArch='linux-armel'; sha256='ac0676d91dfb388c799ec5c2845f42018a666423376f52f3ae13d61fd2e6f87d' ;; \
-# arm32v7
-    armhf) pypyArch='linux-armhf-raring'; sha256='2597b7b21acdef4f2b81074a594157c9450363c74a17f005548c6b102f93cff4' ;; \
+    armel) pypyArch='linux-armel'; sha256='6fdd55dd8f674efd06f76edb60a09a03b9b04a5fbc56741f416a94a0b9d2ff91' ;; \
 # i386
-    i386) pypyArch='linux32'; sha256='a2431a9e4ef879da1a2b56b111013b4a6efb87d4173a37bf650de47834ac5fe4' ;; \
+    i386) pypyArch='linux32'; sha256='a2431a9e4ef879da1a2b56b111013b4a6efb87d4173a37bf650de47834ac5fe' ;; \
     *) echo >&2 "error: current architecture ($dpkgArch) does not have a corresponding PyPy $PYPY_VERSION binary release"; exit 1 ;; \
   esac; \
   \
