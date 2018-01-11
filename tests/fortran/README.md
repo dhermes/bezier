@@ -1,7 +1,18 @@
 # Unit Tests for Fortran Surface of `libbezier`
 
-This is so that the Fortran source can evolve without
-having to have an equivalent Python function for every
-piece of code.
+This is so that the Fortran source can evolve without having to have an
+equivalent Python function for every piece of code.
 
-To run the tests, simply run `make test` from this directory.
+Usage:
+
+```
+$ make
+Makefile for Fortran unit and functional tests
+
+Usage:
+   make unit          Build and run unit tests
+   make lcov          Run unit tests with coverage
+   make functional    Build and run functional tests
+   make clean         Clean generated files
+
+```
