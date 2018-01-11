@@ -14,11 +14,11 @@
 """Cython "wrapped" interface for `curve_intersection.f90`."""
 
 
-from libcpp cimport bool as bool_t
 import numpy as np
 from numpy cimport ndarray as ndarray_t
 
 cimport bezier._curve_intersection
+from bezier._curve_intersection cimport BoxIntersectionType
 cimport bezier._status
 
 
@@ -58,7 +58,8 @@ def newton_refine(
 
 
 def bbox_intersect(double[::1, :] nodes1, double[::1, :] nodes2):
-    cdef int num_nodes1, num_nodes2, enum_val
+    cdef int num_nodes1, num_nodes2
+    cdef BoxIntersectionType enum_val
 
     # NOTE: We don't check that there are 2 columns.
     num_nodes1, _ = np.shape(nodes1)
@@ -92,10 +93,11 @@ def workspace_size():
 
 def all_intersections(
         double[::1, :] nodes_first, double[::1, :] nodes_second,
-        bool_t allow_resize=True):
+        bint allow_resize=True):
     global WORKSPACE
     cdef int num_nodes_first, num_nodes_second
-    cdef int intersections_size, num_intersections, status
+    cdef int intersections_size, num_intersections
+    cdef bezier._status.Status status
     cdef ndarray_t[double, ndim=2, mode='fortran'] intersections
 
     # NOTE: We don't check that there are 2 columns.

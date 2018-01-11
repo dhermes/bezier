@@ -13,7 +13,7 @@
 """Cython wrapper for ``curve_intersection.f90``."""
 
 
-from libcpp cimport bool as bool_t
+from bezier._status cimport Status
 
 
 cdef extern from "bezier/curve_intersection.h":
@@ -28,10 +28,10 @@ cdef extern from "bezier/curve_intersection.h":
         double *new_s, double *new_t)
     void bbox_intersect(
         int *num_nodes1, double *nodes1,
-        int *num_nodes2, double *nodes2, int *enum_)
+        int *num_nodes2, double *nodes2, BoxIntersectionType *enum_)
     void curve_intersections(
         int *num_nodes_first, double *nodes_first,
         int *num_nodes_second, double *nodes_second,
         int *intersections_size, double *intersections,
-        int *num_intersections, int *status)
+        int *num_intersections, Status *status)
     void free_curve_intersections_workspace()

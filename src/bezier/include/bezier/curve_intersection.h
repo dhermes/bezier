@@ -13,17 +13,17 @@
 #ifndef BEZIER_CURVE_INTERSECTION_H
 #define BEZIER_CURVE_INTERSECTION_H
 
-#include "bezier/_bool_patch.h"
+#include "bezier/status.h"
 
 #if defined (__cplusplus)
 extern "C" {
 #endif
 
-enum BoxIntersectionType {
+typedef enum BoxIntersectionType {
   INTERSECTION = 0,
   TANGENT = 1,
   DISJOINT = 2,
-};
+} BoxIntersectionType;
 
 void newton_refine_curve_intersect(
     double *s, int *num_nodes1, double *nodes1,
@@ -31,12 +31,12 @@ void newton_refine_curve_intersect(
     double *new_s, double *new_t);
 void bbox_intersect(
     int *num_nodes1, double *nodes1,
-    int *num_nodes2, double *nodes2, int *enum_);
+    int *num_nodes2, double *nodes2, BoxIntersectionType *enum_);
 void curve_intersections(
     int *num_nodes_first, double *nodes_first,
     int *num_nodes_second, double *nodes_second,
     int *intersections_size, double *intersections,
-    int *num_intersections, int *status);
+    int *num_intersections, Status *status);
 void free_curve_intersections_workspace(void);
 
 #if defined (__cplusplus)
