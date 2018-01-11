@@ -422,7 +422,7 @@ To regenerate all the images:
    $ python tests/functional/test_surface_locate.py --save-plot
    $ python tests/functional/make_curve_curve_images.py
    $ python tests/functional/make_surface_surface_images.py
-   $ unset MATPLOTLIBRC PYTHONPATH
+   $ unset MATPLOTLIBRC GENERATE_IMAGES PYTHONPATH
 
 **********************
 Continuous Integration
