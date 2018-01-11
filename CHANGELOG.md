@@ -12,6 +12,11 @@ Docs: https://bezier.readthedocs.io/en/0.y.z/
 - Noting that `Surface.intersect()` can return a list of either
   `CurvedPolygon` or `Surface` instances ([`16e77d7`][0.y.z-5]).
 
+#### Breaking Changes
+
+- Removing `IntersectionClassification` enum from
+  `_status.pxd` ([`4da969e`][0.y.z-4]).
+
 ### ABI Changes
 
 #### Surface Changes
@@ -28,8 +33,6 @@ Docs: https://bezier.readthedocs.io/en/0.y.z/
 
 #### Breaking Changes
 
-- Removing `IntersectionClassification` enum from
-  `_status.pxd` ([`4da969e`][0.y.z-4]).
 - Removing inputs `curve_start / curve_end` and outputs `true_start / true_end`
   in `curve.h::specialize_curve` ([`959c547`][0.y.z-6])
 
