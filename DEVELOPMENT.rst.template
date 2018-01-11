@@ -57,20 +57,21 @@ variable:
 
 Using ``distutils`` and ``numpy.distutils`` to compile Fortran is not
 "fully-supported" (i.e. the tooling is ad-hoc). As a result, there is a
-decent amount of code in ``setup.py``, ``setup_helpers.py`` and
-``setup_helpers_osx.py`` to specify the build process. To make sure these
-are working as expected, it's possible to track **how** extensions are
-being installed. To actually make sure the correct compiler commands are
-invoked, provide a filename as the ``BEZIER_JOURNAL`` environment variable
-and then the commands invoked will be written there:
+decent amount of code in ``setup.py``, ``setup_helpers.py``,
+``setup_helpers_osx.py`` and ``setup_helpers_windows.py`` to specify the build
+process. To make sure these are working as expected, it's possible to
+track **how** extensions are being installed. To actually make sure the
+correct compiler commands are invoked, provide a filename as the
+``BEZIER_JOURNAL`` environment variable and then the commands invoked will
+be written there:
 
 .. code-block:: console
 
    $ BEZIER_JOURNAL=$(pwd)/journal.txt python setup.py build_ext --inplace
 
 The ``nox`` session ``check_journal`` uses this journaling option to verify
-the commands used to compile the extensions in Linux on CircleCI and in
-Mac OS X on `Travis CI`_.
+the commands used to compile the extensions in Linux on `CircleCI`_, in
+Mac OS X on `Travis CI`_ and in Windows on `AppVeyor`_.
 
 As the build complexity grows, it may make more sense to transition the steps
 out of Python and into `CMake`_, `SCons`_ or another build tool.
@@ -442,8 +443,8 @@ On Travis CI, Matthew Brett's `multibuild`_ is used to install "official"
 python.org CPython binaries for Mac OS X. Then tests are run in both 32-bit
 and 64-bit mode.
 
-It's worth noting that the Windows build story still needs work. As a result,
-only pure Python code is tested on AppVeyor.
+On AppVeyor, all extensions are built and tested with both 32-bit and 64-bit
+Python binaries.
 
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
 .. _Travis CI: https://travis-ci.org/dhermes/bezier
