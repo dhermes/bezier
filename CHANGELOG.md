@@ -78,16 +78,8 @@ Docs: https://bezier.readthedocs.io/en/0.6.0/
   - `base_x` ([`dea75e3`][0.6.0-2])
   - `base_y` ([`dea75e3`][0.6.0-2])
   - `width` ([`dea75e3`][0.6.0-2])
-- Stop accepting `degree` in curve helper functions
-  - `_curve_speedup.pyx::newton_refine` ([`d923579`][0.6.0-74])
-  - `_curve_speedup.pyx::subdivide_nodes` ([`06501c5`][0.6.0-7])
-  - `_curve_speedup.pyx::locate_point` ([`06501c5`][0.6.0-7])
-  - `_curve_speedup.pyx::elevate_nodes` ([`06501c5`][0.6.0-7])
-  - `_curve_speedup.pyx::get_curvature` ([`06501c5`][0.6.0-7])
-  - `_curve_speedup.pyx::reduce_pseudo_inverse` ([`06501c5`][0.6.0-7])
-  - `_curve_speedup.pyx::compute_length` ([`06501c5`][0.6.0-7])
 - Remove `dimension` argument in `_curve_speedup.pyx::elevate_nodes` since
-  it can be inferred from `nodes` ([`06501c5`][0.6.0-7])
+  it can be inferred from `nodes` ([`06501c5`][0.6.0-7]).
 
 ### ABI Changes
 
@@ -96,9 +88,9 @@ Docs: https://bezier.readthedocs.io/en/0.6.0/
 - Fully implemented curve-curve intersection (as
   `curve_intersection.h::curve_intersections`) and surface-surface
   intersection (as `surface_intersection.h::surface_intersections`) at
-  the ABI level
+  the ABI level.
 - Added the `surface_intersection.h` header file and implementations for the
-  described functions ([`fafd9ff`][0.6.0-84])
+  described functions ([`fafd9ff`][0.6.0-84]).
 - Newly added functions
   - `curve.h::subdivide_nodes_curve` ([`efb3ce6`][0.6.0-82])
   - `curve.h::newton_refine_curve` ([`2257344`][0.6.0-15])
@@ -127,10 +119,10 @@ Docs: https://bezier.readthedocs.io/en/0.6.0/
     [`ca134e6`][0.6.0-69], [`bf69852`][0.6.0-65])
   - `surface_intersection.h::surface_intersections`
   - `surface_intersection.h::free_surface_intersections_workspace`
-- Added `status.h` with an enum for failure states. Each Fortran procedure
-  that returns a status documents the possible values and if each value is
-  set directly or by a called procedure ([`9fc8575`][0.6.0-56],
-  [`c2accf7`][0.6.0-67])
+- Added [`status.h`][0.6.0-97] with an enum for failure states. Each Fortran
+  procedure that returns a status documents the possible values and if each
+  value is set directly or by a called procedure ([`9fc8575`][0.6.0-56],
+  [`c2accf7`][0.6.0-67]).
 
 #### Breaking Changes
 
@@ -265,6 +257,7 @@ Docs: https://bezier.readthedocs.io/en/0.6.0/
 [0.6.0-94]: https://github.com/dhermes/bezier/commit/72005fbb0a05715f6832f68dc8c3f04576781047
 [0.6.0-95]: http://bezier.readthedocs.io/en/0.6.0/native-libraries.html
 [0.6.0-96]: https://github.com/dhermes/bezier/commit/c92f98dde15a2ad3cbdf8db46fd48fbbed105552
+[0.6.0-97]: https://github.com/dhermes/bezier/blob/0.6.0/src/bezier/include/bezier/status.h
 
 ## 0.5.0
 
