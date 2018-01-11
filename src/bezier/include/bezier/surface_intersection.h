@@ -17,11 +17,11 @@
 extern "C" {
 #endif
 
-enum SurfaceContained {
+typedef enum SurfaceContained {
   NEITHER = 0,
   FIRST = 1,
   SECOND = 2,
-};
+} SurfaceContained;
 
 typedef struct CurvedPolygonSegment {
   double start;
@@ -41,7 +41,7 @@ void surface_intersections(
     int *num_nodes2, double *nodes2, int *degree2,
     int *segment_ends_size, int *segment_ends,
     int *segments_size, CurvedPolygonSegment *segments,
-    int *num_intersected, int *contained, int *status);
+    int *num_intersected, SurfaceContained *contained, int *status);
 void free_surface_intersections_workspace(void);
 
 #if defined (__cplusplus)

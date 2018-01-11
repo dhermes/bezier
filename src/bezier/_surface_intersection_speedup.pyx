@@ -22,6 +22,7 @@ cimport bezier._status
 cimport bezier._surface
 cimport bezier._surface_intersection
 from bezier._surface_intersection cimport CurvedPolygonSegment
+from bezier._surface_intersection cimport SurfaceContained
 
 
 cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
@@ -236,7 +237,8 @@ def surface_intersections(
     cdef int num_nodes1, num_nodes2
     cdef int segment_ends_size
     cdef int segments_size
-    cdef int num_intersected, contained, status
+    cdef int num_intersected, status
+    cdef SurfaceContained contained
 
     # NOTE: We don't check that there are 2 columns.
     num_nodes1, _ = np.shape(nodes1)
