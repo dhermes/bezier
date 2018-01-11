@@ -604,8 +604,7 @@ class Curve(_base.Base):
         Returns:
             Curve: The newly-specialized curve.
         """
-        new_nodes, _, _ = _curve_helpers.specialize_curve(
-            self._nodes, start, end, 0.0, 1.0)
+        new_nodes = _curve_helpers.specialize_curve(self._nodes, start, end)
         return Curve(new_nodes, self._degree, _copy=False)
 
     def locate(self, point):

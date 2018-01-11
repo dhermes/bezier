@@ -427,7 +427,7 @@ def de_casteljau_one_round(nodes, lambda1, lambda2):
         lambda1 * nodes[:-1, :] + lambda2 * nodes[1:, :])
 
 
-def _specialize_curve(nodes, start, end, curve_start, curve_end):
+def _specialize_curve(nodes, start, end):
     """Specialize a curve to a re-parameterization
 
     Does so by taking two points along the number line and then
@@ -447,15 +447,9 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end):
         nodes (numpy.ndarray): Control points for a curve.
         start (float): The start point of the interval we are specializing to.
         end (float): The end point of the interval we are specializing to.
-        curve_start (float): The beginning of the original interval which the
-            the curve defined by ``nodes`` defines.
-        curve_end (float): The end of the original interval which the
-            the curve defined by ``nodes`` defines.
 
     Returns:
-        Tuple[numpy.ndarray, float, float]: The control points for the
-        specialized curve, as well as the true start and true end of the
-        newly created curve.
+        numpy.ndarray: The control points for the specialized curve.
     """
     # pylint: disable=too-many-locals
     num_nodes, _ = np.shape(nodes)
@@ -486,10 +480,7 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end):
         key = (0,) * (num_nodes - index - 1) + (1,) * index
         result[index, :] = partial_vals[key]
 
-    interval_delta = curve_end - curve_start
-    true_start = curve_start + start * interval_delta
-    true_end = curve_start + end * interval_delta
-    return result, true_start, true_end
+    return result
     # pylint: enable=too-many-locals
 
 

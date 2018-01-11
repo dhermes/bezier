@@ -136,7 +136,6 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: true_start, true_end
     real(c_double) :: nodes1(2, 2)
     real(c_double) :: new_nodes1(2, 2), expected1(2, 2)
     real(c_double) :: nodes2(3, 2), left_nodes(3, 2), right_nodes(3, 2)
@@ -155,11 +154,8 @@ contains
     expected1(1, :) = [0.25_dp, 0.25_dp]
     expected1(2, :) = [0.75_dp, 0.75_dp]
     call specialize_curve( &
-         2, 2, nodes1, 0.25_dp, 0.75_dp, 0.125_dp, 0.25_dp, &
-         new_nodes1, true_start, true_end)
-    case_success = ( &
-         all(new_nodes1 == expected1) .AND. &
-         true_start == 0.15625_dp .AND. true_end == 0.21875_dp)
+         2, 2, nodes1, 0.25_dp, 0.75_dp, new_nodes1)
+    case_success = all(new_nodes1 == expected1)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic curve, after subdivision.
@@ -169,19 +165,14 @@ contains
     call subdivide_nodes( &
          3, 2, nodes2, left_nodes, right_nodes)
     call specialize_curve( &
-         3, 2, nodes2, 0.0_dp, 0.5_dp, 0.0_dp, 1.0_dp, &
-         new_nodes2, true_start, true_end)
-    case_success = ( &
-         all(new_nodes2 == left_nodes) .AND. &
-         true_start == 0.0_dp .AND. true_end == 0.5_dp)
+         3, 2, nodes2, 0.0_dp, 0.5_dp, new_nodes2)
+    case_success = all(new_nodes2 == left_nodes)
     ! Do a "second" check for the right-hand nodes.
     call specialize_curve( &
-         3, 2, nodes2, 0.5_dp, 1.0_dp, 0.0_dp, 1.0_dp, &
-         new_nodes2, true_start, true_end)
+         3, 2, nodes2, 0.5_dp, 1.0_dp, new_nodes2)
     case_success = ( &
          case_success .AND. &
-         all(new_nodes2 == right_nodes) .AND. &
-         true_start == 0.5_dp .AND. true_end == 1.0_dp)
+         all(new_nodes2 == right_nodes))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Cubic curve.
@@ -194,11 +185,8 @@ contains
     expected3(3, :) = [499.0_dp, -579.0_dp] / 512.0_dp
     expected3(4, :) = [735.0_dp, -335.0_dp] / 512.0_dp
     call specialize_curve( &
-         4, 2, nodes3, 0.125_dp, 0.625_dp, 0.0_dp, 1.0_dp, &
-         new_nodes3, true_start, true_end)
-    case_success = ( &
-         all(new_nodes3 == expected3) .AND. &
-         true_start == 0.125_dp .AND. true_end == 0.625_dp)
+         4, 2, nodes3, 0.125_dp, 0.625_dp, new_nodes3)
+    case_success = all(new_nodes3 == expected3)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Quartic curve.
@@ -213,12 +201,9 @@ contains
     expected4(4, :) = [2.2578125_dp, 6.484375_dp]
     expected4(5, :) = [2.47265625_dp, 6.5234375_dp]
     call specialize_curve( &
-         5, 2, nodes4, 0.5_dp, 0.75_dp, 0.0_dp, 1.0_dp, &
-         new_nodes4, true_start, true_end)
+         5, 2, nodes4, 0.5_dp, 0.75_dp, new_nodes4)
 
-    case_success = ( &
-         all(new_nodes4 == expected4) .AND. &
-         true_start == 0.5_dp .AND. true_end == 0.75_dp)
+    case_success = all(new_nodes4 == expected4)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_specialize_curve

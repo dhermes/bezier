@@ -479,27 +479,22 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
 class Test__specialize_curve(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(
-            nodes, start, end, curve_start, curve_end):
+    def _call_function_under_test(nodes, start, end):
         from bezier import _curve_helpers
 
-        return _curve_helpers._specialize_curve(
-            nodes, start, end, curve_start, curve_end)
+        return _curve_helpers._specialize_curve(nodes, start, end)
 
     def test_linear(self):
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        result, true_start, true_end = self._call_function_under_test(
-            nodes, 0.25, 0.75, 0.125, 0.25)
+        result = self._call_function_under_test(nodes, 0.25, 0.75)
         expected = np.asfortranarray([
             [0.25, 0.25],
             [0.75, 0.75],
         ])
         self.assertEqual(result, expected)
-        self.assertEqual(true_start, 0.15625)
-        self.assertEqual(true_end, 0.21875)
 
     def test_against_subdivision(self):
         import bezier
@@ -512,17 +507,11 @@ class Test__specialize_curve(utils.NumPyTestCase):
         curve = bezier.Curve(nodes, 2)
         left, right = curve.subdivide()
 
-        left_nodes, true_start, true_end = self._call_function_under_test(
-            nodes, 0.0, 0.5, 0.0, 1.0)
+        left_nodes = self._call_function_under_test(nodes, 0.0, 0.5)
         self.assertEqual(left.nodes, left_nodes)
-        self.assertEqual(true_start, 0.0)
-        self.assertEqual(true_end, 0.5)
 
-        right_nodes, true_start, true_end = self._call_function_under_test(
-            nodes, 0.5, 1.0, 0.0, 1.0)
+        right_nodes = self._call_function_under_test(nodes, 0.5, 1.0)
         self.assertEqual(right.nodes, right_nodes)
-        self.assertEqual(true_start, 0.5)
-        self.assertEqual(true_end, 1.0)
 
     def test_cubic(self):
         nodes = np.asfortranarray([
@@ -531,8 +520,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [1.0, -2.0],
             [3.0, 2.0],
         ])
-        result, true_start, true_end = self._call_function_under_test(
-            nodes, 0.125, 0.625, 0.0, 1.0)
+        result = self._call_function_under_test(nodes, 0.125, 0.625)
         expected = np.asfortranarray([
             [171, -187],
             [375, -423],
@@ -540,8 +528,6 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [735, -335],
         ], dtype=FLOAT64) / 512.0
         self.assertEqual(result, expected)
-        self.assertEqual(true_start, 0.125)
-        self.assertEqual(true_end, 0.625)
 
     def test_quartic(self):
         nodes = np.asfortranarray([
@@ -551,8 +537,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [3.0, 6.0],
             [3.0, 7.0],
         ])
-        result, true_start, true_end = self._call_function_under_test(
-            nodes, 0.5, 0.75, 0.0, 1.0)
+        result = self._call_function_under_test(nodes, 0.5, 0.75)
         expected = np.asfortranarray([
             [1.5625, 6.375],
             [1.78125, 6.4375],
@@ -561,20 +546,16 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [2.47265625, 6.5234375],
         ])
         self.assertEqual(result, expected)
-        self.assertEqual(true_start, 0.5)
-        self.assertEqual(true_end, 0.75)
 
 
 @utils.needs_curve_speedup
 class Test_speedup_specialize_curve(Test__specialize_curve):
 
     @staticmethod
-    def _call_function_under_test(
-            nodes, start, end, curve_start, curve_end):
+    def _call_function_under_test(nodes, start, end):
         from bezier import _curve_speedup
 
-        return _curve_speedup.specialize_curve(
-            nodes, start, end, curve_start, curve_end)
+        return _curve_speedup.specialize_curve(nodes, start, end)
 
 
 class Test__evaluate_hodograph(utils.NumPyTestCase):

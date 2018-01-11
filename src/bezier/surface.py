@@ -1127,8 +1127,7 @@ def _make_intersection(edge_info, all_edge_nodes):
     edges = []
     for index, start, end in edge_info:
         nodes = all_edge_nodes[index]
-        new_nodes, _, _ = _curve_helpers.specialize_curve(
-            nodes, start, end, 0.0, 1.0)
+        new_nodes = _curve_helpers.specialize_curve(nodes, start, end)
         degree = new_nodes.shape[0] - 1
         edge = _curve_mod.Curve(new_nodes, degree, _copy=False)
         edges.append(edge)

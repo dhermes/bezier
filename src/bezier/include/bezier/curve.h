@@ -27,8 +27,7 @@ void evaluate_multi(
     int *num_vals, double *s_vals, double *evaluated);
 void specialize_curve(
     int *num_nodes, int *dimension, double *nodes,
-    double *start, double *end, double *curve_start, double *curve_end,
-    double *new_nodes, double *true_start, double *true_end);
+    double *start, double *end, double *new_nodes);
 void evaluate_hodograph(
     double *s, int *num_nodes, int *dimension, double *nodes,
     double *hodograph);

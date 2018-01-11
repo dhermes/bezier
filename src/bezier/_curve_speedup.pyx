@@ -72,11 +72,8 @@ def evaluate_multi(
     return evaluated
 
 
-def specialize_curve(
-        double[::1, :] nodes, double start, double end,
-        double curve_start, double curve_end):
+def specialize_curve(double[::1, :] nodes, double start, double end):
     cdef int num_nodes, dimension
-    cdef double true_start, true_end
     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
 
     num_nodes, dimension = np.shape(nodes)
@@ -88,14 +85,10 @@ def specialize_curve(
         &nodes[0, 0],
         &start,
         &end,
-        &curve_start,
-        &curve_end,
         &new_nodes[0, 0],
-        &true_start,
-        &true_end,
     )
 
-    return new_nodes, true_start, true_end
+    return new_nodes
 
 
 def evaluate_hodograph(double s, double[::1, :] nodes):

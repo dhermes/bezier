@@ -232,17 +232,13 @@ contains
   end subroutine specialize_curve_quadratic
 
   subroutine specialize_curve( &
-       num_nodes, dimension_, nodes, start, end_, curve_start, curve_end, &
-       new_nodes, true_start, true_end) &
+       num_nodes, dimension_, nodes, start, end_, new_nodes) &
        bind(c, name='specialize_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(in) :: start, end_, curve_start, curve_end
+    real(c_double), intent(in) :: start, end_
     real(c_double), intent(out) :: new_nodes(num_nodes, dimension_)
-    real(c_double), intent(out) :: true_start, true_end
-    ! Variables outside of signature.
-    real(c_double) :: interval_delta
 
     if (num_nodes == 2) then
        new_nodes(1, :) = (1.0_dp - start) * nodes(1, :) + start * nodes(2, :)
@@ -254,11 +250,6 @@ contains
        call specialize_curve_generic( &
             num_nodes, dimension_, nodes, start, end_, new_nodes)
     end if
-
-    ! Now, compute the new interval.
-    interval_delta = curve_end - curve_start
-    true_start = curve_start + start * interval_delta
-    true_end = curve_start + end_ * interval_delta
 
   end subroutine specialize_curve
 
