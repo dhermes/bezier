@@ -958,8 +958,8 @@ class Surface(_base.Base):
                 Defaults to :data:`True`.
 
         Returns:
-            List[Union[~bezier.curved_polygon.CurvedPolygon, .Surface]]: List
-            of intersections (possibly empty).
+            List[Union[~bezier.curved_polygon.CurvedPolygon, \
+            ~bezier.surface.Surface]]: List of intersections (possibly empty).
 
         Raises:
             TypeError: If ``other`` is not a surface (and ``_verify=True``).
