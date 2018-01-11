@@ -1,5 +1,42 @@
 # Changelog
 
+## 0.y.z (unreleased)
+
+PyPI: https://pypi.org/project/bezier/0.y.z/ <br>
+Docs: https://bezier.readthedocs.io/en/0.y.z/
+
+### Python Changes
+
+#### Documentation
+
+- Noting that `Surface.intersect()` can return a list of either
+  `CurvedPolygon` or `Surface` instances ([`16e77d7`][0.y.z-5]).
+
+### ABI Changes
+
+#### Surface Changes
+
+- Switching from `int` to an actual enum for relevant functions
+  with output values that are enums:
+  - In `surface_intersection.h::surface_intersections`, `contained` is now a
+    `SurfaceContained` ([`0a9c0c3`][0.y.z-3]) and `status` is now a
+    `Status` ([`c356c32`][0.y.z-2])
+  - In `curve_intersection.h::bbox_intersect`, `enum_` is now a
+    `BoxIntersectionType` ([`ef856af`][0.y.z-1])
+  - In `curve_intersection.h::curve_intersections`, `status` is now a
+    `Status` ([`ef856af`][0.y.z-1])
+
+#### Breaking Changes
+
+- Removing `IntersectionClassification` enum from
+  `_status.pxd` ([`4da969e`][0.y.z-4]).
+
+[0.y.z-1]: https://github.com/dhermes/bezier/commit/ef856aff4e87ab0620d1ce28e7fdbd3395c8ec38
+[0.y.z-2]: https://github.com/dhermes/bezier/commit/c356c32b33781b03785b8868f59efd6ad3076a51
+[0.y.z-3]: https://github.com/dhermes/bezier/commit/0a9c0c3736e95deedeecb8d10284c92ebd39469d
+[0.y.z-4]: https://github.com/dhermes/bezier/commit/4da969e65cec37ca5c0a56e956e7a1546be24236
+[0.y.z-5]: https://github.com/dhermes/bezier/commit/16e77d74c526a216c0c2a74d4536cd1d9f93bcff
+
 ## 0.6.0
 
 PyPI: https://pypi.org/project/bezier/0.6.0/ <br>
