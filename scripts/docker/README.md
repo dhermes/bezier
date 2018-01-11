@@ -1,6 +1,6 @@
 ## [`python-multi`][1] Dockerfile
 
-> Multiple Python versions installed into Ubuntu LTS (16.04 as of October 2017)
+> Multiple Python versions installed into Ubuntu LTS (16.04 as of January 2018)
 
 Currently
 

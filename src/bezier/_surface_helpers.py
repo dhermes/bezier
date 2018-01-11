@@ -1964,7 +1964,7 @@ def ends_to_curve(start_node, end_node):
         end_node (.Intersection): The end of (the same) segment.
 
     Returns:
-        Tuple[int, float, float]: The 4-tuple of:
+        Tuple[int, float, float]: The 3-tuple of:
 
         * The edge index along the first surface (if in ``{0, 1, 2}``)
           or the edge index along the second surface shifted to the right by
