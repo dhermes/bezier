@@ -29,6 +29,7 @@ UNIT_TRIANGLE = np.asfortranarray([
     [0.0, 1.0],
 ])
 FLOAT64 = np.float64  # pylint: disable=no-member
+SPACING = np.spacing  # pylint: disable=no-member
 # pylint: disable=invalid-name,no-member
 slow = pytest.mark.skipif(
     pytest.config.getoption('--ignore-slow') and not HAS_SURFACE_SPEEDUP,
@@ -119,7 +120,8 @@ class Test_two_by_two_det(unittest.TestCase):
 
         np_det = np.linalg.det(mat)
         self.assertNotEqual(actual_det, np_det)
-        self.assertLess(abs(actual_det - np_det), 1e-16)
+        local_eps = abs(SPACING(actual_det))
+        self.assertAlmostEqual(actual_det, np_det, delta=local_eps)
 
 
 class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
