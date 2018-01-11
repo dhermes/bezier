@@ -650,9 +650,6 @@ contains
   subroutine projection_error( &
        num_nodes, dimension_, nodes, projected, error)
 
-    ! NOTE: This subroutine is not part of the C ABI for this module,
-    !       but it is (for now) public, so that it can be tested.
-
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(num_nodes, dimension_)
     real(c_double), intent(in) :: projected(num_nodes, dimension_)
