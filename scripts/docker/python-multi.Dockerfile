@@ -30,7 +30,7 @@ RUN apt-get update \
   && rm -f /var/cache/apt/archives/*.deb
 
 # Install the desired versions of Python.
-RUN for PYTHON_VERSION in 2.7.14 3.5.4 3.6.3; do \
+RUN for PYTHON_VERSION in 2.7.14 3.5.4 3.6.4; do \
   set -ex \
     && wget --no-check-certificate -O python-${PYTHON_VERSION}.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
     && wget --no-check-certificate -O python-${PYTHON_VERSION}.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
@@ -40,7 +40,7 @@ RUN for PYTHON_VERSION in 2.7.14 3.5.4 3.6.3; do \
       C01E1CAD5EA2C4F0B8E3571504C367C218ADD4FF \
       # 3.5.4 (REF: https://github.com/docker-library/python/blob/0b0fb40ad8aaa4c6f57192300b2ab61dd481ce86/3.5/jessie/Dockerfile#L22)
       97FC712E4C024BBEA48A61ED3A5CA953F73C700D \
-      # 3.6.3 (REF: https://github.com/docker-library/python/blob/0b0fb40ad8aaa4c6f57192300b2ab61dd481ce86/3.6/stretch/Dockerfile#L22)
+      # 3.6.4 (REF: https://github.com/docker-library/python/blob/2f73f58fb5ad731616109e0b8ed6367a0d474c52/3.6/stretch/Dockerfile#L22)
       0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D \
     && gpg --batch --verify python-${PYTHON_VERSION}.tar.xz.asc python-${PYTHON_VERSION}.tar.xz \
     && rm -r "$GNUPGHOME" python-${PYTHON_VERSION}.tar.xz.asc \
