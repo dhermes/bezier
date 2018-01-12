@@ -69,7 +69,7 @@ except ImportError as exc:  # pragma: NO COVER
 #       and related. This is **entirely** to accomodate builds where
 #       ``bezier`` is imported from source (and not installed).
 __author__ = 'Danny Hermes'
-__version__ = '0.6.1'
+__version__ = '0.6.2.dev1'
 """str: The current version of :mod:`bezier`."""
 __all__ = [
     '__author__',
