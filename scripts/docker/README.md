@@ -1,15 +1,4 @@
-## [`python-multi`][1] Dockerfile
-
-> Multiple Python versions installed into Ubuntu LTS (16.04 as of January 2018)
-
-Currently
-
-- CPython 2.7.14
-- CPython 3.5.4
-- CPython 3.6.4
-- PyPy 2.7.13 (version 5.10.0)
-
-## [`bezier`][2] Dockerfile
+## [`bezier`][1] Dockerfile
 
 > Provides Python, NumPy, gfortran and nox. For automated testing of bezier Python package.
 
@@ -36,10 +25,6 @@ for those who don't use `docker` on a regular basis).
 
 ```
 $ docker build \
->   --file python-multi.Dockerfile \
->   --tag dhermes/python-multi:latest \
->   .
-$ docker build \
 >   --file bezier.Dockerfile \
 >   --tag dhermes/bezier:latest \
 >   .
@@ -63,5 +48,4 @@ $ docker image rm ${IMAGE_ID}
 $ docker image rm ${REPOSITORY}:${TAG}
 ```
 
-[1]: https://hub.docker.com/r/dhermes/python-multi/
-[2]: https://hub.docker.com/r/dhermes/bezier/
+[1]: https://hub.docker.com/r/dhermes/bezier/

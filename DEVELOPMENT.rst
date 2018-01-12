@@ -452,7 +452,7 @@ Python binaries.
 .. _CircleCI config: https://github.com/dhermes/bezier/blob/master/.circleci/config.yml
 .. _Travis config: https://github.com/dhermes/bezier/blob/master/.travis.yml
 .. _AppVeyor config: https://github.com/dhermes/bezier/blob/master/.appveyor.yml
-.. _python-multi Dockerfile: https://github.com/dhermes/bezier/blob/master/scripts/docker/python-multi.Dockerfile
+.. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/master/scripts/docker/bezier.Dockerfile
 .. _multibuild: https://github.com/matthew-brett/multibuild
 
