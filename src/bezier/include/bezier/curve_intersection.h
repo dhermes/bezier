@@ -37,6 +37,10 @@ void curve_intersections(
     int *num_nodes_second, double *nodes_second,
     int *intersections_size, double *intersections,
     int *num_intersections, Status *status);
+void set_max_candidates(int *num_candidates);
+void get_max_candidates(int *num_candidates);
+void set_similar_ulps(int *num_bits);
+void get_similar_ulps(int *num_bits);
 void free_curve_intersections_workspace(void);
 
 #if defined (__cplusplus)

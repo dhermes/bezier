@@ -1027,6 +1027,55 @@ def _all_intersections(nodes_first, nodes_second):
     raise ValueError(msg)
 
 
+def _set_max_candidates(num_candidates):
+    """Set the max number of candidates allowed in :func:`_all_intersections`.
+
+    Allows modifying the **runtime** behavior by tweaking the maximum number
+    of candidates.
+
+    For tangent or coincident curves, the number of candidate pairs of
+    subdivided sections of eachcurve can increase exponentially, so
+    ``MAX_CANDIDATES`` is used to limit the growth of the list of
+    candidates.
+
+    Args:
+        num_candidates (int): The number of candidates to set.
+    """
+    global _MAX_CANDIDATES
+    _MAX_CANDIDATES = num_candidates
+
+
+def _get_max_candidates():
+    """Get the max number of candidates allowed in :func:`_all_intersections`.
+
+    Returns:
+        int: The number of candidates.
+    """
+    return _MAX_CANDIDATES
+
+
+def _set_similar_ulps(num_bits):
+    """Set the number of ULPs "wiggle" allowed in :func:`add_intersection`.
+
+    Allows modifying the **runtime** behavior by tweaking the number of ULPs
+    two parameters must differ by to be considered "the same".
+
+    Args:
+        num_bits (int): The number of ULPs wiggle room to allow.
+    """
+    global _SIMILAR_ULPS
+    _SIMILAR_ULPS = num_bits
+
+
+def _get_similar_ulps():
+    """Get the number of ULPs "wiggle" allowed in :func:`add_intersection`.
+
+    Returns:
+        int: The number of ULPs wiggle room to allow.
+    """
+    return _SIMILAR_ULPS
+
+
 class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
     """Enum representing all possible bounding box intersections.
 
@@ -1191,9 +1240,17 @@ class Linearization(object):
 if _curve_intersection_speedup is None:  # pragma: NO COVER
     bbox_intersect = _bbox_intersect
     all_intersections = _all_intersections
+    set_max_candidates = _set_max_candidates
+    get_max_candidates = _get_max_candidates
+    set_similar_ulps = _set_similar_ulps
+    get_similar_ulps = _get_similar_ulps
 else:
     bbox_intersect = _curve_intersection_speedup.bbox_intersect
     all_intersections = _curve_intersection_speedup.all_intersections
+    set_max_candidates = _curve_intersection_speedup.set_max_candidates
+    get_max_candidates = _curve_intersection_speedup.get_max_candidates
+    set_similar_ulps = _curve_intersection_speedup.set_similar_ulps
+    get_similar_ulps = _curve_intersection_speedup.get_similar_ulps
     atexit.register(
         _curve_intersection_speedup.free_curve_intersections_workspace)
 # pylint: enable=invalid-name

@@ -35,7 +35,8 @@ module curve_intersection
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, all_intersections, &
-       all_intersections_abi, free_curve_intersections_workspace
+       all_intersections_abi, set_max_candidates, get_max_candidates, &
+       set_similar_ulps, get_similar_ulps, free_curve_intersections_workspace
 
   ! Values of BoxIntersectionType enum:
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
@@ -49,7 +50,11 @@ module curve_intersection
   ! Set the threshold for linearization error at half the bits available.
   real(c_double), parameter :: LINEARIZATION_THRESHOLD = 0.5_dp**26
   integer(c_int), parameter :: MAX_INTERSECT_SUBDIVISIONS = 20
-  integer(c_int), parameter :: MAX_CANDIDATES = 64
+  ! Run-time parameters that can be modified. If multiple threads are used,
+  ! these **should** be thread-local (though it's expected that callers will
+  ! update these values **before** beginning computation).
+  integer(c_int) :: MAX_CANDIDATES = 64
+  integer(c_int) :: SIMILAR_ULPS = 1
   ! Long-lived workspaces for ``all_intersections()`` and
   ! ``all_intersections_abi()``. If multiple threads are used, each of these
   ! **should** be thread-local.
@@ -472,8 +477,10 @@ contains
     ! determined by ``ulps_away``).
     do index_ = 1, num_intersections
        if ( &
-            ulps_away(intersections(1, index_), s, 1, VECTOR_CLOSE_EPS) .AND. &
-            ulps_away(intersections(2, index_), t, 1, VECTOR_CLOSE_EPS)) then
+            ulps_away(intersections(1, index_), s, &
+            SIMILAR_ULPS, VECTOR_CLOSE_EPS) .AND. &
+            ulps_away(intersections(2, index_), t, &
+            SIMILAR_ULPS, VECTOR_CLOSE_EPS)) then
           return
        end if
     end do
@@ -949,6 +956,42 @@ contains
     end if
 
   end subroutine all_intersections_abi
+
+  subroutine set_max_candidates(num_candidates) &
+       bind(c, name='set_max_candidates')
+
+    integer(c_int), intent(in) :: num_candidates
+
+    MAX_CANDIDATES = num_candidates
+
+  end subroutine set_max_candidates
+
+  subroutine get_max_candidates(num_candidates) &
+       bind(c, name='get_max_candidates')
+
+    integer(c_int), intent(out) :: num_candidates
+
+    num_candidates = MAX_CANDIDATES
+
+  end subroutine get_max_candidates
+
+  subroutine set_similar_ulps(num_bits) &
+       bind(c, name='set_similar_ulps')
+
+    integer(c_int), intent(in) :: num_bits
+
+    SIMILAR_ULPS = num_bits
+
+  end subroutine set_similar_ulps
+
+  subroutine get_similar_ulps(num_bits) &
+       bind(c, name='get_similar_ulps')
+
+    integer(c_int), intent(out) :: num_bits
+
+    num_bits = SIMILAR_ULPS
+
+  end subroutine get_similar_ulps
 
   subroutine free_curve_intersections_workspace() &
        bind(c, name='free_curve_intersections_workspace')

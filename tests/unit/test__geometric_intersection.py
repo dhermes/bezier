@@ -1222,6 +1222,94 @@ class Test_speedup_all_intersections(Test__all_intersections):
         self.assertEqual(self.workspace_size(), 2)
 
 
+class Test__set_max_candidates(unittest.TestCase):
+    # NOTE: This is also a test for ``_get_max_candidates``.
+
+    @staticmethod
+    def _call_function_under_test(num_candidates):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection._set_max_candidates(num_candidates)
+
+    @staticmethod
+    def get_max_candidates():
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection._get_max_candidates()
+
+    def test_it(self):
+        curr_candidates = self.get_max_candidates()
+
+        new_candidates = 55
+        return_value = self._call_function_under_test(new_candidates)
+        self.assertIsNone(return_value)
+        self.assertEqual(self.get_max_candidates(), new_candidates)
+
+        # Put things back the way they were.
+        self._call_function_under_test(curr_candidates)
+
+
+@utils.needs_curve_intersection_speedup
+class Test_speedup_set_max_candidates(Test__set_max_candidates):
+    # NOTE: This is also a test for the ``get_max_candidates`` speedup.
+
+    @staticmethod
+    def _call_function_under_test(num_candidates):
+        from bezier import _curve_intersection_speedup
+
+        return _curve_intersection_speedup.set_max_candidates(num_candidates)
+
+    @staticmethod
+    def get_max_candidates():
+        from bezier import _curve_intersection_speedup
+
+        return _curve_intersection_speedup.get_max_candidates()
+
+
+class Test__set_similar_ulps(unittest.TestCase):
+    # NOTE: This is also a test for ``_get_similar_ulps``.
+
+    @staticmethod
+    def _call_function_under_test(num_bits):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection._set_similar_ulps(num_bits)
+
+    @staticmethod
+    def get_similar_ulps():
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection._get_similar_ulps()
+
+    def test_it(self):
+        curr_num_bits = self.get_similar_ulps()
+
+        new_num_bits = 4
+        return_value = self._call_function_under_test(new_num_bits)
+        self.assertIsNone(return_value)
+        self.assertEqual(self.get_similar_ulps(), new_num_bits)
+
+        # Put things back the way they were.
+        self._call_function_under_test(curr_num_bits)
+
+
+@utils.needs_curve_intersection_speedup
+class Test_speedup_set_similar_ulps(Test__set_similar_ulps):
+    # NOTE: This is also a test for the ``get_similar_ulps`` speedup.
+
+    @staticmethod
+    def _call_function_under_test(num_bits):
+        from bezier import _curve_intersection_speedup
+
+        return _curve_intersection_speedup.set_similar_ulps(num_bits)
+
+    @staticmethod
+    def get_similar_ulps():
+        from bezier import _curve_intersection_speedup
+
+        return _curve_intersection_speedup.get_similar_ulps()
+
+
 class TestSubdividedCurve(utils.NumPyTestCase):
 
     @staticmethod

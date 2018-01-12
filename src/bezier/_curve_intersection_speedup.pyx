@@ -148,5 +148,29 @@ def all_intersections(
         raise NotImplementedError(TOO_MANY_TEMPLATE.format(status))
 
 
+def set_max_candidates(int num_candidates):
+    bezier._curve_intersection.set_max_candidates(&num_candidates)
+
+
+def get_max_candidates():
+    cdef int num_candidates
+
+    bezier._curve_intersection.get_max_candidates(&num_candidates)
+
+    return num_candidates
+
+
+def set_similar_ulps(int num_bits):
+    bezier._curve_intersection.set_similar_ulps(&num_bits)
+
+
+def get_similar_ulps():
+    cdef int num_bits
+
+    bezier._curve_intersection.get_similar_ulps(&num_bits)
+
+    return num_bits
+
+
 def free_curve_intersections_workspace():
     bezier._curve_intersection.free_curve_intersections_workspace()
