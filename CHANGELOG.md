@@ -1,26 +1,26 @@
 # Changelog
 
-## 0.y.z (unreleased)
+## 0.6.1
 
-PyPI: https://pypi.org/project/bezier/0.y.z/ <br>
-Docs: https://bezier.readthedocs.io/en/0.y.z/
+PyPI: https://pypi.org/project/bezier/0.6.1/ <br>
+Docs: https://bezier.readthedocs.io/en/0.6.1/
 
 ### Python Changes
 
 #### Documentation
 
 - Noting that `Surface.intersect()` can return a list of either
-  `CurvedPolygon` or `Surface` instances ([`16e77d7`][0.y.z-5]).
+  `CurvedPolygon` or `Surface` instances ([`16e77d7`][0.6.1-5]).
 
 #### Breaking Changes
 
 - Removing `IntersectionClassification` enum from
-  `_status.pxd` ([`4da969e`][0.y.z-4]).
+  `_status.pxd` ([`4da969e`][0.6.1-4]).
 
 #### Non-Public API
 
 - Adding getters and setters for parameters used during curve-curve
-  intersection ([`ef4ebc0`][0.y.z-7]):
+  intersection ([`ef4ebc0`][0.6.1-7]):
   - `bezier._geometric_intersection.set_max_candidates()`
   - `bezier._geometric_intersection.get_max_candidates()`
   - `bezier._geometric_intersection.set_similar_ulps()`
@@ -33,14 +33,14 @@ Docs: https://bezier.readthedocs.io/en/0.y.z/
 - Switching from `int` to an actual enum for relevant functions
   with output values that are enums:
   - In `surface_intersection.h::surface_intersections`, `contained` is now a
-    `SurfaceContained` ([`0a9c0c3`][0.y.z-3]) and `status` is now a
-    `Status` ([`c356c32`][0.y.z-2])
+    `SurfaceContained` ([`0a9c0c3`][0.6.1-3]) and `status` is now a
+    `Status` ([`c356c32`][0.6.1-2])
   - In `curve_intersection.h::bbox_intersect`, `enum_` is now a
-    `BoxIntersectionType` ([`ef856af`][0.y.z-1])
+    `BoxIntersectionType` ([`ef856af`][0.6.1-1])
   - In `curve_intersection.h::curve_intersections`, `status` is now a
-    `Status` ([`ef856af`][0.y.z-1])
+    `Status` ([`ef856af`][0.6.1-1])
 - Adding getters and setters for parameters used during curve-curve
-  intersection ([`ef4ebc0`][0.y.z-7]):
+  intersection ([`ef4ebc0`][0.6.1-7]):
   - `curve_intersection.h::set_max_candidates`
   - `curve_intersection.h::get_max_candidates`
   - `curve_intersection.h::set_similar_ulps`
@@ -49,15 +49,15 @@ Docs: https://bezier.readthedocs.io/en/0.y.z/
 #### Breaking Changes
 
 - Removing inputs `curve_start / curve_end` and outputs `true_start / true_end`
-  in `curve.h::specialize_curve` ([`959c547`][0.y.z-6])
+  in `curve.h::specialize_curve` ([`959c547`][0.6.1-6])
 
-[0.y.z-1]: https://github.com/dhermes/bezier/commit/ef856aff4e87ab0620d1ce28e7fdbd3395c8ec38
-[0.y.z-2]: https://github.com/dhermes/bezier/commit/c356c32b33781b03785b8868f59efd6ad3076a51
-[0.y.z-3]: https://github.com/dhermes/bezier/commit/0a9c0c3736e95deedeecb8d10284c92ebd39469d
-[0.y.z-4]: https://github.com/dhermes/bezier/commit/4da969e65cec37ca5c0a56e956e7a1546be24236
-[0.y.z-5]: https://github.com/dhermes/bezier/commit/16e77d74c526a216c0c2a74d4536cd1d9f93bcff
-[0.y.z-6]: https://github.com/dhermes/bezier/commit/959c5473e97e80b1b4e4fd0109f7e79cf1dc36eb
-[0.y.z-7]: https://github.com/dhermes/bezier/commit/ef4ebc0654d863610df982f218449b27bd135afc
+[0.6.1-1]: https://github.com/dhermes/bezier/commit/ef856aff4e87ab0620d1ce28e7fdbd3395c8ec38
+[0.6.1-2]: https://github.com/dhermes/bezier/commit/c356c32b33781b03785b8868f59efd6ad3076a51
+[0.6.1-3]: https://github.com/dhermes/bezier/commit/0a9c0c3736e95deedeecb8d10284c92ebd39469d
+[0.6.1-4]: https://github.com/dhermes/bezier/commit/4da969e65cec37ca5c0a56e956e7a1546be24236
+[0.6.1-5]: https://github.com/dhermes/bezier/commit/16e77d74c526a216c0c2a74d4536cd1d9f93bcff
+[0.6.1-6]: https://github.com/dhermes/bezier/commit/959c5473e97e80b1b4e4fd0109f7e79cf1dc36eb
+[0.6.1-7]: https://github.com/dhermes/bezier/commit/ef4ebc0654d863610df982f218449b27bd135afc
 
 ## 0.6.0
 
