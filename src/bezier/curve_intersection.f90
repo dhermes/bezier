@@ -24,8 +24,8 @@ module curve_intersection
        CurveData, evaluate_multi, evaluate_hodograph, subdivide_curve
   implicit none
   private &
-       MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, CANDIDATES_ODD, &
-       CANDIDATES_EVEN, make_candidates
+       MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, SIMILAR_ULPS, &
+       CANDIDATES_ODD, CANDIDATES_EVEN, make_candidates
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, Subdivide_FIRST, Subdivide_SECOND, &

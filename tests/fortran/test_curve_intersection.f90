@@ -29,7 +29,8 @@ module test_curve_intersection
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, all_intersections, &
-       all_intersections_abi
+       all_intersections_abi, set_max_candidates, get_max_candidates, &
+       set_similar_ulps, get_similar_ulps
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -64,6 +65,8 @@ contains
     call test_intersect_one_round(success)
     call test_all_intersections(success)
     call test_all_intersections_abi(success)
+    call test_set_max_candidates(success)
+    call test_set_similar_ulps(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -1718,5 +1721,61 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_all_intersections_abi
+
+  subroutine test_set_max_candidates(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer(c_int) :: orig_num_candidates, num_candidates1, num_candidates2
+    integer :: case_id
+    character(18) :: name
+
+    ! NOTE: This is **also** a test for ``get_max_candidates``.
+
+    case_id = 1
+    name = "set_max_candidates"
+
+    ! CASE 1: Check that we can properly set and get the value.
+    call get_max_candidates(orig_num_candidates)
+
+    num_candidates1 = 33
+    call set_max_candidates(num_candidates1)
+    call get_max_candidates(num_candidates2)
+    case_success = ( &
+         orig_num_candidates == 64 .AND. &
+         num_candidates1 == num_candidates2)
+    call print_status(name, case_id, case_success, success)
+    ! Restore the original value.
+    call set_max_candidates(orig_num_candidates)
+
+  end subroutine test_set_max_candidates
+
+  subroutine test_set_similar_ulps(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer(c_int) :: orig_num_bits, num_bits1, num_bits2
+    integer :: case_id
+    character(16) :: name
+
+    ! NOTE: This is **also** a test for ``get_similar_ulps``.
+
+    case_id = 1
+    name = "set_similar_ulps"
+
+    ! CASE 1: Check that we can properly set and get the value.
+    call get_similar_ulps(orig_num_bits)
+
+    num_bits1 = 7
+    call set_similar_ulps(num_bits1)
+    call get_similar_ulps(num_bits2)
+    case_success = ( &
+         orig_num_bits == 1 .AND. &
+         num_bits1 == num_bits2)
+    call print_status(name, case_id, case_success, success)
+    ! Restore the original value.
+    call set_similar_ulps(orig_num_bits)
+
+  end subroutine test_set_similar_ulps
 
 end module test_curve_intersection
