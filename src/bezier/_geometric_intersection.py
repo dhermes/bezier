@@ -1041,7 +1041,7 @@ def _set_max_candidates(num_candidates):
     Args:
         num_candidates (int): The number of candidates to set.
     """
-    global _MAX_CANDIDATES
+    global _MAX_CANDIDATES  # pylint: disable=global-statement
     _MAX_CANDIDATES = num_candidates
 
 
@@ -1063,7 +1063,7 @@ def _set_similar_ulps(num_bits):
     Args:
         num_bits (int): The number of ULPs wiggle room to allow.
     """
-    global _SIMILAR_ULPS
+    global _SIMILAR_ULPS  # pylint: disable=global-statement
     _SIMILAR_ULPS = num_bits
 
 
