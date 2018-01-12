@@ -17,6 +17,15 @@ Docs: https://bezier.readthedocs.io/en/0.y.z/
 - Removing `IntersectionClassification` enum from
   `_status.pxd` ([`4da969e`][0.y.z-4]).
 
+#### Non-Public API
+
+- Adding getters and setters for parameters used during curve-curve
+  intersection ([`ef4ebc0`][0.y.z-7]):
+  - `bezier._geometric_intersection.set_max_candidates()`
+  - `bezier._geometric_intersection.get_max_candidates()`
+  - `bezier._geometric_intersection.set_similar_ulps()`
+  - `bezier._geometric_intersection.get_similar_ulps()`
+
 ### ABI Changes
 
 #### Surface Changes
@@ -30,6 +39,12 @@ Docs: https://bezier.readthedocs.io/en/0.y.z/
     `BoxIntersectionType` ([`ef856af`][0.y.z-1])
   - In `curve_intersection.h::curve_intersections`, `status` is now a
     `Status` ([`ef856af`][0.y.z-1])
+- Adding getters and setters for parameters used during curve-curve
+  intersection ([`ef4ebc0`][0.y.z-7]):
+  - `curve_intersection.h::set_max_candidates`
+  - `curve_intersection.h::get_max_candidates`
+  - `curve_intersection.h::set_similar_ulps`
+  - `curve_intersection.h::get_similar_ulps`
 
 #### Breaking Changes
 
@@ -42,6 +57,7 @@ Docs: https://bezier.readthedocs.io/en/0.y.z/
 [0.y.z-4]: https://github.com/dhermes/bezier/commit/4da969e65cec37ca5c0a56e956e7a1546be24236
 [0.y.z-5]: https://github.com/dhermes/bezier/commit/16e77d74c526a216c0c2a74d4536cd1d9f93bcff
 [0.y.z-6]: https://github.com/dhermes/bezier/commit/959c5473e97e80b1b4e4fd0109f7e79cf1dc36eb
+[0.y.z-7]: https://github.com/dhermes/bezier/commit/ef4ebc0654d863610df982f218449b27bd135afc
 
 ## 0.6.0
 
