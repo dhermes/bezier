@@ -1,0 +1,272 @@
+``0.6.0``
+=========
+
+|pypi| |docs|
+
+Performance Optimizations
+-------------------------
+
+-  Added recommended performance flags for ``gfortran`` based on
+   `recommendations <http://www.fortran90.org/src/faq.html>`__ on
+   ``fortran90.org``
+   (`3877982 <https://github.com/dhermes/bezier/commit/387798248cf452b27b8e7aa16b83417b1cdcb196>`__).
+
+   -  Extensions can be compiled in debug mode by setting ``DEBUG=True``
+      (`b62460b <https://github.com/dhermes/bezier/commit/b62460b47faec2666fceb13457bc11558f8079e9>`__).
+   -  Setting ``BEZIER_NO_EXTENSIONS=True`` will build pure-Python modules
+      only
+      (`3f6280c <https://github.com/dhermes/bezier/commit/3f6280ccfa1b7dbb9415aaf088dcc610ac4bd8ac>`__)
+
+-  Added `QUADPACK <https://en.wikipedia.org/wiki/QUADPACK>`__ to use in
+   ``curve.f90::compute_length``
+   (`985a4c0 <https://github.com/dhermes/bezier/commit/985a4c07c25c9bb362c6de615580a4246b3c16b1>`__).
+-  Implemented curve-curve intersection completely in Fortran (e.g.
+   `4a8f801 <https://github.com/dhermes/bezier/commit/4a8f80177b56f1241e96e973639cfc8a1273e080>`__)
+   which resulted in a 10x speedup when called from Python. Also
+   implemented surface-surface intersection completely in Fortran,
+   resulting in a 3x speedup.
+
+Python Changes
+--------------
+
+New Features
+~~~~~~~~~~~~
+
+-  Added ``CurvedPolygon._metadata`` to track where edges originated,
+   e.g. from a surface-surface intersection
+   (`871d23d <https://github.com/dhermes/bezier/commit/871d23d640e9333f5e7ae02e29ca878c80176682>`__).
+   This is used for sanity checking in functional tests
+   (`e253da2 <https://github.com/dhermes/bezier/commit/e253da2e507b4edf1627ddd753a6e5e73e563684>`__).
+-  Made speedup checks specific to the module, not all four. I.e.
+   ``bezier._HAS_SPEEDUP`` was dropped in favor of five members, e.g.
+   ``_HAS_CURVE_SPEEDUP``
+   (`d798f66 <https://github.com/dhermes/bezier/commit/d798f665fdd0c223a1b0a71919eb9a45ee86951d>`__).
+-  Added ``bezier.__author__`` and ``bezier.__version__``
+   `attributes <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.html#bezier.__version__>`__.
+-  `Added <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.html#bezier.get_dll>`__
+   ``bezier.get_dll()`` for Windows
+   (`699e39b <https://github.com/dhermes/bezier/commit/699e39b2671daed23a57d37b5e776c6627c72850>`__).
+-  Added ``bezier/__config__.py`` that adds ``libbezier`` to ``%PATH%``
+   on Windows
+   (`8538af4 <https://github.com/dhermes/bezier/commit/8538af47870849e6f55e0c861e0e2b720aa3ae75>`__).
+-  Fortran / Cython speedups added:
+
+   -  ``_curve_speedup.pyx::subdivide_nodes``
+   -  ``_curve_speedup.pyx::newton_refine``
+   -  ``_curve_speedup.pyx::locate_point``
+   -  ``_curve_speedup.pyx::elevate_nodes``
+   -  ``_curve_speedup.pyx::get_curvature``
+   -  ``_curve_speedup.pyx::reduce_pseudo_inverse``
+   -  ``_curve_speedup.pyx::full_reduce``
+   -  ``_curve_speedup.pyx::compute_length``
+   -  ``_curve_intersection_speedup.pyx::all_intersections``
+   -  ``_curve_intersection_speedup.pyx::free_curve_intersections_workspace``
+   -  ``_helpers_speedup.pyx::contains_nd``
+   -  ``_helpers_speedup.pyx::vector_close``
+   -  ``_helpers_speedup.pyx::in_interval``
+   -  ``_helpers_speedup.pyx::ulps_away``
+   -  ``_surface_speedup.pyx::specialize_surface``
+   -  ``_surface_speedup.pyx::subdivide_nodes``
+   -  ``_surface_speedup.pyx::compute_edge_nodes``
+   -  ``_surface_intersection_speedup.pyx::newton_refine``
+   -  ``_surface_intersection_speedup.pyx::locate_point``
+   -  ``_surface_intersection_speedup.pyx::surface_intersections``
+   -  ``_surface_intersection_speedup.pyx::free_surface_intersections_workspace``
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+-  ``Curve.intersect()``
+   `returns <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__
+   ``s-t`` parameters rather than ``x-y`` values
+   (`c309998 <https://github.com/dhermes/bezier/commit/c309998f705de7467e1222e41467190739ff3118>`__).
+-  ``Surface.intersect()``
+   `returns <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
+   a list with a single ``Surface`` when one of the two surfaces
+   is contained in the other
+   (`05b1fd9 <https://github.com/dhermes/bezier/commit/05b1fd98c5caea015b87819abdd2d6631ccc9bd4>`__).
+-  ``Surface.is_valid`` will only
+   `return <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
+   ``True`` if the map ``B(s, t)`` determined by the
+   surface has everywhere positive Jacobian. Previously a negative
+   Jacobian was also allowed
+   (`260fb51 <https://github.com/dhermes/bezier/commit/260fb512a67376a7b62b41c37377306c743c8b61>`__).
+-  Removed data members from ``Curve``:
+
+   -  ``edge_index``
+      (`b969488 <https://github.com/dhermes/bezier/commit/b969488df308ee78712db0b605a86d3adc0d3da6>`__)
+   -  ``next_edge``
+      (`28619e8 <https://github.com/dhermes/bezier/commit/28619e8ab4f7b205c7676e45e6339468a5d92460>`__)
+   -  ``previous_edge``
+      (`28619e8 <https://github.com/dhermes/bezier/commit/28619e8ab4f7b205c7676e45e6339468a5d92460>`__)
+   -  ``root``
+      (`db427f9 <https://github.com/dhermes/bezier/commit/db427f958266103e0a266721e18c66a7025d85ae>`__)
+   -  ``start``
+      (`39ee98b <https://github.com/dhermes/bezier/commit/39ee98b5add3333b90f73279b304dbb1fd0f2c54>`__)
+   -  ``end``
+      (`39ee98b <https://github.com/dhermes/bezier/commit/39ee98b5add3333b90f73279b304dbb1fd0f2c54>`__)
+
+-  Removed data members from ``Surface``:
+
+   -  ``base_x``
+      (`dea75e3 <https://github.com/dhermes/bezier/commit/dea75e3f2999e52f74c3d2603a4e162ae3eb2ef2>`__)
+   -  ``base_y``
+      (`dea75e3 <https://github.com/dhermes/bezier/commit/dea75e3f2999e52f74c3d2603a4e162ae3eb2ef2>`__)
+   -  ``width``
+      (`dea75e3 <https://github.com/dhermes/bezier/commit/dea75e3f2999e52f74c3d2603a4e162ae3eb2ef2>`__)
+
+-  Remove ``dimension`` argument in
+   ``_curve_speedup.pyx::elevate_nodes`` since it can be inferred from
+   ``nodes``
+   (`06501c5 <https://github.com/dhermes/bezier/commit/06501c5c05e4f646e756f225dc2db0fab98cbbab>`__).
+
+ABI Changes
+-----------
+
+New Features
+~~~~~~~~~~~~
+
+-  Fully implemented curve-curve intersection (as
+   ``curve_intersection.h::curve_intersections``) and surface-surface
+   intersection (as ``surface_intersection.h::surface_intersections``)
+   at the ABI level.
+-  Added the ``surface_intersection.h`` header file and implementations
+   for the described functions
+   (`fafd9ff <https://github.com/dhermes/bezier/commit/fafd9ff181755e9b204372f1b94dd10578a16382>`__).
+-  Newly added functions
+
+   -  ``curve.h::subdivide_nodes_curve``
+      (`efb3ce6 <https://github.com/dhermes/bezier/commit/efb3ce65cef671d1745028594bb5f0897e96e053>`__)
+   -  ``curve.h::newton_refine_curve``
+      (`2257344 <https://github.com/dhermes/bezier/commit/2257344abc501d4456f9b819969cf8dd9cbefb0b>`__)
+   -  ``curve.h::locate_point_curve``
+      (`2121101 <https://github.com/dhermes/bezier/commit/21211010bdf5640b6bbfbbd6a270d35dc928efbc>`__,
+      `32b0fa9 <https://github.com/dhermes/bezier/commit/32b0fa953f7f4dd9ea8f0b3439206f6185f3d863>`__)
+   -  ``curve.h::elevate_nodes_curve``
+      (`b03fc28 <https://github.com/dhermes/bezier/commit/b03fc280053043996138932043de4f6ac69e16ce>`__)
+   -  ``curve.h::get_curvature``
+      (`69cb2f8 <https://github.com/dhermes/bezier/commit/69cb2f852d82076c3e7c98ce68097bc3b8b4a5b6>`__)
+   -  ``curve.h::reduce_pseudo_inverse``
+      (`7c3db17 <https://github.com/dhermes/bezier/commit/7c3db1727c45763ec7a14550764979cb9ceafcb5>`__)
+   -  ``curve.h::full_reduce``
+      (`4abd309 <https://github.com/dhermes/bezier/commit/4abd309ff0125bf82f91a71946511e82fd7eaf8a>`__)
+   -  ``curve.h::compute_length``
+      (`985a4c0 <https://github.com/dhermes/bezier/commit/985a4c07c25c9bb362c6de615580a4246b3c16b1>`__,
+      `7e71b20 <https://github.com/dhermes/bezier/commit/7e71b202cfcb2ea575771c2e1169d0e0c27e481b>`__)
+   -  ``curve_intersection.h::curve_intersections``
+      (`c92f98d <https://github.com/dhermes/bezier/commit/c92f98dde15a2ad3cbdf8db46fd48fbbed105552>`__)
+   -  ``curve_intersection.h::free_curve_intersections_workspace``
+      (`c92f98d <https://github.com/dhermes/bezier/commit/c92f98dde15a2ad3cbdf8db46fd48fbbed105552>`__)
+   -  ``helpers.h::contains_nd``
+      (`36f4b5e <https://github.com/dhermes/bezier/commit/36f4b5e9a6f872178781390b352e42ad15a4d9e1>`__)
+   -  ``helpers.h::vector_close``
+      (`9f3716a <https://github.com/dhermes/bezier/commit/9f3716ae18ea5e592db01f37242623b718e23a84>`__)
+   -  ``helpers.h::in_interval``
+      (`3c0af5d <https://github.com/dhermes/bezier/commit/3c0af5d32aa494efc15cb23a3bf1d15c0b5859b1>`__)
+   -  ``helpers.h::ulps_away``
+      (`0197237 <https://github.com/dhermes/bezier/commit/01972377303afa9a41c79533ee967b8bcc526435>`__)
+   -  ``surface.h::specialize_surface``
+      (`eb8693e <https://github.com/dhermes/bezier/commit/eb8693e823f7a2af3fb6682f76a667b20d419e5d>`__,
+      `fcd5bad <https://github.com/dhermes/bezier/commit/fcd5bad6fe47499c23db32092e7a749e2e866f92>`__)
+   -  ``surface.h::subdivide_nodes_surface``
+      (`6027210 <https://github.com/dhermes/bezier/commit/602721004887cd17e977e7255c7f574cd321d032>`__,
+      `4fc5f2a <https://github.com/dhermes/bezier/commit/4fc5f2a552a91ef738f062ff1578d2865672c9f6>`__,
+      `8beb1ac <https://github.com/dhermes/bezier/commit/8beb1ace5934d7bce03cb19c483aa1aec57ec06b>`__,
+      `0b2b1f3 <https://github.com/dhermes/bezier/commit/0b2b1f3edeab418bbacc8cd60a419a201cfdd038>`__,
+      `d27b86f <https://github.com/dhermes/bezier/commit/d27b86f417c4f6227c08bfc0c50da88584d7996b>`__,
+      `88c302b <https://github.com/dhermes/bezier/commit/88c302b5d070d512339bd1b16960a4e43025005c>`__)
+   -  ``surface.h::compute_edge_nodes``
+      (`2d02590 <https://github.com/dhermes/bezier/commit/2d02590ed972dba902958a07598b95f8099a7295>`__,
+      `f86649a <https://github.com/dhermes/bezier/commit/f86649aa1f631a11ad314754a236719dd6f0c714>`__)
+   -  ``surface_intersection.h::newton_refine_surface``
+      (`93c288d <https://github.com/dhermes/bezier/commit/93c288d5e5865986aa2627ea81f12b6370099865>`__)
+   -  ``surface_intersection.h::locate_point_surface``
+      (`325ea47 <https://github.com/dhermes/bezier/commit/325ea479665947016844b3ea37cbccf5962f5876>`__,
+      `ca134e6 <https://github.com/dhermes/bezier/commit/ca134e63f1061b99404e3dfedefdd5d8cf5956ea>`__,
+      `bf69852 <https://github.com/dhermes/bezier/commit/bf698525d99f2424717ba4a8559ea2ab84abe6cb>`__)
+   -  ``surface_intersection.h::surface_intersections``
+   -  ``surface_intersection.h::free_surface_intersections_workspace``
+
+-  Added
+   `status.h <https://github.com/dhermes/bezier/blob/0.6.0/src/bezier/include/bezier/status.h>`__
+   with an enum for failure states. Each Fortran procedure that returns
+   a status documents the possible values and if each value is set
+   directly or by a called procedure
+   (`9fc8575 <https://github.com/dhermes/bezier/commit/9fc857553fd1b525e801970cfe0eb2e2288f5319>`__,
+   `c2accf7 <https://github.com/dhermes/bezier/commit/c2accf76047741d7a42327a67c4732b488c56600>`__).
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+-  Removed functions
+
+   -  ``curve.h::specialize_curve_generic``
+      (`d52453b <https://github.com/dhermes/bezier/commit/d52453ba27c993422da3fbbc78c53aea960fd525>`__)
+   -  ``curve.h::specialize_curve_quadratic``
+      (`d52453b <https://github.com/dhermes/bezier/commit/d52453ba27c993422da3fbbc78c53aea960fd525>`__)
+   -  ``curve_intersection.h::from_linearized``
+      (`d62e462 <https://github.com/dhermes/bezier/commit/d62e462507287af66f51043889ae56be21cb8e45>`__)
+   -  ``curve_intersection.h::bbox_line_intersect``
+      (`72c0179 <https://github.com/dhermes/bezier/commit/72c017995f7df9bfa42347dbc0f967e666bbadee>`__)
+   -  ``curve_intersection.h::linearization_error``
+      (`4a3378b <https://github.com/dhermes/bezier/commit/4a3378b11f54d582f7f223c92939745fe8daaa4c>`__)
+   -  ``curve_intersection.h::segment_intersection``
+      (`4060590 <https://github.com/dhermes/bezier/commit/40605901872d679956b384bedf426f6cbf7a43c5>`__)
+   -  ``curve_intersection.h::parallel_different``
+      (`df3e195 <https://github.com/dhermes/bezier/commit/df3e195a77236799ed975d3b9251c45eb4bbf29a>`__)
+
+-  Renamed functions
+
+   -  ``curve.h::newton_refine`` to ``newton_refine_curve``
+      (`194ce95 <https://github.com/dhermes/bezier/commit/194ce95a8721e014d3a7d73213d358d89bc81fd8>`__)
+   -  ``curve.h::elevate_nodes`` to ``elevate_nodes_curve``
+      (`194ce95 <https://github.com/dhermes/bezier/commit/194ce95a8721e014d3a7d73213d358d89bc81fd8>`__)
+   -  ``curve_intersection.h::newton_refine_intersect`` to
+      ``newton_refine_curve_intersect``
+      (`a055525 <https://github.com/dhermes/bezier/commit/a055525c1ab81246bc6d040fdce376772cf65703>`__)
+
+-  Replaced ``degree`` with ``num_nodes (== degree + 1)`` in functions
+   that operate on curves:
+
+   -  ``curve.h::evaluate_curve_barycentric``
+      (`13eacdd <https://github.com/dhermes/bezier/commit/13eacdd189b81acbbcc3e39bb6643c6edf6a4750>`__)
+   -  ``curve.h::evaluate_multi``
+      (`962c288 <https://github.com/dhermes/bezier/commit/962c288a2eb3c0c7fdeb6f055ebbff57331b7cf5>`__)
+   -  ``curve.h::specialize_curve``
+      (`ac86233 <https://github.com/dhermes/bezier/commit/ac86233dea35c56f5b5c81fd1020ca480487d87c>`__)
+   -  ``curve.h::evaluate_hodograph``
+      (`9170855 <https://github.com/dhermes/bezier/commit/91708552355b71e95adb8454ec69d1f3d1e81c22>`__)
+   -  ``curve_intersection.h::newton_refine_curve_intersect``
+      (`80ec491 <https://github.com/dhermes/bezier/commit/80ec491d5d7094d378de5110b2b254e33ca271a1>`__)
+
+Miscellany
+----------
+
+-  Added documentation for "native extensions" in ``DEVELOPMENT``
+   (`2f9f2c4 <https://github.com/dhermes/bezier/commit/2f9f2c49585238024722b5a5b4fb60ea3338b9b3>`__).
+-  Overhauled
+   `native-libraries doc <http://bezier.readthedocs.io/en/0.6.0/native-libraries.html>`__
+   with subsections for OS X and Windows
+   (`bfa75ee <https://github.com/dhermes/bezier/commit/bfa75eedda8187bef59ca8e04f9d04ee0fc28b97>`__,
+   `72005fb <https://github.com/dhermes/bezier/commit/72005fbb0a05715f6832f68dc8c3f04576781047>`__,
+   etc.).
+-  Added Fortran unit tests
+   (`758bdd1 <https://github.com/dhermes/bezier/commit/758bdd15426424c1566bda15c03594bc2e66410a>`__,
+   `e8afba7 <https://github.com/dhermes/bezier/commit/e8afba7c64a7ecc2ded84efb5f164513974963cf>`__,
+   `3164365 <https://github.com/dhermes/bezier/commit/3164365b261564c0da158ab46d899357735fbd31>`__,
+   etc.).
+-  Began testing in Mac OS X on Travis
+   (`9ac5e8e <https://github.com/dhermes/bezier/commit/9ac5e8e4a02ce8b64b9e6b5142a6c1fda01ee787>`__,
+   `85f7619 <https://github.com/dhermes/bezier/commit/85f7619929debd3730d6ddafa4ac75789ad8e5f3>`__,
+   etc.).
+-  Added a workaround (``include/bezier/_bool_patch.h``) for the missing
+   support for ``bool`` in old MSVC versions that are required to work
+   with Python 2.7
+   (`5577178 <https://github.com/dhermes/bezier/commit/5577178a3ef45487667cd72d81146390be2b0c41>`__).
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.6.0.svg
+   :target: https://pypi.org/project/bezier/0.6.0/
+   :alt: PyPI link to release 0.6.0
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.6.0
+   :target: https://bezier.readthedocs.io/en/0.6.0/
+   :alt: Documentation for release 0.6.0

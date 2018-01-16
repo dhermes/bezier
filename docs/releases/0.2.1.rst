@@ -1,0 +1,32 @@
+``0.2.1``
+=========
+
+|pypi| |docs|
+
+-  Added ``Curve.locate()`` public
+   `method <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.curve.html#bezier.curve.Curve.locate>`__
+   and ``_curve_helpers.newton_refine()``
+   `helper <http://bezier.readthedocs.io/en/0.2.1/algorithm-helpers.html#bezier._curve_helpers.newton_refine>`__
+-  Adding optional ``color`` to ``Surface.plot()``
+   `method <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.surface.html#bezier.surface.Surface.plot>`__
+-  Adding ``Surface.elevate()``
+   `method <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.surface.html#bezier.surface.Surface.elevate>`__
+   for degree elevation
+-  Fixing nodes defining the `self-intersecting
+   curve <http://bezier.readthedocs.io/en/0.2.1/curve-curve-intersection.html#detecting-self-intersections>`__
+   in ``curve-curve-intersection`` (no code in ``bezier`` was broken /
+   fixed, just "bad" docs)
+-  Allow wiggle outside of ``[0, 1]`` when intersecting linearizations
+   in ``from_linearized()``
+-  Collapsing almost-same parameter values in ``intersect_one_round()``
+   (via ``from_linearized()``). Previously checked for bitwise equality
+   and relied on checking values at the boundary of a subdivided
+   interval
+-  Adding non-public ``bezier._plot_helpers`` module
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.2.1.svg
+   :target: https://pypi.org/project/bezier/0.2.1/
+   :alt: PyPI link to release 0.2.1
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.2.1
+   :target: https://bezier.readthedocs.io/en/0.2.1/
+   :alt: Documentation for release 0.2.1

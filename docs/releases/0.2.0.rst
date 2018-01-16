@@ -1,0 +1,49 @@
+``0.2.0``
+=========
+
+|pypi| |docs|
+
+-  **Primary feature**: ``Surface.intersect()``
+   `method <http://bezier.readthedocs.io/en/0.2.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
+   added
+-  To support intersection, needed ``CurvedPolygon``
+   `type <http://bezier.readthedocs.io/en/0.2.0/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon>`__,
+   i.e. an object defined only by its curved sides (whereas a
+   ``Surface`` may have interior control points)
+-  Added ``Curve.specialize()``
+   `method <http://bezier.readthedocs.io/en/0.2.0/reference/bezier.curve.html#bezier.curve.Curve.specialize>`__
+   for chopping a ``Curve`` at arbitrary parameter values (this is also
+   used in surface-surface intersection)
+-  Added images to most documented functions and methods to illustrate
+   the concept at hand. For example the ``classify_intersection()``
+   `helper <http://bezier.readthedocs.io/en/0.2.0/algorithm-helpers.html#bezier._surface_helpers.classify_intersection>`__
+   has **seven** images to enumerate all of the possible cases covered
+   in the algorithm.
+-  Added ``Surface.locate()``
+   `method <http://bezier.readthedocs.io/en/0.2.0/reference/bezier.surface.html#bezier.surface.Surface.locate>`__,
+   made possible by the ``newton_refine()``
+   `helper <http://bezier.readthedocs.io/en/0.2.0/algorithm-helpers.html#bezier._surface_helpers.newton_refine>`__
+-  Added `Algorithm
+   Helpers <http://bezier.readthedocs.io/en/0.2.0/algorithm-helpers.html>`__
+   doc to try to explain some of the core algorithms at work (not all
+   are documented yet). Some of this content was previously documented
+   in the ``bezier.curve`` module, but was moved. Since, documentation
+   has been added for ``get_curvature``, ``newton_refine`` (for
+   surfaces), ``classify_intersection`` (to determine how two curves
+   interact while intersecting) and for some helper classes.
+-  Added ``Surface.base_x``, ``Surface.base_y`` and ``Surface.width``
+   `properties <http://bezier.readthedocs.io/en/0.2.0/reference/bezier.surface.html#bezier.surface.Surface.width>`__
+   to allow tracking a sub-surface during the subdivision process (this
+   is an analogue to the ``Curve.start`` and ``Curve.end``
+   `properties <http://bezier.readthedocs.io/en/0.2.0/reference/bezier.curve.html#bezier.curve.Curve.start>`__)
+-  Added ``Curve.edge_index``, ``Curve.next_edge`` and
+   ``Curve.previous_edge``
+   `properties <http://bezier.readthedocs.io/en/0.2.0/reference/bezier.curve.html#bezier.curve.Curve.edge_index>`__
+   to allow tracking when curves are actually the sides of a ``Surface``
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.2.0.svg
+   :target: https://pypi.org/project/bezier/0.2.0/
+   :alt: PyPI link to release 0.2.0
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.2.0
+   :target: https://bezier.readthedocs.io/en/0.2.0/
+   :alt: Documentation for release 0.2.0

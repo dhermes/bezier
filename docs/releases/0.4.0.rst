@@ -1,0 +1,118 @@
+``0.4.0``
+=========
+
+|pypi| |docs|
+
+Performance Optimizations
+-------------------------
+
+-  `Adding <https://github.com/dhermes/bezier/commits/0.4.0/src/bezier/speedup.f90>`__
+   Fortran
+   `speedups <https://github.com/dhermes/bezier/blob/0.4.0/src/bezier/speedup.f90>`__
+   for many crucial computation helpers including
+
+   -  intersecting line segments
+   -  (vectorized) Horner's method for evaluating a Bézier curve at
+      multiple parameters at once
+   -  (vectorized) Horner's method for evaluating a Bézier surface
+   -  computing "linearization error" (how close a curve is to a line)
+   -  specializing a Bézier curve to a sub-interval
+   -  using Newton's method to refine a curve-curve intersection
+
+-  `Adding <https://github.com/dhermes/bezier/commit/dcf40f4c9ed2167e96fc8f4675aeedcc2d811a0b>`__
+   ``_verify`` switch to ``Surface.locate()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.locate>`__)
+   and ``Curve.intersect()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__)
+   to selectively disable overly defensive value checking. (Making sure
+   to use this switch during "internal" computation.)
+-  Making sure NumPy arrays are Fortan-contiguous as often as possible
+   (e.g. snippets and source, via ``np.asfortranarray()``). This is to
+   avoid (and emphasize) a non-trivial overhead when passing a
+   C-contiguous array to a Fortran function.
+   (`03a7242 <https://github.com/dhermes/bezier/commit/03a72428c6f9d3bd3a1fac9b7f9afa615ce12d46>`__,
+   `6064e4c <https://github.com/dhermes/bezier/commit/6064e4c314d8d717873d46e6ef35c0bbc9772728>`__,
+   `f1804f4 <https://github.com/dhermes/bezier/commit/f1804f442f190d0bc36782e940ee0b8a68c5ecd6>`__)
+-  Using Horner's method in ``Curve.evaluate_multi()`` and
+   ``Surface.evaluate_barycentric()``, rather than inferior (sometimes
+   non-vectorized) approaches
+   (`dee8181 <https://github.com/dhermes/bezier/commit/dee81813e34d5f69c52f48aa90f7c11eb4ddc3ec>`__,
+   `2611e64 <https://github.com/dhermes/bezier/commit/2611e64a735e46317cce08a41270d61024705fd9>`__)
+-  Made surface-surface intersection more resilient / lenient for corner
+   intersections. For "nearby" intersections, parameter values can be
+   rounded to ``0`` or ``1``.
+   (`4a8458c <https://github.com/dhermes/bezier/commit/4a8458c823d8acc185818f856889cff6f46300d3>`__)
+
+New Features
+------------
+
+-  `Adding <https://github.com/dhermes/bezier/commit/e72ca20f0f4ee0f6399b56805b30fe67a02aa04f>`__
+   optional ``strategy`` argument (one of geometric or algebraic) to the
+   ``Surface.intersect()``
+   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
+
+   -  Added "algebraic" ``IntersectionStrategy``
+      `enum <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.IntersectionStrategy>`__
+      via curve
+      `implicitization <https://github.com/dhermes/bezier/commits/0.4.0/src/bezier/_implicitization.py>`__
+      (`reference <https://en.wikipedia.org/wiki/Resultant>`__)
+
+-  Adding ``Curve.reduce_()``
+   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.reduce_>`__
+   which acts as a partial inverse to ``Curve.elevate()``
+   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.elevate>`__.
+   It is only a complete inverse when a curve is degree-elevated,
+   otherwise it returns the "best" reduced form (in the least squares
+   sense).
+
+Interface Changes
+-----------------
+
+-  (**Breaking change**)
+   `Removing <https://github.com/dhermes/bezier/commit/828f4238971b12a9d494ce38387cec855d063c91>`__
+   ``show`` keyword from ``Curve.plot()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__),
+   ``Surface.plot()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.plot>`__)
+   and ``CurvedPolygon.plot()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon.plot>`__)
+-  `Adding <https://github.com/dhermes/bezier/commit/ce838a2aaef2281f06603d1c76324a3aa8289cf9>`__
+   ``color`` keyword to ``Curve.plot()``
+   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__
+-  `Adding <https://github.com/dhermes/bezier/commit/dcbeefc25b7f5f9a1fa725dac04e81a43039f680>`__
+   ``alpha`` keyword to ``Curve.plot()``
+   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__
+-  (**Breaking change**)
+   `Splitting <https://github.com/dhermes/bezier/commit/cea88285b8c9002a57efd88e69b5bd2ef46e7ca7>`__
+   the ``Surface.evaluate_multi()``
+   `method <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_multi>`__
+   into ``Surface.evaluate_barycentric_multi()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_barycentric_multi>`__)
+   and ``Surface.evaluate_cartesian_multi()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_cartesian_multi>`__)
+-  `Adding <https://github.com/dhermes/bezier/commit/f0fca088ac6f70c39f9f5af457c29e3c82f094b5>`__
+   ``__dict__`` helpers on ``Curve``, ``CurvedPolygon`` and ``Surface``.
+   These are ``@property``\ s intended only for REPL use, since classes
+   with ``__slots__`` no longer have a ``__dict__`` attribute.
+
+Miscellany
+----------
+
+-  Adding ``IntersectionClassification``
+   `enum <http://bezier.readthedocs.io/en/0.4.0/algorithm-helpers.html#bezier._surface_helpers.IntersectionClassification>`__
+   to docs
+   (`ref <https://github.com/dhermes/bezier/commit/828f4238971b12a9d494ce38387cec855d063c91>`__)
+-  `Moving <https://github.com/dhermes/bezier/commit/dc4d33cfcf7f9ac6e794b856dc6d76635d362922>`__
+   most plotting into a dedicated module. More importantly, importing
+   plotting helpers at **run-time** rather at **import time**. So if
+   computational code never plots, it won't eat the import cost of
+   ``matplotlib``.
+   `Removing <https://github.com/dhermes/bezier/commit/064e2c5efe7fa6498d74a33798a363e2c8e0b83e>`__
+   ``matplotlib`` as a dependency.
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.4.0.svg
+   :target: https://pypi.org/project/bezier/0.4.0/
+   :alt: PyPI link to release 0.4.0
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.4.0
+   :target: https://bezier.readthedocs.io/en/0.4.0/
+   :alt: Documentation for release 0.4.0

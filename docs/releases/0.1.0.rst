@@ -1,0 +1,17 @@
+``0.1.0``
+=========
+
+|pypi| |docs|
+
+Primary changes since previous release
+(`0.0.1 <https://pypi.org/project/bezier/0.0.1/>`__) are related to
+curve-curve intersection. See `the intersection
+docs <http://bezier.readthedocs.io/en/0.1.0/curve-curve-intersection.html>`__
+for examples and more information.
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.1.0.svg
+   :target: https://pypi.org/project/bezier/0.1.0/
+   :alt: PyPI link to release 0.1.0
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.1.0
+   :target: https://bezier.readthedocs.io/en/0.1.0/
+   :alt: Documentation for release 0.1.0

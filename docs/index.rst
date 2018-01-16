@@ -21,6 +21,7 @@
    algorithm-helpers
    native-libraries
    development
+   releases/index
 
 This library provides:
 

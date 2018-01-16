@@ -1,0 +1,8 @@
+``0.0.1``
+=========
+
+|pypi|
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.0.1.svg
+   :target: https://pypi.org/project/bezier/0.0.1/
+   :alt: PyPI link to release 0.0.1

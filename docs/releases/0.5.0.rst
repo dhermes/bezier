@@ -1,0 +1,78 @@
+``0.5.0``
+=========
+
+|pypi| |docs|
+
+Performance Optimizations
+-------------------------
+
+-  Change ``wiggle_interval`` to return ``success`` bool instead of
+   raising an exception. This allows the implicitization approach to use
+   it without having to use exceptions for flow-control. (Fixes
+   `#22 <https://github.com/dhermes/bezier/pull/22>`__.)
+-  Switching Fortran speedups from ``f2py`` to Cython (this is because
+   ``f2py`` artificially limits the feature set of Fortran, i.e. user
+   defined types)
+-  Moving some more code to Fortran (e.g. ``bbox_line_intersect()``
+   `3dcf640 <https://github.com/dhermes/bezier/commit/3dcf64090bb5874320dcde86eaf449e94278dd08>`__)
+
+New Features
+------------
+
+-  Making Fortran features available outside of Python (see `Native
+   Libraries <http://bezier.readthedocs.io/en/0.5.0/native-libraries.html>`__)
+-  C headers for each Fortran module (via the ``bezier.get_include()``
+   `function <http://bezier.readthedocs.io/en/0.5.0/reference/bezier.html#bezier.get_include>`__)
+
+   -  Cython ``.pxd`` declarations for all Fortran modules
+   -  ``libbezier`` static library (via the ``bezier.get_lib()``
+      `function <http://bezier.readthedocs.io/en/0.5.0/reference/bezier.html#bezier.get_lib>`__)
+
+-  Implementing ``bezier_roots()`` polynomial root
+   `solver <http://bezier.readthedocs.io/en/0.5.0/algorithm-helpers.html#bezier._implicitization.bezier_roots>`__
+   for polynomials written in Bernstein basis.
+   (`0dd6369 <https://github.com/dhermes/bezier/commit/0dd6369b0f77e4c0cf8113f2d25812addc90482a>`__)
+
+Miscellany
+----------
+
+-  Getting ``bezier``
+   `published <http://joss.theoj.org/papers/10.21105/joss.00267>`__ in
+   the Journal of Open Source Science (JOSS). See
+   `review <https://github.com/openjournals/joss-reviews/issues/267>`__.
+   (`e6c4536 <https://github.com/dhermes/bezier/commit/e6c45360f0c8412ae90d967463a14c49490d70ee>`__
+   and
+   `975ac6b <https://github.com/dhermes/bezier/commit/975ac6b1a4313db4dcdc17396d6d34561005939e>`__)
+-  Updating error message for ``locate()`` methods and adding a note
+   that ``locate()`` / ``evaluate*()`` are (essentially) inverses. H/T
+   to `@pdknsk <https://github.com/pdknsk>`__
+   `#36 <https://github.com/dhermes/bezier/pull/36>`__
+-  Using Fortran-contiguous arrays in ``_check_non_simple()``.
+   (`b06c78e <https://github.com/dhermes/bezier/commit/b06c78e50d53bf673bcf0b71fa84b36c8df564d8>`__)
+-  Moving most of ``Curve.subdivide()`` and ``Surface.subdivide()``
+   logic into helpers. This is part of an effort to make all helpers
+   take low-level data types rather than ``Curve``\ s, ``Surface``\ s,
+   etc.
+   (`34515bd <https://github.com/dhermes/bezier/commit/34515bd6246f57fbb311b4089520a24e8237294a>`__
+   and
+   `1fc80e5 <https://github.com/dhermes/bezier/commit/1fc80e54ad1b45cb628af06e5a2100eeb9282865>`__)
+-  Split ``speedup.f90`` into submodules ``curve.f90``, ``surface.f90``,
+   etc.
+   (`75349b7 <https://github.com/dhermes/bezier/commit/75349b745063a9bbc623808b3f7bbf6b7641c008>`__,
+   `dfd6bba <https://github.com/dhermes/bezier/commit/dfd6bba303ac0a8492fac1f309086b685e52ab59>`__,
+   `7096a9d <https://github.com/dhermes/bezier/commit/7096a9d646930378476e650c77d0652a48bf148a>`__,
+   `c326c00 <https://github.com/dhermes/bezier/commit/c326c00a5c0ee74f9aa53c2b104ac6d4eb5c6794>`__)
+-  Adding ``BEZIER_JOURNAL`` option to ``setup.py``. This stores a
+   record of compiler commands invoked during installation. See `Native
+   Libraries <http://bezier.readthedocs.io/en/0.5.0/native-libraries.html>`__
+   for more details.
+   (`3d832e7 <https://github.com/dhermes/bezier/commit/3d832e78af2a951a642ff5860b9593abfa674ec3>`__
+   and
+   `c64a97a <https://github.com/dhermes/bezier/commit/c64a97aa5599220b927094a41de04b0c75bbec33>`__)
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.5.0.svg
+   :target: https://pypi.org/project/bezier/0.5.0/
+   :alt: PyPI link to release 0.5.0
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.5.0
+   :target: https://bezier.readthedocs.io/en/0.5.0/
+   :alt: Documentation for release 0.5.0
