@@ -112,6 +112,7 @@ TOCTREE = """\
    algorithm-helpers
    native-libraries
    development
+   releases/index
 
 """
 IMG_PREFIX = 'https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/'
