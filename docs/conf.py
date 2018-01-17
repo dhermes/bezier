@@ -371,7 +371,7 @@ texinfo_documents = [
 intersphinx_mapping = {
     'matplotlib': ('https://matplotlib.org/', None),
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-    'python': ('https://docs.python.org/3.6/', None),
+    'python': ('https://docs.python.org/3/', None),
 }
 
 # Autodoc config
