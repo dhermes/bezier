@@ -823,13 +823,13 @@ contains
     !       a C compatible interface is exposed as ``all_intersections_abi``.
 
     ! Possible error states:
-    ! * Status_SUCCESS    : On success.
-    ! * Status_PARALLEL   : Via ``intersect_one_round()``.
-    ! * Status_WIGGLE_FAIL: Via ``intersect_one_round()``.
-    ! * Status_NO_CONVERGE: If the curves don't converge to linear after
-    !                       ``MAX_INTERSECT_SUBDIVISIONS``.
-    ! * (N >= 64)         : The number of candidates if it exceeds the limit
-    !                       ``MAX_CANDIDATES == 64``.
+    ! * Status_SUCCESS       : On success.
+    ! * Status_PARALLEL      : Via ``intersect_one_round()``.
+    ! * Status_WIGGLE_FAIL   : Via ``intersect_one_round()``.
+    ! * Status_NO_CONVERGE   : If the curves don't converge to linear after
+    !                          ``MAX_INTERSECT_SUBDIVISIONS``.
+    ! * (N >= MAX_CANDIDATES): The number of candidates if it exceeds the limit
+    !                          ``MAX_CANDIDATES`` (64 is the default).
 
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)
@@ -926,7 +926,7 @@ contains
     ! * Status_NO_CONVERGE       : Via ``all_intersections()``.
     ! * Status_INSUFFICIENT_SPACE: If ``intersections_size`` is smaller than
     !                              the number of intersections.
-    ! * (N >= 64)                : Via ``all_intersections()``.
+    ! * (N >= MAX_CANDIDATES)    : Via ``all_intersections()``.
 
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)

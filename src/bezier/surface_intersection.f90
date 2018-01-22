@@ -795,7 +795,7 @@ contains
     ! * Status_PARALLEL      : Via ``curve_intersection.all_intersections()``.
     ! * Status_WIGGLE_FAIL   : Via ``curve_intersection.all_intersections()``.
     ! * Status_NO_CONVERGE   : Via ``curve_intersection.all_intersections()``.
-    ! * (N >= 64)            : Via ``curve_intersection.all_intersections()``.
+    ! * (N >= MAX_CANDIDATES): Via ``curve_intersection.all_intersections()``.
     ! * Status_EDGE_END      : Via ``add_st_vals()``.
     ! * Status_BAD_TANGENT   : Via ``add_st_vals()``.
     ! * Status_SAME_CURVATURE: Via ``add_st_vals()``.
@@ -1345,7 +1345,7 @@ contains
     ! * Status_PARALLEL      : Via ``surfaces_intersection_points()``.
     ! * Status_WIGGLE_FAIL   : Via ``surfaces_intersection_points()``.
     ! * Status_NO_CONVERGE   : Via ``surfaces_intersection_points()``.
-    ! * (N >= 64)            : Via ``surfaces_intersection_points()``.
+    ! * (N >= MAX_CANDIDATES): Via ``surfaces_intersection_points()``.
     ! * Status_EDGE_END      : Via ``surfaces_intersection_points()``.
     ! * Status_BAD_TANGENT   : Via ``surfaces_intersection_points()``.
     ! * Status_SAME_CURVATURE: Via ``surfaces_intersection_points()``.
@@ -1448,7 +1448,7 @@ contains
     ! * Status_PARALLEL          : Via ``surfaces_intersect()``.
     ! * Status_WIGGLE_FAIL       : Via ``surfaces_intersect()``.
     ! * Status_NO_CONVERGE       : Via ``surfaces_intersect()``.
-    ! * (N >= 64)                : Via ``surfaces_intersect()``.
+    ! * (N >= MAX_CANDIDATES)    : Via ``surfaces_intersect()``.
     ! * Status_EDGE_END          : Via ``surfaces_intersect()``.
     ! * Status_BAD_TANGENT       : Via ``surfaces_intersect()``.
     ! * Status_SAME_CURVATURE    : Via ``surfaces_intersect()``.

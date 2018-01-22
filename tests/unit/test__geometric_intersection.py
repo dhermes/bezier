@@ -1222,7 +1222,7 @@ class Test_speedup_all_intersections(Test__all_intersections):
         self.assertEqual(self.workspace_size(), 2)
 
 
-class Test__set_max_candidates(unittest.TestCase):
+class Test__set_max_candidates(utils.NumPyTestCase):
     # NOTE: This is also a test for ``_get_max_candidates``.
 
     @staticmethod
@@ -1248,6 +1248,61 @@ class Test__set_max_candidates(unittest.TestCase):
         # Put things back the way they were.
         self._call_function_under_test(curr_candidates)
 
+    @staticmethod
+    def intersect(nodes1, nodes2):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection._all_intersections(nodes1, nodes2)
+
+    def test_on_intersection(self):
+        from bezier import _geometric_intersection
+
+        template = _geometric_intersection._TOO_MANY_TEMPLATE
+        # B1(s) = [s(2s - 1), s(3 - 2s)]
+        # f1(x, y) = 4(x^2 + 2xy - 3x + y^2 - y)
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [-0.5, 1.5],
+            [1.0, 1.0],
+        ])
+        # B2(s) = [(1 - 2s)(s - 1), 2s^2 - s + 1]
+        # f2(x, y) = 4(x^2 + 2xy - x + y^2 - 3y + 2)
+        nodes2 = np.asfortranarray([
+            [-1.0, 1.0],
+            [0.5, 0.5],
+            [0.0, 2.0],
+        ])
+
+        curr_candidates = self.get_max_candidates()
+        self.assertEqual(curr_candidates, 64)
+
+        # First, show failure with the default.
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self.intersect(nodes1, nodes2)
+        self.assertEqual(exc_info.exception.args, (template.format(88),))
+
+        # Then, show failure with twice the limit.
+        self._call_function_under_test(128)
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self.intersect(nodes1, nodes2)
+        self.assertEqual(exc_info.exception.args, (template.format(184),))
+
+        # Then, show failure with (almost) four times the limit.
+        self._call_function_under_test(255)
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self.intersect(nodes1, nodes2)
+        self.assertEqual(exc_info.exception.args, (template.format(256),))
+
+        # Then, show success.
+        self._call_function_under_test(256)
+        result = self.intersect(nodes1, nodes2)
+        # f2(*B1(s)) = 8(2s - 1)^2
+        # f1(*B2(t)) = 8(2t - 1)^2
+        self.assertEqual(result, np.asfortranarray([[0.5, 0.5]]))
+
+        # Put things back the way they were.
+        self._call_function_under_test(curr_candidates)
+
 
 @utils.needs_curve_intersection_speedup
 class Test_speedup_set_max_candidates(Test__set_max_candidates):
@@ -1264,6 +1319,12 @@ class Test_speedup_set_max_candidates(Test__set_max_candidates):
         from bezier import _curve_intersection_speedup
 
         return _curve_intersection_speedup.get_max_candidates()
+
+    @staticmethod
+    def intersect(nodes1, nodes2):
+        from bezier import _curve_intersection_speedup
+
+        return _curve_intersection_speedup.all_intersections(nodes1, nodes2)
 
 
 class Test__set_similar_ulps(unittest.TestCase):
