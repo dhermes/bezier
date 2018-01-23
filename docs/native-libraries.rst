@@ -4,8 +4,8 @@ Native Libraries
 
 .. note::
 
-   This content was last updated October 23, 2017 (shortly after the
-   ``0.5.0`` release). Much of the content is tested automatically to keep
+   This content was last updated January 23, 2018 (as part of the
+   ``0.6.2`` release). Much of the content is tested automatically to keep
    from getting stale, but some of the console code blocks are not. As a
    result, this material may be out of date. If anything does not seem
    correct --- or even if the explanation is insufficient --- please
@@ -256,13 +256,13 @@ with a version of ``libgfortran`` that is used by ``libbezier``, e.g.
    $ ls -1
    libgfortran-ed201abd.so.3.0.0*
 
-For example, the ``_curve_speedup`` module depends on this local copy:
+The ``bezier._speedup`` module depends on this local copy:
 
 .. code-block:: console
 
-   $ readelf -d _curve_speedup.cpython-36m-x86_64-linux-gnu.so
+   $ readelf -d _speedup.cpython-36m-x86_64-linux-gnu.so
 
-   Dynamic section at offset 0x10d000 contains 27 entries:
+   Dynamic section at offset 0x2f9000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/.libs]
     0x0000000000000001 (NEEDED)             Shared library: [libgfortran-ed201abd.so.3.0.0]
@@ -294,7 +294,7 @@ with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
      libgfortran.4.dylib
      libquadmath.0.dylib
 
-For example, the ``_curve_speedup`` module depends on the local copy
+The ``bezier._speedup`` module depends on the local copy
 of ``libgfortran``:
 
 .. testsetup:: os-x-extension, os-x-delocated-libgfortran
@@ -323,9 +323,9 @@ of ``libgfortran``:
    :mac-os-x-only:
    :pyversion: >= 3.6
 
-   >>> invoke_shell('otool', '-L', '_curve_speedup.cpython-36m-darwin.so')
-   $ otool -L _curve_speedup.cpython-36m-darwin.so
-   _curve_speedup.cpython-36m-darwin.so:
+   >>> invoke_shell('otool', '-L', '_speedup.cpython-36m-darwin.so')
+   $ otool -L _speedup.cpython-36m-darwin.so
+   _speedup.cpython-36m-darwin.so:
            @loader_path/.dylibs/libgfortran.4.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
@@ -411,13 +411,13 @@ The Python extension modules (``.pyd`` files) depend directly on this library:
    :windows-only:
    :pyversion: >= 3.6
 
-   >>> invoke_shell('dumpbin', '/dependents', '_curve_speedup.cp36-win_amd64.pyd')
-   > dumpbin /dependents _curve_speedup.cp36-win_amd64.pyd
+   >>> invoke_shell('dumpbin', '/dependents', '_speedup.cp36-win_amd64.pyd')
+   > dumpbin /dependents _speedup.cp36-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
    <BLANKLINE>
    <BLANKLINE>
-   Dump of file _curve_speedup.cp36-win_amd64.pyd
+   Dump of file _speedup.cp36-win_amd64.pyd
    <BLANKLINE>
    File Type: DLL
    <BLANKLINE>
