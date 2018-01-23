@@ -374,6 +374,8 @@ def clean(session):
         get_path('dist'),
         get_path('docs', '__pycache__'),
         get_path('docs', 'build'),
+        get_path('scripts', 'osx', 'dist_wheels'),
+        get_path('scripts', 'osx', 'fixed_wheels'),
         get_path('src', 'bezier.egg-info'),
         get_path('src', 'bezier', '__pycache__'),
         get_path('src', 'bezier', 'extra-dll'),
@@ -381,6 +383,7 @@ def clean(session):
         get_path('tests', '__pycache__'),
         get_path('tests', 'functional', '__pycache__'),
         get_path('tests', 'unit', '__pycache__'),
+        get_path('wheelhouse'),
     )
     clean_globs = (
         get_path('.coverage'),
