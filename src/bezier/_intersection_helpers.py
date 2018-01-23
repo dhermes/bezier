@@ -33,9 +33,9 @@ import numpy as np
 
 from bezier import _curve_helpers
 try:
-    from bezier import _curve_intersection_speedup
+    from bezier import _speedup
 except ImportError:  # pragma: NO COVER
-    _curve_intersection_speedup = None
+    _speedup = None
 
 
 def _newton_refine(s, nodes1, t, nodes2):
@@ -479,8 +479,8 @@ class IntersectionStrategy(enum.Enum):
 
 
 # pylint: disable=invalid-name
-if _curve_intersection_speedup is None:  # pragma: NO COVER
+if _speedup is None:  # pragma: NO COVER
     newton_refine = _newton_refine
 else:
-    newton_refine = _curve_intersection_speedup.newton_refine
+    newton_refine = _speedup.newton_refine_curve_intersect
 # pylint: enable=invalid-name

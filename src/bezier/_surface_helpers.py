@@ -38,9 +38,9 @@ from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
 try:
-    from bezier import _surface_speedup
+    from bezier import _speedup
 except ImportError:  # pragma: NO COVER
-    _surface_speedup = None
+    _speedup = None
 
 
 _MAX_POLY_SUBDIVISIONS = 5
@@ -2367,7 +2367,7 @@ class IntersectionClassification(enum.Enum):
 
 
 # pylint: disable=invalid-name
-if _surface_speedup is None:  # pragma: NO COVER
+if _speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
     specialize_surface = _specialize_surface
     subdivide_nodes = _subdivide_nodes
@@ -2378,13 +2378,13 @@ if _surface_speedup is None:  # pragma: NO COVER
     evaluate_cartesian_multi = _evaluate_cartesian_multi
     compute_edge_nodes = _compute_edge_nodes
 else:
-    de_casteljau_one_round = _surface_speedup.de_casteljau_one_round
-    specialize_surface = _surface_speedup.specialize_surface
-    subdivide_nodes = _surface_speedup.subdivide_nodes
-    jacobian_both = _surface_speedup.jacobian_both
-    jacobian_det = _surface_speedup.jacobian_det
-    evaluate_barycentric = _surface_speedup.evaluate_barycentric
-    evaluate_barycentric_multi = _surface_speedup.evaluate_barycentric_multi
-    evaluate_cartesian_multi = _surface_speedup.evaluate_cartesian_multi
-    compute_edge_nodes = _surface_speedup.compute_edge_nodes
+    de_casteljau_one_round = _speedup.de_casteljau_one_round
+    specialize_surface = _speedup.specialize_surface
+    subdivide_nodes = _speedup.subdivide_nodes_surface
+    jacobian_both = _speedup.jacobian_both
+    jacobian_det = _speedup.jacobian_det
+    evaluate_barycentric = _speedup.evaluate_barycentric
+    evaluate_barycentric_multi = _speedup.evaluate_barycentric_multi
+    evaluate_cartesian_multi = _speedup.evaluate_cartesian_multi
+    compute_edge_nodes = _speedup.compute_edge_nodes
 # pylint: enable=invalid-name

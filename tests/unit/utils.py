@@ -115,63 +115,15 @@ def check_plot_call(test_case, call, expected, **kwargs):
     test_case.assertEqual(positional[1], expected[:, 1])
 
 
-def needs_helpers_speedup(test_class):
+def needs_speedup(test_class):
     if bezier is None:
         has_speedup = False  # pragma: NO COVER
     else:
-        has_speedup = bezier._HAS_HELPERS_SPEEDUP
+        has_speedup = bezier._HAS_SPEEDUP
 
     decorator = unittest.skipUnless(
-        has_speedup, 'No helpers speedup available')
+        has_speedup, 'No speedup available')
     return decorator(test_class)
-
-
-def needs_curve_speedup(test_class):
-    if bezier is None:
-        has_speedup = False  # pragma: NO COVER
-    else:
-        has_speedup = bezier._HAS_CURVE_SPEEDUP
-
-    decorator = unittest.skipUnless(
-        has_speedup, 'No curve speedup available')
-    return decorator(test_class)
-
-
-def needs_surface_speedup(test_class):
-    if bezier is None:
-        has_speedup = False  # pragma: NO COVER
-    else:
-        has_speedup = bezier._HAS_SURFACE_SPEEDUP
-
-    decorator = unittest.skipUnless(
-        has_speedup, 'No surface speedup available')
-    return decorator(test_class)
-
-
-# pylint: disable=invalid-name
-def needs_curve_intersection_speedup(test_class):
-    if bezier is None:
-        has_speedup = False  # pragma: NO COVER
-    else:
-        has_speedup = bezier._HAS_CURVE_INTERSECTION_SPEEDUP
-
-    decorator = unittest.skipUnless(
-        has_speedup, 'No curve intersection speedup available')
-    return decorator(test_class)
-# pylint: enable=invalid-name
-
-
-# pylint: disable=invalid-name
-def needs_surface_intersection_speedup(test_class):
-    if bezier is None:
-        has_speedup = False  # pragma: NO COVER
-    else:
-        has_speedup = bezier._HAS_SURFACE_INTERSECTION_SPEEDUP
-
-    decorator = unittest.skipUnless(
-        has_speedup, 'No surface intersection speedup available')
-    return decorator(test_class)
-# pylint: enable=invalid-name
 
 
 class NumPyTestCase(unittest.TestCase):

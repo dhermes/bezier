@@ -37,9 +37,9 @@ from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
 try:
-    from bezier import _curve_intersection_speedup
+    from bezier import _speedup
 except ImportError:  # pragma: NO COVER
-    _curve_intersection_speedup = None
+    _speedup = None
 
 
 # Set the threshold for exponent at half the bits available,
@@ -1237,7 +1237,7 @@ class Linearization(object):
 
 
 # pylint: disable=invalid-name
-if _curve_intersection_speedup is None:  # pragma: NO COVER
+if _speedup is None:  # pragma: NO COVER
     bbox_intersect = _bbox_intersect
     all_intersections = _all_intersections
     set_max_candidates = _set_max_candidates
@@ -1245,12 +1245,12 @@ if _curve_intersection_speedup is None:  # pragma: NO COVER
     set_similar_ulps = _set_similar_ulps
     get_similar_ulps = _get_similar_ulps
 else:
-    bbox_intersect = _curve_intersection_speedup.bbox_intersect
-    all_intersections = _curve_intersection_speedup.all_intersections
-    set_max_candidates = _curve_intersection_speedup.set_max_candidates
-    get_max_candidates = _curve_intersection_speedup.get_max_candidates
-    set_similar_ulps = _curve_intersection_speedup.set_similar_ulps
-    get_similar_ulps = _curve_intersection_speedup.get_similar_ulps
+    bbox_intersect = _speedup.bbox_intersect
+    all_intersections = _speedup.curve_intersections
+    set_max_candidates = _speedup.set_max_candidates
+    get_max_candidates = _speedup.get_max_candidates
+    set_similar_ulps = _speedup.set_similar_ulps
+    get_similar_ulps = _speedup.get_similar_ulps
     atexit.register(
-        _curve_intersection_speedup.free_curve_intersections_workspace)
+        _speedup.free_curve_intersections_workspace)
 # pylint: enable=invalid-name

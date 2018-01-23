@@ -36,9 +36,9 @@ from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _surface_helpers
 try:
-    from bezier import _surface_intersection_speedup
+    from bezier import _speedup
 except ImportError:  # pragma: NO COVER
-    _surface_intersection_speedup = None
+    _speedup = None
 
 
 MAX_LOCATE_SUBDIVISIONS = 20
@@ -674,14 +674,14 @@ def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
 
 
 # pylint: disable=invalid-name
-if _surface_intersection_speedup is None:  # pragma: NO COVER
+if _speedup is None:  # pragma: NO COVER
     newton_refine = _newton_refine
     locate_point = _locate_point
     geometric_intersect = _geometric_intersect
 else:
-    newton_refine = _surface_intersection_speedup.newton_refine
-    locate_point = _surface_intersection_speedup.locate_point
-    geometric_intersect = _surface_intersection_speedup.surface_intersections
+    newton_refine = _speedup.newton_refine_surface
+    locate_point = _speedup.locate_point_surface
+    geometric_intersect = _speedup.surface_intersections
     atexit.register(
-        _surface_intersection_speedup.free_surface_intersections_workspace)
+        _speedup.free_surface_intersections_workspace)
 # pylint: enable=invalid-name

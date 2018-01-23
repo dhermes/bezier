@@ -95,60 +95,18 @@ QUADPACK_MODULES = (
 # NOTE: This represents the Fortran module dependency graph. Order is
 #       important both of the keys and of the dependencies that are in
 #       each value.
-FORTRAN_MODULES = collections.OrderedDict()
-FORTRAN_MODULES['types'] = ('types',)
-FORTRAN_MODULES['status'] = ('status',)
-FORTRAN_MODULES['helpers'] = ('types', 'helpers')
-FORTRAN_MODULES['curve'] = (
-    'types',
-    'helpers',
-    os.path.join(QUADPACK_DIR, 'd1mach'),
-    os.path.join(QUADPACK_DIR, 'dqelg'),
-    os.path.join(QUADPACK_DIR, 'dqpsrt'),
-    os.path.join(QUADPACK_DIR, 'dqk21'),
-    os.path.join(QUADPACK_DIR, 'dqagse'),
-    'curve',
-)
-FORTRAN_MODULES['surface'] = (
-    'types',
-    'helpers',
-    os.path.join(QUADPACK_DIR, 'd1mach'),
-    os.path.join(QUADPACK_DIR, 'dqelg'),
-    os.path.join(QUADPACK_DIR, 'dqpsrt'),
-    os.path.join(QUADPACK_DIR, 'dqk21'),
-    os.path.join(QUADPACK_DIR, 'dqagse'),
-    'curve',
-    'surface',
-)
-FORTRAN_MODULES['curve_intersection'] = (
+FORTRAN_MODULES = (
     'types',
     'status',
     'helpers',
-    os.path.join(QUADPACK_DIR, 'd1mach'),
-    os.path.join(QUADPACK_DIR, 'dqelg'),
-    os.path.join(QUADPACK_DIR, 'dqpsrt'),
-    os.path.join(QUADPACK_DIR, 'dqk21'),
-    os.path.join(QUADPACK_DIR, 'dqagse'),
     'curve',
-    'curve_intersection',
-)
-FORTRAN_MODULES['surface_intersection'] = (
-    'types',
-    'status',
-    'helpers',
-    os.path.join(QUADPACK_DIR, 'd1mach'),
-    os.path.join(QUADPACK_DIR, 'dqelg'),
-    os.path.join(QUADPACK_DIR, 'dqpsrt'),
-    os.path.join(QUADPACK_DIR, 'dqk21'),
-    os.path.join(QUADPACK_DIR, 'dqagse'),
-    'curve',
-    'curve_intersection',
     'surface',
+    'curve_intersection',
     'surface_intersection',
 )
 FORTRAN_SOURCE_FILENAME = os.path.join('src', 'bezier', '{}.f90')
 OBJECT_FILENAME = os.path.join('src', 'bezier', '{}.o')
-SPEEDUP_FILENAME = os.path.join('src', 'bezier', '_{}_speedup.c')
+SPEEDUP_FILENAME = os.path.join('src', 'bezier', '_speedup.c')
 
 
 def gfortran_search_path(library_dirs):
@@ -236,40 +194,37 @@ def extension_modules():
     import numpy as np
 
     libraries, library_dirs = BuildFortranThenExt.get_library_dirs()
-    extensions = []
-    for name, dependencies in FORTRAN_MODULES.items():
-        if name in ('types', 'status'):  # No speedup.
-            continue
-
-        mod_name = 'bezier._{}_speedup'.format(name)
-        path = SPEEDUP_FILENAME.format(name)
-        if BuildFortranThenExt.USE_SHARED_LIBRARY:
-            # Here we don't depend on object files since the functionality
-            # is contained in the shared library.
-            extra_objects = []
-        else:
-            # NOTE: These may be treated as relative paths and replaced
-            #       before the extension is actually built.
-            extra_objects = [
-                OBJECT_FILENAME.format(dependency)
-                for dependency in dependencies
-            ]
-        # NOTE: Copy ``libraries`` and ``library_dirs`` so they
-        #       aren't shared (and mutable) between extensions.
-        extension = setuptools.Extension(
-            mod_name,
-            [path],
-            extra_objects=extra_objects,
-            include_dirs=[
-                np.get_include(),
-                os.path.join('src', 'bezier', 'include'),
-            ],
-            libraries=copy.deepcopy(libraries),
-            library_dirs=copy.deepcopy(library_dirs),
+    if BuildFortranThenExt.USE_SHARED_LIBRARY:
+        # Here we don't depend on object files since the functionality
+        # is contained in the shared library.
+        extra_objects = []
+    else:
+        # NOTE: These may be treated as relative paths and replaced
+        #       before the extension is actually built.
+        extra_objects = [
+            OBJECT_FILENAME.format(fortran_module)
+            for fortran_module in FORTRAN_MODULES
+        ]
+        extra_objects.extend(
+            OBJECT_FILENAME.format(os.path.join(QUADPACK_DIR, fortran_module))
+            for fortran_module in QUADPACK_MODULES
         )
-        extensions.append(extension)
 
-    return extensions
+    # NOTE: Copy ``libraries`` and ``library_dirs`` so they
+    #       aren't shared and mutable.
+    extension = setuptools.Extension(
+        'bezier._speedup',
+        [SPEEDUP_FILENAME],
+        extra_objects=extra_objects,
+        include_dirs=[
+            np.get_include(),
+            os.path.join('src', 'bezier', 'include'),
+        ],
+        libraries=copy.deepcopy(libraries),
+        library_dirs=copy.deepcopy(library_dirs),
+    )
+
+    return [extension]
 
 
 def patch_f90_compiler(f90_compiler):

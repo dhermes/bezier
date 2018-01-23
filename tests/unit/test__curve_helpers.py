@@ -203,14 +203,14 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
         self._points_check(nodes)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
 
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.subdivide_nodes(nodes)
+        return _speedup.subdivide_nodes_curve(nodes)
 
 
 class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
@@ -241,15 +241,15 @@ class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_evaluate_multi_barycentric(
         Test__evaluate_multi_barycentric):
 
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.evaluate_multi_barycentric(
+        return _speedup.evaluate_multi_barycentric(
             nodes, lambda1, lambda2)
 
 
@@ -298,14 +298,14 @@ class Test__evaluate_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_evaluate_multi(Test__evaluate_multi):
 
     @staticmethod
     def _call_function_under_test(nodes, s_vals):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.evaluate_multi(nodes, s_vals)
+        return _speedup.evaluate_multi(nodes, s_vals)
 
 
 class Test_vec_size(unittest.TestCase):
@@ -391,14 +391,14 @@ class Test__compute_length(unittest.TestCase):
                 self._call_function_under_test(nodes)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_compute_length(Test__compute_length):
 
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.compute_length(nodes)
+        return _speedup.compute_length(nodes)
 
     def _scipy_skip(self):
         # Fortran implementation directly includes QUADPACK, so the presence
@@ -448,14 +448,14 @@ class Test__elevate_nodes(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_elevate_nodes(Test__elevate_nodes):
 
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.elevate_nodes(nodes)
+        return _speedup.elevate_nodes(nodes)
 
 
 class Test_de_casteljau_one_round(utils.NumPyTestCase):
@@ -548,14 +548,14 @@ class Test__specialize_curve(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_specialize_curve(Test__specialize_curve):
 
     @staticmethod
     def _call_function_under_test(nodes, start, end):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.specialize_curve(nodes, start, end)
+        return _speedup.specialize_curve(nodes, start, end)
 
 
 class Test__evaluate_hodograph(utils.NumPyTestCase):
@@ -615,14 +615,14 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
             self.assertEqual(first_deriv[0, 1], y_prime)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
 
     @staticmethod
     def _call_function_under_test(s, nodes):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.evaluate_hodograph(s, nodes)
+        return _speedup.evaluate_hodograph(s, nodes)
 
 
 class Test__get_curvature(unittest.TestCase):
@@ -672,14 +672,14 @@ class Test__get_curvature(unittest.TestCase):
         self.assertEqual(result, -4.0)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_get_curvature(Test__get_curvature):
 
     @staticmethod
     def _call_function_under_test(nodes, tangent_vec, s):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.get_curvature(nodes, tangent_vec, s)
+        return _speedup.get_curvature(nodes, tangent_vec, s)
 
 
 class Test__newton_refine(unittest.TestCase):
@@ -703,14 +703,14 @@ class Test__newton_refine(unittest.TestCase):
         self.assertEqual(110.0 * new_s, 57.0)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_newton_refine(Test__newton_refine):
 
     @staticmethod
     def _call_function_under_test(nodes, point, s):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.newton_refine(nodes, point, s)
+        return _speedup.newton_refine_curve(nodes, point, s)
 
 
 class Test__locate_point(unittest.TestCase):
@@ -753,14 +753,14 @@ class Test__locate_point(unittest.TestCase):
             self._call_function_under_test(nodes, point)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_locate_point(Test__locate_point):
 
     @staticmethod
     def _call_function_under_test(nodes, point):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.locate_point(nodes, point)
+        return _speedup.locate_point_curve(nodes, point)
 
 
 class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
@@ -880,14 +880,14 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
             self._call_function_under_test(nodes)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup__reduce_pseudo_inverse(Test__reduce_pseudo_inverse):
 
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.reduce_pseudo_inverse(nodes)
+        return _speedup.reduce_pseudo_inverse(nodes)
 
 
 class Test_projection_error(unittest.TestCase):
@@ -1096,11 +1096,11 @@ class Test__full_reduce(utils.NumPyTestCase):
             self._call_function_under_test(nodes)
 
 
-@utils.needs_curve_speedup
+@utils.needs_speedup
 class Test_speedup_full_reduce(Test__full_reduce):
 
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _curve_speedup
+        from bezier import _speedup
 
-        return _curve_speedup.full_reduce(nodes)
+        return _speedup.full_reduce(nodes)

@@ -39,9 +39,9 @@ except ImportError:  # pragma: NO COVER
 
 from bezier import _helpers
 try:
-    from bezier import _curve_speedup
+    from bezier import _speedup
 except ImportError:  # pragma: NO COVER
-    _curve_speedup = None
+    _speedup = None
 
 
 _MAX_LOCATE_SUBDIVISIONS = 20
@@ -962,7 +962,7 @@ def _full_reduce(nodes):
 
 
 # pylint: disable=invalid-name
-if _curve_speedup is None:  # pragma: NO COVER
+if _speedup is None:  # pragma: NO COVER
     subdivide_nodes = _subdivide_nodes
     evaluate_multi = _evaluate_multi
     evaluate_multi_barycentric = _evaluate_multi_barycentric
@@ -976,16 +976,16 @@ if _curve_speedup is None:  # pragma: NO COVER
     reduce_pseudo_inverse = _reduce_pseudo_inverse
     full_reduce = _full_reduce
 else:
-    subdivide_nodes = _curve_speedup.subdivide_nodes
-    evaluate_multi = _curve_speedup.evaluate_multi
-    evaluate_multi_barycentric = _curve_speedup.evaluate_multi_barycentric
-    compute_length = _curve_speedup.compute_length
-    elevate_nodes = _curve_speedup.elevate_nodes
-    specialize_curve = _curve_speedup.specialize_curve
-    evaluate_hodograph = _curve_speedup.evaluate_hodograph
-    get_curvature = _curve_speedup.get_curvature
-    newton_refine = _curve_speedup.newton_refine
-    locate_point = _curve_speedup.locate_point
-    reduce_pseudo_inverse = _curve_speedup.reduce_pseudo_inverse
-    full_reduce = _curve_speedup.full_reduce
+    subdivide_nodes = _speedup.subdivide_nodes_curve
+    evaluate_multi = _speedup.evaluate_multi
+    evaluate_multi_barycentric = _speedup.evaluate_multi_barycentric
+    compute_length = _speedup.compute_length
+    elevate_nodes = _speedup.elevate_nodes
+    specialize_curve = _speedup.specialize_curve
+    evaluate_hodograph = _speedup.evaluate_hodograph
+    get_curvature = _speedup.get_curvature
+    newton_refine = _speedup.newton_refine_curve
+    locate_point = _speedup.locate_point_curve
+    reduce_pseudo_inverse = _speedup.reduce_pseudo_inverse
+    full_reduce = _speedup.full_reduce
 # pylint: enable=invalid-name

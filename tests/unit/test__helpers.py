@@ -59,14 +59,14 @@ class Test__vector_close(unittest.TestCase):
         self.assertFalse(self._call_function_under_test(vec1, vec2))
 
 
-@utils.needs_helpers_speedup
+@utils.needs_speedup
 class Test_speedup_vector_close(Test__vector_close):
 
     @staticmethod
     def _call_function_under_test(vec1, vec2, **kwargs):
-        from bezier import _helpers_speedup
+        from bezier import _speedup
 
-        return _helpers_speedup.vector_close(vec1, vec2, **kwargs)
+        return _speedup.vector_close(vec1, vec2, **kwargs)
 
 
 class Test__in_interval(unittest.TestCase):
@@ -96,14 +96,14 @@ class Test__in_interval(unittest.TestCase):
             -1.0, 1.0, 2.0))
 
 
-@utils.needs_helpers_speedup
+@utils.needs_speedup
 class Test_speedup_in_interval(Test__in_interval):
 
     @staticmethod
     def _call_function_under_test(value, start, end):
-        from bezier import _helpers_speedup
+        from bezier import _speedup
 
-        return _helpers_speedup.in_interval(value, start, end)
+        return _speedup.in_interval(value, start, end)
 
 
 class Test__bbox(unittest.TestCase):
@@ -141,14 +141,14 @@ class Test__bbox(unittest.TestCase):
         self.assertEqual(top, 4.0)
 
 
-@utils.needs_helpers_speedup
+@utils.needs_speedup
 class Test_speedup_bbox(Test__bbox):
 
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _helpers_speedup
+        from bezier import _speedup
 
-        return _helpers_speedup.bbox(nodes)
+        return _speedup.bbox(nodes)
 
 
 class Test__contains_nd(unittest.TestCase):
@@ -196,14 +196,14 @@ class Test__contains_nd(unittest.TestCase):
             self._call_function_under_test(nodes, point)
 
 
-@utils.needs_helpers_speedup
+@utils.needs_speedup
 class Test_speedup_contains_nd(Test__contains_nd):
 
     @staticmethod
     def _call_function_under_test(nodes, point):
-        from bezier import _helpers_speedup
+        from bezier import _speedup
 
-        return _helpers_speedup.contains_nd(nodes, point)
+        return _speedup.contains_nd(nodes, point)
 
 
 class Test__cross_product(utils.NumPyTestCase):
@@ -229,14 +229,14 @@ class Test__cross_product(utils.NumPyTestCase):
         self.assertEqual(actual_cross, expected)
 
 
-@utils.needs_helpers_speedup
+@utils.needs_speedup
 class Test_speedup_cross_product(Test__cross_product):
 
     @staticmethod
     def _call_function_under_test(vec0, vec1):
-        from bezier import _helpers_speedup
+        from bezier import _speedup
 
-        return _helpers_speedup.cross_product(vec0, vec1)
+        return _speedup.cross_product(vec0, vec1)
 
 
 class Test__ulps_away(unittest.TestCase):
@@ -299,14 +299,14 @@ class Test__ulps_away(unittest.TestCase):
             self._call_function_under_test(value1, value2, num_bits=5))
 
 
-@utils.needs_helpers_speedup
+@utils.needs_speedup
 class Test_speedup_ulps_away(Test__ulps_away):
 
     @staticmethod
     def _call_function_under_test(value1, value2, **kwargs):
-        from bezier import _helpers_speedup
+        from bezier import _speedup
 
-        return _helpers_speedup.ulps_away(value1, value2, **kwargs)
+        return _speedup.ulps_away(value1, value2, **kwargs)
 
 
 class Test_matrix_product(utils.NumPyTestCase):
@@ -472,14 +472,14 @@ class Test__wiggle_interval(unittest.TestCase):
             self._call_function_under_test(value, wiggle=0.25), (1.0, True))
 
 
-@utils.needs_helpers_speedup
+@utils.needs_speedup
 class Test_speedup_wiggle_interval(Test__wiggle_interval):
 
     def _call_function_under_test(self, value, **kwargs):
-        from bezier import _helpers_speedup
+        from bezier import _speedup
 
         self.assertEqual(kwargs, {})
-        return _helpers_speedup.wiggle_interval(value, **kwargs)
+        return _speedup.wiggle_interval(value, **kwargs)
 
     def test_custom_wiggle(self):
         # Fortran implementation doesn't support optional wiggle. This

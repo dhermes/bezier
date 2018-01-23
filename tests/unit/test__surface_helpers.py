@@ -17,9 +17,9 @@ import numpy as np
 import pytest
 
 try:
-    from bezier import _HAS_SURFACE_SPEEDUP as HAS_SURFACE_SPEEDUP
+    from bezier import _HAS_SPEEDUP as HAS_SPEEDUP
 except ImportError:  # pragma: NO COVER
-    HAS_SURFACE_SPEEDUP = False
+    HAS_SPEEDUP = False
 from tests.unit import utils
 
 
@@ -32,7 +32,7 @@ FLOAT64 = np.float64  # pylint: disable=no-member
 SPACING = np.spacing  # pylint: disable=no-member
 # pylint: disable=invalid-name,no-member
 slow = pytest.mark.skipif(
-    pytest.config.getoption('--ignore-slow') and not HAS_SURFACE_SPEEDUP,
+    pytest.config.getoption('--ignore-slow') and not HAS_SPEEDUP,
     reason='--ignore-slow ignores the slow tests',
 )
 # pylint: enable=invalid-name,no-member
@@ -287,14 +287,14 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_surface_speedup
+@utils.needs_speedup
 class Test_speedup_de_casteljau_one_round(Test__de_casteljau_one_round):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _surface_speedup
+        from bezier import _speedup
 
-        return _surface_speedup.de_casteljau_one_round(
+        return _speedup.de_casteljau_one_round(
             nodes, degree, lambda1, lambda2, lambda3)
 
 
@@ -462,15 +462,15 @@ class Test__specialize_surface(utils.NumPyTestCase):
             _surface_helpers.QUARTIC_SUBDIVIDE_D)
 
 
-@utils.needs_surface_speedup
+@utils.needs_speedup
 class Test_speedup_specialize_surface(Test__specialize_surface):
 
     @staticmethod
     def _call_function_under_test(
             nodes, degree, weights_a, weights_b, weights_c):
-        from bezier import _surface_speedup
+        from bezier import _speedup
 
-        return _surface_speedup.specialize_surface(
+        return _speedup.specialize_surface(
             nodes, degree, weights_a, weights_b, weights_c)
 
 
@@ -694,14 +694,14 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
         self._points_check(nodes, 5)
 
 
-@utils.needs_surface_speedup
+@utils.needs_speedup
 class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
 
     @staticmethod
     def _call_function_under_test(nodes, degree):
-        from bezier import _surface_speedup
+        from bezier import _speedup
 
-        return _surface_speedup.subdivide_nodes(nodes, degree)
+        return _speedup.subdivide_nodes_surface(nodes, degree)
 
 
 class Test_jacobian_s(utils.NumPyTestCase):
@@ -896,14 +896,14 @@ class Test__jacobian_both(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_surface_speedup
+@utils.needs_speedup
 class Test_speedup_jacobian_both(Test__jacobian_both):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _surface_speedup
+        from bezier import _speedup
 
-        return _surface_speedup.jacobian_both(nodes, degree, dimension)
+        return _speedup.jacobian_both(nodes, degree, dimension)
 
 
 class Test__jacobian_det(utils.NumPyTestCase):
@@ -957,14 +957,14 @@ class Test__jacobian_det(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_surface_speedup
+@utils.needs_speedup
 class Test_speedup_jacobian_det(Test__jacobian_det):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, st_vals):
-        from bezier import _surface_speedup
+        from bezier import _speedup
 
-        return _surface_speedup.jacobian_det(nodes, degree, st_vals)
+        return _speedup.jacobian_det(nodes, degree, st_vals)
 
 
 class Test_classify_intersection(unittest.TestCase):
@@ -2073,14 +2073,14 @@ class Test__evaluate_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_surface_speedup
+@utils.needs_speedup
 class Test_speedup_evaluate_barycentric(Test__evaluate_barycentric):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _surface_speedup
+        from bezier import _speedup
 
-        return _surface_speedup.evaluate_barycentric(
+        return _speedup.evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3)
 
 
@@ -2134,15 +2134,15 @@ class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_surface_speedup
+@utils.needs_speedup
 class Test_speedup_evaluate_barycentric_multi(
         Test__evaluate_barycentric_multi):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _surface_speedup
+        from bezier import _speedup
 
-        return _surface_speedup.evaluate_barycentric_multi(
+        return _speedup.evaluate_barycentric_multi(
             nodes, degree, param_vals, dimension)
 
 
@@ -2201,14 +2201,14 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_surface_speedup
+@utils.needs_speedup
 class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
 
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _surface_speedup
+        from bezier import _speedup
 
-        return _surface_speedup.evaluate_cartesian_multi(
+        return _speedup.evaluate_cartesian_multi(
             nodes, degree, param_vals, dimension)
 
 
@@ -2280,14 +2280,14 @@ class Test__compute_edge_nodes(utils.NumPyTestCase):
             np.asfortranarray(np.vstack([p003, p102, p201, p300])))
 
 
-@utils.needs_surface_speedup
+@utils.needs_speedup
 class Test_speedup_compute_edge_nodes(Test__compute_edge_nodes):
 
     @staticmethod
     def _call_function_under_test(nodes, degree):
-        from bezier import _surface_speedup
+        from bezier import _speedup
 
-        return _surface_speedup.compute_edge_nodes(nodes, degree)
+        return _speedup.compute_edge_nodes(nodes, degree)
 
 
 def make_intersect(*args, **kwargs):

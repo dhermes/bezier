@@ -78,14 +78,14 @@ class Test__bbox_intersect(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-@utils.needs_curve_intersection_speedup
+@utils.needs_speedup
 class Test_speedup_bbox_intersect(Test__bbox_intersect):
 
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.bbox_intersect(nodes1, nodes2)
+        return _speedup.bbox_intersect(nodes1, nodes2)
 
 
 class Test_linearization_error(unittest.TestCase):
@@ -1149,27 +1149,27 @@ class Test__all_intersections(utils.NumPyTestCase):
         self.assertEqual(intersections, expected)
 
 
-@utils.needs_curve_intersection_speedup
+@utils.needs_speedup
 class Test_speedup_all_intersections(Test__all_intersections):
 
     @staticmethod
     def _call_function_under_test(nodes_first, nodes_second, **kwargs):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.all_intersections(
+        return _speedup.curve_intersections(
             nodes_first, nodes_second, **kwargs)
 
     @staticmethod
-    def reset_workspace(workspace_size):
-        from bezier import _curve_intersection_speedup
+    def reset_curves_workspace(workspace_size):
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.reset_workspace(workspace_size)
+        return _speedup.reset_curves_workspace(workspace_size)
 
     @staticmethod
-    def workspace_size():
-        from bezier import _curve_intersection_speedup
+    def curves_workspace_size():
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.workspace_size()
+        return _speedup.curves_workspace_size()
 
     def test_workspace_resize(self):
         nodes1 = np.asfortranarray([
@@ -1184,7 +1184,7 @@ class Test_speedup_all_intersections(Test__all_intersections):
         ])
         # NOTE: These curves intersect 3 times, so a workspace of
         #       2 is not large enough.
-        self.reset_workspace(2)
+        self.reset_curves_workspace(2)
         intersections = self._call_function_under_test(nodes1, nodes2)
         expected = np.asfortranarray([
             [0.5, 0.5],
@@ -1193,10 +1193,10 @@ class Test_speedup_all_intersections(Test__all_intersections):
         ])
         self.assertEqual(intersections, expected)
         # Make sure the workspace was resized.
-        self.assertEqual(self.workspace_size(), 3)
+        self.assertEqual(self.curves_workspace_size(), 3)
 
     def test_workspace_too_small(self):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
         nodes1 = np.asfortranarray([
             [-3.0, 0.0],
@@ -1210,16 +1210,16 @@ class Test_speedup_all_intersections(Test__all_intersections):
         ])
         # NOTE: These curves intersect 3 times, so a workspace of
         #       2 is not large enough.
-        self.reset_workspace(2)
+        self.reset_curves_workspace(2)
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(
                 nodes1, nodes2, allow_resize=False)
 
         exc_args = exc_info.exception.args
-        expected = _curve_intersection_speedup.TOO_SMALL_TEMPLATE.format(3, 2)
+        expected = _speedup.TOO_SMALL_TEMPLATE.format(3, 2)
         self.assertEqual(exc_args, (expected,))
         # Make sure the workspace was **not** resized.
-        self.assertEqual(self.workspace_size(), 2)
+        self.assertEqual(self.curves_workspace_size(), 2)
 
 
 class Test__set_max_candidates(utils.NumPyTestCase):
@@ -1304,27 +1304,27 @@ class Test__set_max_candidates(utils.NumPyTestCase):
         self._call_function_under_test(curr_candidates)
 
 
-@utils.needs_curve_intersection_speedup
+@utils.needs_speedup
 class Test_speedup_set_max_candidates(Test__set_max_candidates):
     # NOTE: This is also a test for the ``get_max_candidates`` speedup.
 
     @staticmethod
     def _call_function_under_test(num_candidates):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.set_max_candidates(num_candidates)
+        return _speedup.set_max_candidates(num_candidates)
 
     @staticmethod
     def get_max_candidates():
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.get_max_candidates()
+        return _speedup.get_max_candidates()
 
     @staticmethod
     def intersect(nodes1, nodes2):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.all_intersections(nodes1, nodes2)
+        return _speedup.curve_intersections(nodes1, nodes2)
 
 
 class Test__set_similar_ulps(unittest.TestCase):
@@ -1354,21 +1354,21 @@ class Test__set_similar_ulps(unittest.TestCase):
         self._call_function_under_test(curr_num_bits)
 
 
-@utils.needs_curve_intersection_speedup
+@utils.needs_speedup
 class Test_speedup_set_similar_ulps(Test__set_similar_ulps):
     # NOTE: This is also a test for the ``get_similar_ulps`` speedup.
 
     @staticmethod
     def _call_function_under_test(num_bits):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.set_similar_ulps(num_bits)
+        return _speedup.set_similar_ulps(num_bits)
 
     @staticmethod
     def get_similar_ulps():
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.get_similar_ulps()
+        return _speedup.get_similar_ulps()
 
 
 class TestSubdividedCurve(utils.NumPyTestCase):
@@ -1576,26 +1576,26 @@ class TestLinearization(utils.NumPyTestCase):
         self.assertEqual(new_shape.error, error)
 
 
-@utils.needs_curve_intersection_speedup
-class Test_reset_workspace(unittest.TestCase):
+@utils.needs_speedup
+class Test_reset_curves_workspace(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(workspace_size):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.reset_workspace(workspace_size)
+        return _speedup.reset_curves_workspace(workspace_size)
 
     def test_it(self):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
         size = 5
         return_value = self._call_function_under_test(size)
         self.assertIsNone(return_value)
-        self.assertEqual(_curve_intersection_speedup.workspace_size(), size)
+        self.assertEqual(_speedup.curves_workspace_size(), size)
 
     @unittest.expectedFailure
     def test_threadsafe(self):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
         size_main = 3
         self._call_function_under_test(size_main)
@@ -1622,25 +1622,25 @@ class Test_reset_workspace(unittest.TestCase):
         actual = (
             worker.size1,
             worker.size2,
-            _curve_intersection_speedup.workspace_size(),
+            _speedup.curves_workspace_size(),
         )
         self.assertEqual(actual, expected)
 
 
-@utils.needs_curve_intersection_speedup
-class Test_workspace_size(unittest.TestCase):
+@utils.needs_speedup
+class Test_curves_workspace_size(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test():
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.workspace_size()
+        return _speedup.curves_workspace_size()
 
     def test_it(self):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
         size = 5
-        _curve_intersection_speedup.reset_workspace(size)
+        _speedup.reset_curves_workspace(size)
         self.assertEqual(self._call_function_under_test(), size)
 
 
@@ -1666,33 +1666,33 @@ class WorkspaceThreadedAccess(object):
         self.size2 = None
 
     def event1(self, size):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
         # NOTE: There is no need to ``wait`` since this is the first event.
-        _curve_intersection_speedup.reset_workspace(size)
+        _speedup.reset_curves_workspace(size)
         self.barrier1.set()
 
     def event2(self):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
         self.barrier1.wait()
-        result = _curve_intersection_speedup.workspace_size()
+        result = _speedup.curves_workspace_size()
         self.barrier2.set()
         return result
 
     def event3(self, size):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
         self.barrier2.wait()
-        _curve_intersection_speedup.reset_workspace(size)
+        _speedup.reset_curves_workspace(size)
         self.barrier3.set()
 
     def event4(self):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
         self.barrier3.wait()
         # NOTE: There is no barrier to ``set`` since this is the last event.
-        return _curve_intersection_speedup.workspace_size()
+        return _speedup.curves_workspace_size()
 
     def task1(self, size):
         self.event1(size)

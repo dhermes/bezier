@@ -26,9 +26,9 @@ leading underscore will be surfaced as the actual interface (e.g.
 import numpy as np
 
 try:
-    from bezier import _helpers_speedup
+    from bezier import _speedup
 except ImportError:  # pragma: NO COVER
-    _helpers_speedup = None
+    _speedup = None
 
 
 _EPS = 0.5**40
@@ -279,7 +279,7 @@ def _wiggle_interval(value, wiggle=0.5**45):
 
 
 # pylint: disable=invalid-name
-if _helpers_speedup is None:  # pragma: NO COVER
+if _speedup is None:  # pragma: NO COVER
     vector_close = _vector_close
     in_interval = _in_interval
     bbox = _bbox
@@ -288,11 +288,11 @@ if _helpers_speedup is None:  # pragma: NO COVER
     ulps_away = _ulps_away
     wiggle_interval = _wiggle_interval
 else:
-    vector_close = _helpers_speedup.vector_close
-    in_interval = _helpers_speedup.in_interval
-    bbox = _helpers_speedup.bbox
-    contains_nd = _helpers_speedup.contains_nd
-    cross_product = _helpers_speedup.cross_product
-    ulps_away = _helpers_speedup.ulps_away
-    wiggle_interval = _helpers_speedup.wiggle_interval
+    vector_close = _speedup.vector_close
+    in_interval = _speedup.in_interval
+    bbox = _speedup.bbox
+    contains_nd = _speedup.contains_nd
+    cross_product = _speedup.cross_product
+    ulps_away = _speedup.ulps_away
+    wiggle_interval = _speedup.wiggle_interval
 # pylint: enable=invalid-name

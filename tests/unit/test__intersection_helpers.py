@@ -187,15 +187,14 @@ class Test__newton_refine(utils.NumPyTestCase):
                          curve2.evaluate(exact_t))
 
 
-@utils.needs_curve_intersection_speedup
+@utils.needs_speedup
 class Test_speedup_newton_refine(Test__newton_refine):
 
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
-        from bezier import _curve_intersection_speedup
+        from bezier import _speedup
 
-        return _curve_intersection_speedup.newton_refine(
-            s, nodes1, t, nodes2)
+        return _speedup.newton_refine_curve_intersect(s, nodes1, t, nodes2)
 
 
 class TestIntersection(unittest.TestCase):

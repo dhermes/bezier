@@ -33,35 +33,11 @@ from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface
 try:
-    import bezier._helpers_speedup  # noqa: F401
-    _HAS_HELPERS_SPEEDUP = True
+    import bezier._speedup  # noqa: F401
+    _HAS_SPEEDUP = True
 except ImportError as exc:  # pragma: NO COVER
-    __config__.handle_import_error(exc, '_helpers_speedup')
-    _HAS_HELPERS_SPEEDUP = False
-try:
-    import bezier._curve_speedup  # noqa: F401
-    _HAS_CURVE_SPEEDUP = True
-except ImportError as exc:  # pragma: NO COVER
-    __config__.handle_import_error(exc, '_curve_speedup')
-    _HAS_CURVE_SPEEDUP = False
-try:
-    import bezier._surface_speedup  # noqa: F401
-    _HAS_SURFACE_SPEEDUP = True
-except ImportError as exc:  # pragma: NO COVER
-    __config__.handle_import_error(exc, '_surface_speedup')
-    _HAS_SURFACE_SPEEDUP = False
-try:
-    import bezier._curve_intersection_speedup  # noqa: F401
-    _HAS_CURVE_INTERSECTION_SPEEDUP = True
-except ImportError as exc:  # pragma: NO COVER
-    __config__.handle_import_error(exc, '_curve_intersection_speedup')
-    _HAS_CURVE_INTERSECTION_SPEEDUP = False
-try:
-    import bezier._surface_intersection_speedup  # noqa: F401
-    _HAS_SURFACE_INTERSECTION_SPEEDUP = True
-except ImportError as exc:  # pragma: NO COVER
-    __config__.handle_import_error(exc, '_surface_intersection_speedup')
-    _HAS_SURFACE_INTERSECTION_SPEEDUP = False
+    __config__.handle_import_error(exc, '_speedup')
+    _HAS_SPEEDUP = False
 
 
 # NOTE: The ``__version__`` and ``__author__`` are hard-coded here, rather

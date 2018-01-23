@@ -35,8 +35,11 @@ def main():
     c_glob = os.path.join('src', 'bezier', '*.c')
     all_files = subprocess.check_output(['git', 'ls-files', c_glob])
 
-    all_files = all_files.decode('utf-8')
-    for filename in all_files.strip().split('\n'):
+    all_files = all_files.decode('utf-8').strip()
+    if not all_files:
+        return
+
+    for filename in all_files.split('\n'):
         os.remove(filename)
 
 
