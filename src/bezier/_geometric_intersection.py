@@ -55,6 +55,7 @@ _TOO_MANY_TEMPLATE = (
 _NO_CONVERGE_TEMPLATE = (
     'Curve intersection failed to converge to approximately linear '
     'subdivisions after {:d} iterations.')
+_AT_LEAST_ONE_OUTSIDE = 'At least one value outside of unit interval'
 # Allow wiggle room for ``s`` and ``t`` computed during segment
 # intersection. Any over- or under-shooting will (hopefully) be
 # resolved in the Newton refinement step. If it isn't resolved, the
@@ -632,8 +633,7 @@ def wiggle_pair(s_val, t_val):
     new_s, success_s = _helpers.wiggle_interval(s_val)
     new_t, success_t = _helpers.wiggle_interval(t_val)
     if not (success_s and success_t):
-        raise ValueError(
-            'At least one value outside of unit interval', s_val, t_val)
+        raise ValueError(_AT_LEAST_ONE_OUTSIDE, s_val, t_val)
 
     return new_s, new_t
 
@@ -678,7 +678,7 @@ def from_linearized(first, second, intersections):
 
         raise NotImplementedError(_SEGMENTS_PARALLEL)
 
-    # Now, promote `s` and `t` onto the original curves.
+    # Now, promote ``s`` and ``t`` onto the original curves.
     orig_s = (1 - s) * first.curve.start + s * first.curve.end
     orig_t = (1 - t) * second.curve.start + t * second.curve.end
     # Perform one step of Newton iteration to refine the computed

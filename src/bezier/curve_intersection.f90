@@ -341,19 +341,15 @@ contains
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then
-       ! LCOV_EXCL_START
        status = Status_WIGGLE_FAIL
        return
-       ! LCOV_EXCL_STOP
     end if
     refined_s = s
 
     call wiggle_interval(refined_t, t, success)
     if (.NOT. success) then
-       ! LCOV_EXCL_START
        status = Status_WIGGLE_FAIL
        return
-       ! LCOV_EXCL_STOP
     end if
     refined_t = t
 

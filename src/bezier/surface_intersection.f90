@@ -1312,10 +1312,8 @@ contains
        else
           ! If the loop terminated without reaching the start node, then
           ! we have encountered an error.
-          ! LCOV_EXCL_START
           status = Status_UNKNOWN
           return
-          ! LCOV_EXCL_STOP
        end if
     end do
 

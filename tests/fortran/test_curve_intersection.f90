@@ -14,11 +14,11 @@ module test_curve_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
-       Status_INSUFFICIENT_SPACE
+       Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
+       Status_NO_CONVERGE, Status_INSUFFICIENT_SPACE
   use curve, only: &
-       CurveData, evaluate_multi, subdivide_nodes, curves_equal, &
-       subdivide_curve
+       CurveData, evaluate_multi, specialize_curve, subdivide_nodes, &
+       curves_equal, subdivide_curve
   use curve_intersection, only: &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, &
@@ -561,7 +561,8 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    type(CurveData) :: curve1, curve2
+    type(CurveData) :: curve1, curve2, curve3
+    real(c_double) :: cubic(4, 2)
     real(c_double) :: error1, error2
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
@@ -732,6 +733,41 @@ contains
          error2, curve2, 2, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = (status == Status_PARALLEL)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 10: A "wiggle" failure caused by almost touching segments
+    !          that produce local parameters within the [-2^{-16}, 1 + 2^{-16}]
+    !          interval but produce a "global" parameter outside of the more
+    !          narrow [-2^{-45}, 1 + 2^{-45}] (where ``WIGGLE == 2^{-45}`` in
+    !          ``helpers.f90``).
+    deallocate(curve1%nodes)
+    allocate(curve1%nodes(4, 2))
+    curve1%nodes(1, :) = [-0.7993236103108717_dp, -0.21683567278362156_dp]
+    curve1%nodes(2, :) = [-0.8072986524226636_dp, -0.21898490744674426_dp]
+    curve1%nodes(3, :) = [-0.8152736945344552_dp, -0.2211341421098668_dp]
+    curve1%nodes(4, :) = [-0.8232487366462472_dp, -0.2232833767729893_dp]
+    call linearization_error( &
+         4, 2, curve1%nodes, error1)
+
+    curve3%start = 0.99609375_dp
+    curve3%end_ = 1.0_dp
+    allocate(curve3%nodes(4, 2))
+    cubic(1, :) = [-0.7838204403623438_dp, -0.25519640597397464_dp]
+    cubic(2, :) = [-0.7894577677825452_dp, -0.24259531488131633_dp]
+    cubic(3, :) = [-0.7946421067207265_dp, -0.22976394420044136_dp]
+    cubic(4, :) = [-0.799367666650849_dp, -0.21671303774854855_dp]
+    call specialize_curve( &
+         4, 2, cubic, curve3%start, curve3%end_, curve3%nodes)
+    call linearization_error( &
+         4, 2, curve3%nodes, error2)
+
+    call from_linearized( &
+         error1, curve1, 4, curve1%nodes, &
+         error2, curve3, 4, cubic, &
+         refined_s, refined_t, does_intersect, status)
+    case_success = ( &
+         does_intersect .AND. &
+         status == Status_WIGGLE_FAIL)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_from_linearized
@@ -1538,6 +1574,7 @@ contains
     real(c_double), allocatable :: intersections(:, :)
     real(c_double) :: linear1(2, 2), linear2(2, 2)
     real(c_double) :: quadratic1(3, 2), quadratic2(3, 2)
+    real(c_double) :: cubic1(4, 2), cubic2(4, 2)
     integer(c_int) :: num_intersections
     integer(c_int) :: status
     integer :: case_id
@@ -1656,6 +1693,35 @@ contains
          intersections(1, 2) == 0.75_dp .AND. &
          intersections(2, 2) == 0.75_dp .AND. &
          status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: Curves that **almost** touch at their endpoints, but don't
+    !         actually cross. This causes a "wiggle fail" in
+    !         ``from_linearized()``.
+    cubic1(1, :) = [-0.7838204403623438_dp, -0.25519640597397464_dp]
+    cubic1(2, :) = [-0.7894577677825452_dp, -0.24259531488131633_dp]
+    cubic1(3, :) = [-0.7946421067207265_dp, -0.22976394420044136_dp]
+    cubic1(4, :) = [-0.799367666650849_dp, -0.21671303774854855_dp]
+    cubic2(1, :) = [-0.7993236103108717_dp, -0.21683567278362156_dp]
+    cubic2(2, :) = [-0.8072986524226636_dp, -0.21898490744674426_dp]
+    cubic2(3, :) = [-0.8152736945344552_dp, -0.2211341421098668_dp]
+    cubic2(4, :) = [-0.8232487366462472_dp, -0.2232833767729893_dp]
+
+    call all_intersections( &
+         4, cubic1, 4, cubic2, intersections, &
+         num_intersections, status)
+    case_success = ( &
+         num_intersections == 0 .AND. &
+         status == Status_WIGGLE_FAIL)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Same as CASE 7, but swap the inputs.
+    call all_intersections( &
+         4, cubic2, 4, cubic1, intersections, &
+         num_intersections, status)
+    case_success = ( &
+         num_intersections == 0 .AND. &
+         status == Status_WIGGLE_FAIL)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_all_intersections

@@ -516,10 +516,12 @@ contains
     if (is_even) then
        ! NOTE: We "exclude" this block from ``lcov`` because it can never
        !       be invoked while ``MAX_LOCATE_SUBDIVISIONS`` is even.
-       s_params(:num_candidates) = ( &  ! LCOV_EXCL_LINE
-            candidates_odd(:num_candidates)%start)  ! LCOV_EXCL_LINE
-       s_params(num_candidates + 1:) = ( &  ! LCOV_EXCL_LINE
-            candidates_odd(:num_candidates)%end_)  ! LCOV_EXCL_LINE
+       ! LCOV_EXCL_START
+       s_params(:num_candidates) = ( &
+            candidates_odd(:num_candidates)%start)
+       s_params(num_candidates + 1:) = ( &
+            candidates_odd(:num_candidates)%end_)
+       ! LCOV_EXCL_STOP
     else
        s_params(:num_candidates) = candidates_even(:num_candidates)%start
        s_params(num_candidates + 1:) = candidates_even(:num_candidates)%end_

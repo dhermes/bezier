@@ -463,6 +463,9 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         [-2.0, -3.0],
         [0.0, -9.0],
     ])
+    BAD_BOUNDARY_ARGS = ('Non-unique intersection',)
+    BAD_BOUNDARY_TYPE = ValueError
+    BAD_BOUNDARY_INCREASE_ULPS = True
 
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
@@ -702,8 +705,71 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         self.assertIsNone(contained)
         check_edges(self, self.NODES1, 1, self.NODES2, 2, all_edge_nodes)
 
+    def test_bad_boundary(self):
+        from bezier import _geometric_intersection
+
+        nodes1 = np.asfortranarray([
+            [-0.519247936646441, 0.008196262233806585],
+            [-0.5206153113582636, 0.01587839530234961],
+            [-0.5220361984817866, 0.023564120023660037],
+            [-0.5234919947680754, 0.03126920999203689],
+            [-0.5306013153328831, 0.010994185722894958],
+            [-0.5320185860555878, 0.018720567953255777],
+            [-0.533471521483344, 0.026443532602826243],
+            [-0.5418564772120571, 0.013842126833196683],
+            [-0.5433055706504355, 0.02160135650021924],
+            [-0.5530139922771271, 0.016726767154940626],
+        ])
+        nodes2 = np.asfortranarray([
+            [-0.5492475273303934, 0.004806678750684627],
+            [-0.5507539103531026, 0.011215423321262663],
+            [-0.552283211157318, 0.017577411042302475],
+            [-0.553868947686436, 0.023906392050982415],
+            [-0.5543287770635862, 0.0032189095236835417],
+            [-0.5558905319225977, 0.00960140358887212],
+            [-0.5574932750785362, 0.015938552164569394],
+            [-0.5596130517429451, 0.0014977481523963628],
+            [-0.5612419767391262, 0.007849282849502192],
+            [-0.5650788564504334, -0.0003406439314109452],
+        ])
+        with self.assertRaises(self.BAD_BOUNDARY_TYPE) as exc_info:
+            self._call_function_under_test(
+                nodes1, 3, nodes2, 3, verify=True)
+
+        self.assertEqual(exc_info.exception.args, self.BAD_BOUNDARY_ARGS)
+
+        if not self.BAD_BOUNDARY_INCREASE_ULPS:
+            return
+
+        # Increase ``SIMILAR_ULPS`` so that the intersection succeeds.
+        similar_ulps = _geometric_intersection.get_similar_ulps()
+        _geometric_intersection.set_similar_ulps(1438)
+
+        try:
+            result = self._call_function_under_test(
+                nodes1, 3, nodes2, 3, verify=True)
+        finally:
+            # Restore the original value.
+            _geometric_intersection.set_similar_ulps(similar_ulps)
+
+        curved_polygons, contained, all_edge_nodes = result
+        expected = [
+            (
+                (3, 0.6093751040632593, 0.6441739731226234),
+                (1, 0.971929530044116, 1.0),
+                (2, 0.0, 0.029255079571207404),
+            ),
+        ]
+        self.assertEqual(curved_polygons, expected)
+        self.assertIsNone(contained)
+        check_edges(self, nodes1, 3, nodes2, 3, all_edge_nodes)
+
 
 class Test_algebraic_intersect(Test__geometric_intersect):
+
+    BAD_BOUNDARY_ARGS = ('Coincident curves not currently supported',)
+    BAD_BOUNDARY_TYPE = RuntimeError
+    BAD_BOUNDARY_INCREASE_ULPS = False
 
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
@@ -750,6 +816,10 @@ class Test_algebraic_intersect(Test__geometric_intersect):
 
 @utils.needs_speedup
 class Test_speedup_geometric_intersect(Test__geometric_intersect):
+
+    BAD_BOUNDARY_ARGS = ('Unknown error has occured.',)
+    BAD_BOUNDARY_TYPE = RuntimeError
+    BAD_BOUNDARY_INCREASE_ULPS = True
 
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):

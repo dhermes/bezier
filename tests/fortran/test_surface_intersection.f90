@@ -14,10 +14,11 @@ module test_surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_INSUFFICIENT_SPACE, &
-       Status_SAME_CURVATURE, Status_BAD_TANGENT, Status_EDGE_END, &
-       Status_UNKNOWN
+       Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
+       Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_BAD_TANGENT, &
+       Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
+  use curve_intersection, only: set_similar_ulps, get_similar_ulps
   use surface_intersection, only: &
        Intersection, CurvedPolygonSegment, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
@@ -1331,8 +1332,11 @@ contains
     integer(c_int) :: num_intersected, contained, status
     real(c_double) :: linear1(3, 2), linear2(3, 2)
     real(c_double) :: quadratic1(6, 2), quadratic2(6, 2)
+    real(c_double) :: cubic1(10, 2), cubic2(10, 2)
     integer(c_int), allocatable :: segment_ends(:)
     type(CurvedPolygonSegment), allocatable :: segments(:)
+    integer(c_int) :: similar_ulps
+    real(c_double) :: start, end_
 
     case_id = 1
     name = "surfaces_intersect"
@@ -1538,6 +1542,66 @@ contains
          contained == SurfaceContained_SECOND .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
+
+    ! CASE 11: Due to round-off issues in ``add_intersection()`` (from the
+    !          ``curve_intersection`` module), a "phantom" extra intersection
+    !          point causes issues in ``interior_combine()``.
+    cubic1(1, :) = [-0.519247936646441_dp, 0.008196262233806585_dp]
+    cubic1(2, :) = [-0.5206153113582636_dp, 0.01587839530234961_dp]
+    cubic1(3, :) = [-0.5220361984817866_dp, 0.023564120023660037_dp]
+    cubic1(4, :) = [-0.5234919947680754_dp, 0.03126920999203689_dp]
+    cubic1(5, :) = [-0.5306013153328831_dp, 0.010994185722894958_dp]
+    cubic1(6, :) = [-0.5320185860555878_dp, 0.018720567953255777_dp]
+    cubic1(7, :) = [-0.533471521483344_dp, 0.026443532602826243_dp]
+    cubic1(8, :) = [-0.5418564772120571_dp, 0.013842126833196683_dp]
+    cubic1(9, :) = [-0.5433055706504355_dp, 0.02160135650021924_dp]
+    cubic1(10, :) = [-0.5530139922771271_dp, 0.016726767154940626_dp]
+    cubic2(1, :) = [-0.5492475273303934_dp, 0.004806678750684627_dp]
+    cubic2(2, :) = [-0.5507539103531026_dp, 0.011215423321262663_dp]
+    cubic2(3, :) = [-0.552283211157318_dp, 0.017577411042302475_dp]
+    cubic2(4, :) = [-0.553868947686436_dp, 0.023906392050982415_dp]
+    cubic2(5, :) = [-0.5543287770635862_dp, 0.0032189095236835417_dp]
+    cubic2(6, :) = [-0.5558905319225977_dp, 0.00960140358887212_dp]
+    cubic2(7, :) = [-0.5574932750785362_dp, 0.015938552164569394_dp]
+    cubic2(8, :) = [-0.5596130517429451_dp, 0.0014977481523963628_dp]
+    cubic2(9, :) = [-0.5612419767391262_dp, 0.007849282849502192_dp]
+    cubic2(10, :) = [-0.5650788564504334_dp, -0.0003406439314109452_dp]
+
+    call surfaces_intersect( &
+         10, cubic1, 3, 10, cubic2, 3, &
+         segment_ends, segments, &
+         num_intersected, contained, status)
+    case_success = ( &
+         num_intersected == 1 .AND. &
+         allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
+         allocated(segments) .AND. &  ! Though unused, not de-allocated.
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_UNKNOWN)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 12: Same as CASE 11, but with ``SIMILAR_ULPS`` increased so that
+    !          the intersection succeeds.
+    call get_similar_ulps(similar_ulps)
+    call set_similar_ulps(418)
+    call surfaces_intersect( &
+         10, cubic1, 3, 10, cubic2, 3, &
+         segment_ends, segments, &
+         num_intersected, contained, status)
+    start = 0.60937510406326101_dp
+    end_ = 0.64417397312262581_dp
+    case_success = ( &
+         num_intersected == 1 .AND. &
+         allocated(segment_ends) .AND. &
+         all(segment_ends == [3]) .AND. &
+         allocated(segments) .AND. &
+         segment_check(segments(1), start, end_, 4) .AND. &
+         segment_check(segments(2), 0.97192953004411253_dp, 1.0_dp, 2) .AND. &
+         segment_check(segments(3), 0.0_dp, 0.029255079571203865_dp, 3) .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+    ! Restore the original value.
+    call set_similar_ulps(similar_ulps)
 
   end subroutine test_surfaces_intersect
 

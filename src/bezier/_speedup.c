@@ -2471,7 +2471,7 @@ static const char __pyx_k_evaluate_cartesian_multi[] = "evaluate_cartesian_multi
 static const char __pyx_k_outside_of_unit_interval[] = "outside of unit interval";
 static const char __pyx_k_reset_surface_workspaces[] = "reset_surface_workspaces";
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
-static const char __pyx_k_Unexpected_number_of_edges[] = "Unexpected number of edges";
+static const char __pyx_k_Unknown_error_has_occured[] = "Unknown error has occured.";
 static const char __pyx_k_evaluate_barycentric_multi[] = "evaluate_barycentric_multi";
 static const char __pyx_k_evaluate_multi_barycentric[] = "evaluate_multi_barycentric";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
@@ -2573,7 +2573,7 @@ static PyObject *__pyx_kp_s_Tangent_curves_have_same_curvatu;
 static PyObject *__pyx_kp_s_The_number_of_candidate_intersec;
 static PyObject *__pyx_n_s_TypeError;
 static PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
-static PyObject *__pyx_kp_s_Unexpected_number_of_edges;
+static PyObject *__pyx_kp_s_Unknown_error_has_occured;
 static PyObject *__pyx_kp_s_Unknown_error_r;
 static PyObject *__pyx_n_s_UserWarning;
 static PyObject *__pyx_n_s_ValueError;
@@ -2924,7 +2924,6 @@ static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_2;
 static PyObject *__pyx_int_3;
 static PyObject *__pyx_int_6;
-static PyObject *__pyx_int_11;
 static PyObject *__pyx_int_184977713;
 static PyObject *__pyx_int_neg_1;
 static double __pyx_k__9;
@@ -21371,7 +21370,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_88surface_intersections(CYTHON_UNUSE
     /* "bezier/_speedup.pyx":1069
  *         #       edges have been added. As the status name indicates, this
  *         #       should never occur, hence will be difficult to test.
- *         raise RuntimeError('Unexpected number of edges', 11)             # <<<<<<<<<<<<<<
+ *         raise RuntimeError('Unknown error has occured.')             # <<<<<<<<<<<<<<
  *     else:
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  */
@@ -38393,7 +38392,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_The_number_of_candidate_intersec, __pyx_k_The_number_of_candidate_intersec, sizeof(__pyx_k_The_number_of_candidate_intersec), 0, 0, 1, 0},
   {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
   {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
-  {&__pyx_kp_s_Unexpected_number_of_edges, __pyx_k_Unexpected_number_of_edges, sizeof(__pyx_k_Unexpected_number_of_edges), 0, 0, 1, 0},
+  {&__pyx_kp_s_Unknown_error_has_occured, __pyx_k_Unknown_error_has_occured, sizeof(__pyx_k_Unknown_error_has_occured), 0, 0, 1, 0},
   {&__pyx_kp_s_Unknown_error_r, __pyx_k_Unknown_error_r, sizeof(__pyx_k_Unknown_error_r), 0, 0, 1, 0},
   {&__pyx_n_s_UserWarning, __pyx_k_UserWarning, sizeof(__pyx_k_UserWarning), 0, 0, 1, 1},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
@@ -38829,11 +38828,11 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":1069
  *         #       edges have been added. As the status name indicates, this
  *         #       should never occur, hence will be difficult to test.
- *         raise RuntimeError('Unexpected number of edges', 11)             # <<<<<<<<<<<<<<
+ *         raise RuntimeError('Unknown error has occured.')             # <<<<<<<<<<<<<<
  *     else:
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  */
-  __pyx_tuple__19 = PyTuple_Pack(2, __pyx_kp_s_Unexpected_number_of_edges, __pyx_int_11); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 1069, __pyx_L1_error)
+  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_kp_s_Unknown_error_has_occured); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 1069, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__19);
   __Pyx_GIVEREF(__pyx_tuple__19);
 
@@ -39850,7 +39849,6 @@ static int __Pyx_InitGlobals(void) {
   __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_3 = PyInt_FromLong(3); if (unlikely(!__pyx_int_3)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_6 = PyInt_FromLong(6); if (unlikely(!__pyx_int_6)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_11 = PyInt_FromLong(11); if (unlikely(!__pyx_int_11)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_184977713 = PyInt_FromLong(184977713L); if (unlikely(!__pyx_int_184977713)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;

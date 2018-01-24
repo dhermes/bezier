@@ -1066,7 +1066,7 @@ def surface_intersections(
         #       failed to return to the start node after ``MAX_EDGES = 10``
         #       edges have been added. As the status name indicates, this
         #       should never occur, hence will be difficult to test.
-        raise RuntimeError('Unexpected number of edges', 11)
+        raise RuntimeError('Unknown error has occured.')
     else:
         # NOTE: If ``status`` isn't one of the enum values, then it is the
         #       number of candidate intersections.
