@@ -11,7 +11,6 @@ $ /usr/bin/gfortran \
 >   -fmax-errors=1 \
 >   -std=f2008 \
 >   -Werror \
->   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/types.f90 \
@@ -32,7 +31,6 @@ $ /usr/bin/gfortran \
 >   -fmax-errors=1 \
 >   -std=f2008 \
 >   -Werror \
->   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/status.f90 \
@@ -53,7 +51,6 @@ $ /usr/bin/gfortran \
 >   -fmax-errors=1 \
 >   -std=f2008 \
 >   -Werror \
->   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/helpers.f90 \
@@ -74,7 +71,6 @@ $ /usr/bin/gfortran \
 >   -fmax-errors=1 \
 >   -std=f2008 \
 >   -Werror \
->   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/curve.f90 \
@@ -95,7 +91,6 @@ $ /usr/bin/gfortran \
 >   -fmax-errors=1 \
 >   -std=f2008 \
 >   -Werror \
->   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/surface.f90 \
@@ -116,7 +111,6 @@ $ /usr/bin/gfortran \
 >   -fmax-errors=1 \
 >   -std=f2008 \
 >   -Werror \
->   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/curve_intersection.f90 \
@@ -137,7 +131,6 @@ $ /usr/bin/gfortran \
 >   -fmax-errors=1 \
 >   -std=f2008 \
 >   -Werror \
->   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/surface_intersection.f90 \
