@@ -47,8 +47,6 @@ GFORTRAN_BAD_PATH = '``gfortran`` library path {} is not a directory.'
 # NOTE: These are mostly recommendations from Certik found here:
 #         http://www.fortran90.org/src/faq.html
 #       specifically "What compiler options should I use for ...?".
-#       I have dropped ``-ffast-math`` because (for now) it causes a headache
-#       in tests and doesn't give an appreciable speed up.
 FPIC = '-fPIC'
 GFORTRAN_SHARED_FLAGS = (  # Used for both "DEBUG" and "OPTIMIZE"
     '-Wall',
