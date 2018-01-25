@@ -705,6 +705,10 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         self.assertIsNone(contained)
         check_edges(self, self.NODES1, 1, self.NODES2, 2, all_edge_nodes)
 
+    def _almost(self, actual, expected, num_ulps):
+        delta = num_ulps * np.spacing(expected)
+        self.assertAlmostEqual(actual, expected, delta=delta)
+
     def test_bad_boundary(self):
         from bezier import _geometric_intersection
 
@@ -753,16 +757,25 @@ class Test__geometric_intersect(utils.NumPyTestCase):
             _geometric_intersection.set_similar_ulps(similar_ulps)
 
         curved_polygons, contained, all_edge_nodes = result
-        expected = [
-            (
-                (3, 0.6093751040632593, 0.6441739731226234),
-                (1, 0.971929530044116, 1.0),
-                (2, 0.0, 0.029255079571207404),
-            ),
-        ]
-        self.assertEqual(curved_polygons, expected)
         self.assertIsNone(contained)
         check_edges(self, nodes1, 3, nodes2, 3, all_edge_nodes)
+        self.assertEqual(len(curved_polygons), 1)
+        self.assertEqual(len(curved_polygons[0]), 3)
+        # First triplet ("edge info")
+        index, s_val, t_val = curved_polygons[0][0]
+        self.assertEqual(index, 3)
+        self._almost(s_val, 0.6093751040632593, 16)
+        self._almost(t_val, 0.6441739731226234, 32)
+        # Second triplet ("edge info")
+        index, s_val, t_val = curved_polygons[0][1]
+        self.assertEqual(index, 1)
+        self._almost(s_val, 0.971929530044116, 32)
+        self.assertEqual(t_val, 1.0)
+        # Third and final triplet ("edge info")
+        index, s_val, t_val = curved_polygons[0][2]
+        self.assertEqual(index, 2)
+        self.assertEqual(s_val, 0.0)
+        self._almost(t_val, 0.029255079571207404, 1024)
 
 
 class Test_algebraic_intersect(Test__geometric_intersect):
