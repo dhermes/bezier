@@ -375,7 +375,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         ])
         curve1 = subdivided_curve(nodes1)
         # NOTE: This curve isn't close to linear, but that's OK.
-        lin1 = make_linearization(curve1)
+        lin1 = make_linearization(curve1, error=np.nan)
 
         nodes2 = np.asfortranarray([
             [0.0, 1.0],
@@ -384,7 +384,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         ])
         curve2 = subdivided_curve(nodes2)
         # NOTE: This curve isn't close to linear, but that's OK.
-        lin2 = make_linearization(curve2)
+        lin2 = make_linearization(curve2, error=np.nan)
 
         intersections = []
         self.assertIsNone(
@@ -398,14 +398,14 @@ class Test_from_linearized(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, 0.0)
+        lin1 = make_linearization(curve1, error=0.0)
 
         nodes2 = np.asfortranarray([
             [1.75, -0.75],
             [0.75, 0.25],
         ])
         curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, 0.0)
+        lin2 = make_linearization(curve2, error=0.0)
 
         intersections = []
         self.assertIsNone(
@@ -419,14 +419,14 @@ class Test_from_linearized(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, 0.0)
+        lin1 = make_linearization(curve1, error=0.0)
 
         nodes2 = np.asfortranarray([
             [1.75, -0.75],
             [0.75, 0.25],
         ])
         curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, 0.0)
+        lin2 = make_linearization(curve2, error=0.0)
 
         if swap:
             lin1, lin2 = lin2, lin1
@@ -451,7 +451,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, 0.25)
+        lin1 = make_linearization(curve1, error=0.25)
 
         nodes2 = np.asfortranarray([
             [1.75, -0.75],
@@ -459,7 +459,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             [0.75, 0.25],
         ])
         curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, 0.25)
+        lin2 = make_linearization(curve2, error=0.25)
 
         if swap:
             lin1, lin2 = lin2, lin1
@@ -482,14 +482,14 @@ class Test_from_linearized(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, 0.0)
+        lin1 = make_linearization(curve1, error=0.0)
 
         nodes2 = np.asfortranarray([
             [0.0, 1.0],
             [1.0, 2.0],
         ])
         curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, 0.0)
+        lin2 = make_linearization(curve2, error=0.0)
 
         intersections = []
         return_value = self._call_function_under_test(
@@ -503,14 +503,14 @@ class Test_from_linearized(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, 0.0)
+        lin1 = make_linearization(curve1, error=0.0)
 
         nodes2 = np.asfortranarray([
             [0.5, 0.5],
             [3.0, 3.0],
         ])
         curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, 0.0)
+        lin2 = make_linearization(curve2, error=0.0)
 
         intersections = []
         with self.assertRaises(NotImplementedError):
@@ -524,7 +524,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, 0.0)
+        lin1 = make_linearization(curve1, error=0.0)
 
         nodes2 = np.asfortranarray([
             [2.0, 2.0],
@@ -532,7 +532,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             [3.0, 3.0],
         ])
         curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, np.nan)
+        lin2 = make_linearization(curve2, error=np.nan)
 
         intersections = []
         return_value = self._call_function_under_test(
@@ -546,7 +546,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, 0.0)
+        lin1 = make_linearization(curve1, error=0.0)
 
         nodes2 = np.asfortranarray([
             [0.5, 0.75],
@@ -554,7 +554,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             [1.5, 1.75],
         ])
         curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, np.nan)
+        lin2 = make_linearization(curve2, error=np.nan)
 
         intersections = []
         with self.assertRaises(NotImplementedError):
@@ -573,8 +573,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             [-0.8232487366462472, -0.2232833767729893],
         ])
         curve1 = subdivided_curve(nodes1)
-        error1 = _geometric_intersection.linearization_error(nodes1)
-        lin1 = make_linearization(curve1, error1)
+        lin1 = make_linearization(curve1)
 
         original_nodes2 = np.asfortranarray([
             [-0.7838204403623438, -0.25519640597397464],
@@ -586,8 +585,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         nodes2 = _curve_helpers.specialize_curve(original_nodes2, start, 1.0)
         curve2 = _geometric_intersection.SubdividedCurve(
             nodes2, original_nodes2, start=start)
-        error2 = _geometric_intersection.linearization_error(nodes2)
-        lin2 = make_linearization(curve2, error2)
+        lin2 = make_linearization(curve2)
 
         intersections = []
         with self.assertRaises(ValueError) as exc_info:
@@ -954,7 +952,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 
     def test_first_linearized(self):
         curve1 = subdivided_curve(self.LINE1)
-        lin1 = make_linearization(curve1, 0.0)
+        lin1 = make_linearization(curve1, error=0.0)
         curve2 = subdivided_curve(self.QUADRATIC2)
 
         intersections = []
@@ -972,7 +970,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
     def test_second_linearized(self):
         curve1 = subdivided_curve(self.QUADRATIC1)
         curve2 = subdivided_curve(self.LINE2)
-        lin2 = make_linearization(curve2, 0.0)
+        lin2 = make_linearization(curve2, error=0.0)
 
         intersections = []
         next_candidates = self._call_function_under_test(
@@ -988,9 +986,9 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 
     def test_both_linearized(self):
         curve1 = subdivided_curve(self.LINE1)
-        lin1 = make_linearization(curve1, 0.0)
+        lin1 = make_linearization(curve1, error=0.0)
         curve2 = subdivided_curve(self.LINE2)
-        lin2 = make_linearization(curve2, 0.0)
+        lin2 = make_linearization(curve2, error=0.0)
 
         intersections = []
         next_candidates = self._call_function_under_test(
@@ -1002,13 +1000,13 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         from bezier import _geometric_intersection
 
         curve1 = subdivided_curve(self.LINE1)
-        lin1 = make_linearization(curve1, 0.0)
+        lin1 = make_linearization(curve1, error=0.0)
         nodes2 = np.asfortranarray([
             [0.5, 0.5],
             [3.0, 3.0],
         ])
         curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, 0.0)
+        lin2 = make_linearization(curve2, error=0.0)
 
         intersections = []
         with self.assertRaises(NotImplementedError) as exc_info:
@@ -1026,7 +1024,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
             [0.0, 2.0],
         ])
         curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, 0.0)
+        lin2 = make_linearization(curve2, error=0.0)
 
         intersections = []
         next_candidates = self._call_function_under_test(
@@ -1721,9 +1719,11 @@ def subdivided_curve(nodes):
     return _geometric_intersection.SubdividedCurve(nodes, nodes)
 
 
-def make_linearization(curve, error=np.nan):
+def make_linearization(curve, error=None):
     from bezier import _geometric_intersection
 
+    if error is None:
+        error = _geometric_intersection.linearization_error(curve.nodes)
     return _geometric_intersection.Linearization(curve, error)
 
 
