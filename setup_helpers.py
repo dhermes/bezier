@@ -71,7 +71,6 @@ GFORTRAN_DEBUG_FLAGS = (
 GFORTRAN_OPTIMIZE_FLAGS = (
     '-Werror',
     '-O3',
-    '-march=native',
     '-funroll-loops',
 )
 BAD_JOURNAL = 'Saving journal failed with {!r}.'
