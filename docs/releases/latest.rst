@@ -1,4 +1,4 @@
-Latest Release (``0.6.2``)
+Latest Release (``0.6.3``)
 ==========================
 
 |pypi| |docs|
@@ -6,34 +6,28 @@ Latest Release (``0.6.2``)
 Python Changes
 --------------
 
-Documentation
-~~~~~~~~~~~~~
+Surface Changes
+~~~~~~~~~~~~~~~
 
--  Converted ``CHANGELOG.md`` file into a
-   `releases <http://bezier.readthedocs.io/en/0.6.2/releases/index.html>`__
-   docs page
-   (`0027cd7 <https://github.com/dhermes/bezier/commit/0027cd7b51433c6b3542f077b08c555ff287e10b>`__).
+-  Changed ``RuntimeError('Unexpected number of edges', 11)`` to
+   ``RuntimeError('Unknown error has occured.')`` in the speedup
+   that does surface-surface intersection
+   (`35ab5d5 <https://github.com/dhermes/bezier/commit/35ab5d5a7d3518fda1ce4478dacee50bc3e56d9c>`__).
+   The old error message was a "copy-paste" artifact from the
+   ``basic_interior_combine()`` Python helper.
 
-Non-Public API
-~~~~~~~~~~~~~~
+Build
+~~~~~
 
--  Collapsed all Cython-generated modules into a single ``bezier._speedup``
-   module (`8bcb319 <https://github.com/dhermes/bezier/commit/8bcb319c6dcb9e523037d688028d8a38c6b2b630>`__).
+-  Removed a flag (``-march=native``) from the build process for the
+   ``bezier._speedup`` extension module
+   (`e739429 <https://github.com/dhermes/bezier/commit/e7394292f14f134191d9944bb333d4a97dd92f29>`__).
+   Using the flag caused the ``manylinux`` wheels to be "broken"
+   (see `#98 <https://github.com/dhermes/bezier/issues/98>`__).
 
-   -  This is the change that **prompted the release**.
-   -  Dropped the five ``bezier._HAS_*_SPEEDUP`` members for a single
-      ``bezier._HAS_SPEEDUP`` (this was the previous approach
-      before ``0.6.0``).
-   -  Renamed a few of the Cython helper functions to avoid name collision.
-   -  This was done to fix a bug and prevent future bugs. The issue was that a
-      mutable Fortran global (``MAX_CANDIDATES``) was being included via an
-      object file in **separate** extension modules. When one module updated
-      the global, the other module never saw the update (because it was a
-      different copy).
-
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.6.2.svg
-   :target: https://pypi.org/project/bezier/0.6.2/
-   :alt: PyPI link to release 0.6.2
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.6.2
-   :target: https://bezier.readthedocs.io/en/0.6.2/
-   :alt: Documentation for release 0.6.2
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.6.3.svg
+   :target: https://pypi.org/project/bezier/0.6.3/
+   :alt: PyPI link to release 0.6.3
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.6.3
+   :target: https://bezier.readthedocs.io/en/0.6.3/
+   :alt: Documentation for release 0.6.3

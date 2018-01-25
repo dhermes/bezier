@@ -9,7 +9,7 @@ Performance Optimizations
 -  Change ``wiggle_interval`` to return ``success`` bool instead of
    raising an exception. This allows the implicitization approach to use
    it without having to use exceptions for flow-control. (Fixes
-   `#22 <https://github.com/dhermes/bezier/pull/22>`__.)
+   `#22 <https://github.com/dhermes/bezier/issues/22>`__.)
 -  Switching Fortran speedups from ``f2py`` to Cython (this is because
    ``f2py`` artificially limits the feature set of Fortran, i.e. user
    defined types)
