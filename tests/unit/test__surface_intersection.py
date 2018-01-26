@@ -705,6 +705,10 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         self.assertIsNone(contained)
         check_edges(self, self.NODES1, 1, self.NODES2, 2, all_edge_nodes)
 
+    def _almost(self, actual, expected, num_ulps):
+        delta = num_ulps * np.spacing(expected)
+        self.assertAlmostEqual(actual, expected, delta=delta)
+
     def test_bad_boundary(self):
         from bezier import _geometric_intersection
 
@@ -743,7 +747,11 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
         # Increase ``SIMILAR_ULPS`` so that the intersection succeeds.
         similar_ulps = _geometric_intersection.get_similar_ulps()
-        _geometric_intersection.set_similar_ulps(418)
+        if (base_utils.IS_MAC_OS_X and
+                not base_utils.IS_64_BIT):  # pragma: NO COVER
+            _geometric_intersection.set_similar_ulps(601)
+        else:
+            _geometric_intersection.set_similar_ulps(418)
 
         try:
             result = self._call_function_under_test(
@@ -760,18 +768,18 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         # First triplet ("edge info")
         index, s_val, t_val = curved_polygons[0][0]
         self.assertEqual(index, 3)
-        self.assertEqual(s_val, 0.60937510406326101)
-        self.assertEqual(t_val, 0.64417397312262581)
+        self._almost(s_val, 0.60937510406326101, 16)
+        self._almost(t_val, 0.64417397312262581, 32)
         # Second triplet ("edge info")
         index, s_val, t_val = curved_polygons[0][1]
         self.assertEqual(index, 1)
-        self.assertEqual(s_val, 0.97192953004411253)
+        self._almost(s_val, 0.97192953004411253, 32)
         self.assertEqual(t_val, 1.0)
         # Third and final triplet ("edge info")
         index, s_val, t_val = curved_polygons[0][2]
         self.assertEqual(index, 2)
         self.assertEqual(s_val, 0.0)
-        self.assertEqual(t_val, 0.029255079571203865)
+        self._almost(t_val, 0.029255079571203865, 1024)
 
 
 class Test_algebraic_intersect(Test__geometric_intersect):
