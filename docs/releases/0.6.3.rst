@@ -1,0 +1,33 @@
+``0.6.3``
+=========
+
+|pypi| |docs|
+
+Python Changes
+--------------
+
+Surface Changes
+~~~~~~~~~~~~~~~
+
+-  Changed ``RuntimeError('Unexpected number of edges', 11)`` to
+   ``RuntimeError('Unknown error has occured.')`` in the speedup
+   that does surface-surface intersection
+   (`35ab5d5 <https://github.com/dhermes/bezier/commit/35ab5d5a7d3518fda1ce4478dacee50bc3e56d9c>`__).
+   The old error message was a "copy-paste" artifact from the
+   ``basic_interior_combine()`` Python helper.
+
+Build
+~~~~~
+
+-  Removed a flag (``-march=native``) from the build process for the
+   ``bezier._speedup`` extension module
+   (`e739429 <https://github.com/dhermes/bezier/commit/e7394292f14f134191d9944bb333d4a97dd92f29>`__).
+   Using the flag caused the ``manylinux`` wheels to be "broken"
+   (see `#98 <https://github.com/dhermes/bezier/issues/98>`__).
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.6.3.svg
+   :target: https://pypi.org/project/bezier/0.6.3/
+   :alt: PyPI link to release 0.6.3
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.6.3
+   :target: https://bezier.readthedocs.io/en/0.6.3/
+   :alt: Documentation for release 0.6.3

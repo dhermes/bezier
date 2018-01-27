@@ -1,4 +1,4 @@
-Latest Release (``0.6.3``)
+Latest Release (``0.6.4``)
 ==========================
 
 |pypi| |docs|
@@ -9,25 +9,26 @@ Python Changes
 Surface Changes
 ~~~~~~~~~~~~~~~
 
--  Changed ``RuntimeError('Unexpected number of edges', 11)`` to
-   ``RuntimeError('Unknown error has occured.')`` in the speedup
-   that does surface-surface intersection
-   (`35ab5d5 <https://github.com/dhermes/bezier/commit/35ab5d5a7d3518fda1ce4478dacee50bc3e56d9c>`__).
-   The old error message was a "copy-paste" artifact from the
-   ``basic_interior_combine()`` Python helper.
+-  Stopped raising
+   ``ValueError('At least one value outside of unit interval', s_val, t_val)``
+   or ``ValueError('outside of unit interval')`` when a curve-curve
+   intersection falls **barely** outside of the parameter space ``[0, 1]``
+   (`329a59a <https://github.com/dhermes/bezier/commit/329a59a5c3f01655993305c3db3a2804eb25e0ad>`__).
 
-Build
-~~~~~
+ABI Changes
+-----------
 
--  Removed a flag (``-march=native``) from the build process for the
-   ``bezier._speedup`` extension module
-   (`e739429 <https://github.com/dhermes/bezier/commit/e7394292f14f134191d9944bb333d4a97dd92f29>`__).
-   Using the flag caused the ``manylinux`` wheels to be "broken"
-   (see `#98 <https://github.com/dhermes/bezier/issues/98>`__).
+Surface Changes
+~~~~~~~~~~~~~~~
 
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.6.3.svg
-   :target: https://pypi.org/project/bezier/0.6.3/
-   :alt: PyPI link to release 0.6.3
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.6.3
-   :target: https://bezier.readthedocs.io/en/0.6.3/
-   :alt: Documentation for release 0.6.3
+-  Removed ``Status_WIGGLE_FAIL`` enum and re-numbered all larger ``Status``
+   enum values (by subtracting one)
+-  Changing "wiggle failure" in curve-curve intersection from a non-success
+   status to be a dropped candidate for intersection
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.6.4.svg
+   :target: https://pypi.org/project/bezier/0.6.4/
+   :alt: PyPI link to release 0.6.4
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.6.4
+   :target: https://bezier.readthedocs.io/en/0.6.4/
+   :alt: Documentation for release 0.6.4
