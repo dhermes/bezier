@@ -20,12 +20,11 @@ extern "C" {
 typedef enum Status {
   SUCCESS = 0,
   PARALLEL = 1,
-  WIGGLE_FAIL = 2,
-  NO_CONVERGE = 3,
-  INSUFFICIENT_SPACE = 4,
-  SAME_CURVATURE = 5,
-  BAD_TANGENT = 6,
-  EDGE_END = 7,
+  NO_CONVERGE = 2,
+  INSUFFICIENT_SPACE = 3,
+  SAME_CURVATURE = 4,
+  BAD_TANGENT = 5,
+  EDGE_END = 6,
   UNKNOWN = 999,
 } Status;
 

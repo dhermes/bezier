@@ -55,7 +55,6 @@ _TOO_MANY_TEMPLATE = (
 _NO_CONVERGE_TEMPLATE = (
     'Curve intersection failed to converge to approximately linear '
     'subdivisions after {:d} iterations.')
-_AT_LEAST_ONE_OUTSIDE = 'At least one value outside of unit interval'
 # Allow wiggle room for ``s`` and ``t`` computed during segment
 # intersection. Any over- or under-shooting will (hopefully) be
 # resolved in the Newton refinement step. If it isn't resolved, the
@@ -619,25 +618,6 @@ def parallel_different(start0, end0, start1, end1):
     return not _helpers.in_interval(0.0, min_val, max_val)
 
 
-def wiggle_pair(s_val, t_val):
-    """Coerce two parameter values into the unit interval.
-
-    Returns:
-        Tuple[float, float]: Pair of ``(s_val, t_val)`` with each potentially
-        rounded into the unit interval (if close enough).
-
-    Raises:
-        ValueError: If one of the values falls outside the unit interval
-            (with wiggle room).
-    """
-    new_s, success_s = _helpers.wiggle_interval(s_val)
-    new_t, success_t = _helpers.wiggle_interval(t_val)
-    if not (success_s and success_t):
-        raise ValueError(_AT_LEAST_ONE_OUTSIDE, s_val, t_val)
-
-    return new_s, new_t
-
-
 def from_linearized(first, second, intersections):
     """Determine curve-curve intersection from pair of linearizations.
 
@@ -652,6 +632,7 @@ def from_linearized(first, second, intersections):
     Raises:
         NotImplementedError: If the segment intersection fails.
     """
+    # pylint: disable=too-many-return-statements
     s, t, success = segment_intersection(
         first.start_node, first.end_node, second.start_node, second.end_node)
     if success:
@@ -686,8 +667,14 @@ def from_linearized(first, second, intersections):
     refined_s, refined_t = _intersection_helpers.newton_refine(
         orig_s, first.curve.original_nodes,
         orig_t, second.curve.original_nodes)
-    refined_s, refined_t = wiggle_pair(refined_s, refined_t)
+    refined_s, success = _helpers.wiggle_interval(refined_s)
+    if not success:
+        return
+    refined_t, success = _helpers.wiggle_interval(refined_t)
+    if not success:
+        return
     add_intersection(refined_s, refined_t, intersections)
+    # pylint: enable=too-many-return-statements
 
 
 def add_intersection(s, t, intersections):

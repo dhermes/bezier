@@ -15,8 +15,8 @@ module curve_intersection
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
-       Status_NO_CONVERGE, Status_INSUFFICIENT_SPACE
+       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
+       Status_INSUFFICIENT_SPACE
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
        vector_close, in_interval, ulps_away
@@ -264,8 +264,6 @@ contains
     !                       can still be avoided if the "root" curves are
     !                       also (parallel) lines that don't overlap or if
     !                       the "root" curves have disjoint bounding boxes.
-    ! * Status_WIGGLE_FAIL: If the s- or t-parameter are too far outside of
-    !                       [0, 1] to be "wiggled" into it.
 
     real(c_double), intent(in) :: error1
     type(CurveData), intent(in) :: curve1
@@ -329,7 +327,6 @@ contains
        return
     end if
 
-    does_intersect = .TRUE.
     ! Now, promote ``s`` and ``t`` onto the original curves.
     s = (1.0_dp - s) * curve1%start + s * curve1%end_  ! orig_s
     t = (1.0_dp - t) * curve2%start + t * curve2%end_  ! orig_t
@@ -341,16 +338,16 @@ contains
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then
-       status = Status_WIGGLE_FAIL
        return
     end if
-    refined_s = s
 
     call wiggle_interval(refined_t, t, success)
     if (.NOT. success) then
-       status = Status_WIGGLE_FAIL
        return
     end if
+
+    does_intersect = .TRUE.
+    refined_s = s
     refined_t = t
 
   end subroutine from_linearized
@@ -512,7 +509,6 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS    : On success.
     ! * Status_PARALLEL   : Via ``from_linearized()``.
-    ! * Status_WIGGLE_FAIL: Via ``from_linearized()``.
 
     type(CurveData), intent(in) :: first
     real(c_double), intent(in) :: root_nodes1(:, :)
@@ -697,7 +693,6 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS    : On success.
     ! * Status_PARALLEL   : Via ``add_from_linearized()``.
-    ! * Status_WIGGLE_FAIL: Via ``add_from_linearized()``.
 
     real(c_double), intent(in) :: root_nodes_first(:, :)
     real(c_double), intent(in) :: root_nodes_second(:, :)
@@ -821,7 +816,6 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
     ! * Status_PARALLEL      : Via ``intersect_one_round()``.
-    ! * Status_WIGGLE_FAIL   : Via ``intersect_one_round()``.
     ! * Status_NO_CONVERGE   : If the curves don't converge to linear after
     !                          ``MAX_INTERSECT_SUBDIVISIONS``.
     ! * (N >= MAX_CANDIDATES): The number of candidates if it exceeds the limit
@@ -918,7 +912,6 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS           : On success.
     ! * Status_PARALLEL          : Via ``all_intersections()``.
-    ! * Status_WIGGLE_FAIL       : Via ``all_intersections()``.
     ! * Status_NO_CONVERGE       : Via ``all_intersections()``.
     ! * Status_INSUFFICIENT_SPACE: If ``intersections_size`` is smaller than
     !                              the number of intersections.

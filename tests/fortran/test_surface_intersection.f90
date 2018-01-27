@@ -14,9 +14,9 @@ module test_surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
-       Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_BAD_TANGENT, &
-       Status_EDGE_END, Status_UNKNOWN
+       Status_SUCCESS, Status_PARALLEL, Status_INSUFFICIENT_SPACE, &
+       Status_SAME_CURVATURE, Status_BAD_TANGENT, Status_EDGE_END, &
+       Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
   use curve_intersection, only: set_similar_ulps, get_similar_ulps
   use surface_intersection, only: &

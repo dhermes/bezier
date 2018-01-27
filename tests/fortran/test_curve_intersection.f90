@@ -14,8 +14,8 @@ module test_curve_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
-       Status_NO_CONVERGE, Status_INSUFFICIENT_SPACE
+       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
+       Status_INSUFFICIENT_SPACE
   use curve, only: &
        CurveData, evaluate_multi, specialize_curve, subdivide_nodes, &
        curves_equal, subdivide_curve
@@ -766,8 +766,8 @@ contains
          error2, curve3, 4, cubic, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         does_intersect .AND. &
-         status == Status_WIGGLE_FAIL)
+         .NOT. does_intersect .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_from_linearized
@@ -1712,7 +1712,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_WIGGLE_FAIL)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Same as CASE 7, but swap the inputs.
@@ -1721,7 +1721,7 @@ contains
          num_intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_WIGGLE_FAIL)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_all_intersections

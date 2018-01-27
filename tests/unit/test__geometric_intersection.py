@@ -338,26 +338,6 @@ class Test_parallel_different(unittest.TestCase):
             self._call_function_under_test(start0, end0, start1, end1))
 
 
-class Test_wiggle_pair(unittest.TestCase):
-
-    @staticmethod
-    def _call_function_under_test(s_val, t_val):
-        from bezier import _geometric_intersection
-
-        return _geometric_intersection.wiggle_pair(s_val, t_val)
-
-    def test_success(self):
-        s_val = float.fromhex('-0x1.fffffffffffffp-46')
-        t_val = 0.75
-        new_s, new_t = self._call_function_under_test(s_val, t_val)
-        self.assertEqual(new_s, 0.0)
-        self.assertEqual(new_t, t_val)
-
-    def test_failure(self):
-        with self.assertRaises(ValueError):
-            self._call_function_under_test(-0.5, 0.5)
-
-
 class Test_from_linearized(utils.NumPyTestCase):
 
     @staticmethod
@@ -588,14 +568,9 @@ class Test_from_linearized(utils.NumPyTestCase):
         lin2 = make_linearization(curve2)
 
         intersections = []
-        with self.assertRaises(ValueError) as exc_info:
-            self._call_function_under_test(lin1, lin2, intersections)
-
+        self.assertIsNone(
+            self._call_function_under_test(lin1, lin2, intersections))
         self.assertEqual(intersections, [])
-        exc_args = exc_info.exception.args
-        self.assertEqual(len(exc_args), 3)
-        self.assertEqual(
-            exc_args[0], _geometric_intersection._AT_LEAST_ONE_OUTSIDE)
 
 
 class Test_add_intersection(unittest.TestCase):
@@ -1183,14 +1158,6 @@ class Test__all_intersections(utils.NumPyTestCase):
         ])
         self.assertEqual(intersections, expected)
 
-    def _check_wiggle_fail(self, exc_info):
-        from bezier import _geometric_intersection
-
-        exc_args = exc_info.exception.args
-        self.assertEqual(len(exc_args), 3)
-        self.assertEqual(
-            exc_args[0], _geometric_intersection._AT_LEAST_ONE_OUTSIDE)
-
     def test_wiggle_failure(self):
         nodes1 = np.asfortranarray([
             [-0.7838204403623438, -0.25519640597397464],
@@ -1205,13 +1172,10 @@ class Test__all_intersections(utils.NumPyTestCase):
             [-0.8232487366462472, -0.2232833767729893],
         ])
 
-        with self.assertRaises(ValueError) as exc_info:
-            self._call_function_under_test(nodes1, nodes2)
-        self._check_wiggle_fail(exc_info)
-
-        with self.assertRaises(ValueError) as exc_info:
-            self._call_function_under_test(nodes2, nodes1)
-        self._check_wiggle_fail(exc_info)
+        intersections = self._call_function_under_test(nodes1, nodes2)
+        self.assertEqual(intersections.shape, (0, 2))
+        intersections = self._call_function_under_test(nodes2, nodes1)
+        self.assertEqual(intersections.shape, (0, 2))
 
 
 @utils.needs_speedup
@@ -1235,10 +1199,6 @@ class Test_speedup_all_intersections(Test__all_intersections):
         from bezier import _speedup
 
         return _speedup.curves_workspace_size()
-
-    def _check_wiggle_fail(self, exc_info):
-        self.assertEqual(
-            exc_info.exception.args, ('outside of unit interval',))
 
     def test_workspace_resize(self):
         nodes1 = np.asfortranarray([

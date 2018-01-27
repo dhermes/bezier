@@ -451,10 +451,6 @@ def curve_intersections(
             raise ValueError(msg)
     elif status == bezier._status.Status.PARALLEL:
         raise NotImplementedError('Line segments parallel.')
-    elif status == bezier._status.Status.WIGGLE_FAIL:
-        # NOTE: This branch may not be tested because it's quite difficult to
-        #       come up with an example that causes it.
-        raise ValueError('outside of unit interval')
     else:
         # NOTE: If ``status`` isn't one of the enum values, then it is the
         #       number of candidate intersections.
@@ -1044,10 +1040,6 @@ def surface_intersections(
             'subdivisions after 20 iterations.')
     elif status == bezier._status.Status.PARALLEL:
         raise NotImplementedError('Line segments parallel.')
-    elif status == bezier._status.Status.WIGGLE_FAIL:
-        # NOTE: This branch may not be tested because it's quite difficult to
-        #       come up with an example that causes it.
-        raise ValueError('outside of unit interval')
     elif status == bezier._status.Status.EDGE_END:
         # NOTE: This text is identical (or should be) to the exception
         #       in the Python ``classify_intersection()``.

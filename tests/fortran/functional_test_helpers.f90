@@ -15,9 +15,9 @@ module functional_test_helpers
   use, intrinsic :: iso_c_binding, only: c_double, c_int
   use types, only: dp
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_WIGGLE_FAIL, &
-       Status_NO_CONVERGE, Status_SAME_CURVATURE, &
-       Status_BAD_TANGENT, Status_EDGE_END, Status_UNKNOWN
+       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
+       Status_SAME_CURVATURE, Status_BAD_TANGENT, Status_EDGE_END, &
+       Status_UNKNOWN
   use curve_intersection, only: &
        all_intersections, free_curve_intersections_workspace
   implicit none
@@ -94,11 +94,6 @@ contains
             "Case ", &
             case_id, &
             " (failure): PARALLEL"
-    else if (status == Status_WIGGLE_FAIL) then
-       write (*, '(A, I2, A)') &
-            "Case ", &
-            case_id, &
-            " (failure): WIGGLE_FAIL"
     else if (status == Status_NO_CONVERGE) then
        write (*, '(A, I2, A)') &
             "Case ", &
