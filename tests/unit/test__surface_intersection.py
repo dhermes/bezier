@@ -747,11 +747,10 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
         # Increase ``SIMILAR_ULPS`` so that the intersection succeeds.
         similar_ulps = _geometric_intersection.get_similar_ulps()
-        if (base_utils.IS_MAC_OS_X and
-                not base_utils.IS_64_BIT):  # pragma: NO COVER
-            _geometric_intersection.set_similar_ulps(601)
-        else:
+        if base_utils.IS_64_BIT or base_utils.IS_WINDOWS:
             _geometric_intersection.set_similar_ulps(418)
+        else:  # pragma: NO COVER
+            _geometric_intersection.set_similar_ulps(601)
 
         try:
             result = self._call_function_under_test(
