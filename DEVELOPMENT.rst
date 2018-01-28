@@ -33,7 +33,7 @@ Many low-level computations have alternate implementations in Fortran.
 See the `Native Libraries`_ page in the documentation for a more
 detailed description.
 
-.. _Native Libraries: https://bezier.readthedocs.io/en/latest/native-libraries.html
+.. _Native Libraries: https://bezier.readthedocs.io/en/0.6.4/native-libraries.html
 
 Building / Compiling
 ====================
@@ -258,32 +258,32 @@ To run the functional tests:
    $ PYTHONPATH=src/ python3.6 -m pytest tests/functional/
    $ PYTHONPATH=src/ pypy      -m pytest tests/functional/
 
-.. _functional tests: https://github.com/dhermes/bezier/tree/master/tests/functional
+.. _functional tests: https://github.com/dhermes/bezier/tree/0.6.4/tests/functional
 
 For example, the following curve-curve intersection is a
 functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/curves11_and_26.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/0.6.4/docs/images/curves11_and_26.png
    :align: center
 
 and there is a `Curve-Curve Intersection`_ document which captures many of
 the cases in the functional tests.
 
-.. _Curve-Curve Intersection: https://bezier.readthedocs.io/en/latest/curve-curve-intersection.html
+.. _Curve-Curve Intersection: https://bezier.readthedocs.io/en/0.6.4/curve-curve-intersection.html
 
 A surface-surface intersection functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/surfaces1Q_and_2Q.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/0.6.4/docs/images/surfaces1Q_and_2Q.png
    :align: center
 
 a segment-box functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_goes_through_box08.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/0.6.4/docs/images/test_goes_through_box08.png
    :align: center
 
 and a "locate point on surface" functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/test_surface3_and_point1.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/0.6.4/docs/images/test_surface3_and_point1.png
    :align: center
 
 Functional Test Data
@@ -301,10 +301,10 @@ This way, the test cases are programming language agnostic and can be
 repurposed. The `JSON schema`_ for these files are stored in the
 ``tests/functional/schema`` directory.
 
-.. _curves.json: https://github.com/dhermes/bezier/blob/master/tests/functional/curves.json
-.. _curve_intersections.json: https://github.com/dhermes/bezier/blob/master/tests/functional/curve_intersections.json
-.. _surfaces.json: https://github.com/dhermes/bezier/blob/master/tests/functional/surfaces.json
-.. _surface_intersections.json: https://github.com/dhermes/bezier/blob/master/tests/functional/surface_intersections.json
+.. _curves.json: https://github.com/dhermes/bezier/blob/0.6.4/tests/functional/curves.json
+.. _curve_intersections.json: https://github.com/dhermes/bezier/blob/0.6.4/tests/functional/curve_intersections.json
+.. _surfaces.json: https://github.com/dhermes/bezier/blob/0.6.4/tests/functional/surfaces.json
+.. _surface_intersections.json: https://github.com/dhermes/bezier/blob/0.6.4/tests/functional/surface_intersections.json
 .. _JSON schema: http://json-schema.org/
 
 ************
@@ -327,7 +327,7 @@ To check compliance:
 A few extensions and overrides have been specified in the `pylintrc`_
 configuration for ``bezier``.
 
-.. _pylintrc: https://github.com/dhermes/bezier/blob/master/pylintrc
+.. _pylintrc: https://github.com/dhermes/bezier/blob/0.6.4/pylintrc
 
 Docstring Style
 ===============
@@ -449,11 +449,11 @@ Python binaries.
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
 .. _Travis CI: https://travis-ci.org/dhermes/bezier
 .. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
-.. _CircleCI config: https://github.com/dhermes/bezier/blob/master/.circleci/config.yml
-.. _Travis config: https://github.com/dhermes/bezier/blob/master/.travis.yml
-.. _AppVeyor config: https://github.com/dhermes/bezier/blob/master/.appveyor.yml
+.. _CircleCI config: https://github.com/dhermes/bezier/blob/0.6.4/.circleci/config.yml
+.. _Travis config: https://github.com/dhermes/bezier/blob/0.6.4/.travis.yml
+.. _AppVeyor config: https://github.com/dhermes/bezier/blob/0.6.4/.appveyor.yml
 .. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
-.. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/master/scripts/docker/bezier.Dockerfile
+.. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/0.6.4/scripts/docker/bezier.Dockerfile
 .. _multibuild: https://github.com/matthew-brett/multibuild
 
 ****************************************
@@ -503,7 +503,7 @@ Supported Python Versions
 
 Supported versions can be found in the ``nox.py`` `config`_.
 
-.. _config: https://github.com/dhermes/bezier/blob/master/nox.py
+.. _config: https://github.com/dhermes/bezier/blob/0.6.4/nox.py
 
 Versioning
 ==========
