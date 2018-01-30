@@ -317,7 +317,9 @@ def _simple_convex_hull(points):
     .. note::
 
        There is also a Fortran implementation of this function, which
-       will be used if it can be built.
+       will be used if it can be built. Note that ``scipy.spatial.ConvexHull``
+       can do this as well (via Qhull), but that would require a hard
+       dependency on ``scipy`` and that helper computes much more than we need.
 
     .. note::
 

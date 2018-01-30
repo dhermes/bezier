@@ -218,6 +218,9 @@ contains
     !        Geometry/Convex_hull/Monotone_chain)
     !       as motivation. The code there is licensed CC BY-SA 3.0.
 
+    ! NOTE: The "standard" implementation for this is in Qhull, but for now
+    !       that is avoided as an extra dependency.
+
     integer(c_int), intent(in) :: num_points
     real(c_double), intent(in) :: points(2, num_points)
     integer(c_int), intent(out) :: polygon_size
