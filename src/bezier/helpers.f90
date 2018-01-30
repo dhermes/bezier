@@ -15,10 +15,10 @@ module helpers
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   implicit none
-  private
+  private min_index, sort_in_place
   public &
        WIGGLE, VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
-       contains_nd, vector_close, in_interval, ulps_away
+       contains_nd, vector_close, in_interval, ulps_away, convex_hull
 
   real(c_double), parameter :: WIGGLE = 0.5_dp**45
   ! NOTE: This is intended to be used as the default value for ``eps``
@@ -156,5 +156,155 @@ contains
     end if
 
   end function ulps_away
+
+  subroutine min_index(num_points, points, match)
+
+    ! Finds the minimum point when sorting first by ``x`` then by
+    ! ``y`` coordinate (in the case of a tie in ``x``).
+
+    ! NOTE: This is a helper for ``sort_in_place``.
+    ! NOTE: This assumes, but does not check, that ``num_points > 0``.
+
+    integer(c_int), intent(in) :: num_points
+    real(c_double), intent(inout) :: points(2, num_points)
+    integer(c_int), intent(out) :: match
+    ! Variables outside of signature.
+    integer(c_int) :: i
+
+    match = 1
+    do i = 2, num_points
+       if (points(1, i) < points(1, match)) then
+          match = i
+       else if (points(1, i) == points(1, match)) then
+          if (points(2, i) < points(2, match)) then
+             match = i
+          end if
+       end if
+    end do
+
+  end subroutine min_index
+
+  subroutine sort_in_place(num_points, points)
+
+    ! NOTE: This is a helper for ``convex_hull``. This does a simple quadratic
+    !       sort (i.e. it is suboptimal) because it expects the number of
+    !       points to be small.
+
+    integer(c_int), intent(in) :: num_points
+    real(c_double), intent(inout) :: points(2, num_points)
+    ! Variables outside of signature.
+    integer(c_int) :: i, match
+    real(c_double) :: swap(2)
+
+    do i = 1, num_points - 1
+       call min_index(num_points + 1 - i, points(:, i:), match)
+       ! Shift ``match`` based on the slice ``points(:, i:)``.
+       match = match + i - 1
+       if (match /= i) then
+          swap = points(:, i)
+          points(:, i) = points(:, match)
+          points(:, match) = swap
+       end if
+    end do
+
+  end subroutine sort_in_place
+
+  subroutine convex_hull(num_points, points, polygon_size, polygon)
+
+    ! NOTE: This uses Andrew's monotone chain convex hull algorithm and used
+    !       (https://en.wikibooks.org/wiki/Algorithm_Implementation/
+    !        Geometry/Convex_hull/Monotone_chain)
+    !       as motivation. The code there is licensed CC BY-SA 3.0.
+
+    integer(c_int), intent(in) :: num_points
+    real(c_double), intent(in) :: points(2, num_points)
+    integer(c_int), intent(out) :: polygon_size
+    real(c_double), intent(out) :: polygon(2, num_points)
+    ! Variables outside of signature.
+    real(c_double) :: point1(1, 2), point2(1, 2), point3(1, 2)
+    integer(c_int) :: num_uniques
+    real(c_double) :: uniques(2, num_points)
+    integer(c_int) :: num_lower, num_upper
+    real(c_double) :: lower(2, num_points), upper(2, num_points)
+    integer(c_int) :: i, j
+    real(c_double) :: result_
+
+    ! First make sure all the points are unique to exact precision.
+    num_uniques = 0
+    unique_loop: do i = 1, num_points
+       point1(1, :) = points(:, i)
+       do j = 1, num_uniques
+          if (all(point1(1, :) == uniques(:, j))) then
+             cycle unique_loop
+          end if
+       end do
+       ! If we haven't cycled, then we know it is unique.
+       num_uniques = num_uniques + 1
+       uniques(:, num_uniques) = points(:, i)
+    end do unique_loop
+
+    ! In the "boring" case that we have fewer than 2 points, return.
+    if (num_uniques == 0) then
+       polygon_size = 0
+       return
+    else if (num_uniques == 1) then
+       polygon_size = 1
+       polygon(:, 1) = uniques(:, 1)
+       return
+    end if
+
+    call sort_in_place(num_uniques, uniques)
+
+    ! First create a "lower" convex hull
+    num_lower = 0
+    do i = 1, num_uniques
+       point3(1, :) = uniques(:, i)
+       result_ = -1.0_dp  ! Dummy value that is ``<= 0.0``.
+       do while (num_lower > 1 .AND. result_ <= 0.0_dp)
+          point1(1, :) = lower(:, num_lower - 1)
+          point2(1, :) = lower(:, num_lower)
+          ! If ``point3`` (the one we are considering) is more "inside"
+          ! of ``point1`` than ``point2`` is, then we drop ``point2``.
+          call cross_product(point2 - point1, point3 - point1, result_)
+          if (result_ <= 0.0_dp) then
+             num_lower = num_lower - 1
+          end if
+       end do
+       num_lower = num_lower + 1
+       lower(:, num_lower) = point3(1, :)
+    end do
+
+    ! Then create an "upper" convex hull
+    num_upper = 0
+    do i = num_uniques, 1, -1
+       point3(1, :) = uniques(:, i)
+       result_ = -1.0_dp  ! Dummy value that is ``<= 0.0``.
+       do while (num_upper > 1 .AND. result_ <= 0.0_dp)
+          point1(1, :) = upper(:, num_upper - 1)
+          point2(1, :) = upper(:, num_upper)
+          ! If ``point3`` (the one we are considering) is more "inside"
+          ! of ``point1`` than ``point2`` is, then we drop ``point2``.
+          call cross_product(point2 - point1, point3 - point1, result_)
+          if (result_ <= 0.0_dp) then
+             num_upper = num_upper - 1
+          end if
+       end do
+       num_upper = num_upper + 1
+       upper(:, num_upper) = point3(1, :)
+    end do
+
+    ! The endpoints are **both** double counted, so we skip the "end"
+    ! of each hull (lower and upper).
+    polygon_size = 0
+    do i = 1, num_lower - 1
+       polygon_size = polygon_size + 1
+       polygon(:, polygon_size) = lower(:, i)
+    end do
+    do i = 1, num_upper - 1
+       polygon_size = polygon_size + 1
+       polygon(:, polygon_size) = upper(:, i)
+    end do
+
+  end subroutine convex_hull
 
 end module helpers

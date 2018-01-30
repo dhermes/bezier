@@ -12,16 +12,17 @@
 
 module test_helpers
 
-  use, intrinsic :: iso_c_binding, only: c_double, c_bool
+  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use helpers, only: &
        WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
-       vector_close, in_interval, ulps_away
+       vector_close, in_interval, ulps_away, convex_hull
   use types, only: dp
   use unit_test_helpers, only: MACHINE_EPS, print_status
   implicit none
   private &
        test_cross_product, test_bbox, test_wiggle_interval, &
-       test_contains_nd, test_vector_close, test_in_interval, test_ulps_away
+       test_contains_nd, test_vector_close, test_in_interval, test_ulps_away, &
+       test_convex_hull
   public helpers_all_tests
 
 contains
@@ -36,6 +37,7 @@ contains
     call test_vector_close(success)
     call test_in_interval(success)
     call test_ulps_away(success)
+    call test_convex_hull(success)
 
   end subroutine helpers_all_tests
 
@@ -408,5 +410,79 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_ulps_away
+
+  subroutine test_convex_hull(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    real(c_double) :: points1(2, 5), points2(2, 2), points3(2, 100)
+    integer(c_int) :: polygon_size, i, j
+    real(c_double) :: polygon(2, 100)
+    character(11) :: name
+
+    case_id = 1
+    name = "convex_hull"
+
+    ! CASE 1: Triangle with centroid (i.e. inside) and a repeated corner.
+    points1(1, :) = [0.0_dp, 0.0_dp, 1.0_dp, 3.0_dp, 0.0_dp]
+    points1(2, :) = [0.0_dp, 3.0_dp, 1.0_dp, 0.0_dp, 3.0_dp]
+    call convex_hull(5, points1, polygon_size, polygon(:, :5))
+    case_success = ( &
+         polygon_size == 3 .AND. &
+         all(polygon(1, :3) == [0.0_dp, 3.0_dp, 0.0_dp]) .AND. &
+         all(polygon(2, :3) == [0.0_dp, 0.0_dp, 3.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Degenerate case (2 points, i.e. the "polygon" is just a line).
+    points2(1, :) = [0.0_dp, 1.0_dp]
+    points2(2, :) = [0.0_dp, 0.0_dp]
+    call convex_hull(2, points2, polygon_size, polygon(:, :2))
+    case_success = ( &
+         polygon_size == 2 .AND. &
+         all(polygon(1, :2) == [0.0_dp, 1.0_dp]) .AND. &
+         all(polygon(2, :2) == [0.0_dp, 0.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Same as CASE 2, but points are in reverse order.
+    points2(1, :) = [1.0_dp, 0.0_dp]
+    points2(2, :) = [0.0_dp, 0.0_dp]
+    call convex_hull(2, points2, polygon_size, polygon(:, :2))
+    case_success = ( &
+         polygon_size == 2 .AND. &
+         all(polygon(1, :2) == [0.0_dp, 1.0_dp]) .AND. &
+         all(polygon(2, :2) == [0.0_dp, 0.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: 10-by-10 grid of points. Also covers case where ``polygon`` is
+    !         allocated but not large enough.
+    do i = 1, 10
+       do j = 1, 10
+          points3(1, 10 * (i - 1) + j) = j
+          points3(2, 10 * (i - 1) + j) = i
+       end do
+    end do
+    call convex_hull(100, points3, polygon_size, polygon)
+    case_success = ( &
+         polygon_size == 4 .AND. &
+         all(polygon(1, :4) == [1.0_dp, 10.0_dp, 10.0_dp, 1.0_dp]) .AND. &
+         all(polygon(2, :4) == [1.0_dp, 1.0_dp, 10.0_dp, 10.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: No points (degenerate case).
+    call convex_hull(0, points1(:, :0), polygon_size, polygon(:, :0))
+    case_success = (polygon_size == 0)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: One point (degenerate case).
+    points1(:, 1) = [2.0_dp, 3.0_dp]
+    call convex_hull(1, points1(:, :1), polygon_size, polygon(:, :1))
+    case_success = ( &
+         polygon_size == 1 .AND. &
+         all(polygon(1, :1) == [2.0_dp]) .AND. &
+         all(polygon(2, :1) == [3.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_convex_hull
 
 end module test_helpers
