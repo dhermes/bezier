@@ -24,6 +24,7 @@ leading underscore will be surfaced as the actual interface (e.g.
 
 
 import numpy as np
+import six
 
 try:
     from bezier import _speedup
@@ -278,6 +279,105 @@ def _wiggle_interval(value, wiggle=0.5**45):
         return np.nan, False
 
 
+def cross_product_compare(start, candidate1, candidate2):
+    """Compare two relative changes by their cross-product.
+
+    This is meant to be a way to determine which vector is more "inside"
+    relative to ``start``.
+
+    .. note::
+
+       This is a helper for :func:`_simple_convex_hull`.
+
+    Args:
+        start (numpy.ndarray): The start vector as a 1x2 NumPy array.
+        candidate1 (numpy.ndarray): The first candidate vector (as a 1x2
+            NumPy array).
+        candidate2 (numpy.ndarray): The second candidate vector (as a 1x2
+            NumPy array).
+
+    Returns:
+        float: The cross product of the two differences.
+    """
+    delta1 = candidate1 - start
+    delta2 = candidate2 - start
+    return cross_product(delta1, delta2)
+
+
+def _simple_convex_hull(points):
+    r"""Compute the convex hull for a set of points.
+
+    .. _wikibooks: https://en.wikibooks.org/wiki/Algorithm_Implementation/\
+                   Geometry/Convex_hull/Monotone_chain
+
+    This uses Andrew's monotone chain convex hull algorithm and this code
+    used a `wikibooks`_ implementation as motivation. tion. The code there
+    is licensed CC BY-SA 3.0.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    .. note::
+
+       This computes the convex hull in a "naive" way. It's expected that
+       internal callers of this function will have a small number of points
+       so ``n log n`` vs. ``n^2`` vs. ``n`` aren't that relevant.
+
+    Args:
+        points (numpy.ndarray): A ``2 x N`` array (``float64``) of points.
+
+    Returns:
+        numpy.ndarray: The ``2 x N`` array (``float64``) of ordered points in
+        the polygonal convex hull.
+    """
+    if points.size == 0:
+        return points
+
+    # First, drop duplicates.
+    unique_points = np.unique(points, axis=1)
+    _, num_points = unique_points.shape
+    if num_points < 2:
+        return unique_points
+
+    # Then sort the data in "lexical" order.
+    points = np.empty((2, num_points), order='F')
+    for index, xy_val in enumerate(
+            sorted(tuple(column) for column in unique_points.T)):
+        points[:, index] = xy_val
+
+    # Build lower hull
+    lower = []
+    for index in six.moves.xrange(num_points):
+        point3 = points[:, index].reshape((1, 2))
+        while (len(lower) >= 2 and
+               cross_product_compare(lower[-2], lower[-1], point3) <= 0):
+            lower.pop()
+        lower.append(point3)
+
+    # Build upper hull
+    upper = []
+    for index in six.moves.xrange(num_points - 1, -1, -1):
+        point3 = points[:, index].reshape((1, 2))
+        while (len(upper) >= 2 and
+               cross_product_compare(upper[-2], upper[-1], point3) <= 0):
+            upper.pop()
+        upper.append(point3)
+
+    # **Both** corners are double counted.
+    size_polygon = len(lower) + len(upper) - 2
+    polygon = np.empty((2, size_polygon), order='F')
+
+    for index, point in enumerate(lower[:-1]):
+        polygon[:, index] = point[0, :]
+    index_start = len(lower) - 1
+    for index, point in enumerate(upper[:-1]):
+        polygon[:, index + index_start] = point[0, :]
+
+    return polygon
+
+
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     vector_close = _vector_close
@@ -287,6 +387,7 @@ if _speedup is None:  # pragma: NO COVER
     cross_product = _cross_product
     ulps_away = _ulps_away
     wiggle_interval = _wiggle_interval
+    simple_convex_hull = _simple_convex_hull
 else:
     vector_close = _speedup.vector_close
     in_interval = _speedup.in_interval
@@ -295,4 +396,5 @@ else:
     cross_product = _speedup.cross_product
     ulps_away = _speedup.ulps_away
     wiggle_interval = _speedup.wiggle_interval
+    simple_convex_hull = _speedup.simple_convex_hull
 # pylint: enable=invalid-name

@@ -13,6 +13,7 @@
 import unittest
 
 import numpy as np
+import six
 
 from tests.unit import utils
 
@@ -487,3 +488,99 @@ class Test_speedup_wiggle_interval(Test__wiggle_interval):
         # to allow the compiler to pre-compute 1 + wiggle / 1 - wiggle
         # rather than having to deal with it at run-time.
         pass
+
+
+class Test_cross_product_compare(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(start, candidate1, candidate2):
+        from bezier import _helpers
+
+        return _helpers.cross_product_compare(start, candidate1, candidate2)
+
+    def test_it(self):
+        start = np.asfortranarray([[0.0, 0.0]])
+        candidate1 = np.asfortranarray([[1.0, 0.0]])
+        candidate2 = np.asfortranarray([[1.0, 1.0]])
+
+        result = self._call_function_under_test(start, candidate1, candidate2)
+        self.assertEqual(result, 1.0)
+
+
+class Test__simple_convex_hull(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(points):
+        from bezier import _helpers
+
+        return _helpers._simple_convex_hull(points)
+
+    def test_triangle_centroid(self):
+        points = np.asfortranarray([
+            [0.0, 0.0, 1.0, 3.0, 0.0],
+            [0.0, 3.0, 1.0, 0.0, 3.0],
+        ])
+        polygon = self._call_function_under_test(points)
+        expected = np.asfortranarray([
+            [0.0, 3.0, 0.0],
+            [0.0, 0.0, 3.0],
+        ])
+        self.assertEqual(expected, polygon)
+
+    def test_two_points(self):
+        points = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 0.0],
+        ])
+        polygon = self._call_function_under_test(points)
+        expected = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 0.0],
+        ])
+        self.assertEqual(expected, polygon)
+        # Switch the order of the points.
+        points = np.asfortranarray([
+            [1.0, 0.0],
+            [0.0, 0.0],
+        ])
+        polygon = self._call_function_under_test(points)
+        self.assertEqual(expected, polygon)
+
+    def test_one_point(self):
+        points = np.asfortranarray([
+            [2.0],
+            [3.0],
+        ])
+        polygon = self._call_function_under_test(points)
+        expected = points
+        self.assertEqual(expected, polygon)
+
+    def test_zero_points(self):
+        points = np.empty((2, 0), order='F')
+        polygon = self._call_function_under_test(points)
+        self.assertEqual(polygon.shape, (2, 0))
+
+    def test_10x10_grid(self):
+        points = np.empty((2, 100), order='F')
+        index = 0
+        for i in six.moves.xrange(10):
+            for j in six.moves.xrange(10):
+                points[:, index] = i, j
+                index += 1
+
+        polygon = self._call_function_under_test(points)
+        expected = np.asfortranarray([
+            [0.0, 9.0, 9.0, 0.0],
+            [0.0, 0.0, 9.0, 9.0],
+        ])
+        self.assertEqual(expected, polygon)
+
+
+@utils.needs_speedup
+class Test_speedup_simple_convex_hull(Test__simple_convex_hull):
+
+    @staticmethod
+    def _call_function_under_test(points):
+        from bezier import _speedup
+
+        return _speedup.simple_convex_hull(points)

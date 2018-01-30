@@ -209,7 +209,9 @@ contains
 
   end subroutine sort_in_place
 
-  subroutine convex_hull(num_points, points, polygon_size, polygon)
+  subroutine convex_hull( &
+       num_points, points, polygon_size, polygon) &
+       bind(c, name='simple_convex_hull')
 
     ! NOTE: This uses Andrew's monotone chain convex hull algorithm and used
     !       (https://en.wikibooks.org/wiki/Algorithm_Implementation/

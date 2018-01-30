@@ -367,6 +367,7 @@ def clean(session):
     clean_dirs = (
         get_path('.cache'),
         get_path('.coverage'),
+        get_path('.pytest_cache'),
         get_path('__pycache__'),
         get_path('benchmarks', 'memory', '__pycache__'),
         get_path('benchmarks', 'time', '__pycache__'),

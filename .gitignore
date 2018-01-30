@@ -11,6 +11,7 @@ __pycache__
 .coverage
 .nox/
 .cache
+.pytest_cache
 
 # Mac
 .DS_Store

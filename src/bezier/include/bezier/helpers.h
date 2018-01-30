@@ -30,6 +30,8 @@ void contains_nd(
 bool vector_close(int *num_values, double *vec1, double *vec2, double *eps);
 bool in_interval(double *value, double *start, double *end);
 bool ulps_away(double *value1, double *value2, int *num_bits, double *eps);
+void simple_convex_hull(
+    int *num_points, double *points, int *polygon_size, double *polygon);
 
 #if defined (__cplusplus)
 }

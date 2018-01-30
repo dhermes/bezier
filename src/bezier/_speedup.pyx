@@ -586,6 +586,25 @@ def ulps_away(double value1, double value2, int num_bits=1, double eps=EPS):
         &eps,
     )
 
+
+def simple_convex_hull(double[::1, :] points):
+    cdef int num_points
+    cdef int polygon_size
+    cdef ndarray_t[double, ndim=2, mode='fortran'] polygon
+
+    # NOTE: We don't check that there are 2 rows.
+    _, num_points = np.shape(points)
+    polygon = np.empty((2, num_points), order='F')
+
+    bezier._helpers.simple_convex_hull(
+        &num_points,
+        &points[0, 0],
+        &polygon_size,
+        &polygon[0, 0],
+    )
+
+    return polygon[:, :polygon_size]
+
 ############################
 # Section: ``surface.f90`` #
 ############################
