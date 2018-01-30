@@ -1,4 +1,5 @@
 #!python
+#cython: boundscheck=False, wraparound=False
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -46,6 +47,8 @@ from bezier._surface_intersection cimport SurfaceContained
 
 
 cdef double EPS = 0.5**40
+cdef double LOCATE_MISS = -1.0
+cdef double LOCATE_INVALID = -2.0
 cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
 cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
 cdef dtype_t SEGMENT_DTYPE = np.dtype(
@@ -216,9 +219,9 @@ def locate_point_curve(double[::1, :] nodes, double[::1, :] point):
         &s_approx,
     )
 
-    if s_approx == -1.0:  # LOCATE_MISS
+    if s_approx == LOCATE_MISS:
         return None
-    elif s_approx == -2.0:  # LOCATE_INVALID
+    elif s_approx == LOCATE_INVALID:
         raise ValueError(
             'Parameters not close enough to one another')
     else:
@@ -291,7 +294,6 @@ def full_reduce(double[::1, :] nodes):
     cdef bool_t not_implemented
 
     num_nodes, dimension = np.shape(nodes)
-
     reduced = np.empty((num_nodes, dimension), order='F')
 
     bezier._curve.full_reduce(
