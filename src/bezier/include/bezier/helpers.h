@@ -32,6 +32,9 @@ bool in_interval(double *value, double *start, double *end);
 bool ulps_away(double *value1, double *value2, int *num_bits, double *eps);
 void simple_convex_hull(
     int *num_points, double *points, int *polygon_size, double *polygon);
+void polygon_collide(
+    int *polygon_size1, double *polygon1,
+    int *polygon_size2, double *polygon2, bool *collision);
 
 #if defined (__cplusplus)
 }

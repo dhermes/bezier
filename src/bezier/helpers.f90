@@ -380,7 +380,8 @@ contains
   end function is_separating
 
   subroutine polygon_collide( &
-       polygon_size1, polygon1, polygon_size2, polygon2, collision)
+       polygon_size1, polygon1, polygon_size2, polygon2, collision) &
+       bind(c, name='polygon_collide')
 
     ! This determines if two **convex** polygons collide. The polygons
     ! are given as ``2 x N`` arrays of ``x-y`` points (one per column)

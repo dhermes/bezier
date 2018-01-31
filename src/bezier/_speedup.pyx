@@ -605,6 +605,25 @@ def simple_convex_hull(double[::1, :] points):
 
     return polygon[:, :polygon_size]
 
+
+def polygon_collide(double[::1, :] polygon1, double[::1, :] polygon2):
+    cdef int polygon_size1, polygon_size2
+    cdef bool_t collision
+
+    # NOTE: We don't check that there are 2 rows.
+    _, polygon_size1 = np.shape(polygon1)
+    _, polygon_size2 = np.shape(polygon2)
+
+    bezier._helpers.polygon_collide(
+        &polygon_size1,
+        &polygon1[0, 0],
+        &polygon_size2,
+        &polygon2[0, 0],
+        &collision,
+    )
+
+    return collision
+
 ############################
 # Section: ``surface.f90`` #
 ############################
