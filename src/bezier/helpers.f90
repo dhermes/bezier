@@ -15,10 +15,11 @@ module helpers
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   implicit none
-  private min_index, sort_in_place
+  private min_index, sort_in_place, is_separating
   public &
        WIGGLE, VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
-       contains_nd, vector_close, in_interval, ulps_away, convex_hull
+       contains_nd, vector_close, in_interval, ulps_away, convex_hull, &
+       polygon_collide
 
   real(c_double), parameter :: WIGGLE = 0.5_dp**45
   ! NOTE: This is intended to be used as the default value for ``eps``
@@ -27,7 +28,7 @@ module helpers
 
 contains
 
-  subroutine cross_product( &
+  pure subroutine cross_product( &
        vec0, vec1, result_) &
        bind(c, name='cross_product')
 
@@ -311,5 +312,129 @@ contains
     end do
 
   end subroutine convex_hull
+
+  logical(c_bool) pure function is_separating( &
+       edge_direction, polygon_size1, polygon1, polygon_size2, polygon2) &
+       result(predicate)
+
+    ! NOTE: This assumes, but does not check, that ``polygon_sizeX`` is
+    !       at least two.
+    real(c_double), intent(in) :: edge_direction(1, 2)
+    integer(c_int), intent(in) :: polygon_size1
+    real(c_double), intent(in) :: polygon1(2, polygon_size1)
+    integer(c_int), intent(in) :: polygon_size2
+    real(c_double), intent(in) :: polygon2(2, polygon_size2)
+    ! Variables outside of signature.
+    real(c_double) :: vertex(1, 2), norm_squared, cp_result, param
+    real(c_double) :: min_param1, max_param1
+    real(c_double) :: min_param2, max_param2
+    integer(c_int) :: i
+
+    ! NOTE: We assume throughout that ``norm_squared != 0``. If it **were**
+    !       zero that would mean the ``edge_direction`` corresponds to an
+    !       invalid edge.
+    norm_squared = dot_product(edge_direction(1, :), edge_direction(1, :))
+
+    ! Compute the parameters along the "separating axis" for the vertices
+    ! of the first polygon.
+    vertex(1, :) = polygon1(:, 1)
+    call cross_product(edge_direction, vertex, cp_result)
+    param = cp_result / norm_squared
+    min_param1 = param
+    max_param1 = param
+    do i = 2, polygon_size1
+       vertex(1, :) = polygon1(:, i)
+       call cross_product(edge_direction, vertex, cp_result)
+       param = cp_result / norm_squared
+       min_param1 = min(min_param1, param)
+       max_param1 = max(max_param1, param)
+    end do
+
+    ! Compute the parameters along the "separating axis" for the vertices
+    ! of the first polygon.
+    vertex(1, :) = polygon2(:, 1)
+    call cross_product(edge_direction, vertex, cp_result)
+    param = cp_result / norm_squared
+    min_param2 = param
+    max_param2 = param
+    do i = 2, polygon_size2
+       vertex(1, :) = polygon2(:, i)
+       call cross_product(edge_direction, vertex, cp_result)
+       param = cp_result / norm_squared
+       min_param2 = min(min_param2, param)
+       max_param2 = max(max_param2, param)
+    end do
+
+    ! Determine if [min_param1, max_param1] and [min_param2, max_param2]
+    ! are disjoint intervals.
+    predicate = (min_param1 >= max_param2 .OR. max_param1 <= min_param2)
+
+  end function is_separating
+
+  subroutine polygon_collide( &
+       polygon_size1, polygon1, polygon_size2, polygon2, collision)
+
+    ! This determines if two **convex** polygons collide. The polygons
+    ! are given as ``2 x N`` arrays of ``x-y`` points (one per column)
+    ! in order they appear (the first and last node are **not** the same
+    ! as is sometimes expected for closed polygons).
+
+    ! This code uses the Separating axis theorem (SAT) [1] [2] to quickly
+    ! determine if the polygons intersect.
+    ! [1]: https://en.wikipedia.org/wiki/Hyperplane_separation_theorem
+    ! [2]: https://hackmd.io/s/ryFmIZrsl
+
+    integer(c_int), intent(in) :: polygon_size1
+    real(c_double), intent(in) :: polygon1(2, polygon_size1)
+    integer(c_int), intent(in) :: polygon_size2
+    real(c_double), intent(in) :: polygon2(2, polygon_size2)
+    logical(c_bool), intent(out) :: collision
+    ! Variables outside of signature.
+    real(c_double) :: edge_direction(1, 2)
+    integer(c_int) :: i
+
+    collision = .TRUE.
+
+    ! First handle the "wrap-around" edge from polygon1.
+    edge_direction(1, :) = polygon1(:, 1) - polygon1(:, polygon_size1)
+    if (is_separating( &
+         edge_direction, polygon_size1, polygon1, &
+         polygon_size2, polygon2)) then
+       collision = .FALSE.
+       return
+    end if
+
+    ! Then, check all other edges from polygon1.
+    do i = 2, polygon_size1
+       edge_direction(1, :) = polygon1(:, i) - polygon1(:, i - 1)
+       if (is_separating( &
+            edge_direction, polygon_size1, polygon1, &
+            polygon_size2, polygon2)) then
+          collision = .FALSE.
+          return
+       end if
+    end do
+
+    ! Then, handle the "wrap-around" edge from polygon2.
+    edge_direction(1, :) = polygon2(:, 1) - polygon2(:, polygon_size2)
+    if (is_separating( &
+         edge_direction, polygon_size1, polygon1, &
+         polygon_size2, polygon2)) then
+       collision = .FALSE.
+       return
+    end if
+
+    ! Then, check all other edges from polygon1.
+    do i = 2, polygon_size2
+       edge_direction(1, :) = polygon2(:, i) - polygon2(:, i - 1)
+       if (is_separating( &
+            edge_direction, polygon_size1, polygon1, &
+            polygon_size2, polygon2)) then
+          collision = .FALSE.
+          return
+       end if
+    end do
+
+  end subroutine polygon_collide
 
 end module helpers

@@ -15,14 +15,14 @@ module test_helpers
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use helpers, only: &
        WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
-       vector_close, in_interval, ulps_away, convex_hull
+       vector_close, in_interval, ulps_away, convex_hull, polygon_collide
   use types, only: dp
   use unit_test_helpers, only: MACHINE_EPS, print_status
   implicit none
   private &
        test_cross_product, test_bbox, test_wiggle_interval, &
        test_contains_nd, test_vector_close, test_in_interval, test_ulps_away, &
-       test_convex_hull
+       test_convex_hull, test_polygon_collide
   public helpers_all_tests
 
 contains
@@ -38,6 +38,7 @@ contains
     call test_in_interval(success)
     call test_ulps_away(success)
     call test_convex_hull(success)
+    call test_polygon_collide(success)
 
   end subroutine helpers_all_tests
 
@@ -484,5 +485,63 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_convex_hull
+
+  subroutine test_polygon_collide(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    real(c_double) :: polygon1(2, 3), polygon2(2, 4), polygon3(2, 4)
+    logical(c_bool) :: collision
+    character(15) :: name
+
+    case_id = 1
+    name = "polygon_collide"
+
+    ! CASE 1: Triangle and square that do not collide.
+    polygon1(1, :) = [1.0_dp, 3.0_dp, -2.0_dp]
+    polygon1(2, :) = [1.0_dp, 4.0_dp, 2.0_dp]
+    polygon2(1, :) = [3.5_dp, 6.5_dp, 6.5_dp, 3.5_dp]
+    polygon2(2, :) = [3.0_dp, 3.0_dp, 7.0_dp, 7.0_dp]
+    call polygon_collide(3, polygon1, 4, polygon2, collision)
+    case_success = (.NOT. collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Same as CASE 1 but with polygons swapped.
+    call polygon_collide(4, polygon2, 3, polygon1, collision)
+    case_success = (.NOT. collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Triangles that do collide.
+    polygon1(1, :) = [0.0_dp, 3.0_dp, 0.0_dp]
+    polygon1(2, :) = [0.0_dp, 0.0_dp, 3.0_dp]
+    polygon2(1, :3) = [1.0_dp, 4.0_dp, 1.0_dp]
+    polygon2(2, :3) = [1.0_dp, 1.0_dp, 4.0_dp]
+    call polygon_collide(3, polygon1, 3, polygon2(:, :3), collision)
+    case_success = (collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Two squares where an edge other than edge 1 in polygon 1 is
+    !         the separating line.
+    polygon2(1, :) = [1.0_dp, 1.0_dp, 0.0_dp, 0.0_dp]
+    polygon2(2, :) = [0.0_dp, 1.0_dp, 1.0_dp, 0.0_dp]
+    polygon3(1, :) = [2.0_dp, 3.0_dp, 3.0_dp, 2.0_dp]
+    polygon3(2, :) = [0.0_dp, 0.0_dp, 1.0_dp, 1.0_dp]
+    call polygon_collide(4, polygon2, 4, polygon3, collision)
+    case_success = (.NOT. collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Square and triangle where none of the edges in polygon 1 are
+    !         separating lines and an edge other than edge 1 in polygon 2
+    !         **is** the separating line.
+    polygon2(1, :) = [0.0_dp, 2.0_dp, 2.0_dp, 0.0_dp]
+    polygon2(2, :) = [0.0_dp, 0.0_dp, 2.0_dp, 2.0_dp]
+    polygon1(1, :) = [1.0_dp, 4.0_dp, 4.0_dp]
+    polygon1(2, :) = [4.0_dp, 1.0_dp, 4.0_dp]
+    call polygon_collide(4, polygon2, 3, polygon1, collision)
+    case_success = (.NOT. collision)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_polygon_collide
 
 end module test_helpers
