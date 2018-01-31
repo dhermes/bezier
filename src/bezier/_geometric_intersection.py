@@ -953,6 +953,47 @@ def intersect_one_round(candidates, intersections):
     return next_candidates
 
 
+def prune_candidates(candidates):
+    """Reduce number of candidate intersection pairs.
+
+    .. note::
+
+       This is a helper for :func:`_all_intersections`.
+
+    Uses more strict bounding box intersection predicate by forming the
+    actual convex hull of each candidate curve segment and then checking
+    if those convex hulls collide.
+
+    Args:
+        candidates (List): An iterable of pairs of curves (or
+            linearized curves).
+
+    Returns:
+        List: A pruned list of curve pairs.
+    """
+    pruned = []
+    # NOTE: In the below we replace ``isinstance(a, B)`` with
+    #       ``a.__class__ is B``, which is a 3-3.5x speedup.
+    for first, second in candidates:
+        if first.__class__ is Linearization:
+            nodes1 = first.curve.nodes
+        else:
+            nodes1 = first.nodes
+        if second.__class__ is Linearization:
+            nodes2 = second.curve.nodes
+        else:
+            nodes2 = second.nodes
+
+        # NOTE: The copy is expensive but required since ``simple_convex_hull``
+        #       (might) need the values in Fortran order.
+        polygon1 = _helpers.simple_convex_hull(np.asfortranarray(nodes1.T))
+        polygon2 = _helpers.simple_convex_hull(np.asfortranarray(nodes2.T))
+        if _helpers.polygon_collide(polygon1, polygon2):
+            pruned.append((first, second))
+
+    return pruned
+
+
 def _all_intersections(nodes_first, nodes_second):
     r"""Find the points of intersection among a pair of curves.
 
@@ -999,8 +1040,11 @@ def _all_intersections(nodes_first, nodes_second):
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
         candidates = intersect_one_round(candidates, intersections)
         if len(candidates) > _MAX_CANDIDATES:
-            msg = _TOO_MANY_TEMPLATE.format(len(candidates))
-            raise NotImplementedError(msg)
+            candidates = prune_candidates(candidates)
+            # If pruning didn't fix anything, then we "fail".
+            if len(candidates) > _MAX_CANDIDATES:
+                msg = _TOO_MANY_TEMPLATE.format(len(candidates))
+                raise NotImplementedError(msg)
 
         # If none of the candidate pairs have been accepted, then there are
         # no more intersections to find.

@@ -375,7 +375,7 @@ contains
 
     ! Determine if [min_param1, max_param1] and [min_param2, max_param2]
     ! are disjoint intervals.
-    predicate = (min_param1 >= max_param2 .OR. max_param1 <= min_param2)
+    predicate = (min_param1 > max_param2 .OR. max_param1 < min_param2)
 
   end function is_separating
 
@@ -392,6 +392,10 @@ contains
     ! determine if the polygons intersect.
     ! [1]: https://en.wikipedia.org/wiki/Hyperplane_separation_theorem
     ! [2]: https://hackmd.io/s/ryFmIZrsl
+
+    ! A "standard" implementation for this is in GEOS [3], but for now
+    ! that is avoided as an extra dependency.
+    ! [3]: https://trac.osgeo.org/geos
 
     integer(c_int), intent(in) :: polygon_size1
     real(c_double), intent(in) :: polygon1(2, polygon_size1)

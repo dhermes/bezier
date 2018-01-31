@@ -420,7 +420,7 @@ def is_separating(direction, polygon1, polygon2):
     # NOTE: The indexing is based on:
     #       params[0] = (min_param1, max_param1)
     #       params[1] = (min_param2, max_param2)
-    return params[0][0] >= params[1][1] or params[0][1] <= params[1][0]
+    return params[0][0] > params[1][1] or params[0][1] < params[1][0]
 
 
 def _polygon_collide(polygon1, polygon2):

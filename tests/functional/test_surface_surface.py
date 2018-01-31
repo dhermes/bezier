@@ -54,10 +54,7 @@ WIGGLES = {
 }
 FAILED_CASES_TANGENT = {
     GEOMETRIC: {
-        7: {'too_many': 66},
         10: {'parallel': True},
-        11: {'too_many': 78},
-        12: {'too_many': 76},
         21: {'bad_tangent': True},
     },
     ALGEBRAIC: {

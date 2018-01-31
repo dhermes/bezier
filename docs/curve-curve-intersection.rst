@@ -709,34 +709,6 @@ are resolved:
 .. image:: images/curves10_and_23.png
    :align: center
 
-but even by rotating an intersection (from above) that we
-know works
-
-.. image:: images/curves28_and_29.png
-   :align: center
-
-we still see a failure
-
-.. doctest:: intersect-28-29
-   :options: +NORMALIZE_WHITESPACE
-
-   >>> nodes1 = np.asfortranarray([
-   ...     [ 0.0, 0.0],
-   ...     [-0.5, 1.5],
-   ...     [ 1.0, 1.0],
-   ... ])
-   >>> curve1 = bezier.Curve(nodes1, degree=2)
-   >>> nodes2 = np.asfortranarray([
-   ...     [-1.0, 1.0],
-   ...     [ 0.5, 0.5],
-   ...     [ 0.0, 2.0],
-   ... ])
-   >>> curve2 = bezier.Curve(nodes2, degree=2)
-   >>> curve1.intersect(curve2)
-   Traceback (most recent call last):
-     ...
-   NotImplementedError: The number of candidate intersections is too high.
-
 In addition to points of tangency, **coincident curve segments**
 are (for now) not supported. For the curves
 

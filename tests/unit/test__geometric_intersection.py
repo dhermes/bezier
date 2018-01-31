@@ -1028,6 +1028,53 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         self.assertEqual(intersections, [(1.0, 0.0)])
 
 
+class Test_prune_candidates(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(candidates):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection.prune_candidates(candidates)
+
+    def test_curved(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [2.0, 0.0],
+            [2.0, 2.0],
+        ])
+        curve1 = subdivided_curve(nodes1)
+
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 3.0],
+            [2.0, 3.0],
+        ])
+        curve2 = subdivided_curve(nodes2)
+
+        candidates = [(curve1, curve2)]
+        pruned = self._call_function_under_test(candidates)
+        self.assertEqual(pruned, [])
+
+    def test_linear(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [4.0, 4.0],
+        ])
+        curve1 = subdivided_curve(nodes1)
+        lin1 = make_linearization(curve1, error=0.0)
+
+        nodes2 = np.asfortranarray([
+            [2.0, 1.0],
+            [6.0, 1.0],
+        ])
+        curve2 = subdivided_curve(nodes2)
+        lin2 = make_linearization(curve2, error=0.0)
+
+        candidates = [(lin1, lin2)]
+        pruned = self._call_function_under_test(candidates)
+        self.assertEqual(pruned, [])
+
+
 class Test__all_intersections(utils.NumPyTestCase):
 
     @staticmethod
@@ -1095,9 +1142,7 @@ class Test__all_intersections(utils.NumPyTestCase):
         self.assertEqual(
             exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
 
-    def test_too_many_candidates(self):
-        from bezier import _geometric_intersection
-
+    def test_pruned_candidates(self):
         nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [-0.5, 1.5],
@@ -1108,12 +1153,26 @@ class Test__all_intersections(utils.NumPyTestCase):
             [0.5, 0.5],
             [0.0, 2.0],
         ])
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(nodes1, nodes2)
+        intersections = self._call_function_under_test(nodes1, nodes2)
+        expected = np.asfortranarray([[0.5, 0.5]])
+        self.assertEqual(intersections, expected)
 
-        exc_args = exc_info.exception.args
-        expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(88)
-        self.assertEqual(exc_args, (expected,))
+    def test_pruned_candidates_odd_index(self):
+        # Same as ``test_pruned_candidates`` but re-parameterized on [0, 2]
+        # and [-1, 1], respectively.
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [-1.0, 3.0],
+            [6.0, -2.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [-6.0, 4.0],
+            [1.0, -1.0],
+            [0.0, 2.0],
+        ])
+        intersections = self._call_function_under_test(nodes1, nodes2)
+        expected = np.asfortranarray([[0.25, 0.75]])
+        self.assertEqual(intersections, expected)
 
     def test_non_convergence(self):
         from bezier import _geometric_intersection
@@ -1176,6 +1235,28 @@ class Test__all_intersections(utils.NumPyTestCase):
         self.assertEqual(intersections.shape, (0, 2))
         intersections = self._call_function_under_test(nodes2, nodes1)
         self.assertEqual(intersections.shape, (0, 2))
+
+    def test_coincident(self):
+        # In this case, "pruning" candidates will fail since the second curve
+        # is just the first specialized to [1/2, 1].
+        from bezier import _geometric_intersection
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 0.25],
+            [1.0, 0.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [0.5, 0.125],
+            [0.75, 0.125],
+            [1.0, 0.0],
+        ])
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(nodes1, nodes2)
+
+        exc_args = exc_info.exception.args
+        expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(96)
+        self.assertEqual(exc_args, (expected,))
 
 
 @utils.needs_speedup
@@ -1277,61 +1358,6 @@ class Test__set_max_candidates(utils.NumPyTestCase):
         # Put things back the way they were.
         self._call_function_under_test(curr_candidates)
 
-    @staticmethod
-    def intersect(nodes1, nodes2):
-        from bezier import _geometric_intersection
-
-        return _geometric_intersection._all_intersections(nodes1, nodes2)
-
-    def test_on_intersection(self):
-        from bezier import _geometric_intersection
-
-        template = _geometric_intersection._TOO_MANY_TEMPLATE
-        # B1(s) = [s(2s - 1), s(3 - 2s)]
-        # f1(x, y) = 4(x^2 + 2xy - 3x + y^2 - y)
-        nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [-0.5, 1.5],
-            [1.0, 1.0],
-        ])
-        # B2(s) = [(1 - 2s)(s - 1), 2s^2 - s + 1]
-        # f2(x, y) = 4(x^2 + 2xy - x + y^2 - 3y + 2)
-        nodes2 = np.asfortranarray([
-            [-1.0, 1.0],
-            [0.5, 0.5],
-            [0.0, 2.0],
-        ])
-
-        curr_candidates = self.get_max_candidates()
-        self.assertEqual(curr_candidates, 64)
-
-        # First, show failure with the default.
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self.intersect(nodes1, nodes2)
-        self.assertEqual(exc_info.exception.args, (template.format(88),))
-
-        # Then, show failure with twice the limit.
-        self._call_function_under_test(128)
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self.intersect(nodes1, nodes2)
-        self.assertEqual(exc_info.exception.args, (template.format(184),))
-
-        # Then, show failure with (almost) four times the limit.
-        self._call_function_under_test(255)
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self.intersect(nodes1, nodes2)
-        self.assertEqual(exc_info.exception.args, (template.format(256),))
-
-        # Then, show success.
-        self._call_function_under_test(256)
-        result = self.intersect(nodes1, nodes2)
-        # f2(*B1(s)) = 8(2s - 1)^2
-        # f1(*B2(t)) = 8(2t - 1)^2
-        self.assertEqual(result, np.asfortranarray([[0.5, 0.5]]))
-
-        # Put things back the way they were.
-        self._call_function_under_test(curr_candidates)
-
 
 @utils.needs_speedup
 class Test_speedup_set_max_candidates(Test__set_max_candidates):
@@ -1348,12 +1374,6 @@ class Test_speedup_set_max_candidates(Test__set_max_candidates):
         from bezier import _speedup
 
         return _speedup.get_max_candidates()
-
-    @staticmethod
-    def intersect(nodes1, nodes2):
-        from bezier import _speedup
-
-        return _speedup.curve_intersections(nodes1, nodes2)
 
 
 class Test__set_similar_ulps(unittest.TestCase):

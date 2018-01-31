@@ -1638,7 +1638,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Tangent curves, which cause the number of candidate pairs
-    !         to become to high.
+    !         to become too high and will trigger a "prune" step.
     quadratic1(1, :) = 0
     quadratic1(2, :) = [-0.5_dp, 1.5_dp]
     quadratic1(3, :) = 1
@@ -1649,11 +1649,14 @@ contains
          3, quadratic1, 3, quadratic2, intersections, &
          num_intersections, status)
     case_success = ( &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         status == 88)
+         all(intersections(:, 1) == [0.5_dp, 0.5_dp]) .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: Badly scaled curves, which cause the subdivision proceass to
+    ! CASE 5: Badly scaled curves, which cause the subdivision process to
     !         take too many iterations before being "almost linear".
     ! NOTE: This is just the quadratic given by [0, 0], [4.5, 9], [9, 0] and
     !       the line given by [0, 8], [6, 0], but scaled up by a factor of
@@ -1724,6 +1727,63 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 9: Same as CASE 4, except the nodes have been re-specialized to
+    !         [0, 2] and [-1, 1], respectively. This way, the first round
+    !         reduces to CASE 4, so the "prune" stage happens at an odd
+    !         iteration rather than en even iteration.
+    quadratic1(1, :) = 0
+    quadratic1(2, :) = [-1.0_dp, 3.0_dp]
+    quadratic1(3, :) = [6.0_dp, -2.0_dp]
+    quadratic2(1, :) = [-6.0_dp, 4.0_dp]
+    quadratic2(2, :) = [1.0_dp, -1.0_dp]
+    quadratic2(3, :) = [0.0_dp, 2.0_dp]
+    call all_intersections( &
+         3, quadratic1, 3, quadratic2, intersections, &
+         num_intersections, status)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
+         num_intersections == 1 .AND. &
+         all(intersections(:, 1) == [0.25_dp, 0.75_dp]) .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 10: Coincident curves (i.e. segments on a common curve). In this
+    !          case, the second curve is just the first curve specialized to
+    !          [1/2, 1]. In this case, "convex hull pruning" is of no use
+    !          because at a certain point the subdivided curve segments will
+    !          be identical.
+    quadratic1(1, :) = 0
+    quadratic1(2, :) = [0.5_dp, 0.25_dp]
+    quadratic1(3, :) = [1.0_dp, 0.0_dp]
+    quadratic2(1, :) = [0.5_dp, 0.125_dp]
+    quadratic2(2, :) = [0.75_dp, 0.125_dp]
+    quadratic2(3, :) = [1.0_dp, 0.0_dp]
+    call all_intersections( &
+         3, quadratic1, 3, quadratic2, intersections, &
+         num_intersections, status)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 16]) .AND. &
+         num_intersections == 16 .AND. &
+         all(intersections(:, 1) == [0.5_dp, 0.0_dp]) .AND. &
+         all(intersections(:, 2) == [0.75_dp, 0.5_dp]) .AND. &
+         all(intersections(:, 3) == [0.625_dp, 0.25_dp]) .AND. &
+         all(intersections(:, 4) == [0.875_dp, 0.75_dp]) .AND. &
+         all(intersections(:, 5) == [0.5625_dp, 0.125_dp]) .AND. &
+         all(intersections(:, 6) == [0.6875_dp, 0.375_dp]) .AND. &
+         all(intersections(:, 7) == [0.8125_dp, 0.625_dp]) .AND. &
+         all(intersections(:, 8) == [0.9375_dp, 0.875_dp]) .AND. &
+         all(intersections(:, 9) == [0.53125_dp, 0.0625_dp]) .AND. &
+         all(intersections(:, 10) == [0.59375_dp, 0.1875_dp]) .AND. &
+         all(intersections(:, 11) == [0.65625_dp, 0.3125_dp]) .AND. &
+         all(intersections(:, 12) == [0.71875_dp, 0.4375_dp]) .AND. &
+         all(intersections(:, 13) == [0.78125_dp, 0.5625_dp]) .AND. &
+         all(intersections(:, 14) == [0.84375_dp, 0.6875_dp]) .AND. &
+         all(intersections(:, 15) == [0.90625_dp, 0.8125_dp]) .AND. &
+         all(intersections(:, 16) == [0.96875_dp, 0.9375_dp]) .AND. &
+         status == 96)
+    call print_status(name, case_id, case_success, success)
   end subroutine test_all_intersections
 
   subroutine test_all_intersections_abi(success)

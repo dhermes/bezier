@@ -19,13 +19,13 @@ module curve_intersection
        Status_INSUFFICIENT_SPACE
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
-       vector_close, in_interval, ulps_away
+       vector_close, in_interval, ulps_away, convex_hull, polygon_collide
   use curve, only: &
        CurveData, evaluate_multi, evaluate_hodograph, subdivide_curve
   implicit none
   private &
        MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, SIMILAR_ULPS, &
-       CANDIDATES_ODD, CANDIDATES_EVEN, make_candidates
+       CANDIDATES_ODD, CANDIDATES_EVEN, make_candidates, prune_candidates
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, Subdivide_FIRST, Subdivide_SECOND, &
@@ -806,6 +806,83 @@ contains
 
   end subroutine make_candidates
 
+  subroutine prune_candidates(candidates, num_candidates)
+
+    ! Uses more strict bounding box intersection predicate by forming the
+    ! actual convex hull of each candidate curve segment and then checking
+    ! if those convex hulls collide.
+
+    type(CurveData), allocatable, intent(inout) :: candidates(:, :)
+    integer(c_int), intent(inout) :: num_candidates
+    ! Variables outside of signature.
+    integer(c_int) :: accepted, i
+    integer(c_int) :: num_nodes1, num_nodes2
+    integer(c_int) :: polygon_size1, polygon_size2
+    real(c_double), allocatable :: polygon1(:, :), polygon2(:, :)
+    logical(c_bool) :: collision
+
+    accepted = 0
+    ! NOTE: This **assumes** but does not check that ``candidates`` is
+    !       allocated and size ``2 x NC`` where ``NC >= num_candidates``.
+    do i = 1, num_candidates
+       ! NOTE: This **assumes** that ``%nodes`` is allocated and size
+       !       ``N x 2``.
+       num_nodes1 = size(candidates(1, i)%nodes, 1)
+       if (allocated(polygon1)) then
+          if (size(polygon1, 2) < num_nodes1) then
+             ! NOTE: We "exclude" this block from ``lcov`` because it
+             !       **should** never occur. (All candidates in row 1 should
+             !       have the same ``num_nodes``).
+             ! LCOV_EXCL_START
+             deallocate(polygon1)
+             allocate(polygon1(2, num_nodes1))
+             ! LCOV_EXCL_STOP
+          end if
+       else
+          allocate(polygon1(2, num_nodes1))
+       end if
+       call convex_hull( &
+            num_nodes1, transpose(candidates(1, i)%nodes), &
+            polygon_size1, polygon1(:, :num_nodes1))
+
+       ! NOTE: This **assumes** that ``%nodes`` is allocated and size
+       !       ``N x 2``.
+       num_nodes2 = size(candidates(2, i)%nodes, 1)
+       if (allocated(polygon2)) then
+          if (size(polygon2, 2) < num_nodes2) then
+             ! NOTE: We "exclude" this block from ``lcov`` because it
+             !       **should** never occur. (All candidates in row 2 should
+             !       have the same ``num_nodes``).
+             ! LCOV_EXCL_START
+             deallocate(polygon2)
+             allocate(polygon2(2, num_nodes2))
+             ! LCOV_EXCL_STOP
+          end if
+       else
+          allocate(polygon2(2, num_nodes2))
+       end if
+       call convex_hull( &
+            num_nodes2, transpose(candidates(2, i)%nodes), &
+            polygon_size2, polygon2(:, :num_nodes2))
+
+       ! Now check if the convex hulls actually collide.
+       call polygon_collide( &
+            polygon_size1, polygon1(:, :polygon_size1), &
+            polygon_size2, polygon2(:, :polygon_size2), collision)
+       if (collision) then
+          accepted = accepted + 1
+          ! NOTE: This relies on the invariant ``accepted <= i``. In the
+          !       ``accepted == i`` case, there is nothing to do.
+          if (accepted < i) then
+             candidates(1, accepted) = candidates(1, i)
+             candidates(2, accepted) = candidates(2, i)
+          end if
+       end if
+    end do
+    num_candidates = accepted
+
+  end subroutine prune_candidates
+
   subroutine all_intersections( &
        num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
        intersections, num_intersections, status)
@@ -875,10 +952,18 @@ contains
 
        ! Bail out of there are too many candidates.
        if (num_candidates > MAX_CANDIDATES) then
-          ! NOTE: This assumes that all of the status enum values are less
-          !       than ``MAX_CANDIDATES + 1``.
-          status = num_candidates
-          return
+          if (is_even) then
+             call prune_candidates(CANDIDATES_ODD, num_candidates)
+          else
+             call prune_candidates(CANDIDATES_EVEN, num_candidates)
+          end if
+          ! If pruning didn't fix anything, then we "fail".
+          if (num_candidates > MAX_CANDIDATES) then
+             ! NOTE: This assumes that all of the status enum values are less
+             !       than ``MAX_CANDIDATES + 1``.
+             status = num_candidates
+             return
+          end if
        end if
 
        ! If none of the candidate pairs have been accepted, then there are
