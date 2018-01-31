@@ -380,6 +380,85 @@ def _simple_convex_hull(points):
     return polygon
 
 
+def is_separating(direction, polygon1, polygon2):
+    """Checks if a given ``direction`` is a separating line for two polygons.
+
+    .. note::
+
+       This is a helper for :func:`_polygon_collide`.
+
+    Args:
+        direction (numpy.ndarray): A ``1 x 2`` array (``float64``) of a
+            potential separating line for th etwo polygons.
+        polygon1 (numpy.ndarray): The ``2 x N`` array (``float64``) of ordered
+            points in a polygon.
+        polygon2 (numpy.ndarray): The ``2 x N`` array (``float64``) of ordered
+            points in a polygon.
+
+    Returns:
+        bool: Flag indicating if ``direction`` is a separating line.
+    """
+    # NOTE: We assume throughout that ``norm_squared != 0``. If it **were**
+    #       zero that would mean the ``direction`` corresponds to an
+    #       invalid edge.
+    norm_squared = (
+        direction[0, 0] * direction[0, 0] + direction[0, 1] * direction[0, 1])
+
+    params = []
+    vertex = np.empty((1, 2), order='F')
+    for polygon in (polygon1, polygon2):
+        _, polygon_size = polygon.shape
+        min_param = np.inf
+        max_param = -np.inf
+        for index in six.moves.xrange(polygon_size):
+            vertex[0, :] = polygon[:, index]
+            param = cross_product(direction, vertex) / norm_squared
+            min_param = min(min_param, param)
+            max_param = max(max_param, param)
+        params.append((min_param, max_param))
+
+    # NOTE: The indexing is based on:
+    #       params[0] = (min_param1, max_param1)
+    #       params[1] = (min_param2, max_param2)
+    return params[0][0] >= params[1][1] or params[0][1] <= params[1][0]
+
+
+def _polygon_collide(polygon1, polygon2):
+    """Determines if two **convex** polygons collide.
+
+    .. _SAT: https://en.wikipedia.org/wiki/Hyperplane_separation_theorem
+    .. _see also: https://hackmd.io/s/ryFmIZrsl
+
+    This code uses the Separating axis theorem (`SAT`_) to quickly
+    determine if the polygons intersect. `See also`_.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    Args:
+        polygon1 (numpy.ndarray): The ``2 x N`` array (``float64``) of ordered
+            points in a polygon.
+        polygon2 (numpy.ndarray): The ``2 x N`` array (``float64``) of ordered
+            points in a polygon.
+
+    Returns:
+        bool: Flag indicating if the two polygons collide.
+    """
+    direction = np.empty((1, 2), order='F')
+    for polygon in (polygon1, polygon2):
+        _, polygon_size = polygon.shape
+        for index in six.moves.xrange(polygon_size):
+            # NOTE: When ``index == 0`` this will "wrap around" and refer
+            #       to index ``-1``.
+            direction[0, :] = polygon[:, index] - polygon[:, index - 1]
+            if is_separating(direction, polygon1, polygon2):
+                return False
+
+    return True
+
+
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     vector_close = _vector_close
@@ -390,6 +469,7 @@ if _speedup is None:  # pragma: NO COVER
     ulps_away = _ulps_away
     wiggle_interval = _wiggle_interval
     simple_convex_hull = _simple_convex_hull
+    polygon_collide = _polygon_collide
 else:
     vector_close = _speedup.vector_close
     in_interval = _speedup.in_interval
@@ -399,4 +479,5 @@ else:
     ulps_away = _speedup.ulps_away
     wiggle_interval = _speedup.wiggle_interval
     simple_convex_hull = _speedup.simple_convex_hull
+    polygon_collide = _speedup.polygon_collide
 # pylint: enable=invalid-name

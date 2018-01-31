@@ -584,3 +584,90 @@ class Test_speedup_simple_convex_hull(Test__simple_convex_hull):
         from bezier import _speedup
 
         return _speedup.simple_convex_hull(points)
+
+
+class Test_is_separating(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(direction, polygon1, polygon2):
+        from bezier import _helpers
+
+        return _helpers.is_separating(direction, polygon1, polygon2)
+
+    def test_it(self):
+        direction = np.asfortranarray([[0.0, 1.0]])
+        polygon1 = np.asfortranarray([
+            [1.0, 3.0, -2.0],
+            [1.0, 4.0, 3.0],
+        ])
+        polygon2 = np.asfortranarray([
+            [3.5, 6.5, 6.5, 3.5],
+            [3.0, 3.0, 7.0, 7.0],
+        ])
+        self.assertTrue(
+            self._call_function_under_test(direction, polygon1, polygon2))
+
+
+class Test__polygon_collide(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(polygon1, polygon2):
+        from bezier import _helpers
+
+        return _helpers._polygon_collide(polygon1, polygon2)
+
+    def test_first_edge(self):
+        polygon1 = np.asfortranarray([
+            [1.0, 3.0, -2.0],
+            [1.0, 4.0, 3.0],
+        ])
+        polygon2 = np.asfortranarray([
+            [3.5, 6.5, 6.5, 3.5],
+            [3.0, 3.0, 7.0, 7.0],
+        ])
+        self.assertFalse(self._call_function_under_test(polygon1, polygon2))
+        # Check with arguments swapped.
+        self.assertFalse(self._call_function_under_test(polygon2, polygon1))
+
+    def test_colliding(self):
+        polygon1 = np.asfortranarray([
+            [0.0, 3.0, 0.0],
+            [0.0, 0.0, 3.0],
+        ])
+        polygon2 = np.asfortranarray([
+            [1.0, 4.0, 1.0],
+            [1.0, 1.0, 4.0],
+        ])
+        self.assertTrue(self._call_function_under_test(polygon1, polygon2))
+
+    def test_non_first_edge_polygon1(self):
+        polygon1 = np.asfortranarray([
+            [1.0, 1.0, 0.0, 0.0],
+            [0.0, 1.0, 1.0, 0.0],
+        ])
+        polygon2 = np.asfortranarray([
+            [2.0, 3.0, 3.0, 2.0],
+            [0.0, 0.0, 1.0, 1.0],
+        ])
+        self.assertFalse(self._call_function_under_test(polygon1, polygon2))
+
+    def test_non_first_edge_polygon2(self):
+        polygon1 = np.asfortranarray([
+            [0.0, 2.0, 2.0, 0.0],
+            [0.0, 0.0, 2.0, 2.0],
+        ])
+        polygon2 = np.asfortranarray([
+            [1.0, 4.0, 4.0],
+            [4.0, 1.0, 4.0],
+        ])
+        self.assertFalse(self._call_function_under_test(polygon1, polygon2))
+
+
+@utils.needs_speedup
+class Test_speedup_polygon_collide(Test__polygon_collide):
+
+    @staticmethod
+    def _call_function_under_test(polygon1, polygon2):
+        from bezier import _speedup
+
+        return _speedup.polygon_collide(polygon1, polygon2)
