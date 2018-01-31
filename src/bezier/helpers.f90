@@ -185,27 +185,48 @@ contains
 
   end subroutine min_index
 
-  subroutine sort_in_place(num_points, points)
+  subroutine sort_in_place(num_points, points, num_uniques)
 
     ! NOTE: This is a helper for ``convex_hull``. This does a simple quadratic
     !       sort (i.e. it is suboptimal) because it expects the number of
-    !       points to be small.
+    !       points to be small. It **also** makes sure the values are unique
+    !       to exact precision.
 
     integer(c_int), intent(in) :: num_points
     real(c_double), intent(inout) :: points(2, num_points)
+    integer(c_int), intent(out) :: num_uniques
     ! Variables outside of signature.
     integer(c_int) :: i, match
     real(c_double) :: swap(2)
 
-    do i = 1, num_points - 1
-       call min_index(num_points + 1 - i, points(:, i:), match)
-       ! Shift ``match`` based on the slice ``points(:, i:)``.
+    num_uniques = num_points
+    ! Place the "smallest" point first (since it can't be a duplicate).
+    call min_index(num_points, points, match)
+    if (match /= 1) then
+       swap = points(:, match)
+       points(:, match) = points(:, 1)
+       points(:, 1) = swap
+    end if
+
+    i = 2
+    do while (i <= num_uniques)
+       call min_index(num_uniques + 1 - i, points(:, i:num_uniques), match)
+       ! Shift ``match`` based on the slice ``points(:, i:...)``.
        match = match + i - 1
        if (match /= i) then
-          swap = points(:, i)
-          points(:, i) = points(:, match)
-          points(:, match) = swap
+          swap = points(:, match)
+          if (all(swap == points(:, i - 1))) then
+             ! This means ``match`` is a duplicate.
+             points(:, match) = points(:, num_uniques)
+             points(:, num_uniques) = swap
+             num_uniques = num_uniques - 1
+          else
+             points(:, match) = points(:, i)
+             points(:, i) = swap
+          end if
        end if
+       ! Increment for next iteration.
+       i = i + 1
     end do
 
   end subroutine sort_in_place
@@ -232,22 +253,11 @@ contains
     real(c_double) :: uniques(2, num_points)
     integer(c_int) :: num_lower, num_upper
     real(c_double) :: lower(2, num_points), upper(2, num_points)
-    integer(c_int) :: i, j
+    integer(c_int) :: i
     real(c_double) :: result_
 
-    ! First make sure all the points are unique to exact precision.
-    num_uniques = 0
-    unique_loop: do i = 1, num_points
-       point1(1, :) = points(:, i)
-       do j = 1, num_uniques
-          if (all(point1(1, :) == uniques(:, j))) then
-             cycle unique_loop
-          end if
-       end do
-       ! If we haven't cycled, then we know it is unique.
-       num_uniques = num_uniques + 1
-       uniques(:, num_uniques) = points(:, i)
-    end do unique_loop
+    uniques = points
+    call sort_in_place(num_points, uniques, num_uniques)
 
     ! In the "boring" case that we have fewer than 2 points, return.
     if (num_uniques == 0) then
@@ -258,8 +268,6 @@ contains
        polygon(:, 1) = uniques(:, 1)
        return
     end if
-
-    call sort_in_place(num_uniques, uniques)
 
     ! First create a "lower" convex hull
     num_lower = 0
