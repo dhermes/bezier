@@ -175,6 +175,8 @@ INCORRECT_COUNT = {
 }
 if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:
     INCORRECT_COUNT[ALGEBRAIC] += (10,)
+if base_utils.IS_MAC_OS_X and not base_utils.IS_64_BIT:
+    COINCIDENT_OVERRIDES[GEOMETRIC][20] = {'too_many': 122}
 
 
 class IncorrectCount(ValueError):
