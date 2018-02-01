@@ -1257,7 +1257,7 @@ class Test__all_intersections(utils.NumPyTestCase):
 
         exc_args = exc_info.exception.args
         if base_utils.IS_MAC_OS_X:
-            num_candidates = 70
+            num_candidates = 70  # pragma: NO COVER
         else:
             num_candidates = 96
         expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(
