@@ -18,7 +18,7 @@ module status
   public &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
        Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_BAD_TANGENT, &
-       Status_EDGE_END, Status_UNKNOWN
+       Status_EDGE_END, Status_INVALID_CURVE, Status_UNKNOWN
 
   ! Values of Status enum:
   ! SUCCESS: Procedure exited with no error.
@@ -44,6 +44,11 @@ module status
   !           an edge (only intersections at the beginning of an edge should
   !           be used).
   integer(c_int), parameter :: Status_EDGE_END = 6
+  ! INVALID_CURVE: Curve was "invalid" for the given operation. This will be
+  !                triggered during curve-curve intersection if two curves
+  !                are being checked as coincident and ``locate_point()``
+  !                returns ``LOCATE_INVALID``.
+  integer(c_int), parameter :: Status_INVALID_CURVE = 7
   ! UNKNOWN: Signifies a block of code reached an "impossible" state. Either
   !          the code has violated some mathematical invariant or the author
   !          misunderstood the possible states of the system.

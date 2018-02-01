@@ -1240,8 +1240,8 @@ class Test_coincident_parameters(utils.NumPyTestCase):
 
         nodes1 = np.asfortranarray([
             [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 0.0],
+            [3.0, 3.0],
+            [6.0, 0.0],
         ])
         nodes2 = _curve_helpers.elevate_nodes(nodes1)
         result = self._call_function_under_test(nodes1, nodes2)
@@ -1250,6 +1250,24 @@ class Test_coincident_parameters(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         self.assertEqual(result, expected)
+
+    def test_invalid_point(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 16.0],
+            [-8.0, 0.0],
+            [8.0, 8.0],
+            [-6.0, 13.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [-2.0, 11.0],
+            [-2.0, 16.0],
+        ])
+        with self.assertRaises(ValueError) as exc_info:
+            result = self._call_function_under_test(nodes1, nodes2)
+
+        self.assertEqual(
+            exc_info.exception.args[0],
+            'Parameters not close enough to one another')
 
     def test_touch_no_intersect_same_curve(self):
         from bezier import _curve_helpers

@@ -12,20 +12,24 @@
 
 module curve_intersection
 
-  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
+  use, intrinsic :: iso_c_binding, only: &
+       c_double, c_int, c_bool, c_f_pointer, c_loc
   use types, only: dp
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
-       Status_INSUFFICIENT_SPACE
+       Status_INSUFFICIENT_SPACE, Status_INVALID_CURVE
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
        vector_close, in_interval, ulps_away, convex_hull, polygon_collide
   use curve, only: &
-       CurveData, evaluate_multi, evaluate_hodograph, subdivide_curve
+       CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_multi, &
+       specialize_curve, evaluate_hodograph, locate_point, elevate_nodes, &
+       subdivide_curve
   implicit none
   private &
        MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, SIMILAR_ULPS, &
-       CANDIDATES_ODD, CANDIDATES_EVEN, make_candidates, prune_candidates
+       CANDIDATES_ODD, CANDIDATES_EVEN, make_candidates, prune_candidates, &
+       elevate_helper
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, Subdivide_FIRST, Subdivide_SECOND, &
@@ -34,9 +38,10 @@ module curve_intersection
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
-       add_candidates, intersect_one_round, all_intersections, &
-       all_intersections_abi, set_max_candidates, get_max_candidates, &
-       set_similar_ulps, get_similar_ulps, free_curve_intersections_workspace
+       add_candidates, intersect_one_round, make_same_degree, &
+       add_coincident_parameters, all_intersections, all_intersections_abi, &
+       set_max_candidates, get_max_candidates, set_similar_ulps, &
+       get_similar_ulps, free_curve_intersections_workspace
 
   ! Values of BoxIntersectionType enum:
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
@@ -258,12 +263,12 @@ contains
        refined_s, refined_t, does_intersect, status)
 
     ! Possible error states:
-    ! * Status_SUCCESS    : On success.
-    ! * Status_PARALLEL   : If ``segment_intersection()`` fails (which means
-    !                       the linearized segments are parallel). This
-    !                       can still be avoided if the "root" curves are
-    !                       also (parallel) lines that don't overlap or if
-    !                       the "root" curves have disjoint bounding boxes.
+    ! * Status_SUCCESS : On success.
+    ! * Status_PARALLEL: If ``segment_intersection()`` fails (which means
+    !                    the linearized segments are parallel). This
+    !                    can still be avoided if the "root" curves are
+    !                    also (parallel) lines that don't overlap or if
+    !                    the "root" curves have disjoint bounding boxes.
 
     real(c_double), intent(in) :: error1
     type(CurveData), intent(in) :: curve1
@@ -882,6 +887,169 @@ contains
     num_candidates = accepted
 
   end subroutine prune_candidates
+
+  subroutine elevate_helper( &
+       curr_size, nodes, final_size, workspace, elevated)
+
+    ! NOTE: This is a helper for ``make_same_degree``.
+    ! NOTE: This assumes, but does not check, that ``final_size > curr_size``.
+
+    integer(c_int), intent(in) :: curr_size
+    real(c_double), intent(in) :: nodes(curr_size, 2)
+    integer(c_int), intent(in) :: final_size
+    real(c_double), intent(inout) :: workspace(final_size, 2)
+    real(c_double), intent(inout) :: elevated(final_size, 2)
+    ! Variables outside of signature.
+    logical(c_bool) :: to_workspace
+    integer(c_int) :: i
+
+    ! Elevate ``nodes`` by using both ``workspace`` and ``elevated`` as
+    ! workspaces.
+    if (mod(final_size - curr_size, 2) == 1) then
+       ! If we have an odd number of steps, then we'll write to e1
+       ! first, for example:
+       ! 1 step : ws -> el
+       ! 3 steps: ws -> el -> ws -> el
+       workspace(:curr_size, :) = nodes
+       to_workspace = .FALSE.
+    else
+       ! If we have an odd number of steps, then we'll write to ws
+       ! first, for example:
+       ! 2 steps: el -> ws -> el
+       ! 4 steps: el -> ws -> el -> ws -> el
+       elevated(:curr_size, :) = nodes
+       to_workspace = .TRUE.
+    end if
+
+    do i = curr_size, final_size - 1
+       if (to_workspace) then
+          call elevate_nodes( &
+               i, 2, elevated(:i, :), workspace(:i + 1, :))
+       else
+          call elevate_nodes( &
+               i, 2, workspace(:i, :), elevated(:i + 1, :))
+       end if
+
+       to_workspace = .NOT. to_workspace  ! Switch parity.
+    end do
+
+  end subroutine elevate_helper
+
+  subroutine make_same_degree( &
+       num_nodes1, nodes1, num_nodes2, nodes2, &
+       num_nodes, elevated1, elevated2)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    integer(c_int), intent(out) :: num_nodes
+    real(c_double), allocatable, intent(out) :: elevated1(:, :)
+    real(c_double), allocatable, intent(out) :: elevated2(:, :)
+
+    if (num_nodes1 > num_nodes2) then
+       num_nodes = num_nodes1
+       allocate(elevated1(num_nodes1, 2))
+       allocate(elevated2(num_nodes1, 2))
+       ! Populate ``elevated2`` by elevating (using ``elevated1`` as a
+       ! helper workspace).
+       call elevate_helper( &
+            num_nodes2, nodes2, num_nodes1, elevated1, elevated2)
+       ! Populate ``elevated1`` without re-allocating it.
+       elevated1(:, :) = nodes1
+    else if (num_nodes2 > num_nodes1) then
+       num_nodes = num_nodes2
+       allocate(elevated1(num_nodes2, 2))
+       allocate(elevated2(num_nodes2, 2))
+       ! Populate ``elevated1`` by elevating (using ``elevated2`` as a
+       ! helper workspace).
+       call elevate_helper( &
+            num_nodes1, nodes1, num_nodes2, elevated2, elevated1)
+       ! Populate ``elevated2`` without re-allocating it.
+       elevated2(:, :) = nodes2
+    else
+       num_nodes = num_nodes2
+       elevated1 = nodes1
+       elevated2 = nodes2
+    end if
+
+  end subroutine make_same_degree
+
+  subroutine add_coincident_parameters( &
+       num_nodes1, nodes1, num_nodes2, nodes2, &
+       num_intersections, intersections, status)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    ! Possible error states:
+    ! * Status_SUCCESS      : On success.
+    ! * Status_INVALID_CURVE: If ``locate_point()`` fails with
+    !                         ``LOCATE_INVALID`` when trying to place **any**
+    !                         of the curve endpoints on the other segment.
+
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    integer(c_int), intent(inout) :: num_intersections
+    real(c_double), allocatable, intent(inout) :: intersections(:, :)
+    integer(c_int), intent(out) :: status
+    ! Variables outside of signature.
+    real(c_double), target, allocatable :: elevated1(:, :)
+    real(c_double), target, allocatable :: elevated2(:, :)
+    real(c_double), target, allocatable :: specialized(:, :)
+    integer(c_int) :: num_nodes
+    real(c_double) :: point(1, 2)
+    real(c_double) :: s_initial, s_final
+    real(c_double), pointer :: as_vec1(:, :), as_vec2(:, :)
+
+    status = Status_SUCCESS
+    ! First, make sure the nodes are the same degree.
+    call make_same_degree( &
+         num_nodes1, nodes1, num_nodes2, nodes2, &
+         num_nodes, elevated1, elevated2)
+
+    point(1, :) = nodes2(1, :)
+    call locate_point( &
+         num_nodes, 2, elevated1, point, s_initial)
+    point(1, :) = nodes2(num_nodes2, :)
+    call locate_point( &
+         num_nodes, 2, elevated1, point, s_final)
+    ! Bail out if the "locate" failed.
+    if (s_initial == LOCATE_INVALID .OR. s_final == LOCATE_INVALID) then
+       status = Status_INVALID_CURVE
+       return
+    end if
+
+    if (s_initial /= LOCATE_MISS .AND. s_final /= LOCATE_MISS) then
+       ! In this case, if the curves were coincident, then ``curve2``
+       ! would be "fully" contained in ``curve1``, so we specialize
+       ! ``curve1`` down to that interval to check.
+       allocate(specialized(num_nodes, 2))
+       call specialize_curve( &
+            num_nodes, 2, elevated1, s_initial, s_final, specialized)
+       call c_f_pointer(c_loc(specialized), as_vec1, [1, 2 * num_nodes])
+       call c_f_pointer(c_loc(elevated2), as_vec2, [1, 2 * num_nodes])
+
+       if (vector_close( &
+            2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
+          call add_intersection( &
+               s_initial, 0.0_dp, num_intersections, intersections)
+          call add_intersection( &
+               s_final, 1.0_dp, num_intersections, intersections)
+       end if
+
+       ! In either case (``vector_close()`` or not), we are done.
+       return
+    end if
+
+    status = 500  ! Not implemented yet.
+
+  end subroutine add_coincident_parameters
 
   subroutine all_intersections( &
        num_nodes_first, nodes_first, num_nodes_second, nodes_second, &

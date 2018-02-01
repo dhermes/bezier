@@ -15,7 +15,7 @@ module test_curve_intersection
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
-       Status_INSUFFICIENT_SPACE
+       Status_INSUFFICIENT_SPACE, Status_INVALID_CURVE
   use curve, only: &
        CurveData, evaluate_multi, specialize_curve, subdivide_nodes, &
        curves_equal, subdivide_curve
@@ -28,9 +28,10 @@ module test_curve_intersection
        newton_refine_intersect, bbox_intersect, parallel_different, &
        from_linearized, bbox_line_intersect, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
-       add_candidates, intersect_one_round, all_intersections, &
-       all_intersections_abi, set_max_candidates, get_max_candidates, &
-       set_similar_ulps, get_similar_ulps
+       add_candidates, intersect_one_round, make_same_degree, &
+       add_coincident_parameters, all_intersections, all_intersections_abi, &
+       set_max_candidates, get_max_candidates, set_similar_ulps, &
+       get_similar_ulps
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -41,8 +42,10 @@ module test_curve_intersection
        test_bbox_line_intersect, test_add_intersection, &
        test_add_from_linearized, test_endpoint_check, &
        test_tangent_bbox_intersection, test_add_candidates, &
-       test_intersect_one_round, test_all_intersections, &
-       test_all_intersections_abi
+       test_intersect_one_round, test_make_same_degree, &
+       test_add_coincident_parameters, test_all_intersections, &
+       test_all_intersections_abi, test_set_max_candidates, &
+       test_set_similar_ulps
   public curve_intersection_all_tests
 
 contains
@@ -63,6 +66,8 @@ contains
     call test_tangent_bbox_intersection(success)
     call test_add_candidates(success)
     call test_intersect_one_round(success)
+    call test_make_same_degree(success)
+    call test_add_coincident_parameters(success)
     call test_all_intersections(success)
     call test_all_intersections_abi(success)
     call test_set_max_candidates(success)
@@ -1566,6 +1571,189 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_intersect_one_round
+
+  subroutine test_make_same_degree(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    real(c_double) :: nodes1(3, 2), nodes2(3, 2), nodes3(2, 2), nodes4(4, 2)
+    integer(c_int) :: num_nodes
+    real(c_double), allocatable :: elevated1(:, :)
+    real(c_double), allocatable :: elevated2(:, :)
+    character(16) :: name
+
+    case_id = 1
+    name = "make_same_degree"
+
+    ! CASE 1: Same degree.
+    nodes1(1, :) = [0.0_dp, 1.0_dp]
+    nodes1(2, :) = [1.0_dp, 2.0_dp]
+    nodes1(3, :) = [2.0_dp, 1.0_dp]
+    nodes2(1, :) = [1.0_dp, 2.0_dp]
+    nodes2(2, :) = [2.0_dp, 1.0_dp]
+    nodes2(3, :) = [4.0_dp, 2.0_dp]
+    call make_same_degree( &
+         3, nodes1, 3, nodes2, num_nodes, elevated1, elevated2)
+    case_success = ( &
+         num_nodes == 3 .AND. &
+         allocated(elevated1) .AND. &
+         all(shape(elevated1) == [3, 2]) .AND. &
+         all(elevated1 == nodes1) .AND. &
+         allocated(elevated2) .AND. &
+         all(shape(elevated2) == [3, 2]) .AND. &
+         all(elevated2 == nodes2))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Elevate once (first argument).
+    nodes3(1, :) = 0
+    nodes3(2, :) = 1
+    nodes1(1, :) = [1.0_dp, 2.0_dp]
+    nodes1(2, :) = [2.0_dp, 2.0_dp]
+    nodes1(3, :) = [0.0_dp, 0.0_dp]
+    call make_same_degree( &
+         2, nodes3, 3, nodes1, num_nodes, elevated1, elevated2)
+    case_success = ( &
+         num_nodes == 3 .AND. &
+         allocated(elevated1) .AND. &
+         all(shape(elevated1) == [3, 2]) .AND. &
+         all(elevated1(1, :) == 0) .AND. &
+         all(elevated1(2, :) == 0.5_dp) .AND. &
+         all(elevated1(3, :) == 1) .AND. &
+         allocated(elevated2) .AND. &
+         all(shape(elevated2) == [3, 2]) .AND. &
+         all(elevated2 == nodes1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Same as CASE 2, but swap arguments.
+    call make_same_degree( &
+         3, nodes1, 2, nodes3, num_nodes, elevated1, elevated2)
+    case_success = ( &
+         num_nodes == 3 .AND. &
+         allocated(elevated1) .AND. &
+         all(shape(elevated1) == [3, 2]) .AND. &
+         all(elevated1 == nodes1) .AND. &
+         allocated(elevated2) .AND. &
+         all(shape(elevated2) == [3, 2]) .AND. &
+         all(elevated2(1, :) == 0) .AND. &
+         all(elevated2(2, :) == 0.5_dp) .AND. &
+         all(elevated2(3, :) == 1))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Elevate twice (first argument).
+    nodes3(1, :) = 0
+    nodes3(2, :) = 3
+    nodes4(1, :) = [0.0_dp, 1.0_dp]
+    nodes4(2, :) = [1.0_dp, 2.0_dp]
+    nodes4(3, :) = [3.0_dp, 2.0_dp]
+    nodes4(4, :) = [4.0_dp, 2.0_dp]
+    call make_same_degree( &
+         2, nodes3, 4, nodes4, num_nodes, elevated1, elevated2)
+    case_success = ( &
+         num_nodes == 4 .AND. &
+         allocated(elevated1) .AND. &
+         all(shape(elevated1) == [4, 2]) .AND. &
+         all(elevated1(1, :) == 0) .AND. &
+         all(elevated1(2, :) == 1) .AND. &
+         all(elevated1(3, :) == 2) .AND. &
+         all(elevated1(4, :) == 3) .AND. &
+         allocated(elevated2) .AND. &
+         all(shape(elevated2) == [4, 2]) .AND. &
+         all(elevated2 == nodes4))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Same as CASE 4, but swap arguments.
+    call make_same_degree( &
+         4, nodes4, 2, nodes3, num_nodes, elevated1, elevated2)
+    case_success = ( &
+         num_nodes == 4 .AND. &
+         allocated(elevated1) .AND. &
+         all(shape(elevated1) == [4, 2]) .AND. &
+         all(elevated1 == nodes4) .AND. &
+         allocated(elevated2) .AND. &
+         all(shape(elevated2) == [4, 2]) .AND. &
+         all(elevated2(1, :) == 0) .AND. &
+         all(elevated2(2, :) == 1) .AND. &
+         all(elevated2(3, :) == 2) .AND. &
+         all(elevated2(4, :) == 3))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_make_same_degree
+
+  subroutine test_add_coincident_parameters(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(4, 2)
+    integer(c_int) :: num_intersections
+    real(c_double), allocatable :: intersections(:, :)
+    integer(c_int) :: status
+    integer :: case_id
+    character(25) :: name
+
+    case_id = 1
+    name = "add_coincident_parameters"
+    num_intersections = 0
+
+    ! CASE 1: Actual curve degrees differ (i.e. one is a line, the other is
+    !         a quadratic).
+    nodes1(1, :) = 0
+    nodes1(2, :) = 1
+    nodes2(1, :) = 0
+    nodes2(2, :) = 1
+    nodes2(3, :) = [2.0_dp, 0.0_dp]
+
+    case_success = .NOT. allocated(intersections)
+    call add_coincident_parameters( &
+         2, nodes1, 3, nodes2, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0 .AND. &
+         status == 500)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Actual curve degrees are the same, but one is elevated (and is
+    !         the same curve segment).
+    nodes2(1, :) = 0
+    nodes2(2, :) = 3
+    nodes2(3, :) = [6.0_dp, 0.0_dp]
+    nodes3(1, :) = 0
+    nodes3(2, :) = 2
+    nodes3(3, :) = [4.0_dp, 2.0_dp]
+    nodes3(4, :) = [6.0_dp, 0.0_dp]
+
+    case_success = .NOT. allocated(intersections)
+    call add_coincident_parameters( &
+         3, nodes2, 4, nodes3, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
+         all(intersections(:, 1) == [0.0_dp, 0.0_dp]) .AND. &
+         all(intersections(:, 2) == [1.0_dp, 1.0_dp]) .AND. &
+         num_intersections == 2 .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Fail due to invalid point (i.e curve has a self-crossing).
+    nodes3(1, :) = [0.0_dp, 16.0_dp]
+    nodes3(2, :) = [-8.0_dp, 0.0_dp]
+    nodes3(3, :) = [8.0_dp, 8.0_dp]
+    nodes3(4, :) = [-6.0_dp, 13.0_dp]
+    nodes1(1, :) = [-2.0_dp, 11.0_dp]
+    nodes1(2, :) = [-2.0_dp, 16.0_dp]
+    call add_coincident_parameters( &
+         4, nodes3, 2, nodes1, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         num_intersections == 2 .AND. &
+         status == Status_INVALID_CURVE)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_add_coincident_parameters
 
   subroutine test_all_intersections(success)
     logical(c_bool), intent(inout) :: success
