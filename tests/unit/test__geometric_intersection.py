@@ -16,6 +16,7 @@ import unittest.mock
 
 import numpy as np
 
+from tests import utils as base_utils
 from tests.unit import utils
 
 
@@ -1255,7 +1256,12 @@ class Test__all_intersections(utils.NumPyTestCase):
             self._call_function_under_test(nodes1, nodes2)
 
         exc_args = exc_info.exception.args
-        expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(96)
+        if base_utils.IS_MAC_OS_X:
+            num_candidates = 70
+        else:
+            num_candidates = 96
+        expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(
+            num_candidates)
         self.assertEqual(exc_args, (expected,))
 
 
