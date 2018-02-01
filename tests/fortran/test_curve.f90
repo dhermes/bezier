@@ -493,6 +493,26 @@ contains
     case_success = (s_val == LOCATE_INVALID)
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 4: Newton's method pushes the value slightly to the left of ``0.0``.
+    nodes2(1, :) = 0
+    nodes2(2, :) = [1.0_dp, 1.0_dp]
+    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    point2(1, :) = [0.0_dp, 0.0_dp]
+    call locate_point( &
+         3, 2, nodes2, point2, s_val)
+
+    case_success = (s_val == 0.0_dp)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Newton's method pushes the value slightly to the right of
+    !         ``1.0`` (uses same nodes as CASE 4).
+    point2(1, :) = [2.0_dp, 0.0_dp]
+    call locate_point( &
+         3, 2, nodes2, point2, s_val)
+
+    case_success = (s_val == 1.0_dp)
+    call print_status(name, case_id, case_success, success)
+
   end subroutine test_locate_point
 
   subroutine test_elevate_nodes(success)

@@ -537,7 +537,16 @@ contains
     ! NOTE: Use ``std_dev`` variable as a "placeholder" for the update.
     call newton_refine( &
          num_nodes, dimension_, nodes, point, s_approx, std_dev)
-    s_approx = std_dev
+    ! NOTE: Since ``mean(s_params)`` must be in ``[0, 1]`` it's
+    !       "safe" to push the Newton-refined value back into the unit
+    !       interval.
+    if (std_dev < 0.0_dp) then
+       s_approx = 0.0_dp
+    else if (std_dev > 1.0_dp) then
+       s_approx = 1.0_dp
+    else
+       s_approx = std_dev
+    end if
 
   end subroutine locate_point
 

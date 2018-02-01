@@ -819,7 +819,16 @@ def _locate_point(nodes, point):
             'Parameters not close enough to one another', params)
 
     s_approx = np.mean(params)
-    return newton_refine(nodes, point, s_approx)
+    s_approx = newton_refine(nodes, point, s_approx)
+    # NOTE: Since ``np.mean(params)`` must be in ``[0, 1]`` it's
+    #       "safe" to push the Newton-refined value back into the unit
+    #       interval.
+    if s_approx < 0.0:
+        return 0.0
+    elif s_approx > 1.0:
+        return 1.0
+    else:
+        return s_approx
 
 
 def _reduce_pseudo_inverse(nodes):

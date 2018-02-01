@@ -752,6 +752,28 @@ class Test__locate_point(unittest.TestCase):
         with self.assertRaises(ValueError):
             self._call_function_under_test(nodes, point)
 
+    def test_outside_left(self):
+        # Newton's method pushes the value slightly to the left of ``0.0``.
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 0.0],
+        ])
+        point = np.asfortranarray([[0.0, 0.0]])
+        result = self._call_function_under_test(nodes, point)
+        self.assertEqual(result, 0.0)
+
+    def test_outside_right(self):
+        # Newton's method pushes the value slightly to the right of ``1.0``.
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 0.0],
+        ])
+        point = np.asfortranarray([[2.0, 0.0]])
+        result = self._call_function_under_test(nodes, point)
+        self.assertEqual(result, 1.0)
+
 
 @utils.needs_speedup
 class Test_speedup_locate_point(Test__locate_point):
