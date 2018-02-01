@@ -1076,6 +1076,320 @@ class Test_prune_candidates(unittest.TestCase):
         self.assertEqual(pruned, [])
 
 
+class Test_flat_no_copy(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection.flat_no_copy(nodes)
+
+    def test_1d(self):
+        nodes = np.asfortranarray([1.0, 2.0, 3.0])
+        result = self._call_function_under_test(nodes)
+
+        expected = np.asfortranarray([[1.0, 2.0, 3.0]])
+        self.assertEqual(result, expected)
+        self.assertFalse(result.flags.owndata)
+        self.assertIs(result.base, nodes)
+
+    def test_2d(self):
+        nodes = np.asfortranarray([
+            [1.0, 2.0],
+            [3.0, 4.0],
+        ])
+        result = self._call_function_under_test(nodes)
+
+        expected = np.asfortranarray([[1.0, 3.0, 2.0, 4.0]])
+        self.assertEqual(result, expected)
+        self.assertFalse(result.flags.owndata)
+        self.assertIs(result.base, nodes)
+
+    def test_c_contiguous(self):
+        nodes = np.array([
+            [1.0, 2.0],
+            [3.0, 4.0],
+        ])
+        result = self._call_function_under_test(nodes)
+
+        expected = np.asfortranarray([[1.0, 3.0, 2.0, 4.0]])
+        self.assertEqual(result, expected)
+        # Make sure a copy occurred.
+        self.assertIsNot(result.base, nodes)
+
+    def test_3d(self):
+        nodes = np.asfortranarray([
+            [
+                [1.0, 2.0],
+                [3.0, 4.0],
+            ], [
+                [5.0, 6.0],
+                [7.0, 8.0],
+            ],
+        ])
+        result = self._call_function_under_test(nodes)
+
+        expected = np.asfortranarray([
+            [1.0, 5.0, 3.0, 7.0, 2.0, 6.0, 4.0, 8.0]])
+        self.assertEqual(result, expected)
+        self.assertFalse(result.flags.owndata)
+        self.assertIs(result.base, nodes)
+
+
+class Test_coincident_parameters(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection.coincident_parameters(nodes1, nodes2)
+
+    def test_different_degree(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 0.0],
+        ])
+        result = self._call_function_under_test(nodes1, nodes2)
+        self.assertIsNone(result)
+
+    def test_elevated_degree(self):
+        from bezier import _curve_helpers
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 0.0],
+        ])
+        nodes2 = _curve_helpers.elevate_nodes(nodes1)
+        result = self._call_function_under_test(nodes1, nodes2)
+        # NOTE: This should **actually** be
+        #           [[0.0, 0.0],
+        #            [1.0, 1.0]]
+        #       but for now the degree difference is ignored.
+        self.assertIsNone(result)
+
+    def test_touch_no_intersect_same_curve(self):
+        from bezier import _curve_helpers
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 2.0],
+            [3.0, 2.0],
+        ])
+        new_params = (
+            (1.0, 2.0),
+            (2.0, 1.0),
+            (-1.0, 0.0),
+            (0.0, -1.0),
+        )
+        for start, end in new_params:
+            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            result = self._call_function_under_test(nodes1, nodes2)
+            self.assertIsNone(result)
+
+    def test_disjoint_segments_same_curve(self):
+        from bezier import _curve_helpers
+
+        nodes1 = np.asfortranarray([
+            [1.0, 0.0],
+            [1.0, 2.0],
+            [3.0, 2.0],
+            [4.0, 0.0],
+        ])
+        new_params = (
+            (1.5, 2.0),
+            (2.0, 1.5),
+            (-1.0, -0.5),
+            (-0.5, -1.0),
+        )
+        for start, end in new_params:
+            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            result = self._call_function_under_test(nodes1, nodes2)
+            self.assertIsNone(result)
+
+    def test_ends_touch_different_curve(self):
+        nodes1 = np.asfortranarray([
+            [1.0, 8.0],
+            [3.0, 6.0],
+            [3.0, 5.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [3.0, 5.0],
+            [3.0, -1.0],
+            [4.0, -4.0],
+        ])
+        result = self._call_function_under_test(nodes1, nodes2)
+        self.assertIsNone(result)
+
+    def test_identical_curves(self):
+        nodes = np.asfortranarray([
+            [0.0, 0.0],
+            [2.0, 3.0],
+            [5.0, 5.0],
+        ])
+        result = self._call_function_under_test(nodes, nodes)
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        self.assertEqual(result, expected)
+
+    def test_contained_and_touching(self):
+        from bezier import _curve_helpers
+
+        nodes1 = np.asfortranarray([
+            [4.0, 1.0],
+            [6.0, 3.0],
+            [2.0, 1.0],
+        ])
+        new_params = (
+            (0.0, 0.5),
+            (0.5, 0.0),
+            (0.5, 1.0),
+            (1.0, 0.5),
+            (0.0, 2.0),
+            (2.0, 0.0),
+            (-1.0, 1.0),
+            (1.0, -1.0),
+        )
+        for start, end in new_params:
+            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            result = self._call_function_under_test(nodes1, nodes2)
+            if start == 2.0 or end == 2.0:
+                expected = np.asfortranarray([
+                    [0.0, -start / (end - start)],
+                    [1.0, (end - 1.0) / (end - start)],
+                ])
+            elif start == -1.0 or end == -1.0:
+                expected = np.asfortranarray([
+                    [0.0, -start / (end - start)],
+                    [1.0, (1.0 - start) / (end - start)],
+                ])
+            else:
+                expected = np.asfortranarray([
+                    [start, 0.0],
+                    [end, 1.0],
+                ])
+
+            self.assertEqual(result, expected)
+
+    def test_fully_contained(self):
+        from bezier import _curve_helpers
+
+        nodes1 = np.asfortranarray([
+            [-1.0, -1.0],
+            [0.0, 2.0],
+            [2.0, 0.0],
+        ])
+        new_params = (
+            (0.25, 0.75),
+            (0.75, 0.25),
+            (-0.5, 1.5),
+            (1.5, -0.5),
+        )
+        for start, end in new_params:
+            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            result = self._call_function_under_test(nodes1, nodes2)
+            if start == -0.5 or end == -0.5:
+                expected = np.asfortranarray([
+                    [0.0, (end - 1.0) / (end - start)],
+                    [1.0, end / (end - start)],
+                ])
+            else:
+                expected = np.asfortranarray([
+                    [start, 0.0],
+                    [end, 1.0],
+                ])
+
+            self.assertEqual(result, expected)
+
+    def test_staggered_overlap(self):
+        from bezier import _curve_helpers
+
+        nodes1 = np.asfortranarray([
+            [0.0, -1.0],
+            [1.0, 2.0],
+            [1.0, 0.0],
+            [3.0, 2.0],
+        ])
+        new_params = (
+            (0.5, 1.5),
+            (1.5, 0.5),
+            (-0.5, 0.5),
+            (0.5, -0.5),
+        )
+        for start, end in new_params:
+            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            result = self._call_function_under_test(nodes1, nodes2)
+            if start == 1.5 or end == 1.5:
+                expected = np.asfortranarray([
+                    [0.5, start - 0.5],
+                    [1.0, 0.5],
+                ])
+            else:
+                expected = np.asfortranarray([
+                    [0.0, 0.5],
+                    [0.5, end + 0.5],
+                ])
+
+            self.assertEqual(result, expected)
+
+    def test_one_endpoint_from_each_not_coincident(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [16.0, 0.0],
+            [16.0, 16.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [7.0, 1.0],
+            [7.0, 17.0],
+            [23.0, 17.0],
+        ])
+        result = self._call_function_under_test(nodes1, nodes2)
+        self.assertIsNone(result)
+
+    def test_both_endpoints_on_other_not_coincident(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [32.0, 32.0],
+            [96.0, 32.0],
+            [128.0, 0.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [29.0, 18.0],
+            [49.0, 38.0],
+            [79.0, 38.0],
+            [99.0, 18.0],
+        ])
+
+        result = self._call_function_under_test(nodes1, nodes2)
+        self.assertIsNone(result)
+        result = self._call_function_under_test(nodes2, nodes1)
+        self.assertIsNone(result)
+
+    def test_endpoint_in_middle_not_coincident(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [2.0, 2.0],
+            [4.0, 0.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [2.0, 1.0],
+            [4.0, 3.0],
+            [6.0, 2.0],
+        ])
+
+        result = self._call_function_under_test(nodes1, nodes2)
+        self.assertIsNone(result)
+        result = self._call_function_under_test(nodes2, nodes1)
+        self.assertIsNone(result)
+
+
 class Test__all_intersections(utils.NumPyTestCase):
 
     @staticmethod

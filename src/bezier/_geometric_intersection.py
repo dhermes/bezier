@@ -59,11 +59,12 @@ _NO_CONVERGE_TEMPLATE = (
 # intersection. Any over- or under-shooting will (hopefully) be
 # resolved in the Newton refinement step. If it isn't resolved, the
 # call to _wiggle_interval() will fail the intersection.
-_WIGGLE_START = -2.0**(-16)
+_WIGGLE_START = -0.5**16
 _WIGGLE_END = 1.0 - _WIGGLE_START
 # Number of bits allowed in ``add_intersection()`` to consider two
 # intersections to be "identical".
 _SIMILAR_ULPS = 1
+_MIN_INTERVAL_WIDTH = 0.5**40
 
 
 def _bbox_intersect(nodes1, nodes2):
@@ -992,6 +993,149 @@ def prune_candidates(candidates):
             pruned.append((first, second))
 
     return pruned
+
+
+def flat_no_copy(nodes):
+    """Flattens a Fortran-ordered array without copying.
+
+    Args:
+        nodes (numpy.ndarray): The array to be flattened.
+
+    Returns:
+        numpy.ndarray: A ``1 x D`` vector containing the elements
+        of ``nodes`` flattened.
+    """
+    return nodes.reshape((1, nodes.size), order='F')
+
+
+def coincident_parameters(nodes1, nodes2):
+    r"""Check if two B |eacute| zier curves are coincident.
+
+    Does so by projecting each segment endpoint onto the other curve
+
+    .. math::
+
+       B_1(s_0) = B_2(0)
+       B_1(s_m) = B_2(1)
+       B_1(0) = B_2(t_0)
+       B_1(1) = B_2(t_n)
+
+    and then finding the "shared interval" where both curves are defined.
+    If such an interval can't be found (e.g. if one of the endpoints can't be
+    located on the other curve), returns :data:`None`.
+
+    If such a "shared interval" does exist, then this will specialize
+    each curve onto that shared interval and check if the new control points
+    agree.
+
+    Args:
+        nodes1 (numpy.ndarray): Set of control points for a
+            B |eacute| zier curve.
+        nodes2 (numpy.ndarray): Set of control points for a
+            B |eacute| zier curve.
+
+    Returns:
+        Optional[numpy.ndarray]: A ``2 x 2`` array of parameters where the two
+        coincident curves meet. If the are not coincident, returns
+        :data:`None`.
+    """
+    # pylint: disable=too-many-return-statements,too-many-branches
+    if nodes1.shape[0] != nodes2.shape[0]:
+        return None
+
+    s_initial = _curve_helpers.locate_point(nodes1, nodes2[[0], :])
+    s_final = _curve_helpers.locate_point(nodes1, nodes2[[-1], :])
+    if s_initial is not None and s_final is not None:
+        # In this case, if the curves were coincident, then ``curve2``
+        # would be "fully" contained in ``curve1``, so we specialize
+        # ``curve1`` down to that interval to check.
+        specialized1 = _curve_helpers.specialize_curve(
+            nodes1, s_initial, s_final)
+        if _helpers.vector_close(
+                flat_no_copy(specialized1), flat_no_copy(nodes2)):
+            return np.asfortranarray([
+                [s_initial, 0.0],
+                [s_final, 1.0],
+            ])
+        else:
+            return None
+
+    t_initial = _curve_helpers.locate_point(nodes2, nodes1[[0], :])
+    t_final = _curve_helpers.locate_point(nodes2, nodes1[[-1], :])
+    if t_initial is None and t_final is None:
+        # An overlap must have two endpoints and since at most one of the
+        # endpoints of ``curve2`` lies on ``curve1`` (as indicated by at
+        # least one of the ``s``-parameters being ``None``), we need (at least)
+        # one endpoint of ``curve1`` on ``curve2``.
+        return None
+
+    if t_initial is not None and t_final is not None:
+        # In this case, if the curves were coincident, then ``curve1``
+        # would be "fully" contained in ``curve2``, so we specialize
+        # ``curve2`` down to that interval to check.
+        specialized2 = _curve_helpers.specialize_curve(
+            nodes2, t_initial, t_final)
+        if _helpers.vector_close(
+                flat_no_copy(nodes1), flat_no_copy(specialized2)):
+            return np.asfortranarray([
+                [0.0, t_initial],
+                [1.0, t_final],
+            ])
+        else:
+            return None
+
+    if s_initial is None and s_final is None:
+        # An overlap must have two endpoints and since exactly one of the
+        # endpoints of ``curve1`` lies on ``curve2`` (as indicated by exactly
+        # one of the ``t``-parameters being ``None``), we need (at least)
+        # one endpoint of ``curve1`` on ``curve2``.
+        return None
+
+    # At this point, we know exactly one of the ``s``-parameters and exactly
+    # one of the ``t``-parameters is not ``None``.
+    if s_initial is None:
+        if t_initial is None:
+            # B1(s_final) = B2(1) AND B1(1) = B2(t_final)
+            start_s = s_final
+            end_s = 1.0
+            start_t = 1.0
+            end_t = t_final
+        else:
+            # B1(0) = B2(t_initial) AND B1(s_final) = B2(1)
+            start_s = 0.0
+            end_s = s_final
+            start_t = t_initial
+            end_t = 1.0
+    else:
+        if t_initial is None:
+            # B1(s_initial) = B2(0) AND B1(1 ) = B2(t_final)
+            start_s = s_initial
+            end_s = 1.0
+            start_t = 0.0
+            end_t = t_final
+        else:
+            # B1(0) = B2(t_initial) AND B1(s_initial) = B2(0)
+            start_s = 0.0
+            end_s = s_initial
+            start_t = t_initial
+            end_t = 0.0
+
+    width_s = abs(start_s - end_s)
+    width_t = abs(start_t - end_t)
+    if width_s < _MIN_INTERVAL_WIDTH and width_t < _MIN_INTERVAL_WIDTH:
+        return None
+
+    specialized1 = _curve_helpers.specialize_curve(nodes1, start_s, end_s)
+    specialized2 = _curve_helpers.specialize_curve(nodes2, start_t, end_t)
+    if _helpers.vector_close(
+            flat_no_copy(specialized1), flat_no_copy(specialized2)):
+        return np.asfortranarray([
+            [start_s, start_t],
+            [end_s, end_t],
+        ])
+    else:
+        return None
+    # pylint: enable=too-many-return-statements,too-many-branches
 
 
 def _all_intersections(nodes_first, nodes_second):
