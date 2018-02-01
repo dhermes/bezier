@@ -1256,7 +1256,7 @@ class Test__all_intersections(utils.NumPyTestCase):
             self._call_function_under_test(nodes1, nodes2)
 
         exc_args = exc_info.exception.args
-        if base_utils.IS_MAC_OS_X:
+        if base_utils.IS_MAC_OS_X and not base_utils.IS_64_BIT:
             num_candidates = 70  # pragma: NO COVER
         else:
             num_candidates = 96
