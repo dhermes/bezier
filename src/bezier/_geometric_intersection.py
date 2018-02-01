@@ -1008,6 +1008,29 @@ def flat_no_copy(nodes):
     return nodes.reshape((1, nodes.size), order='F')
 
 
+def make_same_degree(nodes1, nodes2):
+    """Degree-elevate a curve so two curves have matching degree.
+
+    Args:
+        nodes1 (numpy.ndarray): Set of control points for a
+            B |eacute| zier curve.
+        nodes2 (numpy.ndarray): Set of control points for a
+            B |eacute| zier curve.
+
+    Returns:
+        Tuple[numpy.ndarray, numpy.ndarray]: The potentially degree-elevated
+        nodes passed in.
+    """
+    num_nodes1, _ = nodes1.shape
+    num_nodes2, _ = nodes2.shape
+    for _ in six.moves.xrange(num_nodes2 - num_nodes1):
+        nodes1 = _curve_helpers.elevate_nodes(nodes1)
+    for _ in six.moves.xrange(num_nodes1 - num_nodes2):
+        nodes2 = _curve_helpers.elevate_nodes(nodes2)
+
+    return nodes1, nodes2
+
+
 def coincident_parameters(nodes1, nodes2):
     r"""Check if two B |eacute| zier curves are coincident.
 
@@ -1040,8 +1063,7 @@ def coincident_parameters(nodes1, nodes2):
         :data:`None`.
     """
     # pylint: disable=too-many-return-statements,too-many-branches
-    if nodes1.shape[0] != nodes2.shape[0]:
-        return None
+    nodes1, nodes2 = make_same_degree(nodes1, nodes2)
 
     s_initial = _curve_helpers.locate_point(nodes1, nodes2[[0], :])
     s_final = _curve_helpers.locate_point(nodes1, nodes2[[-1], :])

@@ -1136,6 +1136,84 @@ class Test_flat_no_copy(utils.NumPyTestCase):
         self.assertIs(result.base, nodes)
 
 
+class Test_make_same_degree(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection.make_same_degree(nodes1, nodes2)
+
+    def test_same_degree(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 2.0],
+            [2.0, 1.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [1.0, 2.0],
+            [2.0, 1.0],
+            [4.0, 2.0],
+        ])
+        elevated1, elevated2 = self._call_function_under_test(nodes1, nodes2)
+        self.assertIs(elevated1, nodes1)
+        self.assertIs(elevated2, nodes2)
+
+    def test_elevate_once(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [1.0, 2.0],
+            [2.0, 2.0],
+            [0.0, 0.0],
+        ])
+
+        # Elevate as the first argument.
+        elevated1, elevated2 = self._call_function_under_test(nodes1, nodes2)
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [0.5, 0.5],
+            [1.0, 1.0],
+        ])
+        self.assertEqual(elevated1, expected)
+        self.assertIs(elevated2, nodes2)
+
+        # Elevate as the second argument.
+        elevated1, elevated2 = self._call_function_under_test(nodes2, nodes1)
+        self.assertIs(elevated1, nodes2)
+        self.assertEqual(elevated2, expected)
+
+    def test_elevate_twice(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 0.0],
+            [3.0, 3.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 2.0],
+            [3.0, 2.0],
+            [4.0, 2.0],
+        ])
+
+        # Elevate as the first argument.
+        elevated1, elevated2 = self._call_function_under_test(nodes1, nodes2)
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 2.0],
+            [3.0, 3.0],
+        ])
+        self.assertEqual(elevated1, expected)
+        self.assertIs(elevated2, nodes2)
+
+        # Elevate as the second argument.
+        elevated1, elevated2 = self._call_function_under_test(nodes2, nodes1)
+        self.assertIs(elevated1, nodes2)
+        self.assertEqual(elevated2, expected)
+
+
 class Test_coincident_parameters(utils.NumPyTestCase):
 
     @staticmethod
@@ -1167,11 +1245,11 @@ class Test_coincident_parameters(utils.NumPyTestCase):
         ])
         nodes2 = _curve_helpers.elevate_nodes(nodes1)
         result = self._call_function_under_test(nodes1, nodes2)
-        # NOTE: This should **actually** be
-        #           [[0.0, 0.0],
-        #            [1.0, 1.0]]
-        #       but for now the degree difference is ignored.
-        self.assertIsNone(result)
+        expected = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 1.0],
+        ])
+        self.assertEqual(result, expected)
 
     def test_touch_no_intersect_same_curve(self):
         from bezier import _curve_helpers
