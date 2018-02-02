@@ -1684,10 +1684,14 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(4, 2)
+    real(c_double) :: linear1(2, 2)
+    real(c_double) :: quadratic1(3, 2), quadratic2(3, 2)
+    real(c_double) :: cubic1(4, 2), cubic2(4, 2)
+    real(c_double) :: params(2, 8), start, end_
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
     integer(c_int) :: status
+    integer(c_int) :: i
     integer :: case_id
     character(25) :: name
 
@@ -1697,15 +1701,15 @@ contains
 
     ! CASE 1: Actual curve degrees differ (i.e. one is a line, the other is
     !         a quadratic).
-    nodes1(1, :) = 0
-    nodes1(2, :) = 1
-    nodes2(1, :) = 0
-    nodes2(2, :) = 1
-    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    linear1(1, :) = 0
+    linear1(2, :) = 1
+    quadratic1(1, :) = 0
+    quadratic1(2, :) = 1
+    quadratic1(3, :) = [2.0_dp, 0.0_dp]
 
     case_success = .NOT. allocated(intersections)
     call add_coincident_parameters( &
-         2, nodes1, 3, nodes2, &
+         2, linear1, 3, quadratic1, &
          num_intersections, intersections, status)
     case_success = ( &
          case_success .AND. &
@@ -1716,17 +1720,17 @@ contains
 
     ! CASE 2: Actual curve degrees are the same, but one is elevated (and is
     !         the same curve segment).
-    nodes2(1, :) = 0
-    nodes2(2, :) = 3
-    nodes2(3, :) = [6.0_dp, 0.0_dp]
-    nodes3(1, :) = 0
-    nodes3(2, :) = 2
-    nodes3(3, :) = [4.0_dp, 2.0_dp]
-    nodes3(4, :) = [6.0_dp, 0.0_dp]
+    quadratic1(1, :) = 0
+    quadratic1(2, :) = 3
+    quadratic1(3, :) = [6.0_dp, 0.0_dp]
+    cubic1(1, :) = 0
+    cubic1(2, :) = 2
+    cubic1(3, :) = [4.0_dp, 2.0_dp]
+    cubic1(4, :) = [6.0_dp, 0.0_dp]
 
     case_success = .NOT. allocated(intersections)
     call add_coincident_parameters( &
-         3, nodes2, 4, nodes3, &
+         3, quadratic1, 4, cubic1, &
          num_intersections, intersections, status)
     case_success = ( &
          case_success .AND. &
@@ -1737,20 +1741,270 @@ contains
          num_intersections == 2 .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
+    deallocate(intersections)
+    num_intersections = 0
 
     ! CASE 3: Fail due to invalid point (i.e curve has a self-crossing).
-    nodes3(1, :) = [0.0_dp, 16.0_dp]
-    nodes3(2, :) = [-8.0_dp, 0.0_dp]
-    nodes3(3, :) = [8.0_dp, 8.0_dp]
-    nodes3(4, :) = [-6.0_dp, 13.0_dp]
-    nodes1(1, :) = [-2.0_dp, 11.0_dp]
-    nodes1(2, :) = [-2.0_dp, 16.0_dp]
+    cubic1(1, :) = [0.0_dp, 16.0_dp]
+    cubic1(2, :) = [-8.0_dp, 0.0_dp]
+    cubic1(3, :) = [8.0_dp, 8.0_dp]
+    cubic1(4, :) = [-6.0_dp, 13.0_dp]
+    linear1(1, :) = [-2.0_dp, 11.0_dp]
+    linear1(2, :) = [-2.0_dp, 16.0_dp]
+    case_success = .NOT. allocated(intersections)
     call add_coincident_parameters( &
-         4, nodes3, 2, nodes1, &
+         4, cubic1, 2, linear1, &
          num_intersections, intersections, status)
     case_success = ( &
-         num_intersections == 2 .AND. &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0 .AND. &
          status == Status_INVALID_CURVE)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Segments are part of the same algebraic curve, but the segments
+    !         only touch at endpoints (i.e. they don't overlap).
+    quadratic1(1, :) = 0
+    quadratic1(2, :) = [1.0_dp, 2.0_dp]
+    quadratic1(3, :) = [3.0_dp, 2.0_dp]
+    params(1, :4) = [1.0_dp, 2.0_dp, -1.0_dp, 0.0_dp]
+    params(2, :4) = [2.0_dp, 1.0_dp, 0.0_dp, -1.0_dp]
+
+    case_success = .NOT. allocated(intersections)
+    do i = 1, 4
+       call specialize_curve( &
+            3, 2, quadratic1, params(1, i), params(2, i), quadratic2)
+       call add_coincident_parameters( &
+            3, quadratic1, 3, quadratic2, &
+            num_intersections, intersections, status)
+       case_success = ( &
+            case_success .AND. &
+            .NOT. allocated(intersections) .AND. &
+            num_intersections == 0 .AND. &
+            status == 500)
+    end do
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Segments are part of the same algebraic curve, but the segments
+    !         are totally disjoint.
+    cubic1(1, :) = [1.0_dp, 0.0_dp]
+    cubic1(2, :) = [1.0_dp, 2.0_dp]
+    cubic1(3, :) = [3.0_dp, 2.0_dp]
+    cubic1(4, :) = [4.0_dp, 0.0_dp]
+    params(1, :4) = [1.5_dp, 2.0_dp, -1.0_dp, -0.5_dp]
+    params(2, :4) = [2.0_dp, 1.5_dp, -0.5_dp, -1.0_dp]
+
+    case_success = .NOT. allocated(intersections)
+    do i = 1, 4
+       call specialize_curve( &
+            4, 2, cubic1, params(1, i), params(2, i), cubic2)
+       call add_coincident_parameters( &
+            4, cubic1, 4, cubic2, &
+            num_intersections, intersections, status)
+       case_success = ( &
+            case_success .AND. &
+            .NOT. allocated(intersections) .AND. &
+            num_intersections == 0 .AND. &
+            status == 500)
+    end do
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Curve endpoints touch, but curves are not coincident.
+    quadratic1(1, :) = [1.0_dp, 8.0_dp]
+    quadratic1(2, :) = [3.0_dp, 6.0_dp]
+    quadratic1(3, :) = [3.0_dp, 5.0_dp]
+    quadratic2(1, :) = [3.0_dp, 5.0_dp]
+    quadratic2(2, :) = [3.0_dp, -1.0_dp]
+    quadratic2(3, :) = [4.0_dp, -4.0_dp]
+    case_success = .NOT. allocated(intersections)
+    call add_coincident_parameters( &
+         3, quadratic1, 3, quadratic2, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0 .AND. &
+         status == 500)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: Identical curves.
+    quadratic1(1, :) = 0
+    quadratic1(2, :) = [2.0_dp, 3.0_dp]
+    quadratic1(3, :) = 5
+    case_success = .NOT. allocated(intersections)
+    call add_coincident_parameters( &
+         3, quadratic1, 3, quadratic1, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
+         all(intersections(:, 1) == [0.0_dp, 0.0_dp]) .AND. &
+         all(intersections(:, 2) == [1.0_dp, 1.0_dp]) .AND. &
+         num_intersections == 2 .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+    deallocate(intersections)
+    num_intersections = 0
+
+    ! CASE 8: Segments are part of the same algebraic curve, one segment
+    !         is interior to the other **AND** they touch at endpoints.
+    quadratic1(1, :) = [4.0_dp, 1.0_dp]
+    quadratic1(2, :) = [6.0_dp, 3.0_dp]
+    quadratic1(3, :) = [2.0_dp, 1.0_dp]
+    params(1, :) = [ &
+         0.0_dp, 0.5_dp, 0.5_dp, 1.0_dp, 0.0_dp, 2.0_dp, -1.0_dp, 1.0_dp]
+    params(2, :) = [ &
+         0.5_dp, 0.0_dp, 1.0_dp, 0.5_dp, 2.0_dp, 0.0_dp, 1.0_dp, -1.0_dp]
+    case_success = .NOT. allocated(intersections)
+    do i = 1, 8
+       start = params(1, i)
+       end_ = params(2, i)
+       call specialize_curve( &
+            3, 2, quadratic1, start, end_, quadratic2)
+       call add_coincident_parameters( &
+            3, quadratic1, 3, quadratic2, &
+            num_intersections, intersections, status)
+       case_success = ( &
+            case_success .AND. &
+            status == Status_SUCCESS .OR. status == 500)
+    end do
+    call print_status(name, case_id, case_success, success)
+    deallocate(intersections)
+    num_intersections = 0
+
+    ! CASE 9: Segments are part of the same algebraic curve, one segment
+    !         is fully interior to the other (i.e. same as CASE 8 but with
+    !         no endpoint contact).
+    quadratic1(1, :) = -1
+    quadratic1(2, :) = [0.0_dp, 2.0_dp]
+    quadratic1(3, :) = [2.0_dp, 0.0_dp]
+    params(1, :4) = [0.25_dp, 0.75_dp, -0.5_dp, 1.5_dp]
+    params(2, :4) = [0.75_dp, 0.25_dp, 1.5_dp, -0.5_dp]
+    case_success = .NOT. allocated(intersections)
+    do i = 1, 4
+       start = params(1, i)
+       end_ = params(2, i)
+       call specialize_curve( &
+            3, 2, quadratic1, start, end_, quadratic2)
+       call add_coincident_parameters( &
+            3, quadratic1, 3, quadratic2, &
+            num_intersections, intersections, status)
+       case_success = ( &
+            case_success .AND. &
+            status == Status_SUCCESS .OR. status == 500)
+    end do
+    call print_status(name, case_id, case_success, success)
+    deallocate(intersections)
+    num_intersections = 0
+
+    ! CASE 10: Segments are part of the same algebraic curve and they
+    !          overlap. I.e curve A starts somewhere in the middle of curve B
+    !          and curve B ends somewhere in the middle of curve A.
+    cubic1(1, :) = [0.0_dp, -1.0_dp]
+    cubic1(2, :) = [1.0_dp, 2.0_dp]
+    cubic1(3, :) = [1.0_dp, 0.0_dp]
+    cubic1(4, :) = [3.0_dp, 2.0_dp]
+    params(1, :4) = [0.5_dp, 1.5_dp, -0.5_dp, 0.5_dp]
+    params(2, :4) = [1.5_dp, 0.5_dp, 0.5_dp, -0.5_dp]
+    case_success = .NOT. allocated(intersections)
+    do i = 1, 4
+       start = params(1, i)
+       end_ = params(2, i)
+       call specialize_curve( &
+            4, 2, cubic1, start, end_, cubic2)
+       call add_coincident_parameters( &
+            4, cubic1, 4, cubic2, &
+            num_intersections, intersections, status)
+       case_success = ( &
+            case_success .AND. &
+            .NOT. allocated(intersections) .AND. &
+            num_intersections == 0 .AND. &
+            status == 500)
+    end do
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 11: Exactly one endpoint from each curve lies on the other curve,
+    !          but the curves are not coincident.
+    quadratic1(1, :) = 0
+    quadratic1(2, :) = [16.0_dp, 0.0_dp]
+    quadratic1(3, :) = 16
+    quadratic2(1, :) = [7.0_dp, 1.0_dp]
+    quadratic2(2, :) = [7.0_dp, 17.0_dp]
+    quadratic2(3, :) = [23.0_dp, 17.0_dp]
+    case_success = .NOT. allocated(intersections)
+    call add_coincident_parameters( &
+         3, quadratic1, 3, quadratic2, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0 .AND. &
+         status == 500)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 12: Both endpoints from one curve lie on the other curve,
+    !          but the curves are not coincident.
+    cubic1(1, :) = 0
+    cubic1(2, :) = 32
+    cubic1(3, :) = [96.0_dp, 32.0_dp]
+    cubic1(4, :) = [128.0_dp, 0.0_dp]
+    cubic2(1, :) = [29.0_dp, 18.0_dp]
+    cubic2(2, :) = [49.0_dp, 38.0_dp]
+    cubic2(3, :) = [79.0_dp, 38.0_dp]
+    cubic2(4, :) = [99.0_dp, 18.0_dp]
+    case_success = .NOT. allocated(intersections)
+    call add_coincident_parameters( &
+         4, cubic1, 4, cubic2, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0 .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 13: Same as CASE 12, with arguments swapped.
+    case_success = .NOT. allocated(intersections)
+    call add_coincident_parameters( &
+         4, cubic2, 4, cubic1, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0 .AND. &
+         status == 500)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 14: Exactly one endpoint from curve A lies on curve B, but not at
+    !          one of the endpoints of curve B.
+    quadratic1(1, :) = 0
+    quadratic1(2, :) = 2
+    quadratic1(3, :) = [4.0_dp, 0.0_dp]
+    quadratic2(1, :) = [2.0_dp, 1.0_dp]
+    quadratic2(2, :) = [4.0_dp, 3.0_dp]
+    quadratic2(3, :) = [6.0_dp, 2.0_dp]
+    case_success = .NOT. allocated(intersections)
+    call add_coincident_parameters( &
+         3, quadratic1, 3, quadratic2, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0 .AND. &
+         status == 500)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 15: Same as CASE 14, with arguments swapped.
+    case_success = .NOT. allocated(intersections)
+    call add_coincident_parameters( &
+         3, quadratic2, 3, quadratic1, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0 .AND. &
+         status == 500)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_coincident_parameters
