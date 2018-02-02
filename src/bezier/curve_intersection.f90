@@ -27,9 +27,9 @@ module curve_intersection
        subdivide_curve
   implicit none
   private &
-       MAX_INTERSECT_SUBDIVISIONS, MAX_CANDIDATES, SIMILAR_ULPS, &
-       CANDIDATES_ODD, CANDIDATES_EVEN, make_candidates, prune_candidates, &
-       elevate_helper
+       MAX_INTERSECT_SUBDIVISIONS, MIN_INTERVAL_WIDTH, MAX_CANDIDATES, &
+       SIMILAR_ULPS, CANDIDATES_ODD, CANDIDATES_EVEN, make_candidates, &
+       prune_candidates, elevate_helper
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, Subdivide_FIRST, Subdivide_SECOND, &
@@ -55,6 +55,7 @@ module curve_intersection
   ! Set the threshold for linearization error at half the bits available.
   real(c_double), parameter :: LINEARIZATION_THRESHOLD = 0.5_dp**26
   integer(c_int), parameter :: MAX_INTERSECT_SUBDIVISIONS = 20
+  real(c_double), parameter :: MIN_INTERVAL_WIDTH = 0.5_dp**40
   ! Run-time parameters that can be modified. If multiple threads are used,
   ! these **should** be thread-local (though it's expected that callers will
   ! update these values **before** beginning computation).
@@ -1004,7 +1005,7 @@ contains
     real(c_double), target, allocatable :: specialized(:, :)
     integer(c_int) :: num_nodes
     real(c_double) :: point(1, 2)
-    real(c_double) :: s_initial, s_final
+    real(c_double) :: s_initial, s_final, t_initial, t_final
     real(c_double), pointer :: as_vec1(:, :), as_vec2(:, :)
 
     status = Status_SUCCESS
@@ -1047,7 +1048,114 @@ contains
        return
     end if
 
-    status = 500  ! Not implemented yet.
+    point(1, :) = nodes1(1, :)
+    call locate_point( &
+         num_nodes, 2, elevated2, point, t_initial)
+    point(1, :) = nodes1(num_nodes1, :)
+    call locate_point( &
+         num_nodes, 2, elevated2, point, t_final)
+    ! Bail out if the "locate" failed.
+    if (t_initial == LOCATE_INVALID .OR. t_final == LOCATE_INVALID) then
+       status = Status_INVALID_CURVE
+       return
+    end if
+
+    if (t_initial == LOCATE_MISS .AND. t_final == LOCATE_MISS) then
+       ! An overlap must have two endpoints and since at most one of the
+       ! endpoints of ``curve2`` lies on ``curve1`` (as indicated by at
+       ! least one of the ``s``-parameters being ``None``), we need (at least)
+       ! one endpoint of ``curve1`` on ``curve2``.
+       return
+    end if
+
+    if (t_initial /= LOCATE_MISS .AND. t_final /= LOCATE_MISS) then
+       ! In this case, if the curves were coincident, then ``curve1``
+       ! would be "fully" contained in ``curve2``, so we specialize
+       ! ``curve2`` down to that interval to check.
+       allocate(specialized(num_nodes, 2))
+       call specialize_curve( &
+            num_nodes, 2, elevated2, t_initial, t_final, specialized)
+       call c_f_pointer(c_loc(elevated1), as_vec1, [1, 2 * num_nodes])
+       call c_f_pointer(c_loc(specialized), as_vec2, [1, 2 * num_nodes])
+
+       if (vector_close( &
+            2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
+          call add_intersection( &
+               0.0_dp, t_initial, num_intersections, intersections)
+          call add_intersection( &
+               1.0_dp, t_final, num_intersections, intersections)
+       end if
+
+       ! In either case (``vector_close()`` or not), we are done.
+       return
+    end if
+
+    if (s_initial == LOCATE_MISS .AND. s_final == LOCATE_MISS) then
+       ! An overlap must have two endpoints and since exactly one of the
+       ! endpoints of ``curve1`` lies on ``curve2`` (as indicated by exactly
+       ! one of the ``t``-parameters being ``None``), we need (at least)
+       ! one endpoint of ``curve1`` on ``curve2``.
+       return
+    end if
+
+    ! At this point, we know exactly one of the ``s``-parameters and exactly
+    ! one of the ``t``-parameters is not ``None``. So we fill in all four
+    ! of ``(s|t)_(initial|final)`` with the known values.
+    if (s_initial == LOCATE_MISS) then
+       if (t_initial == LOCATE_MISS) then
+          ! B1(s_final) = B2(1) AND B1(1) = B2(t_final)
+          s_initial = s_final
+          s_final = 1.0_dp
+          t_initial = 1.0_dp
+          ! t_final is fine as-is
+       else
+          ! B1(0) = B2(t_initial) AND B1(s_final) = B2(1)
+          s_initial = 0.0_dp
+          ! s_final is fine as-is
+          ! t_initial is fine as-is
+          t_final = 1.0_dp
+       end if
+    else
+       if (t_initial == LOCATE_MISS) then
+          ! B1(s_initial) = B2(0) AND B1(1 ) = B2(t_final)
+          ! s_initial is fine as-is
+          s_final = 1.0_dp
+          t_initial = 0.0_dp
+          ! t_final is fine as-is
+       else
+          ! B1(0) = B2(t_initial) AND B1(s_initial) = B2(0)
+          s_final = s_initial
+          s_initial = 0.0_dp
+          ! t_initial is fine as-is
+          t_final = 0.0_dp
+       end if
+    end if
+
+    if ( &
+         abs(s_initial - s_final) < MIN_INTERVAL_WIDTH .AND. &
+         abs(t_initial - t_final) < MIN_INTERVAL_WIDTH) then
+       return
+    end if
+
+    allocate(specialized(num_nodes, 2))
+    ! First specialize ``elevated1`` onto ``specialized``.
+    call specialize_curve( &
+         num_nodes, 2, elevated1, s_initial, s_final, specialized)
+    ! Then specialize ``elevated2`` onto ``elevated1`` since we are
+    ! done with it.
+    call specialize_curve( &
+         num_nodes, 2, elevated2, t_initial, t_final, elevated1)
+
+    call c_f_pointer(c_loc(specialized), as_vec1, [1, 2 * num_nodes])
+    call c_f_pointer(c_loc(elevated1), as_vec2, [1, 2 * num_nodes])
+
+    if (vector_close( &
+         2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
+       call add_intersection( &
+            s_initial, t_initial, num_intersections, intersections)
+       call add_intersection( &
+            s_final, t_final, num_intersections, intersections)
+    end if
 
   end subroutine add_coincident_parameters
 

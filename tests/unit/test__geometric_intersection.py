@@ -1262,11 +1262,16 @@ class Test_coincident_parameters(utils.NumPyTestCase):
             [-2.0, 11.0],
             [-2.0, 16.0],
         ])
-        with self.assertRaises(ValueError) as exc_info:
+        with self.assertRaises(ValueError) as exc_info1:
             self._call_function_under_test(nodes1, nodes2)
+        with self.assertRaises(ValueError) as exc_info2:
+            self._call_function_under_test(nodes2, nodes1)
 
         self.assertEqual(
-            exc_info.exception.args[0],
+            exc_info1.exception.args[0],
+            'Parameters not close enough to one another')
+        self.assertEqual(
+            exc_info2.exception.args[0],
             'Parameters not close enough to one another')
 
     def test_touch_no_intersect_same_curve(self):
