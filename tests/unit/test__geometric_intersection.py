@@ -1263,7 +1263,7 @@ class Test_coincident_parameters(utils.NumPyTestCase):
             [-2.0, 16.0],
         ])
         with self.assertRaises(ValueError) as exc_info:
-            result = self._call_function_under_test(nodes1, nodes2)
+            self._call_function_under_test(nodes1, nodes2)
 
         self.assertEqual(
             exc_info.exception.args[0],
