@@ -710,12 +710,14 @@ are resolved:
    :align: center
 
 In addition to points of tangency, **coincident curve segments**
-are (for now) not supported. For the curves
+are partially supported (but are in general hard to detect). For the
+curves
 
 .. image:: images/curves1_and_24.png
    :align: center
 
-the library fails as well
+the library determines the "intersection" points as the beginning
+and end of the segment that is common to both curves:
 
 .. doctest:: intersect-1-24
    :options: +NORMALIZE_WHITESPACE
@@ -733,6 +735,5 @@ the library fails as well
    ... ])
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> curve1.intersect(curve2)
-   Traceback (most recent call last):
-     ...
-   NotImplementedError: The number of candidate intersections is too high.
+   array([[0.25, 0.  ],
+          [1.  , 0.75]])

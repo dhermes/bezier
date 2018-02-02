@@ -24,7 +24,6 @@ from bezier import _algebraic_intersection
 from bezier import _geometric_intersection
 from bezier import _surface_helpers
 from bezier import curve
-from tests import utils as base_utils
 from tests.functional import utils
 
 
@@ -82,8 +81,6 @@ FAILED_CASES_COINCIDENT = {
     },
 }
 CONFIG = utils.Config()
-if base_utils.IS_MAC_OS_X and not base_utils.IS_64_BIT:
-    FAILED_CASES_COINCIDENT[GEOMETRIC][4] = {'too_many': 123}
 
 
 def curved_polygon_edges(intersection):
