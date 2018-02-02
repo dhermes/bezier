@@ -160,7 +160,7 @@ TANGENT_OVERRIDES = {
 }
 COINCIDENT_OVERRIDES = {
     GEOMETRIC: {
-        20: {'too_many': 96},
+        20: {'success': True},
         33: {'success': True},
         34: {'success': True},
         35: {'success': True},

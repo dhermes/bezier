@@ -2215,25 +2215,12 @@ contains
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 16]) .AND. &
-         num_intersections == 16 .AND. &
+         num_intersections == 2 .AND. &
          all(intersections(:, 1) == [0.5_dp, 0.0_dp]) .AND. &
-         all(intersections(:, 2) == [0.75_dp, 0.5_dp]) .AND. &
-         all(intersections(:, 3) == [0.625_dp, 0.25_dp]) .AND. &
-         all(intersections(:, 4) == [0.875_dp, 0.75_dp]) .AND. &
-         all(intersections(:, 5) == [0.5625_dp, 0.125_dp]) .AND. &
-         all(intersections(:, 6) == [0.6875_dp, 0.375_dp]) .AND. &
-         all(intersections(:, 7) == [0.8125_dp, 0.625_dp]) .AND. &
-         all(intersections(:, 8) == [0.9375_dp, 0.875_dp]) .AND. &
-         all(intersections(:, 9) == [0.53125_dp, 0.0625_dp]) .AND. &
-         all(intersections(:, 10) == [0.59375_dp, 0.1875_dp]) .AND. &
-         all(intersections(:, 11) == [0.65625_dp, 0.3125_dp]) .AND. &
-         all(intersections(:, 12) == [0.71875_dp, 0.4375_dp]) .AND. &
-         all(intersections(:, 13) == [0.78125_dp, 0.5625_dp]) .AND. &
-         all(intersections(:, 14) == [0.84375_dp, 0.6875_dp]) .AND. &
-         all(intersections(:, 15) == [0.90625_dp, 0.8125_dp]) .AND. &
-         all(intersections(:, 16) == [0.96875_dp, 0.9375_dp]) .AND. &
-         status == 96)
+         all(intersections(:, 2) == [1.0_dp, 1.0_dp]) .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
+
   end subroutine test_all_intersections
 
   subroutine test_all_intersections_abi(success)

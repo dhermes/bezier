@@ -1039,6 +1039,9 @@ contains
        if (vector_close( &
             2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
           coincident = .TRUE.
+          ! Empty out candidates since anything in there until now was
+          ! "accidental".
+          num_intersections = 0
           call add_intersection( &
                s_initial, 0.0_dp, num_intersections, intersections)
           call add_intersection( &
@@ -1081,6 +1084,9 @@ contains
        if (vector_close( &
             2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
           coincident = .TRUE.
+          ! Empty out candidates since anything in there until now was
+          ! "accidental".
+          num_intersections = 0
           call add_intersection( &
                0.0_dp, t_initial, num_intersections, intersections)
           call add_intersection( &
@@ -1153,6 +1159,9 @@ contains
     if (vector_close( &
          2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
        coincident = .TRUE.
+       ! Empty out candidates since anything in there until now was
+       ! "accidental".
+       num_intersections = 0
        call add_intersection( &
             s_initial, t_initial, num_intersections, intersections)
        call add_intersection( &
@@ -1186,7 +1195,7 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: num_candidates, num_next_candidates
     integer(c_int) :: index_, intersect_status
-    logical(c_bool) :: is_even
+    logical(c_bool) :: is_even, coincident
 
     num_intersections = 0
     ! First iteration is odd (i.e. ``index_ == 1``).
@@ -1235,11 +1244,24 @@ contains
           else
              call prune_candidates(CANDIDATES_EVEN, num_candidates)
           end if
-          ! If pruning didn't fix anything, then we "fail".
+          ! If pruning didn't fix anything, we check if the curves are
+          ! coincident and "fail" if they aren't.
           if (num_candidates > MAX_CANDIDATES) then
-             ! NOTE: This assumes that all of the status enum values are less
-             !       than ``MAX_CANDIDATES + 1``.
-             status = num_candidates
+             call add_coincident_parameters( &
+                  num_nodes_first, nodes_first, &
+                  num_nodes_second, nodes_second, &
+                  num_intersections, intersections, coincident)
+             if (.NOT. coincident) then
+                ! NOTE: This assumes that all of the status enum values are
+                !       less than ``MAX_CANDIDATES + 1``.
+                ! NOTE: This line is very difficult to trigger due to the
+                !       ``prune_candidates()`` and coincident check
+                !       mitigations. As a result, there is no unit test
+                !       to trigger this line (no case has been discovered
+                !       yet).
+                status = num_candidates  ! LCOV_EXCL_LINE
+             end if
+             ! Return either way since pruning didn't "fix" anything.
              return
           end if
        end if

@@ -33,6 +33,7 @@ GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
 _, INTERSECTIONS = utils.surface_intersections_info()
 PARALLEL_FAILURE = (_geometric_intersection._SEGMENTS_PARALLEL,)
 BAD_TANGENT = (_surface_helpers._BAD_TANGENT,)
+SAME_CURVATURE = (_surface_helpers._SAME_CURVATURE,)
 TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
 WIGGLES = {
     GEOMETRIC: {
@@ -72,7 +73,7 @@ FAILED_CASES_TANGENT = {
 }
 FAILED_CASES_COINCIDENT = {
     GEOMETRIC: {
-        4: {'too_many': 96},
+        4: {'curvature': True},
         5: {'parallel': True},
     },
     ALGEBRAIC: {
@@ -122,7 +123,8 @@ def check_tangent_manager(
 
 
 @contextlib.contextmanager
-def check_coincident_manager(strategy, parallel=False, too_many=None):
+def check_coincident_manager(
+        strategy, parallel=False, too_many=None, curvature=False):
     caught_exc = None
     try:
         yield
@@ -134,6 +136,8 @@ def check_coincident_manager(strategy, parallel=False, too_many=None):
     if strategy is GEOMETRIC:
         if parallel:
             assert exc_args == PARALLEL_FAILURE
+        elif curvature:
+            assert exc_args == SAME_CURVATURE
         else:
             err_msg = TOO_MANY.format(too_many)
             assert exc_args == (err_msg,)

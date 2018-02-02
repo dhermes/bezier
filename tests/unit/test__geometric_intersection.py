@@ -16,7 +16,6 @@ import unittest.mock
 
 import numpy as np
 
-from tests import utils as base_utils
 from tests.unit import utils
 
 
@@ -1214,7 +1213,7 @@ class Test_make_same_degree(utils.NumPyTestCase):
         self.assertEqual(elevated2, expected)
 
 
-class Test_coincident_parameters(utils.NumPyTestCase):
+class Test_coincident_parameters(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
@@ -1245,10 +1244,10 @@ class Test_coincident_parameters(utils.NumPyTestCase):
         ])
         nodes2 = _curve_helpers.elevate_nodes(nodes1)
         result = self._call_function_under_test(nodes1, nodes2)
-        expected = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
+        expected = (
+            (0.0, 0.0),
+            (1.0, 1.0),
+        )
         self.assertEqual(result, expected)
 
     def test_invalid_point(self):
@@ -1334,10 +1333,10 @@ class Test_coincident_parameters(utils.NumPyTestCase):
             [5.0, 5.0],
         ])
         result = self._call_function_under_test(nodes, nodes)
-        expected = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-        ])
+        expected = (
+            (0.0, 0.0),
+            (1.0, 1.0),
+        )
         self.assertEqual(result, expected)
 
     def test_contained_and_touching(self):
@@ -1362,20 +1361,20 @@ class Test_coincident_parameters(utils.NumPyTestCase):
             nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             if start == 2.0 or end == 2.0:
-                expected = np.asfortranarray([
-                    [0.0, -start / (end - start)],
-                    [1.0, (end - 1.0) / (end - start)],
-                ])
+                expected = (
+                    (0.0, -start / (end - start)),
+                    (1.0, (end - 1.0) / (end - start)),
+                )
             elif start == -1.0 or end == -1.0:
-                expected = np.asfortranarray([
-                    [0.0, -start / (end - start)],
-                    [1.0, (1.0 - start) / (end - start)],
-                ])
+                expected = (
+                    (0.0, -start / (end - start)),
+                    (1.0, (1.0 - start) / (end - start)),
+                )
             else:
-                expected = np.asfortranarray([
-                    [start, 0.0],
-                    [end, 1.0],
-                ])
+                expected = (
+                    (start, 0.0),
+                    (end, 1.0),
+                )
 
             self.assertEqual(result, expected)
 
@@ -1397,15 +1396,15 @@ class Test_coincident_parameters(utils.NumPyTestCase):
             nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             if start == -0.5 or end == -0.5:
-                expected = np.asfortranarray([
-                    [0.0, (end - 1.0) / (end - start)],
-                    [1.0, end / (end - start)],
-                ])
+                expected = (
+                    (0.0, (end - 1.0) / (end - start)),
+                    (1.0, end / (end - start)),
+                )
             else:
-                expected = np.asfortranarray([
-                    [start, 0.0],
-                    [end, 1.0],
-                ])
+                expected = (
+                    (start, 0.0),
+                    (end, 1.0),
+                )
 
             self.assertEqual(result, expected)
 
@@ -1428,15 +1427,15 @@ class Test_coincident_parameters(utils.NumPyTestCase):
             nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             if start == 1.5 or end == 1.5:
-                expected = np.asfortranarray([
-                    [0.5, start - 0.5],
-                    [1.0, 0.5],
-                ])
+                expected = (
+                    (0.5, start - 0.5),
+                    (1.0, 0.5),
+                )
             else:
-                expected = np.asfortranarray([
-                    [0.0, 0.5],
-                    [0.5, end + 0.5],
-                ])
+                expected = (
+                    (0.0, 0.5),
+                    (0.5, end + 0.5),
+                )
 
             self.assertEqual(result, expected)
 
@@ -1653,10 +1652,6 @@ class Test__all_intersections(utils.NumPyTestCase):
         self.assertEqual(intersections.shape, (0, 2))
 
     def test_coincident(self):
-        # In this case, "pruning" candidates will fail since the second curve
-        # is just the first specialized to [1/2, 1].
-        from bezier import _geometric_intersection
-
         nodes1 = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 0.25],
@@ -1667,17 +1662,12 @@ class Test__all_intersections(utils.NumPyTestCase):
             [0.75, 0.125],
             [1.0, 0.0],
         ])
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(nodes1, nodes2)
-
-        exc_args = exc_info.exception.args
-        if base_utils.IS_MAC_OS_X and not base_utils.IS_64_BIT:
-            num_candidates = 70  # pragma: NO COVER
-        else:
-            num_candidates = 96
-        expected = _geometric_intersection._TOO_MANY_TEMPLATE.format(
-            num_candidates)
-        self.assertEqual(exc_args, (expected,))
+        intersections = self._call_function_under_test(nodes1, nodes2)
+        expected = np.asfortranarray([
+            [0.5, 0.0],
+            [1.0, 1.0],
+        ])
+        self.assertEqual(intersections, expected)
 
 
 @utils.needs_speedup

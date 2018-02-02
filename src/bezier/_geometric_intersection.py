@@ -1058,9 +1058,9 @@ def coincident_parameters(nodes1, nodes2):
             B |eacute| zier curve.
 
     Returns:
-        Optional[numpy.ndarray]: A ``2 x 2`` array of parameters where the two
-        coincident curves meet. If the are not coincident, returns
-        :data:`None`.
+        Optional[Tuple[Tuple[float, float], ...]]: A ``2 x 2`` array of
+        parameters where the two coincident curves meet. If they are not
+        coincident, returns :data:`None`.
     """
     # pylint: disable=too-many-return-statements,too-many-branches
     nodes1, nodes2 = make_same_degree(nodes1, nodes2)
@@ -1075,10 +1075,10 @@ def coincident_parameters(nodes1, nodes2):
             nodes1, s_initial, s_final)
         if _helpers.vector_close(
                 flat_no_copy(specialized1), flat_no_copy(nodes2)):
-            return np.asfortranarray([
-                [s_initial, 0.0],
-                [s_final, 1.0],
-            ])
+            return (
+                (s_initial, 0.0),
+                (s_final, 1.0),
+            )
         else:
             return None
 
@@ -1099,10 +1099,10 @@ def coincident_parameters(nodes1, nodes2):
             nodes2, t_initial, t_final)
         if _helpers.vector_close(
                 flat_no_copy(nodes1), flat_no_copy(specialized2)):
-            return np.asfortranarray([
-                [0.0, t_initial],
-                [1.0, t_final],
-            ])
+            return (
+                (0.0, t_initial),
+                (1.0, t_final),
+            )
         else:
             return None
 
@@ -1151,10 +1151,10 @@ def coincident_parameters(nodes1, nodes2):
     specialized2 = _curve_helpers.specialize_curve(nodes2, start_t, end_t)
     if _helpers.vector_close(
             flat_no_copy(specialized1), flat_no_copy(specialized2)):
-        return np.asfortranarray([
-            [start_s, start_t],
-            [end_s, end_t],
-        ])
+        return (
+            (start_s, start_t),
+            (end_s, end_t),
+        )
     else:
         return None
     # pylint: enable=too-many-return-statements,too-many-branches
@@ -1192,7 +1192,8 @@ def _all_intersections(nodes_first, nodes_second):
             before exhausting the maximum number of subdivisions.
         NotImplementedError: If the subdivision process picks up too
             many candidate pairs. This typically indicates tangent
-            curves or coincident curves.
+            curves or coincident curves (though there are mitigations for
+            those cases in place).
     """
     curve_first = SubdividedCurve(nodes_first, nodes_first)
     curve_second = SubdividedCurve(nodes_second, nodes_second)
@@ -1207,10 +1208,23 @@ def _all_intersections(nodes_first, nodes_second):
         candidates = intersect_one_round(candidates, intersections)
         if len(candidates) > _MAX_CANDIDATES:
             candidates = prune_candidates(candidates)
-            # If pruning didn't fix anything, then we "fail".
+            # If pruning didn't fix anything, we check if the curves are
+            # coincident and "fail" if they aren't.
             if len(candidates) > _MAX_CANDIDATES:
-                msg = _TOO_MANY_TEMPLATE.format(len(candidates))
-                raise NotImplementedError(msg)
+                params = coincident_parameters(nodes_first, nodes_second)
+                if params is None:
+                    # NOTE: This case is very difficult to trigger due to the
+                    #       ``prune_candidates()`` and coincident check
+                    #       mitigations. As a result, there is no unit test
+                    #       to trigger this line (no case has been discovered
+                    #       yet).
+                    raise NotImplementedError(  # pragma: NO COVER
+                        _TOO_MANY_TEMPLATE.format(len(candidates)))
+                else:
+                    intersections = params
+                    # Artificially empty out candidates so that this
+                    # function exits.
+                    candidates = []
 
         # If none of the candidate pairs have been accepted, then there are
         # no more intersections to find.
