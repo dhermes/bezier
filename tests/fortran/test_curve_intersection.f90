@@ -15,7 +15,7 @@ module test_curve_intersection
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
-       Status_INSUFFICIENT_SPACE, Status_INVALID_CURVE
+       Status_INSUFFICIENT_SPACE
   use curve, only: &
        CurveData, evaluate_multi, specialize_curve, subdivide_nodes, &
        curves_equal, subdivide_curve
@@ -1691,7 +1691,7 @@ contains
     real(c_double) :: expected(2, 2)
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
-    integer(c_int) :: status
+    logical(c_bool) :: coincident
     integer(c_int) :: i
     integer :: case_id
     character(25) :: name
@@ -1711,10 +1711,10 @@ contains
 
     call add_coincident_parameters( &
          2, linear1, 3, quadratic1, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_SUCCESS)
+         .NOT. coincident)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Actual curve degrees are the same, but one is elevated (and is
@@ -1729,13 +1729,13 @@ contains
 
     call add_coincident_parameters( &
          3, quadratic1, 4, cubic1, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          all(shape(intersections) == [2, 2]) .AND. &
          all(intersections(:, 1) == [0.0_dp, 0.0_dp]) .AND. &
          all(intersections(:, 2) == [1.0_dp, 1.0_dp]) .AND. &
          num_intersections == 2 .AND. &
-         status == Status_SUCCESS)
+         coincident)
     call print_status(name, case_id, case_success, success)
     num_intersections = 0
 
@@ -1748,19 +1748,19 @@ contains
     linear1(2, :) = [-2.0_dp, 16.0_dp]
     call add_coincident_parameters( &
          4, cubic1, 2, linear1, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_INVALID_CURVE)
+         .NOT. coincident)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Same as CASE 3, with arguments swapped.
     call add_coincident_parameters( &
          2, linear1, 4, cubic1, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_INVALID_CURVE)
+         .NOT. coincident)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Segments are part of the same algebraic curve, but the segments
@@ -1777,11 +1777,11 @@ contains
             3, 2, quadratic1, params(1, i), params(2, i), quadratic2)
        call add_coincident_parameters( &
             3, quadratic1, 3, quadratic2, &
-            num_intersections, intersections, status)
+            num_intersections, intersections, coincident)
        case_success = ( &
             case_success .AND. &
             num_intersections == 0 .AND. &
-            status == Status_SUCCESS)
+            .NOT. coincident)
     end do
     call print_status(name, case_id, case_success, success)
 
@@ -1800,11 +1800,11 @@ contains
             4, 2, cubic1, params(1, i), params(2, i), cubic2)
        call add_coincident_parameters( &
             4, cubic1, 4, cubic2, &
-            num_intersections, intersections, status)
+            num_intersections, intersections, coincident)
        case_success = ( &
             case_success .AND. &
             num_intersections == 0 .AND. &
-            status == Status_SUCCESS)
+            .NOT. coincident)
     end do
     call print_status(name, case_id, case_success, success)
 
@@ -1817,10 +1817,10 @@ contains
     quadratic2(3, :) = [4.0_dp, -4.0_dp]
     call add_coincident_parameters( &
          3, quadratic1, 3, quadratic2, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_SUCCESS)
+         .NOT. coincident)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Identical curves.
@@ -1829,13 +1829,13 @@ contains
     quadratic1(3, :) = 5
     call add_coincident_parameters( &
          3, quadratic1, 3, quadratic1, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          all(shape(intersections) == [2, 2]) .AND. &
          all(intersections(:, 1) == [0.0_dp, 0.0_dp]) .AND. &
          all(intersections(:, 2) == [1.0_dp, 1.0_dp]) .AND. &
          num_intersections == 2 .AND. &
-         status == Status_SUCCESS)
+         coincident)
     call print_status(name, case_id, case_success, success)
     num_intersections = 0
 
@@ -1856,7 +1856,7 @@ contains
             3, 2, quadratic1, start, end_, quadratic2)
        call add_coincident_parameters( &
             3, quadratic1, 3, quadratic2, &
-            num_intersections, intersections, status)
+            num_intersections, intersections, coincident)
        if (start == 2.0_dp .OR. end_ == 2.0_dp) then
           expected(:, 1) = [0.0_dp, -start / (end_ - start)]
           expected(:, 2) = [1.0_dp, (end_ - 1.0_dp) / (end_ - start)]
@@ -1872,7 +1872,7 @@ contains
             all(shape(intersections) == [2, 2]) .AND. &
             all(intersections == expected) .AND. &
             num_intersections == 2 .AND. &
-            status == Status_SUCCESS)
+            coincident)
        num_intersections = 0
     end do
     call print_status(name, case_id, case_success, success)
@@ -1893,7 +1893,7 @@ contains
             3, 2, quadratic1, start, end_, quadratic2)
        call add_coincident_parameters( &
             3, quadratic1, 3, quadratic2, &
-            num_intersections, intersections, status)
+            num_intersections, intersections, coincident)
        if (start == -0.5_dp .OR. end_ == -0.5_dp) then
           expected(:, 1) = [0.0_dp, (end_ - 1.0_dp) / (end_ - start)]
           expected(:, 2) = [1.0_dp, end_ / (end_ - start)]
@@ -1906,7 +1906,7 @@ contains
             all(shape(intersections) == [2, 2]) .AND. &
             all(intersections == expected) .AND. &
             num_intersections == 2 .AND. &
-            status == Status_SUCCESS)
+            coincident)
        num_intersections = 0
     end do
     call print_status(name, case_id, case_success, success)
@@ -1929,7 +1929,7 @@ contains
             4, 2, cubic1, start, end_, cubic2)
        call add_coincident_parameters( &
             4, cubic1, 4, cubic2, &
-            num_intersections, intersections, status)
+            num_intersections, intersections, coincident)
        if (start == 1.5_dp .OR. end_ == 1.5_dp) then
           expected(:, 1) = [0.5_dp, start - 0.5_dp]
           expected(:, 2) = [1.0_dp, 0.5_dp]
@@ -1942,7 +1942,7 @@ contains
             all(shape(intersections) == [2, 2]) .AND. &
             all(intersections == expected) .AND. &
             num_intersections == 2 .AND. &
-            status == Status_SUCCESS)
+            coincident)
        num_intersections = 0
     end do
     call print_status(name, case_id, case_success, success)
@@ -1957,10 +1957,10 @@ contains
     quadratic2(3, :) = [23.0_dp, 17.0_dp]
     call add_coincident_parameters( &
          3, quadratic1, 3, quadratic2, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_SUCCESS)
+         .NOT. coincident)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 13: Both endpoints from one curve lie on the other curve,
@@ -1975,19 +1975,19 @@ contains
     cubic2(4, :) = [99.0_dp, 18.0_dp]
     call add_coincident_parameters( &
          4, cubic1, 4, cubic2, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_SUCCESS)
+         .NOT. coincident)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 14: Same as CASE 13, with arguments swapped.
     call add_coincident_parameters( &
          4, cubic2, 4, cubic1, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_SUCCESS)
+         .NOT. coincident)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 15: Exactly one endpoint from curve A lies on curve B, but not at
@@ -2000,19 +2000,19 @@ contains
     quadratic2(3, :) = [6.0_dp, 2.0_dp]
     call add_coincident_parameters( &
          3, quadratic1, 3, quadratic2, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_SUCCESS)
+         .NOT. coincident)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 16: Same as CASE 15, with arguments swapped.
     call add_coincident_parameters( &
          3, quadratic2, 3, quadratic1, &
-         num_intersections, intersections, status)
+         num_intersections, intersections, coincident)
     case_success = ( &
          num_intersections == 0 .AND. &
-         status == Status_SUCCESS)
+         .NOT. coincident)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_coincident_parameters

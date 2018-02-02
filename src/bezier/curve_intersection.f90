@@ -17,7 +17,7 @@ module curve_intersection
   use types, only: dp
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
-       Status_INSUFFICIENT_SPACE, Status_INVALID_CURVE
+       Status_INSUFFICIENT_SPACE
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
        vector_close, in_interval, ulps_away, convex_hull, polygon_collide
@@ -981,16 +981,17 @@ contains
 
   subroutine add_coincident_parameters( &
        num_nodes1, nodes1, num_nodes2, nodes2, &
-       num_intersections, intersections, status)
+       num_intersections, intersections, coincident)
 
     ! NOTE: This subroutine is not part of the C ABI for this module,
     !       but it is (for now) public, so that it can be tested.
 
-    ! Possible error states:
-    ! * Status_SUCCESS      : On success.
-    ! * Status_INVALID_CURVE: If ``locate_point()`` fails with
-    !                         ``LOCATE_INVALID`` when trying to place **any**
-    !                         of the curve endpoints on the other segment.
+    ! NOTE: If ``locate_point()`` fails with ``LOCATE_INVALID`` when trying
+    !       to place **any** of the curve endpoints on the other segment,
+    !       this method will just return ``coincident == FALSE``. This
+    !       is "intentional" in the sense that callers (likely) won't benefit
+    !       from a **different** error status than the one they are already
+    !       trying to avoid by showing the curves are coincident.
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(num_nodes1, 2)
@@ -998,7 +999,7 @@ contains
     real(c_double), intent(in) :: nodes2(num_nodes2, 2)
     integer(c_int), intent(inout) :: num_intersections
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
-    integer(c_int), intent(out) :: status
+    logical(c_bool), intent(out) :: coincident
     ! Variables outside of signature.
     real(c_double), target, allocatable :: elevated1(:, :)
     real(c_double), target, allocatable :: elevated2(:, :)
@@ -1008,7 +1009,7 @@ contains
     real(c_double) :: s_initial, s_final, t_initial, t_final
     real(c_double), pointer :: as_vec1(:, :), as_vec2(:, :)
 
-    status = Status_SUCCESS
+    coincident = .FALSE.
     ! First, make sure the nodes are the same degree.
     call make_same_degree( &
          num_nodes1, nodes1, num_nodes2, nodes2, &
@@ -1022,7 +1023,6 @@ contains
          num_nodes, 2, elevated1, point, s_final)
     ! Bail out if the "locate" failed.
     if (s_initial == LOCATE_INVALID .OR. s_final == LOCATE_INVALID) then
-       status = Status_INVALID_CURVE
        return
     end if
 
@@ -1038,6 +1038,7 @@ contains
 
        if (vector_close( &
             2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
+          coincident = .TRUE.
           call add_intersection( &
                s_initial, 0.0_dp, num_intersections, intersections)
           call add_intersection( &
@@ -1056,7 +1057,6 @@ contains
          num_nodes, 2, elevated2, point, t_final)
     ! Bail out if the "locate" failed.
     if (t_initial == LOCATE_INVALID .OR. t_final == LOCATE_INVALID) then
-       status = Status_INVALID_CURVE
        return
     end if
 
@@ -1080,6 +1080,7 @@ contains
 
        if (vector_close( &
             2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
+          coincident = .TRUE.
           call add_intersection( &
                0.0_dp, t_initial, num_intersections, intersections)
           call add_intersection( &
@@ -1151,6 +1152,7 @@ contains
 
     if (vector_close( &
          2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
+       coincident = .TRUE.
        call add_intersection( &
             s_initial, t_initial, num_intersections, intersections)
        call add_intersection( &
