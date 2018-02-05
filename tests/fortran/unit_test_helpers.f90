@@ -18,7 +18,7 @@ module unit_test_helpers
   private
   public &
        MACHINE_EPS, print_status, get_random_nodes, binary_round, &
-       get_id_mat, ref_triangle_uniform_nodes
+       get_id_mat, ref_triangle_uniform_params
 
   ! NOTE: Should probably use ``d1mach`` to determine this.
   real(c_double), parameter :: MACHINE_EPS = 0.5_dp**52
@@ -113,23 +113,23 @@ contains
 
   end function get_id_mat
 
-  function ref_triangle_uniform_nodes(pts_exponent) result(nodes)
+  function ref_triangle_uniform_params(pts_exponent) result(params)
     integer, intent(in) :: pts_exponent
     real(c_double) :: &
-         nodes((2**pts_exponent + 1) * (2**(pts_exponent - 1) + 1), 2)
+         params((2**pts_exponent + 1) * (2**(pts_exponent - 1) + 1), 2)
     ! Variables outside of signature.
     integer :: index, x_val, y_val
 
     index = 1
     do y_val = 0, 2**pts_exponent
        do x_val = 0, 2**pts_exponent - y_val
-          nodes(index, :) = [x_val, y_val]
+          params(index, :) = [x_val, y_val]
           index = index + 1
        end do
     end do
 
-    nodes = 0.5_dp**pts_exponent * nodes
+    params = 0.5_dp**pts_exponent * params
 
-  end function ref_triangle_uniform_nodes
+  end function ref_triangle_uniform_params
 
 end module unit_test_helpers

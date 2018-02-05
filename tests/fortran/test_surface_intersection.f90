@@ -66,7 +66,7 @@ contains
     logical :: case_success
     integer :: case_id
     character(23) :: name
-    real(c_double) :: nodes(6, 2)
+    real(c_double) :: nodes(2, 6)
     real(c_double) :: updated_s, updated_t
 
     case_id = 1
@@ -75,12 +75,12 @@ contains
     ! CASE 1: Quadratic surface.
     ! NOTE: This surface is given by
     !       [(4 s - t^2) / 4, (4 s^2 + 4 s t - t^2 - 4 s + 8 t) / 8]
-    nodes(1, :) = [0.0_dp, 0.0_dp]
-    nodes(2, :) = [0.5_dp, -0.25_dp]
-    nodes(3, :) = [1.0_dp, 0.0_dp]
-    nodes(4, :) = [0.0_dp, 0.5_dp]
-    nodes(5, :) = [0.5_dp, 0.5_dp]
-    nodes(6, :) = [-0.25_dp, 0.875_dp]
+    nodes(:, 1) = 0
+    nodes(:, 2) = [0.5_dp, -0.25_dp]
+    nodes(:, 3) = [1.0_dp, 0.0_dp]
+    nodes(:, 4) = [0.0_dp, 0.5_dp]
+    nodes(:, 5) = 0.5_dp
+    nodes(:, 6) = [-0.25_dp, 0.875_dp]
     ! At our point (s, t) = (1/4, 1/2), the Jacobian is
     !     [1, -1/4]
     !     [0,  1  ]
@@ -95,12 +95,12 @@ contains
 
     ! CASE 2: Solution is **exact**.
     ! NOTE: This surface is given by [s, t]
-    nodes(1, :) = [0.0_dp, 0.0_dp]
-    nodes(2, :) = [0.5_dp, 0.0_dp]
-    nodes(3, :) = [1.0_dp, 0.0_dp]
-    nodes(4, :) = [0.0_dp, 0.5_dp]
-    nodes(5, :) = [0.5_dp, 0.5_dp]
-    nodes(6, :) = [0.0_dp, 1.0_dp]
+    nodes(:, 1) = 0
+    nodes(:, 2) = [0.5_dp, 0.0_dp]
+    nodes(:, 3) = [1.0_dp, 0.0_dp]
+    nodes(:, 4) = [0.0_dp, 0.5_dp]
+    nodes(:, 5) = 0.5_dp
+    nodes(:, 6) = [0.0_dp, 1.0_dp]
     ! Since x(s) = s and y(t) = t, we simply use the same x/y and s/t.
     call newton_refine( &
          6, nodes, 2, 0.375_dp, 0.75_dp, &
@@ -126,10 +126,10 @@ contains
     name = "newton_refine (Surface)"
 
     ! CASE 1: B(s, t) = (s, t), match.
-    allocate(nodes(3, 2))
-    nodes(1, :) = 0
-    nodes(2, :) = [1.0_dp, 0.0_dp]
-    nodes(3, :) = [0.0_dp, 1.0_dp]
+    allocate(nodes(2, 3))
+    nodes(:, 1) = 0
+    nodes(:, 2) = [1.0_dp, 0.0_dp]
+    nodes(:, 3) = [0.0_dp, 1.0_dp]
     x_val = 0.25_dp
     y_val = 0.625_dp
     call locate_point( &
@@ -148,13 +148,13 @@ contains
     ! CASE 3: B(s, t) = (-2 (s + 2 t) (t - 1), 2 (s + 1) t), one extra
     !         Newton refinement required (verified by hand).
     deallocate(nodes)
-    allocate(nodes(6, 2))
-    nodes(1, :) = 0
-    nodes(2, :) = [1.0_dp, 0.0_dp]
-    nodes(3, :) = [2.0_dp, 0.0_dp]
-    nodes(4, :) = [2.0_dp, 1.0_dp]
-    nodes(5, :) = [2.0_dp, 2.0_dp]
-    nodes(6, :) = [0.0_dp, 2.0_dp]
+    allocate(nodes(2, 6))
+    nodes(:, 1) = 0
+    nodes(:, 2) = [1.0_dp, 0.0_dp]
+    nodes(:, 3) = [2.0_dp, 0.0_dp]
+    nodes(:, 4) = [2.0_dp, 1.0_dp]
+    nodes(:, 5) = 2
+    nodes(:, 6) = [0.0_dp, 2.0_dp]
     x_val = 0.59375_dp
     y_val = 0.25_dp
     call locate_point( &
@@ -182,7 +182,7 @@ contains
     character(21) :: name
     type(Intersection) :: intersection_
     type(CurveData) :: edges_first(3), edges_second(3)
-    real(c_double) :: nodes1(2, 2), nodes2(3, 2)
+    real(c_double) :: nodes1(2, 2), nodes2(2, 3)
     integer(c_int) :: enum_, status
 
     case_id = 1
@@ -205,12 +205,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Intersection is on interior, "second".
-    nodes1(1, :) = 0
-    nodes1(2, :) = 1
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = 1
     edges_first(1)%nodes = nodes1
 
-    nodes1(1, :) = [0.25_dp, 0.0_dp]
-    nodes1(2, :) = [0.75_dp, 1.0_dp]
+    nodes1(:, 1) = [0.25_dp, 0.0_dp]
+    nodes1(:, 2) = [0.75_dp, 1.0_dp]
     edges_second(1)%nodes = nodes1
 
     intersection_ = Intersection(0.5_dp, 0.5_dp, 1, 1)
@@ -231,14 +231,14 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Intersection is tangent, "first".
-    nodes2(1, :) = 0
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [3.0_dp, 0.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [3.0_dp, 0.0_dp]
     edges_first(1)%nodes = nodes2
 
-    nodes2(1, :) = [1.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    nodes2(:, 1) = [1.0_dp, 0.0_dp]
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [2.0_dp, 0.0_dp]
     edges_second(1)%nodes = nodes2
 
     intersection_ = Intersection(0.5_dp, 0.5_dp, 1, 1)
@@ -261,27 +261,27 @@ contains
     ! CASE 7: Intersection is an ignored corner.
     ! NOTE: The curves in ``edges_first`` are the edges of the
     !       "unit simplex" ...
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(1)%nodes = nodes1
-    nodes1(1, :) = [1.0_dp, 0.0_dp]
-    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    nodes1(:, 1) = [1.0_dp, 0.0_dp]
+    nodes1(:, 2) = [0.0_dp, 1.0_dp]
     edges_first(2)%nodes = nodes1
-    nodes1(1, :) = [0.0_dp, 1.0_dp]
-    nodes1(2, :) = 0
+    nodes1(:, 1) = [0.0_dp, 1.0_dp]
+    nodes1(:, 2) = 0
     edges_first(3)%nodes = nodes1
     ! ... and those in ``edges_second`` are the edges in the surface given by
     !           [ 0,  0]
     !           [-1,  0]
     !           [ 0, -1]
-    nodes1(1, :) = [-1.0_dp, 0.0_dp]
-    nodes1(2, :) = [0.0_dp, -1.0_dp]
+    nodes1(:, 1) = [-1.0_dp, 0.0_dp]
+    nodes1(:, 2) = [0.0_dp, -1.0_dp]
     edges_second(1)%nodes = nodes1
-    nodes1(1, :) = [0.0_dp, -1.0_dp]
-    nodes1(2, :) = 0
+    nodes1(:, 1) = [0.0_dp, -1.0_dp]
+    nodes1(:, 2) = 0
     edges_second(2)%nodes = nodes1
-    nodes1(1, :) = 0
-    nodes1(2, :) = [-1.0_dp, 0.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [-1.0_dp, 0.0_dp]
     edges_second(3)%nodes = nodes1
 
     intersection_ = Intersection(0.0_dp, 0.0_dp, 1, 3)
@@ -294,17 +294,17 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Intersection is a corner.
-    nodes1(1, :) = [0.0_dp, 0.5_dp]
-    nodes1(2, :) = 1
+    nodes1(:, 1) = [0.0_dp, 0.5_dp]
+    nodes1(:, 2) = 1
     edges_first(1)%nodes = nodes1
-    nodes1(1, :) = 1
-    nodes1(2, :) = 0
+    nodes1(:, 1) = 1
+    nodes1(:, 2) = 0
     edges_first(2)%nodes = nodes1
     deallocate(edges_first(3)%nodes)  ! Unset.
 
     deallocate(edges_second(1)%nodes)  ! Unset.
-    nodes1(1, :) = [1.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 2.0_dp]
+    nodes1(:, 1) = [1.0_dp, 0.0_dp]
+    nodes1(:, 2) = [1.0_dp, 2.0_dp]
     edges_second(2)%nodes = nodes1
     deallocate(edges_second(3)%nodes)  ! Unset.
 
@@ -319,14 +319,14 @@ contains
 
     ! CASE 9: Intersection is tangent, use curvature of "first".
     deallocate(edges_first(1)%nodes)  ! Unset.
-    nodes2(1, :) = [2.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    nodes2(:, 1) = [2.0_dp, 0.0_dp]
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [1.0_dp, 0.0_dp]
     edges_first(2)%nodes = nodes2
 
-    nodes2(1, :) = [3.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [0.0_dp, 0.0_dp]
+    nodes2(:, 1) = [3.0_dp, 0.0_dp]
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = 0
     edges_second(2)%nodes = nodes2
 
     intersection_ = Intersection(0.5_dp, 0.5_dp, 2, 2)
@@ -339,14 +339,14 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 10: Intersection is tangent, use curvature of "second".
-    nodes2(1, :) = [1.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    nodes2(:, 1) = [1.0_dp, 0.0_dp]
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [2.0_dp, 0.0_dp]
     edges_first(2)%nodes = nodes2
 
-    nodes2(1, :) = [0.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [3.0_dp, 0.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [3.0_dp, 0.0_dp]
     edges_second(2)%nodes = nodes2
 
     call classify_intersection( &
@@ -357,14 +357,14 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 11: Intersection is tangent, same curvature and direction.
-    nodes2(1, :) = [1.0_dp, 0.25_dp]
-    nodes2(2, :) = [-0.5_dp, -0.25_dp]
-    nodes2(3, :) = [0.0_dp, 0.25_dp]
+    nodes2(:, 1) = [1.0_dp, 0.25_dp]
+    nodes2(:, 2) = [-0.5_dp, -0.25_dp]
+    nodes2(:, 3) = [0.0_dp, 0.25_dp]
     edges_first(2)%nodes = nodes2
 
-    nodes2(1, :) = [0.75_dp, 0.25_dp]
-    nodes2(2, :) = [-0.25_dp, -0.25_dp]
-    nodes2(3, :) = [-0.25_dp, 0.25_dp]
+    nodes2(:, 1) = [0.75_dp, 0.25_dp]
+    nodes2(:, 2) = -0.25_dp
+    nodes2(:, 3) = [-0.25_dp, 0.25_dp]
     edges_second(2)%nodes = nodes2
 
     call classify_intersection( &
@@ -373,14 +373,14 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 12: Intersection is tangent, same curvature, opposite direction.
-    nodes2(1, :) = [0.0_dp, 0.25_dp]
-    nodes2(2, :) = [-0.5_dp, -0.25_dp]
-    nodes2(3, :) = [1.0_dp, 0.25_dp]
+    nodes2(:, 1) = [0.0_dp, 0.25_dp]
+    nodes2(:, 2) = [-0.5_dp, -0.25_dp]
+    nodes2(:, 3) = [1.0_dp, 0.25_dp]
     edges_first(2)%nodes = nodes2
 
-    nodes2(1, :) = [0.75_dp, 0.25_dp]
-    nodes2(2, :) = [-0.25_dp, -0.25_dp]
-    nodes2(3, :) = [-0.25_dp, 0.25_dp]
+    nodes2(:, 1) = [0.75_dp, 0.25_dp]
+    nodes2(:, 2) = -0.25_dp
+    nodes2(:, 3) = [-0.25_dp, 0.25_dp]
     edges_second(2)%nodes = nodes2
 
     call classify_intersection( &
@@ -390,14 +390,14 @@ contains
 
     ! CASE 13: Intersection is tangent, opposite direction, curvatures have
     !          same sign and there is no overlap.
-    nodes2(1, :) = [2.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    nodes2(:, 1) = [2.0_dp, 0.0_dp]
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [1.0_dp, 0.0_dp]
     edges_first(2)%nodes = nodes2
 
-    nodes2(1, :) = 1
-    nodes2(2, :) = [1.5_dp, 0.0_dp]
-    nodes2(3, :) = [2.0_dp, 1.0_dp]
+    nodes2(:, 1) = 1
+    nodes2(:, 2) = [1.5_dp, 0.0_dp]
+    nodes2(:, 3) = [2.0_dp, 1.0_dp]
     edges_second(2)%nodes = nodes2
 
     call classify_intersection( &
@@ -409,14 +409,14 @@ contains
 
     ! CASE 14: Intersection is tangent, opposite direction, curvatures have
     !          same sign and there **is** overlap.
-    nodes2(1, :) = [1.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    nodes2(:, 1) = [1.0_dp, 0.0_dp]
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [2.0_dp, 0.0_dp]
     edges_first(2)%nodes = nodes2
 
-    nodes2(1, :) = [2.0_dp, 1.0_dp]
-    nodes2(2, :) = [1.5_dp, 0.0_dp]
-    nodes2(3, :) = 1
+    nodes2(:, 1) = [2.0_dp, 1.0_dp]
+    nodes2(:, 2) = [1.5_dp, 0.0_dp]
+    nodes2(:, 3) = 1
     edges_second(2)%nodes = nodes2
 
     call classify_intersection( &
@@ -426,14 +426,14 @@ contains
 
     ! CASE 15: Intersection is tangent, opposite direction, curvatures have
     !          opposite sign and there is no overlap.
-    nodes2(1, :) = [2.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    nodes2(:, 1) = [2.0_dp, 0.0_dp]
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [1.0_dp, 0.0_dp]
     edges_first(2)%nodes = nodes2
 
-    nodes2(1, :) = [0.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [3.0_dp, 0.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [3.0_dp, 0.0_dp]
     edges_second(2)%nodes = nodes2
 
     call classify_intersection( &
@@ -445,14 +445,14 @@ contains
 
     ! CASE 16: Intersection is tangent, opposite direction, curvatures have
     !          opposite sign and there **is** overlap.
-    nodes2(1, :) = [1.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    nodes2(:, 1) = [1.0_dp, 0.0_dp]
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = [2.0_dp, 0.0_dp]
     edges_first(2)%nodes = nodes2
 
-    nodes2(1, :) = [3.0_dp, 0.0_dp]
-    nodes2(2, :) = [1.5_dp, 1.0_dp]
-    nodes2(3, :) = [0.0_dp, 0.0_dp]
+    nodes2(:, 1) = [3.0_dp, 0.0_dp]
+    nodes2(:, 2) = [1.5_dp, 1.0_dp]
+    nodes2(:, 3) = 0
     edges_second(2)%nodes = nodes2
 
     call classify_intersection( &
@@ -461,15 +461,15 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 17: Intersection at corner, but the corner "staddles" an edge.
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(2)%nodes = nodes1
 
-    nodes1(1, :) = [1.0_dp, 1.0_dp]
-    nodes1(2, :) = [0.5_dp, 0.0_dp]
+    nodes1(:, 1) = 1
+    nodes1(:, 2) = [0.5_dp, 0.0_dp]
     edges_second(1)%nodes = nodes1
-    nodes1(1, :) = [0.5_dp, 0.0_dp]
-    nodes1(2, :) = [1.5_dp, -1.0_dp]
+    nodes1(:, 1) = [0.5_dp, 0.0_dp]
+    nodes1(:, 2) = [1.5_dp, -1.0_dp]
     edges_second(2)%nodes = nodes1
 
     intersection_ = Intersection(0.5_dp, 0.0_dp, 2, 2)
@@ -483,18 +483,18 @@ contains
 
     ! CASE 18: Intersection at corner of **both** edges, the corners just
     !          "kiss", hence are ignored.
-    nodes1(1, :) = [0.5_dp, 1.0_dp]
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = [0.5_dp, 1.0_dp]
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(1)%nodes = nodes1
-    nodes1(1, :) = [1.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.5_dp, 0.25_dp]
+    nodes1(:, 1) = [1.0_dp, 0.0_dp]
+    nodes1(:, 2) = [1.5_dp, 0.25_dp]
     edges_first(2)%nodes = nodes1
 
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_second(1)%nodes = nodes1
-    nodes1(1, :) = [1.0_dp, 0.0_dp]
-    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    nodes1(:, 1) = [1.0_dp, 0.0_dp]
+    nodes1(:, 2) = [0.0_dp, 1.0_dp]
     edges_second(2)%nodes = nodes1
 
     intersection_ = Intersection(0.0_dp, 0.0_dp, 2, 2)
@@ -507,18 +507,18 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 19: Intersection at corner of **both** edges, "first" is interior.
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(1)%nodes = nodes1
-    nodes1(1, :) = [1.0_dp, 0.0_dp]
-    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    nodes1(:, 1) = [1.0_dp, 0.0_dp]
+    nodes1(:, 2) = [0.0_dp, 1.0_dp]
     edges_first(2)%nodes = nodes1
 
-    nodes1(1, :) = [0.5_dp, 0.25_dp]
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = [0.5_dp, 0.25_dp]
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_second(1)%nodes = nodes1
-    nodes1(1, :) = [1.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 1.0_dp]
+    nodes1(:, 1) = [1.0_dp, 0.0_dp]
+    nodes1(:, 2) = 1
     edges_second(2)%nodes = nodes1
 
     call classify_intersection( &
@@ -529,18 +529,18 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 20: Intersection at corner of **both** edges, "second" is interior.
-    nodes1(1, :) = [0.5_dp, 0.25_dp]
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = [0.5_dp, 0.25_dp]
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(1)%nodes = nodes1
-    nodes1(1, :) = [1.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 1.0_dp]
+    nodes1(:, 1) = [1.0_dp, 0.0_dp]
+    nodes1(:, 2) = 1
     edges_first(2)%nodes = nodes1
 
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_second(1)%nodes = nodes1
-    nodes1(1, :) = [1.0_dp, 0.0_dp]
-    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    nodes1(:, 1) = [1.0_dp, 0.0_dp]
+    nodes1(:, 2) = [0.0_dp, 1.0_dp]
     edges_second(2)%nodes = nodes1
 
     call classify_intersection( &
@@ -552,18 +552,18 @@ contains
 
     ! CASE 21: Intersection at corner of **both** edges, one corner is
     !          completely contained in the area of the other corner.
-    nodes1(1, :) = [0.5_dp, 1.0_dp]
-    nodes1(2, :) = 0
+    nodes1(:, 1) = [0.5_dp, 1.0_dp]
+    nodes1(:, 2) = 0
     edges_first(1)%nodes = nodes1
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 0.5_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 0.5_dp]
     edges_first(2)%nodes = nodes1
 
-    nodes1(1, :) = [0.0_dp, 1.0_dp]
-    nodes1(2, :) = 0
+    nodes1(:, 1) = [0.0_dp, 1.0_dp]
+    nodes1(:, 2) = 0
     edges_second(1)%nodes = nodes1
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_second(2)%nodes = nodes1
 
     call classify_intersection( &
@@ -603,10 +603,10 @@ contains
     ! Set the relevant edges as lines.
     allocate(edges_first(2)%nodes(2, 2))
     allocate(edges_second(3)%nodes(2, 2))
-    edges_first(2)%nodes(1, :) = [0.0_dp, 0.0_dp]
-    edges_first(2)%nodes(2, :) = [1.0_dp, 1.0_dp]
-    edges_second(3)%nodes(1, :) = [1.0_dp, -0.5_dp]
-    edges_second(3)%nodes(2, :) = [0.0_dp, 0.5_dp]
+    edges_first(2)%nodes(:, 1) = 0
+    edges_first(2)%nodes(:, 2) = 1
+    edges_second(3)%nodes(:, 1) = [1.0_dp, -0.5_dp]
+    edges_second(3)%nodes(:, 2) = [0.0_dp, 0.5_dp]
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, &
          2, 3, intersections, num_intersections, all_types, status)
@@ -627,10 +627,10 @@ contains
     ! Set the relevant edges as lines.
     allocate(edges_first(3)%nodes(2, 2))
     allocate(edges_second(1)%nodes(2, 2))
-    edges_first(3)%nodes(1, :) = [0.0_dp, 0.0_dp]
-    edges_first(3)%nodes(2, :) = [1.0_dp, 1.0_dp]
-    edges_second(1)%nodes(1, :) = [1.0_dp, -1.0_dp]
-    edges_second(1)%nodes(2, :) = [-1.0_dp, 1.0_dp]
+    edges_first(3)%nodes(:, 1) = 0
+    edges_first(3)%nodes(:, 2) = 1
+    edges_second(1)%nodes(:, 1) = [1.0_dp, -1.0_dp]
+    edges_second(1)%nodes(:, 2) = [-1.0_dp, 1.0_dp]
     case_success = ( &
          allocated(intersections) .AND. &
          num_intersections == 1)
@@ -654,10 +654,10 @@ contains
     st_vals(:, 1) = [0.875_dp, 0.125_dp]
     ! Set the relevant edges as lines.
     allocate(edges_second(2)%nodes(2, 2))
-    edges_first(2)%nodes(1, :) = [0.0_dp, 0.0_dp]
-    edges_first(2)%nodes(2, :) = [1.0_dp, 1.0_dp]
-    edges_second(2)%nodes(1, :) = [0.75_dp, 0.625_dp]
-    edges_second(2)%nodes(2, :) = [1.75_dp, 2.625_dp]
+    edges_first(2)%nodes(:, 1) = 0
+    edges_first(2)%nodes(:, 2) = 1
+    edges_second(2)%nodes(:, 1) = [0.75_dp, 0.625_dp]
+    edges_second(2)%nodes(:, 2) = [1.75_dp, 2.625_dp]
     case_success = allocated(intersections)
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, &
@@ -675,17 +675,17 @@ contains
 
     ! CASE 4: Intersection causes error.
     all_types = 0
-    st_vals(:, 1) = [0.5_dp, 0.5_dp]
+    st_vals(:, 1) = 0.5_dp
     deallocate(edges_first(2)%nodes)
-    allocate(edges_first(2)%nodes(3, 2))
-    edges_first(2)%nodes(1, :) = [1.0_dp, 0.25_dp]
-    edges_first(2)%nodes(2, :) = [-0.5_dp, -0.25_dp]
-    edges_first(2)%nodes(3, :) = [0.0_dp, 0.25_dp]
+    allocate(edges_first(2)%nodes(2, 3))
+    edges_first(2)%nodes(:, 1) = [1.0_dp, 0.25_dp]
+    edges_first(2)%nodes(:, 2) = [-0.5_dp, -0.25_dp]
+    edges_first(2)%nodes(:, 3) = [0.0_dp, 0.25_dp]
     deallocate(edges_second(2)%nodes)
-    allocate(edges_second(2)%nodes(3, 2))
-    edges_second(2)%nodes(1, :) = [0.75_dp, 0.25_dp]
-    edges_second(2)%nodes(2, :) = [-0.25_dp, -0.25_dp]
-    edges_second(2)%nodes(3, :) = [-0.25_dp, 0.25_dp]
+    allocate(edges_second(2)%nodes(2, 3))
+    edges_second(2)%nodes(:, 1) = [0.75_dp, 0.25_dp]
+    edges_second(2)%nodes(:, 2) = -0.25_dp
+    edges_second(2)%nodes(:, 3) = [-0.25_dp, 0.25_dp]
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, &
          2, 2, intersections, num_intersections, all_types, status)
@@ -701,13 +701,13 @@ contains
     num_intersections = 0
     all_types = 0
     st_vals(:, 1) = [1.0_dp, 0.125_dp]
-    st_vals(:, 2) = [0.5_dp, 0.5_dp]
+    st_vals(:, 2) = 0.5_dp
     ! Set the relevant edges as lines.
     allocate(edges_first(1)%nodes(2, 2))
-    edges_first(1)%nodes(1, :) = [0.0_dp, 0.0_dp]
-    edges_first(1)%nodes(2, :) = [1.0_dp, 1.0_dp]
-    edges_second(1)%nodes(1, :) = [0.0_dp, 1.0_dp]
-    edges_second(1)%nodes(2, :) = [1.0_dp, 0.0_dp]
+    edges_first(1)%nodes(:, 1) = 0
+    edges_first(1)%nodes(:, 2) = 1
+    edges_second(1)%nodes(:, 1) = [0.0_dp, 1.0_dp]
+    edges_second(1)%nodes(:, 2) = [1.0_dp, 0.0_dp]
     call add_st_vals( &
          edges_first, edges_second, 2, st_vals, &
          1, 1, intersections, num_intersections, all_types, status)
@@ -729,8 +729,8 @@ contains
     logical :: case_success
     integer :: case_id
     character(28) :: name
-    real(c_double) :: linear1(3, 2), linear2(3, 2)
-    real(c_double) :: quadratic1(6, 2), quadratic2(6, 2)
+    real(c_double) :: linear1(2, 3), linear2(2, 3)
+    real(c_double) :: quadratic1(2, 6), quadratic2(2, 6)
     type(Intersection), allocatable :: intersections(:)
     integer(c_int) :: num_intersections
     integer(c_int) :: all_types, status
@@ -743,12 +743,12 @@ contains
     second = IntersectionClassification_SECOND
 
     ! CASE 1: Overlapping triangles (i.e. degree 1 surfaces).
-    linear1(1, :) = 0
-    linear1(2, :) = [2.0_dp, 0.0_dp]
-    linear1(3, :) = [1.0_dp, 2.0_dp]
-    linear2(1, :) = [0.0_dp, 1.0_dp]
-    linear2(2, :) = [2.0_dp, 1.0_dp]
-    linear2(3, :) = [1.0_dp, -1.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = [2.0_dp, 0.0_dp]
+    linear1(:, 3) = [1.0_dp, 2.0_dp]
+    linear2(:, 1) = [0.0_dp, 1.0_dp]
+    linear2(:, 2) = [2.0_dp, 1.0_dp]
+    linear2(:, 3) = [1.0_dp, -1.0_dp]
     call surfaces_intersection_points( &
          3, linear1, 1, 3, linear2, 1, &
          intersections, num_intersections, all_types, status)
@@ -773,18 +773,18 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Tangent intersection (causes ``all_intersections()`` to error).
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [6.0_dp, 12.0_dp]
-    quadratic1(3, :) = [12.0_dp, 6.0_dp]
-    quadratic1(4, :) = [4.0_dp, -8.0_dp]
-    quadratic1(5, :) = [10.0_dp, -5.0_dp]
-    quadratic1(6, :) = [8.0_dp, -16.0_dp]
-    quadratic2(1, :) = [4.0_dp, 10.0_dp]
-    quadratic2(2, :) = [10.0_dp, 4.0_dp]
-    quadratic2(3, :) = [16.0_dp, 16.0_dp]
-    quadratic2(4, :) = [6.0_dp, 21.0_dp]
-    quadratic2(5, :) = [12.0_dp, 24.0_dp]
-    quadratic2(6, :) = [8.0_dp, 32.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [6.0_dp, 12.0_dp]
+    quadratic1(:, 3) = [12.0_dp, 6.0_dp]
+    quadratic1(:, 4) = [4.0_dp, -8.0_dp]
+    quadratic1(:, 5) = [10.0_dp, -5.0_dp]
+    quadratic1(:, 6) = [8.0_dp, -16.0_dp]
+    quadratic2(:, 1) = [4.0_dp, 10.0_dp]
+    quadratic2(:, 2) = [10.0_dp, 4.0_dp]
+    quadratic2(:, 3) = [16.0_dp, 16.0_dp]
+    quadratic2(:, 4) = [6.0_dp, 21.0_dp]
+    quadratic2(:, 5) = [12.0_dp, 24.0_dp]
+    quadratic2(:, 6) = [8.0_dp, 32.0_dp]
     call surfaces_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, all_types, status)
@@ -796,18 +796,18 @@ contains
 
     ! CASE 3: Tangent intersection (causes ``add_st_vals()`` to error).
     num_intersections = 0
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [2.0_dp, 4.0_dp]
-    quadratic1(3, :) = [4.0_dp, 0.0_dp]
-    quadratic1(4, :) = [1.0_dp, 3.0_dp]
-    quadratic1(5, :) = [3.0_dp, 3.0_dp]
-    quadratic1(6, :) = [2.0_dp, 6.0_dp]
-    quadratic2(1, :) = [4.0_dp, 4.0_dp]
-    quadratic2(2, :) = [2.0_dp, 0.0_dp]
-    quadratic2(3, :) = [0.0_dp, 4.0_dp]
-    quadratic2(4, :) = [3.0_dp, 1.0_dp]
-    quadratic2(5, :) = [1.0_dp, 1.0_dp]
-    quadratic2(6, :) = [2.0_dp, -2.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [2.0_dp, 4.0_dp]
+    quadratic1(:, 3) = [4.0_dp, 0.0_dp]
+    quadratic1(:, 4) = [1.0_dp, 3.0_dp]
+    quadratic1(:, 5) = 3
+    quadratic1(:, 6) = [2.0_dp, 6.0_dp]
+    quadratic2(:, 1) = 4
+    quadratic2(:, 2) = [2.0_dp, 0.0_dp]
+    quadratic2(:, 3) = [0.0_dp, 4.0_dp]
+    quadratic2(:, 4) = [3.0_dp, 1.0_dp]
+    quadratic2(:, 5) = 1
+    quadratic2(:, 6) = [2.0_dp, -2.0_dp]
     call surfaces_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, all_types, status)
@@ -1330,9 +1330,9 @@ contains
     integer :: case_id
     character(18) :: name
     integer(c_int) :: num_intersected, contained, status
-    real(c_double) :: linear1(3, 2), linear2(3, 2)
-    real(c_double) :: quadratic1(6, 2), quadratic2(6, 2)
-    real(c_double) :: cubic1(10, 2), cubic2(10, 2)
+    real(c_double) :: linear1(2, 3), linear2(2, 3)
+    real(c_double) :: quadratic1(2, 6), quadratic2(2, 6)
+    real(c_double) :: cubic1(2, 10), cubic2(2, 10)
     integer(c_int), allocatable :: segment_ends(:)
     type(CurvedPolygonSegment), allocatable :: segments(:)
     integer(c_int) :: similar_ulps
@@ -1342,12 +1342,12 @@ contains
     name = "surfaces_intersect"
 
     ! CASE 1: Disjoint bounding boxes.
-    linear1(1, :) = 0
-    linear1(2, :) = [1.0_dp, 0.0_dp]
-    linear1(3, :) = [0.0_dp, 1.0_dp]
-    linear2(1, :) = 10
-    linear2(2, :) = [11.0_dp, 10.0_dp]
-    linear2(3, :) = [10.0_dp, 11.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = [1.0_dp, 0.0_dp]
+    linear1(:, 3) = [0.0_dp, 1.0_dp]
+    linear2(:, 1) = 10
+    linear2(:, 2) = [11.0_dp, 10.0_dp]
+    linear2(:, 3) = [10.0_dp, 11.0_dp]
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
@@ -1362,12 +1362,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Intersecting edges results in error.
-    linear1(1, :) = 0
-    linear1(2, :) = [5.0_dp, 0.0_dp]
-    linear1(3, :) = [0.0_dp, 5.0_dp]
-    linear2(1, :) = [2.0_dp, 0.0_dp]
-    linear2(2, :) = [3.0_dp, 0.0_dp]
-    linear2(3, :) = [2.0_dp, 1.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = [5.0_dp, 0.0_dp]
+    linear1(:, 3) = [0.0_dp, 5.0_dp]
+    linear2(:, 1) = [2.0_dp, 0.0_dp]
+    linear2(:, 2) = [3.0_dp, 0.0_dp]
+    linear2(:, 3) = [2.0_dp, 1.0_dp]
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
@@ -1382,9 +1382,9 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Surface 2 contained in surface 1 (re-uses ``linear1``).
-    linear2(1, :) = [2.0_dp, 1.0_dp]
-    linear2(2, :) = [3.0_dp, 1.0_dp]
-    linear2(3, :) = [2.0_dp, 2.0_dp]
+    linear2(:, 1) = [2.0_dp, 1.0_dp]
+    linear2(:, 2) = [3.0_dp, 1.0_dp]
+    linear2(:, 3) = 2
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
@@ -1413,9 +1413,9 @@ contains
 
     ! CASE 5: Surfaces disjoint with overlapping bounding boxes (re-uses
     !         ``linear1`` from previous cases).
-    linear2(1, :) = [4.0_dp, 2.0_dp]
-    linear2(2, :) = [4.0_dp, 3.0_dp]
-    linear2(3, :) = [3.0_dp, 3.0_dp]
+    linear2(:, 1) = [4.0_dp, 2.0_dp]
+    linear2(:, 2) = [4.0_dp, 3.0_dp]
+    linear2(:, 3) = 3
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
@@ -1430,12 +1430,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Surfaces intersect.
-    linear1(1, :) = 0
-    linear1(2, :) = [8.0_dp, 0.0_dp]
-    linear1(3, :) = [0.0_dp, 8.0_dp]
-    linear2(1, :) = [4.0_dp, 5.0_dp]
-    linear2(2, :) = [-4.0_dp, 5.0_dp]
-    linear2(3, :) = [4.0_dp, -3.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = [8.0_dp, 0.0_dp]
+    linear1(:, 3) = [0.0_dp, 8.0_dp]
+    linear2(:, 1) = [4.0_dp, 5.0_dp]
+    linear2(:, 2) = [-4.0_dp, 5.0_dp]
+    linear2(:, 3) = [4.0_dp, -3.0_dp]
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
@@ -1458,18 +1458,18 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 7: The only intersection(s) are ``OPPOSED``.
-    quadratic1(1, :) = [4.0_dp, 0.0_dp]
-    quadratic1(2, :) = [2.0_dp, 4.0_dp]
-    quadratic1(3, :) = [0.0_dp, 0.0_dp]
-    quadratic1(4, :) = [3.0_dp, -2.0_dp]
-    quadratic1(5, :) = [1.0_dp, -2.0_dp]
-    quadratic1(6, :) = [2.0_dp, -4.0_dp]
-    quadratic2(1, :) = [0.0_dp, 4.0_dp]
-    quadratic2(2, :) = [2.0_dp, 0.0_dp]
-    quadratic2(3, :) = [4.0_dp, 4.0_dp]
-    quadratic2(4, :) = [1.0_dp, 6.0_dp]
-    quadratic2(5, :) = [3.0_dp, 6.0_dp]
-    quadratic2(6, :) = [2.0_dp, 8.0_dp]
+    quadratic1(:, 1) = [4.0_dp, 0.0_dp]
+    quadratic1(:, 2) = [2.0_dp, 4.0_dp]
+    quadratic1(:, 3) = 0
+    quadratic1(:, 4) = [3.0_dp, -2.0_dp]
+    quadratic1(:, 5) = [1.0_dp, -2.0_dp]
+    quadratic1(:, 6) = [2.0_dp, -4.0_dp]
+    quadratic2(:, 1) = [0.0_dp, 4.0_dp]
+    quadratic2(:, 2) = [2.0_dp, 0.0_dp]
+    quadratic2(:, 3) = 4
+    quadratic2(:, 4) = [1.0_dp, 6.0_dp]
+    quadratic2(:, 5) = [3.0_dp, 6.0_dp]
+    quadratic2(:, 6) = [2.0_dp, 8.0_dp]
 
     call surfaces_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
@@ -1484,12 +1484,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: The only intersection(s) are ``IGNORED_CORNER``.
-    linear1(1, :) = 0
-    linear1(2, :) = [1.0_dp, 0.0_dp]
-    linear1(3, :) = [0.0_dp, 1.0_dp]
-    linear2(1, :) = 0
-    linear2(2, :) = [-2.0_dp, 3.0_dp]
-    linear2(3, :) = [1.0_dp, -3.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = [1.0_dp, 0.0_dp]
+    linear1(:, 3) = [0.0_dp, 1.0_dp]
+    linear2(:, 1) = 0
+    linear2(:, 2) = [-2.0_dp, 3.0_dp]
+    linear2(:, 3) = [1.0_dp, -3.0_dp]
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
@@ -1504,18 +1504,18 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 9: The only intersection(s) are ``TANGENT_FIRST``.
-    quadratic1(1, :) = [2.0_dp, 1.25_dp]
-    quadratic1(2, :) = [4.0_dp, 0.75_dp]
-    quadratic1(3, :) = [6.0_dp, 1.25_dp]
-    quadratic1(4, :) = [3.0_dp, 3.0_dp]
-    quadratic1(5, :) = [5.0_dp, 3.0_dp]
-    quadratic1(6, :) = [4.0_dp, 5.0_dp]
-    quadratic2(1, :) = [0.0_dp, 0.0_dp]
-    quadratic2(2, :) = [4.0_dp, 2.0_dp]
-    quadratic2(3, :) = [8.0_dp, 0.0_dp]
-    quadratic2(4, :) = [1.5_dp, 7.5_dp]
-    quadratic2(5, :) = [11.0_dp, 6.0_dp]
-    quadratic2(6, :) = [8.0_dp, 8.0_dp]
+    quadratic1(:, 1) = [2.0_dp, 1.25_dp]
+    quadratic1(:, 2) = [4.0_dp, 0.75_dp]
+    quadratic1(:, 3) = [6.0_dp, 1.25_dp]
+    quadratic1(:, 4) = 3
+    quadratic1(:, 5) = [5.0_dp, 3.0_dp]
+    quadratic1(:, 6) = [4.0_dp, 5.0_dp]
+    quadratic2(:, 1) = 0
+    quadratic2(:, 2) = [4.0_dp, 2.0_dp]
+    quadratic2(:, 3) = [8.0_dp, 0.0_dp]
+    quadratic2(:, 4) = [1.5_dp, 7.5_dp]
+    quadratic2(:, 5) = [11.0_dp, 6.0_dp]
+    quadratic2(:, 6) = 8
 
     call surfaces_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
@@ -1546,26 +1546,26 @@ contains
     ! CASE 11: Due to round-off issues in ``add_intersection()`` (from the
     !          ``curve_intersection`` module), a "phantom" extra intersection
     !          point causes issues in ``interior_combine()``.
-    cubic1(1, :) = [-0.519247936646441_dp, 0.008196262233806585_dp]
-    cubic1(2, :) = [-0.5206153113582636_dp, 0.01587839530234961_dp]
-    cubic1(3, :) = [-0.5220361984817866_dp, 0.023564120023660037_dp]
-    cubic1(4, :) = [-0.5234919947680754_dp, 0.03126920999203689_dp]
-    cubic1(5, :) = [-0.5306013153328831_dp, 0.010994185722894958_dp]
-    cubic1(6, :) = [-0.5320185860555878_dp, 0.018720567953255777_dp]
-    cubic1(7, :) = [-0.533471521483344_dp, 0.026443532602826243_dp]
-    cubic1(8, :) = [-0.5418564772120571_dp, 0.013842126833196683_dp]
-    cubic1(9, :) = [-0.5433055706504355_dp, 0.02160135650021924_dp]
-    cubic1(10, :) = [-0.5530139922771271_dp, 0.016726767154940626_dp]
-    cubic2(1, :) = [-0.5492475273303934_dp, 0.004806678750684627_dp]
-    cubic2(2, :) = [-0.5507539103531026_dp, 0.011215423321262663_dp]
-    cubic2(3, :) = [-0.552283211157318_dp, 0.017577411042302475_dp]
-    cubic2(4, :) = [-0.553868947686436_dp, 0.023906392050982415_dp]
-    cubic2(5, :) = [-0.5543287770635862_dp, 0.0032189095236835417_dp]
-    cubic2(6, :) = [-0.5558905319225977_dp, 0.00960140358887212_dp]
-    cubic2(7, :) = [-0.5574932750785362_dp, 0.015938552164569394_dp]
-    cubic2(8, :) = [-0.5596130517429451_dp, 0.0014977481523963628_dp]
-    cubic2(9, :) = [-0.5612419767391262_dp, 0.007849282849502192_dp]
-    cubic2(10, :) = [-0.5650788564504334_dp, -0.0003406439314109452_dp]
+    cubic1(:, 1) = [-0.519247936646441_dp, 0.008196262233806585_dp]
+    cubic1(:, 2) = [-0.5206153113582636_dp, 0.01587839530234961_dp]
+    cubic1(:, 3) = [-0.5220361984817866_dp, 0.023564120023660037_dp]
+    cubic1(:, 4) = [-0.5234919947680754_dp, 0.03126920999203689_dp]
+    cubic1(:, 5) = [-0.5306013153328831_dp, 0.010994185722894958_dp]
+    cubic1(:, 6) = [-0.5320185860555878_dp, 0.018720567953255777_dp]
+    cubic1(:, 7) = [-0.533471521483344_dp, 0.026443532602826243_dp]
+    cubic1(:, 8) = [-0.5418564772120571_dp, 0.013842126833196683_dp]
+    cubic1(:, 9) = [-0.5433055706504355_dp, 0.02160135650021924_dp]
+    cubic1(:, 10) = [-0.5530139922771271_dp, 0.016726767154940626_dp]
+    cubic2(:, 1) = [-0.5492475273303934_dp, 0.004806678750684627_dp]
+    cubic2(:, 2) = [-0.5507539103531026_dp, 0.011215423321262663_dp]
+    cubic2(:, 3) = [-0.552283211157318_dp, 0.017577411042302475_dp]
+    cubic2(:, 4) = [-0.553868947686436_dp, 0.023906392050982415_dp]
+    cubic2(:, 5) = [-0.5543287770635862_dp, 0.0032189095236835417_dp]
+    cubic2(:, 6) = [-0.5558905319225977_dp, 0.00960140358887212_dp]
+    cubic2(:, 7) = [-0.5574932750785362_dp, 0.015938552164569394_dp]
+    cubic2(:, 8) = [-0.5596130517429451_dp, 0.0014977481523963628_dp]
+    cubic2(:, 9) = [-0.5612419767391262_dp, 0.007849282849502192_dp]
+    cubic2(:, 10) = [-0.5650788564504334_dp, -0.0003406439314109452_dp]
 
     call surfaces_intersect( &
          10, cubic1, 3, 10, cubic2, 3, &
@@ -1611,7 +1611,7 @@ contains
     logical :: case_success
     integer :: case_id
     character(22) :: name
-    real(c_double) :: linear1(3, 2), linear2(3, 2), quadratic(6, 2)
+    real(c_double) :: linear1(2, 3), linear2(2, 3), quadratic(2, 6)
     integer(c_int) :: num_intersected, contained, status
     integer(c_int) :: segment_ends(2)
     type(CurvedPolygonSegment) :: segments(6)
@@ -1620,12 +1620,12 @@ contains
     name = "surfaces_intersect_abi"
 
     ! CASE 1: Intersection results in error.
-    linear1(1, :) = 0
-    linear1(2, :) = [5.0_dp, 0.0_dp]
-    linear1(3, :) = [0.0_dp, 5.0_dp]
-    linear2(1, :) = [2.0_dp, 0.0_dp]
-    linear2(2, :) = [3.0_dp, 0.0_dp]
-    linear2(3, :) = [2.0_dp, 1.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = [5.0_dp, 0.0_dp]
+    linear1(:, 3) = [0.0_dp, 5.0_dp]
+    linear2(:, 1) = [2.0_dp, 0.0_dp]
+    linear2(:, 2) = [3.0_dp, 0.0_dp]
+    linear2(:, 3) = [2.0_dp, 1.0_dp]
     call surfaces_intersect_abi( &
          3, linear1, 1, 3, linear2, 1, &
          2, segment_ends, 6, segments, &
@@ -1638,15 +1638,15 @@ contains
 
     ! CASE 2: ``segment_ends`` is not large enough; two disjoint intersections
     !         from 13L-38Q (ID: 39).
-    linear1(1, :) = [-8.0_dp, 0.0_dp]
-    linear1(2, :) = [8.0_dp, 0.0_dp]
-    linear1(3, :) = [0.0_dp, 8.0_dp]
-    quadratic(1, :) = [4.0_dp, 3.0_dp]
-    quadratic(2, :) = [0.0_dp, -5.0_dp]
-    quadratic(3, :) = [-4.0_dp, 3.0_dp]
-    quadratic(4, :) = [2.0_dp, -3.0_dp]
-    quadratic(5, :) = [-2.0_dp, -3.0_dp]
-    quadratic(6, :) = [0.0_dp, -9.0_dp]
+    linear1(:, 1) = [-8.0_dp, 0.0_dp]
+    linear1(:, 2) = [8.0_dp, 0.0_dp]
+    linear1(:, 3) = [0.0_dp, 8.0_dp]
+    quadratic(:, 1) = [4.0_dp, 3.0_dp]
+    quadratic(:, 2) = [0.0_dp, -5.0_dp]
+    quadratic(:, 3) = [-4.0_dp, 3.0_dp]
+    quadratic(:, 4) = [2.0_dp, -3.0_dp]
+    quadratic(:, 5) = [-2.0_dp, -3.0_dp]
+    quadratic(:, 6) = [0.0_dp, -9.0_dp]
     segment_ends(:2) = [-1337, -42]
     call surfaces_intersect_abi( &
          3, linear1, 1, 6, quadratic, 2, &
@@ -1692,12 +1692,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: No intersections.
-    linear1(1, :) = [0.0_dp, 0.0_dp]
-    linear1(2, :) = [1.0_dp, 0.0_dp]
-    linear1(3, :) = [0.0_dp, 1.0_dp]
-    linear2(1, :) = [3.0_dp, 3.0_dp]
-    linear2(2, :) = [4.0_dp, 3.0_dp]
-    linear2(3, :) = [3.0_dp, 4.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = [1.0_dp, 0.0_dp]
+    linear1(:, 3) = [0.0_dp, 1.0_dp]
+    linear2(:, 1) = 3
+    linear2(:, 2) = [4.0_dp, 3.0_dp]
+    linear2(:, 3) = [3.0_dp, 4.0_dp]
     call surfaces_intersect_abi( &
          3, linear1, 1, 3, linear2, 1, &
          2, segment_ends, 6, segments, &

@@ -160,9 +160,9 @@ contains
 
     integer(c_int), intent(in) :: case_id
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
     integer(c_int), intent(in) :: expected_n
     real(c_double), intent(in) :: expected_params(2, expected_n)
     ! Variables outside of signature.

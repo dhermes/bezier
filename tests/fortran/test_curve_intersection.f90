@@ -79,9 +79,9 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(5, 2)
-    real(c_double) :: nodes4(3, 3), nodes5(4, 2), nodes6(6, 2)
-    real(c_double) :: left_nodes2(3, 2), right_nodes2(3, 2)
+    real(c_double) :: nodes1(2, 2), nodes2(2, 3), nodes3(2, 5)
+    real(c_double) :: nodes4(3, 3), nodes5(2, 4), nodes6(2, 6)
+    real(c_double) :: left_nodes2(2, 3), right_nodes2(2, 3)
     real(c_double) :: error1, error2, expected
     integer :: case_id
     character(19) :: name
@@ -90,28 +90,28 @@ contains
     name = "linearization_error"
 
     ! CASE 1: Linear curve (i.e. no error).
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 2.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 2.0_dp]
     call linearization_error( &
          2, 2, nodes1, error1)
     case_success = (error1 == 0.0_dp)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Degree-elevated line (i.e. no error) as quadratic.
-    nodes2(1, :) = 0
-    nodes2(2, :) = [0.5_dp, 1.0_dp]
-    nodes2(3, :) = [1.0_dp, 2.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [0.5_dp, 1.0_dp]
+    nodes2(:, 3) = [1.0_dp, 2.0_dp]
     call linearization_error( &
          3, 2, nodes2, error1)
     case_success = (error1 == 0.0_dp)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Degree-elevated line (i.e. no error) as quartic.
-    nodes3(1, :) = 0
-    nodes3(2, :) = [0.25_dp, 0.5_dp]
-    nodes3(3, :) = [0.5_dp, 1.0_dp]
-    nodes3(4, :) = [0.75_dp, 1.5_dp]
-    nodes3(5, :) = [1.0_dp, 2.0_dp]
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = [0.25_dp, 0.5_dp]
+    nodes3(:, 3) = [0.5_dp, 1.0_dp]
+    nodes3(:, 4) = [0.75_dp, 1.5_dp]
+    nodes3(:, 5) = [1.0_dp, 2.0_dp]
     call linearization_error( &
          5, 2, nodes3, error1)
     case_success = (error1 == 0.0_dp)
@@ -120,9 +120,9 @@ contains
     ! CASE 4: Line with bad parameterization.
     ! NOTE: This is the line 3 y = 4 x, but with the parameterization
     !       x(s) = 3 s (4 - 3 s).
-    nodes2(1, :) = 0
-    nodes2(2, :) = [6.0_dp, 8.0_dp]
-    nodes2(3, :) = [3.0_dp, 4.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [6.0_dp, 8.0_dp]
+    nodes2(:, 3) = [3.0_dp, 4.0_dp]
     call linearization_error( &
          3, 2, nodes2, error1)
     ! D^2 v = [-9, -12]
@@ -131,9 +131,9 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Quadratic curve.
-    nodes2(1, :) = 0
-    nodes2(2, :) = [1.0_dp, 1.0_dp]
-    nodes2(3, :) = [5.0_dp, 6.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = 1
+    nodes2(:, 3) = [5.0_dp, 6.0_dp]
     call linearization_error( &
          3, 2, nodes2, error1)
     ! NOTE: This is hand picked so that
@@ -159,9 +159,9 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 7: Quadratic curve in 3D.
-    nodes4(1, :) = [1.5_dp, 0.0_dp, 6.25_dp]
-    nodes4(2, :) = [3.5_dp, -5.0_dp, 10.25_dp]
-    nodes4(3, :) = [8.5_dp, 2.0_dp, 10.25_dp]
+    nodes4(:, 1) = [1.5_dp, 0.0_dp, 6.25_dp]
+    nodes4(:, 2) = [3.5_dp, -5.0_dp, 10.25_dp]
+    nodes4(:, 3) = [8.5_dp, 2.0_dp, 10.25_dp]
     call linearization_error( &
          3, 3, nodes4, error1)
     ! NOTE: This is hand picked so that
@@ -175,11 +175,11 @@ contains
     ! CASE 8: Quadratic with bad parameterization.
     ! NOTE: This is the quadratic y = 1 + x^2 / 4, but with the
     !       parameterization x(s) = (3 s - 1)^2.
-    nodes3(1, :) = [1.0_dp, 1.25_dp]
-    nodes3(2, :) = [-0.5_dp, 0.5_dp]
-    nodes3(3, :) = [-0.5_dp, 2.0_dp]
-    nodes3(4, :) = [1.0_dp, -1.0_dp]
-    nodes3(5, :) = [4.0_dp, 5.0_dp]
+    nodes3(:, 1) = [1.0_dp, 1.25_dp]
+    nodes3(:, 2) = [-0.5_dp, 0.5_dp]
+    nodes3(:, 3) = [-0.5_dp, 2.0_dp]
+    nodes3(:, 4) = [1.0_dp, -1.0_dp]
+    nodes3(:, 5) = [4.0_dp, 5.0_dp]
     call linearization_error( &
          5, 2, nodes3, error1)
     ! D^2 v = [1.5, 2.25], [1.5, -4.5], [1.5, 9]
@@ -188,10 +188,10 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 9: Cubic curve.
-    nodes5(1, :) = 0
-    nodes5(2, :) = 1
-    nodes5(3, :) = [5.0_dp, 6.0_dp]
-    nodes5(4, :) = [6.0_dp, 7.0_dp]
+    nodes5(:, 1) = 0
+    nodes5(:, 2) = 1
+    nodes5(:, 3) = [5.0_dp, 6.0_dp]
+    nodes5(:, 4) = [6.0_dp, 7.0_dp]
     call linearization_error( &
          4, 2, nodes5, error1)
     ! NOTE: This is hand picked so that
@@ -203,11 +203,11 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 10: Quartic curve.
-    nodes3(1, :) = 0
-    nodes3(2, :) = 1
-    nodes3(3, :) = [5.0_dp, 6.0_dp]
-    nodes3(4, :) = [6.0_dp, 7.0_dp]
-    nodes3(5, :) = [4.0_dp, 7.0_dp]
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = 1
+    nodes3(:, 3) = [5.0_dp, 6.0_dp]
+    nodes3(:, 4) = [6.0_dp, 7.0_dp]
+    nodes3(:, 5) = [4.0_dp, 7.0_dp]
     call linearization_error( &
          5, 2, nodes3, error1)
     ! NOTE: This is hand picked so that
@@ -219,12 +219,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 11: Quintic curve (i.e. degree 5).
-    nodes6(1, :) = [0.0_dp, 0.0_dp]
-    nodes6(2, :) = [1.0_dp, 1.0_dp]
-    nodes6(3, :) = [7.0_dp, 3.0_dp]
-    nodes6(4, :) = [11.0_dp, 8.0_dp]
-    nodes6(5, :) = [15.0_dp, 1.0_dp]
-    nodes6(6, :) = [16.0_dp, -3.0_dp]
+    nodes6(:, 1) = 0
+    nodes6(:, 2) = 1
+    nodes6(:, 3) = [7.0_dp, 3.0_dp]
+    nodes6(:, 4) = [11.0_dp, 8.0_dp]
+    nodes6(:, 5) = [15.0_dp, 1.0_dp]
+    nodes6(:, 6) = [16.0_dp, -3.0_dp]
     call linearization_error( &
          6, 2, nodes6, error1)
     ! NOTE: This is hand picked so that
@@ -241,8 +241,8 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: start0(1, 2), end0(1, 2)
-    real(c_double) :: start1(1, 2), end1(1, 2)
+    real(c_double) :: start0(2), end0(2)
+    real(c_double) :: start1(2), end1(2)
     real(c_double) :: s, t
     logical(c_bool) :: si_success
     integer :: case_id
@@ -252,10 +252,10 @@ contains
     name = "segment_intersection"
 
     ! CASE 1: Segments that intersect.
-    start0(1, :) = [1.75_dp, 2.125_dp]
-    end0(1, :) = [-1.25_dp, 1.625_dp]
-    start1(1, :) = [-0.25_dp, 2.625_dp]
-    end1(1, :) = [1.75_dp, 1.625_dp]
+    start0 = [1.75_dp, 2.125_dp]
+    end0 = [-1.25_dp, 1.625_dp]
+    start1 = [-0.25_dp, 2.625_dp]
+    end1 = [1.75_dp, 1.625_dp]
     ! D0 x D1 == 4.0, so there will be no round-off in answer.
     call segment_intersection( &
          start0, end0, start1, end1, s, t, si_success)
@@ -263,10 +263,10 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Parallel segments.
-    start0(1, :) = [0.0_dp, 0.5_dp]
-    end0(1, :) = [0.0_dp, -0.5_dp]
-    start1(1, :) = [0.0_dp, 1.0_dp]
-    end1(1, :) = [0.0_dp, -1.0_dp]
+    start0 = [0.0_dp, 0.5_dp]
+    end0 = [0.0_dp, -0.5_dp]
+    start1 = [0.0_dp, 1.0_dp]
+    end1 = [0.0_dp, -1.0_dp]
     call segment_intersection( &
          start0, end0, start1, end1, s, t, si_success)
     case_success = (.NOT. si_success)
@@ -279,7 +279,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     real(c_double) :: nodes1(2, 2), nodes2(2, 2)
-    real(c_double) :: nodes3(3, 2), nodes4(3, 2), nodes5(5, 2)
+    real(c_double) :: nodes3(2, 3), nodes4(2, 3), nodes5(2, 5)
     real(c_double) :: known_s, known_t
     real(c_double) :: wrong_s, wrong_t
     real(c_double) :: new_s, new_t
@@ -293,11 +293,11 @@ contains
     ! CASE 1: Intersection of two lines.
     ! Newton's method is exact on linear problems so will
     ! always converge after one step.
-    nodes1(1, :) = 0
-    nodes1(2, :) = 1
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = 1
     known_s = 0.75_dp
-    nodes2(1, :) = [1.0_dp, 0.0_dp]
-    nodes2(2, :) = [0.0_dp, 3.0_dp]
+    nodes2(:, 1) = [1.0_dp, 0.0_dp]
+    nodes2(:, 2) = [0.0_dp, 3.0_dp]
     known_t = 0.25_dp
     ! NOTE: By construction, the Jacobian matrix will be
     !           [1, 1], [1, -3]
@@ -313,12 +313,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Mixed degree (line and quadratic).
-    nodes3(1, :) = 0
-    nodes3(2, :) = [0.5_dp, 1.0_dp]
-    nodes3(3, :) = [1.0_dp, 0.0_dp]
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = [0.5_dp, 1.0_dp]
+    nodes3(:, 3) = [1.0_dp, 0.0_dp]
     known_s = 0.5_dp
-    nodes1(1, :) = [1.0_dp, 0.0_dp]
-    nodes1(2, :) = [0.0_dp, 1.0_dp]
+    nodes1(:, 1) = [1.0_dp, 0.0_dp]
+    nodes1(:, 2) = [0.0_dp, 1.0_dp]
     known_t = 0.5_dp
     ! NOTE: By construction, the Jacobian matrix will be
     !           [1, 1], [1, -1]
@@ -337,13 +337,13 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Early exit (i.e. already an intersection).
-    nodes3(1, :) = 0
-    nodes3(2, :) = [0.5_dp, 1.0_dp]
-    nodes3(3, :) = [1.0_dp, 0.0_dp]
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = [0.5_dp, 1.0_dp]
+    nodes3(:, 3) = [1.0_dp, 0.0_dp]
     known_s = 0.25_dp
-    nodes4(1, :) = [1.0_dp, 0.75_dp]
-    nodes4(2, :) = [0.5_dp, -0.25_dp]
-    nodes4(3, :) = [0.0_dp, 0.75_dp]
+    nodes4(:, 1) = [1.0_dp, 0.75_dp]
+    nodes4(:, 2) = [0.5_dp, -0.25_dp]
+    nodes4(:, 3) = [0.0_dp, 0.75_dp]
     known_t = 0.75_dp
     call newton_refine_intersect( &
          known_s, 3, nodes3, known_t, 3, nodes4, new_s, new_t)
@@ -353,13 +353,13 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Intersect quadratics.
-    nodes3(1, :) = 0
-    nodes3(2, :) = [0.5_dp, 1.0_dp]
-    nodes3(3, :) = [1.0_dp, 0.0_dp]
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = [0.5_dp, 1.0_dp]
+    nodes3(:, 3) = [1.0_dp, 0.0_dp]
     known_s = 0.25_dp
-    nodes4(1, :) = [1.0_dp, 0.75_dp]
-    nodes4(2, :) = [0.5_dp, -0.25_dp]
-    nodes4(3, :) = [0.0_dp, 0.75_dp]
+    nodes4(:, 1) = [1.0_dp, 0.75_dp]
+    nodes4(:, 2) = [0.5_dp, -0.25_dp]
+    nodes4(:, 3) = [0.0_dp, 0.75_dp]
     known_t = 0.75_dp
     ! NOTE: By construction, the Jacobian matrix will be
     !           [1, 3/4], [1, -5/4]
@@ -378,14 +378,14 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Convergence test.
-    nodes5(1, :) = [0.0_dp, 0.0_dp]
-    nodes5(2, :) = [0.25_dp, 1.0_dp]
-    nodes5(3, :) = [0.5_dp, -0.75_dp]
-    nodes5(4, :) = [0.75_dp, 1.0_dp]
-    nodes5(5, :) = [1.0_dp, 0.0_dp]
+    nodes5(:, 1) = 0
+    nodes5(:, 2) = [0.25_dp, 1.0_dp]
+    nodes5(:, 3) = [0.5_dp, -0.75_dp]
+    nodes5(:, 4) = [0.75_dp, 1.0_dp]
+    nodes5(:, 5) = [1.0_dp, 0.0_dp]
     known_s = 0.5_dp
-    nodes1(1, :) = [0.5_dp, 0.0_dp]
-    nodes1(2, :) = [0.5_dp, 1.0_dp]
+    nodes1(:, 1) = [0.5_dp, 0.0_dp]
+    nodes1(:, 2) = [0.5_dp, 1.0_dp]
     known_t = 0.21875_dp
     ! We start with a very wrong guess and update it three times.
     wrong_s = 0.0_dp
@@ -424,9 +424,9 @@ contains
     real(c_double) :: point1(1, 2), point2(1, 2)
 
     call evaluate_multi( &
-         size(nodes1, 1), size(nodes1, 2), nodes1, 1, [s], point1)
+         size(nodes1, 2), size(nodes1, 1), nodes1, 1, [s], point1)
     call evaluate_multi( &
-         size(nodes2, 1), size(nodes2, 2), nodes2, 1, [t], point2)
+         size(nodes2, 2), size(nodes2, 1), nodes2, 1, [t], point2)
     predicate = all(point1 == point2)
 
   end function curves_intersect
@@ -435,21 +435,21 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: unit_square(4, 2), other(4, 2), delta
+    real(c_double) :: unit_square(2, 4), other(2, 4), delta
     integer(c_int) :: enum_, i
     integer :: case_id
     character(14) :: name
 
     case_id = 1
     name = "bbox_intersect"
-    unit_square(1, :) = [0.0_dp, 0.0_dp]
-    unit_square(2, :) = [1.0_dp, 0.0_dp]
-    unit_square(3, :) = [1.0_dp, 1.0_dp]
-    unit_square(4, :) = [0.0_dp, 1.0_dp]
+    unit_square(:, 1) = 0
+    unit_square(:, 2) = [1.0_dp, 0.0_dp]
+    unit_square(:, 3) = 1
+    unit_square(:, 4) = [0.0_dp, 1.0_dp]
 
     ! CASE 1: Intersecting bbox-es.
     forall (i = 1:4)
-       other(i, :) = unit_square(i, :) + [0.5_dp, 0.5_dp]
+       other(:, i) = unit_square(:, i) + 0.5_dp
     end forall
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
@@ -458,7 +458,7 @@ contains
 
     ! CASE 2: Far apart bbox-es.
     forall (i = 1:4)
-       other(i, :) = unit_square(i, :) + [100.0_dp, 100.0_dp]
+       other(:, i) = unit_square(:, i) + 100.0_dp
     end forall
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
@@ -467,7 +467,7 @@ contains
 
     ! CASE 3: Disjoint bbox-es that have an "aligned" edge.
     forall (i = 1:4)
-       other(i, :) = unit_square(i, :) + [1.0_dp, 2.0_dp]
+       other(:, i) = unit_square(:, i) + [1.0_dp, 2.0_dp]
     end forall
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
@@ -476,7 +476,7 @@ contains
 
     ! CASE 4: Tangent bbox-es.
     forall (i = 1:4)
-       other(i, :) = unit_square(i, :) + [1.0_dp, 0.0_dp]
+       other(:, i) = unit_square(:, i) + [1.0_dp, 0.0_dp]
     end forall
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
@@ -486,7 +486,7 @@ contains
     ! CASE 5: Almost tangent bbox-es.
     delta = 1.0_dp + spacing(1.0_dp)
     forall (i = 1:4)
-       other(i, :) = unit_square(i, :) + [delta, 0.0_dp]
+       other(:, i) = unit_square(:, i) + [delta, 0.0_dp]
     end forall
     call bbox_intersect( &
          4, unit_square, 4, other, enum_)
@@ -500,8 +500,8 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     logical(c_bool) :: result_
-    real(c_double) :: start0(1, 2), end0(1, 2)
-    real(c_double) :: start1(1, 2), end1(1, 2)
+    real(c_double) :: start0(2), end0(2)
+    real(c_double) :: start1(2), end1(2)
     integer :: case_id
     character(18) :: name
 
@@ -509,10 +509,10 @@ contains
     name = "parallel_different"
 
     ! CASE 1: Same line, but segments don't overlap.
-    start0(1, :) = 0
-    end0(1, :) = [3.0_dp, 4.0_dp]
-    start1(1, :) = [6.0_dp, 8.0_dp]
-    end1(1, :) = [9.0_dp, 12.0_dp]
+    start0 = 0
+    end0 = [3.0_dp, 4.0_dp]
+    start1 = [6.0_dp, 8.0_dp]
+    end1 = [9.0_dp, 12.0_dp]
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (result_)
@@ -521,40 +521,40 @@ contains
     ! CASE 2: Same line, ``start1`` contained in segment "0".
     ! NOTE: All of segment "1" is contained in segment "0", but the
     !       computation stops after ``start1`` is found on the segment.
-    start0(1, :) = [6.0_dp, -3.0_dp]
-    end0(1, :) = [-7.0_dp, 1.0_dp]
-    start1(1, :) = [1.125_dp, -1.5_dp]
-    end1(1, :) = [-5.375_dp, 0.5_dp]
+    start0 = [6.0_dp, -3.0_dp]
+    end0 = [-7.0_dp, 1.0_dp]
+    start1 = [1.125_dp, -1.5_dp]
+    end1 = [-5.375_dp, 0.5_dp]
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (.NOT. result_)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Same line, ``end1`` contained in segment "0".
-    start0(1, :) = [1.0_dp, 2.0_dp]
-    end0(1, :) = [3.0_dp, 5.0_dp]
-    start1(1, :) = [-0.5_dp, -0.25_dp]
-    end1(1, :) = [2.0_dp, 3.5_dp]
+    start0 = [1.0_dp, 2.0_dp]
+    end0 = [3.0_dp, 5.0_dp]
+    start1 = [-0.5_dp, -0.25_dp]
+    end1 = [2.0_dp, 3.5_dp]
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (.NOT. result_)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Same line, segment "0" fully contained in segment "1".
-    start0(1, :) = [-9.0_dp, 0.0_dp]
-    end0(1, :) = [4.0_dp, 5.0_dp]
-    start1(1, :) = [23.5_dp, 12.5_dp]
-    end1(1, :) = [-25.25_dp, -6.25_dp]
+    start0 = [-9.0_dp, 0.0_dp]
+    end0 = [4.0_dp, 5.0_dp]
+    start1 = [23.5_dp, 12.5_dp]
+    end1 = [-25.25_dp, -6.25_dp]
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (.NOT. result_)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Parallel, but different lines.
-    start0(1, :) = [3.0_dp, 2.0_dp]
-    end0(1, :) = [3.0_dp, 0.75_dp]
-    start1(1, :) = 0
-    end1(1, :) = [0.0_dp, 2.0_dp]
+    start0 = [3.0_dp, 2.0_dp]
+    end0 = [3.0_dp, 0.75_dp]
+    start1 = 0
+    end1 = [0.0_dp, 2.0_dp]
     call parallel_different( &
          start0, end0, start1, end1, result_)
     case_success = (result_)
@@ -567,7 +567,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     type(CurveData) :: curve1, curve2, curve3
-    real(c_double) :: cubic(4, 2)
+    real(c_double) :: cubic(2, 4)
     real(c_double) :: error1, error2
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
@@ -585,18 +585,18 @@ contains
     curve2%end_ = 1.0_dp
 
     ! CASE 1: Basic test of not-very-linearized quadratics.
-    allocate(curve1%nodes(3, 2))
-    curve1%nodes(1, :) = 0
-    curve1%nodes(2, :) = [0.5_dp, 1.0_dp]
-    curve1%nodes(3, :) = 1
+    allocate(curve1%nodes(2, 3))
+    curve1%nodes(:, 1) = 0
+    curve1%nodes(:, 2) = [0.5_dp, 1.0_dp]
+    curve1%nodes(:, 3) = 1
     ! NOTE: This curve isn't close to linear, but that's OK.
     call linearization_error( &
          3, 2, curve1%nodes, error1)
 
-    allocate(curve2%nodes(3, 2))
-    curve2%nodes(1, :) = [0.0_dp, 1.0_dp]
-    curve2%nodes(2, :) = [0.5_dp, 1.0_dp]
-    curve2%nodes(3, :) = [1.0_dp, 0.0_dp]
+    allocate(curve2%nodes(2, 3))
+    curve2%nodes(:, 1) = [0.0_dp, 1.0_dp]
+    curve2%nodes(:, 2) = [0.5_dp, 1.0_dp]
+    curve2%nodes(:, 3) = [1.0_dp, 0.0_dp]
     ! NOTE: This curve isn't close to linear, but that's OK.
     call linearization_error( &
          3, 2, curve2%nodes, error2)
@@ -611,16 +611,16 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Bounding boxes intersect but the quadratics do not.
-    curve1%nodes(1, :) = 0
-    curve1%nodes(2, :) = [0.5_dp, 0.0_dp]
-    curve1%nodes(3, :) = 1
+    curve1%nodes(:, 1) = 0
+    curve1%nodes(:, 2) = [0.5_dp, 0.0_dp]
+    curve1%nodes(:, 3) = 1
     error1 = 0.25_dp
 
     deallocate(curve2%nodes)
-    allocate(curve2%nodes(3, 2))
-    curve2%nodes(1, :) = [1.75_dp, -0.75_dp]
-    curve2%nodes(2, :) = [1.25_dp, -0.75_dp]
-    curve2%nodes(3, :) = [0.75_dp, 0.25_dp]
+    allocate(curve2%nodes(2, 3))
+    curve2%nodes(:, 1) = [1.75_dp, -0.75_dp]
+    curve2%nodes(:, 2) = [1.25_dp, -0.75_dp]
+    curve2%nodes(:, 3) = [0.75_dp, 0.25_dp]
     error2 = 0.25_dp
 
     call from_linearized( &
@@ -643,13 +643,13 @@ contains
     ! CASE 4: Linearized parts are same line but disjoint segments.
     deallocate(curve1%nodes)
     allocate(curve1%nodes(2, 2))
-    curve1%nodes(1, :) = 0
-    curve1%nodes(2, :) = 1
+    curve1%nodes(:, 1) = 0
+    curve1%nodes(:, 2) = 1
     error1 = 0.0_dp
 
-    curve2%nodes(1, :) = 2
-    curve2%nodes(2, :) = 2.5009765625_dp
-    curve2%nodes(3, :) = 3
+    curve2%nodes(:, 1) = 2
+    curve2%nodes(:, 2) = 2.5009765625_dp
+    curve2%nodes(:, 3) = 3
     call linearization_error( &
          3, 2, curve2%nodes, error2)
 
@@ -662,13 +662,13 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Linearized parts parallel / diff. lines / bbox-es overlap.
-    curve1%nodes(1, :) = 0
-    curve1%nodes(2, :) = 1
+    curve1%nodes(:, 1) = 0
+    curve1%nodes(:, 2) = 1
     error1 = 0.0_dp
 
-    curve2%nodes(1, :) = [0.5_dp, 0.75_dp]
-    curve2%nodes(2, :) = [1.0009765625_dp, 1.2509765625_dp]
-    curve2%nodes(3, :) = [1.5_dp, 1.75_dp]
+    curve2%nodes(:, 1) = [0.5_dp, 0.75_dp]
+    curve2%nodes(:, 2) = [1.0009765625_dp, 1.2509765625_dp]
+    curve2%nodes(:, 3) = [1.5_dp, 1.75_dp]
     call linearization_error( &
          3, 2, curve2%nodes, error2)
 
@@ -680,14 +680,14 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Bounding boxes intersect but the lines do not.
-    curve1%nodes(1, :) = 0
-    curve1%nodes(2, :) = 1
+    curve1%nodes(:, 1) = 0
+    curve1%nodes(:, 2) = 1
     error1 = 0.0_dp
 
     deallocate(curve2%nodes)
     allocate(curve2%nodes(2, 2))
-    curve2%nodes(1, :) = [1.75_dp, -0.75_dp]
-    curve2%nodes(2, :) = [0.75_dp, 0.25_dp]
+    curve2%nodes(:, 1) = [1.75_dp, -0.75_dp]
+    curve2%nodes(:, 2) = [0.75_dp, 0.25_dp]
     error2 = 0.0_dp
 
     call from_linearized( &
@@ -708,12 +708,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Parallel lines that do not intersect.
-    curve1%nodes(1, :) = 0
-    curve1%nodes(2, :) = 1
+    curve1%nodes(:, 1) = 0
+    curve1%nodes(:, 2) = 1
     error1 = 0.0_dp
 
-    curve2%nodes(1, :) = [0.0_dp, 1.0_dp]
-    curve2%nodes(2, :) = [1.0_dp, 2.0_dp]
+    curve2%nodes(:, 1) = [0.0_dp, 1.0_dp]
+    curve2%nodes(:, 2) = [1.0_dp, 2.0_dp]
     error2 = 0.0_dp
 
     call from_linearized( &
@@ -725,12 +725,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 9: Parallel lines that **do** intersect.
-    curve1%nodes(1, :) = 0
-    curve1%nodes(2, :) = 1
+    curve1%nodes(:, 1) = 0
+    curve1%nodes(:, 2) = 1
     error1 = 0.0_dp
 
-    curve2%nodes(1, :) = [0.5_dp, 0.5_dp]
-    curve2%nodes(2, :) = [3.0_dp, 3.0_dp]
+    curve2%nodes(:, 1) = 0.5_dp
+    curve2%nodes(:, 2) = 3
     error2 = 0.0_dp
 
     call from_linearized( &
@@ -746,21 +746,21 @@ contains
     !          narrow [-2^{-45}, 1 + 2^{-45}] (where ``WIGGLE == 2^{-45}`` in
     !          ``helpers.f90``).
     deallocate(curve1%nodes)
-    allocate(curve1%nodes(4, 2))
-    curve1%nodes(1, :) = [-0.7993236103108717_dp, -0.21683567278362156_dp]
-    curve1%nodes(2, :) = [-0.8072986524226636_dp, -0.21898490744674426_dp]
-    curve1%nodes(3, :) = [-0.8152736945344552_dp, -0.2211341421098668_dp]
-    curve1%nodes(4, :) = [-0.8232487366462472_dp, -0.2232833767729893_dp]
+    allocate(curve1%nodes(2, 4))
+    curve1%nodes(:, 1) = [-0.7993236103108717_dp, -0.21683567278362156_dp]
+    curve1%nodes(:, 2) = [-0.8072986524226636_dp, -0.21898490744674426_dp]
+    curve1%nodes(:, 3) = [-0.8152736945344552_dp, -0.2211341421098668_dp]
+    curve1%nodes(:, 4) = [-0.8232487366462472_dp, -0.2232833767729893_dp]
     call linearization_error( &
          4, 2, curve1%nodes, error1)
 
     curve3%start = 0.99609375_dp
     curve3%end_ = 1.0_dp
-    allocate(curve3%nodes(4, 2))
-    cubic(1, :) = [-0.7838204403623438_dp, -0.25519640597397464_dp]
-    cubic(2, :) = [-0.7894577677825452_dp, -0.24259531488131633_dp]
-    cubic(3, :) = [-0.7946421067207265_dp, -0.22976394420044136_dp]
-    cubic(4, :) = [-0.799367666650849_dp, -0.21671303774854855_dp]
+    allocate(curve3%nodes(2, 4))
+    cubic(:, 1) = [-0.7838204403623438_dp, -0.25519640597397464_dp]
+    cubic(:, 2) = [-0.7894577677825452_dp, -0.24259531488131633_dp]
+    cubic(:, 3) = [-0.7946421067207265_dp, -0.22976394420044136_dp]
+    cubic(:, 4) = [-0.799367666650849_dp, -0.21671303774854855_dp]
     call specialize_curve( &
          4, 2, cubic, curve3%start, curve3%end_, curve3%nodes)
     call linearization_error( &
@@ -781,62 +781,62 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: unit_square(4, 2)
-    real(c_double) :: line_start(1, 2), line_end(1, 2)
+    real(c_double) :: unit_square(2, 4)
+    real(c_double) :: line_start(2), line_end(2)
     integer(c_int) :: enum_
     integer :: case_id
     character(19) :: name
 
     case_id = 1
     name = "bbox_line_intersect"
-    unit_square(1, :) = [0.0_dp, 0.0_dp]
-    unit_square(2, :) = [1.0_dp, 0.0_dp]
-    unit_square(3, :) = [1.0_dp, 1.0_dp]
-    unit_square(4, :) = [0.0_dp, 1.0_dp]
+    unit_square(:, 1) = 0
+    unit_square(:, 2) = [1.0_dp, 0.0_dp]
+    unit_square(:, 3) = 1
+    unit_square(:, 4) = [0.0_dp, 1.0_dp]
 
     ! CASE 1: Line starts inside bounding box.
-    line_start(1, :) = 0.5_dp
-    line_end(1, :) = [0.5_dp, 1.5_dp]
+    line_start = 0.5_dp
+    line_end = [0.5_dp, 1.5_dp]
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Line ends (but does not start) in bounding box.
-    line_start(1, :) = [-1.0_dp, 0.5_dp]
-    line_end(1, :) = 0.5_dp
+    line_start = [-1.0_dp, 0.5_dp]
+    line_end = 0.5_dp
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Line segment "pierces" bbox from the bottom.
-    line_start(1, :) = [0.5_dp, -0.5_dp]
-    line_end(1, :) = [0.5_dp, 1.5_dp]
+    line_start = [0.5_dp, -0.5_dp]
+    line_end = [0.5_dp, 1.5_dp]
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Line segment "pierces" bbox from the right.
-    line_start(1, :) = [-0.5_dp, 0.5_dp]
-    line_end(1, :) = [1.5_dp, 0.5_dp]
+    line_start = [-0.5_dp, 0.5_dp]
+    line_end = [1.5_dp, 0.5_dp]
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Line segment "pierces" bbox from the top.
-    line_start(1, :) = [-0.25_dp, 0.5_dp]
-    line_end(1, :) = [0.5_dp, 1.25_dp]
+    line_start = [-0.25_dp, 0.5_dp]
+    line_end = [0.5_dp, 1.25_dp]
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_INTERSECTION)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Line segment is disjoint from bbox.
-    line_start(1, :) = 2
-    line_end(1, :) = [2.0_dp, 5.0_dp]
+    line_start = 2
+    line_end = [2.0_dp, 5.0_dp]
     call bbox_line_intersect( &
          4, unit_square, line_start, line_end, enum_)
     case_success = (enum_ == BoxIntersectionType_DISJOINT)
@@ -933,8 +933,8 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer(c_int) :: status
-    real(c_double) :: nodes1(2, 2), nodes2(3, 2)
-    real(c_double) :: root_nodes1(3, 2), root_nodes2(3, 2)
+    real(c_double) :: nodes1(2, 2), nodes2(2, 3)
+    real(c_double) :: root_nodes1(2, 3), root_nodes2(2, 3)
     type(CurveData) :: first, second
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
@@ -949,14 +949,14 @@ contains
     ! CASE 1: Lines that intersect. Since lines, there are 0 subdivisions.
     first%start = 0.0_dp
     first%end_ = 1.0_dp
-    nodes1(1, :) = 0
-    nodes1(2, :) = 1
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = 1
     first%nodes = nodes1
 
     second%start = 0.0_dp
     second%end_ = 1.0_dp
-    nodes1(1, :) = [0.0_dp, 1.0_dp]
-    nodes1(2, :) = [1.0_dp, 0.0_dp]
+    nodes1(:, 1) = [0.0_dp, 1.0_dp]
+    nodes1(:, 2) = [1.0_dp, 0.0_dp]
     second%nodes = nodes1
 
     call add_from_linearized( &
@@ -976,14 +976,14 @@ contains
     ! CASE 2: Lines that **do not** intersect.
     first%start = 0.0_dp
     first%end_ = 1.0_dp
-    nodes1(1, :) = 0
-    nodes1(2, :) = 1
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = 1
     first%nodes = nodes1
 
     second%start = 0.0_dp
     second%end_ = 1.0_dp
-    nodes1(1, :) = [3.0_dp, 0.0_dp]
-    nodes1(2, :) = [2.0_dp, 1.0_dp]
+    nodes1(:, 1) = [3.0_dp, 0.0_dp]
+    nodes1(:, 2) = [2.0_dp, 1.0_dp]
     second%nodes = nodes1
 
     call add_from_linearized( &
@@ -996,30 +996,30 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Quadratic curves that intersect after many (12) subdivisions.
-    root_nodes1(1, :) = [0.25_dp, 0.4375_dp]
-    root_nodes1(2, :) = [0.625_dp, 1.0_dp]
-    root_nodes1(3, :) = [1.0_dp, 1.0_dp]
+    root_nodes1(:, 1) = [0.25_dp, 0.4375_dp]
+    root_nodes1(:, 2) = [0.625_dp, 1.0_dp]
+    root_nodes1(:, 3) = 1
     first%start = 1365.0_dp / 4096.0_dp
     first%end_ = 1366.0_dp / 4096.0_dp
     ! NOTE: This is the result of
     !       call specialize_curve( &
     !            3, 2, root_nodes1, first%start, first%end_, ...)
-    nodes2(1, :) = [134201344.0_dp, 201310207.0_dp]
-    nodes2(2, :) = [134225920.0_dp, 201334786.0_dp]
-    nodes2(3, :) = [134250496.0_dp, 201359356.0_dp]
+    nodes2(:, 1) = [134201344.0_dp, 201310207.0_dp]
+    nodes2(:, 2) = [134225920.0_dp, 201334786.0_dp]
+    nodes2(:, 3) = [134250496.0_dp, 201359356.0_dp]
     first%nodes = 0.5_dp**28 * nodes2
 
-    root_nodes2(1, :) = [0.0_dp, 1.0_dp]
-    root_nodes2(2, :) = [0.375_dp, 1.0_dp]
-    root_nodes2(3, :) = [0.75_dp, 0.4375_dp]
+    root_nodes2(:, 1) = [0.0_dp, 1.0_dp]
+    root_nodes2(:, 2) = [0.375_dp, 1.0_dp]
+    root_nodes2(:, 3) = [0.75_dp, 0.4375_dp]
     second%start = 2730.0_dp / 4096.0_dp
     second%end_ = 2731.0_dp / 4096.0_dp
     ! NOTE: This is the result of
     !       call specialize_curve( &
     !            3, 2, root_nodes2, second%start, second%end_, ...)
-    nodes2(1, :) = [134184960.0_dp, 201359356.0_dp]
-    nodes2(2, :) = [134209536.0_dp, 201334786.0_dp]
-    nodes2(3, :) = [134234112.0_dp, 201310207.0_dp]
+    nodes2(:, 1) = [134184960.0_dp, 201359356.0_dp]
+    nodes2(:, 2) = [134209536.0_dp, 201334786.0_dp]
+    nodes2(:, 3) = [134234112.0_dp, 201310207.0_dp]
     second%nodes = 0.5_dp**28 * nodes2
 
     call linearization_error( &
@@ -1043,14 +1043,14 @@ contains
     ! CASE 4: Parallel lines that **do** intersect.
     first%start = 0.0_dp
     first%end_ = 1.0_dp
-    nodes1(1, :) = 0
-    nodes1(2, :) = 1
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = 1
     first%nodes = nodes1
 
     second%start = 0.0_dp
     second%end_ = 1.0_dp
-    nodes1(1, :) = [0.5_dp, 0.5_dp]
-    nodes1(2, :) = [3.0_dp, 3.0_dp]
+    nodes1(:, 1) = 0.5_dp
+    nodes1(:, 2) = 3
     second%nodes = nodes1
 
     call add_from_linearized( &
@@ -1069,9 +1069,9 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     type(CurveData) :: first, second
-    real(c_double) :: node_first(1, 2), node_second(1, 2)
+    real(c_double) :: node_first(2), node_second(2)
     real(c_double) :: s, t
-    real(c_double) :: nodes1(2, 2), nodes2(3, 2)
+    real(c_double) :: nodes1(2, 2), nodes2(2, 3)
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
@@ -1101,17 +1101,17 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: The endpoints are actually the same.
-    nodes1(1, :) = 0
-    nodes1(2, :) = 1
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = 1
     first%nodes = nodes1
     s = 1.0_dp
-    node_first(1, :) = first%nodes(2, :)
+    node_first = first%nodes(:, 2)
 
-    nodes1(1, :) = 1
-    nodes1(2, :) = [2.0_dp, 1.0_dp]
+    nodes1(:, 1) = 1
+    nodes1(:, 2) = [2.0_dp, 1.0_dp]
     second%nodes = nodes1
     t = 0.0_dp
-    node_second(1, :) = second%nodes(1, :)
+    node_second = second%nodes(:, 1)
 
     call endpoint_check( &
          first, node_first, s, &
@@ -1129,19 +1129,19 @@ contains
     ! CASE 3: An intersection after one subdivision.
     first%start = 0.0_dp
     first%end_ = 0.5_dp
-    nodes2(1, :) = 0
-    nodes2(2, :) = [0.25_dp, 0.5_dp]
-    nodes2(3, :) = 0.5_dp
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [0.25_dp, 0.5_dp]
+    nodes2(:, 3) = 0.5_dp
     first%nodes = nodes2
-    node_first(1, :) = first%nodes(3, :)
+    node_first = first%nodes(:, 3)
 
     second%start = 0.5_dp
     second%end_ = 1.0_dp
-    nodes2(1, :) = 0.5_dp
-    nodes2(2, :) = [0.5_dp, 0.0_dp]
-    nodes2(3, :) = [1.0_dp, -0.5_dp]
+    nodes2(:, 1) = 0.5_dp
+    nodes2(:, 2) = [0.5_dp, 0.0_dp]
+    nodes2(:, 3) = [1.0_dp, -0.5_dp]
     second%nodes = nodes2
-    node_second(1, :) = second%nodes(1, :)
+    node_second = second%nodes(:, 1)
 
     call endpoint_check( &
          first, node_first, s, &
@@ -1162,7 +1162,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     type(CurveData) :: first, second
-    real(c_double) :: nodes1(3, 2), nodes2(2, 2)
+    real(c_double) :: nodes1(2, 3), nodes2(2, 2)
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
     integer :: case_id
@@ -1173,14 +1173,14 @@ contains
     num_intersections = 0
 
     ! CASE 1: Standard case of two quadratics that touch at a single endpoint.
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 2.0_dp]
-    nodes1(3, :) = [2.0_dp, 0.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 2.0_dp]
+    nodes1(:, 3) = [2.0_dp, 0.0_dp]
     first%nodes = nodes1
 
-    nodes1(1, :) = [2.0_dp, 0.0_dp]
-    nodes1(2, :) = [3.0_dp, 2.0_dp]
-    nodes1(3, :) = [4.0_dp, 0.0_dp]
+    nodes1(:, 1) = [2.0_dp, 0.0_dp]
+    nodes1(:, 2) = [3.0_dp, 2.0_dp]
+    nodes1(:, 3) = [4.0_dp, 0.0_dp]
     second%nodes = nodes1
 
     call tangent_bbox_intersection( &
@@ -1195,14 +1195,14 @@ contains
     num_intersections = 0
 
     ! CASE 2: Two quadratics that touch at both endpoints.
-    nodes1(1, :) = 0
-    nodes1(2, :) = [-1.0_dp, 0.5_dp]
-    nodes1(3, :) = [0.0_dp, 1.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [-1.0_dp, 0.5_dp]
+    nodes1(:, 3) = [0.0_dp, 1.0_dp]
     first%nodes = nodes1
 
-    nodes1(1, :) = 0
-    nodes1(2, :) = [1.0_dp, 0.5_dp]
-    nodes1(3, :) = [0.0_dp, 1.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 0.5_dp]
+    nodes1(:, 3) = [0.0_dp, 1.0_dp]
     second%nodes = nodes1
 
     call tangent_bbox_intersection( &
@@ -1220,12 +1220,12 @@ contains
 
     ! CASE 3: Two lines that don't touch at endpoints, but have
     !         tangent bounding boxes.
-    nodes2(1, :) = 0
-    nodes2(2, :) = [2.0_dp, 1.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [2.0_dp, 1.0_dp]
     first%nodes = nodes2
 
-    nodes2(1, :) = [0.5_dp, 1.0_dp]
-    nodes2(2, :) = [2.5_dp, 2.0_dp]
+    nodes2(:, 1) = [0.5_dp, 1.0_dp]
+    nodes2(:, 2) = [2.5_dp, 2.0_dp]
     second%nodes = nodes2
 
     call tangent_bbox_intersection( &
@@ -1250,13 +1250,13 @@ contains
     name = "add_candidates"
 
     ! Pre-populate the curves.
-    allocate(curve1%nodes(3, 2))
-    curve1%nodes(1, :) = [0.0_dp, 1.0_dp]
-    curve1%nodes(2, :) = [1.0_dp, 2.0_dp]
-    curve1%nodes(3, :) = [2.0_dp, 1.0_dp]
+    allocate(curve1%nodes(2, 3))
+    curve1%nodes(:, 1) = [0.0_dp, 1.0_dp]
+    curve1%nodes(:, 2) = [1.0_dp, 2.0_dp]
+    curve1%nodes(:, 3) = [2.0_dp, 1.0_dp]
     allocate(curve2%nodes(2, 2))
-    curve2%nodes(1, :) = [0.0_dp, 1.25_dp]
-    curve2%nodes(2, :) = [2.0_dp, 1.25_dp]
+    curve2%nodes(:, 1) = [0.0_dp, 1.25_dp]
+    curve2%nodes(:, 2) = [2.0_dp, 1.25_dp]
     call subdivide_curve(curve1, curve3, right1)
     call subdivide_curve(curve3, left3, right3)
 
@@ -1352,7 +1352,7 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: fixed_quadratic1(3, 2), fixed_quadratic2(3, 2)
+    real(c_double) :: fixed_quadratic1(2, 3), fixed_quadratic2(2, 3)
     real(c_double) :: fixed_line1(2, 2), fixed_line2(2, 2)
     integer(c_int) :: num_candidates
     type(CurveData), allocatable :: candidates(:, :)
@@ -1371,20 +1371,20 @@ contains
 
     ! NOTE: ``fixed_quadratic1`` is a specialization of
     !       [0, 0], [1/2, 1], [1, 1] onto the interval [1/4, 1].
-    fixed_quadratic1(1, :) = [0.25_dp, 0.4375_dp]
-    fixed_quadratic1(2, :) = [0.625_dp, 1.0_dp]
-    fixed_quadratic1(3, :) = [1.0_dp, 1.0_dp]
+    fixed_quadratic1(:, 1) = [0.25_dp, 0.4375_dp]
+    fixed_quadratic1(:, 2) = [0.625_dp, 1.0_dp]
+    fixed_quadratic1(:, 3) = 1
     ! NOTE: ``fixed_quadratic2`` is a specialization of
     !       [0, 1], [1/2, 1], [1, 0] onto the interval [0, 3/4].
-    fixed_quadratic2(1, :) = [0.0_dp, 1.0_dp]
-    fixed_quadratic2(2, :) = [0.375_dp, 1.0_dp]
-    fixed_quadratic2(3, :) = [0.75_dp, 0.4375_dp]
+    fixed_quadratic2(:, 1) = [0.0_dp, 1.0_dp]
+    fixed_quadratic2(:, 2) = [0.375_dp, 1.0_dp]
+    fixed_quadratic2(:, 3) = [0.75_dp, 0.4375_dp]
 
-    fixed_line1(1, :) = [0.0_dp, 0.0_dp]
-    fixed_line1(2, :) = [1.0_dp, 1.0_dp]
+    fixed_line1(:, 1) = 0
+    fixed_line1(:, 2) = 1
 
-    fixed_line2(1, :) = [0.0_dp, 1.0_dp]
-    fixed_line2(2, :) = [1.0_dp, 0.0_dp]
+    fixed_line2(:, 1) = [0.0_dp, 1.0_dp]
+    fixed_line2(:, 2) = [1.0_dp, 0.0_dp]
 
     ! CASE 1: Simple test, non-linearized quadratics.
     num_candidates = 1
@@ -1500,8 +1500,8 @@ contains
     candidates(1, 1)%nodes = fixed_line1
     ! Populate the "second" curve with a line.
     allocate(candidates(2, 1)%nodes(2, 2))
-    candidates(2, 1)%nodes(1, :) = [0.5_dp, 0.5_dp]
-    candidates(2, 1)%nodes(2, :) = [3.0_dp, 3.0_dp]
+    candidates(2, 1)%nodes(:, 1) = 0.5_dp
+    candidates(2, 1)%nodes(:, 2) = 3
 
     call intersect_one_round( &
          fixed_line1, candidates(2, 1)%nodes, num_candidates, candidates, &
@@ -1521,8 +1521,8 @@ contains
     candidates(1, 1)%nodes = fixed_quadratic1
     ! Populate the "second" curve with a line.
     allocate(candidates(2, 1)%nodes(2, 2))
-    candidates(2, 1)%nodes(1, :) = [1.0_dp, 1.25_dp]
-    candidates(2, 1)%nodes(2, :) = [0.0_dp, 2.0_dp]
+    candidates(2, 1)%nodes(:, 1) = [1.0_dp, 1.25_dp]
+    candidates(2, 1)%nodes(:, 2) = [0.0_dp, 2.0_dp]
 
     call intersect_one_round( &
          fixed_quadratic1, candidates(2, 1)%nodes, &
@@ -1543,16 +1543,16 @@ contains
     num_candidates = 1
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve.
-    allocate(candidates(1, 1)%nodes(3, 2))
-    candidates(1, 1)%nodes(1, :) = [0.0_dp, 0.0_dp]
-    candidates(1, 1)%nodes(2, :) = [0.5_dp, 1.0_dp]
-    candidates(1, 1)%nodes(3, :) = [1.0_dp, 0.0_dp]
+    allocate(candidates(1, 1)%nodes(2, 3))
+    candidates(1, 1)%nodes(:, 1) = 0
+    candidates(1, 1)%nodes(:, 2) = [0.5_dp, 1.0_dp]
+    candidates(1, 1)%nodes(:, 3) = [1.0_dp, 0.0_dp]
     ! [0 <= x <= 1.0], [0.0 <= y <= 1.0]
     ! Populate the "second" curve.
-    allocate(candidates(2, 1)%nodes(3, 2))
-    candidates(2, 1)%nodes(1, :) = [1.0_dp, 0.0_dp]
-    candidates(2, 1)%nodes(2, :) = [1.5_dp, 0.5_dp]
-    candidates(2, 1)%nodes(3, :) = [2.0_dp, -0.25_dp]
+    allocate(candidates(2, 1)%nodes(2, 3))
+    candidates(2, 1)%nodes(:, 1) = [1.0_dp, 0.0_dp]
+    candidates(2, 1)%nodes(:, 2) = [1.5_dp, 0.5_dp]
+    candidates(2, 1)%nodes(:, 3) = [2.0_dp, -0.25_dp]
     ! [1.0 <= x <= 2.0], [-0.25 <= y <= 0.5]
 
     call intersect_one_round( &
@@ -1577,7 +1577,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    real(c_double) :: nodes1(3, 2), nodes2(3, 2), nodes3(2, 2), nodes4(4, 2)
+    real(c_double) :: nodes1(2, 3), nodes2(2, 3), nodes3(2, 2), nodes4(2, 4)
     integer(c_int) :: num_nodes
     real(c_double), allocatable :: elevated1(:, :)
     real(c_double), allocatable :: elevated2(:, :)
@@ -1587,41 +1587,41 @@ contains
     name = "make_same_degree"
 
     ! CASE 1: Same degree.
-    nodes1(1, :) = [0.0_dp, 1.0_dp]
-    nodes1(2, :) = [1.0_dp, 2.0_dp]
-    nodes1(3, :) = [2.0_dp, 1.0_dp]
-    nodes2(1, :) = [1.0_dp, 2.0_dp]
-    nodes2(2, :) = [2.0_dp, 1.0_dp]
-    nodes2(3, :) = [4.0_dp, 2.0_dp]
+    nodes1(:, 1) = [0.0_dp, 1.0_dp]
+    nodes1(:, 2) = [1.0_dp, 2.0_dp]
+    nodes1(:, 3) = [2.0_dp, 1.0_dp]
+    nodes2(:, 1) = [1.0_dp, 2.0_dp]
+    nodes2(:, 2) = [2.0_dp, 1.0_dp]
+    nodes2(:, 3) = [4.0_dp, 2.0_dp]
     call make_same_degree( &
          3, nodes1, 3, nodes2, num_nodes, elevated1, elevated2)
     case_success = ( &
          num_nodes == 3 .AND. &
          allocated(elevated1) .AND. &
-         all(shape(elevated1) == [3, 2]) .AND. &
+         all(shape(elevated1) == [2, 3]) .AND. &
          all(elevated1 == nodes1) .AND. &
          allocated(elevated2) .AND. &
-         all(shape(elevated2) == [3, 2]) .AND. &
+         all(shape(elevated2) == [2, 3]) .AND. &
          all(elevated2 == nodes2))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Elevate once (first argument).
-    nodes3(1, :) = 0
-    nodes3(2, :) = 1
-    nodes1(1, :) = [1.0_dp, 2.0_dp]
-    nodes1(2, :) = [2.0_dp, 2.0_dp]
-    nodes1(3, :) = [0.0_dp, 0.0_dp]
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = 1
+    nodes1(:, 1) = [1.0_dp, 2.0_dp]
+    nodes1(:, 2) = 2
+    nodes1(:, 3) = 0
     call make_same_degree( &
          2, nodes3, 3, nodes1, num_nodes, elevated1, elevated2)
     case_success = ( &
          num_nodes == 3 .AND. &
          allocated(elevated1) .AND. &
-         all(shape(elevated1) == [3, 2]) .AND. &
-         all(elevated1(1, :) == 0) .AND. &
-         all(elevated1(2, :) == 0.5_dp) .AND. &
-         all(elevated1(3, :) == 1) .AND. &
+         all(shape(elevated1) == [2, 3]) .AND. &
+         all(elevated1(:, 1) == 0) .AND. &
+         all(elevated1(:, 2) == 0.5_dp) .AND. &
+         all(elevated1(:, 3) == 1) .AND. &
          allocated(elevated2) .AND. &
-         all(shape(elevated2) == [3, 2]) .AND. &
+         all(shape(elevated2) == [2, 3]) .AND. &
          all(elevated2 == nodes1))
     call print_status(name, case_id, case_success, success)
 
@@ -1631,34 +1631,34 @@ contains
     case_success = ( &
          num_nodes == 3 .AND. &
          allocated(elevated1) .AND. &
-         all(shape(elevated1) == [3, 2]) .AND. &
+         all(shape(elevated1) == [2, 3]) .AND. &
          all(elevated1 == nodes1) .AND. &
          allocated(elevated2) .AND. &
-         all(shape(elevated2) == [3, 2]) .AND. &
-         all(elevated2(1, :) == 0) .AND. &
-         all(elevated2(2, :) == 0.5_dp) .AND. &
-         all(elevated2(3, :) == 1))
+         all(shape(elevated2) == [2, 3]) .AND. &
+         all(elevated2(:, 1) == 0) .AND. &
+         all(elevated2(:, 2) == 0.5_dp) .AND. &
+         all(elevated2(:, 3) == 1))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Elevate twice (first argument).
-    nodes3(1, :) = 0
-    nodes3(2, :) = 3
-    nodes4(1, :) = [0.0_dp, 1.0_dp]
-    nodes4(2, :) = [1.0_dp, 2.0_dp]
-    nodes4(3, :) = [3.0_dp, 2.0_dp]
-    nodes4(4, :) = [4.0_dp, 2.0_dp]
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = 3
+    nodes4(:, 1) = [0.0_dp, 1.0_dp]
+    nodes4(:, 2) = [1.0_dp, 2.0_dp]
+    nodes4(:, 3) = [3.0_dp, 2.0_dp]
+    nodes4(:, 4) = [4.0_dp, 2.0_dp]
     call make_same_degree( &
          2, nodes3, 4, nodes4, num_nodes, elevated1, elevated2)
     case_success = ( &
          num_nodes == 4 .AND. &
          allocated(elevated1) .AND. &
-         all(shape(elevated1) == [4, 2]) .AND. &
-         all(elevated1(1, :) == 0) .AND. &
-         all(elevated1(2, :) == 1) .AND. &
-         all(elevated1(3, :) == 2) .AND. &
-         all(elevated1(4, :) == 3) .AND. &
+         all(shape(elevated1) == [2, 4]) .AND. &
+         all(elevated1(:, 1) == 0) .AND. &
+         all(elevated1(:, 2) == 1) .AND. &
+         all(elevated1(:, 3) == 2) .AND. &
+         all(elevated1(:, 4) == 3) .AND. &
          allocated(elevated2) .AND. &
-         all(shape(elevated2) == [4, 2]) .AND. &
+         all(shape(elevated2) == [2, 4]) .AND. &
          all(elevated2 == nodes4))
     call print_status(name, case_id, case_success, success)
 
@@ -1668,14 +1668,14 @@ contains
     case_success = ( &
          num_nodes == 4 .AND. &
          allocated(elevated1) .AND. &
-         all(shape(elevated1) == [4, 2]) .AND. &
+         all(shape(elevated1) == [2, 4]) .AND. &
          all(elevated1 == nodes4) .AND. &
          allocated(elevated2) .AND. &
-         all(shape(elevated2) == [4, 2]) .AND. &
-         all(elevated2(1, :) == 0) .AND. &
-         all(elevated2(2, :) == 1) .AND. &
-         all(elevated2(3, :) == 2) .AND. &
-         all(elevated2(4, :) == 3))
+         all(shape(elevated2) == [2, 4]) .AND. &
+         all(elevated2(:, 1) == 0) .AND. &
+         all(elevated2(:, 2) == 1) .AND. &
+         all(elevated2(:, 3) == 2) .AND. &
+         all(elevated2(:, 4) == 3))
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_make_same_degree
@@ -1685,8 +1685,8 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     real(c_double) :: linear1(2, 2)
-    real(c_double) :: quadratic1(3, 2), quadratic2(3, 2)
-    real(c_double) :: cubic1(4, 2), cubic2(4, 2)
+    real(c_double) :: quadratic1(2, 3), quadratic2(2, 3)
+    real(c_double) :: cubic1(2, 4), cubic2(2, 4)
     real(c_double) :: params(2, 8), start, end_
     real(c_double) :: expected(2, 2)
     integer(c_int) :: num_intersections
@@ -1703,11 +1703,11 @@ contains
 
     ! CASE 1: Actual curve degrees differ (i.e. one is a line, the other is
     !         a quadratic).
-    linear1(1, :) = 0
-    linear1(2, :) = 1
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = 1
-    quadratic1(3, :) = [2.0_dp, 0.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = 1
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = 1
+    quadratic1(:, 3) = [2.0_dp, 0.0_dp]
 
     call add_coincident_parameters( &
          2, linear1, 3, quadratic1, &
@@ -1719,33 +1719,33 @@ contains
 
     ! CASE 2: Actual curve degrees are the same, but one is elevated (and is
     !         the same curve segment).
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = 3
-    quadratic1(3, :) = [6.0_dp, 0.0_dp]
-    cubic1(1, :) = 0
-    cubic1(2, :) = 2
-    cubic1(3, :) = [4.0_dp, 2.0_dp]
-    cubic1(4, :) = [6.0_dp, 0.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = 3
+    quadratic1(:, 3) = [6.0_dp, 0.0_dp]
+    cubic1(:, 1) = 0
+    cubic1(:, 2) = 2
+    cubic1(:, 3) = [4.0_dp, 2.0_dp]
+    cubic1(:, 4) = [6.0_dp, 0.0_dp]
 
     call add_coincident_parameters( &
          3, quadratic1, 4, cubic1, &
          num_intersections, intersections, coincident)
     case_success = ( &
          all(shape(intersections) == [2, 2]) .AND. &
-         all(intersections(:, 1) == [0.0_dp, 0.0_dp]) .AND. &
-         all(intersections(:, 2) == [1.0_dp, 1.0_dp]) .AND. &
+         all(intersections(:, 1) == 0) .AND. &
+         all(intersections(:, 2) == 1) .AND. &
          num_intersections == 2 .AND. &
          coincident)
     call print_status(name, case_id, case_success, success)
     num_intersections = 0
 
     ! CASE 3: Fail due to invalid point (i.e curve has a self-crossing).
-    cubic1(1, :) = [0.0_dp, 16.0_dp]
-    cubic1(2, :) = [-8.0_dp, 0.0_dp]
-    cubic1(3, :) = [8.0_dp, 8.0_dp]
-    cubic1(4, :) = [-6.0_dp, 13.0_dp]
-    linear1(1, :) = [-2.0_dp, 11.0_dp]
-    linear1(2, :) = [-2.0_dp, 16.0_dp]
+    cubic1(:, 1) = [0.0_dp, 16.0_dp]
+    cubic1(:, 2) = [-8.0_dp, 0.0_dp]
+    cubic1(:, 3) = [8.0_dp, 8.0_dp]
+    cubic1(:, 4) = [-6.0_dp, 13.0_dp]
+    linear1(:, 1) = [-2.0_dp, 11.0_dp]
+    linear1(:, 2) = [-2.0_dp, 16.0_dp]
     call add_coincident_parameters( &
          4, cubic1, 2, linear1, &
          num_intersections, intersections, coincident)
@@ -1765,9 +1765,9 @@ contains
 
     ! CASE 5: Segments are part of the same algebraic curve, but the segments
     !         only touch at endpoints (i.e. they don't overlap).
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [1.0_dp, 2.0_dp]
-    quadratic1(3, :) = [3.0_dp, 2.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [1.0_dp, 2.0_dp]
+    quadratic1(:, 3) = [3.0_dp, 2.0_dp]
     params(1, :4) = [1.0_dp, 2.0_dp, -1.0_dp, 0.0_dp]
     params(2, :4) = [2.0_dp, 1.0_dp, 0.0_dp, -1.0_dp]
 
@@ -1787,10 +1787,10 @@ contains
 
     ! CASE 6: Segments are part of the same algebraic curve, but the segments
     !         are totally disjoint.
-    cubic1(1, :) = [1.0_dp, 0.0_dp]
-    cubic1(2, :) = [1.0_dp, 2.0_dp]
-    cubic1(3, :) = [3.0_dp, 2.0_dp]
-    cubic1(4, :) = [4.0_dp, 0.0_dp]
+    cubic1(:, 1) = [1.0_dp, 0.0_dp]
+    cubic1(:, 2) = [1.0_dp, 2.0_dp]
+    cubic1(:, 3) = [3.0_dp, 2.0_dp]
+    cubic1(:, 4) = [4.0_dp, 0.0_dp]
     params(1, :4) = [1.5_dp, 2.0_dp, -1.0_dp, -0.5_dp]
     params(2, :4) = [2.0_dp, 1.5_dp, -0.5_dp, -1.0_dp]
 
@@ -1809,12 +1809,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 7: Curve endpoints touch, but curves are not coincident.
-    quadratic1(1, :) = [1.0_dp, 8.0_dp]
-    quadratic1(2, :) = [3.0_dp, 6.0_dp]
-    quadratic1(3, :) = [3.0_dp, 5.0_dp]
-    quadratic2(1, :) = [3.0_dp, 5.0_dp]
-    quadratic2(2, :) = [3.0_dp, -1.0_dp]
-    quadratic2(3, :) = [4.0_dp, -4.0_dp]
+    quadratic1(:, 1) = [1.0_dp, 8.0_dp]
+    quadratic1(:, 2) = [3.0_dp, 6.0_dp]
+    quadratic1(:, 3) = [3.0_dp, 5.0_dp]
+    quadratic2(:, 1) = [3.0_dp, 5.0_dp]
+    quadratic2(:, 2) = [3.0_dp, -1.0_dp]
+    quadratic2(:, 3) = [4.0_dp, -4.0_dp]
     call add_coincident_parameters( &
          3, quadratic1, 3, quadratic2, &
          num_intersections, intersections, coincident)
@@ -1824,16 +1824,16 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Identical curves.
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [2.0_dp, 3.0_dp]
-    quadratic1(3, :) = 5
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [2.0_dp, 3.0_dp]
+    quadratic1(:, 3) = 5
     call add_coincident_parameters( &
          3, quadratic1, 3, quadratic1, &
          num_intersections, intersections, coincident)
     case_success = ( &
          all(shape(intersections) == [2, 2]) .AND. &
-         all(intersections(:, 1) == [0.0_dp, 0.0_dp]) .AND. &
-         all(intersections(:, 2) == [1.0_dp, 1.0_dp]) .AND. &
+         all(intersections(:, 1) == 0) .AND. &
+         all(intersections(:, 2) == 1) .AND. &
          num_intersections == 2 .AND. &
          coincident)
     call print_status(name, case_id, case_success, success)
@@ -1841,9 +1841,9 @@ contains
 
     ! CASE 9: Segments are part of the same algebraic curve, one segment
     !         is interior to the other **AND** they touch at endpoints.
-    quadratic1(1, :) = [4.0_dp, 1.0_dp]
-    quadratic1(2, :) = [6.0_dp, 3.0_dp]
-    quadratic1(3, :) = [2.0_dp, 1.0_dp]
+    quadratic1(:, 1) = [4.0_dp, 1.0_dp]
+    quadratic1(:, 2) = [6.0_dp, 3.0_dp]
+    quadratic1(:, 3) = [2.0_dp, 1.0_dp]
     params(1, :) = [ &
          0.0_dp, 0.5_dp, 0.5_dp, 1.0_dp, 0.0_dp, 2.0_dp, -1.0_dp, 1.0_dp]
     params(2, :) = [ &
@@ -1880,9 +1880,9 @@ contains
     ! CASE 10: Segments are part of the same algebraic curve, one segment
     !          is fully interior to the other (i.e. same as CASE 9 but with
     !          no endpoint contact).
-    quadratic1(1, :) = -1
-    quadratic1(2, :) = [0.0_dp, 2.0_dp]
-    quadratic1(3, :) = [2.0_dp, 0.0_dp]
+    quadratic1(:, 1) = -1
+    quadratic1(:, 2) = [0.0_dp, 2.0_dp]
+    quadratic1(:, 3) = [2.0_dp, 0.0_dp]
     params(1, :4) = [0.25_dp, 0.75_dp, -0.5_dp, 1.5_dp]
     params(2, :4) = [0.75_dp, 0.25_dp, 1.5_dp, -0.5_dp]
     case_success = .TRUE.
@@ -1915,10 +1915,10 @@ contains
     !          in a staggered fashion. I.e curve A starts somewhere in the
     !          middle of curve B and curve B ends somewhere in the middle of
     !          curve A.
-    cubic1(1, :) = [0.0_dp, -1.0_dp]
-    cubic1(2, :) = [1.0_dp, 2.0_dp]
-    cubic1(3, :) = [1.0_dp, 0.0_dp]
-    cubic1(4, :) = [3.0_dp, 2.0_dp]
+    cubic1(:, 1) = [0.0_dp, -1.0_dp]
+    cubic1(:, 2) = [1.0_dp, 2.0_dp]
+    cubic1(:, 3) = [1.0_dp, 0.0_dp]
+    cubic1(:, 4) = [3.0_dp, 2.0_dp]
     params(1, :4) = [0.5_dp, 1.5_dp, -0.5_dp, 0.5_dp]
     params(2, :4) = [1.5_dp, 0.5_dp, 0.5_dp, -0.5_dp]
     case_success = .TRUE.
@@ -1949,12 +1949,12 @@ contains
 
     ! CASE 12: Exactly one endpoint from each curve lies on the other curve,
     !          but the curves are not coincident.
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [16.0_dp, 0.0_dp]
-    quadratic1(3, :) = 16
-    quadratic2(1, :) = [7.0_dp, 1.0_dp]
-    quadratic2(2, :) = [7.0_dp, 17.0_dp]
-    quadratic2(3, :) = [23.0_dp, 17.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [16.0_dp, 0.0_dp]
+    quadratic1(:, 3) = 16
+    quadratic2(:, 1) = [7.0_dp, 1.0_dp]
+    quadratic2(:, 2) = [7.0_dp, 17.0_dp]
+    quadratic2(:, 3) = [23.0_dp, 17.0_dp]
     call add_coincident_parameters( &
          3, quadratic1, 3, quadratic2, &
          num_intersections, intersections, coincident)
@@ -1965,14 +1965,14 @@ contains
 
     ! CASE 13: Both endpoints from one curve lie on the other curve,
     !          but the curves are not coincident.
-    cubic1(1, :) = 0
-    cubic1(2, :) = 32
-    cubic1(3, :) = [96.0_dp, 32.0_dp]
-    cubic1(4, :) = [128.0_dp, 0.0_dp]
-    cubic2(1, :) = [29.0_dp, 18.0_dp]
-    cubic2(2, :) = [49.0_dp, 38.0_dp]
-    cubic2(3, :) = [79.0_dp, 38.0_dp]
-    cubic2(4, :) = [99.0_dp, 18.0_dp]
+    cubic1(:, 1) = 0
+    cubic1(:, 2) = 32
+    cubic1(:, 3) = [96.0_dp, 32.0_dp]
+    cubic1(:, 4) = [128.0_dp, 0.0_dp]
+    cubic2(:, 1) = [29.0_dp, 18.0_dp]
+    cubic2(:, 2) = [49.0_dp, 38.0_dp]
+    cubic2(:, 3) = [79.0_dp, 38.0_dp]
+    cubic2(:, 4) = [99.0_dp, 18.0_dp]
     call add_coincident_parameters( &
          4, cubic1, 4, cubic2, &
          num_intersections, intersections, coincident)
@@ -1992,12 +1992,12 @@ contains
 
     ! CASE 15: Exactly one endpoint from curve A lies on curve B, but not at
     !          one of the endpoints of curve B.
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = 2
-    quadratic1(3, :) = [4.0_dp, 0.0_dp]
-    quadratic2(1, :) = [2.0_dp, 1.0_dp]
-    quadratic2(2, :) = [4.0_dp, 3.0_dp]
-    quadratic2(3, :) = [6.0_dp, 2.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = 2
+    quadratic1(:, 3) = [4.0_dp, 0.0_dp]
+    quadratic2(:, 1) = [2.0_dp, 1.0_dp]
+    quadratic2(:, 2) = [4.0_dp, 3.0_dp]
+    quadratic2(:, 3) = [6.0_dp, 2.0_dp]
     call add_coincident_parameters( &
          3, quadratic1, 3, quadratic2, &
          num_intersections, intersections, coincident)
@@ -2023,8 +2023,8 @@ contains
     logical :: case_success
     real(c_double), allocatable :: intersections(:, :)
     real(c_double) :: linear1(2, 2), linear2(2, 2)
-    real(c_double) :: quadratic1(3, 2), quadratic2(3, 2)
-    real(c_double) :: cubic1(4, 2), cubic2(4, 2)
+    real(c_double) :: quadratic1(2, 3), quadratic2(2, 3)
+    real(c_double) :: cubic1(2, 4), cubic2(2, 4)
     integer(c_int) :: num_intersections
     integer(c_int) :: status
     integer :: case_id
@@ -2034,10 +2034,10 @@ contains
     name = "all_intersections"
 
     ! CASE 1: No intersections.
-    linear1(1, :) = 0
-    linear1(2, :) = 1
-    linear2(1, :) = [3.0_dp, 3.0_dp]
-    linear2(2, :) = [4.0_dp, 3.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = 1
+    linear2(:, 1) = 3
+    linear2(:, 2) = [4.0_dp, 3.0_dp]
 
     call all_intersections( &
          2, linear1, 2, linear2, intersections, &
@@ -2054,12 +2054,12 @@ contains
     !       specialization of [0, 1], [1/2, 1], [1, 0] onto the interval
     !       [0, 3/4]. We expect them to intersect at s = 1/3, t = 2/3, which is
     !       the point [1/2, 3/4].
-    quadratic1(1, :) = [0.25_dp, 0.4375_dp]
-    quadratic1(2, :) = [0.625_dp, 1.0_dp]
-    quadratic1(3, :) = 1
-    quadratic2(1, :) = [0.0_dp, 1.0_dp]
-    quadratic2(2, :) = [0.375_dp, 1.0_dp]
-    quadratic2(3, :) = [0.75_dp, 0.4375_dp]
+    quadratic1(:, 1) = [0.25_dp, 0.4375_dp]
+    quadratic1(:, 2) = [0.625_dp, 1.0_dp]
+    quadratic1(:, 3) = 1
+    quadratic2(:, 1) = [0.0_dp, 1.0_dp]
+    quadratic2(:, 2) = [0.375_dp, 1.0_dp]
+    quadratic2(:, 3) = [0.75_dp, 0.4375_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
          num_intersections, status)
@@ -2073,12 +2073,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Tangent curves, with a ``status`` failure due to parallel lines.
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [0.375_dp, 0.75_dp]
-    quadratic1(3, :) = [0.75_dp, 0.375_dp]
-    quadratic2(1, :) = [0.25_dp, 0.625_dp]
-    quadratic2(2, :) = [0.625_dp, 0.25_dp]
-    quadratic2(3, :) = 1
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
+    quadratic1(:, 3) = [0.75_dp, 0.375_dp]
+    quadratic2(:, 1) = [0.25_dp, 0.625_dp]
+    quadratic2(:, 2) = [0.625_dp, 0.25_dp]
+    quadratic2(:, 3) = 1
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
          num_intersections, status)
@@ -2089,12 +2089,12 @@ contains
 
     ! CASE 4: Tangent curves, which cause the number of candidate pairs
     !         to become too high and will trigger a "prune" step.
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [-0.5_dp, 1.5_dp]
-    quadratic1(3, :) = 1
-    quadratic2(1, :) = [-1.0_dp, 1.0_dp]
-    quadratic2(2, :) = 0.5_dp
-    quadratic2(3, :) = [0.0_dp, 2.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [-0.5_dp, 1.5_dp]
+    quadratic1(:, 3) = 1
+    quadratic2(:, 1) = [-1.0_dp, 1.0_dp]
+    quadratic2(:, 2) = 0.5_dp
+    quadratic2(:, 3) = [0.0_dp, 2.0_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
          num_intersections, status)
@@ -2102,7 +2102,7 @@ contains
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
-         all(intersections(:, 1) == [0.5_dp, 0.5_dp]) .AND. &
+         all(intersections(:, 1) == 0.5_dp) .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2114,11 +2114,11 @@ contains
     !       This definitely points out a flaw in using absolute vs. relative
     !       linearization error. However, there is an upside in not using
     !       relative error: it is faster to compute without normalization.
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [73728.0_dp, 147456.0_dp]
-    quadratic1(3, :) = [147456.0_dp, 0.0_dp]
-    linear1(1, :) = [0.0_dp, 131072.0_dp]
-    linear1(2, :) = [98304.0_dp, 0.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [73728.0_dp, 147456.0_dp]
+    quadratic1(:, 3) = [147456.0_dp, 0.0_dp]
+    linear1(:, 1) = [0.0_dp, 131072.0_dp]
+    linear1(:, 2) = [98304.0_dp, 0.0_dp]
     call all_intersections( &
          3, quadratic1, 2, linear1, intersections, &
          num_intersections, status)
@@ -2129,12 +2129,12 @@ contains
 
     ! CASE 6: Curves where there are duplicate intersections caused by
     !         bounding boxes touching at corners.
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [0.5_dp, 1.0_dp]
-    quadratic1(3, :) = [1.0_dp, 0.0_dp]
-    quadratic2(1, :) = [0.0_dp, 0.75_dp]
-    quadratic2(2, :) = [0.5_dp, -0.25_dp]
-    quadratic2(3, :) = [1.0_dp, 0.75_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [0.5_dp, 1.0_dp]
+    quadratic1(:, 3) = [1.0_dp, 0.0_dp]
+    quadratic2(:, 1) = [0.0_dp, 0.75_dp]
+    quadratic2(:, 2) = [0.5_dp, -0.25_dp]
+    quadratic2(:, 3) = [1.0_dp, 0.75_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
          num_intersections, status)
@@ -2151,14 +2151,14 @@ contains
     ! CASE 7: Curves that **almost** touch at their endpoints, but don't
     !         actually cross. This causes a "wiggle fail" in
     !         ``from_linearized()``.
-    cubic1(1, :) = [-0.7838204403623438_dp, -0.25519640597397464_dp]
-    cubic1(2, :) = [-0.7894577677825452_dp, -0.24259531488131633_dp]
-    cubic1(3, :) = [-0.7946421067207265_dp, -0.22976394420044136_dp]
-    cubic1(4, :) = [-0.799367666650849_dp, -0.21671303774854855_dp]
-    cubic2(1, :) = [-0.7993236103108717_dp, -0.21683567278362156_dp]
-    cubic2(2, :) = [-0.8072986524226636_dp, -0.21898490744674426_dp]
-    cubic2(3, :) = [-0.8152736945344552_dp, -0.2211341421098668_dp]
-    cubic2(4, :) = [-0.8232487366462472_dp, -0.2232833767729893_dp]
+    cubic1(:, 1) = [-0.7838204403623438_dp, -0.25519640597397464_dp]
+    cubic1(:, 2) = [-0.7894577677825452_dp, -0.24259531488131633_dp]
+    cubic1(:, 3) = [-0.7946421067207265_dp, -0.22976394420044136_dp]
+    cubic1(:, 4) = [-0.799367666650849_dp, -0.21671303774854855_dp]
+    cubic2(:, 1) = [-0.7993236103108717_dp, -0.21683567278362156_dp]
+    cubic2(:, 2) = [-0.8072986524226636_dp, -0.21898490744674426_dp]
+    cubic2(:, 3) = [-0.8152736945344552_dp, -0.2211341421098668_dp]
+    cubic2(:, 4) = [-0.8232487366462472_dp, -0.2232833767729893_dp]
 
     call all_intersections( &
          4, cubic1, 4, cubic2, intersections, &
@@ -2181,12 +2181,12 @@ contains
     !         [0, 2] and [-1, 1], respectively. This way, the first round
     !         reduces to CASE 4, so the "prune" stage happens at an odd
     !         iteration rather than en even iteration.
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [-1.0_dp, 3.0_dp]
-    quadratic1(3, :) = [6.0_dp, -2.0_dp]
-    quadratic2(1, :) = [-6.0_dp, 4.0_dp]
-    quadratic2(2, :) = [1.0_dp, -1.0_dp]
-    quadratic2(3, :) = [0.0_dp, 2.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [-1.0_dp, 3.0_dp]
+    quadratic1(:, 3) = [6.0_dp, -2.0_dp]
+    quadratic2(:, 1) = [-6.0_dp, 4.0_dp]
+    quadratic2(:, 2) = [1.0_dp, -1.0_dp]
+    quadratic2(:, 3) = [0.0_dp, 2.0_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
          num_intersections, status)
@@ -2203,12 +2203,12 @@ contains
     !          [1/2, 1]. In this case, "convex hull pruning" is of no use
     !          because at a certain point the subdivided curve segments will
     !          be identical.
-    quadratic1(1, :) = 0
-    quadratic1(2, :) = [0.5_dp, 0.25_dp]
-    quadratic1(3, :) = [1.0_dp, 0.0_dp]
-    quadratic2(1, :) = [0.5_dp, 0.125_dp]
-    quadratic2(2, :) = [0.75_dp, 0.125_dp]
-    quadratic2(3, :) = [1.0_dp, 0.0_dp]
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [0.5_dp, 0.25_dp]
+    quadratic1(:, 3) = [1.0_dp, 0.0_dp]
+    quadratic2(:, 1) = [0.5_dp, 0.125_dp]
+    quadratic2(:, 2) = [0.75_dp, 0.125_dp]
+    quadratic2(:, 3) = [1.0_dp, 0.0_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
          num_intersections, status)
@@ -2217,7 +2217,7 @@ contains
          all(shape(intersections) == [2, 16]) .AND. &
          num_intersections == 2 .AND. &
          all(intersections(:, 1) == [0.5_dp, 0.0_dp]) .AND. &
-         all(intersections(:, 2) == [1.0_dp, 1.0_dp]) .AND. &
+         all(intersections(:, 2) == 1) .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2228,7 +2228,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     real(c_double) :: linear1(2, 2), linear2(2, 2)
-    real(c_double) :: cubic1(4, 2)
+    real(c_double) :: cubic1(2, 4)
     integer(c_int) :: num_intersections
     real(c_double) :: intersections1(2, 2), intersections2(2, 3)
     integer(c_int) :: status
@@ -2239,10 +2239,10 @@ contains
     name = "all_intersections_abi"
 
     ! CASE 1: **Other** failure (overlapping lines).
-    linear1(1, :) = [0.0_dp, 0.0_dp]
-    linear1(2, :) = [2.0_dp, 4.0_dp]
-    linear2(1, :) = [1.0_dp, 2.0_dp]
-    linear2(2, :) = [3.0_dp, 6.0_dp]
+    linear1(:, 1) = 0
+    linear1(:, 2) = [2.0_dp, 4.0_dp]
+    linear2(:, 1) = [1.0_dp, 2.0_dp]
+    linear2(:, 2) = [3.0_dp, 6.0_dp]
 
     call all_intersections_abi( &
          2, linear1, 2, linear2, 2, intersections1, &
@@ -2253,12 +2253,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: ``intersections`` is not large enough.
-    linear1(1, :) = [-3.0_dp, 0.0_dp]
-    linear1(2, :) = [5.0_dp, 0.0_dp]
-    cubic1(1, :) = [-7.0_dp, -9.0_dp]
-    cubic1(2, :) = [9.0_dp, 13.0_dp]
-    cubic1(3, :) = [-7.0_dp, -13.0_dp]
-    cubic1(4, :) = [9.0_dp, 9.0_dp]
+    linear1(:, 1) = [-3.0_dp, 0.0_dp]
+    linear1(:, 2) = [5.0_dp, 0.0_dp]
+    cubic1(:, 1) = [-7.0_dp, -9.0_dp]
+    cubic1(:, 2) = [9.0_dp, 13.0_dp]
+    cubic1(:, 3) = [-7.0_dp, -13.0_dp]
+    cubic1(:, 4) = [9.0_dp, 9.0_dp]
 
     call all_intersections_abi( &
          2, linear1, 4, cubic1, 2, intersections1, &

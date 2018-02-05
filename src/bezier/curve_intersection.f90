@@ -74,10 +74,10 @@ contains
        num_nodes, dimension_, nodes, error)
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
     real(c_double), intent(out) :: error
     ! Variables outside of signature.
-    real(c_double) :: second_deriv(num_nodes - 2, dimension_)
+    real(c_double) :: second_deriv(dimension_, num_nodes - 2)
     real(c_double) :: worst_case(dimension_)
 
     ! A line has no linearization error.
@@ -87,10 +87,10 @@ contains
     end if
 
     second_deriv = ( &
-         nodes(:num_nodes - 2, :) - &
-         2.0_dp * nodes(2:num_nodes - 1, :) + &
-         nodes(3:, :))
-    worst_case = maxval(abs(second_deriv), 1)
+         nodes(:, :num_nodes - 2) - &
+         2.0_dp * nodes(:, 2:num_nodes - 1) + &
+         nodes(:, 3:))
+    worst_case = maxval(abs(second_deriv), 2)
     error = 0.125_dp * (num_nodes - 1) * (num_nodes - 2) * norm2(worst_case)
 
   end subroutine linearization_error
@@ -98,16 +98,16 @@ contains
   subroutine segment_intersection( &
        start0, end0, start1, end1, s, t, success)
 
-    real(c_double), intent(in) :: start0(1, 2)
-    real(c_double), intent(in) :: end0(1, 2)
-    real(c_double), intent(in) :: start1(1, 2)
-    real(c_double), intent(in) :: end1(1, 2)
+    real(c_double), intent(in) :: start0(2)
+    real(c_double), intent(in) :: end0(2)
+    real(c_double), intent(in) :: start1(2)
+    real(c_double), intent(in) :: end1(2)
     real(c_double), intent(out) :: s, t
     logical(c_bool), intent(out) :: success
     ! Variables outside of signature.
-    real(c_double) :: delta0(1, 2)
-    real(c_double) :: delta1(1, 2)
-    real(c_double) :: start_delta(1, 2)
+    real(c_double) :: delta0(2)
+    real(c_double) :: delta1(2)
+    real(c_double) :: start_delta(2)
     real(c_double) :: cross_d0_d1
     real(c_double) :: other_cross
 
@@ -134,15 +134,15 @@ contains
 
     real(c_double), intent(in) :: s
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
     real(c_double), intent(in) :: t
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
     real(c_double), intent(out) :: new_s, new_t
     ! Variables outside of signature.
     real(c_double) :: param(1)
-    real(c_double) :: func_val(1, 2)
-    real(c_double) :: workspace(1, 2)
+    real(c_double) :: func_val(2, 1)
+    real(c_double) :: workspace(2, 1)
     real(c_double) :: jac_mat(2, 2)
     real(c_double) :: determinant, delta_s, delta_t
 
@@ -172,12 +172,12 @@ contains
     ! NOTE: We manually invert the 2x2 system ([ds, dt] J)^T = f^T.
     delta_s = ( &
          (jac_mat(2, 2) * func_val(1, 1) - &
-         jac_mat(2, 1) * func_val(1, 2)) / determinant)
+         jac_mat(2, 1) * func_val(2, 1)) / determinant)
     new_s = s + delta_s
 
     delta_t = ( &
          (jac_mat(1, 2) * func_val(1, 1) - &
-         jac_mat(1, 1) * func_val(1, 2)) / determinant)
+         jac_mat(1, 1) * func_val(2, 1)) / determinant)
     new_t = t + delta_t
 
   end subroutine newton_refine_intersect
@@ -187,9 +187,9 @@ contains
        bind(c, name='bbox_intersect')
 
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
     integer(c_int), intent(out) :: enum_
     ! Variables outside of signature.
     real(c_double) :: left1, right1, bottom1, top1
@@ -215,13 +215,13 @@ contains
   subroutine parallel_different( &
        start0, end0, start1, end1, result_)
 
-    real(c_double), intent(in) :: start0(1, 2)
-    real(c_double), intent(in) :: end0(1, 2)
-    real(c_double), intent(in) :: start1(1, 2)
-    real(c_double), intent(in) :: end1(1, 2)
+    real(c_double), intent(in) :: start0(2)
+    real(c_double), intent(in) :: end0(2)
+    real(c_double), intent(in) :: start1(2)
+    real(c_double), intent(in) :: end1(2)
     logical(c_bool), intent(out) :: result_
     ! Variables outside of signature.
-    real(c_double) :: delta0(1, 2)
+    real(c_double) :: delta0(2)
     real(c_double) :: val1, val2  ! Workspace
 
     delta0 = end0 - start0
@@ -233,9 +233,9 @@ contains
        return
     end if
 
-    val1 = dot_product(delta0(1, :), delta0(1, :))  ! norm0_sq
+    val1 = dot_product(delta0, delta0)  ! norm0_sq
     ! val2 == start_numer
-    val2 = dot_product(start1(1, :) - start0(1, :), delta0(1, :))
+    val2 = dot_product(start1 - start0, delta0)
     !      0 <= start_numer / norm0_sq <= 1
     ! <==> 0 <= start_numer            <= norm0_sq
     if (0.0_dp <= val2 .AND. val2 <= val1) then
@@ -243,7 +243,7 @@ contains
        return
     end if
 
-    val2 = dot_product(end1(1, :) - start0(1, :), delta0(1, :))  ! end_numer
+    val2 = dot_product(end1 - start0, delta0)  ! end_numer
     !      0 <= end_numer / norm0_sq <= 1
     ! <==> 0 <= end_numer            <= norm0_sq
     if (0.0_dp <= val2 .AND. val2 <= val1) then
@@ -274,11 +274,11 @@ contains
     real(c_double), intent(in) :: error1
     type(CurveData), intent(in) :: curve1
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: root_nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: root_nodes1(2, num_nodes1)
     real(c_double), intent(in) :: error2
     type(CurveData), intent(in) :: curve2
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: root_nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: root_nodes2(2, num_nodes2)
     real(c_double), intent(out) :: refined_s, refined_t
     logical(c_bool), intent(out) :: does_intersect
     integer(c_int), intent(out) :: status
@@ -290,8 +290,8 @@ contains
     status = Status_SUCCESS
     does_intersect = .FALSE.  ! Default value.
     call segment_intersection( &
-         curve1%nodes(1, :), curve1%nodes(num_nodes1, :), &
-         curve2%nodes(1, :), curve2%nodes(num_nodes2, :), &
+         curve1%nodes(:, 1), curve1%nodes(:, num_nodes1), &
+         curve2%nodes(:, 1), curve2%nodes(:, num_nodes2), &
          s, t, success)
 
     if (success) then
@@ -315,8 +315,8 @@ contains
        ! Handle special case where the curves are actually lines.
        if (error1 == 0.0_dp .AND. error2 == 0.0_dp) then
           call parallel_different( &
-               curve1%nodes(1, :), curve1%nodes(num_nodes1, :), &
-               curve2%nodes(1, :), curve2%nodes(num_nodes2, :), &
+               curve1%nodes(:, 1), curve1%nodes(:, num_nodes1), &
+               curve2%nodes(:, 1), curve2%nodes(:, num_nodes2), &
                success)
           if (success) then
              return
@@ -362,14 +362,14 @@ contains
        num_nodes, nodes, line_start, line_end, enum_)
 
     integer(c_int), intent(in) :: num_nodes
-    real(c_double), intent(in) :: nodes(num_nodes, 2)
-    real(c_double), intent(in) :: line_start(1, 2)
-    real(c_double), intent(in) :: line_end(1, 2)
+    real(c_double), intent(in) :: nodes(2, num_nodes)
+    real(c_double), intent(in) :: line_start(2)
+    real(c_double), intent(in) :: line_end(2)
     integer(c_int), intent(out) :: enum_
     ! Variables outside of signature.
     real(c_double) :: left, right, bottom, top
-    real(c_double) :: segment_start(1, 2)
-    real(c_double) :: segment_end(1, 2)
+    real(c_double) :: segment_start(2)
+    real(c_double) :: segment_end(2)
     real(c_double) :: s_curr, t_curr
     logical(c_bool) :: success
 
@@ -377,16 +377,16 @@ contains
 
     ! Check if line start is inside the bounding box.
     if ( &
-         in_interval(line_start(1, 1), left, right) .AND. &
-         in_interval(line_start(1, 2), bottom, top)) then
+         in_interval(line_start(1), left, right) .AND. &
+         in_interval(line_start(2), bottom, top)) then
        enum_ = BoxIntersectionType_INTERSECTION
        return
     end if
 
     ! Check if line end is inside the bounding box.
     if ( &
-         in_interval(line_end(1, 1), left, right) .AND. &
-         in_interval(line_end(1, 2), bottom, top)) then
+         in_interval(line_end(1), left, right) .AND. &
+         in_interval(line_end(2), bottom, top)) then
        enum_ = BoxIntersectionType_INTERSECTION
        return
     end if
@@ -403,10 +403,10 @@ contains
     !       edge will be skipped, but the other two will be covered.
 
     ! Bottom Edge
-    segment_start(1, 1) = left
-    segment_start(1, 2) = bottom
-    segment_end(1, 1) = right
-    segment_end(1, 2) = bottom
+    segment_start(1) = left
+    segment_start(2) = bottom
+    segment_end(1) = right
+    segment_end(2) = bottom
     call segment_intersection( &
          segment_start, segment_end, line_start, line_end, &
          s_curr, t_curr, success)
@@ -419,10 +419,10 @@ contains
     end if
 
     ! Right Edge
-    segment_start(1, 1) = right
-    segment_start(1, 2) = bottom
-    segment_end(1, 1) = right
-    segment_end(1, 2) = top
+    segment_start(1) = right
+    segment_start(2) = bottom
+    segment_end(1) = right
+    segment_end(2) = top
     call segment_intersection( &
          segment_start, segment_end, line_start, line_end, &
          s_curr, t_curr, success)
@@ -435,10 +435,10 @@ contains
     end if
 
     ! Top Edge
-    segment_start(1, 1) = right
-    segment_start(1, 2) = top
-    segment_end(1, 1) = left
-    segment_end(1, 2) = top
+    segment_start(1) = right
+    segment_start(2) = top
+    segment_end(1) = left
+    segment_end(2) = top
     call segment_intersection( &
          segment_start, segment_end, line_start, line_end, &
          s_curr, t_curr, success)
@@ -513,8 +513,8 @@ contains
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
     ! Possible error states:
-    ! * Status_SUCCESS    : On success.
-    ! * Status_PARALLEL   : Via ``from_linearized()``.
+    ! * Status_SUCCESS : On success.
+    ! * Status_PARALLEL: Via ``from_linearized()``.
 
     type(CurveData), intent(in) :: first
     real(c_double), intent(in) :: root_nodes1(:, :)
@@ -530,8 +530,8 @@ contains
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
 
-    num_nodes1 = size(first%nodes, 1)
-    num_nodes2 = size(second%nodes, 1)
+    num_nodes1 = size(first%nodes, 2)
+    num_nodes2 = size(second%nodes, 2)
 
     call from_linearized( &
          linearization_error1, first, num_nodes1, root_nodes1, &
@@ -558,10 +558,10 @@ contains
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
     type(CurveData), intent(in) :: first
-    real(c_double), intent(in) :: node_first(1, 2)
+    real(c_double), intent(in) :: node_first(2)
     real(c_double), intent(in) :: s
     type(CurveData), intent(in) :: second
-    real(c_double), intent(in) :: node_second(1, 2)
+    real(c_double), intent(in) :: node_second(2)
     real(c_double), intent(in) :: t
     integer(c_int), intent(inout) :: num_intersections
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
@@ -588,16 +588,16 @@ contains
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
     ! Variables outside of signature.
     integer(c_int) :: num_nodes1, num_nodes2
-    real(c_double) :: nodes1_start(1, 2), nodes1_end(1, 2)
-    real(c_double) :: nodes2_start(1, 2), nodes2_end(1, 2)
+    real(c_double) :: nodes1_start(2), nodes1_end(2)
+    real(c_double) :: nodes2_start(2), nodes2_end(2)
 
-    num_nodes1 = size(first%nodes, 1)
-    nodes1_start(1, :) = first%nodes(1, :2)
-    nodes2_start(1, :) = first%nodes(num_nodes1, :2)
+    num_nodes1 = size(first%nodes, 2)
+    nodes1_start = first%nodes(:2, 1)
+    nodes2_start = first%nodes(:2, num_nodes1)
 
-    num_nodes2 = size(second%nodes, 1)
-    nodes1_end(1, :) = second%nodes(1, :2)
-    nodes2_end(1, :) = second%nodes(num_nodes2, :2)
+    num_nodes2 = size(second%nodes, 2)
+    nodes1_end = second%nodes(:2, 1)
+    nodes2_end = second%nodes(:2, num_nodes2)
 
     call endpoint_check( &
          first, nodes1_start, 0.0_dp, &
@@ -723,8 +723,8 @@ contains
        first = candidates(1, index_)
        second = candidates(2, index_)
        ! Compute the linearization error for each curve.
-       num_nodes1 = size(first%nodes, 1)
-       num_nodes2 = size(second%nodes, 1)
+       num_nodes1 = size(first%nodes, 2)
+       num_nodes2 = size(second%nodes, 2)
        call linearization_error( &
             num_nodes1, 2, first%nodes, linearization_error1)
        call linearization_error( &
@@ -751,14 +751,14 @@ contains
              subdivide_enum = Subdivide_SECOND
              call bbox_line_intersect( &
                   num_nodes2, second%nodes, &
-                  first%nodes(1, :), first%nodes(num_nodes1, :), bbox_int)
+                  first%nodes(:, 1), first%nodes(:, num_nodes1), bbox_int)
           end if
        else
           if (linearization_error2 < LINEARIZATION_THRESHOLD) then
              subdivide_enum = Subdivide_FIRST
              call bbox_line_intersect( &
                   num_nodes1, first%nodes, &
-                  second%nodes(1, :), second%nodes(num_nodes2, :), bbox_int)
+                  second%nodes(:, 1), second%nodes(:, num_nodes2), bbox_int)
           else
              subdivide_enum = Subdivide_BOTH
              ! If neither curve is close to a line, we can still reject the
@@ -833,7 +833,7 @@ contains
     do i = 1, num_candidates
        ! NOTE: This **assumes** that ``%nodes`` is allocated and size
        !       ``N x 2``.
-       num_nodes1 = size(candidates(1, i)%nodes, 1)
+       num_nodes1 = size(candidates(1, i)%nodes, 2)
        if (allocated(polygon1)) then
           if (size(polygon1, 2) < num_nodes1) then
              ! NOTE: We "exclude" this block from ``lcov`` because it
@@ -848,12 +848,12 @@ contains
           allocate(polygon1(2, num_nodes1))
        end if
        call convex_hull( &
-            num_nodes1, transpose(candidates(1, i)%nodes), &
+            num_nodes1, candidates(1, i)%nodes, &
             polygon_size1, polygon1(:, :num_nodes1))
 
        ! NOTE: This **assumes** that ``%nodes`` is allocated and size
        !       ``N x 2``.
-       num_nodes2 = size(candidates(2, i)%nodes, 1)
+       num_nodes2 = size(candidates(2, i)%nodes, 2)
        if (allocated(polygon2)) then
           if (size(polygon2, 2) < num_nodes2) then
              ! NOTE: We "exclude" this block from ``lcov`` because it
@@ -868,7 +868,7 @@ contains
           allocate(polygon2(2, num_nodes2))
        end if
        call convex_hull( &
-            num_nodes2, transpose(candidates(2, i)%nodes), &
+            num_nodes2, candidates(2, i)%nodes, &
             polygon_size2, polygon2(:, :num_nodes2))
 
        ! Now check if the convex hulls actually collide.
@@ -896,10 +896,10 @@ contains
     ! NOTE: This assumes, but does not check, that ``final_size > curr_size``.
 
     integer(c_int), intent(in) :: curr_size
-    real(c_double), intent(in) :: nodes(curr_size, 2)
+    real(c_double), intent(in) :: nodes(2, curr_size)
     integer(c_int), intent(in) :: final_size
-    real(c_double), intent(inout) :: workspace(final_size, 2)
-    real(c_double), intent(inout) :: elevated(final_size, 2)
+    real(c_double), intent(inout) :: workspace(2, final_size)
+    real(c_double), intent(inout) :: elevated(2, final_size)
     ! Variables outside of signature.
     logical(c_bool) :: to_workspace
     integer(c_int) :: i
@@ -911,24 +911,24 @@ contains
        ! first, for example:
        ! 1 step : ws -> el
        ! 3 steps: ws -> el -> ws -> el
-       workspace(:curr_size, :) = nodes
+       workspace(:, :curr_size) = nodes
        to_workspace = .FALSE.
     else
        ! If we have an odd number of steps, then we'll write to ws
        ! first, for example:
        ! 2 steps: el -> ws -> el
        ! 4 steps: el -> ws -> el -> ws -> el
-       elevated(:curr_size, :) = nodes
+       elevated(:, :curr_size) = nodes
        to_workspace = .TRUE.
     end if
 
     do i = curr_size, final_size - 1
        if (to_workspace) then
           call elevate_nodes( &
-               i, 2, elevated(:i, :), workspace(:i + 1, :))
+               i, 2, elevated(:, :i), workspace(:, :i + 1))
        else
           call elevate_nodes( &
-               i, 2, workspace(:i, :), elevated(:i + 1, :))
+               i, 2, workspace(:, :i), elevated(:, :i + 1))
        end if
 
        to_workspace = .NOT. to_workspace  ! Switch parity.
@@ -944,17 +944,17 @@ contains
     !       but it is (for now) public, so that it can be tested.
 
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
     integer(c_int), intent(out) :: num_nodes
     real(c_double), allocatable, intent(out) :: elevated1(:, :)
     real(c_double), allocatable, intent(out) :: elevated2(:, :)
 
     if (num_nodes1 > num_nodes2) then
        num_nodes = num_nodes1
-       allocate(elevated1(num_nodes1, 2))
-       allocate(elevated2(num_nodes1, 2))
+       allocate(elevated1(2, num_nodes1))
+       allocate(elevated2(2, num_nodes1))
        ! Populate ``elevated2`` by elevating (using ``elevated1`` as a
        ! helper workspace).
        call elevate_helper( &
@@ -963,8 +963,8 @@ contains
        elevated1(:, :) = nodes1
     else if (num_nodes2 > num_nodes1) then
        num_nodes = num_nodes2
-       allocate(elevated1(num_nodes2, 2))
-       allocate(elevated2(num_nodes2, 2))
+       allocate(elevated1(2, num_nodes2))
+       allocate(elevated2(2, num_nodes2))
        ! Populate ``elevated1`` by elevating (using ``elevated2`` as a
        ! helper workspace).
        call elevate_helper( &
@@ -994,9 +994,9 @@ contains
     !       trying to avoid by showing the curves are coincident.
 
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
     integer(c_int), intent(inout) :: num_intersections
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
     logical(c_bool), intent(out) :: coincident
@@ -1005,9 +1005,9 @@ contains
     real(c_double), target, allocatable :: elevated2(:, :)
     real(c_double), target, allocatable :: specialized(:, :)
     integer(c_int) :: num_nodes
-    real(c_double) :: point(1, 2)
+    real(c_double) :: point(2)
     real(c_double) :: s_initial, s_final, t_initial, t_final
-    real(c_double), pointer :: as_vec1(:, :), as_vec2(:, :)
+    real(c_double), pointer :: as_vec1(:), as_vec2(:)
 
     coincident = .FALSE.
     ! First, make sure the nodes are the same degree.
@@ -1015,10 +1015,10 @@ contains
          num_nodes1, nodes1, num_nodes2, nodes2, &
          num_nodes, elevated1, elevated2)
 
-    point(1, :) = nodes2(1, :)
+    point = nodes2(:, 1)
     call locate_point( &
          num_nodes, 2, elevated1, point, s_initial)
-    point(1, :) = nodes2(num_nodes2, :)
+    point = nodes2(:, num_nodes2)
     call locate_point( &
          num_nodes, 2, elevated1, point, s_final)
     ! Bail out if the "locate" failed.
@@ -1030,11 +1030,11 @@ contains
        ! In this case, if the curves were coincident, then ``curve2``
        ! would be "fully" contained in ``curve1``, so we specialize
        ! ``curve1`` down to that interval to check.
-       allocate(specialized(num_nodes, 2))
+       allocate(specialized(2, num_nodes))
        call specialize_curve( &
             num_nodes, 2, elevated1, s_initial, s_final, specialized)
-       call c_f_pointer(c_loc(specialized), as_vec1, [1, 2 * num_nodes])
-       call c_f_pointer(c_loc(elevated2), as_vec2, [1, 2 * num_nodes])
+       call c_f_pointer(c_loc(specialized), as_vec1, [2 * num_nodes])
+       call c_f_pointer(c_loc(elevated2), as_vec2, [2 * num_nodes])
 
        if (vector_close( &
             2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
@@ -1052,10 +1052,10 @@ contains
        return
     end if
 
-    point(1, :) = nodes1(1, :)
+    point = nodes1(:, 1)
     call locate_point( &
          num_nodes, 2, elevated2, point, t_initial)
-    point(1, :) = nodes1(num_nodes1, :)
+    point = nodes1(:, num_nodes1)
     call locate_point( &
          num_nodes, 2, elevated2, point, t_final)
     ! Bail out if the "locate" failed.
@@ -1075,11 +1075,11 @@ contains
        ! In this case, if the curves were coincident, then ``curve1``
        ! would be "fully" contained in ``curve2``, so we specialize
        ! ``curve2`` down to that interval to check.
-       allocate(specialized(num_nodes, 2))
+       allocate(specialized(2, num_nodes))
        call specialize_curve( &
             num_nodes, 2, elevated2, t_initial, t_final, specialized)
-       call c_f_pointer(c_loc(elevated1), as_vec1, [1, 2 * num_nodes])
-       call c_f_pointer(c_loc(specialized), as_vec2, [1, 2 * num_nodes])
+       call c_f_pointer(c_loc(elevated1), as_vec1, [2 * num_nodes])
+       call c_f_pointer(c_loc(specialized), as_vec2, [2 * num_nodes])
 
        if (vector_close( &
             2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
@@ -1144,7 +1144,7 @@ contains
        return
     end if
 
-    allocate(specialized(num_nodes, 2))
+    allocate(specialized(2, num_nodes))
     ! First specialize ``elevated1`` onto ``specialized``.
     call specialize_curve( &
          num_nodes, 2, elevated1, s_initial, s_final, specialized)
@@ -1153,8 +1153,8 @@ contains
     call specialize_curve( &
          num_nodes, 2, elevated2, t_initial, t_final, elevated1)
 
-    call c_f_pointer(c_loc(specialized), as_vec1, [1, 2 * num_nodes])
-    call c_f_pointer(c_loc(elevated1), as_vec2, [1, 2 * num_nodes])
+    call c_f_pointer(c_loc(specialized), as_vec1, [2 * num_nodes])
+    call c_f_pointer(c_loc(elevated1), as_vec2, [2 * num_nodes])
 
     if (vector_close( &
          2 * num_nodes, as_vec1, as_vec2, VECTOR_CLOSE_EPS)) then
@@ -1186,9 +1186,9 @@ contains
     !                          ``MAX_CANDIDATES`` (64 is the default).
 
     integer(c_int), intent(in) :: num_nodes_first
-    real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)
+    real(c_double), intent(in) :: nodes_first(2, num_nodes_first)
     integer(c_int), intent(in) :: num_nodes_second
-    real(c_double), intent(in) :: nodes_second(num_nodes_second, 2)
+    real(c_double), intent(in) :: nodes_second(2, num_nodes_second)
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
     integer(c_int), intent(out) :: num_intersections
     integer(c_int), intent(out) :: status
@@ -1303,9 +1303,9 @@ contains
     ! * (N >= MAX_CANDIDATES)    : Via ``all_intersections()``.
 
     integer(c_int), intent(in) :: num_nodes_first
-    real(c_double), intent(in) :: nodes_first(num_nodes_first, 2)
+    real(c_double), intent(in) :: nodes_first(2, num_nodes_first)
     integer(c_int), intent(in) :: num_nodes_second
-    real(c_double), intent(in) :: nodes_second(num_nodes_second, 2)
+    real(c_double), intent(in) :: nodes_second(2, num_nodes_second)
     integer(c_int), intent(in) :: intersections_size
     real(c_double), intent(out) :: intersections(2, intersections_size)
     integer(c_int), intent(out) :: num_intersections

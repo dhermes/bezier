@@ -102,11 +102,11 @@ contains
     ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
     integer(c_int), intent(in) :: num_vals
     real(c_double), intent(in) :: lambda1(num_vals)
     real(c_double), intent(in) :: lambda2(num_vals)
-    real(c_double), intent(out) :: evaluated(num_vals, dimension_)
+    real(c_double), intent(out) :: evaluated(dimension_, num_vals)
     ! Variables outside of signature.
     integer(c_int) :: i, j
     real(c_double) :: lambda2_pow(num_vals)
@@ -116,23 +116,23 @@ contains
     binom_val = 1
 
     forall (i = 1:num_vals)
-       evaluated(i, :) = lambda1(i) * nodes(1, :)
+       evaluated(:, i) = lambda1(i) * nodes(:, 1)
     end forall
 
     do i = 2, num_nodes - 1
        lambda2_pow = lambda2_pow * lambda2
        binom_val = (binom_val * (num_nodes - i + 1)) / (i - 1)
        forall (j = 1:num_vals)
-          evaluated(j, :) = ( &
-               evaluated(j, :) + &
-               binom_val * lambda2_pow(j) * nodes(i, :)) * lambda1(j)
+          evaluated(:, j) = ( &
+               evaluated(:, j) + &
+               binom_val * lambda2_pow(j) * nodes(:, i)) * lambda1(j)
        end forall
     end do
 
     forall (i = 1:num_vals)
-       evaluated(i, :) = ( &
-            evaluated(i, :) + &
-            lambda2_pow(i) * lambda2(i) * nodes(num_nodes, :))
+       evaluated(:, i) = ( &
+            evaluated(:, i) + &
+            lambda2_pow(i) * lambda2(i) * nodes(:, num_nodes))
     end forall
 
   end subroutine evaluate_curve_barycentric
@@ -144,10 +144,10 @@ contains
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
     integer(c_int), intent(in) :: num_vals
     real(c_double), intent(in) :: s_vals(num_vals)
-    real(c_double), intent(out) :: evaluated(num_vals, dimension_)
+    real(c_double), intent(out) :: evaluated(dimension_, num_vals)
     ! Variables outside of signature.
     real(c_double) :: one_less(num_vals)
 
@@ -162,42 +162,42 @@ contains
     ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
     real(c_double), intent(in) :: start, end_
-    real(c_double), intent(out) :: new_nodes(num_nodes, dimension_)
+    real(c_double), intent(out) :: new_nodes(dimension_, num_nodes)
     ! Variables outside of signature.
-    real(c_double) :: workspace(num_nodes - 1, dimension_, num_nodes)
+    real(c_double) :: workspace(dimension_, num_nodes - 1, num_nodes)
     integer(c_int) :: index_, curr_size, j
     real(c_double) :: minus_start, minus_end
 
     minus_start = 1.0_dp - start
     minus_end = 1.0_dp - end_
     workspace(:, :, 1) = ( &
-         minus_start * nodes(:num_nodes - 1, :) + start * nodes(2:, :))
+         minus_start * nodes(:, :num_nodes - 1) + start * nodes(:, 2:))
     workspace(:, :, 2) = ( &
-         minus_end * nodes(:num_nodes - 1, :) + end_ * nodes(2:, :))
+         minus_end * nodes(:, :num_nodes - 1) + end_ * nodes(:, 2:))
 
     curr_size = num_nodes - 1
     do index_ = 3, num_nodes
        curr_size = curr_size - 1
        ! First add a new "column" (or whatever the 3rd dimension is called)
        ! at the end using ``end_``.
-       workspace(:curr_size, :, index_) = ( &
-            minus_end * workspace(:curr_size, :, index_ - 1) + &
-            end_ * workspace(2:curr_size + 1, :, index_ - 1))
+       workspace(:, :curr_size, index_) = ( &
+            minus_end * workspace(:, :curr_size, index_ - 1) + &
+            end_ * workspace(:, 2:curr_size + 1, index_ - 1))
        ! Update all the values in place by using de Casteljau with the
        ! ``start`` parameter.
        forall (j = 1:index_ - 1)
-          workspace(:curr_size, :, j) = ( &
-               minus_start * workspace(:curr_size, :, j) + &
-               start * workspace(2:curr_size + 1, :, j))
+          workspace(:, :curr_size, j) = ( &
+               minus_start * workspace(:, :curr_size, j) + &
+               start * workspace(:, 2:curr_size + 1, j))
        end forall
     end do
 
     ! Move the final "column" (or whatever the 3rd dimension is called)
     ! of the workspace into ``new_nodes``.
     forall (index_ = 1:num_nodes)
-       new_nodes(index_, :) = workspace(1, :, index_)
+       new_nodes(:, index_) = workspace(:, 1, index_)
     end forall
 
   end subroutine specialize_curve_generic
@@ -206,9 +206,9 @@ contains
        dimension_, nodes, start, end_, new_nodes)
 
     integer(c_int), intent(in) :: dimension_
-    real(c_double), intent(in) :: nodes(3, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, 3)
     real(c_double), intent(in) :: start, end_
-    real(c_double), intent(out) :: new_nodes(3, dimension_)
+    real(c_double), intent(out) :: new_nodes(dimension_, 3)
     ! Variables outside of signature.
     real(c_double) :: minus_start, minus_end, prod_both
 
@@ -216,18 +216,18 @@ contains
     minus_end = 1.0_dp - end_
     prod_both = start * end_
 
-    new_nodes(1, :) = ( &
-         minus_start * minus_start * nodes(1, :) + &
-         2.0_dp * start * minus_start * nodes(2, :) + &
-         start * start * nodes(3, :))
-    new_nodes(2, :) = ( &
-         minus_start * minus_end * nodes(1, :) + &
-         (end_ + start - 2.0_dp * prod_both) * nodes(2, :) + &
-         prod_both * nodes(3, :))
-    new_nodes(3, :) = ( &
-         minus_end * minus_end * nodes(1, :) + &
-         2.0_dp * end_ * minus_end * nodes(2, :) + &
-         end_ * end_ * nodes(3, :))
+    new_nodes(:, 1) = ( &
+         minus_start * minus_start * nodes(:, 1) + &
+         2.0_dp * start * minus_start * nodes(:, 2) + &
+         start * start * nodes(:, 3))
+    new_nodes(:, 2) = ( &
+         minus_start * minus_end * nodes(:, 1) + &
+         (end_ + start - 2.0_dp * prod_both) * nodes(:, 2) + &
+         prod_both * nodes(:, 3))
+    new_nodes(:, 3) = ( &
+         minus_end * minus_end * nodes(:, 1) + &
+         2.0_dp * end_ * minus_end * nodes(:, 2) + &
+         end_ * end_ * nodes(:, 3))
 
   end subroutine specialize_curve_quadratic
 
@@ -236,13 +236,13 @@ contains
        bind(c, name='specialize_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
     real(c_double), intent(in) :: start, end_
-    real(c_double), intent(out) :: new_nodes(num_nodes, dimension_)
+    real(c_double), intent(out) :: new_nodes(dimension_, num_nodes)
 
     if (num_nodes == 2) then
-       new_nodes(1, :) = (1.0_dp - start) * nodes(1, :) + start * nodes(2, :)
-       new_nodes(2, :) = (1.0_dp - end_) * nodes(1, :) + end_ * nodes(2, :)
+       new_nodes(:, 1) = (1.0_dp - start) * nodes(:, 1) + start * nodes(:, 2)
+       new_nodes(:, 2) = (1.0_dp - end_) * nodes(:, 1) + end_ * nodes(:, 2)
     else if (num_nodes == 3) then
        call specialize_curve_quadratic( &
             dimension_, nodes, start, end_, new_nodes)
@@ -259,12 +259,12 @@ contains
 
     real(c_double), intent(in) :: s
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(out) :: hodograph(1, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    real(c_double), intent(out) :: hodograph(dimension_, 1)
     ! Variables outside of signature.
-    real(c_double) :: first_deriv(num_nodes - 1, dimension_)
+    real(c_double) :: first_deriv(dimension_, num_nodes - 1)
 
-    first_deriv = nodes(2:, :) - nodes(:num_nodes - 1, :)
+    first_deriv = nodes(:, 2:) - nodes(:, :num_nodes - 1)
     call evaluate_multi( &
          num_nodes - 1, dimension_, first_deriv, 1, [s], hodograph)
     hodograph = (num_nodes - 1) * hodograph
@@ -275,9 +275,9 @@ contains
        num_nodes, dimension_, nodes, left_nodes, right_nodes)
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(out) :: left_nodes(num_nodes, dimension_)
-    real(c_double), intent(out) :: right_nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    real(c_double), intent(out) :: left_nodes(dimension_, num_nodes)
+    real(c_double), intent(out) :: right_nodes(dimension_, num_nodes)
     ! Variables outside of signature.
     real(c_double) :: pascals_triangle(num_nodes)
     integer(c_int) :: elt_index, pascal_index
@@ -292,16 +292,16 @@ contains
                pascals_triangle(:elt_index) + pascals_triangle(elt_index:1:-1))
        end if
 
-       left_nodes(elt_index, :) = 0
-       right_nodes(num_nodes + 1 - elt_index, :) = 0
+       left_nodes(:, elt_index) = 0
+       right_nodes(:, num_nodes + 1 - elt_index) = 0
        do pascal_index = 1, elt_index
-          left_nodes(elt_index, :) = ( &
-               left_nodes(elt_index, :) + &
-               pascals_triangle(pascal_index) * nodes(pascal_index, :))
-          right_nodes(num_nodes + 1 - elt_index, :) = ( &
-               right_nodes(num_nodes + 1 - elt_index, :) + &
+          left_nodes(:, elt_index) = ( &
+               left_nodes(:, elt_index) + &
+               pascals_triangle(pascal_index) * nodes(:, pascal_index))
+          right_nodes(:, num_nodes + 1 - elt_index) = ( &
+               right_nodes(:, num_nodes + 1 - elt_index) + &
                pascals_triangle(pascal_index) * &
-               nodes(num_nodes + 1 - pascal_index, :))
+               nodes(:, num_nodes + 1 - pascal_index))
        end do
     end do
 
@@ -312,35 +312,35 @@ contains
        bind(c, name='subdivide_nodes_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(out) :: left_nodes(num_nodes, dimension_)
-    real(c_double), intent(out) :: right_nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    real(c_double), intent(out) :: left_nodes(dimension_, num_nodes)
+    real(c_double), intent(out) :: right_nodes(dimension_, num_nodes)
 
     if (num_nodes == 2) then
-       left_nodes(1, :) = nodes(1, :)
-       left_nodes(2, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
-       right_nodes(1, :) = left_nodes(2, :)
-       right_nodes(2, :) = nodes(2, :)
+       left_nodes(:, 1) = nodes(:, 1)
+       left_nodes(:, 2) = 0.5_dp * (nodes(:, 1) + nodes(:, 2))
+       right_nodes(:, 1) = left_nodes(:, 2)
+       right_nodes(:, 2) = nodes(:, 2)
     else if (num_nodes == 3) then
-       left_nodes(1, :) = nodes(1, :)
-       left_nodes(2, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
-       left_nodes(3, :) = 0.25_dp * ( &
-            nodes(1, :) + 2 * nodes(2, :) + nodes(3, :))
-       right_nodes(1, :) = left_nodes(3, :)
-       right_nodes(2, :) = 0.5_dp * (nodes(2, :) + nodes(3, :))
-       right_nodes(3, :) = nodes(3, :)
+       left_nodes(:, 1) = nodes(:, 1)
+       left_nodes(:, 2) = 0.5_dp * (nodes(:, 1) + nodes(:, 2))
+       left_nodes(:, 3) = 0.25_dp * ( &
+            nodes(:, 1) + 2 * nodes(:, 2) + nodes(:, 3))
+       right_nodes(:, 1) = left_nodes(:, 3)
+       right_nodes(:, 2) = 0.5_dp * (nodes(:, 2) + nodes(:, 3))
+       right_nodes(:, 3) = nodes(:, 3)
     else if (num_nodes == 4) then
-       left_nodes(1, :) = nodes(1, :)
-       left_nodes(2, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
-       left_nodes(3, :) = 0.25_dp * ( &
-            nodes(1, :) + 2 * nodes(2, :) + nodes(3, :))
-       left_nodes(4, :) = 0.125_dp * ( &
-            nodes(1, :) + 3 * nodes(2, :) + 3 * nodes(3, :) + nodes(4, :))
-       right_nodes(1, :) = left_nodes(4, :)
-       right_nodes(2, :) = 0.25_dp * ( &
-            nodes(2, :) + 2 * nodes(3, :) + nodes(4, :))
-       right_nodes(3, :) = 0.5_dp * (nodes(3, :) + nodes(4, :))
-       right_nodes(4, :) = nodes(4, :)
+       left_nodes(:, 1) = nodes(:, 1)
+       left_nodes(:, 2) = 0.5_dp * (nodes(:, 1) + nodes(:, 2))
+       left_nodes(:, 3) = 0.25_dp * ( &
+            nodes(:, 1) + 2 * nodes(:, 2) + nodes(:, 3))
+       left_nodes(:, 4) = 0.125_dp * ( &
+            nodes(:, 1) + 3 * nodes(:, 2) + 3 * nodes(:, 3) + nodes(:, 4))
+       right_nodes(:, 1) = left_nodes(:, 4)
+       right_nodes(:, 2) = 0.25_dp * ( &
+            nodes(:, 2) + 2 * nodes(:, 3) + nodes(:, 4))
+       right_nodes(:, 3) = 0.5_dp * (nodes(:, 3) + nodes(:, 4))
+       right_nodes(:, 4) = nodes(:, 4)
     else
        call subdivide_nodes_generic( &
             num_nodes, dimension_, nodes, left_nodes, right_nodes)
@@ -353,13 +353,13 @@ contains
        bind(c, name='newton_refine_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(in) :: point(1, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    real(c_double), intent(in) :: point(dimension_, 1)
     real(c_double), intent(in) :: s
     real(c_double), intent(out) :: updated_s
     ! Variables outside of signature.
-    real(c_double) :: pt_delta(1, dimension_)
-    real(c_double) :: derivative(1, dimension_)
+    real(c_double) :: pt_delta(dimension_, 1)
+    real(c_double) :: derivative(dimension_, 1)
 
     call evaluate_multi( &
          num_nodes, dimension_, nodes, 1, [s], pt_delta)
@@ -370,8 +370,8 @@ contains
 
     updated_s = ( &
          s + &
-         (dot_product(pt_delta(1, :), derivative(1, :)) / &
-         dot_product(derivative(1, :), derivative(1, :))))
+         (dot_product(pt_delta(:, 1), derivative(:, 1)) / &
+         dot_product(derivative(:, 1), derivative(:, 1))))
 
   end subroutine newton_refine
 
@@ -387,10 +387,10 @@ contains
     ! NOTE: This **assumes** but does not check that if the nodes are
     !       allocated, they are also the correct shape.
     if (.NOT. allocated(next_candidates(num_next_candidates - 1)%nodes)) then
-       allocate(next_candidates(num_next_candidates - 1)%nodes(num_nodes, dimension_))
+       allocate(next_candidates(num_next_candidates - 1)%nodes(dimension_, num_nodes))
     end if
     if (.NOT. allocated(next_candidates(num_next_candidates)%nodes)) then
-       allocate(next_candidates(num_next_candidates)%nodes(num_nodes, dimension_))
+       allocate(next_candidates(num_next_candidates)%nodes(dimension_, num_nodes))
     end if
 
     call subdivide_nodes( &
@@ -429,7 +429,7 @@ contains
        num_next_candidates, next_candidates)
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: point(1, dimension_)
+    real(c_double), intent(in) :: point(dimension_, 1)
     integer(c_int), intent(in) :: num_candidates
     type(CurveData), intent(in) :: candidates(:)
     integer(c_int), intent(inout) :: num_next_candidates
@@ -444,7 +444,7 @@ contains
     do cand_index = 1, num_candidates
        call contains_nd( &
             num_nodes, dimension_, candidates(cand_index)%nodes, &
-            point(1, :), predicate)
+            point(:, 1), predicate)
        if (predicate) then
           num_next_candidates = num_next_candidates + 2
           call split_candidate( &
@@ -465,8 +465,8 @@ contains
     !       parameters is too large).
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(in) :: point(1, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    real(c_double), intent(in) :: point(dimension_, 1)
     real(c_double), intent(out) :: s_approx
     ! Variables outside of signature.
     integer(c_int) :: sub_index
@@ -555,17 +555,17 @@ contains
        bind(c, name='elevate_nodes_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(out) :: elevated(num_nodes + 1, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    real(c_double), intent(out) :: elevated(dimension_, num_nodes + 1)
     ! Variables outside of signature.
     integer(c_int) :: i
 
-    elevated(1, :) = nodes(1, :)
+    elevated(:, 1) = nodes(:, 1)
     forall (i = 1:num_nodes - 1)
-       elevated(i + 1, :) = ( &
-            i * nodes(i, :) + (num_nodes - i) * nodes(i + 1, :)) / num_nodes
+       elevated(:, i + 1) = ( &
+            i * nodes(:, i) + (num_nodes - i) * nodes(:, i + 1)) / num_nodes
     end forall
-    elevated(num_nodes + 1, :) = nodes(num_nodes, :)
+    elevated(:, num_nodes + 1) = nodes(:, num_nodes)
 
   end subroutine elevate_nodes
 
@@ -574,13 +574,13 @@ contains
        bind(c, name='get_curvature')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(in) :: tangent_vec(1, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    real(c_double), intent(in) :: tangent_vec(dimension_, 1)
     real(c_double), intent(in) :: s
     real(c_double), intent(out) :: curvature
     ! Variables outside of signature.
-    real(c_double) :: work(num_nodes - 1, dimension_)
-    real(c_double) :: concavity(1, dimension_)
+    real(c_double) :: work(dimension_, num_nodes - 1)
+    real(c_double) :: concavity(dimension_, 1)
 
     if (num_nodes == 2) then
        curvature = 0
@@ -590,13 +590,13 @@ contains
     ! NOTE: We somewhat replicate code in ``evaluate_hodograph()`` here.
 
     ! First derivative:
-    work = nodes(2:, :) - nodes(:num_nodes - 1, :)
+    work = nodes(:, 2:) - nodes(:, :num_nodes - 1)
     ! Second derivative (no need for last element of work array):
-    work(:num_nodes - 2, :) = work(2:, :) - work(:num_nodes - 2, :)
+    work(:, :num_nodes - 2) = work(:, 2:) - work(:, :num_nodes - 2)
 
     ! NOTE: The degree being evaluated is ``degree - 2 == num_nodes - 3``.
     call evaluate_multi( &
-         num_nodes - 2, dimension_, work(:num_nodes - 2, :), 1, [s], concavity)
+         num_nodes - 2, dimension_, work(:, :num_nodes - 2), 1, [s], concavity)
     ! B''(s) = d (d - 1) D(s) where D(s) is defined by the "double hodograph".
     concavity = concavity * (num_nodes - 1) * (num_nodes - 2)
 
@@ -610,39 +610,39 @@ contains
        bind(c, name='reduce_pseudo_inverse')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(out) :: reduced(num_nodes - 1, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    real(c_double), intent(out) :: reduced(dimension_, num_nodes - 1)
     logical(c_bool), intent(out) :: not_implemented
 
     not_implemented = .FALSE.
     if (num_nodes == 2) then
-       reduced(1, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
+       reduced(:, 1) = 0.5_dp * (nodes(:, 1) + nodes(:, 2))
     else if (num_nodes == 3) then
-       reduced(1, :) = (5 * nodes(1, :) + 2 * nodes(2, :) - nodes(3, :)) / 6
-       reduced(2, :) = (-nodes(1, :) + 2 * nodes(2, :) + 5 * nodes(3, :)) / 6
+       reduced(:, 1) = (5 * nodes(:, 1) + 2 * nodes(:, 2) - nodes(:, 3)) / 6
+       reduced(:, 2) = (-nodes(:, 1) + 2 * nodes(:, 2) + 5 * nodes(:, 3)) / 6
     else if (num_nodes == 4) then
-       reduced(1, :) = ( &
-            19 * nodes(1, :) + 3 * nodes(2, :) - &
-            3 * nodes(3, :) + nodes(4, :)) / 20
-       reduced(2, :) = 0.25_dp * ( &
-            -nodes(1, :) + 3 * nodes(2, :) + &
-            3 * nodes(3, :) - nodes(4, :))
-       reduced(3, :) = ( &
-            nodes(1, :) - 3 * nodes(2, :) + &
-            3 * nodes(3, :) + 19 * nodes(4, :)) / 20
+       reduced(:, 1) = ( &
+            19 * nodes(:, 1) + 3 * nodes(:, 2) - &
+            3 * nodes(:, 3) + nodes(:, 4)) / 20
+       reduced(:, 2) = 0.25_dp * ( &
+            -nodes(:, 1) + 3 * nodes(:, 2) + &
+            3 * nodes(:, 3) - nodes(:, 4))
+       reduced(:, 3) = ( &
+            nodes(:, 1) - 3 * nodes(:, 2) + &
+            3 * nodes(:, 3) + 19 * nodes(:, 4)) / 20
     else if (num_nodes == 5) then
-       reduced(1, :) = ( &
-            69 * nodes(1, :) + 4 * nodes(2, :) - 6 * nodes(3, :) + &
-            4 * nodes(4, :) - nodes(5, :)) / 70
-       reduced(2, :) = ( &
-            -53 * nodes(1, :) + 212 * nodes(2, :) + 102 * nodes(3, :) - &
-            68 * nodes(4, :) + 17 * nodes(5, :)) / 210
-       reduced(3, :) = ( &
-            17 * nodes(1, :) - 68 * nodes(2, :) + 102 * nodes(3, :) + &
-            212 * nodes(4, :) - 53 * nodes(5, :)) / 210
-       reduced(4, :) = ( &
-            -nodes(1, :) + 4 * nodes(2, :) - 6 * nodes(3, :) + &
-            4 * nodes(4, :) + 69 * nodes(5, :)) / 70
+       reduced(:, 1) = ( &
+            69 * nodes(:, 1) + 4 * nodes(:, 2) - 6 * nodes(:, 3) + &
+            4 * nodes(:, 4) - nodes(:, 5)) / 70
+       reduced(:, 2) = ( &
+            -53 * nodes(:, 1) + 212 * nodes(:, 2) + 102 * nodes(:, 3) - &
+            68 * nodes(:, 4) + 17 * nodes(:, 5)) / 210
+       reduced(:, 3) = ( &
+            17 * nodes(:, 1) - 68 * nodes(:, 2) + 102 * nodes(:, 3) + &
+            212 * nodes(:, 4) - 53 * nodes(:, 5)) / 210
+       reduced(:, 4) = ( &
+            -nodes(:, 1) + 4 * nodes(:, 2) - 6 * nodes(:, 3) + &
+            4 * nodes(:, 4) + 69 * nodes(:, 5)) / 70
     else
        not_implemented = .TRUE.
     end if
@@ -653,8 +653,8 @@ contains
        num_nodes, dimension_, nodes, projected, error)
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
-    real(c_double), intent(in) :: projected(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    real(c_double), intent(in) :: projected(dimension_, num_nodes)
     real(c_double), intent(out) :: error
 
     ! If "dim" is not passed to ``norm2``, will be Frobenius norm.
@@ -677,10 +677,10 @@ contains
     !       but it is (for now) public, so that it can be tested.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
     integer(c_int), intent(out) :: success
     ! Variables outside of signature.
-    real(c_double) :: reduced(num_nodes, dimension_)
+    real(c_double) :: reduced(dimension_, num_nodes)
     real(c_double) :: relative_err
 
     if (num_nodes < 2 .OR. num_nodes > 5) then
@@ -693,41 +693,41 @@ contains
 
     ! First, put the "projection" in ``reduced``.
     if (num_nodes == 2) then
-       reduced(1, :) = 0.5_dp * (nodes(1, :) + nodes(2, :))
-       reduced(2, :) = reduced(1, :)
+       reduced(:, 1) = 0.5_dp * (nodes(:, 1) + nodes(:, 2))
+       reduced(:, 2) = reduced(:, 1)
     else if (num_nodes == 3) then
-       reduced(1, :) = (5 * nodes(1, :) + 2 * nodes(2, :) - nodes(3, :)) / 6
-       reduced(2, :) = (nodes(1, :) + nodes(2, :) + nodes(3, :)) / 3
-       reduced(3, :) = (-nodes(1, :) + 2 * nodes(2, :) + 5 * nodes(3, :)) / 6
+       reduced(:, 1) = (5 * nodes(:, 1) + 2 * nodes(:, 2) - nodes(:, 3)) / 6
+       reduced(:, 2) = (nodes(:, 1) + nodes(:, 2) + nodes(:, 3)) / 3
+       reduced(:, 3) = (-nodes(:, 1) + 2 * nodes(:, 2) + 5 * nodes(:, 3)) / 6
     else if (num_nodes == 4) then
-       reduced(1, :) = ( &
-            19 * nodes(1, :) + 3 * nodes(2, :) - &
-            3 * nodes(3, :) + nodes(4, :)) / 20
-       reduced(2, :) = ( &
-            3 * nodes(1, :) + 11 * nodes(2, :) + &
-            9 * nodes(3, :) - 3 * nodes(4, :)) / 20
-       reduced(3, :) = ( &
-            -3 * nodes(1, :) + 9 * nodes(2, :) + &
-            11 * nodes(3, :) + 3 * nodes(4, :)) / 20
-       reduced(4, :) = ( &
-            nodes(1, :) - 3 * nodes(2, :) + &
-            3 * nodes(3, :) + 19 * nodes(4, :)) / 20
+       reduced(:, 1) = ( &
+            19 * nodes(:, 1) + 3 * nodes(:, 2) - &
+            3 * nodes(:, 3) + nodes(:, 4)) / 20
+       reduced(:, 2) = ( &
+            3 * nodes(:, 1) + 11 * nodes(:, 2) + &
+            9 * nodes(:, 3) - 3 * nodes(:, 4)) / 20
+       reduced(:, 3) = ( &
+            -3 * nodes(:, 1) + 9 * nodes(:, 2) + &
+            11 * nodes(:, 3) + 3 * nodes(:, 4)) / 20
+       reduced(:, 4) = ( &
+            nodes(:, 1) - 3 * nodes(:, 2) + &
+            3 * nodes(:, 3) + 19 * nodes(:, 4)) / 20
     else if (num_nodes == 5) then
-       reduced(1, :) = ( &
-            69 * nodes(1, :) + 4 * nodes(2, :) - 6 * nodes(3, :) + &
-            4 * nodes(4, :) - nodes(5, :)) / 70
-       reduced(2, :) = ( &
-            2 * nodes(1, :) + 27 * nodes(2, :) + 12 * nodes(3, :) - &
-            8 * nodes(4, :) + 2 * nodes(5, :)) / 35
-       reduced(3, :) = ( &
-            -3 * nodes(1, :) + 12 * nodes(2, :) + 17 * nodes(3, :) + &
-            12 * nodes(4, :) - 3 * nodes(5, :)) / 35
-       reduced(4, :) = ( &
-            2 * nodes(1, :) - 8 * nodes(2, :) + 12 * nodes(3, :) + &
-            27 * nodes(4, :) + 2 * nodes(5, :)) / 35
-       reduced(5, :) = ( &
-            -nodes(1, :) + 4 * nodes(2, :) - 6 * nodes(3, :) + &
-            4 * nodes(4, :) + 69 * nodes(5, :)) / 70
+       reduced(:, 1) = ( &
+            69 * nodes(:, 1) + 4 * nodes(:, 2) - 6 * nodes(:, 3) + &
+            4 * nodes(:, 4) - nodes(:, 5)) / 70
+       reduced(:, 2) = ( &
+            2 * nodes(:, 1) + 27 * nodes(:, 2) + 12 * nodes(:, 3) - &
+            8 * nodes(:, 4) + 2 * nodes(:, 5)) / 35
+       reduced(:, 3) = ( &
+            -3 * nodes(:, 1) + 12 * nodes(:, 2) + 17 * nodes(:, 3) + &
+            12 * nodes(:, 4) - 3 * nodes(:, 5)) / 35
+       reduced(:, 4) = ( &
+            2 * nodes(:, 1) - 8 * nodes(:, 2) + 12 * nodes(:, 3) + &
+            27 * nodes(:, 4) + 2 * nodes(:, 5)) / 35
+       reduced(:, 5) = ( &
+            -nodes(:, 1) + 4 * nodes(:, 2) - 6 * nodes(:, 3) + &
+            4 * nodes(:, 4) + 69 * nodes(:, 5)) / 70
     end if
 
     call projection_error(num_nodes, dimension_, nodes, reduced, relative_err)
@@ -749,13 +749,13 @@ contains
     !       of nodes in the fully reduced nodes.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
     integer(c_int), intent(out) :: num_reduced_nodes
-    real(c_double), intent(out) :: reduced(num_nodes, dimension_)
+    real(c_double), intent(out) :: reduced(dimension_, num_nodes)
     logical(c_bool), intent(out) :: not_implemented
     ! Variables outside of signature.
     integer(c_int) :: i, cr_success
-    real(c_double) :: work(num_nodes - 1, dimension_)
+    real(c_double) :: work(dimension_, num_nodes - 1)
 
     reduced = nodes
     num_reduced_nodes = num_nodes
@@ -765,19 +765,19 @@ contains
     do i = 1, num_nodes - 1
        call can_reduce( &
             num_reduced_nodes, dimension_, &
-            reduced(:num_reduced_nodes, :), cr_success)
+            reduced(:, :num_reduced_nodes), cr_success)
 
        if (cr_success == 1) then
           ! Actually reduce the nodes.
           call reduce_pseudo_inverse( &
-               num_reduced_nodes, dimension_, reduced(:num_reduced_nodes, :), &
-               work(:num_reduced_nodes - 1, :), not_implemented)
+               num_reduced_nodes, dimension_, reduced(:, :num_reduced_nodes), &
+               work(:, :num_reduced_nodes - 1), not_implemented)
           if (not_implemented) then
              return  ! LCOV_EXCL_LINE
           else
              num_reduced_nodes = num_reduced_nodes - 1
              ! Update `reduced` based on the **new** number of nodes.
-             reduced(:num_reduced_nodes, :) = work(:num_reduced_nodes, :)
+             reduced(:, :num_reduced_nodes) = work(:, :num_reduced_nodes)
           end if
        else if (cr_success == 0) then
           return
@@ -795,11 +795,11 @@ contains
        bind(c, name='compute_length')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
     real(c_double), intent(out) :: length
     integer(c_int), intent(out) :: error_val
     ! Variables outside of signature.
-    real(c_double) :: first_deriv(num_nodes - 1, dimension_)
+    real(c_double) :: first_deriv(dimension_, num_nodes - 1)
     real(c_double) :: abserr
     integer(c_int) :: neval
     real(c_double) :: alist(50)
@@ -812,7 +812,7 @@ contains
     ! NOTE: We somewhat replicate code in ``evaluate_hodograph()``
     !       here. This is so we don't re-compute the nodes for the first
     !       derivative every time it is evaluated.
-    first_deriv = (num_nodes - 1) * (nodes(2:, :) - nodes(:num_nodes - 1, :))
+    first_deriv = (num_nodes - 1) * (nodes(:, 2:) - nodes(:, :num_nodes - 1))
     if (num_nodes == 2) then
        length = norm2(first_deriv)
        error_val = 0
@@ -831,7 +831,7 @@ contains
     real(c_double) function vec_size(s_val) result(norm_)
       real(c_double), intent(in) :: s_val
       ! Variables outside of signature.
-      real(c_double) :: evaluated(1, dimension_)
+      real(c_double) :: evaluated(dimension_, 1)
 
       ! ``evaluate_multi`` takes degree, which is one less than the number
       ! of nodes, so our derivative is one less than that.
@@ -902,16 +902,16 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: num_nodes, dimension_
 
-    num_nodes = size(curve_data%nodes, 1)
-    dimension_ = size(curve_data%nodes, 2)
+    num_nodes = size(curve_data%nodes, 2)
+    dimension_ = size(curve_data%nodes, 1)
 
     left%start = curve_data%start
     left%end_ = 0.5_dp * (curve_data%start + curve_data%end_)
-    allocate(left%nodes(num_nodes, dimension_))
+    allocate(left%nodes(dimension_, num_nodes))
 
     right%start = left%end_
     right%end_ = curve_data%end_
-    allocate(right%nodes(num_nodes, dimension_))
+    allocate(right%nodes(dimension_, num_nodes))
 
     call subdivide_nodes( &
          num_nodes, dimension_, curve_data%nodes, left%nodes, right%nodes)

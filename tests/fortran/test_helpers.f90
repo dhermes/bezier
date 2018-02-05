@@ -46,8 +46,8 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: vec0(1, 2)
-    real(c_double) :: vec1(1, 2)
+    real(c_double) :: vec0(2)
+    real(c_double) :: vec1(2)
     real(c_double) :: result_
     integer :: case_id
     character(13) :: name
@@ -56,8 +56,8 @@ contains
     name = "cross_product"
 
     ! CASE 1: Identical vector.
-    vec0(1, :) = [1.0_dp, 7.0_dp] / 8
-    vec1(1, :) = [-11.0_dp, 24.0_dp] / 32
+    vec0 = [1.0_dp, 7.0_dp] / 8
+    vec1 = [-11.0_dp, 24.0_dp] / 32
     call cross_product(vec0, vec1, result_)
     case_success = (result_ == 101.0_dp / 256)
     call print_status(name, case_id, case_success, success)
@@ -68,7 +68,7 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(2, 2), nodes2(6, 2)
+    real(c_double) :: nodes1(2, 2), nodes2(2, 6)
     real(c_double) :: left, right, bottom, top
     integer :: case_id
     character(4) :: name
@@ -77,8 +77,8 @@ contains
     name = "bbox"
 
     ! CASE 1: Simple case (just two nodes).
-    nodes1(1, :) = [0.0_dp, 5.0_dp]
-    nodes1(2, :) = [1.0_dp, 3.0_dp]
+    nodes1(:, 1) = [0.0_dp, 5.0_dp]
+    nodes1(:, 2) = [1.0_dp, 3.0_dp]
     call bbox(2, nodes1, left, right, bottom, top)
     case_success = ( &
          left == 0.0_dp .AND. right == 1.0_dp &
@@ -86,12 +86,12 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: "Many" nodes.
-    nodes2(1, :) = [1.0_dp, 0.0_dp]
-    nodes2(2, :) = [2.0_dp, 1.0_dp]
-    nodes2(3, :) = [-1.0_dp, 2.0_dp]
-    nodes2(4, :) = [5.0_dp, -3.0_dp]
-    nodes2(5, :) = [4.0_dp, 4.0_dp]
-    nodes2(6, :) = [0.0_dp, 0.0_dp]
+    nodes2(:, 1) = [1.0_dp, 0.0_dp]
+    nodes2(:, 2) = [2.0_dp, 1.0_dp]
+    nodes2(:, 3) = [-1.0_dp, 2.0_dp]
+    nodes2(:, 4) = [5.0_dp, -3.0_dp]
+    nodes2(:, 5) = [4.0_dp, 4.0_dp]
+    nodes2(:, 6) = [0.0_dp, 0.0_dp]
     call bbox(6, nodes2, left, right, bottom, top)
     case_success = ( &
          left == -1.0_dp .AND. right == 5.0_dp &
@@ -228,7 +228,7 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(3, 2), nodes2(2, 3), nodes3(2, 4)
+    real(c_double) :: nodes1(2, 3), nodes2(3, 2), nodes3(4, 2)
     real(c_double) :: point1(2), point2(3), point3(4)
     logical(c_bool) :: is_contained
     integer :: case_id
@@ -238,25 +238,25 @@ contains
     name = "contains_nd"
 
     ! CASE 1: Below bounding box.
-    nodes1(1, :) = [0.0_dp, 1.0_dp]
-    nodes1(2, :) = [0.5_dp, 0.0_dp]
-    nodes1(3, :) = [1.0_dp, 2.0_dp]
+    nodes1(:, 1) = [0.0_dp, 1.0_dp]
+    nodes1(:, 2) = [0.5_dp, 0.0_dp]
+    nodes1(:, 3) = [1.0_dp, 2.0_dp]
     point1 = [-0.5_dp, 1.0_dp]
     call contains_nd(3, 2, nodes1, point1, is_contained)
     case_success = (.NOT. is_contained)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Above bounding box.
-    nodes2(1, :) = [0.0_dp, -4.0_dp, 2.0_dp]
-    nodes2(2, :) = [-1.0_dp, 1.0_dp, 3.0_dp]
+    nodes2(:, 1) = [0.0_dp, -4.0_dp, 2.0_dp]
+    nodes2(:, 2) = [-1.0_dp, 1.0_dp, 3.0_dp]
     point2 = [-0.5_dp, 2.0_dp, 2.5_dp]
     call contains_nd(2, 3, nodes2, point2, is_contained)
     case_success = (.NOT. is_contained)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Inside bounding box.
-    nodes3(1, :) = [0.0_dp, 1.0_dp, 2.0_dp, 3.0_dp]
-    nodes3(2, :) = [1.0_dp, -2.0_dp, -4.0_dp, 1.0_dp]
+    nodes3(:, 1) = [0.0_dp, 1.0_dp, 2.0_dp, 3.0_dp]
+    nodes3(:, 2) = [1.0_dp, -2.0_dp, -4.0_dp, 1.0_dp]
     point3 = [0.5_dp, 0.0_dp, 0.0_dp, 2.0_dp]
     call contains_nd(2, 4, nodes3, point3, is_contained)
     case_success = (is_contained)
@@ -269,8 +269,8 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     real(c_double) :: eps
-    real(c_double) :: vec1(1, 2)
-    real(c_double) :: vec2(1, 2)
+    real(c_double) :: vec1(2)
+    real(c_double) :: vec2(2)
     logical(c_bool) :: is_close
     integer :: case_id
     character(12) :: name
@@ -280,42 +280,42 @@ contains
     name = "vector_close"
 
     ! CASE 1: Identical vector.
-    vec1(1, :) = [0.5_dp, 4.0_dp]
+    vec1 = [0.5_dp, 4.0_dp]
     is_close = vector_close(2, vec1, vec1, eps)
     case_success = (is_close)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Far apart vectors.
-    vec1(1, :) = [0.0_dp, 6.0_dp]
-    vec2(1, :) = [1.0_dp, -4.0_dp]
+    vec1 = [0.0_dp, 6.0_dp]
+    vec2 = [1.0_dp, -4.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     case_success = (.NOT. is_close)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Close but different.
-    vec1(1, :) = [2.25_dp, -3.5_dp]
-    vec2(1, :) = vec1(1, :) + 0.5_dp**43 * [-5.0_dp, 12.0_dp]
+    vec1 = [2.25_dp, -3.5_dp]
+    vec2 = vec1 + 0.5_dp**43 * [-5.0_dp, 12.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     case_success = (is_close)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Custom epsilon.
-    vec1(1, :) = [3.0_dp, 4.0_dp]
-    vec2(1, :) = [2.0_dp, 5.0_dp]
+    vec1 = [3.0_dp, 4.0_dp]
+    vec2 = [2.0_dp, 5.0_dp]
     is_close = vector_close(2, vec1, vec2, 0.5_dp)
     case_success = (is_close .AND. .NOT. vector_close(2, vec1, vec2, eps))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Near zero.
-    vec1(1, :) = [0.0_dp, 0.0_dp]
-    vec2(1, :) = 0.5_dp**45 * [3.0_dp, 4.0_dp]
+    vec1 = [0.0_dp, 0.0_dp]
+    vec2 = 0.5_dp**45 * [3.0_dp, 4.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     case_success = (is_close)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Near zero failure (i.e. not near enough).
-    vec1(1, :) = 0.5_dp**20 * [1.0_dp, 0.0_dp]
-    vec2(1, :) = [0.0_dp, 0.0_dp]
+    vec1 = 0.5_dp**20 * [1.0_dp, 0.0_dp]
+    vec2 = [0.0_dp, 0.0_dp]
     is_close = vector_close(2, vec1, vec2, eps)
     case_success = (.NOT. is_close)
     call print_status(name, case_id, case_success, success)

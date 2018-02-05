@@ -94,7 +94,7 @@ contains
 
     ! NOTE: This is a helper for ``newton_refine``.
 
-    real(c_double), intent(in) :: jac_both(1, 4)
+    real(c_double), intent(in) :: jac_both(4, 1)
     real(c_double), intent(in) :: x_val, surf_x
     real(c_double), intent(in) :: y_val, surf_y
     real(c_double), intent(out) :: delta_s, delta_t
@@ -104,9 +104,9 @@ contains
     e_val = x_val - surf_x
     f_val = y_val - surf_y
     denominator = ( &
-         jac_both(1, 1) * jac_both(1, 4) - jac_both(1, 2) * jac_both(1, 3))
-    delta_s = (jac_both(1, 4) * e_val - jac_both(1, 3) * f_val) / denominator
-    delta_t = (jac_both(1, 1) * f_val - jac_both(1, 2) * e_val) / denominator
+         jac_both(1, 1) * jac_both(4, 1) - jac_both(2, 1) * jac_both(3, 1))
+    delta_s = (jac_both(4, 1) * e_val - jac_both(3, 1) * f_val) / denominator
+    delta_t = (jac_both(1, 1) * f_val - jac_both(2, 1) * e_val) / denominator
 
   end subroutine newton_refine_solve
 
@@ -116,21 +116,21 @@ contains
        bind(c, name='newton_refine_surface')
 
     integer(c_int), intent(in) :: num_nodes
-    real(c_double), intent(in) :: nodes(num_nodes, 2)
+    real(c_double), intent(in) :: nodes(2, num_nodes)
     integer(c_int), intent(in) :: degree
     real(c_double), intent(in) :: x_val, y_val
     real(c_double), intent(in) :: s, t
     real(c_double), intent(out) :: updated_s, updated_t
     ! Variables outside of signature.
-    real(c_double) :: point(1, 2), jac_both(1, 4)
-    real(c_double) :: jac_nodes(num_nodes - degree - 1, 4)
+    real(c_double) :: point(2, 1), jac_both(4, 1)
+    real(c_double) :: jac_nodes(4, num_nodes - degree - 1)
     real(c_double) :: delta_s, delta_t
 
     call evaluate_barycentric( &
          num_nodes, 2, nodes, degree, &
          1.0_dp - s - t, s, t, point)
 
-    if (point(1, 1) == x_val .AND. point(1, 2) == y_val) then
+    if (point(1, 1) == x_val .AND. point(2, 1) == y_val) then
        ! No refinement is needed.
        updated_s = s
        updated_t = t
@@ -144,7 +144,7 @@ contains
          1.0_dp - s - t, s, t, jac_both)
     call newton_refine_solve( &
          jac_both, x_val, point(1, 1), &
-         y_val, point(1, 2), delta_s, delta_t)
+         y_val, point(2, 1), delta_s, delta_t)
     updated_s = s + delta_s
     updated_t = t + delta_t
 
@@ -169,16 +169,16 @@ contains
     ! NOTE: This **assumes** but does not check that if the nodes are
     !       allocated, they are also the correct shape.
     if (.NOT. allocated(next_candidates(num_next_candidates - 3)%nodes)) then
-       allocate(next_candidates(num_next_candidates - 3)%nodes(num_nodes, 2))
+       allocate(next_candidates(num_next_candidates - 3)%nodes(2, num_nodes))
     end if
     if (.NOT. allocated(next_candidates(num_next_candidates - 2)%nodes)) then
-       allocate(next_candidates(num_next_candidates - 2)%nodes(num_nodes, 2))
+       allocate(next_candidates(num_next_candidates - 2)%nodes(2, num_nodes))
     end if
     if (.NOT. allocated(next_candidates(num_next_candidates - 1)%nodes)) then
-       allocate(next_candidates(num_next_candidates - 1)%nodes(num_nodes, 2))
+       allocate(next_candidates(num_next_candidates - 1)%nodes(2, num_nodes))
     end if
     if (.NOT. allocated(next_candidates(num_next_candidates)%nodes)) then
-       allocate(next_candidates(num_next_candidates)%nodes(num_nodes, 2))
+       allocate(next_candidates(num_next_candidates)%nodes(2, num_nodes))
     end if
 
     call subdivide_nodes( &
@@ -238,7 +238,7 @@ contains
        num_next_candidates, next_candidates)
 
     integer(c_int), intent(in) :: num_nodes, degree
-    real(c_double), intent(in) :: point(1, 2)
+    real(c_double), intent(in) :: point(2)
     integer(c_int), intent(in) :: num_candidates
     type(LocateCandidate), intent(in) :: candidates(:)
     integer(c_int), intent(inout) :: num_next_candidates
@@ -252,7 +252,7 @@ contains
     do cand_index = 1, num_candidates
        call contains_nd( &
             num_nodes, 2, candidates(cand_index)%nodes, &
-            point(1, :), predicate)
+            point, predicate)
 
        if (predicate) then
           num_next_candidates = num_next_candidates + 4
@@ -278,20 +278,20 @@ contains
     !       i.e. all pre-image are unique.
 
     integer(c_int), intent(in) :: num_nodes
-    real(c_double), intent(in) :: nodes(num_nodes, 2)
+    real(c_double), intent(in) :: nodes(2, num_nodes)
     integer(c_int), intent(in) :: degree
     real(c_double), intent(in) :: x_val, y_val
     real(c_double), intent(out) :: s_val, t_val
     ! Variables outside of signature.
-    real(c_double) :: point(1, 2)
+    real(c_double) :: point(2)
     integer(c_int) :: sub_index
     integer(c_int) :: num_candidates, num_next_candidates
     type(LocateCandidate), allocatable :: candidates_odd(:), candidates_even(:)
     real(c_double) :: s_approx, t_approx
-    real(c_double) :: actual(1, 2)
+    real(c_double) :: actual(2)
     logical(c_bool) :: is_even
 
-    point(1, :) = [x_val, y_val]
+    point = [x_val, y_val]
     ! Start out with the full curve.
     allocate(candidates_odd(1))  ! First iteration is odd.
     candidates_odd(1) = LocateCandidate(1.0_dp, 1.0_dp, 1.0_dp, nodes)
@@ -375,13 +375,13 @@ contains
        edge_tangent, corner_tangent, num_nodes, &
        previous_edge_nodes) result(predicate)
 
-    real(c_double), intent(in) :: edge_tangent(1, 2)
-    real(c_double), intent(in) :: corner_tangent(1, 2)
+    real(c_double), intent(in) :: edge_tangent(2)
+    real(c_double), intent(in) :: corner_tangent(2)
     integer(c_int), intent(in) :: num_nodes
-    real(c_double), intent(in) :: previous_edge_nodes(num_nodes, 2)
+    real(c_double), intent(in) :: previous_edge_nodes(2, num_nodes)
     ! Variables outside of signature.
     real(c_double) :: cross_prod
-    real(c_double) :: alt_corner_tangent(1, 2)
+    real(c_double) :: alt_corner_tangent(2)
 
     call cross_product( &
          edge_tangent, corner_tangent, cross_prod)
@@ -413,15 +413,15 @@ contains
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
-    real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
+    real(c_double), intent(in) :: tangent_s(2), tangent_t(2)
     ! Variables outside of signature.
     integer(c_int) :: index, num_nodes
-    real(c_double) :: alt_tangent_s(1, 2), alt_tangent_t(1, 2)
+    real(c_double) :: alt_tangent_s(2), alt_tangent_t(2)
     real(c_double) :: cross_prod1, cross_prod2, cross_prod3
 
     ! Compute the other edge for the ``s`` surface.
     index = 1 + modulo(intersection_%index_first - 2, 3)
-    num_nodes = size(edges_first(index)%nodes, 1)
+    num_nodes = size(edges_first(index)%nodes, 2)
     call evaluate_hodograph( &
          1.0_dp, num_nodes, 2, &
          edges_first(index)%nodes, alt_tangent_s)
@@ -447,7 +447,7 @@ contains
     ! If ``tangent_t`` is not interior, we check the other ``t``
     ! edge that ends at the corner.
     index = 1 + modulo(intersection_%index_second - 2, 3)
-    num_nodes = size(edges_second(index)%nodes, 1)
+    num_nodes = size(edges_second(index)%nodes, 2)
     call evaluate_hodograph( &
          1.0_dp, num_nodes, 2, &
          edges_second(index)%nodes, alt_tangent_t)
@@ -491,7 +491,7 @@ contains
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
-    real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
+    real(c_double), intent(in) :: tangent_s(2), tangent_t(2)
     ! Variables outside of signature.
     integer(c_int) :: index, num_nodes
 
@@ -508,7 +508,7 @@ contains
           !       since it will return values in {0, 1, 2}. The goal is
           !       to send [1, 2, 3] --> [3, 1, 2] (i.e. move indices to
           !       the left and wrap around).
-          num_nodes = size(edges_first(index)%nodes, 1)
+          num_nodes = size(edges_first(index)%nodes, 2)
           predicate = ignored_edge_corner( &
                tangent_t, tangent_s, num_nodes, edges_first(index)%nodes)
        end if
@@ -519,7 +519,7 @@ contains
        !       since it will return values in {0, 1, 2}. The goal is
        !       to send [1, 2, 3] --> [3, 1, 2] (i.e. move indices to
        !       the left and wrap around).
-       num_nodes = size(edges_second(index)%nodes, 1)
+       num_nodes = size(edges_second(index)%nodes, 2)
        predicate = ignored_edge_corner( &
             tangent_s, tangent_t, num_nodes, edges_second(index)%nodes)
     else
@@ -546,7 +546,7 @@ contains
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
-    real(c_double), intent(in) :: tangent_s(1, 2), tangent_t(1, 2)
+    real(c_double), intent(in) :: tangent_s(2), tangent_t(2)
     integer(c_int), intent(out) :: enum_
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
@@ -557,16 +557,16 @@ contains
     real(c_double) :: delta_c
 
     status = Status_SUCCESS
-    dot_prod = dot_product(tangent_s(1, :), tangent_t(1, :))
+    dot_prod = dot_product(tangent_s, tangent_t)
     ! NOTE: When computing curvatures we assume that we don't have lines
     !       here, because lines that are tangent at an intersection are
     !       parallel and we don't handle that case.
-    num_nodes = size(edges_first(intersection_%index_first)%nodes, 1)
+    num_nodes = size(edges_first(intersection_%index_first)%nodes, 2)
     call get_curvature( &
          num_nodes, 2, edges_first(intersection_%index_first)%nodes, &
          tangent_s, intersection_%s, curvature1)
 
-    num_nodes = size(edges_second(intersection_%index_second)%nodes, 1)
+    num_nodes = size(edges_second(intersection_%index_second)%nodes, 2)
     call get_curvature( &
          num_nodes, 2, edges_second(intersection_%index_second)%nodes, &
          tangent_t, intersection_%t, curvature2)
@@ -638,7 +638,7 @@ contains
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: num_nodes
-    real(c_double) :: tangent_s(1, 2), tangent_t(1, 2)
+    real(c_double) :: tangent_s(2), tangent_t(2)
     real(c_double) :: cross_prod
 
     status = Status_SUCCESS
@@ -649,14 +649,14 @@ contains
 
     ! NOTE: We assume, but don't check that ``%nodes`` is allocated
     !       and that it has 2 columns.
-    num_nodes = size(edges_first(intersection_%index_first)%nodes, 1)
+    num_nodes = size(edges_first(intersection_%index_first)%nodes, 2)
     call evaluate_hodograph( &
          intersection_%s, num_nodes, 2, &
          edges_first(intersection_%index_first)%nodes, tangent_s)
 
     ! NOTE: We assume, but don't check that ``%nodes`` is allocated
     !       and that it has 2 columns.
-    num_nodes = size(edges_second(intersection_%index_second)%nodes, 1)
+    num_nodes = size(edges_second(intersection_%index_second)%nodes, 2)
     call evaluate_hodograph( &
          intersection_%t, num_nodes, 2, &
          edges_second(intersection_%index_second)%nodes, tangent_t)
@@ -800,10 +800,10 @@ contains
     ! * Status_SAME_CURVATURE: Via ``add_st_vals()``.
 
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
     integer(c_int), intent(in) :: degree1
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
     integer(c_int), intent(in) :: degree2
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     integer(c_int), intent(out) :: num_intersections
@@ -815,17 +815,17 @@ contains
     integer(c_int) :: num_st_vals
 
     ! Compute the edge nodes for the first surface.
-    allocate(edges_first(1)%nodes(degree1 + 1, 2))
-    allocate(edges_first(2)%nodes(degree1 + 1, 2))
-    allocate(edges_first(3)%nodes(degree1 + 1, 2))
+    allocate(edges_first(1)%nodes(2, degree1 + 1))
+    allocate(edges_first(2)%nodes(2, degree1 + 1))
+    allocate(edges_first(3)%nodes(2, degree1 + 1))
     call compute_edge_nodes( &
          num_nodes1, 2, nodes1, degree1, &
          edges_first(1)%nodes, edges_first(2)%nodes, edges_first(3)%nodes)
 
     ! Compute the edge nodes for the second surface.
-    allocate(edges_second(1)%nodes(degree2 + 1, 2))
-    allocate(edges_second(2)%nodes(degree2 + 1, 2))
-    allocate(edges_second(3)%nodes(degree2 + 1, 2))
+    allocate(edges_second(1)%nodes(2, degree2 + 1))
+    allocate(edges_second(2)%nodes(2, degree2 + 1))
+    allocate(edges_second(3)%nodes(2, degree2 + 1))
     call compute_edge_nodes( &
          num_nodes2, 2, nodes2, degree2, &
          edges_second(1)%nodes, edges_second(2)%nodes, edges_second(3)%nodes)
@@ -864,10 +864,10 @@ contains
     ! NOTE: This is a helper for ``surfaces_intersect()``.
 
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
     integer(c_int), intent(in) :: degree1
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
     integer(c_int), intent(in) :: degree2
     integer(c_int), intent(out) :: contained
     ! Variables outside of signature.
@@ -877,7 +877,7 @@ contains
     ! then the whole surface must be since there are no intersections.
     call locate_point( &
          num_nodes2, nodes2, degree2, &
-         nodes1(1, 1), nodes1(1, 2), s_val, t_val)
+         nodes1(1, 1), nodes1(2, 1), s_val, t_val)
     if (s_val /= LOCATE_MISS) then
        contained = SurfaceContained_FIRST
        return
@@ -887,7 +887,7 @@ contains
     ! then the whole surface must be since there are no intersections.
     call locate_point( &
          num_nodes1, nodes1, degree1, &
-         nodes2(1, 1), nodes2(1, 2), s_val, t_val)
+         nodes2(1, 1), nodes2(2, 1), s_val, t_val)
     if (s_val /= LOCATE_MISS) then
        contained = SurfaceContained_SECOND
        return
@@ -1351,10 +1351,10 @@ contains
     !                          never occur).
 
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
     integer(c_int), intent(in) :: degree1
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
     integer(c_int), intent(in) :: degree2
     integer(c_int), allocatable, intent(inout) :: segment_ends(:)
     type(CurvedPolygonSegment), allocatable, intent(inout) :: segments(:)
@@ -1454,10 +1454,10 @@ contains
     !                              of segments.
 
     integer(c_int), intent(in) :: num_nodes1
-    real(c_double), intent(in) :: nodes1(num_nodes1, 2)
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
     integer(c_int), intent(in) :: degree1
     integer(c_int), intent(in) :: num_nodes2
-    real(c_double), intent(in) :: nodes2(num_nodes2, 2)
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
     integer(c_int), intent(in) :: degree2
     integer(c_int), intent(in) :: segment_ends_size
     integer(c_int), intent(out) :: segment_ends(segment_ends_size)

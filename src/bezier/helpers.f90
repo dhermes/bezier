@@ -32,11 +32,11 @@ contains
        vec0, vec1, result_) &
        bind(c, name='cross_product')
 
-    real(c_double), intent(in) :: vec0(1, 2)
-    real(c_double), intent(in) :: vec1(1, 2)
+    real(c_double), intent(in) :: vec0(2)
+    real(c_double), intent(in) :: vec1(2)
     real(c_double), intent(out) :: result_
 
-    result_ = vec0(1, 1) * vec1(1, 2) - vec0(1, 2) * vec1(1, 1)
+    result_ = vec0(1) * vec1(2) - vec0(2) * vec1(1)
 
   end subroutine cross_product
 
@@ -45,15 +45,15 @@ contains
        bind(c, name='bbox')
 
     integer(c_int), intent(in) :: num_nodes
-    real(c_double), intent(in) :: nodes(num_nodes, 2)
+    real(c_double), intent(in) :: nodes(2, num_nodes)
     real(c_double), intent(out) :: left, right, bottom, top
     ! Variables outside of signature.
     real(c_double) :: workspace(2)
 
-    workspace = minval(nodes, 1)
+    workspace = minval(nodes, 2)
     left = workspace(1)
     bottom = workspace(2)
-    workspace = maxval(nodes, 1)
+    workspace = maxval(nodes, 2)
     right = workspace(1)
     top = workspace(2)
 
@@ -86,13 +86,13 @@ contains
        bind(c, name='contains_nd')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(num_nodes, dimension_)
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
     real(c_double), intent(in) :: point(dimension_)
     logical(c_bool), intent(out) :: predicate
 
-    if (any(point < minval(nodes, 1))) then
+    if (any(point < minval(nodes, 2))) then
        predicate = .FALSE.
-    else if (any(maxval(nodes, 1) < point)) then
+    else if (any(maxval(nodes, 2) < point)) then
        predicate = .FALSE.
     else
        predicate = .TRUE.
@@ -105,8 +105,8 @@ contains
        bind(c, name='vector_close')
 
     integer(c_int), intent(in) :: num_values
-    real(c_double), intent(in) :: vec1(1, num_values)
-    real(c_double), intent(in) :: vec2(1, num_values)
+    real(c_double), intent(in) :: vec1(num_values)
+    real(c_double), intent(in) :: vec2(num_values)
     real(c_double), intent(in) :: eps
     ! Variables outside of signature.
     real(c_double) :: size1, size2
@@ -248,7 +248,7 @@ contains
     integer(c_int), intent(out) :: polygon_size
     real(c_double), intent(out) :: polygon(2, num_points)
     ! Variables outside of signature.
-    real(c_double) :: point1(1, 2), point2(1, 2), point3(1, 2)
+    real(c_double) :: point1(2), point2(2), point3(2)
     integer(c_int) :: num_uniques
     real(c_double) :: uniques(2, num_points)
     integer(c_int) :: num_lower, num_upper
@@ -272,11 +272,11 @@ contains
     ! First create a "lower" convex hull
     num_lower = 0
     do i = 1, num_uniques
-       point3(1, :) = uniques(:, i)
+       point3 = uniques(:, i)
        result_ = -1.0_dp  ! Dummy value that is ``<= 0.0``.
        do while (num_lower > 1 .AND. result_ <= 0.0_dp)
-          point1(1, :) = lower(:, num_lower - 1)
-          point2(1, :) = lower(:, num_lower)
+          point1 = lower(:, num_lower - 1)
+          point2 = lower(:, num_lower)
           ! If ``point3`` (the one we are considering) is more "inside"
           ! of ``point1`` than ``point2`` is, then we drop ``point2``.
           call cross_product(point2 - point1, point3 - point1, result_)
@@ -285,17 +285,17 @@ contains
           end if
        end do
        num_lower = num_lower + 1
-       lower(:, num_lower) = point3(1, :)
+       lower(:, num_lower) = point3
     end do
 
     ! Then create an "upper" convex hull
     num_upper = 0
     do i = num_uniques, 1, -1
-       point3(1, :) = uniques(:, i)
+       point3 = uniques(:, i)
        result_ = -1.0_dp  ! Dummy value that is ``<= 0.0``.
        do while (num_upper > 1 .AND. result_ <= 0.0_dp)
-          point1(1, :) = upper(:, num_upper - 1)
-          point2(1, :) = upper(:, num_upper)
+          point1 = upper(:, num_upper - 1)
+          point2 = upper(:, num_upper)
           ! If ``point3`` (the one we are considering) is more "inside"
           ! of ``point1`` than ``point2`` is, then we drop ``point2``.
           call cross_product(point2 - point1, point3 - point1, result_)
@@ -304,7 +304,7 @@ contains
           end if
        end do
        num_upper = num_upper + 1
-       upper(:, num_upper) = point3(1, :)
+       upper(:, num_upper) = point3
     end do
 
     ! The endpoints are **both** double counted, so we skip the "end"
@@ -327,13 +327,13 @@ contains
 
     ! NOTE: This assumes, but does not check, that ``polygon_sizeX`` is
     !       at least two.
-    real(c_double), intent(in) :: edge_direction(1, 2)
+    real(c_double), intent(in) :: edge_direction(2)
     integer(c_int), intent(in) :: polygon_size1
     real(c_double), intent(in) :: polygon1(2, polygon_size1)
     integer(c_int), intent(in) :: polygon_size2
     real(c_double), intent(in) :: polygon2(2, polygon_size2)
     ! Variables outside of signature.
-    real(c_double) :: vertex(1, 2), norm_squared, cp_result, param
+    real(c_double) :: vertex(2), norm_squared, cp_result, param
     real(c_double) :: min_param1, max_param1
     real(c_double) :: min_param2, max_param2
     integer(c_int) :: i
@@ -341,17 +341,17 @@ contains
     ! NOTE: We assume throughout that ``norm_squared != 0``. If it **were**
     !       zero that would mean the ``edge_direction`` corresponds to an
     !       invalid edge.
-    norm_squared = dot_product(edge_direction(1, :), edge_direction(1, :))
+    norm_squared = dot_product(edge_direction, edge_direction)
 
     ! Compute the parameters along the "separating axis" for the vertices
     ! of the first polygon.
-    vertex(1, :) = polygon1(:, 1)
+    vertex = polygon1(:, 1)
     call cross_product(edge_direction, vertex, cp_result)
     param = cp_result / norm_squared
     min_param1 = param
     max_param1 = param
     do i = 2, polygon_size1
-       vertex(1, :) = polygon1(:, i)
+       vertex = polygon1(:, i)
        call cross_product(edge_direction, vertex, cp_result)
        param = cp_result / norm_squared
        min_param1 = min(min_param1, param)
@@ -360,13 +360,13 @@ contains
 
     ! Compute the parameters along the "separating axis" for the vertices
     ! of the first polygon.
-    vertex(1, :) = polygon2(:, 1)
+    vertex = polygon2(:, 1)
     call cross_product(edge_direction, vertex, cp_result)
     param = cp_result / norm_squared
     min_param2 = param
     max_param2 = param
     do i = 2, polygon_size2
-       vertex(1, :) = polygon2(:, i)
+       vertex = polygon2(:, i)
        call cross_product(edge_direction, vertex, cp_result)
        param = cp_result / norm_squared
        min_param2 = min(min_param2, param)
@@ -403,13 +403,13 @@ contains
     real(c_double), intent(in) :: polygon2(2, polygon_size2)
     logical(c_bool), intent(out) :: collision
     ! Variables outside of signature.
-    real(c_double) :: edge_direction(1, 2)
+    real(c_double) :: edge_direction(2)
     integer(c_int) :: i
 
     collision = .TRUE.
 
     ! First handle the "wrap-around" edge from polygon1.
-    edge_direction(1, :) = polygon1(:, 1) - polygon1(:, polygon_size1)
+    edge_direction = polygon1(:, 1) - polygon1(:, polygon_size1)
     if (is_separating( &
          edge_direction, polygon_size1, polygon1, &
          polygon_size2, polygon2)) then
@@ -419,7 +419,7 @@ contains
 
     ! Then, check all other edges from polygon1.
     do i = 2, polygon_size1
-       edge_direction(1, :) = polygon1(:, i) - polygon1(:, i - 1)
+       edge_direction = polygon1(:, i) - polygon1(:, i - 1)
        if (is_separating( &
             edge_direction, polygon_size1, polygon1, &
             polygon_size2, polygon2)) then
@@ -429,7 +429,7 @@ contains
     end do
 
     ! Then, handle the "wrap-around" edge from polygon2.
-    edge_direction(1, :) = polygon2(:, 1) - polygon2(:, polygon_size2)
+    edge_direction = polygon2(:, 1) - polygon2(:, polygon_size2)
     if (is_separating( &
          edge_direction, polygon_size1, polygon1, &
          polygon_size2, polygon2)) then
@@ -439,7 +439,7 @@ contains
 
     ! Then, check all other edges from polygon1.
     do i = 2, polygon_size2
-       edge_direction(1, :) = polygon2(:, i) - polygon2(:, i - 1)
+       edge_direction = polygon2(:, i) - polygon2(:, i - 1)
        if (is_separating( &
             edge_direction, polygon_size1, polygon1, &
             polygon_size2, polygon2)) then

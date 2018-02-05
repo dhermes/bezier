@@ -58,7 +58,7 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes(4, 3)
+    real(c_double) :: nodes(3, 4)
     real(c_double) :: lambda1(3), lambda2(3)
     real(c_double) :: evaluated(3, 3), expected(3, 3)
     integer :: case_id
@@ -68,15 +68,15 @@ contains
     name = "evaluate_curve_barycentric"
 
     ! CASE 1: Slightly complex example.
-    nodes(1, :) = [0.0_dp, 0.0_dp, 0.0_dp]
-    nodes(2, :) = [0.5_dp, 3.0_dp, 1.0_dp]
-    nodes(3, :) = [1.5_dp, 4.0_dp, 1.0_dp]
-    nodes(4, :) = [2.0_dp, 8.0_dp, 1.0_dp]
+    nodes(:, 1) = [0.0_dp, 0.0_dp, 0.0_dp]
+    nodes(:, 2) = [0.5_dp, 3.0_dp, 1.0_dp]
+    nodes(:, 3) = [1.5_dp, 4.0_dp, 1.0_dp]
+    nodes(:, 4) = [2.0_dp, 8.0_dp, 1.0_dp]
     lambda1 = [0.25_dp, 0.5_dp, 0.75_dp]
     lambda2 = [0.25_dp, 0.125_dp, -0.75_dp]
-    expected(1, :) = [0.125_dp, 0.453125_dp, 0.109375_dp]
-    expected(2, :) = [0.0859375_dp, 0.390625_dp, 0.119140625_dp]
-    expected(3, :) = [0.421875_dp, -2.109375_dp, -0.421875_dp]
+    expected(:, 1) = [0.125_dp, 0.453125_dp, 0.109375_dp]
+    expected(:, 2) = [0.0859375_dp, 0.390625_dp, 0.119140625_dp]
+    expected(:, 3) = [0.421875_dp, -2.109375_dp, -0.421875_dp]
     call evaluate_curve_barycentric( &
          4, 3, nodes, 3, lambda1, lambda2, evaluated)
 
@@ -89,10 +89,12 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(2, 3), nodes2(3, 2)
-    real(c_double) :: s_vals1(129), s_vals2(65)
-    real(c_double) :: evaluated1(129, 3), expected1(129, 3)
-    real(c_double) :: evaluated2(65, 2), expected2(65, 2)
+    real(c_double) :: nodes1(3, 2)
+    real(c_double) :: s_vals1(129)
+    real(c_double) :: evaluated1(3, 129), expected1(3, 129)
+    real(c_double) :: nodes2(2, 3)
+    real(c_double) :: s_vals2(65)
+    real(c_double) :: evaluated2(2, 65), expected2(2, 65)
     integer :: i
     integer :: case_id
     character(14) :: name
@@ -104,12 +106,12 @@ contains
     do i = 1, 129
        s_vals1(i) = (i - 1) / 128.0_dp
     end do
-    nodes1(1, :) = [1.0_dp, 1.0_dp, -7.0_dp]
-    nodes1(2, :) = [2.0_dp, -1.0_dp, -4.0_dp]
+    nodes1(:, 1) = [1.0_dp, 1.0_dp, -7.0_dp]
+    nodes1(:, 2) = [2.0_dp, -1.0_dp, -4.0_dp]
     ! B(s) = [s + 1, 1 - 2 s, 3 s - 7]
-    expected1(:, 1) = 1.0_dp + s_vals1
-    expected1(:, 2) = 1.0_dp - 2.0_dp * s_vals1
-    expected1(:, 3) = -7.0_dp + 3.0_dp * s_vals1
+    expected1(1, :) = 1.0_dp + s_vals1
+    expected1(2, :) = 1.0_dp - 2.0_dp * s_vals1
+    expected1(3, :) = -7.0_dp + 3.0_dp * s_vals1
     call evaluate_multi( &
          2, 3, nodes1, 129, s_vals1, evaluated1)
     case_success = all(evaluated1 == expected1)
@@ -119,12 +121,12 @@ contains
     do i = 1, 65
        s_vals2(i) = (i - 1) / 64.0_dp
     end do
-    nodes2(1, :) = [0.0_dp, 0.0_dp]
-    nodes2(2, :) = [2.0_dp, -1.0_dp]
-    nodes2(3, :) = [3.0_dp, 2.0_dp]
+    nodes2(:, 1) = [0.0_dp, 0.0_dp]
+    nodes2(:, 2) = [2.0_dp, -1.0_dp]
+    nodes2(:, 3) = [3.0_dp, 2.0_dp]
     ! B(s) = [s(4 - s), 2s(2s - 1)]
-    expected2(:, 1) = s_vals2 * (4.0_dp - s_vals2)
-    expected2(:, 2) = 2.0_dp * s_vals2 * (2.0_dp * s_vals2 - 1.0_dp)
+    expected2(1, :) = s_vals2 * (4.0_dp - s_vals2)
+    expected2(2, :) = 2.0_dp * s_vals2 * (2.0_dp * s_vals2 - 1.0_dp)
     call evaluate_multi( &
          3, 2, nodes2, 65, s_vals2, evaluated2)
     case_success = all(evaluated2 == expected2)
@@ -138,10 +140,10 @@ contains
     logical :: case_success
     real(c_double) :: nodes1(2, 2)
     real(c_double) :: new_nodes1(2, 2), expected1(2, 2)
-    real(c_double) :: nodes2(3, 2), left_nodes(3, 2), right_nodes(3, 2)
-    real(c_double) :: new_nodes2(3, 2)
-    real(c_double) :: nodes3(4, 2), new_nodes3(4, 2), expected3(4, 2)
-    real(c_double) :: nodes4(5, 2), new_nodes4(5, 2), expected4(5, 2)
+    real(c_double) :: nodes2(2, 3), left_nodes(2, 3), right_nodes(2, 3)
+    real(c_double) :: new_nodes2(2, 3)
+    real(c_double) :: nodes3(2, 4), new_nodes3(2, 4), expected3(2, 4)
+    real(c_double) :: nodes4(2, 5), new_nodes4(2, 5), expected4(2, 5)
     integer :: case_id
     character(16) :: name
 
@@ -149,19 +151,19 @@ contains
     name = "specialize_curve"
 
     ! CASE 1: Linear curve.
-    nodes1(1, :) = [0.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 1.0_dp]
-    expected1(1, :) = [0.25_dp, 0.25_dp]
-    expected1(2, :) = [0.75_dp, 0.75_dp]
+    nodes1(:, 1) = [0.0_dp, 0.0_dp]
+    nodes1(:, 2) = [1.0_dp, 1.0_dp]
+    expected1(:, 1) = [0.25_dp, 0.25_dp]
+    expected1(:, 2) = [0.75_dp, 0.75_dp]
     call specialize_curve( &
          2, 2, nodes1, 0.25_dp, 0.75_dp, new_nodes1)
     case_success = all(new_nodes1 == expected1)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic curve, after subdivision.
-    nodes2(1, :) = [0.0_dp, 1.0_dp]
-    nodes2(2, :) = [1.0_dp, 6.0_dp]
-    nodes2(3, :) = [3.0_dp, 5.0_dp]
+    nodes2(:, 1) = [0.0_dp, 1.0_dp]
+    nodes2(:, 2) = [1.0_dp, 6.0_dp]
+    nodes2(:, 3) = [3.0_dp, 5.0_dp]
     call subdivide_nodes( &
          3, 2, nodes2, left_nodes, right_nodes)
     call specialize_curve( &
@@ -176,30 +178,30 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Cubic curve.
-    nodes3(1, :) = [0.0_dp, 0.0_dp]
-    nodes3(2, :) = [1.0_dp, -1.0_dp]
-    nodes3(3, :) = [1.0_dp, -2.0_dp]
-    nodes3(4, :) = [3.0_dp, 2.0_dp]
-    expected3(1, :) = [171.0_dp, -187.0_dp] / 512.0_dp
-    expected3(2, :) = [375.0_dp, -423.0_dp] / 512.0_dp
-    expected3(3, :) = [499.0_dp, -579.0_dp] / 512.0_dp
-    expected3(4, :) = [735.0_dp, -335.0_dp] / 512.0_dp
+    nodes3(:, 1) = [0.0_dp, 0.0_dp]
+    nodes3(:, 2) = [1.0_dp, -1.0_dp]
+    nodes3(:, 3) = [1.0_dp, -2.0_dp]
+    nodes3(:, 4) = [3.0_dp, 2.0_dp]
+    expected3(:, 1) = [171.0_dp, -187.0_dp] / 512.0_dp
+    expected3(:, 2) = [375.0_dp, -423.0_dp] / 512.0_dp
+    expected3(:, 3) = [499.0_dp, -579.0_dp] / 512.0_dp
+    expected3(:, 4) = [735.0_dp, -335.0_dp] / 512.0_dp
     call specialize_curve( &
          4, 2, nodes3, 0.125_dp, 0.625_dp, new_nodes3)
     case_success = all(new_nodes3 == expected3)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Quartic curve.
-    nodes4(1, :) = [0.0_dp, 5.0_dp]
-    nodes4(2, :) = [1.0_dp, 6.0_dp]
-    nodes4(3, :) = [1.0_dp, 7.0_dp]
-    nodes4(4, :) = [3.0_dp, 6.0_dp]
-    nodes4(5, :) = [3.0_dp, 7.0_dp]
-    expected4(1, :) = [1.5625_dp, 6.375_dp]
-    expected4(2, :) = [1.78125_dp, 6.4375_dp]
-    expected4(3, :) = [2.015625_dp, 6.46875_dp]
-    expected4(4, :) = [2.2578125_dp, 6.484375_dp]
-    expected4(5, :) = [2.47265625_dp, 6.5234375_dp]
+    nodes4(:, 1) = [0.0_dp, 5.0_dp]
+    nodes4(:, 2) = [1.0_dp, 6.0_dp]
+    nodes4(:, 3) = [1.0_dp, 7.0_dp]
+    nodes4(:, 4) = [3.0_dp, 6.0_dp]
+    nodes4(:, 5) = [3.0_dp, 7.0_dp]
+    expected4(:, 1) = [1.5625_dp, 6.375_dp]
+    expected4(:, 2) = [1.78125_dp, 6.4375_dp]
+    expected4(:, 3) = [2.015625_dp, 6.46875_dp]
+    expected4(:, 4) = [2.2578125_dp, 6.484375_dp]
+    expected4(:, 5) = [2.47265625_dp, 6.5234375_dp]
     call specialize_curve( &
          5, 2, nodes4, 0.5_dp, 0.75_dp, new_nodes4)
 
@@ -213,8 +215,8 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     real(c_double) :: s_vals(5), s_val
-    real(c_double) :: hodograph(1, 2), expected(1, 2)
-    real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(4, 2)
+    real(c_double) :: hodograph(2, 1), expected(2, 1)
+    real(c_double) :: nodes1(2, 2), nodes2(2, 3), nodes3(2, 4)
     integer :: i
     integer :: case_id
     character(18) :: name
@@ -223,9 +225,9 @@ contains
     name = "evaluate_hodograph"
 
     ! CASE 1: Linear curve.
-    nodes1(1, :) = [0.0_dp, 0.0_dp]
-    nodes1(2, :) = [1.0_dp, 1.0_dp]
-    expected(1, :) = nodes1(2, :) - nodes1(1, :)
+    nodes1(:, 1) = [0.0_dp, 0.0_dp]
+    nodes1(:, 2) = [1.0_dp, 1.0_dp]
+    expected(:, 1) = nodes1(:, 2) - nodes1(:, 1)
     s_vals(:2) = [0.25_dp, 0.75_dp]
     case_success = .TRUE.
     do i = 1, 2
@@ -238,9 +240,9 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic curve.
-    nodes2(1, :) = [0.0_dp, 0.0_dp]
-    nodes2(2, :) = [0.5_dp, 1.0_dp]
-    nodes2(3, :) = [1.25_dp, 0.25_dp]
+    nodes2(:, 1) = [0.0_dp, 0.0_dp]
+    nodes2(:, 2) = [0.5_dp, 1.0_dp]
+    nodes2(:, 3) = [1.25_dp, 0.25_dp]
     !  B(s) = [s(s + 4)/4, s(8 - 7s)/4]
     ! B'(s) = [(2 + s)/2, (4 - 7s)/2]
     s_vals = [0.0_dp, 0.25_dp, 0.5_dp, 0.625_dp, 0.875_dp]
@@ -249,7 +251,7 @@ contains
        s_val = s_vals(i)
        call evaluate_hodograph( &
             s_val, 3, 2, nodes2, hodograph)
-       expected(1, :) = [ &
+       expected(:, 1) = [ &
             (2.0_dp + s_val) / 2.0_dp, &
             (4.0_dp - 7.0_dp * s_val) / 2.0_dp]
        case_success = ( &
@@ -259,10 +261,10 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Cubic curve.
-    nodes3(1, :) = [0.0_dp, 0.0_dp]
-    nodes3(2, :) = [0.25_dp, 1.0_dp]
-    nodes3(3, :) = [0.75_dp, 0.5_dp]
-    nodes3(4, :) = [1.25_dp, 1.0_dp]
+    nodes3(:, 1) = [0.0_dp, 0.0_dp]
+    nodes3(:, 2) = [0.25_dp, 1.0_dp]
+    nodes3(:, 3) = [0.75_dp, 0.5_dp]
+    nodes3(:, 4) = [1.25_dp, 1.0_dp]
     !  B(s) = [s(3 + 3s - s^2)/4, s(5s^2 - 9s + 6)/2]
     ! B'(s) = [3(1 + 2s - s^2)/4, 3(5s^2 - 6s + 2)/2]
     s_vals = [0.125_dp, 0.5_dp, 0.75_dp, 1.0_dp, 1.125_dp]
@@ -273,7 +275,7 @@ contains
             s_val, 4, 2, nodes3, hodograph)
        expected(1, 1) = ( &
             3.0_dp * (1.0_dp + 2.0_dp * s_val - s_val * s_val) / 4.0_dp)
-       expected(1, 2) = ( &
+       expected(2, 1) = ( &
             1.5_dp * (5.0_dp * s_val * s_val - 6.0_dp * s_val + 2.0_dp))
        case_success = ( &
             case_success .AND. &
@@ -289,10 +291,10 @@ contains
     logical :: case_success
     real(c_double) :: nodes1(2, 2), l_expected1(2, 2), r_expected1(2, 2)
     real(c_double) :: left_nodes1(2, 2), right_nodes1(2, 2)
-    real(c_double) :: nodes2(3, 2), l_expected2(3, 2), r_expected2(3, 2)
-    real(c_double) :: left_nodes2(3, 2), right_nodes2(3, 2)
-    real(c_double) :: nodes3(4, 2), l_expected3(4, 2), r_expected3(4, 2)
-    real(c_double) :: left_nodes3(4, 2), right_nodes3(4, 2)
+    real(c_double) :: nodes2(2, 3), l_expected2(2, 3), r_expected2(2, 3)
+    real(c_double) :: left_nodes2(2, 3), right_nodes2(2, 3)
+    real(c_double) :: nodes3(2, 4), l_expected3(2, 4), r_expected3(2, 4)
+    real(c_double) :: left_nodes3(2, 4), right_nodes3(2, 4)
     integer :: case_id
     character(23) :: name
 
@@ -300,12 +302,12 @@ contains
     name = "subdivide_nodes (Curve)"
 
     ! CASE 1: Linear curve.
-    nodes1(1, :) = [0.0_dp, 1.0_dp]
-    nodes1(2, :) = [4.0_dp, 6.0_dp]
-    l_expected1(1, :) = [0.0_dp, 1.0_dp]
-    l_expected1(2, :) = [2.0_dp, 3.5_dp]
-    r_expected1(1, :) = [2.0_dp, 3.5_dp]
-    r_expected1(2, :) = [4.0_dp, 6.0_dp]
+    nodes1(:, 1) = [0.0_dp, 1.0_dp]
+    nodes1(:, 2) = [4.0_dp, 6.0_dp]
+    l_expected1(:, 1) = [0.0_dp, 1.0_dp]
+    l_expected1(:, 2) = [2.0_dp, 3.5_dp]
+    r_expected1(:, 1) = [2.0_dp, 3.5_dp]
+    r_expected1(:, 2) = [4.0_dp, 6.0_dp]
     call subdivide_nodes( &
          2, 2, nodes1, left_nodes1, right_nodes1)
 
@@ -320,15 +322,15 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Quadratic curve.
-    nodes2(1, :) = [0.0_dp, 1.0_dp]
-    nodes2(2, :) = [4.0_dp, 6.0_dp]
-    nodes2(3, :) = [7.0_dp, 3.0_dp]
-    l_expected2(1, :) = [0.0_dp, 1.0_dp]
-    l_expected2(2, :) = [2.0_dp, 3.5_dp]
-    l_expected2(3, :) = [3.75_dp, 4.0_dp]
-    r_expected2(1, :) = [3.75_dp, 4.0_dp]
-    r_expected2(2, :) = [5.5_dp, 4.5_dp]
-    r_expected2(3, :) = [7.0_dp, 3.0_dp]
+    nodes2(:, 1) = [0.0_dp, 1.0_dp]
+    nodes2(:, 2) = [4.0_dp, 6.0_dp]
+    nodes2(:, 3) = [7.0_dp, 3.0_dp]
+    l_expected2(:, 1) = [0.0_dp, 1.0_dp]
+    l_expected2(:, 2) = [2.0_dp, 3.5_dp]
+    l_expected2(:, 3) = [3.75_dp, 4.0_dp]
+    r_expected2(:, 1) = [3.75_dp, 4.0_dp]
+    r_expected2(:, 2) = [5.5_dp, 4.5_dp]
+    r_expected2(:, 3) = [7.0_dp, 3.0_dp]
     call subdivide_nodes( &
          3, 2, nodes2, left_nodes2, right_nodes2)
 
@@ -343,18 +345,18 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Cubic curve.
-    nodes3(1, :) = [0.0_dp, 1.0_dp]
-    nodes3(2, :) = [4.0_dp, 6.0_dp]
-    nodes3(3, :) = [7.0_dp, 3.0_dp]
-    nodes3(4, :) = [6.0_dp, 5.0_dp]
-    l_expected3(1, :) = [0.0_dp, 1.0_dp]
-    l_expected3(2, :) = [2.0_dp, 3.5_dp]
-    l_expected3(3, :) = [3.75_dp, 4.0_dp]
-    l_expected3(4, :) = [4.875_dp, 4.125_dp]
-    r_expected3(1, :) = [4.875_dp, 4.125_dp]
-    r_expected3(2, :) = [6.0_dp, 4.25_dp]
-    r_expected3(3, :) = [6.5_dp, 4.0_dp]
-    r_expected3(4, :) = [6.0_dp, 5.0_dp]
+    nodes3(:, 1) = [0.0_dp, 1.0_dp]
+    nodes3(:, 2) = [4.0_dp, 6.0_dp]
+    nodes3(:, 3) = [7.0_dp, 3.0_dp]
+    nodes3(:, 4) = [6.0_dp, 5.0_dp]
+    l_expected3(:, 1) = [0.0_dp, 1.0_dp]
+    l_expected3(:, 2) = [2.0_dp, 3.5_dp]
+    l_expected3(:, 3) = [3.75_dp, 4.0_dp]
+    l_expected3(:, 4) = [4.875_dp, 4.125_dp]
+    r_expected3(:, 1) = [4.875_dp, 4.125_dp]
+    r_expected3(:, 2) = [6.0_dp, 4.25_dp]
+    r_expected3(:, 3) = [6.5_dp, 4.0_dp]
+    r_expected3(:, 4) = [6.0_dp, 5.0_dp]
     call subdivide_nodes( &
          4, 2, nodes3, left_nodes3, right_nodes3)
 
@@ -380,12 +382,12 @@ contains
     integer, intent(in) :: num_nodes, dimension_, multiplier, modulus
     logical, intent(out) :: success
     ! Variables outside of signature.
-    real(c_double) :: nodes(num_nodes, dimension_)
-    real(c_double) :: left(num_nodes, dimension_)
-    real(c_double) :: right(num_nodes, dimension_)
+    real(c_double) :: nodes(dimension_, num_nodes)
+    real(c_double) :: left(dimension_, num_nodes)
+    real(c_double) :: right(dimension_, num_nodes)
     real(c_double) :: unit_interval(33), left_s(33), right_s(33)
-    real(c_double) :: evaluated1(33, dimension_)
-    real(c_double) :: evaluated2(33, dimension_)
+    real(c_double) :: evaluated1(dimension_, 33)
+    real(c_double) :: evaluated2(dimension_, 33)
     integer :: i
 
     success = .TRUE.
@@ -422,8 +424,8 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes(4, 3)
-    real(c_double) :: point(1, 3)
+    real(c_double) :: nodes(3, 4)
+    real(c_double) :: point(3, 1)
     real(c_double) :: new_s
     integer :: case_id
     character(13) :: name
@@ -432,12 +434,12 @@ contains
     name = "newton_refine"
 
     ! CASE 1: Cubic in 3D.
-    nodes(1, :) = [0.0_dp, 0.0_dp, 0.0_dp]
-    nodes(2, :) = [1.0_dp, -1.0_dp, 1.0_dp]
-    nodes(3, :) = [3.0_dp, 2.0_dp, 2.0_dp]
-    nodes(4, :) = [2.0_dp, 2.0_dp, 4.0_dp]
+    nodes(:, 1) = [0.0_dp, 0.0_dp, 0.0_dp]
+    nodes(:, 2) = [1.0_dp, -1.0_dp, 1.0_dp]
+    nodes(:, 3) = [3.0_dp, 2.0_dp, 2.0_dp]
+    nodes(:, 4) = [2.0_dp, 2.0_dp, 4.0_dp]
     ! curve(1/2) = p
-    point(1, :) = [1.75_dp, 0.625_dp, 1.625_dp]
+    point(:, 1) = [1.75_dp, 0.625_dp, 1.625_dp]
     call newton_refine( &
          4, 3, nodes, point, 0.25_dp, new_s)
     case_success = (110.0_dp * new_s == 57.0_dp)
@@ -449,9 +451,9 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(3, 3), point1(1, 3)
-    real(c_double) :: nodes2(3, 2), point2(1, 2)
-    real(c_double) :: nodes3(4, 2), point3(1, 2)
+    real(c_double) :: nodes1(3, 3), point1(3, 1)
+    real(c_double) :: nodes2(2, 3), point2(2, 1)
+    real(c_double) :: nodes3(2, 4), point3(2, 1)
     real(c_double) :: s_val
     integer :: case_id
     character(20) :: name
@@ -460,10 +462,10 @@ contains
     name = "locate_point (Curve)"
 
     ! CASE 1: Quadratic in 3D (with match).
-    nodes1(1, :) = 0
-    nodes1(2, :) = [3.0_dp, 0.0_dp, -1.0_dp]
-    nodes1(3, :) = [1.0_dp, 1.0_dp, 3.0_dp]
-    point1(1, :) = [43.0_dp, 1.0_dp, -11.0_dp] / 64.0_dp
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [3.0_dp, 0.0_dp, -1.0_dp]
+    nodes1(:, 3) = [1.0_dp, 1.0_dp, 3.0_dp]
+    point1(:, 1) = [43.0_dp, 1.0_dp, -11.0_dp] / 64.0_dp
     call locate_point( &
          3, 3, nodes1, point1, s_val)
 
@@ -471,10 +473,10 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic in 2D (without match).
-    nodes2(1, :) = 0
-    nodes2(2, :) = [0.5_dp, 1.0_dp]
-    nodes2(3, :) = [1.0_dp, 0.0_dp]
-    point2(1, :) = [0.5_dp, 2.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [0.5_dp, 1.0_dp]
+    nodes2(:, 3) = [1.0_dp, 0.0_dp]
+    point2(:, 1) = [0.5_dp, 2.0_dp]
     call locate_point( &
          3, 2, nodes2, point2, s_val)
 
@@ -482,11 +484,11 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Self-intersecting cubic in 3D (will cause failure).
-    nodes3(1, :) = [0.0_dp, 2.0_dp]
-    nodes3(2, :) = [-1.0_dp, 0.0_dp]
-    nodes3(3, :) = [1.0_dp, 1.0_dp]
-    nodes3(4, :) = [-0.75_dp, 1.625_dp]
-    point3(1, :) = [-0.25_dp, 1.375_dp]
+    nodes3(:, 1) = [0.0_dp, 2.0_dp]
+    nodes3(:, 2) = [-1.0_dp, 0.0_dp]
+    nodes3(:, 3) = [1.0_dp, 1.0_dp]
+    nodes3(:, 4) = [-0.75_dp, 1.625_dp]
+    point3(:, 1) = [-0.25_dp, 1.375_dp]
     call locate_point( &
          4, 2, nodes3, point3, s_val)
 
@@ -494,10 +496,10 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Newton's method pushes the value slightly to the left of ``0.0``.
-    nodes2(1, :) = 0
-    nodes2(2, :) = [1.0_dp, 1.0_dp]
-    nodes2(3, :) = [2.0_dp, 0.0_dp]
-    point2(1, :) = [0.0_dp, 0.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [1.0_dp, 1.0_dp]
+    nodes2(:, 3) = [2.0_dp, 0.0_dp]
+    point2(:, 1) = [0.0_dp, 0.0_dp]
     call locate_point( &
          3, 2, nodes2, point2, s_val)
 
@@ -506,7 +508,7 @@ contains
 
     ! CASE 5: Newton's method pushes the value slightly to the right of
     !         ``1.0`` (uses same nodes as CASE 4).
-    point2(1, :) = [2.0_dp, 0.0_dp]
+    point2(:, 1) = [2.0_dp, 0.0_dp]
     call locate_point( &
          3, 2, nodes2, point2, s_val)
 
@@ -519,8 +521,8 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(2, 2), elevated1(3, 2), expected1(3, 2)
-    real(c_double) :: nodes2(3, 3), elevated2(4, 3), expected2(4, 3)
+    real(c_double) :: nodes1(2, 2), elevated1(2, 3), expected1(2, 3)
+    real(c_double) :: nodes2(3, 3), elevated2(3, 4), expected2(3, 4)
     integer :: case_id
     character(13) :: name
 
@@ -528,24 +530,24 @@ contains
     name = "elevate_nodes"
 
     ! CASE 1: Linear curve.
-    nodes1(1, :) = 0
-    nodes1(2, :) = [2.0_dp, 4.0_dp]
-    expected1(1, :) = [0.0_dp, 0.0_dp]
-    expected1(2, :) = [1.0_dp, 2.0_dp]
-    expected1(3, :) = [2.0_dp, 4.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [2.0_dp, 4.0_dp]
+    expected1(:, 1) = [0.0_dp, 0.0_dp]
+    expected1(:, 2) = [1.0_dp, 2.0_dp]
+    expected1(:, 3) = [2.0_dp, 4.0_dp]
     call elevate_nodes( &
          2, 2, nodes1, elevated1)
     case_success = all(elevated1 == expected1)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Quadratic curve.
-    nodes2(1, :) = [0.0_dp, 0.5_dp, 0.75_dp]
-    nodes2(2, :) = [3.0_dp, 0.5_dp, 3.0_dp]
-    nodes2(3, :) = [6.0_dp, 0.5_dp, 2.25_dp]
-    expected2(1, :) = [0.0_dp, 0.5_dp, 0.75_dp]
-    expected2(2, :) = [2.0_dp, 0.5_dp, 2.25_dp]
-    expected2(3, :) = [4.0_dp, 0.5_dp, 2.75_dp]
-    expected2(4, :) = [6.0_dp, 0.5_dp, 2.25_dp]
+    nodes2(:, 1) = [0.0_dp, 0.5_dp, 0.75_dp]
+    nodes2(:, 2) = [3.0_dp, 0.5_dp, 3.0_dp]
+    nodes2(:, 3) = [6.0_dp, 0.5_dp, 2.25_dp]
+    expected2(:, 1) = [0.0_dp, 0.5_dp, 0.75_dp]
+    expected2(:, 2) = [2.0_dp, 0.5_dp, 2.25_dp]
+    expected2(:, 3) = [4.0_dp, 0.5_dp, 2.75_dp]
+    expected2(:, 4) = [6.0_dp, 0.5_dp, 2.25_dp]
     call elevate_nodes( &
          3, 3, nodes2, elevated2)
     case_success = all(elevated2 == expected2)
@@ -557,8 +559,8 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(2, 2), nodes2(3, 2)
-    real(c_double) :: s_val, tangent_vec(1, 2), curvature
+    real(c_double) :: nodes1(2, 2), nodes2(2, 3)
+    real(c_double) :: s_val, tangent_vec(2, 1), curvature
     integer :: case_id
     character(13) :: name
 
@@ -566,8 +568,8 @@ contains
     name = "get_curvature"
 
     ! CASE 1: Linear curve.
-    nodes1(1, :) = 0
-    nodes1(2, :) = 1
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = 1
     s_val = 0.5_dp
     call evaluate_hodograph( &
          s_val, 2, 2, nodes1, tangent_vec)
@@ -577,9 +579,9 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Linear curve, degree-elevated to quadratic.
-    nodes2(1, :) = 0
-    nodes2(2, :) = 0.5_dp
-    nodes2(3, :) = 1
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = 0.5_dp
+    nodes2(:, 3) = 1
     s_val = 0.25_dp
     call evaluate_hodograph( &
          s_val, 3, 2, nodes2, tangent_vec)
@@ -589,9 +591,9 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Quadratic curve.
-    nodes2(1, :) = 0
-    nodes2(2, :) = [0.5_dp, 1.0_dp]
-    nodes2(3, :) = [1.0_dp, 0.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [0.5_dp, 1.0_dp]
+    nodes2(:, 3) = [1.0_dp, 0.0_dp]
     s_val = 0.5_dp
     call evaluate_hodograph( &
          s_val, 3, 2, nodes2, tangent_vec)
@@ -607,12 +609,12 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     logical(c_bool) :: not_implemented
-    real(c_double) :: nodes1(2, 2), reduced1(1, 2), expected1(1, 2)
-    real(c_double) :: nodes2(3, 2), reduced2(2, 2), expected2(2, 2)
-    real(c_double) :: nodes3(4, 3), reduced3(3, 3), expected3(3, 3)
+    real(c_double) :: nodes1(2, 2), reduced1(2, 1), expected1(2, 1)
+    real(c_double) :: nodes2(2, 3), reduced2(2, 2), expected2(2, 2)
+    real(c_double) :: nodes3(3, 4), reduced3(3, 3), expected3(3, 3)
     real(c_double) :: nodes4(5, 1), reduced4(4, 1), expected4(4, 1)
     real(c_double) :: reduced5(4, 4), expected5(4, 4)
-    real(c_double) :: nodes6(6, 2), reduced6(5, 2)
+    real(c_double) :: nodes6(2, 6), reduced6(2, 5)
     integer :: case_id
     character(21) :: name
 
@@ -620,20 +622,20 @@ contains
     name = "reduce_pseudo_inverse"
 
     ! CASE 1: Reduce from line to point/constant.
-    nodes1(1, :) = [-2.0_dp, 1.0_dp]
-    nodes1(2, :) = nodes1(1, :)
-    expected1(1, :) = nodes1(1, :)
+    nodes1(:, 1) = [-2.0_dp, 1.0_dp]
+    nodes1(:, 2) = nodes1(:, 1)
+    expected1(:, 1) = nodes1(:, 1)
     call reduce_pseudo_inverse( &
          2, 2, nodes1, reduced1, not_implemented)
     case_success = (all(reduced1 == expected1) .AND. .NOT. not_implemented)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Reduce a degree-elevated line (as quadratic).
-    nodes2(1, :) = 0
-    nodes2(2, :) = [1.0_dp, 2.0_dp]
-    nodes2(3, :) = [2.0_dp, 4.0_dp]
-    expected2(1, :) = 0
-    expected2(2, :) = [2.0_dp, 4.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [1.0_dp, 2.0_dp]
+    nodes2(:, 3) = [2.0_dp, 4.0_dp]
+    expected2(:, 1) = 0
+    expected2(:, 2) = [2.0_dp, 4.0_dp]
     call reduce_pseudo_inverse( &
          3, 2, nodes2, reduced2, not_implemented)
     case_success = (all(reduced2 == expected2) .AND. .NOT. not_implemented)
@@ -645,24 +647,24 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Reduce a quadratic that is not a deg.-elevated line.
-    nodes2(1, :) = 0
-    nodes2(2, :) = [1.0_dp, 1.5_dp]
-    nodes2(3, :) = [2.0_dp, 0.0_dp]
-    expected2(1, :) = [0.0_dp, 0.5_dp]
-    expected2(2, :) = [2.0_dp, 0.5_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [1.0_dp, 1.5_dp]
+    nodes2(:, 3) = [2.0_dp, 0.0_dp]
+    expected2(:, 1) = [0.0_dp, 0.5_dp]
+    expected2(:, 2) = [2.0_dp, 0.5_dp]
     call reduce_pseudo_inverse( &
          3, 2, nodes2, reduced2, not_implemented)
     case_success = (all(reduced2 == expected2) .AND. .NOT. not_implemented)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Reduce a degree-elevated quadratic (as cubic).
-    nodes3(1, :) = [0.0_dp, 0.5_dp, 0.75_dp]
-    nodes3(2, :) = [2.0_dp, 0.5_dp, 2.25_dp]
-    nodes3(3, :) = [4.0_dp, 0.5_dp, 2.75_dp]
-    nodes3(4, :) = [6.0_dp, 0.5_dp, 2.25_dp]
-    expected3(1, :) = nodes3(1, :)
-    expected3(2, :) = [3.0_dp, 0.5_dp, 3.0_dp]
-    expected3(3, :) = nodes3(4, :)
+    nodes3(:, 1) = [0.0_dp, 0.5_dp, 0.75_dp]
+    nodes3(:, 2) = [2.0_dp, 0.5_dp, 2.25_dp]
+    nodes3(:, 3) = [4.0_dp, 0.5_dp, 2.75_dp]
+    nodes3(:, 4) = [6.0_dp, 0.5_dp, 2.25_dp]
+    expected3(:, 1) = nodes3(:, 1)
+    expected3(:, 2) = [3.0_dp, 0.5_dp, 3.0_dp]
+    expected3(:, 3) = nodes3(:, 4)
     call reduce_pseudo_inverse( &
          4, 3, nodes3, reduced3, not_implemented)
     case_success = (all(reduced3 == expected3) .AND. .NOT. not_implemented)
@@ -706,8 +708,8 @@ contains
     logical(c_bool), intent(out) :: not_implemented
     ! Variables outside of signature.
     real(c_double) :: nodes(degree + 1, degree + 1)
-    real(c_double) :: reduction_mat(degree, degree + 1)
-    real(c_double) :: elevation_mat(degree + 1, degree)
+    real(c_double) :: reduction_mat(degree + 1, degree)
+    real(c_double) :: elevation_mat(degree, degree + 1)
 
     nodes = get_id_mat(degree + 1)
     call reduce_pseudo_inverse( &
@@ -719,7 +721,7 @@ contains
     call elevate_nodes( &
          degree, degree, id_mat, elevation_mat)
 
-    result_ = matmul(reduction_mat, elevation_mat)
+    result_ = matmul(elevation_mat, reduction_mat)
 
   end subroutine pseudo_inverse_helper
 
@@ -727,11 +729,11 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(2, 1), expected1(2, 1), reduced1(2, 1)
-    real(c_double) :: nodes2(4, 2), expected2(4, 2), reduced2(4, 2)
-    real(c_double) :: nodes3(6, 2), reduced3(6, 2)
-    real(c_double) :: nodes4(1, 2), expected4(1, 2), reduced4(1, 2)
-    real(c_double) :: nodes5(5, 2), expected5(5, 2), reduced5(5, 2)
+    real(c_double) :: nodes1(1, 2), expected1(1, 2), reduced1(1, 2)
+    real(c_double) :: nodes2(2, 4), expected2(2, 4), reduced2(2, 4)
+    real(c_double) :: nodes3(2, 6), reduced3(2, 6)
+    real(c_double) :: nodes4(2, 1), expected4(2, 1), reduced4(2, 1)
+    real(c_double) :: nodes5(2, 5), expected5(2, 5), reduced5(2, 5)
     integer(c_int) :: num_reduced_nodes
     logical(c_bool) :: not_implemented
     integer :: case_id
@@ -742,61 +744,61 @@ contains
 
     ! CASE 1: Linear curve, one reduction.
     nodes1 = 5.5_dp
-    expected1(1, :) = 5.5_dp
+    expected1(:, 1) = 5.5_dp
     call full_reduce( &
          2, 1, nodes1, num_reduced_nodes, &
          reduced1, not_implemented)
     case_success = ( &
          num_reduced_nodes == 1 .AND. &
-         all(reduced1(:1, :) == expected1(:1, :)) .AND. &
+         all(reduced1(:, :1) == expected1(:, :1)) .AND. &
          .NOT. not_implemented)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Cubic curve, one reduction.
-    nodes2(1, :) = 0
-    nodes2(2, :) = [2.0_dp, 4.0_dp]
-    nodes2(3, :) = [4.0_dp, 6.0_dp]
-    nodes2(4, :) = [6.0_dp, 6.0_dp]
-    expected2(1, :) = 0
-    expected2(2, :) = [3.0_dp, 6.0_dp]
-    expected2(3, :) = [6.0_dp, 6.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [2.0_dp, 4.0_dp]
+    nodes2(:, 3) = [4.0_dp, 6.0_dp]
+    nodes2(:, 4) = [6.0_dp, 6.0_dp]
+    expected2(:, 1) = 0
+    expected2(:, 2) = [3.0_dp, 6.0_dp]
+    expected2(:, 3) = [6.0_dp, 6.0_dp]
     call full_reduce( &
          4, 2, nodes2, num_reduced_nodes, &
          reduced2, not_implemented)
     case_success = ( &
          num_reduced_nodes == 3 .AND. &
-         all(reduced2(:3, :) == expected2(:3, :)) .AND. &
+         all(reduced2(:, :3) == expected2(:, :3)) .AND. &
          .NOT. not_implemented)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Cubic curve, two reductions.
-    nodes2(1, :) = [0.0_dp, 4.0_dp]
-    nodes2(2, :) = [1.0_dp, 4.5_dp]
-    nodes2(3, :) = [2.0_dp, 5.0_dp]
-    nodes2(4, :) = [3.0_dp, 5.5_dp]
-    expected2(1, :) = [0.0_dp, 4.0_dp]
-    expected2(2, :) = [3.0_dp, 5.5_dp]
+    nodes2(:, 1) = [0.0_dp, 4.0_dp]
+    nodes2(:, 2) = [1.0_dp, 4.5_dp]
+    nodes2(:, 3) = [2.0_dp, 5.0_dp]
+    nodes2(:, 4) = [3.0_dp, 5.5_dp]
+    expected2(:, 1) = [0.0_dp, 4.0_dp]
+    expected2(:, 2) = [3.0_dp, 5.5_dp]
     call full_reduce( &
          4, 2, nodes2, num_reduced_nodes, &
          reduced2, not_implemented)
     case_success = ( &
          num_reduced_nodes == 2 .AND. &
-         all(reduced2(:2, :) == expected2(:2, :)) .AND. &
+         all(reduced2(:, :2) == expected2(:, :2)) .AND. &
          .NOT. not_implemented)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Cubic curve, no reductions.
-    nodes2(1, :) = [0.0_dp, 2.0_dp]
-    nodes2(2, :) = [-1.0_dp, 0.0_dp]
-    nodes2(3, :) = 1
-    nodes2(4, :) = [-0.75_dp, 1.625_dp]
+    nodes2(:, 1) = [0.0_dp, 2.0_dp]
+    nodes2(:, 2) = [-1.0_dp, 0.0_dp]
+    nodes2(:, 3) = 1
+    nodes2(:, 4) = [-0.75_dp, 1.625_dp]
     expected2 = nodes2
     call full_reduce( &
          4, 2, nodes2, num_reduced_nodes, &
          reduced2, not_implemented)
     case_success = ( &
          num_reduced_nodes == 4 .AND. &
-         all(reduced2(:4, :) == expected2(:4, :)) .AND. &
+         all(reduced2(:, :4) == expected2(:, :4)) .AND. &
          .NOT. not_implemented)
     call print_status(name, case_id, case_success, success)
 
@@ -809,7 +811,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Point/constant (can't be any reduction).
-    nodes4(1, :) = [0.0_dp, 1.0_dp]
+    nodes4(:, 1) = [0.0_dp, 1.0_dp]
     expected4 = nodes4
     call full_reduce( &
          1, 2, nodes4, num_reduced_nodes, &
@@ -821,30 +823,30 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 7: Quartic curve, one reduction.
-    expected5(1, :) = [0.0_dp, 0.0_dp]
-    expected5(2, :) = [2.0_dp, 4.0_dp]
-    expected5(3, :) = [4.0_dp, 6.5_dp]
-    expected5(4, :) = [18.0_dp, 1.5_dp]
-    nodes5(1, :) = expected5(1, :)
-    nodes5(2, :) = (expected5(1, :) + 3 * expected5(2, :)) / 4.0_dp
-    nodes5(3, :) = (expected5(2, :) + expected5(3, :)) / 2.0_dp
-    nodes5(4, :) = (3 * expected5(3, :) + expected5(4, :)) / 4.0_dp
-    nodes5(5, :) = expected5(4, :)
+    expected5(:, 1) = [0.0_dp, 0.0_dp]
+    expected5(:, 2) = [2.0_dp, 4.0_dp]
+    expected5(:, 3) = [4.0_dp, 6.5_dp]
+    expected5(:, 4) = [18.0_dp, 1.5_dp]
+    nodes5(:, 1) = expected5(:, 1)
+    nodes5(:, 2) = (expected5(:, 1) + 3 * expected5(:, 2)) / 4.0_dp
+    nodes5(:, 3) = (expected5(:, 2) + expected5(:, 3)) / 2.0_dp
+    nodes5(:, 4) = (3 * expected5(:, 3) + expected5(:, 4)) / 4.0_dp
+    nodes5(:, 5) = expected5(:, 4)
     call full_reduce( &
          5, 2, nodes5, num_reduced_nodes, &
          reduced5, not_implemented)
     case_success = ( &
          num_reduced_nodes == 4 .AND. &
-         all(reduced5(:4, :) == expected5(:4, :)) .AND. &
+         all(reduced5(:, :4) == expected5(:, :4)) .AND. &
          .NOT. not_implemented)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Quartic curve, no reductions.
-    nodes5(1, :) = [0.0_dp, 0.0_dp]
-    nodes5(2, :) = [1.0_dp, 2.0_dp]
-    nodes5(3, :) = [2.0_dp, 3.5_dp]
-    nodes5(4, :) = [5.0_dp, 3.5_dp]
-    nodes5(5, :) = [8.0_dp, 18.0_dp]
+    nodes5(:, 1) = [0.0_dp, 0.0_dp]
+    nodes5(:, 2) = [1.0_dp, 2.0_dp]
+    nodes5(:, 3) = [2.0_dp, 3.5_dp]
+    nodes5(:, 4) = [5.0_dp, 3.5_dp]
+    nodes5(:, 5) = [8.0_dp, 18.0_dp]
     call full_reduce( &
          5, 2, nodes5, num_reduced_nodes, &
          reduced5, not_implemented)
@@ -860,7 +862,7 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes1(2, 2), nodes2(3, 2), nodes3(4, 2)
+    real(c_double) :: nodes1(2, 2), nodes2(2, 3), nodes3(2, 4)
     real(c_double) :: length, expected
     integer(c_int) :: error_val
     integer :: case_id
@@ -870,17 +872,17 @@ contains
     name = "compute_length"
 
     ! CASE 1: Linear curve.
-    nodes1(1, :) = 0
-    nodes1(2, :) = [3.0_dp, 4.0_dp]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [3.0_dp, 4.0_dp]
     call compute_length( &
          2, 2, nodes1, length, error_val)
     case_success = (length == 5.0_dp .AND. error_val == 0)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 1: Quadratic curve.
-    nodes2(1, :) = 0
-    nodes2(2, :) = [1.0_dp, 2.0_dp]
-    nodes2(3, :) = [2.0_dp, 0.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [1.0_dp, 2.0_dp]
+    nodes2(:, 3) = [2.0_dp, 0.0_dp]
     call compute_length( &
          3, 2, nodes2, length, error_val)
     ! 2 INT_0^1 SQRT(16 s^2  - 16 s + 5) ds = SQRT(5) + sinh^{-1}(2)/2
@@ -891,10 +893,10 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Cubic curve.
-    nodes3(1, :) = 0
-    nodes3(2, :) = [1.0_dp, 2.0_dp]
-    nodes3(3, :) = [2.0_dp, 0.0_dp]
-    nodes3(4, :) = [3.5_dp, 0.0_dp]
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = [1.0_dp, 2.0_dp]
+    nodes3(:, 3) = [2.0_dp, 0.0_dp]
+    nodes3(:, 4) = [3.5_dp, 0.0_dp]
     call compute_length( &
          4, 2, nodes3, length, error_val)
     ! x(s) = s (s^2 + 6) / 2
@@ -925,8 +927,8 @@ contains
     curve1%start = 0.25_dp
     curve1%end_ = 0.75_dp
     allocate(curve1%nodes(2, 2))
-    curve1%nodes(1, :) = [0.5_dp, 2.5_dp]
-    curve1%nodes(2, :) = [7.0_dp, -2.0_dp]
+    curve1%nodes(:, 1) = [0.5_dp, 2.5_dp]
+    curve1%nodes(:, 2) = [7.0_dp, -2.0_dp]
 
     ! CASE 1: Compare curve1 to itself.
     case_success = curves_equal(curve1, curve1)
@@ -970,8 +972,8 @@ contains
     ! CASE 6: Compare curve1 to a curve that differs in node shape
     curve6%start = curve1%start
     curve6%end_ = curve1%end_
-    allocate(curve6%nodes(1, 2))
-    curve6%nodes(1, :) = curve1%nodes(1, :)
+    allocate(curve6%nodes(2, 1))
+    curve6%nodes(:, 1) = curve1%nodes(:, 1)
     case_success = ( &
          .NOT. curves_equal(curve1, curve6) .AND. &
          .NOT. curves_equal(curve6, curve1))
@@ -1001,27 +1003,27 @@ contains
     logical :: case_success
     integer :: case_id
     type(CurveData) :: curve_data, left1, left2, right
-    real(c_double) :: left_nodes(4, 2), right_nodes(4, 2)
+    real(c_double) :: left_nodes(2, 4), right_nodes(2, 4)
     character(15) :: name
 
     case_id = 1
     name = "subdivide_curve"
 
     ! CASE 1: Curve has not yet been subdivided.
-    allocate(curve_data%nodes(4, 2))
-    curve_data%nodes(1, :) = [0.0_dp, 1.0_dp]
-    curve_data%nodes(2, :) = [1.0_dp, 2.0_dp]
-    curve_data%nodes(3, :) = [1.0_dp, 2.0_dp]
-    curve_data%nodes(4, :) = [3.0_dp, 0.0_dp]
+    allocate(curve_data%nodes(2, 4))
+    curve_data%nodes(:, 1) = [0.0_dp, 1.0_dp]
+    curve_data%nodes(:, 2) = [1.0_dp, 2.0_dp]
+    curve_data%nodes(:, 3) = [1.0_dp, 2.0_dp]
+    curve_data%nodes(:, 4) = [3.0_dp, 0.0_dp]
 
-    left_nodes(1, :) = [0.0_dp, 1.0_dp]
-    left_nodes(2, :) = [0.5_dp, 1.5_dp]
-    left_nodes(3, :) = [0.75_dp, 1.75_dp]
-    left_nodes(4, :) = [1.125_dp, 1.625_dp]
-    right_nodes(1, :) = [1.125_dp, 1.625_dp]
-    right_nodes(2, :) = [1.5_dp, 1.5_dp]
-    right_nodes(3, :) = [2.0_dp, 1.0_dp]
-    right_nodes(4, :) = [3.0_dp, 0.0_dp]
+    left_nodes(:, 1) = [0.0_dp, 1.0_dp]
+    left_nodes(:, 2) = [0.5_dp, 1.5_dp]
+    left_nodes(:, 3) = [0.75_dp, 1.75_dp]
+    left_nodes(:, 4) = [1.125_dp, 1.625_dp]
+    right_nodes(:, 1) = [1.125_dp, 1.625_dp]
+    right_nodes(:, 2) = [1.5_dp, 1.5_dp]
+    right_nodes(:, 3) = [2.0_dp, 1.0_dp]
+    right_nodes(:, 4) = [3.0_dp, 0.0_dp]
 
     call subdivide_curve(curve_data, left1, right)
     case_success = ( &
@@ -1034,14 +1036,14 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Curve has **already** been subdivided.
-    left_nodes(1, :) = [0.0_dp, 1.0_dp]
-    left_nodes(2, :) = [0.25_dp, 1.25_dp]
-    left_nodes(3, :) = [0.4375_dp, 1.4375_dp]
-    left_nodes(4, :) = [0.609375_dp, 1.546875_dp]
-    right_nodes(1, :) = [0.609375_dp, 1.546875_dp]
-    right_nodes(2, :) = [0.78125_dp, 1.65625_dp]
-    right_nodes(3, :) = [0.9375_dp, 1.6875_dp]
-    right_nodes(4, :) = [1.125_dp, 1.625_dp]
+    left_nodes(:, 1) = [0.0_dp, 1.0_dp]
+    left_nodes(:, 2) = [0.25_dp, 1.25_dp]
+    left_nodes(:, 3) = [0.4375_dp, 1.4375_dp]
+    left_nodes(:, 4) = [0.609375_dp, 1.546875_dp]
+    right_nodes(:, 1) = [0.609375_dp, 1.546875_dp]
+    right_nodes(:, 2) = [0.78125_dp, 1.65625_dp]
+    right_nodes(:, 3) = [0.9375_dp, 1.6875_dp]
+    right_nodes(:, 4) = [1.125_dp, 1.625_dp]
 
     call subdivide_curve(left1, left2, right)
     case_success = ( &

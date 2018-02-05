@@ -20,13 +20,13 @@ from tests.functional import utils
 SCRIPTS_DIR = os.path.abspath(os.path.dirname(__file__))
 GENERATED_FILENAME = os.path.abspath(os.path.join(
     SCRIPTS_DIR, '..', 'tests', 'fortran', 'functional_curve.f90'))
-ROW_TEMPLATE = '    nodes{:d}({:d}, :) = [{}_dp, {}_dp]'
+ROW_TEMPLATE = '    nodes{:d}(:, {:d}) = [{}_dp, {}_dp]'
 PARAM_TEMPLATE = '    expected_params({:d}, :) = [{}]'
 CASE_TEMPLATE = """\
   subroutine case{case_id:d}()
 
-    real(c_double) :: nodes{id1}({num_nodes1:d}, 2)
-    real(c_double) :: nodes{id2}({num_nodes2:d}, 2)
+    real(c_double) :: nodes{id1}(2, {num_nodes1:d})
+    real(c_double) :: nodes{id2}(2, {num_nodes2:d})
     real(c_double) :: expected_params(2, {expected_n:d})
 
 {nodes1_vals}
