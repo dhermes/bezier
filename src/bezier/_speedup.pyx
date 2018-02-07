@@ -50,7 +50,7 @@ cdef double EPS = 0.5**40
 cdef double LOCATE_MISS = -1.0
 cdef double LOCATE_INVALID = -2.0
 cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
-cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
 cdef dtype_t SEGMENT_DTYPE = np.dtype(
     [
         ('start', np.double),
@@ -59,7 +59,7 @@ cdef dtype_t SEGMENT_DTYPE = np.dtype(
     ],
     align=True,
 )
-cdef CurvedPolygonSegment[:] SEGMENTS_WORKSPACE = np.empty(
+cdef CurvedPolygonSegment[::1] SEGMENTS_WORKSPACE = np.empty(
     6, dtype=SEGMENT_DTYPE)
 
 DQAGSE_ERR_MSGS = (
@@ -89,7 +89,7 @@ SEGMENTS_TOO_SMALL = (
 ##########################
 
 def evaluate_multi_barycentric(
-        double[::1, :] nodes, double[:] lambda1, double[:] lambda2):
+        double[::1, :] nodes, double[::1] lambda1, double[::1] lambda2):
     cdef int num_nodes, dimension, num_vals
     cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
 
@@ -109,7 +109,7 @@ def evaluate_multi_barycentric(
 
 
 def evaluate_multi(
-        double[::1, :] nodes, double[:] s_vals):
+        double[::1, :] nodes, double[::1] s_vals):
     cdef int num_nodes, dimension, num_vals
     cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
 
@@ -490,7 +490,7 @@ def free_curve_intersections_workspace():
 # Section: ``helpers.f90`` #
 ############################
 
-def cross_product(double[:] vec0, double[:] vec1):
+def cross_product(double[::1] vec0, double[::1] vec1):
     cdef double result
 
     bezier._helpers.cross_product(
@@ -534,7 +534,7 @@ def wiggle_interval(double value):
     return result, success
 
 
-def contains_nd(double[::1, :] nodes, double[:] point):
+def contains_nd(double[::1, :] nodes, double[::1] point):
     cdef int num_nodes, dimension
     cdef bool_t predicate
 
@@ -555,7 +555,7 @@ def contains_nd(double[::1, :] nodes, double[:] point):
     return predicate
 
 
-def vector_close(double[:] vec1, double[:] vec2, double eps=EPS):
+def vector_close(double[::1] vec1, double[::1] vec2, double eps=EPS):
     cdef int num_values
 
     # NOTE: We don't check that ``np.shape(vec1) == np.shape(vec2)``.
@@ -767,7 +767,7 @@ def jacobian_det(double[::1, :] nodes, int degree, double[::1, :] st_vals):
 
 def specialize_surface(
         double[::1, :] nodes, int degree,
-        double[:] weights_a, double[:] weights_b, double[:] weights_c):
+        double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
     cdef int num_nodes, dimension
     cdef ndarray_t[double, ndim=2, mode='fortran'] specialized
 

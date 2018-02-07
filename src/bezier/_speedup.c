@@ -1829,7 +1829,7 @@ static int __Pyx_ValidateAndInit_memviewslice(
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dcd__double(PyObject *);
 
 /* ObjectToMemviewSlice.proto */
-static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_double(PyObject *);
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_double(PyObject *);
 
 /* MemviewDtypeToObject.proto */
 static CYTHON_INLINE PyObject *__pyx_memview_get_double(const char *itemp);
@@ -1989,10 +1989,10 @@ static CYTHON_INLINE int __Pyx_PyErr_GivenExceptionMatches2(PyObject *err, PyObj
 #endif
 
 /* ObjectToMemviewSlice.proto */
-static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_int(PyObject *);
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_int(PyObject *);
 
 /* ObjectToMemviewSlice.proto */
-static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_nn_CurvedPolygonSegment(PyObject *);
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_nn_CurvedPolygonSegment(PyObject *);
 
 /* FetchCommonType.proto */
 static PyTypeObject* __Pyx_FetchCommonType(PyTypeObject* type);
@@ -3106,7 +3106,7 @@ static PyObject *__pyx_codeobj__157;
  * ##########################
  *
  * def evaluate_multi_barycentric(             # <<<<<<<<<<<<<<
- *         double[::1, :] nodes, double[:] lambda1, double[:] lambda2):
+ *         double[::1, :] nodes, double[::1] lambda1, double[::1] lambda2):
  *     cdef int num_nodes, dimension, num_vals
  */
 
@@ -3165,8 +3165,8 @@ static PyObject *__pyx_pw_6bezier_8_speedup_1evaluate_multi_barycentric(PyObject
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
     __pyx_v_nodes = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes.memview)) __PYX_ERR(0, 92, __pyx_L3_error)
-    __pyx_v_lambda1 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[1]); if (unlikely(!__pyx_v_lambda1.memview)) __PYX_ERR(0, 92, __pyx_L3_error)
-    __pyx_v_lambda2 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[2]); if (unlikely(!__pyx_v_lambda2.memview)) __PYX_ERR(0, 92, __pyx_L3_error)
+    __pyx_v_lambda1 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[1]); if (unlikely(!__pyx_v_lambda1.memview)) __PYX_ERR(0, 92, __pyx_L3_error)
+    __pyx_v_lambda2 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[2]); if (unlikely(!__pyx_v_lambda2.memview)) __PYX_ERR(0, 92, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -3545,7 +3545,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_evaluate_multi_barycentric(CYTHON_UN
  *         &num_nodes,
  *         &dimension,
  */
-  evaluate_curve_barycentric((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ (__pyx_v_lambda1.data + __pyx_t_15 * __pyx_v_lambda1.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_lambda2.data + __pyx_t_16 * __pyx_v_lambda2.strides[0]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
+  evaluate_curve_barycentric((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_lambda1.data) + __pyx_t_15)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_lambda2.data) + __pyx_t_16)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":108
  *         &evaluated[0, 0],
@@ -3563,7 +3563,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_evaluate_multi_barycentric(CYTHON_UN
  * ##########################
  *
  * def evaluate_multi_barycentric(             # <<<<<<<<<<<<<<
- *         double[::1, :] nodes, double[:] lambda1, double[:] lambda2):
+ *         double[::1, :] nodes, double[::1] lambda1, double[::1] lambda2):
  *     cdef int num_nodes, dimension, num_vals
  */
 
@@ -3599,7 +3599,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_evaluate_multi_barycentric(CYTHON_UN
  *
  *
  * def evaluate_multi(             # <<<<<<<<<<<<<<
- *         double[::1, :] nodes, double[:] s_vals):
+ *         double[::1, :] nodes, double[::1] s_vals):
  *     cdef int num_nodes, dimension, num_vals
  */
 
@@ -3648,7 +3648,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_3evaluate_multi(PyObject *__pyx_self
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
     __pyx_v_nodes = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes.memview)) __PYX_ERR(0, 112, __pyx_L3_error)
-    __pyx_v_s_vals = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[1]); if (unlikely(!__pyx_v_s_vals.memview)) __PYX_ERR(0, 112, __pyx_L3_error)
+    __pyx_v_s_vals = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[1]); if (unlikely(!__pyx_v_s_vals.memview)) __PYX_ERR(0, 112, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -4017,7 +4017,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_2evaluate_multi(CYTHON_UNUSED PyObje
  *         &num_nodes,
  *         &dimension,
  */
-  evaluate_multi((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ (__pyx_v_s_vals.data + __pyx_t_15 * __pyx_v_s_vals.strides[0]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
+  evaluate_multi((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_s_vals.data) + __pyx_t_15)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":127
  *         &evaluated[0, 0],
@@ -4035,7 +4035,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_2evaluate_multi(CYTHON_UNUSED PyObje
  *
  *
  * def evaluate_multi(             # <<<<<<<<<<<<<<
- *         double[::1, :] nodes, double[:] s_vals):
+ *         double[::1, :] nodes, double[::1] s_vals):
  *     cdef int num_nodes, dimension, num_vals
  */
 
@@ -10278,7 +10278,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_42free_curve_intersections_workspace
 /* "bezier/_speedup.pyx":493
  * ############################
  *
- * def cross_product(double[:] vec0, double[:] vec1):             # <<<<<<<<<<<<<<
+ * def cross_product(double[::1] vec0, double[::1] vec1):             # <<<<<<<<<<<<<<
  *     cdef double result
  *
  */
@@ -10327,8 +10327,8 @@ static PyObject *__pyx_pw_6bezier_8_speedup_45cross_product(PyObject *__pyx_self
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_vec0 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[0]); if (unlikely(!__pyx_v_vec0.memview)) __PYX_ERR(0, 493, __pyx_L3_error)
-    __pyx_v_vec1 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[1]); if (unlikely(!__pyx_v_vec1.memview)) __PYX_ERR(0, 493, __pyx_L3_error)
+    __pyx_v_vec0 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[0]); if (unlikely(!__pyx_v_vec0.memview)) __PYX_ERR(0, 493, __pyx_L3_error)
+    __pyx_v_vec1 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[1]); if (unlikely(!__pyx_v_vec1.memview)) __PYX_ERR(0, 493, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -10379,7 +10379,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_44cross_product(CYTHON_UNUSED PyObje
  *         &vec0[0],
  *         &vec1[0],
  */
-  cross_product((&(*((double *) ( /* dim=0 */ (__pyx_v_vec0.data + __pyx_t_1 * __pyx_v_vec0.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_vec1.data + __pyx_t_2 * __pyx_v_vec1.strides[0]) )))), (&__pyx_v_result));
+  cross_product((&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec0.data) + __pyx_t_1)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec1.data) + __pyx_t_2)) )))), (&__pyx_v_result));
 
   /* "bezier/_speedup.pyx":502
  *     )
@@ -10398,7 +10398,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_44cross_product(CYTHON_UNUSED PyObje
   /* "bezier/_speedup.pyx":493
  * ############################
  *
- * def cross_product(double[:] vec0, double[:] vec1):             # <<<<<<<<<<<<<<
+ * def cross_product(double[::1] vec0, double[::1] vec1):             # <<<<<<<<<<<<<<
  *     cdef double result
  *
  */
@@ -10761,7 +10761,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_48wiggle_interval(CYTHON_UNUSED PyOb
 /* "bezier/_speedup.pyx":537
  *
  *
- * def contains_nd(double[::1, :] nodes, double[:] point):             # <<<<<<<<<<<<<<
+ * def contains_nd(double[::1, :] nodes, double[::1] point):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef bool_t predicate
  */
@@ -10811,7 +10811,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_51contains_nd(PyObject *__pyx_self, 
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
     __pyx_v_nodes = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes.memview)) __PYX_ERR(0, 537, __pyx_L3_error)
-    __pyx_v_point = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[1]); if (unlikely(!__pyx_v_point.memview)) __PYX_ERR(0, 537, __pyx_L3_error)
+    __pyx_v_point = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[1]); if (unlikely(!__pyx_v_point.memview)) __PYX_ERR(0, 537, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -11220,7 +11220,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_50contains_nd(CYTHON_UNUSED PyObject
  *         &num_nodes,
  *         &dimension,
  */
-  contains_nd((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_point.data + __pyx_t_14 * __pyx_v_point.strides[0]) )))), (&__pyx_v_predicate));
+  contains_nd((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_14)) )))), (&__pyx_v_predicate));
 
   /* "bezier/_speedup.pyx":555
  *     )
@@ -11239,7 +11239,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_50contains_nd(CYTHON_UNUSED PyObject
   /* "bezier/_speedup.pyx":537
  *
  *
- * def contains_nd(double[::1, :] nodes, double[:] point):             # <<<<<<<<<<<<<<
+ * def contains_nd(double[::1, :] nodes, double[::1] point):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef bool_t predicate
  */
@@ -11267,7 +11267,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_50contains_nd(CYTHON_UNUSED PyObject
 /* "bezier/_speedup.pyx":558
  *
  *
- * def vector_close(double[:] vec1, double[:] vec2, double eps=EPS):             # <<<<<<<<<<<<<<
+ * def vector_close(double[::1] vec1, double[::1] vec2, double eps=EPS):             # <<<<<<<<<<<<<<
  *     cdef int num_values
  *
  */
@@ -11329,8 +11329,8 @@ static PyObject *__pyx_pw_6bezier_8_speedup_53vector_close(PyObject *__pyx_self,
         default: goto __pyx_L5_argtuple_error;
       }
     }
-    __pyx_v_vec1 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[0]); if (unlikely(!__pyx_v_vec1.memview)) __PYX_ERR(0, 558, __pyx_L3_error)
-    __pyx_v_vec2 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[1]); if (unlikely(!__pyx_v_vec2.memview)) __PYX_ERR(0, 558, __pyx_L3_error)
+    __pyx_v_vec1 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[0]); if (unlikely(!__pyx_v_vec1.memview)) __PYX_ERR(0, 558, __pyx_L3_error)
+    __pyx_v_vec2 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[1]); if (unlikely(!__pyx_v_vec2.memview)) __PYX_ERR(0, 558, __pyx_L3_error)
     if (values[2]) {
       __pyx_v_eps = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_eps == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 558, __pyx_L3_error)
     } else {
@@ -11508,7 +11508,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52vector_close(CYTHON_UNUSED PyObjec
  *         &num_values,
  *         &vec1[0],
  */
-  __pyx_t_1 = __Pyx_PyBool_FromLong(vector_close((&__pyx_v_num_values), (&(*((double *) ( /* dim=0 */ (__pyx_v_vec1.data + __pyx_t_8 * __pyx_v_vec1.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_vec2.data + __pyx_t_9 * __pyx_v_vec2.strides[0]) )))), (&__pyx_v_eps))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 564, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(vector_close((&__pyx_v_num_values), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec1.data) + __pyx_t_8)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec2.data) + __pyx_t_9)) )))), (&__pyx_v_eps))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 564, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -11517,7 +11517,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52vector_close(CYTHON_UNUSED PyObjec
   /* "bezier/_speedup.pyx":558
  *
  *
- * def vector_close(double[:] vec1, double[:] vec2, double eps=EPS):             # <<<<<<<<<<<<<<
+ * def vector_close(double[::1] vec1, double[::1] vec2, double eps=EPS):             # <<<<<<<<<<<<<<
  *     cdef int num_values
  *
  */
@@ -15163,7 +15163,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72jacobian_det(CYTHON_UNUSED PyObjec
  *
  * def specialize_surface(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
- *         double[:] weights_a, double[:] weights_b, double[:] weights_c):
+ *         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
  */
 
 /* Python wrapper */
@@ -15242,9 +15242,9 @@ static PyObject *__pyx_pw_6bezier_8_speedup_75specialize_surface(PyObject *__pyx
     }
     __pyx_v_nodes = __Pyx_PyObject_to_MemoryviewSlice_dcd__double(values[0]); if (unlikely(!__pyx_v_nodes.memview)) __PYX_ERR(0, 769, __pyx_L3_error)
     __pyx_v_degree = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_degree == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 769, __pyx_L3_error)
-    __pyx_v_weights_a = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[2]); if (unlikely(!__pyx_v_weights_a.memview)) __PYX_ERR(0, 770, __pyx_L3_error)
-    __pyx_v_weights_b = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[3]); if (unlikely(!__pyx_v_weights_b.memview)) __PYX_ERR(0, 770, __pyx_L3_error)
-    __pyx_v_weights_c = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[4]); if (unlikely(!__pyx_v_weights_c.memview)) __PYX_ERR(0, 770, __pyx_L3_error)
+    __pyx_v_weights_a = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[2]); if (unlikely(!__pyx_v_weights_a.memview)) __PYX_ERR(0, 770, __pyx_L3_error)
+    __pyx_v_weights_b = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[3]); if (unlikely(!__pyx_v_weights_b.memview)) __PYX_ERR(0, 770, __pyx_L3_error)
+    __pyx_v_weights_c = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[4]); if (unlikely(!__pyx_v_weights_c.memview)) __PYX_ERR(0, 770, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
@@ -15525,7 +15525,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_74specialize_surface(CYTHON_UNUSED P
  *         &num_nodes,
  *         &dimension,
  */
-  specialize_surface((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*((double *) ( /* dim=0 */ (__pyx_v_weights_a.data + __pyx_t_15 * __pyx_v_weights_a.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_weights_b.data + __pyx_t_16 * __pyx_v_weights_b.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_weights_c.data + __pyx_t_17 * __pyx_v_weights_c.strides[0]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_specialized.rcbuffer->pybuffer.buf, __pyx_t_18, __pyx_pybuffernd_specialized.diminfo[0].strides, __pyx_t_19, __pyx_pybuffernd_specialized.diminfo[1].strides))));
+  specialize_surface((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_a.data) + __pyx_t_15)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_b.data) + __pyx_t_16)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_c.data) + __pyx_t_17)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_specialized.rcbuffer->pybuffer.buf, __pyx_t_18, __pyx_pybuffernd_specialized.diminfo[0].strides, __pyx_t_19, __pyx_pybuffernd_specialized.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":788
  *     )
@@ -15544,7 +15544,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_74specialize_surface(CYTHON_UNUSED P
  *
  * def specialize_surface(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
- *         double[:] weights_a, double[:] weights_b, double[:] weights_c):
+ *         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
  */
 
   /* function exit code */
@@ -17504,7 +17504,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84reset_surface_workspaces(CYTHON_UN
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_ds_int(__pyx_t_6);
+    __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_dc_int(__pyx_t_6);
     if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 897, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __PYX_XDEC_MEMVIEW(&__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE, 1);
@@ -17558,7 +17558,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84reset_surface_workspaces(CYTHON_UN
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_8 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn_CurvedPolygonSegment(__pyx_t_3);
+    __pyx_t_8 = __Pyx_PyObject_to_MemoryviewSlice_dc_nn_CurvedPolygonSegment(__pyx_t_3);
     if (unlikely(!__pyx_t_8.memview)) __PYX_ERR(0, 899, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __PYX_XDEC_MEMVIEW(&__pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE, 1);
@@ -18091,7 +18091,7 @@ static PyObject *__pyx_gb_6bezier_8_speedup_30_surface_intersections_success_2ge
  */
     if (unlikely(!__pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("SEGMENTS_WORKSPACE"); __PYX_ERR(0, 940, __pyx_L1_error) }
     __pyx_t_3 = __pyx_cur_scope->__pyx_v_j;
-    __pyx_t_4 = __Pyx_PyInt_From_long(((*((CurvedPolygonSegment *) ( /* dim=0 */ (__pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data + __pyx_t_3 * __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.strides[0]) ))).edge_index - 1)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 940, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_long(((*((CurvedPolygonSegment *) ( /* dim=0 */ ((char *) (((CurvedPolygonSegment *) __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data) + __pyx_t_3)) ))).edge_index - 1)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 940, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
 
     /* "bezier/_speedup.pyx":941
@@ -18103,7 +18103,7 @@ static PyObject *__pyx_gb_6bezier_8_speedup_30_surface_intersections_success_2ge
  */
     if (unlikely(!__pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("SEGMENTS_WORKSPACE"); __PYX_ERR(0, 941, __pyx_L1_error) }
     __pyx_t_5 = __pyx_cur_scope->__pyx_v_j;
-    __pyx_t_6 = PyFloat_FromDouble((*((CurvedPolygonSegment *) ( /* dim=0 */ (__pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data + __pyx_t_5 * __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.strides[0]) ))).start); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 941, __pyx_L1_error)
+    __pyx_t_6 = PyFloat_FromDouble((*((CurvedPolygonSegment *) ( /* dim=0 */ ((char *) (((CurvedPolygonSegment *) __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data) + __pyx_t_5)) ))).start); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 941, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
 
     /* "bezier/_speedup.pyx":942
@@ -18115,7 +18115,7 @@ static PyObject *__pyx_gb_6bezier_8_speedup_30_surface_intersections_success_2ge
  */
     if (unlikely(!__pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("SEGMENTS_WORKSPACE"); __PYX_ERR(0, 942, __pyx_L1_error) }
     __pyx_t_7 = __pyx_cur_scope->__pyx_v_j;
-    __pyx_t_8 = PyFloat_FromDouble((*((CurvedPolygonSegment *) ( /* dim=0 */ (__pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data + __pyx_t_7 * __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.strides[0]) ))).end); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 942, __pyx_L1_error)
+    __pyx_t_8 = PyFloat_FromDouble((*((CurvedPolygonSegment *) ( /* dim=0 */ ((char *) (((CurvedPolygonSegment *) __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data) + __pyx_t_7)) ))).end); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 942, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
 
     /* "bezier/_speedup.pyx":940
@@ -18348,7 +18348,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_88_surface_intersections_success(CYT
     /*else*/ {
       if (unlikely(!__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("SEGMENT_ENDS_WORKSPACE"); __PYX_ERR(0, 934, __pyx_L1_error) }
       __pyx_t_5 = (__pyx_v_i - 1);
-      __pyx_cur_scope->__pyx_v_begin_index = (*((int *) ( /* dim=0 */ (__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data + __pyx_t_5 * __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.strides[0]) )));
+      __pyx_cur_scope->__pyx_v_begin_index = (*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data) + __pyx_t_5)) )));
     }
     __pyx_L5:;
 
@@ -18361,7 +18361,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_88_surface_intersections_success(CYT
  */
     if (unlikely(!__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("SEGMENT_ENDS_WORKSPACE"); __PYX_ERR(0, 935, __pyx_L1_error) }
     __pyx_t_6 = __pyx_v_i;
-    __pyx_cur_scope->__pyx_v_end_index = (*((int *) ( /* dim=0 */ (__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data + __pyx_t_6 * __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.strides[0]) )));
+    __pyx_cur_scope->__pyx_v_end_index = (*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data) + __pyx_t_6)) )));
 
     /* "bezier/_speedup.pyx":940
  *         triples = tuple(
@@ -19454,7 +19454,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_90_surface_intersections_resize(CYTH
     /*else*/ {
       if (unlikely(!__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("SEGMENT_ENDS_WORKSPACE"); __PYX_ERR(0, 1004, __pyx_L1_error) }
       __pyx_t_5 = (__pyx_v_num_intersected - 1);
-      __pyx_v_num_segments = (*((int *) ( /* dim=0 */ (__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data + __pyx_t_5 * __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.strides[0]) )));
+      __pyx_v_num_segments = (*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data) + __pyx_t_5)) )));
 
       /* "bezier/_speedup.pyx":1005
  *         else:
@@ -19692,7 +19692,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_90_surface_intersections_resize(CYTH
     /*else*/ {
       if (unlikely(!__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.memview)) { __Pyx_RaiseUnboundLocalError("SEGMENT_ENDS_WORKSPACE"); __PYX_ERR(0, 1016, __pyx_L1_error) }
       __pyx_t_10 = (__pyx_v_num_intersected - 1);
-      __pyx_v_num_segments = (*((int *) ( /* dim=0 */ (__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data + __pyx_t_10 * __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.strides[0]) )));
+      __pyx_v_num_segments = (*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data) + __pyx_t_10)) )));
 
       /* "bezier/_speedup.pyx":1017
  *         else:
@@ -20358,7 +20358,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_92surface_intersections(CYTHON_UNUSE
  *         &num_nodes1,
  *         &nodes1[0, 0],
  */
-  surface_intersections((&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_degree1), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_degree2), (&__pyx_v_segment_ends_size), (&(*((int *) ( /* dim=0 */ (__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data + __pyx_t_13 * __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.strides[0]) )))), (&__pyx_v_segments_size), (&(*((CurvedPolygonSegment *) ( /* dim=0 */ (__pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data + __pyx_t_14 * __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.strides[0]) )))), (&__pyx_v_num_intersected), (&__pyx_v_contained), (&__pyx_v_status));
+  surface_intersections((&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_degree1), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_degree2), (&__pyx_v_segment_ends_size), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data) + __pyx_t_13)) )))), (&__pyx_v_segments_size), (&(*((CurvedPolygonSegment *) ( /* dim=0 */ ((char *) (((CurvedPolygonSegment *) __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data) + __pyx_t_14)) )))), (&__pyx_v_num_intersected), (&__pyx_v_contained), (&__pyx_v_status));
 
   /* "bezier/_speedup.pyx":1059
  *     )
@@ -38658,7 +38658,7 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef double LOCATE_MISS = -1.0
  * cdef double LOCATE_INVALID = -2.0
  * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')             # <<<<<<<<<<<<<<
- * cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+ * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  */
   __pyx_tuple__50 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_2); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(0, 52, __pyx_L1_error)
@@ -38671,7 +38671,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":53
  * cdef double LOCATE_INVALID = -2.0
  * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
- * cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)             # <<<<<<<<<<<<<<
+ * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)             # <<<<<<<<<<<<<<
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  *     [
  */
@@ -38682,7 +38682,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":62
  *     align=True,
  * )
- * cdef CurvedPolygonSegment[:] SEGMENTS_WORKSPACE = np.empty(             # <<<<<<<<<<<<<<
+ * cdef CurvedPolygonSegment[::1] SEGMENTS_WORKSPACE = np.empty(             # <<<<<<<<<<<<<<
  *     6, dtype=SEGMENT_DTYPE)
  *
  */
@@ -38705,7 +38705,7 @@ static int __Pyx_InitCachedConstants(void) {
  * ##########################
  *
  * def evaluate_multi_barycentric(             # <<<<<<<<<<<<<<
- *         double[::1, :] nodes, double[:] lambda1, double[:] lambda2):
+ *         double[::1, :] nodes, double[::1] lambda1, double[::1] lambda2):
  *     cdef int num_nodes, dimension, num_vals
  */
   __pyx_tuple__55 = PyTuple_Pack(7, __pyx_n_s_nodes, __pyx_n_s_lambda1, __pyx_n_s_lambda2, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_num_vals, __pyx_n_s_evaluated); if (unlikely(!__pyx_tuple__55)) __PYX_ERR(0, 91, __pyx_L1_error)
@@ -38717,7 +38717,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  *
  * def evaluate_multi(             # <<<<<<<<<<<<<<
- *         double[::1, :] nodes, double[:] s_vals):
+ *         double[::1, :] nodes, double[::1] s_vals):
  *     cdef int num_nodes, dimension, num_vals
  */
   __pyx_tuple__57 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_s_vals, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_num_vals, __pyx_n_s_evaluated); if (unlikely(!__pyx_tuple__57)) __PYX_ERR(0, 111, __pyx_L1_error)
@@ -38965,7 +38965,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":493
  * ############################
  *
- * def cross_product(double[:] vec0, double[:] vec1):             # <<<<<<<<<<<<<<
+ * def cross_product(double[::1] vec0, double[::1] vec1):             # <<<<<<<<<<<<<<
  *     cdef double result
  *
  */
@@ -39001,7 +39001,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":537
  *
  *
- * def contains_nd(double[::1, :] nodes, double[:] point):             # <<<<<<<<<<<<<<
+ * def contains_nd(double[::1, :] nodes, double[::1] point):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef bool_t predicate
  */
@@ -39013,7 +39013,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":558
  *
  *
- * def vector_close(double[:] vec1, double[:] vec2, double eps=EPS):             # <<<<<<<<<<<<<<
+ * def vector_close(double[::1] vec1, double[::1] vec2, double eps=EPS):             # <<<<<<<<<<<<<<
  *     cdef int num_values
  *
  */
@@ -39147,7 +39147,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def specialize_surface(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
- *         double[:] weights_a, double[:] weights_b, double[:] weights_c):
+ *         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
  */
   __pyx_tuple__129 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_weights_a, __pyx_n_s_weights_b, __pyx_n_s_weights_c, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_specialized); if (unlikely(!__pyx_tuple__129)) __PYX_ERR(0, 768, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__129);
@@ -39623,7 +39623,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
  * cdef double LOCATE_MISS = -1.0
  * cdef double LOCATE_INVALID = -2.0             # <<<<<<<<<<<<<<
  * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
- * cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+ * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  */
   __pyx_v_6bezier_8_speedup_LOCATE_INVALID = -2.0;
 
@@ -39631,7 +39631,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
  * cdef double LOCATE_MISS = -1.0
  * cdef double LOCATE_INVALID = -2.0
  * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')             # <<<<<<<<<<<<<<
- * cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+ * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
@@ -39657,7 +39657,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
   /* "bezier/_speedup.pyx":53
  * cdef double LOCATE_INVALID = -2.0
  * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
- * cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)             # <<<<<<<<<<<<<<
+ * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)             # <<<<<<<<<<<<<<
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  *     [
  */
@@ -39679,7 +39679,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_ds_int(__pyx_t_5);
+  __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_dc_int(__pyx_t_5);
   if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __PYX_XDEC_MEMVIEW(&__pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE, 1);
@@ -39689,7 +39689,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
 
   /* "bezier/_speedup.pyx":54
  * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
- * cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+ * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(             # <<<<<<<<<<<<<<
  *     [
  *         ('start', np.double),
@@ -39764,7 +39764,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
   __pyx_t_7 = 0;
 
   /* "bezier/_speedup.pyx":55
- * cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+ * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  *     [             # <<<<<<<<<<<<<<
  *         ('start', np.double),
@@ -39784,7 +39784,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
 
   /* "bezier/_speedup.pyx":54
  * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
- * cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+ * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(             # <<<<<<<<<<<<<<
  *     [
  *         ('start', np.double),
@@ -39800,7 +39800,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
  *     ],
  *     align=True,             # <<<<<<<<<<<<<<
  * )
- * cdef CurvedPolygonSegment[:] SEGMENTS_WORKSPACE = np.empty(
+ * cdef CurvedPolygonSegment[::1] SEGMENTS_WORKSPACE = np.empty(
  */
   __pyx_t_7 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
@@ -39808,7 +39808,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
 
   /* "bezier/_speedup.pyx":54
  * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
- * cdef int[:] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
+ * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(             # <<<<<<<<<<<<<<
  *     [
  *         ('start', np.double),
@@ -39827,7 +39827,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
   /* "bezier/_speedup.pyx":62
  *     align=True,
  * )
- * cdef CurvedPolygonSegment[:] SEGMENTS_WORKSPACE = np.empty(             # <<<<<<<<<<<<<<
+ * cdef CurvedPolygonSegment[::1] SEGMENTS_WORKSPACE = np.empty(             # <<<<<<<<<<<<<<
  *     6, dtype=SEGMENT_DTYPE)
  *
  */
@@ -39839,7 +39839,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
 
   /* "bezier/_speedup.pyx":63
  * )
- * cdef CurvedPolygonSegment[:] SEGMENTS_WORKSPACE = np.empty(
+ * cdef CurvedPolygonSegment[::1] SEGMENTS_WORKSPACE = np.empty(
  *     6, dtype=SEGMENT_DTYPE)             # <<<<<<<<<<<<<<
  *
  * DQAGSE_ERR_MSGS = (
@@ -39851,7 +39851,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
   /* "bezier/_speedup.pyx":62
  *     align=True,
  * )
- * cdef CurvedPolygonSegment[:] SEGMENTS_WORKSPACE = np.empty(             # <<<<<<<<<<<<<<
+ * cdef CurvedPolygonSegment[::1] SEGMENTS_WORKSPACE = np.empty(             # <<<<<<<<<<<<<<
  *     6, dtype=SEGMENT_DTYPE)
  *
  */
@@ -39859,7 +39859,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_8 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn_CurvedPolygonSegment(__pyx_t_2);
+  __pyx_t_8 = __Pyx_PyObject_to_MemoryviewSlice_dc_nn_CurvedPolygonSegment(__pyx_t_2);
   if (unlikely(!__pyx_t_8.memview)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __PYX_XDEC_MEMVIEW(&__pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE, 1);
@@ -39916,7 +39916,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
  * ##########################
  *
  * def evaluate_multi_barycentric(             # <<<<<<<<<<<<<<
- *         double[::1, :] nodes, double[:] lambda1, double[:] lambda2):
+ *         double[::1, :] nodes, double[::1] lambda1, double[::1] lambda2):
  *     cdef int num_nodes, dimension, num_vals
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_1evaluate_multi_barycentric, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
@@ -39928,7 +39928,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
  *
  *
  * def evaluate_multi(             # <<<<<<<<<<<<<<
- *         double[::1, :] nodes, double[:] s_vals):
+ *         double[::1, :] nodes, double[::1] s_vals):
  *     cdef int num_nodes, dimension, num_vals
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_3evaluate_multi, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 111, __pyx_L1_error)
@@ -40179,7 +40179,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
   /* "bezier/_speedup.pyx":493
  * ############################
  *
- * def cross_product(double[:] vec0, double[:] vec1):             # <<<<<<<<<<<<<<
+ * def cross_product(double[::1] vec0, double[::1] vec1):             # <<<<<<<<<<<<<<
  *     cdef double result
  *
  */
@@ -40215,7 +40215,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
   /* "bezier/_speedup.pyx":537
  *
  *
- * def contains_nd(double[::1, :] nodes, double[:] point):             # <<<<<<<<<<<<<<
+ * def contains_nd(double[::1, :] nodes, double[::1] point):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef bool_t predicate
  */
@@ -40227,7 +40227,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
   /* "bezier/_speedup.pyx":558
  *
  *
- * def vector_close(double[:] vec1, double[:] vec2, double eps=EPS):             # <<<<<<<<<<<<<<
+ * def vector_close(double[::1] vec1, double[::1] vec2, double eps=EPS):             # <<<<<<<<<<<<<<
  *     cdef int num_values
  *
  */
@@ -40363,7 +40363,7 @@ static int __pyx_pymod_exec__speedup(PyObject *__pyx_pyinit_module)
  *
  * def specialize_surface(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
- *         double[:] weights_a, double[:] weights_b, double[:] weights_c):
+ *         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_75specialize_surface, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 768, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -43492,17 +43492,17 @@ __pyx_fail:
 }
 
 /* ObjectToMemviewSlice */
-        static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_double(PyObject *obj) {
+        static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_double(PyObject *obj) {
     __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
     __Pyx_BufFmt_StackElem stack[1];
-    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_STRIDED) };
+    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_CONTIG) };
     int retcode;
     if (obj == Py_None) {
         result.memview = (struct __pyx_memoryview_obj *) Py_None;
         return result;
     }
-    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, 0,
-                                                 PyBUF_RECORDS, 1,
+    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
+                                                 (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT | PyBUF_WRITABLE), 1,
                                                  &__Pyx_TypeInfo_double, stack,
                                                  &result, obj);
     if (unlikely(retcode == -1))
@@ -44952,17 +44952,17 @@ static CYTHON_INLINE int __Pyx_PyErr_GivenExceptionMatches2(PyObject *err, PyObj
 #endif
 
 /* ObjectToMemviewSlice */
-        static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_int(PyObject *obj) {
+        static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_int(PyObject *obj) {
     __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
     __Pyx_BufFmt_StackElem stack[1];
-    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_STRIDED) };
+    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_CONTIG) };
     int retcode;
     if (obj == Py_None) {
         result.memview = (struct __pyx_memoryview_obj *) Py_None;
         return result;
     }
-    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, 0,
-                                                 PyBUF_RECORDS, 1,
+    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
+                                                 (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT | PyBUF_WRITABLE), 1,
                                                  &__Pyx_TypeInfo_int, stack,
                                                  &result, obj);
     if (unlikely(retcode == -1))
@@ -44975,17 +44975,17 @@ __pyx_fail:
 }
 
 /* ObjectToMemviewSlice */
-        static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_nn_CurvedPolygonSegment(PyObject *obj) {
+        static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_nn_CurvedPolygonSegment(PyObject *obj) {
     __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
     __Pyx_BufFmt_StackElem stack[2];
-    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_STRIDED) };
+    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_CONTIG) };
     int retcode;
     if (obj == Py_None) {
         result.memview = (struct __pyx_memoryview_obj *) Py_None;
         return result;
     }
-    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, 0,
-                                                 PyBUF_RECORDS, 1,
+    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
+                                                 (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT | PyBUF_WRITABLE), 1,
                                                  &__Pyx_TypeInfo_nn_CurvedPolygonSegment, stack,
                                                  &result, obj);
     if (unlikely(retcode == -1))
