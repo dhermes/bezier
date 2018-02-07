@@ -5,6 +5,7 @@ Releases
    :maxdepth: 1
 
    latest
+   0.6.4
    0.6.3
    0.6.2
    0.6.1
