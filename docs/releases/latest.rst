@@ -7,7 +7,8 @@ Robustness
 ----------
 
 -  Geometric curve-curve intersection has better handling for cases when
-   the number of intersection candidates grows large (``MAX_CANDIDES == 64``):
+   the number of intersection candidates grows
+   large (``MAX_CANDIDATES == 64``):
 
    -  First tries to reduce the number of candidates by checking if the
       **actual** convex hulls of each segment in a candidate pair intersect.
