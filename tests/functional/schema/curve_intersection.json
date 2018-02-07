@@ -38,9 +38,9 @@
                     "description": "A coordinate as a numerical value.",
                     "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/numerical.json"
                 },
-                "minItems": 2,
-                "maxItems": 2
             }
+            "minItems": 2,
+            "maxItems": 2
         },
         "curve1_params": {
             "description": "Parameters in curve 1 of the intersection points (in the same order).",

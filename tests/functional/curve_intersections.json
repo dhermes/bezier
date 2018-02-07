@@ -5,8 +5,8 @@
         "id": 1,
         "type": "standard",
         "intersections": [
-            ["0x1.b7537f52e7c79p-3", "0x1.59159015a3071p-2"],
-            ["0x1.d22b202b460e2p-1", "0x1.4dd4dfd4b9f1ep-3"]
+            ["0x1.b7537f52e7c79p-3", "0x1.d22b202b460e2p-1"],
+            ["0x1.59159015a3071p-2", "0x1.4dd4dfd4b9f1ep-3"]
         ],
         "curve1_params": [
             "0x1.b7537f52e7c79p-3",
@@ -30,8 +30,8 @@
         "id": 2,
         "type": "standard",
         "intersections": [
-            ["3/4", "9/8"],
-            ["21/8", "21/32"]
+            ["3/4", "21/8"],
+            ["9/8", "21/32"]
         ],
         "curve1_params": [
             "1/4",
@@ -47,8 +47,8 @@
         "id": 3,
         "type": "standard",
         "intersections": [
-            ["1/4", "3/8"],
-            ["3/4", "3/8"]
+            ["1/4", "3/4"],
+            ["3/8", "3/8"]
         ],
         "curve1_params": [
             "1/4",
@@ -64,7 +64,8 @@
         "id": 4,
         "type": "tangent",
         "intersections": [
-            ["1/2", "1/2"]
+            ["1/2"],
+            ["1/2"]
         ],
         "curve1_params": [
             "1/2"
@@ -78,8 +79,8 @@
         "id": 5,
         "type": "standard",
         "intersections": [
-            ["0x1.36fa590b4b85dp-3", "0x1.07c1f07c1f07cp-2"],
-            ["0x1.b24169bd2d1e9p-1", "0x1.07c1f07c1f07cp-2"]
+            ["0x1.36fa590b4b85dp-3", "0x1.b24169bd2d1e9p-1"],
+            ["0x1.07c1f07c1f07cp-2", "0x1.07c1f07c1f07cp-2"]
         ],
         "curve1_params": [
             "0x1.36fa590b4b85dp-3",
@@ -103,8 +104,8 @@
         "id": 6,
         "type": "standard",
         "intersections": [
-            ["1/4", "3/8"],
-            ["3/4", "3/8"]
+            ["1/4", "3/4"],
+            ["3/8", "3/8"]
         ],
         "curve1_params": [
             "1/4",
@@ -120,7 +121,8 @@
         "id": 7,
         "type": "standard",
         "intersections": [
-            ["1/2", "1/2"]
+            ["1/2"],
+            ["1/2"]
         ],
         "curve1_params": [
             "1/2"
@@ -134,7 +136,8 @@
         "id": 8,
         "type": "standard",
         "intersections": [
-            [3, 4]
+            [3],
+            [4]
         ],
         "curve1_params": [
             "1/3"
@@ -148,7 +151,8 @@
         "id": 9,
         "type": "standard",
         "intersections": [
-            ["1/2", "3/8"]
+            ["1/2"],
+            ["3/8"]
         ],
         "curve1_params": [
             "1/2"
@@ -162,10 +166,8 @@
         "id": 10,
         "type": "standard",
         "intersections": [
-            [0, 0],
-            ["0x1.3e7b70cac040dp-2", "0x1.b6db6db6db6dbp-2"],
-            ["0x1.60c2479a9fdfap-1", "0x1.b6db6db6db6dbp-2"],
-            [1, 0]
+            [0, "0x1.3e7b70cac040dp-2", "0x1.60c2479a9fdfap-1", 1],
+            [0, "0x1.b6db6db6db6dbp-2", "0x1.b6db6db6db6dbp-2", 0]
         ],
         "curve1_params": [
             0,
@@ -197,7 +199,8 @@
         "id": 11,
         "type": "tangent",
         "intersections": [
-            ["1/2", "1/2"]
+            ["1/2"],
+            ["1/2"]
         ],
         "curve1_params": [
             "2/3"
@@ -211,8 +214,8 @@
         "id": 12,
         "type": "standard",
         "intersections": [
-            ["3/8", "15/32"],
-            ["5/8", "15/32"]
+            ["3/8", "5/8"],
+            ["15/32", "15/32"]
         ],
         "curve1_params": [
             "1/2",
@@ -228,7 +231,8 @@
         "id": 13,
         "type": "standard",
         "intersections": [
-            [3, 4]
+            [3],
+            [4]
         ],
         "curve1_params": [
             "1/3"
@@ -242,7 +246,8 @@
         "id": 14,
         "type": "tangent",
         "intersections": [
-            [1, 0]
+            [1],
+            [0]
         ],
         "curve1_params": [
             1
@@ -256,7 +261,8 @@
         "id": 15,
         "type": "standard",
         "intersections": [
-            [1, 0]
+            [1],
+            [0]
         ],
         "curve1_params": [
             1
@@ -270,10 +276,8 @@
         "id": 16,
         "type": "standard",
         "intersections": [
-            ["0x1.8722191a02d61p-4", "0x1.61c8864680b58p-3"],
-            ["1/4", "3/8"],
-            ["0x1.4f1bbcdcbfa54p-1", "0x1.cf1bbcdcbfa54p-2"],
-            [1, 0]
+            ["0x1.8722191a02d61p-4", "1/4", "0x1.4f1bbcdcbfa54p-1", 1],
+            ["0x1.61c8864680b58p-3", "3/8", "0x1.cf1bbcdcbfa54p-2", 0]
         ],
         "curve1_params": [
             "0x1.8722191a02d61p-4",
@@ -305,10 +309,8 @@
         "id": 17,
         "type": "standard",
         "intersections": [
-            [1, 0],
-            ["0x1.8722191a02d61p-4", "0x1.61c8864680b58p-3"],
-            ["1/4", "3/8"],
-            ["0x1.4f1bbcdcbfa54p-1", "0x1.cf1bbcdcbfa54p-2"]
+            [1, "0x1.8722191a02d61p-4", "1/4", "0x1.4f1bbcdcbfa54p-1"],
+            [0, "0x1.61c8864680b58p-3", "3/8", "0x1.cf1bbcdcbfa54p-2"]
         ],
         "curve1_params": [
             0,
@@ -340,10 +342,8 @@
         "id": 18,
         "type": "standard",
         "intersections": [
-            ["0x1.8722191a02d61p-4", "0x1.61c8864680b58p-3"],
-            ["1/4", "3/8"],
-            ["0x1.4f1bbcdcbfa54p-1", "0x1.cf1bbcdcbfa54p-2"],
-            [1, 0]
+            ["0x1.8722191a02d61p-4", "1/4", "0x1.4f1bbcdcbfa54p-1", 1],
+            ["0x1.61c8864680b58p-3", "3/8", "0x1.cf1bbcdcbfa54p-2", 0]
         ],
         "curve1_params": [
             "0x1.6940d6d73455ap-3",
@@ -375,7 +375,8 @@
         "id": 19,
         "type": "tangent",
         "intersections": [
-            ["9/2", "9/2"]
+            ["9/2"],
+            ["9/2"]
         ],
         "curve1_params": [
             "1/2"
@@ -390,8 +391,8 @@
         "type": "coincident",
         "note": "The curves in this intersection are coincident: curve1([1/4, 1]) == curve24([0, 3/4]).",
         "intersections": [
-            ["1/4", "3/8"],
-            [1, 0]
+            ["1/4", 1],
+            ["3/8", 0]
         ],
         "curve1_params": [
             "1/4",
@@ -407,7 +408,8 @@
         "id": 21,
         "type": "standard",
         "intersections": [
-            ["0x1.c9c6769baeb4bp-1", "0x1.9f09401c281dep-1"]
+            ["0x1.c9c6769baeb4bp-1"],
+            ["0x1.9f09401c281dep-1"]
         ],
         "curve1_params": [
             "0x1.b7b348cf939b9p-1"
@@ -427,9 +429,8 @@
         "id": 22,
         "type": "standard",
         "intersections": [
-            ["0x1.5eb412d9d98cep-1", "0x1.c58ca7865bbdep+2"],
-            [3, 4],
-            ["0x1.54297da4c4ce6p+2", "0x1.d39ac3cd22113p-1"]
+            ["0x1.5eb412d9d98cep-1", 3, "0x1.54297da4c4ce6p+2"],
+            ["0x1.c58ca7865bbdep+2", 4, "0x1.d39ac3cd22113p-1"]
         ],
         "curve1_params": [
             "0x1.d39ac3cd22113p-4",
@@ -457,8 +458,8 @@
         "id": 23,
         "type": "standard",
         "intersections": [
-            ["0x1.ae0b02accd842p-3", "3/8"],
-            ["0x1.cb0f15070e256p-2", "3/8"]
+            ["0x1.ae0b02accd842p-3", "0x1.cb0f15070e256p-2"],
+            ["3/8", "3/8"]
         ],
         "curve1_params": [
             "0x1.ae0b02accd842p-3",
@@ -483,7 +484,8 @@
         "type": "tangent",
         "note": "The geometric algorithm in this library successfully detects intersection (at a point of tangency) of curves #1 and #6, but fails (currently, as of July 2017) to detect the tangency of the rotated and scaled equivalent pair #28 and #29.",
         "intersections": [
-            [0, 1]
+            [0],
+            [1]
         ],
         "curve1_params": [
             "1/2"
@@ -497,7 +499,8 @@
         "id": 25,
         "type": "standard",
         "intersections": [
-            [0, 1]
+            [0],
+            [1]
         ],
         "curve1_params": [
             "1/2"
@@ -527,7 +530,8 @@
         "id": 28,
         "type": "standard",
         "intersections": [
-            ["-3/64", "-1/4"]
+            ["-3/64"],
+            ["-1/4"]
         ],
         "curve1_params": [
             "13/56"
@@ -541,7 +545,8 @@
         "id": 29,
         "type": "standard",
         "intersections": [
-            ["1/2", "21/8"]
+            ["1/2"],
+            ["21/8"]
         ],
         "curve1_params": [
             1
@@ -555,7 +560,8 @@
         "id": 30,
         "type": "standard",
         "intersections": [
-            ["1/2", "-3/8"]
+            ["1/2"],
+            ["-3/8"]
         ],
         "curve1_params": [
             0
@@ -569,7 +575,8 @@
         "id": 31,
         "type": "tangent",
         "intersections": [
-            [1, 0]
+            [1],
+            [0]
         ],
         "curve1_params": [
             "1/3"
@@ -592,8 +599,8 @@
         "type": "coincident",
         "note": "The curves in this intersection are coincident: curve42([1, 2]) == curve43([0, 1]). The algebraic curve that contains them both also has a self-crossing present on these curves.",
         "intersections": [
-            ["-1/4", "11/8"],
-            ["-3/32", "53/64"]
+            ["-1/4", "-3/32"],
+            ["11/8", "53/64"]
         ],
         "curve1_params": [
             "0x1.04c1661157396p-2",
@@ -618,7 +625,8 @@
         "type": "coincident",
         "note": "The curves in this intersection are coincident: curve44([1, 2]) == curve45([0, 1]).",
         "intersections": [
-            ["-75/256", "517/512"]
+            ["-75/256"],
+            ["517/512"]
         ],
         "curve1_params": [
             1
@@ -633,7 +641,8 @@
         "type": "coincident",
         "note": "The curves in this intersection are coincident: curve46([1, 2]) == curve47([0, 1]).",
         "intersections": [
-            ["-9/256", "583/512"]
+            ["-9/256"],
+            ["583/512"]
         ],
         "curve1_params": [
             1
@@ -647,7 +656,8 @@
         "id": 36,
         "type": "standard",
         "intersections": [
-            [1, 0]
+            [1],
+            [0]
         ],
         "curve1_params": [
             "1/2"
@@ -661,7 +671,8 @@
         "id": 37,
         "type": "standard",
         "intersections": [
-            ["17/8", "23/8"]
+            ["17/8"],
+            ["23/8"]
         ],
         "curve1_params": [
             1
@@ -681,7 +692,8 @@
         "id": 38,
         "type": "standard",
         "intersections": [
-            ["17/8", "23/8"]
+            ["17/8"],
+            ["23/8"]
         ],
         "curve1_params": [
             0
@@ -701,7 +713,8 @@
         "id": 39,
         "type": "standard",
         "intersections": [
-            ["17/8", "23/8"]
+            ["17/8"],
+            ["23/8"]
         ],
         "curve1_params": [
             1
@@ -721,7 +734,8 @@
         "id": 40,
         "type": "standard",
         "intersections": [
-            ["17/8", "23/8"]
+            ["17/8"],
+            ["23/8"]
         ],
         "curve1_params": [
             0
@@ -741,7 +755,8 @@
         "id": 41,
         "type": "tangent",
         "intersections": [
-            ["1/2", "1/2"]
+            ["1/2"],
+            ["1/2"]
         ],
         "curve1_params": [
             "1/2"
@@ -756,7 +771,8 @@
         "type": "tangent",
         "note": "The curves in this intersection are not only tangent, they also have the same curvature (-1/8) at this point. This corresponds to the parameters being a triple root of the functions `f_0(t) = Resultant_s(x_0(s) - x_1(t), y_0(s) - y_1(t)) = 256 (2 t - 9) (2 t - 1)^3` and `f_1(s) = Resultant_t(x_1(t) - x_0(s), y_1(t) - y_0(s)) = 256 (2 s + 3) (2 s - 1)^3`",
         "intersections": [
-            [0, 0]
+            [0],
+            [0]
         ],
         "curve1_params": [
             "1/2"

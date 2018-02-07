@@ -55,90 +55,90 @@ ULPS_ALLOWED_OVERRIDE = {
             (1, 1): 4,  # Established on CentOS 5 (i686 Docker image)
         },
         12: {
-            (0, 1): 4,  # Established on Ubuntu 16.04
+            (1, 0): 4,  # Established on Ubuntu 16.04
         },
         17: {
-            (0, 5): ZERO_MISS,  # Established on Ubuntu 16.04
-            (2, 1): 8,  # Established on CentOS 5 (i686 Docker image)
-            (3, 1): 4,  # Established on Ubuntu 16.04
+            (5, 0): ZERO_MISS,  # Established on Ubuntu 16.04
+            (1, 2): 8,  # Established on CentOS 5 (i686 Docker image)
+            (1, 3): 4,  # Established on Ubuntu 16.04
         },
         18: {
-            (0, 4): 5,  # Established on Ubuntu 16.04
-            (1, 0): 8,  # Established on Ubuntu 16.04
-            (1, 4): 4,  # Established on Ubuntu 16.04
-            (2, 0): 4,  # Established on CentOS 5 (i686 Docker image)
+            (4, 0): 5,  # Established on Ubuntu 16.04
+            (0, 1): 8,  # Established on Ubuntu 16.04
+            (4, 1): 4,  # Established on Ubuntu 16.04
+            (0, 2): 4,  # Established on CentOS 5 (i686 Docker image)
             (3, 3): ZERO_MISS,  # Established on Ubuntu 16.04
-            (3, 5): ZERO_MISS,  # Established on Ubuntu 16.04
+            (5, 3): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         22: {
             (0, 0): 8,  # Established on CentOS 5 (i686 Docker image)
-            (0, 1): 18,  # Established on CentOS 5 (i686 Docker image)
+            (1, 0): 18,  # Established on CentOS 5 (i686 Docker image)
         },
         23: {
             (0, 0): 14,  # Established on Ubuntu 16.04
-            (0, 1): 41,  # Established on Ubuntu 16.04
-            (1, 0): 16,  # Established on Ubuntu 16.04
+            (1, 0): 41,  # Established on Ubuntu 16.04
+            (0, 1): 16,  # Established on Ubuntu 16.04
             (1, 1): 21,  # Established on Ubuntu 16.04
         },
         25: {
-            (0, 4): ZERO_MISS,  # Established on Ubuntu 16.04
+            (4, 0): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         28: {
-            (0, 2): 4,  # Established on CentOS 5 (i686 Docker image)
+            (2, 0): 4,  # Established on CentOS 5 (i686 Docker image)
         },
         37: {
-            (0, 1): 91,  # Established on Ubuntu 16.04
+            (1, 0): 91,  # Established on Ubuntu 16.04
         },
         38: {
-            (0, 1): 1013,  # Established on Ubuntu 16.04
+            (1, 0): 1013,  # Established on Ubuntu 16.04
         },
         39: {
-            (0, 1): 91,  # Established on Ubuntu 16.04
+            (1, 0): 91,  # Established on Ubuntu 16.04
         },
         40: {
-            (0, 1): 1013,  # Established on Ubuntu 16.04
+            (1, 0): 1013,  # Established on Ubuntu 16.04
         },
     },
     ALGEBRAIC: {
         12: {
-            (0, 1): 4,  # Established on OS X 10.11 in 32-bit (Early 2011 MBP)
+            (1, 0): 4,  # Established on OS X 10.11 in 32-bit (Early 2011 MBP)
         },
         17: {
-            (0, 5): ZERO_MISS,  # Established on Ubuntu 16.04
+            (5, 0): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         18: {
-            (0, 4): 5,  # Established on Ubuntu 16.04
-            (1, 4): 4,  # Established on Ubuntu 16.04
-            (3, 1): 5,  # Established on CentOS 5 (i686 Docker image)
+            (4, 0): 5,  # Established on Ubuntu 16.04
+            (4, 1): 4,  # Established on Ubuntu 16.04
+            (1, 3): 5,  # Established on CentOS 5 (i686 Docker image)
             (3, 3): ZERO_MISS,  # Established on Ubuntu 16.04
-            (3, 5): ZERO_MISS,  # Established on Ubuntu 16.04
+            (5, 3): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         22: {
             (0, 0): 12,  # Established on Ubuntu 16.04
-            (0, 1): 29,  # Established on Ubuntu 16.04
-            (1, 0): 4,  # Established on CentOS 5 (i686 Docker image)
+            (1, 0): 29,  # Established on Ubuntu 16.04
+            (0, 1): 4,  # Established on CentOS 5 (i686 Docker image)
             (1, 1): 4,  # Established on CentOS 5 (i686 Docker image)
         },
         23: {
-            (0, 1): 4,  # Established on Ubuntu 16.04
+            (1, 0): 4,  # Established on Ubuntu 16.04
         },
         25: {
-            (0, 4): ZERO_MISS,  # Established on Ubuntu 16.04
+            (4, 0): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         28: {
-            (0, 2): 4,  # Established on CentOS 5 (i686 Docker image)
+            (2, 0): 4,  # Established on CentOS 5 (i686 Docker image)
         },
         37: {
-            (0, 1): 165,  # Established on Ubuntu 16.04
+            (1, 0): 165,  # Established on Ubuntu 16.04
         },
         38: {
-            (0, 1): 18,  # Established on Ubuntu 16.04
+            (1, 0): 18,  # Established on Ubuntu 16.04
         },
         39: {
-            (0, 1): 165,  # Established on Ubuntu 16.04
+            (1, 0): 165,  # Established on Ubuntu 16.04
         },
         40: {
-            (0, 1): 18,  # Established on Ubuntu 16.04
+            (1, 0): 18,  # Established on Ubuntu 16.04
         },
     },
 }
@@ -196,15 +196,15 @@ def get_sorted_intersections(intersection_info, strategy):
             nodes1, nodes2)
 
     # Make we have the right number of intersections.
-    if intersections.shape != (intersection_info.num_params, 2):
+    if intersections.shape != (2, intersection_info.num_params):
         raise IncorrectCount(
             'Received wrong number of intersections',
             intersections.shape, 'Expected', intersection_info.num_params,
             intersection_info.test_id)
 
     # Sort the intersections by s-value.
-    sorted_inds = np.argsort(intersections[:, 0])
-    return intersections[sorted_inds, :]
+    sorted_inds = np.argsort(intersections[0, :])
+    return intersections[:, sorted_inds]
 
 
 def intersection_values(intersection_info, strategy):
@@ -213,23 +213,25 @@ def intersection_values(intersection_info, strategy):
 
     # Put the computed and expected values into matrices to be compared.
     s_vals, t_vals, intersection_pts = intersection_info.params
-    computed = np.zeros((intersection_info.num_params, 6), order='F')
+    computed = np.zeros((6, intersection_info.num_params), order='F')
     exact = np.zeros(computed.shape, order='F')
 
-    info = six.moves.zip(intersections, s_vals, t_vals, intersection_pts)
+    info = six.moves.zip(intersections.T, s_vals, t_vals, intersection_pts.T)
     for index, (intersection, s_val, t_val, point) in enumerate(info):
-        computed[index, (0, 1)] = intersection
-        exact[index, (0, 1)] = s_val, t_val
+        computed[(0, 1), index] = intersection
+        exact[(0, 1), index] = s_val, t_val
 
         # Make sure the point corresponding to the parameter on curve 1
         # is close to the exact one.
-        computed[index, (2, 3)] = intersection_info.curve1.evaluate(s_val)
-        exact[index, (2, 3)] = point
+        computed[(2, 3), index] = (
+            intersection_info.curve1.evaluate(s_val)[:, 0])
+        exact[(2, 3), index] = point
 
         # Make sure the point corresponding to the parameter on curve 2
         # is close to the exact one.
-        computed[index, (4, 5)] = intersection_info.curve2.evaluate(t_val)
-        exact[index, (4, 5)] = point
+        computed[(4, 5), index] = (
+            intersection_info.curve2.evaluate(t_val)[:, 0])
+        exact[(4, 5), index] = point
 
     return computed, exact
 

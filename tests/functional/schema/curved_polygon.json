@@ -13,10 +13,10 @@
                     "description": "A coordinate as a numerical value.",
                     "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/numerical.json"
                 },
-                "minItems": 2,
-                "maxItems": 2
+                "minItems": 2
             },
-            "minItems": 2
+            "minItems": 2,
+            "maxItems": 2
         },
         "start_params": {
             "description": "Numerical parameters (along an edge of a surface) that define the starting points of each edge of the curved polygon (as segments within an edge of one of the two surfaces).",

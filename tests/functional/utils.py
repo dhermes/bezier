@@ -448,7 +448,7 @@ class CurveIntersectionInfo(object):
             msg = 'Expected shape {} for ``curve2_params``.'.format(shape)
             raise ValueError(msg)
 
-        shape = (num_params, 2)
+        shape = (2, num_params)
         if self.intersections.shape != shape:
             msg = 'Expected shape {} for ``intersections``.'.format(shape)
             raise ValueError(msg)
@@ -575,7 +575,7 @@ class CurveIntersectionInfo(object):
             _convert_float(info.pop('curve2_params')))
 
         if intersections.size == 0:
-            intersections = intersections.reshape((0, 2), order='F')
+            intersections = intersections.reshape((2, 0), order='F')
 
         # Optional fields.
         curve1_polys = info.pop('curve1_polys', None)
@@ -795,7 +795,7 @@ class CurvedPolygonInfo(object):
             nodes = np.asfortranarray(
                 _convert_float(info.pop('nodes')))
             if nodes.size == 0:
-                nodes = nodes.reshape((0, 2), order='F')
+                nodes = nodes.reshape((2, 0), order='F')
 
             start_params = np.asfortranarray(
                 _convert_float(info.pop('start_params')))

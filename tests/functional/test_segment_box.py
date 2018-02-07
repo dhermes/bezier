@@ -19,14 +19,15 @@ except ImportError:
 import numpy as np
 
 from bezier import _geometric_intersection
+from bezier import _helpers
 from tests.functional import utils
 
 
 CONFIG = utils.Config()
 # Always gives us the unit square.
 UNIT_SQUARE = np.asfortranarray([
-    [0.0, 0.0],
-    [1.0, 1.0],
+    [0.0, 1.0],
+    [0.0, 1.0],
 ])
 
 
@@ -37,11 +38,10 @@ def make_plot(segment, index):
     line, = ax.plot([0, 1], [0, 1], alpha=0.0)
     ax.fill_between([0, 1], [0, 0], [1, 1],
                     alpha=0.5, color=line.get_color())
-    line, = ax.plot(segment[:, 0], segment[:, 1])
-    ax.plot(segment[0, 0], segment[0, 1], marker='o',
+    line, = ax.plot(segment[0, :], segment[1, :])
+    ax.plot(segment[0, 0], segment[1, 0], marker='o',
             linestyle='None', color=line.get_color())
-    left_, bottom_ = np.min(segment, axis=0)
-    right_, top_ = np.max(segment, axis=0)
+    left_, right_, bottom_, top_ = _helpers.bbox(segment)
     ax.fill_between([left_, right_], [bottom_, bottom_], [top_, top_],
                     alpha=0.5, color=line.get_color())
     ax.axis('scaled')
@@ -63,7 +63,7 @@ def run_it(segment, expected=None, index=0):
         expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
 
     result = _geometric_intersection.bbox_line_intersect(
-        UNIT_SQUARE, segment[[0], :], segment[[1], :])
+        UNIT_SQUARE, segment[:, 0], segment[:, 1])
     assert result == expected
 
     if not CONFIG.running:
@@ -78,16 +78,16 @@ def test_outside():
         [-0.75, 0.25],
     ])
     segment_bottom_right = np.asfortranarray([
-        [0.75, -0.75],
-        [1.75, 0.25],
+        [0.75, 1.75],
+        [-0.75, 0.25],
     ])
     segment_top_right = np.asfortranarray([
         [0.75, 1.75],
         [1.75, 0.75],
     ])
     segment_top_left = np.asfortranarray([
-        [-0.75, 0.75],
-        [0.25, 1.75],
+        [-0.75, 0.25],
+        [0.75, 1.75],
     ])
 
     segments = (
@@ -104,48 +104,48 @@ def test_outside():
 def test_start_in_box():
     segments = (
         np.asfortranarray([
-            [0.5, 0.0],
-            [0.5, -0.5],
+            [0.5, 0.5],
+            [0.0, -0.5],
         ]),
         np.asfortranarray([
-            [0.5, 0.0],
+            [0.5, 0.5],
+            [0.0, 0.5],
+        ]),
+        np.asfortranarray([
+            [1.0, 1.5],
             [0.5, 0.5],
         ]),
         np.asfortranarray([
             [1.0, 0.5],
-            [1.5, 0.5],
-        ]),
-        np.asfortranarray([
-            [1.0, 0.5],
             [0.5, 0.5],
         ]),
         np.asfortranarray([
-            [0.5, 1.0],
+            [0.5, 0.5],
+            [1.0, 1.5],
+        ]),
+        np.asfortranarray([
+            [0.5, 0.5],
+            [1.0, 0.5],
+        ]),
+        np.asfortranarray([
+            [0.0, -0.5],
+            [0.5, 0.5],
+        ]),
+        np.asfortranarray([
+            [0.0, 0.5],
+            [0.5, 0.5],
+        ]),
+        np.asfortranarray([
             [0.5, 1.5],
-        ]),
-        np.asfortranarray([
-            [0.5, 1.0],
             [0.5, 0.5],
-        ]),
-        np.asfortranarray([
-            [0.0, 0.5],
-            [-0.5, 0.5],
-        ]),
-        np.asfortranarray([
-            [0.0, 0.5],
-            [0.5, 0.5],
-        ]),
-        np.asfortranarray([
-            [0.5, 0.5],
-            [1.5, 0.5],
         ]),
         np.asfortranarray([
             [0.5, 0.5],
             [0.5, -0.5],
         ]),
         np.asfortranarray([
-            [0.5, 0.5],
-            [-0.5, 1.5],
+            [0.5, -0.5],
+            [0.5, 1.5],
         ]),
     )
 
@@ -156,44 +156,44 @@ def test_start_in_box():
 def test_end_in_box():
     segments = (
         np.asfortranarray([
-            [0.5, -1.0],
-            [0.5, 0.0],
+            [0.5, 0.5],
+            [-1.0, 0.0],
         ]),
         np.asfortranarray([
-            [0.25, -1.0],
-            [0.5, 0.0],
+            [0.25, 0.5],
+            [-1.0, 0.0],
+        ]),
+        np.asfortranarray([
+            [1.5, 1.0],
+            [0.5, 0.5],
+        ]),
+        np.asfortranarray([
+            [1.0, 1.0],
+            [-0.5, 0.5],
+        ]),
+        np.asfortranarray([
+            [0.5, 0.5],
+            [1.5, 1.0],
+        ]),
+        np.asfortranarray([
+            [0.5, 0.5],
+            [-0.5, 1.0],
+        ]),
+        np.asfortranarray([
+            [-0.5, 0.0],
+            [0.5, 0.5],
+        ]),
+        np.asfortranarray([
+            [0.5, 0.5],
+            [1.5, 0.5],
+        ]),
+        np.asfortranarray([
+            [-0.5, 0.5],
+            [0.5, 0.5],
         ]),
         np.asfortranarray([
             [1.5, 0.5],
-            [1.0, 0.5],
-        ]),
-        np.asfortranarray([
-            [1.0, -0.5],
-            [1.0, 0.5],
-        ]),
-        np.asfortranarray([
-            [0.5, 1.5],
-            [0.5, 1.0],
-        ]),
-        np.asfortranarray([
-            [0.5, -0.5],
-            [0.5, 1.0],
-        ]),
-        np.asfortranarray([
-            [-0.5, 0.5],
-            [0.0, 0.5],
-        ]),
-        np.asfortranarray([
-            [0.5, 1.5],
-            [0.5, 0.5],
-        ]),
-        np.asfortranarray([
-            [-0.5, 0.5],
-            [0.5, 0.5],
-        ]),
-        np.asfortranarray([
-            [1.5, 1.5],
-            [0.5, 0.5],
+            [1.5, 0.5],
         ]),
     )
 
@@ -204,8 +204,8 @@ def test_end_in_box():
 def test_goes_through_box():
     segments = (
         np.asfortranarray([
-            [0.5, -0.25],
-            [1.25, 0.5],
+            [0.5, 1.25],
+            [-0.25, 0.5],
         ]),
         np.asfortranarray([
             [-0.25, 0.5],
@@ -216,28 +216,28 @@ def test_goes_through_box():
             [0.5, 1.25],
         ]),
         np.asfortranarray([
-            [-0.5, 0.5],
-            [1.5, 0.5],
+            [-0.5, 1.5],
+            [0.5, 0.5],
         ]),
         np.asfortranarray([
-            [-0.25, 0.0],
-            [1.25, 0.0],
+            [-0.25, 1.25],
+            [0.0, 0.0],
         ]),
         np.asfortranarray([
-            [1.0, -0.25],
-            [1.0, 1.25],
+            [1.0, 1.0],
+            [-0.25, 1.25],
         ]),
         np.asfortranarray([
-            [1.25, 1.0],
-            [-0.25, 1.0],
+            [1.25, -0.25],
+            [1.0, 1.0],
         ]),
         np.asfortranarray([
-            [0.0, 1.25],
-            [0.0, -0.25],
+            [0.0, 0.0],
+            [1.25, -0.25],
         ]),
         np.asfortranarray([
-            [0.5, 1.25],
-            [-0.25, 0.5],
+            [0.5, -0.25],
+            [1.25, 0.5],
         ]),
     )
 

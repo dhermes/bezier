@@ -178,9 +178,9 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
                 edge = int_edges[index]
                 assert np.allclose(specialized._nodes, edge._nodes)
 
-                node = intersected.nodes[index]
+                node = intersected.nodes[index, :]
                 CONFIG.assert_close(edge._nodes[0, 0], node[0])
-                CONFIG.assert_close(edge._nodes[0, 1], node[1])
+                CONFIG.assert_close(edge._nodes[1, 0], node[1])
         else:
             assert isinstance(intersection, bezier.Surface)
             assert isinstance(intersected, utils.SurfaceIntersectionInfo)

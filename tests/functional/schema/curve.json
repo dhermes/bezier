@@ -13,10 +13,10 @@
                     "description": "A coordinate as a numerical value.",
                     "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/numerical.json"
                 },
-                "minItems": 2,
-                "maxItems": 2
+                "minItems": 1
             },
-            "minItems": 1
+            "minItems": 2,
+            "maxItems": 2
         },
         "note": {
             "description": "Description of the curve or segment within a curve.",
