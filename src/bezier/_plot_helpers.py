@@ -47,7 +47,7 @@ def add_plot_boundary(ax, padding=0.125):
             of padding to add around data. Defaults to ``0.125``.
     """
     nodes = np.asfortranarray(
-        np.vstack([line.get_xydata() for line in ax.lines]))
+        np.vstack([line.get_xydata() for line in ax.lines]).T)
     left, right, bottom, top = _helpers.bbox(nodes)
     center_x = 0.5 * (right + left)
     delta_x = right - left
@@ -83,19 +83,15 @@ def add_patch(ax, color, pts_per_edge, *edges):
         points = edge.evaluate_multi(s_vals)
         # We assume the edges overlap and leave out the first point
         # in each.
-        all_points.append(points[1:, :])
+        all_points.append(points[:, 1:])
 
     # Add first point as last point (polygon is closed).
     first_edge = all_points[0]
-    # NOTE: ``first_edge[[0], :]`` makes a copy while the access
-    #       below **does not** copy. See
-    #       (https://docs.scipy.org/doc/numpy-1.6.0/reference/
-    #        arrays.indexing.html#advanced-indexing)
-    all_points.append(first_edge[0, :].reshape((1, 2), order='F'))
+    all_points.append(first_edge[:, [0]])
 
     # Add boundary first.
-    polygon = np.asfortranarray(np.vstack(all_points))
-    line, = ax.plot(polygon[:, 0], polygon[:, 1], color=color)
+    polygon = np.asfortranarray(np.hstack(all_points))
+    line, = ax.plot(polygon[0, :], polygon[1, :], color=color)
     # Reset ``color`` in case it was ``None`` and set from color wheel.
     color = line.get_color()
 

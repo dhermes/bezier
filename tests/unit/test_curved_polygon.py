@@ -20,14 +20,12 @@ from tests.unit import utils
 class TestCurvedPolygon(utils.NumPyTestCase):
 
     NODES0 = np.asfortranarray([
-        [0.0, 0.0],
-        [0.5, -1.0],
-        [1.0, 0.0],
+        [0.0, 0.5, 1.0],
+        [0.0, -1.0, 0.0],
     ])
     NODES1 = np.asfortranarray([
-        [1.0, 0.0],
-        [0.5, 1.0],
-        [0.0, 0.0],
+        [1.0, 0.5, 0.0],
+        [0.0, 1.0, 0.0],
     ])
     COLOR = (0.125, 0.125, 0.0)
 
@@ -94,8 +92,8 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         import bezier
 
         nodes0 = np.asfortranarray([
-            [1.0, 1.0],
-            [2.0, 2.0],
+            [1.0, 2.0],
+            [1.0, 2.0],
         ])
         edge0 = bezier.Curve(nodes0, 1)
         edge1 = bezier.Curve(self.NODES1, 2)
@@ -105,7 +103,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
     def test__verify_not_aligned(self):
         import bezier
 
-        edge0 = bezier.Curve(np.asfortranarray([[0.0], [0.0]]), 1)
+        edge0 = bezier.Curve(np.asfortranarray([[0.0, 0.0]]), 1)
         edge1 = bezier.Curve(self.NODES1, 2)
         with self.assertRaises(ValueError):
             self._make_one(edge0, edge1)
@@ -128,8 +126,9 @@ class TestCurvedPolygon(utils.NumPyTestCase):
 
     def test___repr__(self):
         curved_poly = self._make_default()
-        self.assertEqual(repr(curved_poly),
-                         '<CurvedPolygon (num_sides=2)>')
+        self.assertEqual(
+            repr(curved_poly),
+            '<CurvedPolygon (num_sides=2)>')
 
     @unittest.mock.patch('bezier._plot_helpers.new_axis')
     @unittest.mock.patch('bezier._plot_helpers.add_patch')

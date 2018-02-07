@@ -22,8 +22,8 @@ class Base(object):
 
     Args:
         nodes (numpy.ndarray): The control points for the shape.
-            Must be a 2D array, where the rows are the nodes and the
-            columns correspond to each dimension the shape occurs in.
+            Must be a 2D array, where the columns are the nodes and the
+            rows correspond to each dimension the shape occurs in.
         _copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
@@ -40,7 +40,7 @@ class Base(object):
             raise ValueError('Nodes must be 2-dimensional, not',
                              nodes.ndim)
 
-        _, dimension = nodes.shape
+        dimension, _ = nodes.shape
         self._dimension = dimension
         if _copy:
             self._nodes = nodes.copy(order='F')

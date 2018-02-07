@@ -66,24 +66,24 @@ def _vector_close(vec1, vec2, eps=_EPS):
        will be used if it can be built.
 
     Args:
-        vec1 (numpy.ndarray): First vector for comparison.
-        vec2 (numpy.ndarray): Second vector for comparison.
+        vec1 (numpy.ndarray): First vector (1D) for comparison.
+        vec2 (numpy.ndarray): Second vector (1D) for comparison.
         eps (float): Error threshold. Defaults to :math:`2^{-40}`.
 
     Returns:
         bool: Flag indicating if they are close to precision.
     """
-    # NOTE: We assume the caller sends a 1xD vector. We turn it into
-    #       a one-dimensional vector so NumPy doesn't use a matrix norm.
-    size1 = np.linalg.norm(vec1[0, :], ord=2)
-    size2 = np.linalg.norm(vec2[0, :], ord=2)
+    # NOTE: This relies on ``vec1`` and ``vec2`` being one-dimensional
+    #       vectors so NumPy doesn't try to use a matrix norm.
+    size1 = np.linalg.norm(vec1, ord=2)
+    size2 = np.linalg.norm(vec2, ord=2)
     if size1 == 0:
         return size2 <= eps
     elif size2 == 0:
         return size1 <= eps
     else:
         upper_bound = eps * min(size1, size2)
-        return np.linalg.norm(vec1[0, :] - vec2[0, :], ord=2) <= upper_bound
+        return np.linalg.norm(vec1 - vec2, ord=2) <= upper_bound
 
 
 def _in_interval(value, start, end):
@@ -127,17 +127,13 @@ def _bbox(nodes):
         Tuple[float, float, float, float]: The left, right,
         bottom and top bounds for the box.
     """
-    left, bottom = np.min(nodes, axis=0)
-    right, top = np.max(nodes, axis=0)
+    left, bottom = np.min(nodes, axis=1)
+    right, top = np.max(nodes, axis=1)
     return left, right, bottom, top
 
 
 def _contains_nd(nodes, point):
     r"""Predicate indicating if a point is within a bounding box.
-
-    Like :func:`contains` but supports points in arbitrary dimension.
-    Unlike :func:`contains`, this function directly uses ``<=`` and
-    ``>=`` for comparison (:func:`contains` uses :func:`in_interval`).
 
     .. note::
 
@@ -152,11 +148,11 @@ def _contains_nd(nodes, point):
     Returns:
         bool: Indicating containment.
     """
-    min_vals = np.min(nodes, axis=0)
+    min_vals = np.min(nodes, axis=1)
     if not np.all(min_vals <= point):
         return False
 
-    max_vals = np.max(nodes, axis=0)
+    max_vals = np.max(nodes, axis=1)
     if not np.all(point <= max_vals):
         return False
 
@@ -182,13 +178,13 @@ def _cross_product(vec0, vec1):
        will be used if it can be built.
 
     Args:
-        vec0 (numpy.ndarray): A vector as a 1x2 NumPy array.
-        vec1 (numpy.ndarray): A vector as a 1x2 NumPy array.
+        vec0 (numpy.ndarray): A vector as a 1D NumPy array with two values.
+        vec1 (numpy.ndarray): A vector as a 1D NumPy array with two values.
 
     Returns:
         float: The cross product (or rather, its :math:`z` component).
     """
-    return vec0[0, 0] * vec1[0, 1] - vec0[0, 1] * vec1[0, 0]
+    return vec0[0] * vec1[1] - vec0[1] * vec1[0]
 
 
 def _ulps_away(value1, value2, num_bits=1):
@@ -290,11 +286,12 @@ def cross_product_compare(start, candidate1, candidate2):
        This is a helper for :func:`_simple_convex_hull`.
 
     Args:
-        start (numpy.ndarray): The start vector as a 1x2 NumPy array.
-        candidate1 (numpy.ndarray): The first candidate vector (as a 1x2
-            NumPy array).
-        candidate2 (numpy.ndarray): The second candidate vector (as a 1x2
-            NumPy array).
+        start (numpy.ndarray): The start vector (as 1D NumPy array with
+            2 elements).
+        candidate1 (numpy.ndarray): The first candidate vector (as 1D
+            NumPy array with 2 elements).
+        candidate2 (numpy.ndarray): The second candidate vector (as 1D
+            NumPy array with 2 elements).
 
     Returns:
         float: The cross product of the two differences.
@@ -352,7 +349,7 @@ def _simple_convex_hull(points):
     # Build lower hull
     lower = []
     for index in six.moves.xrange(num_points):
-        point3 = points[:, index].reshape((1, 2))
+        point3 = points[:, index]
         while (len(lower) >= 2 and
                cross_product_compare(lower[-2], lower[-1], point3) <= 0):
             lower.pop()
@@ -361,7 +358,7 @@ def _simple_convex_hull(points):
     # Build upper hull
     upper = []
     for index in six.moves.xrange(num_points - 1, -1, -1):
-        point3 = points[:, index].reshape((1, 2))
+        point3 = points[:, index]
         while (len(upper) >= 2 and
                cross_product_compare(upper[-2], upper[-1], point3) <= 0):
             upper.pop()
@@ -372,10 +369,10 @@ def _simple_convex_hull(points):
     polygon = np.empty((2, size_polygon), order='F')
 
     for index, point in enumerate(lower[:-1]):
-        polygon[:, index] = point[0, :]
+        polygon[:, index] = point
     index_start = len(lower) - 1
     for index, point in enumerate(upper[:-1]):
-        polygon[:, index + index_start] = point[0, :]
+        polygon[:, index + index_start] = point
 
     return polygon
 
@@ -388,11 +385,11 @@ def is_separating(direction, polygon1, polygon2):
        This is a helper for :func:`_polygon_collide`.
 
     Args:
-        direction (numpy.ndarray): A ``1 x 2`` array (``float64``) of a
-            potential separating line for th etwo polygons.
-        polygon1 (numpy.ndarray): The ``2 x N`` array (``float64``) of ordered
+        direction (numpy.ndarray): A 1D ``2``-array (``float64``) of a
+            potential separating line for the two polygons.
+        polygon1 (numpy.ndarray): A ``2 x N`` array (``float64``) of ordered
             points in a polygon.
-        polygon2 (numpy.ndarray): The ``2 x N`` array (``float64``) of ordered
+        polygon2 (numpy.ndarray): A ``2 x N`` array (``float64``) of ordered
             points in a polygon.
 
     Returns:
@@ -402,16 +399,16 @@ def is_separating(direction, polygon1, polygon2):
     #       zero that would mean the ``direction`` corresponds to an
     #       invalid edge.
     norm_squared = (
-        direction[0, 0] * direction[0, 0] + direction[0, 1] * direction[0, 1])
+        direction[0] * direction[0] + direction[1] * direction[1])
 
     params = []
-    vertex = np.empty((1, 2), order='F')
+    vertex = np.empty((2,), order='F')
     for polygon in (polygon1, polygon2):
         _, polygon_size = polygon.shape
         min_param = np.inf
         max_param = -np.inf
         for index in six.moves.xrange(polygon_size):
-            vertex[0, :] = polygon[:, index]
+            vertex[:] = polygon[:, index]
             param = cross_product(direction, vertex) / norm_squared
             min_param = min(min_param, param)
             max_param = max(max_param, param)
@@ -438,21 +435,21 @@ def _polygon_collide(polygon1, polygon2):
        will be used if it can be built.
 
     Args:
-        polygon1 (numpy.ndarray): The ``2 x N`` array (``float64``) of ordered
+        polygon1 (numpy.ndarray): A ``2 x N`` array (``float64``) of ordered
             points in a polygon.
-        polygon2 (numpy.ndarray): The ``2 x N`` array (``float64``) of ordered
+        polygon2 (numpy.ndarray): A ``2 x N`` array (``float64``) of ordered
             points in a polygon.
 
     Returns:
         bool: Flag indicating if the two polygons collide.
     """
-    direction = np.empty((1, 2), order='F')
+    direction = np.empty((2,), order='F')
     for polygon in (polygon1, polygon2):
         _, polygon_size = polygon.shape
         for index in six.moves.xrange(polygon_size):
             # NOTE: When ``index == 0`` this will "wrap around" and refer
             #       to index ``-1``.
-            direction[0, :] = polygon[:, index] - polygon[:, index - 1]
+            direction[:] = polygon[:, index] - polygon[:, index - 1]
             if is_separating(direction, polygon1, polygon2):
                 return False
 

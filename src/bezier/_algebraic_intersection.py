@@ -19,7 +19,7 @@ Primarily helps implicitize B |eacute| zier curves.
 .. _Farouki and Rajan: https://dx.doi.org/10.1016/0167-8396(88)90016-7
 .. _theorem: https://en.wikipedia.org/wiki/B%C3%A9zout's_theorem
 
-Primarily uses the `resultant`_ to evaluate the implicitized
+Uses the `resultant`_ to evaluate the implicitized
 `algebraic curve`_. In order to do this on B |eacute| zier curves
 without translating to a power basis, we utilize the work of
 `Farouki and Rajan`_ to compute a modified Sylvester determinant.
@@ -60,7 +60,8 @@ from bezier import _intersection_helpers
 #         0.5 * (np.cos(np.pi * np.arange(1, 14, 2.0) / 14) + 1.0)
 #         0.5 * (np.cos(np.pi * np.arange(1, 18, 2.0) / 18) + 1.0)
 #         0.5 * (np.cos(np.pi * np.arange(1, 20, 2.0) / 20) + 1.0)
-#       but have been made more precise with ``mpmath``.
+#       See 73f909805e971221cb7976cf69603b82f31a4a32 and
+#       80907b1be03f5895f7132e0e920c5e3cdebba9ac.
 _CHEB7 = np.asfortranarray([
     float.fromhex('0x1.f994e02ac74b4p-1'),
     float.fromhex('0x1.c8261ba82ef26p-1'),
@@ -117,7 +118,7 @@ def _evaluate3(nodes, x_val, y_val):
     """Helper for :func:`evaluate` when ``nodes`` is degree 3.
 
     Args:
-        nodes (numpy.ndarray): ``4x2`` array of nodes in a curve.
+        nodes (numpy.ndarray): ``2 x 4`` array of nodes in a curve.
         x_val (float): ``x``-coordinate for evaluation.
         y_val (float): ``y``-coordinate for evaluation.
 
@@ -127,13 +128,13 @@ def _evaluate3(nodes, x_val, y_val):
     # NOTE: This may be (a) slower and (b) less precise than
     #       hard-coding the determinant.
     sylvester_mat = np.zeros((6, 6), order='F')
-    delta = nodes - np.asfortranarray([[x_val, y_val]])
-    delta[1:3, :] *= 3.0
+    delta = nodes - np.asfortranarray([[x_val], [y_val]])
+    delta[:, 1:3] *= 3.0
     # Swap rows/columns so that x-y are right next to each other.
     # This will only change the determinant up to a sign.
-    sylvester_mat[:4, :2] = delta
-    sylvester_mat[1:5, 2:4] = delta
-    sylvester_mat[2:, 4:] = delta
+    sylvester_mat[:2, :4] = delta
+    sylvester_mat[2:4, 1:5] = delta
+    sylvester_mat[4:, 2:] = delta
     return np.linalg.det(sylvester_mat)
 
 
@@ -145,7 +146,7 @@ def evaluate(nodes, x_val, y_val):
 
     .. note::
 
-       This assumes, but doesn't check, that ``nodes`` has 2 columns.
+       This assumes, but doesn't check, that ``nodes`` has 2 rows.
 
     .. note::
 
@@ -154,7 +155,7 @@ def evaluate(nodes, x_val, y_val):
        have zero determinant.
 
     Args:
-        nodes (numpy.ndarray): ``Nx2`` array of nodes in a curve.
+        nodes (numpy.ndarray): ``2 x N`` array of nodes in a curve.
         x_val (float): ``x``-coordinate for evaluation.
         y_val (float): ``y``-coordinate for evaluation.
 
@@ -165,7 +166,7 @@ def evaluate(nodes, x_val, y_val):
         ValueError: If the curve is a point.
         NotImplementedError: If the curve is not degree 1 or 2.
     """
-    num_nodes, _ = nodes.shape
+    _, num_nodes = nodes.shape
     if num_nodes == 1:
         raise ValueError('A point cannot be implicitized')
     elif num_nodes == 2:
@@ -175,7 +176,7 @@ def evaluate(nodes, x_val, y_val):
         #                     [y0 - y, y1 - y]
         return (
             (nodes[0, 0] - x_val) * (nodes[1, 1] - y_val) -
-            (nodes[1, 0] - x_val) * (nodes[0, 1] - y_val))
+            (nodes[0, 1] - x_val) * (nodes[1, 0] - y_val))
     elif num_nodes == 3:
         # x(s) - x = (x0 - x) (1 - s)^2 + 2 (x1 - x) s(1 - s) + (x2 - x) s^2
         # y(s) - y = (y0 - y) (1 - s)^2 + 2 (y1 - y) s(1 - s) + (y2 - y) s^2
@@ -183,9 +184,9 @@ def evaluate(nodes, x_val, y_val):
         #                     [     0,    x0 - x, 2(x1 - x), x2 - x]   0|A|B|C
         #                     [y0 - y, 2(y1 - y),    y2 - y,      0]   D|E|F|0
         #                     [     0,    y0 - y, 2(y1 - y), y2 - y]   0|D|E|F
-        val_a, val_b, val_c = nodes[:, 0] - x_val
+        val_a, val_b, val_c = nodes[0, :] - x_val
         val_b *= 2
-        val_d, val_e, val_f = nodes[:, 1] - y_val
+        val_d, val_e, val_f = nodes[1, :] - y_val
         val_e *= 2
         #     [A, B, C]         [E, F, 0]
         # det [E, F, 0] = - det [A, B, C] = -E (BF - CE) + F(AF - CD)
@@ -225,7 +226,7 @@ def eval_intersection_polynomial(nodes1, nodes2, t):
     Returns:
         float: The computed value of :math:`f_1(x_2(t), y_2(t))`.
     """
-    (x_val, y_val), = _curve_helpers.evaluate_multi(
+    (x_val,), (y_val,) = _curve_helpers.evaluate_multi(
         nodes2, np.asfortranarray([t]))
     return evaluate(nodes1, x_val, y_val)
 
@@ -470,8 +471,8 @@ def to_power_basis(nodes1, nodes2):
             ``1-3``, ``1-4``, ``2-2``, ``2-3``, ``2-4`` or ``3-3``.
     """
     # pylint: disable=too-many-return-statements
-    num_nodes1, _ = nodes1.shape
-    num_nodes2, _ = nodes2.shape
+    _, num_nodes1 = nodes1.shape
+    _, num_nodes2 = nodes2.shape
     if num_nodes1 == 2:
         if num_nodes2 == 2:
             return _to_power_basis11(nodes1, nodes2)
@@ -493,7 +494,7 @@ def to_power_basis(nodes1, nodes2):
             return _to_power_basis33(nodes1, nodes2)
 
     raise NotImplementedError(
-        'Degree 1', num_nodes1 - 1, 'Degree2', num_nodes2 - 1,
+        'Degree 1', num_nodes1 - 1, 'Degree 2', num_nodes2 - 1,
         _POWER_BASIS_ERR)
     # pylint: enable=too-many-return-statements
 
@@ -576,7 +577,6 @@ def _get_sigma_coeffs(coeffs):
     In cases where terms with "low exponents" of :math:`(1 - s)` have
     coefficient zero, the degree of :math:`g(\sigma)` may not be the
     same as the degree of :math:`f(s)`:
-
 
     .. math::
 
@@ -1216,7 +1216,7 @@ def intersect_curves(nodes1, nodes2):
         nodes2 (numpy.ndarray): The nodes in the second curve.
 
     Returns:
-        numpy.ndarray: ``Nx2`` array of intersection parameters.
+        numpy.ndarray: ``2 x N`` array of intersection parameters.
         Each row contains a pair of values :math:`s` and :math:`t`
         (each in :math:`\left[0, 1\right]`) such that the curves
         intersect: :math:`B_1(s) = B_2(t)`.
@@ -1228,8 +1228,8 @@ def intersect_curves(nodes1, nodes2):
     nodes1 = _curve_helpers.full_reduce(nodes1)
     nodes2 = _curve_helpers.full_reduce(nodes2)
 
-    num_nodes1, _ = nodes1.shape
-    num_nodes2, _ = nodes2.shape
+    _, num_nodes1 = nodes1.shape
+    _, num_nodes2 = nodes2.shape
     swapped = False
     if num_nodes1 > num_nodes2:
         nodes1, nodes2 = nodes2, nodes1
@@ -1245,19 +1245,19 @@ def intersect_curves(nodes1, nodes2):
     final_s = []
     final_t = []
     for t_val in t_vals:
-        (x_val, y_val), = _curve_helpers.evaluate_multi(
+        (x_val,), (y_val,) = _curve_helpers.evaluate_multi(
             nodes2, np.asfortranarray([t_val]))
         s_val = locate_point(nodes1, x_val, y_val)
         if s_val is not None:
             _resolve_and_add(
                 nodes1, s_val, final_s, nodes2, t_val, final_t)
 
-    result = np.zeros((len(final_s), 2), order='F')
+    result = np.zeros((2, len(final_s)), order='F')
     if swapped:
         final_s, final_t = final_t, final_s
 
-    result[:, 0] = final_s
-    result[:, 1] = final_t
+    result[0, :] = final_s
+    result[1, :] = final_t
 
     return result
 
@@ -1328,28 +1328,28 @@ def locate_point(nodes, x_val, y_val):
         Optional[float]: The parameter on the curve (if it exists).
     """
     # First, reduce to the true degree of x(s) and y(s).
-    zero1 = _curve_helpers.full_reduce(nodes[:, [0]]) - x_val
-    zero2 = _curve_helpers.full_reduce(nodes[:, [1]]) - y_val
+    zero1 = _curve_helpers.full_reduce(nodes[[0], :]) - x_val
+    zero2 = _curve_helpers.full_reduce(nodes[[1], :]) - y_val
 
     # Make sure we have the lowest degree in front, to make the polynomial
     # solve have the fewest number of roots.
-    if zero1.shape[0] > zero2.shape[0]:
+    if zero1.shape[1] > zero2.shape[1]:
         zero1, zero2 = zero2, zero1
 
     # If the "smallest" is a constant, we can't find any roots from it.
-    if zero1.shape[0] == 1:
+    if zero1.shape[1] == 1:
         # NOTE: We assume that callers won't pass ``nodes`` that are
         #       degree 0, so if ``zero1`` is a constant, ``zero2`` won't be.
         zero1, zero2 = zero2, zero1
 
-    power_basis1 = poly_to_power_basis(zero1[:, 0])
+    power_basis1 = poly_to_power_basis(zero1[0, :])
     all_roots = roots_in_unit_interval(power_basis1)
     if all_roots.size == 0:
         return None
 
     # NOTE: We normalize ``power_basis2`` because we want to check for
     #       "zero" values, i.e. f2(s) == 0.
-    power_basis2 = normalize_polynomial(poly_to_power_basis(zero2[:, 0]))
+    power_basis2 = normalize_polynomial(poly_to_power_basis(zero2[0, :]))
 
     near_zero = np.abs(polynomial.polyval(all_roots, power_basis2))
     index = np.argmin(near_zero)
@@ -1376,7 +1376,7 @@ def all_intersections(nodes_first, nodes_second):
             intersected with ``nodes_first``.
 
     Returns:
-        numpy.ndarray: ``Nx2`` array of intersection parameters.
+        numpy.ndarray: ``2 x N`` array of intersection parameters.
         Each row contains a pair of values :math:`s` and :math:`t`
         (each in :math:`\left[0, 1\right]`) such that the curves
         intersect: :math:`B_1(s) = B_2(t)`.
@@ -1385,6 +1385,6 @@ def all_intersections(nodes_first, nodes_second):
     bbox_int = _geometric_intersection.bbox_intersect(
         nodes_first, nodes_second)
     if bbox_int == _DISJOINT:
-        return np.empty((0, 2), order='F')
+        return np.empty((2, 0), order='F')
 
     return intersect_curves(nodes_first, nodes_second)

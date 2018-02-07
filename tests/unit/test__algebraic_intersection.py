@@ -45,10 +45,8 @@ class Test__evaluate3(unittest.TestCase):
     def test_it(self):
         # f(x, y) = 289(17 x^3 - 81 x^2 + 135 x - 27 y)
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 5.0],
-            [2.0, 1.0],
-            [3.0, 5.0],
+            [0.0, 1.0, 2.0, 3.0],
+            [0.0, 5.0, 1.0, 5.0],
         ])
 
         xy_vals = utils.get_random_nodes(
@@ -68,15 +66,18 @@ class Test_evaluate(unittest.TestCase):
         return _algebraic_intersection.evaluate(nodes, x_val, y_val)
 
     def test_point(self):
-        nodes = np.asfortranarray([[1.0, 1.0]])
+        nodes = np.asfortranarray([
+            [1.0],
+            [1.0],
+        ])
         with self.assertRaises(ValueError):
             self._call_function_under_test(nodes, 0.0, 0.0)
 
     def test_linear(self):
         # f(x, y) = -4 x + y + 3
         nodes = np.asfortranarray([
-            [1.0, 1.0],
-            [2.0, 5.0],
+            [1.0, 2.0],
+            [1.0, 5.0],
         ])
 
         result0 = self._call_function_under_test(nodes, 0.0, 0.0)
@@ -90,8 +91,8 @@ class Test_evaluate(unittest.TestCase):
 
         # f(x, y) = (-12 x + 8 y - 5) / 32
         nodes = np.asfortranarray([
-            [0.0, 0.625],
-            [0.25, 1.0],
+            [0.0, 0.25],
+            [0.625, 1.0],
         ])
 
         result0 = self._call_function_under_test(nodes, 0.0, 0.0)
@@ -118,9 +119,8 @@ class Test_evaluate(unittest.TestCase):
     def test_quadratic(self):
         # f(x, y) = x^2 + 4 x - 4 y
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 3.0],
+            [0.0, 1.0, 2.0],
+            [0.0, 1.0, 3.0],
         ])
 
         values = [
@@ -136,9 +136,8 @@ class Test_evaluate(unittest.TestCase):
 
         # f(x, y) = (x - y)^2 - y
         nodes = np.asfortranarray([
-            [0.75, 0.25],
-            [-0.25, -0.25],
-            [-0.25, 0.25],
+            [0.75, -0.25, -0.25],
+            [0.25, -0.25, 0.25],
         ])
         xy_vals = utils.get_random_nodes(
             shape=(50, 2), seed=7930932, num_bits=8)
@@ -152,10 +151,8 @@ class Test_evaluate(unittest.TestCase):
     def test_cubic(self):
         # f(x, y) = 13824 (x^3 - 24 y^2)
         nodes = np.asfortranarray([
-            [6.0, -3.0],
-            [-2.0, 3.0],
-            [-2.0, -3.0],
-            [6.0, 3.0],
+            [6.0, -2.0, -2.0, 6.0],
+            [-3.0, 3.0, -3.0, 3.0],
         ])
 
         xy_vals = utils.get_random_nodes(
@@ -168,11 +165,8 @@ class Test_evaluate(unittest.TestCase):
     def test_quartic(self):
         # f(x, y) = -28 x^4 + 56 x^3 - 36 x^2 + 8 x - y
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.25, 2.0],
-            [0.5, -2.0],
-            [0.75, 2.0],
-            [1.0, 0.0],
+            [0.0, 0.25, 0.5, 0.75, 1.0],
+            [0.0, 2.0, -2.0, 2.0, 0.0],
         ])
 
         with self.assertRaises(NotImplementedError):
@@ -191,13 +185,13 @@ class Test_eval_intersection_polynomial(unittest.TestCase):
     def test_degrees_1_1(self):
         # f1(x, y) = (8 y - 3) / 8
         nodes1 = np.asfortranarray([
-            [0.0, 0.375],
-            [1.0, 0.375],
+            [0.0, 1.0],
+            [0.375, 0.375],
         ])
         # x2(t), y2(t) = 1 / 2, 3 s / 4
         nodes2 = np.asfortranarray([
-            [0.5, 0.0],
-            [0.5, 0.75],
+            [0.5, 0.5],
+            [0.0, 0.75],
         ])
 
         values = [
@@ -212,14 +206,13 @@ class Test_eval_intersection_polynomial(unittest.TestCase):
     def test_degrees_1_2(self):
         # f1(x, y) = 2 (4 x + 3 y - 24)
         nodes1 = np.asfortranarray([
-            [0.0, 8.0],
-            [6.0, 0.0],
+            [0.0, 6.0],
+            [8.0, 0.0],
         ])
         # x2(t), y2(t) = 9 t, 18 t (1 - t)
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [4.5, 9.0],
-            [9.0, 0.0],
+            [0.0, 4.5, 9.0],
+            [0.0, 9.0, 0.0],
         ])
 
         values = [
@@ -245,13 +238,13 @@ class Test__to_power_basis11(utils.NumPyTestCase):
     def test_it(self):
         # f1(x, y) = -(12 x - 8 y + 5) / 32
         nodes1 = np.asfortranarray([
-            [0.0, 0.625],
-            [0.25, 1.0],
+            [0.0, 0.25],
+            [0.625, 1.0],
         ])
         # x2(t), y2(t) = (2 - 3 t) / 4, (3 t + 2) / 4
         nodes2 = np.asfortranarray([
-            [0.5, 0.5],
-            [-0.25, 1.25],
+            [0.5, -0.25],
+            [0.5, 1.25],
         ])
         # f1(x2(t), y2(t)) = (15 t - 7) / 32
         result = self._call_function_under_test(nodes1, nodes2)
@@ -270,14 +263,13 @@ class Test__to_power_basis12(utils.NumPyTestCase):
     def test_it(self):
         # f1(x, y) = (2 y - 1) / 2
         nodes1 = np.asfortranarray([
-            [0.0, 0.5],
-            [1.0, 0.5],
+            [0.0, 1.0],
+            [0.5, 0.5],
         ])
         # x2(t), y2(t) = t, 2 t (1 - t)
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 1.0],
-            [1.0, 0.0],
+            [0.0, 0.5, 1.0],
+            [0.0, 1.0, 0.0],
         ])
         # f1(x2(t), y2(t)) = -(2 t - 1)^2 / 2
         result = self._call_function_under_test(nodes1, nodes2)
@@ -296,15 +288,13 @@ class Test__to_power_basis13(utils.NumPyTestCase):
     def test_it(self):
         # f1(x, y) = -(152 x + 112 y - 967) / 64
         nodes1 = np.asfortranarray([
-            [2.5625, 5.15625],
-            [0.8125, 7.53125],
+            [2.5625, 0.8125],
+            [5.15625, 7.53125],
         ])
         # x2(t), y2(t) = 3 (14 t + 1) / 8, 18 t^3 - 27 t^2 + 3 t + 7
         nodes2 = np.asfortranarray([
-            [0.375, 7.0],
-            [2.125, 8.0],
-            [3.875, 0.0],
-            [5.625, 1.0],
+            [0.375, 2.125, 3.875, 5.625],
+            [7.0, 8.0, 0.0, 1.0],
         ])
         # f1(x2(t), y2(t)) = -63 (t - 1) (4 t - 1)^2 / 32
         result = self._call_function_under_test(nodes1, nodes2)
@@ -325,15 +315,13 @@ class Test__to_power_basis_degree4(utils.NumPyTestCase):
     def test_degrees_2_2(self):
         # f1(x, y) = (x^2 - 4 x y + 4 y^2 - y) / 16
         nodes1 = np.asfortranarray([
-            [0.375, 0.0625],
-            [-0.125, -0.0625],
-            [-0.125, 0.0625],
+            [0.375, -0.125, -0.125],
+            [0.0625, -0.0625, 0.0625],
         ])
         # x2(t), y2(t) = (2 t - 3) (2 t - 1) / 4, (2 t - 1)^2 / 4
         nodes2 = np.asfortranarray([
-            [0.75, 0.25],
-            [-0.25, -0.25],
-            [-0.25, 0.25],
+            [0.75, -0.25, -0.25],
+            [0.25, -0.25, 0.25],
         ])
         # f1(x2(t), y2(t)) = (2 t - 1)^3 (2 t + 3) / 256
         result = self._call_function_under_test(nodes1, nodes2)
@@ -345,16 +333,13 @@ class Test__to_power_basis_degree4(utils.NumPyTestCase):
     def test_degrees_1_4(self):
         # f1(x, y) = 4 (y - 3)
         nodes1 = np.asfortranarray([
-            [0.0, 3.0],
-            [4.0, 3.0],
+            [0.0, 4.0],
+            [3.0, 3.0],
         ])
         # x2(t), y2(t) = 4 s, 2 s (s - 1) (5 s^2 - 5 s - 2)
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 3.0],
-            [3.0, 1.0],
-            [4.0, 0.0],
+            [0.0, 1.0, 2.0, 3.0, 4.0],
+            [0.0, 1.0, 3.0, 1.0, 0.0],
         ])
         # f1(x2(t), y2(t)) = 4 (10 t^4 - 20 t^3 + 6 t^2 + 4 t - 3)
         result = self._call_function_under_test(nodes1, nodes2)
@@ -374,16 +359,13 @@ class Test__to_power_basis23(utils.NumPyTestCase):
     def test_it(self):
         # f1(x, y) = 4 (4 x^2 - 12 x - 4 y + 11)
         nodes1 = np.asfortranarray([
-            [0.5, 1.5],
-            [1.5, -0.5],
-            [2.5, 1.5],
+            [0.5, 1.5, 2.5],
+            [1.5, -0.5, 1.5],
         ])
         # x2(t), y2(t) = 3 t, t (4 t^2 - 6 t + 3)
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 0.0],
-            [3.0, 1.0],
+            [0.0, 1.0, 2.0, 3.0],
+            [0.0, 1.0, 0.0, 1.0],
         ])
         # f1(x2(t), y2(t)) = 4 (2 s - 1)^2 (4 s - 11)
         result = self._call_function_under_test(nodes1, nodes2)
@@ -402,17 +384,13 @@ class Test__to_power_basis_degree8(utils.NumPyTestCase):
     def test_degrees_2_4(self):
         # f1(x, y) = 2 (9 x - 2 y^2 - 6 y)
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.5],
-            [4.0, 3.0],
+            [0.0, 1.0, 4.0],
+            [0.0, 1.5, 3.0],
         ])
         # x2(t), y2(t) = 4 t, -t (7 t^3 - 6 t - 4)
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 3.0],
-            [3.0, 6.0],
-            [4.0, 3.0],
+            [0.0, 1.0, 2.0, 3.0, 4.0],
+            [0.0, 1.0, 3.0, 6.0, 3.0],
         ])
         # f1(x2(t), y2(t)) = (
         #     4 t (t - 1) (49 t^6 + 49 t^5 - 35 t^4 -
@@ -434,17 +412,13 @@ class Test__to_power_basis33(utils.NumPyTestCase):
     def test_it(self):
         # f1(x, y) = x^3 - 9 x^2 + 27 x - 27 y
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 1.0],
-            [3.0, 1.0],
+            [0.0, 1.0, 2.0, 3.0],
+            [0.0, 1.0, 1.0, 1.0],
         ])
         # x2(t), y2(t) = (1 - t) (t^2 + t + 1), 3 (1 - t)
         nodes2 = np.asfortranarray([
-            [1.0, 3.0],
-            [1.0, 2.0],
-            [1.0, 1.0],
-            [0.0, 0.0],
+            [1.0, 1.0, 1.0, 0.0],
+            [3.0, 2.0, 1.0, 0.0],
         ])
         # f1(x2(t), y2(t)) = (
         #     -(s - 1)^2 (s + 2) (s^6 + 3 s^4 + 4 s^3 + 9 s^2 + 6 s + 31)
@@ -470,8 +444,8 @@ class Test_to_power_basis(utils.NumPyTestCase):
         ])
         # x2(t), y2(t) = 1, t
         nodes2 = np.asfortranarray([
-            [1.0, 0.0],
             [1.0, 1.0],
+            [0.0, 1.0],
         ])
         # f1(x2(t), y2(t)) = -1
         result = self._call_function_under_test(nodes1, nodes2)
@@ -481,14 +455,13 @@ class Test_to_power_basis(utils.NumPyTestCase):
     def test_degrees_1_2(self):
         # f1(x, y) = 2 (4 x + 3 y - 24)
         nodes1 = np.asfortranarray([
-            [0.0, 8.0],
-            [6.0, 0.0],
+            [0.0, 6.0],
+            [8.0, 0.0],
         ])
         # x2(t), y2(t) = 9 t, 18 t (1 - t)
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [4.5, 9.0],
-            [9.0, 0.0],
+            [0.0, 4.5, 9.0],
+            [0.0, 9.0, 0.0],
         ])
         # f1(x2(t), y2(t)) = 12 (4 - 3 t) (3 t - 1)
         result = self._call_function_under_test(nodes1, nodes2)
@@ -498,15 +471,13 @@ class Test_to_power_basis(utils.NumPyTestCase):
     def test_degrees_1_3(self):
         # f1(x, y) = -(2 x - y - 1) / 2
         nodes1 = np.asfortranarray([
-            [0.5, 0.0],
-            [1.0, 1.0],
+            [0.5, 1.0],
+            [0.0, 1.0],
         ])
         # x2(t), y2(t) = -t (2 t^2 - 3 t - 3) / 4, -(3 t^3 - 3 t - 1) / 2
         nodes2 = np.asfortranarray([
-            [0.0, 0.5],
-            [0.25, 1.0],
-            [0.75, 1.5],
-            [1.0, 0.5],
+            [0.0, 0.25, 0.75, 1.0],
+            [0.5, 1.0, 1.5, 0.5],
         ])
         # f1(x2(t), y2(t)) = -(t^3 + 3 t^2 - 3) / 4
         result = self._call_function_under_test(nodes1, nodes2)
@@ -517,16 +488,13 @@ class Test_to_power_basis(utils.NumPyTestCase):
     def test_degrees_1_4(self):
         # f1(x, y) = 4 y - 3 x
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [4.0, 3.0],
+            [0.0, 4.0],
+            [0.0, 3.0],
         ])
         # x2(t), y2(t) = 4 t, -t (7 t^3 - 6 t - 4)
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 3.0],
-            [3.0, 6.0],
-            [4.0, 3.0],
+            [0.0, 1.0, 2.0, 3.0, 4.0],
+            [0.0, 1.0, 3.0, 6.0, 3.0],
         ])
         # f1(x2(t), y2(t)) = 4 t (1 - t) (7 t^2 + 7 t + 1)
         result = self._call_function_under_test(nodes1, nodes2)
@@ -537,15 +505,13 @@ class Test_to_power_basis(utils.NumPyTestCase):
     def test_degrees_2_2(self):
         # f1(x, y) = (x^2 - 2 x y + 4 x + y^2 + 4 y - 5) / 4
         nodes1 = np.asfortranarray([
-            [1.0, 0.0],
-            [0.75, 0.75],
-            [0.0, 1.0],
+            [1.0, 0.75, 0.0],
+            [0.0, 0.75, 1.0],
         ])
         # x2(t), y2(t) = (t - 1) (5 t - 8) / 8, -(t - 1) (7 t + 8) / 8
         nodes2 = np.asfortranarray([
-            [1.0, 1.0],
-            [0.1875, 0.9375],
-            [0.0, 0.0],
+            [1.0, 0.1875, 0.0],
+            [1.0, 0.9375, 0.0],
         ])
         # f1(x2(t), y2(t)) = (9 t^4 - 18 t^3 + 5 t^2 - 28 t + 12) / 16
         result = self._call_function_under_test(nodes1, nodes2)
@@ -557,16 +523,13 @@ class Test_to_power_basis(utils.NumPyTestCase):
     def test_degrees_2_3(self):
         # f1(x, y) = 81 (2 x^2 - 2 x - y + 1) / 128
         nodes1 = np.asfortranarray([
-            [0.25, 0.625],
-            [0.625, 0.25],
-            [1.0, 1.0],
+            [0.25, 0.625, 1.0],
+            [0.625, 0.25, 1.0],
         ])
         # x2(t), y2(t) = -t (2 t^2 - 3 t - 3) / 4, -(3 t^3 - 3 t - 1) / 2
         nodes2 = np.asfortranarray([
-            [0.0, 0.5],
-            [0.25, 1.0],
-            [0.75, 1.5],
-            [1.0, 0.5],
+            [0.0, 0.25, 0.75, 1.0],
+            [0.5, 1.0, 1.5, 0.5],
         ])
         # f1(x2(t), y2(t)) = (
         #     81 (t + 1) (4 t^5 - 16 t^4 + 13 t^3 + 25 t^2 - 28 t + 4) / 1024)
@@ -579,17 +542,13 @@ class Test_to_power_basis(utils.NumPyTestCase):
     def test_degrees_2_4(self):
         # f1(x, y) = 2*(9*x - 2*y**2 - 6*y)
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.5],
-            [4.0, 3.0],
+            [0.0, 1.0, 4.0],
+            [0.0, 1.5, 3.0],
         ])
         # x2(t), y2(t) = 4*t, 2*t*(t - 1)*(5*t**2 - 5*t - 2)]])
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [2.0, 3.0],
-            [3.0, 1.0],
-            [4.0, 0.0],
+            [0.0, 1.0, 2.0, 3.0, 4.0],
+            [0.0, 1.0, 3.0, 1.0, 0.0],
         ])
         # f1(x2(t), y2(t)) = (
         #     8 t (50 t^7 - 200 t^6 + 260 t^5 - 80 t^4 -
@@ -604,17 +563,13 @@ class Test_to_power_basis(utils.NumPyTestCase):
         #              288 x y^2 - 2088 x y + 39816 x + 8 y^3 +
         #              129 y^2 + 6846 y - 6983) / 512
         nodes1 = np.asfortranarray([
-            [0.0, 1.0],
-            [0.375, -1.0],
-            [0.625, 0.0],
-            [1.0, 1.0],
+            [0.0, 0.375, 0.625, 1.0],
+            [1.0, -1.0, 0.0, 1.0],
         ])
         # x2(t), y2(t) = -t (2 t^2 - 3 t - 3) / 4, -(3 t^3 - 3 t - 1) / 2
         nodes2 = np.asfortranarray([
-            [0.0, 0.5],
-            [0.25, 1.0],
-            [0.75, 1.5],
-            [1.0, 0.5],
+            [0.0, 0.25, 0.75, 1.0],
+            [0.5, 1.0, 1.5, 0.5],
         ])
         # f1(x2(t), y2(t)) = (
         #     13500 t^9 - 48600 t^8 + 1620 t^7 + 170451 t^6 - 171072 t^5 -
@@ -628,9 +583,9 @@ class Test_to_power_basis(utils.NumPyTestCase):
 
     def test_unsupported(self):
         nodes_yes1 = np.zeros((2, 2), order='F')
-        nodes_yes2 = np.zeros((3, 2), order='F')
-        nodes_yes3 = np.zeros((4, 2), order='F')
-        nodes_no = np.zeros((6, 2), order='F')
+        nodes_yes2 = np.zeros((2, 3), order='F')
+        nodes_yes3 = np.zeros((2, 4), order='F')
+        nodes_no = np.zeros((2, 6), order='F')
 
         # Just make sure we fall through **all** of the implicit
         # ``else`` branches.
@@ -803,45 +758,45 @@ class Test_intersect_curves(utils.NumPyTestCase):
     def test_degrees_1_1(self):
         # f1(x, y) = (8 y - 3) / 8
         nodes1 = np.asfortranarray([
-            [0.0, 0.375],
-            [1.0, 0.375],
+            [0.0, 1.0],
+            [0.375, 0.375],
         ])
         # x2(t), y2(t) = 1 / 2, 3 s / 4
         nodes2 = np.asfortranarray([
-            [0.5, 0.0],
-            [0.5, 0.75],
+            [0.5, 0.5],
+            [0.0, 0.75],
         ])
         # f1(x2(t), y2(t)) = 3 (2 t - 1) / 8
         result = self._call_function_under_test(nodes1, nodes2)
         expected = np.asfortranarray([
-            [0.5, 0.5],
+            [0.5],
+            [0.5],
         ])
         self.assertEqual(result, expected)
 
     def _degrees_1_2_helper(self, swapped=False):
         # f1(x, y) = 2 (4 x + 3 y - 24)
         nodes1 = np.asfortranarray([
-            [0.0, 8.0],
-            [6.0, 0.0],
+            [0.0, 6.0],
+            [8.0, 0.0],
         ])
         # x2(t), y2(t) = 9 t, 18 t (1 - t)
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [4.5, 9.0],
-            [9.0, 0.0],
+            [0.0, 4.5, 9.0],
+            [0.0, 9.0, 0.0],
         ])
 
         # f1(x2(t), y2(t)) = 12 (4 - 3 t) (3 t - 1)
         if swapped:
-            col1, col2 = 1, 0
+            row1, row2 = 1, 0
             result = self._call_function_under_test(nodes2, nodes1)
         else:
-            col1, col2 = 0, 1
+            row1, row2 = 0, 1
             result = self._call_function_under_test(nodes1, nodes2)
 
-        self.assertEqual(result.shape, (1, 2))
-        self.assertAlmostEqual(result[0, col1], 0.5, delta=LOCAL_EPS)
-        self.assertAlmostEqual(result[0, col2], 1.0 / 3.0, delta=LOCAL_EPS)
+        self.assertEqual(result.shape, (2, 1))
+        self.assertAlmostEqual(result[row1, 0], 0.5, delta=LOCAL_EPS)
+        self.assertAlmostEqual(result[row2, 0], 1.0 / 3.0, delta=LOCAL_EPS)
 
     def test_degrees_1_2(self):
         self._degrees_1_2_helper()
@@ -852,16 +807,13 @@ class Test_intersect_curves(utils.NumPyTestCase):
     def test_t_val_without_s_val(self):
         # f1(x, y) = 81 (2 x^2 - 2 x - y + 1) / 128
         nodes1 = np.asfortranarray([
-            [0.25, 0.625],
-            [0.625, 0.25],
-            [1.0, 1.0],
+            [0.25, 0.625, 1.0],
+            [0.625, 0.25, 1.0],
         ])
         # x2(t), y2(t) = -t (2 t^2 - 3 t - 3) / 4, -(3 t^3 - 3 t - 1) / 2
         nodes2 = np.asfortranarray([
-            [0.0, 0.5],
-            [0.25, 1.0],
-            [0.75, 1.5],
-            [1.0, 0.5],
+            [0.0, 0.25, 0.75, 1.0],
+            [0.5, 1.0, 1.5, 0.5],
         ])
 
         # f1(x2(t), y2(t)) = (
@@ -871,28 +823,26 @@ class Test_intersect_curves(utils.NumPyTestCase):
         #       they correspond to s-values s1 = -0.1367750984247189222649977
         #       and s2 = 0.8587897065534014787757 so only s2, t2 is returned.
         result = self._call_function_under_test(nodes1, nodes2)
-        self.assertEqual(result.shape, (1, 2))
+        self.assertEqual(result.shape, (2, 1))
         # 486 s^5 - 3726 s^4 + 13905 s^3 - 18405 s^2 + 6213 s + 1231
         self.assertAlmostEqual(
             result[0, 0], float.fromhex('0x1.b7b348cf939b9p-1'),
             delta=LOCAL_EPS)
         # 4 t^5 - 16 t^4 + 13 t^3 + 25 t^2 - 28 t + 4
         self.assertAlmostEqual(
-            result[0, 1], float.fromhex('0x1.bf3536665a0cdp-1'),
+            result[1, 0], float.fromhex('0x1.bf3536665a0cdp-1'),
             delta=LOCAL_EPS)
 
     def test_coincident(self):
         # f1(x, y) = -4 (4 x^2 + 4 x y - 16 x + y^2 + 8 y)
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 2.0],
-            [4.0, 0.0],
+            [0.0, 1.0, 4.0],
+            [0.0, 2.0, 0.0],
         ])
         # x2(t), y2(t) = 3 (t + 1) (3 t + 7) / 8, -3 (t + 1) (3 t - 1) / 4
         nodes2 = np.asfortranarray([
-            [2.625, 0.75],
-            [4.5, 0.0],
-            [7.5, -3.0],
+            [2.625, 4.5, 7.5],
+            [0.75, 0.0, -3.0],
         ])
 
         # f1(x2(t), y2(t)) = 0
@@ -1339,7 +1289,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
 
     def test_check_one_failure(self):
         # 3 (s^2 + 3) (2 - s)
-        coeffs = np.asfortranarray([18, 15, 14, 12])
+        coeffs = np.asfortranarray([18.0, 15.0, 14.0, 12.0])
         # 3 (1^2 + 3) (2 - 1) = 12
         rhs_val = 10.0
         self.assertFalse(
@@ -1551,45 +1501,40 @@ class Test_locate_point(unittest.TestCase):
 
     def test_reduced(self):
         nodes = np.asfortranarray([
-            [0.0, 3.0],
-            [1.0, 2.0],
-            [3.0, 0.0],
+            [0.0, 1.0, 3.0],
+            [3.0, 2.0, 0.0],
         ])
         result = self._call_function_under_test(nodes, 1.25, 1.75)
         self.assertEqual(result, 0.5)
 
     def test_elevated_swap(self):
         nodes = np.asfortranarray([
-            [0.0, 1.0],
-            [1.0, 2.0],
-            [1.0, 3.0],
-            [2.0, 4.0],
+            [0.0, 1.0, 1.0, 2.0],
+            [1.0, 2.0, 3.0, 4.0],
         ])
         result = self._call_function_under_test(nodes, 1.40625, 3.25)
         self.assertEqual(result, 0.75)
 
     def test_with_point(self):
         nodes = np.asfortranarray([
-            [0.0, 1.0],
-            [0.0, 5.0],
+            [0.0, 0.0],
+            [1.0, 5.0],
         ])
         result = self._call_function_under_test(nodes, 0.0, 1.5)
         self.assertEqual(result, 0.125)
 
     def test_no_solution_first(self):
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [3.0, 0.0],
+            [0.0, 1.0, 3.0],
+            [0.0, 1.0, 0.0],
         ])
         result = self._call_function_under_test(nodes, 4.0, 0.25)
         self.assertIsNone(result)
 
     def test_no_solution_second(self):
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
-            [3.0, 0.0],
+            [0.0, 1.0, 3.0],
+            [0.0, 1.0, 0.0],
         ])
         result = self._call_function_under_test(nodes, 0.5, 1.0)
         self.assertIsNone(result)
@@ -1606,15 +1551,15 @@ class Test_all_intersections(utils.NumPyTestCase):
 
     def test_no_intersections(self):
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
         ])
         nodes2 = np.asfortranarray([
+            [3.0, 4.0],
             [3.0, 3.0],
-            [4.0, 3.0],
         ])
         intersections = self._call_function_under_test(nodes1, nodes2)
-        self.assertEqual(intersections.shape, (0, 2))
+        self.assertEqual(intersections.shape, (2, 0))
 
     def test_success(self):
         # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
@@ -1623,18 +1568,19 @@ class Test_all_intersections(utils.NumPyTestCase):
         #       We expect them to intersect at s = 1/3, t = 2/3, which is
         #       the point [1/2, 3/4].
         nodes1 = np.asfortranarray([
-            [0.25, 0.4375],
-            [0.625, 1.0],
-            [1.0, 1.0],
+            [0.25, 0.625, 1.0],
+            [0.4375, 1.0, 1.0],
         ])
         nodes2 = np.asfortranarray([
-            [0.0, 1.0],
-            [0.375, 1.0],
-            [0.75, 0.4375],
+            [0.0, 0.375, 0.75],
+            [1.0, 1.0, 0.4375],
         ])
         s_val = 1.0 / 3.0
         t_val = 2.0 / 3.0
 
         intersections = self._call_function_under_test(nodes1, nodes2)
-        expected = np.asfortranarray([[s_val, t_val]])
+        expected = np.asfortranarray([
+            [s_val],
+            [t_val],
+        ])
         self.assertEqual(intersections, expected)

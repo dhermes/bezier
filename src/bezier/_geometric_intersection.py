@@ -180,9 +180,8 @@ def linearization_error(nodes):
     .. doctest:: linearization-error
 
        >>> nodes = np.asfortranarray([
-       ...     [0.0,  0.0],
-       ...     [3.0,  1.0],
-       ...     [9.0, -2.0],
+       ...     [0.0, 3.0, 9.0],
+       ...     [0.0, 1.0, -2.0],
        ... ])
        >>> linearization_error(nodes)
        1.25
@@ -218,10 +217,8 @@ def linearization_error(nodes):
     .. doctest:: linearization-error-fail
 
        >>> nodes = np.asfortranarray([
-       ...     [ 0.0,  0.0],
-       ...     [ 5.0, 12.0],
-       ...     [10.0, 24.0],
-       ...     [30.0, 72.0],
+       ...     [0.0, 5.0, 10.0, 30.0],
+       ...     [0.0, 12.0, 24.0, 72.0],
        ... ])
        >>> linearization_error(nodes)
        29.25
@@ -248,13 +245,13 @@ def linearization_error(nodes):
         float: The maximum error between the curve and the
         linear approximation.
     """
-    num_nodes, _ = nodes.shape
+    _, num_nodes = nodes.shape
     degree = num_nodes - 1
     if degree == 1:
         return 0.0
 
-    second_deriv = nodes[:-2, :] - 2.0 * nodes[1:-1, :] + nodes[2:, :]
-    worst_case = np.max(np.abs(second_deriv), axis=0)
+    second_deriv = nodes[:, :-2] - 2.0 * nodes[:, 1:-1] + nodes[:, 2:]
+    worst_case = np.max(np.abs(second_deriv), axis=1)
 
     # max_{0 <= s <= 1} s(1 - s)/2 = 1/8 = 0.125
     multiplier = 0.125 * degree * (degree - 1)
@@ -327,10 +324,10 @@ def segment_intersection(start0, end0, start1, end1):
     .. doctest:: segment-intersection1
        :options: +NORMALIZE_WHITESPACE
 
-       >>> start0 = np.asfortranarray([[0.0, 0.0]])
-       >>> end0 = np.asfortranarray([[2.0, 2.0]])
-       >>> start1 = np.asfortranarray([[-1.0, 2.0]])
-       >>> end1 = np.asfortranarray([[1.0, 0.0]])
+       >>> start0 = np.asfortranarray([0.0, 0.0])
+       >>> end0 = np.asfortranarray([2.0, 2.0])
+       >>> start1 = np.asfortranarray([-1.0, 2.0])
+       >>> end1 = np.asfortranarray([1.0, 0.0])
        >>> s, t, _ = segment_intersection(start0, end0, start1, end1)
        >>> s
        0.25
@@ -362,10 +359,10 @@ def segment_intersection(start0, end0, start1, end1):
     .. doctest:: segment-intersection2
        :options: +NORMALIZE_WHITESPACE
 
-       >>> start0 = np.asfortranarray([[1.0, 0.0]])
-       >>> end0 = np.asfortranarray([[0.0, 1.0]])
-       >>> start1 = np.asfortranarray([[-1.0, 3.0]])
-       >>> end1 = np.asfortranarray([[3.0, -1.0]])
+       >>> start0 = np.asfortranarray([1.0, 0.0])
+       >>> end0 = np.asfortranarray([0.0, 1.0])
+       >>> start1 = np.asfortranarray([-1.0, 3.0])
+       >>> end1 = np.asfortranarray([3.0, -1.0])
        >>> _, _, success = segment_intersection(start0, end0, start1, end1)
        >>> success
        False
@@ -382,10 +379,10 @@ def segment_intersection(start0, end0, start1, end1):
        import numpy as np
        from bezier._geometric_intersection import parallel_different
 
-       start0 = np.asfortranarray([[1.0, 0.0]])
-       end0 = np.asfortranarray([[0.0, 1.0]])
-       start1 = np.asfortranarray([[-1.0, 3.0]])
-       end1 = np.asfortranarray([[3.0, -1.0]])
+       start0 = np.asfortranarray([1.0, 0.0])
+       end0 = np.asfortranarray([0.0, 1.0])
+       start1 = np.asfortranarray([-1.0, 3.0])
+       end1 = np.asfortranarray([3.0, -1.0])
 
     .. doctest:: segment-intersection2-continued
 
@@ -398,13 +395,13 @@ def segment_intersection(start0, end0, start1, end1):
        will be used if it can be built.
 
     Args:
-        start0 (numpy.ndarray): A 1x2 NumPy array that is the start
+        start0 (numpy.ndarray): A 1D NumPy ``2``-array that is the start
             vector :math:`S_0` of the parametric line :math:`L_0(s)`.
-        end0 (numpy.ndarray): A 1x2 NumPy array that is the end
+        end0 (numpy.ndarray): A 1D NumPy ``2``-array that is the end
             vector :math:`E_0` of the parametric line :math:`L_0(s)`.
-        start1 (numpy.ndarray): A 1x2 NumPy array that is the start
+        start1 (numpy.ndarray): A 1D NumPy ``2``-array that is the start
             vector :math:`S_1` of the parametric line :math:`L_1(s)`.
-        end1 (numpy.ndarray): A 1x2 NumPy array that is the end
+        end1 (numpy.ndarray): A 1D NumPy ``2``-array that is the end
             vector :math:`E_1` of the parametric line :math:`L_1(s)`.
 
     Returns:
@@ -471,11 +468,11 @@ def parallel_different(start0, end0, start1, end1):
     .. doctest:: parallel-different1
 
        >>> # Line: y = 1
-       >>> start0 = np.asfortranarray([[0.0, 1.0]])
-       >>> end0 = np.asfortranarray([[1.0, 1.0]])
+       >>> start0 = np.asfortranarray([0.0, 1.0])
+       >>> end0 = np.asfortranarray([1.0, 1.0])
        >>> # Vertical shift up: y = 2
-       >>> start1 = np.asfortranarray([[-1.0, 2.0]])
-       >>> end1 = np.asfortranarray([[3.0, 2.0]])
+       >>> start1 = np.asfortranarray([-1.0, 2.0])
+       >>> end1 = np.asfortranarray([3.0, 2.0])
        >>> parallel_different(start0, end0, start1, end1)
        True
 
@@ -506,8 +503,8 @@ def parallel_different(start0, end0, start1, end1):
 
     .. doctest:: parallel-different2
 
-       >>> start0 = np.asfortranarray([[1.0, 0.0]])
-       >>> delta0 = np.asfortranarray([[2.0, -1.0]])
+       >>> start0 = np.asfortranarray([1.0, 0.0])
+       >>> delta0 = np.asfortranarray([2.0, -1.0])
        >>> end0 = start0 + 1.0 * delta0
        >>> start1 = start0 + 1.5 * delta0
        >>> end1 = start0 + 2.0 * delta0
@@ -531,8 +528,8 @@ def parallel_different(start0, end0, start1, end1):
        import numpy as np
        from bezier._geometric_intersection import parallel_different
 
-       start0 = np.asfortranarray([[1.0, 0.0]])
-       delta0 = np.asfortranarray([[2.0, -1.0]])
+       start0 = np.asfortranarray([1.0, 0.0])
+       delta0 = np.asfortranarray([2.0, -1.0])
        end0 = start0 + 1.0 * delta0
 
     .. doctest:: parallel-different3
@@ -580,13 +577,13 @@ def parallel_different(start0, end0, start1, end1):
        will be used if it can be built.
 
     Args:
-        start0 (numpy.ndarray): A 1x2 NumPy array that is the start
+        start0 (numpy.ndarray): A 1D NumPy ``2``-array that is the start
             vector :math:`S_0` of the parametric line :math:`L_0(s)`.
-        end0 (numpy.ndarray): A 1x2 NumPy array that is the end
+        end0 (numpy.ndarray): A 1D NumPy ``2``-array that is the end
             vector :math:`E_0` of the parametric line :math:`L_0(s)`.
-        start1 (numpy.ndarray): A 1x2 NumPy array that is the start
+        start1 (numpy.ndarray): A 1D NumPy ``2``-array that is the start
             vector :math:`S_1` of the parametric line :math:`L_1(s)`.
-        end1 (numpy.ndarray): A 1x2 NumPy array that is the end
+        end1 (numpy.ndarray): A 1D NumPy ``2``-array that is the end
             vector :math:`E_1` of the parametric line :math:`L_1(s)`.
 
     Returns:
@@ -598,15 +595,15 @@ def parallel_different(start0, end0, start1, end1):
     if line0_const != start1_against:
         return True
 
-    # Each array is 1x2 (i.e. a row vector), we want the vector dot product.
-    norm0_sq = np.vdot(delta0[0, :], delta0[0, :])
-    start_numer = np.vdot((start1 - start0)[0, :], delta0[0, :])
+    # Each array is a 1D vector, so we can use the vector dot product.
+    norm0_sq = np.vdot(delta0, delta0)
+    start_numer = np.vdot(start1 - start0, delta0)
     #      0 <= start_numer / norm0_sq <= 1
     # <==> 0 <= start_numer            <= norm0_sq
     if _helpers.in_interval(start_numer, 0.0, norm0_sq):
         return False
 
-    end_numer = np.vdot((end1 - start0)[0, :], delta0[0, :])
+    end_numer = np.vdot(end1 - start0, delta0)
     #      0 <= end_numer / norm0_sq <= 1
     # <==> 0 <= end_numer            <= norm0_sq
     if _helpers.in_interval(end_numer, 0.0, norm0_sq):
@@ -720,18 +717,18 @@ def endpoint_check(
     Args:
         first (SubdividedCurve): First curve being intersected (assumed in
             :math:\mathbf{R}^2`).
-        node_first (numpy.ndarray): ``1x2`` array, one of the endpoints
+        node_first (numpy.ndarray): 1D ``2``-array, one of the endpoints
             of ``first``.
         s (float): The parameter corresponding to ``node_first``, so
              expected to be one of ``0.0`` or ``1.0``.
         second (SubdividedCurve): Second curve being intersected (assumed in
             :math:\mathbf{R}^2`).
-        node_second (numpy.ndarray): ``1x2`` array, one of the endpoints
+        node_second (numpy.ndarray): 1D ``2``-array, one of the endpoints
             of ``second``.
         t (float): The parameter corresponding to ``node_second``, so
              expected to be one of ``0.0`` or ``1.0``.
         intersections (list): A list of already encountered
-            intersections. If these curves intersect at their tangeny,
+            intersections. If these curves intersect at their tangency,
             then those intersections will be added to this list.
     """
     if _helpers.vector_close(node_first, node_second):
@@ -786,21 +783,13 @@ def tangent_bbox_intersection(first, second, intersections):
         second (SubdividedCurve): Second curve being intersected (assumed in
             :math:\mathbf{R}^2`).
         intersections (list): A list of already encountered
-            intersections. If these curves intersect at their tangeny,
+            intersections. If these curves intersect at their tangency,
             then those intersections will be added to this list.
     """
-    node_first1 = np.asfortranarray([
-        [first.nodes[0, 0], first.nodes[0, 1]],
-    ])
-    node_first2 = np.asfortranarray([
-        [first.nodes[-1, 0], first.nodes[-1, 1]],
-    ])
-    node_second1 = np.asfortranarray([
-        [second.nodes[0, 0], second.nodes[0, 1]],
-    ])
-    node_second2 = np.asfortranarray([
-        [second.nodes[-1, 0], second.nodes[-1, 1]],
-    ])
+    node_first1 = first.nodes[:, 0]
+    node_first2 = first.nodes[:, -1]
+    node_second1 = second.nodes[:, 0]
+    node_second2 = second.nodes[:, -1]
 
     endpoint_check(
         first, node_first1, 0.0, second, node_second1, 0.0, intersections)
@@ -828,9 +817,11 @@ def bbox_line_intersect(nodes, line_start, line_end):
        function should be "upgraded" at some point.
 
     Args:
-        nodes (numpy.ndarray): Points (Nx2) that determine a bounding box.
-        line_start (numpy.ndarray): Beginning of a line segment (1x2).
-        line_end (numpy.ndarray): End of a line segment (1x2).
+        nodes (numpy.ndarray): Points (``2 x N``) that determine a
+            bounding box.
+        line_start (numpy.ndarray): Beginning of a line segment (1D
+            ``2``-array).
+        line_end (numpy.ndarray): End of a line segment (1D ``2``-array).
 
     Returns:
         int: Enum from ``BoxIntersectionType`` indicating the type of
@@ -838,11 +829,11 @@ def bbox_line_intersect(nodes, line_start, line_end):
     """
     left, right, bottom, top = _helpers.bbox(nodes)
 
-    if (_helpers.in_interval(line_start[0, 0], left, right) and
-            _helpers.in_interval(line_start[0, 1], bottom, top)):
+    if (_helpers.in_interval(line_start[0], left, right) and
+            _helpers.in_interval(line_start[1], bottom, top)):
         return BoxIntersectionType.INTERSECTION
-    if (_helpers.in_interval(line_end[0, 0], left, right) and
-            _helpers.in_interval(line_end[0, 1], bottom, top)):
+    if (_helpers.in_interval(line_end[0], left, right) and
+            _helpers.in_interval(line_end[1], bottom, top)):
         return BoxIntersectionType.INTERSECTION
 
     # NOTE: We allow ``segment_intersection`` to fail below (i.e.
@@ -858,24 +849,24 @@ def bbox_line_intersect(nodes, line_start, line_end):
 
     # Bottom Edge
     s_bottom, t_bottom, success = segment_intersection(
-        np.asfortranarray([[left, bottom]]),
-        np.asfortranarray([[right, bottom]]),
+        np.asfortranarray([left, bottom]),
+        np.asfortranarray([right, bottom]),
         line_start, line_end)
     if (success and _helpers.in_interval(s_bottom, 0.0, 1.0) and
             _helpers.in_interval(t_bottom, 0.0, 1.0)):
         return BoxIntersectionType.INTERSECTION
     # Right Edge
     s_right, t_right, success = segment_intersection(
-        np.asfortranarray([[right, bottom]]),
-        np.asfortranarray([[right, top]]),
+        np.asfortranarray([right, bottom]),
+        np.asfortranarray([right, top]),
         line_start, line_end)
     if (success and _helpers.in_interval(s_right, 0.0, 1.0) and
             _helpers.in_interval(t_right, 0.0, 1.0)):
         return BoxIntersectionType.INTERSECTION
     # Top Edge
     s_top, t_top, success = segment_intersection(
-        np.asfortranarray([[right, top]]),
-        np.asfortranarray([[left, top]]),
+        np.asfortranarray([right, top]),
+        np.asfortranarray([left, top]),
         line_start, line_end)
     if (success and _helpers.in_interval(s_top, 0.0, 1.0) and
             _helpers.in_interval(t_top, 0.0, 1.0)):
@@ -987,25 +978,12 @@ def prune_candidates(candidates):
 
         # NOTE: The copy is expensive but required since ``simple_convex_hull``
         #       (might) need the values in Fortran order.
-        polygon1 = _helpers.simple_convex_hull(np.asfortranarray(nodes1.T))
-        polygon2 = _helpers.simple_convex_hull(np.asfortranarray(nodes2.T))
+        polygon1 = _helpers.simple_convex_hull(nodes1)
+        polygon2 = _helpers.simple_convex_hull(nodes2)
         if _helpers.polygon_collide(polygon1, polygon2):
             pruned.append((first, second))
 
     return pruned
-
-
-def flat_no_copy(nodes):
-    """Flattens a Fortran-ordered array without copying.
-
-    Args:
-        nodes (numpy.ndarray): The array to be flattened.
-
-    Returns:
-        numpy.ndarray: A ``1 x D`` vector containing the elements
-        of ``nodes`` flattened.
-    """
-    return nodes.reshape((1, nodes.size), order='F')
 
 
 def make_same_degree(nodes1, nodes2):
@@ -1021,8 +999,8 @@ def make_same_degree(nodes1, nodes2):
         Tuple[numpy.ndarray, numpy.ndarray]: The potentially degree-elevated
         nodes passed in.
     """
-    num_nodes1, _ = nodes1.shape
-    num_nodes2, _ = nodes2.shape
+    _, num_nodes1 = nodes1.shape
+    _, num_nodes2 = nodes2.shape
     for _ in six.moves.xrange(num_nodes2 - num_nodes1):
         nodes1 = _curve_helpers.elevate_nodes(nodes1)
     for _ in six.moves.xrange(num_nodes1 - num_nodes2):
@@ -1065,8 +1043,10 @@ def coincident_parameters(nodes1, nodes2):
     # pylint: disable=too-many-return-statements,too-many-branches
     nodes1, nodes2 = make_same_degree(nodes1, nodes2)
 
-    s_initial = _curve_helpers.locate_point(nodes1, nodes2[[0], :])
-    s_final = _curve_helpers.locate_point(nodes1, nodes2[[-1], :])
+    s_initial = _curve_helpers.locate_point(
+        nodes1, nodes2[:, 0].reshape((2, 1), order='F'))
+    s_final = _curve_helpers.locate_point(
+        nodes1, nodes2[:, -1].reshape((2, 1), order='F'))
     if s_initial is not None and s_final is not None:
         # In this case, if the curves were coincident, then ``curve2``
         # would be "fully" contained in ``curve1``, so we specialize
@@ -1074,7 +1054,7 @@ def coincident_parameters(nodes1, nodes2):
         specialized1 = _curve_helpers.specialize_curve(
             nodes1, s_initial, s_final)
         if _helpers.vector_close(
-                flat_no_copy(specialized1), flat_no_copy(nodes2)):
+                specialized1.ravel(order='F'), nodes2.ravel(order='F')):
             return (
                 (s_initial, 0.0),
                 (s_final, 1.0),
@@ -1082,8 +1062,10 @@ def coincident_parameters(nodes1, nodes2):
         else:
             return None
 
-    t_initial = _curve_helpers.locate_point(nodes2, nodes1[[0], :])
-    t_final = _curve_helpers.locate_point(nodes2, nodes1[[-1], :])
+    t_initial = _curve_helpers.locate_point(
+        nodes2, nodes1[:, 0].reshape((2, 1), order='F'))
+    t_final = _curve_helpers.locate_point(
+        nodes2, nodes1[:, -1].reshape((2, 1), order='F'))
     if t_initial is None and t_final is None:
         # An overlap must have two endpoints and since at most one of the
         # endpoints of ``curve2`` lies on ``curve1`` (as indicated by at
@@ -1098,7 +1080,7 @@ def coincident_parameters(nodes1, nodes2):
         specialized2 = _curve_helpers.specialize_curve(
             nodes2, t_initial, t_final)
         if _helpers.vector_close(
-                flat_no_copy(nodes1), flat_no_copy(specialized2)):
+                nodes1.ravel(order='F'), specialized2.ravel(order='F')):
             return (
                 (0.0, t_initial),
                 (1.0, t_final),
@@ -1150,7 +1132,7 @@ def coincident_parameters(nodes1, nodes2):
     specialized1 = _curve_helpers.specialize_curve(nodes1, start_s, end_s)
     specialized2 = _curve_helpers.specialize_curve(nodes2, start_t, end_t)
     if _helpers.vector_close(
-            flat_no_copy(specialized1), flat_no_copy(specialized2)):
+            specialized1.ravel(order='F'), specialized2.ravel(order='F')):
         return (
             (start_s, start_t),
             (end_s, end_t),
@@ -1182,7 +1164,7 @@ def _all_intersections(nodes_first, nodes_second):
             intersected with ``nodes_first``.
 
     Returns:
-        numpy.ndarray: ``Nx2`` array of intersection parameters.
+        numpy.ndarray: ``2 x N`` array of intersection parameters.
         Each row contains a pair of values :math:`s` and :math:`t`
         (each in :math:`\left[0, 1\right]`) such that the curves
         intersect: :math:`B_1(s) = B_2(t)`.
@@ -1230,9 +1212,11 @@ def _all_intersections(nodes_first, nodes_second):
         # no more intersections to find.
         if not candidates:
             if intersections:
-                return np.asfortranarray(intersections)
+                # NOTE: The transpose of a C-ordered array is Fortran-ordered,
+                #       i.e. this is on purpose.
+                return np.array(intersections, order='C').T
             else:
-                return np.empty((0, 2), order='F')
+                return np.empty((2, 0), order='F')
 
     msg = _NO_CONVERGE_TEMPLATE.format(_MAX_INTERSECT_SUBDIVISIONS)
     raise ValueError(msg)
@@ -1384,14 +1368,10 @@ class Linearization(object):
         """SubdividedCurve: The curve that this linearization approximates."""
         self.error = error
         """float: The linearization error for the linearized curve."""
-        self.start_node = np.asfortranarray([
-            [curve.nodes[0, 0], curve.nodes[0, 1]],
-        ])
-        """numpy.ndarray: The start vector of this linearization."""
-        self.end_node = np.asfortranarray([
-            [curve.nodes[-1, 0], curve.nodes[-1, 1]],
-        ])
-        """numpy.ndarray: The end vector of this linearization."""
+        self.start_node = curve.nodes[:, 0]
+        """numpy.ndarray: The 1D start vector of this linearization."""
+        self.end_node = curve.nodes[:, -1]
+        """numpy.ndarray: The 1D end vector of this linearization."""
 
     @property
     def __dict__(self):

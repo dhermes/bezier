@@ -49,8 +49,8 @@ _LOCATE_STD_CAP = 0.5**20
 _FLOAT64 = np.float64  # pylint: disable=no-member
 _REDUCE_THRESHOLD = 0.5**26  # sqrt(machine precision)
 # Projections onto the space of degree-elevated nodes.
-# If v --> Ev is the elevation map, then P = E (E^T E)^{-1} E^T
-# is the projection.
+# If v --> vE is the (right) elevation map, then P = E^T (E E^T)^{-1} E
+# is the (right) projection.
 # pylint: disable=bad-whitespace
 _PROJECTION0 = np.asfortranarray([
     [0.5, 0.5],
@@ -79,59 +79,63 @@ _PROJECTION3 = np.asfortranarray([
 ])
 _PROJ_DENOM3 = 35.0
 # Reductions for a set of degree-elevated nodes.
-# If v --> Ev is the elevation map, then R = (E^T E)^{-1} E^T -- the
-# pseudo-inverse of E -- actually reduces a set of nodes.
+# If v --> vE is the (right) elevation map, then R = E^T (E E^T)^{-1} -- the
+# (right) pseudo-inverse of E -- actually reduces a set of nodes.
 _REDUCTION0 = np.asfortranarray([
-    [0.5, 0.5],
+    [0.5],
+    [0.5],
 ])
 _REDUCTION_DENOM0 = 1.0
 _REDUCTION1 = np.asfortranarray([
-    [ 2.5, 1.0, -0.5],  # noqa: E201
-    [-0.5, 1.0,  2.5],
+    [2.5, -0.5],
+    [1.0, 1.0],
+    [-0.5, 2.5],
 ])
 _REDUCTION_DENOM1 = 3.0
 _REDUCTION2 = np.asfortranarray([
-    [ 4.75,  0.75, -0.75,  0.25],  # noqa: E201
-    [-1.25,  3.75,  3.75, -1.25],
-    [ 0.25, -0.75,  0.75,  4.75],  # noqa: E201
+    [4.75, -1.25, 0.25],
+    [0.75, 3.75, -0.75],
+    [-0.75, 3.75, 0.75],
+    [0.25, -1.25, 4.75],
 ])
 _REDUCTION_DENOM2 = 5.0
 _REDUCTION3 = np.asfortranarray([
-    [103.5,   6.0, -9.0,   6.0,  -1.5],
-    [-26.5, 106.0, 51.0, -34.0,   8.5],
-    [  8.5, -34.0, 51.0, 106.0, -26.5],  # noqa: E201
-    [ -1.5,   6.0, -9.0,   6.0, 103.5],  # noqa: E201
+    [103.5, -26.5, 8.5, -1.5],
+    [6.0, 106.0, -34.0, 6.0],
+    [-9.0, 51.0, 51.0, -9.0],
+    [6.0, -34.0, 106.0, 6.0],
+    [-1.5, 8.5, -26.5, 103.5],
 ])
 _REDUCTION_DENOM3 = 105.0
 _LINEAR_SUBDIVIDE_LEFT = np.asfortranarray([
-    [1.0, 0.0],
-    [0.5, 0.5],
+    [1.0, 0.5],
+    [0.0, 0.5],
 ])
 _LINEAR_SUBDIVIDE_RIGHT = np.asfortranarray([
-    [0.5, 0.5],
-    [0.0, 1.0],
+    [0.5, 0.0],
+    [0.5, 1.0],
 ])
 _QUADRATIC_SUBDIVIDE_LEFT = np.asfortranarray([
-    [1.0 , 0.0, 0.0 ],  # noqa: E202,E203
-    [0.5 , 0.5, 0.0 ],  # noqa: E202,E203
-    [0.25, 0.5, 0.25],
+    [1.0, 0.5, 0.25],
+    [0.0, 0.5, 0.5],
+    [0.0, 0.0, 0.25],
 ])
 _QUADRATIC_SUBDIVIDE_RIGHT = np.asfortranarray([
-    [0.25, 0.5, 0.25],
-    [0.0 , 0.5, 0.5 ],  # noqa: E202,E203
-    [0.0 , 0.0, 1.0 ],  # noqa: E202,E203
+    [0.25, 0.0, 0.0],
+    [0.5, 0.5, 0.0],
+    [0.25, 0.5, 1.0],
 ])
 _CUBIC_SUBDIVIDE_LEFT = np.asfortranarray([
-    [1.0  , 0.0  , 0.0  , 0.0  ],  # noqa: E202,E203
-    [0.5  , 0.5  , 0.0  , 0.0  ],  # noqa: E202,E203
-    [0.25 , 0.5  , 0.25 , 0.0  ],  # noqa: E202,E203
-    [0.125, 0.375, 0.375, 0.125],
+    [1.0, 0.5, 0.25, 0.125],
+    [0.0, 0.5, 0.5, 0.375],
+    [0.0, 0.0, 0.25, 0.375],
+    [0.0, 0.0, 0.0, 0.125],
 ])
 _CUBIC_SUBDIVIDE_RIGHT = np.asfortranarray([
-    [0.125, 0.375, 0.375, 0.125],
-    [0.0  , 0.25 , 0.5  , 0.25 ],  # noqa: E202,E203
-    [0.0  , 0.0  , 0.5  , 0.5  ],  # noqa: E202,E203
-    [0.0  , 0.0  , 0.0  , 1.0  ],  # noqa: E202,E203
+    [0.125, 0.0, 0.0, 0.0],
+    [0.375, 0.25, 0.0, 0.0],
+    [0.375, 0.5, 0.5, 0.0],
+    [0.125, 0.25, 0.5, 1.0],
 ])
 # pylint: enable=bad-whitespace
 
@@ -156,16 +160,16 @@ def make_subdivision_matrices(degree):
     right = np.zeros((degree + 1, degree + 1), order='F')
     left[0, 0] = 1.0
     right[-1, -1] = 1.0
-    for row in six.moves.xrange(1, degree + 1):
-        half_prev = 0.5 * left[row - 1, :row]
-        left[row, :row] = half_prev
-        left[row, 1:row + 1] += half_prev
-        # Populate the complement row (in right) as well.
-        complement = degree - row
+    for col in six.moves.xrange(1, degree + 1):
+        half_prev = 0.5 * left[:col, col - 1]
+        left[:col, col] = half_prev
+        left[1:col + 1, col] += half_prev
+        # Populate the complement col (in right) as well.
+        complement = degree - col
         # NOTE: We "should" reverse the results when using
         #       the complement, but they are symmetric so
         #       that would be a waste.
-        right[complement, -(row + 1):] = left[row, :row + 1]
+        right[-(col + 1):, complement] = left[:col + 1, col]
 
     return left, right
 
@@ -187,21 +191,21 @@ def _subdivide_nodes(nodes):
     Returns:
         Tuple[numpy.ndarray, numpy.ndarray]: The nodes for the two sub-curves.
     """
-    num_nodes, _ = np.shape(nodes)
+    _, num_nodes = np.shape(nodes)
     if num_nodes == 2:
-        left_nodes = _helpers.matrix_product(_LINEAR_SUBDIVIDE_LEFT, nodes)
-        right_nodes = _helpers.matrix_product(_LINEAR_SUBDIVIDE_RIGHT, nodes)
+        left_nodes = _helpers.matrix_product(nodes, _LINEAR_SUBDIVIDE_LEFT)
+        right_nodes = _helpers.matrix_product(nodes, _LINEAR_SUBDIVIDE_RIGHT)
     elif num_nodes == 3:
-        left_nodes = _helpers.matrix_product(_QUADRATIC_SUBDIVIDE_LEFT, nodes)
+        left_nodes = _helpers.matrix_product(nodes, _QUADRATIC_SUBDIVIDE_LEFT)
         right_nodes = _helpers.matrix_product(
-            _QUADRATIC_SUBDIVIDE_RIGHT, nodes)
+            nodes, _QUADRATIC_SUBDIVIDE_RIGHT)
     elif num_nodes == 4:
-        left_nodes = _helpers.matrix_product(_CUBIC_SUBDIVIDE_LEFT, nodes)
-        right_nodes = _helpers.matrix_product(_CUBIC_SUBDIVIDE_RIGHT, nodes)
+        left_nodes = _helpers.matrix_product(nodes, _CUBIC_SUBDIVIDE_LEFT)
+        right_nodes = _helpers.matrix_product(nodes, _CUBIC_SUBDIVIDE_RIGHT)
     else:
         left_mat, right_mat = make_subdivision_matrices(num_nodes - 1)
-        left_nodes = _helpers.matrix_product(left_mat, nodes)
-        right_nodes = _helpers.matrix_product(right_mat, nodes)
+        left_nodes = _helpers.matrix_product(nodes, left_mat)
+        right_nodes = _helpers.matrix_product(nodes, right_mat)
 
     return left_nodes, right_nodes
 
@@ -224,8 +228,8 @@ def _evaluate_multi(nodes, s_vals):
 
     Returns:
         numpy.ndarray: The evaluated points on the curve as a two dimensional
-        NumPy array, with the rows corresponding to each ``s``
-        value and the columns to the dimension.
+        NumPy array, with the columns corresponding to each ``s``
+        value and the rows to the dimension.
     """
     one_less = 1.0 - s_vals
     return evaluate_multi_barycentric(nodes, one_less, s_vals)
@@ -261,30 +265,31 @@ def _evaluate_multi_barycentric(nodes, lambda1, lambda2):
 
     Returns:
         numpy.ndarray: The evaluated points as a two dimensional
-        NumPy array, with the rows corresponding to each pair of parameter
-        values and the columns to the dimension.
+        NumPy array, with the columns corresponding to each pair of parameter
+        values and the rows to the dimension.
     """
     # NOTE: We assume but don't check that lambda2 has the same shape.
     num_vals, = lambda1.shape
-    num_nodes, dimension = nodes.shape
+    dimension, num_nodes = nodes.shape
     degree = num_nodes - 1
 
-    # Resize for broadcasting.
-    lambda1 = lambda1[:, np.newaxis]
-    lambda2 = lambda2[:, np.newaxis]
+    # Resize as row vectors for broadcast multiplying with
+    # columns of ``nodes``.
+    lambda1 = lambda1[np.newaxis, :]
+    lambda2 = lambda2[np.newaxis, :]
 
-    result = np.zeros((num_vals, dimension), order='F')
-    result += lambda1 * nodes[0, :]
+    result = np.zeros((dimension, num_vals), order='F')
+    result += lambda1 * nodes[:, [0]]
 
     binom_val = 1.0
-    lambda2_pow = np.ones((num_vals, 1), order='F')
+    lambda2_pow = np.ones((1, num_vals), order='F')
     for index in six.moves.xrange(1, degree):
         lambda2_pow *= lambda2
         binom_val = (binom_val * (degree - index + 1)) / index
-        result += binom_val * lambda2_pow * nodes[index, :]
+        result += binom_val * lambda2_pow * nodes[:, [index]]
         result *= lambda1
 
-    result += lambda2 * lambda2_pow * nodes[degree, :]
+    result += lambda2 * lambda2_pow * nodes[:, [degree]]
 
     return result
 
@@ -309,7 +314,7 @@ def vec_size(nodes, s_val):
     """
     result_vec = evaluate_multi(nodes, np.asfortranarray([s_val]))
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
-    return np.linalg.norm(result_vec[0, :], ord=2)
+    return np.linalg.norm(result_vec[:, 0], ord=2)
 
 
 def _compute_length(nodes):
@@ -342,14 +347,14 @@ def _compute_length(nodes):
     Raises:
         OSError: If SciPy is not installed.
     """
-    num_nodes, _ = np.shape(nodes)
+    _, num_nodes = np.shape(nodes)
     # NOTE: We somewhat replicate code in ``evaluate_hodograph()``
     #       here. This is so we don't re-compute the nodes for the first
     #       derivative every time it is evaluated.
-    first_deriv = (num_nodes - 1) * (nodes[1:, :] - nodes[:-1, :])
+    first_deriv = (num_nodes - 1) * (nodes[:, 1:] - nodes[:, :-1])
     if num_nodes == 2:
         # NOTE: We convert to 1D to make sure NumPy uses vector norm.
-        return np.linalg.norm(first_deriv[0, :], ord=2)
+        return np.linalg.norm(first_deriv[:, 0], ord=2)
 
     if _scipy_int is None:
         raise OSError('This function requires SciPy for quadrature.')
@@ -384,21 +389,21 @@ def _elevate_nodes(nodes):
     Returns:
         numpy.ndarray: The nodes of the degree-elevated curve.
     """
-    num_nodes, dimension = np.shape(nodes)
-    new_nodes = np.empty((num_nodes + 1, dimension), order='F')
+    dimension, num_nodes = np.shape(nodes)
+    new_nodes = np.empty((dimension, num_nodes + 1), order='F')
 
-    multipliers = np.arange(1, num_nodes, dtype=_FLOAT64)[:, np.newaxis]
+    multipliers = np.arange(1, num_nodes, dtype=_FLOAT64)[np.newaxis, :]
     denominator = float(num_nodes)
-    new_nodes[1:-1, :] = (
-        multipliers * nodes[:-1, :] +
-        (denominator - multipliers) * nodes[1:, :])
+    new_nodes[:, 1:-1] = (
+        multipliers * nodes[:, :-1] +
+        (denominator - multipliers) * nodes[:, 1:])
     # Hold off on division until the end, to (attempt to) avoid round-off.
     new_nodes /= denominator
 
     # After setting the internal nodes (which require division), set the
     # boundary nodes.
-    new_nodes[0, :] = nodes[0, :]
-    new_nodes[-1, :] = nodes[-1, :]
+    new_nodes[:, 0] = nodes[:, 0]
+    new_nodes[:, -1] = nodes[:, -1]
 
     return new_nodes
 
@@ -424,15 +429,11 @@ def de_casteljau_one_round(nodes, lambda1, lambda2):
         lower.
     """
     return np.asfortranarray(
-        lambda1 * nodes[:-1, :] + lambda2 * nodes[1:, :])
+        lambda1 * nodes[:, :-1] + lambda2 * nodes[:, 1:])
 
 
 def _specialize_curve(nodes, start, end):
     """Specialize a curve to a re-parameterization
-
-    Does so by taking two points along the number line and then
-    reparameterizing the curve onto the interval formed by the
-    start and end points.
 
     .. note::
 
@@ -452,7 +453,7 @@ def _specialize_curve(nodes, start, end):
         numpy.ndarray: The control points for the specialized curve.
     """
     # pylint: disable=too-many-locals
-    num_nodes, _ = np.shape(nodes)
+    _, num_nodes = np.shape(nodes)
 
     # Uses start-->0, end-->1 to represent the specialization used.
     weights = (
@@ -478,7 +479,7 @@ def _specialize_curve(nodes, start, end):
     result = np.empty(nodes.shape, order='F')
     for index in six.moves.xrange(num_nodes):
         key = (0,) * (num_nodes - index - 1) + (1,) * index
-        result[index, :] = partial_vals[key]
+        result[:, [index]] = partial_vals[key]
 
     return result
     # pylint: enable=too-many-locals
@@ -512,8 +513,8 @@ def _evaluate_hodograph(s, nodes):
         numpy.ndarray: The point on the Hodograph curve (as a two
         dimensional NumPy array with a single row).
     """
-    num_nodes, _ = np.shape(nodes)
-    first_deriv = nodes[1:, :] - nodes[:-1, :]
+    _, num_nodes = np.shape(nodes)
+    first_deriv = nodes[:, 1:] - nodes[:, :-1]
     return (num_nodes - 1) * evaluate_multi(
         first_deriv, np.asfortranarray([s]))
 
@@ -541,16 +542,14 @@ def _get_curvature(nodes, tangent_vec, s):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes = np.asfortranarray([
-       ...     [1.0 ,  0.0],
-       ...     [0.75,  2.0],
-       ...     [0.5 , -2.0],
-       ...     [0.25,  2.0],
-       ...     [0.0 ,  0.0],
+       ...     [1.0, 0.75,  0.5, 0.25, 0.0],
+       ...     [0.0, 2.0 , -2.0, 2.0 , 0.0],
        ... ])
        >>> s = 0.5
        >>> tangent_vec = evaluate_hodograph(s, nodes)
        >>> tangent_vec
-       array([[-1., 0.]])
+       array([[-1.],
+              [ 0.]])
        >>> curvature = get_curvature(nodes, tangent_vec, s)
        >>> curvature
        -12.0
@@ -574,19 +573,20 @@ def _get_curvature(nodes, tangent_vec, s):
     Returns:
         float: The signed curvature.
     """
-    num_nodes, _ = np.shape(nodes)
+    _, num_nodes = np.shape(nodes)
     if num_nodes == 2:  # Lines have no curvature.
         return 0.0
 
     # NOTE: We somewhat replicate code in ``evaluate_hodograph()`` here.
-    first_deriv = nodes[1:, :] - nodes[:-1, :]
-    second_deriv = first_deriv[1:, :] - first_deriv[:-1, :]
+    first_deriv = nodes[:, 1:] - nodes[:, :-1]
+    second_deriv = first_deriv[:, 1:] - first_deriv[:, :-1]
     concavity = (num_nodes - 1) * (num_nodes - 2) * evaluate_multi(
         second_deriv, np.asfortranarray([s]))
 
-    curvature = _helpers.cross_product(tangent_vec, concavity)
+    curvature = _helpers.cross_product(
+        tangent_vec.ravel(order='F'), concavity.ravel(order='F'))
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
-    curvature /= np.linalg.norm(tangent_vec[0, :], ord=2)**3
+    curvature /= np.linalg.norm(tangent_vec[:, 0], ord=2)**3
     return curvature
 
 
@@ -644,14 +644,14 @@ def _newton_refine(nodes, point, s):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes = np.asfortranarray([
-       ...     [0.0, 0.0],
-       ...     [1.0, 2.0],
-       ...     [3.0, 1.0],
+       ...     [0.0, 1.0, 3.0],
+       ...     [0.0, 2.0, 1.0],
        ... ])
        >>> curve = bezier.Curve(nodes, degree=2)
        >>> point = curve.evaluate(0.25)
        >>> point
-       array([[0.5625, 0.8125]])
+       array([[0.5625],
+              [0.8125]])
        >>> s = 0.75
        >>> new_s = newton_refine(nodes, point, s)
        >>> 5 * (new_s - s)
@@ -673,16 +673,15 @@ def _newton_refine(nodes, point, s):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes = np.asfortranarray([
-       ...     [ 6.0, -3.0],
-       ...     [-2.0,  3.0],
-       ...     [-2.0, -3.0],
-       ...     [ 6.0,  3.0],
+       ...     [ 6.0, -2.0, -2.0, 6.0],
+       ...     [-3.0,  3.0, -3.0, 3.0],
        ... ])
        >>> curve = bezier.Curve(nodes, degree=3)
        >>> expected = 0.5
        >>> point = curve.evaluate(expected)
        >>> point
-       array([[0., 0.]])
+       array([[0.],
+              [0.]])
        >>> s_vals = [0.625, None, None, None, None, None]
        >>> np.log2(abs(expected - s_vals[0]))
        -3.0
@@ -717,10 +716,8 @@ def _newton_refine(nodes, point, s):
        from bezier._curve_helpers import newton_refine
 
        nodes = np.asfortranarray([
-           [6.0, -3.0],
-           [-2.0, 3.0],
-           [-2.0, -3.0],
-           [6.0, 3.0],
+           [ 6.0, -2.0, -2.0, 6.0],
+           [-3.0,  3.0, -3.0, 3.0],
        ])
        curve = bezier.Curve(nodes, degree=3)
        point = curve.evaluate(0.5)
@@ -758,10 +755,11 @@ def _newton_refine(nodes, point, s):
     """
     pt_delta = point - evaluate_multi(nodes, np.asfortranarray([s]))
     derivative = evaluate_hodograph(s, nodes)
-    # Each array is 1x2 (i.e. a row vector), we want the vector dot product.
+    # Each array is 2 x 1 (i.e. a column vector), we want the vector
+    # dot product.
     delta_s = (
-        np.vdot(pt_delta[0, :], derivative[0, :]) /
-        np.vdot(derivative[0, :], derivative[0, :]))
+        np.vdot(pt_delta[:, 0], derivative[:, 0]) /
+        np.vdot(derivative[:, 0], derivative[:, 0]))
     return s + delta_s
 
 
@@ -775,7 +773,7 @@ def _locate_point(nodes, point):
 
     .. note::
 
-       This assumes, but does not check, that ``point`` is ``1xD``,
+       This assumes, but does not check, that ``point`` is ``D x 1``,
        where ``D`` is the dimension that ``curve`` is in.
 
     .. note::
@@ -800,7 +798,7 @@ def _locate_point(nodes, point):
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for start, end, candidate in candidates:
-            if _helpers.contains_nd(candidate, point):
+            if _helpers.contains_nd(candidate, point.ravel(order='F')):
                 midpoint = 0.5 * (start + end)
                 left, right = subdivide_nodes(candidate)
                 next_candidates.extend((
@@ -851,7 +849,7 @@ def _reduce_pseudo_inverse(nodes):
     Raises:
         NotImplementedError: If the degree is not 1, 2, 3 or 4.
     """
-    num_nodes, _ = np.shape(nodes)
+    _, num_nodes = np.shape(nodes)
     if num_nodes == 2:
         reduction = _REDUCTION0
         denom = _REDUCTION_DENOM0
@@ -867,7 +865,7 @@ def _reduce_pseudo_inverse(nodes):
     else:
         raise NotImplementedError('Unsupported degree', num_nodes - 1)
 
-    result = _helpers.matrix_product(reduction, nodes)
+    result = _helpers.matrix_product(nodes, reduction)
     result /= denom
     return result
 
@@ -910,8 +908,8 @@ def maybe_reduce(nodes):
     We check if the nodes are degree-elevated by projecting onto the
     space of degree-elevated curves of the same degree, then comparing
     to the projection. We form the projection by taking the corresponding
-    elevation matrix :math:`E` (from one degree lower) and forming
-    :math:`E \left(E^T E\right)^{-1} E^T`.
+    (right) elevation matrix :math:`E` (from one degree lower) and forming
+    :math:`E^T \left(E E^T\right)^{-1} E`.
 
     Args:
         nodes (numpy.ndarray): The nodes in the curve.
@@ -924,7 +922,7 @@ def maybe_reduce(nodes):
     Raises:
         NotImplementedError: If the curve is degree 5 or higher.
     """
-    num_nodes, _ = nodes.shape
+    _, num_nodes = nodes.shape
     if num_nodes < 2:
         return False, nodes
     elif num_nodes == 2:
@@ -942,7 +940,7 @@ def maybe_reduce(nodes):
     else:
         raise NotImplementedError(num_nodes)
 
-    projected = _helpers.matrix_product(projection, nodes) / denom
+    projected = _helpers.matrix_product(nodes, projection) / denom
     relative_err = projection_error(nodes, projected)
     if relative_err < _REDUCE_THRESHOLD:
         return True, reduce_pseudo_inverse(nodes)

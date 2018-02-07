@@ -65,7 +65,7 @@ def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
        dt = (A F - B E) / (A D - B C)
 
     Args:
-        jac_both (numpy.ndarray): A 1x4 matrix of entries in a Jacobian.
+        jac_both (numpy.ndarray): A ``4 x 1`` matrix of entries in a Jacobian.
         x_val (float): An ``x``-value we are trying to reach.
         surf_x (float): The actual ``x``-value we are currently at.
         y_val (float): An ``y``-value we are trying to reach.
@@ -75,7 +75,7 @@ def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
         Tuple[float, float]: The pair of values the solve the
          linear system.
     """
-    a_val, b_val, c_val, d_val = jac_both[0, :]
+    a_val, b_val, c_val, d_val = jac_both[:, 0]
     #       and
     e_val = x_val - surf_x
     f_val = y_val - surf_y
@@ -157,17 +157,13 @@ def _newton_refine(nodes, degree, x_val, y_val, s, t):
     .. doctest:: newton-refine-surface
 
        >>> nodes = np.asfortranarray([
-       ...     [0.0, 0.0],
-       ...     [1.0, 0.0],
-       ...     [2.0, 0.0],
-       ...     [2.0, 1.0],
-       ...     [2.0, 2.0],
-       ...     [0.0, 2.0],
+       ...     [0.0, 1.0, 2.0, 2.0, 2.0, 0.0],
+       ...     [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
        ... ])
        >>> surface = bezier.Surface(nodes, degree=2)
        >>> surface.is_valid
        True
-       >>> (x_val, y_val), = surface.evaluate_cartesian(0.25, 0.5)
+       >>> (x_val,), (y_val,) = surface.evaluate_cartesian(0.25, 0.5)
        >>> x_val, y_val
        (1.25, 1.25)
        >>> s, t = 0.5, 0.25
@@ -197,7 +193,7 @@ def _newton_refine(nodes, degree, x_val, y_val, s, t):
         Tuple[float, float]: The refined :math:`s` and :math:`t` values.
     """
     lambda1 = 1.0 - s - t
-    (surf_x, surf_y), = _surface_helpers.evaluate_barycentric(
+    (surf_x,), (surf_y,) = _surface_helpers.evaluate_barycentric(
         nodes, degree, lambda1, s, t)
     if surf_x == x_val and surf_y == y_val:
         # No refinement is needed.
@@ -210,8 +206,8 @@ def _newton_refine(nodes, degree, x_val, y_val, s, t):
     jac_both = _surface_helpers.evaluate_barycentric(
         jac_nodes, degree - 1, lambda1, s, t)
 
-    # The first column of the jacobian matrix is B_s (i.e. the
-    # left-most values in ``jac_both``).
+    # The first row of the jacobian matrix is B_s (i.e. the
+    # top-most values in ``jac_both``).
     delta_s, delta_t = newton_refine_solve(
         jac_both, x_val, surf_x, y_val, surf_y)
     return s + delta_s, t + delta_t
@@ -245,7 +241,7 @@ def update_locate_candidates(
         degree (int): The degree of the surface.
     """
     centroid_x, centroid_y, width, candidate_nodes = candidate
-    point = np.asfortranarray([[x_val, y_val]])
+    point = np.asfortranarray([x_val, y_val])
     if not _helpers.contains_nd(candidate_nodes, point):
         return
 
@@ -363,8 +359,9 @@ def _locate_point(nodes, degree, x_val, y_val):
 
     actual = _surface_helpers.evaluate_barycentric(
         nodes, degree, 1.0 - s - t, s, t)
-    expected = np.asfortranarray([[x_val, y_val]])
-    if not _helpers.vector_close(actual, expected, eps=LOCATE_EPS):
+    expected = np.asfortranarray([x_val, y_val])
+    if not _helpers.vector_close(
+            actual.ravel(order='F'), expected, eps=LOCATE_EPS):
         s, t = newton_refine(
             nodes, degree, x_val, y_val, s, t)
     return s, t
@@ -521,7 +518,7 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
             nodes of the three edges of the second surface being intersected.
         all_intersections (Callable): A helper that intersects B |eacute| zier
             curves. Takes the nodes of each curve as input and returns an
-            array (``N x 2``) of intersections.
+            array (``2 x N``) of intersections.
 
     Returns:
         Tuple[list, list, list, set]: 4-tuple of
@@ -540,7 +537,7 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
     for index1, nodes1 in enumerate(edge_nodes1):
         for index2, nodes2 in enumerate(edge_nodes2):
             st_vals = all_intersections(nodes1, nodes2)
-            for s, t in st_vals:
+            for s, t in st_vals.T:
                 add_intersection(
                     index1, s, index2, t, edge_nodes1, edge_nodes2,
                     duplicates, intersections, unused, all_types)
@@ -567,7 +564,7 @@ def generic_intersect(
             should be checked.
         all_intersections (Callable): A helper that intersects B |eacute| zier
             curves. Takes the nodes of each curve as input and returns an
-            array (``N x 2``) of intersections.
+            array (``2 x N``) of intersections.
 
     Returns:
         Tuple[Optional[list], Optional[bool], tuple]: 3-tuple of

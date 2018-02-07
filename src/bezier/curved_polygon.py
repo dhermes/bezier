@@ -52,25 +52,23 @@ class CurvedPolygon(object):
 
        >>> import bezier
        >>> nodes0 = np.asfortranarray([
-       ...     [0.0,  0.0],
-       ...     [1.0, -1.0],
-       ...     [2.0,  0.0],
+       ...     [0.0,  1.0, 2.0],
+       ...     [0.0, -1.0, 0.0],
        ... ])
        >>> edge0 = bezier.Curve(nodes0, degree=2)
        >>> nodes1 = np.asfortranarray([
-       ...     [2.0, 0.0],
-       ...     [2.0, 1.0],
+       ...     [2.0, 2.0],
+       ...     [0.0, 1.0],
        ... ])
        >>> edge1 = bezier.Curve(nodes1, degree=1)
        >>> nodes2 = np.asfortranarray([
-       ...     [2.0, 1.0],
-       ...     [1.0, 2.0],
-       ...     [0.0, 1.0],
+       ...     [2.0, 1.0, 0.0],
+       ...     [1.0, 2.0, 1.0],
        ... ])
        >>> edge2 = bezier.Curve(nodes2, degree=2)
        >>> nodes3 = np.asfortranarray([
-       ...     [0.0, 1.0],
        ...     [0.0, 0.0],
+       ...     [1.0, 0.0],
        ... ])
        >>> edge3 = bezier.Curve(nodes3, degree=1)
        >>> curved_poly = bezier.CurvedPolygon(
@@ -93,25 +91,23 @@ class CurvedPolygon(object):
     .. doctest:: curved-polygon-constructor-invalid
 
        >>> nodes0 = np.asfortranarray([
+       ...     [0.0, 1.0],
        ...     [0.0, 0.0],
-       ...     [1.0, 0.0],
        ... ])
        >>> edge0 = bezier.Curve(nodes0, degree=1)
        >>> nodes1 = np.asfortranarray([
-       ...     [1.0 , 0.0],
-       ...     [1.25, 0.5],
-       ...     [1.0 , 1.0],
+       ...     [1.0, 1.25, 1.0],
+       ...     [0.0, 0.5 , 1.0],
        ... ])
        >>> edge1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
+       ...     [1.0, 2.0],
        ...     [1.0, 1.0],
-       ...     [2.0, 1.0],
        ... ])
        >>> edge2 = bezier.Curve(nodes2, degree=1)
        >>> nodes3 = np.asfortranarray([
-       ...     [2.0, 1.0 ],
-       ...     [1.0, 0.75],
-       ...     [0.0, 0.0 ],
+       ...     [2.0, 1.0 , 0.0],
+       ...     [1.0, 0.75, 0.0]
        ... ])
        >>> edge3 = bezier.Curve(nodes3, degree=2)
        >>> curved_poly = bezier.CurvedPolygon(
@@ -168,12 +164,8 @@ class CurvedPolygon(object):
         if prev._dimension != 2:
             raise ValueError('Curve not in R^2', prev)
 
-        end = np.asfortranarray([
-            [prev._nodes[-1, 0], prev._nodes[-1, 1]],
-        ])
-        start = np.asfortranarray([
-            [curr._nodes[0, 0], curr._nodes[0, 1]],
-        ])
+        end = prev._nodes[:, -1]
+        start = curr._nodes[:, 0]
         if not _helpers.vector_close(end, start):
             raise ValueError(
                 'Not sufficiently close',

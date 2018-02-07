@@ -117,22 +117,20 @@ class Test_add_patch(utils.NumPyTestCase):
             self, call, expected, color=color)
 
     @staticmethod
-    def _get_info(points):
+    def _get_info(nodes):
         from bezier import surface as surface_mod
 
-        surface = surface_mod.Surface(points, 1, _copy=False)
+        surface = surface_mod.Surface(nodes, 1, _copy=False)
         edges = surface._get_edges()
 
-        point0, point1, point2 = points
-        expected = np.asfortranarray([
-            0.5 * (point0 + point1),
-            point1,
-            0.5 * (point1 + point2),
-            point2,
-            0.5 * (point2 + point0),
-            point0,
-            0.5 * (point0 + point1),
-        ])
+        expected = np.empty((2, 7), order='F')
+        expected[:, 0] = 0.5 * (nodes[:, 0] + nodes[:, 1])
+        expected[:, 1] = nodes[:, 1]
+        expected[:, 2] = 0.5 * (nodes[:, 1] + nodes[:, 2])
+        expected[:, 3] = nodes[:, 2]
+        expected[:, 4] = 0.5 * (nodes[:, 2] + nodes[:, 0])
+        expected[:, 5] = nodes[:, 0]
+        expected[:, 6] = expected[:, 0]
 
         return expected, edges
 
@@ -140,12 +138,11 @@ class Test_add_patch(utils.NumPyTestCase):
         # Set-up input values.
         color = (0.25, 0.5, 0.75)
         pts_per_edge = 3
-        points = np.asfortranarray([
-            [0.0, 1.0],
-            [1.0, 3.0],
-            [2.0, 6.0],
+        nodes = np.asfortranarray([
+            [0.0, 1.0, 2.0],
+            [1.0, 3.0, 6.0],
         ])
-        expected, edges = self._get_info(points)
+        expected, edges = self._get_info(nodes)
 
         # Set-up mocks (quite a lot).
         patches = unittest.mock.Mock(spec=['PathPatch'])

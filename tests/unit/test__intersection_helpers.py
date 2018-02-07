@@ -31,8 +31,8 @@ class Test__newton_refine(utils.NumPyTestCase):
         import bezier
 
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
         ])
         nodes2 = np.asfortranarray([
             [1.0, 0.0],
@@ -65,14 +65,12 @@ class Test__newton_refine(utils.NumPyTestCase):
         import bezier
 
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 1.0],
-            [1.0, 0.0],
+            [0.0, 0.5, 1.0],
+            [0.0, 1.0, 0.0],
         ])
         nodes2 = np.asfortranarray([
-            [1.0, 0.75],
-            [0.5, -0.25],
-            [0.0, 0.75],
+            [1.0, 0.5, 0.0],
+            [0.75, -0.25, 0.75],
         ])
         curve1 = bezier.Curve(nodes1, degree=2)
         curve2 = bezier.Curve(nodes2, degree=2)
@@ -152,37 +150,32 @@ class Test__newton_refine(utils.NumPyTestCase):
         import bezier
 
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [0.25, 1.0],
-            [0.5, -0.75],
-            [0.75, 1.0],
-            [1.0, 0.0],
+            [0.0, 0.25, 0.5, 0.75, 1.0],
+            [0.0, 1.0, -0.75, 1.0, 0.0],
         ])
         curve1 = bezier.Curve(nodes1, degree=4)
         # Vertical line forces a unique solution.
         nodes2 = np.asfortranarray([
-            [0.5, 0.0],
-            [0.5, 1.0],
+            [0.5, 0.5],
+            [0.0, 1.0],
         ])
         curve2 = bezier.Curve(nodes2, degree=1)
 
         num_guess = 4
-        parameters = np.zeros((num_guess, 2), order='F')
+        parameters = np.zeros((2, num_guess), order='F')
         # NOTE: This means our "first" guess is (s, t) = (0, 0).
         for guess in six.moves.xrange(1, num_guess):
-            prev_s, prev_t = parameters[guess - 1, :]
-            parameters[guess, :] = self._call_function_under_test(
+            prev_s, prev_t = parameters[:, guess - 1]
+            parameters[:, guess] = self._call_function_under_test(
                 prev_s, nodes1, prev_t, nodes2)
 
         expected = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 2.0],
-            [0.5, 0.21875],
-            [0.5, 0.21875],
+            [0.0, 0.5, 0.5, 0.5],
+            [0.0, 2.0, 0.21875, 0.21875],
         ])
         self.assertEqual(parameters, expected)
         # Make sure that we've actually converged.
-        exact_s, exact_t = parameters[-1, :]
+        exact_s, exact_t = parameters[:, -1]
         self.assertEqual(curve1.evaluate(exact_s),
                          curve2.evaluate(exact_t))
 

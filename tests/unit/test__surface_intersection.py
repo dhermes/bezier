@@ -21,9 +21,8 @@ from tests.unit import utils
 
 
 UNIT_TRIANGLE = np.asfortranarray([
-    [0.0, 0.0],
-    [1.0, 0.0],
-    [0.0, 1.0],
+    [0.0, 1.0, 0.0],
+    [0.0, 0.0, 1.0],
 ])
 SPACING = np.spacing  # pylint: disable=no-member
 
@@ -38,7 +37,12 @@ class Test_newton_refine_solve(unittest.TestCase):
             jac_both, x_val, surf_x, y_val, surf_y)
 
     def test_it(self):
-        jac_both = np.asfortranarray([[1.0, 1.0, -2.0, 2.0]])
+        jac_both = np.asfortranarray([
+            [1.0],
+            [1.0],
+            [-2.0],
+            [2.0],
+        ])
         delta_s, delta_t = self._call_function_under_test(
             jac_both, 0.5, 0.25, 0.75, 1.25)
         self.assertEqual(delta_s, -0.125)
@@ -56,12 +60,8 @@ class Test__newton_refine(unittest.TestCase):
 
     def test_improvement(self):
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, -0.25],
-            [1.0, 0.0],
-            [0.0, 0.5],
-            [0.5, 0.5],
-            [-0.25, 0.875],
+            [0.0, 0.5, 1.0, 0.0, 0.5, -0.25],
+            [0.0, -0.25, 0.0, 0.5, 0.5, 0.875],
         ])
         # This surface is given by
         #     [(4 s - t^2) / 4, (4 s^2 + 4 s t - t^2 - 4 s + 8 t) / 8]
@@ -81,12 +81,8 @@ class Test__newton_refine(unittest.TestCase):
 
     def test_at_solution(self):
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 0.0],
-            [1.0, 0.0],
-            [0.0, 0.5],
-            [0.5, 0.5],
-            [0.0, 1.0],
+            [0.0, 0.5, 1.0, 0.0, 0.5, 0.0],
+            [0.0, 0.0, 0.0, 0.5, 0.5, 1.0],
         ])
         # This surface is given by [s, t].
         s = 0.375
@@ -131,12 +127,8 @@ class Test_update_locate_candidates(unittest.TestCase):
         ))
     def test_contained(self, subdivide_nodes):
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [0.5, 0.25],
-            [1.0, 0.0],
-            [0.0, 0.5],
-            [0.75, 0.75],
-            [0.0, 1.0],
+            [0.0, 0.5, 1.0, 0.0, 0.75, 0.0],
+            [0.0, 0.25, 0.0, 0.5, 0.75, 1.0],
         ])
         candidate = (
             1.25,
@@ -161,9 +153,8 @@ class Test_update_locate_candidates(unittest.TestCase):
 
     def test_not_contained(self):
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [2.0, 3.0],
-            [-1.0, 2.0],
+            [0.0, 2.0, -1.0],
+            [0.0, 3.0, 2.0],
         ])
         candidate = (
             2.0,
@@ -221,12 +212,8 @@ class Test__locate_point(unittest.TestCase):
         # x(s, t) = -2 (s + 2 t) (t - 1)
         # y(s, t) =  2 (s + 1) t
         nodes = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [2.0, 0.0],
-            [2.0, 1.0],
-            [2.0, 2.0],
-            [0.0, 2.0],
+            [0.0, 1.0, 2.0, 2.0, 2.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
         ])
         degree = 2
         x_val = 0.59375
@@ -380,14 +367,12 @@ class Test_surface_intersections(utils.NumPyTestCase):
         from bezier import _geometric_intersection
 
         surface1 = bezier.Surface.from_nodes(np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 1.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
         ]))
         surface2 = bezier.Surface.from_nodes(np.asfortranarray([
-            [0.0, 0.0],
-            [-2.0, 3.0],
-            [1.0, -3.0],
+            [0.0, -2.0, 1.0],
+            [0.0, 3.0, -3.0],
         ]))
 
         edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
@@ -428,14 +413,12 @@ class Test_generic_intersect(utils.NumPyTestCase):
         from bezier import _geometric_intersection
 
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 1.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
         ])
         nodes2 = np.asfortranarray([
-            [10.0, 10.0],
-            [11.0, 10.0],
-            [10.0, 11.0],
+            [10.0, 11.0, 10.0],
+            [10.0, 10.0, 11.0],
         ])
         all_intersections = _geometric_intersection.all_intersections
 
@@ -451,17 +434,12 @@ class Test_generic_intersect(utils.NumPyTestCase):
 class Test__geometric_intersect(utils.NumPyTestCase):
 
     NODES1 = np.asfortranarray([
-        [-8.0, 0.0],
-        [8.0, 0.0],
-        [0.0, 8.0],
+        [-8.0, 8.0, 0.0],
+        [0.0, 0.0, 8.0],
     ])
     NODES2 = np.asfortranarray([
-        [4.0, 3.0],
-        [0.0, -5.0],
-        [-4.0, 3.0],
-        [2.0, -3.0],
-        [-2.0, -3.0],
-        [0.0, -9.0],
+        [4.0, 0.0, -4.0, 2.0, -2.0, 0.0],
+        [3.0, -5.0, 3.0, -3.0, -3.0, -9.0],
     ])
     BAD_BOUNDARY_ARGS = ('Non-unique intersection',)
     BAD_BOUNDARY_TYPE = ValueError
@@ -482,14 +460,12 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
     def test_disjoint_bbox(self):
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 1.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
         ])
         nodes2 = np.asfortranarray([
-            [10.0, 10.0],
-            [11.0, 10.0],
-            [10.0, 11.0],
+            [10.0, 11.0, 10.0],
+            [10.0, 10.0, 11.0],
         ])
 
         result = self._call_function_under_test(
@@ -501,14 +477,12 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
     def test_parallel(self):
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [5.0, 0.0],
-            [0.0, 5.0],
+            [0.0, 5.0, 0.0],
+            [0.0, 0.0, 5.0],
         ])
         nodes2 = np.asfortranarray([
-            [2.0, 0.0],
-            [3.0, 0.0],
-            [2.0, 1.0],
+            [2.0, 3.0, 2.0],
+            [0.0, 0.0, 1.0],
         ])
 
         with self.assertRaises(NotImplementedError) as exc_info:
@@ -519,14 +493,12 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
     def test_contained(self):
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [5.0, 0.0],
-            [0.0, 5.0],
+            [0.0, 5.0, 0.0],
+            [0.0, 0.0, 5.0],
         ])
         nodes2 = np.asfortranarray([
-            [2.0, 1.0],
-            [3.0, 1.0],
-            [2.0, 2.0],
+            [2.0, 3.0, 2.0],
+            [1.0, 1.0, 2.0],
         ])
 
         result = self._call_function_under_test(
@@ -546,14 +518,12 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
     def test_disjoint_with_intersecting_bbox(self):
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [5.0, 0.0],
-            [0.0, 5.0],
+            [0.0, 5.0, 0.0],
+            [0.0, 0.0, 5.0],
         ])
         nodes2 = np.asfortranarray([
-            [4.0, 2.0],
-            [4.0, 3.0],
-            [3.0, 3.0],
+            [4.0, 4.0, 3.0],
+            [2.0, 3.0, 3.0],
         ])
 
         result = self._call_function_under_test(
@@ -586,14 +556,12 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
     def test_linear_intersection(self):
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [8.0, 0.0],
-            [0.0, 8.0],
+            [0.0, 8.0, 0.0],
+            [0.0, 0.0, 8.0],
         ])
         nodes2 = np.asfortranarray([
-            [4.0, 5.0],
-            [-4.0, 5.0],
-            [4.0, -3.0],
+            [4.0, -4.0, 4.0],
+            [5.0, 5.0, -3.0],
         ])
 
         result = self._call_function_under_test(
@@ -605,20 +573,12 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
     def test_opposed_tangencies(self):
         nodes1 = np.asfortranarray([
-            [4.0, 0.0],
-            [2.0, 4.0],
-            [0.0, 0.0],
-            [3.0, -2.0],
-            [1.0, -2.0],
-            [2.0, -4.0],
+            [4.0, 2.0, 0.0, 3.0, 1.0, 2.0],
+            [0.0, 4.0, 0.0, -2.0, -2.0, -4.0],
         ])
         nodes2 = np.asfortranarray([
-            [0.0, 4.0],
-            [2.0, 0.0],
-            [4.0, 4.0],
-            [1.0, 6.0],
-            [3.0, 6.0],
-            [2.0, 8.0],
+            [0.0, 2.0, 4.0, 1.0, 3.0, 2.0],
+            [4.0, 0.0, 4.0, 6.0, 6.0, 8.0],
         ])
 
         result = self._call_function_under_test(
@@ -630,14 +590,12 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
     def test_ignored_corner(self):
         nodes1 = np.asfortranarray([
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 1.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
         ])
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [-2.0, 3.0],
-            [1.0, -3.0],
+            [0.0, -2.0, 1.0],
+            [0.0, 3.0, -3.0],
         ])
 
         result = self._call_function_under_test(
@@ -649,20 +607,12 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
     def test_tangent_contained(self):
         nodes1 = np.asfortranarray([
-            [2.0, 1.25],
-            [4.0, 0.75],
-            [6.0, 1.25],
-            [3.0, 3.0],
-            [5.0, 3.0],
-            [4.0, 5.0],
+            [2.0, 4.0, 6.0, 3.0, 5.0, 4.0],
+            [1.25, 0.75, 1.25, 3.0, 3.0, 5.0],
         ])
         nodes2 = np.asfortranarray([
-            [0.0, 0.0],
-            [4.0, 2.0],
-            [8.0, 0.0],
-            [1.5, 7.5],
-            [11.0, 6.0],
-            [8.0, 8.0],
+            [0.0, 4.0, 8.0, 1.5, 11.0, 8.0],
+            [0.0, 2.0, 0.0, 7.5, 6.0, 8.0],
         ])
 
         result = self._call_function_under_test(
@@ -712,7 +662,9 @@ class Test__geometric_intersect(utils.NumPyTestCase):
     def test_bad_boundary(self):
         from bezier import _geometric_intersection
 
-        nodes1 = np.asfortranarray([
+        # NOTE: The transpose of a C-ordered array is Fortran-ordered,
+        #       i.e. this is on purpose.
+        nodes1 = np.array([
             [-0.519247936646441, 0.008196262233806585],
             [-0.5206153113582636, 0.01587839530234961],
             [-0.5220361984817866, 0.023564120023660037],
@@ -723,8 +675,8 @@ class Test__geometric_intersect(utils.NumPyTestCase):
             [-0.5418564772120571, 0.013842126833196683],
             [-0.5433055706504355, 0.02160135650021924],
             [-0.5530139922771271, 0.016726767154940626],
-        ])
-        nodes2 = np.asfortranarray([
+        ], order='C').T
+        nodes2 = np.array([
             [-0.5492475273303934, 0.004806678750684627],
             [-0.5507539103531026, 0.011215423321262663],
             [-0.552283211157318, 0.017577411042302475],
@@ -735,7 +687,7 @@ class Test__geometric_intersect(utils.NumPyTestCase):
             [-0.5596130517429451, 0.0014977481523963628],
             [-0.5612419767391262, 0.007849282849502192],
             [-0.5650788564504334, -0.0003406439314109452],
-        ])
+        ], order='C').T
         with self.assertRaises(self.BAD_BOUNDARY_TYPE) as exc_info:
             self._call_function_under_test(
                 nodes1, 3, nodes2, 3, verify=True)

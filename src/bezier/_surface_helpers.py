@@ -54,9 +54,9 @@ _WRONG_CURVE = 'Start and end node not defined on same curve'
 # NOTE: The ``SUBDIVIDE`` matrices are public since used in
 #       the ``surface`` module.
 LINEAR_SUBDIVIDE_A = np.asfortranarray([
-    [2, 0, 0],
-    [1, 1, 0],
-    [1, 0, 1],
+    [2, 1, 1],
+    [0, 1, 0],
+    [0, 0, 1],
 ], dtype=_FLOAT64) / 2.0
 LINEAR_SUBDIVIDE_B = np.asfortranarray([
     [0, 1, 1],
@@ -64,162 +64,162 @@ LINEAR_SUBDIVIDE_B = np.asfortranarray([
     [1, 1, 0],
 ], dtype=_FLOAT64) / 2.0
 LINEAR_SUBDIVIDE_C = np.asfortranarray([
-    [1, 1, 0],
-    [0, 2, 0],
-    [0, 1, 1],
+    [1, 0, 0],
+    [1, 2, 1],
+    [0, 0, 1],
 ], dtype=_FLOAT64) / 2.0
 LINEAR_SUBDIVIDE_D = np.asfortranarray([
-    [1, 0, 1],
-    [0, 1, 1],
-    [0, 0, 2],
+    [1, 0, 0],
+    [0, 1, 0],
+    [1, 1, 2],
 ], dtype=_FLOAT64) / 2.0
 QUADRATIC_SUBDIVIDE_A = np.asfortranarray([
-    [4, 0, 0, 0, 0, 0],
-    [2, 2, 0, 0, 0, 0],
-    [1, 2, 1, 0, 0, 0],
-    [2, 0, 0, 2, 0, 0],
-    [1, 1, 0, 1, 1, 0],
-    [1, 0, 0, 2, 0, 1],
+    [4, 2, 1, 2, 1, 1],
+    [0, 2, 2, 0, 1, 0],
+    [0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 2, 1, 2],
+    [0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 1],
 ], dtype=_FLOAT64) / 4.0
 QUADRATIC_SUBDIVIDE_B = np.asfortranarray([
-    [0, 0, 1, 0, 2, 1],
-    [0, 1, 0, 1, 1, 1],
-    [1, 0, 0, 2, 0, 1],
-    [0, 1, 1, 1, 1, 0],
-    [1, 1, 0, 1, 1, 0],
-    [1, 2, 1, 0, 0, 0],
+    [0, 0, 1, 0, 1, 1],
+    [0, 1, 0, 1, 1, 2],
+    [1, 0, 0, 1, 0, 1],
+    [0, 1, 2, 1, 1, 0],
+    [2, 1, 0, 1, 1, 0],
+    [1, 1, 1, 0, 0, 0],
 ], dtype=_FLOAT64) / 4.0
 QUADRATIC_SUBDIVIDE_C = np.asfortranarray([
-    [1, 2, 1, 0, 0, 0],
-    [0, 2, 2, 0, 0, 0],
-    [0, 0, 4, 0, 0, 0],
-    [0, 1, 1, 1, 1, 0],
-    [0, 0, 2, 0, 2, 0],
-    [0, 0, 1, 0, 2, 1],
+    [1, 0, 0, 0, 0, 0],
+    [2, 2, 0, 1, 0, 0],
+    [1, 2, 4, 1, 2, 1],
+    [0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 1, 2, 2],
+    [0, 0, 0, 0, 0, 1],
 ], dtype=_FLOAT64) / 4.0
 QUADRATIC_SUBDIVIDE_D = np.asfortranarray([
-    [1, 0, 0, 2, 0, 1],
-    [0, 1, 0, 1, 1, 1],
-    [0, 0, 1, 0, 2, 1],
-    [0, 0, 0, 2, 0, 2],
-    [0, 0, 0, 0, 2, 2],
-    [0, 0, 0, 0, 0, 4],
+    [1, 0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0],
+    [2, 1, 0, 2, 0, 0],
+    [0, 1, 2, 0, 2, 0],
+    [1, 1, 1, 2, 2, 4],
 ], dtype=_FLOAT64) / 4.0
 CUBIC_SUBDIVIDE_A = np.asfortranarray([
-    [8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
-    [2, 4, 2, 0, 0, 0, 0, 0, 0, 0],
-    [1, 3, 3, 1, 0, 0, 0, 0, 0, 0],
-    [4, 0, 0, 0, 4, 0, 0, 0, 0, 0],
-    [2, 2, 0, 0, 2, 2, 0, 0, 0, 0],
-    [1, 2, 1, 0, 1, 2, 1, 0, 0, 0],
-    [2, 0, 0, 0, 4, 0, 0, 2, 0, 0],
-    [1, 1, 0, 0, 2, 2, 0, 1, 1, 0],
-    [1, 0, 0, 0, 3, 0, 0, 3, 0, 1],
+    [8, 4, 2, 1, 4, 2, 1, 2, 1, 1],
+    [0, 4, 4, 3, 0, 2, 2, 0, 1, 0],
+    [0, 0, 2, 3, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 4, 2, 1, 4, 2, 3],
+    [0, 0, 0, 0, 0, 2, 2, 0, 2, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 2, 1, 3],
+    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 ], dtype=_FLOAT64) / 8.0
 CUBIC_SUBDIVIDE_B = np.asfortranarray([
-    [0, 0, 0, 1, 0, 0, 3, 0, 3, 1],
-    [0, 0, 1, 0, 0, 2, 1, 1, 2, 1],
-    [0, 1, 0, 0, 1, 2, 0, 2, 1, 1],
-    [1, 0, 0, 0, 3, 0, 0, 3, 0, 1],
-    [0, 0, 1, 1, 0, 2, 2, 1, 1, 0],
-    [0, 1, 1, 0, 1, 2, 1, 1, 1, 0],
-    [1, 1, 0, 0, 2, 2, 0, 1, 1, 0],
-    [0, 1, 2, 1, 1, 2, 1, 0, 0, 0],
-    [1, 2, 1, 0, 1, 2, 1, 0, 0, 0],
-    [1, 3, 3, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+    [0, 0, 1, 0, 0, 1, 1, 1, 2, 3],
+    [0, 1, 0, 0, 1, 1, 0, 2, 1, 3],
+    [1, 0, 0, 0, 1, 0, 0, 1, 0, 1],
+    [0, 0, 1, 3, 0, 1, 2, 1, 1, 0],
+    [0, 2, 2, 0, 2, 2, 2, 2, 2, 0],
+    [3, 1, 0, 0, 2, 1, 0, 1, 1, 0],
+    [0, 1, 2, 3, 1, 1, 1, 0, 0, 0],
+    [3, 2, 1, 0, 1, 1, 1, 0, 0, 0],
+    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
 ], dtype=_FLOAT64) / 8.0
 CUBIC_SUBDIVIDE_C = np.asfortranarray([
-    [1, 3, 3, 1, 0, 0, 0, 0, 0, 0],
-    [0, 2, 4, 2, 0, 0, 0, 0, 0, 0],
-    [0, 0, 4, 4, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 8, 0, 0, 0, 0, 0, 0],
-    [0, 1, 2, 1, 1, 2, 1, 0, 0, 0],
-    [0, 0, 2, 2, 0, 2, 2, 0, 0, 0],
-    [0, 0, 0, 4, 0, 0, 4, 0, 0, 0],
-    [0, 0, 1, 1, 0, 2, 2, 1, 1, 0],
-    [0, 0, 0, 2, 0, 0, 4, 0, 2, 0],
-    [0, 0, 0, 1, 0, 0, 3, 0, 3, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 2, 0, 0, 1, 0, 0, 0, 0, 0],
+    [3, 4, 4, 0, 2, 2, 0, 1, 0, 0],
+    [1, 2, 4, 8, 1, 2, 4, 1, 2, 1],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 2, 2, 0, 2, 0, 0],
+    [0, 0, 0, 0, 1, 2, 4, 2, 4, 3],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 2, 3],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 ], dtype=_FLOAT64) / 8.0
 CUBIC_SUBDIVIDE_D = np.asfortranarray([
-    [1, 0, 0, 0, 3, 0, 0, 3, 0, 1],
-    [0, 1, 0, 0, 1, 2, 0, 2, 1, 1],
-    [0, 0, 1, 0, 0, 2, 1, 1, 2, 1],
-    [0, 0, 0, 1, 0, 0, 3, 0, 3, 1],
-    [0, 0, 0, 0, 2, 0, 0, 4, 0, 2],
-    [0, 0, 0, 0, 0, 2, 0, 2, 2, 2],
-    [0, 0, 0, 0, 0, 0, 2, 0, 4, 2],
-    [0, 0, 0, 0, 0, 0, 0, 4, 0, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 4, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 8],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [3, 1, 0, 0, 2, 0, 0, 0, 0, 0],
+    [0, 2, 2, 0, 0, 2, 0, 0, 0, 0],
+    [0, 0, 1, 3, 0, 0, 2, 0, 0, 0],
+    [3, 2, 1, 0, 4, 2, 0, 4, 0, 0],
+    [0, 1, 2, 3, 0, 2, 4, 0, 4, 0],
+    [1, 1, 1, 1, 2, 2, 2, 4, 4, 8],
 ], dtype=_FLOAT64) / 8.0
 QUARTIC_SUBDIVIDE_A = np.asfortranarray([
-    [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [4, 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [2, 6, 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 4, 6, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [8, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [4, 4, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
-    [2, 4, 2, 0, 0, 2, 4, 2, 0, 0, 0, 0, 0, 0, 0],
-    [1, 3, 3, 1, 0, 1, 3, 3, 1, 0, 0, 0, 0, 0, 0],
-    [4, 0, 0, 0, 0, 8, 0, 0, 0, 4, 0, 0, 0, 0, 0],
-    [2, 2, 0, 0, 0, 4, 4, 0, 0, 2, 2, 0, 0, 0, 0],
-    [1, 2, 1, 0, 0, 2, 4, 2, 0, 1, 2, 1, 0, 0, 0],
-    [2, 0, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 2, 0, 0],
-    [1, 1, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 1, 1, 0],
-    [1, 0, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 4, 0, 1],
+    [16, 8, 4, 2, 1, 8, 4, 2, 1, 4, 2, 1, 2, 1, 1],
+    [0, 8, 8, 6, 4, 0, 4, 4, 3, 0, 2, 2, 0, 1, 0],
+    [0, 0, 4, 6, 6, 0, 0, 2, 3, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 2, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 8, 4, 2, 1, 8, 4, 2, 6, 3, 4],
+    [0, 0, 0, 0, 0, 0, 4, 4, 3, 0, 4, 4, 0, 3, 0],
+    [0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 2, 1, 6, 3, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 3, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 4],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 ], dtype=_FLOAT64) / 16.0
 QUARTIC_SUBDIVIDE_B = np.asfortranarray([
-    [0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 6, 0, 4, 1],
-    [0, 0, 0, 1, 0, 0, 0, 3, 1, 0, 3, 3, 1, 3, 1],
-    [0, 0, 1, 0, 0, 0, 2, 2, 0, 1, 4, 1, 2, 2, 1],
-    [0, 1, 0, 0, 0, 1, 3, 0, 0, 3, 3, 0, 3, 1, 1],
-    [1, 0, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 4, 0, 1],
-    [0, 0, 0, 1, 1, 0, 0, 3, 3, 0, 3, 3, 1, 1, 0],
-    [0, 0, 1, 1, 0, 0, 2, 3, 1, 1, 3, 2, 1, 1, 0],
-    [0, 1, 1, 0, 0, 1, 3, 2, 0, 2, 3, 1, 1, 1, 0],
-    [1, 1, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 1, 1, 0],
-    [0, 0, 1, 2, 1, 0, 2, 4, 2, 1, 2, 1, 0, 0, 0],
-    [0, 1, 2, 1, 0, 1, 3, 3, 1, 1, 2, 1, 0, 0, 0],
-    [1, 2, 1, 0, 0, 2, 4, 2, 0, 1, 2, 1, 0, 0, 0],
-    [0, 1, 3, 3, 1, 1, 3, 3, 1, 0, 0, 0, 0, 0, 0],
-    [1, 3, 3, 1, 0, 1, 3, 3, 1, 0, 0, 0, 0, 0, 0],
-    [1, 4, 6, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+    [0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 2, 1, 3, 4],
+    [0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 2, 1, 3, 3, 6],
+    [0, 1, 0, 0, 0, 1, 1, 0, 0, 2, 1, 0, 3, 1, 4],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1],
+    [0, 0, 0, 1, 4, 0, 0, 1, 3, 0, 1, 2, 1, 1, 0],
+    [0, 0, 2, 3, 0, 0, 2, 3, 3, 2, 3, 4, 3, 3, 0],
+    [0, 3, 2, 0, 0, 3, 3, 2, 0, 4, 3, 2, 3, 3, 0],
+    [4, 1, 0, 0, 0, 3, 1, 0, 0, 2, 1, 0, 1, 1, 0],
+    [0, 0, 1, 3, 6, 0, 1, 2, 3, 1, 1, 1, 0, 0, 0],
+    [0, 3, 4, 3, 0, 3, 3, 3, 3, 2, 2, 2, 0, 0, 0],
+    [6, 3, 1, 0, 0, 3, 2, 1, 0, 1, 1, 1, 0, 0, 0],
+    [0, 1, 2, 3, 4, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [4, 3, 2, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ], dtype=_FLOAT64) / 16.0
 QUARTIC_SUBDIVIDE_C = np.asfortranarray([
-    [1, 4, 6, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 2, 6, 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 4, 8, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 3, 3, 1, 1, 3, 3, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 2, 4, 2, 0, 2, 4, 2, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 4, 4, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 2, 1, 0, 2, 4, 2, 1, 2, 1, 0, 0, 0],
-    [0, 0, 0, 2, 2, 0, 0, 4, 4, 0, 2, 2, 0, 0, 0],
-    [0, 0, 0, 0, 4, 0, 0, 0, 8, 0, 0, 4, 0, 0, 0],
-    [0, 0, 0, 1, 1, 0, 0, 3, 3, 0, 3, 3, 1, 1, 0],
-    [0, 0, 0, 0, 2, 0, 0, 0, 6, 0, 0, 6, 0, 2, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 6, 0, 4, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [4, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [6, 6, 4, 0, 0, 3, 2, 0, 0, 1, 0, 0, 0, 0, 0],
+    [4, 6, 8, 8, 0, 3, 4, 4, 0, 2, 2, 0, 1, 0, 0],
+    [1, 2, 4, 8, 16, 1, 2, 4, 8, 1, 2, 4, 1, 2, 1],
+    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 3, 2, 0, 0, 2, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 3, 4, 4, 0, 4, 4, 0, 3, 0, 0],
+    [0, 0, 0, 0, 0, 1, 2, 4, 8, 2, 4, 8, 3, 6, 4],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 3, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4, 3, 6, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 ], dtype=_FLOAT64) / 16.0
 QUARTIC_SUBDIVIDE_D = np.asfortranarray([
-    [1, 0, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 4, 0, 1],
-    [0, 1, 0, 0, 0, 1, 3, 0, 0, 3, 3, 0, 3, 1, 1],
-    [0, 0, 1, 0, 0, 0, 2, 2, 0, 1, 4, 1, 2, 2, 1],
-    [0, 0, 0, 1, 0, 0, 0, 3, 1, 0, 3, 3, 1, 3, 1],
-    [0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 6, 0, 4, 1],
-    [0, 0, 0, 0, 0, 2, 0, 0, 0, 6, 0, 0, 6, 0, 2],
-    [0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 4, 0, 4, 2, 2],
-    [0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 4, 2, 2, 4, 2],
-    [0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 6, 0, 6, 2],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 8, 0, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 4, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 8, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [4, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 3, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 2, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+    [6, 3, 1, 0, 0, 6, 2, 0, 0, 4, 0, 0, 0, 0, 0],
+    [0, 3, 4, 3, 0, 0, 4, 4, 0, 0, 4, 0, 0, 0, 0],
+    [0, 0, 1, 3, 6, 0, 0, 2, 6, 0, 0, 4, 0, 0, 0],
+    [4, 3, 2, 1, 0, 6, 4, 2, 0, 8, 4, 0, 8, 0, 0],
+    [0, 1, 2, 3, 4, 0, 2, 4, 6, 0, 4, 8, 0, 8, 0],
+    [1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4, 4, 8, 8, 16],
 ], dtype=_FLOAT64) / 16.0
 _WEIGHTS_SUBDIVIDE0 = np.asfortranarray([1.0, 0.0, 0.0])
 _WEIGHTS_SUBDIVIDE1 = np.asfortranarray([0.5, 0.5, 0.0])
@@ -231,29 +231,23 @@ _WEIGHTS_SUBDIVIDE5 = np.asfortranarray([0.0, 0.0, 1.0])
 # dB/ds = [-2L1, 2(L1 - L2), 2L2, -2L3, 2L3, 0] * nodes
 # dB/dt = [-2L1, -2L2, 0, 2(L1 - L3), 2L2, 2L3] * nodes
 # We evaluate this at each of the 6 points in the quadratic
-# triangle and then stack them (2 rows * 6 = 12 rows)
+# triangle and then stack them (2 columns * 6 = 12 columns)
 # pylint: disable=bad-whitespace
 _QUADRATIC_JACOBIAN_HELPER = np.asfortranarray([
-    [-2,  2, 0,  0, 0, 0],
-    [-2,  0, 0,  2, 0, 0],
-    [-1,  0, 1,  0, 0, 0],
-    [-1, -1, 0,  1, 1, 0],
-    [ 0, -2, 2,  0, 0, 0],  # noqa: E201
-    [ 0, -2, 0,  0, 2, 0],  # noqa: E201
-    [-1,  1, 0, -1, 1, 0],
-    [-1,  0, 0,  0, 0, 1],
-    [ 0, -1, 1, -1, 1, 0],  # noqa: E201
-    [ 0, -1, 0, -1, 1, 1],  # noqa: E201
-    [ 0,  0, 0, -2, 2, 0],  # noqa: E201
-    [ 0,  0, 0, -2, 0, 2],  # noqa: E201
+    [-2, -2, -1, -1, 0, 0, -1, -1, 0, 0, 0, 0],
+    [2, 0, 0, -1, -2, -2, 1, 0, -1, -1, 0, 0],
+    [0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 0, 0],
+    [0, 2, 0, 1, 0, 0, -1, 0, -1, -1, -2, -2],
+    [0, 0, 0, 1, 0, 2, 1, 0, 1, 1, 2, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 2],
 ], dtype=_FLOAT64)
 _QUADRATIC_TO_BERNSTEIN = np.asfortranarray([
-    [ 2, 0,  0, 0, 0,  0],  # noqa: E201
-    [-1, 4, -1, 0, 0,  0],
-    [ 0, 0,  2, 0, 0,  0],  # noqa: E201
-    [-1, 0,  0, 4, 0, -1],
-    [ 0, 0, -1, 0, 4, -1],  # noqa: E201
-    [ 0, 0,  0, 0, 0,  2],  # noqa: E201
+    [2, -1, 0, -1, 0, 0],
+    [0, 4, 0, 0, 0, 0],
+    [0, -1, 2, 0, -1, 0],
+    [0, 0, 0, 4, 0, 0],
+    [0, 0, 0, 0, 4, 0],
+    [0, 0, 0, -1, -1, 2],
 ], dtype=_FLOAT64) / 2.0
 # pylint: enable=bad-whitespace
 # The Jacobian of a cubic (in any dimension) as given by
@@ -262,57 +256,47 @@ _QUADRATIC_TO_BERNSTEIN = np.asfortranarray([
 # dB/dt = [-3 L1^2, -6 L1 L2, -3 L2^2, 0, 3 L1(L1 - 2 L3), 6 L2 (L1 - L3),
 #          3 L2^2, 3 L3(2 L1 - L3), 6 L2 L3, 3 L3^2] * nodes
 # We evaluate this at each of the 15 points in the quartic
-# triangle and then stack them (2 rows * 15 = 30 rows)
+# triangle and then stack them (2 columns * 15 = 30 columns)
 # pylint: disable=bad-whitespace
 _CUBIC_JACOBIAN_HELPER = np.asfortranarray([
-    [-48,  48,   0,  0,   0,   0,  0,   0,  0,  0],
-    [-48,   0,   0,  0,  48,   0,  0,   0,  0,  0],
-    [-27,   9,  15,  3,   0,   0,  0,   0,  0,  0],
-    [-27, -18,  -3,  0,  27,  18,  3,   0,  0,  0],
-    [-12, -12,  12, 12,   0,   0,  0,   0,  0,  0],
-    [-12, -24, -12,  0,  12,  24, 12,   0,  0,  0],
-    [ -3, -15,  -9, 27,   0,   0,  0,   0,  0,  0],  # noqa: E201
-    [ -3, -18, -27,  0,   3,  18, 27,   0,  0,  0],  # noqa: E201
-    [  0,   0, -48, 48,   0,   0,  0,   0,  0,  0],  # noqa: E201
-    [  0,   0, -48,  0,   0,   0, 48,   0,  0,  0],  # noqa: E201
-    [-27,  27,   0,  0, -18,  18,  0,  -3,  3,  0],
-    [-27,   0,   0,  0,   9,   0,  0,  15,  0,  3],
-    [-12,   0,   9,  3, -12,   6,  6,  -3,  3,  0],
-    [-12, -12,  -3,  0,   0,   6,  3,   9,  6,  3],
-    [ -3,  -9,   0, 12,  -6,  -6, 12,  -3,  3,  0],  # noqa: E201
-    [ -3, -12, -12,  0,  -3,   0, 12,   3, 12,  3],  # noqa: E201
-    [  0,   0, -27, 27,   0, -18, 18,  -3,  3,  0],  # noqa: E201
-    [  0,   0, -27,  0,   0, -18, 27,  -3, 18,  3],  # noqa: E201
-    [-12,  12,   0,  0, -24,  24,  0, -12, 12,  0],
-    [-12,   0,   0,  0, -12,   0,  0,  12,  0, 12],
-    [ -3,  -3,   3,  3, -12,   0, 12, -12, 12,  0],  # noqa: E201
-    [ -3,  -6,  -3,  0,  -9,  -6,  3,   0, 12, 12],  # noqa: E201
-    [  0,   0, -12, 12,   0, -24, 24, -12, 12,  0],  # noqa: E201
-    [  0,   0, -12,  0,   0, -24, 12, -12, 24, 12],  # noqa: E201
-    [ -3,   3,   0,  0, -18,  18,  0, -27, 27,  0],  # noqa: E201
-    [ -3,   0,   0,  0, -15,   0,  0,  -9,  0, 27],  # noqa: E201
-    [  0,   0,  -3,  3,   0, -18, 18, -27, 27,  0],  # noqa: E201
-    [  0,   0,  -3,  0,   0, -18,  3, -27, 18, 27],  # noqa: E201
-    [  0,   0,   0,  0,   0,   0,  0, -48, 48,  0],  # noqa: E201
-    [  0,   0,   0,  0,   0,   0,  0, -48,  0, 48],  # noqa: E201
+    [-48, -48, -27, -27, -12, -12, -3, -3, 0, 0, -27, -27, -12, -12,
+     -3, -3, 0, 0, -12, -12, -3, -3, 0, 0, -3, -3, 0, 0, 0, 0],
+    [48, 0, 9, -18, -12, -24, -15, -18, 0, 0, 27, 0, 0, -12, -9,
+     -12, 0, 0, 12, 0, -3, -6, 0, 0, 3, 0, 0, 0, 0, 0],
+    [0, 0, 15, -3, 12, -12, -9, -27, -48, -48, 0, 0, 9, -3, 0, -12,
+     -27, -27, 0, 0, 3, -3, -12, -12, 0, 0, -3, -3, 0, 0],
+    [0, 0, 3, 0, 12, 0, 27, 0, 48, 0, 0, 0, 3, 0, 12, 0, 27, 0, 0,
+     0, 3, 0, 12, 0, 0, 0, 3, 0, 0, 0],
+    [0, 48, 0, 27, 0, 12, 0, 3, 0, 0, -18, 9, -12, 0, -6, -3, 0, 0,
+     -24, -12, -12, -9, 0, 0, -18, -15, 0, 0, 0, 0],
+    [0, 0, 0, 18, 0, 24, 0, 18, 0, 0, 18, 0, 6, 6, -6, 0, -18, -18,
+     24, 0, 0, -6, -24, -24, 18, 0, -18, -18, 0, 0],
+    [0, 0, 0, 3, 0, 12, 0, 27, 0, 48, 0, 0, 6, 3, 12, 12, 18, 27,
+     0, 0, 12, 3, 24, 12, 0, 0, 18, 3, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, 15, -3, 9, -3, 3, -3, -3,
+     -12, 12, -12, 0, -12, -12, -27, -9, -27, -27, -48, -48],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 6, 3, 12, 3, 18, 12,
+     0, 12, 12, 12, 24, 27, 0, 27, 18, 48, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 3, 0, 3, 0,
+     12, 0, 12, 0, 12, 0, 27, 0, 27, 0, 48],
 ], dtype=_FLOAT64) / 16.0
 # pylint: enable=bad-whitespace
 _QUARTIC_TO_BERNSTEIN = np.asfortranarray([
-    [36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [-39, 144, -108, 48, -9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [26, -128, 240, -128, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [-9, 48, -108, 144, -39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [-39, 0, 0, 0, 0, 144, 0, 0, 0, -108, 0, 0, 48, 0, -9],
-    [26, -64, -24, 32, -9, -64, 288, -96, 16, -24, -96, 12, 32, 16, -9],
-    [-9, 32, -24, -64, 26, 16, -96, 288, -64, 12, -96, -24, 16, 32, -9],
-    [0, 0, 0, 0, -39, 0, 0, 0, 144, 0, 0, -108, 0, 48, -9],
-    [26, 0, 0, 0, 0, -128, 0, 0, 0, 240, 0, 0, -128, 0, 26],
-    [-9, 16, 12, 16, -9, 32, -96, -96, 32, -24, 288, -24, -64, -64, 26],
-    [0, 0, 0, 0, 26, 0, 0, 0, -128, 0, 0, 240, 0, -128, 26],
-    [-9, 0, 0, 0, 0, 48, 0, 0, 0, -108, 0, 0, 144, 0, -39],
-    [0, 0, 0, 0, -9, 0, 0, 0, 48, 0, 0, -108, 0, 144, -39],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36],
+    [36, -39, 26, -9, 0, -39, 26, -9, 0, 26, -9, 0, -9, 0, 0],
+    [0, 144, -128, 48, 0, 0, -64, 32, 0, 0, 16, 0, 0, 0, 0],
+    [0, -108, 240, -108, 0, 0, -24, -24, 0, 0, 12, 0, 0, 0, 0],
+    [0, 48, -128, 144, 0, 0, 32, -64, 0, 0, 16, 0, 0, 0, 0],
+    [0, -9, 26, -39, 36, 0, -9, 26, -39, 0, -9, 26, 0, -9, 0],
+    [0, 0, 0, 0, 0, 144, -64, 16, 0, -128, 32, 0, 48, 0, 0],
+    [0, 0, 0, 0, 0, 0, 288, -96, 0, 0, -96, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, -96, 288, 0, 0, -96, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 16, -64, 144, 0, 32, -128, 0, 48, 0],
+    [0, 0, 0, 0, 0, -108, -24, 12, 0, 240, -24, 0, -108, 0, 0],
+    [0, 0, 0, 0, 0, 0, -96, -96, 0, 0, 288, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 12, -24, -108, 0, -24, 240, 0, -108, 0],
+    [0, 0, 0, 0, 0, 48, 32, 16, 0, -128, -64, 0, 144, 0, 0],
+    [0, 0, 0, 0, 0, 0, 16, 32, 48, 0, -64, -128, 0, 144, 0],
+    [0, 0, 0, 0, 0, -9, -9, -9, -9, 26, 26, 26, -39, -39, 36],
 ], dtype=_FLOAT64)
 # NOTE: We avoid round-off until after ``_QUARTIC_TO_BERNSTEIN``
 #       has been applied.
@@ -373,7 +357,7 @@ def polynomial_sign(poly_surface, degree):
     sign.
 
     Args:
-        poly_surface (numpy.ndarray): 2D array (with 1 column) of control
+        poly_surface (numpy.ndarray): 2D array (with 1 row) of control
             points for a "surface", i.e. a bivariate polynomial.
         degree (int): The degree of the surface / polynomial given by
             ``poly_surface``.
@@ -395,7 +379,7 @@ def polynomial_sign(poly_surface, degree):
         undecided = []
         for poly in sub_polys:
             # First add all the signs of the corner nodes.
-            signs.update(_SIGN(poly[corner_indices, 0]).astype(int))
+            signs.update(_SIGN(poly[0, corner_indices]).astype(int))
             # Then check if the ``poly`` nodes are **uniformly** one sign.
             if np.all(poly == 0.0):
                 signs.add(0)
@@ -473,33 +457,33 @@ def quadratic_jacobian_polynomial(nodes):
 
     .. note::
 
-       This assumes that ``nodes`` is 6x2 but doesn't verify this.
-       (However, the multiplication by ``_QUADRATIC_JACOBIAN_HELPER``
-       would fail if ``nodes`` wasn't 6xN and then the ensuing
-       determinants would fail if there weren't 2 columns.)
+       This assumes that ``nodes`` is ``2 x 6`` but doesn't verify this.
+       (However, the right multiplication by ``_QUADRATIC_JACOBIAN_HELPER``
+       would fail if ``nodes`` wasn't ``R x 6`` and then the ensuing
+       determinants would fail if there weren't 2 rows.)
 
     Args:
-        nodes (numpy.ndarray): A 6x2 array of nodes in a surface.
+        nodes (numpy.ndarray): A 2 x 6 array of nodes in a surface.
 
     Returns:
-        numpy.ndarray: Coefficients in Bernstein basis.
+        numpy.ndarray: 1 x 6 array, coefficients in Bernstein basis.
     """
     # First evaluate the Jacobian at each of the 6 nodes.
     # pylint: disable=no-member
     jac_parts = _helpers.matrix_product(
-        _QUADRATIC_JACOBIAN_HELPER, nodes)
+        nodes, _QUADRATIC_JACOBIAN_HELPER)
     # pylint: enable=no-member
-    jac_at_nodes = np.empty((6, 1), order='F')
-    jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:2, :])
-    jac_at_nodes[1, 0] = two_by_two_det(jac_parts[2:4, :])
-    jac_at_nodes[2, 0] = two_by_two_det(jac_parts[4:6, :])
-    jac_at_nodes[3, 0] = two_by_two_det(jac_parts[6:8, :])
-    jac_at_nodes[4, 0] = two_by_two_det(jac_parts[8:10, :])
-    jac_at_nodes[5, 0] = two_by_two_det(jac_parts[10:, :])
+    jac_at_nodes = np.empty((1, 6), order='F')
+    jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
+    jac_at_nodes[0, 1] = two_by_two_det(jac_parts[:, 2:4])
+    jac_at_nodes[0, 2] = two_by_two_det(jac_parts[:, 4:6])
+    jac_at_nodes[0, 3] = two_by_two_det(jac_parts[:, 6:8])
+    jac_at_nodes[0, 4] = two_by_two_det(jac_parts[:, 8:10])
+    jac_at_nodes[0, 5] = two_by_two_det(jac_parts[:, 10:])
 
     # Convert the nodal values to the Bernstein basis...
     bernstein = _helpers.matrix_product(
-        _QUADRATIC_TO_BERNSTEIN, jac_at_nodes)
+        jac_at_nodes, _QUADRATIC_TO_BERNSTEIN)
     return bernstein
 
 
@@ -517,42 +501,41 @@ def cubic_jacobian_polynomial(nodes):
 
     .. note::
 
-       This assumes that ``nodes`` is 10x2 but doesn't verify this.
-       (However, the multiplication by ``_CUBIC_JACOBIAN_HELPER``
-       would fail if ``nodes`` wasn't 10xN and then the ensuing
-       determinants would fail if there weren't 2 columns.)
+       This assumes that ``nodes`` is ``2 x 10`` but doesn't verify this.
+       (However, the right multiplication by ``_CUBIC_JACOBIAN_HELPER``
+       would fail if ``nodes`` wasn't ``R x 10`` and then the ensuing
+       determinants would fail if there weren't 2 rows.)
 
     Args:
-        nodes (numpy.ndarray): A 10x2 array of nodes in a surface.
+        nodes (numpy.ndarray): A 2 x 10 array of nodes in a surface.
 
     Returns:
-        numpy.ndarray: 15x1 array, coefficients in Bernstein basis.
+        numpy.ndarray: 1 x 15 array, coefficients in Bernstein basis.
     """
     # First evaluate the Jacobian at each of the 15 nodes
     # in the quartic triangle.
     jac_parts = _helpers.matrix_product(
-        _CUBIC_JACOBIAN_HELPER, nodes)
-    jac_at_nodes = np.empty((15, 1), order='F')
-    jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:2, :])
-    jac_at_nodes[1, 0] = two_by_two_det(jac_parts[2:4, :])
-    jac_at_nodes[2, 0] = two_by_two_det(jac_parts[4:6, :])
-    jac_at_nodes[3, 0] = two_by_two_det(jac_parts[6:8, :])
-    jac_at_nodes[4, 0] = two_by_two_det(jac_parts[8:10, :])
-    jac_at_nodes[5, 0] = two_by_two_det(jac_parts[10:12, :])
-    jac_at_nodes[6, 0] = two_by_two_det(jac_parts[12:14, :])
-    jac_at_nodes[7, 0] = two_by_two_det(jac_parts[14:16, :])
-    jac_at_nodes[8, 0] = two_by_two_det(jac_parts[16:18, :])
-    jac_at_nodes[9, 0] = two_by_two_det(jac_parts[18:20, :])
-    jac_at_nodes[10, 0] = two_by_two_det(jac_parts[20:22, :])
-    jac_at_nodes[11, 0] = two_by_two_det(jac_parts[22:24, :])
-    jac_at_nodes[12, 0] = two_by_two_det(jac_parts[24:26, :])
-    jac_at_nodes[13, 0] = two_by_two_det(jac_parts[26:28, :])
-    jac_at_nodes[14, 0] = two_by_two_det(jac_parts[28:, :])
-
+        nodes, _CUBIC_JACOBIAN_HELPER)
+    jac_at_nodes = np.empty((1, 15), order='F')
+    jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
+    jac_at_nodes[0, 1] = two_by_two_det(jac_parts[:, 2:4])
+    jac_at_nodes[0, 2] = two_by_two_det(jac_parts[:, 4:6])
+    jac_at_nodes[0, 3] = two_by_two_det(jac_parts[:, 6:8])
+    jac_at_nodes[0, 4] = two_by_two_det(jac_parts[:, 8:10])
+    jac_at_nodes[0, 5] = two_by_two_det(jac_parts[:, 10:12])
+    jac_at_nodes[0, 6] = two_by_two_det(jac_parts[:, 12:14])
+    jac_at_nodes[0, 7] = two_by_two_det(jac_parts[:, 14:16])
+    jac_at_nodes[0, 8] = two_by_two_det(jac_parts[:, 16:18])
+    jac_at_nodes[0, 9] = two_by_two_det(jac_parts[:, 18:20])
+    jac_at_nodes[0, 10] = two_by_two_det(jac_parts[:, 20:22])
+    jac_at_nodes[0, 11] = two_by_two_det(jac_parts[:, 22:24])
+    jac_at_nodes[0, 12] = two_by_two_det(jac_parts[:, 24:26])
+    jac_at_nodes[0, 13] = two_by_two_det(jac_parts[:, 26:28])
+    jac_at_nodes[0, 14] = two_by_two_det(jac_parts[:, 28:])
     # Convert the nodal values to the Bernstein basis...
     # pylint: disable=no-member
     bernstein = _helpers.matrix_product(
-        _QUARTIC_TO_BERNSTEIN, jac_at_nodes)
+        jac_at_nodes, _QUARTIC_TO_BERNSTEIN)
     # pylint: enable=no-member
     bernstein /= _QUARTIC_BERNSTEIN_FACTOR
     return bernstein
@@ -582,8 +565,8 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
 
     .. note:
 
-       For degree :math:`d`d, the number of nodes should be
-       :math:`(d + 1)(d + 2)/2`, but we don't verify this property.
+       For degree :math:`d`, the number of nodes should be
+       :math:`(d + 1)(d + 2)/2`, but we don't verify this.
 
     Args:
         nodes (numpy.ndarray): The nodes to reduce.
@@ -595,10 +578,10 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     Returns:
         numpy.ndarray: The converted nodes.
     """
-    num_nodes, dimension = nodes.shape
+    dimension, num_nodes = nodes.shape
     num_new_nodes = num_nodes - degree - 1
 
-    new_nodes = np.empty((num_new_nodes, dimension), order='F')
+    new_nodes = np.empty((dimension, num_new_nodes), order='F')
 
     index = 0
     # parent_i1 = index + k
@@ -610,10 +593,10 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     for k in six.moves.xrange(degree):
         for unused_j in six.moves.xrange(degree - k):
             # NOTE: i = (degree - 1) - j - k
-            new_nodes[index, :] = (
-                lambda1 * nodes[parent_i1, :] +
-                lambda2 * nodes[parent_i2, :] +
-                lambda3 * nodes[parent_i3, :])
+            new_nodes[:, index] = (
+                lambda1 * nodes[:, parent_i1] +
+                lambda2 * nodes[:, parent_i2] +
+                lambda3 * nodes[:, parent_i3])
             # Update all the indices.
             parent_i1 += 1
             parent_i2 += 1
@@ -710,7 +693,7 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
         for j in six.moves.xrange(degree + 1 - k):
             i = degree - j - k
             key = (0,) * i + (1,) * j + (2,) * k
-            result[index, :] = vals_by_weight[key]
+            result[:, index] = vals_by_weight[key][:, 0]
             index += 1
 
     return result
@@ -767,7 +750,7 @@ def _specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
             for next_id in six.moves.xrange(key[-1], 2 + 1):
                 new_key = key + (next_id,)
                 new_partial[new_key] = _helpers.matrix_product(
-                    transform[next_id], sub_nodes)
+                    sub_nodes, transform[next_id])
 
         partial_vals = new_partial
 
@@ -795,25 +778,25 @@ def _subdivide_nodes(nodes, degree):
         nodes for the four sub-surfaces.
     """
     if degree == 1:
-        nodes_a = _helpers.matrix_product(LINEAR_SUBDIVIDE_A, nodes)
-        nodes_b = _helpers.matrix_product(LINEAR_SUBDIVIDE_B, nodes)
-        nodes_c = _helpers.matrix_product(LINEAR_SUBDIVIDE_C, nodes)
-        nodes_d = _helpers.matrix_product(LINEAR_SUBDIVIDE_D, nodes)
+        nodes_a = _helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_A)
+        nodes_b = _helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_B)
+        nodes_c = _helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_C)
+        nodes_d = _helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_D)
     elif degree == 2:
-        nodes_a = _helpers.matrix_product(QUADRATIC_SUBDIVIDE_A, nodes)
-        nodes_b = _helpers.matrix_product(QUADRATIC_SUBDIVIDE_B, nodes)
-        nodes_c = _helpers.matrix_product(QUADRATIC_SUBDIVIDE_C, nodes)
-        nodes_d = _helpers.matrix_product(QUADRATIC_SUBDIVIDE_D, nodes)
+        nodes_a = _helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_A)
+        nodes_b = _helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_B)
+        nodes_c = _helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_C)
+        nodes_d = _helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_D)
     elif degree == 3:
-        nodes_a = _helpers.matrix_product(CUBIC_SUBDIVIDE_A, nodes)
-        nodes_b = _helpers.matrix_product(CUBIC_SUBDIVIDE_B, nodes)
-        nodes_c = _helpers.matrix_product(CUBIC_SUBDIVIDE_C, nodes)
-        nodes_d = _helpers.matrix_product(CUBIC_SUBDIVIDE_D, nodes)
+        nodes_a = _helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_A)
+        nodes_b = _helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_B)
+        nodes_c = _helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_C)
+        nodes_d = _helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_D)
     elif degree == 4:
-        nodes_a = _helpers.matrix_product(QUARTIC_SUBDIVIDE_A, nodes)
-        nodes_b = _helpers.matrix_product(QUARTIC_SUBDIVIDE_B, nodes)
-        nodes_c = _helpers.matrix_product(QUARTIC_SUBDIVIDE_C, nodes)
-        nodes_d = _helpers.matrix_product(QUARTIC_SUBDIVIDE_D, nodes)
+        nodes_a = _helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_A)
+        nodes_b = _helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_B)
+        nodes_c = _helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_C)
+        nodes_d = _helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_D)
     else:
         nodes_a = specialize_surface(
             nodes, degree,
@@ -846,16 +829,16 @@ def jacobian_s(nodes, degree, dimension):
 
     Returns:
         numpy.ndarray: Nodes of the Jacobian surface in
-            B |eacute| zier form.
+        B |eacute| zier form.
     """
     num_nodes = (degree * (degree + 1)) // 2
-    result = np.empty((num_nodes, dimension), order='F')
+    result = np.empty((dimension, num_nodes), order='F')
 
     index = 0
     i = 0
     for num_vals in six.moves.xrange(degree, 0, -1):
         for _ in six.moves.xrange(num_vals):
-            result[index, :] = nodes[i + 1, :] - nodes[i, :]
+            result[:, index] = nodes[:, i + 1] - nodes[:, i]
             # Update the indices
             index += 1
             i += 1
@@ -881,17 +864,17 @@ def jacobian_t(nodes, degree, dimension):
 
     Returns:
         numpy.ndarray: Nodes of the Jacobian surface in
-            B |eacute| zier form.
+        B |eacute| zier form.
     """
     num_nodes = (degree * (degree + 1)) // 2
-    result = np.empty((num_nodes, dimension), order='F')
+    result = np.empty((dimension, num_nodes), order='F')
 
     index = 0
     i = 0
     j = degree + 1
     for num_vals in six.moves.xrange(degree, 0, -1):
         for _ in six.moves.xrange(num_vals):
-            result[index, :] = nodes[j, :] - nodes[i, :]
+            result[:, index] = nodes[:, j] - nodes[:, i]
             # Update the indices
             index += 1
             i += 1
@@ -920,10 +903,10 @@ def _jacobian_both(nodes, degree, dimension):
         numpy.ndarray: Nodes of the Jacobian surfaces in
             B |eacute| zier form.
     """
-    num_nodes, _ = nodes.shape
-    result = np.empty((num_nodes - degree - 1, 2 * dimension), order='F')
-    result[:, :dimension] = jacobian_s(nodes, degree, dimension)
-    result[:, dimension:] = jacobian_t(nodes, degree, dimension)
+    _, num_nodes = nodes.shape
+    result = np.empty((2 * dimension, num_nodes - degree - 1), order='F')
+    result[:dimension, :] = jacobian_s(nodes, degree, dimension)
+    result[dimension:, :] = jacobian_t(nodes, degree, dimension)
     return result
 
 
@@ -954,12 +937,8 @@ def _jacobian_det(nodes, degree, st_vals):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes = np.asfortranarray([
-       ...     [0.0, 0.0],
-       ...     [1.0, 0.0],
-       ...     [2.0, 0.0],
-       ...     [0.0, 1.0],
-       ...     [1.5, 1.5],
-       ...     [0.0, 2.0],
+       ...     [0.0, 1.0, 2.0, 0.0, 1.5, 0.0],
+       ...     [0.0, 0.0, 0.0, 1.0, 1.5, 2.0],
        ... ])
        >>> surface = bezier.Surface(nodes, degree=2)
        >>> st_vals = np.asfortranarray([
@@ -969,9 +948,8 @@ def _jacobian_det(nodes, degree, st_vals):
        ... ])
        >>> s_vals, t_vals = st_vals.T
        >>> surface.evaluate_cartesian_multi(st_vals)
-       array([[0.5    , 0.     ],
-              [1.59375, 0.34375],
-              [1.25   , 1.25   ]])
+       array([[0.5 , 1.59375, 1.25 ],
+              [0.  , 0.34375, 1.25 ]])
        >>> # B(s, t) = [s(t + 2), t(s + 2)]
        >>> s_vals * (t_vals + 2)
        array([0.5 , 1.59375, 1.25 ])
@@ -992,7 +970,7 @@ def _jacobian_det(nodes, degree, st_vals):
         nodes (numpy.ndarray): Nodes defining a B |eacute| zier
             surface :math:`B(s, t)`.
         degree (int): The degree of the surface :math:`B`.
-        st_vals (numpy.ndarray): ``Nx2`` array of Cartesian
+        st_vals (numpy.ndarray): ``N x 2`` array of Cartesian
             inputs to B |eacute| zier surfaces defined by
             :math:`B_s` and :math:`B_t`.
 
@@ -1003,14 +981,14 @@ def _jacobian_det(nodes, degree, st_vals):
     jac_nodes = jacobian_both(nodes, degree, 2)
     if degree == 1:
         num_vals, _ = st_vals.shape
-        bs_bt_vals = np.repeat(jac_nodes, num_vals, axis=0)
+        bs_bt_vals = np.repeat(jac_nodes, num_vals, axis=1)
     else:
         bs_bt_vals = evaluate_cartesian_multi(
             jac_nodes, degree - 1, st_vals, 4)
 
     # Take the determinant for each (s, t).
-    return (bs_bt_vals[:, 0] * bs_bt_vals[:, 3] -
-            bs_bt_vals[:, 1] * bs_bt_vals[:, 2])
+    return (bs_bt_vals[0, :] * bs_bt_vals[3, :] -
+            bs_bt_vals[1, :] * bs_bt_vals[2, :])
 
 
 def classify_tangent_intersection(
@@ -1026,11 +1004,11 @@ def classify_tangent_intersection(
         nodes1 (numpy.ndarray): Control points for the first curve at
             the intersection.
         tangent1 (numpy.ndarray): The tangent vector to the first curve
-            at the intersection.
+            at the intersection (``2 x 1`` array).
         nodes2 (numpy.ndarray): Control points for the second curve at
             the intersection.
         tangent2 (numpy.ndarray): The tangent vector to the second curve
-            at the intersection.
+            at the intersection (``2 x 1`` array).
 
     Returns:
         IntersectionClassification: The "inside" curve type, based on
@@ -1043,8 +1021,9 @@ def classify_tangent_intersection(
         NotImplementedError: If the curves are tangent at the intersection
             and have the same curvature.
     """
-    # Each array is 1x2 (i.e. a row vector), we want the vector dot product.
-    dot_prod = np.vdot(tangent1[0, :], tangent2[0, :])
+    # Each array is 2 x 1 (i.e. a column vector), we want the vector
+    # dot product.
+    dot_prod = np.vdot(tangent1[:, 0], tangent2[:, 0])
     # NOTE: When computing curvatures we assume that we don't have lines
     #       here, because lines that are tangent at an intersection are
     #       parallel and we don't handle that case.
@@ -1091,18 +1070,20 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     ``t`` are ``0``, but **not both**.
 
     Args:
-        edge_tangent (numpy.ndarray): Tangent vector along the edge
-            that the intersection occurs in the middle of.
-        corner_tangent (numpy.ndarray): Tangent vector at the corner
-            where intersection occurs (at the beginning of edge).
+        edge_tangent (numpy.ndarray): Tangent vector (``2 x 1`` array) along
+            the edge that the intersection occurs in the middle of.
+        corner_tangent (numpy.ndarray): Tangent vector (``2 x 1`` array) at
+            the corner where intersection occurs (at the beginning of edge).
         corner_previous_edge (numpy.ndarray): Edge that ends at the corner
             intersection (whereas ``corner_tangent`` comes from the edge
-            that **begins** at the corner intersection).
+            that **begins** at the corner intersection). This is a ``2 x N``
+            array where ``N`` is the number of nodes on the edge.
 
     Returns:
         bool: Indicates if the corner intersection should be ignored.
     """
-    cross_prod = _helpers.cross_product(edge_tangent, corner_tangent)
+    cross_prod = _helpers.cross_product(
+        edge_tangent.ravel(order='F'), corner_tangent.ravel(order='F'))
     # A negative cross product indicates that ``edge_tangent`` is
     # "inside" / "to the left" of ``corner_tangent`` (due to right-hand rule).
     if cross_prod > 0.0:
@@ -1113,7 +1094,8 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
         1.0, corner_previous_edge)
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
-    cross_prod = _helpers.cross_product(edge_tangent, alt_corner_tangent)
+    cross_prod = _helpers.cross_product(
+        edge_tangent.ravel(order='F'), alt_corner_tangent.ravel(order='F'))
     return cross_prod <= 0.0
 
 
@@ -1135,10 +1117,10 @@ def ignored_double_corner(
 
     Args:
         intersection (.Intersection): An intersection to "diagnose".
-        tangent_s (numpy.ndarray): The tangent vector to the first curve
-            at the intersection.
-        tangent_t (numpy.ndarray): The tangent vector to the second curve
-            at the intersection.
+        tangent_s (numpy.ndarray): The tangent vector (``2 x 1`` array) to
+            the first curve at the intersection.
+        tangent_t (numpy.ndarray): The tangent vector (``2 x 1`` array) to
+            the second curve at the intersection.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the first surface being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
@@ -1153,7 +1135,8 @@ def ignored_double_corner(
     alt_tangent_s = _curve_helpers.evaluate_hodograph(1.0, prev_edge)
 
     # First check if ``tangent_t`` is interior to the ``s`` surface.
-    cross_prod1 = _helpers.cross_product(tangent_s, tangent_t)
+    cross_prod1 = _helpers.cross_product(
+        tangent_s.ravel(order='F'), tangent_t.ravel(order='F'))
     # A positive cross product indicates that ``tangent_t`` is
     # interior to ``tangent_s``. Similar for ``alt_tangent_s``.
     # If ``tangent_t`` is interior to both, then the surfaces
@@ -1161,7 +1144,8 @@ def ignored_double_corner(
     # not be ignored.
     if cross_prod1 >= 0.0:
         # Only compute ``cross_prod2`` if we need to.
-        cross_prod2 = _helpers.cross_product(alt_tangent_s, tangent_t)
+        cross_prod2 = _helpers.cross_product(
+            alt_tangent_s.ravel(order='F'), tangent_t.ravel(order='F'))
         if cross_prod2 >= 0.0:
             return False
 
@@ -1173,10 +1157,12 @@ def ignored_double_corner(
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
 
-    cross_prod3 = _helpers.cross_product(tangent_s, alt_tangent_t)
+    cross_prod3 = _helpers.cross_product(
+        tangent_s.ravel(order='F'), alt_tangent_t.ravel(order='F'))
     if cross_prod3 >= 0.0:
         # Only compute ``cross_prod4`` if we need to.
-        cross_prod4 = _helpers.cross_product(alt_tangent_s, alt_tangent_t)
+        cross_prod4 = _helpers.cross_product(
+            alt_tangent_s.ravel(order='F'), alt_tangent_t.ravel(order='F'))
         if cross_prod4 >= 0.0:
             return False
 
@@ -1217,10 +1203,10 @@ def ignored_corner(
 
     Args:
         intersection (.Intersection): An intersection to "diagnose".
-        tangent_s (numpy.ndarray): The tangent vector to the first curve
-            at the intersection.
-        tangent_t (numpy.ndarray): The tangent vector to the second curve
-            at the intersection.
+        tangent_s (numpy.ndarray): The tangent vector (``2 x 1`` array) to
+            the first curve at the intersection.
+        tangent_t (numpy.ndarray): The tangent vector (``2 x 1`` array) to
+            the second curve at the intersection.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the first surface being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
@@ -1292,26 +1278,27 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes1 = np.asfortranarray([
-       ...     [1.0 , 0.0 ],
-       ...     [1.75, 0.25],
-       ...     [2.0 , 1.0 ],
+       ...     [1.0, 1.75, 2.0],
+       ...     [0.0, 0.25, 1.0],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
-       ...     [0.0   , 0.0   ],
-       ...     [1.6875, 0.0625],
-       ...     [2.0   , 0.5   ],
+       ...     [0.0, 1.6875, 2.0],
+       ...     [0.0, 0.0625, 0.5],
        ... ])
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.25, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]])
+       array([[ True],
+              [ True]])
        >>> tangent1 = hodograph(curve1, s)
        >>> tangent1
-       array([[1.25, 0.75]])
+       array([[1.25],
+              [0.75]])
        >>> tangent2 = hodograph(curve2, t)
        >>> tangent2
-       array([[2. , 0.5]])
+       array([[2. ],
+              [0.5]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1355,20 +1342,19 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes1 = np.asfortranarray([
-       ...     [1.0, 0.0],
-       ...     [1.5, 1.0],
-       ...     [2.0, 0.0],
+       ...     [1.0, 1.5, 2.0],
+       ...     [0.0, 1.0, 0.0],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
-       ...     [0.0, 0.0],
-       ...     [1.5, 1.0],
-       ...     [3.0, 0.0],
+       ...     [0.0, 1.5, 3.0],
+       ...     [0.0, 1.0, 0.0],
        ... ])
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]])
+       array([[ True],
+              [ True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1393,20 +1379,19 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes1 = np.asfortranarray([
-       ...     [2.0, 0.0],
-       ...     [1.5, 1.0],
-       ...     [1.0, 0.0],
+       ...     [2.0, 1.5, 1.0],
+       ...     [0.0, 1.0, 0.0],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
-       ...     [3.0, 0.0],
-       ...     [1.5, 1.0],
-       ...     [0.0, 0.0],
+       ...     [3.0, 1.5, 0.0],
+       ...     [0.0, 1.0, 0.0],
        ... ])
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]])
+       array([[ True],
+              [ True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1429,20 +1414,19 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes1 = np.asfortranarray([
-       ...     [2.0, 0.0],
-       ...     [1.5, 1.0],
-       ...     [1.0, 0.0],
+       ...     [2.0, 1.5, 1.0],
+       ...     [0.0, 1.0, 0.0],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
-       ...     [0.0, 0.0],
-       ...     [1.5, 1.0],
-       ...     [3.0, 0.0],
+       ...     [0.0, 1.5, 3.0],
+       ...     [0.0, 1.0, 0.0],
        ... ])
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]])
+       array([[ True],
+              [ True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1467,20 +1451,19 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes1 = np.asfortranarray([
-       ...     [1.0, 0.0],
-       ...     [1.5, 1.0],
-       ...     [2.0, 0.0],
+       ...     [1.0, 1.5, 2.0],
+       ...     [0.0, 1.0, 0.0],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
-       ...     [3.0, 0.0],
-       ...     [1.5, 1.0],
-       ...     [0.0, 0.0],
+       ...     [3.0, 1.5, 0.0],
+       ...     [0.0, 1.0, 0.0],
        ... ])
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]])
+       array([[ True],
+              [ True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1505,24 +1488,25 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes1 = np.asfortranarray([
-       ...     [-0.125,  0.0625],
-       ...     [-0.125, -0.0625],
-       ...     [ 0.375,  0.0625],
+       ...     [-0.125 , -0.125 , 0.375 ],
+       ...     [ 0.0625, -0.0625, 0.0625],
        ... ])
        >>> curve1 = bezier.Curve(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
-       ...     [-0.25,  0.25],
-       ...     [-0.25, -0.25],
-       ...     [ 0.75,  0.25],
+       ...     [-0.25, -0.25, 0.75],
+       ...     [ 0.25, -0.25, 0.25],
        ... ])
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 0.5, 0.5
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]])
+       array([[ True],
+              [ True]])
        >>> hodograph(curve1, s)
-       array([[0.5, 0. ]])
+       array([[0.5],
+              [0. ]])
        >>> hodograph(curve2, t)
-       array([[1., 0.]])
+       array([[1.],
+              [0.]])
        >>> curvature(curve1, s)
        2.0
        >>> curvature(curve2, t)
@@ -1550,20 +1534,19 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes1a = np.asfortranarray([
-       ...     [0.0, 0.0 ],
-       ...     [4.5, 0.0 ],
-       ...     [9.0, 2.25],
+       ...     [0.0, 4.5, 9.0 ],
+       ...     [0.0, 0.0, 2.25],
        ... ])
        >>> curve1a = bezier.Curve(nodes1a, degree=2)
        >>> nodes2 = np.asfortranarray([
-       ...     [11.25, 0.0],
-       ...     [ 9.0 , 4.5],
-       ...     [ 2.75, 1.0],
+       ...     [11.25, 9.0, 2.75],
+       ...     [ 0.0 , 4.5, 1.0 ],
        ... ])
        >>> curve2 = bezier.Curve(nodes2, degree=2)
        >>> s, t = 1.0, 0.375
        >>> curve1a.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]])
+       array([[ True],
+              [ True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1a, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
@@ -1574,13 +1557,13 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
                     's', 1.0, 't', 0.375)
        >>>
        >>> nodes1b = np.asfortranarray([
-       ...     [9.0, 2.25 ],
-       ...     [4.5, 2.375],
-       ...     [0.0, 2.5  ],
+       ...     [9.0, 4.5, 0.0],
+       ...     [2.25, 2.375, 2.5],
        ... ])
        >>> curve1b = bezier.Curve(nodes1b, degree=2)
        >>> curve1b.evaluate(0.0) == curve2.evaluate(t)
-       array([[ True, True]])
+       array([[ True],
+              [ True]])
        >>> intersection = Intersection(1, 0.0, 0, t)
        >>> edge_nodes1 = (nodes1a, nodes1b, None)
        >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
@@ -1602,21 +1585,13 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        :options: +NORMALIZE_WHITESPACE
 
        >>> nodes1 = np.asfortranarray([
-       ...     [0.25 , 1.0  ],
-       ...     [0.0  , 0.5  ],
-       ...     [0.0  , 0.0  ],
-       ...     [0.625, 0.875],
-       ...     [0.5  , 0.375],
-       ...     [1.0  , 0.75 ],
+       ...     [0.25, 0.0, 0.0, 0.625, 0.5  , 1.0 ],
+       ...     [1.0 , 0.5, 0.0, 0.875, 0.375, 0.75],
        ... ])
        >>> surface1 = bezier.Surface(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
-       ...     [ 0.0625, 0.5  ],
-       ...     [-0.25  , 1.0  ],
-       ...     [-1.0   , 1.0  ],
-       ...     [-0.5   , 0.125],
-       ...     [-1.0   , 0.5  ],
-       ...     [-1.0   , 0.0  ],
+       ...     [0.0625, -0.25, -1.0, -0.5  , -1.0, -1.0],
+       ...     [0.5   ,  1.0 ,  1.0,  0.125,  0.5,  0.0],
        ... ])
        >>> surface2 = bezier.Surface(nodes2, degree=2)
        >>> curve1, _, _ = surface1.edges
@@ -1625,7 +1600,8 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> edge_nodes2 = [curve.nodes for curve in surface2.edges]
        >>> s, t = 0.5, 0.0
        >>> curve1.evaluate(s) == curve2.evaluate(t)
-       array([[ True, True]])
+       array([[ True],
+              [ True]])
        >>> intersection = Intersection(0, s, 0, t)
        >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
        <IntersectionClassification.IGNORED_CORNER: 5>
@@ -1680,7 +1656,8 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
     # Take the cross product of tangent vectors to determine which one
     # is more "inside" / "to the left".
-    cross_prod = _helpers.cross_product(tangent1, tangent2)
+    cross_prod = _helpers.cross_product(
+        tangent1.ravel(order='F'), tangent2.ravel(order='F'))
     if cross_prod < 0:
         return IntersectionClassification.FIRST
     elif cross_prod > 0:
@@ -1728,6 +1705,8 @@ def handle_ends(index1, s, index2, t):
         s = 0.0
         index1 = (index1 + 1) % 3
         edge_end = True
+    # NOTE: This is not a typo, the values can be updated twice if both ``s``
+    #       and ``t`` are ``1.0``
     if t == 1.0:
         t = 0.0
         index2 = (index2 + 1) % 3
@@ -2022,12 +2001,12 @@ def no_intersections(nodes1, degree1, nodes2, degree2):
     from bezier import _surface_intersection
 
     located = _surface_intersection.locate_point(
-        nodes2, degree2, nodes1[0, 0], nodes1[0, 1])
+        nodes2, degree2, nodes1[0, 0], nodes1[1, 0])
     if located is not None:
         return None, True
 
     located = _surface_intersection.locate_point(
-        nodes1, degree1, nodes2[0, 0], nodes2[0, 1])
+        nodes1, degree1, nodes2[0, 0], nodes2[1, 0])
     if located is not None:
         return None, False
 
@@ -2221,15 +2200,15 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         lambda3 (float): Parameter along the reference triangle.
 
     Returns:
-        numpy.ndarray: The evaluated point as a ``1xD`` array (where ``D``
+        numpy.ndarray: The evaluated point as a ``D x 1`` array (where ``D``
         is the ambient dimension where ``nodes`` reside).
     """
-    num_nodes, dimension = nodes.shape
+    dimension, num_nodes = nodes.shape
 
     binom_val = 1.0
-    result = np.zeros((1, dimension), order='F')
+    result = np.zeros((dimension, 1), order='F')
     index = num_nodes - 1
-    result += nodes[index, :]
+    result[:, 0] += nodes[:, index]
 
     # curve evaluate_multi_barycentric() takes arrays.
     lambda1 = np.asfortranarray([lambda1])
@@ -2237,19 +2216,19 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
     for k in six.moves.xrange(degree - 1, -1, -1):
         # We want to go from (d C (k + 1)) to (d C k).
         binom_val = (binom_val * (k + 1)) / (degree - k)
-        index -= 1  # Step to last element in row.
+        index -= 1  # Step to last element in column.
         #     k = d - 1, d - 2, ...
         # d - k =     1,     2, ...
-        # We know row k has (d - k + 1) elements.
-        new_index = index - degree + k  # First element in row.
+        # We know column k has (d - k + 1) elements.
+        new_index = index - degree + k  # First element in column.
 
-        row_nodes = nodes[new_index:index + 1, :]
-        row_nodes = np.asfortranarray(row_nodes)
-        row_result = _curve_helpers.evaluate_multi_barycentric(
-            row_nodes, lambda1, lambda2)
+        col_nodes = nodes[:, new_index:index + 1]
+        col_nodes = np.asfortranarray(col_nodes)
+        col_result = _curve_helpers.evaluate_multi_barycentric(
+            col_nodes, lambda1, lambda2)
 
         result *= lambda3
-        result += binom_val * row_result
+        result += binom_val * col_result
         # Update index for next iteration.
         index = new_index
 
@@ -2268,19 +2247,19 @@ def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
         nodes (numpy.ndarray): Control point nodes that define the surface.
         degree (int): The degree of the surface define by ``nodes``.
         param_vals (numpy.ndarray): Array of parameter values (as a
-            ``Nx3`` array).
+            ``N x 3`` array).
         dimension (int): The dimension the surface lives in.
 
     Returns:
-        numpy.ndarray: The evaluated points, where rows correspond to
-        rows of ``param_vals`` and the columns to the dimension of the
+        numpy.ndarray: The evaluated points, where columns correspond to
+        rows of ``param_vals`` and the rows to the dimension of the
         underlying surface.
     """
     num_vals, _ = param_vals.shape
-    result = np.empty((num_vals, dimension), order='F')
+    result = np.empty((dimension, num_vals), order='F')
     for index, (lambda1, lambda2, lambda3) in enumerate(param_vals):
-        result[index, :] = evaluate_barycentric(
-            nodes, degree, lambda1, lambda2, lambda3)
+        result[:, index] = evaluate_barycentric(
+            nodes, degree, lambda1, lambda2, lambda3)[:, 0]
     return result
 
 
@@ -2296,19 +2275,19 @@ def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
         nodes (numpy.ndarray): Control point nodes that define the surface.
         degree (int): The degree of the surface define by ``nodes``.
         param_vals (numpy.ndarray): Array of parameter values (as a
-            ``Nx2`` array).
+            ``N x 2`` array).
         dimension (int): The dimension the surface lives in.
 
     Returns:
-        numpy.ndarray: The evaluated points, where rows correspond to
-        rows of ``param_vals`` and the columns to the dimension of the
+        numpy.ndarray: The evaluated points, where columns correspond to
+        rows of ``param_vals`` and the rows to the dimension of the
         underlying surface.
     """
     num_vals, _ = param_vals.shape
-    result = np.empty((num_vals, dimension), order='F')
+    result = np.empty((dimension, num_vals), order='F')
     for index, (s, t) in enumerate(param_vals):
-        result[index, :] = evaluate_barycentric(
-            nodes, degree, 1.0 - s - t, s, t)
+        result[:, index] = evaluate_barycentric(
+            nodes, degree, 1.0 - s - t, s, t)[:, 0]
     return result
 
 
@@ -2328,17 +2307,17 @@ def _compute_edge_nodes(nodes, degree):
         Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]: The nodes in
         the edges of the surface.
     """
-    _, dimension = np.shape(nodes)
-    nodes1 = np.empty((degree + 1, dimension), order='F')
-    nodes2 = np.empty((degree + 1, dimension), order='F')
-    nodes3 = np.empty((degree + 1, dimension), order='F')
+    dimension, _ = np.shape(nodes)
+    nodes1 = np.empty((dimension, degree + 1), order='F')
+    nodes2 = np.empty((dimension, degree + 1), order='F')
+    nodes3 = np.empty((dimension, degree + 1), order='F')
 
     curr2 = degree
     curr3 = -1
     for i in six.moves.xrange(degree + 1):
-        nodes1[i, :] = nodes[i, :]
-        nodes2[i, :] = nodes[curr2, :]
-        nodes3[i, :] = nodes[curr3, :]
+        nodes1[:, i] = nodes[:, i]
+        nodes2[:, i] = nodes[:, curr2]
+        nodes3[:, i] = nodes[:, curr3]
         # Update the indices.
         curr2 += degree - i
         curr3 -= i + 2

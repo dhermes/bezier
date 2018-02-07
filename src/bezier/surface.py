@@ -37,8 +37,9 @@ from bezier import curved_polygon
 
 _SIGN = np.sign  # pylint: disable=no-member
 _LOCATE_ERROR_TEMPLATE = (
-    'Dimension mismatch: This surface is {:d}-dimensional, so the point '
-    'should be a 1x{:d} NumPy array. Instead the point {} has dimensions {}.')
+    'Dimension mismatch: This surface is {:d}-dimensional, '
+    'so the point should be a {:d} x 1 NumPy array. '
+    'Instead the point {} has dimensions {}.')
 _STRATEGY = _intersection_helpers.IntersectionStrategy
 
 
@@ -90,7 +91,7 @@ class Surface(_base.Base):
        .. math::
 
           \left[\begin{array}{c c c}
-              v_{1,0,0} & v_{0,1,0} & v_{0,0,1} \end{array}\right]^T
+              v_{1,0,0} & v_{0,1,0} & v_{0,0,1} \end{array}\right]
 
        the quadratic triangle:
 
@@ -109,7 +110,7 @@ class Surface(_base.Base):
           \left[\begin{array}{c c c c c c}
               v_{2,0,0} & v_{1,1,0} &
               v_{0,2,0} & v_{1,0,1} &
-              v_{0,1,1} & v_{0,0,2} \end{array}\right]^T
+              v_{0,1,1} & v_{0,0,2} \end{array}\right]
 
        the cubic triangle:
 
@@ -132,7 +133,7 @@ class Surface(_base.Base):
               v_{1,2,0} & v_{0,3,0} &
               v_{2,0,1} & v_{1,1,1} &
               v_{0,2,1} & v_{1,0,2} &
-              v_{0,1,2} & v_{0,0,3} \end{array}\right]^T
+              v_{0,1,2} & v_{0,0,3} \end{array}\right]
 
        and so on.
 
@@ -153,12 +154,8 @@ class Surface(_base.Base):
 
        >>> import bezier
        >>> nodes = np.asfortranarray([
-       ...     [0.0  , 0.0  ],
-       ...     [0.5  , 0.0  ],
-       ...     [1.0  , 0.25 ],
-       ...     [0.125, 0.5  ],
-       ...     [0.375, 0.375],
-       ...     [0.25 , 1.0  ],
+       ...     [0.0, 0.5, 1.0 , 0.125, 0.375, 0.25],
+       ...     [0.0, 0.0, 0.25, 0.5  , 0.375, 1.0 ],
        ... ])
        >>> surface = bezier.Surface(nodes, degree=2)
        >>> surface
@@ -171,8 +168,8 @@ class Surface(_base.Base):
        make_images.surface_constructor(surface)
 
     Args:
-        nodes (numpy.ndarray): The nodes in the surface. The rows
-            represent each node while the columns are the dimension
+        nodes (numpy.ndarray): The nodes in the surface. The columns
+            represent each node while the rows are the dimension
             of the ambient space.
         degree (int): The degree of the surface. This is assumed to
             correctly correspond to the number of ``nodes``. Use
@@ -202,8 +199,8 @@ class Surface(_base.Base):
         Computes the ``degree`` based on the shape of ``nodes``.
 
         Args:
-            nodes (numpy.ndarray): The nodes in the surface. The rows
-                represent each node while the columns are the dimension
+            nodes (numpy.ndarray): The nodes in the surface. The columns
+                represent each node while the rows are the dimension
                 of the ambient space.
             _copy (bool): Flag indicating if the nodes should be copied before
                 being stored. Defaults to :data:`True` since callers may
@@ -212,9 +209,9 @@ class Surface(_base.Base):
         Returns:
             Surface: The constructed surface.
         """
-        num_nodes, _ = nodes.shape
+        _, num_nodes = nodes.shape
         degree = cls._get_degree(num_nodes)
-        return cls(nodes, degree, _copy=True)
+        return cls(nodes, degree, _copy=_copy)
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -241,10 +238,12 @@ class Surface(_base.Base):
         else:
             raise ValueError(num_nodes, 'not a triangular number')
 
-    # pylint: disable=missing-return-doc,missing-return-type-doc
     @property
     def area(self):
         """float: The area of the current surface.
+
+        Returns:
+            float: The area of the current surface.
 
         Raises:
             NotImplementedError: If the area isn't already cached.
@@ -253,7 +252,6 @@ class Surface(_base.Base):
             raise NotImplementedError(
                 'Area computation not yet implemented.')
         return self._area
-    # pylint: enable=missing-return-doc,missing-return-type-doc
 
     def _compute_edges(self):
         """Compute the edges of the current surface.
@@ -295,21 +293,16 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.asfortranarray([
-           ...     [0.0   ,  0.0   ],
-           ...     [0.5   , -0.1875],
-           ...     [1.0   ,  0.0   ],
-           ...     [0.1875,  0.5   ],
-           ...     [0.625 ,  0.625 ],
-           ...     [0.0   ,  1.0   ],
+           ...     [0.0,  0.5   , 1.0, 0.1875, 0.625, 0.0],
+           ...     [0.0, -0.1875, 0.0, 0.5   , 0.625, 1.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> edge1, _, _ = surface.edges
            >>> edge1
            <Curve (degree=2, dimension=2)>
            >>> edge1.nodes
-           array([[ 0.  ,  0.    ],
-                  [ 0.5 , -0.1875],
-                  [ 1.  ,  0.    ]])
+           array([[ 0. ,  0.5   , 1. ],
+                  [ 0. , -0.1875, 0. ]])
 
         Returns:
             Tuple[~bezier.curve.Curve, ~bezier.curve.Curve, \
@@ -342,7 +335,7 @@ class Surface(_base.Base):
             ValueError: If some weights are negative.
         """
         weights_total = lambda1 + lambda2 + lambda3
-        if not np.allclose(weights_total, 1.0):
+        if not np.allclose(weights_total, 1.0, atol=0.0):
             raise ValueError('Weights do not sum to 1',
                              lambda1, lambda2, lambda3)
         if lambda1 < 0.0 or lambda2 < 0.0 or lambda3 < 0.0:
@@ -357,18 +350,14 @@ class Surface(_base.Base):
         .. image:: ../images/surface_evaluate_barycentric.png
            :align: center
 
-        .. testsetup:: surface-barycentric, surface-barycentric-fail,
-                       surface-barycentric-no-verify
+        .. testsetup:: surface-barycentric, surface-barycentric-fail1,
+                       surface-barycentric-fail2, surface-barycentric-no-verify
 
            import numpy as np
            import bezier
            nodes = np.asfortranarray([
-               [0.0  , 0.0  ],
-               [0.5  , 0.0  ],
-               [1.0  , 0.25 ],
-               [0.125, 0.5  ],
-               [0.375, 0.375],
-               [0.25 , 1.0  ],
+               [0.0, 0.5, 1.0 , 0.125, 0.375, 0.25],
+               [0.0, 0.0, 0.25, 0.5  , 0.375, 1.0 ],
            ])
            surface = bezier.Surface(nodes, degree=2)
 
@@ -376,17 +365,14 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.asfortranarray([
-           ...     [0.0  , 0.0  ],
-           ...     [0.5  , 0.0  ],
-           ...     [1.0  , 0.25 ],
-           ...     [0.125, 0.5  ],
-           ...     [0.375, 0.375],
-           ...     [0.25 , 1.0  ],
+           ...     [0.0, 0.5, 1.0 , 0.125, 0.375, 0.25],
+           ...     [0.0, 0.0, 0.25, 0.5  , 0.375, 1.0 ],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> point = surface.evaluate_barycentric(0.125, 0.125, 0.75)
            >>> point
-           array([[0.265625  , 0.73046875]])
+           array([[0.265625  ],
+                  [0.73046875]])
 
         .. testcleanup:: surface-barycentric
 
@@ -396,21 +382,21 @@ class Surface(_base.Base):
         However, this can't be used for points **outside** the
         reference triangle:
 
-        .. doctest:: surface-barycentric-fail
+        .. doctest:: surface-barycentric-fail1
 
            >>> surface.evaluate_barycentric(-0.25, 0.75, 0.5)
            Traceback (most recent call last):
              ...
-           ValueError: ('Parameters must be positive', -0.25, 0.75, 0.5)
+           ValueError: ('Weights must be positive', -0.25, 0.75, 0.5)
 
         or for non-barycentric coordinates;
 
-        .. doctest:: surface-barycentric-fail
+        .. doctest:: surface-barycentric-fail2
 
            >>> surface.evaluate_barycentric(0.25, 0.25, 0.25)
            Traceback (most recent call last):
              ...
-           ValueError: ('Values do not sum to 1', 0.25, 0.25, 0.25)
+           ValueError: ('Weights do not sum to 1', 0.25, 0.25, 0.25)
 
         However, these "invalid" inputs can be used if ``_verify`` is
         :data:`False`.
@@ -419,9 +405,11 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> surface.evaluate_barycentric(-0.25, 0.75, 0.5, _verify=False)
-           array([[0.6875 , 0.546875]])
+           array([[0.6875  ],
+                  [0.546875]])
            >>> surface.evaluate_barycentric(0.25, 0.25, 0.25, _verify=False)
-           array([[0.203125, 0.1875 ]])
+           array([[0.203125],
+                  [0.1875  ]])
 
         Args:
             lambda1 (float): Parameter along the reference triangle.
@@ -435,7 +423,7 @@ class Surface(_base.Base):
 
         Returns:
             numpy.ndarray: The point on the surface (as a two dimensional
-            NumPy array with a single row).
+            NumPy array with a single column).
 
         Raises:
             ValueError: If the weights are not valid barycentric
@@ -464,12 +452,8 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.asfortranarray([
-           ...     [ 0. , 0.  ],
-           ...     [ 1. , 0.75],
-           ...     [ 2. , 1.  ],
-           ...     [-1.5, 1.  ],
-           ...     [-0.5, 1.5 ],
-           ...     [-3. , 2.  ],
+           ...     [0.0, 1.0 , 2.0, -1.5, -0.5, -3.0],
+           ...     [0.0, 0.75, 1.0,  1.0,  1.5,  2.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> surface
@@ -482,10 +466,8 @@ class Surface(_base.Base):
            ... ])
            >>> points = surface.evaluate_barycentric_multi(param_vals)
            >>> points
-           array([[-1.75  , 1.75    ],
-                  [ 0.    , 0.      ],
-                  [ 0.25  , 1.0625  ],
-                  [-0.625 , 1.046875]])
+           array([[-1.75 , 0. , 0.25   , -0.625   ],
+                  [ 1.75 , 0. , 1.0625 ,  1.046875]])
 
         .. testcleanup:: surface-eval-multi2
 
@@ -494,7 +476,7 @@ class Surface(_base.Base):
 
         Args:
             param_vals (numpy.ndarray): Array of parameter values (as a
-                ``Nx3`` array).
+                ``N x 3`` array).
             _verify (Optional[bool]): Indicates if the coordinates should be
                 verified. See :meth:`evaluate_barycentric`. Defaults to
                 :data:`True`. Will also double check that ``param_vals``
@@ -549,19 +531,17 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.asfortranarray([
-           ...     [0.0 , 0.0  ],
-           ...     [0.5 , 0.5  ],
-           ...     [1.0 , 0.625],
-           ...     [0.0 , 0.5  ],
-           ...     [0.5 , 0.5  ],
-           ...     [0.25, 1.0  ],
+           ...     [0.0, 0.5, 1.0  , 0.0, 0.5, 0.25],
+           ...     [0.0, 0.5, 0.625, 0.5, 0.5, 1.0 ],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> point = surface.evaluate_cartesian(0.125, 0.375)
            >>> point
-           array([[0.16015625, 0.44726562]])
+           array([[0.16015625],
+                  [0.44726562]])
            >>> surface.evaluate_barycentric(0.5, 0.125, 0.375)
-           array([[0.16015625, 0.44726562]])
+           array([[0.16015625],
+                  [0.44726562]])
 
         Args:
             s (float): Parameter along the reference triangle.
@@ -594,9 +574,8 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.asfortranarray([
-           ...     [ 0.0, 0.0],
-           ...     [ 2.0, 1.0],
-           ...     [-3.0, 2.0],
+           ...     [0.0, 2.0, -3.0],
+           ...     [0.0, 1.0,  2.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=1)
            >>> surface
@@ -608,9 +587,8 @@ class Surface(_base.Base):
            ... ])
            >>> points = surface.evaluate_cartesian_multi(param_vals)
            >>> points
-           array([[ 0.   , 0.   ],
-                  [-1.625, 1.375],
-                  [-0.5  , 1.5  ]])
+           array([[ 0. , -1.625, -0.5],
+                  [ 0. ,  1.375,  1.5]])
 
         .. testcleanup:: surface-eval-multi1
 
@@ -619,7 +597,7 @@ class Surface(_base.Base):
 
         Args:
             param_vals (numpy.ndarray): Array of parameter values (as a
-                ``Nx2`` array).
+                ``N x 2`` array).
             _verify (Optional[bool]): Indicates if the coordinates should be
                 verified. See :meth:`evaluate_cartesian`. Defaults to
                 :data:`True`. Will also double check that ``param_vals``
@@ -669,7 +647,7 @@ class Surface(_base.Base):
         _plot_helpers.add_patch(ax, color, pts_per_edge, *self._get_edges())
 
         if with_nodes:
-            ax.plot(self._nodes[:, 0], self._nodes[:, 1],
+            ax.plot(self._nodes[0, :], self._nodes[1, :],
                     color='black', marker='o', linestyle='None')
 
         return ax
@@ -695,24 +673,16 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.asfortranarray([
-           ...     [-1.0 , 0.0 ],
-           ...     [ 0.5 , 0.5 ],
-           ...     [ 2.0 , 0.0 ],
-           ...     [ 0.25, 1.75],
-           ...     [ 2.0 , 3.0 ],
-           ...     [ 0.0 , 4.0 ],
+           ...     [-1.0, 0.5, 2.0, 0.25, 2.0, 0.0],
+           ...     [ 0.0, 0.5, 0.0, 1.75, 3.0, 4.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> _, sub_surface_b, _, _ = surface.subdivide()
            >>> sub_surface_b
            <Surface (degree=2, dimension=2)>
            >>> sub_surface_b.nodes
-           array([[ 1.5   , 2.5   ],
-                  [ 0.6875, 2.3125],
-                  [-0.125 , 1.875 ],
-                  [ 1.1875, 1.3125],
-                  [ 0.4375, 1.3125],
-                  [ 0.5   , 0.25  ]])
+           array([[ 1.5 ,  0.6875, -0.125 , 1.1875, 0.4375, 0.5  ],
+                  [ 2.5 ,  2.3125,  1.875 , 1.3125, 1.3125, 0.25 ]])
 
         .. testcleanup:: surface-subdivide
 
@@ -756,7 +726,7 @@ class Surface(_base.Base):
         if self._degree == 1:
             # In the linear case, we are only invalid if the points
             # are collinear.
-            first_deriv = self._nodes[1:, :] - self._nodes[:-1, :]
+            first_deriv = self._nodes[:, 1:] - self._nodes[:, :-1]
             poly_sign = _SIGN(np.linalg.det(first_deriv))
         elif self._degree == 2:
             bernstein = _surface_helpers.quadratic_jacobian_polynomial(
@@ -791,9 +761,8 @@ class Surface(_base.Base):
         .. doctest:: surface-is-valid1
 
            >>> nodes = np.asfortranarray([
-           ...     [0.0, 0.0],
-           ...     [1.0, 1.0],
-           ...     [2.0, 2.0],
+           ...     [0.0, 1.0, 2.0],
+           ...     [0.0, 1.0, 2.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=1)
            >>> surface.is_valid
@@ -812,12 +781,8 @@ class Surface(_base.Base):
         .. doctest:: surface-is-valid2
 
            >>> nodes = np.asfortranarray([
-           ...     [ 0.0  , 0.0  ],
-           ...     [ 0.5  , 0.125],
-           ...     [ 1.0  , 0.0  ],
-           ...     [-0.125, 0.5  ],
-           ...     [ 0.5  , 0.5  ],
-           ...     [ 0.0  , 1.0  ],
+           ...     [0.0, 0.5  , 1.0, -0.125, 0.5, 0.0],
+           ...     [0.0, 0.125, 0.0,  0.5  , 0.5, 1.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> surface.is_valid
@@ -836,12 +801,8 @@ class Surface(_base.Base):
         .. doctest:: surface-is-valid3
 
            >>> nodes = np.asfortranarray([
-           ...     [1.0, 0.0],
-           ...     [0.0, 0.0],
-           ...     [1.0, 1.0],
-           ...     [0.0, 0.0],
-           ...     [0.0, 0.0],
-           ...     [0.0, 1.0],
+           ...     [1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+           ...     [0.0, 0.0, 1.0, 0.0, 0.0, 1.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> surface.is_valid
@@ -894,15 +855,11 @@ class Surface(_base.Base):
         .. doctest:: surface-locate
 
            >>> nodes = np.asfortranarray([
-           ...     [0.0 ,  0.0 ],
-           ...     [0.5 , -0.25],
-           ...     [1.0 ,  0.0 ],
-           ...     [0.25,  0.5 ],
-           ...     [0.75,  0.75],
-           ...     [0.0 ,  1.0 ],
+           ...     [0.0,  0.5 , 1.0, 0.25, 0.75, 0.0],
+           ...     [0.0, -0.25, 0.0, 0.5 , 0.75, 1.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
-           >>> point = np.asfortranarray([[0.59375, 0.25]])
+           >>> point = np.asfortranarray([[0.59375], [0.25]])
            >>> s, t = surface.locate(point)
            >>> s
            0.5
@@ -915,7 +872,7 @@ class Surface(_base.Base):
            make_images.surface_locate(surface, point)
 
         Args:
-            point (numpy.ndarray): A (``1xD``) point on the surface,
+            point (numpy.ndarray): A (``D x 1``) point on the surface,
                 where :math:`D` is the dimension of the surface.
             _verify (Optional[bool]): Indicates if extra caution should be
                 used to verify assumptions about the inputs. Can be
@@ -935,7 +892,7 @@ class Surface(_base.Base):
             if self._dimension != 2:
                 raise NotImplementedError('Only 2D surfaces supported.')
 
-            if point.shape != (1, self._dimension):
+            if point.shape != (self._dimension, 1):
                 point_dimensions = ' x '.join(
                     str(dimension) for dimension in point.shape)
                 msg = _LOCATE_ERROR_TEMPLATE.format(
@@ -943,7 +900,7 @@ class Surface(_base.Base):
                 raise ValueError(msg)
 
         return _surface_intersection.locate_point(
-            self._nodes, self._degree, point[0, 0], point[0, 1])
+            self._nodes, self._degree, point[0, 0], point[1, 0])
 
     def intersect(self, other, strategy=_STRATEGY.GEOMETRIC, _verify=True):
         """Find the common intersection with another surface.
@@ -1036,28 +993,16 @@ class Surface(_base.Base):
            :options: +NORMALIZE_WHITESPACE
 
            >>> nodes = np.asfortranarray([
-           ...     [0.0 , 0.0 ],
-           ...     [1.5 , 0.0 ],
-           ...     [3.0 , 0.0 ],
-           ...     [0.75, 1.5 ],
-           ...     [2.25, 2.25],
-           ...     [0.0 , 3.0 ],
+           ...     [0.0, 1.5, 3.0, 0.75, 2.25, 0.0],
+           ...     [0.0, 0.0, 0.0, 1.5 , 2.25, 3.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> elevated = surface.elevate()
            >>> elevated
            <Surface (degree=3, dimension=2)>
            >>> elevated.nodes
-           array([[0.  , 0.  ],
-                  [1.  , 0.  ],
-                  [2.  , 0.  ],
-                  [3.  , 0.  ],
-                  [0.5 , 1.  ],
-                  [1.5 , 1.25],
-                  [2.5 , 1.5 ],
-                  [0.5 , 2.  ],
-                  [1.5 , 2.5 ],
-                  [0.  , 3.  ]])
+           array([[0. , 1. , 2. , 3. , 0.5 , 1.5 , 2.5 , 0.5 , 1.5 , 0. ],
+                  [0. , 0. , 0. , 0. , 1.  , 1.25, 1.5 , 2.  , 2.5 , 3. ]])
 
         .. testcleanup:: surface-elevate
 
@@ -1067,10 +1012,10 @@ class Surface(_base.Base):
         Returns:
             Surface: The degree-elevated surface.
         """
-        num_nodes, _ = self._nodes.shape
+        _, num_nodes = self._nodes.shape
         # (d + 1)(d + 2)/2 --> (d + 2)(d + 3)/2
         num_new = num_nodes + self._degree + 2
-        new_nodes = np.zeros((num_new, self._dimension), order='F')
+        new_nodes = np.zeros((self._dimension, num_new), order='F')
 
         # NOTE: We start from the index triples (i, j, k) for the current
         #       nodes and map them onto (i + 1, j, k), etc. This index
@@ -1085,9 +1030,9 @@ class Surface(_base.Base):
         for k in six.moves.xrange(self._degree + 1):
             for j in six.moves.xrange(self._degree + 1 - k):
                 i = self._degree - j - k
-                new_nodes[parent_i1, :] += (i + 1) * self._nodes[index, :]
-                new_nodes[parent_i2, :] += (j + 1) * self._nodes[index, :]
-                new_nodes[parent_i3, :] += (k + 1) * self._nodes[index, :]
+                new_nodes[:, parent_i1] += (i + 1) * self._nodes[:, index]
+                new_nodes[:, parent_i2] += (j + 1) * self._nodes[:, index]
+                new_nodes[:, parent_i3] += (k + 1) * self._nodes[:, index]
                 # Update all the indices.
                 parent_i1 += 1
                 parent_i2 += 1
@@ -1128,7 +1073,7 @@ def _make_intersection(edge_info, all_edge_nodes):
     for index, start, end in edge_info:
         nodes = all_edge_nodes[index]
         new_nodes = _curve_helpers.specialize_curve(nodes, start, end)
-        degree = new_nodes.shape[0] - 1
+        degree = new_nodes.shape[1] - 1
         edge = _curve_mod.Curve(new_nodes, degree, _copy=False)
         edges.append(edge)
 

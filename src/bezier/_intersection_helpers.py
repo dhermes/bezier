@@ -123,9 +123,8 @@ def _newton_refine(s, nodes1, t, nodes2):
     .. doctest:: newton-refine1
 
        >>> nodes1 = np.asfortranarray([
-       ...     [0.0, 0.0],
-       ...     [2.0, 4.0],
-       ...     [4.0, 0.0],
+       ...     [0.0, 2.0, 4.0],
+       ...     [0.0, 4.0, 0.0],
        ... ])
        >>> nodes2 = np.asfortranarray([
        ...     [2.0, 0.0],
@@ -396,14 +395,11 @@ def _newton_refine(s, nodes1, t, nodes2):
 
     # NOTE: This assumes the curves are 2D.
     jac_mat = np.empty((2, 2), order='F')
-    # In curve.evaluate() and evaluate_hodograph() the roles of
-    # columns and rows are swapped.
-    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(s, nodes1)
-    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(t, nodes2)
+    jac_mat[:, 0] = _curve_helpers.evaluate_hodograph(s, nodes1)[:, 0]
+    jac_mat[:, 1] = - _curve_helpers.evaluate_hodograph(t, nodes2)[:, 0]
 
-    # Solve the system (via the transposes, since, as above, the roles
-    # of columns and rows are reversed).
-    result = np.linalg.solve(jac_mat.T, func_val.T)
+    # Solve the system.
+    result = np.linalg.solve(jac_mat, func_val)
     # Convert to row-vector and unpack (also makes assertion on shape).
     (delta_s, delta_t), = result.T
     return s + delta_s, t + delta_t

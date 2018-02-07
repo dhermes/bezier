@@ -107,12 +107,18 @@ def ref_triangle_uniform_nodes(pts_exponent):
 
 
 def check_plot_call(test_case, call, expected, **kwargs):
+    import numpy as np
+
     # Unpack the call as name, positional args, keyword args
     _, positional, keyword = call
     test_case.assertEqual(keyword, kwargs)
     test_case.assertEqual(len(positional), 2)
-    test_case.assertEqual(positional[0], expected[:, 0])
-    test_case.assertEqual(positional[1], expected[:, 1])
+    test_case.assertEqual(
+        np.asfortranarray(positional[0]),
+        np.asfortranarray(expected[0, :]))
+    test_case.assertEqual(
+        np.asfortranarray(positional[1]),
+        np.asfortranarray(expected[1, :]))
 
 
 def needs_speedup(test_class):
