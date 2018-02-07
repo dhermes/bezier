@@ -587,8 +587,8 @@ class Surface(_base.Base):
            ... ])
            >>> points = surface.evaluate_cartesian_multi(param_vals)
            >>> points
-           array([[ 0. , -1.625, -0.5],
-                  [ 0. ,  1.375,  1.5]])
+           array([[ 0. , -1.625, -0.5 ],
+                  [ 0. ,  1.375,  1.5 ]])
 
         .. testcleanup:: surface-eval-multi1
 

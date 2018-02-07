@@ -154,18 +154,12 @@ def _newton_refine(s, nodes1, t, nodes2):
     .. doctest:: newton-refine2
 
        >>> nodes1 = np.asfortranarray([
-       ...     [0.0 ,  0.0],
-       ...     [0.25,  2.0],
-       ...     [0.5 , -2.0],
-       ...     [0.75,  2.0],
-       ...     [1.0 ,  0.0],
+       ...     [0.0, 0.25,  0.5, 0.75, 1.0],
+       ...     [0.0, 2.0 , -2.0, 2.0 , 0.0],
        ... ])
        >>> nodes2 = np.asfortranarray([
-       ...     [0.0 , 1.0],
-       ...     [0.25, 0.5],
-       ...     [0.5 , 0.5],
-       ...     [0.75, 0.5],
-       ...     [1.0 , 0.0],
+       ...     [0.0, 0.25, 0.5, 0.75, 1.0],
+       ...     [1.0, 0.5 , 0.5, 0.5 , 0.0],
        ... ])
        >>> # The expected intersection is the only real root of
        >>> # 28 s^3 - 30 s^2 + 9 s - 1.
@@ -205,13 +199,12 @@ def _newton_refine(s, nodes1, t, nodes2):
     .. doctest:: newton-refine3
 
        >>> nodes1 = np.asfortranarray([
-       ...     [0.0, 0.0],
-       ...     [0.5, 1.0],
-       ...     [1.0, 0.0],
+       ...     [0.0, 0.5, 1.0],
+       ...     [0.0, 1.0, 0.0],
        ... ])
        >>> nodes2 = np.asfortranarray([
-       ...     [0.0, 0.5],
-       ...     [1.0, 0.5],
+       ...     [0.0, 1.0],
+       ...     [0.5, 0.5],
        ... ])
        >>> expected = 0.5
        >>> s_vals = [0.375, None, None, None, None, None]
@@ -252,13 +245,12 @@ def _newton_refine(s, nodes1, t, nodes2):
        from bezier._intersection_helpers import newton_refine
 
        nodes1 = np.asfortranarray([
-           [0.0, 0.0],
-           [0.5, 1.0],
-           [1.0, 0.0],
+           [0.0, 0.5, 1.0],
+           [0.0, 1.0, 0.0],
        ])
        nodes2 = np.asfortranarray([
-           [0.0, 0.5],
-           [1.0, 0.5],
+           [0.0, 1.0],
+           [0.5, 0.5],
        ])
 
     .. doctest:: newton-refine3-continued
