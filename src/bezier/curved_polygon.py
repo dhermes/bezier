@@ -26,7 +26,6 @@ boundary.
 """
 
 
-import numpy as np
 import six
 
 from bezier import _helpers
