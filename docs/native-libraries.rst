@@ -617,9 +617,9 @@ For examples, see:
 * `Mac OS X journal`_
 * `Windows journal`_
 
-.. _Linux journal: https://github.com/dhermes/bezier/blob/0.7.0/.circleci/expected_journal.txt
-.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/0.7.0/scripts/osx/travis_journal.txt
-.. _Windows journal: https://github.com/dhermes/bezier/blob/0.7.0/appveyor/expected_journal.txt
+.. _Linux journal: https://github.com/dhermes/bezier/blob/master/.circleci/expected_journal.txt
+.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/master/scripts/osx/travis_journal.txt
+.. _Windows journal: https://github.com/dhermes/bezier/blob/master/appveyor/expected_journal.txt
 
 ***************************
 Building a Python Extension
