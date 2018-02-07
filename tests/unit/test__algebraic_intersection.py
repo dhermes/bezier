@@ -425,7 +425,7 @@ class Test__to_power_basis33(utils.NumPyTestCase):
         result = self._call_function_under_test(nodes1, nodes2)
         expected = np.asfortranarray(
             [-62, 81, 0, -12, 0, 0, -6, 0, 0, -1], dtype=FLOAT64)
-        self.assertLess(np.abs(result - expected).max(), LOCAL_EPS)
+        self.assertLess(np.abs(result - expected).max(), 2.0 * LOCAL_EPS)
 
 
 class Test_to_power_basis(utils.NumPyTestCase):
