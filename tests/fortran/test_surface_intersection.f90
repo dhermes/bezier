@@ -15,7 +15,8 @@ module test_surface_intersection
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_INSUFFICIENT_SPACE, &
-       Status_SAME_CURVATURE, Status_EDGE_END, Status_UNKNOWN
+       Status_SAME_CURVATURE, Status_BAD_INTERIOR, Status_EDGE_END, &
+       Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
   use curve_intersection, only: set_similar_ulps, get_similar_ulps
   use surface_intersection, only: &
@@ -1580,7 +1581,7 @@ contains
          allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
          allocated(segments) .AND. &  ! Though unused, not de-allocated.
          contained == SurfaceContained_NEITHER .AND. &
-         status == Status_UNKNOWN)
+         status == Status_BAD_INTERIOR)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 12: Same as CASE 11, but with ``SIMILAR_ULPS`` increased so that
