@@ -1,5 +1,5 @@
-bezier\.curve module
-====================
+bezier.curve module
+===================
 
 .. automodule:: bezier.curve
     :members:
