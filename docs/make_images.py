@@ -1033,6 +1033,97 @@ def classify_intersection8(s, curve1, surface1, curve2, surface2):
     save_image(ax.figure, 'classify_intersection8.png')
 
 
+def _edges_classify_intersection9():
+    """The edges for the curved polygon intersection used below.
+
+    Helper for :func:`classify_intersection9`.
+    """
+    edges1 = (
+        bezier.Curve.from_nodes(np.asfortranarray([
+            [32.0, 30.0],
+            [20.0, 25.0],
+        ])),
+        bezier.Curve.from_nodes(np.asfortranarray([
+            [30.0, 25.0, 20.0],
+            [25.0, 20.0, 20.0],
+        ])),
+        bezier.Curve.from_nodes(np.asfortranarray([
+            [20.0, 25.0, 30.0],
+            [20.0, 20.0, 15.0],
+        ])),
+        bezier.Curve.from_nodes(np.asfortranarray([
+            [30.0, 32.0],
+            [15.0, 20.0],
+        ])),
+    )
+
+    edges2 = (
+        bezier.Curve.from_nodes(np.asfortranarray([
+            [8.0, 10.0],
+            [20.0, 15.0],
+        ])),
+        bezier.Curve.from_nodes(np.asfortranarray([
+            [10.0, 15.0, 20.0],
+            [15.0, 20.0, 20.0],
+        ])),
+        bezier.Curve.from_nodes(np.asfortranarray([
+            [20.0, 15.0, 10.0],
+            [20.0, 20.0, 25.0],
+        ])),
+        bezier.Curve.from_nodes(np.asfortranarray([
+            [10.0, 8.0],
+            [25.0, 20.0],
+        ])),
+    )
+
+    return edges1, edges2
+
+
+def classify_intersection9(s, curve1, curve2):
+    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    if NO_IMAGES:
+        return
+
+    surface1 = bezier.Surface.from_nodes(np.asfortranarray([
+        [0.0, 20.0, 40.0, 10.0, 30.0, 20.0],
+        [0.0, 40.0, 0.0, 25.0, 25.0, 50.0],
+    ]))
+    surface2 = bezier.Surface.from_nodes(np.asfortranarray([
+        [40.0, 20.0, 0.0, 30.0, 10.0, 20.0],
+        [40.0, 0.0, 40.0, 15.0, 15.0, -10.0],
+    ]))
+
+    figure, (ax1, ax2) = plt.subplots(1, 2)
+    classify_help(s, curve1, surface1, curve2, surface2, 0, ax=ax1)
+    classify_help(s, curve1, surface1, curve2, surface2, 1, ax=ax2)
+
+    # Remove the alpha from the color
+    color1 = ax1.patches[0].get_facecolor()[:3]
+    color2 = ax1.patches[1].get_facecolor()[:3]
+
+    # Now add the "degenerate" intersection polygons.
+    cp_edges1, cp_edges2 = _edges_classify_intersection9()
+    curved_polygon1 = bezier.CurvedPolygon(*cp_edges1)
+    curved_polygon1.plot(256, ax=ax1)
+    curved_polygon2 = bezier.CurvedPolygon(*cp_edges2)
+    curved_polygon2.plot(256, ax=ax2)
+
+    (int_x,), (int_y,) = curve1.evaluate(s)
+    ax1.plot([int_x], [int_y],
+             color=color1, linestyle='None', marker='o')
+    ax2.plot([int_x], [int_y],
+             color=color2, linestyle='None', marker='o')
+
+    for ax in (ax1, ax2):
+        ax.axis('scaled')
+        ax.set_xlim(-2.0, 42.0)
+        ax.set_ylim(-12.0, 52.0)
+
+    plt.setp(ax2.get_yticklabels(), visible=False)
+    figure.tight_layout(w_pad=1.0)
+    save_image(figure, 'classify_intersection9.png')
+
+
 def curve_elevate(curve, elevated):
     """Image for :meth:`.curve.Curve.elevate` docstring."""
     if NO_IMAGES:

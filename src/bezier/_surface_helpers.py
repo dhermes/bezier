@@ -1250,7 +1250,8 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     .. testsetup:: classify-intersection1, classify-intersection2,
                    classify-intersection3, classify-intersection4,
                    classify-intersection5, classify-intersection6,
-                   classify-intersection7, classify-intersection8
+                   classify-intersection7, classify-intersection8,
+                   classify-intersection9
 
        import numpy as np
        import bezier
@@ -1469,6 +1470,41 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
        import make_images
        make_images.classify_intersection5(s, curve1, curve2)
+
+    The :attr:`~.IntersectionClassification.TANGENT_BOTH` classification
+    can also occur if the curves are "kissing" but share a zero width
+    interior at the point of tangency:
+
+    .. image:: images/classify_intersection9.png
+       :align: center
+
+    .. doctest:: classify-intersection9
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> nodes1 = np.asfortranarray([
+       ...     [0.0, 20.0, 40.0],
+       ...     [0.0, 40.0,  0.0],
+       ... ])
+       >>> curve1 = bezier.Curve(nodes1, degree=2)
+       >>> nodes2 = np.asfortranarray([
+       ...     [40.0, 20.0,  0.0],
+       ...     [40.0,  0.0, 40.0],
+       ... ])
+       >>> curve2 = bezier.Curve(nodes2, degree=2)
+       >>> s, t = 0.5, 0.5
+       >>> curve1.evaluate(s) == curve2.evaluate(t)
+       array([[ True],
+              [ True]])
+       >>> intersection = Intersection(0, s, 0, t)
+       >>> edge_nodes1 = (nodes1, None, None)
+       >>> edge_nodes2 = (nodes2, None, None)
+       >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
+       <IntersectionClassification.TANGENT_BOTH: 6>
+
+    .. testcleanup:: classify-intersection9
+
+       import make_images
+       make_images.classify_intersection9(s, curve1, curve2)
 
     However, if the `curvature`_ of each curve is identical, we
     don't try to distinguish further:
