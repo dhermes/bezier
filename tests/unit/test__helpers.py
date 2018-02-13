@@ -660,6 +660,62 @@ class Test__polygon_collide(unittest.TestCase):
         self.assertFalse(self._call_function_under_test(polygon1, polygon2))
 
 
+class TestUnsupportedDegree(unittest.TestCase):
+
+    @staticmethod
+    def _get_target_class():
+        from bezier import _helpers
+
+        return _helpers.UnsupportedDegree
+
+    def _make_one(self, *args, **kwargs):
+        klass = self._get_target_class()
+        return klass(*args, **kwargs)
+
+    def test_inherit_not_implemented(self):
+        klass = self._get_target_class()
+        self.assertTrue(issubclass(klass, NotImplementedError))
+
+    def test_constructor_defaults(self):
+        exc = self._make_one(3)
+        self.assertEqual(exc.degree, 3)
+        self.assertEqual(exc.supported, ())
+
+    def test_constructor_explicit(self):
+        exc = self._make_one(4, supported=(1, 2))
+        self.assertEqual(exc.degree, 4)
+        self.assertEqual(exc.supported, (1, 2))
+
+    def test___str__zero_supported(self):
+        exc = self._make_one(1)
+        as_str = str(exc)
+        expected = 'UnsupportedDegree(degree=1)'
+        self.assertEqual(as_str, expected)
+
+    def test___str__one_supported(self):
+        exc = self._make_one(2, supported=(1,))
+        as_str = str(exc)
+        expected = (
+            'UnsupportedDegree(The only degree supported at '
+            'this time is 1, degree=2)')
+        self.assertEqual(as_str, expected)
+
+    def test___str__multiple_supported(self):
+        exc = self._make_one(3, supported=(1, 2))
+        as_str = str(exc)
+        expected = (
+            'UnsupportedDegree(The only degrees supported at '
+            'this time are 1 and 2, degree=3)')
+        self.assertEqual(as_str, expected)
+
+        exc = self._make_one(4, supported=(1, 3, 2))
+        as_str = str(exc)
+        expected = (
+            'UnsupportedDegree(The only degrees supported at '
+            'this time are 1, 3 and 2, degree=4)')
+        self.assertEqual(as_str, expected)
+
+
 @utils.needs_speedup
 class Test_speedup_polygon_collide(Test__polygon_collide):
 

@@ -27,6 +27,7 @@ import six
 
 from bezier import _base
 from bezier import _curve_helpers
+from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
@@ -716,7 +717,7 @@ class Surface(_base.Base):
         Raises:
             NotImplementedError: If the surface is in a dimension other
                 than :math:`\mathbf{R}^2`.
-            NotImplementedError: If the degree is not 1, 2 or 3.
+            .UnsupportedDegree: If the degree is not 1, 2 or 3.
         """
         if self._dimension != 2:
             raise NotImplementedError(
@@ -737,8 +738,7 @@ class Surface(_base.Base):
                 self._nodes)
             poly_sign = _surface_helpers.polynomial_sign(bernstein, 4)
         else:
-            raise NotImplementedError(
-                'Degrees 1, 2 and 3 only supported at this time')
+            raise _helpers.UnsupportedDegree(self._degree, supported=(1, 2, 3))
 
         return poly_sign == 1
 

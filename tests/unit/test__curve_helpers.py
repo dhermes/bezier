@@ -845,10 +845,15 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
         self.assertLess(max_err, self.EPS)
 
     def test_unsupported_degree(self):
+        from bezier import _helpers
+
+        degree = 5
         nodes = utils.get_random_nodes(
-            shape=(2, 6), seed=3820, num_bits=8)
-        with self.assertRaises(NotImplementedError):
+            shape=(2, degree + 1), seed=3820, num_bits=8)
+        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(nodes)
+        self.assertEqual(exc_info.exception.degree, degree)
+        self.assertEqual(exc_info.exception.supported, (1, 2, 3, 4))
 
 
 @utils.needs_speedup
@@ -979,11 +984,15 @@ class Test_maybe_reduce(utils.NumPyTestCase):
         self.assertEqual(expected, new_nodes)
 
     def test_unsupported_degree(self):
+        from bezier import _helpers
+
         degree = 5
         nodes = utils.get_random_nodes(
             shape=(2, degree + 1), seed=77618, num_bits=8)
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(nodes)
+        self.assertEqual(exc_info.exception.degree, degree)
+        self.assertEqual(exc_info.exception.supported, (0, 1, 2, 3, 4))
 
 
 class Test__full_reduce(utils.NumPyTestCase):
@@ -1040,11 +1049,15 @@ class Test__full_reduce(utils.NumPyTestCase):
         self.assertIs(new_nodes, nodes)
 
     def test_unsupported_degree(self):
+        from bezier import _helpers
+
         degree = 5
         nodes = utils.get_random_nodes(
             shape=(2, degree + 1), seed=360009, num_bits=8)
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(nodes)
+        self.assertEqual(exc_info.exception.degree, degree)
+        self.assertEqual(exc_info.exception.supported, (0, 1, 2, 3, 4))
 
 
 @utils.needs_speedup

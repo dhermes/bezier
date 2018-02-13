@@ -164,7 +164,7 @@ def evaluate(nodes, x_val, y_val):
 
     Raises:
         ValueError: If the curve is a point.
-        NotImplementedError: If the curve is not degree 1 or 2.
+        .UnsupportedDegree: If the degree is not 1, 2 or 3.
     """
     _, num_nodes = nodes.shape
     if num_nodes == 1:
@@ -202,7 +202,7 @@ def evaluate(nodes, x_val, y_val):
     elif num_nodes == 4:
         return _evaluate3(nodes, x_val, y_val)
     else:
-        raise NotImplementedError('Only degrees 1 and 2 supported')
+        raise _helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3))
 
 
 def eval_intersection_polynomial(nodes1, nodes2, t):
@@ -1279,7 +1279,7 @@ def poly_to_power_basis(bezier_coeffs):
         numpy.ndarray: 1D array of coefficients in monomial basis.
 
     Raises:
-        NotImplementedError: If the degree of the curve is not among
+        .UnsupportedDegree: If the degree of the curve is not among
             0, 1, 2 or 3.
     """
     num_coeffs, = bezier_coeffs.shape
@@ -1307,8 +1307,8 @@ def poly_to_power_basis(bezier_coeffs):
             coeff3 - 3.0 * coeff2 + 3.0 * coeff1 - coeff0,
         ])
     else:
-        raise NotImplementedError(
-            'Currently only supports degrees 0, 1, 2 and 3')
+        raise _helpers.UnsupportedDegree(
+            num_coeffs - 1, supported=(0, 1, 2, 3))
 
 
 def locate_point(nodes, x_val, y_val):

@@ -847,7 +847,7 @@ def _reduce_pseudo_inverse(nodes):
         numpy.ndarray: The reduced nodes.
 
     Raises:
-        NotImplementedError: If the degree is not 1, 2, 3 or 4.
+        .UnsupportedDegree: If the degree is not 1, 2, 3 or 4.
     """
     _, num_nodes = np.shape(nodes)
     if num_nodes == 2:
@@ -863,7 +863,7 @@ def _reduce_pseudo_inverse(nodes):
         reduction = _REDUCTION3
         denom = _REDUCTION_DENOM3
     else:
-        raise NotImplementedError('Unsupported degree', num_nodes - 1)
+        raise _helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
 
     result = _helpers.matrix_product(nodes, reduction)
     result /= denom
@@ -920,7 +920,7 @@ def maybe_reduce(nodes):
         either the reduced ones or the original passed in.
 
     Raises:
-        NotImplementedError: If the curve is degree 5 or higher.
+        .UnsupportedDegree: If the curve is degree 5 or higher.
     """
     _, num_nodes = nodes.shape
     if num_nodes < 2:
@@ -938,7 +938,8 @@ def maybe_reduce(nodes):
         projection = _PROJECTION3
         denom = _PROJ_DENOM3
     else:
-        raise NotImplementedError(num_nodes)
+        raise _helpers.UnsupportedDegree(
+            num_nodes - 1, supported=(0, 1, 2, 3, 4))
 
     projected = _helpers.matrix_product(nodes, projection) / denom
     relative_err = projection_error(nodes, projected)

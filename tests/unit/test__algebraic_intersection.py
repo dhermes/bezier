@@ -163,14 +163,19 @@ class Test_evaluate(unittest.TestCase):
             self.assertAlmostEqual(result, expected, delta=LOCAL_EPS)
 
     def test_quartic(self):
+        from bezier import _helpers
+
         # f(x, y) = -28 x^4 + 56 x^3 - 36 x^2 + 8 x - y
         nodes = np.asfortranarray([
             [0.0, 0.25, 0.5, 0.75, 1.0],
             [0.0, 2.0, -2.0, 2.0, 0.0],
         ])
+        degree = nodes.shape[1] - 1
 
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(nodes, 0.0, 0.0)
+        self.assertEqual(exc_info.exception.degree, degree)
+        self.assertEqual(exc_info.exception.supported, (1, 2, 3))
 
 
 class Test_eval_intersection_polynomial(unittest.TestCase):
@@ -1486,9 +1491,14 @@ class Test_poly_to_power_basis(utils.NumPyTestCase):
             self._call_function_under_test(bezier_coeffs), expected)
 
     def test_unsupported(self):
+        from bezier import _helpers
+
         bezier_coeffs = np.asfortranarray([1.0, 0.0, 0.0, 2.0, 1.0])
-        with self.assertRaises(NotImplementedError):
+        degree = bezier_coeffs.shape[0] - 1
+        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(bezier_coeffs)
+        self.assertEqual(exc_info.exception.degree, degree)
+        self.assertEqual(exc_info.exception.supported, (0, 1, 2, 3))
 
 
 class Test_locate_point(unittest.TestCase):

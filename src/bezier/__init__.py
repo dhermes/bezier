@@ -20,6 +20,9 @@ Plotting utilities are also provided.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
+
+.. autoclass:: UnsupportedDegree
+   :members:
 """
 
 import os
@@ -29,6 +32,7 @@ import pkg_resources
 # NOTE: ``__config__`` **must** be the first import because it (may)
 #       modify the search path used to locate shared libraries.
 from bezier import __config__
+from bezier._helpers import UnsupportedDegree
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface
@@ -56,6 +60,7 @@ __all__ = [
     'get_include',
     'get_lib',
     'Surface',
+    'UnsupportedDegree',
 ]
 
 

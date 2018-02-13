@@ -593,10 +593,16 @@ class TestSurface(utils.NumPyTestCase):
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_bad_degree(self):
-        nodes = np.zeros((2, 15), order='F')
-        surface = self._make_one(nodes, 4)
-        with self.assertRaises(NotImplementedError):
+        from bezier import _helpers
+
+        degree = 4
+        num_nodes = ((degree + 1) * (degree + 2)) // 2
+        nodes = np.zeros((2, num_nodes), order='F')
+        surface = self._make_one(nodes, degree=degree)
+        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
             surface._compute_valid()
+        self.assertEqual(exc_info.exception.degree, degree)
+        self.assertEqual(exc_info.exception.supported, (1, 2, 3))
 
     def test_is_valid_property(self):
         surface = self._make_one(self.UNIT_TRIANGLE, 1)

@@ -282,7 +282,10 @@ def reduce_pseudo_inverse(double[::1, :] nodes):
     )
 
     if not_implemented:
-        raise NotImplementedError(num_nodes - 1)
+        # NOTE: This import at runtime is expensive, but we don't mind it
+        #       because the exception is intended to halt the program.
+        from bezier._helpers import UnsupportedDegree
+        raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
 
     return reduced
 
@@ -306,7 +309,10 @@ def full_reduce(double[::1, :] nodes):
     )
 
     if not_implemented:
-        raise NotImplementedError(num_nodes)
+        # NOTE: This import at runtime is expensive, but we don't mind it
+        #       because the exception is intended to halt the program.
+        from bezier._helpers import UnsupportedDegree
+        raise UnsupportedDegree(num_nodes - 1, supported=(0, 1, 2, 3, 4))
 
     if num_reduced_nodes == num_nodes:
         if isinstance(nodes.base, np.ndarray):

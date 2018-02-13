@@ -456,6 +456,46 @@ def _polygon_collide(polygon1, polygon2):
     return True
 
 
+class UnsupportedDegree(NotImplementedError):
+    """Custom exception to indicate the given degree is unsupported.
+
+    This is intentionally a subclass of a :exc:`NotImplementedError`
+    since it's intended to indicate a lack of an implementation. For
+    example, :meth:`.Curve.reduce_` uses hard-coded matrices for
+    a small subset of possible degrees, so the implementation is
+    **degree-specific**.
+
+    Args:
+        degree (int): The degree that is not possible to support.
+        supported (Tuple[int, ...]): The degrees that are
+            actually supported by the failing method.
+    """
+
+    def __init__(self, degree, supported=()):
+        super(UnsupportedDegree, self).__init__()
+        self.degree = degree
+        """int: The degree that the caller attempted to use."""
+        self.supported = supported
+        """Tuple[int, ...]: The degrees supported by the failing method."""
+
+    def __str__(self):
+        num_supported = len(self.supported)
+        if num_supported == 0:
+            return 'UnsupportedDegree(degree={})'.format(self.degree)
+
+        degrees_str = [
+            '{}'.format(degree) for degree in self.supported]
+        if num_supported == 1:
+            msg = 'The only degree supported at this time is ' + degrees_str[0]
+        else:
+            msg = (
+                'The only degrees supported at this time are ' +
+                ', '.join(degrees_str[:-1]) +
+                ' and ' +
+                degrees_str[-1])
+        return 'UnsupportedDegree({}, degree={})'.format(msg, self.degree)
+
+
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     vector_close = _vector_close
