@@ -859,7 +859,10 @@ class Surface(_base.Base):
            ...     [0.0, -0.25, 0.0, 0.5 , 0.75, 1.0],
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
-           >>> point = np.asfortranarray([[0.59375], [0.25]])
+           >>> point = np.asfortranarray([
+           ...     [0.59375],
+           ...     [0.25   ],
+           ... ])
            >>> s, t = surface.locate(point)
            >>> s
            0.5

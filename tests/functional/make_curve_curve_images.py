@@ -29,7 +29,7 @@ def make_plot(intersection_info, save_plot):
 
     ax = curve1.plot(64)
     curve2.plot(64, ax=ax)
-    ax.plot(intersection_pts[:, 0], intersection_pts[:, 1],
+    ax.plot(intersection_pts[0, :], intersection_pts[1, :],
             marker='o', linestyle='None', color='black')
     ax.axis('scaled')
     _plot_helpers.add_plot_boundary(ax)

@@ -1013,8 +1013,6 @@ def classify_tangent_intersection(
         of the ``tangent`` values.
 
     Raises:
-        NotImplementedError: If the curves are tangent, moving in opposite
-            directions, but enclose overlapping arcs.
         NotImplementedError: If the curves are tangent at the intersection
             and have the same curvature.
     """
@@ -1465,10 +1463,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> edge_nodes1 = (nodes1, None, None)
        >>> edge_nodes2 = (nodes2, None, None)
        >>> classify_intersection(intersection, edge_nodes1, edge_nodes2)
-       Traceback (most recent call last):
-         ...
-       NotImplementedError: Curves moving in opposite direction
-                            but define overlapping arcs.
+       <IntersectionClassification.TANGENT_BOTH: 6>
 
     .. testcleanup:: classify-intersection5
 

@@ -348,7 +348,7 @@ class Curve(_base.Base):
         .. testcleanup:: curve-intersect
 
            import make_images
-           make_images.curve_intersect(curve1, curve2, intersections)
+           make_images.curve_intersect(curve1, curve2, s_vals)
 
         Args:
             other (Curve): Other curve to intersect with.
@@ -614,11 +614,17 @@ class Curve(_base.Base):
            ...     [0.0, 2.0, 1.0, 0.0],
            ... ])
            >>> curve = bezier.Curve(nodes, degree=3)
-           >>> point1 = np.asfortranarray([[3.09375], [0.703125]])
+           >>> point1 = np.asfortranarray([
+           ...     [3.09375 ],
+           ...     [0.703125],
+           ... ])
            >>> s = curve.locate(point1)
            >>> s
            0.75
-           >>> point2 = np.asfortranarray([[2.0], [0.5]])
+           >>> point2 = np.asfortranarray([
+           ...     [2.0],
+           ...     [0.5],
+           ... ])
            >>> curve.locate(point2) is None
            True
 

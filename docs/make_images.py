@@ -20,7 +20,6 @@ To actually execute these functions with the desired inputs, run:
 """
 
 
-import fractions
 import os
 
 try:
@@ -61,21 +60,42 @@ def save_image(figure, filename):
     plt.close(figure)
 
 
+def stack1d(*points):
+    """Fill out the columns of matrix with a series of points.
+
+    This is because ``np.hstack()`` will just make another 1D vector
+    out of them and ``np.vstack()`` will put them in the rows.
+
+    Args:
+        points (Tuple[numpy.ndarray, ...]): Tuple of 1D points (i.e.
+            arrays with shape ``(2,)``.
+
+    Returns:
+        numpy.ndarray: The array with each point in ``points`` as its
+        columns.
+    """
+    result = np.empty((2, len(points)), order='F')
+    for index, point in enumerate(points):
+        result[:, index] = point
+
+    return result
+
+
 def linearization_error(nodes):
     """Image for :func:`.linearization_error` docstring."""
     if NO_IMAGES:
         return
 
     curve = bezier.Curve.from_nodes(nodes)
-    line = bezier.Curve.from_nodes(nodes[(0, -1), :])
-    midpoints = np.vstack([
+    line = bezier.Curve.from_nodes(nodes[:, (0, -1)])
+    midpoints = np.hstack([
         curve.evaluate(0.5),
         line.evaluate(0.5),
     ])
 
     ax = curve.plot(256)
     line.plot(256, ax=ax)
-    ax.plot(midpoints[:, 0], midpoints[:, 1],
+    ax.plot(midpoints[0, :], midpoints[1, :],
             color='black', linestyle='dashed')
 
     ax.axis('scaled')
@@ -87,21 +107,21 @@ def newton_refine1(s, new_s, curve1, t, new_t, curve2):
     if NO_IMAGES:
         return
 
-    points = np.vstack([
+    points = np.hstack([
         curve1.evaluate(s),
         curve2.evaluate(t),
     ])
-    points_new = np.vstack([
+    points_new = np.hstack([
         curve1.evaluate(new_s),
         curve2.evaluate(new_t),
     ])
 
     ax = curve1.plot(256)
     curve2.plot(256, ax=ax)
-    ax.plot(points[:, 0], points[:, 1],
+    ax.plot(points[0, :], points[1, :],
             color='black', linestyle='None', marker='o',
             markeredgewidth=1, markerfacecolor='None')
-    ax.plot(points_new[:, 0], points_new[:, 1],
+    ax.plot(points_new[0, :], points_new[1, :],
             color='black', linestyle='None', marker='o')
 
     ax.axis('scaled')
@@ -120,7 +140,7 @@ def newton_refine2(s_vals, curve1, curve2):
 
     points = curve1.evaluate_multi(np.asfortranarray(s_vals))
     colors = seaborn.dark_palette('blue', 5)
-    ax.scatter(points[:, 0], points[:, 1], c=colors,
+    ax.scatter(points[0, :], points[1, :], c=colors,
                s=20, alpha=0.75, zorder=2)
 
     ax.axis('scaled')
@@ -141,7 +161,7 @@ def newton_refine3(s_vals, curve1, curve2):
 
     points = curve1.evaluate_multi(np.asfortranarray(s_vals))
     colors = seaborn.dark_palette('blue', 6)
-    ax.scatter(points[:, 0], points[:, 1], c=colors,
+    ax.scatter(points[0, :], points[1, :], c=colors,
                s=20, alpha=0.75, zorder=2)
 
     ax.axis('scaled')
@@ -155,13 +175,13 @@ def segment_intersection1(start0, end0, start1, end1, s):
     if NO_IMAGES:
         return
 
-    line0 = bezier.Curve.from_nodes(np.vstack([start0, end0]))
-    line1 = bezier.Curve.from_nodes(np.vstack([start1, end1]))
+    line0 = bezier.Curve.from_nodes(stack1d(start0, end0))
+    line1 = bezier.Curve.from_nodes(stack1d(start1, end1))
 
     ax = line0.plot(2)
     line1.plot(256, ax=ax)
 
-    (x_val, y_val), = line0.evaluate(s)
+    (x_val,), (y_val,) = line0.evaluate(s)
     ax.plot([x_val], [y_val], color='black', marker='o')
 
     ax.axis('scaled')
@@ -173,8 +193,8 @@ def segment_intersection2(start0, end0, start1, end1):
     if NO_IMAGES:
         return
 
-    line0 = bezier.Curve.from_nodes(np.vstack([start0, end0]))
-    line1 = bezier.Curve.from_nodes(np.vstack([start1, end1]))
+    line0 = bezier.Curve.from_nodes(stack1d(start0, end0))
+    line1 = bezier.Curve.from_nodes(stack1d(start1, end1))
 
     ax = line0.plot(2)
     line1.plot(2, ax=ax)
@@ -191,9 +211,9 @@ def helper_parallel_different(start0, end0, start1, end1, filename):
     figure = plt.figure()
     ax = figure.gca()
 
-    points = np.vstack([start0, end0, start1, end1])
-    ax.plot(points[:2, 0], points[:2, 1], marker='o')
-    ax.plot(points[2:, 0], points[2:, 1], marker='o')
+    points = stack1d(start0, end0, start1, end1)
+    ax.plot(points[0, :2], points[1, :2], marker='o')
+    ax.plot(points[0, 2:], points[1, 2:], marker='o')
 
     ax.axis('scaled')
     _plot_helpers.add_plot_boundary(ax)
@@ -203,12 +223,14 @@ def helper_parallel_different(start0, end0, start1, end1, filename):
 
 def add_patch(ax, nodes, color, with_nodes=True,
               alpha=0.625, node_color='black'):
-    path = _path_mod.Path(nodes)
+    # ``nodes`` is stored Fortran-contiguous with ``x-y`` points in each
+    # column but ``Path()`` wants ``x-y`` points in each row.
+    path = _path_mod.Path(nodes.T)
     patch = patches.PathPatch(
         path, facecolor=color, alpha=alpha)
     ax.add_patch(patch)
     if with_nodes:
-        ax.plot(nodes[:, 0], nodes[:, 1], color=node_color,
+        ax.plot(nodes[0, :], nodes[1, :], color=node_color,
                 linestyle='None', marker='o')
 
 
@@ -221,7 +243,7 @@ def curve_constructor(curve):
     line = ax.lines[0]
 
     nodes = curve._nodes
-    ax.plot(nodes[:, 0], nodes[:, 1], color='black',
+    ax.plot(nodes[0, :], nodes[1, :], color='black',
             linestyle='None', marker='o')
     add_patch(ax, nodes, line.get_color())
 
@@ -238,7 +260,7 @@ def curve_evaluate(curve):
 
     ax = curve.plot(256)
     points = curve.evaluate_multi(np.asfortranarray([0.75]))
-    ax.plot(points[:, 0], points[:, 1], color='black',
+    ax.plot(points[0, :], points[1, :], color='black',
             linestyle='None', marker='o')
 
     ax.axis('scaled')
@@ -270,14 +292,15 @@ def curve_subdivide(curve, left, right):
     save_image(ax.figure, 'curve_subdivide.png')
 
 
-def curve_intersect(curve1, curve2, intersections):
+def curve_intersect(curve1, curve2, s_vals):
     """Image for :meth`.Curve.intersect` docstring."""
     if NO_IMAGES:
         return
 
     ax = curve1.plot(256)
     curve2.plot(256, ax=ax)
-    ax.plot(intersections[:, 0], intersections[:, 1],
+    intersections = curve1.evaluate_multi(s_vals)
+    ax.plot(intersections[0, :], intersections[1, :],
             color='black', linestyle='None', marker='o')
 
     ax.axis('scaled')
@@ -295,19 +318,19 @@ def surface_constructor(surface):
     line = ax.lines[0]
 
     nodes = surface._nodes
-    add_patch(ax, nodes[(0, 1, 2, 5), :], line.get_color())
+    add_patch(ax, nodes[:, (0, 1, 2, 5)], line.get_color())
     delta = 1.0 / 32.0
-    ax.text(nodes[0, 0], nodes[0, 1], r'$v_0$', fontsize=20,
+    ax.text(nodes[0, 0], nodes[1, 0], r'$v_0$', fontsize=20,
             verticalalignment='top', horizontalalignment='right')
-    ax.text(nodes[1, 0], nodes[1, 1], r'$v_1$', fontsize=20,
+    ax.text(nodes[0, 1], nodes[1, 1], r'$v_1$', fontsize=20,
             verticalalignment='top', horizontalalignment='center')
-    ax.text(nodes[2, 0], nodes[2, 1], r'$v_2$', fontsize=20,
+    ax.text(nodes[0, 2], nodes[1, 2], r'$v_2$', fontsize=20,
             verticalalignment='top', horizontalalignment='left')
-    ax.text(nodes[3, 0] - delta, nodes[3, 1], r'$v_3$', fontsize=20,
+    ax.text(nodes[0, 3] - delta, nodes[1, 3], r'$v_3$', fontsize=20,
             verticalalignment='center', horizontalalignment='right')
-    ax.text(nodes[4, 0] + delta, nodes[4, 1], r'$v_4$', fontsize=20,
+    ax.text(nodes[0, 4] + delta, nodes[1, 4], r'$v_4$', fontsize=20,
             verticalalignment='center', horizontalalignment='left')
-    ax.text(nodes[5, 0], nodes[5, 1] + delta, r'$v_5$', fontsize=20,
+    ax.text(nodes[0, 5], nodes[1, 5] + delta, r'$v_5$', fontsize=20,
             verticalalignment='bottom', horizontalalignment='center')
 
     ax.axis('scaled')
@@ -322,7 +345,7 @@ def surface_evaluate_barycentric(surface, point):
         return
 
     ax = surface.plot(256)
-    ax.plot(point[:, 0], point[:, 1], color='black',
+    ax.plot(point[0, :], point[1, :], color='black',
             linestyle='None', marker='o')
 
     ax.axis('scaled')
@@ -337,16 +360,20 @@ def surface_evaluate_cartesian_multi(surface, points):
         return
 
     ax = surface.plot(256)
-    ax.plot(points[:, 0], points[:, 1], color='black',
+    ax.plot(points[0, :], points[1, :], color='black',
             linestyle='None', marker='o')
 
     delta = 1.0 / 32.0
-    ax.text(points[0, 0], points[0, 1], r'$w_0$', fontsize=20,
-            verticalalignment='top', horizontalalignment='right')
-    ax.text(points[1, 0] + 2 * delta, points[1, 1], r'$w_1$', fontsize=20,
-            verticalalignment='center', horizontalalignment='left')
-    ax.text(points[2, 0], points[2, 1] + delta, r'$w_2$', fontsize=20,
-            verticalalignment='bottom', horizontalalignment='left')
+    font_size = 18
+    ax.text(
+        points[0, 0], points[1, 0], r'$w_0$', fontsize=font_size,
+        verticalalignment='top', horizontalalignment='right')
+    ax.text(
+        points[0, 1] + 2 * delta, points[1, 1], r'$w_1$', fontsize=font_size,
+        verticalalignment='center', horizontalalignment='left')
+    ax.text(
+        points[0, 2], points[1, 2] + delta, r'$w_2$', fontsize=font_size,
+        verticalalignment='bottom', horizontalalignment='left')
 
     ax.axis('scaled')
     ax.set_xlim(-3.125, 2.375)
@@ -360,18 +387,23 @@ def surface_evaluate_barycentric_multi(surface, points):
         return
 
     ax = surface.plot(256)
-    ax.plot(points[:, 0], points[:, 1], color='black',
+    ax.plot(points[0, :], points[1, :], color='black',
             linestyle='None', marker='o')
 
     delta = 1.0 / 32.0
-    ax.text(points[0, 0], points[0, 1] + delta, r'$w_0$', fontsize=20,
-            verticalalignment='bottom', horizontalalignment='center')
-    ax.text(points[1, 0], points[1, 1] - delta, r'$w_1$', fontsize=20,
-            verticalalignment='top', horizontalalignment='right')
-    ax.text(points[2, 0], points[2, 1], r'$w_2$', fontsize=20,
-            verticalalignment='bottom', horizontalalignment='left')
-    ax.text(points[3, 0], points[3, 1], r'$w_3$', fontsize=20,
-            verticalalignment='top', horizontalalignment='right')
+    font_size = 18
+    ax.text(
+        points[0, 0], points[1, 0] + delta, r'$w_0$', fontsize=font_size,
+        verticalalignment='bottom', horizontalalignment='center')
+    ax.text(
+        points[0, 1], points[1, 1] - delta, r'$w_1$', fontsize=font_size,
+        verticalalignment='top', horizontalalignment='right')
+    ax.text(
+        points[0, 2], points[1, 2], r'$w_2$', fontsize=font_size,
+        verticalalignment='bottom', horizontalalignment='left')
+    ax.text(
+        points[0, 3], points[1, 3], r'$w_3$', fontsize=font_size,
+        verticalalignment='top', horizontalalignment='right')
 
     ax.axis('scaled')
     ax.set_xlim(-3.125, 2.125)
@@ -433,20 +465,20 @@ def surface_is_valid3(surface):
     # for each "true" edge.
     figure = plt.figure()
     ax = figure.gca()
-    line, = ax.plot(jac_edge[:, 0], jac_edge[:, 1])
+    line, = ax.plot(jac_edge[0, :], jac_edge[1, :])
     color = line.get_color()
 
-    ax.plot(points1[:, 0], points1[:, 1],
+    ax.plot(points1[0, :], points1[1, :],
             color='black', linestyle='dashed')
-    ax.plot(points2[:, 0], points2[:, 1],
+    ax.plot(points2[0, :], points2[1, :],
             color='black', linestyle='dashed')
-    ax.plot(points3[:, 0], points3[:, 1],
+    ax.plot(points3[0, :], points3[1, :],
             color='black', linestyle='dashed')
 
-    polygon = np.vstack([
-        points1[1:, :],
-        points2[1:, :],
-        jac_edge[1:, :],
+    polygon = np.hstack([
+        points1[:, 1:],
+        points2[:, 1:],
+        jac_edge[:, 1:],
     ])
     add_patch(ax, polygon, color, with_nodes=False)
 
@@ -462,9 +494,8 @@ def surface_subdivide1():
         return
 
     surface = bezier.Surface.from_nodes(np.asfortranarray([
-        [0.0, 0.0],
-        [1.0, 0.0],
-        [0.0, 1.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0],
     ]))
     surf_a, surf_b, surf_c, surf_d = surface.subdivide()
 
@@ -503,9 +534,9 @@ def add_edges(ax, surface, s_vals, color):
     points3 = edge3.evaluate_multi(s_vals)
 
     # Add the points to the plot.
-    ax.plot(points1[:, 0], points1[:, 1], color=color)
-    ax.plot(points2[:, 0], points2[:, 1], color=color)
-    ax.plot(points3[:, 0], points3[:, 1], color=color)
+    ax.plot(points1[0, :], points1[1, :], color=color)
+    ax.plot(points2[0, :], points2[1, :], color=color)
+    ax.plot(points3[0, :], points3[1, :], color=color)
 
 
 def surface_subdivide2(surface, sub_surface_b):
@@ -526,20 +557,20 @@ def surface_subdivide2(surface, sub_surface_b):
     add_edges(ax, sub_surface_b, s_vals, colors[0])
 
     # Add the control points polygon for the original surface.
-    nodes = surface._nodes[(0, 2, 4, 5, 0), :]
+    nodes = surface._nodes[:, (0, 2, 4, 5, 0)]
     add_patch(ax, nodes, colors[2], with_nodes=False)
 
     # Add the control points polygon for the sub-surface.
-    nodes = sub_surface_b._nodes[(0, 1, 2, 5, 3, 0), :]
+    nodes = sub_surface_b._nodes[:, (0, 1, 2, 5, 3, 0)]
     add_patch(ax, nodes, colors[1], with_nodes=False)
 
     # Plot **all** the nodes.
     sub_nodes = sub_surface_b._nodes
-    ax.plot(sub_nodes[:, 0], sub_nodes[:, 1], color='black',
+    ax.plot(sub_nodes[0, :], sub_nodes[1, :], color='black',
             linestyle='None', marker='o')
 
     # Take those same points and add the boundary.
-    ax.plot(nodes[:, 0], nodes[:, 1],
+    ax.plot(nodes[0, :], nodes[1, :],
             color='black', linestyle='dashed')
 
     ax.axis('scaled')
@@ -578,7 +609,7 @@ def surface_locate(surface, point):
         return
 
     ax = surface.plot(256)
-    ax.plot(point[:, 0], point[:, 1], color='black',
+    ax.plot(point[0, :], point[1, :], color='black',
             linestyle='None', marker='o')
 
     ax.axis('scaled')
@@ -587,42 +618,25 @@ def surface_locate(surface, point):
     save_image(ax.figure, 'surface_locate.png')
 
 
-def _pretty_value(float_val):
-    as_frac = fractions.Fraction(float_val)
-    if as_frac.denominator == 1:
-        return as_frac.numerator
-
-    frac_tex = r'\frac{{{}}}{{{}}}'.format(
-        abs(as_frac.numerator), as_frac.denominator)
-    if float_val < 0.0:
-        frac_tex = '-' + frac_tex
-    if len(frac_tex) < 20:
-        return frac_tex
-    else:
-        return '{:g}'.format(float_val)
-
-
 def curve_specialize(curve, new_curve):
     """Image for :meth`.Curve.specialize` docstring."""
     if NO_IMAGES:
         return
 
     ax = curve.plot(256)
-    interval = r'$\left[{}, {}\right]$'.format(
-        _pretty_value(curve.start), _pretty_value(curve.end))
+    interval = r'$\left[0, 1\right]$'
     line = ax.lines[-1]
     line.set_label(interval)
     color1 = line.get_color()
 
     new_curve.plot(256, ax=ax)
-    interval = r'$\left[{}, {}\right]$'.format(
-        _pretty_value(new_curve.start), _pretty_value(new_curve.end))
+    interval = r'$\left[-\frac{1}{4}, \frac{3}{4}\right]$'
     line = ax.lines[-1]
     line.set_label(interval)
 
-    ax.plot(curve._nodes[(0, -1), 0], curve._nodes[(0, -1), 1],
+    ax.plot(curve._nodes[0, (0, -1)], curve._nodes[1, (0, -1)],
             color=color1, linestyle='None', marker='o')
-    ax.plot(new_curve._nodes[(0, -1), 0], new_curve._nodes[(0, -1), 1],
+    ax.plot(new_curve._nodes[0, (0, -1)], new_curve._nodes[1, (0, -1)],
             color=line.get_color(), linestyle='None', marker='o')
 
     ax.legend(loc='lower right', fontsize=12)
@@ -641,9 +655,8 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
 
     # Plot features of the parameter space in ax1.
     tri_surf = bezier.Surface.from_nodes(np.asfortranarray([
-        [0.0, 0.0],
-        [1.0, 0.0],
-        [0.0, 1.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0],
     ]))
     tri_surf.plot(2, ax=ax1)
     ax1.plot([0.25], [0.5], marker='H')
@@ -660,9 +673,9 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
         [new_s, new_t],
     ]))
     ax2.plot([x_val], [y_val], marker='H')
-    ax2.plot(points[[0], 0], points[[0], 1],
+    ax2.plot(points[0, [0]], points[1, [0]],
              color='black', linestyle='None', marker='o')
-    ax2.plot(points[[1], 0], points[[1], 1],
+    ax2.plot(points[0, [1]], points[1, [1]],
              color='black', linestyle='None', marker='o',
              markeredgewidth=1, markerfacecolor='None')
 
@@ -702,7 +715,7 @@ def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
     edge1.plot(256, ax=ax, color=color1)
     edge2.plot(256, ax=ax, color=color2)
 
-    (int_x, int_y), = curve1.evaluate(s)
+    (int_x,), (int_y,) = curve1.evaluate(s)
     if interior == 0:
         color = color1
     elif interior == 1:
@@ -722,33 +735,25 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
         return
 
     surface1 = bezier.Surface.from_nodes(np.asfortranarray([
-        [1.0, 0.0],
-        [1.75, 0.25],
-        [2.0, 1.0],
-        [1.0, 1.0],
-        [1.5, 1.5],
-        [1.0, 2.0],
+        [1.0, 1.75, 2.0, 1.0, 1.5, 1.0],
+        [0.0, 0.25, 1.0, 1.0, 1.5, 2.0],
     ]))
     surface2 = bezier.Surface.from_nodes(np.asfortranarray([
-        [0.0, 0.0],
-        [1.6875, 0.0625],
-        [2.0, 0.5],
-        [0.25, 1.0],
-        [1.25, 1.25],
-        [0.5, 2.0],
+        [0.0, 1.6875, 2.0, 0.25, 1.25, 0.5],
+        [0.0, 0.0625, 0.5, 1.0, 1.25, 2.0],
     ]))
 
     ax = classify_help(s, curve1, surface1, curve2, surface2, 0)
-    (int_x, int_y), = curve1.evaluate(s)
+    (int_x,), (int_y,) = curve1.evaluate(s)
 
     # Remove the alpha from the color
     color1 = ax.patches[0].get_facecolor()[:3]
     color2 = ax.patches[1].get_facecolor()[:3]
     ax.plot([int_x, int_x + tangent1[0, 0]],
-            [int_y, int_y + tangent1[0, 1]],
+            [int_y, int_y + tangent1[1, 0]],
             color=color1, linestyle='dashed')
     ax.plot([int_x, int_x + tangent2[0, 0]],
-            [int_y, int_y + tangent2[0, 1]],
+            [int_y, int_y + tangent2[1, 0]],
             color=color2, linestyle='dashed')
     ax.plot([int_x], [int_y],
             color=color1, linestyle='None', marker='o')
@@ -765,20 +770,12 @@ def classify_intersection2(s, curve1, curve2):
         return
 
     surface1 = bezier.Surface.from_nodes(np.asfortranarray([
-        [1.0, 0.0],
-        [1.5, 1.0],
-        [2.0, 0.0],
-        [1.25, 1.0],
-        [1.75, 1.0],
-        [1.5, 2.0],
+        [1.0, 1.5, 2.0, 1.25, 1.75, 1.5],
+        [0.0, 1.0, 0.0, 1.0, 1.0, 2.0],
     ]))
     surface2 = bezier.Surface.from_nodes(np.asfortranarray([
-        [0.0, 0.0],
-        [1.5, 1.0],
-        [3.0, 0.0],
-        [0.75, 2.0],
-        [2.25, 2.0],
-        [1.5, 4.0],
+        [0.0, 1.5, 3.0, 0.75, 2.25, 1.5],
+        [0.0, 1.0, 0.0, 2.0, 2.0, 4.0],
     ]))
 
     ax = classify_help(s, curve1, surface1, curve2, surface2, 1)
@@ -793,20 +790,12 @@ def classify_intersection3(s, curve1, curve2):
         return
 
     surface1 = bezier.Surface.from_nodes(np.asfortranarray([
-        [2.0, 0.0],
-        [1.5, 1.0],
-        [1.0, 0.0],
-        [1.75, -1.0],
-        [1.25, -1.0],
-        [1.5, -2.0],
+        [2.0, 1.5, 1.0, 1.75, 1.25, 1.5],
+        [0.0, 1.0, 0.0, -1.0, -1.0, -2.0],
     ]))
     surface2 = bezier.Surface.from_nodes(np.asfortranarray([
-        [3.0, 0.0],
-        [1.5, 1.0],
-        [0.0, 0.0],
-        [2.25, -2.0],
-        [0.75, -2.0],
-        [1.5, -4.0],
+        [3.0, 1.5, 0.0, 2.25, 0.75, 1.5],
+        [0.0, 1.0, 0.0, -2.0, -2.0, -4.0],
     ]))
 
     ax = classify_help(s, curve1, surface1, curve2, surface2, 0)
@@ -821,20 +810,12 @@ def classify_intersection4(s, curve1, curve2):
         return
 
     surface1 = bezier.Surface.from_nodes(np.asfortranarray([
-        [2.0, 0.0],
-        [1.5, 1.0],
-        [1.0, 0.0],
-        [1.75, -1.0],
-        [1.25, -1.0],
-        [1.5, -2.0],
+        [2.0, 1.5, 1.0, 1.75, 1.25, 1.5],
+        [0.0, 1.0, 0.0, -1.0, -1.0, -2.0],
     ]))
     surface2 = bezier.Surface.from_nodes(np.asfortranarray([
-        [0.0, 0.0],
-        [1.5, 1.0],
-        [3.0, 0.0],
-        [0.75, 2.0],
-        [2.25, 2.0],
-        [1.5, 4.0],
+        [0.0, 1.5, 3.0, 0.75, 2.25, 1.5],
+        [0.0, 1.0, 0.0, 2.0, 2.0, 4.0],
     ]))
 
     ax = classify_help(s, curve1, surface1, curve2, surface2, None)
@@ -849,20 +830,12 @@ def classify_intersection5(s, curve1, curve2):
         return
 
     surface1 = bezier.Surface.from_nodes(np.asfortranarray([
-        [1.0, 0.0],
-        [1.5, 1.0],
-        [2.0, 0.0],
-        [1.25, 0.9375],
-        [1.75, 0.9375],
-        [1.5, 1.875],
+        [1.0, 1.5, 2.0, 1.25, 1.75, 1.5],
+        [0.0, 1.0, 0.0, 0.9375, 0.9375, 1.875],
     ]))
     surface2 = bezier.Surface.from_nodes(np.asfortranarray([
-        [3.0, 0.0],
-        [1.5, 1.0],
-        [0.0, 0.0],
-        [2.25, -2.0],
-        [0.75, -2.0],
-        [1.5, -4.0],
+        [3.0, 1.5, 0.0, 2.25, 0.75, 1.5],
+        [0.0, 1.0, 0.0, -2.0, -2.0, -4.0],
     ]))
 
     figure, (ax1, ax2) = plt.subplots(2, 1)
@@ -877,12 +850,8 @@ def classify_intersection5(s, curve1, curve2):
     # comes from specializing to
     # left1(0.5, 1.0)-left2(0.0, 0.25)-right1(0.375, 0.5)
     surface3 = bezier.Surface.from_nodes(np.asfortranarray([
-        [1.5, 0.5],
-        [1.75, 0.5],
-        [2.0, 0.0],
-        [1.6875, 0.5],
-        [1.9375, 0.234375],
-        [1.875, 0.46875],
+        [1.5, 1.75, 2.0, 1.6875, 1.9375, 1.875],
+        [0.5, 0.5, 0.0, 0.5, 0.234375, 0.46875],
     ]))
     # NOTE: We don't require the intersection polygon be valid.
     surface3.plot(256, ax=ax1)
@@ -890,17 +859,13 @@ def classify_intersection5(s, curve1, curve2):
     # The second comes from specializing to
     # left1(0.0, 0.5)-right1(0.5, 0.625)-left3(0.75, 1.0)
     surface4 = bezier.Surface.from_nodes(np.asfortranarray([
-        [1.0, 0.0],
-        [1.25, 0.5],
-        [1.5, 0.5],
-        [1.0625, 0.234375],
-        [1.3125, 0.5],
-        [1.125, 0.46875],
+        [1.0, 1.25, 1.5, 1.0625, 1.3125, 1.125],
+        [0.0, 0.5, 0.5, 0.234375, 0.5, 0.46875],
     ]))
     # NOTE: We don't require the intersection polygon be valid.
     surface4.plot(256, ax=ax2)
 
-    (int_x, int_y), = curve1.evaluate(s)
+    (int_x,), (int_y,) = curve1.evaluate(s)
     ax1.plot([int_x], [int_y],
              color=color1, linestyle='None', marker='o')
     ax2.plot([int_x], [int_y],
@@ -922,20 +887,12 @@ def classify_intersection6(s, curve1, curve2):
         return
 
     surface1 = bezier.Surface.from_nodes(np.asfortranarray([
-        [-0.125, 0.0625],
-        [-0.125, -0.0625],
-        [0.375, 0.0625],
-        [-0.0625, 0.15625],
-        [0.1875, 0.15625],
-        [0.0, 0.25],
+        [-0.125, -0.125, 0.375, -0.0625, 0.1875, 0.0],
+        [0.0625, -0.0625, 0.0625, 0.15625, 0.15625, 0.25],
     ]))
     surface2 = bezier.Surface.from_nodes(np.asfortranarray([
-        [-0.25, 0.25],
-        [-0.25, -0.25],
-        [0.75, 0.25],
-        [0.125, 0.625],
-        [0.625, 0.625],
-        [0.5, 1.0],
+        [-0.25, -0.25, 0.75, 0.125, 0.625, 0.5],
+        [0.25, -0.25, 0.25, 0.625, 0.625, 1.0],
     ]))
 
     ax = classify_help(s, curve1, surface1, curve2, surface2, None)
@@ -950,25 +907,17 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
         return
 
     surface1 = bezier.Surface.from_nodes(np.asfortranarray([
-        [0.0, 0.0],
-        [4.5, 0.0],
-        [9.0, 2.25],
-        [0.0, 1.25],
-        [4.5, 2.375],
-        [0.0, 2.5],
+        [0.0, 4.5, 9.0, 0.0, 4.5, 0.0],
+        [0.0, 0.0, 2.25, 1.25, 2.375, 2.5],
     ]))
     surface2 = bezier.Surface.from_nodes(np.asfortranarray([
-        [11.25, 0.0],
-        [9.0, 4.5],
-        [2.75, 1.0],
-        [8.125, -0.75],
-        [3.875, -0.25],
-        [5.0, -1.5],
+        [11.25, 9.0, 2.75, 8.125, 3.875, 5.0],
+        [0.0, 4.5, 1.0, -0.75, -0.25, -1.5],
     ]))
 
     figure, (ax1, ax2) = plt.subplots(2, 1)
     classify_help(s, curve1a, surface1, curve2, surface2, None, ax=ax1)
-    surface1._nodes = np.asfortranarray(surface1._nodes[(2, 4, 5, 1, 3, 0), :])
+    surface1._nodes = np.asfortranarray(surface1._nodes[:, (2, 4, 5, 1, 3, 0)])
     surface1._edges = None
     classify_help(0.0, curve1b, surface1, curve2, surface2, 0, ax=ax2)
 
@@ -990,7 +939,10 @@ def get_curvature(nodes, s, tangent_vec, curvature):
 
     # Find the center of the circle along the direction
     # perpendicular to the tangent vector (90 degree left turn).
-    radius_dir = np.asfortranarray([[-tangent_vec[0, 1], tangent_vec[0, 0]]])
+    radius_dir = np.asfortranarray([
+        [-tangent_vec[1, 0]],
+        [tangent_vec[0, 0]],
+    ])
     radius_dir /= np.linalg.norm(radius_dir, ord=2)
     point = curve.evaluate(s)
     circle_center = point + radius_dir / curvature
@@ -998,11 +950,11 @@ def get_curvature(nodes, s, tangent_vec, curvature):
     # Add the curve.
     ax = curve.plot(256)
     # Add the circle.
-    circle_center = circle_center.flatten()
+    circle_center = circle_center.ravel(order='F')
     circle = plt.Circle(circle_center, 1.0 / abs(curvature), alpha=0.25)
     ax.add_artist(circle)
     # Add the point.
-    ax.plot(point[:, 0], point[:, 1],
+    ax.plot(point[0, :], point[1, :],
             color='black', marker='o', linestyle='None')
 
     ax.axis('scaled')
@@ -1017,8 +969,8 @@ def curve_locate(curve, point1, point2):
         return
 
     ax = curve.plot(256)
-    points = np.vstack([point1, point2])
-    ax.plot(points[:, 0], points[:, 1], color='black',
+    points = np.hstack([point1, point2])
+    ax.plot(points[0, :], points[1, :], color='black',
             linestyle='None', marker='o')
 
     ax.axis('scaled')
@@ -1033,11 +985,11 @@ def newton_refine_curve(curve, point, s, new_s):
         return
 
     ax = curve.plot(256)
-    ax.plot(point[:, 0], point[:, 1], marker='H')
+    ax.plot(point[0, :], point[1, :], marker='H')
     wrong_points = curve.evaluate_multi(np.asfortranarray([s, new_s]))
-    ax.plot(wrong_points[[0], 0], wrong_points[[0], 1],
+    ax.plot(wrong_points[0, [0]], wrong_points[1, [0]],
             color='black', linestyle='None', marker='o')
-    ax.plot(wrong_points[[1], 0], wrong_points[[1], 1],
+    ax.plot(wrong_points[0, [1]], wrong_points[1, [1]],
             color='black', linestyle='None', marker='o',
             markeredgewidth=1, markerfacecolor='None')
 
@@ -1059,7 +1011,7 @@ def newton_refine_curve_cusp(curve, s_vals):
 
     points = curve.evaluate_multi(np.asfortranarray(s_vals))
     colors = seaborn.dark_palette('blue', 6)
-    ax.scatter(points[:, 0], points[:, 1], c=colors,
+    ax.scatter(points[0, :], points[1, :], c=colors,
                s=20, alpha=0.75, zorder=2)
 
     # Set the axis bounds / scaling.
@@ -1114,12 +1066,12 @@ def surface_elevate(surface, elevated):
 
     surface.plot(256, ax=ax1)
     color = ax1.lines[-1].get_color()
-    nodes = surface._nodes[(0, 1, 2, 4, 5), :]
+    nodes = surface._nodes[:, (0, 1, 2, 4, 5)]
     add_patch(ax1, nodes, color)
 
     elevated.plot(256, ax=ax2)
     color = ax2.lines[-1].get_color()
-    nodes = elevated._nodes[(0, 1, 2, 3, 6, 8, 9), :]
+    nodes = elevated._nodes[:, (0, 1, 2, 3, 6, 8, 9)]
     add_patch(ax2, nodes, color)
 
     ax1.axis('scaled')
@@ -1137,9 +1089,8 @@ def unit_triangle():
         return
 
     nodes = np.asfortranarray([
-        [0.0, 0.0],
-        [1.0, 0.0],
-        [0.0, 1.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0],
     ])
     surface = bezier.Surface(nodes, degree=1)
 
