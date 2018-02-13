@@ -1068,8 +1068,8 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         second = bezier.Curve(self.QUADRATIC3[:, ::-1], 2)
         intersection = make_intersect(1, 0.5, 1, 0.5)
 
-        with self.assertRaises(NotImplementedError):
-            self._call_helper(intersection, first, second)
+        result = self._call_helper(intersection, first, second)
+        self.assertIs(result, get_enum('TANGENT_BOTH'))
 
     def test_opposed_opp_sign_curvature_no_overlap(self):
         import bezier
@@ -1088,8 +1088,8 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         second = bezier.Curve(self.QUADRATIC2[:, ::-1], 2)
         intersection = make_intersect(1, 0.5, 0, 0.5)
 
-        with self.assertRaises(NotImplementedError):
-            self._call_helper(intersection, first, second)
+        result = self._call_helper(intersection, first, second)
+        self.assertIs(result, get_enum('TANGENT_BOTH'))
 
 
 class Test_ignored_edge_corner(unittest.TestCase):

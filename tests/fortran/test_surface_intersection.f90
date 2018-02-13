@@ -15,8 +15,7 @@ module test_surface_intersection
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_INSUFFICIENT_SPACE, &
-       Status_SAME_CURVATURE, Status_BAD_TANGENT, Status_EDGE_END, &
-       Status_UNKNOWN
+       Status_SAME_CURVATURE, Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
   use curve_intersection, only: set_similar_ulps, get_similar_ulps
   use surface_intersection, only: &
@@ -25,7 +24,8 @@ module test_surface_intersection
        IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
-       IntersectionClassification_IGNORED_CORNER, SurfaceContained_NEITHER, &
+       IntersectionClassification_IGNORED_CORNER, &
+       IntersectionClassification_TANGENT_BOTH, SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
@@ -421,7 +421,9 @@ contains
 
     call classify_intersection( &
          edges_first, edges_second, intersection_, enum_, status)
-    case_success = (status == Status_BAD_TANGENT)
+    case_success = ( &
+         enum_ == IntersectionClassification_TANGENT_BOTH .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 15: Intersection is tangent, opposite direction, curvatures have
@@ -457,7 +459,9 @@ contains
 
     call classify_intersection( &
          edges_first, edges_second, intersection_, enum_, status)
-    case_success = (status == Status_BAD_TANGENT)
+    case_success = ( &
+         enum_ == IntersectionClassification_TANGENT_BOTH .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 17: Intersection at corner, but the corner "staddles" an edge.
@@ -796,25 +800,25 @@ contains
 
     ! CASE 3: Tangent intersection (causes ``add_st_vals()`` to error).
     num_intersections = 0
-    quadratic1(:, 1) = 0
-    quadratic1(:, 2) = [2.0_dp, 4.0_dp]
-    quadratic1(:, 3) = [4.0_dp, 0.0_dp]
-    quadratic1(:, 4) = [1.0_dp, 3.0_dp]
-    quadratic1(:, 5) = 3
-    quadratic1(:, 6) = [2.0_dp, 6.0_dp]
-    quadratic2(:, 1) = 4
-    quadratic2(:, 2) = [2.0_dp, 0.0_dp]
-    quadratic2(:, 3) = [0.0_dp, 4.0_dp]
-    quadratic2(:, 4) = [3.0_dp, 1.0_dp]
-    quadratic2(:, 5) = 1
-    quadratic2(:, 6) = [2.0_dp, -2.0_dp]
+    quadratic1(:, 1) = [0.0_dp, 2.0_dp]
+    quadratic1(:, 2) = [-4.0_dp, -2.0_dp]
+    quadratic1(:, 3) = [8.0_dp, 2.0_dp]
+    quadratic1(:, 4) = [4.0_dp, 4.0_dp]
+    quadratic1(:, 5) = [8.0_dp, 4.0_dp]
+    quadratic1(:, 6) = [8.0_dp, 6.0_dp]
+    quadratic2(:, 1) = [-2.0_dp, 2.0_dp]
+    quadratic2(:, 2) = [-2.0_dp, -2.0_dp]
+    quadratic2(:, 3) = [6.0_dp, 2.0_dp]
+    quadratic2(:, 4) = [1.0_dp, 5.0_dp]
+    quadratic2(:, 5) = [5.0_dp, 5.0_dp]
+    quadratic2(:, 6) = [4.0_dp, 8.0_dp]
     call surfaces_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, all_types, status)
     case_success = ( &
-         num_intersections == 1 .AND. &
+         num_intersections == 26 .AND. &
          all_types == 0 .AND. &
-         status == Status_BAD_TANGENT)
+         status == Status_SAME_CURVATURE)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_surfaces_intersection_points

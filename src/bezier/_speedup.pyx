@@ -1083,11 +1083,6 @@ def surface_intersections(
         # NOTE: This text is identical (or should be) to the exception
         #       in the Python ``classify_intersection()``.
         raise ValueError('Intersection occurs at the end of an edge')
-    elif status == bezier._status.Status.BAD_TANGENT:
-        # NOTE: This text is identical (or should be) to the exception(s)
-        #       in the Python ``classify_tangent_intersection()``.
-        raise NotImplementedError(
-            'Curves moving in opposite direction but define overlapping arcs.')
     elif status == bezier._status.Status.SAME_CURVATURE:
         # NOTE: This text is identical (or should be) to the exception(s)
         #       in the Python ``classify_tangent_intersection()``.

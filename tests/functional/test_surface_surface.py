@@ -31,7 +31,6 @@ ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
 GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
 _, INTERSECTIONS = utils.surface_intersections_info()
 PARALLEL_FAILURE = (_geometric_intersection._SEGMENTS_PARALLEL,)
-BAD_TANGENT = (_surface_helpers._BAD_TANGENT,)
 SAME_CURVATURE = (_surface_helpers._SAME_CURVATURE,)
 TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
 WIGGLES = {
@@ -40,6 +39,7 @@ WIGGLES = {
         3: 10,  # Established on AppVeyor (64-bit Python 2.7)
         8: 18,  # Established on CentOS 5 (i686 Docker image)
         13: 19,  # Established on Ubuntu 16.04
+        21: 15,  # Established on Ubuntu 16.04
         22: 37,  # Established on Ubuntu 16.04
         32: 1013,  # Established on Ubuntu 16.04
         33: 1013,  # Established on Ubuntu 16.04
@@ -56,7 +56,6 @@ WIGGLES = {
 FAILED_CASES_TANGENT = {
     GEOMETRIC: {
         10: {'parallel': True},
-        21: {'bad_tangent': True},
     },
     ALGEBRAIC: {
         6: {},
@@ -96,8 +95,7 @@ def curved_polygon_edges(intersection):
 
 
 @contextlib.contextmanager
-def check_tangent_manager(
-        strategy, parallel=False, bad_tangent=False, too_many=None):
+def check_tangent_manager(strategy, parallel=False, too_many=None):
     caught_exc = None
     try:
         yield
@@ -109,8 +107,6 @@ def check_tangent_manager(
     if strategy is GEOMETRIC:
         if parallel:
             assert exc_args == PARALLEL_FAILURE
-        elif bad_tangent:
-            assert exc_args == BAD_TANGENT
         else:
             err_msg = TOO_MANY.format(too_many)
             assert exc_args == (err_msg,)

@@ -47,9 +47,6 @@ _MAX_POLY_SUBDIVISIONS = 5
 _SIGN = np.sign  # pylint: disable=no-member
 _FLOAT64 = np.float64  # pylint: disable=no-member
 _SAME_CURVATURE = 'Tangent curves have same curvature.'
-_BAD_TANGENT = (
-    'Curves moving in opposite direction but define '
-    'overlapping arcs.')
 _WRONG_CURVE = 'Start and end node not defined on same curve'
 # NOTE: The ``SUBDIVIDE`` matrices are public since used in
 #       the ``surface`` module.
@@ -1040,7 +1037,7 @@ def classify_tangent_intersection(
             if sign1 == 1.0:
                 return IntersectionClassification.OPPOSED
             else:
-                raise NotImplementedError(_BAD_TANGENT)
+                return IntersectionClassification.TANGENT_BOTH
         else:
             delta_c = abs(curvature1) - abs(curvature2)
             if delta_c == 0.0:
@@ -1048,7 +1045,7 @@ def classify_tangent_intersection(
             elif sign1 == _SIGN(delta_c):
                 return IntersectionClassification.OPPOSED
             else:
-                raise NotImplementedError(_BAD_TANGENT)
+                return IntersectionClassification.TANGENT_BOTH
     else:
         if curvature1 > curvature2:
             return IntersectionClassification.TANGENT_FIRST
@@ -2343,6 +2340,8 @@ class IntersectionClassification(enum.Enum):
     """Tangent intersection, second curve is on the interior."""
     IGNORED_CORNER = 5
     """Intersection at a corner, interiors don't intersect."""
+    TANGENT_BOTH = 6
+    """Tangent intersection, both curves are interior from some perspective."""
 
 
 # pylint: disable=invalid-name

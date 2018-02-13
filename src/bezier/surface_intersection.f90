@@ -15,7 +15,7 @@ module surface_intersection
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use status, only: &
        Status_SUCCESS, Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, &
-       Status_BAD_TANGENT, Status_EDGE_END, Status_UNKNOWN
+       Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
   use curve_intersection, only: &
        BoxIntersectionType_INTERSECTION, INTERSECTIONS_WORKSPACE, &
@@ -37,7 +37,8 @@ module surface_intersection
        IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
-       IntersectionClassification_IGNORED_CORNER, SurfaceContained_NEITHER, &
+       IntersectionClassification_IGNORED_CORNER, &
+       IntersectionClassification_TANGENT_BOTH, SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
@@ -78,6 +79,7 @@ module surface_intersection
   integer(c_int), parameter :: IntersectionClassification_TANGENT_FIRST = 3
   integer(c_int), parameter :: IntersectionClassification_TANGENT_SECOND = 4
   integer(c_int), parameter :: IntersectionClassification_IGNORED_CORNER = 5
+  integer(c_int), parameter :: IntersectionClassification_TANGENT_BOTH = 6
   ! Values of SurfaceContained enum:
   integer(c_int), parameter :: SurfaceContained_NEITHER = 0
   integer(c_int), parameter :: SurfaceContained_FIRST = 1
@@ -539,8 +541,6 @@ contains
 
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
-    ! * Status_BAD_TANGENT   : If the curves move in an opposite direction
-    !                          while defining overlapping arcs.
     ! * Status_SAME_CURVATURE: If the curves have identical curvature at the
     !                          point of tangency.
 
@@ -583,7 +583,7 @@ contains
           if (sign1 == 1.0_dp) then
              enum_ = IntersectionClassification_OPPOSED
           else
-             status = Status_BAD_TANGENT
+             enum_ = IntersectionClassification_TANGENT_BOTH
           end if
        else
           delta_c = abs(curvature1) - abs(curvature2)
@@ -594,7 +594,7 @@ contains
              if (sign1 == sign2) then
                 enum_ = IntersectionClassification_OPPOSED
              else
-                status = Status_BAD_TANGENT
+                enum_ = IntersectionClassification_TANGENT_BOTH
              end if
           end if
        end if
@@ -629,7 +629,6 @@ contains
     !                          another edge of the surface will also contain
     !                          that point (at it's beginning), that edge
     !                          should be used.
-    ! * Status_BAD_TANGENT   : Via ``classify_tangent_intersection()``.
     ! * Status_SAME_CURVATURE: Via ``classify_tangent_intersection()``.
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
@@ -699,7 +698,6 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
     ! * Status_EDGE_END      : Via ``classify_intersection()``.
-    ! * Status_BAD_TANGENT   : Via ``classify_intersection()``.
     ! * Status_SAME_CURVATURE: Via ``classify_intersection()``.
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
@@ -796,7 +794,6 @@ contains
     ! * Status_NO_CONVERGE   : Via ``curve_intersection.all_intersections()``.
     ! * (N >= MAX_CANDIDATES): Via ``curve_intersection.all_intersections()``.
     ! * Status_EDGE_END      : Via ``add_st_vals()``.
-    ! * Status_BAD_TANGENT   : Via ``add_st_vals()``.
     ! * Status_SAME_CURVATURE: Via ``add_st_vals()``.
 
     integer(c_int), intent(in) :: num_nodes1
@@ -1343,7 +1340,6 @@ contains
     ! * Status_NO_CONVERGE   : Via ``surfaces_intersection_points()``.
     ! * (N >= MAX_CANDIDATES): Via ``surfaces_intersection_points()``.
     ! * Status_EDGE_END      : Via ``surfaces_intersection_points()``.
-    ! * Status_BAD_TANGENT   : Via ``surfaces_intersection_points()``.
     ! * Status_SAME_CURVATURE: Via ``surfaces_intersection_points()``.
     ! * Status_UNKNOWN       : If all of the intersections are classified
     !                          as ``OPPOSED / IGNORED_CORNER / TANGENT_*``
@@ -1445,7 +1441,6 @@ contains
     ! * Status_NO_CONVERGE       : Via ``surfaces_intersect()``.
     ! * (N >= MAX_CANDIDATES)    : Via ``surfaces_intersect()``.
     ! * Status_EDGE_END          : Via ``surfaces_intersect()``.
-    ! * Status_BAD_TANGENT       : Via ``surfaces_intersect()``.
     ! * Status_SAME_CURVATURE    : Via ``surfaces_intersect()``.
     ! * Status_UNKNOWN           : Via ``surfaces_intersect()``.
     ! * Status_INSUFFICIENT_SPACE: If ``segment_ends_size`` is smaller than

@@ -16,8 +16,7 @@ module functional_test_helpers
   use types, only: dp
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
-       Status_SAME_CURVATURE, Status_BAD_TANGENT, Status_EDGE_END, &
-       Status_UNKNOWN
+       Status_SAME_CURVATURE, Status_EDGE_END, Status_UNKNOWN
   use curve_intersection, only: &
        all_intersections, free_curve_intersections_workspace
   implicit none
@@ -104,11 +103,6 @@ contains
             "Case ", &
             case_id, &
             " (failure): SAME_CURVATURE"
-    else if (status == Status_BAD_TANGENT) then
-       write (*, '(A, I2, A)') &
-            "Case ", &
-            case_id, &
-            " (failure): BAD_TANGENT"
     else if (status == Status_EDGE_END) then
        write (*, '(A, I2, A)') &
             "Case ", &
