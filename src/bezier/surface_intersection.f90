@@ -15,7 +15,7 @@ module surface_intersection
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use status, only: &
        Status_SUCCESS, Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, &
-       Status_EDGE_END, Status_UNKNOWN
+       Status_BAD_INTERIOR, Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS, evaluate_hodograph, get_curvature
   use curve_intersection, only: &
        BoxIntersectionType_INTERSECTION, INTERSECTIONS_WORKSPACE, &
@@ -1231,11 +1231,11 @@ contains
     !       overwritten in place.
 
     ! Possible error states:
-    ! * Status_SUCCESS: On success.
-    ! * Status_UNKNOWN: If a curved polygon requires more than ``MAX_EDGES``
-    !                   sides. (This could be due to either a particular
-    !                   complex intersection or a programming error which
-    !                   causes ``at_start`` to never be true.)
+    ! * Status_SUCCESS     : On success.
+    ! * Status_BAD_INTERIOR: If a curved polygon requires more than
+    !                        ``MAX_EDGES`` sides. (This could be due to either
+    !                        a particular complex intersection or a programming
+    !                        error which causes ``at_start`` to never be true.)
 
     integer(c_int), intent(in) :: num_intersections
     type(Intersection), intent(in) :: intersections(num_intersections)
@@ -1308,7 +1308,7 @@ contains
        else
           ! If the loop terminated without reaching the start node, then
           ! we have encountered an error.
-          status = Status_UNKNOWN
+          status = Status_BAD_INTERIOR
           return
        end if
     end do
@@ -1345,6 +1345,7 @@ contains
     !                          as ``OPPOSED / IGNORED_CORNER / TANGENT_*``
     !                          but not uniquely one type. (This should
     !                          never occur).
+    ! * Status_BAD_INTERIOR  : Via ``interior_combine()``.
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(2, num_nodes1)
@@ -1442,6 +1443,7 @@ contains
     ! * (N >= MAX_CANDIDATES)    : Via ``surfaces_intersect()``.
     ! * Status_EDGE_END          : Via ``surfaces_intersect()``.
     ! * Status_SAME_CURVATURE    : Via ``surfaces_intersect()``.
+    ! * Status_BAD_INTERIOR      : Via ``surfaces_intersect()``.
     ! * Status_UNKNOWN           : Via ``surfaces_intersect()``.
     ! * Status_INSUFFICIENT_SPACE: If ``segment_ends_size`` is smaller than
     !                              ``num_intersected`` **OR** if

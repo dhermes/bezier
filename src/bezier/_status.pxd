@@ -20,5 +20,6 @@ cdef extern from "bezier/status.h":
         NO_CONVERGE = 2
         INSUFFICIENT_SPACE = 3
         SAME_CURVATURE = 4
+        BAD_INTERIOR = 5
         EDGE_END = 6
         UNKNOWN = 999

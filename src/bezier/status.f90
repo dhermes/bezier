@@ -17,8 +17,8 @@ module status
   private
   public &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
-       Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_EDGE_END, &
-       Status_UNKNOWN
+       Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_BAD_INTERIOR, &
+       Status_EDGE_END, Status_UNKNOWN
 
   ! Values of Status enum:
   ! SUCCESS: Procedure exited with no error.
@@ -37,6 +37,11 @@ module status
   ! SAME_CURVATURE: Can't classify curve-curve intersection when the curves
   !                 have identical curvature at the point of intersection.
   integer(c_int), parameter :: Status_SAME_CURVATURE = 4
+  ! BAD_INTERIOR: Caused by a failure during the process of surface-surface
+  !               intersection. Occurs when the corners and edge-edge
+  !               intersections can't be converted into the curved polygon(s)
+  !               that make up the intersection of the two surfaces.
+  integer(c_int), parameter :: Status_BAD_INTERIOR = 5
   ! EDGE_END: A surface-surface intersection point occurs at the **end** of
   !           an edge (only intersections at the beginning of an edge should
   !           be used).

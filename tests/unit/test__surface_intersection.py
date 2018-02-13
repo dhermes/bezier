@@ -785,7 +785,7 @@ class Test_algebraic_intersect(Test__geometric_intersect):
 @utils.needs_speedup
 class Test_speedup_geometric_intersect(Test__geometric_intersect):
 
-    BAD_BOUNDARY_ARGS = ('Unknown error has occured.',)
+    BAD_BOUNDARY_ARGS = ('Unexpected number of edges',)
     BAD_BOUNDARY_TYPE = RuntimeError
     BAD_BOUNDARY_INCREASE_ULPS = True
 

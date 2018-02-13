@@ -1087,11 +1087,12 @@ def surface_intersections(
         # NOTE: This text is identical (or should be) to the exception(s)
         #       in the Python ``classify_tangent_intersection()``.
         raise NotImplementedError('Tangent curves have same curvature.')
-    elif status == bezier._status.Status.UNKNOWN:
+    elif status == bezier._status.Status.BAD_INTERIOR:
         # NOTE: This assumes that the Fortran ``interior_combine()`` has
         #       failed to return to the start node after ``MAX_EDGES = 10``
-        #       edges have been added. As the status name indicates, this
-        #       should never occur, hence will be difficult to test.
+        #       edges have been added.
+        raise RuntimeError('Unexpected number of edges')
+    elif status == bezier._status.Status.UNKNOWN:
         raise RuntimeError('Unknown error has occured.')
     else:
         # NOTE: If ``status`` isn't one of the enum values, then it is the
