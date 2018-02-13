@@ -102,13 +102,13 @@ class Test_add_patch(utils.NumPyTestCase):
 
         return _plot_helpers.add_patch(ax, color, pts_per_edge, *edges)
 
-    def _path_val(self, path, expected):
+    def _path_val(self, path, expected_transpose):
         self.assertEqual(path.Path.call_count, 1)
         call = path.Path.mock_calls[0]
         _, positional, keyword = call
         self.assertEqual(keyword, {})
         self.assertEqual(len(positional), 1)
-        self.assertEqual(positional[0], expected)
+        self.assertEqual(positional[0].T, expected_transpose)
 
     def _plot_check(self, ax, expected, color):
         self.assertEqual(ax.plot.call_count, 1)
@@ -142,7 +142,7 @@ class Test_add_patch(utils.NumPyTestCase):
             [0.0, 1.0, 2.0],
             [1.0, 3.0, 6.0],
         ])
-        expected, edges = self._get_info(nodes)
+        expected_transpose, edges = self._get_info(nodes)
 
         # Set-up mocks (quite a lot).
         patches = unittest.mock.Mock(spec=['PathPatch'])
@@ -167,10 +167,10 @@ class Test_add_patch(utils.NumPyTestCase):
         self.assertIsNone(result)
 
         # Verify mocks (quite a lot).
-        self._path_val(path, expected)
+        self._path_val(path, expected_transpose)
         patches.PathPatch.assert_called_once_with(
             path.Path.return_value, facecolor=color, alpha=0.625)
         ax.add_patch.assert_called_once_with(
             patches.PathPatch.return_value)
         line.get_color.assert_called_once_with()
-        self._plot_check(ax, expected, color)
+        self._plot_check(ax, expected_transpose, color)

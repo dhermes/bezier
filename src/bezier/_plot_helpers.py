@@ -95,7 +95,9 @@ def add_patch(ax, color, pts_per_edge, *edges):
     # Reset ``color`` in case it was ``None`` and set from color wheel.
     color = line.get_color()
 
-    path = _path_mod.Path(polygon)
+    # ``polygon`` is stored Fortran-contiguous with ``x-y`` points in each
+    # column but ``Path()`` wants ``x-y`` points in each row.
+    path = _path_mod.Path(polygon.T)
     patch = patches.PathPatch(
         path, facecolor=color, alpha=0.625)
     ax.add_patch(patch)
