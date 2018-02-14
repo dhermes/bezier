@@ -105,6 +105,17 @@ of a curve segment.
 .. _directory: https://github.com/dhermes/bezier/tree/master/src/bezier/quadpack
 .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
 
+The ``src/bezier/minpack`` directory `also has`_ a subset of Fortran 77
+subroutines from `MINPACK`_. These come with a ``disclaimer`` notice
+about redistribution and use with has been included with the source.
+
+MINPACK is used to perform root-finding (via the ``hybrj1`` subroutine).
+It is used in rare cases that two curves cannot be intersected after
+being linearized.
+
+.. _also has: https://github.com/dhermes/bezier/tree/master/src/bezier/minpack
+.. _MINPACK: https://en.wikipedia.org/wiki/MINPACK
+
 ******************
 Running Unit Tests
 ******************
