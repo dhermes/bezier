@@ -463,7 +463,24 @@ class UnsupportedDegree(NotImplementedError):
     since it's intended to indicate a lack of an implementation. For
     example, :meth:`.Curve.reduce_` uses hard-coded matrices for
     a small subset of possible degrees, so the implementation is
-    **degree-specific**.
+    **degree-specific**:
+
+    .. testsetup:: unsupported-degree
+
+       import numpy as np
+       import bezier
+
+    .. doctest:: unsupported-degree
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> degree = 5
+       >>> nodes = np.empty((2, degree + 1), order='F')
+       >>> curve = bezier.Curve(nodes, degree=degree)
+       >>> curve.reduce_()
+       Traceback (most recent call last):
+         ...
+       bezier._helpers.UnsupportedDegree: The only degrees supported at this
+                                          time are 1, 2, 3 and 4 (degree=5)
 
     Args:
         degree (int): The degree that is not possible to support.
@@ -481,7 +498,7 @@ class UnsupportedDegree(NotImplementedError):
     def __str__(self):
         num_supported = len(self.supported)
         if num_supported == 0:
-            return 'UnsupportedDegree(degree={})'.format(self.degree)
+            return 'degree={}'.format(self.degree)
 
         degrees_str = [
             '{}'.format(degree) for degree in self.supported]
@@ -493,7 +510,7 @@ class UnsupportedDegree(NotImplementedError):
                 ', '.join(degrees_str[:-1]) +
                 ' and ' +
                 degrees_str[-1])
-        return 'UnsupportedDegree({}, degree={})'.format(msg, self.degree)
+        return '{} (degree={})'.format(msg, self.degree)
 
 
 # pylint: disable=invalid-name

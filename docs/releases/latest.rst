@@ -33,6 +33,12 @@ Python Changes
    helpers were not correctly updated). The ``add_patch()`` helper was
    fixed to account for the changes in data layout
    (`80bfaaa <https://github.com/dhermes/bezier/commit/80bfaaa74219f9053585aa8970131018baa516d1>`__).
+-  Added custom ``UnsupportedDegree``
+   `exception <http://bezier.readthedocs.io/en/0.7.1/reference/bezier.html#bezier.UnsupportedDegree>`__
+   to be used by routines that have implementations that are hard-coded for
+   specific degrees
+   (`87a1f21 <https://github.com/dhermes/bezier/commit/87a1f2171f6b810516544ff1691856d7fadfa12f>`__).
+   See `#103 <https://github.com/dhermes/bezier/issues/103>`__.
 
 Non-Public API
 ~~~~~~~~~~~~~~
