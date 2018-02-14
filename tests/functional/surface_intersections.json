@@ -140,7 +140,31 @@
         "surface2": "19Q",
         "id": 5,
         "note": "These surfaces do not intersect. However, they share an entire edge (edge 1 of 10Q and edge 2 of 19Q).",
-        "intersections": []
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    ["1/2", "-3/4"]
+                ],
+                "start_params": [
+                    0,
+                    0
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [0, 1]
+                ],
+                "end_params": [
+                    1,
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 1],
+                    [-1, 1]
+                ],
+                "edge_list": [1, 5]
+            }
+        ]
     }, {
         "surface1": "3Q",
         "surface2": "4Q",
@@ -820,7 +844,7 @@
         "surface1": "6Q",
         "surface2": "34Q",
         "id": 34,
-        "note": "This is almost identical to intersection ID 13 (6Q-7Q), but the 34Q has an edge that goes **outside** of 6Q instead. This way, one of the two curved polygons has 3 sides and the other has 4. (In intersection ID 13, both curved polygons have 4 sides.)",
+        "note": "This is almost identical to intersection ID 13 (6Q-7Q), but surface 34Q has an edge that goes **outside** of 6Q instead. This way, one of the two curved polygons has 3 sides and the other has 4. (In intersection ID 13, both curved polygons have 4 sides.)",
         "intersections": [
             {
                 "nodes": [
@@ -1123,6 +1147,46 @@
                     [-3, 14, 1]
                 ],
                 "edge_list": [0, 5, 3, 4]
+            }
+        ]
+    }, {
+        "surface1": "41Q",
+        "surface2": "21Q",
+        "id": 42,
+        "note": "This is almost identical to intersection ID 10 (20Q-21Q) in that the surfaces are tangent at a corner. This differs because the tangency is only a corner of 21Q, whereas in intersection ID 10, the tangency is a corner of both surfaces.",
+        "intersections": [
+            {
+                "nodes": [
+                    [1, 0],
+                    ["7/16", "15/16"],
+                    ["-1/2", "15/46"],
+                    ["-1/2", "1/4"]
+                ],
+                "start_params": [
+                    "1/4",
+                    0,
+                    "108/115",
+                    0
+                ],
+                "start_param_polys": [
+                    [-1, 4],
+                    [0, 1],
+                    [-108, 115],
+                    [0, 1]
+                ],
+                "end_params": [
+                    1,
+                    "15/23",
+                    1,
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 1],
+                    [-15, 23],
+                    [-1, 1],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 1, 4, 5]
             }
         ]
     }

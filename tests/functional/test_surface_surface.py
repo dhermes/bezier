@@ -56,6 +56,7 @@ WIGGLES = {
 FAILED_CASES_TANGENT = {
     GEOMETRIC: {
         10: {'parallel': True},
+        42: {'parallel': True},
     },
     ALGEBRAIC: {
         6: {},
@@ -68,6 +69,7 @@ FAILED_CASES_TANGENT = {
         21: {},
         37: {},
         41: {},
+        42: {},
     },
 }
 FAILED_CASES_COINCIDENT = {
