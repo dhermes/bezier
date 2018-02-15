@@ -17,7 +17,7 @@ import pytest
 from tests.functional import utils
 
 
-FAILURES = (4, 5, 7, 10, 11, 12, 21)
+FAILURES = (4, 5, 7, 10, 11, 12, 21, 42, 45)
 
 
 def get_bounds():
@@ -32,7 +32,7 @@ def intersect_all(intersections):
         try:
             intersection.surface1.intersect(intersection.surface2)
         except NotImplementedError:
-            assert intersection.id_ in FAILURES
+            assert intersection.id_ in FAILURES, intersection.id_
 
 
 @pytest.mark.benchmark(

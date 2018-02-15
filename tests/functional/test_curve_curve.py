@@ -177,14 +177,6 @@ if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:
     INCORRECT_COUNT[ALGEBRAIC] += (10,)
 
 
-class IncorrectCount(ValueError):
-    """Custom exception for a "very bad" answer.
-
-    This should be raised when the **computed** number of intersections
-    disagrees with the actual number of intersections.
-    """
-
-
 def get_sorted_intersections(intersection_info, strategy):
     nodes1 = intersection_info.nodes1
     nodes2 = intersection_info.nodes2
@@ -197,7 +189,7 @@ def get_sorted_intersections(intersection_info, strategy):
 
     # Make we have the right number of intersections.
     if intersections.shape != (2, intersection_info.num_params):
-        raise IncorrectCount(
+        raise utils.IncorrectCount(
             'Received wrong number of intersections',
             intersections.shape, 'Expected', intersection_info.num_params,
             intersection_info.test_id)
@@ -353,7 +345,7 @@ def test_intersect(strategy, intersection_info):
     intersection_type = intersection_info.type_
 
     if id_ in INCORRECT_COUNT[strategy]:
-        with pytest.raises(IncorrectCount):
+        with pytest.raises(utils.IncorrectCount):
             check_intersect(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.tangent:
         check_tangent(intersection_info, strategy)

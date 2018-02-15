@@ -76,11 +76,21 @@ FAILED_CASES_COINCIDENT = {
     GEOMETRIC: {
         4: {'curvature': True},
         5: {'parallel': True},
+        45: {'parallel': True},
     },
     ALGEBRAIC: {
         4: {},
         5: {},
+        43: {},
+        44: {},
+        45: {},
     },
+}
+INCORRECT_COUNT = {
+    GEOMETRIC: (
+        44,
+    ),
+    ALGEBRAIC: (),
 }
 CONFIG = utils.Config()
 
@@ -147,7 +157,11 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
     assert surface2.is_valid
 
     intersections = surface1.intersect(surface2, strategy=strategy)
-    assert len(intersections) == len(all_intersected)
+    if len(intersections) != len(all_intersected):
+        raise utils.IncorrectCount(
+            'Received wrong number of intersections',
+            len(intersections), 'Expected', len(all_intersected))
+
     all_edges = surface1._get_edges() + surface2._get_edges()
 
     for intersection, intersected in six.moves.zip(
@@ -200,7 +214,9 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
 )
 def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_
-    if id_ in FAILED_CASES_TANGENT[strategy]:
+    if id_ in INCORRECT_COUNT[strategy]:
+        context = pytest.raises(utils.IncorrectCount)
+    elif id_ in FAILED_CASES_TANGENT[strategy]:
         kwargs = FAILED_CASES_TANGENT[strategy][id_]
         context = check_tangent_manager(strategy, **kwargs)
     elif id_ in FAILED_CASES_COINCIDENT[strategy]:

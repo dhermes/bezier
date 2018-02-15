@@ -330,6 +330,25 @@
         ],
         "note": "This is derived from surface 20Q by reparameterizing the curved edge onto [-1/4, 3/4] and then connecting the third corner to the new edge ends."
     },
+    "42Q": {
+        "control_points": [
+            [0, "1/8", "5/4", "5/8", "5/4", "5/4"],
+            ["5/4", "1/8", 0, "5/4", "5/8", "5/4"]
+        ]
+    },
+    "43Q": {
+        "control_points": [
+            ["1/8", "1/2", "15/8", "11/16", "25/16", "5/4"],
+            ["3/4", "-1/8", 0, 1, "5/8", "5/4"]
+        ]
+    },
+    "44Q": {
+        "control_points": [
+            ["1/8", "-1/8", "-3/8", "3/8", "1/8", "5/8"],
+            ["-3/16", "-5/16", "-9/16", "-9/16", "-3/4", "-15/16"]
+        ],
+        "note": "This is derived from surface 19Q via a shift by [1/8, -3/16]."
+    },
     "1C": {
         "control_points": [
             [0, 3, 9, 12, 0, 5, 8, 0, 4, 0],

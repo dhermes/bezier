@@ -206,6 +206,14 @@ def id_func(value):
         return value.test_id
 
 
+class IncorrectCount(ValueError):
+    """Custom exception for a "very bad" answer.
+
+    This should be raised when the **computed** number of intersections
+    disagrees with the actual number of intersections.
+    """
+
+
 class Config(object):
     """Run-time configuration.
 
