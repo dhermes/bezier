@@ -941,9 +941,9 @@ def make_intersect(*args, **kwargs):
 
 
 def get_enum(str_val):
-    from bezier import _surface_helpers
+    from bezier import _intersection_helpers
 
-    return _surface_helpers.IntersectionClassification[str_val]
+    return _intersection_helpers.IntersectionClassification[str_val]
 
 
 def check_edges(test_case, nodes1, degree1, nodes2, degree2, all_edge_nodes):

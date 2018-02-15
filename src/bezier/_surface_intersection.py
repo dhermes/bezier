@@ -44,6 +44,7 @@ except ImportError:  # pragma: NO COVER
 MAX_LOCATE_SUBDIVISIONS = 20
 LOCATE_EPS = 2.0**(-47)
 INTERSECTION_T = _geometric_intersection.BoxIntersectionType.INTERSECTION
+CLASSIFICATION_T = _intersection_helpers.IntersectionClassification
 
 
 def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
@@ -496,9 +497,9 @@ def add_intersection(  # pylint: disable=too-many-arguments
         all_types.add(interior)
         intersection.interior_curve = interior
         # Only keep the intersections which are ``ACCEPTABLE``.
-        if interior == _surface_helpers.IntersectionClassification.FIRST:
+        if interior == CLASSIFICATION_T.FIRST:
             intersections.append(intersection)
-        elif interior == _surface_helpers.IntersectionClassification.SECOND:
+        elif interior == CLASSIFICATION_T.SECOND:
             intersections.append(intersection)
         else:
             unused.append(intersection)

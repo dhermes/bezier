@@ -397,6 +397,28 @@ def _newton_refine(s, nodes1, t, nodes2):
     return s + delta_s, t + delta_t
 
 
+class IntersectionClassification(enum.Enum):
+    """Enum classifying the "interior" curve in an intersection.
+
+    Provided as the output values for :func:`.classify_intersection`.
+    """
+
+    FIRST = 0
+    """The first curve is on the interior."""
+    SECOND = 1
+    """The second curve is on the interior."""
+    OPPOSED = 2
+    """Tangent intersection with opposed interiors."""
+    TANGENT_FIRST = 3
+    """Tangent intersection, first curve is on the interior."""
+    TANGENT_SECOND = 4
+    """Tangent intersection, second curve is on the interior."""
+    IGNORED_CORNER = 5
+    """Intersection at a corner, interiors don't intersect."""
+    TANGENT_BOTH = 6
+    """Tangent intersection, both curves are interior from some perspective."""
+
+
 class Intersection(object):  # pylint: disable=too-few-public-methods
     """Representation of a curve-curve intersection.
 
@@ -412,7 +434,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         t (float): The parameter along the second curve where the
             intersection occurs.
         interior_curve (Optional[ \
-            ~bezier._surface_helpers.IntersectionClassification]): The
+            ~bezier._intersection_helpers.IntersectionClassification]): The
             classification of the intersection.
     """
 

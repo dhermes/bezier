@@ -24,7 +24,7 @@ This is to help with the exposition of the computation and
 .. autofunction:: bezier._geometric_intersection.parallel_different
 .. autofunction:: bezier._curve_helpers._get_curvature
 .. autofunction:: bezier._curve_helpers._newton_refine
-.. autoclass:: bezier._surface_helpers.IntersectionClassification
+.. autoclass:: bezier._intersection_helpers.IntersectionClassification
    :members:
 .. autofunction:: bezier._surface_helpers.classify_intersection
 .. autofunction:: bezier._surface_helpers._jacobian_det
