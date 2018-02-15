@@ -403,6 +403,8 @@ class IntersectionClassification(enum.Enum):
     Provided as the output values for :func:`.classify_intersection`.
     """
 
+    UNCLASSIFIED = -1
+    """The intersection has not yet been classified."""
     FIRST = 0
     """The first curve is on the interior."""
     SECOND = 1
@@ -417,6 +419,8 @@ class IntersectionClassification(enum.Enum):
     """Intersection at a corner, interiors don't intersect."""
     TANGENT_BOTH = 6
     """Tangent intersection, both curves are interior from some perspective."""
+    COINCIDENT = 7
+    """Intersection is actually an endpoint of a coincident segment."""
 
 
 class Intersection(object):  # pylint: disable=too-few-public-methods

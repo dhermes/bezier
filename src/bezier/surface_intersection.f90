@@ -33,12 +33,14 @@ module surface_intersection
        remove_node, finalize_segment, check_contained
   public &
        Intersection, CurvedPolygonSegment, &
+       IntersectionClassification_UNCLASSIFIED, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
        IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, &
-       IntersectionClassification_TANGENT_BOTH, SurfaceContained_NEITHER, &
+       IntersectionClassification_TANGENT_BOTH, &
+       IntersectionClassification_COINCIDENT, SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
@@ -73,6 +75,7 @@ module surface_intersection
   real(c_double), parameter :: LOCATE_EPS = 0.5_dp**47
   integer(c_int), parameter :: MAX_EDGES = 10
   ! Values of IntersectionClassification enum:
+  integer(c_int), parameter :: IntersectionClassification_UNCLASSIFIED = -1
   integer(c_int), parameter :: IntersectionClassification_FIRST = 0
   integer(c_int), parameter :: IntersectionClassification_SECOND = 1
   integer(c_int), parameter :: IntersectionClassification_OPPOSED = 2
@@ -80,6 +83,7 @@ module surface_intersection
   integer(c_int), parameter :: IntersectionClassification_TANGENT_SECOND = 4
   integer(c_int), parameter :: IntersectionClassification_IGNORED_CORNER = 5
   integer(c_int), parameter :: IntersectionClassification_TANGENT_BOTH = 6
+  integer(c_int), parameter :: IntersectionClassification_COINCIDENT = 7
   ! Values of SurfaceContained enum:
   integer(c_int), parameter :: SurfaceContained_NEITHER = 0
   integer(c_int), parameter :: SurfaceContained_FIRST = 1
