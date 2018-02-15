@@ -13,6 +13,8 @@
 """Cython wrapper for ``curve_intersection.f90``."""
 
 
+from libcpp cimport bool as bool_t
+
 from bezier._status cimport Status
 
 
@@ -33,7 +35,7 @@ cdef extern from "bezier/curve_intersection.h":
         int *num_nodes_first, double *nodes_first,
         int *num_nodes_second, double *nodes_second,
         int *intersections_size, double *intersections,
-        int *num_intersections, Status *status)
+        int *num_intersections, bool_t *coincident, Status *status)
     void set_max_candidates(int *num_candidates)
     void get_max_candidates(int *num_candidates)
     void set_similar_ulps(int *num_bits)

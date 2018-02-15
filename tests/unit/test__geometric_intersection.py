@@ -1380,8 +1380,10 @@ class Test__all_intersections(utils.NumPyTestCase):
             [3.0, 4.0],
             [3.0, 3.0],
         ])
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
         self.assertEqual(intersections.shape, (2, 0))
+        self.assertFalse(coincident)
 
     def test_quadratics_intersect_once(self):
         # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
@@ -1399,13 +1401,15 @@ class Test__all_intersections(utils.NumPyTestCase):
         ])
         s_val = 1.0 / 3.0
         t_val = 2.0 / 3.0
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
 
         # Due to round-off, the answer may be wrong by a tiny wiggle.
         self.assertEqual(intersections.shape, (2, 1))
         self.assertAlmostEqual(
             intersections[0, 0], s_val, delta=SPACING(s_val))
         self.assertEqual(intersections[1, 0], t_val)
+        self.assertFalse(coincident)
 
     def test_parallel_failure(self):
         from bezier import _geometric_intersection
@@ -1434,12 +1438,14 @@ class Test__all_intersections(utils.NumPyTestCase):
             [-1.0, 0.5, 0.0],
             [1.0, 0.5, 2.0],
         ])
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
         expected = np.asfortranarray([
             [0.5],
             [0.5],
         ])
         self.assertEqual(intersections, expected)
+        self.assertFalse(coincident)
 
     def test_pruned_candidates_odd_index(self):
         # Same as ``test_pruned_candidates`` but re-parameterized on [0, 2]
@@ -1452,12 +1458,14 @@ class Test__all_intersections(utils.NumPyTestCase):
             [-6.0, 1.0, 0.0],
             [4.0, -1.0, 2.0],
         ])
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
         expected = np.asfortranarray([
             [0.25],
             [0.75],
         ])
         self.assertEqual(intersections, expected)
+        self.assertFalse(coincident)
 
     def test_non_convergence(self):
         from bezier import _geometric_intersection
@@ -1492,12 +1500,14 @@ class Test__all_intersections(utils.NumPyTestCase):
             [0.0, 0.5, 1.0],
             [0.75, -0.25, 0.75],
         ])
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
         expected = np.asfortranarray([
             [0.25, 0.75],
             [0.25, 0.75],
         ])
         self.assertEqual(intersections, expected)
+        self.assertFalse(coincident)
 
     def test_wiggle_failure(self):
         nodes1 = np.asfortranarray([
@@ -1513,10 +1523,14 @@ class Test__all_intersections(utils.NumPyTestCase):
              -0.2211341421098668, -0.2232833767729893],
         ])
 
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
         self.assertEqual(intersections.shape, (2, 0))
-        intersections = self._call_function_under_test(nodes2, nodes1)
+        self.assertFalse(coincident)
+        intersections, coincident = self._call_function_under_test(
+            nodes2, nodes1)
         self.assertEqual(intersections.shape, (2, 0))
+        self.assertFalse(coincident)
 
     def test_coincident(self):
         nodes1 = np.asfortranarray([
@@ -1527,12 +1541,14 @@ class Test__all_intersections(utils.NumPyTestCase):
             [0.5, 0.75, 1.0],
             [0.125, 0.125, 0.0],
         ])
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
         expected = np.asfortranarray([
             [0.5, 1.0],
             [0.0, 1.0],
         ])
         self.assertEqual(intersections, expected)
+        self.assertTrue(coincident)
 
 
 @utils.needs_speedup
@@ -1569,12 +1585,14 @@ class Test_speedup_all_intersections(Test__all_intersections):
         # NOTE: These curves intersect 3 times, so a workspace of
         #       2 is not large enough.
         self.reset_curves_workspace(2)
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
         expected = np.asfortranarray([
             [0.5, 0.375, 0.625],
             [0.5, 0.25, 0.75],
         ])
         self.assertEqual(intersections, expected)
+        self.assertFalse(coincident)
         # Make sure the workspace was resized.
         self.assertEqual(self.curves_workspace_size(), 3)
 

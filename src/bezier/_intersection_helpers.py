@@ -403,8 +403,6 @@ class IntersectionClassification(enum.Enum):
     Provided as the output values for :func:`.classify_intersection`.
     """
 
-    UNCLASSIFIED = -1
-    """The intersection has not yet been classified."""
     FIRST = 0
     """The first curve is on the interior."""
     SECOND = 1

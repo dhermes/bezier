@@ -420,6 +420,7 @@ def curve_intersections(
     cdef int intersections_size, num_intersections
     cdef bezier._status.Status status
     cdef ndarray_t[double, ndim=2, mode='fortran'] intersections
+    cdef bool_t coincident
 
     # NOTE: We don't check that there are 2 rows.
     _, num_nodes_first = np.shape(nodes_first)
@@ -435,13 +436,14 @@ def curve_intersections(
         &intersections_size,
         &CURVES_WORKSPACE[0, 0],
         &num_intersections,
+        &coincident,
         &status,
     )
 
     if status == bezier._status.Status.SUCCESS:
         intersections = np.empty((2, num_intersections), order='F')
         intersections[:, :] = CURVES_WORKSPACE[:, :num_intersections]
-        return intersections
+        return intersections, coincident
     elif status == bezier._status.Status.NO_CONVERGE:
         # NOTE: This assumes, but does not verify, that the Fortran subroutine
         #       uses ``MAX_INTERSECT_SUBDIVISIONS = 20``.

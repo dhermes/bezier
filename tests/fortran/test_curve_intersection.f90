@@ -2026,6 +2026,7 @@ contains
     real(c_double) :: quadratic1(2, 3), quadratic2(2, 3)
     real(c_double) :: cubic1(2, 4), cubic2(2, 4)
     integer(c_int) :: num_intersections
+    logical(c_bool) :: coincident
     integer(c_int) :: status
     integer :: case_id
     character(17) :: name
@@ -2041,10 +2042,11 @@ contains
 
     call all_intersections( &
          2, linear1, 2, linear2, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          .NOT. allocated(intersections) .AND. &
          num_intersections == 0 .AND. &
+         .NOT. coincident .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2062,13 +2064,14 @@ contains
     quadratic2(:, 3) = [0.75_dp, 0.4375_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
          3 * intersections(1, 1) == 1.0_dp .AND. &
          3 * intersections(2, 1) == 2.0_dp .AND. &
+         .NOT. coincident .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2081,9 +2084,10 @@ contains
     quadratic2(:, 3) = 1
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          num_intersections == 0 .AND. &
+         .NOT. coincident .AND. &
          status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
@@ -2097,12 +2101,13 @@ contains
     quadratic2(:, 3) = [0.0_dp, 2.0_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 1]) .AND. &
          num_intersections == 1 .AND. &
          all(intersections(:, 1) == 0.5_dp) .AND. &
+         .NOT. coincident .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2121,9 +2126,10 @@ contains
     linear1(:, 2) = [98304.0_dp, 0.0_dp]
     call all_intersections( &
          3, quadratic1, 2, linear1, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          num_intersections == 0 .AND. &
+         .NOT. coincident .AND. &
          status == Status_NO_CONVERGE)
     call print_status(name, case_id, case_success, success)
 
@@ -2137,7 +2143,7 @@ contains
     quadratic2(:, 3) = [1.0_dp, 0.75_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 2 .AND. &
@@ -2145,6 +2151,7 @@ contains
          intersections(2, 1) == 0.25_dp .AND. &
          intersections(1, 2) == 0.75_dp .AND. &
          intersections(2, 2) == 0.75_dp .AND. &
+         .NOT. coincident .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2162,18 +2169,20 @@ contains
 
     call all_intersections( &
          4, cubic1, 4, cubic2, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          num_intersections == 0 .AND. &
+         .NOT. coincident .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: Same as CASE 7, but swap the inputs.
     call all_intersections( &
          4, cubic2, 4, cubic1, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          num_intersections == 0 .AND. &
+         .NOT. coincident .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2189,12 +2198,13 @@ contains
     quadratic2(:, 3) = [0.0_dp, 2.0_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 1 .AND. &
          all(intersections(:, 1) == [0.25_dp, 0.75_dp]) .AND. &
+         .NOT. coincident .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2211,13 +2221,14 @@ contains
     quadratic2(:, 3) = [1.0_dp, 0.0_dp]
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 16]) .AND. &
          num_intersections == 2 .AND. &
          all(intersections(:, 1) == [0.5_dp, 0.0_dp]) .AND. &
          all(intersections(:, 2) == 1) .AND. &
+         coincident .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2230,6 +2241,7 @@ contains
     real(c_double) :: linear1(2, 2), linear2(2, 2)
     real(c_double) :: cubic1(2, 4)
     integer(c_int) :: num_intersections
+    logical(c_bool) :: coincident
     real(c_double) :: intersections1(2, 2), intersections2(2, 3)
     integer(c_int) :: status
     integer :: case_id
@@ -2246,9 +2258,10 @@ contains
 
     call all_intersections_abi( &
          2, linear1, 2, linear2, 2, intersections1, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          num_intersections == 0 .AND. &
+         .NOT. coincident .AND. &
          status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
@@ -2262,16 +2275,17 @@ contains
 
     call all_intersections_abi( &
          2, linear1, 4, cubic1, 2, intersections1, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          num_intersections == 3 .AND. &
+         .NOT. coincident .AND. &
          status == Status_INSUFFICIENT_SPACE)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Just case 7, but with large enough ``intersections``.
     call all_intersections_abi( &
          2, linear1, 4, cubic1, 3, intersections2, &
-         num_intersections, status)
+         num_intersections, coincident, status)
     case_success = ( &
          num_intersections == 3 .AND. &
          intersections2(1, 1) == 0.5_dp .AND. &
@@ -2280,6 +2294,7 @@ contains
          intersections2(2, 2) == 0.25_dp .AND. &
          intersections2(1, 3) == 0.625_dp .AND. &
          intersections2(2, 3) == 0.75_dp .AND. &
+         .NOT. coincident .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 

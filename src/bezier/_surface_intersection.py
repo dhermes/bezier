@@ -537,7 +537,7 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
     unused = []
     for index1, nodes1 in enumerate(edge_nodes1):
         for index2, nodes2 in enumerate(edge_nodes2):
-            st_vals = all_intersections(nodes1, nodes2)
+            st_vals, coincident_unused = all_intersections(nodes1, nodes2)
             for s, t in st_vals.T:
                 add_intersection(
                     index1, s, index2, t, edge_nodes1, edge_nodes2,

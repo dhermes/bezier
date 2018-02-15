@@ -13,6 +13,7 @@
 #ifndef BEZIER_CURVE_INTERSECTION_H
 #define BEZIER_CURVE_INTERSECTION_H
 
+#include "bezier/_bool_patch.h"
 #include "bezier/status.h"
 
 #if defined (__cplusplus)
@@ -36,7 +37,7 @@ void curve_intersections(
     int *num_nodes_first, double *nodes_first,
     int *num_nodes_second, double *nodes_second,
     int *intersections_size, double *intersections,
-    int *num_intersections, Status *status);
+    int *num_intersections, bool *coincident, Status *status);
 void set_max_candidates(int *num_candidates);
 void get_max_candidates(int *num_candidates);
 void set_similar_ulps(int *num_bits);

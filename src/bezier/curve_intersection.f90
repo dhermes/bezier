@@ -160,23 +160,23 @@ contains
        return
     end if
 
-    call evaluate_hodograph(s, num_nodes1, 2, nodes1, jac_mat(1:1, :))
+    call evaluate_hodograph(s, num_nodes1, 2, nodes1, jac_mat(:, 1:1))
     ! NOTE: We actually want the negative, since we want -B2'(t), but
     !       since we manually solve the system, it's just algebra
     !       to figure out how to use the negative values.
-    call evaluate_hodograph(t, num_nodes2, 2, nodes2, jac_mat(2:2, :))
+    call evaluate_hodograph(t, num_nodes2, 2, nodes2, jac_mat(:, 2:2))
 
     determinant = ( &
-         jac_mat(1, 1) * jac_mat(2, 2) - jac_mat(1, 2) * jac_mat(2, 1))
+         jac_mat(1, 1) * jac_mat(2, 2) - jac_mat(2, 1) * jac_mat(1, 2))
 
     ! NOTE: We manually invert the 2x2 system ([ds, dt] J)^T = f^T.
     delta_s = ( &
          (jac_mat(2, 2) * func_val(1, 1) - &
-         jac_mat(2, 1) * func_val(2, 1)) / determinant)
+         jac_mat(1, 2) * func_val(2, 1)) / determinant)
     new_s = s + delta_s
 
     delta_t = ( &
-         (jac_mat(1, 2) * func_val(1, 1) - &
+         (jac_mat(2, 1) * func_val(1, 1) - &
          jac_mat(1, 1) * func_val(2, 1)) / determinant)
     new_t = t + delta_t
 
@@ -1172,7 +1172,7 @@ contains
 
   subroutine all_intersections( &
        num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
-       intersections, num_intersections, status)
+       intersections, num_intersections, coincident, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op, but
     !       a C compatible interface is exposed as ``all_intersections_abi``.
@@ -1191,13 +1191,15 @@ contains
     real(c_double), intent(in) :: nodes_second(2, num_nodes_second)
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
     integer(c_int), intent(out) :: num_intersections
+    logical(c_bool), intent(out) :: coincident
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: num_candidates, num_next_candidates
     integer(c_int) :: index_, intersect_status
-    logical(c_bool) :: is_even, coincident
+    logical(c_bool) :: is_even
 
     num_intersections = 0
+    coincident = .FALSE.
     ! First iteration is odd (i.e. ``index_ == 1``).
     num_candidates = 1
     call make_candidates( &
@@ -1282,7 +1284,8 @@ contains
 
   subroutine all_intersections_abi( &
        num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
-       intersections_size, intersections, num_intersections, status) &
+       intersections_size, intersections, num_intersections, &
+       coincident, status) &
        bind(c, name='curve_intersections')
 
     ! NOTE: The number of intersections cannot be known beforehand (though it
@@ -1309,11 +1312,12 @@ contains
     integer(c_int), intent(in) :: intersections_size
     real(c_double), intent(out) :: intersections(2, intersections_size)
     integer(c_int), intent(out) :: num_intersections
+    logical(c_bool), intent(out) :: coincident
     integer(c_int), intent(out) :: status
 
     call all_intersections( &
          num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
-         INTERSECTIONS_WORKSPACE, num_intersections, status)
+         INTERSECTIONS_WORKSPACE, num_intersections, coincident, status)
 
     if (status /= Status_SUCCESS) then
        return

@@ -1376,15 +1376,20 @@ def all_intersections(nodes_first, nodes_second):
             intersected with ``nodes_first``.
 
     Returns:
-        numpy.ndarray: ``2 x N`` array of intersection parameters.
-        Each row contains a pair of values :math:`s` and :math:`t`
-        (each in :math:`\left[0, 1\right]`) such that the curves
-        intersect: :math:`B_1(s) = B_2(t)`.
+        Tuple[numpy.ndarray, bool]: An array and a flag:
+
+        * A ``2 x N`` array of intersection parameters.
+          Each row contains a pair of values :math:`s` and :math:`t`
+          (each in :math:`\left[0, 1\right]`) such that the curves
+          intersect: :math:`B_1(s) = B_2(t)`.
+        * Flag indicating if the curves are coincident. (For now, this
+          will always be :data:`False` since :func:`.intersect_curves`
+          fails if coincident curves are detected.)
     """
     # Only attempt this if the bounding boxes intersect.
     bbox_int = _geometric_intersection.bbox_intersect(
         nodes_first, nodes_second)
     if bbox_int == _DISJOINT:
-        return np.empty((2, 0), order='F')
+        return np.empty((2, 0), order='F'), False
 
-    return intersect_curves(nodes_first, nodes_second)
+    return intersect_curves(nodes_first, nodes_second), False

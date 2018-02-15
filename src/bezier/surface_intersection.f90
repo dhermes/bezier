@@ -33,7 +33,6 @@ module surface_intersection
        remove_node, finalize_segment, check_contained
   public &
        Intersection, CurvedPolygonSegment, &
-       IntersectionClassification_UNCLASSIFIED, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
        IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
@@ -75,7 +74,6 @@ module surface_intersection
   real(c_double), parameter :: LOCATE_EPS = 0.5_dp**47
   integer(c_int), parameter :: MAX_EDGES = 10
   ! Values of IntersectionClassification enum:
-  integer(c_int), parameter :: IntersectionClassification_UNCLASSIFIED = -1
   integer(c_int), parameter :: IntersectionClassification_FIRST = 0
   integer(c_int), parameter :: IntersectionClassification_SECOND = 1
   integer(c_int), parameter :: IntersectionClassification_OPPOSED = 2
@@ -814,6 +812,7 @@ contains
     type(CurveData) :: edges_first(3), edges_second(3)
     integer(c_int) :: index1, index2
     integer(c_int) :: num_st_vals
+    logical(c_bool) :: coincident_unused
 
     ! Compute the edge nodes for the first surface.
     allocate(edges_first(1)%nodes(2, degree1 + 1))
@@ -838,7 +837,7 @@ contains
           call all_intersections( &
                degree1 + 1, edges_first(index1)%nodes, &
                degree2 + 1, edges_second(index2)%nodes, &
-               INTERSECTIONS_WORKSPACE, num_st_vals, status)
+               INTERSECTIONS_WORKSPACE, num_st_vals, coincident_unused, status)
           if (status == Status_SUCCESS) then
              if (num_st_vals > 0) then
                 call add_st_vals( &

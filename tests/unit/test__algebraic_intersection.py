@@ -1568,8 +1568,10 @@ class Test_all_intersections(utils.NumPyTestCase):
             [3.0, 4.0],
             [3.0, 3.0],
         ])
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
         self.assertEqual(intersections.shape, (2, 0))
+        self.assertFalse(coincident)
 
     def test_success(self):
         # NOTE: ``nodes1`` is a specialization of [0, 0], [1/2, 1], [1, 1]
@@ -1588,9 +1590,11 @@ class Test_all_intersections(utils.NumPyTestCase):
         s_val = 1.0 / 3.0
         t_val = 2.0 / 3.0
 
-        intersections = self._call_function_under_test(nodes1, nodes2)
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
         expected = np.asfortranarray([
             [s_val],
             [t_val],
         ])
         self.assertEqual(intersections, expected)
+        self.assertFalse(coincident)

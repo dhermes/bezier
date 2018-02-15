@@ -1164,10 +1164,13 @@ def _all_intersections(nodes_first, nodes_second):
             intersected with ``nodes_first``.
 
     Returns:
-        numpy.ndarray: ``2 x N`` array of intersection parameters.
-        Each row contains a pair of values :math:`s` and :math:`t`
-        (each in :math:`\left[0, 1\right]`) such that the curves
-        intersect: :math:`B_1(s) = B_2(t)`.
+        Tuple[numpy.ndarray, bool]: An array and a flag:
+
+        * A ``2 x N`` array of intersection parameters.
+          Each row contains a pair of values :math:`s` and :math:`t`
+          (each in :math:`\left[0, 1\right]`) such that the curves
+          intersect: :math:`B_1(s) = B_2(t)`.
+        * Flag indicating if the curves are coincident.
 
     Raises:
         ValueError: If the subdivision iteration does not terminate
@@ -1186,6 +1189,7 @@ def _all_intersections(nodes_first, nodes_second):
         ),
     ]
     intersections = []
+    coincident = False
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
         candidates = intersect_one_round(candidates, intersections)
         if len(candidates) > _MAX_CANDIDATES:
@@ -1204,6 +1208,7 @@ def _all_intersections(nodes_first, nodes_second):
                         _TOO_MANY_TEMPLATE.format(len(candidates)))
                 else:
                     intersections = params
+                    coincident = True
                     # Artificially empty out candidates so that this
                     # function exits.
                     candidates = []
@@ -1214,9 +1219,9 @@ def _all_intersections(nodes_first, nodes_second):
             if intersections:
                 # NOTE: The transpose of a C-ordered array is Fortran-ordered,
                 #       i.e. this is on purpose.
-                return np.array(intersections, order='C').T
+                return np.array(intersections, order='C').T, coincident
             else:
-                return np.empty((2, 0), order='F')
+                return np.empty((2, 0), order='F'), coincident
 
     msg = _NO_CONVERGE_TEMPLATE.format(_MAX_INTERSECT_SUBDIVISIONS)
     raise ValueError(msg)
