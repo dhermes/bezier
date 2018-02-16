@@ -1001,7 +1001,9 @@ def _reciprocal_condition_number(lu_mat, one_norm):
     if _scipy_lapack is None:
         raise OSError('This function requires SciPy for calling into LAPACK.')
 
+    # pylint: disable=no-member
     rcond, info = _scipy_lapack.dgecon(lu_mat, one_norm)
+    # pylint: enable=no-member
     if info != 0:
         raise RuntimeError(
             'The reciprocal 1-norm condition number could not be computed.')

@@ -20,13 +20,13 @@ import nox
 import py.path
 
 
-NUMPY = 'numpy >= 1.14.0'
+NUMPY_DEP = 'numpy >= 1.14.0'
 IS_MAC_OS_X = sys.platform == 'darwin'
-SCIPY = 'scipy >= 1.0.0'
+SCIPY_DEP = 'scipy >= 1.0.0'
 MOCK_DEP = 'mock >= 1.3.0'
 SEABORN_DEP = 'seaborn >= 0.8'
 BASE_DEPS = (
-    NUMPY,
+    NUMPY_DEP,
     'pytest',
 )
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -52,7 +52,7 @@ def pypy_setup(local_deps, session):
     if WHEELHOUSE is not None:
         # Remove NumPy from dependencies.
         local_deps = list(local_deps)
-        local_deps.remove(NUMPY)
+        local_deps.remove(NUMPY_DEP)
         local_deps = tuple(local_deps)
         # Install NumPy and SciPy from pre-built wheels.
         session.install(
@@ -60,8 +60,8 @@ def pypy_setup(local_deps, session):
             '--no-index',
             '--find-links',
             WHEELHOUSE,
-            NUMPY,
-            SCIPY,
+            NUMPY_DEP,
+            SCIPY_DEP,
         )
 
     return local_deps
@@ -110,7 +110,7 @@ def unit(session, py):
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
         session.interpreter = 'python{}'.format(py)
-        local_deps = BASE_DEPS + (SCIPY,)
+        local_deps = BASE_DEPS + (SCIPY_DEP,)
 
     if py in ('2.7', PYPY):
         local_deps += (MOCK_DEP,)
@@ -130,7 +130,7 @@ def cover(session):
     session.interpreter = SINGLE_INTERP
 
     # Install all test dependencies.
-    local_deps = BASE_DEPS + (SCIPY, 'pytest-cov', 'coverage')
+    local_deps = BASE_DEPS + (SCIPY_DEP, 'pytest-cov', 'coverage')
     session.install(*local_deps)
     # Install this package.
     session.install('.')
@@ -256,6 +256,7 @@ def lint(session):
         'matplotlib',
         'Pygments',
         'pylint',
+        SEABORN_DEP,
     )
     session.install(*local_deps)
     # Install this package.
@@ -300,7 +301,7 @@ def benchmark(session, target):
     session.interpreter = SINGLE_INTERP
 
     if target == 'memory':
-        local_deps = (NUMPY, 'psutil', 'memory_profiler')
+        local_deps = (NUMPY_DEP, 'psutil', 'memory_profiler')
         test_fi1 = get_path('benchmarks', 'memory', 'test_curves.py')
         test_fi2 = get_path('benchmarks', 'memory', 'test_surfaces.py')
         all_run_args = [
@@ -335,7 +336,7 @@ def check_journal(session, machine):
     os.close(filehandle)
 
     # Set the journal environment variable and install ``bezier``.
-    session.install(NUMPY)  # Install requirement(s).
+    session.install(NUMPY_DEP)  # Install requirement(s).
     env = {'BEZIER_JOURNAL': journal_filename}
     session.run('pip', 'install', '.', env=env)
 
