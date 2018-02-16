@@ -340,6 +340,301 @@ class Test_verify_duplicates(unittest.TestCase):
             self._call_function_under_test([uniq, uniq], [uniq])
 
 
+class Test_add_edge_end_unused(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(
+            intersection, duplicates, intersections, unused, all_types):
+        from bezier import _surface_intersection
+
+        return _surface_intersection.add_edge_end_unused(
+            intersection, duplicates, intersections, unused, all_types)
+
+    def test_match_s(self):
+        intersection1 = make_intersect(
+            1, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED'))
+        intersection2 = make_intersect(
+            1, 0.0, 2, 0.5, interior_curve=get_enum('FIRST'))
+
+        duplicates = []
+        intersections = [intersection2]
+        unused = []
+        all_types = set()
+        return_value = self._call_function_under_test(
+            intersection1, duplicates, intersections, unused, all_types)
+        self.assertIsNone(return_value)
+
+        self.assertEqual(duplicates, [intersection2])
+        self.assertEqual(intersections, [])
+        self.assertEqual(unused, [intersection1])
+        self.assertEqual(all_types, set([get_enum('COINCIDENT_UNUSED')]))
+
+    def test_match_t(self):
+        intersection1 = make_intersect(
+            0, 0.5, 0, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED'))
+        intersection2 = make_intersect(
+            0, 0.5, 0, 0.0, interior_curve=get_enum('TANGENT_FIRST'))
+
+        duplicates = []
+        intersections = [intersection2]
+        unused = []
+        all_types = set()
+        return_value = self._call_function_under_test(
+            intersection1, duplicates, intersections, unused, all_types)
+        self.assertIsNone(return_value)
+
+        self.assertEqual(duplicates, [intersection2])
+        self.assertEqual(intersections, [])
+        self.assertEqual(unused, [intersection1])
+        self.assertEqual(all_types, set([get_enum('COINCIDENT_UNUSED')]))
+
+    def test_no_match(self):
+        intersection1 = make_intersect(
+            1, 0.5, 0, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED'))
+        intersection2 = make_intersect(
+            2, 0.0, 2, 0.5, interior_curve=get_enum('SECOND'))
+        intersection3 = make_intersect(
+            1, 0.5, 0, 0.75, interior_curve=get_enum('FIRST'))
+
+        intersections = [intersection2, intersection3]
+        unused = []
+        all_types = set()
+        return_value = self._call_function_under_test(
+            intersection1, None, intersections, unused, all_types)
+        self.assertIsNone(return_value)
+
+        self.assertEqual(unused, [intersection1])
+        self.assertEqual(all_types, set([get_enum('COINCIDENT_UNUSED')]))
+
+
+class Test_check_unused(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersection, duplicates, unused):
+        from bezier import _surface_intersection
+
+        return _surface_intersection.check_unused(
+            intersection, duplicates, unused)
+
+    def test_match_s(self):
+        intersection1 = make_intersect(1, 0.0, 2, 0.5)
+        intersection2 = make_intersect(
+            1, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED'))
+        duplicates = []
+        unused = [intersection2]
+
+        is_duplicate = self._call_function_under_test(
+            intersection1, duplicates, unused)
+        self.assertTrue(is_duplicate)
+        self.assertEqual(duplicates, [intersection1])
+
+    def test_match_t(self):
+        intersection1 = make_intersect(1, 0.5, 2, 0.0)
+        intersection2 = make_intersect(
+            1, 0.5, 2, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED'))
+        duplicates = []
+        unused = [intersection2]
+
+        is_duplicate = self._call_function_under_test(
+            intersection1, duplicates, unused)
+        self.assertTrue(is_duplicate)
+        self.assertEqual(duplicates, [intersection1])
+
+    def test_no_match(self):
+        intersection1 = make_intersect(1, 0.5, 0, 0.0)
+        intersection2 = make_intersect(
+            2, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED'))
+        intersection3 = make_intersect(
+            1, 0.5, 0, 0.75, interior_curve=get_enum('COINCIDENT_UNUSED'))
+
+        duplicates = None
+        unused = [intersection2, intersection3]
+        is_duplicate = self._call_function_under_test(
+            intersection1, duplicates, unused)
+        self.assertFalse(is_duplicate)
+
+
+class Test_add_intersection(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(  # pylint: disable=too-many-arguments
+            index1, s, index2, t, coincident, edge_nodes1, edge_nodes2,
+            duplicates, intersections, unused, all_types):
+        from bezier import _surface_intersection
+
+        return _surface_intersection.add_intersection(
+            index1, s, index2, t, coincident, edge_nodes1, edge_nodes2,
+            duplicates, intersections, unused, all_types)
+
+    def test_coincident_duplicate(self):
+        enum_val = get_enum('COINCIDENT')
+
+        duplicates = []
+        intersections = []
+        unused = []
+        all_types = set()
+        return_value = self._call_function_under_test(
+            0, 1.0, 0, 0.5, enum_val, None, None,
+            duplicates, intersections, unused, all_types)
+        self.assertIsNone(return_value)
+
+        self.assertEqual(intersections, [])
+        self.assertEqual(unused, [])
+        self.assertEqual(all_types, set())
+
+        self.assertEqual(len(duplicates), 1)
+        duplicate = duplicates[0]
+        self.assertEqual(duplicate.index_first, 1)
+        self.assertEqual(duplicate.s, 0.0)
+        self.assertEqual(duplicate.index_second, 0)
+        self.assertEqual(duplicate.t, 0.5)
+        self.assertEqual(duplicate.interior_curve, enum_val)
+
+    def test_coincident_new_intersection(self):
+        enum_val = get_enum('COINCIDENT')
+
+        duplicates = []
+        intersections = []
+        unused = []
+        all_types = set()
+        return_value = self._call_function_under_test(
+            0, 0.5, 0, 0.5, enum_val, None, None,
+            duplicates, intersections, unused, all_types)
+        self.assertIsNone(return_value)
+
+        self.assertEqual(duplicates, [])
+        self.assertEqual(unused, [])
+        self.assertEqual(all_types, set([enum_val]))
+
+        self.assertEqual(len(intersections), 1)
+        intersection = intersections[0]
+        self.assertEqual(intersection.index_first, 0)
+        self.assertEqual(intersection.s, 0.5)
+        self.assertEqual(intersection.index_second, 0)
+        self.assertEqual(intersection.t, 0.5)
+        self.assertEqual(intersection.interior_curve, enum_val)
+
+    def test_coincident_unused_duplicate(self):
+        enum_val = get_enum('COINCIDENT_UNUSED')
+
+        duplicates = []
+        intersections = []
+        unused = []
+        all_types = set()
+        return_value = self._call_function_under_test(
+            0, 1.0, 0, 0.5, enum_val, None, None,
+            duplicates, intersections, unused, all_types)
+        self.assertIsNone(return_value)
+
+        self.assertEqual(intersections, [])
+        self.assertEqual(duplicates, [])
+        self.assertEqual(all_types, set([enum_val]))
+
+        self.assertEqual(len(unused), 1)
+        intersection = unused[0]
+        self.assertEqual(intersection.index_first, 1)
+        self.assertEqual(intersection.s, 0.0)
+        self.assertEqual(intersection.index_second, 0)
+        self.assertEqual(intersection.t, 0.5)
+        self.assertEqual(intersection.interior_curve, enum_val)
+
+    def _coincident_unused_new_helper(self, s_val, all_types):
+        enum_val = get_enum('COINCIDENT_UNUSED')
+
+        duplicates = []
+        intersections = []
+        unused = []
+        return_value = self._call_function_under_test(
+            2, s_val, 2, 0.75, enum_val, None, None,
+            duplicates, intersections, unused, all_types)
+        self.assertIsNone(return_value)
+
+        self.assertEqual(duplicates, [])
+        self.assertEqual(intersections, [])
+        self.assertEqual(all_types, set([enum_val]))
+
+        self.assertEqual(len(unused), 1)
+        intersection = unused[0]
+        self.assertEqual(intersection.index_first, 2)
+        self.assertEqual(intersection.s, s_val)
+        self.assertEqual(intersection.index_second, 2)
+        self.assertEqual(intersection.t, 0.75)
+        self.assertEqual(intersection.interior_curve, enum_val)
+
+    def test_coincident_unused_new_intersection(self):
+        all_types = set()
+        self._coincident_unused_new_helper(0.25, all_types)
+
+    def test_coincident_unused_new_intersection_corner(self):
+        all_types = set([get_enum('COINCIDENT_UNUSED')])
+        self._coincident_unused_new_helper(0.0, all_types)
+
+    def test_coincident_unused_already_seen(self):
+        enum_val = get_enum('COINCIDENT_UNUSED')
+
+        intersection = make_intersect(
+            2, 0.0, 2, 0.75, interior_curve=get_enum('COINCIDENT_UNUSED'))
+        interior_curve = unittest.mock.sentinel.interior_curve
+
+        duplicates = []
+        intersections = []
+        unused = [intersection]
+        all_types = set([enum_val])
+        return_value = self._call_function_under_test(
+            2, 0.0, 2, 0.75, interior_curve, None, None,
+            duplicates, intersections, unused, all_types)
+        self.assertIsNone(return_value)
+
+        self.assertEqual(unused, [intersection])
+        self.assertEqual(intersections, [])
+        self.assertEqual(all_types, set([enum_val]))
+
+        self.assertEqual(len(duplicates), 1)
+        intersection = duplicates[0]
+        self.assertEqual(intersection.index_first, 2)
+        self.assertEqual(intersection.s, 0.0)
+        self.assertEqual(intersection.index_second, 2)
+        self.assertEqual(intersection.t, 0.75)
+        self.assertIsNone(intersection.interior_curve)
+
+
+class Test_classify_coincident(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(st_vals, coincident):
+        from bezier import _surface_intersection
+
+        return _surface_intersection.classify_coincident(st_vals, coincident)
+
+    def test_not_coincident(self):
+        interior_curve = self._call_function_under_test(None, False)
+        self.assertIsNone(interior_curve)
+
+    def test_coincident_unused(self):
+        st_vals = np.asfortranarray([
+            [0.0, 0.5],
+            [1.0, 0.5],
+        ])
+        interior_curve = self._call_function_under_test(st_vals, True)
+        enum_val = get_enum('COINCIDENT_UNUSED')
+        self.assertEqual(interior_curve, enum_val)
+
+        st_vals = np.asfortranarray([
+            [0.5, 0.0],
+            [0.0, 1.0],
+        ])
+        interior_curve = self._call_function_under_test(st_vals, True)
+        self.assertEqual(interior_curve, enum_val)
+
+    def test_coincident(self):
+        st_vals = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ])
+        interior_curve = self._call_function_under_test(st_vals, True)
+        self.assertEqual(interior_curve, get_enum('COINCIDENT'))
+
+
 class Test_surface_intersections(utils.NumPyTestCase):
 
     @staticmethod

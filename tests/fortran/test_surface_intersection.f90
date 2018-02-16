@@ -20,15 +20,19 @@ module test_surface_intersection
   use curve, only: CurveData, LOCATE_MISS
   use curve_intersection, only: set_similar_ulps, get_similar_ulps
   use surface_intersection, only: &
-       Intersection, CurvedPolygonSegment, &
+       Intersection, CurvedPolygonSegment, IntersectionClassification_UNSET, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
        IntersectionClassification_OPPOSED, &
        IntersectionClassification_TANGENT_FIRST, &
        IntersectionClassification_TANGENT_SECOND, &
        IntersectionClassification_IGNORED_CORNER, &
-       IntersectionClassification_TANGENT_BOTH, SurfaceContained_NEITHER, &
+       IntersectionClassification_TANGENT_BOTH, &
+       IntersectionClassification_COINCIDENT, &
+       IntersectionClassification_COINCIDENT_UNUSED, &
+       SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
-       locate_point, classify_intersection, add_st_vals, &
+       locate_point, classify_intersection, update_edge_end_unused, &
+       find_corner, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
        interior_combine, surfaces_intersect, surfaces_intersect_abi
   use types, only: dp
@@ -36,7 +40,8 @@ module test_surface_intersection
   implicit none
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
-       test_add_st_vals, test_surfaces_intersection_points, &
+       test_update_edge_end_unused, test_find_corner, test_add_st_vals, &
+       test_surfaces_intersection_points, &
        intersection_check, intersection_equal, test_get_next, test_to_front, &
        test_add_segment, test_interior_combine, segment_check, &
        test_surfaces_intersect, test_surfaces_intersect_abi
@@ -50,6 +55,8 @@ contains
     call test_newton_refine(success)
     call test_locate_point(success)
     call test_classify_intersection(success)
+    call test_update_edge_end_unused(success)
+    call test_find_corner(success)
     call test_add_st_vals(success)
     call test_surfaces_intersection_points(success)
     call test_get_next(success)
@@ -205,7 +212,7 @@ contains
     case_success = (status == Status_EDGE_END)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Intersection is on interior, "second".
+    ! CASE 3: Intersection is on interior, "SECOND".
     nodes1(:, 1) = 0
     nodes1(:, 2) = 1
     edges_first(1)%nodes = nodes1
@@ -223,7 +230,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: Intersection is on interior, "first".
+    ! CASE 4: Intersection is on interior, "FIRST".
     call classify_intersection( &
          edges_second, edges_first, intersection_, enum_, status)
     case_success = ( &
@@ -231,7 +238,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: Intersection is tangent, "first".
+    ! CASE 5: Intersection is tangent, "FIRST".
     nodes2(:, 1) = 0
     nodes2(:, 2) = [1.5_dp, 1.0_dp]
     nodes2(:, 3) = [3.0_dp, 0.0_dp]
@@ -251,7 +258,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 6: Intersection is tangent, "second".
+    ! CASE 6: Intersection is tangent, "SECOND".
     call classify_intersection( &
          edges_second, edges_first, intersection_, enum_, status)
     case_success = ( &
@@ -318,7 +325,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 9: Intersection is tangent, use curvature of "first".
+    ! CASE 9: Intersection is tangent, use curvature of "FIRST".
     deallocate(edges_first(1)%nodes)  ! Unset.
     nodes2(:, 1) = [2.0_dp, 0.0_dp]
     nodes2(:, 2) = [1.5_dp, 1.0_dp]
@@ -339,7 +346,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 10: Intersection is tangent, use curvature of "second".
+    ! CASE 10: Intersection is tangent, use curvature of "SECOND".
     nodes2(:, 1) = [1.0_dp, 0.0_dp]
     nodes2(:, 2) = [1.5_dp, 1.0_dp]
     nodes2(:, 3) = [2.0_dp, 0.0_dp]
@@ -511,7 +518,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 19: Intersection at corner of **both** edges, "first" is interior.
+    ! CASE 19: Intersection at corner of **both** edges, "FIRST" is interior.
     nodes1(:, 1) = 0
     nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(1)%nodes = nodes1
@@ -533,7 +540,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 20: Intersection at corner of **both** edges, "second" is interior.
+    ! CASE 20: Intersection at corner of **both** edges, "SECOND" is interior.
     nodes1(:, 1) = [0.5_dp, 0.25_dp]
     nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(1)%nodes = nodes1
@@ -580,6 +587,148 @@ contains
 
   end subroutine test_classify_intersection
 
+  subroutine test_update_edge_end_unused(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(22) :: name
+    type(Intersection) :: intersections(1)
+    integer(c_int) :: num_intersections
+    integer(c_int) :: all_types, unused
+
+    case_id = 1
+    name = "update_edge_end_unused"
+
+    unused = IntersectionClassification_COINCIDENT_UNUSED
+
+    ! CASE 1: ``s`` is the corner, no matching intersection.
+    num_intersections = 0
+    all_types = 0
+    call update_edge_end_unused( &
+         1.0_dp, 1, 0.5_dp, 1, &
+         intersections, num_intersections, all_types)
+    case_success = ( &
+         num_intersections == 1 .AND. &
+         intersection_check( &
+         intersections(1), 0.0_dp, 0.5_dp, 2, 1, unused) .AND. &
+         all_types == 2**unused)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: ``s`` is the corner, matching intersection.
+    num_intersections = 1
+    intersections(1)%s = 0.0_dp
+    intersections(1)%t = 0.25_dp
+    intersections(1)%index_first = 3
+    intersections(1)%index_second = 2
+    all_types = 0
+    call update_edge_end_unused( &
+         1.0_dp, 2, 0.25_dp, 2, &
+         intersections, num_intersections, all_types)
+    case_success = ( &
+         num_intersections == 1 .AND. &
+         intersection_check( &
+         intersections(1), 0.0_dp, 0.25_dp, 3, 2, unused) .AND. &
+         all_types == 2**unused)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: ``t`` is the corner, no matching intersection.
+    num_intersections = 0
+    all_types = 0
+    call update_edge_end_unused( &
+         0.5_dp, 1, 1.0_dp, 1, &
+         intersections, num_intersections, all_types)
+    case_success = ( &
+         num_intersections == 1 .AND. &
+         intersection_check( &
+         intersections(1), 0.5_dp, 0.0_dp, 1, 2, unused) .AND. &
+         all_types == 2**unused)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: ``t`` is the corner, matching intersection.
+    num_intersections = 1
+    intersections(1)%s = 0.25_dp
+    intersections(1)%t = 0.0_dp
+    intersections(1)%index_first = 2
+    intersections(1)%index_second = 3
+    all_types = 0
+    call update_edge_end_unused( &
+         0.25_dp, 2, 1.0_dp, 2, &
+         intersections, num_intersections, all_types)
+    case_success = ( &
+         num_intersections == 1 .AND. &
+         intersection_check( &
+         intersections(1), 0.25_dp, 0.0_dp, 2, 3, unused) .AND. &
+         all_types == 2**unused)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Both ``s`` and ``t`` are corners, no matching intersection.
+    num_intersections = 0
+    all_types = 0
+    call update_edge_end_unused( &
+         1.0_dp, 3, 1.0_dp, 3, &
+         intersections, num_intersections, all_types)
+    case_success = ( &
+         num_intersections == 1 .AND. &
+         intersection_check( &
+         intersections(1), 0.0_dp, 0.0_dp, 1, 1, unused) .AND. &
+         all_types == 2**unused)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_update_edge_end_unused
+
+  subroutine test_find_corner(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(11) :: name
+    type(Intersection) :: intersections(1)
+    logical(c_bool) :: found
+
+    case_id = 1
+    name = "find_corner"
+
+    ! CASE 1: ``s == 0``, not found.
+    intersections(1)%index_first = 2
+    call find_corner( &
+         0.0_dp, 1, 1, intersections, 1, found)
+    case_success = (.NOT. found)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: ``s == 0``, found.
+    intersections(1)%s = 0.0_dp
+    intersections(1)%t = 0.5_dp
+    intersections(1)%index_first = 2
+    intersections(1)%index_second = 3
+    intersections(1)%interior_curve = ( &
+         IntersectionClassification_COINCIDENT_UNUSED)
+    call find_corner( &
+         0.0_dp, 2, 3, intersections, 1, found)
+    case_success = found
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: ``t == 0`` (i.e. ``s /= 0``), not found.
+    intersections(1)%index_second = 2
+    call find_corner( &
+         0.5_dp, 1, 1, intersections, 1, found)
+    case_success = (.NOT. found)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: ``t == 0`` (i.e. ``s /= 0``), found.
+    intersections(1)%s = 0.5_dp
+    intersections(1)%t = 0.0_dp
+    intersections(1)%index_first = 2
+    intersections(1)%index_second = 3
+    intersections(1)%interior_curve = ( &
+         IntersectionClassification_COINCIDENT_UNUSED)
+    call find_corner( &
+         0.5_dp, 2, 3, intersections, 1, found)
+    case_success = found
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_find_corner
+
   subroutine test_add_st_vals(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
@@ -592,12 +741,15 @@ contains
     type(CurveData) :: edges_first(3), edges_second(3)
     integer(c_int) :: first, second
     integer(c_int) :: all_types, status
+    integer(c_int) :: coincident, known_enum
 
     case_id = 1
     name = "add_st_vals"
 
     first = IntersectionClassification_FIRST
     second = IntersectionClassification_SECOND
+    coincident = IntersectionClassification_COINCIDENT
+    known_enum = IntersectionClassification_UNSET
 
     ! CASE 1: ``intersections`` must be allocated.
     num_intersections = 0
@@ -613,7 +765,7 @@ contains
     edges_second(3)%nodes(:, 1) = [1.0_dp, -0.5_dp]
     edges_second(3)%nodes(:, 2) = [0.0_dp, 0.5_dp]
     call add_st_vals( &
-         edges_first, edges_second, 1, st_vals, &
+         edges_first, edges_second, 1, st_vals, known_enum, &
          2, 3, intersections, num_intersections, all_types, status)
     case_success = ( &
          case_success .AND. &
@@ -640,7 +792,7 @@ contains
          allocated(intersections) .AND. &
          num_intersections == 1)
     call add_st_vals( &
-         edges_first, edges_second, 1, st_vals, &
+         edges_first, edges_second, 1, st_vals, known_enum, &
          3, 1, intersections, num_intersections, all_types, status)
     case_success = ( &
          case_success .AND. &
@@ -665,7 +817,7 @@ contains
     edges_second(2)%nodes(:, 2) = [1.75_dp, 2.625_dp]
     case_success = allocated(intersections)
     call add_st_vals( &
-         edges_first, edges_second, 1, st_vals, &
+         edges_first, edges_second, 1, st_vals, known_enum, &
          2, 2, intersections, num_intersections, all_types, status)
     case_success = ( &
          case_success .AND. &
@@ -692,7 +844,7 @@ contains
     edges_second(2)%nodes(:, 2) = -0.25_dp
     edges_second(2)%nodes(:, 3) = [-0.25_dp, 0.25_dp]
     call add_st_vals( &
-         edges_first, edges_second, 1, st_vals, &
+         edges_first, edges_second, 1, st_vals, known_enum, &
          2, 2, intersections, num_intersections, all_types, status)
     case_success = ( &
          all_types == 0 .AND. &
@@ -714,7 +866,7 @@ contains
     edges_second(1)%nodes(:, 1) = [0.0_dp, 1.0_dp]
     edges_second(1)%nodes(:, 2) = [1.0_dp, 0.0_dp]
     call add_st_vals( &
-         edges_first, edges_second, 2, st_vals, &
+         edges_first, edges_second, 2, st_vals, known_enum, &
          1, 1, intersections, num_intersections, all_types, status)
     case_success = ( &
          allocated(intersections) .AND. &
@@ -723,6 +875,33 @@ contains
          intersection_check( &
          intersections(1), 0.5_dp, 0.5_dp, 1, 1, first) .AND. &
          all_types == 2**first .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Intersection is coincident.
+    known_enum = IntersectionClassification_COINCIDENT
+    num_intersections = 0
+    all_types = 0
+    st_vals(:, 1) = [0.5_dp, 0.5_dp]
+    ! Set the relevant edges as lines.
+    edges_first(1)%nodes(:, 1) = 0
+    edges_first(1)%nodes(:, 2) = 1
+    edges_second(1)%nodes(:, 1) = [1.0_dp, 0.0_dp]
+    edges_second(1)%nodes(:, 2) = [0.0_dp, 1.0_dp]
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 2)
+    call add_st_vals( &
+         edges_first, edges_second, 1, st_vals, known_enum, &
+         1, 1, intersections, num_intersections, all_types, status)
+    case_success = ( &
+         case_success .AND. &
+         allocated(intersections) .AND. &
+         size(intersections) == 2 .AND. &
+         num_intersections == 1 .AND. &
+         intersection_check( &
+         intersections(1), 0.5_dp, 0.5_dp, 1, 1, coincident) .AND. &
+         all_types == 2**IntersectionClassification_COINCIDENT .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -739,13 +918,14 @@ contains
     type(Intersection), allocatable :: intersections(:)
     integer(c_int) :: num_intersections
     integer(c_int) :: all_types, status
-    integer(c_int) :: first, second
+    integer(c_int) :: first, second, coincident
 
     case_id = 1
     name = "surfaces_intersection_points"
 
     first = IntersectionClassification_FIRST
     second = IntersectionClassification_SECOND
+    coincident = IntersectionClassification_COINCIDENT
 
     ! CASE 1: Overlapping triangles (i.e. degree 1 surfaces).
     linear1(:, 1) = 0
@@ -817,9 +997,43 @@ contains
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, all_types, status)
     case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 26 .AND. &
          num_intersections == 26 .AND. &
          all_types == 0 .AND. &
          status == Status_SAME_CURVATURE)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Coincident intersection with shared interior, which sets
+    !         ``known_enum`` to ``COINCIDENT``.
+    num_intersections = 0
+    quadratic1(:, 1) = [1.0_dp, 0.0_dp]
+    quadratic1(:, 2) = [0.5_dp, 0.25_dp]
+    quadratic1(:, 3) = 0
+    quadratic1(:, 4) = [0.75_dp, -0.375_dp]
+    quadratic1(:, 5) = [0.25_dp, -0.375_dp]
+    quadratic1(:, 6) = [0.5_dp, -0.75_dp]
+    quadratic2(:, 1) = [0.75_dp, 0.09375_dp]
+    quadratic2(:, 2) = [0.25_dp, 0.21875_dp]
+    quadratic2(:, 3) = [-0.25_dp, -0.15625_dp]
+    quadratic2(:, 4) = [0.625_dp, -0.328125_dp]
+    quadratic2(:, 5) = [0.125_dp, -0.453125_dp]
+    quadratic2(:, 6) = [0.5_dp, -0.75_dp]
+    call surfaces_intersection_points( &
+         6, quadratic1, 2, 6, quadratic2, 2, &
+         intersections, num_intersections, all_types, status)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         size(intersections) == 26 .AND. &
+         num_intersections == 3 .AND. &
+         intersection_check( &
+         intersections(1), 0.25_dp, 0.0_dp, 1, 1, coincident) .AND. &
+         intersection_check( &
+         intersections(2), 0.0_dp, 0.75_dp, 2, 1, first) .AND. &
+         intersection_check( &
+         intersections(3), 0.0_dp, 0.0_dp, 3, 3, second) .AND. &
+         all_types == (2**first + 2**second + 2**coincident) .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_surfaces_intersection_points
@@ -864,7 +1078,7 @@ contains
     logical :: case_success
     integer :: case_id
     character(8) :: name
-    integer(c_int) :: first, second
+    integer(c_int) :: first, second, coincident
     type(Intersection) :: intersections(5)
     type(Intersection) :: curr_node, next_node
     logical(c_bool) :: at_start
@@ -876,6 +1090,7 @@ contains
 
     first = IntersectionClassification_FIRST
     second = IntersectionClassification_SECOND
+    coincident = IntersectionClassification_COINCIDENT
 
     ! CASE 1: On an edge of first surface, no other intersections on that edge.
     curr_node = Intersection(0.125_dp, -1.0_dp, 2, -1, first)
@@ -956,6 +1171,63 @@ contains
          remaining == 3 .AND. &
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: On an edge of both surfaces (i.e. along a ``COINCIDENT``
+    !         segment). Next node found along edge of first surface.
+    curr_node = Intersection(0.25_dp, 0.0_dp, 1, 3, coincident)
+    ! NOTE: ``intersections(1)`` is "nonsense". A coincident edge should
+    !       only have one other intesection along it, the "nonsense"
+    !       intesection is just there to hit a "just in case" code path
+    !       that checks the smallest ``s`` value after ``curr_node``.
+    intersections(1) = Intersection(0.875_dp, -1.0_dp, 1, 2, first)
+    intersections(2) = Intersection(0.75_dp, 0.0_dp, 1, 1, second)
+    unused(:2) = [2, 3]
+    remaining = 2
+    call get_next( &
+         2, intersections(:2), unused, remaining, &
+         1, curr_node, next_node, at_start)
+    case_success = ( &
+         intersection_check(next_node, 0.75_dp, 0.0_dp, 1, 1, second) .AND. &
+         remaining == 1 .AND. &
+         all(unused(:2) == [3, 3]) .AND. &
+         .NOT. at_start)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: On an edge of both surfaces (i.e. along a ``COINCIDENT``
+    !         segment). Next node found along edge of second surface.
+    curr_node = Intersection(0.625_dp, 0.0_dp, 2, 2, coincident)
+    ! NOTE: ``intersections(1)`` is "nonsense". A coincident edge should
+    !       only have one other intesection along it, the "nonsense"
+    !       intesection is just there to hit a "just in case" code path
+    !       that checks the smallest ``t`` value after ``curr_node``.
+    intersections(1) = Intersection(-1.0_dp, 0.75_dp, 1, 2, first)
+    intersections(2) = Intersection(0.0_dp, 0.5_dp, 3, 2, second)
+    unused(:2) = [2, 5]
+    remaining = 2
+    call get_next( &
+         2, intersections(:2), unused, remaining, &
+         1, curr_node, next_node, at_start)
+    case_success = ( &
+         intersection_check(next_node, 0.0_dp, 0.5_dp, 3, 2, second) .AND. &
+         remaining == 1 .AND. &
+         all(unused(:2) == [5, 5]) .AND. &
+         .NOT. at_start)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: On an edge of both surfaces (i.e. along a ``COINCIDENT``
+    !         segment). Next node found at corner of edges.
+    curr_node = Intersection(0.625_dp, 0.5_dp, 1, 3, coincident)
+    intersections(1) = Intersection(0.0_dp, 0.0_dp, 2, 1, first)
+    unused(:2) = [1, 5]
+    remaining = 2
+    call get_next( &
+         1, intersections(:1), unused, remaining, &
+         1, curr_node, next_node, at_start)
+    case_success = ( &
+         intersection_check( &
+         next_node, 1.0_dp, 1.0_dp, 1, 3, coincident) .AND. &
+         remaining == 2 .AND. &
+         .NOT. at_start)
 
   end subroutine test_get_next
 
@@ -1115,6 +1387,46 @@ contains
          segments(2)%start == curr_node%s .AND. &
          segments(2)%end_ == next_node%s .AND. &
          segments(2)%edge_index == curr_node%index_first)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Intersection is classified as COINCIDENT, nodes match
+    !         on first edge.
+    count = 0
+    curr_node = Intersection( &
+         0.125_dp, -1.0_dp, 3, -1, IntersectionClassification_COINCIDENT)
+    next_node = Intersection(s=0.625_dp, index_first=3)
+    case_success = ( &
+         allocated(segments) .AND. &
+         size(segments) == 2)
+    call add_segment(curr_node, next_node, count, segments)
+    case_success = ( &
+         case_success .AND. &
+         count == 1 .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 2 .AND. &
+         segments(1)%start == curr_node%s .AND. &
+         segments(1)%end_ == next_node%s .AND. &
+         segments(1)%edge_index == curr_node%index_first)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Intersection is classified as COINCIDENT, nodes match
+    !         on second edge.
+    count = 0
+    curr_node = Intersection( &
+         -1.0_dp, 0.25_dp, -1, 1, IntersectionClassification_COINCIDENT)
+    next_node = Intersection(-1.0_dp, 1.0_dp, -2, 1)
+    case_success = ( &
+         allocated(segments) .AND. &
+         size(segments) == 2)
+    call add_segment(curr_node, next_node, count, segments)
+    case_success = ( &
+         case_success .AND. &
+         count == 1 .AND. &
+         allocated(segments) .AND. &
+         size(segments) == 2 .AND. &
+         segments(1)%start == curr_node%t .AND. &
+         segments(1)%end_ == next_node%t .AND. &
+         segments(1)%edge_index == curr_node%index_second + 3)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_segment
@@ -1607,6 +1919,41 @@ contains
     call print_status(name, case_id, case_success, success)
     ! Restore the original value.
     call set_similar_ulps(similar_ulps)
+
+    ! CASE 13: Two surfaces share an edge but no interior, will result in
+    !          ``COINCIDENT_UNUSED``. This is 29Q-42Q (ID: 43).
+    quadratic1(:, 1) = -0.5_dp
+    quadratic1(:, 2) = [0.3125_dp, -0.25_dp]
+    quadratic1(:, 3) = [1.25_dp, 0.0_dp]
+    quadratic1(:, 4) = [-0.25_dp, 0.3125_dp]
+    quadratic1(:, 5) = 0.125_dp
+    quadratic1(:, 6) = [0.0_dp, 1.25_dp]
+    quadratic2(:, 1) = [0.0_dp, 1.25_dp]
+    quadratic2(:, 2) = 0.125_dp
+    quadratic2(:, 3) = [1.25_dp, 0.0_dp]
+    quadratic2(:, 4) = [0.625_dp, 1.25_dp]
+    quadratic2(:, 5) = [1.25_dp, 0.625_dp]
+    quadratic2(:, 6) = 1.25_dp
+    call surfaces_intersect( &
+         6, quadratic1, 2, 6, quadratic2, 2, &
+         segment_ends, segments, &
+         num_intersected, contained, status)
+    case_success = ( &
+         num_intersected == 0 .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 14: Same as CASE 13, with arguments swapped.
+    call surfaces_intersect( &
+         6, quadratic2, 2, 6, quadratic1, 2, &
+         segment_ends, segments, &
+         num_intersected, contained, status)
+    case_success = ( &
+         num_intersected == 0 .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
 
   end subroutine test_surfaces_intersect
 

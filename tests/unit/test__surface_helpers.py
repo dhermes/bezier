@@ -1310,27 +1310,37 @@ class Test_handle_ends(unittest.TestCase):
         return _surface_helpers.handle_ends(index1, s, index2, t)
 
     def test_neither(self):
-        edge_end, intersection_args = self._call_function_under_test(
-            0, 0.5, 1, 0.5)
+        result = self._call_function_under_test(0, 0.5, 1, 0.5)
+        edge_end, is_corner, intersection_args = result
         self.assertFalse(edge_end)
+        self.assertFalse(is_corner)
         self.assertEqual(intersection_args, (0, 0.5, 1, 0.5))
 
+        result = self._call_function_under_test(2, 0.0, 2, 0.5)
+        edge_end, is_corner, intersection_args = result
+        self.assertFalse(edge_end)
+        self.assertTrue(is_corner)
+        self.assertEqual(intersection_args, (2, 0.0, 2, 0.5))
+
     def test_s(self):
-        edge_end, intersection_args = self._call_function_under_test(
-            2, 1.0, 1, 0.25)
+        result = self._call_function_under_test(2, 1.0, 1, 0.25)
+        edge_end, is_corner, intersection_args = result
         self.assertTrue(edge_end)
+        self.assertTrue(is_corner)
         self.assertEqual(intersection_args, (0, 0.0, 1, 0.25))
 
     def test_t(self):
-        edge_end, intersection_args = self._call_function_under_test(
-            2, 0.75, 0, 1.0)
+        result = self._call_function_under_test(2, 0.75, 0, 1.0)
+        edge_end, is_corner, intersection_args = result
         self.assertTrue(edge_end)
+        self.assertTrue(is_corner)
         self.assertEqual(intersection_args, (2, 0.75, 1, 0.0))
 
     def test_both(self):
-        edge_end, intersection_args = self._call_function_under_test(
-            1, 1.0, 1, 1.0)
+        result = self._call_function_under_test(1, 1.0, 1, 1.0)
+        edge_end, is_corner, intersection_args = result
         self.assertTrue(edge_end)
+        self.assertTrue(is_corner)
         self.assertEqual(intersection_args, (2, 0.0, 2, 0.0))
 
 
@@ -1428,10 +1438,11 @@ class Test_to_front(unittest.TestCase):
 class Test_get_next_first(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersection, intersections):
+    def _call_function_under_test(intersection, intersections, **kwargs):
         from bezier import _surface_helpers
 
-        return _surface_helpers.get_next_first(intersection, intersections)
+        return _surface_helpers.get_next_first(
+            intersection, intersections, **kwargs)
 
     def test_move_to_corner(self):
         from bezier import _intersection_helpers
@@ -1466,14 +1477,21 @@ class Test_get_next_first(unittest.TestCase):
         result = self._call_function_under_test(intersection, intersections)
         self.assertIs(result, intersections[1])
 
+    def test_skip_end(self):
+        intersection = make_intersect(
+            2, 0.25, None, None, interior_curve=get_enum('FIRST'))
+        result = self._call_function_under_test(intersection, [], to_end=False)
+        self.assertIsNone(result)
+
 
 class Test_get_next_second(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(intersection, intersections):
+    def _call_function_under_test(intersection, intersections, **kwargs):
         from bezier import _surface_helpers
 
-        return _surface_helpers.get_next_second(intersection, intersections)
+        return _surface_helpers.get_next_second(
+            intersection, intersections, **kwargs)
 
     def test_move_to_corner(self):
         from bezier import _intersection_helpers
@@ -1508,6 +1526,71 @@ class Test_get_next_second(unittest.TestCase):
         result = self._call_function_under_test(intersection, intersections)
         self.assertIs(result, intersections[1])
 
+    def test_skip_end(self):
+        intersection = make_intersect(
+            None, None, 0, 0.125, interior_curve=get_enum('SECOND'))
+        result = self._call_function_under_test(intersection, [], to_end=False)
+        self.assertIsNone(result)
+
+
+class Test_get_next_coincident(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersection, intersections):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.get_next_coincident(
+            intersection, intersections)
+
+    def test_move_on_first(self):
+        from bezier import _intersection_helpers
+
+        intersection = make_intersect(
+            0, 0.0, 1, 0.5, interior_curve=get_enum('COINCIDENT'))
+        intersections = [
+            make_intersect(
+                0, 0.5, 2, 0.0, interior_curve=get_enum('FIRST')),
+        ]
+
+        result = self._call_function_under_test(intersection, intersections)
+        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertEqual(result.s, 0.5)
+        self.assertEqual(result.index_first, 0)
+        self.assertEqual(result.t, 0.0)
+        self.assertEqual(result.index_second, 2)
+        self.assertIs(result.interior_curve, get_enum('FIRST'))
+
+    def test_move_on_second(self):
+        from bezier import _intersection_helpers
+
+        intersection = make_intersect(
+            1, 0.75, 2, 0.0, interior_curve=get_enum('COINCIDENT'))
+        intersections = [
+            make_intersect(
+                2, 0.0, 2, 0.75, interior_curve=get_enum('SECOND')),
+        ]
+
+        result = self._call_function_under_test(intersection, intersections)
+        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertEqual(result.s, 0.0)
+        self.assertEqual(result.index_first, 2)
+        self.assertEqual(result.t, 0.75)
+        self.assertEqual(result.index_second, 2)
+        self.assertIs(result.interior_curve, get_enum('SECOND'))
+
+    def test_move_to_double_corner(self):
+        from bezier import _intersection_helpers
+
+        intersection = make_intersect(
+            2, 0.0, 0, 0.5, interior_curve=get_enum('COINCIDENT'))
+        result = self._call_function_under_test(intersection, [])
+        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertEqual(result.s, 1.0)
+        self.assertEqual(result.index_first, 2)
+        self.assertEqual(result.t, 1.0)
+        self.assertEqual(result.index_second, 0)
+        self.assertIs(result.interior_curve, get_enum('COINCIDENT'))
+
 
 class Test_get_next(unittest.TestCase):
 
@@ -1519,7 +1602,7 @@ class Test_get_next(unittest.TestCase):
             intersection, intersections, unused)
 
     def test_remove_from_unused(self):
-        # Also tests branch through "first".
+        # Also tests branch through "FIRST".
         return_value = make_intersect(
             1, None, 0, None, interior_curve=get_enum('SECOND'))
         unused = [return_value]
@@ -1561,6 +1644,23 @@ class Test_get_next(unittest.TestCase):
         with self.assertRaises(ValueError):
             self._call_function_under_test(intersection, [], [])
 
+    def test_coincident(self):
+        return_value = make_intersect(
+            0, None, 2, None, interior_curve=get_enum('SECOND'))
+        intersection = make_intersect(
+            0, None, 2, None, interior_curve=get_enum('COINCIDENT'))
+
+        patch = unittest.mock.patch(
+            'bezier._surface_helpers.get_next_coincident',
+            return_value=return_value)
+        with patch as mocked:
+            result = self._call_function_under_test(
+                intersection, unittest.mock.sentinel.intersections, [])
+
+        self.assertIs(result, return_value)
+        mocked.assert_called_once_with(
+            intersection, unittest.mock.sentinel.intersections)
+
 
 class Test_ends_to_curve(utils.NumPyTestCase):
 
@@ -1577,11 +1677,16 @@ class Test_ends_to_curve(utils.NumPyTestCase):
             self._call_function_under_test(start_node, end_node)
 
     def _on_different_curves(self, interior_curve):
+        from bezier import _surface_helpers
+
         start_node = make_intersect(
             0, 0.5, 2, 0.5, interior_curve=interior_curve)
         end_node = make_intersect(1, 0.5, 1, 0.5)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(start_node, end_node)
+
+        expected_args = (_surface_helpers._WRONG_CURVE,)
+        self.assertEqual(exc_info.exception.args, expected_args)
 
     def test_first_on_different_curves(self):
         self._on_different_curves(get_enum('FIRST'))
@@ -1602,6 +1707,32 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         end_node = make_intersect(None, None, 2, 0.25)
         result = self._call_function_under_test(start_node, end_node)
         self.assertEqual(result, (5, 0.125, 0.25))
+
+    def test_coincident_first(self):
+        start_node = make_intersect(
+            2, 0.5, None, None, interior_curve=get_enum('COINCIDENT'))
+        end_node = make_intersect(2, 0.75, None, None)
+        result = self._call_function_under_test(start_node, end_node)
+        self.assertEqual(result, (2, 0.5, 0.75))
+
+    def test_coincident_second(self):
+        start_node = make_intersect(
+            0, 1.0, 0, 0.5, interior_curve=get_enum('COINCIDENT'))
+        end_node = make_intersect(1, 0.75, 0, 1.0)
+        result = self._call_function_under_test(start_node, end_node)
+        self.assertEqual(result, (3, 0.5, 1.0))
+
+    def test_coincident_failure(self):
+        from bezier import _surface_helpers
+
+        start_node = make_intersect(
+            0, 0.0, 0, 0.0, interior_curve=get_enum('COINCIDENT'))
+        end_node = make_intersect(1, 0.0, 1, 0.0)
+        with self.assertRaises(ValueError) as exc_info:
+            self._call_function_under_test(start_node, end_node)
+
+        expected_args = (_surface_helpers._WRONG_CURVE,)
+        self.assertEqual(exc_info.exception.args, expected_args)
 
 
 class Test_no_intersections(unittest.TestCase):
@@ -1681,6 +1812,12 @@ class Test_tangent_only_intersections(unittest.TestCase):
         self.assertIsNone(edges_info)
         self.assertIsNotNone(contained)
         self.assertFalse(contained)
+
+    def test_coincident_unused(self):
+        all_types = set([get_enum('COINCIDENT_UNUSED')])
+        edges_info, contained = self._call_function_under_test(all_types)
+        self.assertEqual(edges_info, [])
+        self.assertIsNone(contained)
 
 
 class Test_basic_interior_combine(utils.NumPyTestCase):

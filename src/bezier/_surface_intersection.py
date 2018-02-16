@@ -45,6 +45,12 @@ MAX_LOCATE_SUBDIVISIONS = 20
 LOCATE_EPS = 2.0**(-47)
 INTERSECTION_T = _geometric_intersection.BoxIntersectionType.INTERSECTION
 CLASSIFICATION_T = _intersection_helpers.IntersectionClassification
+UNUSED_T = CLASSIFICATION_T.COINCIDENT_UNUSED
+ACCEPTABLE_CLASSIFICATIONS = (
+    CLASSIFICATION_T.FIRST,
+    CLASSIFICATION_T.SECOND,
+    CLASSIFICATION_T.COINCIDENT,
+)
 
 
 def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
@@ -452,9 +458,87 @@ def verify_duplicates(duplicates, uniques):
             raise ValueError('Unexpected duplicate count', count)
 
 
+def add_edge_end_unused(
+        intersection, duplicates, intersections, unused, all_types):
+    """Add intersection that is ``COINCIDENT_UNUSED`` but on an edge end.
+
+    This is a helper for :func:`~._surface_intersection.add_intersection`.
+    It assumes that
+
+    * ``intersection`` will have at least one of ``s == 0.0`` or ``t == 0.0``
+    * A "misclassified" intersection in ``intersections`` that matches
+      ``intersection`` will be the "same" if it matches both ``index_first``
+      and ``index_second`` and if it matches the start index exactly
+
+    Args:
+        intersection (.Intersection): An intersection to be added.
+        duplicates (List[.Intersection]): List of duplicate intersections.
+        intersections (List[.Intersection]): List of "accepted" (i.e.
+            non-duplicate) intersections.
+        unused (List[.Intersection]): Intersections that won't be used,
+            such as a tangent intersection along an edge. This is
+            provided for the case where the output will be verified.
+        all_types (Set[.IntersectionClassification]): The set of all
+            intersection classifications encountered among the intersections
+            for the given surface-surface pair.
+    """
+    found = None
+    for other in intersections:
+        if (intersection.index_first == other.index_first and
+                intersection.index_second == other.index_second):
+            if intersection.s == 0.0 and other.s == 0.0:
+                found = other
+                break
+
+            if intersection.t == 0.0 and other.t == 0.0:
+                found = other
+                break
+
+    if found is not None:
+        intersections.remove(found)
+        duplicates.append(found)
+
+    unused.append(intersection)
+    all_types.add(UNUSED_T)
+
+
+def check_unused(intersection, duplicates, unused):
+    """Check if a "valid" ``intersection`` is already in ``unused``.
+
+    This assumes that
+
+    * ``intersection`` will have at least one of ``s == 0.0`` or ``t == 0.0``
+    * At least one of the intersections in ``unused`` is classified as
+      ``COINCIDENT_UNUSED``.
+
+    Args:
+        intersection (.Intersection): An intersection to be added.
+        duplicates (List[.Intersection]): List of duplicate intersections.
+        unused (List[.Intersection]): Intersections that won't be used,
+            such as a tangent intersection along an edge. This is
+            provided for the case where the output will be verified.
+
+    Returns:
+        bool: Indicates if the ``intersection`` is a duplicate.
+    """
+    for other in unused:
+        if (other.interior_curve == UNUSED_T and
+                intersection.index_first == other.index_first and
+                intersection.index_second == other.index_second):
+            if intersection.s == 0.0 and other.s == 0.0:
+                duplicates.append(intersection)
+                return True
+
+            if intersection.t == 0.0 and other.t == 0.0:
+                duplicates.append(intersection)
+                return True
+
+    return False
+
+
 def add_intersection(  # pylint: disable=too-many-arguments
-        index1, s, index2, t, edge_nodes1, edge_nodes2, duplicates,
-        intersections, unused, all_types):
+        index1, s, index2, t, interior_curve, edge_nodes1, edge_nodes2,
+        duplicates, intersections, unused, all_types):
     """Create an :class:`Intersection` and append.
 
     The intersection will be classified as either a duplicate or a valid
@@ -468,6 +552,9 @@ def add_intersection(  # pylint: disable=too-many-arguments
         index2 (int): The index (among 0, 1, 2) of the second edge in the
             intersection.
         t (float): The parameter along the second curve of the intersection.
+        interior_curve (Optional[.IntersectionClassification]): The
+            classification of the intersection, if known. If :data:`None`,
+            the classification will be computed below.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the first surface being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
@@ -482,27 +569,79 @@ def add_intersection(  # pylint: disable=too-many-arguments
             intersection classifications encountered among the intersections
             for the given surface-surface pair.
     """
-    edge_end, intersection_args = _surface_helpers.handle_ends(
+    # pylint: disable=too-many-locals
+    edge_end, is_corner, intersection_args = _surface_helpers.handle_ends(
         index1, s, index2, t)
     if edge_end:
         intersection = _intersection_helpers.Intersection(
             *intersection_args)
-        duplicates.append(intersection)
+        intersection.interior_curve = interior_curve
+
+        if interior_curve == UNUSED_T:
+            add_edge_end_unused(
+                intersection, duplicates, intersections, unused, all_types)
+        else:
+            duplicates.append(intersection)
     else:
         intersection = _intersection_helpers.Intersection(
             index1, s, index2, t)
+
+        if is_corner and UNUSED_T in all_types:
+            is_duplicate = check_unused(intersection, duplicates, unused)
+            if is_duplicate:
+                return
+
         # Classify the intersection.
-        interior = _surface_helpers.classify_intersection(
-            intersection, edge_nodes1, edge_nodes2)
-        all_types.add(interior)
-        intersection.interior_curve = interior
-        # Only keep the intersections which are ``ACCEPTABLE``.
-        if interior == CLASSIFICATION_T.FIRST:
-            intersections.append(intersection)
-        elif interior == CLASSIFICATION_T.SECOND:
+        if interior_curve is None:
+            interior_curve = _surface_helpers.classify_intersection(
+                intersection, edge_nodes1, edge_nodes2)
+
+        all_types.add(interior_curve)
+        intersection.interior_curve = interior_curve
+        # Only keep the intersections which are "acceptable".
+        if interior_curve in ACCEPTABLE_CLASSIFICATIONS:
             intersections.append(intersection)
         else:
             unused.append(intersection)
+    # pylint: enable=too-many-locals
+
+
+def classify_coincident(st_vals, coincident):
+    r"""Determine if coincident parameters are "unused".
+
+    .. note::
+
+       This is a helper for :func:`surface_intersections`.
+
+    In the case that ``coincident`` is :data:`True`, then we'll have two
+    sets of parameters :math:`(s_1, t_1)` and :math:`(s_2, t_2)`.
+
+    If one of :math:`s1 < s2` or :math:`t1 < t2` is not satisfied, the
+    coincident segments will be moving in opposite directions, hence don't
+    define an interior of an intersection.
+
+    .. warning::
+
+       In the "coincident" case, this assumes, but doesn't check, that
+       ``st_vals`` is ``2 x 2``.
+
+    Args:
+        st_vals (numpy.ndarray): ``2 X N`` array of intersection parameters.
+        coincident (bool): Flag indicating if the intersections are the
+            endpoints of coincident segments of two curves.
+
+    Returns:
+        Optional[.IntersectionClassification]: The classification of the
+        intersections.
+    """
+    if not coincident:
+        return None
+
+    if (st_vals[0, 0] >= st_vals[0, 1] or
+            st_vals[1, 0] >= st_vals[1, 1]):
+        return UNUSED_T
+    else:
+        return CLASSIFICATION_T.COINCIDENT
 
 
 def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
@@ -531,19 +670,23 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
           along an edge
         * All the intersection classifications encountered
     """
+    # pylint: disable=too-many-locals
     all_types = set()
     intersections = []
     duplicates = []
     unused = []
     for index1, nodes1 in enumerate(edge_nodes1):
         for index2, nodes2 in enumerate(edge_nodes2):
-            st_vals, coincident_unused = all_intersections(nodes1, nodes2)
+            st_vals, coincident = all_intersections(nodes1, nodes2)
+            interior_curve = classify_coincident(st_vals, coincident)
             for s, t in st_vals.T:
                 add_intersection(
-                    index1, s, index2, t, edge_nodes1, edge_nodes2,
+                    index1, s, index2, t, interior_curve,
+                    edge_nodes1, edge_nodes2,
                     duplicates, intersections, unused, all_types)
 
     return intersections, duplicates, unused, all_types
+    # pylint: enable=too-many-locals
 
 
 def generic_intersect(

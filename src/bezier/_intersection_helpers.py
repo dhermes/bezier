@@ -419,6 +419,8 @@ class IntersectionClassification(enum.Enum):
     """Tangent intersection, both curves are interior from some perspective."""
     COINCIDENT = 7
     """Intersection is actually an endpoint of a coincident segment."""
+    COINCIDENT_UNUSED = 8
+    """Unused because the edges are moving in opposite directions."""
 
 
 class Intersection(object):  # pylint: disable=too-few-public-methods

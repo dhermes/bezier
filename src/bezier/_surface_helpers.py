@@ -1723,9 +1723,10 @@ def handle_ends(index1, s, index2, t):
         t (float): The parameter along the second curve of the intersection.
 
     Returns:
-        Tuple[bool, Tuple[int, float, int, float]]: A pair of:
+        Tuple[bool, bool, Tuple[int, float, int, float]]: A triple of:
 
         * flag indicating if the intersection is at the end of an edge
+        * flag indicating if the intersection is a "corner"
         * 4-tuple of the "updated" values ``(index1, s, index2, t)``
     """
     edge_end = False
@@ -1740,7 +1741,8 @@ def handle_ends(index1, s, index2, t):
         index2 = (index2 + 1) % 3
         edge_end = True
 
-    return edge_end, (index1, s, index2, t)
+    is_corner = (s == 0.0 or t == 0.0)
+    return edge_end, is_corner, (index1, s, index2, t)
 
 
 def to_front(intersection, intersections, unused):
@@ -1809,7 +1811,7 @@ def to_front(intersection, intersections, unused):
         return intersection
 
 
-def get_next_first(intersection, intersections):
+def get_next_first(intersection, intersections, to_end=True):
     """Gets the next node along the current (first) edge.
 
     .. note::
@@ -1828,11 +1830,15 @@ def get_next_first(intersection, intersections):
         intersections (List[.Intersection]): List of all detected
             intersections, provided as a reference for potential
             points to arrive at.
+        to_end (Optional[bool]): Indicates if the next node should just be
+            the end of the first edge or :data:`None`.
 
     Returns:
-        .Intersection: The "next" point along a surface of intersection.
-        This will produce the next intersection along the current (first)
-        edge or the end of the same edge.
+        Optional[.Intersection]: The "next" point along a surface of
+        intersection. This will produce the next intersection along the
+        current (first) edge or the end of the same edge. If ``to_end`` is
+        :data:`False` and there are no other intersections along the current
+        edge, will return :data:`None` (rather than the end of the same edge).
     """
     along_edge = None
     index_first = intersection.index_first
@@ -1844,16 +1850,19 @@ def get_next_first(intersection, intersections):
                 along_edge = other_int
 
     if along_edge is None:
-        # If there is no other intersection on the edge, just return
-        # the segment end.
-        return _intersection_helpers.Intersection(
-            index_first, 1.0, None, None,
-            interior_curve=CLASSIFICATION_T.FIRST)
+        if to_end:
+            # If there is no other intersection on the edge, just return
+            # the segment end.
+            return _intersection_helpers.Intersection(
+                index_first, 1.0, None, None,
+                interior_curve=CLASSIFICATION_T.FIRST)
+        else:
+            return None
     else:
         return along_edge
 
 
-def get_next_second(intersection, intersections):
+def get_next_second(intersection, intersections, to_end=True):
     """Gets the next node along the current (second) edge.
 
     .. note::
@@ -1872,11 +1881,15 @@ def get_next_second(intersection, intersections):
         intersections (List[.Intersection]): List of all detected
             intersections, provided as a reference for potential
             points to arrive at.
+        to_end (Optional[bool]): Indicates if the next node should just be
+            the end of the first edge or :data:`None`.
 
     Returns:
-        .Intersection: The "next" point along a surface of intersection.
-        This will produce the next intersection along the current (second)
-        edge or the end of the same edge.
+        Optional[.Intersection]: The "next" point along a surface of
+        intersection. This will produce the next intersection along the
+        current (second) edge or the end of the same edge. If ``to_end`` is
+        :data:`False` and there are no other intersections along the current
+        edge, will return :data:`None` (rather than the end of the same edge).
     """
     along_edge = None
     index_second = intersection.index_second
@@ -1888,13 +1901,70 @@ def get_next_second(intersection, intersections):
                 along_edge = other_int
 
     if along_edge is None:
-        # If there is no other intersection on the edge, just return
-        # the segment end.
-        return _intersection_helpers.Intersection(
-            None, None, index_second, 1.0,
-            interior_curve=CLASSIFICATION_T.SECOND)
+        if to_end:
+            # If there is no other intersection on the edge, just return
+            # the segment end.
+            return _intersection_helpers.Intersection(
+                None, None, index_second, 1.0,
+                interior_curve=CLASSIFICATION_T.SECOND)
+        else:
+            return None
     else:
         return along_edge
+
+
+def get_next_coincident(intersection, intersections):
+    """Gets the next node along the current (coincident) edge.
+
+    .. note::
+
+       This is a helper used only by :func:`get_next`, which in
+       turn is only used by :func:`basic_interior_combine`, which itself
+       is only used by :func:`combine_intersections`.
+
+    Along with :func:`get_next_first` and :func:`get_next_second`, this
+    function does the majority of the heavy lifting in :func:`get_next`.
+
+    This function moves immediately to the "next" intersection along the
+    "current" edge. An intersection labeled as ``COINCIDENT`` can only occur
+    at the beginning of a segment. The end will correspond to the ``s`` or
+    ``t`` parameter being equal to ``1.0`` and so it will get "rotated"
+    to the front of the next edge, where it will be classified according
+    to a different edge pair.
+
+    It's also worth noting that some coincident segments will correspond
+    to curves moving in opposite directions. In that case, there is
+    no "interior" intersection (the curves are facing away) and so that
+    segment won't be part of an intersection.
+
+    Args:
+        intersection (.Intersection): The current intersection.
+        intersections (List[.Intersection]): List of all detected
+            intersections, provided as a reference for potential
+            points to arrive at.
+
+    Returns:
+        .Intersection: The "next" point along a surface of intersection.
+        This will produce the next intersection along the current (second)
+        edge or the end of the same edge.
+    """
+    # Moving along the first or second edge will produce the same result, but
+    # since we "rotate" all intersections to the beginning of an edge, the
+    # index may not match the first or second (or both).
+    along_first = get_next_first(intersection, intersections, to_end=False)
+    if along_first is None:
+        along_second = get_next_second(
+            intersection, intersections, to_end=False)
+    else:
+        return along_first
+
+    if along_second is None:
+        return _intersection_helpers.Intersection(
+            intersection.index_first, 1.0,
+            intersection.index_second, 1.0,
+            interior_curve=CLASSIFICATION_T.COINCIDENT)
+    else:
+        return along_second
 
 
 def get_next(intersection, intersections, unused):
@@ -1937,9 +2007,11 @@ def get_next(intersection, intersections, unused):
         result = get_next_first(intersection, intersections)
     elif intersection.interior_curve == CLASSIFICATION_T.SECOND:
         result = get_next_second(intersection, intersections)
+    elif intersection.interior_curve == CLASSIFICATION_T.COINCIDENT:
+        result = get_next_coincident(intersection, intersections)
     else:
         raise ValueError('Cannot get next node if not starting from '
-                         '"first" or "second".')
+                         '"FIRST", "SECOND" or "COINCIDENT".')
 
     if result in unused:
         unused.remove(result)
@@ -1981,11 +2053,15 @@ def ends_to_curve(start_node, end_node):
 
     Raises:
         ValueError: If the ``start_node`` and ``end_node`` disagree on
-            the first curve when classified as "first" or disagree on
-            the second curve when classified as "second".
+            the first curve when classified as "FIRST".
+        ValueError: If the ``start_node`` and ``end_node`` disagree on
+            the second curve when classified as "SECOND".
+        ValueError: If the ``start_node`` and ``end_node`` disagree on
+            the both curves when classified as "COINCIDENT".
         ValueError: If the ``start_node`` is not classified as
-            :attr:`~.IntersectionClassification.FIRST` or
-            :attr:`~.IntersectionClassification.SECOND`.
+            :attr:`~.IntersectionClassification.FIRST`,
+            :attr:`~.IntersectionClassification.SECOND` or
+            :attr:`~.IntersectionClassification.COINCIDENT`.
     """
     if start_node.interior_curve == CLASSIFICATION_T.FIRST:
         if end_node.index_first != start_node.index_first:
@@ -1995,9 +2071,16 @@ def ends_to_curve(start_node, end_node):
         if end_node.index_second != start_node.index_second:
             raise ValueError(_WRONG_CURVE)
         return start_node.index_second + 3, start_node.t, end_node.t
+    elif start_node.interior_curve == CLASSIFICATION_T.COINCIDENT:
+        if end_node.index_first == start_node.index_first:
+            return start_node.index_first, start_node.s, end_node.s
+        elif end_node.index_second == start_node.index_second:
+            return start_node.index_second + 3, start_node.t, end_node.t
+        else:
+            raise ValueError(_WRONG_CURVE)
     else:
         raise ValueError('Segment start must be classified as '
-                         '"FIRST" or "SECOND".')
+                         '"FIRST", "SECOND" or "COINCIDENT".')
 
 
 def no_intersections(nodes1, degree1, nodes2, degree2):
@@ -2051,8 +2134,9 @@ def tangent_only_intersections(all_types):
     Thus we expect every intersection to be classified as
     :attr:`~.IntersectionClassification.TANGENT_FIRST`,
     :attr:`~.IntersectionClassification.TANGENT_SECOND`,
-    :attr:`~.IntersectionClassification.OPPOSED` or
-    :attr:`~.IntersectionClassification.IGNORED_CORNER`.
+    :attr:`~.IntersectionClassification.OPPOSED`,
+    :attr:`~.IntersectionClassification.IGNORED_CORNER` or
+    :attr:`~.IntersectionClassification.COINCIDENT_UNUSED`.
 
     What's more, we expect all intersections to be classified the same for
     a given pairing.
@@ -2073,8 +2157,9 @@ def tangent_only_intersections(all_types):
         ValueError: If there are intersections of more than one type among
             :attr:`~.IntersectionClassification.TANGENT_FIRST`,
             :attr:`~.IntersectionClassification.TANGENT_SECOND`,
-            :attr:`~.IntersectionClassification.OPPOSED` or
-            :attr:`~.IntersectionClassification.IGNORED_CORNER`.
+            :attr:`~.IntersectionClassification.OPPOSED`,
+            :attr:`~.IntersectionClassification.IGNORED_CORNER` or
+            :attr:`~.IntersectionClassification.COINCIDENT_UNUSED`.
         ValueError: If there is a unique classification, but it isn't one
             of the tangent types.
     """
@@ -2090,6 +2175,8 @@ def tangent_only_intersections(all_types):
         return None, True
     elif point_type == CLASSIFICATION_T.TANGENT_SECOND:
         return None, False
+    elif point_type == CLASSIFICATION_T.COINCIDENT_UNUSED:
+        return [], None
     else:
         raise ValueError('Point type not for tangency', point_type)
 

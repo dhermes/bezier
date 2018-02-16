@@ -181,10 +181,10 @@ def get_sorted_intersections(intersection_info, strategy):
     nodes1 = intersection_info.nodes1
     nodes2 = intersection_info.nodes2
     if strategy is GEOMETRIC:
-        intersections = _geometric_intersection.all_intersections(
+        intersections, _ = _geometric_intersection.all_intersections(
             nodes1, nodes2)
     else:
-        intersections = _algebraic_intersection.all_intersections(
+        intersections, _ = _algebraic_intersection.all_intersections(
             nodes1, nodes2)
 
     # Make we have the right number of intersections.
