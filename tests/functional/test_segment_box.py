@@ -12,10 +12,6 @@
 
 from __future__ import absolute_import
 
-try:
-    import matplotlib.pyplot as plt
-except ImportError:
-    plt = None
 import numpy as np
 
 from bezier import _geometric_intersection
@@ -32,6 +28,14 @@ UNIT_SQUARE = np.asfortranarray([
 
 
 def make_plot(segment, index):
+    # NOTE: We import the plotting library at runtime to
+    #       avoid the cost for users that only want to compute.
+    #       The ``matplotlib`` import is a tad expensive.
+    import matplotlib.pyplot as plt
+    import seaborn
+
+    seaborn.set()  # Required in `seaborn >= 0.8`
+
     figure = plt.figure()
     ax = figure.gca()
 

@@ -13,6 +13,7 @@
 from __future__ import absolute_import
 
 import matplotlib.pyplot as plt
+import seaborn
 
 from bezier import _plot_helpers
 from tests.functional import utils
@@ -55,4 +56,5 @@ def main():
 
 
 if __name__ == '__main__':
+    seaborn.set()  # Required in `seaborn >= 0.8`
     main()

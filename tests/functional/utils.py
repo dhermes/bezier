@@ -25,15 +25,7 @@ import json
 import os
 import types
 
-try:
-    import matplotlib.pyplot as plt
-except ImportError:
-    plt = None
 import numpy as np
-try:
-    import seaborn  # pylint: disable=unused-import
-except ImportError:
-    seaborn = None
 import six  # noqa: I202
 
 import bezier
@@ -41,8 +33,6 @@ from bezier import _helpers
 import bezier.curve
 
 
-if seaborn is not None:
-    seaborn.set()  # Required in `seaborn >= 0.8`
 FNL_TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 _DOCS_DIR = os.path.abspath(
     os.path.join(FNL_TESTS_DIR, '..', '..', 'docs'))
@@ -306,6 +296,11 @@ class Config(object):
                 Filename defaults to ``{current_test}.png`` but if ``extra``
                 is passed, it will be ``{current_test}{extra}.png``.
         """
+        # NOTE: We import the plotting library at runtime to
+        #       avoid the cost for users that only want to compute.
+        #       The ``matplotlib`` import is a tad expensive.
+        import matplotlib.pyplot as plt
+
         filename = '{}{}.png'.format(self.current_test, extra)
         path = os.path.join(IMAGES_DIR, filename)
         plt.savefig(path, bbox_inches='tight')

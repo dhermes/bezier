@@ -12,10 +12,6 @@
 
 from __future__ import absolute_import
 
-try:
-    import matplotlib.pyplot as plt
-except ImportError:
-    plt = None
 import numpy as np
 
 import bezier
@@ -56,8 +52,13 @@ POINTS = np.asfortranarray([
 
 
 def make_plot(surface, point):
-    if not CONFIG.running:
-        return
+    # NOTE: We import the plotting library at runtime to
+    #       avoid the cost for users that only want to compute.
+    #       The ``matplotlib`` import is a tad expensive.
+    import matplotlib.pyplot as plt
+    import seaborn
+
+    seaborn.set()  # Required in `seaborn >= 0.8`
 
     ax = surface.plot(64)
     ax.plot(point[0, :], point[1, :], color='black',
@@ -84,6 +85,9 @@ def check_point(surface, point_ind, expected_s, expected_t):
 
         CONFIG.assert_close(s, expected_s)
         CONFIG.assert_close(t, expected_t)
+
+    if not CONFIG.running:
+        return
 
     make_plot(surface, point)
 
