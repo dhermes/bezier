@@ -8,7 +8,8 @@ New Features
 
 -  Adding support for surface-surface intersections that have
    coincident segments shared between each surface
-   (`cfa2b93 <https://github.com/dhermes/bezier/commit/cfa2b93792695b87f11ece9da1959013ecf77678>`__).
+   (`cfa2b93 <https://github.com/dhermes/bezier/commit/cfa2b93792695b87f11ece9da1959013ecf77678>`__,
+   (`0a9645c <https://github.com/dhermes/bezier/commit/0a9645c9a3f1df3274677ad3def3d934c590b642>`__).
    See cases:
 
    -   4: `10Q-18Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_18Q.png>`__
