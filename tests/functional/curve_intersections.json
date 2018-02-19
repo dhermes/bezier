@@ -482,7 +482,6 @@
         "curve2": "29",
         "id": 24,
         "type": "tangent",
-        "note": "The geometric algorithm in this library successfully detects intersection (at a point of tangency) of curves #1 and #6, but fails (currently, as of July 2017) to detect the tangency of the rotated and scaled equivalent pair #28 and #29.",
         "intersections": [
             [0],
             [1]
@@ -779,6 +778,38 @@
         ],
         "curve2_params": [
             "1/2"
+        ]
+    }, {
+        "curve1": "58",
+        "curve2": "59",
+        "id": 43,
+        "type": "tangent",
+        "note": "This intersection is uniquely challenging, it is both a point of tangency **and** an endpoint of both edges.",
+        "intersections": [
+            [1],
+            [0]
+        ],
+        "curve1_params": [
+            0
+        ],
+        "curve2_params": [
+            0
+        ]
+    }, {
+        "curve1": "60",
+        "curve2": "59",
+        "id": 44,
+        "type": "tangent",
+        "note": "This intersection is similar to #43, but the intersection occurs on the ``interior'' of the first curve, rather than at an endpoint.",
+        "intersections": [
+            [1],
+            [0]
+        ],
+        "curve1_params": [
+            "1/4"
+        ],
+        "curve2_params": [
+            0
         ]
     }
 ]

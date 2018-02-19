@@ -693,5 +693,50 @@
             [-4, 1, 1],
             [1, 2, 0]
         ]
+    },
+    "58": {
+        "control_points": [
+            [1, 1, 0],
+            [0, 1, 1]
+        ],
+        "implicitized": [
+            [-3, 0, 0],
+            [2, 0, 1],
+            [2, 1, 0],
+            [1, 0, 2],
+            [-2, 1, 1],
+            [1, 2, 0]
+        ],
+        "note": "This is the first edge from surface 20Q."
+    },
+    "59": {
+        "control_points": [
+            [1, 1, "-1/2"],
+            [0, "3/2", "3/2"]
+        ],
+        "implicitized": [
+            [-5, 0, 0],
+            [2, 0, 1],
+            [4, 1, 0],
+            [1, 0, 2],
+            [-2, 1, 1],
+            [1, 2, 0]
+        ],
+        "note": "This is the first edge from surface 21Q."
+    },
+    "60": {
+        "control_points": [
+            ["15/16", "19/16", "7/16"],
+            ["-9/16", "11/16", "15/16"]
+        ],
+        "implicitized": [
+            [-3, 0, 0],
+            [2, 0, 1],
+            [2, 1, 0],
+            [1, 0, 2],
+            [-2, 1, 1],
+            [1, 2, 0]
+        ],
+        "note": "This is the first edge from surface 41Q. It is a specialized version of #58: curve60 = curve58([-1/4, 3/4])."
     }
 }
