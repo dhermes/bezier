@@ -25,8 +25,8 @@ module test_curve_intersection
        Subdivide_FIRST, Subdivide_SECOND, &
        Subdivide_BOTH, Subdivide_NEITHER, &
        linearization_error, segment_intersection, &
-       newton_refine_intersect, bbox_intersect, parallel_different, &
-       from_linearized, bbox_line_intersect, add_intersection, &
+       newton_refine_intersect, bbox_intersect, parallel_lines_parameters, &
+       from_linearized, bbox_line_intersect, check_lines, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
        add_coincident_parameters, all_intersections, all_intersections_abi, &
@@ -38,8 +38,8 @@ module test_curve_intersection
   private &
        test_linearization_error, test_segment_intersection, &
        test_newton_refine_intersect, test_bbox_intersect, &
-       test_parallel_different, test_from_linearized, &
-       test_bbox_line_intersect, test_add_intersection, &
+       test_parallel_lines_parameters, test_from_linearized, &
+       test_bbox_line_intersect, test_check_lines, test_add_intersection, &
        test_add_from_linearized, test_endpoint_check, &
        test_tangent_bbox_intersection, test_add_candidates, &
        test_intersect_one_round, test_make_same_degree, &
@@ -57,9 +57,10 @@ contains
     call test_segment_intersection(success)
     call test_newton_refine_intersect(success)
     call test_bbox_intersect(success)
-    call test_parallel_different(success)
+    call test_parallel_lines_parameters(success)
     call test_from_linearized(success)
     call test_bbox_line_intersect(success)
+    call test_check_lines(success)
     call test_add_intersection(success)
     call test_add_from_linearized(success)
     call test_endpoint_check(success)
@@ -495,72 +496,152 @@ contains
 
   end subroutine test_bbox_intersect
 
-  subroutine test_parallel_different(success)
+  subroutine test_parallel_lines_parameters(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    logical(c_bool) :: result_
+    logical(c_bool) :: disjoint
     real(c_double) :: start0(2), end0(2)
     real(c_double) :: start1(2), end1(2)
+    real(c_double) :: parameters(2, 2)
     integer :: case_id
-    character(18) :: name
+    character(25) :: name
 
     case_id = 1
-    name = "parallel_different"
+    name = "parallel_lines_parameters"
 
     ! CASE 1: Same line, but segments don't overlap.
     start0 = 0
     end0 = [3.0_dp, 4.0_dp]
     start1 = [6.0_dp, 8.0_dp]
     end1 = [9.0_dp, 12.0_dp]
-    call parallel_different( &
-         start0, end0, start1, end1, result_)
-    case_success = (result_)
+    call parallel_lines_parameters( &
+         start0, end0, start1, end1, disjoint, parameters)
+    case_success = (disjoint)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Same line, ``start1`` contained in segment "0".
-    ! NOTE: All of segment "1" is contained in segment "0", but the
-    !       computation stops after ``start1`` is found on the segment.
+    ! CASE 2: Same as CASE 1, but reverse the direction of line 1.
+    call parallel_lines_parameters( &
+         start0, end0, end1, start1, disjoint, parameters)
+    case_success = (disjoint)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Same as CASE 1, but swap the lines.
+    call parallel_lines_parameters( &
+         start1, end1, start0, end0, disjoint, parameters)
+    case_success = (disjoint)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Same as CASE 1, but reverse the direction of line 0.
+    call parallel_lines_parameters( &
+         end0, start0, start1, end1, disjoint, parameters)
+    case_success = (disjoint)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Same line, ``start1`` contained in segment "0".
     start0 = [6.0_dp, -3.0_dp]
     end0 = [-7.0_dp, 1.0_dp]
     start1 = [1.125_dp, -1.5_dp]
     end1 = [-5.375_dp, 0.5_dp]
-    call parallel_different( &
-         start0, end0, start1, end1, result_)
-    case_success = (.NOT. result_)
+    call parallel_lines_parameters( &
+         start0, end0, start1, end1, disjoint, parameters)
+    case_success = ( &
+         .NOT. disjoint .AND. &
+         all(parameters(:, 1) == [0.375_dp, 0.0_dp]) .AND. &
+         all(parameters(:, 2) == [0.875_dp, 1.0_dp]))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Same line, ``end1`` contained in segment "0".
+    ! CASE 6: Same as CASE 5, but reverse the direction of line 1.
+    call parallel_lines_parameters( &
+         start0, end0, end1, start1, disjoint, parameters)
+    case_success = ( &
+         .NOT. disjoint .AND. &
+         all(parameters(:, 1) == [0.875_dp, 0.0_dp]) .AND. &
+         all(parameters(:, 2) == [0.375_dp, 1.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: Same as CASE 5, but swap the lines.
+    call parallel_lines_parameters( &
+         start1, end1, start0, end0, disjoint, parameters)
+    case_success = ( &
+         .NOT. disjoint .AND. &
+         all(parameters(:, 1) == [0.0_dp, 0.375_dp]) .AND. &
+         all(parameters(:, 2) == [1.0_dp, 0.875_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Same line, ``end1`` contained in segment "0".
     start0 = [1.0_dp, 2.0_dp]
     end0 = [3.0_dp, 5.0_dp]
-    start1 = [-0.5_dp, -0.25_dp]
+    start1 = [-2.0_dp, -2.5_dp]
     end1 = [2.0_dp, 3.5_dp]
-    call parallel_different( &
-         start0, end0, start1, end1, result_)
-    case_success = (.NOT. result_)
+    call parallel_lines_parameters( &
+         start0, end0, start1, end1, disjoint, parameters)
+    case_success = ( &
+         .NOT. disjoint .AND. &
+         all(parameters(:, 1) == [0.0_dp, 0.75_dp]) .AND. &
+         all(parameters(:, 2) == [0.5_dp, 1.0_dp]))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: Same line, segment "0" fully contained in segment "1".
+    ! CASE 9: Same as CASE 8, but reverse the direction of line 1.
+    call parallel_lines_parameters( &
+         start0, end0, end1, start1, disjoint, parameters)
+    case_success = ( &
+         .NOT. disjoint .AND. &
+         all(parameters(:, 1) == [0.5_dp, 0.0_dp]) .AND. &
+         all(parameters(:, 2) == [0.0_dp, 0.25_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 10: Same as CASE 8, but swap the lines.
+    call parallel_lines_parameters( &
+         start1, end1, start0, end0, disjoint, parameters)
+    case_success = ( &
+         .NOT. disjoint .AND. &
+         all(parameters(:, 1) == [0.75_dp, 0.0_dp]) .AND. &
+         all(parameters(:, 2) == [1.0_dp, 0.5_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 11: Same line, segment "0" fully contained in segment "1".
     start0 = [-9.0_dp, 0.0_dp]
     end0 = [4.0_dp, 5.0_dp]
     start1 = [23.5_dp, 12.5_dp]
-    end1 = [-25.25_dp, -6.25_dp]
-    call parallel_different( &
-         start0, end0, start1, end1, result_)
-    case_success = (.NOT. result_)
+    end1 = [-28.5_dp, -7.5_dp]
+    call parallel_lines_parameters( &
+         start0, end0, start1, end1, disjoint, parameters)
+    case_success = ( &
+         .NOT. disjoint .AND. &
+         all(parameters(:, 1) == [1.0_dp, 0.375_dp]) .AND. &
+         all(parameters(:, 2) == [0.0_dp, 0.625_dp]))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: Parallel, but different lines.
+    ! CASE 12: Same as CASE 11, but reverse the direction of line 1.
+    call parallel_lines_parameters( &
+         start0, end0, end1, start1, disjoint, parameters)
+    case_success = ( &
+         .NOT. disjoint .AND. &
+         all(parameters(:, 1) == [0.0_dp, 0.375_dp]) .AND. &
+         all(parameters(:, 2) == [1.0_dp, 0.625_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 13: Same as CASE 11, but swap the lines.
+    call parallel_lines_parameters( &
+         start1, end1, start0, end0, disjoint, parameters)
+    case_success = ( &
+         .NOT. disjoint .AND. &
+         all(parameters(:, 1) == [0.625_dp, 0.0_dp]) .AND. &
+         all(parameters(:, 2) == [0.375_dp, 1.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 14: Parallel, but different lines.
     start0 = [3.0_dp, 2.0_dp]
     end0 = [3.0_dp, 0.75_dp]
     start1 = 0
     end1 = [0.0_dp, 2.0_dp]
-    call parallel_different( &
-         start0, end0, start1, end1, result_)
-    case_success = (result_)
+    call parallel_lines_parameters( &
+         start0, end0, start1, end1, disjoint, parameters)
+    case_success = (disjoint)
     call print_status(name, case_id, case_success, success)
 
-  end subroutine test_parallel_different
+  end subroutine test_parallel_lines_parameters
 
   subroutine test_from_linearized(success)
     logical(c_bool), intent(inout) :: success
@@ -707,7 +788,8 @@ contains
          .NOT. does_intersect .AND. status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 8: Parallel lines that do not intersect.
+    ! CASE 8: Parallel lines (should have been handled already by
+    !         ``check_lines``).
     curve1%nodes(:, 1) = 0
     curve1%nodes(:, 2) = 1
     error1 = 0.0_dp
@@ -721,30 +803,14 @@ contains
          error2, curve2, 2, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. status == Status_SUCCESS)
+         .NOT. does_intersect .AND. status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 9: Parallel lines that **do** intersect.
-    curve1%nodes(:, 1) = 0
-    curve1%nodes(:, 2) = 1
-    error1 = 0.0_dp
-
-    curve2%nodes(:, 1) = 0.5_dp
-    curve2%nodes(:, 2) = 3
-    error2 = 0.0_dp
-
-    call from_linearized( &
-         error1, curve1, 2, curve1%nodes, &
-         error2, curve2, 2, curve2%nodes, &
-         refined_s, refined_t, does_intersect, status)
-    case_success = (status == Status_PARALLEL)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 10: A "wiggle" failure caused by almost touching segments
-    !          that produce local parameters within the [-2^{-16}, 1 + 2^{-16}]
-    !          interval but produce a "global" parameter outside of the more
-    !          narrow [-2^{-45}, 1 + 2^{-45}] (where ``WIGGLE == 2^{-45}`` in
-    !          ``helpers.f90``).
+    ! CASE 9: A "wiggle" failure caused by almost touching segments
+    !         that produce local parameters within the [-2^{-16}, 1 + 2^{-16}]
+    !         interval but produce a "global" parameter outside of the more
+    !         narrow [-2^{-45}, 1 + 2^{-45}] (where ``WIGGLE == 2^{-45}`` in
+    !         ``helpers.f90``).
     deallocate(curve1%nodes)
     allocate(curve1%nodes(2, 4))
     curve1%nodes(:, 1) = [-0.7993236103108717_dp, -0.21683567278362156_dp]
@@ -843,6 +909,169 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_bbox_line_intersect
+
+  subroutine test_check_lines(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    real(c_double) :: nodes1(2, 3), nodes2(2, 3), nodes3(2, 2), nodes4(2, 2)
+    logical(c_bool) :: both_linear
+    logical(c_bool) :: coincident
+    real(c_double), allocatable :: intersections(:, :)
+    integer(c_int) :: num_intersections
+    integer :: case_id
+    character(19) :: name
+
+    case_id = 1
+    name = "check_lines"
+
+    ! CASE 1: Test first curve not linearized.
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = 1
+    nodes1(:, 3) = [2.0_dp, 0.0_dp]
+    nodes2(:, 1) = [0.0_dp, 1.0_dp]
+    nodes2(:, 2) = [1.0_dp, 0.0_dp]
+    nodes2(:, 3) = [2.0_dp, 1.0_dp]
+
+    call check_lines( &
+         3, nodes1, 3, nodes2, &
+         both_linear, coincident, intersections, num_intersections)
+    case_success = ( &
+         .NOT. both_linear .AND. &
+         .NOT. coincident .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Test second curve not linearized.
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = 1
+
+    call check_lines( &
+         2, nodes3, 3, nodes2, &
+         both_linear, coincident, intersections, num_intersections)
+    case_success = ( &
+         .NOT. both_linear .AND. &
+         .NOT. coincident .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Lines aren't parallel, but do not intersect in their parameter
+    !         ranges.
+    nodes4(:, 1) = [2.0_dp, 3.0_dp]
+    nodes4(:, 2) = [3.0_dp, 2.0_dp]
+
+    call check_lines( &
+         2, nodes3, 2, nodes4, &
+         both_linear, coincident, intersections, num_intersections)
+    case_success = ( &
+         both_linear .AND. &
+         .NOT. coincident .AND. &
+         .NOT. allocated(intersections) .AND. &
+         num_intersections == 0)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Lines do intersect (aren't parallel). Also, ``intersections``
+    !         gets allocated.
+    nodes4(:, 1) = [0.0_dp, 1.0_dp]
+    nodes4(:, 2) = [1.0_dp, 0.0_dp]
+
+    call check_lines( &
+         2, nodes3, 2, nodes4, &
+         both_linear, coincident, intersections, num_intersections)
+    case_success = ( &
+         both_linear .AND. &
+         .NOT. coincident .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
+         num_intersections == 1 .AND. &
+         all(intersections(:, 1) == 0.5_dp))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Lines do intersect (aren't parallel), but ``intersections``
+    !         is already allocated.
+    nodes4(:, 1) = [0.0_dp, 1.0_dp]
+    nodes4(:, 2) = [2.0_dp, -1.0_dp]
+
+    case_success = ( &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]))
+    call check_lines( &
+         2, nodes3, 2, nodes4, &
+         both_linear, coincident, intersections, num_intersections)
+    case_success = ( &
+         case_success .AND. &
+         both_linear .AND. &
+         .NOT. coincident .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
+         num_intersections == 1 .AND. &
+         all(intersections(:, 1) == [0.5_dp, 0.25_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Lines are parallel, but do not shared a coincident segment.
+    !         This also checks that even in the "failure" case (i.e. not
+    !         coincident), ``intersections`` will get allocated. It **also**
+    !         shows that it increases the size when too small.
+    nodes4(:, 1) = [0.0_dp, 1.0_dp]
+    nodes4(:, 2) = [1.0_dp, 2.0_dp]
+
+    case_success = ( &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]))
+    call check_lines( &
+         2, nodes3, 2, nodes4, &
+         both_linear, coincident, intersections, num_intersections)
+    case_success = ( &
+         case_success .AND. &
+         both_linear .AND. &
+         .NOT. coincident .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
+         num_intersections == 0)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: Lines are parallel and do share a coincident segment (and
+    !         ``intersections`` is "big enough").
+    nodes4(:, 1) = [0.5_dp, 0.5_dp]
+    nodes4(:, 2) = [4.5_dp, 4.5_dp]
+
+    case_success = ( &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]))
+    call check_lines( &
+         2, nodes3, 2, nodes4, &
+         both_linear, coincident, intersections, num_intersections)
+    case_success = ( &
+         case_success .AND. &
+         both_linear .AND. &
+         coincident .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
+         num_intersections == 2 .AND. &
+         all(intersections(:, 1) == [0.5_dp, 0.0_dp]) .AND. &
+         all(intersections(:, 2) == [1.0_dp, 0.125_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Same as CASE 8, but ``intersections`` does not start
+    !         out allocated.
+    deallocate(intersections)
+    call check_lines( &
+         2, nodes3, 2, nodes4, &
+         both_linear, coincident, intersections, num_intersections)
+    case_success = ( &
+         case_success .AND. &
+         both_linear .AND. &
+         coincident .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
+         num_intersections == 2 .AND. &
+         all(intersections(:, 1) == [0.5_dp, 0.0_dp]) .AND. &
+         all(intersections(:, 2) == [1.0_dp, 0.125_dp]))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_check_lines
 
   subroutine test_add_intersection(success)
     logical(c_bool), intent(inout) :: success
@@ -1493,28 +1722,7 @@ contains
     deallocate(candidates)
     num_intersections = 0
 
-    ! CASE 5: Failure caused by parallel lines that **do** intersect.
-    num_candidates = 1
-    allocate(candidates(2, num_candidates))
-    ! Populate the "first" curve with a line.
-    candidates(1, 1)%nodes = fixed_line1
-    ! Populate the "second" curve with a line.
-    allocate(candidates(2, 1)%nodes(2, 2))
-    candidates(2, 1)%nodes(:, 1) = 0.5_dp
-    candidates(2, 1)%nodes(:, 2) = 3
-
-    call intersect_one_round( &
-         fixed_line1, candidates(2, 1)%nodes, num_candidates, candidates, &
-         num_intersections, intersections, &
-         next_candidates, num_next_candidates, status)
-    case_success = ( &
-         num_intersections == 0 .AND. &
-         num_next_candidates == 0 .AND. &
-         status == Status_PARALLEL)
-    call print_status(name, case_id, case_success, success)
-    deallocate(candidates)
-
-    ! CASE 6: Disjoint bounding boxes.
+    ! CASE 5: Disjoint bounding boxes.
     num_candidates = 1
     allocate(candidates(2, num_candidates))
     ! Populate the "first" curve with a line.
@@ -1536,7 +1744,7 @@ contains
     call print_status(name, case_id, case_success, success)
     deallocate(candidates)
 
-    ! CASE 7: Tangent bounding boxes (**with** an intersection), noting
+    ! CASE 6: Tangent bounding boxes (**with** an intersection), noting
     !         that tangency is only allowed for a pair with both curves
     !         can't be linearized (since tangency can be resolved in the
     !         linearized case by checking endpoints).
@@ -2238,7 +2446,8 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: linear1(2, 2), linear2(2, 2)
+    real(c_double) :: linear1(2, 2)
+    real(c_double) :: quadratic1(2, 3), quadratic2(2, 3)
     real(c_double) :: cubic1(2, 4)
     integer(c_int) :: num_intersections
     logical(c_bool) :: coincident
@@ -2250,14 +2459,16 @@ contains
     case_id = 1
     name = "all_intersections_abi"
 
-    ! CASE 1: **Other** failure (overlapping lines).
-    linear1(:, 1) = 0
-    linear1(:, 2) = [2.0_dp, 4.0_dp]
-    linear2(:, 1) = [1.0_dp, 2.0_dp]
-    linear2(:, 2) = [3.0_dp, 6.0_dp]
+    ! CASE 1: **Other** failure (tangent curves).
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
+    quadratic1(:, 3) = [0.75_dp, 0.375_dp]
+    quadratic2(:, 1) = [0.25_dp, 0.625_dp]
+    quadratic2(:, 2) = [0.625_dp, 0.25_dp]
+    quadratic2(:, 3) = 1
 
     call all_intersections_abi( &
-         2, linear1, 2, linear2, 2, intersections1, &
+         3, quadratic1, 3, quadratic2, 2, intersections1, &
          num_intersections, coincident, status)
     case_success = ( &
          num_intersections == 0 .AND. &

@@ -49,6 +49,9 @@ _ERROR_VAL = 0.5**26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _MAX_CANDIDATES = 64
 _SEGMENTS_PARALLEL = 'Line segments parallel.'
+_UNHANDLED_LINES = (
+    'If both curves are lines, the intersection should have '
+    'been computed already.')
 _TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
     '{:d} candidate pairs.')
@@ -372,12 +375,12 @@ def segment_intersection(start0, end0, start1, end1):
        import make_images
        make_images.segment_intersection2(start0, end0, start1, end1)
 
-    Instead, we use :func:`parallel_different`:
+    Instead, we use :func:`parallel_lines_parameters`:
 
     .. testsetup:: segment-intersection2-continued
 
        import numpy as np
-       from bezier._geometric_intersection import parallel_different
+       from bezier._geometric_intersection import parallel_lines_parameters
 
        start0 = np.asfortranarray([1.0, 0.0])
        end0 = np.asfortranarray([0.0, 1.0])
@@ -386,7 +389,8 @@ def segment_intersection(start0, end0, start1, end1):
 
     .. doctest:: segment-intersection2-continued
 
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> disjoint, _ = parallel_lines_parameters(start0, end0, start1, end1)
+       >>> disjoint
        True
 
     .. note::
@@ -408,7 +412,8 @@ def segment_intersection(start0, end0, start1, end1):
         Tuple[float, float, bool]: Pair of :math:`s_{\ast}` and
         :math:`t_{\ast}` such that the lines intersect:
         :math:`L_0\left(s_{\ast}\right) = L_1\left(t_{\ast}\right)` and then
-        a boolean indicating if an intersection was found.
+        a boolean indicating if an intersection was found (i.e. if the lines
+        aren't parallel).
     """
     delta0 = end0 - start0
     delta1 = end1 - start1
@@ -422,7 +427,7 @@ def segment_intersection(start0, end0, start1, end1):
         return s, t, True
 
 
-def parallel_different(start0, end0, start1, end1):
+def parallel_lines_parameters(start0, end0, start1, end1):
     r"""Checks if two parallel lines ever meet.
 
     Meant as a back-up when :func:`segment_intersection` fails.
@@ -432,10 +437,10 @@ def parallel_different(start0, end0, start1, end1):
        This function assumes but never verifies that the lines
        are parallel.
 
-    In the case that the segments are parallel and lie on the **exact**
-    same line, finding a unique intersection is not possible. However, if
-    they are parallel but on **different** lines, then there is a
-    **guarantee** of no intersection.
+    In the case that the segments are parallel and lie on **different**
+    lines, then there is a **guarantee** of no intersection. However, if
+    they are on the exact same line, they may define a shared segment
+    coincident to both lines.
 
     In :func:`segment_intersection`, we utilized the normal form of the
     lines (via the cross product):
@@ -457,13 +462,13 @@ def parallel_different(start0, end0, start1, end1):
     If it is not on the first line, then we are done, the
     segments don't meet:
 
-    .. image:: images/parallel_different1.png
+    .. image:: images/parallel_lines_parameters1.png
        :align: center
 
     .. testsetup:: parallel-different1, parallel-different2
 
        import numpy as np
-       from bezier._geometric_intersection import parallel_different
+       from bezier._geometric_intersection import parallel_lines_parameters
 
     .. doctest:: parallel-different1
 
@@ -473,14 +478,15 @@ def parallel_different(start0, end0, start1, end1):
        >>> # Vertical shift up: y = 2
        >>> start1 = np.asfortranarray([-1.0, 2.0])
        >>> end1 = np.asfortranarray([3.0, 2.0])
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> disjoint, _ = parallel_lines_parameters(start0, end0, start1, end1)
+       >>> disjoint
        True
 
     .. testcleanup:: parallel-different1
 
        import make_images
-       make_images.helper_parallel_different(
-           start0, end0, start1, end1, 'parallel_different1.png')
+       make_images.helper_parallel_lines(
+           start0, end0, start1, end1, 'parallel_lines_parameters1.png')
 
     If :math:`S_1` **is** on the first line, we want to check that
     :math:`S_1` and :math:`E_1` define parameters outside of
@@ -498,7 +504,7 @@ def parallel_different(start0, end0, start1, end1):
     :math:`E_1 = S_0 + 2 \Delta_0`) correspond to segments that
     don't meet:
 
-    .. image:: images/parallel_different2.png
+    .. image:: images/parallel_lines_parameters2.png
        :align: center
 
     .. doctest:: parallel-different2
@@ -508,25 +514,26 @@ def parallel_different(start0, end0, start1, end1):
        >>> end0 = start0 + 1.0 * delta0
        >>> start1 = start0 + 1.5 * delta0
        >>> end1 = start0 + 2.0 * delta0
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> disjoint, _ = parallel_lines_parameters(start0, end0, start1, end1)
+       >>> disjoint
        True
 
     .. testcleanup:: parallel-different2
 
        import make_images
-       make_images.helper_parallel_different(
-           start0, end0, start1, end1, 'parallel_different2.png')
+       make_images.helper_parallel_lines(
+           start0, end0, start1, end1, 'parallel_lines_parameters2.png')
 
     but if the intervals overlap, like :math:`\left[0, 1\right]` and
     :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
 
-    .. image:: images/parallel_different3.png
+    .. image:: images/parallel_lines_parameters3.png
        :align: center
 
     .. testsetup:: parallel-different3, parallel-different4
 
        import numpy as np
-       from bezier._geometric_intersection import parallel_different
+       from bezier._geometric_intersection import parallel_lines_parameters
 
        start0 = np.asfortranarray([1.0, 0.0])
        delta0 = np.asfortranarray([2.0, -1.0])
@@ -534,35 +541,45 @@ def parallel_different(start0, end0, start1, end1):
 
     .. doctest:: parallel-different3
 
-       >>> start1 = start0 - 1.0 * delta0
+       >>> start1 = start0 - 1.5 * delta0
        >>> end1 = start0 + 0.5 * delta0
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> disjoint, parameters = parallel_lines_parameters(
+       ...     start0, end0, start1, end1)
+       >>> disjoint
        False
+       >>> parameters
+       array([[0.  , 0.5 ],
+              [0.75, 1.  ]])
 
     .. testcleanup:: parallel-different3
 
        import make_images
-       make_images.helper_parallel_different(
-           start0, end0, start1, end1, 'parallel_different3.png')
+       make_images.helper_parallel_lines(
+           start0, end0, start1, end1, 'parallel_lines_parameters3.png')
 
     Similarly, if the second interval completely contains the first,
     the segments meet:
 
-    .. image:: images/parallel_different4.png
+    .. image:: images/parallel_lines_parameters4.png
        :align: center
 
     .. doctest:: parallel-different4
 
-       >>> start1 = start0 + 3.0 * delta0
-       >>> end1 = start0 - 2.0 * delta0
-       >>> parallel_different(start0, end0, start1, end1)
+       >>> start1 = start0 + 4.5 * delta0
+       >>> end1 = start0 - 3.5 * delta0
+       >>> disjoint, parameters = parallel_lines_parameters(
+       ...     start0, end0, start1, end1)
+       >>> disjoint
        False
+       >>> parameters
+       array([[1.    , 0.    ],
+              [0.4375, 0.5625]])
 
     .. testcleanup:: parallel-different4
 
        import make_images
-       make_images.helper_parallel_different(
-           start0, end0, start1, end1, 'parallel_different4.png')
+       make_images.helper_parallel_lines(
+           start0, end0, start1, end1, 'parallel_lines_parameters4.png')
 
     .. note::
 
@@ -587,33 +604,86 @@ def parallel_different(start0, end0, start1, end1):
             vector :math:`E_1` of the parametric line :math:`L_1(s)`.
 
     Returns:
-        bool: Indicating if the lines are different.
+        Tuple[bool, Optional[numpy.ndarray]]: A pair of
+
+        * Flag indicating if the lines are disjoint.
+        * An optional ``2 x 2`` matrix of ``s-t`` parameters only present if
+          the lines aren't disjoint. The first column will contain the
+          parameters at the beginning of the shared segment and the second
+          column will correspond to the end of the shared segment.
     """
+    # pylint: disable=too-many-branches
     delta0 = end0 - start0
     line0_const = _helpers.cross_product(start0, delta0)
     start1_against = _helpers.cross_product(start1, delta0)
     if line0_const != start1_against:
-        return True
+        return True, None
 
     # Each array is a 1D vector, so we can use the vector dot product.
     norm0_sq = np.vdot(delta0, delta0)
-    start_numer = np.vdot(start1 - start0, delta0)
-    #      0 <= start_numer / norm0_sq <= 1
-    # <==> 0 <= start_numer            <= norm0_sq
-    if _helpers.in_interval(start_numer, 0.0, norm0_sq):
-        return False
 
-    end_numer = np.vdot(end1 - start0, delta0)
-    #      0 <= end_numer / norm0_sq <= 1
-    # <==> 0 <= end_numer            <= norm0_sq
-    if _helpers.in_interval(end_numer, 0.0, norm0_sq):
-        return False
+    #                S1 = L1(0) = S0 + sA D0
+    # <==>        sA D0 = S1 - S0
+    #  ==> sA (D0^T D0) = D0^T (S1 - S0)
+    s_val0 = np.vdot(start1 - start0, delta0) / norm0_sq
+    #                E1 = L1(1) = S0 + sB D0
+    # <==>        sB D0 = E1 - S0
+    #  ==> sB (D0^T D0) = D0^T (E1 - S0)
+    s_val1 = np.vdot(end1 - start0, delta0) / norm0_sq
 
-    # We know neither the start or end parameters are in [0, 1], but
-    # they may contain [0, 1] between them.
-    min_val, max_val = sorted([start_numer, end_numer])
-    # So we make sure that 0 isn't between them.
-    return not _helpers.in_interval(0.0, min_val, max_val)
+    # s = s_val0 + t (s_val1 - s_val0)
+    # t = 0                                <==> s = s_val0
+    # t = 1                                <==> s = s_val1
+    # t = -s_val0 / (s_val1 - s_val0)      <==> s = 0
+    # t = (1 - s_val0) / (s_val1 - s_val0) <==> s = 1
+    if s_val0 <= s_val1:
+        # In this branch the segments are moving in the same direction, i.e.
+        # (t=0<-->s=s_val0) are both less than (t=1<-->s_val1).
+        if 1.0 < s_val0:
+            return True, None
+        elif s_val0 < 0.0:
+            start_s = 0.0
+            start_t = -s_val0 / (s_val1 - s_val0)
+        else:
+            start_s = s_val0
+            start_t = 0.0
+
+        if s_val1 < 0.0:
+            return True, None
+        elif 1.0 < s_val1:
+            end_s = 1.0
+            end_t = (1.0 - s_val0) / (s_val1 - s_val0)
+        else:
+            end_s = s_val1
+            end_t = 1.0
+    else:
+        # In this branch the segments are moving in opposite directions, i.e.
+        # in (t=0<-->s=s_val0) and (t=1<-->s_val1) we have 0 < 1
+        # but ``s_val0 > s_val1``.
+        if s_val0 < 0.0:
+            return True, None
+        elif 1.0 < s_val0:
+            start_s = 1.0
+            start_t = (s_val0 - 1.0) / (s_val0 - s_val1)
+        else:
+            start_s = s_val0
+            start_t = 0.0
+
+        if 1.0 < s_val1:
+            return True, None
+        elif s_val1 < 0.0:
+            end_s = 0.0
+            end_t = s_val0 / (s_val0 - s_val1)
+        else:
+            end_s = s_val1
+            end_t = 1.0
+
+    parameters = np.asfortranarray([
+        [start_s, end_s],
+        [start_t, end_t],
+    ])
+    return False, parameters
+    # pylint: enable=too-many-branches
 
 
 def from_linearized(first, second, intersections):
@@ -628,6 +698,10 @@ def from_linearized(first, second, intersections):
         intersections (list): A list of existing intersections.
 
     Raises:
+        ValueError: If ``first`` and ``second`` both have linearization error
+            of ``0.0`` (i.e. they are both lines). This is because this
+            function expects the caller to have used :func:`check_lines`
+            already.
         NotImplementedError: If the segment intersection fails.
     """
     # pylint: disable=too-many-return-statements
@@ -643,17 +717,13 @@ def from_linearized(first, second, intersections):
         if not _helpers.in_interval(t, _WIGGLE_START, _WIGGLE_END):
             return
     else:
-        # Handle special case where the curves are actually lines.
         if first.error == 0.0 and second.error == 0.0:
-            if parallel_different(
-                    first.start_node, first.end_node,
-                    second.start_node, second.end_node):
-                return
-        else:
-            bbox_int = bbox_intersect(
-                first.curve.original_nodes, second.curve.original_nodes)
-            if bbox_int == BoxIntersectionType.DISJOINT:
-                return
+            raise ValueError(_UNHANDLED_LINES)
+
+        bbox_int = bbox_intersect(
+            first.curve.original_nodes, second.curve.original_nodes)
+        if bbox_int == BoxIntersectionType.DISJOINT:
+            return
 
         raise NotImplementedError(_SEGMENTS_PARALLEL)
 
@@ -1142,6 +1212,67 @@ def coincident_parameters(nodes1, nodes2):
     # pylint: enable=too-many-return-statements,too-many-branches
 
 
+def check_lines(first, second):
+    """Checks if two curves are lines and tries to intersect them.
+
+    .. note::
+
+       This is a helper for :func:`._all_intersections`.
+
+    If they are not lines / not linearized, immediately returns :data:`False`
+    with no "return value".
+
+    If they are lines, attempts to intersect them (even if they are parallel
+    and share a coincident segment).
+
+    Args:
+        first (Union[SubdividedCurve, Linearization]): First curve being
+            intersected.
+        second (Union[SubdividedCurve, Linearization]): Second curve being
+            intersected.
+
+    Returns:
+        Tuple[bool, Optional[Tuple[numpy.ndarray, bool]]]: A pair of
+
+        * Flag indicating if both candidates in the pair are lines.
+        * Optional "result" populated only if both candidates are lines.
+          When this result is populated, it will be a pair of
+
+          * array of parameters of intersection
+          * flag indicating if the two candidates share a coincident segment
+    """
+    # NOTE: In the below we replace ``isinstance(a, B)`` with
+    #       ``a.__class__ is B``, which is a 3-3.5x speedup.
+    if not (first.__class__ is Linearization and
+            second.__class__ is Linearization and
+            first.error == 0.0 and second.error == 0.0):
+        return False, None
+
+    s, t, success = segment_intersection(
+        first.start_node, first.end_node,
+        second.start_node, second.end_node)
+    if success:
+        if (_helpers.in_interval(s, 0.0, 1.0) and
+                _helpers.in_interval(t, 0.0, 1.0)):
+            intersections = np.asfortranarray([
+                [s],
+                [t],
+            ])
+            result = intersections, False
+        else:
+            result = np.empty((2, 0), order='F'), False
+    else:
+        disjoint, params = parallel_lines_parameters(
+            first.start_node, first.end_node,
+            second.start_node, second.end_node)
+        if disjoint:
+            result = np.empty((2, 0), order='F'), False
+        else:
+            result = params, True
+
+    return True, result
+
+
 def _all_intersections(nodes_first, nodes_second):
     r"""Find the points of intersection among a pair of curves.
 
@@ -1182,12 +1313,14 @@ def _all_intersections(nodes_first, nodes_second):
     """
     curve_first = SubdividedCurve(nodes_first, nodes_first)
     curve_second = SubdividedCurve(nodes_second, nodes_second)
-    candidates = [
-        (
-            Linearization.from_shape(curve_first),
-            Linearization.from_shape(curve_second),
-        ),
-    ]
+    candidate1 = Linearization.from_shape(curve_first)
+    candidate2 = Linearization.from_shape(curve_second)
+    # Handle the line-line intersection case as a one-off.
+    both_linear, result = check_lines(candidate1, candidate2)
+    if both_linear:
+        return result
+
+    candidates = [(candidate1, candidate2)]
     intersections = []
     coincident = False
     for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):

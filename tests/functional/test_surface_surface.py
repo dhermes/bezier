@@ -73,10 +73,7 @@ FAILED_CASES_TANGENT = {
     },
 }
 FAILED_CASES_COINCIDENT = {
-    GEOMETRIC: {
-        5: {'parallel': True},
-        45: {'parallel': True},
-    },
+    GEOMETRIC: {},
     ALGEBRAIC: {
         4: {},
         5: {},

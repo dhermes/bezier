@@ -27,7 +27,7 @@ module surface_intersection
   implicit none
   private &
        LocateCandidate, &
-       MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, MAX_EDGES, UNUSED_BIT, &
+       MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, MAX_EDGES, &
        SEGMENT_ENDS_WORKSPACE, SEGMENTS_WORKSPACE, &
        newton_refine_solve, split_candidate, allocate_candidates, &
        update_candidates, ignored_edge_corner, ignored_double_corner, &
@@ -47,7 +47,7 @@ module surface_intersection
        SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, update_edge_end_unused, &
-       find_corner, add_st_vals, &
+       find_corner_unused, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
        interior_combine, surfaces_intersect, surfaces_intersect_abi, &
        free_surface_intersections_workspace
@@ -98,9 +98,6 @@ module surface_intersection
   integer(c_int), parameter :: SurfaceContained_NEITHER = 0
   integer(c_int), parameter :: SurfaceContained_FIRST = 1
   integer(c_int), parameter :: SurfaceContained_SECOND = 2
-  ! For convenience.
-  integer(c_int), parameter :: UNUSED_BIT = ( &
-       2**IntersectionClassification_COINCIDENT_UNUSED)
   ! Long-lived workspaces for ``surfaces_intersect_abi()``. If multiple
   ! threads are used, each of these **should** be thread-local.
   integer(c_int), allocatable :: SEGMENT_ENDS_WORKSPACE(:)
@@ -702,7 +699,7 @@ contains
 
   subroutine update_edge_end_unused( &
        s, index_first, t, index_second, &
-       intersections, num_intersections, all_types)
+       intersections, num_intersections)
 
     ! NOTE: This assumes, but does not check, that at least one of
     !       ``s == 1`` or ``t == 1`` is true. I.e. the caller must **pass**
@@ -717,7 +714,6 @@ contains
     integer(c_int), intent(in) :: index_second
     type(Intersection), intent(inout) :: intersections(:)
     integer(c_int), intent(inout) :: num_intersections
-    integer(c_int), intent(inout) :: all_types
     ! Variables outside of signature.
     real(c_double) :: front_s, front_t
     integer(c_int) :: i, index1, index2
@@ -737,10 +733,6 @@ contains
        front_t = t
        index2 = index_second
     end if
-
-    ! No matter what we find, we will be adding ``COINCIDENT_UNUSED`` to
-    ! the set of classifications (if not already added).
-    all_types = ior(all_types, UNUSED_BIT)
 
     ! Then, try to find an intersection matching our edge indices and
     ! starting at a relevant corner. If we do find a match, edit the
@@ -780,7 +772,7 @@ contains
 
   end subroutine update_edge_end_unused
 
-  subroutine find_corner( &
+  subroutine find_corner_unused( &
        s, index_first, index_second, &
        intersections, num_intersections, found)
 
@@ -832,12 +824,11 @@ contains
        end do
     end if
 
-  end subroutine find_corner
+  end subroutine find_corner_unused
 
   subroutine add_st_vals( &
        edges_first, edges_second, num_st_vals, st_vals, known_enum, &
-       index_first, index_second, intersections, num_intersections, &
-       all_types, status)
+       index_first, index_second, intersections, num_intersections, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This subroutine is not part of the C ABI for this module,
@@ -858,7 +849,6 @@ contains
     integer(c_int), intent(in) :: index_first, index_second
     type(Intersection), allocatable, intent(inout) :: intersections(:)
     integer(c_int), intent(inout) :: num_intersections
-    integer(c_int), intent(inout) :: all_types
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     integer(c_int) :: curr_size, i, intersection_index
@@ -895,19 +885,17 @@ contains
           if (known_enum == IntersectionClassification_COINCIDENT_UNUSED) then
              call update_edge_end_unused( &
                   st_vals(1, i), index_first, st_vals(2, i), index_second, &
-                  intersections, intersection_index, all_types)
+                  intersections, intersection_index)
           end if
           cycle value_loop
        end if
 
        ! Before classifying, try to determine if this intersection was
-       ! already added as a ``COINCIDENT_UNUSED`` intersection. First check
-       ! if the intersection is at a corner AND check if ``COINCIDENT_UNUSED``
-       ! has already been encountered.
-       if ((st_vals(1, i) == 0.0_dp .OR. &
-            st_vals(2, i) == 0.0_dp) .AND. &
-            iand(all_types, UNUSED_BIT) == UNUSED_BIT) then
-          call find_corner( &
+       ! already added as a ``COINCIDENT_UNUSED`` intersection. Only check
+       ! if the intersection is at a corner (though it'd be nice to know
+       ! check if ``COINCIDENT_UNUSED`` has been encountered).
+       if (st_vals(1, i) == 0.0_dp .OR. st_vals(2, i) == 0.0_dp) then
+          call find_corner_unused( &
                st_vals(1, i), index_first, index_second, &
                intersections, intersection_index, found)
           if (found) then
@@ -931,22 +919,7 @@ contains
        else
           enum_ = known_enum
        end if
-       ! NOTE: This assumes, but does not check, that ``enum_`` is in
-       !       {0, 1, 2, 3, 4, 5, 6, 7, 8} (should be an enum value from
-       !       ``IntersectionClassification``) which limits the value of
-       !       ``all_types`` to [0, 511] (inclusive).
-       all_types = ior(all_types, 2**enum_)
-       if ( &
-            enum_ == IntersectionClassification_FIRST .OR. &
-            enum_ == IntersectionClassification_SECOND .OR. &
-            enum_ == IntersectionClassification_COINCIDENT) then
-          ! "Keep" the intersection if it is ``FIRST``, ``SECOND`` or
-          ! ``COINCIDENT``.
-          intersections(intersection_index)%interior_curve = enum_
-       else
-          ! "Discard" the intersection (rather, allow it to be over-written).
-          intersection_index = intersection_index - 1
-       end if
+       intersections(intersection_index)%interior_curve = enum_
     end do value_loop
 
     ! Actually set ``num_intersections`` based on the number of **accepted**
@@ -969,9 +942,9 @@ contains
     !       the end of an edge) do match with the corresponding intersection
     !       at the beginning of an edge (in the case of a double corner, this
     !       means **three** duplicate intersections).
-    ! NOTE: The returned ``all_types`` uses the first 6 bits to identify
+    ! NOTE: The returned ``all_types`` uses the first 9 bits to identify
     !       which classified states are among the intersections. (The
-    !       possible classifications must be in {0, 1, 2, 3, 4, 5}).
+    !       possible classifications must be in {0, 1, 2, 3, 4, 5, 7, 8}).
 
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
@@ -1046,7 +1019,7 @@ contains
                      edges_first, edges_second, &
                      num_st_vals, INTERSECTIONS_WORKSPACE(:, :num_st_vals), &
                      enum_, index1, index2, intersections, &
-                     num_intersections, all_types, status)
+                     num_intersections, status)
                 if (status /= Status_SUCCESS) then
                    return
                 end if
@@ -1061,13 +1034,26 @@ contains
     ! and remove any intersections classified as ``COINCIDENT_UNUSED``.
     index1 = 1
     do while (index1 <= num_intersections)
-       if (intersections(index1)%interior_curve == &
-            IntersectionClassification_COINCIDENT_UNUSED) then
+       ! First, update the ``all_types`` "set" with the encountered
+       ! classification (whether or not we "keep" the intersection).
+       enum_ = intersections(index1)%interior_curve
+       ! NOTE: This assumes, but does not check, that ``enum_`` is in
+       !       {0, 1, 2, 3, 4, 5, 6, 7, 8} (should be an enum value from
+       !       ``IntersectionClassification``) which limits the value of
+       !       ``all_types`` to [0, 511] (inclusive).
+       all_types = ior(all_types, 2**enum_)
+       if ( &
+            enum_ == IntersectionClassification_FIRST .OR. &
+            enum_ == IntersectionClassification_SECOND .OR. &
+            enum_ == IntersectionClassification_COINCIDENT) then
+          ! "Keep" the intersection if it is ``FIRST``, ``SECOND`` or
+          ! ``COINCIDENT``.
+          index1 = index1 + 1
+       else
+          ! "Discard" the intersection.
           intersections(index1:num_intersections - 1) = ( &
                intersections(index1 + 1:num_intersections))
           num_intersections = num_intersections - 1
-       else
-          index1 = index1 + 1
        end if
     end do
 
@@ -1696,7 +1682,8 @@ contains
        else if (all_types == 2**IntersectionClassification_TANGENT_SECOND) then
           contained = SurfaceContained_SECOND
           return
-       else if (all_types == UNUSED_BIT) then
+       else if (all_types == &
+            2**IntersectionClassification_COINCIDENT_UNUSED) then
           return
        else
           ! NOTE: We "exclude" this block from ``lcov`` because it **should**

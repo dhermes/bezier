@@ -203,8 +203,8 @@ def segment_intersection2(start0, end0, start1, end1):
     save_image(ax.figure, 'segment_intersection2.png')
 
 
-def helper_parallel_different(start0, end0, start1, end1, filename):
-    """Image for :func:`._parallel_different` docstring."""
+def helper_parallel_lines(start0, end0, start1, end1, filename):
+    """Image for :func:`.parallel_lines_parameters` docstring."""
     if NO_IMAGES:
         return
 

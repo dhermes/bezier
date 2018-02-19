@@ -32,7 +32,7 @@ module test_surface_intersection
        SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, update_edge_end_unused, &
-       find_corner, add_st_vals, &
+       find_corner_unused, add_st_vals, &
        surfaces_intersection_points, get_next, to_front, add_segment, &
        interior_combine, surfaces_intersect, surfaces_intersect_abi
   use types, only: dp
@@ -40,8 +40,8 @@ module test_surface_intersection
   implicit none
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
-       test_update_edge_end_unused, test_find_corner, test_add_st_vals, &
-       test_surfaces_intersection_points, &
+       test_update_edge_end_unused, test_find_corner_unused, &
+       test_add_st_vals, test_surfaces_intersection_points, &
        intersection_check, intersection_equal, test_get_next, test_to_front, &
        test_add_segment, test_interior_combine, segment_check, &
        test_surfaces_intersect, test_surfaces_intersect_abi
@@ -56,7 +56,7 @@ contains
     call test_locate_point(success)
     call test_classify_intersection(success)
     call test_update_edge_end_unused(success)
-    call test_find_corner(success)
+    call test_find_corner_unused(success)
     call test_add_st_vals(success)
     call test_surfaces_intersection_points(success)
     call test_get_next(success)
@@ -594,8 +594,7 @@ contains
     integer :: case_id
     character(22) :: name
     type(Intersection) :: intersections(1)
-    integer(c_int) :: num_intersections
-    integer(c_int) :: all_types, unused
+    integer(c_int) :: num_intersections, unused
 
     case_id = 1
     name = "update_edge_end_unused"
@@ -604,15 +603,12 @@ contains
 
     ! CASE 1: ``s`` is the corner, no matching intersection.
     num_intersections = 0
-    all_types = 0
     call update_edge_end_unused( &
-         1.0_dp, 1, 0.5_dp, 1, &
-         intersections, num_intersections, all_types)
+         1.0_dp, 1, 0.5_dp, 1, intersections, num_intersections)
     case_success = ( &
          num_intersections == 1 .AND. &
          intersection_check( &
-         intersections(1), 0.0_dp, 0.5_dp, 2, 1, unused) .AND. &
-         all_types == 2**unused)
+         intersections(1), 0.0_dp, 0.5_dp, 2, 1, unused))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: ``s`` is the corner, matching intersection.
@@ -621,28 +617,22 @@ contains
     intersections(1)%t = 0.25_dp
     intersections(1)%index_first = 3
     intersections(1)%index_second = 2
-    all_types = 0
     call update_edge_end_unused( &
-         1.0_dp, 2, 0.25_dp, 2, &
-         intersections, num_intersections, all_types)
+         1.0_dp, 2, 0.25_dp, 2, intersections, num_intersections)
     case_success = ( &
          num_intersections == 1 .AND. &
          intersection_check( &
-         intersections(1), 0.0_dp, 0.25_dp, 3, 2, unused) .AND. &
-         all_types == 2**unused)
+         intersections(1), 0.0_dp, 0.25_dp, 3, 2, unused))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: ``t`` is the corner, no matching intersection.
     num_intersections = 0
-    all_types = 0
     call update_edge_end_unused( &
-         0.5_dp, 1, 1.0_dp, 1, &
-         intersections, num_intersections, all_types)
+         0.5_dp, 1, 1.0_dp, 1, intersections, num_intersections)
     case_success = ( &
          num_intersections == 1 .AND. &
          intersection_check( &
-         intersections(1), 0.5_dp, 0.0_dp, 1, 2, unused) .AND. &
-         all_types == 2**unused)
+         intersections(1), 0.5_dp, 0.0_dp, 1, 2, unused))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: ``t`` is the corner, matching intersection.
@@ -651,47 +641,41 @@ contains
     intersections(1)%t = 0.0_dp
     intersections(1)%index_first = 2
     intersections(1)%index_second = 3
-    all_types = 0
     call update_edge_end_unused( &
-         0.25_dp, 2, 1.0_dp, 2, &
-         intersections, num_intersections, all_types)
+         0.25_dp, 2, 1.0_dp, 2, intersections, num_intersections)
     case_success = ( &
          num_intersections == 1 .AND. &
          intersection_check( &
-         intersections(1), 0.25_dp, 0.0_dp, 2, 3, unused) .AND. &
-         all_types == 2**unused)
+         intersections(1), 0.25_dp, 0.0_dp, 2, 3, unused))
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Both ``s`` and ``t`` are corners, no matching intersection.
     num_intersections = 0
-    all_types = 0
     call update_edge_end_unused( &
-         1.0_dp, 3, 1.0_dp, 3, &
-         intersections, num_intersections, all_types)
+         1.0_dp, 3, 1.0_dp, 3, intersections, num_intersections)
     case_success = ( &
          num_intersections == 1 .AND. &
          intersection_check( &
-         intersections(1), 0.0_dp, 0.0_dp, 1, 1, unused) .AND. &
-         all_types == 2**unused)
+         intersections(1), 0.0_dp, 0.0_dp, 1, 1, unused))
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_update_edge_end_unused
 
-  subroutine test_find_corner(success)
+  subroutine test_find_corner_unused(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    character(11) :: name
+    character(18) :: name
     type(Intersection) :: intersections(1)
     logical(c_bool) :: found
 
     case_id = 1
-    name = "find_corner"
+    name = "find_corner_unused"
 
     ! CASE 1: ``s == 0``, not found.
     intersections(1)%index_first = 2
-    call find_corner( &
+    call find_corner_unused( &
          0.0_dp, 1, 1, intersections, 1, found)
     case_success = (.NOT. found)
     call print_status(name, case_id, case_success, success)
@@ -703,14 +687,14 @@ contains
     intersections(1)%index_second = 3
     intersections(1)%interior_curve = ( &
          IntersectionClassification_COINCIDENT_UNUSED)
-    call find_corner( &
+    call find_corner_unused( &
          0.0_dp, 2, 3, intersections, 1, found)
     case_success = found
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: ``t == 0`` (i.e. ``s /= 0``), not found.
     intersections(1)%index_second = 2
-    call find_corner( &
+    call find_corner_unused( &
          0.5_dp, 1, 1, intersections, 1, found)
     case_success = (.NOT. found)
     call print_status(name, case_id, case_success, success)
@@ -722,12 +706,12 @@ contains
     intersections(1)%index_second = 3
     intersections(1)%interior_curve = ( &
          IntersectionClassification_COINCIDENT_UNUSED)
-    call find_corner( &
+    call find_corner_unused( &
          0.5_dp, 2, 3, intersections, 1, found)
     case_success = found
     call print_status(name, case_id, case_success, success)
 
-  end subroutine test_find_corner
+  end subroutine test_find_corner_unused
 
   subroutine test_add_st_vals(success)
     logical(c_bool), intent(inout) :: success
@@ -739,9 +723,8 @@ contains
     type(Intersection), allocatable :: intersections(:)
     integer(c_int) :: num_intersections
     type(CurveData) :: edges_first(3), edges_second(3)
-    integer(c_int) :: first, second
-    integer(c_int) :: all_types, status
-    integer(c_int) :: coincident, known_enum
+    integer(c_int) :: first, second, coincident, known_enum
+    integer(c_int) :: status
 
     case_id = 1
     name = "add_st_vals"
@@ -753,7 +736,6 @@ contains
 
     ! CASE 1: ``intersections`` must be allocated.
     num_intersections = 0
-    all_types = 0
     allocate(st_vals(2, 1))
     st_vals(:, 1) = [0.25_dp, 0.75_dp]
     case_success = .NOT. allocated(intersections)
@@ -766,7 +748,7 @@ contains
     edges_second(3)%nodes(:, 2) = [0.0_dp, 0.5_dp]
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, known_enum, &
-         2, 3, intersections, num_intersections, all_types, status)
+         2, 3, intersections, num_intersections, status)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
@@ -774,12 +756,10 @@ contains
          num_intersections == 1 .AND. &
          intersection_check( &
          intersections(1), 0.25_dp, 0.75_dp, 2, 3, second) .AND. &
-         all_types == 2**second .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: ``intersections`` must be re-allocated.
-    all_types = 0
     st_vals(:, 1) = [0.0_dp, 0.5_dp]
     ! Set the relevant edges as lines.
     allocate(edges_first(3)%nodes(2, 2))
@@ -793,7 +773,7 @@ contains
          num_intersections == 1)
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, known_enum, &
-         3, 1, intersections, num_intersections, all_types, status)
+         3, 1, intersections, num_intersections, status)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
@@ -801,13 +781,11 @@ contains
          num_intersections == 2 .AND. &
          intersection_check( &
          intersections(2), 0.0_dp, 0.5_dp, 3, 1, second) .AND. &
-         all_types == 2**second .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: ``intersections`` is large enough.
     num_intersections = 0
-    all_types = 0
     st_vals(:, 1) = [0.875_dp, 0.125_dp]
     ! Set the relevant edges as lines.
     allocate(edges_second(2)%nodes(2, 2))
@@ -818,7 +796,7 @@ contains
     case_success = allocated(intersections)
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, known_enum, &
-         2, 2, intersections, num_intersections, all_types, status)
+         2, 2, intersections, num_intersections, status)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
@@ -826,12 +804,10 @@ contains
          num_intersections == 1 .AND. &
          intersection_check( &
          intersections(1), 0.875_dp, 0.125_dp, 2, 2, second) .AND. &
-         all_types == 2**second .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Intersection causes error.
-    all_types = 0
     st_vals(:, 1) = 0.5_dp
     deallocate(edges_first(2)%nodes)
     allocate(edges_first(2)%nodes(2, 3))
@@ -845,10 +821,8 @@ contains
     edges_second(2)%nodes(:, 3) = [-0.25_dp, 0.25_dp]
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, known_enum, &
-         2, 2, intersections, num_intersections, all_types, status)
-    case_success = ( &
-         all_types == 0 .AND. &
-         status == Status_SAME_CURVATURE)
+         2, 2, intersections, num_intersections, status)
+    case_success = (status == Status_SAME_CURVATURE)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: ``intersections`` has edge ends, gets "over-allocated".
@@ -856,7 +830,6 @@ contains
     deallocate(st_vals)
     allocate(st_vals(2, 2))
     num_intersections = 0
-    all_types = 0
     st_vals(:, 1) = [1.0_dp, 0.125_dp]
     st_vals(:, 2) = 0.5_dp
     ! Set the relevant edges as lines.
@@ -867,21 +840,19 @@ contains
     edges_second(1)%nodes(:, 2) = [1.0_dp, 0.0_dp]
     call add_st_vals( &
          edges_first, edges_second, 2, st_vals, known_enum, &
-         1, 1, intersections, num_intersections, all_types, status)
+         1, 1, intersections, num_intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
          size(intersections) == 2 .AND. &
          num_intersections == 1 .AND. &
          intersection_check( &
          intersections(1), 0.5_dp, 0.5_dp, 1, 1, first) .AND. &
-         all_types == 2**first .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: Intersection is coincident.
     known_enum = IntersectionClassification_COINCIDENT
     num_intersections = 0
-    all_types = 0
     st_vals(:, 1) = [0.5_dp, 0.5_dp]
     ! Set the relevant edges as lines.
     edges_first(1)%nodes(:, 1) = 0
@@ -893,7 +864,7 @@ contains
          size(intersections) == 2)
     call add_st_vals( &
          edges_first, edges_second, 1, st_vals, known_enum, &
-         1, 1, intersections, num_intersections, all_types, status)
+         1, 1, intersections, num_intersections, status)
     case_success = ( &
          case_success .AND. &
          allocated(intersections) .AND. &
@@ -901,7 +872,6 @@ contains
          num_intersections == 1 .AND. &
          intersection_check( &
          intersections(1), 0.5_dp, 0.5_dp, 1, 1, coincident) .AND. &
-         all_types == 2**IntersectionClassification_COINCIDENT .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1679,26 +1649,35 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Intersecting edges results in error.
-    linear1(:, 1) = 0
-    linear1(:, 2) = [5.0_dp, 0.0_dp]
-    linear1(:, 3) = [0.0_dp, 5.0_dp]
-    linear2(:, 1) = [2.0_dp, 0.0_dp]
-    linear2(:, 2) = [3.0_dp, 0.0_dp]
-    linear2(:, 3) = [2.0_dp, 1.0_dp]
+    quadratic1(:, 1) = [0.75_dp, 0.375_dp]
+    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
+    quadratic1(:, 3) = 0
+    quadratic1(:, 4) = [0.5_dp, -0.0625_dp]
+    quadratic1(:, 5) = [0.125_dp, -0.25_dp]
+    quadratic1(:, 6) = [0.25_dp, -0.5_dp]
+    quadratic2(:, 1) = [0.25_dp, 0.625_dp]
+    quadratic2(:, 2) = [0.625_dp, 0.25_dp]
+    quadratic2(:, 3) = 1
+    quadratic2(:, 4) = [0.375_dp, 1.0625_dp]
+    quadratic2(:, 5) = [0.75_dp, 1.25_dp]
+    quadratic2(:, 6) = [0.5_dp, 1.5_dp]
 
     call surfaces_intersect( &
-         3, linear1, 1, 3, linear2, 1, &
+         6, quadratic1, 2, 6, quadratic2, 2, &
          segment_ends, segments, &
          num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
-         .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
+         .NOT. allocated(segment_ends) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Surface 2 contained in surface 1 (re-uses ``linear1``).
+    ! CASE 3: Surface 2 contained in surface 1.
+    linear1(:, 1) = 0
+    linear1(:, 2) = [5.0_dp, 0.0_dp]
+    linear1(:, 3) = [0.0_dp, 5.0_dp]
     linear2(:, 1) = [2.0_dp, 1.0_dp]
     linear2(:, 2) = [3.0_dp, 1.0_dp]
     linear2(:, 3) = 2
@@ -1730,9 +1709,9 @@ contains
 
     ! CASE 5: Surfaces disjoint with overlapping bounding boxes (re-uses
     !         ``linear1`` from previous cases).
-    linear2(:, 1) = [4.0_dp, 2.0_dp]
-    linear2(:, 2) = [4.0_dp, 3.0_dp]
-    linear2(:, 3) = 3
+    linear2(:, 1) = [7.0_dp, 2.0_dp]
+    linear2(:, 2) = [7.0_dp, 3.0_dp]
+    linear2(:, 3) = [6.0_dp, 3.0_dp]
 
     call surfaces_intersect( &
          3, linear1, 1, 3, linear2, 1, &
@@ -1955,6 +1934,24 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 15: Surfaces are disjoint, but bounding boxes are not.
+    linear1(:, 1) = 0
+    linear1(:, 2) = [8.0_dp, 0.0_dp]
+    linear1(:, 3) = [0.0_dp, 8.0_dp]
+    linear2(:, 1) = [6.0_dp, 3.0_dp]
+    linear2(:, 2) = 6
+    linear2(:, 3) = [3.0_dp, 6.0_dp]
+
+    call surfaces_intersect( &
+         3, linear1, 1, 3, linear2, 1, &
+         segment_ends, segments, &
+         num_intersected, contained, status)
+    case_success = ( &
+         num_intersected == 0 .AND. &
+         contained == SurfaceContained_NEITHER .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
   end subroutine test_surfaces_intersect
 
   subroutine test_surfaces_intersect_abi(success)
@@ -1963,7 +1960,8 @@ contains
     logical :: case_success
     integer :: case_id
     character(22) :: name
-    real(c_double) :: linear1(2, 3), linear2(2, 3), quadratic(2, 6)
+    real(c_double) :: linear1(2, 3), linear2(2, 3)
+    real(c_double) :: quadratic1(2, 6), quadratic2(2, 6)
     integer(c_int) :: num_intersected, contained, status
     integer(c_int) :: segment_ends(2)
     type(CurvedPolygonSegment) :: segments(6)
@@ -1972,14 +1970,20 @@ contains
     name = "surfaces_intersect_abi"
 
     ! CASE 1: Intersection results in error.
-    linear1(:, 1) = 0
-    linear1(:, 2) = [5.0_dp, 0.0_dp]
-    linear1(:, 3) = [0.0_dp, 5.0_dp]
-    linear2(:, 1) = [2.0_dp, 0.0_dp]
-    linear2(:, 2) = [3.0_dp, 0.0_dp]
-    linear2(:, 3) = [2.0_dp, 1.0_dp]
+    quadratic1(:, 1) = [0.75_dp, 0.375_dp]
+    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
+    quadratic1(:, 3) = 0
+    quadratic1(:, 4) = [0.5_dp, -0.0625_dp]
+    quadratic1(:, 5) = [0.125_dp, -0.25_dp]
+    quadratic1(:, 6) = [0.25_dp, -0.5_dp]
+    quadratic2(:, 1) = [0.25_dp, 0.625_dp]
+    quadratic2(:, 2) = [0.625_dp, 0.25_dp]
+    quadratic2(:, 3) = 1
+    quadratic2(:, 4) = [0.375_dp, 1.0625_dp]
+    quadratic2(:, 5) = [0.75_dp, 1.25_dp]
+    quadratic2(:, 6) = [0.5_dp, 1.5_dp]
     call surfaces_intersect_abi( &
-         3, linear1, 1, 3, linear2, 1, &
+         6, quadratic1, 2, 6, quadratic2, 2, &
          2, segment_ends, 6, segments, &
          num_intersected, contained, status)
     case_success = ( &
@@ -1993,15 +1997,15 @@ contains
     linear1(:, 1) = [-8.0_dp, 0.0_dp]
     linear1(:, 2) = [8.0_dp, 0.0_dp]
     linear1(:, 3) = [0.0_dp, 8.0_dp]
-    quadratic(:, 1) = [4.0_dp, 3.0_dp]
-    quadratic(:, 2) = [0.0_dp, -5.0_dp]
-    quadratic(:, 3) = [-4.0_dp, 3.0_dp]
-    quadratic(:, 4) = [2.0_dp, -3.0_dp]
-    quadratic(:, 5) = [-2.0_dp, -3.0_dp]
-    quadratic(:, 6) = [0.0_dp, -9.0_dp]
+    quadratic1(:, 1) = [4.0_dp, 3.0_dp]
+    quadratic1(:, 2) = [0.0_dp, -5.0_dp]
+    quadratic1(:, 3) = [-4.0_dp, 3.0_dp]
+    quadratic1(:, 4) = [2.0_dp, -3.0_dp]
+    quadratic1(:, 5) = [-2.0_dp, -3.0_dp]
+    quadratic1(:, 6) = [0.0_dp, -9.0_dp]
     segment_ends(:2) = [-1337, -42]
     call surfaces_intersect_abi( &
-         3, linear1, 1, 6, quadratic, 2, &
+         3, linear1, 1, 6, quadratic1, 2, &
          1, segment_ends, 3, segments(:3), &
          num_intersected, contained, status)
     case_success = ( &
@@ -2014,7 +2018,7 @@ contains
     ! CASE 3: ``segments`` is not large enough; two disjoint intersections
     !         from 13L-38Q (ID: 39).
     call surfaces_intersect_abi( &
-         3, linear1, 1, 6, quadratic, 2, &
+         3, linear1, 1, 6, quadratic1, 2, &
          2, segment_ends, 3, segments(:3), &
          num_intersected, contained, status)
     case_success = ( &
@@ -2027,7 +2031,7 @@ contains
     ! CASE 4: Successful intersection; two disjoint intersections
     !         from 13L-38Q (ID: 39).
     call surfaces_intersect_abi( &
-         3, linear1, 1, 6, quadratic, 2, &
+         3, linear1, 1, 6, quadratic1, 2, &
          2, segment_ends, 6, segments, &
          num_intersected, contained, status)
     case_success = ( &

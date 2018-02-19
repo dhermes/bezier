@@ -21,7 +21,7 @@ This is to help with the exposition of the computation and
    :members:
 .. autofunction:: bezier._geometric_intersection.linearization_error
 .. autofunction:: bezier._geometric_intersection.segment_intersection
-.. autofunction:: bezier._geometric_intersection.parallel_different
+.. autofunction:: bezier._geometric_intersection.parallel_lines_parameters
 .. autofunction:: bezier._curve_helpers._get_curvature
 .. autofunction:: bezier._curve_helpers._newton_refine
 .. autoclass:: bezier._intersection_helpers.IntersectionClassification

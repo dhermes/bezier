@@ -35,8 +35,8 @@ module curve_intersection
        BoxIntersectionType_DISJOINT, Subdivide_FIRST, Subdivide_SECOND, &
        Subdivide_BOTH, Subdivide_NEITHER, LINEARIZATION_THRESHOLD, &
        INTERSECTIONS_WORKSPACE, linearization_error, segment_intersection, &
-       newton_refine_intersect, bbox_intersect, parallel_different, &
-       from_linearized, bbox_line_intersect, add_intersection, &
+       newton_refine_intersect, bbox_intersect, parallel_lines_parameters, &
+       from_linearized, bbox_line_intersect, check_lines, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
        add_coincident_parameters, all_intersections, all_intersections_abi, &
@@ -212,51 +212,106 @@ contains
 
   end subroutine bbox_intersect
 
-  subroutine parallel_different( &
-       start0, end0, start1, end1, result_)
+  subroutine parallel_lines_parameters( &
+       start0, end0, start1, end1, disjoint, parameters)
 
     real(c_double), intent(in) :: start0(2)
     real(c_double), intent(in) :: end0(2)
     real(c_double), intent(in) :: start1(2)
     real(c_double), intent(in) :: end1(2)
-    logical(c_bool), intent(out) :: result_
+    logical(c_bool), intent(out) :: disjoint
+    real(c_double), intent(out) :: parameters(2, 2)
     ! Variables outside of signature.
     real(c_double) :: delta0(2)
-    real(c_double) :: val1, val2  ! Workspace
+    real(c_double) :: norm0_sq, s_val0, s_val1
 
     delta0 = end0 - start0
-    call cross_product(start0, delta0, val1)  ! line0_const
-    call cross_product(start1, delta0, val2)  ! start1_against
+    ! NOTE: We use the variable ``norm0_sq`` as "workspace" like
+    !       ``line0_const`` (in the Python version) and ``s_val0``
+    !       acts like ``start1_against``.
+    call cross_product(start0, delta0, norm0_sq)
+    call cross_product(start1, delta0, s_val0)
 
-    if (val1 /= val2) then
-       result_ = .TRUE.
+    if (norm0_sq /= s_val0) then
+       disjoint = .TRUE.
        return
     end if
 
-    val1 = dot_product(delta0, delta0)  ! norm0_sq
-    ! val2 == start_numer
-    val2 = dot_product(start1 - start0, delta0)
-    !      0 <= start_numer / norm0_sq <= 1
-    ! <==> 0 <= start_numer            <= norm0_sq
-    if (0.0_dp <= val2 .AND. val2 <= val1) then
-       result_ = .FALSE.
-       return
+    norm0_sq = dot_product(delta0, delta0)
+    !                S1 = L1(0) = S0 + sA D0
+    ! <==>        sA D0 = S1 - S0
+    !  ==> sA (D0^T D0) = D0^T (S1 - S0)
+    s_val0 = dot_product(start1 - start0, delta0) / norm0_sq
+    !                E1 = L1(1) = S0 + sB D0
+    ! <==>        sB D0 = E1 - S0
+    !  ==> sB (D0^T D0) = D0^T (E1 - S0)
+    s_val1 = dot_product(end1 - start0, delta0) / norm0_sq
+
+    ! s = s_val0 + t (s_val1 - s_val0)
+    ! t = 0                                <==> s = s_val0
+    ! t = 1                                <==> s = s_val1
+    ! t = -s_val0 / (s_val1 - s_val0)      <==> s = 0
+    ! t = (1 - s_val0) / (s_val1 - s_val0) <==> s = 1
+    ! NOTE: We have the relationship:
+    !         start_s <--> parameters(1, 1)
+    !           end_s <--> parameters(1, 2)
+    !         start_t <--> parameters(2, 1)
+    !           end_t <--> parameters(2, 2)
+    if (s_val0 <= s_val1) then
+       ! In this branch the segments are moving in the same direction, i.e.
+       ! (t=0<-->s=s_val0) are both less than (t=1<-->s_val1).
+       if (1.0_dp < s_val0) then
+          disjoint = .TRUE.
+          return
+       else if (s_val0 < 0.0_dp) then
+          parameters(1, 1) = 0.0_dp
+          parameters(2, 1) = -s_val0 / (s_val1 - s_val0)
+       else
+          parameters(1, 1) = s_val0
+          parameters(2, 1) = 0.0_dp
+       end if
+
+       if (s_val1 < 0.0_dp) then
+          disjoint = .TRUE.
+          return
+       else if (1.0_dp < s_val1) then
+          parameters(1, 2) = 1.0_dp
+          parameters(2, 2) = (1.0_dp - s_val0) / (s_val1 - s_val0)
+       else
+          parameters(1, 2) = s_val1
+          parameters(2, 2) = 1.0_dp
+       end if
+    else
+       ! In this branch the segments are moving in opposite directions, i.e.
+       ! in (t=0<-->s=s_val0) and (t=1<-->s_val1) we have 0 < 1
+       ! but ``s_val0 > s_val1``.
+       if (s_val0 < 0.0_dp) then
+          disjoint = .TRUE.
+          return
+       else if (1.0_dp < s_val0) then
+          parameters(1, 1) = 1.0_dp
+          parameters(2, 1) = (s_val0 - 1.0_dp) / (s_val0 - s_val1)
+       else
+          parameters(1, 1) = s_val0
+          parameters(2, 1) = 0.0_dp
+       end if
+
+       if (1.0_dp < s_val1) then
+          disjoint = .TRUE.
+          return
+       else if (s_val1 < 0.0_dp) then
+          parameters(1, 2) = 0.0_dp
+          parameters(2, 2) = s_val0 / (s_val0 - s_val1)
+       else
+          parameters(1, 2) = s_val1
+          parameters(2, 2) = 1.0_dp
+       end if
     end if
 
-    val2 = dot_product(end1 - start0, delta0)  ! end_numer
-    !      0 <= end_numer / norm0_sq <= 1
-    ! <==> 0 <= end_numer            <= norm0_sq
-    if (0.0_dp <= val2 .AND. val2 <= val1) then
-       result_ = .FALSE.
-       return
-    end if
+    ! If we have not ``return``-ed, then the lines overlap.
+    disjoint = .FALSE.
 
-    ! We know neither the start or end parameters are in [0, 1], but
-    ! they may contain [0, 1] between them, so we make sure that 0
-    ! isn't between them.
-    result_ = (0.0_dp < min(val1, val2) .OR. max(val1, val2) < 0.0_dp)
-
-  end subroutine parallel_different
+  end subroutine parallel_lines_parameters
 
   subroutine from_linearized( &
        error1, curve1, num_nodes1, root_nodes1, &
@@ -312,21 +367,12 @@ contains
           return
        end if
     else
-       ! Handle special case where the curves are actually lines.
-       if (error1 == 0.0_dp .AND. error2 == 0.0_dp) then
-          call parallel_different( &
-               curve1%nodes(:, 1), curve1%nodes(:, num_nodes1), &
-               curve2%nodes(:, 1), curve2%nodes(:, num_nodes2), &
-               success)
-          if (success) then
-             return
-          end if
-       else
-          call bbox_intersect( &
-               num_nodes1, root_nodes1, num_nodes2, root_nodes2, enum_)
-          if (enum_ == BoxIntersectionType_DISJOINT) then
-             return
-          end if
+       ! NOTE: If both curves are lines, the intersection should have
+       !       been computed already via ``check_lines``.
+       call bbox_intersect( &
+            num_nodes1, root_nodes1, num_nodes2, root_nodes2, enum_)
+       if (enum_ == BoxIntersectionType_DISJOINT) then
+          return
        end if
 
        status = Status_PARALLEL
@@ -458,6 +504,90 @@ contains
     enum_ = BoxIntersectionType_DISJOINT
 
   end subroutine bbox_line_intersect
+
+  subroutine check_lines( &
+       num_nodes1, nodes1, num_nodes2, nodes2, &
+       both_linear, coincident, intersections, num_intersections)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
+    logical(c_bool), intent(out) :: both_linear
+    logical(c_bool), intent(out) :: coincident
+    real(c_double), allocatable, intent(inout) :: intersections(:, :)
+    integer(c_int), intent(out) :: num_intersections
+    ! Variables outside of signature.
+    real(c_double) :: value1, value2
+    logical(c_bool) :: predicate
+
+    num_intersections = 0
+    coincident = .FALSE.
+    ! NOTE: ``value1`` is a stand-in for ``error`.
+    call linearization_error(num_nodes1, 2, nodes1, value1)
+    if (value1 /= 0.0_dp) then
+       both_linear = .FALSE.
+       return
+    end if
+    ! NOTE: ``value1`` is a stand-in for ``error`.
+    call linearization_error(num_nodes2, 2, nodes2, value1)
+    if (value1 /= 0.0_dp) then
+       both_linear = .FALSE.
+       return
+    end if
+
+    both_linear = .TRUE.
+    ! NOTE: ``value1`` / ``value2`` are stand-ins for ``s`` / ``t``.
+    call segment_intersection( &
+         nodes1(:, 1), nodes1(:, num_nodes1), &
+         nodes2(:, 1), nodes2(:, num_nodes2), &
+         value1, value2, predicate)
+    ! Here, ``predicate`` is a stand-in for ``success`` of
+    ! segment intersection.
+    if (predicate) then
+       if (in_interval(value1, 0.0_dp, 1.0_dp) .AND. &
+            in_interval(value2, 0.0_dp, 1.0_dp)) then
+          if (.NOT. allocated(intersections)) then
+             ! NOTE: This assumes, but does not check, that if it is
+             !       allocated, ``intersections`` has exactly 2 rows and at
+             !       least 1 column.
+             allocate(intersections(2, 1))
+          end if
+          intersections(1, 1) = value1
+          intersections(2, 1) = value2
+          num_intersections = 1
+       end if
+    else
+       ! NOTE: This assumes these new parameters will be the first ones
+       !       in ``intersections`` (i.e. if we deallocate we don't need
+       !       to "swap"). It also may allocate ``intersections`` even
+       !       if the space isn't needed. But over the long term this will
+       !       not be a problem because the allocatable intersections
+       !       will be re-used and large enough.
+       if (allocated(intersections)) then
+          if (size(intersections, 2) < 2) then
+             deallocate(intersections)
+             allocate(intersections(2, 2))
+          end if
+       else
+          allocate(intersections(2, 2))
+       end if
+       ! Here, ``predicate`` is a stand-in for ``disjoint``.
+       call parallel_lines_parameters( &
+            nodes1(:, 1), nodes1(:, num_nodes1), &
+            nodes2(:, 1), nodes2(:, num_nodes2), &
+            predicate, intersections)
+       if (.NOT. predicate) then
+          ! I.e., ``disjoint == .FALSE.``
+          coincident = .TRUE.
+          num_intersections = 2
+       end if
+    end if
+
+  end subroutine check_lines
 
   subroutine add_intersection( &
        s, t, num_intersections, intersections)
@@ -1198,13 +1328,23 @@ contains
     integer(c_int) :: index_, intersect_status
     logical(c_bool) :: is_even
 
+    status = Status_SUCCESS  ! Default.
+
+    ! NOTE: Here, we use ``is_even`` as ``both_linear``.
+    call check_lines( &
+         num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
+         is_even, coincident, intersections, num_intersections)
+    if (is_even) then
+       ! I.e. if ``both_linear``.
+       return
+    end if
+
     num_intersections = 0
     coincident = .FALSE.
     ! First iteration is odd (i.e. ``index_ == 1``).
     num_candidates = 1
     call make_candidates( &
          nodes_first, nodes_second, CANDIDATES_ODD)
-    status = Status_SUCCESS  ! Default.
 
     is_even = .TRUE.  ! At zero.
     do index_ = 1, MAX_INTERSECT_SUBDIVISIONS

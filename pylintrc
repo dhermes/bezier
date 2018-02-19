@@ -21,6 +21,7 @@ disable =
     I,
     cyclic-import,
     no-else-return,
+    misplaced-comparison-constant,
 
 [REPORTS]
 # Tells whether to display a full report or only the messages

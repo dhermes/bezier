@@ -458,8 +458,7 @@ def verify_duplicates(duplicates, uniques):
             raise ValueError('Unexpected duplicate count', count)
 
 
-def add_edge_end_unused(
-        intersection, duplicates, intersections, unused, all_types):
+def add_edge_end_unused(intersection, duplicates, intersections):
     """Add intersection that is ``COINCIDENT_UNUSED`` but on an edge end.
 
     This is a helper for :func:`~._surface_intersection.add_intersection`.
@@ -475,12 +474,6 @@ def add_edge_end_unused(
         duplicates (List[.Intersection]): List of duplicate intersections.
         intersections (List[.Intersection]): List of "accepted" (i.e.
             non-duplicate) intersections.
-        unused (List[.Intersection]): Intersections that won't be used,
-            such as a tangent intersection along an edge. This is
-            provided for the case where the output will be verified.
-        all_types (Set[.IntersectionClassification]): The set of all
-            intersection classifications encountered among the intersections
-            for the given surface-surface pair.
     """
     found = None
     for other in intersections:
@@ -498,30 +491,28 @@ def add_edge_end_unused(
         intersections.remove(found)
         duplicates.append(found)
 
-    unused.append(intersection)
-    all_types.add(UNUSED_T)
+    intersections.append(intersection)
 
 
-def check_unused(intersection, duplicates, unused):
-    """Check if a "valid" ``intersection`` is already in ``unused``.
+def check_unused(intersection, duplicates, intersections):
+    """Check if a "valid" ``intersection`` is already in ``intersections``.
 
     This assumes that
 
     * ``intersection`` will have at least one of ``s == 0.0`` or ``t == 0.0``
-    * At least one of the intersections in ``unused`` is classified as
+    * At least one of the intersections in ``intersections`` is classified as
       ``COINCIDENT_UNUSED``.
 
     Args:
         intersection (.Intersection): An intersection to be added.
         duplicates (List[.Intersection]): List of duplicate intersections.
-        unused (List[.Intersection]): Intersections that won't be used,
-            such as a tangent intersection along an edge. This is
-            provided for the case where the output will be verified.
+        intersections (List[.Intersection]): List of "accepted" (i.e.
+            non-duplicate) intersections.
 
     Returns:
         bool: Indicates if the ``intersection`` is a duplicate.
     """
-    for other in unused:
+    for other in intersections:
         if (other.interior_curve == UNUSED_T and
                 intersection.index_first == other.index_first and
                 intersection.index_second == other.index_second):
@@ -537,8 +528,8 @@ def check_unused(intersection, duplicates, unused):
 
 
 def add_intersection(  # pylint: disable=too-many-arguments
-        index1, s, index2, t, interior_curve, edge_nodes1, edge_nodes2,
-        duplicates, intersections, unused, all_types):
+        index1, s, index2, t, interior_curve,
+        edge_nodes1, edge_nodes2, duplicates, intersections):
     """Create an :class:`Intersection` and append.
 
     The intersection will be classified as either a duplicate or a valid
@@ -562,12 +553,6 @@ def add_intersection(  # pylint: disable=too-many-arguments
         duplicates (List[.Intersection]): List of duplicate intersections.
         intersections (List[.Intersection]): List of "accepted" (i.e.
             non-duplicate) intersections.
-        unused (List[.Intersection]): Intersections that won't be used,
-            such as a tangent intersection along an edge. This is
-            provided for the case where the output will be verified.
-        all_types (Set[.IntersectionClassification]): The set of all
-            intersection classifications encountered among the intersections
-            for the given surface-surface pair.
     """
     # pylint: disable=too-many-locals
     edge_end, is_corner, intersection_args = _surface_helpers.handle_ends(
@@ -578,16 +563,16 @@ def add_intersection(  # pylint: disable=too-many-arguments
         intersection.interior_curve = interior_curve
 
         if interior_curve == UNUSED_T:
-            add_edge_end_unused(
-                intersection, duplicates, intersections, unused, all_types)
+            add_edge_end_unused(intersection, duplicates, intersections)
         else:
             duplicates.append(intersection)
     else:
         intersection = _intersection_helpers.Intersection(
             index1, s, index2, t)
 
-        if is_corner and UNUSED_T in all_types:
-            is_duplicate = check_unused(intersection, duplicates, unused)
+        if is_corner:
+            is_duplicate = check_unused(
+                intersection, duplicates, intersections)
             if is_duplicate:
                 return
 
@@ -596,13 +581,8 @@ def add_intersection(  # pylint: disable=too-many-arguments
             interior_curve = _surface_helpers.classify_intersection(
                 intersection, edge_nodes1, edge_nodes2)
 
-        all_types.add(interior_curve)
         intersection.interior_curve = interior_curve
-        # Only keep the intersections which are "acceptable".
-        if interior_curve in ACCEPTABLE_CLASSIFICATIONS:
-            intersections.append(intersection)
-        else:
-            unused.append(intersection)
+        intersections.append(intersection)
     # pylint: enable=too-many-locals
 
 
@@ -671,10 +651,8 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
         * All the intersection classifications encountered
     """
     # pylint: disable=too-many-locals
-    all_types = set()
     intersections = []
     duplicates = []
-    unused = []
     for index1, nodes1 in enumerate(edge_nodes1):
         for index2, nodes2 in enumerate(edge_nodes2):
             st_vals, coincident = all_intersections(nodes1, nodes2)
@@ -682,10 +660,20 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
             for s, t in st_vals.T:
                 add_intersection(
                     index1, s, index2, t, interior_curve,
-                    edge_nodes1, edge_nodes2,
-                    duplicates, intersections, unused, all_types)
+                    edge_nodes1, edge_nodes2, duplicates, intersections)
 
-    return intersections, duplicates, unused, all_types
+    all_types = set()
+    to_keep = []
+    unused = []
+    for intersection in intersections:
+        all_types.add(intersection.interior_curve)
+        # Only keep the intersections which are "acceptable".
+        if intersection.interior_curve in ACCEPTABLE_CLASSIFICATIONS:
+            to_keep.append(intersection)
+        else:
+            unused.append(intersection)
+
+    return to_keep, duplicates, unused, all_types
     # pylint: enable=too-many-locals
 
 

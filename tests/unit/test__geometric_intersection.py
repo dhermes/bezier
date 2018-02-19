@@ -268,13 +268,13 @@ class Test_segment_intersection(unittest.TestCase):
         self.assertFalse(success)
 
 
-class Test_parallel_different(unittest.TestCase):
+class Test_parallel_lines_parameters(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
         from bezier import _geometric_intersection
 
-        return _geometric_intersection.parallel_different(
+        return _geometric_intersection.parallel_lines_parameters(
             start0, end0, start1, end1)
 
     def test_same_line_no_overlap(self):
@@ -282,40 +282,145 @@ class Test_parallel_different(unittest.TestCase):
         end0 = np.asfortranarray([3.0, 4.0])
         start1 = np.asfortranarray([6.0, 8.0])
         end1 = np.asfortranarray([9.0, 12.0])
-        self.assertTrue(
-            self._call_function_under_test(start0, end0, start1, end1))
+
+        disjoint, params = self._call_function_under_test(
+            start0, end0, start1, end1)
+        self.assertTrue(disjoint)
+        self.assertIsNone(params)
+
+        # Do the same, but reverse the direction of line 1.
+        disjoint, params = self._call_function_under_test(
+            start0, end0, end1, start1)
+        self.assertTrue(disjoint)
+        self.assertIsNone(params)
+
+        # Do the same, but swap the lines.
+        disjoint, params = self._call_function_under_test(
+            start1, end1, start0, end0)
+        self.assertTrue(disjoint)
+        self.assertIsNone(params)
+
+        # Do the same, but reverse the direction of line 0.
+        disjoint, params = self._call_function_under_test(
+            end0, start0, start1, end1)
+        self.assertTrue(disjoint)
+        self.assertIsNone(params)
 
     def test_same_line_overlap_at_start(self):
         start0 = np.asfortranarray([6.0, -3.0])
         end0 = np.asfortranarray([-7.0, 1.0])
         start1 = np.asfortranarray([1.125, -1.5])
         end1 = np.asfortranarray([-5.375, 0.5])
-        self.assertFalse(
-            self._call_function_under_test(start0, end0, start1, end1))
+
+        disjoint, params = self._call_function_under_test(
+            start0, end0, start1, end1)
+        self.assertFalse(disjoint)
+        expected = np.asfortranarray([
+            [0.375, 0.875],
+            [0.0, 1.0],
+        ])
+        self.assertEqual(params, expected)
+
+        # Do the same, but reverse the direction of line 1.
+        disjoint, params = self._call_function_under_test(
+            start0, end0, end1, start1)
+        self.assertFalse(disjoint)
+        expected = np.asfortranarray([
+            [0.875, 0.375],
+            [0.0, 1.0],
+        ])
+        self.assertEqual(params, expected)
+
+        # Do the same, but swap the lines.
+        disjoint, params = self._call_function_under_test(
+            start1, end1, start0, end0)
+        self.assertFalse(disjoint)
+        expected = np.asfortranarray([
+            [0.0, 1.0],
+            [0.375, 0.875],
+        ])
+        self.assertEqual(params, expected)
 
     def test_same_line_overlap_at_end(self):
         start0 = np.asfortranarray([1.0, 2.0])
         end0 = np.asfortranarray([3.0, 5.0])
-        start1 = np.asfortranarray([-0.5, -0.25])
+        start1 = np.asfortranarray([-2.0, -2.5])
         end1 = np.asfortranarray([2.0, 3.5])
-        self.assertFalse(
-            self._call_function_under_test(start0, end0, start1, end1))
+
+        disjoint, params = self._call_function_under_test(
+            start0, end0, start1, end1)
+        self.assertFalse(disjoint)
+        expected = np.asfortranarray([
+            [0.0, 0.5],
+            [0.75, 1.0],
+        ])
+        self.assertEqual(params, expected)
+
+        # Do the same, but reverse the direction of line 1.
+        disjoint, params = self._call_function_under_test(
+            start0, end0, end1, start1)
+        self.assertFalse(disjoint)
+        expected = np.asfortranarray([
+            [0.5, 0.0],
+            [0.0, 0.25],
+        ])
+        self.assertEqual(params, expected)
+
+        # Do the same, but swap the lines.
+        disjoint, params = self._call_function_under_test(
+            start1, end1, start0, end0)
+        self.assertFalse(disjoint)
+        expected = np.asfortranarray([
+            [0.75, 1.0],
+            [0.0, 0.5],
+        ])
+        self.assertEqual(params, expected)
 
     def test_same_line_contained(self):
         start0 = np.asfortranarray([-9.0, 0.0])
         end0 = np.asfortranarray([4.0, 5.0])
         start1 = np.asfortranarray([23.5, 12.5])
-        end1 = np.asfortranarray([-25.25, -6.25])
-        self.assertFalse(
-            self._call_function_under_test(start0, end0, start1, end1))
+        end1 = np.asfortranarray([-28.5, -7.5])
+
+        disjoint, params = self._call_function_under_test(
+            start0, end0, start1, end1)
+        self.assertFalse(disjoint)
+        expected = np.asfortranarray([
+            [1.0, 0.0],
+            [0.375, 0.625],
+        ])
+        self.assertEqual(params, expected)
+
+        # Do the same, but reverse the direction of line 1.
+        disjoint, params = self._call_function_under_test(
+            start0, end0, end1, start1)
+        self.assertFalse(disjoint)
+        expected = np.asfortranarray([
+            [0.0, 1.0],
+            [0.375, 0.625],
+        ])
+        self.assertEqual(params, expected)
+
+        # Do the same, but swap the lines.
+        disjoint, params = self._call_function_under_test(
+            start1, end1, start0, end0)
+        self.assertFalse(disjoint)
+        expected = np.asfortranarray([
+            [0.625, 0.375],
+            [0.0, 1.0],
+        ])
+        self.assertEqual(params, expected)
 
     def test_different_line(self):
         start0 = np.asfortranarray([3.0, 2.0])
         end0 = np.asfortranarray([3.0, 0.75])
         start1 = np.asfortranarray([0.0, 0.0])
         end1 = np.asfortranarray([0.0, 2.0])
-        self.assertTrue(
-            self._call_function_under_test(start0, end0, start1, end1))
+
+        disjoint, params = self._call_function_under_test(
+            start0, end0, start1, end1)
+        self.assertTrue(disjoint)
+        self.assertIsNone(params)
 
 
 class Test_from_linearized(utils.NumPyTestCase):
@@ -368,7 +473,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         intersections = []
         self.assertIsNone(
             self._call_function_under_test(lin1, lin2, intersections))
-        self.assertEqual(len(intersections), 0)
+        self.assertEqual(intersections, [])
 
     def _no_intersect_help(self, swap=False):
         # The bounding boxes intersect but the lines do not.
@@ -433,6 +538,8 @@ class Test_from_linearized(utils.NumPyTestCase):
         self._no_intersect_help_non_line(swap=True)
 
     def test_parallel_intersection(self):
+        from bezier import _geometric_intersection
+
         nodes1 = np.asfortranarray([
             [0.0, 1.0],
             [0.0, 1.0],
@@ -448,30 +555,11 @@ class Test_from_linearized(utils.NumPyTestCase):
         lin2 = make_linearization(curve2, error=0.0)
 
         intersections = []
-        return_value = self._call_function_under_test(
-            lin1, lin2, intersections)
-        self.assertIsNone(return_value)
-        self.assertEqual(intersections, [])
-
-    def test_same_line_intersection(self):
-        nodes1 = np.asfortranarray([
-            [0.0, 1.0],
-            [0.0, 1.0],
-        ])
-        curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, error=0.0)
-
-        nodes2 = np.asfortranarray([
-            [0.5, 3.0],
-            [0.5, 3.0],
-        ])
-        curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, error=0.0)
-
-        intersections = []
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(lin1, lin2, intersections)
 
+        expected_args = (_geometric_intersection._UNHANDLED_LINES,)
+        self.assertEqual(exc_info.exception.args, expected_args)
         self.assertEqual(intersections, [])
 
     def test_parallel_non_degree_one_disjoint(self):
@@ -937,25 +1025,25 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         self.assertEqual(next_candidates, [])
         self.assertEqual(intersections, [(0.5, 0.5)])
 
-    def test_failure_due_to_parallel(self):
+    def test_failure_due_to_unhandled_lines(self):
         from bezier import _geometric_intersection
 
         curve1 = subdivided_curve(self.LINE1)
         lin1 = make_linearization(curve1, error=0.0)
         nodes2 = np.asfortranarray([
-            [0.5, 3.0],
-            [0.5, 3.0],
+            [0.5, 4.5],
+            [0.5, 4.5],
         ])
         curve2 = subdivided_curve(nodes2)
         lin2 = make_linearization(curve2, error=0.0)
 
         intersections = []
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test([(lin1, lin2)], intersections)
+        with self.assertRaises(ValueError) as exc_info:
+            self._call_function_under_test(
+                [(lin1, lin2)], intersections)
 
-        exc_args = exc_info.exception.args
-        self.assertEqual(
-            exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
+        expected_args = (_geometric_intersection._UNHANDLED_LINES,)
+        self.assertEqual(exc_info.exception.args, expected_args)
         self.assertEqual(intersections, [])
 
     def test_disjoint_bboxes(self):
@@ -1360,6 +1448,145 @@ class Test_coincident_parameters(unittest.TestCase):
         self.assertIsNone(result)
         result = self._call_function_under_test(nodes2, nodes1)
         self.assertIsNone(result)
+
+
+class Test_check_lines(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(first, second):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection.check_lines(first, second)
+
+    def test_not_linearized(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0, 2.0],
+            [0.0, 1.0, 0.0],
+        ])
+        curve1 = subdivided_curve(nodes1)
+
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0, 2.0],
+            [1.0, 0.0, 1.0],
+        ])
+        curve2 = subdivided_curve(nodes2)
+
+        both_linear, result = self._call_function_under_test(curve1, curve2)
+        self.assertFalse(both_linear)
+        self.assertIsNone(result)
+
+    def test_nonzero_linearization_error(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0, 2.0],
+            [0.0, 1.0, 0.0],
+        ])
+        curve1 = subdivided_curve(nodes1)
+        lin1 = make_linearization(curve1)
+        self.assertGreater(lin1.error, 0.0)
+
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0, 2.0],
+            [1.0, 0.0, 1.0],
+        ])
+        curve2 = subdivided_curve(nodes2)
+        lin2 = make_linearization(curve2)
+        self.assertGreater(lin2.error, 0.0)
+
+        both_linear, result = self._call_function_under_test(lin1, lin2)
+        self.assertFalse(both_linear)
+        self.assertIsNone(result)
+
+    def test_do_intersect(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ])
+        curve1 = subdivided_curve(nodes1)
+        lin1 = make_linearization(curve1, error=0.0)
+
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 0.0],
+        ])
+        curve2 = subdivided_curve(nodes2)
+        lin2 = make_linearization(curve2, error=0.0)
+
+        both_linear, result = self._call_function_under_test(lin1, lin2)
+        self.assertTrue(both_linear)
+        parameters, coincident = result
+        expected = np.asfortranarray([
+            [0.5],
+            [0.5],
+        ])
+        self.assertEqual(parameters, expected)
+        self.assertFalse(coincident)
+
+    def test_do_not_intersect(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ])
+        curve1 = subdivided_curve(nodes1)
+        lin1 = make_linearization(curve1, error=0.0)
+
+        nodes2 = np.asfortranarray([
+            [2.0, 3.0],
+            [3.0, 2.0],
+        ])
+        curve2 = subdivided_curve(nodes2)
+        lin2 = make_linearization(curve2, error=0.0)
+
+        both_linear, result = self._call_function_under_test(lin1, lin2)
+        self.assertTrue(both_linear)
+        parameters, coincident = result
+        self.assertEqual(parameters.shape, (2, 0))
+        self.assertFalse(coincident)
+
+    def test_parallel_disjoint(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ])
+        curve1 = subdivided_curve(nodes1)
+        lin1 = make_linearization(curve1, error=0.0)
+
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 2.0],
+        ])
+        curve2 = subdivided_curve(nodes2)
+        lin2 = make_linearization(curve2, error=0.0)
+
+        both_linear, result = self._call_function_under_test(lin1, lin2)
+        self.assertTrue(both_linear)
+        parameters, coincident = result
+        self.assertEqual(parameters.shape, (2, 0))
+        self.assertFalse(coincident)
+
+    def test_parallel_coincident(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ])
+        curve1 = subdivided_curve(nodes1)
+        lin1 = make_linearization(curve1, error=0.0)
+
+        nodes2 = np.asfortranarray([
+            [0.5, 4.5],
+            [0.5, 4.5],
+        ])
+        curve2 = subdivided_curve(nodes2)
+        lin2 = make_linearization(curve2, error=0.0)
+
+        both_linear, result = self._call_function_under_test(lin1, lin2)
+        self.assertTrue(both_linear)
+        parameters, coincident = result
+        expected = np.asfortranarray([
+            [0.5, 1.0],
+            [0.0, 0.125],
+        ])
+        self.assertEqual(parameters, expected)
+        self.assertTrue(coincident)
 
 
 class Test__all_intersections(utils.NumPyTestCase):
