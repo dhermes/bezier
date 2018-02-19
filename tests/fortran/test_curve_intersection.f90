@@ -1078,7 +1078,9 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer(c_int) :: num_intersections
+    integer(c_int) :: num_bits
     real(c_double), allocatable :: intersections(:, :)
+    real(c_double) :: s_val, t_val
     integer :: case_id
     character(16) :: name
 
@@ -1153,6 +1155,47 @@ contains
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 2]) .AND. &
          num_intersections == 2)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Proposed intersection is inside the "wiggle"
+    !         threshold of an existing intersection.
+    call get_similar_ulps(num_bits)
+    call set_similar_ulps(10)
+
+    s_val = intersections(1, 1) + 3 * spacing(intersections(1, 1))
+    t_val = intersections(2, 1)
+    call add_intersection( &
+         s_val, t_val, num_intersections, intersections)
+    case_success = ( &
+         num_bits == 1 .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
+         num_intersections == 2)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: Proposed intersection is barely / exactly inside the "wiggle"
+    !         threshold of an existing intersection.
+    call set_similar_ulps(3)
+    call add_intersection( &
+         s_val, t_val, num_intersections, intersections)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 2]) .AND. &
+         num_intersections == 2)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Proposed intersection is outside the "wiggle"
+    !         threshold of an existing intersection.
+    ! Restore the original value.
+    call set_similar_ulps(num_bits)
+    call add_intersection( &
+         s_val, t_val, num_intersections, intersections)
+    case_success = ( &
+         num_bits == 1 .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 3]) .AND. &
+         num_intersections == 3 .AND. &
+         all(intersections(:, 3) == [s_val, t_val]))
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_intersection
