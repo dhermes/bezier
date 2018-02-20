@@ -21,7 +21,7 @@ import memory_profiler
 from tests.functional import utils
 
 
-FAILURES = (4, 5, 7, 10, 11, 12, 21, 42, 45)
+FAILURES = (10, 42)
 ERR_TEMPLATE = 'Memory usage {:g} outside of expected range {}-{}KB.'
 SUCCESS_TEMPLATE = 'Memory usage: {:g}KB.'
 

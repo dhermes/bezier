@@ -21,7 +21,7 @@ import memory_profiler
 from tests.functional import utils
 
 
-FAILURES = (11, 20, 24, 42)
+FAILURES = (11, 43, 44)
 ERR_TEMPLATE = 'Memory usage {:g} outside of expected range {}-{}KB.'
 SUCCESS_TEMPLATE = 'Memory usage: {:g}KB.'
 
@@ -41,7 +41,7 @@ def intersect_all():
         try:
             intersection.curve1.intersect(intersection.curve2)
         except NotImplementedError:
-            assert intersection.id_ in FAILURES
+            assert intersection.id_ in FAILURES, intersection.id_
 
 
 def test_main():

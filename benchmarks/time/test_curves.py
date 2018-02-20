@@ -17,7 +17,7 @@ import pytest
 from tests.functional import utils
 
 
-FAILURES = (11, 20, 24, 42)
+FAILURES = (11, 43, 44)
 
 
 def get_bounds():
@@ -32,7 +32,7 @@ def intersect_all(intersections):
         try:
             intersection.curve1.intersect(intersection.curve2)
         except NotImplementedError:
-            assert intersection.id_ in FAILURES
+            assert intersection.id_ in FAILURES, intersection.id_
 
 
 @pytest.mark.benchmark(
