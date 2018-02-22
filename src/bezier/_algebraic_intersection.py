@@ -813,7 +813,8 @@ def bezier_roots(coeffs):
               [ 0. ,  1. ,  0. ]])
        >>> sigma_values2 = np.linalg.eigvals(companion2)
        >>> sigma_values2
-       array([-1. +0. j, -0.5+0.5j, -0.5-0.5j])
+       array([-1. +0.j , -0.5+0.5j, -0.5-0.5j])
+
 
     so we drop any values :math:`\sigma` that are sufficiently close to
     :math:`-1`:
