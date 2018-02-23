@@ -689,6 +689,17 @@ def parallel_lines_parameters(start0, end0, start1, end1):
 def from_linearized(first, second, intersections):
     """Determine curve-curve intersection from pair of linearizations.
 
+    .. note::
+
+       This assumes that at least one of ``first`` and ``second`` is
+       not a line. The line-line case should be handled "early"
+       by :func:`check_lines`.
+
+    .. note::
+
+       This assumes the caller has verified that the bounding boxes
+       for ``first`` and ``second`` actually intersect.
+
     If there is an intersection along the segments, adds that intersection
     to ``intersections``. Otherwise, returns without doing anything.
 
@@ -719,12 +730,6 @@ def from_linearized(first, second, intersections):
     else:
         if first.error == 0.0 and second.error == 0.0:
             raise ValueError(_UNHANDLED_LINES)
-
-        bbox_int = bbox_intersect(
-            first.curve.original_nodes, second.curve.original_nodes)
-        if bbox_int == BoxIntersectionType.DISJOINT:
-            return
-
         raise NotImplementedError(_SEGMENTS_PARALLEL)
 
     # Now, promote ``s`` and ``t`` onto the original curves.
@@ -980,12 +985,12 @@ def intersect_one_round(candidates, intersections):
     # NOTE: In the below we replace ``isinstance(a, B)`` with
     #       ``a.__class__ is B``, which is a 3-3.5x speedup.
     for first, second in candidates:
+        both_linearized = False
         if first.__class__ is Linearization:
             if second.__class__ is Linearization:
-                # If both ``first`` and ``second`` are linearizations, then
-                # we can intersect them immediately.
-                from_linearized(first, second, intersections)
-                continue
+                both_linearized = True
+                bbox_int = bbox_intersect(
+                    first.curve.nodes, second.curve.nodes)
             else:
                 bbox_int = bbox_line_intersect(
                     second.nodes, first.start_node, first.end_node)
@@ -998,8 +1003,17 @@ def intersect_one_round(candidates, intersections):
 
         if bbox_int == BoxIntersectionType.DISJOINT:
             continue
-        elif bbox_int == BoxIntersectionType.TANGENT:
+        elif bbox_int == BoxIntersectionType.TANGENT and not both_linearized:
+            # NOTE: Ignore tangent bounding boxes in the linearized case
+            #       because ``tangent_bbox_intersection()`` assumes that both
+            #       curves are not linear.
             tangent_bbox_intersection(first, second, intersections)
+            continue
+
+        if both_linearized:
+            # If both ``first`` and ``second`` are linearizations, then
+            # we can intersect them immediately.
+            from_linearized(first, second, intersections)
             continue
 
         # If we haven't ``continue``-d, add the accepted pair.

@@ -738,8 +738,7 @@ contains
          error1, curve1, 2, curve1%nodes, &
          error2, curve2, 3, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
-    case_success = ( &
-         .NOT. does_intersect .AND. status == Status_SUCCESS)
+    case_success = (status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 5: Linearized parts parallel / diff. lines / bbox-es overlap.

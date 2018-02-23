@@ -318,6 +318,13 @@ contains
        error2, curve2, num_nodes2, root_nodes2, &
        refined_s, refined_t, does_intersect, status)
 
+    ! NOTE: This assumes that at least one of ``curve1`` and ``curve2`` is
+    !       not a line. The line-line case should be handled "early"
+    !       by ``check_lines()``.
+
+    ! NOTE: This assumes the caller has verified that the bounding boxes
+    !       for ``curve1`` and ``curve2`` actually intersect.
+
     ! Possible error states:
     ! * Status_SUCCESS : On success.
     ! * Status_PARALLEL: If ``segment_intersection()`` fails (which means
@@ -339,42 +346,34 @@ contains
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     real(c_double) :: s, t
-    integer(c_int) :: enum_
     logical(c_bool) :: success
 
     status = Status_SUCCESS
     does_intersect = .FALSE.  ! Default value.
+
     call segment_intersection( &
          curve1%nodes(:, 1), curve1%nodes(:, num_nodes1), &
          curve2%nodes(:, 1), curve2%nodes(:, num_nodes2), &
          s, t, success)
 
     if (success) then
-       ! Special case for lines, allow no leeway on almost intersections.
+       ! Special case for lines, allow no leeway on "almost" intersections.
        if (error1 == 0.0_dp .AND. (s < 0.0_dp .OR. 1.0_dp < s)) then
           return
        end if
-
        if (error2 == 0.0_dp .AND. (t < 0.0_dp .OR. 1.0_dp < t)) then
           return
        end if
-
+       ! Allow **some** leeway for "almost" intersections in the non-line case.
        if (s < -(0.5_dp**16) .OR. 1.0_dp + 0.5_dp**16 < s) then
           return
        end if
-
        if (t < -(0.5_dp**16) .OR. 1.0_dp + 0.5_dp**16 < t) then
           return
        end if
     else
        ! NOTE: If both curves are lines, the intersection should have
-       !       been computed already via ``check_lines``.
-       call bbox_intersect( &
-            num_nodes1, root_nodes1, num_nodes2, root_nodes2, enum_)
-       if (enum_ == BoxIntersectionType_DISJOINT) then
-          return
-       end if
-
+       !       been computed already via ``check_lines()``.
        status = Status_PARALLEL
        return
     end if
@@ -862,21 +861,9 @@ contains
 
        if (linearization_error1 < LINEARIZATION_THRESHOLD) then
           if (linearization_error2 < LINEARIZATION_THRESHOLD) then
-             ! If both ``first`` and ``second`` are linearizations, then
-             ! we can (attempt to) intersect them immediately.
              subdivide_enum = Subdivide_NEITHER
-             call add_from_linearized( &
-                  first, root_nodes_first, linearization_error1, &
-                  second, root_nodes_second, linearization_error2, &
-                  num_intersections, intersections, status)
-
-             ! If there was a failure, exit this subroutine.
-             if (status /= Status_SUCCESS) then
-                return
-             end if
-
-             ! If there was no failure, move to the next iteration.
-             cycle subdivide_loop
+             call bbox_intersect( &
+                  num_nodes1, first%nodes, num_nodes2, second%nodes, bbox_int)
           else
              subdivide_enum = Subdivide_SECOND
              call bbox_line_intersect( &
@@ -901,9 +888,31 @@ contains
        ! Reject if the bounding boxes do not intersect.
        if (bbox_int == BoxIntersectionType_DISJOINT) then
           cycle subdivide_loop
-       else if (bbox_int == BoxIntersectionType_TANGENT) then
+       else if ( &
+            bbox_int == BoxIntersectionType_TANGENT .AND. &
+            subdivide_enum /= Subdivide_NEITHER) then
+          ! NOTE: Ignore tangent bounding boxes in the linearized case
+          !       because ``tangent_bbox_intersection()`` assumes that both
+          !       curves are not linear.
           call tangent_bbox_intersection( &
                first, second, num_intersections, intersections)
+          cycle subdivide_loop
+       end if
+
+       if (subdivide_enum == Subdivide_NEITHER) then
+          ! If both ``first`` and ``second`` are linearizations, then
+          ! we can (attempt to) intersect them immediately.
+          call add_from_linearized( &
+               first, root_nodes_first, linearization_error1, &
+               second, root_nodes_second, linearization_error2, &
+               num_intersections, intersections, status)
+
+          ! If there was a failure, exit this subroutine.
+          if (status /= Status_SUCCESS) then
+             return
+          end if
+
+          ! If there was no failure, move to the next iteration.
           cycle subdivide_loop
        end if
 

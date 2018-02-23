@@ -563,6 +563,8 @@ class Test_from_linearized(utils.NumPyTestCase):
         self.assertEqual(intersections, [])
 
     def test_parallel_non_degree_one_disjoint(self):
+        from bezier import _geometric_intersection
+
         nodes1 = np.asfortranarray([
             [0.0, 1.0],
             [0.0, 1.0],
@@ -578,10 +580,13 @@ class Test_from_linearized(utils.NumPyTestCase):
         lin2 = make_linearization(curve2, error=np.nan)
 
         intersections = []
-        return_value = self._call_function_under_test(
-            lin1, lin2, intersections)
-        self.assertIsNone(return_value)
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(lin1, lin2, intersections)
+
         self.assertEqual(intersections, [])
+        exc_args = exc_info.exception.args
+        self.assertEqual(
+            exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
 
     def test_parallel_non_degree_not_disjoint(self):
         nodes1 = np.asfortranarray([
