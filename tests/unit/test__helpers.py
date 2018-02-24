@@ -660,6 +660,64 @@ class Test__polygon_collide(unittest.TestCase):
         self.assertFalse(self._call_function_under_test(polygon1, polygon2))
 
 
+class Test_solve2x2(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(lhs, rhs):
+        from bezier import _helpers
+
+        return _helpers.solve2x2(lhs, rhs)
+
+    def test_solve_without_row_swap(self):
+        lhs = np.asfortranarray([
+            [2.0, 3.0],
+            [1.0, 2.0],
+        ])
+        rhs = np.asfortranarray([31.0, 19.0])
+        singular, x_val, y_val = self._call_function_under_test(lhs, rhs)
+        self.assertFalse(singular)
+        self.assertEqual(x_val, 5.0)
+        self.assertEqual(y_val, 7.0)
+
+    def test_solve_with_row_swap(self):
+        lhs = np.asfortranarray([
+            [1.0, 0.0],
+            [4.0, 1.0],
+        ])
+        rhs = np.asfortranarray([3.0, 13.0])
+        singular, x_val, y_val = self._call_function_under_test(lhs, rhs)
+        self.assertFalse(singular)
+        self.assertEqual(x_val, 3.0)
+        self.assertEqual(y_val, 1.0)
+
+    def test_zero_column(self):
+        lhs = np.zeros((2, 2), order='F')
+        singular, x_val, y_val = self._call_function_under_test(lhs, None)
+        self.assertTrue(singular)
+        self.assertIsNone(x_val)
+        self.assertIsNone(y_val)
+
+    def test_singular_without_row_swap(self):
+        lhs = np.asfortranarray([
+            [2.0, 4.0],
+            [1.0, 2.0],
+        ])
+        singular, x_val, y_val = self._call_function_under_test(lhs, None)
+        self.assertTrue(singular)
+        self.assertIsNone(x_val)
+        self.assertIsNone(y_val)
+
+    def test_singular_with_row_swap(self):
+        lhs = np.asfortranarray([
+            [3.0, 1.0],
+            [12.0, 4.0],
+        ])
+        singular, x_val, y_val = self._call_function_under_test(lhs, None)
+        self.assertTrue(singular)
+        self.assertIsNone(x_val)
+        self.assertIsNone(y_val)
+
+
 class TestUnsupportedDegree(unittest.TestCase):
 
     @staticmethod

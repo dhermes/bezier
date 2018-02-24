@@ -456,6 +456,72 @@ def _polygon_collide(polygon1, polygon2):
     return True
 
 
+def solve2x2(lhs, rhs):
+    """Solve a square 2 x 2 system via LU factorization.
+
+    This is meant to be a stand-in for LAPACK's ``dgesv``, which just wraps
+    two calls to ``dgetrf`` and ``dgetrs``. We wrap for two reasons:
+
+    * We seek to avoid exceptions as part of the control flow (which is
+      what :func`numpy.linalg.solve` does).
+    * We seek to avoid excessive type- and size-checking, since this
+      special case is already known.
+
+    Args:
+        lhs (numpy.ndarray) A ``2 x 2`` array of real numbers.
+        rhs (numpy.ndarray) A 1D array of 2 real numbers.
+
+    Returns:
+        Tuple[bool, float, float]: A triple of
+
+        * A flag indicating if ``lhs`` is a singular matrix.
+        * The first component of the solution.
+        * The second component of the solution.
+    """
+    # A <--> lhs[0, 0]
+    # B <--> lhs[0, 1]
+    # C <--> lhs[1, 0]
+    # D <--> lhs[1, 1]
+    # E <--> rhs[0]
+    # F <--> rhs[1]
+    if np.abs(lhs[1, 0]) > np.abs(lhs[0, 0]):
+        # NOTE: We know there is no division by zero here since ``C``
+        #       is **strictly** bigger than **some** value (in magnitude).
+        # [A | B][x] = [E]
+        # [C | D][y]   [F]
+        ratio = lhs[0, 0] / lhs[1, 0]
+        # r = A / C
+        # [A - rC | B - rD][x]   [E - rF]
+        # [C      | D     ][y] = [F     ]
+        # ==> 0x + (B - rD) y = E - rF
+        denominator = lhs[0, 1] - ratio * lhs[1, 1]
+        if denominator == 0.0:
+            return True, None, None
+
+        y_val = (rhs[0] - ratio * rhs[1]) / denominator
+        # Cx + Dy = F ==> x = (F - Dy) / C
+        x_val = (rhs[1] - lhs[1, 1] * y_val) / lhs[1, 0]
+        return False, x_val, y_val
+    else:
+        if lhs[0, 0] == 0.0:
+            return True, None, None
+        # [A | B][x] = [E]
+        # [C | D][y]   [F]
+        ratio = lhs[1, 0] / lhs[0, 0]
+        # r = C / A
+        # [A      | B     ][x] = [E     ]
+        # [C - rA | D - rB][y]   [F - rE]
+        # ==> 0x + (D - rB) y = F - rE
+        denominator = lhs[1, 1] - ratio * lhs[0, 1]
+        if denominator == 0.0:
+            return True, None, None
+
+        y_val = (rhs[1] - ratio * rhs[0]) / denominator
+        # Ax + By = E ==> x = (E - B y) / A
+        x_val = (rhs[0] - lhs[0, 1] * y_val) / lhs[0, 0]
+        return False, x_val, y_val
+
+
 class UnsupportedDegree(NotImplementedError):
     """Custom exception to indicate the given degree is unsupported.
 
