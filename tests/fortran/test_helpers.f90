@@ -15,14 +15,15 @@ module test_helpers
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use helpers, only: &
        WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
-       vector_close, in_interval, ulps_away, convex_hull, polygon_collide
+       vector_close, in_interval, ulps_away, convex_hull, polygon_collide, &
+       solve2x2
   use types, only: dp
   use unit_test_helpers, only: MACHINE_EPS, print_status
   implicit none
   private &
        test_cross_product, test_bbox, test_wiggle_interval, &
        test_contains_nd, test_vector_close, test_in_interval, test_ulps_away, &
-       test_convex_hull, test_polygon_collide
+       test_convex_hull, test_polygon_collide, test_solve2x2
   public helpers_all_tests
 
 contains
@@ -39,6 +40,7 @@ contains
     call test_ulps_away(success)
     call test_convex_hull(success)
     call test_polygon_collide(success)
+    call test_solve2x2(success)
 
   end subroutine helpers_all_tests
 
@@ -543,5 +545,61 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_polygon_collide
+
+  subroutine test_solve2x2(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    real(c_double) :: lhs(2, 2), rhs(2), x_val, y_val
+    logical(c_bool) :: singular
+    character(8) :: name
+
+    case_id = 1
+    name = "solve2x2"
+
+    ! CASE 1: Solve without a row-swap.
+    lhs(:, 1) = [2.0_dp, 1.0_dp]
+    lhs(:, 2) = [3.0_dp, 2.0_dp]
+    rhs = [31.0_dp, 19.0_dp]
+    call solve2x2(lhs, rhs, singular, x_val, y_val)
+    case_success = ( &
+         .NOT. singular .AND. &
+         x_val == 5.0_dp .AND. &
+         y_val == 7.0_dp)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Solve with a row-swap.
+    lhs(:, 1) = [1.0_dp, 4.0_dp]
+    lhs(:, 2) = [0.0_dp, 1.0_dp]
+    rhs = [3.0_dp, 13.0_dp]
+    call solve2x2(lhs, rhs, singular, x_val, y_val)
+    case_success = ( &
+         .NOT. singular .AND. &
+         x_val == 3.0_dp .AND. &
+         y_val == 1.0_dp)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Singular due to first column all zero.
+    lhs(:, 1) = 0
+    call solve2x2(lhs, rhs, singular, x_val, y_val)
+    case_success = singular
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Singular without a row-swap.
+    lhs(:, 1) = [2.0_dp, 1.0_dp]
+    lhs(:, 2) = [4.0_dp, 2.0_dp]
+    call solve2x2(lhs, rhs, singular, x_val, y_val)
+    case_success = singular
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Singular with a row-swap.
+    lhs(:, 1) = [3.0_dp, 12.0_dp]
+    lhs(:, 2) = [1.0_dp, 4.0_dp]
+    call solve2x2(lhs, rhs, singular, x_val, y_val)
+    case_success = singular
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_solve2x2
 
 end module test_helpers

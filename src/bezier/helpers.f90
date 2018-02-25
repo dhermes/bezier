@@ -19,7 +19,7 @@ module helpers
   public &
        WIGGLE, VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
        contains_nd, vector_close, in_interval, ulps_away, convex_hull, &
-       polygon_collide
+       polygon_collide, solve2x2
 
   real(c_double), parameter :: WIGGLE = 0.5_dp**45
   ! NOTE: This is intended to be used as the default value for ``eps``
@@ -449,5 +449,67 @@ contains
     end do
 
   end subroutine polygon_collide
+
+  subroutine solve2x2(lhs, rhs, singular, x_val, y_val)
+
+    real(c_double), intent(in) :: lhs(2, 2)
+    real(c_double), intent(in) :: rhs(2)
+    logical(c_bool), intent(out) :: singular
+    real(c_double), intent(out) :: x_val
+    real(c_double), intent(out) :: y_val
+    ! Variables outside of signature.
+    real(c_double) :: ratio, denominator
+
+    ! A <--> lhs(1, 1)
+    ! B <--> lhs(1, 2)
+    ! C <--> lhs(2, 1)
+    ! D <--> lhs(2, 2)
+    ! E <--> rhs(1)
+    ! F <--> rhs(2)
+    if (abs(lhs(2, 1)) > abs(lhs(1, 1))) then
+       ! NOTE: We know there is no division by zero here since ``C``
+       !       is **strictly** bigger than **some** value (in magnitude).
+       ! [A | B][x] = [E]
+       ! [C | D][y]   [F]
+       ratio = lhs(1, 1) / lhs(2, 1)
+       ! r = A / C
+       ! [A - rC | B - rD][x]   [E - rF]
+       ! [C      | D     ][y] = [F     ]
+       ! ==> 0x + (B - rD) y = E - rF
+       denominator = lhs(1, 2) - ratio * lhs(2, 2)
+       if (denominator == 0.0_dp) then
+          singular = .TRUE.
+          return
+       end if
+
+       y_val = (rhs(1) - ratio * rhs(2)) / denominator
+       ! Cx + Dy = F ==> x = (F - Dy) / C
+       x_val = (rhs(2) - lhs(2, 2) * y_val) / lhs(2, 1)
+       singular = .FALSE.
+    else
+       if (lhs(1, 1) == 0.0_dp) then
+          singular = .TRUE.
+          return
+       end if
+       ! [A | B][x] = [E]
+       ! [C | D][y]   [F]
+       ratio = lhs(2, 1) / lhs(1, 1)
+       ! r = C / A
+       ! [A      | B     ][x] = [E     ]
+       ! [C - rA | D - rB][y]   [F - rE]
+       ! ==> 0x + (D - rB) y = F - rE
+       denominator = lhs(2, 2) - ratio * lhs(1, 2)
+       if (denominator == 0.0_dp) then
+          singular = .TRUE.
+          return
+       end if
+
+       y_val = (rhs(2) - ratio * rhs(1)) / denominator
+       ! Ax + By = E ==> x = (E - B y) / A
+       x_val = (rhs(1) - lhs(1, 2) * y_val) / lhs(1, 1)
+       singular = .FALSE.
+    end if
+
+  end subroutine solve2x2
 
 end module helpers
