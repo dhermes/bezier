@@ -15,7 +15,7 @@ module test_curve_intersection
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
-       Status_INSUFFICIENT_SPACE
+       Status_INSUFFICIENT_SPACE, Status_SINGULAR
   use curve, only: &
        CurveData, evaluate_multi, specialize_curve, subdivide_nodes, &
        curves_equal, subdivide_curve
@@ -26,7 +26,8 @@ module test_curve_intersection
        Subdivide_BOTH, Subdivide_NEITHER, &
        linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_lines_parameters, &
-       from_linearized, bbox_line_intersect, check_lines, add_intersection, &
+       line_line_collide, convex_hull_collide, from_linearized, &
+       bbox_line_intersect, check_lines, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
        add_coincident_parameters, all_intersections, all_intersections_abi, &
@@ -38,7 +39,8 @@ module test_curve_intersection
   private &
        test_linearization_error, test_segment_intersection, &
        test_newton_refine_intersect, test_bbox_intersect, &
-       test_parallel_lines_parameters, test_from_linearized, &
+       test_parallel_lines_parameters, test_line_line_collide, &
+       test_convex_hull_collide, test_from_linearized, &
        test_bbox_line_intersect, test_check_lines, test_add_intersection, &
        test_add_from_linearized, test_endpoint_check, &
        test_tangent_bbox_intersection, test_add_candidates, &
@@ -58,6 +60,8 @@ contains
     call test_newton_refine_intersect(success)
     call test_bbox_intersect(success)
     call test_parallel_lines_parameters(success)
+    call test_line_line_collide(success)
+    call test_convex_hull_collide(success)
     call test_from_linearized(success)
     call test_bbox_line_intersect(success)
     call test_check_lines(success)
@@ -284,6 +288,7 @@ contains
     real(c_double) :: known_s, known_t
     real(c_double) :: wrong_s, wrong_t
     real(c_double) :: new_s, new_t
+    integer(c_int) :: status
     integer :: i
     integer :: case_id
     character(23) :: name
@@ -307,9 +312,11 @@ contains
     wrong_s = known_s - 0.125_dp
     wrong_t = known_t + 0.125_dp
     call newton_refine_intersect( &
-         wrong_s, 2, nodes1, wrong_t, 2, nodes2, new_s, new_t)
+         wrong_s, 2, nodes1, wrong_t, 2, nodes2, new_s, new_t, status)
     case_success = ( &
-         new_s == known_s .AND. new_t == known_t .AND. &
+         status == Status_SUCCESS .AND. &
+         new_s == known_s .AND. &
+         new_t == known_t .AND. &
          curves_intersect(nodes1, known_s, nodes2, known_t))
     call print_status(name, case_id, case_success, success)
 
@@ -328,8 +335,9 @@ contains
     wrong_s = 0.25_dp
     wrong_t = 0.25_dp
     call newton_refine_intersect( &
-         wrong_s, 3, nodes3, wrong_t, 2, nodes1, new_s, new_t)
+         wrong_s, 3, nodes3, wrong_t, 2, nodes1, new_s, new_t, status)
     case_success = ( &
+         status == Status_SUCCESS .AND. &
          new_s == 0.4375_dp .AND. &
          abs(known_s - new_s) < abs(known_s - wrong_s) .AND. &
          new_t == 0.5625_dp .AND. &
@@ -347,9 +355,11 @@ contains
     nodes4(:, 3) = [0.0_dp, 0.75_dp]
     known_t = 0.75_dp
     call newton_refine_intersect( &
-         known_s, 3, nodes3, known_t, 3, nodes4, new_s, new_t)
+         known_s, 3, nodes3, known_t, 3, nodes4, new_s, new_t, status)
     case_success = ( &
-         new_s == known_s .AND. new_t == known_t .AND. &
+         status == Status_SUCCESS .AND. &
+         new_s == known_s .AND. &
+         new_t == known_t .AND. &
          curves_intersect(nodes3, known_s, nodes4, known_t))
     call print_status(name, case_id, case_success, success)
 
@@ -369,8 +379,9 @@ contains
     wrong_s = known_s + 0.0625_dp
     wrong_t = known_t + 0.0625_dp
     call newton_refine_intersect( &
-         wrong_s, 3, nodes3, wrong_t, 3, nodes4, new_s, new_t)
+         wrong_s, 3, nodes3, wrong_t, 3, nodes4, new_s, new_t, status)
     case_success = ( &
+         status == Status_SUCCESS .AND. &
          new_s == 0.2421875_dp .AND. &
          abs(known_s - new_s) < abs(known_s - wrong_s) .AND. &
          new_t == 0.7578125_dp .AND. &
@@ -394,17 +405,19 @@ contains
     case_success = .TRUE.
     do i = 1, 3
        call newton_refine_intersect( &
-            wrong_s, 5, nodes5, wrong_t, 2, nodes1, new_s, new_t)
+            wrong_s, 5, nodes5, wrong_t, 2, nodes1, new_s, new_t, status)
        wrong_s = new_s
        wrong_t = new_t
        if (i == 1) then
           case_success = ( &
                case_success .AND. &
+               status == Status_SUCCESS .AND. &
                new_s == known_s .AND. &
                new_t == 2.0_dp)
        else
           case_success = ( &
                case_success .AND. &
+               status == Status_SUCCESS .AND. &
                new_s == known_s .AND. &
                new_t == known_t)
        end if
@@ -413,6 +426,24 @@ contains
     case_success = ( &
          case_success .AND. &
          curves_intersect(nodes5, known_s, nodes1, known_t))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Singular Jacobian.
+    nodes3(:, 1) = [0.5_dp, 0.0_dp]
+    nodes3(:, 2) = 1
+    nodes3(:, 3) = [1.5_dp, 0.0_dp]
+    known_s = 0.5_dp
+    nodes1(:, 1) = [0.0_dp, 0.5_dp]
+    nodes1(:, 2) = [1.0_dp, 0.5_dp]
+    known_t = 0.5_dp
+    ! NOTE: By construction, the Jacobian matrix
+    !           [1, -1], [2(1 - 2s), 0]
+    !       will evaluate at ``1/2, 1/2`` to
+    !           [1, -1], [0, 0]
+    !       which has determinant 0.0 exactly.
+    call newton_refine_intersect( &
+         known_s, 3, nodes3, known_t, 2, nodes1, new_s, new_t, status)
+    case_success = (status == Status_SINGULAR)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_newton_refine_intersect
@@ -643,13 +674,114 @@ contains
 
   end subroutine test_parallel_lines_parameters
 
+  subroutine test_line_line_collide(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    real(c_double) :: line1(2, 2), line2(2, 2)
+    logical(c_bool) :: collision
+    integer :: case_id
+    character(17) :: name
+
+    case_id = 1
+    name = "line_line_collide"
+
+    ! Will hold throughout.
+    line1(:, 1) = 0
+    line1(:, 2) = 1
+
+    ! CASE 1: Lines in general position (i.e. not parallel) that collide.
+    line2(:, 1) = [0.0_dp, 1.0_dp]
+    line2(:, 2) = [1.0_dp, 0.0_dp]
+    call line_line_collide(line1, line2, collision)
+    case_success = (collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Lines in general position (i.e. not parallel) that don't collide.
+    line2(:, 1) = [3.0_dp, 4.0_dp]
+    line2(:, 2) = [3.0_dp, 5.0_dp]
+    call line_line_collide(line1, line2, collision)
+    case_success = (.NOT. collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Segments that lie on parallel (but distinct) lines.
+    line2(:, 1) = [0.0_dp, 1.0_dp]
+    line2(:, 2) = [1.0_dp, 2.0_dp]
+    call line_line_collide(line1, line2, collision)
+    case_success = (.NOT. collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Segments that lie on the same line, but are disjoint.
+    line2(:, 1) = 2
+    line2(:, 2) = 3
+    call line_line_collide(line1, line2, collision)
+    case_success = (.NOT. collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Segments that lie on the same line and overlap.
+    line2(:, 1) = 0.5_dp
+    line2(:, 2) = 1.5_dp
+    call line_line_collide(line1, line2, collision)
+    case_success = (collision)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_line_line_collide
+
+  subroutine test_convex_hull_collide(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    real(c_double) :: nodes1(2, 2), nodes2(2, 3)
+    real(c_double), allocatable :: polygon1(:, :), polygon2(:, :)
+    logical(c_bool) :: collision
+    integer :: case_id
+    character(19) :: name
+
+    case_id = 1
+    name = "convex_hull_collide"
+
+    ! CASE 1: Convex hulls are both lines (Also, both ``polygon1`` and
+    !         ``polygon2`` need to be allocated.)
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = 1
+    nodes2(:, 3) = 2
+    nodes1(:, 1) = [0.0_dp, 1.0_dp]
+    nodes1(:, 2) = [0.0_dp, 2.0_dp]
+    call convex_hull_collide( &
+         3, nodes2, polygon1, 2, nodes1, polygon2, collision)
+    case_success = (.NOT. collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: At least one of the convex hulls is not a line (Also,
+    !         ``polygon1`` does not need to be resized but ``polygon2``
+    !         does.)
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = 1
+    nodes2(:, 1) = [0.0_dp, 0.5_dp]
+    nodes2(:, 2) = 1
+    nodes2(:, 3) = [2.0_dp, 0.5_dp]
+    call convex_hull_collide( &
+         2, nodes1, polygon1, 3, nodes2, polygon2, collision)
+    case_success = (collision)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Same as CASE 2 with inputs swapped (Also, ``polygon2`` does not
+    !         need to be resized but ``polygon1`` does.)
+    deallocate(polygon1)
+    allocate(polygon1(2, 2))
+    call convex_hull_collide( &
+         3, nodes2, polygon1, 2, nodes1, polygon2, collision)
+    case_success = (collision)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_convex_hull_collide
+
   subroutine test_from_linearized(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    type(CurveData) :: curve1, curve2, curve3
-    real(c_double) :: cubic(2, 4)
-    real(c_double) :: error1, error2
+    type(CurveData) :: curve1, curve2, curve3, curve4
+    real(c_double) :: root_nodes1(2, 3), root_nodes2(2, 3)
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
     integer(c_int) :: status
@@ -665,179 +797,132 @@ contains
     curve2%start = 0.0_dp
     curve2%end_ = 1.0_dp
 
-    ! CASE 1: Basic test of not-very-linearized quadratics.
+    ! CASE 1: Basic test of not-very-linearized quadratics that do intersect.
     allocate(curve1%nodes(2, 3))
     curve1%nodes(:, 1) = 0
     curve1%nodes(:, 2) = [0.5_dp, 1.0_dp]
     curve1%nodes(:, 3) = 1
-    ! NOTE: This curve isn't close to linear, but that's OK.
-    call linearization_error( &
-         3, 2, curve1%nodes, error1)
 
     allocate(curve2%nodes(2, 3))
     curve2%nodes(:, 1) = [0.0_dp, 1.0_dp]
     curve2%nodes(:, 2) = [0.5_dp, 1.0_dp]
     curve2%nodes(:, 3) = [1.0_dp, 0.0_dp]
-    ! NOTE: This curve isn't close to linear, but that's OK.
-    call linearization_error( &
-         3, 2, curve2%nodes, error2)
 
     call from_linearized( &
-         error1, curve1, 3, curve1%nodes, &
-         error2, curve2, 3, curve2%nodes, &
+         curve1, 3, curve1%nodes, &
+         curve2, 3, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         does_intersect .AND. status == Status_SUCCESS .AND. &
-         refined_s == 0.5_dp .AND. refined_t == 0.5_dp)
+         status == Status_SUCCESS .AND. &
+         does_intersect .AND. &
+         refined_s == 0.5_dp .AND. &
+         refined_t == 0.5_dp)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Bounding boxes intersect but the quadratics do not.
+    ! CASE 2: Curves have overlapping bounding boxes, but do not intersect. The
+    !         linearized intersection has ``s = 0.5, t == 1.25``, i.e. it is
+    !         outside the unit interval. In this case, we fall back to the
+    !         convex hulls (which are disjoint).
     curve1%nodes(:, 1) = 0
     curve1%nodes(:, 2) = [0.5_dp, 0.0_dp]
     curve1%nodes(:, 3) = 1
-    error1 = 0.25_dp
 
     deallocate(curve2%nodes)
     allocate(curve2%nodes(2, 3))
     curve2%nodes(:, 1) = [1.75_dp, -0.75_dp]
     curve2%nodes(:, 2) = [1.25_dp, -0.75_dp]
     curve2%nodes(:, 3) = [0.75_dp, 0.25_dp]
-    error2 = 0.25_dp
 
     call from_linearized( &
-         error1, curve1, 3, curve1%nodes, &
-         error2, curve2, 3, curve2%nodes, &
+         curve1, 3, curve1%nodes, &
+         curve2, 3, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. status == Status_SUCCESS)
+         status == Status_SUCCESS .AND. &
+         .NOT. does_intersect)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Same as CASE 2, but swap the inputs.
-    call from_linearized( &
-         error2, curve2, 3, curve2%nodes, &
-         error1, curve1, 3, curve1%nodes, &
-         refined_s, refined_t, does_intersect, status)
-    case_success = ( &
-         .NOT. does_intersect .AND. status == Status_SUCCESS)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 4: Linearized parts are same line but disjoint segments.
+    ! CASE 3: Linearized segments are parallel, so we fall back to the convex
+    !         hulls (which are disjoint).
     deallocate(curve1%nodes)
     allocate(curve1%nodes(2, 2))
     curve1%nodes(:, 1) = 0
     curve1%nodes(:, 2) = 1
-    error1 = 0.0_dp
 
+    ! NOTE: This is a "bad" parameterization of ``y == x``.
     curve2%nodes(:, 1) = 2
     curve2%nodes(:, 2) = 2.5009765625_dp
     curve2%nodes(:, 3) = 3
-    call linearization_error( &
-         3, 2, curve2%nodes, error2)
 
     call from_linearized( &
-         error1, curve1, 2, curve1%nodes, &
-         error2, curve2, 3, curve2%nodes, &
+         curve1, 2, curve1%nodes, &
+         curve2, 3, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
-    case_success = (status == Status_PARALLEL)
+    case_success = ( &
+         status == Status_SUCCESS .AND. &
+         .NOT. does_intersect)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: Linearized parts parallel / diff. lines / bbox-es overlap.
+    ! CASE 4: Similar to CASE 2, this is just the linearized segments as lines.
     curve1%nodes(:, 1) = 0
     curve1%nodes(:, 2) = 1
-    error1 = 0.0_dp
-
-    curve2%nodes(:, 1) = [0.5_dp, 0.75_dp]
-    curve2%nodes(:, 2) = [1.0009765625_dp, 1.2509765625_dp]
-    curve2%nodes(:, 3) = [1.5_dp, 1.75_dp]
-    call linearization_error( &
-         3, 2, curve2%nodes, error2)
-
-    call from_linearized( &
-         error1, curve1, 2, curve1%nodes, &
-         error2, curve2, 3, curve2%nodes, &
-         refined_s, refined_t, does_intersect, status)
-    case_success = (status == Status_PARALLEL)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 6: Bounding boxes intersect but the lines do not.
-    curve1%nodes(:, 1) = 0
-    curve1%nodes(:, 2) = 1
-    error1 = 0.0_dp
 
     deallocate(curve2%nodes)
     allocate(curve2%nodes(2, 2))
     curve2%nodes(:, 1) = [1.75_dp, -0.75_dp]
     curve2%nodes(:, 2) = [0.75_dp, 0.25_dp]
-    error2 = 0.0_dp
 
     call from_linearized( &
-         error1, curve1, 2, curve1%nodes, &
-         error2, curve2, 2, curve2%nodes, &
+         curve1, 2, curve1%nodes, &
+         curve2, 2, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. status == Status_SUCCESS)
+         status == Status_SUCCESS .AND. &
+         .NOT. does_intersect)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 7: Same as CASE 6, but swap the inputs.
-    call from_linearized( &
-         error2, curve2, 2, curve2%nodes, &
-         error1, curve1, 2, curve1%nodes, &
-         refined_s, refined_t, does_intersect, status)
-    case_success = ( &
-         .NOT. does_intersect .AND. status == Status_SUCCESS)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 8: Parallel lines (should have been handled already by
+    ! CASE 5: Parallel lines (should have been handled already by
     !         ``check_lines``).
     curve1%nodes(:, 1) = 0
     curve1%nodes(:, 2) = 1
-    error1 = 0.0_dp
 
     curve2%nodes(:, 1) = [0.0_dp, 1.0_dp]
     curve2%nodes(:, 2) = [1.0_dp, 2.0_dp]
-    error2 = 0.0_dp
 
     call from_linearized( &
-         error1, curve1, 2, curve1%nodes, &
-         error2, curve2, 2, curve2%nodes, &
+         curve1, 2, curve1%nodes, &
+         curve2, 2, curve2%nodes, &
          refined_s, refined_t, does_intersect, status)
     case_success = ( &
-         .NOT. does_intersect .AND. status == Status_PARALLEL)
+         status == Status_SUCCESS .AND. &
+         .NOT. does_intersect)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 9: A "wiggle" failure caused by almost touching segments
-    !         that produce local parameters within the [-2^{-16}, 1 + 2^{-16}]
-    !         interval but produce a "global" parameter outside of the more
-    !         narrow [-2^{-45}, 1 + 2^{-45}] (where ``WIGGLE == 2^{-45}`` in
-    !         ``helpers.f90``).
-    deallocate(curve1%nodes)
-    allocate(curve1%nodes(2, 4))
-    curve1%nodes(:, 1) = [-0.7993236103108717_dp, -0.21683567278362156_dp]
-    curve1%nodes(:, 2) = [-0.8072986524226636_dp, -0.21898490744674426_dp]
-    curve1%nodes(:, 3) = [-0.8152736945344552_dp, -0.2211341421098668_dp]
-    curve1%nodes(:, 4) = [-0.8232487366462472_dp, -0.2232833767729893_dp]
-    call linearization_error( &
-         4, 2, curve1%nodes, error1)
-
-    curve3%start = 0.99609375_dp
-    curve3%end_ = 1.0_dp
-    allocate(curve3%nodes(2, 4))
-    cubic(:, 1) = [-0.7838204403623438_dp, -0.25519640597397464_dp]
-    cubic(:, 2) = [-0.7894577677825452_dp, -0.24259531488131633_dp]
-    cubic(:, 3) = [-0.7946421067207265_dp, -0.22976394420044136_dp]
-    cubic(:, 4) = [-0.799367666650849_dp, -0.21671303774854855_dp]
+    ! CASE 6: Curves have parallel linearized segments caused by a tangent
+    !         intersection.
+    curve3%start = 5461.0_dp / 8192
+    curve3%end_ = 5462.0_dp / 8192
+    allocate(curve3%nodes(2, 3))
+    root_nodes1(:, 1) = 0
+    root_nodes1(:, 2) = [0.375_dp, 0.75_dp]
+    root_nodes1(:, 3) = [0.75_dp, 0.375_dp]
     call specialize_curve( &
-         4, 2, cubic, curve3%start, curve3%end_, curve3%nodes)
-    call linearization_error( &
-         4, 2, curve3%nodes, error2)
+         3, 2, root_nodes1, curve3%start, curve3%end_, curve3%nodes)
+
+    curve4%start = 2730.0_dp / 8192
+    curve4%end_ = 2731.0_dp / 8192
+    allocate(curve4%nodes(2, 3))
+    root_nodes2(:, 1) = [0.25_dp, 0.625_dp]
+    root_nodes2(:, 2) = [0.625_dp, 0.25_dp]
+    root_nodes2(:, 3) = 1
+    call specialize_curve( &
+         3, 2, root_nodes2, curve4%start, curve4%end_, curve4%nodes)
 
     call from_linearized( &
-         error1, curve1, 4, curve1%nodes, &
-         error2, curve3, 4, cubic, &
+         curve3, 3, root_nodes1, &
+         curve4, 3, root_nodes2, &
          refined_s, refined_t, does_intersect, status)
-    case_success = ( &
-         .NOT. does_intersect .AND. &
-         status == Status_SUCCESS)
+    case_success = (status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_from_linearized
@@ -1209,7 +1294,6 @@ contains
     type(CurveData) :: first, second
     integer(c_int) :: num_intersections
     real(c_double), allocatable :: intersections(:, :)
-    real(c_double) :: linearization_error1, linearization_error2
     integer :: case_id
     character(19) :: name
 
@@ -1231,8 +1315,7 @@ contains
     second%nodes = nodes1
 
     call add_from_linearized( &
-         first, first%nodes, 0.0_dp, &
-         second, second%nodes, 0.0_dp, &
+         first, first%nodes, second, second%nodes, &
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
@@ -1258,8 +1341,7 @@ contains
     second%nodes = nodes1
 
     call add_from_linearized( &
-         first, first%nodes, 0.0_dp, &
-         second, second%nodes, 0.0_dp, &
+         first, first%nodes, second, second%nodes, &
          num_intersections, intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &
@@ -1293,13 +1375,8 @@ contains
     nodes2(:, 3) = [134234112.0_dp, 201310207.0_dp]
     second%nodes = 0.5_dp**28 * nodes2
 
-    call linearization_error( &
-         3, 2, first%nodes, linearization_error1)
-    call linearization_error( &
-         3, 2, second%nodes, linearization_error2)
     call add_from_linearized( &
-         first, root_nodes1, linearization_error1, &
-         second, root_nodes2, linearization_error2, &
+         first, root_nodes1, second, root_nodes2, &
          num_intersections, intersections, status)
     case_success = ( &
          allocated(intersections) .AND. &
@@ -1325,8 +1402,7 @@ contains
     second%nodes = nodes1
 
     call add_from_linearized( &
-         first, first%nodes, 0.0_dp, &
-         second, second%nodes, 0.0_dp, &
+         first, first%nodes, second, second%nodes, &
          num_intersections, intersections, status)
     case_success = ( &
          num_intersections == 0 .AND. &

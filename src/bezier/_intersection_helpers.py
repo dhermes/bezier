@@ -32,6 +32,7 @@ import enum
 import numpy as np
 
 from bezier import _curve_helpers
+from bezier import _helpers
 try:
     from bezier import _speedup
 except ImportError:  # pragma: NO COVER
@@ -376,6 +377,9 @@ def _newton_refine(s, nodes1, t, nodes2):
     Returns:
         Tuple[float, float]: The refined parameters from a single Newton
         step.
+
+    Raises:
+        ValueError: If the Jacobian is singular at ``(s, t)``.
     """
     # NOTE: We form -F(s, t) since we want to solve -DF^{-1} F(s, t).
     func_val = (
@@ -391,10 +395,11 @@ def _newton_refine(s, nodes1, t, nodes2):
     jac_mat[:, 1] = - _curve_helpers.evaluate_hodograph(t, nodes2)[:, 0]
 
     # Solve the system.
-    result = np.linalg.solve(jac_mat, func_val)
-    # Convert to row-vector and unpack (also makes assertion on shape).
-    (delta_s, delta_t), = result.T
-    return s + delta_s, t + delta_t
+    singular, delta_s, delta_t = _helpers.solve2x2(jac_mat, func_val[:, 0])
+    if singular:
+        raise ValueError('Jacobian is singular.')
+    else:
+        return s + delta_s, t + delta_t
 
 
 class IntersectionClassification(enum.Enum):

@@ -18,12 +18,13 @@ module status
   public &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
        Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_BAD_INTERIOR, &
-       Status_EDGE_END, Status_UNKNOWN
+       Status_EDGE_END, Status_SINGULAR, Status_UNKNOWN
 
   ! Values of Status enum:
   ! SUCCESS: Procedure exited with no error.
   integer(c_int), parameter :: Status_SUCCESS = 0
-  ! PARALLEL: Corresponds to ``NotImplementedError('Line segments parallel.')``
+  ! PARALLEL: Corresponds to a curve-curve intersection failure where
+  !           linearized segments are parallel.
   integer(c_int), parameter :: Status_PARALLEL = 1
   ! NO_CONVERGE: An iterative algorithm has failed to converge. Used by
   !              ``curve_intersection.all_intersections()``.
@@ -46,6 +47,9 @@ module status
   !           an edge (only intersections at the beginning of an edge should
   !           be used).
   integer(c_int), parameter :: Status_EDGE_END = 6
+  ! SINGULAR: Signifies that an attempt was made to solve a linear system
+  !           that was singular.
+  integer(c_int), parameter :: Status_SINGULAR = 7
   ! UNKNOWN: Signifies a block of code reached an "impossible" state. Either
   !          the code has violated some mathematical invariant or the author
   !          misunderstood the possible states of the system.

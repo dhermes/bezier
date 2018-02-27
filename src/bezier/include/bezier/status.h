@@ -25,6 +25,7 @@ typedef enum Status {
   SAME_CURVATURE = 4,
   BAD_INTERIOR = 5,
   EDGE_END = 6,
+  SINGULAR = 7,
   UNKNOWN = 999,
 } Status;
 

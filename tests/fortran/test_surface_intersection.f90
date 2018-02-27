@@ -949,7 +949,7 @@ contains
          status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Tangent intersection (causes ``add_st_vals()`` to error).
+    ! CASE 3: Tangent intersection (has same curvature).
     num_intersections = 0
     quadratic1(:, 1) = [0.0_dp, 2.0_dp]
     quadratic1(:, 2) = [-4.0_dp, -2.0_dp]
@@ -968,10 +968,10 @@ contains
          intersections, num_intersections, all_types, status)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 26 .AND. &
-         num_intersections == 26 .AND. &
+         size(intersections) == 6 .AND. &
+         num_intersections == 0 .AND. &
          all_types == 0 .AND. &
-         status == Status_SAME_CURVATURE)
+         status == Status_PARALLEL)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Coincident intersection with shared interior, which sets
@@ -994,7 +994,7 @@ contains
          intersections, num_intersections, all_types, status)
     case_success = ( &
          allocated(intersections) .AND. &
-         size(intersections) == 26 .AND. &
+         size(intersections) == 6 .AND. &
          num_intersections == 3 .AND. &
          intersection_check( &
          intersections(1), 0.25_dp, 0.0_dp, 1, 1, coincident) .AND. &
@@ -1622,7 +1622,6 @@ contains
     real(c_double) :: cubic1(2, 10), cubic2(2, 10)
     integer(c_int), allocatable :: segment_ends(:)
     type(CurvedPolygonSegment), allocatable :: segments(:)
-    integer(c_int) :: similar_ulps
     real(c_double) :: start, end_
 
     case_id = 1
@@ -1867,23 +1866,7 @@ contains
          10, cubic1, 3, 10, cubic2, 3, &
          segment_ends, segments, &
          num_intersected, contained, status)
-    case_success = ( &
-         num_intersected == 1 .AND. &
-         allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
-         allocated(segments) .AND. &  ! Though unused, not de-allocated.
-         contained == SurfaceContained_NEITHER .AND. &
-         status == Status_BAD_INTERIOR)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 12: Same as CASE 11, but with ``SIMILAR_ULPS`` increased so that
-    !          the intersection succeeds.
-    call get_similar_ulps(similar_ulps)
-    call set_similar_ulps(418)
-    call surfaces_intersect( &
-         10, cubic1, 3, 10, cubic2, 3, &
-         segment_ends, segments, &
-         num_intersected, contained, status)
-    start = 0.60937510406326101_dp
+    start = 0.60937510406326156_dp
     end_ = 0.64417397312262581_dp
     case_success = ( &
          num_intersected == 1 .AND. &
@@ -1892,14 +1875,12 @@ contains
          allocated(segments) .AND. &
          segment_check(segments(1), start, end_, 4) .AND. &
          segment_check(segments(2), 0.97192953004411253_dp, 1.0_dp, 2) .AND. &
-         segment_check(segments(3), 0.0_dp, 0.029255079571203865_dp, 3) .AND. &
+         segment_check(segments(3), 0.0_dp, 0.029255079571202415_dp, 3) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
-    ! Restore the original value.
-    call set_similar_ulps(similar_ulps)
 
-    ! CASE 13: Two surfaces share an edge but no interior, will result in
+    ! CASE 12: Two surfaces share an edge but no interior, will result in
     !          ``COINCIDENT_UNUSED``. This is 29Q-42Q (ID: 43).
     quadratic1(:, 1) = -0.5_dp
     quadratic1(:, 2) = [0.3125_dp, -0.25_dp]
@@ -1923,7 +1904,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 14: Same as CASE 13, with arguments swapped.
+    ! CASE 13: Same as CASE 12, with arguments swapped.
     call surfaces_intersect( &
          6, quadratic2, 2, 6, quadratic1, 2, &
          segment_ends, segments, &
@@ -1934,7 +1915,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 15: Surfaces are disjoint, but bounding boxes are not.
+    ! CASE 14: Surfaces are disjoint, but bounding boxes are not.
     linear1(:, 1) = 0
     linear1(:, 2) = [8.0_dp, 0.0_dp]
     linear1(:, 3) = [0.0_dp, 8.0_dp]

@@ -358,6 +358,7 @@ def newton_refine_curve_intersect(
         double s, double[::1, :] nodes1, double t, double[::1, :] nodes2):
     cdef int num_nodes1, num_nodes2
     cdef double new_s, new_t
+    cdef bezier._status.Status status
 
     # NOTE: We don't check that there are 2 rows.
     _, num_nodes1 = np.shape(nodes1)
@@ -373,7 +374,11 @@ def newton_refine_curve_intersect(
         &nodes2[0, 0],
         &new_s,
         &new_t,
+        &status,
     )
+
+    if status == bezier._status.Status.SINGULAR:
+        raise ValueError('Jacobian is singular.')
 
     return new_s, new_t
 
@@ -460,7 +465,7 @@ def curve_intersections(
                 num_intersections, intersections_size)
             raise ValueError(msg)
     elif status == bezier._status.Status.PARALLEL:
-        raise NotImplementedError('Line segments parallel.')
+        raise NotImplementedError('Parameters need help.')
     else:
         # NOTE: If ``status`` isn't one of the enum values, then it is the
         #       number of candidate intersections.
@@ -1086,7 +1091,7 @@ def surface_intersections(
             'Curve intersection failed to converge to approximately linear '
             'subdivisions after 20 iterations.')
     elif status == bezier._status.Status.PARALLEL:
-        raise NotImplementedError('Line segments parallel.')
+        raise NotImplementedError('Parameters need help.')
     elif status == bezier._status.Status.EDGE_END:
         # NOTE: This text is identical (or should be) to the exception
         #       in the Python ``classify_intersection()``.

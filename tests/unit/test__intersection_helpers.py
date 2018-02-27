@@ -179,6 +179,23 @@ class Test__newton_refine(utils.NumPyTestCase):
         self.assertEqual(curve1.evaluate(exact_s),
                          curve2.evaluate(exact_t))
 
+    def test_singular_jacobian(self):
+        nodes1 = np.asfortranarray([
+            [0.5, 1.0, 1.5],
+            [0.0, 1.0, 0.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.5, 0.5],
+        ])
+
+        with self.assertRaises(ValueError) as exc_info:
+            self._call_function_under_test(
+                0.5, nodes1, 0.5, nodes2)
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(exc_args, ('Jacobian is singular.',))
+
 
 @utils.needs_speedup
 class Test_speedup_newton_refine(Test__newton_refine):

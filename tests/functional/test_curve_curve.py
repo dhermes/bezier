@@ -143,18 +143,22 @@ ULPS_ALLOWED_OVERRIDE = {
     },
 }
 NON_SIMPLE_ERR = _algebraic_intersection._NON_SIMPLE_ERR
-SEGMENTS_PARALLEL = (_geometric_intersection._SEGMENTS_PARALLEL,)
+SEGMENTS_PARALLEL = ('Parameters need help.',)
 TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
 COINCIDENT_ERR = (_algebraic_intersection._COINCIDENT_ERR,)
 TANGENT_OVERRIDES = {
     GEOMETRIC: {
         4: {'success': True},
         11: {'parallel': True},
+        12: {'parallel': True},
+        13: {'parallel': True},
         14: {'success': True},
+        17: {'parallel': True},
         19: {'success': True},
         24: {'success': True},
+        31: {'parallel': True},
         41: {'success': True},
-        42: {'success': True},
+        42: {'parallel': True},
         43: {'parallel': True},
         44: {'parallel': True},
     },
@@ -170,9 +174,7 @@ COINCIDENT_OVERRIDES = {
     ALGEBRAIC: {},
 }
 INCORRECT_COUNT = {
-    GEOMETRIC: (
-        31,
-    ),
+    GEOMETRIC: (),
     ALGEBRAIC: (),
 }
 if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:
@@ -354,7 +356,10 @@ def test_intersect(strategy, intersection_info):
     elif intersection_type == CurveIntersectionType.coincident:
         check_coincident(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.standard:
-        check_intersect(intersection_info, strategy)
+        if id_ in TANGENT_OVERRIDES[strategy]:
+            check_tangent(intersection_info, strategy)
+        else:
+            check_intersect(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.no_intersection:
         check_no_intersect(intersection_info, strategy)
     else:

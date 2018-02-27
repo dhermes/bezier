@@ -30,7 +30,7 @@ from tests.functional import utils
 ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
 GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
 _, INTERSECTIONS = utils.surface_intersections_info()
-PARALLEL_FAILURE = (_geometric_intersection._SEGMENTS_PARALLEL,)
+PARALLEL_FAILURE = ('Parameters need help.',)
 SAME_CURVATURE = (_surface_helpers._SAME_CURVATURE,)
 TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
 WIGGLES = {

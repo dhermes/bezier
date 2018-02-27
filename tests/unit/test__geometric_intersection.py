@@ -423,6 +423,95 @@ class Test_parallel_lines_parameters(utils.NumPyTestCase):
         self.assertIsNone(params)
 
 
+class Test_line_line_collide(unittest.TestCase):
+
+    FIRST = np.asfortranarray([
+        [0.0, 1.0],
+        [0.0, 1.0],
+    ])
+
+    @staticmethod
+    def _call_function_under_test(line1, line2):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection.line_line_collide(line1, line2)
+
+    def test_general_position_collide(self):
+        # I.e. not parallel.
+        line2 = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 0.0],
+        ])
+        do_collide = self._call_function_under_test(self.FIRST, line2)
+        self.assertTrue(do_collide)
+
+    def test_general_position_miss(self):
+        # I.e. not parallel.
+        line2 = np.asfortranarray([
+            [3.0, 4.0],
+            [3.0, 5.0],
+        ])
+        do_collide = self._call_function_under_test(self.FIRST, line2)
+        self.assertFalse(do_collide)
+
+    def test_parallel(self):
+        line2 = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 2.0],
+        ])
+        do_collide = self._call_function_under_test(self.FIRST, line2)
+        self.assertFalse(do_collide)
+
+    def test_parallel_disjoint_same_line(self):
+        line2 = np.asfortranarray([
+            [2.0, 3.0],
+            [2.0, 3.0],
+        ])
+        do_collide = self._call_function_under_test(self.FIRST, line2)
+        self.assertFalse(do_collide)
+
+    def test_parallel_overlap(self):
+        line2 = np.asfortranarray([
+            [0.5, 1.5],
+            [0.5, 1.5],
+        ])
+        do_collide = self._call_function_under_test(self.FIRST, line2)
+        self.assertTrue(do_collide)
+
+
+class Test_convex_hull_collide(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes1, nodes2):
+        from bezier import _geometric_intersection
+
+        return _geometric_intersection.convex_hull_collide(nodes1, nodes2)
+
+    def test_line_line(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0, 2.0],
+            [0.0, 1.0, 2.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [0.0, 0.0],
+            [1.0, 2.0],
+        ])
+        do_collide = self._call_function_under_test(nodes1, nodes2)
+        self.assertFalse(do_collide)
+
+    def test_hull_hull(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0, 2.0],
+            [0.5, 1.0, 0.5],
+        ])
+        do_collide = self._call_function_under_test(nodes1, nodes2)
+        self.assertTrue(do_collide)
+
+
 class Test_from_linearized(utils.NumPyTestCase):
 
     @staticmethod
@@ -432,7 +521,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         return _geometric_intersection.from_linearized(
             first, second, intersections)
 
-    def test_success(self):
+    def test_does_intersect(self):
         nodes1 = np.asfortranarray([
             [0.0, 0.5, 1.0],
             [0.0, 1.0, 1.0],
@@ -454,7 +543,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             self._call_function_under_test(lin1, lin2, intersections))
         self.assertEqual(intersections, [(0.5, 0.5)])
 
-    def test_failure(self):
+    def test_lines_outside_unit_interval_disjoint_hulls(self):
         # The bounding boxes intersect but the lines do not.
         nodes1 = np.asfortranarray([
             [0.0, 1.0],
@@ -475,38 +564,7 @@ class Test_from_linearized(utils.NumPyTestCase):
             self._call_function_under_test(lin1, lin2, intersections))
         self.assertEqual(intersections, [])
 
-    def _no_intersect_help(self, swap=False):
-        # The bounding boxes intersect but the lines do not.
-        nodes1 = np.asfortranarray([
-            [0.0, 1.0],
-            [0.0, 1.0],
-        ])
-        curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, error=0.0)
-
-        nodes2 = np.asfortranarray([
-            [1.75, 0.75],
-            [-0.75, 0.25],
-        ])
-        curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, error=0.0)
-
-        if swap:
-            lin1, lin2 = lin2, lin1
-
-        intersections = []
-        return_value = self._call_function_under_test(
-            lin1, lin2, intersections)
-        self.assertIsNone(return_value)
-        self.assertEqual(intersections, [])
-
-    def test_no_intersection_bad_t(self):
-        self._no_intersect_help()
-
-    def test_no_intersection_bad_s(self):
-        self._no_intersect_help(swap=True)
-
-    def _no_intersect_help_non_line(self, swap=False):
+    def test_curved_outside_unit_interval_disjoint_hulls(self):
         # The bounding boxes intersect but the lines do not.
         nodes1 = np.asfortranarray([
             [0.0, 0.5, 1.0],
@@ -522,22 +580,13 @@ class Test_from_linearized(utils.NumPyTestCase):
         curve2 = subdivided_curve(nodes2)
         lin2 = make_linearization(curve2, error=0.25)
 
-        if swap:
-            lin1, lin2 = lin2, lin1
-
         intersections = []
         return_value = self._call_function_under_test(
             lin1, lin2, intersections)
         self.assertIsNone(return_value)
         self.assertEqual(intersections, [])
 
-    def test_no_intersection_bad_t_non_line(self):
-        self._no_intersect_help_non_line()
-
-    def test_no_intersection_bad_s_non_line(self):
-        self._no_intersect_help_non_line(swap=True)
-
-    def test_parallel_intersection(self):
+    def test_unhandled_parallel_lines(self):
         from bezier import _geometric_intersection
 
         nodes1 = np.asfortranarray([
@@ -562,9 +611,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         self.assertEqual(exc_info.exception.args, expected_args)
         self.assertEqual(intersections, [])
 
-    def test_parallel_non_degree_one_disjoint(self):
-        from bezier import _geometric_intersection
-
+    def test_curved_parallel_segments_disjoint_hulls(self):
         nodes1 = np.asfortranarray([
             [0.0, 1.0],
             [0.0, 1.0],
@@ -572,6 +619,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         curve1 = subdivided_curve(nodes1)
         lin1 = make_linearization(curve1, error=0.0)
 
+        # This is a "bad" parameterization of ``y == x``.
         nodes2 = np.asfortranarray([
             [2.0, 2.5009765625, 3.0],
             [2.0, 2.5009765625, 3.0],
@@ -580,64 +628,47 @@ class Test_from_linearized(utils.NumPyTestCase):
         lin2 = make_linearization(curve2, error=np.nan)
 
         intersections = []
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(lin1, lin2, intersections)
-
-        self.assertEqual(intersections, [])
-        exc_args = exc_info.exception.args
-        self.assertEqual(
-            exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
-
-    def test_parallel_non_degree_not_disjoint(self):
-        nodes1 = np.asfortranarray([
-            [0.0, 1.0],
-            [0.0, 1.0],
-        ])
-        curve1 = subdivided_curve(nodes1)
-        lin1 = make_linearization(curve1, error=0.0)
-
-        nodes2 = np.asfortranarray([
-            [0.5, 1.0009765625, 1.5],
-            [0.75, 1.2509765625, 1.75],
-        ])
-        curve2 = subdivided_curve(nodes2)
-        lin2 = make_linearization(curve2, error=np.nan)
-
-        intersections = []
-        with self.assertRaises(NotImplementedError):
-            self._call_function_under_test(lin1, lin2, intersections)
-
+        return_value = self._call_function_under_test(
+            lin1, lin2, intersections)
+        self.assertIsNone(return_value)
         self.assertEqual(intersections, [])
 
-    def test_wiggle_failure(self):
+    def test_curved_parallel_segments_tangent(self):
+        # pylint: disable=too-many-locals
         from bezier import _curve_helpers
         from bezier import _geometric_intersection
 
-        nodes1 = np.asfortranarray([
-            [-0.7993236103108717, -0.8072986524226636,
-             -0.8152736945344552, -0.8232487366462472],
-            [-0.21683567278362156, -0.21898490744674426,
-             -0.2211341421098668, -0.2232833767729893],
+        start1 = 5461.0 / 8192.0
+        end1 = 5462.0 / 8192.0
+        original_nodes1 = np.asfortranarray([
+            [0.0, 0.375, 0.75],
+            [0.0, 0.75, 0.375],
         ])
-        curve1 = subdivided_curve(nodes1)
+        nodes1 = _curve_helpers.specialize_curve(original_nodes1, start1, end1)
+        curve1 = _geometric_intersection.SubdividedCurve(
+            nodes1, original_nodes1, start=start1, end=end1)
         lin1 = make_linearization(curve1)
 
+        start2 = 2730.0 / 8192.0
+        end2 = 2731.0 / 8192.0
         original_nodes2 = np.asfortranarray([
-            [-0.7838204403623438, -0.7894577677825452,
-             -0.7946421067207265, -0.799367666650849],
-            [-0.25519640597397464, -0.24259531488131633,
-             -0.22976394420044136, -0.21671303774854855],
+            [0.25, 0.625, 1.0],
+            [0.625, 0.25, 1.0],
         ])
-        start = 0.99609375
-        nodes2 = _curve_helpers.specialize_curve(original_nodes2, start, 1.0)
+        nodes2 = _curve_helpers.specialize_curve(original_nodes2, start2, end2)
         curve2 = _geometric_intersection.SubdividedCurve(
-            nodes2, original_nodes2, start=start)
+            nodes2, original_nodes2, start=start2, end=end2)
         lin2 = make_linearization(curve2)
 
         intersections = []
-        self.assertIsNone(
-            self._call_function_under_test(lin1, lin2, intersections))
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(
+                lin1, lin2, intersections)
+
         self.assertEqual(intersections, [])
+        exc_args = exc_info.exception.args
+        self.assertEqual(exc_args, ('Parameters need help.',))
+        # pylint: enable=too-many-locals
 
 
 class Test_add_intersection(unittest.TestCase):
@@ -1644,8 +1675,6 @@ class Test__all_intersections(utils.NumPyTestCase):
         self.assertFalse(coincident)
 
     def test_parallel_failure(self):
-        from bezier import _geometric_intersection
-
         nodes1 = np.asfortranarray([
             [0.0, 0.375, 0.75],
             [0.0, 0.75, 0.375],
@@ -1658,8 +1687,7 @@ class Test__all_intersections(utils.NumPyTestCase):
             self._call_function_under_test(nodes1, nodes2)
 
         exc_args = exc_info.exception.args
-        self.assertEqual(
-            exc_args, (_geometric_intersection._SEGMENTS_PARALLEL,))
+        self.assertEqual(exc_args, ('Parameters need help.',))
 
     def test_pruned_candidates(self):
         nodes1 = np.asfortranarray([

@@ -17,10 +17,11 @@ module curve_intersection
   use types, only: dp
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
-       Status_INSUFFICIENT_SPACE
+       Status_INSUFFICIENT_SPACE, Status_SINGULAR
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
-       vector_close, in_interval, ulps_away, convex_hull, polygon_collide
+       vector_close, in_interval, ulps_away, convex_hull, polygon_collide, &
+       solve2x2
   use curve, only: &
        CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_multi, &
        specialize_curve, evaluate_hodograph, locate_point, elevate_nodes, &
@@ -28,15 +29,16 @@ module curve_intersection
   implicit none
   private &
        MAX_INTERSECT_SUBDIVISIONS, MIN_INTERVAL_WIDTH, MAX_CANDIDATES, &
-       SIMILAR_ULPS, CANDIDATES_ODD, CANDIDATES_EVEN, make_candidates, &
-       prune_candidates, elevate_helper
+       SIMILAR_ULPS, CANDIDATES_ODD, CANDIDATES_EVEN, POLYGON1, POLYGON2, &
+       make_candidates, prune_candidates, elevate_helper
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, Subdivide_FIRST, Subdivide_SECOND, &
        Subdivide_BOTH, Subdivide_NEITHER, LINEARIZATION_THRESHOLD, &
        INTERSECTIONS_WORKSPACE, linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_lines_parameters, &
-       from_linearized, bbox_line_intersect, check_lines, add_intersection, &
+       line_line_collide, convex_hull_collide, from_linearized, &
+       bbox_line_intersect, check_lines, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
        add_coincident_parameters, all_intersections, all_intersections_abi, &
@@ -67,6 +69,8 @@ module curve_intersection
   type(CurveData), allocatable :: CANDIDATES_ODD(:, :)
   type(CurveData), allocatable :: CANDIDATES_EVEN(:, :)
   real(c_double), allocatable :: INTERSECTIONS_WORKSPACE(:, :)
+  real(c_double), allocatable :: POLYGON1(:, :)
+  real(c_double), allocatable :: POLYGON2(:, :)
 
 contains
 
@@ -129,8 +133,12 @@ contains
   end subroutine segment_intersection
 
   subroutine newton_refine_intersect( &
-       s, num_nodes1, nodes1, t, num_nodes2, nodes2, new_s, new_t) &
+       s, num_nodes1, nodes1, t, num_nodes2, nodes2, new_s, new_t, status) &
        bind(c, name='newton_refine_curve_intersect')
+
+    ! Possible error states:
+    ! * Status_SUCCESS : On success.
+    ! * Status_SINGULAR: If the computed Jacobian is singular.
 
     real(c_double), intent(in) :: s
     integer(c_int), intent(in) :: num_nodes1
@@ -139,12 +147,14 @@ contains
     integer(c_int), intent(in) :: num_nodes2
     real(c_double), intent(in) :: nodes2(2, num_nodes2)
     real(c_double), intent(out) :: new_s, new_t
+    integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     real(c_double) :: param(1)
     real(c_double) :: func_val(2, 1)
     real(c_double) :: workspace(2, 1)
     real(c_double) :: jac_mat(2, 2)
-    real(c_double) :: determinant, delta_s, delta_t
+    real(c_double) :: delta_s, delta_t
+    logical(c_bool) :: singular
 
     param = t
     call evaluate_multi( &
@@ -161,24 +171,17 @@ contains
     end if
 
     call evaluate_hodograph(s, num_nodes1, 2, nodes1, jac_mat(:, 1:1))
-    ! NOTE: We actually want the negative, since we want -B2'(t), but
-    !       since we manually solve the system, it's just algebra
-    !       to figure out how to use the negative values.
     call evaluate_hodograph(t, num_nodes2, 2, nodes2, jac_mat(:, 2:2))
+    jac_mat(:, 2) = -jac_mat(:, 2)
 
-    determinant = ( &
-         jac_mat(1, 1) * jac_mat(2, 2) - jac_mat(2, 1) * jac_mat(1, 2))
-
-    ! NOTE: We manually invert the 2x2 system ([ds, dt] J)^T = f^T.
-    delta_s = ( &
-         (jac_mat(2, 2) * func_val(1, 1) - &
-         jac_mat(1, 2) * func_val(2, 1)) / determinant)
-    new_s = s + delta_s
-
-    delta_t = ( &
-         (jac_mat(2, 1) * func_val(1, 1) - &
-         jac_mat(1, 1) * func_val(2, 1)) / determinant)
-    new_t = t + delta_t
+    call solve2x2(jac_mat, func_val(:, 1), singular, delta_s, delta_t)
+    if (singular) then
+       status = Status_SINGULAR
+    else
+       status = Status_SUCCESS
+       new_s = s + delta_s
+       new_t = t + delta_t
+    end if
 
   end subroutine newton_refine_intersect
 
@@ -313,9 +316,88 @@ contains
 
   end subroutine parallel_lines_parameters
 
+  subroutine line_line_collide(line1, line2, collision)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    real(c_double), intent(in) :: line1(2, 2)
+    real(c_double), intent(in) :: line2(2, 2)
+    logical(c_bool), intent(out) :: collision
+    ! Variables outside of signature.
+    real(c_double) :: s, t, unused_parameters(2, 2)
+    logical(c_bool) :: success
+
+    call segment_intersection( &
+         line1(:, 1), line1(:, 2), line2(:, 1), line2(:, 2), s, t, success)
+    if (success) then
+       collision = ( &
+            in_interval(s, 0.0_dp, 1.0_dp) .AND. &
+            in_interval(t, 0.0_dp, 1.0_dp))
+    else
+       ! NOTE: We use ``success`` as a stand-in for ``disjoint``.
+       call parallel_lines_parameters( &
+            line1(:, 1), line1(:, 2), line2(:, 1), line2(:, 2), &
+            success, unused_parameters)
+       collision = .NOT. success
+    end if
+
+  end subroutine line_line_collide
+
+  subroutine convex_hull_collide( &
+       num_nodes1, nodes1, polygon1, &
+       num_nodes2, nodes2, polygon2, collision)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
+    real(c_double), allocatable, intent(inout) :: polygon1(:, :)
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
+    real(c_double), allocatable, intent(inout) :: polygon2(:, :)
+    logical(c_bool), intent(out) :: collision
+    ! Variables outside of signature.
+    integer(c_int) :: polygon_size1, polygon_size2
+
+    if (allocated(polygon1)) then
+       if (size(polygon1, 2) < num_nodes1) then
+          deallocate(polygon1)
+          allocate(polygon1(2, num_nodes1))
+       end if
+    else
+       allocate(polygon1(2, num_nodes1))
+    end if
+
+    if (allocated(polygon2)) then
+       if (size(polygon2, 2) < num_nodes2) then
+          deallocate(polygon2)
+          allocate(polygon2(2, num_nodes2))
+       end if
+    else
+       allocate(polygon2(2, num_nodes2))
+    end if
+
+    call convex_hull( &
+         num_nodes1, nodes1, polygon_size1, polygon1)
+    call convex_hull( &
+         num_nodes2, nodes2, polygon_size2, polygon2)
+
+    if (polygon_size1 == 2 .AND. polygon_size2 == 2) then
+       call line_line_collide(polygon1(:, :2), polygon2(:, :2), collision)
+    else
+       call polygon_collide( &
+            polygon_size1, polygon1(:, :polygon_size1), &
+            polygon_size2, polygon2(:, :polygon_size2), &
+            collision)
+    end if
+
+  end subroutine convex_hull_collide
+
   subroutine from_linearized( &
-       error1, curve1, num_nodes1, root_nodes1, &
-       error2, curve2, num_nodes2, root_nodes2, &
+       curve1, num_nodes1, root_nodes1, &
+       curve2, num_nodes2, root_nodes2, &
        refined_s, refined_t, does_intersect, status)
 
     ! NOTE: This assumes that at least one of ``curve1`` and ``curve2`` is
@@ -327,17 +409,18 @@ contains
 
     ! Possible error states:
     ! * Status_SUCCESS : On success.
-    ! * Status_PARALLEL: If ``segment_intersection()`` fails (which means
-    !                    the linearized segments are parallel). This
-    !                    can still be avoided if the "root" curves are
-    !                    also (parallel) lines that don't overlap or if
-    !                    the "root" curves have disjoint bounding boxes.
+    ! * Status_PARALLEL: If a "full" Newton's method is needed. This
+    !                    happens when the two curves have overlapping
+    !                    convex hulls and the line-line intersection parameters
+    !                    are "invalid" in some way. They can be invalid if
+    !                    ``segment_intersection()`` fails (which means
+    !                    the linearized segments are parallel) or if the
+    !                    ``s, t`` values returned are outside ``[0, 1]``.
+    ! * Status_SINGULAR: Via ``newton_refine_intersect()``.
 
-    real(c_double), intent(in) :: error1
     type(CurveData), intent(in) :: curve1
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: root_nodes1(2, num_nodes1)
-    real(c_double), intent(in) :: error2
     type(CurveData), intent(in) :: curve2
     integer(c_int), intent(in) :: num_nodes2
     real(c_double), intent(in) :: root_nodes2(2, num_nodes2)
@@ -346,7 +429,7 @@ contains
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     real(c_double) :: s, t
-    logical(c_bool) :: success
+    logical(c_bool) :: success, do_full_newton
 
     status = Status_SUCCESS
     does_intersect = .FALSE.  ! Default value.
@@ -356,25 +439,33 @@ contains
          curve2%nodes(:, 1), curve2%nodes(:, num_nodes2), &
          s, t, success)
 
+    do_full_newton = .FALSE.
     if (success) then
-       ! Special case for lines, allow no leeway on "almost" intersections.
-       if (error1 == 0.0_dp .AND. (s < 0.0_dp .OR. 1.0_dp < s)) then
-          return
-       end if
-       if (error2 == 0.0_dp .AND. (t < 0.0_dp .OR. 1.0_dp < t)) then
-          return
-       end if
-       ! Allow **some** leeway for "almost" intersections in the non-line case.
-       if (s < -(0.5_dp**16) .OR. 1.0_dp + 0.5_dp**16 < s) then
-          return
-       end if
-       if (t < -(0.5_dp**16) .OR. 1.0_dp + 0.5_dp**16 < t) then
-          return
+       if (.NOT. ( &
+            in_interval(s, 0.0_dp, 1.0_dp) .AND. &
+            in_interval(t, 0.0_dp, 1.0_dp))) then
+          do_full_newton = .TRUE.
        end if
     else
        ! NOTE: If both curves are lines, the intersection should have
        !       been computed already via ``check_lines()``.
-       status = Status_PARALLEL
+
+       ! Just fall back to a full Newton iteration starting in the middle of
+       ! the given intervals.
+       do_full_newton = .TRUE.
+       s = 0.5_dp
+       t = 0.5_dp
+    end if
+
+    if (do_full_newton) then
+       call convex_hull_collide( &
+            num_nodes1, curve1%nodes, POLYGON1, &
+            num_nodes2, curve2%nodes, POLYGON2, success)
+       if (success) then
+          ! This is essentially a ``NotImplementedError``.
+          status = Status_PARALLEL
+       end if
+
        return
     end if
 
@@ -383,18 +474,22 @@ contains
     t = (1.0_dp - t) * curve2%start + t * curve2%end_  ! orig_t
     ! Perform one step of Newton iteration to refine the computed
     ! values of s and t.
+
     call newton_refine_intersect( &
          s, num_nodes1, root_nodes1, t, &
-         num_nodes2, root_nodes2, refined_s, refined_t)
+         num_nodes2, root_nodes2, refined_s, refined_t, status)
+    if (status /= Status_SUCCESS) then
+       return  ! LCOV_EXCL_LINE
+    end if
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then
-       return
+       return  ! LCOV_EXCL_LINE
     end if
 
     call wiggle_interval(refined_t, t, success)
     if (.NOT. success) then
-       return
+       return  ! LCOV_EXCL_LINE
     end if
 
     does_intersect = .TRUE.
@@ -633,8 +728,7 @@ contains
   end subroutine add_intersection
 
   subroutine add_from_linearized( &
-       first, root_nodes1, linearization_error1, &
-       second, root_nodes2, linearization_error2, &
+       first, root_nodes1, second, root_nodes2, &
        num_intersections, intersections, status)
 
     ! Adds an intersection from two linearizations.
@@ -644,13 +738,12 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS : On success.
     ! * Status_PARALLEL: Via ``from_linearized()``.
+    ! * Status_SINGULAR: Via ``from_linearized()``.
 
     type(CurveData), intent(in) :: first
     real(c_double), intent(in) :: root_nodes1(:, :)
-    real(c_double), intent(in) :: linearization_error1
     type(CurveData), intent(in) :: second
     real(c_double), intent(in) :: root_nodes2(:, :)
-    real(c_double), intent(in) :: linearization_error2
     integer(c_int), intent(inout) :: num_intersections
     real(c_double), allocatable, intent(inout) :: intersections(:, :)
     integer(c_int), intent(out) :: status
@@ -663,8 +756,8 @@ contains
     num_nodes2 = size(second%nodes, 2)
 
     call from_linearized( &
-         linearization_error1, first, num_nodes1, root_nodes1, &
-         linearization_error2, second, num_nodes2, root_nodes2, &
+         first, num_nodes1, root_nodes1, &
+         second, num_nodes2, root_nodes2, &
          refined_s, refined_t, does_intersect, status)
 
     if (status /= Status_SUCCESS) then
@@ -826,8 +919,9 @@ contains
     !       two rows and has at **least** ``num_candidates`` columns.
 
     ! Possible error states:
-    ! * Status_SUCCESS    : On success.
-    ! * Status_PARALLEL   : Via ``add_from_linearized()``.
+    ! * Status_SUCCESS : On success.
+    ! * Status_PARALLEL: Via ``add_from_linearized()``.
+    ! * Status_SINGULAR: Via ``add_from_linearized()``.
 
     real(c_double), intent(in) :: root_nodes_first(:, :)
     real(c_double), intent(in) :: root_nodes_second(:, :)
@@ -903,8 +997,7 @@ contains
           ! If both ``first`` and ``second`` are linearizations, then
           ! we can (attempt to) intersect them immediately.
           call add_from_linearized( &
-               first, root_nodes_first, linearization_error1, &
-               second, root_nodes_second, linearization_error2, &
+               first, root_nodes_first, second, root_nodes_second, &
                num_intersections, intersections, status)
 
           ! If there was a failure, exit this subroutine.
@@ -962,8 +1055,6 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: accepted, i
     integer(c_int) :: num_nodes1, num_nodes2
-    integer(c_int) :: polygon_size1, polygon_size2
-    real(c_double), allocatable :: polygon1(:, :), polygon2(:, :)
     logical(c_bool) :: collision
 
     accepted = 0
@@ -973,47 +1064,13 @@ contains
        ! NOTE: This **assumes** that ``%nodes`` is allocated and size
        !       ``N x 2``.
        num_nodes1 = size(candidates(1, i)%nodes, 2)
-       if (allocated(polygon1)) then
-          if (size(polygon1, 2) < num_nodes1) then
-             ! NOTE: We "exclude" this block from ``lcov`` because it
-             !       **should** never occur. (All candidates in row 1 should
-             !       have the same ``num_nodes``).
-             ! LCOV_EXCL_START
-             deallocate(polygon1)
-             allocate(polygon1(2, num_nodes1))
-             ! LCOV_EXCL_STOP
-          end if
-       else
-          allocate(polygon1(2, num_nodes1))
-       end if
-       call convex_hull( &
-            num_nodes1, candidates(1, i)%nodes, &
-            polygon_size1, polygon1(:, :num_nodes1))
-
        ! NOTE: This **assumes** that ``%nodes`` is allocated and size
        !       ``N x 2``.
        num_nodes2 = size(candidates(2, i)%nodes, 2)
-       if (allocated(polygon2)) then
-          if (size(polygon2, 2) < num_nodes2) then
-             ! NOTE: We "exclude" this block from ``lcov`` because it
-             !       **should** never occur. (All candidates in row 2 should
-             !       have the same ``num_nodes``).
-             ! LCOV_EXCL_START
-             deallocate(polygon2)
-             allocate(polygon2(2, num_nodes2))
-             ! LCOV_EXCL_STOP
-          end if
-       else
-          allocate(polygon2(2, num_nodes2))
-       end if
-       call convex_hull( &
-            num_nodes2, candidates(2, i)%nodes, &
-            polygon_size2, polygon2(:, :num_nodes2))
+       call convex_hull_collide( &
+            num_nodes1, candidates(1, i)%nodes, POLYGON1, &
+            num_nodes2, candidates(2, i)%nodes, POLYGON2, collision)
 
-       ! Now check if the convex hulls actually collide.
-       call polygon_collide( &
-            polygon_size1, polygon1(:, :polygon_size1), &
-            polygon_size2, polygon2(:, :polygon_size2), collision)
        if (collision) then
           accepted = accepted + 1
           ! NOTE: This relies on the invariant ``accepted <= i``. In the
@@ -1319,6 +1376,7 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
     ! * Status_PARALLEL      : Via ``intersect_one_round()``.
+    ! * Status_SINGULAR      : Via ``intersect_one_round()``.
     ! * Status_NO_CONVERGE   : If the curves don't converge to linear after
     !                          ``MAX_INTERSECT_SUBDIVISIONS``.
     ! * (N >= MAX_CANDIDATES): The number of candidates if it exceeds the limit
@@ -1449,6 +1507,7 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS           : On success.
     ! * Status_PARALLEL          : Via ``all_intersections()``.
+    ! * Status_SINGULAR          : Via ``all_intersections()``.
     ! * Status_NO_CONVERGE       : Via ``all_intersections()``.
     ! * Status_INSUFFICIENT_SPACE: If ``intersections_size`` is smaller than
     !                              the number of intersections.
@@ -1536,6 +1595,14 @@ contains
 
     if (allocated(INTERSECTIONS_WORKSPACE)) then
        deallocate(INTERSECTIONS_WORKSPACE)
+    end if
+
+    if (allocated(POLYGON1)) then
+       deallocate(POLYGON1)
+    end if
+
+    if (allocated(POLYGON2)) then
+       deallocate(POLYGON2)
     end if
 
   end subroutine free_curve_intersections_workspace

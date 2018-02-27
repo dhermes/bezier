@@ -48,7 +48,6 @@ except ImportError:  # pragma: NO COVER
 _ERROR_VAL = 0.5**26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _MAX_CANDIDATES = 64
-_SEGMENTS_PARALLEL = 'Line segments parallel.'
 _UNHANDLED_LINES = (
     'If both curves are lines, the intersection should have '
     'been computed already.')
@@ -686,6 +685,57 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     # pylint: enable=too-many-branches
 
 
+def line_line_collide(line1, line2):
+    """Determine if two line segments meet.
+
+    This is a helper for :func:`convex_hull_collide` in the
+    special case that the two convex hulls are actually
+    just line segments. (Even in this case, this is only
+    problematic if both segments are on a single line.)
+
+    Args:
+        line1 (numpy.ndarray): ``2 x 2`` array of start and end nodes.
+        line2 (numpy.ndarray): ``2 x 2`` array of start and end nodes.
+
+    Returns:
+        bool: Indicating if the line segments collide.
+    """
+    s, t, success = segment_intersection(
+        line1[:, 0], line1[:, 1], line2[:, 0], line2[:, 1])
+    if success:
+        return (_helpers.in_interval(s, 0.0, 1.0) and
+                _helpers.in_interval(t, 0.0, 1.0))
+    else:
+        disjoint, _ = parallel_lines_parameters(
+            line1[:, 0], line1[:, 1], line2[:, 0], line2[:, 1])
+        return not disjoint
+
+
+def convex_hull_collide(nodes1, nodes2):
+    """Determine if the convex hulls of two curves collide.
+
+    .. note::
+
+       This is a helper for :func:`from_linearized`.
+
+    Args:
+        nodes1 (numpy.ndarray): Control points of a first curve.
+        nodes2 (numpy.ndarray): Control points of a second curve.
+
+    Returns:
+        bool: Indicating if the convex hulls collide.
+    """
+    polygon1 = _helpers.simple_convex_hull(nodes1)
+    _, polygon_size1 = polygon1.shape
+    polygon2 = _helpers.simple_convex_hull(nodes2)
+    _, polygon_size2 = polygon2.shape
+
+    if polygon_size1 == 2 and polygon_size2 == 2:
+        return line_line_collide(polygon1, polygon2)
+    else:
+        return _helpers.polygon_collide(polygon1, polygon2)
+
+
 def from_linearized(first, second, intersections):
     """Determine curve-curve intersection from pair of linearizations.
 
@@ -718,19 +768,26 @@ def from_linearized(first, second, intersections):
     # pylint: disable=too-many-return-statements
     s, t, success = segment_intersection(
         first.start_node, first.end_node, second.start_node, second.end_node)
+    do_full_newton = False
     if success:
-        if first.error == 0.0 and not _helpers.in_interval(s, 0.0, 1.0):
-            return
-        if second.error == 0.0 and not _helpers.in_interval(t, 0.0, 1.0):
-            return
-        if not _helpers.in_interval(s, _WIGGLE_START, _WIGGLE_END):
-            return
-        if not _helpers.in_interval(t, _WIGGLE_START, _WIGGLE_END):
-            return
+        if not (_helpers.in_interval(s, 0.0, 1.0) and
+                _helpers.in_interval(t, 0.0, 1.0)):
+            do_full_newton = True
     else:
         if first.error == 0.0 and second.error == 0.0:
             raise ValueError(_UNHANDLED_LINES)
-        raise NotImplementedError(_SEGMENTS_PARALLEL)
+
+        # Just fall back to a full Newton iteration starting in the middle of
+        # the given intervals.
+        do_full_newton = True
+        s = 0.5
+        t = 0.5
+
+    if do_full_newton:
+        if convex_hull_collide(first.curve.nodes, second.curve.nodes):
+            raise NotImplementedError('Parameters need help.')
+        else:
+            return
 
     # Now, promote ``s`` and ``t`` onto the original curves.
     orig_s = (1 - s) * first.curve.start + s * first.curve.end
@@ -742,10 +799,10 @@ def from_linearized(first, second, intersections):
         orig_t, second.curve.original_nodes)
     refined_s, success = _helpers.wiggle_interval(refined_s)
     if not success:
-        return
+        return  # pragma: NO COVER
     refined_t, success = _helpers.wiggle_interval(refined_t)
     if not success:
-        return
+        return  # pragma: NO COVER
     add_intersection(refined_s, refined_t, intersections)
     # pylint: enable=too-many-return-statements
 
@@ -1060,11 +1117,7 @@ def prune_candidates(candidates):
         else:
             nodes2 = second.nodes
 
-        # NOTE: The copy is expensive but required since ``simple_convex_hull``
-        #       (might) need the values in Fortran order.
-        polygon1 = _helpers.simple_convex_hull(nodes1)
-        polygon2 = _helpers.simple_convex_hull(nodes2)
-        if _helpers.polygon_collide(polygon1, polygon2):
+        if convex_hull_collide(nodes1, nodes2):
             pruned.append((first, second))
 
     return pruned

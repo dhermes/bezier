@@ -949,6 +949,7 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
     ! * Status_PARALLEL      : Via ``curve_intersection.all_intersections()``.
+    ! * Status_SINGULAR      : Via ``curve_intersection.all_intersections()``.
     ! * Status_NO_CONVERGE   : Via ``curve_intersection.all_intersections()``.
     ! * (N >= MAX_CANDIDATES): Via ``curve_intersection.all_intersections()``.
     ! * Status_EDGE_END      : Via ``add_st_vals()``.
@@ -1021,7 +1022,7 @@ contains
                      enum_, index1, index2, intersections, &
                      num_intersections, status)
                 if (status /= Status_SUCCESS) then
-                   return
+                   return  ! LCOV_EXCL_LINE
                 end if
              end if
           else
@@ -1592,8 +1593,8 @@ contains
        else
           ! If the loop terminated without reaching the start node, then
           ! we have encountered an error.
-          status = Status_BAD_INTERIOR
-          return
+          status = Status_BAD_INTERIOR  ! LCOV_EXCL_LINE
+          return  ! LCOV_EXCL_LINE
        end if
     end do
 
@@ -1621,6 +1622,7 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS       : On success.
     ! * Status_PARALLEL      : Via ``surfaces_intersection_points()``.
+    ! * Status_SINGULAR      : Via ``surfaces_intersection_points()``.
     ! * Status_NO_CONVERGE   : Via ``surfaces_intersection_points()``.
     ! * (N >= MAX_CANDIDATES): Via ``surfaces_intersection_points()``.
     ! * Status_EDGE_END      : Via ``surfaces_intersection_points()``.
@@ -1726,6 +1728,7 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS           : Via ``surfaces_intersect()``.
     ! * Status_PARALLEL          : Via ``surfaces_intersect()``.
+    ! * Status_SINGULAR          : Via ``surfaces_intersect()``.
     ! * Status_NO_CONVERGE       : Via ``surfaces_intersect()``.
     ! * (N >= MAX_CANDIDATES)    : Via ``surfaces_intersect()``.
     ! * Status_EDGE_END          : Via ``surfaces_intersect()``.
