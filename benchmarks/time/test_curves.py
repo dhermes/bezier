@@ -17,7 +17,7 @@ import pytest
 from tests.functional import utils
 
 
-FAILURES = (11, 43, 44)
+FAILURES = (11, 12, 13, 17, 31, 42, 43, 44)
 
 
 def get_bounds():
