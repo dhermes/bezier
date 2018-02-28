@@ -30,6 +30,7 @@ or the speedup.
 import enum
 
 import numpy as np
+import six
 
 from bezier import _curve_helpers
 from bezier import _helpers
@@ -37,6 +38,32 @@ try:
     from bezier import _speedup
 except ImportError:  # pragma: NO COVER
     _speedup = None
+
+
+# For ``full_newton()``.
+ZERO_THRESHOLD = 0.5**10  # ~1e-3
+MAX_NEWTON_ITERATIONS = 10
+NEWTON_ERROR_RATIO = 0.5**45
+NEWTON_NO_CONVERGE = """\
+Unsupported multiplicity.
+
+Newton's method failed to converge to a solution under the
+following assumptions:
+
+- The starting ``s-t`` values were already near a solution
+- The root / solution has multiplicity 1 or 2
+  - 1: The root is "simple", i.e. the curves are not tangent
+       and have no self-intersections at the point of intersection.
+  - 2: The root is a double root, i.e. the curves are tangent
+       but have different curvatures at the point of intersection.
+
+The failure to converge may have been caused by one of:
+
+- The root was of multiplicity greater than 2
+- The curves don't actually intersect, though they come very close
+- Numerical issues caused the iteration to leave the region
+  of convergence
+"""
 
 
 def _newton_refine(s, nodes1, t, nodes2):
@@ -391,8 +418,8 @@ def _newton_refine(s, nodes1, t, nodes2):
 
     # NOTE: This assumes the curves are 2D.
     jac_mat = np.empty((2, 2), order='F')
-    jac_mat[:, 0] = _curve_helpers.evaluate_hodograph(s, nodes1)[:, 0]
-    jac_mat[:, 1] = - _curve_helpers.evaluate_hodograph(t, nodes2)[:, 0]
+    jac_mat[:, :1] = _curve_helpers.evaluate_hodograph(s, nodes1)
+    jac_mat[:, 1:] = - _curve_helpers.evaluate_hodograph(t, nodes2)
 
     # Solve the system.
     singular, delta_s, delta_t = _helpers.solve2x2(jac_mat, func_val[:, 0])
@@ -400,6 +427,396 @@ def _newton_refine(s, nodes1, t, nodes2):
         raise ValueError('Jacobian is singular.')
     else:
         return s + delta_s, t + delta_t
+
+
+class NewtonSimpleRoot(object):  # pylint: disable=too-few-public-methods
+    r"""Callable object that facilitates Newton's method.
+
+    This is meant to be used to compute the Newton update via:
+
+    .. math::
+
+       DF(s, t) \left[\begin{array}{c}
+           \Delta s \\ \Delta t \end{array}\right] = -F(s, t).
+
+    Args:
+        nodes1 (numpy.ndarray): Control points of the first curve.
+        first_deriv1 (numpy.ndarray): Control points of the curve
+            :math:`B_1'(s)`.
+        nodes2 (numpy.ndarray): Control points of the second curve.
+        first_deriv2 (numpy.ndarray): Control points of the curve
+            :math:`B_2'(t)`.
+    """
+
+    def __init__(self, nodes1, first_deriv1, nodes2, first_deriv2):
+        self.nodes1 = nodes1
+        self.first_deriv1 = first_deriv1
+        self.nodes2 = nodes2
+        self.first_deriv2 = first_deriv2
+
+    def __call__(self, s, t):
+        r"""This computes :math:`F = B_1(s) - B_2(t)` and :math:`DF(s, t)`.
+
+        .. note::
+
+           There is **almost** identical code in :func:`._newton_refine`, but
+           that code can avoid computing the ``first_deriv1`` and
+           ``first_deriv2`` nodes in cases that :math:`F(s, t) = 0` whereas
+           this function assumes they have been given.
+
+        In the case that :math:`DF(s, t)` is singular, the assumption is that
+        the intersection has a multiplicity higher than one (i.e. the root is
+        non-simple). **Near** a simple root, it must be the case that
+        :math:`DF(s, t)` has non-zero determinant, so due to continuity, we
+        assume the Jacobian will be invertible nearby.
+
+        Args:
+            s (float): The parameter where we'll compute :math:`B_1(s)` and
+                :math:`DF(s, t)`.
+            t (float): The parameter where we'll compute :math:`B_2(t)` and
+                :math:`DF(s, t)`.
+
+        Returns:
+            Tuple[Optional[numpy.ndarray], numpy.ndarray]: Pair of
+
+            * The LHS matrix ``DF``, a ``2 x 2`` array. If ``F == 0`` then
+              this matrix won't be computed and :data:`None` will be returned.
+            * The RHS vector ``F``, a ``2 x 1`` array.
+        """
+        s_vals = np.asfortranarray([s])
+        b1_s = _curve_helpers.evaluate_multi(self.nodes1, s_vals)
+
+        t_vals = np.asfortranarray([t])
+        b2_t = _curve_helpers.evaluate_multi(self.nodes2, t_vals)
+
+        func_val = b1_s - b2_t
+        if np.all(func_val == 0.0):
+            return None, func_val
+        else:
+            jacobian = np.empty((2, 2), order='F')
+            jacobian[:, :1] = _curve_helpers.evaluate_multi(
+                self.first_deriv1, s_vals)
+            jacobian[:, 1:] = -_curve_helpers.evaluate_multi(
+                self.first_deriv2, t_vals)
+            return jacobian, func_val
+
+
+class NewtonDoubleRoot(object):  # pylint: disable=too-few-public-methods
+    r"""Callable object that facilitates Newton's method for double roots.
+
+    This is an augmented version of :class:`NewtonSimpleRoot`.
+
+    For non-simple intersections (i.e. multiplicity greater than 1),
+    the curves will be tangent, which forces :math:`B_1'(s) \times B_2'(t)`
+    to be zero. Unfortunately, that quantity is also equal to the
+    determinant of the Jacobian, so :math:`DF` will not be full rank.
+
+    In order to produce a system that **can** be solved, an
+    an augmented function is computed:
+
+    .. math::
+
+        G(s, t) = \left[\begin{array}{c}
+            F(s, t) \\ \hline
+            B_1'(s) \times B_2'(t)
+            \end{array}\right]
+
+    The use of :math:`B_1'(s) \times B_2'(t)` (with lowered degree in
+    :math:`s` and :math:`t`) means that the rank deficiency in
+    :math:`DF` can be fixed in:
+
+    .. math::
+
+        DG(s, t) = \left[\begin{array}{c | c}
+            B_1'(s) & -B_2'(t) \\ \hline
+            B_1''(s) \times B_2'(t) & B_1'(s) \times B_2''(t)
+            \end{array}\right]
+
+    (This may not always be full rank, but in the double root / multiplicity
+    2 case it will be full rank near a solution.)
+
+    Rather than finding a least squares solution to the overdetermined system
+
+    .. math::
+
+       DG(s, t) \left[\begin{array}{c}
+           \Delta s \\ \Delta t \end{array}\right] = -G(s, t)
+
+    we find a solution to the square (and hopefully full rank) system:
+
+    .. math::
+
+       DG^T DG \left[\begin{array}{c}
+           \Delta s \\ \Delta t \end{array}\right] = -DG^T G.
+
+    Forming ``DG^T DG`` squares the condition number, so it would be "better"
+    to use :func:`~numpy.linalg.lstsq` (which wraps the LAPACK routine
+    ``dgelsd``). However, using :func:`.solve2x2` is **much** more
+    straightforward and in practice this is just as accurate.
+
+    Args:
+        nodes1 (numpy.ndarray): Control points of the first curve.
+        first_deriv1 (numpy.ndarray): Control points of the curve
+            :math:`B_1'(s)`.
+        second_deriv1 (numpy.ndarray): Control points of the curve
+            :math:`B_1''(s)`.
+        nodes2 (numpy.ndarray): Control points of the second curve.
+        first_deriv2 (numpy.ndarray): Control points of the curve
+            :math:`B_2'(t)`.
+        second_deriv2 (numpy.ndarray): Control points of the curve
+            :math:`B_2''(t)`.
+    """
+
+    def __init__(
+            self, nodes1, first_deriv1, second_deriv1,
+            nodes2, first_deriv2, second_deriv2):
+        self.nodes1 = nodes1
+        self.first_deriv1 = first_deriv1
+        self.second_deriv1 = second_deriv1
+        self.nodes2 = nodes2
+        self.first_deriv2 = first_deriv2
+        self.second_deriv2 = second_deriv2
+
+    def __call__(self, s, t):
+        r"""This computes :math:`DG^T G` and :math:`DG^T DG`.
+
+        If :math:`DG^T DG` is not full rank, this means either :math:`DG`
+        was not full rank or that it was, but with a relatively high condition
+        number. So, in the case that :math:`DG^T DG` is singular, the
+        assumption is that the intersection has a multiplicity higher than two.
+
+        Args:
+            s (float): The parameter where we'll compute :math:`G(s, t)` and
+                :math:`DG(s, t)`.
+            t (float): The parameter where we'll compute :math:`G(s, t)` and
+                :math:`DG(s, t)`.
+
+        Returns:
+            Tuple[Optional[numpy.ndarray], Optional[numpy.ndarray]]: Pair of
+
+            * The LHS matrix ``DG^T DG``, a ``2 x 2`` array. If ``G == 0`` then
+              this matrix won't be computed and :data:`None` will be returned.
+            * The RHS vector ``DG^T G``, a ``2 x 1`` array.
+        """
+        s_vals = np.asfortranarray([s])
+        b1_s = _curve_helpers.evaluate_multi(self.nodes1, s_vals)
+        b1_ds = _curve_helpers.evaluate_multi(self.first_deriv1, s_vals)
+
+        t_vals = np.asfortranarray([t])
+        b2_t = _curve_helpers.evaluate_multi(self.nodes2, t_vals)
+        b2_dt = _curve_helpers.evaluate_multi(self.first_deriv2, t_vals)
+
+        func_val = np.empty((3, 1), order='F')
+        func_val[:2, :] = b1_s - b2_t
+        func_val[2, :] = _helpers.cross_product(b1_ds[:, 0], b2_dt[:, 0])
+        if np.all(func_val == 0.0):
+            return None, func_val[:2, :]
+        else:
+            jacobian = np.empty((3, 2), order='F')
+            jacobian[:2, :1] = b1_ds
+            jacobian[:2, 1:] = -b2_dt
+            jacobian[2, 0] = _helpers.cross_product(
+                _curve_helpers.evaluate_multi(
+                    self.second_deriv1, s_vals)[:, 0],
+                b2_dt[:, 0],
+            )
+            jacobian[2, 1] = _helpers.cross_product(
+                b1_ds[:, 0],
+                _curve_helpers.evaluate_multi(
+                    self.second_deriv2, t_vals)[:, 0],
+            )
+
+            modified_lhs = _helpers.matrix_product(jacobian.T, jacobian)
+            modified_rhs = _helpers.matrix_product(jacobian.T, func_val)
+            return modified_lhs, modified_rhs
+
+
+def newton_iterate(evaluate_fn, s, t):
+    r"""Perform a Newton iteration.
+
+    In this function, we assume that :math:`s` and :math:`t` are nonzero,
+    this makes convergence easier to detect since "relative error" at
+    ``0.0`` is not a useful measure.
+
+    There are several tolerance / threshold quantities used below:
+
+    * :math:`10` (:attr:`MAX_NEWTON_ITERATIONS`) iterations will be done before
+      "giving up". This is based on the assumption that we are already starting
+      near a root, so quadratic convergence should terminate quickly.
+    * :math:`\tau = \frac{1}{4}` is used as the boundary between linear
+      and superlinear convergence. So if the current error
+      :math:`\|p_{n + 1} - p_n\|` is not smaller than :math:`\tau` times
+      the previous error :math:`\|p_n - p_{n - 1}\|`, then convergence
+      is considered to be linear at that point.
+    * :math:`\frac{2}{3}` of all iterations must be converging linearly
+      for convergence to be stopped (and moved to the next regime). This
+      will only be checked after 4 or more updates have occurred.
+    * :math:`\tau = 2^{-45}` (:attr:`NEWTON_ERROR_RATIO`) is used to
+      determine that an update is sufficiently small to stop iterating. So if
+      the error :math:`\|p_{n + 1} - p_n\|` smaller than :math:`\tau` times
+      size of the term being updated :math:`\|p_n\|`, then we
+      exit with the "correct" answer.
+
+    It is assumed that ``evaluate_fn`` will use a Jacobian return value of
+    :data:`None` to indicate that :math:`F(s, t)` is exactly ``0.0``. We
+    **assume** that if the function evaluates to exactly ``0.0``, then we are
+    at a solution. It is possible however, that badly parameterized curves
+    can evaluate to exactly ``0.0`` for inputs that are relatively far away
+    from a solution (see issue #21).
+
+    Args:
+        evaluate_fn (Callable[Tuple[float, float], tuple]): A callable
+            which takes :math:`s` and :math:`t` and produces an evaluated
+            function value and the Jacobian matrix.
+        s (float): The (first) parameter where the iteration will start.
+        t (float): The (second) parameter where the iteration will start.
+
+    Returns:
+        Tuple[bool, float, float]: The triple of
+
+        * Flag indicating if the iteration converged.
+        * The current :math:`s` value when the iteration stopped.
+        * The current :math:`t` value when the iteration stopped.
+    """
+    # Several quantities will be tracked throughout the iteration:
+    # * norm_update_prev: ||p{n}   - p{n-1}|| = ||dp{n-1}||
+    # * norm_update     : ||p{n+1} - p{n}  || = ||dp{n}  ||
+    # * linear_updates  : This is a count on the number of times that
+    #                     ``dp{n}`` "looks like" ``dp{n-1}`` (i.e.
+    #                     is within a constant factor of it).
+    norm_update_prev = None
+    norm_update = None
+    linear_updates = 0  # Track the number of "linear" updates.
+
+    current_s = s
+    current_t = t
+    for index in six.moves.xrange(MAX_NEWTON_ITERATIONS):
+        jacobian, func_val = evaluate_fn(current_s, current_t)
+        if jacobian is None:
+            return True, current_s, current_t
+
+        singular, delta_s, delta_t = _helpers.solve2x2(
+            jacobian, func_val[:, 0])
+        if singular:
+            break
+
+        norm_update_prev = norm_update
+        norm_update = np.linalg.norm([delta_s, delta_t], ord=2)
+        # If ||p{n} - p{n-1}|| > 0.25 ||p{n-1} - p{n-2}||, then that means
+        # our convergence is acting linear at the current step.
+        if index > 0 and norm_update > 0.25 * norm_update_prev:
+            linear_updates += 1
+        # If ``>=2/3`` of the updates have been linear, we are near a
+        # non-simple root. (Make sure at least 5 updates have occurred.)
+        if index >= 4 and 3 * linear_updates >= 2 * index:
+            break
+
+        # Determine the norm of the "old" solution before updating.
+        norm_soln = np.linalg.norm([current_s, current_t], ord=2)
+        current_s -= delta_s
+        current_t -= delta_t
+
+        if norm_update < NEWTON_ERROR_RATIO * norm_soln:
+            return True, current_s, current_t
+
+    return False, current_s, current_t
+
+
+def full_newton_nonzero(s, nodes1, t, nodes2):
+    r"""Perform a Newton iteration until convergence to a solution.
+
+    This is the "implementation" for :func:`full_newton`. In this
+    function, we assume that :math:`s` and :math:`t` are nonzero.
+
+    Args:
+        s (float): The parameter along the first curve where the iteration
+            will start.
+        nodes1 (numpy.ndarray): Control points of the first curve.
+        t (float): The parameter along the second curve where the iteration
+            will start.
+        nodes2 (numpy.ndarray): Control points of the second curve.
+
+    Returns:
+        Tuple[float, float]: The pair of :math:`s` and :math:`t` values that
+        Newton's method converged to.
+
+    Raises:
+        ValueError: If Newton's method doesn't converge.
+    """
+    # NOTE: We somewhat replicate code in ``evaluate_hodograph()``
+    #       here. This is so we don't re-compute the nodes for the first
+    #       (and possibly second) derivatives every time they are evaluated.
+    _, num_nodes1 = np.shape(nodes1)
+    first_deriv1 = (num_nodes1 - 1) * (nodes1[:, 1:] - nodes1[:, :-1])
+    _, num_nodes2 = np.shape(nodes2)
+    first_deriv2 = (num_nodes2 - 1) * (nodes2[:, 1:] - nodes2[:, :-1])
+
+    evaluate_fn = NewtonSimpleRoot(nodes1, first_deriv1, nodes2, first_deriv2)
+    converged, current_s, current_t = newton_iterate(evaluate_fn, s, t)
+    if converged:
+        return current_s, current_t
+
+    # If Newton's method did not converge, then assume the root is not simple.
+    second_deriv1 = (num_nodes1 - 2) * (
+        first_deriv1[:, 1:] - first_deriv1[:, :-1])
+    second_deriv2 = (num_nodes2 - 2) * (
+        first_deriv2[:, 1:] - first_deriv2[:, :-1])
+    evaluate_fn = NewtonDoubleRoot(
+        nodes1, first_deriv1, second_deriv1,
+        nodes2, first_deriv2, second_deriv2)
+    converged, current_s, current_t = newton_iterate(
+        evaluate_fn, current_s, current_t)
+
+    if converged:
+        return current_s, current_t
+
+    raise ValueError(NEWTON_NO_CONVERGE)
+
+
+def full_newton(s, nodes1, t, nodes2):
+    r"""Perform a Newton iteration until convergence to a solution.
+
+    This assumes :math:`s` and :math:`t` are sufficiently close to an
+    intersection. It **does not** govern the maximum distance away
+    that the solution can lie, though the subdivided intervals that contain
+    :math:`s` and :math:`t` could be used.
+
+    To avoid round-off issues near ``0.0``, this reverses the direction
+    of a curve and replaces the parameter value :math:`\nu` with
+    :math:`1 - \nu` whenever :math:`\nu < \tau` (here we use a threshold
+    :math:`\tau` equal to :math:`2^{-10}`, i.e. ``ZERO_THRESHOLD``).
+
+    Args:
+        s (float): The parameter along the first curve where the iteration
+            will start.
+        nodes1 (numpy.ndarray): Control points of the first curve.
+        t (float): The parameter along the second curve where the iteration
+            will start.
+        nodes2 (numpy.ndarray): Control points of the second curve.
+
+    Returns:
+        Tuple[float, float]: The pair of :math:`s` and :math:`t` values that
+        Newton's method converged to.
+    """
+    if s < ZERO_THRESHOLD:
+        reversed1 = np.asfortranarray(nodes1[:, ::-1])
+        if t < ZERO_THRESHOLD:
+            reversed2 = np.asfortranarray(nodes2[:, ::-1])
+            refined_s, refined_t = full_newton_nonzero(
+                1.0 - s, reversed1, 1.0 - t, reversed2)
+            return 1.0 - refined_s, 1.0 - refined_t
+        else:
+            refined_s, refined_t = full_newton_nonzero(
+                1.0 - s, reversed1, t, nodes2)
+            return 1.0 - refined_s, refined_t
+    else:
+        if t < ZERO_THRESHOLD:
+            reversed2 = np.asfortranarray(nodes2[:, ::-1])
+            refined_s, refined_t = full_newton_nonzero(
+                s, nodes1, 1.0 - t, reversed2)
+            return refined_s, 1.0 - refined_t
+        else:
+            return full_newton_nonzero(s, nodes1, t, nodes2)
 
 
 class IntersectionClassification(enum.Enum):
