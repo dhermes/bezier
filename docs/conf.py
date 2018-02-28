@@ -22,6 +22,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import doctest
 import email
 import os
 import pkg_resources
@@ -378,3 +379,18 @@ intersphinx_mapping = {
 autoclass_content = 'both'
 autodoc_member_order = 'bysource'
 autodoc_mock_imports = []
+
+# -- Options for sphinx.ext.doctest  --------------------------------------
+# See:
+# (http://www.sphinx-doc.org/en/stable/ext/
+#  doctest.html#confval-doctest_default_flags)
+# Defaults (as of 1.7.1) are:
+# - ELLIPSIS
+# - IGNORE_EXCEPTION_DETAIL  (TURN THIS ONE BACK ON)
+# - DONT_ACCEPT_TRUE_FOR_1
+# We want to turn off
+# (https://docs.python.org/3/library/\
+#  doctest.html#doctest.IGNORE_EXCEPTION_DETAIL)
+doctest_default_flags = (
+    doctest.DONT_ACCEPT_TRUE_FOR_1 |
+    doctest.ELLIPSIS)
