@@ -161,6 +161,7 @@ TANGENT_OVERRIDES = {
         42: {'parallel': True},
         43: {'parallel': True},
         44: {'parallel': True},
+        45: {'too_many': 74},
     },
     ALGEBRAIC: {},
 }

@@ -811,5 +811,21 @@
         "curve2_params": [
             0
         ]
+    }, {
+        "curve1": "61",
+        "curve2": "62",
+        "id": 45,
+        "type": "tangent",
+        "note": "The curves in this intersection are not only tangent, they also have the same curvature. This intersection is the same as #42, but the curves have been reparameterized so that the intersection occurs at (1/3, 1/3).",
+        "intersections": [
+            [0],
+            [0]
+        ],
+        "curve1_params": [
+            "1/3"
+        ],
+        "curve2_params": [
+            "1/3"
+        ]
     }
 ]

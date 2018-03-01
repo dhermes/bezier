@@ -738,5 +738,31 @@
             [1, 2, 0]
         ],
         "note": "This is the first edge from surface 41Q. It is a specialized version of #58: curve60 = curve58([-1/4, 3/4])."
+    },
+    "61": {
+        "control_points": [
+            [12, -12, 0],
+            [4, -8, 16]
+        ],
+        "implicitized": [
+            [-16, 0, 1],
+            [1, 0, 2],
+            [-2, 1, 1],
+            [1, 2, 0]
+        ],
+        "note": "This is an extension of #56: curve61 = curve56([0, 1.5])."
+    },
+    "62": {
+        "control_points": [
+            [6, -6, 0],
+            [1, -2, 4]
+        ],
+        "implicitized": [
+            [-16, 0, 1],
+            [4, 0, 2],
+            [-4, 1, 1],
+            [1, 2, 0]
+        ],
+        "note": "This is an extension of #56: curve62 = curve57([0, 1.5])."
     }
 }
