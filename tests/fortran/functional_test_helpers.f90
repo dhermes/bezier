@@ -12,12 +12,12 @@
 
 module functional_test_helpers
 
-  use, intrinsic :: iso_c_binding, only: c_double, c_int
+  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   use status, only: &
        Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
        Status_SAME_CURVATURE, Status_BAD_INTERIOR, Status_EDGE_END, &
-       Status_UNKNOWN
+       Status_SINGULAR, Status_UNKNOWN
   use curve_intersection, only: &
        all_intersections, free_curve_intersections_workspace
   implicit none
@@ -114,6 +114,11 @@ contains
             "Case ", &
             case_id, &
             " (failure): EDGE_END"
+    else if (status == Status_SINGULAR) then
+       write (*, '(A, I2, A)') &
+            "Case ", &
+            case_id, &
+            " (failure): SINGULAR"
     else if (status == Status_UNKNOWN) then
        write (*, '(A, I2, A)') &
             "Case ", &
@@ -167,12 +172,13 @@ contains
     real(c_double), intent(in) :: expected_params(2, expected_n)
     ! Variables outside of signature.
     integer(c_int) :: num_intersections, status
+    logical(c_bool) :: unused_coincident
 
     call all_intersections( &
          num_nodes1, nodes1, &
          num_nodes2, nodes2, &
          CURVE_INTERSECTIONS, num_intersections, &
-         status)
+         unused_coincident, status)
     call sort_vals(num_intersections, status)
     call show_curve_intersect_result( &
          case_id, status, num_intersections, expected_n, expected_params)
