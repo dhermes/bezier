@@ -20,8 +20,10 @@ from tests.functional import utils
 SCRIPTS_DIR = os.path.abspath(os.path.dirname(__file__))
 GENERATED_FILENAME = os.path.abspath(os.path.join(
     SCRIPTS_DIR, '..', 'tests', 'fortran', 'functional_curve.f90'))
-ROW_TEMPLATE = '    nodes{:d}(:, {:d}) = [{}_dp, {}_dp]'
-PARAM_TEMPLATE = '    expected_params({:d}, :) = [{}]'
+COL_TEMPLATE = '    nodes{:d}(:, {:d}) = [{}_dp, {}_dp]'
+PARAM_TEMPLATE_COMPACT = '    expected_params({:d}, :) = [{}]'
+PARAM_TEMPLATE = '    expected_params({:d}, :) = [ &\n         {}]'
+PARAM_JOIN_ON = ', &\n         '
 CASE_TEMPLATE = """\
   subroutine case{case_id:d}()
 
@@ -77,38 +79,44 @@ end module functional_curve
 """
 
 
+def params_string(index, curve_params):
+    inside = ['{}_dp'.format(param)
+              for param in curve_params]
+    result_compact = PARAM_TEMPLATE_COMPACT.format(index, ', '.join(inside))
+    if len(result_compact) <= 80:
+        return result_compact
+
+    return PARAM_TEMPLATE.format(index, PARAM_JOIN_ON.join(inside))
+
+
 def make_test_case(intersection):
     id1 = int(intersection.curve1_info.id_)
     nodes1 = intersection.nodes1
-    num_nodes1, _ = nodes1.shape
+    _, num_nodes1 = nodes1.shape
 
     id2 = int(intersection.curve2_info.id_)
     nodes2 = intersection.nodes2
-    num_nodes2, _ = nodes2.shape
+    _, num_nodes2 = nodes2.shape
 
     num_params = intersection.num_params
 
     parts = []
-    for row in range(num_nodes1):
-        x_val, y_val = nodes1[row, :]
-        parts.append(ROW_TEMPLATE.format(id1, row + 1, x_val, y_val))
+    for col in range(num_nodes1):
+        x_val, y_val = nodes1[:, col]
+        parts.append(COL_TEMPLATE.format(id1, col + 1, x_val, y_val))
     nodes1_vals = '\n'.join(parts)
 
     parts = []
-    for row in range(num_nodes2):
-        x_val, y_val = nodes2[row, :]
-        parts.append(ROW_TEMPLATE.format(id2, row + 1, x_val, y_val))
+    for col in range(num_nodes2):
+        x_val, y_val = nodes2[:, col]
+        parts.append(COL_TEMPLATE.format(id2, col + 1, x_val, y_val))
     nodes2_vals = '\n'.join(parts)
 
     if num_params == 0:
         expected_params = ''
     else:
-        inside = ['{}_dp'.format(param)
-                  for param in intersection.curve1_params]
-        part1 = PARAM_TEMPLATE.format(1, ', '.join(inside))
-        inside = ['{}_dp'.format(param)
-                  for param in intersection.curve2_params]
-        part2 = PARAM_TEMPLATE.format(2, ', '.join(inside))
+        part1 = params_string(1, intersection.curve1_params)
+        part2 = params_string(2, intersection.curve2_params)
         expected_params = part1 + '\n' + part2 + '\n\n'
 
     return CASE_TEMPLATE.format(

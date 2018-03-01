@@ -58,7 +58,10 @@ module functional_curve
        case39, &
        case40, &
        case41, &
-       case42
+       case42, &
+       case43, &
+       case44, &
+       case45
   public all_cases
 
 contains
@@ -299,8 +302,16 @@ contains
     nodes13(:, 4) = [0.75_dp, 2.0_dp]
     nodes13(:, 5) = [1.0_dp, 0.0_dp]
 
-    expected_params(1, :) = [0.0_dp, 0.3110177634953864_dp, 0.6889822365046137_dp, 1.0_dp]
-    expected_params(2, :) = [0.0_dp, 0.3110177634953864_dp, 0.6889822365046137_dp, 1.0_dp]
+    expected_params(1, :) = [ &
+         0.0_dp, &
+         0.3110177634953864_dp, &
+         0.6889822365046137_dp, &
+         1.0_dp]
+    expected_params(2, :) = [ &
+         0.0_dp, &
+         0.3110177634953864_dp, &
+         0.6889822365046137_dp, &
+         1.0_dp]
 
     call intersect_and_check( &
          10, &
@@ -449,8 +460,16 @@ contains
     nodes20(:, 2) = [-1.0_dp, 0.25_dp]
     nodes20(:, 3) = [1.0_dp, 0.5_dp]
 
-    expected_params(1, :) = [0.09549150281252629_dp, 0.25_dp, 0.6545084971874737_dp, 1.0_dp]
-    expected_params(2, :) = [0.3454915028125263_dp, 0.75_dp, 0.9045084971874737_dp, 0.0_dp]
+    expected_params(1, :) = [ &
+         0.09549150281252629_dp, &
+         0.25_dp, &
+         0.6545084971874737_dp, &
+         1.0_dp]
+    expected_params(2, :) = [ &
+         0.3454915028125263_dp, &
+         0.75_dp, &
+         0.9045084971874737_dp, &
+         0.0_dp]
 
     call intersect_and_check( &
          16, &
@@ -474,8 +493,16 @@ contains
     nodes21(:, 2) = [0.5_dp, 1.28125_dp]
     nodes21(:, 3) = [1.125_dp, -0.28125_dp]
 
-    expected_params(1, :) = [0.0_dp, 0.3454915028125263_dp, 0.75_dp, 0.9045084971874737_dp]
-    expected_params(2, :) = [0.9_dp, 0.17639320225002103_dp, 0.3_dp, 0.623606797749979_dp]
+    expected_params(1, :) = [ &
+         0.0_dp, &
+         0.3454915028125263_dp, &
+         0.75_dp, &
+         0.9045084971874737_dp]
+    expected_params(2, :) = [ &
+         0.9_dp, &
+         0.17639320225002103_dp, &
+         0.3_dp, &
+         0.623606797749979_dp]
 
     call intersect_and_check( &
          17, &
@@ -499,8 +526,16 @@ contains
     nodes22(:, 2) = [-1.5625_dp, 0.25_dp]
     nodes22(:, 3) = [1.5625_dp, 0.5625_dp]
 
-    expected_params(1, :) = [0.17639320225002103_dp, 0.3_dp, 0.623606797749979_dp, 0.9_dp]
-    expected_params(2, :) = [0.37639320225002104_dp, 0.7_dp, 0.823606797749979_dp, 0.1_dp]
+    expected_params(1, :) = [ &
+         0.17639320225002103_dp, &
+         0.3_dp, &
+         0.623606797749979_dp, &
+         0.9_dp]
+    expected_params(2, :) = [ &
+         0.37639320225002104_dp, &
+         0.7_dp, &
+         0.823606797749979_dp, &
+         0.1_dp]
 
     call intersect_and_check( &
          18, &
@@ -599,8 +634,14 @@ contains
     nodes26(:, 3) = [3.875_dp, 0.0_dp]
     nodes26(:, 4) = [5.625_dp, 1.0_dp]
 
-    expected_params(1, :) = [0.11416126713641388_dp, 0.5_dp, 0.8858387328635862_dp]
-    expected_params(2, :) = [0.059041448155901566_dp, 0.5_dp, 0.9409585518440984_dp]
+    expected_params(1, :) = [ &
+         0.11416126713641388_dp, &
+         0.5_dp, &
+         0.8858387328635862_dp]
+    expected_params(2, :) = [ &
+         0.059041448155901566_dp, &
+         0.5_dp, &
+         0.9409585518440984_dp]
 
     call intersect_and_check( &
          22, &
@@ -1091,6 +1132,81 @@ contains
 
   end subroutine case42
 
+  subroutine case43()
+
+    real(c_double) :: nodes58(2, 3)
+    real(c_double) :: nodes59(2, 3)
+    real(c_double) :: expected_params(2, 1)
+
+    nodes58(:, 1) = [1.0_dp, 0.0_dp]
+    nodes58(:, 2) = [1.0_dp, 1.0_dp]
+    nodes58(:, 3) = [0.0_dp, 1.0_dp]
+
+    nodes59(:, 1) = [1.0_dp, 0.0_dp]
+    nodes59(:, 2) = [1.0_dp, 1.5_dp]
+    nodes59(:, 3) = [-0.5_dp, 1.5_dp]
+
+    expected_params(1, :) = [0.0_dp]
+    expected_params(2, :) = [0.0_dp]
+
+    call intersect_and_check( &
+         43, &
+         3, nodes58, &
+         3, nodes59, &
+         1, expected_params)
+
+  end subroutine case43
+
+  subroutine case44()
+
+    real(c_double) :: nodes60(2, 3)
+    real(c_double) :: nodes59(2, 3)
+    real(c_double) :: expected_params(2, 1)
+
+    nodes60(:, 1) = [0.9375_dp, -0.5625_dp]
+    nodes60(:, 2) = [1.1875_dp, 0.6875_dp]
+    nodes60(:, 3) = [0.4375_dp, 0.9375_dp]
+
+    nodes59(:, 1) = [1.0_dp, 0.0_dp]
+    nodes59(:, 2) = [1.0_dp, 1.5_dp]
+    nodes59(:, 3) = [-0.5_dp, 1.5_dp]
+
+    expected_params(1, :) = [0.25_dp]
+    expected_params(2, :) = [0.0_dp]
+
+    call intersect_and_check( &
+         44, &
+         3, nodes60, &
+         3, nodes59, &
+         1, expected_params)
+
+  end subroutine case44
+
+  subroutine case45()
+
+    real(c_double) :: nodes61(2, 3)
+    real(c_double) :: nodes62(2, 3)
+    real(c_double) :: expected_params(2, 1)
+
+    nodes61(:, 1) = [12.0_dp, 4.0_dp]
+    nodes61(:, 2) = [-12.0_dp, -8.0_dp]
+    nodes61(:, 3) = [0.0_dp, 16.0_dp]
+
+    nodes62(:, 1) = [6.0_dp, 1.0_dp]
+    nodes62(:, 2) = [-6.0_dp, -2.0_dp]
+    nodes62(:, 3) = [0.0_dp, 4.0_dp]
+
+    expected_params(1, :) = [0.3333333333333333_dp]
+    expected_params(2, :) = [0.3333333333333333_dp]
+
+    call intersect_and_check( &
+         45, &
+         3, nodes61, &
+         3, nodes62, &
+         1, expected_params)
+
+  end subroutine case45
+
   subroutine all_cases()
 
     call case1()
@@ -1135,6 +1251,9 @@ contains
     call case40()
     call case41()
     call case42()
+    call case43()
+    call case44()
+    call case45()
 
   end subroutine all_cases
 
