@@ -28,22 +28,37 @@ module curve_intersection
        subdivide_curve
   implicit none
   private &
-       MAX_INTERSECT_SUBDIVISIONS, MIN_INTERVAL_WIDTH, MAX_CANDIDATES, &
-       SIMILAR_ULPS, CANDIDATES_ODD, CANDIDATES_EVEN, POLYGON1, POLYGON2, &
-       make_candidates, prune_candidates, elevate_helper
+       newton_routine, MAX_INTERSECT_SUBDIVISIONS, MIN_INTERVAL_WIDTH, &
+       MAX_CANDIDATES, SIMILAR_ULPS, CANDIDATES_ODD, CANDIDATES_EVEN, &
+       POLYGON1, POLYGON2, make_candidates, prune_candidates, elevate_helper
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
        BoxIntersectionType_DISJOINT, Subdivide_FIRST, Subdivide_SECOND, &
        Subdivide_BOTH, Subdivide_NEITHER, LINEARIZATION_THRESHOLD, &
        INTERSECTIONS_WORKSPACE, linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_lines_parameters, &
-       line_line_collide, convex_hull_collide, from_linearized, &
+       line_line_collide, convex_hull_collide, newton_simple_root, &
+       newton_double_root, newton_iterate, full_newton_nonzero, full_newton, &
+       from_linearized, &
        bbox_line_intersect, check_lines, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
        add_coincident_parameters, all_intersections, all_intersections_abi, &
        set_max_candidates, get_max_candidates, set_similar_ulps, &
        get_similar_ulps, free_curve_intersections_workspace
+
+  ! Interface for ``newton_iterate()``.
+  abstract interface
+     subroutine newton_routine(s, t, jacobian, func_val)
+       use, intrinsic :: iso_c_binding, only: c_double
+       implicit none
+
+       real(c_double), intent(in) :: s
+       real(c_double), intent(in) :: t
+       real(c_double), intent(out) :: jacobian(2, 2)
+       real(c_double), intent(out) :: func_val(2, 1)
+     end subroutine newton_routine
+  end interface
 
   ! Values of BoxIntersectionType enum:
   integer(c_int), parameter :: BoxIntersectionType_INTERSECTION = 0
@@ -146,22 +161,20 @@ contains
     real(c_double), intent(in) :: t
     integer(c_int), intent(in) :: num_nodes2
     real(c_double), intent(in) :: nodes2(2, num_nodes2)
-    real(c_double), intent(out) :: new_s, new_t
+    real(c_double), intent(out) :: new_s
+    real(c_double), intent(out) :: new_t
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
-    real(c_double) :: param(1)
     real(c_double) :: func_val(2, 1)
     real(c_double) :: workspace(2, 1)
     real(c_double) :: jac_mat(2, 2)
     real(c_double) :: delta_s, delta_t
     logical(c_bool) :: singular
 
-    param = t
     call evaluate_multi( &
-         num_nodes2, 2, nodes2, 1, param, func_val)
-    param = s
+         num_nodes2, 2, nodes2, 1, [t], func_val)
     call evaluate_multi( &
-         num_nodes1, 2, nodes1, 1, param, workspace)
+         num_nodes1, 2, nodes1, 1, [s], workspace)
     func_val = func_val - workspace
 
     if (all(func_val == 0.0_dp)) then
@@ -394,6 +407,359 @@ contains
     end if
 
   end subroutine convex_hull_collide
+
+  subroutine newton_simple_root( &
+       s, num_nodes1, nodes1, first_deriv1, &
+       t, num_nodes2, nodes2, first_deriv2, jacobian, func_val)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    ! Evaluate F(s, t) = B1(s) - B2(t) and compute the Jacobian
+    ! DF(s, t) at that point. This is **very** similar to
+    ! ``newton_refine_intersect`` but it
+    ! 1. Assumes ``first_deriv1`` and ``first_deriv2`` have already
+    !    been computed rather than re-computing them in
+    !    ``evaluate_hodograph()``
+    ! 2. Does not try to solve ``J [ds, dt] = -F``.
+
+    real(c_double), intent(in) :: s
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
+    real(c_double), intent(in) :: first_deriv1(2, num_nodes1 - 1)
+    real(c_double), intent(in) :: t
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
+    real(c_double), intent(in) :: first_deriv2(2, num_nodes2 - 1)
+    real(c_double), intent(out) :: jacobian(2, 2)
+    real(c_double), intent(out) :: func_val(2, 1)
+    ! Variables outside of signature.
+    real(c_double) :: workspace(2, 1)
+
+    call evaluate_multi( &
+         num_nodes1, 2, nodes1, 1, [s], func_val)
+    call evaluate_multi( &
+         num_nodes2, 2, nodes2, 1, [t], workspace)
+    func_val = func_val - workspace
+
+    ! Only compute the Jacobian if ``F(s, t) != [0, 0]``.
+    if (all(func_val == 0.0_dp)) then
+       return
+    end if
+
+    ! NOTE: We somewhat replicate code in ``evaluate_hodograph()`` here.
+    !       This is because we have already been provided the nodes for the
+    !       derivative.
+    call evaluate_multi( &
+         num_nodes1 - 1, 2, first_deriv1, 1, [s], jacobian(:, 1:1))
+    call evaluate_multi( &
+         num_nodes2 - 1, 2, first_deriv2, 1, [t], jacobian(:, 2:2))
+    jacobian(:, 2) = -jacobian(:, 2)
+
+  end subroutine newton_simple_root
+
+  subroutine newton_double_root( &
+       s, num_nodes1, nodes1, first_deriv1, second_deriv1, &
+       t, num_nodes2, nodes2, first_deriv2, second_deriv2, &
+       modified_lhs, modified_rhs)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    ! Evaluate G(s, t) which has B1(s) - B2(t) in the first two slots
+    ! and B1'(s) x B2'(t) in the third and compute the Jacobian
+    ! DG(s, t) at that point. After doing so, make the overdetermined
+    ! system square by returning DG^T DG and DG^T G.
+
+    real(c_double), intent(in) :: s
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
+    real(c_double), intent(in) :: first_deriv1(2, num_nodes1 - 1)
+    real(c_double), intent(in) :: second_deriv1(2, num_nodes1 - 2)
+    real(c_double), intent(in) :: t
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
+    real(c_double), intent(in) :: first_deriv2(2, num_nodes2 - 1)
+    real(c_double), intent(in) :: second_deriv2(2, num_nodes2 - 2)
+    real(c_double), intent(out) :: modified_lhs(2, 2)
+    real(c_double), intent(out) :: modified_rhs(2, 1)
+    ! Variables outside of signature.
+    real(c_double) :: jacobian(3, 2)
+    real(c_double) :: func_val(3, 1)
+    real(c_double) :: workspace(2, 1)
+    real(c_double) :: b1_ds(2, 1), b2_dt(2, 1)
+
+    call evaluate_multi( &
+         num_nodes1, 2, nodes1, 1, [s], workspace)
+    func_val(:2, :) = workspace
+    call evaluate_multi( &
+         num_nodes2, 2, nodes2, 1, [t], workspace)
+    func_val(:2, :) = func_val(:2, :) - workspace
+
+    call evaluate_multi( &
+         num_nodes1 - 1, 2, first_deriv1, 1, [s], b1_ds)
+    call evaluate_multi( &
+         num_nodes2 - 1, 2, first_deriv2, 1, [t], b2_dt)
+    call cross_product(b1_ds(:, 1), b2_dt(:, 1), func_val(3, 1))
+
+    ! Only compute the Jacobian if ``G(s, t) != [0, 0, 0]``.
+    if (all(func_val == 0.0_dp)) then
+       modified_rhs = 0.0_dp
+       return
+    end if
+
+    jacobian(:2, 1:1) = b1_ds
+    jacobian(:2, 2:2) = -b2_dt
+    ! Here, we use ``workspace`` for ``B1''(s)``.
+    call evaluate_multi( &
+         num_nodes1 - 2, 2, second_deriv1, 1, [s], workspace)
+    call cross_product(workspace(:, 1), b2_dt(:, 1), jacobian(3, 1))
+
+    ! Here, we use ``workspace`` for ``B2''(t)``.
+    call evaluate_multi( &
+         num_nodes2 - 2, 2, second_deriv2, 1, [t], workspace)
+    call cross_product(b1_ds(:, 1), workspace(:, 1), jacobian(3, 2))
+
+    modified_lhs = matmul(transpose(jacobian), jacobian)
+    modified_rhs = matmul(transpose(jacobian), func_val)
+
+  end subroutine newton_double_root
+
+  subroutine newton_iterate(evaluate_fn, s, t, new_s, new_t, converged)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    ! See ``_intersection_helpers.py::newton_iterate()`` for details on
+    ! this implementation.
+
+    procedure(newton_routine) :: evaluate_fn
+    real(c_double), intent(in) :: s
+    real(c_double), intent(in) :: t
+    real(c_double), intent(out) :: new_s
+    real(c_double), intent(out) :: new_t
+    logical(c_bool), intent(out) :: converged
+    ! Variables outside of signature.
+    real(c_double) :: jacobian(2, 2), func_val(2, 1)
+    real(c_double) :: delta_s, delta_t
+    real(c_double) :: norm_update_prev, norm_update, norm_soln
+    integer(c_int) :: i, linear_updates
+
+    linear_updates = 0
+    new_s = s
+    new_t = t
+
+    newton_loop: do i = 1, 10
+       call evaluate_fn(new_s, new_t, jacobian, func_val)
+       if (all(func_val == 0.0_dp)) then
+          converged = .TRUE.
+          return
+       end if
+
+       ! NOTE: We use ``converged`` as a stand-in for ``singular``.
+       call solve2x2(jacobian, func_val(:, 1), converged, delta_s, delta_t)
+       if (converged) then
+          ! i.e. ``jacobian`` is singular.
+          exit newton_loop
+       end if
+
+       norm_update_prev = norm_update
+       norm_update = norm2([delta_s, delta_t])
+       ! If ||p{n} - p{n-1}|| > 0.25 ||p{n-1} - p{n-2}||, then that means
+       ! our convergence is acting linear at the current step.
+       if (i > 1 .AND. norm_update > 0.25 * norm_update_prev) then
+          linear_updates = linear_updates + 1
+       end if
+       ! If ``>=2/3`` of the updates have been linear, we are near a
+       ! non-simple root. (Make sure at least 5 updates have occurred.)
+       if (i >= 5 .AND. 3 * linear_updates >= 2 * i) then
+          exit newton_loop
+       end if
+
+       ! Determine the norm of the "old" solution before updating.
+       norm_soln = norm2([new_s, new_t])
+       new_s = new_s - delta_s
+       new_t = new_t - delta_t
+
+       if (norm_update < 0.5_dp**45 * norm_soln) then
+          converged = .TRUE.
+          return
+       end if
+
+    end do newton_loop
+
+    converged = .FALSE.
+
+  end subroutine newton_iterate
+
+  subroutine full_newton_nonzero( &
+       s, num_nodes1, nodes1, t, num_nodes2, nodes2, new_s, new_t, status)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    ! Does a "full" Newton's method until convergence.
+    ! NOTE: This assumes ``s, t`` are sufficiently far from ``0.0``.
+
+    ! Possible error states:
+    ! * Status_SUCCESS    : On success.
+    ! * Status_NO_CONVERGE: If the method doesn't converge to either a
+    !                       simple or double root.
+
+    real(c_double), intent(in) :: s
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
+    real(c_double), intent(in) :: t
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
+    real(c_double), intent(out) :: new_s
+    real(c_double), intent(out) :: new_t
+    integer(c_int), intent(out) :: status
+    ! Variables outside of signature.
+    real(c_double) :: first_deriv1(2, num_nodes1 - 1)
+    real(c_double) :: first_deriv2(2, num_nodes2 - 1)
+    logical(c_bool) :: converged
+    real(c_double) :: second_deriv1(2, num_nodes1 - 2)
+    real(c_double) :: second_deriv2(2, num_nodes2 - 2)
+    real(c_double) :: current_s, current_t
+
+    status = Status_SUCCESS
+
+    first_deriv1 = (num_nodes1 - 1) * ( &
+         nodes1(:, 2:) - nodes1(:, :num_nodes1 - 1))
+    first_deriv2 = (num_nodes2 - 1) * ( &
+         nodes2(:, 2:) - nodes2(:, :num_nodes2 - 1))
+
+    call newton_iterate(f_simple, s, t, current_s, current_t, converged)
+    if (converged) then
+       new_s = current_s
+       new_t = current_t
+       return
+    end if
+
+    second_deriv1 = (num_nodes1 - 2) * ( &
+         first_deriv1(:, 2:) - first_deriv1(:, :num_nodes1 - 2))
+    second_deriv2 = (num_nodes2 - 2) * ( &
+         first_deriv2(:, 2:) - first_deriv2(:, :num_nodes2 - 2))
+
+    call newton_iterate( &
+         f_double, current_s, current_t, new_s, new_t, converged)
+    if (converged) then
+       return
+    end if
+
+    status = Status_NO_CONVERGE
+
+  contains
+
+    ! NOTE: This is a closure around several variables in the scope above:
+    !       * ``num_nodes1``
+    !       * ``nodes1``
+    !       * ``first_deriv1``
+    !       * ``num_nodes2``
+    !       * ``nodes2``
+    !       * ``first_deriv2``
+    subroutine f_simple(s, t, jacobian, func_val)
+      real(c_double), intent(in) :: s
+      real(c_double), intent(in) :: t
+      real(c_double), intent(out) :: jacobian(2, 2)
+      real(c_double), intent(out) :: func_val(2, 1)
+
+      call newton_simple_root( &
+           s, num_nodes1, nodes1, first_deriv1, &
+           t, num_nodes2, nodes2, first_deriv2, jacobian, func_val)
+
+    end subroutine f_simple
+
+    ! NOTE: This is a closure around several variables in the scope above:
+    !       * ``num_nodes1``
+    !       * ``nodes1``
+    !       * ``first_deriv1``
+    !       * ``second_deriv1``
+    !       * ``num_nodes2``
+    !       * ``nodes2``
+    !       * ``first_deriv2``
+    !       * ``second_deriv2``
+    subroutine f_double(s, t, jacobian, func_val)
+      real(c_double), intent(in) :: s
+      real(c_double), intent(in) :: t
+      real(c_double), intent(out) :: jacobian(2, 2)
+      real(c_double), intent(out) :: func_val(2, 1)
+
+      call newton_double_root( &
+           s, num_nodes1, nodes1, first_deriv1, second_deriv1, &
+           t, num_nodes2, nodes2, first_deriv2, second_deriv2, &
+           jacobian, func_val)
+
+    end subroutine f_double
+
+  end subroutine full_newton_nonzero
+
+  subroutine full_newton( &
+       s, num_nodes1, nodes1, t, num_nodes2, nodes2, new_s, new_t, status)
+
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    ! This is a "wrapper" for ``full_newton_nonzero`` that checks if
+    ! ``s`` or ``t`` is below a zero threshold (``2^{-10} ~= 1e-3`` and then
+    ! reverses the direction of the curve(s) if the parameter is below. This is
+    ! done to avoid round-off issues near ``0.0``.
+
+    ! Possible error states:
+    ! * Status_SUCCESS    : On success.
+    ! * Status_NO_CONVERGE: Via ``full_newton_nonzero()``.
+
+    real(c_double), intent(in) :: s
+    integer(c_int), intent(in) :: num_nodes1
+    real(c_double), intent(in) :: nodes1(2, num_nodes1)
+    real(c_double), intent(in) :: t
+    integer(c_int), intent(in) :: num_nodes2
+    real(c_double), intent(in) :: nodes2(2, num_nodes2)
+    real(c_double), intent(out) :: new_s
+    real(c_double), intent(out) :: new_t
+    integer(c_int), intent(out) :: status
+    ! Variables outside of signature.
+    real(c_double) :: reversed1(2, num_nodes1)
+    real(c_double) :: reversed2(2, num_nodes2)
+
+    if (s < 0.5_dp**10) then
+       reversed1 = nodes1(:, num_nodes1:1:-1)
+       if (t < 0.5_dp**10) then
+          ! s ~= 0, t ~= 0.
+          reversed2 = nodes2(:, num_nodes2:1:-1)
+          call full_newton_nonzero( &
+               1.0_dp - s, num_nodes1, reversed1, &
+               1.0_dp - t, num_nodes2, reversed2, &
+               new_s, new_t, status)
+          new_s = 1.0_dp - new_s
+          new_t = 1.0_dp - new_t
+       else
+          ! s ~= 0, t >> 0.
+          call full_newton_nonzero( &
+               1.0_dp - s, num_nodes1, reversed1, &
+               t, num_nodes2, nodes2, &
+               new_s, new_t, status)
+          new_s = 1.0_dp - new_s
+       end if
+    else
+       if (t < 0.5_dp**10) then
+          ! s >> 0, t ~= 0.
+          reversed2 = nodes2(:, num_nodes2:1:-1)
+          call full_newton_nonzero( &
+               s, num_nodes1, nodes1, &
+               1.0_dp - t, num_nodes2, reversed2, &
+               new_s, new_t, status)
+          new_t = 1.0_dp - new_t
+       else
+          ! s >> 0, t >> 0.
+          call full_newton_nonzero( &
+               s, num_nodes1, nodes1, &
+               t, num_nodes2, nodes2, new_s, new_t, status)
+       end if
+    end if
+
+  end subroutine full_newton
 
   subroutine from_linearized( &
        curve1, num_nodes1, root_nodes1, &

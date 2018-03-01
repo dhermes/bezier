@@ -26,7 +26,9 @@ module test_curve_intersection
        Subdivide_BOTH, Subdivide_NEITHER, &
        linearization_error, segment_intersection, &
        newton_refine_intersect, bbox_intersect, parallel_lines_parameters, &
-       line_line_collide, convex_hull_collide, from_linearized, &
+       line_line_collide, convex_hull_collide, newton_simple_root, &
+       newton_double_root, newton_iterate, full_newton_nonzero, full_newton, &
+       from_linearized, &
        bbox_line_intersect, check_lines, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
@@ -40,7 +42,9 @@ module test_curve_intersection
        test_linearization_error, test_segment_intersection, &
        test_newton_refine_intersect, test_bbox_intersect, &
        test_parallel_lines_parameters, test_line_line_collide, &
-       test_convex_hull_collide, test_from_linearized, &
+       test_convex_hull_collide, test_newton_simple_root, &
+       test_newton_double_root, check_closer, test_newton_iterate, &
+       test_full_newton_nonzero, test_full_newton, test_from_linearized, &
        test_bbox_line_intersect, test_check_lines, test_add_intersection, &
        test_add_from_linearized, test_endpoint_check, &
        test_tangent_bbox_intersection, test_add_candidates, &
@@ -62,6 +66,11 @@ contains
     call test_parallel_lines_parameters(success)
     call test_line_line_collide(success)
     call test_convex_hull_collide(success)
+    call test_newton_simple_root(success)
+    call test_newton_double_root(success)
+    call test_newton_iterate(success)
+    call test_full_newton_nonzero(success)
+    call test_full_newton(success)
     call test_from_linearized(success)
     call test_bbox_line_intersect(success)
     call test_check_lines(success)
@@ -775,6 +784,573 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_convex_hull_collide
+
+  subroutine test_newton_simple_root(success)
+
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(18) :: name
+    real(c_double) :: nodes1(2, 3), nodes2(2, 2)
+    real(c_double) :: first_deriv1(2, 2), first_deriv2(2, 1)
+    real(c_double) :: jacobian(2, 2)
+    real(c_double) :: func_val(2, 1)
+
+    case_id = 1
+    name = "newton_simple_root"
+
+    ! CASE 1: F(s, t) != [0, 0].
+    !           B1(s) = [s(s + 2) ]
+    !                   [4s(1 - s)]
+    !           B2(t) = [1 + 3t]
+    !                   [4 - 4t]
+    !           DF    = [2 + 2s, -3]
+    !                   [4 - 8s,  4]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 2.0_dp]
+    nodes1(:, 3) = [3.0_dp, 0.0_dp]
+    first_deriv1(:, 1) = [2.0_dp, 4.0_dp]
+    first_deriv1(:, 2) = [4.0_dp, -4.0_dp]
+    nodes2(:, 1) = [1.0_dp, 4.0_dp]
+    nodes2(:, 2) = [4.0_dp, 0.0_dp]
+    first_deriv2(:, 1) = [3.0_dp, -4.0_dp]
+    call newton_simple_root( &
+         0.5_dp, 3, nodes1, first_deriv1, &
+         0.25_dp, 2, nodes2, first_deriv2, jacobian, func_val)
+    case_success = ( &
+         all(jacobian(:, 1) == [3.0_dp, 0.0_dp]) .AND. &
+         all(jacobian(:, 2) == [-3.0_dp, 4.0_dp]) .AND. &
+         all(func_val(:, 1) == [-0.5_dp, -2.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: F(s, t) == [0, 0].
+    !           B1(s) = [2s(1 + s)]
+    !                   [6s(1 - s)]
+    !           B2(t) = [21t]
+    !                   [ 9t]
+    !           DF    = [2 +  4s, -21]
+    !                   [6 - 12s,  -9]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [1.0_dp, 3.0_dp]
+    nodes1(:, 3) = [4.0_dp, 0.0_dp]
+    first_deriv1(:, 1) = [2.0_dp, 6.0_dp]
+    first_deriv1(:, 2) = [6.0_dp, -6.0_dp]
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [21.0_dp, 9.0_dp]
+    first_deriv2(:, 1) = [21.0_dp, 9.0_dp]
+    call newton_simple_root( &
+         0.75_dp, 3, nodes1, first_deriv1, &
+         0.125_dp, 2, nodes2, first_deriv2, jacobian, func_val)
+    case_success = ( &
+         all(func_val == 0.0_dp))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_newton_simple_root
+
+  subroutine test_newton_double_root(success)
+
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(18) :: name
+    real(c_double) :: nodes1(2, 3), nodes2(2, 3)
+    real(c_double) :: first_deriv1(2, 2), first_deriv2(2, 2)
+    real(c_double) :: second_deriv1(2, 1), second_deriv2(2, 1)
+    real(c_double) :: modified_lhs(2, 2)
+    real(c_double) :: modified_rhs(2, 1)
+
+    case_id = 1
+    name = "newton_double_root"
+
+    ! Same for both.
+    !           B1(s) = [s(s + 2) ]
+    !                   [4s(1 - s)]
+    !           B2(t) = [1 + 3t]
+    !                   [4 - 4t]
+    !           DF    = [2 + 2s, -3]
+    !                   [4 - 8s,  4]
+    !           B1(s) = [4s(1 - s)]
+    !                   [       2s]
+    !           B2(t) = [2(2t^2 - 2t + 1)]
+    !                   [              2t]
+    !           B1'(s) x B2'(s) = -16(s + t - 1)
+    !           DG    = [4 - 8s, 4 - 8t]
+    !                   [     2,     -2]
+    !                   [   -16,    -16]
+    !           DG^T DG = [   4(16s^2 - 16s + 69), 4(16st - 8s - 8t + 67)]
+    !                     [4(16st - 8s - 8t + 67),    4(16t^2 - 16t + 69)]
+    !           DG^T G  =
+    !     [4(8s^3 - 12s^2 + 8st^2 - 8st + 73s - 4t^2 + 67t - 66)]
+    !     [4(8s^2t - 4s^2 - 8st + 67s + 8t^3 - 12t^2 + 73t - 66)]
+    nodes1(:, 1) = 0
+    nodes1(:, 2) = [2.0_dp, 1.0_dp]
+    nodes1(:, 3) = [0.0_dp, 2.0_dp]
+    first_deriv1(:, 1) = [4.0_dp, 2.0_dp]
+    first_deriv1(:, 2) = [-4.0_dp, 2.0_dp]
+    second_deriv1(:, 1) = [-8.0_dp, 0.0_dp]
+    nodes2(:, 1) = [2.0_dp, 0.0_dp]
+    nodes2(:, 2) = [0.0_dp, 1.0_dp]
+    nodes2(:, 3) = [2.0_dp, 2.0_dp]
+    first_deriv2(:, 1) = [-4.0_dp, 2.0_dp]
+    first_deriv2(:, 2) = [4.0_dp, 2.0_dp]
+    second_deriv2(:, 1) = [8.0_dp, 0.0_dp]
+
+    ! CASE 1: G(s, t) != [0, 0, 0].
+    call newton_double_root( &
+         0.75_dp, 3, nodes1, first_deriv1, second_deriv1, &
+         0.25_dp, 3, nodes2, first_deriv2, second_deriv2, &
+         modified_lhs, modified_rhs)
+    case_success = ( &
+         all(modified_lhs(:, 1) == [264.0_dp, 248.0_dp]) .AND. &
+         all(modified_lhs(:, 2) == [248.0_dp, 264.0_dp]) .AND. &
+         all(modified_rhs(:, 1) == [3.0_dp, -3.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: G(s, t) == [0, 0, 0].
+    call newton_double_root( &
+         0.5_dp, 3, nodes1, first_deriv1, second_deriv1, &
+         0.5_dp, 3, nodes2, first_deriv2, second_deriv2, &
+         modified_lhs, modified_rhs)
+    case_success = ( &
+         all(modified_rhs(:, 1) == 0.0_dp))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_newton_double_root
+
+  subroutine check_closer( &
+       s, current_s, expected_s, t, current_t, expected_t, success)
+
+    ! Checks if ``current_s`` is closer to ``expected_s`` than ``s`` was
+    ! but also makes sure it is not as close as ``sqrt(machine precision)``
+    ! in relative error.
+
+    real(c_double), intent(in) :: s
+    real(c_double), intent(in) :: current_s
+    real(c_double), intent(in) :: expected_s
+    real(c_double), intent(in) :: t
+    real(c_double), intent(in) :: current_t
+    real(c_double), intent(in) :: expected_t
+    logical, intent(out) :: success
+    ! Variables outside of signature.
+    real(c_double) :: err_s, err_t
+
+    err_s = abs(expected_s - current_s)
+    err_t = abs(expected_t - current_t)
+
+    success = ( &
+         err_s < abs(expected_s - s) .AND. &
+         err_t < abs(expected_t - t) .AND. &
+         err_s > 0.5_dp**26 * expected_s .AND. &
+         err_t > 0.5_dp**26 * expected_t)
+
+  end subroutine check_closer
+
+  subroutine test_newton_iterate(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(14) :: name
+    real(c_double) :: s, t, new_s, new_t
+    logical(c_bool) :: converged
+    real(c_double) :: quadratic1(2, 3), quadratic2(2, 3)
+    real(c_double) :: first_deriv1(2, 2), first_deriv2(2, 2)
+    real(c_double) :: second_deriv1(2, 1), second_deriv2(2, 1)
+    real(c_double) :: expected_s, expected_t
+
+    case_id = 1
+    name = "newton_iterate"
+
+    ! CASE 1: RHS is exactly zero during "Newton simple" iteration.
+    !         B1([10922/32768, 10923/32768]) and B2([16383/16384, 1]) are
+    !         linearized and when the segments intersect they produce
+    !         t = 109217/109216 > 1.
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [4.5_dp, 9.0_dp]
+    quadratic1(:, 3) = [9.0_dp, 0.0_dp]
+    first_deriv1 = 2 * (quadratic1(:, 2:) - quadratic1(:, :2))
+    s = 671023103.0_dp / 2013069312.0_dp
+
+    quadratic2(:, 1) = [11.0_dp, 8.0_dp]
+    quadratic2(:, 2) = [7.0_dp, 10.0_dp]
+    quadratic2(:, 3) = [3.0_dp, 4.0_dp]
+    first_deriv2 = 2 * (quadratic2(:, 2:) - quadratic2(:, :2))
+    t = 1789394945.0_dp / 1789394944.0_dp
+
+    call newton_iterate(f_simple, s, t, new_s, new_t, converged)
+    case_success = ( &
+         3 * new_s == 1.0_dp .AND. &
+         new_t == 1.0_dp .AND. &
+         converged)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Jacobian becomes singular during "Newton simple" iteration.
+    !         B1([5461/8192, 5462/8192]) and B2([2730/8192, 2731/8192]) are
+    !         linearized and the segments are parallel. The curves intersect
+    !         at the point B1(2/3) = [1/2, 1/2] = B2(1/3) and they have
+    !         parallel tangent vectors B1'(2/3) = [3/4, 0] = B2'(1/3).
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
+    quadratic1(:, 3) = [0.75_dp, 0.375_dp]
+    first_deriv1 = 2 * (quadratic1(:, 2:) - quadratic1(:, :2))
+    s = 10923.0_dp / 16384.0_dp
+
+    quadratic2(:, 1) = [0.25_dp, 0.625_dp]
+    quadratic2(:, 2) = [0.625_dp, 0.25_dp]
+    quadratic2(:, 3) = 1
+    first_deriv2 = 2 * (quadratic2(:, 2:) - quadratic2(:, :2))
+    t = 5461.0_dp / 16384.0_dp
+
+    call newton_iterate(f_simple, s, t, new_s, new_t, converged)
+    case_success = ( &
+         3 * new_s == 2.0_dp + 0.5_dp**14 .AND. &
+         3 * new_t == 1.0_dp - 0.5_dp**14 .AND. &
+         .NOT. converged)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: The method converges linearly (rather than quadratically)
+    !         during "Newton simple" iteration.
+    !         B1([2730/8192, 2731/8192]) and B2([1/2, 2049/4096]) are
+    !         linearized and when the segments intersect they produce
+    !         t = -1/6 < 0.
+    quadratic1(:, 1) = [0.5_dp, 0.125_dp]
+    quadratic1(:, 2) = [1.25_dp, -0.25_dp]
+    quadratic1(:, 3) = [2.0_dp, 0.5_dp]
+    first_deriv1 = 2 * (quadratic1(:, 2:) - quadratic1(:, :2))
+    s = 12287.0_dp / 36864.0_dp
+
+    quadratic2(:, 1) = [0.5_dp, -0.125_dp]
+    quadratic2(:, 2) = [1.0_dp, 0.125_dp]
+    quadratic2(:, 3) = [1.5_dp, -0.125_dp]
+    first_deriv2 = 2 * (quadratic2(:, 2:) - quadratic2(:, :2))
+    t = 12287.0_dp / 24576.0_dp
+
+    call newton_iterate(f_simple, s, t, new_s, new_t, converged)
+    call check_closer( &
+         s, new_s, 1.0_dp / 3.0_dp, t, new_t, 0.5_dp, case_success)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. converged)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: The method converges because relative error is below threshold
+    !         during "Newton double" iteration.
+    !         B1([2730/8192, 2731/8192]) and B2([2047/4096, 1/2]) are
+    !         linearized and when the segments intersect they produce
+    !         t = 11/10 > 1.
+    !         This re-uses the nodes from CASE 3.
+
+    second_deriv1 = (first_deriv1(:, 2:) - first_deriv1(:, :1))
+    second_deriv2 = (first_deriv2(:, 2:) - first_deriv2(:, :1))
+
+    ! NOTE: These ``s-t`` values come after the simple root case exits
+    !       due to linear convergence, having started from
+    !       s = 6827 / 20480 and t = 20481 / 40960 and updating 4 times.
+    s = 109227.0_dp / 327680.0_dp
+    t = 327681.0_dp / 655360.0_dp
+
+    call newton_iterate(f_double, s, t, new_s, new_t, converged)
+    expected_s = 1.0_dp / 3.0_dp
+    case_success = ( &
+         expected_s - new_s == spacing(expected_s) .AND. &
+         new_t == 0.5_dp .AND. &
+         converged)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: The method converges because relative error is below threshold
+    !         during "Newton simple" iteration.
+    !         B1([12287/16384, 3/4]) and B2([2457/8192, 2458/8192]) are
+    !         linearized and when the segments intersect they produce
+    !         s = 33555797/33551701 > 1.
+    quadratic1(:, 1) = [1.0_dp, 0.0_dp]
+    quadratic1(:, 2) = [-1.0_dp, 0.25_dp]
+    quadratic1(:, 3) = [1.0_dp, 0.5_dp]
+    first_deriv1 = 2 * (quadratic1(:, 2:) - quadratic1(:, :2))
+    s = 25163776.0_dp / 33551701.0_dp
+
+    quadratic2(:, 1) = [-0.125_dp, -0.28125_dp]
+    quadratic2(:, 2) = [0.5_dp, 1.28125_dp]
+    quadratic2(:, 3) = [1.125_dp, -0.28125_dp]
+    first_deriv2 = 2 * (quadratic2(:, 2:) - quadratic2(:, :2))
+    t = 41228331827.0_dp / 137427767296.0_dp
+
+    call newton_iterate(f_simple, s, t, new_s, new_t, converged)
+    expected_t = 3.0_dp / 10.0_dp
+    case_success = ( &
+         new_s == 0.75_dp .AND. &
+         new_t - expected_t == spacing(expected_t) .AND. &
+         converged)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 6: Jacobian becomes singular during "Newton double" iteration.
+    !         The curves are tangent and have the same curvature (i.e.
+    !         triple root).
+    quadratic1(:, 1) = [12.0_dp, 4.0_dp]
+    quadratic1(:, 2) = -4
+    quadratic1(:, 3) = [-4.0_dp, 4.0_dp]
+    first_deriv1 = 2 * (quadratic1(:, 2:) - quadratic1(:, :2))
+    second_deriv1 = (first_deriv1(:, 2:) - first_deriv1(:, :1))
+    s = 1125899532873825.0_dp * 0.5_dp**51
+
+    quadratic2(:, 1) = [6.0_dp, 1.0_dp]
+    quadratic2(:, 2) = [-2.0_dp, -1.0_dp]
+    quadratic2(:, 3) = [-2.0_dp, 1.0_dp]
+    first_deriv2 = 2 * (quadratic2(:, 2:) - quadratic2(:, :2))
+    second_deriv2 = (first_deriv2(:, 2:) - first_deriv2(:, :1))
+    t = 4503596635588511.0_dp * 0.5_dp**53
+
+    call newton_iterate(f_double, s, t, new_s, new_t, converged)
+    call check_closer( &
+         s, new_s, 0.5_dp, t, new_t, 0.5_dp, case_success)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. converged)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: The method converges linearly (rather than quadratically)
+    !         during "Newton simple" iteration.
+    !         B1([16387/32768, 16388/32768]) and B2([8195/16384, 8196/16384])
+    !         are linearized and when the segments intersect they produce
+    !         s = t = -9/7 < 0.
+    !         This re-uses the nodes from CASE 6.
+
+    ! NOTE: These ``s-t`` values come after the simple root case exits
+    !       due to linear convergence, having started from
+    !       s = 28675 / 57344 and t = 14339 / 28672.
+    s = 4503629435419537.0_dp * 0.5_dp**53
+    t = 2251829621738309.0_dp * 0.5_dp**52
+
+    call newton_iterate(f_double, s, t, new_s, new_t, converged)
+    call check_closer( &
+         s, new_s, 0.5_dp, t, new_t, 0.5_dp, case_success)
+    case_success = ( &
+         case_success .AND. &
+         .NOT. converged)
+    call print_status(name, case_id, case_success, success)
+
+  contains
+
+    ! NOTE: This is a closure around several variables in the
+    !       scope above which may change:
+    !       * ``quadratic1``
+    !       * ``first_deriv1``
+    !       * ``quadratic2``
+    !       * ``first_deriv2``
+    subroutine f_simple(s, t, jacobian, func_val)
+      real(c_double), intent(in) :: s
+      real(c_double), intent(in) :: t
+      real(c_double), intent(out) :: jacobian(2, 2)
+      real(c_double), intent(out) :: func_val(2, 1)
+
+      call newton_simple_root( &
+           s, 3, quadratic1, first_deriv1, &
+           t, 3, quadratic2, first_deriv2, jacobian, func_val)
+
+    end subroutine f_simple
+
+    ! NOTE: This is a closure around several variables in the
+    !       scope above which may change:
+    !       * ``quadratic1``
+    !       * ``first_deriv1``
+    !       * ``second_deriv1``
+    !       * ``quadratic2``
+    !       * ``first_deriv2``
+    !       * ``second_deriv2``
+    subroutine f_double(s, t, jacobian, func_val)
+      real(c_double), intent(in) :: s
+      real(c_double), intent(in) :: t
+      real(c_double), intent(out) :: jacobian(2, 2)
+      real(c_double), intent(out) :: func_val(2, 1)
+
+      call newton_double_root( &
+           s, 3, quadratic1, first_deriv1, second_deriv1, &
+           t, 3, quadratic2, first_deriv2, second_deriv2, &
+           jacobian, func_val)
+
+    end subroutine f_double
+
+  end subroutine test_newton_iterate
+
+  subroutine test_full_newton_nonzero(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(19) :: name
+    real(c_double) :: s, t, new_s, new_t
+    real(c_double) :: quadratic1(2, 3), quadratic2(2, 3)
+    integer(c_int) :: status
+    real(c_double) :: expected_s, expected_t
+
+    case_id = 1
+    name = "full_newton_nonzero"
+
+    ! CASE 1: Simple root, converges.
+    !         B1([4095/8192, 1/2]) and B2([1365/8192, 1366/8192]) are
+    !         linearized and when the segments intersect they produce
+    !         s = 24580/24579 > 1.
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
+    quadratic1(:, 3) = [0.75_dp, 0.375_dp]
+    s = 100675585.0_dp / 201351168.0_dp
+
+    quadratic2(:, 1) = [0.25_dp, 0.5625_dp]
+    quadratic2(:, 2) = [0.625_dp, 0.1875_dp]
+    quadratic2(:, 3) = [1.0_dp, 0.9375_dp]
+    t = 33558529.0_dp / 201351168.0_dp
+
+    call full_newton_nonzero( &
+         s, 3, quadratic1, t, 3, quadratic2, new_s, new_t, status)
+    expected_s = 0.5_dp
+    expected_t = 1.0_dp / 6.0_dp
+    case_success = ( &
+         new_s - expected_s == spacing(expected_s) .AND. &
+         new_t - expected_t == 3 * spacing(expected_t) .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Double root, converges.
+    !         B1([5461/8192, 5462/8192]) and B2([2730/8192, 2731/8192]) are
+    !         linearized and the segments are parallel. The curves intersect
+    !         at the point B1(2/3) = [1/2, 1/2] = B2(1/3) and they have
+    !         parallel tangent vectors B1'(2/3) = [3/4, 0] = B2'(1/3).
+    !         This re-uses the ``quadratic1`` from CASE 1.
+
+    s = 10923.0_dp / 16384.0_dp
+
+    quadratic2(:, 1) = [0.25_dp, 0.625_dp]
+    quadratic2(:, 2) = [0.625_dp, 0.25_dp]
+    quadratic2(:, 3) = 1
+    t = 5461.0_dp / 16384.0_dp
+
+    call full_newton_nonzero( &
+         s, 3, quadratic1, t, 3, quadratic2, new_s, new_t, status)
+    expected_s = 2.0_dp / 3.0_dp
+    expected_t = 1.0_dp / 3.0_dp
+    case_success = ( &
+         new_s - expected_s == spacing(expected_s) .AND. &
+         new_t == expected_t .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Triple root, does not converge.
+    !         B1([16382/32768, 16383/32768]) and B2([8190/16384, 8191/16384])
+    !         are linearized and when the segments intersect they produce
+    !         s = t = 4/3 > 1.
+    quadratic1(:, 1) = [12.0_dp, 4.0_dp]
+    quadratic1(:, 2) = -4
+    quadratic1(:, 3) = [-4.0_dp, 4.0_dp]
+    s = 24575.0_dp / 49152.0_dp
+
+    quadratic2(:, 1) = [6.0_dp, 1.0_dp]
+    quadratic2(:, 2) = [-2.0_dp, -1.0_dp]
+    quadratic2(:, 3) = [-2.0_dp, 1.0_dp]
+    t = 12287.0_dp / 24576.0_dp
+
+    call full_newton_nonzero( &
+         s, 3, quadratic1, t, 3, quadratic2, new_s, new_t, status)
+    call check_closer( &
+         s, new_s, 0.5_dp, t, new_t, 0.5_dp, case_success)
+    case_success = ( &
+         case_success .AND. &
+         status == Status_NO_CONVERGE)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_full_newton_nonzero
+
+  subroutine test_full_newton(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(11) :: name
+    real(c_double) :: s, t, new_s, new_t
+    real(c_double) :: quadratic1(2, 3), quadratic2(2, 3)
+    integer(c_int) :: status
+    real(c_double) :: expected_s, expected_t
+
+    case_id = 1
+    name = "full_newton"
+
+    ! CASE 1: Both parameters near zero.
+    !         B1([0, 1/8192]) and B2([0, 1/8192]) are linearized and the
+    !         segments are parallel, and the root is a double root.
+    quadratic1(:, 1) = [1.0_dp, 0.0_dp]
+    quadratic1(:, 2) = 1
+    quadratic1(:, 3) = [0.0_dp, 1.0_dp]
+    s = 1.0_dp / 16384.0_dp
+
+    quadratic2(:, 1) = [1.0_dp, 0.0_dp]
+    quadratic2(:, 2) = [1.0_dp, 1.5_dp]
+    quadratic2(:, 3) = [-0.5_dp, 1.5_dp]
+    t = 1.0_dp / 16384.0_dp
+
+    call full_newton( &
+         s, 3, quadratic1, t, 3, quadratic2, new_s, new_t, status)
+    case_success = ( &
+         new_s == 0.0_dp .AND. &
+         new_t == 0.0_dp .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: ``s`` near zero, ``t`` not.
+    !         B1([0, 1/8192]) and B2([1/4, 2049/8192]) are linearized and the
+    !         segments are parallel, and the root is a double root.
+    quadratic1(:, 1) = [1.0_dp, 0.0_dp]
+    quadratic1(:, 2) = [1.0_dp, 1.5_dp]
+    quadratic1(:, 3) = [-0.5_dp, 1.5_dp]
+    s = 1.0_dp / 16384.0_dp
+
+    quadratic2(:, 1) = [0.9375_dp, -0.5625_dp]
+    quadratic2(:, 2) = [1.1875_dp, 0.6875_dp]
+    quadratic2(:, 3) = [0.4375_dp, 0.9375_dp]
+    t = 4097.0_dp / 16384.0_dp
+
+    call full_newton( &
+         s, 3, quadratic1, t, 3, quadratic2, new_s, new_t, status)
+    case_success = ( &
+         new_s == 0.0_dp .AND. &
+         new_t == 0.25_dp .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: ``t`` near zero, ``s`` not. We re-use the nodes and parameters
+    !         from CASE 2 and just swap the order.
+    call full_newton( &
+         t, 3, quadratic2, s, 3, quadratic1, new_s, new_t, status)
+    case_success = ( &
+         new_s == 0.25_dp .AND. &
+         new_t == 0.0_dp .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Neither parameter near zero.
+    !         B1([6826/8192, 6827/8192]) and B2([1/2, 4097/8192]) are
+    !         linearized and when the segments intersect they produce
+    !         t = -1/24579 < 0. The root is a simple root.
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
+    quadratic1(:, 3) = [0.75_dp, 0.375_dp]
+    s = 167792639.0_dp / 201351168.0_dp
+
+    quadratic2(:, 1) = [0.25_dp, 0.5625_dp]
+    quadratic2(:, 2) = [0.625_dp, 0.1875_dp]
+    quadratic2(:, 3) = [1.0_dp, 0.9375_dp]
+    t = 100675583.0_dp / 201351168.0_dp
+
+    expected_s = 5.0_dp / 6.0_dp
+    expected_t = 0.5_dp
+    call full_newton( &
+         s, 3, quadratic1, t, 3, quadratic2, new_s, new_t, status)
+    case_success = ( &
+         expected_s - new_s == 2 * spacing(expected_s) .AND. &
+         expected_t - new_t == 0.5_dp * spacing(expected_t) .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_full_newton
 
   subroutine test_from_linearized(success)
     logical(c_bool), intent(inout) :: success

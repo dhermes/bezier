@@ -27,7 +27,8 @@ module status
   !           linearized segments are parallel.
   integer(c_int), parameter :: Status_PARALLEL = 1
   ! NO_CONVERGE: An iterative algorithm has failed to converge. Used by
-  !              ``curve_intersection.all_intersections()``.
+  !              ``curve_intersection.all_intersections()`` and
+  !              ``curve_intersection.full_newton_nonzero()``.
   integer(c_int), parameter :: Status_NO_CONVERGE = 2
   ! INSUFFICIENT_SPACE: Intended to be used by ABI versions of procedures. Will
   !                     be used when the caller has not allocated enough space

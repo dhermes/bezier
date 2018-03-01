@@ -1661,9 +1661,9 @@ contains
     end if
 
     call surfaces_intersection_points( &
-       num_nodes1, nodes1, degree1, &
-       num_nodes2, nodes2, degree2, &
-       intersections, num_intersections, all_types, status)
+         num_nodes1, nodes1, degree1, &
+         num_nodes2, nodes2, degree2, &
+         intersections, num_intersections, all_types, status)
     if (status /= Status_SUCCESS) then
        return
     end if
