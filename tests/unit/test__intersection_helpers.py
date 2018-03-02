@@ -569,7 +569,7 @@ class Test_newton_iterate(unittest.TestCase):
 
         self.assertTrue(converged)
         self.assertEqual(0.75, current_s)
-        almost(self, 3.0 / 10.0, current_t, 1)
+        utils.almost(self, 3.0 / 10.0, current_t, 1)
 
     def test_below_error_ratio_dg(self):
         # B1([2730/8192, 2731/8192]) and B2([2047/4096, 1/2]) are
@@ -594,7 +594,7 @@ class Test_newton_iterate(unittest.TestCase):
             evaluate_fn, s, t)
 
         self.assertTrue(converged)
-        almost(self, 1.0 / 3.0, current_s, 1)
+        utils.almost(self, 1.0 / 3.0, current_s, 1)
         self.assertEqual(0.5, current_t)
 
     def test_all_iterations(self):
@@ -651,8 +651,8 @@ class Test_full_newton_nonzero(unittest.TestCase):
 
         computed_s, computed_t = self._call_function_under_test(
             s, nodes1, t, nodes2)
-        almost(self, 0.5, computed_s, 1)
-        almost(self, 1.0 / 6.0, computed_t, 3)
+        utils.almost(self, 0.5, computed_s, 1)
+        utils.almost(self, 1.0 / 6.0, computed_t, 3)
 
     def test_double_root(self):
         # B1([5461/8192, 5462/8192]) and B2([2730/8192, 2731/8192]) are
@@ -673,7 +673,7 @@ class Test_full_newton_nonzero(unittest.TestCase):
 
         computed_s, computed_t = self._call_function_under_test(
             s, nodes1, t, nodes2)
-        almost(self, 2.0 / 3.0, computed_s, 1)
+        utils.almost(self, 2.0 / 3.0, computed_s, 1)
         self.assertEqual(1.0 / 3.0, computed_t)
 
     def test_triple_root(self):
@@ -693,11 +693,30 @@ class Test_full_newton_nonzero(unittest.TestCase):
         ])
         t = 12287.0 / 24576.0
 
-        with self.assertRaises(ValueError) as exc_info:
+        with self.assertRaises(NotImplementedError) as exc_info:
             self._call_function_under_test(s, nodes1, t, nodes2)
 
         expected = (_intersection_helpers.NEWTON_NO_CONVERGE,)
         self.assertEqual(exc_info.exception.args, expected)
+
+    def test_line_and_curve(self):
+        # B1([5461/16384, 5462/16384]) and B2([0, 1]) are linearized
+        # and when the segments intersect they produce s = -1/3 < 0.
+        nodes1 = np.asfortranarray([
+            [0.0, 1.5, 3.0],
+            [2.25, -2.25, 2.25],
+        ])
+        s = 8191.0 / 24576.0
+        nodes2 = np.asfortranarray([
+            [-0.5, 4.0],
+            [1.75, -2.75],
+        ])
+        t = 12287.0 / 36864.0
+
+        computed_s, computed_t = self._call_function_under_test(
+            s, nodes1, t, nodes2)
+        utils.almost(self, 1.0 / 3.0, computed_s, 1)
+        self.assertEqual(1.0 / 3.0, computed_t)
 
 
 class Test_full_newton(unittest.TestCase):
@@ -778,8 +797,8 @@ class Test_full_newton(unittest.TestCase):
 
         computed_s, computed_t = self._call_function_under_test(
             s, nodes1, t, nodes2)
-        almost(self, 5.0 / 6.0, computed_s, 2)
-        almost(self, 0.5, computed_t, 1)
+        utils.almost(self, 5.0 / 6.0, computed_s, 2)
+        utils.almost(self, 0.5, computed_t, 1)
 
 
 @utils.needs_speedup
@@ -845,10 +864,3 @@ class TestIntersection(unittest.TestCase):
         # Check that modifying ``props_dict`` won't modify ``curve``.
         props_dict['s'] = 0.5
         self.assertNotEqual(intersection.s, props_dict['s'])
-
-
-def almost(test_case, expected, actual, num_ulps):
-    test_case.assertNotEqual(expected, 0.0)
-    test_case.assertNotEqual(actual, expected)
-    delta = num_ulps * np.spacing(expected)
-    test_case.assertAlmostEqual(actual, expected, delta=delta)

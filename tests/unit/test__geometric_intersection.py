@@ -177,8 +177,7 @@ class Test_linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(nodes)
         # D^2 v = [1.5, 2.25], [1.5, -4.5], [1.5, 9]
         expected = 0.125 * 4 * 3 * np.sqrt(1.5**2 + 9.0**2)
-        local_eps = abs(SPACING(expected))
-        self.assertAlmostEqual(error_val, expected, delta=local_eps)
+        self.assertEqual(expected, error_val)
 
     def test_cubic(self):
         nodes = np.asfortranarray([
@@ -636,7 +635,6 @@ class Test_from_linearized(utils.NumPyTestCase):
     def test_curved_parallel_segments_tangent(self):
         # pylint: disable=too-many-locals
         from bezier import _curve_helpers
-        from bezier import _geometric_intersection
 
         start1 = 5461.0 / 8192.0
         end1 = 5462.0 / 8192.0
@@ -645,8 +643,8 @@ class Test_from_linearized(utils.NumPyTestCase):
             [0.0, 0.75, 0.375],
         ])
         nodes1 = _curve_helpers.specialize_curve(original_nodes1, start1, end1)
-        curve1 = _geometric_intersection.SubdividedCurve(
-            nodes1, original_nodes1, start=start1, end=end1)
+        curve1 = subdivided_curve(
+            nodes1, original_nodes=original_nodes1, start=start1, end=end1)
         lin1 = make_linearization(curve1)
 
         start2 = 2730.0 / 8192.0
@@ -656,18 +654,52 @@ class Test_from_linearized(utils.NumPyTestCase):
             [0.625, 0.25, 1.0],
         ])
         nodes2 = _curve_helpers.specialize_curve(original_nodes2, start2, end2)
-        curve2 = _geometric_intersection.SubdividedCurve(
-            nodes2, original_nodes2, start=start2, end=end2)
+        curve2 = subdivided_curve(
+            nodes2, original_nodes=original_nodes2, start=start2, end=end2)
         lin2 = make_linearization(curve2)
 
         intersections = []
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(
-                lin1, lin2, intersections)
+        return_value = self._call_function_under_test(
+            lin1, lin2, intersections)
+        self.assertIsNone(return_value)
+        self.assertEqual(len(intersections), 1)
+        s, t = intersections[0]
+        utils.almost(self, 2.0 / 3.0, s, 1)
+        self.assertEqual(1.0 / 3.0, t)
+        # pylint: enable=too-many-locals
 
-        self.assertEqual(intersections, [])
-        exc_args = exc_info.exception.args
-        self.assertEqual(exc_args, ('Parameters need help.',))
+    def test_line_and_curve_tangent(self):
+        # pylint: disable=too-many-locals
+        from bezier import _curve_helpers
+
+        # B1([5461/16384, 5462/16384]) and B2([0, 1]) are linearized
+        # and when the segments intersect they produce s = -1/3 < 0.
+        start1 = 5461.0 / 16384.0
+        end1 = 5462.0 / 16384.0
+        original_nodes1 = np.asfortranarray([
+            [0.0, 1.5, 3.0],
+            [2.25, -2.25, 2.25],
+        ])
+        nodes1 = _curve_helpers.specialize_curve(original_nodes1, start1, end1)
+        curve1 = subdivided_curve(
+            nodes1, original_nodes=original_nodes1, start=start1, end=end1)
+        lin1 = make_linearization(curve1)
+
+        nodes2 = np.asfortranarray([
+            [-0.5, 4.0],
+            [1.75, -2.75],
+        ])
+        curve2 = subdivided_curve(nodes2)
+        lin2 = make_linearization(curve2, error=0.0)
+
+        intersections = []
+        return_value = self._call_function_under_test(
+            lin1, lin2, intersections)
+        self.assertIsNone(return_value)
+        self.assertEqual(len(intersections), 1)
+        s, t = intersections[0]
+        utils.almost(self, 1.0 / 3.0, s, 1)
+        self.assertEqual(1.0 / 3.0, t)
         # pylint: enable=too-many-locals
 
 
@@ -1669,12 +1701,11 @@ class Test__all_intersections(utils.NumPyTestCase):
 
         # Due to round-off, the answer may be wrong by a tiny wiggle.
         self.assertEqual(intersections.shape, (2, 1))
-        self.assertAlmostEqual(
-            intersections[0, 0], s_val, delta=SPACING(s_val))
+        utils.almost(self, intersections[0, 0], s_val, 1)
         self.assertEqual(intersections[1, 0], t_val)
         self.assertFalse(coincident)
 
-    def test_parallel_failure(self):
+    def test_tangent_curves_parallel_when_linearized(self):
         nodes1 = np.asfortranarray([
             [0.0, 0.375, 0.75],
             [0.0, 0.75, 0.375],
@@ -1683,11 +1714,15 @@ class Test__all_intersections(utils.NumPyTestCase):
             [0.25, 0.625, 1.0],
             [0.625, 0.25, 1.0],
         ])
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(nodes1, nodes2)
 
-        exc_args = exc_info.exception.args
-        self.assertEqual(exc_args, ('Parameters need help.',))
+        intersections, coincident = self._call_function_under_test(
+            nodes1, nodes2)
+
+        # Due to round-off, the answer may be wrong by a tiny wiggle.
+        self.assertEqual(intersections.shape, (2, 1))
+        utils.almost(self, 2.0 / 3.0, intersections[0, 0], 1)
+        self.assertEqual(1.0 / 3.0, intersections[1, 0])
+        self.assertFalse(coincident)
 
     def test_pruned_candidates(self):
         nodes1 = np.asfortranarray([
@@ -1809,6 +1844,43 @@ class Test__all_intersections(utils.NumPyTestCase):
         ])
         self.assertEqual(intersections, expected)
         self.assertTrue(coincident)
+
+    def test_triple_root(self):
+        from bezier import _intersection_helpers
+
+        # Curves intersect and are tangent with the same curvature.
+        nodes1 = np.asfortranarray([
+            [12.0, -4.0, -4.0],
+            [4.0, -4.0, 4.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [6.0, -2.0, -2.0],
+            [1.0, -1.0, 1.0],
+        ])
+
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(nodes1, nodes2)
+
+        expected = (_intersection_helpers.NEWTON_NO_CONVERGE,)
+        self.assertEqual(exc_info.exception.args, expected)
+
+    def test_too_many_candidates(self):
+        from bezier import _geometric_intersection
+
+        nodes1 = np.asfortranarray([
+            [12.0, -12.0, 0.0],
+            [4.0, -8.0, 16.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [6.0, -6.0, 0.0],
+            [1.0, -2.0, 4.0],
+        ])
+
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(nodes1, nodes2)
+
+        expected = (_geometric_intersection._TOO_MANY_TEMPLATE.format(74),)
+        self.assertEqual(exc_info.exception.args, expected)
 
 
 @utils.needs_speedup
@@ -2233,10 +2305,12 @@ class Test_curves_workspace_size(unittest.TestCase):
         self.assertEqual(self._call_function_under_test(), size)
 
 
-def subdivided_curve(nodes):
+def subdivided_curve(nodes, **kwargs):
     from bezier import _geometric_intersection
 
-    return _geometric_intersection.SubdividedCurve(nodes, nodes)
+    if 'original_nodes' not in kwargs:
+        kwargs['original_nodes'] = nodes
+    return _geometric_intersection.SubdividedCurve(nodes, **kwargs)
 
 
 def make_linearization(curve, error=None):

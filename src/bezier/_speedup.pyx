@@ -82,6 +82,36 @@ SEGMENT_ENDS_TOO_SMALL = (
 SEGMENTS_TOO_SMALL = (
     'Did not have enough space for segments. Needed space '
     'for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.')
+# NOTE: The ``SUBDIVISION_NO_CONVERGE`` error message is copied from
+#       ``_geometric_intersection.py::_NO_CONVERGE_TEMPLATE``. This
+#       assumes, but does not verify, that the Fortran subroutine
+#       ``curve_intersection.f90::all_intersections_abi()`` uses
+#       ``MAX_INTERSECT_SUBDIVISIONS = 20``.
+SUBDIVISION_NO_CONVERGE = (
+    'Curve intersection failed to converge to approximately linear '
+    'subdivisions after 20 iterations.')
+# NOTE: The ``NEWTON_NO_CONVERGE`` error message is copied from
+#       ``_intersection_helpers.py::NEWTON_NO_CONVERGE``.
+NEWTON_NO_CONVERGE = """\
+Unsupported multiplicity.
+
+Newton's method failed to converge to a solution under the
+following assumptions:
+
+- The starting ``s-t`` values were already near a solution
+- The root / solution has multiplicity 1 or 2
+  - 1: The root is "simple", i.e. the curves are not tangent
+       and have no self-intersections at the point of intersection.
+  - 2: The root is a double root, i.e. the curves are tangent
+       but have different curvatures at the point of intersection.
+
+The failure to converge may have been caused by one of:
+
+- The root was of multiplicity greater than 2
+- The curves don't actually intersect, though they come very close
+- Numerical issues caused the iteration to leave the region
+  of convergence
+"""
 
 
 ##########################
@@ -450,11 +480,7 @@ def curve_intersections(
         intersections[:, :] = CURVES_WORKSPACE[:, :num_intersections]
         return intersections, coincident
     elif status == bezier._status.Status.NO_CONVERGE:
-        # NOTE: This assumes, but does not verify, that the Fortran subroutine
-        #       uses ``MAX_INTERSECT_SUBDIVISIONS = 20``.
-        raise ValueError(
-            'Curve intersection failed to converge to approximately linear '
-            'subdivisions after 20 iterations.')
+        raise ValueError(SUBDIVISION_NO_CONVERGE)
     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
         if allow_resize:
             reset_curves_workspace(num_intersections)
@@ -464,8 +490,8 @@ def curve_intersections(
             msg = TOO_SMALL_TEMPLATE.format(
                 num_intersections, intersections_size)
             raise ValueError(msg)
-    elif status == bezier._status.Status.PARALLEL:
-        raise NotImplementedError('Parameters need help.')
+    elif status == bezier._status.Status.BAD_MULTIPLICITY:
+        raise NotImplementedError(NEWTON_NO_CONVERGE)
     else:
         # NOTE: If ``status`` isn't one of the enum values, then it is the
         #       number of candidate intersections.
@@ -1085,13 +1111,9 @@ def surface_intersections(
             segment_ends_size, segments_size,
             num_intersected, resizes_allowed)
     elif status == bezier._status.Status.NO_CONVERGE:
-        # NOTE: This assumes, but does not verify, that this comes from
-        #       ``curve_intersections()``.
-        raise ValueError(
-            'Curve intersection failed to converge to approximately linear '
-            'subdivisions after 20 iterations.')
-    elif status == bezier._status.Status.PARALLEL:
-        raise NotImplementedError('Parameters need help.')
+        raise ValueError(SUBDIVISION_NO_CONVERGE)
+    elif status == bezier._status.Status.BAD_MULTIPLICITY:
+        raise NotImplementedError(NEWTON_NO_CONVERGE)
     elif status == bezier._status.Status.EDGE_END:
         # NOTE: This text is identical (or should be) to the exception
         #       in the Python ``classify_intersection()``.

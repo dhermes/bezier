@@ -16,7 +16,7 @@
 cdef extern from "bezier/status.h":
     cpdef enum Status:
         SUCCESS = 0
-        PARALLEL = 1
+        BAD_MULTIPLICITY = 1
         NO_CONVERGE = 2
         INSUFFICIENT_SPACE = 3
         SAME_CURVATURE = 4

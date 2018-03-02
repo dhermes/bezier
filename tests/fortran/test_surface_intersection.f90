@@ -14,9 +14,9 @@ module test_surface_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_INSUFFICIENT_SPACE, &
-       Status_SAME_CURVATURE, Status_BAD_INTERIOR, Status_EDGE_END, &
-       Status_UNKNOWN
+       Status_SUCCESS, Status_BAD_MULTIPLICITY, Status_NO_CONVERGE, &
+       Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_BAD_INTERIOR, &
+       Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
   use curve_intersection, only: set_similar_ulps, get_similar_ulps
   use surface_intersection, only: &
@@ -889,6 +889,7 @@ contains
     integer(c_int) :: num_intersections
     integer(c_int) :: all_types, status
     integer(c_int) :: first, second, coincident
+    real(c_double) :: expected_s, expected_t
 
     case_id = 1
     name = "surfaces_intersection_points"
@@ -923,11 +924,11 @@ contains
          intersections(5), 0.5_dp, 0.25_dp, 3, 1, second) .AND. &
          intersection_check( &
          intersections(6), 0.75_dp, 0.75_dp, 3, 3, first) .AND. &
-         all_types == (2**first + 2**second) .AND. &
+         all_types == 2**first + 2**second .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Tangent intersection (causes ``all_intersections()`` to error).
+    ! CASE 2: Tangent intersection, which requires a "full" Newton iteration.
     quadratic1(:, 1) = 0
     quadratic1(:, 2) = [6.0_dp, 12.0_dp]
     quadratic1(:, 3) = [12.0_dp, 6.0_dp]
@@ -943,13 +944,21 @@ contains
     call surfaces_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, all_types, status)
+    expected_s = 2.0_dp / 3.0_dp
+    expected_t = 1.0_dp / 3.0_dp
+    ! Account for an error of 1 ULP in computed ``s``.
+    expected_s = expected_s + spacing(expected_s)
     case_success = ( &
-         num_intersections == 0 .AND. &
-         all_types == 0 .AND. &
-         status == Status_PARALLEL)
+         allocated(intersections) .AND. &
+         size(intersections) == 6 .AND. &
+         num_intersections == 1 .AND. &
+         intersection_check( &
+         intersections(1), expected_s, expected_t, 1, 1, second) .AND. &
+         all_types == 2**second .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Tangent intersection (has same curvature).
+    ! CASE 3: Tangent intersection with the same curvature.
     num_intersections = 0
     quadratic1(:, 1) = [0.0_dp, 2.0_dp]
     quadratic1(:, 2) = [-4.0_dp, -2.0_dp]
@@ -971,7 +980,7 @@ contains
          size(intersections) == 6 .AND. &
          num_intersections == 0 .AND. &
          all_types == 0 .AND. &
-         status == Status_PARALLEL)
+         status == Status_BAD_MULTIPLICITY)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Coincident intersection with shared interior, which sets
@@ -1648,18 +1657,18 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Intersecting edges results in error.
-    quadratic1(:, 1) = [0.75_dp, 0.375_dp]
-    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
-    quadratic1(:, 3) = 0
-    quadratic1(:, 4) = [0.5_dp, -0.0625_dp]
-    quadratic1(:, 5) = [0.125_dp, -0.25_dp]
-    quadratic1(:, 6) = [0.25_dp, -0.5_dp]
-    quadratic2(:, 1) = [0.25_dp, 0.625_dp]
-    quadratic2(:, 2) = [0.625_dp, 0.25_dp]
-    quadratic2(:, 3) = 1
-    quadratic2(:, 4) = [0.375_dp, 1.0625_dp]
-    quadratic2(:, 5) = [0.75_dp, 1.25_dp]
-    quadratic2(:, 6) = [0.5_dp, 1.5_dp]
+    quadratic1(:, 1) = [0.0_dp, 2.0_dp]
+    quadratic1(:, 2) = [-4.0_dp, -2.0_dp]
+    quadratic1(:, 3) = [8.0_dp, 2.0_dp]
+    quadratic1(:, 4) = [4.0_dp, 4.0_dp]
+    quadratic1(:, 5) = [8.0_dp, 4.0_dp]
+    quadratic1(:, 6) = [8.0_dp, 6.0_dp]
+    quadratic2(:, 1) = [-2.0_dp, 2.0_dp]
+    quadratic2(:, 2) = [-2.0_dp, -2.0_dp]
+    quadratic2(:, 3) = [6.0_dp, 2.0_dp]
+    quadratic2(:, 4) = [1.0_dp, 5.0_dp]
+    quadratic2(:, 5) = [5.0_dp, 5.0_dp]
+    quadratic2(:, 6) = [4.0_dp, 8.0_dp]
 
     call surfaces_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
@@ -1670,7 +1679,7 @@ contains
          .NOT. allocated(segments) .AND. &
          .NOT. allocated(segment_ends) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
-         status == Status_PARALLEL)
+         status == Status_BAD_MULTIPLICITY)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: Surface 2 contained in surface 1.
@@ -1951,18 +1960,18 @@ contains
     name = "surfaces_intersect_abi"
 
     ! CASE 1: Intersection results in error.
-    quadratic1(:, 1) = [0.75_dp, 0.375_dp]
-    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
-    quadratic1(:, 3) = 0
-    quadratic1(:, 4) = [0.5_dp, -0.0625_dp]
-    quadratic1(:, 5) = [0.125_dp, -0.25_dp]
-    quadratic1(:, 6) = [0.25_dp, -0.5_dp]
-    quadratic2(:, 1) = [0.25_dp, 0.625_dp]
-    quadratic2(:, 2) = [0.625_dp, 0.25_dp]
-    quadratic2(:, 3) = 1
-    quadratic2(:, 4) = [0.375_dp, 1.0625_dp]
-    quadratic2(:, 5) = [0.75_dp, 1.25_dp]
-    quadratic2(:, 6) = [0.5_dp, 1.5_dp]
+    quadratic1(:, 1) = [0.0_dp, 2.0_dp]
+    quadratic1(:, 2) = [-4.0_dp, -2.0_dp]
+    quadratic1(:, 3) = [8.0_dp, 2.0_dp]
+    quadratic1(:, 4) = [4.0_dp, 4.0_dp]
+    quadratic1(:, 5) = [8.0_dp, 4.0_dp]
+    quadratic1(:, 6) = [8.0_dp, 6.0_dp]
+    quadratic2(:, 1) = [-2.0_dp, 2.0_dp]
+    quadratic2(:, 2) = [-2.0_dp, -2.0_dp]
+    quadratic2(:, 3) = [6.0_dp, 2.0_dp]
+    quadratic2(:, 4) = [1.0_dp, 5.0_dp]
+    quadratic2(:, 5) = [5.0_dp, 5.0_dp]
+    quadratic2(:, 6) = [4.0_dp, 8.0_dp]
     call surfaces_intersect_abi( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          2, segment_ends, 6, segments, &
@@ -1970,7 +1979,7 @@ contains
     case_success = ( &
          num_intersected == 0 .AND. &
          contained == SurfaceContained_NEITHER .AND. &
-         status == Status_PARALLEL)
+         status == Status_BAD_MULTIPLICITY)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: ``segment_ends`` is not large enough; two disjoint intersections

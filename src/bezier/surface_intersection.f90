@@ -947,13 +947,14 @@ contains
     !       possible classifications must be in {0, 1, 2, 3, 4, 5, 7, 8}).
 
     ! Possible error states:
-    ! * Status_SUCCESS       : On success.
-    ! * Status_PARALLEL      : Via ``curve_intersection.all_intersections()``.
-    ! * Status_SINGULAR      : Via ``curve_intersection.all_intersections()``.
-    ! * Status_NO_CONVERGE   : Via ``curve_intersection.all_intersections()``.
-    ! * (N >= MAX_CANDIDATES): Via ``curve_intersection.all_intersections()``.
-    ! * Status_EDGE_END      : Via ``add_st_vals()``.
-    ! * Status_SAME_CURVATURE: Via ``add_st_vals()``.
+    ! * Status_SUCCESS         : On success.
+    ! * Status_NO_CONVERGE     : Via ``all_intersections()`` from
+    !                            ``curve_intersection.f90``.
+    ! * (N >= MAX_CANDIDATES)  : Via ``all_intersections()``.
+    ! * Status_BAD_MULTIPLICITY: Via ``all_intersections()``.
+    ! * Status_SINGULAR        : Via ``all_intersections()``.
+    ! * Status_EDGE_END        : Via ``all_intersections()``.
+    ! * Status_SAME_CURVATURE  : Via ``all_intersections()``.
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(2, num_nodes1)
@@ -1620,18 +1621,18 @@ contains
     !       ``segment_ends`` will be ``[3, 7]``.
 
     ! Possible error states:
-    ! * Status_SUCCESS       : On success.
-    ! * Status_PARALLEL      : Via ``surfaces_intersection_points()``.
-    ! * Status_SINGULAR      : Via ``surfaces_intersection_points()``.
-    ! * Status_NO_CONVERGE   : Via ``surfaces_intersection_points()``.
-    ! * (N >= MAX_CANDIDATES): Via ``surfaces_intersection_points()``.
-    ! * Status_EDGE_END      : Via ``surfaces_intersection_points()``.
-    ! * Status_SAME_CURVATURE: Via ``surfaces_intersection_points()``.
-    ! * Status_UNKNOWN       : If all of the intersections are classified
-    !                          as ``OPPOSED / IGNORED_CORNER / TANGENT_*``
-    !                          but not uniquely one type. (This should
-    !                          never occur).
-    ! * Status_BAD_INTERIOR  : Via ``interior_combine()``.
+    ! * Status_SUCCESS         : On success.
+    ! * Status_UNKNOWN         : If all of the intersections are classified
+    !                            as ``OPPOSED / IGNORED_CORNER / TANGENT_*``
+    !                            but not uniquely one type. (This should
+    !                            never occur).
+    ! * Status_NO_CONVERGE     : Via ``surfaces_intersection_points()``.
+    ! * (N >= MAX_CANDIDATES)  : Via ``surfaces_intersection_points()``.
+    ! * Status_BAD_MULTIPLICITY: Via ``surfaces_intersection_points()``.
+    ! * Status_SINGULAR        : Via ``surfaces_intersection_points()``.
+    ! * Status_EDGE_END        : Via ``surfaces_intersection_points()``.
+    ! * Status_SAME_CURVATURE  : Via ``surfaces_intersection_points()``.
+    ! * Status_BAD_INTERIOR    : Via ``interior_combine()``.
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(2, num_nodes1)
@@ -1727,18 +1728,18 @@ contains
 
     ! Possible error states:
     ! * Status_SUCCESS           : Via ``surfaces_intersect()``.
-    ! * Status_PARALLEL          : Via ``surfaces_intersect()``.
-    ! * Status_SINGULAR          : Via ``surfaces_intersect()``.
-    ! * Status_NO_CONVERGE       : Via ``surfaces_intersect()``.
-    ! * (N >= MAX_CANDIDATES)    : Via ``surfaces_intersect()``.
-    ! * Status_EDGE_END          : Via ``surfaces_intersect()``.
-    ! * Status_SAME_CURVATURE    : Via ``surfaces_intersect()``.
-    ! * Status_BAD_INTERIOR      : Via ``surfaces_intersect()``.
-    ! * Status_UNKNOWN           : Via ``surfaces_intersect()``.
     ! * Status_INSUFFICIENT_SPACE: If ``segment_ends_size`` is smaller than
     !                              ``num_intersected`` **OR** if
     !                              ``segments_size`` is smaller than the number
     !                              of segments.
+    ! * Status_UNKNOWN           : Via ``surfaces_intersect()``.
+    ! * Status_NO_CONVERGE       : Via ``surfaces_intersect()``.
+    ! * (N >= MAX_CANDIDATES)    : Via ``surfaces_intersect()``.
+    ! * Status_BAD_MULTIPLICITY  : Via ``surfaces_intersect()``.
+    ! * Status_SINGULAR          : Via ``surfaces_intersect()``.
+    ! * Status_EDGE_END          : Via ``surfaces_intersect()``.
+    ! * Status_SAME_CURVATURE    : Via ``surfaces_intersect()``.
+    ! * Status_BAD_INTERIOR      : Via ``surfaces_intersect()``.
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(2, num_nodes1)

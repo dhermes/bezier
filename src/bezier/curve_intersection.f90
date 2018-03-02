@@ -16,7 +16,7 @@ module curve_intersection
        c_double, c_int, c_bool, c_f_pointer, c_loc
   use types, only: dp
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
+       Status_SUCCESS, Status_BAD_MULTIPLICITY, Status_NO_CONVERGE, &
        Status_INSUFFICIENT_SPACE, Status_SINGULAR
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
@@ -511,14 +511,22 @@ contains
     jacobian(:2, 1:1) = b1_ds
     jacobian(:2, 2:2) = -b2_dt
     ! Here, we use ``workspace`` for ``B1''(s)``.
-    call evaluate_multi( &
-         num_nodes1 - 2, 2, second_deriv1, 1, [s], workspace)
-    call cross_product(workspace(:, 1), b2_dt(:, 1), jacobian(3, 1))
+    if (num_nodes1 > 2) then
+       call evaluate_multi( &
+            num_nodes1 - 2, 2, second_deriv1, 1, [s], workspace)
+       call cross_product(workspace(:, 1), b2_dt(:, 1), jacobian(3, 1))
+    else
+       jacobian(3, 1) = 0.0_dp
+    end if
 
     ! Here, we use ``workspace`` for ``B2''(t)``.
-    call evaluate_multi( &
-         num_nodes2 - 2, 2, second_deriv2, 1, [t], workspace)
-    call cross_product(b1_ds(:, 1), workspace(:, 1), jacobian(3, 2))
+    if (num_nodes2 > 2) then
+       call evaluate_multi( &
+            num_nodes2 - 2, 2, second_deriv2, 1, [t], workspace)
+       call cross_product(b1_ds(:, 1), workspace(:, 1), jacobian(3, 2))
+    else
+       jacobian(3, 2) = 0.0_dp
+    end if
 
     modified_lhs = matmul(transpose(jacobian), jacobian)
     modified_rhs = matmul(transpose(jacobian), func_val)
@@ -602,9 +610,9 @@ contains
     ! NOTE: This assumes ``s, t`` are sufficiently far from ``0.0``.
 
     ! Possible error states:
-    ! * Status_SUCCESS    : On success.
-    ! * Status_NO_CONVERGE: If the method doesn't converge to either a
-    !                       simple or double root.
+    ! * Status_SUCCESS         : On success.
+    ! * Status_BAD_MULTIPLICITY: If the method doesn't converge to either a
+    !                            simple or double root.
 
     real(c_double), intent(in) :: s
     integer(c_int), intent(in) :: num_nodes1
@@ -637,10 +645,14 @@ contains
        return
     end if
 
-    second_deriv1 = (num_nodes1 - 2) * ( &
-         first_deriv1(:, 2:) - first_deriv1(:, :num_nodes1 - 2))
-    second_deriv2 = (num_nodes2 - 2) * ( &
-         first_deriv2(:, 2:) - first_deriv2(:, :num_nodes2 - 2))
+    if (num_nodes1 > 2) then
+       second_deriv1 = (num_nodes1 - 2) * ( &
+            first_deriv1(:, 2:) - first_deriv1(:, :num_nodes1 - 2))
+    end if
+    if (num_nodes2 > 2) then
+       second_deriv2 = (num_nodes2 - 2) * ( &
+            first_deriv2(:, 2:) - first_deriv2(:, :num_nodes2 - 2))
+    end if
 
     call newton_iterate( &
          f_double, current_s, current_t, new_s, new_t, converged)
@@ -648,7 +660,7 @@ contains
        return
     end if
 
-    status = Status_NO_CONVERGE
+    status = Status_BAD_MULTIPLICITY
 
   contains
 
@@ -707,8 +719,8 @@ contains
     ! done to avoid round-off issues near ``0.0``.
 
     ! Possible error states:
-    ! * Status_SUCCESS    : On success.
-    ! * Status_NO_CONVERGE: Via ``full_newton_nonzero()``.
+    ! * Status_SUCCESS         : On success.
+    ! * Status_BAD_MULTIPLICITY: Via ``full_newton_nonzero()``.
 
     real(c_double), intent(in) :: s
     integer(c_int), intent(in) :: num_nodes1
@@ -774,15 +786,9 @@ contains
     !       for ``curve1`` and ``curve2`` actually intersect.
 
     ! Possible error states:
-    ! * Status_SUCCESS : On success.
-    ! * Status_PARALLEL: If a "full" Newton's method is needed. This
-    !                    happens when the two curves have overlapping
-    !                    convex hulls and the line-line intersection parameters
-    !                    are "invalid" in some way. They can be invalid if
-    !                    ``segment_intersection()`` fails (which means
-    !                    the linearized segments are parallel) or if the
-    !                    ``s, t`` values returned are outside ``[0, 1]``.
-    ! * Status_SINGULAR: Via ``newton_refine_intersect()``.
+    ! * Status_SUCCESS         : On success.
+    ! * Status_BAD_MULTIPLICITY: Via ``full_newton()``.
+    ! * Status_SINGULAR        : Via ``newton_refine_intersect()``.
 
     type(CurveData), intent(in) :: curve1
     integer(c_int), intent(in) :: num_nodes1
@@ -827,25 +833,34 @@ contains
        call convex_hull_collide( &
             num_nodes1, curve1%nodes, POLYGON1, &
             num_nodes2, curve2%nodes, POLYGON2, success)
-       if (success) then
-          ! This is essentially a ``NotImplementedError``.
-          status = Status_PARALLEL
+       ! In the unlikely case that we have parallel segments or segments
+       ! that intersect outside of [0, 1] x [0, 1], we can still exit
+       ! if the convex hulls don't intersect.
+       if (.NOT. success) then
+          return
        end if
-
-       return
     end if
 
     ! Now, promote ``s`` and ``t`` onto the original curves.
     s = (1.0_dp - s) * curve1%start + s * curve1%end_  ! orig_s
     t = (1.0_dp - t) * curve2%start + t * curve2%end_  ! orig_t
-    ! Perform one step of Newton iteration to refine the computed
-    ! values of s and t.
 
-    call newton_refine_intersect( &
-         s, num_nodes1, root_nodes1, t, &
-         num_nodes2, root_nodes2, refined_s, refined_t, status)
+    if (do_full_newton) then
+       call full_newton( &
+            s, num_nodes1, root_nodes1, &
+            t, num_nodes2, root_nodes2, &
+            refined_s, refined_t, status)
+    else
+       ! Perform one step of Newton iteration to refine the computed
+       ! values of s and t.
+       call newton_refine_intersect( &
+            s, num_nodes1, root_nodes1, &
+            t, num_nodes2, root_nodes2, &
+            refined_s, refined_t, status)
+    end if
+
     if (status /= Status_SUCCESS) then
-       return  ! LCOV_EXCL_LINE
+       return
     end if
 
     call wiggle_interval(refined_s, s, success)
@@ -1102,9 +1117,9 @@ contains
     ! NOTE: This is **explicitly** not intended for C inter-op.
 
     ! Possible error states:
-    ! * Status_SUCCESS : On success.
-    ! * Status_PARALLEL: Via ``from_linearized()``.
-    ! * Status_SINGULAR: Via ``from_linearized()``.
+    ! * Status_SUCCESS         : On success.
+    ! * Status_BAD_MULTIPLICITY: Via ``from_linearized()``.
+    ! * Status_SINGULAR        : Via ``from_linearized()``.
 
     type(CurveData), intent(in) :: first
     real(c_double), intent(in) :: root_nodes1(:, :)
@@ -1285,9 +1300,9 @@ contains
     !       two rows and has at **least** ``num_candidates`` columns.
 
     ! Possible error states:
-    ! * Status_SUCCESS : On success.
-    ! * Status_PARALLEL: Via ``add_from_linearized()``.
-    ! * Status_SINGULAR: Via ``add_from_linearized()``.
+    ! * Status_SUCCESS         : On success.
+    ! * Status_BAD_MULTIPLICITY: Via ``add_from_linearized()``.
+    ! * Status_SINGULAR        : Via ``add_from_linearized()``.
 
     real(c_double), intent(in) :: root_nodes_first(:, :)
     real(c_double), intent(in) :: root_nodes_second(:, :)
@@ -1740,13 +1755,13 @@ contains
     !       a C compatible interface is exposed as ``all_intersections_abi``.
 
     ! Possible error states:
-    ! * Status_SUCCESS       : On success.
-    ! * Status_PARALLEL      : Via ``intersect_one_round()``.
-    ! * Status_SINGULAR      : Via ``intersect_one_round()``.
-    ! * Status_NO_CONVERGE   : If the curves don't converge to linear after
-    !                          ``MAX_INTERSECT_SUBDIVISIONS``.
-    ! * (N >= MAX_CANDIDATES): The number of candidates if it exceeds the limit
-    !                          ``MAX_CANDIDATES`` (64 is the default).
+    ! * Status_SUCCESS         : On success.
+    ! * Status_NO_CONVERGE     : If the curves don't converge to linear after
+    !                            ``MAX_INTERSECT_SUBDIVISIONS``.
+    ! * (N >= MAX_CANDIDATES)  : The number of candidates if it exceeds the
+    !                            limit ``MAX_CANDIDATES`` (64 is the default).
+    ! * Status_BAD_MULTIPLICITY: Via ``intersect_one_round()``.
+    ! * Status_SINGULAR        : Via ``intersect_one_round()``.
 
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(2, num_nodes_first)
@@ -1834,7 +1849,7 @@ contains
                 !       mitigations. As a result, there is no unit test
                 !       to trigger this line (no case has been discovered
                 !       yet).
-                status = num_candidates  ! LCOV_EXCL_LINE
+                status = num_candidates
              end if
              ! Return either way since pruning didn't "fix" anything.
              return
@@ -1872,12 +1887,12 @@ contains
 
     ! Possible error states:
     ! * Status_SUCCESS           : On success.
-    ! * Status_PARALLEL          : Via ``all_intersections()``.
-    ! * Status_SINGULAR          : Via ``all_intersections()``.
-    ! * Status_NO_CONVERGE       : Via ``all_intersections()``.
     ! * Status_INSUFFICIENT_SPACE: If ``intersections_size`` is smaller than
     !                              the number of intersections.
+    ! * Status_NO_CONVERGE       : Via ``all_intersections()``.
     ! * (N >= MAX_CANDIDATES)    : Via ``all_intersections()``.
+    ! * Status_BAD_MULTIPLICITY  : Via ``all_intersections()``.
+    ! * Status_SINGULAR          : Via ``all_intersections()``.
 
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(2, num_nodes_first)

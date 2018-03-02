@@ -57,12 +57,6 @@ _TOO_MANY_TEMPLATE = (
 _NO_CONVERGE_TEMPLATE = (
     'Curve intersection failed to converge to approximately linear '
     'subdivisions after {:d} iterations.')
-# Allow wiggle room for ``s`` and ``t`` computed during segment
-# intersection. Any over- or under-shooting will (hopefully) be
-# resolved in the Newton refinement step. If it isn't resolved, the
-# call to _wiggle_interval() will fail the intersection.
-_WIGGLE_START = -0.5**16
-_WIGGLE_END = 1.0 - _WIGGLE_START
 # Number of bits allowed in ``add_intersection()`` to consider two
 # intersections to be "identical".
 _SIMILAR_ULPS = 1
@@ -763,7 +757,6 @@ def from_linearized(first, second, intersections):
             of ``0.0`` (i.e. they are both lines). This is because this
             function expects the caller to have used :func:`check_lines`
             already.
-        NotImplementedError: If the segment intersection fails.
     """
     # pylint: disable=too-many-return-statements
     s, t, success = segment_intersection(
@@ -784,19 +777,26 @@ def from_linearized(first, second, intersections):
         t = 0.5
 
     if do_full_newton:
-        if convex_hull_collide(first.curve.nodes, second.curve.nodes):
-            raise NotImplementedError('Parameters need help.')
-        else:
+        # In the unlikely case that we have parallel segments or segments
+        # that intersect outside of [0, 1] x [0, 1], we can still exit
+        # if the convex hulls don't intersect.
+        if not convex_hull_collide(first.curve.nodes, second.curve.nodes):
             return
 
     # Now, promote ``s`` and ``t`` onto the original curves.
     orig_s = (1 - s) * first.curve.start + s * first.curve.end
     orig_t = (1 - t) * second.curve.start + t * second.curve.end
-    # Perform one step of Newton iteration to refine the computed
-    # values of s and t.
-    refined_s, refined_t = _intersection_helpers.newton_refine(
-        orig_s, first.curve.original_nodes,
-        orig_t, second.curve.original_nodes)
+    if do_full_newton:
+        refined_s, refined_t = _intersection_helpers.full_newton(
+            orig_s, first.curve.original_nodes,
+            orig_t, second.curve.original_nodes)
+    else:
+        # Perform one step of Newton iteration to refine the computed
+        # values of s and t.
+        refined_s, refined_t = _intersection_helpers.newton_refine(
+            orig_s, first.curve.original_nodes,
+            orig_t, second.curve.original_nodes)
+
     refined_s, success = _helpers.wiggle_interval(refined_s)
     if not success:
         return  # pragma: NO COVER
@@ -1404,7 +1404,7 @@ def _all_intersections(nodes_first, nodes_second):
                     #       mitigations. As a result, there is no unit test
                     #       to trigger this line (no case has been discovered
                     #       yet).
-                    raise NotImplementedError(  # pragma: NO COVER
+                    raise NotImplementedError(
                         _TOO_MANY_TEMPLATE.format(len(candidates)))
                 else:
                     intersections = params

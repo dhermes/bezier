@@ -218,9 +218,13 @@ with zero error:
    ... ])
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
-   Traceback (most recent call last):
-     ...
-   NotImplementedError: Parameters need help.
+   >>> intersections
+   array([[0.5       , 0.5       , 0.8333..., 0.8333...],
+          [0.16666..., 0.16666..., 0.5      , 0.5      ]])
+   >>> s_vals = np.asfortranarray(intersections[0, :])
+   >>> curve1.evaluate_multi(s_vals)
+   array([[0.375  , 0.375  , 0.625  , 0.625  ],
+          [0.46875, 0.46875, 0.46875, 0.46875]])
 
 .. image:: images/curves14_and_16.png
    :align: center
@@ -550,9 +554,13 @@ Intersections at Endpoints
    ... ])
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
-   Traceback (most recent call last):
-     ...
-   NotImplementedError: Parameters need help.
+   >>> intersections
+   array([[0.333...],
+          [1.      ]])
+   >>> s_vals = np.asfortranarray(intersections[0, :])
+   >>> curve1.evaluate_multi(s_vals)
+   array([[3.],
+          [4.]])
 
 .. image:: images/curves10_and_17.png
    :align: center
@@ -634,14 +642,20 @@ successfully terminates
 .. image:: images/curves1_and_6.png
    :align: center
 
-However this library mostly avoids (for now) computing tangent
-intersections. For example, the curves
+This library makes an earnest effort to compute tangent intersections.
+For example, when the curves
 
 .. image:: images/curves14_and_15.png
    :align: center
 
-have a tangent intersection that this library fails to
-compute:
+have been subdivided and approximated by lines, the corresponding
+segments are parallel, hence don't intersect. At this point, this library
+detects the problematic intersection point and switches to a more robust
+Newton's method that is built to handle the numerical issue caused by
+the double root.
+
+Unlike the first tangent example, this intersection occurs at parameters
+which are not **exact** floating point numbers:
 
 .. doctest:: intersect-14-15
    :options: +NORMALIZE_WHITESPACE
@@ -656,16 +670,17 @@ compute:
    ...     [0.625, 0.25 , 1.0],
    ... ])
    >>> curve2 = bezier.Curve(nodes2, degree=2)
-   >>> curve1.intersect(curve2)
-   Traceback (most recent call last):
-     ...
-   NotImplementedError: Parameters need help.
+   >>> intersections = curve1.intersect(curve2)
+   >>> intersections
+   array([[0.6666...],
+          [0.3333...]])
+   >>> s_vals = np.asfortranarray(intersections[0, :])
+   >>> curve1.evaluate_multi(s_vals)
+   array([[0.5],
+          [0.5]])
 
-This failure comes from the fact that the linear approximations
-of the curves near the point of intersection are parallel.
-
-As above, we can find some cases where tangent intersections
-are resolved:
+See another case where one parameter is an exact floating point
+number and the other is not:
 
 .. doctest:: intersect-10-23
    :options: +NORMALIZE_WHITESPACE

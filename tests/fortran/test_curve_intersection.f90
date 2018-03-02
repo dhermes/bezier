@@ -14,7 +14,7 @@ module test_curve_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
-       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
+       Status_SUCCESS, Status_BAD_MULTIPLICITY, Status_NO_CONVERGE, &
        Status_INSUFFICIENT_SPACE, Status_SINGULAR
   use curve, only: &
        CurveData, evaluate_multi, specialize_curve, subdivide_nodes, &
@@ -1180,7 +1180,7 @@ contains
     integer :: case_id
     character(19) :: name
     real(c_double) :: s, t, new_s, new_t
-    real(c_double) :: quadratic1(2, 3), quadratic2(2, 3)
+    real(c_double) :: quadratic1(2, 3), quadratic2(2, 3), line(2, 2)
     integer(c_int) :: status
     real(c_double) :: expected_s, expected_t
 
@@ -1255,7 +1255,30 @@ contains
          s, new_s, 0.5_dp, t, new_t, 0.5_dp, case_success)
     case_success = ( &
          case_success .AND. &
-         status == Status_NO_CONVERGE)
+         status == Status_BAD_MULTIPLICITY)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Intersect a line and a curve (and line has special handling
+    !         for the second derivative).
+    !         B1([5461/16384, 5462/16384]) and B2([0, 1]) are linearized
+    !         and when the segments intersect they produce s = -1/3 < 0.
+    quadratic1(:, 1) = [0.0_dp, 2.25_dp]
+    quadratic1(:, 2) = [1.5_dp, -2.25_dp]
+    quadratic1(:, 3) = [3.0_dp, 2.25_dp]
+    s = 8191.0_dp / 24576.0_dp
+
+    line(:, 1) = [-0.5_dp, 1.75_dp]
+    line(:, 2) = [4.0_dp, -2.75_dp]
+    t = 12287.0_dp / 36864.0_dp
+
+    call full_newton_nonzero( &
+         s, 3, quadratic1, t, 2, line, new_s, new_t, status)
+    expected_s = 1.0_dp / 3.0_dp
+    expected_t = 1.0_dp / 3.0_dp
+    case_success = ( &
+         new_s - expected_s == spacing(expected_s) .AND. &
+         new_t == expected_t .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_full_newton_nonzero
@@ -1361,6 +1384,7 @@ contains
     real(c_double) :: refined_s, refined_t
     logical(c_bool) :: does_intersect
     integer(c_int) :: status
+    real(c_double) :: expected_s, expected_t
     integer :: case_id
     character(15) :: name
 
@@ -1498,7 +1522,13 @@ contains
          curve3, 3, root_nodes1, &
          curve4, 3, root_nodes2, &
          refined_s, refined_t, does_intersect, status)
-    case_success = (status == Status_PARALLEL)
+    expected_s = 2.0_dp / 3.0_dp
+    expected_t = 1.0_dp / 3.0_dp
+    case_success = ( &
+         status == Status_SUCCESS .AND. &
+         does_intersect .AND. &
+         refined_s - expected_s == spacing(expected_s) .AND. &
+         refined_t == expected_t)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_from_linearized
@@ -1964,25 +1994,45 @@ contains
     call print_status(name, case_id, case_success, success)
     num_intersections = 0
 
-    ! CASE 4: Parallel lines that **do** intersect.
-    first%start = 0.0_dp
-    first%end_ = 1.0_dp
-    nodes1(:, 1) = 0
-    nodes1(:, 2) = 1
-    first%nodes = nodes1
+    ! CASE 4: A line that is tangent to a curve, which requires a "full"
+    !         Newton iteration.
+    first%start = 5461.0_dp / 16384.0_dp
+    first%end_ = 5462.0_dp / 16384.0_dp
+    root_nodes1(:, 1) = [0.0_dp, 2.25_dp]
+    root_nodes1(:, 2) = [1.5_dp, -2.25_dp]
+    root_nodes1(:, 3) = [3.0_dp, 2.25_dp]
+    call specialize_curve( &
+         3, 2, root_nodes1, first%start, first%end_, first%nodes)
 
     second%start = 0.0_dp
     second%end_ = 1.0_dp
-    nodes1(:, 1) = 0.5_dp
-    nodes1(:, 2) = 3
+    nodes1(:, 1) = [-0.5_dp, 1.75_dp]
+    nodes1(:, 2) = [4.0_dp, -2.75_dp]
     second%nodes = nodes1
 
     call add_from_linearized( &
-         first, first%nodes, second, second%nodes, &
+         first, root_nodes1, second, second%nodes, &
          num_intersections, intersections, status)
     case_success = ( &
-         num_intersections == 0 .AND. &
-         status == Status_PARALLEL)
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
+         num_intersections == 1 .AND. &
+         status == Status_SUCCESS .AND. &
+         3.0_dp * intersections(1, 1) == 1.0_dp .AND. &
+         3.0_dp * intersections(2, 1) == 1.0_dp)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Same as CASE 4, with arguments swapped.
+    call add_from_linearized( &
+         second, second%nodes, first, root_nodes1, &
+         num_intersections, intersections, status)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
+         num_intersections == 1 .AND. &
+         status == Status_SUCCESS .AND. &
+         3.0_dp * intersections(1, 1) == 1.0_dp .AND. &
+         3.0_dp * intersections(2, 1) == 1.0_dp)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_from_linearized
@@ -2929,6 +2979,7 @@ contains
     real(c_double) :: cubic1(2, 4), cubic2(2, 4)
     integer(c_int) :: num_intersections
     logical(c_bool) :: coincident
+    real(c_double) :: expected_s, expected_t
     integer(c_int) :: status
     integer :: case_id
     character(17) :: name
@@ -2977,7 +3028,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Tangent curves, with a ``status`` failure due to parallel lines.
+    ! CASE 3: Tangent curves which have to do a "full" Newton iteration.
     quadratic1(:, 1) = 0
     quadratic1(:, 2) = [0.375_dp, 0.75_dp]
     quadratic1(:, 3) = [0.75_dp, 0.375_dp]
@@ -2987,10 +3038,16 @@ contains
     call all_intersections( &
          3, quadratic1, 3, quadratic2, intersections, &
          num_intersections, coincident, status)
+    expected_s = 2.0_dp / 3.0_dp
+    expected_t = 1.0_dp / 3.0_dp
     case_success = ( &
-         num_intersections == 0 .AND. &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 1]) .AND. &
+         num_intersections == 1 .AND. &
+         intersections(1, 1) - expected_s == spacing(expected_s) .AND. &
+         intersections(2, 1) == expected_t .AND. &
          .NOT. coincident .AND. &
-         status == Status_PARALLEL)
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: Tangent curves, which cause the number of candidate pairs
@@ -3059,7 +3116,7 @@ contains
 
     ! CASE 7: Curves that **almost** touch at their endpoints, but don't
     !         actually cross. This causes a "wiggle fail" in
-    !         ``from_linearized()``.
+    !         ``from_linearized()`` but the convex hulls are disjoint.
     cubic1(:, 1) = [-0.7838204403623438_dp, -0.25519640597397464_dp]
     cubic1(:, 2) = [-0.7894577677825452_dp, -0.24259531488131633_dp]
     cubic1(:, 3) = [-0.7946421067207265_dp, -0.22976394420044136_dp]
@@ -3078,17 +3135,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 8: Same as CASE 7, but swap the inputs.
-    call all_intersections( &
-         4, cubic2, 4, cubic1, intersections, &
-         num_intersections, coincident, status)
-    case_success = ( &
-         num_intersections == 0 .AND. &
-         .NOT. coincident .AND. &
-         status == Status_SUCCESS)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 9: Same as CASE 4, except the nodes have been re-specialized to
+    ! CASE 8: Same as CASE 4, except the nodes have been re-specialized to
     !         [0, 2] and [-1, 1], respectively. This way, the first round
     !         reduces to CASE 4, so the "prune" stage happens at an odd
     !         iteration rather than en even iteration.
@@ -3110,11 +3157,11 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 10: Coincident curves (i.e. segments on a common curve). In this
-    !          case, the second curve is just the first curve specialized to
-    !          [1/2, 1]. In this case, "convex hull pruning" is of no use
-    !          because at a certain point the subdivided curve segments will
-    !          be identical.
+    ! CASE 9: Coincident curves (i.e. segments on a common curve). In this
+    !         case, the second curve is just the first curve specialized to
+    !         [1/2, 1]. In this case, "convex hull pruning" is of no use
+    !         because at a certain point the subdivided curve segments will
+    !         be identical.
     quadratic1(:, 1) = 0
     quadratic1(:, 2) = [0.5_dp, 0.25_dp]
     quadratic1(:, 3) = [1.0_dp, 0.0_dp]
@@ -3132,6 +3179,26 @@ contains
          all(intersections(:, 2) == 1) .AND. &
          coincident .AND. &
          status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 10: Curve are tangent and have the same curvature, but
+    !          there are more than ``MAX_CANDIDATES`` candidates
+    !          that can't be pruned.
+    quadratic1(:, 1) = [12.0_dp, 4.0_dp]
+    quadratic1(:, 2) = [-12.0_dp, -8.0_dp]
+    quadratic1(:, 3) = [0.0_dp, 16.0_dp]
+    quadratic2(:, 1) = [6.0_dp, 1.0_dp]
+    quadratic2(:, 2) = [-6.0_dp, -2.0_dp]
+    quadratic2(:, 3) = [0.0_dp, 4.0_dp]
+    call all_intersections( &
+         3, quadratic1, 3, quadratic2, intersections, &
+         num_intersections, coincident, status)
+    case_success = ( &
+         allocated(intersections) .AND. &
+         all(shape(intersections) == [2, 16]) .AND. &
+         num_intersections == 0 .AND. &
+         .NOT. coincident .AND. &
+         status == 74)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_all_intersections
@@ -3153,21 +3220,21 @@ contains
     case_id = 1
     name = "all_intersections_abi"
 
-    ! CASE 1: **Other** failure (tangent curves).
-    quadratic1(:, 1) = 0
-    quadratic1(:, 2) = [0.375_dp, 0.75_dp]
-    quadratic1(:, 3) = [0.75_dp, 0.375_dp]
-    quadratic2(:, 1) = [0.25_dp, 0.625_dp]
-    quadratic2(:, 2) = [0.625_dp, 0.25_dp]
-    quadratic2(:, 3) = 1
+    ! CASE 1: **Other** failure (tangent curves with the same curvature).
+    quadratic1(:, 1) = [12.0_dp, 4.0_dp]
+    quadratic1(:, 2) = -4
+    quadratic1(:, 3) = [-4.0_dp, 4.0_dp]
+    quadratic2(:, 1) = [6.0_dp, 1.0_dp]
+    quadratic2(:, 2) = [-2.0_dp, -1.0_dp]
+    quadratic2(:, 3) = [-2.0_dp, 1.0_dp]
 
     call all_intersections_abi( &
          3, quadratic1, 3, quadratic2, 2, intersections1, &
          num_intersections, coincident, status)
     case_success = ( &
-         num_intersections == 0 .AND. &
+         num_intersections == 1 .AND. &
          .NOT. coincident .AND. &
-         status == Status_PARALLEL)
+         status == Status_BAD_MULTIPLICITY)
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: ``intersections`` is not large enough.

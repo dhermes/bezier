@@ -920,6 +920,27 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         self.assertIsNone(contained)
         check_edges(self, self.NODES1, 1, self.NODES2, 2, all_edge_nodes)
 
+    def _check_triple_root_err(self, exception):
+        from bezier import _intersection_helpers
+
+        expected = (_intersection_helpers.NEWTON_NO_CONVERGE,)
+        self.assertEqual(exception.args, expected)
+
+    def test_triple_root(self):
+        nodes1 = np.asfortranarray([
+            [0.0, -4.0, 8.0, 4.0, 8.0, 8.0],
+            [2.0, -2.0, 2.0, 4.0, 4.0, 6.0],
+        ])
+        nodes2 = np.asfortranarray([
+            [-2.0, -2.0, 6.0, 1.0, 5.0, 4.0],
+            [2.0, -2.0, 2.0, 5.0, 5.0, 8.0],
+        ])
+
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(nodes1, 2, nodes2, 2, verify=True)
+
+        self._check_triple_root_err(exc_info.exception)
+
 
 class Test_algebraic_intersect(Test__geometric_intersect):
 
@@ -968,6 +989,15 @@ class Test_algebraic_intersect(Test__geometric_intersect):
         self.assertEqual(exc_args[0], _algebraic_intersection._NON_SIMPLE_ERR)
         self.assertIsInstance(exc_args[1], np.ndarray)
         self.assertEqual(exc_args[1].shape, (3,))
+
+    def _check_triple_root_err(self, exception):
+        from bezier import _algebraic_intersection
+
+        exc_args = exception.args
+        self.assertEqual(len(exc_args), 2)
+        self.assertEqual(exc_args[0], _algebraic_intersection._NON_SIMPLE_ERR)
+        self.assertIsInstance(exc_args[1], np.ndarray)
+        self.assertEqual(exc_args[1].shape, (5,))
 
 
 @utils.needs_speedup

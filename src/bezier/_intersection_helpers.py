@@ -741,7 +741,8 @@ def full_newton_nonzero(s, nodes1, t, nodes2):
         Newton's method converged to.
 
     Raises:
-        ValueError: If Newton's method doesn't converge.
+        NotImplementedError: If Newton's method doesn't converge in either the
+            multiplicity 1 or 2 cases.
     """
     # NOTE: We somewhat replicate code in ``evaluate_hodograph()``
     #       here. This is so we don't re-compute the nodes for the first
@@ -770,7 +771,7 @@ def full_newton_nonzero(s, nodes1, t, nodes2):
     if converged:
         return current_s, current_t
 
-    raise ValueError(NEWTON_NO_CONVERGE)
+    raise NotImplementedError(NEWTON_NO_CONVERGE)
 
 
 def full_newton(s, nodes1, t, nodes2):

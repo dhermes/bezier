@@ -30,7 +30,6 @@ from tests.functional import utils
 ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
 GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
 _, INTERSECTIONS = utils.surface_intersections_info()
-PARALLEL_FAILURE = ('Parameters need help.',)
 SAME_CURVATURE = (_surface_helpers._SAME_CURVATURE,)
 TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
 WIGGLES = {
@@ -54,10 +53,7 @@ WIGGLES = {
     },
 }
 FAILED_CASES_TANGENT = {
-    GEOMETRIC: {
-        10: {'parallel': True},
-        42: {'parallel': True},
-    },
+    GEOMETRIC: {},
     ALGEBRAIC: {
         6: {},
         7: {},
@@ -83,7 +79,7 @@ FAILED_CASES_COINCIDENT = {
     },
 }
 INCORRECT_COUNT = {
-    GEOMETRIC: (),
+    GEOMETRIC: (10, 42),
     ALGEBRAIC: (),
 }
 CONFIG = utils.Config()
@@ -102,7 +98,7 @@ def curved_polygon_edges(intersection):
 
 
 @contextlib.contextmanager
-def check_tangent_manager(strategy, parallel=False, too_many=None):
+def check_tangent_manager(strategy, too_many=None):
     caught_exc = None
     try:
         yield
@@ -112,19 +108,15 @@ def check_tangent_manager(strategy, parallel=False, too_many=None):
     assert caught_exc is not None
     exc_args = caught_exc.args
     if strategy is GEOMETRIC:
-        if parallel:
-            assert exc_args == PARALLEL_FAILURE
-        else:
-            err_msg = TOO_MANY.format(too_many)
-            assert exc_args == (err_msg,)
+        err_msg = TOO_MANY.format(too_many)
+        assert exc_args == (err_msg,)
     else:
         assert len(exc_args) == 2
         assert exc_args[0] == _algebraic_intersection._NON_SIMPLE_ERR
 
 
 @contextlib.contextmanager
-def check_coincident_manager(
-        strategy, parallel=False, too_many=None, curvature=False):
+def check_coincident_manager(strategy, too_many=None, curvature=False):
     caught_exc = None
     try:
         yield
@@ -134,9 +126,7 @@ def check_coincident_manager(
     assert caught_exc is not None
     exc_args = caught_exc.args
     if strategy is GEOMETRIC:
-        if parallel:
-            assert exc_args == PARALLEL_FAILURE
-        elif curvature:
+        if curvature:
             assert exc_args == SAME_CURVATURE
         else:
             err_msg = TOO_MANY.format(too_many)
@@ -165,7 +155,10 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
 
             edge_info, int_edges = curved_polygon_edges(intersection)
             num_edges = len(edge_info)
-            assert num_edges == len(intersected.edge_list)
+            if num_edges != len(intersected.edge_list):
+                raise utils.IncorrectCount(
+                    'Received wrong number of edges within an intersection',
+                    num_edges, 'Expected', len(intersected.edge_list))
             assert num_edges == len(intersected.start_params)
             assert num_edges == len(intersected.end_params)
             assert num_edges == len(intersected.nodes)

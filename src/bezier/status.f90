@@ -16,19 +16,20 @@ module status
   implicit none
   private
   public &
-       Status_SUCCESS, Status_PARALLEL, Status_NO_CONVERGE, &
+       Status_SUCCESS, Status_BAD_MULTIPLICITY, Status_NO_CONVERGE, &
        Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_BAD_INTERIOR, &
        Status_EDGE_END, Status_SINGULAR, Status_UNKNOWN
 
   ! Values of Status enum:
   ! SUCCESS: Procedure exited with no error.
   integer(c_int), parameter :: Status_SUCCESS = 0
-  ! PARALLEL: Corresponds to a curve-curve intersection failure where
-  !           linearized segments are parallel.
-  integer(c_int), parameter :: Status_PARALLEL = 1
+  ! BAD_MULTIPLICITY: Newton's method failed to converge in
+  !                   ``curve_intersection.full_newton_nonzero()`` because
+  !                   the root had an unsupported multiplicity (i.e. it was
+  !                   a triple root or higher).
+  integer(c_int), parameter :: Status_BAD_MULTIPLICITY = 1
   ! NO_CONVERGE: An iterative algorithm has failed to converge. Used by
-  !              ``curve_intersection.all_intersections()`` and
-  !              ``curve_intersection.full_newton_nonzero()``.
+  !              ``curve_intersection.all_intersections()``.
   integer(c_int), parameter :: Status_NO_CONVERGE = 2
   ! INSUFFICIENT_SPACE: Intended to be used by ABI versions of procedures. Will
   !                     be used when the caller has not allocated enough space

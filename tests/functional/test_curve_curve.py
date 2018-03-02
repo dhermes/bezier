@@ -20,6 +20,7 @@ import six
 
 from bezier import _algebraic_intersection
 from bezier import _geometric_intersection
+from bezier import _intersection_helpers
 import bezier.curve
 from tests import utils as base_utils
 from tests.functional import utils
@@ -143,24 +144,19 @@ ULPS_ALLOWED_OVERRIDE = {
     },
 }
 NON_SIMPLE_ERR = _algebraic_intersection._NON_SIMPLE_ERR
-SEGMENTS_PARALLEL = ('Parameters need help.',)
 TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
+BAD_MULTIPLICITY = (_intersection_helpers.NEWTON_NO_CONVERGE,)
 COINCIDENT_ERR = (_algebraic_intersection._COINCIDENT_ERR,)
 TANGENT_OVERRIDES = {
     GEOMETRIC: {
         4: {'success': True},
-        11: {'parallel': True},
-        12: {'parallel': True},
-        13: {'parallel': True},
+        11: {'success': True},
         14: {'success': True},
-        17: {'parallel': True},
         19: {'success': True},
         24: {'success': True},
-        31: {'parallel': True},
+        31: {'success': True},
         41: {'success': True},
-        42: {'parallel': True},
-        43: {'parallel': True},
-        44: {'parallel': True},
+        42: {'bad_multiplicity': True},
         45: {'too_many': 74},
     },
     ALGEBRAIC: {},
@@ -175,7 +171,7 @@ COINCIDENT_OVERRIDES = {
     ALGEBRAIC: {},
 }
 INCORRECT_COUNT = {
-    GEOMETRIC: (),
+    GEOMETRIC: (12, 17, 43, 44),
     ALGEBRAIC: (),
 }
 if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:
@@ -305,9 +301,9 @@ def check_tangent(intersection_info, strategy):
             assert len(exc_args) == 2
             assert exc_args[0] == NON_SIMPLE_ERR
         else:
-            if 'parallel' in tangent_kwargs:
-                assert tangent_kwargs == {'parallel': True}
-                assert exc_args == SEGMENTS_PARALLEL
+            if 'bad_multiplicity' in tangent_kwargs:
+                assert tangent_kwargs == {'bad_multiplicity': True}
+                assert exc_args == BAD_MULTIPLICITY
             else:
                 too_many = tangent_kwargs.get('too_many')
                 assert tangent_kwargs == {'too_many': too_many}
@@ -357,10 +353,7 @@ def test_intersect(strategy, intersection_info):
     elif intersection_type == CurveIntersectionType.coincident:
         check_coincident(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.standard:
-        if id_ in TANGENT_OVERRIDES[strategy]:
-            check_tangent(intersection_info, strategy)
-        else:
-            check_intersect(intersection_info, strategy)
+        check_intersect(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.no_intersection:
         check_no_intersect(intersection_info, strategy)
     else:
