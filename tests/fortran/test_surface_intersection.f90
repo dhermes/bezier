@@ -1847,9 +1847,11 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 11: Due to round-off issues in ``add_intersection()`` (from the
-    !          ``curve_intersection`` module), a "phantom" extra intersection
-    !          point causes issues in ``interior_combine()``.
+    ! CASE 11: In a previous implementation, round-off issues in
+    !          ``curve_intersection.f90::add_intersection()`` caused a
+    !          "phantom" extra intersection point caused issues in
+    !          ``interior_combine()``. This case is kept around to guard
+    !          against regression.
     cubic1(:, 1) = [-0.519247936646441_dp, 0.008196262233806585_dp]
     cubic1(:, 2) = [-0.5206153113582636_dp, 0.01587839530234961_dp]
     cubic1(:, 3) = [-0.5220361984817866_dp, 0.023564120023660037_dp]

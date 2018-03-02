@@ -102,7 +102,7 @@ QUADPACK subroutines depend on).
 QUADPACK is used to perform numerical quadrature to compute the length
 of a curve segment.
 
-.. _directory: https://github.com/dhermes/bezier/tree/master/src/bezier/quadpack
+.. _directory: https://github.com/dhermes/bezier/tree/{revision}/src/bezier/quadpack
 .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
 
 ******************

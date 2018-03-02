@@ -3,21 +3,64 @@ Latest Release (``0.7.1.dev1``)
 
 |pypi| |docs|
 
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
+
 New Features
 ------------
 
 -  Adding support for surface-surface intersections that have
    coincident segments shared between each surface
    (`cfa2b93 <https://github.com/dhermes/bezier/commit/cfa2b93792695b87f11ece9da1959013ecf77678>`__,
-   (`0a9645c <https://github.com/dhermes/bezier/commit/0a9645c9a3f1df3274677ad3def3d934c590b642>`__).
+   `0a9645c <https://github.com/dhermes/bezier/commit/0a9645c9a3f1df3274677ad3def3d934c590b642>`__).
    See cases:
 
-   -   4: `10Q-18Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_18Q.png>`__
-   -   5: `10Q-19Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_19Q.png>`__
-   -   43: `29Q-42Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces29Q_and_42Q.png>`__
-   -   44: `29Q-43Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces29Q_and_43Q.png>`__
-   -   45: `10Q-44Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_44Q.png>`__
+   -  4: `10Q-18Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_18Q.png>`__
+   -  5: `10Q-19Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_19Q.png>`__
+   -  43: `29Q-42Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces29Q_and_42Q.png>`__
+   -  44: `29Q-43Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces29Q_and_43Q.png>`__
+   -  45: `10Q-44Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_44Q.png>`__
+-  Adding support for curve-curve intersections that are also points of
+   tangency. This was accomplished by three broad changes to the geometric
+   intersection algorithm:
 
+   -  Checking if almost-linear curves have disjoint bounding boxes
+      **before** intersecting the linearized segments
+      (`05f0343 <https://github.com/dhermes/bezier/commit/05f0343ca1962dbc5ab3b143b5c6fe20b87272d1>`__).
+   -  Adding a "full" Newton iteration for finding ``B1(s) = B2(t)`` when known
+      to be near a solution. In particular, this has **special** handling for
+      tangencies, which cause a singular Jacobian and make convergence drop
+      from quadratic to linear and stalls out convergence early
+      (`13a5be5 <https://github.com/dhermes/bezier/commit/13a5be5d80d6a07a1a71326493baa06dbda70f13>`__,
+      `4bac61a <https://github.com/dhermes/bezier/commit/4bac61a243b08002c4b0154d2b346cc356097eaf>`__).
+   -  Changing how "bad" linearized segments are handled. After subdividing
+      to approximately linear curve segments, there were two problems which
+      are now being handled in the same way. If the line segments connecting
+      the subdivided curve endpoints
+
+      -  are parallel, then the algorithm failed with a ``PARALLEL`` status
+      -  intersect outside of the unit interval (for either ``s`` or ``t``),
+         the curve-curve candidate was rejected (a small amount, ``0.5^{16}``,
+         of "wiggle" room was allowed outside of ``[0, 1]``).
+
+      Now both cases are handled in the same way. First, the subdivided curve
+      segments will have a convex hull check applied (which is more strict than
+      a bounding box check). If their convex hulls do collide, then a "full"
+      Newton solve will be used
+      (`4457f64 <https://github.com/dhermes/bezier/commit/4457f64eaf28bb9fb5c91a8740cd0d618fafc3da>`__,
+      `fe453c3 <https://github.com/dhermes/bezier/commit/fe453c3839b19ce4a85dfd0b5ad78f71a0973daf>`__).
+
+   Four curve-curve functional test cases have gone from failing to passing:
+
+   -  11: `14-15 <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/curves14_and_15.png>`__
+   -  31: `38-39 <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/curves38_and_39.png>`__
+   -  43: `58-59 <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/curves58_and_59.png>`__
+   -  44: `60-59 <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/curves60_and_59.png>`__
+
+   and two surface-surface cases have as well:
+
+   -  10: `20Q-21Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces20Q_and_21Q.png>`__
+   -  42: `41Q-21Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces41Q_and_21Q.png>`__
 
 ABI Changes
 -----------
@@ -40,6 +83,42 @@ Breaking Changes
    curved polygon intersection(s) cannot be determined from the edge-edge
    intersections for a given surface-surface pair. See
    `#101 <https://github.com/dhermes/bezier/issues/101>`__.
+-  Removed ``PARALLEL`` status enum
+   (`fe453c3 <https://github.com/dhermes/bezier/commit/fe453c3839b19ce4a85dfd0b5ad78f71a0973daf>`__).
+   Now when doing geometric curve-curve intersection, parallel linearized
+   segments are handled by checking if the convex hulls collide and then
+   (if they do) using a modifed Newton iteration to converge to a root.
+-  Adding ``BAD_MULTIPLICITY`` status enum
+   (`fe453c3 <https://github.com/dhermes/bezier/commit/fe453c3839b19ce4a85dfd0b5ad78f71a0973daf>`__).
+   (This is a **breaking** change rather than additive because it re-uses
+   the enum value of ``1`` previously used by ``PARALLEL``.) This is used
+   when Newton's method fails to converge to either a simple intersection
+   or a tangent intersection. Such failures to converge, when already starting
+   near an intersection, may be caused by one of:
+
+   -  The intersection was of multiplicity greater than 2
+   -  The curves don't actually intersect, though they come very close
+   -  Numerical issues caused the iteration to leave the region
+      of convergence
+
+Surface Changes
+~~~~~~~~~~~~~~~
+
+-  Added ``SINGULAR`` status enum for cases when a linear system can't be
+   solved due to a singular matrix
+   (`4457f64 <https://github.com/dhermes/bezier/commit/4457f64eaf28bb9fb5c91a8740cd0d618fafc3da>`__).
+-  Adding ``status`` as a return value in ``newton_refine_curve_intersect()``.
+   This way, when the Jacobian is singular (which happens at points of
+   tangency), the ``SINGULAR`` status can be returned
+   (`4457f64 <https://github.com/dhermes/bezier/commit/4457f64eaf28bb9fb5c91a8740cd0d618fafc3da>`__).
+   The old behavior would've resulted in a division by zero.
+
+Non-Public API
+~~~~~~~~~~~~~~
+
+-  Adding custom linear solver for the ``2 x 2`` case
+   (`a3fb476 <https://github.com/dhermes/bezier/commit/a3fb476cf9a82a34754bdd9b9881fbe857883d57>`__).
+   This is modelled after ``dgesv`` from LAPACK.
 
 Python Changes
 --------------
@@ -77,6 +156,14 @@ Non-Public API
    for cases where coincident segments are moving in opposite directions (i.e.
    the surfaces don't share a common interior). For example see case 44
    (`29Q-43Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces29Q_and_43Q.png>`__).
+-  Adding custom linear solver for the ``2 x 2`` case
+   (`764e56d <https://github.com/dhermes/bezier/commit/764e56db5bb4987d31e3c9f5fbabbe6564d6e0c0>`__).
+   This is modelled after ``dgesv`` from LAPACK.
+-  Adding some support for B |eacute| zier clipping algorithm
+   (`fbed62d <https://github.com/dhermes/bezier/commit/fbed62df305b8c2679ff260bba4f57d414e79a77>`__,
+   `ada4ea3 <https://github.com/dhermes/bezier/commit/ada4ea34bf31cff5cc34491d6689f0f3a2b9f0a1>`__).
+   See the original `paper <https://dx.doi.org/10.1016/0010-4485(90)90039-F>`__
+   by Sederberg and Nishita for more information.
 
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.7.1.svg
    :target: https://pypi.org/project/bezier/0.7.1/
