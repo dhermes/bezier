@@ -953,8 +953,8 @@ contains
     ! * (N >= MAX_CANDIDATES)  : Via ``all_intersections()``.
     ! * Status_BAD_MULTIPLICITY: Via ``all_intersections()``.
     ! * Status_SINGULAR        : Via ``all_intersections()``.
-    ! * Status_EDGE_END        : Via ``all_intersections()``.
-    ! * Status_SAME_CURVATURE  : Via ``all_intersections()``.
+    ! * Status_EDGE_END        : Via ``add_st_vals()``.
+    ! * Status_SAME_CURVATURE  : Via ``add_st_vals()``.
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(2, num_nodes1)
