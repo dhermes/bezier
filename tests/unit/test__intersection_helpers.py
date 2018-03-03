@@ -626,6 +626,55 @@ class Test_newton_iterate(unittest.TestCase):
         self.assertEqual(8.221323371115176, current_s)
         self.assertEqual(8.221323371115176, current_t)
 
+    def test_premature_exit(self):
+        from bezier import _intersection_helpers
+
+        nodes1 = np.asfortranarray([
+            [0.0, 0.5, 1.0],
+            [0.0, 1.0, 0.0],
+        ])
+        first_deriv1 = 2.0 * (nodes1[:, 1:] - nodes1[:, :-1])
+
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.5, 0.5],
+        ])
+        first_deriv2 = nodes2[:, 1:] - nodes2[:, :-1]
+
+        evaluate_fn = _intersection_helpers.NewtonSimpleRoot(
+            nodes1, first_deriv1, nodes2, first_deriv2)
+
+        # First, show that sn = tn = 0.5 - k results in
+        # s{n + 1} = t{n + 1} = 0.5 - 0.5 k. So starting from k = 1 and
+        # attempting four linearly converging iterations, we end up
+        # with s4 = t4 = 0.5 - 0.5**4 (1).
+        s = -0.5
+        t = -0.5
+        converged, current_s, current_t = self._call_function_under_test(
+            evaluate_fn, s, t)
+        self.assertFalse(converged)
+        self.assertEqual(current_s, 0.5 - 0.5**4)
+        self.assertEqual(current_t, 0.5 - 0.5**4)
+
+        # Do the same as above, but start a bit closer to a root.
+        s = 0.5 - 0.5**20
+        t = 0.5 - 0.5**20
+        converged, current_s, current_t = self._call_function_under_test(
+            evaluate_fn, s, t)
+        self.assertFalse(converged)
+        self.assertEqual(current_s, 0.5 - 0.5**24)
+        self.assertEqual(current_t, 0.5 - 0.5**24)
+
+        # Finally, start "too close" so that ``F(s, t)`` evaluates to zero
+        # earlier than it should.
+        s = 0.5 - 0.5**26
+        t = 0.5 - 0.5**26
+        converged, current_s, current_t = self._call_function_under_test(
+            evaluate_fn, s, t)
+        self.assertTrue(converged)
+        self.assertEqual(current_s, 0.5 - 0.5**28)
+        self.assertEqual(current_t, 0.5 - 0.5**28)
+
 
 class Test_full_newton_nonzero(unittest.TestCase):
 

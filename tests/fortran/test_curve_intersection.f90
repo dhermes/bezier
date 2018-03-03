@@ -957,6 +957,7 @@ contains
     logical(c_bool) :: converged
     real(c_double) :: quadratic1(2, 3), quadratic2(2, 3)
     real(c_double) :: first_deriv1(2, 2), first_deriv2(2, 2)
+    real(c_double) :: line(2, 2), line_first_deriv(2, 1)
     real(c_double) :: second_deriv1(2, 1), second_deriv2(2, 1)
     real(c_double) :: expected_s, expected_t
 
@@ -1130,6 +1131,51 @@ contains
          .NOT. converged)
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 8: A sequence of ``s-t`` parameters converges linearly via
+    !         ``sn = tn = 0.5 - k`` ==> ``s{n+1} = t{n+1} = 0.5 - 0.5 k``.
+    !         This will be used to show an "early" exit when the root gets
+    !         within ``sqrt(machine precision)`` of the actual root
+    !         ``s = t = 0.5``.
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [0.5_dp, 1.0_dp]
+    quadratic1(:, 3) = [1.0_dp, 0.0_dp]
+    first_deriv1 = 2 * (quadratic1(:, 2:) - quadratic1(:, :2))
+    s = -0.5_dp
+
+    line(:, 1) = [0.0_dp, 0.5_dp]
+    line(:, 2) = [1.0_dp, 0.5_dp]
+    line_first_deriv = line(:, 2:) - line(:, :1)
+    t = -0.5_dp
+
+    call newton_iterate(f_curve_line, s, t, new_s, new_t, converged)
+    case_success = ( &
+         new_s == 0.5_dp - 0.5_dp**4 .AND. &
+         new_t == 0.5_dp - 0.5_dp**4 .AND. &
+         .NOT. converged)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 9: Same as CASE 8, but closer to the solution (but still not close
+    !         enough to "converge" prematurely).
+    s = 0.5_dp - 0.5_dp**20
+    t = 0.5_dp - 0.5_dp**20
+    call newton_iterate(f_curve_line, s, t, new_s, new_t, converged)
+    case_success = ( &
+         new_s == 0.5_dp - 0.5_dp**24 .AND. &
+         new_t == 0.5_dp - 0.5_dp**24 .AND. &
+         .NOT. converged)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 10: Same as CASE 8 and 9 and "converges" prematurely, i.e.
+    !          ``F(s, t)`` evaluates to zero earlier than it should.
+    s = 0.5_dp - 0.5_dp**26
+    t = 0.5_dp - 0.5_dp**26
+    call newton_iterate(f_curve_line, s, t, new_s, new_t, converged)
+    case_success = ( &
+         new_s == 0.5_dp - 0.5_dp**28 .AND. &
+         new_t == 0.5_dp - 0.5_dp**28 .AND. &
+         converged)
+    call print_status(name, case_id, case_success, success)
+
   contains
 
     ! NOTE: This is a closure around several variables in the
@@ -1170,6 +1216,24 @@ contains
            jacobian, func_val)
 
     end subroutine f_double
+
+    ! NOTE: This is a closure around several variables in the
+    !       scope above which may change:
+    !       * ``quadratic1``
+    !       * ``first_deriv1``
+    !       * ``line``
+    !       * ``line_first_deriv``
+    subroutine f_curve_line(s, t, jacobian, func_val)
+      real(c_double), intent(in) :: s
+      real(c_double), intent(in) :: t
+      real(c_double), intent(out) :: jacobian(2, 2)
+      real(c_double), intent(out) :: func_val(2, 1)
+
+      call newton_simple_root( &
+           s, 3, quadratic1, first_deriv1, &
+           t, 2, line, line_first_deriv, jacobian, func_val)
+
+    end subroutine f_curve_line
 
   end subroutine test_newton_iterate
 
