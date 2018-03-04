@@ -723,43 +723,27 @@ class Test_add_intersection(unittest.TestCase):
         self.assertEqual(intersections, expected)
 
     def test_existing(self):
-        intersections = [(0.0, 1.0)]
+        intersections = [(0.25, 1.0)]
         self.assertIsNone(
-            self._call_function_under_test(0.0, 1.0, intersections))
+            self._call_function_under_test(0.25, 1.0, intersections))
 
-        self.assertEqual(intersections, [(0.0, 1.0)])
+        self.assertEqual(intersections, [(0.25, 1.0)])
 
-    def test_ulp_wiggle(self):
-        from bezier import _geometric_intersection
+    def test_s_under_zero(self):
+        intersections = [(0.0, 0.75)]
+        candidate_s = 0.5**46
+        self.assertIsNone(
+            self._call_function_under_test(candidate_s, 0.75, intersections))
 
-        delta = 3 * SPACING(0.5)
-        intersections = [(0.5, 0.5)]
-        s_val = 0.5 + delta
-        t_val = 0.5
+        self.assertEqual(intersections, [(0.0, 0.75)])
 
-        patch = unittest.mock.patch.object(
-            _geometric_intersection, '_SIMILAR_ULPS', new=10)
-        with patch:
-            self.assertIsNone(
-                self._call_function_under_test(s_val, t_val, intersections))
-            # No change since delta is within 10 ULPs.
-            self.assertEqual(intersections, [(0.5, 0.5)])
+    def test_t_under_zero(self):
+        intersections = [(0.125, 0.0)]
+        candidate_t = 0.5**45
+        self.assertIsNone(
+            self._call_function_under_test(0.125, candidate_t, intersections))
 
-        patch = unittest.mock.patch.object(
-            _geometric_intersection, '_SIMILAR_ULPS', new=3)
-        with patch:
-            self.assertIsNone(
-                self._call_function_under_test(s_val, t_val, intersections))
-            # No change since delta is within 3 ULPs.
-            self.assertEqual(intersections, [(0.5, 0.5)])
-
-        patch = unittest.mock.patch.object(
-            _geometric_intersection, '_SIMILAR_ULPS', new=2)
-        with patch:
-            self.assertIsNone(
-                self._call_function_under_test(s_val, t_val, intersections))
-            # Add new intersection since delta is not within 2 ULPs.
-            self.assertEqual(intersections, [(0.5, 0.5), (s_val, t_val)])
+        self.assertEqual(intersections, [(0.125, 0.0)])
 
 
 class Test_endpoint_check(utils.NumPyTestCase):
@@ -1995,50 +1979,6 @@ class Test_speedup_set_max_candidates(Test__set_max_candidates):
         from bezier import _speedup
 
         return _speedup.get_max_candidates()
-
-
-class Test__set_similar_ulps(unittest.TestCase):
-    # NOTE: This is also a test for ``_get_similar_ulps``.
-
-    @staticmethod
-    def _call_function_under_test(num_bits):
-        from bezier import _geometric_intersection
-
-        return _geometric_intersection._set_similar_ulps(num_bits)
-
-    @staticmethod
-    def get_similar_ulps():
-        from bezier import _geometric_intersection
-
-        return _geometric_intersection._get_similar_ulps()
-
-    def test_it(self):
-        curr_num_bits = self.get_similar_ulps()
-
-        new_num_bits = 4
-        return_value = self._call_function_under_test(new_num_bits)
-        self.assertIsNone(return_value)
-        self.assertEqual(self.get_similar_ulps(), new_num_bits)
-
-        # Put things back the way they were.
-        self._call_function_under_test(curr_num_bits)
-
-
-@utils.needs_speedup
-class Test_speedup_set_similar_ulps(Test__set_similar_ulps):
-    # NOTE: This is also a test for the ``get_similar_ulps`` speedup.
-
-    @staticmethod
-    def _call_function_under_test(num_bits):
-        from bezier import _speedup
-
-        return _speedup.set_similar_ulps(num_bits)
-
-    @staticmethod
-    def get_similar_ulps():
-        from bezier import _speedup
-
-        return _speedup.get_similar_ulps()
 
 
 class TestSubdividedCurve(utils.NumPyTestCase):

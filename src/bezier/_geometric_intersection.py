@@ -57,9 +57,6 @@ _TOO_MANY_TEMPLATE = (
 _NO_CONVERGE_TEMPLATE = (
     'Curve intersection failed to converge to approximately linear '
     'subdivisions after {:d} iterations.')
-# Number of bits allowed in ``add_intersection()`` to consider two
-# intersections to be "identical".
-_SIMILAR_ULPS = 1
 _MIN_INTERVAL_WIDTH = 0.5**40
 
 
@@ -808,7 +805,7 @@ def from_linearized(first, second, intersections):
 
 
 def add_intersection(s, t, intersections):
-    """Adds an intersection to list of ``intersections``.
+    r"""Adds an intersection to list of ``intersections``.
 
     .. note::
 
@@ -817,19 +814,53 @@ def add_intersection(s, t, intersections):
        :func:`_all_intersections` exclusively, and that function has a
        Fortran equivalent.
 
-    Accounts for repeated points at curve endpoints. If the
-    intersection has already been found, does nothing.
+    Accounts for repeated intersection points. If the intersection has already
+    been found, does nothing.
+
+    If ``s`` is below :math:`2^{-10}`, it will be replaced with ``1 - s``
+    and compared against ``1 - s'`` for all ``s'`` already in
+    ``intersections``. (Similar if ``t`` is below the :attr:`.ZERO_THRESHOLD`.)
+    This is perfectly "appropriate" since evaluating a B |eacute| zier curve
+    requires using both ``s`` and ``1 - s``, so both values are equally
+    relevant.
+
+    Compares :math:`\|p - q\|` to :math:`\|p\|` where :math:`p = (s, t)` is
+    current candidate intersection (or the "normalized" version, such as
+    :math:`p = (1 - s, t)`) and :math:`q` is one of the already added
+    intersections. If the difference is below :math:`2^{-45}` (i.e.
+    :attr`.NEWTON_ERROR_RATIO`) then the intersection is considered to be
+    duplicate.
 
     Args:
         s (float): The first parameter in an intersection.
         t (float): The second parameter in an intersection.
         intersections (list): List of existing intersections.
     """
+    if not intersections:
+        intersections.append((s, t))
+        return
+
+    if s < _intersection_helpers.ZERO_THRESHOLD:
+        candidate_s = 1.0 - s
+    else:
+        candidate_s = s
+
+    if t < _intersection_helpers.ZERO_THRESHOLD:
+        candidate_t = 1.0 - t
+    else:
+        candidate_t = t
+
+    norm_candidate = np.linalg.norm([candidate_s, candidate_t], ord=2)
     for existing_s, existing_t in intersections:
-        if (_helpers.ulps_away(
-                existing_s, s, num_bits=_SIMILAR_ULPS) and
-                _helpers.ulps_away(
-                    existing_t, t, num_bits=_SIMILAR_ULPS)):
+        # NOTE: |(1 - s1) - (1 - s2)| = |s1 - s2| in exact arithmetic, so
+        #       we don't bother comparing to ``candidate_s`` / ``candidate_t``.
+        #       Due to round-off, these may be slightly different, but only
+        #       up to machine precision.
+        delta_s = s - existing_s
+        delta_t = t - existing_t
+        norm_update = np.linalg.norm([delta_s, delta_t], ord=2)
+        if (norm_update <
+                _intersection_helpers.NEWTON_ERROR_RATIO * norm_candidate):
             return
 
     intersections.append((s, t))
@@ -1454,28 +1485,6 @@ def _get_max_candidates():
     return _MAX_CANDIDATES
 
 
-def _set_similar_ulps(num_bits):
-    """Set the number of ULPs "wiggle" allowed in :func:`add_intersection`.
-
-    Allows modifying the **runtime** behavior by tweaking the number of ULPs
-    two parameters must differ by to be considered "the same".
-
-    Args:
-        num_bits (int): The number of ULPs wiggle room to allow.
-    """
-    global _SIMILAR_ULPS  # pylint: disable=global-statement
-    _SIMILAR_ULPS = num_bits
-
-
-def _get_similar_ulps():
-    """Get the number of ULPs "wiggle" allowed in :func:`add_intersection`.
-
-    Returns:
-        int: The number of ULPs wiggle room to allow.
-    """
-    return _SIMILAR_ULPS
-
-
 class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
     """Enum representing all possible bounding box intersections.
 
@@ -1638,15 +1647,11 @@ if _speedup is None:  # pragma: NO COVER
     all_intersections = _all_intersections
     set_max_candidates = _set_max_candidates
     get_max_candidates = _get_max_candidates
-    set_similar_ulps = _set_similar_ulps
-    get_similar_ulps = _get_similar_ulps
 else:
     bbox_intersect = _speedup.bbox_intersect
     all_intersections = _speedup.curve_intersections
     set_max_candidates = _speedup.set_max_candidates
     get_max_candidates = _speedup.get_max_candidates
-    set_similar_ulps = _speedup.set_similar_ulps
-    get_similar_ulps = _speedup.get_similar_ulps
     atexit.register(
         _speedup.free_curve_intersections_workspace)
 # pylint: enable=invalid-name

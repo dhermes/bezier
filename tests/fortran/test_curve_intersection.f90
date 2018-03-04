@@ -33,8 +33,7 @@ module test_curve_intersection
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
        add_coincident_parameters, all_intersections, all_intersections_abi, &
-       set_max_candidates, get_max_candidates, set_similar_ulps, &
-       get_similar_ulps
+       set_max_candidates, get_max_candidates
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -50,8 +49,7 @@ module test_curve_intersection
        test_tangent_bbox_intersection, test_add_candidates, &
        test_intersect_one_round, test_make_same_degree, &
        test_add_coincident_parameters, test_all_intersections, &
-       test_all_intersections_abi, test_set_max_candidates, &
-       test_set_similar_ulps
+       test_all_intersections_abi, test_set_max_candidates
   public curve_intersection_all_tests
 
 contains
@@ -85,7 +83,6 @@ contains
     call test_all_intersections(success)
     call test_all_intersections_abi(success)
     call test_set_max_candidates(success)
-    call test_set_similar_ulps(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -1832,7 +1829,6 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer(c_int) :: num_intersections
-    integer(c_int) :: num_bits
     real(c_double), allocatable :: intersections(:, :)
     real(c_double) :: s_val, t_val
     integer :: case_id
@@ -1911,45 +1907,32 @@ contains
          num_intersections == 2)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 6: Proposed intersection is inside the "wiggle"
-    !         threshold of an existing intersection.
-    call get_similar_ulps(num_bits)
-    call set_similar_ulps(10)
+    ! CASE 6: ``s``-value is below the ``ZERO_THRESHOLD``.
+    intersections(1, 1) = 0.0_dp
+    intersections(2, 1) = 0.75_dp
+    num_intersections = 1
 
-    s_val = intersections(1, 1) + 3 * spacing(intersections(1, 1))
-    t_val = intersections(2, 1)
+    s_val = 0.5_dp**46
     call add_intersection( &
-         s_val, t_val, num_intersections, intersections)
-    case_success = ( &
-         num_bits == 1 .AND. &
-         allocated(intersections) .AND. &
-         all(shape(intersections) == [2, 2]) .AND. &
-         num_intersections == 2)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 7: Proposed intersection is barely / exactly inside the "wiggle"
-    !         threshold of an existing intersection.
-    call set_similar_ulps(3)
-    call add_intersection( &
-         s_val, t_val, num_intersections, intersections)
+         s_val, 0.75_dp, num_intersections, intersections)
     case_success = ( &
          allocated(intersections) .AND. &
          all(shape(intersections) == [2, 2]) .AND. &
-         num_intersections == 2)
+         num_intersections == 1)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 8: Proposed intersection is outside the "wiggle"
-    !         threshold of an existing intersection.
-    ! Restore the original value.
-    call set_similar_ulps(num_bits)
+    ! CASE 7: ``s``-value is below the ``ZERO_THRESHOLD``.
+    intersections(1, 1) = 0.125_dp
+    intersections(2, 1) = 0.0_dp
+    num_intersections = 1
+
+    t_val = 0.5_dp**45
     call add_intersection( &
-         s_val, t_val, num_intersections, intersections)
+         0.125_dp, t_val, num_intersections, intersections)
     case_success = ( &
-         num_bits == 1 .AND. &
          allocated(intersections) .AND. &
-         all(shape(intersections) == [2, 3]) .AND. &
-         num_intersections == 3 .AND. &
-         all(intersections(:, 3) == [s_val, t_val]))
+         all(shape(intersections) == [2, 2]) .AND. &
+         num_intersections == 1)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_add_intersection
@@ -3363,33 +3346,5 @@ contains
     call set_max_candidates(orig_num_candidates)
 
   end subroutine test_set_max_candidates
-
-  subroutine test_set_similar_ulps(success)
-    logical(c_bool), intent(inout) :: success
-    ! Variables outside of signature.
-    logical :: case_success
-    integer(c_int) :: orig_num_bits, num_bits1, num_bits2
-    integer :: case_id
-    character(16) :: name
-
-    ! NOTE: This is **also** a test for ``get_similar_ulps``.
-
-    case_id = 1
-    name = "set_similar_ulps"
-
-    ! CASE 1: Check that we can properly set and get the value.
-    call get_similar_ulps(orig_num_bits)
-
-    num_bits1 = 7
-    call set_similar_ulps(num_bits1)
-    call get_similar_ulps(num_bits2)
-    case_success = ( &
-         orig_num_bits == 1 .AND. &
-         num_bits1 == num_bits2)
-    call print_status(name, case_id, case_success, success)
-    ! Restore the original value.
-    call set_similar_ulps(orig_num_bits)
-
-  end subroutine test_set_similar_ulps
 
 end module test_curve_intersection

@@ -510,18 +510,6 @@ def get_max_candidates():
     return num_candidates
 
 
-def set_similar_ulps(int num_bits):
-    bezier._curve_intersection.set_similar_ulps(&num_bits)
-
-
-def get_similar_ulps():
-    cdef int num_bits
-
-    bezier._curve_intersection.get_similar_ulps(&num_bits)
-
-    return num_bits
-
-
 def free_curve_intersections_workspace():
     bezier._curve_intersection.free_curve_intersections_workspace()
 
@@ -613,15 +601,6 @@ def in_interval(double value, double start, double end):
         &value,
         &start,
         &end,
-    )
-
-
-def ulps_away(double value1, double value2, int num_bits=1, double eps=EPS):
-    return bezier._helpers.ulps_away(
-        &value1,
-        &value2,
-        &num_bits,
-        &eps,
     )
 
 

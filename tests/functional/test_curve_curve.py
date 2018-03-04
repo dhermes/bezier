@@ -171,7 +171,7 @@ COINCIDENT_OVERRIDES = {
     ALGEBRAIC: {},
 }
 INCORRECT_COUNT = {
-    GEOMETRIC: (12, 17, 43, 44),
+    GEOMETRIC: (43, 44),
     ALGEBRAIC: (),
 }
 if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:

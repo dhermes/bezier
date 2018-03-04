@@ -15,14 +15,14 @@ module test_helpers
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use helpers, only: &
        WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
-       vector_close, in_interval, ulps_away, convex_hull, polygon_collide, &
+       vector_close, in_interval, convex_hull, polygon_collide, &
        solve2x2
   use types, only: dp
   use unit_test_helpers, only: MACHINE_EPS, print_status
   implicit none
   private &
        test_cross_product, test_bbox, test_wiggle_interval, &
-       test_contains_nd, test_vector_close, test_in_interval, test_ulps_away, &
+       test_contains_nd, test_vector_close, test_in_interval, &
        test_convex_hull, test_polygon_collide, test_solve2x2
   public helpers_all_tests
 
@@ -37,7 +37,6 @@ contains
     call test_contains_nd(success)
     call test_vector_close(success)
     call test_in_interval(success)
-    call test_ulps_away(success)
     call test_convex_hull(success)
     call test_polygon_collide(success)
     call test_solve2x2(success)
@@ -356,63 +355,6 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_in_interval
-
-  subroutine test_ulps_away(success)
-    logical(c_bool), intent(inout) :: success
-    ! Variables outside of signature.
-    logical :: case_success
-    real(c_double) :: eps, value1, value2
-    logical(c_bool) :: is_near
-    integer :: case_id
-    character(9) :: name
-
-    eps = 0.5_dp**40
-    case_id = 1
-    name = "ulps_away"
-
-    ! CASE 1: First value is zero.
-    is_near = ulps_away(0.0_dp, 0.0_dp, 1, eps)
-    case_success = (is_near)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 2: Second value is zero.
-    is_near = ulps_away(1.0_dp, 0.0_dp, 1, eps)
-    case_success = (.NOT. is_near)
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 3: First value positive **AND** negative.
-    is_near = ulps_away(1.0_dp, 1.0_dp + MACHINE_EPS, 1, eps)
-    case_success = ( &
-         is_near .AND. ulps_away(-1.0_dp, -1.0_dp - MACHINE_EPS, 1, eps))
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 4: Boundaries where a single bit works.
-    case_success = ( &
-         ulps_away(1.0_dp, 1.0_dp, 1, eps) .AND. &
-         ulps_away(1.0_dp, 1.0_dp + MACHINE_EPS, 1, eps) .AND. &
-         ulps_away(1.0_dp + MACHINE_EPS, 1.0_dp, 1, eps) .AND. &
-         ulps_away(1.0_dp, 1.0_dp - MACHINE_EPS / 2, 1, eps) .AND. &
-         ulps_away(1.0_dp - MACHINE_EPS / 2, 1.0_dp, 1, eps))
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 5: Non-default ``num_bits``.
-    value1 = 1.5_dp
-    value2 = value1 + 0.5_dp**43
-    case_success = ( &
-         .NOT. ulps_away(value1, value2, 1, eps) .AND. &
-         ulps_away(value1, value2, 1000, eps))
-    call print_status(name, case_id, case_success, success)
-
-    ! CASE 6: Very close, but not close enough.
-    value1 = 0.25_dp - 5.625_dp * MACHINE_EPS
-    value2 = 0.25_dp - 6.25_dp * MACHINE_EPS
-    case_success = ( &
-         .NOT. ulps_away(value1, value2, 1, eps) .AND. &
-         .NOT. ulps_away(value1, value2, 4, eps) .AND. &
-         ulps_away(value1, value2, 5, eps))
-    call print_status(name, case_id, case_success, success)
-
-  end subroutine test_ulps_away
 
   subroutine test_convex_hull(success)
     logical(c_bool), intent(inout) :: success

@@ -26,10 +26,9 @@ import os
 import types
 
 import numpy as np
-import six  # noqa: I202
+import six
 
 import bezier
-from bezier import _helpers
 import bezier.curve
 
 
@@ -196,6 +195,34 @@ def id_func(value):
         return value.test_id
 
 
+def ulps_away(value1, value2, num_bits=1):
+    r"""Determines if ``value1`` is within ``n`` ULPs of ``value2``.
+
+    Uses ``np.spacing`` to determine the unit of least precision (ULP)
+    for ``value1`` and then checks that the different between the values
+    does not exceed ``n`` ULPs.
+
+    When ``value1 == 0`` or ``value2 == 0``, we instead check that the other
+    is exactly equal to ``0.0``.
+
+    Args:
+        value1 (float): The first value that being compared.
+        value2 (float): The second value that being compared.
+        num_bits (Optional[int]): The number of bits allowed to differ.
+            Defaults to ``1``.
+
+    Returns:
+        bool: Predicate indicating if the values agree to ``n`` bits.
+    """
+    if value1 == 0.0:
+        return value2 == 0.0
+    elif value2 == 0.0:
+        return value1 == 0.0
+    else:
+        local_epsilon = np.spacing(value1)  # pylint: disable=no-member
+        return abs(value1 - value2) <= num_bits * abs(local_epsilon)
+
+
 class IncorrectCount(ValueError):
     """Custom exception for a "very bad" answer.
 
@@ -264,7 +291,7 @@ class Config(object):
         """
         msg = '{} ~= {} to {:d} bits'.format(
             approximated.hex(), exact.hex(), self._wiggle)
-        assert _helpers.ulps_away(
+        assert ulps_away(
             exact, approximated, num_bits=self._wiggle), msg
 
     def run(self, mod_globals):

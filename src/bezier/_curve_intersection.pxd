@@ -38,6 +38,4 @@ cdef extern from "bezier/curve_intersection.h":
         int *num_intersections, bool_t *coincident, Status *status)
     void set_max_candidates(int *num_candidates)
     void get_max_candidates(int *num_candidates)
-    void set_similar_ulps(int *num_bits)
-    void get_similar_ulps(int *num_bits)
     void free_curve_intersections_workspace()

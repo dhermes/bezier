@@ -20,7 +20,7 @@ module curve_intersection
        Status_INSUFFICIENT_SPACE, Status_SINGULAR
   use helpers, only: &
        VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
-       vector_close, in_interval, ulps_away, convex_hull, polygon_collide, &
+       vector_close, in_interval, convex_hull, polygon_collide, &
        solve2x2
   use curve, only: &
        CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_multi, &
@@ -29,7 +29,8 @@ module curve_intersection
   implicit none
   private &
        newton_routine, MAX_INTERSECT_SUBDIVISIONS, MIN_INTERVAL_WIDTH, &
-       MAX_CANDIDATES, SIMILAR_ULPS, CANDIDATES_ODD, CANDIDATES_EVEN, &
+       MAX_CANDIDATES, ZERO_THRESHOLD, NEWTON_ERROR_RATIO, &
+       CANDIDATES_ODD, CANDIDATES_EVEN, &
        POLYGON1, POLYGON2, make_candidates, prune_candidates, elevate_helper
   public &
        BoxIntersectionType_INTERSECTION, BoxIntersectionType_TANGENT, &
@@ -44,8 +45,8 @@ module curve_intersection
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
        add_coincident_parameters, all_intersections, all_intersections_abi, &
-       set_max_candidates, get_max_candidates, set_similar_ulps, &
-       get_similar_ulps, free_curve_intersections_workspace
+       set_max_candidates, get_max_candidates, &
+       free_curve_intersections_workspace
 
   ! Interface for ``newton_iterate()``.
   abstract interface
@@ -77,7 +78,9 @@ module curve_intersection
   ! these **should** be thread-local (though it's expected that callers will
   ! update these values **before** beginning computation).
   integer(c_int) :: MAX_CANDIDATES = 64
-  integer(c_int) :: SIMILAR_ULPS = 1
+  ! Point under which values are considered to be "near zero".
+  real(c_double), parameter :: ZERO_THRESHOLD = 0.5_dp**10
+  real(c_double), parameter :: NEWTON_ERROR_RATIO = 0.5_dp**45
   ! Long-lived workspaces for ``all_intersections()`` and
   ! ``all_intersections_abi()``. If multiple threads are used, each of these
   ! **should** be thread-local.
@@ -589,7 +592,7 @@ contains
        new_s = new_s - delta_s
        new_t = new_t - delta_t
 
-       if (norm_update < 0.5_dp**45 * norm_soln) then
+       if (norm_update < NEWTON_ERROR_RATIO * norm_soln) then
           converged = .TRUE.
           return
        end if
@@ -735,9 +738,9 @@ contains
     real(c_double) :: reversed1(2, num_nodes1)
     real(c_double) :: reversed2(2, num_nodes2)
 
-    if (s < 0.5_dp**10) then
+    if (s < ZERO_THRESHOLD) then
        reversed1 = nodes1(:, num_nodes1:1:-1)
-       if (t < 0.5_dp**10) then
+       if (t < ZERO_THRESHOLD) then
           ! s ~= 0, t ~= 0.
           reversed2 = nodes2(:, num_nodes2:1:-1)
           call full_newton_nonzero( &
@@ -755,7 +758,7 @@ contains
           new_s = 1.0_dp - new_s
        end if
     else
-       if (t < 0.5_dp**10) then
+       if (t < ZERO_THRESHOLD) then
           ! s >> 0, t ~= 0.
           reversed2 = nodes2(:, num_nodes2:1:-1)
           call full_newton_nonzero( &
@@ -1076,15 +1079,33 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: curr_size, index_
     real(c_double), allocatable :: intersections_swap(:, :)
+    real(c_double) :: workspace(2)
+    real(c_double) :: norm_candidate
 
+    ! First, determine what the actual candidate is, i.e. ``(s, t)`` vs.
+    ! ``(1 - s , t)``, ``(s, 1 - t)`` or ``(1 - s, 1 - t)``.
+    if (s < ZERO_THRESHOLD) then
+       workspace(1) = 1.0_dp - s
+    else
+       workspace(1) = s
+    end if
+    if (t < ZERO_THRESHOLD) then
+       workspace(2) = 1.0_dp - t
+    else
+       workspace(2) = t
+    end if
+
+    norm_candidate = norm2(workspace)
     ! First, check if the intersection is a duplicate (up to precision,
     ! determined by ``ulps_away``).
     do index_ = 1, num_intersections
-       if ( &
-            ulps_away(intersections(1, index_), s, &
-            SIMILAR_ULPS, VECTOR_CLOSE_EPS) .AND. &
-            ulps_away(intersections(2, index_), t, &
-            SIMILAR_ULPS, VECTOR_CLOSE_EPS)) then
+       ! NOTE: |(1 - s1) - (1 - s2)| = |s1 - s2| in exact arithmetic, so
+       !       we don't bother comparing to ``(1 - s)`` / ``(1 - t)``.
+       !       Due to round-off, these difference may be slightly different,
+       !       but only up to machine precision.
+       workspace(1) = s - intersections(1, index_)
+       workspace(2) = t - intersections(2, index_)
+       if (norm2(workspace) < NEWTON_ERROR_RATIO * norm_candidate) then
           return
        end if
     end do
@@ -1941,24 +1962,6 @@ contains
     num_candidates = MAX_CANDIDATES
 
   end subroutine get_max_candidates
-
-  subroutine set_similar_ulps(num_bits) &
-       bind(c, name='set_similar_ulps')
-
-    integer(c_int), intent(in) :: num_bits
-
-    SIMILAR_ULPS = num_bits
-
-  end subroutine set_similar_ulps
-
-  subroutine get_similar_ulps(num_bits) &
-       bind(c, name='get_similar_ulps')
-
-    integer(c_int), intent(out) :: num_bits
-
-    num_bits = SIMILAR_ULPS
-
-  end subroutine get_similar_ulps
 
   subroutine free_curve_intersections_workspace() &
        bind(c, name='free_curve_intersections_workspace')

@@ -18,7 +18,6 @@ module test_surface_intersection
        Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_BAD_INTERIOR, &
        Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
-  use curve_intersection, only: set_similar_ulps, get_similar_ulps
   use surface_intersection, only: &
        Intersection, CurvedPolygonSegment, IntersectionClassification_UNSET, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &

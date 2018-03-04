@@ -219,12 +219,12 @@ with zero error:
    >>> curve2 = bezier.Curve(nodes2, degree=2)
    >>> intersections = curve1.intersect(curve2)
    >>> intersections
-   array([[0.5       , 0.5       , 0.8333..., 0.8333...],
-          [0.16666..., 0.16666..., 0.5      , 0.5      ]])
+   array([[0.5       , 0.8333...],
+          [0.16666..., 0.5      ]])
    >>> s_vals = np.asfortranarray(intersections[0, :])
    >>> curve1.evaluate_multi(s_vals)
-   array([[0.375  , 0.375  , 0.625  , 0.625  ],
-          [0.46875, 0.46875, 0.46875, 0.46875]])
+   array([[0.375  , 0.625  ],
+          [0.46875, 0.46875]])
 
 .. image:: images/curves14_and_16.png
    :align: center

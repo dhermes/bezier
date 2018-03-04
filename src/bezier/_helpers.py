@@ -187,39 +187,6 @@ def _cross_product(vec0, vec1):
     return vec0[0] * vec1[1] - vec0[1] * vec1[0]
 
 
-def _ulps_away(value1, value2, num_bits=1):
-    r"""Determines if ``value1`` is within ``n`` ULPs of ``value2``.
-
-    Uses ``np.spacing`` to determine the unit of least precision (ULP)
-    for ``value1`` and then checks that the different between the values
-    does not exceed ``n`` ULPs.
-
-    When ``value1 == 0`` or ``value2 == 0``, we instead check that the other
-    is less than :math:`2^{-40}` (``_EPS``) in magnitude.
-
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
-
-    Args:
-        value1 (float): The first value that being compared.
-        value2 (float): The second value that being compared.
-        num_bits (Optional[int]): The number of bits allowed to differ.
-            Defaults to ``1``.
-
-    Returns:
-        bool: Predicate indicating if the values agree to ``n`` bits.
-    """
-    if value1 == 0.0:
-        return abs(value2) < _EPS
-    elif value2 == 0.0:
-        return abs(value1) < _EPS
-    else:
-        local_epsilon = np.spacing(value1)  # pylint: disable=no-member
-        return abs(value1 - value2) <= num_bits * abs(local_epsilon)
-
-
 def matrix_product(mat1, mat2):
     """Compute the product of two Fortran contiguous matrices.
 
@@ -586,7 +553,6 @@ if _speedup is None:  # pragma: NO COVER
     bbox = _bbox
     contains_nd = _contains_nd
     cross_product = _cross_product
-    ulps_away = _ulps_away
     wiggle_interval = _wiggle_interval
     simple_convex_hull = _simple_convex_hull
     polygon_collide = _polygon_collide
@@ -596,7 +562,6 @@ else:
     bbox = _speedup.bbox
     contains_nd = _speedup.contains_nd
     cross_product = _speedup.cross_product
-    ulps_away = _speedup.ulps_away
     wiggle_interval = _speedup.wiggle_interval
     simple_convex_hull = _speedup.simple_convex_hull
     polygon_collide = _speedup.polygon_collide

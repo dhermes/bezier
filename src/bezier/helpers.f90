@@ -18,7 +18,7 @@ module helpers
   private min_index, sort_in_place, is_separating
   public &
        WIGGLE, VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
-       contains_nd, vector_close, in_interval, ulps_away, convex_hull, &
+       contains_nd, vector_close, in_interval, convex_hull, &
        polygon_collide, solve2x2
 
   real(c_double), parameter :: WIGGLE = 0.5_dp**45
@@ -134,29 +134,6 @@ contains
     predicate = (start <= value_) .AND. (value_ <= end)
 
   end function in_interval
-
-  pure function ulps_away( &
-       value1, value2, num_bits, eps) result(predicate) &
-       bind(c, name='ulps_away')
-
-    real(c_double), intent(in) :: value1, value2
-    integer(c_int), intent(in) :: num_bits
-    real(c_double), intent(in) :: eps
-    logical(c_bool) :: predicate
-
-    if (value1 == 0.0_dp) then
-       predicate = abs(value2) < eps
-    else if (value2 == 0.0_dp) then
-       predicate = abs(value1) < eps
-    else
-       ! NOTE: This assumes `spacing` always returns a positive (which is
-       !       not the case with ``numpy.spacing``, which keeps the sign
-       !       of the input).
-       ! NOTE: This will be the most common path through this function.
-       predicate = abs(value1 - value2) <= num_bits * spacing(value1)
-    end if
-
-  end function ulps_away
 
   subroutine min_index(num_points, points, match)
 
