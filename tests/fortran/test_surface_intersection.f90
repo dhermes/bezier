@@ -31,8 +31,9 @@ module test_surface_intersection
        SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, update_edge_end_unused, &
-       find_corner_unused, add_st_vals, &
-       surfaces_intersection_points, get_next, to_front, add_segment, &
+       find_corner_unused, add_st_vals, should_keep, &
+       surfaces_intersection_points, is_first, is_second, &
+       get_next, to_front, add_segment, &
        interior_combine, surfaces_intersect, surfaces_intersect_abi
   use types, only: dp
   use unit_test_helpers, only: print_status
@@ -40,7 +41,8 @@ module test_surface_intersection
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
        test_update_edge_end_unused, test_find_corner_unused, &
-       test_add_st_vals, test_surfaces_intersection_points, &
+       test_add_st_vals, test_should_keep, test_surfaces_intersection_points, &
+       test_is_first, test_is_second, &
        intersection_check, intersection_equal, test_get_next, test_to_front, &
        test_add_segment, test_interior_combine, segment_check, &
        test_surfaces_intersect, test_surfaces_intersect_abi
@@ -57,7 +59,10 @@ contains
     call test_update_edge_end_unused(success)
     call test_find_corner_unused(success)
     call test_add_st_vals(success)
+    call test_should_keep(success)
     call test_surfaces_intersection_points(success)
+    call test_is_first(success)
+    call test_is_second(success)
     call test_get_next(success)
     call test_to_front(success)
     call test_add_segment(success)
@@ -876,6 +881,56 @@ contains
 
   end subroutine test_add_st_vals
 
+  subroutine test_should_keep(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(11) :: name
+    type(Intersection) :: intersection_
+    logical(c_bool) :: predicate
+
+    case_id = 1
+    name = "should_keep"
+
+    ! CASE 1: Classified as an "acceptable" value.
+    intersection_%interior_curve = IntersectionClassification_FIRST
+    predicate = should_keep(intersection_)
+    case_success = predicate
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Classified as tangent, in a corner.
+    intersection_%s = 0.0_dp
+    intersection_%t = 0.5_dp
+    intersection_%interior_curve = IntersectionClassification_TANGENT_SECOND
+    predicate = should_keep(intersection_)
+    case_success = predicate
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: In a corner, not classified as tangent.
+    intersection_%s = 0.0_dp
+    intersection_%t = 0.5_dp
+    intersection_%interior_curve = IntersectionClassification_IGNORED_CORNER
+    predicate = should_keep(intersection_)
+    case_success = .NOT. predicate
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Classified as tangent, not in a corner.
+    intersection_%s = 0.25_dp
+    intersection_%t = 0.25_dp
+    intersection_%interior_curve = IntersectionClassification_TANGENT_FIRST
+    predicate = should_keep(intersection_)
+    case_success = .NOT. predicate
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: "Always unused" classification type.
+    intersection_%interior_curve = IntersectionClassification_OPPOSED
+    predicate = should_keep(intersection_)
+    case_success = .NOT. predicate
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_should_keep
+
   subroutine test_surfaces_intersection_points(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
@@ -1015,6 +1070,62 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_surfaces_intersection_points
+
+  subroutine test_is_first(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(8) :: name
+    logical(c_bool) :: predicate
+
+    case_id = 1
+    name = "is_first"
+
+    ! CASE 1: Success.
+    predicate = is_first(IntersectionClassification_FIRST)
+    case_success = predicate
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Failure.
+    predicate = is_first(IntersectionClassification_COINCIDENT)
+    case_success = .NOT. predicate
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Success, and tangent.
+    predicate = is_first(IntersectionClassification_TANGENT_FIRST)
+    case_success = predicate
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_is_first
+
+  subroutine test_is_second(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(9) :: name
+    logical(c_bool) :: predicate
+
+    case_id = 1
+    name = "is_second"
+
+    ! CASE 1: Success.
+    predicate = is_second(IntersectionClassification_SECOND)
+    case_success = predicate
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Failure.
+    predicate = is_second(IntersectionClassification_TANGENT_BOTH)
+    case_success = .NOT. predicate
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Success, and tangent.
+    predicate = is_second(IntersectionClassification_TANGENT_SECOND)
+    case_success = predicate
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_is_second
 
   function intersection_check( &
        intersection_, s, t, index_first, index_second, &

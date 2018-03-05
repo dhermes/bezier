@@ -51,6 +51,10 @@ ACCEPTABLE_CLASSIFICATIONS = (
     CLASSIFICATION_T.SECOND,
     CLASSIFICATION_T.COINCIDENT,
 )
+TANGENT_CLASSIFICATIONS = (
+    CLASSIFICATION_T.TANGENT_FIRST,
+    CLASSIFICATION_T.TANGENT_SECOND,
+)
 
 
 def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
@@ -624,6 +628,32 @@ def classify_coincident(st_vals, coincident):
         return CLASSIFICATION_T.COINCIDENT
 
 
+def should_use(intersection):
+    """Check if an intersection can be used as part of a curved polygon.
+
+    Will return :data:`True` if the intersection is classified as
+    :attr:`~.IntersectionClassification.FIRST`,
+    :attr:`~.IntersectionClassification.SECOND` or
+    :attr:`~.IntersectionClassification.COINCIDENT` or if the intersection
+    is classified is a corner / edge end which is classified as
+    :attr:`~.IntersectionClassification.TANGENT_FIRST` or
+    :attr:`~.IntersectionClassification.TANGENT_SECOND`.
+
+    Args:
+        intersection (.Intersection): An intersection to be added.
+
+    Returns:
+        bool: Indicating if the intersection will be used.
+    """
+    if intersection.interior_curve in ACCEPTABLE_CLASSIFICATIONS:
+        return True
+
+    if intersection.interior_curve in TANGENT_CLASSIFICATIONS:
+        return intersection.s == 0.0 or intersection.t == 0.0
+
+    return False
+
+
 def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
     """Find all intersections among edges of two surfaces.
 
@@ -668,7 +698,7 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
     for intersection in intersections:
         all_types.add(intersection.interior_curve)
         # Only keep the intersections which are "acceptable".
-        if intersection.interior_curve in ACCEPTABLE_CLASSIFICATIONS:
+        if should_use(intersection):
             to_keep.append(intersection)
         else:
             unused.append(intersection)

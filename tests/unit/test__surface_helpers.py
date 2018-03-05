@@ -1592,6 +1592,48 @@ class Test_get_next_coincident(unittest.TestCase):
         self.assertIs(result.interior_curve, get_enum('COINCIDENT'))
 
 
+class Test_is_first(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(classification):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.is_first(classification)
+
+    def _from_name(self, name):
+        return self._call_function_under_test(get_enum(name))
+
+    def test_success(self):
+        self.assertTrue(self._from_name('FIRST'))
+
+    def test_failure(self):
+        self.assertFalse(self._from_name('COINCIDENT'))
+
+    def test_success_tangent(self):
+        self.assertTrue(self._from_name('TANGENT_FIRST'))
+
+
+class Test_is_second(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(classification):
+        from bezier import _surface_helpers
+
+        return _surface_helpers.is_second(classification)
+
+    def _from_name(self, name):
+        return self._call_function_under_test(get_enum(name))
+
+    def test_success(self):
+        self.assertTrue(self._from_name('SECOND'))
+
+    def test_failure(self):
+        self.assertFalse(self._from_name('TANGENT_BOTH'))
+
+    def test_success_tangent(self):
+        self.assertTrue(self._from_name('TANGENT_SECOND'))
+
+
 class Test_get_next(unittest.TestCase):
 
     @staticmethod

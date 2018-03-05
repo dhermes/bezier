@@ -1967,6 +1967,34 @@ def get_next_coincident(intersection, intersections):
         return along_second
 
 
+def is_first(classification):
+    """Check if a classification is on the "first" curve.
+
+    Args:
+        classification (.IntersectionClassification): The classification
+            being checked.
+
+    Returns:
+        bool: Indicating if the classification is on the first curve.
+    """
+    return (classification == CLASSIFICATION_T.FIRST or
+            classification == CLASSIFICATION_T.TANGENT_FIRST)
+
+
+def is_second(classification):
+    """Check if a classification is on the "second" curve.
+
+    Args:
+        classification (.IntersectionClassification): The classification
+            being checked.
+
+    Returns:
+        bool: Indicating if the classification is on the second curve.
+    """
+    return (classification == CLASSIFICATION_T.SECOND or
+            classification == CLASSIFICATION_T.TANGENT_SECOND)
+
+
 def get_next(intersection, intersections, unused):
     """Gets the next node along a given edge.
 
@@ -1999,19 +2027,23 @@ def get_next(intersection, intersections, unused):
 
     Raises:
         ValueError: If the intersection is not classified as
-            :attr:`~.IntersectionClassification.FIRST` or
-            :attr:`~.IntersectionClassification.SECOND`.
+            :attr:`~.IntersectionClassification.FIRST`,
+            :attr:`~.IntersectionClassification.TANGENT_FIRST`,
+            :attr:`~.IntersectionClassification.SECOND`,
+            :attr:`~.IntersectionClassification.TANGENT_SECOND` or
+            :attr:`~.IntersectionClassification.COINCIDENT`.
     """
     result = None
-    if intersection.interior_curve == CLASSIFICATION_T.FIRST:
+    if is_first(intersection.interior_curve):
         result = get_next_first(intersection, intersections)
-    elif intersection.interior_curve == CLASSIFICATION_T.SECOND:
+    elif is_second(intersection.interior_curve):
         result = get_next_second(intersection, intersections)
     elif intersection.interior_curve == CLASSIFICATION_T.COINCIDENT:
         result = get_next_coincident(intersection, intersections)
     else:
-        raise ValueError('Cannot get next node if not starting from '
-                         '"FIRST", "SECOND" or "COINCIDENT".')
+        raise ValueError(
+            'Cannot get next node if not starting from "FIRST", '
+            '"TANGENT_FIRST", "SECOND", "TANGENT_SECOND" or "COINCIDENT".')
 
     if result in unused:
         unused.remove(result)
@@ -2060,14 +2092,16 @@ def ends_to_curve(start_node, end_node):
             the both curves when classified as "COINCIDENT".
         ValueError: If the ``start_node`` is not classified as
             :attr:`~.IntersectionClassification.FIRST`,
-            :attr:`~.IntersectionClassification.SECOND` or
+            :attr:`~.IntersectionClassification.TANGENT_FIRST`,
+            :attr:`~.IntersectionClassification.SECOND`,
+            :attr:`~.IntersectionClassification.TANGENT_SECOND` or
             :attr:`~.IntersectionClassification.COINCIDENT`.
     """
-    if start_node.interior_curve == CLASSIFICATION_T.FIRST:
+    if is_first(start_node.interior_curve):
         if end_node.index_first != start_node.index_first:
             raise ValueError(_WRONG_CURVE)
         return start_node.index_first, start_node.s, end_node.s
-    elif start_node.interior_curve == CLASSIFICATION_T.SECOND:
+    elif is_second(start_node.interior_curve):
         if end_node.index_second != start_node.index_second:
             raise ValueError(_WRONG_CURVE)
         return start_node.index_second + 3, start_node.t, end_node.t
@@ -2079,8 +2113,9 @@ def ends_to_curve(start_node, end_node):
         else:
             raise ValueError(_WRONG_CURVE)
     else:
-        raise ValueError('Segment start must be classified as '
-                         '"FIRST", "SECOND" or "COINCIDENT".')
+        raise ValueError(
+            'Segment start must be classified as "FIRST", "TANGENT_FIRST", '
+            '"SECOND", "TANGENT_SECOND" or "COINCIDENT".')
 
 
 def no_intersections(nodes1, degree1, nodes2, degree2):

@@ -47,8 +47,9 @@ module surface_intersection
        SurfaceContained_NEITHER, &
        SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
        locate_point, classify_intersection, update_edge_end_unused, &
-       find_corner_unused, add_st_vals, &
-       surfaces_intersection_points, get_next, to_front, add_segment, &
+       find_corner_unused, add_st_vals, should_keep, &
+       surfaces_intersection_points, is_first, is_second, &
+       get_next, to_front, add_segment, &
        interior_combine, surfaces_intersect, surfaces_intersect_abi, &
        free_surface_intersections_workspace
 
@@ -928,6 +929,40 @@ contains
 
   end subroutine add_st_vals
 
+  logical(c_bool) function should_keep(intersection_) result(predicate)
+
+    ! NOTE: This function is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    type(Intersection), intent(in) :: intersection_
+    ! Variables outside of signature.
+    integer(c_int) :: enum_
+
+    enum_ = intersection_%interior_curve
+    ! "Keep" the intersection if it is ``FIRST``, ``SECOND`` or
+    ! ``COINCIDENT``.
+    if ( &
+         enum_ == IntersectionClassification_FIRST .OR. &
+         enum_ == IntersectionClassification_SECOND .OR. &
+         enum_ == IntersectionClassification_COINCIDENT) then
+       predicate = .TRUE.
+       return
+    end if
+
+    ! "Keep" the intersection if it is tangent and a corner.
+    if ( &
+         enum_ == IntersectionClassification_TANGENT_FIRST .OR. &
+         enum_ == IntersectionClassification_TANGENT_SECOND) then
+       if (intersection_%s == 0.0_dp .OR. intersection_%t == 0.0_dp) then
+          predicate = .TRUE.
+          return
+       end if
+    end if
+
+    predicate = .FALSE.
+
+  end function should_keep
+
   subroutine surfaces_intersection_points( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
@@ -1044,12 +1079,7 @@ contains
        !       ``IntersectionClassification``) which limits the value of
        !       ``all_types`` to [0, 511] (inclusive).
        all_types = ior(all_types, 2**enum_)
-       if ( &
-            enum_ == IntersectionClassification_FIRST .OR. &
-            enum_ == IntersectionClassification_SECOND .OR. &
-            enum_ == IntersectionClassification_COINCIDENT) then
-          ! "Keep" the intersection if it is ``FIRST``, ``SECOND`` or
-          ! ``COINCIDENT``.
+       if (should_keep(intersections(index1))) then
           index1 = index1 + 1
        else
           ! "Discard" the intersection.
@@ -1132,6 +1162,32 @@ contains
 
   end subroutine remove_node
 
+  logical(c_bool) function is_first(enum_) result(predicate)
+
+    ! NOTE: This function is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    integer(c_int), intent(in) :: enum_
+
+    predicate = ( &
+         enum_ == IntersectionClassification_FIRST .OR. &
+         enum_ == IntersectionClassification_TANGENT_FIRST)
+
+  end function is_first
+
+  logical(c_bool) function is_second(enum_) result(predicate)
+
+    ! NOTE: This function is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    integer(c_int), intent(in) :: enum_
+
+    predicate = ( &
+         enum_ == IntersectionClassification_SECOND .OR. &
+         enum_ == IntersectionClassification_TANGENT_SECOND)
+
+  end function is_second
+
   subroutine get_next( &
        num_intersections, intersections, unused, remaining, &
        start, curr_node, next_node, at_start)
@@ -1155,7 +1211,7 @@ contains
 
     intersection_index = -1
     at_start = .FALSE.
-    if (curr_node%interior_curve == IntersectionClassification_FIRST) then
+    if (is_first(curr_node%interior_curve)) then
        do i = 1, num_intersections
           if ( &
                intersections(i)%index_first == curr_node%index_first .AND. &
@@ -1186,8 +1242,7 @@ contains
           ! it is contained there.
           call remove_node(intersection_index, unused, remaining)
        end if
-    else if ( &
-         curr_node%interior_curve == IntersectionClassification_SECOND) then
+    else if (is_second(curr_node%interior_curve)) then
        do i = 1, num_intersections
           if ( &
                intersections(i)%index_second == curr_node%index_second .AND. &
@@ -1398,14 +1453,13 @@ contains
        allocate(segments(count))
     end if
 
-    if (curr_node%interior_curve == IntersectionClassification_FIRST) then
+    if (is_first(curr_node%interior_curve)) then
        segments(count)%start = curr_node%s
        segments(count)%end_ = next_node%s
        ! NOTE: This **assumes**, but does not check that ``index_first``
        !       is the same for both ``curr_node`` and ``next_node``.
        segments(count)%edge_index = curr_node%index_first
-    else if ( &
-         curr_node%interior_curve == IntersectionClassification_SECOND) then
+    else if (is_second(curr_node%interior_curve)) then
        segments(count)%start = curr_node%t
        segments(count)%end_ = next_node%t
        ! NOTE: This **assumes**, but does not check that ``index_second``

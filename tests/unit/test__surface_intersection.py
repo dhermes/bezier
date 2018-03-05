@@ -596,6 +596,40 @@ class Test_classify_coincident(unittest.TestCase):
         self.assertEqual(interior_curve, get_enum('COINCIDENT'))
 
 
+class Test_should_use(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(intersection):
+        from bezier import _surface_intersection
+
+        return _surface_intersection.should_use(intersection)
+
+    def test_acceptable(self):
+        intersection = make_intersect(
+            1, 0.125, 2, 0.75, interior_curve=get_enum('FIRST'))
+        self.assertTrue(self._call_function_under_test(intersection))
+
+    def test_tangent_corner(self):
+        intersection = make_intersect(
+            2, 0.0, 1, 0.5, interior_curve=get_enum('TANGENT_SECOND'))
+        self.assertTrue(self._call_function_under_test(intersection))
+
+    def test_corner_not_tangent(self):
+        intersection = make_intersect(
+            0, 0.0, 2, 0.5, interior_curve=get_enum('IGNORED_CORNER'))
+        self.assertFalse(self._call_function_under_test(intersection))
+
+    def test_tangent_not_corner(self):
+        intersection = make_intersect(
+            1, 0.25, 1, 0.25, interior_curve=get_enum('TANGENT_FIRST'))
+        self.assertFalse(self._call_function_under_test(intersection))
+
+    def test_unused(self):
+        intersection = make_intersect(
+            2, 0.75, 0, 0.875, interior_curve=get_enum('OPPOSED'))
+        self.assertFalse(self._call_function_under_test(intersection))
+
+
 class Test_surface_intersections(utils.NumPyTestCase):
 
     @staticmethod
