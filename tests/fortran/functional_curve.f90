@@ -61,7 +61,12 @@ module functional_curve
        case42, &
        case43, &
        case44, &
-       case45
+       case45, &
+       case46, &
+       case47, &
+       case48, &
+       case49, &
+       case50
   public all_cases
 
 contains
@@ -1207,6 +1212,141 @@ contains
 
   end subroutine case45
 
+  subroutine case46()
+
+    real(c_double) :: nodes63(2, 3)
+    real(c_double) :: nodes64(2, 3)
+    real(c_double) :: expected_params(2, 3)
+
+    nodes63(:, 1) = [0.0_dp, 0.0_dp]
+    nodes63(:, 2) = [0.5_dp, 2.0_dp]
+    nodes63(:, 3) = [1.0_dp, 0.0_dp]
+
+    nodes64(:, 1) = [1.0_dp, 0.1_dp]
+    nodes64(:, 2) = [-0.6722503405359305_dp, 0.5_dp]
+    nodes64(:, 3) = [1.0_dp, 1.0_dp]
+
+    expected_params(1, :) = [ &
+         0.17292378169294392_dp, &
+         0.6666077520083393_dp, &
+         0.9725947698747117_dp]
+    expected_params(2, :) = [ &
+         0.5520155861681976_dp, &
+         0.8877064436020611_dp, &
+         0.00826238406154377_dp]
+
+    call intersect_and_check( &
+         46, &
+         3, nodes63, &
+         3, nodes64, &
+         3, expected_params)
+
+  end subroutine case46
+
+  subroutine case47()
+
+    real(c_double) :: nodes65(2, 3)
+    real(c_double) :: nodes66(2, 3)
+    real(c_double) :: expected_params(2, 3)
+
+    nodes65(:, 1) = [-0.5_dp, -3.0_dp]
+    nodes65(:, 2) = [0.5_dp, 5.0_dp]
+    nodes65(:, 3) = [1.5_dp, -3.0_dp]
+
+    nodes66(:, 1) = [4.0_dp, -4.125_dp]
+    nodes66(:, 2) = [-1.5_dp, 1.375_dp]
+    nodes66(:, 3) = [1.0_dp, 0.875_dp]
+
+    expected_params(1, :) = [ &
+         0.375_dp, &
+         0.5721745075055178_dp, &
+         0.8653254924944822_dp]
+    expected_params(2, :) = [ &
+         0.75_dp, &
+         0.9181509849889643_dp, &
+         0.33184901501103564_dp]
+
+    call intersect_and_check( &
+         47, &
+         3, nodes65, &
+         3, nodes66, &
+         3, expected_params)
+
+  end subroutine case47
+
+  subroutine case48()
+
+    real(c_double) :: nodes67(2, 2)
+    real(c_double) :: nodes68(2, 2)
+    real(c_double) :: expected_params(2, 1)
+
+    nodes67(:, 1) = [0.0_dp, 0.0_dp]
+    nodes67(:, 2) = [1.0_dp, 1.0_dp]
+
+    nodes68(:, 1) = [0.00390625_dp, -0.00390625_dp]
+    nodes68(:, 2) = [0.99609375_dp, 1.00390625_dp]
+
+    expected_params(1, :) = [0.5_dp]
+    expected_params(2, :) = [0.5_dp]
+
+    call intersect_and_check( &
+         48, &
+         2, nodes67, &
+         2, nodes68, &
+         1, expected_params)
+
+  end subroutine case48
+
+  subroutine case49()
+
+    real(c_double) :: nodes69(2, 3)
+    real(c_double) :: nodes70(2, 3)
+    real(c_double) :: expected_params(2, 1)
+
+    nodes69(:, 1) = [0.0_dp, 0.0_dp]
+    nodes69(:, 2) = [1.0_dp, 0.0_dp]
+    nodes69(:, 3) = [1.0_dp, 1.0_dp]
+
+    nodes70(:, 1) = [0.00390625_dp, -0.00390625_dp]
+    nodes70(:, 2) = [1.00390625_dp, -0.00390625_dp]
+    nodes70(:, 3) = [0.99609375_dp, 1.00390625_dp]
+
+    expected_params(1, :) = [0.7071067811865476_dp]
+    expected_params(2, :) = [0.7071067811865476_dp]
+
+    call intersect_and_check( &
+         49, &
+         3, nodes69, &
+         3, nodes70, &
+         1, expected_params)
+
+  end subroutine case49
+
+  subroutine case50()
+
+    real(c_double) :: nodes71(2, 3)
+    real(c_double) :: nodes72(2, 3)
+    real(c_double) :: expected_params(2, 2)
+
+    nodes71(:, 1) = [0.5003591034553179_dp, -0.5985224678695326_dp]
+    nodes71(:, 2) = [0.4424702153048212_dp, -0.6835950191386464_dp]
+    nodes71(:, 3) = [0.3838240936690618_dp, -0.7622137966405907_dp]
+
+    nodes72(:, 1) = [0.4958221889917101_dp, -0.5983563350601222_dp]
+    nodes72(:, 2) = [0.44414160334741726_dp, -0.6900255095833565_dp]
+    nodes72(:, 3) = [0.38700163732483334_dp, -0.753067262372925_dp]
+
+    expected_params(1, :) = [0.30862335873249314_dp, 0.7448360508660676_dp]
+    expected_params(2, :) = [0.2978170326600928_dp, 0.7636785393899922_dp]
+
+    call intersect_and_check( &
+         50, &
+         3, nodes71, &
+         3, nodes72, &
+         2, expected_params)
+
+  end subroutine case50
+
   subroutine all_cases()
 
     call case1()
@@ -1254,6 +1394,11 @@ contains
     call case43()
     call case44()
     call case45()
+    call case46()
+    call case47()
+    call case48()
+    call case49()
+    call case50()
 
   end subroutine all_cases
 

@@ -15,8 +15,9 @@ module functional_test_helpers
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   use status, only: &
-       Status_SUCCESS, Status_NO_CONVERGE, Status_SAME_CURVATURE, &
-       Status_BAD_INTERIOR, Status_EDGE_END, Status_SINGULAR, Status_UNKNOWN
+       Status_SUCCESS, Status_BAD_MULTIPLICITY, Status_NO_CONVERGE, &
+       Status_SAME_CURVATURE, Status_BAD_INTERIOR, Status_EDGE_END, &
+       Status_SINGULAR, Status_UNKNOWN
   use curve_intersection, only: &
        all_intersections, free_curve_intersections_workspace
   implicit none
@@ -93,6 +94,11 @@ contains
             "Case ", &
             case_id, &
             " (failure): NO_CONVERGE"
+    else if (status == Status_BAD_MULTIPLICITY) then
+       write (*, '(A, I2, A)') &
+            "Case ", &
+            case_id, &
+            " (failure): BAD_MULTIPLICITY"
     else if (status == Status_SAME_CURVATURE) then
        write (*, '(A, I2, A)') &
             "Case ", &
