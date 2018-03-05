@@ -136,7 +136,6 @@ def almost(test_case, expected, actual, num_ulps):
     import numpy as np
 
     test_case.assertNotEqual(expected, 0.0)
-    test_case.assertNotEqual(actual, expected)
     delta = num_ulps * np.spacing(expected)
     test_case.assertAlmostEqual(actual, expected, delta=delta)
 

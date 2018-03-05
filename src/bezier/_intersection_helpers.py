@@ -615,16 +615,23 @@ class NewtonDoubleRoot(object):  # pylint: disable=too-few-public-methods
             jacobian = np.empty((3, 2), order='F')
             jacobian[:2, :1] = b1_ds
             jacobian[:2, 1:] = -b2_dt
-            jacobian[2, 0] = _helpers.cross_product(
-                _curve_helpers.evaluate_multi(
-                    self.second_deriv1, s_vals)[:, 0],
-                b2_dt[:, 0],
-            )
-            jacobian[2, 1] = _helpers.cross_product(
-                b1_ds[:, 0],
-                _curve_helpers.evaluate_multi(
-                    self.second_deriv2, t_vals)[:, 0],
-            )
+            if self.second_deriv1.size == 0:
+                jacobian[2, 0] = 0.0
+            else:
+                jacobian[2, 0] = _helpers.cross_product(
+                    _curve_helpers.evaluate_multi(
+                        self.second_deriv1, s_vals)[:, 0],
+                    b2_dt[:, 0],
+                )
+
+            if self.second_deriv2.size == 0:
+                jacobian[2, 1] = 0.0
+            else:
+                jacobian[2, 1] = _helpers.cross_product(
+                    b1_ds[:, 0],
+                    _curve_helpers.evaluate_multi(
+                        self.second_deriv2, t_vals)[:, 0],
+                )
 
             modified_lhs = _helpers.matrix_product(jacobian.T, jacobian)
             modified_rhs = _helpers.matrix_product(jacobian.T, func_val)

@@ -393,6 +393,43 @@ class TestNewtonDoubleRoot(utils.NumPyTestCase):
         ])
         self.assertEqual(func_val, expected_func_val)
 
+    def test___call__linear_curves(self):
+        nodes1 = np.asfortranarray([
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ])
+        first_deriv1 = np.asfortranarray([
+            [1.0],
+            [1.0],
+        ])
+        second_deriv1 = np.empty((2, 0))
+        nodes2 = np.asfortranarray([
+            [0.0, 1.0],
+            [1.0, 0.0],
+        ])
+        first_deriv2 = np.asfortranarray([
+            [1.0],
+            [-1.0],
+        ])
+        second_deriv2 = np.empty((2, 0))
+        evaluate_fn = self._make_one(
+            nodes1, first_deriv1, second_deriv1,
+            nodes2, first_deriv2, second_deriv2)
+
+        jacobian, func_val = evaluate_fn(0.25, 0.25)
+
+        expected_jacobian = np.asfortranarray([
+            [2.0, 0.0],
+            [0.0, 2.0],
+        ])
+        self.assertEqual(jacobian, expected_jacobian)
+        expected_func_val = np.asfortranarray([
+            [-0.5],
+            [-0.5],
+        ])
+        self.assertEqual(func_val, expected_func_val)
+
+
 
 class Test_newton_iterate(unittest.TestCase):
 
