@@ -868,5 +868,19 @@
             [-258, 1, 1],
             [-129, 2, 0]
         ]
+    },
+    "71": {
+        "control_points": [
+            ["0x1.002f11833164ap-1", "0x1.c516e980c0ce0p-2", "0x1.89092ee6e6df4p-2"],
+            ["-0x1.32718972d77a1p-1", "-0x1.5e002a95d165ep-1", "-0x1.8640e302433dfp-1"]
+        ],
+        "note": "This curve and #72 are from a real-world failure, so the values do not have a rational or algebraic representation."
+    },
+    "72": {
+        "control_points": [
+            ["0x1.fbb8cfd966f05p-2", "0x1.c6cd0e74ae3ecp-2", "0x1.8c4a283f3c04dp-2"],
+            ["-0x1.325bc2f4e012cp-1", "-0x1.614b060a21ebap-1", "-0x1.8192083f28f11p-1"]
+        ],
+        "note": "This curve and #71 are from a real-world failure, so the values do not have a rational or algebraic representation."
     }
 }

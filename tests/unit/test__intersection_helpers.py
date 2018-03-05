@@ -803,6 +803,47 @@ class Test_full_newton_nonzero(unittest.TestCase):
         utils.almost(self, 1.0 / 3.0, computed_s, 1)
         self.assertEqual(1.0 / 3.0, computed_t)
 
+    def test_nearby_solutions(self):
+        from bezier import _intersection_helpers
+
+        # B1([158/512, 159/512]) and B2([304/1024, 305/1024]) are linearized
+        # and when the segments intersect they produce perfectly valid
+        # s = float.fromhex('0x1.f19b11c66f80cp-7') ~= 0.0152 and
+        # t = float.fromhex('0x1.edecc2b71e352p-1') ~= 0.9647. This causes
+        # a convergence failure even though the curves are not tangent at
+        # the nearby point of intersection.
+
+        nodes1 = np.asfortranarray([
+            [
+                float.fromhex('0x1.002f11833164ap-1'),
+                float.fromhex('0x1.c516e980c0ce0p-2'),
+                float.fromhex('0x1.89092ee6e6df4p-2'),
+            ], [
+                float.fromhex('-0x1.32718972d77a1p-1'),
+                float.fromhex('-0x1.5e002a95d165ep-1'),
+                float.fromhex('-0x1.8640e302433dfp-1'),
+            ],
+        ])
+        s = float.fromhex('0x1.3c07c66c4719cp-2')
+        nodes2 = np.asfortranarray([
+            [
+                float.fromhex('0x1.fbb8cfd966f05p-2'),
+                float.fromhex('0x1.c6cd0e74ae3ecp-2'),
+                float.fromhex('0x1.8c4a283f3c04dp-2'),
+            ], [
+                float.fromhex('-0x1.325bc2f4e012cp-1'),
+                float.fromhex('-0x1.614b060a21ebap-1'),
+                float.fromhex('-0x1.8192083f28f11p-1'),
+            ],
+        ])
+        t = float.fromhex('0x1.30f6f6615b8f1p-2')
+
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(s, nodes1, t, nodes2)
+
+        expected = (_intersection_helpers.NEWTON_NO_CONVERGE,)
+        self.assertEqual(exc_info.exception.args, expected)
+
 
 class Test_full_newton(unittest.TestCase):
 

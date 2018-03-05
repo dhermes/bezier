@@ -148,6 +148,12 @@ ULPS_ALLOWED_OVERRIDE = {
             (0, 0): 27,  # Established on Ubuntu 16.04
             (1, 0): 27,  # Established on Ubuntu 16.04
         },
+        50: {
+            (0, 0): 398,  # Established on Ubuntu 16.04
+            (0, 1): 20,  # Established on Ubuntu 16.04
+            (1, 0): 417,  # Established on Ubuntu 16.04
+            (1, 1): 23,  # Established on Ubuntu 16.04
+        },
     },
 }
 NON_SIMPLE_ERR = _algebraic_intersection._NON_SIMPLE_ERR
@@ -169,6 +175,7 @@ TANGENT_OVERRIDES = {
         45: {'too_many': 74},
         46: {'success': True},
         47: {'success': True},
+        50: {'bad_multiplicity': True},
     },
     ALGEBRAIC: {},
 }
@@ -364,7 +371,10 @@ def test_intersect(strategy, intersection_info):
     elif intersection_type == CurveIntersectionType.coincident:
         check_coincident(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.standard:
-        check_intersect(intersection_info, strategy)
+        if id_ in TANGENT_OVERRIDES[strategy]:
+            check_tangent(intersection_info, strategy)
+        else:
+            check_intersect(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.no_intersection:
         check_no_intersect(intersection_info, strategy)
     else:

@@ -1342,6 +1342,31 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 5: Two simple roots are nearby each other and cause issues
+    !         with convergence of Newton's method. The intersection
+    !         parameters come from intersecting the linearized segments
+    !         B1([158/512, 159/512]) and B2([304/1024, 305/1024]).
+    quadratic1(1, 1) = 2253417071872805.0_dp * 0.5_dp**52
+    quadratic1(2, 1) = -5391011126540193.0_dp * 0.5_dp**53
+    quadratic1(1, 2) = 249088587096167.0_dp * 0.5_dp**49
+    quadratic1(2, 2) = -3078638273465135.0_dp * 0.5_dp**52
+    quadratic1(1, 3) = 1728590045223805.0_dp * 0.5_dp**52
+    quadratic1(2, 3) = -6865411541054431.0_dp * 0.5_dp**53
+    s = 1389916272532583.0_dp * 0.5_dp**52
+
+    quadratic2(1, 1) = 8931938502340357.0_dp * 0.5_dp**54
+    quadratic2(2, 1) = -1347378683805771.0_dp * 0.5_dp**51
+    quadratic2(1, 2) = 2000235959335163.0_dp * 0.5_dp**52
+    quadratic2(2, 2) = -3107598627835741.0_dp * 0.5_dp**52
+    quadratic2(1, 3) = 6971601718591565.0_dp * 0.5_dp**54
+    quadratic2(2, 3) = -6783026884415249.0_dp * 0.5_dp**53
+    t = 5364995685988593.0_dp * 0.5_dp**54
+
+    call full_newton_nonzero( &
+         s, 3, quadratic1, t, 3, quadratic2, new_s, new_t, status)
+    case_success = (status == Status_BAD_MULTIPLICITY)
+    call print_status(name, case_id, case_success, success)
+
   end subroutine test_full_newton_nonzero
 
   subroutine test_full_newton(success)

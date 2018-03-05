@@ -925,5 +925,23 @@
         "curve2_polys": [
             [-1, 0, 2]
         ]
+    }, {
+        "curve1": "71",
+        "curve2": "72",
+        "id": 50,
+        "type": "standard",
+        "note": "These curves are **very** close to identical and close to linear, and they intersect twice.",
+        "intersections": [
+            ["0x1.dbb45f3a33413p-2", "0x1.a7a1e6d182739p-2"],
+            ["-0x1.4d03a7a539fe4p-1", "-0x1.717f0642f61dfp-1"]
+        ],
+        "curve1_params": [
+            "0x1.3c07c30226a3cp-2",
+            "0x1.7d5b269eb3fecp-1"
+        ],
+        "curve2_params": [
+            "0x1.30f6f2bdde113p-2",
+            "0x1.8700df9eac93bp-1"
+        ]
     }
 ]
