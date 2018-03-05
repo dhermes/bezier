@@ -99,6 +99,9 @@ ULPS_ALLOWED_OVERRIDE = {
         40: {
             (1, 0): 1013,  # Established on Ubuntu 16.04
         },
+        46: {
+            (1, 2): 22,  # Established on Ubuntu 16.04
+        },
     },
     ALGEBRAIC: {
         12: {
@@ -141,6 +144,10 @@ ULPS_ALLOWED_OVERRIDE = {
         40: {
             (1, 0): 18,  # Established on Ubuntu 16.04
         },
+        49: {
+            (0, 0): 27,  # Established on Ubuntu 16.04
+            (1, 0): 27,  # Established on Ubuntu 16.04
+        },
     },
 }
 NON_SIMPLE_ERR = _algebraic_intersection._NON_SIMPLE_ERR
@@ -160,6 +167,8 @@ TANGENT_OVERRIDES = {
         43: {'success': True},
         44: {'success': True},
         45: {'too_many': 74},
+        46: {'success': True},
+        47: {'success': True},
     },
     ALGEBRAIC: {},
 }

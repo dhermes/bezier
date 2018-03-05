@@ -23,7 +23,7 @@
             "type": "string"
         },
         "implicitized": {
-            "description": "The algebraic curve that contains this B\\u00e9zier curve as a segment. (Only provided if the curve comes from rational control points.) A given algebraic curve is represented as a list of integer triples, each of which holds a coefficient, an x-exponent and a y-exponent. For example, for the curve with ``x(s) = 9 - 8 s`` and ``y(s) = (2 s - 1)^2``, we have ``16 y = (8 s - 4)^2 = (5 - x)^2`` which corresponds to ``f(x, y) = x^2 - 10 x - 16 y + 25``. This polynomial is represented by the four triples [25, 0, 0], [-16, 0, 1], [-10, 1, 0] and [1, 2, 0].",
+            "description": "The algebraic curve that contains this B\\u00e9zier curve as a segment. (Only provided if the curve comes from rational control points.) A given algebraic curve is represented as a list of integer triples, each of which holds a coefficient, an x-exponent and a y-exponent. For example, for the curve with ``x(s) = 9 - 8 s`` and ``y(s) = (2 s - 1)^2``, we have ``16 y = (8 s - 4)^2 = (5 - x)^2`` which corresponds to ``f(x, y) = x^2 - 10 x - 16 y + 25``. This polynomial is represented by the four triples [25, 0, 0], [-16, 0, 1], [-10, 1, 0] and [1, 2, 0]. These will be ordered first by total degree, then in ascending order based on the x-degree. The coefficients will have a gcd of 1 and the ``lowest'' coefficient will be positive.",
             "type": "array",
             "items": {
                 "description": "A coefficient, x-exponent, y-exponent triple.",
