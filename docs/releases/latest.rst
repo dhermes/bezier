@@ -1,4 +1,4 @@
-Latest Release (``0.7.1.dev1``)
+Latest Release (``0.8.0.dev1``)
 ===============================
 
 |pypi| |docs|
@@ -15,13 +15,13 @@ New Features
    `0a9645c <https://github.com/dhermes/bezier/commit/0a9645c9a3f1df3274677ad3def3d934c590b642>`__).
    See cases:
 
-   -  4: `10Q-18Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_18Q.png>`__
-   -  5: `10Q-19Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_19Q.png>`__
-   -  43: `29Q-42Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces29Q_and_42Q.png>`__
-   -  44: `29Q-43Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces29Q_and_43Q.png>`__
-   -  45: `10Q-44Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces10Q_and_44Q.png>`__
+   -  4: `10Q-18Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces10Q_and_18Q.png>`__
+   -  5: `10Q-19Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces10Q_and_19Q.png>`__
+   -  43: `29Q-42Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces29Q_and_42Q.png>`__
+   -  44: `29Q-43Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces29Q_and_43Q.png>`__
+   -  45: `10Q-44Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces10Q_and_44Q.png>`__
 -  Adding support for curve-curve intersections that are also points of
-   tangency. This was accomplished by three broad changes to the geometric
+   tangency. This was accomplished by five broad changes to the geometric
    intersection algorithm:
 
    -  Checking if almost-linear curves have disjoint bounding boxes
@@ -45,22 +45,42 @@ New Features
 
       Now both cases are handled in the same way. First, the subdivided curve
       segments will have a convex hull check applied (which is more strict than
-      a bounding box check). If their convex hulls do collide, then a "full"
-      Newton solve will be used
+      a bounding box check). If their convex hulls do collide, they are
+      treated as a normal intersection of curved segments
       (`4457f64 <https://github.com/dhermes/bezier/commit/4457f64eaf28bb9fb5c91a8740cd0d618fafc3da>`__,
       `fe453c3 <https://github.com/dhermes/bezier/commit/fe453c3839b19ce4a85dfd0b5ad78f71a0973daf>`__).
+   -  Using the newly added "full" Newton's iteration for all intersections.
+      Before, a single Newton step was applied after intersection the
+      linearized segments
+      (`d06430f <https://github.com/dhermes/bezier/commit/d06430fbb027eb9d62b6b724f70e62d0efb0732b>`__).
+   -  Changing how a candidate pair of ``s-t`` parameters is added.
+      (`c998445 <https://github.com/dhermes/bezier/commit/c998445026a5487c59af17c9cbdfc9a6cf4d72c0>`__).
+      In the previous implementation, a pair was considered a duplicate
+      only if there was a difference of at most 1
+      `ULP <https://en.wikipedia.org/wiki/Unit_in_the_last_place>`__ from
+      an existing intersection (though this could be toggled via
+      ``set_similar_ulps()``). Now, the pair is "normalized" so that ``s``
+      and ``t`` are away from ``0``. For example, if ``s < 2^{-10}`` then we
+      use ``1 - s`` instead. (This is perfectly "appropriate" since evaluating
+      a B |eacute| zier curve requires using both ``s`` and ``1 - s``, so both
+      values are equally relevant.) Once normalized, a relative error threshold
+      is used.
 
    Four curve-curve functional test cases have gone from failing to passing:
 
-   -  11: `14-15 <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/curves14_and_15.png>`__
-   -  31: `38-39 <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/curves38_and_39.png>`__
-   -  43: `58-59 <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/curves58_and_59.png>`__
-   -  44: `60-59 <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/curves60_and_59.png>`__
+   -  11: `14-15 <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/curves14_and_15.png>`__
+   -  31: `38-39 <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/curves38_and_39.png>`__
+   -  43: `58-59 <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/curves58_and_59.png>`__
+   -  44: `60-59 <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/curves60_and_59.png>`__
 
    and two surface-surface cases have as well:
 
-   -  10: `20Q-21Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces20Q_and_21Q.png>`__
-   -  42: `41Q-21Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces41Q_and_21Q.png>`__
+   -  10: `20Q-21Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces20Q_and_21Q.png>`__
+   -  42: `41Q-21Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces41Q_and_21Q.png>`__
+
+   In order to support the aforementioned surface-surface cases, special
+   support for "tangent corners" was added
+   (`12b0de4 <https://github.com/dhermes/bezier/commit/12b0de4e4dae1d84e0681386fd312794ac8736ff>`__).
 
 ABI Changes
 -----------
@@ -73,7 +93,7 @@ Breaking Changes
    The case where that failure was issued has now been handled as an acceptable
    ``TANGENT_BOTH`` classification for surface-surface intersection points.
    (See the ``classify_intersection()``
-   `function <http://bezier.readthedocs.io/en/0.7.1/algorithm-helpers.html#bezier._surface_helpers.classify_intersection>`__
+   `function <http://bezier.readthedocs.io/en/0.8.0/algorithm-helpers.html#bezier._surface_helpers.classify_intersection>`__
    for an example.)
 -  Adding ``BAD_INTERIOR`` status enum
    (`6348dc6 <https://github.com/dhermes/bezier/commit/6348dc63b5d11453fa8312997429448bbdad0a3f>`__).
@@ -100,6 +120,10 @@ Breaking Changes
    -  The curves don't actually intersect, though they come very close
    -  Numerical issues caused the iteration to leave the region
       of convergence
+-  Removed ``ulps_away()``
+   (`c998445 <https://github.com/dhermes/bezier/commit/c998445026a5487c59af17c9cbdfc9a6cf4d72c0>`__).
+-  Removed ``set_similar_ulps()`` and ``get_similar_ulps()``
+   (`c998445 <https://github.com/dhermes/bezier/commit/c998445026a5487c59af17c9cbdfc9a6cf4d72c0>`__).
 
 Surface Changes
 ~~~~~~~~~~~~~~~
@@ -129,11 +153,15 @@ Python Changes
    fixed to account for the changes in data layout
    (`80bfaaa <https://github.com/dhermes/bezier/commit/80bfaaa74219f9053585aa8970131018baa516d1>`__).
 -  Added custom ``UnsupportedDegree``
-   `exception <http://bezier.readthedocs.io/en/0.7.1/reference/bezier.html#bezier.UnsupportedDegree>`__
+   `exception <http://bezier.readthedocs.io/en/0.8.0/reference/bezier.html#bezier.UnsupportedDegree>`__
    to be used by routines that have implementations that are hard-coded for
    specific degrees
    (`87a1f21 <https://github.com/dhermes/bezier/commit/87a1f2171f6b810516544ff1691856d7fadfa12f>`__).
    See `#103 <https://github.com/dhermes/bezier/issues/103>`__.
+-  Removed ``ulps_away()``
+   (`c998445 <https://github.com/dhermes/bezier/commit/c998445026a5487c59af17c9cbdfc9a6cf4d72c0>`__).
+-  Removed ``set_similar_ulps()`` and ``get_similar_ulps()``
+   (`c998445 <https://github.com/dhermes/bezier/commit/c998445026a5487c59af17c9cbdfc9a6cf4d72c0>`__).
 
 Non-Public API
 ~~~~~~~~~~~~~~
@@ -155,7 +183,7 @@ Non-Public API
    (`cfa2b93 <https://github.com/dhermes/bezier/commit/cfa2b93792695b87f11ece9da1959013ecf77678>`__)
    for cases where coincident segments are moving in opposite directions (i.e.
    the surfaces don't share a common interior). For example see case 44
-   (`29Q-43Q <https://github.com/dhermes/bezier/blob/0.7.1/docs/images/surfaces29Q_and_43Q.png>`__).
+   (`29Q-43Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces29Q_and_43Q.png>`__).
 -  Adding custom linear solver for the ``2 x 2`` case
    (`764e56d <https://github.com/dhermes/bezier/commit/764e56db5bb4987d31e3c9f5fbabbe6564d6e0c0>`__).
    This is modelled after ``dgesv`` from LAPACK.
@@ -165,9 +193,9 @@ Non-Public API
    See the original `paper <https://dx.doi.org/10.1016/0010-4485(90)90039-F>`__
    by Sederberg and Nishita for more information.
 
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.7.1.svg
-   :target: https://pypi.org/project/bezier/0.7.1/
-   :alt: PyPI link to release 0.7.1
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.7.1
-   :target: https://bezier.readthedocs.io/en/0.7.1/
-   :alt: Documentation for release 0.7.1
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.8.0.svg
+   :target: https://pypi.org/project/bezier/0.8.0/
+   :alt: PyPI link to release 0.8.0
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.8.0
+   :target: https://bezier.readthedocs.io/en/0.8.0/
+   :alt: Documentation for release 0.8.0

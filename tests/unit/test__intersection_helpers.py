@@ -430,7 +430,6 @@ class TestNewtonDoubleRoot(utils.NumPyTestCase):
         self.assertEqual(func_val, expected_func_val)
 
 
-
 class Test_newton_iterate(unittest.TestCase):
 
     HALF_EPS = 0.5**26

@@ -17,9 +17,6 @@ import pytest
 from tests.functional import utils
 
 
-FAILURES = (10, 42)
-
-
 def get_bounds():
     if os.environ.get('CIRCLECI') == 'true':
         return 125.0 / 16384.0, 155.0 / 16384.0
@@ -29,10 +26,7 @@ def get_bounds():
 
 def intersect_all(intersections):
     for intersection in intersections:
-        try:
-            intersection.surface1.intersect(intersection.surface2)
-        except NotImplementedError:
-            assert intersection.id_ in FAILURES, intersection.id_
+        intersection.surface1.intersect(intersection.surface2)
 
 
 @pytest.mark.benchmark(
