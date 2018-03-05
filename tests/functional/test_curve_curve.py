@@ -73,7 +73,7 @@ ULPS_ALLOWED_OVERRIDE = {
         },
         22: {
             (0, 0): 8,  # Established on CentOS 5 (i686 Docker image)
-            (1, 0): 18,  # Established on CentOS 5 (i686 Docker image)
+            (1, 0): 21,  # Established on CentOS 5 (i686 Docker image)
         },
         23: {
             (0, 0): 14,  # Established on Ubuntu 16.04
@@ -157,6 +157,8 @@ TANGENT_OVERRIDES = {
         31: {'success': True},
         41: {'success': True},
         42: {'bad_multiplicity': True},
+        43: {'success': True},
+        44: {'success': True},
         45: {'too_many': 74},
     },
     ALGEBRAIC: {},
@@ -171,7 +173,7 @@ COINCIDENT_OVERRIDES = {
     ALGEBRAIC: {},
 }
 INCORRECT_COUNT = {
-    GEOMETRIC: (43, 44),
+    GEOMETRIC: (),
     ALGEBRAIC: (),
 }
 if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:

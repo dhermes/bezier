@@ -288,7 +288,7 @@ numbers, we can compute the intersection to machine precision:
    ... ]) / 66.0
    >>> max_err = np.max(np.abs(intersections - expected_ints))
    >>> binary_exponent(max_err)
-   -55
+   -54
    >>> s_vals = np.asfortranarray(intersections[0, :])
    >>> points = curve1.evaluate_multi(s_vals)
    >>> expected_pts = np.asfortranarray([
@@ -367,7 +367,7 @@ numbers, we can compute the intersection to machine precision:
    ... ]) / 16.0
    >>> max_err = np.max(np.abs(points - expected_pts))
    >>> binary_exponent(max_err)
-   -51
+   -53
 
 .. image:: images/curves21_and_22.png
    :align: center
@@ -436,7 +436,7 @@ larger.
    ... ]) / 48.0
    >>> max_err = np.max(np.abs(intersections - expected_ints))
    >>> binary_exponent(max_err)
-   -53
+   -52
    >>> s_vals = np.asfortranarray(intersections[0, :])
    >>> points = curve1.evaluate_multi(s_vals)
    >>> expected_pts = np.asfortranarray([
@@ -475,14 +475,14 @@ larger.
    ... ])
    >>> max_err = np.max(np.abs(intersections - expected_ints))
    >>> binary_exponent(max_err)
-   -51
+   -52
    >>> expected_pts = np.asfortranarray([
    ...     [s_val1, s_val2],
    ...     [ 0.375, 0.375 ],
    ... ])
    >>> max_err = np.max(np.abs(points - expected_pts))
    >>> binary_exponent(max_err)
-   -51
+   -52
 
 .. image:: images/curves8_and_27.png
    :align: center
@@ -585,7 +585,7 @@ Detecting Self-Intersections
    ... ]) / 3.0
    >>> max_err = np.max(np.abs(intersections - expected_ints))
    >>> binary_exponent(max_err)
-   -54
+   -53
    >>> s_vals = np.asfortranarray(intersections[0, :])
    >>> left.evaluate_multi(s_vals)
    array([[-0.09375 , -0.25  ],

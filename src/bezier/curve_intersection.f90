@@ -804,7 +804,7 @@ contains
     integer(c_int), intent(out) :: status
     ! Variables outside of signature.
     real(c_double) :: s, t
-    logical(c_bool) :: success, do_full_newton
+    logical(c_bool) :: success, bad_parameters
 
     status = Status_SUCCESS
     does_intersect = .FALSE.  ! Default value.
@@ -814,12 +814,12 @@ contains
          curve2%nodes(:, 1), curve2%nodes(:, num_nodes2), &
          s, t, success)
 
-    do_full_newton = .FALSE.
+    bad_parameters = .FALSE.
     if (success) then
        if (.NOT. ( &
             in_interval(s, 0.0_dp, 1.0_dp) .AND. &
             in_interval(t, 0.0_dp, 1.0_dp))) then
-          do_full_newton = .TRUE.
+          bad_parameters = .TRUE.
        end if
     else
        ! NOTE: If both curves are lines, the intersection should have
@@ -827,12 +827,12 @@ contains
 
        ! Just fall back to a full Newton iteration starting in the middle of
        ! the given intervals.
-       do_full_newton = .TRUE.
+       bad_parameters = .TRUE.
        s = 0.5_dp
        t = 0.5_dp
     end if
 
-    if (do_full_newton) then
+    if (bad_parameters) then
        call convex_hull_collide( &
             num_nodes1, curve1%nodes, POLYGON1, &
             num_nodes2, curve2%nodes, POLYGON2, success)
@@ -848,19 +848,10 @@ contains
     s = (1.0_dp - s) * curve1%start + s * curve1%end_  ! orig_s
     t = (1.0_dp - t) * curve2%start + t * curve2%end_  ! orig_t
 
-    if (do_full_newton) then
-       call full_newton( &
-            s, num_nodes1, root_nodes1, &
-            t, num_nodes2, root_nodes2, &
-            refined_s, refined_t, status)
-    else
-       ! Perform one step of Newton iteration to refine the computed
-       ! values of s and t.
-       call newton_refine_intersect( &
-            s, num_nodes1, root_nodes1, &
-            t, num_nodes2, root_nodes2, &
-            refined_s, refined_t, status)
-    end if
+    call full_newton( &
+         s, num_nodes1, root_nodes1, &
+         t, num_nodes2, root_nodes2, &
+         refined_s, refined_t, status)
 
     if (status /= Status_SUCCESS) then
        return
@@ -1100,9 +1091,10 @@ contains
     ! determined by ``ulps_away``).
     do index_ = 1, num_intersections
        ! NOTE: |(1 - s1) - (1 - s2)| = |s1 - s2| in exact arithmetic, so
-       !       we don't bother comparing to ``(1 - s)`` / ``(1 - t)``.
-       !       Due to round-off, these difference may be slightly different,
-       !       but only up to machine precision.
+       !       we just compute ``s1 - s2`` rather than using
+       !       ``candidate_s`` / ``candidate_t``. Due to round-off, these
+       !       differences may be slightly different, but only up to machine
+       !       precision.
        workspace(1) = s - intersections(1, index_)
        workspace(2) = t - intersections(2, index_)
        if (norm2(workspace) < NEWTON_ERROR_RATIO * norm_candidate) then

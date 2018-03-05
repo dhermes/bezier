@@ -1876,16 +1876,16 @@ contains
          10, cubic1, 3, 10, cubic2, 3, &
          segment_ends, segments, &
          num_intersected, contained, status)
-    start = 0.60937510406326156_dp
-    end_ = 0.64417397312262581_dp
+    start = 0.60937510406326056_dp
+    end_ = 0.64417397312262270_dp
     case_success = ( &
          num_intersected == 1 .AND. &
          allocated(segment_ends) .AND. &
          all(segment_ends == [3]) .AND. &
          allocated(segments) .AND. &
          segment_check(segments(1), start, end_, 4) .AND. &
-         segment_check(segments(2), 0.97192953004411253_dp, 1.0_dp, 2) .AND. &
-         segment_check(segments(3), 0.0_dp, 0.029255079571202415_dp, 3) .AND. &
+         segment_check(segments(2), 0.97192953004411586_dp, 1.0_dp, 2) .AND. &
+         segment_check(segments(3), 0.0_dp, 0.029255079571205871_dp, 3) .AND. &
          contained == SurfaceContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)

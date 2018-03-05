@@ -42,9 +42,8 @@ except ImportError:  # pragma: NO COVER
     _speedup = None
 
 
-# Set the threshold for exponent at half the bits available,
-# this way one round of Newton's method can finish the job
-# by squaring the error.
+# Set the threshold for exponent at half the bits available, this way one round
+# of Newton's method can (usually) finish the job by squaring the error.
 _ERROR_VAL = 0.5**26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _MAX_CANDIDATES = 64
@@ -758,22 +757,22 @@ def from_linearized(first, second, intersections):
     # pylint: disable=too-many-return-statements
     s, t, success = segment_intersection(
         first.start_node, first.end_node, second.start_node, second.end_node)
-    do_full_newton = False
+    bad_parameters = False
     if success:
         if not (_helpers.in_interval(s, 0.0, 1.0) and
                 _helpers.in_interval(t, 0.0, 1.0)):
-            do_full_newton = True
+            bad_parameters = True
     else:
         if first.error == 0.0 and second.error == 0.0:
             raise ValueError(_UNHANDLED_LINES)
 
-        # Just fall back to a full Newton iteration starting in the middle of
+        # Just fall back to a Newton iteration starting in the middle of
         # the given intervals.
-        do_full_newton = True
+        bad_parameters = True
         s = 0.5
         t = 0.5
 
-    if do_full_newton:
+    if bad_parameters:
         # In the unlikely case that we have parallel segments or segments
         # that intersect outside of [0, 1] x [0, 1], we can still exit
         # if the convex hulls don't intersect.
@@ -783,16 +782,9 @@ def from_linearized(first, second, intersections):
     # Now, promote ``s`` and ``t`` onto the original curves.
     orig_s = (1 - s) * first.curve.start + s * first.curve.end
     orig_t = (1 - t) * second.curve.start + t * second.curve.end
-    if do_full_newton:
-        refined_s, refined_t = _intersection_helpers.full_newton(
-            orig_s, first.curve.original_nodes,
-            orig_t, second.curve.original_nodes)
-    else:
-        # Perform one step of Newton iteration to refine the computed
-        # values of s and t.
-        refined_s, refined_t = _intersection_helpers.newton_refine(
-            orig_s, first.curve.original_nodes,
-            orig_t, second.curve.original_nodes)
+    refined_s, refined_t = _intersection_helpers.full_newton(
+        orig_s, first.curve.original_nodes,
+        orig_t, second.curve.original_nodes)
 
     refined_s, success = _helpers.wiggle_interval(refined_s)
     if not success:
@@ -853,9 +845,10 @@ def add_intersection(s, t, intersections):
     norm_candidate = np.linalg.norm([candidate_s, candidate_t], ord=2)
     for existing_s, existing_t in intersections:
         # NOTE: |(1 - s1) - (1 - s2)| = |s1 - s2| in exact arithmetic, so
-        #       we don't bother comparing to ``candidate_s`` / ``candidate_t``.
-        #       Due to round-off, these may be slightly different, but only
-        #       up to machine precision.
+        #       we just compute ``s1 - s2`` rather than using
+        #       ``candidate_s`` / ``candidate_t``. Due to round-off, these
+        #       differences may be slightly different, but only up to machine
+        #       precision.
         delta_s = s - existing_s
         delta_t = t - existing_t
         norm_update = np.linalg.norm([delta_s, delta_t], ord=2)
