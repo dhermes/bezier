@@ -43,7 +43,7 @@ except ImportError:  # pragma: NO COVER
 # For ``full_newton()``.
 ZERO_THRESHOLD = 0.5**10  # ~1e-3
 MAX_NEWTON_ITERATIONS = 10
-NEWTON_ERROR_RATIO = 0.5**45
+NEWTON_ERROR_RATIO = 0.5**42
 NEWTON_NO_CONVERGE = """\
 Unsupported multiplicity.
 
@@ -658,7 +658,7 @@ def newton_iterate(evaluate_fn, s, t):
     * :math:`\frac{2}{3}` of all iterations must be converging linearly
       for convergence to be stopped (and moved to the next regime). This
       will only be checked after 4 or more updates have occurred.
-    * :math:`\tau = 2^{-45}` (:attr:`NEWTON_ERROR_RATIO`) is used to
+    * :math:`\tau = 2^{-42}` (:attr:`NEWTON_ERROR_RATIO`) is used to
       determine that an update is sufficiently small to stop iterating. So if
       the error :math:`\|p_{n + 1} - p_n\|` smaller than :math:`\tau` times
       size of the term being updated :math:`\|p_n\|`, then we

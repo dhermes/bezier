@@ -102,6 +102,12 @@ ULPS_ALLOWED_OVERRIDE = {
         46: {
             (1, 2): 22,  # Established on Ubuntu 16.04
         },
+        50: {
+            (0, 0): 447,  # Established on Ubuntu 16.04
+            (0, 1): 10,  # Established on Ubuntu 16.04
+            (1, 0): 474,  # Established on Ubuntu 16.04
+            (1, 1): 13,  # Established on Ubuntu 16.04
+        },
     },
     ALGEBRAIC: {
         12: {
@@ -175,7 +181,7 @@ TANGENT_OVERRIDES = {
         45: {'too_many': 74},
         46: {'success': True},
         47: {'success': True},
-        50: {'bad_multiplicity': True},
+        50: {'success': True},
     },
     ALGEBRAIC: {},
 }

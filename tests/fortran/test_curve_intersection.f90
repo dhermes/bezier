@@ -1937,7 +1937,7 @@ contains
     intersections(2, 1) = 0.75_dp
     num_intersections = 1
 
-    s_val = 0.5_dp**46
+    s_val = 0.5_dp**44
     call add_intersection( &
          s_val, 0.75_dp, num_intersections, intersections)
     case_success = ( &
@@ -1951,7 +1951,7 @@ contains
     intersections(2, 1) = 0.0_dp
     num_intersections = 1
 
-    t_val = 0.5_dp**45
+    t_val = 0.5_dp**42
     call add_intersection( &
          0.125_dp, t_val, num_intersections, intersections)
     case_success = ( &

@@ -731,7 +731,7 @@ class Test_add_intersection(unittest.TestCase):
 
     def test_s_under_zero(self):
         intersections = [(0.0, 0.75)]
-        candidate_s = 0.5**46
+        candidate_s = 0.5**43
         self.assertIsNone(
             self._call_function_under_test(candidate_s, 0.75, intersections))
 
@@ -739,7 +739,7 @@ class Test_add_intersection(unittest.TestCase):
 
     def test_t_under_zero(self):
         intersections = [(0.125, 0.0)]
-        candidate_t = 0.5**45
+        candidate_t = 0.5**42
         self.assertIsNone(
             self._call_function_under_test(0.125, candidate_t, intersections))
 

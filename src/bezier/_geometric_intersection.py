@@ -819,7 +819,7 @@ def add_intersection(s, t, intersections):
     Compares :math:`\|p - q\|` to :math:`\|p\|` where :math:`p = (s, t)` is
     current candidate intersection (or the "normalized" version, such as
     :math:`p = (1 - s, t)`) and :math:`q` is one of the already added
-    intersections. If the difference is below :math:`2^{-45}` (i.e.
+    intersections. If the difference is below :math:`2^{-42}` (i.e.
     :attr`.NEWTON_ERROR_RATIO`) then the intersection is considered to be
     duplicate.
 

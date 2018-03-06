@@ -804,8 +804,6 @@ class Test_full_newton_nonzero(unittest.TestCase):
         self.assertEqual(1.0 / 3.0, computed_t)
 
     def test_nearby_solutions(self):
-        from bezier import _intersection_helpers
-
         # B1([158/512, 159/512]) and B2([304/1024, 305/1024]) are linearized
         # and when the segments intersect they produce perfectly valid
         # s = float.fromhex('0x1.f19b11c66f80cp-7') ~= 0.0152 and
@@ -838,11 +836,12 @@ class Test_full_newton_nonzero(unittest.TestCase):
         ])
         t = float.fromhex('0x1.30f6f6615b8f1p-2')
 
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(s, nodes1, t, nodes2)
-
-        expected = (_intersection_helpers.NEWTON_NO_CONVERGE,)
-        self.assertEqual(exc_info.exception.args, expected)
+        computed_s, computed_t = self._call_function_under_test(
+            s, nodes1, t, nodes2)
+        known_s = float.fromhex('0x1.3c07c30226a3cp-2')
+        utils.almost(self, known_s, computed_s, 447)
+        known_t = float.fromhex('0x1.30f6f2bdde113p-2')
+        utils.almost(self, known_t, computed_t, 474)
 
 
 class Test_full_newton(unittest.TestCase):
