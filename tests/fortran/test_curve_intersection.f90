@@ -1364,7 +1364,12 @@ contains
 
     call full_newton_nonzero( &
          s, 3, quadratic1, t, 3, quadratic2, new_s, new_t, status)
-    case_success = (status == Status_BAD_MULTIPLICITY)
+    expected_s = 1389916043385487.0_dp * 0.5_dp**52
+    expected_t = 5364994709250323.0_dp * 0.5_dp**54
+    case_success = ( &
+         new_s - expected_s == 447 * spacing(expected_s) .AND. &
+         new_t - expected_t == 474 * spacing(expected_t) .AND. &
+         status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_full_newton_nonzero
