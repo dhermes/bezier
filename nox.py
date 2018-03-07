@@ -25,6 +25,7 @@ IS_MAC_OS_X = sys.platform == 'darwin'
 SCIPY_DEP = 'scipy >= 1.0.0'
 MOCK_DEP = 'mock >= 1.3.0'
 SEABORN_DEP = 'seaborn >= 0.8'
+MATPLOTLIB_DEP = 'matplotlib >= 2.2.0'
 BASE_DEPS = (
     NUMPY_DEP,
     'pytest',
@@ -216,7 +217,7 @@ def docs_images(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
     local_deps = DOCS_DEPS
-    local_deps += ('matplotlib >= 2.0.0', SEABORN_DEP, 'pytest')
+    local_deps += (MATPLOTLIB_DEP, SEABORN_DEP, 'pytest')
     session.install(*local_deps)
     # Install this package.
     session.install('.')
@@ -253,7 +254,7 @@ def lint(session):
         'docutils',
         'flake8',
         'flake8-import-order',
-        'matplotlib',
+        MATPLOTLIB_DEP,
         'Pygments',
         'pylint',
         SEABORN_DEP,
