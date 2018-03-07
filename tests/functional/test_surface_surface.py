@@ -66,6 +66,7 @@ FAILED_CASES_TANGENT = {
         37: {},
         41: {},
         42: {},
+        48: {},
     },
 }
 FAILED_CASES_COINCIDENT = {
@@ -81,7 +82,9 @@ FAILED_CASES_COINCIDENT = {
     },
 }
 INCORRECT_COUNT = {
-    GEOMETRIC: (),
+    GEOMETRIC: (
+        48,
+    ),
     ALGEBRAIC: (),
 }
 CONFIG = utils.Config()
