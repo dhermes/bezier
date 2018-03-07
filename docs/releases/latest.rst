@@ -20,6 +20,8 @@ New Features
    -  43: `29Q-42Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces29Q_and_42Q.png>`__
    -  44: `29Q-43Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces29Q_and_43Q.png>`__
    -  45: `10Q-44Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces10Q_and_44Q.png>`__
+   -  46: `1Q-45Q <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces1Q_and_45Q.png>`__
+   -  47: `1Q-2C <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/surfaces1Q_and_2C.png>`__
 -  Adding support for curve-curve intersections that are also points of
    tangency. This was accomplished by five broad changes to the geometric
    intersection algorithm:

@@ -1183,5 +1183,21 @@
         "id": 45,
         "note": "This is intended to be like intersection ID 5 (10Q-19Q) in that the surfaces share (part of) an edge, but the intersection is ``degenerate'' in the sense that it has area equal to zero.",
         "intersections": []
+    }, {
+        "surface1": "1Q",
+        "surface2": "45Q",
+        "id": 46,
+        "note": "These surfaces are identical, but the edges are relabeled.",
+        "intersections": [
+            true
+        ]
+    }, {
+        "surface1": "1Q",
+        "surface2": "2C",
+        "id": 47,
+        "note": "This is literally the same surface, but 2C is degree-elevated.",
+        "intersections": [
+            true
+        ]
     }
 ]
