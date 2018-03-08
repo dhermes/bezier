@@ -1697,7 +1697,9 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     else:
         # NOTE: A more robust approach would take ||tangent1|| and ||tangent2||
         #       into account when comparing (tangent1 x tangent2) to the
-        #       "almost zero" threshold.
+        #       "almost zero" threshold. We (for now) avoid doing this because
+        #       normalizing the tangent vectors has a "cost" of ~6 flops each
+        #       and that cost would happen for **every** single intersection.
         return classify_tangent_intersection(
             intersection, nodes1, tangent1, nodes2, tangent2)
 
