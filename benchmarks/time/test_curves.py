@@ -24,7 +24,7 @@ def get_bounds():
     if os.environ.get('CIRCLECI') == 'true':
         return 90.0 / 16384.0, 140.0 / 16384.0
     else:
-        return 60.0 / 16384.0, 110.0 / 16384.0
+        return 60.0 / 16384.0, 115.0 / 16384.0
 
 
 def intersect_all(intersections):
