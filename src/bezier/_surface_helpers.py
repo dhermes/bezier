@@ -331,6 +331,10 @@ SECOND_SURFACE_INFO = (
         (4, 0.0, 1.0),
     ),
 )
+# Threshold where a vector cross-product (u x v) is considered
+# to be "zero". This is a "hack", since it doesn't take ||u||
+# or ||v|| into account.
+ALMOST_TANGENT = 0.5**50
 
 
 def polynomial_sign(poly_surface, degree):
@@ -1686,11 +1690,14 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     # is more "inside" / "to the left".
     cross_prod = _helpers.cross_product(
         tangent1.ravel(order='F'), tangent2.ravel(order='F'))
-    if cross_prod < 0:
+    if cross_prod < -ALMOST_TANGENT:
         return CLASSIFICATION_T.FIRST
-    elif cross_prod > 0:
+    elif cross_prod > ALMOST_TANGENT:
         return CLASSIFICATION_T.SECOND
     else:
+        # NOTE: A more robust approach would take ||tangent1|| and ||tangent2||
+        #       into account when comparing (tangent1 x tangent2) to the
+        #       "almost zero" threshold.
         return classify_tangent_intersection(
             intersection, nodes1, tangent1, nodes2, tangent2)
 

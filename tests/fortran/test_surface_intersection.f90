@@ -270,7 +270,28 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 7: Intersection is an ignored corner.
+    ! CASE 7: Intersection is tangent, but only to machine precision. The
+    !         cross product of the tangent vectors is ``-2^{-53}``, rather
+    !         than ``0.0``.
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [0.5_dp, -1.0_dp / 5.0_dp]
+    nodes2(:, 3) = [1.0_dp, 0.0_dp]
+    edges_first(1)%nodes = nodes2
+
+    nodes2(:, 1) = [0.5_dp, -0.125_dp]
+    nodes2(:, 2) = [2.0625_dp, 0.1875_dp]
+    nodes2(:, 3) = [3.625_dp, 0.5_dp]
+    edges_second(1)%nodes = nodes2
+
+    intersection_ = Intersection(0.75_dp, 2.0_dp / 25.0_dp - 0.5_dp**56, 1, 1)
+    call classify_intersection( &
+         edges_first, edges_second, intersection_, enum_, status)
+    case_success = ( &
+         enum_ == IntersectionClassification_TANGENT_FIRST .AND. &
+         status == Status_SUCCESS)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Intersection is an ignored corner.
     ! NOTE: The curves in ``edges_first`` are the edges of the
     !       "unit simplex" ...
     nodes1(:, 1) = 0
@@ -305,7 +326,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 8: Intersection is a corner.
+    ! CASE 9: Intersection is a corner.
     nodes1(:, 1) = [0.0_dp, 0.5_dp]
     nodes1(:, 2) = 1
     edges_first(1)%nodes = nodes1
@@ -329,7 +350,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 9: Intersection is tangent, use curvature of "FIRST".
+    ! CASE 10: Intersection is tangent, use curvature of "FIRST".
     deallocate(edges_first(1)%nodes)  ! Unset.
     nodes2(:, 1) = [2.0_dp, 0.0_dp]
     nodes2(:, 2) = [1.5_dp, 1.0_dp]
@@ -350,7 +371,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 10: Intersection is tangent, use curvature of "SECOND".
+    ! CASE 11: Intersection is tangent, use curvature of "SECOND".
     nodes2(:, 1) = [1.0_dp, 0.0_dp]
     nodes2(:, 2) = [1.5_dp, 1.0_dp]
     nodes2(:, 3) = [2.0_dp, 0.0_dp]
@@ -368,7 +389,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 11: Intersection is tangent, same curvature and direction.
+    ! CASE 12: Intersection is tangent, same curvature and direction.
     nodes2(:, 1) = [1.0_dp, 0.25_dp]
     nodes2(:, 2) = [-0.5_dp, -0.25_dp]
     nodes2(:, 3) = [0.0_dp, 0.25_dp]
@@ -384,7 +405,7 @@ contains
     case_success = (status == Status_SAME_CURVATURE)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 12: Intersection is tangent, same curvature, opposite direction.
+    ! CASE 13: Intersection is tangent, same curvature, opposite direction.
     nodes2(:, 1) = [0.0_dp, 0.25_dp]
     nodes2(:, 2) = [-0.5_dp, -0.25_dp]
     nodes2(:, 3) = [1.0_dp, 0.25_dp]
@@ -400,7 +421,7 @@ contains
     case_success = (status == Status_SAME_CURVATURE)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 13: Intersection is tangent, opposite direction, curvatures have
+    ! CASE 14: Intersection is tangent, opposite direction, curvatures have
     !          same sign and there is no overlap.
     nodes2(:, 1) = [2.0_dp, 0.0_dp]
     nodes2(:, 2) = [1.5_dp, 1.0_dp]
@@ -419,7 +440,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 14: Intersection is tangent, opposite direction, curvatures have
+    ! CASE 15: Intersection is tangent, opposite direction, curvatures have
     !          same sign and there **is** overlap.
     nodes2(:, 1) = [1.0_dp, 0.0_dp]
     nodes2(:, 2) = [1.5_dp, 1.0_dp]
@@ -438,7 +459,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 15: Intersection is tangent, opposite direction, curvatures have
+    ! CASE 16: Intersection is tangent, opposite direction, curvatures have
     !          opposite sign and there is no overlap.
     nodes2(:, 1) = [2.0_dp, 0.0_dp]
     nodes2(:, 2) = [1.5_dp, 1.0_dp]
@@ -457,7 +478,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 16: Intersection is tangent, opposite direction, curvatures have
+    ! CASE 17: Intersection is tangent, opposite direction, curvatures have
     !          opposite sign and there **is** overlap.
     nodes2(:, 1) = [1.0_dp, 0.0_dp]
     nodes2(:, 2) = [1.5_dp, 1.0_dp]
@@ -476,7 +497,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 17: Intersection at corner, but the corner "staddles" an edge.
+    ! CASE 18: Intersection at corner, but the corner "staddles" an edge.
     nodes1(:, 1) = 0
     nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(2)%nodes = nodes1
@@ -497,7 +518,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 18: Intersection at corner of **both** edges, the corners just
+    ! CASE 19: Intersection at corner of **both** edges, the corners just
     !          "kiss", hence are ignored.
     nodes1(:, 1) = [0.5_dp, 1.0_dp]
     nodes1(:, 2) = [1.0_dp, 0.0_dp]
@@ -522,7 +543,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 19: Intersection at corner of **both** edges, "FIRST" is interior.
+    ! CASE 20: Intersection at corner of **both** edges, "FIRST" is interior.
     nodes1(:, 1) = 0
     nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(1)%nodes = nodes1
@@ -544,7 +565,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 20: Intersection at corner of **both** edges, "SECOND" is interior.
+    ! CASE 21: Intersection at corner of **both** edges, "SECOND" is interior.
     nodes1(:, 1) = [0.5_dp, 0.25_dp]
     nodes1(:, 2) = [1.0_dp, 0.0_dp]
     edges_first(1)%nodes = nodes1
@@ -566,7 +587,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 21: Intersection at corner of **both** edges, one corner is
+    ! CASE 22: Intersection at corner of **both** edges, one corner is
     !          completely contained in the area of the other corner.
     nodes1(:, 1) = [0.5_dp, 1.0_dp]
     nodes1(:, 2) = 0

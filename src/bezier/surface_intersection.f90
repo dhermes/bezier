@@ -28,7 +28,7 @@ module surface_intersection
   private &
        LocateCandidate, &
        MAX_LOCATE_SUBDIVISIONS, LOCATE_EPS, MAX_EDGES, &
-       SEGMENT_ENDS_WORKSPACE, SEGMENTS_WORKSPACE, &
+       ALMOST_TANGENT, SEGMENT_ENDS_WORKSPACE, SEGMENTS_WORKSPACE, &
        newton_refine_solve, split_candidate, allocate_candidates, &
        update_candidates, ignored_edge_corner, ignored_double_corner, &
        ignored_corner, classify_tangent_intersection, &
@@ -99,6 +99,10 @@ module surface_intersection
   integer(c_int), parameter :: SurfaceContained_NEITHER = 0
   integer(c_int), parameter :: SurfaceContained_FIRST = 1
   integer(c_int), parameter :: SurfaceContained_SECOND = 2
+  ! Threshold where a vector cross-product (u x v) is considered
+  ! to be "zero". This is a "hack", since it doesn't take ||u||
+  ! or ||v|| into account.
+  real(c_double), parameter :: ALMOST_TANGENT = 0.5_dp**50
   ! Long-lived workspaces for ``surfaces_intersect_abi()``. If multiple
   ! threads are used, each of these **should** be thread-local.
   integer(c_int), allocatable :: SEGMENT_ENDS_WORKSPACE(:)
@@ -686,11 +690,14 @@ contains
     ! is more "inside" / "to the left".
     call cross_product( &
          tangent_s, tangent_t, cross_prod)
-    if (cross_prod < 0.0_dp) then
+    if (cross_prod < -ALMOST_TANGENT) then
        enum_ = IntersectionClassification_FIRST
-    else if (cross_prod > 0.0_dp) then
+    else if (cross_prod > ALMOST_TANGENT) then
        enum_ = IntersectionClassification_SECOND
     else
+       ! NOTE: A more robust approach would take ||tangent1|| and ||tangent2||
+       !       into account when comparing (tangent1 x tangent2) to the
+       !       "almost zero" threshold.
        call classify_tangent_intersection( &
             edges_first, edges_second, intersection_, &
             tangent_s, tangent_t, enum_, status)

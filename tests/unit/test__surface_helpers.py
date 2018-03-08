@@ -950,6 +950,26 @@ class Test_classify_intersection(unittest.TestCase):
             intersection, edge_nodes1, edge_nodes2)
         self.assertIs(result, get_enum('TANGENT_FIRST'))
 
+    def test_tangent_inexact(self):
+        # The intersection occurs at a point of tangency, but the curves
+        # aren't **exactly** tangent at that point. Instead, the cross
+        # product of the two curves is ``-0.5**53``.
+        first = np.asfortranarray([
+            [0.0, 0.5, 1.0],
+            [0.0, -1.0 / 5.0, 0.0],
+        ])
+        edge_nodes1 = (first, None, None)
+        second = np.asfortranarray([
+            [0.5, 2.0625, 3.625],
+            [-0.125, 0.1875, 0.5],
+        ])
+        edge_nodes2 = (second, None ,None)
+        t_val = 2.0 / 25.0 - 0.5**56
+        intersection = make_intersect(0, 0.75, 0, t_val)
+        result = self._call_function_under_test(
+            intersection, edge_nodes1, edge_nodes2)
+        self.assertIs(result, get_enum('TANGENT_FIRST'))
+
     def test_ignored_corner(self):
         import bezier
 

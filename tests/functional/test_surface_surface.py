@@ -82,9 +82,7 @@ FAILED_CASES_COINCIDENT = {
     },
 }
 INCORRECT_COUNT = {
-    GEOMETRIC: (
-        48,
-    ),
+    GEOMETRIC: (),
     ALGEBRAIC: (),
 }
 CONFIG = utils.Config()
