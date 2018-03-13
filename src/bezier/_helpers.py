@@ -23,6 +23,8 @@ leading underscore will be surfaced as the actual interface (e.g.
 """
 
 
+import bisect
+
 import numpy as np
 import six
 
@@ -268,6 +270,25 @@ def cross_product_compare(start, candidate1, candidate2):
     return cross_product(delta1, delta2)
 
 
+def in_sorted(values, value):
+    """Checks if a value is in a sorted list.
+
+    Uses the :mod:`bisect` builtin to find the insertion point for
+    ``value``.
+
+    Args:
+        values (List[int]): Integers sorted in ascending order.
+        value (int): Value to check if contained in ``values``.
+
+    Returns:
+        bool: Indicating if the value is contained.
+    """
+    index = bisect.bisect_left(values, value)
+    if index >= len(values):
+        return False
+    return values[index] == value
+
+
 def _simple_convex_hull(points):
     r"""Compute the convex hull for a set of points.
 
@@ -298,6 +319,7 @@ def _simple_convex_hull(points):
         numpy.ndarray: The ``2 x N`` array (``float64``) of ordered points in
         the polygonal convex hull.
     """
+    # pylint: disable=too-many-branches
     if points.size == 0:
         return points
 
@@ -307,41 +329,59 @@ def _simple_convex_hull(points):
     if num_points < 2:
         return unique_points
 
-    # Then sort the data in "lexical" order.
+    # Then sort the data in left-to-right order (and break ties by y-value).
     points = np.empty((2, num_points), order='F')
     for index, xy_val in enumerate(
             sorted(tuple(column) for column in unique_points.T)):
         points[:, index] = xy_val
 
+    # After sorting, if there are only 2 points, return.
+    if num_points < 3:
+        return points
+
     # Build lower hull
-    lower = []
-    for index in six.moves.xrange(num_points):
-        point3 = points[:, index]
-        while (len(lower) >= 2 and
-               cross_product_compare(lower[-2], lower[-1], point3) <= 0):
-            lower.pop()
-        lower.append(point3)
+    lower = [0, 1]
+    for index in six.moves.xrange(2, num_points):
+        point2 = points[:, index]
+        while len(lower) >= 2:
+            point0 = points[:, lower[-2]]
+            point1 = points[:, lower[-1]]
+            if cross_product_compare(point0, point1, point2) > 0:
+                break
+            else:
+                lower.pop()
+
+        lower.append(index)
 
     # Build upper hull
-    upper = []
-    for index in six.moves.xrange(num_points - 1, -1, -1):
-        point3 = points[:, index]
-        while (len(upper) >= 2 and
-               cross_product_compare(upper[-2], upper[-1], point3) <= 0):
-            upper.pop()
-        upper.append(point3)
+    upper = [num_points - 1]
+    for index in six.moves.xrange(num_points - 2, -1, -1):
+        # Don't consider indices from the lower hull (other than the ends).
+        if index > 0 and in_sorted(lower, index):
+            continue
+        point2 = points[:, index]
+        while len(upper) >= 2:
+            point0 = points[:, upper[-2]]
+            point1 = points[:, upper[-1]]
+            if cross_product_compare(point0, point1, point2) > 0:
+                break
+            else:
+                upper.pop()
+
+        upper.append(index)
 
     # **Both** corners are double counted.
     size_polygon = len(lower) + len(upper) - 2
     polygon = np.empty((2, size_polygon), order='F')
 
-    for index, point in enumerate(lower[:-1]):
-        polygon[:, index] = point
+    for index, column in enumerate(lower[:-1]):
+        polygon[:, index] = points[:, column]
     index_start = len(lower) - 1
-    for index, point in enumerate(upper[:-1]):
-        polygon[:, index + index_start] = point
+    for index, column in enumerate(upper[:-1]):
+        polygon[:, index + index_start] = points[:, column]
 
     return polygon
+    # pylint: enable=too-many-branches
 
 
 def is_separating(direction, polygon1, polygon2):

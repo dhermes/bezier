@@ -15,7 +15,7 @@ module test_helpers
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use helpers, only: &
        WIGGLE, cross_product, bbox, wiggle_interval, contains_nd, &
-       vector_close, in_interval, convex_hull, polygon_collide, &
+       vector_close, in_interval, in_sorted, convex_hull, polygon_collide, &
        solve2x2
   use types, only: dp
   use unit_test_helpers, only: MACHINE_EPS, print_status
@@ -23,7 +23,7 @@ module test_helpers
   private &
        test_cross_product, test_bbox, test_wiggle_interval, &
        test_contains_nd, test_vector_close, test_in_interval, &
-       test_convex_hull, test_polygon_collide, test_solve2x2
+       test_in_sorted, test_convex_hull, test_polygon_collide, test_solve2x2
   public helpers_all_tests
 
 contains
@@ -37,6 +37,7 @@ contains
     call test_contains_nd(success)
     call test_vector_close(success)
     call test_in_interval(success)
+    call test_in_sorted(success)
     call test_convex_hull(success)
     call test_polygon_collide(success)
     call test_solve2x2(success)
@@ -356,6 +357,52 @@ contains
 
   end subroutine test_in_interval
 
+  subroutine test_in_sorted(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer(c_int) :: values(5)
+    integer :: case_id
+    character(9) :: name
+
+    case_id = 1
+    name = "in_sorted"
+
+    ! CASE 1: Inside the interval.
+    values = [0, 5, 8, 12, 17]
+    case_success = ( &
+         .NOT. in_sorted(5, values, 4) .AND. &
+         in_sorted(5, values, 5) .AND. &
+         .NOT. in_sorted(5, values, 6) .AND. &
+         .NOT. in_sorted(5, values, 7) .AND. &
+         in_sorted(5, values, 8) .AND. &
+         .NOT. in_sorted(5, values, 9) .AND. &
+         .NOT. in_sorted(5, values, 10) .AND. &
+         .NOT. in_sorted(5, values, 11) .AND. &
+         in_sorted(5, values, 12) .AND. &
+         .NOT. in_sorted(5, values, 13))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Near the left endpoint.
+    values(:3) = [9, 11, 220]
+    case_success = ( &
+         .NOT. in_sorted(3, values(:3), 7) .AND. &
+         .NOT. in_sorted(3, values(:3), 8) .AND. &
+         in_sorted(3, values(:3), 9) .AND. &
+         .NOT. in_sorted(3, values(:3), 10))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Near the right endpoint.
+    values(:3) = [16, 18, 20]
+    case_success = ( &
+         .NOT. in_sorted(3, values(:3), 19) .AND. &
+         in_sorted(3, values(:3), 20) .AND. &
+         .NOT. in_sorted(3, values(:3), 21) .AND. &
+         .NOT. in_sorted(3, values(:3), 22))
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_in_sorted
+
   subroutine test_convex_hull(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
@@ -426,6 +473,23 @@ contains
          polygon_size == 1 .AND. &
          all(polygon(1, :1) == [2.0_dp]) .AND. &
          all(polygon(2, :1) == [3.0_dp]))
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 7: Almost linear. In a previous implementation, this caused
+    !         an illegal memory access because the middle point of the
+    !         "line" was placed in both the upper and lower hull (which used
+    !         4 points for the hull when only 3 were allocated).
+    points1(1, 1) = -2320058418903481.0_dp * 0.5_dp**54
+    points1(1, 2) = -6216142699324449.0_dp * 0.5_dp**56
+    points1(1, 3) = -6304103446069947.0_dp * 0.5_dp**57
+    points1(2, 1) = -1911920978562235.0_dp * 0.5_dp**55
+    points1(2, 2) = -461442255594807.0_dp * 0.5_dp**57
+    points1(2, 3) = 6724799403059327.0_dp * 0.5_dp**57
+
+    call convex_hull(3, points1(:, :3), polygon_size, polygon(:, :3))
+    case_success = ( &
+         polygon_size == 3 .AND. &
+         all(polygon(:, :3) == points1(:, :3)))
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_convex_hull

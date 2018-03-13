@@ -434,6 +434,42 @@ class Test_cross_product_compare(unittest.TestCase):
         self.assertEqual(result, 1.0)
 
 
+class Test_in_sorted(utils.NumPyTestCase):
+
+    @staticmethod
+    def _call_function_under_test(values, value):
+        from bezier import _helpers
+
+        return _helpers.in_sorted(values, value)
+
+    def test_inside(self):
+        values = [0, 5, 8, 12, 17]
+        self.assertFalse(self._call_function_under_test(values, 4))
+        self.assertTrue(self._call_function_under_test(values, 5))
+        self.assertFalse(self._call_function_under_test(values, 6))
+        self.assertFalse(self._call_function_under_test(values, 7))
+        self.assertTrue(self._call_function_under_test(values, 8))
+        self.assertFalse(self._call_function_under_test(values, 9))
+        self.assertFalse(self._call_function_under_test(values, 10))
+        self.assertFalse(self._call_function_under_test(values, 11))
+        self.assertTrue(self._call_function_under_test(values, 12))
+        self.assertFalse(self._call_function_under_test(values, 13))
+
+    def test_left_endpoint(self):
+        values = [9, 11, 220]
+        self.assertFalse(self._call_function_under_test(values, 7))
+        self.assertFalse(self._call_function_under_test(values, 8))
+        self.assertTrue(self._call_function_under_test(values, 9))
+        self.assertFalse(self._call_function_under_test(values, 10))
+
+    def test_right_endpoint(self):
+        values = [16, 18, 20]
+        self.assertFalse(self._call_function_under_test(values, 19))
+        self.assertTrue(self._call_function_under_test(values, 20))
+        self.assertFalse(self._call_function_under_test(values, 21))
+        self.assertFalse(self._call_function_under_test(values, 22))
+
+
 class Test__simple_convex_hull(utils.NumPyTestCase):
 
     @staticmethod
@@ -501,6 +537,38 @@ class Test__simple_convex_hull(utils.NumPyTestCase):
             [0.0, 0.0, 9.0, 9.0],
         ])
         self.assertEqual(expected, polygon)
+
+    def test_almost_linear(self):
+        from bezier import _helpers
+
+        # In a previous implementation, this case broke the algorithm
+        # because the middle point of the line was placed in both the
+        # upper and lower hull (which used 4 points for the hull when
+        # only 3 were allocated).
+        points = np.asfortranarray([
+            [
+                -0.12878911375710406,
+                -0.08626630936431968,
+                -0.043743504971535306,
+            ], [
+                -0.05306646729159134,
+                -0.0032018988543520074,
+                0.04666266958288733,
+            ],
+        ])
+        polygon = self._call_function_under_test(points)
+        expected = points
+        self.assertEqual(expected, polygon)
+
+        # Also verify why the case failed previously.
+        point0 = points[:, 0]
+        point1 = points[:, 1]
+        point2 = points[:, 2]
+
+        compare_lower = _helpers.cross_product_compare(point0, point1, point2)
+        self.assertGreater(compare_lower, 0.0)
+        compare_upper = _helpers.cross_product_compare(point2, point1, point0)
+        self.assertGreater(compare_upper, 0.0)
 
 
 @utils.needs_speedup

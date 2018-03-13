@@ -18,7 +18,7 @@ module helpers
   private min_index, sort_in_place, is_separating
   public &
        WIGGLE, VECTOR_CLOSE_EPS, cross_product, bbox, wiggle_interval, &
-       contains_nd, vector_close, in_interval, convex_hull, &
+       contains_nd, vector_close, in_interval, in_sorted, convex_hull, &
        polygon_collide, solve2x2
 
   real(c_double), parameter :: WIGGLE = 0.5_dp**45
@@ -208,6 +208,38 @@ contains
 
   end subroutine sort_in_place
 
+  logical(c_bool) pure function in_sorted( &
+       num_values, values, value_) result(contained)
+
+    ! NOTE: This assumes ``num_values >= 1``.
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    integer(c_int), intent(in) :: num_values
+    integer(c_int), intent(in) :: values(num_values)
+    integer(c_int), intent(in) :: value_
+    ! Variables outside of signature.
+    integer(c_int) :: left, right, midpoint
+
+    left = 1
+    right = num_values
+
+    do while (left < right)
+       midpoint = (left + right) / 2
+       if (value_ == values(midpoint)) then
+          contained = .TRUE.
+          return
+       else if (value_ < values(midpoint)) then
+          right = midpoint - 1
+       else
+          left = midpoint + 1
+       end if
+    end do
+
+    contained = values(left) == value_
+
+  end function in_sorted
+
   subroutine convex_hull( &
        num_points, points, polygon_size, polygon) &
        bind(c, name='simple_convex_hull')
@@ -229,7 +261,7 @@ contains
     integer(c_int) :: num_uniques
     real(c_double) :: uniques(2, num_points)
     integer(c_int) :: num_lower, num_upper
-    real(c_double) :: lower(2, num_points), upper(2, num_points)
+    integer(c_int) :: lower(num_points), upper(num_points)
     integer(c_int) :: i
     real(c_double) :: result_
 
@@ -240,20 +272,21 @@ contains
     if (num_uniques == 0) then
        polygon_size = 0
        return
-    else if (num_uniques == 1) then
-       polygon_size = 1
-       polygon(:, 1) = uniques(:, 1)
+    else if (num_uniques < 3) then
+       polygon_size = num_uniques
+       polygon(:, :num_uniques) = uniques(:, :num_uniques)
        return
     end if
 
     ! First create a "lower" convex hull
-    num_lower = 0
-    do i = 1, num_uniques
+    num_lower = 2  ! We know ``num_uniques >= 3``.
+    lower(:2) = [1, 2]
+    do i = 3, num_uniques
        point3 = uniques(:, i)
        result_ = -1.0_dp  ! Dummy value that is ``<= 0.0``.
        do while (num_lower > 1 .AND. result_ <= 0.0_dp)
-          point1 = lower(:, num_lower - 1)
-          point2 = lower(:, num_lower)
+          point1 = uniques(:, lower(num_lower - 1))
+          point2 = uniques(:, lower(num_lower))
           ! If ``point3`` (the one we are considering) is more "inside"
           ! of ``point1`` than ``point2`` is, then we drop ``point2``.
           call cross_product(point2 - point1, point3 - point1, result_)
@@ -262,17 +295,22 @@ contains
           end if
        end do
        num_lower = num_lower + 1
-       lower(:, num_lower) = point3
+       lower(num_lower) = i
     end do
 
     ! Then create an "upper" convex hull
-    num_upper = 0
-    do i = num_uniques, 1, -1
+    num_upper = 1
+    upper(1) = num_uniques
+    upper_loop: do i = num_uniques - 1, 1, -1
+       ! Don't consider indices from the lower hull (other than the ends).
+       if (i > 1 .AND. in_sorted(num_lower, lower(:num_lower), i)) then
+          cycle upper_loop
+       end if
        point3 = uniques(:, i)
        result_ = -1.0_dp  ! Dummy value that is ``<= 0.0``.
        do while (num_upper > 1 .AND. result_ <= 0.0_dp)
-          point1 = upper(:, num_upper - 1)
-          point2 = upper(:, num_upper)
+          point1 = uniques(:, upper(num_upper - 1))
+          point2 = uniques(:, upper(num_upper))
           ! If ``point3`` (the one we are considering) is more "inside"
           ! of ``point1`` than ``point2`` is, then we drop ``point2``.
           call cross_product(point2 - point1, point3 - point1, result_)
@@ -281,19 +319,19 @@ contains
           end if
        end do
        num_upper = num_upper + 1
-       upper(:, num_upper) = point3
-    end do
+       upper(num_upper) = i
+    end do upper_loop
 
     ! The endpoints are **both** double counted, so we skip the "end"
     ! of each hull (lower and upper).
     polygon_size = 0
     do i = 1, num_lower - 1
        polygon_size = polygon_size + 1
-       polygon(:, polygon_size) = lower(:, i)
+       polygon(:, polygon_size) = uniques(:, lower(i))
     end do
     do i = 1, num_upper - 1
        polygon_size = polygon_size + 1
-       polygon(:, polygon_size) = upper(:, i)
+       polygon(:, polygon_size) = uniques(:, upper(i))
     end do
 
   end subroutine convex_hull
