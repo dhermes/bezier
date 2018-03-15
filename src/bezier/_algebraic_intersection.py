@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 r"""Helpers for intersecting B |eacute| zier curves via algebraic methods.
 
 Primarily helps implicitize B |eacute| zier curves.
@@ -49,12 +48,10 @@ try:
     import scipy.linalg.lapack as _scipy_lapack
 except ImportError:  # pragma: NO COVER
     _scipy_lapack = None
-
 from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _helpers
 from bezier import _intersection_helpers
-
 
 # NOTE: These are hardcoded from:
 #         0.5 * (np.cos(np.pi * np.arange(1, 14, 2.0) / 14) + 1.0)
@@ -62,54 +59,61 @@ from bezier import _intersection_helpers
 #         0.5 * (np.cos(np.pi * np.arange(1, 20, 2.0) / 20) + 1.0)
 #       See 73f909805e971221cb7976cf69603b82f31a4a32 and
 #       80907b1be03f5895f7132e0e920c5e3cdebba9ac.
-_CHEB7 = np.asfortranarray([
-    float.fromhex('0x1.f994e02ac74b4p-1'),
-    float.fromhex('0x1.c8261ba82ef26p-1'),
-    float.fromhex('0x1.6f130135c6af0p-1'),
-    float.fromhex('0x1.0000000000000p-1'),
-    float.fromhex('0x1.21d9fd9472a20p-2'),
-    float.fromhex('0x1.becf22be886e0p-4'),
-    float.fromhex('0x1.9ac7f54e2d2c0p-7'),
-])
-_CHEB9 = np.asfortranarray([
-    float.fromhex('0x1.fc1c5c6408e0cp-1'),
-    float.fromhex('0x1.ddb3d742c2656p-1'),
-    float.fromhex('0x1.a48dba91e0b0ep-1'),
-    float.fromhex('0x1.578ea1d2282fep-1'),
-    float.fromhex('0x1.0000000000000p-1'),
-    float.fromhex('0x1.50e2bc5bafa08p-2'),
-    float.fromhex('0x1.6dc915b87d3c6p-3'),
-    float.fromhex('0x1.126145e9ecd5cp-4'),
-    float.fromhex('0x1.f1d1cdfb8fa40p-8'),
-])
-_CHEB10 = np.asfortranarray([
-    float.fromhex('0x1.fcd924a17f22ep-1'),
-    float.fromhex('0x1.e41900e9e9636p-1'),
-    float.fromhex('0x1.b504f333f9de6p-1'),
-    float.fromhex('0x1.7438b8ad13780p-1'),
-    float.fromhex('0x1.280c16cf50a6fp-1'),
-    float.fromhex('0x1.afe7d2615eb25p-2'),
-    float.fromhex('0x1.178e8ea5d9100p-2'),
-    float.fromhex('0x1.2bec333018868p-3'),
-    float.fromhex('0x1.be6ff16169ca0p-5'),
-    float.fromhex('0x1.936daf406e940p-8'),
-])
+_CHEB7 = np.asfortranarray(
+    [
+        float.fromhex('0x1.f994e02ac74b4p-1'),
+        float.fromhex('0x1.c8261ba82ef26p-1'),
+        float.fromhex('0x1.6f130135c6af0p-1'),
+        float.fromhex('0x1.0000000000000p-1'),
+        float.fromhex('0x1.21d9fd9472a20p-2'),
+        float.fromhex('0x1.becf22be886e0p-4'),
+        float.fromhex('0x1.9ac7f54e2d2c0p-7'),
+    ]
+)
+_CHEB9 = np.asfortranarray(
+    [
+        float.fromhex('0x1.fc1c5c6408e0cp-1'),
+        float.fromhex('0x1.ddb3d742c2656p-1'),
+        float.fromhex('0x1.a48dba91e0b0ep-1'),
+        float.fromhex('0x1.578ea1d2282fep-1'),
+        float.fromhex('0x1.0000000000000p-1'),
+        float.fromhex('0x1.50e2bc5bafa08p-2'),
+        float.fromhex('0x1.6dc915b87d3c6p-3'),
+        float.fromhex('0x1.126145e9ecd5cp-4'),
+        float.fromhex('0x1.f1d1cdfb8fa40p-8'),
+    ]
+)
+_CHEB10 = np.asfortranarray(
+    [
+        float.fromhex('0x1.fcd924a17f22ep-1'),
+        float.fromhex('0x1.e41900e9e9636p-1'),
+        float.fromhex('0x1.b504f333f9de6p-1'),
+        float.fromhex('0x1.7438b8ad13780p-1'),
+        float.fromhex('0x1.280c16cf50a6fp-1'),
+        float.fromhex('0x1.afe7d2615eb25p-2'),
+        float.fromhex('0x1.178e8ea5d9100p-2'),
+        float.fromhex('0x1.2bec333018868p-3'),
+        float.fromhex('0x1.be6ff16169ca0p-5'),
+        float.fromhex('0x1.936daf406e940p-8'),
+    ]
+)
 # Allow a buffer of sqrt(sqrt(machine precision)) for polynomial roots.
-_IMAGINARY_WIGGLE = 0.5**13
-_UNIT_INTERVAL_WIGGLE_START = -0.5**13
-_UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
-_SIGMA_THRESHOLD = 0.5**20
-_SINGULAR_EPS = 0.5**52
+_IMAGINARY_WIGGLE = 0.5 ** 13
+_UNIT_INTERVAL_WIGGLE_START = - 0.5 ** 13
+_UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5 ** 13
+_SIGMA_THRESHOLD = 0.5 ** 20
+_SINGULAR_EPS = 0.5 ** 52
 # Detect almost zero polynomials.
-_L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
-_ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
-_COEFFICIENT_THRESHOLD = 0.5**26  # sqrt(machine precision)
-_NON_SIMPLE_THRESHOLD = 0.5**48  # 16 (machine precision)
+_L2_THRESHOLD = 0.5 ** 40  # 4096 (machine precision)
+_ZERO_THRESHOLD = 0.5 ** 38  # 16384 (machine precision)
+_COEFFICIENT_THRESHOLD = 0.5 ** 26  # sqrt(machine precision)
+_NON_SIMPLE_THRESHOLD = 0.5 ** 48  # 16 (machine precision)
 _COINCIDENT_ERR = 'Coincident curves not currently supported'
 _NON_SIMPLE_ERR = 'Polynomial has non-simple roots'
 _POWER_BASIS_ERR = (
     'Currently only supporting degree pairs '
-    '1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3.')
+    '1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3.'
+)
 _LINEARIZATION = _geometric_intersection.Linearization
 _DISJOINT = _geometric_intersection.BoxIntersectionType.DISJOINT
 
@@ -169,14 +173,19 @@ def evaluate(nodes, x_val, y_val):
     _, num_nodes = nodes.shape
     if num_nodes == 1:
         raise ValueError('A point cannot be implicitized')
+
     elif num_nodes == 2:
         # x(s) - x = (x0 - x) (1 - s) + (x1 - x) s
         # y(s) - y = (y0 - y) (1 - s) + (y1 - y) s
         # Modified Sylvester: [x0 - x, x1 - x]
         #                     [y0 - y, y1 - y]
         return (
-            (nodes[0, 0] - x_val) * (nodes[1, 1] - y_val) -
-            (nodes[0, 1] - x_val) * (nodes[1, 0] - y_val))
+            (nodes[0, 0] - x_val) *
+            (nodes[1, 1] - y_val) -
+            (nodes[0, 1] - x_val) *
+            (nodes[1, 0] - y_val)
+        )
+
     elif num_nodes == 3:
         # x(s) - x = (x0 - x) (1 - s)^2 + 2 (x1 - x) s(1 - s) + (x2 - x) s^2
         # y(s) - y = (y0 - y) (1 - s)^2 + 2 (y1 - y) s(1 - s) + (y2 - y) s^2
@@ -199,8 +208,10 @@ def evaluate(nodes, x_val, y_val):
         #     [D, E, F]
         sub_det_d = val_b * sub1 - val_c * sub2
         return val_a * sub_det_a + val_d * sub_det_d
+
     elif num_nodes == 4:
         return _evaluate3(nodes, x_val, y_val)
+
     else:
         raise _helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3))
 
@@ -227,7 +238,8 @@ def eval_intersection_polynomial(nodes1, nodes2, t):
         float: The computed value of :math:`f_1(x_2(t), y_2(t))`.
     """
     (x_val,), (y_val,) = _curve_helpers.evaluate_multi(
-        nodes2, np.asfortranarray([t]))
+        nodes2, np.asfortranarray([t])
+    )
     return evaluate(nodes1, x_val, y_val)
 
 
@@ -281,11 +293,13 @@ def _to_power_basis12(nodes1, nodes2):
     # [c0] = [ 1  0  0][n0]
     # [c1] = [-3  4 -1][n1]
     # [c2] = [ 2 -4  2][n2]
-    return np.asfortranarray([
-        val0,
-        -3.0 * val0 + 4.0 * val1 - val2,
-        2.0 * val0 - 4.0 * val1 + 2.0 * val2,
-    ])
+    return np.asfortranarray(
+        [
+            val0,
+            -3.0 * val0 + 4.0 * val1 - val2,
+            2.0 * val0 - 4.0 * val1 + 2.0 * val2,
+        ]
+    )
 
 
 def _to_power_basis13(nodes1, nodes2):
@@ -319,12 +333,14 @@ def _to_power_basis13(nodes1, nodes2):
     # [c3] =       [-16  32 -32  16][n3]
     # Since polynomial coefficients, we don't need to divide by 3
     # to get the same polynomial. Avoid the division to avoid round-off.
-    return np.asfortranarray([
-        3.0 * val0,
-        -19.0 * val0 + 24.0 * val1 - 8.0 * val2 + 3.0 * val3,
-        32.0 * val0 - 56.0 * val1 + 40.0 * val2 - 16.0 * val3,
-        -16.0 * val0 + 32.0 * val1 - 32.0 * val2 + 16.0 * val3,
-    ])
+    return np.asfortranarray(
+        [
+            3.0 * val0,
+            -19.0 * val0 + 24.0 * val1 - 8.0 * val2 + 3.0 * val3,
+            32.0 * val0 - 56.0 * val1 + 40.0 * val2 - 16.0 * val3,
+            -16.0 * val0 + 32.0 * val1 - 32.0 * val2 + 16.0 * val3,
+        ]
+    )
 
 
 def _to_power_basis_degree4(nodes1, nodes2):
@@ -360,14 +376,53 @@ def _to_power_basis_degree4(nodes1, nodes2):
     # [c4] =       [ 32 -128  192 -128  32][n4]
     # Since polynomial coefficients, we don't need to divide by 3
     # to get the same polynomial. Avoid the division to avoid round-off.
-    return np.asfortranarray([
-        3.0 * val0,
-        -25.0 * val0 + 48.0 * val1 - 36.0 * val2 + 16.0 * val3 - 3.0 * val4,
-        70.0 * val0 - 208.0 * val1 + 228.0 * val2 - 112.0 * val3 + 22.0 * val4,
-        (-80.0 * val0 + 288.0 * val1 - 384.0 * val2 +
-         224.0 * val3 - 48.0 * val4),
-        32.0 * val0 - 128.0 * val1 + 192.0 * val2 - 128.0 * val3 + 32.0 * val4,
-    ])
+    return np.asfortranarray(
+        [
+            3.0 * val0,
+            -25.0 *
+            val0 +
+            48.0 *
+            val1 -
+            36.0 *
+            val2 +
+            16.0 *
+            val3 -
+            3.0 *
+            val4,
+            70.0 *
+            val0 -
+            208.0 *
+            val1 +
+            228.0 *
+            val2 -
+            112.0 *
+            val3 +
+            22.0 *
+            val4,
+            (
+                -80.0 *
+                val0 +
+                288.0 *
+                val1 -
+                384.0 *
+                val2 +
+                224.0 *
+                val3 -
+                48.0 *
+                val4
+            ),
+            32.0 *
+            val0 -
+            128.0 *
+            val1 +
+            192.0 *
+            val2 -
+            128.0 *
+            val3 +
+            32.0 *
+            val4,
+        ]
+    )
 
 
 def _to_power_basis23(nodes1, nodes2):
@@ -392,8 +447,9 @@ def _to_power_basis23(nodes1, nodes2):
     Returns:
         numpy.ndarray: ``7``-array of coefficients.
     """
-    evaluated = [eval_intersection_polynomial(nodes1, nodes2, t_val)
-                 for t_val in _CHEB7]
+    evaluated = [
+        eval_intersection_polynomial(nodes1, nodes2, t_val) for t_val in _CHEB7
+    ]
     return polynomial.polyfit(_CHEB7, evaluated, 6)
 
 
@@ -419,8 +475,9 @@ def _to_power_basis_degree8(nodes1, nodes2):
     Returns:
         numpy.ndarray: ``9``-array of coefficients.
     """
-    evaluated = [eval_intersection_polynomial(nodes1, nodes2, t_val)
-                 for t_val in _CHEB9]
+    evaluated = [
+        eval_intersection_polynomial(nodes1, nodes2, t_val) for t_val in _CHEB9
+    ]
     return polynomial.polyfit(_CHEB9, evaluated, 8)
 
 
@@ -446,8 +503,10 @@ def _to_power_basis33(nodes1, nodes2):
     Returns:
         numpy.ndarray: ``10``-array of coefficients.
     """
-    evaluated = [eval_intersection_polynomial(nodes1, nodes2, t_val)
-                 for t_val in _CHEB10]
+    evaluated = [
+        eval_intersection_polynomial(nodes1, nodes2, t_val)
+        for t_val in _CHEB10
+    ]
     return polynomial.polyfit(_CHEB10, evaluated, 9)
 
 
@@ -476,26 +535,37 @@ def to_power_basis(nodes1, nodes2):
     if num_nodes1 == 2:
         if num_nodes2 == 2:
             return _to_power_basis11(nodes1, nodes2)
+
         elif num_nodes2 == 3:
             return _to_power_basis12(nodes1, nodes2)
+
         elif num_nodes2 == 4:
             return _to_power_basis13(nodes1, nodes2)
+
         elif num_nodes2 == 5:
             return _to_power_basis_degree4(nodes1, nodes2)
+
     elif num_nodes1 == 3:
         if num_nodes2 == 3:
             return _to_power_basis_degree4(nodes1, nodes2)
+
         elif num_nodes2 == 4:
             return _to_power_basis23(nodes1, nodes2)
+
         elif num_nodes2 == 5:
             return _to_power_basis_degree8(nodes1, nodes2)
+
     elif num_nodes1 == 4:
         if num_nodes2 == 4:
             return _to_power_basis33(nodes1, nodes2)
 
     raise NotImplementedError(
-        'Degree 1', num_nodes1 - 1, 'Degree 2', num_nodes2 - 1,
-        _POWER_BASIS_ERR)
+        'Degree 1',
+        num_nodes1 - 1,
+        'Degree 2',
+        num_nodes2 - 1,
+        _POWER_BASIS_ERR,
+    )
     # pylint: enable=too-many-return-statements
 
 
@@ -526,7 +596,6 @@ def polynomial_norm(coeffs):
         for j in six.moves.xrange(i + 1, num_coeffs):
             coeff_j = coeffs[j]
             result += 2.0 * coeff_i * coeff_j / (i + j + 1.0)
-
     return np.sqrt(result)
 
 
@@ -549,6 +618,7 @@ def normalize_polynomial(coeffs, threshold=_L2_THRESHOLD):
     l2_norm = polynomial_norm(coeffs)
     if l2_norm < threshold:
         return np.zeros(coeffs.shape, order='F')
+
     else:
         coeffs /= l2_norm
         return coeffs
@@ -600,7 +670,6 @@ def _get_sigma_coeffs(coeffs):
     """
     num_nodes, = coeffs.shape
     degree = num_nodes - 1
-
     effective_degree = None
     for index in six.moves.range(degree, -1, -1):
         if coeffs[index] != 0.0:
@@ -630,7 +699,6 @@ def _get_sigma_coeffs(coeffs):
         #     = (p j) / (q (d - j + 1))
         binom_numerator *= exponent
         binom_denominator *= degree - exponent + 1
-
     return sigma_coeffs, degree, effective_degree
 
 
@@ -672,8 +740,8 @@ def bernstein_companion(coeffs):
         return np.empty((0, 0), order='F'), degree, 0
 
     companion = np.zeros((effective_degree, effective_degree), order='F')
-    companion.flat[effective_degree::effective_degree + 1] = 1.0
-    companion[0, :] = -sigma_coeffs[::-1]
+    companion.flat[effective_degree:: effective_degree + 1] = 1.0
+    companion[0, :] = - sigma_coeffs[::-1]
     return companion, degree, effective_degree
 
 
@@ -843,11 +911,9 @@ def bezier_roots(coeffs):
         s_vals = sigma_roots / (1.0 + sigma_roots)
     else:
         s_vals = np.empty((0,), order='F')
-
     if effective_degree != degree:
         delta = degree - effective_degree
         s_vals = np.hstack([s_vals, [1] * delta])
-
     return s_vals
 
 
@@ -950,7 +1016,6 @@ def lu_companion(top_row, value):
     """
     degree, = top_row.shape
     lu_mat = np.zeros((degree, degree), order='F')
-
     if degree == 1:
         lu_mat[0, 0] = top_row[0] - value
         return lu_mat, abs(lu_mat[0, 0])
@@ -960,7 +1025,6 @@ def lu_companion(top_row, value):
     one_norm = 1.0 + abs(horner_curr)
     lu_mat[0, 0] = 1.0
     lu_mat[degree - 1, 0] = horner_curr
-
     # Columns 1-(end - 1): Three values in LU and C - t I.
     abs_one_plus = 1.0 + abs(value)
     last_row = degree - 1
@@ -971,14 +1035,12 @@ def lu_companion(top_row, value):
         lu_mat[col - 1, col] = -value
         lu_mat[col, col] = 1.0
         lu_mat[last_row, col] = horner_curr
-
     # Last Column: Special case since it doesn't have ``-1`` on the diagonal.
     curr_coeff = top_row[last_row]
     horner_curr = value * horner_curr + curr_coeff
     one_norm = max(one_norm, abs(value) + abs(curr_coeff))
     lu_mat[last_row - 1, last_row] = -value
     lu_mat[last_row, last_row] = horner_curr
-
     return lu_mat, one_norm
 
 
@@ -1007,7 +1069,8 @@ def _reciprocal_condition_number(lu_mat, one_norm):
     # pylint: enable=no-member
     if info != 0:
         raise RuntimeError(
-            'The reciprocal 1-norm condition number could not be computed.')
+            'The reciprocal 1-norm condition number could not be computed.'
+        )
 
     return rcond
 
@@ -1079,7 +1142,7 @@ def bezier_value_check(coeffs, s_val, rhs_val=0.0):
         return shifted_coeffs[0] == 0.0
 
     sigma_val = s_val / (1.0 - s_val)
-    lu_mat, one_norm = lu_companion(-sigma_coeffs[::-1], sigma_val)
+    lu_mat, one_norm = lu_companion(- sigma_coeffs[::-1], sigma_val)
     rcond = _reciprocal_condition_number(lu_mat, one_norm)
     # "Is a root?" IFF Singular IF ``1/kappa_1 < m epsilon``
     return rcond < effective_degree * _SINGULAR_EPS
@@ -1099,7 +1162,8 @@ def roots_in_unit_interval(coeffs):
     # Only keep roots inside or very near to the unit interval.
     all_roots = all_roots[
         (_UNIT_INTERVAL_WIGGLE_START < all_roots.real) &
-        (all_roots.real < _UNIT_INTERVAL_WIGGLE_END)]
+        (all_roots.real < _UNIT_INTERVAL_WIGGLE_END)
+    ]
     # Only keep roots with very small imaginary part. (Really only
     # keep the real parts.)
     real_inds = np.abs(all_roots.imag) < _IMAGINARY_WIGGLE
@@ -1155,7 +1219,6 @@ def _check_non_simple(coeffs):
         return
 
     deriv_poly = polynomial.polyder(coeffs)
-
     companion = polynomial.polycompanion(deriv_poly)
     # NOTE: `polycompanion()` returns a C-contiguous array.
     companion = companion.T
@@ -1166,8 +1229,8 @@ def _check_non_simple(coeffs):
     for index in six.moves.xrange(num_coeffs - 2, -1, -1):
         coeff = coeffs[index]
         evaluated = (
-            _helpers.matrix_product(evaluated, companion) + coeff * id_mat)
-
+            _helpers.matrix_product(evaluated, companion) + coeff * id_mat
+        )
     if num_companion == 1:
         # NOTE: This relies on the fact that coeffs is normalized.
         if np.abs(evaluated[0, 0]) > _NON_SIMPLE_THRESHOLD:
@@ -1200,8 +1263,8 @@ def _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t):
             parameters ``t``.
     """
     s_val, t_val = _intersection_helpers.newton_refine(
-        s_val, nodes1, t_val, nodes2)
-
+        s_val, nodes1, t_val, nodes2
+    )
     s_val, success_s = _helpers.wiggle_interval(s_val)
     t_val, success_t = _helpers.wiggle_interval(t_val)
     if not (success_s and success_t):
@@ -1230,38 +1293,32 @@ def intersect_curves(nodes1, nodes2):
     """
     nodes1 = _curve_helpers.full_reduce(nodes1)
     nodes2 = _curve_helpers.full_reduce(nodes2)
-
     _, num_nodes1 = nodes1.shape
     _, num_nodes2 = nodes2.shape
     swapped = False
     if num_nodes1 > num_nodes2:
         nodes1, nodes2 = nodes2, nodes1
         swapped = True
-
     coeffs = normalize_polynomial(to_power_basis(nodes1, nodes2))
     if np.all(coeffs == 0.0):
         raise NotImplementedError(_COINCIDENT_ERR)
 
     _check_non_simple(coeffs)
     t_vals = roots_in_unit_interval(coeffs)
-
     final_s = []
     final_t = []
     for t_val in t_vals:
         (x_val,), (y_val,) = _curve_helpers.evaluate_multi(
-            nodes2, np.asfortranarray([t_val]))
+            nodes2, np.asfortranarray([t_val])
+        )
         s_val = locate_point(nodes1, x_val, y_val)
         if s_val is not None:
-            _resolve_and_add(
-                nodes1, s_val, final_s, nodes2, t_val, final_t)
-
+            _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t)
     result = np.zeros((2, len(final_s)), order='F')
     if swapped:
         final_s, final_t = final_t, final_s
-
     result[0, :] = final_s
     result[1, :] = final_t
-
     return result
 
 
@@ -1288,30 +1345,38 @@ def poly_to_power_basis(bezier_coeffs):
     num_coeffs, = bezier_coeffs.shape
     if num_coeffs == 1:
         return bezier_coeffs
+
     elif num_coeffs == 2:
         # C0 (1 - s) + C1 s = C0 + (C1 - C0) s
         coeff0, coeff1 = bezier_coeffs
         return np.asfortranarray([coeff0, coeff1 - coeff0])
+
     elif num_coeffs == 3:
         #   C0 (1 - s)^2 + C1 2 (1 - s) s + C2 s^2
         # = C0 + 2(C1 - C0) s + (C2 - 2 C1 + C0) s^2
         coeff0, coeff1, coeff2 = bezier_coeffs
-        return np.asfortranarray([
-            coeff0, 2.0 * (coeff1 - coeff0), coeff2 - 2.0 * coeff1 + coeff0])
+        return np.asfortranarray(
+            [coeff0, 2.0 * (coeff1 - coeff0), coeff2 - 2.0 * coeff1 + coeff0]
+        )
+
     elif num_coeffs == 4:
         #   C0 (1 - s)^3 + C1 3 (1 - s)^2 + C2 3 (1 - s) s^2 + C3 s^3
         # = C0 + 3(C1 - C0) s + 3(C2 - 2 C1 + C0) s^2 +
         #   (C3 - 3 C2 + 3 C1 - C0) s^3
         coeff0, coeff1, coeff2, coeff3 = bezier_coeffs
-        return np.asfortranarray([
-            coeff0,
-            3.0 * (coeff1 - coeff0),
-            3.0 * (coeff2 - 2.0 * coeff1 + coeff0),
-            coeff3 - 3.0 * coeff2 + 3.0 * coeff1 - coeff0,
-        ])
+        return np.asfortranarray(
+            [
+                coeff0,
+                3.0 * (coeff1 - coeff0),
+                3.0 * (coeff2 - 2.0 * coeff1 + coeff0),
+                coeff3 - 3.0 * coeff2 + 3.0 * coeff1 - coeff0,
+            ]
+        )
+
     else:
         raise _helpers.UnsupportedDegree(
-            num_coeffs - 1, supported=(0, 1, 2, 3))
+            num_coeffs - 1, supported=(0, 1, 2, 3)
+        )
 
 
 def locate_point(nodes, x_val, y_val):
@@ -1333,18 +1398,15 @@ def locate_point(nodes, x_val, y_val):
     # First, reduce to the true degree of x(s) and y(s).
     zero1 = _curve_helpers.full_reduce(nodes[[0], :]) - x_val
     zero2 = _curve_helpers.full_reduce(nodes[[1], :]) - y_val
-
     # Make sure we have the lowest degree in front, to make the polynomial
     # solve have the fewest number of roots.
     if zero1.shape[1] > zero2.shape[1]:
         zero1, zero2 = zero2, zero1
-
     # If the "smallest" is a constant, we can't find any roots from it.
     if zero1.shape[1] == 1:
         # NOTE: We assume that callers won't pass ``nodes`` that are
         #       degree 0, so if ``zero1`` is a constant, ``zero2`` won't be.
         zero1, zero2 = zero2, zero1
-
     power_basis1 = poly_to_power_basis(zero1[0, :])
     all_roots = roots_in_unit_interval(power_basis1)
     if all_roots.size == 0:
@@ -1353,10 +1415,8 @@ def locate_point(nodes, x_val, y_val):
     # NOTE: We normalize ``power_basis2`` because we want to check for
     #       "zero" values, i.e. f2(s) == 0.
     power_basis2 = normalize_polynomial(poly_to_power_basis(zero2[0, :]))
-
     near_zero = np.abs(polynomial.polyval(all_roots, power_basis2))
     index = np.argmin(near_zero)
-
     if near_zero[index] < _ZERO_THRESHOLD:
         return all_roots[index]
 
@@ -1391,7 +1451,8 @@ def all_intersections(nodes_first, nodes_second):
     """
     # Only attempt this if the bounding boxes intersect.
     bbox_int = _geometric_intersection.bbox_intersect(
-        nodes_first, nodes_second)
+        nodes_first, nodes_second
+    )
     if bbox_int == _DISJOINT:
         return np.empty((2, 0), order='F'), False
 

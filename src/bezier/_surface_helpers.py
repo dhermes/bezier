@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Private helper methods for :mod:`bezier.surface`.
 
 As a convention, the functions defined here with a leading underscore
@@ -36,12 +35,11 @@ import six
 from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
+
 try:
     from bezier import _speedup
 except ImportError:  # pragma: NO COVER
     _speedup = None
-
-
 _MAX_POLY_SUBDIVISIONS = 5
 _SIGN = np.sign  # pylint: disable=no-member
 _FLOAT64 = np.float64  # pylint: disable=no-member
@@ -50,174 +48,202 @@ _WRONG_CURVE = 'Start and end node not defined on same curve'
 CLASSIFICATION_T = _intersection_helpers.IntersectionClassification
 # NOTE: The ``SUBDIVIDE`` matrices are public since used in
 #       the ``surface`` module.
-LINEAR_SUBDIVIDE_A = np.asfortranarray([
-    [2, 1, 1],
-    [0, 1, 0],
-    [0, 0, 1],
-], dtype=_FLOAT64) / 2.0
-LINEAR_SUBDIVIDE_B = np.asfortranarray([
-    [0, 1, 1],
-    [1, 0, 1],
-    [1, 1, 0],
-], dtype=_FLOAT64) / 2.0
-LINEAR_SUBDIVIDE_C = np.asfortranarray([
-    [1, 0, 0],
-    [1, 2, 1],
-    [0, 0, 1],
-], dtype=_FLOAT64) / 2.0
-LINEAR_SUBDIVIDE_D = np.asfortranarray([
-    [1, 0, 0],
-    [0, 1, 0],
-    [1, 1, 2],
-], dtype=_FLOAT64) / 2.0
-QUADRATIC_SUBDIVIDE_A = np.asfortranarray([
-    [4, 2, 1, 2, 1, 1],
-    [0, 2, 2, 0, 1, 0],
-    [0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 2, 1, 2],
-    [0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 1],
-], dtype=_FLOAT64) / 4.0
-QUADRATIC_SUBDIVIDE_B = np.asfortranarray([
-    [0, 0, 1, 0, 1, 1],
-    [0, 1, 0, 1, 1, 2],
-    [1, 0, 0, 1, 0, 1],
-    [0, 1, 2, 1, 1, 0],
-    [2, 1, 0, 1, 1, 0],
-    [1, 1, 1, 0, 0, 0],
-], dtype=_FLOAT64) / 4.0
-QUADRATIC_SUBDIVIDE_C = np.asfortranarray([
-    [1, 0, 0, 0, 0, 0],
-    [2, 2, 0, 1, 0, 0],
-    [1, 2, 4, 1, 2, 1],
-    [0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 1, 2, 2],
-    [0, 0, 0, 0, 0, 1],
-], dtype=_FLOAT64) / 4.0
-QUADRATIC_SUBDIVIDE_D = np.asfortranarray([
-    [1, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 0],
-    [2, 1, 0, 2, 0, 0],
-    [0, 1, 2, 0, 2, 0],
-    [1, 1, 1, 2, 2, 4],
-], dtype=_FLOAT64) / 4.0
-CUBIC_SUBDIVIDE_A = np.asfortranarray([
-    [8, 4, 2, 1, 4, 2, 1, 2, 1, 1],
-    [0, 4, 4, 3, 0, 2, 2, 0, 1, 0],
-    [0, 0, 2, 3, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 4, 2, 1, 4, 2, 3],
-    [0, 0, 0, 0, 0, 2, 2, 0, 2, 0],
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 2, 1, 3],
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-], dtype=_FLOAT64) / 8.0
-CUBIC_SUBDIVIDE_B = np.asfortranarray([
-    [0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
-    [0, 0, 1, 0, 0, 1, 1, 1, 2, 3],
-    [0, 1, 0, 0, 1, 1, 0, 2, 1, 3],
-    [1, 0, 0, 0, 1, 0, 0, 1, 0, 1],
-    [0, 0, 1, 3, 0, 1, 2, 1, 1, 0],
-    [0, 2, 2, 0, 2, 2, 2, 2, 2, 0],
-    [3, 1, 0, 0, 2, 1, 0, 1, 1, 0],
-    [0, 1, 2, 3, 1, 1, 1, 0, 0, 0],
-    [3, 2, 1, 0, 1, 1, 1, 0, 0, 0],
-    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-], dtype=_FLOAT64) / 8.0
-CUBIC_SUBDIVIDE_C = np.asfortranarray([
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [3, 2, 0, 0, 1, 0, 0, 0, 0, 0],
-    [3, 4, 4, 0, 2, 2, 0, 1, 0, 0],
-    [1, 2, 4, 8, 1, 2, 4, 1, 2, 1],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 2, 2, 0, 2, 0, 0],
-    [0, 0, 0, 0, 1, 2, 4, 2, 4, 3],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 1, 2, 3],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-], dtype=_FLOAT64) / 8.0
-CUBIC_SUBDIVIDE_D = np.asfortranarray([
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [3, 1, 0, 0, 2, 0, 0, 0, 0, 0],
-    [0, 2, 2, 0, 0, 2, 0, 0, 0, 0],
-    [0, 0, 1, 3, 0, 0, 2, 0, 0, 0],
-    [3, 2, 1, 0, 4, 2, 0, 4, 0, 0],
-    [0, 1, 2, 3, 0, 2, 4, 0, 4, 0],
-    [1, 1, 1, 1, 2, 2, 2, 4, 4, 8],
-], dtype=_FLOAT64) / 8.0
-QUARTIC_SUBDIVIDE_A = np.asfortranarray([
-    [16, 8, 4, 2, 1, 8, 4, 2, 1, 4, 2, 1, 2, 1, 1],
-    [0, 8, 8, 6, 4, 0, 4, 4, 3, 0, 2, 2, 0, 1, 0],
-    [0, 0, 4, 6, 6, 0, 0, 2, 3, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 2, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 8, 4, 2, 1, 8, 4, 2, 6, 3, 4],
-    [0, 0, 0, 0, 0, 0, 4, 4, 3, 0, 4, 4, 0, 3, 0],
-    [0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 2, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 2, 1, 6, 3, 6],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 3, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-], dtype=_FLOAT64) / 16.0
-QUARTIC_SUBDIVIDE_B = np.asfortranarray([
-    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
-    [0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 2, 1, 3, 4],
-    [0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 2, 1, 3, 3, 6],
-    [0, 1, 0, 0, 0, 1, 1, 0, 0, 2, 1, 0, 3, 1, 4],
-    [1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1],
-    [0, 0, 0, 1, 4, 0, 0, 1, 3, 0, 1, 2, 1, 1, 0],
-    [0, 0, 2, 3, 0, 0, 2, 3, 3, 2, 3, 4, 3, 3, 0],
-    [0, 3, 2, 0, 0, 3, 3, 2, 0, 4, 3, 2, 3, 3, 0],
-    [4, 1, 0, 0, 0, 3, 1, 0, 0, 2, 1, 0, 1, 1, 0],
-    [0, 0, 1, 3, 6, 0, 1, 2, 3, 1, 1, 1, 0, 0, 0],
-    [0, 3, 4, 3, 0, 3, 3, 3, 3, 2, 2, 2, 0, 0, 0],
-    [6, 3, 1, 0, 0, 3, 2, 1, 0, 1, 1, 1, 0, 0, 0],
-    [0, 1, 2, 3, 4, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-    [4, 3, 2, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-], dtype=_FLOAT64) / 16.0
-QUARTIC_SUBDIVIDE_C = np.asfortranarray([
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [4, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [6, 6, 4, 0, 0, 3, 2, 0, 0, 1, 0, 0, 0, 0, 0],
-    [4, 6, 8, 8, 0, 3, 4, 4, 0, 2, 2, 0, 1, 0, 0],
-    [1, 2, 4, 8, 16, 1, 2, 4, 8, 1, 2, 4, 1, 2, 1],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 3, 2, 0, 0, 2, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 3, 4, 4, 0, 4, 4, 0, 3, 0, 0],
-    [0, 0, 0, 0, 0, 1, 2, 4, 8, 2, 4, 8, 3, 6, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 3, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4, 3, 6, 6],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-], dtype=_FLOAT64) / 16.0
-QUARTIC_SUBDIVIDE_D = np.asfortranarray([
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [4, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 3, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 2, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
-    [6, 3, 1, 0, 0, 6, 2, 0, 0, 4, 0, 0, 0, 0, 0],
-    [0, 3, 4, 3, 0, 0, 4, 4, 0, 0, 4, 0, 0, 0, 0],
-    [0, 0, 1, 3, 6, 0, 0, 2, 6, 0, 0, 4, 0, 0, 0],
-    [4, 3, 2, 1, 0, 6, 4, 2, 0, 8, 4, 0, 8, 0, 0],
-    [0, 1, 2, 3, 4, 0, 2, 4, 6, 0, 4, 8, 0, 8, 0],
-    [1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4, 4, 8, 8, 16],
-], dtype=_FLOAT64) / 16.0
+LINEAR_SUBDIVIDE_A = np.asfortranarray(
+    [[2, 1, 1], [0, 1, 0], [0, 0, 1]], dtype=_FLOAT64
+) / 2.0
+LINEAR_SUBDIVIDE_B = np.asfortranarray(
+    [[0, 1, 1], [1, 0, 1], [1, 1, 0]], dtype=_FLOAT64
+) / 2.0
+LINEAR_SUBDIVIDE_C = np.asfortranarray(
+    [[1, 0, 0], [1, 2, 1], [0, 0, 1]], dtype=_FLOAT64
+) / 2.0
+LINEAR_SUBDIVIDE_D = np.asfortranarray(
+    [[1, 0, 0], [0, 1, 0], [1, 1, 2]], dtype=_FLOAT64
+) / 2.0
+QUADRATIC_SUBDIVIDE_A = np.asfortranarray(
+    [
+        [4, 2, 1, 2, 1, 1],
+        [0, 2, 2, 0, 1, 0],
+        [0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 2, 1, 2],
+        [0, 0, 0, 0, 1, 0],
+        [0, 0, 0, 0, 0, 1],
+    ],
+    dtype=_FLOAT64,
+) / 4.0
+QUADRATIC_SUBDIVIDE_B = np.asfortranarray(
+    [
+        [0, 0, 1, 0, 1, 1],
+        [0, 1, 0, 1, 1, 2],
+        [1, 0, 0, 1, 0, 1],
+        [0, 1, 2, 1, 1, 0],
+        [2, 1, 0, 1, 1, 0],
+        [1, 1, 1, 0, 0, 0],
+    ],
+    dtype=_FLOAT64,
+) / 4.0
+QUADRATIC_SUBDIVIDE_C = np.asfortranarray(
+    [
+        [1, 0, 0, 0, 0, 0],
+        [2, 2, 0, 1, 0, 0],
+        [1, 2, 4, 1, 2, 1],
+        [0, 0, 0, 1, 0, 0],
+        [0, 0, 0, 1, 2, 2],
+        [0, 0, 0, 0, 0, 1],
+    ],
+    dtype=_FLOAT64,
+) / 4.0
+QUADRATIC_SUBDIVIDE_D = np.asfortranarray(
+    [
+        [1, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0],
+        [2, 1, 0, 2, 0, 0],
+        [0, 1, 2, 0, 2, 0],
+        [1, 1, 1, 2, 2, 4],
+    ],
+    dtype=_FLOAT64,
+) / 4.0
+CUBIC_SUBDIVIDE_A = np.asfortranarray(
+    [
+        [8, 4, 2, 1, 4, 2, 1, 2, 1, 1],
+        [0, 4, 4, 3, 0, 2, 2, 0, 1, 0],
+        [0, 0, 2, 3, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 4, 2, 1, 4, 2, 3],
+        [0, 0, 0, 0, 0, 2, 2, 0, 2, 0],
+        [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 2, 1, 3],
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    ],
+    dtype=_FLOAT64,
+) / 8.0
+CUBIC_SUBDIVIDE_B = np.asfortranarray(
+    [
+        [0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+        [0, 0, 1, 0, 0, 1, 1, 1, 2, 3],
+        [0, 1, 0, 0, 1, 1, 0, 2, 1, 3],
+        [1, 0, 0, 0, 1, 0, 0, 1, 0, 1],
+        [0, 0, 1, 3, 0, 1, 2, 1, 1, 0],
+        [0, 2, 2, 0, 2, 2, 2, 2, 2, 0],
+        [3, 1, 0, 0, 2, 1, 0, 1, 1, 0],
+        [0, 1, 2, 3, 1, 1, 1, 0, 0, 0],
+        [3, 2, 1, 0, 1, 1, 1, 0, 0, 0],
+        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    ],
+    dtype=_FLOAT64,
+) / 8.0
+CUBIC_SUBDIVIDE_C = np.asfortranarray(
+    [
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3, 2, 0, 0, 1, 0, 0, 0, 0, 0],
+        [3, 4, 4, 0, 2, 2, 0, 1, 0, 0],
+        [1, 2, 4, 8, 1, 2, 4, 1, 2, 1],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 2, 0, 2, 0, 0],
+        [0, 0, 0, 0, 1, 2, 4, 2, 4, 3],
+        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 1, 2, 3],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    ],
+    dtype=_FLOAT64,
+) / 8.0
+CUBIC_SUBDIVIDE_D = np.asfortranarray(
+    [
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [3, 1, 0, 0, 2, 0, 0, 0, 0, 0],
+        [0, 2, 2, 0, 0, 2, 0, 0, 0, 0],
+        [0, 0, 1, 3, 0, 0, 2, 0, 0, 0],
+        [3, 2, 1, 0, 4, 2, 0, 4, 0, 0],
+        [0, 1, 2, 3, 0, 2, 4, 0, 4, 0],
+        [1, 1, 1, 1, 2, 2, 2, 4, 4, 8],
+    ],
+    dtype=_FLOAT64,
+) / 8.0
+QUARTIC_SUBDIVIDE_A = np.asfortranarray(
+    [
+        [16, 8, 4, 2, 1, 8, 4, 2, 1, 4, 2, 1, 2, 1, 1],
+        [0, 8, 8, 6, 4, 0, 4, 4, 3, 0, 2, 2, 0, 1, 0],
+        [0, 0, 4, 6, 6, 0, 0, 2, 3, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 2, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 8, 4, 2, 1, 8, 4, 2, 6, 3, 4],
+        [0, 0, 0, 0, 0, 0, 4, 4, 3, 0, 4, 4, 0, 3, 0],
+        [0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 2, 1, 6, 3, 6],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 3, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 4],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    ],
+    dtype=_FLOAT64,
+) / 16.0
+QUARTIC_SUBDIVIDE_B = np.asfortranarray(
+    [
+        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+        [0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 2, 1, 3, 4],
+        [0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 2, 1, 3, 3, 6],
+        [0, 1, 0, 0, 0, 1, 1, 0, 0, 2, 1, 0, 3, 1, 4],
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1],
+        [0, 0, 0, 1, 4, 0, 0, 1, 3, 0, 1, 2, 1, 1, 0],
+        [0, 0, 2, 3, 0, 0, 2, 3, 3, 2, 3, 4, 3, 3, 0],
+        [0, 3, 2, 0, 0, 3, 3, 2, 0, 4, 3, 2, 3, 3, 0],
+        [4, 1, 0, 0, 0, 3, 1, 0, 0, 2, 1, 0, 1, 1, 0],
+        [0, 0, 1, 3, 6, 0, 1, 2, 3, 1, 1, 1, 0, 0, 0],
+        [0, 3, 4, 3, 0, 3, 3, 3, 3, 2, 2, 2, 0, 0, 0],
+        [6, 3, 1, 0, 0, 3, 2, 1, 0, 1, 1, 1, 0, 0, 0],
+        [0, 1, 2, 3, 4, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+        [4, 3, 2, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ],
+    dtype=_FLOAT64,
+) / 16.0
+QUARTIC_SUBDIVIDE_C = np.asfortranarray(
+    [
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [4, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [6, 6, 4, 0, 0, 3, 2, 0, 0, 1, 0, 0, 0, 0, 0],
+        [4, 6, 8, 8, 0, 3, 4, 4, 0, 2, 2, 0, 1, 0, 0],
+        [1, 2, 4, 8, 16, 1, 2, 4, 8, 1, 2, 4, 1, 2, 1],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 3, 2, 0, 0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 3, 4, 4, 0, 4, 4, 0, 3, 0, 0],
+        [0, 0, 0, 0, 0, 1, 2, 4, 8, 2, 4, 8, 3, 6, 4],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 3, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4, 3, 6, 6],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    ],
+    dtype=_FLOAT64,
+) / 16.0
+QUARTIC_SUBDIVIDE_D = np.asfortranarray(
+    [
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [4, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 3, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 2, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+        [6, 3, 1, 0, 0, 6, 2, 0, 0, 4, 0, 0, 0, 0, 0],
+        [0, 3, 4, 3, 0, 0, 4, 4, 0, 0, 4, 0, 0, 0, 0],
+        [0, 0, 1, 3, 6, 0, 0, 2, 6, 0, 0, 4, 0, 0, 0],
+        [4, 3, 2, 1, 0, 6, 4, 2, 0, 8, 4, 0, 8, 0, 0],
+        [0, 1, 2, 3, 4, 0, 2, 4, 6, 0, 4, 8, 0, 8, 0],
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4, 4, 8, 8, 16],
+    ],
+    dtype=_FLOAT64,
+) / 16.0
 _WEIGHTS_SUBDIVIDE0 = np.asfortranarray([1.0, 0.0, 0.0])
 _WEIGHTS_SUBDIVIDE1 = np.asfortranarray([0.5, 0.5, 0.0])
 _WEIGHTS_SUBDIVIDE2 = np.asfortranarray([0.5, 0.0, 0.5])
@@ -229,24 +255,28 @@ _WEIGHTS_SUBDIVIDE5 = np.asfortranarray([0.0, 0.0, 1.0])
 # dB/dt = [-2L1, -2L2, 0, 2(L1 - L3), 2L2, 2L3] * nodes
 # We evaluate this at each of the 6 points in the quadratic
 # triangle and then stack them (2 columns * 6 = 12 columns)
-# pylint: disable=bad-whitespace
-_QUADRATIC_JACOBIAN_HELPER = np.asfortranarray([
-    [-2, -2, -1, -1, 0, 0, -1, -1, 0, 0, 0, 0],
-    [2, 0, 0, -1, -2, -2, 1, 0, -1, -1, 0, 0],
-    [0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 0, 0],
-    [0, 2, 0, 1, 0, 0, -1, 0, -1, -1, -2, -2],
-    [0, 0, 0, 1, 0, 2, 1, 0, 1, 1, 2, 0],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 2],
-], dtype=_FLOAT64)
-_QUADRATIC_TO_BERNSTEIN = np.asfortranarray([
-    [2, -1, 0, -1, 0, 0],
-    [0, 4, 0, 0, 0, 0],
-    [0, -1, 2, 0, -1, 0],
-    [0, 0, 0, 4, 0, 0],
-    [0, 0, 0, 0, 4, 0],
-    [0, 0, 0, -1, -1, 2],
-], dtype=_FLOAT64) / 2.0
-# pylint: enable=bad-whitespace
+_QUADRATIC_JACOBIAN_HELPER = np.asfortranarray(
+    [
+        [-2, -2, -1, -1, 0, 0, -1, -1, 0, 0, 0, 0],
+        [2, 0, 0, -1, -2, -2, 1, 0, -1, -1, 0, 0],
+        [0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 0, 0],
+        [0, 2, 0, 1, 0, 0, -1, 0, -1, -1, -2, -2],
+        [0, 0, 0, 1, 0, 2, 1, 0, 1, 1, 2, 0],
+        [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 2],
+    ],
+    dtype=_FLOAT64,
+)
+_QUADRATIC_TO_BERNSTEIN = np.asfortranarray(
+    [
+        [2, -1, 0, -1, 0, 0],
+        [0, 4, 0, 0, 0, 0],
+        [0, -1, 2, 0, -1, 0],
+        [0, 0, 0, 4, 0, 0],
+        [0, 0, 0, 0, 4, 0],
+        [0, 0, 0, -1, -1, 2],
+    ],
+    dtype=_FLOAT64,
+) / 2.0
 # The Jacobian of a cubic (in any dimension) as given by
 # dB/ds = [-3 L1^2, 3 L1(L1 - 2 L2), 3 L2(2 L1 - L2), 3 L2^2, -6 L1 L3,
 #          6 L3(L1 - L2), 6 L2 L3, -3 L3^2, 3 L3^2, 0] * nodes
@@ -254,47 +284,351 @@ _QUADRATIC_TO_BERNSTEIN = np.asfortranarray([
 #          3 L2^2, 3 L3(2 L1 - L3), 6 L2 L3, 3 L3^2] * nodes
 # We evaluate this at each of the 15 points in the quartic
 # triangle and then stack them (2 columns * 15 = 30 columns)
-# pylint: disable=bad-whitespace
-_CUBIC_JACOBIAN_HELPER = np.asfortranarray([
-    [-48, -48, -27, -27, -12, -12, -3, -3, 0, 0, -27, -27, -12, -12,
-     -3, -3, 0, 0, -12, -12, -3, -3, 0, 0, -3, -3, 0, 0, 0, 0],
-    [48, 0, 9, -18, -12, -24, -15, -18, 0, 0, 27, 0, 0, -12, -9,
-     -12, 0, 0, 12, 0, -3, -6, 0, 0, 3, 0, 0, 0, 0, 0],
-    [0, 0, 15, -3, 12, -12, -9, -27, -48, -48, 0, 0, 9, -3, 0, -12,
-     -27, -27, 0, 0, 3, -3, -12, -12, 0, 0, -3, -3, 0, 0],
-    [0, 0, 3, 0, 12, 0, 27, 0, 48, 0, 0, 0, 3, 0, 12, 0, 27, 0, 0,
-     0, 3, 0, 12, 0, 0, 0, 3, 0, 0, 0],
-    [0, 48, 0, 27, 0, 12, 0, 3, 0, 0, -18, 9, -12, 0, -6, -3, 0, 0,
-     -24, -12, -12, -9, 0, 0, -18, -15, 0, 0, 0, 0],
-    [0, 0, 0, 18, 0, 24, 0, 18, 0, 0, 18, 0, 6, 6, -6, 0, -18, -18,
-     24, 0, 0, -6, -24, -24, 18, 0, -18, -18, 0, 0],
-    [0, 0, 0, 3, 0, 12, 0, 27, 0, 48, 0, 0, 6, 3, 12, 12, 18, 27,
-     0, 0, 12, 3, 24, 12, 0, 0, 18, 3, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, 15, -3, 9, -3, 3, -3, -3,
-     -12, 12, -12, 0, -12, -12, -27, -9, -27, -27, -48, -48],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 6, 3, 12, 3, 18, 12,
-     0, 12, 12, 12, 24, 27, 0, 27, 18, 48, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 3, 0, 3, 0,
-     12, 0, 12, 0, 12, 0, 27, 0, 27, 0, 48],
-], dtype=_FLOAT64) / 16.0
-# pylint: enable=bad-whitespace
-_QUARTIC_TO_BERNSTEIN = np.asfortranarray([
-    [36, -39, 26, -9, 0, -39, 26, -9, 0, 26, -9, 0, -9, 0, 0],
-    [0, 144, -128, 48, 0, 0, -64, 32, 0, 0, 16, 0, 0, 0, 0],
-    [0, -108, 240, -108, 0, 0, -24, -24, 0, 0, 12, 0, 0, 0, 0],
-    [0, 48, -128, 144, 0, 0, 32, -64, 0, 0, 16, 0, 0, 0, 0],
-    [0, -9, 26, -39, 36, 0, -9, 26, -39, 0, -9, 26, 0, -9, 0],
-    [0, 0, 0, 0, 0, 144, -64, 16, 0, -128, 32, 0, 48, 0, 0],
-    [0, 0, 0, 0, 0, 0, 288, -96, 0, 0, -96, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, -96, 288, 0, 0, -96, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 16, -64, 144, 0, 32, -128, 0, 48, 0],
-    [0, 0, 0, 0, 0, -108, -24, 12, 0, 240, -24, 0, -108, 0, 0],
-    [0, 0, 0, 0, 0, 0, -96, -96, 0, 0, 288, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 12, -24, -108, 0, -24, 240, 0, -108, 0],
-    [0, 0, 0, 0, 0, 48, 32, 16, 0, -128, -64, 0, 144, 0, 0],
-    [0, 0, 0, 0, 0, 0, 16, 32, 48, 0, -64, -128, 0, 144, 0],
-    [0, 0, 0, 0, 0, -9, -9, -9, -9, 26, 26, 26, -39, -39, 36],
-], dtype=_FLOAT64)
+_CUBIC_JACOBIAN_HELPER = np.asfortranarray(
+    [
+        [
+            -48,
+            -48,
+            -27,
+            -27,
+            -12,
+            -12,
+            -3,
+            -3,
+            0,
+            0,
+            -27,
+            -27,
+            -12,
+            -12,
+            -3,
+            -3,
+            0,
+            0,
+            -12,
+            -12,
+            -3,
+            -3,
+            0,
+            0,
+            -3,
+            -3,
+            0,
+            0,
+            0,
+            0,
+        ],
+        [
+            48,
+            0,
+            9,
+            -18,
+            -12,
+            -24,
+            -15,
+            -18,
+            0,
+            0,
+            27,
+            0,
+            0,
+            -12,
+            -9,
+            -12,
+            0,
+            0,
+            12,
+            0,
+            -3,
+            -6,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ],
+        [
+            0,
+            0,
+            15,
+            -3,
+            12,
+            -12,
+            -9,
+            -27,
+            -48,
+            -48,
+            0,
+            0,
+            9,
+            -3,
+            0,
+            -12,
+            -27,
+            -27,
+            0,
+            0,
+            3,
+            -3,
+            -12,
+            -12,
+            0,
+            0,
+            -3,
+            -3,
+            0,
+            0,
+        ],
+        [
+            0,
+            0,
+            3,
+            0,
+            12,
+            0,
+            27,
+            0,
+            48,
+            0,
+            0,
+            0,
+            3,
+            0,
+            12,
+            0,
+            27,
+            0,
+            0,
+            0,
+            3,
+            0,
+            12,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+        ],
+        [
+            0,
+            48,
+            0,
+            27,
+            0,
+            12,
+            0,
+            3,
+            0,
+            0,
+            -18,
+            9,
+            -12,
+            0,
+            -6,
+            -3,
+            0,
+            0,
+            -24,
+            -12,
+            -12,
+            -9,
+            0,
+            0,
+            -18,
+            -15,
+            0,
+            0,
+            0,
+            0,
+        ],
+        [
+            0,
+            0,
+            0,
+            18,
+            0,
+            24,
+            0,
+            18,
+            0,
+            0,
+            18,
+            0,
+            6,
+            6,
+            -6,
+            0,
+            -18,
+            -18,
+            24,
+            0,
+            0,
+            -6,
+            -24,
+            -24,
+            18,
+            0,
+            -18,
+            -18,
+            0,
+            0,
+        ],
+        [
+            0,
+            0,
+            0,
+            3,
+            0,
+            12,
+            0,
+            27,
+            0,
+            48,
+            0,
+            0,
+            6,
+            3,
+            12,
+            12,
+            18,
+            27,
+            0,
+            0,
+            12,
+            3,
+            24,
+            12,
+            0,
+            0,
+            18,
+            3,
+            0,
+            0,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            -3,
+            15,
+            -3,
+            9,
+            -3,
+            3,
+            -3,
+            -3,
+            -12,
+            12,
+            -12,
+            0,
+            -12,
+            -12,
+            -27,
+            -9,
+            -27,
+            -27,
+            -48,
+            -48,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            3,
+            6,
+            3,
+            12,
+            3,
+            18,
+            12,
+            0,
+            12,
+            12,
+            12,
+            24,
+            27,
+            0,
+            27,
+            18,
+            48,
+            0,
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            3,
+            0,
+            3,
+            0,
+            3,
+            0,
+            12,
+            0,
+            12,
+            0,
+            12,
+            0,
+            27,
+            0,
+            27,
+            0,
+            48,
+        ],
+    ],
+    dtype=_FLOAT64,
+) / 16.0
+_QUARTIC_TO_BERNSTEIN = np.asfortranarray(
+    [
+        [36, -39, 26, -9, 0, -39, 26, -9, 0, 26, -9, 0, -9, 0, 0],
+        [0, 144, -128, 48, 0, 0, -64, 32, 0, 0, 16, 0, 0, 0, 0],
+        [0, -108, 240, -108, 0, 0, -24, -24, 0, 0, 12, 0, 0, 0, 0],
+        [0, 48, -128, 144, 0, 0, 32, -64, 0, 0, 16, 0, 0, 0, 0],
+        [0, -9, 26, -39, 36, 0, -9, 26, -39, 0, -9, 26, 0, -9, 0],
+        [0, 0, 0, 0, 0, 144, -64, 16, 0, -128, 32, 0, 48, 0, 0],
+        [0, 0, 0, 0, 0, 0, 288, -96, 0, 0, -96, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, -96, 288, 0, 0, -96, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 16, -64, 144, 0, 32, -128, 0, 48, 0],
+        [0, 0, 0, 0, 0, -108, -24, 12, 0, 240, -24, 0, -108, 0, 0],
+        [0, 0, 0, 0, 0, 0, -96, -96, 0, 0, 288, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 12, -24, -108, 0, -24, 240, 0, -108, 0],
+        [0, 0, 0, 0, 0, 48, 32, 16, 0, -128, -64, 0, 144, 0, 0],
+        [0, 0, 0, 0, 0, 0, 16, 32, 48, 0, -64, -128, 0, 144, 0],
+        [0, 0, 0, 0, 0, -9, -9, -9, -9, 26, 26, 26, -39, -39, 36],
+    ],
+    dtype=_FLOAT64,
+)
 # NOTE: We avoid round-off until after ``_QUARTIC_TO_BERNSTEIN``
 #       has been applied.
 _QUARTIC_BERNSTEIN_FACTOR = 36.0
@@ -302,39 +636,19 @@ _QUARTIC_BERNSTEIN_FACTOR = 36.0
 # row is a return value of ``ends_to_curve()``. The second and third constant
 # are just obtained from the first by rotating the rows.
 FIRST_SURFACE_INFO = (
-    (
-        (0, 0.0, 1.0),
-        (1, 0.0, 1.0),
-        (2, 0.0, 1.0),
-    ), (
-        (1, 0.0, 1.0),
-        (2, 0.0, 1.0),
-        (0, 0.0, 1.0),
-    ), (
-        (2, 0.0, 1.0),
-        (0, 0.0, 1.0),
-        (1, 0.0, 1.0),
-    ),
+    ((0, 0.0, 1.0), (1, 0.0, 1.0), (2, 0.0, 1.0)),
+    ((1, 0.0, 1.0), (2, 0.0, 1.0), (0, 0.0, 1.0)),
+    ((2, 0.0, 1.0), (0, 0.0, 1.0), (1, 0.0, 1.0)),
 )
 SECOND_SURFACE_INFO = (
-    (
-        (3, 0.0, 1.0),
-        (4, 0.0, 1.0),
-        (5, 0.0, 1.0),
-    ), (
-        (4, 0.0, 1.0),
-        (5, 0.0, 1.0),
-        (3, 0.0, 1.0),
-    ), (
-        (5, 0.0, 1.0),
-        (3, 0.0, 1.0),
-        (4, 0.0, 1.0),
-    ),
+    ((3, 0.0, 1.0), (4, 0.0, 1.0), (5, 0.0, 1.0)),
+    ((4, 0.0, 1.0), (5, 0.0, 1.0), (3, 0.0, 1.0)),
+    ((5, 0.0, 1.0), (3, 0.0, 1.0), (4, 0.0, 1.0)),
 )
 # Threshold where a vector cross-product (u x v) is considered
 # to be "zero". This is a "hack", since it doesn't take ||u||
 # or ||v|| into account.
-ALMOST_TANGENT = 0.5**50
+ALMOST_TANGENT = 0.5 ** 50
 
 
 def polynomial_sign(poly_surface, degree):
@@ -390,7 +704,6 @@ def polynomial_sign(poly_surface, degree):
                 signs.add(-1)
             else:
                 undecided.append(poly)
-
             if len(signs) > 1:
                 return 0
 
@@ -405,7 +718,9 @@ def polynomial_sign(poly_surface, degree):
     if sub_polys:
         raise ValueError(
             'Did not reach a conclusion after max subdivisions',
-            _MAX_POLY_SUBDIVISIONS)
+            _MAX_POLY_SUBDIVISIONS,
+        )
+
     else:
         # NOTE: We are guaranteed that ``len(signs) <= 1``.
         return signs.pop()
@@ -470,10 +785,7 @@ def quadratic_jacobian_polynomial(nodes):
         numpy.ndarray: 1 x 6 array, coefficients in Bernstein basis.
     """
     # First evaluate the Jacobian at each of the 6 nodes.
-    # pylint: disable=no-member
-    jac_parts = _helpers.matrix_product(
-        nodes, _QUADRATIC_JACOBIAN_HELPER)
-    # pylint: enable=no-member
+    jac_parts = _helpers.matrix_product(nodes, _QUADRATIC_JACOBIAN_HELPER)
     jac_at_nodes = np.empty((1, 6), order='F')
     jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
     jac_at_nodes[0, 1] = two_by_two_det(jac_parts[:, 2:4])
@@ -481,10 +793,8 @@ def quadratic_jacobian_polynomial(nodes):
     jac_at_nodes[0, 3] = two_by_two_det(jac_parts[:, 6:8])
     jac_at_nodes[0, 4] = two_by_two_det(jac_parts[:, 8:10])
     jac_at_nodes[0, 5] = two_by_two_det(jac_parts[:, 10:])
-
     # Convert the nodal values to the Bernstein basis...
-    bernstein = _helpers.matrix_product(
-        jac_at_nodes, _QUADRATIC_TO_BERNSTEIN)
+    bernstein = _helpers.matrix_product(jac_at_nodes, _QUADRATIC_TO_BERNSTEIN)
     return bernstein
 
 
@@ -515,8 +825,7 @@ def cubic_jacobian_polynomial(nodes):
     """
     # First evaluate the Jacobian at each of the 15 nodes
     # in the quartic triangle.
-    jac_parts = _helpers.matrix_product(
-        nodes, _CUBIC_JACOBIAN_HELPER)
+    jac_parts = _helpers.matrix_product(nodes, _CUBIC_JACOBIAN_HELPER)
     jac_at_nodes = np.empty((1, 15), order='F')
     jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
     jac_at_nodes[0, 1] = two_by_two_det(jac_parts[:, 2:4])
@@ -534,10 +843,7 @@ def cubic_jacobian_polynomial(nodes):
     jac_at_nodes[0, 13] = two_by_two_det(jac_parts[:, 26:28])
     jac_at_nodes[0, 14] = two_by_two_det(jac_parts[:, 28:])
     # Convert the nodal values to the Bernstein basis...
-    # pylint: disable=no-member
-    bernstein = _helpers.matrix_product(
-        jac_at_nodes, _QUARTIC_TO_BERNSTEIN)
-    # pylint: enable=no-member
+    bernstein = _helpers.matrix_product(jac_at_nodes, _QUARTIC_TO_BERNSTEIN)
     bernstein /= _QUARTIC_BERNSTEIN_FACTOR
     return bernstein
 
@@ -581,9 +887,7 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     """
     dimension, num_nodes = nodes.shape
     num_new_nodes = num_nodes - degree - 1
-
     new_nodes = np.empty((dimension, num_new_nodes), order='F')
-
     index = 0
     # parent_i1 = index + k
     # parent_i2 = index + k + 1
@@ -595,19 +899,21 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
         for unused_j in six.moves.xrange(degree - k):
             # NOTE: i = (degree - 1) - j - k
             new_nodes[:, index] = (
-                lambda1 * nodes[:, parent_i1] +
-                lambda2 * nodes[:, parent_i2] +
-                lambda3 * nodes[:, parent_i3])
+                lambda1 *
+                nodes[:, parent_i1] +
+                lambda2 *
+                nodes[:, parent_i2] +
+                lambda3 *
+                nodes[:, parent_i3]
+            )
             # Update all the indices.
             parent_i1 += 1
             parent_i2 += 1
             parent_i3 += 1
             index += 1
-
         # Update the indices that depend on k.
         parent_i1 += 1
         parent_i2 += 1
-
     return new_nodes
 
 
@@ -643,7 +949,6 @@ def make_transform(degree, weights_a, weights_b, weights_c):
     """
     num_nodes = ((degree + 1) * (degree + 2)) // 2
     id_mat = np.eye(num_nodes, order='F')
-
     # Pre-compute the matrices that do the reduction so we don't
     # have to **actually** perform the de Casteljau algorithm
     # every time.
@@ -696,7 +1001,6 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
             key = (0,) * i + (1,) * j + (2,) * k
             result[:, index] = vals_by_weight[key][:, 0]
             index += 1
-
     return result
 
 
@@ -741,20 +1045,19 @@ def _specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
         (1,): de_casteljau_one_round(nodes, degree, *weights_b),
         (2,): de_casteljau_one_round(nodes, degree, *weights_c),
     }
-
     for reduced_deg in six.moves.xrange(degree - 1, 0, -1):
         new_partial = {}
         transform = make_transform(
-            reduced_deg, weights_a, weights_b, weights_c)
+            reduced_deg, weights_a, weights_b, weights_c
+        )
         for key, sub_nodes in six.iteritems(partial_vals):
             # Our keys are ascending so we increment from the last value.
             for next_id in six.moves.xrange(key[-1], 2 + 1):
                 new_key = key + (next_id,)
                 new_partial[new_key] = _helpers.matrix_product(
-                    sub_nodes, transform[next_id])
-
+                    sub_nodes, transform[next_id]
+                )
         partial_vals = new_partial
-
     return reduced_to_matrix(nodes.shape, degree, partial_vals)
 
 
@@ -800,18 +1103,33 @@ def _subdivide_nodes(nodes, degree):
         nodes_d = _helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_D)
     else:
         nodes_a = specialize_surface(
-            nodes, degree,
-            _WEIGHTS_SUBDIVIDE0, _WEIGHTS_SUBDIVIDE1, _WEIGHTS_SUBDIVIDE2)
+            nodes,
+            degree,
+            _WEIGHTS_SUBDIVIDE0,
+            _WEIGHTS_SUBDIVIDE1,
+            _WEIGHTS_SUBDIVIDE2,
+        )
         nodes_b = specialize_surface(
-            nodes, degree,
-            _WEIGHTS_SUBDIVIDE3, _WEIGHTS_SUBDIVIDE2, _WEIGHTS_SUBDIVIDE1)
+            nodes,
+            degree,
+            _WEIGHTS_SUBDIVIDE3,
+            _WEIGHTS_SUBDIVIDE2,
+            _WEIGHTS_SUBDIVIDE1,
+        )
         nodes_c = specialize_surface(
-            nodes, degree,
-            _WEIGHTS_SUBDIVIDE1, _WEIGHTS_SUBDIVIDE4, _WEIGHTS_SUBDIVIDE3)
+            nodes,
+            degree,
+            _WEIGHTS_SUBDIVIDE1,
+            _WEIGHTS_SUBDIVIDE4,
+            _WEIGHTS_SUBDIVIDE3,
+        )
         nodes_d = specialize_surface(
-            nodes, degree,
-            _WEIGHTS_SUBDIVIDE2, _WEIGHTS_SUBDIVIDE3, _WEIGHTS_SUBDIVIDE5)
-
+            nodes,
+            degree,
+            _WEIGHTS_SUBDIVIDE2,
+            _WEIGHTS_SUBDIVIDE3,
+            _WEIGHTS_SUBDIVIDE5,
+        )
     return nodes_a, nodes_b, nodes_c, nodes_d
 
 
@@ -834,7 +1152,6 @@ def jacobian_s(nodes, degree, dimension):
     """
     num_nodes = (degree * (degree + 1)) // 2
     result = np.empty((dimension, num_nodes), order='F')
-
     index = 0
     i = 0
     for num_vals in six.moves.xrange(degree, 0, -1):
@@ -843,10 +1160,8 @@ def jacobian_s(nodes, degree, dimension):
             # Update the indices
             index += 1
             i += 1
-
         # In between each row, the index gains an extra value.
         i += 1
-
     return float(degree) * result
 
 
@@ -869,7 +1184,6 @@ def jacobian_t(nodes, degree, dimension):
     """
     num_nodes = (degree * (degree + 1)) // 2
     result = np.empty((dimension, num_nodes), order='F')
-
     index = 0
     i = 0
     j = degree + 1
@@ -880,10 +1194,8 @@ def jacobian_t(nodes, degree, dimension):
             index += 1
             i += 1
             j += 1
-
         # In between each row, the index gains an extra value.
         i += 1
-
     return float(degree) * result
 
 
@@ -985,15 +1297,18 @@ def _jacobian_det(nodes, degree, st_vals):
         bs_bt_vals = np.repeat(jac_nodes, num_vals, axis=1)
     else:
         bs_bt_vals = evaluate_cartesian_multi(
-            jac_nodes, degree - 1, st_vals, 4)
-
+            jac_nodes, degree - 1, st_vals, 4
+        )
     # Take the determinant for each (s, t).
-    return (bs_bt_vals[0, :] * bs_bt_vals[3, :] -
-            bs_bt_vals[1, :] * bs_bt_vals[2, :])
+    return (
+        bs_bt_vals[0, :] * bs_bt_vals[3, :] -
+        bs_bt_vals[1, :] * bs_bt_vals[2, :]
+    )
 
 
 def classify_tangent_intersection(
-        intersection, nodes1, tangent1, nodes2, tangent2):
+    intersection, nodes1, tangent1, nodes2, tangent2
+):
     """Helper for func:`classify_intersection` at tangencies.
 
     .. note::
@@ -1038,21 +1353,28 @@ def classify_tangent_intersection(
             # the surface intersection.
             if sign1 == 1.0:
                 return CLASSIFICATION_T.OPPOSED
+
             else:
                 return CLASSIFICATION_T.TANGENT_BOTH
+
         else:
             delta_c = abs(curvature1) - abs(curvature2)
             if delta_c == 0.0:
                 raise NotImplementedError(_SAME_CURVATURE)
+
             elif sign1 == _SIGN(delta_c):
                 return CLASSIFICATION_T.OPPOSED
+
             else:
                 return CLASSIFICATION_T.TANGENT_BOTH
+
     else:
         if curvature1 > curvature2:
             return CLASSIFICATION_T.TANGENT_FIRST
+
         elif curvature1 < curvature2:
             return CLASSIFICATION_T.TANGENT_SECOND
+
         else:
             raise NotImplementedError(_SAME_CURVATURE)
 
@@ -1082,7 +1404,8 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
         bool: Indicates if the corner intersection should be ignored.
     """
     cross_prod = _helpers.cross_product(
-        edge_tangent.ravel(order='F'), corner_tangent.ravel(order='F'))
+        edge_tangent.ravel(order='F'), corner_tangent.ravel(order='F')
+    )
     # A negative cross product indicates that ``edge_tangent`` is
     # "inside" / "to the left" of ``corner_tangent`` (due to right-hand rule).
     if cross_prod > 0.0:
@@ -1090,16 +1413,19 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
 
     # Do the same for the **other** tangent at the corner.
     alt_corner_tangent = _curve_helpers.evaluate_hodograph(
-        1.0, corner_previous_edge)
+        1.0, corner_previous_edge
+    )
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
     cross_prod = _helpers.cross_product(
-        edge_tangent.ravel(order='F'), alt_corner_tangent.ravel(order='F'))
+        edge_tangent.ravel(order='F'), alt_corner_tangent.ravel(order='F')
+    )
     return cross_prod <= 0.0
 
 
 def ignored_double_corner(
-        intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2):
+    intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
+):
     """Check if an intersection is an "ignored" double corner.
 
     .. note::
@@ -1132,10 +1458,10 @@ def ignored_double_corner(
     prev_index = (intersection.index_first - 1) % 3
     prev_edge = edge_nodes1[prev_index]
     alt_tangent_s = _curve_helpers.evaluate_hodograph(1.0, prev_edge)
-
     # First check if ``tangent_t`` is interior to the ``s`` surface.
     cross_prod1 = _helpers.cross_product(
-        tangent_s.ravel(order='F'), tangent_t.ravel(order='F'))
+        tangent_s.ravel(order='F'), tangent_t.ravel(order='F')
+    )
     # A positive cross product indicates that ``tangent_t`` is
     # interior to ``tangent_s``. Similar for ``alt_tangent_s``.
     # If ``tangent_t`` is interior to both, then the surfaces
@@ -1144,7 +1470,8 @@ def ignored_double_corner(
     if cross_prod1 >= 0.0:
         # Only compute ``cross_prod2`` if we need to.
         cross_prod2 = _helpers.cross_product(
-            alt_tangent_s.ravel(order='F'), tangent_t.ravel(order='F'))
+            alt_tangent_s.ravel(order='F'), tangent_t.ravel(order='F')
+        )
         if cross_prod2 >= 0.0:
             return False
 
@@ -1155,13 +1482,14 @@ def ignored_double_corner(
     alt_tangent_t = _curve_helpers.evaluate_hodograph(1.0, prev_edge)
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
-
     cross_prod3 = _helpers.cross_product(
-        tangent_s.ravel(order='F'), alt_tangent_t.ravel(order='F'))
+        tangent_s.ravel(order='F'), alt_tangent_t.ravel(order='F')
+    )
     if cross_prod3 >= 0.0:
         # Only compute ``cross_prod4`` if we need to.
         cross_prod4 = _helpers.cross_product(
-            alt_tangent_s.ravel(order='F'), alt_tangent_t.ravel(order='F'))
+            alt_tangent_s.ravel(order='F'), alt_tangent_t.ravel(order='F')
+        )
         if cross_prod4 >= 0.0:
             return False
 
@@ -1181,7 +1509,8 @@ def ignored_double_corner(
 
 
 def ignored_corner(
-        intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2):
+    intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
+):
     """Check if an intersection is an "ignored" corner.
 
     .. note::
@@ -1218,17 +1547,21 @@ def ignored_corner(
         if intersection.t == 0.0:
             # Double corner.
             return ignored_double_corner(
-                intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2)
+                intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
+            )
+
         else:
             # s-only corner.
             prev_index = (intersection.index_first - 1) % 3
             prev_edge = edge_nodes1[prev_index]
             return ignored_edge_corner(tangent_t, tangent_s, prev_edge)
+
     elif intersection.t == 0.0:
         # t-only corner.
         prev_index = (intersection.index_second - 1) % 3
         prev_edge = edge_nodes2[prev_index]
         return ignored_edge_corner(tangent_s, tangent_t, prev_edge)
+
     else:
         # Not a corner.
         return False
@@ -1674,26 +2007,34 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
             end of a segment.
     """
     if intersection.s == 1.0 or intersection.t == 1.0:
-        raise ValueError('Intersection occurs at the end of an edge',
-                         's', intersection.s, 't', intersection.t)
+        raise ValueError(
+            'Intersection occurs at the end of an edge',
+            's',
+            intersection.s,
+            't',
+            intersection.t,
+        )
 
     nodes1 = edge_nodes1[intersection.index_first]
     tangent1 = _curve_helpers.evaluate_hodograph(intersection.s, nodes1)
     nodes2 = edge_nodes2[intersection.index_second]
     tangent2 = _curve_helpers.evaluate_hodograph(intersection.t, nodes2)
-
     if ignored_corner(
-            intersection, tangent1, tangent2, edge_nodes1, edge_nodes2):
+        intersection, tangent1, tangent2, edge_nodes1, edge_nodes2
+    ):
         return CLASSIFICATION_T.IGNORED_CORNER
 
     # Take the cross product of tangent vectors to determine which one
     # is more "inside" / "to the left".
     cross_prod = _helpers.cross_product(
-        tangent1.ravel(order='F'), tangent2.ravel(order='F'))
+        tangent1.ravel(order='F'), tangent2.ravel(order='F')
+    )
     if cross_prod < -ALMOST_TANGENT:
         return CLASSIFICATION_T.FIRST
+
     elif cross_prod > ALMOST_TANGENT:
         return CLASSIFICATION_T.SECOND
+
     else:
         # NOTE: A more robust approach would take ||tangent1|| and ||tangent2||
         #       into account when comparing (tangent1 x tangent2) to the
@@ -1701,7 +2042,8 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
         #       normalizing the tangent vectors has a "cost" of ~6 flops each
         #       and that cost would happen for **every** single intersection.
         return classify_tangent_intersection(
-            intersection, nodes1, tangent1, nodes2, tangent2)
+            intersection, nodes1, tangent1, nodes2, tangent2
+        )
 
 
 def handle_ends(index1, s, index2, t):
@@ -1749,7 +2091,6 @@ def handle_ends(index1, s, index2, t):
         t = 0.0
         index2 = (index2 + 1) % 3
         edge_end = True
-
     is_corner = (s == 0.0 or t == 0.0)
     return edge_end, is_corner, (index1, s, index2, t)
 
@@ -1798,8 +2139,9 @@ def to_front(intersection, intersections, unused):
         # If we haven't already returned, create **another** artificial
         # intersection.
         return _intersection_helpers.Intersection(
-            next_index, 0.0, None, None,
-            interior_curve=CLASSIFICATION_T.FIRST)
+            next_index, 0.0, None, None, interior_curve=CLASSIFICATION_T.FIRST
+        )
+
     elif intersection.t == 1.0:
         # NOTE: We assume, but do not check, that ``s == 1.0`` and ``t == 1.0``
         #       are mutually exclusive.
@@ -1814,8 +2156,9 @@ def to_front(intersection, intersections, unused):
         # If we haven't already returned, create **another** artificial
         # intersection.
         return _intersection_helpers.Intersection(
-            None, None, next_index, 0.0,
-            interior_curve=CLASSIFICATION_T.SECOND)
+            None, None, next_index, 0.0, interior_curve=CLASSIFICATION_T.SECOND
+        )
+
     else:
         return intersection
 
@@ -1857,16 +2200,21 @@ def get_next_first(intersection, intersections, to_end=True):
         if other_int.index_first == index_first and other_s > s:
             if along_edge is None or other_s < along_edge.s:
                 along_edge = other_int
-
     if along_edge is None:
         if to_end:
             # If there is no other intersection on the edge, just return
             # the segment end.
             return _intersection_helpers.Intersection(
-                index_first, 1.0, None, None,
-                interior_curve=CLASSIFICATION_T.FIRST)
+                index_first,
+                1.0,
+                None,
+                None,
+                interior_curve=CLASSIFICATION_T.FIRST,
+            )
+
         else:
             return None
+
     else:
         return along_edge
 
@@ -1908,16 +2256,21 @@ def get_next_second(intersection, intersections, to_end=True):
         if other_int.index_second == index_second and other_t > t:
             if along_edge is None or other_t < along_edge.t:
                 along_edge = other_int
-
     if along_edge is None:
         if to_end:
             # If there is no other intersection on the edge, just return
             # the segment end.
             return _intersection_helpers.Intersection(
-                None, None, index_second, 1.0,
-                interior_curve=CLASSIFICATION_T.SECOND)
+                None,
+                None,
+                index_second,
+                1.0,
+                interior_curve=CLASSIFICATION_T.SECOND,
+            )
+
         else:
             return None
+
     else:
         return along_edge
 
@@ -1963,15 +2316,20 @@ def get_next_coincident(intersection, intersections):
     along_first = get_next_first(intersection, intersections, to_end=False)
     if along_first is None:
         along_second = get_next_second(
-            intersection, intersections, to_end=False)
+            intersection, intersections, to_end=False
+        )
     else:
         return along_first
 
     if along_second is None:
         return _intersection_helpers.Intersection(
-            intersection.index_first, 1.0,
-            intersection.index_second, 1.0,
-            interior_curve=CLASSIFICATION_T.COINCIDENT)
+            intersection.index_first,
+            1.0,
+            intersection.index_second,
+            1.0,
+            interior_curve=CLASSIFICATION_T.COINCIDENT,
+        )
+
     else:
         return along_second
 
@@ -1986,8 +2344,10 @@ def is_first(classification):
     Returns:
         bool: Indicating if the classification is on the first curve.
     """
-    return (classification == CLASSIFICATION_T.FIRST or
-            classification == CLASSIFICATION_T.TANGENT_FIRST)
+    return (
+        classification == CLASSIFICATION_T.FIRST or
+        classification == CLASSIFICATION_T.TANGENT_FIRST
+    )
 
 
 def is_second(classification):
@@ -2000,8 +2360,10 @@ def is_second(classification):
     Returns:
         bool: Indicating if the classification is on the second curve.
     """
-    return (classification == CLASSIFICATION_T.SECOND or
-            classification == CLASSIFICATION_T.TANGENT_SECOND)
+    return (
+        classification == CLASSIFICATION_T.SECOND or
+        classification == CLASSIFICATION_T.TANGENT_SECOND
+    )
 
 
 def get_next(intersection, intersections, unused):
@@ -2052,7 +2414,8 @@ def get_next(intersection, intersections, unused):
     else:
         raise ValueError(
             'Cannot get next node if not starting from "FIRST", '
-            '"TANGENT_FIRST", "SECOND", "TANGENT_SECOND" or "COINCIDENT".')
+            '"TANGENT_FIRST", "SECOND", "TANGENT_SECOND" or "COINCIDENT".'
+        )
 
     if result in unused:
         unused.remove(result)
@@ -2109,22 +2472,30 @@ def ends_to_curve(start_node, end_node):
     if is_first(start_node.interior_curve):
         if end_node.index_first != start_node.index_first:
             raise ValueError(_WRONG_CURVE)
+
         return start_node.index_first, start_node.s, end_node.s
+
     elif is_second(start_node.interior_curve):
         if end_node.index_second != start_node.index_second:
             raise ValueError(_WRONG_CURVE)
+
         return start_node.index_second + 3, start_node.t, end_node.t
+
     elif start_node.interior_curve == CLASSIFICATION_T.COINCIDENT:
         if end_node.index_first == start_node.index_first:
             return start_node.index_first, start_node.s, end_node.s
+
         elif end_node.index_second == start_node.index_second:
             return start_node.index_second + 3, start_node.t, end_node.t
+
         else:
             raise ValueError(_WRONG_CURVE)
+
     else:
         raise ValueError(
             'Segment start must be classified as "FIRST", "TANGENT_FIRST", '
-            '"SECOND", "TANGENT_SECOND" or "COINCIDENT".')
+            '"SECOND", "TANGENT_SECOND" or "COINCIDENT".'
+        )
 
 
 def no_intersections(nodes1, degree1, nodes2, degree2):
@@ -2156,12 +2527,14 @@ def no_intersections(nodes1, degree1, nodes2, degree2):
     from bezier import _surface_intersection
 
     located = _surface_intersection.locate_point(
-        nodes2, degree2, nodes1[0, 0], nodes1[1, 0])
+        nodes2, degree2, nodes1[0, 0], nodes1[1, 0]
+    )
     if located is not None:
         return None, True
 
     located = _surface_intersection.locate_point(
-        nodes1, degree1, nodes2[0, 0], nodes2[1, 0])
+        nodes1, degree1, nodes2[0, 0], nodes2[1, 0]
+    )
     if located is not None:
         return None, False
 
@@ -2208,19 +2581,24 @@ def tangent_only_intersections(all_types):
             of the tangent types.
     """
     if len(all_types) != 1:
-        raise ValueError('Unexpected value, types should all match',
-                         all_types)
+        raise ValueError('Unexpected value, types should all match', all_types)
+
     point_type = all_types.pop()
     if point_type == CLASSIFICATION_T.OPPOSED:
         return [], None
+
     elif point_type == CLASSIFICATION_T.IGNORED_CORNER:
         return [], None
+
     elif point_type == CLASSIFICATION_T.TANGENT_FIRST:
         return None, True
+
     elif point_type == CLASSIFICATION_T.TANGENT_SECOND:
         return None, False
+
     elif point_type == CLASSIFICATION_T.COINCIDENT_UNUSED:
         return [], None
+
     else:
         raise ValueError('Point type not for tangency', point_type)
 
@@ -2272,21 +2650,23 @@ def basic_interior_combine(intersections, max_edges=10):
             #       (of 2 or 4 choices) at the front of segment(s).
             if curr_node is start:
                 break
+
             next_node = get_next(curr_node, intersections, unused)
             edge_ends.append((curr_node, next_node))
             if len(edge_ends) > max_edges:
                 raise RuntimeError(
-                    'Unexpected number of edges', len(edge_ends))
+                    'Unexpected number of edges', len(edge_ends)
+                )
 
         edge_info = tuple(
             ends_to_curve(start_node, end_node)
             for start_node, end_node in edge_ends
         )
         result.append(edge_info)
-
     if len(result) == 1:
         if result[0] in FIRST_SURFACE_INFO:
             return None, True
+
         elif result[0] in SECOND_SURFACE_INFO:
             return None, False
 
@@ -2294,7 +2674,8 @@ def basic_interior_combine(intersections, max_edges=10):
 
 
 def combine_intersections(
-        intersections, nodes1, degree1, nodes2, degree2, all_types):
+    intersections, nodes1, degree1, nodes2, degree2, all_types
+):
     r"""Combine curve-curve intersections into curved polygon(s).
 
     .. note::
@@ -2334,8 +2715,10 @@ def combine_intersections(
     """
     if intersections:
         return basic_interior_combine(intersections)
+
     elif all_types:
         return tangent_only_intersections(all_types)
+
     else:
         return no_intersections(nodes1, degree1, nodes2, degree2)
 
@@ -2363,12 +2746,10 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         is the ambient dimension where ``nodes`` reside).
     """
     dimension, num_nodes = nodes.shape
-
     binom_val = 1.0
     result = np.zeros((dimension, 1), order='F')
     index = num_nodes - 1
     result[:, 0] += nodes[:, index]
-
     # curve evaluate_multi_barycentric() takes arrays.
     lambda1 = np.asfortranarray([lambda1])
     lambda2 = np.asfortranarray([lambda2])
@@ -2380,17 +2761,15 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         # d - k =     1,     2, ...
         # We know column k has (d - k + 1) elements.
         new_index = index - degree + k  # First element in column.
-
-        col_nodes = nodes[:, new_index:index + 1]
+        col_nodes = nodes[:, new_index: index + 1]
         col_nodes = np.asfortranarray(col_nodes)
         col_result = _curve_helpers.evaluate_multi_barycentric(
-            col_nodes, lambda1, lambda2)
-
+            col_nodes, lambda1, lambda2
+        )
         result *= lambda3
         result += binom_val * col_result
         # Update index for next iteration.
         index = new_index
-
     return result
 
 
@@ -2418,7 +2797,10 @@ def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
     result = np.empty((dimension, num_vals), order='F')
     for index, (lambda1, lambda2, lambda3) in enumerate(param_vals):
         result[:, index] = evaluate_barycentric(
-            nodes, degree, lambda1, lambda2, lambda3)[:, 0]
+            nodes, degree, lambda1, lambda2, lambda3
+        )[
+            :, 0
+        ]
     return result
 
 
@@ -2446,7 +2828,10 @@ def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
     result = np.empty((dimension, num_vals), order='F')
     for index, (s, t) in enumerate(param_vals):
         result[:, index] = evaluate_barycentric(
-            nodes, degree, 1.0 - s - t, s, t)[:, 0]
+            nodes, degree, 1.0 - s - t, s, t
+        )[
+            :, 0
+        ]
     return result
 
 
@@ -2470,7 +2855,6 @@ def _compute_edge_nodes(nodes, degree):
     nodes1 = np.empty((dimension, degree + 1), order='F')
     nodes2 = np.empty((dimension, degree + 1), order='F')
     nodes3 = np.empty((dimension, degree + 1), order='F')
-
     curr2 = degree
     curr3 = -1
     for i in six.moves.xrange(degree + 1):
@@ -2480,7 +2864,6 @@ def _compute_edge_nodes(nodes, degree):
         # Update the indices.
         curr2 += degree - i
         curr3 -= i + 2
-
     return nodes1, nodes2, nodes3
 
 

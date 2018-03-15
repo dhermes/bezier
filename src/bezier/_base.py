@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Common features of B |eacute| zier shapes.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -31,14 +30,12 @@ class Base(object):
     Raises:
         ValueError: If the ``nodes`` are not 2D.
     """
-
     __slots__ = ('_dimension', '_nodes')
     _degree = -1
 
     def __init__(self, nodes, _copy=True):
         if nodes.ndim != 2:
-            raise ValueError('Nodes must be 2-dimensional, not',
-                             nodes.ndim)
+            raise ValueError('Nodes must be 2-dimensional, not', nodes.ndim)
 
         dimension, _ = nodes.shape
         self._dimension = dimension
@@ -73,4 +70,5 @@ class Base(object):
             str: Object representation.
         """
         return '<{} (degree={:d}, dimension={:d})>'.format(
-            self.__class__.__name__, self._degree, self._dimension)
+            self.__class__.__name__, self._degree, self._dimension
+        )

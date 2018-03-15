@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Private helper methods for intersecting B |eacute| zier shapes.
 
 As a convention, the functions defined here with a leading underscore
@@ -34,16 +33,15 @@ import six
 
 from bezier import _curve_helpers
 from bezier import _helpers
+
 try:
     from bezier import _speedup
 except ImportError:  # pragma: NO COVER
     _speedup = None
-
-
 # For ``full_newton()``.
-ZERO_THRESHOLD = 0.5**10  # ~1e-3
+ZERO_THRESHOLD = 0.5 ** 10  # ~1e-3
 MAX_NEWTON_ITERATIONS = 10
-NEWTON_ERROR_RATIO = 0.5**36
+NEWTON_ERROR_RATIO = 0.5 ** 36
 NEWTON_NO_CONVERGE = """\
 Unsupported multiplicity.
 
@@ -411,7 +409,8 @@ def _newton_refine(s, nodes1, t, nodes2):
     # NOTE: We form -F(s, t) since we want to solve -DF^{-1} F(s, t).
     func_val = (
         _curve_helpers.evaluate_multi(nodes2, np.asfortranarray([t])) -
-        _curve_helpers.evaluate_multi(nodes1, np.asfortranarray([s])))
+        _curve_helpers.evaluate_multi(nodes1, np.asfortranarray([s]))
+    )
     if np.all(func_val == 0.0):
         # No refinement is needed.
         return s, t
@@ -420,11 +419,11 @@ def _newton_refine(s, nodes1, t, nodes2):
     jac_mat = np.empty((2, 2), order='F')
     jac_mat[:, :1] = _curve_helpers.evaluate_hodograph(s, nodes1)
     jac_mat[:, 1:] = - _curve_helpers.evaluate_hodograph(t, nodes2)
-
     # Solve the system.
     singular, delta_s, delta_t = _helpers.solve2x2(jac_mat, func_val[:, 0])
     if singular:
         raise ValueError('Jacobian is singular.')
+
     else:
         return s + delta_s, t + delta_t
 
@@ -485,19 +484,20 @@ class NewtonSimpleRoot(object):  # pylint: disable=too-few-public-methods
         """
         s_vals = np.asfortranarray([s])
         b1_s = _curve_helpers.evaluate_multi(self.nodes1, s_vals)
-
         t_vals = np.asfortranarray([t])
         b2_t = _curve_helpers.evaluate_multi(self.nodes2, t_vals)
-
         func_val = b1_s - b2_t
         if np.all(func_val == 0.0):
             return None, func_val
+
         else:
             jacobian = np.empty((2, 2), order='F')
             jacobian[:, :1] = _curve_helpers.evaluate_multi(
-                self.first_deriv1, s_vals)
-            jacobian[:, 1:] = -_curve_helpers.evaluate_multi(
-                self.first_deriv2, t_vals)
+                self.first_deriv1, s_vals
+            )
+            jacobian[:, 1:] = - _curve_helpers.evaluate_multi(
+                self.first_deriv2, t_vals
+            )
             return jacobian, func_val
 
 
@@ -568,8 +568,14 @@ class NewtonDoubleRoot(object):  # pylint: disable=too-few-public-methods
     """
 
     def __init__(
-            self, nodes1, first_deriv1, second_deriv1,
-            nodes2, first_deriv2, second_deriv2):
+        self,
+        nodes1,
+        first_deriv1,
+        second_deriv1,
+        nodes2,
+        first_deriv2,
+        second_deriv2,
+    ):
         self.nodes1 = nodes1
         self.first_deriv1 = first_deriv1
         self.second_deriv1 = second_deriv1
@@ -601,16 +607,15 @@ class NewtonDoubleRoot(object):  # pylint: disable=too-few-public-methods
         s_vals = np.asfortranarray([s])
         b1_s = _curve_helpers.evaluate_multi(self.nodes1, s_vals)
         b1_ds = _curve_helpers.evaluate_multi(self.first_deriv1, s_vals)
-
         t_vals = np.asfortranarray([t])
         b2_t = _curve_helpers.evaluate_multi(self.nodes2, t_vals)
         b2_dt = _curve_helpers.evaluate_multi(self.first_deriv2, t_vals)
-
         func_val = np.empty((3, 1), order='F')
         func_val[:2, :] = b1_s - b2_t
         func_val[2, :] = _helpers.cross_product(b1_ds[:, 0], b2_dt[:, 0])
         if np.all(func_val == 0.0):
             return None, func_val[:2, :]
+
         else:
             jacobian = np.empty((3, 2), order='F')
             jacobian[:2, :1] = b1_ds
@@ -619,20 +624,20 @@ class NewtonDoubleRoot(object):  # pylint: disable=too-few-public-methods
                 jacobian[2, 0] = 0.0
             else:
                 jacobian[2, 0] = _helpers.cross_product(
-                    _curve_helpers.evaluate_multi(
-                        self.second_deriv1, s_vals)[:, 0],
+                    _curve_helpers.evaluate_multi(self.second_deriv1, s_vals)[
+                        :, 0
+                    ],
                     b2_dt[:, 0],
                 )
-
             if self.second_deriv2.size == 0:
                 jacobian[2, 1] = 0.0
             else:
                 jacobian[2, 1] = _helpers.cross_product(
                     b1_ds[:, 0],
-                    _curve_helpers.evaluate_multi(
-                        self.second_deriv2, t_vals)[:, 0],
+                    _curve_helpers.evaluate_multi(self.second_deriv2, t_vals)[
+                        :, 0
+                    ],
                 )
-
             modified_lhs = _helpers.matrix_product(jacobian.T, jacobian)
             modified_rhs = _helpers.matrix_product(jacobian.T, func_val)
             return modified_lhs, modified_rhs
@@ -694,7 +699,6 @@ def newton_iterate(evaluate_fn, s, t):
     norm_update_prev = None
     norm_update = None
     linear_updates = 0  # Track the number of "linear" updates.
-
     current_s = s
     current_t = t
     for index in six.moves.xrange(MAX_NEWTON_ITERATIONS):
@@ -703,7 +707,8 @@ def newton_iterate(evaluate_fn, s, t):
             return True, current_s, current_t
 
         singular, delta_s, delta_t = _helpers.solve2x2(
-            jacobian, func_val[:, 0])
+            jacobian, func_val[:, 0]
+        )
         if singular:
             break
 
@@ -722,7 +727,6 @@ def newton_iterate(evaluate_fn, s, t):
         norm_soln = np.linalg.norm([current_s, current_t], ord=2)
         current_s -= delta_s
         current_t -= delta_t
-
         if norm_update < NEWTON_ERROR_RATIO * norm_soln:
             return True, current_s, current_t
 
@@ -758,7 +762,6 @@ def full_newton_nonzero(s, nodes1, t, nodes2):
     first_deriv1 = (num_nodes1 - 1) * (nodes1[:, 1:] - nodes1[:, :-1])
     _, num_nodes2 = np.shape(nodes2)
     first_deriv2 = (num_nodes2 - 1) * (nodes2[:, 1:] - nodes2[:, :-1])
-
     evaluate_fn = NewtonSimpleRoot(nodes1, first_deriv1, nodes2, first_deriv2)
     converged, current_s, current_t = newton_iterate(evaluate_fn, s, t)
     if converged:
@@ -766,15 +769,22 @@ def full_newton_nonzero(s, nodes1, t, nodes2):
 
     # If Newton's method did not converge, then assume the root is not simple.
     second_deriv1 = (num_nodes1 - 2) * (
-        first_deriv1[:, 1:] - first_deriv1[:, :-1])
+        first_deriv1[:, 1:] - first_deriv1[:, :-1]
+    )
     second_deriv2 = (num_nodes2 - 2) * (
-        first_deriv2[:, 1:] - first_deriv2[:, :-1])
+        first_deriv2[:, 1:] - first_deriv2[:, :-1]
+    )
     evaluate_fn = NewtonDoubleRoot(
-        nodes1, first_deriv1, second_deriv1,
-        nodes2, first_deriv2, second_deriv2)
+        nodes1,
+        first_deriv1,
+        second_deriv1,
+        nodes2,
+        first_deriv2,
+        second_deriv2,
+    )
     converged, current_s, current_t = newton_iterate(
-        evaluate_fn, current_s, current_t)
-
+        evaluate_fn, current_s, current_t
+    )
     if converged:
         return current_s, current_t
 
@@ -811,18 +821,24 @@ def full_newton(s, nodes1, t, nodes2):
         if t < ZERO_THRESHOLD:
             reversed2 = np.asfortranarray(nodes2[:, ::-1])
             refined_s, refined_t = full_newton_nonzero(
-                1.0 - s, reversed1, 1.0 - t, reversed2)
+                1.0 - s, reversed1, 1.0 - t, reversed2
+            )
             return 1.0 - refined_s, 1.0 - refined_t
+
         else:
             refined_s, refined_t = full_newton_nonzero(
-                1.0 - s, reversed1, t, nodes2)
+                1.0 - s, reversed1, t, nodes2
+            )
             return 1.0 - refined_s, refined_t
+
     else:
         if t < ZERO_THRESHOLD:
             reversed2 = np.asfortranarray(nodes2[:, ::-1])
             refined_s, refined_t = full_newton_nonzero(
-                s, nodes1, 1.0 - t, reversed2)
+                s, nodes1, 1.0 - t, reversed2
+            )
             return refined_s, 1.0 - refined_t
+
         else:
             return full_newton_nonzero(s, nodes1, t, nodes2)
 
@@ -832,7 +848,6 @@ class IntersectionClassification(enum.Enum):
 
     Provided as the output values for :func:`.classify_intersection`.
     """
-
     FIRST = 0
     """The first curve is on the interior."""
     SECOND = 1
@@ -871,12 +886,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             ~bezier._intersection_helpers.IntersectionClassification]): The
             classification of the intersection.
     """
-
-    __slots__ = (
-        'index_first', 's',
-        'index_second', 't',
-        'interior_curve',
-    )
+    __slots__ = ('index_first', 's', 'index_second', 't', 'interior_curve')
 
     def __init__(self, index_first, s, index_second, t, interior_curve=None):
         self.index_first = index_first
@@ -915,7 +925,6 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
 
 class IntersectionStrategy(enum.Enum):
     """Enum determining the type of intersection algorithm to use."""
-
     GEOMETRIC = 0
     """Geometric approach to intersection (via subdivision)."""
     ALGEBRAIC = 1

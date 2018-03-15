@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Generic geometry and floating point helpers.
 
 As a convention, the functions defined here with a leading underscore
@@ -32,9 +31,7 @@ try:
     from bezier import _speedup
 except ImportError:  # pragma: NO COVER
     _speedup = None
-
-
-_EPS = 0.5**40
+_EPS = 0.5 ** 40
 
 
 def _vector_close(vec1, vec2, eps=_EPS):
@@ -81,8 +78,10 @@ def _vector_close(vec1, vec2, eps=_EPS):
     size2 = np.linalg.norm(vec2, ord=2)
     if size1 == 0:
         return size2 <= eps
+
     elif size2 == 0:
         return size1 <= eps
+
     else:
         upper_bound = eps * min(size1, size2)
         return np.linalg.norm(vec1 - vec2, ord=2) <= upper_bound
@@ -209,7 +208,7 @@ def matrix_product(mat1, mat2):
     return np.dot(mat2.T, mat1.T).T
 
 
-def _wiggle_interval(value, wiggle=0.5**44):
+def _wiggle_interval(value, wiggle=0.5 ** 44):
     r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
 
     Allows a little bit of wiggle room outside the interval. Any value
@@ -236,10 +235,13 @@ def _wiggle_interval(value, wiggle=0.5**44):
     """
     if -wiggle < value < wiggle:
         return 0.0, True
+
     elif wiggle <= value <= 1.0 - wiggle:
         return value, True
+
     elif 1.0 - wiggle < value < 1.0 + wiggle:
         return 1.0, True
+
     else:
         return np.nan, False
 
@@ -286,6 +288,7 @@ def in_sorted(values, value):
     index = bisect.bisect_left(values, value)
     if index >= len(values):
         return False
+
     return values[index] == value
 
 
@@ -332,9 +335,9 @@ def _simple_convex_hull(points):
     # Then sort the data in left-to-right order (and break ties by y-value).
     points = np.empty((2, num_points), order='F')
     for index, xy_val in enumerate(
-            sorted(tuple(column) for column in unique_points.T)):
+        sorted(tuple(column) for column in unique_points.T)
+    ):
         points[:, index] = xy_val
-
     # After sorting, if there are only 2 points, return.
     if num_points < 3:
         return points
@@ -348,38 +351,35 @@ def _simple_convex_hull(points):
             point1 = points[:, lower[-1]]
             if cross_product_compare(point0, point1, point2) > 0:
                 break
+
             else:
                 lower.pop()
-
         lower.append(index)
-
     # Build upper hull
     upper = [num_points - 1]
     for index in six.moves.xrange(num_points - 2, -1, -1):
         # Don't consider indices from the lower hull (other than the ends).
         if index > 0 and in_sorted(lower, index):
             continue
+
         point2 = points[:, index]
         while len(upper) >= 2:
             point0 = points[:, upper[-2]]
             point1 = points[:, upper[-1]]
             if cross_product_compare(point0, point1, point2) > 0:
                 break
+
             else:
                 upper.pop()
-
         upper.append(index)
-
     # **Both** corners are double counted.
     size_polygon = len(lower) + len(upper) - 2
     polygon = np.empty((2, size_polygon), order='F')
-
     for index, column in enumerate(lower[:-1]):
         polygon[:, index] = points[:, column]
     index_start = len(lower) - 1
     for index, column in enumerate(upper[:-1]):
         polygon[:, index + index_start] = points[:, column]
-
     return polygon
     # pylint: enable=too-many-branches
 
@@ -405,22 +405,19 @@ def is_separating(direction, polygon1, polygon2):
     # NOTE: We assume throughout that ``norm_squared != 0``. If it **were**
     #       zero that would mean the ``direction`` corresponds to an
     #       invalid edge.
-    norm_squared = (
-        direction[0] * direction[0] + direction[1] * direction[1])
-
+    norm_squared = (direction[0] * direction[0] + direction[1] * direction[1])
     params = []
     vertex = np.empty((2,), order='F')
     for polygon in (polygon1, polygon2):
         _, polygon_size = polygon.shape
         min_param = np.inf
-        max_param = -np.inf
+        max_param = - np.inf
         for index in six.moves.xrange(polygon_size):
             vertex[:] = polygon[:, index]
             param = cross_product(direction, vertex) / norm_squared
             min_param = min(min_param, param)
             max_param = max(max_param, param)
         params.append((min_param, max_param))
-
     # NOTE: The indexing is based on:
     #       params[0] = (min_param1, max_param1)
     #       params[1] = (min_param2, max_param2)
@@ -509,9 +506,11 @@ def solve2x2(lhs, rhs):
         # Cx + Dy = F ==> x = (F - Dy) / C
         x_val = (rhs[1] - lhs[1, 1] * y_val) / lhs[1, 0]
         return False, x_val, y_val
+
     else:
         if lhs[0, 0] == 0.0:
             return True, None, None
+
         # [A | B][x] = [E]
         # [C | D][y]   [F]
         ratio = lhs[1, 0] / lhs[0, 0]
@@ -573,8 +572,7 @@ class UnsupportedDegree(NotImplementedError):
         if num_supported == 0:
             return 'degree={}'.format(self.degree)
 
-        degrees_str = [
-            '{}'.format(degree) for degree in self.supported]
+        degrees_str = ['{}'.format(degree) for degree in self.supported]
         if num_supported == 1:
             msg = 'The only degree supported at this time is ' + degrees_str[0]
         else:
@@ -582,7 +580,8 @@ class UnsupportedDegree(NotImplementedError):
                 'The only degrees supported at this time are ' +
                 ', '.join(degrees_str[:-1]) +
                 ' and ' +
-                degrees_str[-1])
+                degrees_str[-1]
+            )
         return '{} (degree={})'.format(msg, self.degree)
 
 

@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Plotting utilities."""
 
 
@@ -47,18 +46,20 @@ def add_plot_boundary(ax, padding=0.125):
             of padding to add around data. Defaults to ``0.125``.
     """
     nodes = np.asfortranarray(
-        np.vstack([line.get_xydata() for line in ax.lines]).T)
+        np.vstack([line.get_xydata() for line in ax.lines]).T
+    )
     left, right, bottom, top = _helpers.bbox(nodes)
     center_x = 0.5 * (right + left)
     delta_x = right - left
     center_y = 0.5 * (top + bottom)
     delta_y = top - bottom
-
     multiplier = (1.0 + padding) * 0.5
-    ax.set_xlim(center_x - multiplier * delta_x,
-                center_x + multiplier * delta_x)
-    ax.set_ylim(center_y - multiplier * delta_y,
-                center_y + multiplier * delta_y)
+    ax.set_xlim(
+        center_x - multiplier * delta_x, center_x + multiplier * delta_x
+    )
+    ax.set_ylim(
+        center_y - multiplier * delta_y, center_y + multiplier * delta_y
+    )
 
 
 def add_patch(ax, color, pts_per_edge, *edges):
@@ -76,7 +77,6 @@ def add_patch(ax, color, pts_per_edge, *edges):
     from matplotlib import path as _path_mod
 
     s_vals = np.linspace(0.0, 1.0, pts_per_edge)
-
     # Evaluate points on each edge.
     all_points = []
     for edge in edges:
@@ -84,20 +84,16 @@ def add_patch(ax, color, pts_per_edge, *edges):
         # We assume the edges overlap and leave out the first point
         # in each.
         all_points.append(points[:, 1:])
-
     # Add first point as last point (polygon is closed).
     first_edge = all_points[0]
     all_points.append(first_edge[:, [0]])
-
     # Add boundary first.
     polygon = np.asfortranarray(np.hstack(all_points))
     line, = ax.plot(polygon[0, :], polygon[1, :], color=color)
     # Reset ``color`` in case it was ``None`` and set from color wheel.
     color = line.get_color()
-
     # ``polygon`` is stored Fortran-contiguous with ``x-y`` points in each
     # column but ``Path()`` wants ``x-y`` points in each row.
     path = _path_mod.Path(polygon.T)
-    patch = patches.PathPatch(
-        path, facecolor=color, alpha=0.625)
+    patch = patches.PathPatch(path, facecolor=color, alpha=0.625)
     ax.add_patch(patch)

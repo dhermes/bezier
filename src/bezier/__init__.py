@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 r"""Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects.
 
 Intended to perform basic operations on B |eacute| zier objects such
@@ -36,14 +35,14 @@ from bezier._helpers import UnsupportedDegree
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface
+
 try:
     import bezier._speedup  # noqa: F401
+
     _HAS_SPEEDUP = True
 except ImportError as exc:  # pragma: NO COVER
     __config__.handle_import_error(exc, '_speedup')
     _HAS_SPEEDUP = False
-
-
 # NOTE: The ``__version__`` and ``__author__`` are hard-coded here, rather
 #       than using ``pkg_resources.get_distribution('bezier').version``
 #       and related. This is **entirely** to accomodate builds where
@@ -114,5 +113,6 @@ def get_dll():
     """
     if os.name == 'nt':
         return pkg_resources.resource_filename('bezier', 'extra-dll')
+
     else:
         raise OSError('This function should only be used on Windows.')

@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 r"""Curved polygon and associated helpers.
 
 A curved polygon (in :math:`\mathbf{R}^2`) is defined by the
@@ -133,7 +132,6 @@ class CurvedPolygon(object):
 
             Other keyword arguments specified will be silently ignored.
     """
-
     __slots__ = ('_edges', '_num_sides', '_metadata')
 
     def __init__(self, *edges, **kwargs):
@@ -169,7 +167,9 @@ class CurvedPolygon(object):
             raise ValueError(
                 'Not sufficiently close',
                 'Consecutive sides do not have common endpoint',
-                prev, curr)
+                prev,
+                curr,
+            )
 
     def _verify(self):
         """Verify that the edges define a curved polygon.
@@ -192,7 +192,6 @@ class CurvedPolygon(object):
 
         for prev, curr in six.moves.zip(self._edges, self._edges[1:]):
             self._verify_pair(prev, curr)
-
         # Now we check that the final edge wraps around.
         prev = self._edges[-1]
         curr = self._edges[0]
@@ -214,10 +213,7 @@ class CurvedPolygon(object):
         This also means that the current object can't be modified by the
         returned dictionary.
         """
-        return {
-            '_edges': self._edges,
-            '_num_sides': self._num_sides,
-        }
+        return {'_edges': self._edges, '_num_sides': self._num_sides}
 
     def __repr__(self):
         """Representation of current object.
@@ -226,7 +222,8 @@ class CurvedPolygon(object):
             str: Object representation.
         """
         return '<{} (num_sides={:d})>'.format(
-            self.__class__.__name__, self._num_sides)
+            self.__class__.__name__, self._num_sides
+        )
 
     def plot(self, pts_per_edge, color=None, ax=None):
         """Plot the current curved polygon.
@@ -243,7 +240,5 @@ class CurvedPolygon(object):
         """
         if ax is None:
             ax = _plot_helpers.new_axis()
-
-        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._edges)
-
+        _plot_helpers.add_patch(ax, color, pts_per_edge, * self._edges)
         return ax

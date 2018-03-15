@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 r"""Proof-of-concept for B |eacute| zier clipping.
 
 .. _algorithm: https://dx.doi.org/10.1016/0010-4485(90)90039-F
@@ -34,7 +33,6 @@ import six
 
 from bezier import _geometric_intersection
 from bezier import _helpers
-
 
 NO_PARALLEL = 'Parallel lines not supported during clipping.'
 DEFAULT_S_MIN = 1.0
@@ -73,12 +71,11 @@ def compute_implicit_line(nodes):
     delta = nodes[:, -1] - nodes[:, 0]
     length = np.linalg.norm(delta, ord=2)
     # Normalize and rotate 90 degrees to the "left".
-    coeff_a = -delta[1] / length
+    coeff_a = - delta[1] / length
     coeff_b = delta[0] / length
     # c = - ax - by = (delta[1] x - delta[0] y) / L
     # NOTE: We divide by ``length`` at the end to "put off" rounding.
     coeff_c = (delta[1] * nodes[0, 0] - delta[0] * nodes[1, 0]) / length
-
     return coeff_a, coeff_b, coeff_c
 
 
@@ -108,19 +105,18 @@ def compute_fat_line(nodes):
         * The "maximum" distance to the fat line among the control points.
     """
     coeff_a, coeff_b, coeff_c = compute_implicit_line(nodes)
-
     # NOTE: This assumes, but does not check, that there are two rows.
     _, num_nodes = nodes.shape
     d_min = 0.0
     d_max = 0.0
     for index in six.moves.xrange(1, num_nodes - 1):  # Only interior nodes.
         curr_dist = (
-            coeff_a * nodes[0, index] + coeff_b * nodes[1, index] + coeff_c)
+            coeff_a * nodes[0, index] + coeff_b * nodes[1, index] + coeff_c
+        )
         if curr_dist < d_min:
             d_min = curr_dist
         elif curr_dist > d_max:
             d_max = curr_dist
-
     return coeff_a, coeff_b, coeff_c, d_min, d_max
 
 
@@ -169,13 +165,15 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
             case will be supported at some point, just not now.)
     """
     s, t, success = _geometric_intersection.segment_intersection(
-        start0, end0, start1, end1)
+        start0, end0, start1, end1
+    )
     if not success:
         raise NotImplementedError(NO_PARALLEL)
 
     if _helpers.in_interval(t, 0.0, 1.0):
         if _helpers.in_interval(s, 0.0, s_min):
             return s, s_max
+
         elif _helpers.in_interval(s, s_max, 1.0):
             return s_min, s
 
@@ -249,24 +247,21 @@ def clip_range(nodes1, nodes2):
     """
     # pylint: disable=too-many-locals
     coeff_a, coeff_b, coeff_c, d_min, d_max = compute_fat_line(nodes1)
-
     # NOTE: This assumes, but does not check, that there are two rows.
     _, num_nodes2 = nodes2.shape
-
     polynomial = np.empty((2, num_nodes2), order='F')
     denominator = float(num_nodes2 - 1)
     for index in six.moves.xrange(num_nodes2):
         polynomial[0, index] = index / denominator
         polynomial[1, index] = (
-            coeff_a * nodes2[0, index] + coeff_b * nodes2[1, index] + coeff_c)
-
+            coeff_a * nodes2[0, index] + coeff_b * nodes2[1, index] + coeff_c
+        )
     # Define segments for the top and the bottom of the region
     # bounded by the fat line.
     start_bottom = np.asfortranarray([0.0, d_min])
     end_bottom = np.asfortranarray([1.0, d_min])
     start_top = np.asfortranarray([0.0, d_max])
     end_top = np.asfortranarray([1.0, d_max])
-
     s_min = DEFAULT_S_MIN
     s_max = DEFAULT_S_MAX
     # NOTE: We avoid computing the convex hull and just compute where
@@ -275,11 +270,20 @@ def clip_range(nodes1, nodes2):
     for start_index in six.moves.xrange(num_nodes2 - 1):
         for end_index in six.moves.xrange(start_index + 1, num_nodes2):
             s_min, s_max = _update_parameters(
-                s_min, s_max, start_bottom, end_bottom,
-                polynomial[:, start_index], polynomial[:, end_index])
+                s_min,
+                s_max,
+                start_bottom,
+                end_bottom,
+                polynomial[:, start_index],
+                polynomial[:, end_index],
+            )
             s_min, s_max = _update_parameters(
-                s_min, s_max, start_top, end_top,
-                polynomial[:, start_index], polynomial[:, end_index])
-
+                s_min,
+                s_max,
+                start_top,
+                end_top,
+                polynomial[:, start_index],
+                polynomial[:, end_index],
+            )
     return _check_parameter_range(s_min, s_max)
     # pylint: enable=too-many-locals

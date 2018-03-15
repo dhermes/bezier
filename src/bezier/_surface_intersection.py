@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Private helper methods for :mod:`bezier.surface`.
 
 As a convention, the functions defined here with a leading underscore
@@ -35,14 +34,13 @@ from bezier import _geometric_intersection
 from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _surface_helpers
+
 try:
     from bezier import _speedup
 except ImportError:  # pragma: NO COVER
     _speedup = None
-
-
 MAX_LOCATE_SUBDIVISIONS = 20
-LOCATE_EPS = 2.0**(-47)
+LOCATE_EPS = 0.5 ** 47
 INTERSECTION_T = _geometric_intersection.BoxIntersectionType.INTERSECTION
 CLASSIFICATION_T = _intersection_helpers.IntersectionClassification
 UNUSED_T = CLASSIFICATION_T.COINCIDENT_UNUSED
@@ -52,8 +50,7 @@ ACCEPTABLE_CLASSIFICATIONS = (
     CLASSIFICATION_T.COINCIDENT,
 )
 TANGENT_CLASSIFICATIONS = (
-    CLASSIFICATION_T.TANGENT_FIRST,
-    CLASSIFICATION_T.TANGENT_SECOND,
+    CLASSIFICATION_T.TANGENT_FIRST, CLASSIFICATION_T.TANGENT_SECOND
 )
 
 
@@ -205,27 +202,27 @@ def _newton_refine(nodes, degree, x_val, y_val, s, t):
     """
     lambda1 = 1.0 - s - t
     (surf_x,), (surf_y,) = _surface_helpers.evaluate_barycentric(
-        nodes, degree, lambda1, s, t)
+        nodes, degree, lambda1, s, t
+    )
     if surf_x == x_val and surf_y == y_val:
         # No refinement is needed.
         return s, t
 
     # NOTE: This function assumes ``dimension==2`` (i.e. since ``x, y``).
     jac_nodes = _surface_helpers.jacobian_both(nodes, degree, 2)
-
     # The degree of the jacobian is one less.
     jac_both = _surface_helpers.evaluate_barycentric(
-        jac_nodes, degree - 1, lambda1, s, t)
-
+        jac_nodes, degree - 1, lambda1, s, t
+    )
     # The first row of the jacobian matrix is B_s (i.e. the
     # top-most values in ``jac_both``).
     delta_s, delta_t = newton_refine_solve(
-        jac_both, x_val, surf_x, y_val, surf_y)
+        jac_both, x_val, surf_x, y_val, surf_y
+    )
     return s + delta_s, t + delta_t
 
 
-def update_locate_candidates(
-        candidate, next_candidates, x_val, y_val, degree):
+def update_locate_candidates(candidate, next_candidates, x_val, y_val, degree):
     """Update list of candidate surfaces during geometric search for a point.
 
     .. note::
@@ -257,32 +254,22 @@ def update_locate_candidates(
         return
 
     nodes_a, nodes_b, nodes_c, nodes_d = _surface_helpers.subdivide_nodes(
-        candidate_nodes, degree)
-
+        candidate_nodes, degree
+    )
     half_width = 0.5 * width
-    next_candidates.extend((
+    next_candidates.extend(
         (
-            centroid_x - half_width,
-            centroid_y - half_width,
-            half_width,
-            nodes_a,
-        ), (
-            centroid_x,
-            centroid_y,
-            -half_width,
-            nodes_b,
-        ), (
-            centroid_x + width,
-            centroid_y - half_width,
-            half_width,
-            nodes_c,
-        ), (
-            centroid_x - half_width,
-            centroid_y + width,
-            half_width,
-            nodes_d,
-        ),
-    ))
+            (
+                centroid_x - half_width,
+                centroid_y - half_width,
+                half_width,
+                nodes_a,
+            ),
+            (centroid_x, centroid_y, -half_width, nodes_b),
+            (centroid_x + width, centroid_y - half_width, half_width, nodes_c),
+            (centroid_x - half_width, centroid_y + width, half_width, nodes_d),
+        )
+    )
 
 
 def mean_centroid(candidates):
@@ -315,7 +302,6 @@ def mean_centroid(candidates):
     for centroid_x, centroid_y, _, _ in candidates:
         sum_x += centroid_x
         sum_y += centroid_y
-
     denom = 3.0 * len(candidates)
     return sum_x / denom, sum_y / denom
 
@@ -355,30 +341,28 @@ def _locate_point(nodes, degree, x_val, y_val):
         next_candidates = []
         for candidate in candidates:
             update_locate_candidates(
-                candidate, next_candidates, x_val, y_val, degree)
-
+                candidate, next_candidates, x_val, y_val, degree
+            )
         candidates = next_candidates
-
     if not candidates:
         return None
 
     # We take the average of all centroids from the candidates
     # that may contain the point.
     s_approx, t_approx = mean_centroid(candidates)
-    s, t = newton_refine(
-        nodes, degree, x_val, y_val, s_approx, t_approx)
-
+    s, t = newton_refine(nodes, degree, x_val, y_val, s_approx, t_approx)
     actual = _surface_helpers.evaluate_barycentric(
-        nodes, degree, 1.0 - s - t, s, t)
+        nodes, degree, 1.0 - s - t, s, t
+    )
     expected = np.asfortranarray([x_val, y_val])
     if not _helpers.vector_close(
-            actual.ravel(order='F'), expected, eps=LOCATE_EPS):
-        s, t = newton_refine(
-            nodes, degree, x_val, y_val, s, t)
+        actual.ravel(order='F'), expected, eps=LOCATE_EPS
+    ):
+        s, t = newton_refine(nodes, degree, x_val, y_val, s, t)
     return s, t
 
 
-def same_intersection(intersection1, intersection2, wiggle=0.5**40):
+def same_intersection(intersection1, intersection2, wiggle=0.5 ** 40):
     """Check if two intersections are close to machine precision.
 
     .. note::
@@ -396,17 +380,18 @@ def same_intersection(intersection1, intersection2, wiggle=0.5**40):
         bool: Indicates if the two intersections are the same to
         machine precision.
     """
-    # pylint: disable=protected-access
     if intersection1.index_first != intersection2.index_first:
         return False
+
     if intersection1.index_second != intersection2.index_second:
         return False
-    # pylint: enable=protected-access
 
     return np.allclose(
         [intersection1.s, intersection1.t],
         [intersection2.s, intersection2.t],
-        atol=0.0, rtol=wiggle)
+        atol=0.0,
+        rtol=wiggle,
+    )
 
 
 def verify_duplicates(duplicates, uniques):
@@ -443,21 +428,21 @@ def verify_duplicates(duplicates, uniques):
         for index, uniq in enumerate(uniques):
             if same_intersection(dupe, uniq):
                 matches.append(index)
-
         if len(matches) != 1:
             raise ValueError('Duplicate not among uniques', dupe)
 
         matched = matches[0]
         counter[matched] += 1
-
     for index, count in six.iteritems(counter):
         uniq = uniques[index]
         if count == 1:
             if (uniq.s, uniq.t).count(0.0) != 1:
                 raise ValueError('Count == 1 should be a single corner', uniq)
+
         elif count == 3:
             if (uniq.s, uniq.t) != (0.0, 0.0):
                 raise ValueError('Count == 3 should be a double corner', uniq)
+
         else:
             raise ValueError('Unexpected duplicate count', count)
 
@@ -481,8 +466,10 @@ def add_edge_end_unused(intersection, duplicates, intersections):
     """
     found = None
     for other in intersections:
-        if (intersection.index_first == other.index_first and
-                intersection.index_second == other.index_second):
+        if (
+            intersection.index_first == other.index_first and
+            intersection.index_second == other.index_second
+        ):
             if intersection.s == 0.0 and other.s == 0.0:
                 found = other
                 break
@@ -494,7 +481,6 @@ def add_edge_end_unused(intersection, duplicates, intersections):
     if found is not None:
         intersections.remove(found)
         duplicates.append(found)
-
     intersections.append(intersection)
 
 
@@ -517,9 +503,11 @@ def check_unused(intersection, duplicates, intersections):
         bool: Indicates if the ``intersection`` is a duplicate.
     """
     for other in intersections:
-        if (other.interior_curve == UNUSED_T and
-                intersection.index_first == other.index_first and
-                intersection.index_second == other.index_second):
+        if (
+            other.interior_curve == UNUSED_T and
+            intersection.index_first == other.index_first and
+            intersection.index_second == other.index_second
+        ):
             if intersection.s == 0.0 and other.s == 0.0:
                 duplicates.append(intersection)
                 return True
@@ -532,8 +520,16 @@ def check_unused(intersection, duplicates, intersections):
 
 
 def add_intersection(  # pylint: disable=too-many-arguments
-        index1, s, index2, t, interior_curve,
-        edge_nodes1, edge_nodes2, duplicates, intersections):
+    index1,
+    s,
+    index2,
+    t,
+    interior_curve,
+    edge_nodes1,
+    edge_nodes2,
+    duplicates,
+    intersections,
+):
     """Create an :class:`Intersection` and append.
 
     The intersection will be classified as either a duplicate or a valid
@@ -560,31 +556,29 @@ def add_intersection(  # pylint: disable=too-many-arguments
     """
     # pylint: disable=too-many-locals
     edge_end, is_corner, intersection_args = _surface_helpers.handle_ends(
-        index1, s, index2, t)
+        index1, s, index2, t
+    )
     if edge_end:
-        intersection = _intersection_helpers.Intersection(
-            *intersection_args)
+        intersection = _intersection_helpers.Intersection(*intersection_args)
         intersection.interior_curve = interior_curve
-
         if interior_curve == UNUSED_T:
             add_edge_end_unused(intersection, duplicates, intersections)
         else:
             duplicates.append(intersection)
     else:
-        intersection = _intersection_helpers.Intersection(
-            index1, s, index2, t)
-
+        intersection = _intersection_helpers.Intersection(index1, s, index2, t)
         if is_corner:
             is_duplicate = check_unused(
-                intersection, duplicates, intersections)
+                intersection, duplicates, intersections
+            )
             if is_duplicate:
                 return
 
         # Classify the intersection.
         if interior_curve is None:
             interior_curve = _surface_helpers.classify_intersection(
-                intersection, edge_nodes1, edge_nodes2)
-
+                intersection, edge_nodes1, edge_nodes2
+            )
         intersection.interior_curve = interior_curve
         intersections.append(intersection)
     # pylint: enable=too-many-locals
@@ -621,9 +615,9 @@ def classify_coincident(st_vals, coincident):
     if not coincident:
         return None
 
-    if (st_vals[0, 0] >= st_vals[0, 1] or
-            st_vals[1, 0] >= st_vals[1, 1]):
+    if (st_vals[0, 0] >= st_vals[0, 1] or st_vals[1, 0] >= st_vals[1, 1]):
         return UNUSED_T
+
     else:
         return CLASSIFICATION_T.COINCIDENT
 
@@ -689,9 +683,16 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
             interior_curve = classify_coincident(st_vals, coincident)
             for s, t in st_vals.T:
                 add_intersection(
-                    index1, s, index2, t, interior_curve,
-                    edge_nodes1, edge_nodes2, duplicates, intersections)
-
+                    index1,
+                    s,
+                    index2,
+                    t,
+                    interior_curve,
+                    edge_nodes1,
+                    edge_nodes2,
+                    duplicates,
+                    intersections,
+                )
     all_types = set()
     to_keep = []
     unused = []
@@ -702,13 +703,13 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
             to_keep.append(intersection)
         else:
             unused.append(intersection)
-
     return to_keep, duplicates, unused, all_types
     # pylint: enable=too-many-locals
 
 
 def generic_intersect(
-        nodes1, degree1, nodes2, degree2, verify, all_intersections):
+    nodes1, degree1, nodes2, degree2, verify, all_intersections
+):
     r"""Find all intersections among edges of two surfaces.
 
     This treats intersections which have ``s == 1.0`` or ``t == 1.0``
@@ -746,17 +747,16 @@ def generic_intersect(
     # We need **all** edges (as nodes).
     edge_nodes1 = _surface_helpers.compute_edge_nodes(nodes1, degree1)
     edge_nodes2 = _surface_helpers.compute_edge_nodes(nodes2, degree2)
-
     # Run through **all** pairs of edges.
     intersections, duplicates, unused, all_types = surface_intersections(
-        edge_nodes1, edge_nodes2, all_intersections)
-
+        edge_nodes1, edge_nodes2, all_intersections
+    )
     # Verify duplicates if need be.
     if verify:
         verify_duplicates(duplicates, intersections + unused)
-
     edge_infos, contained = _surface_helpers.combine_intersections(
-        intersections, nodes1, degree1, nodes2, degree2, all_types)
+        intersections, nodes1, degree1, nodes2, degree2, all_types
+    )
     if edge_infos is None or edge_infos == []:
         return edge_infos, contained, ()
 
@@ -797,7 +797,8 @@ def _geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
     """
     all_intersections = _geometric_intersection.all_intersections
     return generic_intersect(
-        nodes1, degree1, nodes2, degree2, verify, all_intersections)
+        nodes1, degree1, nodes2, degree2, verify, all_intersections
+    )
 
 
 def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
@@ -829,7 +830,8 @@ def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
     """
     all_intersections = _algebraic_intersection.all_intersections
     return generic_intersect(
-        nodes1, degree1, nodes2, degree2, verify, all_intersections)
+        nodes1, degree1, nodes2, degree2, verify, all_intersections
+    )
 
 
 # pylint: disable=invalid-name
@@ -841,6 +843,5 @@ else:
     newton_refine = _speedup.newton_refine_surface
     locate_point = _speedup.locate_point_surface
     geometric_intersect = _speedup.surface_intersections
-    atexit.register(
-        _speedup.free_surface_intersections_workspace)
+    atexit.register(_speedup.free_surface_intersections_workspace)
 # pylint: enable=invalid-name

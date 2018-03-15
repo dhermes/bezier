@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Helpers for intersecting B |eacute| zier curves via geometric methods.
 
 As a convention, the functions defined here with a leading underscore
@@ -36,27 +35,29 @@ import six
 from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
+
 try:
     from bezier import _speedup
 except ImportError:  # pragma: NO COVER
     _speedup = None
-
-
 # Set the threshold for exponent at half the bits available, this way one round
 # of Newton's method can (usually) finish the job by squaring the error.
-_ERROR_VAL = 0.5**26
+_ERROR_VAL = 0.5 ** 26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _MAX_CANDIDATES = 64
 _UNHANDLED_LINES = (
     'If both curves are lines, the intersection should have '
-    'been computed already.')
+    'been computed already.'
+)
 _TOO_MANY_TEMPLATE = (
     'The number of candidate intersections is too high.\n'
-    '{:d} candidate pairs.')
+    '{:d} candidate pairs.'
+)
 _NO_CONVERGE_TEMPLATE = (
     'Curve intersection failed to converge to approximately linear '
-    'subdivisions after {:d} iterations.')
-_MIN_INTERVAL_WIDTH = 0.5**40
+    'subdivisions after {:d} iterations.'
+)
+_MIN_INTERVAL_WIDTH = 0.5 ** 40
 
 
 def _bbox_intersect(nodes1, nodes2):
@@ -88,14 +89,17 @@ def _bbox_intersect(nodes1, nodes2):
     """
     left1, right1, bottom1, top1 = _helpers.bbox(nodes1)
     left2, right2, bottom2, top2 = _helpers.bbox(nodes2)
-
-    if (right2 < left1 or right1 < left2 or
-            top2 < bottom1 or top1 < bottom2):
+    if right2 < left1 or right1 < left2 or top2 < bottom1 or top1 < bottom2:
         return BoxIntersectionType.DISJOINT
 
-    if (right2 == left1 or right1 == left2 or
-            top2 == bottom1 or top1 == bottom2):
+    if (
+        right2 == left1 or
+        right1 == left2 or
+        top2 == bottom1 or
+        top1 == bottom2
+    ):
         return BoxIntersectionType.TANGENT
+
     else:
         return BoxIntersectionType.INTERSECTION
 
@@ -244,7 +248,6 @@ def linearization_error(nodes):
 
     second_deriv = nodes[:, :-2] - 2.0 * nodes[:, 1:-1] + nodes[:, 2:]
     worst_case = np.max(np.abs(second_deriv), axis=1)
-
     # max_{0 <= s <= 1} s(1 - s)/2 = 1/8 = 0.125
     multiplier = 0.125 * degree * (degree - 1)
     # NOTE: worst_case is 1D due to np.max(), so this is the vector norm.
@@ -409,6 +412,7 @@ def segment_intersection(start0, end0, start1, end1):
     cross_d0_d1 = _helpers.cross_product(delta0, delta1)
     if cross_d0_d1 == 0.0:
         return None, None, False
+
     else:
         start_delta = start1 - start0
         s = _helpers.cross_product(start_delta, delta1) / cross_d0_d1
@@ -610,7 +614,6 @@ def parallel_lines_parameters(start0, end0, start1, end1):
 
     # Each array is a 1D vector, so we can use the vector dot product.
     norm0_sq = np.vdot(delta0, delta0)
-
     #                S1 = L1(0) = S0 + sA D0
     # <==>        sA D0 = S1 - S0
     #  ==> sA (D0^T D0) = D0^T (S1 - S0)
@@ -619,7 +622,6 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     # <==>        sB D0 = E1 - S0
     #  ==> sB (D0^T D0) = D0^T (E1 - S0)
     s_val1 = np.vdot(end1 - start0, delta0) / norm0_sq
-
     # s = s_val0 + t (s_val1 - s_val0)
     # t = 0                                <==> s = s_val0
     # t = 1                                <==> s = s_val1
@@ -630,15 +632,16 @@ def parallel_lines_parameters(start0, end0, start1, end1):
         # (t=0<-->s=s_val0) are both less than (t=1<-->s_val1).
         if 1.0 < s_val0:
             return True, None
+
         elif s_val0 < 0.0:
             start_s = 0.0
             start_t = -s_val0 / (s_val1 - s_val0)
         else:
             start_s = s_val0
             start_t = 0.0
-
         if s_val1 < 0.0:
             return True, None
+
         elif 1.0 < s_val1:
             end_s = 1.0
             end_t = (1.0 - s_val0) / (s_val1 - s_val0)
@@ -651,26 +654,23 @@ def parallel_lines_parameters(start0, end0, start1, end1):
         # but ``s_val0 > s_val1``.
         if s_val0 < 0.0:
             return True, None
+
         elif 1.0 < s_val0:
             start_s = 1.0
             start_t = (s_val0 - 1.0) / (s_val0 - s_val1)
         else:
             start_s = s_val0
             start_t = 0.0
-
         if 1.0 < s_val1:
             return True, None
+
         elif s_val1 < 0.0:
             end_s = 0.0
             end_t = s_val0 / (s_val0 - s_val1)
         else:
             end_s = s_val1
             end_t = 1.0
-
-    parameters = np.asfortranarray([
-        [start_s, end_s],
-        [start_t, end_t],
-    ])
+    parameters = np.asfortranarray([[start_s, end_s], [start_t, end_t]])
     return False, parameters
     # pylint: enable=too-many-branches
 
@@ -691,13 +691,18 @@ def line_line_collide(line1, line2):
         bool: Indicating if the line segments collide.
     """
     s, t, success = segment_intersection(
-        line1[:, 0], line1[:, 1], line2[:, 0], line2[:, 1])
+        line1[:, 0], line1[:, 1], line2[:, 0], line2[:, 1]
+    )
     if success:
-        return (_helpers.in_interval(s, 0.0, 1.0) and
-                _helpers.in_interval(t, 0.0, 1.0))
+        return (
+            _helpers.in_interval(s, 0.0, 1.0) and
+            _helpers.in_interval(t, 0.0, 1.0)
+        )
+
     else:
         disjoint, _ = parallel_lines_parameters(
-            line1[:, 0], line1[:, 1], line2[:, 0], line2[:, 1])
+            line1[:, 0], line1[:, 1], line2[:, 0], line2[:, 1]
+        )
         return not disjoint
 
 
@@ -719,9 +724,9 @@ def convex_hull_collide(nodes1, nodes2):
     _, polygon_size1 = polygon1.shape
     polygon2 = _helpers.simple_convex_hull(nodes2)
     _, polygon_size2 = polygon2.shape
-
     if polygon_size1 == 2 and polygon_size2 == 2:
         return line_line_collide(polygon1, polygon2)
+
     else:
         return _helpers.polygon_collide(polygon1, polygon2)
 
@@ -756,11 +761,14 @@ def from_linearized(first, second, intersections):
     """
     # pylint: disable=too-many-return-statements
     s, t, success = segment_intersection(
-        first.start_node, first.end_node, second.start_node, second.end_node)
+        first.start_node, first.end_node, second.start_node, second.end_node
+    )
     bad_parameters = False
     if success:
-        if not (_helpers.in_interval(s, 0.0, 1.0) and
-                _helpers.in_interval(t, 0.0, 1.0)):
+        if not (
+            _helpers.in_interval(s, 0.0, 1.0) and
+            _helpers.in_interval(t, 0.0, 1.0)
+        ):
             bad_parameters = True
     else:
         if first.error == 0.0 and second.error == 0.0:
@@ -771,7 +779,6 @@ def from_linearized(first, second, intersections):
         bad_parameters = True
         s = 0.5
         t = 0.5
-
     if bad_parameters:
         # In the unlikely case that we have parallel segments or segments
         # that intersect outside of [0, 1] x [0, 1], we can still exit
@@ -783,15 +790,16 @@ def from_linearized(first, second, intersections):
     orig_s = (1 - s) * first.curve.start + s * first.curve.end
     orig_t = (1 - t) * second.curve.start + t * second.curve.end
     refined_s, refined_t = _intersection_helpers.full_newton(
-        orig_s, first.curve.original_nodes,
-        orig_t, second.curve.original_nodes)
-
+        orig_s, first.curve.original_nodes, orig_t, second.curve.original_nodes
+    )
     refined_s, success = _helpers.wiggle_interval(refined_s)
     if not success:
         return  # pragma: NO COVER
+
     refined_t, success = _helpers.wiggle_interval(refined_t)
     if not success:
         return  # pragma: NO COVER
+
     add_intersection(refined_s, refined_t, intersections)
     # pylint: enable=too-many-return-statements
 
@@ -836,12 +844,10 @@ def add_intersection(s, t, intersections):
         candidate_s = 1.0 - s
     else:
         candidate_s = s
-
     if t < _intersection_helpers.ZERO_THRESHOLD:
         candidate_t = 1.0 - t
     else:
         candidate_t = t
-
     norm_candidate = np.linalg.norm([candidate_s, candidate_t], ord=2)
     for existing_s, existing_t in intersections:
         # NOTE: |(1 - s1) - (1 - s2)| = |s1 - s2| in exact arithmetic, so
@@ -852,15 +858,18 @@ def add_intersection(s, t, intersections):
         delta_s = s - existing_s
         delta_t = t - existing_t
         norm_update = np.linalg.norm([delta_s, delta_t], ord=2)
-        if (norm_update <
-                _intersection_helpers.NEWTON_ERROR_RATIO * norm_candidate):
+        if (
+            norm_update <
+            _intersection_helpers.NEWTON_ERROR_RATIO * norm_candidate
+        ):
             return
 
     intersections.append((s, t))
 
 
 def endpoint_check(
-        first, node_first, s, second, node_second, t, intersections):
+    first, node_first, s, second, node_second, t, intersections
+):
     r"""Check if curve endpoints are identical.
 
     .. note::
@@ -946,15 +955,18 @@ def tangent_bbox_intersection(first, second, intersections):
     node_first2 = first.nodes[:, -1]
     node_second1 = second.nodes[:, 0]
     node_second2 = second.nodes[:, -1]
-
     endpoint_check(
-        first, node_first1, 0.0, second, node_second1, 0.0, intersections)
+        first, node_first1, 0.0, second, node_second1, 0.0, intersections
+    )
     endpoint_check(
-        first, node_first1, 0.0, second, node_second2, 1.0, intersections)
+        first, node_first1, 0.0, second, node_second2, 1.0, intersections
+    )
     endpoint_check(
-        first, node_first2, 1.0, second, node_second1, 0.0, intersections)
+        first, node_first2, 1.0, second, node_second1, 0.0, intersections
+    )
     endpoint_check(
-        first, node_first2, 1.0, second, node_second2, 1.0, intersections)
+        first, node_first2, 1.0, second, node_second2, 1.0, intersections
+    )
 
 
 def bbox_line_intersect(nodes, line_start, line_end):
@@ -984,12 +996,16 @@ def bbox_line_intersect(nodes, line_start, line_end):
         bounding box intersection.
     """
     left, right, bottom, top = _helpers.bbox(nodes)
-
-    if (_helpers.in_interval(line_start[0], left, right) and
-            _helpers.in_interval(line_start[1], bottom, top)):
+    if (
+        _helpers.in_interval(line_start[0], left, right) and
+        _helpers.in_interval(line_start[1], bottom, top)
+    ):
         return BoxIntersectionType.INTERSECTION
-    if (_helpers.in_interval(line_end[0], left, right) and
-            _helpers.in_interval(line_end[1], bottom, top)):
+
+    if (
+        _helpers.in_interval(line_end[0], left, right) and
+        _helpers.in_interval(line_end[1], bottom, top)
+    ):
         return BoxIntersectionType.INTERSECTION
 
     # NOTE: We allow ``segment_intersection`` to fail below (i.e.
@@ -1002,36 +1018,52 @@ def bbox_line_intersect(nodes, line_start, line_end):
     #       entire side of the box, which will force it to intersect the 3
     #       edges that meet at the two ends of those sides. The parallel
     #       edge will be skipped, but the other two will be covered.
-
     # Bottom Edge
     s_bottom, t_bottom, success = segment_intersection(
         np.asfortranarray([left, bottom]),
         np.asfortranarray([right, bottom]),
-        line_start, line_end)
-    if (success and _helpers.in_interval(s_bottom, 0.0, 1.0) and
-            _helpers.in_interval(t_bottom, 0.0, 1.0)):
+        line_start,
+        line_end,
+    )
+    if (
+        success and
+        _helpers.in_interval(s_bottom, 0.0, 1.0) and
+        _helpers.in_interval(t_bottom, 0.0, 1.0)
+    ):
         return BoxIntersectionType.INTERSECTION
+
     # Right Edge
     s_right, t_right, success = segment_intersection(
         np.asfortranarray([right, bottom]),
         np.asfortranarray([right, top]),
-        line_start, line_end)
-    if (success and _helpers.in_interval(s_right, 0.0, 1.0) and
-            _helpers.in_interval(t_right, 0.0, 1.0)):
+        line_start,
+        line_end,
+    )
+    if (
+        success and
+        _helpers.in_interval(s_right, 0.0, 1.0) and
+        _helpers.in_interval(t_right, 0.0, 1.0)
+    ):
         return BoxIntersectionType.INTERSECTION
+
     # Top Edge
     s_top, t_top, success = segment_intersection(
         np.asfortranarray([right, top]),
         np.asfortranarray([left, top]),
-        line_start, line_end)
-    if (success and _helpers.in_interval(s_top, 0.0, 1.0) and
-            _helpers.in_interval(t_top, 0.0, 1.0)):
+        line_start,
+        line_end,
+    )
+    if (
+        success and
+        _helpers.in_interval(s_top, 0.0, 1.0) and
+        _helpers.in_interval(t_top, 0.0, 1.0)
+    ):
         return BoxIntersectionType.INTERSECTION
+
     # NOTE: We skip the "last" edge. This is because any curve
     #       that doesn't have an endpoint on a curve must cross
     #       at least two, so we will have already covered such curves
     #       in one of the branches above.
-
     return BoxIntersectionType.DISJOINT
 
 
@@ -1062,7 +1094,6 @@ def intersect_one_round(candidates, intersections):
         list: Returns a list of the next round of ``candidates``.
     """
     next_candidates = []
-
     # NOTE: In the below we replace ``isinstance(a, B)`` with
     #       ``a.__class__ is B``, which is a 3-3.5x speedup.
     for first, second in candidates:
@@ -1071,19 +1102,22 @@ def intersect_one_round(candidates, intersections):
             if second.__class__ is Linearization:
                 both_linearized = True
                 bbox_int = bbox_intersect(
-                    first.curve.nodes, second.curve.nodes)
+                    first.curve.nodes, second.curve.nodes
+                )
             else:
                 bbox_int = bbox_line_intersect(
-                    second.nodes, first.start_node, first.end_node)
+                    second.nodes, first.start_node, first.end_node
+                )
         else:
             if second.__class__ is Linearization:
                 bbox_int = bbox_line_intersect(
-                    first.nodes, second.start_node, second.end_node)
+                    first.nodes, second.start_node, second.end_node
+                )
             else:
                 bbox_int = bbox_intersect(first.nodes, second.nodes)
-
         if bbox_int == BoxIntersectionType.DISJOINT:
             continue
+
         elif bbox_int == BoxIntersectionType.TANGENT and not both_linearized:
             # NOTE: Ignore tangent bounding boxes in the linearized case
             #       because ``tangent_bbox_intersection()`` assumes that both
@@ -1106,7 +1140,6 @@ def intersect_one_round(candidates, intersections):
         lin1 = six.moves.map(Linearization.from_shape, first.subdivide())
         lin2 = six.moves.map(Linearization.from_shape, second.subdivide())
         next_candidates.extend(itertools.product(lin1, lin2))
-
     return next_candidates
 
 
@@ -1140,10 +1173,8 @@ def prune_candidates(candidates):
             nodes2 = second.curve.nodes
         else:
             nodes2 = second.nodes
-
         if convex_hull_collide(nodes1, nodes2):
             pruned.append((first, second))
-
     return pruned
 
 
@@ -1166,7 +1197,6 @@ def make_same_degree(nodes1, nodes2):
         nodes1 = _curve_helpers.elevate_nodes(nodes1)
     for _ in six.moves.xrange(num_nodes1 - num_nodes2):
         nodes2 = _curve_helpers.elevate_nodes(nodes2)
-
     return nodes1, nodes2
 
 
@@ -1203,30 +1233,33 @@ def coincident_parameters(nodes1, nodes2):
     """
     # pylint: disable=too-many-return-statements,too-many-branches
     nodes1, nodes2 = make_same_degree(nodes1, nodes2)
-
     s_initial = _curve_helpers.locate_point(
-        nodes1, nodes2[:, 0].reshape((2, 1), order='F'))
+        nodes1, nodes2[:, 0].reshape((2, 1), order='F')
+    )
     s_final = _curve_helpers.locate_point(
-        nodes1, nodes2[:, -1].reshape((2, 1), order='F'))
+        nodes1, nodes2[:, -1].reshape((2, 1), order='F')
+    )
     if s_initial is not None and s_final is not None:
         # In this case, if the curves were coincident, then ``curve2``
         # would be "fully" contained in ``curve1``, so we specialize
         # ``curve1`` down to that interval to check.
         specialized1 = _curve_helpers.specialize_curve(
-            nodes1, s_initial, s_final)
+            nodes1, s_initial, s_final
+        )
         if _helpers.vector_close(
-                specialized1.ravel(order='F'), nodes2.ravel(order='F')):
-            return (
-                (s_initial, 0.0),
-                (s_final, 1.0),
-            )
+            specialized1.ravel(order='F'), nodes2.ravel(order='F')
+        ):
+            return ((s_initial, 0.0), (s_final, 1.0))
+
         else:
             return None
 
     t_initial = _curve_helpers.locate_point(
-        nodes2, nodes1[:, 0].reshape((2, 1), order='F'))
+        nodes2, nodes1[:, 0].reshape((2, 1), order='F')
+    )
     t_final = _curve_helpers.locate_point(
-        nodes2, nodes1[:, -1].reshape((2, 1), order='F'))
+        nodes2, nodes1[:, -1].reshape((2, 1), order='F')
+    )
     if t_initial is None and t_final is None:
         # An overlap must have two endpoints and since at most one of the
         # endpoints of ``curve2`` lies on ``curve1`` (as indicated by at
@@ -1239,13 +1272,13 @@ def coincident_parameters(nodes1, nodes2):
         # would be "fully" contained in ``curve2``, so we specialize
         # ``curve2`` down to that interval to check.
         specialized2 = _curve_helpers.specialize_curve(
-            nodes2, t_initial, t_final)
+            nodes2, t_initial, t_final
+        )
         if _helpers.vector_close(
-                nodes1.ravel(order='F'), specialized2.ravel(order='F')):
-            return (
-                (0.0, t_initial),
-                (1.0, t_final),
-            )
+            nodes1.ravel(order='F'), specialized2.ravel(order='F')
+        ):
+            return ((0.0, t_initial), (1.0, t_final))
+
         else:
             return None
 
@@ -1284,7 +1317,6 @@ def coincident_parameters(nodes1, nodes2):
             end_s = s_initial
             start_t = t_initial
             end_t = 0.0
-
     width_s = abs(start_s - end_s)
     width_t = abs(start_t - end_t)
     if width_s < _MIN_INTERVAL_WIDTH and width_t < _MIN_INTERVAL_WIDTH:
@@ -1293,11 +1325,10 @@ def coincident_parameters(nodes1, nodes2):
     specialized1 = _curve_helpers.specialize_curve(nodes1, start_s, end_s)
     specialized2 = _curve_helpers.specialize_curve(nodes2, start_t, end_t)
     if _helpers.vector_close(
-            specialized1.ravel(order='F'), specialized2.ravel(order='F')):
-        return (
-            (start_s, start_t),
-            (end_s, end_t),
-        )
+        specialized1.ravel(order='F'), specialized2.ravel(order='F')
+    ):
+        return ((start_s, start_t), (end_s, end_t))
+
     else:
         return None
     # pylint: enable=too-many-return-statements,too-many-branches
@@ -1334,33 +1365,37 @@ def check_lines(first, second):
     """
     # NOTE: In the below we replace ``isinstance(a, B)`` with
     #       ``a.__class__ is B``, which is a 3-3.5x speedup.
-    if not (first.__class__ is Linearization and
-            second.__class__ is Linearization and
-            first.error == 0.0 and second.error == 0.0):
+    if not (
+        first.__class__ is Linearization and
+        second.__class__ is Linearization and
+        first.error == 0.0 and
+        second.error == 0.0
+    ):
         return False, None
 
     s, t, success = segment_intersection(
-        first.start_node, first.end_node,
-        second.start_node, second.end_node)
+        first.start_node, first.end_node, second.start_node, second.end_node
+    )
     if success:
-        if (_helpers.in_interval(s, 0.0, 1.0) and
-                _helpers.in_interval(t, 0.0, 1.0)):
-            intersections = np.asfortranarray([
-                [s],
-                [t],
-            ])
+        if (
+            _helpers.in_interval(s, 0.0, 1.0) and
+            _helpers.in_interval(t, 0.0, 1.0)
+        ):
+            intersections = np.asfortranarray([[s], [t]])
             result = intersections, False
         else:
             result = np.empty((2, 0), order='F'), False
     else:
         disjoint, params = parallel_lines_parameters(
-            first.start_node, first.end_node,
-            second.start_node, second.end_node)
+            first.start_node,
+            first.end_node,
+            second.start_node,
+            second.end_node,
+        )
         if disjoint:
             result = np.empty((2, 0), order='F'), False
         else:
             result = params, True
-
     return True, result
 
 
@@ -1429,14 +1464,15 @@ def _all_intersections(nodes_first, nodes_second):
                     #       to trigger this line (no case has been discovered
                     #       yet).
                     raise NotImplementedError(
-                        _TOO_MANY_TEMPLATE.format(len(candidates)))
+                        _TOO_MANY_TEMPLATE.format(len(candidates))
+                    )
+
                 else:
                     intersections = params
                     coincident = True
                     # Artificially empty out candidates so that this
                     # function exits.
                     candidates = []
-
         # If none of the candidate pairs have been accepted, then there are
         # no more intersections to find.
         if not candidates:
@@ -1444,6 +1480,7 @@ def _all_intersections(nodes_first, nodes_second):
                 # NOTE: The transpose of a C-ordered array is Fortran-ordered,
                 #       i.e. this is on purpose.
                 return np.array(intersections, order='C').T, coincident
+
             else:
                 return np.empty((2, 0), order='F'), coincident
 
@@ -1486,7 +1523,6 @@ class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
        This class would be more "correct" as an ``enum.Enum``, but it we keep
        the values integers to make interfacing with Fortran easier.
     """
-
     INTERSECTION = 0
     """Bounding boxes overlap with positive area."""
     TANGENT = 1
@@ -1509,7 +1545,6 @@ class SubdividedCurve(object):  # pylint: disable=too-few-public-methods
         start (Optional[float]): The start parameter after subdivision.
         end (Optional[float]): The start parameter after subdivision.
     """
-
     __slots__ = ('nodes', 'original_nodes', 'start', 'end')
 
     def __init__(self, nodes, original_nodes, start=0.0, end=1.0):
@@ -1548,11 +1583,11 @@ class SubdividedCurve(object):  # pylint: disable=too-few-public-methods
         left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self.nodes)
         midpoint = 0.5 * (self.start + self.end)
         left = SubdividedCurve(
-            left_nodes, self.original_nodes,
-            start=self.start, end=midpoint)
+            left_nodes, self.original_nodes, start=self.start, end=midpoint
+        )
         right = SubdividedCurve(
-            right_nodes, self.original_nodes,
-            start=midpoint, end=self.end)
+            right_nodes, self.original_nodes, start=midpoint, end=self.end
+        )
         return left, right
 
 
@@ -1567,7 +1602,6 @@ class Linearization(object):
         error (float): The linearization error. Expected to have been
             computed via :func:`linearization_error`.
     """
-
     __slots__ = ('curve', 'error', 'start_node', 'end_node')
 
     def __init__(self, curve, error):
@@ -1625,11 +1659,13 @@ class Linearization(object):
         #       ``a.__class__ is B``, which is a 3-3.5x speedup.
         if shape.__class__ is cls:
             return shape
+
         else:
             error = linearization_error(shape.nodes)
             if error < _ERROR_VAL:
                 linearized = cls(shape, error)
                 return linearized
+
             else:
                 return shape
 
@@ -1645,6 +1681,5 @@ else:
     all_intersections = _speedup.curve_intersections
     set_max_candidates = _speedup.set_max_candidates
     get_max_candidates = _speedup.get_max_candidates
-    atexit.register(
-        _speedup.free_curve_intersections_workspace)
+    atexit.register(_speedup.free_curve_intersections_workspace)
 # pylint: enable=invalid-name

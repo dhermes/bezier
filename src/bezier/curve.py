@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Helper for B |eacute| zier Curves.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -37,12 +36,10 @@ from bezier import _geometric_intersection
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
-
 _LOCATE_ERROR_TEMPLATE = (
     'Dimension mismatch: This curve is {:d}-dimensional, so the point should '
-    'be a {:d} x 1 NumPy array. Instead the point {} has dimensions {}.')
-
-
+    'be a {:d} x 1 NumPy array. Instead the point {} has dimensions {}.'
+)
 IntersectionStrategy = _intersection_helpers.IntersectionStrategy
 
 
@@ -89,9 +86,9 @@ class Curve(_base.Base):
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
     """
-
     __slots__ = (
-        '_dimension', '_nodes',  # From base class
+        '_dimension',  # From base class
+        '_nodes',  # From base class
         '_degree',  # From constructor
         '_length',  # Empty defaults
     )
@@ -205,7 +202,8 @@ class Curve(_base.Base):
             NumPy array with a single column).
         """
         return _curve_helpers.evaluate_multi(
-            self._nodes, np.asfortranarray([s]))
+            self._nodes, np.asfortranarray([s])
+        )
 
     def evaluate_multi(self, s_vals):
         r"""Evaluate :math:`B(s)` for multiple points along the curve.
@@ -259,17 +257,17 @@ class Curve(_base.Base):
             NotImplementedError: If the curve's dimension is not ``2``.
         """
         if self._dimension != 2:
-            raise NotImplementedError('2D is the only supported dimension',
-                                      'Current dimension', self._dimension)
+            raise NotImplementedError(
+                '2D is the only supported dimension',
+                'Current dimension',
+                self._dimension,
+            )
 
         s_vals = np.linspace(0.0, 1.0, num_pts)
         points = self.evaluate_multi(s_vals)
-
         if ax is None:
             ax = _plot_helpers.new_axis()
-
         ax.plot(points[0, :], points[1, :], color=color, alpha=alpha)
-
         return ax
 
     def subdivide(self):
@@ -314,8 +312,8 @@ class Curve(_base.Base):
         return left, right
 
     def intersect(
-            self, other, strategy=IntersectionStrategy.GEOMETRIC,
-            _verify=True):
+        self, other, strategy=IntersectionStrategy.GEOMETRIC, _verify=True
+    ):
         """Find the points of intersection with another curve.
 
         See :doc:`../curve-curve-intersection` for more details.
@@ -372,11 +370,14 @@ class Curve(_base.Base):
         """
         if _verify:
             if not isinstance(other, Curve):
-                raise TypeError('Can only intersect with another curve',
-                                'Received', other)
+                raise TypeError(
+                    'Can only intersect with another curve', 'Received', other
+                )
+
             if self._dimension != 2 or other._dimension != 2:
                 raise NotImplementedError(
-                    'Intersection only implemented in 2D')
+                    'Intersection only implemented in 2D'
+                )
 
         if strategy == IntersectionStrategy.GEOMETRIC:
             all_intersections = _geometric_intersection.all_intersections
@@ -649,9 +650,11 @@ class Curve(_base.Base):
         """
         if point.shape != (self._dimension, 1):
             point_dimensions = ' x '.join(
-                str(dimension) for dimension in point.shape)
+                str(dimension) for dimension in point.shape
+            )
             msg = _LOCATE_ERROR_TEMPLATE.format(
-                self._dimension, self._dimension, point, point_dimensions)
+                self._dimension, self._dimension, point, point_dimensions
+            )
             raise ValueError(msg)
 
         return _curve_helpers.locate_point(self._nodes, point)
