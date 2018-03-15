@@ -43,6 +43,9 @@ WIGGLES = {
         32: 1013,  # Established on Ubuntu 16.04
         33: 1013,  # Established on Ubuntu 16.04
         34: 19,  # Established on Ubuntu 16.04 on CircleCI
+        49: 86670,  # Established on Ubuntu 16.04
+        50: 15222,  # Established on Ubuntu 16.04
+        51: 206544,  # Established on Ubuntu 16.04
     },
     ALGEBRAIC: {
         3: 12,  # Established on Ubuntu 16.04
@@ -50,6 +53,8 @@ WIGGLES = {
         32: 18,  # Established on Ubuntu 16.04
         33: 18,  # Established on Ubuntu 16.04
         36: 9,  # Established on Ubuntu 16.04 on CircleCI and OS X.
+        49: 8265,  # Established on Ubuntu 16.04
+        50: 86670,  # Established on Ubuntu 16.04
     },
 }
 FAILED_CASES_TANGENT = {
@@ -79,10 +84,19 @@ FAILED_CASES_COINCIDENT = {
         45: {},
         46: {},
         47: {},
+        51: {},
     },
 }
-INCORRECT_COUNT = {
+FAILED_CASES_BAD_EDGES = {
     GEOMETRIC: (),
+    ALGEBRAIC: (
+        52,
+    ),
+}
+INCORRECT_COUNT = {
+    GEOMETRIC: (
+        52,
+    ),
     ALGEBRAIC: (),
 }
 CONFIG = utils.Config()
@@ -136,6 +150,19 @@ def check_coincident_manager(strategy, too_many=None, curvature=False):
             assert exc_args == (err_msg,)
     else:
         assert exc_args == (_algebraic_intersection._COINCIDENT_ERR,)
+
+
+@contextlib.contextmanager
+def check_bad_edges_manager():
+    caught_exc = None
+    try:
+        yield
+    except RuntimeError as exc:
+        caught_exc = exc
+
+    assert caught_exc is not None
+    exc_args = caught_exc.args
+    assert exc_args[0] == 'Unexpected number of edges'
 
 
 def surface_surface_check(strategy, surface1, surface2, *all_intersected):
@@ -212,6 +239,8 @@ def test_intersect(strategy, intersection_info):
     elif id_ in FAILED_CASES_COINCIDENT[strategy]:
         kwargs = FAILED_CASES_COINCIDENT[strategy][id_]
         context = check_coincident_manager(strategy, **kwargs)
+    elif id_ in FAILED_CASES_BAD_EDGES[strategy]:
+        context = check_bad_edges_manager()
     elif id_ in WIGGLES[strategy]:
         context = CONFIG.wiggle(WIGGLES[strategy][id_])
     else:

@@ -80,7 +80,7 @@ module curve_intersection
   integer(c_int) :: MAX_CANDIDATES = 64
   ! Point under which values are considered to be "near zero".
   real(c_double), parameter :: ZERO_THRESHOLD = 0.5_dp**10
-  real(c_double), parameter :: NEWTON_ERROR_RATIO = 0.5_dp**42
+  real(c_double), parameter :: NEWTON_ERROR_RATIO = 0.5_dp**36
   ! Long-lived workspaces for ``all_intersections()`` and
   ! ``all_intersections_abi()``. If multiple threads are used, each of these
   ! **should** be thread-local.

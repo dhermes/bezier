@@ -108,6 +108,18 @@ ULPS_ALLOWED_OVERRIDE = {
             (1, 0): 474,  # Established on Ubuntu 16.04
             (1, 1): 13,  # Established on Ubuntu 16.04
         },
+        51: {
+            (0, 0): 2259,  # Established on Ubuntu 16.04
+            (1, 0): 86670,  # Established on Ubuntu 16.04
+        },
+        52: {
+            (0, 0): 15222,  # Established on Ubuntu 16.04
+            (1, 0): 10239,  # Established on Ubuntu 16.04
+        },
+        53: {
+            (0, 0): 206544,  # Established on Ubuntu 16.04
+            (1, 0): 191360,  # Established on Ubuntu 16.04
+        },
     },
     ALGEBRAIC: {
         12: {
@@ -160,6 +172,14 @@ ULPS_ALLOWED_OVERRIDE = {
             (1, 0): 417,  # Established on Ubuntu 16.04
             (1, 1): 23,  # Established on Ubuntu 16.04
         },
+        51: {
+            (0, 0): 243,  # Established on Ubuntu 16.04
+            (1, 0): 8265,  # Established on Ubuntu 16.04
+        },
+        52: {
+            (0, 0): 13677,  # Established on Ubuntu 16.04
+            (1, 0): 9260,  # Established on Ubuntu 16.04
+        },
     },
 }
 NON_SIMPLE_ERR = _algebraic_intersection._NON_SIMPLE_ERR
@@ -192,7 +212,9 @@ COINCIDENT_OVERRIDES = {
         34: {'success': True},
         35: {'success': True},
     },
-    ALGEBRAIC: {},
+    ALGEBRAIC: {
+        53: {},
+    },
 }
 INCORRECT_COUNT = {
     GEOMETRIC: (),
@@ -374,13 +396,11 @@ def test_intersect(strategy, intersection_info):
             check_intersect(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.tangent:
         check_tangent(intersection_info, strategy)
-    elif intersection_type == CurveIntersectionType.coincident:
+    elif (intersection_type == CurveIntersectionType.coincident or
+          id_ in COINCIDENT_OVERRIDES[strategy]):
         check_coincident(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.standard:
-        if id_ in TANGENT_OVERRIDES[strategy]:
-            check_tangent(intersection_info, strategy)
-        else:
-            check_intersect(intersection_info, strategy)
+        check_intersect(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.no_intersection:
         check_no_intersect(intersection_info, strategy)
     else:

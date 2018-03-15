@@ -77,6 +77,20 @@
             [0, 0, 8]
         ]
     },
+    "14L": {
+        "control_points": [
+            ["0x1.6863885e407edp-1", "0x1.6924a2e5e142fp-1", "0x1.5b8b094c47a96p-1"],
+            ["-0x1.5131e4761e6fep-1", "-0x1.3d3d1ffab5baep-1", "-0x1.4ad6b9944f548p-1"]
+        ],
+        "note": "This surface and 48Q are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "15L": {
+        "control_points": [
+            ["0x1.bf8ad4846373bp-1", "0x1.c93025aa5981cp-1", "0x1.bf8ad4846373bp-1"],
+            ["0x1.3131d8b46f55bp-3", "0x1.286f6bfe8d295p-3", "0x1.67983f1ad5bc2p-3"]
+        ],
+        "note": "This surface and 49Q are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
     "1Q": {
         "control_points": [
             [0, "1/2", 1, "1/4", "3/4", 0],
@@ -369,6 +383,86 @@
             ["-1/8", "3/16", "1/2", "3/16", "1/2", "1/2"]
         ]
     },
+    "48Q": {
+        "control_points": [
+            [
+                "0x1.63e1b4c544d3ap-1",
+                "0x1.6c074b46d2b9ep-1",
+                "0x1.740dd73c29145p-1",
+                "0x1.63dfc219c43e0p-1",
+                "0x1.6c0143822c9c2p-1",
+                "0x1.63f54b194fe80p-1"
+            ], [
+                "-0x1.424da10fb674dp-1",
+                "-0x1.3a7d6b25aa9edp-1",
+                "-0x1.32aa53fca29dep-1",
+                "-0x1.3a5101ace41bep-1",
+                "-0x1.3287cd06d793dp-1",
+                "-0x1.3249ee51aadb0p-1"
+            ]
+        ],
+        "note": "This surface and 14L are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "49Q": {
+        "control_points": [
+            [
+                "0x1.bf84f70f66400p-1",
+                "0x1.bfa4807c92afap-1",
+                "0x1.bfc409e9bf1f5p-1",
+                "0x1.baf2d5f8dd22ap-1",
+                "0x1.bb16e0bec6c6ap-1",
+                "0x1.b663431f7e597p-1"
+            ], [
+                "0x1.6017a1182b9b6p-3",
+                "0x1.725d85f3802ebp-3",
+                "0x1.84a36aced4c22p-3",
+                "0x1.6015c9959e8b7p-3",
+                "0x1.725b379ff4c0fp-3",
+                "0x1.605a965800eb2p-3"
+            ]
+        ],
+        "note": "This surface and 15L are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "50Q": {
+        "control_points": [
+            [
+                "-0x1.ed0cf603c1befp-1",
+                "-0x1.f6713e54a23bep-1",
+                -1,
+                "-0x1.f6867b01e0df8p-1",
+                -1,
+                -1
+            ], [
+                "-0x1.b72990e8efa44p-1",
+                "-0x1.ade7b16d037d8p-1",
+                "-0x1.a492492492494p-1",
+                "-0x1.b7027f4fe5890p-1",
+                "-0x1.adb6db6db6db8p-1",
+                "-0x1.b6db6db6db6dcp-1"
+            ]
+        ],
+        "note": "This surface and 51Q are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "51Q": {
+        "control_points": [
+            [
+                "-0x1.0649249249249p+0",
+                "-0x1.016db6db6db6fp+0",
+                "-0x1.f924924924925p-1",
+                "-0x1.fd97edd78b894p-1",
+                "-0x1.f3e11269d4adep-1",
+                "-0x1.ee9d928a84c98p-1"
+            ], [
+                "-0x1.9800000000001p-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.94960f9a0a6aep-1",
+                "-0x1.9e4ceb07c1464p-1",
+                "-0x1.912c1f3414d5bp-1"
+            ]
+        ],
+        "note": "This surface and 50Q are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
     "1C": {
         "control_points": [
             [0, 3, 9, 12, 0, 5, 8, 0, 4, 0],
@@ -381,5 +475,61 @@
             [0, "-1/6", "-1/6", 0, "1/3", "1/3", "1/2", "2/3", "5/6", 1]
         ],
         "note": "This is surface 1Q, but degree-elevated to a cubic surface."
+    },
+    "3C": {
+        "control_points": [
+            [
+                "0x1.369ba68472b75p-3",
+                "0x1.409ed25ee0f68p-3",
+                "0x1.4adcf93075358p-3",
+                "0x1.5555555555553p-3",
+                "0x1.44fb2fb54d6abp-3",
+                "0x1.4eef6235c2a80p-3",
+                "0x1.5915dcbeae18fp-3",
+                "0x1.535f028b90c2ap-3",
+                "0x1.5d3ff20ca458cp-3",
+                "0x1.61c71f073cc01p-3"
+            ], [
+                "-0x1.f59baaff49e70p-1",
+                "-0x1.f918e3dfd6917p-1",
+                "-0x1.fc8f879b43fabp-1",
+                -1,
+                "-0x1.f59969b819c1cp-1",
+                "-0x1.f916eb07c00b0p-1",
+                "-0x1.fc8f879b43fabp-1",
+                "-0x1.f595446c5b8acp-1",
+                "-0x1.f914f22fa9859p-1",
+                "-0x1.f58f3b1c0f41dp-1"
+            ]
+        ],
+        "note": "This surface and 4C are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "4C": {
+        "control_points": [
+            [
+                "0x1.6d9bc7a99ce60p-3",
+                "0x1.6d421c712f1f9p-3",
+                "0x1.6cc4cad228b7fp-3",
+                "0x1.6c39f4c490645p-3",
+                "0x1.5e123b961ee05p-3",
+                "0x1.5db2a26c6a5b8p-3",
+                "0x1.5d378e43c0010p-3",
+                "0x1.4e89fba3680cfp-3",
+                "0x1.4e24e33e0486cp-3",
+                "0x1.3f0307d1786cbp-3"
+            ], [
+                "-0x1.f58ab325f427fp-1",
+                "-0x1.f10f371230103p-1",
+                "-0x1.eca3ae04c9187p-1",
+                "-0x1.e843f8a3cf153p-1",
+                "-0x1.f590228da381dp-1",
+                "-0x1.f115da7b69f93p-1",
+                "-0x1.ecabb82c2bc80p-1",
+                "-0x1.f59660a5e7ca4p-1",
+                "-0x1.f11d917abfc97p-1",
+                "-0x1.f59d6d6ec1001p-1"
+            ]
+        ],
+        "note": "This surface and 3C are from a real-world case, so the values do not have a rational or algebraic representation."
     }
 }

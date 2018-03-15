@@ -943,5 +943,53 @@
             "0x1.30f6f2bdde113p-2",
             "0x1.8700df9eac93bp-1"
         ]
+    }, {
+        "curve1": "73",
+        "curve2": "74",
+        "id": 51,
+        "type": "standard",
+        "note": "This is a problematic edge-edge intersection that occurs in surface-surface intersection case #49. This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            ["0x1.6900a8d9a4a7ep-1"],
+            ["-0x1.3d611a06f255fp-1"]
+        ],
+        "curve1_params": [
+            "0x1.42968093ddf88p-2"
+        ],
+        "curve2_params": [
+            "0x1.529acd85b333ep-7"
+        ]
+    }, {
+        "curve1": "75",
+        "curve2": "76",
+        "id": 52,
+        "type": "standard",
+        "note": "This is a problematic edge-edge intersection that occurs in surface-surface intersection case #50. This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            ["0x1.bf8ad4846373bp-1"],
+            ["0x1.637d99fa68cacp-3"]
+        ],
+        "curve1_params": [
+            "0x1.7ce08ef2b6425p-4"
+        ],
+        "curve2_params": [
+            "0x1.350363e3ce847p-4"
+        ]
+    }, {
+        "curve1": "77",
+        "curve2": "78",
+        "id": 53,
+        "type": "standard",
+        "note": "This is a problematic edge-edge intersection that occurs in surface-surface intersection case #51. This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            ["0x1.537baa83c36dap-3"],
+            ["-0x1.f5949a0ad50f6p-1"]
+        ],
+        "curve1_params": [
+            "0x1.52cfc17cd81b6p-2"
+        ],
+        "curve2_params": [
+            "0x1.c1f44f818b884p-2"
+        ]
     }
 ]

@@ -209,7 +209,7 @@ def matrix_product(mat1, mat2):
     return np.dot(mat2.T, mat1.T).T
 
 
-def _wiggle_interval(value, wiggle=0.5**45):
+def _wiggle_interval(value, wiggle=0.5**44):
     r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
 
     Allows a little bit of wiggle room outside the interval. Any value

@@ -273,6 +273,9 @@ class Test_matrix_product(utils.NumPyTestCase):
 
 class Test__wiggle_interval(unittest.TestCase):
 
+    WIGGLE = 0.5**44
+    MACHINE_EPS = 0.5**52
+
     @staticmethod
     def _call_function_under_test(value, **kwargs):
         from bezier import _helpers
@@ -290,7 +293,7 @@ class Test__wiggle_interval(unittest.TestCase):
         self.assertEqual(result, 1.0)
 
     def test_near_endpoint(self):
-        _, success = self._call_function_under_test(1.0 + 2.0**(-20))
+        _, success = self._call_function_under_test(1.0 + 0.5**20)
         self.assertFalse(success)
 
     def test_outside_below(self):
@@ -308,79 +311,79 @@ class Test__wiggle_interval(unittest.TestCase):
         self.assertEqual(result, 0.25)
 
     def test_wiggle_below(self):
-        value = -2.0**(-60)
+        value = -0.5**60
         result, success = self._call_function_under_test(value)
         self.assertTrue(success)
         self.assertEqual(result, 0.0)
 
     def test_wiggle_above(self):
-        value = 1 + 2.0**(-52)
+        value = 1.0 + self.MACHINE_EPS
         result, success = self._call_function_under_test(value)
         self.assertTrue(success)
         self.assertEqual(result, 1.0)
 
     def test_outer_boundary(self):
         # Values near / at the left-hand boundary.
-        value = float.fromhex('-0x1.ffffffffffffep-46')
+        value = -self.WIGGLE + self.MACHINE_EPS * self.WIGGLE
         self.assertEqual(
             self._call_function_under_test(value), (0.0, True))
-        value = float.fromhex('-0x1.fffffffffffffp-46')
+        value = -self.WIGGLE + self.MACHINE_EPS * self.WIGGLE / 2
         self.assertEqual(
             self._call_function_under_test(value), (0.0, True))
 
-        value = float.fromhex('-0x1.0000000000000p-45')
+        value = -self.WIGGLE
         _, success = self._call_function_under_test(value)
         self.assertFalse(success)
 
-        value = float.fromhex('-0x1.0000000000001p-45')
+        value = -self.WIGGLE - self.MACHINE_EPS * self.WIGGLE
         _, success = self._call_function_under_test(value)
         self.assertFalse(success)
 
         # Values near / at the right-hand boundary.
-        value = float.fromhex('0x1.000000000007ep+0')
+        value = 1.0 + self.WIGGLE - 2 * self.MACHINE_EPS
         self.assertEqual(
             self._call_function_under_test(value), (1.0, True))
-        value = float.fromhex('0x1.000000000007fp+0')
+        value = 1.0 + self.WIGGLE - self.MACHINE_EPS
         self.assertEqual(
             self._call_function_under_test(value), (1.0, True))
 
-        value = float.fromhex('0x1.0000000000080p+0')
+        value = 1.0 + self.WIGGLE
         _, success = self._call_function_under_test(value)
         self.assertFalse(success)
 
-        value = float.fromhex('0x1.0000000000081p+0')
+        value = 1.0 + self.WIGGLE + self.MACHINE_EPS
         _, success = self._call_function_under_test(value)
         self.assertFalse(success)
 
     def test_inner_boundary(self):
         # Values near / at the left-hand boundary.
-        value = float.fromhex('0x1.ffffffffffffep-46')
+        value = self.WIGGLE - self.WIGGLE * self.MACHINE_EPS
         self.assertEqual(
             self._call_function_under_test(value), (0.0, True))
-        value = float.fromhex('0x1.fffffffffffffp-46')
+        value = self.WIGGLE - self.WIGGLE * self.MACHINE_EPS / 2
         self.assertEqual(
             self._call_function_under_test(value), (0.0, True))
-        value = float.fromhex('0x1.0000000000000p-45')
+        value = self.WIGGLE
         self.assertEqual(
             self._call_function_under_test(value), (value, True))
-        value = float.fromhex('0x1.0000000000001p-45')
+        value = self.WIGGLE + self.WIGGLE * self.MACHINE_EPS
         self.assertEqual(
             self._call_function_under_test(value), (value, True))
 
         # Values near / at the right-hand boundary.
-        value = float.fromhex('0x1.ffffffffffefep-1')
+        value = 1.0 - self.WIGGLE - self.MACHINE_EPS
         self.assertEqual(
             self._call_function_under_test(value), (value, True))
-        value = float.fromhex('0x1.ffffffffffeffp-1')
+        value = 1.0 - self.WIGGLE - self.MACHINE_EPS / 2
         self.assertEqual(
             self._call_function_under_test(value), (value, True))
-        value = float.fromhex('0x1.fffffffffff00p-1')
+        value = 1.0 - self.WIGGLE
         self.assertEqual(
             self._call_function_under_test(value), (value, True))
-        value = float.fromhex('0x1.fffffffffff01p-1')
+        value = 1.0 - self.WIGGLE + self.MACHINE_EPS / 2
         self.assertEqual(
             self._call_function_under_test(value), (1.0, True))
-        value = float.fromhex('0x1.fffffffffff02p-1')
+        value = 1.0 - self.WIGGLE + self.MACHINE_EPS
         self.assertEqual(
             self._call_function_under_test(value), (1.0, True))
 

@@ -21,7 +21,7 @@ module helpers
        contains_nd, vector_close, in_interval, in_sorted, convex_hull, &
        polygon_collide, solve2x2
 
-  real(c_double), parameter :: WIGGLE = 0.5_dp**45
+  real(c_double), parameter :: WIGGLE = 0.5_dp**44
   ! NOTE: This is intended to be used as the default value for ``eps``
   !       in ``vector_close``.
   real(c_double), parameter :: VECTOR_CLOSE_EPS = 0.5_dp**40

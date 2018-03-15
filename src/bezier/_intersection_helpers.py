@@ -43,7 +43,7 @@ except ImportError:  # pragma: NO COVER
 # For ``full_newton()``.
 ZERO_THRESHOLD = 0.5**10  # ~1e-3
 MAX_NEWTON_ITERATIONS = 10
-NEWTON_ERROR_RATIO = 0.5**42
+NEWTON_ERROR_RATIO = 0.5**36
 NEWTON_NO_CONVERGE = """\
 Unsupported multiplicity.
 
