@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Get environment information."""
 
 from __future__ import print_function
@@ -29,14 +28,12 @@ def main():
     env_var('PYTHON_ARCH')
     env_var('PYTHON_VERSION')
     print('sys.platform: {}'.format(sys.platform))
-
-    if sys.maxsize == 2**63 - 1:
+    if sys.maxsize == 2 ** 63 - 1:
         print('sys.maxsize: 2^(63) - 1')
-    elif sys.maxsize == 2**31 - 1:
+    elif sys.maxsize == 2 ** 31 - 1:
         print('sys.maxsize: 2^(31) - 1')
     else:
         print('sys.maxsize: {}'.format(sys.maxsize))
-
     print('sys.version:\n{}'.format(sys.version))
     bitness = struct.calcsize('P') * 8
     print('struct.calcsize(\'P\') * 8: {}'.format(bitness))

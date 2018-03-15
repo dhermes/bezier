@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Check that the current ``README.rst`` is built from the template.
 
 Also checks a collection of other documents:
@@ -30,24 +29,23 @@ import functools
 import os
 import re
 
-
 _SCRIPTS_DIR = os.path.dirname(__file__)
 _ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
 TEMPLATE_FILE = os.path.join(_ROOT_DIR, 'README.rst.template')
 README_FILE = os.path.join(_ROOT_DIR, 'README.rst')
-RELEASE_README_FILE = os.path.join(
-    _ROOT_DIR, 'README.rst.release.template')
+RELEASE_README_FILE = os.path.join(_ROOT_DIR, 'README.rst.release.template')
 INDEX_FILE = os.path.join(_ROOT_DIR, 'docs', 'index.rst')
 RELEASE_INDEX_FILE = os.path.join(
-    _ROOT_DIR, 'docs', 'index.rst.release.template')
+    _ROOT_DIR, 'docs', 'index.rst.release.template'
+)
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst.template')
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst')
 NATIVE_LIBS_FILE = os.path.join(_ROOT_DIR, 'docs', 'native-libraries.rst')
 NATIVE_LIBS_TEMPLATE = os.path.join(
-    _ROOT_DIR, 'docs', 'native-libraries.rst.template')
+    _ROOT_DIR, 'docs', 'native-libraries.rst.template'
+)
 RTD_VERSION = 'latest'
 REVISION = 'master'
-
 PLAIN_CODE_BLOCK = '.. code-block:: python'
 SPHINX_CODE_BLOCK1 = """\
 .. testsetup:: getting-started
@@ -151,26 +149,32 @@ DOCS_IMG = """\
 """
 CIRCLECI_BADGE = (
     'https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?'
-    'maxAge=3600&label=Linux')
+    'maxAge=3600&label=Linux'
+)
 CIRCLECI_BADGE_RELEASE = (
     'https://cdn.rawgit.com/dhermes/bezier/{version}/'
-    'docs/circleci-passing.svg')
+    'docs/circleci-passing.svg'
+)
 TRAVIS_BADGE = (
     'https://img.shields.io/travis/dhermes/bezier/master.svg?'
-    'maxAge=3600&label=Mac%20OS%20X')
+    'maxAge=3600&label=Mac%20OS%20X'
+)
 TRAVIS_BADGE_RELEASE = (
     'https://cdn.rawgit.com/dhermes/bezier/{version}/'
-    'docs/travis-passing.svg')
+    'docs/travis-passing.svg'
+)
 APPVEYOR_BADGE = (
     'https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?'
-    'maxAge=3600&label=Windows')
+    'maxAge=3600&label=Windows'
+)
 APPVEYOR_BADGE_RELEASE = (
     'https://cdn.rawgit.com/dhermes/bezier/{version}/'
-    'docs/appveyor-passing.svg')
+    'docs/appveyor-passing.svg'
+)
 COVERALLS_BADGE = 'https://coveralls.io/repos/github/dhermes/bezier/badge.svg'
 COVERALLS_BADGE_RELEASE = (
-    'https://s3.amazonaws.com/assets.coveralls.io/'
-    'badges/coveralls_100.svg')
+    'https://s3.amazonaws.com/assets.coveralls.io/' 'badges/coveralls_100.svg'
+)
 COVERALLS_PATH = 'github/dhermes/bezier'
 PYPI_IMG = """
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
@@ -250,7 +254,8 @@ def get_diff(value1, value2, name1, name2):
     lines1 = [line + '\n' for line in value1.splitlines()]
     lines2 = [line + '\n' for line in value2.splitlines()]
     diff_lines = difflib.context_diff(
-        lines1, lines2, fromfile=name1, tofile=name2)
+        lines1, lines2, fromfile=name1, tofile=name2
+    )
     return ''.join(diff_lines)
 
 
@@ -273,15 +278,14 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
     """
     with open(TEMPLATE_FILE, 'r') as file_obj:
         template = file_obj.read()
-
     img_prefix = IMG_PREFIX.format(revision=revision)
     extra_links = EXTRA_LINKS.format(
-        rtd_version=rtd_version, revision=revision)
+        rtd_version=rtd_version, revision=revision
+    )
     docs_img = DOCS_IMG.format(rtd_version=rtd_version)
     bernstein_basis = BERNSTEIN_BASIS_PLAIN.format(img_prefix=img_prefix)
     bezier_defn = BEZIER_DEFN_PLAIN.format(img_prefix=img_prefix)
     sum_to_unity = SUM_TO_UNITY_PLAIN.format(img_prefix=img_prefix)
-
     template_kwargs = {
         'code_block1': PLAIN_CODE_BLOCK,
         'code_block2': PLAIN_CODE_BLOCK,
@@ -316,20 +320,16 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
     }
     template_kwargs.update(**extra_kwargs)
     readme_contents = template.format(**template_kwargs)
-
     # Apply regular expressions to convert Sphinx "roles" to plain reST.
     readme_contents = INLINE_MATH_EXPR.sub(inline_math, readme_contents)
-
     sphinx_modules = []
-    to_replace = functools.partial(
-        mod_replace, sphinx_modules=sphinx_modules)
+    to_replace = functools.partial(mod_replace, sphinx_modules=sphinx_modules)
     readme_contents = MOD_EXPR.sub(to_replace, readme_contents)
     if sphinx_modules != ['bezier.curve', 'bezier.surface']:
         raise ValueError('Unexpected sphinx_modules', sphinx_modules)
 
     sphinx_docs = []
-    to_replace = functools.partial(
-        doc_replace, sphinx_docs=sphinx_docs)
+    to_replace = functools.partial(doc_replace, sphinx_docs=sphinx_docs)
     readme_contents = DOC_EXPR.sub(to_replace, readme_contents)
     if sphinx_docs != ['reference/bezier', 'development']:
         raise ValueError('Unexpected sphinx_docs', sphinx_docs)
@@ -348,11 +348,12 @@ def readme_verify():
     # Actually get the stored contents.
     with open(README_FILE, 'r') as file_obj:
         contents = file_obj.read()
-
     if contents != expected:
         err_msg = '\n' + get_diff(
-            contents, expected, 'README.rst.actual', 'README.rst.expected')
+            contents, expected, 'README.rst.actual', 'README.rst.expected'
+        )
         raise ValueError(err_msg)
+
     else:
         print('README contents are as expected.')
 
@@ -383,16 +384,17 @@ def release_readme_verify():
         coveralls_badge=COVERALLS_BADGE_RELEASE,
         coveralls_path='builds/{coveralls_build}',
     )
-
     with open(RELEASE_README_FILE, 'r') as file_obj:
         contents = file_obj.read()
-
     if contents != expected:
         err_msg = '\n' + get_diff(
-            contents, expected,
+            contents,
+            expected,
             'README.rst.release.actual',
-            'README.rst.release.expected')
+            'README.rst.release.expected',
+        )
         raise ValueError(err_msg)
+
     else:
         print('README.rst.release.template contents are as expected.')
 
@@ -413,10 +415,8 @@ def _index_verify(index_file, **extra_kwargs):
             expected value computed from the template.
     """
     side_effect = extra_kwargs.pop('side_effect', None)
-
     with open(TEMPLATE_FILE, 'r') as file_obj:
         template = file_obj.read()
-
     template_kwargs = {
         'code_block1': SPHINX_CODE_BLOCK1,
         'code_block2': SPHINX_CODE_BLOCK2,
@@ -449,20 +449,21 @@ def _index_verify(index_file, **extra_kwargs):
         'joss': ' |JOSS|',
         'joss_img': JOSS_IMG,
     }
-
     template_kwargs.update(**extra_kwargs)
     expected = template.format(**template_kwargs)
     if side_effect is not None:
         expected = side_effect(expected)
-
     with open(index_file, 'r') as file_obj:
         contents = file_obj.read()
-
     if contents != expected:
         err_msg = '\n' + get_diff(
-            contents, expected,
-            index_file + '.actual', index_file + '.expected')
+            contents,
+            expected,
+            index_file + '.actual',
+            index_file + '.expected',
+        )
         raise ValueError(err_msg)
+
     else:
         rel_name = os.path.relpath(index_file, _ROOT_DIR)
         msg = '{} contents are as expected.'.format(rel_name)
@@ -490,14 +491,12 @@ def release_docs_side_effect(content):
     """
     # First replace **all** curly braces.
     result = content.replace('{', '{{').replace('}', '}}')
-
     # Then reset the actual template arguments.
     result = result.replace('{{version}}', '{version}')
     result = result.replace('{{circleci_build}}', '{circleci_build}')
     result = result.replace('{{travis_build}}', '{travis_build}')
     result = result.replace('{{appveyor_build}}', '{appveyor_build}')
     result = result.replace('{{coveralls_build}}', '{coveralls_build}')
-
     return result
 
 
@@ -538,17 +537,18 @@ def development_verify():
     """
     with open(DEVELOPMENT_TEMPLATE, 'r') as file_obj:
         template = file_obj.read()
-
     expected = template.format(revision=REVISION, rtd_version=RTD_VERSION)
-
     with open(DEVELOPMENT_FILE, 'r') as file_obj:
         contents = file_obj.read()
-
     if contents != expected:
         err_msg = '\n' + get_diff(
-            contents, expected,
-            'DEVELOPMENT.rst.actual', 'DEVELOPMENT.rst.expected')
+            contents,
+            expected,
+            'DEVELOPMENT.rst.actual',
+            'DEVELOPMENT.rst.expected',
+        )
         raise ValueError(err_msg)
+
     else:
         print('DEVELOPMENT.rst contents are as expected.')
 
@@ -562,18 +562,18 @@ def native_libraries_verify():
     """
     with open(NATIVE_LIBS_TEMPLATE, 'r') as file_obj:
         template = file_obj.read()
-
     expected = template.format(revision=REVISION)
-
     with open(NATIVE_LIBS_FILE, 'r') as file_obj:
         contents = file_obj.read()
-
     if contents != expected:
         err_msg = '\n' + get_diff(
-            contents, expected,
+            contents,
+            expected,
             'docs/native-libraries.rst.actual',
-            'docs/native-libraries.rst.expected')
+            'docs/native-libraries.rst.expected',
+        )
         raise ValueError(err_msg)
+
     else:
         print('docs/native-libraries.rst contents are as expected.')
 

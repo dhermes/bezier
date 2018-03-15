@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Setup file for bezier."""
 
 from __future__ import print_function
@@ -23,7 +22,6 @@ import setuptools
 import setup_helpers
 import setup_helpers_osx
 import setup_helpers_windows
-
 
 VERSION = '0.8.0.dev1'  # Also in ``codemeta.json`` and ``__init__.py``.
 AUTHOR = 'Danny Hermes'  # Also in ``__init__.py``.
@@ -46,16 +44,14 @@ NO_EXTENSIONS_ENV = 'BEZIER_NO_EXTENSIONS'
 NO_SPEEDUPS_MESSAGE = """\
 The {} environment variable has been used to explicitly disable the
 building of extension modules.
-""".format(NO_EXTENSIONS_ENV)
-REQUIREMENTS = (
-    'numpy >= 1.14.0',
-    'six >= 1.11.0',
+""".format(
+    NO_EXTENSIONS_ENV
 )
-EXTRAS_REQUIRE = {
-    ':python_version<"3.4"': ['enum34'],
-}
+REQUIREMENTS = ('numpy >= 1.14.0', 'six >= 1.11.0')
+EXTRAS_REQUIRE = {':python_version<"3.4"': ['enum34']}
 DESCRIPTION = (
-    u'Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects')
+    u'Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects'
+)
 
 
 def is_installed(requirement):
@@ -63,6 +59,7 @@ def is_installed(requirement):
         pkg_resources.require(requirement)
     except pkg_resources.ResolutionError:
         return False
+
     else:
         return True
 
@@ -81,6 +78,7 @@ def extension_modules():
     require_numpy()
     if setup_helpers.BuildFortranThenExt.has_f90_compiler():
         return setup_helpers.extension_modules()
+
     else:
         print(MISSING_F90_MESSAGE, file=sys.stderr)
         return []
@@ -113,7 +111,7 @@ def setup():
                 os.path.join('lib', '*.a'),
                 os.path.join('lib', '*.lib'),
                 os.path.join('extra-dll', '*.dll'),
-            ],
+            ]
         },
         zip_safe=True,
         install_requires=REQUIREMENTS,
@@ -143,9 +141,7 @@ def main():
         setup_helpers_osx.patch_f90_compiler,
         setup_helpers_windows.patch_f90_compiler,
     ]
-
     setup_helpers_windows.patch_cmd(setup_helpers.BuildFortranThenExt)
-
     setup()
 
 

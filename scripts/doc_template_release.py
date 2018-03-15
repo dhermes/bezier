@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Populate documentation for a release.
 
 This will introduce one-off changes in
@@ -33,20 +32,20 @@ import sys
 
 import six
 
-
 _SCRIPTS_DIR = os.path.dirname(__file__)
 _ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
 README_FILE = os.path.join(_ROOT_DIR, 'README.rst')
-RELEASE_README_FILE = os.path.join(
-    _ROOT_DIR, 'README.rst.release.template')
+RELEASE_README_FILE = os.path.join(_ROOT_DIR, 'README.rst.release.template')
 INDEX_FILE = os.path.join(_ROOT_DIR, 'docs', 'index.rst')
 RELEASE_INDEX_FILE = os.path.join(
-    _ROOT_DIR, 'docs', 'index.rst.release.template')
+    _ROOT_DIR, 'docs', 'index.rst.release.template'
+)
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst.template')
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst')
 NATIVE_LIBS_FILE = os.path.join(_ROOT_DIR, 'docs', 'native-libraries.rst')
 NATIVE_LIBS_TEMPLATE = os.path.join(
-    _ROOT_DIR, 'docs', 'native-libraries.rst.template')
+    _ROOT_DIR, 'docs', 'native-libraries.rst.template'
+)
 
 
 def get_version():
@@ -62,15 +61,14 @@ def get_version():
     sys.modules['setup_helpers'] = object()
     sys.modules['setup_helpers_osx'] = object()
     sys.modules['setup_helpers_windows'] = object()
-
     filename = os.path.join(_ROOT_DIR, 'setup.py')
     setup_mod = imp.load_source('setup', filename)
     return setup_mod.VERSION
 
 
 def populate_readme(
-        version, circleci_build, appveyor_build,
-        coveralls_build, travis_build):
+    version, circleci_build, appveyor_build, coveralls_build, travis_build
+):
     """Populates ``README.rst`` with release-specific data.
 
     This is because ``README.rst`` is used on PyPI.
@@ -88,7 +86,6 @@ def populate_readme(
     """
     with open(RELEASE_README_FILE, 'r') as file_obj:
         template = file_obj.read()
-
     contents = template.format(
         version=version,
         circleci_build=circleci_build,
@@ -96,14 +93,13 @@ def populate_readme(
         coveralls_build=coveralls_build,
         travis_build=travis_build,
     )
-
     with open(README_FILE, 'w') as file_obj:
         file_obj.write(contents)
 
 
 def populate_index(
-        version, circleci_build, appveyor_build,
-        coveralls_build, travis_build):
+    version, circleci_build, appveyor_build, coveralls_build, travis_build
+):
     """Populates ``docs/index.rst`` with release-specific data.
 
     Args:
@@ -119,7 +115,6 @@ def populate_index(
     """
     with open(RELEASE_INDEX_FILE, 'r') as file_obj:
         template = file_obj.read()
-
     contents = template.format(
         version=version,
         circleci_build=circleci_build,
@@ -127,7 +122,6 @@ def populate_index(
         coveralls_build=coveralls_build,
         travis_build=travis_build,
     )
-
     with open(INDEX_FILE, 'w') as file_obj:
         file_obj.write(contents)
 
@@ -140,11 +134,7 @@ def populate_native_libraries(version):
     """
     with open(NATIVE_LIBS_TEMPLATE, 'r') as file_obj:
         template = file_obj.read()
-
-    contents = template.format(
-        revision=version,
-    )
-
+    contents = template.format(revision=version,)
     with open(NATIVE_LIBS_FILE, 'w') as file_obj:
         file_obj.write(contents)
 
@@ -159,12 +149,7 @@ def populate_development(version):
     """
     with open(DEVELOPMENT_TEMPLATE, 'r') as file_obj:
         template = file_obj.read()
-
-    contents = template.format(
-        revision=version,
-        rtd_version=version,
-    )
-
+    contents = template.format(revision=version, rtd_version=version)
     with open(DEVELOPMENT_FILE, 'w') as file_obj:
         file_obj.write(contents)
 
@@ -180,11 +165,12 @@ def main():
     appveyor_build = six.moves.input('AppVeyor Build ID: ')
     coveralls_build = six.moves.input('Coveralls Build ID: ')
     travis_build = six.moves.input('Travis Build ID: ')
-
     populate_readme(
-        version, circleci_build, appveyor_build, coveralls_build, travis_build)
+        version, circleci_build, appveyor_build, coveralls_build, travis_build
+    )
     populate_index(
-        version, circleci_build, appveyor_build, coveralls_build, travis_build)
+        version, circleci_build, appveyor_build, coveralls_build, travis_build
+    )
     populate_native_libraries(version)
     populate_development(version)
 

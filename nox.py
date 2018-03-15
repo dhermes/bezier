@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import glob
 import os
 import shutil
@@ -19,22 +18,17 @@ import tempfile
 import nox
 import py.path
 
-
 NUMPY_DEP = 'numpy >= 1.14.0'
 IS_MAC_OS_X = sys.platform == 'darwin'
 SCIPY_DEP = 'scipy >= 1.0.0'
 MOCK_DEP = 'mock >= 1.3.0'
 SEABORN_DEP = 'seaborn >= 0.8'
 MATPLOTLIB_DEP = 'matplotlib >= 2.2.0'
-BASE_DEPS = (
-    NUMPY_DEP,
-    'pytest',
-)
+BASE_DEPS = (NUMPY_DEP, 'pytest')
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
 WHEELHOUSE = os.environ.get('WHEELHOUSE')
 DOCS_DEPS = (
-    '--requirement',
-    os.path.join(NOX_DIR, 'docs', 'requirements.txt'),
+    '--requirement', os.path.join(NOX_DIR, 'docs', 'requirements.txt')
 )
 SINGLE_INTERP = 'python3.6'
 PYPY = 'pypy'
@@ -64,7 +58,6 @@ def pypy_setup(local_deps, session):
             NUMPY_DEP,
             SCIPY_DEP,
         )
-
     return local_deps
 
 
@@ -74,30 +67,27 @@ def update_generated(session, check):
     name = 'update-{}'.format(check)
     # NOTE: ``nox`` requires virtualenv_dirname to be lowercase.
     session.virtualenv_dirname = name.lower()
-
     # Update Cython generated source code.
     session.interpreter = SINGLE_INTERP
-
     # Install all dependencies.
     session.install('Cython')
-
     if check:
         command = get_path('scripts', 'remove_cython_files.py')
         session.run('python', command)
-
     pyx_glob = get_path('src', 'bezier', '*.pyx')
     for pyx_module in glob.glob(pyx_glob):
         session.run('cython', pyx_module)
-
     command = get_path('scripts', 'clean_cython.py')
     c_glob = get_path('src', 'bezier', '*.c')
     for c_source in glob.glob(c_glob):
         session.run(
-            'python', command,
-            '--filename', c_source,
-            '--virtualenv-dirname', session.virtualenv_dirname,
+            'python',
+            command,
+            '--filename',
+            c_source,
+            '--virtualenv-dirname',
+            session.virtualenv_dirname,
         )
-
     if check:
         command = get_path('scripts', 'cython_update_check.py')
         session.run('python', command)
@@ -112,15 +102,12 @@ def unit(session, py):
     else:
         session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS + (SCIPY_DEP,)
-
     if py in ('2.7', PYPY):
         local_deps += (MOCK_DEP,)
-
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
     session.install('.')
-
     # Run py.test against the unit tests.
     run_args = ['py.test'] + session.posargs + [get_path('tests', 'unit')]
     session.run(*run_args)
@@ -129,13 +116,11 @@ def unit(session, py):
 @nox.session
 def cover(session):
     session.interpreter = SINGLE_INTERP
-
     # Install all test dependencies.
     local_deps = BASE_DEPS + (SCIPY_DEP, 'pytest-cov', 'coverage')
     session.install(*local_deps)
     # Install this package.
     session.install('.')
-
     # Run py.test with coverage against the unit tests.
     run_args = ['py.test', '--cov=bezier', '--cov=tests.unit']
     run_args += session.posargs
@@ -152,31 +137,27 @@ def functional(session, py):
     else:
         session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS
-
     if py in ('2.7', PYPY):
         local_deps += (MOCK_DEP,)
-
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
     session.install('.')
-
     # Run py.test against the functional tests.
     run_args = (
-        ['py.test'] + session.posargs + [get_path('tests', 'functional')])
+        ['py.test'] + session.posargs + [get_path('tests', 'functional')]
+    )
     session.run(*run_args)
 
 
 @nox.session
 def docs(session):
     session.interpreter = SINGLE_INTERP
-
     # Install all dependencies.
     session.install(*DOCS_DEPS)
     # Install this package.
     env = {'BEZIER_NO_EXTENSIONS': 'True'}
     session.run('pip', 'install', '.', env=env)
-
     # Run the script for building docs.
     command = get_path('scripts', 'build_docs.sh')
     session.run(command, env=env)
@@ -184,9 +165,12 @@ def docs(session):
 
 def get_doctest_args(session):
     run_args = [
-        'sphinx-build', '-W',
-        '-b', 'doctest',
-        '-d', get_path('docs', 'build', 'doctrees'),
+        'sphinx-build',
+        '-W',
+        '-b',
+        'doctest',
+        '-d',
+        get_path('docs', 'build', 'doctrees'),
         get_path('docs'),
         get_path('docs', 'build', 'doctest'),
     ]
@@ -206,7 +190,6 @@ def doctest(session):
         session.run(command)
     else:
         session.install('.')
-
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
     session.run(*run_args)
@@ -221,24 +204,22 @@ def docs_images(session):
     session.install(*local_deps)
     # Install this package.
     session.install('.')
-
     # Use custom RC-file for matplotlib.
     env = {'MATPLOTLIBRC': 'docs', 'GENERATE_IMAGES': 'True'}
-
     # Run the script for generating images for docs.
     run_args = get_doctest_args(session)
     session.run(*run_args, env=env)
-
     # Run the functional tests with --save-plot.
     fnl_tests_glob = get_path('tests', 'functional', 'test_*.py')
     modules_to_run = glob.glob(fnl_tests_glob)
     # Generate images for ``curve_intersections.json`` and
     # ``surface_intersections.json``.
-    modules_to_run.extend((
-        get_path('tests', 'functional', 'make_curve_curve_images.py'),
-        get_path('tests', 'functional', 'make_surface_surface_images.py')
-    ))
-
+    modules_to_run.extend(
+        (
+            get_path('tests', 'functional', 'make_curve_curve_images.py'),
+            get_path('tests', 'functional', 'make_surface_surface_images.py'),
+        )
+    )
     # Make sure that the root directory is on the Python path so that
     # ``tests`` is import-able.
     env['PYTHONPATH'] = get_path()
@@ -262,15 +243,19 @@ def lint(session):
     session.install(*local_deps)
     # Install this package.
     session.install('.')
-
     # Run the script to check that the README and other docs are valid.
     check_path = get_path('scripts', 'check_doc_templates.py')
     session.run('python', check_path)
     # Run the script to check that setup.py is valid.
     setup_file = get_path('setup.py')
     session.run(
-        'python', setup_file, 'check', '--metadata',
-        '--restructuredtext', '--strict')
+        'python',
+        setup_file,
+        'check',
+        '--metadata',
+        '--restructuredtext',
+        '--strict',
+    )
     # Run flake8 over the code to check import order.
     session.run(
         'flake8',
@@ -281,13 +266,17 @@ def lint(session):
     )
     # Run Pylint over the library source.
     session.run(
-        'pylint', '--rcfile', 'pylintrc',
+        'pylint',
+        '--rcfile',
+        'pylintrc',
         '--max-module-lines=2891',
         get_path('src', 'bezier'),
     )
     # Run Pylint over the tests source.
     session.run(
-        'pylint', '--rcfile', 'pylintrc',
+        'pylint',
+        '--rcfile',
+        'pylintrc',
         '--disable=missing-docstring',
         '--disable=protected-access',
         '--disable=too-many-public-methods',
@@ -300,27 +289,19 @@ def lint(session):
 @nox.parametrize('target', ['memory', 'time'])
 def benchmark(session, target):
     session.interpreter = SINGLE_INTERP
-
     if target == 'memory':
         local_deps = (NUMPY_DEP, 'psutil', 'memory_profiler')
         test_fi1 = get_path('benchmarks', 'memory', 'test_curves.py')
         test_fi2 = get_path('benchmarks', 'memory', 'test_surfaces.py')
-        all_run_args = [
-            ['python', test_fi1],
-            ['python', test_fi2],
-        ]
+        all_run_args = [['python', test_fi1], ['python', test_fi2]]
     elif target == 'time':
         local_deps = BASE_DEPS + ('pytest-benchmark',)
         test_dir = get_path('benchmarks', 'time')
-        all_run_args = [
-            ['py.test'] + session.posargs + [test_dir],
-        ]
-
+        all_run_args = [['py.test'] + session.posargs + [test_dir]]
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
     session.install('.')
-
     # NOTE: We need `tests` to be import-able.
     for run_args in all_run_args:
         session.run(*run_args, env={'PYTHONPATH': '.'})
@@ -331,22 +312,21 @@ def benchmark(session, target):
 def check_journal(session, machine):
     session.virtualenv_dirname = 'journal-{}'.format(machine)
     session.interpreter = SINGLE_INTERP
-
     # Get a temporary file where the journal will be written.
     filehandle, journal_filename = tempfile.mkstemp(suffix='-journal.txt')
     os.close(filehandle)
-
     # Set the journal environment variable and install ``bezier``.
     session.install(NUMPY_DEP)  # Install requirement(s).
     env = {'BEZIER_JOURNAL': journal_filename}
     session.run('pip', 'install', '.', env=env)
-
     # Compare the expected file to the actual results.
     session.run(
         'python',
         get_path('scripts', 'post_process_journal.py'),
-        '--journal-filename', journal_filename,
-        '--machine', machine,
+        '--journal-filename',
+        journal_filename,
+        '--machine',
+        machine,
     )
     expected_journal = get_path(JOURNAL_PATHS[machine])
     diff_tool = get_path('scripts', 'diff.py')
@@ -365,7 +345,6 @@ def clean(session):
     """
     # No need to create a virtualenv.
     session.virtualenv = False
-
     clean_dirs = (
         get_path('.cache'),
         get_path('.coverage'),
@@ -401,10 +380,8 @@ def clean(session):
         get_path('tests', 'functional', '*.pyc'),
         get_path('tests', 'unit', '*.pyc'),
     )
-
     for dir_path in clean_dirs:
         session.run(shutil.rmtree, dir_path, ignore_errors=True)
-
     for glob_path in clean_globs:
         for filename in glob.glob(glob_path):
             session.run(os.remove, filename)
@@ -414,33 +391,30 @@ def clean(session):
 def fortran_unit(session):
     session.interpreter = SINGLE_INTERP
     session.install('lcov_cobertura', 'pycobertura')
-
     if py.path.local.sysfind('make') is None:
         session.skip('`make` must be installed')
-
     if py.path.local.sysfind('gfortran') is None:
         session.skip('`gfortran` must be installed')
-
     if py.path.local.sysfind('lcov') is None:
         session.skip('`lcov` must be installed')
-
     test_dir = get_path('tests', 'fortran')
     lcov_filename = os.path.join(test_dir, 'coverage.info')
-
     session.chdir(test_dir)
     session.run('make', 'unit')
     session.chdir(NOX_DIR)
-
     session.run(
-        'lcov', '--capture',
-        '--directory', test_dir,
-        '--output-file', lcov_filename,
+        'lcov',
+        '--capture',
+        '--directory',
+        test_dir,
+        '--output-file',
+        lcov_filename,
     )
     session.run(
         'python',
         get_path('scripts', 'report_lcov.py'),
-        '--lcov-filename', lcov_filename,
+        '--lcov-filename',
+        lcov_filename,
     )
-
     session.chdir(test_dir)
     session.run('make', 'clean')

@@ -9,17 +9,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from __future__ import absolute_import
 
 import os
 
 from tests.functional import utils
 
-
 SCRIPTS_DIR = os.path.abspath(os.path.dirname(__file__))
-GENERATED_FILENAME = os.path.abspath(os.path.join(
-    SCRIPTS_DIR, '..', 'tests', 'fortran', 'functional_curve.f90'))
+GENERATED_FILENAME = os.path.abspath(
+    os.path.join(SCRIPTS_DIR, '..', 'tests', 'fortran', 'functional_curve.f90')
+)
 COL_TEMPLATE = '    nodes{:d}(:, {:d}) = [{}_dp, {}_dp]'
 PARAM_TEMPLATE_COMPACT = '    expected_params({:d}, :) = [{}]'
 PARAM_TEMPLATE = '    expected_params({:d}, :) = [ &\n         {}]'
@@ -80,8 +79,7 @@ end module functional_curve
 
 
 def params_string(index, curve_params):
-    inside = ['{}_dp'.format(param)
-              for param in curve_params]
+    inside = ['{}_dp'.format(param) for param in curve_params]
     result_compact = PARAM_TEMPLATE_COMPACT.format(index, ', '.join(inside))
     if len(result_compact) <= 80:
         return result_compact
@@ -93,32 +91,26 @@ def make_test_case(intersection):
     id1 = int(intersection.curve1_info.id_)
     nodes1 = intersection.nodes1
     _, num_nodes1 = nodes1.shape
-
     id2 = int(intersection.curve2_info.id_)
     nodes2 = intersection.nodes2
     _, num_nodes2 = nodes2.shape
-
     num_params = intersection.num_params
-
     parts = []
     for col in range(num_nodes1):
         x_val, y_val = nodes1[:, col]
         parts.append(COL_TEMPLATE.format(id1, col + 1, x_val, y_val))
     nodes1_vals = '\n'.join(parts)
-
     parts = []
     for col in range(num_nodes2):
         x_val, y_val = nodes2[:, col]
         parts.append(COL_TEMPLATE.format(id2, col + 1, x_val, y_val))
     nodes2_vals = '\n'.join(parts)
-
     if num_params == 0:
         expected_params = ''
     else:
         part1 = params_string(1, intersection.curve1_params)
         part2 = params_string(2, intersection.curve2_params)
         expected_params = part1 + '\n' + part2 + '\n\n'
-
     return CASE_TEMPLATE.format(
         case_id=intersection.id_,
         id1=id1,
@@ -138,28 +130,22 @@ def write_content(intersections, file_obj):
         parts.append('       case{:d}, &'.format(intersection.id_))
     parts.append('       case{:d}'.format(intersections[-1].id_))
     cases = '\n'.join(parts)
-
     parts = []
     for intersection in intersections:
         parts.append(make_test_case(intersection))
     case_impls = '\n'.join(parts)
-
     parts = []
     for intersection in intersections:
         parts.append('    call case{:d}()'.format(intersection.id_))
     case_calls = '\n'.join(parts)
-
     content = FILE_TEMPLATE.format(
-        cases=cases,
-        case_impls=case_impls,
-        case_calls=case_calls,
+        cases=cases, case_impls=case_impls, case_calls=case_calls
     )
     file_obj.write(content)
 
 
 def main():
     _, intersections = utils.curve_intersections_info()
-
     with open(GENERATED_FILENAME, 'w') as file_obj:
         write_content(intersections, file_obj)
 

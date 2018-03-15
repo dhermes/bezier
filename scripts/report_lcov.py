@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Convert ``lcov`` report into "cobertura" format.
 
 Using the converted report, print a table of the report and
@@ -24,22 +23,18 @@ import sys
 import pycobertura
 import lcov_cobertura
 
-
 THRESHOLD = 1.0  # 100%
 
 
 def report_coverage(lcov_filename):
     with open(lcov_filename, 'r') as file_obj:
         contents = file_obj.read()
-
     converter = lcov_cobertura.LcovCobertura(contents)
     cobertura_xml = converter.convert()
-
     report = io.StringIO(cobertura_xml)
     cobertura = pycobertura.Cobertura(report)
     reporter = pycobertura.TextReporter(cobertura)
     print(reporter.generate())
-
     # The status code will be the number of files under the
     # threshold.
     return sum(
@@ -50,11 +45,14 @@ def report_coverage(lcov_filename):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Convert lcov output to cobertura XML and report.')
+        description='Convert lcov output to cobertura XML and report.'
+    )
     parser.add_argument(
-        '--lcov-filename', dest='lcov_filename', required=True,
-        help='Filename of `lcov` report to be converted.')
-
+        '--lcov-filename',
+        dest='lcov_filename',
+        required=True,
+        help='Filename of `lcov` report to be converted.',
+    )
     args = parser.parse_args()
     status_code = report_coverage(args.lcov_filename)
     sys.exit(status_code)

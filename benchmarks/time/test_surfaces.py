@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import os
 
 import pytest
@@ -20,6 +19,7 @@ from tests.functional import utils
 def get_bounds():
     if os.environ.get('CIRCLECI') == 'true':
         return 160.0 / 16384.0, 200.0 / 16384.0
+
     else:
         return 125.0 / 16384.0, 155.0 / 16384.0
 
@@ -30,15 +30,12 @@ def intersect_all(intersections):
 
 
 @pytest.mark.benchmark(
-    group='surface-intersection',
-    disable_gc=True,
-    warmup=False
+    group='surface-intersection', disable_gc=True, warmup=False
 )
 def test_intersections(benchmark):
     _, intersections = utils.surface_intersections_info()
     result = benchmark(intersect_all, intersections)
     assert result is None
-
     stats = benchmark.stats.stats
     min_time, max_time = get_bounds()
     assert min_time <= stats.median <= max_time

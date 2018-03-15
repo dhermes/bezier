@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Generic (i.e. platform-independent) helpers for ``setup.py``."""
 
 from __future__ import print_function
@@ -24,7 +23,6 @@ import sys
 
 import setuptools
 import setuptools.command.build_ext
-
 
 DEBUG_ENV = 'DEBUG'
 GFORTRAN_LIB_ENV = 'GFORTRAN_LIB'
@@ -60,17 +58,9 @@ GFORTRAN_SHARED_FLAGS = (  # Used for both "DEBUG" and "OPTIMIZE"
     '-std=f2008',
 )
 GFORTRAN_DEBUG_FLAGS = (
-    '-g',
-    '-fcheck=all',
-    '-fbacktrace',
-    '-fimplicit-none',
-    '-pedantic',
+    '-g', '-fcheck=all', '-fbacktrace', '-fimplicit-none', '-pedantic'
 )
-GFORTRAN_OPTIMIZE_FLAGS = (
-    '-Werror',
-    '-O3',
-    '-funroll-loops',
-)
+GFORTRAN_OPTIMIZE_FLAGS = ('-Werror', '-O3', '-funroll-loops')
 BAD_JOURNAL = 'Saving journal failed with {!r}.'
 JOURNAL_ENV = 'BEZIER_JOURNAL'
 """Environment variable to specify a text file for saving compiler commands.
@@ -82,13 +72,7 @@ to make sure the build is occurring as expected.
 QUADPACK_DIR = 'quadpack'
 QUADPACK_SOURCE_FILENAME = os.path.join('src', 'bezier', QUADPACK_DIR, '{}.f')
 # NOTE: QUADPACK module dependencies: order is important.
-QUADPACK_MODULES = (
-    'd1mach',
-    'dqelg',
-    'dqpsrt',
-    'dqk21',
-    'dqagse',
-)
+QUADPACK_MODULES = ('d1mach', 'dqelg', 'dqpsrt', 'dqk21', 'dqagse')
 # NOTE: This represents the Fortran module dependency graph. Order is
 #       important both of the keys and of the dependencies that are in
 #       each value.
@@ -123,13 +107,11 @@ def gfortran_search_path(library_dirs):
     cmd = ('gfortran', '-print-search-dirs')
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     return_code = process.wait()
-
     # Bail out if the command failed.
     if return_code != 0:
         return library_dirs
 
     cmd_output = process.stdout.read().decode('utf-8')
-
     # Find single line starting with ``libraries: ``.
     search_lines = cmd_output.strip().split('\n')
     library_lines = [
@@ -147,14 +129,12 @@ def gfortran_search_path(library_dirs):
     accepted = set(library_dirs)
     for part in library_line.split(os.pathsep):
         full_path = os.path.abspath(part.strip())
-
         if os.path.isdir(full_path):
             accepted.add(full_path)
         else:
             # Ignore anything that isn't a directory.
             msg = GFORTRAN_BAD_PATH.format(full_path)
             print(msg, file=sys.stderr)
-
     return sorted(accepted)
 
 
@@ -180,7 +160,6 @@ def patch_library_dirs(f90_compiler):
     gfortran_lib = os.environ.get(GFORTRAN_LIB_ENV)
     # ``library_dirs`` is a list (i.e. mutable), so we can update in place.
     library_dirs = f90_compiler.library_dirs
-
     if gfortran_lib is None:
         library_dirs[:] = gfortran_search_path(library_dirs)
     else:
@@ -206,7 +185,6 @@ def extension_modules():
             OBJECT_FILENAME.format(os.path.join(QUADPACK_DIR, fortran_module))
             for fortran_module in QUADPACK_MODULES
         )
-
     # NOTE: Copy ``libraries`` and ``library_dirs`` so they
     #       aren't shared and mutable.
     extension = setuptools.Extension(
@@ -214,13 +192,11 @@ def extension_modules():
         [SPEEDUP_FILENAME],
         extra_objects=extra_objects,
         include_dirs=[
-            np.get_include(),
-            os.path.join('src', 'bezier', 'include'),
+            np.get_include(), os.path.join('src', 'bezier', 'include')
         ],
         libraries=copy.deepcopy(libraries),
         library_dirs=copy.deepcopy(library_dirs),
     )
-
     return [extension]
 
 
@@ -251,20 +227,16 @@ def patch_f90_compiler(f90_compiler):
     for flag in GFORTRAN_SHARED_FLAGS:
         if flag not in f90_flags:
             f90_flags.append(flag)
-
     if DEBUG_ENV in os.environ:
         to_add = GFORTRAN_DEBUG_FLAGS
         to_remove = GFORTRAN_OPTIMIZE_FLAGS
     else:
         to_add = GFORTRAN_OPTIMIZE_FLAGS
         to_remove = GFORTRAN_DEBUG_FLAGS
-
     for flag in to_add:
         if flag not in f90_flags:
             f90_flags.append(flag)
-
-    without = [flag for flag in f90_flags
-               if flag not in to_remove]
+    without = [flag for flag in f90_flags if flag not in to_remove]
     # Update in place.
     f90_flags[:] = without
 
@@ -291,7 +263,6 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
       object files or if they will refer to a shared library.
     * ``CLEANUP`` optional callable that cleans up at the end of :meth:`run`.
     """
-
     # Will be set at runtime, not import time.
     F90_COMPILER = None
     PATCH_FUNCTIONS = []
@@ -315,21 +286,20 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         c_compiler = distutils.ccompiler.new_compiler()
         if c_compiler is None:
             return
+
         if c_compiler.compiler_type == 'msvc':
             c_compiler.initialize()
-
         f90_compiler = numpy.distutils.fcompiler.new_fcompiler(
-            requiref90=True, c_compiler=c_compiler)
+            requiref90=True, c_compiler=c_compiler
+        )
         if f90_compiler is None:
             return
 
         dist = numpy.distutils.core.get_distribution(always=True)
         f90_compiler.customize(dist)
-
         # Patch up ``f90_compiler`` with any OS-specific patches.
         for patch_fn in cls.PATCH_FUNCTIONS:
             patch_fn(f90_compiler)
-
         cls.F90_COMPILER = f90_compiler
 
     @classmethod
@@ -349,6 +319,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             libraries = ['bezier']
             library_dirs = []
             return libraries, library_dirs
+
         else:
             return cls.F90_COMPILER.libraries, cls.F90_COMPILER.library_dirs
 
@@ -370,12 +341,11 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         def journaled_spawn(patched_self, cmd, display=None):
             self.commands.append(cmd)
             return numpy.distutils.ccompiler.CCompiler_spawn(
-                patched_self, cmd, display=None)
+                patched_self, cmd, display=None
+            )
 
         numpy.distutils.ccompiler.replace_method(
-            distutils.ccompiler.CCompiler,
-            'spawn',
-            journaled_spawn,
+            distutils.ccompiler.CCompiler, 'spawn', journaled_spawn
         )
 
     @staticmethod
@@ -385,22 +355,18 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         first_line = '$ {} \\'
         middle_line = '>   {} \\'
         last_line = '>   {}'
-
         parts = [first_line.format(command[0])]
         for argument in command[1:-1]:
             parts.append(middle_line.format(argument))
         parts.append(last_line.format(command[-1]))
-
         return '\n'.join(parts)
 
     def _commands_to_text(self):
         separator = '-' * 40
-
         parts = [separator]
         for command in self.commands:
             command_text = self._command_to_text(command)
             parts.extend([command_text, separator])
-
         parts.append('')  # Trailing newline in file.
         return '\n'.join(parts)
 
@@ -431,13 +397,12 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             obj_files (List[str]): List of paths of compiled object files.
         """
         c_compiler = self.F90_COMPILER.c_compiler
-
         static_lib_dir = os.path.join(self.build_lib, 'bezier', 'lib')
         if not os.path.exists(static_lib_dir):
             os.makedirs(static_lib_dir)
         c_compiler.create_static_lib(
-            obj_files, 'bezier', output_dir=static_lib_dir)
-
+            obj_files, 'bezier', output_dir=static_lib_dir
+        )
         # NOTE: We must "modify" the paths for the ``extra_objects`` in
         #       each extension since they were compiled with
         #       ``output_dir=self.build_temp``.
@@ -463,13 +428,9 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             macros=[],
             include_dirs=[],
             debug=None,
-            extra_postargs=[
-                '-J',
-                self.build_temp,
-            ],
+            extra_postargs=['-J', self.build_temp],
             depends=[],
         )
-
         if self.CUSTOM_STATIC_LIB is None:
             self._default_static_lib(obj_files)
         else:
@@ -499,11 +460,8 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
     def run(self):
         self.set_f90_compiler()
         self.start_journaling()
-
         self.compile_fortran_obj_files()
-
         result = setuptools.command.build_ext.build_ext.run(self)
         self.save_journal()
         self.cleanup()
-
         return result

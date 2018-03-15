@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Helpers for ``setup.py`` specific to Windows."""
 
 
@@ -19,16 +18,15 @@ import sys
 
 import setup_helpers
 
-
 LIB_DIR = os.path.join('bezier', 'lib')
 DLL_DIR = os.path.join('bezier', 'extra-dll')
 DLL_NAME = 'libbezier.dll'
 DEF_NAME = 'libbezier.def'
 LIB_NAME = 'bezier.lib'
 # See: https://docs.python.org/3/library/platform.html#cross-platform
-if sys.maxsize == 2**63 - 1:
+if sys.maxsize == 2 ** 63 - 1:
     MACHINE_TYPE = '/machine:x64'
-elif sys.maxsize == 2**31 - 1:
+elif sys.maxsize == 2 ** 31 - 1:
     MACHINE_TYPE = '/machine:x86'
 else:  # pragma: NO COVER
     raise ImportError('Unexpected maxsize', sys.maxsize)
@@ -43,33 +41,23 @@ def _ensure_exists(*dir_names):
 def make_static_lib(build_ext_cmd, obj_files):
     f90_compiler = build_ext_cmd.F90_COMPILER
     c_compiler = f90_compiler.c_compiler
-    gfortran_exe =  f90_compiler.compiler_f90[0]
-
+    gfortran_exe = f90_compiler.compiler_f90[0]
     static_lib_dir = os.path.join(build_ext_cmd.build_lib, LIB_DIR)
     extra_dll_dir = os.path.join(build_ext_cmd.build_lib, DLL_DIR)
     _ensure_exists(static_lib_dir, extra_dll_dir, build_ext_cmd.build_temp)
-
     # Add build lib dir to extensions (for linking).
     for extension in build_ext_cmd.extensions:
         library_dirs = extension.library_dirs
         if static_lib_dir not in library_dirs:
             library_dirs.append(static_lib_dir)
-
     # NOTE: Would prefer to use a `tuple` but command must be
     #       mutable on Windows.
     temp_dll_filename = os.path.join(build_ext_cmd.build_temp, DLL_NAME)
-    cmd = [
-        gfortran_exe,
-        '-static',
-         '-shared',
-         '-o',
-         temp_dll_filename,
-    ]
+    cmd = [gfortran_exe, '-static', '-shared', '-o', temp_dll_filename]
     cmd.extend(obj_files)
     def_filename = os.path.join(build_ext_cmd.build_temp, DEF_NAME)
     cmd.append('-Wl,--output-def,' + def_filename)
     f90_compiler.spawn(cmd)
-
     # NOTE: This assumes, but does not check that ``c_compiler.initialized``
     #       is True.
     temp_lib_filename = os.path.join(build_ext_cmd.build_temp, LIB_NAME)
@@ -80,7 +68,6 @@ def make_static_lib(build_ext_cmd, obj_files):
         MACHINE_TYPE,
     ]
     f90_compiler.spawn(cmd)
-
     # Move files for distribution from build temp. dir to build lib dir.
     dll_filename = os.path.join(extra_dll_dir, DLL_NAME)
     shutil.move(temp_dll_filename, dll_filename)
@@ -98,14 +85,8 @@ def run_cleanup(build_ext_cmd):
         return
 
     bezier_dir = os.path.join('src', 'bezier')
-    shutil.move(
-        os.path.join(build_ext_cmd.build_lib, LIB_DIR),
-        bezier_dir,
-    )
-    shutil.move(
-        os.path.join(build_ext_cmd.build_lib, DLL_DIR),
-        bezier_dir,
-    )
+    shutil.move(os.path.join(build_ext_cmd.build_lib, LIB_DIR), bezier_dir)
+    shutil.move(os.path.join(build_ext_cmd.build_lib, DLL_DIR), bezier_dir)
 
 
 def patch_f90_compiler(f90_compiler):
@@ -132,14 +113,15 @@ def patch_f90_compiler(f90_compiler):
         return
 
     f90_compiler.compiler_f90[:] = [
-        value for value in f90_compiler.compiler_f90
+        value
+        for value in f90_compiler.compiler_f90
         if value != setup_helpers.FPIC
     ]
-
     c_compiler = f90_compiler.c_compiler
     if c_compiler.compiler_type != 'msvc':
         raise NotImplementedError(
-            'MSVC is the only supported C compiler on Windows.')
+            'MSVC is the only supported C compiler on Windows.'
+        )
 
 
 def patch_cmd(cmd_class):

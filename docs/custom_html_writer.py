@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Custom HTML builder.
 
 This is used to verify that all snippets are ``doctest``-ed.
@@ -20,7 +19,6 @@ how to write a custom Sphinx extension.
 
 from sphinx import errors
 from sphinx.writers import html
-
 
 _LITERAL_ERR_TEMPLATE = """\
 All literal blocks must either be used for doctest or explicitly
@@ -51,8 +49,10 @@ class CustomHTMLWriter(html.HTMLTranslator):
         if test_type != 'doctest':
             if language.lower() in ('', 'python'):
                 msg = _LITERAL_ERR_TEMPLATE.format(
-                    node.rawsource, language, test_type)
+                    node.rawsource, language, test_type
+                )
                 raise errors.ExtensionError(msg)
+
         # The base classes are not new-style, so we can't use super().
         return html.HTMLTranslator.visit_literal_block(self, node)
 

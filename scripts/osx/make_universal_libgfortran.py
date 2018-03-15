@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Create a universal library for ``libgfortran`` and its dependencies.
 
 Intended to be used on OS X only. It is needed because the Homebrew
@@ -23,7 +22,6 @@ import os
 import shutil
 import subprocess
 import sys
-
 
 CURR_DIR = os.path.abspath(os.path.dirname(__file__))
 FRANKENSTEIN = os.path.join(CURR_DIR, 'frankenstein')
@@ -45,7 +43,6 @@ def get_library_dirs():
     """
     cmd = ('gfortran', '-print-search-dirs')
     cmd_output = subprocess.check_output(cmd).decode('utf-8')
-
     search_lines = cmd_output.strip().split('\n')
     library_lines = [
         line[len(FORTRAN_LIBRARY_PREFIX):]
@@ -55,12 +52,10 @@ def get_library_dirs():
     if len(library_lines) != 1:
         print(LIBRARY_DIRS_ERR, file=sys.stderr)
         sys.exit(1)
-
     library_line = library_lines[0]
     directories = []
     for part in library_line.split(':'):
         full_path = os.path.abspath(part)
-
         if not os.path.exists(full_path):
             continue
 
@@ -69,7 +64,6 @@ def get_library_dirs():
         else:
             msg = 'Path {} is not a directory.'.format(full_path)
             print(msg, file=sys.stderr)
-
     if directories:
         print('``gfortran`` library directories:')
         for directory in directories:
@@ -77,7 +71,6 @@ def get_library_dirs():
     else:
         print('No ``gfortran`` library directories found.', file=sys.stderr)
         sys.exit(1)
-
     return directories
 
 
@@ -104,20 +97,18 @@ def find_libgfortran():
         versioned_path = os.path.realpath(path)
         if os.path.exists(versioned_path):
             matches.append(versioned_path)
-
     if len(matches) != 1:
         msg = 'Expected exactly one match: {}'.format(', '.join(matches))
         print(msg, file=sys.stderr)
         sys.exit(1)
-
     dylib = matches[0]
     architectures = get_architectures(dylib)
     if architectures != ['x86_64']:
         msg = 'Expected {} to be x86_64 only, not {}.'.format(
-            dylib, ', '.join(architectures))
+            dylib, ', '.join(architectures)
+        )
         print(msg, file=sys.stderr)
         sys.exit(1)
-
     x86_64_dir, libgfortran = os.path.split(dylib)
     print('Found x86_64 ``libgfortran``:')
     print('\t{}'.format(dylib))
@@ -147,17 +138,15 @@ def get_i386_dir(x86_64_dir, libgfortran):
         template = 'Expected location of i386 libgfortran does not exist: {}'
         print(template.format(dylib), file=sys.stderr)
         sys.exit(1)
-
     architectures = get_architectures(dylib)
     if architectures != ['i386']:
         msg = 'Expected {} to be i386 only, not {}.'.format(
-            dylib, ', '.join(architectures))
+            dylib, ', '.join(architectures)
+        )
         print(msg, file=sys.stderr)
         sys.exit(1)
-
     print('Found directory with ``i386`` dynamic libraries:')
     print('\t{}'.format(i386_dir))
-
     return i386_dir
 
 
@@ -212,7 +201,6 @@ def get_dependencies(dylib, check_exists=True):
     """
     cmd = ('otool', '-L', dylib)
     cmd_output = subprocess.check_output(cmd).decode('utf-8')
-
     lines = cmd_output.strip().split('\n')
     if lines[0] != dylib + ':':
         raise ValueError('Unexpected first line', lines[0])
@@ -226,8 +214,8 @@ def get_dependencies(dylib, check_exists=True):
         dependency = get_otool_path(line)
         if check_exists and not os.path.exists(dependency):
             raise ValueError('Dependency does not exist', dependency)
-        dependencies.append(dependency)
 
+        dependencies.append(dependency)
     return dependencies
 
 
@@ -270,16 +258,16 @@ def get_architectures(dylib):
     """
     cmd = ('lipo', '-info', dylib)
     cmd_output = subprocess.check_output(cmd).decode('utf-8').strip()
-
     prefix = 'Architectures in the fat file: {} are: '.format(dylib)
-
     if cmd_output.startswith(prefix):
         architectures = cmd_output[len(prefix):].split()
         return architectures
+
     else:
         prefix = 'Non-fat file: {} is architecture: '.format(dylib)
         if not cmd_output.startswith(prefix):
             raise ValueError('Unexpected output', cmd_output)
+
         return [cmd_output[len(prefix):]]
 
 
@@ -322,16 +310,15 @@ def non_universal_libraries(dylib):
     result = set()
     if is_universal(dylib):
         return result
+
     else:
         result.add(dylib)
-
     for dependency in get_dependencies(dylib):
         if is_universal(dependency):
             continue
 
         result.add(dependency)
         result.update(non_universal_libraries(dependency))
-
     return result
 
 
@@ -361,30 +348,28 @@ def verify_libraries(libgfortran_path, libraries):
     print('Non-universal libraries found:')
     for library in libraries:
         print('\t{}'.format(library))
-
     if len(libraries) != 2 or libgfortran_path not in libraries:
         msg = 'Expected ``libgfortran`` and ``libquadmath``: {}'.format(
-            ', '.join(sorted(libraries)))
+            ', '.join(sorted(libraries))
+        )
         print(msg, file=sys.stderr)
         sys.exit(1)
-
     libraries.remove(libgfortran_path)
     libquadmath_path = libraries.pop()
-
     architectures = get_architectures(libquadmath_path)
     if architectures != ['x86_64']:
         msg = 'Expected {} to be x86_64 only, not {}.'.format(
-            libquadmath_path, ', '.join(architectures))
+            libquadmath_path, ', '.join(architectures)
+        )
         print(msg, file=sys.stderr)
         sys.exit(1)
-
     library_dir, libquadmath = os.path.split(libquadmath_path)
     if library_dir != os.path.dirname(libgfortran_path):
         msg = 'Expected {} and {} in same directory.'.format(
-            libgfortran_path, libquadmath)
+            libgfortran_path, libquadmath
+        )
         print(msg, file=sys.stderr)
         sys.exit(1)
-
     return libquadmath
 
 
@@ -439,32 +424,29 @@ def copy_arch(arch, library_dir, libgfortran, libquadmath):
     """
     sub_dir = os.path.join(FRANKENSTEIN, arch)
     os.mkdir(sub_dir)
-
     # Determine the old/new filenames.
     old_libgfortran = os.path.join(library_dir, libgfortran)
     arch_libgfortran = os.path.join(sub_dir, libgfortran)
     universal_libgfortran = os.path.join(FRANKENSTEIN, libgfortran)
-
     old_libquadmath = os.path.join(library_dir, libquadmath)
     arch_libquadmath = os.path.join(sub_dir, libquadmath)
     universal_libquadmath = os.path.join(FRANKENSTEIN, libquadmath)
-
     # Update ``libgfortran``
     copyfile(old_libgfortran, arch_libgfortran)
     os.chmod(arch_libgfortran, 0o644)
-    subprocess.check_call((
-        'install_name_tool',
-        '-id', universal_libgfortran,
-        arch_libgfortran,
-    ))
-    subprocess.check_call((
-        'install_name_tool',
-        '-change',
-        old_libquadmath, universal_libquadmath,
-        arch_libgfortran,
-    ))
+    subprocess.check_call(
+        ('install_name_tool', '-id', universal_libgfortran, arch_libgfortran)
+    )
+    subprocess.check_call(
+        (
+            'install_name_tool',
+            '-change',
+            old_libquadmath,
+            universal_libquadmath,
+            arch_libgfortran,
+        )
+    )
     os.chmod(arch_libgfortran, 0o444)
-
     print('{}:'.format(arch_libgfortran))
     print('\t``install_name``:')
     print('\t\t{}'.format(universal_libgfortran))
@@ -472,17 +454,13 @@ def copy_arch(arch, library_dir, libgfortran, libquadmath):
     dependencies = get_dependencies(arch_libgfortran, check_exists=False)
     for dependency in dependencies:
         print('\t\t{}'.format(dependency))
-
     # Update ``libquadmath``
     copyfile(old_libquadmath, arch_libquadmath)
     os.chmod(arch_libquadmath, 0o644)
-    subprocess.check_call((
-        'install_name_tool',
-        '-id', universal_libquadmath,
-        arch_libquadmath,
-    ))
+    subprocess.check_call(
+        ('install_name_tool', '-id', universal_libquadmath, arch_libquadmath)
+    )
     os.chmod(arch_libquadmath, 0o444)
-
     print('{}:'.format(arch_libquadmath))
     print('\t``install_name``:')
     print('\t\t{}'.format(universal_libquadmath))
@@ -490,7 +468,6 @@ def copy_arch(arch, library_dir, libgfortran, libquadmath):
     dependencies = get_dependencies(arch_libquadmath, check_exists=False)
     for dependency in dependencies:
         print('\t\t{}'.format(dependency))
-
     return (
         arch_libgfortran,
         universal_libgfortran,
@@ -510,50 +487,47 @@ def combine_dylibs(i386_dylib, x86_64_dylib, universal_dylib):
         universal_dylib (str): The full path of the universal dynamic library
             that they should be combined into.
     """
-    subprocess.check_call((
-        'lipo',
-        i386_dylib,
-        x86_64_dylib,
-        '-create',
-        '-output',
-        universal_dylib,
-    ))
+    subprocess.check_call(
+        (
+            'lipo',
+            i386_dylib,
+            x86_64_dylib,
+            '-create',
+            '-output',
+            universal_dylib,
+        )
+    )
     print('Created universal dynamic library:')
     print('\t{}'.format(universal_dylib))
     curr_dir = os.getcwd()
-
     # Make a symlink **without** the library version.
-
     # NOTE: This assumes that os.path.dirname(universal_dylib) == FRANKENSTEIN.
     filename = os.path.basename(universal_dylib)
     name, _, extension = filename.split('.')
     unversioned = '{}.{}'.format(name, extension)
-
     os.chdir(FRANKENSTEIN)
     os.symlink(filename, unversioned)
     os.chdir(curr_dir)
-
     print('Created symbolic link:')
     print('\t{}@ -> {}'.format(unversioned, filename))
 
 
 def main():
     make_root_dir()
-
     x86_64_dir, libgfortran = find_libgfortran()
     i386_dir = get_i386_dir(x86_64_dir, libgfortran)
-
     full_path = os.path.join(x86_64_dir, libgfortran)
     libraries = non_universal_libraries(full_path)
     libquadmath = verify_libraries(full_path, libraries)
-
     i386_names = copy_arch('i386', i386_dir, libgfortran, libquadmath)
     x86_64_names = copy_arch('x86_64', x86_64_dir, libgfortran, libquadmath)
-
-    (i386_libgfortran, universal_libgfortran,
-     i386_libquadmath, universal_libquadmath) = i386_names
+    (
+        i386_libgfortran,
+        universal_libgfortran,
+        i386_libquadmath,
+        universal_libquadmath,
+    ) = i386_names
     x86_64_libgfortran, _, x86_64_libquadmath, _ = x86_64_names
-
     combine_dylibs(i386_libgfortran, x86_64_libgfortran, universal_libgfortran)
     combine_dylibs(i386_libquadmath, x86_64_libquadmath, universal_libquadmath)
 

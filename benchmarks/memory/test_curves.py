@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from __future__ import print_function
 
 import gc
@@ -19,7 +18,6 @@ import sys
 import memory_profiler
 
 from tests.functional import utils
-
 
 FAILURES = (42, 45)
 ERR_TEMPLATE = 'Memory usage {:g} outside of expected range {}-{}KB.'
@@ -31,6 +29,7 @@ def get_bounds():
     #       When using a test runner like `py.test`, usage goes up by 4-8 KB.
     if os.environ.get('CIRCLECI') == 'true':
         return 28, 41
+
     else:
         return 28, 35
 
@@ -46,7 +45,6 @@ def intersect_all():
 
 def test_main():
     min_kb, max_kb = get_bounds()
-
     # This should be the **only** test function here.
     gc.disable()
     intersect_all()
@@ -59,7 +57,6 @@ def test_main():
         status = 1
         msg = ERR_TEMPLATE.format(kb_used_after, min_kb, max_kb)
         print(msg, file=sys.stderr)
-
     gc.enable()
     sys.exit(status)
 
