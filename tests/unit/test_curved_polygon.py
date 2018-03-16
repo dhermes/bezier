@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import unittest.mock
 
 import numpy as np
@@ -18,21 +17,13 @@ from tests.unit import utils
 
 
 class TestCurvedPolygon(utils.NumPyTestCase):
-
-    NODES0 = np.asfortranarray([
-        [0.0, 0.5, 1.0],
-        [0.0, -1.0, 0.0],
-    ])
-    NODES1 = np.asfortranarray([
-        [1.0, 0.5, 0.0],
-        [0.0, 1.0, 0.0],
-    ])
+    NODES0 = np.asfortranarray([[0.0, 0.5, 1.0], [0.0, -1.0, 0.0]])
+    NODES1 = np.asfortranarray([[1.0, 0.5, 0.0], [0.0, 1.0, 0.0]])
     COLOR = (0.125, 0.125, 0.0)
 
     @staticmethod
     def _get_target_class():
         from bezier import curved_polygon
-
         return curved_polygon.CurvedPolygon
 
     def _make_one(self, *args, **kwargs):
@@ -62,7 +53,6 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         edge0 = bezier.Curve(self.NODES0, 2)
         with self.assertRaises(ValueError):
             self._make_one(edge0)
-
         curved_poly = self._make_one(edge0, _verify=False)
         self.assertEqual(curved_poly._edges, (edge0,))
         self.assertEqual(curved_poly._num_sides, 1)
@@ -73,10 +63,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
 
         edge0 = bezier.Curve(self.NODES0, 2)
         edge1 = bezier.Curve(self.NODES1, 2)
-        metadata = (
-            (0, 0.0, 0.5),
-            (4, 0.5, 1.0),
-        )
+        metadata = ((0, 0.0, 0.5), (4, 0.5, 1.0))
         curved_poly = self._make_one(edge0, edge1, metadata=metadata)
         self.assertEqual(curved_poly._edges, (edge0, edge1))
         self.assertEqual(curved_poly._num_sides, 2)
@@ -91,10 +78,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
     def test__verify_bad_dimension(self):
         import bezier
 
-        nodes0 = np.asfortranarray([
-            [1.0, 2.0],
-            [1.0, 2.0],
-        ])
+        nodes0 = np.asfortranarray([[1.0, 2.0], [1.0, 2.0]])
         edge0 = bezier.Curve(nodes0, 1)
         edge1 = bezier.Curve(self.NODES1, 2)
         with self.assertRaises(ValueError):
@@ -116,8 +100,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         curved_poly = self._make_default()
         props_dict = curved_poly.__dict__
         expected = {
-            '_edges': curved_poly._edges,
-            '_num_sides': curved_poly._num_sides,
+            '_edges': curved_poly._edges, '_num_sides': curved_poly._num_sides
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curved_poly``.
@@ -126,25 +109,22 @@ class TestCurvedPolygon(utils.NumPyTestCase):
 
     def test___repr__(self):
         curved_poly = self._make_default()
-        self.assertEqual(
-            repr(curved_poly),
-            '<CurvedPolygon (num_sides=2)>')
+        self.assertEqual(repr(curved_poly), '<CurvedPolygon (num_sides=2)>')
 
     @unittest.mock.patch('bezier._plot_helpers.new_axis')
     @unittest.mock.patch('bezier._plot_helpers.add_patch')
     def test_plot_defaults(self, add_patch_mock, new_axis_mock):
         ax = unittest.mock.Mock(spec=[])
         new_axis_mock.return_value = ax
-
         curved_poly = self._make_default()
         pts_per_edge = 16
         result = curved_poly.plot(pts_per_edge)
         self.assertIs(result, ax)
-
         # Verify mocks.
         new_axis_mock.assert_called_once_with()
         add_patch_mock.assert_called_once_with(
-            ax, None, pts_per_edge, *curved_poly._edges)
+            ax, None, pts_per_edge, *curved_poly._edges
+        )
 
     @unittest.mock.patch('bezier._plot_helpers.new_axis')
     @unittest.mock.patch('bezier._plot_helpers.add_patch')
@@ -152,12 +132,11 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         ax = unittest.mock.Mock(spec=[])
         color = (0.5, 0.5, 0.5)
         curved_poly = self._make_default()
-
         pts_per_edge = 16
         result = curved_poly.plot(pts_per_edge, color=color, ax=ax)
         self.assertIs(result, ax)
-
         # Verify mocks.
         new_axis_mock.assert_not_called()
         add_patch_mock.assert_called_once_with(
-            ax, color, pts_per_edge, *curved_poly._edges)
+            ax, color, pts_per_edge, *curved_poly._edges
+        )

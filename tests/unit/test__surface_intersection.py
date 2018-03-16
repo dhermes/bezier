@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import threading
 import unittest
 import unittest.mock
@@ -19,11 +18,7 @@ import numpy as np
 from tests import utils as base_utils
 from tests.unit import utils
 
-
-UNIT_TRIANGLE = np.asfortranarray([
-    [0.0, 1.0, 0.0],
-    [0.0, 0.0, 1.0],
-])
+UNIT_TRIANGLE = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
 SPACING = np.spacing  # pylint: disable=no-member
 
 
@@ -32,19 +27,15 @@ class Test_newton_refine_solve(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(jac_both, x_val, surf_x, y_val, surf_y):
         from bezier import _surface_intersection
-
         return _surface_intersection.newton_refine_solve(
-            jac_both, x_val, surf_x, y_val, surf_y)
+            jac_both, x_val, surf_x, y_val, surf_y
+        )
 
     def test_it(self):
-        jac_both = np.asfortranarray([
-            [1.0],
-            [1.0],
-            [-2.0],
-            [2.0],
-        ])
+        jac_both = np.asfortranarray([[1.0], [1.0], [-2.0], [2.0]])
         delta_s, delta_t = self._call_function_under_test(
-            jac_both, 0.5, 0.25, 0.75, 1.25)
+            jac_both, 0.5, 0.25, 0.75, 1.25
+        )
         self.assertEqual(delta_s, -0.125)
         self.assertEqual(delta_t, -0.1875)
 
@@ -54,15 +45,17 @@ class Test__newton_refine(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
         from bezier import _surface_intersection
-
         return _surface_intersection._newton_refine(
-            nodes, degree, x_val, y_val, s, t)
+            nodes, degree, x_val, y_val, s, t
+        )
 
     def test_improvement(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.5, 1.0, 0.0, 0.5, -0.25],
-            [0.0, -0.25, 0.0, 0.5, 0.5, 0.875],
-        ])
+        nodes = np.asfortranarray(
+            [
+                [0.0, 0.5, 1.0, 0.0, 0.5, -0.25],
+                [0.0, -0.25, 0.0, 0.5, 0.5, 0.875],
+            ]
+        )
         # This surface is given by
         #     [(4 s - t^2) / 4, (4 s^2 + 4 s t - t^2 - 4 s + 8 t) / 8]
         s = 0.25
@@ -75,15 +68,15 @@ class Test__newton_refine(unittest.TestCase):
         x_val = 0.484375
         y_val = 0.1796875
         new_s, new_t = self._call_function_under_test(
-            nodes, 2, x_val, y_val, s, t)
+            nodes, 2, x_val, y_val, s, t
+        )
         self.assertEqual(new_s, 247.0 / 512.0)
         self.assertEqual(new_t, 31.0 / 128.0)
 
     def test_at_solution(self):
-        nodes = np.asfortranarray([
-            [0.0, 0.5, 1.0, 0.0, 0.5, 0.0],
-            [0.0, 0.0, 0.0, 0.5, 0.5, 1.0],
-        ])
+        nodes = np.asfortranarray(
+            [[0.0, 0.5, 1.0, 0.0, 0.5, 0.0], [0.0, 0.0, 0.0, 0.5, 0.5, 1.0]]
+        )
         # This surface is given by [s, t].
         s = 0.375
         t = 0.75
@@ -91,7 +84,8 @@ class Test__newton_refine(unittest.TestCase):
         x_val = s
         y_val = t
         new_s, new_t = self._call_function_under_test(
-            nodes, 2, x_val, y_val, s, t)
+            nodes, 2, x_val, y_val, s, t
+        )
         self.assertEqual(new_s, s)
         self.assertEqual(new_t, t)
 
@@ -102,20 +96,21 @@ class Test_speedup_newton_refine(Test__newton_refine):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
         from bezier import _speedup
-
         return _speedup.newton_refine_surface(
-            nodes, degree, x_val, y_val, s, t)
+            nodes, degree, x_val, y_val, s, t
+        )
 
 
 class Test_update_locate_candidates(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(
-            candidate, next_candidates, x_val, y_val, degree):
+        candidate, next_candidates, x_val, y_val, degree
+    ):
         from bezier import _surface_intersection
-
         return _surface_intersection.update_locate_candidates(
-            candidate, next_candidates, x_val, y_val, degree)
+            candidate, next_candidates, x_val, y_val, degree
+        )
 
     @unittest.mock.patch(
         'bezier._surface_helpers.subdivide_nodes',
@@ -124,24 +119,18 @@ class Test_update_locate_candidates(unittest.TestCase):
             unittest.mock.sentinel.nodes_b,
             unittest.mock.sentinel.nodes_c,
             unittest.mock.sentinel.nodes_d,
-        ))
+        ),
+    )
     def test_contained(self, subdivide_nodes):
-        nodes = np.asfortranarray([
-            [0.0, 0.5, 1.0, 0.0, 0.75, 0.0],
-            [0.0, 0.25, 0.0, 0.5, 0.75, 1.0],
-        ])
-        candidate = (
-            1.25,
-            1.25,
-            -0.25,
-            nodes,
+        nodes = np.asfortranarray(
+            [[0.0, 0.5, 1.0, 0.0, 0.75, 0.0], [0.0, 0.25, 0.0, 0.5, 0.75, 1.0]]
         )
+        candidate = (1.25, 1.25, -0.25, nodes)
         next_candidates = []
-
         ret_val = self._call_function_under_test(
-            candidate, next_candidates, 0.5625, 0.375, 2)
+            candidate, next_candidates, 0.5625, 0.375, 2
+        )
         self.assertIsNone(ret_val)
-
         expected = [
             (1.375, 1.375, -0.125, unittest.mock.sentinel.nodes_a),
             (1.25, 1.25, 0.125, unittest.mock.sentinel.nodes_b),
@@ -152,22 +141,13 @@ class Test_update_locate_candidates(unittest.TestCase):
         subdivide_nodes.assert_called_once_with(nodes, 2)
 
     def test_not_contained(self):
-        nodes = np.asfortranarray([
-            [0.0, 2.0, -1.0],
-            [0.0, 3.0, 2.0],
-        ])
-        candidate = (
-            2.0,
-            0.5,
-            0.5,
-            nodes,
-        )
+        nodes = np.asfortranarray([[0.0, 2.0, -1.0], [0.0, 3.0, 2.0]])
+        candidate = (2.0, 0.5, 0.5, nodes)
         next_candidates = []
-
         ret_val = self._call_function_under_test(
-            candidate, next_candidates, 9.0, 9.0, 1)
+            candidate, next_candidates, 9.0, 9.0, 1
+        )
         self.assertIsNone(ret_val)
-
         self.assertEqual(next_candidates, [])
 
 
@@ -176,7 +156,6 @@ class Test_mean_centroid(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(candidates):
         from bezier import _surface_intersection
-
         return _surface_intersection.mean_centroid(candidates)
 
     def test_it(self):
@@ -185,7 +164,6 @@ class Test_mean_centroid(unittest.TestCase):
             (2.25, 1.5, None, None),
             (1.25, 4.25, None, None),
         )
-
         centroid_x, centroid_y = self._call_function_under_test(candidates)
         self.assertEqual(centroid_x, 0.5)
         self.assertEqual(centroid_y, 0.75)
@@ -196,7 +174,6 @@ class Test__locate_point(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
         from bezier import _surface_intersection
-
         return _surface_intersection._locate_point(nodes, degree, x_val, y_val)
 
     def test_it(self):
@@ -211,10 +188,9 @@ class Test__locate_point(unittest.TestCase):
     def test_extra_newton_step(self):
         # x(s, t) = -2 (s + 2 t) (t - 1)
         # y(s, t) =  2 (s + 1) t
-        nodes = np.asfortranarray([
-            [0.0, 1.0, 2.0, 2.0, 2.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
-        ])
+        nodes = np.asfortranarray(
+            [[0.0, 1.0, 2.0, 2.0, 2.0, 0.0], [0.0, 0.0, 0.0, 1.0, 2.0, 2.0]]
+        )
         degree = 2
         x_val = 0.59375
         y_val = 0.25
@@ -236,7 +212,8 @@ class Test__locate_point(unittest.TestCase):
         x_val = -0.125
         y_val = 0.25
         self.assertIsNone(
-            self._call_function_under_test(nodes, degree, x_val, y_val))
+            self._call_function_under_test(nodes, degree, x_val, y_val)
+        )
 
 
 @utils.needs_speedup
@@ -245,9 +222,7 @@ class Test_speedup_locate_point(Test__locate_point):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
         from bezier import _speedup
-
-        return _speedup.locate_point_surface(
-            nodes, degree, x_val, y_val)
+        return _speedup.locate_point_surface(nodes, degree, x_val, y_val)
 
 
 class Test_same_intersection(unittest.TestCase):
@@ -255,9 +230,9 @@ class Test_same_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection1, intersection2, **kwargs):
         from bezier import _surface_intersection
-
         return _surface_intersection.same_intersection(
-            intersection1, intersection2, **kwargs)
+            intersection1, intersection2, **kwargs
+        )
 
     def test_same(self):
         intersection = make_intersect(10, 0.5, 99, 0.75)
@@ -270,7 +245,8 @@ class Test_same_intersection(unittest.TestCase):
         result = self._call_function_under_test(intersection1, intersection2)
         self.assertFalse(result)
         result = self._call_function_under_test(
-            intersection1, intersection2, wiggle=0.5)
+            intersection1, intersection2, wiggle=0.5
+        )
         self.assertTrue(result)
 
     def test_different_edge(self):
@@ -278,18 +254,22 @@ class Test_same_intersection(unittest.TestCase):
         intersection2 = make_intersect(10, 0.5, 98, 0.5)
         intersection3 = make_intersect(11, 0.5, 99, 0.5)
         self.assertFalse(
-            self._call_function_under_test(intersection1, intersection2))
+            self._call_function_under_test(intersection1, intersection2)
+        )
         self.assertFalse(
-            self._call_function_under_test(intersection1, intersection3))
+            self._call_function_under_test(intersection1, intersection3)
+        )
 
     def test_different_param(self):
         intersection1 = make_intersect(1, 0.5, 9, 0.5)
         intersection2 = make_intersect(1, 0.75, 9, 0.5)
         intersection3 = make_intersect(1, 0.5, 9, 0.75)
         self.assertFalse(
-            self._call_function_under_test(intersection1, intersection2))
+            self._call_function_under_test(intersection1, intersection2)
+        )
         self.assertFalse(
-            self._call_function_under_test(intersection1, intersection3))
+            self._call_function_under_test(intersection1, intersection3)
+        )
 
 
 class Test_verify_duplicates(unittest.TestCase):
@@ -297,7 +277,6 @@ class Test_verify_duplicates(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(duplicates, uniques):
         from bezier import _surface_intersection
-
         return _surface_intersection.verify_duplicates(duplicates, uniques)
 
     def test_empty(self):
@@ -305,13 +284,13 @@ class Test_verify_duplicates(unittest.TestCase):
 
     def test_success(self):
         uniq = make_intersect(1, 0.0, 2, 0.25)
-        self.assertIsNone(
-            self._call_function_under_test([uniq], [uniq]))
+        self.assertIsNone(self._call_function_under_test([uniq], [uniq]))
 
     def test_success_triple(self):
         uniq = make_intersect(1, 0.0, 2, 0.0)
         self.assertIsNone(
-            self._call_function_under_test([uniq, uniq, uniq], [uniq]))
+            self._call_function_under_test([uniq, uniq, uniq], [uniq])
+        )
 
     def test_failed_uniqueness(self):
         uniq = make_intersect(1, 0.375, 2, 0.75)
@@ -345,55 +324,60 @@ class Test_add_edge_end_unused(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, duplicates, intersections):
         from bezier import _surface_intersection
-
         return _surface_intersection.add_edge_end_unused(
-            intersection, duplicates, intersections)
+            intersection, duplicates, intersections
+        )
 
     def test_match_s(self):
         intersection1 = make_intersect(
-            1, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED'))
+            1, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED')
+        )
         intersection2 = make_intersect(
-            1, 0.0, 2, 0.5, interior_curve=get_enum('FIRST'))
-
+            1, 0.0, 2, 0.5, interior_curve=get_enum('FIRST')
+        )
         duplicates = []
         intersections = [intersection2]
         return_value = self._call_function_under_test(
-            intersection1, duplicates, intersections)
+            intersection1, duplicates, intersections
+        )
         self.assertIsNone(return_value)
-
         self.assertEqual(duplicates, [intersection2])
         self.assertEqual(intersections, [intersection1])
 
     def test_match_t(self):
         intersection1 = make_intersect(
-            0, 0.5, 0, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED'))
+            0, 0.5, 0, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED')
+        )
         intersection2 = make_intersect(
-            0, 0.5, 0, 0.0, interior_curve=get_enum('TANGENT_FIRST'))
-
+            0, 0.5, 0, 0.0, interior_curve=get_enum('TANGENT_FIRST')
+        )
         duplicates = []
         intersections = [intersection2]
         return_value = self._call_function_under_test(
-            intersection1, duplicates, intersections)
+            intersection1, duplicates, intersections
+        )
         self.assertIsNone(return_value)
-
         self.assertEqual(duplicates, [intersection2])
         self.assertEqual(intersections, [intersection1])
 
     def test_no_match(self):
         intersection1 = make_intersect(
-            1, 0.5, 0, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED'))
+            1, 0.5, 0, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED')
+        )
         intersection2 = make_intersect(
-            2, 0.0, 2, 0.5, interior_curve=get_enum('SECOND'))
+            2, 0.0, 2, 0.5, interior_curve=get_enum('SECOND')
+        )
         intersection3 = make_intersect(
-            1, 0.5, 0, 0.75, interior_curve=get_enum('FIRST'))
-
+            1, 0.5, 0, 0.75, interior_curve=get_enum('FIRST')
+        )
         intersections = [intersection2, intersection3]
         return_value = self._call_function_under_test(
-            intersection1, None, intersections)
+            intersection1, None, intersections
+        )
         self.assertIsNone(return_value)
-
         self.assertEqual(
-            intersections, [intersection2, intersection3, intersection1])
+            intersections, [intersection2, intersection3, intersection1]
+        )
 
 
 class Test_check_unused(unittest.TestCase):
@@ -401,45 +385,49 @@ class Test_check_unused(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, duplicates, unused):
         from bezier import _surface_intersection
-
         return _surface_intersection.check_unused(
-            intersection, duplicates, unused)
+            intersection, duplicates, unused
+        )
 
     def test_match_s(self):
         intersection1 = make_intersect(1, 0.0, 2, 0.5)
         intersection2 = make_intersect(
-            1, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED'))
+            1, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED')
+        )
         duplicates = []
         unused = [intersection2]
-
         is_duplicate = self._call_function_under_test(
-            intersection1, duplicates, unused)
+            intersection1, duplicates, unused
+        )
         self.assertTrue(is_duplicate)
         self.assertEqual(duplicates, [intersection1])
 
     def test_match_t(self):
         intersection1 = make_intersect(1, 0.5, 2, 0.0)
         intersection2 = make_intersect(
-            1, 0.5, 2, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED'))
+            1, 0.5, 2, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED')
+        )
         duplicates = []
         unused = [intersection2]
-
         is_duplicate = self._call_function_under_test(
-            intersection1, duplicates, unused)
+            intersection1, duplicates, unused
+        )
         self.assertTrue(is_duplicate)
         self.assertEqual(duplicates, [intersection1])
 
     def test_no_match(self):
         intersection1 = make_intersect(1, 0.5, 0, 0.0)
         intersection2 = make_intersect(
-            2, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED'))
+            2, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED')
+        )
         intersection3 = make_intersect(
-            1, 0.5, 0, 0.75, interior_curve=get_enum('COINCIDENT_UNUSED'))
-
+            1, 0.5, 0, 0.75, interior_curve=get_enum('COINCIDENT_UNUSED')
+        )
         duplicates = None
         unused = [intersection2, intersection3]
         is_duplicate = self._call_function_under_test(
-            intersection1, duplicates, unused)
+            intersection1, duplicates, unused
+        )
         self.assertFalse(is_duplicate)
 
 
@@ -447,24 +435,37 @@ class Test_add_intersection(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(  # pylint: disable=too-many-arguments
-            index1, s, index2, t, interior_curve,
-            edge_nodes1, edge_nodes2, duplicates, intersections):
+        index1,
+        s,
+        index2,
+        t,
+        interior_curve,
+        edge_nodes1,
+        edge_nodes2,
+        duplicates,
+        intersections,
+    ):
         from bezier import _surface_intersection
-
         return _surface_intersection.add_intersection(
-            index1, s, index2, t, interior_curve,
-            edge_nodes1, edge_nodes2, duplicates, intersections)
+            index1,
+            s,
+            index2,
+            t,
+            interior_curve,
+            edge_nodes1,
+            edge_nodes2,
+            duplicates,
+            intersections,
+        )
 
     def test_coincident_duplicate(self):
         enum_val = get_enum('COINCIDENT')
-
         duplicates = []
         intersections = []
         return_value = self._call_function_under_test(
-            0, 1.0, 0, 0.5, enum_val,
-            None, None, duplicates, intersections)
+            0, 1.0, 0, 0.5, enum_val, None, None, duplicates, intersections
+        )
         self.assertIsNone(return_value)
-
         self.assertEqual(intersections, [])
         self.assertEqual(len(duplicates), 1)
         duplicate = duplicates[0]
@@ -476,14 +477,12 @@ class Test_add_intersection(unittest.TestCase):
 
     def test_coincident_new_intersection(self):
         enum_val = get_enum('COINCIDENT')
-
         duplicates = []
         intersections = []
         return_value = self._call_function_under_test(
-            0, 0.5, 0, 0.5, enum_val,
-            None, None, duplicates, intersections)
+            0, 0.5, 0, 0.5, enum_val, None, None, duplicates, intersections
+        )
         self.assertIsNone(return_value)
-
         self.assertEqual(duplicates, [])
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
@@ -495,14 +494,12 @@ class Test_add_intersection(unittest.TestCase):
 
     def test_coincident_unused_duplicate(self):
         enum_val = get_enum('COINCIDENT_UNUSED')
-
         duplicates = []
         intersections = []
         return_value = self._call_function_under_test(
-            0, 1.0, 0, 0.5, enum_val,
-            None, None, duplicates, intersections)
+            0, 1.0, 0, 0.5, enum_val, None, None, duplicates, intersections
+        )
         self.assertIsNone(return_value)
-
         self.assertEqual(duplicates, [])
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
@@ -514,14 +511,12 @@ class Test_add_intersection(unittest.TestCase):
 
     def _coincident_unused_new_helper(self, s_val):
         enum_val = get_enum('COINCIDENT_UNUSED')
-
         duplicates = []
         intersections = []
         return_value = self._call_function_under_test(
-            2, s_val, 2, 0.75, enum_val,
-            None, None, duplicates, intersections)
+            2, s_val, 2, 0.75, enum_val, None, None, duplicates, intersections
+        )
         self.assertIsNone(return_value)
-
         self.assertEqual(duplicates, [])
         self.assertEqual(len(intersections), 1)
         intersection = intersections[0]
@@ -539,15 +534,22 @@ class Test_add_intersection(unittest.TestCase):
 
     def test_coincident_unused_already_seen(self):
         intersection = make_intersect(
-            2, 0.0, 2, 0.75, interior_curve=get_enum('COINCIDENT_UNUSED'))
+            2, 0.0, 2, 0.75, interior_curve=get_enum('COINCIDENT_UNUSED')
+        )
         interior_curve = unittest.mock.sentinel.interior_curve
-
         duplicates = []
         intersections = [intersection]
         return_value = self._call_function_under_test(
-            2, 0.0, 2, 0.75, interior_curve,
-            None, None, duplicates, intersections)
-
+            2,
+            0.0,
+            2,
+            0.75,
+            interior_curve,
+            None,
+            None,
+            duplicates,
+            intersections,
+        )
         self.assertIsNone(return_value)
         self.assertEqual(intersections, [intersection])
         self.assertEqual(len(duplicates), 1)
@@ -564,7 +566,6 @@ class Test_classify_coincident(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(st_vals, coincident):
         from bezier import _surface_intersection
-
         return _surface_intersection.classify_coincident(st_vals, coincident)
 
     def test_not_coincident(self):
@@ -572,26 +573,16 @@ class Test_classify_coincident(unittest.TestCase):
         self.assertIsNone(interior_curve)
 
     def test_coincident_unused(self):
-        st_vals = np.asfortranarray([
-            [0.0, 0.5],
-            [1.0, 0.5],
-        ])
+        st_vals = np.asfortranarray([[0.0, 0.5], [1.0, 0.5]])
         interior_curve = self._call_function_under_test(st_vals, True)
         enum_val = get_enum('COINCIDENT_UNUSED')
         self.assertEqual(interior_curve, enum_val)
-
-        st_vals = np.asfortranarray([
-            [0.5, 0.0],
-            [0.0, 1.0],
-        ])
+        st_vals = np.asfortranarray([[0.5, 0.0], [0.0, 1.0]])
         interior_curve = self._call_function_under_test(st_vals, True)
         self.assertEqual(interior_curve, enum_val)
 
     def test_coincident(self):
-        st_vals = np.asfortranarray([
-            [0.0, 1.0],
-            [0.0, 1.0],
-        ])
+        st_vals = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
         interior_curve = self._call_function_under_test(st_vals, True)
         self.assertEqual(interior_curve, get_enum('COINCIDENT'))
 
@@ -601,32 +592,36 @@ class Test_should_use(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection):
         from bezier import _surface_intersection
-
         return _surface_intersection.should_use(intersection)
 
     def test_acceptable(self):
         intersection = make_intersect(
-            1, 0.125, 2, 0.75, interior_curve=get_enum('FIRST'))
+            1, 0.125, 2, 0.75, interior_curve=get_enum('FIRST')
+        )
         self.assertTrue(self._call_function_under_test(intersection))
 
     def test_tangent_corner(self):
         intersection = make_intersect(
-            2, 0.0, 1, 0.5, interior_curve=get_enum('TANGENT_SECOND'))
+            2, 0.0, 1, 0.5, interior_curve=get_enum('TANGENT_SECOND')
+        )
         self.assertTrue(self._call_function_under_test(intersection))
 
     def test_corner_not_tangent(self):
         intersection = make_intersect(
-            0, 0.0, 2, 0.5, interior_curve=get_enum('IGNORED_CORNER'))
+            0, 0.0, 2, 0.5, interior_curve=get_enum('IGNORED_CORNER')
+        )
         self.assertFalse(self._call_function_under_test(intersection))
 
     def test_tangent_not_corner(self):
         intersection = make_intersect(
-            1, 0.25, 1, 0.25, interior_curve=get_enum('TANGENT_FIRST'))
+            1, 0.25, 1, 0.25, interior_curve=get_enum('TANGENT_FIRST')
+        )
         self.assertFalse(self._call_function_under_test(intersection))
 
     def test_unused(self):
         intersection = make_intersect(
-            2, 0.75, 0, 0.875, interior_curve=get_enum('OPPOSED'))
+            2, 0.75, 0, 0.875, interior_curve=get_enum('OPPOSED')
+        )
         self.assertFalse(self._call_function_under_test(intersection))
 
 
@@ -635,17 +630,22 @@ class Test_surface_intersections(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(edge_nodes1, edge_nodes2, all_intersections):
         from bezier import _surface_intersection
-
         return _surface_intersection.surface_intersections(
-            edge_nodes1, edge_nodes2, all_intersections)
+            edge_nodes1, edge_nodes2, all_intersections
+        )
 
     def _check_intersection(
-            self, intersection, index_first, s_val, index_second,
-            t_val, interior_curve):
+        self,
+        intersection,
+        index_first,
+        s_val,
+        index_second,
+        t_val,
+        interior_curve,
+    ):
         from bezier import _intersection_helpers
 
-        self.assertIsInstance(
-            intersection, _intersection_helpers.Intersection)
+        self.assertIsInstance(intersection, _intersection_helpers.Intersection)
         self.assertEqual(intersection.index_first, index_first)
         self.assertEqual(intersection.s, s_val)
         self.assertEqual(intersection.index_second, index_second)
@@ -656,36 +656,27 @@ class Test_surface_intersections(utils.NumPyTestCase):
         import bezier
         from bezier import _geometric_intersection
 
-        surface1 = bezier.Surface.from_nodes(np.asfortranarray([
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ]))
-        surface2 = bezier.Surface.from_nodes(np.asfortranarray([
-            [0.0, -2.0, 1.0],
-            [0.0, 3.0, -3.0],
-        ]))
-
+        surface1 = bezier.Surface.from_nodes(
+            np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        )
+        surface2 = bezier.Surface.from_nodes(
+            np.asfortranarray([[0.0, -2.0, 1.0], [0.0, 3.0, -3.0]])
+        )
         edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
         edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
         all_intersections = _geometric_intersection.all_intersections
         result = self._call_function_under_test(
-            edge_nodes1, edge_nodes2, all_intersections)
+            edge_nodes1, edge_nodes2, all_intersections
+        )
         intersections, duplicates, unused, all_types = result
-
         self.assertEqual(intersections, [])
-
         self.assertEqual(len(duplicates), 3)
-        self._check_intersection(
-            duplicates[0], 0, 0.0, 0, 0.0, None)
-        self._check_intersection(
-            duplicates[1], 0, 0.0, 0, 0.0, None)
-        self._check_intersection(
-            duplicates[2], 0, 0.0, 0, 0.0, None)
-
+        self._check_intersection(duplicates[0], 0, 0.0, 0, 0.0, None)
+        self._check_intersection(duplicates[1], 0, 0.0, 0, 0.0, None)
+        self._check_intersection(duplicates[2], 0, 0.0, 0, 0.0, None)
         self.assertEqual(len(unused), 1)
         enum_val = get_enum('IGNORED_CORNER')
-        self._check_intersection(
-            unused[0], 0, 0.0, 0, 0.0, enum_val)
+        self._check_intersection(unused[0], 0, 0.0, 0, 0.0, enum_val)
         self.assertEqual(all_types, set([enum_val]))
 
 
@@ -693,44 +684,33 @@ class Test_generic_intersect(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(
-            nodes1, degree1, nodes2, degree2, verify, all_intersections):
+        nodes1, degree1, nodes2, degree2, verify, all_intersections
+    ):
         from bezier import _surface_intersection
-
         return _surface_intersection.generic_intersect(
-            nodes1, degree1, nodes2, degree2, verify, all_intersections)
+            nodes1, degree1, nodes2, degree2, verify, all_intersections
+        )
 
     def test_disjoint_bbox(self):
         from bezier import _geometric_intersection
 
-        nodes1 = np.asfortranarray([
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [10.0, 11.0, 10.0],
-            [10.0, 10.0, 11.0],
-        ])
+        nodes1 = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        nodes2 = np.asfortranarray([[10.0, 11.0, 10.0], [10.0, 10.0, 11.0]])
         all_intersections = _geometric_intersection.all_intersections
-
         result = self._call_function_under_test(
-            nodes1, 1, nodes2, 1, True, all_intersections)
+            nodes1, 1, nodes2, 1, True, all_intersections
+        )
         edge_infos, contained, all_edge_nodes = result
-
         self.assertEqual(edge_infos, [])
         self.assertIsNone(contained)
         self.assertEqual(all_edge_nodes, ())
 
 
 class Test__geometric_intersect(utils.NumPyTestCase):
-
-    NODES1 = np.asfortranarray([
-        [-8.0, 8.0, 0.0],
-        [0.0, 0.0, 8.0],
-    ])
-    NODES2 = np.asfortranarray([
-        [4.0, 0.0, -4.0, 2.0, -2.0, 0.0],
-        [3.0, -5.0, 3.0, -3.0, -3.0, -9.0],
-    ])
+    NODES1 = np.asfortranarray([[-8.0, 8.0, 0.0], [0.0, 0.0, 8.0]])
+    NODES2 = np.asfortranarray(
+        [[4.0, 0.0, -4.0, 2.0, -2.0, 0.0], [3.0, -5.0, 3.0, -3.0, -3.0, -9.0]]
+    )
     BAD_BOUNDARY_ARGS = ('Non-unique intersection',)
     BAD_BOUNDARY_TYPE = ValueError
     BAD_BOUNDARY_INCREASE_ULPS = True
@@ -738,45 +718,33 @@ class Test__geometric_intersect(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
         from bezier import _surface_intersection
-
         return _surface_intersection._geometric_intersect(
-            nodes1, degree1, nodes2, degree2, **kwargs)
+            nodes1, degree1, nodes2, degree2, **kwargs
+        )
 
     @staticmethod
     def parallel_err():
         return None
 
     def test_disjoint_bbox(self):
-        nodes1 = np.asfortranarray([
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [10.0, 11.0, 10.0],
-            [10.0, 10.0, 11.0],
-        ])
-
+        nodes1 = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        nodes2 = np.asfortranarray([[10.0, 11.0, 10.0], [10.0, 10.0, 11.0]])
         result = self._call_function_under_test(
-            nodes1, 1, nodes2, 1, verify=True)
+            nodes1, 1, nodes2, 1, verify=True
+        )
         curved_polygons, contained, all_edge_nodes = result
         self.assertEqual(curved_polygons, [])
         self.assertIsNone(contained)
         self.assertEqual(all_edge_nodes, ())
 
     def test_parallel(self):
-        nodes1 = np.asfortranarray([
-            [0.0, 8.0, 0.0],
-            [0.0, 0.0, 8.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [2.0, 3.0, 2.0],
-            [0.0, 0.0, 1.0],
-        ])
+        nodes1 = np.asfortranarray([[0.0, 8.0, 0.0], [0.0, 0.0, 8.0]])
+        nodes2 = np.asfortranarray([[2.0, 3.0, 2.0], [0.0, 0.0, 1.0]])
         err_msg = self.parallel_err()  # pylint: disable=assignment-from-none
-
         if err_msg is None:
             result = self._call_function_under_test(
-                nodes1, 1, nodes2, 1, verify=True)
+                nodes1, 1, nodes2, 1, verify=True
+            )
             curved_polygons, contained, all_edge_nodes = result
             expected = [((4, 0.0, 1.0), (5, 0.0, 1.0), (0, 0.25, 0.375))]
             self.assertEqual(curved_polygons, expected)
@@ -785,48 +753,36 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         else:
             with self.assertRaises(NotImplementedError) as exc_info:
                 self._call_function_under_test(
-                    nodes1, 1, nodes2, 1, verify=True)
-
+                    nodes1, 1, nodes2, 1, verify=True
+                )
             exc_args = exc_info.exception.args
             self.assertEqual(exc_args, (err_msg,))
 
     def test_contained(self):
-        nodes1 = np.asfortranarray([
-            [0.0, 5.0, 0.0],
-            [0.0, 0.0, 5.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [2.0, 3.0, 2.0],
-            [1.0, 1.0, 2.0],
-        ])
-
+        nodes1 = np.asfortranarray([[0.0, 5.0, 0.0], [0.0, 0.0, 5.0]])
+        nodes2 = np.asfortranarray([[2.0, 3.0, 2.0], [1.0, 1.0, 2.0]])
         result = self._call_function_under_test(
-            nodes1, 1, nodes2, 1, verify=False)
+            nodes1, 1, nodes2, 1, verify=False
+        )
         curved_polygons, contained, all_edge_nodes = result
         self.assertIsNone(curved_polygons)
         self.assertIsNotNone(contained)
         self.assertFalse(contained)
         self.assertEqual(all_edge_nodes, ())  # NOT EMPTY GEOM.
-
         result = self._call_function_under_test(
-            nodes2, 1, nodes1, 1, verify=True)
+            nodes2, 1, nodes1, 1, verify=True
+        )
         curved_polygons, contained, all_edge_nodes = result
         self.assertIsNone(curved_polygons)
         self.assertTrue(contained)
         self.assertEqual(all_edge_nodes, ())
 
     def test_disjoint_with_intersecting_bbox(self):
-        nodes1 = np.asfortranarray([
-            [0.0, 5.0, 0.0],
-            [0.0, 0.0, 5.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [4.0, 4.0, 3.0],
-            [2.0, 3.0, 3.0],
-        ])
-
+        nodes1 = np.asfortranarray([[0.0, 5.0, 0.0], [0.0, 0.0, 5.0]])
+        nodes2 = np.asfortranarray([[4.0, 4.0, 3.0], [2.0, 3.0, 3.0]])
         result = self._call_function_under_test(
-            nodes1, 1, nodes2, 1, verify=True)
+            nodes1, 1, nodes2, 1, verify=True
+        )
         curved_polygons, contained, all_edge_nodes = result
         self.assertEqual(curved_polygons, [])
         self.assertIsNone(contained)
@@ -845,7 +801,6 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         self.assertEqual(edge_info[3], (1, 0.5, 0.625))
         self.assertEqual(edge_info[4], (3, 0.125, 0.5))
         self.assertEqual(edge_info[5], (2, 0.375, 0.875))
-
         # Add special handling for edge 1 (algebraic messes this up).
         self.assertIsInstance(edge_info[1], tuple)
         self.assertEqual(len(edge_info[1]), 3)
@@ -854,75 +809,59 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         self._check_linear_intersection1(edge_info[1][1])
 
     def test_linear_intersection(self):
-        nodes1 = np.asfortranarray([
-            [0.0, 8.0, 0.0],
-            [0.0, 0.0, 8.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [4.0, -4.0, 4.0],
-            [5.0, 5.0, -3.0],
-        ])
-
+        nodes1 = np.asfortranarray([[0.0, 8.0, 0.0], [0.0, 0.0, 8.0]])
+        nodes2 = np.asfortranarray([[4.0, -4.0, 4.0], [5.0, 5.0, -3.0]])
         result = self._call_function_under_test(
-            nodes1, 1, nodes2, 1, verify=True)
+            nodes1, 1, nodes2, 1, verify=True
+        )
         curved_polygons, contained, all_edge_nodes = result
         self._check_linear_intersection(curved_polygons)
         self.assertIsNone(contained)
         check_edges(self, nodes1, 1, nodes2, 1, all_edge_nodes)
 
     def test_opposed_tangencies(self):
-        nodes1 = np.asfortranarray([
-            [4.0, 2.0, 0.0, 3.0, 1.0, 2.0],
-            [0.0, 4.0, 0.0, -2.0, -2.0, -4.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [0.0, 2.0, 4.0, 1.0, 3.0, 2.0],
-            [4.0, 0.0, 4.0, 6.0, 6.0, 8.0],
-        ])
-
+        nodes1 = np.asfortranarray(
+            [[4.0, 2.0, 0.0, 3.0, 1.0, 2.0], [0.0, 4.0, 0.0, -2.0, -2.0, -4.0]]
+        )
+        nodes2 = np.asfortranarray(
+            [[0.0, 2.0, 4.0, 1.0, 3.0, 2.0], [4.0, 0.0, 4.0, 6.0, 6.0, 8.0]]
+        )
         result = self._call_function_under_test(
-            nodes1, 2, nodes2, 2, verify=True)
+            nodes1, 2, nodes2, 2, verify=True
+        )
         curved_polygons, contained, all_edge_nodes = result
         self.assertEqual(curved_polygons, [])
         self.assertIsNone(contained)
         self.assertEqual(all_edge_nodes, ())
 
     def test_ignored_corner(self):
-        nodes1 = np.asfortranarray([
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [0.0, -2.0, 1.0],
-            [0.0, 3.0, -3.0],
-        ])
-
+        nodes1 = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        nodes2 = np.asfortranarray([[0.0, -2.0, 1.0], [0.0, 3.0, -3.0]])
         result = self._call_function_under_test(
-            nodes1, 1, nodes2, 1, verify=True)
+            nodes1, 1, nodes2, 1, verify=True
+        )
         curved_polygons, contained, all_edge_nodes = result
         self.assertEqual(curved_polygons, [])
         self.assertIsNone(contained)
         self.assertEqual(all_edge_nodes, ())
 
     def test_tangent_contained(self):
-        nodes1 = np.asfortranarray([
-            [2.0, 4.0, 6.0, 3.0, 5.0, 4.0],
-            [1.25, 0.75, 1.25, 3.0, 3.0, 5.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [0.0, 4.0, 8.0, 1.5, 11.0, 8.0],
-            [0.0, 2.0, 0.0, 7.5, 6.0, 8.0],
-        ])
-
+        nodes1 = np.asfortranarray(
+            [[2.0, 4.0, 6.0, 3.0, 5.0, 4.0], [1.25, 0.75, 1.25, 3.0, 3.0, 5.0]]
+        )
+        nodes2 = np.asfortranarray(
+            [[0.0, 4.0, 8.0, 1.5, 11.0, 8.0], [0.0, 2.0, 0.0, 7.5, 6.0, 8.0]]
+        )
         result = self._call_function_under_test(
-            nodes1, 2, nodes2, 2, verify=True)
+            nodes1, 2, nodes2, 2, verify=True
+        )
         curved_polygons, contained, all_edge_nodes = result
         self.assertIsNone(curved_polygons)
         self.assertTrue(contained)
         self.assertEqual(all_edge_nodes, ())
-
         result = self._call_function_under_test(
-            nodes2, 2, nodes1, 2, verify=True)
+            nodes2, 2, nodes1, 2, verify=True
+        )
         curved_polygons, contained, all_edge_nodes = result
         self.assertIsNone(curved_polygons)
         self.assertIsNotNone(contained)
@@ -931,19 +870,13 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
     def _two_curved_polygons(self, **kwargs):
         expected = [
-            (
-                (5, 0.75, 1.0),
-                (3, 0.0, 0.25),
-                (0, 0.625, 0.6875),
-            ), (
-                (0, 0.3125, 0.375),
-                (3, 0.75, 1.0),
-                (4, 0.0, 0.25),
-            ),
+            ((5, 0.75, 1.0), (3, 0.0, 0.25), (0, 0.625, 0.6875)),
+            ((0, 0.3125, 0.375), (3, 0.75, 1.0), (4, 0.0, 0.25)),
         ]
         return (
             self._call_function_under_test(
-                self.NODES1, 1, self.NODES2, 2, **kwargs),
+                self.NODES1, 1, self.NODES2, 2, **kwargs
+            ),
             expected,
         )
 
@@ -961,23 +894,18 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         self.assertEqual(exception.args, expected)
 
     def test_triple_root(self):
-        nodes1 = np.asfortranarray([
-            [0.0, -4.0, 8.0, 4.0, 8.0, 8.0],
-            [2.0, -2.0, 2.0, 4.0, 4.0, 6.0],
-        ])
-        nodes2 = np.asfortranarray([
-            [-2.0, -2.0, 6.0, 1.0, 5.0, 4.0],
-            [2.0, -2.0, 2.0, 5.0, 5.0, 8.0],
-        ])
-
+        nodes1 = np.asfortranarray(
+            [[0.0, -4.0, 8.0, 4.0, 8.0, 8.0], [2.0, -2.0, 2.0, 4.0, 4.0, 6.0]]
+        )
+        nodes2 = np.asfortranarray(
+            [[-2.0, -2.0, 6.0, 1.0, 5.0, 4.0], [2.0, -2.0, 2.0, 5.0, 5.0, 8.0]]
+        )
         with self.assertRaises(NotImplementedError) as exc_info:
             self._call_function_under_test(nodes1, 2, nodes2, 2, verify=True)
-
         self._check_triple_root_err(exc_info.exception)
 
 
 class Test_algebraic_intersect(Test__geometric_intersect):
-
     BAD_BOUNDARY_ARGS = ('Coincident curves not currently supported',)
     BAD_BOUNDARY_TYPE = RuntimeError
     BAD_BOUNDARY_INCREASE_ULPS = False
@@ -985,14 +913,13 @@ class Test_algebraic_intersect(Test__geometric_intersect):
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
         from bezier import _surface_intersection
-
         return _surface_intersection.algebraic_intersect(
-            nodes1, degree1, nodes2, degree2, **kwargs)
+            nodes1, degree1, nodes2, degree2, **kwargs
+        )
 
     @staticmethod
     def parallel_err():
         from bezier import _algebraic_intersection
-
         return _algebraic_intersection._COINCIDENT_ERR
 
     def _check_linear_intersection1(self, value):
@@ -1005,7 +932,6 @@ class Test_algebraic_intersect(Test__geometric_intersect):
 
         with self.assertRaises(NotImplementedError) as exc_info:
             super(Test_algebraic_intersect, self).test_opposed_tangencies()
-
         exc_args = exc_info.exception.args
         self.assertEqual(len(exc_args), 2)
         self.assertEqual(exc_args[0], _algebraic_intersection._NON_SIMPLE_ERR)
@@ -1017,7 +943,6 @@ class Test_algebraic_intersect(Test__geometric_intersect):
 
         with self.assertRaises(NotImplementedError) as exc_info:
             super(Test_algebraic_intersect, self).test_tangent_contained()
-
         exc_args = exc_info.exception.args
         self.assertEqual(len(exc_args), 2)
         self.assertEqual(exc_args[0], _algebraic_intersection._NON_SIMPLE_ERR)
@@ -1036,7 +961,6 @@ class Test_algebraic_intersect(Test__geometric_intersect):
 
 @utils.needs_speedup
 class Test_speedup_geometric_intersect(Test__geometric_intersect):
-
     BAD_BOUNDARY_ARGS = ('Unexpected number of edges',)
     BAD_BOUNDARY_TYPE = RuntimeError
     BAD_BOUNDARY_INCREASE_ULPS = True
@@ -1044,9 +968,9 @@ class Test_speedup_geometric_intersect(Test__geometric_intersect):
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
         from bezier import _surface_intersection
-
         return _surface_intersection.geometric_intersect(
-            nodes1, degree1, nodes2, degree2, **kwargs)
+            nodes1, degree1, nodes2, degree2, **kwargs
+        )
 
     def test_two_curved_polygons(self):
         # Make sure there is enough space so that no resize is needed.
@@ -1054,19 +978,15 @@ class Test_speedup_geometric_intersect(Test__geometric_intersect):
         segment_ends_size, segments_size = sizes
         self.assertGreaterEqual(segment_ends_size, 2)
         self.assertGreaterEqual(segments_size, 6)
-
         super_ = super(Test_speedup_geometric_intersect, self)
         super_.test_two_curved_polygons()
-
         # Make sure the workspace was **not** resized.
         self.assertEqual(surface_workspace_sizes(), sizes)
 
     def test_resize_both(self):
         reset_surface_workspaces(segment_ends_size=1, segments_size=1)
-
         super_ = super(Test_speedup_geometric_intersect, self)
         super_.test_two_curved_polygons()
-
         # Make sure the sizes were resized from (1, 1).
         self.assertEqual(surface_workspace_sizes(), (2, 6))
 
@@ -1075,10 +995,8 @@ class Test_speedup_geometric_intersect(Test__geometric_intersect):
 
         reset_surface_workspaces(segment_ends_size=1)
         sizes = surface_workspace_sizes()
-
         with self.assertRaises(ValueError) as exc_info:
             self._two_curved_polygons(resizes_allowed=0)
-
         exc_args = exc_info.exception.args
         template = _speedup.SEGMENT_ENDS_TOO_SMALL
         self.assertEqual(exc_args, (template.format(2, 1),))
@@ -1090,10 +1008,8 @@ class Test_speedup_geometric_intersect(Test__geometric_intersect):
 
         reset_surface_workspaces(segment_ends_size=2, segments_size=2)
         sizes = surface_workspace_sizes()
-
         with self.assertRaises(ValueError) as exc_info:
             self._two_curved_polygons(resizes_allowed=0)
-
         exc_args = exc_info.exception.args
         template = _speedup.SEGMENTS_TOO_SMALL
         self.assertEqual(exc_args, (template.format(6, 2),))
@@ -1110,7 +1026,8 @@ class Test_reset_surface_workspaces(unittest.TestCase):
 
     def test_it(self):
         return_value = self._call_function_under_test(
-            segment_ends_size=1, segments_size=2)
+            segment_ends_size=1, segments_size=2
+        )
         self.assertIsNone(return_value)
         self.assertEqual(surface_workspace_sizes(), (1, 2))
 
@@ -1118,12 +1035,11 @@ class Test_reset_surface_workspaces(unittest.TestCase):
     def test_threadsafe(self):
         sizes_main = (4, 3)
         self._call_function_under_test(
-            segment_ends_size=sizes_main[0], segments_size=sizes_main[1])
-
+            segment_ends_size=sizes_main[0], segments_size=sizes_main[1]
+        )
         worker = WorkspaceThreadedAccess()
         self.assertIsNone(worker.sizes1)
         self.assertIsNone(worker.sizes2)
-
         sizes1 = (1, 3)
         sizes2 = (2, 2)
         thread1 = threading.Thread(target=worker.task1, args=(sizes1,))
@@ -1132,18 +1048,13 @@ class Test_reset_surface_workspaces(unittest.TestCase):
         thread2.start()
         thread1.join()
         thread2.join()
-
         # This check demonstrates the **broken-ness** of the implementation.
         # The sizes for each thread should be the sizes actually **set** in
         # the given thread and the workspace in the main thread should be
         # unchanged (i.e. should have ``sizes_main``). What we'll actually
         # observe is ``(sizes2, sizes1, sizes2)``.
         expected = (sizes1, sizes2, sizes_main)
-        actual = (
-            worker.sizes1,
-            worker.sizes2,
-            surface_workspace_sizes(),
-        )
+        actual = (worker.sizes1, worker.sizes2, surface_workspace_sizes())
         self.assertEqual(actual, expected)
 
 
@@ -1169,13 +1080,11 @@ class Test_speedup__type_info(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         from bezier import _speedup
-
         return _speedup._type_info()
 
     def test_it(self):
         result = self._call_function_under_test()
         is_native, item_size, dtype_num, size_of_struct = result
-
         self.assertTrue(is_native)
         self.assertEqual(dtype_num, 20)
         if base_utils.IS_64_BIT or base_utils.IS_WINDOWS:
@@ -1188,13 +1097,11 @@ class Test_speedup__type_info(unittest.TestCase):
 
 def make_intersect(*args, **kwargs):
     from bezier import _intersection_helpers
-
     return _intersection_helpers.Intersection(*args, **kwargs)
 
 
 def get_enum(str_val):
     from bezier import _intersection_helpers
-
     return _intersection_helpers.IntersectionClassification[str_val]
 
 
@@ -1203,10 +1110,8 @@ def check_edges(test_case, nodes1, degree1, nodes2, degree2, all_edge_nodes):
 
     test_case.assertIsInstance(all_edge_nodes, tuple)
     test_case.assertEqual(len(all_edge_nodes), 6)
-
     edge_nodes1 = _surface_helpers.compute_edge_nodes(nodes1, degree1)
     edge_nodes2 = _surface_helpers.compute_edge_nodes(nodes2, degree2)
-
     test_case.assertEqual(edge_nodes1[0], all_edge_nodes[0])
     test_case.assertEqual(edge_nodes1[1], all_edge_nodes[1])
     test_case.assertEqual(edge_nodes1[2], all_edge_nodes[2])
@@ -1217,13 +1122,11 @@ def check_edges(test_case, nodes1, degree1, nodes2, degree2, all_edge_nodes):
 
 def reset_surface_workspaces(**kwargs):
     from bezier import _speedup
-
     return _speedup.reset_surface_workspaces(**kwargs)
 
 
 def surface_workspace_sizes():
     from bezier import _speedup
-
     return _speedup.surface_workspace_sizes()
 
 
@@ -1239,7 +1142,8 @@ class WorkspaceThreadedAccess(object):
     def event1(self, sizes):
         # NOTE: There is no need to ``wait`` since this is the first event.
         reset_surface_workspaces(
-            segment_ends_size=sizes[0], segments_size=sizes[1])
+            segment_ends_size=sizes[0], segments_size=sizes[1]
+        )
         self.barrier1.set()
 
     def event2(self):
@@ -1251,7 +1155,8 @@ class WorkspaceThreadedAccess(object):
     def event3(self, sizes):
         self.barrier2.wait()
         reset_surface_workspaces(
-            segment_ends_size=sizes[0], segments_size=sizes[1])
+            segment_ends_size=sizes[0], segments_size=sizes[1]
+        )
         self.barrier3.set()
 
     def event4(self):

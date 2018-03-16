@@ -9,14 +9,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import email
 import os
 import unittest
 import unittest.mock
 
 import pkg_resources
-
 
 CHECK_PKG_MSG = """\
 path     = {!r}
@@ -26,10 +24,10 @@ from_egg = {!r}"""
 
 
 class Test___version__(unittest.TestCase):
+
     # NOTE: The ``__version__`` is hard-coded in ``__init__.py`` to
     #       accomodate builds where ``bezier`` is imported from source
     #       but not installed.
-
     def test_it(self):
         import bezier
 
@@ -39,10 +37,10 @@ class Test___version__(unittest.TestCase):
 
 
 class Test___author__(unittest.TestCase):
+
     # NOTE: The ``__author__`` is hard-coded in ``__init__.py`` to
     #       accomodate builds where ``bezier`` is imported from source
     #       but not installed.
-
     def test_it(self):
         import bezier
 
@@ -58,7 +56,6 @@ class Test_get_include(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         import bezier
-
         return bezier.get_include()
 
     def test_it(self):
@@ -71,7 +68,6 @@ class Test_get_lib(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         import bezier
-
         return bezier.get_lib()
 
     def test_it(self):
@@ -84,7 +80,6 @@ class Test_get_dll(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         import bezier
-
         return bezier.get_dll()
 
     @unittest.mock.patch('os.name', new='nt')
@@ -101,13 +96,9 @@ class Test_get_dll(unittest.TestCase):
 def _check_pkg_filename(test_case, path, last_segment):
     short = os.path.join('bezier', last_segment)
     from_egg = path.endswith(short) and '.egg' in path
-
     src_path = os.path.join('src', short)
     from_source = path.endswith(src_path)
-
     verbose = os.path.join('site-packages', short)
     site_pkg = path.endswith(verbose)
-
-    msg = CHECK_PKG_MSG.format(
-        path, verbose, site_pkg, from_egg)
+    msg = CHECK_PKG_MSG.format(path, verbose, site_pkg, from_egg)
     test_case.assertTrue(from_egg or from_source or site_pkg, msg=msg)

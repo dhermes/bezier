@@ -655,7 +655,7 @@ class Surface(_base.Base):
 
         if ax is None:
             ax = _plot_helpers.new_axis()
-        _plot_helpers.add_patch(ax, color, pts_per_edge, * self._get_edges())
+        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._get_edges())
         if with_nodes:
             ax.plot(
                 self._nodes[0, :],

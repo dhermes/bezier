@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """py.test shared testing configuration.
 
 This
@@ -25,9 +24,9 @@ import unittest
 
 import six
 
-
 if six.PY2:
     import mock  # pylint: disable=import-error
+
     unittest.mock = mock
     sys.modules['unittest.mock'] = unittest.mock
 
@@ -37,4 +36,5 @@ def pytest_addoption(parser):
         '--ignore-slow',
         dest='ignore_slow',
         action='store_true',
-        help='Ignore slow tests.')
+        help='Ignore slow tests.',
+    )

@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from __future__ import absolute_import
 
 import numpy as np
@@ -18,37 +17,40 @@ import bezier
 from bezier import _plot_helpers
 from tests.functional import utils
 
-
 CONFIG = utils.Config()
-
-
 # F1 = sympy.Matrix([[s, t]])
-SURFACE1 = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 1.0, 0.0],
-    [0.0, 0.0, 1.0],
-]), _copy=False)
+SURFACE1 = bezier.Surface.from_nodes(
+    np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]), _copy=False
+)
 # F2 = sympy.Matrix([[
 #     (-t**2 + 2 * s + t) / 2, (s**2 + 2 * s * t - s + 2 * t) / 2]])
-SURFACE2 = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.5, 1.0, 0.25, 0.75, 0.0],
-    [0.0, -0.25, 0.0, 0.5, 0.75, 1.0],
-]), _copy=False)
+SURFACE2 = bezier.Surface.from_nodes(
+    np.asfortranarray(
+        [[0.0, 0.5, 1.0, 0.25, 0.75, 0.0], [0.0, -0.25, 0.0, 0.5, 0.75, 1.0]]
+    ),
+    _copy=False,
+)
 # F3 = sympy.Matrix([[
 #     -(2 * s * t - 4 * s - t) / 4, (s**2 - s * t + 4 * t) / 4]])
-SURFACE3 = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 0.5, 1.0, 0.125, 0.375, 0.25],
-    [0.0, 0.0, 0.25, 0.5, 0.375, 1.0],
-]), _copy=False)
+SURFACE3 = bezier.Surface.from_nodes(
+    np.asfortranarray(
+        [
+            [0.0, 0.5, 1.0, 0.125, 0.375, 0.25],
+            [0.0, 0.0, 0.25, 0.5, 0.375, 1.0],
+        ]
+    ),
+    _copy=False,
+)
 # F4 = sympy.Matrix([[2 * (s + 2 * t) * (1 - t), 2 * t * (s + 1)]])
-SURFACE4 = bezier.Surface.from_nodes(np.asfortranarray([
-    [0.0, 1.0, 2.0, 2.0, 2.0, 0.0],
-    [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
-]), _copy=False)
-
-POINTS = np.asfortranarray([
-    [0.0, 0.25, 0.59375, 0.265625, 1.25],
-    [0.0, 0.25, 0.25, 0.73046875, 1.25],
-])
+SURFACE4 = bezier.Surface.from_nodes(
+    np.asfortranarray(
+        [[0.0, 1.0, 2.0, 2.0, 2.0, 0.0], [0.0, 0.0, 0.0, 1.0, 2.0, 2.0]]
+    ),
+    _copy=False,
+)
+POINTS = np.asfortranarray(
+    [[0.0, 0.25, 0.59375, 0.265625, 1.25], [0.0, 0.25, 0.25, 0.73046875, 1.25]]
+)
 
 
 def make_plot(surface, point):
@@ -59,20 +61,17 @@ def make_plot(surface, point):
     import seaborn
 
     seaborn.set()  # Required in `seaborn >= 0.8`
-
     ax = surface.plot(64)
-    ax.plot(point[0, :], point[1, :], color='black',
-            marker='o', linestyle='None')
-
+    ax.plot(
+        point[0, :], point[1, :], color='black', marker='o', linestyle='None'
+    )
     ax.axis('scaled')
     _plot_helpers.add_plot_boundary(ax)
-
     if CONFIG.save_plot:
         CONFIG.save_fig()
     else:
         plt.title(CONFIG.current_test)
         plt.show()
-
     plt.close(ax.figure)
 
 
@@ -82,10 +81,8 @@ def check_point(surface, point_ind, expected_s, expected_t):
         assert surface.locate(point) is None
     else:
         s, t = surface.locate(point)
-
         CONFIG.assert_close(s, expected_s)
         CONFIG.assert_close(t, expected_t)
-
     if not CONFIG.running:
         return
 

@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from __future__ import absolute_import
 
 import itertools
@@ -25,7 +24,6 @@ import bezier.curve
 from tests import utils as base_utils
 from tests.functional import utils
 from tests.functional.utils import CurveIntersectionType
-
 
 SPACING = np.spacing  # pylint: disable=no-member
 GEOMETRIC = bezier.curve.IntersectionStrategy.GEOMETRIC
@@ -45,19 +43,15 @@ ULPS_ALLOWED = 3.0
 # NOTE: Set a threshold for values that are "approximately" zero.
 #       This is an **absolute** error rather than a relative error
 #       since relative to zero error is always infinite.
-ZERO_THRESHOLD = 0.5**52
+ZERO_THRESHOLD = 0.5 ** 52
 ZERO_MISS = object()
 # NOTE: We use units of least precision (ULP) as error. These
 #       are for the very rare cases where the computed values
 #       differ from the actual values by more than 3 ULPs.
 ULPS_ALLOWED_OVERRIDE = {
     GEOMETRIC: {
-        1: {
-            (1, 1): 4,  # Established on CentOS 5 (i686 Docker image)
-        },
-        12: {
-            (1, 0): 4,  # Established on Ubuntu 16.04
-        },
+        1: {(1, 1): 4},  # Established on CentOS 5 (i686 Docker image)
+        12: {(1, 0): 4},  # Established on Ubuntu 16.04
         17: {
             (5, 0): ZERO_MISS,  # Established on Ubuntu 16.04
             (1, 2): 8,  # Established on CentOS 5 (i686 Docker image)
@@ -81,27 +75,13 @@ ULPS_ALLOWED_OVERRIDE = {
             (0, 1): 16,  # Established on Ubuntu 16.04
             (1, 1): 21,  # Established on Ubuntu 16.04
         },
-        25: {
-            (4, 0): ZERO_MISS,  # Established on Ubuntu 16.04
-        },
-        28: {
-            (2, 0): 4,  # Established on CentOS 5 (i686 Docker image)
-        },
-        37: {
-            (1, 0): 91,  # Established on Ubuntu 16.04
-        },
-        38: {
-            (1, 0): 1013,  # Established on Ubuntu 16.04
-        },
-        39: {
-            (1, 0): 91,  # Established on Ubuntu 16.04
-        },
-        40: {
-            (1, 0): 1013,  # Established on Ubuntu 16.04
-        },
-        46: {
-            (1, 2): 22,  # Established on Ubuntu 16.04
-        },
+        25: {(4, 0): ZERO_MISS},  # Established on Ubuntu 16.04
+        28: {(2, 0): 4},  # Established on CentOS 5 (i686 Docker image)
+        37: {(1, 0): 91},  # Established on Ubuntu 16.04
+        38: {(1, 0): 1013},  # Established on Ubuntu 16.04
+        39: {(1, 0): 91},  # Established on Ubuntu 16.04
+        40: {(1, 0): 1013},  # Established on Ubuntu 16.04
+        46: {(1, 2): 22},  # Established on Ubuntu 16.04
         50: {
             (0, 0): 447,  # Established on Ubuntu 16.04
             (0, 1): 10,  # Established on Ubuntu 16.04
@@ -123,11 +103,9 @@ ULPS_ALLOWED_OVERRIDE = {
     },
     ALGEBRAIC: {
         12: {
-            (1, 0): 4,  # Established on OS X 10.11 in 32-bit (Early 2011 MBP)
+            (1, 0): 4  # Established on OS X 10.11 in 32-bit (Early 2011 MBP)
         },
-        17: {
-            (5, 0): ZERO_MISS,  # Established on Ubuntu 16.04
-        },
+        17: {(5, 0): ZERO_MISS},  # Established on Ubuntu 16.04
         18: {
             (4, 0): 5,  # Established on Ubuntu 16.04
             (4, 1): 4,  # Established on Ubuntu 16.04
@@ -141,27 +119,13 @@ ULPS_ALLOWED_OVERRIDE = {
             (0, 1): 4,  # Established on CentOS 5 (i686 Docker image)
             (1, 1): 4,  # Established on CentOS 5 (i686 Docker image)
         },
-        23: {
-            (1, 0): 4,  # Established on Ubuntu 16.04
-        },
-        25: {
-            (4, 0): ZERO_MISS,  # Established on Ubuntu 16.04
-        },
-        28: {
-            (2, 0): 4,  # Established on CentOS 5 (i686 Docker image)
-        },
-        37: {
-            (1, 0): 165,  # Established on Ubuntu 16.04
-        },
-        38: {
-            (1, 0): 18,  # Established on Ubuntu 16.04
-        },
-        39: {
-            (1, 0): 165,  # Established on Ubuntu 16.04
-        },
-        40: {
-            (1, 0): 18,  # Established on Ubuntu 16.04
-        },
+        23: {(1, 0): 4},  # Established on Ubuntu 16.04
+        25: {(4, 0): ZERO_MISS},  # Established on Ubuntu 16.04
+        28: {(2, 0): 4},  # Established on CentOS 5 (i686 Docker image)
+        37: {(1, 0): 165},  # Established on Ubuntu 16.04
+        38: {(1, 0): 18},  # Established on Ubuntu 16.04
+        39: {(1, 0): 165},  # Established on Ubuntu 16.04
+        40: {(1, 0): 18},  # Established on Ubuntu 16.04
         49: {
             (0, 0): 27,  # Established on Ubuntu 16.04
             (1, 0): 27,  # Established on Ubuntu 16.04
@@ -212,14 +176,9 @@ COINCIDENT_OVERRIDES = {
         34: {'success': True},
         35: {'success': True},
     },
-    ALGEBRAIC: {
-        53: {},
-    },
+    ALGEBRAIC: {53: {}},
 }
-INCORRECT_COUNT = {
-    GEOMETRIC: (),
-    ALGEBRAIC: (),
-}
+INCORRECT_COUNT = {GEOMETRIC: (), ALGEBRAIC: ()}
 if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:
     INCORRECT_COUNT[ALGEBRAIC] += (10,)
 
@@ -229,17 +188,21 @@ def get_sorted_intersections(intersection_info, strategy):
     nodes2 = intersection_info.nodes2
     if strategy is GEOMETRIC:
         intersections, _ = _geometric_intersection.all_intersections(
-            nodes1, nodes2)
+            nodes1, nodes2
+        )
     else:
         intersections, _ = _algebraic_intersection.all_intersections(
-            nodes1, nodes2)
-
+            nodes1, nodes2
+        )
     # Make we have the right number of intersections.
     if intersections.shape != (2, intersection_info.num_params):
         raise utils.IncorrectCount(
             'Received wrong number of intersections',
-            intersections.shape, 'Expected', intersection_info.num_params,
-            intersection_info.test_id)
+            intersections.shape,
+            'Expected',
+            intersection_info.num_params,
+            intersection_info.test_id,
+        )
 
     # Sort the intersections by s-value.
     sorted_inds = np.argsort(intersections[0, :])
@@ -249,29 +212,26 @@ def get_sorted_intersections(intersection_info, strategy):
 def intersection_values(intersection_info, strategy):
     # Actually intersect the curves.
     intersections = get_sorted_intersections(intersection_info, strategy)
-
     # Put the computed and expected values into matrices to be compared.
     s_vals, t_vals, intersection_pts = intersection_info.params
     computed = np.zeros((6, intersection_info.num_params), order='F')
     exact = np.zeros(computed.shape, order='F')
-
     info = six.moves.zip(intersections.T, s_vals, t_vals, intersection_pts.T)
     for index, (intersection, s_val, t_val, point) in enumerate(info):
         computed[(0, 1), index] = intersection
         exact[(0, 1), index] = s_val, t_val
-
         # Make sure the point corresponding to the parameter on curve 1
         # is close to the exact one.
         computed[(2, 3), index] = (
-            intersection_info.curve1.evaluate(s_val)[:, 0])
+            intersection_info.curve1.evaluate(s_val)[:, 0]
+        )
         exact[(2, 3), index] = point
-
         # Make sure the point corresponding to the parameter on curve 2
         # is close to the exact one.
         computed[(4, 5), index] = (
-            intersection_info.curve2.evaluate(t_val)[:, 0])
+            intersection_info.curve2.evaluate(t_val)[:, 0]
+        )
         exact[(4, 5), index] = point
-
     return computed, exact
 
 
@@ -286,38 +246,34 @@ def error_multipliers(intersection_info, shape, strategy):
                 zero_misses.append(index_tuple)
             else:
                 multipliers[index_tuple] = value
-
     return zero_misses, multipliers
 
 
 def incorrect_values(multipliers, errors, exact):
     observed_error_ulps = np.abs(errors / SPACING(exact))
-
     failure_rows, failure_cols = np.where(observed_error_ulps > multipliers)
     failures = []
     for failure_row, failure_col in six.moves.zip(failure_rows, failure_cols):
         failures.append('* {:d}, {:d}'.format(failure_row, failure_col))
     failures = '\n'.join(failures)
-
     zero_misses = np.where((exact == 0.0) & (observed_error_ulps != 0.0))
     observed_error_ulps[zero_misses] = np.nan
-
     msg = INCORRECT_VALUES_MSG.format(
-        multipliers, observed_error_ulps, failures)
+        multipliers, observed_error_ulps, failures
+    )
     raise AssertionError(msg)
 
 
 def check_intersect(intersection_info, strategy):
     computed, exact = intersection_values(intersection_info, strategy)
     zero_misses, multipliers = error_multipliers(
-        intersection_info, exact.shape, strategy)
-
+        intersection_info, exact.shape, strategy
+    )
     # Make sure our errors fall under the number of "allowed" ULPs.
     allowed_errors = np.abs(multipliers * SPACING(exact))
     errors = np.abs(exact - computed)
     if not np.all(errors <= allowed_errors):
         incorrect_values(multipliers, errors, exact)
-
     # If there are any ``exact`` zeros that have been missed, check
     # that we fall under the **absolute** threshold for them.
     if zero_misses:
@@ -335,13 +291,11 @@ def check_no_intersect(intersection_info, strategy):
 def check_tangent(intersection_info, strategy):
     id_ = intersection_info.id_
     tangent_kwargs = TANGENT_OVERRIDES[strategy].get(id_, {})
-
     if tangent_kwargs == {'success': True}:
         check_intersect(intersection_info, strategy)
     else:
         with pytest.raises(NotImplementedError) as exc_info:
             intersection_values(intersection_info, strategy)
-
         exc_args = exc_info.value.args
         if strategy is ALGEBRAIC:
             assert len(exc_args) == 2
@@ -360,13 +314,11 @@ def check_tangent(intersection_info, strategy):
 def check_coincident(intersection_info, strategy):
     id_ = intersection_info.id_
     coincident_kwargs = COINCIDENT_OVERRIDES[strategy].get(id_, {})
-
     if coincident_kwargs == {'success': True}:
         check_intersect(intersection_info, strategy)
     else:
         with pytest.raises(NotImplementedError) as exc_info:
             intersection_values(intersection_info, strategy)
-
         exc_args = exc_info.value.args
         if strategy is ALGEBRAIC:
             assert coincident_kwargs == {}
@@ -380,29 +332,26 @@ def check_coincident(intersection_info, strategy):
 
 @pytest.mark.parametrize(
     'strategy,intersection_info',
-    itertools.product(
-        (GEOMETRIC, ALGEBRAIC),
-        INTERSECTIONS,
-    ),
+    itertools.product((GEOMETRIC, ALGEBRAIC), INTERSECTIONS),
     ids=utils.id_func,
 )
 def test_intersect(strategy, intersection_info):
     id_ = intersection_info.id_
     # Actually try to intersect the curves.
     intersection_type = intersection_info.type_
-
     if id_ in INCORRECT_COUNT[strategy]:
         with pytest.raises(utils.IncorrectCount):
             check_intersect(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.tangent:
         check_tangent(intersection_info, strategy)
-    elif (intersection_type == CurveIntersectionType.coincident or
-          id_ in COINCIDENT_OVERRIDES[strategy]):
+    elif (
+        intersection_type == CurveIntersectionType.coincident or
+        id_ in COINCIDENT_OVERRIDES[strategy]
+    ):
         check_coincident(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.standard:
         check_intersect(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.no_intersection:
         check_no_intersect(intersection_info, strategy)
     else:
-        raise ValueError(
-            'Unexpected intersection type', intersection_type)
+        raise ValueError('Unexpected intersection type', intersection_type)

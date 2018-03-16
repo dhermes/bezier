@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from __future__ import absolute_import
 
 import matplotlib.pyplot as plt
@@ -17,7 +16,6 @@ import seaborn
 
 from bezier import _plot_helpers
 from tests.functional import utils
-
 
 CONFIG = utils.Config()
 _, INTERSECTIONS = utils.curve_intersections_info()
@@ -27,14 +25,17 @@ def make_plot(intersection_info, save_plot):
     curve1 = intersection_info.curve1
     curve2 = intersection_info.curve2
     intersection_pts = intersection_info.intersections
-
     ax = curve1.plot(64)
     curve2.plot(64, ax=ax)
-    ax.plot(intersection_pts[0, :], intersection_pts[1, :],
-            marker='o', linestyle='None', color='black')
+    ax.plot(
+        intersection_pts[0, :],
+        intersection_pts[1, :],
+        marker='o',
+        linestyle='None',
+        color='black',
+    )
     ax.axis('scaled')
     _plot_helpers.add_plot_boundary(ax)
-
     filename = intersection_info.img_filename
     if save_plot:
         # NOTE: This is an abuse of ``current_test``, but we don't need
@@ -44,7 +45,6 @@ def make_plot(intersection_info, save_plot):
     else:
         plt.title(filename)
         plt.show()
-
     plt.close(ax.figure)
 
 

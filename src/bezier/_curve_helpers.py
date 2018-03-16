@@ -433,8 +433,8 @@ def _specialize_curve(nodes, start, end):
     # Uses start-->0, end-->1 to represent the specialization used.
     weights = ((1.0 - start, start), (1.0 - end, end))
     partial_vals = {
-        (0,): de_casteljau_one_round(nodes, * weights[0]),
-        (1,): de_casteljau_one_round(nodes, * weights[1]),
+        (0,): de_casteljau_one_round(nodes, *weights[0]),
+        (1,): de_casteljau_one_round(nodes, *weights[1]),
     }
     for _ in six.moves.xrange(num_nodes - 2, 0, -1):
         new_partial = {}
@@ -443,7 +443,7 @@ def _specialize_curve(nodes, start, end):
             for next_id in six.moves.xrange(key[-1], 1 + 1):
                 new_key = key + (next_id,)
                 new_partial[new_key] = de_casteljau_one_round(
-                    sub_nodes, * weights[next_id]
+                    sub_nodes, *weights[next_id]
                 )
         partial_vals = new_partial
     result = np.empty(nodes.shape, order='F')

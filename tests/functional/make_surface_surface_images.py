@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from __future__ import absolute_import
 
 import matplotlib.pyplot as plt
@@ -20,18 +19,13 @@ import bezier
 from bezier import _plot_helpers
 from tests.functional import utils
 
-
 CONFIG = utils.Config()
 _, INTERSECTIONS = utils.surface_intersections_info()
 
 
 def make_curved_polygon(surface1, surface2, curved_polygon_info):
     if isinstance(curved_polygon_info, utils.CurvedPolygonInfo):
-        base_edges = (
-            surface1._get_edges(),
-            surface2._get_edges(),
-        )
-
+        base_edges = (surface1._get_edges(), surface2._get_edges())
         edge_list = curved_polygon_info.edge_list
         start_params = curved_polygon_info.start_params
         end_params = curved_polygon_info.end_params
@@ -43,12 +37,13 @@ def make_curved_polygon(surface1, surface2, curved_polygon_info):
             else:
                 base_edge = base_edges[1][edge_index - 3]
             edges.append(base_edge.specialize(start_param, end_param))
-
         return bezier.CurvedPolygon(*edges)
+
     else:
         assert isinstance(curved_polygon_info, utils.SurfaceIntersectionInfo)
         if curved_polygon_info.first:
             return surface1
+
         else:
             return surface2
 
@@ -56,21 +51,18 @@ def make_curved_polygon(surface1, surface2, curved_polygon_info):
 def make_plot(intersection_info, save_plot):
     surface1 = intersection_info.surface1
     surface2 = intersection_info.surface2
-
     ax = surface1.plot(64)
     surface2.plot(64, ax=ax)
-
     color = None
     for curved_polygon_info in intersection_info.intersections:
         curved_polygon = make_curved_polygon(
-            surface1, surface2, curved_polygon_info)
+            surface1, surface2, curved_polygon_info
+        )
         curved_polygon.plot(64, color=color, ax=ax)
         # Color is (R,G,B,A) but we just want (R,G,B).
         color = ax.patches[-1].get_facecolor()[:3]
-
     ax.axis('scaled')
     _plot_helpers.add_plot_boundary(ax)
-
     filename = intersection_info.img_filename
     if save_plot:
         # NOTE: This is an abuse of ``current_test``, but we don't need
@@ -80,7 +72,6 @@ def make_plot(intersection_info, save_plot):
     else:
         plt.title(filename)
         plt.show()
-
     plt.close(ax.figure)
 
 

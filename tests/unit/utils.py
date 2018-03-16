@@ -9,15 +9,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import unittest
 
 try:
     import bezier
 except ImportError:  # pragma: NO COVER
     bezier = None
-
-
 WRONG_FLAGS_TEMPLATE = """\
 Arrays are not Fortran contiguous
 array1 flags =
@@ -50,7 +47,6 @@ array2 =
 
 def get_random(seed):
     import numpy as np
-
     return np.random.RandomState(seed=seed)  # pylint: disable=no-member
 
 
@@ -62,13 +58,10 @@ def binary_round(value, num_bits):
     pre, hex_digits = hex_val.split('0x1.')
     hex_digits, post = hex_digits.split('p')
     assert len(hex_digits) == 13
-
     all_bits = '{:052b}'.format(int(hex_digits, 16))
     assert len(all_bits) == 52
-
     truncated_bits = all_bits[:num_bits] + '0' * (52 - num_bits)
     truncated_hex = '{:013x}'.format(int(truncated_bits, 2))
-
     python_hex = pre + '0x1.' + truncated_hex + 'p' + post
     return float.fromhex(python_hex)
 
@@ -91,17 +84,15 @@ def ref_triangle_uniform_nodes(pts_exponent):
     # Using the exponent means that we will divide by
     # 2**exp, which can be done without roundoff (for small
     # enough exponents).
-    pts_per_side = 2**pts_exponent + 1
+    pts_per_side = 2 ** pts_exponent + 1
     total = ((pts_per_side + 1) * pts_per_side) // 2
     result = np.zeros((total, 2), order='F')
-
     index = 0
     for y_val in six.moves.xrange(pts_per_side):
         remaining = pts_per_side - y_val
         for x_val in six.moves.xrange(remaining):
             result[index, :] = x_val, y_val
             index += 1
-
     result /= (pts_per_side - 1.0)
     return result
 
@@ -114,11 +105,11 @@ def check_plot_call(test_case, call, expected, **kwargs):
     test_case.assertEqual(keyword, kwargs)
     test_case.assertEqual(len(positional), 2)
     test_case.assertEqual(
-        np.asfortranarray(positional[0]),
-        np.asfortranarray(expected[0, :]))
+        np.asfortranarray(positional[0]), np.asfortranarray(expected[0, :])
+    )
     test_case.assertEqual(
-        np.asfortranarray(positional[1]),
-        np.asfortranarray(expected[1, :]))
+        np.asfortranarray(positional[1]), np.asfortranarray(expected[1, :])
+    )
 
 
 def needs_speedup(test_class):
@@ -126,9 +117,7 @@ def needs_speedup(test_class):
         has_speedup = False  # pragma: NO COVER
     else:
         has_speedup = bezier._HAS_SPEEDUP
-
-    decorator = unittest.skipUnless(
-        has_speedup, 'No speedup available')
+    decorator = unittest.skipUnless(has_speedup, 'No speedup available')
     return decorator(test_class)
 
 
@@ -151,22 +140,21 @@ class NumPyTestCase(unittest.TestCase):
     def assertArrayEqual(self, arr1, arr2, msg=None):
         import numpy as np
 
-        if (not arr1.flags.f_contiguous or
-                not arr2.flags.f_contiguous):  # pragma: NO COVER
-            standard_msg = WRONG_FLAGS_TEMPLATE.format(
-                arr1.flags, arr2.flags)
+        if (
+            not arr1.flags.f_contiguous or not arr2.flags.f_contiguous
+        ):  # pragma: NO COVER
+            standard_msg = WRONG_FLAGS_TEMPLATE.format(arr1.flags, arr2.flags)
             self.fail(self._formatMessage(msg, standard_msg))
-
         if arr1.dtype is not arr2.dtype:  # pragma: NO COVER
             standard_msg = WRONG_TYPE_TEMPLATE.format(
-                arr1.dtype, arr1, arr2.dtype, arr2)
+                arr1.dtype, arr1, arr2.dtype, arr2
+            )
             self.fail(self._formatMessage(msg, standard_msg))
-
         if arr1.shape != arr2.shape:  # pragma: NO COVER
             standard_msg = WRONG_SHAPE_TEMPLATE.format(
-                arr1.shape, arr1, arr2.shape, arr2)
+                arr1.shape, arr1, arr2.shape, arr2
+            )
             self.fail(self._formatMessage(msg, standard_msg))
-
         if not np.all(arr1 == arr2):  # pragma: NO COVER
             standard_msg = NOT_EQ_TEMPLATE.format(arr1, arr2)
             self.fail(self._formatMessage(msg, standard_msg))

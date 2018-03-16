@@ -9,7 +9,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from __future__ import absolute_import
 
 import contextlib
@@ -25,7 +24,6 @@ from bezier import _geometric_intersection
 from bezier import _surface_helpers
 from bezier import curve
 from tests.functional import utils
-
 
 ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
 GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
@@ -76,29 +74,10 @@ FAILED_CASES_TANGENT = {
 }
 FAILED_CASES_COINCIDENT = {
     GEOMETRIC: {},
-    ALGEBRAIC: {
-        4: {},
-        5: {},
-        43: {},
-        44: {},
-        45: {},
-        46: {},
-        47: {},
-        51: {},
-    },
+    ALGEBRAIC: {4: {}, 5: {}, 43: {}, 44: {}, 45: {}, 46: {}, 47: {}, 51: {}},
 }
-FAILED_CASES_BAD_EDGES = {
-    GEOMETRIC: (),
-    ALGEBRAIC: (
-        52,
-    ),
-}
-INCORRECT_COUNT = {
-    GEOMETRIC: (
-        52,
-    ),
-    ALGEBRAIC: (),
-}
+FAILED_CASES_BAD_EDGES = {GEOMETRIC: (), ALGEBRAIC: (52,)}
+INCORRECT_COUNT = {GEOMETRIC: (52,), ALGEBRAIC: ()}
 CONFIG = utils.Config()
 
 
@@ -107,10 +86,8 @@ def curved_polygon_edges(intersection):
     edge_info = intersection._metadata
     index = edge_info.index(min(edge_info))
     edge_info = edge_info[index:] + edge_info[:index]
-
     edge_list = intersection._edges
     edge_list = edge_list[index:] + edge_list[:index]
-
     return edge_info, edge_list
 
 
@@ -119,9 +96,9 @@ def check_tangent_manager(strategy, too_many=None):
     caught_exc = None
     try:
         yield
+
     except NotImplementedError as exc:
         caught_exc = exc
-
     assert caught_exc is not None
     exc_args = caught_exc.args
     if strategy is GEOMETRIC:
@@ -137,9 +114,9 @@ def check_coincident_manager(strategy, too_many=None, curvature=False):
     caught_exc = None
     try:
         yield
+
     except NotImplementedError as exc:
         caught_exc = exc
-
     assert caught_exc is not None
     exc_args = caught_exc.args
     if strategy is GEOMETRIC:
@@ -157,9 +134,9 @@ def check_bad_edges_manager():
     caught_exc = None
     try:
         yield
+
     except RuntimeError as exc:
         caught_exc = exc
-
     assert caught_exc is not None
     exc_args = caught_exc.args
     assert exc_args[0] == 'Unexpected number of edges'
@@ -169,45 +146,46 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
     # pylint: disable=too-many-locals
     assert surface1.is_valid
     assert surface2.is_valid
-
     intersections = surface1.intersect(surface2, strategy=strategy)
     if len(intersections) != len(all_intersected):
         raise utils.IncorrectCount(
             'Received wrong number of intersections',
-            len(intersections), 'Expected', len(all_intersected))
+            len(intersections),
+            'Expected',
+            len(all_intersected),
+        )
 
     all_edges = surface1._get_edges() + surface2._get_edges()
-
     for intersection, intersected in six.moves.zip(
-            intersections, all_intersected):
+        intersections, all_intersected
+    ):
         if isinstance(intersection, bezier.CurvedPolygon):
             assert isinstance(intersected, utils.CurvedPolygonInfo)
-
             edge_info, int_edges = curved_polygon_edges(intersection)
             num_edges = len(edge_info)
             if num_edges != len(intersected.edge_list):
                 raise utils.IncorrectCount(
                     'Received wrong number of edges within an intersection',
-                    num_edges, 'Expected', len(intersected.edge_list))
+                    num_edges,
+                    'Expected',
+                    len(intersected.edge_list),
+                )
+
             assert num_edges == len(intersected.start_params)
             assert num_edges == len(intersected.end_params)
             assert num_edges == len(intersected.nodes)
-
             for index in six.moves.xrange(num_edges):
                 edge_triple = edge_info[index]
                 edge_index = intersected.edge_list[index]
                 assert edge_triple[0] == edge_index
-
                 start_val = intersected.start_params[index]
                 end_val = intersected.end_params[index]
                 CONFIG.assert_close(edge_triple[1], start_val)
                 CONFIG.assert_close(edge_triple[2], end_val)
-
                 expected_root = all_edges[edge_index]
                 specialized = expected_root.specialize(start_val, end_val)
                 edge = int_edges[index]
                 assert np.allclose(specialized._nodes, edge._nodes)
-
                 node = intersected.nodes[index, :]
                 CONFIG.assert_close(edge._nodes[0, 0], node[0])
                 CONFIG.assert_close(edge._nodes[1, 0], node[1])
@@ -223,10 +201,7 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
 
 @pytest.mark.parametrize(
     'strategy,intersection_info',
-    itertools.product(
-        (GEOMETRIC, ALGEBRAIC),
-        INTERSECTIONS,
-    ),
+    itertools.product((GEOMETRIC, ALGEBRAIC), INTERSECTIONS),
     ids=utils.id_func,
 )
 def test_intersect(strategy, intersection_info):
@@ -245,10 +220,9 @@ def test_intersect(strategy, intersection_info):
         context = CONFIG.wiggle(WIGGLES[strategy][id_])
     else:
         context = utils.no_op_manager()
-
     surface1 = intersection_info.surface1
     surface2 = intersection_info.surface2
     with context:
         surface_surface_check(
-            strategy, surface1, surface2,
-            *intersection_info.intersections)
+            strategy, surface1, surface2, *intersection_info.intersections
+        )
