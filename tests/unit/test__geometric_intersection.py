@@ -574,6 +574,58 @@ class Test_from_linearized(utils.NumPyTestCase):
         self.assertEqual(1.0 / 3.0, t)
         # pylint: enable=too-many-locals
 
+    def _wiggle_outside_helper(self, swap=False):
+        from bezier import _curve_helpers
+
+        # B1([127/128, 1]) and B2([0, 1]) are linearized and when the segments
+        # intersect they produce s = 0.9999999999940287 and
+        # t = 0.35294117647054574. After performing Newton's method the final
+        # parameter values are s = 1.000000000000334, t = 0.3529411764708877,
+        # the first of which is outside of ``[-2^{-44}, 1 + 2^{-44}]``.
+        start1 = 127.0 / 128.0
+        end1 = 1.0
+        original_nodes1 = np.asfortranarray(
+            [
+                [
+                    -0.8558466524001767,
+                    -0.8384755863215392,
+                    -0.8214285714285716,
+                ],
+                [-0.9648818559703933, -0.9825154456957814, -1.0],
+            ]
+        )
+        nodes1 = _curve_helpers.specialize_curve(original_nodes1, start1, end1)
+        curve1 = subdivided_curve(
+            nodes1, original_nodes=original_nodes1, start=start1, end=end1
+        )
+        lin1 = make_linearization(curve1)
+        nodes2 = np.asfortranarray(
+            [
+                [
+                    -0.8348214285714286,
+                    -0.8158482142857144,
+                    -0.7968750000000001,
+                ],
+                [-0.986607142857143, -1.0055803571428572, -1.0245535714285714],
+            ]
+        )
+        curve2 = subdivided_curve(nodes2)
+        lin2 = make_linearization(curve2)
+        intersections = []
+        if swap:
+            lin1, lin2 = lin2, lin1
+        return_value = self._call_function_under_test(
+            lin1, lin2, intersections
+        )
+        self.assertIsNone(return_value)
+        self.assertEqual(intersections, [])
+
+    def test_s_wiggle_outside(self):
+        self._wiggle_outside_helper()
+
+    def test_t_wiggle_outside(self):
+        self._wiggle_outside_helper(swap=True)
+
 
 class Test_add_intersection(unittest.TestCase):
 
@@ -1348,7 +1400,7 @@ class Test__all_intersections(utils.NumPyTestCase):
         self.assertEqual(intersections, expected)
         self.assertFalse(coincident)
 
-    def test_wiggle_failure(self):
+    def test_hull_failure(self):
         nodes1 = np.asfortranarray(
             [
                 [

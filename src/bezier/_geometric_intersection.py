@@ -794,11 +794,11 @@ def from_linearized(first, second, intersections):
     )
     refined_s, success = _helpers.wiggle_interval(refined_s)
     if not success:
-        return  # pragma: NO COVER
+        return
 
     refined_t, success = _helpers.wiggle_interval(refined_t)
     if not success:
-        return  # pragma: NO COVER
+        return
 
     add_intersection(refined_s, refined_t, intersections)
     # pylint: enable=too-many-return-statements
@@ -1458,11 +1458,6 @@ def _all_intersections(nodes_first, nodes_second):
             if len(candidates) > _MAX_CANDIDATES:
                 params = coincident_parameters(nodes_first, nodes_second)
                 if params is None:
-                    # NOTE: This case is very difficult to trigger due to the
-                    #       ``prune_candidates()`` and coincident check
-                    #       mitigations. As a result, there is no unit test
-                    #       to trigger this line (no case has been discovered
-                    #       yet).
                     raise NotImplementedError(
                         _TOO_MANY_TEMPLATE.format(len(candidates))
                     )

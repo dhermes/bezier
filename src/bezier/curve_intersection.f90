@@ -859,12 +859,12 @@ contains
 
     call wiggle_interval(refined_s, s, success)
     if (.NOT. success) then
-       return  ! LCOV_EXCL_LINE
+       return
     end if
 
     call wiggle_interval(refined_t, t, success)
     if (.NOT. success) then
-       return  ! LCOV_EXCL_LINE
+       return
     end if
 
     does_intersect = .TRUE.

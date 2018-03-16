@@ -16,6 +16,7 @@ module test_curve_intersection
   use status, only: &
        Status_SUCCESS, Status_BAD_MULTIPLICITY, Status_NO_CONVERGE, &
        Status_INSUFFICIENT_SPACE, Status_SINGULAR
+  use helpers, only: WIGGLE
   use curve, only: &
        CurveData, evaluate_multi, specialize_curve, subdivide_nodes, &
        curves_equal, subdivide_curve
@@ -1622,6 +1623,44 @@ contains
          refined_t == expected_t)
     call print_status(name, case_id, case_success, success)
 
+    ! CASE 7: Curves intersect just outside of the "wiggled" unit interval
+    !         ``[-2^{-44}, 1 + 2^{-44}]``.
+    curve3%start = 127.0_dp / 128
+    curve3%end_ = 1
+    root_nodes1(:, 1) = [-0.8558466524001767_dp, -0.9648818559703933_dp]
+    root_nodes1(:, 2) = [-0.8384755863215392_dp, -0.9825154456957814_dp]
+    root_nodes1(:, 3) = [-0.8214285714285716_dp, -1.0_dp]
+    call specialize_curve( &
+         3, 2, root_nodes1, curve3%start, curve3%end_, curve3%nodes)
+
+    curve4%start = 0
+    curve4%end_ = 1
+    root_nodes2(:, 1) = [-0.8348214285714286_dp, -0.986607142857143_dp]
+    root_nodes2(:, 2) = [-0.8158482142857144_dp, -1.0055803571428572_dp]
+    root_nodes2(:, 3) = [-0.7968750000000001_dp, -1.0245535714285714_dp]
+    curve4%nodes = root_nodes2
+
+    call from_linearized( &
+         curve3, 3, root_nodes1, &
+         curve4, 3, root_nodes2, &
+         refined_s, refined_t, does_intersect, status)
+    case_success = ( &
+         status == Status_SUCCESS .AND. &
+         .NOT. does_intersect .AND. &
+         refined_s > 1.0_dp + WIGGLE)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 8: Same as CASE 7, with arguments reversed.
+    call from_linearized( &
+         curve4, 3, root_nodes2, &
+         curve3, 3, root_nodes1, &
+         refined_s, refined_t, does_intersect, status)
+    case_success = ( &
+         status == Status_SUCCESS .AND. &
+         .NOT. does_intersect .AND. &
+         refined_t > 1.0_dp + WIGGLE)
+    call print_status(name, case_id, case_success, success)
+
   end subroutine test_from_linearized
 
   subroutine test_bbox_line_intersect(success)
@@ -3192,8 +3231,8 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 7: Curves that **almost** touch at their endpoints, but don't
-    !         actually cross. This causes a "wiggle fail" in
-    !         ``from_linearized()`` but the convex hulls are disjoint.
+    !         actually cross. This results in no intersections because
+    !         ``from_linearized()`` exits since the convex hulls are disjoint.
     cubic1(:, 1) = [-0.7838204403623438_dp, -0.25519640597397464_dp]
     cubic1(:, 2) = [-0.7894577677825452_dp, -0.24259531488131633_dp]
     cubic1(:, 3) = [-0.7946421067207265_dp, -0.22976394420044136_dp]
