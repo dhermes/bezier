@@ -15,6 +15,7 @@ import unittest.mock
 
 import numpy as np
 
+from tests import utils as base_utils
 from tests.unit import utils
 
 SPACING = np.spacing  # pylint: disable=no-member
@@ -620,9 +621,17 @@ class Test_from_linearized(utils.NumPyTestCase):
         self.assertIsNone(return_value)
         self.assertEqual(intersections, [])
 
+    @unittest.skipIf(
+        base_utils.IS_MAC_OS_X and not base_utils.IS_64_BIT,
+        '32-bit OS X is skipped',
+    )
     def test_s_wiggle_outside(self):
         self._wiggle_outside_helper()
 
+    @unittest.skipIf(
+        base_utils.IS_MAC_OS_X and not base_utils.IS_64_BIT,
+        '32-bit OS X is skipped',
+    )
     def test_t_wiggle_outside(self):
         self._wiggle_outside_helper(swap=True)
 
