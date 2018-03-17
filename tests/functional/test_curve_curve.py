@@ -77,16 +77,21 @@ ULPS_ALLOWED_OVERRIDE = {
         },
         25: {(4, 0): ZERO_MISS},  # Established on Ubuntu 16.04
         28: {(2, 0): 4},  # Established on CentOS 5 (i686 Docker image)
+        31: {(3, 0): ZERO_MISS},  # Established on CentOS 5 (i686 Docker image)
         37: {(1, 0): 91},  # Established on Ubuntu 16.04
         38: {(1, 0): 1013},  # Established on Ubuntu 16.04
         39: {(1, 0): 91},  # Established on Ubuntu 16.04
         40: {(1, 0): 1013},  # Established on Ubuntu 16.04
         46: {(1, 2): 22},  # Established on Ubuntu 16.04
+        49: {
+            (0, 0): 13,  # Established on CentOS 5 (i686 Docker image)
+            (1, 0): 13,  # Established on CentOS 5 (i686 Docker image)
+        },
         50: {
             (0, 0): 447,  # Established on Ubuntu 16.04
-            (0, 1): 10,  # Established on Ubuntu 16.04
+            (0, 1): 62,  # Established on CentOS 5 (i686 Docker image)
             (1, 0): 474,  # Established on Ubuntu 16.04
-            (1, 1): 13,  # Established on Ubuntu 16.04
+            (1, 1): 69,  # Established on CentOS 5 (i686 Docker image)
         },
         51: {
             (0, 0): 2259,  # Established on Ubuntu 16.04
@@ -97,8 +102,8 @@ ULPS_ALLOWED_OVERRIDE = {
             (1, 0): 10239,  # Established on Ubuntu 16.04
         },
         53: {
-            (0, 0): 206544,  # Established on Ubuntu 16.04
-            (1, 0): 191360,  # Established on Ubuntu 16.04
+            (0, 0): 285086,  # Established on CentOS 5 (i686 Docker image)
+            (1, 0): 264170,  # Established on CentOS 5 (i686 Docker image)
         },
     },
     ALGEBRAIC: {
@@ -137,8 +142,8 @@ ULPS_ALLOWED_OVERRIDE = {
             (1, 1): 23,  # Established on Ubuntu 16.04
         },
         51: {
-            (0, 0): 243,  # Established on Ubuntu 16.04
-            (1, 0): 8265,  # Established on Ubuntu 16.04
+            (0, 0): 1528,  # Established on CentOS 5 (i686 Docker image)
+            (1, 0): 56288,  # Established on CentOS 5 (i686 Docker image)
         },
         52: {
             (0, 0): 13677,  # Established on Ubuntu 16.04
@@ -345,8 +350,8 @@ def test_intersect(strategy, intersection_info):
     elif intersection_type == CurveIntersectionType.tangent:
         check_tangent(intersection_info, strategy)
     elif (
-        intersection_type == CurveIntersectionType.coincident or
-        id_ in COINCIDENT_OVERRIDES[strategy]
+        intersection_type == CurveIntersectionType.coincident
+        or id_ in COINCIDENT_OVERRIDES[strategy]
     ):
         check_coincident(intersection_info, strategy)
     elif intersection_type == CurveIntersectionType.standard:

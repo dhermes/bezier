@@ -474,7 +474,7 @@ class Test_newton_iterate(unittest.TestCase):
         )
         self.assertTrue(converged)
         utils.almost(self, 1.0 / 3.0, current_s, 1)
-        self.assertEqual(0.5, current_t)
+        utils.almost(self, 0.5, current_t, 1)
 
     def test_all_iterations(self):
         # We start very far away from the root s = t = 0.5 by using
@@ -562,7 +562,7 @@ class Test_full_newton_nonzero(unittest.TestCase):
             s, nodes1, t, nodes2
         )
         utils.almost(self, 0.5, computed_s, 1)
-        utils.almost(self, 1.0 / 6.0, computed_t, 3)
+        utils.almost(self, 1.0 / 6.0, computed_t, 4)
 
     def test_double_root(self):
         # B1([5461/8192, 5462/8192]) and B2([2730/8192, 2731/8192]) are
@@ -577,7 +577,7 @@ class Test_full_newton_nonzero(unittest.TestCase):
             s, nodes1, t, nodes2
         )
         utils.almost(self, 2.0 / 3.0, computed_s, 1)
-        self.assertEqual(1.0 / 3.0, computed_t)
+        utils.almost(self, 1.0 / 3.0, computed_t, 1)
 
     def test_triple_root(self):
         from bezier import _intersection_helpers
@@ -605,7 +605,7 @@ class Test_full_newton_nonzero(unittest.TestCase):
             s, nodes1, t, nodes2
         )
         utils.almost(self, 1.0 / 3.0, computed_s, 1)
-        self.assertEqual(1.0 / 3.0, computed_t)
+        utils.almost(self, 1.0 / 3.0, computed_t, 1)
 
     def test_nearby_solutions(self):
         # B1([158/512, 159/512]) and B2([304/1024, 305/1024]) are linearized
@@ -766,7 +766,7 @@ class TestIntersection(unittest.TestCase):
 
     def test___dict___property(self):
         intersection = self._constructor_helper(
-            interior_curve=unittest.mock.sentinel.interior_curve,
+            interior_curve=unittest.mock.sentinel.interior_curve
         )
         props_dict = intersection.__dict__
         expected = {

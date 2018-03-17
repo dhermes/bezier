@@ -23,6 +23,7 @@ from bezier import _algebraic_intersection
 from bezier import _geometric_intersection
 from bezier import _surface_helpers
 from bezier import curve
+from tests import utils as base_utils
 from tests.functional import utils
 
 ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
@@ -43,7 +44,7 @@ WIGGLES = {
         34: 19,  # Established on Ubuntu 16.04 on CircleCI
         49: 86670,  # Established on Ubuntu 16.04
         50: 15222,  # Established on Ubuntu 16.04
-        51: 206544,  # Established on Ubuntu 16.04
+        51: 285086,  # Established on CentOS 5 (i686 Docker image)
     },
     ALGEBRAIC: {
         3: 12,  # Established on Ubuntu 16.04
@@ -51,7 +52,7 @@ WIGGLES = {
         32: 18,  # Established on Ubuntu 16.04
         33: 18,  # Established on Ubuntu 16.04
         36: 9,  # Established on Ubuntu 16.04 on CircleCI and OS X.
-        49: 8265,  # Established on Ubuntu 16.04
+        49: 56288,  # Established on CentOS 5 (i686 Docker image)
         50: 86670,  # Established on Ubuntu 16.04
     },
 }
@@ -78,6 +79,8 @@ FAILED_CASES_COINCIDENT = {
 }
 FAILED_CASES_BAD_EDGES = {GEOMETRIC: (), ALGEBRAIC: (52,)}
 INCORRECT_COUNT = {GEOMETRIC: (52,), ALGEBRAIC: ()}
+if base_utils.IS_LINUX and not base_utils.IS_64_BIT:
+    INCORRECT_COUNT[ALGEBRAIC] += (52,)
 CONFIG = utils.Config()
 
 

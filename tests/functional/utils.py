@@ -29,6 +29,7 @@ import six
 
 import bezier
 import bezier.curve
+from tests import utils as base_utils
 
 FNL_TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 _DOCS_DIR = os.path.abspath(os.path.join(FNL_TESTS_DIR, '..', '..', 'docs'))
@@ -199,7 +200,7 @@ def id_func(value):
         return value.test_id
 
 
-def ulps_away(value1, value2, num_bits=1):
+def ulps_away(value1, value2, num_bits=1, eps=0.5 ** 40):
     r"""Determines if ``value1`` is within ``n`` ULPs of ``value2``.
 
     Uses ``np.spacing`` to determine the unit of least precision (ULP)
@@ -219,10 +220,18 @@ def ulps_away(value1, value2, num_bits=1):
         bool: Predicate indicating if the values agree to ``n`` bits.
     """
     if value1 == 0.0:
-        return value2 == 0.0
+        if base_utils.IS_LINUX and not base_utils.IS_64_BIT:
+            return abs(value2) < eps
+
+        else:
+            return value2 == 0.0
 
     elif value2 == 0.0:
-        return value1 == 0.0
+        if base_utils.IS_LINUX and not base_utils.IS_64_BIT:
+            return abs(value1) < eps
+
+        else:
+            return value1 == 0.0
 
     else:
         local_epsilon = np.spacing(value1)  # pylint: disable=no-member
