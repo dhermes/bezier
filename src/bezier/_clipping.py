@@ -27,7 +27,6 @@ which is the primary usage within ``bezier``.
    :trim:
 """
 
-
 import numpy as np
 import six
 
@@ -71,7 +70,7 @@ def compute_implicit_line(nodes):
     delta = nodes[:, -1] - nodes[:, 0]
     length = np.linalg.norm(delta, ord=2)
     # Normalize and rotate 90 degrees to the "left".
-    coeff_a = - delta[1] / length
+    coeff_a = -delta[1] / length
     coeff_b = delta[0] / length
     # c = - ax - by = (delta[1] x - delta[0] y) / L
     # NOTE: We divide by ``length`` at the end to "put off" rounding.

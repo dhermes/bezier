@@ -16,7 +16,6 @@ the package ``__init__.py`` causes Sphinx to try to document
 each included element multiple times.
 """
 
-
 import os
 import types
 

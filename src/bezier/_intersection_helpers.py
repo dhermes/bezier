@@ -25,7 +25,6 @@ or the speedup.
    :trim:
 """
 
-
 import enum
 
 import numpy as np
@@ -418,7 +417,7 @@ def _newton_refine(s, nodes1, t, nodes2):
     # NOTE: This assumes the curves are 2D.
     jac_mat = np.empty((2, 2), order='F')
     jac_mat[:, :1] = _curve_helpers.evaluate_hodograph(s, nodes1)
-    jac_mat[:, 1:] = - _curve_helpers.evaluate_hodograph(t, nodes2)
+    jac_mat[:, 1:] = -_curve_helpers.evaluate_hodograph(t, nodes2)
     # Solve the system.
     singular, delta_s, delta_t = _helpers.solve2x2(jac_mat, func_val[:, 0])
     if singular:
@@ -495,7 +494,7 @@ class NewtonSimpleRoot(object):  # pylint: disable=too-few-public-methods
             jacobian[:, :1] = _curve_helpers.evaluate_multi(
                 self.first_deriv1, s_vals
             )
-            jacobian[:, 1:] = - _curve_helpers.evaluate_multi(
+            jacobian[:, 1:] = -_curve_helpers.evaluate_multi(
                 self.first_deriv2, t_vals
             )
             return jacobian, func_val

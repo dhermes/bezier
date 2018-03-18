@@ -11,7 +11,6 @@
 # limitations under the License.
 """Plotting utilities."""
 
-
 import numpy as np
 
 from bezier import _helpers

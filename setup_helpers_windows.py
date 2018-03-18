@@ -11,7 +11,6 @@
 # limitations under the License.
 """Helpers for ``setup.py`` specific to Windows."""
 
-
 import os
 import shutil
 import sys

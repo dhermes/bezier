@@ -21,7 +21,6 @@ leading underscore will be surfaced as the actual interface (e.g.
 ``bbox``) whether that is the pure Python implementation or the speedup.
 """
 
-
 import bisect
 
 import numpy as np
@@ -411,7 +410,7 @@ def is_separating(direction, polygon1, polygon2):
     for polygon in (polygon1, polygon2):
         _, polygon_size = polygon.shape
         min_param = np.inf
-        max_param = - np.inf
+        max_param = -np.inf
         for index in six.moves.xrange(polygon_size):
             vertex[:] = polygon[:, index]
             param = cross_product(direction, vertex) / norm_squared

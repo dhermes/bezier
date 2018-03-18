@@ -39,7 +39,6 @@ is the "intersection polynomial" for :math:`t`.
    :trim:
 """
 
-
 import numpy as np
 from numpy.polynomial import polynomial
 import six
@@ -99,7 +98,7 @@ _CHEB10 = np.asfortranarray(
 )
 # Allow a buffer of sqrt(sqrt(machine precision)) for polynomial roots.
 _IMAGINARY_WIGGLE = 0.5 ** 13
-_UNIT_INTERVAL_WIGGLE_START = - 0.5 ** 13
+_UNIT_INTERVAL_WIGGLE_START = -0.5 ** 13
 _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5 ** 13
 _SIGMA_THRESHOLD = 0.5 ** 20
 _SINGULAR_EPS = 0.5 ** 52
@@ -297,7 +296,7 @@ def _to_power_basis12(nodes1, nodes2):
         [
             val0,
             -3.0 * val0 + 4.0 * val1 - val2,
-            2.0 * val0 - 4.0 * val1 + 2.0 * val2,
+            2.0 * val0 - 4.0 * val1 + 2.0 * val2
         ]
     )
 
@@ -338,7 +337,7 @@ def _to_power_basis13(nodes1, nodes2):
             3.0 * val0,
             -19.0 * val0 + 24.0 * val1 - 8.0 * val2 + 3.0 * val3,
             32.0 * val0 - 56.0 * val1 + 40.0 * val2 - 16.0 * val3,
-            -16.0 * val0 + 32.0 * val1 - 32.0 * val2 + 16.0 * val3,
+            -16.0 * val0 + 32.0 * val1 - 32.0 * val2 + 16.0 * val3
         ]
     )
 
@@ -420,7 +419,7 @@ def _to_power_basis_degree4(nodes1, nodes2):
             128.0 *
             val3 +
             32.0 *
-            val4,
+            val4
         ]
     )
 
@@ -1142,7 +1141,7 @@ def bezier_value_check(coeffs, s_val, rhs_val=0.0):
         return shifted_coeffs[0] == 0.0
 
     sigma_val = s_val / (1.0 - s_val)
-    lu_mat, one_norm = lu_companion(- sigma_coeffs[::-1], sigma_val)
+    lu_mat, one_norm = lu_companion(-sigma_coeffs[::-1], sigma_val)
     rcond = _reciprocal_condition_number(lu_mat, one_norm)
     # "Is a root?" IFF Singular IF ``1/kappa_1 < m epsilon``
     return rcond < effective_degree * _SINGULAR_EPS
@@ -1369,7 +1368,7 @@ def poly_to_power_basis(bezier_coeffs):
                 coeff0,
                 3.0 * (coeff1 - coeff0),
                 3.0 * (coeff2 - 2.0 * coeff1 + coeff0),
-                coeff3 - 3.0 * coeff2 + 3.0 * coeff1 - coeff0,
+                coeff3 - 3.0 * coeff2 + 3.0 * coeff1 - coeff0
             ]
         )
 

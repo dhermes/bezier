@@ -134,7 +134,7 @@ def populate_native_libraries(version):
     """
     with open(NATIVE_LIBS_TEMPLATE, 'r') as file_obj:
         template = file_obj.read()
-    contents = template.format(revision=version,)
+    contents = template.format(revision=version)
     with open(NATIVE_LIBS_FILE, 'w') as file_obj:
         file_obj.write(contents)
 

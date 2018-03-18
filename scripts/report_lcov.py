@@ -15,7 +15,6 @@ Using the converted report, print a table of the report and
 exit with status code 0 if all files have 100% coverage.
 """
 
-
 import argparse
 import io
 import sys

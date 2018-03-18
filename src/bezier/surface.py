@@ -20,7 +20,6 @@
    import bezier
 """
 
-
 import numpy as np
 import six
 

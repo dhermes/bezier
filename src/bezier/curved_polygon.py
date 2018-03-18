@@ -24,7 +24,6 @@ boundary.
    import bezier
 """
 
-
 import six
 
 from bezier import _helpers

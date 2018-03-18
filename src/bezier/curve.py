@@ -26,7 +26,6 @@ See :doc:`../curve-curve-intersection` for examples using the
    :members:
 """
 
-
 import numpy as np
 
 from bezier import _algebraic_intersection

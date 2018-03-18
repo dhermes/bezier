@@ -18,7 +18,6 @@ To actually execute these functions with the desired inputs, run:
    $ nox -s docs_images
 """
 
-
 import os
 
 try:
@@ -519,7 +518,7 @@ def surface_is_valid3(surface):
     ax.plot(points1[0, :], points1[1, :], color='black', linestyle='dashed')
     ax.plot(points2[0, :], points2[1, :], color='black', linestyle='dashed')
     ax.plot(points3[0, :], points3[1, :], color='black', linestyle='dashed')
-    polygon = np.hstack([points1[:,1:], points2[:,1:], jac_edge[:,1:]])
+    polygon = np.hstack([points1[:, 1:], points2[:, 1:], jac_edge[:, 1:]])
     add_patch(ax, polygon, color, with_nodes=False)
     ax.axis('scaled')
     ax.set_xlim(-0.0625, 1.0625)

@@ -877,7 +877,7 @@ class Test__geometric_intersect(utils.NumPyTestCase):
             self._call_function_under_test(
                 self.NODES1, 1, self.NODES2, 2, **kwargs
             ),
-            expected,
+            expected
         )
 
     def test_two_curved_polygons(self):

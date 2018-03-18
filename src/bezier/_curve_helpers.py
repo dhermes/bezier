@@ -25,7 +25,6 @@ or the speedup.
    :trim:
 """
 
-
 import functools
 
 import numpy as np
@@ -148,13 +147,13 @@ def make_subdivision_matrices(degree):
     for col in six.moves.xrange(1, degree + 1):
         half_prev = 0.5 * left[:col, col - 1]
         left[:col, col] = half_prev
-        left[1: col + 1, col] += half_prev
+        left[1:col + 1, col] += half_prev
         # Populate the complement col (in right) as well.
         complement = degree - col
         # NOTE: We "should" reverse the results when using
         #       the complement, but they are symmetric so
         #       that would be a waste.
-        right[- (col + 1):, complement] = left[: col + 1, col]
+        right[-(col + 1):, complement] = left[:col + 1, col]
     return left, right
 
 

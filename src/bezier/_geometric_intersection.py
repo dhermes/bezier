@@ -25,7 +25,6 @@ or the speedup.
    :trim:
 """
 
-
 import atexit
 import itertools
 
@@ -93,10 +92,10 @@ def _bbox_intersect(nodes1, nodes2):
         return BoxIntersectionType.DISJOINT
 
     if (
-        right2 == left1 or
-        right1 == left2 or
-        top2 == bottom1 or
-        top1 == bottom2
+        right2 == left1
+        or right1 == left2
+        or top2 == bottom1
+        or top1 == bottom2
     ):
         return BoxIntersectionType.TANGENT
 
@@ -695,8 +694,8 @@ def line_line_collide(line1, line2):
     )
     if success:
         return (
-            _helpers.in_interval(s, 0.0, 1.0) and
-            _helpers.in_interval(t, 0.0, 1.0)
+            _helpers.in_interval(s, 0.0, 1.0)
+            and _helpers.in_interval(t, 0.0, 1.0)
         )
 
     else:
@@ -766,8 +765,8 @@ def from_linearized(first, second, intersections):
     bad_parameters = False
     if success:
         if not (
-            _helpers.in_interval(s, 0.0, 1.0) and
-            _helpers.in_interval(t, 0.0, 1.0)
+            _helpers.in_interval(s, 0.0, 1.0)
+            and _helpers.in_interval(t, 0.0, 1.0)
         ):
             bad_parameters = True
     else:
@@ -997,14 +996,14 @@ def bbox_line_intersect(nodes, line_start, line_end):
     """
     left, right, bottom, top = _helpers.bbox(nodes)
     if (
-        _helpers.in_interval(line_start[0], left, right) and
-        _helpers.in_interval(line_start[1], bottom, top)
+        _helpers.in_interval(line_start[0], left, right)
+        and _helpers.in_interval(line_start[1], bottom, top)
     ):
         return BoxIntersectionType.INTERSECTION
 
     if (
-        _helpers.in_interval(line_end[0], left, right) and
-        _helpers.in_interval(line_end[1], bottom, top)
+        _helpers.in_interval(line_end[0], left, right)
+        and _helpers.in_interval(line_end[1], bottom, top)
     ):
         return BoxIntersectionType.INTERSECTION
 
@@ -1026,9 +1025,9 @@ def bbox_line_intersect(nodes, line_start, line_end):
         line_end,
     )
     if (
-        success and
-        _helpers.in_interval(s_bottom, 0.0, 1.0) and
-        _helpers.in_interval(t_bottom, 0.0, 1.0)
+        success
+        and _helpers.in_interval(s_bottom, 0.0, 1.0)
+        and _helpers.in_interval(t_bottom, 0.0, 1.0)
     ):
         return BoxIntersectionType.INTERSECTION
 
@@ -1040,9 +1039,9 @@ def bbox_line_intersect(nodes, line_start, line_end):
         line_end,
     )
     if (
-        success and
-        _helpers.in_interval(s_right, 0.0, 1.0) and
-        _helpers.in_interval(t_right, 0.0, 1.0)
+        success
+        and _helpers.in_interval(s_right, 0.0, 1.0)
+        and _helpers.in_interval(t_right, 0.0, 1.0)
     ):
         return BoxIntersectionType.INTERSECTION
 
@@ -1054,9 +1053,9 @@ def bbox_line_intersect(nodes, line_start, line_end):
         line_end,
     )
     if (
-        success and
-        _helpers.in_interval(s_top, 0.0, 1.0) and
-        _helpers.in_interval(t_top, 0.0, 1.0)
+        success
+        and _helpers.in_interval(s_top, 0.0, 1.0)
+        and _helpers.in_interval(t_top, 0.0, 1.0)
     ):
         return BoxIntersectionType.INTERSECTION
 
@@ -1366,10 +1365,10 @@ def check_lines(first, second):
     # NOTE: In the below we replace ``isinstance(a, B)`` with
     #       ``a.__class__ is B``, which is a 3-3.5x speedup.
     if not (
-        first.__class__ is Linearization and
-        second.__class__ is Linearization and
-        first.error == 0.0 and
-        second.error == 0.0
+        first.__class__ is Linearization
+        and second.__class__ is Linearization
+        and first.error == 0.0
+        and second.error == 0.0
     ):
         return False, None
 
@@ -1378,8 +1377,8 @@ def check_lines(first, second):
     )
     if success:
         if (
-            _helpers.in_interval(s, 0.0, 1.0) and
-            _helpers.in_interval(t, 0.0, 1.0)
+            _helpers.in_interval(s, 0.0, 1.0)
+            and _helpers.in_interval(t, 0.0, 1.0)
         ):
             intersections = np.asfortranarray([[s], [t]])
             result = intersections, False

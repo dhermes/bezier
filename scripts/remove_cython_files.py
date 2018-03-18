@@ -18,7 +18,6 @@ Used in:
    $ nox -s "update_generated(check=True)"
 """
 
-
 import os
 import subprocess
 

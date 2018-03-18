@@ -28,7 +28,7 @@ def clean_file(c_source, virtualenv_dirname):
     with open(c_source, 'r') as file_obj:
         contents = file_obj.read().rstrip()
     # Replace the path to the Cython include files.
-    py_version = 'python{}.{}'.format(* sys.version_info[:2])
+    py_version = 'python{}.{}'.format(*sys.version_info[:2])
     lib_path = os.path.join(
         '.nox', virtualenv_dirname, 'lib', py_version, 'site-packages', ''
     )

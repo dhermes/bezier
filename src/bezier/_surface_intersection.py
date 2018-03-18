@@ -467,8 +467,8 @@ def add_edge_end_unused(intersection, duplicates, intersections):
     found = None
     for other in intersections:
         if (
-            intersection.index_first == other.index_first and
-            intersection.index_second == other.index_second
+            intersection.index_first == other.index_first
+            and intersection.index_second == other.index_second
         ):
             if intersection.s == 0.0 and other.s == 0.0:
                 found = other
@@ -504,9 +504,9 @@ def check_unused(intersection, duplicates, intersections):
     """
     for other in intersections:
         if (
-            other.interior_curve == UNUSED_T and
-            intersection.index_first == other.index_first and
-            intersection.index_second == other.index_second
+            other.interior_curve == UNUSED_T
+            and intersection.index_first == other.index_first
+            and intersection.index_second == other.index_second
         ):
             if intersection.s == 0.0 and other.s == 0.0:
                 duplicates.append(intersection)
