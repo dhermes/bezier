@@ -215,6 +215,9 @@ def ulps_away(value1, value2, num_bits=1, eps=0.5 ** 40):
         value2 (float): The second value that being compared.
         num_bits (Optional[int]): The number of bits allowed to differ.
             Defaults to ``1``.
+        eps (Optional[float]): The "zero threshold" to use when one of
+            ``value1`` / ``value2`` is zero, but the other is not. Will
+            only be used on 32-bit Linux.
 
     Returns:
         bool: Predicate indicating if the values agree to ``n`` bits.
