@@ -68,7 +68,7 @@ New Features
       values are equally relevant.) Once normalized, a relative error threshold
       is used.
 
-   Four curve-curve functional test cases have gone from failing to passing:
+-  Four curve-curve functional test cases have gone from failing to passing:
 
    -  11: `14-15 <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/curves14_and_15.png>`__
    -  31: `38-39 <https://github.com/dhermes/bezier/blob/0.8.0/docs/images/curves38_and_39.png>`__
