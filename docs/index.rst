@@ -5,8 +5,6 @@
 
 |circle-build| |travis-build| |appveyor-build| |coverage|
 
-|pypi| |versions|
-
 |zenodo| |JOSS|
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -217,25 +215,19 @@ License
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/0.8.0/LICENSE
 
-.. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?maxAge=3600&label=Linux
-   :target: https://circleci.com/gh/dhermes/bezier
+.. |circle-build| image:: https://cdn.rawgit.com/dhermes/bezier/0.8.0/docs/circleci-passing.svg
+   :target: https://circleci.com/gh/dhermes/bezier/1270
    :alt: CircleCI Build
-.. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/master.svg?maxAge=3600&label=Mac%20OS%20X
-   :target: https://travis-ci.org/dhermes/bezier
+.. |travis-build| image:: https://cdn.rawgit.com/dhermes/bezier/0.8.0/docs/travis-passing.svg
+   :target: https://travis-ci.org/dhermes/bezier/builds/355482899
    :alt: Travis Build
-.. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?maxAge=3600&label=Windows
-   :target: https://ci.appveyor.com/project/dhermes/bezier
+.. |appveyor-build| image:: https://cdn.rawgit.com/dhermes/bezier/0.8.0/docs/appveyor-passing.svg
+   :target: https://ci.appveyor.com/project/dhermes/bezier/build/1.0.938.master
    :alt: AppVeyor CI Build
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
-   :target: https://pypi.org/project/bezier/
-   :alt: PyPI Latest
-.. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
-   :target: https://pypi.org/project/bezier/
-   :alt: Package Versions
-.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg
-   :target: https://coveralls.io/github/dhermes/bezier
+.. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
+   :target: https://coveralls.io/builds/16057472
    :alt: Code Coverage
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
