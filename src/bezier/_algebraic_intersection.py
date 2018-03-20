@@ -258,8 +258,8 @@ def _to_power_basis11(nodes1, nodes2):
         numpy.ndarray: ``2``-array of coefficients.
     """
     # We manually invert the Vandermonde matrix:
-    # [1 0.0][c0] = [n0]
-    # [1 1.0][c1]   [n1]
+    # [1 0][c0] = [n0]
+    # [1 1][c1]   [n1]
     val0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
     val1 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
     # [c0] = [ 1 0][n0]
@@ -283,9 +283,9 @@ def _to_power_basis12(nodes1, nodes2):
         numpy.ndarray: ``3``-array of coefficients.
     """
     # We manually invert the Vandermonde matrix:
-    # [1 0.0 0.0 ][c0] = [n0]
-    # [1 0.5 0.25][c1]   [n1]
-    # [1 1.0 1.0 ][c2]   [n2]
+    # [1 0   0  ][c0] = [n0]
+    # [1 1/2 1/4][c1]   [n1]
+    # [1 1   1  ][c2]   [n2]
     val0 = eval_intersection_polynomial(nodes1, nodes2, 0.0)
     val1 = eval_intersection_polynomial(nodes1, nodes2, 0.5)
     val2 = eval_intersection_polynomial(nodes1, nodes2, 1.0)
@@ -1219,7 +1219,7 @@ def _check_non_simple(coeffs):
 
     deriv_poly = polynomial.polyder(coeffs)
     companion = polynomial.polycompanion(deriv_poly)
-    # NOTE: `polycompanion()` returns a C-contiguous array.
+    # NOTE: ``polycompanion()`` returns a C-contiguous array.
     companion = companion.T
     # Use Horner's method to evaluate f(companion)
     num_companion, _ = companion.shape
