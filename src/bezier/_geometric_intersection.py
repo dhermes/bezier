@@ -1482,33 +1482,6 @@ def _all_intersections(nodes_first, nodes_second):
     raise ValueError(msg)
 
 
-def _set_max_candidates(num_candidates):
-    """Set the max number of candidates allowed in :func:`_all_intersections`.
-
-    Allows modifying the **runtime** behavior by tweaking the maximum number
-    of candidates.
-
-    For tangent or coincident curves, the number of candidate pairs of
-    subdivided sections of eachcurve can increase exponentially, so
-    ``MAX_CANDIDATES`` is used to limit the growth of the list of
-    candidates.
-
-    Args:
-        num_candidates (int): The number of candidates to set.
-    """
-    global _MAX_CANDIDATES  # pylint: disable=global-statement
-    _MAX_CANDIDATES = num_candidates
-
-
-def _get_max_candidates():
-    """Get the max number of candidates allowed in :func:`_all_intersections`.
-
-    Returns:
-        int: The number of candidates.
-    """
-    return _MAX_CANDIDATES
-
-
 class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
     """Enum representing all possible bounding box intersections.
 
@@ -1668,12 +1641,8 @@ class Linearization(object):
 if _speedup is None:  # pragma: NO COVER
     bbox_intersect = _bbox_intersect
     all_intersections = _all_intersections
-    set_max_candidates = _set_max_candidates
-    get_max_candidates = _get_max_candidates
 else:
     bbox_intersect = _speedup.bbox_intersect
     all_intersections = _speedup.curve_intersections
-    set_max_candidates = _speedup.set_max_candidates
-    get_max_candidates = _speedup.get_max_candidates
     atexit.register(_speedup.free_curve_intersections_workspace)
 # pylint: enable=invalid-name

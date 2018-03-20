@@ -33,8 +33,7 @@ module test_curve_intersection
        bbox_line_intersect, check_lines, add_intersection, &
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
-       add_coincident_parameters, all_intersections, all_intersections_abi, &
-       set_max_candidates, get_max_candidates
+       add_coincident_parameters, all_intersections, all_intersections_abi
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
@@ -50,7 +49,7 @@ module test_curve_intersection
        test_tangent_bbox_intersection, test_add_candidates, &
        test_intersect_one_round, test_make_same_degree, &
        test_add_coincident_parameters, test_all_intersections, &
-       test_all_intersections_abi, test_set_max_candidates
+       test_all_intersections_abi
   public curve_intersection_all_tests
 
 contains
@@ -83,7 +82,6 @@ contains
     call test_add_coincident_parameters(success)
     call test_all_intersections(success)
     call test_all_intersections_abi(success)
-    call test_set_max_candidates(success)
 
   end subroutine curve_intersection_all_tests
 
@@ -3387,33 +3385,5 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_all_intersections_abi
-
-  subroutine test_set_max_candidates(success)
-    logical(c_bool), intent(inout) :: success
-    ! Variables outside of signature.
-    logical :: case_success
-    integer(c_int) :: orig_num_candidates, num_candidates1, num_candidates2
-    integer :: case_id
-    character(18) :: name
-
-    ! NOTE: This is **also** a test for ``get_max_candidates``.
-
-    case_id = 1
-    name = "set_max_candidates"
-
-    ! CASE 1: Check that we can properly set and get the value.
-    call get_max_candidates(orig_num_candidates)
-
-    num_candidates1 = 33
-    call set_max_candidates(num_candidates1)
-    call get_max_candidates(num_candidates2)
-    case_success = ( &
-         orig_num_candidates == 64 .AND. &
-         num_candidates1 == num_candidates2)
-    call print_status(name, case_id, case_success, success)
-    ! Restore the original value.
-    call set_max_candidates(orig_num_candidates)
-
-  end subroutine test_set_max_candidates
 
 end module test_curve_intersection

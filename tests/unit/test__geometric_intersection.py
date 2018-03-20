@@ -1535,44 +1535,6 @@ class Test_speedup_all_intersections(Test__all_intersections):
         self.assertEqual(self.curves_workspace_size(), 2)
 
 
-class Test__set_max_candidates(utils.NumPyTestCase):
-
-    # NOTE: This is also a test for ``_get_max_candidates``.
-    @staticmethod
-    def _call_function_under_test(num_candidates):
-        from bezier import _geometric_intersection
-        return _geometric_intersection._set_max_candidates(num_candidates)
-
-    @staticmethod
-    def get_max_candidates():
-        from bezier import _geometric_intersection
-        return _geometric_intersection._get_max_candidates()
-
-    def test_it(self):
-        curr_candidates = self.get_max_candidates()
-        new_candidates = 55
-        return_value = self._call_function_under_test(new_candidates)
-        self.assertIsNone(return_value)
-        self.assertEqual(self.get_max_candidates(), new_candidates)
-        # Put things back the way they were.
-        self._call_function_under_test(curr_candidates)
-
-
-@utils.needs_speedup
-class Test_speedup_set_max_candidates(Test__set_max_candidates):
-
-    # NOTE: This is also a test for the ``get_max_candidates`` speedup.
-    @staticmethod
-    def _call_function_under_test(num_candidates):
-        from bezier import _speedup
-        return _speedup.set_max_candidates(num_candidates)
-
-    @staticmethod
-    def get_max_candidates():
-        from bezier import _speedup
-        return _speedup.get_max_candidates()
-
-
 class TestSubdividedCurve(utils.NumPyTestCase):
 
     @staticmethod

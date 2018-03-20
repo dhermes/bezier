@@ -38,8 +38,6 @@ void curve_intersections(
     int *num_nodes_second, double *nodes_second,
     int *intersections_size, double *intersections,
     int *num_intersections, bool *coincident, Status *status);
-void set_max_candidates(int *num_candidates);
-void get_max_candidates(int *num_candidates);
 void free_curve_intersections_workspace(void);
 
 #if defined (__cplusplus)

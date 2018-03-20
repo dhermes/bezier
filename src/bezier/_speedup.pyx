@@ -498,18 +498,6 @@ def curve_intersections(
         raise NotImplementedError(TOO_MANY_TEMPLATE.format(status))
 
 
-def set_max_candidates(int num_candidates):
-    bezier._curve_intersection.set_max_candidates(&num_candidates)
-
-
-def get_max_candidates():
-    cdef int num_candidates
-
-    bezier._curve_intersection.get_max_candidates(&num_candidates)
-
-    return num_candidates
-
-
 def free_curve_intersections_workspace():
     bezier._curve_intersection.free_curve_intersections_workspace()
 

@@ -45,7 +45,6 @@ module curve_intersection
        add_from_linearized, endpoint_check, tangent_bbox_intersection, &
        add_candidates, intersect_one_round, make_same_degree, &
        add_coincident_parameters, all_intersections, all_intersections_abi, &
-       set_max_candidates, get_max_candidates, &
        free_curve_intersections_workspace
 
   ! Interface for ``newton_iterate()``.
@@ -77,7 +76,7 @@ module curve_intersection
   ! Run-time parameters that can be modified. If multiple threads are used,
   ! these **should** be thread-local (though it's expected that callers will
   ! update these values **before** beginning computation).
-  integer(c_int) :: MAX_CANDIDATES = 64
+  integer(c_int), parameter :: MAX_CANDIDATES = 64
   ! Point under which values are considered to be "near zero".
   real(c_double), parameter :: ZERO_THRESHOLD = 0.5_dp**10
   real(c_double), parameter :: NEWTON_ERROR_RATIO = 0.5_dp**36
@@ -1936,24 +1935,6 @@ contains
     end if
 
   end subroutine all_intersections_abi
-
-  subroutine set_max_candidates(num_candidates) &
-       bind(c, name='set_max_candidates')
-
-    integer(c_int), intent(in) :: num_candidates
-
-    MAX_CANDIDATES = num_candidates
-
-  end subroutine set_max_candidates
-
-  subroutine get_max_candidates(num_candidates) &
-       bind(c, name='get_max_candidates')
-
-    integer(c_int), intent(out) :: num_candidates
-
-    num_candidates = MAX_CANDIDATES
-
-  end subroutine get_max_candidates
 
   subroutine free_curve_intersections_workspace() &
        bind(c, name='free_curve_intersections_workspace')
