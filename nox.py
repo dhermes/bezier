@@ -18,13 +18,29 @@ import tempfile
 import nox
 import py.path
 
-NUMPY_DEP = 'numpy >= 1.14.0'
 IS_MAC_OS_X = sys.platform == 'darwin'
-SCIPY_DEP = 'scipy >= 1.0.0'
-MOCK_DEP = 'mock >= 1.3.0'
-SEABORN_DEP = 'seaborn >= 0.8'
-MATPLOTLIB_DEP = 'matplotlib >= 2.2.0'
-BASE_DEPS = (NUMPY_DEP, 'pytest')
+DEPS = {
+    'coverage': 'coverage',
+    'Cython': 'Cython >= 0.28.1',
+    'docutils': 'docutils',
+    'flake8': 'flake8',
+    'flake8-import-order': 'flake8-import-order',
+    'lcov_cobertura': 'lcov_cobertura',
+    'matplotlib': 'matplotlib >= 2.2.0',
+    'memory_profiler': 'memory_profiler',
+    'mock': 'mock >= 1.3.0',
+    'numpy': 'numpy >= 1.14.0',
+    'psutil': 'psutil',
+    'pycobertura': 'pycobertura',
+    'Pygments': 'Pygments',
+    'pylint': 'pylint',
+    'pytest': 'pytest >= 3.4.2',
+    'pytest-benchmark': 'pytest-benchmark',
+    'pytest-cov': 'pytest-cov',
+    'scipy': 'scipy >= 1.0.0',
+    'seaborn': 'seaborn >= 0.8',
+}
+BASE_DEPS = (DEPS['numpy'], DEPS['pytest'])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
 WHEELHOUSE = os.environ.get('WHEELHOUSE')
 DOCS_DEPS = (
@@ -47,7 +63,7 @@ def pypy_setup(local_deps, session):
     if WHEELHOUSE is not None:
         # Remove NumPy from dependencies.
         local_deps = list(local_deps)
-        local_deps.remove(NUMPY_DEP)
+        local_deps.remove(DEPS['numpy'])
         local_deps = tuple(local_deps)
         # Install NumPy and SciPy from pre-built wheels.
         session.install(
@@ -55,8 +71,8 @@ def pypy_setup(local_deps, session):
             '--no-index',
             '--find-links',
             WHEELHOUSE,
-            NUMPY_DEP,
-            SCIPY_DEP,
+            DEPS['numpy'],
+            DEPS['scipy'],
         )
     return local_deps
 
@@ -70,7 +86,7 @@ def update_generated(session, check):
     # Update Cython generated source code.
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
-    session.install('Cython')
+    session.install(DEPS['Cython'])
     if check:
         command = get_path('scripts', 'remove_cython_files.py')
         session.run('python', command)
@@ -101,9 +117,9 @@ def unit(session, py):
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
         session.interpreter = 'python{}'.format(py)
-        local_deps = BASE_DEPS + (SCIPY_DEP,)
+        local_deps = BASE_DEPS + (DEPS['scipy'],)
     if py in ('2.7', PYPY):
-        local_deps += (MOCK_DEP,)
+        local_deps += (DEPS['mock'],)
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
@@ -117,7 +133,9 @@ def unit(session, py):
 def cover(session):
     session.interpreter = SINGLE_INTERP
     # Install all test dependencies.
-    local_deps = BASE_DEPS + (SCIPY_DEP, 'pytest-cov', 'coverage')
+    local_deps = BASE_DEPS + (
+        DEPS['scipy'], DEPS['pytest-cov'], DEPS['coverage']
+    )
     session.install(*local_deps)
     # Install this package.
     session.install('.')
@@ -138,7 +156,7 @@ def functional(session, py):
         session.interpreter = 'python{}'.format(py)
         local_deps = BASE_DEPS
     if py in ('2.7', PYPY):
-        local_deps += (MOCK_DEP,)
+        local_deps += (DEPS['mock'],)
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
@@ -182,8 +200,7 @@ def get_doctest_args(session):
 def doctest(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
-    local_deps = DOCS_DEPS
-    session.install(*local_deps)
+    session.install(*DOCS_DEPS)
     # Install this package.
     if IS_MAC_OS_X:
         command = get_path('scripts', 'osx', 'nox-install-for-doctest.sh')
@@ -200,7 +217,7 @@ def docs_images(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
     local_deps = DOCS_DEPS
-    local_deps += (MATPLOTLIB_DEP, SEABORN_DEP, 'pytest')
+    local_deps += (DEPS['matplotlib'], DEPS['seaborn'], DEPS['pytest'])
     session.install(*local_deps)
     # Install this package.
     session.install('.')
@@ -232,13 +249,13 @@ def lint(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
     local_deps = BASE_DEPS + (
-        'docutils',
-        'flake8',
-        'flake8-import-order',
-        MATPLOTLIB_DEP,
-        'Pygments',
-        'pylint',
-        SEABORN_DEP,
+        DEPS['docutils'],
+        DEPS['flake8'],
+        DEPS['flake8-import-order'],
+        DEPS['matplotlib'],
+        DEPS['Pygments'],
+        DEPS['pylint'],
+        DEPS['seaborn'],
     )
     session.install(*local_deps)
     # Install this package.
@@ -290,12 +307,12 @@ def lint(session):
 def benchmark(session, target):
     session.interpreter = SINGLE_INTERP
     if target == 'memory':
-        local_deps = (NUMPY_DEP, 'psutil', 'memory_profiler')
+        local_deps = (DEPS['numpy'], DEPS['psutil'], DEPS['memory_profiler'])
         test_fi1 = get_path('benchmarks', 'memory', 'test_curves.py')
         test_fi2 = get_path('benchmarks', 'memory', 'test_surfaces.py')
         all_run_args = [['python', test_fi1], ['python', test_fi2]]
     elif target == 'time':
-        local_deps = BASE_DEPS + ('pytest-benchmark',)
+        local_deps = BASE_DEPS + (DEPS['pytest-benchmark'],)
         test_dir = get_path('benchmarks', 'time')
         all_run_args = [['py.test'] + session.posargs + [test_dir]]
     # Install all test dependencies.
@@ -316,7 +333,7 @@ def check_journal(session, machine):
     filehandle, journal_filename = tempfile.mkstemp(suffix='-journal.txt')
     os.close(filehandle)
     # Set the journal environment variable and install ``bezier``.
-    session.install(NUMPY_DEP)  # Install requirement(s).
+    session.install(DEPS['numpy'])  # Install requirement(s).
     env = {'BEZIER_JOURNAL': journal_filename}
     session.run('pip', 'install', '.', env=env)
     # Compare the expected file to the actual results.
@@ -390,7 +407,7 @@ def clean(session):
 @nox.session
 def fortran_unit(session):
     session.interpreter = SINGLE_INTERP
-    session.install('lcov_cobertura', 'pycobertura')
+    session.install(DEPS['lcov_cobertura'], DEPS['pycobertura'])
     if py.path.local.sysfind('make') is None:
         session.skip('`make` must be installed')
     if py.path.local.sysfind('gfortran') is None:
