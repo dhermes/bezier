@@ -65,6 +65,7 @@ help:
 	@echo ''
 	@echo 'Usage:'
 	@echo '   make unit          Build and run unit tests'
+	@echo '   make valgrind      Run unit tests with valgrind'
 	@echo '   make lcov          Run unit tests with coverage'
 	@echo '   make functional    Build and run functional tests'
 	@echo '   make clean         Clean generated files'
@@ -89,6 +90,9 @@ $(CURR_DIR)/unit-test-bin: $(F77_OBJS) $(F90_OBJS) $(TEST_OBJS) $(CURR_DIR)/unit
 
 unit: $(CURR_DIR)/unit-test-bin
 	$(CURR_DIR)/unit-test-bin
+
+valgrind: $(CURR_DIR)/unit-test-bin
+	valgrind $(CURR_DIR)/unit-test-bin
 
 lcov: $(CURR_DIR)/unit-test-bin
 	$(CURR_DIR)/unit-test-bin
@@ -124,4 +128,4 @@ clean:
 	rm -fr $(CURR_DIR)/functional-test-bin.dSYM
 	rm -fr $(CURR_DIR)/lcov-html
 
-.PHONY: help unit lcov functional clean
+.PHONY: help unit valgrind lcov functional clean

@@ -105,7 +105,7 @@ contains
     ! Variables outside of signature.
     integer :: i
 
-    ! Populate both as the identity matrix.
+    ! Populate as the identity matrix.
     id_mat = 0
     forall (i = 1:n)
        id_mat(i, i) = 1

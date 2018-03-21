@@ -547,6 +547,7 @@ contains
     weights5 = [0.0_dp, 0.0_dp, 1.0_dp]
 
     ! CASE 1: degree == 1, subdivision A
+    allocate(id_mat(3, 3))
     id_mat = get_id_mat(3)
     allocate(specialized(3, 3))
     allocate(expected(3, 3))

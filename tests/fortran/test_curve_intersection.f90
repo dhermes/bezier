@@ -1738,7 +1738,7 @@ contains
     real(c_double), allocatable :: intersections(:, :)
     integer(c_int) :: num_intersections
     integer :: case_id
-    character(19) :: name
+    character(11) :: name
 
     case_id = 1
     name = "check_lines"
