@@ -9,6 +9,7 @@ Submodules
 
 .. toctree::
 
+   bezier.collinear_normal
    bezier.curve
    bezier.curved_polygon
    bezier.triangle

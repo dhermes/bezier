@@ -231,6 +231,8 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
             return s, s_max
 
         elif _helpers.in_interval(s, s_max, 1.0):
+            # THIS IS A FAIL BECAUSE IT WON'T GIVE THE "OLD" ``s_min``
+            # TO ``s_max``.
             return s_min, s
 
     return s_min, s_max
@@ -413,6 +415,7 @@ def clip_range(nodes1, nodes2):
     end_bottom = np.asfortranarray([degree2, d_min])
     start_top = np.asfortranarray([0.0, d_max])
     end_top = np.asfortranarray([degree2, d_max])
+
     s_min = DEFAULT_S_MIN
     s_max = DEFAULT_S_MAX
     # NOTE: We avoid computing the convex hull and just compute where
