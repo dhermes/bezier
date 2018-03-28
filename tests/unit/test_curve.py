@@ -34,7 +34,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve._degree, 2)
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
-        self.assertIsNone(curve._length)
 
     def test_constructor_wrong_dimension(self):
         nodes = np.asfortranarray([1.0, 2.0])
@@ -52,36 +51,16 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve._degree, 1)
         self.assertEqual(curve._dimension, 3)
         self.assertEqual(curve._nodes, nodes)
-        self.assertIsNone(curve._length)
 
     def test__get_degree(self):
         klass = self._get_target_class()
         self.assertEqual(0, klass._get_degree(1))
         self.assertEqual(1, klass._get_degree(2))
 
-    def test_length_property_not_cached(self):
-        nodes = np.asfortranarray([[0.0, 1.0], [0.0, 2.0]])
-        curve = self._make_one(nodes, 1)
-        self.assertIsNone(curve._length)
-        patch = unittest.mock.patch(
-            'bezier._curve_helpers.compute_length',
-            return_value=unittest.mock.sentinel.length,
-        )
-        with patch as mocked:
-            self.assertEqual(curve.length, unittest.mock.sentinel.length)
-            self.assertEqual(mocked.call_count, 1)
-            call = mocked.mock_calls[0]
-            _, positional, keyword = call
-            self.assertEqual(keyword, {})
-            self.assertEqual(len(positional), 1)
-            self.assertEqual(positional[0], nodes)
-
     def test_length_property(self):
-        nodes = np.asfortranarray([[0.0, 1.0], [0.0, 2.0]])
+        nodes = np.asfortranarray([[0.0, 3.0], [0.0, 4.0]])
         curve = self._make_one(nodes, 1)
-        length = 2.817281728
-        curve._length = length
-        self.assertEqual(curve.length, length)
+        self.assertEqual(curve.length, 5.0)
 
     def test___dict___property(self):
         curve = self._make_one(self.ZEROS, 1, _copy=False)
@@ -90,18 +69,15 @@ class TestCurve(utils.NumPyTestCase):
             '_nodes': self.ZEROS,
             '_dimension': 2,
             '_degree': 1,
-            '_length': None,
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curve``.
-        expected['_length'] = 1.5
-        self.assertIsNone(curve._length)
+        expected['_dimension'] = 47
+        self.assertNotEqual(curve._dimension, expected['_dimension'])
 
     def _copy_helper(self, **kwargs):
         np_shape = (2, 2)
-        length = kwargs.pop('_length', None)
         curve = self._make_one(np.zeros(np_shape, order='F'), 1, **kwargs)
-        curve._length = length
         fake_nodes = unittest.mock.Mock(
             ndim=2, shape=np_shape, spec=['ndim', 'shape', 'copy']
         )
@@ -113,7 +89,6 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(new_curve._degree, curve._degree)
         self.assertEqual(new_curve._dimension, curve._dimension)
         self.assertIs(new_curve._nodes, copied_nodes)
-        self.assertEqual(new_curve._length, curve._length)
         fake_nodes.copy.assert_called_once_with(order='F')
 
     def test__copy(self):

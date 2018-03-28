@@ -181,17 +181,13 @@ class Surface(_base.Base):
         '_dimension',  # From base class
         '_nodes',  # From base class
         '_degree',  # From constructor
-        '_area',  # Empty default
         '_edges',  # Empty default
-        '_is_valid',  # Empty default
     )
 
     def __init__(self, nodes, degree, _copy=True):
         super(Surface, self).__init__(nodes, _copy=_copy)
         self._degree = degree
-        self._area = None
         self._edges = None
-        self._is_valid = None
 
     @classmethod
     def from_nodes(cls, nodes, _copy=True):
@@ -270,9 +266,6 @@ class Surface(_base.Base):
 
         where :math:`b_{i, d}, b_{j, d}` are Bernstein basis polynomials.
 
-        On first access, this value will be computed and then cached for future
-        accesses.
-
         Returns:
             float: The area of the current surface.
 
@@ -287,13 +280,10 @@ class Surface(_base.Base):
                 self._dimension,
             )
 
-        if self._area is None:
-            edge1, edge2, edge3 = self._get_edges()
-            self._area = _surface_helpers.compute_area(
-                edge1._nodes, edge2._nodes, edge3._nodes
-            )
-
-        return self._area
+        edge1, edge2, edge3 = self._get_edges()
+        return _surface_helpers.compute_area(
+            edge1._nodes, edge2._nodes, edge3._nodes
+        )
 
     def _compute_edges(self):
         """Compute the edges of the current surface.
@@ -864,9 +854,7 @@ class Surface(_base.Base):
            import make_images
            make_images.surface_is_valid3(surface)
         """
-        if self._is_valid is None:
-            self._is_valid = self._compute_valid()
-        return self._is_valid
+        return self._compute_valid()
 
     @property
     def __dict__(self):
@@ -883,9 +871,7 @@ class Surface(_base.Base):
             '_dimension': self._dimension,
             '_nodes': self._nodes,
             '_degree': self._degree,
-            '_area': self._area,
             '_edges': self._edges,
-            '_is_valid': self._is_valid,
         }
 
     def locate(self, point, _verify=True):

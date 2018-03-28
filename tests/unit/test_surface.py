@@ -47,9 +47,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(surface._degree, 1)
         self.assertEqual(surface._dimension, 2)
         self.assertIs(surface._nodes, nodes)
-        self.assertIsNone(surface._area)
         self.assertIsNone(surface._edges)
-        self.assertIsNone(surface._is_valid)
 
     def test_constructor_wrong_dimension(self):
         nodes = np.asfortranarray([1.0, 2.0])
@@ -73,9 +71,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(surface._degree, 2)
         self.assertEqual(surface._dimension, 3)
         self.assertEqual(surface._nodes, nodes)
-        self.assertIsNone(surface._area)
         self.assertIsNone(surface._edges)
-        self.assertIsNone(surface._is_valid)
 
     def test___repr__(self):
         nodes = np.zeros((3, 15), order='F')
@@ -101,7 +97,6 @@ class TestSurface(utils.NumPyTestCase):
     def test_area_property_wrong_dimension(self):
         nodes = np.asfortranarray([[0.0, 0.0], [1.0, 2.0], [2.0, 3.0]])
         surface = self._make_one(nodes, 1)
-        self.assertIsNone(surface._area)
         with self.assertRaises(NotImplementedError) as exc_info:
             getattr(surface, 'area')
 
@@ -111,19 +106,10 @@ class TestSurface(utils.NumPyTestCase):
         )
         self.assertEqual(exc_args, expected_args)
 
-    def test_area_property_not_cached(self):
+    def test_area_property(self):
         nodes = np.asfortranarray([[0.0, 2.0, 1.0], [0.0, 3.0, 2.0]])
         surface = self._make_one(nodes, 1)
-        self.assertIsNone(surface._area)
-        computed_area = surface.area
-        self.assertEqual(computed_area, 0.5)
-
-    def test_area_property_cached(self):
-        nodes = np.asfortranarray([[0.0, 2.0, 1.0], [0.0, 3.0, 2.0]])
-        surface = self._make_one(nodes, 1)
-        area = 0.5
-        surface._area = area
-        self.assertEqual(surface.area, area)
+        self.assertEqual(surface.area, 0.5)
 
     def _edges_helper(self, edge1, edge2, edge3, nodes1, nodes2, nodes3):
         import bezier
@@ -563,20 +549,6 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(self.UNIT_TRIANGLE, 1)
         self.assertTrue(surface.is_valid)
 
-    def test_is_valid_property_cached(self):
-        surface = self._make_one_no_slots(self.ZEROS, 1)
-        compute_valid = unittest.mock.Mock(spec=[])
-        surface._compute_valid = compute_valid
-        compute_valid.return_value = True
-        self.assertIsNone(surface._is_valid)
-        # Access the property and check the mocks.
-        self.assertTrue(surface.is_valid)
-        self.assertTrue(surface._is_valid)
-        compute_valid.assert_called_once_with()
-        # Access again but make sure no more calls to _compute_valid().
-        self.assertTrue(surface.is_valid)
-        self.assertEqual(compute_valid.call_count, 1)
-
     def test___dict___property(self):
         surface = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
         props_dict = surface.__dict__
@@ -584,9 +556,7 @@ class TestSurface(utils.NumPyTestCase):
             '_nodes': self.UNIT_TRIANGLE,
             '_dimension': 2,
             '_degree': 1,
-            '_area': None,
             '_edges': None,
-            '_is_valid': None,
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``surface``.

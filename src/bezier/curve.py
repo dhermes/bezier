@@ -89,13 +89,11 @@ class Curve(_base.Base):
         '_dimension',  # From base class
         '_nodes',  # From base class
         '_degree',  # From constructor
-        '_length',  # Empty defaults
     )
 
     def __init__(self, nodes, degree, _copy=True):
         super(Curve, self).__init__(nodes, _copy=_copy)
         self._degree = degree
-        self._length = None
 
     @classmethod
     def from_nodes(cls, nodes, _copy=True):
@@ -141,15 +139,10 @@ class Curve(_base.Base):
            \int_{B\left(\left[0, 1\right]\right)} 1 \, d\mathbf{x} =
            \int_0^1 \left\lVert B'(s) \right\rVert_2 \, ds
 
-        On first access, this value will be computed and then cached for future
-        accesses.
-
         Returns:
             float: The length of the current curve.
         """
-        if self._length is None:
-            self._length = _curve_helpers.compute_length(self._nodes)
-        return self._length
+        return _curve_helpers.compute_length(self._nodes)
 
     @property
     def __dict__(self):
@@ -166,7 +159,6 @@ class Curve(_base.Base):
             '_dimension': self._dimension,
             '_nodes': self._nodes,
             '_degree': self._degree,
-            '_length': self._length,
         }
 
     def _copy(self):
@@ -175,10 +167,7 @@ class Curve(_base.Base):
         Returns:
             .Curve: Copy of current curve.
         """
-        result = Curve(self._nodes, self._degree, _copy=True)
-        # Also copy over any cached computed values.
-        result._length = self._length  # pylint: disable=protected-access
-        return result
+        return Curve(self._nodes, self._degree, _copy=True)
 
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
