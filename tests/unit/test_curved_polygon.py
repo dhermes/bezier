@@ -107,6 +107,10 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         expected['_num_sides'] = 5
         self.assertNotEqual(curved_poly._num_sides, expected['_num_sides'])
 
+    def test_area(self):
+        curved_poly = self._make_default()
+        self.assertEqual(curved_poly.area, 2.0 / 3.0)
+
     def test___repr__(self):
         curved_poly = self._make_default()
         self.assertEqual(repr(curved_poly), '<CurvedPolygon (num_sides=2)>')

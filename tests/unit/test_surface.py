@@ -98,17 +98,30 @@ class TestSurface(utils.NumPyTestCase):
         with self.assertRaises(ValueError):
             klass._get_degree(9)
 
-    def test_area_property_not_cached(self):
+    def test_area_property_wrong_dimension(self):
         nodes = np.asfortranarray([[0.0, 0.0], [1.0, 2.0], [2.0, 3.0]])
         surface = self._make_one(nodes, 1)
         self.assertIsNone(surface._area)
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(NotImplementedError) as exc_info:
             getattr(surface, 'area')
 
-    def test_area_property(self):
-        nodes = np.asfortranarray([[0.0, 0.0], [1.0, 2.0], [2.0, 3.0]])
+        exc_args = exc_info.exception.args
+        expected_args = (
+            '2D is the only supported dimension', 'Current dimension', 3
+        )
+        self.assertEqual(exc_args, expected_args)
+
+    def test_area_property_not_cached(self):
+        nodes = np.asfortranarray([[0.0, 2.0, 1.0], [0.0, 3.0, 2.0]])
         surface = self._make_one(nodes, 1)
-        area = 3.14159
+        self.assertIsNone(surface._area)
+        computed_area = surface.area
+        self.assertEqual(computed_area, 0.5)
+
+    def test_area_property_cached(self):
+        nodes = np.asfortranarray([[0.0, 2.0, 1.0], [0.0, 3.0, 2.0]])
+        surface = self._make_one(nodes, 1)
+        area = 0.5
         surface._area = area
         self.assertEqual(surface.area, area)
 

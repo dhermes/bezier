@@ -648,6 +648,24 @@ SECOND_SURFACE_INFO = (
 # to be "zero". This is a "hack", since it doesn't take ||u||
 # or ||v|| into account.
 ALMOST_TANGENT = 0.5 ** 50
+# Hardcoded "line integral" helpers for ``shoelace_for_area()``.
+SHOELACE_LINEAR = ((1, 0, 1),)
+SHOELACE_QUADRATIC = ((2, 0, 1), (2, 1, 2), (1, 0, 2))
+SHOELACE_CUBIC = (
+    (6, 0, 1), (3, 0, 2), (1, 0, 3), (3, 1, 2), (3, 1, 3), (6, 2, 3)
+)
+SHOELACE_QUARTIC = (
+    (20, 0, 1),
+    (10, 0, 2),
+    (4, 0, 3),
+    (1, 0, 4),
+    (8, 1, 2),
+    (8, 1, 3),
+    (4, 1, 4),
+    (8, 2, 3),
+    (10, 2, 4),
+    (20, 3, 4),
+)
 
 
 def polynomial_sign(poly_surface, degree):
@@ -1300,8 +1318,10 @@ def _jacobian_det(nodes, degree, st_vals):
         )
     # Take the determinant for each (s, t).
     return (
-        bs_bt_vals[0, :] * bs_bt_vals[3, :] -
-        bs_bt_vals[1, :] * bs_bt_vals[2, :]
+        bs_bt_vals[0, :] *
+        bs_bt_vals[3, :] -
+        bs_bt_vals[1, :] *
+        bs_bt_vals[2, :]
     )
 
 
@@ -2866,6 +2886,88 @@ def _compute_edge_nodes(nodes, degree):
     return nodes1, nodes2, nodes3
 
 
+def shoelace_for_area(nodes):
+    r"""Compute an auxiliary "shoelace" sum used to compute area.
+
+    .. note::
+
+       This is a helper for :func:`_compute_area`.
+
+    Defining :math:`\left[i, j\right] = x_i y_j - y_i x_j` as a shoelace
+    term illuminates the name of this helper. On a degree one curve, this
+    function will return
+
+    .. math::
+
+       \frac{1}{2}\left[0, 1\right].
+
+    on a degree two curve it will return
+
+    .. math::
+
+       \frac{1}{6}\left(2 \left[0, 1\right] + 2 \left[1, 2\right] +
+           \left[0, 2\right]\right)
+
+    and so on.
+
+    For a given :math:`\left[i, j\right]`, the coefficient comes from
+    integrating :math:`b_{i, d}, b_{j, d}` on :math:`\left[0, 1\right]` (where
+    :math:`b_{i, d}, b_{j, d}` are Bernstein basis polynomials).
+
+    Returns:
+        float: The computed sum of shoelace terms.
+
+    Raises:
+        .UnsupportedDegree: If the degree is not 1, 2, 3 or 4.
+    """
+    _, num_nodes = nodes.shape
+    if num_nodes == 2:
+        shoelace = SHOELACE_LINEAR
+        scale_factor = 2.0
+    elif num_nodes == 3:
+        shoelace = SHOELACE_QUADRATIC
+        scale_factor = 6.0
+    elif num_nodes == 4:
+        shoelace = SHOELACE_CUBIC
+        scale_factor = 20.0
+    elif num_nodes == 5:
+        shoelace = SHOELACE_QUARTIC
+        scale_factor = 70.0
+    else:
+        raise _helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
+
+    result = 0.0
+    for multiplier, index1, index2 in shoelace:
+        result += multiplier * (
+            nodes[0, index1] *
+            nodes[1, index2] -
+            nodes[1, index1] *
+            nodes[0, index2]
+        )
+
+    return result / scale_factor
+
+
+def _compute_area(*edges):
+    """Compute the area of a curved polygon.
+
+    Uses Green's theorem to compute the area exactly. See :attr:`.Surface.area`
+    and :attr:`.CurvedPolygon.area` for more information.
+
+    Args:
+        edges (Tuple[numpy.ndarray]): A list of ``2 x N`` arrays, each of which
+            are control points for an edge of a curved polygon.
+
+    Returns:
+        float: The computed area.
+    """
+    result = 0.0
+    for edge_nodes in edges:
+        result += shoelace_for_area(edge_nodes)
+
+    return result
+
+
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _de_casteljau_one_round
@@ -2877,6 +2979,7 @@ if _speedup is None:  # pragma: NO COVER
     evaluate_barycentric_multi = _evaluate_barycentric_multi
     evaluate_cartesian_multi = _evaluate_cartesian_multi
     compute_edge_nodes = _compute_edge_nodes
+    compute_area = _compute_area
 else:
     de_casteljau_one_round = _speedup.de_casteljau_one_round
     specialize_surface = _speedup.specialize_surface
@@ -2887,4 +2990,5 @@ else:
     evaluate_barycentric_multi = _speedup.evaluate_barycentric_multi
     evaluate_cartesian_multi = _speedup.evaluate_cartesian_multi
     compute_edge_nodes = _speedup.compute_edge_nodes
+    compute_area = _compute_area
 # pylint: enable=invalid-name

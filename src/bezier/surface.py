@@ -52,8 +52,8 @@ class Surface(_base.Base):
         https://en.wikipedia.org/wiki/Barycentric_coordinate_system
 
     We define a B |eacute| zier triangle as a mapping from the
-    `unit simplex`_ in 2D (i.e. the unit triangle) onto a surface in an
-    arbitrary dimension. We use `barycentric coordinates`_
+    `unit simplex`_ in :math:`\mathbf{R}^2` (i.e. the unit triangle) onto a
+    surface in an arbitrary dimension. We use `barycentric coordinates`_
 
     .. math::
 
@@ -242,16 +242,56 @@ class Surface(_base.Base):
 
     @property
     def area(self):
-        """float: The area of the current surface.
+        r"""The area of the current surface.
+
+        For surfaces in :math:`\mathbf{R}^2`, this computes the area via
+        Green's theorem. Using the vector field :math:`\mathbf{F} =
+        \left[-y, x\right]^T`, since :math:`\partial_x(x) - \partial_y(-y) = 2`
+        Green's theorem says twice the area is equal to
+
+        .. math::
+
+           \int_{B\left(\mathcal{U}\right)} 2 \, d\mathbf{x} =
+           \int_{\partial B\left(\mathcal{U}\right)} -y \, dx + x \, dy.
+
+        This relies on the assumption that the current surface is valid, which
+        implies that the image of the unit triangle under the B |eacute| zier
+        map --- :math:`B\left(\mathcal{U}\right)`  --- has the edges of the
+        surface as its boundary.
+
+        Note that for a given edge :math:`C(r)` with control points
+        :math:`x_j, y_j`, the integral can be simplified:
+
+        .. math::
+
+            \int_C -y \, dx + x \, dy = \int_0^1 (x y' - y x') \, dr
+                = \sum_{i < j} (x_i y_j - y_i x_j) \int_0^1 b_{i, d}
+                b'_{j, d} \, dr
+
+        where :math:`b_{i, d}, b_{j, d}` are Bernstein basis polynomials.
+
+        On first access, this value will be computed and then cached for future
+        accesses.
 
         Returns:
             float: The area of the current surface.
 
         Raises:
-            NotImplementedError: If the area isn't already cached.
+            NotImplementedError: If the current surface isn't in
+                :math:`\mathbf{R}^2`.
         """
+        if self._dimension != 2:
+            raise NotImplementedError(
+                '2D is the only supported dimension',
+                'Current dimension',
+                self._dimension,
+            )
+
         if self._area is None:
-            raise NotImplementedError('Area computation not yet implemented.')
+            edge1, edge2, edge3 = self._get_edges()
+            self._area = _surface_helpers.compute_area(
+                edge1._nodes, edge2._nodes, edge3._nodes
+            )
 
         return self._area
 

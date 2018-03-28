@@ -28,6 +28,7 @@ import six
 
 from bezier import _helpers
 from bezier import _plot_helpers
+from bezier import _surface_helpers
 
 
 class CurvedPolygon(object):
@@ -213,6 +214,41 @@ class CurvedPolygon(object):
         returned dictionary.
         """
         return {'_edges': self._edges, '_num_sides': self._num_sides}
+
+    @property
+    def area(self):
+        r"""The area of the current curved polygon.
+
+        This assumes, but does not check, that the current curved polygon
+        is valid (i.e. it is bounded by the edges).
+
+        This computes the area via Green's theorem. Using the vector field
+        :math:`\mathbf{F} = \left[-y, x\right]^T`, since
+        :math:`\partial_x(x) - \partial_y(-y) = 2` Green's theorem says
+
+        .. math::
+
+           \int_{\mathcal{P}} 2 \, d\textbf{x} =
+           \int_{\partial \mathcal{P}} -y \, dx + x \, dy
+
+        (where :math:`\mathcal{P}` is the current curved polygon).
+
+        Note that for a given edge :math:`C(r)` with control points
+        :math:`x_j, y_j`, the integral can be simplified:
+
+        .. math::
+
+            \int_C -y \, dx + x \, dy = \int_0^1 (x y' - y x') \, dr
+                = \sum_{i < j} (x_i y_j - y_i x_j) \int_0^1 b_{i, d}
+                b'_{j, d} \, dr
+
+        where :math:`b_{i, d}, b_{j, d}` are Bernstein basis polynomials.
+
+        Returns:
+            float: The area of the current curved polygon.
+        """
+        edges = tuple(edge._nodes for edge in self._edges)
+        return _surface_helpers.compute_area(*edges)
 
     def __repr__(self):
         """Representation of current object.

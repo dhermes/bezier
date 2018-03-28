@@ -132,7 +132,21 @@ class Curve(_base.Base):
 
     @property
     def length(self):
-        """float: The length of the current curve."""
+        r"""The length of the current curve.
+
+        Computes the length via:
+
+        .. math::
+
+           \int_{B\left(\left[0, 1\right]\right)} 1 \, d\mathbf{x} =
+           \int_0^1 \left\lVert B'(s) \right\rVert_2 \, ds
+
+        On first access, this value will be computed and then cached for future
+        accesses.
+
+        Returns:
+            float: The length of the current curve.
+        """
         if self._length is None:
             self._length = _curve_helpers.compute_length(self._nodes)
         return self._length

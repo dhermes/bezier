@@ -2357,6 +2357,78 @@ class Test_speedup_compute_edge_nodes(Test__compute_edge_nodes):
         return _speedup.compute_edge_nodes(nodes, degree)
 
 
+class Test_shoelace_for_area(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier import _surface_helpers
+        return _surface_helpers.shoelace_for_area(nodes)
+
+    def test_linear(self):
+        edge_nodes = np.asfortranarray([[1.0, 2.0], [1.0, 4.0]])
+        shoelace_val = self._call_function_under_test(edge_nodes)
+        self.assertEqual(shoelace_val, 1.0)
+
+    def test_quadratic(self):
+        edge_nodes = np.asfortranarray([[0.0, 1.0, 4.0], [0.0, 3.0, 3.0]])
+        shoelace_val = self._call_function_under_test(edge_nodes)
+        self.assertEqual(shoelace_val, -3.0)
+
+    def test_cubic(self):
+        edge_nodes = np.asfortranarray(
+            [[0.0, 1.0, 2.0, 3.0], [0.0, 9.0, -6.0, 3.0]]
+        )
+        shoelace_val = self._call_function_under_test(edge_nodes)
+        self.assertEqual(shoelace_val, 0.0)
+
+    def test_quartic(self):
+        edge_nodes = np.asfortranarray(
+            [[0.0, 1.0, 2.0, 3.0, 4.0], [0.0, -4.0, 3.0, -4.0, 0.0]]
+        )
+        shoelace_val = self._call_function_under_test(edge_nodes)
+        self.assertEqual(shoelace_val, 4.0)
+
+    def test_unsupported_degree(self):
+        from bezier import _helpers
+
+        degree = 5
+        edge_nodes = np.empty((2, degree + 1), order='F')
+        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
+            self._call_function_under_test(edge_nodes)
+
+        self.assertEqual(exc_info.exception.degree, degree)
+        self.assertEqual(exc_info.exception.supported, (1, 2, 3, 4))
+
+
+class Test__compute_area(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(*edges):
+        from bezier import _surface_helpers
+        return _surface_helpers._compute_area(*edges)
+
+    def test_mixed_degree(self):
+        edge1 = np.asfortranarray([[0.0, 2.0], [0.0, 0.0]])
+        edge2 = np.asfortranarray([[2.0, 1.0, 0.0], [0.0, 3.0, 0.0]])
+        area = self._call_function_under_test(edge1, edge2)
+        self.assertEqual(area, 2.0)
+
+    def test_curved_triangle(self):
+        edge1 = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, -1.0, 0.0]])
+        edge2 = np.asfortranarray([[2.0, 1.5, 0.0], [0.0, 1.5, 2.0]])
+        edge3 = np.asfortranarray([[0.0, 1.0, 0.0], [2.0, 1.0, 0.0]])
+        area = self._call_function_under_test(edge1, edge2, edge3)
+        self.assertEqual(area, 8.0 / 3.0)
+
+    def test_curved_quadrilateral(self):
+        edge1 = np.asfortranarray([[0.0, 1.0], [0.0, 0.0]])
+        edge2 = np.asfortranarray([[1.0, 1.0], [0.0, 1.0]])
+        edge3 = np.asfortranarray([[1.0, 0.5, 0.0], [1.0, 2.0, 1.0]])
+        edge4 = np.asfortranarray([[0.0, 0.0], [1.0, 0.0]])
+        area = self._call_function_under_test(edge1, edge2, edge3, edge4)
+        utils.almost(self, 4.0 / 3.0, area, 1)
+
+
 def make_intersect(*args, **kwargs):
     from bezier import _intersection_helpers
     return _intersection_helpers.Intersection(*args, **kwargs)

@@ -306,8 +306,8 @@ def _compute_length(nodes):
 
     .. math::
 
-       \ell\left(B\right) =
-           \int_0^1 \| B'(s) \|_2 \, ds
+       \int_{B\left(\left[0, 1\right]\right)} 1 \, d\mathbf{x} =
+       \int_0^1 \left\lVert B'(s) \right\rVert_2 \, ds
 
     using `QUADPACK`_ (via SciPy).
 
@@ -372,8 +372,10 @@ def _elevate_nodes(nodes):
     multipliers = np.arange(1, num_nodes, dtype=_FLOAT64)[np.newaxis, :]
     denominator = float(num_nodes)
     new_nodes[:, 1:-1] = (
-        multipliers * nodes[:, :-1] +
-        (denominator - multipliers) * nodes[:, 1:]
+        multipliers *
+        nodes[:, :-1] +
+        (denominator - multipliers) *
+        nodes[:, 1:]
     )
     # Hold off on division until the end, to (attempt to) avoid round-off.
     new_nodes /= denominator
