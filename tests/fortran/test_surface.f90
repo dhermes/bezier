@@ -12,11 +12,12 @@
 
 module test_surface
 
-  use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
+  use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int, c_ptr, c_loc
   use surface, only: &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det, specialize_surface, subdivide_nodes, compute_edge_nodes
+       jacobian_det, specialize_surface, subdivide_nodes, compute_edge_nodes, &
+       shoelace_for_area, compute_area
   use types, only: dp
   use unit_test_helpers, only: &
        print_status, get_random_nodes, get_id_mat, ref_triangle_uniform_params
@@ -26,7 +27,8 @@ module test_surface
        test_evaluate_barycentric_multi, test_evaluate_cartesian_multi, &
        test_jacobian_both, test_jacobian_det, &
        test_specialize_surface, test_subdivide_nodes, &
-       subdivide_points_check, test_compute_edge_nodes
+       subdivide_points_check, test_compute_edge_nodes, &
+       test_shoelace_for_area, test_compute_area
   public surface_all_tests
 
 contains
@@ -43,6 +45,8 @@ contains
     call test_specialize_surface(success)
     call test_subdivide_nodes(success)
     call test_compute_edge_nodes(success)
+    call test_shoelace_for_area(success)
+    call test_compute_area(success)
 
   end subroutine surface_all_tests
 
@@ -1178,5 +1182,152 @@ contains
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_compute_edge_nodes
+
+  subroutine test_shoelace_for_area(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(17) :: name
+    real(c_double) :: nodes1(2, 2), nodes2(2, 3), nodes3(2, 4)
+    real(c_double) :: nodes4(2, 5), nodes5(2, 6)
+    real(c_double) :: shoelace
+    logical(c_bool) :: not_implemented
+
+    case_id = 1
+    name = "shoelace_for_area"
+
+    ! CASE 1: Linear edge.
+    nodes1(:, 1) = 1
+    nodes1(:, 2) = [2.0_dp, 4.0_dp]
+    call shoelace_for_area(2, nodes1, shoelace, not_implemented)
+    case_success = ( &
+         shoelace == 1.0_dp .AND. &
+         .NOT. not_implemented)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Quadratic edge.
+    nodes2(:, 1) = 0
+    nodes2(:, 2) = [1.0_dp, 3.0_dp]
+    nodes2(:, 3) = [4.0_dp, 3.0_dp]
+    call shoelace_for_area(3, nodes2, shoelace, not_implemented)
+    case_success = ( &
+         shoelace == -3.0_dp .AND. &
+         .NOT. not_implemented)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Cubic edge.
+    nodes3(:, 1) = 0
+    nodes3(:, 2) = [1.0_dp, 9.0_dp]
+    nodes3(:, 3) = [2.0_dp, -6.0_dp]
+    nodes3(:, 4) = [3.0_dp, 3.0_dp]
+    call shoelace_for_area(4, nodes3, shoelace, not_implemented)
+    case_success = ( &
+         shoelace == 0.0_dp .AND. &
+         .NOT. not_implemented)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Quartic edge.
+    nodes4(:, 1) = 0
+    nodes4(:, 2) = [1.0_dp, -4.0_dp]
+    nodes4(:, 3) = [2.0_dp, 3.0_dp]
+    nodes4(:, 4) = [3.0_dp, -4.0_dp]
+    nodes4(:, 5) = [4.0_dp, 0.0_dp]
+    call shoelace_for_area(5, nodes4, shoelace, not_implemented)
+    case_success = ( &
+         shoelace == 4.0_dp .AND. &
+         .NOT. not_implemented)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Unsupported degree.
+    nodes5 = 1
+    call shoelace_for_area(6, nodes5, shoelace, not_implemented)
+    case_success = not_implemented
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_shoelace_for_area
+
+  subroutine test_compute_area(success)
+    logical(c_bool), intent(inout) :: success
+    ! Variables outside of signature.
+    logical :: case_success
+    integer :: case_id
+    character(12) :: name
+    type(c_ptr) :: nodes_pointers(4)
+    real(c_double) :: area
+    logical(c_bool) :: not_implemented
+    real(c_double), target :: linear1(2, 2), linear2(2, 2), linear3(2, 2)
+    real(c_double), target :: &
+         quadratic1(2, 3), quadratic2(2, 3), quadratic3(2, 3)
+    real(c_double), target :: quintic1(2, 6)
+
+    case_id = 1
+    name = "compute_area"
+
+    ! CASE 1: Curved clam shell (edges are mixed degree).
+    linear1(:, 1) = 0
+    linear1(:, 2) = [2.0_dp, 0.0_dp]
+    nodes_pointers(1) = c_loc(linear1)
+    quadratic1(:, 1) = [2.0_dp, 0.0_dp]
+    quadratic1(:, 2) = [1.0_dp, 3.0_dp]
+    quadratic1(:, 3) = 0
+    nodes_pointers(2) = c_loc(quadratic1)
+    call compute_area( &
+         2, [2, 3], nodes_pointers(:2), area, not_implemented)
+    case_success = ( &
+         area == 2.0_dp .AND. &
+         .NOT. not_implemented)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Curved triangle (all edges quadratic).
+    quadratic1(:, 1) = 0
+    quadratic1(:, 2) = [1.0_dp, -1.0_dp]
+    quadratic1(:, 3) = [2.0_dp, 0.0_dp]
+    nodes_pointers(1) = c_loc(quadratic1)
+    quadratic2(:, 1) = [2.0_dp, 0.0_dp]
+    quadratic2(:, 2) = [1.5_dp, 1.5_dp]
+    quadratic2(:, 3) = [0.0_dp, 2.0_dp]
+    nodes_pointers(2) = c_loc(quadratic2)
+    quadratic3(:, 1) = [0.0_dp, 2.0_dp]
+    quadratic3(:, 2) = 1
+    quadratic3(:, 3) = 0
+    nodes_pointers(3) = c_loc(quadratic3)
+    call compute_area( &
+         3, [3, 3, 3], nodes_pointers(:3), area, not_implemented)
+    case_success = ( &
+         3.0_dp * area == 8.0_dp .AND. &
+         .NOT. not_implemented)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Curved quadrilateral (edges are mixed degree).
+    linear1(:, 1) = 0
+    linear1(:, 2) = [1.0_dp, 0.0_dp]
+    nodes_pointers(1) = c_loc(linear1)
+    linear2(:, 1) = [1.0_dp, 0.0_dp]
+    linear2(:, 2) = 1
+    nodes_pointers(2) = c_loc(linear2)
+    quadratic1(:, 1) = 1
+    quadratic1(:, 2) = [0.5_dp, 2.0_dp]
+    quadratic1(:, 3) = [0.0_dp, 1.0_dp]
+    nodes_pointers(3) = c_loc(quadratic1)
+    linear3(:, 1) = [0.0_dp, 1.0_dp]
+    linear3(:, 2) = 0
+    nodes_pointers(4) = c_loc(linear3)
+    call compute_area( &
+         4, [2, 2, 3, 2], nodes_pointers, area, not_implemented)
+    case_success = ( &
+         3.0_dp * area == 4.0_dp .AND. &
+         .NOT. not_implemented)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Unsupported degree.
+    quintic1 = 1
+    nodes_pointers(1) = c_loc(quintic1)
+    call compute_area( &
+         1, [6], nodes_pointers(:1), area, not_implemented)
+    case_success = not_implemented
+    call print_status(name, case_id, case_success, success)
+
+  end subroutine test_compute_area
 
 end module test_surface

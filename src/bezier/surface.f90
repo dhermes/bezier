@@ -12,7 +12,8 @@
 
 module surface
 
-  use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
+  use, intrinsic :: iso_c_binding, only: &
+       c_double, c_int, c_bool, c_ptr, c_f_pointer
   use types, only: dp
   use curve, only: evaluate_curve_barycentric
   implicit none
@@ -20,7 +21,8 @@ module surface
   public &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det, specialize_surface, subdivide_nodes, compute_edge_nodes
+       jacobian_det, specialize_surface, subdivide_nodes, compute_edge_nodes, &
+       shoelace_for_area, compute_area
 
 contains
 
@@ -277,10 +279,12 @@ contains
   end subroutine jacobian_det
 
   subroutine specialize_workspace_sizes(degree, size_odd, size_even)
+
+    ! NOTE: This is a helper for ``specialize_surface()``.
+
     integer(c_int), intent(in) :: degree
     integer(c_int), intent(out) :: size_odd, size_even
 
-    ! NOTE: This is a helper for ``specialize_surface``.
     if (mod(degree, 2) == 1) then
        size_odd = ((degree + 1) * (degree + 3)**2 * (degree + 5)) / 64
        size_even = size_odd
@@ -788,5 +792,83 @@ contains
     end do
 
   end subroutine compute_edge_nodes
+
+  subroutine shoelace_for_area(num_nodes, nodes, shoelace, not_implemented)
+
+    ! NOTE: This is a helper for ``compute_area()``.
+    ! NOTE: This subroutine is not part of the C ABI for this module,
+    !       but it is (for now) public, so that it can be tested.
+
+    integer(c_int), intent(in) :: num_nodes
+    real(c_double), intent(in) :: nodes(2, num_nodes)
+    real(c_double), intent(out) :: shoelace
+    logical(c_bool), intent(out) :: not_implemented
+
+    not_implemented = .FALSE.
+    if (num_nodes == 2) then
+       shoelace = ( &
+            nodes(1, 1) * nodes(2, 2) - nodes(2, 1) * nodes(1, 2))
+       shoelace = shoelace / 2
+    else if (num_nodes == 3) then
+       shoelace = ( &
+            2 * (nodes(1, 1) * nodes(2, 2) - nodes(2, 1) * nodes(1, 2)) + &
+            (nodes(1, 1) * nodes(2, 3) - nodes(2, 1) * nodes(1, 3)) + &
+            2 * (nodes(1, 2) * nodes(2, 3) - nodes(2, 2) * nodes(1, 3)))
+       shoelace = shoelace / 6
+    else if (num_nodes == 4) then
+       shoelace = ( &
+            6 * (nodes(1, 1) * nodes(2, 2) - nodes(2, 1) * nodes(1, 2)) + &
+            3 * (nodes(1, 1) * nodes(2, 3) - nodes(2, 1) * nodes(1, 3)) + &
+            (nodes(1, 1) * nodes(2, 4) - nodes(2, 1) * nodes(1, 4)) + &
+            3 * (nodes(1, 2) * nodes(2, 3) - nodes(2, 2) * nodes(1, 3)) + &
+            3 * (nodes(1, 2) * nodes(2, 4) - nodes(2, 2) * nodes(1, 4)) + &
+            6 * (nodes(1, 3) * nodes(2, 4) - nodes(2, 3) * nodes(1, 4)))
+       shoelace = shoelace / 20
+    else if (num_nodes == 5) then
+       shoelace = ( &
+            20 * (nodes(1, 1) * nodes(2, 2) - nodes(2, 1) * nodes(1, 2)) + &
+            10 * (nodes(1, 1) * nodes(2, 3) - nodes(2, 1) * nodes(1, 3)) + &
+            4 * (nodes(1, 1) * nodes(2, 4) - nodes(2, 1) * nodes(1, 4)) + &
+            (nodes(1, 1) * nodes(2, 5) - nodes(2, 1) * nodes(1, 5)) + &
+            8 * (nodes(1, 2) * nodes(2, 3) - nodes(2, 2) * nodes(1, 3)) + &
+            8 * (nodes(1, 2) * nodes(2, 4) - nodes(2, 2) * nodes(1, 4)) + &
+            4 * (nodes(1, 2) * nodes(2, 5) - nodes(2, 2) * nodes(1, 5)) + &
+            8 * (nodes(1, 3) * nodes(2, 4) - nodes(2, 3) * nodes(1, 4)) + &
+            10 * (nodes(1, 3) * nodes(2, 5) - nodes(2, 3) * nodes(1, 5)) + &
+            20 * (nodes(1, 4) * nodes(2, 5) - nodes(2, 4) * nodes(1, 5)))
+       shoelace = shoelace / 70
+    else
+       not_implemented = .TRUE.
+       return
+    end if
+
+  end subroutine shoelace_for_area
+
+  subroutine compute_area( &
+       num_edges, sizes, nodes_pointers, area, not_implemented) &
+       bind(c, name='compute_area')
+
+    integer(c_int), intent(in) :: num_edges
+    integer(c_int), intent(in) :: sizes(num_edges)
+    type(c_ptr), intent(in) :: nodes_pointers(num_edges)
+    real(c_double), intent(out) :: area
+    logical(c_bool), intent(out) :: not_implemented
+    ! Variables outside of signature.
+    integer(c_int) :: i
+    real(c_double), pointer :: nodes(:, :)
+    real(c_double) :: shoelace
+
+    area = 0.0_dp
+    do i = 1, num_edges
+       call c_f_pointer(nodes_pointers(i), nodes, [2, sizes(i)])
+       call shoelace_for_area(sizes(i), nodes, shoelace, not_implemented)
+       if (not_implemented) then
+          return
+       else
+          area = area + shoelace
+       end if
+    end do
+
+  end subroutine compute_area
 
 end module surface
