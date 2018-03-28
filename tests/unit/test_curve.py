@@ -65,11 +65,7 @@ class TestCurve(utils.NumPyTestCase):
     def test___dict___property(self):
         curve = self._make_one(self.ZEROS, 1, _copy=False)
         props_dict = curve.__dict__
-        expected = {
-            '_nodes': self.ZEROS,
-            '_dimension': 2,
-            '_degree': 1,
-        }
+        expected = {'_nodes': self.ZEROS, '_dimension': 2, '_degree': 1}
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curve``.
         expected['_dimension'] = 47
