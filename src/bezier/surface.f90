@@ -838,8 +838,8 @@ contains
             20 * (nodes(1, 4) * nodes(2, 5) - nodes(2, 4) * nodes(1, 5)))
        shoelace = shoelace / 70
     else
+       shoelace = 0.0_dp
        not_implemented = .TRUE.
-       return
     end if
 
   end subroutine shoelace_for_area
