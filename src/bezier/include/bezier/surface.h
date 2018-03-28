@@ -13,6 +13,8 @@
 #ifndef BEZIER_SURFACE_H
 #define BEZIER_SURFACE_H
 
+#include "bezier/_bool_patch.h"
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -45,6 +47,9 @@ void subdivide_nodes_surface(
 void compute_edge_nodes(
     int *num_nodes, int *dimension, double *nodes, int *degree,
     double *nodes1, double *nodes2, double *nodes3);
+void compute_area(
+    int *num_edges, int *sizes, double **nodes_pointers,
+    double *area, bool *not_implemented);
 
 #if defined (__cplusplus)
 }

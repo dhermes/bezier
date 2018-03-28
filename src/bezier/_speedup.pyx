@@ -30,6 +30,8 @@ files **expect** to share some global state.)
 
 import warnings
 
+from libc.stdlib cimport free
+from libc.stdlib cimport malloc
 from libcpp cimport bool as bool_t
 import numpy as np
 from numpy cimport dtype as dtype_t
@@ -843,6 +845,53 @@ def compute_edge_nodes(double[::1, :] nodes, int degree):
     )
 
     return nodes1, nodes2, nodes3
+
+
+def compute_area(tuple edges):
+    cdef int num_edges
+    cdef int[::1] sizes
+    cdef double** nodes_pointers
+    cdef int i
+    cdef double[::1, :] edge_nodes
+    cdef int num_nodes
+    cdef double area
+    cdef bool_t unused_not_implemented
+
+    # First, create the workspace that will convey our data.
+    num_edges = len(edges)
+    sizes = np.empty(num_edges, dtype=np.intc)
+    nodes_pointers = <double **>malloc(num_edges * sizeof(double *))
+
+    # Then, populate the size and pointer information.
+    for i, edge_nodes in enumerate(edges):
+        # NOTE: We don't check that there are 2 rows.
+        _, num_nodes = np.shape(edge_nodes)
+
+        if num_nodes - 1 > 4:
+            free(nodes_pointers)
+
+            # NOTE: This import at runtime is expensive, but we don't mind it
+            #       because the exception is intended to halt the program.
+            from bezier._helpers import UnsupportedDegree
+            raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
+
+        sizes[i] = num_nodes
+        nodes_pointers[i] = &edge_nodes[0, 0]
+
+    # Pass along the pointers to the ABI (i.e. the Fortran layer).
+    # This assumes that ``unused_not_implemented`` will be ``False``
+    # since we already check the supported degrees above.
+    bezier._surface.compute_area(
+        &num_edges,
+        &sizes[0],
+        nodes_pointers,
+        &area,
+        &unused_not_implemented,
+    )
+
+    free(nodes_pointers)
+
+    return area
 
 #########################################
 # Section: ``surface_intersection.f90`` #

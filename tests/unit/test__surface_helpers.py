@@ -2428,6 +2428,26 @@ class Test__compute_area(unittest.TestCase):
         area = self._call_function_under_test((edge1, edge2, edge3, edge4))
         utils.almost(self, 4.0 / 3.0, area, 1)
 
+    def test_unsupported_degree(self):
+        from bezier import _helpers
+
+        degree = 5
+        edge1 = np.empty((2, degree + 1), order='F')
+        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
+            self._call_function_under_test((edge1,))
+
+        self.assertEqual(exc_info.exception.degree, degree)
+        self.assertEqual(exc_info.exception.supported, (1, 2, 3, 4))
+
+
+@utils.needs_speedup
+class Test_speedup_compute_area(Test__compute_area):
+
+    @staticmethod
+    def _call_function_under_test(edges):
+        from bezier import _speedup
+        return _speedup.compute_area(edges)
+
 
 def make_intersect(*args, **kwargs):
     from bezier import _intersection_helpers

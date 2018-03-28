@@ -2951,6 +2951,11 @@ def shoelace_for_area(nodes):
 def _compute_area(edges):
     """Compute the area of a curved polygon.
 
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
     Uses Green's theorem to compute the area exactly. See :attr:`.Surface.area`
     and :attr:`.CurvedPolygon.area` for more information.
 
@@ -2990,5 +2995,5 @@ else:
     evaluate_barycentric_multi = _speedup.evaluate_barycentric_multi
     evaluate_cartesian_multi = _speedup.evaluate_cartesian_multi
     compute_edge_nodes = _speedup.compute_edge_nodes
-    compute_area = _compute_area
+    compute_area = _speedup.compute_area
 # pylint: enable=invalid-name

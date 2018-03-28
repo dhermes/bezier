@@ -13,6 +13,9 @@
 """Cython wrapper for ``surface.f90``."""
 
 
+from libcpp cimport bool as bool_t
+
+
 cdef extern from "bezier/surface.h":
     void de_casteljau_one_round(
         int *num_nodes, int *dimension, double *nodes, int *degree,
@@ -42,3 +45,6 @@ cdef extern from "bezier/surface.h":
     void compute_edge_nodes(
         int *num_nodes, int *dimension, double *nodes, int *degree,
         double *nodes1, double *nodes2, double *nodes3)
+    void compute_area(
+        int *num_edges, int *sizes, double **nodes_pointers,
+        double *area, bool_t *not_implemented)
