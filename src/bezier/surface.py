@@ -282,7 +282,7 @@ class Surface(_base.Base):
 
         edge1, edge2, edge3 = self._get_edges()
         return _surface_helpers.compute_area(
-            edge1._nodes, edge2._nodes, edge3._nodes
+            (edge1._nodes, edge2._nodes, edge3._nodes)
         )
 
     def _compute_edges(self):

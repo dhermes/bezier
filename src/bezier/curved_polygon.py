@@ -248,7 +248,7 @@ class CurvedPolygon(object):
             float: The area of the current curved polygon.
         """
         edges = tuple(edge._nodes for edge in self._edges)
-        return _surface_helpers.compute_area(*edges)
+        return _surface_helpers.compute_area(edges)
 
     def __repr__(self):
         """Representation of current object.

@@ -650,7 +650,7 @@ SECOND_SURFACE_INFO = (
 ALMOST_TANGENT = 0.5 ** 50
 # Hardcoded "line integral" helpers for ``shoelace_for_area()``.
 SHOELACE_LINEAR = ((1, 0, 1),)
-SHOELACE_QUADRATIC = ((2, 0, 1), (2, 1, 2), (1, 0, 2))
+SHOELACE_QUADRATIC = ((2, 0, 1), (1, 0, 2), (2, 1, 2))
 SHOELACE_CUBIC = (
     (6, 0, 1), (3, 0, 2), (1, 0, 3), (3, 1, 2), (3, 1, 3), (6, 2, 3)
 )
@@ -2948,7 +2948,7 @@ def shoelace_for_area(nodes):
     return result / scale_factor
 
 
-def _compute_area(*edges):
+def _compute_area(edges):
     """Compute the area of a curved polygon.
 
     Uses Green's theorem to compute the area exactly. See :attr:`.Surface.area`

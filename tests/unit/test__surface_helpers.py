@@ -2403,21 +2403,21 @@ class Test_shoelace_for_area(unittest.TestCase):
 class Test__compute_area(unittest.TestCase):
 
     @staticmethod
-    def _call_function_under_test(*edges):
+    def _call_function_under_test(edges):
         from bezier import _surface_helpers
-        return _surface_helpers._compute_area(*edges)
+        return _surface_helpers._compute_area(edges)
 
     def test_mixed_degree(self):
         edge1 = np.asfortranarray([[0.0, 2.0], [0.0, 0.0]])
         edge2 = np.asfortranarray([[2.0, 1.0, 0.0], [0.0, 3.0, 0.0]])
-        area = self._call_function_under_test(edge1, edge2)
+        area = self._call_function_under_test((edge1, edge2))
         self.assertEqual(area, 2.0)
 
     def test_curved_triangle(self):
         edge1 = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, -1.0, 0.0]])
         edge2 = np.asfortranarray([[2.0, 1.5, 0.0], [0.0, 1.5, 2.0]])
         edge3 = np.asfortranarray([[0.0, 1.0, 0.0], [2.0, 1.0, 0.0]])
-        area = self._call_function_under_test(edge1, edge2, edge3)
+        area = self._call_function_under_test((edge1, edge2, edge3))
         self.assertEqual(area, 8.0 / 3.0)
 
     def test_curved_quadrilateral(self):
@@ -2425,7 +2425,7 @@ class Test__compute_area(unittest.TestCase):
         edge2 = np.asfortranarray([[1.0, 1.0], [0.0, 1.0]])
         edge3 = np.asfortranarray([[1.0, 0.5, 0.0], [1.0, 2.0, 1.0]])
         edge4 = np.asfortranarray([[0.0, 0.0], [1.0, 0.0]])
-        area = self._call_function_under_test(edge1, edge2, edge3, edge4)
+        area = self._call_function_under_test((edge1, edge2, edge3, edge4))
         utils.almost(self, 4.0 / 3.0, area, 1)
 
 
