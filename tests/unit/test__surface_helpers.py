@@ -2418,7 +2418,7 @@ class Test__compute_area(unittest.TestCase):
         edge2 = np.asfortranarray([[2.0, 1.5, 0.0], [0.0, 1.5, 2.0]])
         edge3 = np.asfortranarray([[0.0, 1.0, 0.0], [2.0, 1.0, 0.0]])
         area = self._call_function_under_test((edge1, edge2, edge3))
-        self.assertEqual(area, 8.0 / 3.0)
+        utils.almost(self, 8.0 / 3.0, area, 1)
 
     def test_curved_quadrilateral(self):
         edge1 = np.asfortranarray([[0.0, 1.0], [0.0, 0.0]])
