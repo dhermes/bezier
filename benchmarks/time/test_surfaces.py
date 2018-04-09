@@ -18,10 +18,10 @@ from tests.functional import utils
 
 def get_bounds():
     if os.environ.get('CIRCLECI') == 'true':
-        return 175.0 / 16384.0, 215.0 / 16384.0
+        return 200.0 / 16384.0, 240.0 / 16384.0
 
     else:
-        return 125.0 / 16384.0, 155.0 / 16384.0
+        return 175.0 / 16384.0, 200.0 / 16384.0
 
 
 def intersect_all(intersections):

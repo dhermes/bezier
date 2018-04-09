@@ -463,6 +463,726 @@
         ],
         "note": "This surface and 50Q are from a real-world case, so the values do not have a rational or algebraic representation."
     },
+    "52Q": {
+        "control_points": [
+            [
+                "-0x1.a492492492494p-1",
+                "-0x1.ade21be379073p-1",
+                "-0x1.b720a1a678806p-1",
+                "-0x1.a4bd899a5474ep-1",
+                "-0x1.ae04b5db47908p-1",
+                "-0x1.a4e8ca1016a08p-1"
+            ], [
+                1,
+                "0x1.f6ae3b7116bc0p-1",
+                "0x1.ed6e8afe15bf0p-1",
+                "0x1.f6ae3b7116bc1p-1",
+                "0x1.ed6580f0219b9p-1",
+                "0x1.ed5c76e22d77ep-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 53Q, so the values do not have a rational or algebraic representation."
+    },
+    "53Q": {
+        "control_points": [
+            [
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.9800000000001p-1",
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.a1b6db6db6db7p-1",
+                "-0x1.ab6db6db6db6ep-1"
+            ], [
+                "0x1.f924924924925p-1",
+                "0x1.016db6db6db6ep+0",
+                "0x1.064924924924ap+0",
+                "0x1.016db6db6db6ep+0",
+                "0x1.064924924924ap+0",
+                "0x1.0649249249249p+0"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 52Q, so the values do not have a rational or algebraic representation."
+    },
+    "54Q": {
+        "control_points": [
+            [
+                "-0x1.a492492492494p-1",
+                "-0x1.a8ef7a9807f9ap-1",
+                "-0x1.ad574a621cfb8p-1",
+                "-0x1.a924924924926p-1",
+                "-0x1.ad8712e7e9eb8p-1",
+                "-0x1.adb6db6db6db8p-1"
+            ], [
+                -1,
+                "-0x1.fb8621db1407dp-1",
+                "-0x1.f707618306cc6p-1",
+                -1,
+                "-0x1.fb83b0c183664p-1",
+                -1
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 55Q, so the values do not have a rational or algebraic representation."
+    },
+    "55Q": {
+        "control_points": [
+            [
+                "-0x1.a1b6db6db6db7p-1",
+                "-0x1.a692492492491p-1",
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a692492492493p-1",
+                "-0x1.ab6db6db6db6dp-1",
+                "-0x1.ab6db6db6db6ep-1"
+            ], [
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000001p-1",
+                "-0x1.f924924924926p-1",
+                "-0x1.016db6db6db70p+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surfaces 54Q and 68Q, so the values do not have a rational or algebraic representation."
+    },
+    "56Q": {
+        "control_points": [
+            [
+                "-0x1.db433d80f06fcp-1",
+                "-0x1.d6c0e1de4d214p-1",
+                "-0x1.d249249249249p-1",
+                "-0x1.d6aba5310e7d9p-1",
+                "-0x1.d22e98b9bad83p-1",
+                "-0x1.d2140ce12c8bap-1"
+            ], [
+                "-0x1.f6eef683607b6p-1",
+                "-0x1.fb79ec5b40df8p-1",
+                -1,
+                "-0x1.f6f1679cf11cep-1",
+                "-0x1.fb79ec5b40df6p-1",
+                "-0x1.f6f3d8b681becp-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surfaces 57Q and 71Q, so the values do not have a rational or algebraic representation."
+    },
+    "57Q": {
+        "control_points": [
+            [
+                "-0x1.c892492492493p-1",
+                "-0x1.cd6db6db6db6dp-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.cd6db6db6db6ep-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.d24924924924bp-1"
+            ], [
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000003p-1",
+                "-0x1.f924924924926p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 56Q, so the values do not have a rational or algebraic representation."
+    },
+    "58Q": {
+        "control_points": [
+            [
+                -1,
+                "-0x1.fb8357164ecccp-1",
+                "-0x1.f7025aeda3c84p-1",
+                -1,
+                "-0x1.fb812d76d1e42p-1",
+                -1
+            ], [
+                "0x1.a492492492491p-1",
+                "0x1.a90df92642395p-1",
+                "0x1.ad8e2e2eec3b6p-1",
+                "0x1.a924924924925p-1",
+                "0x1.ada284ce518b9p-1",
+                "0x1.adb6db6db6db6p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surfaces 59Q and 83Q, so the values do not have a rational or algebraic representation."
+    },
+    "59Q": {
+        "control_points": [
+            [
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000001p-1",
+                "-0x1.f924924924926p-1",
+                "-0x1.016db6db6db70p+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0"
+            ], [
+                "0x1.a1b6db6db6db6p-1",
+                "0x1.a692492492492p-1",
+                "0x1.ab6db6db6db6dp-1",
+                "0x1.a69249249248ep-1",
+                "0x1.ab6db6db6db6ep-1",
+                "0x1.ab6db6db6db6dp-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 58Q, so the values do not have a rational or algebraic representation."
+    },
+    "60Q": {
+        "control_points": [
+            [
+                "-0x1.a492492492494p-1",
+                "-0x1.ad4cac0b7da9cp-1",
+                "-0x1.b631884ce6514p-1",
+                "-0x1.adb6db6db6db8p-1",
+                "-0x1.b6867b01e0df8p-1",
+                "-0x1.b6db6db6db6dcp-1"
+            ], [
+                -1,
+                "-0x1.f70c43b6280fcp-1",
+                "-0x1.ee04fe9fcb120p-1",
+                -1,
+                "-0x1.f7027f4fe5890p-1",
+                -1
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 61Q, so the values do not have a rational or algebraic representation."
+    },
+    "61Q": {
+        "control_points": [
+            [
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.9800000000001p-1",
+                "-0x1.9c735b8e66f71p-1",
+                "-0x1.92bc8020b01bbp-1",
+                "-0x1.8d79004160376p-1"
+            ], [
+                "-0x1.f924924924926p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.0649249249249p+0",
+                "-0x1.f5baa1e32efd4p-1",
+                "-0x1.ff717d50e5d8cp-1",
+                "-0x1.f250b17d39681p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 60Q, so the values do not have a rational or algebraic representation."
+    },
+    "62Q": {
+        "control_points": [
+            [
+                "0x1.ede51b58cb251p-1",
+                "0x1.f6f855a9c81bcp-1",
+                1,
+                "0x1.edeae3562dae4p-1",
+                "0x1.f6f855a9c81bcp-1",
+                "0x1.edf0ab5390377p-1"
+            ], [
+                "-0x1.b688c0e4e97c4p-1",
+                "-0x1.ad832f6a7fa48p-1",
+                "-0x1.a492492492494p-1",
+                "-0x1.ad59d90186abcp-1",
+                "-0x1.a45e9d215b124p-1",
+                "-0x1.a42af11e23db4p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 63Q, so the values do not have a rational or algebraic representation."
+    },
+    "63Q": {
+        "control_points": [
+            [
+                "0x1.0649249249249p+0",
+                "0x1.016db6db6db6fp+0",
+                "0x1.f924924924924p-1",
+                "0x1.064924924924ap+0",
+                "0x1.016db6db6db6ep+0",
+                "0x1.0649249249249p+0"
+            ], [
+                "-0x1.9800000000001p-1",
+                "-0x1.a1b6db6db6db7p-1",
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.ab6db6db6db6cp-1",
+                "-0x1.ab6db6db6db6fp-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 62Q, so the values do not have a rational or algebraic representation."
+    },
+    "64Q": {
+        "control_points": [
+            [
+                1,
+                "0x1.f6f855a9c81bcp-1",
+                "0x1.ede51b58cb251p-1",
+                1,
+                "0x1.f6f28dac65928p-1",
+                1
+            ], [
+                "-0x1.a492492492494p-1",
+                "-0x1.ad832f6a7fa48p-1",
+                "-0x1.b688c0e4e97c4p-1",
+                "-0x1.adb6db6db6db8p-1",
+                "-0x1.b6b2174de2750p-1",
+                "-0x1.b6db6db6db6dcp-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 65Q, so the values do not have a rational or algebraic representation."
+    },
+    "65Q": {
+        "control_points": [
+            [
+                "0x1.f924924924924p-1",
+                "0x1.016db6db6db6ep+0",
+                "0x1.0649249249249p+0",
+                "0x1.f79b27380e77cp-1",
+                "0x1.00a90152e2a9bp+0",
+                "0x1.f611bc26f85d4p-1"
+            ], [
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.9800000000001p-1",
+                "-0x1.9f1e84091c4ecp-1",
+                "-0x1.9567a89b65734p-1",
+                "-0x1.92cf5136cae69p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 64Q, so the values do not have a rational or algebraic representation."
+    },
+    "66Q": {
+        "control_points": [
+            [
+                "0x1.a492492492491p-1",
+                "0x1.add3c360a3896p-1",
+                "0x1.b709ada1efb75p-1",
+                "0x1.a4af31177ef71p-1",
+                "0x1.adeae3562dae3p-1",
+                "0x1.a4cc190a6ba52p-1"
+            ], [
+                -1,
+                "-0x1.f6a7c1b3a436cp-1",
+                "-0x1.ed642e9bc4e9dp-1",
+                "-0x1.f6a7c1b3a436cp-1",
+                "-0x1.ed59d90186abap-1",
+                "-0x1.ed4f8367486d8p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 67Q, so the values do not have a rational or algebraic representation."
+    },
+    "67Q": {
+        "control_points": [
+            [
+                "0x1.ab6db6db6db6dp-1",
+                "0x1.a1b6db6db6db6p-1",
+                "0x1.97fffffffffffp-1",
+                "0x1.ab6db6db6db6ep-1",
+                "0x1.a1b6db6db6db6p-1",
+                "0x1.ab6db6db6db6dp-1"
+            ], [
+                "-0x1.f924924924925p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.0649249249249p+0",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.064924924924ap+0",
+                "-0x1.0649249249249p+0"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 66Q, so the values do not have a rational or algebraic representation."
+    },
+    "68Q": {
+        "control_points": [
+            [
+                "-0x1.ad574a621cfb8p-1",
+                "-0x1.a8ef7a9807f9ap-1",
+                "-0x1.a492492492494p-1",
+                "-0x1.a8bfb2123b097p-1",
+                "-0x1.a45d317375b03p-1",
+                "-0x1.a42819c259176p-1"
+            ], [
+                "-0x1.f707618306cc6p-1",
+                "-0x1.fb8621db1407cp-1",
+                -1,
+                "-0x1.f709d29c976e2p-1",
+                "-0x1.fb8621db1407ep-1",
+                "-0x1.f70c43b6280fcp-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 55Q, so the values do not have a rational or algebraic representation."
+    },
+    "69Q": {
+        "control_points": [
+            [
+                -1,
+                "-0x1.fb389f2a511dep-1",
+                "-0x1.f67bdcab418dbp-1",
+                "-0x1.fb389f2a511e0p-1",
+                "-0x1.f6768d7ff1e4ep-1",
+                "-0x1.f6713e54a23c0p-1"
+            ], [
+                "-0x1.a492492492494p-1",
+                "-0x1.a93cfd48cae35p-1",
+                "-0x1.ade2cf39e23a2p-1",
+                "-0x1.a4aab424389a2p-1",
+                "-0x1.a952f72ee092ap-1",
+                "-0x1.a4c31f23deeb4p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 70Q, so the values do not have a rational or algebraic representation."
+    },
+    "70Q": {
+        "control_points": [
+            [
+                "-0x1.f924924924925p-1",
+                "-0x1.fe00000000004p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.016db6db6db6ep+0"
+            ], [
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.a692492492494p-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.ab6db6db6db70p-1",
+                "-0x1.a692492492494p-1",
+                "-0x1.ab6db6db6db6fp-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 69Q, so the values do not have a rational or algebraic representation."
+    },
+    "71Q": {
+        "control_points": [
+            [
+                "-0x1.dc00000000001p-1",
+                "-0x1.d724924924926p-1",
+                "-0x1.d24924924924bp-1",
+                "-0x1.d724924924925p-1",
+                "-0x1.d24924924924bp-1",
+                "-0x1.d24924924924ap-1"
+            ], [
+                "-0x1.f924924924927p-1",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.f924924924927p-1",
+                "-0x1.fe00000000003p-1",
+                "-0x1.f924924924926p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 56Q, so the values do not have a rational or algebraic representation."
+    },
+    "72Q": {
+        "control_points": [
+            [
+                "0x1.a492492492491p-1",
+                "0x1.a93306429ae94p-1",
+                "0x1.add0df61f244cp-1",
+                "0x1.a4a0bd1e08a02p-1",
+                "0x1.a940083cb89e0p-1",
+                "0x1.a4af31177ef71p-1"
+            ], [
+                -1,
+                "-0x1.fb53e0d9d21b6p-1",
+                "-0x1.f6acec80c355dp-1",
+                "-0x1.fb53e0d9d21b4p-1",
+                "-0x1.f6aa571a33c66p-1",
+                "-0x1.f6a7c1b3a436cp-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 73Q, so the values do not have a rational or algebraic representation."
+    },
+    "73Q": {
+        "control_points": [
+            [
+                "0x1.ab6db6db6db6dp-1",
+                "0x1.a692492492493p-1",
+                "0x1.a1b6db6db6db6p-1",
+                "0x1.ab6db6db6db6ep-1",
+                "0x1.a692492492492p-1",
+                "0x1.ab6db6db6db6dp-1"
+            ], [
+                "-0x1.f924924924925p-1",
+                "-0x1.fe00000000004p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 72Q, so the values do not have a rational or algebraic representation."
+    },
+    "74Q": {
+        "control_points": [
+            [
+                "0x1.f6f571ab16d72p-1",
+                "0x1.fb7c2ad4e40dcp-1",
+                1,
+                "0x1.f6f6e3aa6f796p-1",
+                "0x1.fb7c2ad4e40dep-1",
+                "0x1.f6f855a9c81bcp-1"
+            ], [
+                "-0x1.ad885a379ec3ap-1",
+                "-0x1.a90abc4788f6ep-1",
+                "-0x1.a492492492494p-1",
+                "-0x1.a8f37bac7ceb2p-1",
+                "-0x1.a4787322f6adcp-1",
+                "-0x1.a45e9d215b124p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 75Q, so the values do not have a rational or algebraic representation."
+    },
+    "75Q": {
+        "control_points": [
+            [
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.f924924924924p-1",
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.016db6db6db6ep+0"
+            ], [
+                "-0x1.a1b6db6db6db7p-1",
+                "-0x1.a692492492491p-1",
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a692492492493p-1",
+                "-0x1.ab6db6db6db6dp-1",
+                "-0x1.ab6db6db6db6ep-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 74Q, so the values do not have a rational or algebraic representation."
+    },
+    "76Q": {
+        "control_points": [
+            [
+                "0x1.f6e6fdb1a0802p-1",
+                "0x1.fb74f0d828e24p-1",
+                1,
+                "0x1.f6e86fb0f922ap-1",
+                "0x1.fb74f0d828e26p-1",
+                "0x1.f6e9e1b051c4cp-1"
+            ], [
+                "-0x1.db590ba6f13a8p-1",
+                "-0x1.d6ce82b60da00p-1",
+                "-0x1.d249249249249p-1",
+                "-0x1.d6c42d1bcf61fp-1",
+                "-0x1.d23c39917b56fp-1",
+                "-0x1.d22f4e90ad892p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surfaces 77Q and 78Q, so the values do not have a rational or algebraic representation."
+    },
+    "77Q": {
+        "control_points": [
+            [
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.f924924924924p-1",
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.016db6db6db6ep+0"
+            ], [
+                "-0x1.c892492492493p-1",
+                "-0x1.cd6db6db6db6dp-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.cd6db6db6db6ep-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.d24924924924bp-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 76Q, so the values do not have a rational or algebraic representation."
+    },
+    "78Q": {
+        "control_points": [
+            [
+                "0x1.f924924924924p-1",
+                "255/256",
+                "0x1.016db6db6db6ep+0",
+                "0x1.f924924924924p-1",
+                "255/256",
+                "0x1.f924924924924p-1"
+            ], [
+                "-0x1.dc00000000001p-1",
+                "-0x1.d724924924926p-1",
+                "-0x1.d24924924924bp-1",
+                "-0x1.d724924924925p-1",
+                "-0x1.d24924924924bp-1",
+                "-0x1.d24924924924ap-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 76Q, so the values do not have a rational or algebraic representation."
+    },
+    "79Q": {
+        "control_points": [
+            [
+                "0x1.d249249249249p-1",
+                "0x1.d6e2a7b396996p-1",
+                "0x1.db7946d632c95p-1",
+                "0x1.d2505e8f04503p-1",
+                "0x1.d6e86fb0f9229p-1",
+                "0x1.d257988bbf7bap-1"
+            ], [
+                -1,
+                "-0x1.fb60cbda9fe92p-1",
+                "-0x1.f6c6c2825ef15p-1",
+                "-0x1.fb60cbda9fe92p-1",
+                "-0x1.f6c42d1bcf61cp-1",
+                "-0x1.f6c197b53fd24p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 80Q, so the values do not have a rational or algebraic representation."
+    },
+    "80Q": {
+        "control_points": [
+            [
+                "0x1.d249249249248p-1",
+                "0x1.cd6db6db6db6ep-1",
+                "0x1.c892492492491p-1",
+                "0x1.d24924924924ap-1",
+                "0x1.cd6db6db6db6ep-1",
+                "0x1.d249249249249p-1"
+            ], [
+                "-0x1.f924924924926p-1",
+                "-0x1.fe00000000001p-1",
+                "-0x1.016db6db6db6fp+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6fp+0",
+                "-0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 79Q, so the values do not have a rational or algebraic representation."
+    },
+    "81Q": {
+        "control_points": [
+            [
+                "-0x1.a492492492494p-1",
+                "-0x1.a93a328405a84p-1",
+                "-0x1.adddc8a47f360p-1",
+                "-0x1.a4a7e95f735f1p-1",
+                "-0x1.a94da91f69d57p-1",
+                "-0x1.a4bd899a5474ep-1"
+            ], [
+                1,
+                "0x1.fb571db88b5dep-1",
+                "0x1.f6b2c07810cdcp-1",
+                "0x1.fb571db88b5e0p-1",
+                "0x1.f6b07df493c4ep-1",
+                "0x1.f6ae3b7116bc0p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 82Q, so the values do not have a rational or algebraic representation."
+    },
+    "82Q": {
+        "control_points": [
+            [
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.a692492492494p-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.ab6db6db6db70p-1",
+                "-0x1.a692492492494p-1",
+                "-0x1.ab6db6db6db6fp-1"
+            ], [
+                "0x1.f924924924925p-1",
+                "0x1.fe00000000004p-1",
+                "0x1.016db6db6db6ep+0",
+                "0x1.fe00000000002p-1",
+                "0x1.016db6db6db70p+0",
+                "0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 81Q, so the values do not have a rational or algebraic representation."
+    },
+    "83Q": {
+        "control_points": [
+            [
+                "-0x1.f8c9bdf052c5cp-1",
+                "-0x1.f8f7281cbbac3p-1",
+                "-0x1.f924924924926p-1",
+                "-0x1.fdd295d39719cp-1",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0"
+            ], [
+                "0x1.a05435f7aebf7p-1",
+                "0x1.a5e0f6698e3b2p-1",
+                "0x1.ab6db6db6db6dp-1",
+                "0x1.a10588b2b2cd7p-1",
+                "0x1.a692492492493p-1",
+                "0x1.a1b6db6db6db6p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 58Q, so the values do not have a rational or algebraic representation."
+    },
+    "84Q": {
+        "control_points": [
+            [
+                -1,
+                "-0x1.fb7ab0985b2a4p-1",
+                "-0x1.f6f10df1bc838p-1",
+                -1,
+                "-0x1.fb7886f8de41cp-1",
+                -1
+            ], [
+                "0x1.c924924924924p-1",
+                "0x1.cda94c58c8a61p-1",
+                "0x1.d2328b6f66cbap-1",
+                "0x1.cdb6db6db6db6p-1",
+                "0x1.d23dd800d7f84p-1",
+                "0x1.d249249249249p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 85Q, so the values do not have a rational or algebraic representation."
+    },
+    "85Q": {
+        "control_points": [
+            [
+                "-0x1.f924924924927p-1",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.f924924924927p-1",
+                "-0x1.fe00000000003p-1",
+                "-0x1.f924924924926p-1"
+            ], [
+                "119/128",
+                "0x1.d724924924924p-1",
+                "0x1.d249249249247p-1",
+                "0x1.d724924924926p-1",
+                "0x1.d249249249246p-1",
+                "0x1.d249249249248p-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 84Q, so the values do not have a rational or algebraic representation."
+    },
+    "86Q": {
+        "control_points": [
+            [
+                "-0x1.d249249249249p-1",
+                "-0x1.d6e63dd44bf8cp-1",
+                "-0x1.db7f03d754fb9p-1",
+                "-0x1.d253f4afb9af9p-1",
+                "-0x1.d6eee4523f9b1p-1",
+                "-0x1.d25ec4cd2a3a6p-1"
+            ], [
+                1,
+                "0x1.fb626a49fc8a6p-1",
+                "0x1.f6c9599af326bp-1",
+                "0x1.fb626a49fc8a9p-1",
+                "0x1.f6c71717761dbp-1",
+                "0x1.f6c4d493f914ep-1"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 87Q, so the values do not have a rational or algebraic representation."
+    },
+    "87Q": {
+        "control_points": [
+            [
+                "-0x1.d24924924924ap-1",
+                "-0x1.cd6db6db6db6ep-1",
+                "-0x1.c892492492493p-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.cd6db6db6db6ep-1",
+                "-0x1.d24924924924bp-1"
+            ], [
+                "0x1.f924924924924p-1",
+                "255/256",
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.016db6db6db6ep+0",
+                "0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This surface is part of a real-world intersection case with surface 86Q, so the values do not have a rational or algebraic representation."
+    },
     "1C": {
         "control_points": [
             [0, 3, 9, 12, 0, 5, 8, 0, 4, 0],

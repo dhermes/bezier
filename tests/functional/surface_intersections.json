@@ -1341,5 +1341,422 @@
                 "edge_list": [0, 1, 3, 4]
             }
         ]
+    }, {
+        "surface1": "52Q",
+        "surface2": "53Q",
+        "id": 53,
+        "note": "These surfaces do not intersect.",
+        "intersections": []
+    }, {
+        "surface1": "54Q",
+        "surface2": "55Q",
+        "id": 54,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.a492492492494p-1", "-0x1.0000000000000p+0"],
+                    ["-0x1.a4924924924c8p-1", "-0x1.fffffffffffcbp-1"],
+                    ["-0x1.ab6db6db6db6ep-1", "-0x1.f924924924926p-1"],
+                    ["-0x1.ab6db6db6db6ep-1", "-0x1.0000000000000p+0"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.2d2d2d2d2e907p-2",
+                    0,
+                    "0x1.000000000009fp-2"
+                ],
+                "end_params": [
+                    "0x1.7b999a54fe9fbp-42",
+                    1,
+                    "0x1.6969696969655p-1",
+                    1
+                ],
+                "edge_list": [0, 3, 4, 2]
+            }
+        ]
+    }, {
+        "surface1": "56Q",
+        "surface2": "57Q",
+        "id": 55,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.d24924924924ap-1", "-0x1.ffffffffffffep-1"],
+                    ["-0x1.d249249249249p-1", "-0x1.0000000000000p+0"],
+                    ["-0x1.d221ce2d0e8f2p-1", "-0x1.f94be8ae5f27ep-1"],
+                    ["-0x1.d24924924924ap-1", "-0x1.f924924924926p-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffffaap-1",
+                    0,
+                    "0x1.f7e6aeec68c16p-1",
+                    0
+                ],
+                "end_params": [
+                    1,
+                    "0x1.7b5a3e4c4f903p-1",
+                    1,
+                    "0x1.6969696969605p-1"
+                ],
+                "edge_list": [0, 1, 3, 4]
+            }
+        ]
+    }, {
+        "surface1": "58Q",
+        "surface2": "59Q",
+        "id": 56,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.0000000000000p+0", "0x1.ab6db6db6db6dp-1"],
+                    ["-0x1.0000000000000p+0", "0x1.a492492492493p-1"],
+                    ["-0x1.f924924924926p-1", "0x1.ab6db6db6db6dp-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffffe9p-3",
+                    "0x1.2d2d2d2d2d32ap-2",
+                    0
+                ],
+                "end_params": [
+                    "0x1.fffffffffffacp-1",
+                    1,
+                    "0x1.6969696969655p-1"
+                ],
+                "edge_list": [2, 3, 4]
+            }
+        ]
+    }, {
+        "surface1": "60Q",
+        "surface2": "61Q",
+        "id": 57,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.a492492492499p-1", "-0x1.ffffffffffffbp-1"],
+                    ["-0x1.ab4c9975c0bccp-1", "-0x1.f91d0616f9146p-1"],
+                    ["-0x1.ab6db6db6db6ep-1", "-0x1.f924924924926p-1"]
+                ],
+                "start_params": [
+                    "0x1.1cb333bfbe1fcp-46",
+                    "0x1.fdca022618befp-1",
+                    0
+                ],
+                "end_params": [
+                    "0x1.8939bda61f9edp-2",
+                    1,
+                    "0x1.6969696969565p-2"
+                ],
+                "edge_list": [0, 5, 3]
+            }
+        ]
+    }, {
+        "surface1": "62Q",
+        "surface2": "63Q",
+        "id": 58,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.fffffffffffcdp-1", "-0x1.a4924924924c7p-1"],
+                    [1, "-0x1.a492492492494p-1"],
+                    [1, "-0x1.a492492492494p-1"]
+                ],
+                "start_params": [
+                    "0x1.ffffffffffa52p-1",
+                    0,
+                    "0x1.4b4b4b4b4b4d9p-1"
+                ],
+                "end_params": [
+                    1,
+                    "0x1.c04a485508697p-50",
+                    "0x1.4b4b4b4b4ba14p-1"
+                ],
+                "edge_list": [0, 1, 3]
+            }
+        ]
+    }, {
+        "surface1": "64Q",
+        "surface2": "65Q",
+        "id": 59,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.fffffffffff9ep-1", "-0x1.a4924924924f5p-1"],
+                    ["0x1.f922cc59f970ep-1", "-0x1.ab5f82f014d07p-1"],
+                    ["0x1.f924924924924p-1", "-0x1.ab6db6db6db6ep-1"]
+                ],
+                "start_params": [
+                    "0x1.5a24002cd7884p-42",
+                    "0x1.fed89f2e48752p-1",
+                    0
+                ],
+                "end_params": [
+                    "0x1.84d340375ba1ep-2",
+                    1,
+                    "0x1.696969696827bp-2"
+                ],
+                "edge_list": [0, 5, 3]
+            }
+        ]
+    }, {
+        "surface1": "66Q",
+        "surface2": "67Q",
+        "id": 60,
+        "note": "These surfaces do not intersect.",
+        "intersections": []
+    }, {
+        "surface1": "68Q",
+        "surface2": "55Q",
+        "id": 61,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.a4924924924c8p-1", "-0x1.fffffffffffcbp-1"],
+                    ["-0x1.a492492492494p-1", "-0x1.0000000000000p+0"],
+                    ["-0x1.a492492492494p-1", "-0x1.fffffffffffffp-1"]
+                ],
+                "start_params": [
+                    "0x1.ffffffffff423p-1",
+                    0,
+                    "0x1.2d2d2d2d2d3afp-2"
+                ],
+                "end_params": [
+                    1,
+                    "0x1.2283d470074a6p-47",
+                    "0x1.2d2d2d2d2e907p-2"
+                ],
+                "edge_list": [0, 1, 3]
+            }
+        ]
+    }, {
+        "surface1": "69Q",
+        "surface2": "70Q",
+        "id": 62,
+        "note": "These surfaces do not intersect.",
+        "intersections": []
+    }, {
+        "surface1": "56Q",
+        "surface2": "71Q",
+        "id": 63,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.d912283bf5943p-1", "-0x1.f924924924927p-1"],
+                    ["-0x1.d24924924924bp-1", "-0x1.ffffffffffffep-1"],
+                    ["-0x1.d24924924924ap-1", "-0x1.f924924924926p-1"]
+                ],
+                "start_params": [
+                    "0x1.f247835e9ec9bp-3",
+                    "0x1.2d2d2d2d2d44dp-2",
+                    0
+                ],
+                "end_params": [
+                    "0x1.fffffffffff92p-1",
+                    1,
+                    "0x1.659edf2b07e8dp-1"
+                ],
+                "edge_list": [0, 4, 5]
+            }
+        ]
+    }, {
+        "surface1": "72Q",
+        "surface2": "73Q",
+        "id": 64,
+        "note": "These surfaces do not intersect.",
+        "intersections": []
+    }, {
+        "surface1": "74Q",
+        "surface2": "75Q",
+        "id": 65,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.fffffffffff3dp-1", "-0x1.a492492492555p-1"],
+                    [1, "-0x1.a492492492494p-1"],
+                    ["0x1.ffffffffffffep-1", "-0x1.a492492492494p-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffd4e3p-1",
+                    0,
+                    "0x1.2d2d2d2d2d3b1p-2"
+                ],
+                "end_params": [
+                    1,
+                    "0x1.a942f5b65d02cp-47",
+                    "0x1.2d2d2d2d32312p-2"
+                ],
+                "edge_list": [0, 1, 3]
+            }
+        ]
+    }, {
+        "surface1": "76Q",
+        "surface2": "77Q",
+        "id": 66,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.ffffffffffffep-1", "-0x1.d24924924924ap-1"],
+                    [1, "-0x1.d249249249249p-1"],
+                    ["0x1.f937dac85df42p-1", "-0x1.d235dc130fc2cp-1"],
+                    ["0x1.f924924924924p-1", "-0x1.d24924924924ap-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffffabp-1",
+                    0,
+                    "0x1.fc07a9924dbccp-1",
+                    0
+                ],
+                "end_params": [
+                    1,
+                    "0x1.7e243b0035fc2p-1",
+                    1,
+                    "0x1.696969696963bp-1"
+                ],
+                "edge_list": [0, 1, 3, 4]
+            }
+        ]
+    }, {
+        "surface1": "76Q",
+        "surface2": "78Q",
+        "id": 67,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.f924924924924p-1", "-0x1.d91d4888ead9cp-1"],
+                    ["0x1.ffffffffffffep-1", "-0x1.d24924924924bp-1"],
+                    ["0x1.f924924924924p-1", "-0x1.d24924924924ap-1"]
+                ],
+                "start_params": [
+                    "0x1.f7e72883bdb92p-3",
+                    "0x1.2d2d2d2d2d3b6p-2",
+                    0
+                ],
+                "end_params": [
+                    "0x1.fffffffffff94p-1",
+                    1,
+                    "0x1.67e9495d872c0p-1"
+                ],
+                "edge_list": [0, 4, 5]
+            }
+        ]
+    }, {
+        "surface1": "79Q",
+        "surface2": "80Q",
+        "id": 68,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.d249249249249p-1", "-0x1.0000000000000p+0"],
+                    ["0x1.d249249249249p-1", "-0x1.0000000000000p+0"],
+                    ["0x1.d249249249249p-1", "-0x1.fffffffffffcap-1"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.2d2d2d2d2d378p-2",
+                    "0x1.ffffffffff45bp-1"
+                ],
+                "end_params": [
+                    "0x1.24b9acd911ec3p-49",
+                    "0x1.2d2d2d2d2e97fp-2",
+                    1
+                ],
+                "edge_list": [0, 5, 2]
+            }
+        ]
+    }, {
+        "surface1": "81Q",
+        "surface2": "82Q",
+        "id": 69,
+        "note": "These surfaces do not intersect.",
+        "intersections": []
+    }, {
+        "surface1": "58Q",
+        "surface2": "83Q",
+        "id": 70,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.0000000000000p+0", "0x1.a492492492491p-1"],
+                    ["-0x1.f924876ae30f5p-1", "0x1.ab6c62db84a5cp-1"],
+                    ["-0x1.f924924924926p-1", "0x1.ab6db6db6db6dp-1"],
+                    ["-0x1.0000000000000p+0", "0x1.a492492492493p-1"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.ffc2bc99bb795p-1",
+                    0,
+                    "0x1.fffffffffff7dp-1"
+                ],
+                "end_params": [
+                    "0x1.86ad853c33248p-1",
+                    1,
+                    "0x1.6969696969655p-1",
+                    1
+                ],
+                "edge_list": [0, 3, 4, 2]
+            }
+        ]
+    }, {
+        "surface1": "84Q",
+        "surface2": "85Q",
+        "id": 71,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.fffffffffff11p-1", "0x1.d249249249247p-1"],
+                    ["-0x1.0000000000000p+0", "0x1.d249249249249p-1"],
+                    ["-0x1.0000000000000p+0", "0x1.d249249249247p-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffcb3dp-1",
+                    0,
+                    "0x1.2d2d2d2d2d381p-2"
+                ],
+                "end_params": [
+                    1,
+                    "0x1.04d10d4985bfcp-46",
+                    "0x1.2d2d2d2d335e7p-2"
+                ],
+                "edge_list": [1, 2, 4]
+            }
+        ]
+    }, {
+        "surface1": "86Q",
+        "surface2": "87Q",
+        "id": 72,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.d249249249249p-1", 1],
+                    ["-0x1.d24924924924ap-1", "0x1.fffffffffffffp-1"],
+                    ["-0x1.d24924924924ap-1", "0x1.fffffffffff5cp-1"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.2d2d2d2d2d38ap-2",
+                    "0x1.fffffffffdc87p-1"
+                ],
+                "end_params": [
+                    "0x1.4c8a38ac90919p-47",
+                    "0x1.2d2d2d2d31656p-2",
+                    1
+                ],
+                "edge_list": [0, 5, 2]
+            }
+        ]
     }
 ]

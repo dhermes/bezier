@@ -78,7 +78,17 @@ FAILED_CASES_COINCIDENT = {
     ALGEBRAIC: {4: {}, 5: {}, 43: {}, 44: {}, 45: {}, 46: {}, 47: {}, 51: {}},
 }
 FAILED_CASES_BAD_EDGES = {GEOMETRIC: (), ALGEBRAIC: (52,)}
-INCORRECT_COUNT = {GEOMETRIC: (52,), ALGEBRAIC: ()}
+FAILED_CASES_PRECISION = {GEOMETRIC: (54, 55, 66, 68, 70), ALGEBRAIC: ()}
+FAILED_CASES_BAD_DUPLICATE = {
+    GEOMETRIC: (),
+    ALGEBRAIC: (53, 54, 55, 56, 57, 59, 60, 62, 63, 64, 66, 67, 69, 70),
+}
+INCORRECT_COUNT = {
+    GEOMETRIC: (
+        52, 53, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 67, 69, 71, 72
+    ),
+    ALGEBRAIC: (58, 61, 65, 68, 71, 72),
+}
 if base_utils.IS_LINUX and not base_utils.IS_64_BIT:
     INCORRECT_COUNT[ALGEBRAIC] += (52,)
 CONFIG = utils.Config()
@@ -143,6 +153,32 @@ def check_bad_edges_manager():
     assert caught_exc is not None
     exc_args = caught_exc.args
     assert exc_args[0] == 'Unexpected number of edges'
+
+
+@contextlib.contextmanager
+def check_precision_manager():
+    caught_exc = None
+    try:
+        yield
+
+    except AssertionError as exc:
+        caught_exc = exc
+
+    assert caught_exc is not None
+
+
+@contextlib.contextmanager
+def check_duplicate_manager():
+    caught_exc = None
+    try:
+        yield
+
+    except ValueError as exc:
+        caught_exc = exc
+
+    assert caught_exc is not None
+    exc_args = caught_exc.args
+    assert exc_args[0] == 'Duplicate not among uniques'
 
 
 def surface_surface_check(strategy, surface1, surface2, *all_intersected):
@@ -219,6 +255,10 @@ def test_intersect(strategy, intersection_info):
         context = check_coincident_manager(strategy, **kwargs)
     elif id_ in FAILED_CASES_BAD_EDGES[strategy]:
         context = check_bad_edges_manager()
+    elif id_ in FAILED_CASES_PRECISION[strategy]:
+        context = check_precision_manager()
+    elif id_ in FAILED_CASES_BAD_DUPLICATE[strategy]:
+        context = check_duplicate_manager()
     elif id_ in WIGGLES[strategy]:
         context = CONFIG.wiggle(WIGGLES[strategy][id_])
     else:
