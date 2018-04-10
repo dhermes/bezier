@@ -52,6 +52,11 @@ ACCEPTABLE_CLASSIFICATIONS = (
 TANGENT_CLASSIFICATIONS = (
     CLASSIFICATION_T.TANGENT_FIRST, CLASSIFICATION_T.TANGENT_SECOND
 )
+BAD_SEGMENT_PARAMS = (
+    'Segment start should be strictly less than end and both '
+    'should be in [0, 1].'
+)
+SEGMENTS_SAME_EDGE = 'Consecutive segments lie on the same edge.'
 
 
 def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
@@ -368,7 +373,7 @@ def same_intersection(intersection1, intersection2, wiggle=0.5 ** 40):
     .. note::
 
        This is a helper used only by :func:`verify_duplicates`, which in turn
-       is only used by :meth:`.Surface.intersect`.
+       is only used by :func:`generic_intersect`.
 
     Args:
         intersection1 (.Intersection): The first intersection.
@@ -399,7 +404,7 @@ def verify_duplicates(duplicates, uniques):
 
     .. note::
 
-       This is a helper used only by :meth:`.Surface.intersect`.
+       This is a helper used only by :func:`generic_intersect`.
 
     Args:
         duplicates (List[.Intersection]): List of intersections
@@ -445,6 +450,44 @@ def verify_duplicates(duplicates, uniques):
 
         else:
             raise ValueError('Unexpected duplicate count', count)
+
+
+def verify_edge_segments(edge_infos):
+    """Verify that the edge segments in an intersection are valid.
+
+    .. note::
+
+       This is a helper used only by :func:`generic_intersect`.
+
+    Args:
+        edge_infos (Optional[list]): List of "edge info" lists. Each list
+            represents a curved polygon and contains 3-tuples of edge index,
+            start and end (see the output of :func:`ends_to_curve`).
+
+    Raises:
+        ValueError: If two consecutive edge segments lie on the same edge
+            index.
+        ValueError: If the start and end parameter are "invalid" (they should
+            be between 0 and 1 and start should be strictly less than end).
+    """
+    if edge_infos is None:
+        return
+
+    for edge_info in edge_infos:
+        num_segments = len(edge_info)
+        for index in six.moves.xrange(-1, num_segments - 1):
+            index1, start1, end1 = edge_info[index]
+            # First, verify the start and end parameters for the current
+            # segment.
+            if not 0.0 <= start1 < end1 <= 1.0:
+                raise ValueError(BAD_SEGMENT_PARAMS, edge_info[index])
+
+            # Then, verify that the indices are not the same.
+            index2, _, _ = edge_info[index + 1]
+            if index1 == index2:
+                raise ValueError(
+                    SEGMENTS_SAME_EDGE, edge_info[index], edge_info[index + 1]
+                )
 
 
 def add_edge_end_unused(intersection, duplicates, intersections):
@@ -751,12 +794,13 @@ def generic_intersect(
     intersections, duplicates, unused, all_types = surface_intersections(
         edge_nodes1, edge_nodes2, all_intersections
     )
-    # Verify duplicates if need be.
-    if verify:
-        verify_duplicates(duplicates, intersections + unused)
     edge_infos, contained = _surface_helpers.combine_intersections(
         intersections, nodes1, degree1, nodes2, degree2, all_types
     )
+    # Verify the duplicates and intersection if need be.
+    if verify:
+        verify_duplicates(duplicates, intersections + unused)
+        verify_edge_segments(edge_infos)
     if edge_infos is None or edge_infos == []:
         return edge_infos, contained, ()
 

@@ -22,6 +22,7 @@ import bezier
 from bezier import _algebraic_intersection
 from bezier import _geometric_intersection
 from bezier import _surface_helpers
+from bezier import _surface_intersection
 from bezier import curve
 from tests import utils as base_utils
 from tests.functional import utils
@@ -78,17 +79,18 @@ FAILED_CASES_COINCIDENT = {
     ALGEBRAIC: {4: {}, 5: {}, 43: {}, 44: {}, 45: {}, 46: {}, 47: {}, 51: {}},
 }
 FAILED_CASES_BAD_EDGES = {GEOMETRIC: (), ALGEBRAIC: (52,)}
-FAILED_CASES_PRECISION = {GEOMETRIC: (54, 55, 66, 68, 70), ALGEBRAIC: ()}
+FAILED_CASES_PRECISION = {GEOMETRIC: (68,), ALGEBRAIC: ()}
 FAILED_CASES_BAD_DUPLICATE = {
     GEOMETRIC: (),
     ALGEBRAIC: (53, 54, 55, 56, 57, 59, 60, 62, 63, 64, 66, 67, 69, 70),
 }
-INCORRECT_COUNT = {
+FAILED_CASES_CONSECUTIVE_SEGMENTS = {
     GEOMETRIC: (
-        52, 53, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 67, 69, 71, 72
+        53, 54, 55, 56, 57, 58, 59, 60, 61, 63, 65, 66, 67, 70, 71, 72
     ),
-    ALGEBRAIC: (58, 61, 65, 68, 71, 72),
+    ALGEBRAIC: (58, 61, 65, 71, 72),
 }
+INCORRECT_COUNT = {GEOMETRIC: (52, 62, 64, 69), ALGEBRAIC: (68,)}
 if base_utils.IS_LINUX and not base_utils.IS_64_BIT:
     INCORRECT_COUNT[ALGEBRAIC] += (52,)
 CONFIG = utils.Config()
@@ -181,11 +183,49 @@ def check_duplicate_manager():
     assert exc_args[0] == 'Duplicate not among uniques'
 
 
+@contextlib.contextmanager
+def check_consecutive_manager():
+    caught_exc = None
+    try:
+        yield
+
+    except ValueError as exc:
+        caught_exc = exc
+
+    assert caught_exc is not None
+    exc_args = caught_exc.args
+    assert exc_args[0] == _surface_intersection.SEGMENTS_SAME_EDGE
+    assert len(exc_args) == 3
+
+
+def extra_verify(strategy, intersections):
+    """Do extra verification on a list of intersections.
+
+    This is intended to be used for cases when the "regular" Python
+    verification was not run, e.g. if the Fortran speedups were used.
+
+    Args:
+        strategy (.IntersectionStrategy): The strategy that was used to
+            intersect edges.
+        intersections (List[Union[~bezier.curved_polygon.CurvedPolygon, \
+            ~bezier.surface.Surface]]): List of intersections (possibly empty).
+    """
+    if strategy == GEOMETRIC and bezier._HAS_SPEEDUP:
+        edge_infos = [
+            curved_polygon._metadata
+            for curved_polygon in intersections
+            if isinstance(curved_polygon, bezier.CurvedPolygon)
+        ]
+        _surface_intersection.verify_edge_segments(edge_infos)
+
+
 def surface_surface_check(strategy, surface1, surface2, *all_intersected):
     # pylint: disable=too-many-locals
     assert surface1.is_valid
     assert surface2.is_valid
     intersections = surface1.intersect(surface2, strategy=strategy)
+    extra_verify(strategy, intersections)
+
     if len(intersections) != len(all_intersected):
         raise utils.IncorrectCount(
             'Received wrong number of intersections',
@@ -259,6 +299,8 @@ def test_intersect(strategy, intersection_info):
         context = check_precision_manager()
     elif id_ in FAILED_CASES_BAD_DUPLICATE[strategy]:
         context = check_duplicate_manager()
+    elif id_ in FAILED_CASES_CONSECUTIVE_SEGMENTS[strategy]:
+        context = check_consecutive_manager()
     elif id_ in WIGGLES[strategy]:
         context = CONFIG.wiggle(WIGGLES[strategy][id_])
     else:

@@ -319,6 +319,51 @@ class Test_verify_duplicates(unittest.TestCase):
             self._call_function_under_test([uniq, uniq], [uniq])
 
 
+class Test_verify_edge_segments(unittest.TestCase):
+
+    @staticmethod
+    def _call_function_under_test(edge_infos):
+        from bezier import _surface_intersection
+        return _surface_intersection.verify_edge_segments(edge_infos)
+
+    def test_none(self):
+        return_value = self._call_function_under_test(None)
+        self.assertIsNone(return_value)
+
+    def test_valid(self):
+        edge_infos = [((0, 0.0, 0.5), (4, 0.25, 1.0), (5, 0.0, 0.75))]
+        return_value = self._call_function_under_test(edge_infos)
+        self.assertIsNone(return_value)
+
+    def test_bad_params(self):
+        from bezier import _surface_intersection
+
+        edge_infos = [((0, 0.0, 1.5), (4, 0.25, 1.0), (5, 0.0, 0.75))]
+        with self.assertRaises(ValueError) as exc_info:
+            self._call_function_under_test(edge_infos)
+
+        exc_args = exc_info.exception.args
+        expected = (_surface_intersection.BAD_SEGMENT_PARAMS, (0, 0.0, 1.5))
+        self.assertEqual(exc_args, expected)
+
+    def test_consecutive_segments(self):
+        from bezier import _surface_intersection
+
+        edge_infos = [
+            ((0, 0.25, 0.5), (4, 0.25, 1.0), (5, 0.0, 0.75), (0, 0.0, 0.25))
+        ]
+        with self.assertRaises(ValueError) as exc_info:
+            self._call_function_under_test(edge_infos)
+
+        exc_args = exc_info.exception.args
+        expected = (
+            _surface_intersection.SEGMENTS_SAME_EDGE,
+            (0, 0.0, 0.25),
+            (0, 0.25, 0.5),
+        )
+        self.assertEqual(exc_args, expected)
+
+
 class Test_add_edge_end_unused(unittest.TestCase):
 
     @staticmethod
