@@ -790,7 +790,6 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS         : On success.
     ! * Status_BAD_MULTIPLICITY: Via ``full_newton()``.
-    ! * Status_SINGULAR        : Via ``newton_refine_intersect()``.
 
     type(CurveData), intent(in) :: curve1
     integer(c_int), intent(in) :: num_nodes1
@@ -1131,7 +1130,6 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS         : On success.
     ! * Status_BAD_MULTIPLICITY: Via ``from_linearized()``.
-    ! * Status_SINGULAR        : Via ``from_linearized()``.
 
     type(CurveData), intent(in) :: first
     real(c_double), intent(in) :: root_nodes1(:, :)
@@ -1314,7 +1312,6 @@ contains
     ! Possible error states:
     ! * Status_SUCCESS         : On success.
     ! * Status_BAD_MULTIPLICITY: Via ``add_from_linearized()``.
-    ! * Status_SINGULAR        : Via ``add_from_linearized()``.
 
     real(c_double), intent(in) :: root_nodes_first(:, :)
     real(c_double), intent(in) :: root_nodes_second(:, :)
@@ -1773,7 +1770,6 @@ contains
     ! * (N >= MAX_CANDIDATES)  : The number of candidates if it exceeds the
     !                            limit ``MAX_CANDIDATES`` (64 is the default).
     ! * Status_BAD_MULTIPLICITY: Via ``intersect_one_round()``.
-    ! * Status_SINGULAR        : Via ``intersect_one_round()``.
 
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(2, num_nodes_first)
@@ -1904,7 +1900,6 @@ contains
     ! * Status_NO_CONVERGE       : Via ``all_intersections()``.
     ! * (N >= MAX_CANDIDATES)    : Via ``all_intersections()``.
     ! * Status_BAD_MULTIPLICITY  : Via ``all_intersections()``.
-    ! * Status_SINGULAR          : Via ``all_intersections()``.
 
     integer(c_int), intent(in) :: num_nodes_first
     real(c_double), intent(in) :: nodes_first(2, num_nodes_first)

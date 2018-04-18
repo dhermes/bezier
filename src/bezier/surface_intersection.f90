@@ -296,7 +296,7 @@ contains
     ! NOTE: This returns ``-1`` (``LOCATE_MISS``) for ``s_val`` as a signal
     !       for "point is not on the surface".
     ! NOTE: This assumes, but does not check, that the surface is "valid",
-    !       i.e. all pre-image are unique.
+    !       i.e. all pre-images are unique.
 
     integer(c_int), intent(in) :: num_nodes
     real(c_double), intent(in) :: nodes(2, num_nodes)
@@ -996,7 +996,6 @@ contains
     !                            ``curve_intersection.f90``.
     ! * (N >= MAX_CANDIDATES)  : Via ``all_intersections()``.
     ! * Status_BAD_MULTIPLICITY: Via ``all_intersections()``.
-    ! * Status_SINGULAR        : Via ``all_intersections()``.
     ! * Status_EDGE_END        : Via ``add_st_vals()``.
     ! * Status_SAME_CURVATURE  : Via ``add_st_vals()``.
 
@@ -1692,7 +1691,6 @@ contains
     ! * Status_NO_CONVERGE     : Via ``surfaces_intersection_points()``.
     ! * (N >= MAX_CANDIDATES)  : Via ``surfaces_intersection_points()``.
     ! * Status_BAD_MULTIPLICITY: Via ``surfaces_intersection_points()``.
-    ! * Status_SINGULAR        : Via ``surfaces_intersection_points()``.
     ! * Status_EDGE_END        : Via ``surfaces_intersection_points()``.
     ! * Status_SAME_CURVATURE  : Via ``surfaces_intersection_points()``.
     ! * Status_BAD_INTERIOR    : Via ``interior_combine()``.
@@ -1790,7 +1788,7 @@ contains
     !       accordingly.
 
     ! Possible error states:
-    ! * Status_SUCCESS           : Via ``surfaces_intersect()``.
+    ! * Status_SUCCESS           : On success.
     ! * Status_INSUFFICIENT_SPACE: If ``segment_ends_size`` is smaller than
     !                              ``num_intersected`` **OR** if
     !                              ``segments_size`` is smaller than the number
@@ -1799,7 +1797,6 @@ contains
     ! * Status_NO_CONVERGE       : Via ``surfaces_intersect()``.
     ! * (N >= MAX_CANDIDATES)    : Via ``surfaces_intersect()``.
     ! * Status_BAD_MULTIPLICITY  : Via ``surfaces_intersect()``.
-    ! * Status_SINGULAR          : Via ``surfaces_intersect()``.
     ! * Status_EDGE_END          : Via ``surfaces_intersect()``.
     ! * Status_SAME_CURVATURE    : Via ``surfaces_intersect()``.
     ! * Status_BAD_INTERIOR      : Via ``surfaces_intersect()``.

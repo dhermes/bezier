@@ -20,6 +20,7 @@
    curve-curve-intersection
    algorithm-helpers
    native-libraries
+   abi/index
    development
    releases/index
 

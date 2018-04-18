@@ -23,22 +23,25 @@ module status
   ! Values of Status enum:
   ! SUCCESS: Procedure exited with no error.
   integer(c_int), parameter :: Status_SUCCESS = 0
-  ! BAD_MULTIPLICITY: Newton's method failed to converge in
-  !                   ``curve_intersection.full_newton_nonzero()`` because
-  !                   the root had an unsupported multiplicity (i.e. it was
-  !                   a triple root or higher).
+  ! BAD_MULTIPLICITY: An iterative method (e.g. Newton's method) failed to
+  !                   converge because it encountered a solution with an
+  !                   unsupported multiplicity (i.e. it was a triple root or
+  !                   higher). The multiplicity is detected by the observed
+  !                   rate of convergence. (Used by
+  !                   ``curve_intersection.full_newton_nonzero()``.)
   integer(c_int), parameter :: Status_BAD_MULTIPLICITY = 1
-  ! NO_CONVERGE: An iterative algorithm has failed to converge. Used by
-  !              ``curve_intersection.all_intersections()``.
+  ! NO_CONVERGE: An iterative method failed to converge in the maximum allowed
+  !              number of iterations. (Used by
+  !              ``curve_intersection.all_intersections()``.)
   integer(c_int), parameter :: Status_NO_CONVERGE = 2
-  ! INSUFFICIENT_SPACE: Intended to be used by ABI versions of procedures. Will
-  !                     be used when the caller has not allocated enough space
-  !                     for the output values. (On the Fortran side, an
+  ! INSUFFICIENT_SPACE: Intended to be used by ABI versions of procedures. This
+  !                     will be used when the caller has not allocated enough
+  !                     space for the output values. (On the Fortran side, an
   !                     ``allocatable`` array can be resized, but in the ABI,
   !                     we can only use what the caller has passed.)
   integer(c_int), parameter :: Status_INSUFFICIENT_SPACE = 3
-  ! SAME_CURVATURE: Can't classify curve-curve intersection when the curves
-  !                 have identical curvature at the point of intersection.
+  ! SAME_CURVATURE: Classification of a curve-curve intersection failed due to
+  !                 two curves having identical at a tangent intersection.
   integer(c_int), parameter :: Status_SAME_CURVATURE = 4
   ! BAD_INTERIOR: Caused by a failure during the process of surface-surface
   !               intersection. Occurs when the corners and edge-edge
@@ -54,7 +57,8 @@ module status
   integer(c_int), parameter :: Status_SINGULAR = 7
   ! UNKNOWN: Signifies a block of code reached an "impossible" state. Either
   !          the code has violated some mathematical invariant or the author
-  !          misunderstood the possible states of the system.
+  !          of that block of code misunderstood the possible states of the
+  !          system.
   integer(c_int), parameter :: Status_UNKNOWN = 999
 
 end module status
