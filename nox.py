@@ -21,7 +21,7 @@ import py.path
 IS_MAC_OS_X = sys.platform == 'darwin'
 DEPS = {
     'coverage': 'coverage',
-    'Cython': 'Cython >= 0.28.1',
+    'Cython': 'Cython >= 0.28.2',
     'docutils': 'docutils',
     'flake8': 'flake8',
     'flake8-import-order': 'flake8-import-order',
