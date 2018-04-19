@@ -574,7 +574,7 @@ contains
     call evaluate_hodograph( &
          s_val, 2, 2, nodes1, tangent_vec)
     call get_curvature( &
-         2, 2, nodes1, tangent_vec, s_val, curvature)
+         2, nodes1, tangent_vec, s_val, curvature)
     case_success = (curvature == 0.0_dp)
     call print_status(name, case_id, case_success, success)
 
@@ -586,7 +586,7 @@ contains
     call evaluate_hodograph( &
          s_val, 3, 2, nodes2, tangent_vec)
     call get_curvature( &
-         3, 2, nodes2, tangent_vec, s_val, curvature)
+         3, nodes2, tangent_vec, s_val, curvature)
     case_success = (curvature == 0.0_dp)
     call print_status(name, case_id, case_success, success)
 
@@ -598,7 +598,7 @@ contains
     call evaluate_hodograph( &
          s_val, 3, 2, nodes2, tangent_vec)
     call get_curvature( &
-         3, 2, nodes2, tangent_vec, s_val, curvature)
+         3, nodes2, tangent_vec, s_val, curvature)
     case_success = (curvature == -4.0_dp)
     call print_status(name, case_id, case_success, success)
 

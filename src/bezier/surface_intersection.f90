@@ -582,12 +582,12 @@ contains
     !       parallel and we don't handle that case.
     num_nodes = size(edges_first(intersection_%index_first)%nodes, 2)
     call get_curvature( &
-         num_nodes, 2, edges_first(intersection_%index_first)%nodes, &
+         num_nodes, edges_first(intersection_%index_first)%nodes, &
          tangent_s, intersection_%s, curvature1)
 
     num_nodes = size(edges_second(intersection_%index_second)%nodes, 2)
     call get_curvature( &
-         num_nodes, 2, edges_second(intersection_%index_second)%nodes, &
+         num_nodes, edges_second(intersection_%index_second)%nodes, &
          tangent_t, intersection_%t, curvature2)
 
     if (dot_prod < 0.0_dp) then

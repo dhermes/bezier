@@ -266,7 +266,6 @@ Procedures
                   bool *not_implemented);
 
 .. c:function:: void get_curvature(int *num_nodes, \
-                                   int *dimension, \
                                    double *nodes, \
                                    double *tangent_vec, \
                                    double *s, \
@@ -275,18 +274,21 @@ Procedures
    Get the curvature of a B |eacute| zier curve at a point. See
    :func:`._get_curvature` for more details.
 
+   .. note::
+
+      This **only** computes curvature for plane curves (i.e. curves
+      in :math:`\mathbf{R}^2`). An equivalent notion of curvature exists for
+      space curves, but support for that is not implemented here.
+
    :param int* num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
-      **[Input]** The dimension :math:`D` such that the curve lies in
-      :math:`\mathbf{R}^D`.
    :param double* nodes:
       **[Input]** The actual control points of the curve as a
-      :math:`D \times N` array. This should be laid out in Fortran order,
-      with :math:`D N` total values.
+      :math:`2 \times N` array. This should be laid out in Fortran order,
+      with :math:`2 N` total values.
    :param double* tangent_vec:
-      **[Input]** The hodograph :math:`B'(s)` as a :math:`D \times 1` array.
+      **[Input]** The hodograph :math:`B'(s)` as a :math:`2 \times 1` array.
       Note that this could be computed once :math:`s` and :math:`B` are known,
       but this allows the caller to re-use an already computed tangent vector.
    :param double* s:

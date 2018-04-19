@@ -43,7 +43,7 @@ void locate_point_curve(
 void elevate_nodes_curve(
     int *num_nodes, int *dimension, double *nodes, double *elevated);
 void get_curvature(
-    int *num_nodes, int *dimension, double *nodes, double *tangent_vec,
+    int *num_nodes, double *nodes, double *tangent_vec,
     double *s, double *curvature);
 void reduce_pseudo_inverse(
     int *num_nodes, int *dimension, double *nodes, double *reduced,

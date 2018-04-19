@@ -570,17 +570,21 @@ contains
   end subroutine elevate_nodes
 
   subroutine get_curvature( &
-       num_nodes, dimension_, nodes, tangent_vec, s, curvature) &
+       num_nodes, nodes, tangent_vec, s, curvature) &
        bind(c, name='get_curvature')
 
-    integer(c_int), intent(in) :: num_nodes, dimension_
-    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
-    real(c_double), intent(in) :: tangent_vec(dimension_, 1)
+    ! NOTE: This **only** computes curvature for plane curves (i.e. curves
+    !       in R^2). An equivalent notion of curvature exists for space
+    !       curves, but support for that is not implemented here.
+
+    integer(c_int), intent(in) :: num_nodes
+    real(c_double), intent(in) :: nodes(2, num_nodes)
+    real(c_double), intent(in) :: tangent_vec(2, 1)
     real(c_double), intent(in) :: s
     real(c_double), intent(out) :: curvature
     ! Variables outside of signature.
-    real(c_double) :: work(dimension_, num_nodes - 1)
-    real(c_double) :: concavity(dimension_, 1)
+    real(c_double) :: work(2, num_nodes - 1)
+    real(c_double) :: concavity(2, 1)
 
     if (num_nodes == 2) then
        curvature = 0
@@ -596,7 +600,7 @@ contains
 
     ! NOTE: The degree being evaluated is ``degree - 2 == num_nodes - 3``.
     call evaluate_multi( &
-         num_nodes - 2, dimension_, work(:, :num_nodes - 2), 1, [s], concavity)
+         num_nodes - 2, 2, work(:, :num_nodes - 2), 1, [s], concavity)
     ! B''(s) = d (d - 1) D(s) where D(s) is defined by the "double hodograph".
     concavity = concavity * (num_nodes - 1) * (num_nodes - 2)
 
