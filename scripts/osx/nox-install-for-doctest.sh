@@ -34,6 +34,6 @@ delocate-wheel \
 # 3. Install from the "delocated" wheel.
 python -m pip install ${DELOCATED_DIR}/bezier*.whl
 
-# Clean up temporary directories.
+# 4. Clean up temporary directories.
 rm -fr ${BASIC_DIR}
 rm -fr ${DELOCATED_DIR}

@@ -20,4 +20,4 @@ install:
   - source scripts/osx/travis-setup.sh
 
 script:
-  - scripts/osx/travis-test.sh
+  - scripts/osx/test.sh

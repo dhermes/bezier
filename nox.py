@@ -48,10 +48,14 @@ DOCS_DEPS = (
 )
 SINGLE_INTERP = 'python3.6'
 PYPY = 'pypy'
+# Constants used for checking the journal of commands.
+APPVEYOR = 'appveyor'
+CIRCLE_CI = 'circleci'
+TRAVIS_OS_X = 'travis-osx'
 JOURNAL_PATHS = {
-    'appveyor': os.path.join('appveyor', 'expected_journal.txt'),
-    'circleci': os.path.join('.circleci', 'expected_journal.txt'),
-    'travis-osx': os.path.join('scripts', 'osx', 'travis_journal.txt'),
+    APPVEYOR: os.path.join('appveyor', 'expected_journal.txt'),
+    CIRCLE_CI: os.path.join('.circleci', 'expected_journal.txt'),
+    TRAVIS_OS_X: os.path.join('scripts', 'osx', 'travis_journal.txt'),
 }
 
 
@@ -324,8 +328,18 @@ def benchmark(session, target):
 
 
 @nox.session
-@nox.parametrize('machine', ['appveyor', 'circleci', 'travis-osx'])
+@nox.parametrize('machine', [APPVEYOR, CIRCLE_CI, TRAVIS_OS_X])
 def check_journal(session, machine):
+    if machine == APPVEYOR and os.environ.get('APPVEYOR') != 'True':
+        session.skip('Not currently running in AppVeyor.')
+    if machine == CIRCLE_CI and os.environ.get('CIRCLECI') != 'true':
+        session.skip('Not currently running in CircleCI.')
+    if machine == TRAVIS_OS_X:
+        if os.environ.get('TRAVIS') != 'true':
+            session.skip('Not currently running in Travis.')
+        if os.environ.get('TRAVIS_OS_NAME') != 'osx':
+            session.skip('Running in Travis, but not in an OS X job.')
+
     session.virtualenv_dirname = 'journal-{}'.format(machine)
     session.interpreter = SINGLE_INTERP
     # Get a temporary file where the journal will be written.
@@ -374,6 +388,9 @@ def clean(session):
         get_path('docs', 'build'),
         get_path('scripts', 'osx', 'dist_wheels'),
         get_path('scripts', 'osx', 'fixed_wheels'),
+        get_path('scripts', 'osx', 'frankenstein'),
+        get_path('scripts', 'osx', 'tempdir-i386'),
+        get_path('scripts', 'osx', 'tempdir-x86_64'),
         get_path('src', 'bezier.egg-info'),
         get_path('src', 'bezier', '__pycache__'),
         get_path('src', 'bezier', 'extra-dll'),
