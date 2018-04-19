@@ -271,7 +271,7 @@ Procedures
                                    double *s, \
                                    double *curvature)
 
-   Get the curvature of a B |eacute| zier curve at a point. See
+   Get the signed curvature of a B |eacute| zier curve at a point. See
    :func:`._get_curvature` for more details.
 
    .. note::
@@ -295,7 +295,7 @@ Procedures
       **[Input]** The parameter :math:`s` where the curvature is being
       computed.
    :param double* curvature:
-      **[Output]** The curvature :math:`\kappa`.
+      **[Output]** The signed curvature :math:`\kappa`.
 
    **Signature:**
 
@@ -334,7 +334,7 @@ Procedures
       **[Input]** The point :math:`p` as a :math:`D \times 1` array.
    :param double* s_approx:
       **[Output]** The parameter :math:`s` of the solution. If
-      :math:`p` can't be located on the surface, then ``s_approx = -1.0``.
+      :math:`p` can't be located on the curve, then ``s_approx = -1.0``.
       If there are **multiple** parameters that satisfy :math:`B(s) = p`
       (indicating that :math:`B(s)` has a self-crossing) then
       ``s_approx = -2.0``.
