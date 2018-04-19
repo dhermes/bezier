@@ -58,7 +58,7 @@ def handle_import_error(caught_exc, name):
         caught_exc (ImportError): An exception caught when trying to import
             a Cython module.
         name (str): The name of the module. For example, for the module
-            ``bezier._curve_speedup``, the name is ``'_curve_speedup'``.
+            ``bezier._curve_speedup``, the name is ``"_curve_speedup"``.
 
     Raises:
         ImportError: If the error message is different than the basic

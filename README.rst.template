@@ -127,8 +127,8 @@ intersections):
    >>> _ = curve2.plot(num_pts=256, ax=ax)
    >>> lines = ax.plot(
    ...     points[0, :], points[1, :],
-   ...     marker='o', linestyle='None', color='black')
-   >>> _ = ax.axis('scaled')
+   ...     marker="o", linestyle="None", color="black")
+   >>> _ = ax.axis("scaled")
    >>> _ = ax.set_xlim(-0.125, 1.125)
    >>> _ = ax.set_ylim(-0.0625, 0.625)
    >>> plt.show()

@@ -74,7 +74,7 @@ def is_dual_architecture():
 
     This property could also be checked by looking for the presence of
     multiple architectures in
-    ``distutils.sysconfig.get_config_var('LDFLAGS')``.
+    ``distutils.sysconfig.get_config_var("LDFLAGS")``.
 
     Returns:
         bool: Indicating if the Python binary is dual architecture
@@ -339,7 +339,7 @@ class DualArchitectureCompile(object):
             obj (str): The location of the object file to be created.
             src (str): The location of the source file to be compiled.
             ext (str): The file extension (used to determine flags).
-            cc_args (List[str]): Compile args, typically just ``['-c']``.
+            cc_args (List[str]): Compile args, typically just ``["-c"]``.
             extra_postargs (List[str]): Extra arguments at the end of the
                 compile command.
             pp_opts (List[str]): Unused by the NumPy ``distutils`` Fortran

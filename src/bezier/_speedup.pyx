@@ -51,13 +51,13 @@ from bezier._surface_intersection cimport SurfaceContained
 cdef double EPS = 0.5**40
 cdef double LOCATE_MISS = -1.0
 cdef double LOCATE_INVALID = -2.0
-cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
+cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")
 cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
 cdef dtype_t SEGMENT_DTYPE = np.dtype(
     [
-        ('start', np.double),
-        ('end', np.double),
-        ('edge_index', np.intc),
+        ("start", np.double),
+        ("end", np.double),
+        ("edge_index", np.intc),
     ],
     align=True,
 )
@@ -65,33 +65,33 @@ cdef CurvedPolygonSegment[::1] SEGMENTS_WORKSPACE = np.empty(
     6, dtype=SEGMENT_DTYPE)
 
 DQAGSE_ERR_MSGS = (
-    'Maximum number of subdivisions allowed has been achieved.',
-    'Roundoff error detected, which prevents convergence to tolerance.',
+    "Maximum number of subdivisions allowed has been achieved.",
+    "Roundoff error detected, which prevents convergence to tolerance.",
     'Integrand behaves "extremely" at some point(s) in the interval.',
-    'Assumed: the requested tolerance cannot be achieved',
-    'Integral is probably divergent or converges too slowly.',
-    'Invalid input.',
+    "Assumed: the requested tolerance cannot be achieved",
+    "Integral is probably divergent or converges too slowly.",
+    "Invalid input.",
 )
 TOO_MANY_TEMPLATE = (
-    'The number of candidate intersections is too high.\n'
-    '{:d} candidate pairs.')
+    "The number of candidate intersections is too high.\n"
+    "{:d} candidate pairs.")
 TOO_SMALL_TEMPLATE = (
-    'Did not have enough space for intersections. Needed space '
-    'for {:d} intersections but only had space for {:d}.')
+    "Did not have enough space for intersections. Needed space "
+    "for {:d} intersections but only had space for {:d}.")
 SEGMENT_ENDS_TOO_SMALL = (
-    'Did not have enough space for segment ends. Needed space '
-    'for {:d} integers but only had space for {:d}.')
+    "Did not have enough space for segment ends. Needed space "
+    "for {:d} integers but only had space for {:d}.")
 SEGMENTS_TOO_SMALL = (
-    'Did not have enough space for segments. Needed space '
-    'for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.')
+    "Did not have enough space for segments. Needed space "
+    "for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.")
 # NOTE: The ``SUBDIVISION_NO_CONVERGE`` error message is copied from
 #       ``_geometric_intersection.py::_NO_CONVERGE_TEMPLATE``. This
 #       assumes, but does not verify, that the Fortran subroutine
 #       ``curve_intersection.f90::all_intersections_abi()`` uses
 #       ``MAX_INTERSECT_SUBDIVISIONS = 20``.
 SUBDIVISION_NO_CONVERGE = (
-    'Curve intersection failed to converge to approximately linear '
-    'subdivisions after 20 iterations.')
+    "Curve intersection failed to converge to approximately linear "
+    "subdivisions after 20 iterations.")
 # NOTE: The ``NEWTON_NO_CONVERGE`` error message is copied from
 #       ``_intersection_helpers.py::NEWTON_NO_CONVERGE``.
 NEWTON_NO_CONVERGE = """\
@@ -123,11 +123,11 @@ The failure to converge may have been caused by one of:
 def evaluate_multi_barycentric(
         double[::1, :] nodes, double[::1] lambda1, double[::1] lambda2):
     cdef int num_nodes, dimension, num_vals
-    cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
+    cdef ndarray_t[double, ndim=2, mode="fortran"] evaluated
 
     dimension, num_nodes = np.shape(nodes)
     num_vals, = np.shape(lambda1)
-    evaluated = np.empty((dimension, num_vals), order='F')
+    evaluated = np.empty((dimension, num_vals), order="F")
     bezier._curve.evaluate_curve_barycentric(
         &num_nodes,
         &dimension,
@@ -143,11 +143,11 @@ def evaluate_multi_barycentric(
 def evaluate_multi(
         double[::1, :] nodes, double[::1] s_vals):
     cdef int num_nodes, dimension, num_vals
-    cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
+    cdef ndarray_t[double, ndim=2, mode="fortran"] evaluated
 
     dimension, num_nodes = np.shape(nodes)
     num_vals, = np.shape(s_vals)
-    evaluated = np.empty((dimension, num_vals), order='F')
+    evaluated = np.empty((dimension, num_vals), order="F")
     bezier._curve.evaluate_multi(
         &num_nodes,
         &dimension,
@@ -161,10 +161,10 @@ def evaluate_multi(
 
 def specialize_curve(double[::1, :] nodes, double start, double end):
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+    cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
 
     dimension, num_nodes = np.shape(nodes)
-    new_nodes = np.empty((dimension, num_nodes), order='F')
+    new_nodes = np.empty((dimension, num_nodes), order="F")
 
     bezier._curve.specialize_curve(
         &num_nodes,
@@ -180,10 +180,10 @@ def specialize_curve(double[::1, :] nodes, double start, double end):
 
 def evaluate_hodograph(double s, double[::1, :] nodes):
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] hodograph
+    cdef ndarray_t[double, ndim=2, mode="fortran"] hodograph
 
     dimension, num_nodes = np.shape(nodes)
-    hodograph = np.empty((dimension, 1), order='F')
+    hodograph = np.empty((dimension, 1), order="F")
 
     bezier._curve.evaluate_hodograph(
         &s,
@@ -198,12 +198,12 @@ def evaluate_hodograph(double s, double[::1, :] nodes):
 
 def subdivide_nodes_curve(double[::1, :] nodes):
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] left_nodes, right_nodes
+    cdef ndarray_t[double, ndim=2, mode="fortran"] left_nodes, right_nodes
 
     dimension, num_nodes = np.shape(nodes)
 
-    left_nodes = np.empty((dimension, num_nodes), order='F')
-    right_nodes = np.empty((dimension, num_nodes), order='F')
+    left_nodes = np.empty((dimension, num_nodes), order="F")
+    right_nodes = np.empty((dimension, num_nodes), order="F")
 
     bezier._curve.subdivide_nodes_curve(
         &num_nodes,
@@ -255,17 +255,17 @@ def locate_point_curve(double[::1, :] nodes, double[::1, :] point):
         return None
     elif s_approx == LOCATE_INVALID:
         raise ValueError(
-            'Parameters not close enough to one another')
+            "Parameters not close enough to one another")
     else:
         return s_approx
 
 
 def elevate_nodes(double[::1, :] nodes):
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] elevated
+    cdef ndarray_t[double, ndim=2, mode="fortran"] elevated
 
     dimension, num_nodes = np.shape(nodes)
-    elevated = np.empty((dimension, num_nodes + 1), order='F')
+    elevated = np.empty((dimension, num_nodes + 1), order="F")
 
     bezier._curve.elevate_nodes_curve(
         &num_nodes,
@@ -299,11 +299,11 @@ def get_curvature(double[::1, :] nodes, double[::1, :] tangent_vec, double s):
 def reduce_pseudo_inverse(double[::1, :] nodes):
     cdef int num_nodes, dimension
     cdef bool_t not_implemented
-    cdef ndarray_t[double, ndim=2, mode='fortran'] reduced
+    cdef ndarray_t[double, ndim=2, mode="fortran"] reduced
 
     dimension, num_nodes = np.shape(nodes)
 
-    reduced = np.empty((dimension, num_nodes - 1), order='F')
+    reduced = np.empty((dimension, num_nodes - 1), order="F")
 
     bezier._curve.reduce_pseudo_inverse(
         &num_nodes,
@@ -325,11 +325,11 @@ def reduce_pseudo_inverse(double[::1, :] nodes):
 def full_reduce(double[::1, :] nodes):
     cdef int num_nodes, dimension
     cdef int num_reduced_nodes
-    cdef ndarray_t[double, ndim=2, mode='fortran'] reduced
+    cdef ndarray_t[double, ndim=2, mode="fortran"] reduced
     cdef bool_t not_implemented
 
     dimension, num_nodes = np.shape(nodes)
-    reduced = np.empty((dimension, num_nodes), order='F')
+    reduced = np.empty((dimension, num_nodes), order="F")
 
     bezier._curve.full_reduce(
         &num_nodes,
@@ -377,7 +377,7 @@ def compute_length(double[::1, :] nodes):
         if 0 <= error_val - 1 < len(DQAGSE_ERR_MSGS):
             err_msg = DQAGSE_ERR_MSGS[error_val - 1]
         else:
-            err_msg = 'Unknown error: {!r}.'.format(error_val)
+            err_msg = "Unknown error: {!r}.".format(error_val)
         warnings.warn(err_msg, UserWarning)
 
     return length
@@ -410,7 +410,7 @@ def newton_refine_curve_intersect(
     )
 
     if status == bezier._status.Status.SINGULAR:
-        raise ValueError('Jacobian is singular.')
+        raise ValueError("Jacobian is singular.")
 
     return new_s, new_t
 
@@ -437,7 +437,7 @@ def bbox_intersect(double[::1, :] nodes1, double[::1, :] nodes2):
 
 def reset_curves_workspace(int workspace_size):
     global CURVES_WORKSPACE
-    CURVES_WORKSPACE = np.empty((2, workspace_size), order='F')
+    CURVES_WORKSPACE = np.empty((2, workspace_size), order="F")
 
 
 def curves_workspace_size():
@@ -456,7 +456,7 @@ def curve_intersections(
     cdef int num_nodes_first, num_nodes_second
     cdef int intersections_size, num_intersections
     cdef bezier._status.Status status
-    cdef ndarray_t[double, ndim=2, mode='fortran'] intersections
+    cdef ndarray_t[double, ndim=2, mode="fortran"] intersections
     cdef bool_t coincident
 
     # NOTE: We don't check that there are 2 rows.
@@ -478,7 +478,7 @@ def curve_intersections(
     )
 
     if status == bezier._status.Status.SUCCESS:
-        intersections = np.empty((2, num_intersections), order='F')
+        intersections = np.empty((2, num_intersections), order="F")
         intersections[:, :] = CURVES_WORKSPACE[:, :num_intersections]
         return intersections, coincident
     elif status == bezier._status.Status.NO_CONVERGE:
@@ -557,7 +557,7 @@ def contains_nd(double[::1, :] nodes, double[::1] point):
 
     dimension, num_nodes = np.shape(nodes)
     if np.shape(point) != (dimension,):
-        msg = 'Point {} was expected to have shape ({},)'.format(
+        msg = "Point {} was expected to have shape ({},)".format(
             np.asarray(point), dimension)
         raise ValueError(msg)
 
@@ -597,11 +597,11 @@ def in_interval(double value, double start, double end):
 def simple_convex_hull(double[::1, :] points):
     cdef int num_points
     cdef int polygon_size
-    cdef ndarray_t[double, ndim=2, mode='fortran'] polygon
+    cdef ndarray_t[double, ndim=2, mode="fortran"] polygon
 
     # NOTE: We don't check that there are 2 rows.
     _, num_points = np.shape(points)
-    polygon = np.empty((2, num_points), order='F')
+    polygon = np.empty((2, num_points), order="F")
 
     bezier._helpers.simple_convex_hull(
         &num_points,
@@ -639,10 +639,10 @@ def de_casteljau_one_round(
         double[::1, :] nodes, int degree,
         double lambda1, double lambda2, double lambda3):
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+    cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
 
     dimension, num_nodes = np.shape(nodes)
-    new_nodes = np.empty((dimension, num_nodes - degree - 1), order='F')
+    new_nodes = np.empty((dimension, num_nodes - degree - 1), order="F")
 
     bezier._surface.de_casteljau_one_round(
         &num_nodes,
@@ -662,10 +662,10 @@ def evaluate_barycentric(
         double[::1, :] nodes, int degree,
         double lambda1, double lambda2, double lambda3):
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] point
+    cdef ndarray_t[double, ndim=2, mode="fortran"] point
 
     dimension, num_nodes = np.shape(nodes)
-    point = np.empty((dimension, 1), order='F')
+    point = np.empty((dimension, 1), order="F")
 
     bezier._surface.evaluate_barycentric(
         &num_nodes,
@@ -685,13 +685,13 @@ def evaluate_barycentric_multi(
         double[::1, :] nodes, int degree,
         double[::1, :] param_vals, int dimension):
     cdef int num_nodes, num_vals
-    cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
+    cdef ndarray_t[double, ndim=2, mode="fortran"] evaluated
 
     # NOTE: We don't check that there are ``dimension`` rows.
     _, num_nodes = np.shape(nodes)
     # NOTE: We don't check that there are 3 columns.
     num_vals, _ = np.shape(param_vals)
-    evaluated = np.empty((dimension, num_vals), order='F')
+    evaluated = np.empty((dimension, num_vals), order="F")
 
     bezier._surface.evaluate_barycentric_multi(
         &num_nodes,
@@ -710,13 +710,13 @@ def evaluate_cartesian_multi(
         double[::1, :] nodes, int degree,
         double[::1, :] param_vals, int dimension):
     cdef int num_nodes, num_vals
-    cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
+    cdef ndarray_t[double, ndim=2, mode="fortran"] evaluated
 
     # NOTE: We don't check that there are ``dimension`` rows.
     _, num_nodes = np.shape(nodes)
     # NOTE: We don't check that there are 2 columns.
     num_vals, _ = np.shape(param_vals)
-    evaluated = np.empty((dimension, num_vals), order='F')
+    evaluated = np.empty((dimension, num_vals), order="F")
 
     bezier._surface.evaluate_cartesian_multi(
         &num_nodes,
@@ -733,11 +733,11 @@ def evaluate_cartesian_multi(
 
 def jacobian_both(double[::1, :] nodes, int degree, int dimension):
     cdef int num_nodes
-    cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+    cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
 
     # NOTE: We don't check that there are ``dimension`` rows.
     _, num_nodes = np.shape(nodes)
-    new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order='F')
+    new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order="F")
 
     bezier._surface.jacobian_both(
         &num_nodes,
@@ -752,14 +752,14 @@ def jacobian_both(double[::1, :] nodes, int degree, int dimension):
 
 def jacobian_det(double[::1, :] nodes, int degree, double[::1, :] st_vals):
     cdef int num_nodes, num_vals
-    cdef ndarray_t[double, ndim=1, mode='fortran'] evaluated
+    cdef ndarray_t[double, ndim=1, mode="fortran"] evaluated
 
     # NOTE: We don't check that there are 2 rows.
     _, num_nodes = np.shape(nodes)
     # NOTE: We don't check that there are 2 columns.
     num_vals, _ = np.shape(st_vals)
 
-    evaluated = np.empty((num_vals,), order='F')
+    evaluated = np.empty((num_vals,), order="F")
 
     bezier._surface.jacobian_det(
         &num_nodes,
@@ -777,10 +777,10 @@ def specialize_surface(
         double[::1, :] nodes, int degree,
         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] specialized
+    cdef ndarray_t[double, ndim=2, mode="fortran"] specialized
 
     dimension, num_nodes = np.shape(nodes)
-    specialized = np.empty((dimension, num_nodes), order='F')
+    specialized = np.empty((dimension, num_nodes), order="F")
 
     bezier._surface.specialize_surface(
         &num_nodes,
@@ -798,16 +798,16 @@ def specialize_surface(
 
 def subdivide_nodes_surface(double[::1, :] nodes, int degree):
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_a
-    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_b
-    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_c
-    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_d
+    cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
+    cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_b
+    cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_c
+    cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_d
 
     dimension, num_nodes = np.shape(nodes)
-    nodes_a = np.empty((dimension, num_nodes), order='F')
-    nodes_b = np.empty((dimension, num_nodes), order='F')
-    nodes_c = np.empty((dimension, num_nodes), order='F')
-    nodes_d = np.empty((dimension, num_nodes), order='F')
+    nodes_a = np.empty((dimension, num_nodes), order="F")
+    nodes_b = np.empty((dimension, num_nodes), order="F")
+    nodes_c = np.empty((dimension, num_nodes), order="F")
+    nodes_d = np.empty((dimension, num_nodes), order="F")
 
     bezier._surface.subdivide_nodes_surface(
         &num_nodes,
@@ -825,14 +825,14 @@ def subdivide_nodes_surface(double[::1, :] nodes, int degree):
 
 def compute_edge_nodes(double[::1, :] nodes, int degree):
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes1
-    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes2
-    cdef ndarray_t[double, ndim=2, mode='fortran'] nodes3
+    cdef ndarray_t[double, ndim=2, mode="fortran"] nodes1
+    cdef ndarray_t[double, ndim=2, mode="fortran"] nodes2
+    cdef ndarray_t[double, ndim=2, mode="fortran"] nodes3
 
     dimension, num_nodes = np.shape(nodes)
-    nodes1 = np.empty((dimension, degree + 1), order='F')
-    nodes2 = np.empty((dimension, degree + 1), order='F')
-    nodes3 = np.empty((dimension, degree + 1), order='F')
+    nodes1 = np.empty((dimension, degree + 1), order="F")
+    nodes2 = np.empty((dimension, degree + 1), order="F")
+    nodes3 = np.empty((dimension, degree + 1), order="F")
 
     bezier._surface.compute_edge_nodes(
         &num_nodes,
@@ -974,12 +974,12 @@ def _surface_intersections_success(
     cdef int begin_index, end_index
     cdef size_t i, j
     cdef int num_nodes, dimension
-    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes1
-    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes2
-    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes3
-    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes4
-    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes5
-    cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes6
+    cdef ndarray_t[double, ndim=2, mode="fortran"] edge_nodes1
+    cdef ndarray_t[double, ndim=2, mode="fortran"] edge_nodes2
+    cdef ndarray_t[double, ndim=2, mode="fortran"] edge_nodes3
+    cdef ndarray_t[double, ndim=2, mode="fortran"] edge_nodes4
+    cdef ndarray_t[double, ndim=2, mode="fortran"] edge_nodes5
+    cdef ndarray_t[double, ndim=2, mode="fortran"] edge_nodes6
 
     curved_polygons = []
     for i in range(num_intersected):
@@ -1006,9 +1006,9 @@ def _surface_intersections_success(
     # NOTE: We compute the nodes for each of the six edges. This is a
     #       "wasted" computation / storage.
     dimension, num_nodes = np.shape(nodes1)
-    edge_nodes1 = np.empty((dimension, degree1 + 1), order='F')
-    edge_nodes2 = np.empty((dimension, degree1 + 1), order='F')
-    edge_nodes3 = np.empty((dimension, degree1 + 1), order='F')
+    edge_nodes1 = np.empty((dimension, degree1 + 1), order="F")
+    edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")
+    edge_nodes3 = np.empty((dimension, degree1 + 1), order="F")
     bezier._surface.compute_edge_nodes(
         &num_nodes,
         &dimension,
@@ -1020,9 +1020,9 @@ def _surface_intersections_success(
     )
 
     dimension, num_nodes = np.shape(nodes2)
-    edge_nodes4 = np.empty((dimension, degree2 + 1), order='F')
-    edge_nodes5 = np.empty((dimension, degree2 + 1), order='F')
-    edge_nodes6 = np.empty((dimension, degree2 + 1), order='F')
+    edge_nodes4 = np.empty((dimension, degree2 + 1), order="F")
+    edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")
+    edge_nodes6 = np.empty((dimension, degree2 + 1), order="F")
     bezier._surface.compute_edge_nodes(
         &num_nodes,
         &dimension,
@@ -1133,18 +1133,18 @@ def surface_intersections(
     elif status == bezier._status.Status.EDGE_END:
         # NOTE: This text is identical (or should be) to the exception
         #       in the Python ``classify_intersection()``.
-        raise ValueError('Intersection occurs at the end of an edge')
+        raise ValueError("Intersection occurs at the end of an edge")
     elif status == bezier._status.Status.SAME_CURVATURE:
         # NOTE: This text is identical (or should be) to the exception(s)
         #       in the Python ``classify_tangent_intersection()``.
-        raise NotImplementedError('Tangent curves have same curvature.')
+        raise NotImplementedError("Tangent curves have same curvature.")
     elif status == bezier._status.Status.BAD_INTERIOR:
         # NOTE: This assumes that the Fortran ``interior_combine()`` has
         #       failed to return to the start node after ``MAX_EDGES = 10``
         #       edges have been added.
-        raise RuntimeError('Unexpected number of edges')
+        raise RuntimeError("Unexpected number of edges")
     elif status == bezier._status.Status.UNKNOWN:
-        raise RuntimeError('Unknown error has occured.')
+        raise RuntimeError("Unknown error has occured.")
     else:
         # NOTE: If ``status`` isn't one of the enum values, then it is the
         #       number of candidate intersections.

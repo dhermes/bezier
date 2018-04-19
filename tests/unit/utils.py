@@ -54,7 +54,7 @@ def binary_round(value, num_bits):
     # NOTE: This assumes ``value`` is not Inf/-Inf/NaN or
     #       a subnormal number.
     hex_val = value.hex()
-    # NOTE: `pre` is either '' or '-'.
+    # NOTE: `pre` is either "" or "-".
     pre, hex_digits = hex_val.split("0x1.")
     hex_digits, post = hex_digits.split("p")
     assert len(hex_digits) == 13

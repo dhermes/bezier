@@ -52,7 +52,7 @@ def get_version():
     """Get the current version from ``setup.py``.
 
     Assumes that importing ``setup.py`` will have no side-effects (i.e.
-    assumes the behavior is guarded by ``if __name__ == '__main__'``).
+    assumes the behavior is guarded by ``if __name__ == "__main__"``).
 
     Returns:
         str: The current version in ``setup.py``.

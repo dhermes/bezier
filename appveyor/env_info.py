@@ -36,7 +36,7 @@ def main():
         print("sys.maxsize: {}".format(sys.maxsize))
     print("sys.version:\n{}".format(sys.version))
     bitness = struct.calcsize("P") * 8
-    print("struct.calcsize('P') * 8: {}".format(bitness))
+    print('struct.calcsize("P") * 8: {}'.format(bitness))
 
 
 if __name__ == "__main__":

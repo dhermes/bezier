@@ -41,10 +41,10 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
+# needs_sphinx = "1.0"
 
 # Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+# extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
@@ -64,12 +64,12 @@ templates_path = []
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
+# source_suffix = [".rst", ".md"]
 source_suffix = ".rst"
 
 # The encoding of source files.
 #
-# source_encoding = 'utf-8-sig'
+# source_encoding = "utf-8-sig"
 
 # The master toctree document.
 master_doc = "index"
@@ -98,11 +98,11 @@ language = None
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
 #
-# today = ''
+# today = ""
 #
 # Else, today_fmt is used as the format for a strftime call.
 #
-# today_fmt = '%B %d, %Y'
+# today_fmt = "%B %d, %Y"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -114,7 +114,7 @@ exclude_patterns = []
 #
 # default_role = None
 
-# If true, '()' will be appended to :func: etc. cross-reference text.
+# If true, "()" will be appended to :func: etc. cross-reference text.
 #
 # add_function_parentheses = True
 
@@ -163,7 +163,7 @@ if not ON_READ_THE_DOCS:
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = u'bezier v0.0.1'
+# html_title = u"bezier v0.0.1"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -191,9 +191,9 @@ html_static_path = ["images"]
 #
 # html_extra_path = []
 
-# If not None, a 'Last updated on:' timestamp is inserted at every page
+# If not None, a "Last updated on:" timestamp is inserted at every page
 # bottom, using the given strftime format.
-# The empty string is equivalent to '%b %d, %Y'.
+# The empty string is equivalent to "%b %d, %Y".
 #
 # html_last_updated_fmt = None
 
@@ -239,28 +239,28 @@ html_static_path = ["images"]
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
 #
-# html_use_opensearch = ''
+# html_use_opensearch = ""
 
 # This is the file name suffix for HTML files (e.g. ".xhtml").
 # html_file_suffix = None
 
 # Language to be used for generating the HTML full-text search index.
 # Sphinx supports the following languages:
-#   'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ja'
-#   'nl', 'no', 'pt', 'ro', 'ru', 'sv', 'tr', 'zh'
+#   "da", "de", "en", "es", "fi", "fr", "hu", "it", "ja"
+#   "nl", "no", "pt", "ro", "ru", "sv", "tr", "zh"
 #
-# html_search_language = 'en'
+# html_search_language = "en"
 
 # A dictionary with options for the search language support, empty by default.
-# 'ja' uses this config value.
-# 'zh' user can custom change `jieba` dictionary path.
+# "ja" uses this config value.
+# "zh" user can custom change `jieba` dictionary path.
 #
-# html_search_options = {'type': 'default'}
+# html_search_options = {"type": "default"}
 
 # The name of a javascript file (relative to the configuration directory) that
 # implements a search results scorer. If empty, the default will be used.
 #
-# html_search_scorer = 'scorer.js'
+# html_search_scorer = "scorer.js"
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "bezier-doc"
@@ -351,9 +351,9 @@ texinfo_documents = [
 #
 # texinfo_domain_indices = True
 
-# How to display URL addresses: 'footnote', 'no', or 'inline'.
+# How to display URL addresses: "footnote", "no", or "inline".
 #
-# texinfo_show_urls = 'footnote'
+# texinfo_show_urls = "footnote"
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #

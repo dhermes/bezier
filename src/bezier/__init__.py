@@ -44,7 +44,7 @@ except ImportError as exc:  # pragma: NO COVER
     __config__.handle_import_error(exc, "_speedup")
     _HAS_SPEEDUP = False
 # NOTE: The ``__version__`` and ``__author__`` are hard-coded here, rather
-#       than using ``pkg_resources.get_distribution('bezier').version``
+#       than using ``pkg_resources.get_distribution("bezier").version``
 #       and related. This is **entirely** to accomodate builds where
 #       ``bezier`` is imported from source (and not installed).
 __author__ = "Danny Hermes"

@@ -57,12 +57,12 @@ The C headers for ``libbezier`` will be included in the installed package
            self.path = path
 
        def __repr__(self):
-           posix_path = self.path.replace(os.path.sep, '/')
+           posix_path = self.path.replace(os.path.sep, "/")
            return repr(posix_path)
 
 
    def sort_key(name):
-       return name.lower().lstrip('_')
+       return name.lower().lstrip("_")
 
 
    def tree(directory, suffix=None):
@@ -74,14 +74,14 @@ The C headers for ``libbezier`` will be included in the installed package
                sub_part = tree(path, suffix=suffix)
                if sub_part is not None:
                    # NOTE: We **always** use posix separator.
-                   parts.append(name + '/')
-                   parts.append(textwrap.indent(sub_part, '  '))
+                   parts.append(name + "/")
+                   parts.append(textwrap.indent(sub_part, "  "))
            else:
                if suffix is None or name.endswith(suffix):
                    parts.append(name)
 
        if parts:
-           return '\n'.join(parts)
+           return "\n".join(parts)
        else:
            return None
 
@@ -90,12 +90,12 @@ The C headers for ``libbezier`` will be included in the installed package
        if isinstance(directory, Path):
            # Make Windows act like posix.
            directory = directory.path
-           separator = '/'
+           separator = "/"
        else:
            separator = os.path.sep
        print(os.path.basename(directory) + separator)
        full_tree = tree(directory, suffix=suffix)
-       print(textwrap.indent(full_tree, '  '))
+       print(textwrap.indent(full_tree, "  "))
 
 
    def parent_directory(directory):
@@ -119,7 +119,7 @@ The C headers for ``libbezier`` will be included in the installed package
 
    # OS X specific.
    base_dir = os.path.dirname(include_directory.path)
-   dylibs_directory = os.path.join(base_dir, '.dylibs')
+   dylibs_directory = os.path.join(base_dir, ".dylibs")
 
 .. doctest:: show-headers
 
@@ -158,7 +158,7 @@ Cython declaration files are provided:
    >>> bezier_directory = parent_directory(include_directory)
    >>> bezier_directory
    '.../site-packages/bezier'
-   >>> print_tree(bezier_directory, suffix='.pxd')
+   >>> print_tree(bezier_directory, suffix=".pxd")
    bezier/
      _curve.pxd
      _curve_intersection.pxd
@@ -309,13 +309,13 @@ of ``libgfortran``:
 
 
    def invoke_shell(*args):
-       print('$ ' + ' '.join(args))
+       print("$ " + " ".join(args))
        prev_cwd = os.getcwd()
        os.chdir(bezier_directory)
        # NOTE: We print to the stdout of the doctest, rather than using
        #       `subprocess.call()` directly.
        output_bytes = subprocess.check_output(args).rstrip()
-       print(output_bytes.decode('utf-8'))
+       print(output_bytes.decode("utf-8"))
        os.chdir(prev_cwd)
 
 .. doctest:: os-x-extension
@@ -323,7 +323,7 @@ of ``libgfortran``:
    :mac-os-x-only:
    :pyversion: >= 3.6
 
-   >>> invoke_shell('otool', '-L', '_speedup.cpython-36m-darwin.so')
+   >>> invoke_shell("otool", "-L", "_speedup.cpython-36m-darwin.so")
    $ otool -L _speedup.cpython-36m-darwin.so
    _speedup.cpython-36m-darwin.so:
            @loader_path/.dylibs/libgfortran.4.dylib (...)
@@ -337,7 +337,7 @@ Though the Python extension modules (``.so`` files) only depend on
    :options: +NORMALIZE_WHITESPACE
    :mac-os-x-only:
 
-   >>> invoke_shell('otool', '-L', '.dylibs/libgfortran.4.dylib')
+   >>> invoke_shell("otool", "-L", ".dylibs/libgfortran.4.dylib")
    $ otool -L .dylibs/libgfortran.4.dylib
    .dylibs/libgfortran.4.dylib:
            /DLC/bezier/libgfortran.4.dylib (...)
@@ -372,13 +372,13 @@ The Python extension modules (``.pyd`` files) depend directly on this library:
 
    import bezier
 
-   if os.name == 'nt':
+   if os.name == "nt":
        c_compiler = distutils.ccompiler.new_compiler()
-       assert c_compiler.compiler_type == 'msvc'
+       assert c_compiler.compiler_type == "msvc"
        c_compiler.initialize()
 
        dumpbin_exe = os.path.join(
-           os.path.dirname(c_compiler.lib), 'dumpbin.exe')
+           os.path.dirname(c_compiler.lib), "dumpbin.exe")
        assert os.path.isfile(dumpbin_exe)
    else:
        # This won't matter if not on Windows.
@@ -388,22 +388,22 @@ The Python extension modules (``.pyd`` files) depend directly on this library:
 
 
    def replace_dumpbin(value):
-       if value == 'dumpbin':
+       if value == "dumpbin":
            return dumpbin_exe
        else:
            return value
 
 
    def invoke_shell(*args):
-       print('> ' + ' '.join(args))
-       # Replace `'dumpbin'` with `dumpbin_exe`.
+       print("> " + " ".join(args))
+       # Replace `"dumpbin"` with `dumpbin_exe`.
        cmd = tuple(map(replace_dumpbin, args))
        prev_cwd = os.getcwd()
        os.chdir(bezier_directory)
        # NOTE: We print to the stdout of the doctest, rather than using
        #       `subprocess.call()` directly.
        output_bytes = subprocess.check_output(cmd).rstrip()
-       print(output_bytes.decode('utf-8'))
+       print(output_bytes.decode("utf-8"))
        os.chdir(prev_cwd)
 
 .. doctest:: windows-extension
@@ -411,7 +411,7 @@ The Python extension modules (``.pyd`` files) depend directly on this library:
    :windows-only:
    :pyversion: >= 3.6
 
-   >>> invoke_shell('dumpbin', '/dependents', '_speedup.cp36-win_amd64.pyd')
+   >>> invoke_shell("dumpbin", "/dependents", "_speedup.cp36-win_amd64.pyd")
    > dumpbin /dependents _speedup.cp36-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
@@ -433,7 +433,7 @@ The Python extension modules (``.pyd`` files) depend directly on this library:
    ...
 
 In order to ensure this DLL can be found, the ``bezier.__config__``
-module adds the ``extra-dll`` directory to ``os.environ['PATH']`` on import
+module adds the ``extra-dll`` directory to ``os.environ["PATH"]`` on import
 (``%PATH%`` is used on Windows as part of the DLL search path).
 
 The ``libbezier`` DLL has **no external dependencies**, but does have
@@ -522,7 +522,7 @@ on MinGW:
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
-   >>> invoke_shell('dumpbin', '/dependents', 'extra-dll\\libbezier.dll')
+   >>> invoke_shell("dumpbin", "/dependents", "extra-dll\\libbezier.dll")
    > dumpbin /dependents extra-dll\libbezier.dll
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
@@ -638,12 +638,12 @@ and library directories:
    >>> import setuptools
    >>>
    >>> extension = setuptools.Extension(
-   ...     'wrapper',
-   ...     ['wrapper.c'],
+   ...     "wrapper",
+   ...     ["wrapper.c"],
    ...     include_dirs=[
    ...         bezier.get_include(),
    ...     ],
-   ...     libraries=['bezier'],
+   ...     libraries=["bezier"],
    ...     library_dirs=[
    ...         bezier.get_lib(),
    ...     ],

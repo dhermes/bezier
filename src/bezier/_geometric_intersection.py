@@ -478,7 +478,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
 
        import make_images
        make_images.helper_parallel_lines(
-           start0, end0, start1, end1, 'parallel_lines_parameters1.png')
+           start0, end0, start1, end1, "parallel_lines_parameters1.png")
 
     If :math:`S_1` **is** on the first line, we want to check that
     :math:`S_1` and :math:`E_1` define parameters outside of
@@ -514,7 +514,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
 
        import make_images
        make_images.helper_parallel_lines(
-           start0, end0, start1, end1, 'parallel_lines_parameters2.png')
+           start0, end0, start1, end1, "parallel_lines_parameters2.png")
 
     but if the intervals overlap, like :math:`\left[0, 1\right]` and
     :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
@@ -547,7 +547,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
 
        import make_images
        make_images.helper_parallel_lines(
-           start0, end0, start1, end1, 'parallel_lines_parameters3.png')
+           start0, end0, start1, end1, "parallel_lines_parameters3.png")
 
     Similarly, if the second interval completely contains the first,
     the segments meet:
@@ -571,7 +571,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
 
        import make_images
        make_images.helper_parallel_lines(
-           start0, end0, start1, end1, 'parallel_lines_parameters4.png')
+           start0, end0, start1, end1, "parallel_lines_parameters4.png")
 
     .. note::
 

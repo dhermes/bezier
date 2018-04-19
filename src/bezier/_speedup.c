@@ -3272,11 +3272,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_evaluate_multi_barycentric(CYTHON_UN
   __pyx_pybuffernd_evaluated.rcbuffer = &__pyx_pybuffer_evaluated;
 
   /* "bezier/_speedup.pyx":128
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] evaluated
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
  *     num_vals, = np.shape(lambda1)
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -3388,7 +3388,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_evaluate_multi_barycentric(CYTHON_UN
  *
  *     dimension, num_nodes = np.shape(nodes)
  *     num_vals, = np.shape(lambda1)             # <<<<<<<<<<<<<<
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  *     bezier._curve.evaluate_curve_barycentric(
  */
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 129, __pyx_L1_error)
@@ -3490,7 +3490,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_evaluate_multi_barycentric(CYTHON_UN
   /* "bezier/_speedup.pyx":130
  *     dimension, num_nodes = np.shape(nodes)
  *     num_vals, = np.shape(lambda1)
- *     evaluated = np.empty((dimension, num_vals), order='F')             # <<<<<<<<<<<<<<
+ *     evaluated = np.empty((dimension, num_vals), order="F")             # <<<<<<<<<<<<<<
  *     bezier._curve.evaluate_curve_barycentric(
  *         &num_nodes,
  */
@@ -3587,7 +3587,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_evaluate_multi_barycentric(CYTHON_UN
 
   /* "bezier/_speedup.pyx":131
  *     num_vals, = np.shape(lambda1)
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  *     bezier._curve.evaluate_curve_barycentric(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
@@ -3745,11 +3745,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_2evaluate_multi(CYTHON_UNUSED PyObje
   __pyx_pybuffernd_evaluated.rcbuffer = &__pyx_pybuffer_evaluated;
 
   /* "bezier/_speedup.pyx":148
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] evaluated
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] evaluated
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
  *     num_vals, = np.shape(s_vals)
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 148, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -3861,7 +3861,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_2evaluate_multi(CYTHON_UNUSED PyObje
  *
  *     dimension, num_nodes = np.shape(nodes)
  *     num_vals, = np.shape(s_vals)             # <<<<<<<<<<<<<<
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  *     bezier._curve.evaluate_multi(
  */
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 149, __pyx_L1_error)
@@ -3963,7 +3963,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_2evaluate_multi(CYTHON_UNUSED PyObje
   /* "bezier/_speedup.pyx":150
  *     dimension, num_nodes = np.shape(nodes)
  *     num_vals, = np.shape(s_vals)
- *     evaluated = np.empty((dimension, num_vals), order='F')             # <<<<<<<<<<<<<<
+ *     evaluated = np.empty((dimension, num_vals), order="F")             # <<<<<<<<<<<<<<
  *     bezier._curve.evaluate_multi(
  *         &num_nodes,
  */
@@ -4051,7 +4051,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_2evaluate_multi(CYTHON_UNUSED PyObje
 
   /* "bezier/_speedup.pyx":151
  *     num_vals, = np.shape(s_vals)
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  *     bezier._curve.evaluate_multi(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
@@ -4110,7 +4110,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_2evaluate_multi(CYTHON_UNUSED PyObje
  *
  * def specialize_curve(double[::1, :] nodes, double start, double end):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  */
 
 /* Python wrapper */
@@ -4217,10 +4217,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_4specialize_curve(CYTHON_UNUSED PyOb
   __pyx_pybuffernd_new_nodes.rcbuffer = &__pyx_pybuffer_new_nodes;
 
   /* "bezier/_speedup.pyx":166
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     new_nodes = np.empty((dimension, num_nodes), order='F')
+ *     new_nodes = np.empty((dimension, num_nodes), order="F")
  *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 166, __pyx_L1_error)
@@ -4332,7 +4332,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_4specialize_curve(CYTHON_UNUSED PyOb
   /* "bezier/_speedup.pyx":167
  *
  *     dimension, num_nodes = np.shape(nodes)
- *     new_nodes = np.empty((dimension, num_nodes), order='F')             # <<<<<<<<<<<<<<
+ *     new_nodes = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._curve.specialize_curve(
  */
@@ -4410,7 +4410,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_4specialize_curve(CYTHON_UNUSED PyOb
   __pyx_t_16 = 0;
 
   /* "bezier/_speedup.pyx":169
- *     new_nodes = np.empty((dimension, num_nodes), order='F')
+ *     new_nodes = np.empty((dimension, num_nodes), order="F")
  *
  *     bezier._curve.specialize_curve(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -4435,7 +4435,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_4specialize_curve(CYTHON_UNUSED PyOb
  *
  * def specialize_curve(double[::1, :] nodes, double start, double end):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  */
 
   /* function exit code */
@@ -4469,7 +4469,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_4specialize_curve(CYTHON_UNUSED PyOb
  *
  * def evaluate_hodograph(double s, double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] hodograph
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] hodograph
  */
 
 /* Python wrapper */
@@ -4565,10 +4565,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_6evaluate_hodograph(CYTHON_UNUSED Py
   __pyx_pybuffernd_hodograph.rcbuffer = &__pyx_pybuffer_hodograph;
 
   /* "bezier/_speedup.pyx":185
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] hodograph
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] hodograph
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     hodograph = np.empty((dimension, 1), order='F')
+ *     hodograph = np.empty((dimension, 1), order="F")
  *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 185, __pyx_L1_error)
@@ -4680,7 +4680,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_6evaluate_hodograph(CYTHON_UNUSED Py
   /* "bezier/_speedup.pyx":186
  *
  *     dimension, num_nodes = np.shape(nodes)
- *     hodograph = np.empty((dimension, 1), order='F')             # <<<<<<<<<<<<<<
+ *     hodograph = np.empty((dimension, 1), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._curve.evaluate_hodograph(
  */
@@ -4756,7 +4756,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_6evaluate_hodograph(CYTHON_UNUSED Py
   __pyx_t_16 = 0;
 
   /* "bezier/_speedup.pyx":188
- *     hodograph = np.empty((dimension, 1), order='F')
+ *     hodograph = np.empty((dimension, 1), order="F")
  *
  *     bezier._curve.evaluate_hodograph(             # <<<<<<<<<<<<<<
  *         &s,
@@ -4781,7 +4781,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_6evaluate_hodograph(CYTHON_UNUSED Py
  *
  * def evaluate_hodograph(double s, double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] hodograph
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] hodograph
  */
 
   /* function exit code */
@@ -4815,7 +4815,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_6evaluate_hodograph(CYTHON_UNUSED Py
  *
  * def subdivide_nodes_curve(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] left_nodes, right_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] left_nodes, right_nodes
  */
 
 /* Python wrapper */
@@ -4882,11 +4882,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_8subdivide_nodes_curve(CYTHON_UNUSED
   __pyx_pybuffernd_right_nodes.rcbuffer = &__pyx_pybuffer_right_nodes;
 
   /* "bezier/_speedup.pyx":203
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] left_nodes, right_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] left_nodes, right_nodes
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
  *
- *     left_nodes = np.empty((dimension, num_nodes), order='F')
+ *     left_nodes = np.empty((dimension, num_nodes), order="F")
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -4997,8 +4997,8 @@ static PyObject *__pyx_pf_6bezier_8_speedup_8subdivide_nodes_curve(CYTHON_UNUSED
   /* "bezier/_speedup.pyx":205
  *     dimension, num_nodes = np.shape(nodes)
  *
- *     left_nodes = np.empty((dimension, num_nodes), order='F')             # <<<<<<<<<<<<<<
- *     right_nodes = np.empty((dimension, num_nodes), order='F')
+ *     left_nodes = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
+ *     right_nodes = np.empty((dimension, num_nodes), order="F")
  *
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 205, __pyx_L1_error)
@@ -5056,8 +5056,8 @@ static PyObject *__pyx_pf_6bezier_8_speedup_8subdivide_nodes_curve(CYTHON_UNUSED
 
   /* "bezier/_speedup.pyx":206
  *
- *     left_nodes = np.empty((dimension, num_nodes), order='F')
- *     right_nodes = np.empty((dimension, num_nodes), order='F')             # <<<<<<<<<<<<<<
+ *     left_nodes = np.empty((dimension, num_nodes), order="F")
+ *     right_nodes = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._curve.subdivide_nodes_curve(
  */
@@ -5145,7 +5145,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_8subdivide_nodes_curve(CYTHON_UNUSED
   __pyx_t_18 = 0;
 
   /* "bezier/_speedup.pyx":208
- *     right_nodes = np.empty((dimension, num_nodes), order='F')
+ *     right_nodes = np.empty((dimension, num_nodes), order="F")
  *
  *     bezier._curve.subdivide_nodes_curve(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -5178,7 +5178,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_8subdivide_nodes_curve(CYTHON_UNUSED
  *
  * def subdivide_nodes_curve(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] left_nodes, right_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] left_nodes, right_nodes
  */
 
   /* function exit code */
@@ -5760,7 +5760,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_12locate_point_curve(CYTHON_UNUSED P
  *         return None
  *     elif s_approx == LOCATE_INVALID:             # <<<<<<<<<<<<<<
  *         raise ValueError(
- *             'Parameters not close enough to one another')
+ *             "Parameters not close enough to one another")
  */
   __pyx_t_13 = ((__pyx_v_s_approx == __pyx_v_6bezier_8_speedup_LOCATE_INVALID) != 0);
   if (unlikely(__pyx_t_13)) {
@@ -5769,7 +5769,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_12locate_point_curve(CYTHON_UNUSED P
  *         return None
  *     elif s_approx == LOCATE_INVALID:
  *         raise ValueError(             # <<<<<<<<<<<<<<
- *             'Parameters not close enough to one another')
+ *             "Parameters not close enough to one another")
  *     else:
  */
     __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 257, __pyx_L1_error)
@@ -5783,12 +5783,12 @@ static PyObject *__pyx_pf_6bezier_8_speedup_12locate_point_curve(CYTHON_UNUSED P
  *         return None
  *     elif s_approx == LOCATE_INVALID:             # <<<<<<<<<<<<<<
  *         raise ValueError(
- *             'Parameters not close enough to one another')
+ *             "Parameters not close enough to one another")
  */
   }
 
   /* "bezier/_speedup.pyx":260
- *             'Parameters not close enough to one another')
+ *             "Parameters not close enough to one another")
  *     else:
  *         return s_approx             # <<<<<<<<<<<<<<
  *
@@ -5833,7 +5833,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_12locate_point_curve(CYTHON_UNUSED P
  *
  * def elevate_nodes(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] elevated
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] elevated
  */
 
 /* Python wrapper */
@@ -5891,10 +5891,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_14elevate_nodes(CYTHON_UNUSED PyObje
   __pyx_pybuffernd_elevated.rcbuffer = &__pyx_pybuffer_elevated;
 
   /* "bezier/_speedup.pyx":267
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] elevated
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] elevated
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     elevated = np.empty((dimension, num_nodes + 1), order='F')
+ *     elevated = np.empty((dimension, num_nodes + 1), order="F")
  *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 267, __pyx_L1_error)
@@ -6006,7 +6006,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_14elevate_nodes(CYTHON_UNUSED PyObje
   /* "bezier/_speedup.pyx":268
  *
  *     dimension, num_nodes = np.shape(nodes)
- *     elevated = np.empty((dimension, num_nodes + 1), order='F')             # <<<<<<<<<<<<<<
+ *     elevated = np.empty((dimension, num_nodes + 1), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._curve.elevate_nodes_curve(
  */
@@ -6084,7 +6084,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_14elevate_nodes(CYTHON_UNUSED PyObje
   __pyx_t_16 = 0;
 
   /* "bezier/_speedup.pyx":270
- *     elevated = np.empty((dimension, num_nodes + 1), order='F')
+ *     elevated = np.empty((dimension, num_nodes + 1), order="F")
  *
  *     bezier._curve.elevate_nodes_curve(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -6109,7 +6109,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_14elevate_nodes(CYTHON_UNUSED PyObje
  *
  * def elevate_nodes(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] elevated
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] elevated
  */
 
   /* function exit code */
@@ -6485,11 +6485,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_18reduce_pseudo_inverse(CYTHON_UNUSE
   __pyx_pybuffernd_reduced.rcbuffer = &__pyx_pybuffer_reduced;
 
   /* "bezier/_speedup.pyx":304
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] reduced
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] reduced
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
  *
- *     reduced = np.empty((dimension, num_nodes - 1), order='F')
+ *     reduced = np.empty((dimension, num_nodes - 1), order="F")
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -6600,7 +6600,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_18reduce_pseudo_inverse(CYTHON_UNUSE
   /* "bezier/_speedup.pyx":306
  *     dimension, num_nodes = np.shape(nodes)
  *
- *     reduced = np.empty((dimension, num_nodes - 1), order='F')             # <<<<<<<<<<<<<<
+ *     reduced = np.empty((dimension, num_nodes - 1), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._curve.reduce_pseudo_inverse(
  */
@@ -6678,7 +6678,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_18reduce_pseudo_inverse(CYTHON_UNUSE
   __pyx_t_16 = 0;
 
   /* "bezier/_speedup.pyx":308
- *     reduced = np.empty((dimension, num_nodes - 1), order='F')
+ *     reduced = np.empty((dimension, num_nodes - 1), order="F")
  *
  *     bezier._curve.reduce_pseudo_inverse(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -6870,7 +6870,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_20full_reduce(CYTHON_UNUSED PyObject
  *     cdef bool_t not_implemented
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     reduced = np.empty((dimension, num_nodes), order='F')
+ *     reduced = np.empty((dimension, num_nodes), order="F")
  *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 331, __pyx_L1_error)
@@ -6982,7 +6982,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_20full_reduce(CYTHON_UNUSED PyObject
   /* "bezier/_speedup.pyx":332
  *
  *     dimension, num_nodes = np.shape(nodes)
- *     reduced = np.empty((dimension, num_nodes), order='F')             # <<<<<<<<<<<<<<
+ *     reduced = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._curve.full_reduce(
  */
@@ -7060,7 +7060,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_20full_reduce(CYTHON_UNUSED PyObject
   __pyx_t_16 = 0;
 
   /* "bezier/_speedup.pyx":334
- *     reduced = np.empty((dimension, num_nodes), order='F')
+ *     reduced = np.empty((dimension, num_nodes), order="F")
  *
  *     bezier._curve.full_reduce(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -7603,7 +7603,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_22compute_length(CYTHON_UNUSED PyObj
  *         if 0 <= error_val - 1 < len(DQAGSE_ERR_MSGS):
  *             err_msg = DQAGSE_ERR_MSGS[error_val - 1]             # <<<<<<<<<<<<<<
  *         else:
- *             err_msg = 'Unknown error: {!r}.'.format(error_val)
+ *             err_msg = "Unknown error: {!r}.".format(error_val)
  */
       __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_DQAGSE_ERR_MSGS); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 378, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
@@ -7627,7 +7627,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_22compute_length(CYTHON_UNUSED PyObj
     /* "bezier/_speedup.pyx":380
  *             err_msg = DQAGSE_ERR_MSGS[error_val - 1]
  *         else:
- *             err_msg = 'Unknown error: {!r}.'.format(error_val)             # <<<<<<<<<<<<<<
+ *             err_msg = "Unknown error: {!r}.".format(error_val)             # <<<<<<<<<<<<<<
  *         warnings.warn(err_msg, UserWarning)
  *
  */
@@ -7689,7 +7689,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_22compute_length(CYTHON_UNUSED PyObj
 
     /* "bezier/_speedup.pyx":381
  *         else:
- *             err_msg = 'Unknown error: {!r}.'.format(error_val)
+ *             err_msg = "Unknown error: {!r}.".format(error_val)
  *         warnings.warn(err_msg, UserWarning)             # <<<<<<<<<<<<<<
  *
  *     return length
@@ -8166,7 +8166,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_24newton_refine_curve_intersect(CYTH
  *     )
  *
  *     if status == bezier._status.Status.SINGULAR:             # <<<<<<<<<<<<<<
- *         raise ValueError('Jacobian is singular.')
+ *         raise ValueError("Jacobian is singular.")
  *
  */
   __pyx_t_12 = ((__pyx_v_status == SINGULAR) != 0);
@@ -8175,7 +8175,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_24newton_refine_curve_intersect(CYTH
     /* "bezier/_speedup.pyx":413
  *
  *     if status == bezier._status.Status.SINGULAR:
- *         raise ValueError('Jacobian is singular.')             # <<<<<<<<<<<<<<
+ *         raise ValueError("Jacobian is singular.")             # <<<<<<<<<<<<<<
  *
  *     return new_s, new_t
  */
@@ -8189,13 +8189,13 @@ static PyObject *__pyx_pf_6bezier_8_speedup_24newton_refine_curve_intersect(CYTH
  *     )
  *
  *     if status == bezier._status.Status.SINGULAR:             # <<<<<<<<<<<<<<
- *         raise ValueError('Jacobian is singular.')
+ *         raise ValueError("Jacobian is singular.")
  *
  */
   }
 
   /* "bezier/_speedup.pyx":415
- *         raise ValueError('Jacobian is singular.')
+ *         raise ValueError("Jacobian is singular.")
  *
  *     return new_s, new_t             # <<<<<<<<<<<<<<
  *
@@ -8632,7 +8632,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_26bbox_intersect(CYTHON_UNUSED PyObj
  *
  * def reset_curves_workspace(int workspace_size):             # <<<<<<<<<<<<<<
  *     global CURVES_WORKSPACE
- *     CURVES_WORKSPACE = np.empty((2, workspace_size), order='F')
+ *     CURVES_WORKSPACE = np.empty((2, workspace_size), order="F")
  */
 
 /* Python wrapper */
@@ -8672,7 +8672,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_28reset_curves_workspace(CYTHON_UNUS
   /* "bezier/_speedup.pyx":440
  * def reset_curves_workspace(int workspace_size):
  *     global CURVES_WORKSPACE
- *     CURVES_WORKSPACE = np.empty((2, workspace_size), order='F')             # <<<<<<<<<<<<<<
+ *     CURVES_WORKSPACE = np.empty((2, workspace_size), order="F")             # <<<<<<<<<<<<<<
  *
  *
  */
@@ -8716,7 +8716,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_28reset_curves_workspace(CYTHON_UNUS
  *
  * def reset_curves_workspace(int workspace_size):             # <<<<<<<<<<<<<<
  *     global CURVES_WORKSPACE
- *     CURVES_WORKSPACE = np.empty((2, workspace_size), order='F')
+ *     CURVES_WORKSPACE = np.empty((2, workspace_size), order="F")
  */
 
   /* function exit code */
@@ -9448,7 +9448,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_32curve_intersections(CYTHON_UNUSED 
  *     )
  *
  *     if status == bezier._status.Status.SUCCESS:             # <<<<<<<<<<<<<<
- *         intersections = np.empty((2, num_intersections), order='F')
+ *         intersections = np.empty((2, num_intersections), order="F")
  *         intersections[:, :] = CURVES_WORKSPACE[:, :num_intersections]
  */
   switch (__pyx_v_status) {
@@ -9457,7 +9457,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_32curve_intersections(CYTHON_UNUSED 
     /* "bezier/_speedup.pyx":481
  *
  *     if status == bezier._status.Status.SUCCESS:
- *         intersections = np.empty((2, num_intersections), order='F')             # <<<<<<<<<<<<<<
+ *         intersections = np.empty((2, num_intersections), order="F")             # <<<<<<<<<<<<<<
  *         intersections[:, :] = CURVES_WORKSPACE[:, :num_intersections]
  *         return intersections, coincident
  */
@@ -9514,7 +9514,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_32curve_intersections(CYTHON_UNUSED 
 
     /* "bezier/_speedup.pyx":482
  *     if status == bezier._status.Status.SUCCESS:
- *         intersections = np.empty((2, num_intersections), order='F')
+ *         intersections = np.empty((2, num_intersections), order="F")
  *         intersections[:, :] = CURVES_WORKSPACE[:, :num_intersections]             # <<<<<<<<<<<<<<
  *         return intersections, coincident
  *     elif status == bezier._status.Status.NO_CONVERGE:
@@ -9554,7 +9554,7 @@ __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_t_18, 2, (PyObject *(*)(char *)) __
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
     /* "bezier/_speedup.pyx":483
- *         intersections = np.empty((2, num_intersections), order='F')
+ *         intersections = np.empty((2, num_intersections), order="F")
  *         intersections[:, :] = CURVES_WORKSPACE[:, :num_intersections]
  *         return intersections, coincident             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.NO_CONVERGE:
@@ -9579,7 +9579,7 @@ __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_t_18, 2, (PyObject *(*)(char *)) __
  *     )
  *
  *     if status == bezier._status.Status.SUCCESS:             # <<<<<<<<<<<<<<
- *         intersections = np.empty((2, num_intersections), order='F')
+ *         intersections = np.empty((2, num_intersections), order="F")
  *         intersections[:, :] = CURVES_WORKSPACE[:, :num_intersections]
  */
     break;
@@ -10642,7 +10642,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_42contains_nd(CYTHON_UNUSED PyObject
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
  *     if np.shape(point) != (dimension,):
- *         msg = 'Point {} was expected to have shape ({},)'.format(
+ *         msg = "Point {} was expected to have shape ({},)".format(
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 558, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -10754,7 +10754,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_42contains_nd(CYTHON_UNUSED PyObject
  *
  *     dimension, num_nodes = np.shape(nodes)
  *     if np.shape(point) != (dimension,):             # <<<<<<<<<<<<<<
- *         msg = 'Point {} was expected to have shape ({},)'.format(
+ *         msg = "Point {} was expected to have shape ({},)".format(
  *             np.asarray(point), dimension)
  */
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 559, __pyx_L1_error)
@@ -10827,7 +10827,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_42contains_nd(CYTHON_UNUSED PyObject
     /* "bezier/_speedup.pyx":560
  *     dimension, num_nodes = np.shape(nodes)
  *     if np.shape(point) != (dimension,):
- *         msg = 'Point {} was expected to have shape ({},)'.format(             # <<<<<<<<<<<<<<
+ *         msg = "Point {} was expected to have shape ({},)".format(             # <<<<<<<<<<<<<<
  *             np.asarray(point), dimension)
  *         raise ValueError(msg)
  */
@@ -10836,7 +10836,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_42contains_nd(CYTHON_UNUSED PyObject
 
     /* "bezier/_speedup.pyx":561
  *     if np.shape(point) != (dimension,):
- *         msg = 'Point {} was expected to have shape ({},)'.format(
+ *         msg = "Point {} was expected to have shape ({},)".format(
  *             np.asarray(point), dimension)             # <<<<<<<<<<<<<<
  *         raise ValueError(msg)
  *
@@ -10949,7 +10949,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_42contains_nd(CYTHON_UNUSED PyObject
     __pyx_t_3 = 0;
 
     /* "bezier/_speedup.pyx":562
- *         msg = 'Point {} was expected to have shape ({},)'.format(
+ *         msg = "Point {} was expected to have shape ({},)".format(
  *             np.asarray(point), dimension)
  *         raise ValueError(msg)             # <<<<<<<<<<<<<<
  *
@@ -10965,7 +10965,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_42contains_nd(CYTHON_UNUSED PyObject
  *
  *     dimension, num_nodes = np.shape(nodes)
  *     if np.shape(point) != (dimension,):             # <<<<<<<<<<<<<<
- *         msg = 'Point {} was expected to have shape ({},)'.format(
+ *         msg = "Point {} was expected to have shape ({},)".format(
  *             np.asarray(point), dimension)
  */
   }
@@ -11505,7 +11505,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_48simple_convex_hull(CYTHON_UNUSED P
  *
  *     # NOTE: We don't check that there are 2 rows.
  *     _, num_points = np.shape(points)             # <<<<<<<<<<<<<<
- *     polygon = np.empty((2, num_points), order='F')
+ *     polygon = np.empty((2, num_points), order="F")
  *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 603, __pyx_L1_error)
@@ -11616,7 +11616,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_48simple_convex_hull(CYTHON_UNUSED P
   /* "bezier/_speedup.pyx":604
  *     # NOTE: We don't check that there are 2 rows.
  *     _, num_points = np.shape(points)
- *     polygon = np.empty((2, num_points), order='F')             # <<<<<<<<<<<<<<
+ *     polygon = np.empty((2, num_points), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._helpers.simple_convex_hull(
  */
@@ -11692,7 +11692,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_48simple_convex_hull(CYTHON_UNUSED P
   __pyx_t_15 = 0;
 
   /* "bezier/_speedup.pyx":606
- *     polygon = np.empty((2, num_points), order='F')
+ *     polygon = np.empty((2, num_points), order="F")
  *
  *     bezier._helpers.simple_convex_hull(             # <<<<<<<<<<<<<<
  *         &num_points,
@@ -12280,10 +12280,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52de_casteljau_one_round(CYTHON_UNUS
   __pyx_pybuffernd_new_nodes.rcbuffer = &__pyx_pybuffer_new_nodes;
 
   /* "bezier/_speedup.pyx":644
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     new_nodes = np.empty((dimension, num_nodes - degree - 1), order='F')
+ *     new_nodes = np.empty((dimension, num_nodes - degree - 1), order="F")
  *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 644, __pyx_L1_error)
@@ -12395,7 +12395,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52de_casteljau_one_round(CYTHON_UNUS
   /* "bezier/_speedup.pyx":645
  *
  *     dimension, num_nodes = np.shape(nodes)
- *     new_nodes = np.empty((dimension, num_nodes - degree - 1), order='F')             # <<<<<<<<<<<<<<
+ *     new_nodes = np.empty((dimension, num_nodes - degree - 1), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._surface.de_casteljau_one_round(
  */
@@ -12473,7 +12473,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52de_casteljau_one_round(CYTHON_UNUS
   __pyx_t_16 = 0;
 
   /* "bezier/_speedup.pyx":647
- *     new_nodes = np.empty((dimension, num_nodes - degree - 1), order='F')
+ *     new_nodes = np.empty((dimension, num_nodes - degree - 1), order="F")
  *
  *     bezier._surface.de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -12661,10 +12661,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_54evaluate_barycentric(CYTHON_UNUSED
   __pyx_pybuffernd_point.rcbuffer = &__pyx_pybuffer_point;
 
   /* "bezier/_speedup.pyx":667
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] point
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] point
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     point = np.empty((dimension, 1), order='F')
+ *     point = np.empty((dimension, 1), order="F")
  *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 667, __pyx_L1_error)
@@ -12776,7 +12776,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_54evaluate_barycentric(CYTHON_UNUSED
   /* "bezier/_speedup.pyx":668
  *
  *     dimension, num_nodes = np.shape(nodes)
- *     point = np.empty((dimension, 1), order='F')             # <<<<<<<<<<<<<<
+ *     point = np.empty((dimension, 1), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._surface.evaluate_barycentric(
  */
@@ -12852,7 +12852,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_54evaluate_barycentric(CYTHON_UNUSED
   __pyx_t_16 = 0;
 
   /* "bezier/_speedup.pyx":670
- *     point = np.empty((dimension, 1), order='F')
+ *     point = np.empty((dimension, 1), order="F")
  *
  *     bezier._surface.evaluate_barycentric(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -13146,7 +13146,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_56evaluate_barycentric_multi(CYTHON_
  *     _, num_nodes = np.shape(nodes)
  *     # NOTE: We don't check that there are 3 columns.
  *     num_vals, _ = np.shape(param_vals)             # <<<<<<<<<<<<<<
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  *
  */
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 693, __pyx_L1_error)
@@ -13257,7 +13257,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_56evaluate_barycentric_multi(CYTHON_
   /* "bezier/_speedup.pyx":694
  *     # NOTE: We don't check that there are 3 columns.
  *     num_vals, _ = np.shape(param_vals)
- *     evaluated = np.empty((dimension, num_vals), order='F')             # <<<<<<<<<<<<<<
+ *     evaluated = np.empty((dimension, num_vals), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._surface.evaluate_barycentric_multi(
  */
@@ -13345,7 +13345,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_56evaluate_barycentric_multi(CYTHON_
   __pyx_t_17 = 0;
 
   /* "bezier/_speedup.pyx":696
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  *
  *     bezier._surface.evaluate_barycentric_multi(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -13641,7 +13641,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_58evaluate_cartesian_multi(CYTHON_UN
  *     _, num_nodes = np.shape(nodes)
  *     # NOTE: We don't check that there are 2 columns.
  *     num_vals, _ = np.shape(param_vals)             # <<<<<<<<<<<<<<
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  *
  */
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 718, __pyx_L1_error)
@@ -13752,7 +13752,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_58evaluate_cartesian_multi(CYTHON_UN
   /* "bezier/_speedup.pyx":719
  *     # NOTE: We don't check that there are 2 columns.
  *     num_vals, _ = np.shape(param_vals)
- *     evaluated = np.empty((dimension, num_vals), order='F')             # <<<<<<<<<<<<<<
+ *     evaluated = np.empty((dimension, num_vals), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._surface.evaluate_cartesian_multi(
  */
@@ -13840,7 +13840,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_58evaluate_cartesian_multi(CYTHON_UN
   __pyx_t_17 = 0;
 
   /* "bezier/_speedup.pyx":721
- *     evaluated = np.empty((dimension, num_vals), order='F')
+ *     evaluated = np.empty((dimension, num_vals), order="F")
  *
  *     bezier._surface.evaluate_cartesian_multi(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -13901,7 +13901,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_58evaluate_cartesian_multi(CYTHON_UN
  *
  * def jacobian_both(double[::1, :] nodes, int degree, int dimension):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  */
 
 /* Python wrapper */
@@ -14010,7 +14010,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_60jacobian_both(CYTHON_UNUSED PyObje
  *
  *     # NOTE: We don't check that there are ``dimension`` rows.
  *     _, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order='F')
+ *     new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order="F")
  *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 739, __pyx_L1_error)
@@ -14121,7 +14121,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_60jacobian_both(CYTHON_UNUSED PyObje
   /* "bezier/_speedup.pyx":740
  *     # NOTE: We don't check that there are ``dimension`` rows.
  *     _, num_nodes = np.shape(nodes)
- *     new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order='F')             # <<<<<<<<<<<<<<
+ *     new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._surface.jacobian_both(
  */
@@ -14199,7 +14199,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_60jacobian_both(CYTHON_UNUSED PyObje
   __pyx_t_15 = 0;
 
   /* "bezier/_speedup.pyx":742
- *     new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order='F')
+ *     new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order="F")
  *
  *     bezier._surface.jacobian_both(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -14224,7 +14224,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_60jacobian_both(CYTHON_UNUSED PyObje
  *
  * def jacobian_both(double[::1, :] nodes, int degree, int dimension):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  */
 
   /* function exit code */
@@ -14259,7 +14259,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_60jacobian_both(CYTHON_UNUSED PyObje
  *
  * def jacobian_det(double[::1, :] nodes, int degree, double[::1, :] st_vals):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, num_vals
- *     cdef ndarray_t[double, ndim=1, mode='fortran'] evaluated
+ *     cdef ndarray_t[double, ndim=1, mode="fortran"] evaluated
  */
 
 /* Python wrapper */
@@ -14483,7 +14483,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObjec
  *     # NOTE: We don't check that there are 2 columns.
  *     num_vals, _ = np.shape(st_vals)             # <<<<<<<<<<<<<<
  *
- *     evaluated = np.empty((num_vals,), order='F')
+ *     evaluated = np.empty((num_vals,), order="F")
  */
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 760, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
@@ -14593,7 +14593,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObjec
   /* "bezier/_speedup.pyx":762
  *     num_vals, _ = np.shape(st_vals)
  *
- *     evaluated = np.empty((num_vals,), order='F')             # <<<<<<<<<<<<<<
+ *     evaluated = np.empty((num_vals,), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._surface.jacobian_det(
  */
@@ -14675,7 +14675,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObjec
   __pyx_t_16 = 0;
 
   /* "bezier/_speedup.pyx":764
- *     evaluated = np.empty((num_vals,), order='F')
+ *     evaluated = np.empty((num_vals,), order="F")
  *
  *     bezier._surface.jacobian_det(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -14700,7 +14700,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObjec
  *
  * def jacobian_det(double[::1, :] nodes, int degree, double[::1, :] st_vals):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, num_vals
- *     cdef ndarray_t[double, ndim=1, mode='fortran'] evaluated
+ *     cdef ndarray_t[double, ndim=1, mode="fortran"] evaluated
  */
 
   /* function exit code */
@@ -14868,10 +14868,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
   __pyx_pybuffernd_specialized.rcbuffer = &__pyx_pybuffer_specialized;
 
   /* "bezier/_speedup.pyx":782
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] specialized
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] specialized
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     specialized = np.empty((dimension, num_nodes), order='F')
+ *     specialized = np.empty((dimension, num_nodes), order="F")
  *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 782, __pyx_L1_error)
@@ -14983,7 +14983,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
   /* "bezier/_speedup.pyx":783
  *
  *     dimension, num_nodes = np.shape(nodes)
- *     specialized = np.empty((dimension, num_nodes), order='F')             # <<<<<<<<<<<<<<
+ *     specialized = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._surface.specialize_surface(
  */
@@ -15088,7 +15088,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
   __pyx_t_19 = 0;
 
   /* "bezier/_speedup.pyx":785
- *     specialized = np.empty((dimension, num_nodes), order='F')
+ *     specialized = np.empty((dimension, num_nodes), order="F")
  *
  *     bezier._surface.specialize_surface(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -15150,7 +15150,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
  *
  * def subdivide_nodes_surface(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_a
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
  */
 
 /* Python wrapper */
@@ -15276,11 +15276,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
   __pyx_pybuffernd_nodes_d.rcbuffer = &__pyx_pybuffer_nodes_d;
 
   /* "bezier/_speedup.pyx":806
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_d
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_d
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     nodes_a = np.empty((dimension, num_nodes), order='F')
- *     nodes_b = np.empty((dimension, num_nodes), order='F')
+ *     nodes_a = np.empty((dimension, num_nodes), order="F")
+ *     nodes_b = np.empty((dimension, num_nodes), order="F")
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 806, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -15391,9 +15391,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
   /* "bezier/_speedup.pyx":807
  *
  *     dimension, num_nodes = np.shape(nodes)
- *     nodes_a = np.empty((dimension, num_nodes), order='F')             # <<<<<<<<<<<<<<
- *     nodes_b = np.empty((dimension, num_nodes), order='F')
- *     nodes_c = np.empty((dimension, num_nodes), order='F')
+ *     nodes_a = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
+ *     nodes_b = np.empty((dimension, num_nodes), order="F")
+ *     nodes_c = np.empty((dimension, num_nodes), order="F")
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 807, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -15450,10 +15450,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
 
   /* "bezier/_speedup.pyx":808
  *     dimension, num_nodes = np.shape(nodes)
- *     nodes_a = np.empty((dimension, num_nodes), order='F')
- *     nodes_b = np.empty((dimension, num_nodes), order='F')             # <<<<<<<<<<<<<<
- *     nodes_c = np.empty((dimension, num_nodes), order='F')
- *     nodes_d = np.empty((dimension, num_nodes), order='F')
+ *     nodes_a = np.empty((dimension, num_nodes), order="F")
+ *     nodes_b = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
+ *     nodes_c = np.empty((dimension, num_nodes), order="F")
+ *     nodes_d = np.empty((dimension, num_nodes), order="F")
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 808, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -15509,10 +15509,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
   __pyx_t_1 = 0;
 
   /* "bezier/_speedup.pyx":809
- *     nodes_a = np.empty((dimension, num_nodes), order='F')
- *     nodes_b = np.empty((dimension, num_nodes), order='F')
- *     nodes_c = np.empty((dimension, num_nodes), order='F')             # <<<<<<<<<<<<<<
- *     nodes_d = np.empty((dimension, num_nodes), order='F')
+ *     nodes_a = np.empty((dimension, num_nodes), order="F")
+ *     nodes_b = np.empty((dimension, num_nodes), order="F")
+ *     nodes_c = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
+ *     nodes_d = np.empty((dimension, num_nodes), order="F")
  *
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 809, __pyx_L1_error)
@@ -15569,9 +15569,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
   __pyx_t_1 = 0;
 
   /* "bezier/_speedup.pyx":810
- *     nodes_b = np.empty((dimension, num_nodes), order='F')
- *     nodes_c = np.empty((dimension, num_nodes), order='F')
- *     nodes_d = np.empty((dimension, num_nodes), order='F')             # <<<<<<<<<<<<<<
+ *     nodes_b = np.empty((dimension, num_nodes), order="F")
+ *     nodes_c = np.empty((dimension, num_nodes), order="F")
+ *     nodes_d = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._surface.subdivide_nodes_surface(
  */
@@ -15679,7 +15679,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
   __pyx_t_25 = 0;
 
   /* "bezier/_speedup.pyx":812
- *     nodes_d = np.empty((dimension, num_nodes), order='F')
+ *     nodes_d = np.empty((dimension, num_nodes), order="F")
  *
  *     bezier._surface.subdivide_nodes_surface(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -15718,7 +15718,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
  *
  * def subdivide_nodes_surface(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_a
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
  */
 
   /* function exit code */
@@ -15761,7 +15761,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
  *
  * def compute_edge_nodes(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes1
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes1
  */
 
 /* Python wrapper */
@@ -15877,11 +15877,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED P
   __pyx_pybuffernd_nodes3.rcbuffer = &__pyx_pybuffer_nodes3;
 
   /* "bezier/_speedup.pyx":832
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes3
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes3
  *
  *     dimension, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
- *     nodes1 = np.empty((dimension, degree + 1), order='F')
- *     nodes2 = np.empty((dimension, degree + 1), order='F')
+ *     nodes1 = np.empty((dimension, degree + 1), order="F")
+ *     nodes2 = np.empty((dimension, degree + 1), order="F")
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 832, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -15992,9 +15992,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED P
   /* "bezier/_speedup.pyx":833
  *
  *     dimension, num_nodes = np.shape(nodes)
- *     nodes1 = np.empty((dimension, degree + 1), order='F')             # <<<<<<<<<<<<<<
- *     nodes2 = np.empty((dimension, degree + 1), order='F')
- *     nodes3 = np.empty((dimension, degree + 1), order='F')
+ *     nodes1 = np.empty((dimension, degree + 1), order="F")             # <<<<<<<<<<<<<<
+ *     nodes2 = np.empty((dimension, degree + 1), order="F")
+ *     nodes3 = np.empty((dimension, degree + 1), order="F")
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 833, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -16051,9 +16051,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED P
 
   /* "bezier/_speedup.pyx":834
  *     dimension, num_nodes = np.shape(nodes)
- *     nodes1 = np.empty((dimension, degree + 1), order='F')
- *     nodes2 = np.empty((dimension, degree + 1), order='F')             # <<<<<<<<<<<<<<
- *     nodes3 = np.empty((dimension, degree + 1), order='F')
+ *     nodes1 = np.empty((dimension, degree + 1), order="F")
+ *     nodes2 = np.empty((dimension, degree + 1), order="F")             # <<<<<<<<<<<<<<
+ *     nodes3 = np.empty((dimension, degree + 1), order="F")
  *
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 834, __pyx_L1_error)
@@ -16110,9 +16110,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED P
   __pyx_t_1 = 0;
 
   /* "bezier/_speedup.pyx":835
- *     nodes1 = np.empty((dimension, degree + 1), order='F')
- *     nodes2 = np.empty((dimension, degree + 1), order='F')
- *     nodes3 = np.empty((dimension, degree + 1), order='F')             # <<<<<<<<<<<<<<
+ *     nodes1 = np.empty((dimension, degree + 1), order="F")
+ *     nodes2 = np.empty((dimension, degree + 1), order="F")
+ *     nodes3 = np.empty((dimension, degree + 1), order="F")             # <<<<<<<<<<<<<<
  *
  *     bezier._surface.compute_edge_nodes(
  */
@@ -16210,7 +16210,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED P
   __pyx_t_22 = 0;
 
   /* "bezier/_speedup.pyx":837
- *     nodes3 = np.empty((dimension, degree + 1), order='F')
+ *     nodes3 = np.empty((dimension, degree + 1), order="F")
  *
  *     bezier._surface.compute_edge_nodes(             # <<<<<<<<<<<<<<
  *         &num_nodes,
@@ -16246,7 +16246,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED P
  *
  * def compute_edge_nodes(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes1
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes1
  */
 
   /* function exit code */
@@ -18269,7 +18269,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   __pyx_pybuffernd_edge_nodes6.rcbuffer = &__pyx_pybuffer_edge_nodes6;
 
   /* "bezier/_speedup.pyx":984
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] edge_nodes6
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] edge_nodes6
  *
  *     curved_polygons = []             # <<<<<<<<<<<<<<
  *     for i in range(num_intersected):
@@ -18428,8 +18428,8 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
  *     # NOTE: We compute the nodes for each of the six edges. This is a
  *     #       "wasted" computation / storage.
  *     dimension, num_nodes = np.shape(nodes1)             # <<<<<<<<<<<<<<
- *     edge_nodes1 = np.empty((dimension, degree1 + 1), order='F')
- *     edge_nodes2 = np.empty((dimension, degree1 + 1), order='F')
+ *     edge_nodes1 = np.empty((dimension, degree1 + 1), order="F")
+ *     edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")
  */
   __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 1008, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
@@ -18540,9 +18540,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   /* "bezier/_speedup.pyx":1009
  *     #       "wasted" computation / storage.
  *     dimension, num_nodes = np.shape(nodes1)
- *     edge_nodes1 = np.empty((dimension, degree1 + 1), order='F')             # <<<<<<<<<<<<<<
- *     edge_nodes2 = np.empty((dimension, degree1 + 1), order='F')
- *     edge_nodes3 = np.empty((dimension, degree1 + 1), order='F')
+ *     edge_nodes1 = np.empty((dimension, degree1 + 1), order="F")             # <<<<<<<<<<<<<<
+ *     edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")
+ *     edge_nodes3 = np.empty((dimension, degree1 + 1), order="F")
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1009, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -18599,9 +18599,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
 
   /* "bezier/_speedup.pyx":1010
  *     dimension, num_nodes = np.shape(nodes1)
- *     edge_nodes1 = np.empty((dimension, degree1 + 1), order='F')
- *     edge_nodes2 = np.empty((dimension, degree1 + 1), order='F')             # <<<<<<<<<<<<<<
- *     edge_nodes3 = np.empty((dimension, degree1 + 1), order='F')
+ *     edge_nodes1 = np.empty((dimension, degree1 + 1), order="F")
+ *     edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")             # <<<<<<<<<<<<<<
+ *     edge_nodes3 = np.empty((dimension, degree1 + 1), order="F")
  *     bezier._surface.compute_edge_nodes(
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1010, __pyx_L1_error)
@@ -18658,9 +18658,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   __pyx_t_1 = 0;
 
   /* "bezier/_speedup.pyx":1011
- *     edge_nodes1 = np.empty((dimension, degree1 + 1), order='F')
- *     edge_nodes2 = np.empty((dimension, degree1 + 1), order='F')
- *     edge_nodes3 = np.empty((dimension, degree1 + 1), order='F')             # <<<<<<<<<<<<<<
+ *     edge_nodes1 = np.empty((dimension, degree1 + 1), order="F")
+ *     edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")
+ *     edge_nodes3 = np.empty((dimension, degree1 + 1), order="F")             # <<<<<<<<<<<<<<
  *     bezier._surface.compute_edge_nodes(
  *         &num_nodes,
  */
@@ -18758,8 +18758,8 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   __pyx_t_28 = 0;
 
   /* "bezier/_speedup.pyx":1012
- *     edge_nodes2 = np.empty((dimension, degree1 + 1), order='F')
- *     edge_nodes3 = np.empty((dimension, degree1 + 1), order='F')
+ *     edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")
+ *     edge_nodes3 = np.empty((dimension, degree1 + 1), order="F")
  *     bezier._surface.compute_edge_nodes(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
@@ -18770,8 +18770,8 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
  *     )
  *
  *     dimension, num_nodes = np.shape(nodes2)             # <<<<<<<<<<<<<<
- *     edge_nodes4 = np.empty((dimension, degree2 + 1), order='F')
- *     edge_nodes5 = np.empty((dimension, degree2 + 1), order='F')
+ *     edge_nodes4 = np.empty((dimension, degree2 + 1), order="F")
+ *     edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")
  */
   __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 1022, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
@@ -18882,9 +18882,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   /* "bezier/_speedup.pyx":1023
  *
  *     dimension, num_nodes = np.shape(nodes2)
- *     edge_nodes4 = np.empty((dimension, degree2 + 1), order='F')             # <<<<<<<<<<<<<<
- *     edge_nodes5 = np.empty((dimension, degree2 + 1), order='F')
- *     edge_nodes6 = np.empty((dimension, degree2 + 1), order='F')
+ *     edge_nodes4 = np.empty((dimension, degree2 + 1), order="F")             # <<<<<<<<<<<<<<
+ *     edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")
+ *     edge_nodes6 = np.empty((dimension, degree2 + 1), order="F")
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1023, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -18941,9 +18941,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
 
   /* "bezier/_speedup.pyx":1024
  *     dimension, num_nodes = np.shape(nodes2)
- *     edge_nodes4 = np.empty((dimension, degree2 + 1), order='F')
- *     edge_nodes5 = np.empty((dimension, degree2 + 1), order='F')             # <<<<<<<<<<<<<<
- *     edge_nodes6 = np.empty((dimension, degree2 + 1), order='F')
+ *     edge_nodes4 = np.empty((dimension, degree2 + 1), order="F")
+ *     edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")             # <<<<<<<<<<<<<<
+ *     edge_nodes6 = np.empty((dimension, degree2 + 1), order="F")
  *     bezier._surface.compute_edge_nodes(
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1024, __pyx_L1_error)
@@ -19000,9 +19000,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   __pyx_t_1 = 0;
 
   /* "bezier/_speedup.pyx":1025
- *     edge_nodes4 = np.empty((dimension, degree2 + 1), order='F')
- *     edge_nodes5 = np.empty((dimension, degree2 + 1), order='F')
- *     edge_nodes6 = np.empty((dimension, degree2 + 1), order='F')             # <<<<<<<<<<<<<<
+ *     edge_nodes4 = np.empty((dimension, degree2 + 1), order="F")
+ *     edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")
+ *     edge_nodes6 = np.empty((dimension, degree2 + 1), order="F")             # <<<<<<<<<<<<<<
  *     bezier._surface.compute_edge_nodes(
  *         &num_nodes,
  */
@@ -19100,8 +19100,8 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   __pyx_t_39 = 0;
 
   /* "bezier/_speedup.pyx":1026
- *     edge_nodes5 = np.empty((dimension, degree2 + 1), order='F')
- *     edge_nodes6 = np.empty((dimension, degree2 + 1), order='F')
+ *     edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")
+ *     edge_nodes6 = np.empty((dimension, degree2 + 1), order="F")
  *     bezier._surface.compute_edge_nodes(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
@@ -20720,7 +20720,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
     /* "bezier/_speedup.pyx":1136
  *         # NOTE: This text is identical (or should be) to the exception
  *         #       in the Python ``classify_intersection()``.
- *         raise ValueError('Intersection occurs at the end of an edge')             # <<<<<<<<<<<<<<
+ *         raise ValueError("Intersection occurs at the end of an edge")             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.SAME_CURVATURE:
  *         # NOTE: This text is identical (or should be) to the exception(s)
  */
@@ -20741,7 +20741,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
 
     /* "bezier/_speedup.pyx":1137
  *         #       in the Python ``classify_intersection()``.
- *         raise ValueError('Intersection occurs at the end of an edge')
+ *         raise ValueError("Intersection occurs at the end of an edge")
  *     elif status == bezier._status.Status.SAME_CURVATURE:             # <<<<<<<<<<<<<<
  *         # NOTE: This text is identical (or should be) to the exception(s)
  *         #       in the Python ``classify_tangent_intersection()``.
@@ -20751,7 +20751,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
     /* "bezier/_speedup.pyx":1140
  *         # NOTE: This text is identical (or should be) to the exception(s)
  *         #       in the Python ``classify_tangent_intersection()``.
- *         raise NotImplementedError('Tangent curves have same curvature.')             # <<<<<<<<<<<<<<
+ *         raise NotImplementedError("Tangent curves have same curvature.")             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.BAD_INTERIOR:
  *         # NOTE: This assumes that the Fortran ``interior_combine()`` has
  */
@@ -20763,7 +20763,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
 
     /* "bezier/_speedup.pyx":1137
  *         #       in the Python ``classify_intersection()``.
- *         raise ValueError('Intersection occurs at the end of an edge')
+ *         raise ValueError("Intersection occurs at the end of an edge")
  *     elif status == bezier._status.Status.SAME_CURVATURE:             # <<<<<<<<<<<<<<
  *         # NOTE: This text is identical (or should be) to the exception(s)
  *         #       in the Python ``classify_tangent_intersection()``.
@@ -20772,7 +20772,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
 
     /* "bezier/_speedup.pyx":1141
  *         #       in the Python ``classify_tangent_intersection()``.
- *         raise NotImplementedError('Tangent curves have same curvature.')
+ *         raise NotImplementedError("Tangent curves have same curvature.")
  *     elif status == bezier._status.Status.BAD_INTERIOR:             # <<<<<<<<<<<<<<
  *         # NOTE: This assumes that the Fortran ``interior_combine()`` has
  *         #       failed to return to the start node after ``MAX_EDGES = 10``
@@ -20782,9 +20782,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
     /* "bezier/_speedup.pyx":1145
  *         #       failed to return to the start node after ``MAX_EDGES = 10``
  *         #       edges have been added.
- *         raise RuntimeError('Unexpected number of edges')             # <<<<<<<<<<<<<<
+ *         raise RuntimeError("Unexpected number of edges")             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.UNKNOWN:
- *         raise RuntimeError('Unknown error has occured.')
+ *         raise RuntimeError("Unknown error has occured.")
  */
     __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1145, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -20794,7 +20794,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
 
     /* "bezier/_speedup.pyx":1141
  *         #       in the Python ``classify_tangent_intersection()``.
- *         raise NotImplementedError('Tangent curves have same curvature.')
+ *         raise NotImplementedError("Tangent curves have same curvature.")
  *     elif status == bezier._status.Status.BAD_INTERIOR:             # <<<<<<<<<<<<<<
  *         # NOTE: This assumes that the Fortran ``interior_combine()`` has
  *         #       failed to return to the start node after ``MAX_EDGES = 10``
@@ -20803,17 +20803,17 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
 
     /* "bezier/_speedup.pyx":1146
  *         #       edges have been added.
- *         raise RuntimeError('Unexpected number of edges')
+ *         raise RuntimeError("Unexpected number of edges")
  *     elif status == bezier._status.Status.UNKNOWN:             # <<<<<<<<<<<<<<
- *         raise RuntimeError('Unknown error has occured.')
+ *         raise RuntimeError("Unknown error has occured.")
  *     else:
  */
     case UNKNOWN:
 
     /* "bezier/_speedup.pyx":1147
- *         raise RuntimeError('Unexpected number of edges')
+ *         raise RuntimeError("Unexpected number of edges")
  *     elif status == bezier._status.Status.UNKNOWN:
- *         raise RuntimeError('Unknown error has occured.')             # <<<<<<<<<<<<<<
+ *         raise RuntimeError("Unknown error has occured.")             # <<<<<<<<<<<<<<
  *     else:
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  */
@@ -20825,9 +20825,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
 
     /* "bezier/_speedup.pyx":1146
  *         #       edges have been added.
- *         raise RuntimeError('Unexpected number of edges')
+ *         raise RuntimeError("Unexpected number of edges")
  *     elif status == bezier._status.Status.UNKNOWN:             # <<<<<<<<<<<<<<
- *         raise RuntimeError('Unknown error has occured.')
+ *         raise RuntimeError("Unknown error has occured.")
  *     else:
  */
     break;
@@ -38113,7 +38113,7 @@ static int __Pyx_InitCachedConstants(void) {
  *         return None
  *     elif s_approx == LOCATE_INVALID:
  *         raise ValueError(             # <<<<<<<<<<<<<<
- *             'Parameters not close enough to one another')
+ *             "Parameters not close enough to one another")
  *     else:
  */
   __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_Parameters_not_close_enough_to_o); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 257, __pyx_L1_error)
@@ -38156,7 +38156,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":413
  *
  *     if status == bezier._status.Status.SINGULAR:
- *         raise ValueError('Jacobian is singular.')             # <<<<<<<<<<<<<<
+ *         raise ValueError("Jacobian is singular.")             # <<<<<<<<<<<<<<
  *
  *     return new_s, new_t
  */
@@ -38166,7 +38166,7 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_speedup.pyx":482
  *     if status == bezier._status.Status.SUCCESS:
- *         intersections = np.empty((2, num_intersections), order='F')
+ *         intersections = np.empty((2, num_intersections), order="F")
  *         intersections[:, :] = CURVES_WORKSPACE[:, :num_intersections]             # <<<<<<<<<<<<<<
  *         return intersections, coincident
  *     elif status == bezier._status.Status.NO_CONVERGE:
@@ -38228,7 +38228,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":1136
  *         # NOTE: This text is identical (or should be) to the exception
  *         #       in the Python ``classify_intersection()``.
- *         raise ValueError('Intersection occurs at the end of an edge')             # <<<<<<<<<<<<<<
+ *         raise ValueError("Intersection occurs at the end of an edge")             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.SAME_CURVATURE:
  *         # NOTE: This text is identical (or should be) to the exception(s)
  */
@@ -38239,7 +38239,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":1140
  *         # NOTE: This text is identical (or should be) to the exception(s)
  *         #       in the Python ``classify_tangent_intersection()``.
- *         raise NotImplementedError('Tangent curves have same curvature.')             # <<<<<<<<<<<<<<
+ *         raise NotImplementedError("Tangent curves have same curvature.")             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.BAD_INTERIOR:
  *         # NOTE: This assumes that the Fortran ``interior_combine()`` has
  */
@@ -38250,18 +38250,18 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":1145
  *         #       failed to return to the start node after ``MAX_EDGES = 10``
  *         #       edges have been added.
- *         raise RuntimeError('Unexpected number of edges')             # <<<<<<<<<<<<<<
+ *         raise RuntimeError("Unexpected number of edges")             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.UNKNOWN:
- *         raise RuntimeError('Unknown error has occured.')
+ *         raise RuntimeError("Unknown error has occured.")
  */
   __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_s_Unexpected_number_of_edges); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 1145, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__16);
   __Pyx_GIVEREF(__pyx_tuple__16);
 
   /* "bezier/_speedup.pyx":1147
- *         raise RuntimeError('Unexpected number of edges')
+ *         raise RuntimeError("Unexpected number of edges")
  *     elif status == bezier._status.Status.UNKNOWN:
- *         raise RuntimeError('Unknown error has occured.')             # <<<<<<<<<<<<<<
+ *         raise RuntimeError("Unknown error has occured.")             # <<<<<<<<<<<<<<
  *     else:
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  */
@@ -38627,7 +38627,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":54
  * cdef double LOCATE_MISS = -1.0
  * cdef double LOCATE_INVALID = -2.0
- * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')             # <<<<<<<<<<<<<<
+ * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")             # <<<<<<<<<<<<<<
  * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  */
@@ -38640,7 +38640,7 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_speedup.pyx":55
  * cdef double LOCATE_INVALID = -2.0
- * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
+ * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")
  * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)             # <<<<<<<<<<<<<<
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  *     [
@@ -38663,8 +38663,8 @@ static int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":68
  *
  * DQAGSE_ERR_MSGS = (
- *     'Maximum number of subdivisions allowed has been achieved.',             # <<<<<<<<<<<<<<
- *     'Roundoff error detected, which prevents convergence to tolerance.',
+ *     "Maximum number of subdivisions allowed has been achieved.",             # <<<<<<<<<<<<<<
+ *     "Roundoff error detected, which prevents convergence to tolerance.",
  *     'Integrand behaves "extremely" at some point(s) in the interval.',
  */
   __pyx_tuple__55 = PyTuple_Pack(6, __pyx_kp_s_Maximum_number_of_subdivisions_a, __pyx_kp_s_Roundoff_error_detected_which_pr, __pyx_kp_s_Integrand_behaves_extremely_at_s, __pyx_kp_s_Assumed_the_requested_tolerance, __pyx_kp_s_Integral_is_probably_divergent_o, __pyx_kp_s_Invalid_input); if (unlikely(!__pyx_tuple__55)) __PYX_ERR(0, 68, __pyx_L1_error)
@@ -38700,7 +38700,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def specialize_curve(double[::1, :] nodes, double start, double end):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  */
   __pyx_tuple__60 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_start, __pyx_n_s_end, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_new_nodes); if (unlikely(!__pyx_tuple__60)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__60);
@@ -38712,7 +38712,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def evaluate_hodograph(double s, double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] hodograph
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] hodograph
  */
   __pyx_tuple__62 = PyTuple_Pack(5, __pyx_n_s_s, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_hodograph); if (unlikely(!__pyx_tuple__62)) __PYX_ERR(0, 181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__62);
@@ -38724,7 +38724,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def subdivide_nodes_curve(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] left_nodes, right_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] left_nodes, right_nodes
  */
   __pyx_tuple__64 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_left_nodes, __pyx_n_s_right_nodes); if (unlikely(!__pyx_tuple__64)) __PYX_ERR(0, 199, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__64);
@@ -38760,7 +38760,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def elevate_nodes(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] elevated
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] elevated
  */
   __pyx_tuple__70 = PyTuple_Pack(5, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_elevated); if (unlikely(!__pyx_tuple__70)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__70);
@@ -38844,7 +38844,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def reset_curves_workspace(int workspace_size):             # <<<<<<<<<<<<<<
  *     global CURVES_WORKSPACE
- *     CURVES_WORKSPACE = np.empty((2, workspace_size), order='F')
+ *     CURVES_WORKSPACE = np.empty((2, workspace_size), order="F")
  */
   __pyx_tuple__85 = PyTuple_Pack(2, __pyx_n_s_workspace_size, __pyx_n_s_workspace_size); if (unlikely(!__pyx_tuple__85)) __PYX_ERR(0, 438, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__85);
@@ -39033,7 +39033,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def jacobian_both(double[::1, :] nodes, int degree, int dimension):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  */
   __pyx_tuple__116 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_dimension, __pyx_n_s_num_nodes, __pyx_n_s_new_nodes, __pyx_n_s__72); if (unlikely(!__pyx_tuple__116)) __PYX_ERR(0, 734, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__116);
@@ -39045,7 +39045,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def jacobian_det(double[::1, :] nodes, int degree, double[::1, :] st_vals):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, num_vals
- *     cdef ndarray_t[double, ndim=1, mode='fortran'] evaluated
+ *     cdef ndarray_t[double, ndim=1, mode="fortran"] evaluated
  */
   __pyx_tuple__118 = PyTuple_Pack(7, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_st_vals, __pyx_n_s_num_nodes, __pyx_n_s_num_vals, __pyx_n_s_evaluated, __pyx_n_s__72); if (unlikely(!__pyx_tuple__118)) __PYX_ERR(0, 753, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__118);
@@ -39069,7 +39069,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def subdivide_nodes_surface(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_a
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
  */
   __pyx_tuple__122 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_nodes_a, __pyx_n_s_nodes_b, __pyx_n_s_nodes_c, __pyx_n_s_nodes_d); if (unlikely(!__pyx_tuple__122)) __PYX_ERR(0, 799, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__122);
@@ -39081,7 +39081,7 @@ static int __Pyx_InitCachedConstants(void) {
  *
  * def compute_edge_nodes(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes1
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes1
  */
   __pyx_tuple__124 = PyTuple_Pack(7, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_nodes1, __pyx_n_s_nodes2, __pyx_n_s_nodes3); if (unlikely(!__pyx_tuple__124)) __PYX_ERR(0, 826, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__124);
@@ -39650,7 +39650,7 @@ if (!__Pyx_RefNanny) {
  * cdef double EPS = 0.5**40
  * cdef double LOCATE_MISS = -1.0             # <<<<<<<<<<<<<<
  * cdef double LOCATE_INVALID = -2.0
- * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
+ * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")
  */
   __pyx_v_6bezier_8_speedup_LOCATE_MISS = -1.0;
 
@@ -39658,7 +39658,7 @@ if (!__Pyx_RefNanny) {
  * cdef double EPS = 0.5**40
  * cdef double LOCATE_MISS = -1.0
  * cdef double LOCATE_INVALID = -2.0             # <<<<<<<<<<<<<<
- * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
+ * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")
  * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  */
   __pyx_v_6bezier_8_speedup_LOCATE_INVALID = -2.0;
@@ -39666,7 +39666,7 @@ if (!__Pyx_RefNanny) {
   /* "bezier/_speedup.pyx":54
  * cdef double LOCATE_MISS = -1.0
  * cdef double LOCATE_INVALID = -2.0
- * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')             # <<<<<<<<<<<<<<
+ * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")             # <<<<<<<<<<<<<<
  * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  */
@@ -39691,7 +39691,7 @@ if (!__Pyx_RefNanny) {
 
   /* "bezier/_speedup.pyx":55
  * cdef double LOCATE_INVALID = -2.0
- * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
+ * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")
  * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)             # <<<<<<<<<<<<<<
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  *     [
@@ -39722,11 +39722,11 @@ if (!__Pyx_RefNanny) {
   __pyx_t_6.data = NULL;
 
   /* "bezier/_speedup.pyx":56
- * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
+ * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")
  * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(             # <<<<<<<<<<<<<<
  *     [
- *         ('start', np.double),
+ *         ("start", np.double),
  */
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
@@ -39737,9 +39737,9 @@ if (!__Pyx_RefNanny) {
   /* "bezier/_speedup.pyx":58
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  *     [
- *         ('start', np.double),             # <<<<<<<<<<<<<<
- *         ('end', np.double),
- *         ('edge_index', np.intc),
+ *         ("start", np.double),             # <<<<<<<<<<<<<<
+ *         ("end", np.double),
+ *         ("edge_index", np.intc),
  */
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
@@ -39757,9 +39757,9 @@ if (!__Pyx_RefNanny) {
 
   /* "bezier/_speedup.pyx":59
  *     [
- *         ('start', np.double),
- *         ('end', np.double),             # <<<<<<<<<<<<<<
- *         ('edge_index', np.intc),
+ *         ("start", np.double),
+ *         ("end", np.double),             # <<<<<<<<<<<<<<
+ *         ("edge_index", np.intc),
  *     ],
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
@@ -39777,9 +39777,9 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":60
- *         ('start', np.double),
- *         ('end', np.double),
- *         ('edge_index', np.intc),             # <<<<<<<<<<<<<<
+ *         ("start", np.double),
+ *         ("end", np.double),
+ *         ("edge_index", np.intc),             # <<<<<<<<<<<<<<
  *     ],
  *     align=True,
  */
@@ -39801,8 +39801,8 @@ if (!__Pyx_RefNanny) {
  * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(
  *     [             # <<<<<<<<<<<<<<
- *         ('start', np.double),
- *         ('end', np.double),
+ *         ("start", np.double),
+ *         ("end", np.double),
  */
   __pyx_t_7 = PyList_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
@@ -39817,11 +39817,11 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":56
- * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
+ * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")
  * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(             # <<<<<<<<<<<<<<
  *     [
- *         ('start', np.double),
+ *         ("start", np.double),
  */
   __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -39830,7 +39830,7 @@ if (!__Pyx_RefNanny) {
   __pyx_t_7 = 0;
 
   /* "bezier/_speedup.pyx":62
- *         ('edge_index', np.intc),
+ *         ("edge_index", np.intc),
  *     ],
  *     align=True,             # <<<<<<<<<<<<<<
  * )
@@ -39841,11 +39841,11 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_align, Py_True) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":56
- * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order='F')
+ * cdef double[::1, :] CURVES_WORKSPACE = np.empty((2, 2), order="F")
  * cdef int[::1] SEGMENT_ENDS_WORKSPACE = np.empty(3, dtype=np.intc)
  * cdef dtype_t SEGMENT_DTYPE = np.dtype(             # <<<<<<<<<<<<<<
  *     [
- *         ('start', np.double),
+ *         ("start", np.double),
  */
   __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_2, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -39903,8 +39903,8 @@ if (!__Pyx_RefNanny) {
   /* "bezier/_speedup.pyx":68
  *
  * DQAGSE_ERR_MSGS = (
- *     'Maximum number of subdivisions allowed has been achieved.',             # <<<<<<<<<<<<<<
- *     'Roundoff error detected, which prevents convergence to tolerance.',
+ *     "Maximum number of subdivisions allowed has been achieved.",             # <<<<<<<<<<<<<<
+ *     "Roundoff error detected, which prevents convergence to tolerance.",
  *     'Integrand behaves "extremely" at some point(s) in the interval.',
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_DQAGSE_ERR_MSGS, __pyx_tuple__55) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
@@ -39912,35 +39912,35 @@ if (!__Pyx_RefNanny) {
   /* "bezier/_speedup.pyx":76
  * )
  * TOO_MANY_TEMPLATE = (
- *     'The number of candidate intersections is too high.\n'             # <<<<<<<<<<<<<<
- *     '{:d} candidate pairs.')
+ *     "The number of candidate intersections is too high.\n"             # <<<<<<<<<<<<<<
+ *     "{:d} candidate pairs.")
  * TOO_SMALL_TEMPLATE = (
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_TOO_MANY_TEMPLATE, __pyx_kp_s_The_number_of_candidate_intersec) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":79
- *     '{:d} candidate pairs.')
+ *     "{:d} candidate pairs.")
  * TOO_SMALL_TEMPLATE = (
- *     'Did not have enough space for intersections. Needed space '             # <<<<<<<<<<<<<<
- *     'for {:d} intersections but only had space for {:d}.')
+ *     "Did not have enough space for intersections. Needed space "             # <<<<<<<<<<<<<<
+ *     "for {:d} intersections but only had space for {:d}.")
  * SEGMENT_ENDS_TOO_SMALL = (
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_TOO_SMALL_TEMPLATE, __pyx_kp_s_Did_not_have_enough_space_for_in) < 0) __PYX_ERR(0, 78, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":82
- *     'for {:d} intersections but only had space for {:d}.')
+ *     "for {:d} intersections but only had space for {:d}.")
  * SEGMENT_ENDS_TOO_SMALL = (
- *     'Did not have enough space for segment ends. Needed space '             # <<<<<<<<<<<<<<
- *     'for {:d} integers but only had space for {:d}.')
+ *     "Did not have enough space for segment ends. Needed space "             # <<<<<<<<<<<<<<
+ *     "for {:d} integers but only had space for {:d}.")
  * SEGMENTS_TOO_SMALL = (
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_SEGMENT_ENDS_TOO_SMALL, __pyx_kp_s_Did_not_have_enough_space_for_se) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":85
- *     'for {:d} integers but only had space for {:d}.')
+ *     "for {:d} integers but only had space for {:d}.")
  * SEGMENTS_TOO_SMALL = (
- *     'Did not have enough space for segments. Needed space '             # <<<<<<<<<<<<<<
- *     'for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.')
+ *     "Did not have enough space for segments. Needed space "             # <<<<<<<<<<<<<<
+ *     "for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.")
  * # NOTE: The ``SUBDIVISION_NO_CONVERGE`` error message is copied from
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_SEGMENTS_TOO_SMALL, __pyx_kp_s_Did_not_have_enough_space_for_se_2) < 0) __PYX_ERR(0, 84, __pyx_L1_error)
@@ -39948,8 +39948,8 @@ if (!__Pyx_RefNanny) {
   /* "bezier/_speedup.pyx":93
  * #       ``MAX_INTERSECT_SUBDIVISIONS = 20``.
  * SUBDIVISION_NO_CONVERGE = (
- *     'Curve intersection failed to converge to approximately linear '             # <<<<<<<<<<<<<<
- *     'subdivisions after 20 iterations.')
+ *     "Curve intersection failed to converge to approximately linear "             # <<<<<<<<<<<<<<
+ *     "subdivisions after 20 iterations.")
  * # NOTE: The ``NEWTON_NO_CONVERGE`` error message is copied from
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_SUBDIVISION_NO_CONVERGE, __pyx_kp_s_Curve_intersection_failed_to_con) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
@@ -39992,7 +39992,7 @@ if (!__Pyx_RefNanny) {
  *
  * def specialize_curve(double[::1, :] nodes, double start, double end):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_5specialize_curve, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -40004,7 +40004,7 @@ if (!__Pyx_RefNanny) {
  *
  * def evaluate_hodograph(double s, double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] hodograph
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] hodograph
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_7evaluate_hodograph, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -40016,7 +40016,7 @@ if (!__Pyx_RefNanny) {
  *
  * def subdivide_nodes_curve(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] left_nodes, right_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] left_nodes, right_nodes
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_9subdivide_nodes_curve, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 199, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -40052,7 +40052,7 @@ if (!__Pyx_RefNanny) {
  *
  * def elevate_nodes(double[::1, :] nodes):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] elevated
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] elevated
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_15elevate_nodes, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -40136,7 +40136,7 @@ if (!__Pyx_RefNanny) {
  *
  * def reset_curves_workspace(int workspace_size):             # <<<<<<<<<<<<<<
  *     global CURVES_WORKSPACE
- *     CURVES_WORKSPACE = np.empty((2, workspace_size), order='F')
+ *     CURVES_WORKSPACE = np.empty((2, workspace_size), order="F")
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_29reset_curves_workspace, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 438, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -40329,7 +40329,7 @@ if (!__Pyx_RefNanny) {
  *
  * def jacobian_both(double[::1, :] nodes, int degree, int dimension):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] new_nodes
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] new_nodes
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_61jacobian_both, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 734, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -40341,7 +40341,7 @@ if (!__Pyx_RefNanny) {
  *
  * def jacobian_det(double[::1, :] nodes, int degree, double[::1, :] st_vals):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, num_vals
- *     cdef ndarray_t[double, ndim=1, mode='fortran'] evaluated
+ *     cdef ndarray_t[double, ndim=1, mode="fortran"] evaluated
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_63jacobian_det, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 753, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -40365,7 +40365,7 @@ if (!__Pyx_RefNanny) {
  *
  * def subdivide_nodes_surface(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes_a
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_67subdivide_nodes_surface, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 799, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -40377,7 +40377,7 @@ if (!__Pyx_RefNanny) {
  *
  * def compute_edge_nodes(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
- *     cdef ndarray_t[double, ndim=2, mode='fortran'] nodes1
+ *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes1
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_69compute_edge_nodes, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 826, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);

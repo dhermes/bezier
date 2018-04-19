@@ -546,7 +546,7 @@ class UnsupportedDegree(NotImplementedError):
        :options: +NORMALIZE_WHITESPACE
 
        >>> degree = 5
-       >>> nodes = np.empty((2, degree + 1), order='F')
+       >>> nodes = np.empty((2, degree + 1), order="F")
        >>> curve = bezier.Curve(nodes, degree=degree)
        >>> curve.reduce_()
        Traceback (most recent call last):

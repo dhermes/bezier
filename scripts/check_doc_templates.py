@@ -64,12 +64,12 @@ SPHINX_CODE_BLOCK1 = """\
        mpl_installed = False
        # Fake the matplotlib imports.
        plt_mod = unittest.mock.Mock(
-           name='matplotlib.pyplot', spec=['figure', 'show'])
+           name="matplotlib.pyplot", spec=["figure", "show"])
        plt_mod.show.return_value = None
-       sys.modules['matplotlib.pyplot'] = plt_mod
+       sys.modules["matplotlib.pyplot"] = plt_mod
        mpl_mod = unittest.mock.Mock(
-           name='matplotlib', pyplot=plt_mod, spec=[])
-       sys.modules['matplotlib'] = mpl_mod
+           name="matplotlib", pyplot=plt_mod, spec=[])
+       sys.modules["matplotlib"] = mpl_mod
 
    try:
        import seaborn
@@ -77,9 +77,9 @@ SPHINX_CODE_BLOCK1 = """\
    except ImportError:
        seaborn_installed = False
        # Fake the seaborn imports.
-       seaborn_mod = unittest.mock.Mock(name='seaborn', spec=['set'])
+       seaborn_mod = unittest.mock.Mock(name="seaborn", spec=["set"])
        seaborn_mod.set.return_value = None
-       sys.modules['seaborn'] = seaborn_mod
+       sys.modules["seaborn"] = seaborn_mod
 
 .. doctest:: getting-started"""
 SPHINX_CODE_BLOCK2 = """\
@@ -90,10 +90,10 @@ TEST_CLEANUP = """\
 .. testcleanup:: getting-started
 
    if not mpl_installed:
-       sys.modules.pop('matplotlib')
-       sys.modules.pop('matplotlib.pyplot')
+       sys.modules.pop("matplotlib")
+       sys.modules.pop("matplotlib.pyplot")
    if not seaborn_installed:
-       sys.modules.pop('seaborn')
+       sys.modules.pop("seaborn")
 
 """
 INLINE_MATH_EXPR = re.compile(r":math:`(?P<math>.*?)`")

@@ -610,8 +610,8 @@ class Test_full_newton_nonzero(unittest.TestCase):
     def test_nearby_solutions(self):
         # B1([158/512, 159/512]) and B2([304/1024, 305/1024]) are linearized
         # and when the segments intersect they produce perfectly valid
-        # s = float.fromhex('0x1.f19b11c66f80cp-7') ~= 0.0152 and
-        # t = float.fromhex('0x1.edecc2b71e352p-1') ~= 0.9647. This causes
+        # s = float.fromhex("0x1.f19b11c66f80cp-7") ~= 0.0152 and
+        # t = float.fromhex("0x1.edecc2b71e352p-1") ~= 0.9647. This causes
         # a convergence failure even though the curves are not tangent at
         # the nearby point of intersection.
         nodes1 = np.asfortranarray(

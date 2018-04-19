@@ -157,7 +157,7 @@ def get_otool_path(otool_line):
 
     Args:
         otool_line (str): A dependency (or ``install_name``) from ``otool -L``
-            output. Expected to be of the form '\t{PATH} (compatibility ...)'.
+            output. Expected to be of the form "\t{PATH} (compatibility ...)".
 
     Returns:
         str: The ``PATH`` in the ``otool_line``.
@@ -173,7 +173,7 @@ def get_dependencies(dylib, check_exists=True):
 
     .. code-block:: python
 
-       >>> dylib = '/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib'
+       >>> dylib = "/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib"
        >>> get_dependencies(dylib)
        ['/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libquadmath.0.dylib',
         '/usr/lib/libSystem.B.dylib',
@@ -239,10 +239,10 @@ def get_architectures(dylib):
     .. code-block:: python
 
        >>> libgfortran = (
-       ...     '/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib')
+       ...     "/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib")
        >>> get_architectures(libgfortran)
        ['x86_64']
-       >>> libgcc_s = '/usr/local/lib/gcc/7/libgcc_s.1.dylib'
+       >>> libgcc_s = "/usr/local/lib/gcc/7/libgcc_s.1.dylib"
        >>> get_architectures(libgcc_s)
        ['x86_64', 'i386']
 
@@ -295,7 +295,7 @@ def non_universal_libraries(dylib):
     .. code-block:: python
 
        >>> libgfortran = (
-       ...     '/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib')
+       ...     "/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib")
        >>> non_universal_libraries(libgfortran)
        {'/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib',
         '/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libquadmath.0.dylib'}
