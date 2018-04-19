@@ -35,9 +35,9 @@ from bezier import curved_polygon
 
 _SIGN = np.sign  # pylint: disable=no-member
 _LOCATE_ERROR_TEMPLATE = (
-    'Dimension mismatch: This surface is {:d}-dimensional, '
-    'so the point should be a {:d} x 1 NumPy array. '
-    'Instead the point {} has dimensions {}.'
+    "Dimension mismatch: This surface is {:d}-dimensional, "
+    "so the point should be a {:d} x 1 NumPy array. "
+    "Instead the point {} has dimensions {}."
 )
 _STRATEGY = _intersection_helpers.IntersectionStrategy
 
@@ -178,10 +178,10 @@ class Surface(_base.Base):
             freely mutate ``nodes`` after passing in.
     """
     __slots__ = (
-        '_dimension',  # From base class
-        '_nodes',  # From base class
-        '_degree',  # From constructor
-        '_edges',  # Empty default
+        "_dimension",  # From base class
+        "_nodes",  # From base class
+        "_degree",  # From constructor
+        "_edges",  # Empty default
     )
 
     def __init__(self, nodes, degree, _copy=True):
@@ -234,7 +234,7 @@ class Surface(_base.Base):
             return d_int
 
         else:
-            raise ValueError(num_nodes, 'not a triangular number')
+            raise ValueError(num_nodes, "not a triangular number")
 
     @property
     def area(self):
@@ -275,8 +275,8 @@ class Surface(_base.Base):
         """
         if self._dimension != 2:
             raise NotImplementedError(
-                '2D is the only supported dimension',
-                'Current dimension',
+                "2D is the only supported dimension",
+                "Current dimension",
                 self._dimension,
             )
 
@@ -370,12 +370,12 @@ class Surface(_base.Base):
         weights_total = lambda1 + lambda2 + lambda3
         if not np.allclose(weights_total, 1.0, atol=0.0):
             raise ValueError(
-                'Weights do not sum to 1', lambda1, lambda2, lambda3
+                "Weights do not sum to 1", lambda1, lambda2, lambda3
             )
 
         if lambda1 < 0.0 or lambda2 < 0.0 or lambda3 < 0.0:
             raise ValueError(
-                'Weights must be positive', lambda1, lambda2, lambda3
+                "Weights must be positive", lambda1, lambda2, lambda3
             )
 
     def evaluate_barycentric(self, lambda1, lambda2, lambda3, _verify=True):
@@ -527,7 +527,7 @@ class Surface(_base.Base):
         """
         if _verify:
             if param_vals.ndim != 2:
-                raise ValueError('Parameter values must be 2D array')
+                raise ValueError("Parameter values must be 2D array")
 
             for lambda1, lambda2, lambda3 in param_vals:
                 self._verify_barycentric(lambda1, lambda2, lambda3)
@@ -549,7 +549,7 @@ class Surface(_base.Base):
             ValueError: If the point lies outside the reference triangle.
         """
         if s < 0.0 or t < 0.0 or s + t > 1.0:
-            raise ValueError('Point lies outside reference triangle', s, t)
+            raise ValueError("Point lies outside reference triangle", s, t)
 
     def evaluate_cartesian(self, s, t, _verify=True):
         r"""Compute a point on the surface.
@@ -649,7 +649,7 @@ class Surface(_base.Base):
         """
         if _verify:
             if param_vals.ndim != 2:
-                raise ValueError('Parameter values must be 2D array')
+                raise ValueError("Parameter values must be 2D array")
 
             for s, t in param_vals:
                 self._verify_cartesian(s, t)
@@ -677,8 +677,8 @@ class Surface(_base.Base):
         """
         if self._dimension != 2:
             raise NotImplementedError(
-                '2D is the only supported dimension',
-                'Current dimension',
+                "2D is the only supported dimension",
+                "Current dimension",
                 self._dimension,
             )
 
@@ -689,9 +689,9 @@ class Surface(_base.Base):
             ax.plot(
                 self._nodes[0, :],
                 self._nodes[1, :],
-                color='black',
-                marker='o',
-                linestyle='None',
+                color="black",
+                marker="o",
+                linestyle="None",
             )
         return ax
 
@@ -762,7 +762,7 @@ class Surface(_base.Base):
             .UnsupportedDegree: If the degree is not 1, 2 or 3.
         """
         if self._dimension != 2:
-            raise NotImplementedError('Validity check only implemented in R^2')
+            raise NotImplementedError("Validity check only implemented in R^2")
 
         poly_sign = None
         if self._degree == 1:
@@ -868,10 +868,10 @@ class Surface(_base.Base):
         returned dictionary.
         """
         return {
-            '_dimension': self._dimension,
-            '_nodes': self._nodes,
-            '_degree': self._degree,
-            '_edges': self._edges,
+            "_dimension": self._dimension,
+            "_nodes": self._nodes,
+            "_degree": self._degree,
+            "_edges": self._edges,
         }
 
     def locate(self, point, _verify=True):
@@ -930,10 +930,10 @@ class Surface(_base.Base):
         """
         if _verify:
             if self._dimension != 2:
-                raise NotImplementedError('Only 2D surfaces supported.')
+                raise NotImplementedError("Only 2D surfaces supported.")
 
             if point.shape != (self._dimension, 1):
-                point_dimensions = ' x '.join(
+                point_dimensions = " x ".join(
                     str(dimension) for dimension in point.shape
                 )
                 msg = _LOCATE_ERROR_TEMPLATE.format(
@@ -971,14 +971,14 @@ class Surface(_base.Base):
         if _verify:
             if not isinstance(other, Surface):
                 raise TypeError(
-                    'Can only intersect with another surface',
-                    'Received',
+                    "Can only intersect with another surface",
+                    "Received",
                     other,
                 )
 
             if self._dimension != 2 or other._dimension != 2:
                 raise NotImplementedError(
-                    'Intersection only implemented in 2D'
+                    "Intersection only implemented in 2D"
                 )
 
         if strategy == _STRATEGY.GEOMETRIC:
@@ -986,7 +986,7 @@ class Surface(_base.Base):
         elif strategy == _STRATEGY.ALGEBRAIC:
             do_intersect = _surface_intersection.algebraic_intersect
         else:
-            raise ValueError('Unexpected strategy.', strategy)
+            raise ValueError("Unexpected strategy.", strategy)
 
         edge_infos, contained, all_edge_nodes = do_intersect(
             self._nodes, self._degree, other._nodes, other._degree, _verify
@@ -1066,7 +1066,7 @@ class Surface(_base.Base):
         _, num_nodes = self._nodes.shape
         # (d + 1)(d + 2)/2 --> (d + 2)(d + 3)/2
         num_new = num_nodes + self._degree + 2
-        new_nodes = np.zeros((self._dimension, num_new), order='F')
+        new_nodes = np.zeros((self._dimension, num_new), order="F")
         # NOTE: We start from the index triples (i, j, k) for the current
         #       nodes and map them onto (i + 1, j, k), etc. This index
         #       tracking is also done in :func:`.de_casteljau_one_round`.

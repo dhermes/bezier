@@ -55,14 +55,14 @@ def binary_round(value, num_bits):
     #       a subnormal number.
     hex_val = value.hex()
     # NOTE: `pre` is either '' or '-'.
-    pre, hex_digits = hex_val.split('0x1.')
-    hex_digits, post = hex_digits.split('p')
+    pre, hex_digits = hex_val.split("0x1.")
+    hex_digits, post = hex_digits.split("p")
     assert len(hex_digits) == 13
-    all_bits = '{:052b}'.format(int(hex_digits, 16))
+    all_bits = "{:052b}".format(int(hex_digits, 16))
     assert len(all_bits) == 52
-    truncated_bits = all_bits[:num_bits] + '0' * (52 - num_bits)
-    truncated_hex = '{:013x}'.format(int(truncated_bits, 2))
-    python_hex = pre + '0x1.' + truncated_hex + 'p' + post
+    truncated_bits = all_bits[:num_bits] + "0" * (52 - num_bits)
+    truncated_hex = "{:013x}".format(int(truncated_bits, 2))
+    python_hex = pre + "0x1." + truncated_hex + "p" + post
     return float.fromhex(python_hex)
 
 
@@ -86,7 +86,7 @@ def ref_triangle_uniform_nodes(pts_exponent):
     # enough exponents).
     pts_per_side = 2 ** pts_exponent + 1
     total = ((pts_per_side + 1) * pts_per_side) // 2
-    result = np.zeros((total, 2), order='F')
+    result = np.zeros((total, 2), order="F")
     index = 0
     for y_val in six.moves.xrange(pts_per_side):
         remaining = pts_per_side - y_val
@@ -117,7 +117,7 @@ def needs_speedup(test_class):
         has_speedup = False  # pragma: NO COVER
     else:
         has_speedup = bezier._HAS_SPEEDUP
-    decorator = unittest.skipUnless(has_speedup, 'No speedup available')
+    decorator = unittest.skipUnless(has_speedup, "No speedup available")
     return decorator(test_class)
 
 

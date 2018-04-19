@@ -23,7 +23,7 @@ class TestSurface(utils.NumPyTestCase):
         [[0.0, 1.25, 2.0, -1.5, 0.0, -3.0], [0.0, 0.5, 1.0, 0.75, 2.0, 3.0]]
     )
     UNIT_TRIANGLE = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    ZEROS = np.zeros((2, 3), order='F')
+    ZEROS = np.zeros((2, 3), order="F")
 
     @staticmethod
     def _get_target_class():
@@ -53,7 +53,7 @@ class TestSurface(utils.NumPyTestCase):
         nodes = np.asfortranarray([1.0, 2.0])
         with self.assertRaises(ValueError):
             self._make_one(nodes, 0)
-        nodes = np.zeros((3, 2, 2), order='F')
+        nodes = np.zeros((3, 2, 2), order="F")
         with self.assertRaises(ValueError):
             self._make_one(nodes, 1)
 
@@ -74,9 +74,9 @@ class TestSurface(utils.NumPyTestCase):
         self.assertIsNone(surface._edges)
 
     def test___repr__(self):
-        nodes = np.zeros((3, 15), order='F')
+        nodes = np.zeros((3, 15), order="F")
         surface = self._make_one(nodes, 4)
-        expected = '<Surface (degree=4, dimension=3)>'
+        expected = "<Surface (degree=4, dimension=3)>"
         self.assertEqual(repr(surface), expected)
 
     def test__get_degree_valid(self):
@@ -98,11 +98,11 @@ class TestSurface(utils.NumPyTestCase):
         nodes = np.asfortranarray([[0.0, 0.0], [1.0, 2.0], [2.0, 3.0]])
         surface = self._make_one(nodes, 1)
         with self.assertRaises(NotImplementedError) as exc_info:
-            getattr(surface, 'area')
+            getattr(surface, "area")
 
         exc_args = exc_info.exception.args
         expected_args = (
-            '2D is the only supported dimension', 'Current dimension', 3
+            "2D is the only supported dimension", "Current dimension", 3
         )
         self.assertEqual(exc_args, expected_args)
 
@@ -217,9 +217,9 @@ class TestSurface(utils.NumPyTestCase):
     def test_edges_property_cached(self):
         surface = self._make_one_no_slots(self.ZEROS, 1)
         # Create mock "edges" to be computed.
-        sentinel1 = unittest.mock.Mock(spec=['_copy'])
-        sentinel2 = unittest.mock.Mock(spec=['_copy'])
-        sentinel3 = unittest.mock.Mock(spec=['_copy'])
+        sentinel1 = unittest.mock.Mock(spec=["_copy"])
+        sentinel2 = unittest.mock.Mock(spec=["_copy"])
+        sentinel3 = unittest.mock.Mock(spec=["_copy"])
         expected = sentinel1, sentinel2, sentinel3
         surface._compute_edges = unittest.mock.Mock(return_value=expected)
         # Make sure the "edges" when copied just return themselves.
@@ -264,7 +264,7 @@ class TestSurface(utils.NumPyTestCase):
         lambda_vals = (0.25, 0.0, 0.75)
         # Just make sure we call the helper.
         patch = unittest.mock.patch(
-            'bezier._surface_helpers.evaluate_barycentric',
+            "bezier._surface_helpers.evaluate_barycentric",
             return_value=unittest.mock.sentinel.evaluated,
         )
         with patch as mocked:
@@ -292,7 +292,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_evaluate_barycentric_multi_wrong_dimension(self):
         surface = self._make_one(self.ZEROS, 1)
-        param_vals_1d = np.zeros((4,), order='F')
+        param_vals_1d = np.zeros((4,), order="F")
         with self.assertRaises(ValueError):
             surface.evaluate_barycentric_multi(param_vals_1d)
 
@@ -301,7 +301,7 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 1, _copy=False)
         param_vals = np.asfortranarray([[1.0, 0.0, 0.0]])
         patch = unittest.mock.patch(
-            'bezier._surface_helpers.evaluate_barycentric_multi',
+            "bezier._surface_helpers.evaluate_barycentric_multi",
             return_value=unittest.mock.sentinel.evaluated,
         )
         with patch as mocked:
@@ -354,7 +354,7 @@ class TestSurface(utils.NumPyTestCase):
         nodes = self.ZEROS
         surface = self._make_one_no_slots(nodes, 1, _copy=False)
         patch = unittest.mock.patch(
-            'bezier._surface_helpers.evaluate_barycentric',
+            "bezier._surface_helpers.evaluate_barycentric",
             return_value=unittest.mock.sentinel.point,
         )
         s_val = 0.25
@@ -366,7 +366,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_evaluate_cartesian_multi_wrong_dimension(self):
         surface = self._make_one(self.ZEROS, 1)
-        param_vals_1d = np.zeros((4,), order='F')
+        param_vals_1d = np.zeros((4,), order="F")
         with self.assertRaises(ValueError):
             surface.evaluate_cartesian_multi(param_vals_1d)
 
@@ -375,7 +375,7 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 1, _copy=False)
         param_vals = np.asfortranarray([[1.0, 0.0]])
         patch = unittest.mock.patch(
-            'bezier._surface_helpers.evaluate_cartesian_multi',
+            "bezier._surface_helpers.evaluate_cartesian_multi",
             return_value=unittest.mock.sentinel.evaluated,
         )
         with patch as mocked:
@@ -397,8 +397,8 @@ class TestSurface(utils.NumPyTestCase):
         with self.assertRaises(NotImplementedError):
             surface.plot(32)
 
-    @unittest.mock.patch('bezier._plot_helpers.new_axis')
-    @unittest.mock.patch('bezier._plot_helpers.add_patch')
+    @unittest.mock.patch("bezier._plot_helpers.new_axis")
+    @unittest.mock.patch("bezier._plot_helpers.add_patch")
     def test_plot_defaults(self, add_patch_mock, new_axis_mock):
         ax = unittest.mock.Mock(spec=[])
         new_axis_mock.return_value = ax
@@ -412,10 +412,10 @@ class TestSurface(utils.NumPyTestCase):
             ax, None, pts_per_edge, *curve._edges
         )
 
-    @unittest.mock.patch('bezier._plot_helpers.new_axis')
-    @unittest.mock.patch('bezier._plot_helpers.add_patch')
+    @unittest.mock.patch("bezier._plot_helpers.new_axis")
+    @unittest.mock.patch("bezier._plot_helpers.add_patch")
     def test_plot_explicit(self, add_patch_mock, new_axis_mock):
-        ax = unittest.mock.Mock(spec=['plot'])
+        ax = unittest.mock.Mock(spec=["plot"])
         color = (0.5, 0.5, 0.5)
         curve = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
         pts_per_edge = 16
@@ -434,9 +434,9 @@ class TestSurface(utils.NumPyTestCase):
             self,
             call,
             self.UNIT_TRIANGLE,
-            color='black',
-            marker='o',
-            linestyle='None',
+            color="black",
+            marker="o",
+            linestyle="None",
         )
 
     def test_subdivide(self):
@@ -466,7 +466,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(surface_d._nodes, expected_d)
 
     def test__compute_valid_bad_dimension(self):
-        nodes = np.zeros((3, 6), order='F')
+        nodes = np.zeros((3, 6), order="F")
         surface = self._make_one(nodes, 2)
         with self.assertRaises(NotImplementedError):
             surface._compute_valid()
@@ -538,7 +538,7 @@ class TestSurface(utils.NumPyTestCase):
 
         degree = 4
         num_nodes = ((degree + 1) * (degree + 2)) // 2
-        nodes = np.zeros((2, num_nodes), order='F')
+        nodes = np.zeros((2, num_nodes), order="F")
         surface = self._make_one(nodes, degree=degree)
         with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
             surface._compute_valid()
@@ -553,15 +553,15 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
         props_dict = surface.__dict__
         expected = {
-            '_nodes': self.UNIT_TRIANGLE,
-            '_dimension': 2,
-            '_degree': 1,
-            '_edges': None,
+            "_nodes": self.UNIT_TRIANGLE,
+            "_dimension": 2,
+            "_degree": 1,
+            "_edges": None,
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``surface``.
-        expected['_dimension'] = -42
-        self.assertNotEqual(surface._dimension, expected['_dimension'])
+        expected["_dimension"] = -42
+        self.assertNotEqual(surface._dimension, expected["_dimension"])
 
     def test_locate(self):
         surface = self._make_one(self.QUADRATIC, 2)
@@ -641,7 +641,7 @@ class TestSurface(utils.NumPyTestCase):
         with self.assertRaises(ValueError) as exc_info:
             surface.intersect(surface, strategy=strategy)
         exc_args = exc_info.exception.args
-        self.assertEqual(exc_args, ('Unexpected strategy.', strategy))
+        self.assertEqual(exc_args, ("Unexpected strategy.", strategy))
 
     def test_intersect_algebraic(self):
         from bezier import _intersection_helpers
@@ -684,7 +684,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_intersect_unsupported_dimension(self):
         surface1 = self._make_one(self.UNIT_TRIANGLE, 1)
-        nodes2 = np.zeros((3, 3), order='F')
+        nodes2 = np.zeros((3, 3), order="F")
         surface2 = self._make_one(nodes2, 1)
         with self.assertRaises(NotImplementedError):
             surface1.intersect(surface2)
@@ -736,8 +736,8 @@ class Test__make_intersection(utils.NumPyTestCase):
         nodes2 = np.asfortranarray([[0.25, -0.75, 0.25], [0.25, 0.25, -0.75]])
         surface2 = bezier.Surface(nodes2, degree=1, _copy=False)
         edge_nodes = (
-            tuple(edge._nodes for edge in surface1.edges) +
-            tuple(edge._nodes for edge in surface2.edges)
+            tuple(edge._nodes for edge in surface1.edges)
+            + tuple(edge._nodes for edge in surface2.edges)
         )
         edge_info = (
             (0, 0.0, 0.25), (5, 0.75, 1.0), (3, 0.0, 0.25), (2, 0.75, 1.0)

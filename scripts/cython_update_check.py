@@ -31,17 +31,17 @@ ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
 def main():
     # Make sure we are running in the project root.
     os.chdir(ROOT_DIR)
-    c_glob = os.path.join('src', 'bezier', '*.c')
-    subprocess.call(['git', 'add', c_glob])
+    c_glob = os.path.join("src", "bezier", "*.c")
+    subprocess.call(["git", "add", c_glob])
     updated = subprocess.check_output(
-        ['git', 'diff', 'HEAD', '--name-status', '--', c_glob]
+        ["git", "diff", "HEAD", "--name-status", "--", c_glob]
     )
-    if updated != b'':
-        updated = updated.decode('utf-8')
-        msg = 'Some generated files have changed:\n{}'.format(updated)
+    if updated != b"":
+        updated = updated.decode("utf-8")
+        msg = "Some generated files have changed:\n{}".format(updated)
         print(msg, file=sys.stderr)
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

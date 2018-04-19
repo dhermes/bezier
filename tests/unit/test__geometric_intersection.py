@@ -511,6 +511,8 @@ class Test_from_linearized(utils.NumPyTestCase):
         self.assertEqual(intersections, [])
 
     def test_curved_parallel_segments_tangent(self):
+        # NOTE: There is no corresponding "enable", but the disable only
+        #       applies in this lexical scope.
         # pylint: disable=too-many-locals
         from bezier import _curve_helpers
 
@@ -543,9 +545,10 @@ class Test_from_linearized(utils.NumPyTestCase):
         s, t = intersections[0]
         utils.almost(self, 2.0 / 3.0, s, 1)
         utils.almost(self, 1.0 / 3.0, t, 1)
-        # pylint: enable=too-many-locals
 
     def test_line_and_curve_tangent(self):
+        # NOTE: There is no corresponding "enable", but the disable only
+        #       applies in this lexical scope.
         # pylint: disable=too-many-locals
         from bezier import _curve_helpers
 
@@ -573,7 +576,6 @@ class Test_from_linearized(utils.NumPyTestCase):
         s, t = intersections[0]
         utils.almost(self, 1.0 / 3.0, s, 1)
         utils.almost(self, 1.0 / 3.0, t, 1)
-        # pylint: enable=too-many-locals
 
     def _wiggle_outside_helper(self, swap=False):
         from bezier import _curve_helpers
@@ -621,11 +623,11 @@ class Test_from_linearized(utils.NumPyTestCase):
         self.assertIsNone(return_value)
         self.assertEqual(intersections, [])
 
-    @unittest.skipIf(not base_utils.IS_64_BIT, '32-bit is skipped')
+    @unittest.skipIf(not base_utils.IS_64_BIT, "32-bit is skipped")
     def test_s_wiggle_outside(self):
         self._wiggle_outside_helper()
 
-    @unittest.skipIf(not base_utils.IS_64_BIT, '32-bit is skipped')
+    @unittest.skipIf(not base_utils.IS_64_BIT, "32-bit is skipped")
     def test_t_wiggle_outside(self):
         self._wiggle_outside_helper(swap=True)
 
@@ -1086,11 +1088,11 @@ class Test_coincident_parameters(unittest.TestCase):
             self._call_function_under_test(nodes2, nodes1)
         self.assertEqual(
             exc_info1.exception.args[0],
-            'Parameters not close enough to one another',
+            "Parameters not close enough to one another",
         )
         self.assertEqual(
             exc_info2.exception.args[0],
-            'Parameters not close enough to one another',
+            "Parameters not close enough to one another",
         )
 
     def test_touch_no_intersect_same_curve(self):
@@ -1580,15 +1582,15 @@ class TestSubdividedCurve(utils.NumPyTestCase):
         )
         props_dict = curve.__dict__
         expected = {
-            'nodes': unittest.mock.sentinel.nodes,
-            'original_nodes': unittest.mock.sentinel.original_nodes,
-            'start': 0.25,
-            'end': 0.75,
+            "nodes": unittest.mock.sentinel.nodes,
+            "original_nodes": unittest.mock.sentinel.original_nodes,
+            "start": 0.25,
+            "end": 0.75,
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curve``.
-        props_dict['start'] = -1.0
-        self.assertNotEqual(curve.start, props_dict['start'])
+        props_dict["start"] = -1.0
+        self.assertNotEqual(curve.start, props_dict["start"])
 
     def test_subdivide(self):
         klass = self._get_target_class()
@@ -1643,13 +1645,13 @@ class TestLinearization(utils.NumPyTestCase):
         # NOTE: We cannot use dictionary equality check because of
         #       the comparison of NumPy arrays.
         self.assertEqual(len(props_dict), 4)
-        self.assertIs(props_dict['curve'], curve)
-        self.assertEqual(props_dict['error'], error)
-        self.assertEqual(props_dict['start_node'], nodes[:, 0])
-        self.assertEqual(props_dict['end_node'], nodes[:, 1])
+        self.assertIs(props_dict["curve"], curve)
+        self.assertEqual(props_dict["error"], error)
+        self.assertEqual(props_dict["start_node"], nodes[:, 0])
+        self.assertEqual(props_dict["end_node"], nodes[:, 1])
         # Check that modifying ``props_dict`` won't modify ``linearization``.
-        props_dict['error'] = 0.5
-        self.assertNotEqual(linearization.error, props_dict['error'])
+        props_dict["error"] = 0.5
+        self.assertNotEqual(linearization.error, props_dict["error"])
 
     def test_subdivide(self):
         linearization = self._make_one(self._simple_curve(), np.nan)
@@ -1770,8 +1772,8 @@ class Test_curves_workspace_size(unittest.TestCase):
 def subdivided_curve(nodes, **kwargs):
     from bezier import _geometric_intersection
 
-    if 'original_nodes' not in kwargs:
-        kwargs['original_nodes'] = nodes
+    if "original_nodes" not in kwargs:
+        kwargs["original_nodes"] = nodes
     return _geometric_intersection.SubdividedCurve(nodes, **kwargs)
 
 

@@ -28,13 +28,13 @@ if six.PY2:
     import mock  # pylint: disable=import-error
 
     unittest.mock = mock
-    sys.modules['unittest.mock'] = unittest.mock
+    sys.modules["unittest.mock"] = unittest.mock
 
 
 def pytest_addoption(parser):
     parser.addoption(
-        '--ignore-slow',
-        dest='ignore_slow',
-        action='store_true',
-        help='Ignore slow tests.',
+        "--ignore-slow",
+        dest="ignore_slow",
+        action="store_true",
+        help="Ignore slow tests.",
     )

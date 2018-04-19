@@ -30,11 +30,11 @@ def make_plot(intersection_info, save_plot):
     ax.plot(
         intersection_pts[0, :],
         intersection_pts[1, :],
-        marker='o',
-        linestyle='None',
-        color='black',
+        marker="o",
+        linestyle="None",
+        color="black",
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
     filename = intersection_info.img_filename
     if save_plot:
@@ -55,6 +55,6 @@ def main():
         make_plot(intersection_info, args.save_plot)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     seaborn.set()  # Required in `seaborn >= 0.8`
     main()

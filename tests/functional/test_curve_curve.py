@@ -157,29 +157,29 @@ BAD_MULTIPLICITY = (_intersection_helpers.NEWTON_NO_CONVERGE,)
 COINCIDENT_ERR = (_algebraic_intersection._COINCIDENT_ERR,)
 TANGENT_OVERRIDES = {
     GEOMETRIC: {
-        4: {'success': True},
-        11: {'success': True},
-        14: {'success': True},
-        19: {'success': True},
-        24: {'success': True},
-        31: {'success': True},
-        41: {'success': True},
-        42: {'bad_multiplicity': True},
-        43: {'success': True},
-        44: {'success': True},
-        45: {'too_many': 74},
-        46: {'success': True},
-        47: {'success': True},
-        50: {'success': True},
+        4: {"success": True},
+        11: {"success": True},
+        14: {"success": True},
+        19: {"success": True},
+        24: {"success": True},
+        31: {"success": True},
+        41: {"success": True},
+        42: {"bad_multiplicity": True},
+        43: {"success": True},
+        44: {"success": True},
+        45: {"too_many": 74},
+        46: {"success": True},
+        47: {"success": True},
+        50: {"success": True},
     },
     ALGEBRAIC: {},
 }
 COINCIDENT_OVERRIDES = {
     GEOMETRIC: {
-        20: {'success': True},
-        33: {'success': True},
-        34: {'success': True},
-        35: {'success': True},
+        20: {"success": True},
+        33: {"success": True},
+        34: {"success": True},
+        35: {"success": True},
     },
     ALGEBRAIC: {53: {}},
 }
@@ -202,9 +202,9 @@ def get_sorted_intersections(intersection_info, strategy):
     # Make we have the right number of intersections.
     if intersections.shape != (2, intersection_info.num_params):
         raise utils.IncorrectCount(
-            'Received wrong number of intersections',
+            "Received wrong number of intersections",
             intersections.shape,
-            'Expected',
+            "Expected",
             intersection_info.num_params,
             intersection_info.test_id,
         )
@@ -219,8 +219,8 @@ def intersection_values(intersection_info, strategy):
     intersections = get_sorted_intersections(intersection_info, strategy)
     # Put the computed and expected values into matrices to be compared.
     s_vals, t_vals, intersection_pts = intersection_info.params
-    computed = np.zeros((6, intersection_info.num_params), order='F')
-    exact = np.zeros(computed.shape, order='F')
+    computed = np.zeros((6, intersection_info.num_params), order="F")
+    exact = np.zeros(computed.shape, order="F")
     info = six.moves.zip(intersections.T, s_vals, t_vals, intersection_pts.T)
     for index, (intersection, s_val, t_val, point) in enumerate(info):
         computed[(0, 1), index] = intersection
@@ -242,7 +242,7 @@ def intersection_values(intersection_info, strategy):
 
 def error_multipliers(intersection_info, shape, strategy):
     zero_misses = []
-    multipliers = ULPS_ALLOWED * np.ones(shape, order='F')
+    multipliers = ULPS_ALLOWED * np.ones(shape, order="F")
     override = ULPS_ALLOWED_OVERRIDE[strategy].get(intersection_info.id_)
     if override is not None:
         for index_tuple, value in six.iteritems(override):
@@ -259,8 +259,8 @@ def incorrect_values(multipliers, errors, exact):
     failure_rows, failure_cols = np.where(observed_error_ulps > multipliers)
     failures = []
     for failure_row, failure_col in six.moves.zip(failure_rows, failure_cols):
-        failures.append('* {:d}, {:d}'.format(failure_row, failure_col))
-    failures = '\n'.join(failures)
+        failures.append("* {:d}, {:d}".format(failure_row, failure_col))
+    failures = "\n".join(failures)
     zero_misses = np.where((exact == 0.0) & (observed_error_ulps != 0.0))
     observed_error_ulps[zero_misses] = np.nan
     msg = INCORRECT_VALUES_MSG.format(
@@ -296,7 +296,7 @@ def check_no_intersect(intersection_info, strategy):
 def check_tangent(intersection_info, strategy):
     id_ = intersection_info.id_
     tangent_kwargs = TANGENT_OVERRIDES[strategy].get(id_, {})
-    if tangent_kwargs == {'success': True}:
+    if tangent_kwargs == {"success": True}:
         check_intersect(intersection_info, strategy)
     else:
         with pytest.raises(NotImplementedError) as exc_info:
@@ -306,12 +306,12 @@ def check_tangent(intersection_info, strategy):
             assert len(exc_args) == 2
             assert exc_args[0] == NON_SIMPLE_ERR
         else:
-            if 'bad_multiplicity' in tangent_kwargs:
-                assert tangent_kwargs == {'bad_multiplicity': True}
+            if "bad_multiplicity" in tangent_kwargs:
+                assert tangent_kwargs == {"bad_multiplicity": True}
                 assert exc_args == BAD_MULTIPLICITY
             else:
-                too_many = tangent_kwargs.get('too_many')
-                assert tangent_kwargs == {'too_many': too_many}
+                too_many = tangent_kwargs.get("too_many")
+                assert tangent_kwargs == {"too_many": too_many}
                 err_msg = TOO_MANY.format(too_many)
                 assert exc_args == (err_msg,)
 
@@ -319,7 +319,7 @@ def check_tangent(intersection_info, strategy):
 def check_coincident(intersection_info, strategy):
     id_ = intersection_info.id_
     coincident_kwargs = COINCIDENT_OVERRIDES[strategy].get(id_, {})
-    if coincident_kwargs == {'success': True}:
+    if coincident_kwargs == {"success": True}:
         check_intersect(intersection_info, strategy)
     else:
         with pytest.raises(NotImplementedError) as exc_info:
@@ -329,14 +329,14 @@ def check_coincident(intersection_info, strategy):
             assert coincident_kwargs == {}
             assert exc_args == COINCIDENT_ERR
         else:
-            too_many = coincident_kwargs.get('too_many')
-            assert coincident_kwargs == {'too_many': too_many}
+            too_many = coincident_kwargs.get("too_many")
+            assert coincident_kwargs == {"too_many": too_many}
             err_msg = TOO_MANY.format(too_many)
             assert exc_args == (err_msg,)
 
 
 @pytest.mark.parametrize(
-    'strategy,intersection_info',
+    "strategy,intersection_info",
     itertools.product((GEOMETRIC, ALGEBRAIC), INTERSECTIONS),
     ids=utils.id_func,
 )
@@ -359,4 +359,4 @@ def test_intersect(strategy, intersection_info):
     elif intersection_type == CurveIntersectionType.no_intersection:
         check_no_intersect(intersection_info, strategy)
     else:
-        raise ValueError('Unexpected intersection type', intersection_type)
+        raise ValueError("Unexpected intersection type", intersection_type)

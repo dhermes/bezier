@@ -17,18 +17,18 @@ import sys
 
 import setup_helpers
 
-LIB_DIR = os.path.join('bezier', 'lib')
-DLL_DIR = os.path.join('bezier', 'extra-dll')
-DLL_NAME = 'libbezier.dll'
-DEF_NAME = 'libbezier.def'
-LIB_NAME = 'bezier.lib'
+LIB_DIR = os.path.join("bezier", "lib")
+DLL_DIR = os.path.join("bezier", "extra-dll")
+DLL_NAME = "libbezier.dll"
+DEF_NAME = "libbezier.def"
+LIB_NAME = "bezier.lib"
 # See: https://docs.python.org/3/library/platform.html#cross-platform
 if sys.maxsize == 2 ** 63 - 1:
-    MACHINE_TYPE = '/machine:x64'
+    MACHINE_TYPE = "/machine:x64"
 elif sys.maxsize == 2 ** 31 - 1:
-    MACHINE_TYPE = '/machine:x86'
+    MACHINE_TYPE = "/machine:x86"
 else:  # pragma: NO COVER
-    raise ImportError('Unexpected maxsize', sys.maxsize)
+    raise ImportError("Unexpected maxsize", sys.maxsize)
 
 
 def _ensure_exists(*dir_names):
@@ -52,18 +52,18 @@ def make_static_lib(build_ext_cmd, obj_files):
     # NOTE: Would prefer to use a `tuple` but command must be
     #       mutable on Windows.
     temp_dll_filename = os.path.join(build_ext_cmd.build_temp, DLL_NAME)
-    cmd = [gfortran_exe, '-static', '-shared', '-o', temp_dll_filename]
+    cmd = [gfortran_exe, "-static", "-shared", "-o", temp_dll_filename]
     cmd.extend(obj_files)
     def_filename = os.path.join(build_ext_cmd.build_temp, DEF_NAME)
-    cmd.append('-Wl,--output-def,' + def_filename)
+    cmd.append("-Wl,--output-def," + def_filename)
     f90_compiler.spawn(cmd)
     # NOTE: This assumes, but does not check that ``c_compiler.initialized``
     #       is True.
     temp_lib_filename = os.path.join(build_ext_cmd.build_temp, LIB_NAME)
     cmd = [
         c_compiler.lib,
-        '/def:' + def_filename,
-        '/out:' + temp_lib_filename,
+        "/def:" + def_filename,
+        "/out:" + temp_lib_filename,
         MACHINE_TYPE,
     ]
     f90_compiler.spawn(cmd)
@@ -83,7 +83,7 @@ def run_cleanup(build_ext_cmd):
     if not build_ext_cmd.inplace:
         return
 
-    bezier_dir = os.path.join('src', 'bezier')
+    bezier_dir = os.path.join("src", "bezier")
     shutil.move(os.path.join(build_ext_cmd.build_lib, LIB_DIR), bezier_dir)
     shutil.move(os.path.join(build_ext_cmd.build_lib, DLL_DIR), bezier_dir)
 
@@ -104,7 +104,7 @@ def patch_f90_compiler(f90_compiler):
     from numpy.distutils.fcompiler import gnu
 
     # Only Windows.
-    if os.name != 'nt':
+    if os.name != "nt":
         return
 
     # Only ``gfortran``.
@@ -117,15 +117,15 @@ def patch_f90_compiler(f90_compiler):
         if value != setup_helpers.FPIC
     ]
     c_compiler = f90_compiler.c_compiler
-    if c_compiler.compiler_type != 'msvc':
+    if c_compiler.compiler_type != "msvc":
         raise NotImplementedError(
-            'MSVC is the only supported C compiler on Windows.'
+            "MSVC is the only supported C compiler on Windows."
         )
 
 
 def patch_cmd(cmd_class):
     # Only Windows.
-    if os.name != 'nt':
+    if os.name != "nt":
         return
 
     cmd_class.CUSTOM_STATIC_LIB = make_static_lib

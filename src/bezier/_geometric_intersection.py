@@ -45,16 +45,16 @@ _ERROR_VAL = 0.5 ** 26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _MAX_CANDIDATES = 64
 _UNHANDLED_LINES = (
-    'If both curves are lines, the intersection should have '
-    'been computed already.'
+    "If both curves are lines, the intersection should have "
+    "been computed already."
 )
 _TOO_MANY_TEMPLATE = (
-    'The number of candidate intersections is too high.\n'
-    '{:d} candidate pairs.'
+    "The number of candidate intersections is too high.\n"
+    "{:d} candidate pairs."
 )
 _NO_CONVERGE_TEMPLATE = (
-    'Curve intersection failed to converge to approximately linear '
-    'subdivisions after {:d} iterations.'
+    "Curve intersection failed to converge to approximately linear "
+    "subdivisions after {:d} iterations."
 )
 _MIN_INTERVAL_WIDTH = 0.5 ** 40
 
@@ -604,6 +604,8 @@ def parallel_lines_parameters(start0, end0, start1, end1):
           parameters at the beginning of the shared segment and the second
           column will correspond to the end of the shared segment.
     """
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-branches
     delta0 = end0 - start0
     line0_const = _helpers.cross_product(start0, delta0)
@@ -671,7 +673,6 @@ def parallel_lines_parameters(start0, end0, start1, end1):
             end_t = 1.0
     parameters = np.asfortranarray([[start_s, end_s], [start_t, end_t]])
     return False, parameters
-    # pylint: enable=too-many-branches
 
 
 def line_line_collide(line1, line2):
@@ -758,6 +759,8 @@ def from_linearized(first, second, intersections):
             function expects the caller to have used :func:`check_lines`
             already.
     """
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-return-statements
     s, t, success = segment_intersection(
         first.start_node, first.end_node, second.start_node, second.end_node
@@ -800,7 +803,6 @@ def from_linearized(first, second, intersections):
         return
 
     add_intersection(refined_s, refined_t, intersections)
-    # pylint: enable=too-many-return-statements
 
 
 def add_intersection(s, t, intersections):
@@ -858,8 +860,8 @@ def add_intersection(s, t, intersections):
         delta_t = t - existing_t
         norm_update = np.linalg.norm([delta_s, delta_t], ord=2)
         if (
-            norm_update <
-            _intersection_helpers.NEWTON_ERROR_RATIO * norm_candidate
+            norm_update
+            < _intersection_helpers.NEWTON_ERROR_RATIO * norm_candidate
         ):
             return
 
@@ -1230,13 +1232,15 @@ def coincident_parameters(nodes1, nodes2):
         parameters where the two coincident curves meet. If they are not
         coincident, returns :data:`None`.
     """
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-return-statements,too-many-branches
     nodes1, nodes2 = make_same_degree(nodes1, nodes2)
     s_initial = _curve_helpers.locate_point(
-        nodes1, nodes2[:, 0].reshape((2, 1), order='F')
+        nodes1, nodes2[:, 0].reshape((2, 1), order="F")
     )
     s_final = _curve_helpers.locate_point(
-        nodes1, nodes2[:, -1].reshape((2, 1), order='F')
+        nodes1, nodes2[:, -1].reshape((2, 1), order="F")
     )
     if s_initial is not None and s_final is not None:
         # In this case, if the curves were coincident, then ``curve2``
@@ -1246,7 +1250,7 @@ def coincident_parameters(nodes1, nodes2):
             nodes1, s_initial, s_final
         )
         if _helpers.vector_close(
-            specialized1.ravel(order='F'), nodes2.ravel(order='F')
+            specialized1.ravel(order="F"), nodes2.ravel(order="F")
         ):
             return ((s_initial, 0.0), (s_final, 1.0))
 
@@ -1254,10 +1258,10 @@ def coincident_parameters(nodes1, nodes2):
             return None
 
     t_initial = _curve_helpers.locate_point(
-        nodes2, nodes1[:, 0].reshape((2, 1), order='F')
+        nodes2, nodes1[:, 0].reshape((2, 1), order="F")
     )
     t_final = _curve_helpers.locate_point(
-        nodes2, nodes1[:, -1].reshape((2, 1), order='F')
+        nodes2, nodes1[:, -1].reshape((2, 1), order="F")
     )
     if t_initial is None and t_final is None:
         # An overlap must have two endpoints and since at most one of the
@@ -1274,7 +1278,7 @@ def coincident_parameters(nodes1, nodes2):
             nodes2, t_initial, t_final
         )
         if _helpers.vector_close(
-            nodes1.ravel(order='F'), specialized2.ravel(order='F')
+            nodes1.ravel(order="F"), specialized2.ravel(order="F")
         ):
             return ((0.0, t_initial), (1.0, t_final))
 
@@ -1324,13 +1328,12 @@ def coincident_parameters(nodes1, nodes2):
     specialized1 = _curve_helpers.specialize_curve(nodes1, start_s, end_s)
     specialized2 = _curve_helpers.specialize_curve(nodes2, start_t, end_t)
     if _helpers.vector_close(
-        specialized1.ravel(order='F'), specialized2.ravel(order='F')
+        specialized1.ravel(order="F"), specialized2.ravel(order="F")
     ):
         return ((start_s, start_t), (end_s, end_t))
 
     else:
         return None
-    # pylint: enable=too-many-return-statements,too-many-branches
 
 
 def check_lines(first, second):
@@ -1383,7 +1386,7 @@ def check_lines(first, second):
             intersections = np.asfortranarray([[s], [t]])
             result = intersections, False
         else:
-            result = np.empty((2, 0), order='F'), False
+            result = np.empty((2, 0), order="F"), False
     else:
         disjoint, params = parallel_lines_parameters(
             first.start_node,
@@ -1392,7 +1395,7 @@ def check_lines(first, second):
             second.end_node,
         )
         if disjoint:
-            result = np.empty((2, 0), order='F'), False
+            result = np.empty((2, 0), order="F"), False
         else:
             result = params, True
     return True, result
@@ -1473,10 +1476,10 @@ def _all_intersections(nodes_first, nodes_second):
             if intersections:
                 # NOTE: The transpose of a C-ordered array is Fortran-ordered,
                 #       i.e. this is on purpose.
-                return np.array(intersections, order='C').T, coincident
+                return np.array(intersections, order="C").T, coincident
 
             else:
-                return np.empty((2, 0), order='F'), coincident
+                return np.empty((2, 0), order="F"), coincident
 
     msg = _NO_CONVERGE_TEMPLATE.format(_MAX_INTERSECT_SUBDIVISIONS)
     raise ValueError(msg)
@@ -1512,7 +1515,7 @@ class SubdividedCurve(object):  # pylint: disable=too-few-public-methods
         start (Optional[float]): The start parameter after subdivision.
         end (Optional[float]): The start parameter after subdivision.
     """
-    __slots__ = ('nodes', 'original_nodes', 'start', 'end')
+    __slots__ = ("nodes", "original_nodes", "start", "end")
 
     def __init__(self, nodes, original_nodes, start=0.0, end=1.0):
         self.nodes = nodes
@@ -1532,10 +1535,10 @@ class SubdividedCurve(object):  # pylint: disable=too-few-public-methods
         returned dictionary.
         """
         return {
-            'nodes': self.nodes,
-            'original_nodes': self.original_nodes,
-            'start': self.start,
-            'end': self.end,
+            "nodes": self.nodes,
+            "original_nodes": self.original_nodes,
+            "start": self.start,
+            "end": self.end,
         }
 
     def subdivide(self):
@@ -1569,7 +1572,7 @@ class Linearization(object):
         error (float): The linearization error. Expected to have been
             computed via :func:`linearization_error`.
     """
-    __slots__ = ('curve', 'error', 'start_node', 'end_node')
+    __slots__ = ("curve", "error", "start_node", "end_node")
 
     def __init__(self, curve, error):
         self.curve = curve
@@ -1593,10 +1596,10 @@ class Linearization(object):
         returned dictionary.
         """
         return {
-            'curve': self.curve,
-            'error': self.error,
-            'start_node': self.start_node,
-            'end_node': self.end_node,
+            "curve": self.curve,
+            "error": self.error,
+            "start_node": self.start_node,
+            "end_node": self.end_node,
         }
 
     def subdivide(self):

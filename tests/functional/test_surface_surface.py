@@ -85,9 +85,7 @@ FAILED_CASES_BAD_DUPLICATE = {
     ALGEBRAIC: (53, 54, 55, 56, 57, 59, 60, 62, 63, 64, 66, 67, 69, 70),
 }
 FAILED_CASES_CONSECUTIVE_SEGMENTS = {
-    GEOMETRIC: (
-        55, 56, 58, 61, 63, 65, 66, 67, 70, 71, 72
-    ),
+    GEOMETRIC: (55, 56, 58, 61, 63, 65, 66, 67, 70, 71, 72),
     ALGEBRAIC: (58, 61, 65, 71, 72),
 }
 INCORRECT_COUNT = {GEOMETRIC: (52, 62, 64), ALGEBRAIC: (68,)}
@@ -166,7 +164,7 @@ def check_bad_edges_manager():
         caught_exc = exc
     assert caught_exc is not None
     exc_args = caught_exc.args
-    assert exc_args[0] == 'Unexpected number of edges'
+    assert exc_args[0] == "Unexpected number of edges"
 
 
 @contextlib.contextmanager
@@ -192,7 +190,7 @@ def check_duplicate_manager():
 
     assert caught_exc is not None
     exc_args = caught_exc.args
-    assert exc_args[0] == 'Duplicate not among uniques'
+    assert exc_args[0] == "Duplicate not among uniques"
 
 
 @contextlib.contextmanager
@@ -232,6 +230,8 @@ def extra_verify(strategy, intersections):
 
 
 def surface_surface_check(strategy, surface1, surface2, *all_intersected):
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-locals
     assert surface1.is_valid
     assert surface2.is_valid
@@ -240,9 +240,9 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
 
     if len(intersections) != len(all_intersected):
         raise utils.IncorrectCount(
-            'Received wrong number of intersections',
+            "Received wrong number of intersections",
             len(intersections),
-            'Expected',
+            "Expected",
             len(all_intersected),
         )
 
@@ -256,9 +256,9 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
             num_edges = len(edge_info)
             if num_edges != len(intersected.edge_list):
                 raise utils.IncorrectCount(
-                    'Received wrong number of edges within an intersection',
+                    "Received wrong number of edges within an intersection",
                     num_edges,
-                    'Expected',
+                    "Expected",
                     len(intersected.edge_list),
                 )
 
@@ -287,11 +287,10 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
                 assert intersection is surface1
             else:
                 assert intersection is surface2
-    # pylint: enable=too-many-locals
 
 
 @pytest.mark.parametrize(
-    'strategy,intersection_info',
+    "strategy,intersection_info",
     itertools.product((GEOMETRIC, ALGEBRAIC), INTERSECTIONS),
     ids=utils.id_func,
 )

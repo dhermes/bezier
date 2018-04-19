@@ -32,8 +32,8 @@ import bezier.curve
 from tests import utils as base_utils
 
 FNL_TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
-_DOCS_DIR = os.path.abspath(os.path.join(FNL_TESTS_DIR, '..', '..', 'docs'))
-IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
+_DOCS_DIR = os.path.abspath(os.path.join(FNL_TESTS_DIR, "..", "..", "docs"))
+IMAGES_DIR = os.path.join(_DOCS_DIR, "images")
 
 
 def _start_line(func):
@@ -55,8 +55,8 @@ def get_parser():
     Returns:
         argparse.ArgumentParser: An argument parser for functional tests.
     """
-    parser = argparse.ArgumentParser(description='Run functional tests.')
-    parser.add_argument('--save-plot', dest='save_plot', action='store_true')
+    parser = argparse.ArgumentParser(description="Run functional tests.")
+    parser.add_argument("--save-plot", dest="save_plot", action="store_true")
     return parser
 
 
@@ -102,11 +102,11 @@ def _convert_float(value):
     elif isinstance(value, six.integer_types):
         return float(value)
 
-    elif value.startswith('0x') or value.startswith('-0x'):
+    elif value.startswith("0x") or value.startswith("-0x"):
         return float.fromhex(value)
 
     else:
-        numerator, denominator = value.split('/')
+        numerator, denominator = value.split("/")
         return float(numerator) / float(denominator)
 
 
@@ -125,15 +125,15 @@ def curve_intersections_info():
         * mapping of curve info dictionaries.
         * list of intersection info dictionaries.
     """
-    filename = os.path.join(FNL_TESTS_DIR, 'curves.json')
-    with io.open(filename, 'r', encoding='utf-8') as file_obj:
+    filename = os.path.join(FNL_TESTS_DIR, "curves.json")
+    with io.open(filename, "r", encoding="utf-8") as file_obj:
         curve_json = json.load(file_obj)
     curves = {
         id_: CurveInfo.from_json(id_, info)
         for id_, info in six.iteritems(curve_json)
     }
-    filename = os.path.join(FNL_TESTS_DIR, 'curve_intersections.json')
-    with io.open(filename, 'r', encoding='utf-8') as file_obj:
+    filename = os.path.join(FNL_TESTS_DIR, "curve_intersections.json")
+    with io.open(filename, "r", encoding="utf-8") as file_obj:
         intersections_json = json.load(file_obj)
     intersections = [
         CurveIntersectionInfo.from_json(info, curves)
@@ -151,15 +151,15 @@ def surface_intersections_info():
         * mapping of surface info dictionaries.
         * list of intersection info dictionaries.
     """
-    filename = os.path.join(FNL_TESTS_DIR, 'surfaces.json')
-    with io.open(filename, 'r', encoding='utf-8') as file_obj:
+    filename = os.path.join(FNL_TESTS_DIR, "surfaces.json")
+    with io.open(filename, "r", encoding="utf-8") as file_obj:
         surface_json = json.load(file_obj)
     surfaces = {
         id_: SurfaceInfo.from_json(id_, info)
         for id_, info in six.iteritems(surface_json)
     }
-    filename = os.path.join(FNL_TESTS_DIR, 'surface_intersections.json')
-    with io.open(filename, 'r', encoding='utf-8') as file_obj:
+    filename = os.path.join(FNL_TESTS_DIR, "surface_intersections.json")
+    with io.open(filename, "r", encoding="utf-8") as file_obj:
         intersections_json = json.load(file_obj)
     intersections = [
         SurfaceIntersectionsInfo.from_json(info, surfaces)
@@ -179,7 +179,7 @@ def _ensure_empty(info):
     """
     # Make sure we've exhausted the data.
     if info:
-        raise ValueError('Unexpected keys remaining in JSON info', info)
+        raise ValueError("Unexpected keys remaining in JSON info", info)
 
 
 def id_func(value):
@@ -194,7 +194,7 @@ def id_func(value):
         str: The ID for a parameter in a parametrized test.
     """
     if isinstance(value, bezier.curve.IntersectionStrategy):
-        return 'strategy: {}'.format(value.name)
+        return "strategy: {}".format(value.name)
 
     else:
         return value.test_id
@@ -271,7 +271,7 @@ class Config(object):
         """
         found = []
         for key, value in six.iteritems(mod_globals):
-            if not key.lower().startswith('test'):
+            if not key.lower().startswith("test"):
                 continue
 
             if not isinstance(value, types.FunctionType):
@@ -308,7 +308,7 @@ class Config(object):
             approximated (float): The value that was computed.
             exact (float): The expected value.
         """
-        msg = '{} ~= {} to {:d} bits'.format(
+        msg = "{} ~= {} to {:d} bits".format(
             approximated.hex(), exact.hex(), self._wiggle
         )
         assert ulps_away(exact, approximated, num_bits=self._wiggle), msg
@@ -331,7 +331,7 @@ class Config(object):
             self.save_plot = save_plot
             self.current_test = None
 
-    def save_fig(self, extra=''):
+    def save_fig(self, extra=""):
         """Save the current figure.
 
         Uses the ``current_test`` for the filename and puts it
@@ -347,10 +347,10 @@ class Config(object):
         #       The ``matplotlib`` import is a tad expensive.
         import matplotlib.pyplot as plt
 
-        filename = '{}{}.png'.format(self.current_test, extra)
+        filename = "{}{}.png".format(self.current_test, extra)
         path = os.path.join(IMAGES_DIR, filename)
-        plt.savefig(path, bbox_inches='tight')
-        print('Saved {}'.format(filename))
+        plt.savefig(path, bbox_inches="tight")
+        print("Saved {}".format(filename))
 
 
 class CurveInfo(object):  # pylint: disable=too-few-public-methods
@@ -391,11 +391,11 @@ class CurveInfo(object):  # pylint: disable=too-few-public-methods
         Returns:
             CurveInfo: The curve info parsed from the JSON.
         """
-        control_points = info.pop('control_points')
+        control_points = info.pop("control_points")
         control_points = np.asfortranarray(_convert_float(control_points))
-        implicitized = info.pop('implicitized', None)
+        implicitized = info.pop("implicitized", None)
         # Optional fields.
-        note = info.pop('note', None)
+        note = info.pop("note", None)
         _ensure_empty(info)
         return cls(id_, control_points, implicitized=implicitized, note=note)
 
@@ -406,17 +406,19 @@ class CurveIntersectionType(enum.Enum):
     These values correspond to the ``type`` enum property in the
     ``curve_intersection.json`` JSON-schema.
     """
-    coincident = 'coincident'
+    coincident = "coincident"
     """Curves lie on the same underlying algebraic curve."""
-    no_intersection = 'no-intersection'
+    no_intersection = "no-intersection"
     """Curves do not intersect."""
-    tangent = 'tangent'
+    tangent = "tangent"
     """Curves are tangent at the point of intersection."""
-    standard = 'standard'
+    standard = "standard"
     """Intersection is not **any** of the other types."""
 
 
 # pylint: disable=too-many-instance-attributes
+
+
 class CurveIntersectionInfo(object):
     """Information about an intersection from ``curve_intersections.json``.
 
@@ -450,6 +452,7 @@ class CurveIntersectionInfo(object):
     """
 
     # pylint: disable=too-many-arguments
+
     def __init__(
         self,
         id_,
@@ -475,6 +478,7 @@ class CurveIntersectionInfo(object):
         self.note = note
         self.num_params = self._verify_dimensions()
         self._verify_data()
+
     # pylint: enable=too-many-arguments
 
     def _verify_dimensions(self):
@@ -488,36 +492,36 @@ class CurveIntersectionInfo(object):
         """
         if self.curve1_params.ndim != 1:
             raise ValueError(
-                'Expected 1-dimensional data for ``curve1_params``.'
+                "Expected 1-dimensional data for ``curve1_params``."
             )
 
         # Unpack into one value now that we know 1D.
         num_params, = self.curve1_params.shape
         shape = (num_params,)
         if self.curve2_params.shape != shape:
-            msg = 'Expected shape {} for ``curve2_params``.'.format(shape)
+            msg = "Expected shape {} for ``curve2_params``.".format(shape)
             raise ValueError(msg)
 
         shape = (2, num_params)
         if self.intersections.shape != shape:
-            msg = 'Expected shape {} for ``intersections``.'.format(shape)
+            msg = "Expected shape {} for ``intersections``.".format(shape)
             raise ValueError(msg)
 
         if self.curve1_polys is not None:
             if len(self.curve1_polys) != num_params:
                 raise ValueError(
-                    'Unexpected number of ``curve1_polys``',
+                    "Unexpected number of ``curve1_polys``",
                     len(self.curve1_polys),
-                    'Expected',
+                    "Expected",
                     num_params,
                 )
 
         if self.curve2_polys is not None:
             if len(self.curve2_polys) != num_params:
                 raise ValueError(
-                    'Unexpected number of ``curve2_polys``',
+                    "Unexpected number of ``curve2_polys``",
                     len(self.curve2_polys),
-                    'Expected',
+                    "Expected",
                     num_params,
                 )
 
@@ -534,21 +538,21 @@ class CurveIntersectionInfo(object):
         sorted_s = np.sort(self.curve1_params)
         if not np.all(sorted_s == self.curve1_params):
             raise ValueError(
-                'Expected s-parameters (``curve1_params``) to be '
-                'in ascending order.'
+                "Expected s-parameters (``curve1_params``) to be "
+                "in ascending order."
             )
 
     @property
     def test_id(self):
         """str: The ID for this intersection in functional tests."""
-        return 'curves {!r} and {!r} (ID: {:d})'.format(
+        return "curves {!r} and {!r} (ID: {:d})".format(
             self.curve1_info.id_, self.curve2_info.id_, self.id_
         )
 
     @property
     def img_filename(self):
         """str: Filename to use when saving images for this intersection."""
-        return 'curves{}_and_{}'.format(
+        return "curves{}_and_{}".format(
             self.curve1_info.id_, self.curve2_info.id_
         )
 
@@ -569,6 +573,7 @@ class CurveIntersectionInfo(object):
         return self.curve1_params, self.curve2_params, self.intersections
 
     # pylint: disable=missing-return-type-doc
+
     @property
     def curve1(self):
         """The first B |eacute| zier curve in the intersection.
@@ -586,6 +591,7 @@ class CurveIntersectionInfo(object):
             ~bezier.curve.Curve: The second B |eacute| zier curve.
         """
         return self.curve2_info.curve
+
     # pylint: enable=missing-return-type-doc
 
     @property
@@ -621,25 +627,25 @@ class CurveIntersectionInfo(object):
         Returns:
             CurveIntersectionInfo: The intersection info parsed from the JSON.
         """
-        id_ = info.pop('id')
-        curve1_info = curves[info.pop('curve1')]
-        curve2_info = curves[info.pop('curve2')]
-        type_ = CurveIntersectionType(info.pop('type'))
+        id_ = info.pop("id")
+        curve1_info = curves[info.pop("curve1")]
+        curve2_info = curves[info.pop("curve2")]
+        type_ = CurveIntersectionType(info.pop("type"))
         intersections = np.asfortranarray(
-            _convert_float(info.pop('intersections'))
+            _convert_float(info.pop("intersections"))
         )
         curve1_params = np.asfortranarray(
-            _convert_float(info.pop('curve1_params'))
+            _convert_float(info.pop("curve1_params"))
         )
         curve2_params = np.asfortranarray(
-            _convert_float(info.pop('curve2_params'))
+            _convert_float(info.pop("curve2_params"))
         )
         if intersections.size == 0:
-            intersections = intersections.reshape((2, 0), order='F')
+            intersections = intersections.reshape((2, 0), order="F")
         # Optional fields.
-        curve1_polys = info.pop('curve1_polys', None)
-        curve2_polys = info.pop('curve2_polys', None)
-        note = info.pop('note', None)
+        curve1_polys = info.pop("curve1_polys", None)
+        curve2_polys = info.pop("curve2_polys", None)
+        note = info.pop("note", None)
         _ensure_empty(info)
         return cls(
             id_,
@@ -653,6 +659,8 @@ class CurveIntersectionInfo(object):
             curve2_polys=curve2_polys,
             note=note,
         )
+
+
 # pylint: enable=too-many-instance-attributes
 
 
@@ -690,15 +698,17 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
         Returns:
             SurfaceInfo: The surface info parsed from the JSON.
         """
-        control_points = info.pop('control_points')
+        control_points = info.pop("control_points")
         control_points = np.asfortranarray(_convert_float(control_points))
         # Optional fields.
-        note = info.pop('note', None)
+        note = info.pop("note", None)
         _ensure_empty(info)
         return cls(id_, control_points, note=note)
 
 
 # pylint: disable=too-few-public-methods
+
+
 class SurfaceIntersectionInfo(object):
     """Basic wrapper indicating an intersection is one of the two surfaces.
 
@@ -711,10 +721,14 @@ class SurfaceIntersectionInfo(object):
         self.first = first
         # Will be set later by the `SurfaceIntersectionsInfo` constructor.
         self.parent = None
+
+
 # pylint: enable=too-few-public-methods
 
 
 # pylint: disable=too-few-public-methods
+
+
 class CurvedPolygonInfo(object):
     """Information about a single curved polygon intersection.
 
@@ -749,6 +763,7 @@ class CurvedPolygonInfo(object):
     """
 
     # pylint: disable=too-many-arguments
+
     def __init__(
         self,
         nodes,
@@ -767,6 +782,7 @@ class CurvedPolygonInfo(object):
         self.end_params = end_params
         self.end_param_polys = end_param_polys
         self.num_nodes = self._verify()
+
     # pylint: enable=too-many-arguments
 
     def _verify_polynomials(self, num_nodes, start=True):
@@ -783,18 +799,18 @@ class CurvedPolygonInfo(object):
         """
         if start:
             polynomials = self.start_param_polys
-            name = 'start'
+            name = "start"
         else:
             polynomials = self.end_param_polys
-            name = 'end'
+            name = "end"
         if polynomials is None:
             return
 
-        err_msg1 = 'Unexpected number of {} parameter polynomials.'.format(
+        err_msg1 = "Unexpected number of {} parameter polynomials.".format(
             name
         )
         template2 = (
-            '{} parameter polynomial should have integer coefficients.'
+            "{} parameter polynomial should have integer coefficients."
         )
         err_msg2 = template2.format(name)
         if len(polynomials) != num_nodes:
@@ -816,20 +832,20 @@ class CurvedPolygonInfo(object):
         """
         num_nodes, cols = self.nodes.shape
         if cols != 2:
-            raise ValueError('Unexpected shape of nodes')
+            raise ValueError("Unexpected shape of nodes")
 
         np_edges = np.asfortranarray(self.edge_list, dtype=int)
         if np_edges.shape != (num_nodes,):
-            raise ValueError('Unexpected shape of edge list')
+            raise ValueError("Unexpected shape of edge list")
 
         if not np.all(np_edges == self.edge_list):
-            raise ValueError('Edge pairs were expected to be integers.')
+            raise ValueError("Edge pairs were expected to be integers.")
 
         if self.start_params.shape != (num_nodes,):
-            raise ValueError('Unexpected shape of start parameters')
+            raise ValueError("Unexpected shape of start parameters")
 
         if self.end_params.shape != (num_nodes,):
-            raise ValueError('Unexpected shape of end parameters')
+            raise ValueError("Unexpected shape of end parameters")
 
         self._verify_polynomials(num_nodes, start=True)
         self._verify_polynomials(num_nodes, start=False)
@@ -861,19 +877,19 @@ class CurvedPolygonInfo(object):
             return SurfaceIntersectionInfo(info)
 
         else:
-            nodes = np.asfortranarray(_convert_float(info.pop('nodes')))
+            nodes = np.asfortranarray(_convert_float(info.pop("nodes")))
             if nodes.size == 0:
-                nodes = nodes.reshape((2, 0), order='F')
+                nodes = nodes.reshape((2, 0), order="F")
             start_params = np.asfortranarray(
-                _convert_float(info.pop('start_params'))
+                _convert_float(info.pop("start_params"))
             )
             end_params = np.asfortranarray(
-                _convert_float(info.pop('end_params'))
+                _convert_float(info.pop("end_params"))
             )
-            edge_list = info.pop('edge_list')
+            edge_list = info.pop("edge_list")
             # Optional fields.
-            start_param_polys = info.pop('start_param_polys', None)
-            end_param_polys = info.pop('end_param_polys', None)
+            start_param_polys = info.pop("start_param_polys", None)
+            end_param_polys = info.pop("end_param_polys", None)
             _ensure_empty(info)
             return cls(
                 nodes,
@@ -883,6 +899,8 @@ class CurvedPolygonInfo(object):
                 start_param_polys=start_param_polys,
                 end_param_polys=end_param_polys,
             )
+
+
 # pylint: enable=too-few-public-methods
 
 
@@ -923,18 +941,19 @@ class SurfaceIntersectionsInfo(object):
     @property
     def test_id(self):
         """str: The ID for this intersection in functional tests."""
-        return 'surfaces {!r} and {!r} (ID: {:d})'.format(
+        return "surfaces {!r} and {!r} (ID: {:d})".format(
             self.surface1_info.id_, self.surface2_info.id_, self.id_
         )
 
     @property
     def img_filename(self):
         """str: Filename to use when saving images for this intersection."""
-        return 'surfaces{}_and_{}'.format(
+        return "surfaces{}_and_{}".format(
             self.surface1_info.id_, self.surface2_info.id_
         )
 
     # pylint: disable=missing-return-type-doc
+
     @property
     def surface1(self):
         """The first B |eacute| zier surface in the intersection.
@@ -952,6 +971,7 @@ class SurfaceIntersectionsInfo(object):
             ~bezier.surface.Surface: The second B |eacute| zier surface.
         """
         return self.surface2_info.surface
+
     # pylint: enable=missing-return-type-doc
 
     @classmethod
@@ -970,12 +990,12 @@ class SurfaceIntersectionsInfo(object):
             SurfaceIntersectionsInfo: The intersection info parsed from
                 the JSON.
         """
-        id_ = info.pop('id')
-        surface1_info = surfaces[info.pop('surface1')]
-        surface2_info = surfaces[info.pop('surface2')]
-        intersections = info.pop('intersections')
+        id_ = info.pop("id")
+        surface1_info = surfaces[info.pop("surface1")]
+        surface2_info = surfaces[info.pop("surface2")]
+        intersections = info.pop("intersections")
         # Optional fields.
-        note = info.pop('note', None)
+        note = info.pop("note", None)
         _ensure_empty(info)
         # Convert ``intersections`` JSON to ``CurvedPolygonInfo``.
         intersections = [

@@ -21,54 +21,54 @@ class Test_modify_path(unittest.TestCase):
         from bezier import __config__
         return __config__.modify_path()
 
-    @unittest.mock.patch.multiple(os, name='not-nt', environ={})
+    @unittest.mock.patch.multiple(os, name="not-nt", environ={})
     def test_non_windows(self):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
         self.assertEqual(os.environ, {})
 
-    @unittest.mock.patch.multiple(os, name='nt', environ={})
+    @unittest.mock.patch.multiple(os, name="nt", environ={})
     def test_no_path(self):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
         self.assertEqual(os.environ, {})
 
-    @unittest.mock.patch.multiple(os, name='nt', environ={'PATH': ''})
+    @unittest.mock.patch.multiple(os, name="nt", environ={"PATH": ""})
     @unittest.mock.patch(
-        'pkg_resources.resource_filename', side_effect=ImportError
+        "pkg_resources.resource_filename", side_effect=ImportError
     )
     def test_windows_without_dll(self, resource_filename):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
-        self.assertEqual(os.environ, {'PATH': ''})
+        self.assertEqual(os.environ, {"PATH": ""})
         # Check mock.
-        resource_filename.assert_called_once_with('bezier', 'extra-dll')
+        resource_filename.assert_called_once_with("bezier", "extra-dll")
 
-    @unittest.mock.patch.multiple(os, name='nt', environ={'PATH': ''})
-    @unittest.mock.patch('os.path.isdir', return_value=True)
+    @unittest.mock.patch.multiple(os, name="nt", environ={"PATH": ""})
+    @unittest.mock.patch("os.path.isdir", return_value=True)
     @unittest.mock.patch(
-        'pkg_resources.resource_filename', return_value='not-a-path'
+        "pkg_resources.resource_filename", return_value="not-a-path"
     )
     def test_windows_with_dll(self, resource_filename, isdir):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
         expected_path = os.pathsep + resource_filename.return_value
-        self.assertEqual(os.environ, {'PATH': expected_path})
+        self.assertEqual(os.environ, {"PATH": expected_path})
         # Check mocks.
-        resource_filename.assert_called_once_with('bezier', 'extra-dll')
+        resource_filename.assert_called_once_with("bezier", "extra-dll")
         isdir.assert_called_once_with(resource_filename.return_value)
 
-    @unittest.mock.patch.multiple(os, name='nt', environ={'PATH': ''})
-    @unittest.mock.patch('os.path.isdir', return_value=False)
+    @unittest.mock.patch.multiple(os, name="nt", environ={"PATH": ""})
+    @unittest.mock.patch("os.path.isdir", return_value=False)
     @unittest.mock.patch(
-        'pkg_resources.resource_filename', return_value='not-a-path'
+        "pkg_resources.resource_filename", return_value="not-a-path"
     )
     def test_windows_with_dll_but_not_a_dir(self, resource_filename, isdir):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
-        self.assertEqual(os.environ, {'PATH': ''})
+        self.assertEqual(os.environ, {"PATH": ""})
         # Check mocks.
-        resource_filename.assert_called_once_with('bezier', 'extra-dll')
+        resource_filename.assert_called_once_with("bezier", "extra-dll")
         isdir.assert_called_once_with(resource_filename.return_value)
 
 
@@ -82,7 +82,7 @@ class Test_handle_import_error(unittest.TestCase):
     def test_valid_exception(self):
         from bezier import __config__
 
-        name = 'this_module'
+        name = "this_module"
         for template in __config__.TEMPLATES:
             single_arg = template.format(name)
             caught_exc = ImportError(single_arg)
@@ -90,7 +90,7 @@ class Test_handle_import_error(unittest.TestCase):
             self.assertIsNone(return_value)
 
     def test_invalid_exception(self):
-        caught_exc = ImportError('two', 'args')
+        caught_exc = ImportError("two", "args")
         with self.assertRaises(ImportError) as exc_info:
-            self._call_function_under_test(caught_exc, 'name')
+            self._call_function_under_test(caught_exc, "name")
         self.assertIs(exc_info.exception, caught_exc)

@@ -125,7 +125,7 @@ class Test__newton_refine(utils.NumPyTestCase):
         nodes2 = np.asfortranarray([[0.5, 0.5], [0.0, 1.0]])
         curve2 = bezier.Curve(nodes2, degree=1)
         num_guess = 4
-        parameters = np.zeros((2, num_guess), order='F')
+        parameters = np.zeros((2, num_guess), order="F")
         # NOTE: This means our "first" guess is (s, t) = (0, 0).
         for guess in six.moves.xrange(1, num_guess):
             prev_s, prev_t = parameters[:, guess - 1]
@@ -146,7 +146,7 @@ class Test__newton_refine(utils.NumPyTestCase):
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(0.5, nodes1, 0.5, nodes2)
         exc_args = exc_info.exception.args
-        self.assertEqual(exc_args, ('Jacobian is singular.',))
+        self.assertEqual(exc_args, ("Jacobian is singular.",))
 
 
 class TestNewtonSimpleRoot(utils.NumPyTestCase):
@@ -395,9 +395,9 @@ class Test_newton_iterate(unittest.TestCase):
         # The curves are tangent and have the same curvature (i.e.
         # triple root).
         nodes1 = np.asfortranarray([[12.0, -4.0, -4.0], [4.0, -4.0, 4.0]])
-        s = float.fromhex('0x1.fffff4dad8308p-2')
+        s = float.fromhex("0x1.fffff4dad8308p-2")
         nodes2 = np.asfortranarray([[6.0, -2.0, -2.0], [1.0, -1.0, 1.0]])
-        t = float.fromhex('0x1.ffffe9b5a0f3ep-2')
+        t = float.fromhex("0x1.ffffe9b5a0f3ep-2")
         evaluate_fn = self._double_evaluate(nodes1, nodes2)
         converged, current_s, current_t = self._call_function_under_test(
             evaluate_fn, s, t
@@ -430,8 +430,8 @@ class Test_newton_iterate(unittest.TestCase):
         # NOTE: These ``s-t`` values come after the simple root case exits
         #       due to linear convergence, having started from
         #       s = 28675 / 57344 and t = 14339 / 28672.
-        s = float.fromhex('0x1.00006f0b2bb91p-1')
-        t = float.fromhex('0x1.0000de165968ap-1')
+        s = float.fromhex("0x1.00006f0b2bb91p-1")
+        t = float.fromhex("0x1.0000de165968ap-1")
         evaluate_fn = self._double_evaluate(nodes1, nodes2)
         converged, current_s, current_t = self._call_function_under_test(
             evaluate_fn, s, t
@@ -489,7 +489,7 @@ class Test_newton_iterate(unittest.TestCase):
         # ``pn`` is moving significantly, so the change in ``||pn||`` tracks
         # the change in ``||p{n+1} - pn||``.
         patch = unittest.mock.patch(
-            'bezier._intersection_helpers.MAX_NEWTON_ITERATIONS', new=3
+            "bezier._intersection_helpers.MAX_NEWTON_ITERATIONS", new=3
         )
         with patch:
             converged, current_s, current_t = self._call_function_under_test(
@@ -617,39 +617,39 @@ class Test_full_newton_nonzero(unittest.TestCase):
         nodes1 = np.asfortranarray(
             [
                 [
-                    float.fromhex('0x1.002f11833164ap-1'),
-                    float.fromhex('0x1.c516e980c0ce0p-2'),
-                    float.fromhex('0x1.89092ee6e6df4p-2'),
+                    float.fromhex("0x1.002f11833164ap-1"),
+                    float.fromhex("0x1.c516e980c0ce0p-2"),
+                    float.fromhex("0x1.89092ee6e6df4p-2"),
                 ],
                 [
-                    float.fromhex('-0x1.32718972d77a1p-1'),
-                    float.fromhex('-0x1.5e002a95d165ep-1'),
-                    float.fromhex('-0x1.8640e302433dfp-1'),
+                    float.fromhex("-0x1.32718972d77a1p-1"),
+                    float.fromhex("-0x1.5e002a95d165ep-1"),
+                    float.fromhex("-0x1.8640e302433dfp-1"),
                 ],
             ]
         )
-        s = float.fromhex('0x1.3c07c66c4719cp-2')
+        s = float.fromhex("0x1.3c07c66c4719cp-2")
         nodes2 = np.asfortranarray(
             [
                 [
-                    float.fromhex('0x1.fbb8cfd966f05p-2'),
-                    float.fromhex('0x1.c6cd0e74ae3ecp-2'),
-                    float.fromhex('0x1.8c4a283f3c04dp-2'),
+                    float.fromhex("0x1.fbb8cfd966f05p-2"),
+                    float.fromhex("0x1.c6cd0e74ae3ecp-2"),
+                    float.fromhex("0x1.8c4a283f3c04dp-2"),
                 ],
                 [
-                    float.fromhex('-0x1.325bc2f4e012cp-1'),
-                    float.fromhex('-0x1.614b060a21ebap-1'),
-                    float.fromhex('-0x1.8192083f28f11p-1'),
+                    float.fromhex("-0x1.325bc2f4e012cp-1"),
+                    float.fromhex("-0x1.614b060a21ebap-1"),
+                    float.fromhex("-0x1.8192083f28f11p-1"),
                 ],
             ]
         )
-        t = float.fromhex('0x1.30f6f6615b8f1p-2')
+        t = float.fromhex("0x1.30f6f6615b8f1p-2")
         computed_s, computed_t = self._call_function_under_test(
             s, nodes1, t, nodes2
         )
-        known_s = float.fromhex('0x1.3c07c30226a3cp-2')
+        known_s = float.fromhex("0x1.3c07c30226a3cp-2")
         utils.almost(self, known_s, computed_s, 447)
-        known_t = float.fromhex('0x1.30f6f2bdde113p-2')
+        known_t = float.fromhex("0x1.30f6f2bdde113p-2")
         utils.almost(self, known_t, computed_t, 474)
 
 
@@ -770,13 +770,13 @@ class TestIntersection(unittest.TestCase):
         )
         props_dict = intersection.__dict__
         expected = {
-            'index_first': 2,
-            's': 0.25,
-            'index_second': 1,
-            't': 0.75,
-            'interior_curve': unittest.mock.sentinel.interior_curve,
+            "index_first": 2,
+            "s": 0.25,
+            "index_second": 1,
+            "t": 0.75,
+            "interior_curve": unittest.mock.sentinel.interior_curve,
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curve``.
-        props_dict['s'] = 0.5
-        self.assertNotEqual(intersection.s, props_dict['s'])
+        props_dict["s"] = 0.5
+        self.assertNotEqual(intersection.s, props_dict["s"])

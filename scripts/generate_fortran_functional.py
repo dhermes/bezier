@@ -17,12 +17,12 @@ from tests.functional import utils
 
 SCRIPTS_DIR = os.path.abspath(os.path.dirname(__file__))
 GENERATED_FILENAME = os.path.abspath(
-    os.path.join(SCRIPTS_DIR, '..', 'tests', 'fortran', 'functional_curve.f90')
+    os.path.join(SCRIPTS_DIR, "..", "tests", "fortran", "functional_curve.f90")
 )
-COL_TEMPLATE = '    nodes{:d}(:, {:d}) = [{}_dp, {}_dp]'
-PARAM_TEMPLATE_COMPACT = '    expected_params({:d}, :) = [{}]'
-PARAM_TEMPLATE = '    expected_params({:d}, :) = [ &\n         {}]'
-PARAM_JOIN_ON = ', &\n         '
+COL_TEMPLATE = "    nodes{:d}(:, {:d}) = [{}_dp, {}_dp]"
+PARAM_TEMPLATE_COMPACT = "    expected_params({:d}, :) = [{}]"
+PARAM_TEMPLATE = "    expected_params({:d}, :) = [ &\n         {}]"
+PARAM_JOIN_ON = ", &\n         "
 CASE_TEMPLATE = """\
   subroutine case{case_id:d}()
 
@@ -79,8 +79,8 @@ end module functional_curve
 
 
 def params_string(index, curve_params):
-    inside = ['{}_dp'.format(param) for param in curve_params]
-    result_compact = PARAM_TEMPLATE_COMPACT.format(index, ', '.join(inside))
+    inside = ["{}_dp".format(param) for param in curve_params]
+    result_compact = PARAM_TEMPLATE_COMPACT.format(index, ", ".join(inside))
     if len(result_compact) <= 80:
         return result_compact
 
@@ -99,18 +99,18 @@ def make_test_case(intersection):
     for col in range(num_nodes1):
         x_val, y_val = nodes1[:, col]
         parts.append(COL_TEMPLATE.format(id1, col + 1, x_val, y_val))
-    nodes1_vals = '\n'.join(parts)
+    nodes1_vals = "\n".join(parts)
     parts = []
     for col in range(num_nodes2):
         x_val, y_val = nodes2[:, col]
         parts.append(COL_TEMPLATE.format(id2, col + 1, x_val, y_val))
-    nodes2_vals = '\n'.join(parts)
+    nodes2_vals = "\n".join(parts)
     if num_params == 0:
-        expected_params = ''
+        expected_params = ""
     else:
         part1 = params_string(1, intersection.curve1_params)
         part2 = params_string(2, intersection.curve2_params)
-        expected_params = part1 + '\n' + part2 + '\n\n'
+        expected_params = part1 + "\n" + part2 + "\n\n"
     return CASE_TEMPLATE.format(
         case_id=intersection.id_,
         id1=id1,
@@ -127,17 +127,17 @@ def make_test_case(intersection):
 def write_content(intersections, file_obj):
     parts = []
     for intersection in intersections[:-1]:
-        parts.append('       case{:d}, &'.format(intersection.id_))
-    parts.append('       case{:d}'.format(intersections[-1].id_))
-    cases = '\n'.join(parts)
+        parts.append("       case{:d}, &".format(intersection.id_))
+    parts.append("       case{:d}".format(intersections[-1].id_))
+    cases = "\n".join(parts)
     parts = []
     for intersection in intersections:
         parts.append(make_test_case(intersection))
-    case_impls = '\n'.join(parts)
+    case_impls = "\n".join(parts)
     parts = []
     for intersection in intersections:
-        parts.append('    call case{:d}()'.format(intersection.id_))
-    case_calls = '\n'.join(parts)
+        parts.append("    call case{:d}()".format(intersection.id_))
+    case_calls = "\n".join(parts)
     content = FILE_TEMPLATE.format(
         cases=cases, case_impls=case_impls, case_calls=case_calls
     )
@@ -146,9 +146,9 @@ def write_content(intersections, file_obj):
 
 def main():
     _, intersections = utils.curve_intersections_info()
-    with open(GENERATED_FILENAME, 'w') as file_obj:
+    with open(GENERATED_FILENAME, "w") as file_obj:
         write_content(intersections, file_obj)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -19,9 +19,9 @@ if sys.maxsize == 2 ** 63 - 1:
 elif sys.maxsize == 2 ** 31 - 1:  # pragma: NO COVER
     IS_64_BIT = False
 else:  # pragma: NO COVER
-    raise ImportError('Unexpected maxsize', sys.maxsize)
+    raise ImportError("Unexpected maxsize", sys.maxsize)
 
-IS_MAC_OS_X = sys.platform == 'darwin'
-IS_WINDOWS = os.name == 'nt'
-IS_LINUX = sys.platform in ('linux', 'linux2')
-IS_PYPY = platform.python_implementation() == 'PyPy'
+IS_MAC_OS_X = sys.platform == "darwin"
+IS_WINDOWS = os.name == "nt"
+IS_LINUX = sys.platform in ("linux", "linux2")
+IS_PYPY = platform.python_implementation() == "PyPy"

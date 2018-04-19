@@ -321,6 +321,8 @@ def _simple_convex_hull(points):
         numpy.ndarray: The ``2 x N`` array (``float64``) of ordered points in
         the polygonal convex hull.
     """
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-branches
     if points.size == 0:
         return points
@@ -332,7 +334,7 @@ def _simple_convex_hull(points):
         return unique_points
 
     # Then sort the data in left-to-right order (and break ties by y-value).
-    points = np.empty((2, num_points), order='F')
+    points = np.empty((2, num_points), order="F")
     for index, xy_val in enumerate(
         sorted(tuple(column) for column in unique_points.T)
     ):
@@ -373,14 +375,13 @@ def _simple_convex_hull(points):
         upper.append(index)
     # **Both** corners are double counted.
     size_polygon = len(lower) + len(upper) - 2
-    polygon = np.empty((2, size_polygon), order='F')
+    polygon = np.empty((2, size_polygon), order="F")
     for index, column in enumerate(lower[:-1]):
         polygon[:, index] = points[:, column]
     index_start = len(lower) - 1
     for index, column in enumerate(upper[:-1]):
         polygon[:, index + index_start] = points[:, column]
     return polygon
-    # pylint: enable=too-many-branches
 
 
 def is_separating(direction, polygon1, polygon2):
@@ -406,7 +407,7 @@ def is_separating(direction, polygon1, polygon2):
     #       invalid edge.
     norm_squared = (direction[0] * direction[0] + direction[1] * direction[1])
     params = []
-    vertex = np.empty((2,), order='F')
+    vertex = np.empty((2,), order="F")
     for polygon in (polygon1, polygon2):
         _, polygon_size = polygon.shape
         min_param = np.inf
@@ -446,7 +447,7 @@ def _polygon_collide(polygon1, polygon2):
     Returns:
         bool: Flag indicating if the two polygons collide.
     """
-    direction = np.empty((2,), order='F')
+    direction = np.empty((2,), order="F")
     for polygon in (polygon1, polygon2):
         _, polygon_size = polygon.shape
         for index in six.moves.xrange(polygon_size):
@@ -569,19 +570,19 @@ class UnsupportedDegree(NotImplementedError):
     def __str__(self):
         num_supported = len(self.supported)
         if num_supported == 0:
-            return 'degree={}'.format(self.degree)
+            return "degree={}".format(self.degree)
 
-        degrees_str = ['{}'.format(degree) for degree in self.supported]
+        degrees_str = ["{}".format(degree) for degree in self.supported]
         if num_supported == 1:
-            msg = 'The only degree supported at this time is ' + degrees_str[0]
+            msg = "The only degree supported at this time is " + degrees_str[0]
         else:
             msg = (
-                'The only degrees supported at this time are ' +
-                ', '.join(degrees_str[:-1]) +
-                ' and ' +
-                degrees_str[-1]
+                "The only degrees supported at this time are "
+                + ", ".join(degrees_str[:-1])
+                + " and "
+                + degrees_str[-1]
             )
-        return '{} (degree={})'.format(msg, self.degree)
+        return "{} (degree={})".format(msg, self.degree)
 
 
 # pylint: disable=invalid-name

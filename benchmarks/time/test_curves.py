@@ -19,7 +19,7 @@ FAILURES = (42, 45)
 
 
 def get_bounds():
-    if os.environ.get('CIRCLECI') == 'true':
+    if os.environ.get("CIRCLECI") == "true":
         return 90.0 / 16384.0, 140.0 / 16384.0
 
     else:
@@ -35,7 +35,7 @@ def intersect_all(intersections):
 
 
 @pytest.mark.benchmark(
-    group='curve-intersection', disable_gc=True, warmup=False
+    group="curve-intersection", disable_gc=True, warmup=False
 )
 def test_intersections(benchmark):
     _, intersections = utils.curve_intersections_info()

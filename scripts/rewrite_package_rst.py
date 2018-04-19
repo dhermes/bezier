@@ -23,8 +23,8 @@ try:
     import bezier
 except ImportError:
     bezier = None
-SPECIAL_MEMBERS = ('__author__', '__version__')
-UNDOCUMENTED_SPECIAL_MEMBERS = ('__author__',)
+SPECIAL_MEMBERS = ("__author__", "__version__")
+UNDOCUMENTED_SPECIAL_MEMBERS = ("__author__",)
 EXPECTED = """\
 bezier package
 ==============
@@ -61,8 +61,8 @@ Submodules
    bezier.surface
 """
 _SCRIPTS_DIR = os.path.dirname(__file__)
-_DOCS_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, '..', 'docs'))
-FILENAME = os.path.join(_DOCS_DIR, 'reference', 'bezier.rst')
+_DOCS_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, "..", "docs"))
+FILENAME = os.path.join(_DOCS_DIR, "reference", "bezier.rst")
 
 
 def get_public_members():
@@ -86,7 +86,7 @@ def get_public_members():
     all_members = set()
     for name in dir(bezier):
         # Filter out non-public.
-        if name.startswith('_') and name not in SPECIAL_MEMBERS:
+        if name.startswith("_") and name not in SPECIAL_MEMBERS:
             continue
 
         value = getattr(bezier, name)
@@ -96,17 +96,17 @@ def get_public_members():
 
         all_members.add(name)
         # Only keep values defined in the base package.
-        home = getattr(value, '__module__', 'bezier')
-        if home == 'bezier':
+        home = getattr(value, "__module__", "bezier")
+        if home == "bezier":
             local_members.append(name)
     size_all = len(bezier.__all__)
     all_exports = set(bezier.__all__)
     if len(all_exports) != size_all:
-        raise ValueError('__all__ has repeated elements')
+        raise ValueError("__all__ has repeated elements")
 
     if all_exports != all_members:
         raise ValueError(
-            '__all__ does not agree with the publicly imported members',
+            "__all__ does not agree with the publicly imported members",
             all_exports,
             all_members,
         )
@@ -129,9 +129,9 @@ def get_desired():
     """
     public_members = get_public_members()
     if public_members:
-        members = '\n    :members: {}'.format(', '.join(public_members))
+        members = "\n    :members: {}".format(", ".join(public_members))
     else:
-        members = ''
+        members = ""
     return DESIRED_TEMPLATE.format(members=members)
 
 
@@ -142,15 +142,15 @@ def main():
         ValueError: If the file doesn't contain the expected or
             desired contents.
     """
-    with open(FILENAME, 'r') as file_obj:
+    with open(FILENAME, "r") as file_obj:
         contents = file_obj.read()
     desired = get_desired()
     if contents == EXPECTED:
-        with open(FILENAME, 'w') as file_obj:
+        with open(FILENAME, "w") as file_obj:
             file_obj.write(desired)
     elif contents != desired:
-        raise ValueError('Unexpected contents', contents, 'Expected', EXPECTED)
+        raise ValueError("Unexpected contents", contents, "Expected", EXPECTED)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -53,10 +53,10 @@ TANGENT_CLASSIFICATIONS = (
     CLASSIFICATION_T.TANGENT_FIRST, CLASSIFICATION_T.TANGENT_SECOND
 )
 BAD_SEGMENT_PARAMS = (
-    'Segment start should be strictly less than end and both '
-    'should be in [0, 1].'
+    "Segment start should be strictly less than end and both "
+    "should be in [0, 1]."
 )
-SEGMENTS_SAME_EDGE = 'Consecutive segments lie on the same edge.'
+SEGMENTS_SAME_EDGE = "Consecutive segments lie on the same edge."
 
 
 def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
@@ -361,7 +361,7 @@ def _locate_point(nodes, degree, x_val, y_val):
     )
     expected = np.asfortranarray([x_val, y_val])
     if not _helpers.vector_close(
-        actual.ravel(order='F'), expected, eps=LOCATE_EPS
+        actual.ravel(order="F"), expected, eps=LOCATE_EPS
     ):
         s, t = newton_refine(nodes, degree, x_val, y_val, s, t)
     return s, t
@@ -425,7 +425,7 @@ def verify_duplicates(duplicates, uniques):
     """
     for uniq1, uniq2 in itertools.combinations(uniques, 2):
         if same_intersection(uniq1, uniq2):
-            raise ValueError('Non-unique intersection')
+            raise ValueError("Non-unique intersection")
 
     counter = collections.Counter()
     for dupe in duplicates:
@@ -434,7 +434,7 @@ def verify_duplicates(duplicates, uniques):
             if same_intersection(dupe, uniq):
                 matches.append(index)
         if len(matches) != 1:
-            raise ValueError('Duplicate not among uniques', dupe)
+            raise ValueError("Duplicate not among uniques", dupe)
 
         matched = matches[0]
         counter[matched] += 1
@@ -442,14 +442,14 @@ def verify_duplicates(duplicates, uniques):
         uniq = uniques[index]
         if count == 1:
             if (uniq.s, uniq.t).count(0.0) != 1:
-                raise ValueError('Count == 1 should be a single corner', uniq)
+                raise ValueError("Count == 1 should be a single corner", uniq)
 
         elif count == 3:
             if (uniq.s, uniq.t) != (0.0, 0.0):
-                raise ValueError('Count == 3 should be a double corner', uniq)
+                raise ValueError("Count == 3 should be a double corner", uniq)
 
         else:
-            raise ValueError('Unexpected duplicate count', count)
+            raise ValueError("Unexpected duplicate count", count)
 
 
 def verify_edge_segments(edge_infos):
@@ -597,6 +597,8 @@ def add_intersection(  # pylint: disable=too-many-arguments
         intersections (List[.Intersection]): List of "accepted" (i.e.
             non-duplicate) intersections.
     """
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-locals
     edge_end, is_corner, intersection_args = _surface_helpers.handle_ends(
         index1, s, index2, t
@@ -624,7 +626,6 @@ def add_intersection(  # pylint: disable=too-many-arguments
             )
         intersection.interior_curve = interior_curve
         intersections.append(intersection)
-    # pylint: enable=too-many-locals
 
 
 def classify_coincident(st_vals, coincident):
@@ -658,7 +659,7 @@ def classify_coincident(st_vals, coincident):
     if not coincident:
         return None
 
-    if (st_vals[0, 0] >= st_vals[0, 1] or st_vals[1, 0] >= st_vals[1, 1]):
+    if st_vals[0, 0] >= st_vals[0, 1] or st_vals[1, 0] >= st_vals[1, 1]:
         return UNUSED_T
 
     else:
@@ -717,6 +718,8 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
           along an edge
         * All the intersection classifications encountered
     """
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-locals
     intersections = []
     duplicates = []
@@ -747,7 +750,6 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
         else:
             unused.append(intersection)
     return to_keep, duplicates, unused, all_types
-    # pylint: enable=too-many-locals
 
 
 def generic_intersect(

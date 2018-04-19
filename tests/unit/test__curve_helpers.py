@@ -224,7 +224,7 @@ class Test__evaluate_multi(utils.NumPyTestCase):
         # B(s) = [s + 1, 1 - 2 s, 3 s - 7]
         nodes = np.asfortranarray([[1.0, 2.0], [1.0, -1.0], [-7.0, -4.0]])
         result = self._call_function_under_test(nodes, s_vals)
-        expected = np.empty((3, num_vals), order='F')
+        expected = np.empty((3, num_vals), order="F")
         expected[0, :] = 1.0 + s_vals
         expected[1, :] = 1.0 - 2.0 * s_vals
         expected[2, :] = -7.0 + 3.0 * s_vals
@@ -236,7 +236,7 @@ class Test__evaluate_multi(utils.NumPyTestCase):
         # B(s) = [s(4 - s), 2s(2s - 1)]
         nodes = np.asfortranarray([[0.0, 2.0, 3.0], [0.0, -1.0, 2.0]])
         result = self._call_function_under_test(nodes, s_vals)
-        expected = np.empty((2, num_vals), order='F')
+        expected = np.empty((2, num_vals), order="F")
         expected[0, :] = s_vals * (4.0 - s_vals)
         expected[1, :] = 2.0 * s_vals * (2.0 * s_vals - 1.0)
         self.assertEqual(result, expected)
@@ -278,7 +278,7 @@ class Test__compute_length(unittest.TestCase):
 
     def _scipy_skip(self):
         if SCIPY_INT is None:  # pragma: NO COVER
-            self.skipTest('SciPy not installed')
+            self.skipTest("SciPy not installed")
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, 3.0], [0.0, 4.0]])
@@ -302,13 +302,13 @@ class Test__compute_length(unittest.TestCase):
         # x(s) = s (s^2 + 6) / 2
         # y(s) = 6 s (s - 1)^2
         # x'(s)^2 + y'(s)^2 = (9/4)(145s^4 - 384s^3 + 356s^2 - 128s + 20)
-        expected = float.fromhex('0x1.05dd184047a7bp+2')
+        expected = float.fromhex("0x1.05dd184047a7bp+2")
         local_eps = abs(SPACING(expected))
         self.assertAlmostEqual(length, expected, delta=local_eps)
 
     def test_without_scipy(self):
-        nodes = np.zeros((2, 5), order='F')
-        with unittest.mock.patch('bezier._curve_helpers._scipy_int', new=None):
+        nodes = np.zeros((2, 5), order="F")
+        with unittest.mock.patch("bezier._curve_helpers._scipy_int", new=None):
             with self.assertRaises(OSError):
                 self._call_function_under_test(nodes)
 
@@ -638,9 +638,9 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
         from bezier import _curve_helpers
         from bezier import _helpers
 
-        nodes = np.eye(degree + 2, order='F')
+        nodes = np.eye(degree + 2, order="F")
         reduction_mat = self._call_function_under_test(nodes)
-        id_mat = np.eye(degree + 1, order='F')
+        id_mat = np.eye(degree + 1, order="F")
         elevation_mat = _curve_helpers.elevate_nodes(id_mat)
         result = _helpers.matrix_product(elevation_mat, reduction_mat)
         return result, id_mat

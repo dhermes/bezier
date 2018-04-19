@@ -47,15 +47,15 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.napoleon',
-    'sphinx_docstring_typing',
-    'custom_html_writer',
-    'doctest_monkeypatch',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.napoleon",
+    "sphinx_docstring_typing",
+    "custom_html_writer",
+    "doctest_monkeypatch",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -65,18 +65,18 @@ templates_path = []
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 #
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'bezier'
-copyright = u'2016, Danny Hermes'
+project = u"bezier"
+copyright = u"2016, Danny Hermes"
 author = bezier.__author__
 version = bezier.__version__
 
@@ -129,7 +129,7 @@ exclude_patterns = []
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -146,9 +146,9 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-ON_READ_THE_DOCS = os.environ.get('READTHEDOCS') == 'True'
+ON_READ_THE_DOCS = os.environ.get("READTHEDOCS") == "True"
 if not ON_READ_THE_DOCS:
-    html_theme = 'sphinx_rtd_theme'
+    html_theme = "sphinx_rtd_theme"
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -183,7 +183,7 @@ if not ON_READ_THE_DOCS:
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['images']
+html_static_path = ["images"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -263,34 +263,23 @@ html_static_path = ['images']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'bezier-doc'
+htmlhelp_basename = "bezier-doc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
-     # The paper size ('letterpaper' or 'a4paper').
-     #
-     # 'papersize': 'letterpaper',
-
-     # The font size ('10pt', '11pt' or '12pt').
-     #
-     # 'pointsize': '10pt',
-
-     # Additional stuff for the LaTeX preamble.
-     #
-     # 'preamble': '',
-
-     # Latex figure (float) alignment
-     #
-     # 'figure_align': 'htbp',
-}
+latex_elements = {}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'bezier.tex', u'bezier Documentation',
-     u'Danny Hermes', 'manual'),
+    (
+        master_doc,
+        "bezier.tex",
+        u"bezier Documentation",
+        u"Danny Hermes",
+        "manual",
+    )
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -330,10 +319,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'bezier', u'bezier Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, "bezier", u"bezier Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 #
@@ -346,9 +332,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'bezier', u'bezier Documentation',
-     author, 'bezier', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "bezier",
+        u"bezier Documentation",
+        author,
+        "bezier",
+        "One line description of project.",
+        "Miscellaneous",
+    )
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -370,14 +362,14 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'matplotlib': ('https://matplotlib.org/', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-    'python': ('https://docs.python.org/3/', None),
+    "matplotlib": ("https://matplotlib.org/", None),
+    "numpy": ("https://docs.scipy.org/doc/numpy/", None),
+    "python": ("https://docs.python.org/3/", None),
 }
 
 # Autodoc config
-autoclass_content = 'both'
-autodoc_member_order = 'bysource'
+autoclass_content = "both"
+autodoc_member_order = "bysource"
 autodoc_mock_imports = []
 
 # -- Options for sphinx.ext.doctest  --------------------------------------
@@ -391,6 +383,4 @@ autodoc_mock_imports = []
 # We want to turn off
 # (https://docs.python.org/3/library/\
 #  doctest.html#doctest.IGNORE_EXCEPTION_DETAIL)
-doctest_default_flags = (
-    doctest.DONT_ACCEPT_TRUE_FOR_1 |
-    doctest.ELLIPSIS)
+doctest_default_flags = (doctest.DONT_ACCEPT_TRUE_FOR_1 | doctest.ELLIPSIS)

@@ -43,12 +43,12 @@ class Test_new_axis(unittest.TestCase):
         return _plot_helpers.new_axis()
 
     def test_it(self):
-        figure = unittest.mock.Mock(spec=['gca'])
+        figure = unittest.mock.Mock(spec=["gca"])
         figure.gca.return_value = unittest.mock.sentinel.ax
-        plt = unittest.mock.Mock(spec=['figure'])
+        plt = unittest.mock.Mock(spec=["figure"])
         plt.figure.return_value = figure
-        matplotlib = unittest.mock.Mock(pyplot=plt, spec=['pyplot'])
-        modules = {'matplotlib': matplotlib, 'matplotlib.pyplot': plt}
+        matplotlib = unittest.mock.Mock(pyplot=plt, spec=["pyplot"])
+        modules = {"matplotlib": matplotlib, "matplotlib.pyplot": plt}
         result = run_fake_modules(modules, self._call_function_under_test)
         self.assertIs(result, unittest.mock.sentinel.ax)
         # Verify mocks.
@@ -64,15 +64,15 @@ class Test_add_plot_boundary(unittest.TestCase):
         return _plot_helpers.add_plot_boundary(ax, **kwargs)
 
     def _helper(self, **kwargs):
-        line = unittest.mock.Mock(spec=['get_xydata'])
+        line = unittest.mock.Mock(spec=["get_xydata"])
         line.get_xydata.return_value = np.asfortranarray(
             [[-1.0, -1.0], [1.0, 1.0]]
         )
         ax = unittest.mock.Mock(
-            lines=[line], spec=['lines', 'set_xlim', 'set_ylim']
+            lines=[line], spec=["lines", "set_xlim", "set_ylim"]
         )
         self.assertIsNone(self._call_function_under_test(ax, **kwargs))
-        padding = kwargs.get('padding', 0.125)
+        padding = kwargs.get("padding", 0.125)
         ax.set_xlim.assert_called_once_with(-1.0 - padding, 1.0 + padding)
         ax.set_ylim.assert_called_once_with(-1.0 - padding, 1.0 + padding)
 
@@ -109,7 +109,7 @@ class Test_add_patch(utils.NumPyTestCase):
 
         surface = surface_mod.Surface(nodes, 1, _copy=False)
         edges = surface._get_edges()
-        expected = np.empty((2, 7), order='F')
+        expected = np.empty((2, 7), order="F")
         expected[:, 0] = 0.5 * (nodes[:, 0] + nodes[:, 1])
         expected[:, 1] = nodes[:, 1]
         expected[:, 2] = 0.5 * (nodes[:, 1] + nodes[:, 2])
@@ -126,20 +126,20 @@ class Test_add_patch(utils.NumPyTestCase):
         nodes = np.asfortranarray([[0.0, 1.0, 2.0], [1.0, 3.0, 6.0]])
         expected_transpose, edges = self._get_info(nodes)
         # Set-up mocks (quite a lot).
-        patches = unittest.mock.Mock(spec=['PathPatch'])
-        path = unittest.mock.Mock(spec=['Path'])
+        patches = unittest.mock.Mock(spec=["PathPatch"])
+        path = unittest.mock.Mock(spec=["Path"])
         matplotlib = unittest.mock.Mock(
-            patches=patches, path=path, spec=['patches', 'path']
+            patches=patches, path=path, spec=["patches", "path"]
         )
-        ax = unittest.mock.Mock(spec=['add_patch', 'plot'])
-        line = unittest.mock.Mock(spec=['get_color'])
+        ax = unittest.mock.Mock(spec=["add_patch", "plot"])
+        line = unittest.mock.Mock(spec=["get_color"])
         line.get_color.return_value = color
         ax.plot.return_value = (line,)
         # Run the code with fake modules.
         modules = {
-            'matplotlib': matplotlib,
-            'matplotlib.patches': patches,
-            'matplotlib.path': path,
+            "matplotlib": matplotlib,
+            "matplotlib.patches": patches,
+            "matplotlib.path": path,
         }
         func = functools.partial(
             self._call_function_under_test, ax, color, pts_per_edge, *edges

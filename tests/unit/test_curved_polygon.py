@@ -100,12 +100,12 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         curved_poly = self._make_default()
         props_dict = curved_poly.__dict__
         expected = {
-            '_edges': curved_poly._edges, '_num_sides': curved_poly._num_sides
+            "_edges": curved_poly._edges, "_num_sides": curved_poly._num_sides
         }
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curved_poly``.
-        expected['_num_sides'] = 5
-        self.assertNotEqual(curved_poly._num_sides, expected['_num_sides'])
+        expected["_num_sides"] = 5
+        self.assertNotEqual(curved_poly._num_sides, expected["_num_sides"])
 
     def test_area(self):
         curved_poly = self._make_default()
@@ -113,10 +113,10 @@ class TestCurvedPolygon(utils.NumPyTestCase):
 
     def test___repr__(self):
         curved_poly = self._make_default()
-        self.assertEqual(repr(curved_poly), '<CurvedPolygon (num_sides=2)>')
+        self.assertEqual(repr(curved_poly), "<CurvedPolygon (num_sides=2)>")
 
-    @unittest.mock.patch('bezier._plot_helpers.new_axis')
-    @unittest.mock.patch('bezier._plot_helpers.add_patch')
+    @unittest.mock.patch("bezier._plot_helpers.new_axis")
+    @unittest.mock.patch("bezier._plot_helpers.add_patch")
     def test_plot_defaults(self, add_patch_mock, new_axis_mock):
         ax = unittest.mock.Mock(spec=[])
         new_axis_mock.return_value = ax
@@ -130,8 +130,8 @@ class TestCurvedPolygon(utils.NumPyTestCase):
             ax, None, pts_per_edge, *curved_poly._edges
         )
 
-    @unittest.mock.patch('bezier._plot_helpers.new_axis')
-    @unittest.mock.patch('bezier._plot_helpers.add_patch')
+    @unittest.mock.patch("bezier._plot_helpers.new_axis")
+    @unittest.mock.patch("bezier._plot_helpers.add_patch")
     def test_plot_explicit(self, add_patch_mock, new_axis_mock):
         ax = unittest.mock.Mock(spec=[])
         color = (0.5, 0.5, 0.5)

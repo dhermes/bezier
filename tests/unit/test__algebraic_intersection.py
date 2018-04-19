@@ -481,10 +481,10 @@ class Test_to_power_basis(utils.NumPyTestCase):
         )
 
     def test_unsupported(self):
-        nodes_yes1 = np.zeros((2, 2), order='F')
-        nodes_yes2 = np.zeros((2, 3), order='F')
-        nodes_yes3 = np.zeros((2, 4), order='F')
-        nodes_no = np.zeros((2, 6), order='F')
+        nodes_yes1 = np.zeros((2, 2), order="F")
+        nodes_yes2 = np.zeros((2, 3), order="F")
+        nodes_yes3 = np.zeros((2, 4), order="F")
+        nodes_no = np.zeros((2, 6), order="F")
         # Just make sure we fall through **all** of the implicit
         # ``else`` branches.
         with self.assertRaises(NotImplementedError):
@@ -603,7 +603,7 @@ class Test__resolve_and_add(utils.NumPyTestCase):
         final_s = []
         final_t = []
         patch = unittest.mock.patch(
-            'bezier._intersection_helpers.newton_refine', return_value=(s, t)
+            "bezier._intersection_helpers.newton_refine", return_value=(s, t)
         )
         with patch as mocked:
             self._call_function_under_test(
@@ -691,13 +691,13 @@ class Test_intersect_curves(utils.NumPyTestCase):
         # 486 s^5 - 3726 s^4 + 13905 s^3 - 18405 s^2 + 6213 s + 1231
         self.assertAlmostEqual(
             result[0, 0],
-            float.fromhex('0x1.b7b348cf939b9p-1'),
+            float.fromhex("0x1.b7b348cf939b9p-1"),
             delta=LOCAL_EPS,
         )
         # 4 t^5 - 16 t^4 + 13 t^3 + 25 t^2 - 28 t + 4
         self.assertAlmostEqual(
             result[1, 0],
-            float.fromhex('0x1.bf3536665a0cdp-1'),
+            float.fromhex("0x1.bf3536665a0cdp-1"),
             delta=LOCAL_EPS,
         )
 
@@ -734,7 +734,7 @@ class Test_normalize_polynomial(utils.NumPyTestCase):
 
     def test_actual_zero(self):
         for num_vals in (1, 2, 3, 4, 5):
-            coeffs = np.zeros((num_vals,), order='F')
+            coeffs = np.zeros((num_vals,), order="F")
             result = self._call_function_under_test(coeffs)
             self.assertIsNot(result, coeffs)
             self.assertEqual(result, coeffs)
@@ -744,11 +744,11 @@ class Test_normalize_polynomial(utils.NumPyTestCase):
         coeffs = 0.5 ** 42 * np.random.random(shape)
         result = self._call_function_under_test(coeffs)
         self.assertIsNot(result, coeffs)
-        self.assertEqual(result, np.zeros(shape, order='F'))
+        self.assertEqual(result, np.zeros(shape, order="F"))
         coeffs = 0.5 ** 10 * np.random.random(shape)
         result = self._call_function_under_test(coeffs, threshold=0.5 ** 8)
         self.assertIsNot(result, coeffs)
-        self.assertEqual(result, np.zeros(shape, order='F'))
+        self.assertEqual(result, np.zeros(shape, order="F"))
 
 
 class Test__get_sigma_coeffs(utils.NumPyTestCase):
@@ -760,7 +760,7 @@ class Test__get_sigma_coeffs(utils.NumPyTestCase):
 
     def test_all_zero(self):
         for num_zeros in (1, 2, 3, 4):
-            coeffs = np.zeros((num_zeros,), order='F')
+            coeffs = np.zeros((num_zeros,), order="F")
             result = self._call_function_under_test(coeffs)
             sigma_coeffs, degree, effective_degree = result
             self.assertIsNone(sigma_coeffs)
@@ -843,7 +843,7 @@ class Test_bernstein_companion(utils.NumPyTestCase):
 
     def test_all_zero(self):
         for num_zeros in (1, 2, 3, 4):
-            coeffs = np.zeros((num_zeros,), order='F')
+            coeffs = np.zeros((num_zeros,), order="F")
             result = self._call_function_under_test(coeffs)
             companion, degree, effective_degree = result
             self.assertEqual(companion.shape, (0, 0))
@@ -871,7 +871,7 @@ class Test_bezier_roots(utils.NumPyTestCase):
 
     def test_all_zero(self):
         for num_zeros in (1, 2, 3, 4):
-            coeffs = np.zeros((num_zeros,), order='F')
+            coeffs = np.zeros((num_zeros,), order="F")
             roots = self._call_function_under_test(coeffs)
             self.assertEqual(roots.shape, (0,))
 
@@ -994,7 +994,7 @@ class Test_lu_companion(utils.NumPyTestCase):
         rows, cols = lu_mat.shape
         self.assertEqual(rows, cols)
         l_mat = np.asfortranarray(
-            np.tril(lu_mat, -1) + np.eye(rows, order='F')
+            np.tril(lu_mat, -1) + np.eye(rows, order="F")
         )
         u_mat = np.triu(lu_mat)
         a_mat = _helpers.matrix_product(l_mat, u_mat)
@@ -1062,15 +1062,15 @@ class Test__reciprocal_condition_number(utils.NumPyTestCase):
         )
 
     @unittest.mock.patch(
-        'bezier._algebraic_intersection._scipy_lapack', new=None
+        "bezier._algebraic_intersection._scipy_lapack", new=None
     )
     def test_without_scipy(self):
-        lu_mat = np.zeros((2, 2), order='F')
+        lu_mat = np.zeros((2, 2), order="F")
         one_norm = 0.0
         with self.assertRaises(OSError):
             self._call_function_under_test(lu_mat, one_norm)
 
-    @unittest.mock.patch('bezier._algebraic_intersection._scipy_lapack')
+    @unittest.mock.patch("bezier._algebraic_intersection._scipy_lapack")
     def test_dgecon_failure(self, _scipy_lapack):
         rcond = 0.5
         info = -1
@@ -1084,7 +1084,7 @@ class Test__reciprocal_condition_number(utils.NumPyTestCase):
             unittest.mock.sentinel.lu_mat, one_norm
         )
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_singular(self):
         # A = [[ 2.   3. ]
         #      [ 1.   1.5]]
@@ -1093,7 +1093,7 @@ class Test__reciprocal_condition_number(utils.NumPyTestCase):
         rcond = self._call_function_under_test(lu_mat, one_norm)
         self.assertEqual(rcond, 0.0)
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_invertible(self):
         # A = [[  4.,  10.,   0.],
         #      [  0.,  16.,  32.],
@@ -1130,13 +1130,13 @@ class Test_bezier_value_check(utils.NumPyTestCase):
         coeffs = np.asfortranarray([8.0, 5.0, 0.0])
         self.assertTrue(self._call_function_under_test(coeffs, 1.0))
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_constant(self):
         input_s = (-9.0, -2.0, 0.0, 0.5, 1.0, 1.5, 4.0)
         values = (1.0, 2.0, 4.5, 0.0)
         for index, value in enumerate(values):
             count = index + 1
-            coeffs = value * np.ones((count,), order='F')
+            coeffs = value * np.ones((count,), order="F")
             for s_val in input_s:
                 is_root = self._call_function_under_test(
                     coeffs, s_val, rhs_val=value
@@ -1149,11 +1149,11 @@ class Test_bezier_value_check(utils.NumPyTestCase):
 
     def test_all_zero(self):
         for num_zeros in (1, 2, 3, 4):
-            coeffs = np.zeros((num_zeros,), order='F')
+            coeffs = np.zeros((num_zeros,), order="F")
             is_root = self._call_function_under_test(coeffs, 0.0)
             self.assertTrue(is_root)
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_linear(self):
         # 8 s + 1
         coeffs = np.asfortranarray([1.0, 9.0])
@@ -1168,7 +1168,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
             )
             self.assertFalse(is_root)
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_quadratic(self):
         # 2 s (s + 1)
         coeffs = np.asfortranarray([0.0, 1.0, 4.0])
@@ -1180,7 +1180,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
             check_values, [False, True, False, True, False, False]
         )
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_quadratic_complex(self):
         # s^2 + 1
         coeffs = np.asfortranarray([1.0, 1.0, 2.0])
@@ -1194,7 +1194,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
             check_values, [False, True, False, False, False, True, False]
         )
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_quadratic_drop_degree(self):
         # 2 (s - 2) (s - 1)
         coeffs = np.asfortranarray([4.0, 1.0, 0.0])
@@ -1206,7 +1206,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
             check_values, [False, False, False, True, False, True, False]
         )
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_quadratic_as_elevated(self):
         # 2 (s + 1)
         coeffs = np.asfortranarray([2.0, 3.0, 4.0])
@@ -1218,7 +1218,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
             check_values, [False, True, False, False, False, False]
         )
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_cubic(self):
         # -(s - 17) (s - 5) (s - 2)
         s_vals = (0.0, 1.0, 2.0, 3.0, 5.0, 6.0, 16.0, 17.0, 18.0)
@@ -1248,7 +1248,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
         check4 = self._call_function_under_test(coeffs, s_val4)
         self.assertFalse(check3 and check4)
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_cubic_wiggle(self):
         self._cubic_wiggle(2.0, 308)
         # This wiggle room is especially egregious.
@@ -1261,7 +1261,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
             self._cubic_wiggle(5.0, 8129)
             self._cubic_wiggle(17.0, 22503)
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_cubic_drop_degree(self):
         # 3 (1 - s)^2 (3 s + 1)
         coeffs = np.asfortranarray([3.0, 4.0, 0.0, 0.0])
@@ -1273,7 +1273,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
             check_values, [False, False, True, False, False, True, False]
         )
 
-    @unittest.skipIf(SCIPY_LAPACK is None, 'SciPy not installed')
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_quartic(self):
         # 4 s^3 (5 - s)
         coeffs = np.asfortranarray([0.0, 0.0, 0.0, 5.0, 16.0])

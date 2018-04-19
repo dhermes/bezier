@@ -23,9 +23,9 @@ import setup_helpers
 import setup_helpers_osx
 import setup_helpers_windows
 
-VERSION = '0.8.1.dev1'  # Also in ``codemeta.json`` and ``__init__.py``.
-AUTHOR = 'Danny Hermes'  # Also in ``__init__.py``.
-README_FILENAME = os.path.join(os.path.dirname(__file__), 'README.rst')
+VERSION = "0.8.1.dev1"  # Also in ``codemeta.json`` and ``__init__.py``.
+AUTHOR = "Danny Hermes"  # Also in ``__init__.py``.
+README_FILENAME = os.path.join(os.path.dirname(__file__), "README.rst")
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
@@ -40,17 +40,17 @@ No Fortran 90 compiler found.
 
 Skipping Fortran extension speedups.
 """
-NO_EXTENSIONS_ENV = 'BEZIER_NO_EXTENSIONS'
+NO_EXTENSIONS_ENV = "BEZIER_NO_EXTENSIONS"
 NO_SPEEDUPS_MESSAGE = """\
 The {} environment variable has been used to explicitly disable the
 building of extension modules.
 """.format(
     NO_EXTENSIONS_ENV
 )
-REQUIREMENTS = ('numpy >= 1.14.0', 'six >= 1.11.0')
-EXTRAS_REQUIRE = {':python_version<"3.4"': ['enum34']}
+REQUIREMENTS = ("numpy >= 1.14.0", "six >= 1.11.0")
+EXTRAS_REQUIRE = {':python_version<"3.4"': ["enum34"]}
 DESCRIPTION = (
-    u'Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects'
+    u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
 )
 
 
@@ -65,7 +65,7 @@ def is_installed(requirement):
 
 
 def require_numpy():
-    if not is_installed('numpy>=1.9.0'):
+    if not is_installed("numpy>=1.9.0"):
         print(NUMPY_MESSAGE, file=sys.stderr)
         sys.exit(1)
 
@@ -85,32 +85,32 @@ def extension_modules():
 
 
 def make_readme():
-    with open(README_FILENAME, 'r') as file_obj:
+    with open(README_FILENAME, "r") as file_obj:
         return file_obj.read()
 
 
 def setup():
     setuptools.setup(
-        name='bezier',
+        name="bezier",
         version=VERSION,
         description=DESCRIPTION,
         author=AUTHOR,
-        author_email='daniel.j.hermes@gmail.com',
+        author_email="daniel.j.hermes@gmail.com",
         long_description=make_readme(),
         scripts=(),
-        url='https://github.com/dhermes/bezier',
-        packages=['bezier'],
-        package_dir={'': 'src'},
-        license='Apache 2.0',
-        platforms='Posix; MacOS X; Windows',
+        url="https://github.com/dhermes/bezier",
+        packages=["bezier"],
+        package_dir={"": "src"},
+        license="Apache 2.0",
+        platforms="Posix; MacOS X; Windows",
         package_data={
-            'bezier': [
-                '*.pxd',
-                os.path.join('include', '*.h'),
-                os.path.join('include', 'bezier', '*.h'),
-                os.path.join('lib', '*.a'),
-                os.path.join('lib', '*.lib'),
-                os.path.join('extra-dll', '*.dll'),
+            "bezier": [
+                "*.pxd",
+                os.path.join("include", "*.h"),
+                os.path.join("include", "bezier", "*.h"),
+                os.path.join("lib", "*.a"),
+                os.path.join("lib", "*.lib"),
+                os.path.join("extra-dll", "*.dll"),
             ]
         },
         zip_safe=True,
@@ -118,19 +118,19 @@ def setup():
         extras_require=EXTRAS_REQUIRE,
         ext_modules=extension_modules(),
         classifiers=(
-            'Development Status :: 4 - Beta',
-            'Intended Audience :: Developers',
-            'Intended Audience :: Science/Research',
-            'Topic :: Scientific/Engineering :: Mathematics',
-            'License :: OSI Approved :: Apache Software License',
-            'Operating System :: OS Independent',
-            'Programming Language :: Python :: 2',
-            'Programming Language :: Python :: 2.7',
-            'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.5',
-            'Programming Language :: Python :: 3.6',
+            "Development Status :: 4 - Beta",
+            "Intended Audience :: Developers",
+            "Intended Audience :: Science/Research",
+            "Topic :: Scientific/Engineering :: Mathematics",
+            "License :: OSI Approved :: Apache Software License",
+            "Operating System :: OS Independent",
+            "Programming Language :: Python :: 2",
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.5",
+            "Programming Language :: Python :: 3.6",
         ),
-        cmdclass={'build_ext': setup_helpers.BuildFortranThenExt},
+        cmdclass={"build_ext": setup_helpers.BuildFortranThenExt},
     )
 
 
@@ -145,5 +145,5 @@ def main():
     setup()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

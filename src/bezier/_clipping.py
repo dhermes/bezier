@@ -33,7 +33,7 @@ import six
 from bezier import _geometric_intersection
 from bezier import _helpers
 
-NO_PARALLEL = 'Parallel lines not supported during clipping.'
+NO_PARALLEL = "Parallel lines not supported during clipping."
 DEFAULT_S_MIN = 1.0
 DEFAULT_S_MAX = 0.0
 
@@ -244,11 +244,13 @@ def clip_range(nodes1, nodes2):
         * The start parameter of the clipped range.
         * The end parameter of the clipped range.
     """
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-locals
     coeff_a, coeff_b, coeff_c, d_min, d_max = compute_fat_line(nodes1)
     # NOTE: This assumes, but does not check, that there are two rows.
     _, num_nodes2 = nodes2.shape
-    polynomial = np.empty((2, num_nodes2), order='F')
+    polynomial = np.empty((2, num_nodes2), order="F")
     denominator = float(num_nodes2 - 1)
     for index in six.moves.xrange(num_nodes2):
         polynomial[0, index] = index / denominator
@@ -285,4 +287,3 @@ def clip_range(nodes1, nodes2):
                 polynomial[:, end_index],
             )
     return _check_parameter_range(s_min, s_max)
-    # pylint: enable=too-many-locals

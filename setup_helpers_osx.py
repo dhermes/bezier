@@ -19,7 +19,7 @@ import tempfile
 
 import setup_helpers
 
-MAC_OS_X = 'darwin'
+MAC_OS_X = "darwin"
 # NOTE: Used by ``gfortran_supports_dual_architecture()``.
 SIMPLE_F90_SOURCE = """\
 subroutine bar(x, y)
@@ -80,12 +80,12 @@ def is_dual_architecture():
         bool: Indicating if the Python binary is dual architecture
         (:data:`True`) or single architecture (:data:`False`).
     """
-    cmd = ('lipo', '-info', sys.executable)
-    cmd_output = subprocess.check_output(cmd).decode('utf-8').strip()
-    prefix = 'Architectures in the fat file: {} are: '.format(sys.executable)
+    cmd = ("lipo", "-info", sys.executable)
+    cmd_output = subprocess.check_output(cmd).decode("utf-8").strip()
+    prefix = "Architectures in the fat file: {} are: ".format(sys.executable)
     if cmd_output.startswith(prefix):
         architectures = cmd_output[len(prefix):].split()
-        return 'i386' in architectures and 'x86_64' in architectures
+        return "i386" in architectures and "x86_64" in architectures
 
     else:
         return False
@@ -104,24 +104,24 @@ def gfortran_supports_dual_architecture():
     Returns:
         bool: Indicates if ``gfortran`` can build dual architecture binaries.
     """
-    temporary_directory = tempfile.mkdtemp(suffix='-fortran')
-    source_name = os.path.join(temporary_directory, 'bar.f90')
-    with open(source_name, 'w') as file_obj:
+    temporary_directory = tempfile.mkdtemp(suffix="-fortran")
+    source_name = os.path.join(temporary_directory, "bar.f90")
+    with open(source_name, "w") as file_obj:
         file_obj.write(SIMPLE_F90_SOURCE)
-    object_name = os.path.join(temporary_directory, 'bar.o')
+    object_name = os.path.join(temporary_directory, "bar.o")
     cmd = (
-        'gfortran',
-        '-arch',
-        'i386',
-        '-arch',
-        'x86_64',
-        '-c',
+        "gfortran",
+        "-arch",
+        "i386",
+        "-arch",
+        "x86_64",
+        "-c",
         source_name,
-        '-o',
+        "-o",
         object_name,
     )
     cmd_output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-    result = b'arch flags ignored' not in cmd_output
+    result = b"arch flags ignored" not in cmd_output
     # Clean-up the temporary directory (could be done with a context manager).
     shutil.rmtree(temporary_directory)
     return result
@@ -203,7 +203,7 @@ class DualArchitectureCompile(object):
         self.f90_compiler = f90_compiler
         self.original_compile = f90_compiler._compile
         self.compiler_cmds = {
-            '.f90': f90_compiler.compiler_f90, '.f': f90_compiler.compiler_f77
+            ".f90": f90_compiler.compiler_f90, ".f": f90_compiler.compiler_f77
         }
         # NOTE: These **should** be cleaned up when this instance goes out
         #       of scope, but that is not particularly simple to do.
@@ -234,29 +234,29 @@ class DualArchitectureCompile(object):
         """
         for extension, compiler_cmd in self.compiler_cmds.items():
             if not isinstance(compiler_cmd, list):
-                raise TypeError('Expected a list', compiler_cmd, extension)
+                raise TypeError("Expected a list", compiler_cmd, extension)
 
-            if compiler_cmd.count('-arch') != 1:
+            if compiler_cmd.count("-arch") != 1:
                 raise ValueError(
                     'Did not find exactly one "-arch" in',
                     compiler_cmd,
                     extension,
                 )
 
-            arch_index = compiler_cmd.index('-arch') + 1
+            arch_index = compiler_cmd.index("-arch") + 1
             if arch_index == len(compiler_cmd):
                 raise ValueError(
-                    'There is no architecture specified in',
+                    "There is no architecture specified in",
                     compiler_cmd,
                     extension,
                 )
 
             arch_value = compiler_cmd[arch_index]
-            if arch_value not in ('i386', 'x86_64'):
+            if arch_value not in ("i386", "x86_64"):
                 raise ValueError(
-                    'Unexpected architecture',
+                    "Unexpected architecture",
                     arch_value,
-                    'in',
+                    "in",
                     compiler_cmd,
                     extension,
                 )
@@ -305,9 +305,9 @@ class DualArchitectureCompile(object):
         Returns:
             str: The directory created (or specified from the environment).
         """
-        i386_dir = os.environ.get('TEMPDIR_I386')
+        i386_dir = os.environ.get("TEMPDIR_I386")
         if i386_dir is None or not os.path.isdir(i386_dir):
-            i386_dir = tempfile.mkdtemp(suffix='-i386')
+            i386_dir = tempfile.mkdtemp(suffix="-i386")
         return i386_dir
 
     @staticmethod
@@ -324,9 +324,9 @@ class DualArchitectureCompile(object):
         Returns:
             str: The directory created (or specified from the environment).
         """
-        x86_64_dir = os.environ.get('TEMPDIR_X86_64')
+        x86_64_dir = os.environ.get("TEMPDIR_X86_64")
         if x86_64_dir is None or not os.path.isdir(x86_64_dir):
-            x86_64_dir = tempfile.mkdtemp(suffix='-x86_64')
+            x86_64_dir = tempfile.mkdtemp(suffix="-x86_64")
         return x86_64_dir
 
     def __call__(self, obj, src, ext, cc_args, extra_postargs, pp_opts):
@@ -349,14 +349,14 @@ class DualArchitectureCompile(object):
         # Create a directory and compile an object targeting i386.
         i386_dir = self.i386_dir
         i386_obj = os.path.join(i386_dir, obj_name)
-        self._set_architecture('i386', ext)
+        self._set_architecture("i386", ext)
         self.original_compile(
             i386_obj, src, ext, cc_args, extra_postargs, pp_opts
         )
         # Create a directory and compile an object targeting x86_64.
         x86_64_dir = self.x86_64_dir
         x86_64_obj = os.path.join(x86_64_dir, obj_name)
-        self._set_architecture('x86_64', ext)
+        self._set_architecture("x86_64", ext)
         self.original_compile(
             x86_64_obj, src, ext, cc_args, extra_postargs, pp_opts
         )
@@ -364,5 +364,5 @@ class DualArchitectureCompile(object):
         # be done with a context manager).
         self._restore_architecture(ext)
         # Use ``lipo`` to combine the object files into a universal.
-        lipo_cmd = ('lipo', i386_obj, x86_64_obj, '-create', '-output', obj)
+        lipo_cmd = ("lipo", i386_obj, x86_64_obj, "-create", "-output", obj)
         self.f90_compiler.spawn(lipo_cmd)

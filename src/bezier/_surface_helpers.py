@@ -42,8 +42,8 @@ except ImportError:  # pragma: NO COVER
 _MAX_POLY_SUBDIVISIONS = 5
 _SIGN = np.sign  # pylint: disable=no-member
 _FLOAT64 = np.float64  # pylint: disable=no-member
-_SAME_CURVATURE = 'Tangent curves have same curvature.'
-_WRONG_CURVE = 'Start and end node not defined on same curve'
+_SAME_CURVATURE = "Tangent curves have same curvature."
+_WRONG_CURVE = "Start and end node not defined on same curve"
 CLASSIFICATION_T = _intersection_helpers.IntersectionClassification
 # NOTE: The ``SUBDIVIDE`` matrices are public since used in
 #       the ``surface`` module.
@@ -734,7 +734,7 @@ def polynomial_sign(poly_surface, degree):
 
     if sub_polys:
         raise ValueError(
-            'Did not reach a conclusion after max subdivisions',
+            "Did not reach a conclusion after max subdivisions",
             _MAX_POLY_SUBDIVISIONS,
         )
 
@@ -803,7 +803,7 @@ def quadratic_jacobian_polynomial(nodes):
     """
     # First evaluate the Jacobian at each of the 6 nodes.
     jac_parts = _helpers.matrix_product(nodes, _QUADRATIC_JACOBIAN_HELPER)
-    jac_at_nodes = np.empty((1, 6), order='F')
+    jac_at_nodes = np.empty((1, 6), order="F")
     jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
     jac_at_nodes[0, 1] = two_by_two_det(jac_parts[:, 2:4])
     jac_at_nodes[0, 2] = two_by_two_det(jac_parts[:, 4:6])
@@ -843,7 +843,7 @@ def cubic_jacobian_polynomial(nodes):
     # First evaluate the Jacobian at each of the 15 nodes
     # in the quartic triangle.
     jac_parts = _helpers.matrix_product(nodes, _CUBIC_JACOBIAN_HELPER)
-    jac_at_nodes = np.empty((1, 15), order='F')
+    jac_at_nodes = np.empty((1, 15), order="F")
     jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
     jac_at_nodes[0, 1] = two_by_two_det(jac_parts[:, 2:4])
     jac_at_nodes[0, 2] = two_by_two_det(jac_parts[:, 4:6])
@@ -904,7 +904,7 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     """
     dimension, num_nodes = nodes.shape
     num_new_nodes = num_nodes - degree - 1
-    new_nodes = np.empty((dimension, num_new_nodes), order='F')
+    new_nodes = np.empty((dimension, num_new_nodes), order="F")
     index = 0
     # parent_i1 = index + k
     # parent_i2 = index + k + 1
@@ -916,12 +916,12 @@ def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
         for unused_j in six.moves.xrange(degree - k):
             # NOTE: i = (degree - 1) - j - k
             new_nodes[:, index] = (
-                lambda1 *
-                nodes[:, parent_i1] +
-                lambda2 *
-                nodes[:, parent_i2] +
-                lambda3 *
-                nodes[:, parent_i3]
+                lambda1
+                * nodes[:, parent_i1]
+                + lambda2
+                * nodes[:, parent_i2]
+                + lambda3
+                * nodes[:, parent_i3]
             )
             # Update all the indices.
             parent_i1 += 1
@@ -965,7 +965,7 @@ def make_transform(degree, weights_a, weights_b, weights_c):
         ``weights_a``, ``1`` to ``weights_b`` and ``2`` to ``weights_c``.
     """
     num_nodes = ((degree + 1) * (degree + 2)) // 2
-    id_mat = np.eye(num_nodes, order='F')
+    id_mat = np.eye(num_nodes, order="F")
     # Pre-compute the matrices that do the reduction so we don't
     # have to **actually** perform the de Casteljau algorithm
     # every time.
@@ -1010,7 +1010,7 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
     Returns:
         numpy.ndarray: The newly created reduced control points.
     """
-    result = np.empty(shape, order='F')
+    result = np.empty(shape, order="F")
     index = 0
     for k in six.moves.xrange(degree + 1):
         for j in six.moves.xrange(degree + 1 - k):
@@ -1168,7 +1168,7 @@ def jacobian_s(nodes, degree, dimension):
         B |eacute| zier form.
     """
     num_nodes = (degree * (degree + 1)) // 2
-    result = np.empty((dimension, num_nodes), order='F')
+    result = np.empty((dimension, num_nodes), order="F")
     index = 0
     i = 0
     for num_vals in six.moves.xrange(degree, 0, -1):
@@ -1200,7 +1200,7 @@ def jacobian_t(nodes, degree, dimension):
         B |eacute| zier form.
     """
     num_nodes = (degree * (degree + 1)) // 2
-    result = np.empty((dimension, num_nodes), order='F')
+    result = np.empty((dimension, num_nodes), order="F")
     index = 0
     i = 0
     j = degree + 1
@@ -1234,7 +1234,7 @@ def _jacobian_both(nodes, degree, dimension):
             B |eacute| zier form.
     """
     _, num_nodes = nodes.shape
-    result = np.empty((2 * dimension, num_nodes - degree - 1), order='F')
+    result = np.empty((2 * dimension, num_nodes - degree - 1), order="F")
     result[:dimension, :] = jacobian_s(nodes, degree, dimension)
     result[dimension:, :] = jacobian_t(nodes, degree, dimension)
     return result
@@ -1318,10 +1318,10 @@ def _jacobian_det(nodes, degree, st_vals):
         )
     # Take the determinant for each (s, t).
     return (
-        bs_bt_vals[0, :] *
-        bs_bt_vals[3, :] -
-        bs_bt_vals[1, :] *
-        bs_bt_vals[2, :]
+        bs_bt_vals[0, :]
+        * bs_bt_vals[3, :]
+        - bs_bt_vals[1, :]
+        * bs_bt_vals[2, :]
     )
 
 
@@ -1423,7 +1423,7 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
         bool: Indicates if the corner intersection should be ignored.
     """
     cross_prod = _helpers.cross_product(
-        edge_tangent.ravel(order='F'), corner_tangent.ravel(order='F')
+        edge_tangent.ravel(order="F"), corner_tangent.ravel(order="F")
     )
     # A negative cross product indicates that ``edge_tangent`` is
     # "inside" / "to the left" of ``corner_tangent`` (due to right-hand rule).
@@ -1437,7 +1437,7 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
     cross_prod = _helpers.cross_product(
-        edge_tangent.ravel(order='F'), alt_corner_tangent.ravel(order='F')
+        edge_tangent.ravel(order="F"), alt_corner_tangent.ravel(order="F")
     )
     return cross_prod <= 0.0
 
@@ -1479,7 +1479,7 @@ def ignored_double_corner(
     alt_tangent_s = _curve_helpers.evaluate_hodograph(1.0, prev_edge)
     # First check if ``tangent_t`` is interior to the ``s`` surface.
     cross_prod1 = _helpers.cross_product(
-        tangent_s.ravel(order='F'), tangent_t.ravel(order='F')
+        tangent_s.ravel(order="F"), tangent_t.ravel(order="F")
     )
     # A positive cross product indicates that ``tangent_t`` is
     # interior to ``tangent_s``. Similar for ``alt_tangent_s``.
@@ -1489,7 +1489,7 @@ def ignored_double_corner(
     if cross_prod1 >= 0.0:
         # Only compute ``cross_prod2`` if we need to.
         cross_prod2 = _helpers.cross_product(
-            alt_tangent_s.ravel(order='F'), tangent_t.ravel(order='F')
+            alt_tangent_s.ravel(order="F"), tangent_t.ravel(order="F")
         )
         if cross_prod2 >= 0.0:
             return False
@@ -1502,12 +1502,12 @@ def ignored_double_corner(
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
     cross_prod3 = _helpers.cross_product(
-        tangent_s.ravel(order='F'), alt_tangent_t.ravel(order='F')
+        tangent_s.ravel(order="F"), alt_tangent_t.ravel(order="F")
     )
     if cross_prod3 >= 0.0:
         # Only compute ``cross_prod4`` if we need to.
         cross_prod4 = _helpers.cross_product(
-            alt_tangent_s.ravel(order='F'), alt_tangent_t.ravel(order='F')
+            alt_tangent_s.ravel(order="F"), alt_tangent_t.ravel(order="F")
         )
         if cross_prod4 >= 0.0:
             return False
@@ -2027,10 +2027,10 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     """
     if intersection.s == 1.0 or intersection.t == 1.0:
         raise ValueError(
-            'Intersection occurs at the end of an edge',
-            's',
+            "Intersection occurs at the end of an edge",
+            "s",
             intersection.s,
-            't',
+            "t",
             intersection.t,
         )
 
@@ -2046,7 +2046,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     # Take the cross product of tangent vectors to determine which one
     # is more "inside" / "to the left".
     cross_prod = _helpers.cross_product(
-        tangent1.ravel(order='F'), tangent2.ravel(order='F')
+        tangent1.ravel(order="F"), tangent2.ravel(order="F")
     )
     if cross_prod < -ALMOST_TANGENT:
         return CLASSIFICATION_T.FIRST
@@ -2600,7 +2600,7 @@ def tangent_only_intersections(all_types):
             of the tangent types.
     """
     if len(all_types) != 1:
-        raise ValueError('Unexpected value, types should all match', all_types)
+        raise ValueError("Unexpected value, types should all match", all_types)
 
     point_type = all_types.pop()
     if point_type == CLASSIFICATION_T.OPPOSED:
@@ -2619,7 +2619,7 @@ def tangent_only_intersections(all_types):
         return [], None
 
     else:
-        raise ValueError('Point type not for tangency', point_type)
+        raise ValueError("Point type not for tangency", point_type)
 
 
 def basic_interior_combine(intersections, max_edges=10):
@@ -2674,7 +2674,7 @@ def basic_interior_combine(intersections, max_edges=10):
             edge_ends.append((curr_node, next_node))
             if len(edge_ends) > max_edges:
                 raise RuntimeError(
-                    'Unexpected number of edges', len(edge_ends)
+                    "Unexpected number of edges", len(edge_ends)
                 )
 
         edge_info = tuple(
@@ -2766,7 +2766,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
     """
     dimension, num_nodes = nodes.shape
     binom_val = 1.0
-    result = np.zeros((dimension, 1), order='F')
+    result = np.zeros((dimension, 1), order="F")
     index = num_nodes - 1
     result[:, 0] += nodes[:, index]
     # curve evaluate_multi_barycentric() takes arrays.
@@ -2813,7 +2813,7 @@ def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
         underlying surface.
     """
     num_vals, _ = param_vals.shape
-    result = np.empty((dimension, num_vals), order='F')
+    result = np.empty((dimension, num_vals), order="F")
     for index, (lambda1, lambda2, lambda3) in enumerate(param_vals):
         result[:, index] = evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3
@@ -2844,7 +2844,7 @@ def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
         underlying surface.
     """
     num_vals, _ = param_vals.shape
-    result = np.empty((dimension, num_vals), order='F')
+    result = np.empty((dimension, num_vals), order="F")
     for index, (s, t) in enumerate(param_vals):
         result[:, index] = evaluate_barycentric(
             nodes, degree, 1.0 - s - t, s, t
@@ -2871,9 +2871,9 @@ def _compute_edge_nodes(nodes, degree):
         the edges of the surface.
     """
     dimension, _ = np.shape(nodes)
-    nodes1 = np.empty((dimension, degree + 1), order='F')
-    nodes2 = np.empty((dimension, degree + 1), order='F')
-    nodes3 = np.empty((dimension, degree + 1), order='F')
+    nodes1 = np.empty((dimension, degree + 1), order="F")
+    nodes2 = np.empty((dimension, degree + 1), order="F")
+    nodes3 = np.empty((dimension, degree + 1), order="F")
     curr2 = degree
     curr3 = -1
     for i in six.moves.xrange(degree + 1):
@@ -2939,10 +2939,10 @@ def shoelace_for_area(nodes):
     result = 0.0
     for multiplier, index1, index2 in shoelace:
         result += multiplier * (
-            nodes[0, index1] *
-            nodes[1, index2] -
-            nodes[1, index1] *
-            nodes[0, index2]
+            nodes[0, index1]
+            * nodes[1, index2]
+            - nodes[1, index1]
+            * nodes[0, index2]
         )
 
     return result / scale_factor

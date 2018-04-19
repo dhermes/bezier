@@ -41,25 +41,25 @@ try:
 
     _HAS_SPEEDUP = True
 except ImportError as exc:  # pragma: NO COVER
-    __config__.handle_import_error(exc, '_speedup')
+    __config__.handle_import_error(exc, "_speedup")
     _HAS_SPEEDUP = False
 # NOTE: The ``__version__`` and ``__author__`` are hard-coded here, rather
 #       than using ``pkg_resources.get_distribution('bezier').version``
 #       and related. This is **entirely** to accomodate builds where
 #       ``bezier`` is imported from source (and not installed).
-__author__ = 'Danny Hermes'
-__version__ = '0.8.1.dev1'
+__author__ = "Danny Hermes"
+__version__ = "0.8.1.dev1"
 """str: The current version of :mod:`bezier`."""
 __all__ = [
-    '__author__',
-    '__version__',
-    'Curve',
-    'CurvedPolygon',
-    'get_dll',
-    'get_include',
-    'get_lib',
-    'Surface',
-    'UnsupportedDegree',
+    "__author__",
+    "__version__",
+    "Curve",
+    "CurvedPolygon",
+    "get_dll",
+    "get_include",
+    "get_lib",
+    "Surface",
+    "UnsupportedDegree",
 ]
 
 
@@ -76,7 +76,7 @@ def get_include():
         str: ``include`` directory that contains header files for the
         ``libbezier`` Fortran library.
     """
-    return pkg_resources.resource_filename('bezier', 'include')
+    return pkg_resources.resource_filename("bezier", "include")
 
 
 def get_lib():
@@ -92,7 +92,7 @@ def get_lib():
         str: ``lib`` directory that contains static libraries for the
         ``libbezier`` Fortran library.
     """
-    return pkg_resources.resource_filename('bezier', 'lib')
+    return pkg_resources.resource_filename("bezier", "lib")
 
 
 def get_dll():
@@ -111,8 +111,8 @@ def get_dll():
     Raises:
         OSError: If this function is used anywhere other than Windows.
     """
-    if os.name == 'nt':
-        return pkg_resources.resource_filename('bezier', 'extra-dll')
+    if os.name == "nt":
+        return pkg_resources.resource_filename("bezier", "extra-dll")
 
     else:
-        raise OSError('This function should only be used on Windows.')
+        raise OSError("This function should only be used on Windows.")

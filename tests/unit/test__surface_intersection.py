@@ -113,7 +113,7 @@ class Test_update_locate_candidates(unittest.TestCase):
         )
 
     @unittest.mock.patch(
-        'bezier._surface_helpers.subdivide_nodes',
+        "bezier._surface_helpers.subdivide_nodes",
         return_value=(
             unittest.mock.sentinel.nodes_a,
             unittest.mock.sentinel.nodes_b,
@@ -177,7 +177,7 @@ class Test__locate_point(unittest.TestCase):
         return _surface_intersection._locate_point(nodes, degree, x_val, y_val)
 
     def test_it(self):
-        nodes = UNIT_TRIANGLE.copy(order='F')
+        nodes = UNIT_TRIANGLE.copy(order="F")
         degree = 1
         x_val = 0.25
         y_val = 0.625
@@ -207,7 +207,7 @@ class Test__locate_point(unittest.TestCase):
         self.assertAlmostEqual(t, expected_t, delta=SPACING(expected_t))
 
     def test_no_match(self):
-        nodes = UNIT_TRIANGLE.copy(order='F')
+        nodes = UNIT_TRIANGLE.copy(order="F")
         degree = 1
         x_val = -0.125
         y_val = 0.25
@@ -375,10 +375,10 @@ class Test_add_edge_end_unused(unittest.TestCase):
 
     def test_match_s(self):
         intersection1 = make_intersect(
-            1, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED')
+            1, 0.0, 2, 0.5, interior_curve=get_enum("COINCIDENT_UNUSED")
         )
         intersection2 = make_intersect(
-            1, 0.0, 2, 0.5, interior_curve=get_enum('FIRST')
+            1, 0.0, 2, 0.5, interior_curve=get_enum("FIRST")
         )
         duplicates = []
         intersections = [intersection2]
@@ -391,10 +391,10 @@ class Test_add_edge_end_unused(unittest.TestCase):
 
     def test_match_t(self):
         intersection1 = make_intersect(
-            0, 0.5, 0, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED')
+            0, 0.5, 0, 0.0, interior_curve=get_enum("COINCIDENT_UNUSED")
         )
         intersection2 = make_intersect(
-            0, 0.5, 0, 0.0, interior_curve=get_enum('TANGENT_FIRST')
+            0, 0.5, 0, 0.0, interior_curve=get_enum("TANGENT_FIRST")
         )
         duplicates = []
         intersections = [intersection2]
@@ -407,13 +407,13 @@ class Test_add_edge_end_unused(unittest.TestCase):
 
     def test_no_match(self):
         intersection1 = make_intersect(
-            1, 0.5, 0, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED')
+            1, 0.5, 0, 0.0, interior_curve=get_enum("COINCIDENT_UNUSED")
         )
         intersection2 = make_intersect(
-            2, 0.0, 2, 0.5, interior_curve=get_enum('SECOND')
+            2, 0.0, 2, 0.5, interior_curve=get_enum("SECOND")
         )
         intersection3 = make_intersect(
-            1, 0.5, 0, 0.75, interior_curve=get_enum('FIRST')
+            1, 0.5, 0, 0.75, interior_curve=get_enum("FIRST")
         )
         intersections = [intersection2, intersection3]
         return_value = self._call_function_under_test(
@@ -437,7 +437,7 @@ class Test_check_unused(unittest.TestCase):
     def test_match_s(self):
         intersection1 = make_intersect(1, 0.0, 2, 0.5)
         intersection2 = make_intersect(
-            1, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED')
+            1, 0.0, 2, 0.5, interior_curve=get_enum("COINCIDENT_UNUSED")
         )
         duplicates = []
         unused = [intersection2]
@@ -450,7 +450,7 @@ class Test_check_unused(unittest.TestCase):
     def test_match_t(self):
         intersection1 = make_intersect(1, 0.5, 2, 0.0)
         intersection2 = make_intersect(
-            1, 0.5, 2, 0.0, interior_curve=get_enum('COINCIDENT_UNUSED')
+            1, 0.5, 2, 0.0, interior_curve=get_enum("COINCIDENT_UNUSED")
         )
         duplicates = []
         unused = [intersection2]
@@ -463,10 +463,10 @@ class Test_check_unused(unittest.TestCase):
     def test_no_match(self):
         intersection1 = make_intersect(1, 0.5, 0, 0.0)
         intersection2 = make_intersect(
-            2, 0.0, 2, 0.5, interior_curve=get_enum('COINCIDENT_UNUSED')
+            2, 0.0, 2, 0.5, interior_curve=get_enum("COINCIDENT_UNUSED")
         )
         intersection3 = make_intersect(
-            1, 0.5, 0, 0.75, interior_curve=get_enum('COINCIDENT_UNUSED')
+            1, 0.5, 0, 0.75, interior_curve=get_enum("COINCIDENT_UNUSED")
         )
         duplicates = None
         unused = [intersection2, intersection3]
@@ -504,7 +504,7 @@ class Test_add_intersection(unittest.TestCase):
         )
 
     def test_coincident_duplicate(self):
-        enum_val = get_enum('COINCIDENT')
+        enum_val = get_enum("COINCIDENT")
         duplicates = []
         intersections = []
         return_value = self._call_function_under_test(
@@ -521,7 +521,7 @@ class Test_add_intersection(unittest.TestCase):
         self.assertEqual(duplicate.interior_curve, enum_val)
 
     def test_coincident_new_intersection(self):
-        enum_val = get_enum('COINCIDENT')
+        enum_val = get_enum("COINCIDENT")
         duplicates = []
         intersections = []
         return_value = self._call_function_under_test(
@@ -538,7 +538,7 @@ class Test_add_intersection(unittest.TestCase):
         self.assertEqual(intersection.interior_curve, enum_val)
 
     def test_coincident_unused_duplicate(self):
-        enum_val = get_enum('COINCIDENT_UNUSED')
+        enum_val = get_enum("COINCIDENT_UNUSED")
         duplicates = []
         intersections = []
         return_value = self._call_function_under_test(
@@ -555,7 +555,7 @@ class Test_add_intersection(unittest.TestCase):
         self.assertEqual(intersection.interior_curve, enum_val)
 
     def _coincident_unused_new_helper(self, s_val):
-        enum_val = get_enum('COINCIDENT_UNUSED')
+        enum_val = get_enum("COINCIDENT_UNUSED")
         duplicates = []
         intersections = []
         return_value = self._call_function_under_test(
@@ -579,7 +579,7 @@ class Test_add_intersection(unittest.TestCase):
 
     def test_coincident_unused_already_seen(self):
         intersection = make_intersect(
-            2, 0.0, 2, 0.75, interior_curve=get_enum('COINCIDENT_UNUSED')
+            2, 0.0, 2, 0.75, interior_curve=get_enum("COINCIDENT_UNUSED")
         )
         interior_curve = unittest.mock.sentinel.interior_curve
         duplicates = []
@@ -620,7 +620,7 @@ class Test_classify_coincident(unittest.TestCase):
     def test_coincident_unused(self):
         st_vals = np.asfortranarray([[0.0, 0.5], [1.0, 0.5]])
         interior_curve = self._call_function_under_test(st_vals, True)
-        enum_val = get_enum('COINCIDENT_UNUSED')
+        enum_val = get_enum("COINCIDENT_UNUSED")
         self.assertEqual(interior_curve, enum_val)
         st_vals = np.asfortranarray([[0.5, 0.0], [0.0, 1.0]])
         interior_curve = self._call_function_under_test(st_vals, True)
@@ -629,7 +629,7 @@ class Test_classify_coincident(unittest.TestCase):
     def test_coincident(self):
         st_vals = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
         interior_curve = self._call_function_under_test(st_vals, True)
-        self.assertEqual(interior_curve, get_enum('COINCIDENT'))
+        self.assertEqual(interior_curve, get_enum("COINCIDENT"))
 
 
 class Test_should_use(unittest.TestCase):
@@ -641,31 +641,31 @@ class Test_should_use(unittest.TestCase):
 
     def test_acceptable(self):
         intersection = make_intersect(
-            1, 0.125, 2, 0.75, interior_curve=get_enum('FIRST')
+            1, 0.125, 2, 0.75, interior_curve=get_enum("FIRST")
         )
         self.assertTrue(self._call_function_under_test(intersection))
 
     def test_tangent_corner(self):
         intersection = make_intersect(
-            2, 0.0, 1, 0.5, interior_curve=get_enum('TANGENT_SECOND')
+            2, 0.0, 1, 0.5, interior_curve=get_enum("TANGENT_SECOND")
         )
         self.assertTrue(self._call_function_under_test(intersection))
 
     def test_corner_not_tangent(self):
         intersection = make_intersect(
-            0, 0.0, 2, 0.5, interior_curve=get_enum('IGNORED_CORNER')
+            0, 0.0, 2, 0.5, interior_curve=get_enum("IGNORED_CORNER")
         )
         self.assertFalse(self._call_function_under_test(intersection))
 
     def test_tangent_not_corner(self):
         intersection = make_intersect(
-            1, 0.25, 1, 0.25, interior_curve=get_enum('TANGENT_FIRST')
+            1, 0.25, 1, 0.25, interior_curve=get_enum("TANGENT_FIRST")
         )
         self.assertFalse(self._call_function_under_test(intersection))
 
     def test_unused(self):
         intersection = make_intersect(
-            2, 0.75, 0, 0.875, interior_curve=get_enum('OPPOSED')
+            2, 0.75, 0, 0.875, interior_curve=get_enum("OPPOSED")
         )
         self.assertFalse(self._call_function_under_test(intersection))
 
@@ -720,7 +720,7 @@ class Test_surface_intersections(utils.NumPyTestCase):
         self._check_intersection(duplicates[1], 0, 0.0, 0, 0.0, None)
         self._check_intersection(duplicates[2], 0, 0.0, 0, 0.0, None)
         self.assertEqual(len(unused), 1)
-        enum_val = get_enum('IGNORED_CORNER')
+        enum_val = get_enum("IGNORED_CORNER")
         self._check_intersection(unused[0], 0, 0.0, 0, 0.0, enum_val)
         self.assertEqual(all_types, set([enum_val]))
 
@@ -756,7 +756,7 @@ class Test__geometric_intersect(utils.NumPyTestCase):
     NODES2 = np.asfortranarray(
         [[4.0, 0.0, -4.0, 2.0, -2.0, 0.0], [3.0, -5.0, 3.0, -3.0, -3.0, -9.0]]
     )
-    BAD_BOUNDARY_ARGS = ('Non-unique intersection',)
+    BAD_BOUNDARY_ARGS = ("Non-unique intersection",)
     BAD_BOUNDARY_TYPE = ValueError
     BAD_BOUNDARY_INCREASE_ULPS = True
 
@@ -922,7 +922,7 @@ class Test__geometric_intersect(utils.NumPyTestCase):
             self._call_function_under_test(
                 self.NODES1, 1, self.NODES2, 2, **kwargs
             ),
-            expected
+            expected,
         )
 
     def test_two_curved_polygons(self):
@@ -951,7 +951,7 @@ class Test__geometric_intersect(utils.NumPyTestCase):
 
 
 class Test_algebraic_intersect(Test__geometric_intersect):
-    BAD_BOUNDARY_ARGS = ('Coincident curves not currently supported',)
+    BAD_BOUNDARY_ARGS = ("Coincident curves not currently supported",)
     BAD_BOUNDARY_TYPE = RuntimeError
     BAD_BOUNDARY_INCREASE_ULPS = False
 
@@ -1006,7 +1006,7 @@ class Test_algebraic_intersect(Test__geometric_intersect):
 
 @utils.needs_speedup
 class Test_speedup_geometric_intersect(Test__geometric_intersect):
-    BAD_BOUNDARY_ARGS = ('Unexpected number of edges',)
+    BAD_BOUNDARY_ARGS = ("Unexpected number of edges",)
     BAD_BOUNDARY_TYPE = RuntimeError
     BAD_BOUNDARY_INCREASE_ULPS = True
 

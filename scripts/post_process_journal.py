@@ -25,11 +25,11 @@ def post_process_travis_osx(journal_filename):
     Args:
         journal_filename (str): The name of the journal file.
     """
-    travis_build_dir = os.environ.get('TRAVIS_BUILD_DIR', '')
-    with open(journal_filename, 'r') as file_obj:
+    travis_build_dir = os.environ.get("TRAVIS_BUILD_DIR", "")
+    with open(journal_filename, "r") as file_obj:
         content = file_obj.read()
-    processed = content.replace(travis_build_dir, '${TRAVIS_BUILD_DIR}')
-    with open(journal_filename, 'w') as file_obj:
+    processed = content.replace(travis_build_dir, "${TRAVIS_BUILD_DIR}")
+    with open(journal_filename, "w") as file_obj:
         file_obj.write(processed)
 
 
@@ -40,27 +40,27 @@ def post_process_journal(journal_filename, machine):
         journal_filename (str): The name of the journal file.
         machine (str): The machine type where the journal was generated.
     """
-    if machine == 'travis-osx':
+    if machine == "travis-osx":
         post_process_travis_osx(journal_filename)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Post-process generated journal file.'
+        description="Post-process generated journal file."
     )
     parser.add_argument(
-        '--journal-filename',
+        "--journal-filename",
         required=True,
-        help='Filename for generated journal.',
+        help="Filename for generated journal.",
     )
     parser.add_argument(
-        '--machine',
+        "--machine",
         required=True,
-        help='Machine type where journal was generated.',
+        help="Machine type where journal was generated.",
     )
     args = parser.parse_args()
     post_process_journal(args.journal_filename, args.machine)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

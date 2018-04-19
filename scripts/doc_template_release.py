@@ -34,17 +34,17 @@ import six
 
 _SCRIPTS_DIR = os.path.dirname(__file__)
 _ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
-README_FILE = os.path.join(_ROOT_DIR, 'README.rst')
-RELEASE_README_FILE = os.path.join(_ROOT_DIR, 'README.rst.release.template')
-INDEX_FILE = os.path.join(_ROOT_DIR, 'docs', 'index.rst')
+README_FILE = os.path.join(_ROOT_DIR, "README.rst")
+RELEASE_README_FILE = os.path.join(_ROOT_DIR, "README.rst.release.template")
+INDEX_FILE = os.path.join(_ROOT_DIR, "docs", "index.rst")
 RELEASE_INDEX_FILE = os.path.join(
-    _ROOT_DIR, 'docs', 'index.rst.release.template'
+    _ROOT_DIR, "docs", "index.rst.release.template"
 )
-DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst.template')
-DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, 'DEVELOPMENT.rst')
-NATIVE_LIBS_FILE = os.path.join(_ROOT_DIR, 'docs', 'native-libraries.rst')
+DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst.template")
+DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst")
+NATIVE_LIBS_FILE = os.path.join(_ROOT_DIR, "docs", "native-libraries.rst")
 NATIVE_LIBS_TEMPLATE = os.path.join(
-    _ROOT_DIR, 'docs', 'native-libraries.rst.template'
+    _ROOT_DIR, "docs", "native-libraries.rst.template"
 )
 
 
@@ -58,11 +58,11 @@ def get_version():
         str: The current version in ``setup.py``.
     """
     # "Spoof" the ``setup.py`` helper modules.
-    sys.modules['setup_helpers'] = object()
-    sys.modules['setup_helpers_osx'] = object()
-    sys.modules['setup_helpers_windows'] = object()
-    filename = os.path.join(_ROOT_DIR, 'setup.py')
-    setup_mod = imp.load_source('setup', filename)
+    sys.modules["setup_helpers"] = object()
+    sys.modules["setup_helpers_osx"] = object()
+    sys.modules["setup_helpers_windows"] = object()
+    filename = os.path.join(_ROOT_DIR, "setup.py")
+    setup_mod = imp.load_source("setup", filename)
     return setup_mod.VERSION
 
 
@@ -84,7 +84,7 @@ def populate_readme(
         travis_build (int): The Travis CI build ID corresponding to
             the release.
     """
-    with open(RELEASE_README_FILE, 'r') as file_obj:
+    with open(RELEASE_README_FILE, "r") as file_obj:
         template = file_obj.read()
     contents = template.format(
         version=version,
@@ -93,7 +93,7 @@ def populate_readme(
         coveralls_build=coveralls_build,
         travis_build=travis_build,
     )
-    with open(README_FILE, 'w') as file_obj:
+    with open(README_FILE, "w") as file_obj:
         file_obj.write(contents)
 
 
@@ -113,7 +113,7 @@ def populate_index(
         travis_build (int): The Travis CI build ID corresponding to
             the release.
     """
-    with open(RELEASE_INDEX_FILE, 'r') as file_obj:
+    with open(RELEASE_INDEX_FILE, "r") as file_obj:
         template = file_obj.read()
     contents = template.format(
         version=version,
@@ -122,7 +122,7 @@ def populate_index(
         coveralls_build=coveralls_build,
         travis_build=travis_build,
     )
-    with open(INDEX_FILE, 'w') as file_obj:
+    with open(INDEX_FILE, "w") as file_obj:
         file_obj.write(contents)
 
 
@@ -132,10 +132,10 @@ def populate_native_libraries(version):
     Args:
         version (str): The current version.
     """
-    with open(NATIVE_LIBS_TEMPLATE, 'r') as file_obj:
+    with open(NATIVE_LIBS_TEMPLATE, "r") as file_obj:
         template = file_obj.read()
     contents = template.format(revision=version)
-    with open(NATIVE_LIBS_FILE, 'w') as file_obj:
+    with open(NATIVE_LIBS_FILE, "w") as file_obj:
         file_obj.write(contents)
 
 
@@ -147,10 +147,10 @@ def populate_development(version):
     Args:
         version (str): The current version.
     """
-    with open(DEVELOPMENT_TEMPLATE, 'r') as file_obj:
+    with open(DEVELOPMENT_TEMPLATE, "r") as file_obj:
         template = file_obj.read()
     contents = template.format(revision=version, rtd_version=version)
-    with open(DEVELOPMENT_FILE, 'w') as file_obj:
+    with open(DEVELOPMENT_FILE, "w") as file_obj:
         file_obj.write(contents)
 
 
@@ -161,10 +161,10 @@ def main():
     build IDs.
     """
     version = get_version()
-    circleci_build = six.moves.input('CircleCI Build ID: ')
-    appveyor_build = six.moves.input('AppVeyor Build ID: ')
-    coveralls_build = six.moves.input('Coveralls Build ID: ')
-    travis_build = six.moves.input('Travis Build ID: ')
+    circleci_build = six.moves.input("CircleCI Build ID: ")
+    appveyor_build = six.moves.input("AppVeyor Build ID: ")
+    coveralls_build = six.moves.input("Coveralls Build ID: ")
+    travis_build = six.moves.input("Travis Build ID: ")
     populate_readme(
         version, circleci_build, appveyor_build, coveralls_build, travis_build
     )
@@ -175,5 +175,5 @@ def main():
     populate_development(version)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

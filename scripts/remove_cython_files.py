@@ -28,15 +28,15 @@ ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
 def main():
     # Make sure we are running in the project root.
     os.chdir(ROOT_DIR)
-    c_glob = os.path.join('src', 'bezier', '*.c')
-    all_files = subprocess.check_output(['git', 'ls-files', c_glob])
-    all_files = all_files.decode('utf-8').strip()
+    c_glob = os.path.join("src", "bezier", "*.c")
+    all_files = subprocess.check_output(["git", "ls-files", c_glob])
+    all_files = all_files.decode("utf-8").strip()
     if not all_files:
         return
 
-    for filename in all_files.split('\n'):
+    for filename in all_files.split("\n"):
         os.remove(filename)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

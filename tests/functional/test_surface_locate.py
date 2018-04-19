@@ -63,9 +63,9 @@ def make_plot(surface, point):
     seaborn.set()  # Required in `seaborn >= 0.8`
     ax = surface.plot(64)
     ax.plot(
-        point[0, :], point[1, :], color='black', marker='o', linestyle='None'
+        point[0, :], point[1, :], color="black", marker="o", linestyle="None"
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
     if CONFIG.save_plot:
         CONFIG.save_fig()
@@ -131,5 +131,5 @@ def test_surface4_and_point4():
     check_point(SURFACE4, 4, 0.25, 0.5)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     CONFIG.run(globals())

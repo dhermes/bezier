@@ -17,7 +17,7 @@ from tests.unit import utils
 
 
 class TestCurve(utils.NumPyTestCase):
-    ZEROS = np.zeros((2, 2), order='F')
+    ZEROS = np.zeros((2, 2), order="F")
 
     @staticmethod
     def _get_target_class():
@@ -39,7 +39,7 @@ class TestCurve(utils.NumPyTestCase):
         nodes = np.asfortranarray([1.0, 2.0])
         with self.assertRaises(ValueError):
             self._make_one(nodes, None)
-        nodes = np.zeros((2, 2, 2), order='F')
+        nodes = np.zeros((2, 2, 2), order="F")
         with self.assertRaises(ValueError):
             self._make_one(nodes, None)
 
@@ -65,27 +65,27 @@ class TestCurve(utils.NumPyTestCase):
     def test___dict___property(self):
         curve = self._make_one(self.ZEROS, 1, _copy=False)
         props_dict = curve.__dict__
-        expected = {'_nodes': self.ZEROS, '_dimension': 2, '_degree': 1}
+        expected = {"_nodes": self.ZEROS, "_dimension": 2, "_degree": 1}
         self.assertEqual(props_dict, expected)
         # Check that modifying ``props_dict`` won't modify ``curve``.
-        expected['_dimension'] = 47
-        self.assertNotEqual(curve._dimension, expected['_dimension'])
+        expected["_dimension"] = 47
+        self.assertNotEqual(curve._dimension, expected["_dimension"])
 
     def _copy_helper(self, **kwargs):
         np_shape = (2, 2)
-        curve = self._make_one(np.zeros(np_shape, order='F'), 1, **kwargs)
+        curve = self._make_one(np.zeros(np_shape, order="F"), 1, **kwargs)
         fake_nodes = unittest.mock.Mock(
-            ndim=2, shape=np_shape, spec=['ndim', 'shape', 'copy']
+            ndim=2, shape=np_shape, spec=["ndim", "shape", "copy"]
         )
         curve._nodes = fake_nodes
-        copied_nodes = np.zeros(np_shape, order='F')
+        copied_nodes = np.zeros(np_shape, order="F")
         fake_nodes.copy.return_value = copied_nodes
         new_curve = curve._copy()
         self.assertIsInstance(new_curve, self._get_target_class())
         self.assertEqual(new_curve._degree, curve._degree)
         self.assertEqual(new_curve._dimension, curve._dimension)
         self.assertIs(new_curve._nodes, copied_nodes)
-        fake_nodes.copy.assert_called_once_with(order='F')
+        fake_nodes.copy.assert_called_once_with(order="F")
 
     def test__copy(self):
         self._copy_helper()
@@ -117,9 +117,9 @@ class TestCurve(utils.NumPyTestCase):
         with self.assertRaises(NotImplementedError):
             curve.plot(32)
 
-    @unittest.mock.patch('bezier._plot_helpers.new_axis')
+    @unittest.mock.patch("bezier._plot_helpers.new_axis")
     def test_plot_defaults(self, new_axis_mock):
-        ax = unittest.mock.Mock(spec=['plot'])
+        ax = unittest.mock.Mock(spec=["plot"])
         new_axis_mock.return_value = ax
         nodes = np.asfortranarray([[0.0, 1.0], [1.0, 3.0]])
         curve = self._make_one(nodes, 1, _copy=False)
@@ -134,12 +134,12 @@ class TestCurve(utils.NumPyTestCase):
         call = ax.plot.mock_calls[0]
         utils.check_plot_call(self, call, nodes, color=None, alpha=None)
 
-    @unittest.mock.patch('bezier._plot_helpers.new_axis')
+    @unittest.mock.patch("bezier._plot_helpers.new_axis")
     def test_plot_explicit(self, new_axis_mock):
         nodes = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
         curve = self._make_one(nodes, 1, _copy=False)
         num_pts = 2  # This value is crucial for the plot call.
-        ax = unittest.mock.Mock(spec=['plot'])
+        ax = unittest.mock.Mock(spec=["plot"])
         color = (0.75, 1.0, 1.0)
         alpha = 0.625
         result = curve.plot(num_pts, color=color, alpha=alpha, ax=ax)
@@ -174,7 +174,7 @@ class TestCurve(utils.NumPyTestCase):
         with self.assertRaises(ValueError) as exc_info:
             curve.intersect(curve, strategy=strategy)
         exc_args = exc_info.exception.args
-        self.assertEqual(exc_args, ('Unexpected strategy.', strategy))
+        self.assertEqual(exc_args, ("Unexpected strategy.", strategy))
 
     def test_intersect_algebraic(self):
         from bezier import _intersection_helpers

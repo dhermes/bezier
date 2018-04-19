@@ -21,7 +21,7 @@ import difflib
 import os
 import sys
 
-NOT_EXISTS = '{} does not exist.'
+NOT_EXISTS = "{} does not exist."
 
 
 def diff(filename1, filename2):
@@ -33,30 +33,30 @@ def diff(filename1, filename2):
         msg = NOT_EXISTS.format(filename2)
         print(msg, file=sys.stderr)
         sys.exit(1)
-    with open(filename1, 'r') as file_obj:
+    with open(filename1, "r") as file_obj:
         lines1 = file_obj.readlines()
-    with open(filename2, 'r') as file_obj:
+    with open(filename2, "r") as file_obj:
         lines2 = file_obj.readlines()
     if lines1 == lines2:
-        msg = '{} and {} are identical'.format(filename1, filename2)
+        msg = "{} and {} are identical".format(filename1, filename2)
         print(msg)
     else:
         diff_lines = difflib.context_diff(
             lines1, lines2, fromfile=filename1, tofile=filename2
         )
-        print(''.join(diff_lines))
+        print("".join(diff_lines))
         sys.exit(1)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Print diff between two files.'
+        description="Print diff between two files."
     )
-    parser.add_argument('filename1', help='First file to compare.')
-    parser.add_argument('filename2', help='Second file to compare.')
+    parser.add_argument("filename1", help="First file to compare.")
+    parser.add_argument("filename2", help="Second file to compare.")
     args = parser.parse_args()
     diff(args.filename1, args.filename2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

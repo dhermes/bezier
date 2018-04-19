@@ -17,7 +17,7 @@ from tests.functional import utils
 
 
 def get_bounds():
-    if os.environ.get('CIRCLECI') == 'true':
+    if os.environ.get("CIRCLECI") == "true":
         return 225.0 / 16384.0, 275.0 / 16384.0
 
     else:
@@ -30,7 +30,7 @@ def intersect_all(intersections):
 
 
 @pytest.mark.benchmark(
-    group='surface-intersection', disable_gc=True, warmup=False
+    group="surface-intersection", disable_gc=True, warmup=False
 )
 def test_intersections(benchmark):
     _, intersections = utils.surface_intersections_info()

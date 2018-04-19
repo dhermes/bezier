@@ -20,14 +20,14 @@ import memory_profiler
 from tests.functional import utils
 
 FAILURES = (42, 45)
-ERR_TEMPLATE = 'Memory usage {:g} outside of expected range {}-{}KB.'
-SUCCESS_TEMPLATE = 'Memory usage: {:g}KB.'
+ERR_TEMPLATE = "Memory usage {:g} outside of expected range {}-{}KB."
+SUCCESS_TEMPLATE = "Memory usage: {:g}KB."
 
 
 def get_bounds():
     # NOTE: These bounds assume **just** the interpeter is running this code.
     #       When using a test runner like `py.test`, usage goes up by 4-8 KB.
-    if os.environ.get('CIRCLECI') == 'true':
+    if os.environ.get("CIRCLECI") == "true":
         return 28, 41
 
     else:
@@ -61,5 +61,5 @@ def test_main():
     sys.exit(status)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_main()

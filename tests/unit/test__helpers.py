@@ -187,9 +187,9 @@ class Test__cross_product(utils.NumPyTestCase):
         vec0 = np.asfortranarray([1.0, 7.0]) / 8.0
         vec1 = np.asfortranarray([-11.0, 24.0]) / 32.0
         result = self._call_function_under_test(vec0, vec1)
-        vec0_as_3d = np.zeros((3,), order='F')
+        vec0_as_3d = np.zeros((3,), order="F")
         vec0_as_3d[:2] = vec0
-        vec1_as_3d = np.zeros((3,), order='F')
+        vec1_as_3d = np.zeros((3,), order="F")
         vec1_as_3d[:2] = vec1
         actual_cross = np.cross(vec0_as_3d, vec1_as_3d)
         expected = np.asfortranarray([0.0, 0.0, result])
@@ -435,12 +435,12 @@ class Test__simple_convex_hull(utils.NumPyTestCase):
         self.assertEqual(expected, polygon)
 
     def test_zero_points(self):
-        points = np.empty((2, 0), order='F')
+        points = np.empty((2, 0), order="F")
         polygon = self._call_function_under_test(points)
         self.assertEqual(polygon.shape, (2, 0))
 
     def test_10x10_grid(self):
-        points = np.empty((2, 100), order='F')
+        points = np.empty((2, 100), order="F")
         index = 0
         for i in six.moves.xrange(10):
             for j in six.moves.xrange(10):
@@ -575,7 +575,7 @@ class Test_solve2x2(unittest.TestCase):
         self.assertEqual(y_val, 1.0)
 
     def test_zero_column(self):
-        lhs = np.zeros((2, 2), order='F')
+        lhs = np.zeros((2, 2), order="F")
         singular, x_val, y_val = self._call_function_under_test(lhs, None)
         self.assertTrue(singular)
         self.assertIsNone(x_val)
@@ -624,27 +624,27 @@ class TestUnsupportedDegree(unittest.TestCase):
     def test___str__zero_supported(self):
         exc = self._make_one(1)
         as_str = str(exc)
-        expected = 'degree=1'
+        expected = "degree=1"
         self.assertEqual(as_str, expected)
 
     def test___str__one_supported(self):
         exc = self._make_one(2, supported=(1,))
         as_str = str(exc)
-        expected = 'The only degree supported at this time is 1 (degree=2)'
+        expected = "The only degree supported at this time is 1 (degree=2)"
         self.assertEqual(as_str, expected)
 
     def test___str__multiple_supported(self):
         exc = self._make_one(3, supported=(1, 2))
         as_str = str(exc)
         expected = (
-            'The only degrees supported at this time are 1 and 2 (degree=3)'
+            "The only degrees supported at this time are 1 and 2 (degree=3)"
         )
         self.assertEqual(as_str, expected)
         exc = self._make_one(4, supported=(1, 3, 2))
         as_str = str(exc)
         expected = (
-            'The only degrees supported at this '
-            'time are 1, 3 and 2 (degree=4)'
+            "The only degrees supported at this "
+            "time are 1, 3 and 2 (degree=4)"
         )
         self.assertEqual(as_str, expected)
 

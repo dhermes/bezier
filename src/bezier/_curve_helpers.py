@@ -140,8 +140,8 @@ def make_subdivision_matrices(degree):
         Tuple[numpy.ndarray, numpy.ndarray]: The matrices used to convert
            the nodes into left and right nodes, respectively.
     """
-    left = np.zeros((degree + 1, degree + 1), order='F')
-    right = np.zeros((degree + 1, degree + 1), order='F')
+    left = np.zeros((degree + 1, degree + 1), order="F")
+    right = np.zeros((degree + 1, degree + 1), order="F")
     left[0, 0] = 1.0
     right[-1, -1] = 1.0
     for col in six.moves.xrange(1, degree + 1):
@@ -259,10 +259,10 @@ def _evaluate_multi_barycentric(nodes, lambda1, lambda2):
     # columns of ``nodes``.
     lambda1 = lambda1[np.newaxis, :]
     lambda2 = lambda2[np.newaxis, :]
-    result = np.zeros((dimension, num_vals), order='F')
+    result = np.zeros((dimension, num_vals), order="F")
     result += lambda1 * nodes[:, [0]]
     binom_val = 1.0
-    lambda2_pow = np.ones((1, num_vals), order='F')
+    lambda2_pow = np.ones((1, num_vals), order="F")
     for index in six.moves.xrange(1, degree):
         lambda2_pow *= lambda2
         binom_val = (binom_val * (degree - index + 1)) / index
@@ -335,7 +335,7 @@ def _compute_length(nodes):
         return np.linalg.norm(first_deriv[:, 0], ord=2)
 
     if _scipy_int is None:
-        raise OSError('This function requires SciPy for quadrature.')
+        raise OSError("This function requires SciPy for quadrature.")
 
     size_func = functools.partial(vec_size, first_deriv)
     length, _ = _scipy_int.quad(size_func, 0.0, 1.0)
@@ -368,14 +368,14 @@ def _elevate_nodes(nodes):
         numpy.ndarray: The nodes of the degree-elevated curve.
     """
     dimension, num_nodes = np.shape(nodes)
-    new_nodes = np.empty((dimension, num_nodes + 1), order='F')
+    new_nodes = np.empty((dimension, num_nodes + 1), order="F")
     multipliers = np.arange(1, num_nodes, dtype=_FLOAT64)[np.newaxis, :]
     denominator = float(num_nodes)
     new_nodes[:, 1:-1] = (
-        multipliers *
-        nodes[:, :-1] +
-        (denominator - multipliers) *
-        nodes[:, 1:]
+        multipliers
+        * nodes[:, :-1]
+        + (denominator - multipliers)
+        * nodes[:, 1:]
     )
     # Hold off on division until the end, to (attempt to) avoid round-off.
     new_nodes /= denominator
@@ -429,6 +429,8 @@ def _specialize_curve(nodes, start, end):
     Returns:
         numpy.ndarray: The control points for the specialized curve.
     """
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-locals
     _, num_nodes = np.shape(nodes)
     # Uses start-->0, end-->1 to represent the specialization used.
@@ -447,12 +449,11 @@ def _specialize_curve(nodes, start, end):
                     sub_nodes, *weights[next_id]
                 )
         partial_vals = new_partial
-    result = np.empty(nodes.shape, order='F')
+    result = np.empty(nodes.shape, order="F")
     for index in six.moves.xrange(num_nodes):
         key = (0,) * (num_nodes - index - 1) + (1,) * index
         result[:, [index]] = partial_vals[key]
     return result
-    # pylint: enable=too-many-locals
 
 
 def _evaluate_hodograph(s, nodes):
@@ -555,7 +556,7 @@ def _get_curvature(nodes, tangent_vec, s):
         second_deriv, np.asfortranarray([s])
     )
     curvature = _helpers.cross_product(
-        tangent_vec.ravel(order='F'), concavity.ravel(order='F')
+        tangent_vec.ravel(order="F"), concavity.ravel(order="F")
     )
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
     curvature /= np.linalg.norm(tangent_vec[:, 0], ord=2) ** 3
@@ -730,8 +731,8 @@ def _newton_refine(nodes, point, s):
     # Each array is 2 x 1 (i.e. a column vector), we want the vector
     # dot product.
     delta_s = (
-        np.vdot(pt_delta[:, 0], derivative[:, 0]) /
-        np.vdot(derivative[:, 0], derivative[:, 0])
+        np.vdot(pt_delta[:, 0], derivative[:, 0])
+        / np.vdot(derivative[:, 0], derivative[:, 0])
     )
     return s + delta_s
 
@@ -771,7 +772,7 @@ def _locate_point(nodes, point):
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for start, end, candidate in candidates:
-            if _helpers.contains_nd(candidate, point.ravel(order='F')):
+            if _helpers.contains_nd(candidate, point.ravel(order="F")):
                 midpoint = 0.5 * (start + end)
                 left, right = subdivide_nodes(candidate)
                 next_candidates.extend(
@@ -783,7 +784,7 @@ def _locate_point(nodes, point):
 
     params = [(start, end) for start, end, _ in candidates]
     if np.std(params) > _LOCATE_STD_CAP:
-        raise ValueError('Parameters not close enough to one another', params)
+        raise ValueError("Parameters not close enough to one another", params)
 
     s_approx = np.mean(params)
     s_approx = newton_refine(nodes, point, s_approx)
@@ -861,9 +862,9 @@ def projection_error(nodes, projected):
     Returns:
         float: The relative error.
     """
-    relative_err = np.linalg.norm(nodes - projected, ord='fro')
+    relative_err = np.linalg.norm(nodes - projected, ord="fro")
     if relative_err != 0.0:
-        relative_err /= np.linalg.norm(nodes, ord='fro')
+        relative_err /= np.linalg.norm(nodes, ord="fro")
     return relative_err
 
 

@@ -44,10 +44,10 @@ class CustomHTMLWriter(html.HTMLTranslator):
 
         This verifies the state of each literal / code block.
         """
-        language = node.attributes.get('language', '')
-        test_type = node.attributes.get('testnodetype', '')
-        if test_type != 'doctest':
-            if language.lower() in ('', 'python'):
+        language = node.attributes.get("language", "")
+        test_type = node.attributes.get("testnodetype", "")
+        if test_type != "doctest":
+            if language.lower() in ("", "python"):
                 msg = _LITERAL_ERR_TEMPLATE.format(
                     node.rawsource, language, test_type
                 )
@@ -63,4 +63,4 @@ def setup(app):
     Args:
         app (sphinx.application.Sphinx): A running Sphinx app.
     """
-    app.set_translator('html', CustomHTMLWriter)
+    app.set_translator("html", CustomHTMLWriter)

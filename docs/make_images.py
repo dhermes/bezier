@@ -41,8 +41,8 @@ from bezier import _plot_helpers
 if seaborn is not None:
     seaborn.set()  # Required in `seaborn >= 0.8`
 _DOCS_DIR = os.path.abspath(os.path.dirname(__file__))
-IMAGES_DIR = os.path.join(_DOCS_DIR, 'images')
-NO_IMAGES = 'GENERATE_IMAGES' not in os.environ
+IMAGES_DIR = os.path.join(_DOCS_DIR, "images")
+NO_IMAGES = "GENERATE_IMAGES" not in os.environ
 
 
 def save_image(figure, filename):
@@ -53,7 +53,7 @@ def save_image(figure, filename):
             directory info).
     """
     path = os.path.join(IMAGES_DIR, filename)
-    figure.savefig(path, bbox_inches='tight')
+    figure.savefig(path, bbox_inches="tight")
     plt.close(figure)
 
 
@@ -71,7 +71,7 @@ def stack1d(*points):
         numpy.ndarray: The array with each point in ``points`` as its
         columns.
     """
-    result = np.empty((2, len(points)), order='F')
+    result = np.empty((2, len(points)), order="F")
     for index, point in enumerate(points):
         result[:, index] = point
     return result
@@ -87,9 +87,11 @@ def linearization_error(nodes):
     midpoints = np.hstack([curve.evaluate(0.5), line.evaluate(0.5)])
     ax = curve.plot(256)
     line.plot(256, ax=ax)
-    ax.plot(midpoints[0, :], midpoints[1, :], color='black', linestyle='dashed')
-    ax.axis('scaled')
-    save_image(ax.figure, 'linearization_error.png')
+    ax.plot(
+        midpoints[0, :], midpoints[1, :], color="black", linestyle="dashed"
+    )
+    ax.axis("scaled")
+    save_image(ax.figure, "linearization_error.png")
 
 
 def newton_refine1(s, new_s, curve1, t, new_t, curve2):
@@ -104,21 +106,21 @@ def newton_refine1(s, new_s, curve1, t, new_t, curve2):
     ax.plot(
         points[0, :],
         points[1, :],
-        color='black',
-        linestyle='None',
-        marker='o',
+        color="black",
+        linestyle="None",
+        marker="o",
         markeredgewidth=1,
-        markerfacecolor='None',
+        markerfacecolor="None",
     )
     ax.plot(
         points_new[0, :],
         points_new[1, :],
-        color='black',
-        linestyle='None',
-        marker='o',
+        color="black",
+        linestyle="None",
+        marker="o",
     )
-    ax.axis('scaled')
-    save_image(ax.figure, 'newton_refine1.png')
+    ax.axis("scaled")
+    save_image(ax.figure, "newton_refine1.png")
 
 
 def newton_refine2(s_vals, curve1, curve2):
@@ -131,12 +133,14 @@ def newton_refine2(s_vals, curve1, curve2):
     curve2.plot(256, ax=ax)
     ax.lines[-1].zorder = 1
     points = curve1.evaluate_multi(np.asfortranarray(s_vals))
-    colors = seaborn.dark_palette('blue', 5)
-    ax.scatter(points[0, :], points[1, :], c=colors, s=20, alpha=0.75, zorder=2)
-    ax.axis('scaled')
+    colors = seaborn.dark_palette("blue", 5)
+    ax.scatter(
+        points[0, :], points[1, :], c=colors, s=20, alpha=0.75, zorder=2
+    )
+    ax.axis("scaled")
     ax.set_xlim(0.0, 1.0)
     ax.set_ylim(0.0, 1.0)
-    save_image(ax.figure, 'newton_refine2.png')
+    save_image(ax.figure, "newton_refine2.png")
 
 
 def newton_refine3(s_vals, curve1, curve2):
@@ -149,12 +153,14 @@ def newton_refine3(s_vals, curve1, curve2):
     curve2.plot(256, ax=ax)
     ax.lines[-1].zorder = 1
     points = curve1.evaluate_multi(np.asfortranarray(s_vals))
-    colors = seaborn.dark_palette('blue', 6)
-    ax.scatter(points[0, :], points[1, :], c=colors, s=20, alpha=0.75, zorder=2)
-    ax.axis('scaled')
+    colors = seaborn.dark_palette("blue", 6)
+    ax.scatter(
+        points[0, :], points[1, :], c=colors, s=20, alpha=0.75, zorder=2
+    )
+    ax.axis("scaled")
     ax.set_xlim(0.0, 1.0)
     ax.set_ylim(0.0, 0.5625)
-    save_image(ax.figure, 'newton_refine3.png')
+    save_image(ax.figure, "newton_refine3.png")
 
 
 def segment_intersection1(start0, end0, start1, end1, s):
@@ -167,9 +173,9 @@ def segment_intersection1(start0, end0, start1, end1, s):
     ax = line0.plot(2)
     line1.plot(256, ax=ax)
     (x_val,), (y_val,) = line0.evaluate(s)
-    ax.plot([x_val], [y_val], color='black', marker='o')
-    ax.axis('scaled')
-    save_image(ax.figure, 'segment_intersection1.png')
+    ax.plot([x_val], [y_val], color="black", marker="o")
+    ax.axis("scaled")
+    save_image(ax.figure, "segment_intersection1.png")
 
 
 def segment_intersection2(start0, end0, start1, end1):
@@ -181,8 +187,8 @@ def segment_intersection2(start0, end0, start1, end1):
     line1 = bezier.Curve.from_nodes(stack1d(start1, end1))
     ax = line0.plot(2)
     line1.plot(2, ax=ax)
-    ax.axis('scaled')
-    save_image(ax.figure, 'segment_intersection2.png')
+    ax.axis("scaled")
+    save_image(ax.figure, "segment_intersection2.png")
 
 
 def helper_parallel_lines(start0, end0, start1, end1, filename):
@@ -193,15 +199,15 @@ def helper_parallel_lines(start0, end0, start1, end1, filename):
     figure = plt.figure()
     ax = figure.gca()
     points = stack1d(start0, end0, start1, end1)
-    ax.plot(points[0, :2], points[1, :2], marker='o')
-    ax.plot(points[0, 2:], points[1, 2:], marker='o')
-    ax.axis('scaled')
+    ax.plot(points[0, :2], points[1, :2], marker="o")
+    ax.plot(points[0, 2:], points[1, 2:], marker="o")
+    ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
     save_image(figure, filename)
 
 
 def add_patch(
-    ax, nodes, color, with_nodes=True, alpha=0.625, node_color='black'
+    ax, nodes, color, with_nodes=True, alpha=0.625, node_color="black"
 ):
     # ``nodes`` is stored Fortran-contiguous with ``x-y`` points in each
     # column but ``Path()`` wants ``x-y`` points in each row.
@@ -213,8 +219,8 @@ def add_patch(
             nodes[0, :],
             nodes[1, :],
             color=node_color,
-            linestyle='None',
-            marker='o',
+            linestyle="None",
+            marker="o",
         )
 
 
@@ -227,13 +233,13 @@ def curve_constructor(curve):
     line = ax.lines[0]
     nodes = curve._nodes
     ax.plot(
-        nodes[0, :], nodes[1, :], color='black', linestyle='None', marker='o'
+        nodes[0, :], nodes[1, :], color="black", linestyle="None", marker="o"
     )
     add_patch(ax, nodes, line.get_color())
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 1.125)
     ax.set_ylim(-0.0625, 0.5625)
-    save_image(ax.figure, 'curve_constructor.png')
+    save_image(ax.figure, "curve_constructor.png")
 
 
 def curve_evaluate(curve):
@@ -244,12 +250,12 @@ def curve_evaluate(curve):
     ax = curve.plot(256)
     points = curve.evaluate_multi(np.asfortranarray([0.75]))
     ax.plot(
-        points[0, :], points[1, :], color='black', linestyle='None', marker='o'
+        points[0, :], points[1, :], color="black", linestyle="None", marker="o"
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 1.125)
     ax.set_ylim(-0.0625, 0.5625)
-    save_image(ax.figure, 'curve_evaluate.png')
+    save_image(ax.figure, "curve_evaluate.png")
 
 
 def curve_subdivide(curve, left, right):
@@ -259,17 +265,17 @@ def curve_subdivide(curve, left, right):
 
     figure = plt.figure()
     ax = figure.gca()
-    add_patch(ax, curve._nodes, 'gray')
+    add_patch(ax, curve._nodes, "gray")
     ax = left.plot(256, ax=ax)
     line = ax.lines[-1]
     add_patch(ax, left._nodes, line.get_color())
     right.plot(256, ax=ax)
     line = ax.lines[-1]
     add_patch(ax, right._nodes, line.get_color())
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.125, 3.125)
-    save_image(ax.figure, 'curve_subdivide.png')
+    save_image(ax.figure, "curve_subdivide.png")
 
 
 def curve_intersect(curve1, curve2, s_vals):
@@ -283,14 +289,14 @@ def curve_intersect(curve1, curve2, s_vals):
     ax.plot(
         intersections[0, :],
         intersections[1, :],
-        color='black',
-        linestyle='None',
-        marker='o',
+        color="black",
+        linestyle="None",
+        marker="o",
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(0.0, 0.75)
     ax.set_ylim(0.0, 0.75)
-    save_image(ax.figure, 'curve_intersect.png')
+    save_image(ax.figure, "curve_intersect.png")
 
 
 def surface_constructor(surface):
@@ -306,55 +312,55 @@ def surface_constructor(surface):
     ax.text(
         nodes[0, 0],
         nodes[1, 0],
-        r'$v_0$',
+        r"$v_0$",
         fontsize=20,
-        verticalalignment='top',
-        horizontalalignment='right',
+        verticalalignment="top",
+        horizontalalignment="right",
     )
     ax.text(
         nodes[0, 1],
         nodes[1, 1],
-        r'$v_1$',
+        r"$v_1$",
         fontsize=20,
-        verticalalignment='top',
-        horizontalalignment='center',
+        verticalalignment="top",
+        horizontalalignment="center",
     )
     ax.text(
         nodes[0, 2],
         nodes[1, 2],
-        r'$v_2$',
+        r"$v_2$",
         fontsize=20,
-        verticalalignment='top',
-        horizontalalignment='left',
+        verticalalignment="top",
+        horizontalalignment="left",
     )
     ax.text(
         nodes[0, 3] - delta,
         nodes[1, 3],
-        r'$v_3$',
+        r"$v_3$",
         fontsize=20,
-        verticalalignment='center',
-        horizontalalignment='right',
+        verticalalignment="center",
+        horizontalalignment="right",
     )
     ax.text(
         nodes[0, 4] + delta,
         nodes[1, 4],
-        r'$v_4$',
+        r"$v_4$",
         fontsize=20,
-        verticalalignment='center',
-        horizontalalignment='left',
+        verticalalignment="center",
+        horizontalalignment="left",
     )
     ax.text(
         nodes[0, 5],
         nodes[1, 5] + delta,
-        r'$v_5$',
+        r"$v_5$",
         fontsize=20,
-        verticalalignment='bottom',
-        horizontalalignment='center',
+        verticalalignment="bottom",
+        horizontalalignment="center",
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 1.125)
     ax.set_ylim(-0.125, 1.125)
-    save_image(ax.figure, 'surface_constructor.png')
+    save_image(ax.figure, "surface_constructor.png")
 
 
 def surface_evaluate_barycentric(surface, point):
@@ -364,12 +370,12 @@ def surface_evaluate_barycentric(surface, point):
 
     ax = surface.plot(256)
     ax.plot(
-        point[0, :], point[1, :], color='black', linestyle='None', marker='o'
+        point[0, :], point[1, :], color="black", linestyle="None", marker="o"
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 1.125)
     ax.set_ylim(-0.125, 1.125)
-    save_image(ax.figure, 'surface_evaluate_barycentric.png')
+    save_image(ax.figure, "surface_evaluate_barycentric.png")
 
 
 def surface_evaluate_cartesian_multi(surface, points):
@@ -379,38 +385,38 @@ def surface_evaluate_cartesian_multi(surface, points):
 
     ax = surface.plot(256)
     ax.plot(
-        points[0, :], points[1, :], color='black', linestyle='None', marker='o'
+        points[0, :], points[1, :], color="black", linestyle="None", marker="o"
     )
     delta = 1.0 / 32.0
     font_size = 18
     ax.text(
         points[0, 0],
         points[1, 0],
-        r'$w_0$',
+        r"$w_0$",
         fontsize=font_size,
-        verticalalignment='top',
-        horizontalalignment='right',
+        verticalalignment="top",
+        horizontalalignment="right",
     )
     ax.text(
         points[0, 1] + 2 * delta,
         points[1, 1],
-        r'$w_1$',
+        r"$w_1$",
         fontsize=font_size,
-        verticalalignment='center',
-        horizontalalignment='left',
+        verticalalignment="center",
+        horizontalalignment="left",
     )
     ax.text(
         points[0, 2],
         points[1, 2] + delta,
-        r'$w_2$',
+        r"$w_2$",
         fontsize=font_size,
-        verticalalignment='bottom',
-        horizontalalignment='left',
+        verticalalignment="bottom",
+        horizontalalignment="left",
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-3.125, 2.375)
     ax.set_ylim(-0.25, 2.125)
-    save_image(ax.figure, 'surface_evaluate_cartesian_multi.png')
+    save_image(ax.figure, "surface_evaluate_cartesian_multi.png")
 
 
 def surface_evaluate_barycentric_multi(surface, points):
@@ -420,46 +426,46 @@ def surface_evaluate_barycentric_multi(surface, points):
 
     ax = surface.plot(256)
     ax.plot(
-        points[0, :], points[1, :], color='black', linestyle='None', marker='o'
+        points[0, :], points[1, :], color="black", linestyle="None", marker="o"
     )
     delta = 1.0 / 32.0
     font_size = 18
     ax.text(
         points[0, 0],
         points[1, 0] + delta,
-        r'$w_0$',
+        r"$w_0$",
         fontsize=font_size,
-        verticalalignment='bottom',
-        horizontalalignment='center',
+        verticalalignment="bottom",
+        horizontalalignment="center",
     )
     ax.text(
         points[0, 1],
         points[1, 1] - delta,
-        r'$w_1$',
+        r"$w_1$",
         fontsize=font_size,
-        verticalalignment='top',
-        horizontalalignment='right',
+        verticalalignment="top",
+        horizontalalignment="right",
     )
     ax.text(
         points[0, 2],
         points[1, 2],
-        r'$w_2$',
+        r"$w_2$",
         fontsize=font_size,
-        verticalalignment='bottom',
-        horizontalalignment='left',
+        verticalalignment="bottom",
+        horizontalalignment="left",
     )
     ax.text(
         points[0, 3],
         points[1, 3],
-        r'$w_3$',
+        r"$w_3$",
         fontsize=font_size,
-        verticalalignment='top',
-        horizontalalignment='right',
+        verticalalignment="top",
+        horizontalalignment="right",
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-3.125, 2.125)
     ax.set_ylim(-0.3125, 2.125)
-    save_image(ax.figure, 'surface_evaluate_barycentric_multi.png')
+    save_image(ax.figure, "surface_evaluate_barycentric_multi.png")
 
 
 def surface_is_valid1(surface):
@@ -468,10 +474,10 @@ def surface_is_valid1(surface):
         return
 
     ax = surface.plot(256)
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.125, 2.125)
-    save_image(ax.figure, 'surface_is_valid1.png')
+    save_image(ax.figure, "surface_is_valid1.png")
 
 
 def surface_is_valid2(surface):
@@ -480,10 +486,10 @@ def surface_is_valid2(surface):
         return
 
     ax = surface.plot(256)
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 1.0625)
     ax.set_ylim(-0.0625, 1.0625)
-    save_image(ax.figure, 'surface_is_valid2.png')
+    save_image(ax.figure, "surface_is_valid2.png")
 
 
 def surface_is_valid3(surface):
@@ -503,7 +509,7 @@ def surface_is_valid3(surface):
     t_discrim = np.sqrt((1.0 - s_vals) * (1.0 - 5.0 * s_vals))
     t_top = 0.5 * (1.0 - s_vals + t_discrim)
     t_bottom = 0.5 * (1.0 - s_vals - t_discrim)
-    jacobian_zero_params = np.zeros((2 * N - 1, 2), order='F')
+    jacobian_zero_params = np.zeros((2 * N - 1, 2), order="F")
     jacobian_zero_params[:N, 0] = s_vals
     jacobian_zero_params[:N, 1] = t_top
     jacobian_zero_params[N:, 0] = s_vals[-2::-1]
@@ -515,15 +521,15 @@ def surface_is_valid3(surface):
     ax = figure.gca()
     line, = ax.plot(jac_edge[0, :], jac_edge[1, :])
     color = line.get_color()
-    ax.plot(points1[0, :], points1[1, :], color='black', linestyle='dashed')
-    ax.plot(points2[0, :], points2[1, :], color='black', linestyle='dashed')
-    ax.plot(points3[0, :], points3[1, :], color='black', linestyle='dashed')
+    ax.plot(points1[0, :], points1[1, :], color="black", linestyle="dashed")
+    ax.plot(points2[0, :], points2[1, :], color="black", linestyle="dashed")
+    ax.plot(points3[0, :], points3[1, :], color="black", linestyle="dashed")
     polygon = np.hstack([points1[:, 1:], points2[:, 1:], jac_edge[:, 1:]])
     add_patch(ax, polygon, color, with_nodes=False)
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.0625, 1.0625)
     ax.set_ylim(-0.0625, 1.0625)
-    save_image(ax.figure, 'surface_is_valid3.png')
+    save_image(ax.figure, "surface_is_valid3.png")
 
 
 def surface_subdivide1():
@@ -542,41 +548,41 @@ def surface_subdivide1():
     ax1.text(
         1.0 / 6.0,
         1.0 / 6.0,
-        r'$A$',
+        r"$A$",
         fontsize=20,
-        verticalalignment='center',
-        horizontalalignment='center',
+        verticalalignment="center",
+        horizontalalignment="center",
     )
     surf_b.plot(2, ax=ax2)
     ax2.text(
         1.0 / 3.0,
         1.0 / 3.0,
-        r'$B$',
+        r"$B$",
         fontsize=20,
-        verticalalignment='center',
-        horizontalalignment='center',
+        verticalalignment="center",
+        horizontalalignment="center",
     )
     surf_c.plot(2, ax=ax3)
     ax3.text(
         2.0 / 3.0,
         1.0 / 6.0,
-        r'$C$',
+        r"$C$",
         fontsize=20,
-        verticalalignment='center',
-        horizontalalignment='center',
+        verticalalignment="center",
+        horizontalalignment="center",
     )
     surf_d.plot(2, ax=ax4)
     ax4.text(
         1.0 / 6.0,
         2.0 / 3.0,
-        r'$D$',
+        r"$D$",
         fontsize=20,
-        verticalalignment='center',
-        horizontalalignment='center',
+        verticalalignment="center",
+        horizontalalignment="center",
     )
     for ax in (ax1, ax2, ax3, ax4):
-        ax.axis('scaled')
-    save_image(figure, 'surface_subdivide1')
+        ax.axis("scaled")
+    save_image(figure, "surface_subdivide1")
 
 
 def add_edges(ax, surface, s_vals, color):
@@ -617,16 +623,16 @@ def surface_subdivide2(surface, sub_surface_b):
     ax.plot(
         sub_nodes[0, :],
         sub_nodes[1, :],
-        color='black',
-        linestyle='None',
-        marker='o',
+        color="black",
+        linestyle="None",
+        marker="o",
     )
     # Take those same points and add the boundary.
-    ax.plot(nodes[0, :], nodes[1, :], color='black', linestyle='dashed')
-    ax.axis('scaled')
+    ax.plot(nodes[0, :], nodes[1, :], color="black", linestyle="dashed")
+    ax.axis("scaled")
     ax.set_xlim(-1.125, 2.125)
     ax.set_ylim(-0.125, 4.125)
-    save_image(ax.figure, 'surface_subdivide2')
+    save_image(ax.figure, "surface_subdivide2")
 
 
 def curved_polygon_constructor1(curved_poly):
@@ -635,10 +641,10 @@ def curved_polygon_constructor1(curved_poly):
         return
 
     ax = curved_poly.plot(256)
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.625, 1.625)
-    save_image(ax.figure, 'curved_polygon_constructor1.png')
+    save_image(ax.figure, "curved_polygon_constructor1.png")
 
 
 def curved_polygon_constructor2(curved_poly):
@@ -647,10 +653,10 @@ def curved_polygon_constructor2(curved_poly):
         return
 
     ax = curved_poly.plot(256)
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.125, 1.125)
-    save_image(ax.figure, 'curved_polygon_constructor2.png')
+    save_image(ax.figure, "curved_polygon_constructor2.png")
 
 
 def surface_locate(surface, point):
@@ -660,12 +666,12 @@ def surface_locate(surface, point):
 
     ax = surface.plot(256)
     ax.plot(
-        point[0, :], point[1, :], color='black', linestyle='None', marker='o'
+        point[0, :], point[1, :], color="black", linestyle="None", marker="o"
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.0625, 1.0625)
     ax.set_ylim(-0.1875, 1.0625)
-    save_image(ax.figure, 'surface_locate.png')
+    save_image(ax.figure, "surface_locate.png")
 
 
 def curve_specialize(curve, new_curve):
@@ -674,33 +680,33 @@ def curve_specialize(curve, new_curve):
         return
 
     ax = curve.plot(256)
-    interval = r'$\left[0, 1\right]$'
+    interval = r"$\left[0, 1\right]$"
     line = ax.lines[-1]
     line.set_label(interval)
     color1 = line.get_color()
     new_curve.plot(256, ax=ax)
-    interval = r'$\left[-\frac{1}{4}, \frac{3}{4}\right]$'
+    interval = r"$\left[-\frac{1}{4}, \frac{3}{4}\right]$"
     line = ax.lines[-1]
     line.set_label(interval)
     ax.plot(
         curve._nodes[0, (0, -1)],
         curve._nodes[1, (0, -1)],
         color=color1,
-        linestyle='None',
-        marker='o',
+        linestyle="None",
+        marker="o",
     )
     ax.plot(
         new_curve._nodes[0, (0, -1)],
         new_curve._nodes[1, (0, -1)],
         color=line.get_color(),
-        linestyle='None',
-        marker='o',
+        linestyle="None",
+        marker="o",
     )
-    ax.legend(loc='lower right', fontsize=12)
-    ax.axis('scaled')
+    ax.legend(loc="lower right", fontsize=12)
+    ax.axis("scaled")
     ax.set_xlim(-0.375, 1.125)
     ax.set_ylim(-0.75, 0.625)
-    save_image(ax.figure, 'curve_specialize.png')
+    save_image(ax.figure, "curve_specialize.png")
 
 
 def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
@@ -714,47 +720,47 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
         np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     )
     tri_surf.plot(2, ax=ax1)
-    ax1.plot([0.25], [0.5], marker='H')
-    ax1.plot([s], [t], color='black', linestyle='None', marker='o')
+    ax1.plot([0.25], [0.5], marker="H")
+    ax1.plot([s], [t], color="black", linestyle="None", marker="o")
     ax1.plot(
         [new_s],
         [new_t],
-        color='black',
-        linestyle='None',
-        marker='o',
+        color="black",
+        linestyle="None",
+        marker="o",
         markeredgewidth=1,
-        markerfacecolor='None',
+        markerfacecolor="None",
     )
     # Plot the equivalent output in ax2.
     surface.plot(256, ax=ax2)
     points = surface.evaluate_cartesian_multi(
         np.asfortranarray([[s, t], [new_s, new_t]])
     )
-    ax2.plot([x_val], [y_val], marker='H')
+    ax2.plot([x_val], [y_val], marker="H")
     ax2.plot(
         points[0, [0]],
         points[1, [0]],
-        color='black',
-        linestyle='None',
-        marker='o',
+        color="black",
+        linestyle="None",
+        marker="o",
     )
     ax2.plot(
         points[0, [1]],
         points[1, [1]],
-        color='black',
-        linestyle='None',
-        marker='o',
+        color="black",
+        linestyle="None",
+        marker="o",
         markeredgewidth=1,
-        markerfacecolor='None',
+        markerfacecolor="None",
     )
     # Set the axis bounds / scaling.
-    ax1.axis('scaled')
+    ax1.axis("scaled")
     ax1.set_xlim(-0.0625, 1.0625)
     ax1.set_ylim(-0.0625, 1.0625)
-    ax2.axis('scaled')
+    ax2.axis("scaled")
     ax2.set_xlim(-0.125, 2.125)
     ax2.set_ylim(-0.125, 2.125)
-    save_image(figure, 'newton_refine_surface.png')
+    save_image(figure, "newton_refine_surface.png")
 
 
 def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
@@ -783,8 +789,8 @@ def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
         color = color2
     else:
         color = None
-    ax.plot([int_x], [int_y], color=color, linestyle='None', marker='o')
-    ax.axis('scaled')
+    ax.plot([int_x], [int_y], color=color, linestyle="None", marker="o")
+    ax.axis("scaled")
     return ax
 
 
@@ -815,19 +821,19 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
         [int_x, int_x + tangent1[0, 0]],
         [int_y, int_y + tangent1[1, 0]],
         color=color1,
-        linestyle='dashed',
+        linestyle="dashed",
     )
     ax.plot(
         [int_x, int_x + tangent2[0, 0]],
         [int_y, int_y + tangent2[1, 0]],
         color=color2,
-        linestyle='dashed',
+        linestyle="dashed",
     )
-    ax.plot([int_x], [int_y], color=color1, linestyle='None', marker='o')
-    ax.axis('scaled')
+    ax.plot([int_x], [int_y], color=color1, linestyle="None", marker="o")
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.125, 1.125)
-    save_image(ax.figure, 'classify_intersection1.png')
+    save_image(ax.figure, "classify_intersection1.png")
 
 
 def classify_intersection2(s, curve1, curve2):
@@ -848,7 +854,7 @@ def classify_intersection2(s, curve1, curve2):
     ax = classify_help(s, curve1, surface1, curve2, surface2, 1)
     ax.set_xlim(-0.0625, 3.0625)
     ax.set_ylim(-0.0625, 0.5625)
-    save_image(ax.figure, 'classify_intersection2.png')
+    save_image(ax.figure, "classify_intersection2.png")
 
 
 def classify_intersection3(s, curve1, curve2):
@@ -875,7 +881,7 @@ def classify_intersection3(s, curve1, curve2):
     ax = classify_help(s, curve1, surface1, curve2, surface2, 0)
     ax.set_xlim(-0.0625, 3.0625)
     ax.set_ylim(-0.0625, 0.5625)
-    save_image(ax.figure, 'classify_intersection3.png')
+    save_image(ax.figure, "classify_intersection3.png")
 
 
 def classify_intersection4(s, curve1, curve2):
@@ -899,7 +905,7 @@ def classify_intersection4(s, curve1, curve2):
     ax = classify_help(s, curve1, surface1, curve2, surface2, None)
     ax.set_xlim(-0.0625, 3.0625)
     ax.set_ylim(-0.0625, 0.5625)
-    save_image(ax.figure, 'classify_intersection4.png')
+    save_image(ax.figure, "classify_intersection4.png")
 
 
 def classify_intersection5(s, curve1, curve2):
@@ -955,15 +961,15 @@ def classify_intersection5(s, curve1, curve2):
     # NOTE: We don't require the intersection polygon be valid.
     surface4.plot(256, ax=ax2)
     (int_x,), (int_y,) = curve1.evaluate(s)
-    ax1.plot([int_x], [int_y], color=color1, linestyle='None', marker='o')
-    ax2.plot([int_x], [int_y], color=color2, linestyle='None', marker='o')
+    ax1.plot([int_x], [int_y], color=color1, linestyle="None", marker="o")
+    ax2.plot([int_x], [int_y], color=color2, linestyle="None", marker="o")
     for ax in (ax1, ax2):
-        ax.axis('scaled')
+        ax.axis("scaled")
         ax.set_xlim(-0.0625, 3.0625)
         ax.set_ylim(-0.0625, 0.5625)
     plt.setp(ax1.get_xticklabels(), visible=False)
     figure.tight_layout(h_pad=-7.0)
-    save_image(figure, 'classify_intersection5.png')
+    save_image(figure, "classify_intersection5.png")
 
 
 def classify_intersection6(s, curve1, curve2):
@@ -990,7 +996,7 @@ def classify_intersection6(s, curve1, curve2):
     ax = classify_help(s, curve1, surface1, curve2, surface2, None)
     ax.set_xlim(-0.3125, 1.0625)
     ax.set_ylim(-0.0625, 0.3125)
-    save_image(ax.figure, 'classify_intersection6.png')
+    save_image(ax.figure, "classify_intersection6.png")
 
 
 def classify_intersection7(s, curve1a, curve1b, curve2):
@@ -1024,7 +1030,7 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
         ax.set_ylim(-0.125, 2.625)
     plt.setp(ax1.get_xticklabels(), visible=False)
     figure.tight_layout(h_pad=-5.0)
-    save_image(figure, 'classify_intersection7.png')
+    save_image(figure, "classify_intersection7.png")
 
 
 def get_curvature(nodes, s, tangent_vec, curvature):
@@ -1042,17 +1048,17 @@ def get_curvature(nodes, s, tangent_vec, curvature):
     # Add the curve.
     ax = curve.plot(256)
     # Add the circle.
-    circle_center = circle_center.ravel(order='F')
+    circle_center = circle_center.ravel(order="F")
     circle = plt.Circle(circle_center, 1.0 / abs(curvature), alpha=0.25)
     ax.add_artist(circle)
     # Add the point.
     ax.plot(
-        point[0, :], point[1, :], color='black', marker='o', linestyle='None'
+        point[0, :], point[1, :], color="black", marker="o", linestyle="None"
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.0625, 1.0625)
     ax.set_ylim(-0.0625, 0.625)
-    save_image(ax.figure, 'get_curvature.png')
+    save_image(ax.figure, "get_curvature.png")
 
 
 def curve_locate(curve, point1, point2):
@@ -1063,12 +1069,12 @@ def curve_locate(curve, point1, point2):
     ax = curve.plot(256)
     points = np.hstack([point1, point2])
     ax.plot(
-        points[0, :], points[1, :], color='black', linestyle='None', marker='o'
+        points[0, :], points[1, :], color="black", linestyle="None", marker="o"
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 4.125)
     ax.set_ylim(-0.125, 1.25)
-    save_image(ax.figure, 'curve_locate.png')
+    save_image(ax.figure, "curve_locate.png")
 
 
 def newton_refine_curve(curve, point, s, new_s):
@@ -1077,29 +1083,29 @@ def newton_refine_curve(curve, point, s, new_s):
         return
 
     ax = curve.plot(256)
-    ax.plot(point[0, :], point[1, :], marker='H')
+    ax.plot(point[0, :], point[1, :], marker="H")
     wrong_points = curve.evaluate_multi(np.asfortranarray([s, new_s]))
     ax.plot(
         wrong_points[0, [0]],
         wrong_points[1, [0]],
-        color='black',
-        linestyle='None',
-        marker='o',
+        color="black",
+        linestyle="None",
+        marker="o",
     )
     ax.plot(
         wrong_points[0, [1]],
         wrong_points[1, [1]],
-        color='black',
-        linestyle='None',
-        marker='o',
+        color="black",
+        linestyle="None",
+        marker="o",
         markeredgewidth=1,
-        markerfacecolor='None',
+        markerfacecolor="None",
     )
     # Set the axis bounds / scaling.
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 3.125)
     ax.set_ylim(-0.125, 1.375)
-    save_image(ax.figure, 'newton_refine_curve.png')
+    save_image(ax.figure, "newton_refine_curve.png")
 
 
 def newton_refine_curve_cusp(curve, s_vals):
@@ -1110,13 +1116,15 @@ def newton_refine_curve_cusp(curve, s_vals):
     ax = curve.plot(256)
     ax.lines[-1].zorder = 1
     points = curve.evaluate_multi(np.asfortranarray(s_vals))
-    colors = seaborn.dark_palette('blue', 6)
-    ax.scatter(points[0, :], points[1, :], c=colors, s=20, alpha=0.75, zorder=2)
+    colors = seaborn.dark_palette("blue", 6)
+    ax.scatter(
+        points[0, :], points[1, :], c=colors, s=20, alpha=0.75, zorder=2
+    )
     # Set the axis bounds / scaling.
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-0.125, 6.125)
     ax.set_ylim(-3.125, 3.125)
-    save_image(ax.figure, 'newton_refine_curve_cusp.png')
+    save_image(ax.figure, "newton_refine_curve_cusp.png")
 
 
 def classify_intersection8(s, curve1, surface1, curve2, surface2):
@@ -1127,7 +1135,7 @@ def classify_intersection8(s, curve1, surface1, curve2, surface2):
     ax = classify_help(s, curve1, surface1, curve2, surface2, None)
     ax.set_xlim(-1.125, 1.125)
     ax.set_ylim(-0.125, 1.125)
-    save_image(ax.figure, 'classify_intersection8.png')
+    save_image(ax.figure, "classify_intersection8.png")
 
 
 def _edges_classify_intersection9():
@@ -1200,15 +1208,15 @@ def classify_intersection9(s, curve1, curve2):
     curved_polygon2 = bezier.CurvedPolygon(*cp_edges2)
     curved_polygon2.plot(256, ax=ax2)
     (int_x,), (int_y,) = curve1.evaluate(s)
-    ax1.plot([int_x], [int_y], color=color1, linestyle='None', marker='o')
-    ax2.plot([int_x], [int_y], color=color2, linestyle='None', marker='o')
+    ax1.plot([int_x], [int_y], color=color1, linestyle="None", marker="o")
+    ax2.plot([int_x], [int_y], color=color2, linestyle="None", marker="o")
     for ax in (ax1, ax2):
-        ax.axis('scaled')
+        ax.axis("scaled")
         ax.set_xlim(-2.0, 42.0)
         ax.set_ylim(-12.0, 52.0)
     plt.setp(ax2.get_yticklabels(), visible=False)
     figure.tight_layout(w_pad=1.0)
-    save_image(figure, 'classify_intersection9.png')
+    save_image(figure, "classify_intersection9.png")
 
 
 def curve_elevate(curve, elevated):
@@ -1223,12 +1231,12 @@ def curve_elevate(curve, elevated):
     elevated.plot(256, ax=ax2)
     color = ax2.lines[-1].get_color()
     add_patch(ax2, elevated._nodes, color)
-    ax1.axis('scaled')
-    ax2.axis('scaled')
+    ax1.axis("scaled")
+    ax2.axis("scaled")
     _plot_helpers.add_plot_boundary(ax1)
     ax2.set_xlim(*ax1.get_xlim())
     ax2.set_ylim(*ax1.get_ylim())
-    save_image(figure, 'curve_elevate.png')
+    save_image(figure, "curve_elevate.png")
 
 
 def surface_elevate(surface, elevated):
@@ -1245,12 +1253,12 @@ def surface_elevate(surface, elevated):
     color = ax2.lines[-1].get_color()
     nodes = elevated._nodes[:, (0, 1, 2, 3, 6, 8, 9)]
     add_patch(ax2, nodes, color)
-    ax1.axis('scaled')
-    ax2.axis('scaled')
+    ax1.axis("scaled")
+    ax2.axis("scaled")
     _plot_helpers.add_plot_boundary(ax1)
     ax2.set_xlim(*ax1.get_xlim())
     ax2.set_ylim(*ax1.get_ylim())
-    save_image(figure, 'surface_elevate.png')
+    save_image(figure, "surface_elevate.png")
 
 
 def unit_triangle():
@@ -1261,9 +1269,9 @@ def unit_triangle():
     nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     surface = bezier.Surface(nodes, degree=1)
     ax = surface.plot(256)
-    ax.axis('scaled')
+    ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
-    save_image(ax.figure, 'unit_triangle.png')
+    save_image(ax.figure, "unit_triangle.png")
 
 
 def curve_reduce(curve, reduced):
@@ -1278,12 +1286,12 @@ def curve_reduce(curve, reduced):
     reduced.plot(256, ax=ax2)
     color = ax2.lines[-1].get_color()
     add_patch(ax2, reduced._nodes, color)
-    ax1.axis('scaled')
-    ax2.axis('scaled')
+    ax1.axis("scaled")
+    ax2.axis("scaled")
     _plot_helpers.add_plot_boundary(ax2)
     ax1.set_xlim(*ax1.get_xlim())
     ax1.set_ylim(*ax1.get_ylim())
-    save_image(figure, 'curve_reduce.png')
+    save_image(figure, "curve_reduce.png")
 
 
 def curve_reduce_approx(curve, reduced):
@@ -1297,6 +1305,6 @@ def curve_reduce_approx(curve, reduced):
     reduced.plot(256, ax=ax)
     color = ax.lines[-1].get_color()
     add_patch(ax, reduced._nodes, color, alpha=0.25, node_color=color)
-    ax.axis('scaled')
+    ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
-    save_image(ax.figure, 'curve_reduce_approx.png')
+    save_image(ax.figure, "curve_reduce_approx.png")

@@ -21,26 +21,26 @@ import pkg_resources
 
 # Error messages for ``handle_import_error``.
 TEMPLATES = (
-    'No module named \'bezier.{}\'',  # 3.5, 3.6, pypy3
-    'No module named {}',  # 2.7
-    'No module named bezier.{}',  # pypy2
+    "No module named 'bezier.{}'",  # 3.5, 3.6, pypy3
+    "No module named {}",  # 2.7
+    "No module named bezier.{}",  # pypy2
 )
 
 
 def modify_path():
     """Modify the module search path."""
     # Only modify path on Windows.
-    if os.name != 'nt':
+    if os.name != "nt":
         return
 
-    path = os.environ.get('PATH')
+    path = os.environ.get("PATH")
     if path is None:
         return
 
     try:
-        extra_dll_dir = pkg_resources.resource_filename('bezier', 'extra-dll')
+        extra_dll_dir = pkg_resources.resource_filename("bezier", "extra-dll")
         if os.path.isdir(extra_dll_dir):
-            os.environ['PATH'] = path + os.pathsep + extra_dll_dir
+            os.environ["PATH"] = path + os.pathsep + extra_dll_dir
     except ImportError:
         pass
 

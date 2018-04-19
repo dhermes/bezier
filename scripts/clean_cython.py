@@ -25,37 +25,37 @@ def clean_file(c_source, virtualenv_dirname):
             directory where Cython is installed (this is part of a
             relative path ``.nox/{NAME}/lib/...``).
     """
-    with open(c_source, 'r') as file_obj:
+    with open(c_source, "r") as file_obj:
         contents = file_obj.read().rstrip()
     # Replace the path to the Cython include files.
-    py_version = 'python{}.{}'.format(*sys.version_info[:2])
+    py_version = "python{}.{}".format(*sys.version_info[:2])
     lib_path = os.path.join(
-        '.nox', virtualenv_dirname, 'lib', py_version, 'site-packages', ''
+        ".nox", virtualenv_dirname, "lib", py_version, "site-packages", ""
     )
-    contents = contents.replace(lib_path, '')
+    contents = contents.replace(lib_path, "")
     # Write the files back, but strip all trailing whitespace.
-    lines = contents.split('\n')
-    with open(c_source, 'w') as file_obj:
+    lines = contents.split("\n")
+    with open(c_source, "w") as file_obj:
         for line in lines:
-            file_obj.write(line.rstrip() + '\n')
+            file_obj.write(line.rstrip() + "\n")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Clean / strip from C source code.'
+        description="Clean / strip from C source code."
     )
     parser.add_argument(
-        '--filename', required=True, help='Filename for source to be cleaned.'
+        "--filename", required=True, help="Filename for source to be cleaned."
     )
     parser.add_argument(
-        '--virtualenv-dirname',
-        dest='virtualenv_dirname',
+        "--virtualenv-dirname",
+        dest="virtualenv_dirname",
         required=True,
-        help='Directory containing virtual env.',
+        help="Directory containing virtual env.",
     )
     args = parser.parse_args()
     clean_file(args.filename, args.virtualenv_dirname)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

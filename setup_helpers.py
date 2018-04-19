@@ -24,8 +24,8 @@ import sys
 import setuptools
 import setuptools.command.build_ext
 
-DEBUG_ENV = 'DEBUG'
-GFORTRAN_LIB_ENV = 'GFORTRAN_LIB'
+DEBUG_ENV = "DEBUG"
+GFORTRAN_LIB_ENV = "GFORTRAN_LIB"
 """Environment variable used to over-ride the ``libgfortran`` search path.
 
 This might be desirable if the "default" ``libgfortran`` does not have some
@@ -35,59 +35,59 @@ to point to a custom ``libgfortran`` that **is** universal. (See
 ``scripts/osx/make_universal_libgfortran.py`` and
 ``scripts/osx/build-wheels.sh`` for an example of this.)
 """
-FORTRAN_LIBRARY_PREFIX = 'libraries: ='
+FORTRAN_LIBRARY_PREFIX = "libraries: ="
 GFORTRAN_MISSING_LIBS = """\
 ``gfortran`` default library path not found via:
 
 $ gfortran -print-search-dirs
 {}"""
-GFORTRAN_BAD_PATH = '``gfortran`` library path {} is not a directory.'
+GFORTRAN_BAD_PATH = "``gfortran`` library path {} is not a directory."
 # NOTE: These are mostly recommendations from Certik found here:
 #         http://www.fortran90.org/src/faq.html
 #       specifically "What compiler options should I use for ...?".
-FPIC = '-fPIC'
+FPIC = "-fPIC"
 GFORTRAN_SHARED_FLAGS = (  # Used for both "DEBUG" and "OPTIMIZE"
-    '-Wall',
-    '-Wextra',
+    "-Wall",
+    "-Wextra",
     # ``-Wextra`` includes ``no-compare-reals``, which warns about
     # ``value == 0.0_dp``
-    '-Wno-compare-reals',
-    '-Wimplicit-interface',
+    "-Wno-compare-reals",
+    "-Wimplicit-interface",
     FPIC,
-    '-fmax-errors=1',
-    '-std=f2008',
+    "-fmax-errors=1",
+    "-std=f2008",
 )
 GFORTRAN_DEBUG_FLAGS = (
-    '-g', '-fcheck=all', '-fbacktrace', '-fimplicit-none', '-pedantic'
+    "-g", "-fcheck=all", "-fbacktrace", "-fimplicit-none", "-pedantic"
 )
-GFORTRAN_OPTIMIZE_FLAGS = ('-Werror', '-O3', '-funroll-loops')
-BAD_JOURNAL = 'Saving journal failed with {!r}.'
-JOURNAL_ENV = 'BEZIER_JOURNAL'
+GFORTRAN_OPTIMIZE_FLAGS = ("-Werror", "-O3", "-funroll-loops")
+BAD_JOURNAL = "Saving journal failed with {!r}."
+JOURNAL_ENV = "BEZIER_JOURNAL"
 """Environment variable to specify a text file for saving compiler commands.
 
 Can be used to determine how extension modules were compiled. This can be
 useful, for example, to track changes across different systems or simple
 to make sure the build is occurring as expected.
 """
-QUADPACK_DIR = 'quadpack'
-QUADPACK_SOURCE_FILENAME = os.path.join('src', 'bezier', QUADPACK_DIR, '{}.f')
+QUADPACK_DIR = "quadpack"
+QUADPACK_SOURCE_FILENAME = os.path.join("src", "bezier", QUADPACK_DIR, "{}.f")
 # NOTE: QUADPACK module dependencies: order is important.
-QUADPACK_MODULES = ('d1mach', 'dqelg', 'dqpsrt', 'dqk21', 'dqagse')
+QUADPACK_MODULES = ("d1mach", "dqelg", "dqpsrt", "dqk21", "dqagse")
 # NOTE: This represents the Fortran module dependency graph. Order is
 #       important both of the keys and of the dependencies that are in
 #       each value.
 FORTRAN_MODULES = (
-    'types',
-    'status',
-    'helpers',
-    'curve',
-    'surface',
-    'curve_intersection',
-    'surface_intersection',
+    "types",
+    "status",
+    "helpers",
+    "curve",
+    "surface",
+    "curve_intersection",
+    "surface_intersection",
 )
-FORTRAN_SOURCE_FILENAME = os.path.join('src', 'bezier', '{}.f90')
-OBJECT_FILENAME = os.path.join('src', 'bezier', '{}.o')
-SPEEDUP_FILENAME = os.path.join('src', 'bezier', '_speedup.c')
+FORTRAN_SOURCE_FILENAME = os.path.join("src", "bezier", "{}.f90")
+OBJECT_FILENAME = os.path.join("src", "bezier", "{}.o")
+SPEEDUP_FILENAME = os.path.join("src", "bezier", "_speedup.c")
 
 
 def gfortran_search_path(library_dirs):
@@ -104,16 +104,16 @@ def gfortran_search_path(library_dirs):
     Returns:
         List[str]: The library directories for ``gfortran``.
     """
-    cmd = ('gfortran', '-print-search-dirs')
+    cmd = ("gfortran", "-print-search-dirs")
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     return_code = process.wait()
     # Bail out if the command failed.
     if return_code != 0:
         return library_dirs
 
-    cmd_output = process.stdout.read().decode('utf-8')
+    cmd_output = process.stdout.read().decode("utf-8")
     # Find single line starting with ``libraries: ``.
-    search_lines = cmd_output.strip().split('\n')
+    search_lines = cmd_output.strip().split("\n")
     library_lines = [
         line[len(FORTRAN_LIBRARY_PREFIX):]
         for line in search_lines
@@ -188,11 +188,11 @@ def extension_modules():
     # NOTE: Copy ``libraries`` and ``library_dirs`` so they
     #       aren't shared and mutable.
     extension = setuptools.Extension(
-        'bezier._speedup',
+        "bezier._speedup",
         [SPEEDUP_FILENAME],
         extra_objects=extra_objects,
         include_dirs=[
-            np.get_include(), os.path.join('src', 'bezier', 'include')
+            np.get_include(), os.path.join("src", "bezier", "include")
         ],
         libraries=copy.deepcopy(libraries),
         library_dirs=copy.deepcopy(library_dirs),
@@ -287,7 +287,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         if c_compiler is None:
             return
 
-        if c_compiler.compiler_type == 'msvc':
+        if c_compiler.compiler_type == "msvc":
             c_compiler.initialize()
         f90_compiler = numpy.distutils.fcompiler.new_fcompiler(
             requiref90=True, c_compiler=c_compiler
@@ -316,7 +316,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             #       dependendence on ``libgfortran`` or similar). It's expected
             #       that ``library_dirs`` will be updated at run-time to have
             #       temporary build directories added.
-            libraries = ['bezier']
+            libraries = ["bezier"]
             library_dirs = []
             return libraries, library_dirs
 
@@ -345,30 +345,30 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             )
 
         numpy.distutils.ccompiler.replace_method(
-            distutils.ccompiler.CCompiler, 'spawn', journaled_spawn
+            distutils.ccompiler.CCompiler, "spawn", journaled_spawn
         )
 
     @staticmethod
     def _command_to_text(command):
         # NOTE: This assumes, but doesn't check that the command has 3
         #       or more arguments.
-        first_line = '$ {} \\'
-        middle_line = '>   {} \\'
-        last_line = '>   {}'
+        first_line = "$ {} \\"
+        middle_line = ">   {} \\"
+        last_line = ">   {}"
         parts = [first_line.format(command[0])]
         for argument in command[1:-1]:
             parts.append(middle_line.format(argument))
         parts.append(last_line.format(command[-1]))
-        return '\n'.join(parts)
+        return "\n".join(parts)
 
     def _commands_to_text(self):
-        separator = '-' * 40
+        separator = "-" * 40
         parts = [separator]
         for command in self.commands:
             command_text = self._command_to_text(command)
             parts.extend([command_text, separator])
-        parts.append('')  # Trailing newline in file.
-        return '\n'.join(parts)
+        parts.append("")  # Trailing newline in file.
+        return "\n".join(parts)
 
     def save_journal(self):
         """Save journaled commands to file.
@@ -384,7 +384,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
 
         try:
             as_text = self._commands_to_text()
-            with open(self.journal_file, 'w') as file_obj:
+            with open(self.journal_file, "w") as file_obj:
                 file_obj.write(as_text)
         except Exception as exc:
             msg = BAD_JOURNAL.format(exc)
@@ -397,11 +397,11 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             obj_files (List[str]): List of paths of compiled object files.
         """
         c_compiler = self.F90_COMPILER.c_compiler
-        static_lib_dir = os.path.join(self.build_lib, 'bezier', 'lib')
+        static_lib_dir = os.path.join(self.build_lib, "bezier", "lib")
         if not os.path.exists(static_lib_dir):
             os.makedirs(static_lib_dir)
         c_compiler.create_static_lib(
-            obj_files, 'bezier', output_dir=static_lib_dir
+            obj_files, "bezier", output_dir=static_lib_dir
         )
         # NOTE: We must "modify" the paths for the ``extra_objects`` in
         #       each extension since they were compiled with
@@ -428,7 +428,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             macros=[],
             include_dirs=[],
             debug=None,
-            extra_postargs=['-J', self.build_temp],
+            extra_postargs=["-J", self.build_temp],
             depends=[],
         )
         if self.CUSTOM_STATIC_LIB is None:
@@ -446,8 +446,8 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
             return
 
         shutil.move(
-            os.path.join(self.build_lib, 'bezier', 'lib'),
-            os.path.join('src', 'bezier'),
+            os.path.join(self.build_lib, "bezier", "lib"),
+            os.path.join("src", "bezier"),
         )
 
     def cleanup(self):

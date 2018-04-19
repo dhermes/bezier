@@ -61,7 +61,7 @@ def make_plot(intersection_info, save_plot):
         curved_polygon.plot(64, color=color, ax=ax)
         # Color is (R,G,B,A) but we just want (R,G,B).
         color = ax.patches[-1].get_facecolor()[:3]
-    ax.axis('scaled')
+    ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
     filename = intersection_info.img_filename
     if save_plot:
@@ -82,6 +82,6 @@ def main():
         make_plot(intersection_info, args.save_plot)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     seaborn.set()  # Required in `seaborn >= 0.8`
     main()

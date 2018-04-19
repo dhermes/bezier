@@ -26,7 +26,7 @@ THRESHOLD = 1.0  # 100%
 
 
 def report_coverage(lcov_filename):
-    with open(lcov_filename, 'r') as file_obj:
+    with open(lcov_filename, "r") as file_obj:
         contents = file_obj.read()
     converter = lcov_cobertura.LcovCobertura(contents)
     cobertura_xml = converter.convert()
@@ -44,18 +44,18 @@ def report_coverage(lcov_filename):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Convert lcov output to cobertura XML and report.'
+        description="Convert lcov output to cobertura XML and report."
     )
     parser.add_argument(
-        '--lcov-filename',
-        dest='lcov_filename',
+        "--lcov-filename",
+        dest="lcov_filename",
         required=True,
-        help='Filename of `lcov` report to be converted.',
+        help="Filename of `lcov` report to be converted.",
     )
     args = parser.parse_args()
     status_code = report_coverage(args.lcov_filename)
     sys.exit(status_code)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

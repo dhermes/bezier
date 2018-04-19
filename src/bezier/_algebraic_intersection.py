@@ -60,40 +60,40 @@ from bezier import _intersection_helpers
 #       80907b1be03f5895f7132e0e920c5e3cdebba9ac.
 _CHEB7 = np.asfortranarray(
     [
-        float.fromhex('0x1.f994e02ac74b4p-1'),
-        float.fromhex('0x1.c8261ba82ef26p-1'),
-        float.fromhex('0x1.6f130135c6af0p-1'),
-        float.fromhex('0x1.0000000000000p-1'),
-        float.fromhex('0x1.21d9fd9472a20p-2'),
-        float.fromhex('0x1.becf22be886e0p-4'),
-        float.fromhex('0x1.9ac7f54e2d2c0p-7'),
+        float.fromhex("0x1.f994e02ac74b4p-1"),
+        float.fromhex("0x1.c8261ba82ef26p-1"),
+        float.fromhex("0x1.6f130135c6af0p-1"),
+        float.fromhex("0x1.0000000000000p-1"),
+        float.fromhex("0x1.21d9fd9472a20p-2"),
+        float.fromhex("0x1.becf22be886e0p-4"),
+        float.fromhex("0x1.9ac7f54e2d2c0p-7"),
     ]
 )
 _CHEB9 = np.asfortranarray(
     [
-        float.fromhex('0x1.fc1c5c6408e0cp-1'),
-        float.fromhex('0x1.ddb3d742c2656p-1'),
-        float.fromhex('0x1.a48dba91e0b0ep-1'),
-        float.fromhex('0x1.578ea1d2282fep-1'),
-        float.fromhex('0x1.0000000000000p-1'),
-        float.fromhex('0x1.50e2bc5bafa08p-2'),
-        float.fromhex('0x1.6dc915b87d3c6p-3'),
-        float.fromhex('0x1.126145e9ecd5cp-4'),
-        float.fromhex('0x1.f1d1cdfb8fa40p-8'),
+        float.fromhex("0x1.fc1c5c6408e0cp-1"),
+        float.fromhex("0x1.ddb3d742c2656p-1"),
+        float.fromhex("0x1.a48dba91e0b0ep-1"),
+        float.fromhex("0x1.578ea1d2282fep-1"),
+        float.fromhex("0x1.0000000000000p-1"),
+        float.fromhex("0x1.50e2bc5bafa08p-2"),
+        float.fromhex("0x1.6dc915b87d3c6p-3"),
+        float.fromhex("0x1.126145e9ecd5cp-4"),
+        float.fromhex("0x1.f1d1cdfb8fa40p-8"),
     ]
 )
 _CHEB10 = np.asfortranarray(
     [
-        float.fromhex('0x1.fcd924a17f22ep-1'),
-        float.fromhex('0x1.e41900e9e9636p-1'),
-        float.fromhex('0x1.b504f333f9de6p-1'),
-        float.fromhex('0x1.7438b8ad13780p-1'),
-        float.fromhex('0x1.280c16cf50a6fp-1'),
-        float.fromhex('0x1.afe7d2615eb25p-2'),
-        float.fromhex('0x1.178e8ea5d9100p-2'),
-        float.fromhex('0x1.2bec333018868p-3'),
-        float.fromhex('0x1.be6ff16169ca0p-5'),
-        float.fromhex('0x1.936daf406e940p-8'),
+        float.fromhex("0x1.fcd924a17f22ep-1"),
+        float.fromhex("0x1.e41900e9e9636p-1"),
+        float.fromhex("0x1.b504f333f9de6p-1"),
+        float.fromhex("0x1.7438b8ad13780p-1"),
+        float.fromhex("0x1.280c16cf50a6fp-1"),
+        float.fromhex("0x1.afe7d2615eb25p-2"),
+        float.fromhex("0x1.178e8ea5d9100p-2"),
+        float.fromhex("0x1.2bec333018868p-3"),
+        float.fromhex("0x1.be6ff16169ca0p-5"),
+        float.fromhex("0x1.936daf406e940p-8"),
     ]
 )
 # Allow a buffer of sqrt(sqrt(machine precision)) for polynomial roots.
@@ -107,11 +107,11 @@ _L2_THRESHOLD = 0.5 ** 40  # 4096 (machine precision)
 _ZERO_THRESHOLD = 0.5 ** 38  # 16384 (machine precision)
 _COEFFICIENT_THRESHOLD = 0.5 ** 26  # sqrt(machine precision)
 _NON_SIMPLE_THRESHOLD = 0.5 ** 48  # 16 (machine precision)
-_COINCIDENT_ERR = 'Coincident curves not currently supported'
-_NON_SIMPLE_ERR = 'Polynomial has non-simple roots'
+_COINCIDENT_ERR = "Coincident curves not currently supported"
+_NON_SIMPLE_ERR = "Polynomial has non-simple roots"
 _POWER_BASIS_ERR = (
-    'Currently only supporting degree pairs '
-    '1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3.'
+    "Currently only supporting degree pairs "
+    "1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3."
 )
 _LINEARIZATION = _geometric_intersection.Linearization
 _DISJOINT = _geometric_intersection.BoxIntersectionType.DISJOINT
@@ -130,7 +130,7 @@ def _evaluate3(nodes, x_val, y_val):
     """
     # NOTE: This may be (a) slower and (b) less precise than
     #       hard-coding the determinant.
-    sylvester_mat = np.zeros((6, 6), order='F')
+    sylvester_mat = np.zeros((6, 6), order="F")
     delta = nodes - np.asfortranarray([[x_val], [y_val]])
     delta[:, 1:3] *= 3.0
     # Swap rows/columns so that x-y are right next to each other.
@@ -171,7 +171,7 @@ def evaluate(nodes, x_val, y_val):
     """
     _, num_nodes = nodes.shape
     if num_nodes == 1:
-        raise ValueError('A point cannot be implicitized')
+        raise ValueError("A point cannot be implicitized")
 
     elif num_nodes == 2:
         # x(s) - x = (x0 - x) (1 - s) + (x1 - x) s
@@ -179,10 +179,10 @@ def evaluate(nodes, x_val, y_val):
         # Modified Sylvester: [x0 - x, x1 - x]
         #                     [y0 - y, y1 - y]
         return (
-            (nodes[0, 0] - x_val) *
-            (nodes[1, 1] - y_val) -
-            (nodes[0, 1] - x_val) *
-            (nodes[1, 0] - y_val)
+            (nodes[0, 0] - x_val)
+            * (nodes[1, 1] - y_val)
+            - (nodes[0, 1] - x_val)
+            * (nodes[1, 0] - y_val)
         )
 
     elif num_nodes == 3:
@@ -296,7 +296,7 @@ def _to_power_basis12(nodes1, nodes2):
         [
             val0,
             -3.0 * val0 + 4.0 * val1 - val2,
-            2.0 * val0 - 4.0 * val1 + 2.0 * val2
+            2.0 * val0 - 4.0 * val1 + 2.0 * val2,
         ]
     )
 
@@ -337,7 +337,7 @@ def _to_power_basis13(nodes1, nodes2):
             3.0 * val0,
             -19.0 * val0 + 24.0 * val1 - 8.0 * val2 + 3.0 * val3,
             32.0 * val0 - 56.0 * val1 + 40.0 * val2 - 16.0 * val3,
-            -16.0 * val0 + 32.0 * val1 - 32.0 * val2 + 16.0 * val3
+            -16.0 * val0 + 32.0 * val1 - 32.0 * val2 + 16.0 * val3,
         ]
     )
 
@@ -378,48 +378,48 @@ def _to_power_basis_degree4(nodes1, nodes2):
     return np.asfortranarray(
         [
             3.0 * val0,
-            -25.0 *
-            val0 +
-            48.0 *
-            val1 -
-            36.0 *
-            val2 +
-            16.0 *
-            val3 -
-            3.0 *
-            val4,
-            70.0 *
-            val0 -
-            208.0 *
-            val1 +
-            228.0 *
-            val2 -
-            112.0 *
-            val3 +
-            22.0 *
-            val4,
+            -25.0
+            * val0
+            + 48.0
+            * val1
+            - 36.0
+            * val2
+            + 16.0
+            * val3
+            - 3.0
+            * val4,
+            70.0
+            * val0
+            - 208.0
+            * val1
+            + 228.0
+            * val2
+            - 112.0
+            * val3
+            + 22.0
+            * val4,
             (
-                -80.0 *
-                val0 +
-                288.0 *
-                val1 -
-                384.0 *
-                val2 +
-                224.0 *
-                val3 -
-                48.0 *
-                val4
+                -80.0
+                * val0
+                + 288.0
+                * val1
+                - 384.0
+                * val2
+                + 224.0
+                * val3
+                - 48.0
+                * val4
             ),
-            32.0 *
-            val0 -
-            128.0 *
-            val1 +
-            192.0 *
-            val2 -
-            128.0 *
-            val3 +
-            32.0 *
-            val4
+            32.0
+            * val0
+            - 128.0
+            * val1
+            + 192.0
+            * val2
+            - 128.0
+            * val3
+            + 32.0
+            * val4,
         ]
     )
 
@@ -528,6 +528,8 @@ def to_power_basis(nodes1, nodes2):
         NotImplementedError: If the degree pair is not ``1-1``, ``1-2``,
             ``1-3``, ``1-4``, ``2-2``, ``2-3``, ``2-4`` or ``3-3``.
     """
+    # NOTE: There is no corresponding "enable", but the disable only applies
+    #       in this lexical scope.
     # pylint: disable=too-many-return-statements
     _, num_nodes1 = nodes1.shape
     _, num_nodes2 = nodes2.shape
@@ -559,13 +561,12 @@ def to_power_basis(nodes1, nodes2):
             return _to_power_basis33(nodes1, nodes2)
 
     raise NotImplementedError(
-        'Degree 1',
+        "Degree 1",
         num_nodes1 - 1,
-        'Degree 2',
+        "Degree 2",
         num_nodes2 - 1,
         _POWER_BASIS_ERR,
     )
-    # pylint: enable=too-many-return-statements
 
 
 def polynomial_norm(coeffs):
@@ -616,7 +617,7 @@ def normalize_polynomial(coeffs, threshold=_L2_THRESHOLD):
     """
     l2_norm = polynomial_norm(coeffs)
     if l2_norm < threshold:
-        return np.zeros(coeffs.shape, order='F')
+        return np.zeros(coeffs.shape, order="F")
 
     else:
         coeffs /= l2_norm
@@ -736,11 +737,11 @@ def bernstein_companion(coeffs):
     """
     sigma_coeffs, degree, effective_degree = _get_sigma_coeffs(coeffs)
     if effective_degree == 0:
-        return np.empty((0, 0), order='F'), degree, 0
+        return np.empty((0, 0), order="F"), degree, 0
 
-    companion = np.zeros((effective_degree, effective_degree), order='F')
-    companion.flat[effective_degree:: effective_degree + 1] = 1.0
-    companion[0, :] = - sigma_coeffs[::-1]
+    companion = np.zeros((effective_degree, effective_degree), order="F")
+    companion.flat[effective_degree::effective_degree + 1] = 1.0
+    companion[0, :] = -sigma_coeffs[::-1]
     return companion, degree, effective_degree
 
 
@@ -909,7 +910,7 @@ def bezier_roots(coeffs):
         sigma_roots = sigma_roots[to_keep]
         s_vals = sigma_roots / (1.0 + sigma_roots)
     else:
-        s_vals = np.empty((0,), order='F')
+        s_vals = np.empty((0,), order="F")
     if effective_degree != degree:
         delta = degree - effective_degree
         s_vals = np.hstack([s_vals, [1] * delta])
@@ -1014,7 +1015,7 @@ def lu_companion(top_row, value):
         `dgecon`_.
     """
     degree, = top_row.shape
-    lu_mat = np.zeros((degree, degree), order='F')
+    lu_mat = np.zeros((degree, degree), order="F")
     if degree == 1:
         lu_mat[0, 0] = top_row[0] - value
         return lu_mat, abs(lu_mat[0, 0])
@@ -1061,14 +1062,14 @@ def _reciprocal_condition_number(lu_mat, one_norm):
             be computed.
     """
     if _scipy_lapack is None:
-        raise OSError('This function requires SciPy for calling into LAPACK.')
+        raise OSError("This function requires SciPy for calling into LAPACK.")
 
     # pylint: disable=no-member
     rcond, info = _scipy_lapack.dgecon(lu_mat, one_norm)
     # pylint: enable=no-member
     if info != 0:
         raise RuntimeError(
-            'The reciprocal 1-norm condition number could not be computed.'
+            "The reciprocal 1-norm condition number could not be computed."
         )
 
     return rcond
@@ -1160,8 +1161,8 @@ def roots_in_unit_interval(coeffs):
     all_roots = polynomial.polyroots(coeffs)
     # Only keep roots inside or very near to the unit interval.
     all_roots = all_roots[
-        (_UNIT_INTERVAL_WIGGLE_START < all_roots.real) &
-        (all_roots.real < _UNIT_INTERVAL_WIGGLE_END)
+        (_UNIT_INTERVAL_WIGGLE_START < all_roots.real)
+        & (all_roots.real < _UNIT_INTERVAL_WIGGLE_END)
     ]
     # Only keep roots with very small imaginary part. (Really only
     # keep the real parts.)
@@ -1223,7 +1224,7 @@ def _check_non_simple(coeffs):
     companion = companion.T
     # Use Horner's method to evaluate f(companion)
     num_companion, _ = companion.shape
-    id_mat = np.eye(num_companion, order='F')
+    id_mat = np.eye(num_companion, order="F")
     evaluated = coeffs[-1] * id_mat
     for index in six.moves.xrange(num_coeffs - 2, -1, -1):
         coeff = coeffs[index]
@@ -1313,7 +1314,7 @@ def intersect_curves(nodes1, nodes2):
         s_val = locate_point(nodes1, x_val, y_val)
         if s_val is not None:
             _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t)
-    result = np.zeros((2, len(final_s)), order='F')
+    result = np.zeros((2, len(final_s)), order="F")
     if swapped:
         final_s, final_t = final_t, final_s
     result[0, :] = final_s
@@ -1368,7 +1369,7 @@ def poly_to_power_basis(bezier_coeffs):
                 coeff0,
                 3.0 * (coeff1 - coeff0),
                 3.0 * (coeff2 - 2.0 * coeff1 + coeff0),
-                coeff3 - 3.0 * coeff2 + 3.0 * coeff1 - coeff0
+                coeff3 - 3.0 * coeff2 + 3.0 * coeff1 - coeff0,
             ]
         )
 
@@ -1453,6 +1454,6 @@ def all_intersections(nodes_first, nodes_second):
         nodes_first, nodes_second
     )
     if bbox_int == _DISJOINT:
-        return np.empty((2, 0), order='F'), False
+        return np.empty((2, 0), order="F"), False
 
     return intersect_curves(nodes_first, nodes_second), False

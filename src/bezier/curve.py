@@ -36,8 +36,8 @@ from bezier import _intersection_helpers
 from bezier import _plot_helpers
 
 _LOCATE_ERROR_TEMPLATE = (
-    'Dimension mismatch: This curve is {:d}-dimensional, so the point should '
-    'be a {:d} x 1 NumPy array. Instead the point {} has dimensions {}.'
+    "Dimension mismatch: This curve is {:d}-dimensional, so the point should "
+    "be a {:d} x 1 NumPy array. Instead the point {} has dimensions {}."
 )
 IntersectionStrategy = _intersection_helpers.IntersectionStrategy
 
@@ -86,9 +86,9 @@ class Curve(_base.Base):
             freely mutate ``nodes`` after passing in.
     """
     __slots__ = (
-        '_dimension',  # From base class
-        '_nodes',  # From base class
-        '_degree',  # From constructor
+        "_dimension",  # From base class
+        "_nodes",  # From base class
+        "_degree",  # From constructor
     )
 
     def __init__(self, nodes, degree, _copy=True):
@@ -156,9 +156,9 @@ class Curve(_base.Base):
         returned dictionary.
         """
         return {
-            '_dimension': self._dimension,
-            '_nodes': self._nodes,
-            '_degree': self._degree,
+            "_dimension": self._dimension,
+            "_nodes": self._nodes,
+            "_degree": self._degree,
         }
 
     def _copy(self):
@@ -260,8 +260,8 @@ class Curve(_base.Base):
         """
         if self._dimension != 2:
             raise NotImplementedError(
-                '2D is the only supported dimension',
-                'Current dimension',
+                "2D is the only supported dimension",
+                "Current dimension",
                 self._dimension,
             )
 
@@ -373,12 +373,12 @@ class Curve(_base.Base):
         if _verify:
             if not isinstance(other, Curve):
                 raise TypeError(
-                    'Can only intersect with another curve', 'Received', other
+                    "Can only intersect with another curve", "Received", other
                 )
 
             if self._dimension != 2 or other._dimension != 2:
                 raise NotImplementedError(
-                    'Intersection only implemented in 2D'
+                    "Intersection only implemented in 2D"
                 )
 
         if strategy == IntersectionStrategy.GEOMETRIC:
@@ -386,7 +386,7 @@ class Curve(_base.Base):
         elif strategy == IntersectionStrategy.ALGEBRAIC:
             all_intersections = _algebraic_intersection.all_intersections
         else:
-            raise ValueError('Unexpected strategy.', strategy)
+            raise ValueError("Unexpected strategy.", strategy)
 
         st_vals, _ = all_intersections(self._nodes, other._nodes)
         return st_vals
@@ -651,7 +651,7 @@ class Curve(_base.Base):
                 dimension of the current curve.
         """
         if point.shape != (self._dimension, 1):
-            point_dimensions = ' x '.join(
+            point_dimensions = " x ".join(
                 str(dimension) for dimension in point.shape
             )
             msg = _LOCATE_ERROR_TEMPLATE.format(

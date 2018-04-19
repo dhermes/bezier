@@ -407,21 +407,21 @@ def _newton_refine(s, nodes1, t, nodes2):
     """
     # NOTE: We form -F(s, t) since we want to solve -DF^{-1} F(s, t).
     func_val = (
-        _curve_helpers.evaluate_multi(nodes2, np.asfortranarray([t])) -
-        _curve_helpers.evaluate_multi(nodes1, np.asfortranarray([s]))
+        _curve_helpers.evaluate_multi(nodes2, np.asfortranarray([t]))
+        - _curve_helpers.evaluate_multi(nodes1, np.asfortranarray([s]))
     )
     if np.all(func_val == 0.0):
         # No refinement is needed.
         return s, t
 
     # NOTE: This assumes the curves are 2D.
-    jac_mat = np.empty((2, 2), order='F')
+    jac_mat = np.empty((2, 2), order="F")
     jac_mat[:, :1] = _curve_helpers.evaluate_hodograph(s, nodes1)
     jac_mat[:, 1:] = -_curve_helpers.evaluate_hodograph(t, nodes2)
     # Solve the system.
     singular, delta_s, delta_t = _helpers.solve2x2(jac_mat, func_val[:, 0])
     if singular:
-        raise ValueError('Jacobian is singular.')
+        raise ValueError("Jacobian is singular.")
 
     else:
         return s + delta_s, t + delta_t
@@ -490,7 +490,7 @@ class NewtonSimpleRoot(object):  # pylint: disable=too-few-public-methods
             return None, func_val
 
         else:
-            jacobian = np.empty((2, 2), order='F')
+            jacobian = np.empty((2, 2), order="F")
             jacobian[:, :1] = _curve_helpers.evaluate_multi(
                 self.first_deriv1, s_vals
             )
@@ -609,14 +609,14 @@ class NewtonDoubleRoot(object):  # pylint: disable=too-few-public-methods
         t_vals = np.asfortranarray([t])
         b2_t = _curve_helpers.evaluate_multi(self.nodes2, t_vals)
         b2_dt = _curve_helpers.evaluate_multi(self.first_deriv2, t_vals)
-        func_val = np.empty((3, 1), order='F')
+        func_val = np.empty((3, 1), order="F")
         func_val[:2, :] = b1_s - b2_t
         func_val[2, :] = _helpers.cross_product(b1_ds[:, 0], b2_dt[:, 0])
         if np.all(func_val == 0.0):
             return None, func_val[:2, :]
 
         else:
-            jacobian = np.empty((3, 2), order='F')
+            jacobian = np.empty((3, 2), order="F")
             jacobian[:2, :1] = b1_ds
             jacobian[:2, 1:] = -b2_dt
             if self.second_deriv1.size == 0:
@@ -885,7 +885,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             ~bezier._intersection_helpers.IntersectionClassification]): The
             classification of the intersection.
     """
-    __slots__ = ('index_first', 's', 'index_second', 't', 'interior_curve')
+    __slots__ = ("index_first", "s", "index_second", "t", "interior_curve")
 
     def __init__(self, index_first, s, index_second, t, interior_curve=None):
         self.index_first = index_first
@@ -914,11 +914,11 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
         returned dictionary.
         """
         return {
-            'index_first': self.index_first,
-            's': self.s,
-            'index_second': self.index_second,
-            't': self.t,
-            'interior_curve': self.interior_curve,
+            "index_first": self.index_first,
+            "s": self.s,
+            "index_second": self.index_second,
+            "t": self.t,
+            "interior_curve": self.interior_curve,
         }
 
 

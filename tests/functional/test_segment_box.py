@@ -38,8 +38,8 @@ def make_plot(segment, index):
     ax.plot(
         segment[0, 0],
         segment[1, 0],
-        marker='o',
-        linestyle='None',
+        marker="o",
+        linestyle="None",
         color=line.get_color(),
     )
     left_, right_, bottom_, top_ = _helpers.bbox(segment)
@@ -50,11 +50,11 @@ def make_plot(segment, index):
         alpha=0.5,
         color=line.get_color(),
     )
-    ax.axis('scaled')
+    ax.axis("scaled")
     ax.set_xlim(-1.125, 2.125)
     ax.set_ylim(-1.125, 2.125)
     if CONFIG.save_plot:
-        extra = '{:02d}'.format(index)
+        extra = "{:02d}".format(index)
         CONFIG.save_fig(extra=extra)
     else:
         plt.title(CONFIG.current_test)
@@ -142,5 +142,5 @@ def test_goes_through_box():
         run_it(segment, index=index)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     CONFIG.run(globals())

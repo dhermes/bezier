@@ -44,18 +44,18 @@ class TestBase(utils.NumPyTestCase):
         nodes = np.asfortranarray([1.0, 2.0])
         with self.assertRaises(ValueError):
             self._make_one(nodes)
-        nodes = np.zeros((2, 2, 2), order='F')
+        nodes = np.zeros((2, 2, 2), order="F")
         with self.assertRaises(ValueError):
             self._make_one(nodes)
 
     def test_degree_property(self):
-        shape = self._make_one(np.zeros((1, 0), order='F'))
+        shape = self._make_one(np.zeros((1, 0), order="F"))
         self.assertEqual(shape.degree, -1)
         self.assertEqual(shape._degree, -1)
 
     def test_dimension_property(self):
         dimension = 4
-        nodes = np.zeros((dimension, 3), order='F')
+        nodes = np.zeros((dimension, 3), order="F")
         shape = self._make_one(nodes)
         self.assertEqual(shape.dimension, dimension)
         self.assertEqual(shape._dimension, dimension)
@@ -67,7 +67,7 @@ class TestBase(utils.NumPyTestCase):
         self.assertIsNot(shape.nodes, nodes)
 
     def test___repr__(self):
-        nodes = np.zeros((3, 4), order='F')
+        nodes = np.zeros((3, 4), order="F")
         shape = self._make_one(nodes)
-        expected = '<Base (degree=-1, dimension=3)>'
+        expected = "<Base (degree=-1, dimension=3)>"
         self.assertEqual(repr(shape), expected)

@@ -132,13 +132,13 @@ class CurvedPolygon(object):
 
             Other keyword arguments specified will be silently ignored.
     """
-    __slots__ = ('_edges', '_num_sides', '_metadata')
+    __slots__ = ("_edges", "_num_sides", "_metadata")
 
     def __init__(self, *edges, **kwargs):
         self._edges = edges
         self._num_sides = len(edges)
-        self._metadata = kwargs.pop('metadata', None)
-        if kwargs.pop('_verify', True):
+        self._metadata = kwargs.pop("metadata", None)
+        if kwargs.pop("_verify", True):
             self._verify()
 
     @staticmethod
@@ -159,14 +159,14 @@ class CurvedPolygon(object):
             ValueError: If consecutive sides don't share an endpoint.
         """
         if prev._dimension != 2:
-            raise ValueError('Curve not in R^2', prev)
+            raise ValueError("Curve not in R^2", prev)
 
         end = prev._nodes[:, -1]
         start = curr._nodes[:, 0]
         if not _helpers.vector_close(end, start):
             raise ValueError(
-                'Not sufficiently close',
-                'Consecutive sides do not have common endpoint',
+                "Not sufficiently close",
+                "Consecutive sides do not have common endpoint",
                 prev,
                 curr,
             )
@@ -188,7 +188,7 @@ class CurvedPolygon(object):
             ValueError: If consecutive sides don't share an endpoint.
         """
         if self._num_sides < 2:
-            raise ValueError('At least two sides required.')
+            raise ValueError("At least two sides required.")
 
         for prev, curr in six.moves.zip(self._edges, self._edges[1:]):
             self._verify_pair(prev, curr)
@@ -213,7 +213,7 @@ class CurvedPolygon(object):
         This also means that the current object can't be modified by the
         returned dictionary.
         """
-        return {'_edges': self._edges, '_num_sides': self._num_sides}
+        return {"_edges": self._edges, "_num_sides": self._num_sides}
 
     @property
     def area(self):
@@ -256,7 +256,7 @@ class CurvedPolygon(object):
         Returns:
             str: Object representation.
         """
-        return '<{} (num_sides={:d})>'.format(
+        return "<{} (num_sides={:d})>".format(
             self.__class__.__name__, self._num_sides
         )
 

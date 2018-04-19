@@ -30,17 +30,17 @@ class Base(object):
     Raises:
         ValueError: If the ``nodes`` are not 2D.
     """
-    __slots__ = ('_dimension', '_nodes')
+    __slots__ = ("_dimension", "_nodes")
     _degree = -1
 
     def __init__(self, nodes, _copy=True):
         if nodes.ndim != 2:
-            raise ValueError('Nodes must be 2-dimensional, not', nodes.ndim)
+            raise ValueError("Nodes must be 2-dimensional, not", nodes.ndim)
 
         dimension, _ = nodes.shape
         self._dimension = dimension
         if _copy:
-            self._nodes = nodes.copy(order='F')
+            self._nodes = nodes.copy(order="F")
         else:
             self._nodes = nodes
 
@@ -61,7 +61,7 @@ class Base(object):
     @property
     def nodes(self):
         """numpy.ndarray: The nodes that define the current shape."""
-        return self._nodes.copy(order='F')
+        return self._nodes.copy(order="F")
 
     def __repr__(self):
         """Representation of current object.
@@ -69,6 +69,6 @@ class Base(object):
         Returns:
             str: Object representation.
         """
-        return '<{} (degree={:d}, dimension={:d})>'.format(
+        return "<{} (degree={:d}, dimension={:d})>".format(
             self.__class__.__name__, self._degree, self._dimension
         )
