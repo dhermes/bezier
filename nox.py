@@ -67,7 +67,6 @@ def pypy_setup(local_deps, session):
         local_deps = tuple(local_deps)
         # Install NumPy and SciPy from pre-built wheels.
         session.install(
-            '--use-wheel',
             '--no-index',
             '--find-links',
             WHEELHOUSE,
