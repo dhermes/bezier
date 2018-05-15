@@ -23,7 +23,7 @@ In order to add a feature to ``bezier``:
    helpful `doctest`_ examples wherever relevant.
 
 .. _File an issue: https://github.com/dhermes/bezier/issues/new
-.. _doctest: http://www.sphinx-doc.org/ext/doctest.html
+.. _doctest: http://www.sphinx-doc.org/en/stable/ext/doctest.html
 
 **********************
 Native Code Extensions
@@ -312,11 +312,11 @@ Coding Style
 ************
 
 Code is `PEP8`_ compliant and this is enforced with `flake8`_
-and `pylint`_.
+and `Pylint`_.
 
 .. _PEP8: https://www.python.org/dev/peps/pep-0008/
 .. _flake8: http://flake8.pycqa.org
-.. _pylint: https://www.pylint.org
+.. _Pylint: https://www.pylint.org
 
 To check compliance:
 
