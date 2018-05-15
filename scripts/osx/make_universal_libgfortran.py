@@ -122,7 +122,7 @@ def get_i386_dir(x86_64_dir, libgfortran):
 
     * The expected location of the ``i386`` verison of ``libgfortran``
       does not exist
-    * t
+    * The detected architectures list is not ``['i386']``.
 
     Args:
         x86_64_dir (str): Directory containing ``x86_64`` dynamic libraries.
@@ -173,11 +173,12 @@ def get_dependencies(dylib, check_exists=True):
 
     .. code-block:: python
 
-       >>> dylib = "/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib"
+       >>> dylib = "/usr/local/Cellar/gcc/8.1.0/lib/gcc/8/libgfortran.5.dylib"
        >>> get_dependencies(dylib)
-       ['/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libquadmath.0.dylib',
+       ['/usr/local/Cellar/gcc/8.1.0/lib/gcc/8/libquadmath.0.dylib',
+        '/usr/lib/libz.1.dylib',
         '/usr/lib/libSystem.B.dylib',
-        '/usr/local/lib/gcc/7/libgcc_s.1.dylib']
+        '/usr/local/lib/gcc/8/libgcc_s.1.dylib']
 
     Args:
         dylib (str): The path to a dynamic library.
@@ -192,9 +193,9 @@ def get_dependencies(dylib, check_exists=True):
         ValueError: If the ``install_name`` (i.e. the second line) does not
             have the same name (not necessarily same path) as ``dylib``.
             For example
-            ``/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib``
+            ``/usr/local/Cellar/gcc/8.1.0/lib/gcc/8/libgfortran.5.dylib``
             has an install name of
-            ``/usr/local/opt/gcc/lib/gcc/7/libgfortran.4.dylib``.
+            ``/usr/local/opt/gcc/lib/gcc/8/libgfortran.5.dylib``.
         ValueError: If one of the dependencies (from any line other than the
             first two) is not actual a file on the current machine. (Will
             only be raised if ``check_exists=True``.)
@@ -227,9 +228,9 @@ def get_architectures(dylib):
 
     .. code-block:: console
 
-       $ lipo -info /usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.dylib
+       $ lipo -info /usr/local/Cellar/gcc/8.1.0/lib/gcc/8/libgfortran.dylib
        Non-fat file: .../libgfortran.dylib is architecture: x86_64
-       $ lipo -info /usr/local/lib/gcc/7/libgcc_s.1.dylib
+       $ lipo -info /usr/local/lib/gcc/8/libgcc_s.1.dylib
        Architectures in the fat file: .../libgcc_s.1.dylib are: x86_64 i386
 
     (Path information has been replaced by ``...`` for display purposes.)
@@ -239,10 +240,10 @@ def get_architectures(dylib):
     .. code-block:: python
 
        >>> libgfortran = (
-       ...     "/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib")
+       ...     "/usr/local/Cellar/gcc/8.1.0/lib/gcc/8/libgfortran.5.dylib")
        >>> get_architectures(libgfortran)
        ['x86_64']
-       >>> libgcc_s = "/usr/local/lib/gcc/7/libgcc_s.1.dylib"
+       >>> libgcc_s = "/usr/local/lib/gcc/8/libgcc_s.1.dylib"
        >>> get_architectures(libgcc_s)
        ['x86_64', 'i386']
 
@@ -295,10 +296,10 @@ def non_universal_libraries(dylib):
     .. code-block:: python
 
        >>> libgfortran = (
-       ...     "/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib")
+       ...     "/usr/local/Cellar/gcc/8.1.0/lib/gcc/8/libgfortran.5.dylib")
        >>> non_universal_libraries(libgfortran)
-       {'/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib',
-        '/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libquadmath.0.dylib'}
+       {'/usr/local/Cellar/gcc/8.1.0/lib/gcc/8/libgfortran.5.dylib',
+        '/usr/local/Cellar/gcc/8.1.0/lib/gcc/8/libquadmath.0.dylib'}
 
     Args:
         dylib (str): Path to a dynamic library.

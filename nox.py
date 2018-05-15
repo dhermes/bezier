@@ -386,6 +386,7 @@ def clean(session):
         get_path("dist"),
         get_path("docs", "__pycache__"),
         get_path("docs", "build"),
+        get_path("scripts", "osx", "__pycache__"),
         get_path("scripts", "osx", "dist_wheels"),
         get_path("scripts", "osx", "fixed_wheels"),
         get_path("scripts", "osx", "frankenstein"),

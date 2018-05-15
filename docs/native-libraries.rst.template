@@ -291,7 +291,7 @@ with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
    >>> print_tree(dylibs_directory)
    .dylibs/
      libgcc_s.1.dylib
-     libgfortran.4.dylib
+     libgfortran.5.dylib
      libquadmath.0.dylib
 
 The ``bezier._speedup`` module depends on the local copy
@@ -326,7 +326,7 @@ of ``libgfortran``:
    >>> invoke_shell("otool", "-L", "_speedup.cpython-36m-darwin.so")
    $ otool -L _speedup.cpython-36m-darwin.so
    _speedup.cpython-36m-darwin.so:
-           @loader_path/.dylibs/libgfortran.4.dylib (...)
+           @loader_path/.dylibs/libgfortran.5.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
 Though the Python extension modules (``.so`` files) only depend on
@@ -337,10 +337,10 @@ Though the Python extension modules (``.so`` files) only depend on
    :options: +NORMALIZE_WHITESPACE
    :mac-os-x-only:
 
-   >>> invoke_shell("otool", "-L", ".dylibs/libgfortran.4.dylib")
-   $ otool -L .dylibs/libgfortran.4.dylib
-   .dylibs/libgfortran.4.dylib:
-           /DLC/bezier/libgfortran.4.dylib (...)
+   >>> invoke_shell("otool", "-L", ".dylibs/libgfortran.5.dylib")
+   $ otool -L .dylibs/libgfortran.5.dylib
+   .dylibs/libgfortran.5.dylib:
+           /DLC/bezier/libgfortran.5.dylib (...)
            @loader_path/libquadmath.0.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
            @loader_path/libgcc_s.1.dylib (...)
