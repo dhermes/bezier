@@ -405,7 +405,7 @@ def is_separating(direction, polygon1, polygon2):
     # NOTE: We assume throughout that ``norm_squared != 0``. If it **were**
     #       zero that would mean the ``direction`` corresponds to an
     #       invalid edge.
-    norm_squared = (direction[0] * direction[0] + direction[1] * direction[1])
+    norm_squared = direction[0] * direction[0] + direction[1] * direction[1]
     params = []
     vertex = np.empty((2,), order="F")
     for polygon in (polygon1, polygon2):

@@ -45,7 +45,7 @@ def get_library_dirs():
     cmd_output = subprocess.check_output(cmd).decode("utf-8")
     search_lines = cmd_output.strip().split("\n")
     library_lines = [
-        line[len(FORTRAN_LIBRARY_PREFIX):]
+        line[len(FORTRAN_LIBRARY_PREFIX) :]
         for line in search_lines
         if line.startswith(FORTRAN_LIBRARY_PREFIX)
     ]
@@ -261,7 +261,7 @@ def get_architectures(dylib):
     cmd_output = subprocess.check_output(cmd).decode("utf-8").strip()
     prefix = "Architectures in the fat file: {} are: ".format(dylib)
     if cmd_output.startswith(prefix):
-        architectures = cmd_output[len(prefix):].split()
+        architectures = cmd_output[len(prefix) :].split()
         return architectures
 
     else:
@@ -269,7 +269,7 @@ def get_architectures(dylib):
         if not cmd_output.startswith(prefix):
             raise ValueError("Unexpected output", cmd_output)
 
-        return [cmd_output[len(prefix):]]
+        return [cmd_output[len(prefix) :]]
 
 
 def is_universal(dylib):

@@ -28,6 +28,7 @@ class TestSurface(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
         from bezier import surface
+
         return surface.Surface
 
     def _make_one(self, *args, **kwargs):
@@ -726,6 +727,7 @@ class Test__make_intersection(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(edge_info, all_edge_nodes):
         from bezier import surface
+
         return surface._make_intersection(edge_info, all_edge_nodes)
 
     def test_it(self):

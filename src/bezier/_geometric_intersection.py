@@ -1609,7 +1609,7 @@ class Linearization(object):
             Tuple[~bezier._geometric_intersection.Linearization]: List of all
             subdivided parts, which is just the current object.
         """
-        return self,
+        return (self,)
 
     @classmethod
     def from_shape(cls, shape):

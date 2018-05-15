@@ -41,7 +41,8 @@ except ImportError:  # pragma: NO COVER
 ZERO_THRESHOLD = 0.5 ** 10  # ~1e-3
 MAX_NEWTON_ITERATIONS = 10
 NEWTON_ERROR_RATIO = 0.5 ** 36
-NEWTON_NO_CONVERGE = """\
+NEWTON_NO_CONVERGE = (
+    """\
 Unsupported multiplicity.
 
 Newton's method failed to converge to a solution under the
@@ -61,6 +62,7 @@ The failure to converge may have been caused by one of:
 - Numerical issues caused the iteration to leave the region
   of convergence
 """
+)
 
 
 def _newton_refine(s, nodes1, t, nodes2):
@@ -767,11 +769,11 @@ def full_newton_nonzero(s, nodes1, t, nodes2):
         return current_s, current_t
 
     # If Newton's method did not converge, then assume the root is not simple.
-    second_deriv1 = (num_nodes1 - 2) * (
-        first_deriv1[:, 1:] - first_deriv1[:, :-1]
+    second_deriv1 = (
+        (num_nodes1 - 2) * (first_deriv1[:, 1:] - first_deriv1[:, :-1])
     )
-    second_deriv2 = (num_nodes2 - 2) * (
-        first_deriv2[:, 1:] - first_deriv2[:, :-1]
+    second_deriv2 = (
+        (num_nodes2 - 2) * (first_deriv2[:, 1:] - first_deriv2[:, :-1])
     )
     evaluate_fn = NewtonDoubleRoot(
         nodes1,

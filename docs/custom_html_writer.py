@@ -20,7 +20,8 @@ how to write a custom Sphinx extension.
 from sphinx import errors
 from sphinx.writers import html
 
-_LITERAL_ERR_TEMPLATE = """\
+_LITERAL_ERR_TEMPLATE = (
+    """\
 All literal blocks must either be used for doctest or explicitly
 declared as a language other than Python. Current node:
 
@@ -29,6 +30,7 @@ declared as a language other than Python. Current node:
 has combination of language ({!r}) and test node type ({!r}) which
 are not allowed.
 """
+)
 
 
 class CustomHTMLWriter(html.HTMLTranslator):

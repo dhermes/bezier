@@ -16,11 +16,13 @@ import unittest.mock
 
 import pkg_resources
 
-CHECK_PKG_MSG = """\
+CHECK_PKG_MSG = (
+    """\
 path     = {!r}
 suffix   = {!r}
 site_pkg = {!r}
 from_egg = {!r}"""
+)
 
 
 class Test___version__(unittest.TestCase):
@@ -58,6 +60,7 @@ class Test_get_include(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         import bezier
+
         return bezier.get_include()
 
     def test_it(self):
@@ -70,6 +73,7 @@ class Test_get_lib(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         import bezier
+
         return bezier.get_lib()
 
     def test_it(self):
@@ -82,6 +86,7 @@ class Test_get_dll(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         import bezier
+
         return bezier.get_dll()
 
     @unittest.mock.patch("os.name", new="nt")

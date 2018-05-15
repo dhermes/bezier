@@ -153,7 +153,7 @@ def make_subdivision_matrices(degree):
         # NOTE: We "should" reverse the results when using
         #       the complement, but they are symmetric so
         #       that would be a waste.
-        right[-(col + 1):, complement] = left[:col + 1, col]
+        right[-(col + 1):, complement] = left[: col + 1, col]
     return left, right
 
 
@@ -372,10 +372,8 @@ def _elevate_nodes(nodes):
     multipliers = np.arange(1, num_nodes, dtype=_FLOAT64)[np.newaxis, :]
     denominator = float(num_nodes)
     new_nodes[:, 1:-1] = (
-        multipliers
-        * nodes[:, :-1]
-        + (denominator - multipliers)
-        * nodes[:, 1:]
+        multipliers * nodes[:, :-1]
+        + (denominator - multipliers) * nodes[:, 1:]
     )
     # Hold off on division until the end, to (attempt to) avoid round-off.
     new_nodes /= denominator
@@ -486,8 +484,8 @@ def _evaluate_hodograph(s, nodes):
     """
     _, num_nodes = np.shape(nodes)
     first_deriv = nodes[:, 1:] - nodes[:, :-1]
-    return (num_nodes - 1) * evaluate_multi(
-        first_deriv, np.asfortranarray([s])
+    return (
+        (num_nodes - 1) * evaluate_multi(first_deriv, np.asfortranarray([s]))
     )
 
 
@@ -552,8 +550,10 @@ def _get_curvature(nodes, tangent_vec, s):
     # NOTE: We somewhat replicate code in ``evaluate_hodograph()`` here.
     first_deriv = nodes[:, 1:] - nodes[:, :-1]
     second_deriv = first_deriv[:, 1:] - first_deriv[:, :-1]
-    concavity = (num_nodes - 1) * (num_nodes - 2) * evaluate_multi(
-        second_deriv, np.asfortranarray([s])
+    concavity = (
+        (num_nodes - 1)
+        * (num_nodes - 2)
+        * evaluate_multi(second_deriv, np.asfortranarray([s]))
     )
     curvature = _helpers.cross_product(
         tangent_vec.ravel(order="F"), concavity.ravel(order="F")

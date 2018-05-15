@@ -23,6 +23,7 @@ class Test__newton_refine(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _intersection_helpers
+
         return _intersection_helpers._newton_refine(s, nodes1, t, nodes2)
 
     def test_linear(self):
@@ -154,6 +155,7 @@ class TestNewtonSimpleRoot(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
         from bezier import _intersection_helpers
+
         return _intersection_helpers.NewtonSimpleRoot
 
     def _make_one(self, *args, **kwargs):
@@ -218,6 +220,7 @@ class TestNewtonDoubleRoot(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
         from bezier import _intersection_helpers
+
         return _intersection_helpers.NewtonDoubleRoot
 
     def _make_one(self, *args, **kwargs):
@@ -317,6 +320,7 @@ class Test_newton_iterate(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(evaluate_fn, s, t):
         from bezier import _intersection_helpers
+
         return _intersection_helpers.newton_iterate(evaluate_fn, s, t)
 
     @staticmethod
@@ -547,6 +551,7 @@ class Test_full_newton_nonzero(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _intersection_helpers
+
         return _intersection_helpers.full_newton_nonzero(s, nodes1, t, nodes2)
 
     def test_simple_root(self):
@@ -658,6 +663,7 @@ class Test_full_newton(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _intersection_helpers
+
         return _intersection_helpers.full_newton(s, nodes1, t, nodes2)
 
     def test_both_near_zero(self):
@@ -724,6 +730,7 @@ class Test_speedup_newton_refine(Test__newton_refine):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _speedup
+
         return _speedup.newton_refine_curve_intersect(s, nodes1, t, nodes2)
 
 
@@ -732,6 +739,7 @@ class TestIntersection(unittest.TestCase):
     @staticmethod
     def _get_target_class():
         from bezier import _intersection_helpers
+
         return _intersection_helpers.Intersection
 
     def _make_one(self, *args, **kwargs):

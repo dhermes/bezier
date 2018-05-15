@@ -19,6 +19,7 @@ class TestBase(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
         from bezier import _base
+
         return _base.Base
 
     def _make_one(self, *args, **kwargs):

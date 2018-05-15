@@ -24,6 +24,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
         from bezier import curved_polygon
+
         return curved_polygon.CurvedPolygon
 
     def _make_one(self, *args, **kwargs):

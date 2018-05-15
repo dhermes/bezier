@@ -21,6 +21,7 @@ class Test_compute_implicit_line(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _clipping
+
         return _clipping.compute_implicit_line(nodes)
 
     def test_no_rounding(self):
@@ -52,6 +53,7 @@ class Test_compute_fat_line(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _clipping
+
         return _clipping.compute_fat_line(nodes)
 
     def test_line(self):
@@ -92,6 +94,7 @@ class Test__update_parameters(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s_min, s_max, start0, end0, start1, end1):
         from bezier import _clipping
+
         return _clipping._update_parameters(
             s_min, s_max, start0, end0, start1, end1
         )
@@ -151,6 +154,7 @@ class Test__check_parameter_range(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s_min, s_max):
         from bezier import _clipping
+
         return _clipping._check_parameter_range(s_min, s_max)
 
     def test_default_both(self):
@@ -182,6 +186,7 @@ class Test_clip_range(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _clipping
+
         return _clipping.clip_range(nodes1, nodes2)
 
     def test_it(self):

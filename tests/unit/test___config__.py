@@ -19,6 +19,7 @@ class Test_modify_path(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         from bezier import __config__
+
         return __config__.modify_path()
 
     @unittest.mock.patch.multiple(os, name="not-nt", environ={})
@@ -77,6 +78,7 @@ class Test_handle_import_error(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(caught_exc, name):
         from bezier import __config__
+
         return __config__.handle_import_error(caught_exc, name)
 
     def test_valid_exception(self):

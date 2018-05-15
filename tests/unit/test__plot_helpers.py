@@ -40,6 +40,7 @@ class Test_new_axis(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         from bezier import _plot_helpers
+
         return _plot_helpers.new_axis()
 
     def test_it(self):
@@ -61,6 +62,7 @@ class Test_add_plot_boundary(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(ax, **kwargs):
         from bezier import _plot_helpers
+
         return _plot_helpers.add_plot_boundary(ax, **kwargs)
 
     def _helper(self, **kwargs):
@@ -88,6 +90,7 @@ class Test_add_patch(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(ax, color, pts_per_edge, *edges):
         from bezier import _plot_helpers
+
         return _plot_helpers.add_patch(ax, color, pts_per_edge, *edges)
 
     def _path_val(self, path, expected_transpose):

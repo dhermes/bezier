@@ -179,10 +179,8 @@ def evaluate(nodes, x_val, y_val):
         # Modified Sylvester: [x0 - x, x1 - x]
         #                     [y0 - y, y1 - y]
         return (
-            (nodes[0, 0] - x_val)
-            * (nodes[1, 1] - y_val)
-            - (nodes[0, 1] - x_val)
-            * (nodes[1, 0] - y_val)
+            (nodes[0, 0] - x_val) * (nodes[1, 1] - y_val)
+            - (nodes[0, 1] - x_val) * (nodes[1, 0] - y_val)
         )
 
     elif num_nodes == 3:
@@ -378,48 +376,28 @@ def _to_power_basis_degree4(nodes1, nodes2):
     return np.asfortranarray(
         [
             3.0 * val0,
-            -25.0
-            * val0
-            + 48.0
-            * val1
-            - 36.0
-            * val2
-            + 16.0
-            * val3
-            - 3.0
-            * val4,
-            70.0
-            * val0
-            - 208.0
-            * val1
-            + 228.0
-            * val2
-            - 112.0
-            * val3
-            + 22.0
-            * val4,
+            -25.0 * val0
+            + 48.0 * val1
+            - 36.0 * val2
+            + 16.0 * val3
+            - 3.0 * val4,
+            70.0 * val0
+            - 208.0 * val1
+            + 228.0 * val2
+            - 112.0 * val3
+            + 22.0 * val4,
             (
-                -80.0
-                * val0
-                + 288.0
-                * val1
-                - 384.0
-                * val2
-                + 224.0
-                * val3
-                - 48.0
-                * val4
+                -80.0 * val0
+                + 288.0 * val1
+                - 384.0 * val2
+                + 224.0 * val3
+                - 48.0 * val4
             ),
-            32.0
-            * val0
-            - 128.0
-            * val1
-            + 192.0
-            * val2
-            - 128.0
-            * val3
-            + 32.0
-            * val4,
+            32.0 * val0
+            - 128.0 * val1
+            + 192.0 * val2
+            - 128.0 * val3
+            + 32.0 * val4,
         ]
     )
 

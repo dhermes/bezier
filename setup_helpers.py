@@ -36,11 +36,13 @@ to point to a custom ``libgfortran`` that **is** universal. (See
 ``scripts/osx/build-wheels.sh`` for an example of this.)
 """
 FORTRAN_LIBRARY_PREFIX = "libraries: ="
-GFORTRAN_MISSING_LIBS = """\
+GFORTRAN_MISSING_LIBS = (
+    """\
 ``gfortran`` default library path not found via:
 
 $ gfortran -print-search-dirs
 {}"""
+)
 GFORTRAN_BAD_PATH = "``gfortran`` library path {} is not a directory."
 # NOTE: These are mostly recommendations from Certik found here:
 #         http://www.fortran90.org/src/faq.html
@@ -115,7 +117,7 @@ def gfortran_search_path(library_dirs):
     # Find single line starting with ``libraries: ``.
     search_lines = cmd_output.strip().split("\n")
     library_lines = [
-        line[len(FORTRAN_LIBRARY_PREFIX):]
+        line[len(FORTRAN_LIBRARY_PREFIX) :]
         for line in search_lines
         if line.startswith(FORTRAN_LIBRARY_PREFIX)
     ]

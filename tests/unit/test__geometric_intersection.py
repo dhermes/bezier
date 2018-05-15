@@ -27,6 +27,7 @@ class Test__bbox_intersect(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _geometric_intersection
+
         return _geometric_intersection._bbox_intersect(nodes1, nodes2)
 
     def test_intersect(self):
@@ -77,6 +78,7 @@ class Test_speedup_bbox_intersect(Test__bbox_intersect):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _speedup
+
         return _speedup.bbox_intersect(nodes1, nodes2)
 
 
@@ -85,6 +87,7 @@ class Test_linearization_error(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.linearization_error(nodes)
 
     def test_linear(self):
@@ -197,6 +200,7 @@ class Test_segment_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.segment_intersection(
             start0, end0, start1, end1
         )
@@ -245,6 +249,7 @@ class Test_parallel_lines_parameters(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.parallel_lines_parameters(
             start0, end0, start1, end1
         )
@@ -374,6 +379,7 @@ class Test_line_line_collide(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(line1, line2):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.line_line_collide(line1, line2)
 
     def test_general_position_collide(self):
@@ -409,6 +415,7 @@ class Test_convex_hull_collide(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.convex_hull_collide(nodes1, nodes2)
 
     def test_line_line(self):
@@ -429,6 +436,7 @@ class Test_from_linearized(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(first, second, intersections):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.from_linearized(
             first, second, intersections
         )
@@ -637,6 +645,7 @@ class Test_add_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s, t, intersections):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.add_intersection(s, t, intersections)
 
     def test_new(self):
@@ -678,6 +687,7 @@ class Test_endpoint_check(utils.NumPyTestCase):
         first, node_first, s, second, node_second, t, intersections
     ):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.endpoint_check(
             first, node_first, s, second, node_second, t, intersections
         )
@@ -729,6 +739,7 @@ class Test_tangent_bbox_intersection(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(first, second, intersections):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.tangent_bbox_intersection(
             first, second, intersections
         )
@@ -774,6 +785,7 @@ class Test_bbox_line_intersect(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, line_start, line_end):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.bbox_line_intersect(
             nodes, line_start, line_end
         )
@@ -858,6 +870,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(candidates, intersections):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.intersect_one_round(
             candidates, intersections
         )
@@ -987,6 +1000,7 @@ class Test_prune_candidates(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(candidates):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.prune_candidates(candidates)
 
     def test_curved(self):
@@ -1015,6 +1029,7 @@ class Test_make_same_degree(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.make_same_degree(nodes1, nodes2)
 
     def test_same_degree(self):
@@ -1060,6 +1075,7 @@ class Test_coincident_parameters(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.coincident_parameters(nodes1, nodes2)
 
     def test_different_degree(self):
@@ -1225,6 +1241,7 @@ class Test_check_lines(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(first, second):
         from bezier import _geometric_intersection
+
         return _geometric_intersection.check_lines(first, second)
 
     def test_not_linearized(self):
@@ -1309,6 +1326,7 @@ class Test__all_intersections(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes_first, nodes_second, **kwargs):
         from bezier import _geometric_intersection
+
         return _geometric_intersection._all_intersections(
             nodes_first, nodes_second, **kwargs
         )
@@ -1379,8 +1397,8 @@ class Test__all_intersections(utils.NumPyTestCase):
         from bezier import _geometric_intersection
 
         multiplier = 16384.0
-        nodes1 = multiplier * np.asfortranarray(
-            [[0.0, 4.5, 9.0], [0.0, 9.0, 0.0]]
+        nodes1 = (
+            multiplier * np.asfortranarray([[0.0, 4.5, 9.0], [0.0, 9.0, 0.0]])
         )
         nodes2 = multiplier * np.asfortranarray([[0.0, 6.0], [8.0, 0.0]])
         with self.assertRaises(ValueError) as exc_info:
@@ -1487,6 +1505,7 @@ class Test_speedup_all_intersections(Test__all_intersections):
     @staticmethod
     def _call_function_under_test(nodes_first, nodes_second, **kwargs):
         from bezier import _speedup
+
         return _speedup.curve_intersections(
             nodes_first, nodes_second, **kwargs
         )
@@ -1494,11 +1513,13 @@ class Test_speedup_all_intersections(Test__all_intersections):
     @staticmethod
     def reset_curves_workspace(workspace_size):
         from bezier import _speedup
+
         return _speedup.reset_curves_workspace(workspace_size)
 
     @staticmethod
     def curves_workspace_size():
         from bezier import _speedup
+
         return _speedup.curves_workspace_size()
 
     def test_workspace_resize(self):
@@ -1542,6 +1563,7 @@ class TestSubdividedCurve(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
         from bezier import _geometric_intersection
+
         return _geometric_intersection.SubdividedCurve
 
     def _make_one(self, *args, **kwargs):
@@ -1617,6 +1639,7 @@ class TestLinearization(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
         from bezier import _geometric_intersection
+
         return _geometric_intersection.Linearization
 
     def _make_one(self, *args, **kwargs):
@@ -1716,6 +1739,7 @@ class Test_reset_curves_workspace(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(workspace_size):
         from bezier import _speedup
+
         return _speedup.reset_curves_workspace(workspace_size)
 
     def test_it(self):
@@ -1759,6 +1783,7 @@ class Test_curves_workspace_size(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
         from bezier import _speedup
+
         return _speedup.curves_workspace_size()
 
     def test_it(self):

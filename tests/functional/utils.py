@@ -809,9 +809,7 @@ class CurvedPolygonInfo(object):
         err_msg1 = "Unexpected number of {} parameter polynomials.".format(
             name
         )
-        template2 = (
-            "{} parameter polynomial should have integer coefficients."
-        )
+        template2 = "{} parameter polynomial should have integer coefficients."
         err_msg2 = template2.format(name)
         if len(polynomials) != num_nodes:
             raise ValueError(err_msg1)

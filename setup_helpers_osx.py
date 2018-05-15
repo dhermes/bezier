@@ -21,7 +21,8 @@ import setup_helpers
 
 MAC_OS_X = "darwin"
 # NOTE: Used by ``gfortran_supports_dual_architecture()``.
-SIMPLE_F90_SOURCE = """\
+SIMPLE_F90_SOURCE = (
+    """\
 subroutine bar(x, y)
   integer, intent(in) :: x
   integer, intent(out) :: y
@@ -30,6 +31,7 @@ subroutine bar(x, y)
 
 end subroutine bar
 """
+)
 
 
 def is_osx_gfortran(f90_compiler):
@@ -84,7 +86,7 @@ def is_dual_architecture():
     cmd_output = subprocess.check_output(cmd).decode("utf-8").strip()
     prefix = "Architectures in the fat file: {} are: ".format(sys.executable)
     if cmd_output.startswith(prefix):
-        architectures = cmd_output[len(prefix):].split()
+        architectures = cmd_output[len(prefix) :].split()
         return "i386" in architectures and "x86_64" in architectures
 
     else:

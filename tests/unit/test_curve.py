@@ -22,6 +22,7 @@ class TestCurve(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
         from bezier import curve
+
         return curve.Curve
 
     def _make_one(self, *args, **kwargs):

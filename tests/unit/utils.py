@@ -15,38 +15,47 @@ try:
     import bezier
 except ImportError:  # pragma: NO COVER
     bezier = None
-WRONG_FLAGS_TEMPLATE = """\
+WRONG_FLAGS_TEMPLATE = (
+    """\
 Arrays are not Fortran contiguous
 array1 flags =
 {}
 array2 flags =
 {}
 """
-WRONG_TYPE_TEMPLATE = """\
+)
+WRONG_TYPE_TEMPLATE = (
+    """\
 Arrays have different types
 array1({}) =
 {!r}
 array2({}) =
 {!r}
 """
-WRONG_SHAPE_TEMPLATE = """\
+)
+WRONG_SHAPE_TEMPLATE = (
+    """\
 Arrays have different shapes
 array1{} =
 {!r}
 array2{} =
 {!r}
 """
-NOT_EQ_TEMPLATE = """\
+)
+NOT_EQ_TEMPLATE = (
+    """\
 Arrays not equal
 array1 =
 {!r}
 array2 =
 {!r}
 """
+)
 
 
 def get_random(seed):
     import numpy as np
+
     return np.random.RandomState(seed=seed)  # pylint: disable=no-member
 
 
@@ -93,7 +102,7 @@ def ref_triangle_uniform_nodes(pts_exponent):
         for x_val in six.moves.xrange(remaining):
             result[index, :] = x_val, y_val
             index += 1
-    result /= (pts_per_side - 1.0)
+    result /= pts_per_side - 1.0
     return result
 
 

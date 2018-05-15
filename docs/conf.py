@@ -383,4 +383,4 @@ autodoc_mock_imports = []
 # We want to turn off
 # (https://docs.python.org/3/library/\
 #  doctest.html#doctest.IGNORE_EXCEPTION_DETAIL)
-doctest_default_flags = (doctest.DONT_ACCEPT_TRUE_FOR_1 | doctest.ELLIPSIS)
+doctest_default_flags = doctest.DONT_ACCEPT_TRUE_FOR_1 | doctest.ELLIPSIS

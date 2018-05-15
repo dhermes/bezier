@@ -136,8 +136,8 @@ def unit(session, py):
 def cover(session):
     session.interpreter = SINGLE_INTERP
     # Install all test dependencies.
-    local_deps = BASE_DEPS + (
-        DEPS["scipy"], DEPS["pytest-cov"], DEPS["coverage"]
+    local_deps = (
+        BASE_DEPS + (DEPS["scipy"], DEPS["pytest-cov"], DEPS["coverage"])
     )
     session.install(*local_deps)
     # Install this package.
@@ -251,14 +251,17 @@ def docs_images(session):
 def lint(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
-    local_deps = BASE_DEPS + (
-        DEPS["docutils"],
-        DEPS["flake8"],
-        DEPS["flake8-import-order"],
-        DEPS["matplotlib"],
-        DEPS["Pygments"],
-        DEPS["pylint"],
-        DEPS["seaborn"],
+    local_deps = (
+        BASE_DEPS
+        + (
+            DEPS["docutils"],
+            DEPS["flake8"],
+            DEPS["flake8-import-order"],
+            DEPS["matplotlib"],
+            DEPS["Pygments"],
+            DEPS["pylint"],
+            DEPS["seaborn"],
+        )
     )
     session.install(*local_deps)
     # Install this package.
@@ -289,7 +292,7 @@ def lint(session):
         "pylint",
         "--rcfile",
         "pylintrc",
-        "--max-module-lines=2999",
+        "--max-module-lines=3033",
         get_path("src", "bezier"),
     )
     # Run Pylint over the tests source.
@@ -300,7 +303,7 @@ def lint(session):
         "--disable=missing-docstring",
         "--disable=protected-access",
         "--disable=too-many-public-methods",
-        "--max-module-lines=2459",
+        "--max-module-lines=2511",
         get_path("tests"),
     )
 
