@@ -3,6 +3,9 @@
 
 |pypi| |docs|
 
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
+
 Performance Optimizations
 -------------------------
 
@@ -12,11 +15,11 @@ Performance Optimizations
    for many crucial computation helpers including
 
    -  intersecting line segments
-   -  (vectorized) Horner's method for evaluating a Bézier curve at
+   -  (vectorized) Horner's method for evaluating a B |eacute| zier curve at
       multiple parameters at once
-   -  (vectorized) Horner's method for evaluating a Bézier surface
+   -  (vectorized) Horner's method for evaluating a B |eacute| zier surface
    -  computing "linearization error" (how close a curve is to a line)
-   -  specializing a Bézier curve to a sub-interval
+   -  specializing a B |eacute| zier curve to a sub-interval
    -  using Newton's method to refine a curve-curve intersection
 
 -  `Adding <https://github.com/dhermes/bezier/commit/dcf40f4c9ed2167e96fc8f4675aeedcc2d811a0b>`__

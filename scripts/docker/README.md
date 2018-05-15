@@ -2,7 +2,7 @@
 
 > Provides Python, NumPy, gfortran and nox. For automated testing of bezier Python package.
 
-`bezier` is a Python library for interacting with Bézier Curves and Surfaces.
+`bezier` is a Python library for interacting with B&#xe9;zier Curves and Surfaces.
 
 This repository is intended to be used as a fully-functional environment for installing / running / testing `bezier`. Provides:
 
