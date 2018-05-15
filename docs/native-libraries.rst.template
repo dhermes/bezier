@@ -342,6 +342,7 @@ Though the Python extension modules (``.so`` files) only depend on
    .dylibs/libgfortran.5.dylib:
            /DLC/bezier/libgfortran.5.dylib (...)
            @loader_path/libquadmath.0.dylib (...)
+           /usr/lib/libz.1.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
            @loader_path/libgcc_s.1.dylib (...)
 
