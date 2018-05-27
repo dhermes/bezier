@@ -495,11 +495,32 @@ Procedures
 
       void
       get_curvature(int *num_nodes,
-                    int *dimension,
                     double *nodes,
                     double *tangent_vec,
                     double *s,
                     double *curvature);
+
+   **Example:**
+
+   .. literalinclude:: example_get_curvature.c
+      :language: c
+      :dedent: 2
+      :lines: 18-28
+
+   .. image:: ../images/get_curvature.png
+      :align: center
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_get_curvature.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Curvature: -12.000000
 
 .. c:function:: void locate_point_curve(int *num_nodes, \
                                         int *dimension, \
