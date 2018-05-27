@@ -200,6 +200,48 @@ Procedures
                                  double *lambda2,
                                  double *evaluated);
 
+   **Example:**
+
+   For the curve :math:`B(s) = \left[\begin{array}{c} 0 \\ 1
+   \end{array}\right] (1 - s)^2 + \left[\begin{array}{c} 2 \\ 1
+   \end{array}\right] 2 (1 - s) s + \left[\begin{array}{c} 3 \\ 3
+   \end{array}\right] s^2 = \left[\begin{array}{c} s(4 - s) \\ 2s^2 + 1
+   \end{array}\right]`:
+
+   .. literalinclude:: example_evaluate_curve_barycentric.c
+      :language: c
+      :dedent: 2
+      :lines: 18-38
+
+   we have
+
+   .. math::
+
+      \begin{align*}
+        Q\left(\frac{1}{4}, \frac{3}{4}\right) &= \frac{1}{16} \left[
+          \begin{array}{c} 39 \\ 34 \end{array}\right] \\
+        Q\left(\frac{1}{2}, \frac{1}{4}\right) &= \frac{1}{16} \left[
+          \begin{array}{c} 11 \\ 11 \end{array}\right] \\
+        Q\left(0, \frac{1}{2}\right) &= \frac{1}{4} \left[
+          \begin{array}{c} 3 \\ 3 \end{array}\right] \\
+        Q\left(1, \frac{1}{4}\right) &= \frac{1}{16} \left[
+          \begin{array}{c} 19 \\ 27 \end{array}\right]
+      \end{align*}
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_evaluate_curve_barycentric.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Evaluated:
+      2.437500, 0.687500, 0.750000, 1.187500
+      2.125000, 0.687500, 0.750000, 1.687500
+
 .. c:function:: void evaluate_hodograph(double *s, \
                                         int *num_nodes, \
                                         int *dimension, \
