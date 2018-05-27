@@ -109,6 +109,41 @@ Procedures
                           double *nodes,
                           double *elevated);
 
+   **Example:**
+
+   After elevating :math:`B(s) = \left[\begin{array}{c} 0 \\ 0
+   \end{array}\right] (1 - s)^2 + \frac{1}{2} \left[\begin{array}{c} 3 \\ 3
+   \end{array}\right] 2 (1 - s) s + \left[\begin{array}{c} 3 \\ 0
+   \end{array}\right] s^2`:
+
+   .. literalinclude:: example_elevate_nodes_curve.c
+      :language: c
+      :dedent: 2
+      :lines: 18-33
+
+   we have :math:`B(s) = \left[\begin{array}{c} 0 \\ 0
+   \end{array}\right] (1 - s)^3 + \left[\begin{array}{c} 1 \\ 1
+   \end{array}\right] 3 (1 - s)^2 s + \left[\begin{array}{c} 2 \\ 1
+   \end{array}\right] 3 (1 - s) s^2 + \left[\begin{array}{c} 3 \\ 0
+   \end{array}\right] s^3`:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_elevate_nodes_curve.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Elevated:
+      0.000000, 1.000000, 2.000000, 3.000000
+      0.000000, 1.000000, 1.000000, 0.000000
+
+   .. image:: ../images/curve_elevate.png
+      :align: center
+
 .. c:function:: void evaluate_curve_barycentric(int *num_nodes, \
                                                 int *dimension, \
                                                 double *nodes, \
