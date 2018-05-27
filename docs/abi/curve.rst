@@ -53,6 +53,28 @@ Procedures
                      double *length,
                      int *error_val);
 
+   **Example:**
+
+   .. literalinclude:: example_compute_length.c
+      :language: c
+      :dedent: 2
+      :lines: 18-28
+
+   Consider the line segment :math:`B(s) = \left[\begin{array}{c} 3s \\ 4s
+   \end{array}\right]`, we can verify the length:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_compute_length.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Length: 5.000000
+
 .. c:function:: void elevate_nodes_curve(int *num_nodes, \
                                          int *dimension, \
                                          double *nodes, \
@@ -149,7 +171,7 @@ Procedures
                                         double *nodes, \
                                         double *hodograph)
 
-   Evaluates the hodograph (or derivative) of a B |eacute| ezier curve
+   Evaluates the hodograph (or derivative) of a B |eacute| zier curve
    function :math:`B'(s)`.
 
    :param int* num_nodes:

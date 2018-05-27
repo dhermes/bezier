@@ -66,6 +66,8 @@ status module
       code has violated some mathematical invariant or the author of that
       block of code has misunderstood the possible states of the system.
 
+   **Example:**
+
    Consider curves which intersect at the point
    :math:`B_1\left(\frac{3}{2}\right) = B_2(-2)`:
 
@@ -89,29 +91,10 @@ status module
 
    nearest to :math:`s = \frac{7}{8}, t = -2`:
 
-   .. code-block:: c
-
-      #include "bezier.h"
-
-      // Inputs.
-      int num_nodes1 = 3;
-      double nodes1[6] = {0.0, 0.0, 2.0, 4.0, 4.0, 0.0};
-      double s = 7.0 / 8.0;
-      int num_nodes2 = 2;
-      double nodes2[4] = {2.0, 0.0, 0.0, 3.0};
-      double t = -2.0;
-
-      // Outputs.
-      double new_s, new_t;
-      Status status;
-
-      newton_refine_curve_intersect(
-          &s, &num_nodes1, nodes1,
-          &t, &num_nodes2, nodes2,
-          &new_s, &new_t, &status);
-      if (status == SINGULAR) {
-         printf("Jacobian is singular.\n");
-      }
+   .. literalinclude:: example_status.c
+      :language: c
+      :dedent: 2
+      :lines: 18-36
 
    the method fails with the status :c:data:`SINGULAR` because the
    Jacobian
@@ -123,4 +106,16 @@ status module
       -6 & -3
       \end{array}\right]
 
-   is singular to numerical precision.
+   is singular to numerical precision:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_status.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Jacobian is singular.

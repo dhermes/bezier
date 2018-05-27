@@ -345,7 +345,7 @@ Procedures
                                    double *new_nodes)
 
    Computes control nets for both cartesian partial derivatives of a
-   B |eacute| ezier surface :math:`B_s(s, t)` and :math:`B_t(s, t)`. Taking
+   B |eacute| zier surface :math:`B_s(s, t)` and :math:`B_t(s, t)`. Taking
    a single (partial) derivative lowers the degree by 1.
 
    :param int* num_nodes:
