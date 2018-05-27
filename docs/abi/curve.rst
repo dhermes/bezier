@@ -347,6 +347,38 @@ Procedures
                      double *s_vals,
                      double *evaluated);
 
+   **Example:**
+
+   For the curve :math:`B(s) = \left[\begin{array}{c} 1 \\ 0
+   \end{array}\right] (1 - s)^3 + \left[\begin{array}{c} 1 \\ 1
+   \end{array}\right] 3 (1 - s)^2 s + \left[\begin{array}{c} 2 \\ 0
+   \end{array}\right] 3 (1 - s) s^2 + \left[\begin{array}{c} 2 \\ 1
+   \end{array}\right] s^3`:
+
+   .. literalinclude:: example_evaluate_multi.c
+      :language: c
+      :dedent: 2
+      :lines: 18-31
+
+   we have :math:`B\left(0\right) = \left[\begin{array}{c}
+   1 \\ 0 \end{array}\right], B\left(\frac{1}{2}\right) =
+   \frac{1}{2} \left[\begin{array}{c} 3 \\ 1 \end{array}\right]` and
+   :math:`B\left(1\right) = \left[\begin{array}{c} 2 \\ 1 \end{array}\right]`:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_evaluate_multi.c
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Evaluated:
+      1.000000, 1.500000, 2.000000
+      0.000000, 0.500000, 1.000000
+
 .. c:function:: void full_reduce(int *num_nodes, \
                                  int *dimension, \
                                  double *nodes, \
