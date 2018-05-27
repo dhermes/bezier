@@ -614,28 +614,35 @@ class Curve(_base.Base):
         .. doctest:: curve-locate
 
            >>> nodes = np.asfortranarray([
-           ...     [0.0, 1.0, 3.0, 4.0],
-           ...     [0.0, 2.0, 1.0, 0.0],
+           ...     [0.0, -1.0, 1.0, -0.75 ],
+           ...     [2.0,  0.0, 1.0,  1.625],
            ... ])
            >>> curve = bezier.Curve(nodes, degree=3)
            >>> point1 = np.asfortranarray([
-           ...     [3.09375 ],
-           ...     [0.703125],
+           ...     [-0.09375 ],
+           ...     [ 0.828125],
            ... ])
-           >>> s = curve.locate(point1)
-           >>> s
-           0.75
+           >>> curve.locate(point1)
+           0.5
            >>> point2 = np.asfortranarray([
-           ...     [2.0],
-           ...     [0.5],
+           ...     [0.0],
+           ...     [1.5],
            ... ])
            >>> curve.locate(point2) is None
            True
+           >>> point3 = np.asfortranarray([
+           ...     [-0.25 ],
+           ...     [ 1.375],
+           ... ])
+           >>> curve.locate(point3) is None
+           Traceback (most recent call last):
+             ...
+           ValueError: Parameters not close enough to one another
 
         .. testcleanup:: curve-locate
 
            import make_images
-           make_images.curve_locate(curve, point1, point2)
+           make_images.curve_locate(curve, point1, point2, point3)
 
         Args:
             point (numpy.ndarray): A (``D x 1``) point on the curve,

@@ -475,14 +475,14 @@ larger.
    ... ])
    >>> max_err = np.max(np.abs(intersections - expected_ints))
    >>> binary_exponent(max_err)
-   -52
+   -51
    >>> expected_pts = np.asfortranarray([
    ...     [s_val1, s_val2],
    ...     [ 0.375, 0.375 ],
    ... ])
    >>> max_err = np.max(np.abs(points - expected_pts))
    >>> binary_exponent(max_err)
-   -52
+   -51
 
 .. image:: images/curves8_and_27.png
    :align: center

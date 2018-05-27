@@ -1061,19 +1061,19 @@ def get_curvature(nodes, s, tangent_vec, curvature):
     save_image(ax.figure, "get_curvature.png")
 
 
-def curve_locate(curve, point1, point2):
+def curve_locate(curve, point1, point2, point3):
     """Image for :meth`.Curve.locate` docstring."""
     if NO_IMAGES:
         return
 
     ax = curve.plot(256)
-    points = np.hstack([point1, point2])
+    points = np.hstack([point1, point2, point3])
     ax.plot(
         points[0, :], points[1, :], color="black", linestyle="None", marker="o"
     )
     ax.axis("scaled")
-    ax.set_xlim(-0.125, 4.125)
-    ax.set_ylim(-0.125, 1.25)
+    ax.set_xlim(-0.8125, 0.0625)
+    ax.set_ylim(0.75, 2.0625)
     save_image(ax.figure, "curve_locate.png")
 
 

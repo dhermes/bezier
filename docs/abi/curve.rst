@@ -603,6 +603,9 @@ Procedures
       When B(s) = [ 0.000000, 1.500000]; s = -1.000000
       When B(s) = [-0.250000, 1.375000]; s = -2.000000
 
+   .. image:: ../images/curve_locate.png
+      :align: center
+
 .. c:function:: void newton_refine_curve(int *num_nodes, \
                                          int *dimension, \
                                          double *nodes, \
