@@ -295,7 +295,7 @@ Procedures
 
       $ gcc \
       >   -o example \
-      >   example_evaluate_hodograph.c
+      >   example_evaluate_hodograph.c \
       >   -I src/bezier/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
@@ -369,7 +369,7 @@ Procedures
 
       $ gcc \
       >   -o example \
-      >   example_evaluate_multi.c
+      >   example_evaluate_multi.c \
       >   -I src/bezier/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
@@ -425,6 +425,37 @@ Procedures
                   int *num_reduced_nodes,
                   double *reduced,
                   bool *not_implemented);
+
+   **Example:**
+
+   When taking a curve that is degree-elevated from linear to quartic:
+
+   .. literalinclude:: example_full_reduce.c
+      :language: c
+      :dedent: 2
+      :lines: 18-35
+
+   this procedure reduces it to the line
+   :math:`B(s) = \left[\begin{array}{c} 1 \\ 3
+   \end{array}\right] (1 - s) + \left[\begin{array}{c} 2 \\ 5
+   \end{array}\right] s = \left[\begin{array}{c} 1 + s \\ 3 + 2s
+   \end{array}\right]`:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_full_reduce.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Number of reduced nodes: 2
+      Reduced:
+      1.000000, 2.000000
+      3.000000, 5.000000
+      Not implemented: FALSE
 
 .. c:function:: void get_curvature(int *num_nodes, \
                                    double *nodes, \
