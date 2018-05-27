@@ -54,6 +54,9 @@ ${PY_BIN} -m pip install --upgrade setuptools numpy
 # Make sure the custom ``libgfortran`` is in place.
 ${PY_BIN} ${OSX_DIR}/make_universal_libgfortran.py
 
+# Indicate that wheels are being built.
+export BEZIER_WHEEL=True
+
 # Create the wheel (make sure to use the custom ``libgfortran``).
 DIST_WHEELS="${OSX_DIR}/dist_wheels"
 mkdir -p ${DIST_WHEELS}

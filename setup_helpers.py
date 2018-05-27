@@ -35,6 +35,12 @@ to point to a custom ``libgfortran`` that **is** universal. (See
 ``scripts/osx/make_universal_libgfortran.py`` and
 ``scripts/osx/build-wheels.sh`` for an example of this.)
 """
+WHEEL_ENV = "BEZIER_WHEEL"
+"""Environment variable used to indicate a wheel is being built.
+
+If this is present (e.g. ``BEZIER_WHEEL="True"``) then the ``-march=native``
+flag will **not** be used.
+"""
 FORTRAN_LIBRARY_PREFIX = "libraries: ="
 GFORTRAN_MISSING_LIBS = (
     """\
@@ -62,6 +68,7 @@ GFORTRAN_SHARED_FLAGS = (  # Used for both "DEBUG" and "OPTIMIZE"
 GFORTRAN_DEBUG_FLAGS = (
     "-g", "-fcheck=all", "-fbacktrace", "-fimplicit-none", "-pedantic"
 )
+GFORTRAN_NATIVE_FLAG = "-march=native"
 GFORTRAN_OPTIMIZE_FLAGS = ("-Werror", "-O3", "-funroll-loops")
 BAD_JOURNAL = "Saving journal failed with {!r}."
 JOURNAL_ENV = "BEZIER_JOURNAL"
@@ -234,6 +241,8 @@ def patch_f90_compiler(f90_compiler):
         to_remove = GFORTRAN_OPTIMIZE_FLAGS
     else:
         to_add = GFORTRAN_OPTIMIZE_FLAGS
+        if os.environ.get(WHEEL_ENV) is None:
+            to_add += (GFORTRAN_NATIVE_FLAG,)
         to_remove = GFORTRAN_DEBUG_FLAGS
     for flag in to_add:
         if flag not in f90_flags:
