@@ -563,6 +563,46 @@ Procedures
                          double *point,
                          double *s_approx);
 
+   **Example:**
+
+   For :math:`B(s) = \left[\begin{array}{c} 0 \\ 2
+   \end{array}\right] (1 - s)^3 + \left[\begin{array}{c} -1 \\ 0
+   \end{array}\right] 3 (1 - s)^2 s + \left[\begin{array}{c} 1 \\ 1
+   \end{array}\right] 3 (1 - s) s^2 + \frac{1}{8} \left[\begin{array}{c}
+   -6 \\ 13 \end{array}\right] s^3`:
+
+   .. literalinclude:: example_locate_point_curve.c
+      :language: c
+      :dedent: 2
+      :lines: 18-37
+
+   We can locate the point :math:`B\left(\frac{1}{2}\right) = \frac{1}{64}
+   \left[\begin{array}{c} -6 \\ 53 \end{array}\right]` but find that
+   :math:`\frac{1}{2} \left[\begin{array}{c} 0 \\ 3 \end{array}\right]` is
+   not on the curve and that
+
+   .. math::
+
+      B\left(\frac{3 - \sqrt{5}}{6}\right) =
+          B\left(\frac{3 + \sqrt{5}}{6}\right) = \frac{1}{8} \left[
+          \begin{array}{c} -2 \\ 11 \end{array}\right]
+
+   is a self-crossing:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_locate_point_curve.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      When B(s) = [-0.093750, 0.828125]; s =  0.500000
+      When B(s) = [ 0.000000, 1.500000]; s = -1.000000
+      When B(s) = [-0.250000, 1.375000]; s = -2.000000
+
 .. c:function:: void newton_refine_curve(int *num_nodes, \
                                          int *dimension, \
                                          double *nodes, \
