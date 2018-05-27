@@ -275,6 +275,36 @@ Procedures
                          double *nodes,
                          double *hodograph);
 
+   **Example:**
+
+   For the curve :math:`B(s) = \left[\begin{array}{c} 1 \\ 0
+   \end{array}\right] (1 - s)^3 + \left[\begin{array}{c} 1 \\ 1
+   \end{array}\right] 3 (1 - s)^2 s + \left[\begin{array}{c} 2 \\ 0
+   \end{array}\right] 3 (1 - s) s^2 + \left[\begin{array}{c} 2 \\ 1
+   \end{array}\right] s^3`:
+
+   .. literalinclude:: example_evaluate_hodograph.c
+      :language: c
+      :dedent: 2
+      :lines: 18-28
+
+   we have :math:`B'\left(\frac{1}{8}\right) = \frac{1}{32} \left[
+   \begin{array}{c} 21 \\ 54 \end{array}\right]`:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_evaluate_hodograph.c
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Hodograph:
+      0.656250
+      1.687500
+
 .. c:function:: void evaluate_multi(int *num_nodes, \
                                     int *dimension, \
                                     double *nodes, \
