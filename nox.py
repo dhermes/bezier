@@ -21,24 +21,24 @@ import py.path
 IS_MAC_OS_X = sys.platform == "darwin"
 DEPS = {
     "coverage": "coverage",
-    "Cython": "Cython >= 0.28.2",
+    "Cython": "Cython >= 0.28.3",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
     "lcov_cobertura": "lcov_cobertura",
-    "matplotlib": "matplotlib >= 2.2.0",
+    "matplotlib": "matplotlib >= 2.2.2",
     "memory_profiler": "memory_profiler",
-    "mock": "mock >= 1.3.0",
-    "numpy": "numpy >= 1.14.0",
+    "mock": "mock >= 2.0.0",
+    "numpy": "numpy >= 1.14.3",
     "psutil": "psutil",
     "pycobertura": "pycobertura",
     "Pygments": "Pygments",
     "pylint": "pylint",
-    "pytest": "pytest >= 3.4.2",
+    "pytest": "pytest >= 3.6.0",
     "pytest-benchmark": "pytest-benchmark",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.0.0",
-    "seaborn": "seaborn >= 0.8",
+    "scipy": "scipy >= 1.1.0",
+    "seaborn": "seaborn >= 0.8.1",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
