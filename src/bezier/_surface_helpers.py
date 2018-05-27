@@ -694,7 +694,12 @@ ALMOST_TANGENT = 0.5 ** 50
 SHOELACE_LINEAR = ((1, 0, 1),)
 SHOELACE_QUADRATIC = ((2, 0, 1), (1, 0, 2), (2, 1, 2))
 SHOELACE_CUBIC = (
-    (6, 0, 1), (3, 0, 2), (1, 0, 3), (3, 1, 2), (3, 1, 3), (6, 2, 3)
+    (6, 0, 1),
+    (3, 0, 2),
+    (1, 0, 3),
+    (3, 1, 2),
+    (3, 1, 3),
+    (6, 2, 3),
 )
 SHOELACE_QUARTIC = (
     (20, 0, 1),
@@ -2817,7 +2822,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         # d - k =     1,     2, ...
         # We know column k has (d - k + 1) elements.
         new_index = index - degree + k  # First element in column.
-        col_nodes = nodes[:, new_index:index + 1]
+        col_nodes = nodes[:, new_index : index + 1]
         col_nodes = np.asfortranarray(col_nodes)
         col_result = _curve_helpers.evaluate_multi_barycentric(
             col_nodes, lambda1, lambda2
@@ -2971,12 +2976,9 @@ def shoelace_for_area(nodes):
 
     result = 0.0
     for multiplier, index1, index2 in shoelace:
-        result += (
-            multiplier
-            * (
-                nodes[0, index1] * nodes[1, index2]
-                - nodes[1, index1] * nodes[0, index2]
-            )
+        result += multiplier * (
+            nodes[0, index1] * nodes[1, index2]
+            - nodes[1, index1] * nodes[0, index2]
         )
 
     return result / scale_factor

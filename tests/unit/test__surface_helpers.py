@@ -730,8 +730,8 @@ class Test_jacobian_s(utils.NumPyTestCase):
             ]
         )
         result = self._call_function_under_test(nodes, 2, 2)
-        expected = (
-            2.0 * np.asfortranarray([[1.0, 4.0, -5.0], [10.0, -4.0, 8.0]])
+        expected = 2.0 * np.asfortranarray(
+            [[1.0, 4.0, -5.0], [10.0, -4.0, 8.0]]
         )
         self.assertEqual(result, expected)
 
@@ -744,11 +744,8 @@ class Test_jacobian_s(utils.NumPyTestCase):
     def test_quartic(self):
         nodes = np.arange(15, dtype=FLOAT64)[np.newaxis, :] ** 2
         result = self._call_function_under_test(nodes, 4, 1)
-        expected = (
-            4
-            * np.asfortranarray(
-                [[1.0, 3.0, 5.0, 7.0, 11.0, 13.0, 15.0, 19.0, 21.0, 25.0]]
-            )
+        expected = 4 * np.asfortranarray(
+            [[1.0, 3.0, 5.0, 7.0, 11.0, 13.0, 15.0, 19.0, 21.0, 25.0]]
         )
         self.assertEqual(result, expected)
 
@@ -775,27 +772,24 @@ class Test_jacobian_t(utils.NumPyTestCase):
             ]
         )
         result = self._call_function_under_test(nodes, 2, 2)
-        expected = (
-            2.0 * np.asfortranarray([[1.0, -1.0, -4.0], [9.0, 5.0, 5.0]])
+        expected = 2.0 * np.asfortranarray(
+            [[1.0, -1.0, -4.0], [9.0, 5.0, 5.0]]
         )
         self.assertEqual(result, expected)
 
     def test_cubic(self):
         nodes = np.arange(10, dtype=FLOAT64)[np.newaxis, :] ** 2
         result = self._call_function_under_test(nodes, 3, 1)
-        expected = (
-            3 * np.asfortranarray([[16.0, 24.0, 32.0, 33.0, 39.0, 32.0]])
+        expected = 3 * np.asfortranarray(
+            [[16.0, 24.0, 32.0, 33.0, 39.0, 32.0]]
         )
         self.assertEqual(result, expected)
 
     def test_quartic(self):
         nodes = np.arange(15, dtype=FLOAT64)[np.newaxis, :] ** 2
         result = self._call_function_under_test(nodes, 4, 1)
-        expected = (
-            4
-            * np.asfortranarray(
-                [[25.0, 35.0, 45.0, 55.0, 56.0, 64.0, 72.0, 63.0, 69.0, 52.0]]
-            )
+        expected = 4 * np.asfortranarray(
+            [[25.0, 35.0, 45.0, 55.0, 56.0, 64.0, 72.0, 63.0, 69.0, 52.0]]
         )
         self.assertEqual(result, expected)
 
@@ -2383,7 +2377,16 @@ class Test__compute_edge_nodes(utils.NumPyTestCase):
             ]
         )
         (
-            p300, p210, p120, p030, p201, unused_p111, p021, p102, p012, p003
+            p300,
+            p210,
+            p120,
+            p030,
+            p201,
+            unused_p111,
+            p021,
+            p102,
+            p012,
+            p003,
         ) = nodes.T
         self._check(
             nodes,

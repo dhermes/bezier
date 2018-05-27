@@ -408,10 +408,9 @@ def _newton_refine(s, nodes1, t, nodes2):
         ValueError: If the Jacobian is singular at ``(s, t)``.
     """
     # NOTE: We form -F(s, t) since we want to solve -DF^{-1} F(s, t).
-    func_val = (
-        _curve_helpers.evaluate_multi(nodes2, np.asfortranarray([t]))
-        - _curve_helpers.evaluate_multi(nodes1, np.asfortranarray([s]))
-    )
+    func_val = _curve_helpers.evaluate_multi(
+        nodes2, np.asfortranarray([t])
+    ) - _curve_helpers.evaluate_multi(nodes1, np.asfortranarray([s]))
     if np.all(func_val == 0.0):
         # No refinement is needed.
         return s, t
@@ -769,11 +768,11 @@ def full_newton_nonzero(s, nodes1, t, nodes2):
         return current_s, current_t
 
     # If Newton's method did not converge, then assume the root is not simple.
-    second_deriv1 = (
-        (num_nodes1 - 2) * (first_deriv1[:, 1:] - first_deriv1[:, :-1])
+    second_deriv1 = (num_nodes1 - 2) * (
+        first_deriv1[:, 1:] - first_deriv1[:, :-1]
     )
-    second_deriv2 = (
-        (num_nodes2 - 2) * (first_deriv2[:, 1:] - first_deriv2[:, :-1])
+    second_deriv2 = (num_nodes2 - 2) * (
+        first_deriv2[:, 1:] - first_deriv2[:, :-1]
     )
     evaluate_fn = NewtonDoubleRoot(
         nodes1,

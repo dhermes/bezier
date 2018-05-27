@@ -44,7 +44,8 @@ BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
 WHEELHOUSE = os.environ.get("WHEELHOUSE")
 DOCS_DEPS = (
-    "--requirement", os.path.join(NOX_DIR, "docs", "requirements.txt")
+    "--requirement",
+    os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
 SINGLE_INTERP = "python3.6"
 PYPY = "pypy"
@@ -136,8 +137,10 @@ def unit(session, py):
 def cover(session):
     session.interpreter = SINGLE_INTERP
     # Install all test dependencies.
-    local_deps = (
-        BASE_DEPS + (DEPS["scipy"], DEPS["pytest-cov"], DEPS["coverage"])
+    local_deps = BASE_DEPS + (
+        DEPS["scipy"],
+        DEPS["pytest-cov"],
+        DEPS["coverage"],
     )
     session.install(*local_deps)
     # Install this package.
@@ -251,17 +254,14 @@ def docs_images(session):
 def lint(session):
     session.interpreter = SINGLE_INTERP
     # Install all dependencies.
-    local_deps = (
-        BASE_DEPS
-        + (
-            DEPS["docutils"],
-            DEPS["flake8"],
-            DEPS["flake8-import-order"],
-            DEPS["matplotlib"],
-            DEPS["Pygments"],
-            DEPS["pylint"],
-            DEPS["seaborn"],
-        )
+    local_deps = BASE_DEPS + (
+        DEPS["docutils"],
+        DEPS["flake8"],
+        DEPS["flake8-import-order"],
+        DEPS["matplotlib"],
+        DEPS["Pygments"],
+        DEPS["pylint"],
+        DEPS["seaborn"],
     )
     session.install(*local_deps)
     # Install this package.

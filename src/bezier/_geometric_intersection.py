@@ -694,9 +694,8 @@ def line_line_collide(line1, line2):
         line1[:, 0], line1[:, 1], line2[:, 0], line2[:, 1]
     )
     if success:
-        return (
-            _helpers.in_interval(s, 0.0, 1.0)
-            and _helpers.in_interval(t, 0.0, 1.0)
+        return _helpers.in_interval(s, 0.0, 1.0) and _helpers.in_interval(
+            t, 0.0, 1.0
         )
 
     else:
@@ -997,15 +996,13 @@ def bbox_line_intersect(nodes, line_start, line_end):
         bounding box intersection.
     """
     left, right, bottom, top = _helpers.bbox(nodes)
-    if (
-        _helpers.in_interval(line_start[0], left, right)
-        and _helpers.in_interval(line_start[1], bottom, top)
-    ):
+    if _helpers.in_interval(
+        line_start[0], left, right
+    ) and _helpers.in_interval(line_start[1], bottom, top):
         return BoxIntersectionType.INTERSECTION
 
-    if (
-        _helpers.in_interval(line_end[0], left, right)
-        and _helpers.in_interval(line_end[1], bottom, top)
+    if _helpers.in_interval(line_end[0], left, right) and _helpers.in_interval(
+        line_end[1], bottom, top
     ):
         return BoxIntersectionType.INTERSECTION
 
@@ -1379,9 +1376,8 @@ def check_lines(first, second):
         first.start_node, first.end_node, second.start_node, second.end_node
     )
     if success:
-        if (
-            _helpers.in_interval(s, 0.0, 1.0)
-            and _helpers.in_interval(t, 0.0, 1.0)
+        if _helpers.in_interval(s, 0.0, 1.0) and _helpers.in_interval(
+            t, 0.0, 1.0
         ):
             intersections = np.asfortranarray([[s], [t]])
             result = intersections, False

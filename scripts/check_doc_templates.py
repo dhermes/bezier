@@ -381,11 +381,8 @@ def readme_verify():
     with open(README_FILE, "r") as file_obj:
         contents = file_obj.read()
     if contents != expected:
-        err_msg = (
-            "\n"
-            + get_diff(
-                contents, expected, "README.rst.actual", "README.rst.expected"
-            )
+        err_msg = "\n" + get_diff(
+            contents, expected, "README.rst.actual", "README.rst.expected"
         )
         raise ValueError(err_msg)
 
@@ -422,14 +419,11 @@ def release_readme_verify():
     with open(RELEASE_README_FILE, "r") as file_obj:
         contents = file_obj.read()
     if contents != expected:
-        err_msg = (
-            "\n"
-            + get_diff(
-                contents,
-                expected,
-                "README.rst.release.actual",
-                "README.rst.release.expected",
-            )
+        err_msg = "\n" + get_diff(
+            contents,
+            expected,
+            "README.rst.release.actual",
+            "README.rst.release.expected",
         )
         raise ValueError(err_msg)
 
@@ -494,14 +488,11 @@ def _index_verify(index_file, **extra_kwargs):
     with open(index_file, "r") as file_obj:
         contents = file_obj.read()
     if contents != expected:
-        err_msg = (
-            "\n"
-            + get_diff(
-                contents,
-                expected,
-                index_file + ".actual",
-                index_file + ".expected",
-            )
+        err_msg = "\n" + get_diff(
+            contents,
+            expected,
+            index_file + ".actual",
+            index_file + ".expected",
         )
         raise ValueError(err_msg)
 
@@ -582,14 +573,11 @@ def development_verify():
     with open(DEVELOPMENT_FILE, "r") as file_obj:
         contents = file_obj.read()
     if contents != expected:
-        err_msg = (
-            "\n"
-            + get_diff(
-                contents,
-                expected,
-                "DEVELOPMENT.rst.actual",
-                "DEVELOPMENT.rst.expected",
-            )
+        err_msg = "\n" + get_diff(
+            contents,
+            expected,
+            "DEVELOPMENT.rst.actual",
+            "DEVELOPMENT.rst.expected",
         )
         raise ValueError(err_msg)
 
@@ -610,14 +598,11 @@ def native_libraries_verify():
     with open(NATIVE_LIBS_FILE, "r") as file_obj:
         contents = file_obj.read()
     if contents != expected:
-        err_msg = (
-            "\n"
-            + get_diff(
-                contents,
-                expected,
-                "docs/native-libraries.rst.actual",
-                "docs/native-libraries.rst.expected",
-            )
+        err_msg = "\n" + get_diff(
+            contents,
+            expected,
+            "docs/native-libraries.rst.actual",
+            "docs/native-libraries.rst.expected",
         )
         raise ValueError(err_msg)
 

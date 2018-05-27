@@ -66,7 +66,11 @@ GFORTRAN_SHARED_FLAGS = (  # Used for both "DEBUG" and "OPTIMIZE"
     "-std=f2008",
 )
 GFORTRAN_DEBUG_FLAGS = (
-    "-g", "-fcheck=all", "-fbacktrace", "-fimplicit-none", "-pedantic"
+    "-g",
+    "-fcheck=all",
+    "-fbacktrace",
+    "-fimplicit-none",
+    "-pedantic",
 )
 GFORTRAN_NATIVE_FLAG = "-march=native"
 GFORTRAN_OPTIMIZE_FLAGS = ("-Werror", "-O3", "-funroll-loops")
@@ -201,7 +205,8 @@ def extension_modules():
         [SPEEDUP_FILENAME],
         extra_objects=extra_objects,
         include_dirs=[
-            np.get_include(), os.path.join("src", "bezier", "include")
+            np.get_include(),
+            os.path.join("src", "bezier", "include"),
         ],
         libraries=copy.deepcopy(libraries),
         library_dirs=copy.deepcopy(library_dirs),

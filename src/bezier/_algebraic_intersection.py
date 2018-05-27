@@ -178,10 +178,9 @@ def evaluate(nodes, x_val, y_val):
         # y(s) - y = (y0 - y) (1 - s) + (y1 - y) s
         # Modified Sylvester: [x0 - x, x1 - x]
         #                     [y0 - y, y1 - y]
-        return (
-            (nodes[0, 0] - x_val) * (nodes[1, 1] - y_val)
-            - (nodes[0, 1] - x_val) * (nodes[1, 0] - y_val)
-        )
+        return (nodes[0, 0] - x_val) * (nodes[1, 1] - y_val) - (
+            nodes[0, 1] - x_val
+        ) * (nodes[1, 0] - y_val)
 
     elif num_nodes == 3:
         # x(s) - x = (x0 - x) (1 - s)^2 + 2 (x1 - x) s(1 - s) + (x2 - x) s^2
@@ -718,7 +717,7 @@ def bernstein_companion(coeffs):
         return np.empty((0, 0), order="F"), degree, 0
 
     companion = np.zeros((effective_degree, effective_degree), order="F")
-    companion.flat[effective_degree::effective_degree + 1] = 1.0
+    companion.flat[effective_degree :: effective_degree + 1] = 1.0
     companion[0, :] = -sigma_coeffs[::-1]
     return companion, degree, effective_degree
 

@@ -205,7 +205,8 @@ class DualArchitectureCompile(object):
         self.f90_compiler = f90_compiler
         self.original_compile = f90_compiler._compile
         self.compiler_cmds = {
-            ".f90": f90_compiler.compiler_f90, ".f": f90_compiler.compiler_f77
+            ".f90": f90_compiler.compiler_f90,
+            ".f": f90_compiler.compiler_f77,
         }
         # NOTE: These **should** be cleaned up when this instance goes out
         #       of scope, but that is not particularly simple to do.

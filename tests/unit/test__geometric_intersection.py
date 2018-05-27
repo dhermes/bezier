@@ -913,7 +913,10 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         left1, right1 = curve1.subdivide()
         left2, right2 = curve2.subdivide()
         expected = [
-            (left1, left2), (left1, right2), (right1, left2), (right1, right2)
+            (left1, left2),
+            (left1, right2),
+            (right1, left2),
+            (right1, right2),
         ]
         self._candidates_compare(next_candidates, expected)
 
@@ -1397,8 +1400,8 @@ class Test__all_intersections(utils.NumPyTestCase):
         from bezier import _geometric_intersection
 
         multiplier = 16384.0
-        nodes1 = (
-            multiplier * np.asfortranarray([[0.0, 4.5, 9.0], [0.0, 9.0, 0.0]])
+        nodes1 = multiplier * np.asfortranarray(
+            [[0.0, 4.5, 9.0], [0.0, 9.0, 0.0]]
         )
         nodes2 = multiplier * np.asfortranarray([[0.0, 6.0], [8.0, 0.0]])
         with self.assertRaises(ValueError) as exc_info:

@@ -147,13 +147,13 @@ def make_subdivision_matrices(degree):
     for col in six.moves.xrange(1, degree + 1):
         half_prev = 0.5 * left[:col, col - 1]
         left[:col, col] = half_prev
-        left[1:col + 1, col] += half_prev
+        left[1 : col + 1, col] += half_prev
         # Populate the complement col (in right) as well.
         complement = degree - col
         # NOTE: We "should" reverse the results when using
         #       the complement, but they are symmetric so
         #       that would be a waste.
-        right[-(col + 1):, complement] = left[: col + 1, col]
+        right[-(col + 1) :, complement] = left[: col + 1, col]
     return left, right
 
 
@@ -484,8 +484,8 @@ def _evaluate_hodograph(s, nodes):
     """
     _, num_nodes = np.shape(nodes)
     first_deriv = nodes[:, 1:] - nodes[:, :-1]
-    return (
-        (num_nodes - 1) * evaluate_multi(first_deriv, np.asfortranarray([s]))
+    return (num_nodes - 1) * evaluate_multi(
+        first_deriv, np.asfortranarray([s])
     )
 
 
@@ -730,9 +730,8 @@ def _newton_refine(nodes, point, s):
     derivative = evaluate_hodograph(s, nodes)
     # Each array is 2 x 1 (i.e. a column vector), we want the vector
     # dot product.
-    delta_s = (
-        np.vdot(pt_delta[:, 0], derivative[:, 0])
-        / np.vdot(derivative[:, 0], derivative[:, 0])
+    delta_s = np.vdot(pt_delta[:, 0], derivative[:, 0]) / np.vdot(
+        derivative[:, 0], derivative[:, 0]
     )
     return s + delta_s
 

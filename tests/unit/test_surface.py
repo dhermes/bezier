@@ -103,7 +103,9 @@ class TestSurface(utils.NumPyTestCase):
 
         exc_args = exc_info.exception.args
         expected_args = (
-            "2D is the only supported dimension", "Current dimension", 3
+            "2D is the only supported dimension",
+            "Current dimension",
+            3,
         )
         self.assertEqual(exc_args, expected_args)
 
@@ -174,7 +176,16 @@ class TestSurface(utils.NumPyTestCase):
             ]
         )
         (
-            p300, p210, p120, p030, p201, unused_p111, p021, p102, p012, p003
+            p300,
+            p210,
+            p120,
+            p030,
+            p201,
+            unused_p111,
+            p021,
+            p102,
+            p012,
+            p003,
         ) = nodes.T
         surface = self._make_one(nodes, 3)
         edges = surface._compute_edges()
@@ -737,12 +748,14 @@ class Test__make_intersection(utils.NumPyTestCase):
         surface1 = bezier.Surface(nodes1, degree=1, _copy=False)
         nodes2 = np.asfortranarray([[0.25, -0.75, 0.25], [0.25, 0.25, -0.75]])
         surface2 = bezier.Surface(nodes2, degree=1, _copy=False)
-        edge_nodes = (
-            tuple(edge._nodes for edge in surface1.edges)
-            + tuple(edge._nodes for edge in surface2.edges)
+        edge_nodes = tuple(edge._nodes for edge in surface1.edges) + tuple(
+            edge._nodes for edge in surface2.edges
         )
         edge_info = (
-            (0, 0.0, 0.25), (5, 0.75, 1.0), (3, 0.0, 0.25), (2, 0.75, 1.0)
+            (0, 0.0, 0.25),
+            (5, 0.75, 1.0),
+            (3, 0.0, 0.25),
+            (2, 0.75, 1.0),
         )
         result = self._call_function_under_test(edge_info, edge_nodes)
         self.assertIsInstance(result, bezier.CurvedPolygon)

@@ -38,9 +38,8 @@ class Test__evaluate3(unittest.TestCase):
 
     @staticmethod
     def _compute_expected(x_val, y_val):
-        return (
-            289.0
-            * (((17.0 * x_val - 81.0) * x_val + 135.0) * x_val - 27.0 * y_val)
+        return 289.0 * (
+            ((17.0 * x_val - 81.0) * x_val + 135.0) * x_val - 27.0 * y_val
         )
 
     def test_it(self):
@@ -268,8 +267,8 @@ class Test__to_power_basis_degree4(utils.NumPyTestCase):
         # f1(x2(t), y2(t)) = (2 t - 1)^3 (2 t + 3) / 256
         result = self._call_function_under_test(nodes1, nodes2)
         # The function avoids a division by 3.0
-        expected = (
-            (3.0 / 256.0) * np.asfortranarray([-3.0, 16.0, -24.0, 0.0, 16.0])
+        expected = (3.0 / 256.0) * np.asfortranarray(
+            [-3.0, 16.0, -24.0, 0.0, 16.0]
         )
         self.assertEqual(result, expected)
 
@@ -421,8 +420,8 @@ class Test_to_power_basis(utils.NumPyTestCase):
         # f1(x2(t), y2(t)) = (9 t^4 - 18 t^3 + 5 t^2 - 28 t + 12) / 16
         result = self._call_function_under_test(nodes1, nodes2)
         # The function avoids a division by 3.0
-        expected = (
-            (3.0 / 16.0) * np.asfortranarray([12.0, -28.0, 5.0, -18.0, 9.0])
+        expected = (3.0 / 16.0) * np.asfortranarray(
+            [12.0, -28.0, 5.0, -18.0, 9.0]
         )
         self.assertEqual(result, expected)
 
@@ -436,8 +435,8 @@ class Test_to_power_basis(utils.NumPyTestCase):
         # f1(x2(t), y2(t)) = (
         #     81 (t + 1) (4 t^5 - 16 t^4 + 13 t^3 + 25 t^2 - 28 t + 4) / 1024)
         result = self._call_function_under_test(nodes1, nodes2)
-        expected = (
-            (81.0 / 1024.0) * np.asfortranarray([4, -24, -3, 38, -3, -12, 4])
+        expected = (81.0 / 1024.0) * np.asfortranarray(
+            [4, -24, -3, 38, -3, -12, 4]
         )
         self.assertTrue(
             np.allclose(result, expected, atol=0.0, rtol=LOCAL_EPS)
