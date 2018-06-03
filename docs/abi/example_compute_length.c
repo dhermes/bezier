@@ -26,6 +26,7 @@ int main(void)
 
   compute_length(&num_nodes, &dimension, nodes, &length, &error_val);
   printf("Length: %f\n", length);
+  printf("Error value: %d\n", error_val);
 
   return 0;
 }

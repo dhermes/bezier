@@ -58,7 +58,7 @@ Procedures
    .. literalinclude:: example_compute_length.c
       :language: c
       :dedent: 2
-      :lines: 18-28
+      :lines: 18-29
 
    Consider the line segment :math:`B(s) = \left[\begin{array}{c} 3s \\ 4s
    \end{array}\right]`, we can verify the length:
@@ -74,6 +74,7 @@ Procedures
       >   -lm -lgfortran
       $ ./example
       Length: 5.000000
+      Error value: 0
 
 .. c:function:: void elevate_nodes_curve(int *num_nodes, \
                                          int *dimension, \
