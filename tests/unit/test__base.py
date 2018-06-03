@@ -15,7 +15,6 @@ from tests.unit import utils
 
 
 class TestBase(utils.NumPyTestCase):
-
     @staticmethod
     def _get_target_class():
         from bezier import _base

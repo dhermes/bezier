@@ -2822,7 +2822,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         # d - k =     1,     2, ...
         # We know column k has (d - k + 1) elements.
         new_index = index - degree + k  # First element in column.
-        col_nodes = nodes[:, new_index : index + 1]
+        col_nodes = nodes[:, new_index : index + 1]  # noqa: E203
         col_nodes = np.asfortranarray(col_nodes)
         col_result = _curve_helpers.evaluate_multi_barycentric(
             col_nodes, lambda1, lambda2

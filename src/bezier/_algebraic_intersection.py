@@ -717,7 +717,9 @@ def bernstein_companion(coeffs):
         return np.empty((0, 0), order="F"), degree, 0
 
     companion = np.zeros((effective_degree, effective_degree), order="F")
-    companion.flat[effective_degree :: effective_degree + 1] = 1.0
+    companion.flat[
+        effective_degree :: effective_degree + 1  # noqa: E203
+    ] = 1.0
     companion[0, :] = -sigma_coeffs[::-1]
     return companion, degree, effective_degree
 

@@ -36,7 +36,6 @@ class TestSurface(utils.NumPyTestCase):
         return klass(*args, **kwargs)
 
     def _make_one_no_slots(self, *args, **kwargs):
-
         class NoSlots(self._get_target_class()):
             pass
 
@@ -734,7 +733,6 @@ class TestSurface(utils.NumPyTestCase):
 
 
 class Test__make_intersection(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(edge_info, all_edge_nodes):
         from bezier import surface

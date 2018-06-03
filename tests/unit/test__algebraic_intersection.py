@@ -29,7 +29,6 @@ LOCAL_EPS = 0.5 ** 25  # 2 * sqrt(machine precision)
 
 
 class Test__evaluate3(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, x_val, y_val):
         from bezier import _algebraic_intersection
@@ -53,7 +52,6 @@ class Test__evaluate3(unittest.TestCase):
 
 
 class Test_evaluate(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, x_val, y_val):
         from bezier import _algebraic_intersection
@@ -147,7 +145,6 @@ class Test_evaluate(unittest.TestCase):
 
 
 class Test_eval_intersection_polynomial(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2, t):
         from bezier import _algebraic_intersection
@@ -188,7 +185,6 @@ class Test_eval_intersection_polynomial(unittest.TestCase):
 
 
 class Test__to_power_basis11(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _algebraic_intersection
@@ -207,7 +203,6 @@ class Test__to_power_basis11(utils.NumPyTestCase):
 
 
 class Test__to_power_basis12(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _algebraic_intersection
@@ -226,7 +221,6 @@ class Test__to_power_basis12(utils.NumPyTestCase):
 
 
 class Test__to_power_basis13(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _algebraic_intersection
@@ -250,7 +244,6 @@ class Test__to_power_basis13(utils.NumPyTestCase):
 
 
 class Test__to_power_basis_degree4(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _algebraic_intersection
@@ -287,7 +280,6 @@ class Test__to_power_basis_degree4(utils.NumPyTestCase):
 
 
 class Test__to_power_basis23(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _algebraic_intersection
@@ -308,7 +300,6 @@ class Test__to_power_basis23(utils.NumPyTestCase):
 
 
 class Test__to_power_basis_degree8(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _algebraic_intersection
@@ -333,7 +324,6 @@ class Test__to_power_basis_degree8(utils.NumPyTestCase):
 
 
 class Test__to_power_basis33(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _algebraic_intersection
@@ -359,7 +349,6 @@ class Test__to_power_basis33(utils.NumPyTestCase):
 
 
 class Test_to_power_basis(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _algebraic_intersection
@@ -512,7 +501,6 @@ class Test_to_power_basis(utils.NumPyTestCase):
 
 
 class Test_polynomial_norm(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(coeffs):
         from bezier import _algebraic_intersection
@@ -527,7 +515,6 @@ class Test_polynomial_norm(unittest.TestCase):
 
 
 class Test_roots_in_unit_interval(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(coeffs):
         from bezier import _algebraic_intersection
@@ -546,7 +533,6 @@ class Test_roots_in_unit_interval(utils.NumPyTestCase):
 
 
 class Test__strip_leading_zeros(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(coeffs, **kwargs):
         from bezier import _algebraic_intersection
@@ -567,7 +553,6 @@ class Test__strip_leading_zeros(utils.NumPyTestCase):
 
 
 class Test__check_non_simple(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(coeffs):
         from bezier import _algebraic_intersection
@@ -605,7 +590,6 @@ class Test__check_non_simple(utils.NumPyTestCase):
 
 
 class Test__resolve_and_add(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(
         nodes1, s_val, final_s, nodes2, t_val, final_t
@@ -654,7 +638,6 @@ class Test__resolve_and_add(utils.NumPyTestCase):
 
 
 class Test_intersect_curves(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _algebraic_intersection
@@ -732,7 +715,6 @@ class Test_intersect_curves(utils.NumPyTestCase):
 
 
 class Test_normalize_polynomial(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(coeffs, **kwargs):
         from bezier import _algebraic_intersection
@@ -773,7 +755,6 @@ class Test_normalize_polynomial(utils.NumPyTestCase):
 
 
 class Test__get_sigma_coeffs(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(coeffs):
         from bezier import _algebraic_intersection
@@ -857,7 +838,6 @@ class Test__get_sigma_coeffs(utils.NumPyTestCase):
 
 
 class Test_bernstein_companion(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(coeffs):
         from bezier import _algebraic_intersection
@@ -886,7 +866,6 @@ class Test_bernstein_companion(utils.NumPyTestCase):
 
 
 class Test_bezier_roots(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(coeffs):
         from bezier import _algebraic_intersection
@@ -998,7 +977,6 @@ class Test_bezier_roots(utils.NumPyTestCase):
 
 
 class Test_lu_companion(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(top_row, value):
         from bezier import _algebraic_intersection
@@ -1078,7 +1056,6 @@ class Test_lu_companion(utils.NumPyTestCase):
 
 
 class Test__reciprocal_condition_number(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(lu_mat, one_norm):
         from bezier import _algebraic_intersection
@@ -1314,7 +1291,6 @@ class Test_bezier_value_check(utils.NumPyTestCase):
 
 
 class Test_poly_to_power_basis(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(bezier_coeffs):
         from bezier import _algebraic_intersection
@@ -1361,7 +1337,6 @@ class Test_poly_to_power_basis(utils.NumPyTestCase):
 
 
 class Test_locate_point(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, x_val, y_val):
         from bezier import _algebraic_intersection
@@ -1395,7 +1370,6 @@ class Test_locate_point(unittest.TestCase):
 
 
 class Test_all_intersections(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes_first, nodes_second):
         from bezier import _algebraic_intersection

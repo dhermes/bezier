@@ -1489,6 +1489,7 @@ class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
        This class would be more "correct" as an ``enum.Enum``, but it we keep
        the values integers to make interfacing with Fortran easier.
     """
+
     INTERSECTION = 0
     """Bounding boxes overlap with positive area."""
     TANGENT = 1
@@ -1511,6 +1512,7 @@ class SubdividedCurve(object):  # pylint: disable=too-few-public-methods
         start (Optional[float]): The start parameter after subdivision.
         end (Optional[float]): The start parameter after subdivision.
     """
+
     __slots__ = ("nodes", "original_nodes", "start", "end")
 
     def __init__(self, nodes, original_nodes, start=0.0, end=1.0):
@@ -1568,6 +1570,7 @@ class Linearization(object):
         error (float): The linearization error. Expected to have been
             computed via :func:`linearization_error`.
     """
+
     __slots__ = ("curve", "error", "start_node", "end_node")
 
     def __init__(self, curve, error):

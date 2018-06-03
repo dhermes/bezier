@@ -139,7 +139,6 @@ def almost(test_case, expected, actual, num_ulps):
 
 
 class NumPyTestCase(unittest.TestCase):
-
     def __init__(self, *args, **kwargs):
         import numpy as np
 

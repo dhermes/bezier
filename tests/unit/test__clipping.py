@@ -17,7 +17,6 @@ SPACING = np.spacing  # pylint: disable=no-member
 
 
 class Test_compute_implicit_line(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _clipping
@@ -49,7 +48,6 @@ class Test_compute_implicit_line(unittest.TestCase):
 
 
 class Test_compute_fat_line(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _clipping
@@ -90,7 +88,6 @@ class Test_compute_fat_line(unittest.TestCase):
 
 
 class Test__update_parameters(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(s_min, s_max, start0, end0, start1, end1):
         from bezier import _clipping
@@ -150,7 +147,6 @@ class Test__update_parameters(unittest.TestCase):
 
 
 class Test__check_parameter_range(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(s_min, s_max):
         from bezier import _clipping
@@ -182,7 +178,6 @@ class Test__check_parameter_range(unittest.TestCase):
 
 
 class Test_clip_range(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _clipping

@@ -56,7 +56,6 @@ class Test___author__(unittest.TestCase):
 
 
 class Test_get_include(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test():
         import bezier
@@ -69,7 +68,6 @@ class Test_get_include(unittest.TestCase):
 
 
 class Test_get_lib(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test():
         import bezier
@@ -82,7 +80,6 @@ class Test_get_lib(unittest.TestCase):
 
 
 class Test_get_dll(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test():
         import bezier

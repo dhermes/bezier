@@ -19,7 +19,6 @@ from tests.unit import utils
 
 
 class Test__newton_refine(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _intersection_helpers
@@ -151,7 +150,6 @@ class Test__newton_refine(utils.NumPyTestCase):
 
 
 class TestNewtonSimpleRoot(utils.NumPyTestCase):
-
     @staticmethod
     def _get_target_class():
         from bezier import _intersection_helpers
@@ -216,7 +214,6 @@ class TestNewtonSimpleRoot(utils.NumPyTestCase):
 
 
 class TestNewtonDoubleRoot(utils.NumPyTestCase):
-
     @staticmethod
     def _get_target_class():
         from bezier import _intersection_helpers
@@ -547,7 +544,6 @@ class Test_newton_iterate(unittest.TestCase):
 
 
 class Test_full_newton_nonzero(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _intersection_helpers
@@ -659,7 +655,6 @@ class Test_full_newton_nonzero(unittest.TestCase):
 
 
 class Test_full_newton(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _intersection_helpers
@@ -726,7 +721,6 @@ class Test_full_newton(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_newton_refine(Test__newton_refine):
-
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _speedup
@@ -735,7 +729,6 @@ class Test_speedup_newton_refine(Test__newton_refine):
 
 
 class TestIntersection(unittest.TestCase):
-
     @staticmethod
     def _get_target_class():
         from bezier import _intersection_helpers

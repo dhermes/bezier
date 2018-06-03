@@ -15,7 +15,6 @@ import unittest.mock
 
 
 class Test_modify_path(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test():
         from bezier import __config__
@@ -74,7 +73,6 @@ class Test_modify_path(unittest.TestCase):
 
 
 class Test_handle_import_error(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(caught_exc, name):
         from bezier import __config__

@@ -36,7 +36,6 @@ def run_fake_modules(modules, func):
 
 
 class Test_new_axis(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test():
         from bezier import _plot_helpers
@@ -58,7 +57,6 @@ class Test_new_axis(unittest.TestCase):
 
 
 class Test_add_plot_boundary(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(ax, **kwargs):
         from bezier import _plot_helpers
@@ -86,7 +84,6 @@ class Test_add_plot_boundary(unittest.TestCase):
 
 
 class Test_add_patch(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(ax, color, pts_per_edge, *edges):
         from bezier import _plot_helpers

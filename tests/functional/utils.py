@@ -406,6 +406,7 @@ class CurveIntersectionType(enum.Enum):
     These values correspond to the ``type`` enum property in the
     ``curve_intersection.json`` JSON-schema.
     """
+
     coincident = "coincident"
     """Curves lie on the same underlying algebraic curve."""
     no_intersection = "no-intersection"

@@ -20,7 +20,6 @@ SPACING = np.spacing  # pylint: disable=no-member
 
 
 class Test__vector_close(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(vec1, vec2, **kwargs):
         from bezier import _helpers
@@ -60,7 +59,6 @@ class Test__vector_close(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_vector_close(Test__vector_close):
-
     @staticmethod
     def _call_function_under_test(vec1, vec2, **kwargs):
         from bezier import _speedup
@@ -69,7 +67,6 @@ class Test_speedup_vector_close(Test__vector_close):
 
 
 class Test__in_interval(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(value, start, end):
         from bezier import _helpers
@@ -97,7 +94,6 @@ class Test__in_interval(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_in_interval(Test__in_interval):
-
     @staticmethod
     def _call_function_under_test(value, start, end):
         from bezier import _speedup
@@ -106,7 +102,6 @@ class Test_speedup_in_interval(Test__in_interval):
 
 
 class Test__bbox(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _helpers
@@ -134,7 +129,6 @@ class Test__bbox(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_bbox(Test__bbox):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup
@@ -143,7 +137,6 @@ class Test_speedup_bbox(Test__bbox):
 
 
 class Test__contains_nd(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, point):
         from bezier import _helpers
@@ -176,7 +169,6 @@ class Test__contains_nd(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_contains_nd(Test__contains_nd):
-
     @staticmethod
     def _call_function_under_test(nodes, point):
         from bezier import _speedup
@@ -185,7 +177,6 @@ class Test_speedup_contains_nd(Test__contains_nd):
 
 
 class Test__cross_product(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(vec0, vec1):
         from bezier import _helpers
@@ -207,7 +198,6 @@ class Test__cross_product(utils.NumPyTestCase):
 
 @utils.needs_speedup
 class Test_speedup_cross_product(Test__cross_product):
-
     @staticmethod
     def _call_function_under_test(vec0, vec1):
         from bezier import _speedup
@@ -216,7 +206,6 @@ class Test_speedup_cross_product(Test__cross_product):
 
 
 class Test_matrix_product(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(mat1, mat2):
         from bezier import _helpers
@@ -350,7 +339,6 @@ class Test__wiggle_interval(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_wiggle_interval(Test__wiggle_interval):
-
     def _call_function_under_test(self, value, **kwargs):
         from bezier import _speedup
 
@@ -366,7 +354,6 @@ class Test_speedup_wiggle_interval(Test__wiggle_interval):
 
 
 class Test_cross_product_compare(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(start, candidate1, candidate2):
         from bezier import _helpers
@@ -382,7 +369,6 @@ class Test_cross_product_compare(unittest.TestCase):
 
 
 class Test_in_sorted(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(values, value):
         from bezier import _helpers
@@ -418,7 +404,6 @@ class Test_in_sorted(utils.NumPyTestCase):
 
 
 class Test__simple_convex_hull(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(points):
         from bezier import _helpers
@@ -503,7 +488,6 @@ class Test__simple_convex_hull(utils.NumPyTestCase):
 
 @utils.needs_speedup
 class Test_speedup_simple_convex_hull(Test__simple_convex_hull):
-
     @staticmethod
     def _call_function_under_test(points):
         from bezier import _speedup
@@ -512,7 +496,6 @@ class Test_speedup_simple_convex_hull(Test__simple_convex_hull):
 
 
 class Test_is_separating(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(direction, polygon1, polygon2):
         from bezier import _helpers
@@ -531,7 +514,6 @@ class Test_is_separating(unittest.TestCase):
 
 
 class Test__polygon_collide(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(polygon1, polygon2):
         from bezier import _helpers
@@ -570,7 +552,6 @@ class Test__polygon_collide(unittest.TestCase):
 
 
 class Test_solve2x2(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(lhs, rhs):
         from bezier import _helpers
@@ -616,7 +597,6 @@ class Test_solve2x2(unittest.TestCase):
 
 
 class TestUnsupportedDegree(unittest.TestCase):
-
     @staticmethod
     def _get_target_class():
         from bezier import _helpers
@@ -671,7 +651,6 @@ class TestUnsupportedDegree(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_polygon_collide(Test__polygon_collide):
-
     @staticmethod
     def _call_function_under_test(polygon1, polygon2):
         from bezier import _speedup

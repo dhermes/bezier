@@ -25,7 +25,6 @@ SPACING = np.spacing  # pylint: disable=no-member
 
 
 class Test_make_subdivision_matrices(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(degree):
         from bezier import _curve_helpers
@@ -90,7 +89,6 @@ class Test_make_subdivision_matrices(utils.NumPyTestCase):
 
 
 class Test__subdivide_nodes(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _curve_helpers
@@ -169,7 +167,6 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
 
 @utils.needs_speedup
 class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup
@@ -178,7 +175,6 @@ class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
 
 
 class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier import _curve_helpers
@@ -208,7 +204,6 @@ class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
 class Test_speedup_evaluate_multi_barycentric(
     Test__evaluate_multi_barycentric
 ):
-
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier import _speedup
@@ -217,7 +212,6 @@ class Test_speedup_evaluate_multi_barycentric(
 
 
 class Test__evaluate_multi(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, s_vals):
         from bezier import _curve_helpers
@@ -250,7 +244,6 @@ class Test__evaluate_multi(utils.NumPyTestCase):
 
 @utils.needs_speedup
 class Test_speedup_evaluate_multi(Test__evaluate_multi):
-
     @staticmethod
     def _call_function_under_test(nodes, s_vals):
         from bezier import _speedup
@@ -259,7 +252,6 @@ class Test_speedup_evaluate_multi(Test__evaluate_multi):
 
 
 class Test_vec_size(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, s_val):
         from bezier import _curve_helpers
@@ -278,7 +270,6 @@ class Test_vec_size(unittest.TestCase):
 
 
 class Test__compute_length(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _curve_helpers
@@ -324,7 +315,6 @@ class Test__compute_length(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_compute_length(Test__compute_length):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup
@@ -343,7 +333,6 @@ class Test_speedup_compute_length(Test__compute_length):
 
 
 class Test__elevate_nodes(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _curve_helpers
@@ -373,7 +362,6 @@ class Test__elevate_nodes(utils.NumPyTestCase):
 
 @utils.needs_speedup
 class Test_speedup_elevate_nodes(Test__elevate_nodes):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup
@@ -382,7 +370,6 @@ class Test_speedup_elevate_nodes(Test__elevate_nodes):
 
 
 class Test_de_casteljau_one_round(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier import _curve_helpers
@@ -396,7 +383,6 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
 
 
 class Test__specialize_curve(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, start, end):
         from bezier import _curve_helpers
@@ -449,7 +435,6 @@ class Test__specialize_curve(utils.NumPyTestCase):
 
 @utils.needs_speedup
 class Test_speedup_specialize_curve(Test__specialize_curve):
-
     @staticmethod
     def _call_function_under_test(nodes, start, end):
         from bezier import _speedup
@@ -458,7 +443,6 @@ class Test_speedup_specialize_curve(Test__specialize_curve):
 
 
 class Test__evaluate_hodograph(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(s, nodes):
         from bezier import _curve_helpers
@@ -504,7 +488,6 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
 
 @utils.needs_speedup
 class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
-
     @staticmethod
     def _call_function_under_test(s, nodes):
         from bezier import _speedup
@@ -513,7 +496,6 @@ class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
 
 
 class Test__get_curvature(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, tangent_vec, s):
         from bezier import _curve_helpers
@@ -550,7 +532,6 @@ class Test__get_curvature(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_get_curvature(Test__get_curvature):
-
     @staticmethod
     def _call_function_under_test(nodes, tangent_vec, s):
         from bezier import _speedup
@@ -559,7 +540,6 @@ class Test_speedup_get_curvature(Test__get_curvature):
 
 
 class Test__newton_refine(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, point, s):
         from bezier import _curve_helpers
@@ -578,7 +558,6 @@ class Test__newton_refine(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_newton_refine(Test__newton_refine):
-
     @staticmethod
     def _call_function_under_test(nodes, point, s):
         from bezier import _speedup
@@ -587,7 +566,6 @@ class Test_speedup_newton_refine(Test__newton_refine):
 
 
 class Test__locate_point(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, point):
         from bezier import _curve_helpers
@@ -633,7 +611,6 @@ class Test__locate_point(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_locate_point(Test__locate_point):
-
     @staticmethod
     def _call_function_under_test(nodes, point):
         from bezier import _speedup
@@ -732,7 +709,6 @@ class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
 
 @utils.needs_speedup
 class Test_speedup__reduce_pseudo_inverse(Test__reduce_pseudo_inverse):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup
@@ -741,7 +717,6 @@ class Test_speedup__reduce_pseudo_inverse(Test__reduce_pseudo_inverse):
 
 
 class Test_projection_error(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, projected):
         from bezier import _curve_helpers
@@ -763,7 +738,6 @@ class Test_projection_error(unittest.TestCase):
 
 
 class Test_maybe_reduce(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _curve_helpers
@@ -835,7 +809,6 @@ class Test_maybe_reduce(utils.NumPyTestCase):
 
 
 class Test__full_reduce(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _curve_helpers
@@ -882,7 +855,6 @@ class Test__full_reduce(utils.NumPyTestCase):
 
 @utils.needs_speedup
 class Test_speedup_full_reduce(Test__full_reduce):
-
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup

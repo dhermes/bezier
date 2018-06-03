@@ -23,7 +23,6 @@ SPACING = np.spacing  # pylint: disable=no-member
 
 
 class Test_newton_refine_solve(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(jac_both, x_val, surf_x, y_val, surf_y):
         from bezier import _surface_intersection
@@ -42,7 +41,6 @@ class Test_newton_refine_solve(unittest.TestCase):
 
 
 class Test__newton_refine(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
         from bezier import _surface_intersection
@@ -94,7 +92,6 @@ class Test__newton_refine(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_newton_refine(Test__newton_refine):
-
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
         from bezier import _speedup
@@ -105,7 +102,6 @@ class Test_speedup_newton_refine(Test__newton_refine):
 
 
 class Test_update_locate_candidates(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(
         candidate, next_candidates, x_val, y_val, degree
@@ -156,7 +152,6 @@ class Test_update_locate_candidates(unittest.TestCase):
 
 
 class Test_mean_centroid(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(candidates):
         from bezier import _surface_intersection
@@ -175,7 +170,6 @@ class Test_mean_centroid(unittest.TestCase):
 
 
 class Test__locate_point(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
         from bezier import _surface_intersection
@@ -224,7 +218,6 @@ class Test__locate_point(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup_locate_point(Test__locate_point):
-
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
         from bezier import _speedup
@@ -233,7 +226,6 @@ class Test_speedup_locate_point(Test__locate_point):
 
 
 class Test_same_intersection(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(intersection1, intersection2, **kwargs):
         from bezier import _surface_intersection
@@ -281,7 +273,6 @@ class Test_same_intersection(unittest.TestCase):
 
 
 class Test_verify_duplicates(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(duplicates, uniques):
         from bezier import _surface_intersection
@@ -329,7 +320,6 @@ class Test_verify_duplicates(unittest.TestCase):
 
 
 class Test_verify_edge_segments(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(edge_infos):
         from bezier import _surface_intersection
@@ -375,7 +365,6 @@ class Test_verify_edge_segments(unittest.TestCase):
 
 
 class Test_add_edge_end_unused(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(intersection, duplicates, intersections):
         from bezier import _surface_intersection
@@ -437,7 +426,6 @@ class Test_add_edge_end_unused(unittest.TestCase):
 
 
 class Test_check_unused(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(intersection, duplicates, unused):
         from bezier import _surface_intersection
@@ -489,7 +477,6 @@ class Test_check_unused(unittest.TestCase):
 
 
 class Test_add_intersection(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(  # pylint: disable=too-many-arguments
         index1,
@@ -620,7 +607,6 @@ class Test_add_intersection(unittest.TestCase):
 
 
 class Test_classify_coincident(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(st_vals, coincident):
         from bezier import _surface_intersection
@@ -647,7 +633,6 @@ class Test_classify_coincident(unittest.TestCase):
 
 
 class Test_should_use(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(intersection):
         from bezier import _surface_intersection
@@ -686,7 +671,6 @@ class Test_should_use(unittest.TestCase):
 
 
 class Test_surface_intersections(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(edge_nodes1, edge_nodes2, all_intersections):
         from bezier import _surface_intersection
@@ -742,7 +726,6 @@ class Test_surface_intersections(utils.NumPyTestCase):
 
 
 class Test_generic_intersect(utils.NumPyTestCase):
-
     @staticmethod
     def _call_function_under_test(
         nodes1, degree1, nodes2, degree2, verify, all_intersections
@@ -1085,7 +1068,6 @@ class Test_speedup_geometric_intersect(Test__geometric_intersect):
 
 @utils.needs_speedup
 class Test_reset_surface_workspaces(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test(**kwargs):
         return reset_surface_workspaces(**kwargs)
@@ -1126,7 +1108,6 @@ class Test_reset_surface_workspaces(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_surface_workspace_sizes(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test():
         return surface_workspace_sizes()
@@ -1142,7 +1123,6 @@ class Test_surface_workspace_sizes(unittest.TestCase):
 
 @utils.needs_speedup
 class Test_speedup__type_info(unittest.TestCase):
-
     @staticmethod
     def _call_function_under_test():
         from bezier import _speedup
@@ -1202,7 +1182,6 @@ def surface_workspace_sizes():
 
 
 class WorkspaceThreadedAccess(object):
-
     def __init__(self):
         self.barrier1 = threading.Event()
         self.barrier2 = threading.Event()

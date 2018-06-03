@@ -132,6 +132,7 @@ class CurvedPolygon(object):
 
             Other keyword arguments specified will be silently ignored.
     """
+
     __slots__ = ("_edges", "_num_sides", "_metadata")
 
     def __init__(self, *edges, **kwargs):

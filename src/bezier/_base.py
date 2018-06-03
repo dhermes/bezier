@@ -30,6 +30,7 @@ class Base(object):
     Raises:
         ValueError: If the ``nodes`` are not 2D.
     """
+
     __slots__ = ("_dimension", "_nodes")
     _degree = -1
 

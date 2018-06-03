@@ -279,6 +279,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
       object files or if they will refer to a shared library.
     * ``CLEANUP`` optional callable that cleans up at the end of :meth:`run`.
     """
+
     # Will be set at runtime, not import time.
     F90_COMPILER = None
     PATCH_FUNCTIONS = []

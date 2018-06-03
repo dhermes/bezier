@@ -848,6 +848,7 @@ class IntersectionClassification(enum.Enum):
 
     Provided as the output values for :func:`.classify_intersection`.
     """
+
     FIRST = 0
     """The first curve is on the interior."""
     SECOND = 1
@@ -886,6 +887,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
             ~bezier._intersection_helpers.IntersectionClassification]): The
             classification of the intersection.
     """
+
     __slots__ = ("index_first", "s", "index_second", "t", "interior_curve")
 
     def __init__(self, index_first, s, index_second, t, interior_curve=None):
@@ -925,6 +927,7 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
 
 class IntersectionStrategy(enum.Enum):
     """Enum determining the type of intersection algorithm to use."""
+
     GEOMETRIC = 0
     """Geometric approach to intersection (via subdivision)."""
     ALGEBRAIC = 1
