@@ -653,6 +653,38 @@ Procedures
                           double *s,
                           double *updated_s);
 
+   **Example:**
+
+   When trying to locate :math:`B\left(\frac{1}{4}\right) = \frac{1}{16}
+   \left[\begin{array}{c} 9 \\ 13 \end{array}\right]` on the curve
+   :math:`B(s) = \left[\begin{array}{c} 0 \\ 0
+   \end{array}\right] (1 - s)^2 + \left[\begin{array}{c} 1 \\ 2
+   \end{array}\right] 2 (1 - s) s + \left[\begin{array}{c} 3 \\ 1
+   \end{array}\right] s^2`, starting at :math:`s = \frac{3}{4}`:
+
+   .. literalinclude:: example_newton_refine_curve.c
+      :language: c
+      :dedent: 2
+      :lines: 18-29
+
+   we expect a Newton update :math:`\Delta s = -\frac{2}{5}`, which produces
+   a new parameter value :math:`s = \frac{7}{20}`:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_newton_refine_curve.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Updated s: 0.350000
+
+   .. image:: ../images/newton_refine_curve.png
+      :align: center
+
 .. c:function:: void reduce_pseudo_inverse(int *num_nodes, \
                                            int *dimension, \
                                            double *nodes, \
