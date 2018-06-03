@@ -474,8 +474,8 @@ larger.
    ...     [t_val1, t_val2],
    ... ])
    >>> max_err = np.max(np.abs(intersections - expected_ints))
-   >>> binary_exponent(max_err)
-   -51
+   >>> binary_exponent(max_err) <= -51
+   True
    >>> expected_pts = np.asfortranarray([
    ...     [s_val1, s_val2],
    ...     [ 0.375, 0.375 ],
