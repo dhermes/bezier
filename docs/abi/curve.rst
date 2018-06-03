@@ -252,6 +252,9 @@ Procedures
    Evaluates the hodograph (or derivative) of a B |eacute| zier curve
    function :math:`B'(s)`.
 
+   :param double* s:
+      **[Input]** The parameter :math:`s` where the hodograph is being
+      computed.
    :param int* num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
