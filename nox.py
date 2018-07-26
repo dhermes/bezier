@@ -9,6 +9,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import contextlib
 import glob
 import os
 import shutil
@@ -16,7 +18,9 @@ import sys
 import tempfile
 
 import nox
+import nox.command
 import py.path
+
 
 IS_MAC_OS_X = sys.platform == "darwin"
 DEPS = {
@@ -127,7 +131,7 @@ def unit(session, py):
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    session.install(".")
+    debug_install(session, ".")
     # Run py.test against the unit tests.
     run_args = ["py.test"] + session.posargs + [get_path("tests", "unit")]
     session.run(*run_args)
@@ -455,3 +459,42 @@ def fortran_unit(session):
     )
     session.chdir(test_dir)
     session.run("make", "clean")
+
+
+@contextlib.contextmanager
+def modify_env(virtual_env, env_vars):
+    """Modify environment variables in a virtual environment.
+
+    Args:
+        virtual_env (nox.virtualenv.VirtualEnv): A virtual environment
+            currently being used.
+        env_vars (Dict[str, str]): A dictionary of modifications to be used
+            for the environment variables in the virtual environment.
+    """
+    current_vars = virtual_env.env
+
+    new_vars = current_vars.copy()
+    new_vars.update(env_vars)
+    try:
+        # Update the virtual environment's own environment variables and
+        # yield control.
+        virtual_env.env = new_vars
+        yield
+    finally:
+        # Restore the virtual environment's original environment variables.
+        virtual_env.env = new_vars
+
+
+class InstallWithEnv(nox.command.InstallCommand):
+    def __init__(self, deps, env_vars):
+        super(InstallWithEnv, self).__init__(deps)
+        self.env_vars = env_vars
+
+    def run(self, venv):
+        with modify_env(venv, self.env_vars):
+            venv.install(*self.deps)
+
+
+def debug_install(session, *args):
+    env_vars = {"DEBUG": "True"}
+    session._commands.append(InstallWithEnv(args, env_vars))
