@@ -42,13 +42,11 @@ If this is present (e.g. ``BEZIER_WHEEL="True"``) then the ``-march=native``
 flag will **not** be used.
 """
 FORTRAN_LIBRARY_PREFIX = "libraries: ="
-GFORTRAN_MISSING_LIBS = (
-    """\
+GFORTRAN_MISSING_LIBS = """\
 ``gfortran`` default library path not found via:
 
 $ gfortran -print-search-dirs
 {}"""
-)
 GFORTRAN_BAD_PATH = "``gfortran`` library path {} is not a directory."
 # NOTE: These are mostly recommendations from Certik found here:
 #         http://www.fortran90.org/src/faq.html

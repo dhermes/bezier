@@ -15,42 +15,34 @@ try:
     import bezier
 except ImportError:  # pragma: NO COVER
     bezier = None
-WRONG_FLAGS_TEMPLATE = (
-    """\
+WRONG_FLAGS_TEMPLATE = """\
 Arrays are not Fortran contiguous
 array1 flags =
 {}
 array2 flags =
 {}
 """
-)
-WRONG_TYPE_TEMPLATE = (
-    """\
+WRONG_TYPE_TEMPLATE = """\
 Arrays have different types
 array1({}) =
 {!r}
 array2({}) =
 {!r}
 """
-)
-WRONG_SHAPE_TEMPLATE = (
-    """\
+WRONG_SHAPE_TEMPLATE = """\
 Arrays have different shapes
 array1{} =
 {!r}
 array2{} =
 {!r}
 """
-)
-NOT_EQ_TEMPLATE = (
-    """\
+NOT_EQ_TEMPLATE = """\
 Arrays not equal
 array1 =
 {!r}
 array2 =
 {!r}
 """
-)
 
 
 def get_random(seed):

@@ -23,6 +23,7 @@ disable =
     no-else-return,
     misplaced-comparison-constant,
     bad-continuation,
+    useless-object-inheritance,
 
 [REPORTS]
 # Tells whether to display a full report or only the messages

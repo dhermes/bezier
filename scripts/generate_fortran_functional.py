@@ -23,8 +23,7 @@ COL_TEMPLATE = "    nodes{:d}(:, {:d}) = [{}_dp, {}_dp]"
 PARAM_TEMPLATE_COMPACT = "    expected_params({:d}, :) = [{}]"
 PARAM_TEMPLATE = "    expected_params({:d}, :) = [ &\n         {}]"
 PARAM_JOIN_ON = ", &\n         "
-CASE_TEMPLATE = (
-    """\
+CASE_TEMPLATE = """\
   subroutine case{case_id:d}()
 
     real(c_double) :: nodes{id1}(2, {num_nodes1:d})
@@ -43,9 +42,7 @@ CASE_TEMPLATE = (
 
   end subroutine case{case_id:d}
 """
-)
-FILE_TEMPLATE = (
-    """\
+FILE_TEMPLATE = """\
 ! Licensed under the Apache License, Version 2.0 (the "License");
 ! you may not use this file except in compliance with the License.
 ! You may obtain a copy of the License at
@@ -79,7 +76,6 @@ contains
 
 end module functional_curve
 """
-)
 
 
 def params_string(index, curve_params):

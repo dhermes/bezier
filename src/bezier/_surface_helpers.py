@@ -1566,7 +1566,7 @@ def ignored_double_corner(
     # contains (tangent_s) x (alt_tangent_t), but we also reversed
     # the sign on ``alt_tangent_t`` so switching the sign back
     # and reversing the arguments in the cross product cancel out.
-    return not (cross_prod1 <= 0.0 and cross_prod3 >= 0.0)
+    return cross_prod1 > 0.0 or cross_prod3 < 0.0
 
 
 def ignored_corner(
@@ -2405,9 +2405,9 @@ def is_first(classification):
     Returns:
         bool: Indicating if the classification is on the first curve.
     """
-    return (
-        classification == CLASSIFICATION_T.FIRST
-        or classification == CLASSIFICATION_T.TANGENT_FIRST
+    return classification in (
+        CLASSIFICATION_T.FIRST,
+        CLASSIFICATION_T.TANGENT_FIRST,
     )
 
 
@@ -2421,9 +2421,9 @@ def is_second(classification):
     Returns:
         bool: Indicating if the classification is on the second curve.
     """
-    return (
-        classification == CLASSIFICATION_T.SECOND
-        or classification == CLASSIFICATION_T.TANGENT_SECOND
+    return classification in (
+        CLASSIFICATION_T.SECOND,
+        CLASSIFICATION_T.TANGENT_SECOND,
     )
 
 

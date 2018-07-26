@@ -16,13 +16,11 @@ import unittest.mock
 
 import pkg_resources
 
-CHECK_PKG_MSG = (
-    """\
+CHECK_PKG_MSG = """\
 path     = {!r}
 suffix   = {!r}
 site_pkg = {!r}
 from_egg = {!r}"""
-)
 
 
 class Test___version__(unittest.TestCase):

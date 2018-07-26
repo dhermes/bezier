@@ -41,8 +41,7 @@ except ImportError:  # pragma: NO COVER
 ZERO_THRESHOLD = 0.5 ** 10  # ~1e-3
 MAX_NEWTON_ITERATIONS = 10
 NEWTON_ERROR_RATIO = 0.5 ** 36
-NEWTON_NO_CONVERGE = (
-    """\
+NEWTON_NO_CONVERGE = """\
 Unsupported multiplicity.
 
 Newton's method failed to converge to a solution under the
@@ -62,7 +61,6 @@ The failure to converge may have been caused by one of:
 - Numerical issues caused the iteration to leave the region
   of convergence
 """
-)
 
 
 def _newton_refine(s, nodes1, t, nodes2):

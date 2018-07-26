@@ -769,7 +769,7 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         )
 
     @staticmethod
-    def parallel_err():
+    def parallel_err():  # pylint: disable=useless-return
         return None
 
     def test_disjoint_bbox(self):

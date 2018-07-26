@@ -29,8 +29,7 @@ SPACING = np.spacing  # pylint: disable=no-member
 GEOMETRIC = bezier.curve.IntersectionStrategy.GEOMETRIC
 ALGEBRAIC = bezier.curve.IntersectionStrategy.ALGEBRAIC
 _, INTERSECTIONS = utils.curve_intersections_info()
-INCORRECT_VALUES_MSG = (
-    """\
+INCORRECT_VALUES_MSG = """\
 Multipliers were:
 {}
 
@@ -40,7 +39,6 @@ However, the actual observed (ULP relative) errors were:
 The issue seems to be in the following index pair(s):
 {}
 """
-)
 ULPS_ALLOWED = 3.0
 # NOTE: Set a threshold for values that are "approximately" zero.
 #       This is an **absolute** error rather than a relative error

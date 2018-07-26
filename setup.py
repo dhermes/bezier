@@ -26,8 +26,7 @@ import setup_helpers_windows
 VERSION = "0.8.1.dev1"  # Also in ``codemeta.json`` and ``__init__.py``.
 AUTHOR = "Danny Hermes"  # Also in ``__init__.py``.
 README_FILENAME = os.path.join(os.path.dirname(__file__), "README.rst")
-NUMPY_MESSAGE = (
-    """\
+NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
 $ python    -m pip install numpy
@@ -36,14 +35,11 @@ $ python3.6 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
-)
-MISSING_F90_MESSAGE = (
-    """\
+MISSING_F90_MESSAGE = """\
 No Fortran 90 compiler found.
 
 Skipping Fortran extension speedups.
 """
-)
 NO_EXTENSIONS_ENV = "BEZIER_NO_EXTENSIONS"
 NO_SPEEDUPS_MESSAGE = """\
 The {} environment variable has been used to explicitly disable the

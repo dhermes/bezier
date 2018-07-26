@@ -21,8 +21,7 @@ import setup_helpers
 
 MAC_OS_X = "darwin"
 # NOTE: Used by ``gfortran_supports_dual_architecture()``.
-SIMPLE_F90_SOURCE = (
-    """\
+SIMPLE_F90_SOURCE = """\
 subroutine bar(x, y)
   integer, intent(in) :: x
   integer, intent(out) :: y
@@ -31,7 +30,6 @@ subroutine bar(x, y)
 
 end subroutine bar
 """
-)
 
 
 def is_osx_gfortran(f90_compiler):

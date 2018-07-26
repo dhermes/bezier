@@ -25,8 +25,7 @@ except ImportError:
     bezier = None
 SPECIAL_MEMBERS = ("__author__", "__version__")
 UNDOCUMENTED_SPECIAL_MEMBERS = ("__author__",)
-EXPECTED = (
-    """\
+EXPECTED = """\
 bezier package
 ==============
 
@@ -46,9 +45,7 @@ Submodules
    bezier.surface
 
 """
-)
-DESIRED_TEMPLATE = (
-    """\
+DESIRED_TEMPLATE = """\
 bezier package
 ==============
 
@@ -63,7 +60,6 @@ Submodules
    bezier.curved_polygon
    bezier.surface
 """
-)
 _SCRIPTS_DIR = os.path.dirname(__file__)
 _DOCS_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, "..", "docs"))
 FILENAME = os.path.join(_DOCS_DIR, "reference", "bezier.rst")

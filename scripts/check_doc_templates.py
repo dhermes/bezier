@@ -46,8 +46,7 @@ NATIVE_LIBS_TEMPLATE = os.path.join(
 RTD_VERSION = "latest"
 REVISION = "master"
 PLAIN_CODE_BLOCK = ".. code-block:: python"
-SPHINX_CODE_BLOCK1 = (
-    """\
+SPHINX_CODE_BLOCK1 = """\
 .. testsetup:: getting-started
 
    import sys
@@ -83,15 +82,11 @@ SPHINX_CODE_BLOCK1 = (
        sys.modules["seaborn"] = seaborn_mod
 
 .. doctest:: getting-started"""
-)
-SPHINX_CODE_BLOCK2 = (
-    """\
+SPHINX_CODE_BLOCK2 = """\
 .. doctest:: getting-started
    :options: +NORMALIZE_WHITESPACE"""
-)
 SPHINX_CODE_BLOCK3 = ".. doctest:: getting-started"
-TEST_CLEANUP = (
-    """\
+TEST_CLEANUP = """\
 .. testcleanup:: getting-started
 
    if not mpl_installed:
@@ -101,12 +96,10 @@ TEST_CLEANUP = (
        sys.modules.pop("seaborn")
 
 """
-)
 INLINE_MATH_EXPR = re.compile(r":math:`(?P<math>.*?)`")
 MOD_EXPR = re.compile(r":mod:`(?P<value>.*) <(?P<module>.*)>`")
 DOC_EXPR = re.compile(r":doc:`(?P<value>.*) <(?P<path>.*)>`")
-TOCTREE = (
-    """\
+TOCTREE = """\
 .. toctree::
    :hidden:
    :maxdepth: 4
@@ -120,57 +113,40 @@ TOCTREE = (
    releases/index
 
 """
-)
 IMG_PREFIX = "https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/"
-EXTRA_LINKS = (
-    """\
+EXTRA_LINKS = """\
 .. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html
 .. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html
 .. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
 """
-)
-BERNSTEIN_BASIS_SPHINX = (
-    """\
+BERNSTEIN_BASIS_SPHINX = """\
 .. math::
 
    b_{j, n} = \\binom{n}{j} s^j (1 - s)^{n - j}"""
-)
-BERNSTEIN_BASIS_PLAIN = (
-    """\
+BERNSTEIN_BASIS_PLAIN = """\
 .. image:: {img_prefix}images/bernstein_basis.png
    :align: center"""
-)
-BEZIER_DEFN_SPHINX = (
-    """\
+BEZIER_DEFN_SPHINX = """\
 .. math::
 
    B(s) = \\sum_{j = 0}^n b_{j, n} \\cdot v_j."""
-)
-BEZIER_DEFN_PLAIN = (
-    """\
+BEZIER_DEFN_PLAIN = """\
 .. image:: {img_prefix}images/bezier_defn.png
    :align: center"""
-)
-SUM_TO_UNITY_SPHINX = (
-    """\
+SUM_TO_UNITY_SPHINX = """\
 .. math::
 
    b_{0, n} + b_{1, n} + \\cdots + b_{n, n} =
        \\left(s + (1 - s)\\right)^n = 1."""
-)
-SUM_TO_UNITY_PLAIN = (
-    """\
+SUM_TO_UNITY_PLAIN = """\
 .. image:: {img_prefix}images/sum_to_unity.png
    :align: center"""
-)
-DOCS_IMG = (
-    """\
+DOCS_IMG = """\
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={rtd_version}
    :target: https://bezier.readthedocs.io/en/{rtd_version}/
    :alt: Documentation Status
 """
-)
 CIRCLECI_BADGE = (
     "https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?"
     "maxAge=3600&label=Linux"
@@ -200,30 +176,22 @@ COVERALLS_BADGE_RELEASE = (
     "https://s3.amazonaws.com/assets.coveralls.io/" "badges/coveralls_100.svg"
 )
 COVERALLS_PATH = "github/dhermes/bezier"
-PYPI_IMG = (
-    """
+PYPI_IMG = """
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
    :target: https://pypi.org/project/bezier/
    :alt: PyPI Latest"""
-)
-VERSIONS_IMG = (
-    """
+VERSIONS_IMG = """
 .. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
    :target: https://pypi.org/project/bezier/
    :alt: Package Versions"""
-)
-ZENODO_IMG = (
-    """
+ZENODO_IMG = """
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
    :alt: Zenodo DOI for ``bezier``"""
-)
-JOSS_IMG = (
-    """
+JOSS_IMG = """
 .. |JOSS| image:: http://joss.theoj.org/papers/10.21105/joss.00267/status.svg
    :target: https://dx.doi.org/10.21105/joss.00267
    :alt: "Journal of Open Source Science" DOI for ``bezier``"""
-)
 
 
 def inline_math(match):
