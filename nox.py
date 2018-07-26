@@ -170,7 +170,7 @@ def functional(session, py):
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    session.install(".")
+    debug_install(session, ".")
     # Run py.test against the functional tests.
     run_args = (
         ["py.test"] + session.posargs + [get_path("tests", "functional")]

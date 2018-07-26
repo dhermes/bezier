@@ -156,9 +156,9 @@ $ /usr/bin/gfortran \
 >   -funroll-loops \
 >   -c \
 >   -c \
->   src/bezier/quadpack/d1mach.f \
+>   src/bezier/quadpack/dqk21.f \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/quadpack/d1mach.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqk21.o \
 >   -J \
 >   build/temp.linux-x86_64-3.6
 ----------------------------------------
@@ -172,9 +172,9 @@ $ /usr/bin/gfortran \
 >   -funroll-loops \
 >   -c \
 >   -c \
->   src/bezier/quadpack/dqelg.f \
+>   src/bezier/quadpack/dqagse.f \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqelg.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqagse.o \
 >   -J \
 >   build/temp.linux-x86_64-3.6
 ----------------------------------------
@@ -204,9 +204,9 @@ $ /usr/bin/gfortran \
 >   -funroll-loops \
 >   -c \
 >   -c \
->   src/bezier/quadpack/dqk21.f \
+>   src/bezier/quadpack/d1mach.f \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqk21.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/d1mach.o \
 >   -J \
 >   build/temp.linux-x86_64-3.6
 ----------------------------------------
@@ -220,9 +220,9 @@ $ /usr/bin/gfortran \
 >   -funroll-loops \
 >   -c \
 >   -c \
->   src/bezier/quadpack/dqagse.f \
+>   src/bezier/quadpack/dqelg.f \
 >   -o \
->   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqagse.o \
+>   build/temp.linux-x86_64-3.6/src/bezier/quadpack/dqelg.o \
 >   -J \
 >   build/temp.linux-x86_64-3.6
 ----------------------------------------
