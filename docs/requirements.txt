@@ -1,4 +1,4 @@
-numpy >= 1.14.0
-Sphinx >= 1.6.4
-sphinx-docstring-typing >= 0.0.2
-sphinx-rtd-theme >= 0.2.4
+numpy >= 1.15.0
+Sphinx >= 1.7.6
+sphinx-docstring-typing >= 0.0.3
+sphinx-rtd-theme >= 0.4.1
