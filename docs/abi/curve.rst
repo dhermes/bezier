@@ -883,3 +883,37 @@ Procedures
                             double *nodes,
                             double *left_nodes,
                             double *right_nodes);
+
+   **Example:**
+
+   For example, subdividing the curve :math:`B(s) = \left[\begin{array}{c}
+   0 \\ 0 \end{array}\right] (1 - s)^2 + \frac{1}{4} \left[\begin{array}{c}
+   5 \\ 12 \end{array}\right] 2 (1 - s) s + \left[\begin{array}{c} 2 \\ 1
+   \end{array}\right] s^2`:
+
+   .. literalinclude:: example_subdivide_nodes_curve.c
+      :language: c
+      :dedent: 2
+      :lines: 18-34
+
+   yields:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_subdivide_nodes_curve.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Left Nodes:
+      0.000000, 0.625000, 1.125000
+      0.000000, 1.500000, 1.750000
+      Right Nodes:
+      1.125000, 1.625000, 2.000000
+      1.750000, 2.000000, 1.000000
+
+   .. image:: ../images/curve_subdivide.png
+      :align: center
