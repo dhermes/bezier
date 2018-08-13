@@ -733,7 +733,7 @@ Procedures
    **Example:**
 
    After elevating :math:`B(s) = \left[\begin{array}{c} -3 \\ 3
-   \end{array}\right] (1 - s)^3 + \frac{1}{2} \left[\begin{array}{c} 0 \\ 2
+   \end{array}\right] (1 - s)^3 + \left[\begin{array}{c} 0 \\ 2
    \end{array}\right] 3 (1 - s)^2 s + \left[\begin{array}{c} 1 \\ 3
    \end{array}\right] 3 (1 - s) s^2 + \left[\begin{array}{c} 0 \\ 6
    \end{array}\right] s^3`:
@@ -805,6 +805,44 @@ Procedures
                        double *start,
                        double *end,
                        double *new_nodes);
+
+   **Example:**
+
+   When we specialize the curve :math:`B(s) = \left[\begin{array}{c} 0 \\ 0
+   \end{array}\right] (1 - s)^2 + \frac{1}{2} \left[\begin{array}{c} 1 \\ 2
+   \end{array}\right] 2 (1 - s) s + \left[\begin{array}{c} 1 \\ 0
+   \end{array}\right] s^2 = \left[\begin{array}{c} s \\ 2s(1 - s)
+   \end{array}\right]` to the interval :math:`\left[-\frac{1}{4},
+   \frac{3}{4}\right]`:
+
+   .. literalinclude:: example_specialize_curve.c
+      :language: c
+      :dedent: 2
+      :lines: 18-31
+
+   we get the specialized curve :math:`S(t) = \frac{1}{8} \left[
+   \begin{array}{c} -2 \\ -5 \end{array}\right] (1 - s)^2 + \frac{1}{8}
+   \left[\begin{array}{c} 2 \\ 7 \end{array}\right] 2 (1 - s) s + \frac{1}{8}
+   \left[\begin{array}{c} 6 \\ 3 \end{array}\right] s^2 = \frac{1}{8}
+   \left[\begin{array}{c} 2(4t - 1) \\ (4t - 1)(5 - 4t) \end{array}\right]`,
+   which still lies on :math:`y = 2x(1 - x)`:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_curve_specialize.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      New Nodes:
+      -0.250000, 0.250000, 0.750000
+      -0.625000, 0.875000, 0.375000
+
+   .. image:: ../images/curve_specialize.png
+      :align: center
 
 .. c:function:: void subdivide_nodes_curve(int *num_nodes, \
                                            int *dimension, \
