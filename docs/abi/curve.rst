@@ -730,6 +730,41 @@ Procedures
                             double *reduced,
                             bool *not_implemented);
 
+   **Example:**
+
+   After elevating :math:`B(s) = \left[\begin{array}{c} -3 \\ 3
+   \end{array}\right] (1 - s)^3 + \frac{1}{2} \left[\begin{array}{c} 0 \\ 2
+   \end{array}\right] 3 (1 - s)^2 s + \left[\begin{array}{c} 1 \\ 3
+   \end{array}\right] 3 (1 - s) s^2 + \left[\begin{array}{c} 0 \\ 6
+   \end{array}\right] s^3`:
+
+   .. literalinclude:: example_reduce_pseudo_inverse.c
+      :language: c
+      :dedent: 2
+      :lines: 18-33
+
+   we get the valid quadratic representation of :math:`B(s) =
+   \left[\begin{array}{c} 3(1 - s)(2s - 1) \\ 3(2s^2 - s + 1)
+   \end{array}\right]`:
+
+   .. code-block:: console
+
+      $ gcc \
+      >   -o example \
+      >   example_reduce_pseudo_inverse.c \
+      >   -I src/bezier/include/ \
+      >   -L .../site-packages/bezier/lib \
+      >   -lbezier \
+      >   -lm -lgfortran
+      $ ./example
+      Reduced:
+      -3.000000, 1.500000, 0.000000
+       3.000000, 1.500000, 6.000000
+      Not implemented: FALSE
+
+   .. image:: ../images/curve_reduce.png
+      :align: center
+
 .. c:function:: void specialize_curve(int *num_nodes, \
                                       int *dimension, \
                                       double *nodes, \
