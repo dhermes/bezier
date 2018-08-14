@@ -1,4 +1,4 @@
 mock >= 2.0.0; python_version == "2.7"
 numpy >= 1.15.0
-pytest >= 3.6.3
+pytest >= 3.7.1
 scipy >= 1.1.0

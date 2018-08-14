@@ -11,4 +11,4 @@ build:
 python:
   pip_install: true
   setup_py_install: false
-  version: 3.6
+  version: 3.7

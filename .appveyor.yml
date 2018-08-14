@@ -41,15 +41,21 @@ environment:
       TEST_TYPE: base
 
     - PYTHON: "C:\\Python36-x64"
+      TEST_TYPE: base
+
+    - PYTHON: "C:\\Python37"
+      TEST_TYPE: base
+
+    - PYTHON: "C:\\Python37-x64"
       TEST_TYPE: cover
 
-    - PYTHON: "C:\\Python36-x64"
+    - PYTHON: "C:\\Python37-x64"
       TEST_TYPE: functional
 
-    - PYTHON: "C:\\Python36-x64"
+    - PYTHON: "C:\\Python37-x64"
       TEST_TYPE: doctest
 
-    - PYTHON: "C:\\Python36-x64"
+    - PYTHON: "C:\\Python37-x64"
       TEST_TYPE: journal
 
 install:
@@ -107,13 +113,13 @@ install:
   # Install (hardcoded) conditional (on base) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "base")
         {
-          python -m pip install pytest mock "scipy >= 1.0.0";
+          python -m pip install pytest mock "scipy >= 1.1.0";
         }
 
   # Install (hardcoded) conditional (on cover) test dependencies.
   - ps: if ($env:TEST_TYPE -eq "cover")
         {
-          python -m pip install pytest mock coverage pytest-cov "scipy >= 1.0.0";
+          python -m pip install pytest mock coverage pytest-cov "scipy >= 1.1.0";
         }
 
   # Install (hardcoded) conditional (on functional) test dependencies.

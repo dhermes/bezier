@@ -260,7 +260,7 @@ The ``bezier._speedup`` module depends on this local copy:
 
 .. code-block:: console
 
-   $ readelf -d _speedup.cpython-36m-x86_64-linux-gnu.so
+   $ readelf -d _speedup.cpython-37m-x86_64-linux-gnu.so
 
    Dynamic section at offset 0x2f9000 contains 27 entries:
      Tag        Type                         Name/Value
@@ -321,11 +321,11 @@ of ``libgfortran``:
 .. doctest:: os-x-extension
    :options: +NORMALIZE_WHITESPACE
    :mac-os-x-only:
-   :pyversion: >= 3.6
+   :pyversion: >= 3.7
 
-   >>> invoke_shell("otool", "-L", "_speedup.cpython-36m-darwin.so")
-   $ otool -L _speedup.cpython-36m-darwin.so
-   _speedup.cpython-36m-darwin.so:
+   >>> invoke_shell("otool", "-L", "_speedup.cpython-37m-darwin.so")
+   $ otool -L _speedup.cpython-37m-darwin.so
+   _speedup.cpython-37m-darwin.so:
            @loader_path/.dylibs/libgfortran.5.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
@@ -410,22 +410,22 @@ The Python extension modules (``.pyd`` files) depend directly on this library:
 .. doctest:: windows-extension
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
-   :pyversion: >= 3.6
+   :pyversion: >= 3.7
 
-   >>> invoke_shell("dumpbin", "/dependents", "_speedup.cp36-win_amd64.pyd")
-   > dumpbin /dependents _speedup.cp36-win_amd64.pyd
+   >>> invoke_shell("dumpbin", "/dependents", "_speedup.cp37-win_amd64.pyd")
+   > dumpbin /dependents _speedup.cp37-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
    <BLANKLINE>
    <BLANKLINE>
-   Dump of file _speedup.cp36-win_amd64.pyd
+   Dump of file _speedup.cp37-win_amd64.pyd
    <BLANKLINE>
    File Type: DLL
    <BLANKLINE>
      Image has the following dependencies:
    <BLANKLINE>
        libbezier.dll
-       python36.dll
+       python37.dll
        KERNEL32.dll
        VCRUNTIME140.dll
        api-ms-win-crt-stdio-l1-1-0.dll

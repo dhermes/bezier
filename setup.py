@@ -31,7 +31,7 @@ Error: NumPy needs to be installed first. It can be installed via:
 
 $ python    -m pip install numpy
 $ python2.7 -m pip install numpy
-$ python3.6 -m pip install numpy
+$ python3.7 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
@@ -129,6 +129,7 @@ def setup():
             "Programming Language :: Python :: 3",
             "Programming Language :: Python :: 3.5",
             "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
         ),
         cmdclass={"build_ext": setup_helpers.BuildFortranThenExt},
     )

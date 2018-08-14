@@ -45,6 +45,8 @@ elif [[ "${PY_VERSION}" == "3.5" ]]; then
     export PY_BIN_DIR="${PREFIX}/3.5/bin"
 elif [[ "${PY_VERSION}" == "3.6" ]]; then
     export PY_BIN_DIR="${PREFIX}/3.6/bin"
+elif [[ "${PY_VERSION}" == "3.7" ]]; then
+    export PY_BIN_DIR="${PREFIX}/3.7/bin"
 else
     echo "Unexpected version: ${PY_VERSION}"
     exit 1
@@ -60,7 +62,7 @@ fi
 
 # Make sure the "official" installed CPython is set up for testing.
 ${PY_BIN_DIR}/python -m pip install --upgrade virtualenv pip
-${PY_BIN_DIR}/python -m pip install --upgrade 'nox-automation >= 0.18.2' numpy
+${PY_BIN_DIR}/python -m pip install --upgrade 'nox-automation >= 0.19.1' numpy
 
 # Make sure there is a universal ``libgfortran``.
 export GFORTRAN_LIB="${OSX_SCRIPTS_DIR}/frankenstein"

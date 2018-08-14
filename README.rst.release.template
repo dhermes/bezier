@@ -78,7 +78,7 @@ Installing
 
    $ python    -m pip install --upgrade bezier
    $ python2.7 -m pip install --upgrade bezier
-   $ python3.6 -m pip install --upgrade bezier
+   $ python3.7 -m pip install --upgrade bezier
 
 ``bezier`` is open-source, so you can alternatively grab the source
 code from `GitHub`_ and install from source.

@@ -16,7 +16,7 @@ In order to add a feature to ``bezier``:
    feature may catch maintainer(s) off guard).
 
 #. **Add tests**: The feature must work fully on the following
-   CPython versions: 2.7, 3.5 and 3.6 on both UNIX and Windows.
+   CPython versions: 2.7, 3.5, 3.6 and 3.7 on Linux, Mac OS X and Windows.
    In addition, the feature should have 100% line coverage.
 
 #. **Documentation**: The feature must (should) be documented with
@@ -116,6 +116,7 @@ We recommend using ``nox`` (`nox-automation`_) to run unit tests:
    $ nox -s "unit(py='2.7')"
    $ nox -s "unit(py='3.5')"
    $ nox -s "unit(py='3.6')"
+   $ nox -s "unit(py='3.7')"
    $ nox -s "unit(py='pypy')"
    $ nox -s  unit  # Run all versions
 
@@ -127,6 +128,7 @@ manage dependencies or build extensions):
    $ PYTHONPATH=src/ python2.7 -m pytest tests/unit/
    $ PYTHONPATH=src/ python3.5 -m pytest tests/unit/
    $ PYTHONPATH=src/ python3.6 -m pytest tests/unit/
+   $ PYTHONPATH=src/ python3.7 -m pytest tests/unit/
    $ PYTHONPATH=src/ pypy      -m pytest tests/unit/
 
 .. _nox-automation: https://nox.readthedocs.io
@@ -184,6 +186,7 @@ marked slow, use the ``--ignore-slow`` flag:
    $ nox -s "unit(py='2.7')" -- --ignore-slow
    $ nox -s "unit(py='3.5')" -- --ignore-slow
    $ nox -s "unit(py='3.6')" -- --ignore-slow
+   $ nox -s "unit(py='3.7')" -- --ignore-slow
    $ nox -s  unit            -- --ignore-slow
 
 These slow tests have been identified via:
@@ -191,7 +194,7 @@ These slow tests have been identified via:
 .. code-block:: console
 
    $ ...
-   $ nox -s "unit(py='3.6')" -- --durations=10
+   $ nox -s "unit(py='3.7')" -- --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 
@@ -250,12 +253,14 @@ To run the functional tests:
    $ nox -s "functional(py='2.7')"
    $ nox -s "functional(py='3.5')"
    $ nox -s "functional(py='3.6')"
+   $ nox -s "functional(py='3.7')"
    $ nox -s "functional(py='pypy')"
    $ nox -s  functional  # Run all versions
    $ # OR
    $ PYTHONPATH=src/ python2.7 -m pytest tests/functional/
    $ PYTHONPATH=src/ python3.5 -m pytest tests/functional/
    $ PYTHONPATH=src/ python3.6 -m pytest tests/functional/
+   $ PYTHONPATH=src/ python3.7 -m pytest tests/functional/
    $ PYTHONPATH=src/ pypy      -m pytest tests/functional/
 
 .. _functional tests: https://github.com/dhermes/bezier/tree/{revision}/tests/functional
@@ -452,7 +457,7 @@ Python binaries.
 .. _CircleCI config: https://github.com/dhermes/bezier/blob/{revision}/.circleci/config.yml
 .. _Travis config: https://github.com/dhermes/bezier/blob/{revision}/.travis.yml
 .. _AppVeyor config: https://github.com/dhermes/bezier/blob/{revision}/.appveyor.yml
-.. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
+.. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/{revision}/src/Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/bezier.Dockerfile
 .. _multibuild: https://github.com/matthew-brett/multibuild
 
@@ -496,10 +501,12 @@ Supported Python Versions
 -  `Python 2.7`_
 -  `Python 3.5`_
 -  `Python 3.6`_
+-  `Python 3.7`_
 
 .. _Python 2.7: https://docs.python.org/2.7/
 .. _Python 3.5: https://docs.python.org/3.5/
 .. _Python 3.6: https://docs.python.org/3.6/
+.. _Python 3.7: https://docs.python.org/3.7/
 
 Supported versions can be found in the ``nox.py`` `config`_.
 

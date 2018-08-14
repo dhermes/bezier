@@ -25,12 +25,12 @@ import py.path
 IS_MAC_OS_X = sys.platform == "darwin"
 DEPS = {
     "coverage": "coverage",
-    "Cython": "Cython >= 0.28.4",
+    "Cython": "Cython >= 0.28.5",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
     "lcov_cobertura": "lcov_cobertura",
-    "matplotlib": "matplotlib >= 2.2.2",
+    "matplotlib": "matplotlib >= 2.2.3",
     "memory_profiler": "memory_profiler",
     "mock": "mock >= 2.0.0",
     "numpy": "numpy >= 1.15.0",
@@ -38,7 +38,7 @@ DEPS = {
     "pycobertura": "pycobertura",
     "Pygments": "Pygments",
     "pylint": "pylint",
-    "pytest": "pytest >= 3.6.3",
+    "pytest": "pytest >= 3.7.1",
     "pytest-benchmark": "pytest-benchmark",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.1.0",
@@ -51,7 +51,7 @@ DOCS_DEPS = (
     "--requirement",
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
-SINGLE_INTERP = "python3.6"
+SINGLE_INTERP = "python3.7"
 PYPY = "pypy"
 # Constants used for checking the journal of commands.
 APPVEYOR = "appveyor"
@@ -118,7 +118,7 @@ def update_generated(session, check):
 
 
 @nox.session
-@nox.parametrize("py", ["2.7", "3.5", "3.6", PYPY])
+@nox.parametrize("py", ["2.7", "3.5", "3.6", "3.7", PYPY])
 def unit(session, py):
     if py == PYPY:
         session.interpreter = PYPY
@@ -157,7 +157,7 @@ def cover(session):
 
 
 @nox.session
-@nox.parametrize("py", ["2.7", "3.5", "3.6", PYPY])
+@nox.parametrize("py", ["2.7", "3.5", "3.6", "3.7", PYPY])
 def functional(session, py):
     if py == PYPY:
         session.interpreter = PYPY

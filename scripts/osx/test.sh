@@ -29,8 +29,10 @@ if [[ "${PY_VERSION}" == "2.7" ]]; then
 elif [[ "${PY_VERSION}" == "3.5" ]]; then
     ${PY_BIN_DIR}/nox -s "unit(py='3.5')"
 elif [[ "${PY_VERSION}" == "3.6" ]]; then
+    ${PY_BIN_DIR}/nox -s "unit(py='3.6')"
+elif [[ "${PY_VERSION}" == "3.7" ]]; then
     ${PY_BIN_DIR}/nox -s cover
-    ${PY_BIN_DIR}/nox -s "functional(py='3.6')"
+    ${PY_BIN_DIR}/nox -s "functional(py='3.7')"
     ${PY_BIN_DIR}/nox -s doctest
     ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-osx')"
 else
