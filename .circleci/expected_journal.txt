@@ -156,6 +156,22 @@ $ /usr/bin/gfortran \
 >   -funroll-loops \
 >   -c \
 >   -c \
+>   src/bezier/quadpack/d1mach.f \
+>   -o \
+>   build/temp.linux-x86_64-3.7/src/bezier/quadpack/d1mach.o \
+>   -J \
+>   build/temp.linux-x86_64-3.7
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
 >   src/bezier/quadpack/dqk21.f \
 >   -o \
 >   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqk21.o \
@@ -188,41 +204,25 @@ $ /usr/bin/gfortran \
 >   -funroll-loops \
 >   -c \
 >   -c \
->   src/bezier/quadpack/dqpsrt.f \
->   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqpsrt.o \
->   -J \
->   build/temp.linux-x86_64-3.7
-----------------------------------------
-$ /usr/bin/gfortran \
->   -Wall \
->   -g \
->   -ffixed-form \
->   -fno-second-underscore \
->   -fPIC \
->   -O3 \
->   -funroll-loops \
->   -c \
->   -c \
->   src/bezier/quadpack/d1mach.f \
->   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/d1mach.o \
->   -J \
->   build/temp.linux-x86_64-3.7
-----------------------------------------
-$ /usr/bin/gfortran \
->   -Wall \
->   -g \
->   -ffixed-form \
->   -fno-second-underscore \
->   -fPIC \
->   -O3 \
->   -funroll-loops \
->   -c \
->   -c \
 >   src/bezier/quadpack/dqelg.f \
 >   -o \
 >   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqelg.o \
+>   -J \
+>   build/temp.linux-x86_64-3.7
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqpsrt.f \
+>   -o \
+>   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqpsrt.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -251,11 +251,10 @@ $ gcc \
 >   -fwrapv \
 >   -O3 \
 >   -Wall \
->   -Wstrict-prototypes \
 >   -fPIC \
 >   -I/var/code/bezier/.nox/journal-circleci/lib/python3.7/site-packages/numpy/core/include \
 >   -Isrc/bezier/include \
->   -I/usr/local/include/python3.7m \
+>   -I/root/.pyenv/versions/3.7.0/include/python3.7m \
 >   -c \
 >   src/bezier/_speedup.c \
 >   -o \
@@ -264,6 +263,8 @@ $ gcc \
 $ gcc \
 >   -pthread \
 >   -shared \
+>   -L/root/.pyenv/versions/3.7.0/lib \
+>   -L/root/.pyenv/versions/3.7.0/lib \
 >   build/temp.linux-x86_64-3.7/src/bezier/_speedup.o \
 >   build/temp.linux-x86_64-3.7/src/bezier/types.o \
 >   build/temp.linux-x86_64-3.7/src/bezier/status.o \
@@ -277,11 +278,9 @@ $ gcc \
 >   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqpsrt.o \
 >   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqk21.o \
 >   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqagse.o \
->   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
->   -L/usr/lib/gcc/x86_64-linux-gnu/5 \
->   -L/usr/local/lib \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/7 \
+>   -L/usr/lib/gcc/x86_64-linux-gnu/7 \
 >   -lgfortran \
->   -lpython3.7m \
 >   -o \
 >   build/lib.linux-x86_64-3.7/bezier/_speedup.cpython-37m-x86_64-linux-gnu.so
 ----------------------------------------

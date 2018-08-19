@@ -117,7 +117,7 @@ def setup():
         install_requires=REQUIREMENTS,
         extras_require=EXTRAS_REQUIRE,
         ext_modules=extension_modules(),
-        classifiers=(
+        classifiers=[
             "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
             "Intended Audience :: Science/Research",
@@ -130,7 +130,7 @@ def setup():
             "Programming Language :: Python :: 3.5",
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
-        ),
+        ],
         cmdclass={"build_ext": setup_helpers.BuildFortranThenExt},
     )
 

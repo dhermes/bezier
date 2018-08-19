@@ -87,6 +87,10 @@ contains
     ! E.g. The first 4 bits of -6691/512 = -13.068359375 = -0x1.a23p+3
     ! are -0x1.ap+3 = -13. To get this, we use `fraction` to compute the
     ! unsigned significand (i.e. `1 + mantissa`) 6691/4096.
+    ! NOTE: The ``allocate`` below is unnecessary, but added in because
+    !       ``gfortran==7.3.0`` complains that "`work.offset` may be used
+    !       uninitialized"
+    allocate(work(size(value_, 1), size(value_, 2)))
     work = 2 * fraction(abs(value_))
     ! Then we multiply by 2^(num_bits) and truncate to an integer
     ! 26 = 0x1.ap+4.
