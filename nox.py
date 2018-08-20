@@ -31,15 +31,12 @@ DEPS = {
     "flake8-import-order": "flake8-import-order",
     "lcov_cobertura": "lcov_cobertura",
     "matplotlib": "matplotlib >= 2.2.3",
-    "memory_profiler": "memory_profiler",
     "mock": "mock >= 2.0.0",
     "numpy": "numpy >= 1.15.0",
-    "psutil": "psutil",
     "pycobertura": "pycobertura",
     "Pygments": "Pygments",
     "pylint": "pylint",
     "pytest": "pytest >= 3.7.1",
-    "pytest-benchmark": "pytest-benchmark",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.1.0",
     "seaborn": "seaborn >= 0.9.0",
@@ -313,28 +310,6 @@ def lint(session):
 
 
 @nox.session
-@nox.parametrize("target", ["memory", "time"])
-def benchmark(session, target):
-    session.interpreter = SINGLE_INTERP
-    if target == "memory":
-        local_deps = (DEPS["numpy"], DEPS["psutil"], DEPS["memory_profiler"])
-        test_fi1 = get_path("benchmarks", "memory", "test_curves.py")
-        test_fi2 = get_path("benchmarks", "memory", "test_surfaces.py")
-        all_run_args = [["python", test_fi1], ["python", test_fi2]]
-    elif target == "time":
-        local_deps = BASE_DEPS + (DEPS["pytest-benchmark"],)
-        test_dir = get_path("benchmarks", "time")
-        all_run_args = [["py.test"] + session.posargs + [test_dir]]
-    # Install all test dependencies.
-    session.install(*local_deps)
-    # Install this package.
-    session.install(".")
-    # NOTE: We need `tests` to be import-able.
-    for run_args in all_run_args:
-        session.run(*run_args, env={"PYTHONPATH": "."})
-
-
-@nox.session
 @nox.parametrize("machine", [APPVEYOR, CIRCLE_CI, TRAVIS_OS_X])
 def check_journal(session, machine):
     if machine == APPVEYOR and os.environ.get("APPVEYOR") != "True":
@@ -387,8 +362,6 @@ def clean(session):
         get_path(".coverage"),
         get_path(".pytest_cache"),
         get_path("__pycache__"),
-        get_path("benchmarks", "memory", "__pycache__"),
-        get_path("benchmarks", "time", "__pycache__"),
         get_path("build"),
         get_path("dist"),
         get_path("docs", "__pycache__"),

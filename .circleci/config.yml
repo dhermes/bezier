@@ -37,12 +37,6 @@ jobs:
           name: Run all doctests
           command: nox -s doctest
       - run:
-          name: Run memory benchmark
-          command: nox -s "benchmark(target='memory')"
-      - run:
-          name: Run time benchmark
-          command: nox -s "benchmark(target='time')"
-      - run:
           name: Build docs
           command: nox -s docs
       - run:
