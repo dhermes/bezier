@@ -172,38 +172,6 @@ $ /usr/bin/gfortran \
 >   -funroll-loops \
 >   -c \
 >   -c \
->   src/bezier/quadpack/dqk21.f \
->   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqk21.o \
->   -J \
->   build/temp.linux-x86_64-3.7
-----------------------------------------
-$ /usr/bin/gfortran \
->   -Wall \
->   -g \
->   -ffixed-form \
->   -fno-second-underscore \
->   -fPIC \
->   -O3 \
->   -funroll-loops \
->   -c \
->   -c \
->   src/bezier/quadpack/dqagse.f \
->   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqagse.o \
->   -J \
->   build/temp.linux-x86_64-3.7
-----------------------------------------
-$ /usr/bin/gfortran \
->   -Wall \
->   -g \
->   -ffixed-form \
->   -fno-second-underscore \
->   -fPIC \
->   -O3 \
->   -funroll-loops \
->   -c \
->   -c \
 >   src/bezier/quadpack/dqelg.f \
 >   -o \
 >   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqelg.o \
@@ -223,6 +191,38 @@ $ /usr/bin/gfortran \
 >   src/bezier/quadpack/dqpsrt.f \
 >   -o \
 >   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqpsrt.o \
+>   -J \
+>   build/temp.linux-x86_64-3.7
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqk21.f \
+>   -o \
+>   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqk21.o \
+>   -J \
+>   build/temp.linux-x86_64-3.7
+----------------------------------------
+$ /usr/bin/gfortran \
+>   -Wall \
+>   -g \
+>   -ffixed-form \
+>   -fno-second-underscore \
+>   -fPIC \
+>   -O3 \
+>   -funroll-loops \
+>   -c \
+>   -c \
+>   src/bezier/quadpack/dqagse.f \
+>   -o \
+>   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqagse.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------

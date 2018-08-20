@@ -329,7 +329,8 @@ def check_journal(session, machine):
     os.close(filehandle)
     # Set the journal environment variable and install ``bezier``.
     session.install(DEPS["numpy"])  # Install requirement(s).
-    env = {"BEZIER_JOURNAL": journal_filename}
+    # Limit to a single build job so commands are always in serial.
+    env = {"BEZIER_JOURNAL": journal_filename, "NPY_NUM_BUILD_JOBS": "1"}
     session.run("pip", "install", ".", env=env)
     # Compare the expected file to the actual results.
     session.run(
