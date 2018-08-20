@@ -445,8 +445,8 @@ Python versions we test in. The image used in our CircleCI builds (from
 ``nox`` and NumPy).
 
 On Travis CI, Matthew Brett's `multibuild`_ is used to install "official"
-python.org CPython binaries for Mac OS X. Then tests are run in both 32-bit
-and 64-bit mode.
+python.org CPython binaries for Mac OS X. Then tests are run in both 64-bit
+mode (NumPy has `discontinued`_ 32-bit support).
 
 On AppVeyor, all extensions are built and tested with both 32-bit and 64-bit
 Python binaries.
@@ -460,6 +460,7 @@ Python binaries.
 .. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/master/scripts/docker/bezier.Dockerfile
 .. _multibuild: https://github.com/matthew-brett/multibuild
+.. _discontinued: https://github.com/numpy/numpy/issues/11625
 
 ****************************************
 Release Process / Deploying New Versions

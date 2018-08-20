@@ -23,9 +23,6 @@ src/bezier/_speedup*.so
 wheelhouse/
 scripts/osx/dist_wheels/
 scripts/osx/fixed_wheels/
-scripts/osx/frankenstein/
-scripts/osx/tempdir-i386/
-scripts/osx/tempdir-x86_64/
 tests/fortran/*.gcda
 tests/fortran/*.gcno
 tests/fortran/*.o

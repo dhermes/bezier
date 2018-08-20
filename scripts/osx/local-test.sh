@@ -17,7 +17,6 @@
 # - checking that the "official" CPython is installed where expected
 # - checking that ``gfortran`` is installed
 # - setting of relevant environment variables
-# - building a universal ``libgfortran``
 # - make sure we have a latest `nox`, `pip`, `numpy` and `virtualenv`
 # - puts the "local" Python at the front of `PATH`
 
@@ -63,21 +62,6 @@ fi
 # Make sure the "official" installed CPython is set up for testing.
 ${PY_BIN_DIR}/python -m pip install --upgrade virtualenv pip
 ${PY_BIN_DIR}/python -m pip install --upgrade 'nox-automation >= 0.19.1' numpy
-
-# Make sure there is a universal ``libgfortran``.
-export GFORTRAN_LIB="${OSX_SCRIPTS_DIR}/frankenstein"
-if [[ -d "${GFORTRAN_LIB}" ]]; then
-    echo "The 'frankenstein' universal gfortran library already exists."
-else
-    ${PY_BIN_DIR}/python ${OSX_SCRIPTS_DIR}/make_universal_libgfortran.py
-fi
-
-
-# Set up the tempfile directories for universal builds.
-export TEMPDIR_I386=${OSX_SCRIPTS_DIR}/tempdir-i386
-mkdir -p ${TEMPDIR_I386}
-export TEMPDIR_X86_64=${OSX_SCRIPTS_DIR}/tempdir-x86_64
-mkdir -p ${TEMPDIR_X86_64}
 
 # Make sure the current Python is at the front of `PATH`.
 export PATH="${PY_BIN_DIR}:${PATH}"

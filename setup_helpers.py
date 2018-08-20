@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Generic (i.e. platform-independent) helpers for ``setup.py``."""
 
 from __future__ import print_function
@@ -24,17 +25,8 @@ import sys
 import setuptools
 import setuptools.command.build_ext
 
-DEBUG_ENV = "DEBUG"
-GFORTRAN_LIB_ENV = "GFORTRAN_LIB"
-"""Environment variable used to over-ride the ``libgfortran`` search path.
 
-This might be desirable if the "default" ``libgfortran`` does not have some
-necessary property. For example, the Homebrew installed ``libgfortran`` on
-OS X is not a universal binary. So this environment variable could be used
-to point to a custom ``libgfortran`` that **is** universal. (See
-``scripts/osx/make_universal_libgfortran.py`` and
-``scripts/osx/build-wheels.sh`` for an example of this.)
-"""
+DEBUG_ENV = "DEBUG"
 WHEEL_ENV = "BEZIER_WHEEL"
 """Environment variable used to indicate a wheel is being built.
 
@@ -104,9 +96,8 @@ SPEEDUP_FILENAME = os.path.join("src", "bezier", "_speedup.c")
 def gfortran_search_path(library_dirs):
     """Get the library directory paths for ``gfortran``.
 
-    This is a helper for :func:`patch_library_dirs`. Looks for
-    ``libraries: =`` in the output of ``gfortran -print-search-dirs`` and
-    then parses the paths. If this fails for any reason, this method will
+    Looks for ``libraries: =`` in the output of ``gfortran -print-search-dirs``
+    and then parses the paths. If this fails for any reason, this method will
     print an error and return ``library_dirs``.
 
     Args:
@@ -147,34 +138,6 @@ def gfortran_search_path(library_dirs):
             msg = GFORTRAN_BAD_PATH.format(full_path)
             print(msg, file=sys.stderr)
     return sorted(accepted)
-
-
-def patch_library_dirs(f90_compiler):
-    """Patch up ``f90_compiler.library_dirs``.
-
-    This assumes (but does not check) that the caller has verified
-    ``f90_compiler`` corresponds to ``gfortran``.
-
-    This is needed with ``gfortran`` on OS X and Windows. The
-    ``numpy.distutils`` "default" constructor for ``Gnu95FCompiler`` only
-    has a single library search path, but there are many library paths
-    include in the full ``gcc`` install.
-
-    The ``library_dirs`` directory can be over-ridden by using the
-    ``GFORTRAN_LIB`` environment variable (more details on "why" in the
-    docstring for (:attr:`GFORTRAN_LIB_ENV`).
-
-    Args:
-        f90_compiler (numpy.distutils.fcompiler.gnu.Gnu95FCompiler): A Fortran
-            compiler instance.
-    """
-    gfortran_lib = os.environ.get(GFORTRAN_LIB_ENV)
-    # ``library_dirs`` is a list (i.e. mutable), so we can update in place.
-    library_dirs = f90_compiler.library_dirs
-    if gfortran_lib is None:
-        library_dirs[:] = gfortran_search_path(library_dirs)
-    else:
-        library_dirs[:] = [gfortran_lib]
 
 
 def extension_modules():

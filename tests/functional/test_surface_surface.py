@@ -79,29 +79,37 @@ FAILED_CASES_COINCIDENT = {
     ALGEBRAIC: {4: {}, 5: {}, 43: {}, 44: {}, 45: {}, 46: {}, 47: {}, 51: {}},
 }
 FAILED_CASES_BAD_EDGES = {GEOMETRIC: (), ALGEBRAIC: ()}
-FAILED_CASES_PRECISION = {GEOMETRIC: (), ALGEBRAIC: ()}
+FAILED_CASES_PRECISION = {GEOMETRIC: (68,), ALGEBRAIC: ()}
 FAILED_CASES_BAD_DUPLICATE = {
     GEOMETRIC: (),
     ALGEBRAIC: (53, 54, 55, 56, 57, 59, 60, 62, 63, 64, 66, 67, 69, 70),
 }
 FAILED_CASES_CONSECUTIVE_SEGMENTS = {
-    GEOMETRIC: (55, 56, 58, 61, 63, 65, 66, 67, 70, 71, 72),
+    GEOMETRIC: (
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        63,
+        65,
+        66,
+        67,
+        70,
+        71,
+        72,
+    ),
     ALGEBRAIC: (58, 61, 65, 71, 72),
 }
-INCORRECT_COUNT = {GEOMETRIC: (52, 62, 64), ALGEBRAIC: (68,)}
+INCORRECT_COUNT = {GEOMETRIC: (52, 62, 64, 69), ALGEBRAIC: (68,)}
 if base_utils.IS_LINUX and not base_utils.IS_64_BIT:
     INCORRECT_COUNT[ALGEBRAIC] += (52,)
 else:
     FAILED_CASES_BAD_EDGES[ALGEBRAIC] += (52,)
-# Special handling for 32-bit OS X (and everything else).
-if base_utils.IS_MAC_OS_X and not base_utils.IS_64_BIT:
-    FAILED_CASES_PRECISION[GEOMETRIC] += (54, 57, 59)
-    FAILED_CASES_CONSECUTIVE_SEGMENTS[GEOMETRIC] += (68,)
-    INCORRECT_COUNT[GEOMETRIC] += (53, 60)
-else:
-    FAILED_CASES_CONSECUTIVE_SEGMENTS[GEOMETRIC] += (53, 54, 57, 59, 60)
-    FAILED_CASES_PRECISION[GEOMETRIC] += (68,)
-    INCORRECT_COUNT[GEOMETRIC] += (69,)
 
 CONFIG = utils.Config()
 

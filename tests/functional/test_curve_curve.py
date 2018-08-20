@@ -107,9 +107,6 @@ ULPS_ALLOWED_OVERRIDE = {
         },
     },
     ALGEBRAIC: {
-        12: {
-            (1, 0): 4  # Established on OS X 10.11 in 32-bit (Early 2011 MBP)
-        },
         17: {(5, 0): ZERO_MISS},  # Established on Ubuntu 16.04
         18: {
             (4, 0): 5,  # Established on Ubuntu 16.04

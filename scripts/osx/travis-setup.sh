@@ -45,13 +45,3 @@ ${PIP_CMD} install --upgrade 'nox-automation >= 0.19.1' numpy
 
 export PY_BIN_DIR=$(dirname "${PYTHON_EXE}")
 echo "PY_BIN_DIR=${PY_BIN_DIR}"
-
-# Make sure there is a universal ``libgfortran``.
-${PYTHON_EXE} ${TRAVIS_BUILD_DIR}/scripts/osx/make_universal_libgfortran.py
-export GFORTRAN_LIB="${TRAVIS_BUILD_DIR}/scripts/osx/frankenstein"
-
-# Set up the tempfile directories for universal builds.
-export TEMPDIR_I386=${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-i386
-mkdir -p ${TEMPDIR_I386}
-export TEMPDIR_X86_64=${TRAVIS_BUILD_DIR}/scripts/osx/tempdir-x86_64
-mkdir -p ${TEMPDIR_X86_64}

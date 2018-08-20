@@ -51,18 +51,13 @@ ${PY_BIN} -m pip install --upgrade delocate wheel virtualenv
 # Make sure install requirement are installed / up-to-date.
 ${PY_BIN} -m pip install --upgrade setuptools numpy
 
-# Make sure the custom ``libgfortran`` is in place.
-${PY_BIN} ${OSX_DIR}/make_universal_libgfortran.py
-
 # Indicate that wheels are being built.
 export BEZIER_WHEEL=True
 
-# Create the wheel (make sure to use the custom ``libgfortran``).
+# Create the wheel.
 DIST_WHEELS="${OSX_DIR}/dist_wheels"
 mkdir -p ${DIST_WHEELS}
-FRANKENSTEIN="${OSX_DIR}/frankenstein"
-GFORTRAN_LIB="${FRANKENSTEIN}" \
-    ${PY_BIN} -m pip wheel ${REPO_ROOT} \
+${PY_BIN} -m pip wheel ${REPO_ROOT} \
     --wheel-dir ${DIST_WHEELS}
 
 # Delocate the wheel.
@@ -87,13 +82,10 @@ ${VENV}/bin/python -m pip install \
     --find-links ${DIST_WHEELS}
 
 set +e  # Allow tests to fail
-# Run unit tests (in both 32 and 64 bit).
-arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/tests/unit
-arch -x86_64 ${VENV}/bin/py.test ${REPO_ROOT}/tests/unit
-# Run functional tests (in both 32 and 64 bit).
-arch -i386 ${VENV}/bin/py.test ${REPO_ROOT}/tests/functional
-arch -x86_64 ${VENV}/bin/py.test ${REPO_ROOT}/tests/functional
+# Run unit tests.
+${VENV}/bin/py.test ${REPO_ROOT}/tests/unit
+# Run functional tests.
+${VENV}/bin/py.test ${REPO_ROOT}/tests/functional
 
 # Clean-up.
 rm -fr ${VENV}
-rm -fr ${FRANKENSTEIN}

@@ -4,8 +4,8 @@ Native Libraries
 
 .. note::
 
-   This content was last updated January 23, 2018 (as part of the
-   ``0.6.2`` release). Much of the content is tested automatically to keep
+   This content was last updated August 20, 2018 (as part of the
+   ``0.8.1`` release). Much of the content is tested automatically to keep
    from getting stale, but some of the console code blocks are not. As a
    result, this material may be out of date. If anything does not seem
    correct --- or even if the explanation is insufficient --- please
@@ -231,7 +231,7 @@ from a `Python wheel`_. The wheels uploaded to PyPI are pre-built, with
 Fortran extensions compiled with `GNU Fortran`_ (``gfortran``). As a
 result, ``libbezier`` will depend on ``libgfortran``. This can be problematic
 due to version conflicts, ABI incompatibility, a desire to use a different
-Fortran compiler (e.g. ``ifort``) and a host of other reasons.
+Fortran compiler (e.g. Intel's ``ifort``) and a host of other reasons.
 
 Some of the standard tooling for distributing wheels tries to address this. On
 Linux and Mac OS X, they address it by placing a copy of ``libgfortran`` (and
@@ -329,8 +329,8 @@ of ``libgfortran``:
            @loader_path/.dylibs/libgfortran.5.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
-Though the Python extension modules (``.so`` files) only depend on
-``libgfortran``, they indirectly depend on ``libquadmath`` and
+Though the Python extension module (``.so`` file) only depends on
+``libgfortran``, it indirectly depends on ``libquadmath`` and
 ``libgcc_s``:
 
 .. doctest:: os-x-delocated-libgfortran
@@ -363,7 +363,7 @@ Windows
 =======
 
 A single Windows shared library (DLL) is provided: ``extra-dll/libbezier.dll``.
-The Python extension modules (``.pyd`` files) depend directly on this library:
+The Python extension module (``.pyd`` file) depends directly on this library:
 
 .. testsetup:: windows-extension, windows-dll
 
@@ -460,9 +460,8 @@ can happen:
     ``HeapFree``), so allocating memory with one and freeing with another is
     an error.
 
-This problem has been `largely fixed`_ in newer versions of
-Python but is still worth knowing, especially for older but still prominent
-Python 2.7.
+This problem has been `largely fixed`_ in newer versions of Python but is
+still worth knowing, especially for the older but still prominent Python 2.7.
 
 Unfortunately, there is no Fortran compiler provided by MSVC. The
 `MinGW-w64`_ suite of tools is a port of the GNU Compiler Collection (``gcc``)
@@ -507,6 +506,7 @@ on MinGW (at either compile, link or run time) is explicitly avoided. By adding
 the ``-static`` flag
 
 .. code-block:: console
+   :emphasize-lines: 2
 
    $ gfortran \
    >   -static \
@@ -544,7 +544,7 @@ on MinGW:
 
    Although ``msvcrt.dll`` is a dependency of ``libbezier.dll``, it is not
    a problem. Any values returned from Fortran (as ``intent(out)``) will
-   have already been allocated by the caller (e.g. the Python interpreter).
+   have already been allocated by the caller (e.g. the Python process).
    This won't necessarily be true for generic Fortran subroutines, but
    subroutines marked with ``bind(c)`` (i.e. marked as part of the C ABI
    of ``libbezier``) will not be allowed to use ``allocatable`` or
@@ -582,7 +582,7 @@ From there, an `import library`_ must be created
 
 .. _version of MSVC: http://matthew-brett.github.io/pydagogue/python_msvc.html
 .. _largely fixed: http://stevedower.id.au/blog/building-for-python-3-5-part-two/
-.. _MinGW-w64: https://mingw-w64.org
+.. _MinGW-w64: http://mingw-w64.org
 
 Source
 ======
@@ -594,7 +594,7 @@ depend on the local copy distributed with the ``bezier`` wheels.
 these libraries, if a different Fortran compiler is required or
 "just because".
 
-The Python extension modules (along with ``libbezier``) can be built from
+The Python extension module (along with ``libbezier``) can be built from
 source via:
 
 .. code-block:: console
