@@ -181,7 +181,7 @@ COINCIDENT_OVERRIDES = {
     ALGEBRAIC: {53: {}},
 }
 INCORRECT_COUNT = {GEOMETRIC: (), ALGEBRAIC: ()}
-if base_utils.IS_MAC_OS_X or base_utils.IS_PYPY:
+if base_utils.IS_PYPY:
     INCORRECT_COUNT[ALGEBRAIC] += (10,)
 
 
