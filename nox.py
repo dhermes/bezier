@@ -238,7 +238,7 @@ def docs(session):
     install_bezier(session, env={"BEZIER_NO_EXTENSIONS": "True"})
     # Run the script for building docs.
     command = get_path("scripts", "build_docs.sh")
-    session.run(command, env=env)
+    session.run(command)
 
 
 def get_doctest_args(session):
