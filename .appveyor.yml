@@ -14,49 +14,46 @@ environment:
 
   global:
 
-    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
-    # /E:ON and /V:ON options are not enabled in the batch script intepreter
-    # See: https://stackoverflow.com/a/13751649/163740
-    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\windows_sdk.cmd"
     MINGW_32: C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin
     MINGW_64: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin
+    DEFAULT_PYTHON: "C:\\Python37-x64"
 
   matrix:
 
     # See: https://www.appveyor.com/docs/installed-software/#python
 
-    - PYTHON: "C:\\Python27"
-      TEST_TYPE: base
+    - PYTHON_ARCH: "32"
+      NOX_SESSION: "unit(py='2.7')"
 
-    - PYTHON: "C:\\Python27-x64"
-      TEST_TYPE: base
+    - PYTHON_ARCH: "64"
+      NOX_SESSION: "unit(py='2.7')"
 
-    - PYTHON: "C:\\Python35"
-      TEST_TYPE: base
+    - PYTHON_ARCH: "32"
+      NOX_SESSION: "unit(py='3.5')"
 
-    - PYTHON: "C:\\Python35-x64"
-      TEST_TYPE: base
+    - PYTHON_ARCH: "64"
+      NOX_SESSION: "unit(py='3.5')"
 
-    - PYTHON: "C:\\Python36"
-      TEST_TYPE: base
+    - PYTHON_ARCH: "32"
+      NOX_SESSION: "unit(py='3.6')"
 
-    - PYTHON: "C:\\Python36-x64"
-      TEST_TYPE: base
+    - PYTHON_ARCH: "64"
+      NOX_SESSION: "unit(py='3.6')"
 
-    - PYTHON: "C:\\Python37"
-      TEST_TYPE: base
+    - PYTHON_ARCH: "32"
+      NOX_SESSION: "unit(py='3.7')"
 
-    - PYTHON: "C:\\Python37-x64"
-      TEST_TYPE: cover
+    - PYTHON_ARCH: "64"
+      NOX_SESSION: "cover"
 
-    - PYTHON: "C:\\Python37-x64"
-      TEST_TYPE: functional
+    - PYTHON_ARCH: "64"
+      NOX_SESSION: "functional(py='3.7')"
 
-    - PYTHON: "C:\\Python37-x64"
-      TEST_TYPE: doctest
+    - PYTHON_ARCH: "64"
+      NOX_SESSION: "doctest"
 
-    - PYTHON: "C:\\Python37-x64"
-      TEST_TYPE: journal
+    - PYTHON_ARCH: "64"
+      NOX_SESSION: "check_journal(machine='appveyor')"
 
 install:
   - cmd: echo "Filesystem root:"
@@ -65,21 +62,8 @@ install:
   - echo "Installed SDKs:"
   - dir "C:/Program Files/Microsoft SDKs/Windows"
 
-  # Prepend "current" Python to the PATH of this build (this cannot be
-  # done from inside the powershell script as it would require to restart
-  # the parent CMD process).
-  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-
-  # https://stackoverflow.com/a/4509885/1068170
-  # Set `PYTHON_ARCH` (either 32 or 64)
-  - set PY_CMD=python -c "import platform; print(platform.architecture()[0][:2])"
-  - for /f "tokens=1 delims=" %%i in ('%PY_CMD%') do set PYTHON_ARCH=%%i
-  # Set `PYTHON_VERSION`
-  - set PY_CMD=python -c "import platform; print(platform.python_version())"
-  - for /f "tokens=1 delims=" %%i in ('%PY_CMD%') do set PYTHON_VERSION=%%i
-
-  # Check that we have the expected version and architecture for Python
-  - python appveyor\env_info.py
+  # Make 64-bit Python 3.7 the "default" Python.
+  - "SET PATH=%DEFAULT_PYTHON%;%DEFAULT_PYTHON%\\Scripts;%PATH%"
 
   # Append MinGW to the PATH of this build so ``gfortran`` is visible
   # to ``numpy.distutils``.
@@ -96,76 +80,8 @@ install:
   - python -m pip install --upgrade pip setuptools
   - python -m pip install --upgrade wheel
 
-  # Requirements for `bezier` install
-  - python -m pip install --upgrade numpy
-
-  # Save command journal while building, if relevant.
-  - ps: if ($env:TEST_TYPE -eq "journal")
-        {
-          $env:BEZIER_JOURNAL = $env:APPVEYOR_BUILD_FOLDER + "\\journal.txt";
-        }
-
-  # Install ``bezier``.
-  - "%CMD_IN_ENV% python -m pip install -vv ."
-
-  # Install (hardcoded) test dependencies (should use ``nox``).
-
-  # Install (hardcoded) conditional (on base) test dependencies.
-  - ps: if ($env:TEST_TYPE -eq "base")
-        {
-          python -m pip install pytest mock "scipy >= 1.1.0";
-        }
-
-  # Install (hardcoded) conditional (on cover) test dependencies.
-  - ps: if ($env:TEST_TYPE -eq "cover")
-        {
-          python -m pip install pytest mock coverage pytest-cov "scipy >= 1.1.0";
-        }
-
-  # Install (hardcoded) conditional (on functional) test dependencies.
-  - ps: if ($env:TEST_TYPE -eq "functional")
-        {
-          python -m pip install pytest mock;
-        }
-
-  # Install (hardcoded) conditional (on doctest) test dependencies.
-  - ps: if ($env:TEST_TYPE -eq "doctest")
-        {
-          python -m pip install Sphinx sphinx-rtd-theme sphinx-docstring-typing mock;
-        }
+  # Install the build dependencies of the project.
+  - python -m pip install --upgrade "nox-automation == 0.19.1"
 
 test_script:
-  - ps: if ($env:TEST_TYPE -eq "base")
-        {
-          python -m pytest tests/unit;
-        }
-  - ps: if ($env:TEST_TYPE -eq "cover")
-        {
-          python -m pytest `
-              --cov=bezier `
-              --cov=tests.unit `
-              tests/unit;
-        }
-  - ps: if ($env:TEST_TYPE -eq "functional")
-        {
-          python -m pytest tests/functional;
-        }
-  - ps: if ($env:TEST_TYPE -eq "doctest")
-        {
-          sphinx-build -W `
-              -b doctest `
-              -d docs/build/doctrees `
-              docs `
-              docs/build/doctest;
-        }
-  - ps: if ($env:TEST_TYPE -eq "journal")
-        {
-          python `
-              .\scripts\post_process_journal.py `
-              --journal-filename $env:BEZIER_JOURNAL `
-              --machine appveyor;
-          python `
-              .\scripts\diff.py `
-              $env:BEZIER_JOURNAL `
-              .\appveyor\expected_journal.txt;
-        }
+  - "nox.exe -s \"%NOX_SESSION%\""

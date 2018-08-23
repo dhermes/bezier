@@ -19,10 +19,13 @@ import tempfile
 
 import nox
 import nox.command
+import nox.virtualenv
 import py.path
 
 
 IS_MAC_OS_X = sys.platform == "darwin"
+PYTHON_ARCH = os.environ.get("PYTHON_ARCH")
+ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
     "coverage": "coverage",
     "Cython": "Cython >= 0.28.5",
@@ -48,7 +51,7 @@ DOCS_DEPS = (
     "--requirement",
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
-SINGLE_INTERP = "python3.7"
+DEFAULT_INTERPRETER = "3.7"
 PYPY = "pypy"
 # Constants used for checking the journal of commands.
 APPVEYOR = "appveyor"
@@ -82,6 +85,49 @@ def pypy_setup(local_deps, session):
     return local_deps
 
 
+def install_bezier(session, py=DEFAULT_INTERPRETER, debug=False, env=None):
+    if env is None:
+        env = {}
+    if debug:
+        env["DEBUG"] = "True"
+
+    if ON_APPVEYOR and py == "2.7" and PYTHON_ARCH == "64":
+        # NOTE: We must manually specify the Python executable (rather than
+        #       just using "python") since ``cmd`` will spawn a subshell
+        #       that doesn't inherit the ``PATH`` changes for the current
+        #       ``virtualenv``.
+        py_exe = os.path.join(
+            ".nox", session.virtualenv_dirname, "Scripts", "python"
+        )
+        parts = [
+            "cmd",
+            "/E:ON",
+            "/V:ON",
+            "/C",
+            os.path.join(".", "appveyor", "windows_py27_64bit.cmd"),
+            py_exe,
+            "-m",
+            "pip",
+            "install",
+            ".",
+        ]
+        session.run(*parts, env=env)
+    else:
+        if env:
+            session._commands.append(InstallWithEnv(".", env))
+        else:
+            session.install(".")
+
+
+def get_interpreter(py=DEFAULT_INTERPRETER):
+    if ON_APPVEYOR:
+        if PYTHON_ARCH == "32":
+            py = "{}-32".format(py)
+        return nox.virtualenv.locate_via_py(py)
+    else:
+        return "python{}".format(py)
+
+
 @nox.session
 @nox.parametrize("check", [True, False])
 def update_generated(session, check):
@@ -89,7 +135,7 @@ def update_generated(session, check):
     # NOTE: ``nox`` requires virtualenv_dirname to be lowercase.
     session.virtualenv_dirname = name.lower()
     # Update Cython generated source code.
-    session.interpreter = SINGLE_INTERP
+    session.interpreter = get_interpreter()
     # Install all dependencies.
     session.install(DEPS["Cython"])
     if check:
@@ -117,18 +163,21 @@ def update_generated(session, check):
 @nox.session
 @nox.parametrize("py", ["2.7", "3.5", "3.6", "3.7", PYPY])
 def unit(session, py):
+    session.virtualenv_dirname = "unit-py-{}".format(py.replace(".", "-"))
+
     if py == PYPY:
         session.interpreter = PYPY
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
-        session.interpreter = "python{}".format(py)
+        session.interpreter = get_interpreter(py)
         local_deps = BASE_DEPS + (DEPS["scipy"],)
     if py in ("2.7", PYPY):
         local_deps += (DEPS["mock"],)
+
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    debug_install(session, ".")
+    install_bezier(session, py, debug=True)
     # Run py.test against the unit tests.
     run_args = ["py.test"] + session.posargs + [get_path("tests", "unit")]
     session.run(*run_args)
@@ -136,7 +185,7 @@ def unit(session, py):
 
 @nox.session
 def cover(session):
-    session.interpreter = SINGLE_INTERP
+    session.interpreter = get_interpreter()
     # Install all test dependencies.
     local_deps = BASE_DEPS + (
         DEPS["scipy"],
@@ -145,7 +194,7 @@ def cover(session):
     )
     session.install(*local_deps)
     # Install this package.
-    session.install(".")
+    install_bezier(session)
     # Run py.test with coverage against the unit tests.
     run_args = ["py.test", "--cov=bezier", "--cov=tests.unit"]
     run_args += session.posargs
@@ -156,18 +205,23 @@ def cover(session):
 @nox.session
 @nox.parametrize("py", ["2.7", "3.5", "3.6", "3.7", PYPY])
 def functional(session, py):
+    session.virtualenv_dirname = "functional-py-{}".format(
+        py.replace(".", "-")
+    )
+
     if py == PYPY:
         session.interpreter = PYPY
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
-        session.interpreter = "python{}".format(py)
+        session.interpreter = get_interpreter(py)
         local_deps = BASE_DEPS
     if py in ("2.7", PYPY):
         local_deps += (DEPS["mock"],)
+
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    debug_install(session, ".")
+    install_bezier(session, py, debug=True)
     # Run py.test against the functional tests.
     run_args = (
         ["py.test"] + session.posargs + [get_path("tests", "functional")]
@@ -177,12 +231,11 @@ def functional(session, py):
 
 @nox.session
 def docs(session):
-    session.interpreter = SINGLE_INTERP
+    session.interpreter = get_interpreter()
     # Install all dependencies.
     session.install(*DOCS_DEPS)
     # Install this package.
-    env = {"BEZIER_NO_EXTENSIONS": "True"}
-    session.run("pip", "install", ".", env=env)
+    install_bezier(session, env={"BEZIER_NO_EXTENSIONS": "True"})
     # Run the script for building docs.
     command = get_path("scripts", "build_docs.sh")
     session.run(command, env=env)
@@ -205,7 +258,7 @@ def get_doctest_args(session):
 
 @nox.session
 def doctest(session):
-    session.interpreter = SINGLE_INTERP
+    session.interpreter = get_interpreter()
     # Install all dependencies.
     session.install(*DOCS_DEPS)
     # Install this package.
@@ -213,7 +266,7 @@ def doctest(session):
         command = get_path("scripts", "osx", "nox-install-for-doctest.sh")
         session.run(command)
     else:
-        session.install(".")
+        install_bezier(session)
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
     session.run(*run_args)
@@ -221,13 +274,13 @@ def doctest(session):
 
 @nox.session
 def docs_images(session):
-    session.interpreter = SINGLE_INTERP
+    session.interpreter = get_interpreter()
     # Install all dependencies.
     local_deps = DOCS_DEPS
     local_deps += (DEPS["matplotlib"], DEPS["seaborn"], DEPS["pytest"])
     session.install(*local_deps)
     # Install this package.
-    session.install(".")
+    install_bezier(session)
     # Use custom RC-file for matplotlib.
     env = {"MATPLOTLIBRC": "docs", "GENERATE_IMAGES": "True"}
     # Run the script for generating images for docs.
@@ -253,7 +306,7 @@ def docs_images(session):
 
 @nox.session
 def lint(session):
-    session.interpreter = SINGLE_INTERP
+    session.interpreter = get_interpreter()
     # Install all dependencies.
     local_deps = BASE_DEPS + (
         DEPS["docutils"],
@@ -266,7 +319,7 @@ def lint(session):
     )
     session.install(*local_deps)
     # Install this package.
-    session.install(".")
+    install_bezier(session)
     # Run the script to check that the README and other docs are valid.
     check_path = get_path("scripts", "check_doc_templates.py")
     session.run("python", check_path)
@@ -312,7 +365,7 @@ def lint(session):
 @nox.session
 @nox.parametrize("machine", [APPVEYOR, CIRCLE_CI, TRAVIS_OS_X])
 def check_journal(session, machine):
-    if machine == APPVEYOR and os.environ.get("APPVEYOR") != "True":
+    if machine == APPVEYOR and not ON_APPVEYOR:
         session.skip("Not currently running in AppVeyor.")
     if machine == CIRCLE_CI and os.environ.get("CIRCLECI") != "true":
         session.skip("Not currently running in CircleCI.")
@@ -323,7 +376,7 @@ def check_journal(session, machine):
             session.skip("Running in Travis, but not in an OS X job.")
 
     session.virtualenv_dirname = "journal-{}".format(machine)
-    session.interpreter = SINGLE_INTERP
+    session.interpreter = get_interpreter()
     # Get a temporary file where the journal will be written.
     filehandle, journal_filename = tempfile.mkstemp(suffix="-journal.txt")
     os.close(filehandle)
@@ -331,7 +384,7 @@ def check_journal(session, machine):
     session.install(DEPS["numpy"])  # Install requirement(s).
     # Limit to a single build job so commands are always in serial.
     env = {"BEZIER_JOURNAL": journal_filename, "NPY_NUM_BUILD_JOBS": "1"}
-    session.run("pip", "install", ".", env=env)
+    install_bezier(session, env=env)
     # Compare the expected file to the actual results.
     session.run(
         "python",
@@ -401,7 +454,7 @@ def clean(session):
 
 @nox.session
 def fortran_unit(session):
-    session.interpreter = SINGLE_INTERP
+    session.interpreter = get_interpreter()
     session.install(DEPS["lcov_cobertura"], DEPS["pycobertura"])
     if py.path.local.sysfind("make") is None:
         session.skip("`make` must be installed")
@@ -464,8 +517,3 @@ class InstallWithEnv(nox.command.InstallCommand):
     def run(self, venv):
         with modify_env(venv, self.env_vars):
             venv.install(*self.deps)
-
-
-def debug_install(session, *args):
-    env_vars = {"DEBUG": "True"}
-    session._commands.append(InstallWithEnv(args, env_vars))
