@@ -3,9 +3,10 @@ FROM dhermes/python-multi
 # Install the current versions of nox and NumPy.
 RUN python3.7 -m pip install --no-cache-dir \
   colorlog==3.1.4 \
-  nox==2018.10.15 \
-  numpy==1.15.2 \
-  py==1.7.0 \
+  nox==2018.8.23 \
+  numpy==1.15.1 \
+  py==1.6.0 \
+  six==1.11.0 \
   virtualenv==16.0.0
 
 # Install `gfortran` (for Fortran extensions), `libatlas-base-dev`,
@@ -29,7 +30,11 @@ RUN for PYPY in pypy pypy3; do \
     && virtualenv --python=${PYPY} pypy-env \
     && pypy-env/bin/python -m pip install --upgrade pip wheel \
     && mkdir /wheelhouse-${PYPY} \
+<<<<<<< HEAD
     && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse-${PYPY} numpy==1.15.2 \
+=======
+    && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse-${PYPY} numpy==1.15.1 \
+>>>>>>> Upgrading from `nox-automation` to `nox`.
     && pypy-env/bin/python -m pip install /wheelhouse-${PYPY}/numpy*.whl \
     && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse-${PYPY} scipy==1.1.0 \
     && rm -fr pypy-env \
