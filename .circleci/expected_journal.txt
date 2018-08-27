@@ -252,7 +252,7 @@ $ gcc \
 >   -O3 \
 >   -Wall \
 >   -fPIC \
->   -I/var/code/bezier/.nox/journal-circleci/lib/python3.7/site-packages/numpy/core/include \
+>   -I/var/code/bezier/.nox/check_journal-3-7-machine-circleci/lib/python3.7/site-packages/numpy/core/include \
 >   -Isrc/bezier/include \
 >   -I/root/.pyenv/versions/3.7.0/include/python3.7m \
 >   -c \

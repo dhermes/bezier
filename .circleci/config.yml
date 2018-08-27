@@ -10,6 +10,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Update to latest `nox`
+          command: |
+            pip uninstall --yes nox-automation
+            pip install git+https://github.com/theacodes/nox/
+      - run:
           name: Check that all Cython generated files have been updated
           command: nox -s "update_generated-3.7(check=True)"
       - run:

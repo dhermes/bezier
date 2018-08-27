@@ -246,7 +246,7 @@ $ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe \
 >   /GL \
 >   /DNDEBUG \
 >   /MD \
->   -Ic:\projects\bezier\.nox\journal-appveyor\lib\site-packages\numpy\core\include \
+>   -Ic:\projects\bezier\.nox\check_journal-3-7-machine-appveyor\lib\site-packages\numpy\core\include \
 >   -Isrc\bezier\include \
 >   -IC:\Python37-x64\include \
 >   -IC:\Python37-x64\include \
@@ -276,8 +276,8 @@ $ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe 
 >   /MANIFESTUAC:NO \
 >   /LIBPATH:build\lib.win-amd64-3.7\bezier\lib \
 >   /LIBPATH:C:\Python37-x64\Libs \
->   /LIBPATH:c:\projects\bezier\.nox\journal-appveyor\libs \
->   /LIBPATH:c:\projects\bezier\.nox\journal-appveyor\PCbuild\amd64 \
+>   /LIBPATH:c:\projects\bezier\.nox\check_journal-3-7-machine-appveyor\libs \
+>   /LIBPATH:c:\projects\bezier\.nox\check_journal-3-7-machine-appveyor\PCbuild\amd64 \
 >   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" \
 >   /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" \
 >   /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" \
