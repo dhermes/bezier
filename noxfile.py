@@ -86,7 +86,7 @@ def pypy_setup(local_deps, session):
             "--no-index",
             "--find-links",
             WHEELHOUSE,
-            DEPS["numpy"],
+            "numpy >= 1.15.0",  # DEPS["numpy"],
             DEPS["scipy"],
         )
     return local_deps
@@ -162,6 +162,8 @@ def unit(session):
     session.install(*local_deps)
     # Install this package.
     install_bezier(session, py=interpreter, debug=True)
+    # Foo
+    session.run("python", get_path("env_info.py"))
     # Run py.test against the unit tests.
     run_args = ["py.test"] + session.posargs + [get_path("tests", "unit")]
     session.run(*run_args)
