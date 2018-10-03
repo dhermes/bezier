@@ -48,7 +48,7 @@ echo "PIP_CMD=${PIP_CMD}"
 
 # Make sure our installed CPython is set up for testing.
 ${PIP_CMD} install --ignore-installed virtualenv pip
-${PIP_CMD} install --upgrade 'git+https://github.com/theacodes/nox/' numpy
+${PIP_CMD} install --upgrade "nox >= 2018.9.14" numpy
 
 export PY_BIN_DIR=$(dirname "${PYTHON_EXE}")
 echo "PY_BIN_DIR=${PY_BIN_DIR}"
