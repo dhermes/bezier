@@ -23,9 +23,7 @@
 # serve to show the default.
 
 import doctest
-import email
 import os
-import pkg_resources
 import sys
 
 import sphinx_rtd_theme
