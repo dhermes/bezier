@@ -109,7 +109,7 @@ of a curve segment.
 Running Unit Tests
 ******************
 
-We recommend using ``nox`` (`nox`_) to run unit tests:
+We recommend using `Nox`_ to run unit tests:
 
 .. code-block:: console
 
@@ -131,7 +131,7 @@ manage dependencies or build extensions):
    $ PYTHONPATH=src/ python3.7 -m pytest tests/unit/
    $ PYTHONPATH=src/ pypy      -m pytest tests/unit/
 
-.. _nox: https://nox.readthedocs.io
+.. _Nox: https://nox.readthedocs.io
 .. _pytest: https://docs.pytest.org
 
 Testing Native Code

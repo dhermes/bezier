@@ -10,11 +10,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Update to latest `nox`
-          command: |
-            pip uninstall --yes nox-automation
-            pip install "nox >= 2018.10.15"
-      - run:
           name: Check that all Cython generated files have been updated
           command: nox -s "update_generated(check=True)"
       - run:
@@ -53,5 +48,5 @@ jobs:
       - deploy:
           name: Upload coverage to coveralls
           command: |
-            .nox/cover-3-7/bin/python -m pip install coveralls
-            .nox/cover-3-7/bin/coveralls
+            .nox/cover/bin/python -m pip install coveralls
+            .nox/cover/bin/coveralls

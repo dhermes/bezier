@@ -86,19 +86,19 @@ def pypy_setup(local_deps, session):
             "--no-index",
             "--find-links",
             WHEELHOUSE,
-            "numpy >= 1.15.0",  # DEPS["numpy"],
+            DEPS["numpy"],
             DEPS["scipy"],
         )
     return local_deps
 
 
-def install_bezier(session, python=DEFAULT_INTERPRETER, debug=False, env=None):
+def install_bezier(session, py=DEFAULT_INTERPRETER, debug=False, env=None):
     if env is None:
         env = {}
     if debug:
         env["DEBUG"] = "True"
 
-    if ON_APPVEYOR and "2.7" in python and not python.endswith("-32"):
+    if ON_APPVEYOR and "2.7" in py and not py.endswith("-32"):
         # NOTE: We must manually specify the Python executable (rather than
         #       just using "python") since ``cmd`` will spawn a subshell
         #       that doesn't inherit the ``PATH`` changes for the current
@@ -161,9 +161,7 @@ def unit(session):
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, python=interpreter, debug=True)
-    # Foo
-    session.run("python", get_path("env_info.py"))
+    install_bezier(session, py=interpreter, debug=True)
     # Run py.test against the unit tests.
     run_args = ["py.test"] + session.posargs + [get_path("tests", "unit")]
     session.run(*run_args)
@@ -200,7 +198,7 @@ def functional(session):
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, python=interpreter, debug=True)
+    install_bezier(session, py=interpreter, debug=True)
     # Run py.test against the functional tests.
     run_args = (
         ["py.test"] + session.posargs + [get_path("tests", "functional")]
