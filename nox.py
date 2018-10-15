@@ -28,7 +28,7 @@ PYTHON_ARCH = os.environ.get("PYTHON_ARCH")
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
     "coverage": "coverage",
-    "Cython": "Cython >= 0.28.5",
+    "Cython": "Cython >= 0.29",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
