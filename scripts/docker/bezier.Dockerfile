@@ -3,7 +3,7 @@ FROM dhermes/python-multi
 # Install the current versions of nox and NumPy.
 RUN python3.7 -m pip install --no-cache-dir \
   colorlog==3.1.4 \
-  nox==2018.9.14 \
+  nox==2018.10.15 \
   numpy==1.15.2 \
   py==1.6.0 \
   virtualenv==16.0.0

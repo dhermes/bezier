@@ -42,7 +42,7 @@ environment:
       PYTHON_ARCH: "64"
     - NOX_SESSION: "doctest"
       PYTHON_ARCH: "64"
-    - NOX_SESSION: "check_journal-3.7(machine='appveyor')"
+    - NOX_SESSION: "check_journal(machine='appveyor')"
       PYTHON_ARCH: "64"
 
 install:
@@ -71,7 +71,7 @@ install:
   - python -m pip install --upgrade wheel
 
   # Install the build dependencies of the project.
-  - python -m pip install --upgrade "nox >= 2018.9.14"
+  - python -m pip install --upgrade "nox >= 2018.10.15"
 
 test_script:
   - "python -m nox -s \"%NOX_SESSION%\""

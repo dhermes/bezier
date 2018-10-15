@@ -284,7 +284,7 @@ $ gcc \
 >   -arch \
 >   x86_64 \
 >   -g \
->   -I${TRAVIS_BUILD_DIR}/.nox/check_journal-3-7-machine-travis-osx/lib/python3.7/site-packages/numpy/core/include \
+>   -I${TRAVIS_BUILD_DIR}/.nox/check_journal-machine-travis-osx/lib/python3.7/site-packages/numpy/core/include \
 >   -Isrc/bezier/include \
 >   -I/Library/Frameworks/Python.framework/Versions/3.7/include/python3.7m \
 >   -c \

@@ -15,7 +15,7 @@ Used in:
 
 .. code-block:: console
 
-   $ nox -s "update_generated-3.7(check=True)"
+   $ nox -s "update_generated(check=True)"
 """
 
 from __future__ import print_function
