@@ -5,8 +5,7 @@ build: off
 matrix:
   fast_finish: true
 
-# We always use a 64-bit machine, but can build x86 distributions
-# with the PYTHON_ARCH variable.
+# We always use a 64-bit machine.
 platform:
   - x64
 
@@ -23,27 +22,16 @@ environment:
     # See: https://www.appveyor.com/docs/installed-software/#python
 
     - NOX_SESSION: "unit-2.7-32"
-      PYTHON_ARCH: "32"
     - NOX_SESSION: "unit-2.7"
-      PYTHON_ARCH: "64"
     - NOX_SESSION: "unit-3.5-32"
-      PYTHON_ARCH: "32"
     - NOX_SESSION: "unit-3.5"
-      PYTHON_ARCH: "64"
     - NOX_SESSION: "unit-3.6-32"
-      PYTHON_ARCH: "32"
     - NOX_SESSION: "unit-3.6"
-      PYTHON_ARCH: "64"
     - NOX_SESSION: "unit-3.7-32"
-      PYTHON_ARCH: "32"
     - NOX_SESSION: "cover"
-      PYTHON_ARCH: "64"
     - NOX_SESSION: "functional-3.7"
-      PYTHON_ARCH: "64"
     - NOX_SESSION: "doctest"
-      PYTHON_ARCH: "64"
     - NOX_SESSION: "check_journal(machine='appveyor')"
-      PYTHON_ARCH: "64"
 
 install:
   - cmd: echo "Filesystem root:"
@@ -58,8 +46,8 @@ install:
   # Append MinGW to the PATH of this build so ``gfortran`` is visible
   # to ``numpy.distutils``.
   - ps: |
-      $PYTHON_ARCH = $env:PYTHON_ARCH
-      If ($PYTHON_ARCH -eq 32) {
+      $NOX_SESSION = $env:NOX_SESSION
+      If ($NOX_SESSION.EndsWith("-32")) {
           $MINGW = $env:MINGW_32
       } Else {
           $MINGW = $env:MINGW_64
