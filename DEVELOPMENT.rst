@@ -523,3 +523,46 @@ Versioning
 It is currently in major version zero (``0.y.z``), which means that
 anything may change at any time and the public API should not be
 considered stable.
+
+*********************
+Environment Variables
+*********************
+
+This project uses environment variables for building the
+``bezier._speedup`` binary extension:
+
+- ``BEZIER_JOURNAL``: If set to a path on the filesystem, all compiler
+  commands executed while building the binary extension will be logged to
+  the journal file
+- ``BEZIER_NO_EXTENSIONS``: If set, this will indicate that only the pure
+  Python package should be built and installed (i.e. without the binary
+  extension).
+- ``BEZIER_WHEEL``: Indicates that the source is being built into a wheel.
+  When this is true, some compiler flags (e.g. ``-march=native``) will be
+  removed since they result in binaries that are too specific to the host
+  platform / architecture.
+- ``DEBUG``: Indicates the binary extension should be built in debug mode.
+
+for interacting with the system at import time:
+
+- ``PATH``: On Windows, we add the ``bezier/extra-dll`` package directory to
+  the path so that the ``libbezier.dll`` shared libary can be loaded at
+  import time
+
+and for running tests and interacting with Continuous Integration
+services:
+
+- ``WHEELHOUSE``: If set, this gives a path to prebuilt NumPy and SciPy wheels
+  for PyPy.
+- ``GENERATE_IMAGES``: Indicates to ``nox -s doctest`` that images should
+  be generated during cleanup of each test case.
+- ``APPVEYOR``: Indicates currently running on AppVeyor.
+- ``CIRCLECI``: Indicates currently running on CircleCI.
+- ``READTHEDOCS``: Indicates currently running on Read The Docs (RTD). This is
+  used to tell Sphinx to use the RTD theme when **not** running on RTD.
+- ``TRAVIS``: Indicates currently running on Travis.
+- ``TRAVIS_BUILD_DIR``: Gives path to the Travis build directory. This is used
+  to modify the command journal to make it deterministic (i.e. independent
+  of the build directory).
+- ``TRAVIS_OS_NAME``: Gives the current operating system on Travis. We check
+  that it is ``osx``.
