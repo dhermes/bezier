@@ -19,7 +19,7 @@ This library provides:
 
 Dive in and take a look!
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/surfaces6Q_and_7Q.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/surfaces6Q_and_7Q.png
    :align: center
 
 Why B |eacute| zier?
@@ -28,17 +28,17 @@ Why B |eacute| zier?
 A B |eacute| zier curve (and surface, etc.) is a parametric curve
 that uses the `Bernstein basis`_:
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/bernstein_basis.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/bernstein_basis.png
    :align: center
 
 to define a curve as a linear combination:
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/bezier_defn.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/bezier_defn.png
    :align: center
 
 This comes from the fact that the weights sum to one:
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/sum_to_unity.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/sum_to_unity.png
    :align: center
 
 This can be generalized to higher order by considering three, four, etc.
@@ -140,7 +140,7 @@ intersections):
    >>> _ = ax.set_ylim(-0.0625, 0.625)
    >>> plt.show()
 
-.. image:: https://cdn.rawgit.com/dhermes/bezier/master/docs/images/curves1_and_13.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/curves1_and_13.png
    :align: center
 
 For API-level documentation, check out the B |eacute| zier

@@ -218,13 +218,13 @@ details, see `the LICENSE`_.
 
 .. _the LICENSE: https://github.com/dhermes/bezier/blob/{version}/LICENSE
 
-.. |circle-build| image:: https://cdn.rawgit.com/dhermes/bezier/{version}/docs/circleci-passing.svg
+.. |circle-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/circleci-passing.svg
    :target: https://circleci.com/gh/dhermes/bezier/{circleci_build}
    :alt: CircleCI Build
-.. |travis-build| image:: https://cdn.rawgit.com/dhermes/bezier/{version}/docs/travis-passing.svg
+.. |travis-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/travis-passing.svg
    :target: https://travis-ci.org/dhermes/bezier/builds/{travis_build}
    :alt: Travis Build
-.. |appveyor-build| image:: https://cdn.rawgit.com/dhermes/bezier/{version}/docs/appveyor-passing.svg
+.. |appveyor-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/appveyor-passing.svg
    :target: https://ci.appveyor.com/project/dhermes/bezier/build/{appveyor_build}
    :alt: AppVeyor CI Build
 .. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg

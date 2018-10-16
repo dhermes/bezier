@@ -113,7 +113,9 @@ TOCTREE = """\
    releases/index
 
 """
-IMG_PREFIX = "https://cdn.rawgit.com/dhermes/bezier/{revision}/docs/"
+IMG_PREFIX = (
+    "https://raw.githubusercontent.com/dhermes/bezier/{revision}/docs/"
+)
 EXTRA_LINKS = """\
 .. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html
 .. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html
@@ -152,7 +154,7 @@ CIRCLECI_BADGE = (
     "maxAge=3600&label=Linux"
 )
 CIRCLECI_BADGE_RELEASE = (
-    "https://cdn.rawgit.com/dhermes/bezier/{version}/"
+    "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
     "docs/circleci-passing.svg"
 )
 TRAVIS_BADGE = (
@@ -160,7 +162,7 @@ TRAVIS_BADGE = (
     "maxAge=3600&label=Mac%20OS%20X"
 )
 TRAVIS_BADGE_RELEASE = (
-    "https://cdn.rawgit.com/dhermes/bezier/{version}/"
+    "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
     "docs/travis-passing.svg"
 )
 APPVEYOR_BADGE = (
@@ -168,7 +170,7 @@ APPVEYOR_BADGE = (
     "maxAge=3600&label=Windows"
 )
 APPVEYOR_BADGE_RELEASE = (
-    "https://cdn.rawgit.com/dhermes/bezier/{version}/"
+    "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
     "docs/appveyor-passing.svg"
 )
 COVERALLS_BADGE = "https://coveralls.io/repos/github/dhermes/bezier/badge.svg"
