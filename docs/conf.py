@@ -26,6 +26,7 @@ import doctest
 import os
 import sys
 
+import sphinx.domains.c
 import sphinx_rtd_theme
 
 import bezier  # ``bezier`` must be installed to build the docs.
@@ -39,14 +40,13 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = "1.0"
+needs_sphinx = "1.7.0"
 
 nitpicky = True
-nitpick_ignore = [
-    ("c:type", "bool"),  # docs/abi
-    ("c:type", "bool*"),  # docs/abi
-    ("py:class", "bezier._base.Base"),  # Base class reference
-]
+# ``bool`` is not a stopword but ``_Bool`` is, because only ``_Bool``
+# is in the language (``bool`` requires ``<stdbool.h>``)
+sphinx.domains.c.CObject.stopwords.add("bool")
+nitpick_ignore = [("py:class", "bezier._base.Base")]
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
