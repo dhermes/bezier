@@ -94,13 +94,16 @@ class Test_two_by_two_det(unittest.TestCase):
         self.assertEqual(self._call_function_under_test(mat), -2.0)
 
     def test_better_than_numpy(self):
-        mat = np.asfortranarray([[-24.0, 3.0], [-27.0, 0.0]]) / 16.0
-        actual_det = self._call_function_under_test(mat)
-        self.assertEqual(actual_det, 81.0 / 256.0)
-        np_det = np.linalg.det(mat)
-        self.assertNotEqual(actual_det, np_det)
-        local_eps = abs(SPACING(actual_det))
-        self.assertAlmostEqual(actual_det, np_det, delta=local_eps)
+        mat1 = np.asfortranarray([[-24.0, 3.0], [-27.0, 0.0]]) / 16.0
+        mat2 = np.asfortranarray([[-1.5, 0.1875], [-1.6875, 0.0]])
+        cases = [(mat1, 81.0 / 256.0), (mat2, 0.31640625)]
+        for mat, expected_det in cases:
+            actual_det = self._call_function_under_test(mat)
+            self.assertEqual(actual_det, expected_det)
+            np_det = np.linalg.det(mat)
+            self.assertNotEqual(actual_det, np_det)
+            local_eps = abs(SPACING(actual_det))
+            self.assertAlmostEqual(actual_det, np_det, delta=local_eps)
 
 
 class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):

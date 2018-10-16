@@ -368,7 +368,7 @@ class Curve(_base.Base):
             NotImplementedError: If at least one of the curves
                 isn't two-dimensional (and ``_verify=True``).
             ValueError: If ``strategy`` is not a valid
-                :attr:`.IntersectionStrategy`.
+                :class:`.IntersectionStrategy`.
         """
         if _verify:
             if not isinstance(other, Curve):

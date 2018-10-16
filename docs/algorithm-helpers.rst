@@ -19,6 +19,8 @@ This is to help with the exposition of the computation and
 .. autofunction:: bezier._intersection_helpers._newton_refine
 .. autoclass:: bezier._geometric_intersection.Linearization
    :members:
+.. autoclass:: bezier._geometric_intersection.SubdividedCurve
+   :members:
 .. autofunction:: bezier._geometric_intersection.linearization_error
 .. autofunction:: bezier._geometric_intersection.segment_intersection
 .. autofunction:: bezier._geometric_intersection.parallel_lines_parameters
@@ -28,7 +30,6 @@ This is to help with the exposition of the computation and
    :members:
 .. autofunction:: bezier._surface_helpers.classify_intersection
 .. autofunction:: bezier._surface_helpers._jacobian_det
-.. autofunction:: bezier._surface_helpers.two_by_two_det
 .. autofunction:: bezier._surface_intersection._newton_refine
 .. autofunction:: bezier._algebraic_intersection.bezier_roots
 .. autofunction:: bezier._algebraic_intersection.lu_companion

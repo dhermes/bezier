@@ -802,18 +802,6 @@ def two_by_two_det(mat):
     determinant implementation which can introduce rounding even when the
     simple :math:`a d - b c` will suffice. For example:
 
-    .. doctest:: 2-by-2
-
-       >>> import numpy as np
-       >>> mat = np.asfortranarray([
-       ...     [-1.5   , 0.1875],
-       ...     [-1.6875, 0.0   ],
-       ... ])
-       >>> actual_det = -mat[0, 1] * mat[1, 0]
-       >>> np_det = np.linalg.det(mat)
-       >>> np.abs(actual_det - np_det) == np.spacing(actual_det)
-       True
-
     Args:
         mat (numpy.ndarray): A 2x2 matrix.
 

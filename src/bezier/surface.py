@@ -966,7 +966,7 @@ class Surface(_base.Base):
             NotImplementedError: If at least one of the surfaces
                 isn't two-dimensional (and ``_verify=True``).
             ValueError: If ``strategy`` is not a valid
-                :attr:`.IntersectionStrategy`.
+                :class:`.IntersectionStrategy`.
         """
         if _verify:
             if not isinstance(other, Surface):
