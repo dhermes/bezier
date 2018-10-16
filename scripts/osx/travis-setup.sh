@@ -33,6 +33,13 @@ source osx_utils.sh
 
 # Use ``multibuild`` to install the given python.org version of CPython.
 get_macpython_environment ${PY_VERSION}
+
+# Since ``nox`` is only supported on Python 3, in the case of Python 2.7
+# we must also install a later Python and use that as our entry.
+if [[ "${PY_VERSION}" == "2.7" ]]; then
+    get_macpython_environment "3.7"
+fi
+
 echo "PYTHON_EXE=${PYTHON_EXE}"
 # NOTE: This assumes that ``multibuild`` uses ``sudo .../bin/python/pipX.Y``
 #       as the command (i.e. it's missing the ``-H`` flag).
@@ -41,7 +48,7 @@ echo "PIP_CMD=${PIP_CMD}"
 
 # Make sure our installed CPython is set up for testing.
 ${PIP_CMD} install --ignore-installed virtualenv pip
-${PIP_CMD} install --upgrade 'nox-automation == 0.19.1' numpy
+${PIP_CMD} install --upgrade "nox >= 2018.10.15" numpy
 
 export PY_BIN_DIR=$(dirname "${PYTHON_EXE}")
 echo "PY_BIN_DIR=${PY_BIN_DIR}"

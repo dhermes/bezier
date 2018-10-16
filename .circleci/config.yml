@@ -14,16 +14,16 @@ jobs:
           command: nox -s "update_generated(check=True)"
       - run:
           name: Unit tests in Python 2.7
-          command: nox -s "unit(py='2.7')"
+          command: nox -s "unit-2.7"
       - run:
           name: Unit tests in Python 3.5
-          command: nox -s "unit(py='3.5')"
+          command: nox -s "unit-3.5"
       - run:
           name: Unit tests in Python 3.6
-          command: nox -s "unit(py='3.6')"
+          command: nox -s "unit-3.6"
       - run:
           name: Unit tests in pypy
-          command: nox -s "unit(py='pypy')"
+          command: nox -s "unit-pypy"
       - run:
           name: Unit tests AND line coverage in Python 3.7
           command: nox -s cover
@@ -32,7 +32,7 @@ jobs:
           command: nox -s fortran_unit
       - run:
           name: Functional tests in Python 3.7
-          command: nox -s "functional(py='3.7')"
+          command: nox -s "functional-3.7"
       - run:
           name: Run all doctests
           command: nox -s doctest

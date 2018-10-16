@@ -10,7 +10,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import contextlib
 import glob
 import os
 import shutil
@@ -18,13 +17,12 @@ import sys
 import tempfile
 
 import nox
-import nox.command
-import nox.virtualenv
 import py.path
 
 
+nox.options.error_on_external_run = True
+
 IS_MAC_OS_X = sys.platform == "darwin"
-PYTHON_ARCH = os.environ.get("PYTHON_ARCH")
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
     "coverage": "coverage",
@@ -33,13 +31,13 @@ DEPS = {
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
     "lcov_cobertura": "lcov_cobertura",
-    "matplotlib": "matplotlib >= 2.2.3",
+    "matplotlib": "matplotlib >= 3.0.0",
     "mock": "mock >= 2.0.0",
-    "numpy": "numpy >= 1.15.0",
+    "numpy": "numpy >= 1.15.2",
     "pycobertura": "pycobertura",
     "Pygments": "Pygments",
     "pylint": "pylint",
-    "pytest": "pytest >= 3.7.1",
+    "pytest": "pytest >= 3.8.2",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.1.0",
     "seaborn": "seaborn >= 0.9.0",
@@ -53,6 +51,17 @@ DOCS_DEPS = (
 )
 DEFAULT_INTERPRETER = "3.7"
 PYPY = "pypy"
+ALL_INTERPRETERS = (
+    "2.7",
+    "2.7-32",
+    "3.5",
+    "3.5-32",
+    "3.6",
+    "3.6-32",
+    "3.7",
+    "3.7-32",
+    PYPY,
+)
 # Constants used for checking the journal of commands.
 APPVEYOR = "appveyor"
 CIRCLE_CI = "circleci"
@@ -91,14 +100,12 @@ def install_bezier(session, py=DEFAULT_INTERPRETER, debug=False, env=None):
     if debug:
         env["DEBUG"] = "True"
 
-    if ON_APPVEYOR and py == "2.7" and PYTHON_ARCH == "64":
+    if ON_APPVEYOR and "2.7" in py and not py.endswith("-32"):
         # NOTE: We must manually specify the Python executable (rather than
         #       just using "python") since ``cmd`` will spawn a subshell
         #       that doesn't inherit the ``PATH`` changes for the current
         #       ``virtualenv``.
-        py_exe = os.path.join(
-            ".nox", session.virtualenv_dirname, "Scripts", "python"
-        )
+        py_exe = os.path.join(session.bin, "python")
         parts = [
             "cmd",
             "/E:ON",
@@ -113,29 +120,12 @@ def install_bezier(session, py=DEFAULT_INTERPRETER, debug=False, env=None):
         ]
         session.run(*parts, env=env)
     else:
-        if env:
-            session._commands.append(InstallWithEnv(".", env))
-        else:
-            session.install(".")
+        session.install(".", env=env)
 
 
-def get_interpreter(py=DEFAULT_INTERPRETER):
-    if ON_APPVEYOR:
-        if PYTHON_ARCH == "32":
-            py = "{}-32".format(py)
-        return nox.virtualenv.locate_via_py(py)
-    else:
-        return "python{}".format(py)
-
-
-@nox.session
+@nox.session(py=DEFAULT_INTERPRETER)
 @nox.parametrize("check", [True, False])
 def update_generated(session, check):
-    name = "update-{}".format(check)
-    # NOTE: ``nox`` requires virtualenv_dirname to be lowercase.
-    session.virtualenv_dirname = name.lower()
-    # Update Cython generated source code.
-    session.interpreter = get_interpreter()
     # Install all dependencies.
     session.install(DEPS["Cython"])
     if check:
@@ -153,39 +143,34 @@ def update_generated(session, check):
             "--filename",
             c_source,
             "--virtualenv-dirname",
-            session.virtualenv_dirname,
+            os.path.basename(session.virtualenv.location),
         )
     if check:
         command = get_path("scripts", "cython_update_check.py")
         session.run("python", command)
 
 
-@nox.session
-@nox.parametrize("py", ["2.7", "3.5", "3.6", "3.7", PYPY])
-def unit(session, py):
-    session.virtualenv_dirname = "unit-py-{}".format(py.replace(".", "-"))
-
-    if py == PYPY:
-        session.interpreter = PYPY
+@nox.session(py=ALL_INTERPRETERS)
+def unit(session):
+    interpreter = session.virtualenv.interpreter
+    if interpreter == PYPY:
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
-        session.interpreter = get_interpreter(py)
         local_deps = BASE_DEPS + (DEPS["scipy"],)
-    if py in ("2.7", PYPY):
+    if interpreter == PYPY or "2.7" in interpreter:
         local_deps += (DEPS["mock"],)
 
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, py, debug=True)
+    install_bezier(session, py=interpreter, debug=True)
     # Run py.test against the unit tests.
     run_args = ["py.test"] + session.posargs + [get_path("tests", "unit")]
     session.run(*run_args)
 
 
-@nox.session
+@nox.session(py=DEFAULT_INTERPRETER)
 def cover(session):
-    session.interpreter = get_interpreter()
     # Install all test dependencies.
     local_deps = BASE_DEPS + (
         DEPS["scipy"],
@@ -202,26 +187,20 @@ def cover(session):
     session.run(*run_args)
 
 
-@nox.session
-@nox.parametrize("py", ["2.7", "3.5", "3.6", "3.7", PYPY])
-def functional(session, py):
-    session.virtualenv_dirname = "functional-py-{}".format(
-        py.replace(".", "-")
-    )
-
-    if py == PYPY:
-        session.interpreter = PYPY
+@nox.session(py=ALL_INTERPRETERS)
+def functional(session):
+    interpreter = session.virtualenv.interpreter
+    if interpreter == PYPY:
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
-        session.interpreter = get_interpreter(py)
         local_deps = BASE_DEPS
-    if py in ("2.7", PYPY):
+    if interpreter == PYPY or "2.7" in interpreter:
         local_deps += (DEPS["mock"],)
 
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, py, debug=True)
+    install_bezier(session, py=interpreter, debug=True)
     # Run py.test against the functional tests.
     run_args = (
         ["py.test"] + session.posargs + [get_path("tests", "functional")]
@@ -229,16 +208,15 @@ def functional(session, py):
     session.run(*run_args)
 
 
-@nox.session
+@nox.session(py=DEFAULT_INTERPRETER)
 def docs(session):
-    session.interpreter = get_interpreter()
     # Install all dependencies.
     session.install(*DOCS_DEPS)
     # Install this package.
     install_bezier(session, env={"BEZIER_NO_EXTENSIONS": "True"})
     # Run the script for building docs.
     command = get_path("scripts", "build_docs.sh")
-    session.run(command)
+    session.run(command, external=True)
 
 
 def get_doctest_args(session):
@@ -256,15 +234,14 @@ def get_doctest_args(session):
     return run_args
 
 
-@nox.session
+@nox.session(py=DEFAULT_INTERPRETER)
 def doctest(session):
-    session.interpreter = get_interpreter()
     # Install all dependencies.
     session.install(*DOCS_DEPS)
     # Install this package.
     if IS_MAC_OS_X:
         command = get_path("scripts", "osx", "nox-install-for-doctest.sh")
-        session.run(command)
+        session.run(command, external=True)
     else:
         install_bezier(session)
     # Run the script for building docs and running doctests.
@@ -272,9 +249,8 @@ def doctest(session):
     session.run(*run_args)
 
 
-@nox.session
+@nox.session(py=DEFAULT_INTERPRETER)
 def docs_images(session):
-    session.interpreter = get_interpreter()
     # Install all dependencies.
     local_deps = DOCS_DEPS
     local_deps += (DEPS["matplotlib"], DEPS["seaborn"], DEPS["pytest"])
@@ -304,9 +280,8 @@ def docs_images(session):
         session.run("python", filename, "--save-plot", env=env)
 
 
-@nox.session
+@nox.session(py=DEFAULT_INTERPRETER)
 def lint(session):
-    session.interpreter = get_interpreter()
     # Install all dependencies.
     local_deps = BASE_DEPS + (
         DEPS["docutils"],
@@ -362,7 +337,7 @@ def lint(session):
     )
 
 
-@nox.session
+@nox.session(py=DEFAULT_INTERPRETER)
 @nox.parametrize("machine", [APPVEYOR, CIRCLE_CI, TRAVIS_OS_X])
 def check_journal(session, machine):
     if machine == APPVEYOR and not ON_APPVEYOR:
@@ -375,8 +350,6 @@ def check_journal(session, machine):
         if os.environ.get("TRAVIS_OS_NAME") != "osx":
             session.skip("Running in Travis, but not in an OS X job.")
 
-    session.virtualenv_dirname = "journal-{}".format(machine)
-    session.interpreter = get_interpreter()
     # Get a temporary file where the journal will be written.
     filehandle, journal_filename = tempfile.mkstemp(suffix="-journal.txt")
     os.close(filehandle)
@@ -399,7 +372,7 @@ def check_journal(session, machine):
     session.run("python", diff_tool, journal_filename, expected_journal)
 
 
-@nox.session
+@nox.session(py=False)
 def clean(session):
     """Clean up build files.
 
@@ -409,8 +382,6 @@ def clean(session):
     There is no need for the session to create a ``virtualenv``
     here (we are just pretending to be ``make``).
     """
-    # No need to create a virtualenv.
-    session.virtualenv = False
     clean_dirs = (
         get_path(".cache"),
         get_path(".coverage"),
@@ -452,9 +423,8 @@ def clean(session):
             session.run(os.remove, filename)
 
 
-@nox.session
+@nox.session(py=DEFAULT_INTERPRETER)
 def fortran_unit(session):
-    session.interpreter = get_interpreter()
     session.install(DEPS["lcov_cobertura"], DEPS["pycobertura"])
     if py.path.local.sysfind("make") is None:
         session.skip("`make` must be installed")
@@ -483,37 +453,3 @@ def fortran_unit(session):
     )
     session.chdir(test_dir)
     session.run("make", "clean")
-
-
-@contextlib.contextmanager
-def modify_env(virtual_env, env_vars):
-    """Modify environment variables in a virtual environment.
-
-    Args:
-        virtual_env (nox.virtualenv.VirtualEnv): A virtual environment
-            currently being used.
-        env_vars (Dict[str, str]): A dictionary of modifications to be used
-            for the environment variables in the virtual environment.
-    """
-    current_vars = virtual_env.env
-
-    new_vars = current_vars.copy()
-    new_vars.update(env_vars)
-    try:
-        # Update the virtual environment's own environment variables and
-        # yield control.
-        virtual_env.env = new_vars
-        yield
-    finally:
-        # Restore the virtual environment's original environment variables.
-        virtual_env.env = new_vars
-
-
-class InstallWithEnv(nox.command.InstallCommand):
-    def __init__(self, deps, env_vars):
-        super(InstallWithEnv, self).__init__(deps)
-        self.env_vars = env_vars
-
-    def run(self, venv):
-        with modify_env(venv, self.env_vars):
-            venv.install(*self.deps)

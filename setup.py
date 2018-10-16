@@ -47,7 +47,7 @@ building of extension modules.
 """.format(
     NO_EXTENSIONS_ENV
 )
-REQUIREMENTS = ("numpy >= 1.15.0", "six >= 1.11.0")
+REQUIREMENTS = ("numpy >= 1.15.2", "six >= 1.11.0")
 EXTRAS_REQUIRE = {':python_version<"3.4"': ["enum34"]}
 DESCRIPTION = (
     u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"

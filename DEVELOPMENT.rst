@@ -109,15 +109,15 @@ of a curve segment.
 Running Unit Tests
 ******************
 
-We recommend using ``nox`` (`nox-automation`_) to run unit tests:
+We recommend using `Nox`_ to run unit tests:
 
 .. code-block:: console
 
-   $ nox -s "unit(py='2.7')"
-   $ nox -s "unit(py='3.5')"
-   $ nox -s "unit(py='3.6')"
-   $ nox -s "unit(py='3.7')"
-   $ nox -s "unit(py='pypy')"
+   $ nox -s "unit-2.7"
+   $ nox -s "unit-3.5"
+   $ nox -s "unit-3.6"
+   $ nox -s "unit-3.7"
+   $ nox -s "unit-pypy"
    $ nox -s  unit  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
@@ -131,7 +131,7 @@ manage dependencies or build extensions):
    $ PYTHONPATH=src/ python3.7 -m pytest tests/unit/
    $ PYTHONPATH=src/ pypy      -m pytest tests/unit/
 
-.. _nox-automation: https://nox.readthedocs.io
+.. _Nox: https://nox.readthedocs.io
 .. _pytest: https://docs.pytest.org
 
 Testing Native Code
@@ -183,18 +183,18 @@ marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
 
-   $ nox -s "unit(py='2.7')" -- --ignore-slow
-   $ nox -s "unit(py='3.5')" -- --ignore-slow
-   $ nox -s "unit(py='3.6')" -- --ignore-slow
-   $ nox -s "unit(py='3.7')" -- --ignore-slow
-   $ nox -s  unit            -- --ignore-slow
+   $ nox -s "unit-2.7" -- --ignore-slow
+   $ nox -s "unit-3.5" -- --ignore-slow
+   $ nox -s "unit-3.6" -- --ignore-slow
+   $ nox -s "unit-3.7" -- --ignore-slow
+   $ nox -s  unit      -- --ignore-slow
 
 These slow tests have been identified via:
 
 .. code-block:: console
 
    $ ...
-   $ nox -s "unit(py='3.7')" -- --durations=10
+   $ nox -s "unit-3.7" -- --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 
@@ -250,11 +250,11 @@ To run the functional tests:
 
 .. code-block:: console
 
-   $ nox -s "functional(py='2.7')"
-   $ nox -s "functional(py='3.5')"
-   $ nox -s "functional(py='3.6')"
-   $ nox -s "functional(py='3.7')"
-   $ nox -s "functional(py='pypy')"
+   $ nox -s "functional-2.7"
+   $ nox -s "functional-3.5"
+   $ nox -s "functional-3.6"
+   $ nox -s "functional-3.7"
+   $ nox -s "functional-pypy"
    $ nox -s  functional  # Run all versions
    $ # OR
    $ PYTHONPATH=src/ python2.7 -m pytest tests/functional/
@@ -509,9 +509,9 @@ Supported Python Versions
 .. _Python 3.6: https://docs.python.org/3.6/
 .. _Python 3.7: https://docs.python.org/3.7/
 
-Supported versions can be found in the ``nox.py`` `config`_.
+Supported versions can be found in the ``noxfile.py`` `config`_.
 
-.. _config: https://github.com/dhermes/bezier/blob/master/nox.py
+.. _config: https://github.com/dhermes/bezier/blob/master/noxfile.py
 
 Versioning
 ==========

@@ -25,14 +25,14 @@ if [[ -z "${PY_BIN_DIR}" ]]; then
 fi
 
 if [[ "${PY_VERSION}" == "2.7" ]]; then
-    ${PY_BIN_DIR}/nox -s "unit(py='2.7')"
+    ${PY_BIN_DIR}/nox -s "unit-2.7"
 elif [[ "${PY_VERSION}" == "3.5" ]]; then
-    ${PY_BIN_DIR}/nox -s "unit(py='3.5')"
+    ${PY_BIN_DIR}/nox -s "unit-3.5"
 elif [[ "${PY_VERSION}" == "3.6" ]]; then
-    ${PY_BIN_DIR}/nox -s "unit(py='3.6')"
+    ${PY_BIN_DIR}/nox -s "unit-3.6"
 elif [[ "${PY_VERSION}" == "3.7" ]]; then
     ${PY_BIN_DIR}/nox -s cover
-    ${PY_BIN_DIR}/nox -s "functional(py='3.7')"
+    ${PY_BIN_DIR}/nox -s "functional-3.7"
     ${PY_BIN_DIR}/nox -s doctest
     ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-osx')"
 else

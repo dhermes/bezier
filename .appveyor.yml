@@ -5,8 +5,7 @@ build: off
 matrix:
   fast_finish: true
 
-# We always use a 64-bit machine, but can build x86 distributions
-# with the PYTHON_ARCH variable.
+# We always use a 64-bit machine.
 platform:
   - x64
 
@@ -22,38 +21,17 @@ environment:
 
     # See: https://www.appveyor.com/docs/installed-software/#python
 
-    - PYTHON_ARCH: "32"
-      NOX_SESSION: "unit(py='2.7')"
-
-    - PYTHON_ARCH: "64"
-      NOX_SESSION: "unit(py='2.7')"
-
-    - PYTHON_ARCH: "32"
-      NOX_SESSION: "unit(py='3.5')"
-
-    - PYTHON_ARCH: "64"
-      NOX_SESSION: "unit(py='3.5')"
-
-    - PYTHON_ARCH: "32"
-      NOX_SESSION: "unit(py='3.6')"
-
-    - PYTHON_ARCH: "64"
-      NOX_SESSION: "unit(py='3.6')"
-
-    - PYTHON_ARCH: "32"
-      NOX_SESSION: "unit(py='3.7')"
-
-    - PYTHON_ARCH: "64"
-      NOX_SESSION: "cover"
-
-    - PYTHON_ARCH: "64"
-      NOX_SESSION: "functional(py='3.7')"
-
-    - PYTHON_ARCH: "64"
-      NOX_SESSION: "doctest"
-
-    - PYTHON_ARCH: "64"
-      NOX_SESSION: "check_journal(machine='appveyor')"
+    - NOX_SESSION: "unit-2.7-32"
+    - NOX_SESSION: "unit-2.7"
+    - NOX_SESSION: "unit-3.5-32"
+    - NOX_SESSION: "unit-3.5"
+    - NOX_SESSION: "unit-3.6-32"
+    - NOX_SESSION: "unit-3.6"
+    - NOX_SESSION: "unit-3.7-32"
+    - NOX_SESSION: "cover"
+    - NOX_SESSION: "functional-3.7"
+    - NOX_SESSION: "doctest"
+    - NOX_SESSION: "check_journal(machine='appveyor')"
 
 install:
   - cmd: echo "Filesystem root:"
@@ -68,8 +46,8 @@ install:
   # Append MinGW to the PATH of this build so ``gfortran`` is visible
   # to ``numpy.distutils``.
   - ps: |
-      $PYTHON_ARCH = $env:PYTHON_ARCH
-      If ($PYTHON_ARCH -eq 32) {
+      $NOX_SESSION = $env:NOX_SESSION
+      If ($NOX_SESSION.EndsWith("-32")) {
           $MINGW = $env:MINGW_32
       } Else {
           $MINGW = $env:MINGW_64
@@ -81,7 +59,7 @@ install:
   - python -m pip install --upgrade wheel
 
   # Install the build dependencies of the project.
-  - python -m pip install --upgrade "nox-automation == 0.19.1"
+  - python -m pip install --upgrade "nox >= 2018.10.15"
 
 test_script:
-  - "nox.exe -s \"%NOX_SESSION%\""
+  - "python -m nox -s \"%NOX_SESSION%\""

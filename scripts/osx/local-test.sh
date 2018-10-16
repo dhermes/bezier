@@ -61,7 +61,7 @@ fi
 
 # Make sure the "official" installed CPython is set up for testing.
 ${PY_BIN_DIR}/python -m pip install --upgrade virtualenv pip
-${PY_BIN_DIR}/python -m pip install --upgrade 'nox-automation == 0.19.1' numpy
+${PY_BIN_DIR}/python -m pip install --upgrade "nox >= 2018.10.15" numpy
 
 # Make sure the current Python is at the front of `PATH`.
 export PATH="${PY_BIN_DIR}:${PATH}"
