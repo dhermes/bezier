@@ -20,6 +20,8 @@ import nox
 import py.path
 
 
+nox.options.error_on_external_run = True
+
 IS_MAC_OS_X = sys.platform == "darwin"
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
@@ -214,7 +216,7 @@ def docs(session):
     install_bezier(session, env={"BEZIER_NO_EXTENSIONS": "True"})
     # Run the script for building docs.
     command = get_path("scripts", "build_docs.sh")
-    session.run(command)
+    session.run(command, external=True)
 
 
 def get_doctest_args(session):
@@ -239,7 +241,7 @@ def doctest(session):
     # Install this package.
     if IS_MAC_OS_X:
         command = get_path("scripts", "osx", "nox-install-for-doctest.sh")
-        session.run(command)
+        session.run(command, external=True)
     else:
         install_bezier(session)
     # Run the script for building docs and running doctests.
