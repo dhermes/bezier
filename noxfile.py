@@ -118,7 +118,7 @@ def install_bezier(session, py=DEFAULT_INTERPRETER, debug=False, env=None):
             "install",
             ".",
         ]
-        session.run(*parts, env=env)
+        session.run(*parts, env=env, external=True)
     else:
         session.install(".", env=env)
 
@@ -435,7 +435,7 @@ def fortran_unit(session):
     test_dir = get_path("tests", "fortran")
     lcov_filename = os.path.join(test_dir, "coverage.info")
     session.chdir(test_dir)
-    session.run("make", "unit")
+    session.run("make", "unit", external=True)
     session.chdir(NOX_DIR)
     session.run(
         "lcov",
@@ -444,6 +444,7 @@ def fortran_unit(session):
         test_dir,
         "--output-file",
         lcov_filename,
+        external=True,
     )
     session.run(
         "python",
@@ -452,4 +453,4 @@ def fortran_unit(session):
         lcov_filename,
     )
     session.chdir(test_dir)
-    session.run("make", "clean")
+    session.run("make", "clean", external=True)
