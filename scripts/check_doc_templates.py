@@ -39,9 +39,11 @@ RELEASE_INDEX_FILE = os.path.join(
 )
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst.template")
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst")
-NATIVE_LIBS_FILE = os.path.join(_ROOT_DIR, "docs", "native-libraries.rst")
-NATIVE_LIBS_TEMPLATE = os.path.join(
-    _ROOT_DIR, "docs", "native-libraries.rst.template"
+BINARY_EXT_FILE = os.path.join(
+    _ROOT_DIR, "docs", "python-binary-extension.rst"
+)
+BINARY_EXT_TEMPLATE = os.path.join(
+    _ROOT_DIR, "docs", "python-binary-extension.rst.template"
 )
 RTD_VERSION = "latest"
 REVISION = "master"
@@ -104,11 +106,12 @@ TOCTREE = """\
    :hidden:
    :maxdepth: 4
 
-   Bezier Package <reference/bezier>
+   Python Package <reference/bezier>
+   abi/index
+   pxd/index
    curve-curve-intersection
    algorithm-helpers
-   native-libraries
-   abi/index
+   python-binary-extension
    development
    releases/index
 
@@ -556,28 +559,28 @@ def development_verify():
 
 
 def native_libraries_verify():
-    """Populate the template and compare to ``docs/native-libraries.rst``.
+    """Populate the template and compare to ``docs/python-binary-extension.rst``.
 
     Raises:
-        ValueError: If the current ``docs/native-libraries.rst`` doesn't
+        ValueError: If the current ``docs/python-binary-extension.rst`` doesn't
             agree with the expected value computed from the template.
     """
-    with open(NATIVE_LIBS_TEMPLATE, "r") as file_obj:
+    with open(BINARY_EXT_TEMPLATE, "r") as file_obj:
         template = file_obj.read()
     expected = template.format(revision=REVISION)
-    with open(NATIVE_LIBS_FILE, "r") as file_obj:
+    with open(BINARY_EXT_FILE, "r") as file_obj:
         contents = file_obj.read()
     if contents != expected:
         err_msg = "\n" + get_diff(
             contents,
             expected,
-            "docs/native-libraries.rst.actual",
-            "docs/native-libraries.rst.expected",
+            "docs/python-binary-extension.rst.actual",
+            "docs/python-binary-extension.rst.expected",
         )
         raise ValueError(err_msg)
 
     else:
-        print("docs/native-libraries.rst contents are as expected.")
+        print("docs/python-binary-extension.rst contents are as expected.")
 
 
 def main():

@@ -29,9 +29,6 @@ for PYBIN in /opt/python/*/bin; do
     if [[ "${PYBIN}" == *"27"* ]]; then
         VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
         continue
-    elif [[ "${PYBIN}" == *"35"* ]]; then
-        VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
-        continue
     elif [[ "${PYBIN}" == *"36"* ]]; then
         VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
         continue

@@ -16,9 +16,6 @@ jobs:
           name: Unit tests in Python 2.7
           command: nox -s "unit-2.7"
       - run:
-          name: Unit tests in Python 3.5
-          command: nox -s "unit-3.5"
-      - run:
           name: Unit tests in Python 3.6
           command: nox -s "unit-3.6"
       - run:

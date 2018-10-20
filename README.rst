@@ -74,7 +74,7 @@ for example;
 Installing
 ----------
 
-``bezier`` can be installed with `pip`_:
+The ``bezier`` Python package can be installed with `pip`_:
 
 .. code-block:: console
 

@@ -1,10 +1,10 @@
-################
-Native Libraries
-################
+#######################
+Python Binary Extension
+#######################
 
 .. note::
 
-   This content was last updated August 20, 2018 (as part of the
+   This content was last updated October 19, 2018 (as part of the
    ``0.8.1`` release). Much of the content is tested automatically to keep
    from getting stale, but some of the console code blocks are not. As a
    result, this material may be out of date. If anything does not seem
@@ -13,22 +13,15 @@ Native Libraries
 
    .. _file an issue: https://github.com/dhermes/bezier/issues/new
 
-``bezier`` has optional speedups implemented in `Fortran`_.
-These are incorporated into the Python interface via
-`Cython`_.
+The ``bezier`` Python package has optional speedups that wrap the
+``libbezier`` :doc:`library <abi/index>`. These are incorporated into the
+Python interface via `Cython`_ as a binary extension.
 
-.. _Fortran: https://en.wikipedia.org/wiki/Fortran
 .. _Cython: https://cython.readthedocs.io/
 
-The subroutines provided there are available in a C ABI ``libbezier``.
-They can be called from Fortran, C, C++, Cython and any other language
-that can invoke a foreign C function (e.g. `Go`_ via ``cgo``).
-
-.. _Go: https://golang.org
-
-After ``bezier`` has been installed **with** these speedups,
-the library provides helpers to make it easier to build
-non-Python code that depends on them.
+After the ``bezier`` Python package has been installed **with** these speedups,
+the library provides helpers to make it easier to build non-Python code that
+depends on ``libbezier``.
 
 *********
 C Headers
@@ -36,7 +29,7 @@ C Headers
 
 The C headers for ``libbezier`` will be included in the installed package
 
-.. testsetup:: show-headers, show-lib, show-dll, show-pxd, os-x-dylibs
+.. testsetup:: show-headers, show-lib, show-dll, os-x-dylibs
 
    import os
    import textwrap
@@ -98,13 +91,6 @@ The C headers for ``libbezier`` will be included in the installed package
        print(textwrap.indent(full_tree, "  "))
 
 
-   def parent_directory(directory):
-       if isinstance(directory, Path):
-           return Path(os.path.dirname(directory.path))
-       else:
-           return os.path.dirname(directory)
-
-
    # Monkey-patch functions to return a ``Path``.
    original_get_include = bezier.get_include
    original_get_lib = bezier.get_lib
@@ -114,11 +100,8 @@ The C headers for ``libbezier`` will be included in the installed package
 
    bezier.get_include = get_include
 
-   # Allow this value to be re-used.
-   include_directory = get_include()
-
    # OS X specific.
-   base_dir = os.path.dirname(include_directory.path)
+   base_dir = os.path.dirname(original_get_include())
    dylibs_directory = os.path.join(base_dir, ".dylibs")
 
 .. doctest:: show-headers
@@ -138,37 +121,13 @@ The C headers for ``libbezier`` will be included in the installed package
        surface_intersection.h
      bezier.h
 
-.. testcleanup:: show-headers, show-lib, show-dll, show-pxd, os-x-dylibs
+.. testcleanup:: show-headers, show-lib, show-dll, os-x-dylibs
 
    # Restore the monkey-patched functions.
    bezier.get_include = original_get_include
 
 Note that this includes a catch-all ``bezier.h`` that just includes all of
 the headers.
-
-****************************
-Cython ``.pxd`` Declarations
-****************************
-
-In addition to the header files, several ``cimport``-able ``.pxd``
-Cython declaration files are provided:
-
-.. doctest:: show-pxd
-
-   >>> bezier_directory = parent_directory(include_directory)
-   >>> bezier_directory
-   '.../site-packages/bezier'
-   >>> print_tree(bezier_directory, suffix=".pxd")
-   bezier/
-     _curve.pxd
-     _curve_intersection.pxd
-     _helpers.pxd
-     _status.pxd
-     _surface.pxd
-     _surface_intersection.pxd
-
-For example, ``cimport bezier._curve`` will provide all the functions
-in ``bezier/curve.h``.
 
 .. _static-library:
 
@@ -194,10 +153,10 @@ library (i.e. a ``.a`` file):
    A static library is used (rather than a shared or dynamic library)
    because the "final" install location of the Python package is not
    dependable. Even on the same machine with the same operating system,
-   ``bezier`` can be installed in virtual environments, in different
-   Python versions, as an egg or wheel, and so on. Given the capabilities
-   of ``auditwheel`` and ``delocate`` discussed below, it may be possible
-   to use a shared library. See `issue 54`_ for more discussion.
+   the ``bezier`` Python package can be installed in virtual environments, in
+   different Python versions, as an egg or wheel, and so on. Given the
+   capabilities of ``auditwheel`` and ``delocate`` discussed below, it may be
+   possible to use a shared library. See `issue 54`_ for more discussion.
 
 .. _issue 54: https://github.com/dhermes/bezier/issues/54
 
@@ -226,9 +185,9 @@ specify the symbols in the Windows **shared** library (DLL):
 Extra Dependencies
 ******************
 
-When ``bezier`` is installed via `pip`_, it will likely be installed
-from a `Python wheel`_. The wheels uploaded to PyPI are pre-built, with
-Fortran extensions compiled with `GNU Fortran`_ (``gfortran``). As a
+When the ``bezier`` Python package is installed via `pip`_, it will likely be
+installed from a `Python wheel`_. The wheels uploaded to PyPI are pre-built,
+with the Fortran code compiled by `GNU Fortran`_ (``gfortran``). As a
 result, ``libbezier`` will depend on ``libgfortran``. This can be problematic
 due to version conflicts, ABI incompatibility, a desire to use a different
 Fortran compiler (e.g. Intel's ``ifort``) and a host of other reasons.
@@ -478,7 +437,7 @@ each of the Fortran submodules:
    $ gfortran \
    >   -shared \
    >   -o extra-dll/libbezier.dll \
-   >   ${OBJ_FILES} \
+   >   ${{OBJ_FILES}} \
    >   -Wl,--output-def,libbezier.def
 
 .. note::
@@ -512,7 +471,7 @@ the ``-static`` flag
    >   -static \
    >   -shared \
    >   -o extra-dll/libbezier.dll \
-   >   ${OBJ_FILES} \
+   >   ${{OBJ_FILES}} \
    >   -Wl,--output-def,libbezier.def
 
 all the symbols used from ``libgfortran`` or ``libgcc_s`` are statically
@@ -558,11 +517,11 @@ on MinGW:
 
    .. code-block:: console
 
-      $ gfortran -dumpspecs > ${SPECS_FILENAME}
+      $ gfortran -dumpspecs > ${{SPECS_FILENAME}}
 
    and modified to replace instances of ``-lmsvcrt`` with a substitute, e.g.
    ``-lmsvcr90``. Then ``gfortran`` can be invoked with the flag
-   ``-specs=${SPECS_FILENAME}`` to use the custom spec. (Some
+   ``-specs=${{SPECS_FILENAME}}`` to use the custom spec. (Some
    `other dependencies`_ may also indirectly depend on ``msvcrt.dll``,
    such as ``-lmoldname``. `Removing dependencies`_ is not an easy process.)
 
@@ -573,7 +532,7 @@ From there, an `import library`_ must be created
 
 .. code-block:: rest
 
-   > lib /def:.\libbezier.def /out:.\lib\bezier.lib /machine:${ARCH}
+   > lib /def:.\libbezier.def /out:.\lib\bezier.lib /machine:${{ARCH}}
 
 .. note::
 
@@ -590,8 +549,8 @@ Source
 For code that depends on ``libgfortran``, it may be problematic to **also**
 depend on the local copy distributed with the ``bezier`` wheels.
 
-``bezier`` can be built from source if it is not feasible to link with
-these libraries, if a different Fortran compiler is required or
+The ``bezier`` Python package can be built from source if it is not feasible to
+link with these libraries, if a different Fortran compiler is required or
 "just because".
 
 The Python extension module (along with ``libbezier``) can be built from
@@ -601,7 +560,7 @@ source via:
 
    $ python setup.py build_ext
    $ # OR
-   $ python setup.py build_ext --fcompiler=${FC}
+   $ python setup.py build_ext --fcompiler=${{FC}}
 
 By providing a filename via an environment variable, a "journal" can
 be stored of the compiler commands invoked to build the extension:
@@ -618,9 +577,9 @@ For examples, see:
 * `Mac OS X journal`_
 * `Windows journal`_
 
-.. _Linux journal: https://github.com/dhermes/bezier/blob/master/.circleci/expected_journal.txt
-.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/master/scripts/osx/travis_journal.txt
-.. _Windows journal: https://github.com/dhermes/bezier/blob/master/appveyor/expected_journal.txt
+.. _Linux journal: https://github.com/dhermes/bezier/blob/{revision}/.circleci/expected_journal.txt
+.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/{revision}/scripts/osx/travis_journal.txt
+.. _Windows journal: https://github.com/dhermes/bezier/blob/{revision}/appveyor/expected_journal.txt
 
 ***************************
 Building a Python Extension

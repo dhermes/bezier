@@ -51,17 +51,7 @@ DOCS_DEPS = (
 )
 DEFAULT_INTERPRETER = "3.7"
 PYPY = "pypy"
-ALL_INTERPRETERS = (
-    "2.7",
-    "2.7-32",
-    "3.5",
-    "3.5-32",
-    "3.6",
-    "3.6-32",
-    "3.7",
-    "3.7-32",
-    PYPY,
-)
+ALL_INTERPRETERS = ("2.7", "2.7-32", "3.6", "3.6-32", "3.7", "3.7-32", PYPY)
 # Constants used for checking the journal of commands.
 APPVEYOR = "appveyor"
 CIRCLE_CI = "circleci"
@@ -179,7 +169,7 @@ def cover(session):
     )
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session)
+    install_bezier(session, debug=True)
     # Run py.test with coverage against the unit tests.
     run_args = ["py.test", "--cov=bezier", "--cov=tests.unit"]
     run_args += session.posargs

@@ -16,11 +16,12 @@
    :hidden:
    :maxdepth: 4
 
-   Bezier Package <reference/bezier>
+   Python Package <reference/bezier>
+   abi/index
+   pxd/index
    curve-curve-intersection
    algorithm-helpers
-   native-libraries
-   abi/index
+   python-binary-extension
    development
    releases/index
 
@@ -90,7 +91,7 @@ for example;
 Installing
 ----------
 
-``bezier`` can be installed with `pip`_:
+The ``bezier`` Python package can be installed with `pip`_:
 
 .. code-block:: console
 

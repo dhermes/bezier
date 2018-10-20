@@ -26,8 +26,6 @@ fi
 
 if [[ "${PY_VERSION}" == "2.7" ]]; then
     ${PY_BIN_DIR}/nox -s "unit-2.7"
-elif [[ "${PY_VERSION}" == "3.5" ]]; then
-    ${PY_BIN_DIR}/nox -s "unit-3.5"
 elif [[ "${PY_VERSION}" == "3.6" ]]; then
     ${PY_BIN_DIR}/nox -s "unit-3.6"
 elif [[ "${PY_VERSION}" == "3.7" ]]; then

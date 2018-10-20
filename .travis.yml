@@ -10,10 +10,6 @@ matrix:
     - os: osx
       language: generic
       env:
-        - PY_VERSION=3.5
-    - os: osx
-      language: generic
-      env:
         - PY_VERSION=3.6
     - os: osx
       language: generic

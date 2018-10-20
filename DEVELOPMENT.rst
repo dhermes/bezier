@@ -16,7 +16,7 @@ In order to add a feature to ``bezier``:
    feature may catch maintainer(s) off guard).
 
 #. **Add tests**: The feature must work fully on the following
-   CPython versions: 2.7, 3.5, 3.6 and 3.7 on Linux, Mac OS X and Windows.
+   CPython versions: 2.7, 3.6 and 3.7 on Linux, Mac OS X and Windows.
    In addition, the feature should have 100% line coverage.
 
 #. **Documentation**: The feature must (should) be documented with
@@ -25,20 +25,20 @@ In order to add a feature to ``bezier``:
 .. _File an issue: https://github.com/dhermes/bezier/issues/new
 .. _doctest: http://www.sphinx-doc.org/en/stable/ext/doctest.html
 
-**********************
-Native Code Extensions
-**********************
+****************
+Binary Extension
+****************
 
 Many low-level computations have alternate implementations in Fortran.
-See the `Native Libraries`_ page in the documentation for a more
+See the `Python Binary Extension`_ page in the documentation for a more
 detailed description.
 
-.. _Native Libraries: https://bezier.readthedocs.io/en/latest/native-libraries.html
+.. _Python Binary Extension: https://bezier.readthedocs.io/en/latest/python-binary-extension.html
 
 Building / Compiling
 ====================
 
-To compile the native extensions (with a Fortran compiler installed) run:
+To compile the binary extension (with a Fortran compiler installed) run:
 
 .. code-block:: console
 
@@ -80,7 +80,7 @@ out of Python and into `CMake`_, `SCons`_ or another build tool.
 .. _SCons: http://scons.org
 
 To explicitly disable the building of extensions, the ``BEZIER_NO_EXTENSIONS``
-can be used:
+environment variable can be used:
 
 .. code-block:: console
 
@@ -114,7 +114,6 @@ We recommend using `Nox`_ to run unit tests:
 .. code-block:: console
 
    $ nox -s "unit-2.7"
-   $ nox -s "unit-3.5"
    $ nox -s "unit-3.6"
    $ nox -s "unit-3.7"
    $ nox -s "unit-pypy"
@@ -126,7 +125,6 @@ manage dependencies or build extensions):
 .. code-block:: console
 
    $ PYTHONPATH=src/ python2.7 -m pytest tests/unit/
-   $ PYTHONPATH=src/ python3.5 -m pytest tests/unit/
    $ PYTHONPATH=src/ python3.6 -m pytest tests/unit/
    $ PYTHONPATH=src/ python3.7 -m pytest tests/unit/
    $ PYTHONPATH=src/ pypy      -m pytest tests/unit/
@@ -134,11 +132,11 @@ manage dependencies or build extensions):
 .. _Nox: https://nox.readthedocs.io
 .. _pytest: https://docs.pytest.org
 
-Testing Native Code
-===================
+Testing the Binary Extension
+============================
 
 When using ``nox``, the ``bezier`` package will automatically be installed
-into a virtual environment and the native extensions will be built during
+into a virtual environment and the binary extension will be built during
 install.
 
 However, if the tests are run directly from the source tree via
@@ -147,8 +145,8 @@ However, if the tests are run directly from the source tree via
 
    $ PYTHONPATH=src/ python -m pytest tests/unit/
 
-some unit tests may be skipped. The unit tests for the native
-implementations will skip (rather than fail) if the extensions aren't
+some unit tests may be skipped. The unit tests that explicitly exercise the
+binary extension will skip (rather than fail) if the extension isn't
 compiled (with ``build_ext --inplace``) and present in the source tree.
 
 Test Coverage
@@ -184,7 +182,6 @@ marked slow, use the ``--ignore-slow`` flag:
 .. code-block:: console
 
    $ nox -s "unit-2.7" -- --ignore-slow
-   $ nox -s "unit-3.5" -- --ignore-slow
    $ nox -s "unit-3.6" -- --ignore-slow
    $ nox -s "unit-3.7" -- --ignore-slow
    $ nox -s  unit      -- --ignore-slow
@@ -251,14 +248,12 @@ To run the functional tests:
 .. code-block:: console
 
    $ nox -s "functional-2.7"
-   $ nox -s "functional-3.5"
    $ nox -s "functional-3.6"
    $ nox -s "functional-3.7"
    $ nox -s "functional-pypy"
    $ nox -s  functional  # Run all versions
    $ # OR
    $ PYTHONPATH=src/ python2.7 -m pytest tests/functional/
-   $ PYTHONPATH=src/ python3.5 -m pytest tests/functional/
    $ PYTHONPATH=src/ python3.6 -m pytest tests/functional/
    $ PYTHONPATH=src/ python3.7 -m pytest tests/functional/
    $ PYTHONPATH=src/ pypy      -m pytest tests/functional/
@@ -378,7 +373,7 @@ To build the documentation locally:
 .. code-block:: console
 
    $ nox -s docs
-   $ # OR (from a Python 3.5 or later environment)
+   $ # OR (from a Python 3.6 or later environment)
    $ PYTHONPATH=src/ ./scripts/build_docs.sh
 
 Documentation Snippets
@@ -394,7 +389,7 @@ To run the documentation tests:
 .. code-block:: console
 
    $ nox -s doctest
-   $ # OR (from a Python 3.5 or later environment)
+   $ # OR (from a Python 3.6 or later environment)
    $ PYTHONPATH=src/ sphinx-build -W \
    >   -b doctest \
    >   -d docs/build/doctrees \
@@ -417,7 +412,7 @@ To regenerate all the images:
 .. code-block:: console
 
    $ nox -s docs_images
-   $ # OR (from a Python 3.5 or later environment)
+   $ # OR (from a Python 3.6 or later environment)
    $ export MATPLOTLIBRC=docs/ GENERATE_IMAGES=True PYTHONPATH=src/
    $ sphinx-build -W \
    >   -b doctest \
@@ -500,12 +495,10 @@ Supported Python Versions
 ``bezier`` explicitly supports:
 
 -  `Python 2.7`_
--  `Python 3.5`_
 -  `Python 3.6`_
 -  `Python 3.7`_
 
 .. _Python 2.7: https://docs.python.org/2.7/
-.. _Python 3.5: https://docs.python.org/3.5/
 .. _Python 3.6: https://docs.python.org/3.6/
 .. _Python 3.7: https://docs.python.org/3.7/
 
@@ -539,8 +532,8 @@ This project uses environment variables for building the
   extension).
 - ``BEZIER_WHEEL``: Indicates that the source is being built into a wheel.
   When this is true, some compiler flags (e.g. ``-march=native``) will be
-  removed since they result in binaries that are too specific to the host
-  platform / architecture.
+  removed since those flags can produce machine instructions that are too
+  specific to the host platform / architecture.
 - ``DEBUG``: Indicates the binary extension should be built in debug mode.
 
 for interacting with the system at import time:

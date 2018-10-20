@@ -29,7 +29,7 @@ Performance Optimizations
    (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__)
    to selectively disable overly defensive value checking. (Making sure
    to use this switch during "internal" computation.)
--  Making sure NumPy arrays are Fortan-contiguous as often as possible
+-  Making sure NumPy arrays are Fortran-contiguous as often as possible
    (e.g. snippets and source, via ``np.asfortranarray()``). This is to
    avoid (and emphasize) a non-trivial overhead when passing a
    C-contiguous array to a Fortran function.

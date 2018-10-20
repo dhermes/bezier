@@ -70,7 +70,7 @@ def get_include():
     ``libbezier`` should use this function to locate the appropriate
     include directory.
 
-    For more information, see :doc:`../native-libraries`.
+    For more information, see :doc:`../python-binary-extension`.
 
     Returns:
         str: ``include`` directory that contains header files for the
@@ -86,7 +86,7 @@ def get_lib():
     ``libbezier`` should use this function to locate the appropriate lib
     directory.
 
-    For more information, see :doc:`../native-libraries`.
+    For more information, see :doc:`../python-binary-extension`.
 
     Returns:
         str: ``lib`` directory that contains static libraries for the
@@ -102,7 +102,7 @@ def get_dll():
     ``libbezier`` should use this function to locate the appropriate
     Windows shared library or libraries (DLLs).
 
-    For more information, see :doc:`../native-libraries`.
+    For more information, see :doc:`../python-binary-extension`.
 
     Returns:
         str: ``extra-dll`` directory that contains the Windows shared library

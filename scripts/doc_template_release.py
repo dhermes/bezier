@@ -15,7 +15,7 @@ This will introduce one-off changes in
 
 * ``README.rst``
 * ``docs/index.rst``
-* ``docs/native-libraries.rst``
+* ``docs/python-binary-extension.rst``
 * ``DEVELOPMENT.rst``
 
 that are not intended to be checked into ``master`` (except maybe
@@ -42,9 +42,11 @@ RELEASE_INDEX_FILE = os.path.join(
 )
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst.template")
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst")
-NATIVE_LIBS_FILE = os.path.join(_ROOT_DIR, "docs", "native-libraries.rst")
-NATIVE_LIBS_TEMPLATE = os.path.join(
-    _ROOT_DIR, "docs", "native-libraries.rst.template"
+BINARY_EXT_FILE = os.path.join(
+    _ROOT_DIR, "docs", "python-binary-extension.rst"
+)
+BINARY_EXT_TEMPLATE = os.path.join(
+    _ROOT_DIR, "docs", "python-binary-extension.rst.template"
 )
 
 
@@ -127,15 +129,15 @@ def populate_index(
 
 
 def populate_native_libraries(version):
-    """Populates ``docs/native-libraries.rst`` with release-specific data.
+    """Populates ``docs/python-binary-extension.rst`` with release-specific data.
 
     Args:
         version (str): The current version.
     """
-    with open(NATIVE_LIBS_TEMPLATE, "r") as file_obj:
+    with open(BINARY_EXT_TEMPLATE, "r") as file_obj:
         template = file_obj.read()
     contents = template.format(revision=version)
-    with open(NATIVE_LIBS_FILE, "w") as file_obj:
+    with open(BINARY_EXT_FILE, "w") as file_obj:
         file_obj.write(contents)
 
 

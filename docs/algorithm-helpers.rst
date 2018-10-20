@@ -6,11 +6,11 @@ library, each computation is split into small units that can
 be tested independently.
 
 Though many of these computational units aren't provided as part
-of the public interface of this library, they are still interesting.
+of the public interface of the Python package, they are still interesting.
 (Possibly) more importantly, it's useful to see these algorithms
 at work.
 
-In this document, these helper functions and objects are documented.
+In this document, these helper functions and types are documented.
 This is to help with the exposition of the computation and
 **does not** imply that these are part of the stable public interface.
 

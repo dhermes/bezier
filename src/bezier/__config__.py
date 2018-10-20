@@ -21,7 +21,7 @@ import pkg_resources
 
 # Error messages for ``handle_import_error``.
 TEMPLATES = (
-    "No module named 'bezier.{}'",  # 3.5, 3.6, 3.7, pypy3
+    "No module named 'bezier.{}'",  # 3.6, 3.7, pypy3
     "No module named {}",  # 2.7
     "No module named bezier.{}",  # pypy2
 )
