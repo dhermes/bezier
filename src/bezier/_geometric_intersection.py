@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Helpers for intersecting B |eacute| zier curves via geometric methods.
 
 As a convention, the functions defined here with a leading underscore
@@ -163,7 +164,7 @@ def linearization_error(nodes):
        \left.\frac{s(1 - s)}{2!} \cdot 10\right|_{s = \frac{1}{2}}
           = \frac{5}{4}.
 
-    .. image:: images/linearization_error.png
+    .. image:: ../images/linearization_error.png
        :align: center
 
     .. testsetup:: linearization-error, linearization-error-fail
@@ -307,7 +308,7 @@ def segment_intersection(start0, end0, start1, end1):
     L_1\left(\frac{3}{4}\right) =
     \frac{1}{2} \left[\begin{array}{c} 1 \\ 1 \end{array}\right]`.
 
-    .. image:: images/segment_intersection1.png
+    .. image:: ../images/segment_intersection1.png
        :align: center
 
     .. testsetup:: segment-intersection1, segment-intersection2
@@ -347,7 +348,7 @@ def segment_intersection(start0, end0, start1, end1):
     we should be able to determine that the lines don't intersect, but
     this function is not meant for that check:
 
-    .. image:: images/segment_intersection2.png
+    .. image:: ../images/segment_intersection2.png
        :align: center
 
     .. doctest:: segment-intersection2
@@ -454,7 +455,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     If it is not on the first line, then we are done, the
     segments don't meet:
 
-    .. image:: images/parallel_lines_parameters1.png
+    .. image:: ../images/parallel_lines_parameters1.png
        :align: center
 
     .. testsetup:: parallel-different1, parallel-different2
@@ -496,7 +497,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     :math:`E_1 = S_0 + 2 \Delta_0`) correspond to segments that
     don't meet:
 
-    .. image:: images/parallel_lines_parameters2.png
+    .. image:: ../images/parallel_lines_parameters2.png
        :align: center
 
     .. doctest:: parallel-different2
@@ -519,7 +520,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     but if the intervals overlap, like :math:`\left[0, 1\right]` and
     :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
 
-    .. image:: images/parallel_lines_parameters3.png
+    .. image:: ../images/parallel_lines_parameters3.png
        :align: center
 
     .. testsetup:: parallel-different3, parallel-different4
@@ -552,7 +553,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     Similarly, if the second interval completely contains the first,
     the segments meet:
 
-    .. image:: images/parallel_lines_parameters4.png
+    .. image:: ../images/parallel_lines_parameters4.png
        :align: center
 
     .. doctest:: parallel-different4

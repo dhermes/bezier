@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Private helper methods for :mod:`bezier.surface`.
 
 As a convention, the functions defined here with a leading underscore
@@ -1630,7 +1631,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
     The "typical" case is on the interior of both edges:
 
-    .. image:: images/classify_intersection1.png
+    .. image:: ../images/classify_intersection1.png
        :align: center
 
     .. testsetup:: classify-intersection1, classify-intersection2,
@@ -1717,7 +1718,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     When :math:`B_1'(s) \times B_2'(t) = 0`, the tangent
     vectors are parallel, i.e. the intersection is a point of tangency:
 
-    .. image:: images/classify_intersection2.png
+    .. image:: ../images/classify_intersection2.png
        :align: center
 
     .. doctest:: classify-intersection2
@@ -1754,7 +1755,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
     .. _curvature: https://en.wikipedia.org/wiki/Curvature
 
-    .. image:: images/classify_intersection3.png
+    .. image:: ../images/classify_intersection3.png
        :align: center
 
     .. doctest:: classify-intersection3
@@ -1789,7 +1790,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     of tangency, there is no side to choose. Either the point of tangency
     is not part of any :class:`.CurvedPolygon` intersection
 
-    .. image:: images/classify_intersection4.png
+    .. image:: ../images/classify_intersection4.png
        :align: center
 
     .. doctest:: classify-intersection4
@@ -1826,7 +1827,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     :attr:`~.IntersectionClassification.FIRST` and from another as
     :attr:`~.IntersectionClassification.SECOND`.
 
-    .. image:: images/classify_intersection5.png
+    .. image:: ../images/classify_intersection5.png
        :align: center
 
     .. doctest:: classify-intersection5
@@ -1861,7 +1862,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     can also occur if the curves are "kissing" but share a zero width
     interior at the point of tangency:
 
-    .. image:: images/classify_intersection9.png
+    .. image:: ../images/classify_intersection9.png
        :align: center
 
     .. doctest:: classify-intersection9
@@ -1895,7 +1896,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     However, if the `curvature`_ of each curve is identical, we
     don't try to distinguish further:
 
-    .. image:: images/classify_intersection6.png
+    .. image:: ../images/classify_intersection6.png
        :align: center
 
     .. doctest:: classify-intersection6
@@ -1941,7 +1942,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     In addition to points of tangency, intersections that happen at
     the end of an edge need special handling:
 
-    .. image:: images/classify_intersection7.png
+    .. image:: ../images/classify_intersection7.png
        :align: center
 
     .. doctest:: classify-intersection7
@@ -1992,7 +1993,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     an actual intersection. However, some surfaces may just "kiss" at a
     corner intersection:
 
-    .. image:: images/classify_intersection8.png
+    .. image:: ../images/classify_intersection8.png
        :align: center
 
     .. doctest:: classify-intersection8

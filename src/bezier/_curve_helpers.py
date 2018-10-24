@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Private helper methods for B |eacute| zier curves.
 
 As a convention, the functions defined here with a leading underscore
@@ -498,7 +499,7 @@ def _get_curvature(nodes, tangent_vec, s):
 
        \frac{B'(s) \times B''(s)}{\left\lVert B'(s) \right\rVert_2^3}
 
-    .. image:: images/get_curvature.png
+    .. image:: ../images/get_curvature.png
        :align: center
 
     .. testsetup:: get-curvature
@@ -604,7 +605,7 @@ def _newton_refine(nodes, point, s):
        \Longrightarrow \Delta s &= -\frac{2}{5}
        \end{align*}
 
-    .. image:: images/newton_refine_curve.png
+    .. image:: ../images/newton_refine_curve.png
        :align: center
 
     .. testsetup:: newton-refine-curve, newton-refine-curve-cusp
@@ -639,7 +640,7 @@ def _newton_refine(nodes, point, s):
     injective with non-zero gradient), Newton's method may
     break down and converge linearly:
 
-    .. image:: images/newton_refine_curve_cusp.png
+    .. image:: ../images/newton_refine_curve_cusp.png
        :align: center
 
     .. doctest:: newton-refine-curve-cusp

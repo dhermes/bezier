@@ -269,7 +269,7 @@ functional test case:
 and there is a `Curve-Curve Intersection`_ document which captures many of
 the cases in the functional tests.
 
-.. _Curve-Curve Intersection: https://bezier.readthedocs.io/en/{rtd_version}/curve-curve-intersection.html
+.. _Curve-Curve Intersection: https://bezier.readthedocs.io/en/{rtd_version}/algorithms/curve-curve-intersection.html
 
 A surface-surface intersection functional test case:
 

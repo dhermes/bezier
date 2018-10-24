@@ -159,7 +159,7 @@ def _newton_refine(nodes, degree, x_val, y_val, s, t):
            \left[\begin{array}{c} -10 \\ 7 \end{array}\right]
        \end{align*}
 
-    .. image:: images/newton_refine_surface.png
+    .. image:: ../images/newton_refine_surface.png
        :align: center
 
     .. testsetup:: newton-refine-surface

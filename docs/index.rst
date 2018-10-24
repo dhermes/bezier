@@ -18,8 +18,7 @@
 
    python/index
    abi/index
-   curve-curve-intersection
-   algorithm-helpers
+   algorithms/index
    development
    releases/index
 

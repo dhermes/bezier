@@ -15,7 +15,7 @@
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
-See :doc:`../../curve-curve-intersection` for examples using the
+See :doc:`../../algorithms/curve-curve-intersection` for examples using the
 :class:`Curve` class to find intersections.
 
 .. testsetup:: *
@@ -319,7 +319,7 @@ class Curve(_base.Base):
     ):
         """Find the points of intersection with another curve.
 
-        See :doc:`../../curve-curve-intersection` for more details.
+        See :doc:`../../algorithms/curve-curve-intersection` for more details.
 
         .. image:: ../../images/curve_intersect.png
            :align: center

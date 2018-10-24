@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Private helper methods for intersecting B |eacute| zier shapes.
 
 As a convention, the functions defined here with a leading underscore
@@ -131,7 +132,7 @@ def _newton_refine(s, nodes1, t, nodes2):
             -1 \\ 2 \end{array}\right].
         \end{align*}
 
-    .. image:: images/newton_refine1.png
+    .. image:: ../images/newton_refine1.png
        :align: center
 
     .. testsetup:: newton-refine1, newton-refine2, newton-refine3
@@ -173,7 +174,7 @@ def _newton_refine(s, nodes1, t, nodes2):
     This means that the number of correct digits doubles every
     iteration (until machine precision is reached).
 
-    .. image:: images/newton_refine2.png
+    .. image:: ../images/newton_refine2.png
        :align: center
 
     .. doctest:: newton-refine2
@@ -218,7 +219,7 @@ def _newton_refine(s, nodes1, t, nodes2):
     the convergence becomes linear. This means that the number of
     correct digits added each iteration is roughly constant.
 
-    .. image:: images/newton_refine3.png
+    .. image:: ../images/newton_refine3.png
        :align: center
 
     .. doctest:: newton-refine3
