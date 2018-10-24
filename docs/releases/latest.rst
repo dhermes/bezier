@@ -26,7 +26,7 @@ Documentation
    (`04d0f8d <https://github.com/dhermes/bezier/commit/04d0f8d3155a22c5a048f52f75a3c6ffcc7eba69>`__).
    The website is being turned down. Fixed
    `#130 <https://github.com/dhermes/bezier/issues/130>`__.
--  Renaming the "Native Libraries" document as "Python Binary Extension"
+-  Renaming the "Native Libraries" document as "Binary Extension"
    (`f99db20 <https://github.com/dhermes/bezier/commit/f99db20312bb4ba7e5943195020a8ced4be9457b>`__).
    In the process, changed most references to the "native" Python extension to
    instead call it a "binary" extension.
@@ -35,6 +35,13 @@ Documentation
    document
    (`f99db20 <https://github.com/dhermes/bezier/commit/f99db20312bb4ba7e5943195020a8ced4be9457b>`__).
    Fixed `#122 <https://github.com/dhermes/bezier/issues/122>`__.
+-  Moving all Python specific documentation under a specific URL path
+   (`3db483b <https://github.com/dhermes/bezier/commit/3db483b58e2c5dd0f618c15fc01710ec6b1a2907>`__).
+   In particular, moving
+
+   -  ``/reference/...`` to ``/python/reference/...``
+   -  ``/python-binary-extension.html`` to ``/python/binary-extension.html``
+   -  ``/pxd/...`` to ``/python/pxd/...``.
 
 ABI Changes
 -----------
