@@ -1279,7 +1279,7 @@ def curve_reduce(curve, reduced):
     if NO_IMAGES:
         return
 
-    figure, (ax1, ax2) = plt.subplots(1, 2)
+    figure, (ax1, ax2) = plt.subplots(1, 2, sharex=True, sharey=True)
     curve.plot(256, ax=ax1)
     color = ax1.lines[-1].get_color()
     add_patch(ax1, curve._nodes, color)
@@ -1289,8 +1289,6 @@ def curve_reduce(curve, reduced):
     ax1.axis("scaled")
     ax2.axis("scaled")
     _plot_helpers.add_plot_boundary(ax2)
-    ax1.set_xlim(*ax1.get_xlim())
-    ax1.set_ylim(*ax1.get_ylim())
     save_image(figure, "curve_reduce.png")
 
 
