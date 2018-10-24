@@ -43,6 +43,14 @@ Documentation
    -  ``/python-binary-extension.html`` to ``/python/binary-extension.html``
    -  ``/pxd/...`` to ``/python/pxd/...``.
 
+-  Moving all algorithm specific documentation under a specific URL path
+   (`6e9c825 <https://github.com/dhermes/bezier/commit/6e9c82501a222c95c616658e6e5e7bc00c9f4288>`__).
+   In particular, moving
+
+   -  ``/algorithm-helpers.html`` to ``/algorithms/helpers.html``
+   -  ``/curve-curve-intersection.html`` to
+      ``/algorithms/curve-curve-intersection.html``
+
 ABI Changes
 -----------
 
