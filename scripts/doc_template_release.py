@@ -15,7 +15,7 @@ This will introduce one-off changes in
 
 * ``README.rst``
 * ``docs/index.rst``
-* ``docs/python-binary-extension.rst``
+* ``docs/python/binary-extension.rst``
 * ``DEVELOPMENT.rst``
 
 that are not intended to be checked into ``master`` (except maybe
@@ -43,10 +43,10 @@ RELEASE_INDEX_FILE = os.path.join(
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst.template")
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst")
 BINARY_EXT_FILE = os.path.join(
-    _ROOT_DIR, "docs", "python-binary-extension.rst"
+    _ROOT_DIR, "docs", "python", "binary-extension.rst"
 )
 BINARY_EXT_TEMPLATE = os.path.join(
-    _ROOT_DIR, "docs", "python-binary-extension.rst.template"
+    _ROOT_DIR, "docs", "python", "binary-extension.rst.template"
 )
 
 
@@ -129,7 +129,7 @@ def populate_index(
 
 
 def populate_native_libraries(version):
-    """Populates ``docs/python-binary-extension.rst`` with release-specific data.
+    """Populates ``binary-extension.rst`` with release-specific data.
 
     Args:
         version (str): The current version.

@@ -136,8 +136,8 @@ intersections):
 {testcleanup}.. image:: {img_prefix}images/curves1_and_13.png
    :align: center
 
-For API-level documentation, check out the B |eacute| zier
-:doc:`Package <reference/bezier>` documentation.
+For API-level documentation, check out the B |eacute| zier Python
+:doc:`package <python/reference/bezier>` documentation.
 
 Development
 -----------

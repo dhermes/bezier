@@ -16,16 +16,16 @@
 
 set -e
 
-rm -r docs/reference
+rm -r docs/python/reference
 OPTIONS="members,inherited-members,undoc-members,show-inheritance"
 SPHINX_APIDOC_OPTIONS="${OPTIONS}" sphinx-apidoc \
     --separate \
     --force \
     --module-first \
-    --output-dir docs/reference \
+    --output-dir docs/python/reference \
     src/bezier
 # Remove unused modules.rst
-rm docs/reference/modules.rst
+rm docs/python/reference/modules.rst
 # Rewrite main package RST
 python scripts/rewrite_package_rst.py
 

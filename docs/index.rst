@@ -16,12 +16,10 @@
    :hidden:
    :maxdepth: 4
 
-   Python Package <reference/bezier>
+   python/index
    abi/index
-   pxd/index
    curve-curve-intersection
    algorithm-helpers
-   python-binary-extension
    development
    releases/index
 
@@ -203,8 +201,8 @@ intersections):
 .. image:: images/curves1_and_13.png
    :align: center
 
-For API-level documentation, check out the B |eacute| zier
-:doc:`Package <reference/bezier>` documentation.
+For API-level documentation, check out the B |eacute| zier Python
+:doc:`package <python/reference/bezier>` documentation.
 
 Development
 -----------

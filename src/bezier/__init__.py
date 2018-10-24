@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 r"""Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects.
 
 Intended to perform basic operations on B |eacute| zier objects such
@@ -70,7 +71,7 @@ def get_include():
     ``libbezier`` should use this function to locate the appropriate
     include directory.
 
-    For more information, see :doc:`../python-binary-extension`.
+    For more information, see :doc:`../binary-extension`.
 
     Returns:
         str: ``include`` directory that contains header files for the
@@ -86,7 +87,7 @@ def get_lib():
     ``libbezier`` should use this function to locate the appropriate lib
     directory.
 
-    For more information, see :doc:`../python-binary-extension`.
+    For more information, see :doc:`../binary-extension`.
 
     Returns:
         str: ``lib`` directory that contains static libraries for the
@@ -102,7 +103,7 @@ def get_dll():
     ``libbezier`` should use this function to locate the appropriate
     Windows shared library or libraries (DLLs).
 
-    For more information, see :doc:`../python-binary-extension`.
+    For more information, see :doc:`../binary-extension`.
 
     Returns:
         str: ``extra-dll`` directory that contains the Windows shared library

@@ -141,8 +141,8 @@ intersections):
 .. image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/images/curves1_and_13.png
    :align: center
 
-For API-level documentation, check out the B |eacute| zier
-`Package`_ documentation.
+For API-level documentation, check out the B |eacute| zier Python
+`package`_ documentation.
 
 Development
 -----------
@@ -157,9 +157,9 @@ License
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _Curves: https://bezier.readthedocs.io/en/{version}/reference/bezier.curve.html
-.. _Surfaces: https://bezier.readthedocs.io/en/{version}/reference/bezier.surface.html
-.. _Package: https://bezier.readthedocs.io/en/{version}/reference/bezier.html
+.. _Curves: https://bezier.readthedocs.io/en/{version}/python/reference/bezier.curve.html
+.. _Surfaces: https://bezier.readthedocs.io/en/{version}/python/reference/bezier.surface.html
+.. _package: https://bezier.readthedocs.io/en/{version}/python/reference/bezier.html
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{version}/DEVELOPMENT.rst
 .. _the LICENSE: https://github.com/dhermes/bezier/blob/{version}/LICENSE
 

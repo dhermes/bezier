@@ -1,6 +1,6 @@
-#######################
-Python Binary Extension
-#######################
+################
+Binary Extension
+################
 
 .. note::
 
@@ -14,7 +14,7 @@ Python Binary Extension
    .. _file an issue: https://github.com/dhermes/bezier/issues/new
 
 The ``bezier`` Python package has optional speedups that wrap the
-``libbezier`` :doc:`library <abi/index>`. These are incorporated into the
+``libbezier`` :doc:`library <../abi/index>`. These are incorporated into the
 Python interface via `Cython`_ as a binary extension.
 
 .. _Cython: https://cython.readthedocs.io/

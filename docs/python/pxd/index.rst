@@ -89,9 +89,9 @@ in ``bezier/curve.h``.
 .. toctree::
    :titlesonly:
 
-   curve
-   curve_intersection
-   helpers
-   status
-   surface
-   surface_intersection
+   curve <curve>
+   curve_intersection <curve_intersection>
+   helpers <helpers>
+   status <status>
+   surface <surface>
+   surface_intersection <surface_intersection>

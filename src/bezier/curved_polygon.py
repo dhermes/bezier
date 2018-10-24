@@ -43,7 +43,7 @@ class CurvedPolygon(object):
        on the boundary is important. When verifying, we check that
        one curve begins where the last one ended.
 
-    .. image:: ../images/curved_polygon_constructor1.png
+    .. image:: ../../images/curved_polygon_constructor1.png
        :align: center
 
     .. doctest:: curved-polygon-constructor
@@ -83,7 +83,7 @@ class CurvedPolygon(object):
     the curved polygon as a whole is not verified, so creating
     a curved polygon with self-intersections is possible:
 
-    .. image:: ../images/curved_polygon_constructor2.png
+    .. image:: ../../images/curved_polygon_constructor2.png
        :align: center
 
     .. doctest:: curved-polygon-constructor-invalid

@@ -31,6 +31,6 @@ Installation
 Currently (as of October 19, 2018) there is no direct support for building
 ``libbezier`` or for installing the header files.
 
-However, the :doc:`../python-binary-extension` document explains how to locate
+However, the :doc:`../python/binary-extension` document explains how to locate
 a built ``libbezier`` static library and the C headers once the ``bezier``
 Python package has been installed.

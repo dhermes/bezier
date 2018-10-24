@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Check that the current ``README.rst`` is built from the template.
 
 Also checks a collection of other documents:
@@ -40,10 +41,10 @@ RELEASE_INDEX_FILE = os.path.join(
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst.template")
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst")
 BINARY_EXT_FILE = os.path.join(
-    _ROOT_DIR, "docs", "python-binary-extension.rst"
+    _ROOT_DIR, "docs", "python", "binary-extension.rst"
 )
 BINARY_EXT_TEMPLATE = os.path.join(
-    _ROOT_DIR, "docs", "python-binary-extension.rst.template"
+    _ROOT_DIR, "docs", "python", "binary-extension.rst.template"
 )
 RTD_VERSION = "latest"
 REVISION = "master"
@@ -106,12 +107,10 @@ TOCTREE = """\
    :hidden:
    :maxdepth: 4
 
-   Python Package <reference/bezier>
+   python/index
    abi/index
-   pxd/index
    curve-curve-intersection
    algorithm-helpers
-   python-binary-extension
    development
    releases/index
 
@@ -120,9 +119,9 @@ IMG_PREFIX = (
     "https://raw.githubusercontent.com/dhermes/bezier/{revision}/docs/"
 )
 EXTRA_LINKS = """\
-.. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.curve.html
-.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.surface.html
-.. _Package: https://bezier.readthedocs.io/en/{rtd_version}/reference/bezier.html
+.. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.curve.html
+.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.surface.html
+.. _package: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.html
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
 """
 BERNSTEIN_BASIS_SPHINX = """\
@@ -336,7 +335,7 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
     sphinx_docs = []
     to_replace = functools.partial(doc_replace, sphinx_docs=sphinx_docs)
     readme_contents = DOC_EXPR.sub(to_replace, readme_contents)
-    if sphinx_docs != ["reference/bezier", "development"]:
+    if sphinx_docs != ["python/reference/bezier", "development"]:
         raise ValueError("Unexpected sphinx_docs", sphinx_docs)
 
     return readme_contents
@@ -559,10 +558,10 @@ def development_verify():
 
 
 def native_libraries_verify():
-    """Populate the template and compare to ``docs/python-binary-extension.rst``.
+    """Populate the template and compare to ``binary-extension.rst``.
 
     Raises:
-        ValueError: If the current ``docs/python-binary-extension.rst`` doesn't
+        ValueError: If the current ``docs/python/binary-extension.rst`` doesn't
             agree with the expected value computed from the template.
     """
     with open(BINARY_EXT_TEMPLATE, "r") as file_obj:
@@ -574,13 +573,13 @@ def native_libraries_verify():
         err_msg = "\n" + get_diff(
             contents,
             expected,
-            "docs/python-binary-extension.rst.actual",
-            "docs/python-binary-extension.rst.expected",
+            "docs/python/binary-extension.rst.actual",
+            "docs/python/binary-extension.rst.expected",
         )
         raise ValueError(err_msg)
 
     else:
-        print("docs/python-binary-extension.rst contents are as expected.")
+        print("docs/python/binary-extension.rst contents are as expected.")
 
 
 def main():

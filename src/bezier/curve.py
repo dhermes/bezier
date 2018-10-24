@@ -9,12 +9,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Helper for B |eacute| zier Curves.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
-See :doc:`../curve-curve-intersection` for examples using the
+See :doc:`../../curve-curve-intersection` for examples using the
 :class:`Curve` class to find intersections.
 
 .. testsetup:: *
@@ -55,7 +56,7 @@ class Curve(_base.Base):
 
        B(s) = \sum_{j = 0}^n \binom{n}{j} s^j (1 - s)^{n - j} \cdot v_j
 
-    .. image:: ../images/curve_constructor.png
+    .. image:: ../../images/curve_constructor.png
        :align: center
 
     .. doctest:: curve-constructor
@@ -176,7 +177,7 @@ class Curve(_base.Base):
 
         See :meth:`evaluate_multi` for more details.
 
-        .. image:: ../images/curve_evaluate.png
+        .. image:: ../../images/curve_evaluate.png
            :align: center
 
         .. doctest:: curve-eval
@@ -281,7 +282,7 @@ class Curve(_base.Base):
         order to do this, also reparameterizes the curve, hence the resulting
         left and right halves have new nodes.
 
-        .. image:: ../images/curve_subdivide.png
+        .. image:: ../../images/curve_subdivide.png
            :align: center
 
         .. doctest:: curve-subdivide
@@ -318,9 +319,9 @@ class Curve(_base.Base):
     ):
         """Find the points of intersection with another curve.
 
-        See :doc:`../curve-curve-intersection` for more details.
+        See :doc:`../../curve-curve-intersection` for more details.
 
-        .. image:: ../images/curve_intersect.png
+        .. image:: ../../images/curve_intersect.png
            :align: center
 
         .. doctest:: curve-intersect
@@ -405,7 +406,7 @@ class Curve(_base.Base):
            w_{n + 1} &= v_n
            \end{align*}
 
-        .. image:: ../images/curve_elevate.png
+        .. image:: ../../images/curve_elevate.png
            :align: center
 
         .. testsetup:: curve-elevate
@@ -477,7 +478,7 @@ class Curve(_base.Base):
            "best" in the least squares sense (when solving the normal
            equations).
 
-        .. image:: ../images/curve_reduce.png
+        .. image:: ../../images/curve_reduce.png
            :align: center
 
         .. testsetup:: curve-reduce, curve-reduce-approx
@@ -507,7 +508,7 @@ class Curve(_base.Base):
 
         In the case that the current curve **is not** degree-elevated.
 
-        .. image:: ../images/curve_reduce_approx.png
+        .. image:: ../../images/curve_reduce_approx.png
            :align: center
 
         .. doctest:: curve-reduce-approx
@@ -539,7 +540,7 @@ class Curve(_base.Base):
     def specialize(self, start, end):
         """Specialize the curve to a given sub-interval.
 
-        .. image:: ../images/curve_specialize.png
+        .. image:: ../../images/curve_specialize.png
            :align: center
 
         .. doctest:: curve-specialize
@@ -608,7 +609,7 @@ class Curve(_base.Base):
            self-intersections. This code assumes, but doesn't check, that
            this is true.
 
-        .. image:: ../images/curve_locate.png
+        .. image:: ../../images/curve_locate.png
            :align: center
 
         .. doctest:: curve-locate

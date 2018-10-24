@@ -62,7 +62,7 @@ class Surface(_base.Base):
     for points in the unit triangle
     :math:`\left\{(s, t) \mid 0 \leq s, t, s + t \leq 1\right\}`:
 
-    .. image:: ../images/unit_triangle.png
+    .. image:: ../../images/unit_triangle.png
        :align: center
 
     As with curves, using these weights we get convex combinations
@@ -146,7 +146,7 @@ class Surface(_base.Base):
        corresponding linear index, but it is not particularly insightful
        or useful.
 
-    .. image:: ../images/surface_constructor.png
+    .. image:: ../../images/surface_constructor.png
        :align: center
 
     .. doctest:: surface-constructor
@@ -383,7 +383,7 @@ class Surface(_base.Base):
 
         Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)`.
 
-        .. image:: ../images/surface_evaluate_barycentric.png
+        .. image:: ../../images/surface_evaluate_barycentric.png
            :align: center
 
         .. testsetup:: surface-barycentric, surface-barycentric-fail1,
@@ -481,7 +481,7 @@ class Surface(_base.Base):
         See :meth:`evaluate_barycentric` for more details on how each row of
         parameter values is evaluated.
 
-        .. image:: ../images/surface_evaluate_barycentric_multi.png
+        .. image:: ../../images/surface_evaluate_barycentric_multi.png
            :align: center
 
         .. doctest:: surface-eval-multi2
@@ -604,7 +604,7 @@ class Surface(_base.Base):
         See :meth:`evaluate_cartesian` for more details on how each row of
         parameter values is evaluated.
 
-        .. image:: ../images/surface_evaluate_cartesian_multi.png
+        .. image:: ../../images/surface_evaluate_cartesian_multi.png
            :align: center
 
         .. doctest:: surface-eval-multi1
@@ -701,7 +701,7 @@ class Surface(_base.Base):
         Does so by taking the unit triangle (i.e. the domain
         of the surface) and splitting it into four sub-triangles
 
-        .. image:: ../images/surface_subdivide1.png
+        .. image:: ../../images/surface_subdivide1.png
            :align: center
 
         Then the surface is re-parameterized via the map to / from the
@@ -709,7 +709,7 @@ class Surface(_base.Base):
 
         For example, when a degree two surface is subdivided:
 
-        .. image:: ../images/surface_subdivide2.png
+        .. image:: ../../images/surface_subdivide2.png
            :align: center
 
         .. doctest:: surface-subdivide
@@ -796,7 +796,7 @@ class Surface(_base.Base):
         triangle is everywhere positive. For example, a linear "surface"
         with collinear points is invalid:
 
-        .. image:: ../images/surface_is_valid1.png
+        .. image:: ../../images/surface_is_valid1.png
            :align: center
 
         .. doctest:: surface-is-valid1
@@ -816,7 +816,7 @@ class Surface(_base.Base):
 
         while a quadratic surface with one straight side:
 
-        .. image:: ../images/surface_is_valid2.png
+        .. image:: ../../images/surface_is_valid2.png
            :align: center
 
         .. doctest:: surface-is-valid2
@@ -836,7 +836,7 @@ class Surface(_base.Base):
 
         though not all higher degree surfaces are valid:
 
-        .. image:: ../images/surface_is_valid3.png
+        .. image:: ../../images/surface_is_valid3.png
            :align: center
 
         .. doctest:: surface-is-valid3
@@ -886,7 +886,7 @@ class Surface(_base.Base):
            A unique solution is only guaranteed if the current surface is
            valid. This code assumes a valid surface, but doesn't check.
 
-        .. image:: ../images/surface_locate.png
+        .. image:: ../../images/surface_locate.png
            :align: center
 
         .. doctest:: surface-locate
@@ -1037,7 +1037,7 @@ class Surface(_base.Base):
         where we define, for example, :math:`v_{i, j, k - 1} = 0`
         if :math:`k = 0`.
 
-        .. image:: ../images/surface_elevate.png
+        .. image:: ../../images/surface_elevate.png
            :align: center
 
         .. doctest:: surface-elevate
