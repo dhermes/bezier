@@ -8,7 +8,7 @@ This repository is intended to be used as a fully-functional environment for ins
 
 - CPython 2.7, 3.5, 3.6, 3.7 and PyPy 2.7 and 3.5
 - NumPy pre-installed (needed for installing extensions)
-- `/wheelhouse` directory with NumPy and SciPy pre-built for PyPy
+- `/wheelhouse` directory with NumPy and SciPy pre-built for PyPy and PyPy 3
 - `gfortran` compiler
 - `nox` test runner
 - `lcov` line coverage tool
