@@ -106,6 +106,9 @@ Non-Public API
 Build
 ~~~~~
 
+-  Renaming `libbezier.dll` shared library to `bezier.dll` on Windows
+   (`d17a9bc <https://github.com/dhermes/bezier/commit/d17a9bcee194edc9f103734e35023d178ed8923b>`__).
+   This follows the correct convention on Windows.
 -  Adding Python 3.7 support and making it the default version used for testing
    (`e368e9f <https://github.com/dhermes/bezier/commit/e368e9fd9ab31cfd818fcb9e777dff6dcbd3a7e6>`__).
 -  Dropping support for Python 3.5
