@@ -9,19 +9,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Setup file for bezier."""
 
 from __future__ import print_function
 
 import os
-import pkg_resources
 import sys
 
+import pkg_resources
 import setuptools
 
 import setup_helpers
 import setup_helpers_osx
 import setup_helpers_windows
+
 
 VERSION = "0.8.1.dev1"  # Also in ``codemeta.json`` and ``__init__.py``.
 AUTHOR = "Danny Hermes"  # Also in ``__init__.py``.
@@ -99,6 +101,20 @@ def setup():
         long_description=make_readme(),
         scripts=(),
         url="https://github.com/dhermes/bezier",
+        project_urls={
+            "Documentation": "https://bezier.readthedocs.io/",
+            "Changelog": (
+                "https://bezier.readthedocs.io/en/latest/releases/index.html"
+            ),
+            "Issue Tracker": "https://github.com/dhermes/bezier/issues",
+        },
+        keywords=[
+            "Geometry",
+            "Curve",
+            u"B\u00e9zier",
+            "Intersection",
+            "Python",
+        ],
         packages=["bezier"],
         package_dir={"": "src"},
         license="Apache 2.0",
