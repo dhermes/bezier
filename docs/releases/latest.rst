@@ -127,6 +127,8 @@ Miscellany
 -  Adopted ``black``
    `code formatter <https://black.readthedocs.io/en/stable/>`__
    (`f21b52d <https://github.com/dhermes/bezier/commit/f21b52d562daf6c86ddaba326aeee8362361e20f>`__).
+-  Adding project URLs and keywords for PyPI
+   (`cfb070d <https://github.com/dhermes/bezier/commit/cfb070d651fba4e7df06216a159f623d57036f02>`__).
 -  Added 20 new surface-surface functional tests
    (`9fd9c1e <https://github.com/dhermes/bezier/commit/9fd9c1e26138034539e91aed04c97ec497a9e4b2>`__).
    See `#121 <https://github.com/dhermes/bezier/issues/121>`__ for more
