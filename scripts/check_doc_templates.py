@@ -156,7 +156,7 @@ CIRCLECI_BADGE = (
 )
 CIRCLECI_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
-    "docs/circleci-passing.svg"
+    "docs/circleci-passing.svg?sanitize=true"
 )
 TRAVIS_BADGE = (
     "https://img.shields.io/travis/dhermes/bezier/master.svg?"
@@ -164,7 +164,7 @@ TRAVIS_BADGE = (
 )
 TRAVIS_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
-    "docs/travis-passing.svg"
+    "docs/travis-passing.svg?sanitize=true"
 )
 APPVEYOR_BADGE = (
     "https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?"
@@ -172,7 +172,7 @@ APPVEYOR_BADGE = (
 )
 APPVEYOR_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
-    "docs/appveyor-passing.svg"
+    "docs/appveyor-passing.svg?sanitize=true"
 )
 COVERALLS_BADGE = "https://coveralls.io/repos/github/dhermes/bezier/badge.svg"
 COVERALLS_BADGE_RELEASE = (
