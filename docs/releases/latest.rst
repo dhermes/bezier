@@ -1,5 +1,5 @@
-Latest Release (``0.8.1.dev1``)
-===============================
+Latest Release (``0.9.0``)
+==========================
 
 |pypi| |docs|
 
@@ -9,16 +9,16 @@ Documentation
 -  Documenting the C ABI ``libbezier``
    (`4608364 <https://github.com/dhermes/bezier/commit/4608364e9c0a2b3888f7f661e629fceda9d9a431>`__).
    Fixed `#63 <https://github.com/dhermes/bezier/issues/63>`__. This
-   `documentation <http://bezier.readthedocs.io/en/0.8.1.dev1/abi/index.html>`__
+   `documentation <http://bezier.readthedocs.io/en/0.9.0/abi/index.html>`__
    contains a page for each "module" which corresponds to the underlying
    Fortran module. Each module documents the routines in the corresponding
    header file, e.g. the
-   `surface <http://bezier.readthedocs.io/en/0.8.1.dev1/abi/surface.html>`__
+   `surface <http://bezier.readthedocs.io/en/0.9.0/abi/surface.html>`__
    document corresponds to the ``bezier/surface.h`` header. Fully working
    C examples have been added for each routine in ``bezier/curve.h`` and for
    the enum in ``bezier/status.h``.
 -  Adding section about environment variables to
-   `development <http://bezier.readthedocs.io/en/0.8.1.dev1/development.html>`__
+   `development <http://bezier.readthedocs.io/en/0.9.0/development.html>`__
    document
    (`5186e24 <https://github.com/dhermes/bezier/commit/5186e24a7c7eab5d65ac41ba53e3826b693fc86f>`__).
    Fixed `#78 <https://github.com/dhermes/bezier/issues/78>`__.
@@ -31,7 +31,7 @@ Documentation
    In the process, changed most references to the "native" Python extension to
    instead call it a "binary" extension.
 -  Added a "Cython ``.pxd``
-   `Declarations <http://bezier.readthedocs.io/en/0.8.1.dev1/python/pxd/index.html>`__"
+   `Declarations <http://bezier.readthedocs.io/en/0.9.0/python/pxd/index.html>`__"
    document
    (`f99db20 <https://github.com/dhermes/bezier/commit/f99db20312bb4ba7e5943195020a8ced4be9457b>`__).
    Fixed `#122 <https://github.com/dhermes/bezier/issues/122>`__.
@@ -81,9 +81,9 @@ New Features
 ~~~~~~~~~~~~
 
 -  Added implementation for ``Surface.area``
-   `property <http://bezier.readthedocs.io/en/0.8.1/python/reference/bezier.surface.html#bezier.surface.Surface.area>`__
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Surface.area>`__
    and ``CurvedPolygon.area``
-   `property <http://bezier.readthedocs.io/en/0.8.1/python/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon.area>`__
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon.area>`__
    (`eb6077e <https://github.com/dhermes/bezier/commit/eb6077eab4f6ca0d72de6194f1789a2d0eada8b0>`__).
 
 Non-Public API
@@ -96,11 +96,11 @@ Non-Public API
    -  ``bezier._geometric_intersection.set_max_candidates()``
    -  ``bezier._geometric_intersection.get_max_candidates()``
 -  Removing cached values for ``Curve.length``
-   `property <http://bezier.readthedocs.io/en/0.8.1/python/reference/bezier.curve.html#bezier.curve.Curve.length>`__,
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.curve.html#bezier.curve.Curve.length>`__,
    ``Surface.area``
-   `property <http://bezier.readthedocs.io/en/0.8.1/python/reference/bezier.surface.html#bezier.surface.Surface.area>`__
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Surface.area>`__
    and ``Surface.is_valid``
-   `property <http://bezier.readthedocs.io/en/0.8.1/python/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
    (`34d48d6 <https://github.com/dhermes/bezier/commit/34d48d6900963734d7fb82f13bd3f37416cc6efe>`__).
 
 Build
@@ -145,9 +145,9 @@ Miscellany
    other related tests
    (`d84dffb <https://github.com/dhermes/bezier/commit/d84dffb9d0e6fe1ee653e01cb9d4297f83aa11e0>`__).
 
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.8.1.svg
-   :target: https://pypi.org/project/bezier/0.8.1/
-   :alt: PyPI link to release 0.8.1
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.8.1
-   :target: https://bezier.readthedocs.io/en/0.8.1/
-   :alt: Documentation for release 0.8.1
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.9.0.svg
+   :target: https://pypi.org/project/bezier/0.9.0/
+   :alt: PyPI link to release 0.9.0
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.9.0
+   :target: https://bezier.readthedocs.io/en/0.9.0/
+   :alt: Documentation for release 0.9.0

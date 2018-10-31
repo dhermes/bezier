@@ -5,7 +5,7 @@ Binary Extension
 .. note::
 
    This content was last updated October 19, 2018 (as part of the
-   ``0.8.1`` release). Much of the content is tested automatically to keep
+   ``0.9.0`` release). Much of the content is tested automatically to keep
    from getting stale, but some of the console code blocks are not. As a
    result, this material may be out of date. If anything does not seem
    correct --- or even if the explanation is insufficient --- please
@@ -577,9 +577,9 @@ For examples, see:
 * `Mac OS X journal`_
 * `Windows journal`_
 
-.. _Linux journal: https://github.com/dhermes/bezier/blob/master/.circleci/expected_journal.txt
-.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/master/scripts/osx/travis_journal.txt
-.. _Windows journal: https://github.com/dhermes/bezier/blob/master/appveyor/expected_journal.txt
+.. _Linux journal: https://github.com/dhermes/bezier/blob/0.9.0/.circleci/expected_journal.txt
+.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/0.9.0/scripts/osx/travis_journal.txt
+.. _Windows journal: https://github.com/dhermes/bezier/blob/0.9.0/appveyor/expected_journal.txt
 
 ***************************
 Building a Python Extension
