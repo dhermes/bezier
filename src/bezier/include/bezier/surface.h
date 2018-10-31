@@ -15,43 +15,36 @@
 
 #include "bezier/_bool_patch.h"
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 extern "C" {
 #endif
 
-void de_casteljau_one_round(
-    int *num_nodes, int *dimension, double *nodes, int *degree,
-    double *lambda1, double *lambda2, double *lambda3, double *new_nodes);
-void evaluate_barycentric(
-    int *num_nodes, int *dimension, double *nodes, int *degree,
-    double *lambda1, double *lambda2, double *lambda3, double *point);
-void evaluate_barycentric_multi(
-    int *num_nodes, int *dimension, double *nodes, int *degree,
-    int *num_vals, double *param_vals, double *evaluated);
-void evaluate_cartesian_multi(
-    int *num_nodes, int *dimension, double *nodes, int *degree,
-    int *num_vals, double *param_vals, double *evaluated);
-void jacobian_both(
-    int *num_nodes, int *dimension, double *nodes,
-    int *degree, double *new_nodes);
-void jacobian_det(
-    int *num_nodes, double *nodes, int *degree,
-    int *num_vals, double *param_vals, double *evaluated);
-void specialize_surface(
-    int *num_nodes, int *dimension, double *nodes, int *degree,
-    double *weights_a, double *weights_b, double *weights_c,
-    double *specialized);
-void subdivide_nodes_surface(
-    int *num_nodes, int *dimension, double *nodes, int *degree,
-    double *nodes_a, double *nodes_b, double *nodes_c, double *nodes_d);
-void compute_edge_nodes(
-    int *num_nodes, int *dimension, double *nodes, int *degree,
-    double *nodes1, double *nodes2, double *nodes3);
-void compute_area(
-    int *num_edges, int *sizes, double **nodes_pointers,
-    double *area, bool *not_implemented);
+void de_casteljau_one_round(int* num_nodes, int* dimension, double* nodes,
+    int* degree, double* lambda1, double* lambda2, double* lambda3,
+    double* new_nodes);
+void evaluate_barycentric(int* num_nodes, int* dimension, double* nodes,
+    int* degree, double* lambda1, double* lambda2, double* lambda3,
+    double* point);
+void evaluate_barycentric_multi(int* num_nodes, int* dimension, double* nodes,
+    int* degree, int* num_vals, double* param_vals, double* evaluated);
+void evaluate_cartesian_multi(int* num_nodes, int* dimension, double* nodes,
+    int* degree, int* num_vals, double* param_vals, double* evaluated);
+void jacobian_both(int* num_nodes, int* dimension, double* nodes, int* degree,
+    double* new_nodes);
+void jacobian_det(int* num_nodes, double* nodes, int* degree, int* num_vals,
+    double* param_vals, double* evaluated);
+void specialize_surface(int* num_nodes, int* dimension, double* nodes,
+    int* degree, double* weights_a, double* weights_b, double* weights_c,
+    double* specialized);
+void subdivide_nodes_surface(int* num_nodes, int* dimension, double* nodes,
+    int* degree, double* nodes_a, double* nodes_b, double* nodes_c,
+    double* nodes_d);
+void compute_edge_nodes(int* num_nodes, int* dimension, double* nodes,
+    int* degree, double* nodes1, double* nodes2, double* nodes3);
+void compute_area(int* num_edges, int* sizes, double** nodes_pointers,
+    double* area, bool* not_implemented);
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 }
 #endif
 

@@ -57,7 +57,7 @@ Procedures
 
    .. literalinclude:: example_compute_length.c
       :language: c
-      :dedent: 2
+      :dedent: 4
       :lines: 18-29
 
    Consider the line segment :math:`B(s) = \left[\begin{array}{c} 3s \\ 4s
@@ -119,8 +119,8 @@ Procedures
 
    .. literalinclude:: example_elevate_nodes_curve.c
       :language: c
-      :dedent: 2
-      :lines: 18-33
+      :dedent: 4
+      :lines: 18-31
 
    we have :math:`B(s) = \left[\begin{array}{c} 0 \\ 0
    \end{array}\right] (1 - s)^3 + \left[\begin{array}{c} 1 \\ 1
@@ -211,8 +211,8 @@ Procedures
 
    .. literalinclude:: example_evaluate_curve_barycentric.c
       :language: c
-      :dedent: 2
-      :lines: 18-38
+      :dedent: 4
+      :lines: 18-35
 
    we have
 
@@ -289,7 +289,7 @@ Procedures
 
    .. literalinclude:: example_evaluate_hodograph.c
       :language: c
-      :dedent: 2
+      :dedent: 4
       :lines: 18-28
 
    we have :math:`B'\left(\frac{1}{8}\right) = \frac{1}{32} \left[
@@ -361,8 +361,8 @@ Procedures
 
    .. literalinclude:: example_evaluate_multi.c
       :language: c
-      :dedent: 2
-      :lines: 18-31
+      :dedent: 4
+      :lines: 18-32
 
    we have :math:`B\left(0\right) = \left[\begin{array}{c}
    1 \\ 0 \end{array}\right], B\left(\frac{1}{2}\right) =
@@ -436,8 +436,8 @@ Procedures
 
    .. literalinclude:: example_full_reduce.c
       :language: c
-      :dedent: 2
-      :lines: 18-35
+      :dedent: 4
+      :lines: 18-34
 
    this procedure reduces it to the line
    :math:`B(s) = \left[\begin{array}{c} 1 \\ 3
@@ -508,7 +508,7 @@ Procedures
 
    .. literalinclude:: example_get_curvature.c
       :language: c
-      :dedent: 2
+      :dedent: 4
       :lines: 18-28
 
    .. image:: ../images/get_curvature.png
@@ -577,8 +577,8 @@ Procedures
 
    .. literalinclude:: example_locate_point_curve.c
       :language: c
-      :dedent: 2
-      :lines: 18-37
+      :dedent: 4
+      :lines: 18-34
 
    We can locate the point :math:`B\left(\frac{1}{2}\right) = \frac{1}{64}
    \left[\begin{array}{c} -6 \\ 53 \end{array}\right]` but find that
@@ -668,7 +668,7 @@ Procedures
 
    .. literalinclude:: example_newton_refine_curve.c
       :language: c
-      :dedent: 2
+      :dedent: 4
       :lines: 18-29
 
    we expect a Newton update :math:`\Delta s = -\frac{2}{5}`, which produces
@@ -740,8 +740,8 @@ Procedures
 
    .. literalinclude:: example_reduce_pseudo_inverse.c
       :language: c
-      :dedent: 2
-      :lines: 18-33
+      :dedent: 4
+      :lines: 18-32
 
    we get the valid quadratic representation of :math:`B(s) =
    \left[\begin{array}{c} 3(1 - s)(2s - 1) \\ 3(2s^2 - s + 1)
@@ -817,7 +817,7 @@ Procedures
 
    .. literalinclude:: example_specialize_curve.c
       :language: c
-      :dedent: 2
+      :dedent: 4
       :lines: 18-31
 
    we get the specialized curve :math:`S(t) = \frac{1}{8} \left[
@@ -893,7 +893,7 @@ Procedures
 
    .. literalinclude:: example_subdivide_nodes_curve.c
       :language: c
-      :dedent: 2
+      :dedent: 4
       :lines: 18-34
 
    yields:

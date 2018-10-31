@@ -13,23 +13,23 @@
 #ifndef BEZIER_STATUS_H
 #define BEZIER_STATUS_H
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 extern "C" {
 #endif
 
 typedef enum Status {
-  SUCCESS = 0,
-  BAD_MULTIPLICITY = 1,
-  NO_CONVERGE = 2,
-  INSUFFICIENT_SPACE = 3,
-  SAME_CURVATURE = 4,
-  BAD_INTERIOR = 5,
-  EDGE_END = 6,
-  SINGULAR = 7,
-  UNKNOWN = 999,
+    SUCCESS = 0,
+    BAD_MULTIPLICITY = 1,
+    NO_CONVERGE = 2,
+    INSUFFICIENT_SPACE = 3,
+    SAME_CURVATURE = 4,
+    BAD_INTERIOR = 5,
+    EDGE_END = 6,
+    SINGULAR = 7,
+    UNKNOWN = 999,
 } Status;
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 }
 #endif
 

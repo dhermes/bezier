@@ -10,22 +10,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
 #include "bezier.h"
+#include <stdio.h>
 
 int main(void)
 {
-  // Inputs.
-  double s = 0.125;
-  int num_nodes = 4;
-  int dimension = 2;
-  double nodes[8] = {1.0, 0.0, 1.0, 1.0, 2.0, 0.0, 2.0, 1.0};
+    // Inputs.
+    double s = 0.125;
+    int num_nodes = 4;
+    int dimension = 2;
+    double nodes[8] = { 1.0, 0.0, 1.0, 1.0, 2.0, 0.0, 2.0, 1.0 };
 
-  // Outputs.
-  double hodograph[2];
+    // Outputs.
+    double hodograph[2];
 
-  evaluate_hodograph(&s, &num_nodes, &dimension, nodes, hodograph);
-  printf("Hodograph:\n%f\n%f\n", hodograph[0], hodograph[1]);
+    evaluate_hodograph(&s, &num_nodes, &dimension, nodes, hodograph);
+    printf("Hodograph:\n%f\n%f\n", hodograph[0], hodograph[1]);
 
-  return 0;
+    return 0;
 }

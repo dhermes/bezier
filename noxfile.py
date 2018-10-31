@@ -326,6 +326,16 @@ def lint(session):
         get_path("tests"),
     )
 
+    if py.path.local.sysfind("clang-format") is not None:
+        filenames = glob.glob(get_path("docs", "abi", "*.c"))
+        filenames.append(get_path("src", "bezier", "include", "bezier.h"))
+        filenames.extend(
+            glob.glob(get_path("src", "bezier", "include", "bezier", "*.h"))
+        )
+        session.run(
+            "clang-format", "-i", "-style=file", *filenames, external=True
+        )
+
 
 @nox.session(py=DEFAULT_INTERPRETER)
 @nox.parametrize("machine", [APPVEYOR, CIRCLE_CI, TRAVIS_OS_X])

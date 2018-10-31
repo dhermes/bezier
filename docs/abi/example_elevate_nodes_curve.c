@@ -10,27 +10,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
 #include "bezier.h"
+#include <stdio.h>
 
 int main(void)
 {
-  // Inputs.
-  int num_nodes = 3;
-  int dimension = 2;
-  double nodes[6] = {0.0, 0.0, 1.5, 1.5, 3.0, 0.0};
+    // Inputs.
+    int num_nodes = 3;
+    int dimension = 2;
+    double nodes[6] = { 0.0, 0.0, 1.5, 1.5, 3.0, 0.0 };
 
-  // Outputs.
-  double elevated[8];
+    // Outputs.
+    double elevated[8];
 
-  elevate_nodes_curve(&num_nodes, &dimension, nodes, elevated);
-  printf("Elevated:\n");
-  printf(
-      "%f, %f, %f, %f\n",
-      elevated[0], elevated[2], elevated[4], elevated[6]);
-  printf(
-      "%f, %f, %f, %f\n",
-      elevated[1], elevated[3], elevated[5], elevated[7]);
+    elevate_nodes_curve(&num_nodes, &dimension, nodes, elevated);
+    printf("Elevated:\n");
+    printf("%f, %f, %f, %f\n", elevated[0], elevated[2], elevated[4],
+        elevated[6]);
+    printf("%f, %f, %f, %f\n", elevated[1], elevated[3], elevated[5],
+        elevated[7]);
 
-  return 0;
+    return 0;
 }

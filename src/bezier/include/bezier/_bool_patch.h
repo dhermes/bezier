@@ -13,31 +13,31 @@
 #ifndef BEZIER_BOOL_PATCH_H
 #define BEZIER_BOOL_PATCH_H
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 extern "C" {
-#elif !defined (_MSC_VER)
+#elif !defined(_MSC_VER)
 #include <stdbool.h>
 #endif
 
-#if !defined (__cplusplus) && defined (_MSC_VER)
-#  if !defined (FALSE)
-#    define FALSE (0)
-#  endif
-#  if !defined (TRUE)
-#    define TRUE (!FALSE)
-#  endif
-#  if _MSC_VER >= 1800
-#    include <stdbool.h>
-#  else
+#if !defined(__cplusplus) && defined(_MSC_VER)
+#if !defined(FALSE)
+#define FALSE (0)
+#endif
+#if !defined(TRUE)
+#define TRUE (!FALSE)
+#endif
+#if _MSC_VER >= 1800
+#include <stdbool.h>
+#else
 //   NOTE: We must use `char` because it is 1 byte, as `bool` is
 //         in C99 and later (which is what `gfortran` uses).
-#    define bool char
-#    define true TRUE
-#    define false FALSE
-#  endif
+#define bool char
+#define true TRUE
+#define false FALSE
+#endif
 #endif
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 }
 #endif
 

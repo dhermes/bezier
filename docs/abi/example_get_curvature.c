@@ -10,22 +10,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
 #include "bezier.h"
+#include <stdio.h>
 
 int main(void)
 {
-  // Inputs.
-  int num_nodes = 5;
-  double nodes[10] = {1.0, 0.0, 0.75, 2.0, 0.5, -2.0, 0.25, 2.0, 0.0, 0.0};
-  double tangent_vec[2] = {-1.0, 0.0};
-  double s = 0.5;
+    // Inputs.
+    int num_nodes = 5;
+    double nodes[10] = { 1.0, 0.0, 0.75, 2.0, 0.5, -2.0, 0.25, 2.0, 0.0, 0.0 };
+    double tangent_vec[2] = { -1.0, 0.0 };
+    double s = 0.5;
 
-  // Outputs.
-  double curvature;
+    // Outputs.
+    double curvature;
 
-  get_curvature(&num_nodes, nodes, tangent_vec, &s, &curvature);
-  printf("Curvature: %f\n", curvature);
+    get_curvature(&num_nodes, nodes, tangent_vec, &s, &curvature);
+    printf("Curvature: %f\n", curvature);
 
-  return 0;
+    return 0;
 }

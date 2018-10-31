@@ -10,23 +10,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
 #include "bezier.h"
+#include <stdio.h>
 
 int main(void)
 {
-  // Inputs.
-  int num_nodes = 2;
-  int dimension = 2;
-  double nodes[4] = {0.0, 0.0, 3.0, 4.0};
+    // Inputs.
+    int num_nodes = 2;
+    int dimension = 2;
+    double nodes[4] = { 0.0, 0.0, 3.0, 4.0 };
 
-  // Outputs.
-  double length;
-  int error_val;
+    // Outputs.
+    double length;
+    int error_val;
 
-  compute_length(&num_nodes, &dimension, nodes, &length, &error_val);
-  printf("Length: %f\n", length);
-  printf("Error value: %d\n", error_val);
+    compute_length(&num_nodes, &dimension, nodes, &length, &error_val);
+    printf("Length: %f\n", length);
+    printf("Error value: %d\n", error_val);
 
-  return 0;
+    return 0;
 }

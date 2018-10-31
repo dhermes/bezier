@@ -13,10 +13,10 @@
 #ifndef BEZIER_H
 #define BEZIER_H
 
-#include "bezier/status.h"
 #include "bezier/curve.h"
 #include "bezier/curve_intersection.h"
 #include "bezier/helpers.h"
+#include "bezier/status.h"
 #include "bezier/surface.h"
 #include "bezier/surface_intersection.h"
 

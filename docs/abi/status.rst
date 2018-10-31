@@ -93,8 +93,8 @@ status module
 
    .. literalinclude:: example_status.c
       :language: c
-      :dedent: 2
-      :lines: 18-36
+      :dedent: 4
+      :lines: 18-34
 
    the method fails with the status :c:data:`SINGULAR` because the
    Jacobian

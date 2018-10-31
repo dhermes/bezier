@@ -10,28 +10,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
 #include "bezier.h"
+#include <stdio.h>
 
 int main(void)
 {
-  // Inputs.
-  int num_nodes = 3;
-  int dimension = 2;
-  double nodes[6] = {0.0, 0.0, 1.25, 3.0, 2.0, 1.0};
+    // Inputs.
+    int num_nodes = 3;
+    int dimension = 2;
+    double nodes[6] = { 0.0, 0.0, 1.25, 3.0, 2.0, 1.0 };
 
-  // Outputs.
-  double left_nodes[6];
-  double right_nodes[6];
+    // Outputs.
+    double left_nodes[6];
+    double right_nodes[6];
 
-  subdivide_nodes_curve(
-      &num_nodes, &dimension, nodes, left_nodes, right_nodes);
-  printf("Left Nodes:\n");
-  printf("%f, %f, %f\n", left_nodes[0], left_nodes[2], left_nodes[4]);
-  printf("%f, %f, %f\n", left_nodes[1], left_nodes[3], left_nodes[5]);
-  printf("Right Nodes:\n");
-  printf("%f, %f, %f\n", right_nodes[0], right_nodes[2], right_nodes[4]);
-  printf("%f, %f, %f\n", right_nodes[1], right_nodes[3], right_nodes[5]);
+    subdivide_nodes_curve(
+        &num_nodes, &dimension, nodes, left_nodes, right_nodes);
+    printf("Left Nodes:\n");
+    printf("%f, %f, %f\n", left_nodes[0], left_nodes[2], left_nodes[4]);
+    printf("%f, %f, %f\n", left_nodes[1], left_nodes[3], left_nodes[5]);
+    printf("Right Nodes:\n");
+    printf("%f, %f, %f\n", right_nodes[0], right_nodes[2], right_nodes[4]);
+    printf("%f, %f, %f\n", right_nodes[1], right_nodes[3], right_nodes[5]);
 
-  return 0;
+    return 0;
 }

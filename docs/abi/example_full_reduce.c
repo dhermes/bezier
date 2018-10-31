@@ -10,29 +10,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
 #include "bezier.h"
+#include <stdio.h>
 
 int main(void)
 {
-  // Inputs.
-  int num_nodes = 5;
-  int dimension = 2;
-  double nodes[10] = {1.0, 3.0, 1.25, 3.5, 1.5, 4.0, 1.75, 4.5, 2.0, 5.0};
+    // Inputs.
+    int num_nodes = 5;
+    int dimension = 2;
+    double nodes[10] = { 1.0, 3.0, 1.25, 3.5, 1.5, 4.0, 1.75, 4.5, 2.0, 5.0 };
 
-  // Outputs.
-  int num_reduced_nodes;
-  double reduced[10];
-  bool not_implemented;
+    // Outputs.
+    int num_reduced_nodes;
+    double reduced[10];
+    bool not_implemented;
 
-  full_reduce(
-      &num_nodes, &dimension, nodes,
-      &num_reduced_nodes, reduced, &not_implemented);
-  printf("Number of reduced nodes: %d\n", num_reduced_nodes);
-  printf("Reduced:\n");
-  printf("%f, %f\n", reduced[0], reduced[2]);
-  printf("%f, %f\n", reduced[1], reduced[3]);
-  printf("Not implemented: %s\n", not_implemented ? "TRUE" : "FALSE");
+    full_reduce(&num_nodes, &dimension, nodes, &num_reduced_nodes, reduced,
+        &not_implemented);
+    printf("Number of reduced nodes: %d\n", num_reduced_nodes);
+    printf("Reduced:\n");
+    printf("%f, %f\n", reduced[0], reduced[2]);
+    printf("%f, %f\n", reduced[1], reduced[3]);
+    printf("Not implemented: %s\n", not_implemented ? "TRUE" : "FALSE");
 
-  return 0;
+    return 0;
 }
