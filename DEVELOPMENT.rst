@@ -539,7 +539,7 @@ This project uses environment variables for building the
 for interacting with the system at import time:
 
 - ``PATH``: On Windows, we add the ``bezier/extra-dll`` package directory to
-  the path so that the ``libbezier.dll`` shared libary can be loaded at
+  the path so that the ``bezier.dll`` shared libary can be loaded at
   import time
 
 and for running tests and interacting with Continuous Integration

@@ -218,7 +218,7 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -static \
 >   -shared \
 >   -o \
->   build\temp.win-amd64-3.7\Release\libbezier.dll \
+>   build\temp.win-amd64-3.7\Release\bezier.dll \
 >   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\d1mach.o \
 >   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqelg.o \
 >   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqpsrt.o \
@@ -231,10 +231,10 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   build\temp.win-amd64-3.7\Release\src\bezier\surface.o \
 >   build\temp.win-amd64-3.7\Release\src\bezier\curve_intersection.o \
 >   build\temp.win-amd64-3.7\Release\src\bezier\surface_intersection.o \
->   -Wl,--output-def,build\temp.win-amd64-3.7\Release\libbezier.def
+>   -Wl,--output-def,build\temp.win-amd64-3.7\Release\bezier.def
 ----------------------------------------
 $ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\lib.exe \
->   /def:build\temp.win-amd64-3.7\Release\libbezier.def \
+>   /def:build\temp.win-amd64-3.7\Release\bezier.def \
 >   /out:build\temp.win-amd64-3.7\Release\bezier.lib \
 >   /machine:x64
 ----------------------------------------

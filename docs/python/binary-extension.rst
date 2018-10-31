@@ -177,7 +177,7 @@ specify the symbols in the Windows **shared** library (DLL):
    '...\\site-packages\\bezier\\extra-dll'
    >>> print_tree(dll_directory)
    extra-dll\
-     libbezier.dll
+     bezier.dll
 
 .. _import library: https://docs.python.org/3/extending/windows.html#differences-between-unix-and-windows
 
@@ -321,7 +321,7 @@ Though the Python extension module (``.so`` file) only depends on
 Windows
 =======
 
-A single Windows shared library (DLL) is provided: ``extra-dll/libbezier.dll``.
+A single Windows shared library (DLL) is provided: ``extra-dll/bezier.dll``.
 The Python extension module (``.pyd`` file) depends directly on this library:
 
 .. testsetup:: windows-extension, windows-dll
@@ -383,7 +383,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
    <BLANKLINE>
      Image has the following dependencies:
    <BLANKLINE>
-       libbezier.dll
+       bezier.dll
        python37.dll
        KERNEL32.dll
        VCRUNTIME140.dll
@@ -436,9 +436,9 @@ each of the Fortran submodules:
 
    $ gfortran \
    >   -shared \
-   >   -o extra-dll/libbezier.dll \
+   >   -o extra-dll/bezier.dll \
    >   ${OBJ_FILES} \
-   >   -Wl,--output-def,libbezier.def
+   >   -Wl,--output-def,bezier.def
 
 .. note::
 
@@ -451,7 +451,7 @@ provided by MinGW:
 
 .. code-block:: rest
 
-   > dumpbin /dependents .\extra-dll\libbezier.dll
+   > dumpbin /dependents .\extra-dll\bezier.dll
    ...
      Image has the following dependencies:
 
@@ -470,25 +470,25 @@ the ``-static`` flag
    $ gfortran \
    >   -static \
    >   -shared \
-   >   -o extra-dll/libbezier.dll \
+   >   -o extra-dll/bezier.dll \
    >   ${OBJ_FILES} \
-   >   -Wl,--output-def,libbezier.def
+   >   -Wl,--output-def,bezier.def
 
 all the symbols used from ``libgfortran`` or ``libgcc_s`` are statically
-included and the resulting shared library ``libbezier.dll`` has no dependency
+included and the resulting shared library ``bezier.dll`` has no dependency
 on MinGW:
 
 .. doctest:: windows-dll
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
-   >>> invoke_shell("dumpbin", "/dependents", "extra-dll\\libbezier.dll")
-   > dumpbin /dependents extra-dll\libbezier.dll
+   >>> invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier.dll")
+   > dumpbin /dependents extra-dll\bezier.dll
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
    <BLANKLINE>
    <BLANKLINE>
-   Dump of file extra-dll\libbezier.dll
+   Dump of file extra-dll\bezier.dll
    <BLANKLINE>
    File Type: DLL
    <BLANKLINE>
@@ -501,7 +501,7 @@ on MinGW:
 
 .. note::
 
-   Although ``msvcrt.dll`` is a dependency of ``libbezier.dll``, it is not
+   Although ``msvcrt.dll`` is a dependency of ``bezier.dll``, it is not
    a problem. Any values returned from Fortran (as ``intent(out)``) will
    have already been allocated by the caller (e.g. the Python process).
    This won't necessarily be true for generic Fortran subroutines, but
@@ -532,7 +532,7 @@ From there, an `import library`_ must be created
 
 .. code-block:: rest
 
-   > lib /def:.\libbezier.def /out:.\lib\bezier.lib /machine:${ARCH}
+   > lib /def:.\bezier.def /out:.\lib\bezier.lib /machine:${ARCH}
 
 .. note::
 

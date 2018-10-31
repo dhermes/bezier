@@ -19,8 +19,8 @@ import setup_helpers
 
 LIB_DIR = os.path.join("bezier", "lib")
 DLL_DIR = os.path.join("bezier", "extra-dll")
-DLL_NAME = "libbezier.dll"
-DEF_NAME = "libbezier.def"
+DLL_NAME = "bezier.dll"
+DEF_NAME = "bezier.def"
 LIB_NAME = "bezier.lib"
 # See: https://docs.python.org/3/library/platform.html#cross-platform
 if sys.maxsize == 2 ** 63 - 1:
