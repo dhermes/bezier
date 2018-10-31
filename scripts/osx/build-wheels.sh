@@ -63,8 +63,11 @@ ${PY_BIN} -m pip wheel ${REPO_ROOT} \
 # Delocate the wheel.
 FIXED_WHEELS="${OSX_DIR}/fixed_wheels"
 mkdir -p ${FIXED_WHEELS}
+# NOTE: This intentionally does not use ``--check-archs``. We only
+#       support 64-bit binaries (due to ``libgfortran`` and NumPy) but
+#       the Python.org official Python's are dual architecture
+#       (i.e. ``intel``).
 ${DELOCATE_WHEEL} \
-    --check-archs \
     --wheel-dir ${FIXED_WHEELS} \
     --verbose \
     ${DIST_WHEELS}/${PKG_NAME}*${PY_TAG}*.whl
