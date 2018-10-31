@@ -27,17 +27,13 @@ cdef extern from "bezier/surface_intersection.h":
         double end
         int edge_index
 
-    void newton_refine_surface(
-        int *num_nodes, double *nodes, int *degree,
-        double *x_val, double *y_val, double *s, double *t,
-        double *updated_s, double *updated_t)
-    void locate_point_surface(
-        int *num_nodes, double *nodes, int *degree,
-        double *x_val, double *y_val, double *s_val, double *t_val)
-    void surface_intersections(
-        int *num_nodes1, double *nodes1, int *degree1,
-        int *num_nodes2, double *nodes2, int *degree2,
-        int *segment_ends_size, int *segment_ends,
-        int *segments_size, CurvedPolygonSegment *segments,
-        int *num_intersected, SurfaceContained *contained, Status *status)
+    void newton_refine_surface(int* num_nodes, double* nodes, int* degree,
+        double* x_val, double* y_val, double* s, double* t, double* updated_s,
+        double* updated_t)
+    void locate_point_surface(int* num_nodes, double* nodes, int* degree,
+        double* x_val, double* y_val, double* s_val, double* t_val)
+    void surface_intersections(int* num_nodes1, double* nodes1, int* degree1,
+        int* num_nodes2, double* nodes2, int* degree2, int* segment_ends_size,
+        int* segment_ends, int* segments_size, CurvedPolygonSegment* segments,
+        int* num_intersected, SurfaceContained* contained, Status* status)
     void free_surface_intersections_workspace()

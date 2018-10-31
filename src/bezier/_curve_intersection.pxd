@@ -24,16 +24,13 @@ cdef extern from "bezier/curve_intersection.h":
         TANGENT = 1
         DISJOINT = 2
 
-    void newton_refine_curve_intersect(
-        double *s, int *num_nodes1, double *nodes1,
-        double *t, int *num_nodes2, double *nodes2,
-        double *new_s, double *new_t, Status *status)
-    void bbox_intersect(
-        int *num_nodes1, double *nodes1,
-        int *num_nodes2, double *nodes2, BoxIntersectionType *enum_)
-    void curve_intersections(
-        int *num_nodes_first, double *nodes_first,
-        int *num_nodes_second, double *nodes_second,
-        int *intersections_size, double *intersections,
-        int *num_intersections, bool_t *coincident, Status *status)
+    void newton_refine_curve_intersect(double* s, int* num_nodes1, double* nodes1,
+        double* t, int* num_nodes2, double* nodes2, double* new_s, double* new_t,
+        Status* status)
+    void bbox_intersect(int* num_nodes1, double* nodes1, int* num_nodes2,
+        double* nodes2, BoxIntersectionType* enum_)
+    void curve_intersections(int* num_nodes_first, double* nodes_first,
+        int* num_nodes_second, double* nodes_second, int* intersections_size,
+        double* intersections, int* num_intersections, bool_t* coincident,
+        Status* status)
     void free_curve_intersections_workspace()
