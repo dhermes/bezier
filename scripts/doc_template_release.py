@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Populate documentation for a release.
 
 This will introduce one-off changes in
@@ -26,7 +27,7 @@ those documents look incorrect to the ``check_doc_templates.py``
 script.
 """
 
-import imp
+import importlib.machinery
 import os
 import sys
 
@@ -64,7 +65,8 @@ def get_version():
     sys.modules["setup_helpers_osx"] = object()
     sys.modules["setup_helpers_windows"] = object()
     filename = os.path.join(_ROOT_DIR, "setup.py")
-    setup_mod = imp.load_source("setup", filename)
+    loader = importlib.machinery.SourceFileLoader("setup", filename)
+    setup_mod = loader.load_module()
     return setup_mod.VERSION
 
 
