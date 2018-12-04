@@ -77,7 +77,7 @@ VENV="${OSX_DIR}/test-venv"
 ${PY_BIN} -m virtualenv ${VENV}
 ${VENV}/bin/python -m pip install \
     --upgrade \
-    --requirement ${OSX_DIR}/requirements.txt
+    --requirement ${SCRIPTS_DIR}/requirements.txt
 ${VENV}/bin/python -m pip install \
     ${PKG_NAME} \
     --no-index \

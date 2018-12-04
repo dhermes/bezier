@@ -46,7 +46,7 @@ export BEZIER_WHEEL=True
 
 # Compile wheels
 for PYBIN in ${VERSION_WHITELIST}; do
-    "${PYBIN}/pip" install -r /io/scripts/manylinux/dev-requirements.txt
+    "${PYBIN}/pip" install -r /io/scripts/requirements.txt
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 
