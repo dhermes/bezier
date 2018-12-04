@@ -148,12 +148,17 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/d1mach.f \
@@ -164,12 +169,17 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/dqelg.f \
@@ -180,12 +190,17 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/dqpsrt.f \
@@ -196,12 +211,17 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/dqk21.f \
@@ -212,12 +232,17 @@ $ /usr/bin/gfortran \
 ----------------------------------------
 $ /usr/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/dqagse.f \
