@@ -141,11 +141,16 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 ----------------------------------------
 $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src\bezier\quadpack\d1mach.f \
@@ -156,11 +161,16 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 ----------------------------------------
 $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src\bezier\quadpack\dqelg.f \
@@ -171,11 +181,16 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 ----------------------------------------
 $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src\bezier\quadpack\dqpsrt.f \
@@ -186,11 +201,16 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 ----------------------------------------
 $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src\bezier\quadpack\dqk21.f \
@@ -201,11 +221,16 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 ----------------------------------------
 $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src\bezier\quadpack\dqagse.f \

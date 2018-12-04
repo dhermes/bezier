@@ -162,7 +162,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -arch \
@@ -170,6 +169,12 @@ $ /usr/local/bin/gfortran \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/d1mach.f \
@@ -180,7 +185,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -arch \
@@ -188,6 +192,12 @@ $ /usr/local/bin/gfortran \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/dqelg.f \
@@ -198,7 +208,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -arch \
@@ -206,6 +215,12 @@ $ /usr/local/bin/gfortran \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/dqpsrt.f \
@@ -216,7 +231,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -arch \
@@ -224,6 +238,12 @@ $ /usr/local/bin/gfortran \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/dqk21.f \
@@ -234,7 +254,6 @@ $ /usr/local/bin/gfortran \
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
->   -g \
 >   -ffixed-form \
 >   -fno-second-underscore \
 >   -arch \
@@ -242,6 +261,12 @@ $ /usr/local/bin/gfortran \
 >   -fPIC \
 >   -O3 \
 >   -funroll-loops \
+>   -Wextra \
+>   -Wno-compare-reals \
+>   -Wimplicit-interface \
+>   -fmax-errors=1 \
+>   -std=f2008 \
+>   -march=native \
 >   -c \
 >   -c \
 >   src/bezier/quadpack/dqagse.f \

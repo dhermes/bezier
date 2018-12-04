@@ -175,6 +175,38 @@ def extension_modules():
     return [extension]
 
 
+def _update_flags(compiler_flags, remove_flags=()):
+    """Update a given set of compiler flags.
+
+    Args:
+        compiler_flags (List[str]): Existing flags associated with a compiler.
+        remove_flags (Optional[Container[str]]): A container of flags to remove
+            that will override any of the defaults.
+
+    Returns:
+        List[str]: The modified list (i.e. some flags added and some removed).
+    """
+    for flag in GFORTRAN_SHARED_FLAGS:
+        if flag not in compiler_flags:
+            compiler_flags.append(flag)
+    if DEBUG_ENV in os.environ:
+        to_add = GFORTRAN_DEBUG_FLAGS
+        to_remove = GFORTRAN_OPTIMIZE_FLAGS
+    else:
+        to_add = GFORTRAN_OPTIMIZE_FLAGS
+        if os.environ.get(WHEEL_ENV) is None:
+            to_add += (GFORTRAN_NATIVE_FLAG,)
+        to_remove = GFORTRAN_DEBUG_FLAGS
+    for flag in to_add:
+        if flag not in compiler_flags:
+            compiler_flags.append(flag)
+    return [
+        flag
+        for flag in compiler_flags
+        if not (flag in to_remove or flag in remove_flags)
+    ]
+
+
 def patch_f90_compiler(f90_compiler):
     """Patch up ``f90_compiler``.
 
@@ -197,25 +229,10 @@ def patch_f90_compiler(f90_compiler):
     if not isinstance(f90_compiler, gnu.Gnu95FCompiler):
         return False
 
-    # NOTE: Should probably handle ``compiler_f77`` too.
-    f90_flags = f90_compiler.compiler_f90
-    for flag in GFORTRAN_SHARED_FLAGS:
-        if flag not in f90_flags:
-            f90_flags.append(flag)
-    if DEBUG_ENV in os.environ:
-        to_add = GFORTRAN_DEBUG_FLAGS
-        to_remove = GFORTRAN_OPTIMIZE_FLAGS
-    else:
-        to_add = GFORTRAN_OPTIMIZE_FLAGS
-        if os.environ.get(WHEEL_ENV) is None:
-            to_add += (GFORTRAN_NATIVE_FLAG,)
-        to_remove = GFORTRAN_DEBUG_FLAGS
-    for flag in to_add:
-        if flag not in f90_flags:
-            f90_flags.append(flag)
-    without = [flag for flag in f90_flags if flag not in to_remove]
-    # Update in place.
-    f90_flags[:] = without
+    f90_compiler.compiler_f77[:] = _update_flags(
+        f90_compiler.compiler_f77, remove_flags=("-Werror",)
+    )
+    f90_compiler.compiler_f90[:] = _update_flags(f90_compiler.compiler_f90)
 
 
 class BuildFortranThenExt(setuptools.command.build_ext.build_ext):

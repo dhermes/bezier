@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 from __future__ import absolute_import
 
 import contextlib
@@ -53,7 +54,7 @@ WIGGLES = {
         32: 18,  # Established on Ubuntu 16.04
         33: 18,  # Established on Ubuntu 16.04
         36: 9,  # Established on Ubuntu 16.04 on CircleCI and OS X.
-        49: 56288,  # Established on CentOS 5 (i686 Docker image)
+        49: 120841,  # Established on CentOS 5 (i686 Docker image)
         50: 86670,  # Established on Ubuntu 16.04
     },
 }
@@ -79,37 +80,26 @@ FAILED_CASES_COINCIDENT = {
     ALGEBRAIC: {4: {}, 5: {}, 43: {}, 44: {}, 45: {}, 46: {}, 47: {}, 51: {}},
 }
 FAILED_CASES_BAD_EDGES = {GEOMETRIC: (), ALGEBRAIC: ()}
-FAILED_CASES_PRECISION = {GEOMETRIC: (68,), ALGEBRAIC: ()}
+FAILED_CASES_PRECISION = {GEOMETRIC: (), ALGEBRAIC: ()}
 FAILED_CASES_BAD_DUPLICATE = {
     GEOMETRIC: (),
     ALGEBRAIC: (53, 54, 55, 56, 57, 59, 60, 62, 63, 64, 66, 67, 69, 70),
 }
 FAILED_CASES_CONSECUTIVE_SEGMENTS = {
-    GEOMETRIC: (
-        53,
-        54,
-        55,
-        56,
-        57,
-        58,
-        59,
-        60,
-        61,
-        63,
-        65,
-        66,
-        67,
-        70,
-        71,
-        72,
-    ),
-    ALGEBRAIC: (58, 61, 65, 71, 72),
+    GEOMETRIC: (55, 56, 59, 61, 63, 65, 66, 67, 70, 71, 72),
+    ALGEBRAIC: (58, 61, 65, 71),
 }
 INCORRECT_COUNT = {GEOMETRIC: (52, 62, 64, 69), ALGEBRAIC: (68,)}
 if base_utils.IS_LINUX and not base_utils.IS_64_BIT:
-    INCORRECT_COUNT[ALGEBRAIC] += (52,)
+    FAILED_CASES_PRECISION[GEOMETRIC] += (54, 57)
+    FAILED_CASES_CONSECUTIVE_SEGMENTS[GEOMETRIC] += (68,)
+    INCORRECT_COUNT[GEOMETRIC] += (53, 58, 60)
+    INCORRECT_COUNT[ALGEBRAIC] += (52, 72)
 else:
+    FAILED_CASES_PRECISION[GEOMETRIC] += (68,)
     FAILED_CASES_BAD_EDGES[ALGEBRAIC] += (52,)
+    FAILED_CASES_CONSECUTIVE_SEGMENTS[GEOMETRIC] += (53, 54, 57, 58, 60)
+    FAILED_CASES_CONSECUTIVE_SEGMENTS[ALGEBRAIC] += (72,)
 
 CONFIG = utils.Config()
 

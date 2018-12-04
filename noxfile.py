@@ -26,7 +26,7 @@ IS_MAC_OS_X = sys.platform == "darwin"
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
     "coverage": "coverage",
-    "Cython": "Cython >= 0.29",
+    "Cython": "Cython >= 0.29.1",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",

@@ -88,6 +88,18 @@ def run_cleanup(build_ext_cmd):
     shutil.move(os.path.join(build_ext_cmd.build_lib, DLL_DIR), bezier_dir)
 
 
+def _remove_fpic(compiler_flags):
+    """Remove ``-fPIC`` from a given set of compiler flags.
+
+    Args:
+        compiler_flags (List[str]): Existing flags associated with a compiler.
+
+    Returns:
+        List[str]: The modified list.
+    """
+    return [value for value in compiler_flags if value != setup_helpers.FPIC]
+
+
 def patch_f90_compiler(f90_compiler):
     """Patch up ``f90_compiler.library_dirs``.
 
@@ -111,11 +123,8 @@ def patch_f90_compiler(f90_compiler):
     if not isinstance(f90_compiler, gnu.Gnu95FCompiler):
         return
 
-    f90_compiler.compiler_f90[:] = [
-        value
-        for value in f90_compiler.compiler_f90
-        if value != setup_helpers.FPIC
-    ]
+    f90_compiler.compiler_f77[:] = _remove_fpic(f90_compiler.compiler_f77)
+    f90_compiler.compiler_f90[:] = _remove_fpic(f90_compiler.compiler_f90)
     c_compiler = f90_compiler.c_compiler
     if c_compiler.compiler_type != "msvc":
         raise NotImplementedError(
