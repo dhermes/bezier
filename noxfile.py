@@ -73,13 +73,10 @@ def pypy_setup(local_deps, session):
         local_deps = list(local_deps)
         local_deps.remove(DEPS["numpy"])
         local_deps = tuple(local_deps)
-        # Install NumPy and SciPy from pre-built wheels.
+        # Install NumPy and SciPy from pre-built wheels. Don't use ``DEPS``
+        # to specify version range for NumPy and SciPy.
         session.install(
-            "--no-index",
-            "--find-links",
-            WHEELHOUSE,
-            DEPS["numpy"],
-            DEPS["scipy"],
+            "--no-index", "--find-links", WHEELHOUSE, "numpy", "scipy"
         )
     return local_deps
 
@@ -353,9 +350,9 @@ def check_journal(session, machine):
     # Get a temporary file where the journal will be written.
     filehandle, journal_filename = tempfile.mkstemp(suffix="-journal.txt")
     os.close(filehandle)
-    # Set the journal environment variable and install ``bezier``.
+    # Set the journal environment variable and install ``bezier``. Making sure
+    # to limit to a single build job so commands are always in serial.
     session.install(DEPS["numpy"])  # Install requirement(s).
-    # Limit to a single build job so commands are always in serial.
     env = {"BEZIER_JOURNAL": journal_filename, "NPY_NUM_BUILD_JOBS": "1"}
     install_bezier(session, env=env)
     # Compare the expected file to the actual results.
