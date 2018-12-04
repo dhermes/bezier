@@ -61,3 +61,7 @@ install:
 
 test_script:
   - "python -m nox -s \"%NOX_SESSION%\""
+
+cache:
+  # Use the appveyor cache to avoid re-downloading large archives.
+  - '%APPDATA%\pip\Cache'
