@@ -152,7 +152,7 @@ DOCS_IMG = """\
 """
 CIRCLECI_BADGE = (
     "https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?"
-    "maxAge=3600&label=Linux"
+    "maxAge=3600&logo=circleci&label=Linux"
 )
 CIRCLECI_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
@@ -160,7 +160,7 @@ CIRCLECI_BADGE_RELEASE = (
 )
 TRAVIS_BADGE = (
     "https://img.shields.io/travis/dhermes/bezier/master.svg?"
-    "maxAge=3600&label=Mac%20OS%20X"
+    "maxAge=3600&logo=travis&label=Mac%20OS%20X"
 )
 TRAVIS_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
@@ -168,7 +168,7 @@ TRAVIS_BADGE_RELEASE = (
 )
 APPVEYOR_BADGE = (
     "https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?"
-    "maxAge=3600&label=Windows"
+    "maxAge=3600&logo=appveyor&label=Windows"
 )
 APPVEYOR_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
