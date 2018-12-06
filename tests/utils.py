@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import os
 import platform
 import sys
@@ -21,7 +22,7 @@ elif sys.maxsize == 2 ** 31 - 1:  # pragma: NO COVER
 else:  # pragma: NO COVER
     raise ImportError("Unexpected maxsize", sys.maxsize)
 
-IS_MAC_OS_X = sys.platform == "darwin"
+IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 IS_LINUX = sys.platform in ("linux", "linux2")
 IS_PYPY = platform.python_implementation() == "PyPy"

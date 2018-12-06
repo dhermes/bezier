@@ -29,7 +29,7 @@ C Headers
 
 The C headers for ``libbezier`` will be included in the installed package
 
-.. testsetup:: show-headers, show-lib, show-dll, os-x-dylibs
+.. testsetup:: show-headers, show-lib, show-dll, macos-dylibs
 
    import os
    import textwrap
@@ -100,7 +100,7 @@ The C headers for ``libbezier`` will be included in the installed package
 
    bezier.get_include = get_include
 
-   # OS X specific.
+   # macOS specific.
    base_dir = os.path.dirname(original_get_include())
    dylibs_directory = os.path.join(base_dir, ".dylibs")
 
@@ -121,7 +121,7 @@ The C headers for ``libbezier`` will be included in the installed package
        surface_intersection.h
      bezier.h
 
-.. testcleanup:: show-headers, show-lib, show-dll, os-x-dylibs
+.. testcleanup:: show-headers, show-lib, show-dll, macos-dylibs
 
    # Restore the monkey-patched functions.
    bezier.get_include = original_get_include
@@ -135,7 +135,7 @@ the headers.
 Static / Shared Library
 ***********************
 
-On Linux and Mac OS X, ``libbezier`` is included as a single static
+On Linux and macOS, ``libbezier`` is included as a single static
 library (i.e. a ``.a`` file):
 
 .. doctest:: show-lib
@@ -193,7 +193,7 @@ due to version conflicts, ABI incompatibility, a desire to use a different
 Fortran compiler (e.g. Intel's ``ifort``) and a host of other reasons.
 
 Some of the standard tooling for distributing wheels tries to address this. On
-Linux and Mac OS X, they address it by placing a copy of ``libgfortran`` (and
+Linux and macOS, they address it by placing a copy of ``libgfortran`` (and
 potentially its dependencies) in the built wheel. (On Windows, there is no
 standard tooling beyond that provided by ``distutils`` and ``setuptools``.)
 This means that libraries that depend on ``libbezier`` should also link
@@ -236,14 +236,14 @@ The ``bezier._speedup`` module depends on this local copy:
 
 .. _auditwheel: https://github.com/pypa/auditwheel
 
-Mac OS X
-========
+macOS
+=====
 
 The command line tool `delocate`_ adds a ``bezier/.dylibs`` directory
 with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 
-.. doctest:: os-x-dylibs
-   :mac-os-x-only:
+.. doctest:: macos-dylibs
+   :macos-only:
 
    >>> dylibs_directory
    '.../site-packages/bezier/.dylibs'
@@ -256,7 +256,7 @@ with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 The ``bezier._speedup`` module depends on the local copy
 of ``libgfortran``:
 
-.. testsetup:: os-x-extension, os-x-delocated-libgfortran
+.. testsetup:: macos-extension, macos-delocated-libgfortran
 
    import os
    import subprocess
@@ -277,9 +277,9 @@ of ``libgfortran``:
        print(output_bytes.decode("utf-8"))
        os.chdir(prev_cwd)
 
-.. doctest:: os-x-extension
+.. doctest:: macos-extension
    :options: +NORMALIZE_WHITESPACE
-   :mac-os-x-only:
+   :macos-only:
    :pyversion: >= 3.7
 
    >>> invoke_shell("otool", "-L", "_speedup.cpython-37m-darwin.so")
@@ -292,9 +292,9 @@ Though the Python extension module (``.so`` file) only depends on
 ``libgfortran``, it indirectly depends on ``libquadmath`` and
 ``libgcc_s``:
 
-.. doctest:: os-x-delocated-libgfortran
+.. doctest:: macos-delocated-libgfortran
    :options: +NORMALIZE_WHITESPACE
-   :mac-os-x-only:
+   :macos-only:
 
    >>> invoke_shell("otool", "-L", ".dylibs/libgfortran.5.dylib")
    $ otool -L .dylibs/libgfortran.5.dylib
@@ -460,7 +460,7 @@ provided by MinGW:
        libgcc_s_seh-1.dll
        libgfortran-3.dll
 
-Unlike Linux and Mac OS X, on Windows relocating and copying any dependencies
+Unlike Linux and macOS, on Windows relocating and copying any dependencies
 on MinGW (at either compile, link or run time) is explicitly avoided. By adding
 the ``-static`` flag
 
@@ -574,11 +574,11 @@ be stored of the compiler commands invoked to build the extension:
 For examples, see:
 
 * `Linux journal`_
-* `Mac OS X journal`_
+* `macOS journal`_
 * `Windows journal`_
 
 .. _Linux journal: https://github.com/dhermes/bezier/blob/master/.circleci/expected_journal.txt
-.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/master/scripts/macos/travis_journal.txt
+.. _macOS journal: https://github.com/dhermes/bezier/blob/master/scripts/macos/travis_journal.txt
 .. _Windows journal: https://github.com/dhermes/bezier/blob/master/appveyor/expected_journal.txt
 
 ***************************

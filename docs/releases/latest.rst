@@ -118,7 +118,7 @@ Build
    This way, when installing from source (either via a local checkout or from
    the source distribution on PyPI) the most optimal machine instructions will
    be produced. Fixed `#99 <https://github.com/dhermes/bezier/issues/99>`__.
--  Removing all traces of 32-bit support for OS X
+-  Removing all traces of 32-bit support for macOS
    (`d7620ad <https://github.com/dhermes/bezier/commit/d7620adb862ed6f9be9d2615916f789c3c24c52f>`__).
    This was driven by a
    `decision <https://github.com/numpy/numpy/issues/11625>`__ from the NumPy

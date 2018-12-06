@@ -40,10 +40,10 @@ else
     exit 1
 fi
 
-# ``readlink -f`` is not our friend on OS X.
+# ``readlink -f`` is not our friend on macOS.
 SCRIPT_FI=$(${PY_BIN} -c "import os; print(os.path.realpath('${0}'))")
-OSX_DIR=$(dirname ${SCRIPT_FI})
-SCRIPTS_DIR=$(dirname ${OSX_DIR})
+MACOS_DIR=$(dirname ${SCRIPT_FI})
+SCRIPTS_DIR=$(dirname ${MACOS_DIR})
 REPO_ROOT=$(dirname ${SCRIPTS_DIR})
 
 # Make sure packaging tools are installed / up-to-date.
@@ -55,13 +55,13 @@ ${PY_BIN} -m pip install --upgrade setuptools numpy
 export BEZIER_WHEEL=True
 
 # Create the wheel.
-DIST_WHEELS="${OSX_DIR}/dist_wheels"
+DIST_WHEELS="${MACOS_DIR}/dist_wheels"
 mkdir -p ${DIST_WHEELS}
 ${PY_BIN} -m pip wheel ${REPO_ROOT} \
     --wheel-dir ${DIST_WHEELS}
 
 # Delocate the wheel.
-FIXED_WHEELS="${OSX_DIR}/fixed_wheels"
+FIXED_WHEELS="${MACOS_DIR}/fixed_wheels"
 mkdir -p ${FIXED_WHEELS}
 # NOTE: This intentionally does not use ``--check-archs``. We only
 #       support 64-bit binaries (due to ``libgfortran`` and NumPy) but
@@ -73,7 +73,7 @@ ${DELOCATE_WHEEL} \
     ${DIST_WHEELS}/${PKG_NAME}*${PY_TAG}*.whl
 
 # Test out the newly created wheel in a virtual environment.
-VENV="${OSX_DIR}/test-venv"
+VENV="${MACOS_DIR}/test-venv"
 ${PY_BIN} -m virtualenv ${VENV}
 ${VENV}/bin/python -m pip install \
     --upgrade \

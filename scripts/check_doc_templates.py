@@ -160,7 +160,7 @@ CIRCLECI_BADGE_RELEASE = (
 )
 TRAVIS_BADGE = (
     "https://img.shields.io/travis/dhermes/bezier/master.svg?"
-    "maxAge=3600&logo=travis&label=Mac%20OS%20X"
+    "maxAge=3600&logo=travis&label=macOS"
 )
 TRAVIS_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"

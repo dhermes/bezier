@@ -171,7 +171,7 @@ details, see `the LICENSE`_.
 .. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?maxAge=3600&logo=circleci&label=Linux
    :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
-.. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/master.svg?maxAge=3600&logo=travis&label=Mac%20OS%20X
+.. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/master.svg?maxAge=3600&logo=travis&label=macOS
    :target: https://travis-ci.org/dhermes/bezier
    :alt: Travis Build
 .. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?maxAge=3600&logo=appveyor&label=Windows

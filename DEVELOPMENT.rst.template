@@ -16,7 +16,7 @@ In order to add a feature to ``bezier``:
    feature may catch maintainer(s) off guard).
 
 #. **Add tests**: The feature must work fully on the following
-   CPython versions: 2.7, 3.6 and 3.7 on Linux, Mac OS X and Windows.
+   CPython versions: 2.7, 3.6 and 3.7 on Linux, macOS and Windows.
    In addition, the feature should have 100% line coverage.
 
 #. **Documentation**: The feature must (should) be documented with
@@ -71,7 +71,7 @@ be written there:
 
 The ``nox`` session ``check_journal`` uses this journaling option to verify
 the commands used to compile the extensions in Linux on `CircleCI`_, in
-Mac OS X on `Travis CI`_ and in Windows on `AppVeyor`_.
+macOS on `Travis CI`_ and in Windows on `AppVeyor`_.
 
 As the build complexity grows, it may make more sense to transition the steps
 out of Python and into `CMake`_, `SCons`_ or another build tool.
@@ -429,7 +429,7 @@ To regenerate all the images:
 Continuous Integration
 **********************
 
-Tests are run on `CircleCI`_ (Linux), `Travis CI`_ (Mac OS X) and
+Tests are run on `CircleCI`_ (Linux), `Travis CI`_ (macOS) and
 `AppVeyor`_ (Windows) after every commit. To see which tests are run, see
 the `CircleCI config`_, the `Travis config`_ and the `AppVeyor config`_.
 
@@ -440,7 +440,7 @@ Python versions we test in. The image used in our CircleCI builds (from
 ``nox`` and NumPy).
 
 On Travis CI, Matthew Brett's `multibuild`_ is used to install "official"
-python.org CPython binaries for Mac OS X. Then tests are run in both 64-bit
+python.org CPython binaries for macOS. Then tests are run in both 64-bit
 mode (NumPy has `discontinued`_ 32-bit support).
 
 On AppVeyor, all extensions are built and tested with both 32-bit and 64-bit
@@ -477,7 +477,7 @@ reasons:
   completed (will be the build that occurred when the tag was pushed). If
   the builds pushed to PyPI automatically, a build would need to
   link to itself **while** being run.
-* Wheels need be built for Linux, Mac OS X and Windows. This process
+* Wheels need be built for Linux, macOS and Windows. This process
   is **becoming** better, but is still scattered across many
   different build systems. Each wheel will be pushed directly to
   PyPI via `twine`_.

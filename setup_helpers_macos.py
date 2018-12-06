@@ -10,18 +10,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helpers for ``setup.py`` specific to OS X."""
+"""Helpers for ``setup.py`` specific to macOS."""
 
 import sys
 
 import setup_helpers
 
 
-MAC_OS_X = "darwin"
+MAC_OS = "darwin"
 
 
-def is_osx_gfortran(f90_compiler):
-    """Checks if the current build is ``gfortran`` on OS X.
+def is_macos_gfortran(f90_compiler):
+    """Checks if the current build is ``gfortran`` on macOS.
 
     Args:
         f90_compiler (numpy.distutils.fcompiler.FCompiler): A Fortran compiler
@@ -30,15 +30,15 @@ def is_osx_gfortran(f90_compiler):
     Returns:
         bool: Only :data:`True` if
 
-        * Current OS is OS X (checked via ``sys.platform``).
+        * Current OS is macOS (checked via ``sys.platform``).
         * ``f90_compiler`` corresponds to ``gfortran``.
     """
     # NOTE: NumPy may not be installed, but we don't want **this** module to
     #       cause an import failure.
     from numpy.distutils.fcompiler import gnu
 
-    # Only Mac OS X.
-    if sys.platform != MAC_OS_X:
+    # Only macOS.
+    if sys.platform != MAC_OS:
         return False
 
     # Only ``gfortran``.
@@ -51,7 +51,7 @@ def is_osx_gfortran(f90_compiler):
 def patch_f90_compiler(f90_compiler):
     """Patch up ``f90_compiler.library_dirs``.
 
-    On Mac OS X, a Homebrew installed ``gfortran`` needs some help. The
+    On macOS, a Homebrew installed ``gfortran`` needs some help. The
     ``numpy.distutils`` "default" constructor for ``Gnu95FCompiler`` only has
     a single library search path, but there are many library paths included in
     the full ``gcc`` install.
@@ -60,7 +60,7 @@ def patch_f90_compiler(f90_compiler):
         f90_compiler (numpy.distutils.fcompiler.FCompiler): A Fortran compiler
             instance.
     """
-    if not is_osx_gfortran(f90_compiler):
+    if not is_macos_gfortran(f90_compiler):
         return
 
     library_dirs = f90_compiler.library_dirs

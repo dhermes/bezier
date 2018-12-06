@@ -23,9 +23,9 @@
 set -e
 
 PREFIX="/Library/Frameworks/Python.framework/Versions"
-# ``readlink -f`` is not our friend on OS X.
+# ``readlink -f`` is not our friend on macOS.
 SCRIPT_FI=$(python -c "import os; print(os.path.realpath('${0}'))")
-OSX_SCRIPTS_DIR=$(dirname ${SCRIPT_FI})
+MACOS_SCRIPTS_DIR=$(dirname ${SCRIPT_FI})
 
 if [[ -z "${PY_VERSION}" ]]; then
     echo "PY_VERSION environment variable should be set by the caller."
@@ -65,4 +65,4 @@ ${PY_BIN_DIR}/python -m pip install --upgrade "nox >= 2018.10.15" numpy
 export PATH="${PY_BIN_DIR}:${PATH}"
 
 # Finally, run the tests.
-${OSX_SCRIPTS_DIR}/test.sh
+${MACOS_SCRIPTS_DIR}/test.sh

@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Add some features to ``sphinx.ext.doctest``.
 
 Does so by monkey-patching the ``option_spec`` in
@@ -20,7 +21,7 @@ Does so by monkey-patching the ``option_spec`` in
 with some extra options:
 
 * ``:linux-only:``
-* ``:mac-os-x-only:``
+* ``:macos-only:``
 * ``:windows-skip:``
 * ``:windows-only:``
 
@@ -43,12 +44,12 @@ import sphinx.ext.doctest
 
 IS_WINDOWS = os.name == "nt"
 IS_LINUX = sys.platform in ("linux", "linux2")
-IS_MAC_OS_X = sys.platform == "darwin"
+IS_MACOS = sys.platform == "darwin"
 LINUX_ONLY = "linux-only"
-MAC_OS_X_ONLY = "mac-os-x-only"
+MACOS_ONLY = "macos-only"
 WINDOWS_ONLY = "windows-only"
 WINDOWS_SKIP = "windows-skip"
-OPTION_NAMES = (LINUX_ONLY, MAC_OS_X_ONLY, WINDOWS_ONLY, WINDOWS_SKIP)
+OPTION_NAMES = (LINUX_ONLY, MACOS_ONLY, WINDOWS_ONLY, WINDOWS_SKIP)
 OLD_RUN = sphinx.ext.doctest.TestDirective.run
 SKIP_FLAG = doctest.OPTIONFLAGS_BY_NAME["SKIP"]
 
@@ -80,8 +81,8 @@ def custom_run(directive):
     if LINUX_ONLY in directive.options:
         if not IS_LINUX:
             node["options"][SKIP_FLAG] = True
-    if MAC_OS_X_ONLY in directive.options:
-        if not IS_MAC_OS_X:
+    if MACOS_ONLY in directive.options:
+        if not IS_MACOS:
             node["options"][SKIP_FLAG] = True
     if WINDOWS_ONLY in directive.options:
         if not IS_WINDOWS:

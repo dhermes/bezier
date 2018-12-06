@@ -22,7 +22,7 @@ import py.path
 
 nox.options.error_on_external_run = True
 
-IS_MAC_OS_X = sys.platform == "darwin"
+IS_MACOS = sys.platform == "darwin"
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
     "coverage": "coverage",
@@ -55,11 +55,11 @@ ALL_INTERPRETERS = ("2.7", "2.7-32", "3.6", "3.6-32", "3.7", "3.7-32", PYPY)
 # Constants used for checking the journal of commands.
 APPVEYOR = "appveyor"
 CIRCLE_CI = "circleci"
-TRAVIS_OS_X = "travis-osx"
+TRAVIS_MACOS = "travis-macos"
 JOURNAL_PATHS = {
     APPVEYOR: os.path.join("appveyor", "expected_journal.txt"),
     CIRCLE_CI: os.path.join(".circleci", "expected_journal.txt"),
-    TRAVIS_OS_X: os.path.join("scripts", "osx", "travis_journal.txt"),
+    TRAVIS_MACOS: os.path.join("scripts", "macos", "travis_journal.txt"),
 }
 
 
@@ -226,8 +226,8 @@ def doctest(session):
     # Install all dependencies.
     session.install(*DOCS_DEPS)
     # Install this package.
-    if IS_MAC_OS_X:
-        command = get_path("scripts", "osx", "nox-install-for-doctest.sh")
+    if IS_MACOS:
+        command = get_path("scripts", "macos", "nox-install-for-doctest.sh")
         session.run(command, external=True)
     else:
         install_bezier(session)
@@ -335,17 +335,17 @@ def lint(session):
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
-@nox.parametrize("machine", [APPVEYOR, CIRCLE_CI, TRAVIS_OS_X])
+@nox.parametrize("machine", [APPVEYOR, CIRCLE_CI, TRAVIS_MACOS])
 def check_journal(session, machine):
     if machine == APPVEYOR and not ON_APPVEYOR:
         session.skip("Not currently running in AppVeyor.")
     if machine == CIRCLE_CI and os.environ.get("CIRCLECI") != "true":
         session.skip("Not currently running in CircleCI.")
-    if machine == TRAVIS_OS_X:
+    if machine == TRAVIS_MACOS:
         if os.environ.get("TRAVIS") != "true":
             session.skip("Not currently running in Travis.")
         if os.environ.get("TRAVIS_OS_NAME") != "osx":
-            session.skip("Running in Travis, but not in an OS X job.")
+            session.skip("Running in Travis, but not in a macOS job.")
 
     # Get a temporary file where the journal will be written.
     filehandle, journal_filename = tempfile.mkstemp(suffix="-journal.txt")
@@ -388,9 +388,9 @@ def clean(session):
         get_path("dist"),
         get_path("docs", "__pycache__"),
         get_path("docs", "build"),
-        get_path("scripts", "osx", "__pycache__"),
-        get_path("scripts", "osx", "dist_wheels"),
-        get_path("scripts", "osx", "fixed_wheels"),
+        get_path("scripts", "macos", "__pycache__"),
+        get_path("scripts", "macos", "dist_wheels"),
+        get_path("scripts", "macos", "fixed_wheels"),
         get_path("src", "bezier.egg-info"),
         get_path("src", "bezier", "__pycache__"),
         get_path("src", "bezier", "extra-dll"),

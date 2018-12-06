@@ -112,7 +112,7 @@ def setup():
         packages=["bezier"],
         package_dir={"": "src"},
         license="Apache 2.0",
-        platforms="Posix; MacOS X; Windows",
+        platforms="Posix; macOS; Windows",
         package_data={
             "bezier": [
                 "*.pxd",
