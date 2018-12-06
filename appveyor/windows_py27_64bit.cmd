@@ -1,11 +1,11 @@
-:: To build extensions for 64 bit Python 3.5 or later no special environment
+:: To build extensions for 64-bit Python 3.5 or later no special environment
 :: needs to be configured.
 ::
-:: To build extensions for 64 bit Python 2, we need to configure environment
+:: To build extensions for 64-bit Python 2, we need to configure environment
 :: variables to use the MSVC 2008 C++ compilers from GRMSDKX_EN_DVD.iso of:
 :: MS Windows SDK for Windows 7 and .NET Framework 3.5 (SDK v7.0)
 ::
-:: 32 bit builds do not require specific environment configurations.
+:: 32-bit builds do not require specific environment configurations.
 ::
 :: Note: this script needs to be run with the /E:ON and /V:ON flags for the
 :: cmd interpreter, at least for (SDK v7.0)
@@ -29,7 +29,7 @@ SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
 SET WINDOWS_SDK_VERSION="v7.0"
 
 (
-    ECHO Configuring Windows SDK %WINDOWS_SDK_VERSION% for Python 2 on a 64 bit architecture
+    ECHO Configuring Windows SDK %WINDOWS_SDK_VERSION% for Python 2 on a 64-bit architecture
     SET DISTUTILS_USE_SDK=1
     SET MSSdk=1
     "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Setup\WindowsSdkVer.exe" -q -version:%WINDOWS_SDK_VERSION%
