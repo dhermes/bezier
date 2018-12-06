@@ -58,7 +58,7 @@ variable:
 Using ``distutils`` and ``numpy.distutils`` to compile Fortran is not
 "fully-supported" (i.e. the tooling is ad-hoc). As a result, there is a
 decent amount of code in ``setup.py``, ``setup_helpers.py``,
-``setup_helpers_osx.py`` and ``setup_helpers_windows.py`` to specify the build
+``setup_helpers_macos.py`` and ``setup_helpers_windows.py`` to specify the build
 process. To make sure these are working as expected, it's possible to
 track **how** extensions are being installed. To actually make sure the
 correct compiler commands are invoked, provide a filename as the

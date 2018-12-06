@@ -21,7 +21,7 @@ import pkg_resources
 import setuptools
 
 import setup_helpers
-import setup_helpers_osx
+import setup_helpers_macos
 import setup_helpers_windows
 
 
@@ -148,7 +148,7 @@ def main():
     # Add any "patches" needed for the Fortran compiler.
     setup_helpers.BuildFortranThenExt.PATCH_FUNCTIONS[:] = [
         setup_helpers.patch_f90_compiler,
-        setup_helpers_osx.patch_f90_compiler,
+        setup_helpers_macos.patch_f90_compiler,
         setup_helpers_windows.patch_f90_compiler,
     ]
     setup_helpers_windows.patch_cmd(setup_helpers.BuildFortranThenExt)

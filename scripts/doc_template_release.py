@@ -62,7 +62,7 @@ def get_version():
     """
     # "Spoof" the ``setup.py`` helper modules.
     sys.modules["setup_helpers"] = object()
-    sys.modules["setup_helpers_osx"] = object()
+    sys.modules["setup_helpers_macos"] = object()
     sys.modules["setup_helpers_windows"] = object()
     filename = os.path.join(_ROOT_DIR, "setup.py")
     loader = importlib.machinery.SourceFileLoader("setup", filename)
