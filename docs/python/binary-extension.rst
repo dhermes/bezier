@@ -578,7 +578,7 @@ For examples, see:
 * `Windows journal`_
 
 .. _Linux journal: https://github.com/dhermes/bezier/blob/master/.circleci/expected_journal.txt
-.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/master/scripts/osx/travis_journal.txt
+.. _Mac OS X journal: https://github.com/dhermes/bezier/blob/master/scripts/macos/travis_journal.txt
 .. _Windows journal: https://github.com/dhermes/bezier/blob/master/appveyor/expected_journal.txt
 
 ***************************

@@ -21,8 +21,8 @@ src/bezier/*.o
 src/bezier/quadpack/*.o
 src/bezier/_speedup*.so
 wheelhouse/
-scripts/osx/dist_wheels/
-scripts/osx/fixed_wheels/
+scripts/macos/dist_wheels/
+scripts/macos/fixed_wheels/
 tests/fortran/*.gcda
 tests/fortran/*.gcno
 tests/fortran/*.o

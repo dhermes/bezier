@@ -17,7 +17,7 @@ matrix:
         - PY_VERSION=3.7
 
 install:
-  - source scripts/osx/travis-setup.sh
+  - source scripts/macos/travis-setup.sh
 
 script:
-  - scripts/osx/test.sh
+  - scripts/macos/test.sh
