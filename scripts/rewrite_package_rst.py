@@ -31,10 +31,10 @@ bezier package
 ==============
 
 .. automodule:: bezier
-    :members:
-    :inherited-members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :inherited-members:
+   :undoc-members:
+   :show-inheritance:
 
 Submodules
 ----------
@@ -44,7 +44,6 @@ Submodules
    bezier.curve
    bezier.curved_polygon
    bezier.surface
-
 """
 DESIRED_TEMPLATE = """\
 bezier package
