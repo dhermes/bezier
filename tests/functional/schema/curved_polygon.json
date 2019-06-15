@@ -11,7 +11,7 @@
                 "type": "array",
                 "items": {
                     "description": "A coordinate as a numerical value.",
-                    "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/numerical.json"
+                    "$ref": "./numerical.json"
                 },
                 "minItems": 2
             },
@@ -23,7 +23,7 @@
             "type": "array",
             "items": {
                 "description": "A parameter as a numerical value.",
-                "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/numerical.json"
+                "$ref": "./numerical.json"
             }
         },
         "end_params": {
@@ -31,7 +31,7 @@
             "type": "array",
             "items": {
                 "description": "A parameter as a numerical value.",
-                "$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/numerical.json"
+                "$ref": "./numerical.json"
             }
         },
         "edge_list": {
@@ -39,7 +39,7 @@
             "type": "array",
             "items": {
                 "description": "A ``hybrid'' index. The values {0, 1, 2} indicate an edge on the first surface and the values {3, 4, 5} indicate an edge on the second surface.",
-                "type": "integer",
+                "type": "integer"
             }
         },
         "start_param_polys": {

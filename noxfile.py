@@ -30,6 +30,7 @@ DEPS = {
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
+    "jsonschema": "jsonschema >= 3.0.1",
     "lcov_cobertura": "lcov_cobertura",
     "matplotlib": "matplotlib >= 3.0.2",
     "mock": "mock >= 2.0.0",
@@ -451,3 +452,13 @@ def fortran_unit(session):
     )
     session.chdir(test_dir)
     session.run("make", "clean", external=True)
+
+
+@nox.session(py=DEFAULT_INTERPRETER)
+def validate_functional_test_cases(session):
+    # Install all dependencies.
+    session.install(DEPS["jsonschema"])
+
+    session.run(
+        "python", get_path("scripts", "validate_functional_test_cases.py")
+    )

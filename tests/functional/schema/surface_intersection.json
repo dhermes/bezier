@@ -26,7 +26,7 @@
                 "description": "Either a curved polygon that occurs within the surface-surface intersection or a boolean. If a boolean, `true` indicates that the intersection is the first surface (i.e. it's fully contained in the second) and `false` indicates that the intersection is the second surface.",
                 "oneOf": [
                     {"type": "boolean"},
-                    {"$ref": "https://raw.githubusercontent.com/dhermes/bezier/master/tests/functional/schema/curved_polygon.json"}
+                    {"$ref": "./curved_polygon.json"}
                 ]
             }
         }
