@@ -40,7 +40,7 @@ DEPS = {
     "pylint": "pylint",
     "pytest": "pytest >= 4.6.3",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.3.0",
+    "scipy": "scipy >= 1.2.2",
     "seaborn": "seaborn >= 0.9.0",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
