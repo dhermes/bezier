@@ -40,6 +40,9 @@ jobs:
           name: Lint code for style issues
           command: nox -s lint
       - run:
+          name: Check that test case examples are valid for JSON schema
+          command: nox -s validate_functional_test_cases
+      - run:
           name: Check the journaled `build_ext` commands
           command: nox -s "check_journal(machine='circleci')"
       - deploy:
