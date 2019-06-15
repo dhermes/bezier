@@ -2,11 +2,11 @@ FROM dhermes/python-multi
 
 # Install the current versions of nox and NumPy.
 RUN python3.7 -m pip install --no-cache-dir \
-  colorlog==3.1.4 \
-  nox==2018.10.15 \
-  numpy==1.15.2 \
-  py==1.7.0 \
-  virtualenv==16.0.0
+  colorlog==3.2.0 \
+  nox==2019.5.30 \
+  numpy==1.16.4 \
+  py==1.8.0 \
+  virtualenv==16.6.0
 
 # Install `gfortran` (for Fortran extensions), `libatlas-base-dev`,
 # `libblas-dev`, `liblapack-dev` (for SciPy) and `lcov` for
@@ -29,9 +29,9 @@ RUN for PYPY in pypy pypy3; do \
     && virtualenv --python=${PYPY} pypy-env \
     && pypy-env/bin/python -m pip install --upgrade pip wheel \
     && mkdir /wheelhouse-${PYPY} \
-    && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse-${PYPY} numpy==1.15.2 \
+    && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse-${PYPY} numpy==1.15.4 \
     && pypy-env/bin/python -m pip install /wheelhouse-${PYPY}/numpy*.whl \
-    && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse-${PYPY} scipy==1.1.0 \
+    && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse-${PYPY} scipy==1.2.2 \
     && rm -fr pypy-env \
   ; done
 
