@@ -512,7 +512,7 @@
         "curve2": "23",
         "id": 26,
         "type": "no-intersection",
-        "intersections": [],
+        "intersections": [[], []],
         "curve1_params": [],
         "curve2_params": []
     }, {
@@ -520,7 +520,7 @@
         "curve2": "31",
         "id": 27,
         "type": "no-intersection",
-        "intersections": [],
+        "intersections": [[], []],
         "curve1_params": [],
         "curve2_params": []
     }, {
@@ -588,7 +588,7 @@
         "curve2": "41",
         "id": 32,
         "type": "no-intersection",
-        "intersections": [],
+        "intersections": [[], []],
         "curve1_params": [],
         "curve2_params": []
     }, {
