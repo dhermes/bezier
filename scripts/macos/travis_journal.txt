@@ -339,9 +339,9 @@ $ gcc \
 >   build/temp.macosx-10.6-intel-3.7/src/bezier/quadpack/dqpsrt.o \
 >   build/temp.macosx-10.6-intel-3.7/src/bezier/quadpack/dqk21.o \
 >   build/temp.macosx-10.6-intel-3.7/src/bezier/quadpack/dqagse.o \
->   -L/usr/local/Cellar/gcc/8.2.0/lib/gcc/8 \
->   -L/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin17.7.0/8.2.0 \
->   -L/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin17.7.0/8.2.0/../../.. \
+>   -L/usr/local/Cellar/gcc/9.1.0/lib/gcc/9 \
+>   -L/usr/local/Cellar/gcc/9.1.0/lib/gcc/9/gcc/x86_64-apple-darwin17/9.1.0 \
+>   -L/usr/local/Cellar/gcc/9.1.0/lib/gcc/9/gcc/x86_64-apple-darwin17/9.1.0/../../.. \
 >   -lgfortran \
 >   -o \
 >   build/lib.macosx-10.6-intel-3.7/bezier/_speedup.cpython-37m-darwin.so
