@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "description": "A description of a curve polygon that has occurred as an intersection between two B\\u00e9zier surfaces. The curved polygon edges will be described in terms of the two surfaces they intersect. A curved polygon can be completely described from its edges and each edge will be given as a segment from an edge of one of the two intersected surfaces.",
+    "description": "A description of a curved polygon that has occurred as an intersection between two B\\u00e9zier surfaces. The curved polygon edges will be described in terms of the two surfaces they intersect. A curved polygon can be completely described from its edges and each edge will be given as a segment from an edge of one of the two intersected surfaces.",
     "type": "object",
     "properties": {
         "nodes": {
