@@ -33,7 +33,6 @@ DEPS = {
     "jsonschema": "jsonschema >= 3.0.2",
     "lcov_cobertura": "lcov_cobertura",
     "matplotlib": "matplotlib >= 3.1.1",
-    "mock": "mock >= 3.0.5",
     "numpy": "numpy >= 1.17.0",
     "pycobertura": "pycobertura",
     "Pygments": "Pygments",
@@ -51,7 +50,7 @@ DOCS_DEPS = (
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
 DEFAULT_INTERPRETER = "3.7"
-PYPY = "pypy"
+PYPY = "pypy3"
 ALL_INTERPRETERS = ("3.6", "3.6-32", "3.7", "3.7-32", PYPY)
 # Constants used for checking the journal of commands.
 APPVEYOR = "appveyor"
@@ -124,8 +123,6 @@ def unit(session):
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
         local_deps = BASE_DEPS + (DEPS["scipy"],)
-    if interpreter == PYPY:
-        local_deps += (DEPS["mock"],)
 
     # Install all test dependencies.
     session.install(*local_deps)
@@ -161,8 +158,6 @@ def functional(session):
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
         local_deps = BASE_DEPS
-    if interpreter == PYPY:
-        local_deps += (DEPS["mock"],)
 
     # Install all test dependencies.
     session.install(*local_deps)

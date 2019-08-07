@@ -115,7 +115,7 @@ We recommend using `Nox`_ to run unit tests:
 
    $ nox -s "unit-3.6"
    $ nox -s "unit-3.7"
-   $ nox -s "unit-pypy"
+   $ nox -s "unit-pypy3"
    $ nox -s  unit  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
@@ -125,7 +125,7 @@ manage dependencies or build extensions):
 
    $ PYTHONPATH=src/ python3.6 -m pytest tests/unit/
    $ PYTHONPATH=src/ python3.7 -m pytest tests/unit/
-   $ PYTHONPATH=src/ pypy      -m pytest tests/unit/
+   $ PYTHONPATH=src/ pypy3     -m pytest tests/unit/
 
 .. _Nox: https://nox.readthedocs.io
 .. _pytest: https://docs.pytest.org
@@ -203,17 +203,17 @@ prohibitive to create a new environment for testing.
 
 In order to avoid this penalty, the ``WHEELHOUSE`` environment
 variable can be used to instruct ``nox`` to install NumPy and SciPy
-from locally built wheels when installing the ``pypy`` sessions.
+from locally built wheels when installing the ``pypy3`` sessions.
 
 To pre-build NumPy and SciPy wheels:
 
 .. code-block:: console
 
-   $ pypy -m virtualenv pypy-venv
-   $ pypy-venv/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} numpy
-   $ pypy-venv/bin/python -m pip install ${WHEELHOUSE}/numpy*.whl
-   $ pypy-venv/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} scipy
-   $ rm -fr pypy-venv/
+   $ pypy3 -m virtualenv pypy3-venv
+   $ pypy3-venv/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} numpy
+   $ pypy3-venv/bin/python -m pip install ${WHEELHOUSE}/numpy*.whl
+   $ pypy3-venv/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} scipy
+   $ rm -fr pypy3-venv/
 
 Alternatively, wheels can be downloaded from `pypy-wheels`_, however
 the SciPy wheel will still require ``libatlas-dev``, ``libblas-dev`` and
@@ -246,12 +246,12 @@ To run the functional tests:
 
    $ nox -s "functional-3.6"
    $ nox -s "functional-3.7"
-   $ nox -s "functional-pypy"
+   $ nox -s "functional-pypy3"
    $ nox -s  functional  # Run all versions
    $ # OR
    $ PYTHONPATH=src/ python3.6 -m pytest tests/functional/
    $ PYTHONPATH=src/ python3.7 -m pytest tests/functional/
-   $ PYTHONPATH=src/ pypy      -m pytest tests/functional/
+   $ PYTHONPATH=src/ pypy3     -m pytest tests/functional/
 
 .. _functional tests: https://github.com/dhermes/bezier/tree/master/tests/functional
 
@@ -539,7 +539,7 @@ and for running tests and interacting with Continuous Integration
 services:
 
 - ``WHEELHOUSE``: If set, this gives a path to prebuilt NumPy and SciPy wheels
-  for PyPy.
+  for PyPy 3.
 - ``GENERATE_IMAGES``: Indicates to ``nox -s doctest`` that images should
   be generated during cleanup of each test case.
 - ``APPVEYOR``: Indicates currently running on AppVeyor.

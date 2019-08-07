@@ -299,11 +299,10 @@ Though the Python extension module (``.so`` file) only depends on
    >>> invoke_shell("otool", "-L", ".dylibs/libgfortran.5.dylib")
    $ otool -L .dylibs/libgfortran.5.dylib
    .dylibs/libgfortran.5.dylib:
-           /DLC/bezier/libgfortran.5.dylib (...)
-           @loader_path/libquadmath.0.dylib (...)
-           /usr/lib/libz.1.dylib (...)
-           /usr/lib/libSystem.B.dylib (...)
-           @loader_path/libgcc_s.1.dylib (...)
+       /DLC/bezier/libgfortran.5.dylib (...)
+       @loader_path/libquadmath.0.dylib (...)
+       /usr/lib/libSystem.B.dylib (...)
+       @loader_path/libgcc_s.1.dylib (...)
 
 .. note::
 

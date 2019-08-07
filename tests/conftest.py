@@ -18,9 +18,6 @@ This
   ``py.test --durations=N``.
 """
 
-import sys
-import unittest
-
 import pytest
 
 try:

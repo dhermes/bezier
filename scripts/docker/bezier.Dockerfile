@@ -23,20 +23,12 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && rm -f /var/cache/apt/archives/*.deb
 
-# Build NumPy and SciPy wheels for PyPy since it takes a bit of time.
-RUN for PYPY in pypy pypy3; do \
-  set -ex \
-    && virtualenv --python=${PYPY} pypy-env \
-    && pypy-env/bin/python -m pip install --upgrade pip wheel \
-    && mkdir /wheelhouse-${PYPY} \
-    && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse-${PYPY} numpy==1.15.4 \
-    && pypy-env/bin/python -m pip install /wheelhouse-${PYPY}/numpy*.whl \
-    && pypy-env/bin/python -m pip wheel --wheel-dir=/wheelhouse-${PYPY} scipy==1.2.2 \
-    && rm -fr pypy-env \
-  ; done
-
-# Combine the version specific wheelhouses into one directory.
-RUN mkdir /wheelhouse \
-  && mv /wheelhouse-pypy/* /wheelhouse \
-  && mv /wheelhouse-pypy3/* /wheelhouse \
-  && rm -fr /wheelhouse-pypy /wheelhouse-pypy3
+# Build NumPy and SciPy wheels for PyPy 3 since it takes a bit of time.
+RUN mkdir /wheelhouse
+RUN set -ex \
+  && virtualenv --python=pypy3 pypy3-env \
+  && pypy3-env/bin/python -m pip install --upgrade pip wheel \
+  && pypy3-env/bin/python -m pip wheel --wheel-dir=/wheelhouse numpy==1.17.0 \
+  && pypy3-env/bin/python -m pip install /wheelhouse/numpy*.whl \
+  && pypy3-env/bin/python -m pip wheel --wheel-dir=/wheelhouse scipy==1.3.0 \
+  && rm -fr pypy3-env
