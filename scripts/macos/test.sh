@@ -24,9 +24,7 @@ if [[ -z "${PY_BIN_DIR}" ]]; then
     exit 1
 fi
 
-if [[ "${PY_VERSION}" == "2.7" ]]; then
-    ${PY_BIN_DIR}/nox -s "unit-2.7"
-elif [[ "${PY_VERSION}" == "3.6" ]]; then
+if [[ "${PY_VERSION}" == "3.6" ]]; then
     ${PY_BIN_DIR}/nox -s "unit-3.6"
 elif [[ "${PY_VERSION}" == "3.7" ]]; then
     ${PY_BIN_DIR}/nox -s cover

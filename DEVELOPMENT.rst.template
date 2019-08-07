@@ -16,7 +16,7 @@ In order to add a feature to ``bezier``:
    feature may catch maintainer(s) off guard).
 
 #. **Add tests**: The feature must work fully on the following
-   CPython versions: 2.7, 3.6 and 3.7 on Linux, macOS and Windows.
+   CPython versions: 3.6 and 3.7 on Linux, macOS and Windows.
    In addition, the feature should have 100% line coverage.
 
 #. **Documentation**: The feature must (should) be documented with
@@ -113,7 +113,6 @@ We recommend using `Nox`_ to run unit tests:
 
 .. code-block:: console
 
-   $ nox -s "unit-2.7"
    $ nox -s "unit-3.6"
    $ nox -s "unit-3.7"
    $ nox -s "unit-pypy"
@@ -124,7 +123,6 @@ manage dependencies or build extensions):
 
 .. code-block:: console
 
-   $ PYTHONPATH=src/ python2.7 -m pytest tests/unit/
    $ PYTHONPATH=src/ python3.6 -m pytest tests/unit/
    $ PYTHONPATH=src/ python3.7 -m pytest tests/unit/
    $ PYTHONPATH=src/ pypy      -m pytest tests/unit/
@@ -181,7 +179,6 @@ marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
 
-   $ nox -s "unit-2.7" -- --ignore-slow
    $ nox -s "unit-3.6" -- --ignore-slow
    $ nox -s "unit-3.7" -- --ignore-slow
    $ nox -s  unit      -- --ignore-slow
@@ -247,13 +244,11 @@ To run the functional tests:
 
 .. code-block:: console
 
-   $ nox -s "functional-2.7"
    $ nox -s "functional-3.6"
    $ nox -s "functional-3.7"
    $ nox -s "functional-pypy"
    $ nox -s  functional  # Run all versions
    $ # OR
-   $ PYTHONPATH=src/ python2.7 -m pytest tests/functional/
    $ PYTHONPATH=src/ python3.6 -m pytest tests/functional/
    $ PYTHONPATH=src/ python3.7 -m pytest tests/functional/
    $ PYTHONPATH=src/ pypy      -m pytest tests/functional/
@@ -494,11 +489,9 @@ Supported Python Versions
 
 ``bezier`` explicitly supports:
 
--  `Python 2.7`_
 -  `Python 3.6`_
 -  `Python 3.7`_
 
-.. _Python 2.7: https://docs.python.org/2.7/
 .. _Python 3.6: https://docs.python.org/3.6/
 .. _Python 3.7: https://docs.python.org/3.7/
 

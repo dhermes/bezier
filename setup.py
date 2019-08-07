@@ -32,7 +32,6 @@ NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
 $ python    -m pip install numpy
-$ python2.7 -m pip install numpy
 $ python3.7 -m pip install numpy
 $ # OR
 $ conda install numpy
@@ -49,8 +48,8 @@ building of extension modules.
 """.format(
     NO_EXTENSIONS_ENV
 )
-REQUIREMENTS = ("numpy >= 1.15.4", "six >= 1.12.0")
-EXTRAS_REQUIRE = {':python_version<"3.4"': ["enum34"]}
+REQUIREMENTS = ("numpy >= 1.17.0", "six >= 1.12.0")
+EXTRAS_REQUIRE = {}
 DESCRIPTION = (
     u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
 )
@@ -134,8 +133,6 @@ def setup():
             "Topic :: Scientific/Engineering :: Mathematics",
             "License :: OSI Approved :: Apache Software License",
             "Operating System :: OS Independent",
-            "Programming Language :: Python :: 2",
-            "Programming Language :: Python :: 2.7",
             "Programming Language :: Python :: 3",
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",

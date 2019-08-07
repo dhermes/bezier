@@ -52,7 +52,7 @@ DOCS_DEPS = (
 )
 DEFAULT_INTERPRETER = "3.7"
 PYPY = "pypy"
-ALL_INTERPRETERS = ("2.7", "2.7-32", "3.6", "3.6-32", "3.7", "3.7-32", PYPY)
+ALL_INTERPRETERS = ("3.6", "3.6-32", "3.7", "3.7-32", PYPY)
 # Constants used for checking the journal of commands.
 APPVEYOR = "appveyor"
 CIRCLE_CI = "circleci"
@@ -82,33 +82,12 @@ def pypy_setup(local_deps, session):
     return local_deps
 
 
-def install_bezier(session, py=DEFAULT_INTERPRETER, debug=False, env=None):
+def install_bezier(session, debug=False, env=None):
     if env is None:
         env = {}
     if debug:
         env["DEBUG"] = "True"
-
-    if ON_APPVEYOR and "2.7" in py and not py.endswith("-32"):
-        # NOTE: We must manually specify the Python executable (rather than
-        #       just using "python") since ``cmd`` will spawn a subshell
-        #       that doesn't inherit the ``PATH`` changes for the current
-        #       ``virtualenv``.
-        py_exe = os.path.join(session.bin, "python")
-        parts = [
-            "cmd",
-            "/E:ON",
-            "/V:ON",
-            "/C",
-            os.path.join(".", "appveyor", "windows_py27_64bit.cmd"),
-            py_exe,
-            "-m",
-            "pip",
-            "install",
-            ".",
-        ]
-        session.run(*parts, env=env, external=True)
-    else:
-        session.install(".", env=env)
+    session.install(".", env=env)
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
@@ -145,13 +124,13 @@ def unit(session):
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
         local_deps = BASE_DEPS + (DEPS["scipy"],)
-    if interpreter == PYPY or "2.7" in interpreter:
+    if interpreter == PYPY:
         local_deps += (DEPS["mock"],)
 
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, py=interpreter, debug=True)
+    install_bezier(session, debug=True)
     # Run py.test against the unit tests.
     run_args = ["py.test"] + session.posargs + [get_path("tests", "unit")]
     session.run(*run_args)
@@ -182,13 +161,13 @@ def functional(session):
         local_deps = pypy_setup(BASE_DEPS, session)
     else:
         local_deps = BASE_DEPS
-    if interpreter == PYPY or "2.7" in interpreter:
+    if interpreter == PYPY:
         local_deps += (DEPS["mock"],)
 
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, py=interpreter, debug=True)
+    install_bezier(session, debug=True)
     # Run py.test against the functional tests.
     run_args = (
         ["py.test"] + session.posargs + [get_path("tests", "functional")]

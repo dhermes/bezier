@@ -20,11 +20,7 @@ import os
 import pkg_resources
 
 # Error messages for ``handle_import_error``.
-TEMPLATES = (
-    "No module named 'bezier.{}'",  # 3.6, 3.7, pypy3
-    "No module named {}",  # 2.7
-    "No module named bezier.{}",  # pypy2
-)
+TEMPLATE = "No module named 'bezier.{}'"  # 3.6, 3.7, pypy3
 
 
 def modify_path():
@@ -64,10 +60,9 @@ def handle_import_error(caught_exc, name):
         ImportError: If the error message is different than the basic
             "missing module" error message.
     """
-    for template in TEMPLATES:
-        expected_msg = template.format(name)
-        if caught_exc.args == (expected_msg,):
-            return
+    expected_msg = TEMPLATE.format(name)
+    if caught_exc.args == (expected_msg,):
+        return
 
     raise caught_exc
 

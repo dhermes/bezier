@@ -26,10 +26,7 @@ yum install -y gcc-gfortran
 VERSION_WHITELIST=""
 for PYBIN in /opt/python/*/bin; do
     # H/T: https://stackoverflow.com/a/229606/1068170
-    if [[ "${PYBIN}" == *"27"* ]]; then
-        VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
-        continue
-    elif [[ "${PYBIN}" == *"36"* ]]; then
+    if [[ "${PYBIN}" == *"36"* ]]; then
         VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
         continue
     elif [[ "${PYBIN}" == *"37"* ]]; then

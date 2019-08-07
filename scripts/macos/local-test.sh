@@ -38,9 +38,7 @@ if [[ -z "$(command -v gfortran)" ]]; then
 fi
 
 # Verify the version and set the PY_BIN_DIR (used by `test.sh`).
-if [[ "${PY_VERSION}" == "2.7" ]]; then
-    export PY_BIN_DIR="${PREFIX}/2.7/bin"
-elif [[ "${PY_VERSION}" == "3.6" ]]; then
+if [[ "${PY_VERSION}" == "3.6" ]]; then
     export PY_BIN_DIR="${PREFIX}/3.6/bin"
 elif [[ "${PY_VERSION}" == "3.7" ]]; then
     export PY_BIN_DIR="${PREFIX}/3.7/bin"

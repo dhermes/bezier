@@ -79,7 +79,6 @@ The ``bezier`` Python package can be installed with `pip`_:
 .. code-block:: console
 
    $ python    -m pip install --upgrade bezier
-   $ python2.7 -m pip install --upgrade bezier
    $ python3.7 -m pip install --upgrade bezier
 
 ``bezier`` is open-source, so you can alternatively grab the source

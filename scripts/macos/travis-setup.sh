@@ -34,12 +34,6 @@ source osx_utils.sh
 # Use ``multibuild`` to install the given python.org version of CPython.
 get_macpython_environment ${PY_VERSION}
 
-# Since ``nox`` is only supported on Python 3, in the case of Python 2.7
-# we must also install a later Python and use that as our entry.
-if [[ "${PY_VERSION}" == "2.7" ]]; then
-    get_macpython_environment "3.7"
-fi
-
 echo "PYTHON_EXE=${PYTHON_EXE}"
 # NOTE: This assumes that ``multibuild`` uses ``sudo .../bin/python/pipX.Y``
 #       as the command (i.e. it's missing the ``-H`` flag).
