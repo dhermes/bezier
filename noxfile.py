@@ -36,7 +36,7 @@ DEPS = {
     "numpy": "numpy >= 1.17.0",
     "pycobertura": "pycobertura",
     "Pygments": "Pygments",
-    "pylint": "pylint",
+    "pylint": "pylint == 2.2.3",
     "pytest": "pytest >= 5.0.1",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.3.0",
@@ -164,9 +164,7 @@ def functional(session):
     # Install this package.
     install_bezier(session, debug=True)
     # Run pytest against the functional tests.
-    run_args = (
-        ["pytest"] + session.posargs + [get_path("tests", "functional")]
-    )
+    run_args = ["pytest"] + session.posargs + [get_path("tests", "functional")]
     session.run(*run_args)
 
 

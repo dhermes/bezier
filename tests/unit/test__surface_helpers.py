@@ -20,6 +20,7 @@ from tests.unit import utils
 UNIT_TRIANGLE = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
 FLOAT64 = np.float64  # pylint: disable=no-member
 SPACING = np.spacing  # pylint: disable=no-member
+RANDOM = np.random.random  # pylint: disable=no-member
 
 
 class Test_polynomial_sign(unittest.TestCase):
@@ -883,7 +884,7 @@ class Test__jacobian_det(utils.NumPyTestCase):
         degree = 1
         surface = bezier.Surface(nodes, degree=degree, _copy=False)
         self.assertTrue(surface.is_valid)
-        st_vals = np.asfortranarray(np.random.random((13, 2)))
+        st_vals = np.asfortranarray(RANDOM((13, 2)))
         result = self._call_function_under_test(nodes, degree, st_vals)
         expected = 2.0 * np.ones(13, order="F")
         self.assertEqual(result, expected)

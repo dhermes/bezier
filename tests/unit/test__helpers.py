@@ -77,13 +77,17 @@ class Test__in_interval(unittest.TestCase):
         self.assertTrue(self._call_function_under_test(1.5, 1.0, 2.0))
 
     def test_barely_inside(self):
+        # pylint: disable=assignment-from-no-return
         local_epsilon = SPACING(1.0)
+        # pylint: enable=assignment-from-no-return
         self.assertTrue(
             self._call_function_under_test(1.0 + local_epsilon, 1.0, 2.0)
         )
 
     def test_barely_outside(self):
+        # pylint: disable=assignment-from-no-return
         local_epsilon = SPACING(1.0)
+        # pylint: enable=assignment-from-no-return
         self.assertFalse(
             self._call_function_under_test(1.0 - local_epsilon / 2.0, 1.0, 2.0)
         )

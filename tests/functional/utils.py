@@ -32,6 +32,7 @@ import bezier
 import bezier.curve
 from tests import utils as base_utils
 
+SPACING = np.spacing  # pylint: disable=no-member
 FNL_TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 _DOCS_DIR = os.path.abspath(os.path.join(FNL_TESTS_DIR, "..", "..", "docs"))
 IMAGES_DIR = os.path.join(_DOCS_DIR, "images")
@@ -238,7 +239,9 @@ def ulps_away(value1, value2, num_bits=1, eps=0.5 ** 40):
             return value1 == 0.0
 
     else:
-        local_epsilon = np.spacing(value1)  # pylint: disable=no-member
+        # NOTE: We disable E1111 (assignment-from-no-return) here. This "hack"
+        #       is needed due to https://github.com/PyCQA/pylint/issues/872.
+        local_epsilon = SPACING(value1)  # pylint: disable=E1111
         return abs(value1 - value2) <= num_bits * abs(local_epsilon)
 
 

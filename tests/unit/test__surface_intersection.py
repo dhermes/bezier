@@ -972,7 +972,7 @@ class Test_algebraic_intersect(Test__geometric_intersect):
 
     def _check_linear_intersection1(self, value):
         expected = 0.125
-        delta = SPACING(expected)
+        delta = SPACING(expected)  # pylint: disable=assignment-from-no-return
         self.assertAlmostEqual(value, expected, delta=delta)
 
     def test_opposed_tangencies(self):

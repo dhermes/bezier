@@ -256,7 +256,9 @@ def error_multipliers(intersection_info, shape, strategy):
 
 def incorrect_values(multipliers, errors, exact):
     observed_error_ulps = np.abs(errors / SPACING(exact))
+    # pylint: disable=unbalanced-tuple-unpacking
     failure_rows, failure_cols = np.where(observed_error_ulps > multipliers)
+    # pylint: enable=unbalanced-tuple-unpacking
     failures = []
     for failure_row, failure_col in six.moves.zip(failure_rows, failure_cols):
         failures.append("* {:d}, {:d}".format(failure_row, failure_col))

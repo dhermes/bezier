@@ -41,7 +41,7 @@ class Test_compute_implicit_line(unittest.TestCase):
         nodes = np.asfortranarray([[4.0, 5.0], [7.0, 8.0]])
         coeff_a, coeff_b, coeff_c = self._call_function_under_test(nodes)
         sqrt_half = np.sqrt(0.5)
-        delta = SPACING(sqrt_half)
+        delta = SPACING(sqrt_half)  # pylint: disable=assignment-from-no-return
         self.assertAlmostEqual(coeff_a, -sqrt_half, delta=delta)
         self.assertAlmostEqual(coeff_b, sqrt_half, delta=delta)
         self.assertAlmostEqual(coeff_c, -3 * sqrt_half, delta=4 * delta)

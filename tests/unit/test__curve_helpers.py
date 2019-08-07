@@ -289,8 +289,10 @@ class Test__compute_length(unittest.TestCase):
         self._scipy_skip()
         nodes = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 2.0, 0.0]])
         length = self._call_function_under_test(nodes)
+        # pylint: disable=no-member,assignment-from-no-return
         # 2 INT_0^1 SQRT(16 s^2  - 16 s + 5) ds = SQRT(5) + sinh^{-1}(2)/2
-        arcs2 = np.arcsinh(2.0)  # pylint: disable=no-member
+        arcs2 = np.arcsinh(2.0)
+        # pylint: enable=no-member,assignment-from-no-return
         expected = np.sqrt(5.0) + 0.5 * arcs2
         local_eps = abs(SPACING(expected))
         self.assertAlmostEqual(length, expected, delta=local_eps)

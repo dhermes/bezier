@@ -204,7 +204,7 @@ def matrix_product(mat1, mat2):
     Returns:
         numpy.ndarray: The product of the two matrices.
     """
-    return np.dot(mat2.T, mat1.T).T
+    return np.dot(mat2.T, mat1.T).T  # pylint: disable=no-member
 
 
 def _wiggle_interval(value, wiggle=0.5 ** 44):

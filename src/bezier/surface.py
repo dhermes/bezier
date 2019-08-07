@@ -769,7 +769,9 @@ class Surface(_base.Base):
             # In the linear case, we are only invalid if the points
             # are collinear.
             first_deriv = self._nodes[:, 1:] - self._nodes[:, :-1]
+            # pylint: disable=assignment-from-no-return
             poly_sign = _SIGN(np.linalg.det(first_deriv))
+            # pylint: enable=assignment-from-no-return
         elif self._degree == 2:
             bernstein = _surface_helpers.quadratic_jacobian_polynomial(
                 self._nodes

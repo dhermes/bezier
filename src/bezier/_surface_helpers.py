@@ -1396,7 +1396,9 @@ def classify_tangent_intersection(
     if dot_prod < 0:
         # If the tangent vectors are pointing in the opposite direction,
         # then the curves are facing opposite directions.
+        # pylint: disable=assignment-from-no-return
         sign1, sign2 = _SIGN([curvature1, curvature2])
+        # pylint: enable=assignment-from-no-return
         if sign1 == sign2:
             # If both curvatures are positive, since the curves are
             # moving in opposite directions, the tangency isn't part of

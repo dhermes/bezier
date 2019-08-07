@@ -25,6 +25,7 @@ from tests.unit import utils
 
 FLOAT64 = np.float64  # pylint: disable=no-member
 SPACING = np.spacing  # pylint: disable=no-member
+RANDOM = np.random.random  # pylint: disable=no-member
 LOCAL_EPS = 0.5 ** 25  # 2 * sqrt(machine precision)
 
 
@@ -744,11 +745,11 @@ class Test_normalize_polynomial(utils.NumPyTestCase):
 
     def test_almost_zero(self):
         shape = (4,)
-        coeffs = 0.5 ** 42 * np.random.random(shape)
+        coeffs = 0.5 ** 42 * RANDOM(shape)
         result = self._call_function_under_test(coeffs)
         self.assertIsNot(result, coeffs)
         self.assertEqual(result, np.zeros(shape, order="F"))
-        coeffs = 0.5 ** 10 * np.random.random(shape)
+        coeffs = 0.5 ** 10 * RANDOM(shape)
         result = self._call_function_under_test(coeffs, threshold=0.5 ** 8)
         self.assertIsNot(result, coeffs)
         self.assertEqual(result, np.zeros(shape, order="F"))
@@ -1238,7 +1239,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
     def _cubic_wiggle(self, root, max_ulps):
         # -(s - 17) (s - 5) (s - 2)
         coeffs = self.CUBIC_COEFFS
-        eps = SPACING(root)
+        eps = SPACING(root)  # pylint: disable=assignment-from-no-return
         for delta in six.moves.xrange(-32, 32 + 1):
             s_val = root + delta * eps
             self.assertTrue(self._call_function_under_test(coeffs, s_val))
