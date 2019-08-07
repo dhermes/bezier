@@ -83,11 +83,10 @@ class Test_handle_import_error(unittest.TestCase):
         from bezier import __config__
 
         name = "this_module"
-        for template in __config__.TEMPLATES:
-            single_arg = template.format(name)
-            caught_exc = ImportError(single_arg)
-            return_value = self._call_function_under_test(caught_exc, name)
-            self.assertIsNone(return_value)
+        single_arg = __config__.TEMPLATE.format(name)
+        caught_exc = ImportError(single_arg)
+        return_value = self._call_function_under_test(caught_exc, name)
+        self.assertIsNone(return_value)
 
     def test_invalid_exception(self):
         caught_exc = ImportError("two", "args")
