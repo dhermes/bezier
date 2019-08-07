@@ -50,6 +50,7 @@ WIGGLES = {
     },
     ALGEBRAIC: {
         3: 12,  # Established on Ubuntu 16.04
+        8: 20,  # Established on Ubuntu 18.04
         22: 14,  # Established on Ubuntu 16.04
         32: 18,  # Established on Ubuntu 16.04
         33: 18,  # Established on Ubuntu 16.04

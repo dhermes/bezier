@@ -123,7 +123,7 @@ ULPS_ALLOWED_OVERRIDE = {
         },
         23: {
             (0, 1): 4,  # Established on CentOS 5 (i686 Docker image)
-            (1, 0): 6,  # Established on CentOS 5 (i686 Docker image)
+            (1, 0): 7,  # Established on Ubuntu 18.04
         },
         25: {(4, 0): ZERO_MISS},  # Established on Ubuntu 16.04
         28: {(2, 0): 4},  # Established on CentOS 5 (i686 Docker image)
@@ -137,9 +137,9 @@ ULPS_ALLOWED_OVERRIDE = {
         },
         50: {
             (0, 0): 528,  # Established on CentOS 5 (i686 Docker image)
-            (0, 1): 20,  # Established on Ubuntu 16.04
+            (0, 1): 75,  # Established on Ubuntu 18.04
             (1, 0): 551,  # Established on CentOS 5 (i686 Docker image)
-            (1, 1): 23,  # Established on Ubuntu 16.04
+            (1, 1): 81,  # Established on Ubuntu 18.04
         },
         51: {
             (0, 0): 3274,  # Established on CentOS 5 (i686 Docker image)
