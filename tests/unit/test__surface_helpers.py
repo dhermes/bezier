@@ -15,21 +15,11 @@ import unittest.mock
 import numpy as np
 import pytest
 
-try:
-    from bezier import _HAS_SPEEDUP as HAS_SPEEDUP
-except ImportError:  # pragma: NO COVER
-    HAS_SPEEDUP = False
 from tests.unit import utils
 
 UNIT_TRIANGLE = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
 FLOAT64 = np.float64  # pylint: disable=no-member
 SPACING = np.spacing  # pylint: disable=no-member
-# pylint: disable=invalid-name,no-member
-slow = pytest.mark.skipif(
-    pytest.config.getoption("--ignore-slow") and not HAS_SPEEDUP,
-    reason="--ignore-slow ignores the slow tests",
-)
-# pylint: enable=invalid-name,no-member
 
 
 class Test_polynomial_sign(unittest.TestCase):
@@ -503,7 +493,7 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
             UNIT_TRIANGLE, 1, expected_a, expected_b, expected_c, expected_d
         )
 
-    @slow
+    @pytest.mark.slow
     def test_line_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
@@ -540,7 +530,7 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
         )
         self._helper(nodes, 2, expected_a, expected_b, expected_c, expected_d)
 
-    @slow
+    @pytest.mark.slow
     def test_quadratic_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
@@ -668,21 +658,21 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
         )
         self._helper(nodes, 3, expected_a, expected_b, expected_c, expected_d)
 
-    @slow
+    @pytest.mark.slow
     def test_cubic_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
         nodes = utils.get_random_nodes(shape=(2, 10), seed=346323, num_bits=8)
         self._points_check(nodes, 3)
 
-    @slow
+    @pytest.mark.slow
     def test_quartic_check_evaluate(self):
         # Use a fixed seed so the test is deterministic and round
         # the nodes to 8 bits of precision to avoid round-off.
         nodes = utils.get_random_nodes(shape=(2, 15), seed=741002, num_bits=8)
         self._points_check(nodes, 4)
 
-    @slow
+    @pytest.mark.slow
     def test_on_the_fly(self):
         # Test for a degree where the subdivision is done on the fly
         # rather than via a stored matrix.

@@ -22,7 +22,13 @@ This
 import sys
 import unittest
 
+import pytest
 import six
+
+try:
+    from bezier import _HAS_SPEEDUP as HAS_SPEEDUP
+except ImportError:  # pragma: NO COVER
+    HAS_SPEEDUP = False
 
 if six.PY2:
     import mock  # pylint: disable=import-error
@@ -38,3 +44,20 @@ def pytest_addoption(parser):
         action="store_true",
         help="Ignore slow tests.",
     )
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "slow: mark test as slow to run")
+
+
+def pytest_collection_modifyitems(config, items):
+    if not config.getoption("--ignore-slow"):
+        return
+
+    if HAS_SPEEDUP:
+        return
+
+    skip_slow = pytest.mark.skip(reason="--ignore-slow ignores the slow tests")
+    for item in items:
+        if "slow" in item.keywords:
+            item.add_marker(skip_slow)
