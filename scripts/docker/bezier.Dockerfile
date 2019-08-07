@@ -4,9 +4,9 @@ FROM dhermes/python-multi
 RUN python3.7 -m pip install --no-cache-dir \
   colorlog==3.2.0 \
   nox==2019.5.30 \
-  numpy==1.16.4 \
+  numpy==1.17.0 \
   py==1.8.0 \
-  virtualenv==16.6.0
+  virtualenv==16.7.2
 
 # Install `gfortran` (for Fortran extensions), `libatlas-base-dev`,
 # `libblas-dev`, `liblapack-dev` (for SciPy) and `lcov` for
