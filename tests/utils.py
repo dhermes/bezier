@@ -11,7 +11,6 @@
 # limitations under the License.
 
 import os
-import platform
 import sys
 
 # See: https://docs.python.org/3/library/platform.html#cross-platform
@@ -25,4 +24,4 @@ else:  # pragma: NO COVER
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 IS_LINUX = sys.platform in ("linux", "linux2")
-IS_PYPY = platform.python_implementation() == "PyPy"
+IS_PYPY = sys.implementation.name == "pypy"

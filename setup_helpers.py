@@ -14,7 +14,6 @@
 
 from __future__ import print_function
 
-import collections
 import copy
 import distutils.ccompiler
 import os
@@ -26,6 +25,7 @@ import setuptools
 import setuptools.command.build_ext
 
 
+IS_PYPY = sys.implementation.name == "pypy"
 DEBUG_ENV = "DEBUG"
 WHEEL_ENV = "BEZIER_WHEEL"
 """Environment variable used to indicate a wheel is being built.
@@ -91,6 +91,8 @@ FORTRAN_MODULES = (
 FORTRAN_SOURCE_FILENAME = os.path.join("src", "bezier", "{}.f90")
 OBJECT_FILENAME = os.path.join("src", "bezier", "{}.o")
 SPEEDUP_FILENAME = os.path.join("src", "bezier", "_speedup.c")
+if IS_PYPY:
+    SPEEDUP_FILENAME = os.path.join("src", "bezier", "_pypy_speedup.c")
 
 
 def gfortran_search_path(library_dirs):
@@ -227,7 +229,7 @@ def patch_f90_compiler(f90_compiler):
 
     # Only ``gfortran``.
     if not isinstance(f90_compiler, gnu.Gnu95FCompiler):
-        return False
+        return
 
     f90_compiler.compiler_f77[:] = _update_flags(
         f90_compiler.compiler_f77, remove_flags=("-Werror",)
