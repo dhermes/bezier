@@ -86,9 +86,9 @@ ${VENV}/bin/python -m pip install \
 
 set +e  # Allow tests to fail
 # Run unit tests.
-${VENV}/bin/py.test ${REPO_ROOT}/tests/unit
+${VENV}/bin/pytest ${REPO_ROOT}/tests/unit
 # Run functional tests.
-${VENV}/bin/py.test ${REPO_ROOT}/tests/functional
+${VENV}/bin/pytest ${REPO_ROOT}/tests/functional
 
 # Clean-up.
 rm -fr ${VENV}

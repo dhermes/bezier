@@ -128,8 +128,8 @@ def unit(session):
     session.install(*local_deps)
     # Install this package.
     install_bezier(session, debug=True)
-    # Run py.test against the unit tests.
-    run_args = ["py.test"] + session.posargs + [get_path("tests", "unit")]
+    # Run pytest against the unit tests.
+    run_args = ["pytest"] + session.posargs + [get_path("tests", "unit")]
     session.run(*run_args)
 
 
@@ -144,8 +144,8 @@ def cover(session):
     session.install(*local_deps)
     # Install this package.
     install_bezier(session, debug=True)
-    # Run py.test with coverage against the unit tests.
-    run_args = ["py.test", "--cov=bezier", "--cov=tests.unit"]
+    # Run pytest with coverage against the unit tests.
+    run_args = ["pytest", "--cov=bezier", "--cov=tests.unit"]
     run_args += session.posargs
     run_args += [get_path("tests", "unit")]
     session.run(*run_args)
@@ -163,9 +163,9 @@ def functional(session):
     session.install(*local_deps)
     # Install this package.
     install_bezier(session, debug=True)
-    # Run py.test against the functional tests.
+    # Run pytest against the functional tests.
     run_args = (
-        ["py.test"] + session.posargs + [get_path("tests", "functional")]
+        ["pytest"] + session.posargs + [get_path("tests", "functional")]
     )
     session.run(*run_args)
 

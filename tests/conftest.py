@@ -9,13 +9,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""py.test shared testing configuration.
+"""pytest shared testing configuration.
 
 This
 
 * Gets slow imports out of the way before running tests, so
   as not to have the cost of imports reflected in
-  ``py.test --durations=N``.
+  ``pytest --durations=N``.
 """
 
 import pytest
