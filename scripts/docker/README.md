@@ -33,6 +33,8 @@ $ docker run \
 >   --tty \
 >   --interactive \
 >   --volume $(git rev-parse --show-toplevel):/var/code/bezier/ \
+>   --workdir /var/code/bezier/ \
+>   --env WHEELHOUSE=/wheelhouse \
 >   dhermes/bezier:latest \
 >   /bin/bash
 ```
