@@ -279,7 +279,7 @@ $ gcc \
 >   -fPIC \
 >   -I/var/code/bezier/.nox/check_journal-machine-circleci/lib/python3.7/site-packages/numpy/core/include \
 >   -Isrc/bezier/include \
->   -I/root/.pyenv/versions/3.7.0/include/python3.7m \
+>   -I/root/.pyenv/versions/3.7.4/include/python3.7m \
 >   -c \
 >   src/bezier/_speedup.c \
 >   -o \
@@ -288,8 +288,8 @@ $ gcc \
 $ gcc \
 >   -pthread \
 >   -shared \
->   -L/root/.pyenv/versions/3.7.0/lib \
->   -L/root/.pyenv/versions/3.7.0/lib \
+>   -L/root/.pyenv/versions/3.7.4/lib \
+>   -L/root/.pyenv/versions/3.7.4/lib \
 >   build/temp.linux-x86_64-3.7/src/bezier/_speedup.o \
 >   build/temp.linux-x86_64-3.7/src/bezier/types.o \
 >   build/temp.linux-x86_64-3.7/src/bezier/status.o \
