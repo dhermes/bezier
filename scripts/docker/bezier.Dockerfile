@@ -24,11 +24,12 @@ RUN apt-get update \
   && rm -f /var/cache/apt/archives/*.deb
 
 # Build NumPy and SciPy wheels for PyPy 3 since it takes a bit of time.
-RUN mkdir /wheelhouse
+ENV WHEELHOUSE=/wheelhouse
+RUN mkdir ${WHEELHOUSE}
 RUN set -ex \
   && virtualenv --python=pypy3 pypy3-env \
   && pypy3-env/bin/python -m pip install --upgrade pip wheel \
-  && pypy3-env/bin/python -m pip wheel --wheel-dir=/wheelhouse numpy==1.17.0 \
-  && pypy3-env/bin/python -m pip install /wheelhouse/numpy*.whl \
-  && pypy3-env/bin/python -m pip wheel --wheel-dir=/wheelhouse scipy==1.3.0 \
+  && pypy3-env/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} numpy==1.15.4 \
+  && pypy3-env/bin/python -m pip install ${WHEELHOUSE}/numpy*.whl \
+  && pypy3-env/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} scipy==1.2.0 \
   && rm -fr pypy3-env
