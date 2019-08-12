@@ -214,6 +214,10 @@ To pre-build NumPy and SciPy wheels:
    $ pypy3-venv/bin/python -m pip wheel --wheel-dir=${{WHEELHOUSE}} scipy
    $ rm -fr pypy3-venv/
 
+In addition to the ``WHEELHOUSE`` environment variable, the paths
+``${{HOME}}/wheelhouse`` and ``/wheelhouse`` will also be searched for
+pre-built wheels.
+
 Alternatively, wheels can be downloaded from `pypy-wheels`_, however
 the SciPy wheel will still require ``libatlas-dev``, ``libblas-dev`` and
 ``liblapack-dev``.

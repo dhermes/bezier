@@ -12,6 +12,7 @@
 
 import glob
 import os
+import pathlib
 import shutil
 import sys
 import tempfile
@@ -45,7 +46,6 @@ DEPS = {
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
-WHEELHOUSE = os.environ.get("WHEELHOUSE")
 DOCS_DEPS = (
     "--requirement",
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
@@ -68,8 +68,37 @@ def get_path(*names):
     return os.path.join(NOX_DIR, *names)
 
 
+def is_wheelhouse(directory):
+    if directory is None:
+        return False
+
+    as_path = pathlib.Path(directory)
+    if not as_path.is_dir():
+        return False
+
+    wheels = list(as_path.glob("*.whl"))
+    # NOTE: This could also be done by using `next()` instead of `list()` and
+    #       catching a `StopIteration` if empty.
+    return len(wheels) > 0
+
+
+def get_wheelhouse():
+    candidates = (
+        os.environ.get("WHEELHOUSE"),
+        pathlib.Path.home() / "wheelhouse",
+        pathlib.Path(os.path.abspath(os.sep)) / "wheelhouse",
+    )
+
+    for directory in candidates:
+        if is_wheelhouse(directory):
+            return directory
+
+    return None
+
+
 def pypy_setup(local_deps, session):
-    if WHEELHOUSE is not None:
+    wheelhouse = get_wheelhouse()
+    if wheelhouse is not None:
         # Remove NumPy from dependencies.
         local_deps = list(local_deps)
         local_deps.remove(DEPS["numpy"])
@@ -77,7 +106,7 @@ def pypy_setup(local_deps, session):
         # Install NumPy and SciPy from pre-built wheels. Don't use ``DEPS``
         # to specify version range for NumPy and SciPy.
         session.install(
-            "--no-index", "--find-links", WHEELHOUSE, "numpy", "scipy"
+            "--no-index", "--find-links", wheelhouse, "numpy", "scipy"
         )
     return local_deps
 
