@@ -384,7 +384,7 @@ Procedures
                                   double *param_vals, \
                                   double *evaluated)
 
-   Computes :math:`\det(DB)` at a many points :math:`(s_j, t_j)`. This is only
+   Computes :math:`\det(DB)` at many points :math:`(s_j, t_j)`. This is only
    well-defined if :math:`\det(DB)` has two rows, hence the surface must lie
    in :math:`\mathbf{R}^2`.
 
