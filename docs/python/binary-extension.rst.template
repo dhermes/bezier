@@ -112,7 +112,6 @@ The C headers for ``libbezier`` will be included in the installed package
    >>> print_tree(include_directory)
    include/
      bezier/
-       _bool_patch.h
        curve.h
        curve_intersection.h
        helpers.h

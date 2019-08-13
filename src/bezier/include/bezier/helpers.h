@@ -13,7 +13,7 @@
 #ifndef BEZIER_HELPERS_H
 #define BEZIER_HELPERS_H
 
-#include "bezier/_bool_patch.h"
+#include <stdbool.h>
 
 #if defined(__cplusplus)
 extern "C" {
