@@ -776,6 +776,8 @@ def bezier_roots(coeffs):
        from bezier._algebraic_intersection import bernstein_companion
        from bezier._algebraic_intersection import bezier_roots
 
+       machine_eps = np.finfo(np.float64).eps
+
     .. doctest:: bezier-roots0
 
        >>> coeffs0 = np.asfortranarray([12.0, 11.0, 8.0])
@@ -869,7 +871,7 @@ def bezier_roots(coeffs):
 
        >>> expected2 = np.asfortranarray([1.0j, -1.0j])
        >>> roots2 = bezier_roots(coeffs2)
-       >>> np.allclose(expected2, roots2, rtol=2e-15, atol=0.0)
+       >>> np.allclose(expected2, roots2, rtol=8 * machine_eps, atol=0.0)
        True
 
     Args:
