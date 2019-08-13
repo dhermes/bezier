@@ -25,6 +25,7 @@ nox.options.error_on_external_run = True
 IS_MACOS = sys.platform == "darwin"
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
+    "black": "black >= 19.3b0",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.13",
     "docutils": "docutils",
@@ -250,6 +251,7 @@ def docs_images(session):
 def lint(session):
     # Install all dependencies.
     local_deps = BASE_DEPS + (
+        DEPS["black"],
         DEPS["docutils"],
         DEPS["flake8"],
         DEPS["flake8-import-order"],
@@ -274,6 +276,9 @@ def lint(session):
         "--restructuredtext",
         "--strict",
     )
+    # Run `black --check` over all Python files
+    check_black = get_path("scripts", "black_check_all_files.py")
+    session.run("python", check_black)
     # Run flake8 over the code to check import order.
     session.run(
         "flake8",
@@ -317,6 +322,14 @@ def lint(session):
         session.run(
             "clang-format", "-i", "-style=file", *filenames, external=True
         )
+
+
+@nox.session(py=DEFAULT_INTERPRETER)
+def blacken(session):
+    """Run black code formatter."""
+    session.install(DEPS["black"])
+    check_black = get_path("scripts", "blacken_all_files.py")
+    session.run("python", check_black)
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
