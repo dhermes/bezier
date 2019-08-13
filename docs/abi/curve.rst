@@ -732,7 +732,7 @@ Procedures
 
    **Example:**
 
-   After elevating :math:`B(s) = \left[\begin{array}{c} -3 \\ 3
+   After reducing :math:`B(s) = \left[\begin{array}{c} -3 \\ 3
    \end{array}\right] (1 - s)^3 + \left[\begin{array}{c} 0 \\ 2
    \end{array}\right] 3 (1 - s)^2 s + \left[\begin{array}{c} 1 \\ 3
    \end{array}\right] 3 (1 - s) s^2 + \left[\begin{array}{c} 0 \\ 6
