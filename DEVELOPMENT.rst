@@ -30,8 +30,7 @@ Binary Extension
 ****************
 
 Many low-level computations have alternate implementations in Fortran.
-See the `Python Binary Extension`_ page in the documentation for a more
-detailed description.
+See the `Python Binary Extension`_ page for a more detailed description.
 
 .. _Python Binary Extension: https://bezier.readthedocs.io/en/latest/python/binary-extension.html
 
