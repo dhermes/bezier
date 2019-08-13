@@ -239,7 +239,7 @@ Procedures
         via Newton's method. (This error will occur via
         :c:func:`curve_intersections`.)
       * :c:data:`EDGE_END` If there is an attempt to add an intersection
-        point with either the :math:`s` or :math:`t`\-parameter eqaul to 1
+        point with either the :math:`s` or :math:`t`\-parameter equal to 1
         (i.e. if the intersection is at the end of an edge). This should
         not occur because such intersections are "rotated" to the beginning
         of the neighboring edge before the boundary of the curved polygon
