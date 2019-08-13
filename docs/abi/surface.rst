@@ -407,7 +407,7 @@ Procedures
       and similarly for the other column.
    :param double* evaluated:
       **[Output]** A :math:`k` array of all evaluated determinants. The
-      surface. The :math:`j`\-th value will be :math:`\det(DB(s_j, t_j))`.
+      :math:`j`\-th value will be :math:`\det(DB(s_j, t_j))`.
 
    **Signature:**
 
