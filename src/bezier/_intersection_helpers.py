@@ -143,8 +143,9 @@ def _newton_refine(s, nodes1, t, nodes2):
 
        machine_eps = np.finfo(np.float64).eps
 
-       def cuberoot(value):
-           return np.cbrt(value)
+       def realroots(*coeffs):
+           all_roots = np.roots(coeffs)
+           return all_roots[np.where(all_roots.imag == 0.0)].real
 
     .. doctest:: newton-refine1
 
@@ -189,8 +190,7 @@ def _newton_refine(s, nodes1, t, nodes2):
        ... ])
        >>> # The expected intersection is the only real root of
        >>> # 28 s^3 - 30 s^2 + 9 s - 1.
-       >>> omega = cuberoot(28.0 * np.sqrt(17.0) + 132.0) / 28.0
-       >>> expected = 5.0 / 14.0 + omega + 1 / (49.0 * omega)
+       >>> expected, = realroots(28, -30, 9, -1)
        >>> s_vals = [0.625, None, None, None, None]
        >>> t = 0.625
        >>> np.log2(abs(expected - s_vals[0]))
@@ -205,7 +205,7 @@ def _newton_refine(s, nodes1, t, nodes2):
        >>> np.log2(abs(expected - s_vals[3]))
        -32.110...
        >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, t, nodes2)
-       >>> np.allclose(s_vals[4], expected, rtol=machine_eps, atol=0.0)
+       >>> np.allclose(s_vals[4], expected, rtol=6 * machine_eps, atol=0.0)
        True
 
     .. testcleanup:: newton-refine2
