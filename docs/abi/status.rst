@@ -37,7 +37,7 @@ status module
 
       (``4``)
       Classification of a curve-curve intersection failed due to two curves
-      having identical at a tangent intersection.
+      having identical curvature at a tangent intersection.
 
    .. c:var:: BAD_INTERIOR
 
