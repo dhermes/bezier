@@ -97,9 +97,15 @@ def update_generated(session, check):
     if check:
         command = get_path("scripts", "remove_cython_files.py")
         session.run("python", command)
-    pyx_glob = get_path("src", "bezier", "*.pyx")
-    for pyx_module in glob.glob(pyx_glob):
-        session.run("cython", pyx_module)
+
+    pyx_file = get_path("src", "bezier", "_speedup.pyx")
+    session.run("cython", pyx_file)
+
+    # Special handling for PyPy
+    session.install("Cython == 0.29.11")
+    output_file_pypy = get_path("src", "bezier", "_pypy_speedup.c")
+    session.run("cython", "--output-file", output_file_pypy, pyx_file)
+
     command = get_path("scripts", "clean_cython.py")
     c_glob = get_path("src", "bezier", "*.c")
     for c_source in glob.glob(c_glob):

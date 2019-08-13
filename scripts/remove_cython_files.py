@@ -23,7 +23,6 @@ import subprocess
 
 _SCRIPTS_DIR = os.path.abspath(os.path.dirname(__file__))
 ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
-IGNORED = (os.path.join("src", "bezier", "_pypy_speedup.c"),)
 
 
 def main():
@@ -36,8 +35,6 @@ def main():
         return
 
     for filename in all_files.split("\n"):
-        if filename in IGNORED:
-            continue
         os.remove(filename)
 
 
