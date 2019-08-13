@@ -173,7 +173,7 @@ def evaluate(nodes, x_val, y_val):
     if num_nodes == 1:
         raise ValueError("A point cannot be implicitized")
 
-    elif num_nodes == 2:
+    if num_nodes == 2:
         # x(s) - x = (x0 - x) (1 - s) + (x1 - x) s
         # y(s) - y = (y0 - y) (1 - s) + (y1 - y) s
         # Modified Sylvester: [x0 - x, x1 - x]
@@ -182,7 +182,7 @@ def evaluate(nodes, x_val, y_val):
             nodes[0, 1] - x_val
         ) * (nodes[1, 0] - y_val)
 
-    elif num_nodes == 3:
+    if num_nodes == 3:
         # x(s) - x = (x0 - x) (1 - s)^2 + 2 (x1 - x) s(1 - s) + (x2 - x) s^2
         # y(s) - y = (y0 - y) (1 - s)^2 + 2 (y1 - y) s(1 - s) + (y2 - y) s^2
         # Modified Sylvester: [x0 - x, 2(x1 - x),    x2 - x,      0] = A|B|C|0
@@ -205,11 +205,10 @@ def evaluate(nodes, x_val, y_val):
         sub_det_d = val_b * sub1 - val_c * sub2
         return val_a * sub_det_a + val_d * sub_det_d
 
-    elif num_nodes == 4:
+    if num_nodes == 4:
         return _evaluate3(nodes, x_val, y_val)
 
-    else:
-        raise _helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3))
+    raise _helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3))
 
 
 def eval_intersection_polynomial(nodes1, nodes2, t):

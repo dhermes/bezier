@@ -1461,12 +1461,11 @@ def _all_intersections(nodes_first, nodes_second):
                         _TOO_MANY_TEMPLATE.format(len(candidates))
                     )
 
-                else:
-                    intersections = params
-                    coincident = True
-                    # Artificially empty out candidates so that this
-                    # function exits.
-                    candidates = []
+                intersections = params
+                coincident = True
+                # Artificially empty out candidates so that this
+                # function exits.
+                candidates = []
         # If none of the candidate pairs have been accepted, then there are
         # no more intersections to find.
         if not candidates:
@@ -1475,8 +1474,7 @@ def _all_intersections(nodes_first, nodes_second):
                 #       i.e. this is on purpose.
                 return np.array(intersections, order="C").T, coincident
 
-            else:
-                return np.empty((2, 0), order="F"), coincident
+            return np.empty((2, 0), order="F"), coincident
 
     msg = _NO_CONVERGE_TEMPLATE.format(_MAX_INTERSECT_SUBDIVISIONS)
     raise ValueError(msg)

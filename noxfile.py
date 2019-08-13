@@ -36,7 +36,7 @@ DEPS = {
     "numpy": "numpy >= 1.17.0",
     "pycobertura": "pycobertura",
     "Pygments": "Pygments",
-    "pylint": "pylint == 2.2.3",
+    "pylint": "pylint >= 2.3.1",
     "pytest": "pytest >= 5.0.1",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.3.0",
@@ -288,6 +288,10 @@ def lint(session):
         "--rcfile",
         "pylintrc",
         "--max-module-lines=3035",
+        "--disable=missing-raises-doc",
+        "--disable=missing-return-type-doc",
+        "--disable=missing-param-doc",
+        "--disable=missing-type-doc",
         get_path("src", "bezier"),
     )
     # Run Pylint over the tests source.
@@ -298,6 +302,8 @@ def lint(session):
         "--disable=missing-docstring",
         "--disable=protected-access",
         "--disable=too-many-public-methods",
+        "--disable=missing-param-doc",
+        "--disable=missing-type-doc",
         "--max-module-lines=2473",
         get_path("tests"),
     )

@@ -786,9 +786,8 @@ def polynomial_sign(poly_surface, degree):
             _MAX_POLY_SUBDIVISIONS,
         )
 
-    else:
-        # NOTE: We are guaranteed that ``len(signs) <= 1``.
-        return signs.pop()
+    # NOTE: We are guaranteed that ``len(signs) <= 1``.
+    return signs.pop()
 
 
 def two_by_two_det(mat):
@@ -1414,11 +1413,10 @@ def classify_tangent_intersection(
             if delta_c == 0.0:
                 raise NotImplementedError(_SAME_CURVATURE)
 
-            elif sign1 == _SIGN(delta_c):
+            if sign1 == _SIGN(delta_c):
                 return CLASSIFICATION_T.OPPOSED
 
-            else:
-                return CLASSIFICATION_T.TANGENT_BOTH
+            return CLASSIFICATION_T.TANGENT_BOTH
 
     else:
         if curvature1 > curvature2:

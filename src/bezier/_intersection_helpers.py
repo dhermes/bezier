@@ -423,8 +423,7 @@ def _newton_refine(s, nodes1, t, nodes2):
     if singular:
         raise ValueError("Jacobian is singular.")
 
-    else:
-        return s + delta_s, t + delta_t
+    return s + delta_s, t + delta_t
 
 
 class NewtonSimpleRoot(object):  # pylint: disable=too-few-public-methods
