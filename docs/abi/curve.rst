@@ -181,7 +181,7 @@ Procedures
       **[Input]** An array of :math:`k` values used for the first parameter
       :math:`\lambda_1`.
    :param double* lambda2:
-      **[Input]** An array of :math:`k` values used for the first parameter
+      **[Input]** An array of :math:`k` values used for the second parameter
       :math:`\lambda_2`.
    :param double* evaluated:
       **[Output]** The evaluated quantites as a :math:`D \times k` array, laid
