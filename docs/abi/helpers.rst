@@ -208,7 +208,7 @@ Procedures
       **[Input]** The second vector :math:`v_2`, as an array of :math:`D`
       values.
    :param double* eps:
-      **[Input]** The tolerance :math:`\vareps` used when comparing
+      **[Input]** The tolerance :math:`\varepsilon` used when comparing
       :math:`\left\lVert v_1 - v_2 \right\rVert` to
       :math:`\left\lVert v_1 \right\rVert` and
       :math:`\left\lVert v_2 \right\rVert`.
