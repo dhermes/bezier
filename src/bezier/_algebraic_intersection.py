@@ -267,8 +267,8 @@ def _to_power_basis12(nodes1, nodes2):
     r"""Compute the coefficients of an **intersection polynomial**.
 
     Helper for :func:`to_power_basis` in the case that the first curve is
-    degree one and the second is degree two. In this case, B |eacute|
-    zout's `theorem`_ tells us that the **intersection polynomial** is
+    degree one and the second is degree two. In this case, B |eacute| zout's
+    `theorem`_ tells us that the **intersection polynomial** is
     degree :math:`1 \cdot 2` hence we return three coefficients.
 
     Args:
@@ -301,8 +301,8 @@ def _to_power_basis13(nodes1, nodes2):
     r"""Compute the coefficients of an **intersection polynomial**.
 
     Helper for :func:`to_power_basis` in the case that the first curve is
-    degree one and the second is degree three. In this case, B |eacute|
-    zout's `theorem`_ tells us that the **intersection polynomial** is
+    degree one and the second is degree three. In this case, B |eacute| zout's
+    `theorem`_ tells us that the **intersection polynomial** is
     degree :math:`1 \cdot 3` hence we return four coefficients.
 
     Args:
@@ -404,8 +404,8 @@ def _to_power_basis23(nodes1, nodes2):
     r"""Compute the coefficients of an **intersection polynomial**.
 
     Helper for :func:`to_power_basis` in the case that the first curve is
-    degree two and the second is degree three. In this case, B |eacute|
-    zout's `theorem`_ tells us that the **intersection polynomial** is
+    degree two and the second is degree three. In this case, B |eacute| zout's
+    `theorem`_ tells us that the **intersection polynomial** is
     degree :math:`2 \cdot 3` hence we return seven coefficients.
 
     .. note::

@@ -482,7 +482,7 @@ Procedures
                                              double *nodes_c, \
                                              double *nodes_d)
 
-   Subdivides a B |eacute| surface into four sub-surfaces that cover
+   Subdivides a B |eacute| zier surface into four sub-surfaces that cover
    the original surface. See :meth:`.Surface.subdivide` for more
    details
 
