@@ -228,21 +228,16 @@ def ulps_away(value1, value2, num_bits=1, eps=0.5 ** 40):
         if base_utils.IS_LINUX and not base_utils.IS_64_BIT:
             return abs(value2) < eps
 
-        else:
-            return value2 == 0.0
+        return value2 == 0.0
 
-    elif value2 == 0.0:
+    if value2 == 0.0:
         if base_utils.IS_LINUX and not base_utils.IS_64_BIT:
             return abs(value1) < eps
 
-        else:
-            return value1 == 0.0
+        return value1 == 0.0
 
-    else:
-        # NOTE: We disable E1111 (assignment-from-no-return) here. This "hack"
-        #       is needed due to https://github.com/PyCQA/pylint/issues/872.
-        local_epsilon = SPACING(value1)  # pylint: disable=E1111
-        return abs(value1 - value2) <= num_bits * abs(local_epsilon)
+    local_epsilon = SPACING(value1)
+    return abs(value1 - value2) <= num_bits * abs(local_epsilon)
 
 
 class IncorrectCount(ValueError):
