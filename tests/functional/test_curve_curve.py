@@ -116,8 +116,8 @@ ULPS_ALLOWED_OVERRIDE = {
             (5, 3): ZERO_MISS,  # Established on Ubuntu 16.04
         },
         22: {
-            (0, 0): 12,  # Established on Ubuntu 16.04
-            (1, 0): 29,  # Established on Ubuntu 16.04
+            (0, 0): 16,  # Established on CentOS 5 (i686 Docker image)
+            (1, 0): 38,  # Established on CentOS 5 (i686 Docker image)
             (0, 1): 4,  # Established on CentOS 5 (i686 Docker image)
             (1, 1): 4,  # Established on CentOS 5 (i686 Docker image)
         },

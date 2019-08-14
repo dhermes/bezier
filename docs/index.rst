@@ -225,7 +225,7 @@ details, see `the LICENSE`_.
    :target: https://ci.appveyor.com/project/dhermes/bezier/build/1.0.1078.master
    :alt: AppVeyor CI Build
 .. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
-   :target: https://coveralls.io/builds/51994444
+   :target: https://coveralls.io/builds/25123319
    :alt: Code Coverage
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
