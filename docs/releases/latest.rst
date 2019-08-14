@@ -1,5 +1,5 @@
-Latest Release (``0.9.1.dev1``)
-===============================
+Latest Release (``0.10.0.dev1``)
+================================
 
 |pypi| |docs|
 
@@ -111,9 +111,9 @@ Documentation
   moved into separate docs.
   (`889c913 <https://github.com/dhermes/bezier/commit/889c913436b6d01533d8eb1830717620cea725ef>`__).
 
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.9.1.svg
-   :target: https://pypi.org/project/bezier/0.9.1/
-   :alt: PyPI link to release 0.9.1
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.9.1
-   :target: https://bezier.readthedocs.io/en/0.9.1/
-   :alt: Documentation for release 0.9.1
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.10.0.svg
+   :target: https://pypi.org/project/bezier/0.10.0/
+   :alt: PyPI link to release 0.10.0
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.10.0
+   :target: https://bezier.readthedocs.io/en/0.10.0/
+   :alt: Documentation for release 0.10.0
