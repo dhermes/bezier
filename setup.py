@@ -25,7 +25,7 @@ import setup_helpers_macos
 import setup_helpers_windows
 
 
-VERSION = "0.9.1.dev1"  # Also in ``codemeta.json`` and ``__init__.py``.
+VERSION = "0.10.0"  # Also in ``codemeta.json`` and ``__init__.py``.
 AUTHOR = "Danny Hermes"  # Also in ``__init__.py``.
 README_FILENAME = os.path.join(os.path.dirname(__file__), "README.rst")
 NUMPY_MESSAGE = """\
@@ -106,7 +106,7 @@ def setup():
         project_urls={
             "Documentation": "https://bezier.readthedocs.io/",
             "Changelog": (
-                "https://bezier.readthedocs.io/en/latest/releases/index.html"
+                "https://bezier.readthedocs.io/en/0.10.0/releases/index.html"
             ),
             "Issue Tracker": "https://github.com/dhermes/bezier/issues",
         },
