@@ -13,8 +13,8 @@
 #ifndef BEZIER_CURVE_INTERSECTION_H
 #define BEZIER_CURVE_INTERSECTION_H
 
-#include <stdbool.h>
 #include "bezier/status.h"
+#include <stdbool.h>
 
 #if defined(__cplusplus)
 extern "C" {
