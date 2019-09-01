@@ -81,6 +81,13 @@ The ``bezier`` Python package can be installed with `pip`_:
    $ python    -m pip install --upgrade bezier
    $ python3.7 -m pip install --upgrade bezier
 
+To install a pure Python version (i.e. with no binary extensions):
+
+.. code-block:: console
+
+   $ BEZIER_NO_EXTENSIONS=true \
+   >   python  -m pip install --upgrade bezier --no-binary=bezier
+
 ``bezier`` is open-source, so you can alternatively grab the source
 code from `GitHub`_ and install from source.
 
