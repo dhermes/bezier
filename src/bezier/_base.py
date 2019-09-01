@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Common features of B |eacute| zier shapes.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -16,7 +17,7 @@
 """
 
 
-class Base(object):
+class Base:
     """Base shape object.
 
     Args:

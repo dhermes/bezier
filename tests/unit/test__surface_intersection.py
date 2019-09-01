@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import threading
 import unittest
 import unittest.mock
@@ -1181,7 +1182,7 @@ def surface_workspace_sizes():
     return _speedup.surface_workspace_sizes()
 
 
-class WorkspaceThreadedAccess(object):
+class WorkspaceThreadedAccess:
     def __init__(self):
         self.barrier1 = threading.Event()
         self.barrier2 = threading.Event()

@@ -31,7 +31,7 @@ from bezier import _plot_helpers
 from bezier import _surface_helpers
 
 
-class CurvedPolygon(object):
+class CurvedPolygon:
     """Represents an object defined by its curved boundary.
 
     The boundary is a piecewise defined collection of

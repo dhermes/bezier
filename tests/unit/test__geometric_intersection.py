@@ -1793,7 +1793,7 @@ def make_linearization(curve, error=None):
     return _geometric_intersection.Linearization(curve, error)
 
 
-class WorkspaceThreadedAccess(object):
+class WorkspaceThreadedAccess:
     def __init__(self):
         self.barrier1 = threading.Event()
         self.barrier2 = threading.Event()

@@ -1480,7 +1480,7 @@ def _all_intersections(nodes_first, nodes_second):
     raise ValueError(msg)
 
 
-class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
+class BoxIntersectionType:  # pylint: disable=too-few-public-methods
     """Enum representing all possible bounding box intersections.
 
     .. note::
@@ -1497,7 +1497,7 @@ class BoxIntersectionType(object):  # pylint: disable=too-few-public-methods
     """Bounding boxes do not intersect or touch."""
 
 
-class SubdividedCurve(object):  # pylint: disable=too-few-public-methods
+class SubdividedCurve:  # pylint: disable=too-few-public-methods
     """A data wrapper for a B |eacute| zier curve
 
     To be used for intersection algorithm via repeated subdivision,
@@ -1558,7 +1558,7 @@ class SubdividedCurve(object):  # pylint: disable=too-few-public-methods
         return left, right
 
 
-class Linearization(object):
+class Linearization:
     """A linearization of a curve.
 
     This class is provided as a stand-in for a curve, so it

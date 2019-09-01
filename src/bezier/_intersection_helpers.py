@@ -426,7 +426,7 @@ def _newton_refine(s, nodes1, t, nodes2):
     return s + delta_s, t + delta_t
 
 
-class NewtonSimpleRoot(object):  # pylint: disable=too-few-public-methods
+class NewtonSimpleRoot:  # pylint: disable=too-few-public-methods
     r"""Callable object that facilitates Newton's method.
 
     This is meant to be used to compute the Newton update via:
@@ -499,7 +499,7 @@ class NewtonSimpleRoot(object):  # pylint: disable=too-few-public-methods
             return jacobian, func_val
 
 
-class NewtonDoubleRoot(object):  # pylint: disable=too-few-public-methods
+class NewtonDoubleRoot:  # pylint: disable=too-few-public-methods
     r"""Callable object that facilitates Newton's method for double roots.
 
     This is an augmented version of :class:`NewtonSimpleRoot`.
@@ -867,7 +867,7 @@ class IntersectionClassification(enum.Enum):
     """Unused because the edges are moving in opposite directions."""
 
 
-class Intersection(object):  # pylint: disable=too-few-public-methods
+class Intersection:  # pylint: disable=too-few-public-methods
     """Representation of a curve-curve intersection.
 
     Args:

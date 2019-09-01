@@ -248,7 +248,7 @@ class IncorrectCount(ValueError):
     """
 
 
-class Config(object):
+class Config:
     """Run-time configuration.
 
     This is a mutable stand-in to allow test set-up to modify
@@ -352,7 +352,7 @@ class Config(object):
         print("Saved {}".format(filename))
 
 
-class CurveInfo(object):  # pylint: disable=too-few-public-methods
+class CurveInfo:  # pylint: disable=too-few-public-methods
     """Information about a curve from ``curves.json``.
 
     The ``curves.json`` file contains a dictionary where each key is the ID
@@ -419,7 +419,7 @@ class CurveIntersectionType(enum.Enum):
 # pylint: disable=too-many-instance-attributes
 
 
-class CurveIntersectionInfo(object):
+class CurveIntersectionInfo:
     """Information about an intersection from ``curve_intersections.json``.
 
     The ``curve_intersections.json`` file contains a list of intersection
@@ -664,7 +664,7 @@ class CurveIntersectionInfo(object):
 # pylint: enable=too-many-instance-attributes
 
 
-class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
+class SurfaceInfo:  # pylint: disable=too-few-public-methods
     """Information about a surface from ``surfaces.json``.
 
     The ``surfaces.json`` file contains a dictionary where each key is the ID
@@ -709,7 +709,7 @@ class SurfaceInfo(object):  # pylint: disable=too-few-public-methods
 # pylint: disable=too-few-public-methods
 
 
-class SurfaceIntersectionInfo(object):
+class SurfaceIntersectionInfo:
     """Basic wrapper indicating an intersection is one of the two surfaces.
 
     Args:
@@ -729,7 +729,7 @@ class SurfaceIntersectionInfo(object):
 # pylint: disable=too-few-public-methods
 
 
-class CurvedPolygonInfo(object):
+class CurvedPolygonInfo:
     """Information about a single curved polygon intersection.
 
     The ``surface_intersections.json`` file contains surface-surface
@@ -902,7 +902,7 @@ class CurvedPolygonInfo(object):
 # pylint: enable=too-few-public-methods
 
 
-class SurfaceIntersectionsInfo(object):
+class SurfaceIntersectionsInfo:
     """Information about an intersection from ``surface_intersections.json``.
 
     The ``surface_intersections.json`` file contains a list of intersection
