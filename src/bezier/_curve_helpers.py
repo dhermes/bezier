@@ -334,8 +334,10 @@ def _compute_length(nodes):
     first_deriv = (num_nodes - 1) * (nodes[:, 1:] - nodes[:, :-1])
     if num_nodes == 0:
         raise ValueError("Curve should have at least one node.")
-    elif num_nodes == 1:
+
+    if num_nodes == 1:
         return 0.0
+
     if num_nodes == 2:
         # NOTE: We convert to 1D to make sure NumPy uses vector norm.
         return np.linalg.norm(first_deriv[:, 0], ord=2)
