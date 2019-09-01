@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import unittest
 import unittest.mock
 
@@ -279,6 +280,19 @@ class Test__compute_length(unittest.TestCase):
     def _scipy_skip(self):
         if SCIPY_INT is None:  # pragma: NO COVER
             self.skipTest("SciPy not installed")
+
+    def test_invalid_size(self):
+        nodes = np.empty((2, 0), order="F")
+        with self.assertRaises(ValueError) as exc_info:
+            self._call_function_under_test(nodes)
+
+        expected = ("Curve should have at least one node.",)
+        self.assertEqual(exc_info.exception.args, expected)
+
+    def test_degree_zero(self):
+        nodes = np.asfortranarray([[0.0], [0.0]])
+        length = self._call_function_under_test(nodes)
+        self.assertEqual(length, 0.0)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, 3.0], [0.0, 4.0]])

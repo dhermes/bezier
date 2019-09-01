@@ -324,6 +324,7 @@ def _compute_length(nodes):
         float: The length of the curve.
 
     Raises:
+        ValueError: If ``nodes`` has zero columns.
         OSError: If SciPy is not installed.
     """
     _, num_nodes = np.shape(nodes)
@@ -331,6 +332,10 @@ def _compute_length(nodes):
     #       here. This is so we don't re-compute the nodes for the first
     #       derivative every time it is evaluated.
     first_deriv = (num_nodes - 1) * (nodes[:, 1:] - nodes[:, :-1])
+    if num_nodes == 0:
+        raise ValueError("Curve should have at least one node.")
+    elif num_nodes == 1:
+        return 0.0
     if num_nodes == 2:
         # NOTE: We convert to 1D to make sure NumPy uses vector norm.
         return np.linalg.norm(first_deriv[:, 0], ord=2)

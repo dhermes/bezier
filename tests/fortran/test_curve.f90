@@ -879,7 +879,7 @@ contains
     case_success = (length == 5.0_dp .AND. error_val == 0)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 1: Quadratic curve.
+    ! CASE 2: Quadratic curve.
     nodes2(:, 1) = 0
     nodes2(:, 2) = [1.0_dp, 2.0_dp]
     nodes2(:, 3) = [2.0_dp, 0.0_dp]
@@ -907,6 +907,18 @@ contains
     case_success = ( &
          abs(length - expected) <= spacing(expected) .AND. &
          error_val == 0)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 4: Degree-zero "curve".
+    call compute_length( &
+         1, 2, nodes1(:, :1), length, error_val)
+    case_success = (length == 0.0_dp .AND. error_val == 0)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 5: Empty curve.
+    call compute_length( &
+         0, 2, nodes1(:, :0), length, error_val)
+    case_success = error_val == -1
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_compute_length

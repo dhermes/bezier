@@ -373,6 +373,8 @@ def compute_length(double[::1, :] nodes):
     if error_val == 6:
         err_msg = DQAGSE_ERR_MSGS[5]
         raise ValueError(err_msg)
+    elif error_val == -1:
+        raise ValueError("Curve should have at least one node.")
     elif error_val != 0:
         if 0 <= error_val - 1 < len(DQAGSE_ERR_MSGS):
             err_msg = DQAGSE_ERR_MSGS[error_val - 1]
