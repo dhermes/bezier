@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import unittest.mock
 
 import numpy as np
@@ -72,24 +73,15 @@ class TestCurve(utils.NumPyTestCase):
         expected["_dimension"] = 47
         self.assertNotEqual(curve._dimension, expected["_dimension"])
 
-    def _copy_helper(self, **kwargs):
-        np_shape = (2, 2)
-        curve = self._make_one(np.zeros(np_shape, order="F"), 1, **kwargs)
-        fake_nodes = unittest.mock.Mock(
-            ndim=2, shape=np_shape, spec=["ndim", "shape", "copy"]
-        )
-        curve._nodes = fake_nodes
-        copied_nodes = np.zeros(np_shape, order="F")
-        fake_nodes.copy.return_value = copied_nodes
-        new_curve = curve._copy()
-        self.assertIsInstance(new_curve, self._get_target_class())
-        self.assertEqual(new_curve._degree, curve._degree)
-        self.assertEqual(new_curve._dimension, curve._dimension)
-        self.assertIs(new_curve._nodes, copied_nodes)
-        fake_nodes.copy.assert_called_once_with(order="F")
-
     def test__copy(self):
-        self._copy_helper()
+        nodes = np.asfortranarray([[2.0, 3.5, 4.0], [0.0, 1.0, 0.0]])
+        curve = self._make_one(nodes, 2)
+
+        new_curve = curve._copy()
+        self.assertEqual(curve._degree, new_curve._degree)
+        self.assertEqual(curve._dimension, new_curve._dimension)
+        self.assertTrue(np.all(curve._nodes == new_curve._nodes))
+        self.assertIsNot(curve._nodes, new_curve._nodes)
 
     def test_evaluate(self):
         s = 0.25

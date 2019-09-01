@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Helper for B |eacute| zier Surfaces / Triangles.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -167,7 +168,8 @@ class Surface(_base.Base):
        make_images.surface_constructor(surface)
 
     Args:
-        nodes (numpy.ndarray): The nodes in the surface. The columns
+        nodes (Sequence): The nodes in the surface. Must be convertible
+            to a 2D NumPy array of floating point values, where the columns
             represent each node while the rows are the dimension
             of the ambient space.
         degree (int): The degree of the surface. This is assumed to
@@ -177,6 +179,7 @@ class Surface(_base.Base):
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
     """
+
     __slots__ = (
         "_dimension",  # From base class
         "_nodes",  # From base class

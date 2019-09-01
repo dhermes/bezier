@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import numpy as np
 
 from tests.unit import utils
@@ -42,11 +43,47 @@ class TestBase(utils.NumPyTestCase):
 
     def test_constructor_wrong_dimension(self):
         nodes = np.asfortranarray([1.0, 2.0])
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as exc_info:
             self._make_one(nodes)
+        expected = ("Nodes must be 2-dimensional, not", 1)
+        self.assertEqual(exc_info.exception.args, expected)
+
         nodes = np.zeros((2, 2, 2), order="F")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as exc_info:
             self._make_one(nodes)
+        expected = ("Nodes must be 2-dimensional, not", 3)
+        self.assertEqual(exc_info.exception.args, expected)
+
+    def test_constructor_change_order(self):
+        nodes = np.array([[10.0, 1.0], [3.5, 2.0]], order="C")
+        shape = self._make_one(nodes, _copy=False)
+
+        self.assertFalse(nodes.flags.f_contiguous)
+        self.assertTrue(shape._nodes.flags.f_contiguous)
+        self.assertTrue(np.all(nodes == shape._nodes))
+
+    def test_constructor_non_array(self):
+        nodes = [[10.25, 20.0], [30.5, 4.0]]
+        shape = self._make_one(nodes, _copy=False)
+
+        self.assertIsInstance(shape._nodes, np.ndarray)
+        self.assertTrue(np.all(nodes == shape._nodes))
+
+    def test_constructor_convert_dtype(self):
+        nodes = np.asfortranarray([[10, 20], [30, 4]])
+        shape = self._make_one(nodes, _copy=False)
+
+        self.assertEqual(nodes.dtype, np.int64)
+        self.assertEqual(shape._nodes.dtype, np.float64)
+        self.assertTrue(np.all(nodes == shape._nodes))
+
+    def test_constructor_rounding_failure(self):
+        nodes = np.asfortranarray([[0], [73786976294838206463]])
+        with self.assertRaises(ValueError) as exc_info:
+            self._make_one(nodes)
+
+        expected = ("Array cannot be converted to floating point",)
+        self.assertEqual(exc_info.exception.args, expected)
 
     def test_degree_property(self):
         shape = self._make_one(np.zeros((1, 0), order="F"))

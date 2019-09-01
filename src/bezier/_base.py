@@ -16,14 +16,17 @@
    :trim:
 """
 
+import numpy as np
+
 
 class Base:
     """Base shape object.
 
     Args:
-        nodes (numpy.ndarray): The control points for the shape.
-            Must be a 2D array, where the columns are the nodes and the
-            rows correspond to each dimension the shape occurs in.
+        nodes (Sequence): The control points for the shape. Must be convertible
+            to a 2D NumPy array of floating point values, where the columns are
+            the nodes and the rows correspond to each dimension the shape
+            occurs in.
         _copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
@@ -36,15 +39,17 @@ class Base:
     _degree = -1
 
     def __init__(self, nodes, _copy=True):
-        if nodes.ndim != 2:
-            raise ValueError("Nodes must be 2-dimensional, not", nodes.ndim)
+        nodes_np = np.asarray(nodes, order="F")
+        if nodes_np.ndim != 2:
+            raise ValueError("Nodes must be 2-dimensional, not", nodes_np.ndim)
 
-        dimension, _ = nodes.shape
+        nodes_np = _lossless_to_float(nodes_np)
+        dimension, _ = nodes_np.shape
         self._dimension = dimension
         if _copy:
-            self._nodes = nodes.copy(order="F")
+            self._nodes = nodes_np.copy(order="F")
         else:
-            self._nodes = nodes
+            self._nodes = nodes_np
 
     @property
     def degree(self):
@@ -74,3 +79,26 @@ class Base:
         return "<{} (degree={:d}, dimension={:d})>".format(
             self.__class__.__name__, self._degree, self._dimension
         )
+
+
+def _lossless_to_float(array):
+    """Convert a NumPy array to ``np.float64`` data type.
+
+    Args:
+        array (numpy.ndarray): The NumPy array to convert to float.
+
+    Returns:
+        numpy.ndarray: The converted array (or the original if already a
+        float).
+
+    Raises:
+        ValueError: If ``array`` can't be directly converted without rounding.
+    """
+    if array.dtype == np.float64:
+        return array
+
+    converted = array.astype(np.float64)
+    if not np.all(array == converted):
+        raise ValueError("Array cannot be converted to floating point")
+
+    return converted

@@ -76,7 +76,8 @@ class Curve(_base.Base):
        make_images.curve_constructor(curve)
 
     Args:
-        nodes (numpy.ndarray): The nodes in the curve. The columns
+        nodes (Sequence): The nodes in the curve. Must be convertible
+            to a 2D NumPy array of floating point values, where the columns
             represent each node while the rows are the dimension
             of the ambient space.
         degree (int): The degree of the curve. This is assumed to
@@ -86,6 +87,7 @@ class Curve(_base.Base):
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
     """
+
     __slots__ = (
         "_dimension",  # From base class
         "_nodes",  # From base class
