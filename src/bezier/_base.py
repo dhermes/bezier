@@ -23,10 +23,10 @@ class Base:
     """Base shape object.
 
     Args:
-        nodes (Sequence): The control points for the shape. Must be convertible
-            to a 2D NumPy array of floating point values, where the columns are
-            the nodes and the rows correspond to each dimension the shape
-            occurs in.
+        nodes (Sequence[Sequence[numbers.Number]]): The control points for the
+            shape. Must be convertible to a 2D NumPy array of floating point
+            values, where the columns are the nodes and the rows correspond to
+            each dimension the shape occurs in.
         _copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.

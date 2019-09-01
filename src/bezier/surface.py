@@ -168,10 +168,10 @@ class Surface(_base.Base):
        make_images.surface_constructor(surface)
 
     Args:
-        nodes (Sequence): The nodes in the surface. Must be convertible
-            to a 2D NumPy array of floating point values, where the columns
-            represent each node while the rows are the dimension
-            of the ambient space.
+        nodes (Sequence[Sequence[numbers.Number]]): The nodes in the surface.
+            Must be convertible to a 2D NumPy array of floating point values,
+            where the columns represent each node while the rows are the
+            dimension of the ambient space.
         degree (int): The degree of the surface. This is assumed to
             correctly correspond to the number of ``nodes``. Use
             :meth:`from_nodes` if the degree has not yet been computed.
@@ -199,9 +199,10 @@ class Surface(_base.Base):
         Computes the ``degree`` based on the shape of ``nodes``.
 
         Args:
-            nodes (numpy.ndarray): The nodes in the surface. The columns
-                represent each node while the rows are the dimension
-                of the ambient space.
+            nodes (Sequence[Sequence[numbers.Number]]): The nodes in the
+                surface. Must be convertible to a 2D NumPy array of floating
+                point values, where the columns represent each node while the
+                rows are the dimension of the ambient space.
             _copy (bool): Flag indicating if the nodes should be copied before
                 being stored. Defaults to :data:`True` since callers may
                 freely mutate ``nodes`` after passing in.
