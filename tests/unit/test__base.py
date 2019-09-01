@@ -73,7 +73,7 @@ class TestBase(utils.NumPyTestCase):
         nodes = np.asfortranarray([[10, 20], [30, 4]])
         shape = self._make_one(nodes, _copy=False)
 
-        self.assertEqual(nodes.dtype, np.int64)
+        self.assertEqual(nodes.dtype, np.dtype(int))
         self.assertEqual(shape._nodes.dtype, np.float64)
         self.assertTrue(np.all(nodes == shape._nodes))
 
