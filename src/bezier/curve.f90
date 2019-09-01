@@ -818,13 +818,13 @@ contains
     !       derivative every time it is evaluated.
     first_deriv = (num_nodes - 1) * (nodes(:, 2:) - nodes(:, :num_nodes - 1))
     if (num_nodes == 0) then
-      error_val = -1
-      return
-   else if (num_nodes == 1) then
-      length = 0.0
-      error_val = 0
-      return
-   else if (num_nodes == 2) then
+       error_val = -1
+       return
+    else if (num_nodes == 1) then
+       length = 0.0
+       error_val = 0
+       return
+    else if (num_nodes == 2) then
        length = norm2(first_deriv)
        error_val = 0
        return
