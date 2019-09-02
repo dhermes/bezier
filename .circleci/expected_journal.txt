@@ -14,9 +14,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/types.f90 \
+>   src/fortran/types.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/types.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/types.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -35,9 +35,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/status.f90 \
+>   src/fortran/status.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/status.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/status.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -56,9 +56,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/helpers.f90 \
+>   src/fortran/helpers.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/helpers.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/helpers.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -77,9 +77,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/curve.f90 \
+>   src/fortran/curve.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/curve.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/curve.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -98,9 +98,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/surface.f90 \
+>   src/fortran/surface.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/surface.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/surface.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -119,9 +119,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/curve_intersection.f90 \
+>   src/fortran/curve_intersection.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/curve_intersection.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/curve_intersection.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -140,9 +140,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/surface_intersection.f90 \
+>   src/fortran/surface_intersection.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/surface_intersection.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/surface_intersection.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -161,9 +161,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/quadpack/d1mach.f \
+>   src/fortran/quadpack/d1mach.f \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/d1mach.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/d1mach.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -182,9 +182,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/quadpack/dqelg.f \
+>   src/fortran/quadpack/dqelg.f \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqelg.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqelg.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -203,9 +203,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/quadpack/dqpsrt.f \
+>   src/fortran/quadpack/dqpsrt.f \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqpsrt.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqpsrt.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -224,9 +224,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/quadpack/dqk21.f \
+>   src/fortran/quadpack/dqk21.f \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqk21.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqk21.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
@@ -245,27 +245,27 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/bezier/quadpack/dqagse.f \
+>   src/fortran/quadpack/dqagse.f \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqagse.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqagse.o \
 >   -J \
 >   build/temp.linux-x86_64-3.7
 ----------------------------------------
 $ ar \
 >   -cr \
 >   build/lib.linux-x86_64-3.7/bezier/lib/libbezier.a \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/d1mach.o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqelg.o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqpsrt.o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqk21.o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqagse.o \
->   build/temp.linux-x86_64-3.7/src/bezier/types.o \
->   build/temp.linux-x86_64-3.7/src/bezier/status.o \
->   build/temp.linux-x86_64-3.7/src/bezier/helpers.o \
->   build/temp.linux-x86_64-3.7/src/bezier/curve.o \
->   build/temp.linux-x86_64-3.7/src/bezier/surface.o \
->   build/temp.linux-x86_64-3.7/src/bezier/curve_intersection.o \
->   build/temp.linux-x86_64-3.7/src/bezier/surface_intersection.o
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/d1mach.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqelg.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqpsrt.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqk21.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqagse.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/types.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/status.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/helpers.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/curve.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/surface.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/curve_intersection.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/surface_intersection.o
 ----------------------------------------
 $ gcc \
 >   -pthread \
@@ -278,31 +278,31 @@ $ gcc \
 >   -Wall \
 >   -fPIC \
 >   -I/var/code/bezier/.nox/check_journal-machine-circleci/lib/python3.7/site-packages/numpy/core/include \
->   -Isrc/bezier/include \
+>   -Isrc/fortran/include \
 >   -I/root/.pyenv/versions/3.7.4/include/python3.7m \
 >   -c \
->   src/bezier/_speedup.c \
+>   src/python/bezier/_speedup.c \
 >   -o \
->   build/temp.linux-x86_64-3.7/src/bezier/_speedup.o
+>   build/temp.linux-x86_64-3.7/src/python/bezier/_speedup.o
 ----------------------------------------
 $ gcc \
 >   -pthread \
 >   -shared \
 >   -L/root/.pyenv/versions/3.7.4/lib \
 >   -L/root/.pyenv/versions/3.7.4/lib \
->   build/temp.linux-x86_64-3.7/src/bezier/_speedup.o \
->   build/temp.linux-x86_64-3.7/src/bezier/types.o \
->   build/temp.linux-x86_64-3.7/src/bezier/status.o \
->   build/temp.linux-x86_64-3.7/src/bezier/helpers.o \
->   build/temp.linux-x86_64-3.7/src/bezier/curve.o \
->   build/temp.linux-x86_64-3.7/src/bezier/surface.o \
->   build/temp.linux-x86_64-3.7/src/bezier/curve_intersection.o \
->   build/temp.linux-x86_64-3.7/src/bezier/surface_intersection.o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/d1mach.o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqelg.o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqpsrt.o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqk21.o \
->   build/temp.linux-x86_64-3.7/src/bezier/quadpack/dqagse.o \
+>   build/temp.linux-x86_64-3.7/src/python/bezier/_speedup.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/types.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/status.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/helpers.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/curve.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/surface.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/curve_intersection.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/surface_intersection.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/d1mach.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqelg.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqpsrt.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqk21.o \
+>   build/temp.linux-x86_64-3.7/src/fortran/quadpack/dqagse.o \
 >   -L/usr/lib/gcc/x86_64-linux-gnu/7 \
 >   -L/usr/lib/gcc/x86_64-linux-gnu/7 \
 >   -lgfortran \
