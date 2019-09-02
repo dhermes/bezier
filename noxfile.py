@@ -344,13 +344,9 @@ def lint(session):
 
     if py.path.local.sysfind("clang-format") is not None:
         filenames = glob.glob(get_path("docs", "abi", "*.c"))
-        filenames.append(
-            get_path("src", "python", "bezier", "include", "bezier.h")
-        )
+        filenames.append(get_path("src", "fortran", "include", "bezier.h"))
         filenames.extend(
-            glob.glob(
-                get_path("src", "python", "bezier", "include", "bezier", "*.h")
-            )
+            glob.glob(get_path("src", "fortran", "include", "bezier", "*.h"))
         )
         session.run(
             "clang-format", "-i", "-style=file", *filenames, external=True
@@ -438,8 +434,8 @@ def clean(session):
         get_path("src", "python", "bezier", "*.pyc"),
         get_path("src", "python", "bezier", "*.pyd"),
         get_path("src", "python", "bezier", "*.so"),
-        get_path("src", "python", "bezier", "quadpack", "*.o"),
-        get_path("src", "python", "bezier", "*.o"),
+        get_path("src", "fortran", "quadpack", "*.o"),
+        get_path("src", "fortran", "*.o"),
         get_path("tests", "*.pyc"),
         get_path("tests", "functional", "*.pyc"),
         get_path("tests", "unit", "*.pyc"),
