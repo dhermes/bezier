@@ -2,5 +2,5 @@
 ``bezier._curve_intersection``
 ##############################
 
-.. literalinclude:: ../../../src/bezier/_curve_intersection.pxd
+.. literalinclude:: ../../../src/python/bezier/_curve_intersection.pxd
    :language: cython

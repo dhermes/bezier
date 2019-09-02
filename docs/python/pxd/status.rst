@@ -2,5 +2,5 @@
 ``bezier._status``
 ##################
 
-.. literalinclude:: ../../../src/bezier/_status.pxd
+.. literalinclude:: ../../../src/python/bezier/_status.pxd
    :language: cython

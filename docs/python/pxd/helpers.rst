@@ -2,5 +2,5 @@
 ``bezier._helpers``
 ###################
 
-.. literalinclude:: ../../../src/bezier/_helpers.pxd
+.. literalinclude:: ../../../src/python/bezier/_helpers.pxd
    :language: cython

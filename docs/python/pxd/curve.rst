@@ -2,5 +2,5 @@
 ``bezier._curve``
 #################
 
-.. literalinclude:: ../../../src/bezier/_curve.pxd
+.. literalinclude:: ../../../src/python/bezier/_curve.pxd
    :language: cython
