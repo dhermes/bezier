@@ -11,7 +11,7 @@
 # limitations under the License.
 
 CURR_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-SRC_DIR := $(realpath $(CURR_DIR)/../../src/bezier)
+SRC_DIR := $(realpath $(CURR_DIR)/../../src/fortran)
 QUADPACK_DIR := $(realpath $(SRC_DIR)/quadpack)
 
 FC = gfortran
