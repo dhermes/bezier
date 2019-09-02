@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import email
 import os
 import unittest
@@ -98,7 +99,7 @@ class Test_get_dll(unittest.TestCase):
 def _check_pkg_filename(test_case, path, last_segment):
     short = os.path.join("bezier", last_segment)
     from_egg = path.endswith(short) and ".egg" in path
-    src_path = os.path.join("src", short)
+    src_path = os.path.join("src", "python", short)
     from_source = path.endswith(src_path)
     verbose = os.path.join("site-packages", short)
     site_pkg = path.endswith(verbose)
