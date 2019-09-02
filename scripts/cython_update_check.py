@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Check if any auto-generated ``*.c`` files have changed.
 
 Used in:
@@ -31,7 +32,7 @@ ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
 def main():
     # Make sure we are running in the project root.
     os.chdir(ROOT_DIR)
-    c_glob = os.path.join("src", "bezier", "*.c")
+    c_glob = os.path.join("src", "python", "bezier", "*.c")
     subprocess.call(["git", "add", c_glob])
     updated = subprocess.check_output(
         ["git", "diff", "HEAD", "--name-status", "--", c_glob]

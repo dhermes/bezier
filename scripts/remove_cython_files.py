@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Remove all Cython auto-generated ``*.c`` files.
 
 Used in:
@@ -28,7 +29,7 @@ ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
 def main():
     # Make sure we are running in the project root.
     os.chdir(ROOT_DIR)
-    c_glob = os.path.join("src", "bezier", "*.c")
+    c_glob = os.path.join("src", "python", "bezier", "*.c")
     all_files = subprocess.check_output(["git", "ls-files", c_glob])
     all_files = all_files.decode("utf-8").strip()
     if not all_files:

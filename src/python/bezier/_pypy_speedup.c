@@ -839,7 +839,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "src/bezier/_speedup.pyx",
+  "src/python/bezier/_speedup.pyx",
   "Cython/Includes/numpy/__init__.pxd",
   "stringsource",
   "Cython/Includes/cpython/type.pxd",
@@ -2640,7 +2640,6 @@ static const char __pyx_k_unused_not_implemented[] = "unused_not_implemented";
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
 static const char __pyx_k_SUBDIVISION_NO_CONVERGE[] = "SUBDIVISION_NO_CONVERGE";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
-static const char __pyx_k_src_bezier__speedup_pyx[] = "src/bezier/_speedup.pyx";
 static const char __pyx_k_subdivide_nodes_surface[] = "subdivide_nodes_surface";
 static const char __pyx_k_surface_workspace_sizes[] = "surface_workspace_sizes";
 static const char __pyx_k_Cannot_index_with_type_s[] = "Cannot index with type '%s'";
@@ -2657,6 +2656,7 @@ static const char __pyx_k_surface_intersections_resize[] = "_surface_intersectio
 static const char __pyx_k_newton_refine_curve_intersect[] = "newton_refine_curve_intersect";
 static const char __pyx_k_surface_intersections_success[] = "_surface_intersections_success";
 static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
+static const char __pyx_k_src_python_bezier__speedup_pyx[] = "src/python/bezier/_speedup.pyx";
 static const char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direct or indirect>";
 static const char __pyx_k_Assumed_the_requested_tolerance[] = "Assumed: the requested tolerance cannot be achieved";
 static const char __pyx_k_Unsupported_multiplicity_Newton[] = "Unsupported multiplicity.\n\nNewton's method failed to converge to a solution under the\nfollowing assumptions:\n\n- The starting ``s-t`` values were already near a solution\n- The root / solution has multiplicity 1 or 2\n  - 1: The root is \"simple\", i.e. the curves are not tangent\n       and have no self-intersections at the point of intersection.\n  - 2: The root is a double root, i.e. the curves are tangent\n       but have different curvatures at the point of intersection.\n\nThe failure to converge may have been caused by one of:\n\n- The root was of multiplicity greater than 2\n- The curves don't actually intersect, though they come very close\n- Numerical issues caused the iteration to leave the region\n  of convergence\n";
@@ -2970,7 +2970,7 @@ static PyObject *__pyx_n_s_sizes;
 static PyObject *__pyx_n_s_specialize_curve;
 static PyObject *__pyx_n_s_specialize_surface;
 static PyObject *__pyx_n_s_specialized;
-static PyObject *__pyx_kp_s_src_bezier__speedup_pyx;
+static PyObject *__pyx_kp_s_src_python_bezier__speedup_pyx;
 static PyObject *__pyx_n_s_st_vals;
 static PyObject *__pyx_n_s_start;
 static PyObject *__pyx_n_u_start;
@@ -36185,7 +36185,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_specialize_curve, __pyx_k_specialize_curve, sizeof(__pyx_k_specialize_curve), 0, 0, 1, 1},
   {&__pyx_n_s_specialize_surface, __pyx_k_specialize_surface, sizeof(__pyx_k_specialize_surface), 0, 0, 1, 1},
   {&__pyx_n_s_specialized, __pyx_k_specialized, sizeof(__pyx_k_specialized), 0, 0, 1, 1},
-  {&__pyx_kp_s_src_bezier__speedup_pyx, __pyx_k_src_bezier__speedup_pyx, sizeof(__pyx_k_src_bezier__speedup_pyx), 0, 0, 1, 0},
+  {&__pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_k_src_python_bezier__speedup_pyx, sizeof(__pyx_k_src_python_bezier__speedup_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_st_vals, __pyx_k_st_vals, sizeof(__pyx_k_st_vals), 0, 0, 1, 1},
   {&__pyx_n_s_start, __pyx_k_start, sizeof(__pyx_k_start), 0, 0, 1, 1},
   {&__pyx_n_u_start, __pyx_k_start, sizeof(__pyx_k_start), 0, 1, 0, 1},
@@ -36753,7 +36753,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__47 = PyTuple_Pack(7, __pyx_n_s_nodes, __pyx_n_s_lambda1, __pyx_n_s_lambda2, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_num_vals, __pyx_n_s_evaluated); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(0, 123, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__47);
   __Pyx_GIVEREF(__pyx_tuple__47);
-  __pyx_codeobj__48 = (PyObject*)__Pyx_PyCode_New(3, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__47, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_evaluate_multi_barycentric, 123, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__48)) __PYX_ERR(0, 123, __pyx_L1_error)
+  __pyx_codeobj__48 = (PyObject*)__Pyx_PyCode_New(3, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__47, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_evaluate_multi_barycentric, 123, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__48)) __PYX_ERR(0, 123, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":143
  *
@@ -36765,7 +36765,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__49 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_s_vals, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_num_vals, __pyx_n_s_evaluated); if (unlikely(!__pyx_tuple__49)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__49);
   __Pyx_GIVEREF(__pyx_tuple__49);
-  __pyx_codeobj__50 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__49, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_evaluate_multi, 143, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__50)) __PYX_ERR(0, 143, __pyx_L1_error)
+  __pyx_codeobj__50 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__49, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_evaluate_multi, 143, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__50)) __PYX_ERR(0, 143, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":162
  *
@@ -36777,7 +36777,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__51 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_start, __pyx_n_s_end, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_new_nodes); if (unlikely(!__pyx_tuple__51)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__51);
   __Pyx_GIVEREF(__pyx_tuple__51);
-  __pyx_codeobj__52 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__51, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_specialize_curve, 162, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__52)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __pyx_codeobj__52 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__51, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_specialize_curve, 162, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__52)) __PYX_ERR(0, 162, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":181
  *
@@ -36789,7 +36789,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__53 = PyTuple_Pack(5, __pyx_n_s_s, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_hodograph); if (unlikely(!__pyx_tuple__53)) __PYX_ERR(0, 181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__53);
   __Pyx_GIVEREF(__pyx_tuple__53);
-  __pyx_codeobj__54 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__53, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_evaluate_hodograph, 181, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__54)) __PYX_ERR(0, 181, __pyx_L1_error)
+  __pyx_codeobj__54 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__53, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_evaluate_hodograph, 181, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__54)) __PYX_ERR(0, 181, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":199
  *
@@ -36801,7 +36801,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__55 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_left_nodes, __pyx_n_s_right_nodes); if (unlikely(!__pyx_tuple__55)) __PYX_ERR(0, 199, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__55);
   __Pyx_GIVEREF(__pyx_tuple__55);
-  __pyx_codeobj__56 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__55, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_subdivide_nodes_curve, 199, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__56)) __PYX_ERR(0, 199, __pyx_L1_error)
+  __pyx_codeobj__56 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__55, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_subdivide_nodes_curve, 199, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__56)) __PYX_ERR(0, 199, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":219
  *
@@ -36813,7 +36813,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__57 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_point, __pyx_n_s_s, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_updated_s); if (unlikely(!__pyx_tuple__57)) __PYX_ERR(0, 219, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__57);
   __Pyx_GIVEREF(__pyx_tuple__57);
-  __pyx_codeobj__58 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__57, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_newton_refine_curve, 219, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__58)) __PYX_ERR(0, 219, __pyx_L1_error)
+  __pyx_codeobj__58 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__57, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_newton_refine_curve, 219, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__58)) __PYX_ERR(0, 219, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":239
  *
@@ -36825,7 +36825,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__59 = PyTuple_Pack(5, __pyx_n_s_nodes, __pyx_n_s_point, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_s_approx); if (unlikely(!__pyx_tuple__59)) __PYX_ERR(0, 239, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__59);
   __Pyx_GIVEREF(__pyx_tuple__59);
-  __pyx_codeobj__60 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__59, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_locate_point_curve, 239, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__60)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_codeobj__60 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__59, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_locate_point_curve, 239, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__60)) __PYX_ERR(0, 239, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":263
  *
@@ -36837,7 +36837,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__61 = PyTuple_Pack(5, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_elevated); if (unlikely(!__pyx_tuple__61)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__61);
   __Pyx_GIVEREF(__pyx_tuple__61);
-  __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(1, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__61, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_elevate_nodes, 263, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 263, __pyx_L1_error)
+  __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(1, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__61, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_elevate_nodes, 263, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 263, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":280
  *
@@ -36849,7 +36849,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__64 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_tangent_vec, __pyx_n_s_s, __pyx_n_s_num_nodes, __pyx_n_s_curvature, __pyx_n_s__63); if (unlikely(!__pyx_tuple__64)) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__64);
   __Pyx_GIVEREF(__pyx_tuple__64);
-  __pyx_codeobj__65 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__64, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_get_curvature, 280, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__65)) __PYX_ERR(0, 280, __pyx_L1_error)
+  __pyx_codeobj__65 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__64, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_get_curvature, 280, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__65)) __PYX_ERR(0, 280, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":299
  *
@@ -36861,7 +36861,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__66 = PyTuple_Pack(7, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_not_implemented, __pyx_n_s_reduced, __pyx_n_s_UnsupportedDegree); if (unlikely(!__pyx_tuple__66)) __PYX_ERR(0, 299, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__66);
   __Pyx_GIVEREF(__pyx_tuple__66);
-  __pyx_codeobj__67 = (PyObject*)__Pyx_PyCode_New(1, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__66, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_reduce_pseudo_inverse, 299, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__67)) __PYX_ERR(0, 299, __pyx_L1_error)
+  __pyx_codeobj__67 = (PyObject*)__Pyx_PyCode_New(1, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__66, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_reduce_pseudo_inverse, 299, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__67)) __PYX_ERR(0, 299, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":325
  *
@@ -36873,7 +36873,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__68 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_num_reduced_nodes, __pyx_n_s_reduced, __pyx_n_s_not_implemented, __pyx_n_s_UnsupportedDegree); if (unlikely(!__pyx_tuple__68)) __PYX_ERR(0, 325, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__68);
   __Pyx_GIVEREF(__pyx_tuple__68);
-  __pyx_codeobj__69 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__68, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_full_reduce, 325, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__69)) __PYX_ERR(0, 325, __pyx_L1_error)
+  __pyx_codeobj__69 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__68, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_full_reduce, 325, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__69)) __PYX_ERR(0, 325, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":358
  *
@@ -36885,7 +36885,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__70 = PyTuple_Pack(7, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_length, __pyx_n_s_error_val, __pyx_n_s_err_msg); if (unlikely(!__pyx_tuple__70)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__70);
   __Pyx_GIVEREF(__pyx_tuple__70);
-  __pyx_codeobj__71 = (PyObject*)__Pyx_PyCode_New(1, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__70, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_compute_length, 358, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__71)) __PYX_ERR(0, 358, __pyx_L1_error)
+  __pyx_codeobj__71 = (PyObject*)__Pyx_PyCode_New(1, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__70, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_compute_length, 358, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__71)) __PYX_ERR(0, 358, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":391
  * #######################################
@@ -36897,7 +36897,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__72 = PyTuple_Pack(10, __pyx_n_s_s, __pyx_n_s_nodes1, __pyx_n_s_t, __pyx_n_s_nodes2, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_new_s, __pyx_n_s_new_t, __pyx_n_s_status, __pyx_n_s__63); if (unlikely(!__pyx_tuple__72)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__72);
   __Pyx_GIVEREF(__pyx_tuple__72);
-  __pyx_codeobj__73 = (PyObject*)__Pyx_PyCode_New(4, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__72, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_newton_refine_curve_intersect, 391, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__73)) __PYX_ERR(0, 391, __pyx_L1_error)
+  __pyx_codeobj__73 = (PyObject*)__Pyx_PyCode_New(4, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__72, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_newton_refine_curve_intersect, 391, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__73)) __PYX_ERR(0, 391, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":420
  *
@@ -36909,7 +36909,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__74 = PyTuple_Pack(6, __pyx_n_s_nodes1, __pyx_n_s_nodes2, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_enum_val, __pyx_n_s__63); if (unlikely(!__pyx_tuple__74)) __PYX_ERR(0, 420, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__74);
   __Pyx_GIVEREF(__pyx_tuple__74);
-  __pyx_codeobj__75 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__74, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_bbox_intersect, 420, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__75)) __PYX_ERR(0, 420, __pyx_L1_error)
+  __pyx_codeobj__75 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__74, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_bbox_intersect, 420, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__75)) __PYX_ERR(0, 420, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":440
  *
@@ -36921,7 +36921,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__76 = PyTuple_Pack(2, __pyx_n_s_workspace_size, __pyx_n_s_workspace_size); if (unlikely(!__pyx_tuple__76)) __PYX_ERR(0, 440, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__76);
   __Pyx_GIVEREF(__pyx_tuple__76);
-  __pyx_codeobj__77 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__76, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_reset_curves_workspace, 440, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__77)) __PYX_ERR(0, 440, __pyx_L1_error)
+  __pyx_codeobj__77 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__76, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_reset_curves_workspace, 440, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__77)) __PYX_ERR(0, 440, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":445
  *
@@ -36933,7 +36933,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__78 = PyTuple_Pack(2, __pyx_n_s_intersections_size, __pyx_n_s__63); if (unlikely(!__pyx_tuple__78)) __PYX_ERR(0, 445, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__78);
   __Pyx_GIVEREF(__pyx_tuple__78);
-  __pyx_codeobj__79 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__78, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_curves_workspace_size, 445, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__79)) __PYX_ERR(0, 445, __pyx_L1_error)
+  __pyx_codeobj__79 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__78, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_curves_workspace_size, 445, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__79)) __PYX_ERR(0, 445, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":454
  *
@@ -36945,7 +36945,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__80 = PyTuple_Pack(12, __pyx_n_s_nodes_first, __pyx_n_s_nodes_second, __pyx_n_s_allow_resize, __pyx_n_s_num_nodes_first, __pyx_n_s_num_nodes_second, __pyx_n_s_intersections_size, __pyx_n_s_num_intersections, __pyx_n_s_status, __pyx_n_s_intersections, __pyx_n_s_coincident, __pyx_n_s__63, __pyx_n_s_msg); if (unlikely(!__pyx_tuple__80)) __PYX_ERR(0, 454, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__80);
   __Pyx_GIVEREF(__pyx_tuple__80);
-  __pyx_codeobj__81 = (PyObject*)__Pyx_PyCode_New(3, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__80, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_curve_intersections, 454, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__81)) __PYX_ERR(0, 454, __pyx_L1_error)
+  __pyx_codeobj__81 = (PyObject*)__Pyx_PyCode_New(3, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__80, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_curve_intersections, 454, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__81)) __PYX_ERR(0, 454, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":505
  *
@@ -36954,7 +36954,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     bezier._curve_intersection.free_curve_intersections_workspace()
  *
  */
-  __pyx_codeobj__82 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_free_curve_intersections_workspa, 505, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__82)) __PYX_ERR(0, 505, __pyx_L1_error)
+  __pyx_codeobj__82 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_free_curve_intersections_workspa, 505, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__82)) __PYX_ERR(0, 505, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":512
  * ############################
@@ -36966,7 +36966,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__83 = PyTuple_Pack(3, __pyx_n_s_vec0, __pyx_n_s_vec1, __pyx_n_s_result); if (unlikely(!__pyx_tuple__83)) __PYX_ERR(0, 512, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__83);
   __Pyx_GIVEREF(__pyx_tuple__83);
-  __pyx_codeobj__84 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__83, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_cross_product, 512, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__84)) __PYX_ERR(0, 512, __pyx_L1_error)
+  __pyx_codeobj__84 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__83, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_cross_product, 512, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__84)) __PYX_ERR(0, 512, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":524
  *
@@ -36978,7 +36978,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__85 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_nodes, __pyx_n_s_num_nodes, __pyx_n_s_left, __pyx_n_s_right, __pyx_n_s_bottom, __pyx_n_s_top, __pyx_n_s__63); if (unlikely(!__pyx_tuple__85)) __PYX_ERR(0, 524, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__85);
   __Pyx_GIVEREF(__pyx_tuple__85);
-  __pyx_codeobj__86 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__85, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_bbox, 524, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__86)) __PYX_ERR(0, 524, __pyx_L1_error)
+  __pyx_codeobj__86 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__85, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_bbox, 524, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__86)) __PYX_ERR(0, 524, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":543
  *
@@ -36990,7 +36990,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__87 = PyTuple_Pack(4, __pyx_n_s_value, __pyx_n_s_value, __pyx_n_s_result, __pyx_n_s_success); if (unlikely(!__pyx_tuple__87)) __PYX_ERR(0, 543, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__87);
   __Pyx_GIVEREF(__pyx_tuple__87);
-  __pyx_codeobj__88 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__87, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_wiggle_interval, 543, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__88)) __PYX_ERR(0, 543, __pyx_L1_error)
+  __pyx_codeobj__88 = (PyObject*)__Pyx_PyCode_New(1, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__87, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_wiggle_interval, 543, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__88)) __PYX_ERR(0, 543, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":556
  *
@@ -37002,7 +37002,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__89 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_point, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_predicate, __pyx_n_s_msg); if (unlikely(!__pyx_tuple__89)) __PYX_ERR(0, 556, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__89);
   __Pyx_GIVEREF(__pyx_tuple__89);
-  __pyx_codeobj__90 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__89, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_contains_nd, 556, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__90)) __PYX_ERR(0, 556, __pyx_L1_error)
+  __pyx_codeobj__90 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__89, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_contains_nd, 556, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__90)) __PYX_ERR(0, 556, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":577
  *
@@ -37014,7 +37014,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__91 = PyTuple_Pack(4, __pyx_n_s_vec1, __pyx_n_s_vec2, __pyx_n_s_eps, __pyx_n_s_num_values); if (unlikely(!__pyx_tuple__91)) __PYX_ERR(0, 577, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__91);
   __Pyx_GIVEREF(__pyx_tuple__91);
-  __pyx_codeobj__92 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__91, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_vector_close, 577, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__92)) __PYX_ERR(0, 577, __pyx_L1_error)
+  __pyx_codeobj__92 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__91, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_vector_close, 577, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__92)) __PYX_ERR(0, 577, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":591
  *
@@ -37026,7 +37026,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__93 = PyTuple_Pack(3, __pyx_n_s_value, __pyx_n_s_start, __pyx_n_s_end); if (unlikely(!__pyx_tuple__93)) __PYX_ERR(0, 591, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__93);
   __Pyx_GIVEREF(__pyx_tuple__93);
-  __pyx_codeobj__94 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__93, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_in_interval, 591, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__94)) __PYX_ERR(0, 591, __pyx_L1_error)
+  __pyx_codeobj__94 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__93, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_in_interval, 591, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__94)) __PYX_ERR(0, 591, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":599
  *
@@ -37038,7 +37038,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__95 = PyTuple_Pack(6, __pyx_n_s_points, __pyx_n_s_points, __pyx_n_s_num_points, __pyx_n_s_polygon_size, __pyx_n_s_polygon, __pyx_n_s__63); if (unlikely(!__pyx_tuple__95)) __PYX_ERR(0, 599, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__95);
   __Pyx_GIVEREF(__pyx_tuple__95);
-  __pyx_codeobj__96 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__95, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_simple_convex_hull, 599, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__96)) __PYX_ERR(0, 599, __pyx_L1_error)
+  __pyx_codeobj__96 = (PyObject*)__Pyx_PyCode_New(1, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__95, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_simple_convex_hull, 599, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__96)) __PYX_ERR(0, 599, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":618
  *
@@ -37050,7 +37050,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__97 = PyTuple_Pack(6, __pyx_n_s_polygon1, __pyx_n_s_polygon2, __pyx_n_s_polygon_size1, __pyx_n_s_polygon_size2, __pyx_n_s_collision, __pyx_n_s__63); if (unlikely(!__pyx_tuple__97)) __PYX_ERR(0, 618, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__97);
   __Pyx_GIVEREF(__pyx_tuple__97);
-  __pyx_codeobj__98 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__97, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_polygon_collide, 618, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__98)) __PYX_ERR(0, 618, __pyx_L1_error)
+  __pyx_codeobj__98 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__97, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_polygon_collide, 618, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__98)) __PYX_ERR(0, 618, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":640
  * ############################
@@ -37062,7 +37062,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__99 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_lambda1, __pyx_n_s_lambda2, __pyx_n_s_lambda3, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_new_nodes); if (unlikely(!__pyx_tuple__99)) __PYX_ERR(0, 640, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__99);
   __Pyx_GIVEREF(__pyx_tuple__99);
-  __pyx_codeobj__100 = (PyObject*)__Pyx_PyCode_New(5, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__99, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_de_casteljau_one_round, 640, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__100)) __PYX_ERR(0, 640, __pyx_L1_error)
+  __pyx_codeobj__100 = (PyObject*)__Pyx_PyCode_New(5, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__99, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_de_casteljau_one_round, 640, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__100)) __PYX_ERR(0, 640, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":663
  *
@@ -37074,7 +37074,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__101 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_lambda1, __pyx_n_s_lambda2, __pyx_n_s_lambda3, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_point); if (unlikely(!__pyx_tuple__101)) __PYX_ERR(0, 663, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__101);
   __Pyx_GIVEREF(__pyx_tuple__101);
-  __pyx_codeobj__102 = (PyObject*)__Pyx_PyCode_New(5, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__101, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_evaluate_barycentric, 663, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__102)) __PYX_ERR(0, 663, __pyx_L1_error)
+  __pyx_codeobj__102 = (PyObject*)__Pyx_PyCode_New(5, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__101, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_evaluate_barycentric, 663, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__102)) __PYX_ERR(0, 663, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":686
  *
@@ -37086,7 +37086,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__103 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_param_vals, __pyx_n_s_dimension, __pyx_n_s_num_nodes, __pyx_n_s_num_vals, __pyx_n_s_evaluated, __pyx_n_s__63); if (unlikely(!__pyx_tuple__103)) __PYX_ERR(0, 686, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__103);
   __Pyx_GIVEREF(__pyx_tuple__103);
-  __pyx_codeobj__104 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__103, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_evaluate_barycentric_multi, 686, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__104)) __PYX_ERR(0, 686, __pyx_L1_error)
+  __pyx_codeobj__104 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__103, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_evaluate_barycentric_multi, 686, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__104)) __PYX_ERR(0, 686, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":711
  *
@@ -37098,7 +37098,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__105 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_param_vals, __pyx_n_s_dimension, __pyx_n_s_num_nodes, __pyx_n_s_num_vals, __pyx_n_s_evaluated, __pyx_n_s__63); if (unlikely(!__pyx_tuple__105)) __PYX_ERR(0, 711, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__105);
   __Pyx_GIVEREF(__pyx_tuple__105);
-  __pyx_codeobj__106 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__105, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_evaluate_cartesian_multi, 711, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__106)) __PYX_ERR(0, 711, __pyx_L1_error)
+  __pyx_codeobj__106 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__105, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_evaluate_cartesian_multi, 711, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__106)) __PYX_ERR(0, 711, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":736
  *
@@ -37110,7 +37110,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__107 = PyTuple_Pack(6, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_dimension, __pyx_n_s_num_nodes, __pyx_n_s_new_nodes, __pyx_n_s__63); if (unlikely(!__pyx_tuple__107)) __PYX_ERR(0, 736, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__107);
   __Pyx_GIVEREF(__pyx_tuple__107);
-  __pyx_codeobj__108 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__107, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_jacobian_both, 736, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__108)) __PYX_ERR(0, 736, __pyx_L1_error)
+  __pyx_codeobj__108 = (PyObject*)__Pyx_PyCode_New(3, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__107, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_jacobian_both, 736, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__108)) __PYX_ERR(0, 736, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":755
  *
@@ -37122,7 +37122,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__109 = PyTuple_Pack(7, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_st_vals, __pyx_n_s_num_nodes, __pyx_n_s_num_vals, __pyx_n_s_evaluated, __pyx_n_s__63); if (unlikely(!__pyx_tuple__109)) __PYX_ERR(0, 755, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__109);
   __Pyx_GIVEREF(__pyx_tuple__109);
-  __pyx_codeobj__110 = (PyObject*)__Pyx_PyCode_New(3, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__109, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_jacobian_det, 755, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__110)) __PYX_ERR(0, 755, __pyx_L1_error)
+  __pyx_codeobj__110 = (PyObject*)__Pyx_PyCode_New(3, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__109, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_jacobian_det, 755, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__110)) __PYX_ERR(0, 755, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":778
  *
@@ -37134,7 +37134,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__111 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_weights_a, __pyx_n_s_weights_b, __pyx_n_s_weights_c, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_specialized); if (unlikely(!__pyx_tuple__111)) __PYX_ERR(0, 778, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__111);
   __Pyx_GIVEREF(__pyx_tuple__111);
-  __pyx_codeobj__112 = (PyObject*)__Pyx_PyCode_New(5, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__111, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_specialize_surface, 778, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__112)) __PYX_ERR(0, 778, __pyx_L1_error)
+  __pyx_codeobj__112 = (PyObject*)__Pyx_PyCode_New(5, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__111, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_specialize_surface, 778, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__112)) __PYX_ERR(0, 778, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":801
  *
@@ -37146,7 +37146,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__113 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_nodes_a, __pyx_n_s_nodes_b, __pyx_n_s_nodes_c, __pyx_n_s_nodes_d); if (unlikely(!__pyx_tuple__113)) __PYX_ERR(0, 801, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__113);
   __Pyx_GIVEREF(__pyx_tuple__113);
-  __pyx_codeobj__114 = (PyObject*)__Pyx_PyCode_New(2, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__113, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_subdivide_nodes_surface, 801, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__114)) __PYX_ERR(0, 801, __pyx_L1_error)
+  __pyx_codeobj__114 = (PyObject*)__Pyx_PyCode_New(2, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__113, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_subdivide_nodes_surface, 801, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__114)) __PYX_ERR(0, 801, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":828
  *
@@ -37158,7 +37158,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__115 = PyTuple_Pack(7, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_nodes1, __pyx_n_s_nodes2, __pyx_n_s_nodes3); if (unlikely(!__pyx_tuple__115)) __PYX_ERR(0, 828, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__115);
   __Pyx_GIVEREF(__pyx_tuple__115);
-  __pyx_codeobj__116 = (PyObject*)__Pyx_PyCode_New(2, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__115, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_compute_edge_nodes, 828, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__116)) __PYX_ERR(0, 828, __pyx_L1_error)
+  __pyx_codeobj__116 = (PyObject*)__Pyx_PyCode_New(2, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__115, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_compute_edge_nodes, 828, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__116)) __PYX_ERR(0, 828, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":852
  *
@@ -37170,7 +37170,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__117 = PyTuple_Pack(11, __pyx_n_s_edges, __pyx_n_s_num_edges, __pyx_n_s_sizes, __pyx_n_s_nodes_pointers, __pyx_n_s_i, __pyx_n_s_edge_nodes, __pyx_n_s_num_nodes, __pyx_n_s_area, __pyx_n_s_unused_not_implemented, __pyx_n_s__63, __pyx_n_s_UnsupportedDegree); if (unlikely(!__pyx_tuple__117)) __PYX_ERR(0, 852, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__117);
   __Pyx_GIVEREF(__pyx_tuple__117);
-  __pyx_codeobj__118 = (PyObject*)__Pyx_PyCode_New(1, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__117, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_compute_area, 852, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__118)) __PYX_ERR(0, 852, __pyx_L1_error)
+  __pyx_codeobj__118 = (PyObject*)__Pyx_PyCode_New(1, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__117, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_compute_area, 852, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__118)) __PYX_ERR(0, 852, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":902
  * #########################################
@@ -37182,7 +37182,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__119 = PyTuple_Pack(10, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_x_val, __pyx_n_s_y_val, __pyx_n_s_s, __pyx_n_s_t, __pyx_n_s_num_nodes, __pyx_n_s_updated_s, __pyx_n_s_updated_t, __pyx_n_s__63); if (unlikely(!__pyx_tuple__119)) __PYX_ERR(0, 902, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__119);
   __Pyx_GIVEREF(__pyx_tuple__119);
-  __pyx_codeobj__120 = (PyObject*)__Pyx_PyCode_New(6, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__119, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_newton_refine_surface, 902, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__120)) __PYX_ERR(0, 902, __pyx_L1_error)
+  __pyx_codeobj__120 = (PyObject*)__Pyx_PyCode_New(6, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__119, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_newton_refine_surface, 902, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__120)) __PYX_ERR(0, 902, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":926
  *
@@ -37194,7 +37194,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__121 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_x_val, __pyx_n_s_y_val, __pyx_n_s_num_nodes, __pyx_n_s_s_val, __pyx_n_s_t_val, __pyx_n_s__63); if (unlikely(!__pyx_tuple__121)) __PYX_ERR(0, 926, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__121);
   __Pyx_GIVEREF(__pyx_tuple__121);
-  __pyx_codeobj__122 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__121, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_locate_point_surface, 926, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__122)) __PYX_ERR(0, 926, __pyx_L1_error)
+  __pyx_codeobj__122 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__121, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_locate_point_surface, 926, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__122)) __PYX_ERR(0, 926, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":950
  *
@@ -37206,7 +37206,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__123 = PyTuple_Pack(2, __pyx_n_s_segment_ends_size, __pyx_n_s_segments_size); if (unlikely(!__pyx_tuple__123)) __PYX_ERR(0, 950, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__123);
   __Pyx_GIVEREF(__pyx_tuple__123);
-  __pyx_codeobj__124 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__123, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_reset_surface_workspaces, 950, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__124)) __PYX_ERR(0, 950, __pyx_L1_error)
+  __pyx_codeobj__124 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__123, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_reset_surface_workspaces, 950, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__124)) __PYX_ERR(0, 950, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":959
  *
@@ -37218,7 +37218,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__125 = PyTuple_Pack(2, __pyx_n_s_segment_ends_size, __pyx_n_s_segments_size); if (unlikely(!__pyx_tuple__125)) __PYX_ERR(0, 959, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__125);
   __Pyx_GIVEREF(__pyx_tuple__125);
-  __pyx_codeobj__126 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__125, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_surface_workspace_sizes, 959, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__126)) __PYX_ERR(0, 959, __pyx_L1_error)
+  __pyx_codeobj__126 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__125, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_surface_workspace_sizes, 959, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__126)) __PYX_ERR(0, 959, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":970
  *
@@ -37230,7 +37230,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__127 = PyTuple_Pack(22, __pyx_n_s_nodes1, __pyx_n_s_degree1, __pyx_n_s_nodes2, __pyx_n_s_degree2, __pyx_n_s_num_intersected, __pyx_n_s_begin_index, __pyx_n_s_end_index, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_edge_nodes1, __pyx_n_s_edge_nodes2, __pyx_n_s_edge_nodes3, __pyx_n_s_edge_nodes4, __pyx_n_s_edge_nodes5, __pyx_n_s_edge_nodes6, __pyx_n_s_curved_polygons, __pyx_n_s_triples, __pyx_n_s_all_edge_nodes, __pyx_n_s_genexpr, __pyx_n_s_genexpr); if (unlikely(!__pyx_tuple__127)) __PYX_ERR(0, 970, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__127);
   __Pyx_GIVEREF(__pyx_tuple__127);
-  __pyx_codeobj__128 = (PyObject*)__Pyx_PyCode_New(5, 0, 22, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__127, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_surface_intersections_success, 970, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__128)) __PYX_ERR(0, 970, __pyx_L1_error)
+  __pyx_codeobj__128 = (PyObject*)__Pyx_PyCode_New(5, 0, 22, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__127, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_surface_intersections_success, 970, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__128)) __PYX_ERR(0, 970, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1049
  *
@@ -37242,7 +37242,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__129 = PyTuple_Pack(10, __pyx_n_s_nodes1, __pyx_n_s_degree1, __pyx_n_s_nodes2, __pyx_n_s_degree2, __pyx_n_s_segment_ends_size, __pyx_n_s_segments_size, __pyx_n_s_num_intersected, __pyx_n_s_resizes_allowed, __pyx_n_s_num_segments, __pyx_n_s_msg); if (unlikely(!__pyx_tuple__129)) __PYX_ERR(0, 1049, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__129);
   __Pyx_GIVEREF(__pyx_tuple__129);
-  __pyx_codeobj__130 = (PyObject*)__Pyx_PyCode_New(8, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__129, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_surface_intersections_resize, 1049, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__130)) __PYX_ERR(0, 1049, __pyx_L1_error)
+  __pyx_codeobj__130 = (PyObject*)__Pyx_PyCode_New(8, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__129, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_surface_intersections_resize, 1049, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__130)) __PYX_ERR(0, 1049, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1079
  *
@@ -37254,7 +37254,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__131 = PyTuple_Pack(14, __pyx_n_s_nodes1, __pyx_n_s_degree1, __pyx_n_s_nodes2, __pyx_n_s_degree2, __pyx_n_s_verify, __pyx_n_s_resizes_allowed, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_segment_ends_size, __pyx_n_s_segments_size, __pyx_n_s_num_intersected, __pyx_n_s_contained, __pyx_n_s_status, __pyx_n_s__63); if (unlikely(!__pyx_tuple__131)) __PYX_ERR(0, 1079, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__131);
   __Pyx_GIVEREF(__pyx_tuple__131);
-  __pyx_codeobj__132 = (PyObject*)__Pyx_PyCode_New(6, 0, 14, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__131, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_surface_intersections, 1079, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__132)) __PYX_ERR(0, 1079, __pyx_L1_error)
+  __pyx_codeobj__132 = (PyObject*)__Pyx_PyCode_New(6, 0, 14, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__131, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_surface_intersections, 1079, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__132)) __PYX_ERR(0, 1079, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1156
  *
@@ -37263,7 +37263,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     bezier._surface_intersection.free_surface_intersections_workspace()
  *
  */
-  __pyx_codeobj__133 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_free_surface_intersections_works, 1156, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__133)) __PYX_ERR(0, 1156, __pyx_L1_error)
+  __pyx_codeobj__133 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_free_surface_intersections_works, 1156, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__133)) __PYX_ERR(0, 1156, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1160
  *
@@ -37272,7 +37272,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     return (
  *         SEGMENT_DTYPE.isnative,
  */
-  __pyx_codeobj__134 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_bezier__speedup_pyx, __pyx_n_s_type_info, 1160, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__134)) __PYX_ERR(0, 1160, __pyx_L1_error)
+  __pyx_codeobj__134 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_type_info, 1160, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__134)) __PYX_ERR(0, 1160, __pyx_L1_error)
 
   /* "View.MemoryView":286
  *         return self.name
