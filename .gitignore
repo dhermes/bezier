@@ -17,9 +17,9 @@ __pycache__
 .DS_Store
 
 # Generated files
-src/bezier/*.o
-src/bezier/quadpack/*.o
-src/bezier/_speedup*.so
+src/fortran/*.o
+src/fortran/quadpack/*.o
+src/python/bezier/_speedup*.so
 wheelhouse/
 scripts/macos/dist_wheels/
 scripts/macos/fixed_wheels/
