@@ -112,7 +112,7 @@ def setup():
         },
         keywords=["Geometry", "Curve", "Bezier", "Intersection", "Python"],
         packages=["bezier"],
-        package_dir={"": "src"},
+        package_dir={"": os.path.join("src", "python")},
         license="Apache 2.0",
         platforms="Posix; macOS; Windows",
         package_data={
