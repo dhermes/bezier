@@ -338,6 +338,8 @@ def lint(session):
         "--disable=too-many-public-methods",
         "--disable=missing-param-doc",
         "--disable=missing-type-doc",
+        "--disable=import-outside-toplevel",
+        "--disable=arguments-out-of-order",
         "--max-module-lines=2473",
         get_path("tests"),
     )

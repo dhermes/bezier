@@ -25,7 +25,7 @@ def new_axis():
     # NOTE: We import the plotting library at runtime to
     #       avoid the cost for users that only want to compute.
     #       The ``matplotlib`` import is a tad expensive.
-    import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
 
     figure = plt.figure()
     return figure.gca()
@@ -72,8 +72,11 @@ def add_patch(ax, color, pts_per_edge, *edges):
         edges (Tuple[~bezier.curve.Curve, ...]): Curved edges defining
             a boundary.
     """
+    # pylint: disable=import-outside-toplevel
     from matplotlib import patches
     from matplotlib import path as _path_mod
+
+    # pylint: enable=import-outside-toplevel
 
     s_vals = np.linspace(0.0, 1.0, pts_per_edge)
     # Evaluate points on each edge.
