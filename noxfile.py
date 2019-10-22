@@ -22,6 +22,7 @@ import py.path
 
 
 nox.options.error_on_external_run = True
+nox.options.error_on_missing_interpreters = True
 
 IS_MACOS = sys.platform == "darwin"
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
@@ -34,14 +35,14 @@ DEPS = {
     "flake8-import-order": "flake8-import-order",
     "jsonschema": "jsonschema >= 3.0.2",
     "lcov_cobertura": "lcov_cobertura",
-    "matplotlib": "matplotlib >= 3.1.1",
-    "numpy": "numpy >= 1.17.0",
+    "matplotlib": "matplotlib >= 3.1.2",
+    "numpy": "numpy >= 1.17.4",
     "pycobertura": "pycobertura",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.4.3",
-    "pytest": "pytest >= 5.0.1",
+    "pylint": "pylint >= 2.4.4",
+    "pytest": "pytest >= 5.3.0",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.3.0",
+    "scipy": "scipy >= 1.3.3",
     "seaborn": "seaborn >= 0.9.0",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
@@ -50,9 +51,9 @@ DOCS_DEPS = (
     "--requirement",
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
-DEFAULT_INTERPRETER = "3.7"
+DEFAULT_INTERPRETER = "3.8"
 PYPY = "pypy3"
-ALL_INTERPRETERS = ("3.6", "3.6-32", "3.7", "3.7-32", PYPY)
+ALL_INTERPRETERS = ("3.6", "3.6-32", "3.7", "3.7-32", "3.8", "3.8-32", PYPY)
 # Constants used for checking the journal of commands.
 APPVEYOR = "appveyor"
 CIRCLE_CI = "circleci"

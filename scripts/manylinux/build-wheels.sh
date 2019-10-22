@@ -32,6 +32,9 @@ for PYBIN in /opt/python/*/bin; do
     elif [[ "${PYBIN}" == *"37"* ]]; then
         VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
         continue
+    elif [[ "${PYBIN}" == *"38"* ]]; then
+        VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
+        continue
     else
         echo "Ignoring unsupported version: ${PYBIN}"
         echo "====================================="

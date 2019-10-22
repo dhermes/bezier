@@ -22,7 +22,7 @@ import pkg_resources
 
 
 # Error messages for ``handle_import_error``.
-TEMPLATE = "No module named 'bezier.{}'"  # 3.6, 3.7, pypy3
+TEMPLATE = "No module named 'bezier.{}'"  # 3.6, 3.7, 3.8, pypy3
 
 
 def modify_path():

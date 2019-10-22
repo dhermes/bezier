@@ -16,7 +16,7 @@ environment:
 
     MINGW_32: C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin
     MINGW_64: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin
-    DEFAULT_PYTHON: "C:\\Python37-x64"
+    DEFAULT_PYTHON: "C:\\Python38-x64"
 
   matrix:
 
@@ -25,8 +25,10 @@ environment:
     - NOX_SESSION: "unit-3.6-32"
     - NOX_SESSION: "unit-3.6"
     - NOX_SESSION: "unit-3.7-32"
+    - NOX_SESSION: "unit-3.7"
+    - NOX_SESSION: "unit-3.8-32"
     - NOX_SESSION: "cover"
-    - NOX_SESSION: "functional-3.7"
+    - NOX_SESSION: "functional-3.8"
     - NOX_SESSION: "doctest"
     - NOX_SESSION: "check_journal(machine='appveyor')"
 
@@ -37,7 +39,7 @@ install:
   - echo "Installed SDKs:"
   - dir "C:/Program Files/Microsoft SDKs/Windows"
 
-  # Make 64-bit Python 3.7 the "default" Python.
+  # Make 64-bit Python 3.8 the "default" Python.
   - "SET PATH=%DEFAULT_PYTHON%;%DEFAULT_PYTHON%\\Scripts;%PATH%"
 
   # Append MinGW to the PATH of this build so ``gfortran`` is visible
