@@ -839,12 +839,14 @@ def quadratic_jacobian_polynomial(nodes):
     # First evaluate the Jacobian at each of the 6 nodes.
     jac_parts = _helpers.matrix_product(nodes, _QUADRATIC_JACOBIAN_HELPER)
     jac_at_nodes = np.empty((1, 6), order="F")
+    # pylint: disable=unsubscriptable-object
     jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
     jac_at_nodes[0, 1] = two_by_two_det(jac_parts[:, 2:4])
     jac_at_nodes[0, 2] = two_by_two_det(jac_parts[:, 4:6])
     jac_at_nodes[0, 3] = two_by_two_det(jac_parts[:, 6:8])
     jac_at_nodes[0, 4] = two_by_two_det(jac_parts[:, 8:10])
     jac_at_nodes[0, 5] = two_by_two_det(jac_parts[:, 10:])
+    # pylint: enable=unsubscriptable-object
     # Convert the nodal values to the Bernstein basis...
     bernstein = _helpers.matrix_product(jac_at_nodes, _QUADRATIC_TO_BERNSTEIN)
     return bernstein
@@ -879,6 +881,7 @@ def cubic_jacobian_polynomial(nodes):
     # in the quartic triangle.
     jac_parts = _helpers.matrix_product(nodes, _CUBIC_JACOBIAN_HELPER)
     jac_at_nodes = np.empty((1, 15), order="F")
+    # pylint: disable=unsubscriptable-object
     jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
     jac_at_nodes[0, 1] = two_by_two_det(jac_parts[:, 2:4])
     jac_at_nodes[0, 2] = two_by_two_det(jac_parts[:, 4:6])
@@ -894,6 +897,7 @@ def cubic_jacobian_polynomial(nodes):
     jac_at_nodes[0, 12] = two_by_two_det(jac_parts[:, 24:26])
     jac_at_nodes[0, 13] = two_by_two_det(jac_parts[:, 26:28])
     jac_at_nodes[0, 14] = two_by_two_det(jac_parts[:, 28:])
+    # pylint: enable=unsubscriptable-object
     # Convert the nodal values to the Bernstein basis...
     bernstein = _helpers.matrix_product(jac_at_nodes, _QUARTIC_TO_BERNSTEIN)
     bernstein /= _QUARTIC_BERNSTEIN_FACTOR
@@ -2574,7 +2578,10 @@ def no_intersections(nodes1, degree1, nodes2, degree2):
           that one of the surfaces is contained in the other.
     """
     # NOTE: This is a circular import.
+    # pylint: disable=import-outside-toplevel
     from bezier import _surface_intersection
+
+    # pylint: enable=import-outside-toplevel
 
     located = _surface_intersection.locate_point(
         nodes2, degree2, nodes1[0, 0], nodes1[1, 0]

@@ -113,7 +113,7 @@ status module
       $ gcc \
       >   -o example \
       >   example_status.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran

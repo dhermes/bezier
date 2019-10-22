@@ -2,5 +2,5 @@
 ``bezier._surface``
 ###################
 
-.. literalinclude:: ../../../src/bezier/_surface.pxd
+.. literalinclude:: ../../../src/python/bezier/_surface.pxd
    :language: cython

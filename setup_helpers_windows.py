@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Helpers for ``setup.py`` specific to Windows."""
 
 import os
@@ -83,7 +84,7 @@ def run_cleanup(build_ext_cmd):
     if not build_ext_cmd.inplace:
         return
 
-    bezier_dir = os.path.join("src", "bezier")
+    bezier_dir = os.path.join("src", "python", "bezier")
     shutil.move(os.path.join(build_ext_cmd.build_lib, LIB_DIR), bezier_dir)
     shutil.move(os.path.join(build_ext_cmd.build_lib, DLL_DIR), bezier_dir)
 

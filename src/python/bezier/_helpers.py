@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Generic geometry and floating point helpers.
 
 As a convention, the functions defined here with a leading underscore
@@ -353,8 +354,8 @@ def _simple_convex_hull(points):
             if cross_product_compare(point0, point1, point2) > 0:
                 break
 
-            else:
-                lower.pop()
+            lower.pop()
+
         lower.append(index)
     # Build upper hull
     upper = [num_points - 1]
@@ -370,8 +371,8 @@ def _simple_convex_hull(points):
             if cross_product_compare(point0, point1, point2) > 0:
                 break
 
-            else:
-                upper.pop()
+            upper.pop()
+
         upper.append(index)
     # **Both** corners are double counted.
     size_polygon = len(lower) + len(upper) - 2

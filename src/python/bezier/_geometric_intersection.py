@@ -1117,7 +1117,7 @@ def intersect_one_round(candidates, intersections):
         if bbox_int == BoxIntersectionType.DISJOINT:
             continue
 
-        elif bbox_int == BoxIntersectionType.TANGENT and not both_linearized:
+        if bbox_int == BoxIntersectionType.TANGENT and not both_linearized:
             # NOTE: Ignore tangent bounding boxes in the linearized case
             #       because ``tangent_bbox_intersection()`` assumes that both
             #       curves are not linear.

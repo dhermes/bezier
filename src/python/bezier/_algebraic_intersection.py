@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 r"""Helpers for intersecting B |eacute| zier curves via algebraic methods.
 
 Primarily helps implicitize B |eacute| zier curves.
@@ -716,9 +717,11 @@ def bernstein_companion(coeffs):
         return np.empty((0, 0), order="F"), degree, 0
 
     companion = np.zeros((effective_degree, effective_degree), order="F")
+    # pylint: disable=unsupported-assignment-operation
     companion.flat[
         effective_degree :: effective_degree + 1  # noqa: E203
     ] = 1.0
+    # pylint: enable=unsupported-assignment-operation
     companion[0, :] = -sigma_coeffs[::-1]
     return companion, degree, effective_degree
 

@@ -68,7 +68,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_compute_length.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -133,7 +133,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_elevate_nodes_curve.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -234,7 +234,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_evaluate_curve_barycentric.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -300,7 +300,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_evaluate_hodograph.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -374,7 +374,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_evaluate_multi.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -450,7 +450,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_full_reduce.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -519,7 +519,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_get_curvature.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -598,7 +598,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_locate_point_curve.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -679,7 +679,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_newton_refine_curve.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -752,7 +752,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_reduce_pseudo_inverse.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -832,7 +832,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_curve_specialize.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -903,7 +903,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_subdivide_nodes_curve.c \
-      >   -I src/bezier/include/ \
+      >   -I src/fortran/include/ \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran

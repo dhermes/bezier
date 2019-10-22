@@ -73,7 +73,7 @@ useful, for example, to track changes across different systems or simple
 to make sure the build is occurring as expected.
 """
 QUADPACK_DIR = "quadpack"
-QUADPACK_SOURCE_FILENAME = os.path.join("src", "bezier", QUADPACK_DIR, "{}.f")
+QUADPACK_SOURCE_FILENAME = os.path.join("src", "fortran", QUADPACK_DIR, "{}.f")
 # NOTE: QUADPACK module dependencies: order is important.
 QUADPACK_MODULES = ("d1mach", "dqelg", "dqpsrt", "dqk21", "dqagse")
 # NOTE: This represents the Fortran module dependency graph. Order is
@@ -88,11 +88,14 @@ FORTRAN_MODULES = (
     "curve_intersection",
     "surface_intersection",
 )
-FORTRAN_SOURCE_FILENAME = os.path.join("src", "bezier", "{}.f90")
-OBJECT_FILENAME = os.path.join("src", "bezier", "{}.o")
-SPEEDUP_FILENAME = os.path.join("src", "bezier", "_speedup.c")
+FORTRAN_INCLUDE_DIR = os.path.join("src", "fortran", "include")
+FORTRAN_SOURCE_FILENAME = os.path.join("src", "fortran", "{}.f90")
+OBJECT_FILENAME = os.path.join("src", "fortran", "{}.o")
+SPEEDUP_FILENAME = os.path.join("src", "python", "bezier", "_speedup.c")
 if IS_PYPY:
-    SPEEDUP_FILENAME = os.path.join("src", "bezier", "_pypy_speedup.c")
+    SPEEDUP_FILENAME = os.path.join(
+        "src", "python", "bezier", "_pypy_speedup.c"
+    )
 
 
 def gfortran_search_path(library_dirs):
@@ -167,10 +170,7 @@ def extension_modules():
         "bezier._speedup",
         [SPEEDUP_FILENAME],
         extra_objects=extra_objects,
-        include_dirs=[
-            np.get_include(),
-            os.path.join("src", "bezier", "include"),
-        ],
+        include_dirs=[np.get_include(), FORTRAN_INCLUDE_DIR],
         libraries=copy.deepcopy(libraries),
         library_dirs=copy.deepcopy(library_dirs),
     )
@@ -444,7 +444,7 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
 
         shutil.move(
             os.path.join(self.build_lib, "bezier", "lib"),
-            os.path.join("src", "bezier"),
+            os.path.join("src", "python", "bezier"),
         )
 
     def cleanup(self):
@@ -454,9 +454,20 @@ class BuildFortranThenExt(setuptools.command.build_ext.build_ext):
         else:
             self.CLEANUP()
 
+    def copy_include_dir(self):
+        """Copy ``include/`` directory into Python build directory.
+
+        This is so the Python library will include the headers.
+        """
+        shutil.copytree(
+            FORTRAN_INCLUDE_DIR,
+            os.path.join(self.build_lib, "bezier", "include"),
+        )
+
     def run(self):
         self.set_f90_compiler()
         self.start_journaling()
+        self.copy_include_dir()
         self.compile_fortran_obj_files()
         result = setuptools.command.build_ext.build_ext.run(self)
         self.save_journal()

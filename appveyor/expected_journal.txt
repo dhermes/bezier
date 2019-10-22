@@ -13,9 +13,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\types.f90 \
+>   src\fortran\types.f90 \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\types.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\types.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -33,9 +33,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\status.f90 \
+>   src\fortran\status.f90 \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\status.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\status.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -53,9 +53,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\helpers.f90 \
+>   src\fortran\helpers.f90 \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\helpers.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\helpers.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -73,9 +73,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\curve.f90 \
+>   src\fortran\curve.f90 \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\curve.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\curve.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -93,9 +93,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\surface.f90 \
+>   src\fortran\surface.f90 \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\surface.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\surface.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -113,9 +113,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\curve_intersection.f90 \
+>   src\fortran\curve_intersection.f90 \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\curve_intersection.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\curve_intersection.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -133,9 +133,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\surface_intersection.f90 \
+>   src\fortran\surface_intersection.f90 \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\surface_intersection.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\surface_intersection.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -153,9 +153,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\quadpack\d1mach.f \
+>   src\fortran\quadpack\d1mach.f \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\d1mach.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\d1mach.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -173,9 +173,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\quadpack\dqelg.f \
+>   src\fortran\quadpack\dqelg.f \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqelg.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\dqelg.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -193,9 +193,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\quadpack\dqpsrt.f \
+>   src\fortran\quadpack\dqpsrt.f \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqpsrt.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\dqpsrt.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -213,9 +213,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\quadpack\dqk21.f \
+>   src\fortran\quadpack\dqk21.f \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqk21.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\dqk21.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -233,9 +233,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\bezier\quadpack\dqagse.f \
+>   src\fortran\quadpack\dqagse.f \
 >   -o \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqagse.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\dqagse.o \
 >   -J \
 >   build\temp.win-amd64-3.7\Release
 ----------------------------------------
@@ -244,18 +244,18 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -shared \
 >   -o \
 >   build\temp.win-amd64-3.7\Release\bezier.dll \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\d1mach.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqelg.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqpsrt.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqk21.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\quadpack\dqagse.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\types.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\status.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\helpers.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\curve.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\surface.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\curve_intersection.o \
->   build\temp.win-amd64-3.7\Release\src\bezier\surface_intersection.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\d1mach.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\dqelg.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\dqpsrt.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\dqk21.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\quadpack\dqagse.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\types.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\status.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\helpers.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\curve.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\surface.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\curve_intersection.o \
+>   build\temp.win-amd64-3.7\Release\src\fortran\surface_intersection.o \
 >   -Wl,--output-def,build\temp.win-amd64-3.7\Release\bezier.def
 ----------------------------------------
 $ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\lib.exe \
@@ -272,7 +272,7 @@ $ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe \
 >   /DNDEBUG \
 >   /MD \
 >   -Ic:\projects\bezier\.nox\check_journal-machine-appveyor\lib\site-packages\numpy\core\include \
->   -Isrc\bezier\include \
+>   -Isrc\fortran\include \
 >   -IC:\Python37-x64\include \
 >   -IC:\Python37-x64\include \
 >   -IC:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE \
@@ -289,8 +289,8 @@ $ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe \
 >   -IC:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared \
 >   -IC:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um \
 >   -IC:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt \
->   /Tcsrc\bezier\_speedup.c \
->   /Fobuild\temp.win-amd64-3.7\Release\src\bezier\_speedup.obj
+>   /Tcsrc\python\bezier\_speedup.c \
+>   /Fobuild\temp.win-amd64-3.7\Release\src\python\bezier\_speedup.obj
 ----------------------------------------
 $ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe \
 >   /nologo \
@@ -315,7 +315,7 @@ $ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe 
 >   /LIBPATH:C:\Program Files (x86)\Windows Kits\10\lib\10.0.18362.0\um\x64 \
 >   bezier.lib \
 >   /EXPORT:PyInit__speedup \
->   build\temp.win-amd64-3.7\Release\src\bezier\_speedup.obj \
+>   build\temp.win-amd64-3.7\Release\src\python\bezier\_speedup.obj \
 >   /OUT:build\lib.win-amd64-3.7\bezier\_speedup.cp37-win_amd64.pyd \
->   /IMPLIB:build\temp.win-amd64-3.7\Release\src\bezier\_speedup.cp37-win_amd64.lib
+>   /IMPLIB:build\temp.win-amd64-3.7\Release\src\python\bezier\_speedup.cp37-win_amd64.lib
 ----------------------------------------
