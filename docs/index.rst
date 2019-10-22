@@ -216,6 +216,34 @@ To work on adding a feature or to run the functional tests, see the
 :doc:`DEVELOPMENT doc <development>` for more information on how to get
 started.
 
+Citation
+--------
+
+For publications that use ``bezier``, there is a `JOSS paper`_ that can be
+cited. The following BibTeX entry can be used:
+
+.. code-block:: rest
+
+   @article{Hermes2017,
+     doi = {10.21105/joss.00267},
+     url = {https://doi.org/10.21105%2Fjoss.00267},
+     year = {2017},
+     month = {Aug},
+     publisher = {The Open Journal},
+     volume = {2},
+     number = {16},
+     pages = {267},
+     author = {Danny Hermes},
+     title = {Helper for B{\'{e}}zier Curves, Triangles, and Higher Order Objects},
+     journal = {The Journal of Open Source Software}
+   }
+
+A **particular** version of this library can be cited via a Zenodo DOI; see
+a full `list by version`_.
+
+.. _JOSS paper: https://joss.theoj.org/papers/10.21105/joss.00267
+.. _list by version: https://zenodo.org/search?page=1&size=20&q=conceptrecid:%22838307%22&sort=-version&all_versions=True
+
 License
 -------
 
