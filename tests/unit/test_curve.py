@@ -54,6 +54,15 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve._dimension, 3)
         self.assertEqual(curve._nodes, nodes)
 
+    def test_from_nodes_factory_non_array(self):
+        nodes = [[1.0, 1.0, 2.0], [2.0, 3.0, 4.0]]
+        klass = self._get_target_class()
+        curve = klass.from_nodes(nodes)
+        self.assertIsInstance(curve, klass)
+        self.assertEqual(curve._degree, 2)
+        self.assertEqual(curve._dimension, 2)
+        self.assertTrue(np.all(curve._nodes == nodes))
+
     def test__get_degree(self):
         klass = self._get_target_class()
         self.assertEqual(0, klass._get_degree(1))

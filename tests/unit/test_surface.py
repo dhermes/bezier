@@ -73,6 +73,16 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(surface._nodes, nodes)
         self.assertIsNone(surface._edges)
 
+    def test_from_nodes_factory_non_array(self):
+        nodes = [[0.0, 1.0, 2.0]]
+        klass = self._get_target_class()
+        surface = klass.from_nodes(nodes)
+        self.assertIsInstance(surface, klass)
+        self.assertEqual(surface._degree, 1)
+        self.assertEqual(surface._dimension, 1)
+        self.assertTrue(np.all(surface._nodes == nodes))
+        self.assertIsNone(surface._edges)
+
     def test___repr__(self):
         nodes = np.zeros((3, 15), order="F")
         surface = self._make_one(nodes, 4)

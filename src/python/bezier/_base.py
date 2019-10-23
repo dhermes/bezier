@@ -39,11 +39,7 @@ class Base:
     _degree = -1
 
     def __init__(self, nodes, _copy=True):
-        nodes_np = np.asarray(nodes, order="F")
-        if nodes_np.ndim != 2:
-            raise ValueError("Nodes must be 2-dimensional, not", nodes_np.ndim)
-
-        nodes_np = _lossless_to_float(nodes_np)
+        nodes_np = sequence_to_array(nodes)
         dimension, _ = nodes_np.shape
         self._dimension = dimension
         if _copy:
@@ -102,3 +98,26 @@ def _lossless_to_float(array):
         raise ValueError("Array cannot be converted to floating point")
 
     return converted
+
+
+def sequence_to_array(nodes):
+    """Convert a sequence to a Fortran-ordered ``np.float64`` NumPy array.
+
+    Args:
+        nodes (Sequence[Sequence[numbers.Number]]): The control points for a
+            shape. Must be convertible to a 2D NumPy array of floating point
+            values, where the columns are the nodes and the rows correspond to
+            each dimension the shape occurs in.
+
+    Returns:
+        numpy.ndarray: The converted array (or the original if already a
+        float array).
+
+    Raises:
+        ValueError: If the ``nodes`` are not 2D.
+    """
+    nodes_np = np.asarray(nodes, order="F")
+    if nodes_np.ndim != 2:
+        raise ValueError("Nodes must be 2-dimensional, not", nodes_np.ndim)
+
+    return _lossless_to_float(nodes_np)

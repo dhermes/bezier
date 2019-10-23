@@ -116,9 +116,10 @@ class Curve(_base.Base):
         Returns:
             Curve: The constructed curve.
         """
-        _, num_nodes = nodes.shape
+        nodes_np = _base.sequence_to_array(nodes)
+        _, num_nodes = nodes_np.shape
         degree = cls._get_degree(num_nodes)
-        return cls(nodes, degree, _copy=_copy)
+        return cls(nodes_np, degree, _copy=_copy)
 
     @staticmethod
     def _get_degree(num_nodes):
