@@ -47,3 +47,16 @@ jobs:
           command: |
             .nox/cover/bin/python -m pip install coveralls
             .nox/cover/bin/coveralls
+
+workflows:
+  version: 2
+  monthly:
+    triggers:
+      - schedule:
+          cron: "0 0 1 * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build
