@@ -392,6 +392,49 @@ def check_journal(session, machine):
     session.run("python", diff_tool, journal_filename, expected_journal)
 
 
+@nox.session(py=DEFAULT_INTERPRETER)
+def fortran_unit(session):
+    session.install(DEPS["lcov_cobertura"], DEPS["pycobertura"])
+    if py.path.local.sysfind("make") is None:
+        session.skip("`make` must be installed")
+    if py.path.local.sysfind("gfortran") is None:
+        session.skip("`gfortran` must be installed")
+    if py.path.local.sysfind("lcov") is None:
+        session.skip("`lcov` must be installed")
+    test_dir = get_path("tests", "fortran")
+    lcov_filename = os.path.join(test_dir, "coverage.info")
+    session.chdir(test_dir)
+    session.run("make", "unit", external=True)
+    session.chdir(NOX_DIR)
+    session.run(
+        "lcov",
+        "--capture",
+        "--directory",
+        test_dir,
+        "--output-file",
+        lcov_filename,
+        external=True,
+    )
+    session.run(
+        "python",
+        get_path("scripts", "report_lcov.py"),
+        "--lcov-filename",
+        lcov_filename,
+    )
+    session.chdir(test_dir)
+    session.run("make", "clean", external=True)
+
+
+@nox.session(py=DEFAULT_INTERPRETER)
+def validate_functional_test_cases(session):
+    # Install all dependencies.
+    session.install(DEPS["jsonschema"])
+
+    session.run(
+        "python", get_path("scripts", "validate_functional_test_cases.py")
+    )
+
+
 @nox.session(py=False)
 def clean(session):
     """Clean up build files.
@@ -441,46 +484,3 @@ def clean(session):
     for glob_path in clean_globs:
         for filename in glob.glob(glob_path):
             session.run(os.remove, filename)
-
-
-@nox.session(py=DEFAULT_INTERPRETER)
-def fortran_unit(session):
-    session.install(DEPS["lcov_cobertura"], DEPS["pycobertura"])
-    if py.path.local.sysfind("make") is None:
-        session.skip("`make` must be installed")
-    if py.path.local.sysfind("gfortran") is None:
-        session.skip("`gfortran` must be installed")
-    if py.path.local.sysfind("lcov") is None:
-        session.skip("`lcov` must be installed")
-    test_dir = get_path("tests", "fortran")
-    lcov_filename = os.path.join(test_dir, "coverage.info")
-    session.chdir(test_dir)
-    session.run("make", "unit", external=True)
-    session.chdir(NOX_DIR)
-    session.run(
-        "lcov",
-        "--capture",
-        "--directory",
-        test_dir,
-        "--output-file",
-        lcov_filename,
-        external=True,
-    )
-    session.run(
-        "python",
-        get_path("scripts", "report_lcov.py"),
-        "--lcov-filename",
-        lcov_filename,
-    )
-    session.chdir(test_dir)
-    session.run("make", "clean", external=True)
-
-
-@nox.session(py=DEFAULT_INTERPRETER)
-def validate_functional_test_cases(session):
-    # Install all dependencies.
-    session.install(DEPS["jsonschema"])
-
-    session.run(
-        "python", get_path("scripts", "validate_functional_test_cases.py")
-    )
