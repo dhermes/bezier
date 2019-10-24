@@ -25,6 +25,55 @@ In order to add a feature to ``bezier``:
 .. _File an issue: https://github.com/dhermes/bezier/issues/new
 .. _doctest: http://www.sphinx-doc.org/en/stable/ext/doctest.html
 
+*************
+``libbezier``
+*************
+
+To build the Fortran shared library directly, use `CMake`_ version
+``3.1`` or later:
+
+.. code-block:: console
+
+   $ mkdir src/fortran/build-debug/
+   $ cmake \
+   >   -DCMAKE_BUILD_TYPE=Debug \
+   >   -DCMAKE_INSTALL_PREFIX:PATH="$(pwd)/src/fortran/usr-debug/" \
+   >   -S src/fortran/ \
+   >   -B src/fortran/build-debug/
+   $ cmake \
+   >   --build src/fortran/build-debug/ \
+   >   --config Debug \
+   >   --target install
+
+On Linux, this should result in:
+
+.. code-block:: console
+
+   $ tree src/fortran/usr-debug/
+   src/fortran/usr-debug/
+   ├── include
+   │   ├── bezier
+   │   │   ├── curve.h
+   │   │   ├── curve_intersection.h
+   │   │   ├── helpers.h
+   │   │   ├── status.h
+   │   │   ├── triangle.h
+   │   │   └── triangle_intersection.h
+   │   └── bezier.h
+   ├── lib
+   │   ├── libbezier.so -> libbezier.so.2020
+   │   ├── libbezier.so.2020 -> libbezier.so.2020.1.14
+   │   └── libbezier.so.2020.1.14
+   └── share
+       └── bezier
+           └── cmake
+               ├── BezierConfig-debug.cmake
+               └── BezierConfig.cmake
+
+   6 directories, 12 files
+
+.. _CMake: https://cmake.org/
+
 ****************
 Binary Extension
 ****************
@@ -75,7 +124,6 @@ macOS on `Travis CI`_ and in Windows on `AppVeyor`_.
 As the build complexity grows, it may make more sense to transition the steps
 out of Python and into `CMake`_, `SCons`_ or another build tool.
 
-.. _CMake: https://cmake.org
 .. _SCons: http://scons.org
 
 To explicitly disable the building of the extension, the
