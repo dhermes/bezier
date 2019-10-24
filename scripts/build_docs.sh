@@ -14,7 +14,7 @@
 #
 # Build the bezier docs.
 
-set -e
+set -e -x
 
 rm -r docs/python/reference
 OPTIONS="members,inherited-members,undoc-members,show-inheritance"

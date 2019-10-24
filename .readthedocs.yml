@@ -1,3 +1,4 @@
+---
 # Don't build any extra formats, HTML and JSON will
 # always be built by default.
 formats:

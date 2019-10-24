@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
+set -e -x
 
 # NOTE: This is the Python.org version of Python.
 export BIN_DIR="/Library/Frameworks/Python.framework/Versions/3.6/bin"

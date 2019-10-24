@@ -1,6 +1,7 @@
+---
 version: 1.0.{build}.{branch}
 
-build: off
+build: false
 
 matrix:
   fast_finish: true

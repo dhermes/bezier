@@ -1,5 +1,12 @@
+---
 language: generic
 os: osx
+osx_image: xcode11.2  # This is latest as of October 23, 2019
+
+addons:
+  homebrew:
+    packages:
+      - gcc  # For `gfortran`
 
 matrix:
   include:

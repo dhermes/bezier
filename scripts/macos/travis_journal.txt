@@ -340,8 +340,8 @@ $ gcc \
 >   build/temp.macosx-10.6-intel-3.7/src/fortran/quadpack/dqk21.o \
 >   build/temp.macosx-10.6-intel-3.7/src/fortran/quadpack/dqagse.o \
 >   -L/usr/local/Cellar/gcc/9.2.0_1/lib/gcc/9 \
->   -L/usr/local/Cellar/gcc/9.2.0_1/lib/gcc/9/gcc/x86_64-apple-darwin17/9.2.0 \
->   -L/usr/local/Cellar/gcc/9.2.0_1/lib/gcc/9/gcc/x86_64-apple-darwin17/9.2.0/../../.. \
+>   -L/usr/local/Cellar/gcc/9.2.0_1/lib/gcc/9/gcc/x86_64-apple-darwin18/9.2.0 \
+>   -L/usr/local/Cellar/gcc/9.2.0_1/lib/gcc/9/gcc/x86_64-apple-darwin18/9.2.0/../../.. \
 >   -lgfortran \
 >   -o \
 >   build/lib.macosx-10.6-intel-3.7/bezier/_speedup.cpython-37m-darwin.so

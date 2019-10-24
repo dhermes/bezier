@@ -20,7 +20,7 @@
 # - make sure we have a latest `nox`, `pip`, `numpy` and `virtualenv`
 # - puts the "local" Python at the front of `PATH`
 
-set -e
+set -e -x
 
 PREFIX="/Library/Frameworks/Python.framework/Versions"
 # ``readlink -f`` is not our friend on macOS.

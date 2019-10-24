@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -e -x
+
 # Avoid adding ``multibuild`` as a ``git`` submodule.
 MB_COMMON_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/master/common_utils.sh"
 MB_OSX_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/master/osx_utils.sh"
@@ -20,10 +22,6 @@ if [[ -z "${PY_VERSION}" ]]; then
     echo "PY_VERSION environment variable should be set by the caller."
     exit 1
 fi
-
-# For ``gfortran``
-brew cask uninstall --force oclint
-brew install gcc
 
 # Get the "bare minimum" from ``matthew-brett/multibuild``
 curl -O ${MB_COMMON_UTILS}
