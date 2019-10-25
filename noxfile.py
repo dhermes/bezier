@@ -501,6 +501,9 @@ def cmake(session):
         "install",
     )
 
+    # Get information on how the build was configured.
+    session.run("cmake", "-L", build_dir)
+
 
 @nox.session(py=False)
 def clean(session):
