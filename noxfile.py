@@ -26,7 +26,7 @@ nox.options.error_on_external_run = True
 IS_MACOS = sys.platform == "darwin"
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
-    "black": "black >= 19.3b0",
+    "black": "black >= 19.10b0",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.13",
     "docutils": "docutils",
