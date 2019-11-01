@@ -32,9 +32,9 @@ def make_plot(segment, index):
     seaborn.set()  # Required in `seaborn >= 0.8`
     figure = plt.figure()
     ax = figure.gca()
-    line, = ax.plot([0, 1], [0, 1], alpha=0.0)
+    (line,) = ax.plot([0, 1], [0, 1], alpha=0.0)
     ax.fill_between([0, 1], [0, 0], [1, 1], alpha=0.5, color=line.get_color())
-    line, = ax.plot(segment[0, :], segment[1, :])
+    (line,) = ax.plot(segment[0, :], segment[1, :])
     ax.plot(
         segment[0, 0],
         segment[1, 0],

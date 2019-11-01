@@ -271,7 +271,7 @@ class Test__wiggle_interval(unittest.TestCase):
         self.assertEqual(result, 0.25)
 
     def test_wiggle_below(self):
-        value = -0.5 ** 60
+        value = -(0.5 ** 60)
         result, success = self._call_function_under_test(value)
         self.assertTrue(success)
         self.assertEqual(result, 0.0)

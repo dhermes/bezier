@@ -253,7 +253,7 @@ def _evaluate_multi_barycentric(nodes, lambda1, lambda2):
         values and the rows to the dimension.
     """
     # NOTE: We assume but don't check that lambda2 has the same shape.
-    num_vals, = lambda1.shape
+    (num_vals,) = lambda1.shape
     dimension, num_nodes = nodes.shape
     degree = num_nodes - 1
     # Resize as row vectors for broadcast multiplying with

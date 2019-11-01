@@ -71,7 +71,7 @@ def custom_run(directive):
     Returns:
         docutils.nodes.Element: The element to be added.
     """
-    node, = OLD_RUN(directive)
+    (node,) = OLD_RUN(directive)
     num_options = sum(1 for name in OPTION_NAMES if name in directive.options)
     if num_options > 1:
         raise RuntimeError(

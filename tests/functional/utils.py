@@ -496,7 +496,7 @@ class CurveIntersectionInfo:
             )
 
         # Unpack into one value now that we know 1D.
-        num_params, = self.curve1_params.shape
+        (num_params,) = self.curve1_params.shape
         shape = (num_params,)
         if self.curve2_params.shape != shape:
             msg = "Expected shape {} for ``curve2_params``.".format(shape)

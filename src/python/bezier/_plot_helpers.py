@@ -91,7 +91,7 @@ def add_patch(ax, color, pts_per_edge, *edges):
     all_points.append(first_edge[:, [0]])
     # Add boundary first.
     polygon = np.asfortranarray(np.hstack(all_points))
-    line, = ax.plot(polygon[0, :], polygon[1, :], color=color)
+    (line,) = ax.plot(polygon[0, :], polygon[1, :], color=color)
     # Reset ``color`` in case it was ``None`` and set from color wheel.
     color = line.get_color()
     # ``polygon`` is stored Fortran-contiguous with ``x-y`` points in each

@@ -625,7 +625,7 @@ class Test__resolve_and_add(utils.NumPyTestCase):
         self.assertEqual(final_t, [t])
 
     def test_to_zero(self):
-        s = -0.5 ** 60
+        s = -(0.5 ** 60)
         t = 0.5
         final_s, final_t = self._helper(s, t)
         self.assertEqual(final_s, [0.0])
@@ -633,7 +633,7 @@ class Test__resolve_and_add(utils.NumPyTestCase):
 
     def test_still_negative(self):
         s = 0.125
-        t = -0.5 ** 20
+        t = -(0.5 ** 20)
         final_s, final_t = self._helper(s, t)
         self.assertEqual(final_s, [])
         self.assertEqual(final_t, [])

@@ -112,8 +112,8 @@ def test_surface2_and_point4():
 
 
 def test_surface3_and_point1():
-    s, = utils.real_roots([2, -5, 15, -3])
-    t, = utils.real_roots([14, -61, 74, -15])
+    (s,) = utils.real_roots([2, -5, 15, -3])
+    (t,) = utils.real_roots([14, -61, 74, -15])
     check_point(SURFACE3, 1, s, t)
 
 
@@ -122,8 +122,8 @@ def test_surface3_and_point3():
 
 
 def test_surface4_and_point2():
-    s, = utils.real_roots([64, 101, 34, -5])
-    t, = utils.real_roots([128, -192, 91, -8])
+    (s,) = utils.real_roots([64, 101, 34, -5])
+    (t,) = utils.real_roots([128, -192, 91, -8])
     check_point(SURFACE4, 2, s, t)
 
 

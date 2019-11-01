@@ -519,7 +519,7 @@ def surface_is_valid3(surface):
     # for each "true" edge.
     figure = plt.figure()
     ax = figure.gca()
-    line, = ax.plot(jac_edge[0, :], jac_edge[1, :])
+    (line,) = ax.plot(jac_edge[0, :], jac_edge[1, :])
     color = line.get_color()
     ax.plot(points1[0, :], points1[1, :], color="black", linestyle="dashed")
     ax.plot(points2[0, :], points2[1, :], color="black", linestyle="dashed")

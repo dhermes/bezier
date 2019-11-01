@@ -99,7 +99,7 @@ _CHEB10 = np.asfortranarray(
 )
 # Allow a buffer of sqrt(sqrt(machine precision)) for polynomial roots.
 _IMAGINARY_WIGGLE = 0.5 ** 13
-_UNIT_INTERVAL_WIGGLE_START = -0.5 ** 13
+_UNIT_INTERVAL_WIGGLE_START = -(0.5 ** 13)
 _UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5 ** 13
 _SIGMA_THRESHOLD = 0.5 ** 20
 _SINGULAR_EPS = 0.5 ** 52
@@ -565,7 +565,7 @@ def polynomial_norm(coeffs):
     Returns:
         float: The :math:`L_2` norm of the polynomial.
     """
-    num_coeffs, = coeffs.shape
+    (num_coeffs,) = coeffs.shape
     result = 0.0
     for i in six.moves.xrange(num_coeffs):
         coeff_i = coeffs[i]
@@ -645,7 +645,7 @@ def _get_sigma_coeffs(coeffs):
         * the "full degree" based on the size of ``coeffs``
         * the "effective degree" determined by the number of leading zeros.
     """
-    num_nodes, = coeffs.shape
+    (num_nodes,) = coeffs.shape
     degree = num_nodes - 1
     effective_degree = None
     for index in six.moves.range(degree, -1, -1):
@@ -997,7 +997,7 @@ def lu_companion(top_row, value):
         As mentioned above, these two values are meant to be used with
         `dgecon`_.
     """
-    degree, = top_row.shape
+    (degree,) = top_row.shape
     lu_mat = np.zeros((degree, degree), order="F")
     if degree == 1:
         lu_mat[0, 0] = top_row[0] - value
@@ -1197,7 +1197,7 @@ def _check_non_simple(coeffs):
         NotImplementedError: If the polynomial has non-simple roots.
     """
     coeffs = _strip_leading_zeros(coeffs)
-    num_coeffs, = coeffs.shape
+    (num_coeffs,) = coeffs.shape
     if num_coeffs < 3:
         return
 
@@ -1325,7 +1325,7 @@ def poly_to_power_basis(bezier_coeffs):
         .UnsupportedDegree: If the degree of the curve is not among
             0, 1, 2 or 3.
     """
-    num_coeffs, = bezier_coeffs.shape
+    (num_coeffs,) = bezier_coeffs.shape
     if num_coeffs == 1:
         return bezier_coeffs
 
