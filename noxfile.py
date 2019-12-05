@@ -28,7 +28,7 @@ ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
     "black": "black >= 19.10b0",
     "coverage": "coverage",
-    "Cython": "Cython >= 0.29.13",
+    "Cython": "Cython >= 0.29.14",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",

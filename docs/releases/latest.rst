@@ -79,7 +79,7 @@ Miscellany
       ``implementation_name``
       (`7e9046d <https://github.com/dhermes/bezier/commit/7e9046dc9dbe6f448238141221c5a7dff497d8d4>`__).
    -  Add ``_pypy_speedup.c`` built with Cython 0.29.11 because the latest
-      Cython (0.29.13 as of August 2019) corresponds to the versions of NumPy
+      Cython (0.29.14 as of December 2019) corresponds to the versions of NumPy
       that are incompatible with PyPy
       (`7813e41 <https://github.com/dhermes/bezier/commit/7813e41f7666fa36fbb4a7daf0aa45c2d2bee87f>`__).
    -  Pinning to ``numpy==1.15.4`` and ``scipy==1.2.0`` in wheelhouse for
