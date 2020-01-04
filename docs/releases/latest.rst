@@ -60,6 +60,19 @@ Build
 .. _recent commits: https://github.com/dhermes/bezier-wheels/compare/ee008511d5ff2736dfb44f770552e7553b00e8f0...424453f50fbb8f240ca60280b637a278f6e9ad4a
 .. _code formatter: https://black.readthedocs.io
 
+Bug Fixes
+---------
+
+-  Fixing high-degree error in ``Curve.evaluate()``
+   `method <https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html#bezier.curve.Curve.evaluate>`__,
+   via the ``evaluate_curve_barycentric()`` Fortran
+   `subroutine <https://bezier.readthedocs.io/en/latest/abi/curve.html#c.evaluate_curve_barycentric>`__
+   (`5768824 <https://github.com/dhermes/bezier/commit/57688243b9264ca7ea48423f100e8f516ba2fa2f>`__).
+   Fixed `#156 <https://github.com/dhermes/bezier/issues/156>`__. The code uses
+   :math:`\binom{n}{k + 1} = \frac{n - k}{k + 1} \binom{n}{k}` to update the
+   value and :math:`(30 - 14) \binom{30}{14}` caused the 32-bit signed integer
+   to overflow.
+
 Miscellany
 ~~~~~~~~~~
 
