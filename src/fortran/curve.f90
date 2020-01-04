@@ -110,7 +110,7 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: i, j
     real(c_double) :: lambda2_pow(num_vals)
-    integer(c_int) :: binom_val
+    real(c_double) :: binom_val
 
     lambda2_pow = 1.0_dp
     binom_val = 1
