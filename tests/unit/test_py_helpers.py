@@ -17,15 +17,16 @@ import six
 
 from tests.unit import utils
 
+
 SPACING = np.spacing  # pylint: disable=no-member
 
 
 class Test__vector_close(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(vec1, vec2, **kwargs):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers._vector_close(vec1, vec2, **kwargs)
+        return _py_helpers.vector_close(vec1, vec2, **kwargs)
 
     def test_identical(self):
         vec1 = np.asfortranarray([0.5, 4.0])
@@ -70,9 +71,9 @@ class Test_speedup_vector_close(Test__vector_close):
 class Test__in_interval(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(value, start, end):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers._in_interval(value, start, end)
+        return _py_helpers.in_interval(value, start, end)
 
     def test_interior(self):
         self.assertTrue(self._call_function_under_test(1.5, 1.0, 2.0))
@@ -109,9 +110,9 @@ class Test_speedup_in_interval(Test__in_interval):
 class Test__bbox(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers._bbox(nodes)
+        return _py_helpers.bbox(nodes)
 
     def test_it(self):
         nodes = np.asfortranarray([[0.0, 1.0], [5.0, 3.0]])
@@ -144,9 +145,9 @@ class Test_speedup_bbox(Test__bbox):
 class Test__contains_nd(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, point):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers._contains_nd(nodes, point)
+        return _py_helpers.contains_nd(nodes, point)
 
     def test_below(self):
         nodes = np.asfortranarray([[0.0, 0.5, 1.0], [1.0, 0.0, 2.0]])
@@ -184,9 +185,9 @@ class Test_speedup_contains_nd(Test__contains_nd):
 class Test__cross_product(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(vec0, vec1):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers._cross_product(vec0, vec1)
+        return _py_helpers.cross_product(vec0, vec1)
 
     def test_it(self):
         vec0 = np.asfortranarray([1.0, 7.0]) / 8.0
@@ -213,9 +214,9 @@ class Test_speedup_cross_product(Test__cross_product):
 class Test_matrix_product(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(mat1, mat2):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers.matrix_product(mat1, mat2)
+        return _py_helpers.matrix_product(mat1, mat2)
 
     def test_it(self):
         mat1 = np.asfortranarray([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
@@ -239,9 +240,9 @@ class Test__wiggle_interval(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(value, **kwargs):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers._wiggle_interval(value, **kwargs)
+        return _py_helpers.wiggle_interval(value, **kwargs)
 
     def test_at_endpoint(self):
         # Really just making sure the function doesn't raise.
@@ -361,9 +362,9 @@ class Test_speedup_wiggle_interval(Test__wiggle_interval):
 class Test_cross_product_compare(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(start, candidate1, candidate2):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers.cross_product_compare(start, candidate1, candidate2)
+        return _py_helpers.cross_product_compare(start, candidate1, candidate2)
 
     def test_it(self):
         start = np.asfortranarray([0.0, 0.0])
@@ -376,9 +377,9 @@ class Test_cross_product_compare(unittest.TestCase):
 class Test_in_sorted(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(values, value):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers.in_sorted(values, value)
+        return _py_helpers.in_sorted(values, value)
 
     def test_inside(self):
         values = [0, 5, 8, 12, 17]
@@ -411,9 +412,9 @@ class Test_in_sorted(utils.NumPyTestCase):
 class Test__simple_convex_hull(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(points):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers._simple_convex_hull(points)
+        return _py_helpers.simple_convex_hull(points)
 
     def test_triangle_centroid(self):
         points = np.asfortranarray(
@@ -458,7 +459,7 @@ class Test__simple_convex_hull(utils.NumPyTestCase):
         self.assertEqual(expected, polygon)
 
     def test_almost_linear(self):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
         # In a previous implementation, this case broke the algorithm
         # because the middle point of the line was placed in both the
@@ -485,9 +486,13 @@ class Test__simple_convex_hull(utils.NumPyTestCase):
         point0 = points[:, 0]
         point1 = points[:, 1]
         point2 = points[:, 2]
-        compare_lower = _helpers.cross_product_compare(point0, point1, point2)
+        compare_lower = _py_helpers.cross_product_compare(
+            point0, point1, point2
+        )
         self.assertGreater(compare_lower, 0.0)
-        compare_upper = _helpers.cross_product_compare(point2, point1, point0)
+        compare_upper = _py_helpers.cross_product_compare(
+            point2, point1, point0
+        )
         self.assertGreater(compare_upper, 0.0)
 
 
@@ -503,9 +508,9 @@ class Test_speedup_simple_convex_hull(Test__simple_convex_hull):
 class Test_is_separating(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(direction, polygon1, polygon2):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers.is_separating(direction, polygon1, polygon2)
+        return _py_helpers.is_separating(direction, polygon1, polygon2)
 
     def test_it(self):
         direction = np.asfortranarray([0.0, 1.0])
@@ -521,9 +526,9 @@ class Test_is_separating(unittest.TestCase):
 class Test__polygon_collide(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(polygon1, polygon2):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers._polygon_collide(polygon1, polygon2)
+        return _py_helpers.polygon_collide(polygon1, polygon2)
 
     def test_first_edge(self):
         polygon1 = np.asfortranarray([[1.0, 3.0, -2.0], [1.0, 4.0, 3.0]])
@@ -559,9 +564,9 @@ class Test__polygon_collide(unittest.TestCase):
 class Test_solve2x2(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(lhs, rhs):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers.solve2x2(lhs, rhs)
+        return _py_helpers.solve2x2(lhs, rhs)
 
     def test_solve_without_row_swap(self):
         lhs = np.asfortranarray([[2.0, 3.0], [1.0, 2.0]])
@@ -604,9 +609,9 @@ class Test_solve2x2(unittest.TestCase):
 class TestUnsupportedDegree(unittest.TestCase):
     @staticmethod
     def _get_target_class():
-        from bezier import _helpers
+        from bezier import _py_helpers
 
-        return _helpers.UnsupportedDegree
+        return _py_helpers.UnsupportedDegree
 
     def _make_one(self, *args, **kwargs):
         klass = self._get_target_class()
