@@ -1296,7 +1296,7 @@ def jacobian_det(nodes, degree, st_vals):
        import numpy as np
 
        import bezier
-       from bezier._surface_helpers import jacobian_det
+       from bezier._py_surface_helpers import jacobian_det
 
     .. doctest:: jacobian-det
        :options: +NORMALIZE_WHITESPACE
@@ -1650,7 +1650,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        import numpy as np
        import bezier
        from bezier._py_intersection_helpers import Intersection
-       from bezier._surface_helpers import classify_intersection
+       from bezier._py_surface_helpers import classify_intersection
        from bezier import _wrap_curve_helpers
 
        def hodograph(curve, s):

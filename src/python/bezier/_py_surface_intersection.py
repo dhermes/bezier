@@ -33,7 +33,7 @@ from bezier import _algebraic_intersection
 from bezier import _py_geometric_intersection
 from bezier import _py_helpers
 from bezier import _py_intersection_helpers
-from bezier import _surface_helpers
+from bezier import _py_surface_helpers
 
 
 MAX_LOCATE_SUBDIVISIONS = 20
@@ -204,7 +204,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
         Tuple[float, float]: The refined :math:`s` and :math:`t` values.
     """
     lambda1 = 1.0 - s - t
-    (surf_x,), (surf_y,) = _surface_helpers.evaluate_barycentric(
+    (surf_x,), (surf_y,) = _py_surface_helpers.evaluate_barycentric(
         nodes, degree, lambda1, s, t
     )
     if surf_x == x_val and surf_y == y_val:
@@ -212,9 +212,9 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
         return s, t
 
     # NOTE: This function assumes ``dimension==2`` (i.e. since ``x, y``).
-    jac_nodes = _surface_helpers.jacobian_both(nodes, degree, 2)
+    jac_nodes = _py_surface_helpers.jacobian_both(nodes, degree, 2)
     # The degree of the jacobian is one less.
-    jac_both = _surface_helpers.evaluate_barycentric(
+    jac_both = _py_surface_helpers.evaluate_barycentric(
         jac_nodes, degree - 1, lambda1, s, t
     )
     # The first row of the jacobian matrix is B_s (i.e. the
@@ -256,7 +256,7 @@ def update_locate_candidates(candidate, next_candidates, x_val, y_val, degree):
     if not _py_helpers.contains_nd(candidate_nodes, point):
         return
 
-    nodes_a, nodes_b, nodes_c, nodes_d = _surface_helpers.subdivide_nodes(
+    nodes_a, nodes_b, nodes_c, nodes_d = _py_surface_helpers.subdivide_nodes(
         candidate_nodes, degree
     )
     half_width = 0.5 * width
@@ -354,7 +354,7 @@ def locate_point(nodes, degree, x_val, y_val):
     # that may contain the point.
     s_approx, t_approx = mean_centroid(candidates)
     s, t = newton_refine(nodes, degree, x_val, y_val, s_approx, t_approx)
-    actual = _surface_helpers.evaluate_barycentric(
+    actual = _py_surface_helpers.evaluate_barycentric(
         nodes, degree, 1.0 - s - t, s, t
     )
     expected = np.asfortranarray([x_val, y_val])
@@ -598,18 +598,22 @@ def add_intersection(  # pylint: disable=too-many-arguments
     # NOTE: There is no corresponding "enable", but the disable only applies
     #       in this lexical scope.
     # pylint: disable=too-many-locals
-    edge_end, is_corner, intersection_args = _surface_helpers.handle_ends(
+    edge_end, is_corner, intersection_args = _py_surface_helpers.handle_ends(
         index1, s, index2, t
     )
     if edge_end:
-        intersection = _py_intersection_helpers.Intersection(*intersection_args)
+        intersection = _py_intersection_helpers.Intersection(
+            *intersection_args
+        )
         intersection.interior_curve = interior_curve
         if interior_curve == UNUSED_T:
             add_edge_end_unused(intersection, duplicates, intersections)
         else:
             duplicates.append(intersection)
     else:
-        intersection = _py_intersection_helpers.Intersection(index1, s, index2, t)
+        intersection = _py_intersection_helpers.Intersection(
+            index1, s, index2, t
+        )
         if is_corner:
             is_duplicate = check_unused(
                 intersection, duplicates, intersections
@@ -619,7 +623,7 @@ def add_intersection(  # pylint: disable=too-many-arguments
 
         # Classify the intersection.
         if interior_curve is None:
-            interior_curve = _surface_helpers.classify_intersection(
+            interior_curve = _py_surface_helpers.classify_intersection(
                 intersection, edge_nodes1, edge_nodes2
             )
         intersection.interior_curve = interior_curve
@@ -788,13 +792,13 @@ def generic_intersect(
         return [], None, ()
 
     # We need **all** edges (as nodes).
-    edge_nodes1 = _surface_helpers.compute_edge_nodes(nodes1, degree1)
-    edge_nodes2 = _surface_helpers.compute_edge_nodes(nodes2, degree2)
+    edge_nodes1 = _py_surface_helpers.compute_edge_nodes(nodes1, degree1)
+    edge_nodes2 = _py_surface_helpers.compute_edge_nodes(nodes2, degree2)
     # Run through **all** pairs of edges.
     intersections, duplicates, unused, all_types = surface_intersections(
         edge_nodes1, edge_nodes2, all_intersections
     )
-    edge_infos, contained = _surface_helpers.combine_intersections(
+    edge_infos, contained = _py_surface_helpers.combine_intersections(
         intersections, nodes1, degree1, nodes2, degree2, all_types
     )
     # Verify the duplicates and intersection if need be.

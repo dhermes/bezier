@@ -26,11 +26,11 @@ import six
 
 from bezier import _base
 from bezier import _plot_helpers
-from bezier import _surface_helpers
 from bezier import _surface_intersection
 from bezier import _wrap_curve_helpers
 from bezier import _wrap_helpers
 from bezier import _wrap_intersection_helpers
+from bezier import _wrap_surface_helpers
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 
@@ -287,7 +287,7 @@ class Surface(_base.Base):
             )
 
         edge1, edge2, edge3 = self._get_edges()
-        return _surface_helpers.compute_area(
+        return _wrap_surface_helpers.compute_area(
             (edge1._nodes, edge2._nodes, edge3._nodes)
         )
 
@@ -298,7 +298,7 @@ class Surface(_base.Base):
             Tuple[~curve.Curve, ~curve.Curve, ~curve.Curve]: The edges of
             the surface.
         """
-        nodes1, nodes2, nodes3 = _surface_helpers.compute_edge_nodes(
+        nodes1, nodes2, nodes3 = _wrap_surface_helpers.compute_edge_nodes(
             self._nodes, self._degree
         )
         edge1 = _curve_mod.Curve(nodes1, self._degree, _copy=False)
@@ -476,7 +476,7 @@ class Surface(_base.Base):
         """
         if _verify:
             self._verify_barycentric(lambda1, lambda2, lambda3)
-        return _surface_helpers.evaluate_barycentric(
+        return _wrap_surface_helpers.evaluate_barycentric(
             self._nodes, self._degree, lambda1, lambda2, lambda3
         )
 
@@ -537,7 +537,7 @@ class Surface(_base.Base):
 
             for lambda1, lambda2, lambda3 in param_vals:
                 self._verify_barycentric(lambda1, lambda2, lambda3)
-        return _surface_helpers.evaluate_barycentric_multi(
+        return _wrap_surface_helpers.evaluate_barycentric_multi(
             self._nodes, self._degree, param_vals, self._dimension
         )
 
@@ -599,7 +599,7 @@ class Surface(_base.Base):
         """
         if _verify:
             self._verify_cartesian(s, t)
-        return _surface_helpers.evaluate_barycentric(
+        return _wrap_surface_helpers.evaluate_barycentric(
             self._nodes, self._degree, 1.0 - s - t, s, t
         )
 
@@ -659,7 +659,7 @@ class Surface(_base.Base):
 
             for s, t in param_vals:
                 self._verify_cartesian(s, t)
-        return _surface_helpers.evaluate_cartesian_multi(
+        return _wrap_surface_helpers.evaluate_cartesian_multi(
             self._nodes, self._degree, param_vals, self._dimension
         )
 
@@ -743,9 +743,12 @@ class Surface(_base.Base):
             Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
             lower right and upper left sub-surfaces (in that order).
         """
-        nodes_a, nodes_b, nodes_c, nodes_d = _surface_helpers.subdivide_nodes(
-            self._nodes, self._degree
-        )
+        (
+            nodes_a,
+            nodes_b,
+            nodes_c,
+            nodes_d,
+        ) = _wrap_surface_helpers.subdivide_nodes(self._nodes, self._degree)
         return (
             Surface(nodes_a, self._degree, _copy=False),
             Surface(nodes_b, self._degree, _copy=False),
@@ -779,13 +782,15 @@ class Surface(_base.Base):
             poly_sign = _SIGN(np.linalg.det(first_deriv))
             # pylint: enable=assignment-from-no-return
         elif self._degree == 2:
-            bernstein = _surface_helpers.quadratic_jacobian_polynomial(
+            bernstein = _wrap_surface_helpers.quadratic_jacobian_polynomial(
                 self._nodes
             )
-            poly_sign = _surface_helpers.polynomial_sign(bernstein, 2)
+            poly_sign = _wrap_surface_helpers.polynomial_sign(bernstein, 2)
         elif self._degree == 3:
-            bernstein = _surface_helpers.cubic_jacobian_polynomial(self._nodes)
-            poly_sign = _surface_helpers.polynomial_sign(bernstein, 4)
+            bernstein = _wrap_surface_helpers.cubic_jacobian_polynomial(
+                self._nodes
+            )
+            poly_sign = _wrap_surface_helpers.polynomial_sign(bernstein, 4)
         else:
             raise _wrap_helpers.UnsupportedDegree(
                 self._degree, supported=(1, 2, 3)
