@@ -31,10 +31,11 @@ import numpy as np
 
 from bezier import _algebraic_intersection
 from bezier import _base
-from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
+from bezier import _wrap_curve_helpers
+
 
 _LOCATE_ERROR_TEMPLATE = (
     "Dimension mismatch: This curve is {:d}-dimensional, so the point should "

@@ -31,9 +31,9 @@ import itertools
 import numpy as np
 import six
 
-from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
+from bezier import _py_curve_helpers
 
 
 # Set the threshold for exponent at half the bits available, this way one round
@@ -1189,9 +1189,9 @@ def make_same_degree(nodes1, nodes2):
     _, num_nodes1 = nodes1.shape
     _, num_nodes2 = nodes2.shape
     for _ in six.moves.xrange(num_nodes2 - num_nodes1):
-        nodes1 = _curve_helpers.elevate_nodes(nodes1)
+        nodes1 = _py_curve_helpers.elevate_nodes(nodes1)
     for _ in six.moves.xrange(num_nodes1 - num_nodes2):
-        nodes2 = _curve_helpers.elevate_nodes(nodes2)
+        nodes2 = _py_curve_helpers.elevate_nodes(nodes2)
     return nodes1, nodes2
 
 
@@ -1230,17 +1230,17 @@ def coincident_parameters(nodes1, nodes2):
     #       in this lexical scope.
     # pylint: disable=too-many-return-statements,too-many-branches
     nodes1, nodes2 = make_same_degree(nodes1, nodes2)
-    s_initial = _curve_helpers.locate_point(
+    s_initial = _py_curve_helpers.locate_point(
         nodes1, nodes2[:, 0].reshape((2, 1), order="F")
     )
-    s_final = _curve_helpers.locate_point(
+    s_final = _py_curve_helpers.locate_point(
         nodes1, nodes2[:, -1].reshape((2, 1), order="F")
     )
     if s_initial is not None and s_final is not None:
         # In this case, if the curves were coincident, then ``curve2``
         # would be "fully" contained in ``curve1``, so we specialize
         # ``curve1`` down to that interval to check.
-        specialized1 = _curve_helpers.specialize_curve(
+        specialized1 = _py_curve_helpers.specialize_curve(
             nodes1, s_initial, s_final
         )
         if _helpers.vector_close(
@@ -1251,10 +1251,10 @@ def coincident_parameters(nodes1, nodes2):
         else:
             return None
 
-    t_initial = _curve_helpers.locate_point(
+    t_initial = _py_curve_helpers.locate_point(
         nodes2, nodes1[:, 0].reshape((2, 1), order="F")
     )
-    t_final = _curve_helpers.locate_point(
+    t_final = _py_curve_helpers.locate_point(
         nodes2, nodes1[:, -1].reshape((2, 1), order="F")
     )
     if t_initial is None and t_final is None:
@@ -1268,7 +1268,7 @@ def coincident_parameters(nodes1, nodes2):
         # In this case, if the curves were coincident, then ``curve1``
         # would be "fully" contained in ``curve2``, so we specialize
         # ``curve2`` down to that interval to check.
-        specialized2 = _curve_helpers.specialize_curve(
+        specialized2 = _py_curve_helpers.specialize_curve(
             nodes2, t_initial, t_final
         )
         if _helpers.vector_close(
@@ -1319,8 +1319,8 @@ def coincident_parameters(nodes1, nodes2):
     if width_s < _MIN_INTERVAL_WIDTH and width_t < _MIN_INTERVAL_WIDTH:
         return None
 
-    specialized1 = _curve_helpers.specialize_curve(nodes1, start_s, end_s)
-    specialized2 = _curve_helpers.specialize_curve(nodes2, start_t, end_t)
+    specialized1 = _py_curve_helpers.specialize_curve(nodes1, start_s, end_s)
+    specialized2 = _py_curve_helpers.specialize_curve(nodes2, start_t, end_t)
     if _helpers.vector_close(
         specialized1.ravel(order="F"), specialized2.ravel(order="F")
     ):
@@ -1543,7 +1543,7 @@ class SubdividedCurve:  # pylint: disable=too-few-public-methods
             Tuple[SubdividedCurve, SubdividedCurve]: The left and right
             sub-curves.
         """
-        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self.nodes)
+        left_nodes, right_nodes = _py_curve_helpers.subdivide_nodes(self.nodes)
         midpoint = 0.5 * (self.start + self.end)
         left = SubdividedCurve(
             left_nodes, self.original_nodes, start=self.start, end=midpoint

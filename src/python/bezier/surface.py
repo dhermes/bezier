@@ -25,14 +25,15 @@ import numpy as np
 import six
 
 from bezier import _base
-from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
 from bezier import _surface_intersection
+from bezier import _wrap_curve_helpers
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
+
 
 _SIGN = np.sign  # pylint: disable=no-member
 _LOCATE_ERROR_TEMPLATE = (

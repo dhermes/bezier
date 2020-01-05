@@ -32,9 +32,9 @@ import operator
 import numpy as np
 import six
 
-from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
+from bezier import _py_curve_helpers
 
 
 _MAX_POLY_SUBDIVISIONS = 5
@@ -1391,8 +1391,12 @@ def classify_tangent_intersection(
     # NOTE: When computing curvatures we assume that we don't have lines
     #       here, because lines that are tangent at an intersection are
     #       parallel and we don't handle that case.
-    curvature1 = _curve_helpers.get_curvature(nodes1, tangent1, intersection.s)
-    curvature2 = _curve_helpers.get_curvature(nodes2, tangent2, intersection.t)
+    curvature1 = _py_curve_helpers.get_curvature(
+        nodes1, tangent1, intersection.s
+    )
+    curvature2 = _py_curve_helpers.get_curvature(
+        nodes2, tangent2, intersection.t
+    )
     if dot_prod < 0:
         # If the tangent vectors are pointing in the opposite direction,
         # then the curves are facing opposite directions.
@@ -1463,7 +1467,7 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
         return False
 
     # Do the same for the **other** tangent at the corner.
-    alt_corner_tangent = _curve_helpers.evaluate_hodograph(
+    alt_corner_tangent = _py_curve_helpers.evaluate_hodograph(
         1.0, corner_previous_edge
     )
     # Change the direction of the "in" tangent so that it points "out".
@@ -1508,7 +1512,7 @@ def ignored_double_corner(
     # Compute the other edge for the ``s`` surface.
     prev_index = (intersection.index_first - 1) % 3
     prev_edge = edge_nodes1[prev_index]
-    alt_tangent_s = _curve_helpers.evaluate_hodograph(1.0, prev_edge)
+    alt_tangent_s = _py_curve_helpers.evaluate_hodograph(1.0, prev_edge)
     # First check if ``tangent_t`` is interior to the ``s`` surface.
     cross_prod1 = _helpers.cross_product(
         tangent_s.ravel(order="F"), tangent_t.ravel(order="F")
@@ -1530,7 +1534,7 @@ def ignored_double_corner(
     # edge that ends at the corner.
     prev_index = (intersection.index_second - 1) % 3
     prev_edge = edge_nodes2[prev_index]
-    alt_tangent_t = _curve_helpers.evaluate_hodograph(1.0, prev_edge)
+    alt_tangent_t = _py_curve_helpers.evaluate_hodograph(1.0, prev_edge)
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
     cross_prod3 = _helpers.cross_product(
@@ -1643,19 +1647,19 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
        import numpy as np
        import bezier
-       from bezier import _curve_helpers
+       from bezier import _wrap_curve_helpers
        from bezier._intersection_helpers import Intersection
        from bezier._surface_helpers import classify_intersection
 
        def hodograph(curve, s):
-           return _curve_helpers.evaluate_hodograph(
+           return _py_curve_helpers.evaluate_hodograph(
                s, curve._nodes)
 
        def curvature(curve, s):
            nodes = curve._nodes
-           tangent = _curve_helpers.evaluate_hodograph(
+           tangent = _py_curve_helpers.evaluate_hodograph(
                s, nodes)
-           return _curve_helpers.get_curvature(
+           return _py_curve_helpers.get_curvature(
                nodes, tangent, s)
 
     .. doctest:: classify-intersection1
@@ -2067,9 +2071,9 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
         )
 
     nodes1 = edge_nodes1[intersection.index_first]
-    tangent1 = _curve_helpers.evaluate_hodograph(intersection.s, nodes1)
+    tangent1 = _py_curve_helpers.evaluate_hodograph(intersection.s, nodes1)
     nodes2 = edge_nodes2[intersection.index_second]
-    tangent2 = _curve_helpers.evaluate_hodograph(intersection.t, nodes2)
+    tangent2 = _py_curve_helpers.evaluate_hodograph(intersection.t, nodes2)
     if ignored_corner(
         intersection, tangent1, tangent2, edge_nodes1, edge_nodes2
     ):
@@ -2817,7 +2821,7 @@ def evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
         new_index = index - degree + k  # First element in column.
         col_nodes = nodes[:, new_index : index + 1]  # noqa: E203
         col_nodes = np.asfortranarray(col_nodes)
-        col_result = _curve_helpers.evaluate_multi_barycentric(
+        col_result = _py_curve_helpers.evaluate_multi_barycentric(
             col_nodes, lambda1, lambda2
         )
         result *= lambda3
