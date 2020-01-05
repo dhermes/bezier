@@ -49,9 +49,9 @@ try:
 except ImportError:  # pragma: NO COVER
     _scipy_lapack = None
 from bezier import _curve_helpers
-from bezier import _intersection_helpers
 from bezier import _wrap_geometric_intersection
 from bezier import _wrap_helpers
+from bezier import _wrap_intersection_helpers
 
 
 # NOTE: These are hardcoded from:
@@ -1246,7 +1246,7 @@ def _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t):
         final_t (List[float]): The list of accepted intersection
             parameters ``t``.
     """
-    s_val, t_val = _intersection_helpers.newton_refine(
+    s_val, t_val = _wrap_intersection_helpers.newton_refine(
         s_val, nodes1, t_val, nodes2
     )
     s_val, success_s = _wrap_helpers.wiggle_interval(s_val)

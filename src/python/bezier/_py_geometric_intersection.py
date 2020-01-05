@@ -31,9 +31,9 @@ import itertools
 import numpy as np
 import six
 
-from bezier import _intersection_helpers
 from bezier import _py_curve_helpers
 from bezier import _py_helpers
+from bezier import _py_intersection_helpers
 
 
 # Set the threshold for exponent at half the bits available, this way one round
@@ -787,7 +787,7 @@ def from_linearized(first, second, intersections):
     # Now, promote ``s`` and ``t`` onto the original curves.
     orig_s = (1 - s) * first.curve.start + s * first.curve.end
     orig_t = (1 - t) * second.curve.start + t * second.curve.end
-    refined_s, refined_t = _intersection_helpers.full_newton(
+    refined_s, refined_t = _py_intersection_helpers.full_newton(
         orig_s, first.curve.original_nodes, orig_t, second.curve.original_nodes
     )
     refined_s, success = _py_helpers.wiggle_interval(refined_s)
@@ -837,11 +837,11 @@ def add_intersection(s, t, intersections):
         intersections.append((s, t))
         return
 
-    if s < _intersection_helpers.ZERO_THRESHOLD:
+    if s < _py_intersection_helpers.ZERO_THRESHOLD:
         candidate_s = 1.0 - s
     else:
         candidate_s = s
-    if t < _intersection_helpers.ZERO_THRESHOLD:
+    if t < _py_intersection_helpers.ZERO_THRESHOLD:
         candidate_t = 1.0 - t
     else:
         candidate_t = t
@@ -857,7 +857,7 @@ def add_intersection(s, t, intersections):
         norm_update = np.linalg.norm([delta_s, delta_t], ord=2)
         if (
             norm_update
-            < _intersection_helpers.NEWTON_ERROR_RATIO * norm_candidate
+            < _py_intersection_helpers.NEWTON_ERROR_RATIO * norm_candidate
         ):
             return
 
@@ -1407,7 +1407,7 @@ def all_intersections(nodes_first, nodes_second):
        This assumes both curves are in :math:`\mathbf{R}^2`, but does not
        **explicitly** check this. However, functions used here will fail if
        that assumption fails, e.g. :func:`bbox_intersect` and
-       :func:`newton_refine() <._intersection_helpers._newton_refine>`.
+       :func:`newton_refine() <._py_intersection_helpers._newton_refine>`.
 
     Args:
         nodes_first (numpy.ndarray): Control points of a curve to be

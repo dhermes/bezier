@@ -31,17 +31,17 @@ import numpy as np
 
 from bezier import _algebraic_intersection
 from bezier import _base
-from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _wrap_curve_helpers
 from bezier import _wrap_geometric_intersection
+from bezier import _wrap_intersection_helpers
 
 
 _LOCATE_ERROR_TEMPLATE = (
     "Dimension mismatch: This curve is {:d}-dimensional, so the point should "
     "be a {:d} x 1 NumPy array. Instead the point {} has dimensions {}."
 )
-IntersectionStrategy = _intersection_helpers.IntersectionStrategy
+IntersectionStrategy = _wrap_intersection_helpers.IntersectionStrategy
 
 
 class Curve(_base.Base):

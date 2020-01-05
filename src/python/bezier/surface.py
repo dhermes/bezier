@@ -25,12 +25,12 @@ import numpy as np
 import six
 
 from bezier import _base
-from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
 from bezier import _surface_intersection
 from bezier import _wrap_curve_helpers
 from bezier import _wrap_helpers
+from bezier import _wrap_intersection_helpers
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 
@@ -41,7 +41,7 @@ _LOCATE_ERROR_TEMPLATE = (
     "so the point should be a {:d} x 1 NumPy array. "
     "Instead the point {} has dimensions {}."
 )
-_STRATEGY = _intersection_helpers.IntersectionStrategy
+_STRATEGY = _wrap_intersection_helpers.IntersectionStrategy
 
 
 class Surface(_base.Base):

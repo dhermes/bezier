@@ -30,16 +30,16 @@ import numpy as np
 import six
 
 from bezier import _algebraic_intersection
-from bezier import _intersection_helpers
 from bezier import _py_geometric_intersection
 from bezier import _py_helpers
+from bezier import _py_intersection_helpers
 from bezier import _surface_helpers
 
 
 MAX_LOCATE_SUBDIVISIONS = 20
 LOCATE_EPS = 0.5 ** 47
 INTERSECTION_T = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
-CLASSIFICATION_T = _intersection_helpers.IntersectionClassification
+CLASSIFICATION_T = _py_intersection_helpers.IntersectionClassification
 UNUSED_T = CLASSIFICATION_T.COINCIDENT_UNUSED
 ACCEPTABLE_CLASSIFICATIONS = (
     CLASSIFICATION_T.FIRST,
@@ -602,14 +602,14 @@ def add_intersection(  # pylint: disable=too-many-arguments
         index1, s, index2, t
     )
     if edge_end:
-        intersection = _intersection_helpers.Intersection(*intersection_args)
+        intersection = _py_intersection_helpers.Intersection(*intersection_args)
         intersection.interior_curve = interior_curve
         if interior_curve == UNUSED_T:
             add_edge_end_unused(intersection, duplicates, intersections)
         else:
             duplicates.append(intersection)
     else:
-        intersection = _intersection_helpers.Intersection(index1, s, index2, t)
+        intersection = _py_intersection_helpers.Intersection(index1, s, index2, t)
         if is_corner:
             is_duplicate = check_unused(
                 intersection, duplicates, intersections

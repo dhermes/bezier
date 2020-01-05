@@ -32,9 +32,9 @@ import operator
 import numpy as np
 import six
 
-from bezier import _intersection_helpers
 from bezier import _py_curve_helpers
 from bezier import _py_helpers
+from bezier import _py_intersection_helpers
 
 
 _MAX_POLY_SUBDIVISIONS = 5
@@ -42,7 +42,7 @@ _SIGN = np.sign  # pylint: disable=no-member
 _FLOAT64 = np.float64  # pylint: disable=no-member
 _SAME_CURVATURE = "Tangent curves have same curvature."
 _WRONG_CURVE = "Start and end node not defined on same curve"
-CLASSIFICATION_T = _intersection_helpers.IntersectionClassification
+CLASSIFICATION_T = _py_intersection_helpers.IntersectionClassification
 # NOTE: The ``SUBDIVIDE`` matrices are public since used in
 #       the ``surface`` module.
 LINEAR_SUBDIVIDE_A = (
@@ -1649,9 +1649,9 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
        import numpy as np
        import bezier
-       from bezier import _wrap_curve_helpers
-       from bezier._intersection_helpers import Intersection
+       from bezier._py_intersection_helpers import Intersection
        from bezier._surface_helpers import classify_intersection
+       from bezier import _wrap_curve_helpers
 
        def hodograph(curve, s):
            return _py_curve_helpers.evaluate_hodograph(
@@ -2195,7 +2195,7 @@ def to_front(intersection, intersections, unused):
 
         # If we haven't already returned, create **another** artificial
         # intersection.
-        return _intersection_helpers.Intersection(
+        return _py_intersection_helpers.Intersection(
             next_index, 0.0, None, None, interior_curve=CLASSIFICATION_T.FIRST
         )
 
@@ -2212,7 +2212,7 @@ def to_front(intersection, intersections, unused):
 
         # If we haven't already returned, create **another** artificial
         # intersection.
-        return _intersection_helpers.Intersection(
+        return _py_intersection_helpers.Intersection(
             None, None, next_index, 0.0, interior_curve=CLASSIFICATION_T.SECOND
         )
 
@@ -2261,7 +2261,7 @@ def get_next_first(intersection, intersections, to_end=True):
         if to_end:
             # If there is no other intersection on the edge, just return
             # the segment end.
-            return _intersection_helpers.Intersection(
+            return _py_intersection_helpers.Intersection(
                 index_first,
                 1.0,
                 None,
@@ -2317,7 +2317,7 @@ def get_next_second(intersection, intersections, to_end=True):
         if to_end:
             # If there is no other intersection on the edge, just return
             # the segment end.
-            return _intersection_helpers.Intersection(
+            return _py_intersection_helpers.Intersection(
                 None,
                 None,
                 index_second,
@@ -2379,7 +2379,7 @@ def get_next_coincident(intersection, intersections):
         return along_first
 
     if along_second is None:
-        return _intersection_helpers.Intersection(
+        return _py_intersection_helpers.Intersection(
             intersection.index_first,
             1.0,
             intersection.index_second,

@@ -136,7 +136,7 @@ def newton_refine(s, nodes1, t, nodes2):
 
        import numpy as np
        import bezier
-       from bezier._intersection_helpers import newton_refine
+       from bezier._py_intersection_helpers import newton_refine
 
        machine_eps = np.finfo(np.float64).eps
 
@@ -265,7 +265,7 @@ def newton_refine(s, nodes1, t, nodes2):
 
        import numpy as np
        import bezier
-       from bezier._intersection_helpers import newton_refine
+       from bezier._py_intersection_helpers import newton_refine
 
        nodes1 = np.asfortranarray([
            [0.0, 0.5, 1.0],
