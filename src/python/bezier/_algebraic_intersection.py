@@ -49,9 +49,10 @@ try:
 except ImportError:  # pragma: NO COVER
     _scipy_lapack = None
 from bezier import _curve_helpers
-from bezier import _geometric_intersection
 from bezier import _helpers
 from bezier import _intersection_helpers
+from bezier import _wrap_geometric_intersection
+
 
 # NOTE: These are hardcoded from:
 #         0.5 * (np.cos(np.pi * np.arange(1, 14, 2.0) / 14) + 1.0)
@@ -114,8 +115,8 @@ _POWER_BASIS_ERR = (
     "Currently only supporting degree pairs "
     "1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3."
 )
-_LINEARIZATION = _geometric_intersection.Linearization
-_DISJOINT = _geometric_intersection.BoxIntersectionType.DISJOINT
+_LINEARIZATION = _wrap_geometric_intersection.Linearization
+_DISJOINT = _wrap_geometric_intersection.BoxIntersectionType.DISJOINT
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -1433,7 +1434,7 @@ def all_intersections(nodes_first, nodes_second):
           fails if coincident curves are detected.)
     """
     # Only attempt this if the bounding boxes intersect.
-    bbox_int = _geometric_intersection.bbox_intersect(
+    bbox_int = _wrap_geometric_intersection.bbox_intersect(
         nodes_first, nodes_second
     )
     if bbox_int == _DISJOINT:

@@ -31,10 +31,10 @@ import numpy as np
 
 from bezier import _algebraic_intersection
 from bezier import _base
-from bezier import _geometric_intersection
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _wrap_curve_helpers
+from bezier import _wrap_geometric_intersection
 
 
 _LOCATE_ERROR_TEMPLATE = (
@@ -388,7 +388,7 @@ class Curve(_base.Base):
                 )
 
         if strategy == IntersectionStrategy.GEOMETRIC:
-            all_intersections = _geometric_intersection.all_intersections
+            all_intersections = _wrap_geometric_intersection.all_intersections
         elif strategy == IntersectionStrategy.ALGEBRAIC:
             all_intersections = _algebraic_intersection.all_intersections
         else:

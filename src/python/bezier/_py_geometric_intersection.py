@@ -167,7 +167,7 @@ def linearization_error(nodes):
 
        import numpy as np
        import bezier
-       from bezier._geometric_intersection import linearization_error
+       from bezier._py_geometric_intersection import linearization_error
 
     .. doctest:: linearization-error
 
@@ -310,7 +310,7 @@ def segment_intersection(start0, end0, start1, end1):
     .. testsetup:: segment-intersection1, segment-intersection2
 
        import numpy as np
-       from bezier._geometric_intersection import segment_intersection
+       from bezier._py_geometric_intersection import segment_intersection
 
     .. doctest:: segment-intersection1
        :options: +NORMALIZE_WHITESPACE
@@ -368,7 +368,7 @@ def segment_intersection(start0, end0, start1, end1):
     .. testsetup:: segment-intersection2-continued
 
        import numpy as np
-       from bezier._geometric_intersection import parallel_lines_parameters
+       from bezier._py_geometric_intersection import parallel_lines_parameters
 
        start0 = np.asfortranarray([1.0, 0.0])
        end0 = np.asfortranarray([0.0, 1.0])
@@ -457,7 +457,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     .. testsetup:: parallel-different1, parallel-different2
 
        import numpy as np
-       from bezier._geometric_intersection import parallel_lines_parameters
+       from bezier._py_geometric_intersection import parallel_lines_parameters
 
     .. doctest:: parallel-different1
 
@@ -522,7 +522,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     .. testsetup:: parallel-different3, parallel-different4
 
        import numpy as np
-       from bezier._geometric_intersection import parallel_lines_parameters
+       from bezier._py_geometric_intersection import parallel_lines_parameters
 
        start0 = np.asfortranarray([1.0, 0.0])
        delta0 = np.asfortranarray([2.0, -1.0])

@@ -30,15 +30,15 @@ import numpy as np
 import six
 
 from bezier import _algebraic_intersection
-from bezier import _geometric_intersection
 from bezier import _helpers
 from bezier import _intersection_helpers
+from bezier import _py_geometric_intersection
 from bezier import _surface_helpers
 
 
 MAX_LOCATE_SUBDIVISIONS = 20
 LOCATE_EPS = 0.5 ** 47
-INTERSECTION_T = _geometric_intersection.BoxIntersectionType.INTERSECTION
+INTERSECTION_T = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
 CLASSIFICATION_T = _intersection_helpers.IntersectionClassification
 UNUSED_T = CLASSIFICATION_T.COINCIDENT_UNUSED
 ACCEPTABLE_CLASSIFICATIONS = (
@@ -783,7 +783,7 @@ def generic_intersect(
         * The nodes of three edges of the first surface being intersected
           followed by the nodes of the three edges of the second.
     """
-    bbox_int = _geometric_intersection.bbox_intersect(nodes1, nodes2)
+    bbox_int = _py_geometric_intersection.bbox_intersect(nodes1, nodes2)
     if bbox_int != INTERSECTION_T:
         return [], None, ()
 
@@ -839,7 +839,7 @@ def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
         * The nodes of three edges of the first surface being intersected
           followed by the nodes of the three edges of the second.
     """
-    all_intersections = _geometric_intersection.all_intersections
+    all_intersections = _py_geometric_intersection.all_intersections
     return generic_intersect(
         nodes1, degree1, nodes2, degree2, verify, all_intersections
     )
