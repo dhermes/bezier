@@ -19,6 +19,7 @@ import numpy as np
 from tests import utils as base_utils
 from tests.unit import utils
 
+
 SPACING = np.spacing  # pylint: disable=no-member
 UNIT_SQUARE = np.asfortranarray([[0.0, 1.0, 1.0, 0.0], [0.0, 0.0, 1.0, 1.0]])
 
@@ -26,49 +27,49 @@ UNIT_SQUARE = np.asfortranarray([[0.0, 1.0, 1.0, 0.0], [0.0, 0.0, 1.0, 1.0]])
 class Test__bbox_intersect(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection._bbox_intersect(nodes1, nodes2)
+        return _py_geometric_intersection.bbox_intersect(nodes1, nodes2)
 
     def test_intersect(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         nodes = UNIT_SQUARE + np.asfortranarray([[0.5], [0.5]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_far_apart(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         nodes = UNIT_SQUARE + np.asfortranarray([[100.0], [100.0]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _geometric_intersection.BoxIntersectionType.DISJOINT
+        expected = _py_geometric_intersection.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
     def test_disjoint_but_aligned(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         nodes = UNIT_SQUARE + np.asfortranarray([[1.0], [2.0]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _geometric_intersection.BoxIntersectionType.DISJOINT
+        expected = _py_geometric_intersection.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
     def test_tangent(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         nodes = UNIT_SQUARE + np.asfortranarray([[1.0], [0.0]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _geometric_intersection.BoxIntersectionType.TANGENT
+        expected = _py_geometric_intersection.BoxIntersectionType.TANGENT
         self.assertEqual(result, expected)
 
     def test_almost_tangent(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         x_val = 1.0 + SPACING(1.0)
         nodes = UNIT_SQUARE + np.asfortranarray([[x_val], [0.0]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _geometric_intersection.BoxIntersectionType.DISJOINT
+        expected = _py_geometric_intersection.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
 
@@ -84,9 +85,9 @@ class Test_speedup_bbox_intersect(Test__bbox_intersect):
 class Test_linearization_error(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.linearization_error(nodes)
+        return _py_geometric_intersection.linearization_error(nodes)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, 1.0], [0.0, 2.0]])
@@ -113,7 +114,7 @@ class Test_linearization_error(unittest.TestCase):
         self.assertEqual(error_val, expected)
 
     def test_quadratic(self):
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         nodes = np.asfortranarray([[0.0, 1.0, 5.0], [0.0, 1.0, 6.0]])
         # NOTE: This is hand picked so that
@@ -126,7 +127,7 @@ class Test_linearization_error(unittest.TestCase):
         # For a degree two curve, the 2nd derivative is constant
         # so by subdividing, our error should drop by a factor
         # of (1/2)^2 = 4.
-        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(nodes)
+        left_nodes, right_nodes = _py_curve_helpers.subdivide_nodes(nodes)
         error_left = self._call_function_under_test(left_nodes)
         error_right = self._call_function_under_test(right_nodes)
         self.assertEqual(error_left, 0.25 * expected)
@@ -196,9 +197,9 @@ class Test_linearization_error(unittest.TestCase):
 class Test_segment_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.segment_intersection(
+        return _py_geometric_intersection.segment_intersection(
             start0, end0, start1, end1
         )
 
@@ -244,9 +245,9 @@ class Test_segment_intersection(unittest.TestCase):
 class Test_parallel_lines_parameters(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.parallel_lines_parameters(
+        return _py_geometric_intersection.parallel_lines_parameters(
             start0, end0, start1, end1
         )
 
@@ -374,9 +375,9 @@ class Test_line_line_collide(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(line1, line2):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.line_line_collide(line1, line2)
+        return _py_geometric_intersection.line_line_collide(line1, line2)
 
     def test_general_position_collide(self):
         # I.e. not parallel.
@@ -409,9 +410,9 @@ class Test_line_line_collide(unittest.TestCase):
 class Test_convex_hull_collide(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.convex_hull_collide(nodes1, nodes2)
+        return _py_geometric_intersection.convex_hull_collide(nodes1, nodes2)
 
     def test_line_line(self):
         nodes1 = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]])
@@ -429,9 +430,9 @@ class Test_convex_hull_collide(unittest.TestCase):
 class Test_from_linearized(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(first, second, intersections):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.from_linearized(
+        return _py_geometric_intersection.from_linearized(
             first, second, intersections
         )
 
@@ -480,7 +481,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         self.assertEqual(intersections, [])
 
     def test_unhandled_parallel_lines(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         nodes1 = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
         curve1 = subdivided_curve(nodes1)
@@ -491,7 +492,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         intersections = []
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(lin1, lin2, intersections)
-        expected_args = (_geometric_intersection._UNHANDLED_LINES,)
+        expected_args = (_py_geometric_intersection._UNHANDLED_LINES,)
         self.assertEqual(exc_info.exception.args, expected_args)
         self.assertEqual(intersections, [])
 
@@ -516,14 +517,16 @@ class Test_from_linearized(utils.NumPyTestCase):
         # NOTE: There is no corresponding "enable", but the disable only
         #       applies in this lexical scope.
         # pylint: disable=too-many-locals
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         start1 = 5461.0 / 8192.0
         end1 = 5462.0 / 8192.0
         original_nodes1 = np.asfortranarray(
             [[0.0, 0.375, 0.75], [0.0, 0.75, 0.375]]
         )
-        nodes1 = _curve_helpers.specialize_curve(original_nodes1, start1, end1)
+        nodes1 = _py_curve_helpers.specialize_curve(
+            original_nodes1, start1, end1
+        )
         curve1 = subdivided_curve(
             nodes1, original_nodes=original_nodes1, start=start1, end=end1
         )
@@ -533,7 +536,9 @@ class Test_from_linearized(utils.NumPyTestCase):
         original_nodes2 = np.asfortranarray(
             [[0.25, 0.625, 1.0], [0.625, 0.25, 1.0]]
         )
-        nodes2 = _curve_helpers.specialize_curve(original_nodes2, start2, end2)
+        nodes2 = _py_curve_helpers.specialize_curve(
+            original_nodes2, start2, end2
+        )
         curve2 = subdivided_curve(
             nodes2, original_nodes=original_nodes2, start=start2, end=end2
         )
@@ -552,7 +557,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         # NOTE: There is no corresponding "enable", but the disable only
         #       applies in this lexical scope.
         # pylint: disable=too-many-locals
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         # B1([5461/16384, 5462/16384]) and B2([0, 1]) are linearized
         # and when the segments intersect they produce s = -1/3 < 0.
@@ -561,7 +566,9 @@ class Test_from_linearized(utils.NumPyTestCase):
         original_nodes1 = np.asfortranarray(
             [[0.0, 1.5, 3.0], [2.25, -2.25, 2.25]]
         )
-        nodes1 = _curve_helpers.specialize_curve(original_nodes1, start1, end1)
+        nodes1 = _py_curve_helpers.specialize_curve(
+            original_nodes1, start1, end1
+        )
         curve1 = subdivided_curve(
             nodes1, original_nodes=original_nodes1, start=start1, end=end1
         )
@@ -580,7 +587,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         utils.almost(self, 1.0 / 3.0, t, 1)
 
     def _wiggle_outside_helper(self, swap=False):
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         # B1([127/128, 1]) and B2([0, 1]) are linearized and when the segments
         # intersect they produce s = 0.9999999999940287 and
@@ -599,7 +606,9 @@ class Test_from_linearized(utils.NumPyTestCase):
                 [-0.9648818559703933, -0.9825154456957814, -1.0],
             ]
         )
-        nodes1 = _curve_helpers.specialize_curve(original_nodes1, start1, end1)
+        nodes1 = _py_curve_helpers.specialize_curve(
+            original_nodes1, start1, end1
+        )
         curve1 = subdivided_curve(
             nodes1, original_nodes=original_nodes1, start=start1, end=end1
         )
@@ -637,9 +646,9 @@ class Test_from_linearized(utils.NumPyTestCase):
 class Test_add_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s, t, intersections):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.add_intersection(s, t, intersections)
+        return _py_geometric_intersection.add_intersection(s, t, intersections)
 
     def test_new(self):
         intersections = [(0.5, 0.5)]
@@ -678,9 +687,9 @@ class Test_endpoint_check(utils.NumPyTestCase):
     def _call_function_under_test(
         first, node_first, s, second, node_second, t, intersections
     ):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.endpoint_check(
+        return _py_geometric_intersection.endpoint_check(
             first, node_first, s, second, node_second, t, intersections
         )
 
@@ -729,9 +738,9 @@ class Test_endpoint_check(utils.NumPyTestCase):
 class Test_tangent_bbox_intersection(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(first, second, intersections):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.tangent_bbox_intersection(
+        return _py_geometric_intersection.tangent_bbox_intersection(
             first, second, intersections
         )
 
@@ -774,76 +783,76 @@ class Test_tangent_bbox_intersection(utils.NumPyTestCase):
 class Test_bbox_line_intersect(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, line_start, line_end):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.bbox_line_intersect(
+        return _py_geometric_intersection.bbox_line_intersect(
             nodes, line_start, line_end
         )
 
     def test_start_in_bbox(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         line_start = np.asfortranarray([0.5, 0.5])
         line_end = np.asfortranarray([0.5, 1.5])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_end_in_bbox(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         line_start = np.asfortranarray([-1.0, 0.5])
         line_end = np.asfortranarray([0.5, 0.5])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_segment_intersect_bbox_bottom(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         line_start = np.asfortranarray([0.5, -0.5])
         line_end = np.asfortranarray([0.5, 1.5])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_segment_intersect_bbox_right(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         line_start = np.asfortranarray([-0.5, 0.5])
         line_end = np.asfortranarray([1.5, 0.5])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_segment_intersect_bbox_top(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         line_start = np.asfortranarray([-0.25, 0.5])
         line_end = np.asfortranarray([0.5, 1.25])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_disjoint(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         line_start = np.asfortranarray([2.0, 2.0])
         line_end = np.asfortranarray([2.0, 5.0])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _geometric_intersection.BoxIntersectionType.DISJOINT
+        expected = _py_geometric_intersection.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
 
@@ -859,28 +868,28 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(candidates, intersections):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.intersect_one_round(
+        return _py_geometric_intersection.intersect_one_round(
             candidates, intersections
         )
 
     def _curves_compare(self, curve1, curve2):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        if isinstance(curve1, _geometric_intersection.Linearization):
+        if isinstance(curve1, _py_geometric_intersection.Linearization):
             self.assertIsInstance(
-                curve2, _geometric_intersection.Linearization
+                curve2, _py_geometric_intersection.Linearization
             )
             # We just check identity, since we assume a ``Linearization``
             # can't be subdivided.
             self.assertIs(curve1, curve2)
         else:
             self.assertIsInstance(
-                curve1, _geometric_intersection.SubdividedCurve
+                curve1, _py_geometric_intersection.SubdividedCurve
             )
             self.assertIsInstance(
-                curve2, _geometric_intersection.SubdividedCurve
+                curve2, _py_geometric_intersection.SubdividedCurve
             )
             self.assertIs(curve1.original_nodes, curve2.original_nodes)
             self.assertEqual(curve1.start, curve2.start)
@@ -949,7 +958,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         self.assertEqual(intersections, [(0.5, 0.5)])
 
     def test_failure_due_to_unhandled_lines(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         curve1 = subdivided_curve(self.LINE1)
         lin1 = make_linearization(curve1, error=0.0)
@@ -959,7 +968,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         intersections = []
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test([(lin1, lin2)], intersections)
-        expected_args = (_geometric_intersection._UNHANDLED_LINES,)
+        expected_args = (_py_geometric_intersection._UNHANDLED_LINES,)
         self.assertEqual(exc_info.exception.args, expected_args)
         self.assertEqual(intersections, [])
 
@@ -991,9 +1000,9 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 class Test_prune_candidates(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(candidates):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.prune_candidates(candidates)
+        return _py_geometric_intersection.prune_candidates(candidates)
 
     def test_curved(self):
         nodes1 = np.asfortranarray([[0.0, 2.0, 2.0], [0.0, 0.0, 2.0]])
@@ -1019,9 +1028,9 @@ class Test_prune_candidates(unittest.TestCase):
 class Test_make_same_degree(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.make_same_degree(nodes1, nodes2)
+        return _py_geometric_intersection.make_same_degree(nodes1, nodes2)
 
     def test_same_degree(self):
         nodes1 = np.asfortranarray([[0.0, 1.0, 2.0], [1.0, 2.0, 1.0]])
@@ -1064,9 +1073,9 @@ class Test_make_same_degree(utils.NumPyTestCase):
 class Test_coincident_parameters(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.coincident_parameters(nodes1, nodes2)
+        return _py_geometric_intersection.coincident_parameters(nodes1, nodes2)
 
     def test_different_degree(self):
         nodes1 = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
@@ -1075,10 +1084,10 @@ class Test_coincident_parameters(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_elevated_degree(self):
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         nodes1 = np.asfortranarray([[0.0, 3.0, 6.0], [0.0, 3.0, 0.0]])
-        nodes2 = _curve_helpers.elevate_nodes(nodes1)
+        nodes2 = _py_curve_helpers.elevate_nodes(nodes1)
         result = self._call_function_under_test(nodes1, nodes2)
         expected = ((0.0, 0.0), (1.0, 1.0))
         self.assertEqual(result, expected)
@@ -1102,24 +1111,24 @@ class Test_coincident_parameters(unittest.TestCase):
         )
 
     def test_touch_no_intersect_same_curve(self):
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         nodes1 = np.asfortranarray([[0.0, 1.0, 3.0], [0.0, 2.0, 2.0]])
         new_params = ((1.0, 2.0), (2.0, 1.0), (-1.0, 0.0), (0.0, -1.0))
         for start, end in new_params:
-            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             self.assertIsNone(result)
 
     def test_disjoint_segments_same_curve(self):
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         nodes1 = np.asfortranarray(
             [[1.0, 1.0, 3.0, 4.0], [0.0, 2.0, 2.0, 0.0]]
         )
         new_params = ((1.5, 2.0), (2.0, 1.5), (-1.0, -0.5), (-0.5, -1.0))
         for start, end in new_params:
-            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             self.assertIsNone(result)
 
@@ -1136,7 +1145,7 @@ class Test_coincident_parameters(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_contained_and_touching(self):
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         nodes1 = np.asfortranarray([[4.0, 6.0, 2.0], [1.0, 3.0, 1.0]])
         new_params = (
@@ -1150,7 +1159,7 @@ class Test_coincident_parameters(unittest.TestCase):
             (1.0, -1.0),
         )
         for start, end in new_params:
-            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             if start == 2.0 or end == 2.0:
                 expected = (
@@ -1167,12 +1176,12 @@ class Test_coincident_parameters(unittest.TestCase):
             self.assertEqual(result, expected)
 
     def test_fully_contained(self):
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         nodes1 = np.asfortranarray([[-1.0, 0.0, 2.0], [-1.0, 2.0, 0.0]])
         new_params = ((0.25, 0.75), (0.75, 0.25), (-0.5, 1.5), (1.5, -0.5))
         for start, end in new_params:
-            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             if start == -0.5 or end == -0.5:
                 expected = (
@@ -1184,14 +1193,14 @@ class Test_coincident_parameters(unittest.TestCase):
             self.assertEqual(result, expected)
 
     def test_staggered_overlap(self):
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         nodes1 = np.asfortranarray(
             [[0.0, 1.0, 1.0, 3.0], [-1.0, 2.0, 0.0, 2.0]]
         )
         new_params = ((0.5, 1.5), (1.5, 0.5), (-0.5, 0.5), (0.5, -0.5))
         for start, end in new_params:
-            nodes2 = _curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             if start == 1.5 or end == 1.5:
                 expected = ((0.5, start - 0.5), (1.0, 0.5))
@@ -1229,9 +1238,9 @@ class Test_coincident_parameters(unittest.TestCase):
 class Test_check_lines(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(first, second):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.check_lines(first, second)
+        return _py_geometric_intersection.check_lines(first, second)
 
     def test_not_linearized(self):
         nodes1 = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 1.0, 0.0]])
@@ -1313,9 +1322,9 @@ class Test_check_lines(utils.NumPyTestCase):
 class Test__all_intersections(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes_first, nodes_second, **kwargs):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection._all_intersections(
+        return _py_geometric_intersection.all_intersections(
             nodes_first, nodes_second, **kwargs
         )
 
@@ -1382,7 +1391,7 @@ class Test__all_intersections(utils.NumPyTestCase):
         self.assertFalse(coincident)
 
     def test_non_convergence(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         multiplier = 16384.0
         nodes1 = multiplier * np.asfortranarray(
@@ -1392,8 +1401,8 @@ class Test__all_intersections(utils.NumPyTestCase):
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(nodes1, nodes2)
         exc_args = exc_info.exception.args
-        expected = _geometric_intersection._NO_CONVERGE_TEMPLATE.format(
-            _geometric_intersection._MAX_INTERSECT_SUBDIVISIONS
+        expected = _py_geometric_intersection._NO_CONVERGE_TEMPLATE.format(
+            _py_geometric_intersection._MAX_INTERSECT_SUBDIVISIONS
         )
         self.assertEqual(exc_args, (expected,))
 
@@ -1466,24 +1475,24 @@ class Test__all_intersections(utils.NumPyTestCase):
         self.assertTrue(coincident)
 
     def test_triple_root(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         # Curves intersect and are tangent with the same curvature.
         nodes1 = np.asfortranarray([[12.0, -4.0, -4.0], [4.0, -4.0, 4.0]])
         nodes2 = np.asfortranarray([[6.0, -2.0, -2.0], [1.0, -1.0, 1.0]])
         with self.assertRaises(NotImplementedError) as exc_info:
             self._call_function_under_test(nodes1, nodes2)
-        expected = (_intersection_helpers.NEWTON_NO_CONVERGE,)
+        expected = (_py_intersection_helpers.NEWTON_NO_CONVERGE,)
         self.assertEqual(exc_info.exception.args, expected)
 
     def test_too_many_candidates(self):
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
         nodes1 = np.asfortranarray([[12.0, -12.0, 0.0], [4.0, -8.0, 16.0]])
         nodes2 = np.asfortranarray([[6.0, -6.0, 0.0], [1.0, -2.0, 4.0]])
         with self.assertRaises(NotImplementedError) as exc_info:
             self._call_function_under_test(nodes1, nodes2)
-        expected = (_geometric_intersection._TOO_MANY_TEMPLATE.format(74),)
+        expected = (_py_geometric_intersection._TOO_MANY_TEMPLATE.format(74),)
         self.assertEqual(exc_info.exception.args, expected)
 
 
@@ -1548,9 +1557,9 @@ class Test_speedup_all_intersections(Test__all_intersections):
 class TestSubdividedCurve(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.SubdividedCurve
+        return _py_geometric_intersection.SubdividedCurve
 
     def _make_one(self, *args, **kwargs):
         klass = self._get_target_class()
@@ -1624,9 +1633,9 @@ class TestLinearization(utils.NumPyTestCase):
 
     @staticmethod
     def _get_target_class():
-        from bezier import _geometric_intersection
+        from bezier import _py_geometric_intersection
 
-        return _geometric_intersection.Linearization
+        return _py_geometric_intersection.Linearization
 
     def _make_one(self, *args, **kwargs):
         klass = self._get_target_class()
@@ -1779,19 +1788,19 @@ class Test_curves_workspace_size(unittest.TestCase):
 
 
 def subdivided_curve(nodes, **kwargs):
-    from bezier import _geometric_intersection
+    from bezier import _py_geometric_intersection
 
     if "original_nodes" not in kwargs:
         kwargs["original_nodes"] = nodes
-    return _geometric_intersection.SubdividedCurve(nodes, **kwargs)
+    return _py_geometric_intersection.SubdividedCurve(nodes, **kwargs)
 
 
 def make_linearization(curve, error=None):
-    from bezier import _geometric_intersection
+    from bezier import _py_geometric_intersection
 
     if error is None:
-        error = _geometric_intersection.linearization_error(curve.nodes)
-    return _geometric_intersection.Linearization(curve, error)
+        error = _py_geometric_intersection.linearization_error(curve.nodes)
+    return _py_geometric_intersection.Linearization(curve, error)
 
 
 class WorkspaceThreadedAccess:
