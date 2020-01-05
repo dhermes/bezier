@@ -13,8 +13,9 @@ from __future__ import absolute_import
 
 import numpy as np
 
-from bezier import _geometric_intersection
-from bezier import _helpers
+from bezier import _py_geometric_intersection
+from bezier import _wrap_geometric_intersection
+from bezier import _wrap_helpers
 from tests.functional import utils
 
 CONFIG = utils.Config()
@@ -42,7 +43,7 @@ def make_plot(segment, index):
         linestyle="None",
         color=line.get_color(),
     )
-    left_, right_, bottom_, top_ = _helpers.bbox(segment)
+    left_, right_, bottom_, top_ = _wrap_helpers.bbox(segment)
     ax.fill_between(
         [left_, right_],
         [bottom_, bottom_],
@@ -64,8 +65,10 @@ def make_plot(segment, index):
 
 def run_it(segment, expected=None, index=0):
     if expected is None:
-        expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
-    result = _geometric_intersection.bbox_line_intersect(
+        expected = (
+            _wrap_geometric_intersection.BoxIntersectionType.INTERSECTION
+        )
+    result = _py_geometric_intersection.bbox_line_intersect(
         UNIT_SQUARE, segment[:, 0], segment[:, 1]
     )
     assert result == expected
@@ -86,7 +89,7 @@ def test_outside():
         segment_top_right,
         segment_top_left,
     )
-    expected = _geometric_intersection.BoxIntersectionType.DISJOINT
+    expected = _wrap_geometric_intersection.BoxIntersectionType.DISJOINT
     for index, segment in enumerate(segments):
         run_it(segment, expected, index)
 

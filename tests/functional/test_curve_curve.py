@@ -18,8 +18,9 @@ import pytest
 import six
 
 from bezier import _algebraic_intersection
-from bezier import _geometric_intersection
-from bezier import _intersection_helpers
+from bezier import _py_geometric_intersection
+from bezier import _py_intersection_helpers
+from bezier import _wrap_geometric_intersection
 import bezier.curve
 from tests import utils as base_utils
 from tests.functional import utils
@@ -152,8 +153,8 @@ ULPS_ALLOWED_OVERRIDE = {
     },
 }
 NON_SIMPLE_ERR = _algebraic_intersection._NON_SIMPLE_ERR
-TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
-BAD_MULTIPLICITY = (_intersection_helpers.NEWTON_NO_CONVERGE,)
+TOO_MANY = _py_geometric_intersection._TOO_MANY_TEMPLATE
+BAD_MULTIPLICITY = (_py_intersection_helpers.NEWTON_NO_CONVERGE,)
 COINCIDENT_ERR = (_algebraic_intersection._COINCIDENT_ERR,)
 TANGENT_OVERRIDES = {
     GEOMETRIC: {
@@ -192,7 +193,7 @@ def get_sorted_intersections(intersection_info, strategy):
     nodes1 = intersection_info.nodes1
     nodes2 = intersection_info.nodes2
     if strategy is GEOMETRIC:
-        intersections, _ = _geometric_intersection.all_intersections(
+        intersections, _ = _wrap_geometric_intersection.all_intersections(
             nodes1, nodes2
         )
     else:
