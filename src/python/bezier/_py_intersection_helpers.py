@@ -34,10 +34,7 @@ import six
 from bezier import _curve_helpers
 from bezier import _helpers
 
-try:
-    from bezier import _speedup
-except ImportError:  # pragma: NO COVER
-    _speedup = None
+
 # For ``full_newton()``.
 ZERO_THRESHOLD = 0.5 ** 10  # ~1e-3
 MAX_NEWTON_ITERATIONS = 10
@@ -930,11 +927,3 @@ class IntersectionStrategy(enum.Enum):
     """Geometric approach to intersection (via subdivision)."""
     ALGEBRAIC = 1
     """Algebraic approach to intersection (via implicitization)."""
-
-
-# pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
-    newton_refine = _newton_refine
-else:
-    newton_refine = _speedup.newton_refine_curve_intersect
-# pylint: enable=invalid-name

@@ -36,10 +36,7 @@ from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
 
-try:
-    from bezier import _speedup
-except ImportError:  # pragma: NO COVER
-    _speedup = None
+
 _MAX_POLY_SUBDIVISIONS = 5
 _SIGN = np.sign  # pylint: disable=no-member
 _FLOAT64 = np.float64  # pylint: disable=no-member
@@ -3003,29 +3000,3 @@ def _compute_area(edges):
         result += shoelace_for_area(edge_nodes)
 
     return result
-
-
-# pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
-    de_casteljau_one_round = _de_casteljau_one_round
-    specialize_surface = _specialize_surface
-    subdivide_nodes = _subdivide_nodes
-    jacobian_both = _jacobian_both
-    jacobian_det = _jacobian_det
-    evaluate_barycentric = _evaluate_barycentric
-    evaluate_barycentric_multi = _evaluate_barycentric_multi
-    evaluate_cartesian_multi = _evaluate_cartesian_multi
-    compute_edge_nodes = _compute_edge_nodes
-    compute_area = _compute_area
-else:
-    de_casteljau_one_round = _speedup.de_casteljau_one_round
-    specialize_surface = _speedup.specialize_surface
-    subdivide_nodes = _speedup.subdivide_nodes_surface
-    jacobian_both = _speedup.jacobian_both
-    jacobian_det = _speedup.jacobian_det
-    evaluate_barycentric = _speedup.evaluate_barycentric
-    evaluate_barycentric_multi = _speedup.evaluate_barycentric_multi
-    evaluate_cartesian_multi = _speedup.evaluate_cartesian_multi
-    compute_edge_nodes = _speedup.compute_edge_nodes
-    compute_area = _speedup.compute_area
-# pylint: enable=invalid-name

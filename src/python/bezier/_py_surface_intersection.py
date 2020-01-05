@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Private helper methods for :mod:`bezier.surface`.
 
 As a convention, the functions defined here with a leading underscore
@@ -22,7 +23,6 @@ leading underscore will be surfaced as the actual interface (e.g.
 or the speedup.
 """
 
-import atexit
 import collections
 import itertools
 
@@ -35,10 +35,7 @@ from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _surface_helpers
 
-try:
-    from bezier import _speedup
-except ImportError:  # pragma: NO COVER
-    _speedup = None
+
 MAX_LOCATE_SUBDIVISIONS = 20
 LOCATE_EPS = 0.5 ** 47
 INTERSECTION_T = _geometric_intersection.BoxIntersectionType.INTERSECTION
@@ -879,16 +876,3 @@ def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
     return generic_intersect(
         nodes1, degree1, nodes2, degree2, verify, all_intersections
     )
-
-
-# pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
-    newton_refine = _newton_refine
-    locate_point = _locate_point
-    geometric_intersect = _geometric_intersect
-else:
-    newton_refine = _speedup.newton_refine_surface
-    locate_point = _speedup.locate_point_surface
-    geometric_intersect = _speedup.surface_intersections
-    atexit.register(_speedup.free_surface_intersections_workspace)
-# pylint: enable=invalid-name

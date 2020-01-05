@@ -26,7 +26,6 @@ or the speedup.
    :trim:
 """
 
-import atexit
 import itertools
 
 import numpy as np
@@ -36,10 +35,7 @@ from bezier import _curve_helpers
 from bezier import _helpers
 from bezier import _intersection_helpers
 
-try:
-    from bezier import _speedup
-except ImportError:  # pragma: NO COVER
-    _speedup = None
+
 # Set the threshold for exponent at half the bits available, this way one round
 # of Newton's method can (usually) finish the job by squaring the error.
 _ERROR_VAL = 0.5 ** 26
@@ -1636,14 +1632,3 @@ class Linearization:
 
             else:
                 return shape
-
-
-# pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
-    bbox_intersect = _bbox_intersect
-    all_intersections = _all_intersections
-else:
-    bbox_intersect = _speedup.bbox_intersect
-    all_intersections = _speedup.curve_intersections
-    atexit.register(_speedup.free_curve_intersections_workspace)
-# pylint: enable=invalid-name

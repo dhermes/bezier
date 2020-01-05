@@ -37,10 +37,7 @@ except ImportError:  # pragma: NO COVER
     _scipy_int = None
 from bezier import _helpers
 
-try:
-    from bezier import _speedup
-except ImportError:  # pragma: NO COVER
-    _speedup = None
+
 _MAX_LOCATE_SUBDIVISIONS = 20
 _LOCATE_STD_CAP = 0.5 ** 20
 _FLOAT64 = np.float64  # pylint: disable=no-member
@@ -948,33 +945,3 @@ def _full_reduce(nodes):
     while was_reduced:
         was_reduced, nodes = maybe_reduce(nodes)
     return nodes
-
-
-# pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
-    subdivide_nodes = _subdivide_nodes
-    evaluate_multi = _evaluate_multi
-    evaluate_multi_barycentric = _evaluate_multi_barycentric
-    compute_length = _compute_length
-    elevate_nodes = _elevate_nodes
-    specialize_curve = _specialize_curve
-    evaluate_hodograph = _evaluate_hodograph
-    get_curvature = _get_curvature
-    newton_refine = _newton_refine
-    locate_point = _locate_point
-    reduce_pseudo_inverse = _reduce_pseudo_inverse
-    full_reduce = _full_reduce
-else:
-    subdivide_nodes = _speedup.subdivide_nodes_curve
-    evaluate_multi = _speedup.evaluate_multi
-    evaluate_multi_barycentric = _speedup.evaluate_multi_barycentric
-    compute_length = _speedup.compute_length
-    elevate_nodes = _speedup.elevate_nodes
-    specialize_curve = _speedup.specialize_curve
-    evaluate_hodograph = _speedup.evaluate_hodograph
-    get_curvature = _speedup.get_curvature
-    newton_refine = _speedup.newton_refine_curve
-    locate_point = _speedup.locate_point_curve
-    reduce_pseudo_inverse = _speedup.reduce_pseudo_inverse
-    full_reduce = _speedup.full_reduce
-# pylint: enable=invalid-name

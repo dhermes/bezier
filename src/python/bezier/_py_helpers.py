@@ -27,10 +27,7 @@ import bisect
 import numpy as np
 import six
 
-try:
-    from bezier import _speedup
-except ImportError:  # pragma: NO COVER
-    _speedup = None
+
 _EPS = 0.5 ** 40
 
 
@@ -584,25 +581,3 @@ class UnsupportedDegree(NotImplementedError):
                 + degrees_str[-1]
             )
         return "{} (degree={})".format(msg, self.degree)
-
-
-# pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
-    vector_close = _vector_close
-    in_interval = _in_interval
-    bbox = _bbox
-    contains_nd = _contains_nd
-    cross_product = _cross_product
-    wiggle_interval = _wiggle_interval
-    simple_convex_hull = _simple_convex_hull
-    polygon_collide = _polygon_collide
-else:
-    vector_close = _speedup.vector_close
-    in_interval = _speedup.in_interval
-    bbox = _speedup.bbox
-    contains_nd = _speedup.contains_nd
-    cross_product = _speedup.cross_product
-    wiggle_interval = _speedup.wiggle_interval
-    simple_convex_hull = _speedup.simple_convex_hull
-    polygon_collide = _speedup.polygon_collide
-# pylint: enable=invalid-name
