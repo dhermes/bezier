@@ -21,6 +21,13 @@ except ImportError:  # pragma: NO COVER
 
 
 # pylint: disable=invalid-name
+quadratic_jacobian_polynomial = (
+    _py_surface_helpers.quadratic_jacobian_polynomial
+)
+polynomial_sign = _py_surface_helpers.polynomial_sign
+cubic_jacobian_polynomial = _py_surface_helpers.cubic_jacobian_polynomial
+polynomial_sign = _py_surface_helpers.polynomial_sign
+
 if _speedup is None:  # pragma: NO COVER
     de_casteljau_one_round = _py_surface_helpers.de_casteljau_one_round
     specialize_surface = _py_surface_helpers.specialize_surface

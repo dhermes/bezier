@@ -21,6 +21,8 @@ except ImportError:  # pragma: NO COVER
 
 
 # pylint: disable=invalid-name
+IntersectionStrategy = _py_intersection_helpers.IntersectionStrategy
+
 if _speedup is None:  # pragma: NO COVER
     newton_refine = _py_intersection_helpers.newton_refine
 else:

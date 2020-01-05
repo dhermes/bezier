@@ -23,6 +23,10 @@ except ImportError:  # pragma: NO COVER
 
 
 # pylint: disable=invalid-name
+Linearization = _py_geometric_intersection.Linearization
+BoxIntersectionType = _py_geometric_intersection.BoxIntersectionType
+segment_intersection = _py_geometric_intersection.segment_intersection
+
 if _speedup is None:  # pragma: NO COVER
     bbox_intersect = _py_geometric_intersection.bbox_intersect
     all_intersections = _py_geometric_intersection.all_intersections

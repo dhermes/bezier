@@ -48,7 +48,8 @@ try:
     import scipy.linalg.lapack as _scipy_lapack
 except ImportError:  # pragma: NO COVER
     _scipy_lapack = None
-from bezier import _curve_helpers
+
+from bezier import _wrap_curve_helpers
 from bezier import _wrap_geometric_intersection
 from bezier import _wrap_helpers
 from bezier import _wrap_intersection_helpers
@@ -234,7 +235,7 @@ def eval_intersection_polynomial(nodes1, nodes2, t):
     Returns:
         float: The computed value of :math:`f_1(x_2(t), y_2(t))`.
     """
-    (x_val,), (y_val,) = _curve_helpers.evaluate_multi(
+    (x_val,), (y_val,) = _wrap_curve_helpers.evaluate_multi(
         nodes2, np.asfortranarray([t])
     )
     return evaluate(nodes1, x_val, y_val)
@@ -1275,8 +1276,8 @@ def intersect_curves(nodes1, nodes2):
         NotImplementedError: If the "intersection polynomial" is
         all zeros -- which indicates coincident curves.
     """
-    nodes1 = _curve_helpers.full_reduce(nodes1)
-    nodes2 = _curve_helpers.full_reduce(nodes2)
+    nodes1 = _wrap_curve_helpers.full_reduce(nodes1)
+    nodes2 = _wrap_curve_helpers.full_reduce(nodes2)
     _, num_nodes1 = nodes1.shape
     _, num_nodes2 = nodes2.shape
     swapped = False
@@ -1292,7 +1293,7 @@ def intersect_curves(nodes1, nodes2):
     final_s = []
     final_t = []
     for t_val in t_vals:
-        (x_val,), (y_val,) = _curve_helpers.evaluate_multi(
+        (x_val,), (y_val,) = _wrap_curve_helpers.evaluate_multi(
             nodes2, np.asfortranarray([t_val])
         )
         s_val = locate_point(nodes1, x_val, y_val)
@@ -1380,8 +1381,8 @@ def locate_point(nodes, x_val, y_val):
         Optional[float]: The parameter on the curve (if it exists).
     """
     # First, reduce to the true degree of x(s) and y(s).
-    zero1 = _curve_helpers.full_reduce(nodes[[0], :]) - x_val
-    zero2 = _curve_helpers.full_reduce(nodes[[1], :]) - y_val
+    zero1 = _wrap_curve_helpers.full_reduce(nodes[[0], :]) - x_val
+    zero2 = _wrap_curve_helpers.full_reduce(nodes[[1], :]) - y_val
     # Make sure we have the lowest degree in front, to make the polynomial
     # solve have the fewest number of roots.
     if zero1.shape[1] > zero2.shape[1]:
