@@ -61,7 +61,7 @@ The failure to converge may have been caused by one of:
 """
 
 
-def _newton_refine(s, nodes1, t, nodes2):
+def newton_refine(s, nodes1, t, nodes2):
     r"""Apply one step of 2D Newton's method.
 
     .. note::

@@ -31,7 +31,7 @@ import six
 _EPS = 0.5 ** 40
 
 
-def _vector_close(vec1, vec2, eps=_EPS):
+def vector_close(vec1, vec2, eps=_EPS):
     r"""Checks that two vectors are equal to some threshold.
 
     Does so by computing :math:`s_1 = \|v_1\|_2` and
@@ -84,7 +84,7 @@ def _vector_close(vec1, vec2, eps=_EPS):
         return np.linalg.norm(vec1 - vec2, ord=2) <= upper_bound
 
 
-def _in_interval(value, start, end):
+def in_interval(value, start, end):
     """Checks if a ``value`` is an interval (inclusive).
 
     .. note::
@@ -110,7 +110,7 @@ def _in_interval(value, start, end):
     return start <= value <= end
 
 
-def _bbox(nodes):
+def bbox(nodes):
     """Get the bounding box for set of points.
 
     .. note::
@@ -130,7 +130,7 @@ def _bbox(nodes):
     return left, right, bottom, top
 
 
-def _contains_nd(nodes, point):
+def contains_nd(nodes, point):
     r"""Predicate indicating if a point is within a bounding box.
 
     .. note::
@@ -157,7 +157,7 @@ def _contains_nd(nodes, point):
     return True
 
 
-def _cross_product(vec0, vec1):
+def cross_product(vec0, vec1):
     r"""Compute the cross product of vectors in :math:`\mathbf{R}^2`.
 
     Utilizes the fact that
@@ -205,7 +205,7 @@ def matrix_product(mat1, mat2):
     return np.dot(mat2.T, mat1.T).T  # pylint: disable=no-member
 
 
-def _wiggle_interval(value, wiggle=0.5 ** 44):
+def wiggle_interval(value, wiggle=0.5 ** 44):
     r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
 
     Allows a little bit of wiggle room outside the interval. Any value
@@ -289,7 +289,7 @@ def in_sorted(values, value):
     return values[index] == value
 
 
-def _simple_convex_hull(points):
+def simple_convex_hull(points):
     r"""Compute the convex hull for a set of points.
 
     .. _wikibooks: https://en.wikibooks.org/wiki/Algorithm_Implementation/\
@@ -422,7 +422,7 @@ def is_separating(direction, polygon1, polygon2):
     return params[0][0] > params[1][1] or params[0][1] < params[1][0]
 
 
-def _polygon_collide(polygon1, polygon2):
+def polygon_collide(polygon1, polygon2):
     """Determines if two **convex** polygons collide.
 
     .. _SAT: https://en.wikipedia.org/wiki/Hyperplane_separation_theorem

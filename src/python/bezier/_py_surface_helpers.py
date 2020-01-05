@@ -901,7 +901,7 @@ def cubic_jacobian_polynomial(nodes):
     return bernstein
 
 
-def _de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
+def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     r"""Performs one "round" of the de Casteljau algorithm for surfaces.
 
     .. note::
@@ -1054,7 +1054,7 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
     return result
 
 
-def _specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
+def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
     """Specialize a surface to a reparameterization
 
     .. note::
@@ -1111,7 +1111,7 @@ def _specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
     return reduced_to_matrix(nodes.shape, degree, partial_vals)
 
 
-def _subdivide_nodes(nodes, degree):
+def subdivide_nodes(nodes, degree):
     """Subdivide a surface into four sub-surfaces.
 
     .. note::
@@ -1249,7 +1249,7 @@ def jacobian_t(nodes, degree, dimension):
     return float(degree) * result
 
 
-def _jacobian_both(nodes, degree, dimension):
+def jacobian_both(nodes, degree, dimension):
     r"""Compute :math:`s` and :math:`t` partial of :math:`B`.
 
     .. note::
@@ -1273,7 +1273,7 @@ def _jacobian_both(nodes, degree, dimension):
     return result
 
 
-def _jacobian_det(nodes, degree, st_vals):
+def jacobian_det(nodes, degree, st_vals):
     r"""Compute :math:`\det(D B)` at a set of values.
 
     This requires that :math:`B \in \mathbf{R}^2`.
@@ -2777,7 +2777,7 @@ def combine_intersections(
         return no_intersections(nodes1, degree1, nodes2, degree2)
 
 
-def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
+def evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
     r"""Compute a point on a surface.
 
     Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)` for a
@@ -2827,7 +2827,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
     return result
 
 
-def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
+def evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
     r"""Compute multiple points on the surface.
 
     .. note::
@@ -2856,7 +2856,7 @@ def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
     return result
 
 
-def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
+def evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
     r"""Compute multiple points on the surface.
 
     .. note::
@@ -2885,7 +2885,7 @@ def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
     return result
 
 
-def _compute_edge_nodes(nodes, degree):
+def compute_edge_nodes(nodes, degree):
     """Compute the nodes of each edges of a surface.
 
     .. note::
@@ -2977,7 +2977,7 @@ def shoelace_for_area(nodes):
     return result / scale_factor
 
 
-def _compute_area(edges):
+def compute_area(edges):
     """Compute the area of a curved polygon.
 
     .. note::

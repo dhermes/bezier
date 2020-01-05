@@ -56,7 +56,7 @@ _NO_CONVERGE_TEMPLATE = (
 _MIN_INTERVAL_WIDTH = 0.5 ** 40
 
 
-def _bbox_intersect(nodes1, nodes2):
+def bbox_intersect(nodes1, nodes2):
     r"""Bounding box intersection predicate.
 
     .. note::
@@ -1394,7 +1394,7 @@ def check_lines(first, second):
     return True, result
 
 
-def _all_intersections(nodes_first, nodes_second):
+def all_intersections(nodes_first, nodes_second):
     r"""Find the points of intersection among a pair of curves.
 
     .. note::

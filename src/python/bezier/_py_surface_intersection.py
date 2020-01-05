@@ -97,7 +97,7 @@ def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
     return delta_s, delta_t
 
 
-def _newton_refine(nodes, degree, x_val, y_val, s, t):
+def newton_refine(nodes, degree, x_val, y_val, s, t):
     r"""Refine a solution to :math:`B(s, t) = p` using Newton's method.
 
     .. note::
@@ -309,7 +309,7 @@ def mean_centroid(candidates):
     return sum_x / denom, sum_y / denom
 
 
-def _locate_point(nodes, degree, x_val, y_val):
+def locate_point(nodes, degree, x_val, y_val):
     r"""Locate a point on a surface.
 
     .. note::
@@ -807,7 +807,7 @@ def generic_intersect(
     return edge_infos, contained, edge_nodes1 + edge_nodes2
 
 
-def _geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
+def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
     r"""Find all intersections among edges of two surfaces.
 
     .. note::

@@ -155,7 +155,7 @@ def make_subdivision_matrices(degree):
     return left, right
 
 
-def _subdivide_nodes(nodes):
+def subdivide_nodes(nodes):
     """Subdivide a curve into two sub-curves.
 
     Does so by taking the unit interval (i.e. the domain of the surface) and
@@ -191,7 +191,7 @@ def _subdivide_nodes(nodes):
     return left_nodes, right_nodes
 
 
-def _evaluate_multi(nodes, s_vals):
+def evaluate_multi(nodes, s_vals):
     r"""Computes multiple points along a curve.
 
     Does so via a modified Horner's method for each value in ``s_vals``
@@ -216,7 +216,7 @@ def _evaluate_multi(nodes, s_vals):
     return evaluate_multi_barycentric(nodes, one_less, s_vals)
 
 
-def _evaluate_multi_barycentric(nodes, lambda1, lambda2):
+def evaluate_multi_barycentric(nodes, lambda1, lambda2):
     r"""Evaluates a B |eacute| zier type-function.
 
     Of the form
@@ -293,7 +293,7 @@ def vec_size(nodes, s_val):
     return np.linalg.norm(result_vec[:, 0], ord=2)
 
 
-def _compute_length(nodes):
+def compute_length(nodes):
     r"""Approximately compute the length of a curve.
 
     .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
@@ -347,7 +347,7 @@ def _compute_length(nodes):
     return length
 
 
-def _elevate_nodes(nodes):
+def elevate_nodes(nodes):
     r"""Degree-elevate a B |eacute| zier curves.
 
     Does this by converting the current nodes :math:`v_0, \ldots, v_n`
@@ -412,7 +412,7 @@ def de_casteljau_one_round(nodes, lambda1, lambda2):
     return np.asfortranarray(lambda1 * nodes[:, :-1] + lambda2 * nodes[:, 1:])
 
 
-def _specialize_curve(nodes, start, end):
+def specialize_curve(nodes, start, end):
     """Specialize a curve to a re-parameterization
 
     .. note::
@@ -459,7 +459,7 @@ def _specialize_curve(nodes, start, end):
     return result
 
 
-def _evaluate_hodograph(s, nodes):
+def evaluate_hodograph(s, nodes):
     r"""Evaluate the Hodograph curve at a point :math:`s`.
 
     The Hodograph (first derivative) of a B |eacute| zier curve
@@ -494,7 +494,7 @@ def _evaluate_hodograph(s, nodes):
     )
 
 
-def _get_curvature(nodes, tangent_vec, s):
+def get_curvature(nodes, tangent_vec, s):
     r"""Compute the signed curvature of a curve at :math:`s`.
 
     Computed via
@@ -568,7 +568,7 @@ def _get_curvature(nodes, tangent_vec, s):
     return curvature
 
 
-def _newton_refine(nodes, point, s):
+def newton_refine(nodes, point, s):
     r"""Refine a solution to :math:`B(s) = p` using Newton's method.
 
     Computes updates via
@@ -741,7 +741,7 @@ def _newton_refine(nodes, point, s):
     return s + delta_s
 
 
-def _locate_point(nodes, point):
+def locate_point(nodes, point):
     r"""Locate a point on a curve.
 
     Does so by recursively subdividing the curve and rejecting
@@ -805,7 +805,7 @@ def _locate_point(nodes, point):
         return s_approx
 
 
-def _reduce_pseudo_inverse(nodes):
+def reduce_pseudo_inverse(nodes):
     """Performs degree-reduction for a B |eacute| zier curve.
 
     Does so by using the pseudo-inverse of the degree elevation
@@ -927,7 +927,7 @@ def maybe_reduce(nodes):
         return False, nodes
 
 
-def _full_reduce(nodes):
+def full_reduce(nodes):
     """Apply degree reduction to ``nodes`` until it can no longer be reduced.
 
     .. note::
