@@ -25,12 +25,12 @@ import numpy as np
 import six
 
 from bezier import _base
-from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
 from bezier import _surface_intersection
 from bezier import _wrap_curve_helpers
+from bezier import _wrap_helpers
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 
@@ -787,7 +787,9 @@ class Surface(_base.Base):
             bernstein = _surface_helpers.cubic_jacobian_polynomial(self._nodes)
             poly_sign = _surface_helpers.polynomial_sign(bernstein, 4)
         else:
-            raise _helpers.UnsupportedDegree(self._degree, supported=(1, 2, 3))
+            raise _wrap_helpers.UnsupportedDegree(
+                self._degree, supported=(1, 2, 3)
+            )
 
         return poly_sign == 1
 

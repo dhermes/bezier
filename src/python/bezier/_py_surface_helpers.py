@@ -32,9 +32,9 @@ import operator
 import numpy as np
 import six
 
-from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _py_curve_helpers
+from bezier import _py_helpers
 
 
 _MAX_POLY_SUBDIVISIONS = 5
@@ -834,7 +834,7 @@ def quadratic_jacobian_polynomial(nodes):
         numpy.ndarray: 1 x 6 array, coefficients in Bernstein basis.
     """
     # First evaluate the Jacobian at each of the 6 nodes.
-    jac_parts = _helpers.matrix_product(nodes, _QUADRATIC_JACOBIAN_HELPER)
+    jac_parts = _py_helpers.matrix_product(nodes, _QUADRATIC_JACOBIAN_HELPER)
     jac_at_nodes = np.empty((1, 6), order="F")
     # pylint: disable=unsubscriptable-object
     jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
@@ -845,7 +845,9 @@ def quadratic_jacobian_polynomial(nodes):
     jac_at_nodes[0, 5] = two_by_two_det(jac_parts[:, 10:])
     # pylint: enable=unsubscriptable-object
     # Convert the nodal values to the Bernstein basis...
-    bernstein = _helpers.matrix_product(jac_at_nodes, _QUADRATIC_TO_BERNSTEIN)
+    bernstein = _py_helpers.matrix_product(
+        jac_at_nodes, _QUADRATIC_TO_BERNSTEIN
+    )
     return bernstein
 
 
@@ -876,7 +878,7 @@ def cubic_jacobian_polynomial(nodes):
     """
     # First evaluate the Jacobian at each of the 15 nodes
     # in the quartic triangle.
-    jac_parts = _helpers.matrix_product(nodes, _CUBIC_JACOBIAN_HELPER)
+    jac_parts = _py_helpers.matrix_product(nodes, _CUBIC_JACOBIAN_HELPER)
     jac_at_nodes = np.empty((1, 15), order="F")
     # pylint: disable=unsubscriptable-object
     jac_at_nodes[0, 0] = two_by_two_det(jac_parts[:, :2])
@@ -896,7 +898,7 @@ def cubic_jacobian_polynomial(nodes):
     jac_at_nodes[0, 14] = two_by_two_det(jac_parts[:, 28:])
     # pylint: enable=unsubscriptable-object
     # Convert the nodal values to the Bernstein basis...
-    bernstein = _helpers.matrix_product(jac_at_nodes, _QUARTIC_TO_BERNSTEIN)
+    bernstein = _py_helpers.matrix_product(jac_at_nodes, _QUARTIC_TO_BERNSTEIN)
     bernstein /= _QUARTIC_BERNSTEIN_FACTOR
     return bernstein
 
@@ -1104,7 +1106,7 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
             # Our keys are ascending so we increment from the last value.
             for next_id in six.moves.xrange(key[-1], 2 + 1):
                 new_key = key + (next_id,)
-                new_partial[new_key] = _helpers.matrix_product(
+                new_partial[new_key] = _py_helpers.matrix_product(
                     sub_nodes, transform[next_id]
                 )
         partial_vals = new_partial
@@ -1132,25 +1134,25 @@ def subdivide_nodes(nodes, degree):
         nodes for the four sub-surfaces.
     """
     if degree == 1:
-        nodes_a = _helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_A)
-        nodes_b = _helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_B)
-        nodes_c = _helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_C)
-        nodes_d = _helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_D)
+        nodes_a = _py_helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_A)
+        nodes_b = _py_helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_B)
+        nodes_c = _py_helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_C)
+        nodes_d = _py_helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_D)
     elif degree == 2:
-        nodes_a = _helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_A)
-        nodes_b = _helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_B)
-        nodes_c = _helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_C)
-        nodes_d = _helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_D)
+        nodes_a = _py_helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_A)
+        nodes_b = _py_helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_B)
+        nodes_c = _py_helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_C)
+        nodes_d = _py_helpers.matrix_product(nodes, QUADRATIC_SUBDIVIDE_D)
     elif degree == 3:
-        nodes_a = _helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_A)
-        nodes_b = _helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_B)
-        nodes_c = _helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_C)
-        nodes_d = _helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_D)
+        nodes_a = _py_helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_A)
+        nodes_b = _py_helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_B)
+        nodes_c = _py_helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_C)
+        nodes_d = _py_helpers.matrix_product(nodes, CUBIC_SUBDIVIDE_D)
     elif degree == 4:
-        nodes_a = _helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_A)
-        nodes_b = _helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_B)
-        nodes_c = _helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_C)
-        nodes_d = _helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_D)
+        nodes_a = _py_helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_A)
+        nodes_b = _py_helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_B)
+        nodes_c = _py_helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_C)
+        nodes_d = _py_helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_D)
     else:
         nodes_a = specialize_surface(
             nodes,
@@ -1458,7 +1460,7 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     Returns:
         bool: Indicates if the corner intersection should be ignored.
     """
-    cross_prod = _helpers.cross_product(
+    cross_prod = _py_helpers.cross_product(
         edge_tangent.ravel(order="F"), corner_tangent.ravel(order="F")
     )
     # A negative cross product indicates that ``edge_tangent`` is
@@ -1472,7 +1474,7 @@ def ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
     )
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
-    cross_prod = _helpers.cross_product(
+    cross_prod = _py_helpers.cross_product(
         edge_tangent.ravel(order="F"), alt_corner_tangent.ravel(order="F")
     )
     return cross_prod <= 0.0
@@ -1514,7 +1516,7 @@ def ignored_double_corner(
     prev_edge = edge_nodes1[prev_index]
     alt_tangent_s = _py_curve_helpers.evaluate_hodograph(1.0, prev_edge)
     # First check if ``tangent_t`` is interior to the ``s`` surface.
-    cross_prod1 = _helpers.cross_product(
+    cross_prod1 = _py_helpers.cross_product(
         tangent_s.ravel(order="F"), tangent_t.ravel(order="F")
     )
     # A positive cross product indicates that ``tangent_t`` is
@@ -1524,7 +1526,7 @@ def ignored_double_corner(
     # not be ignored.
     if cross_prod1 >= 0.0:
         # Only compute ``cross_prod2`` if we need to.
-        cross_prod2 = _helpers.cross_product(
+        cross_prod2 = _py_helpers.cross_product(
             alt_tangent_s.ravel(order="F"), tangent_t.ravel(order="F")
         )
         if cross_prod2 >= 0.0:
@@ -1537,12 +1539,12 @@ def ignored_double_corner(
     alt_tangent_t = _py_curve_helpers.evaluate_hodograph(1.0, prev_edge)
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
-    cross_prod3 = _helpers.cross_product(
+    cross_prod3 = _py_helpers.cross_product(
         tangent_s.ravel(order="F"), alt_tangent_t.ravel(order="F")
     )
     if cross_prod3 >= 0.0:
         # Only compute ``cross_prod4`` if we need to.
-        cross_prod4 = _helpers.cross_product(
+        cross_prod4 = _py_helpers.cross_product(
             alt_tangent_s.ravel(order="F"), alt_tangent_t.ravel(order="F")
         )
         if cross_prod4 >= 0.0:
@@ -2081,7 +2083,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
     # Take the cross product of tangent vectors to determine which one
     # is more "inside" / "to the left".
-    cross_prod = _helpers.cross_product(
+    cross_prod = _py_helpers.cross_product(
         tangent1.ravel(order="F"), tangent2.ravel(order="F")
     )
     if cross_prod < -ALMOST_TANGENT:
@@ -2969,7 +2971,9 @@ def shoelace_for_area(nodes):
         shoelace = SHOELACE_QUARTIC
         scale_factor = 70.0
     else:
-        raise _helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
+        raise _py_helpers.UnsupportedDegree(
+            num_nodes - 1, supported=(1, 2, 3, 4)
+        )
 
     result = 0.0
     for multiplier, index1, index2 in shoelace:

@@ -26,9 +26,9 @@ boundary.
 
 import six
 
-from bezier import _helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
+from bezier import _wrap_helpers
 
 
 class CurvedPolygon:
@@ -164,7 +164,7 @@ class CurvedPolygon:
 
         end = prev._nodes[:, -1]
         start = curr._nodes[:, 0]
-        if not _helpers.vector_close(end, start):
+        if not _wrap_helpers.vector_close(end, start):
             raise ValueError(
                 "Not sufficiently close",
                 "Consecutive sides do not have common endpoint",

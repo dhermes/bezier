@@ -35,7 +35,8 @@ try:
     import scipy.integrate as _scipy_int
 except ImportError:  # pragma: NO COVER
     _scipy_int = None
-from bezier import _helpers
+
+from bezier import _py_helpers
 
 
 _MAX_LOCATE_SUBDIVISIONS = 20
@@ -174,20 +175,24 @@ def subdivide_nodes(nodes):
     """
     _, num_nodes = np.shape(nodes)
     if num_nodes == 2:
-        left_nodes = _helpers.matrix_product(nodes, _LINEAR_SUBDIVIDE_LEFT)
-        right_nodes = _helpers.matrix_product(nodes, _LINEAR_SUBDIVIDE_RIGHT)
+        left_nodes = _py_helpers.matrix_product(nodes, _LINEAR_SUBDIVIDE_LEFT)
+        right_nodes = _py_helpers.matrix_product(
+            nodes, _LINEAR_SUBDIVIDE_RIGHT
+        )
     elif num_nodes == 3:
-        left_nodes = _helpers.matrix_product(nodes, _QUADRATIC_SUBDIVIDE_LEFT)
-        right_nodes = _helpers.matrix_product(
+        left_nodes = _py_helpers.matrix_product(
+            nodes, _QUADRATIC_SUBDIVIDE_LEFT
+        )
+        right_nodes = _py_helpers.matrix_product(
             nodes, _QUADRATIC_SUBDIVIDE_RIGHT
         )
     elif num_nodes == 4:
-        left_nodes = _helpers.matrix_product(nodes, _CUBIC_SUBDIVIDE_LEFT)
-        right_nodes = _helpers.matrix_product(nodes, _CUBIC_SUBDIVIDE_RIGHT)
+        left_nodes = _py_helpers.matrix_product(nodes, _CUBIC_SUBDIVIDE_LEFT)
+        right_nodes = _py_helpers.matrix_product(nodes, _CUBIC_SUBDIVIDE_RIGHT)
     else:
         left_mat, right_mat = make_subdivision_matrices(num_nodes - 1)
-        left_nodes = _helpers.matrix_product(nodes, left_mat)
-        right_nodes = _helpers.matrix_product(nodes, right_mat)
+        left_nodes = _py_helpers.matrix_product(nodes, left_mat)
+        right_nodes = _py_helpers.matrix_product(nodes, right_mat)
     return left_nodes, right_nodes
 
 
@@ -560,7 +565,7 @@ def get_curvature(nodes, tangent_vec, s):
         * (num_nodes - 2)
         * evaluate_multi(second_deriv, np.asfortranarray([s]))
     )
-    curvature = _helpers.cross_product(
+    curvature = _py_helpers.cross_product(
         tangent_vec.ravel(order="F"), concavity.ravel(order="F")
     )
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
@@ -776,7 +781,7 @@ def locate_point(nodes, point):
     for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for start, end, candidate in candidates:
-            if _helpers.contains_nd(candidate, point.ravel(order="F")):
+            if _py_helpers.contains_nd(candidate, point.ravel(order="F")):
                 midpoint = 0.5 * (start + end)
                 left, right = subdivide_nodes(candidate)
                 next_candidates.extend(
@@ -839,9 +844,11 @@ def reduce_pseudo_inverse(nodes):
         reduction = _REDUCTION3
         denom = _REDUCTION_DENOM3
     else:
-        raise _helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
+        raise _py_helpers.UnsupportedDegree(
+            num_nodes - 1, supported=(1, 2, 3, 4)
+        )
 
-    result = _helpers.matrix_product(nodes, reduction)
+    result = _py_helpers.matrix_product(nodes, reduction)
     result /= denom
     return result
 
@@ -914,11 +921,11 @@ def maybe_reduce(nodes):
         projection = _PROJECTION3
         denom = _PROJ_DENOM3
     else:
-        raise _helpers.UnsupportedDegree(
+        raise _py_helpers.UnsupportedDegree(
             num_nodes - 1, supported=(0, 1, 2, 3, 4)
         )
 
-    projected = _helpers.matrix_product(nodes, projection) / denom
+    projected = _py_helpers.matrix_product(nodes, projection) / denom
     relative_err = projection_error(nodes, projected)
     if relative_err < _REDUCE_THRESHOLD:
         return True, reduce_pseudo_inverse(nodes)

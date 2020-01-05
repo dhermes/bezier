@@ -49,9 +49,9 @@ try:
 except ImportError:  # pragma: NO COVER
     _scipy_lapack = None
 from bezier import _curve_helpers
-from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _wrap_geometric_intersection
+from bezier import _wrap_helpers
 
 
 # NOTE: These are hardcoded from:
@@ -210,7 +210,7 @@ def evaluate(nodes, x_val, y_val):
     if num_nodes == 4:
         return _evaluate3(nodes, x_val, y_val)
 
-    raise _helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3))
+    raise _wrap_helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3))
 
 
 def eval_intersection_polynomial(nodes1, nodes2, t):
@@ -1213,7 +1213,7 @@ def _check_non_simple(coeffs):
     for index in six.moves.xrange(num_coeffs - 2, -1, -1):
         coeff = coeffs[index]
         evaluated = (
-            _helpers.matrix_product(evaluated, companion) + coeff * id_mat
+            _wrap_helpers.matrix_product(evaluated, companion) + coeff * id_mat
         )
     if num_companion == 1:
         # NOTE: This relies on the fact that coeffs is normalized.
@@ -1249,8 +1249,8 @@ def _resolve_and_add(nodes1, s_val, final_s, nodes2, t_val, final_t):
     s_val, t_val = _intersection_helpers.newton_refine(
         s_val, nodes1, t_val, nodes2
     )
-    s_val, success_s = _helpers.wiggle_interval(s_val)
-    t_val, success_t = _helpers.wiggle_interval(t_val)
+    s_val, success_s = _wrap_helpers.wiggle_interval(s_val)
+    t_val, success_t = _wrap_helpers.wiggle_interval(t_val)
     if not (success_s and success_t):
         return
 
@@ -1358,7 +1358,7 @@ def poly_to_power_basis(bezier_coeffs):
         )
 
     else:
-        raise _helpers.UnsupportedDegree(
+        raise _wrap_helpers.UnsupportedDegree(
             num_coeffs - 1, supported=(0, 1, 2, 3)
         )
 

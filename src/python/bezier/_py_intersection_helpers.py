@@ -31,8 +31,8 @@ import enum
 import numpy as np
 import six
 
-from bezier import _helpers
 from bezier import _py_curve_helpers
+from bezier import _py_helpers
 
 
 # For ``full_newton()``.
@@ -348,7 +348,7 @@ def newton_refine(s, nodes1, t, nodes2):
     .. testsetup:: newton-refine4
 
        import numpy as np
-       from bezier import _helpers
+       from bezier import _py_helpers
 
        def modified_update(s, t):
            minus_G = np.asfortranarray([
@@ -363,8 +363,8 @@ def newton_refine(s, nodes1, t, nodes2):
            ])
            DG_t = np.asfortranarray(DG.T)
 
-           LHS = _helpers.matrix_product(DG_t, DG)
-           RHS = _helpers.matrix_product(DG_t, minus_G)
+           LHS = _py_helpers.matrix_product(DG_t, DG)
+           RHS = _py_helpers.matrix_product(DG_t, minus_G)
            delta_params = np.linalg.solve(LHS, RHS)
            delta_s, delta_t = delta_params.flatten()
            return s + delta_s, t + delta_t
@@ -416,7 +416,7 @@ def newton_refine(s, nodes1, t, nodes2):
     jac_mat[:, :1] = _py_curve_helpers.evaluate_hodograph(s, nodes1)
     jac_mat[:, 1:] = -_py_curve_helpers.evaluate_hodograph(t, nodes2)
     # Solve the system.
-    singular, delta_s, delta_t = _helpers.solve2x2(jac_mat, func_val[:, 0])
+    singular, delta_s, delta_t = _py_helpers.solve2x2(jac_mat, func_val[:, 0])
     if singular:
         raise ValueError("Jacobian is singular.")
 
@@ -607,7 +607,7 @@ class NewtonDoubleRoot:  # pylint: disable=too-few-public-methods
         b2_dt = _py_curve_helpers.evaluate_multi(self.first_deriv2, t_vals)
         func_val = np.empty((3, 1), order="F")
         func_val[:2, :] = b1_s - b2_t
-        func_val[2, :] = _helpers.cross_product(b1_ds[:, 0], b2_dt[:, 0])
+        func_val[2, :] = _py_helpers.cross_product(b1_ds[:, 0], b2_dt[:, 0])
         if np.all(func_val == 0.0):
             return None, func_val[:2, :]
 
@@ -618,7 +618,7 @@ class NewtonDoubleRoot:  # pylint: disable=too-few-public-methods
             if self.second_deriv1.size == 0:
                 jacobian[2, 0] = 0.0
             else:
-                jacobian[2, 0] = _helpers.cross_product(
+                jacobian[2, 0] = _py_helpers.cross_product(
                     _py_curve_helpers.evaluate_multi(
                         self.second_deriv1, s_vals
                     )[:, 0],
@@ -627,14 +627,14 @@ class NewtonDoubleRoot:  # pylint: disable=too-few-public-methods
             if self.second_deriv2.size == 0:
                 jacobian[2, 1] = 0.0
             else:
-                jacobian[2, 1] = _helpers.cross_product(
+                jacobian[2, 1] = _py_helpers.cross_product(
                     b1_ds[:, 0],
                     _py_curve_helpers.evaluate_multi(
                         self.second_deriv2, t_vals
                     )[:, 0],
                 )
-            modified_lhs = _helpers.matrix_product(jacobian.T, jacobian)
-            modified_rhs = _helpers.matrix_product(jacobian.T, func_val)
+            modified_lhs = _py_helpers.matrix_product(jacobian.T, jacobian)
+            modified_rhs = _py_helpers.matrix_product(jacobian.T, func_val)
             return modified_lhs, modified_rhs
 
 
@@ -701,7 +701,7 @@ def newton_iterate(evaluate_fn, s, t):
         if jacobian is None:
             return True, current_s, current_t
 
-        singular, delta_s, delta_t = _helpers.solve2x2(
+        singular, delta_s, delta_t = _py_helpers.solve2x2(
             jacobian, func_val[:, 0]
         )
         if singular:

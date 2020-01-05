@@ -30,9 +30,9 @@ import numpy as np
 import six
 
 from bezier import _algebraic_intersection
-from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _py_geometric_intersection
+from bezier import _py_helpers
 from bezier import _surface_helpers
 
 
@@ -253,7 +253,7 @@ def update_locate_candidates(candidate, next_candidates, x_val, y_val, degree):
     """
     centroid_x, centroid_y, width, candidate_nodes = candidate
     point = np.asfortranarray([x_val, y_val])
-    if not _helpers.contains_nd(candidate_nodes, point):
+    if not _py_helpers.contains_nd(candidate_nodes, point):
         return
 
     nodes_a, nodes_b, nodes_c, nodes_d = _surface_helpers.subdivide_nodes(
@@ -358,7 +358,7 @@ def locate_point(nodes, degree, x_val, y_val):
         nodes, degree, 1.0 - s - t, s, t
     )
     expected = np.asfortranarray([x_val, y_val])
-    if not _helpers.vector_close(
+    if not _py_helpers.vector_close(
         actual.ravel(order="F"), expected, eps=LOCATE_EPS
     ):
         s, t = newton_refine(nodes, degree, x_val, y_val, s, t)

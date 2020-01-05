@@ -30,8 +30,8 @@ which is the primary usage within ``bezier``.
 import numpy as np
 import six
 
-from bezier import _helpers
 from bezier import _wrap_geometric_intersection
+from bezier import _wrap_helpers
 
 
 NO_PARALLEL = "Parallel lines not supported during clipping."
@@ -171,11 +171,11 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
     if not success:
         raise NotImplementedError(NO_PARALLEL)
 
-    if _helpers.in_interval(t, 0.0, 1.0):
-        if _helpers.in_interval(s, 0.0, s_min):
+    if _wrap_helpers.in_interval(t, 0.0, 1.0):
+        if _wrap_helpers.in_interval(s, 0.0, s_min):
             return s, s_max
 
-        elif _helpers.in_interval(s, s_max, 1.0):
+        elif _wrap_helpers.in_interval(s, s_max, 1.0):
             return s_min, s
 
     return s_min, s_max
