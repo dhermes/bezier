@@ -18,6 +18,7 @@ import pytest
 
 from tests.unit import utils
 
+
 UNIT_TRIANGLE = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
 FLOAT64 = np.float64  # pylint: disable=no-member
 SPACING = np.spacing  # pylint: disable=no-member
@@ -27,9 +28,9 @@ RANDOM = np.random.random  # pylint: disable=no-member
 class Test_polynomial_sign(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(poly_surface, degree):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.polynomial_sign(poly_surface, degree)
+        return _py_surface_helpers.polynomial_sign(poly_surface, degree)
 
     def test_positive(self):
         bernstein = np.asfortranarray([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]])
@@ -53,14 +54,14 @@ class Test_polynomial_sign(unittest.TestCase):
 
     def test_max_iterations(self):
         bernstein = np.asfortranarray([[1.0, 2.0, 3.0]])
-        subs = "bezier._surface_helpers._MAX_POLY_SUBDIVISIONS"
+        subs = "bezier._py_surface_helpers._MAX_POLY_SUBDIVISIONS"
         with unittest.mock.patch(subs, new=1):
             sign = self._call_function_under_test(bernstein, 1)
             self.assertEqual(sign, 1)
 
     def test_no_conclusion(self):
         bernstein = np.asfortranarray([[-1.0, 1.0, 2.0]])
-        subs = "bezier._surface_helpers._MAX_POLY_SUBDIVISIONS"
+        subs = "bezier._py_surface_helpers._MAX_POLY_SUBDIVISIONS"
         with unittest.mock.patch(subs, new=0):
             with self.assertRaises(ValueError):
                 self._call_function_under_test(bernstein, 1)
@@ -77,9 +78,9 @@ class Test_polynomial_sign(unittest.TestCase):
 class Test_two_by_two_det(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(mat):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.two_by_two_det(mat)
+        return _py_surface_helpers.two_by_two_det(mat)
 
     def test_integers(self):
         mat = np.asfortranarray([[1.0, 2.0], [3.0, 4.0]])
@@ -101,9 +102,9 @@ class Test_two_by_two_det(unittest.TestCase):
 class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.quadratic_jacobian_polynomial(nodes)
+        return _py_surface_helpers.quadratic_jacobian_polynomial(nodes)
 
     def test_it(self):
         # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
@@ -115,7 +116,7 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
         self.assertEqual(bernstein, expected)
 
     def test_against_det(self):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
         # B(L1, L2, L3) = [s (t + 2), s^2 + 4 t]
         nodes = np.asfortranarray(
@@ -131,13 +132,13 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
                 [0.0, 1.0],
             ]
         )
-        as_det = _surface_helpers.jacobian_det(nodes, 2, st_vals)
+        as_det = _py_surface_helpers.jacobian_det(nodes, 2, st_vals)
         as_det = as_det.reshape((1, 6), order="F")
         # B_s = [t + 2, 2*s]
         # B_t = [s, 4]
         # det(DB) = -2 (s^2 - 2t - 4)
         bernstein = self._call_function_under_test(nodes)
-        evaluated_bernstein = _surface_helpers.evaluate_cartesian_multi(
+        evaluated_bernstein = _py_surface_helpers.evaluate_cartesian_multi(
             bernstein, 2, st_vals, 1
         )
         self.assertEqual(evaluated_bernstein, as_det)
@@ -146,9 +147,9 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
 class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.cubic_jacobian_polynomial(nodes)
+        return _py_surface_helpers.cubic_jacobian_polynomial(nodes)
 
     def test_it(self):
         # B(L1, L2, L3) = [L1^3 + L2^3, L2^3 + L3^3]
@@ -171,9 +172,9 @@ class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
 class Test__de_casteljau_one_round(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._de_casteljau_one_round(
+        return _py_surface_helpers.de_casteljau_one_round(
             nodes, degree, lambda1, lambda2, lambda3
         )
 
@@ -209,7 +210,7 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_cubic(self):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
         nodes = np.asfortranarray(
             [
@@ -234,7 +235,7 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
                 [0.0, 0.0, 0.0, 0.0, 0.0, t_val],
             ]
         )
-        expected = _helpers.matrix_product(nodes, transform)
+        expected = _py_helpers.matrix_product(nodes, transform)
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val
         )
@@ -255,9 +256,9 @@ class Test_speedup_de_casteljau_one_round(Test__de_casteljau_one_round):
 class Test_make_transform(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(degree, weights_a, weights_b, weights_c):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.make_transform(
+        return _py_surface_helpers.make_transform(
             degree, weights_a, weights_b, weights_c
         )
 
@@ -320,9 +321,9 @@ class Test_make_transform(utils.NumPyTestCase):
 class Test_reduced_to_matrix(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(shape, degree, vals_by_weight):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.reduced_to_matrix(
+        return _py_surface_helpers.reduced_to_matrix(
             shape, degree, vals_by_weight
         )
 
@@ -359,9 +360,9 @@ class Test__specialize_surface(utils.NumPyTestCase):
     def _call_function_under_test(
         nodes, degree, weights_a, weights_b, weights_c
     ):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._specialize_surface(
+        return _py_surface_helpers.specialize_surface(
             nodes, degree, weights_a, weights_b, weights_c
         )
 
@@ -386,47 +387,47 @@ class Test__specialize_surface(utils.NumPyTestCase):
         self.assertEqual(computed_d, expected_d)
 
     def test_known_linear(self):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
         self._helper(
             1,
-            _surface_helpers.LINEAR_SUBDIVIDE_A,
-            _surface_helpers.LINEAR_SUBDIVIDE_B,
-            _surface_helpers.LINEAR_SUBDIVIDE_C,
-            _surface_helpers.LINEAR_SUBDIVIDE_D,
+            _py_surface_helpers.LINEAR_SUBDIVIDE_A,
+            _py_surface_helpers.LINEAR_SUBDIVIDE_B,
+            _py_surface_helpers.LINEAR_SUBDIVIDE_C,
+            _py_surface_helpers.LINEAR_SUBDIVIDE_D,
         )
 
     def test_known_quadratic(self):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
         self._helper(
             2,
-            _surface_helpers.QUADRATIC_SUBDIVIDE_A,
-            _surface_helpers.QUADRATIC_SUBDIVIDE_B,
-            _surface_helpers.QUADRATIC_SUBDIVIDE_C,
-            _surface_helpers.QUADRATIC_SUBDIVIDE_D,
+            _py_surface_helpers.QUADRATIC_SUBDIVIDE_A,
+            _py_surface_helpers.QUADRATIC_SUBDIVIDE_B,
+            _py_surface_helpers.QUADRATIC_SUBDIVIDE_C,
+            _py_surface_helpers.QUADRATIC_SUBDIVIDE_D,
         )
 
     def test_known_cubic(self):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
         self._helper(
             3,
-            _surface_helpers.CUBIC_SUBDIVIDE_A,
-            _surface_helpers.CUBIC_SUBDIVIDE_B,
-            _surface_helpers.CUBIC_SUBDIVIDE_C,
-            _surface_helpers.CUBIC_SUBDIVIDE_D,
+            _py_surface_helpers.CUBIC_SUBDIVIDE_A,
+            _py_surface_helpers.CUBIC_SUBDIVIDE_B,
+            _py_surface_helpers.CUBIC_SUBDIVIDE_C,
+            _py_surface_helpers.CUBIC_SUBDIVIDE_D,
         )
 
     def test_known_quartic(self):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
         self._helper(
             4,
-            _surface_helpers.QUARTIC_SUBDIVIDE_A,
-            _surface_helpers.QUARTIC_SUBDIVIDE_B,
-            _surface_helpers.QUARTIC_SUBDIVIDE_C,
-            _surface_helpers.QUARTIC_SUBDIVIDE_D,
+            _py_surface_helpers.QUARTIC_SUBDIVIDE_A,
+            _py_surface_helpers.QUARTIC_SUBDIVIDE_B,
+            _py_surface_helpers.QUARTIC_SUBDIVIDE_C,
+            _py_surface_helpers.QUARTIC_SUBDIVIDE_D,
         )
 
 
@@ -448,9 +449,9 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._subdivide_nodes(nodes, degree)
+        return _py_surface_helpers.subdivide_nodes(nodes, degree)
 
     def _helper(
         self, nodes, degree, expected_a, expected_b, expected_c, expected_d
@@ -464,7 +465,7 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
         self.assertEqual(nodes_d, expected_d)
 
     def _points_check(self, nodes, degree):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
         dimension, _ = nodes.shape
         sub_surfaces = self._call_function_under_test(nodes, degree)
@@ -478,10 +479,10 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
         ]
         for sub_surface, quarter in zip(sub_surfaces, quarters):
             # Make sure sub_surface(ref_triangle) == surface(quarter)
-            main_vals = _surface_helpers.evaluate_cartesian_multi(
+            main_vals = _py_surface_helpers.evaluate_cartesian_multi(
                 nodes, degree, quarter, dimension
             )
-            sub_vals = _surface_helpers.evaluate_cartesian_multi(
+            sub_vals = _py_surface_helpers.evaluate_cartesian_multi(
                 sub_surface, degree, ref_triangle, dimension
             )
             self.assertEqual(main_vals, sub_vals)
@@ -696,9 +697,9 @@ class Test_speedup_subdivide_nodes(Test__subdivide_nodes):
 class Test_jacobian_s(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.jacobian_s(nodes, degree, dimension)
+        return _py_surface_helpers.jacobian_s(nodes, degree, dimension)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, 1.0, np.nan]])
@@ -737,9 +738,9 @@ class Test_jacobian_s(utils.NumPyTestCase):
 class Test_jacobian_t(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.jacobian_t(nodes, degree, dimension)
+        return _py_surface_helpers.jacobian_t(nodes, degree, dimension)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, np.nan, 1.0]])
@@ -780,9 +781,9 @@ class Test_jacobian_t(utils.NumPyTestCase):
 class Test__jacobian_both(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._jacobian_both(nodes, degree, dimension)
+        return _py_surface_helpers.jacobian_both(nodes, degree, dimension)
 
     def test_linear(self):
         # B(s, t) = -2s + 2t + 3
@@ -874,9 +875,9 @@ class Test_speedup_jacobian_both(Test__jacobian_both):
 class Test__jacobian_det(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, st_vals):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._jacobian_det(nodes, degree, st_vals)
+        return _py_surface_helpers.jacobian_det(nodes, degree, st_vals)
 
     def test_linear(self):
         import bezier
@@ -921,9 +922,9 @@ class Test_speedup_jacobian_det(Test__jacobian_det):
 class Test_classify_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, edge_nodes1, edge_nodes2):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.classify_intersection(
+        return _py_surface_helpers.classify_intersection(
             intersection, edge_nodes1, edge_nodes2
         )
 
@@ -1017,19 +1018,19 @@ class Test_classify_tangent_intersection(unittest.TestCase):
     def _call_function_under_test(
         intersection, nodes1, tangent1, nodes2, tangent2
     ):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.classify_tangent_intersection(
+        return _py_surface_helpers.classify_tangent_intersection(
             intersection, nodes1, tangent1, nodes2, tangent2
         )
 
     def _call_helper(self, intersection, first, second):
-        from bezier import _curve_helpers
+        from bezier import _py_curve_helpers
 
         nodes1 = first._nodes
-        tangent1 = _curve_helpers.evaluate_hodograph(intersection.s, nodes1)
+        tangent1 = _py_curve_helpers.evaluate_hodograph(intersection.s, nodes1)
         nodes2 = second._nodes
-        tangent2 = _curve_helpers.evaluate_hodograph(intersection.t, nodes2)
+        tangent2 = _py_curve_helpers.evaluate_hodograph(intersection.t, nodes2)
         return self._call_function_under_test(
             intersection, nodes1, tangent1, nodes2, tangent2
         )
@@ -1120,9 +1121,9 @@ class Test_ignored_edge_corner(unittest.TestCase):
     def _call_function_under_test(
         edge_tangent, corner_tangent, corner_previous_edge
     ):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.ignored_edge_corner(
+        return _py_surface_helpers.ignored_edge_corner(
             edge_tangent, corner_tangent, corner_previous_edge
         )
 
@@ -1157,9 +1158,9 @@ class Test_ignored_double_corner(unittest.TestCase):
     def _call_function_under_test(
         intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
     ):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.ignored_double_corner(
+        return _py_surface_helpers.ignored_double_corner(
             intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
         )
 
@@ -1237,9 +1238,9 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def _call_function_under_test(
         intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
     ):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.ignored_corner(
+        return _py_surface_helpers.ignored_corner(
             intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
         )
 
@@ -1258,7 +1259,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
         edge_nodes2 = ()
         intersection = make_intersect(2, 0.0, None, 0.5)
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.ignored_edge_corner",
+            "bezier._py_surface_helpers.ignored_edge_corner",
             return_value=unittest.mock.sentinel.edge_result,
         )
         with patch as mocked:
@@ -1288,7 +1289,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
         edge_nodes2 = tuple(edge._nodes for edge in surface.edges)
         intersection = make_intersect(None, 0.5, 1, 0.0)
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.ignored_edge_corner",
+            "bezier._py_surface_helpers.ignored_edge_corner",
             return_value=unittest.mock.sentinel.edge_result,
         )
         with patch as mocked:
@@ -1313,7 +1314,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def test_double_corner(self):
         intersection = make_intersect(0, 0.0, 2, 0.0)
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.ignored_double_corner",
+            "bezier._py_surface_helpers.ignored_double_corner",
             return_value=unittest.mock.sentinel.double_result,
         )
         with patch as mocked:
@@ -1337,9 +1338,9 @@ class Test_ignored_corner(utils.NumPyTestCase):
 class Test_handle_ends(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(index1, s, index2, t):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.handle_ends(index1, s, index2, t)
+        return _py_surface_helpers.handle_ends(index1, s, index2, t)
 
     def test_neither(self):
         result = self._call_function_under_test(0, 0.5, 1, 0.5)
@@ -1378,9 +1379,11 @@ class Test_handle_ends(unittest.TestCase):
 class Test_to_front(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections, unused):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.to_front(intersection, intersections, unused)
+        return _py_surface_helpers.to_front(
+            intersection, intersections, unused
+        )
 
     def test_no_change(self):
         intersection = make_intersect(
@@ -1390,7 +1393,7 @@ class Test_to_front(unittest.TestCase):
         self.assertIs(result, intersection)
 
     def test_move_s(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         enum_val = get_enum("FIRST")
         intersection = make_intersect(
@@ -1398,7 +1401,7 @@ class Test_to_front(unittest.TestCase):
         )
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
-        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
         self.assertEqual(result.s, 0.0)
         self.assertEqual(result.index_first, 0)
         self.assertIsNone(result.t)
@@ -1432,7 +1435,7 @@ class Test_to_front(unittest.TestCase):
         self.assertEqual(unused, [])
 
     def test_move_t(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         enum_val = get_enum("SECOND")
         intersection = make_intersect(
@@ -1440,7 +1443,7 @@ class Test_to_front(unittest.TestCase):
         )
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
-        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
         self.assertIsNone(result.s)
         self.assertIsNone(result.index_first)
         self.assertEqual(result.t, 0.0)
@@ -1477,18 +1480,18 @@ class Test_to_front(unittest.TestCase):
 class Test_get_next_first(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections, **kwargs):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.get_next_first(
+        return _py_surface_helpers.get_next_first(
             intersection, intersections, **kwargs
         )
 
     def test_move_to_corner(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         intersection = make_intersect(1, 0.25, None, None)
         result = self._call_function_under_test(intersection, [])
-        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
         self.assertEqual(result.s, 1.0)
         self.assertEqual(result.index_first, 1)
         self.assertIsNone(result.t)
@@ -1531,18 +1534,18 @@ class Test_get_next_first(unittest.TestCase):
 class Test_get_next_second(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections, **kwargs):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.get_next_second(
+        return _py_surface_helpers.get_next_second(
             intersection, intersections, **kwargs
         )
 
     def test_move_to_corner(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         intersection = make_intersect(None, None, 1, 0.625)
         result = self._call_function_under_test(intersection, [])
-        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
         self.assertIsNone(result.s)
         self.assertIsNone(result.index_first)
         self.assertEqual(result.t, 1.0)
@@ -1585,14 +1588,14 @@ class Test_get_next_second(unittest.TestCase):
 class Test_get_next_coincident(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.get_next_coincident(
+        return _py_surface_helpers.get_next_coincident(
             intersection, intersections
         )
 
     def test_move_on_first(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         intersection = make_intersect(
             0, 0.0, 1, 0.5, interior_curve=get_enum("COINCIDENT")
@@ -1601,7 +1604,7 @@ class Test_get_next_coincident(unittest.TestCase):
             make_intersect(0, 0.5, 2, 0.0, interior_curve=get_enum("FIRST"))
         ]
         result = self._call_function_under_test(intersection, intersections)
-        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
         self.assertEqual(result.s, 0.5)
         self.assertEqual(result.index_first, 0)
         self.assertEqual(result.t, 0.0)
@@ -1609,7 +1612,7 @@ class Test_get_next_coincident(unittest.TestCase):
         self.assertIs(result.interior_curve, get_enum("FIRST"))
 
     def test_move_on_second(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         intersection = make_intersect(
             1, 0.75, 2, 0.0, interior_curve=get_enum("COINCIDENT")
@@ -1618,7 +1621,7 @@ class Test_get_next_coincident(unittest.TestCase):
             make_intersect(2, 0.0, 2, 0.75, interior_curve=get_enum("SECOND"))
         ]
         result = self._call_function_under_test(intersection, intersections)
-        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
         self.assertEqual(result.s, 0.0)
         self.assertEqual(result.index_first, 2)
         self.assertEqual(result.t, 0.75)
@@ -1626,13 +1629,13 @@ class Test_get_next_coincident(unittest.TestCase):
         self.assertIs(result.interior_curve, get_enum("SECOND"))
 
     def test_move_to_double_corner(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         intersection = make_intersect(
             2, 0.0, 0, 0.5, interior_curve=get_enum("COINCIDENT")
         )
         result = self._call_function_under_test(intersection, [])
-        self.assertIsInstance(result, _intersection_helpers.Intersection)
+        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
         self.assertEqual(result.s, 1.0)
         self.assertEqual(result.index_first, 2)
         self.assertEqual(result.t, 1.0)
@@ -1643,9 +1646,9 @@ class Test_get_next_coincident(unittest.TestCase):
 class Test_is_first(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(classification):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.is_first(classification)
+        return _py_surface_helpers.is_first(classification)
 
     def _from_name(self, name):
         return self._call_function_under_test(get_enum(name))
@@ -1663,9 +1666,9 @@ class Test_is_first(unittest.TestCase):
 class Test_is_second(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(classification):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.is_second(classification)
+        return _py_surface_helpers.is_second(classification)
 
     def _from_name(self, name):
         return self._call_function_under_test(get_enum(name))
@@ -1683,9 +1686,11 @@ class Test_is_second(unittest.TestCase):
 class Test_get_next(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections, unused):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.get_next(intersection, intersections, unused)
+        return _py_surface_helpers.get_next(
+            intersection, intersections, unused
+        )
 
     def test_remove_from_unused(self):
         # Also tests branch through "FIRST".
@@ -1697,7 +1702,8 @@ class Test_get_next(unittest.TestCase):
             2, None, 2, None, interior_curve=get_enum("FIRST")
         )
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.get_next_first", return_value=return_value
+            "bezier._py_surface_helpers.get_next_first",
+            return_value=return_value,
         )
         with patch as mocked:
             result = self._call_function_under_test(
@@ -1717,7 +1723,7 @@ class Test_get_next(unittest.TestCase):
             0, None, 2, None, interior_curve=get_enum("SECOND")
         )
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.get_next_second",
+            "bezier._py_surface_helpers.get_next_second",
             return_value=return_value,
         )
         with patch as mocked:
@@ -1744,7 +1750,7 @@ class Test_get_next(unittest.TestCase):
             0, None, 2, None, interior_curve=get_enum("COINCIDENT")
         )
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.get_next_coincident",
+            "bezier._py_surface_helpers.get_next_coincident",
             return_value=return_value,
         )
         with patch as mocked:
@@ -1760,9 +1766,9 @@ class Test_get_next(unittest.TestCase):
 class Test_ends_to_curve(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(start_node, end_node):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.ends_to_curve(start_node, end_node)
+        return _py_surface_helpers.ends_to_curve(start_node, end_node)
 
     def test_bad_classification(self):
         start_node = make_intersect(0, 0.5, 0, 0.5)
@@ -1771,7 +1777,7 @@ class Test_ends_to_curve(utils.NumPyTestCase):
             self._call_function_under_test(start_node, end_node)
 
     def _on_different_curves(self, interior_curve):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
         start_node = make_intersect(
             0, 0.5, 2, 0.5, interior_curve=interior_curve
@@ -1779,7 +1785,7 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         end_node = make_intersect(1, 0.5, 1, 0.5)
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(start_node, end_node)
-        expected_args = (_surface_helpers._WRONG_CURVE,)
+        expected_args = (_py_surface_helpers._WRONG_CURVE,)
         self.assertEqual(exc_info.exception.args, expected_args)
 
     def test_first_on_different_curves(self):
@@ -1821,7 +1827,7 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         self.assertEqual(result, (3, 0.5, 1.0))
 
     def test_coincident_failure(self):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
         start_node = make_intersect(
             0, 0.0, 0, 0.0, interior_curve=get_enum("COINCIDENT")
@@ -1829,16 +1835,16 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         end_node = make_intersect(1, 0.0, 1, 0.0)
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(start_node, end_node)
-        expected_args = (_surface_helpers._WRONG_CURVE,)
+        expected_args = (_py_surface_helpers._WRONG_CURVE,)
         self.assertEqual(exc_info.exception.args, expected_args)
 
 
 class Test_no_intersections(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.no_intersections(
+        return _py_surface_helpers.no_intersections(
             nodes1, degree1, nodes2, degree2
         )
 
@@ -1871,9 +1877,9 @@ class Test_no_intersections(unittest.TestCase):
 class Test_tangent_only_intersections(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(all_types):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.tangent_only_intersections(all_types)
+        return _py_surface_helpers.tangent_only_intersections(all_types)
 
     def test_too_few_types(self):
         with self.assertRaises(ValueError):
@@ -1922,9 +1928,11 @@ class Test_tangent_only_intersections(unittest.TestCase):
 class Test_basic_interior_combine(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(intersections, **kwargs):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.basic_interior_combine(intersections, **kwargs)
+        return _py_surface_helpers.basic_interior_combine(
+            intersections, **kwargs
+        )
 
     def test_it(self):
         intersection1 = make_intersect(
@@ -2000,22 +2008,22 @@ class Test_basic_interior_combine(utils.NumPyTestCase):
         self.assertEqual(get_next.call_count, max_edges + 1)
 
     @unittest.mock.patch(
-        "bezier._surface_helpers.get_next",
+        "bezier._py_surface_helpers.get_next",
         return_value=unittest.mock.sentinel.next_,
     )
     @unittest.mock.patch(
-        "bezier._surface_helpers.to_front",
+        "bezier._py_surface_helpers.to_front",
         return_value=unittest.mock.sentinel.front,
     )
     def test_too_many_edges(self, to_front, get_next):
         self._too_many_edges_helper(to_front, get_next)
 
     @unittest.mock.patch(
-        "bezier._surface_helpers.get_next",
+        "bezier._py_surface_helpers.get_next",
         return_value=unittest.mock.sentinel.next_,
     )
     @unittest.mock.patch(
-        "bezier._surface_helpers.to_front",
+        "bezier._py_surface_helpers.to_front",
         return_value=unittest.mock.sentinel.front,
     )
     def test_too_many_edges_explicit_max(self, to_front, get_next):
@@ -2027,9 +2035,9 @@ class Test_combine_intersections(utils.NumPyTestCase):
     def _call_function_under_test(
         intersections, nodes1, degree1, nodes2, degree2, all_types
     ):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.combine_intersections(
+        return _py_surface_helpers.combine_intersections(
             intersections, nodes1, degree1, nodes2, degree2, all_types
         )
 
@@ -2087,9 +2095,9 @@ class Test_combine_intersections(utils.NumPyTestCase):
 class Test__evaluate_barycentric(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._evaluate_barycentric(
+        return _py_surface_helpers.evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3
         )
 
@@ -2178,9 +2186,9 @@ class Test_speedup_evaluate_barycentric(Test__evaluate_barycentric):
 class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._evaluate_barycentric_multi(
+        return _py_surface_helpers.evaluate_barycentric_multi(
             nodes, degree, param_vals, dimension
         )
 
@@ -2219,9 +2227,9 @@ class Test_speedup_evaluate_barycentric_multi(
 class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._evaluate_cartesian_multi(
+        return _py_surface_helpers.evaluate_cartesian_multi(
             nodes, degree, param_vals, dimension
         )
 
@@ -2265,9 +2273,9 @@ class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
 class Test__compute_edge_nodes(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._compute_edge_nodes(nodes, degree)
+        return _py_surface_helpers.compute_edge_nodes(nodes, degree)
 
     def _check(self, nodes, degree, expected1, expected2, expected3):
         nodes1, nodes2, nodes3 = self._call_function_under_test(nodes, degree)
@@ -2364,9 +2372,9 @@ class Test_speedup_compute_edge_nodes(Test__compute_edge_nodes):
 class Test_shoelace_for_area(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers.shoelace_for_area(nodes)
+        return _py_surface_helpers.shoelace_for_area(nodes)
 
     def test_linear(self):
         edge_nodes = np.asfortranarray([[1.0, 2.0], [1.0, 4.0]])
@@ -2393,11 +2401,11 @@ class Test_shoelace_for_area(unittest.TestCase):
         self.assertEqual(shoelace_val, 4.0)
 
     def test_unsupported_degree(self):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
         degree = 5
         edge_nodes = np.empty((2, degree + 1), order="F")
-        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(edge_nodes)
 
         self.assertEqual(exc_info.exception.degree, degree)
@@ -2407,9 +2415,9 @@ class Test_shoelace_for_area(unittest.TestCase):
 class Test__compute_area(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(edges):
-        from bezier import _surface_helpers
+        from bezier import _py_surface_helpers
 
-        return _surface_helpers._compute_area(edges)
+        return _py_surface_helpers.compute_area(edges)
 
     def test_mixed_degree(self):
         edge1 = np.asfortranarray([[0.0, 2.0], [0.0, 0.0]])
@@ -2433,11 +2441,11 @@ class Test__compute_area(unittest.TestCase):
         utils.almost(self, 4.0 / 3.0, area, 1)
 
     def test_unsupported_degree(self):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
         degree = 5
         edge1 = np.empty((2, degree + 1), order="F")
-        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test((edge1,))
 
         self.assertEqual(exc_info.exception.degree, degree)
@@ -2454,12 +2462,12 @@ class Test_speedup_compute_area(Test__compute_area):
 
 
 def make_intersect(*args, **kwargs):
-    from bezier import _intersection_helpers
+    from bezier import _py_intersection_helpers
 
-    return _intersection_helpers.Intersection(*args, **kwargs)
+    return _py_intersection_helpers.Intersection(*args, **kwargs)
 
 
 def get_enum(str_val):
-    from bezier import _intersection_helpers
+    from bezier import _py_intersection_helpers
 
-    return _intersection_helpers.IntersectionClassification[str_val]
+    return _py_intersection_helpers.IntersectionClassification[str_val]
