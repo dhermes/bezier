@@ -515,8 +515,8 @@ def get_curvature(nodes, tangent_vec, s):
 
        import numpy as np
        import bezier
-       from bezier._wrap_curve_helpers import evaluate_hodograph
-       from bezier._wrap_curve_helpers import get_curvature
+       from bezier._py_curve_helpers import evaluate_hodograph
+       from bezier._py_curve_helpers import get_curvature
 
     .. doctest:: get-curvature
        :options: +NORMALIZE_WHITESPACE
@@ -621,7 +621,7 @@ def newton_refine(nodes, point, s):
 
        import numpy as np
        import bezier
-       from bezier._wrap_curve_helpers import newton_refine
+       from bezier._py_curve_helpers import newton_refine
 
     .. doctest:: newton-refine-curve
        :options: +NORMALIZE_WHITESPACE
@@ -696,7 +696,7 @@ def newton_refine(nodes, point, s):
 
        import numpy as np
        import bezier
-       from bezier._wrap_curve_helpers import newton_refine
+       from bezier._py_curve_helpers import newton_refine
 
        nodes = np.asfortranarray([
            [ 6.0, -2.0, -2.0, 6.0],
