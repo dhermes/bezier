@@ -163,7 +163,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
        import numpy as np
        import bezier
-       from bezier._surface_intersection import newton_refine
+       from bezier._py_surface_intersection import newton_refine
 
     .. doctest:: newton-refine-surface
 

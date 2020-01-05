@@ -26,11 +26,11 @@ import six
 
 from bezier import _base
 from bezier import _plot_helpers
-from bezier import _surface_intersection
 from bezier import _wrap_curve_helpers
 from bezier import _wrap_helpers
 from bezier import _wrap_intersection_helpers
 from bezier import _wrap_surface_helpers
+from bezier import _wrap_surface_intersection
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 
@@ -956,7 +956,7 @@ class Surface(_base.Base):
                 )
                 raise ValueError(msg)
 
-        return _surface_intersection.locate_point(
+        return _wrap_surface_intersection.locate_point(
             self._nodes, self._degree, point[0, 0], point[1, 0]
         )
 
@@ -997,9 +997,9 @@ class Surface(_base.Base):
                 )
 
         if strategy == _STRATEGY.GEOMETRIC:
-            do_intersect = _surface_intersection.geometric_intersect
+            do_intersect = _wrap_surface_intersection.geometric_intersect
         elif strategy == _STRATEGY.ALGEBRAIC:
-            do_intersect = _surface_intersection.algebraic_intersect
+            do_intersect = _wrap_surface_intersection.algebraic_intersect
         else:
             raise ValueError("Unexpected strategy.", strategy)
 

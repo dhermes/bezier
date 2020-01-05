@@ -2582,17 +2582,17 @@ def no_intersections(nodes1, degree1, nodes2, degree2):
     """
     # NOTE: This is a circular import.
     # pylint: disable=import-outside-toplevel
-    from bezier import _surface_intersection
+    from bezier import _py_surface_intersection
 
     # pylint: enable=import-outside-toplevel
 
-    located = _surface_intersection.locate_point(
+    located = _py_surface_intersection.locate_point(
         nodes2, degree2, nodes1[0, 0], nodes1[1, 0]
     )
     if located is not None:
         return None, True
 
-    located = _surface_intersection.locate_point(
+    located = _py_surface_intersection.locate_point(
         nodes1, degree1, nodes2[0, 0], nodes2[1, 0]
     )
     if located is not None:
