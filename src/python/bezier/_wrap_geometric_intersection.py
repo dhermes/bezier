@@ -10,7 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helpers for intersecting B |eacute| zier curves via geometric methods."""
+"""Helpers for intersecting B |eacute| zier curves via geometric methods.
+
+The functions provided by this module have a Cython speedup with the
+exact same interface which calls out to a Fortran implementation. The speedup
+will be used if the extension can be built.
+"""
 
 import atexit
 

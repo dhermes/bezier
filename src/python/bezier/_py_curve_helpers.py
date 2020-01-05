@@ -10,17 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Private helper methods for B |eacute| zier curves.
-
-As a convention, the functions defined here with a leading underscore
-(e.g. :func:`subdivide_nodes`) have a special meaning.
-
-Each of these functions have a Cython speedup with the exact same
-interface which calls out to a Fortran implementation. The speedup
-will be used if the extension can be built. The name **without** the
-leading underscore will be surfaced as the actual interface (e.g.
-``subdivide_nodes``) whether that is the pure Python implementation
-or the speedup.
+"""Pure Python implementations of helper methods for B |eacute| zier curves.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:

@@ -12,15 +12,8 @@
 
 """Helpers for intersecting B |eacute| zier curves via geometric methods.
 
-As a convention, the functions defined here with a leading underscore
-(e.g. :func:`bbox_intersect`) have a special meaning.
-
-Each of these functions have a Cython speedup with the exact same
-interface which calls out to a Fortran implementation. The speedup
-will be used if the extension can be built. The name **without** the
-leading underscore will be surfaced as the actual interface (e.g.
-``bbox_intersect``) whether that is the pure Python implementation
-or the speedup.
+The functions here are pure Python and many have equivalent implementations
+written in Fortran and exposed via a Cython wrapper.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:

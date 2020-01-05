@@ -10,17 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Private helper methods for intersecting B |eacute| zier shapes.
-
-As a convention, the functions defined here with a leading underscore
-(e.g. :func:`newton_refine`) have a special meaning.
-
-Each of these functions have a Cython speedup with the exact same
-interface which calls out to a Fortran implementation. The speedup
-will be used if the extension can be built. The name **without** the
-leading underscore will be surfaced as the actual interface (e.g.
-``newton_refine``) whether that is the pure Python implementation
-or the speedup.
+"""Pure Python helper methods for intersecting B |eacute| zier shapes.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:

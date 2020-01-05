@@ -10,17 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Generic geometry and floating point helpers.
-
-As a convention, the functions defined here with a leading underscore
-(e.g. :func:`bbox`) have a special meaning.
-
-Each of these functions have a Cython speedup with the exact same
-interface which calls out to a Fortran implementation. The speedup
-will be used if the extension can be built. The name **without** the
-leading underscore will be surfaced as the actual interface (e.g.
-``bbox``) whether that is the pure Python implementation or the speedup.
-"""
+"""Pure Python generic geometry and floating point helpers."""
 
 import bisect
 

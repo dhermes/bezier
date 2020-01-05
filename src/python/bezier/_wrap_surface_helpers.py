@@ -10,7 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Private helper methods for :mod:`bezier.surface`."""
+"""Helper methods for :mod:`bezier.surface`.
+
+The functions provided by this module have a Cython speedup with the
+exact same interface which calls out to a Fortran implementation. The speedup
+will be used if the extension can be built.
+"""
 
 from bezier import _py_surface_helpers
 
