@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import unittest
 import unittest.mock
 
@@ -21,9 +22,9 @@ from tests.unit import utils
 class Test__newton_refine(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
-        return _intersection_helpers._newton_refine(s, nodes1, t, nodes2)
+        return _py_intersection_helpers.newton_refine(s, nodes1, t, nodes2)
 
     def test_linear(self):
         import bezier
@@ -152,9 +153,9 @@ class Test__newton_refine(utils.NumPyTestCase):
 class TestNewtonSimpleRoot(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
-        return _intersection_helpers.NewtonSimpleRoot
+        return _py_intersection_helpers.NewtonSimpleRoot
 
     def _make_one(self, *args, **kwargs):
         klass = self._get_target_class()
@@ -216,9 +217,9 @@ class TestNewtonSimpleRoot(utils.NumPyTestCase):
 class TestNewtonDoubleRoot(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
-        return _intersection_helpers.NewtonDoubleRoot
+        return _py_intersection_helpers.NewtonDoubleRoot
 
     def _make_one(self, *args, **kwargs):
         klass = self._get_target_class()
@@ -316,29 +317,29 @@ class Test_newton_iterate(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(evaluate_fn, s, t):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
-        return _intersection_helpers.newton_iterate(evaluate_fn, s, t)
+        return _py_intersection_helpers.newton_iterate(evaluate_fn, s, t)
 
     @staticmethod
     def _simple_evaluate(quadratic1, quadratic2):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         first_deriv1 = 2.0 * (quadratic1[:, 1:] - quadratic1[:, :-1])
         first_deriv2 = 2.0 * (quadratic2[:, 1:] - quadratic2[:, :-1])
-        return _intersection_helpers.NewtonSimpleRoot(
+        return _py_intersection_helpers.NewtonSimpleRoot(
             quadratic1, first_deriv1, quadratic2, first_deriv2
         )
 
     @staticmethod
     def _double_evaluate(quadratic1, quadratic2):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         first_deriv1 = 2.0 * (quadratic1[:, 1:] - quadratic1[:, :-1])
         second_deriv1 = first_deriv1[:, 1:] - first_deriv1[:, :-1]
         first_deriv2 = 2.0 * (quadratic2[:, 1:] - quadratic2[:, :-1])
         second_deriv2 = first_deriv2[:, 1:] - first_deriv2[:, :-1]
-        return _intersection_helpers.NewtonDoubleRoot(
+        return _py_intersection_helpers.NewtonDoubleRoot(
             quadratic1,
             first_deriv1,
             second_deriv1,
@@ -490,7 +491,7 @@ class Test_newton_iterate(unittest.TestCase):
         # ``pn`` is moving significantly, so the change in ``||pn||`` tracks
         # the change in ``||p{n+1} - pn||``.
         patch = unittest.mock.patch(
-            "bezier._intersection_helpers.MAX_NEWTON_ITERATIONS", new=3
+            "bezier._py_intersection_helpers.MAX_NEWTON_ITERATIONS", new=3
         )
         with patch:
             converged, current_s, current_t = self._call_function_under_test(
@@ -501,13 +502,13 @@ class Test_newton_iterate(unittest.TestCase):
         self.assertEqual(8.221323371115176, current_t)
 
     def test_premature_exit(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         nodes1 = np.asfortranarray([[0.0, 0.5, 1.0], [0.0, 1.0, 0.0]])
         first_deriv1 = 2.0 * (nodes1[:, 1:] - nodes1[:, :-1])
         nodes2 = np.asfortranarray([[0.0, 1.0], [0.5, 0.5]])
         first_deriv2 = nodes2[:, 1:] - nodes2[:, :-1]
-        evaluate_fn = _intersection_helpers.NewtonSimpleRoot(
+        evaluate_fn = _py_intersection_helpers.NewtonSimpleRoot(
             nodes1, first_deriv1, nodes2, first_deriv2
         )
         # First, show that sn = tn = 0.5 - k results in
@@ -546,9 +547,11 @@ class Test_newton_iterate(unittest.TestCase):
 class Test_full_newton_nonzero(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
-        return _intersection_helpers.full_newton_nonzero(s, nodes1, t, nodes2)
+        return _py_intersection_helpers.full_newton_nonzero(
+            s, nodes1, t, nodes2
+        )
 
     def test_simple_root(self):
         # B1([4095/8192, 1/2]) and B2([1365/8192, 1366/8192]) are linearized
@@ -581,7 +584,7 @@ class Test_full_newton_nonzero(unittest.TestCase):
         utils.almost(self, 1.0 / 3.0, computed_t, 1)
 
     def test_triple_root(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
         # B1([16382/32768, 16383/32768]) and B2([8190/16384, 8191/16384]) are
         # linearized and when the segments intersect they produce
@@ -592,7 +595,7 @@ class Test_full_newton_nonzero(unittest.TestCase):
         t = 12287.0 / 24576.0
         with self.assertRaises(NotImplementedError) as exc_info:
             self._call_function_under_test(s, nodes1, t, nodes2)
-        expected = (_intersection_helpers.NEWTON_NO_CONVERGE,)
+        expected = (_py_intersection_helpers.NEWTON_NO_CONVERGE,)
         self.assertEqual(exc_info.exception.args, expected)
 
     def test_line_and_curve(self):
@@ -657,9 +660,9 @@ class Test_full_newton_nonzero(unittest.TestCase):
 class Test_full_newton(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
-        return _intersection_helpers.full_newton(s, nodes1, t, nodes2)
+        return _py_intersection_helpers.full_newton(s, nodes1, t, nodes2)
 
     def test_both_near_zero(self):
         # B1([0, 1/8192]) and B2([0, 1/8192]) are linearized and the
@@ -731,9 +734,9 @@ class Test_speedup_newton_refine(Test__newton_refine):
 class TestIntersection(unittest.TestCase):
     @staticmethod
     def _get_target_class():
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
-        return _intersection_helpers.Intersection
+        return _py_intersection_helpers.Intersection
 
     def _make_one(self, *args, **kwargs):
         klass = self._get_target_class()
