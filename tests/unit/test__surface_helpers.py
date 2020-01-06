@@ -62,6 +62,7 @@ class Test_speedup_subdivide_nodes(
 
     # NOTE: The following methods are intentionally re-defined without changing
     #       the original to remove the ``@pytest.mark.slow`` decorator.
+    # pylint: disable=useless-super-delegation
     def test_line_check_evaluate(self):
         super(Test_speedup_subdivide_nodes, self).test_line_check_evaluate()
 
@@ -78,6 +79,8 @@ class Test_speedup_subdivide_nodes(
 
     def test_on_the_fly(self):
         super(Test_speedup_subdivide_nodes, self).test_on_the_fly()
+
+    # pylint: enable=useless-super-delegation
 
 
 @utils.needs_speedup
