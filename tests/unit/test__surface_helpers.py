@@ -60,6 +60,25 @@ class Test_speedup_subdivide_nodes(
             nodes, degree, param_vals, dimension
         )
 
+    # NOTE: The following methods are intentionally re-defined without changing
+    #       the original to remove the ``@pytest.mark.slow`` decorator.
+    def test_line_check_evaluate(self):
+        super(Test_speedup_subdivide_nodes, self).test_line_check_evaluate()
+
+    def test_quadratic_check_evaluate(self):
+        super(
+            Test_speedup_subdivide_nodes, self
+        ).test_quadratic_check_evaluate()
+
+    def test_cubic_check_evaluate(self):
+        super(Test_speedup_subdivide_nodes, self).test_cubic_check_evaluate()
+
+    def test_quartic_check_evaluate(self):
+        super(Test_speedup_subdivide_nodes, self).test_quartic_check_evaluate()
+
+    def test_on_the_fly(self):
+        super(Test_speedup_subdivide_nodes, self).test_on_the_fly()
+
 
 @utils.needs_speedup
 class Test_speedup_jacobian_both(test__py_surface_helpers.Test_jacobian_both):

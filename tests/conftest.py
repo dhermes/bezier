@@ -21,11 +21,6 @@ This
 
 import pytest
 
-try:
-    from bezier import _HAS_SPEEDUP as HAS_SPEEDUP
-except ImportError:  # pragma: NO COVER
-    HAS_SPEEDUP = False
-
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -42,9 +37,6 @@ def pytest_configure(config):
 
 def pytest_collection_modifyitems(config, items):
     if not config.getoption("--ignore-slow"):
-        return
-
-    if HAS_SPEEDUP:
         return
 
     skip_slow = pytest.mark.skip(reason="--ignore-slow ignores the slow tests")
