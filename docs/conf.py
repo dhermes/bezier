@@ -9,7 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 # bezier documentation build configuration file, created by
 # sphinx-quickstart on Sun Nov  6 22:34:38 2016.
 #

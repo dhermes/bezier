@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 from __future__ import absolute_import
 
 import matplotlib.pyplot as plt
@@ -16,6 +17,7 @@ import seaborn
 
 from bezier import _plot_helpers
 from tests.functional import utils
+
 
 CONFIG = utils.Config()
 _, INTERSECTIONS = utils.curve_intersections_info()

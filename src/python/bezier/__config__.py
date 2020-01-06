@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Environment configuration for ``bezier`` runtime dependencies.
 
 Only needed for Windows, to add ``extra-dll`` directory to the search
@@ -18,6 +19,7 @@ Only needed for Windows, to add ``extra-dll`` directory to the search
 import os
 
 import pkg_resources
+
 
 # Error messages for ``handle_import_error``.
 TEMPLATE = "No module named 'bezier.{}'"  # 3.6, 3.7, pypy3

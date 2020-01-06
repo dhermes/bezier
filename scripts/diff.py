@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Compare two files.
 
 Intended as a platform-independent version of ``diff``.
@@ -20,6 +21,7 @@ import argparse
 import difflib
 import os
 import sys
+
 
 NOT_EXISTS = "{} does not exist."
 

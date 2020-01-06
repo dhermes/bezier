@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 from __future__ import absolute_import
 
 import itertools
@@ -25,6 +26,7 @@ import bezier.curve
 from tests import utils as base_utils
 from tests.functional import utils
 from tests.functional.utils import CurveIntersectionType
+
 
 SPACING = np.spacing  # pylint: disable=no-member
 GEOMETRIC = bezier.curve.IntersectionStrategy.GEOMETRIC
