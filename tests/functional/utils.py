@@ -26,7 +26,6 @@ import os
 import types
 
 import numpy as np
-import six
 
 import bezier
 import bezier.curve
@@ -101,7 +100,7 @@ def _convert_float(value):
     elif isinstance(value, list):
         return [_convert_float(element) for element in value]
 
-    elif isinstance(value, six.integer_types):
+    elif isinstance(value, int):
         return float(value)
 
     elif value.startswith("0x") or value.startswith("-0x"):
@@ -131,8 +130,7 @@ def curve_intersections_info():
     with io.open(filename, "r", encoding="utf-8") as file_obj:
         curve_json = json.load(file_obj)
     curves = {
-        id_: CurveInfo.from_json(id_, info)
-        for id_, info in six.iteritems(curve_json)
+        id_: CurveInfo.from_json(id_, info) for id_, info in curve_json.items()
     }
     filename = os.path.join(FNL_TESTS_DIR, "curve_intersections.json")
     with io.open(filename, "r", encoding="utf-8") as file_obj:
@@ -158,7 +156,7 @@ def surface_intersections_info():
         surface_json = json.load(file_obj)
     surfaces = {
         id_: SurfaceInfo.from_json(id_, info)
-        for id_, info in six.iteritems(surface_json)
+        for id_, info in surface_json.items()
     }
     filename = os.path.join(FNL_TESTS_DIR, "surface_intersections.json")
     with io.open(filename, "r", encoding="utf-8") as file_obj:
@@ -269,7 +267,7 @@ class Config:
             mod_globals (dict): The globals from a module.
         """
         found = []
-        for key, value in six.iteritems(mod_globals):
+        for key, value in mod_globals.items():
             if not key.lower().startswith("test"):
                 continue
 

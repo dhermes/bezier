@@ -29,7 +29,6 @@ which is the primary usage within ``bezier``.
 """
 
 import numpy as np
-import six
 
 from bezier import _helpers
 from bezier import _py_geometric_intersection
@@ -110,7 +109,7 @@ def compute_fat_line(nodes):
     _, num_nodes = nodes.shape
     d_min = 0.0
     d_max = 0.0
-    for index in six.moves.xrange(1, num_nodes - 1):  # Only interior nodes.
+    for index in range(1, num_nodes - 1):  # Only interior nodes.
         curr_dist = (
             coeff_a * nodes[0, index] + coeff_b * nodes[1, index] + coeff_c
         )
@@ -255,7 +254,7 @@ def clip_range(nodes1, nodes2):
     _, num_nodes2 = nodes2.shape
     polynomial = np.empty((2, num_nodes2), order="F")
     denominator = float(num_nodes2 - 1)
-    for index in six.moves.xrange(num_nodes2):
+    for index in range(num_nodes2):
         polynomial[0, index] = index / denominator
         polynomial[1, index] = (
             coeff_a * nodes2[0, index] + coeff_b * nodes2[1, index] + coeff_c
@@ -271,8 +270,8 @@ def clip_range(nodes1, nodes2):
     # NOTE: We avoid computing the convex hull and just compute where
     #       all segments connecting two control points intersect the
     #       fat lines.
-    for start_index in six.moves.xrange(num_nodes2 - 1):
-        for end_index in six.moves.xrange(start_index + 1, num_nodes2):
+    for start_index in range(num_nodes2 - 1):
+        for end_index in range(start_index + 1, num_nodes2):
             s_min, s_max = _update_parameters(
                 s_min,
                 s_max,

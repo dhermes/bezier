@@ -19,10 +19,10 @@ try:
     import scipy.linalg.lapack as SCIPY_LAPACK
 except ImportError:  # pragma: NO COVER
     SCIPY_LAPACK = None
-import six  # noqa: I202
 
 from tests import utils as base_utils
 from tests.unit import utils
+
 
 FLOAT64 = np.float64  # pylint: disable=no-member
 SPACING = np.spacing  # pylint: disable=no-member
@@ -1241,7 +1241,7 @@ class Test_bezier_value_check(utils.NumPyTestCase):
         # -(s - 17) (s - 5) (s - 2)
         coeffs = self.CUBIC_COEFFS
         eps = SPACING(root)  # pylint: disable=assignment-from-no-return
-        for delta in six.moves.xrange(-32, 32 + 1):
+        for delta in range(-32, 32 + 1):
             s_val = root + delta * eps
             self.assertTrue(self._call_function_under_test(coeffs, s_val))
         s_val1 = root + max_ulps * eps

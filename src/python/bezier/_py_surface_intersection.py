@@ -16,7 +16,6 @@ import collections
 import itertools
 
 import numpy as np
-import six
 
 from bezier import _algebraic_intersection
 from bezier import _py_geometric_intersection
@@ -329,7 +328,7 @@ def locate_point(nodes, degree, x_val, y_val):
     # the centroid -- to avoid division by three until needed). We also need
     # to track the width (or rather, just the sign of the width).
     candidates = [(1.0, 1.0, 1.0, nodes)]
-    for _ in six.moves.xrange(MAX_LOCATE_SUBDIVISIONS + 1):
+    for _ in range(MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for candidate in candidates:
             update_locate_candidates(
@@ -425,7 +424,7 @@ def verify_duplicates(duplicates, uniques):
 
         matched = matches[0]
         counter[matched] += 1
-    for index, count in six.iteritems(counter):
+    for index, count in counter.items():
         uniq = uniques[index]
         if count == 1:
             if (uniq.s, uniq.t).count(0.0) != 1:
@@ -462,7 +461,7 @@ def verify_edge_segments(edge_infos):
 
     for edge_info in edge_infos:
         num_segments = len(edge_info)
-        for index in six.moves.xrange(-1, num_segments - 1):
+        for index in range(-1, num_segments - 1):
             index1, start1, end1 = edge_info[index]
             # First, verify the start and end parameters for the current
             # segment.

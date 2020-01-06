@@ -83,7 +83,6 @@ def get_random_nodes(shape, seed, num_bits):
 
 def ref_triangle_uniform_nodes(pts_exponent):
     import numpy as np
-    import six
 
     # Using the exponent means that we will divide by
     # 2**exp, which can be done without roundoff (for small
@@ -92,9 +91,9 @@ def ref_triangle_uniform_nodes(pts_exponent):
     total = ((pts_per_side + 1) * pts_per_side) // 2
     result = np.zeros((total, 2), order="F")
     index = 0
-    for y_val in six.moves.xrange(pts_per_side):
+    for y_val in range(pts_per_side):
         remaining = pts_per_side - y_val
-        for x_val in six.moves.xrange(remaining):
+        for x_val in range(remaining):
             result[index, :] = x_val, y_val
             index += 1
     result /= pts_per_side - 1.0

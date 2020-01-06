@@ -15,7 +15,6 @@
 import bisect
 
 import numpy as np
-import six
 
 
 _EPS = 0.5 ** 40
@@ -333,7 +332,7 @@ def simple_convex_hull(points):
 
     # Build lower hull
     lower = [0, 1]
-    for index in six.moves.xrange(2, num_points):
+    for index in range(2, num_points):
         point2 = points[:, index]
         while len(lower) >= 2:
             point0 = points[:, lower[-2]]
@@ -346,7 +345,7 @@ def simple_convex_hull(points):
         lower.append(index)
     # Build upper hull
     upper = [num_points - 1]
-    for index in six.moves.xrange(num_points - 2, -1, -1):
+    for index in range(num_points - 2, -1, -1):
         # Don't consider indices from the lower hull (other than the ends).
         if index > 0 and in_sorted(lower, index):
             continue
@@ -400,7 +399,7 @@ def is_separating(direction, polygon1, polygon2):
         _, polygon_size = polygon.shape
         min_param = np.inf
         max_param = -np.inf
-        for index in six.moves.xrange(polygon_size):
+        for index in range(polygon_size):
             vertex[:] = polygon[:, index]
             param = cross_product(direction, vertex) / norm_squared
             min_param = min(min_param, param)
@@ -438,7 +437,7 @@ def polygon_collide(polygon1, polygon2):
     direction = np.empty((2,), order="F")
     for polygon in (polygon1, polygon2):
         _, polygon_size = polygon.shape
-        for index in six.moves.xrange(polygon_size):
+        for index in range(polygon_size):
             # NOTE: When ``index == 0`` this will "wrap around" and refer
             #       to index ``-1``.
             direction[:] = polygon[:, index] - polygon[:, index - 1]

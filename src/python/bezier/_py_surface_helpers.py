@@ -20,7 +20,6 @@ import functools
 import operator
 
 import numpy as np
-import six
 
 from bezier import _py_curve_helpers
 from bezier import _py_helpers
@@ -742,7 +741,7 @@ def polynomial_sign(poly_surface, degree):
     corner_indices = (0, degree, -1)
     sub_polys = [poly_surface]
     signs = set()
-    for _ in six.moves.xrange(_MAX_POLY_SUBDIVISIONS):
+    for _ in range(_MAX_POLY_SUBDIVISIONS):
         undecided = []
         for poly in sub_polys:
             # First add all the signs of the corner nodes.
@@ -940,8 +939,8 @@ def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     parent_i1 = 0
     parent_i2 = 1
     parent_i3 = degree + 1
-    for k in six.moves.xrange(degree):
-        for unused_j in six.moves.xrange(degree - k):
+    for k in range(degree):
+        for unused_j in range(degree - k):
             # NOTE: i = (degree - 1) - j - k
             new_nodes[:, index] = (
                 lambda1 * nodes[:, parent_i1]
@@ -1037,8 +1036,8 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
     """
     result = np.empty(shape, order="F")
     index = 0
-    for k in six.moves.xrange(degree + 1):
-        for j in six.moves.xrange(degree + 1 - k):
+    for k in range(degree + 1):
+        for j in range(degree + 1 - k):
             i = degree - j - k
             key = (0,) * i + (1,) * j + (2,) * k
             result[:, index] = vals_by_weight[key][:, 0]
@@ -1087,14 +1086,14 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
         (1,): de_casteljau_one_round(nodes, degree, *weights_b),
         (2,): de_casteljau_one_round(nodes, degree, *weights_c),
     }
-    for reduced_deg in six.moves.xrange(degree - 1, 0, -1):
+    for reduced_deg in range(degree - 1, 0, -1):
         new_partial = {}
         transform = make_transform(
             reduced_deg, weights_a, weights_b, weights_c
         )
-        for key, sub_nodes in six.iteritems(partial_vals):
+        for key, sub_nodes in partial_vals.items():
             # Our keys are ascending so we increment from the last value.
-            for next_id in six.moves.xrange(key[-1], 2 + 1):
+            for next_id in range(key[-1], 2 + 1):
                 new_key = key + (next_id,)
                 new_partial[new_key] = _py_helpers.matrix_product(
                     sub_nodes, transform[next_id]
@@ -1196,8 +1195,8 @@ def jacobian_s(nodes, degree, dimension):
     result = np.empty((dimension, num_nodes), order="F")
     index = 0
     i = 0
-    for num_vals in six.moves.xrange(degree, 0, -1):
-        for _ in six.moves.xrange(num_vals):
+    for num_vals in range(degree, 0, -1):
+        for _ in range(num_vals):
             result[:, index] = nodes[:, i + 1] - nodes[:, i]
             # Update the indices
             index += 1
@@ -1229,8 +1228,8 @@ def jacobian_t(nodes, degree, dimension):
     index = 0
     i = 0
     j = degree + 1
-    for num_vals in six.moves.xrange(degree, 0, -1):
-        for _ in six.moves.xrange(num_vals):
+    for num_vals in range(degree, 0, -1):
+        for _ in range(num_vals):
             result[:, index] = nodes[:, j] - nodes[:, i]
             # Update the indices
             index += 1
@@ -2803,7 +2802,7 @@ def evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
     # curve evaluate_multi_barycentric() takes arrays.
     lambda1 = np.asfortranarray([lambda1])
     lambda2 = np.asfortranarray([lambda2])
-    for k in six.moves.xrange(degree - 1, -1, -1):
+    for k in range(degree - 1, -1, -1):
         # We want to go from (d C (k + 1)) to (d C k).
         binom_val = (binom_val * (k + 1)) / (degree - k)
         index -= 1  # Step to last element in column.
@@ -2903,7 +2902,7 @@ def compute_edge_nodes(nodes, degree):
     nodes3 = np.empty((dimension, degree + 1), order="F")
     curr2 = degree
     curr3 = -1
-    for i in six.moves.xrange(degree + 1):
+    for i in range(degree + 1):
         nodes1[:, i] = nodes[:, i]
         nodes2[:, i] = nodes[:, curr2]
         nodes3[:, i] = nodes[:, curr3]

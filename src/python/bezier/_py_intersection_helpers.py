@@ -19,7 +19,6 @@
 import enum
 
 import numpy as np
-import six
 
 from bezier import _py_curve_helpers
 from bezier import _py_helpers
@@ -686,7 +685,7 @@ def newton_iterate(evaluate_fn, s, t):
     linear_updates = 0  # Track the number of "linear" updates.
     current_s = s
     current_t = t
-    for index in six.moves.xrange(MAX_NEWTON_ITERATIONS):
+    for index in range(MAX_NEWTON_ITERATIONS):
         jacobian, func_val = evaluate_fn(current_s, current_t)
         if jacobian is None:
             return True, current_s, current_t

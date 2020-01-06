@@ -13,7 +13,6 @@
 import unittest
 
 import numpy as np
-import six
 
 from tests.unit import utils
 
@@ -387,8 +386,8 @@ class Test_simple_convex_hull(utils.NumPyTestCase):
     def test_10x10_grid(self):
         points = np.empty((2, 100), order="F")
         index = 0
-        for i in six.moves.xrange(10):
-            for j in six.moves.xrange(10):
+        for i in range(10):
+            for j in range(10):
                 points[:, index] = i, j
                 index += 1
         polygon = self._call_function_under_test(points)

@@ -22,7 +22,6 @@
 """
 
 import numpy as np
-import six
 
 from bezier import _base
 from bezier import _curve_helpers
@@ -1094,8 +1093,8 @@ class Surface(_base.Base):
         parent_i1 = 0
         parent_i2 = 1
         parent_i3 = self._degree + 2
-        for k in six.moves.xrange(self._degree + 1):
-            for j in six.moves.xrange(self._degree + 1 - k):
+        for k in range(self._degree + 1):
+            for j in range(self._degree + 1 - k):
                 i = self._degree - j - k
                 new_nodes[:, parent_i1] += (i + 1) * self._nodes[:, index]
                 new_nodes[:, parent_i2] += (j + 1) * self._nodes[:, index]

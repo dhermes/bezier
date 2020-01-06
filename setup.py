@@ -46,7 +46,7 @@ building of extension modules.
 """.format(
     NO_EXTENSIONS_ENV
 )
-REQUIREMENTS = ("six >= 1.12.0",)
+REQUIREMENTS = ()
 EXTRAS_REQUIRE = {
     ':implementation_name == "pypy"': ["numpy == 1.15.4"],
     ':implementation_name == "cpython"': ["numpy >= 1.17.0"],

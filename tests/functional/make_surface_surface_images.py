@@ -12,7 +12,6 @@
 
 import matplotlib.pyplot as plt
 import seaborn
-import six
 
 import bezier
 from bezier import _plot_helpers
@@ -29,7 +28,7 @@ def make_curved_polygon(surface1, surface2, curved_polygon_info):
         edge_list = curved_polygon_info.edge_list
         start_params = curved_polygon_info.start_params
         end_params = curved_polygon_info.end_params
-        info = six.moves.zip(edge_list, start_params, end_params)
+        info = zip(edge_list, start_params, end_params)
         edges = []
         for edge_index, start_param, end_param in info:
             if edge_index < 3:

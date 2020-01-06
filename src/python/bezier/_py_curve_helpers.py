@@ -19,7 +19,6 @@
 import functools
 
 import numpy as np
-import six
 
 try:
     import scipy.integrate as _scipy_int
@@ -133,7 +132,7 @@ def make_subdivision_matrices(degree):
     right = np.zeros((degree + 1, degree + 1), order="F")
     left[0, 0] = 1.0
     right[-1, -1] = 1.0
-    for col in six.moves.xrange(1, degree + 1):
+    for col in range(1, degree + 1):
         half_prev = 0.5 * left[:col, col - 1]
         left[:col, col] = half_prev
         left[1 : col + 1, col] += half_prev  # noqa: E203
@@ -256,7 +255,7 @@ def evaluate_multi_barycentric(nodes, lambda1, lambda2):
     result += lambda1 * nodes[:, [0]]
     binom_val = 1.0
     lambda2_pow = np.ones((1, num_vals), order="F")
-    for index in six.moves.xrange(1, degree):
+    for index in range(1, degree):
         lambda2_pow *= lambda2
         binom_val = (binom_val * (degree - index + 1)) / index
         result += binom_val * lambda2_pow * nodes[:, [index]]
@@ -437,18 +436,18 @@ def specialize_curve(nodes, start, end):
         (0,): de_casteljau_one_round(nodes, *weights[0]),
         (1,): de_casteljau_one_round(nodes, *weights[1]),
     }
-    for _ in six.moves.xrange(num_nodes - 2, 0, -1):
+    for _ in range(num_nodes - 2, 0, -1):
         new_partial = {}
-        for key, sub_nodes in six.iteritems(partial_vals):
+        for key, sub_nodes in partial_vals.items():
             # Our keys are ascending so we increment from the last value.
-            for next_id in six.moves.xrange(key[-1], 1 + 1):
+            for next_id in range(key[-1], 1 + 1):
                 new_key = key + (next_id,)
                 new_partial[new_key] = de_casteljau_one_round(
                     sub_nodes, *weights[next_id]
                 )
         partial_vals = new_partial
     result = np.empty(nodes.shape, order="F")
-    for index in six.moves.xrange(num_nodes):
+    for index in range(num_nodes):
         key = (0,) * (num_nodes - index - 1) + (1,) * index
         result[:, [index]] = partial_vals[key]
     return result
@@ -768,7 +767,7 @@ def locate_point(nodes, point):
             threshold (e.g. :math:`2^{-20}`).
     """
     candidates = [(0.0, 1.0, nodes)]
-    for _ in six.moves.xrange(_MAX_LOCATE_SUBDIVISIONS + 1):
+    for _ in range(_MAX_LOCATE_SUBDIVISIONS + 1):
         next_candidates = []
         for start, end, candidate in candidates:
             if _py_helpers.contains_nd(candidate, point.ravel(order="F")):

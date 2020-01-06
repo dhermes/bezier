@@ -42,7 +42,6 @@ is the "intersection polynomial" for :math:`t`.
 
 import numpy as np
 from numpy.polynomial import polynomial
-import six
 
 try:
     import scipy.linalg.lapack as _scipy_lapack
@@ -571,10 +570,10 @@ def polynomial_norm(coeffs):
     """
     (num_coeffs,) = coeffs.shape
     result = 0.0
-    for i in six.moves.xrange(num_coeffs):
+    for i in range(num_coeffs):
         coeff_i = coeffs[i]
         result += coeff_i * coeff_i / (2.0 * i + 1.0)
-        for j in six.moves.xrange(i + 1, num_coeffs):
+        for j in range(i + 1, num_coeffs):
             coeff_j = coeffs[j]
             result += 2.0 * coeff_i * coeff_j / (i + j + 1.0)
     return np.sqrt(result)
@@ -652,7 +651,7 @@ def _get_sigma_coeffs(coeffs):
     (num_nodes,) = coeffs.shape
     degree = num_nodes - 1
     effective_degree = None
-    for index in six.moves.range(degree, -1, -1):
+    for index in range(degree, -1, -1):
         if coeffs[index] != 0.0:
             effective_degree = index
             break
@@ -672,7 +671,7 @@ def _get_sigma_coeffs(coeffs):
     #     = e / (d - e + 1)
     binom_numerator = effective_degree
     binom_denominator = degree - effective_degree + 1
-    for exponent in six.moves.xrange(effective_degree - 1, -1, -1):
+    for exponent in range(effective_degree - 1, -1, -1):
         sigma_coeffs[exponent] *= binom_numerator
         sigma_coeffs[exponent] /= binom_denominator
         # We swap (d C j) with (d C (j - 1)), so `p / q` becomes
@@ -1015,7 +1014,7 @@ def lu_companion(top_row, value):
     # Columns 1-(end - 1): Three values in LU and C - t I.
     abs_one_plus = 1.0 + abs(value)
     last_row = degree - 1
-    for col in six.moves.xrange(1, degree - 1):
+    for col in range(1, degree - 1):
         curr_coeff = top_row[col]
         horner_curr = value * horner_curr + curr_coeff
         one_norm = max(one_norm, abs_one_plus + abs(curr_coeff))
@@ -1213,7 +1212,7 @@ def _check_non_simple(coeffs):
     num_companion, _ = companion.shape
     id_mat = np.eye(num_companion, order="F")
     evaluated = coeffs[-1] * id_mat
-    for index in six.moves.xrange(num_coeffs - 2, -1, -1):
+    for index in range(num_coeffs - 2, -1, -1):
         coeff = coeffs[index]
         evaluated = (
             _py_helpers.matrix_product(evaluated, companion) + coeff * id_mat

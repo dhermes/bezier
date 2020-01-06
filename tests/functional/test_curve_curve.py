@@ -14,7 +14,6 @@ import itertools
 
 import numpy as np
 import pytest
-import six
 
 from bezier import _algebraic_intersection
 from bezier import _geometric_intersection
@@ -222,7 +221,7 @@ def intersection_values(intersection_info, strategy):
     s_vals, t_vals, intersection_pts = intersection_info.params
     computed = np.zeros((6, intersection_info.num_params), order="F")
     exact = np.zeros(computed.shape, order="F")
-    info = six.moves.zip(intersections.T, s_vals, t_vals, intersection_pts.T)
+    info = zip(intersections.T, s_vals, t_vals, intersection_pts.T)
     for index, (intersection, s_val, t_val, point) in enumerate(info):
         computed[(0, 1), index] = intersection
         exact[(0, 1), index] = s_val, t_val
@@ -246,7 +245,7 @@ def error_multipliers(intersection_info, shape, strategy):
     multipliers = ULPS_ALLOWED * np.ones(shape, order="F")
     override = ULPS_ALLOWED_OVERRIDE[strategy].get(intersection_info.id_)
     if override is not None:
-        for index_tuple, value in six.iteritems(override):
+        for index_tuple, value in override.items():
             if value is ZERO_MISS:
                 multipliers[index_tuple] = np.inf
                 zero_misses.append(index_tuple)
@@ -261,7 +260,7 @@ def incorrect_values(multipliers, errors, exact):
     failure_rows, failure_cols = np.where(observed_error_ulps > multipliers)
     # pylint: enable=unbalanced-tuple-unpacking
     failures = []
-    for failure_row, failure_col in six.moves.zip(failure_rows, failure_cols):
+    for failure_row, failure_col in zip(failure_rows, failure_cols):
         failures.append("* {:d}, {:d}".format(failure_row, failure_col))
     failures = "\n".join(failures)
     zero_misses = np.where((exact == 0.0) & (observed_error_ulps != 0.0))

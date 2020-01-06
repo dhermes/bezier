@@ -31,7 +31,6 @@ import importlib.machinery
 import os
 import sys
 
-import six
 
 _SCRIPTS_DIR = os.path.dirname(__file__)
 _ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
@@ -165,10 +164,10 @@ def main():
     build IDs.
     """
     version = get_version()
-    circleci_build = six.moves.input("CircleCI Build ID: ")
-    appveyor_build = six.moves.input("AppVeyor Build ID: ")
-    coveralls_build = six.moves.input("Coveralls Build ID: ")
-    travis_build = six.moves.input("Travis Build ID: ")
+    circleci_build = input("CircleCI Build ID: ")
+    appveyor_build = input("AppVeyor Build ID: ")
+    coveralls_build = input("Coveralls Build ID: ")
+    travis_build = input("Travis Build ID: ")
     populate_readme(
         version, circleci_build, appveyor_build, coveralls_build, travis_build
     )

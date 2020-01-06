@@ -25,8 +25,6 @@ boundary.
    import bezier
 """
 
-import six
-
 from bezier import _helpers
 from bezier import _plot_helpers
 from bezier import _surface_helpers
@@ -192,7 +190,7 @@ class CurvedPolygon:
         if self._num_sides < 2:
             raise ValueError("At least two sides required.")
 
-        for prev, curr in six.moves.zip(self._edges, self._edges[1:]):
+        for prev, curr in zip(self._edges, self._edges[1:]):
             self._verify_pair(prev, curr)
         # Now we check that the final edge wraps around.
         prev = self._edges[-1]

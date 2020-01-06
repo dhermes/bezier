@@ -22,7 +22,6 @@ written in Fortran and exposed via a Cython wrapper.
 import itertools
 
 import numpy as np
-import six
 
 from bezier import _py_curve_helpers
 from bezier import _py_helpers
@@ -1125,8 +1124,8 @@ def intersect_one_round(candidates, intersections):
         #       only passes one pair at a time). However, in practice
         #       the number of such pairs will be small so this cost
         #       will be low.
-        lin1 = six.moves.map(Linearization.from_shape, first.subdivide())
-        lin2 = six.moves.map(Linearization.from_shape, second.subdivide())
+        lin1 = map(Linearization.from_shape, first.subdivide())
+        lin2 = map(Linearization.from_shape, second.subdivide())
         next_candidates.extend(itertools.product(lin1, lin2))
     return next_candidates
 
@@ -1181,9 +1180,9 @@ def make_same_degree(nodes1, nodes2):
     """
     _, num_nodes1 = nodes1.shape
     _, num_nodes2 = nodes2.shape
-    for _ in six.moves.xrange(num_nodes2 - num_nodes1):
+    for _ in range(num_nodes2 - num_nodes1):
         nodes1 = _py_curve_helpers.elevate_nodes(nodes1)
-    for _ in six.moves.xrange(num_nodes1 - num_nodes2):
+    for _ in range(num_nodes1 - num_nodes2):
         nodes2 = _py_curve_helpers.elevate_nodes(nodes2)
     return nodes1, nodes2
 
@@ -1437,7 +1436,7 @@ def all_intersections(nodes_first, nodes_second):
     candidates = [(candidate1, candidate2)]
     intersections = []
     coincident = False
-    for _ in six.moves.xrange(_MAX_INTERSECT_SUBDIVISIONS):
+    for _ in range(_MAX_INTERSECT_SUBDIVISIONS):
         candidates = intersect_one_round(candidates, intersections)
         if len(candidates) > _MAX_CANDIDATES:
             candidates = prune_candidates(candidates)

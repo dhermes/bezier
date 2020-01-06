@@ -15,7 +15,6 @@ import itertools
 
 import numpy as np
 import pytest
-import six
 
 import bezier
 from bezier import _algebraic_intersection
@@ -244,9 +243,7 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
         )
 
     all_edges = surface1._get_edges() + surface2._get_edges()
-    for intersection, intersected in six.moves.zip(
-        intersections, all_intersected
-    ):
+    for intersection, intersected in zip(intersections, all_intersected):
         if isinstance(intersection, bezier.CurvedPolygon):
             assert isinstance(intersected, utils.CurvedPolygonInfo)
             edge_info, int_edges = curved_polygon_edges(intersection)
@@ -262,7 +259,7 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
             assert num_edges == len(intersected.start_params)
             assert num_edges == len(intersected.end_params)
             assert num_edges == len(intersected.nodes)
-            for index in six.moves.xrange(num_edges):
+            for index in range(num_edges):
                 edge_triple = edge_info[index]
                 edge_index = intersected.edge_list[index]
                 assert edge_triple[0] == edge_index

@@ -14,7 +14,6 @@ import unittest
 import unittest.mock
 
 import numpy as np
-import six
 
 from tests.unit import utils
 
@@ -128,7 +127,7 @@ class Test_newton_refine(utils.NumPyTestCase):
         num_guess = 4
         parameters = np.zeros((2, num_guess), order="F")
         # NOTE: This means our "first" guess is (s, t) = (0, 0).
-        for guess in six.moves.xrange(1, num_guess):
+        for guess in range(1, num_guess):
             prev_s, prev_t = parameters[:, guess - 1]
             parameters[:, guess] = self._call_function_under_test(
                 prev_s, nodes1, prev_t, nodes2
