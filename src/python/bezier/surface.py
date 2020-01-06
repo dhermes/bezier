@@ -30,9 +30,9 @@ from bezier import _py_helpers
 from bezier import _py_intersection_helpers
 from bezier import _py_surface_helpers
 from bezier import _py_surface_intersection
-from bezier import _wrap_curve_helpers
-from bezier import _wrap_surface_helpers
-from bezier import _wrap_surface_intersection
+from bezier import _curve_helpers
+from bezier import _surface_helpers
+from bezier import _surface_intersection
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 
@@ -289,7 +289,7 @@ class Surface(_base.Base):
             )
 
         edge1, edge2, edge3 = self._get_edges()
-        return _wrap_surface_helpers.compute_area(
+        return _surface_helpers.compute_area(
             (edge1._nodes, edge2._nodes, edge3._nodes)
         )
 
@@ -300,7 +300,7 @@ class Surface(_base.Base):
             Tuple[~curve.Curve, ~curve.Curve, ~curve.Curve]: The edges of
             the surface.
         """
-        nodes1, nodes2, nodes3 = _wrap_surface_helpers.compute_edge_nodes(
+        nodes1, nodes2, nodes3 = _surface_helpers.compute_edge_nodes(
             self._nodes, self._degree
         )
         edge1 = _curve_mod.Curve(nodes1, self._degree, _copy=False)
@@ -478,7 +478,7 @@ class Surface(_base.Base):
         """
         if _verify:
             self._verify_barycentric(lambda1, lambda2, lambda3)
-        return _wrap_surface_helpers.evaluate_barycentric(
+        return _surface_helpers.evaluate_barycentric(
             self._nodes, self._degree, lambda1, lambda2, lambda3
         )
 
@@ -539,7 +539,7 @@ class Surface(_base.Base):
 
             for lambda1, lambda2, lambda3 in param_vals:
                 self._verify_barycentric(lambda1, lambda2, lambda3)
-        return _wrap_surface_helpers.evaluate_barycentric_multi(
+        return _surface_helpers.evaluate_barycentric_multi(
             self._nodes, self._degree, param_vals, self._dimension
         )
 
@@ -601,7 +601,7 @@ class Surface(_base.Base):
         """
         if _verify:
             self._verify_cartesian(s, t)
-        return _wrap_surface_helpers.evaluate_barycentric(
+        return _surface_helpers.evaluate_barycentric(
             self._nodes, self._degree, 1.0 - s - t, s, t
         )
 
@@ -661,7 +661,7 @@ class Surface(_base.Base):
 
             for s, t in param_vals:
                 self._verify_cartesian(s, t)
-        return _wrap_surface_helpers.evaluate_cartesian_multi(
+        return _surface_helpers.evaluate_cartesian_multi(
             self._nodes, self._degree, param_vals, self._dimension
         )
 
@@ -750,7 +750,7 @@ class Surface(_base.Base):
             nodes_b,
             nodes_c,
             nodes_d,
-        ) = _wrap_surface_helpers.subdivide_nodes(self._nodes, self._degree)
+        ) = _surface_helpers.subdivide_nodes(self._nodes, self._degree)
         return (
             Surface(nodes_a, self._degree, _copy=False),
             Surface(nodes_b, self._degree, _copy=False),
@@ -958,7 +958,7 @@ class Surface(_base.Base):
                 )
                 raise ValueError(msg)
 
-        return _wrap_surface_intersection.locate_point(
+        return _surface_intersection.locate_point(
             self._nodes, self._degree, point[0, 0], point[1, 0]
         )
 
@@ -999,7 +999,7 @@ class Surface(_base.Base):
                 )
 
         if strategy == _STRATEGY.GEOMETRIC:
-            do_intersect = _wrap_surface_intersection.geometric_intersect
+            do_intersect = _surface_intersection.geometric_intersect
         elif strategy == _STRATEGY.ALGEBRAIC:
             do_intersect = _py_surface_intersection.algebraic_intersect
         else:
@@ -1136,7 +1136,7 @@ def _make_intersection(edge_info, all_edge_nodes):
     edges = []
     for index, start, end in edge_info:
         nodes = all_edge_nodes[index]
-        new_nodes = _wrap_curve_helpers.specialize_curve(nodes, start, end)
+        new_nodes = _curve_helpers.specialize_curve(nodes, start, end)
         degree = new_nodes.shape[1] - 1
         edge = _curve_mod.Curve(new_nodes, degree, _copy=False)
         edges.append(edge)

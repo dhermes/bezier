@@ -33,8 +33,8 @@ from bezier import _algebraic_intersection
 from bezier import _base
 from bezier import _plot_helpers
 from bezier import _py_intersection_helpers
-from bezier import _wrap_curve_helpers
-from bezier import _wrap_geometric_intersection
+from bezier import _curve_helpers
+from bezier import _geometric_intersection
 
 
 _LOCATE_ERROR_TEMPLATE = (
@@ -148,7 +148,7 @@ class Curve(_base.Base):
         Returns:
             float: The length of the current curve.
         """
-        return _wrap_curve_helpers.compute_length(self._nodes)
+        return _curve_helpers.compute_length(self._nodes)
 
     @property
     def __dict__(self):
@@ -209,7 +209,7 @@ class Curve(_base.Base):
             numpy.ndarray: The point on the curve (as a two dimensional
             NumPy array with a single column).
         """
-        return _wrap_curve_helpers.evaluate_multi(
+        return _curve_helpers.evaluate_multi(
             self._nodes, np.asfortranarray([s])
         )
 
@@ -245,7 +245,7 @@ class Curve(_base.Base):
             NumPy array, with the columns corresponding to each ``s``
             value and the rows to the dimension.
         """
-        return _wrap_curve_helpers.evaluate_multi(self._nodes, s_vals)
+        return _curve_helpers.evaluate_multi(self._nodes, s_vals)
 
     def plot(self, num_pts, color=None, alpha=None, ax=None):
         """Plot the current curve.
@@ -314,7 +314,7 @@ class Curve(_base.Base):
         Returns:
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
-        left_nodes, right_nodes = _wrap_curve_helpers.subdivide_nodes(
+        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(
             self._nodes
         )
         left = Curve(left_nodes, self._degree, _copy=False)
@@ -390,7 +390,7 @@ class Curve(_base.Base):
                 )
 
         if strategy == IntersectionStrategy.GEOMETRIC:
-            all_intersections = _wrap_geometric_intersection.all_intersections
+            all_intersections = _geometric_intersection.all_intersections
         elif strategy == IntersectionStrategy.ALGEBRAIC:
             all_intersections = _algebraic_intersection.all_intersections
         else:
@@ -444,7 +444,7 @@ class Curve(_base.Base):
         Returns:
             Curve: The degree-elevated curve.
         """
-        new_nodes = _wrap_curve_helpers.elevate_nodes(self._nodes)
+        new_nodes = _curve_helpers.elevate_nodes(self._nodes)
         return Curve(new_nodes, self._degree + 1, _copy=False)
 
     def reduce_(self):
@@ -541,7 +541,7 @@ class Curve(_base.Base):
         Returns:
             Curve: The degree-reduced curve.
         """
-        new_nodes = _wrap_curve_helpers.reduce_pseudo_inverse(self._nodes)
+        new_nodes = _curve_helpers.reduce_pseudo_inverse(self._nodes)
         return Curve(new_nodes, self._degree - 1, _copy=False)
 
     def specialize(self, start, end):
@@ -600,7 +600,7 @@ class Curve(_base.Base):
         Returns:
             Curve: The newly-specialized curve.
         """
-        new_nodes = _wrap_curve_helpers.specialize_curve(
+        new_nodes = _curve_helpers.specialize_curve(
             self._nodes, start, end
         )
         return Curve(new_nodes, self._degree, _copy=False)
@@ -676,4 +676,4 @@ class Curve(_base.Base):
             )
             raise ValueError(msg)
 
-        return _wrap_curve_helpers.locate_point(self._nodes, point)
+        return _curve_helpers.locate_point(self._nodes, point)

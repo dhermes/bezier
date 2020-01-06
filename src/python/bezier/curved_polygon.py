@@ -27,8 +27,8 @@ boundary.
 import six
 
 from bezier import _plot_helpers
-from bezier import _wrap_helpers
-from bezier import _wrap_surface_helpers
+from bezier import _helpers
+from bezier import _surface_helpers
 
 
 class CurvedPolygon:
@@ -164,7 +164,7 @@ class CurvedPolygon:
 
         end = prev._nodes[:, -1]
         start = curr._nodes[:, 0]
-        if not _wrap_helpers.vector_close(end, start):
+        if not _helpers.vector_close(end, start):
             raise ValueError(
                 "Not sufficiently close",
                 "Consecutive sides do not have common endpoint",
@@ -249,7 +249,7 @@ class CurvedPolygon:
             float: The area of the current curved polygon.
         """
         edges = tuple(edge._nodes for edge in self._edges)
-        return _wrap_surface_helpers.compute_area(edges)
+        return _surface_helpers.compute_area(edges)
 
     def __repr__(self):
         """Representation of current object.

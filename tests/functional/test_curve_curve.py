@@ -20,7 +20,7 @@ import six
 from bezier import _algebraic_intersection
 from bezier import _py_geometric_intersection
 from bezier import _py_intersection_helpers
-from bezier import _wrap_geometric_intersection
+from bezier import _geometric_intersection
 import bezier.curve
 from tests import utils as base_utils
 from tests.functional import utils
@@ -193,7 +193,7 @@ def get_sorted_intersections(intersection_info, strategy):
     nodes1 = intersection_info.nodes1
     nodes2 = intersection_info.nodes2
     if strategy is GEOMETRIC:
-        intersections, _ = _wrap_geometric_intersection.all_intersections(
+        intersections, _ = _geometric_intersection.all_intersections(
             nodes1, nodes2
         )
     else:

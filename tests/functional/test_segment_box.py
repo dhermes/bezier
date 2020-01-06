@@ -14,7 +14,7 @@ from __future__ import absolute_import
 import numpy as np
 
 from bezier import _py_geometric_intersection
-from bezier import _wrap_helpers
+from bezier import _helpers
 from tests.functional import utils
 
 CONFIG = utils.Config()
@@ -42,7 +42,7 @@ def make_plot(segment, index):
         linestyle="None",
         color=line.get_color(),
     )
-    left_, right_, bottom_, top_ = _wrap_helpers.bbox(segment)
+    left_, right_, bottom_, top_ = _helpers.bbox(segment)
     ax.fill_between(
         [left_, right_],
         [bottom_, bottom_],

@@ -14,7 +14,7 @@
 
 import numpy as np
 
-from bezier import _wrap_helpers
+from bezier import _helpers
 
 
 def new_axis():
@@ -48,7 +48,7 @@ def add_plot_boundary(ax, padding=0.125):
     nodes = np.asfortranarray(
         np.vstack([line.get_xydata() for line in ax.lines]).T
     )
-    left, right, bottom, top = _wrap_helpers.bbox(nodes)
+    left, right, bottom, top = _helpers.bbox(nodes)
     center_x = 0.5 * (right + left)
     delta_x = right - left
     center_y = 0.5 * (top + bottom)
