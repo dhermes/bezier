@@ -1022,9 +1022,9 @@ class Test_speedup_geometric_intersect(Test__geometric_intersect):
 
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
-        from bezier import _py_surface_intersection
+        from bezier import _speedup
 
-        return _py_surface_intersection.geometric_intersect(
+        return _speedup.surface_intersections(
             nodes1, degree1, nodes2, degree2, **kwargs
         )
 

@@ -285,7 +285,7 @@ class TestSurface(utils.NumPyTestCase):
         lambda_vals = (0.25, 0.0, 0.75)
         # Just make sure we call the helper.
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.evaluate_barycentric",
+            "bezier._wrap_surface_helpers.evaluate_barycentric",
             return_value=unittest.mock.sentinel.evaluated,
         )
         with patch as mocked:
@@ -322,7 +322,7 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 1, _copy=False)
         param_vals = np.asfortranarray([[1.0, 0.0, 0.0]])
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.evaluate_barycentric_multi",
+            "bezier._wrap_surface_helpers.evaluate_barycentric_multi",
             return_value=unittest.mock.sentinel.evaluated,
         )
         with patch as mocked:
@@ -375,7 +375,7 @@ class TestSurface(utils.NumPyTestCase):
         nodes = self.ZEROS
         surface = self._make_one_no_slots(nodes, 1, _copy=False)
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.evaluate_barycentric",
+            "bezier._wrap_surface_helpers.evaluate_barycentric",
             return_value=unittest.mock.sentinel.point,
         )
         s_val = 0.25
@@ -396,7 +396,7 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 1, _copy=False)
         param_vals = np.asfortranarray([[1.0, 0.0]])
         patch = unittest.mock.patch(
-            "bezier._surface_helpers.evaluate_cartesian_multi",
+            "bezier._wrap_surface_helpers.evaluate_cartesian_multi",
             return_value=unittest.mock.sentinel.evaluated,
         )
         with patch as mocked:

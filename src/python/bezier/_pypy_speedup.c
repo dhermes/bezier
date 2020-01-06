@@ -2588,7 +2588,6 @@ static const char __pyx_k_DQAGSE_ERR_MSGS[] = "DQAGSE_ERR_MSGS";
 static const char __pyx_k_Unknown_error_r[] = "Unknown error: {!r}.";
 static const char __pyx_k_View_MemoryView[] = "View.MemoryView";
 static const char __pyx_k_allocate_buffer[] = "allocate_buffer";
-static const char __pyx_k_bezier__helpers[] = "bezier._helpers";
 static const char __pyx_k_bezier__speedup[] = "bezier._speedup";
 static const char __pyx_k_curved_polygons[] = "curved_polygons";
 static const char __pyx_k_dtype_is_object[] = "dtype_is_object";
@@ -2611,6 +2610,7 @@ static const char __pyx_k_segment_ends_size[] = "segment_ends_size";
 static const char __pyx_k_NEWTON_NO_CONVERGE[] = "NEWTON_NO_CONVERGE";
 static const char __pyx_k_SEGMENTS_TOO_SMALL[] = "SEGMENTS_TOO_SMALL";
 static const char __pyx_k_TOO_SMALL_TEMPLATE[] = "TOO_SMALL_TEMPLATE";
+static const char __pyx_k_bezier__py_helpers[] = "bezier._py_helpers";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_compute_edge_nodes[] = "compute_edge_nodes";
 static const char __pyx_k_evaluate_hodograph[] = "evaluate_hodograph";
@@ -2777,7 +2777,7 @@ static PyObject *__pyx_n_s_base;
 static PyObject *__pyx_n_s_bbox;
 static PyObject *__pyx_n_s_bbox_intersect;
 static PyObject *__pyx_n_s_begin_index;
-static PyObject *__pyx_n_s_bezier__helpers;
+static PyObject *__pyx_n_s_bezier__py_helpers;
 static PyObject *__pyx_n_s_bezier__speedup;
 static PyObject *__pyx_n_s_bottom;
 static PyObject *__pyx_n_s_c;
@@ -6431,7 +6431,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_18reduce_pseudo_inverse(CYTHON_UNUSE
     /* "bezier/_speedup.pyx":319
  *         # NOTE: This import at runtime is expensive, but we don't mind it
  *         #       because the exception is intended to halt the program.
- *         from bezier._helpers import UnsupportedDegree             # <<<<<<<<<<<<<<
+ *         from bezier._py_helpers import UnsupportedDegree             # <<<<<<<<<<<<<<
  *         raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
  *
  */
@@ -6440,7 +6440,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_18reduce_pseudo_inverse(CYTHON_UNUSE
     __Pyx_INCREF(__pyx_n_s_UnsupportedDegree);
     __Pyx_GIVEREF(__pyx_n_s_UnsupportedDegree);
     PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_UnsupportedDegree);
-    __pyx_t_4 = __Pyx_Import(__pyx_n_s_bezier__helpers, __pyx_t_1, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 319, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_Import(__pyx_n_s_bezier__py_helpers, __pyx_t_1, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 319, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_4, __pyx_n_s_UnsupportedDegree); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
@@ -6452,7 +6452,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_18reduce_pseudo_inverse(CYTHON_UNUSE
 
     /* "bezier/_speedup.pyx":320
  *         #       because the exception is intended to halt the program.
- *         from bezier._helpers import UnsupportedDegree
+ *         from bezier._py_helpers import UnsupportedDegree
  *         raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))             # <<<<<<<<<<<<<<
  *
  *     return reduced
@@ -6781,7 +6781,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_20full_reduce(CYTHON_UNUSED PyObject
     /* "bezier/_speedup.pyx":346
  *         # NOTE: This import at runtime is expensive, but we don't mind it
  *         #       because the exception is intended to halt the program.
- *         from bezier._helpers import UnsupportedDegree             # <<<<<<<<<<<<<<
+ *         from bezier._py_helpers import UnsupportedDegree             # <<<<<<<<<<<<<<
  *         raise UnsupportedDegree(num_nodes - 1, supported=(0, 1, 2, 3, 4))
  *
  */
@@ -6790,7 +6790,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_20full_reduce(CYTHON_UNUSED PyObject
     __Pyx_INCREF(__pyx_n_s_UnsupportedDegree);
     __Pyx_GIVEREF(__pyx_n_s_UnsupportedDegree);
     PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_UnsupportedDegree);
-    __pyx_t_4 = __Pyx_Import(__pyx_n_s_bezier__helpers, __pyx_t_1, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 346, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_Import(__pyx_n_s_bezier__py_helpers, __pyx_t_1, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 346, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_4, __pyx_n_s_UnsupportedDegree); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 346, __pyx_L1_error)
@@ -6802,7 +6802,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_20full_reduce(CYTHON_UNUSED PyObject
 
     /* "bezier/_speedup.pyx":347
  *         #       because the exception is intended to halt the program.
- *         from bezier._helpers import UnsupportedDegree
+ *         from bezier._py_helpers import UnsupportedDegree
  *         raise UnsupportedDegree(num_nodes - 1, supported=(0, 1, 2, 3, 4))             # <<<<<<<<<<<<<<
  *
  *     if num_reduced_nodes == num_nodes:
@@ -15214,7 +15214,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
       /* "bezier/_speedup.pyx":877
  *             # NOTE: This import at runtime is expensive, but we don't mind it
  *             #       because the exception is intended to halt the program.
- *             from bezier._helpers import UnsupportedDegree             # <<<<<<<<<<<<<<
+ *             from bezier._py_helpers import UnsupportedDegree             # <<<<<<<<<<<<<<
  *             raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
  *
  */
@@ -15223,7 +15223,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
       __Pyx_INCREF(__pyx_n_s_UnsupportedDegree);
       __Pyx_GIVEREF(__pyx_n_s_UnsupportedDegree);
       PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_UnsupportedDegree);
-      __pyx_t_4 = __Pyx_Import(__pyx_n_s_bezier__helpers, __pyx_t_2, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 877, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_Import(__pyx_n_s_bezier__py_helpers, __pyx_t_2, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 877, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_4, __pyx_n_s_UnsupportedDegree); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 877, __pyx_L1_error)
@@ -15235,7 +15235,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
 
       /* "bezier/_speedup.pyx":878
  *             #       because the exception is intended to halt the program.
- *             from bezier._helpers import UnsupportedDegree
+ *             from bezier._py_helpers import UnsupportedDegree
  *             raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))             # <<<<<<<<<<<<<<
  *
  *         sizes[i] = num_nodes
@@ -35992,7 +35992,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_bbox, __pyx_k_bbox, sizeof(__pyx_k_bbox), 0, 0, 1, 1},
   {&__pyx_n_s_bbox_intersect, __pyx_k_bbox_intersect, sizeof(__pyx_k_bbox_intersect), 0, 0, 1, 1},
   {&__pyx_n_s_begin_index, __pyx_k_begin_index, sizeof(__pyx_k_begin_index), 0, 0, 1, 1},
-  {&__pyx_n_s_bezier__helpers, __pyx_k_bezier__helpers, sizeof(__pyx_k_bezier__helpers), 0, 0, 1, 1},
+  {&__pyx_n_s_bezier__py_helpers, __pyx_k_bezier__py_helpers, sizeof(__pyx_k_bezier__py_helpers), 0, 0, 1, 1},
   {&__pyx_n_s_bezier__speedup, __pyx_k_bezier__speedup, sizeof(__pyx_k_bezier__speedup), 0, 0, 1, 1},
   {&__pyx_n_s_bottom, __pyx_k_bottom, sizeof(__pyx_k_bottom), 0, 0, 1, 1},
   {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
@@ -36275,7 +36275,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_speedup.pyx":320
  *         #       because the exception is intended to halt the program.
- *         from bezier._helpers import UnsupportedDegree
+ *         from bezier._py_helpers import UnsupportedDegree
  *         raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))             # <<<<<<<<<<<<<<
  *
  *     return reduced
@@ -36286,7 +36286,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_speedup.pyx":347
  *         #       because the exception is intended to halt the program.
- *         from bezier._helpers import UnsupportedDegree
+ *         from bezier._py_helpers import UnsupportedDegree
  *         raise UnsupportedDegree(num_nodes - 1, supported=(0, 1, 2, 3, 4))             # <<<<<<<<<<<<<<
  *
  *     if num_reduced_nodes == num_nodes:
