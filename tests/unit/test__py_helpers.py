@@ -59,15 +59,6 @@ class Test__vector_close(unittest.TestCase):
         self.assertFalse(self._call_function_under_test(vec1, vec2))
 
 
-@utils.needs_speedup
-class Test_speedup_vector_close(Test__vector_close):
-    @staticmethod
-    def _call_function_under_test(vec1, vec2, **kwargs):
-        from bezier import _speedup
-
-        return _speedup.vector_close(vec1, vec2, **kwargs)
-
-
 class Test__in_interval(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(value, start, end):
@@ -98,15 +89,6 @@ class Test__in_interval(unittest.TestCase):
         self.assertFalse(self._call_function_under_test(-1.0, 1.0, 2.0))
 
 
-@utils.needs_speedup
-class Test_speedup_in_interval(Test__in_interval):
-    @staticmethod
-    def _call_function_under_test(value, start, end):
-        from bezier import _speedup
-
-        return _speedup.in_interval(value, start, end)
-
-
 class Test__bbox(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
@@ -131,15 +113,6 @@ class Test__bbox(unittest.TestCase):
         self.assertEqual(right, 5.0)
         self.assertEqual(bottom, -3.0)
         self.assertEqual(top, 4.0)
-
-
-@utils.needs_speedup
-class Test_speedup_bbox(Test__bbox):
-    @staticmethod
-    def _call_function_under_test(nodes):
-        from bezier import _speedup
-
-        return _speedup.bbox(nodes)
 
 
 class Test__contains_nd(unittest.TestCase):
@@ -173,15 +146,6 @@ class Test__contains_nd(unittest.TestCase):
             self._call_function_under_test(nodes, point)
 
 
-@utils.needs_speedup
-class Test_speedup_contains_nd(Test__contains_nd):
-    @staticmethod
-    def _call_function_under_test(nodes, point):
-        from bezier import _speedup
-
-        return _speedup.contains_nd(nodes, point)
-
-
 class Test__cross_product(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(vec0, vec1):
@@ -200,15 +164,6 @@ class Test__cross_product(utils.NumPyTestCase):
         actual_cross = np.cross(vec0_as_3d, vec1_as_3d)
         expected = np.asfortranarray([0.0, 0.0, result])
         self.assertEqual(actual_cross, expected)
-
-
-@utils.needs_speedup
-class Test_speedup_cross_product(Test__cross_product):
-    @staticmethod
-    def _call_function_under_test(vec0, vec1):
-        from bezier import _speedup
-
-        return _speedup.cross_product(vec0, vec1)
 
 
 class Test_matrix_product(utils.NumPyTestCase):
@@ -341,22 +296,6 @@ class Test__wiggle_interval(unittest.TestCase):
         self.assertEqual(
             self._call_function_under_test(value, wiggle=0.25), (1.0, True)
         )
-
-
-@utils.needs_speedup
-class Test_speedup_wiggle_interval(Test__wiggle_interval):
-    def _call_function_under_test(self, value, **kwargs):
-        from bezier import _speedup
-
-        self.assertEqual(kwargs, {})
-        return _speedup.wiggle_interval(value, **kwargs)
-
-    def test_custom_wiggle(self):
-        # Fortran implementation doesn't support optional wiggle. This
-        # isn't because Fortran **can't** (just use "optional"), it's just
-        # to allow the compiler to pre-compute 1 + wiggle / 1 - wiggle
-        # rather than having to deal with it at run-time.
-        pass
 
 
 class Test_cross_product_compare(unittest.TestCase):
@@ -494,15 +433,6 @@ class Test__simple_convex_hull(utils.NumPyTestCase):
             point2, point1, point0
         )
         self.assertGreater(compare_upper, 0.0)
-
-
-@utils.needs_speedup
-class Test_speedup_simple_convex_hull(Test__simple_convex_hull):
-    @staticmethod
-    def _call_function_under_test(points):
-        from bezier import _speedup
-
-        return _speedup.simple_convex_hull(points)
 
 
 class Test_is_separating(unittest.TestCase):
@@ -657,12 +587,3 @@ class TestUnsupportedDegree(unittest.TestCase):
             "time are 1, 3 and 2 (degree=4)"
         )
         self.assertEqual(as_str, expected)
-
-
-@utils.needs_speedup
-class Test_speedup_polygon_collide(Test__polygon_collide):
-    @staticmethod
-    def _call_function_under_test(polygon1, polygon2):
-        from bezier import _speedup
-
-        return _speedup.polygon_collide(polygon1, polygon2)
