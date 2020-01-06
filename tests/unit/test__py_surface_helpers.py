@@ -421,6 +421,7 @@ class Test_specialize_surface(utils.NumPyTestCase):
 
 
 class Test_subdivide_nodes(utils.NumPyTestCase):
+
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
 
     @staticmethod
@@ -428,6 +429,14 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         from bezier import _py_surface_helpers
 
         return _py_surface_helpers.subdivide_nodes(nodes, degree)
+
+    @staticmethod
+    def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
+        from bezier import _py_surface_helpers
+
+        return _py_surface_helpers.evaluate_cartesian_multi(
+            nodes, degree, param_vals, dimension
+        )
 
     def _helper(
         self, nodes, degree, expected_a, expected_b, expected_c, expected_d
@@ -441,8 +450,6 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         self.assertEqual(nodes_d, expected_d)
 
     def _points_check(self, nodes, degree):
-        from bezier import _py_surface_helpers
-
         dimension, _ = nodes.shape
         sub_surfaces = self._call_function_under_test(nodes, degree)
         ref_triangle = self.REF_TRIANGLE
@@ -455,10 +462,10 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         ]
         for sub_surface, quarter in zip(sub_surfaces, quarters):
             # Make sure sub_surface(ref_triangle) == surface(quarter)
-            main_vals = _py_surface_helpers.evaluate_cartesian_multi(
+            main_vals = self._evaluate_cartesian_multi(
                 nodes, degree, quarter, dimension
             )
-            sub_vals = _py_surface_helpers.evaluate_cartesian_multi(
+            sub_vals = self._evaluate_cartesian_multi(
                 sub_surface, degree, ref_triangle, dimension
             )
             self.assertEqual(main_vals, sub_vals)

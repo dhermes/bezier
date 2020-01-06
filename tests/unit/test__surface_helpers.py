@@ -52,6 +52,14 @@ class Test_speedup_subdivide_nodes(
 
         return _speedup.subdivide_nodes_surface(nodes, degree)
 
+    @staticmethod
+    def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
+        from bezier import _speedup
+
+        return _speedup.evaluate_cartesian_multi(
+            nodes, degree, param_vals, dimension
+        )
+
 
 @utils.needs_speedup
 class Test_speedup_jacobian_both(test__py_surface_helpers.Test_jacobian_both):
