@@ -133,14 +133,14 @@ class Test_evaluate(unittest.TestCase):
             self.assertAlmostEqual(result, expected, delta=LOCAL_EPS)
 
     def test_quartic(self):
-        from bezier import _wrap_helpers
+        from bezier import _py_helpers
 
         # f(x, y) = -28 x^4 + 56 x^3 - 36 x^2 + 8 x - y
         nodes = np.asfortranarray(
             [[0.0, 0.25, 0.5, 0.75, 1.0], [0.0, 2.0, -2.0, 2.0, 0.0]]
         )
         degree = nodes.shape[1] - 1
-        with self.assertRaises(_wrap_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(nodes, 0.0, 0.0)
         self.assertEqual(exc_info.exception.degree, degree)
         self.assertEqual(exc_info.exception.supported, (1, 2, 3))
@@ -995,7 +995,7 @@ class Test_lu_companion(utils.NumPyTestCase):
         self.assertEqual(one_norm, 1.0)
 
     def _check_lu(self, lu_mat, expected_a):
-        from bezier import _wrap_helpers
+        from bezier import _py_helpers
 
         rows, cols = lu_mat.shape
         self.assertEqual(rows, cols)
@@ -1003,7 +1003,7 @@ class Test_lu_companion(utils.NumPyTestCase):
             np.tril(lu_mat, -1) + np.eye(rows, order="F")
         )
         u_mat = np.triu(lu_mat)
-        a_mat = _wrap_helpers.matrix_product(l_mat, u_mat)
+        a_mat = _py_helpers.matrix_product(l_mat, u_mat)
         self.assertEqual(a_mat, expected_a)
 
     def test_quadratic(self):
@@ -1329,11 +1329,11 @@ class Test_poly_to_power_basis(utils.NumPyTestCase):
         )
 
     def test_unsupported(self):
-        from bezier import _wrap_helpers
+        from bezier import _py_helpers
 
         bezier_coeffs = np.asfortranarray([1.0, 0.0, 0.0, 2.0, 1.0])
         degree = bezier_coeffs.shape[0] - 1
-        with self.assertRaises(_wrap_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(bezier_coeffs)
         self.assertEqual(exc_info.exception.degree, degree)
         self.assertEqual(exc_info.exception.supported, (0, 1, 2, 3))

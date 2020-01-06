@@ -26,9 +26,11 @@ import six
 
 from bezier import _base
 from bezier import _plot_helpers
+from bezier import _py_helpers
+from bezier import _py_intersection_helpers
+from bezier import _py_surface_helpers
+from bezier import _py_surface_intersection
 from bezier import _wrap_curve_helpers
-from bezier import _wrap_helpers
-from bezier import _wrap_intersection_helpers
 from bezier import _wrap_surface_helpers
 from bezier import _wrap_surface_intersection
 from bezier import curve as _curve_mod
@@ -41,7 +43,7 @@ _LOCATE_ERROR_TEMPLATE = (
     "so the point should be a {:d} x 1 NumPy array. "
     "Instead the point {} has dimensions {}."
 )
-_STRATEGY = _wrap_intersection_helpers.IntersectionStrategy
+_STRATEGY = _py_intersection_helpers.IntersectionStrategy
 
 
 class Surface(_base.Base):
@@ -782,17 +784,17 @@ class Surface(_base.Base):
             poly_sign = _SIGN(np.linalg.det(first_deriv))
             # pylint: enable=assignment-from-no-return
         elif self._degree == 2:
-            bernstein = _wrap_surface_helpers.quadratic_jacobian_polynomial(
+            bernstein = _py_surface_helpers.quadratic_jacobian_polynomial(
                 self._nodes
             )
-            poly_sign = _wrap_surface_helpers.polynomial_sign(bernstein, 2)
+            poly_sign = _py_surface_helpers.polynomial_sign(bernstein, 2)
         elif self._degree == 3:
-            bernstein = _wrap_surface_helpers.cubic_jacobian_polynomial(
+            bernstein = _py_surface_helpers.cubic_jacobian_polynomial(
                 self._nodes
             )
-            poly_sign = _wrap_surface_helpers.polynomial_sign(bernstein, 4)
+            poly_sign = _py_surface_helpers.polynomial_sign(bernstein, 4)
         else:
-            raise _wrap_helpers.UnsupportedDegree(
+            raise _py_helpers.UnsupportedDegree(
                 self._degree, supported=(1, 2, 3)
             )
 
@@ -999,7 +1001,7 @@ class Surface(_base.Base):
         if strategy == _STRATEGY.GEOMETRIC:
             do_intersect = _wrap_surface_intersection.geometric_intersect
         elif strategy == _STRATEGY.ALGEBRAIC:
-            do_intersect = _wrap_surface_intersection.algebraic_intersect
+            do_intersect = _py_surface_intersection.algebraic_intersect
         else:
             raise ValueError("Unexpected strategy.", strategy)
 

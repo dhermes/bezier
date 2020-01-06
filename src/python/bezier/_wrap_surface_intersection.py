@@ -23,8 +23,6 @@ except ImportError:  # pragma: NO COVER
 
 
 # pylint: disable=invalid-name
-algebraic_intersect = _py_surface_intersection.algebraic_intersect
-
 if _speedup is None:  # pragma: NO COVER
     newton_refine = _py_surface_intersection.newton_refine
     locate_point = _py_surface_intersection.locate_point

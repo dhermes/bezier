@@ -179,13 +179,13 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(exc_args, ("Unexpected strategy.", strategy))
 
     def test_intersect_algebraic(self):
-        from bezier import _wrap_intersection_helpers
+        from bezier import _py_intersection_helpers
 
         nodes1 = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
         curve1 = self._make_one(nodes1, 1)
         nodes2 = np.asfortranarray([[0.0, 1.0], [1.0, 0.0]])
         curve2 = self._make_one(nodes2, 1)
-        strategy = _wrap_intersection_helpers.IntersectionStrategy.ALGEBRAIC
+        strategy = _py_intersection_helpers.IntersectionStrategy.ALGEBRAIC
         intersections = curve1.intersect(curve2, strategy=strategy)
         expected = np.asfortranarray([[0.5], [0.5]])
         self.assertEqual(intersections, expected)

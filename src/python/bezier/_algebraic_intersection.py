@@ -49,6 +49,8 @@ try:
 except ImportError:  # pragma: NO COVER
     _scipy_lapack = None
 
+from bezier import _py_geometric_intersection
+from bezier import _py_helpers
 from bezier import _wrap_curve_helpers
 from bezier import _wrap_geometric_intersection
 from bezier import _wrap_helpers
@@ -116,8 +118,8 @@ _POWER_BASIS_ERR = (
     "Currently only supporting degree pairs "
     "1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3."
 )
-_LINEARIZATION = _wrap_geometric_intersection.Linearization
-_DISJOINT = _wrap_geometric_intersection.BoxIntersectionType.DISJOINT
+_LINEARIZATION = _py_geometric_intersection.Linearization
+_DISJOINT = _py_geometric_intersection.BoxIntersectionType.DISJOINT
 
 
 def _evaluate3(nodes, x_val, y_val):
@@ -211,7 +213,7 @@ def evaluate(nodes, x_val, y_val):
     if num_nodes == 4:
         return _evaluate3(nodes, x_val, y_val)
 
-    raise _wrap_helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3))
+    raise _py_helpers.UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3))
 
 
 def eval_intersection_polynomial(nodes1, nodes2, t):
@@ -1214,7 +1216,7 @@ def _check_non_simple(coeffs):
     for index in six.moves.xrange(num_coeffs - 2, -1, -1):
         coeff = coeffs[index]
         evaluated = (
-            _wrap_helpers.matrix_product(evaluated, companion) + coeff * id_mat
+            _py_helpers.matrix_product(evaluated, companion) + coeff * id_mat
         )
     if num_companion == 1:
         # NOTE: This relies on the fact that coeffs is normalized.
@@ -1359,7 +1361,7 @@ def poly_to_power_basis(bezier_coeffs):
         )
 
     else:
-        raise _wrap_helpers.UnsupportedDegree(
+        raise _py_helpers.UnsupportedDegree(
             num_coeffs - 1, supported=(0, 1, 2, 3)
         )
 

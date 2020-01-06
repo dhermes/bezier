@@ -21,9 +21,6 @@ except ImportError:  # pragma: NO COVER
 
 
 # pylint: disable=invalid-name
-matrix_product = _py_helpers.matrix_product
-UnsupportedDegree = _py_helpers.UnsupportedDegree
-
 if _speedup is None:  # pragma: NO COVER
     vector_close = _py_helpers.vector_close
     in_interval = _py_helpers.in_interval
