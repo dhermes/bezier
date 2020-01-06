@@ -38078,7 +38078,7 @@ if (!__Pyx_RefNanny) {
 
   /* "bezier/_speedup.pyx":97
  * # NOTE: The ``NEWTON_NO_CONVERGE`` error message is copied from
- * #       ``_intersection_helpers.py::NEWTON_NO_CONVERGE``.
+ * #       ``_py_intersection_helpers.py::NEWTON_NO_CONVERGE``.
  * NEWTON_NO_CONVERGE = """\             # <<<<<<<<<<<<<<
  * Unsupported multiplicity.
  *
