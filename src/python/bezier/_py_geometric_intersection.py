@@ -13,7 +13,7 @@
 """Helpers for intersecting B |eacute| zier curves via geometric methods.
 
 As a convention, the functions defined here with a leading underscore
-(e.g. :func:`_bbox_intersect`) have a special meaning.
+(e.g. :func:`bbox_intersect`) have a special meaning.
 
 Each of these functions have a Cython speedup with the exact same
 interface which calls out to a Fortran implementation. The speedup
@@ -808,7 +808,7 @@ def add_intersection(s, t, intersections):
 
        This is a helper for :func:`from_linearized` and :func:`endpoint_check`.
        These functions are used (directly or indirectly) by
-       :func:`_all_intersections` exclusively, and that function has a
+       :func:`all_intersections` exclusively, and that function has a
        Fortran equivalent.
 
     Accounts for repeated intersection points. If the intersection has already
@@ -873,7 +873,7 @@ def endpoint_check(
 
        This is a helper for :func:`tangent_bbox_intersection`. These
        functions are used (directly or indirectly) by
-       :func:`_all_intersections` exclusively, and that function has a
+       :func:`all_intersections` exclusively, and that function has a
        Fortran equivalent.
 
     Args:
@@ -906,7 +906,7 @@ def tangent_bbox_intersection(first, second, intersections):
 
        This is a helper for :func:`intersect_one_round`. These
        functions are used (directly or indirectly) by
-       :func:`_all_intersections` exclusively, and that function has a
+       :func:`all_intersections` exclusively, and that function has a
        Fortran equivalent.
 
     If the bounding boxes are tangent, intersection can
@@ -935,7 +935,7 @@ def tangent_bbox_intersection(first, second, intersections):
     .. note::
 
        This function assumes callers will not pass curves that can be
-       linearized / are linear. In :func:`_all_intersections`, curves
+       linearized / are linear. In :func:`all_intersections`, curves
        are pre-processed to do any linearization before the
        subdivision / intersection process begins.
 
@@ -1067,7 +1067,7 @@ def intersect_one_round(candidates, intersections):
 
     .. note::
 
-       This is a helper for :func:`_all_intersections` and that function
+       This is a helper for :func:`all_intersections` and that function
        has a Fortran equivalent.
 
     Checks if the bounding boxes of each pair in ``candidates``
@@ -1143,7 +1143,7 @@ def prune_candidates(candidates):
 
     .. note::
 
-       This is a helper for :func:`_all_intersections`.
+       This is a helper for :func:`all_intersections`.
 
     Uses more strict bounding box intersection predicate by forming the
     actual convex hull of each candidate curve segment and then checking
@@ -1335,7 +1335,7 @@ def check_lines(first, second):
 
     .. note::
 
-       This is a helper for :func:`._all_intersections`.
+       This is a helper for :func:`.all_intersections`.
 
     If they are not lines / not linearized, immediately returns :data:`False`
     with no "return value".
@@ -1407,7 +1407,7 @@ def all_intersections(nodes_first, nodes_second):
        This assumes both curves are in :math:`\mathbf{R}^2`, but does not
        **explicitly** check this. However, functions used here will fail if
        that assumption fails, e.g. :func:`bbox_intersect` and
-       :func:`newton_refine() <._py_intersection_helpers._newton_refine>`.
+       :func:`newton_refine() <._py_intersection_helpers.newton_refine>`.
 
     Args:
         nodes_first (numpy.ndarray): Control points of a curve to be

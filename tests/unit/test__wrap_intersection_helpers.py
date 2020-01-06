@@ -16,7 +16,7 @@ from tests.unit import utils
 
 @utils.needs_speedup
 class Test_speedup_newton_refine(
-    test__py_intersection_helpers.Test__newton_refine
+    test__py_intersection_helpers.Test_newton_refine
 ):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):

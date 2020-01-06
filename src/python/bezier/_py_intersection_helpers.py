@@ -13,7 +13,7 @@
 """Private helper methods for intersecting B |eacute| zier shapes.
 
 As a convention, the functions defined here with a leading underscore
-(e.g. :func:`_newton_refine`) have a special meaning.
+(e.g. :func:`newton_refine`) have a special meaning.
 
 Each of these functions have a Cython speedup with the exact same
 interface which calls out to a Fortran implementation. The speedup
@@ -453,7 +453,7 @@ class NewtonSimpleRoot:  # pylint: disable=too-few-public-methods
 
         .. note::
 
-           There is **almost** identical code in :func:`._newton_refine`, but
+           There is **almost** identical code in :func:`.newton_refine`, but
            that code can avoid computing the ``first_deriv1`` and
            ``first_deriv2`` nodes in cases that :math:`F(s, t) = 0` whereas
            this function assumes they have been given.

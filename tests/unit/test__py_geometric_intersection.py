@@ -23,7 +23,7 @@ SPACING = np.spacing  # pylint: disable=no-member
 UNIT_SQUARE = np.asfortranarray([[0.0, 1.0, 1.0, 0.0], [0.0, 0.0, 1.0, 1.0]])
 
 
-class Test__bbox_intersect(unittest.TestCase):
+class Test_bbox_intersect(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
         from bezier import _py_geometric_intersection
@@ -1309,7 +1309,7 @@ class Test_check_lines(utils.NumPyTestCase):
         self.assertTrue(coincident)
 
 
-class Test__all_intersections(utils.NumPyTestCase):
+class Test_all_intersections(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes_first, nodes_second, **kwargs):
         from bezier import _py_geometric_intersection

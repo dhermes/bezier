@@ -169,7 +169,7 @@ class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
         self.assertEqual(bernstein, expected)
 
 
-class Test__de_casteljau_one_round(utils.NumPyTestCase):
+class Test_de_casteljau_one_round(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
         from bezier import _py_surface_helpers
@@ -337,7 +337,7 @@ class Test_reduced_to_matrix(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test__specialize_surface(utils.NumPyTestCase):
+class Test_specialize_surface(utils.NumPyTestCase):
     WEIGHTS0 = np.asfortranarray([1.0, 0.0, 0.0])
     WEIGHTS1 = np.asfortranarray([0.5, 0.5, 0.0])
     WEIGHTS2 = np.asfortranarray([0.0, 1.0, 0.0])
@@ -420,7 +420,7 @@ class Test__specialize_surface(utils.NumPyTestCase):
         )
 
 
-class Test__subdivide_nodes(utils.NumPyTestCase):
+class Test_subdivide_nodes(utils.NumPyTestCase):
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
 
     @staticmethod
@@ -745,7 +745,7 @@ class Test_jacobian_t(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test__jacobian_both(utils.NumPyTestCase):
+class Test_jacobian_both(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
         from bezier import _py_surface_helpers
@@ -830,7 +830,7 @@ class Test__jacobian_both(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test__jacobian_det(utils.NumPyTestCase):
+class Test_jacobian_det(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, st_vals):
         from bezier import _py_surface_helpers
@@ -2041,7 +2041,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
         self.assertTrue(contained)
 
 
-class Test__evaluate_barycentric(utils.NumPyTestCase):
+class Test_evaluate_barycentric(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
         from bezier import _py_surface_helpers
@@ -2121,7 +2121,7 @@ class Test__evaluate_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
+class Test_evaluate_barycentric_multi(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
         from bezier import _py_surface_helpers
@@ -2149,7 +2149,7 @@ class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
+class Test_evaluate_cartesian_multi(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
         from bezier import _py_surface_helpers
@@ -2184,7 +2184,7 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test__compute_edge_nodes(utils.NumPyTestCase):
+class Test_compute_edge_nodes(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree):
         from bezier import _py_surface_helpers
@@ -2317,7 +2317,7 @@ class Test_shoelace_for_area(unittest.TestCase):
         self.assertEqual(exc_info.exception.supported, (1, 2, 3, 4))
 
 
-class Test__compute_area(unittest.TestCase):
+class Test_compute_area(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(edges):
         from bezier import _py_surface_helpers

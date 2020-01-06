@@ -16,7 +16,7 @@ from tests.unit import utils
 
 @utils.needs_speedup
 class Test_speedup_subdivide_nodes(
-    test__py_curve_helpers.Test__subdivide_nodes
+    test__py_curve_helpers.Test_subdivide_nodes
 ):
     @staticmethod
     def _call_function_under_test(nodes):
@@ -27,7 +27,7 @@ class Test_speedup_subdivide_nodes(
 
 @utils.needs_speedup
 class Test_speedup_evaluate_multi_barycentric(
-    test__py_curve_helpers.Test__evaluate_multi_barycentric
+    test__py_curve_helpers.Test_evaluate_multi_barycentric
 ):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
@@ -37,7 +37,7 @@ class Test_speedup_evaluate_multi_barycentric(
 
 
 @utils.needs_speedup
-class Test_speedup_evaluate_multi(test__py_curve_helpers.Test__evaluate_multi):
+class Test_speedup_evaluate_multi(test__py_curve_helpers.Test_evaluate_multi):
     @staticmethod
     def _call_function_under_test(nodes, s_vals):
         from bezier import _speedup
@@ -46,7 +46,7 @@ class Test_speedup_evaluate_multi(test__py_curve_helpers.Test__evaluate_multi):
 
 
 @utils.needs_speedup
-class Test_speedup_compute_length(test__py_curve_helpers.Test__compute_length):
+class Test_speedup_compute_length(test__py_curve_helpers.Test_compute_length):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup
@@ -65,7 +65,7 @@ class Test_speedup_compute_length(test__py_curve_helpers.Test__compute_length):
 
 
 @utils.needs_speedup
-class Test_speedup_elevate_nodes(test__py_curve_helpers.Test__elevate_nodes):
+class Test_speedup_elevate_nodes(test__py_curve_helpers.Test_elevate_nodes):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup
@@ -75,7 +75,7 @@ class Test_speedup_elevate_nodes(test__py_curve_helpers.Test__elevate_nodes):
 
 @utils.needs_speedup
 class Test_speedup_specialize_curve(
-    test__py_curve_helpers.Test__specialize_curve
+    test__py_curve_helpers.Test_specialize_curve
 ):
     @staticmethod
     def _call_function_under_test(nodes, start, end):
@@ -86,7 +86,7 @@ class Test_speedup_specialize_curve(
 
 @utils.needs_speedup
 class Test_speedup_evaluate_hodograph(
-    test__py_curve_helpers.Test__evaluate_hodograph
+    test__py_curve_helpers.Test_evaluate_hodograph
 ):
     @staticmethod
     def _call_function_under_test(s, nodes):
@@ -96,7 +96,7 @@ class Test_speedup_evaluate_hodograph(
 
 
 @utils.needs_speedup
-class Test_speedup_get_curvature(test__py_curve_helpers.Test__get_curvature):
+class Test_speedup_get_curvature(test__py_curve_helpers.Test_get_curvature):
     @staticmethod
     def _call_function_under_test(nodes, tangent_vec, s):
         from bezier import _speedup
@@ -105,7 +105,7 @@ class Test_speedup_get_curvature(test__py_curve_helpers.Test__get_curvature):
 
 
 @utils.needs_speedup
-class Test_speedup_newton_refine(test__py_curve_helpers.Test__newton_refine):
+class Test_speedup_newton_refine(test__py_curve_helpers.Test_newton_refine):
     @staticmethod
     def _call_function_under_test(nodes, point, s):
         from bezier import _speedup
@@ -114,7 +114,7 @@ class Test_speedup_newton_refine(test__py_curve_helpers.Test__newton_refine):
 
 
 @utils.needs_speedup
-class Test_speedup_locate_point(test__py_curve_helpers.Test__locate_point):
+class Test_speedup_locate_point(test__py_curve_helpers.Test_locate_point):
     @staticmethod
     def _call_function_under_test(nodes, point):
         from bezier import _speedup
@@ -123,8 +123,8 @@ class Test_speedup_locate_point(test__py_curve_helpers.Test__locate_point):
 
 
 @utils.needs_speedup
-class Test_speedup__reduce_pseudo_inverse(
-    test__py_curve_helpers.Test__reduce_pseudo_inverse
+class Test_speedup_reduce_pseudo_inverse(
+    test__py_curve_helpers.Test_reduce_pseudo_inverse
 ):
     @staticmethod
     def _call_function_under_test(nodes):
@@ -134,7 +134,7 @@ class Test_speedup__reduce_pseudo_inverse(
 
 
 @utils.needs_speedup
-class Test_speedup_full_reduce(test__py_curve_helpers.Test__full_reduce):
+class Test_speedup_full_reduce(test__py_curve_helpers.Test_full_reduce):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup

@@ -90,7 +90,7 @@ class Test_make_subdivision_matrices(utils.NumPyTestCase):
         self._helper(4, expected_l, expected_r)
 
 
-class Test__subdivide_nodes(utils.NumPyTestCase):
+class Test_subdivide_nodes(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _py_curve_helpers
@@ -167,7 +167,7 @@ class Test__subdivide_nodes(utils.NumPyTestCase):
         self._points_check(nodes)
 
 
-class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
+class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier import _py_curve_helpers
@@ -193,7 +193,7 @@ class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test__evaluate_multi(utils.NumPyTestCase):
+class Test_evaluate_multi(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, s_vals):
         from bezier import _py_curve_helpers
@@ -355,7 +355,7 @@ class Test_vec_size(unittest.TestCase):
         self.assertEqual(size, 3.25)
 
 
-class Test__compute_length(unittest.TestCase):
+class Test_compute_length(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _py_curve_helpers
@@ -416,7 +416,7 @@ class Test__compute_length(unittest.TestCase):
                 self._call_function_under_test(nodes)
 
 
-class Test__elevate_nodes(utils.NumPyTestCase):
+class Test_elevate_nodes(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _py_curve_helpers
@@ -459,7 +459,7 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, np.asfortranarray([[2.25], [4.0]]))
 
 
-class Test__specialize_curve(utils.NumPyTestCase):
+class Test_specialize_curve(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, start, end):
         from bezier import _py_curve_helpers
@@ -510,7 +510,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test__evaluate_hodograph(utils.NumPyTestCase):
+class Test_evaluate_hodograph(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(s, nodes):
         from bezier import _py_curve_helpers
@@ -554,7 +554,7 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
             self.assertEqual(first_deriv[1, 0], y_prime)
 
 
-class Test__get_curvature(unittest.TestCase):
+class Test_get_curvature(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, tangent_vec, s):
         from bezier import _py_curve_helpers
@@ -589,7 +589,7 @@ class Test__get_curvature(unittest.TestCase):
         self.assertEqual(result, -4.0)
 
 
-class Test__newton_refine(unittest.TestCase):
+class Test_newton_refine(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, point, s):
         from bezier import _py_curve_helpers
@@ -606,7 +606,7 @@ class Test__newton_refine(unittest.TestCase):
         self.assertEqual(110.0 * new_s, 57.0)
 
 
-class Test__locate_point(unittest.TestCase):
+class Test_locate_point(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, point):
         from bezier import _py_curve_helpers
@@ -650,7 +650,7 @@ class Test__locate_point(unittest.TestCase):
         self.assertEqual(result, 1.0)
 
 
-class Test__reduce_pseudo_inverse(utils.NumPyTestCase):
+class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
     EPS = 0.5 ** 52
 
     @staticmethod
@@ -831,7 +831,7 @@ class Test_maybe_reduce(utils.NumPyTestCase):
         self.assertEqual(exc_info.exception.supported, (0, 1, 2, 3, 4))
 
 
-class Test__full_reduce(utils.NumPyTestCase):
+class Test_full_reduce(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _py_curve_helpers

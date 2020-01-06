@@ -13,7 +13,7 @@
 """Private helper methods for :mod:`bezier.surface`.
 
 As a convention, the functions defined here with a leading underscore
-(e.g. :func:`_newton_refine`) have a special meaning.
+(e.g. :func:`newton_refine`) have a special meaning.
 
 Each of these functions have a Cython speedup with the exact same
 interface which calls out to a Fortran implementation. The speedup

@@ -19,7 +19,7 @@ import six
 from tests.unit import utils
 
 
-class Test__newton_refine(utils.NumPyTestCase):
+class Test_newton_refine(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _py_intersection_helpers

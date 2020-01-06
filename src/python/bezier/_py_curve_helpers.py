@@ -13,7 +13,7 @@
 """Private helper methods for B |eacute| zier curves.
 
 As a convention, the functions defined here with a leading underscore
-(e.g. :func:`_subdivide_nodes`) have a special meaning.
+(e.g. :func:`subdivide_nodes`) have a special meaning.
 
 Each of these functions have a Cython speedup with the exact same
 interface which calls out to a Fortran implementation. The speedup
@@ -128,7 +128,7 @@ def make_subdivision_matrices(degree):
 
     .. note::
 
-        This is a helper for :func:`_subdivide_nodes`. It does not have a
+        This is a helper for :func:`subdivide_nodes`. It does not have a
         Fortran speedup because it is **only** used by a function which has
         a Fortran speedup.
 
@@ -280,7 +280,7 @@ def vec_size(nodes, s_val):
 
     .. note::
 
-        This is a helper for :func:`_compute_length` and does not have
+        This is a helper for :func:`compute_length` and does not have
         a Fortran speedup.
 
     Intended to be used with ``functools.partial`` to fill in the
@@ -399,7 +399,7 @@ def de_casteljau_one_round(nodes, lambda1, lambda2):
 
     .. note::
 
-        This is a helper for :func:`_specialize_curve`. It does not have a
+        This is a helper for :func:`specialize_curve`. It does not have a
         Fortran speedup because it is **only** used by a function which has
         a Fortran speedup.
 

@@ -21,7 +21,7 @@ from tests.unit import utils
 
 @utils.needs_speedup
 class Test_speedup_bbox_intersect(
-    test__py_geometric_intersection.Test__bbox_intersect
+    test__py_geometric_intersection.Test_bbox_intersect
 ):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
@@ -32,7 +32,7 @@ class Test_speedup_bbox_intersect(
 
 @utils.needs_speedup
 class Test_speedup_all_intersections(
-    test__py_geometric_intersection.Test__all_intersections
+    test__py_geometric_intersection.Test_all_intersections
 ):
     @staticmethod
     def _call_function_under_test(nodes_first, nodes_second, **kwargs):

@@ -13,7 +13,7 @@
 """Private helper methods for :mod:`bezier.surface`.
 
 As a convention, the functions defined here with a leading underscore
-(e.g. :func:`_jacobian_det`) have a special meaning.
+(e.g. :func:`jacobian_det`) have a special meaning.
 
 Each of these functions have a Cython speedup with the exact same
 interface which calls out to a Fortran implementation. The speedup
@@ -914,8 +914,8 @@ def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     .. note::
 
        This is a helper function, used by :func:`make_transform` and
-       :func:`_specialize_surface` (and :func:`make_transform` is **only**
-       used by :func:`_specialize_surface`).
+       :func:`specialize_surface` (and :func:`make_transform` is **only**
+       used by :func:`specialize_surface`).
 
     Converts the ``nodes`` into a basis for a surface one degree smaller
     by using the barycentric weights:
@@ -974,7 +974,7 @@ def make_transform(degree, weights_a, weights_b, weights_c):
 
     .. note::
 
-       This is a helper used only by :func:`_specialize_surface`.
+       This is a helper used only by :func:`specialize_surface`.
 
     Applies the de Casteljau to the identity matrix, thus
     effectively caching the algorithm in a transformation matrix.
@@ -1017,7 +1017,7 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
 
     .. note::
 
-       This is a helper used only by :func:`_specialize_surface`.
+       This is a helper used only by :func:`specialize_surface`.
 
     The ``vals_by_weight`` mapping has keys of the form:
     ``(0, ..., 1, ..., 2, ...)`` where the ``0`` corresponds
@@ -1074,7 +1074,7 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
 
     .. note::
 
-       This is used **only** as a helper for :func:`_subdivide_nodes`, however
+       This is used **only** as a helper for :func:`subdivide_nodes`, however
        it may be worth adding this to :class:`Surface` as an analogue to
        :meth:`Curve.specialize`.
 
@@ -1190,7 +1190,7 @@ def jacobian_s(nodes, degree, dimension):
 
     .. note::
 
-       This is a helper for :func:`_jacobian_both`, which has an
+       This is a helper for :func:`jacobian_both`, which has an
        equivalent Fortran implementation.
 
     Args:
@@ -1222,7 +1222,7 @@ def jacobian_t(nodes, degree, dimension):
 
     .. note::
 
-       This is a helper for :func:`_jacobian_both`, which has an
+       This is a helper for :func:`jacobian_both`, which has an
        equivalent Fortran implementation.
 
     Args:
@@ -2928,7 +2928,7 @@ def shoelace_for_area(nodes):
 
     .. note::
 
-       This is a helper for :func:`_compute_area`.
+       This is a helper for :func:`compute_area`.
 
     Defining :math:`\left[i, j\right] = x_i y_j - y_i x_j` as a shoelace
     term illuminates the name of this helper. On a degree one curve, this

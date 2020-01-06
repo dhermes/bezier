@@ -13,7 +13,7 @@
 """Generic geometry and floating point helpers.
 
 As a convention, the functions defined here with a leading underscore
-(e.g. :func:`_bbox`) have a special meaning.
+(e.g. :func:`bbox`) have a special meaning.
 
 Each of these functions have a Cython speedup with the exact same
 interface which calls out to a Fortran implementation. The speedup
@@ -251,7 +251,7 @@ def cross_product_compare(start, candidate1, candidate2):
 
     .. note::
 
-       This is a helper for :func:`_simple_convex_hull`.
+       This is a helper for :func:`simple_convex_hull`.
 
     Args:
         start (numpy.ndarray): The start vector (as 1D NumPy array with
@@ -387,7 +387,7 @@ def is_separating(direction, polygon1, polygon2):
 
     .. note::
 
-       This is a helper for :func:`_polygon_collide`.
+       This is a helper for :func:`polygon_collide`.
 
     Args:
         direction (numpy.ndarray): A 1D ``2``-array (``float64``) of a

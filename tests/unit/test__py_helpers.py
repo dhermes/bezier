@@ -21,7 +21,7 @@ from tests.unit import utils
 SPACING = np.spacing  # pylint: disable=no-member
 
 
-class Test__vector_close(unittest.TestCase):
+class Test_vector_close(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(vec1, vec2, **kwargs):
         from bezier import _py_helpers
@@ -59,7 +59,7 @@ class Test__vector_close(unittest.TestCase):
         self.assertFalse(self._call_function_under_test(vec1, vec2))
 
 
-class Test__in_interval(unittest.TestCase):
+class Test_in_interval(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(value, start, end):
         from bezier import _py_helpers
@@ -89,7 +89,7 @@ class Test__in_interval(unittest.TestCase):
         self.assertFalse(self._call_function_under_test(-1.0, 1.0, 2.0))
 
 
-class Test__bbox(unittest.TestCase):
+class Test_bbox(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _py_helpers
@@ -115,7 +115,7 @@ class Test__bbox(unittest.TestCase):
         self.assertEqual(top, 4.0)
 
 
-class Test__contains_nd(unittest.TestCase):
+class Test_contains_nd(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, point):
         from bezier import _py_helpers
@@ -146,7 +146,7 @@ class Test__contains_nd(unittest.TestCase):
             self._call_function_under_test(nodes, point)
 
 
-class Test__cross_product(utils.NumPyTestCase):
+class Test_cross_product(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(vec0, vec1):
         from bezier import _py_helpers
@@ -189,7 +189,7 @@ class Test_matrix_product(utils.NumPyTestCase):
         self.assertFalse(result.flags.owndata)
 
 
-class Test__wiggle_interval(unittest.TestCase):
+class Test_wiggle_interval(unittest.TestCase):
     WIGGLE = 0.5 ** 44
     MACHINE_EPS = 0.5 ** 52
 
@@ -348,7 +348,7 @@ class Test_in_sorted(utils.NumPyTestCase):
         self.assertFalse(self._call_function_under_test(values, 22))
 
 
-class Test__simple_convex_hull(utils.NumPyTestCase):
+class Test_simple_convex_hull(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(points):
         from bezier import _py_helpers
@@ -453,7 +453,7 @@ class Test_is_separating(unittest.TestCase):
         )
 
 
-class Test__polygon_collide(unittest.TestCase):
+class Test_polygon_collide(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(polygon1, polygon2):
         from bezier import _py_helpers

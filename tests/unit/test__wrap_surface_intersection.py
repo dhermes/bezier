@@ -20,7 +20,7 @@ from tests.unit import utils
 
 @utils.needs_speedup
 class Test_speedup_newton_refine(
-    test__py_surface_intersection.Test__newton_refine
+    test__py_surface_intersection.Test_newton_refine
 ):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
@@ -33,7 +33,7 @@ class Test_speedup_newton_refine(
 
 @utils.needs_speedup
 class Test_speedup_locate_point(
-    test__py_surface_intersection.Test__locate_point
+    test__py_surface_intersection.Test_locate_point
 ):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
@@ -44,7 +44,7 @@ class Test_speedup_locate_point(
 
 @utils.needs_speedup
 class Test_speedup_geometric_intersect(
-    test__py_surface_intersection.Test__geometric_intersect
+    test__py_surface_intersection.Test_geometric_intersect
 ):
     BAD_BOUNDARY_ARGS = ("Unexpected number of edges",)
     BAD_BOUNDARY_TYPE = RuntimeError

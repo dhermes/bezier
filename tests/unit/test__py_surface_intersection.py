@@ -40,7 +40,7 @@ class Test_newton_refine_solve(unittest.TestCase):
         self.assertEqual(delta_t, -0.1875)
 
 
-class Test__newton_refine(unittest.TestCase):
+class Test_newton_refine(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
         from bezier import _py_surface_intersection
@@ -158,7 +158,7 @@ class Test_mean_centroid(unittest.TestCase):
         self.assertEqual(centroid_y, 0.75)
 
 
-class Test__locate_point(unittest.TestCase):
+class Test_locate_point(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
         from bezier import _py_surface_intersection
@@ -737,7 +737,7 @@ class Test_generic_intersect(utils.NumPyTestCase):
         self.assertEqual(all_edge_nodes, ())
 
 
-class Test__geometric_intersect(utils.NumPyTestCase):
+class Test_geometric_intersect(utils.NumPyTestCase):
     NODES1 = np.asfortranarray([[-8.0, 8.0, 0.0], [0.0, 0.0, 8.0]])
     NODES2 = np.asfortranarray(
         [[4.0, 0.0, -4.0, 2.0, -2.0, 0.0], [3.0, -5.0, 3.0, -3.0, -3.0, -9.0]]
@@ -937,7 +937,7 @@ class Test__geometric_intersect(utils.NumPyTestCase):
         self._check_triple_root_err(exc_info.exception)
 
 
-class Test_algebraic_intersect(Test__geometric_intersect):
+class Test_algebraic_intersect(Test_geometric_intersect):
     BAD_BOUNDARY_ARGS = ("Coincident curves not currently supported",)
     BAD_BOUNDARY_TYPE = RuntimeError
     BAD_BOUNDARY_INCREASE_ULPS = False
