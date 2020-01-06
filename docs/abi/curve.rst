@@ -468,7 +468,7 @@ Procedures
                                    double *curvature)
 
    Get the signed curvature of a B |eacute| zier curve at a point. See
-   :func:`._get_curvature` for more details.
+   :func:`._py_curve_helpers.get_curvature` for more details.
 
    .. note::
 

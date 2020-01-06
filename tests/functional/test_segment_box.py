@@ -9,12 +9,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 from __future__ import absolute_import
 
 import numpy as np
 
-from bezier import _geometric_intersection
 from bezier import _helpers
+from bezier import _py_geometric_intersection
 from tests.functional import utils
 
 CONFIG = utils.Config()
@@ -64,8 +65,8 @@ def make_plot(segment, index):
 
 def run_it(segment, expected=None, index=0):
     if expected is None:
-        expected = _geometric_intersection.BoxIntersectionType.INTERSECTION
-    result = _geometric_intersection.bbox_line_intersect(
+        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
+    result = _py_geometric_intersection.bbox_line_intersect(
         UNIT_SQUARE, segment[:, 0], segment[:, 1]
     )
     assert result == expected
@@ -86,7 +87,7 @@ def test_outside():
         segment_top_right,
         segment_top_left,
     )
-    expected = _geometric_intersection.BoxIntersectionType.DISJOINT
+    expected = _py_geometric_intersection.BoxIntersectionType.DISJOINT
     for index, segment in enumerate(segments):
         run_it(segment, expected, index)
 

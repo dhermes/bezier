@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import unittest.mock
 
 import numpy as np
@@ -555,13 +556,13 @@ class TestSurface(utils.NumPyTestCase):
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_bad_degree(self):
-        from bezier import _helpers
+        from bezier import _py_helpers
 
         degree = 4
         num_nodes = ((degree + 1) * (degree + 2)) // 2
         nodes = np.zeros((2, num_nodes), order="F")
         surface = self._make_one(nodes, degree=degree)
-        with self.assertRaises(_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
             surface._compute_valid()
         self.assertEqual(exc_info.exception.degree, degree)
         self.assertEqual(exc_info.exception.supported, (1, 2, 3))
@@ -665,9 +666,9 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(exc_args, ("Unexpected strategy.", strategy))
 
     def test_intersect_algebraic(self):
-        from bezier import _intersection_helpers
+        from bezier import _py_intersection_helpers
 
-        strategy = _intersection_helpers.IntersectionStrategy.ALGEBRAIC
+        strategy = _py_intersection_helpers.IntersectionStrategy.ALGEBRAIC
         self._basic_intersect_helper(strategy=strategy)
 
     def test_intersect_disjoint_bbox(self):

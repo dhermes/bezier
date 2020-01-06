@@ -32,7 +32,7 @@ import pkg_resources
 # NOTE: ``__config__`` **must** be the first import because it (may)
 #       modify the search path used to locate shared libraries.
 from bezier import __config__
-from bezier._helpers import UnsupportedDegree
+from bezier._py_helpers import UnsupportedDegree
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface

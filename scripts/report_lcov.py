@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Convert ``lcov`` report into "cobertura" format.
 
 Using the converted report, print a table of the report and
@@ -21,6 +22,7 @@ import sys
 
 import pycobertura
 import lcov_cobertura
+
 
 THRESHOLD = 1.0  # 100%
 

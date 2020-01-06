@@ -6,27 +6,27 @@ Geometric Helpers
 Functions
 *********
 
-.. autofunction:: bezier._intersection_helpers._newton_refine
-.. autofunction:: bezier._geometric_intersection.linearization_error
-.. autofunction:: bezier._geometric_intersection.segment_intersection
-.. autofunction:: bezier._geometric_intersection.parallel_lines_parameters
-.. autofunction:: bezier._curve_helpers._get_curvature
-.. autofunction:: bezier._curve_helpers._newton_refine
-.. autofunction:: bezier._surface_helpers.classify_intersection
-.. autofunction:: bezier._surface_helpers._jacobian_det
-.. autofunction:: bezier._surface_intersection._newton_refine
+.. autofunction:: bezier._py_intersection_helpers.newton_refine
+.. autofunction:: bezier._py_geometric_intersection.linearization_error
+.. autofunction:: bezier._py_geometric_intersection.segment_intersection
+.. autofunction:: bezier._py_geometric_intersection.parallel_lines_parameters
+.. autofunction:: bezier._py_curve_helpers.get_curvature
+.. autofunction:: bezier._py_curve_helpers.newton_refine
+.. autofunction:: bezier._py_surface_helpers.classify_intersection
+.. autofunction:: bezier._py_surface_helpers.jacobian_det
+.. autofunction:: bezier._py_surface_intersection.newton_refine
 
 *****
 Types
 *****
 
-.. autoclass:: bezier._intersection_helpers.IntersectionClassification
+.. autoclass:: bezier._py_intersection_helpers.IntersectionClassification
    :members:
-.. autoclass:: bezier._intersection_helpers.Intersection
+.. autoclass:: bezier._py_intersection_helpers.Intersection
    :members:
-.. autoclass:: bezier._geometric_intersection.Linearization
+.. autoclass:: bezier._py_geometric_intersection.Linearization
    :members:
-.. autoclass:: bezier._geometric_intersection.SubdividedCurve
+.. autoclass:: bezier._py_geometric_intersection.SubdividedCurve
    :members:
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE

@@ -9,12 +9,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import unittest
 
 try:
     import bezier
 except ImportError:  # pragma: NO COVER
     bezier = None
+
+
 WRONG_FLAGS_TEMPLATE = """\
 Arrays are not Fortran contiguous
 array1 flags =

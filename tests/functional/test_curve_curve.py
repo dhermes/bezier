@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 from __future__ import absolute_import
 
 import itertools
@@ -19,11 +20,13 @@ import six
 
 from bezier import _algebraic_intersection
 from bezier import _geometric_intersection
-from bezier import _intersection_helpers
+from bezier import _py_geometric_intersection
+from bezier import _py_intersection_helpers
 import bezier.curve
 from tests import utils as base_utils
 from tests.functional import utils
 from tests.functional.utils import CurveIntersectionType
+
 
 SPACING = np.spacing  # pylint: disable=no-member
 GEOMETRIC = bezier.curve.IntersectionStrategy.GEOMETRIC
@@ -152,8 +155,8 @@ ULPS_ALLOWED_OVERRIDE = {
     },
 }
 NON_SIMPLE_ERR = _algebraic_intersection._NON_SIMPLE_ERR
-TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
-BAD_MULTIPLICITY = (_intersection_helpers.NEWTON_NO_CONVERGE,)
+TOO_MANY = _py_geometric_intersection._TOO_MANY_TEMPLATE
+BAD_MULTIPLICITY = (_py_intersection_helpers.NEWTON_NO_CONVERGE,)
 COINCIDENT_ERR = (_algebraic_intersection._COINCIDENT_ERR,)
 TANGENT_OVERRIDES = {
     GEOMETRIC: {

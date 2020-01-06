@@ -85,7 +85,7 @@ SEGMENTS_TOO_SMALL = (
     "Did not have enough space for segments. Needed space "
     "for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.")
 # NOTE: The ``SUBDIVISION_NO_CONVERGE`` error message is copied from
-#       ``_geometric_intersection.py::_NO_CONVERGE_TEMPLATE``. This
+#       ``_py_geometric_intersection.py::_NO_CONVERGE_TEMPLATE``. This
 #       assumes, but does not verify, that the Fortran subroutine
 #       ``curve_intersection.f90::all_intersections_abi()`` uses
 #       ``MAX_INTERSECT_SUBDIVISIONS = 20``.
@@ -93,7 +93,7 @@ SUBDIVISION_NO_CONVERGE = (
     "Curve intersection failed to converge to approximately linear "
     "subdivisions after 20 iterations.")
 # NOTE: The ``NEWTON_NO_CONVERGE`` error message is copied from
-#       ``_intersection_helpers.py::NEWTON_NO_CONVERGE``.
+#       ``_py_intersection_helpers.py::NEWTON_NO_CONVERGE``.
 NEWTON_NO_CONVERGE = """\
 Unsupported multiplicity.
 
@@ -316,7 +316,7 @@ def reduce_pseudo_inverse(double[::1, :] nodes):
     if not_implemented:
         # NOTE: This import at runtime is expensive, but we don't mind it
         #       because the exception is intended to halt the program.
-        from bezier._helpers import UnsupportedDegree
+        from bezier._py_helpers import UnsupportedDegree
         raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
 
     return reduced
@@ -343,7 +343,7 @@ def full_reduce(double[::1, :] nodes):
     if not_implemented:
         # NOTE: This import at runtime is expensive, but we don't mind it
         #       because the exception is intended to halt the program.
-        from bezier._helpers import UnsupportedDegree
+        from bezier._py_helpers import UnsupportedDegree
         raise UnsupportedDegree(num_nodes - 1, supported=(0, 1, 2, 3, 4))
 
     if num_reduced_nodes == num_nodes:
@@ -874,7 +874,7 @@ def compute_area(tuple edges):
 
             # NOTE: This import at runtime is expensive, but we don't mind it
             #       because the exception is intended to halt the program.
-            from bezier._helpers import UnsupportedDegree
+            from bezier._py_helpers import UnsupportedDegree
             raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
 
         sizes[i] = num_nodes

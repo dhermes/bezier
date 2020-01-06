@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 r"""Curved polygon and associated helpers.
 
 A curved polygon (in :math:`\mathbf{R}^2`) is defined by the

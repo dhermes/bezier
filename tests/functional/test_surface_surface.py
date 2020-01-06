@@ -21,9 +21,9 @@ import six
 
 import bezier
 from bezier import _algebraic_intersection
-from bezier import _geometric_intersection
-from bezier import _surface_helpers
-from bezier import _surface_intersection
+from bezier import _py_geometric_intersection
+from bezier import _py_surface_helpers
+from bezier import _py_surface_intersection
 from bezier import curve
 from tests import utils as base_utils
 from tests.functional import utils
@@ -31,8 +31,8 @@ from tests.functional import utils
 ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
 GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
 _, INTERSECTIONS = utils.surface_intersections_info()
-SAME_CURVATURE = (_surface_helpers._SAME_CURVATURE,)
-TOO_MANY = _geometric_intersection._TOO_MANY_TEMPLATE
+SAME_CURVATURE = (_py_surface_helpers._SAME_CURVATURE,)
+TOO_MANY = _py_geometric_intersection._TOO_MANY_TEMPLATE
 WIGGLES = {
     GEOMETRIC: {
         1: 48,  # Established on CentOS 5 (i686 Docker image)
@@ -203,7 +203,7 @@ def check_consecutive_manager():
 
     assert caught_exc is not None
     exc_args = caught_exc.args
-    assert exc_args[0] == _surface_intersection.SEGMENTS_SAME_EDGE
+    assert exc_args[0] == _py_surface_intersection.SEGMENTS_SAME_EDGE
     assert len(exc_args) == 3
 
 
@@ -225,7 +225,7 @@ def extra_verify(strategy, intersections):
             for curved_polygon in intersections
             if isinstance(curved_polygon, bezier.CurvedPolygon)
         ]
-        _surface_intersection.verify_edge_segments(edge_infos)
+        _py_surface_intersection.verify_edge_segments(edge_infos)
 
 
 def surface_surface_check(strategy, surface1, surface2, *all_intersected):

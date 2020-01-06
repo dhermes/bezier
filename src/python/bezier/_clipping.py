@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 r"""Proof-of-concept for B |eacute| zier clipping.
 
 .. _algorithm: https://dx.doi.org/10.1016/0010-4485(90)90039-F
@@ -30,8 +31,9 @@ which is the primary usage within ``bezier``.
 import numpy as np
 import six
 
-from bezier import _geometric_intersection
 from bezier import _helpers
+from bezier import _py_geometric_intersection
+
 
 NO_PARALLEL = "Parallel lines not supported during clipping."
 DEFAULT_S_MIN = 1.0
@@ -163,9 +165,10 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
         NotImplementedError: If the two line segments are parallel. (This
             case will be supported at some point, just not now.)
     """
-    s, t, success = _geometric_intersection.segment_intersection(
+    s, t, success = _py_geometric_intersection.segment_intersection(
         start0, end0, start1, end1
     )
+
     if not success:
         raise NotImplementedError(NO_PARALLEL)
 

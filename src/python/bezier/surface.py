@@ -26,13 +26,16 @@ import six
 
 from bezier import _base
 from bezier import _curve_helpers
-from bezier import _helpers
-from bezier import _intersection_helpers
 from bezier import _plot_helpers
+from bezier import _py_helpers
+from bezier import _py_intersection_helpers
+from bezier import _py_surface_helpers
+from bezier import _py_surface_intersection
 from bezier import _surface_helpers
 from bezier import _surface_intersection
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
+
 
 _SIGN = np.sign  # pylint: disable=no-member
 _LOCATE_ERROR_TEMPLATE = (
@@ -40,7 +43,7 @@ _LOCATE_ERROR_TEMPLATE = (
     "so the point should be a {:d} x 1 NumPy array. "
     "Instead the point {} has dimensions {}."
 )
-_STRATEGY = _intersection_helpers.IntersectionStrategy
+_STRATEGY = _py_intersection_helpers.IntersectionStrategy
 
 
 class Surface(_base.Base):
@@ -742,9 +745,12 @@ class Surface(_base.Base):
             Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
             lower right and upper left sub-surfaces (in that order).
         """
-        nodes_a, nodes_b, nodes_c, nodes_d = _surface_helpers.subdivide_nodes(
-            self._nodes, self._degree
-        )
+        (
+            nodes_a,
+            nodes_b,
+            nodes_c,
+            nodes_d,
+        ) = _surface_helpers.subdivide_nodes(self._nodes, self._degree)
         return (
             Surface(nodes_a, self._degree, _copy=False),
             Surface(nodes_b, self._degree, _copy=False),
@@ -778,15 +784,19 @@ class Surface(_base.Base):
             poly_sign = _SIGN(np.linalg.det(first_deriv))
             # pylint: enable=assignment-from-no-return
         elif self._degree == 2:
-            bernstein = _surface_helpers.quadratic_jacobian_polynomial(
+            bernstein = _py_surface_helpers.quadratic_jacobian_polynomial(
                 self._nodes
             )
-            poly_sign = _surface_helpers.polynomial_sign(bernstein, 2)
+            poly_sign = _py_surface_helpers.polynomial_sign(bernstein, 2)
         elif self._degree == 3:
-            bernstein = _surface_helpers.cubic_jacobian_polynomial(self._nodes)
-            poly_sign = _surface_helpers.polynomial_sign(bernstein, 4)
+            bernstein = _py_surface_helpers.cubic_jacobian_polynomial(
+                self._nodes
+            )
+            poly_sign = _py_surface_helpers.polynomial_sign(bernstein, 4)
         else:
-            raise _helpers.UnsupportedDegree(self._degree, supported=(1, 2, 3))
+            raise _py_helpers.UnsupportedDegree(
+                self._degree, supported=(1, 2, 3)
+            )
 
         return poly_sign == 1
 
@@ -991,7 +1001,7 @@ class Surface(_base.Base):
         if strategy == _STRATEGY.GEOMETRIC:
             do_intersect = _surface_intersection.geometric_intersect
         elif strategy == _STRATEGY.ALGEBRAIC:
-            do_intersect = _surface_intersection.algebraic_intersect
+            do_intersect = _py_surface_intersection.algebraic_intersect
         else:
             raise ValueError("Unexpected strategy.", strategy)
 
