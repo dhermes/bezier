@@ -22,8 +22,6 @@ Also checks a collection of other documents:
   want to be able to freeze the versioned references for releases)
 """
 
-from __future__ import print_function
-
 import difflib
 import functools
 import os

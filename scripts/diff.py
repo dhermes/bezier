@@ -15,8 +15,6 @@
 Intended as a platform-independent version of ``diff``.
 """
 
-from __future__ import print_function
-
 import argparse
 import difflib
 import os

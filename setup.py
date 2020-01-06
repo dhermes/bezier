@@ -12,8 +12,6 @@
 
 """Setup file for bezier."""
 
-from __future__ import print_function
-
 import os
 import sys
 

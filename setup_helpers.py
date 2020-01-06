@@ -12,8 +12,6 @@
 
 """Generic (i.e. platform-independent) helpers for ``setup.py``."""
 
-from __future__ import print_function
-
 import copy
 import distutils.ccompiler
 import os
