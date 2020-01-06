@@ -879,7 +879,7 @@ class Intersection:  # pylint: disable=too-few-public-methods
         t (float): The parameter along the second curve where the
             intersection occurs.
         interior_curve (Optional[ \
-            ~bezier._intersection_helpers.IntersectionClassification]): The
+            ~bezier._py_intersection_helpers.IntersectionClassification]): The
             classification of the intersection.
     """
 

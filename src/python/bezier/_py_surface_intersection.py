@@ -491,7 +491,7 @@ def verify_edge_segments(edge_infos):
 def add_edge_end_unused(intersection, duplicates, intersections):
     """Add intersection that is ``COINCIDENT_UNUSED`` but on an edge end.
 
-    This is a helper for :func:`~._surface_intersection.add_intersection`.
+    This is a helper for :func:`~._py_surface_intersection.add_intersection`.
     It assumes that
 
     * ``intersection`` will have at least one of ``s == 0.0`` or ``t == 0.0``

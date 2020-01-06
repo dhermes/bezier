@@ -9,6 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Helper to make images that are intended for docs.
 
 To actually execute these functions with the desired inputs, run:
@@ -35,8 +36,8 @@ try:
 except ImportError:
     seaborn = None
 import bezier
-from bezier import _intersection_helpers
 from bezier import _plot_helpers
+
 
 if seaborn is not None:
     seaborn.set()  # Required in `seaborn >= 0.8`
@@ -710,7 +711,7 @@ def curve_specialize(curve, new_curve):
 
 
 def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
-    """Image for :func:`._surface_helpers.newton_refine` docstring."""
+    """Image for :func:`._py_surface_helpers.newton_refine` docstring."""
     if NO_IMAGES:
         return
 
@@ -795,7 +796,7 @@ def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
 
 
 def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
-    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
@@ -837,7 +838,7 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
 
 
 def classify_intersection2(s, curve1, curve2):
-    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
@@ -858,7 +859,7 @@ def classify_intersection2(s, curve1, curve2):
 
 
 def classify_intersection3(s, curve1, curve2):
-    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
@@ -885,7 +886,7 @@ def classify_intersection3(s, curve1, curve2):
 
 
 def classify_intersection4(s, curve1, curve2):
-    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
@@ -909,7 +910,7 @@ def classify_intersection4(s, curve1, curve2):
 
 
 def classify_intersection5(s, curve1, curve2):
-    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
@@ -973,7 +974,7 @@ def classify_intersection5(s, curve1, curve2):
 
 
 def classify_intersection6(s, curve1, curve2):
-    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
@@ -1000,7 +1001,7 @@ def classify_intersection6(s, curve1, curve2):
 
 
 def classify_intersection7(s, curve1a, curve1b, curve2):
-    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
@@ -1078,7 +1079,7 @@ def curve_locate(curve, point1, point2, point3):
 
 
 def newton_refine_curve(curve, point, s, new_s):
-    """Image for :func:`._curve_helpers.newton_refine` docstring."""
+    """Image for :func:`._py_curve_helpers.newton_refine` docstring."""
     if NO_IMAGES:
         return
 
@@ -1109,7 +1110,7 @@ def newton_refine_curve(curve, point, s, new_s):
 
 
 def newton_refine_curve_cusp(curve, s_vals):
-    """Image for :func:`._curve_helpers.newton_refine` docstring."""
+    """Image for :func:`._py_curve_helpers.newton_refine` docstring."""
     if NO_IMAGES:
         return
 
@@ -1128,7 +1129,7 @@ def newton_refine_curve_cusp(curve, s_vals):
 
 
 def classify_intersection8(s, curve1, surface1, curve2, surface2):
-    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
@@ -1175,7 +1176,7 @@ def _edges_classify_intersection9():
 
 
 def classify_intersection9(s, curve1, curve2):
-    """Image for :func:`._surface_helpers.classify_intersection` docstring."""
+    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 

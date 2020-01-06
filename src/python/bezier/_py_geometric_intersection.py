@@ -1600,8 +1600,8 @@ class Linearization:
         """Do-nothing method to match the :class:`.Curve` interface.
 
         Returns:
-            Tuple[~bezier._geometric_intersection.Linearization]: List of all
-            subdivided parts, which is just the current object.
+            Tuple[~bezier._py_geometric_intersection.Linearization]: List of
+            all subdivided parts, which is just the current object.
         """
         return (self,)
 
@@ -1611,12 +1611,12 @@ class Linearization:
 
         Args:
             shape (Union[SubdividedCurve, \
-            ~bezier._geometric_intersection.Linearization]): A curve or an
+            ~bezier._py_geometric_intersection.Linearization]): A curve or an
                 already linearized curve.
 
         Returns:
             Union[SubdividedCurve, \
-            ~bezier._geometric_intersection.Linearization]: The
+            ~bezier._py_geometric_intersection.Linearization]: The
             (potentially linearized) curve.
         """
         # NOTE: In the below we replace ``isinstance(a, B)`` with

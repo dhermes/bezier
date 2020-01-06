@@ -549,8 +549,8 @@ class UnsupportedDegree(NotImplementedError):
        >>> curve.reduce_()
        Traceback (most recent call last):
          ...
-       bezier._helpers.UnsupportedDegree: The only degrees supported at this
-                                          time are 1, 2, 3 and 4 (degree=5)
+       bezier._py_helpers.UnsupportedDegree: The only degrees supported at this
+                                             time are 1, 2, 3 and 4 (degree=5)
 
     Args:
         degree (int): The degree that is not possible to support.
