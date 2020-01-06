@@ -608,8 +608,7 @@ class Test__resolve_and_add(utils.NumPyTestCase):
         final_s = []
         final_t = []
         patch = unittest.mock.patch(
-            "bezier._intersection_helpers.newton_refine",
-            return_value=(s, t),
+            "bezier._intersection_helpers.newton_refine", return_value=(s, t),
         )
         with patch as mocked:
             self._call_function_under_test(

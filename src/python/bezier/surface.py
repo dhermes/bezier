@@ -25,12 +25,12 @@ import numpy as np
 import six
 
 from bezier import _base
+from bezier import _curve_helpers
 from bezier import _plot_helpers
 from bezier import _py_helpers
 from bezier import _py_intersection_helpers
 from bezier import _py_surface_helpers
 from bezier import _py_surface_intersection
-from bezier import _curve_helpers
 from bezier import _surface_helpers
 from bezier import _surface_intersection
 from bezier import curve as _curve_mod

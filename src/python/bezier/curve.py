@@ -31,10 +31,10 @@ import numpy as np
 
 from bezier import _algebraic_intersection
 from bezier import _base
-from bezier import _plot_helpers
-from bezier import _py_intersection_helpers
 from bezier import _curve_helpers
 from bezier import _geometric_intersection
+from bezier import _plot_helpers
+from bezier import _py_intersection_helpers
 
 
 _LOCATE_ERROR_TEMPLATE = (
@@ -314,9 +314,7 @@ class Curve(_base.Base):
         Returns:
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
-        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(
-            self._nodes
-        )
+        left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self._nodes)
         left = Curve(left_nodes, self._degree, _copy=False)
         right = Curve(right_nodes, self._degree, _copy=False)
         return left, right
@@ -600,9 +598,7 @@ class Curve(_base.Base):
         Returns:
             Curve: The newly-specialized curve.
         """
-        new_nodes = _curve_helpers.specialize_curve(
-            self._nodes, start, end
-        )
+        new_nodes = _curve_helpers.specialize_curve(self._nodes, start, end)
         return Curve(new_nodes, self._degree, _copy=False)
 
     def locate(self, point):

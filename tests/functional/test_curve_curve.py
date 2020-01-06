@@ -18,9 +18,9 @@ import pytest
 import six
 
 from bezier import _algebraic_intersection
+from bezier import _geometric_intersection
 from bezier import _py_geometric_intersection
 from bezier import _py_intersection_helpers
-from bezier import _geometric_intersection
 import bezier.curve
 from tests import utils as base_utils
 from tests.functional import utils

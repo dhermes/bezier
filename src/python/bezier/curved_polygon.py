@@ -26,8 +26,8 @@ boundary.
 
 import six
 
-from bezier import _plot_helpers
 from bezier import _helpers
+from bezier import _plot_helpers
 from bezier import _surface_helpers
 
 

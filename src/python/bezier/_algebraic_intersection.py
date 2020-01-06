@@ -49,12 +49,12 @@ try:
 except ImportError:  # pragma: NO COVER
     _scipy_lapack = None
 
-from bezier import _py_geometric_intersection
-from bezier import _py_helpers
 from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _helpers
 from bezier import _intersection_helpers
+from bezier import _py_geometric_intersection
+from bezier import _py_helpers
 
 
 # NOTE: These are hardcoded from:

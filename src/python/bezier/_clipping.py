@@ -31,8 +31,8 @@ which is the primary usage within ``bezier``.
 import numpy as np
 import six
 
-from bezier import _py_geometric_intersection
 from bezier import _helpers
+from bezier import _py_geometric_intersection
 
 
 NO_PARALLEL = "Parallel lines not supported during clipping."
