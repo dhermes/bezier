@@ -46,7 +46,7 @@ building of extension modules.
 """.format(
     NO_EXTENSIONS_ENV
 )
-REQUIREMENTS = ("numpy == 1.18.1",)
+REQUIREMENTS = ("numpy >= 1.18.1",)
 EXTRAS_REQUIRE = {}
 DESCRIPTION = (
     u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
