@@ -18,9 +18,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/types.f90 \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/types.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/types.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -41,9 +41,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/status.f90 \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/status.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/status.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -64,9 +64,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/helpers.f90 \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/helpers.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/helpers.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -87,9 +87,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/curve.f90 \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/curve.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -110,9 +110,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/surface.f90 \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/surface.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -133,9 +133,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/curve_intersection.f90 \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/curve_intersection.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve_intersection.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -156,9 +156,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/surface_intersection.f90 \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/surface_intersection.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface_intersection.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -179,9 +179,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/quadpack/d1mach.f \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/d1mach.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/d1mach.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -202,9 +202,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/quadpack/dqelg.f \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqelg.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqelg.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -225,9 +225,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/quadpack/dqpsrt.f \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqpsrt.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqpsrt.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -248,9 +248,9 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/quadpack/dqk21.f \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqk21.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqk21.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ /usr/local/bin/gfortran \
 >   -Wall \
@@ -271,32 +271,33 @@ $ /usr/local/bin/gfortran \
 >   -c \
 >   src/fortran/quadpack/dqagse.f \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqagse.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqagse.o \
 >   -J \
->   build/temp.macosx-10.6-intel-3.8
+>   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
 $ ar \
 >   -cr \
->   build/lib.macosx-10.6-intel-3.8/bezier/lib/libbezier.a \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/d1mach.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqelg.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqpsrt.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqk21.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqagse.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/types.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/status.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/helpers.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/curve.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/surface.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/curve_intersection.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/surface_intersection.o
+>   build/lib.macosx-10.9-x86_64-3.8/bezier/lib/libbezier.a \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/d1mach.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqelg.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqpsrt.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqk21.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqagse.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/types.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/status.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/helpers.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve_intersection.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface_intersection.o
 ----------------------------------------
 $ ranlib \
->   build/lib.macosx-10.6-intel-3.8/bezier/lib/libbezier.a
+>   build/lib.macosx-10.9-x86_64-3.8/bezier/lib/libbezier.a
 ----------------------------------------
 $ gcc \
->   -fno-strict-aliasing \
+>   -Wno-unused-result \
 >   -Wsign-compare \
+>   -Wunreachable-code \
 >   -fno-common \
 >   -dynamic \
 >   -DNDEBUG \
@@ -305,44 +306,40 @@ $ gcc \
 >   -O3 \
 >   -Wall \
 >   -arch \
->   i386 \
->   -arch \
 >   x86_64 \
 >   -g \
 >   -I${TRAVIS_BUILD_DIR}/.nox/check_journal-machine-travis-macos/lib/python3.8/site-packages/numpy/core/include \
 >   -Isrc/fortran/include \
->   -I/Library/Frameworks/Python.framework/Versions/3.8/include/python3.8m \
+>   -I/Library/Frameworks/Python.framework/Versions/3.8/include/python3.8 \
 >   -c \
 >   src/python/bezier/_speedup.c \
 >   -o \
->   build/temp.macosx-10.6-intel-3.8/src/python/bezier/_speedup.o
+>   build/temp.macosx-10.9-x86_64-3.8/src/python/bezier/_speedup.o
 ----------------------------------------
 $ gcc \
 >   -bundle \
 >   -undefined \
 >   dynamic_lookup \
 >   -arch \
->   i386 \
->   -arch \
 >   x86_64 \
 >   -g \
->   build/temp.macosx-10.6-intel-3.8/src/python/bezier/_speedup.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/types.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/status.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/helpers.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/curve.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/surface.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/curve_intersection.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/surface_intersection.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/d1mach.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqelg.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqpsrt.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqk21.o \
->   build/temp.macosx-10.6-intel-3.8/src/fortran/quadpack/dqagse.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/python/bezier/_speedup.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/types.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/status.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/helpers.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve_intersection.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface_intersection.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/d1mach.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqelg.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqpsrt.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqk21.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqagse.o \
 >   -L/usr/local/Cellar/gcc/9.2.0_2/lib/gcc/9 \
 >   -L/usr/local/Cellar/gcc/9.2.0_2/lib/gcc/9/gcc/x86_64-apple-darwin18/9.2.0 \
 >   -L/usr/local/Cellar/gcc/9.2.0_2/lib/gcc/9/gcc/x86_64-apple-darwin18/9.2.0/../../.. \
 >   -lgfortran \
 >   -o \
->   build/lib.macosx-10.6-intel-3.8/bezier/_speedup.cpython-38-darwin.so
+>   build/lib.macosx-10.9-x86_64-3.8/bezier/_speedup.cpython-38-darwin.so
 ----------------------------------------
