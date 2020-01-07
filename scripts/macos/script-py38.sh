@@ -17,7 +17,7 @@ set -e
 # NOTE: This is the Python.org version of Python.
 export BIN_DIR="/Library/Frameworks/Python.framework/Versions/3.8/bin"
 export PY_BIN="${BIN_DIR}/python3"
-export PY_TAG="cp38-cp38m"
+export PY_TAG="cp38-cp38"
 
 # ``readlink -f`` is not our friend on macOS.
 SCRIPT_FI=$(${PY_BIN} -c "import os; print(os.path.realpath('${0}'))")

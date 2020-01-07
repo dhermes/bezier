@@ -344,5 +344,5 @@ $ gcc \
 >   -L/usr/local/Cellar/gcc/9.2.0_2/lib/gcc/9/gcc/x86_64-apple-darwin18/9.2.0/../../.. \
 >   -lgfortran \
 >   -o \
->   build/lib.macosx-10.6-intel-3.8/bezier/_speedup.cpython-38m-darwin.so
+>   build/lib.macosx-10.6-intel-3.8/bezier/_speedup.cpython-38-darwin.so
 ----------------------------------------

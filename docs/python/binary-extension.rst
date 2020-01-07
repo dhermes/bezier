@@ -218,7 +218,7 @@ The ``bezier._speedup`` module depends on this local copy:
 
 .. code-block:: console
 
-   $ readelf -d _speedup.cpython-38m-x86_64-linux-gnu.so
+   $ readelf -d _speedup.cpython-38-x86_64-linux-gnu.so
 
    Dynamic section at offset 0x2f9000 contains 27 entries:
      Tag        Type                         Name/Value
@@ -281,9 +281,9 @@ of ``libgfortran``:
    :macos-only:
    :pyversion: >= 3.8
 
-   >>> invoke_shell("otool", "-L", "_speedup.cpython-38m-darwin.so")
-   $ otool -L _speedup.cpython-38m-darwin.so
-   _speedup.cpython-38m-darwin.so:
+   >>> invoke_shell("otool", "-L", "_speedup.cpython-38-darwin.so")
+   $ otool -L _speedup.cpython-38-darwin.so
+   _speedup.cpython-38-darwin.so:
            @loader_path/.dylibs/libgfortran.5.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
